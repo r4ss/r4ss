@@ -28,13 +28,10 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
 #
 ################################################################################
 
-# if you have never installed the required packages,
-# copy and paste the following install.packages commands (without the "#").
+# if you have never installed the required package,
+# copy and paste the following install.packages command (without the "#").
 # Note: this may require administrative priviledges on your computer
 #
-# install.packages(gdata)
-# install.packages(gtools)
-# install.packages(gplots)
 # install.packages(lattice)
 
   # Require packages
