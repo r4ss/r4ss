@@ -18,10 +18,10 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
-# Written: Ian Stewart, NWFSC. Ian.Stewart@noaa.gov 206-302-2447
-#          Ian Taylor, NWFSC/UW. Ian.Taylor@noaa.gov 206-861-7603
+# Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
+#          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.0.
+# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.2.
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and packages: gregmisc,gdata,gtools,gplots,lattice
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
