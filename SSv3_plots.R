@@ -14,7 +14,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
 
 ################################################################################
 #
-# SSv3.plots BETA September 30, 2008.
+# SSv3_plots BETA October 28, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -200,6 +200,8 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # Static growth (mean weight, maturity, spawning output)
   if(1 %in% c(plot, print))
   {
+    growdat <- replist$endgrowth
+    print(cbind(growdat$Age,growdat$Age_Mat))
     xlab <- "Length (cm)"
     x <- biology$Mean_Size
     ylab <- "Mean weight (kg) in last year"
@@ -212,10 +214,8 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
         lines(x,biology$Wt_len_M,col="blue",type="o")
         legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}}
     gfunc2 <- function(){
-      plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red")
-      abline(h=0,col="grey")}
-    gfunc2b <- function(){
-      plot(growdat$Age, growdat$Mat_Age,xlab="Age",ylab="Maturity",type="o",col="red")
+      if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red") 
+      }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
     gfunc3 <- function(){
       plot(x,biology$Spawn,xlab="Length (cm)",ylab=ylab2,type="o",col="red")
@@ -236,7 +236,6 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       dev.off()}
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
-    growdat <- replist$endgrowth
     growdatF <- growdat[growdat$Morph==mainmorphs[1],]
     growdatF$Sd_Size <- growdatF$SD_Mid
     growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
@@ -253,7 +252,8 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       lines(x,growdatF$high,col="red",lwd=1,lty="dashed")
       lines(x,growdatF$low,col="red",lwd=1,lty="dashed")
       mtext(header,3,1.5)
-      if(nsexes > 1){
+      if(nsexes > 1)
+      {
         growdatM <- growdat[growdat$Morph==mainmorphs[2],]
         xm <- growdatM$Age
         growdatM$Sd_Size <- growdatM$SD_Mid
@@ -263,7 +263,9 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
         lines(xm,growdatM$high,col="blue",lwd=1,lty="dashed")
         lines(xm,growdatM$low,col="blue",lwd=1,lty="dashed")
         grid()
-        legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}}
+        legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))
+      }
+    }
     if(1 %in% plot) gfunc4()
     if(1 %in% print){
       png(file=paste(plotdir,"1sizeatage.png",sep=""),width=pwidth,height=pheight)
