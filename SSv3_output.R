@@ -5,27 +5,28 @@ SSv3_output <- function(dir="C:\\myfiles\\mymodels\\myrun\\",
 {
 ################################################################################
 #
-# SSv3.output BETA September 30, 2008.
+# SSv3.output BETA October 28, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
-# Written: Ian Stewart, NWFSC. Ian.Stewart@noaa.gov 206-302-2447
-#          Ian Taylor, NWFSC/UW. Ian.Taylor@noaa.gov 206-861-7603
+# Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
+#          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and summary statistics to R console
-# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.0.
-# Notes:   See users guide for documentation.
+# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.2.
+# Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
 ################################################################################
 
-# Functions needed
+# Defining internal functions: matchfun and matchfun2
 matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
 {
   # return a line number from the report file (or other file)
   # sstr controls whether to compare subsets or the whole line
   match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
 }
+
 matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchcol2=1,
   objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE)
 {
@@ -55,8 +56,8 @@ for(icol in 1:ncols){
 maxnonblank = max(c(0,(1:ncols)[nonblanks==1]))
 if(maxnonblank==ncols){
   print(      "! Warning, all columns are used and some data may have been missed,",quote=F)
-  print(paste("  consider increasing 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
-}else{ print(paste("Got all columns (maximum column with output = ",maxnonblank,")",sep=""),quote=F)}
+  print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
+}else{ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
 if(verbose) print("Got Report file",quote=F)
 flush.console()
 
@@ -139,6 +140,9 @@ ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
 begin <- matchfun("TIME_SERIES")+2
 end  <- matchfun("SPR_series")-1
 nareas <- max(as.numeric(rawrep[begin:end,1]))
+print(unique(as.numeric(rawrep[begin:end,1])))
+print(as.numeric(rawrep[begin:end,1]))
+
 
 
 startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
