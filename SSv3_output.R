@@ -198,16 +198,6 @@ der <- rawder[-1,]
 der[der=="_"] <- NA
 for(i in 2:3) der[,i] = as.numeric(der[,i])
 
-
-# read .cor file
-if(cor){
-  corfile <- paste(dir,model,".cor",sep="")
-  rawcor <- read.table(file=corfile,quote="",colClasses="character",nrows=1)
-  if(verbose) print("Got first line of .cor file",quote=F)
-}else{if(verbose) print("You skipped the .cor file",quote=F)}
-flush.console()
-
-
 if(hessian) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
 stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
 stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SR_parms")+3),2])
@@ -423,8 +413,8 @@ if(return=="Yes"){
 # return list of statistics
  if(printstats){
    print(stats)
-   if(cor){
-     print("Correlations above threshold")
+   if(hessian){
+     print("Correlations above threshold (not yet implemented for SSv3)")
      print(corlist)}
  }
 
