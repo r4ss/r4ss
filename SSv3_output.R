@@ -1,7 +1,7 @@
-SSv3_output <- function(dir="C:\\myfiles\\mymodels\\myrun\\",
-         model="SS3_opt",ncols=200,ncors=600,hessian=F,forecast=F,
-         sprtarg=0.50,cor=F,covar=F,cormax=0.95,return=c("Yes"),
-         verbose=T,printstats=F,msycheck=F,repfile="Report.SSO")
+SSv3_output <- function(
+         dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
+         ncols=200, hessian=F, forecast=F, sprtarg=0.50, covar=F, cormax=0.95, 
+         verbose=T, printstats=F, msycheck=F, return="Yes")
 {
 ################################################################################
 #
@@ -59,14 +59,6 @@ if(maxnonblank==ncols){
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
 }else{ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
 if(verbose) print("Got Report file",quote=F)
-flush.console()
-
-# read .cor file
-if(cor){
-  corfile <- paste(dir,model,".cor",sep="")
-  rawcor <- read.table(file=corfile,quote="",colClasses="character",nrows=1)
-  if(verbose) print("Got first line of .cor file",quote=F)
-}else{if(verbose) print("You skipped the .cor file",quote=F)}
 flush.console()
 
 # read .CoVar file
@@ -140,11 +132,6 @@ ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
 begin <- matchfun("TIME_SERIES")+2
 end  <- matchfun("SPR_series")-1
 nareas <- max(as.numeric(rawrep[begin:end,1]))
-print(unique(as.numeric(rawrep[begin:end,1])))
-print(as.numeric(rawrep[begin:end,1]))
-
-
-
 startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
 temptime <- rawrep[begin:end,2:3]
 endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
@@ -211,7 +198,17 @@ der <- rawder[-1,]
 der[der=="_"] <- NA
 for(i in 2:3) der[,i] = as.numeric(der[,i])
 
-if(cor) stats$log_det_hessian <- as.numeric(rawcor[1,10])
+
+# read .cor file
+if(cor){
+  corfile <- paste(dir,model,".cor",sep="")
+  rawcor <- read.table(file=corfile,quote="",colClasses="character",nrows=1)
+  if(verbose) print("Got first line of .cor file",quote=F)
+}else{if(verbose) print("You skipped the .cor file",quote=F)}
+flush.console()
+
+
+if(hessian) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
 stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
 stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SR_parms")+3),2])
 stats$sigma_R_out <- as.numeric(rawrep[(matchfun("N_est")+1),2])

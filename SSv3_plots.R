@@ -1,17 +1,16 @@
-SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
-     readrep=T,replist=NA,plot=1:19,print=0,OS="Windows",verbose=T,forecast=F,hessian=F,
-     printstats=F,covar=F,smooth=T,btarget=0.4,minbthresh=0.25,sprtarg=0.50,pntscalar=2.6,
-     datplot=T,minnbubble=8,pwidth=700,pheight=700,aalyear=-1,aalbin=-1,aalresids=F,
-     printfolder='',maxneff=5000,fleetcols=1,areacols=1,samplesizeON=F,bubbleON=T,...){
-
- # if replist is not in workspace or readrep==TRUE then read report file
- if(readrep | is.na(replist[[1]])){
-   if(!exists("SSv3_output")){
-     print("! Warning: the function 'SSv3_output' is not in R workspace.")
-     print("  See user manual on instructions for sourcing the file SSv3_output.R.")}
-   replist <- SSv3_output(dir=dir,printstats=printstats,hessian=hessian,covar=covar,...)
- }
-
+SSv3_plots <- function(
+    # plotting related inputs
+    readrep=T, replist=NA, plot=1:19, print=0, printfolder="", fleets=NA, areas=NA, fleetcols=NA, 
+    areacols=NA, verbose=T, datplot=F, Natageplot=T, btarget=0.4, minbthresh=0.25, pntscalar=2.6, 
+    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, 
+    bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
+    
+    # the following inputs are a repeat of those in the SSv3_output function which will
+    # be passed to that function. This could also be achieved using the "..." input
+    dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
+    ncols=200, hessian=F, forecast=F, sprtarg=0.50, covar=F, cormax=0.95, 
+    printstats=F, msycheck=F){
+      
 ################################################################################
 #
 # SSv3_plots BETA October 28, 2008.
@@ -23,7 +22,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
 # Returns: Plots with plot history in R GUI and/or .png files.
 # General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.2.
 # Notes:   See users guide for documentation.
-# Required SS3v_output function and packages: gregmisc,gdata,gtools,gplots,lattice
+# Required SS3v_output function and packages: lattice
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
 #
 ################################################################################
@@ -34,10 +33,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
 #
 # install.packages(lattice)
 
-  # Require packages
-  # require(gdata)
-  # require(gtools)
-  # require(gplots)
+  # load required package
   require(lattice)
 
   plotCI <- function(x,z=x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,sfrac = 0.01)
@@ -99,7 +95,18 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
     rgb.m <- matrix(c(r, g, b), ncol = 3)
     rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3]))
   }
-
+  
+  # if replist is not in workspace or readrep==TRUE then read report file
+  if(readrep | is.na(replist[[1]])){
+    if(!exists("SSv3_output")){
+      print("! Warning: the function 'SSv3_output' is not in R workspace.")
+    print("  See user manual on instructions for sourcing the file SSv3_output.R.")}
+    replist <- SSv3_output(
+      dir=dir, model=model, repfile=repfile, ncols=ncols, hessian=hessian, 
+      forecast=forecast, sprtarg=sprtarg, covar=covar, cormax=cormax, verbose=verbose,
+      printstats=printstats, msycheck=msycheck, return="Yes")
+  }
+  
   # get quantities from the big list
   # this could also be done using attach()
   nfleets                        <- replist$nfleets
@@ -163,9 +170,23 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
-
+  if(is.na(fleets)) fleets <- 1:nfleets
+  if(is.na(areas)) areas <- 1:nareas
+  
+  
   plotdir <- paste(dir,printfolder,sep="")
 
+  # time series quantities used for multiple plots
+  timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
+  ts <- timeseries[timeseries$Yr <= endyr+1,]
+  tsyears <- ts$Yr[ts$Seas==1]
+  tsarea <- ts$Area[ts$Seas==1]
+  tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
+  if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
+  dep <- tsspaw_bio/tsspaw_bio[1]
+
+  
+  
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
     print(paste("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")",sep=""),quote=F)
@@ -201,7 +222,6 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   if(1 %in% c(plot, print))
   {
     growdat <- replist$endgrowth
-    print(cbind(growdat$Age,growdat$Age_Mat))
     xlab <- "Length (cm)"
     x <- biology$Mean_Size
     ylab <- "Mean weight (kg) in last year"
@@ -345,7 +365,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       if(m==2) sextitle2 <- "Male ending"
       intret <- retention[retention$gender==m,]
       intselex <- sizeselex[sizeselex$gender==m,]
-      for(i in 1:nfleets)
+      for(i in fleets)
       {
         plotselex <- intselex[intselex$Fleet==i,]
         time <- FALSE
@@ -436,7 +456,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       if(m==1 & nsexes==1) sextitle2 <- "Ending"
       if(m==1 & nsexes==2) sextitle2 <- "Female ending"
       if(m==2) sextitle2 <- "Male ending"
-      for(i in 1:nfleets)
+      for(i in fleets)
       {
         plotageselex <- ageselex[ageselex$fleet==i & ageselex$gender==m,]
         time <- FALSE
@@ -504,14 +524,6 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # stats and dimensions
   if(5 %in% c(plot, print))
   {
-    timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
-    ts <- timeseries[timeseries$Yr <= endyr+1,]
-    tsyears <- ts$Yr[ts$Seas==1]
-    tsarea <- ts$Area[ts$Seas==1]
-    tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
-    if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
-    dep <- tsspaw_bio/tsspaw_bio[1]
-
     # Total and summary biomass
     tbiofunc <- function(){
       plot(ts$Yr[tsarea==1],ts$Bio_all[tsarea==1],xlab="Year",ylim=c(0,max(ts$Bio_all)),ylab="Total biomass",type="o",col=areacols[1])
@@ -820,7 +832,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
 
     }
-    for(iarea in 1:nareas){
+    for(iarea in areas){
       if(8 %in% plot) depfunc(iarea)
       if(8 %in% print){
         png(file=paste(plotdir,"8depletion.png",sep=""),width=pwidth,height=pheight)
@@ -1127,7 +1139,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   ### Plot 14: numbers at age ###
   if(14 %in% c(plot, print))
   {
-    for(iarea in 1:nareas)
+    for(iarea in areas)
     {
       for(m in 1:nsexes)
       {
@@ -1147,7 +1159,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
         if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
         plottitle <- paste("Expected numbers ",sextitle," at age in thousands (max=",max(resz),")",sep="")
 
-        # trellis.device(theme=col.whitebg(),new=F)
+        trellis.device(theme=col.whitebg(),new=F)
         nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
                       key.entries=c(0.0),pch=c(NA,1)[1+(resz>0)],scales=list(relation="same",alternating="1",tck=c(1,0)))
         natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
@@ -1194,7 +1206,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   if(datplot & length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
   {
     # length data
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(lendbase$Obs[lendbase$Fleet==i])>0)
       {
@@ -1230,7 +1242,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
               ptitle <- paste("Male discard lengths for ", FleetNames[i],sep="")
               if(j==2){ptitle <- paste("Male retained lengths for ", FleetNames[i],sep="")}
               if(j==0){ptitle <- paste("Male whole catch lengths for ", FleetNames[i],sep="")}}
-            # trellis.device(theme=col.whitebg(),new=FALSE)
+            trellis.device(theme=col.whitebg(),new=FALSE)
             trellis2 <-barchart(plotobs~plotbins|plotyear,as.table=T,ylab="Proportion",xlab="Length bin (cm)",col="GREY",main=ptitle,
                                 box.ratio=100,subset=TRUE,strip=strip.custom(bg="grey"),horizontal=FALSE,groups=NULL,
                                 scales=list(y=list(limits=c(0,max(ldat2$plotobs)+0.02)),x=list(limits=c(0,(nlbins+1)),at=(usebins),labels=(binlabs)),
@@ -1270,7 +1282,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
     if(verbose) print("Finished plot 15: length comp data ",quote=F)
 
     # age data
-    for(i in 1:nfleets) # loop over fleets
+    for(i in fleets) # loop over fleets
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0) # if there are ages for fleet i
       {
@@ -1308,7 +1320,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
                 plottitle <- paste("Male discard ages for ", FleetNames[i],sep="")
                 if(j==2){plottitle <- paste("Male retained ages for ", FleetNames[i],sep="")}
                 if(j==0){plottitle <- paste("Male whole catch ages for ", FleetNames[i],sep="")}}
-                # trellis.device(theme=col.whitebg(),new = FALSE)
+                trellis.device(theme=col.whitebg(),new = FALSE)
                 trellis2 <-barchart(plotobs~plotbins|plotyear,as.table=T,ylab="Proportion",xlab="Age bin (yr)",col="GREY",main=plottitle,
                                     box.ratio=80,subset=TRUE,strip=strip.custom(bg="grey"),horizontal=FALSE,groups=NULL,
                                     scales=list(y=list(limits=c(0,max(adat2$plotobs)+0.02)),drop.unused.levels=F,
@@ -1348,7 +1360,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
     } # fleets
 
     # conditional data
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
       {
@@ -1463,7 +1475,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # Plot 17: length comps with fits
   if(17 %in% c(plot, print))
   {
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(lendbase$Obs[lendbase$Fleet==i])>0)
       {
@@ -1531,7 +1543,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
               if(j==2){plottitle <- paste("Male retained length fits for ", FleetNames[i],sep="")}
               if(j==0){plottitle <- paste("Male whole catch length fits for ", FleetNames[i],sep="")}}
 
-            # trellis.device(theme=col.whitebg(),new = FALSE)
+            trellis.device(theme=col.whitebg(),new = FALSE)
             trellfems <- lfit2
             ntrell <- nrow(trellfems)
             trellfems$obsexp <- "obs"
@@ -1550,43 +1562,42 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
               print(print(trellis1))
               dev.off()}
 
-     if(bubbleON){
-
-            resx <- as.numeric(lfit2$Yr)
-            resy <- as.numeric(lfit2$plotbins)
-            resz <- as.numeric(lfit2$Pearson)
-            if(k==1){
-              plottitle <- paste("Combined sex discard Pearson residuals for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Combined sex retained Pearson residuals for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Combined sex whole catch Pearson residuals for ", FleetNames[i],sep="")}}
-            if(k==2){
-              plottitle <- paste("Female discard Pearson residuals for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Female retained Pearson residuals for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Female whole catch Pearson residuals for ", FleetNames[i],sep="")}}
-            if(k==3){
-              plottitle <- paste("Male discard Pearson residuals for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Male retained Pearson residuals for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Male whole catch Pearson residuals for ", FleetNames[i],sep="")}}
-            if(length(unique(resx))<minnbubble){
-              resx <- c(resx,(max(resx)+1),(min(resx)-1))
-              resy <- c(resy,(min(resy)),(min(resy)))
-              resz <- c(resz,0,0)}
-            plotbub <- cbind(resx,resy,resz)
-            pch <- resz
-            pch[pch==0] <- NA
-            pch[pch>0] <- 16
-            pch[pch<0] <- 1
-            plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
-            bub <- bubble2(plotbub,xlab="Year",ylab="Length bin (cm)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
-                         key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-            if(17 %in% plot) print(bub)
-            if(17 %in% print){
-              sex <- 1
-              if(k==3){sex <- 2}
-              png(file=paste(plotdir,"17lendatresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
-              print(bub)
-              dev.off()}
-     }
+            if(bubbleON){
+              resx <- as.numeric(lfit2$Yr)
+              resy <- as.numeric(lfit2$plotbins)
+              resz <- as.numeric(lfit2$Pearson)
+              if(k==1){
+                plottitle <- paste("Combined sex discard Pearson residuals for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Combined sex retained Pearson residuals for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Combined sex whole catch Pearson residuals for ", FleetNames[i],sep="")}}
+              if(k==2){
+                plottitle <- paste("Female discard Pearson residuals for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Female retained Pearson residuals for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Female whole catch Pearson residuals for ", FleetNames[i],sep="")}}
+              if(k==3){
+                plottitle <- paste("Male discard Pearson residuals for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Male retained Pearson residuals for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Male whole catch Pearson residuals for ", FleetNames[i],sep="")}}
+              if(length(unique(resx))<minnbubble){
+                resx <- c(resx,(max(resx)+1),(min(resx)-1))
+                resy <- c(resy,(min(resy)),(min(resy)))
+                resz <- c(resz,0,0)}
+              plotbub <- cbind(resx,resy,resz)
+              pch <- resz
+              pch[pch==0] <- NA
+              pch[pch>0] <- 16
+              pch[pch<0] <- 1
+              plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
+              bub <- bubble2(plotbub,xlab="Year",ylab="Length bin (cm)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
+                           key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
+              if(17 %in% plot) print(bub)
+              if(17 %in% print){
+                sex <- 1
+                if(k==3){sex <- 2}
+                png(file=paste(plotdir,"17lendatresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                print(bub)
+                dev.off()}
+            } # end if bubbleON
             ### this didn't work, explore later: add a histogram of the Pearson residuals
             #par(mfrow=c(2,2)) #pearsons <- mcmc(as.numeric(plotfems$Pearson))
             #pearsons[pearsons > 5] <- 5 #pearsons[pearsons < -5] <- -5
@@ -1606,7 +1617,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # Plot 18: traditional age comps
   if(18 %in% c(plot, print))
   {
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
       {
@@ -1628,39 +1639,41 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
             afit2 <- afit2[!is.na(afit2$plotbins),]
             afit2$plotobs <- afit2$Obs
             afit2$plotexp <- afit2$Exp
-   if(samplesizeON){
-
-            if(k==1){
-              plottitle <- paste("Sample size for sexes combined discard ages for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Sample size for sexes combined retained ages for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Sample size for sexes combined whole catch ages for ", FleetNames[i],sep="")}}
-            if(k==2){
-              plottitle <- paste("Sample size for female discard ages for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Sample size for female retained ages for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Sample size for female whole catch ages for ", FleetNames[i],sep="")}}
-            if(k==3){
-              plottitle <- paste("Sample size for male discard ages for ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Sample size for male retained ages for ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Sample size for male whole catch ages for ", FleetNames[i],sep="")}}
-            ymax <- max(afit2$effN)
-            xmax <- max(afit2$N)
-            afitssfunc <- function()
-            { plot(afit2$N,afit2$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
-              abline(h=0,col="grey")
-              lines(x=c(0,ymax),y=c(0,ymax),col="black")
-              npoints <- length(as.numeric(afit2$N))
-              if(npoints>3 & smooth & length(unique(afit2$N))>3)
-              { psmooth <- loess(afit2$effN~afit2$N,degree=1)
-                lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
-            }
-            if(18 %in% plot){afitssfunc()}
-            if(18 %in% print)
-            { sex <- 1
-              if(k==3){sex <- 2}
-              png(file=paste(plotdir,"18agedatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
-              afitssfunc()
-              dev.off()}
-   }
+            
+            # may optionally turn of sample size plots in #18
+            if(samplesizeON){ 
+              
+              if(k==1){
+                plottitle <- paste("Sample size for sexes combined discard ages for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Sample size for sexes combined retained ages for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Sample size for sexes combined whole catch ages for ", FleetNames[i],sep="")}}
+              if(k==2){
+                plottitle <- paste("Sample size for female discard ages for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Sample size for female retained ages for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Sample size for female whole catch ages for ", FleetNames[i],sep="")}}
+              if(k==3){
+                plottitle <- paste("Sample size for male discard ages for ", FleetNames[i],sep="")
+                if(j==2){plottitle <- paste("Sample size for male retained ages for ", FleetNames[i],sep="")}
+                if(j==0){plottitle <- paste("Sample size for male whole catch ages for ", FleetNames[i],sep="")}}
+              ymax <- max(afit2$effN)
+              xmax <- max(afit2$N)
+              afitssfunc <- function()
+              { plot(afit2$N,afit2$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
+                abline(h=0,col="grey")
+                lines(x=c(0,ymax),y=c(0,ymax),col="black")
+                npoints <- length(as.numeric(afit2$N))
+                if(npoints>3 & smooth & length(unique(afit2$N))>3)
+                { psmooth <- loess(afit2$effN~afit2$N,degree=1)
+                  lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
+              }
+              if(18 %in% plot){afitssfunc()}
+              if(18 %in% print)
+              { sex <- 1
+                if(k==3){sex <- 2}
+                png(file=paste(plotdir,"18agedatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                afitssfunc()
+                dev.off()}
+            } # end if samplesizeON
             if(k==1){
               plottitle <- paste("Combined sex discard age fits for ", FleetNames[i],sep="")
               if(j==2){plottitle <- paste("Combined sex retained age fits for ", FleetNames[i],sep="")}
@@ -1691,43 +1704,44 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
               png(file=paste(plotdir,"18agedatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
               print(trellis1)
               dev.off()}
-    if(bubbleON){
-
-            resx <- afit2$Yr
-            resy <- afit2$plotbins
-            resz <- afit2$Pearson
-            if(k==1){
-              plottitle <- paste("Combined sex discard Pearson residuals for age comps from ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Combined sex retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Combined sex whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
-            if(k==2){
-              plottitle <- paste("Female discard Pearson residuals for age comps from ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Female retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Female whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
-            if(k==3){
-              plottitle <- paste("Male discard Pearson residuals for age comps from ", FleetNames[i],sep="")
-              if(j==2){plottitle <- paste("Male retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
-              if(j==0){plottitle <- paste("Male whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
-            if(length(unique(resx))<minnbubble)
-            { resx <- c(resx,max(resx)+1,min(resx)-1)
-              resy <- c(resy,min(resy),min(resy))
-              resz <- c(resz,0,0)}
-            plotbub <- cbind(resx,resy,resz)
-            pch <- resz
-            pch[pch==0] <- NA
-            pch[pch>0] <- 16
-            pch[pch<0] <- 1
-            plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
-            bub <- bubble2(plotbub,xlab="Year",ylab="Age bin (yr)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
-                           key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-            if(18 %in% plot){print(bub)}
-            if(18 %in% print)
-            { sex <- 1
-              if(k==3){sex <- 2}
-              png(file=paste(plotdir,"18agedatfitresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
-              print(bub)
-              dev.off()}
-    }
+            
+            # may optionally turn of residual plots in #18
+            if(bubbleON){   
+                resx <- afit2$Yr
+                resy <- afit2$plotbins
+                resz <- afit2$Pearson
+                if(k==1){
+                  plottitle <- paste("Combined sex discard Pearson residuals for age comps from ", FleetNames[i],sep="")
+                  if(j==2){plottitle <- paste("Combined sex retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
+                  if(j==0){plottitle <- paste("Combined sex whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
+                if(k==2){
+                  plottitle <- paste("Female discard Pearson residuals for age comps from ", FleetNames[i],sep="")
+                  if(j==2){plottitle <- paste("Female retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
+                  if(j==0){plottitle <- paste("Female whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
+                if(k==3){
+                  plottitle <- paste("Male discard Pearson residuals for age comps from ", FleetNames[i],sep="")
+                  if(j==2){plottitle <- paste("Male retained Pearson residuals for age comps from ", FleetNames[i],sep="")}
+                  if(j==0){plottitle <- paste("Male whole catch Pearson residuals for age comps from ", FleetNames[i],sep="")}}
+                if(length(unique(resx))<minnbubble)
+                { resx <- c(resx,max(resx)+1,min(resx)-1)
+                  resy <- c(resy,min(resy),min(resy))
+                  resz <- c(resz,0,0)}
+                plotbub <- cbind(resx,resy,resz)
+                pch <- resz
+                pch[pch==0] <- NA
+                pch[pch>0] <- 16
+                pch[pch<0] <- 1
+                plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
+                bub <- bubble2(plotbub,xlab="Year",ylab="Age bin (yr)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
+                               key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
+                if(18 %in% plot){print(bub)}
+                if(18 %in% print)
+                { sex <- 1
+                  if(k==3){sex <- 2}
+                  png(file=paste(plotdir,"18agedatfitresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                  print(bub)
+                  dev.off()}
+            } # end if bubbleON
           } # market
         } # k loop
       } # if lengths exist
@@ -1735,7 +1749,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
     if(verbose) print("Finished traditional age comps",quote=F)
 
     ## Effective sample sizes for conditional age data
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
       {
@@ -1780,7 +1794,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
         if(length(agedbase$Obs[agedbase$Yr==aalyear[j]])>0)
         {
           agedbase1 <- agedbase[agedbase$Yr==aalyear[j],]
-          for(i in 1:nfleets)
+          for(i in fleets)
           {
             if(length(agedbase1$Obs[agedbase1$Fleet==i])>0)
             {
@@ -1852,7 +1866,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
       if(length(agedbase$Obs[agedbase$Lbin_hi %in% aalbin])>0)
       {
         agedbase2 <- agedbase[agedbase$Lbin_hi %in% aalbin,]
-        for(i in 1:nfleets)
+        for(i in fleets)
         {
           if(length(agedbase2$Obs[agedbase2$Fleet==i])>0)
           {
@@ -1902,7 +1916,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
     ## Multipanel plots of conditional aal residuals
     if(aalresids)
     {
-      for(i in 1:nfleets)
+      for(i in fleets)
       {
         if(length(agedbase$Obs[agedbase$Fleet==i])>0)
         {
@@ -2021,7 +2035,7 @@ SSv3_plots <- function(dir="c:\\SS\\SSv3.01h\\New_features_copy\\",
   # Plot 19: length at age data
   if(19 %in% c(plot, print))
   {
-    for(i in 1:nfleets)
+    for(i in fleets)
     {
       if(length(latagebase$Obs[latagebase$Fleet==i])>0)
       {
