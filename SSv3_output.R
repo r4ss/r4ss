@@ -269,7 +269,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  names(rawselex)<- rawselex[1,]
  selex <- rawselex[-1,]
  if(!forecast) selex <- selex[selex$year <= endyr,]
- # for(icol in c(1:3,5:ncol(selex))) selex[,i] = as.numeric(selex[,i])
+ for(icol in c(1:3,5:ncol(selex))) selex[,icol] = as.numeric(selex[,icol])
  if("sizeselex" %in% return | return=="Yes") returndat$sizeselex <- selex
 
  rawret <- matchfun2("RETENTION",1,"DISCARD_MORT",-1,cols=1:(nlbinspop+4))
@@ -283,7 +283,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  names(rawageselex)<- rawageselex[1,]
  ageselex <- rawageselex[-1,]
  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
- for(icol in c(1:3,5:ncol(ageselex))) ageselex[,i] = as.numeric(ageselex[,i])
+ for(icol in c(1:3,5:ncol(ageselex))) ageselex[,icol] = as.numeric(ageselex[,icol])
  if("ageselex" %in% return | return=="Yes") returndat$ageselex <- ageselex
 
 # time series

@@ -174,7 +174,7 @@ SSv3_plots <- function(
   if(is.na(areas)) areas <- 1:nareas
   
   
-  plotdir <- paste(dir,printfolder,sep="")
+  plotdir <- paste(dir,printfolder,"\\",sep="")
 
   # time series quantities used for multiple plots
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
@@ -208,6 +208,7 @@ SSv3_plots <- function(
     if(OS=="Linux") system(paste("mkdir -p ",plotdir))
     if(OS=="Mac") shell(paste("mkdir ",plotdir)) # don't know if this is correct or not
   }
+  if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir))  
 
   # colors
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
@@ -546,10 +547,10 @@ SSv3_plots <- function(
       tbiofunc()
       sbiofunc()}
     if(5 %in% print){
-      png(file=paste(dir,"5totbio.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"5totbio.png",sep=""),width=pwidth,height=pheight)
       tbiofunc()
       dev.off()
-      png(file=paste(dir,"5summarybio.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"5summarybio.png",sep=""),width=pwidth,height=pheight)
       sbiofunc()
       dev.off()}
 
