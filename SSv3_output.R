@@ -1,11 +1,11 @@
 SSv3_output <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-         ncols=200, hessian=F, forecast=F, sprtarg=0.50, covar=F, cormax=0.95, 
-         verbose=T, printstats=F, msycheck=F, return="Yes")
+         ncols=200, forecast=F, warn=T, sprtarg=0.50, covar=F, cormax=0.95, 
+         verbose=T, printstats=F, return="Yes")
 {
 ################################################################################
 #
-# SSv3.output BETA November 19, 2008.
+# SSv3_output BETA November 20, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -18,6 +18,9 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
+
+if(verbose) print("running SSv3.output:",quote=F)
+flush.console()
 
 # Defining internal functions: matchfun and matchfun2
 matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
@@ -42,7 +45,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 
 # read report file
 repfile <- paste(dir,repfile,sep="")
-if(verbose) print(paste("running SSv3.output: reading",repfile),quote=F)
+if(verbose) print(paste("reading",repfile),quote=F)
+flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
 
 
@@ -57,7 +61,9 @@ maxnonblank = max(c(0,(1:ncols)[nonblanks==1]))
 if(maxnonblank==ncols){
   print(      "! Warning, all columns are used and some data may have been missed,",quote=F)
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
-}else{ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
+}
+if((maxnonblank+1)==ncols){ print("Got all columns.",quote=F)}
+if((maxnonblank+1)<ncols){ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
 if(verbose) print("Got Report file",quote=F)
 flush.console()
 
@@ -71,17 +77,6 @@ if(covar){
 }else{if(verbose) print("You skipped the CoVar file",quote=F)}
 flush.console()
 
-# read .std file
-if(hessian){
-  stdfile <- paste(dir,model,".std",sep="")
-  rawstd <- read.table(file=stdfile,col.names=c(seq(1,5,by=1)),fill=T,quote="",colClasses="character",nrows=-1,comment.char="")
-  rawstd <- rawstd[-1,1:4]
-  for(i in c(1,3,4)) rawstd[,i] <- as.numeric(rawstd[,i])
-  names(rawstd) <- c("index","name","value","std_dev")
-  if(verbose) print("Got .std file",quote=F)
-}else{if(verbose) print("You skipped the .std file",quote=F)}
-flush.console()
-
 # read forecast report file
 if(forecast){
   forcastname <- paste(dir,"Forecast-report.SSO",sep="")
@@ -89,6 +84,14 @@ if(forecast){
   rawforcast <- rawforcast1[(matchfun("Management_report",rawforcast1[,1]):(length(rawforcast1[,1]))),]
   if(verbose) print("Got forecast file",quote=F)
 }else{if(verbose) print("You skipped the forecast file",quote=F)}
+flush.console()
+
+# read warnings file
+if(warn){
+  warnname <- paste(dir,"Warning.SSO",sep="")
+  warn <- readLines(warnname,warn=F) 
+  if(verbose) print("Got warning file",quote=F)
+}else{if(verbose) print("You skipped the warnings file",quote=F)}
 if(verbose) print("Finished reading files",quote=F)
 flush.console()
 
@@ -157,17 +160,18 @@ stats$Run_time <- paste(as.vector(rawrep[2,1:6]),collapse=" ")
 tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
 stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
-rawlike <- rawrep[matchfun("LIKELIHOOD")+2:11,1:3]
+stats$warnings <- warn
+
+rawlike <- rawrep[matchfun("LIKELIHOOD")+2:12,1:3]
 like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
 names(like) <- "values"
 rownames(like) <- rawlike[,1]
+like$lambdas <- rawlike[,3]
 stats$used_likelihoods <- like
 
-like2 <- rawrep[matchfun("LIKELIHOOD")+16:26, 1:(2+nfleets)]
-names(like2) <- paste("Fleet_",like2[1,],sep="")
-rownames(like2) <- like2[,1]
-like2 <- like2[-1,-1]
-stats$raw_likelihoods_by_fleet <- like2
+like2 <- rawrep[matchfun("LIKELIHOOD")+14:20, 1:(2+nfleets)]
+names(like2) <- like2[1,]
+stats$raw_likelihoods_by_fleet <- like2[2:length(like2[,1]),]
 
 rawvars <- matchfun2("Input_Variance_Adjustment",1,"Input_Variance_Adjustment",7,cols=1:(nfleets+1))
 names(rawvars) <- rawvars[1,]
@@ -181,6 +185,8 @@ allpars <- rawpars
 allpars[allpars=="_"] <- NA
 for(i in (1:ncol(allpars))[!(names(allpars)%in%c("Label","Status"))]) allpars[,i] = as.numeric(allpars[,i])
 
+stats$N_estimated_parameters <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,6]
+
 pars <- rawpars[!(rawpars$Phase %in% c("_","")),]
 pars[pars=="_"] <- NA
 for(i in (1:ncol(pars))[!(names(pars)%in%c("Label","Status"))]) pars[,i] = as.numeric(pars[,i])
@@ -189,8 +195,9 @@ pars$checkdiff <- pars$Value - pars$Min
 pars$checkdiff2 <- pars$Max - pars$Value
 pars$checkdiff3 <- abs(pars$Value-(pars$Max-(pars$Max-pars$Min)/2))
 pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
+pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
 pars <- pars[pars$Phase %in% 0:25,]
-stats$estimated_parameters <- pars[,1:15]
+stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
 
 rawder <- matchfun2("DERIVED_QUANTITIES",4,"MGParm_Block_Assignments",-1,cols=1:3)
 names(rawder) <- rawder[1,]
@@ -198,21 +205,11 @@ der <- rawder[-1,]
 der[der=="_"] <- NA
 for(i in 2:3) der[,i] = as.numeric(der[,i])
 
-if(hessian) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
+if(covar) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
 stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
-stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SR_parms")+3),2])
+stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SPAWN_RECRUIT")+3),1])
 stats$sigma_R_out <- as.numeric(rawrep[(matchfun("N_est")+1),2])
-if(forecast & msycheck){
-  begin <- matchfun("SPRtrial",rawforcast1[,2])+1
-  forecastconverge1 <- rawforcast1[begin:(matchfun("Btgt_trial",rawforcast1[,2])-1),3]
-  begin2 <- matchfun("Btgt_trial",rawforcast1[,2])+1
-  forecastconverge2 <- rawforcast1[begin2:(matchfun("MSYtrial",rawforcast1[,2])-1),4]
-  begin3 <- matchfun("MSYtrial",rawforcast1[,2])+1
-  forecastconverge3 <- rawforcast1[begin3:(matchfun("Management_report",rawforcast1[,1])-1),5]
-  testconverge <- c(forecastconverge1,forecastconverge2,forecastconverge3)
-  testconverge <- max(as.numeric(testconverge[(!(testconverge %in% c("+","")))]))
-  if(testconverge > 0 & verbose) print("MSY or SPR search likely caused Hessian error, check file for convergence",quote=F)
-}
+
 if(verbose) print("Finished primary run statistics list",quote=F)
 flush.console()
 
@@ -302,10 +299,10 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
  if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
  depletionseries <- tsspaw_bio/tsspaw_bio[1]
- stats$Bzero <- ts$SpawnBio[1]
- if(nsexes==1) stats$Bzero <- stats$Bzero/2
+ stats$SBzero <- ts$SpawnBio[1]
+ if(nsexes==1) stats$SBzero <- stats$SBzero/2
  tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
- stats$depletion_final_year <- tsspaw_bio[length(tsspaw_bio)]/stats$Bzero
+ stats$current_depletion <- depletionseries[length(depletionseries)]
  # total landings
  ls <- nrow(ts)-1
  totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
@@ -324,9 +321,9 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  }else{stringmatch <- "F:_"}
  Hrates <- as.matrix(ts[,substr(names(ts),1,nchar(stringmatch))==stringmatch])
  fmax <- max(Hrates)
- stats$fmax <- fmax
- stats$endyrcatch <- ts$totcatch[ls]
- stats$endyrlandings <- ts$totretained[ls]
+ #stats$fmax <- fmax
+ #stats$endyrcatch <- ts$totcatch[ls]
+ #stats$endyrlandings <- ts$totretained[ls]
 
 # depletion
  depletion_basis <- as.numeric(rawrep[matchfun("depletion_basis"),2])
@@ -358,14 +355,14 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  spr <- spr[spr$Year <= endyr,]
  spr$spr <- spr$SPR
  if("sprseries" %in% return | return=="Yes") returndat$sprseries <- spr
- stats$endyrspr <- spr$spr[length(spr$spr)]
- stats$endyrspr_to_proxy <- spr$spr[length(spr$spr)]/sprtarg
+ stats$last_years_sprmetric <- spr$spr[length(spr$spr)]
+ #stats$endyrspr_to_proxy <- spr$spr[length(spr$spr)]/sprtarg
 
  if(forecast){
-   stats$spr_at_msy <- as.numeric(rawforcast[33,2])
-   stats$exploit_at_msy <- as.numeric(rawforcast[35,2])
-   stats$bmsy_over_VLHbzero <- as.numeric(rawforcast[38,3])
-   stats$retained_msy <- as.numeric(rawforcast[43,5])
+  # stats$spr_at_msy <- as.numeric(rawforcast[33,2])
+  # stats$exploit_at_msy <- as.numeric(rawforcast[35,2])
+  # stats$bmsy_over_VLHbzero <- as.numeric(rawforcast[38,3])
+  # stats$retained_msy <- as.numeric(rawforcast[43,5])
  }else{if(verbose) print("You skipped the MSY statistics",quote=F)}
  flush.console()
 
@@ -413,9 +410,9 @@ if(return=="Yes"){
 # return list of statistics
  if(printstats){
    print(stats)
-   if(hessian){
+   if(covar){
      print("Correlations above threshold (not yet implemented for SSv3)")
-     print(corlist)}
+     }
  }
 
 # age-length matrix
@@ -460,9 +457,8 @@ if(return=="Yes"){
    returndat$parameters <- allpars
    returndat$FleetNames <- FleetNames
  }
- if(hessian & ("covar" %in% return | return=="Yes")) returndat$CoVar <- CoVar
- if(hessian & ("stdtable" %in% return | return=="Yes")) returndat$stdtable <- stdtable
- if(hessian & ("rawstd" %in% return | return=="Yes")) returndat$rawstd <- rawstd
+ if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
+ if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
 
  if(verbose) print("completed SSv3.output",quote=F)
