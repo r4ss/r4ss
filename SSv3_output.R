@@ -1,6 +1,6 @@
 SSv3_output <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-         ncols=200, forecast=F, warn=T, covar=F, cormax=0.95, readtargets=T,
+         ncols=200, forecast=F, warn=T, covar=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
          verbose=T, printstats=F, return="Yes")
 {
 ################################################################################
@@ -70,9 +70,60 @@ flush.console()
 if(covar){
   CoVar <- read.table(paste(dir,"CoVar.SSO",sep=""),
     header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"))
-  if(verbose) print("Got CoVar file",quote=F)
+  rangecor <- range(abs(CoVar$corr[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par"]))
+  if(verbose) print(paste("Got CoVar file. Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor)),quote=F)
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
+  
+  # search for high or low correlations in CoVar file
+  highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
+  lowcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
+    
+  nhighcor <- nrow(highcor)   
+  nlowcor <- nrow(lowcor)   
+  row.names(lowcor) = 1:nlowcor
+  
+  if(printhighcor>0){
+    if(nhighcor==0) textblock <- "No correlations"  
+    if(nhighcor==1) textblock <- "1 correlation"  
+    if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")  
+    print(paste(textblock, " above threshold (cormax=", cormax,")",sep=""), quote=F)
+    if(nhighcor>0 & nhighcor<=printhighcor){
+      row.names(highcor) = paste("   ",1:nhighcor)
+      print(highcor)
+    }
+    if(nhighcor>0 & nhighcor>printhighcor){
+      highcorsub <- highcor[order(-abs(highcor$corr)),]
+      highcorsub <- highcorsub[1:printhighcor,]
+      row.names(highcorsub) <- paste("   ",1:printhighcor)
+      print(paste("Highest",printhighcor,
+        "parameter correlations above threshold (to print more, increase 'printhighcor' input):"),quote=F)
+      print(highcorsub)
+    }
+  }else{
+    print("High correlations not reported. To report, change 'printhighcor' input to a positive value.", quote=F)
+  }
+  if(printlowcor>0){
+    if(nlowcor==0) textblock <- "No correlations"  
+    if(nlowcor==1) textblock <- "1 correlation"  
+    if(nlowcor>1)  textblock <- paste(nlowcor,"correlations")  
+    print(paste(textblock, " below threshold (cormin=", cormin,")",sep=""), quote=F)
+    if(nlowcor>0 & nlowcor<=printlowcor){
+      row.names(lowcor) = paste("   ",1:nlowcor)
+      print(lowcor)
+    }
+    if(nlowcor>0 & nlowcor>printlowcor){
+      lowcorsub <- lowcor[order(abs(lowcor$corr)),]
+      lowcorsub <- lowcorsub[1:printlowcor,]
+      row.names(lowcorsub) <- paste("   ",1:printlowcor)
+      print(paste("Lowest",printlowcor,
+        "parameter correlations below threshold (to print more, increase 'printlowcor' input):"),quote=F)
+      print(lowcorsub)
+    }
+  }else{
+    print("Low correlations not reported. To report, change 'printlowcor' input to a positive value.", quote=F)
+  }
+  
 }else{if(verbose) print("You skipped the CoVar file",quote=F)}
 flush.console()
 
@@ -456,27 +507,17 @@ if(return=="Yes"){
    returndat$parameters <- allpars
    returndat$FleetNames <- FleetNames
  }
- if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
+ if(covar){
+   if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
+   if("highcor" %in% return | return=="Yes") returndat$highcor <- highcor
+   if("lowcor" %in% return | return=="Yes") returndat$lowcor <- lowcor
+ }
  if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
-
- # read targets for SPR and Biomass
- if(readtargets){
-   if(verbose) print("reading SPR_target and Biomass target from Forecast.SS_New",quote=F)
-   # not ideal to read from Forecast.SS_New, but better than requiring input to this function
-   forecastinputs <- read.table(file=paste(dir,"Forecast.SS_New",sep=""))
-   sprtarg <- forecastinputs[6,]
-   btarg <- forecastinputs[7,]
-   returndat$sprtarg <- sprtarg
-   returndat$btarg   <- btarg
- }else{
-   returndat$sprtarg <- NA
-   returndat$btarg   <- NA
- }
-
+  
+ # return the inputs to this function so they can be used by SSv3_plots or other functions
  if("inputs" %in% return | return=="Yes"){
    inputs <- list()
-   # return the inputs to SSv3_output so they can be used by SSv3_plots or other functions
    inputs$dir      <- dir
    inputs$model    <- model
    inputs$repfile  <- repfile
@@ -486,6 +527,7 @@ if(return=="Yes"){
    inputs$verbose  <- verbose
    returndat$inputs <- inputs
  }         
+ 
  if(verbose) print("completed SSv3.output",quote=F)
  if(return!="No"){invisible(returndat)}
 
