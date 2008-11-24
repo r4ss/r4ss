@@ -1,6 +1,6 @@
 SSv3_output <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-         ncols=200, forecast=F, warn=T, sprtarg=0.50, covar=F, cormax=0.95, 
+         ncols=200, forecast=F, warn=T, covar=F, cormax=0.95, readtargets=T,
          verbose=T, printstats=F, return="Yes")
 {
 ################################################################################
@@ -49,7 +49,6 @@ if(verbose) print(paste("reading",repfile),quote=F)
 flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
 
-
 # check empty columns
 nonblanks <- rep(NA,ncols)
 for(icol in 1:ncols){
@@ -89,8 +88,10 @@ flush.console()
 # read warnings file
 if(warn){
   warnname <- paste(dir,"Warning.SSO",sep="")
-  warn <- readLines(warnname,warn=F) 
-  if(verbose) print("Got warning file",quote=F)
+  warn <- readLines(warnname,warn=F)
+  nwarn <- length(warn)
+  textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
+  if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
 }else{if(verbose) print("You skipped the warnings file",quote=F)}
 if(verbose) print("Finished reading files",quote=F)
 flush.console()
@@ -346,7 +347,6 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  if(return=="Yes") returndat$mnwgt <- mnwgt
 
 # Yield and SPR time-series
- if(forecast) sprtarg <- as.numeric(rawforcast[9,2])
  rawspr <- matchfun2("SPR_series",4,"SPAWN_RECRUIT",-1,cols=1:(20+2*nmorphs))
  names(rawspr) <- rawspr[1,]
  rawspr[rawspr=="_"] <- NA
@@ -356,7 +356,6 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  spr$spr <- spr$SPR
  if("sprseries" %in% return | return=="Yes") returndat$sprseries <- spr
  stats$last_years_sprmetric <- spr$spr[length(spr$spr)]
- #stats$endyrspr_to_proxy <- spr$spr[length(spr$spr)]/sprtarg
 
  if(forecast){
   # stats$spr_at_msy <- as.numeric(rawforcast[33,2])
@@ -461,6 +460,32 @@ if(return=="Yes"){
  if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
 
+ # read targets for SPR and Biomass
+ if(readtargets){
+   if(verbose) print("reading SPR_target and Biomass target from Forecast.SS_New",quote=F)
+   # not ideal to read from Forecast.SS_New, but better than requiring input to this function
+   forecastinputs <- read.table(file=paste(dir,"Forecast.SS_New",sep=""))
+   sprtarg <- forecastinputs[6,]
+   btarg <- forecastinputs[7,]
+   returndat$sprtarg <- sprtarg
+   returndat$btarg   <- btarg
+ }else{
+   returndat$sprtarg <- NA
+   returndat$btarg   <- NA
+ }
+
+ if("inputs" %in% return | return=="Yes"){
+   inputs <- list()
+   # return the inputs to SSv3_output so they can be used by SSv3_plots or other functions
+   inputs$dir      <- dir
+   inputs$model    <- model
+   inputs$repfile  <- repfile
+   inputs$forecast <- forecast
+   inputs$warn     <- warn
+   inputs$covar    <- covar
+   inputs$verbose  <- verbose
+   returndat$inputs <- inputs
+ }         
  if(verbose) print("completed SSv3.output",quote=F)
  if(return!="No"){invisible(returndat)}
 

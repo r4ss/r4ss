@@ -1,19 +1,20 @@
 SSv3_plots <- function(
     # plotting related inputs
     readrep=T, replist=NA, plot=1:19, print=0, printfolder="", fleets=NA, areas=NA, fleetcols=NA, 
-    areacols=NA, verbose=T, datplot=F, Natageplot=T, btarget=0.4, minbthresh=0.25, pntscalar=2.6, 
+    areacols=NA, verbose=T, datplot=F, Natageplot=T, minbthresh=0.25, pntscalar=2.6, 
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, 
     bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
     
     # the following inputs are a repeat of those in the SSv3_output function which will
-    # be passed to that function. This could also be achieved using the "..." input
+    # be passed to that function. This could also be achieved using the "..." input.
+    # if readrep=F these inputs will be overridden by the values that were used to create the replist
+
     dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-    ncols=200, hessian=F, forecast=F, sprtarg=0.50, covar=F, cormax=0.95, 
-    printstats=F, msycheck=F){
-      
+    ncols=200, forecast=F, warn=T, covar=F, cormax=0.95, readtargets=T,
+    printstats=F, return="Yes"){    
 ################################################################################
 #
-# SSv3_plots BETA October 28, 2008.
+# SSv3_plots BETA November 24, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -96,15 +97,26 @@ SSv3_plots <- function(
     rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3]))
   }
   
-  # if replist is not in workspace or readrep==TRUE then read report file
   if(readrep | is.na(replist[[1]])){
+    # if replist is not in workspace or readrep==TRUE then read report file
     if(!exists("SSv3_output")){
       print("! Warning: the function 'SSv3_output' is not in R workspace.")
-    print("  See user manual on instructions for sourcing the file SSv3_output.R.")}
+      print("  See documentation at http://code.google.com/p/r4ss/wiki/Documentation") 
+      print("  for instructions for sourcing the file SSv3_output.R.")
+    }
     replist <- SSv3_output(
-      dir=dir, model=model, repfile=repfile, ncols=ncols, hessian=hessian, 
-      forecast=forecast, sprtarg=sprtarg, covar=covar, cormax=cormax, verbose=verbose,
-      printstats=printstats, msycheck=msycheck, return="Yes")
+      dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, warn=warn, 
+      covar=covar, cormax=cormax, readtargets=readtargets, verbose=verbose,
+      printstats=printstats, return="Yes")
+  }else{
+    # otherwise get important inputs that were used in the call to SSv3_output that produced the supplied replist
+    dir      <- replist$inputs$dir      <- dir 
+    model    <- replist$inputs$model    <- model 
+    repfile  <- replist$inputs$repfile  <- repfile
+    forecast <- replist$inputs$forecast <- forecast
+    warn     <- replist$inputs$warn     <- warn
+    covar    <- replist$inputs$covar    <- covar 
+    verbose  <- replist$inputs$verbose  <- verbose
   }
   
   # get quantities from the big list
@@ -166,16 +178,17 @@ SSv3_plots <- function(
   endyrlandings                  <- replist$endyrlandings
   endyrspr                       <- replist$endyrspr
   endyrspr_to_proxy              <- replist$endyrspr_to_proxy
-
+  # sprtarg and btarg are read from Forecast.SS_New alternatively they could be  
+  # read from Forecast-report.SSO or taken as inputs to this function
+  sprtarg                        <- replist$sprtarg
+  btarg                          <- replist$btarg
+  
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
   if(is.na(fleets)) fleets <- 1:nfleets
   if(is.na(areas)) areas <- 1:nareas
-  
-  
-  plotdir <- paste(dir,printfolder,"\\",sep="")
-
+    
   # time series quantities used for multiple plots
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
@@ -185,8 +198,6 @@ SSv3_plots <- function(
   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
   dep <- tsspaw_bio/tsspaw_bio[1]
 
-  
-  
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
     print(paste("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")",sep=""),quote=F)
@@ -204,6 +215,7 @@ SSv3_plots <- function(
     if(OS=="Mac") quartz()
   }
   if(printfolder!="" & nprints>0){
+    plotdir <- paste(dir,printfolder,"\\",sep="")
     if(OS=="Windows") shell(paste("mkdir ",plotdir),translate=T)
     if(OS=="Linux") system(paste("mkdir -p ",plotdir))
     if(OS=="Mac") shell(paste("mkdir ",plotdir)) # don't know if this is correct or not
@@ -684,7 +696,7 @@ SSv3_plots <- function(
         dev.off()}
     }
     # recruitment with asymptotic interval
-    if(hessian){
+    if(covar){
       recstd <- derived_quants[substring(derived_quants$LABEL,1,4)=="Recr",]
       recstd$Yr <- as.numeric(substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1))
       v <- recstd$Value
@@ -750,7 +762,7 @@ SSv3_plots <- function(
         sbfunc2()
         dev.off()}
     }
-    if(hessian){
+    if(covar){
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
@@ -887,7 +899,7 @@ SSv3_plots <- function(
         png(file=paste(plotdir,"8depletionforecast.png",sep=""),width=pwidth,height=pheight)
         depfunc3()
         dev.off()}
-      if(hessian){
+      if(covar){
         depstdfore <- rawstd[rawstd$name=="depletion",]
         depstdfore <- depstdfore[(6+2*nforecastyears):((6+2*nforecastyears)+nforecastyears-1),]
         depstdfore$upper <- depstdfore$value + 1.96* depstdfore$std_dev
@@ -929,7 +941,7 @@ SSv3_plots <- function(
   # Plot 9: rec devs and asymptotic error check
   if(9 %in% c(plot, print))
   {
-    if(hessian){
+    if(covar){
       recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
       if(nrow(recdev)>0){
         recdev$Yr <- as.numeric(substring(recdev$Label,9,nchar(recdev$Label[1])))
@@ -1004,7 +1016,6 @@ SSv3_plots <- function(
   ### Plot 11: SPR ###
   if(11 %in% c(plot, print))
   {
-    # ! add something like this line: if(forecast) sprtarg <- as.numeric(rawforcast[9,2])
     sprfunc <- function(){
       plot(sprseries$Year,sprseries$spr,xlab="Year",ylab="SPR",ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="o",col="blue")
       abline(h=sprtarg,col="red",lty=2)
