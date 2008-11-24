@@ -1,7 +1,7 @@
 SSv3_plots <- function(
     # plotting related inputs
     readrep=T, replist=NA, plot=1:19, print=0, printfolder="", fleets=NA, areas=NA, fleetcols=NA, 
-    areacols=NA, verbose=T, datplot=F, Natageplot=T, minbthresh=0.25, pntscalar=2.6, 
+    areacols=NA, verbose=T, datplot=F, Natageplot=T, sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, 
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, 
     bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
     
@@ -10,7 +10,7 @@ SSv3_plots <- function(
     # if readrep=F these inputs will be overridden by the values that were used to create the replist
 
     dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-    ncols=200, forecast=F, warn=T, covar=F, cormax=0.95, readtargets=T,
+    ncols=200, forecast=F, warn=T, covar=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
     printstats=F, return="Yes"){    
 ################################################################################
 #
@@ -106,10 +106,12 @@ SSv3_plots <- function(
     }
     replist <- SSv3_output(
       dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, warn=warn, 
-      covar=covar, cormax=cormax, readtargets=readtargets, verbose=verbose,
-      printstats=printstats, return="Yes")
+      covar=covar, cormax=cormax, covar=covar, covar=T, cormax=cormax, cormin=cormin, 
+      printhighcor=printhighcor, printlowcor=printlowcor, 
+      verbose=verbose, printstats=printstats, return="Yes")
   }else{
     # otherwise get important inputs that were used in the call to SSv3_output that produced the supplied replist
+    # inputs that have no effect on the plots are not included
     dir      <- replist$inputs$dir      <- dir 
     model    <- replist$inputs$model    <- model 
     repfile  <- replist$inputs$repfile  <- repfile
@@ -178,10 +180,6 @@ SSv3_plots <- function(
   endyrlandings                  <- replist$endyrlandings
   endyrspr                       <- replist$endyrspr
   endyrspr_to_proxy              <- replist$endyrspr_to_proxy
-  # sprtarg and btarg are read from Forecast.SS_New alternatively they could be  
-  # read from Forecast-report.SSO or taken as inputs to this function
-  sprtarg                        <- replist$sprtarg
-  btarg                          <- replist$btarg
   
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
