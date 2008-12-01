@@ -105,8 +105,8 @@ SSv3_plots <- function(
       print("  for instructions for sourcing the file SSv3_output.R.")
     }
     replist <- SSv3_output(
-      dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, warn=warn, 
-      covar=covar, cormax=cormax, covar=covar, covar=T, cormax=cormax, cormin=cormin, 
+      dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, 
+      warn=warn, covar=covar, cormax=cormax, cormin=cormin, 
       printhighcor=printhighcor, printlowcor=printlowcor, 
       verbose=verbose, printstats=printstats, return="Yes")
   }else{
@@ -212,11 +212,13 @@ SSv3_plots <- function(
     if(OS=="Linux") X11()
     if(OS=="Mac") quartz()
   }
-  if(printfolder!="" & nprints>0){
+  if(nprints>0){
     plotdir <- paste(dir,printfolder,"\\",sep="")
-    if(OS=="Windows") shell(paste("mkdir ",plotdir),translate=T)
-    if(OS=="Linux") system(paste("mkdir -p ",plotdir))
-    if(OS=="Mac") shell(paste("mkdir ",plotdir)) # don't know if this is correct or not
+    if(printfolder!=""){
+      if(OS=="Windows") shell(paste("mkdir ",plotdir),translate=T)
+      if(OS=="Linux") system(paste("mkdir -p ",plotdir))
+      if(OS=="Mac") shell(paste("mkdir ",plotdir)) # don't know correct syntax for Mac
+    }
   }
   if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir))  
 
@@ -722,7 +724,7 @@ SSv3_plots <- function(
           recfunc3(maxyr=max(timeseries$Yr))
           dev.off()}
       }
-    } # hessian
+    } # end if covar
     if(verbose) print("Finished plot 6: recruitment",quote=F)
   } # end if 6 in plot or print
 
@@ -824,7 +826,7 @@ SSv3_plots <- function(
         } # forecast
       } # sexes==1
   } #temporarily turning off section on forecast
-    } # hessian==T
+    } # if covar==T
     if(verbose) print("Finished plot 7: Basic time series",quote=F)
   } # end if 7 in plot or print
 
@@ -836,10 +838,20 @@ SSv3_plots <- function(
     depfunc <- function(iarea){
       plottitle <- NULL
       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+      # temporary
+      print(tsyears)
+      print(dep)
+      print(tsarea)
+      print(iarea)      
+      print(length(tsyears[tsarea==iarea]))
+      print(length(dep[tsarea==iarea]))
+      plot(tsyears[1:34],dep[1:34])
+      print(length(tsarea==iarea))
+      return('blah')
       plot(tsyears[tsarea==iarea],dep[tsarea==iarea],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
       abline(h=0,col="grey")
-      abline(h=c(btarget,minbthresh),col="red")
-      text(startyr+4,btarget+0.03,"Management target",adj=0)
+      abline(h=c(btarg,minbthresh),col="red")
+      text(startyr+4,btarg+0.03,"Management target",adj=0)
       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
 
     }
@@ -853,7 +865,7 @@ SSv3_plots <- function(
 
 
     # if depletion_basis not equal to 1, then code below needs changing
-    if(hessian & depletion_basis==1){
+    if(covar & depletion_basis==1){
       depstd <- rawstd[rawstd$name=="depletion",]
       depstd$upper <- depstd$value + 1.96*depstd$std_dev
       depstd$lower <- depstd$value - 1.96*depstd$std_dev
@@ -866,8 +878,8 @@ SSv3_plots <- function(
       depfunc2 <- function(){
         plot(tsyears[tsarea==1],depstd$value,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
-        abline(h=c(btarget,minbthresh),col="red")
-        text((startyr+4),(btarget+0.03),"Management target",adj=0)
+        abline(h=c(btarg,minbthresh),col="red")
+        text((startyr+4),(btarg+0.03),"Management target",adj=0)
         text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
         points(yr1,depstd$upper,pch="-",col="blue",cex=1.2)
         lines(yr1,depstd$upper,col="blue",lty="dashed")
@@ -887,8 +899,8 @@ SSv3_plots <- function(
       depfunc3 <- function(){
         plot(tsyears,dep,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
-        abline(h=c(btarget,minbthresh),col="red")
-        text((startyr+4),(btarget+0.03),"Management target",adj=0)
+        abline(h=c(btarg,minbthresh),col="red")
+        text((startyr+4),(btarg+0.03),"Management target",adj=0)
         text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
         lines(yr,goodforcast$Depletion,lwd=1,col="red",lty="dashed")
         points(goodforcast$Year[2:nforecastyears],goodforcast$Depletion[2:nforecastyears],col="red",pch=20)}
@@ -912,8 +924,8 @@ SSv3_plots <- function(
         depfunc4 <- function(){
           plot(tsyears,dep,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue")
           abline(h=0,col="grey")
-          abline(h=c(btarget,minbthresh),col="red")
-          text((startyr+4),(btarget+0.03),"Management target",adj=0)
+          abline(h=c(btarg,minbthresh),col="red")
+          text((startyr+4),(btarg+0.03),"Management target",adj=0)
           text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
           points(yr1,depstd$upper,pch="-",col="blue",cex=1.2)
           lines(yr1,depstd$upper,col="blue",lty="dashed")
@@ -930,8 +942,8 @@ SSv3_plots <- function(
           png(file=paste(plotdir,"8depletionforecastinterval.png",sep=""),width=pwidth,height=pheight)
           depfunc4()
           dev.off()}
-      } # hessian==T
-    } # forecast==T
+      } # end if covar==T
+    } # end if forecast==T
     if(verbose) print("Finished plot 8: depletion",quote=F)
   } # end if 8 in plot or print
 
@@ -966,7 +978,7 @@ SSv3_plots <- function(
           recdevfunc2()
           dev.off()}
       } # rec devs
-    } # hessian = T
+    } # end if covar==T
     if(verbose) print("Finished plot 9: rec devs and asymptotic error check",quote=F)
     flush.console()
   } # end if 9 in plot or print
@@ -1032,11 +1044,11 @@ SSv3_plots <- function(
     if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
     depletionseries <- tsspaw_bio/tsspaw_bio[1]
 
-    reldep <- depletionseries[tsyears %in% sprseries$Year]/btarget
+    reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
     relspr <- 1-sprseries$spr
     xymax <- 1.1*max(c(reldep,relspr[!is.na(relspr)]))
     phasefunc <- function(){
-      plot(reldep,relspr,xlab="B/Btarget",xlim=c(0,xymax),ylim=c(0,1.0),ylab="1-SPR",type="o",col="blue")
+      plot(reldep,relspr,xlab="B/Btarg",xlim=c(0,xymax),ylim=c(0,1.0),ylab="1-SPR",type="o",col="blue")
       abline(h=0,col="grey")
       points(reldep[length(reldep)],relspr[length(relspr)],col="red",pch=19)
       abline(h=1-sprtarg,col="red",lty=2)
