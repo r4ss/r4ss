@@ -838,16 +838,6 @@ SSv3_plots <- function(
     depfunc <- function(iarea){
       plottitle <- NULL
       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
-      # temporary
-      print(tsyears)
-      print(dep)
-      print(tsarea)
-      print(iarea)      
-      print(length(tsyears[tsarea==iarea]))
-      print(length(dep[tsarea==iarea]))
-      plot(tsyears[1:34],dep[1:34])
-      print(length(tsarea==iarea))
-      return('blah')
       plot(tsyears[tsarea==iarea],dep[tsarea==iarea],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
       abline(h=0,col="grey")
       abline(h=c(btarg,minbthresh),col="red")
@@ -863,8 +853,10 @@ SSv3_plots <- function(
         dev.off()}
     }
 
-
-    # if depletion_basis not equal to 1, then code below needs changing
+# code below needs changing: didn't work if depletion_basis not equal to 1 anyway 
+temp_switch=F #temporarily turning off the following section
+if(temp_switch)
+{
     if(covar & depletion_basis==1){
       depstd <- rawstd[rawstd$name=="depletion",]
       depstd$upper <- depstd$value + 1.96*depstd$std_dev
@@ -944,6 +936,8 @@ SSv3_plots <- function(
           dev.off()}
       } # end if covar==T
     } # end if forecast==T
+} #end temporarily turning off broken section
+
     if(verbose) print("Finished plot 8: depletion",quote=F)
   } # end if 8 in plot or print
 
@@ -954,7 +948,7 @@ SSv3_plots <- function(
     if(covar){
       recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
       if(nrow(recdev)>0){
-        recdev$Yr <- as.numeric(substring(recdev$Label,9,nchar(recdev$Label[1])))
+        recdev$Yr <- as.numeric(substring(recdev$Label,9,nchar(recdev$Label[1])-1))
         ylab <- "Log Recruitment deviation"
         recdevfunc <- function(){
           plot(recdev$Yr,recdev$Value,xlab="Year",main="",ylab=ylab,type="b")
