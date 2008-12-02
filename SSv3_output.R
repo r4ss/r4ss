@@ -1,19 +1,19 @@
 SSv3_output <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-         ncols=200, forecast=F, warn=T, covar=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-         verbose=T, printstats=F, return="Yes")
+         dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3", repfile="Report.SSO", 
+         ncols=200, forecast=T, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
+         verbose=T, printstats=T, return="Yes")
 {
 ################################################################################
 #
-# SSv3_output BETA November 20, 2008.
+# SSv3_output BETA December 1, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
-#          formatted as R objects, and summary statistics to R console
-# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.2.
+#          formatted as R objects, and optional summary statistics to R console
+# General: Updated for Stock Synthesis version 3.01n November, 2008; R version 2.8.0.
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -70,60 +70,67 @@ flush.console()
 if(covar){
   CoVar <- read.table(paste(dir,"CoVar.SSO",sep=""),
     header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"))
-  rangecor <- range(abs(CoVar$corr[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par"]))
-  if(verbose) print(paste("Got CoVar file. Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor)),quote=F)
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
-  
+if(checkcor==T)
+{
+  corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
+  rangecor <- range(abs(corfilter$corr))
+  if(verbose) print("Got CoVar file.",quote=F)
+  corstats <- list()
+  corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
   # search for high or low correlations in CoVar file
-  highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
-  lowcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
-    
+  highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
+  lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
+  lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
+  lowcortestlist$name <- as.character(lowcortestlist[,1])
+  lowcortestlist$max <- NA
+  for(i in 1:length(lowcortestlist[,1]))
+   {
+     lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
+   }
+  lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
   nhighcor <- nrow(highcor)   
   nlowcor <- nrow(lowcor)   
-  row.names(lowcor) = 1:nlowcor
-  
   if(printhighcor>0){
     if(nhighcor==0) textblock <- "No correlations"  
     if(nhighcor==1) textblock <- "1 correlation"  
     if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")  
-    print(paste(textblock, " above threshold (cormax=", cormax,")",sep=""), quote=F)
+    corstats$cormessage2 <-paste(textblock, " above threshold (cormax=", cormax,")",sep="")
     if(nhighcor>0 & nhighcor<=printhighcor){
       row.names(highcor) = paste("   ",1:nhighcor)
-      print(highcor)
+      corstats$cormessage3 <- highcor
     }
     if(nhighcor>0 & nhighcor>printhighcor){
       highcorsub <- highcor[order(-abs(highcor$corr)),]
       highcorsub <- highcorsub[1:printhighcor,]
       row.names(highcorsub) <- paste("   ",1:printhighcor)
-      print(paste("Highest",printhighcor,
-        "parameter correlations above threshold (to print more, increase 'printhighcor' input):"),quote=F)
-      print(highcorsub)
+      corstats$cormessage4 <- paste("Highest",printhighcor,
+        "parameter correlations above threshold (to print more, increase 'printhighcor' input):")
+      corstats$cormessag5 <- highcorsub
     }
   }else{
-    print("High correlations not reported. To report, change 'printhighcor' input to a positive value.", quote=F)
+    corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
   }
   if(printlowcor>0){
-    if(nlowcor==0) textblock <- "No correlations"  
-    if(nlowcor==1) textblock <- "1 correlation"  
-    if(nlowcor>1)  textblock <- paste(nlowcor,"correlations")  
-    print(paste(textblock, " below threshold (cormin=", cormin,")",sep=""), quote=F)
+    if(nlowcor==0) textblock <- "No uncorrelated parameters"  
+    if(nlowcor==1) textblock <- "1 uncorrelation"  
+    if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")  
+    corstats$cormessag7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
     if(nlowcor>0 & nlowcor<=printlowcor){
-      row.names(lowcor) = paste("   ",1:nlowcor)
-      print(lowcor)
+      corstats$cormessag8 <-lowcor
     }
     if(nlowcor>0 & nlowcor>printlowcor){
-      lowcorsub <- lowcor[order(abs(lowcor$corr)),]
+      lowcorsub <- lowcor[order(abs(lowcor$max)),]
       lowcorsub <- lowcorsub[1:printlowcor,]
-      row.names(lowcorsub) <- paste("   ",1:printlowcor)
-      print(paste("Lowest",printlowcor,
-        "parameter correlations below threshold (to print more, increase 'printlowcor' input):"),quote=F)
-      print(lowcorsub)
+      corstats$cormessag9 <- paste("Lowest",printlowcor,
+        "parameters uncorrelations below threshold (to print more, increase 'printlowcor' input):")
+      corstats$cormessag10 <-lowcorsub
     }
   }else{
-    print("Low correlations not reported. To report, change 'printlowcor' input to a positive value.", quote=F)
+    corstats$cormessag11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
   }
-  
+  }else{if(verbose) print("You skipped the correlation check",quote=F)}
 }else{if(verbose) print("You skipped the CoVar file",quote=F)}
 flush.console()
 
@@ -131,7 +138,7 @@ flush.console()
 if(forecast){
   forcastname <- paste(dir,"Forecast-report.SSO",sep="")
   rawforcast1 <- read.table(file=forcastname,col.names=c(seq(1,ncols,by=1)),fill=T,quote="",colClasses="character",nrows=-1)
-  rawforcast <- rawforcast1[(matchfun("Management_report",rawforcast1[,1]):(length(rawforcast1[,1]))),]
+  #rawforcast <- rawforcast1[(matchfun("Management_report",rawforcast1[,1]):(length(rawforcast1[,1]))),]
   if(verbose) print("Got forecast file",quote=F)
 }else{if(verbose) print("You skipped the forecast file",quote=F)}
 flush.console()
@@ -198,9 +205,9 @@ names(morph_indexing) <- morph_indexing[1,]
 morph_indexing <- morph_indexing[-1,]
 for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
 if(forecast){
-  grab  <- matchfun("N_forecast_yrs;_and_with",objmatch=rawforcast[,1])
-  nforecastyears <- as.numeric(rawforcast[grab,2])
-  nforecastyearswithsd <- as.numeric(rawforcast[grab,3])}
+  grab  <- rawforcast1[,1]
+  nforecastyears <- as.numeric(rawforcast1[grab %in% c("N_forecast_yrs:"),2])
+nforecastyears <- nforecastyears[1]}
 if(verbose) print("Finished dimensioning",quote=F)
 flush.console()
 
@@ -284,6 +291,7 @@ if("dimensions" %in% return | return=="Yes"){
   returndat$endyr       <- endyr
   returndat$nseasons    <- nseasons
   returndat$seasfracs   <- seasfracs
+  returndat$nforecastyears <- nforecastyears
 }
 if(return=="Yes") returndat$morph_indexing <- morph_indexing
 
@@ -408,13 +416,13 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  if("sprseries" %in% return | return=="Yes") returndat$sprseries <- spr
  stats$last_years_sprmetric <- spr$spr[length(spr$spr)]
 
- if(forecast){
+ #if(forecast){
   # stats$spr_at_msy <- as.numeric(rawforcast[33,2])
   # stats$exploit_at_msy <- as.numeric(rawforcast[35,2])
   # stats$bmsy_over_VLHbzero <- as.numeric(rawforcast[38,3])
   # stats$retained_msy <- as.numeric(rawforcast[43,5])
- }else{if(verbose) print("You skipped the MSY statistics",quote=F)}
- flush.console()
+ #}else{if(verbose) print("You skipped the MSY statistics",quote=F)}
+ #flush.console()
 
 # Spawner-recruit curve
  rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:7)
@@ -461,7 +469,7 @@ if(return=="Yes"){
  if(printstats){
    print(stats)
    if(covar){
-     print("Correlations above threshold (not yet implemented for SSv3)")
+     print(corstats, quote=F)
      }
  }
 
