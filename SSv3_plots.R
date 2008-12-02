@@ -9,19 +9,19 @@ SSv3_plots <- function(
     # be passed to that function. This could also be achieved using the "..." input.
     # if readrep=F these inputs will be overridden by the values that were used to create the replist
 
-    dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3_opt", repfile="Report.SSO", 
-    ncols=200, forecast=F, warn=T, covar=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
+    dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3", repfile="Report.SSO", 
+    ncols=200, forecast=F, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
     printstats=F, return="Yes"){    
 ################################################################################
 #
-# SSv3_plots BETA November 24, 2008.
+# SSv3_plots BETA December 1, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.01L September, 2008; R version 2.7.2.
+# General: Updated for Stock Synthesis version 3.01n November, 2008; R version 2.8.0.
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and packages: lattice
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
@@ -96,6 +96,19 @@ SSv3_plots <- function(
     rgb.m <- matrix(c(r, g, b), ncol = 3)
     rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3]))
   }
+
+matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchcol2=1,
+  objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE)
+{
+  # return a subset of values from the report file (or other file)
+  # subset is defined by character strings at the start and end, with integer
+  # adjustments of the number of lines to above/below the two strings
+  line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
+  line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
+  if(!is.na(cols[1])){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
+     }else{            out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
+  return(out)
+}
   
   if(readrep | is.na(replist[[1]])){
     # if replist is not in workspace or readrep==TRUE then read report file
@@ -106,7 +119,7 @@ SSv3_plots <- function(
     }
     replist <- SSv3_output(
       dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, 
-      warn=warn, covar=covar, cormax=cormax, cormin=cormin, 
+      warn=warn, covar=covar, checkcor=checkcor, cormax=cormax, cormin=cormin, 
       printhighcor=printhighcor, printlowcor=printlowcor, 
       verbose=verbose, printstats=printstats, return="Yes")
   }else{
@@ -138,6 +151,7 @@ SSv3_plots <- function(
   endyr                          <- replist$endyr
   nseasons                       <- replist$nseasons
   seasfracs                      <- replist$seasfracs
+  nforecastyears 		 <- replist$nforecastyears
   morph_indexing                 <- replist$morph_indexing
   biology                        <- replist$biology
   endgrowth                      <- replist$endgrowth
@@ -154,33 +168,36 @@ SSv3_plots <- function(
   recruit                        <- replist$recruit
   cpue                           <- replist$cpue
   natage                         <- replist$natage
+  movement			 <- replist$movement
   ALK                            <- replist$ALK
+  AAK                            <- replist$AAK
   compdbase                      <- replist$composition_database
   derived_quants                 <- replist$derived_quants
   parameters                     <- replist$parameters
   FleetNames                     <- replist$FleetNames
   CoVar                          <- replist$CoVar
   stdtable                       <- replist$stdtable
-  rawstd                         <- replist$rawstd
+  #rawstd                         <- replist$rawstd
   SS_version                     <- replist$SS_version
   Run_time                       <- replist$Run_time
   Files_used                     <- replist$Files_used
   used_likelihoods               <- replist$used_likelihoods
   raw_likelihoods_by_fleet       <- replist$raw_likelihoods_by_fleet
   variance_adjustments_by_fleet  <- replist$variance_adjustments_by_fleet
-  estimated_parameters           <- replist$estimated_parameters
+  N_estimated_parameters  	 <- replist$N_estimated_parameters
+  estimated_non_rec_devparameters <- replist$estimated_non_rec_devparameters
   log_det_hessian                <- replist$log_det_hessian
   maximum_gradient_component     <- replist$maximum_gradient_component
   sigma_R_in                     <- replist$sigma_R_in
   sigma_R_out                    <- replist$sigma_R_out
-  Bzero                          <- replist$Bzero
-  depletion_final_year           <- replist$depletion_final_year
-  fmax                           <- replist$fmax
-  endyrcatch                     <- replist$endyrcatch
-  endyrlandings                  <- replist$endyrlandings
-  endyrspr                       <- replist$endyrspr
-  endyrspr_to_proxy              <- replist$endyrspr_to_proxy
-  
+  SBzero                          <- replist$SBzero
+  current_depletion              <- replist$current_depletion
+  #fmax                           <- replist$fmax
+  #endyrcatch                     <- replist$endyrcatch
+  #endyrlandings                  <- replist$endyrlandings
+  #endyrspr                       <- replist$endyrspr
+  last_years_sprmetric              <- replist$last_years_sprmetric
+
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
@@ -539,7 +556,10 @@ SSv3_plots <- function(
   {
     # Total and summary biomass
     tbiofunc <- function(){
-      plot(ts$Yr[tsarea==1],ts$Bio_all[tsarea==1],xlab="Year",ylim=c(0,max(ts$Bio_all)),ylab="Total biomass",type="o",col=areacols[1])
+      tsplotyr <- ts$Yr[tsarea==1]
+      tsplotbio <- ts$Bio_all[tsarea==1]
+      plot(tsplotyr[2:length(tsplotyr)],tsplotbio[2:length(tsplotbio)],xlab="Year",ylim=c(0,max(ts$Bio_all)),ylab="Total biomass",type="o",col=areacols[1])
+      points(tsplotyr[1],tsplotbio[1],col=areacols[1],pch=19)
       if(nareas>1){
         for(iarea in 2:nareas) lines(ts$Yr[tsarea==iarea],ts$Bio_all[tsarea==iarea],type="o",col=areacols[iarea])
         legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
@@ -547,7 +567,10 @@ SSv3_plots <- function(
       abline(h=0,col="grey")
     }
     sbiofunc <- function(){
-      plot(ts$Yr[tsarea==1],ts$Bio_smry[tsarea==1],xlab="Year",ylim=c(0,max(ts$Bio_smry)),ylab="Summary biomass",type="o",col=areacols[1])
+      tsplotyr <- ts$Yr[tsarea==1]
+      tsplotbiosum <- ts$Bio_smry[tsarea==1]
+      plot(tsplotyr[2:length(tsplotyr)],tsplotbiosum[2:length(tsplotbiosum)],xlab="Year",ylim=c(0,max(ts$Bio_smry)),ylab="Summary biomass",type="o",col=areacols[1])
+      points(tsplotyr[1],tsplotbiosum[1],col=areacols[1],pch=19)
       if(nareas>1){
         for(iarea in 2:nareas) lines(ts$Yr[tsarea==iarea],ts$Bio_smry[tsarea==iarea],type="o",col=areacols[iarea])
         legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
@@ -572,14 +595,15 @@ SSv3_plots <- function(
     ts$totretained <- 0
     ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
     landfunc <- function(){
-      plot(ts$Yr[1:ls],ts$totretained[1:ls],xlab="Year",ylab="Landings (mt)",type="o",col="black")
+      plot(ts$Yr[2:(ls-1)],ts$totretained[2:(ls-1)],xlab="Year",ylab="Landings (mt)",type="o",col="black")
       abline(h=0,col="grey")
-      for(xx in 1:nfishfleets){lines(ts$Yr[3:ls],totretainedmat[3:ls,xx],type="l",col=fleetcols[xx])}}
+      for(xx in 1:nfishfleets){lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])}}
     if(5 %in% plot) landfunc()
     if(5 %in% print){
       png(file=paste(plotdir,"5landings.png",sep=""),width=pwidth,height=pheight)
       landfunc()
       dev.off()}
+
     # total catch (not adapted for multi-area models)
     totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
     ts$totcatch <- 0
@@ -610,9 +634,9 @@ SSv3_plots <- function(
     Hrates <- as.matrix(ts[,substr(names(ts),1,nchar(stringmatch))==stringmatch])
     fmax <- max(Hrates)
     Hratefunc <- function(){
-      plot(ts$Yr[3:ls],3:ls,xlab="Year",ylim=c(0,fmax),ylab=ylab,type="n")
+      plot(ts$Yr[2:(ls-1)],2:(ls-1),xlab="Year",ylim=c(0,fmax),ylab=ylab,type="n")
         abline(h=0,col="grey")
-        for(xx in 1:nfishfleets) lines(ts$Yr[3:ls],Hrates[3:ls,xx],type="o",col=fleetcols[xx])
+        for(xx in 1:nfishfleets) lines(ts$Yr[2:(ls-1)],Hrates[2:(ls-1),xx],type="o",col=fleetcols[xx])
     }
     if(5 %in% plot) Hratefunc()
     if(5 %in% print){
@@ -672,13 +696,16 @@ SSv3_plots <- function(
     y <- ts$Recruit_0
     ylab <- "Age-0 recruits (1,000s)"
     recfunc <- function(){
-      plot(x,y,xlab="Year",ylab=ylab,ylim=c(0,max(y)),type="o",col="blue")
+      plot(x[3:length(x)],y[3:length(y)],xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
+      points(x[1],y[1],col="blue",pch=19)
+      points(x[2],y[2],col="blue")
       abline(h=0,col="grey")}
     if(6 %in% plot) recfunc()
     if(6 %in% print){
       png(file=paste(plotdir,"6recruits.png",sep=""),width=pwidth,height=pheight)
       recfunc()
       dev.off()}
+
     if(forecast){
       x <- timeseries$Yr
       y <- timeseries$Recruit_0
@@ -697,8 +724,11 @@ SSv3_plots <- function(
     }
     # recruitment with asymptotic interval
     if(covar){
-      recstd <- derived_quants[substring(derived_quants$LABEL,1,4)=="Recr",]
-      recstd$Yr <- as.numeric(substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1))
+      recstd <- matchfun2("VirginRecr",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+      recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
+      recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
+      recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
+      recstd$Yr <- as.numeric(recstd$Yr)
       v <- recstd$Value
       recstd$val1 <- log(v)
       recstd$logint <- sqrt(log(1+(recstd$StdDev/v)^2))
@@ -708,7 +738,7 @@ SSv3_plots <- function(
       uiw <- recstd$upper - v
       liw <- v - recstd$lower
       recfunc3 <- function(maxyr){
-        plotCI(x=recstd$Yr[recstd$Yr<=maxyr],y=v[recstd$Yr<=maxyr],sfrac=0.001,z=2,
+        plotCI(x=recstd$Yr[recstd$Yr<=(endyr+1)],y=v[recstd$Yr<=(endyr+1)],sfrac=0.001,z=2,
           uiw=uiw[recstd$Yr<=maxyr],liw=liw[recstd$Yr<=maxyr],xlab="Year",ylo=0,
           col="black",ylab=ylab,lty=1,main=plottitle)
         abline(h=0,col="grey")}
@@ -717,6 +747,7 @@ SSv3_plots <- function(
         png(file=paste(plotdir,"6recswintervals.png",sep=""),width=pwidth,height=pheight)
         recfunc3(maxyr=endyr+1)
         dev.off()}
+
       if(forecast){
         if(6 %in% plot) recfunc3(maxyr=max(timeseries$Yr))
         if(6 %in% print){
