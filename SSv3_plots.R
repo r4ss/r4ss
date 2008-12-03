@@ -1,20 +1,13 @@
 SSv3_plots <- function(
     # plotting related inputs
-    readrep=T, replist=NA, plot=1:19, print=0, printfolder="", fleets=NA, areas=NA, fleetcols=NA, 
-    areacols=NA, verbose=T, datplot=F, Natageplot=T, sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, 
-    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, 
-    bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
-    
-    # the following inputs are a repeat of those in the SSv3_output function which will
-    # be passed to that function. This could also be achieved using the "..." input.
-    # if readrep=F these inputs will be overridden by the values that were used to create the replist
+    replist="ReportObject", plot=1:19, print=0, printfolder="", fleets="all", areas="all", 
+    fleetcols="default", areacols="default", verbose=T, datplot=F, Natageplot=T, sprtarg=0.4, btarg=0.4, 
+    minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, 
+    samplesizeON=T, bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
 
-    dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3", repfile="Report.SSO", 
-    ncols=200, forecast=F, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-    printstats=F, return="Yes"){    
 ################################################################################
 #
-# SSv3_plots BETA December 1, 2008.
+# SSv3_plots BETA December 3, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -23,7 +16,7 @@ SSv3_plots <- function(
 # Returns: Plots with plot history in R GUI and/or .png files.
 # General: Updated for Stock Synthesis version 3.01n November, 2008; R version 2.8.0.
 # Notes:   See users guide for documentation.
-# Required SS3v_output function and packages: lattice
+# Required SS3v_output function and lattice package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
 #
 ################################################################################
@@ -110,28 +103,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   return(out)
 }
   
-  if(readrep | is.na(replist[[1]])){
-    # if replist is not in workspace or readrep==TRUE then read report file
-    if(!exists("SSv3_output")){
-      print("! Warning: the function 'SSv3_output' is not in R workspace.")
-      print("  See documentation at http://code.google.com/p/r4ss/wiki/Documentation") 
-      print("  for instructions for sourcing the file SSv3_output.R.")
-    }
-    replist <- SSv3_output(
-      dir=dir, model=model, repfile=repfile, ncols=ncols, forecast=forecast, 
-      warn=warn, covar=covar, checkcor=checkcor, cormax=cormax, cormin=cormin, 
-      printhighcor=printhighcor, printlowcor=printlowcor, 
-      verbose=verbose, printstats=printstats, return="Yes")
-  }else{
-    # otherwise get important inputs that were used in the call to SSv3_output that produced the supplied replist
-    # inputs that have no effect on the plots are not included
-    dir      <- replist$inputs$dir      <- dir 
-    model    <- replist$inputs$model    <- model 
-    repfile  <- replist$inputs$repfile  <- repfile
-    forecast <- replist$inputs$forecast <- forecast
-    warn     <- replist$inputs$warn     <- warn
-    covar    <- replist$inputs$covar    <- covar 
-    verbose  <- replist$inputs$verbose  <- verbose
+  if(replist=="ReportObject"){
+    return("The input 'replist' should refer to an R object created by the function 'SSv3_output'.")
   }
   
   # get quantities from the big list
@@ -201,8 +174,16 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
-  if(is.na(fleets)) fleets <- 1:nfleets
-  if(is.na(areas)) areas <- 1:nareas
+  if(fleets=="all"){
+    fleets <- 1:nfleets
+  }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
+      return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+  }} 
+  if(areas=="all"){
+    areas <- 1:nareas
+  }else{ if(length(intersect(areas,1:nareas))!=length(areas)){
+      return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+  }} 
     
   # time series quantities used for multiple plots
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
@@ -242,11 +223,15 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # colors
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
-  if(is.na(fleetcols)) fleetcols <- rich.colors.short(nfleets)
-  if(is.na(areacols )) areacols  <- rich.colors.short(nareas)
-  if(nareas==3) areacols <- rainbow(nareas)
-  if(nfleets==3) fleetcols <- rainbow(nareas)
-
+  if(fleetcols!="default"){
+    fleetcols <- rich.colors.short(nfleets)
+    if(nareas==3) areacols <- rainbow(nareas)
+  }
+  if(areacols!="default"){
+    areacols  <- rich.colors.short(nareas)
+    if(nfleets==3) fleetcols <- rainbow(nareas)
+  }
+  
   #### plot 1
   # Static growth (mean weight, maturity, spawning output)
   if(1 %in% c(plot, print))
