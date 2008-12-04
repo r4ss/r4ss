@@ -467,6 +467,7 @@ if(return=="Yes"){
 
 # return list of statistics
  if(printstats){
+   print("Statistics shown below (to turn off, change input to printstats=F)",quote=F)
    print(stats)
    if(covar){
      print(corstats, quote=F)
@@ -519,8 +520,8 @@ if(return=="Yes"){
    if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
    if("highcor" %in% return | return=="Yes") returndat$highcor <- highcor
    if("lowcor" %in% return | return=="Yes") returndat$lowcor <- lowcor
+   if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  }
- if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
   
  # return the inputs to this function so they can be used by SSv3_plots or other functions

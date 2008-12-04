@@ -1,10 +1,10 @@
 SSv3_plots <- function(
     # plotting related inputs
     replist="ReportObject", plot=1:19, print=0, printfolder="", fleets="all", areas="all", 
-    fleetcols="default", areacols="default", verbose=T, datplot=F, Natageplot=T, sprtarg=0.4, btarg=0.4, 
-    minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalresids=F, maxneff=5000, smooth=T, 
-    samplesizeON=T, bubbleON=T, pwidth=700, pheight=700, OS="Windows", 
-
+    fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
+    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
+    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, bubbleON=T, pwidth=700, pheight=700, OS="Windows")
+{
 ################################################################################
 #
 # SSv3_plots BETA December 3, 2008.
@@ -103,7 +103,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   return(out)
 }
   
-  if(replist=="ReportObject"){
+  if(replist[[1]]=="ReportObject"){
     return("The input 'replist' should refer to an R object created by the function 'SSv3_output'.")
   }
   
@@ -124,7 +124,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   endyr                          <- replist$endyr
   nseasons                       <- replist$nseasons
   seasfracs                      <- replist$seasfracs
-  nforecastyears 		 <- replist$nforecastyears
+  nforecastyears                 <- replist$nforecastyears
   morph_indexing                 <- replist$morph_indexing
   biology                        <- replist$biology
   endgrowth                      <- replist$endgrowth
@@ -141,7 +141,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   recruit                        <- replist$recruit
   cpue                           <- replist$cpue
   natage                         <- replist$natage
-  movement			 <- replist$movement
+  movement                       <- replist$movement
   ALK                            <- replist$ALK
   AAK                            <- replist$AAK
   compdbase                      <- replist$composition_database
@@ -157,29 +157,34 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   used_likelihoods               <- replist$used_likelihoods
   raw_likelihoods_by_fleet       <- replist$raw_likelihoods_by_fleet
   variance_adjustments_by_fleet  <- replist$variance_adjustments_by_fleet
-  N_estimated_parameters  	 <- replist$N_estimated_parameters
+  N_estimated_parameters         <- replist$N_estimated_parameters
   estimated_non_rec_devparameters <- replist$estimated_non_rec_devparameters
   log_det_hessian                <- replist$log_det_hessian
   maximum_gradient_component     <- replist$maximum_gradient_component
   sigma_R_in                     <- replist$sigma_R_in
   sigma_R_out                    <- replist$sigma_R_out
-  SBzero                          <- replist$SBzero
+  SBzero                         <- replist$SBzero
   current_depletion              <- replist$current_depletion
   #fmax                           <- replist$fmax
   #endyrcatch                     <- replist$endyrcatch
   #endyrlandings                  <- replist$endyrlandings
   #endyrspr                       <- replist$endyrspr
-  last_years_sprmetric              <- replist$last_years_sprmetric
-
+  last_years_sprmetric           <- replist$last_years_sprmetric
+  inputs                         <- replist$inputs
+  
+  # check for internal consistency
+  if(uncertainty==T & inputs$covar==F) 
+    return("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function")
+    
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
-  if(fleets=="all"){
+  if(fleets[1]=="all"){
     fleets <- 1:nfleets
   }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
       return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
   }} 
-  if(areas=="all"){
+  if(areas[1]=="all"){
     areas <- 1:nareas
   }else{ if(length(intersect(areas,1:nareas))!=length(areas)){
       return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
@@ -223,11 +228,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # colors
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
-  if(fleetcols!="default"){
+  if(fleetcols[1]=="default"){
     fleetcols <- rich.colors.short(nfleets)
     if(nareas==3) areacols <- rainbow(nareas)
   }
-  if(areacols!="default"){
+  if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)
     if(nfleets==3) fleetcols <- rainbow(nareas)
   }
@@ -691,7 +696,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       recfunc()
       dev.off()}
 
-    if(forecast){
+    if(forecastplot){
       x <- timeseries$Yr
       y <- timeseries$Recruit_0
       ymax <- max(y)
@@ -708,7 +713,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         dev.off()}
     }
     # recruitment with asymptotic interval
-    if(covar){
+    if(uncertainty){
       recstd <- matchfun2("VirginRecr",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
       recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
       recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
@@ -733,14 +738,14 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         recfunc3(maxyr=endyr+1)
         dev.off()}
 
-      if(forecast){
+      if(forecastplot){
         if(6 %in% plot) recfunc3(maxyr=max(timeseries$Yr))
         if(6 %in% print){
           png(file=paste(plotdir,"6recswforecastintervals.png",sep=""),width=pwidth,height=pheight)
           recfunc3(maxyr=max(timeseries$Yr))
           dev.off()}
       }
-    } # end if covar
+    } # end if uncertainty
     if(verbose) print("Finished plot 6: recruitment",quote=F)
   } # end if 6 in plot or print
 
@@ -761,7 +766,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
       sbfunc()
       dev.off()}
-    if(forecast){
+    if(forecastplot){
       if(nsexes==1) goodforcast$Spbio <- as.numeric(goodforcast$Spbio)/2
       ymax <- max(as.numeric(tsspaw_bio),as.numeric(goodforcast$Spbio))
       xmin <- min(tsyears)-1
@@ -778,7 +783,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         sbfunc2()
         dev.off()}
     }
-    if(covar){
+    if(uncertainty){
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
@@ -804,7 +809,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     temp_switch=F #temporarily turning off the following section
     if(temp_switch)
     {
-      if(forecast){
+      if(forecastplot){
         if(nforecastyears==nforecastyearswithsd){
           sbstd <- rawstd[rawstd$name %in% c("spbio_std"),]
           sbstdfore <- rawstd[rawstd$name %in% c("depletion"),]
@@ -839,10 +844,10 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
             png(file=paste(plotdir,"7spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight)
             sbfunc4()
             dev.off()}
-        } # forecast
+        } # forecastplot
       } # sexes==1
   } #temporarily turning off section on forecast
-    } # if covar==T
+    } # if uncertainty==T
     if(verbose) print("Finished plot 7: Basic time series",quote=F)
   } # end if 7 in plot or print
 
@@ -873,7 +878,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 temp_switch=F #temporarily turning off the following section
 if(temp_switch)
 {
-    if(covar & depletion_basis==1){
+    if(uncertainty & depletion_basis==1){
       depstd <- rawstd[rawstd$name=="depletion",]
       depstd$upper <- depstd$value + 1.96*depstd$std_dev
       depstd$lower <- depstd$value - 1.96*depstd$std_dev
@@ -899,7 +904,7 @@ if(temp_switch)
         depfunc2()
         dev.off()}
     }
-    if(forecast){
+    if(forecastplot){
       ymax <- max(dep,as.numeric(goodforcast$Depletion))
       xmin <- min(tsyears)-1
       yr <- as.numeric(goodforcast$Year)
@@ -917,7 +922,7 @@ if(temp_switch)
         png(file=paste(plotdir,"8depletionforecast.png",sep=""),width=pwidth,height=pheight)
         depfunc3()
         dev.off()}
-      if(covar){
+      if(uncertainty){
         depstdfore <- rawstd[rawstd$name=="depletion",]
         depstdfore <- depstdfore[(6+2*nforecastyears):((6+2*nforecastyears)+nforecastyears-1),]
         depstdfore$upper <- depstdfore$value + 1.96* depstdfore$std_dev
@@ -950,8 +955,8 @@ if(temp_switch)
           png(file=paste(plotdir,"8depletionforecastinterval.png",sep=""),width=pwidth,height=pheight)
           depfunc4()
           dev.off()}
-      } # end if covar==T
-    } # end if forecast==T
+      } # end if uncertainty==T
+    } # end if forecastplot==T
 } #end temporarily turning off broken section
 
     if(verbose) print("Finished plot 8: depletion",quote=F)
@@ -961,7 +966,7 @@ if(temp_switch)
   # Plot 9: rec devs and asymptotic error check
   if(9 %in% c(plot, print))
   {
-    if(covar){
+    if(uncertainty){
       recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
       if(nrow(recdev)>0){
         recdev$Yr <- as.numeric(substring(recdev$Label,9,nchar(recdev$Label[1])-1))
@@ -988,7 +993,7 @@ if(temp_switch)
           recdevfunc2()
           dev.off()}
       } # rec devs
-    } # end if covar==T
+    } # end if uncertainty==T
     if(verbose) print("Finished plot 9: rec devs and asymptotic error check",quote=F)
     flush.console()
   } # end if 9 in plot or print
