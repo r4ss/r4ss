@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 1, 2008.
+# SSv3_output BETA December 4, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -425,12 +425,12 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  #flush.console()
 
 # Spawner-recruit curve
- rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:7)
+ rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
  names(rawsr) <- rawsr[1,]
  rawsr[rawsr=="_"] <- NA
  rawsr <- rawsr[-(1:2),] # remove header rows
  sr <- rawsr[-(1:2),] # remove rows for Virg and Init
- for(i in 1:ncol(sr)) sr[,i] <- as.numeric(sr[,i])
+ for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
  if("recruit" %in% return | return=="Yes") returndat$recruit <- sr
 
 # CPUE/Survey series
