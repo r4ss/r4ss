@@ -3,11 +3,11 @@ SSv3_plots <- function(
     replist="ReportObject", plot=1:19, print=0, printfolder="", fleets="all", areas="all", 
     fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
-    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, bubbleON=T, pwidth=700, pheight=700, OS="Windows")
+    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, OS="Windows")
 {
 ################################################################################
 #
-# SSv3_plots BETA December 3, 2008.
+# SSv3_plots BETA December 4, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -754,9 +754,12 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   {
     ylab <- "Spawning biomass (mt)"
     ylim <- c(0,max(tsspaw_bio))
+      tsplotyr <- ts$Yr[tsarea==1]
+      tsplotSB <- tsspaw_bio[tsarea==1]
     sbfunc <- function(){
-      plot(tsyears[tsarea==1],tsspaw_bio[tsarea==1],xlab="Year",ylab=ylab,ylim=ylim,type="o",col=areacols[1])
-      if(nareas>1){
+      plot(tsplotyr[2:length(tsplotyr)],tsplotSB[2:length(tsplotSB)],xlab="Year",ylab=ylab,ylim=ylim,type="o",col=areacols[1])
+    points(tsplotyr[1],tsplotSB[1],col=areacols[1],pch=19)     
+     if(nareas>1){
         for(iarea in 2:nareas) lines(tsyears[tsarea==iarea],tsspaw_bio[tsarea==iarea],type="o",col=areacols[iarea])
         legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
       }
@@ -766,6 +769,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
       sbfunc()
       dev.off()}
+
+
     if(forecastplot){
       if(nsexes==1) goodforcast$Spbio <- as.numeric(goodforcast$Spbio)/2
       ymax <- max(as.numeric(tsspaw_bio),as.numeric(goodforcast$Spbio))
@@ -783,23 +788,35 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         sbfunc2()
         dev.off()}
     }
+
     if(uncertainty){
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
-      sbstd <- derived_quants[substring(derived_quants$LABEL,1,3)=="SPB",]
-      sbstd$Yr <- as.numeric(substring(sbstd$LABEL,5,nchar(sbstd$LABEL[1])-1))
+      sbstd <- matchfun2("VirginSPB",0,"VirginRecr",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+      sbstd$Yr <- substring(sbstd$LABEL,5,nchar(sbstd$LABEL[1])-1)
+      sbstd$Yr[2] <- as.numeric(sbstd$Yr[3])-1
+      sbstd$Yr[1] <- as.numeric(sbstd$Yr[2])-1
+      sbstd$Yr <- as.numeric(sbstd$Yr)
       v <- sbstd$Value/bioscale
       sbstd$upper <- v + 1.96*sbstd$StdDev/bioscale
       sbstd$lower <- v - 1.96*sbstd$StdDev/bioscale
       sbstd$lower[sbstd$lower < 0] <- 0
       ymax <- max(as.numeric(sbstd$upper))
       plottitle <- "~95% Asymptotic confidence interval"
-      sbfunc3 <- function(){
-        plot(sbstd$Yr,v,main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+     sbfunc3 <- function(){
+        plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+1)]
+        plotsbstv <- v[sbstd$Yr<=(endyr+1)]
+        plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+1)]
+        plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+1)]
+        plot(plotsbstdyr[2:length(plotsbstdyr)],plotsbstv[2:length(plotsbstv)],main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
-        lines(sbstd$Yr,sbstd$upper,lwd=1,col="blue",lty="dashed")
-        lines(sbstd$Yr,sbstd$lower,lwd=1,col="blue",lty="dashed")}
+        lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
+        lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
+        points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
+        points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
+        points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
+        }
       if(7 %in% plot) sbfunc3()
       if(7 %in% print){
         png(file=paste(plotdir,"7spawnbiointerval.png",sep=""),width=pwidth,height=pheight)
@@ -859,12 +876,14 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     depfunc <- function(iarea){
       plottitle <- NULL
       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
-      plot(tsyears[tsarea==iarea],dep[tsarea==iarea],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
+      tsplotyr <- tsyears[tsarea==iarea]
+      tsplotdep <- dep[tsarea==iarea]
+      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
+      points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
       abline(h=0,col="grey")
       abline(h=c(btarg,minbthresh),col="red")
       text(startyr+4,btarg+0.03,"Management target",adj=0)
       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
-
     }
     for(iarea in areas){
       if(8 %in% plot) depfunc(iarea)
@@ -874,30 +893,23 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         dev.off()}
     }
 
-# code below needs changing: didn't work if depletion_basis not equal to 1 anyway 
-temp_switch=F #temporarily turning off the following section
-if(temp_switch)
-{
-    if(uncertainty & depletion_basis==1){
-      depstd <- rawstd[rawstd$name=="depletion",]
-      depstd$upper <- depstd$value + 1.96*depstd$std_dev
-      depstd$lower <- depstd$value - 1.96*depstd$std_dev
-      if(depletion_basis==1){
-        depstd$upper <- depstd$upper * depletion_level
-        depstd$lower <- depstd$lower * depletion_level}
+    if(uncertainty){
+      depstd <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
+      depstd$Yr <- as.numeric(substring(depstd$LABEL,8))
+      depstd$period <- "fore"
+      depstd$period[depstd$Yr<=(endyr+1)] <- "time"
+      depstd$upper <- depstd$Value + 1.96*depstd$StdDev
+      depstd$lower <- depstd$Value - 1.96*depstd$StdDev
       ymax <- max(dep,depstd$upper)
-      len <- length(tsyears)
-      yr1 <- tsyears[-(1:3)]
       depfunc2 <- function(){
-        plot(tsyears[tsarea==1],depstd$value,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+        plot(depstd$Yr[depstd$period=="time"],depstd$Value[depstd$period=="time"],xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
         abline(h=c(btarg,minbthresh),col="red")
-        text((startyr+4),(btarg+0.03),"Management target",adj=0)
-        text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
-        points(yr1,depstd$upper,pch="-",col="blue",cex=1.2)
-        lines(yr1,depstd$upper,col="blue",lty="dashed")
-        points(yr1,depstd$lower,pch="-",col="blue",cex=1.2)
-        lines(yr1,depstd$lower,col="blue",lty="dashed")}
+        text((min(depstd$Yr)+4),(btarg+0.03),"Management target",adj=0)
+        text((min(depstd$Yr)+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
+        lines(depstd$Yr[depstd$period=="time"],depstd$upper[depstd$period=="time"],col="blue",lty="dashed")
+        lines(depstd$Yr[depstd$period=="time"],depstd$lower[depstd$period=="time"],col="blue",lty="dashed")
+       }
       if(8 %in% plot) depfunc2()
       if(8 %in% print){
         png(file=paste(plotdir,"8depletioninterval.png",sep=""),width=pwidth,height=pheight)
@@ -957,7 +969,6 @@ if(temp_switch)
           dev.off()}
       } # end if uncertainty==T
     } # end if forecastplot==T
-} #end temporarily turning off broken section
 
     if(verbose) print("Finished plot 8: depletion",quote=F)
   } # end if 8 in plot or print
@@ -969,7 +980,7 @@ if(temp_switch)
     if(uncertainty){
       recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
       if(nrow(recdev)>0){
-        recdev$Yr <- as.numeric(substring(recdev$Label,9,nchar(recdev$Label[1])-1))
+        recdev$Yr <- as.numeric(substring(recdev$Label,9))
         ylab <- "Log Recruitment deviation"
         recdevfunc <- function(){
           plot(recdev$Yr,recdev$Value,xlab="Year",main="",ylab=ylab,type="b")
@@ -1080,18 +1091,18 @@ if(temp_switch)
   ### Plot 12: spawner-recruit curve ###
   if(12 %in% c(plot, print))
   {
-    recruit <- recruit[recruit$year <= (endyr+1),]
+    recruit <- recruit[recruit$era=="Main",]
     ymax <- max(recruit$pred_recr)
     x <- recruit$spawn_bio
     xmax <- max(x)
     xlab <- "Spawning biomass (mt)"
     ylab <- "Recruitment (1,000s)"
     recruitfun <- function(){
-      plot(x,recruit$with_env,xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
+      plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
       abline(h=0,col="grey")
       biasad <- recruit$bias_adj
-      lines(x[-length(x)],biasad[-length(biasad)],col="green")
-      lines(x,recruit$exp_recr,lwd=2,col="black")
+      lines(x[order(x)],biasad[order(x)],col="green")      
+      lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
       points(x,recruit$pred_recr,col="red")}
     if(12 %in% plot) recruitfun()
     if(12 %in% print){
@@ -1123,7 +1134,7 @@ if(temp_switch)
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
         npoints <- length(z)
-        if(npoints > 3 & smooth){
+        if(npoints > 6 & smooth){
           psmooth <- loess(z~y,degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
       if(13 %in% print){
@@ -1137,7 +1148,7 @@ if(temp_switch)
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
         npoints <- length(z)
-        if(npoints > 3 & smooth){
+        if(npoints > 6 & smooth){
           psmooth <- loess(z~y,degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
         dev.off()}
@@ -1168,6 +1179,10 @@ if(temp_switch)
           psmooth <- loess(log(z)~log(y),degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
         dev.off()}
+
+
+
+
     } # nfleets
     if(verbose) print("Finished plot 13: CPUE plots",quote=F)
     flush.console()
@@ -1419,7 +1434,8 @@ if(temp_switch)
           cadat$plotbins <- cadat$Bin
           cadat$lenbin <- cadat$Lbin_hi
           cadat <- cadat[order(cadat$lenbin),]
-          if(Lbin_method==3) cadat$lenbin2 <- cadat$lenbin
+          #if(Lbin_method==3) 
+          cadat$lenbin2 <- cadat$lenbin
           cadat$lenbin <- as.factor(cadat$lenbin2)
           cadat$group <- cadat$obsexp
           cadat$group[cadat$obsexp=="exp"] <- cadat$Yr[cadat$obsexp=="exp"]
@@ -1599,7 +1615,7 @@ if(temp_switch)
               print(print(trellis1))
               dev.off()}
 
-            if(bubbleON){
+            if(compresidsON){
               resx <- as.numeric(lfit2$Yr)
               resy <- as.numeric(lfit2$plotbins)
               resz <- as.numeric(lfit2$Pearson)
@@ -1634,7 +1650,7 @@ if(temp_switch)
                 png(file=paste(plotdir,"17lendatresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
                 print(bub)
                 dev.off()}
-            } # end if bubbleON
+            } # end if compresidsON
             ### this didn't work, explore later: add a histogram of the Pearson residuals
             #par(mfrow=c(2,2)) #pearsons <- mcmc(as.numeric(plotfems$Pearson))
             #pearsons[pearsons > 5] <- 5 #pearsons[pearsons < -5] <- -5
@@ -1743,7 +1759,7 @@ if(temp_switch)
               dev.off()}
             
             # may optionally turn of residual plots in #18
-            if(bubbleON){   
+            if(compresidsON){   
                 resx <- afit2$Yr
                 resy <- afit2$plotbins
                 resz <- afit2$Pearson
@@ -1778,7 +1794,7 @@ if(temp_switch)
                   png(file=paste(plotdir,"18agedatfitresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
                   print(bub)
                   dev.off()}
-            } # end if bubbleON
+            } # end if compresidsON
           } # market
         } # k loop
       } # if lengths exist
@@ -1853,8 +1869,10 @@ if(temp_switch)
                 aydat$plotbins <- aydat$Bin
                 aydat$lenbin <- aydat$Lbin_hi
                 aydat <- aydat[order(aydat$lenbin),]
-                if(Lbin_method==1) aydat$lenbin2 <- lbins[aydat$lenbin]
-                if(Lbin_method==3) aydat$lenbin2 <- aydat$lenbin
+                #if(Lbin_method==1) 
+		aydat$lenbin2 <- lbins[aydat$lenbin]
+                #if(Lbin_method==3) 
+		aydat$lenbin2 <- aydat$lenbin
                 aydat$lenbin <- as.factor(aydat$lenbin2)
                 aydat$group <- aydat$obsexp
                 aydat$group[aydat$obsexp=="exp"] <- aydat$Yr[aydat$obsexp=="exp"]
@@ -1977,8 +1995,10 @@ if(temp_switch)
             ares$lenbin <- ares$Lbin_hi
             ares <- ares[order(ares$lenbin),]
             ares$lenbin2 <- 0
-            if(Lbin_method==1) ares$lenbin2 <- lbins[ares$lenbin]
-            if(Lbin_method==3) ares$lenbin2 <- ares$lenbin
+            #if(Lbin_method==1) 
+		ares$lenbin2 <- lbins[ares$lenbin]
+            #if(Lbin_method==3) 
+		ares$lenbin2 <- ares$lenbin
             ares$lenbin <- as.factor(ares$lenbin2)
             ares$group <- ares$obsexp
             ares$group[ares$obsexp=="exp"] <- ares$Yr[ares$obsexp=="exp"]
