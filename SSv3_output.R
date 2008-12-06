@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 4, 2008.
+# SSv3_output BETA December 5, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -30,7 +30,7 @@ matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
   match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
 }
 
-matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchcol2=1,
+matchfun2 <- function(string1,adjust1,string2,adjust2,cols="all",matchcol1=1,matchcol2=1,
   objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE)
 {
   # return a subset of values from the report file (or other file)
@@ -38,8 +38,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # adjustments of the number of lines to above/below the two strings
   line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
   line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
-  if(!is.na(cols[1])){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
-     }else{            out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
+  if(is.na(line1) | is.na(line2)) return("absent")
+  if(cols[1]!="all"){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
+     }else{           out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
   return(out)
 }
 
@@ -188,7 +189,7 @@ lendbase$effN <- as.numeric(lendbase$effN)
 agedbase$effN <- as.numeric(agedbase$effN)
 agebins <- unique(agedbase$Bin[!is.na(agedbase$Bin)])
 nagebins <- length(agebins)
-tempaccu <- as.character(rawrep[matchfun("AGE_LENGTH_KEY")+5,-1])
+tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
 ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
 begin <- matchfun("TIME_SERIES")+2
@@ -314,13 +315,15 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
 
 # Time-varying growth
  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))
- names(rawgrow) <- rawgrow[1,]
- growdat <- rawgrow[-1,]
- for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
- growdat <- growdat[growdat$Beg==1 & growdat$Yr < endyr,]
- if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
- if("growthseries" %in% return | return=="Yes") returndat$growthseries <- growdat
-
+ if(rawgrow!="absent"){
+   names(rawgrow) <- rawgrow[1,]
+   growdat <- rawgrow[-1,]
+   for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
+   growdat <- growdat[growdat$Beg==1 & growdat$Yr < endyr,]
+   if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
+   if("growthseries" %in% return | return=="Yes") returndat$growthseries <- growdat
+ }
+ 
 # Length selex and retention
  rawselex <- matchfun2("LEN_SELEX",1,"RETENTION",-1,cols=1:(nlbinspop+4))
  names(rawselex)<- rawselex[1,]
@@ -447,13 +450,15 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  }else{cpue <- NA}
  if("cpue" %in% return | return=="Yes") returndat$cpue <- cpue
 
-# Numbers at age
+ # Numbers at age
  if("natage" %in% return | return=="Yes"){
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
-   names(rawnatage) <- rawnatage[1,]
-   rawnatage <- rawnatage[-1,]
-   for(i in (1:ncol(rawnatage))[names(rawnatage)!="Era"]) rawnatage[,i] = as.numeric(rawnatage[,i])
-   returndat$natage <- rawnatage
+   if(rawnatage!="absent"){
+     names(rawnatage) <- rawnatage[1,]
+     rawnatage <- rawnatage[-1,]
+     for(i in (1:ncol(rawnatage))[names(rawnatage)!="Era"]) rawnatage[,i] = as.numeric(rawnatage[,i])
+     returndat$natage <- rawnatage
+   }
  }
 
 # Movement
@@ -477,37 +482,40 @@ if(return=="Yes"){
 # age-length matrix
  if("ALK" %in% return | return=="Yes"){
    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-   ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
-   starts <- grep("Morph:",rawALK[,3])+2
-   ends <- grep("mean",rawALK[,1])-1
-   for(i in 1:nmorphs){
-     ALKtemp <- rawALK[starts[i]:ends[i],-1]
-     for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
-     ALK[i,,] <- as.matrix(ALKtemp)
+   if(rawALK!="absent"){
+     ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
+     starts <- grep("Morph:",rawALK[,3])+2
+     ends <- grep("mean",rawALK[,1])-1
+     for(i in 1:nmorphs){
+       ALKtemp <- rawALK[starts[i]:ends[i],-1]
+       for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+       ALK[i,,] <- as.matrix(ALKtemp)
+     }
+     returndat$ALK <- ALK
    }
-   returndat$ALK <- ALK
  }
 
 # ageing error matrices
  if("AGE_AGE_KEY" %in% return | return=="Yes"){
    rawAAK <- matchfun2("AGE_AGE_KEY",1,"Size_Bins_pop",-1,cols=1:(accuage+2))
-   starts <- grep("KEY:",rawAAK[,1])
-   N_ageerror_defs <- length(starts)
-   if(N_ageerror_defs > 0)
-   {
-     AAK = array(NA,c(N_ageerror_defs,nagebins,accuage+1))
-     age_error_sd = 0:accuage
-     for(i in 1:N_ageerror_defs){
-       AAKtemp <- rawAAK[starts[i] + 1 + 1:nagebins,-1]
-       # what about 2-sex model?
-       for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
-       AAK[i,,] <- as.matrix(AAKtemp)
-       age_error_sd <- cbind(age_error_sd,as.numeric((rawAAK[starts[i] + 2,-1])))
+   if(rawALK!="absent"){
+     starts <- grep("KEY:",rawAAK[,1])
+     N_ageerror_defs <- length(starts)
+     if(N_ageerror_defs > 0)
+     {
+       AAK = array(NA,c(N_ageerror_defs,nagebins,accuage+1))
+       age_error_sd = 0:accuage
+       for(i in 1:N_ageerror_defs){
+         AAKtemp <- rawAAK[starts[i] + 1 + 1:nagebins,-1]
+         # what about 2-sex model?
+         for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
+         AAK[i,,] <- as.matrix(AAKtemp)
+         age_error_sd <- cbind(age_error_sd,as.numeric((rawAAK[starts[i] + 2,-1])))
+       }
+       returndat$AAK <- AAK
      }
-     returndat$AAK <- AAK
    }
  }
-
 
  if("compdbase" %in% return | return=="Yes") returndat$composition_database <- compdbase
 
