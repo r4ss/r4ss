@@ -315,7 +315,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
 
 # Time-varying growth
  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))
- if(rawgrow!="absent"){
+ if(length(rawgrow)>1){
    names(rawgrow) <- rawgrow[1,]
    growdat <- rawgrow[-1,]
    for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
@@ -453,7 +453,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  # Numbers at age
  if("natage" %in% return | return=="Yes"){
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
-   if(rawnatage!="absent"){
+   if(length(rawnatage)>1){
      names(rawnatage) <- rawnatage[1,]
      rawnatage <- rawnatage[-1,]
      for(i in (1:ncol(rawnatage))[names(rawnatage)!="Era"]) rawnatage[,i] = as.numeric(rawnatage[,i])
@@ -482,7 +482,7 @@ if(return=="Yes"){
 # age-length matrix
  if("ALK" %in% return | return=="Yes"){
    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-   if(rawALK!="absent"){
+   if(length(rawALK)>1){
      ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
      starts <- grep("Morph:",rawALK[,3])+2
      ends <- grep("mean",rawALK[,1])-1
@@ -498,7 +498,7 @@ if(return=="Yes"){
 # ageing error matrices
  if("AGE_AGE_KEY" %in% return | return=="Yes"){
    rawAAK <- matchfun2("AGE_AGE_KEY",1,"Size_Bins_pop",-1,cols=1:(accuage+2))
-   if(rawALK!="absent"){
+   if(length(rawAAK)>1){
      starts <- grep("KEY:",rawAAK[,1])
      N_ageerror_defs <- length(starts)
      if(N_ageerror_defs > 0)
