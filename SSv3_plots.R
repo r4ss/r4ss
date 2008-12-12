@@ -7,7 +7,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA December 4, 2008.
+# SSv3_plots BETA December 11, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -238,7 +238,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   }
   
   #### plot 1
-  # Static growth (mean weight, maturity, spawning output)
+  # Static growth (mean weight, maturity, fecundity, spawning output)
   if(1 %in% c(plot, print))
   {
     growdat <- replist$endgrowth
@@ -246,7 +246,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     x <- biology$Mean_Size
     ylab <- "Mean weight (kg) in last year"
     ylab2 <- "Spawning output"
-
+    fec_ylab <- "Eggs per gram"
+    fec_xlab <- "Female weight (kg)"
     gfunc1 <- function(){
       plot(x,biology$Wt_len_F,xlab=xlab,ylab=ylab,type="o",col="red")
       abline(h=0,col="grey")
@@ -257,12 +258,22 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red") 
       }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
+    gfunc4 <- function(){
+      par1 <- parameters[substr(parameters[,2],1,nchar("Eggs1_Fem"))=="Eggs1_Fem",3]
+      par2 <- parameters[substr(parameters[,2],1,nchar("Eggs2_Fem"))=="Eggs2_Fem",3]
+      ymin <- 0
+      ymax <- max(1.1*(par1 + par2*biology$Wt_len_F))
+      plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(ymin,ymax),col="blue",pch=19)
+      lines(biology$Wt_len_F,rep(par1,length(biology$Wt_len_F)),col="red")
+      text((max(biology$Wt_len_F)-min(biology$Wt_len_F))/2,par1-0.02*ymax,"Egg output proportional to spawning biomass")
+      }
     gfunc3 <- function(){
       plot(x,biology$Spawn,xlab="Length (cm)",ylab=ylab2,type="o",col="red")
       abline(h=0,col="grey")}
     if(1 %in% plot){
       gfunc1()
       gfunc2()
+      gfunc4()
       gfunc3()}
     if(1 %in% print){
       png(file=paste(plotdir,"1weightatsize.png",sep=""),width=pwidth,height=pheight)
@@ -270,6 +281,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       dev.off()
       png(file=paste(plotdir,"1maturity.png",sep=""),width=pwidth,height=pheight)
       gfunc2()
+      dev.off()
+      png(file=paste(plotdir,"1fecundity.png",sep=""),width=pwidth,height=pheight)
+      gfunc4()
       dev.off()
       png(file=paste(plotdir,"1spawningoutput.png",sep=""),width=pwidth,height=pheight)
       gfunc3()
