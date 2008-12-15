@@ -7,14 +7,14 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA December 11, 2008.
+# SSv3_plots BETA December 15, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.01n November, 2008; R version 2.8.0.
+# General: Updated for Stock Synthesis version 3.01o December, 2008; R version 2.8.0.
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and lattice package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
@@ -259,8 +259,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
     gfunc4 <- function(){
-      par1 <- parameters[substr(parameters[,2],1,nchar("Eggs1_Fem"))=="Eggs1_Fem",3]
-      par2 <- parameters[substr(parameters[,2],1,nchar("Eggs2_Fem"))=="Eggs2_Fem",3]
+      par1 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_inter_Fem"))=="Eg/gm_inter_Fem",3]
+      par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
       ymin <- 0
       ymax <- max(1.1*(par1 + par2*biology$Wt_len_F))
       plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(ymin,ymax),col="blue",pch=19)
