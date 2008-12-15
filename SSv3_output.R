@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 5, 2008.
+# SSv3_output BETA December 15, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -13,7 +13,7 @@ SSv3_output <- function(
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.01n November, 2008; R version 2.8.0.
+# General: Updated for Stock Synthesis version 3.01o December, 2008; R version 2.8.0.
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -233,11 +233,6 @@ like2 <- rawrep[matchfun("LIKELIHOOD")+14:20, 1:(2+nfleets)]
 names(like2) <- like2[1,]
 stats$raw_likelihoods_by_fleet <- like2[2:length(like2[,1]),]
 
-rawvars <- matchfun2("Input_Variance_Adjustment",1,"Input_Variance_Adjustment",7,cols=1:(nfleets+1))
-names(rawvars) <- rawvars[1,]
-vars <- rawvars[-1,]
-stats$variance_adjustments_by_fleet <- vars
-
 rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:14)
 names(rawpars) <- rawpars[1,]
 rawpars <- rawpars[-1,]
@@ -269,6 +264,30 @@ if(covar) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nro
 stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
 stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SPAWN_RECRUIT")+3),1])
 stats$sigma_R_out <- as.numeric(rawrep[(matchfun("N_est")+1),2])
+
+rawvartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21)
+names(rawvartune) <- rawvartune[1,]
+rawvartune <- rawvartune[2:length(rawvartune[,1]),]
+rawvartune[,1] <- rawvartune[,21]
+vartune <- rawvartune[,c(1,8,11,13,16,18)]
+vartune <- vartune[vartune$N > 0,]
+stats$index_variance_tuning_check <- vartune
+
+rawlenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10)
+names(rawlenntune) <- rawlenntune[1,]
+rawlenntune <- rawlenntune[2:length(rawlenntune[,1]),]
+rawlenntune[,1] <- rawlenntune[,10]
+lenntune <- rawlenntune[,c(1,2,4,5,6,8,9)]
+lenntune <- lenntune[lenntune$N > 0,]
+stats$Length_comp_Eff_N_tuning_check <- lenntune
+
+rawagentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10)
+names(rawagentune) <- rawagentune[1,]
+rawagentune <- rawagentune[2:length(rawagentune[,1]),]
+rawagentune[,1] <- rawagentune[,10]
+agentune <- rawagentune[,c(1,2,4,5,6,8,9)]
+agentune <- agentune[agentune$N > 0,]
+stats$Age_comp_Eff_N_tuning_check <- agentune
 
 if(verbose) print("Finished primary run statistics list",quote=F)
 flush.console()
