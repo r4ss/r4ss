@@ -7,7 +7,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA December 15, 2008.
+# SSv3_plots BETA December 16, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -26,9 +26,11 @@ SSv3_plots <- function(
 # Note: this may require administrative priviledges on your computer
 #
 # install.packages(lattice)
+# install.packages(plotrix)
 
   # load required package
   require(lattice)
+  require(plotrix)
 
   plotCI <- function(x,z=x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,sfrac = 0.01)
   {
@@ -171,6 +173,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   #endyrspr                       <- replist$endyrspr
   last_years_sprmetric           <- replist$last_years_sprmetric
   inputs                         <- replist$inputs
+  managementratiolabels          <- replist$managementratiolabels
   
   # check for internal consistency
   if(uncertainty==T & inputs$covar==F) 
@@ -598,10 +601,21 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
     ts$totretained <- 0
     ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
+    polyts <- data.frame(ts$Yr[3:(ls-1)])
+    row.names(polyts) <- seq(1,length(polyts[,1]),by=1)
+    polyts <- polyts[,rep(1,nfishfleets)]
     landfunc <- function(){
       plot(ts$Yr[2:(ls-1)],ts$totretained[2:(ls-1)],xlab="Year",ylab="Landings (mt)",type="o",col="black")
       abline(h=0,col="grey")
-      for(xx in 1:nfishfleets){lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])}}
+      for(xx in 1:nfishfleets){
+       lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])
+       polyts <- cbind(polyts,totretainedmat[3:(ls-1),xx])
+       }
+      stackpoly(x=polyts[,(nfishfleets+1):(nfishfleets*2)],xaxlab=as.character(c(polyts[,1])),
+                ylim=c(0,max(ts$totretained[2:(ls-1)])),stack=T,axis4=F,
+                xlab="Year",ylab="Landings (mt)",col=fleetcols)
+          }
+
     if(5 %in% plot) landfunc()
     if(5 %in% print){
       png(file=paste(plotdir,"5landings.png",sep=""),width=pwidth,height=pheight)
@@ -1063,7 +1077,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     flush.console()
   } # end if 10 in plot or print
 
-  ### Plot 11: SPR ###
+  ### Plot 11: SPR and fishing intensity plots ###
   if(11 %in% c(plot, print))
   {
     sprfunc <- function(){
@@ -1077,21 +1091,58 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       sprfunc()
       dev.off()}
 
+    sprfunc <- function(){
+      plot(sprseries$Year,(1-sprseries$spr),xlab="Year",ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
+      abline(h=(1-sprtarg),col="red",lty=2)
+      abline(h=0,col="grey")
+      abline(h=1,col="grey")}
+    if(11 %in% plot) sprfunc()
+    if(11 %in% print){
+      png(file=paste(plotdir,"111minussprseries",i,".png",sep=""),width=pwidth,height=pheight)
+      sprfunc()
+      dev.off()}
+
+    if(uncertainty){
+      sprratiostd <- derived_quants[substring(derived_quants$LABEL,1,8)=="SPRratio",]
+      sprratiostd$Yr <- as.numeric(substring(sprratiostd$LABEL,10))
+      sprratiostd$period <- "fore"
+      sprratiostd$period[sprratiostd$Yr<=(endyr)] <- "time"
+      sprratiostd$upper <- sprratiostd$Value + 1.96*sprratiostd$StdDev
+      sprratiostd$lower <- sprratiostd$Value - 1.96*sprratiostd$StdDev
+      ylab <- managementratiolabels[1,2] 
+      ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))     
+      sprfunc2 <- function(){
+        plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],xlab="Year",ylim=ylim,ylab=ylab,type="o",col="blue")
+        abline(h=0,col="grey")
+        abline(h=1,col="red")
+        text((min(sprratiostd$Yr)+4),(1+0.02),"Management target",adj=0)
+        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$upper[sprratiostd$period=="time"],col="blue",lty="dashed")
+        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$lower[sprratiostd$period=="time"],col="blue",lty="dashed")
+       }
+      if(11 %in% plot) sprfunc2()
+      if(11 %in% print){
+        png(file=paste(plotdir,"11sprratiointerval.png",sep=""),width=pwidth,height=pheight)
+        sprfunc2()
+        dev.off()}
+       }
+
     timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
     ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
     tsyears <- ts$Yr[ts$Seas==1]
     tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
     if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
     depletionseries <- tsspaw_bio/tsspaw_bio[1]
-
     reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
-    relspr <- 1-sprseries$spr
-    xymax <- 1.1*max(c(reldep,relspr[!is.na(relspr)]))
+    relspr <- (1-sprseries$spr)/(1-sprtarg)
+    xmax <- 1.1*max(reldep)
+    ymax <- 1.1*max(1,relspr[!is.na(relspr)])
     phasefunc <- function(){
-      plot(reldep,relspr,xlab="B/Btarg",xlim=c(0,xymax),ylim=c(0,1.0),ylab="1-SPR",type="o",col="blue")
+      plot(reldep,relspr,xlab="B/Btarget",xlim=c(0,xmax),ylim=c(0,ymax),ylab="(1-SPR)/(1-SPRTarget)",type="o",col="blue")
       abline(h=0,col="grey")
+      abline(v=0,col="grey")
+      lines(reldep,relspr,type="o",col="blue")
       points(reldep[length(reldep)],relspr[length(relspr)],col="red",pch=19)
-      abline(h=1-sprtarg,col="red",lty=2)
+      abline(h=1,col="red",lty=2)
       abline(v=1,col="red",lty=2)}
     if(11 %in% plot) phasefunc()
     if(11 %in% print){
@@ -1194,9 +1245,6 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
         dev.off()}
 
-
-
-
     } # nfleets
     if(verbose) print("Finished plot 13: CPUE plots",quote=F)
     flush.console()
@@ -1257,20 +1305,65 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           dev.off()}
       } # end gender loop
     } # end area loop
+
+    # plot the ageing imprecision for all age methods
+  if(!is.null(AAK)){
+    sd_vectors <- as.data.frame(AAK[,1,])
+    n_age_error_keys <- length(sd_vectors[,1])
+    xvals <- seq(0.5,length(sd_vectors[1,]),by=1)
+    ylim <- c(0,max(sd_vectors))
+    if(14 %in% plot){
+     plot(xvals,sd_vectors[1,],ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+     if(n_age_error_keys > 1){
+      for(i in 2:n_age_error_keys){
+       lines(xvals,sd_vectors[i,],type="o",col=fleetcols[i])
+       } # close for n keys loop
+     } # close if more than one key statement
+  } # end if 14 in plot
+    } # close if 14 plot 
+        if(14 %in% print){
+          png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
+     plot(xvals,sd_vectors[1,],ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+     if(n_age_error_keys > 1){
+      for(i in 2:n_age_error_keys){
+       lines(xvals,sd_vectors[i,],type="o",col=fleetcols[i])
+       } # close for n keys loop
+     } # close if more than one key statement
+          dev.off()}
+   } # end if AAK
+
     if(verbose) print("Finished plot 14: numbers at age",quote=F)
     flush.console()
-  } # end if 14 in plot or print
 
-  # Plots of comps: data only
+  # Plots of data only
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
   latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
-
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
 
   if(datplot & length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
   {
+
+   # Index data plots only
+    for(i in unique(cpue$Fleet)){
+      cpueuse <- cpue[cpue$Obs > 0 & cpue$Fleet==i,]
+      x <- cpueuse$Yr
+      y <- cpueuse$Obs
+      uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
+      liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
+      main=paste("Index ", i,sep="")
+      xlab <- "Observed index"
+      if(13 %in% plot){
+        plotCI(x=x,y=y,z=y,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+        abline(h=0,col="grey")}
+      if(13 %in% print){
+        png(file=paste(plotdir,"13cpuedata",i,".png",sep=""),width=pwidth,height=pheight)
+        plotCI(x=x,y=y,z=y,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+        abline(h=0,col="grey")
+        dev.off()}
+    } # nfleets
+
     # length data
     for(i in fleets)
     {
@@ -1293,8 +1386,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
             ldat2$plotbins <- ldat2$Bin
             ldat2 <- ldat2[!is.na(ldat2$plotbins),]
             ldat2$plotobs <- ldat2$Obs
-            bincounter <- as.integer(nlbins/5)
-            usebins <- seq(1,bincounter*5,by=bincounter)
+            bincounter <- as.integer(nlbins/6)
+            usebins <- seq(1,bincounter*6,by=bincounter)
             binlabs <- as.character(lbins[usebins])
             if(k==1){
               ptitle <- paste("Sexes combined discard lengths for ", FleetNames[i],sep="")
@@ -1374,6 +1467,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
               adat2$plotobs <- adat2$Obs
               maxbin <- max(agebins)
               minbin <- min(agebins)
+            bincounter <- as.integer(nagebins/6)
+            usebins <- seq(1,bincounter*6,by=bincounter)
+            binlabs <- as.character(agebins[usebins])
               if(k==1){
                 plottitle <- paste("Sexes combined discard ages for ", FleetNames[i],sep="")
                 if(j==2){plottitle <- paste("Sexes combined retained ages for ", FleetNames[i],sep="")}
@@ -1390,7 +1486,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
                 trellis2 <-barchart(plotobs~plotbins|plotyear,as.table=T,ylab="Proportion",xlab="Age bin (yr)",col="GREY",main=plottitle,
                                     box.ratio=80,subset=TRUE,strip=strip.custom(bg="grey"),horizontal=FALSE,groups=NULL,
                                     scales=list(y=list(limits=c(0,max(adat2$plotobs)+0.02)),drop.unused.levels=F,
-                                    x=list(tick.number=5,limits=c(0,(maxbin+1))),relation="same",alternating="1",tck=c(1,0)),data=adat2)
+                                   # x=list(tick.number=5,limits=c(0,(maxbin+1))),relation="same",alternating="1",tck=c(1,0)),
+                                    x=list(limits=c(0,(nagebins+1)),at=(usebins),labels=(binlabs)),relation="same",alternating="1",tck=c(1,0)),                                    
+                                    data=adat2)
               if(16 %in% plot) print(trellis2)
               if(16 %in% print)
               { sex <- 1
@@ -1585,7 +1683,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
               abline(h=0,col="grey")
               lines(x=c(0,ymax),y=c(0,ymax),col="black")
               npoints <- length(lfit2$N)
-              if(npoints > 3 & smooth & length(unique(lfit2$N))>3)
+              if(npoints > 6 & smooth & length(unique(lfit2$N))>6)
               { psmooth <- loess(lfit2$effN~lfit2$N,degree=1)
                 lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
             }
@@ -1729,7 +1827,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
                 abline(h=0,col="grey")
                 lines(x=c(0,ymax),y=c(0,ymax),col="black")
                 npoints <- length(as.numeric(afit2$N))
-                if(npoints>3 & smooth & length(unique(afit2$N))>3)
+                if(npoints>6 & smooth & length(unique(afit2$N))>6)
                 { psmooth <- loess(afit2$effN~afit2$N,degree=1)
                   lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
               }
@@ -1816,6 +1914,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(verbose) print("Finished traditional age comps",quote=F)
 
     ## Effective sample sizes for conditional age data
+  if(samplesizeON){ 
     for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
@@ -1841,7 +1940,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
             abline(h=0,col="grey")
             lines(x=c(0,ymax),y=c(0,ymax),col="black")
             npoints <- length(as.numeric(femsamps$N))
-            if(npoints > 3 & smooth & length(unique(femsamps$N))>3){
+            if(npoints > 6 & smooth & length(unique(femsamps$N))>6){
               psmooth <- loess(femsamps$effN~femsamps$N,degree=1)
               lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
           if(18 %in% plot) alenssfunc()
@@ -1852,6 +1951,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         } # m
       } # if ages
     } # fleet loop
+   } # end if samplesizeON
 
     # aalyear and make year-specific key if positive
     if(aalyear[1] > 0)
@@ -2130,7 +2230,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
             abline(h=0,col="grey")
             lines(x=c(0,ymax),y=c(0,ymax),col="black")
             npoints <- length(la$N)
-            if(npoints > 3 & smooth & length(unique(la$N))>3){
+            if(npoints > 6 & smooth & length(unique(la$N))>6){
               psmooth <- loess(la$effN~la$N,degree=1)
               lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
           #if(19 %in% plot){lenatagefunc()}
