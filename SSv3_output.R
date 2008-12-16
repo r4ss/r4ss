@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 15, 2008.
+# SSv3_output BETA December 16, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -222,14 +222,14 @@ stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
 stats$warnings <- warn
 
-rawlike <- rawrep[matchfun("LIKELIHOOD")+2:12,1:3]
+rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2,cols=1:3)
 like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
 names(like) <- "values"
 rownames(like) <- rawlike[,1]
 like$lambdas <- rawlike[,3]
 stats$used_likelihoods <- like
 
-like2 <- rawrep[matchfun("LIKELIHOOD")+14:20, 1:(2+nfleets)]
+like2 <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,cols=1:(2+nfleets))
 names(like2) <- like2[1,]
 stats$raw_likelihoods_by_fleet <- like2[2:length(like2[,1]),]
 
@@ -259,6 +259,10 @@ names(rawder) <- rawder[1,]
 der <- rawder[-1,]
 der[der=="_"] <- NA
 for(i in 2:3) der[,i] = as.numeric(der[,i])
+
+managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
+names(managementratiolabels) <- c("Ratio","Label")
+
 
 if(covar) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
 stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
@@ -445,6 +449,9 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
   # stats$retained_msy <- as.numeric(rawforcast[43,5])
  #}else{if(verbose) print("You skipped the MSY statistics",quote=F)}
  #flush.console()
+
+ if("managementratiolabels" %in% return | return=="Yes") returndat$managementratiolabels <- managementratiolabels
+
 
 # Spawner-recruit curve
  rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
