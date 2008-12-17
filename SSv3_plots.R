@@ -7,7 +7,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA December 16, 2008.
+# SSv3_plots BETA December 17, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -606,10 +606,12 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
        lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])
        polyts <- cbind(polyts,totretainedmat[3:(ls-1),xx])
        }
+      if(nfishfleets > 1){
       stackpoly(x=polyts[,(nfishfleets+1):(nfishfleets*2)],xaxlab=as.character(c(polyts[,1])),
                 ylim=c(0,max(ts$totretained[2:(ls-1)])),stack=T,axis4=F,
                 xlab="Year",ylab="Landings (mt)",col=fleetcols)
-          }
+       } # end if nfishfleets > 1
+          } # end landfunc
 
     if(5 %in% plot) landfunc()
     if(5 %in% print){
