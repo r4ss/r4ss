@@ -626,9 +626,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(max(ts$totcatch[3:ls] - ts$totretained[3:ls] != 0))
     {
       catfunc <- function()
-      {plot(ts$Yr[1:ls],ts$totcatch[1:ls],xlab="Year",ylab="Total catch (mt)",type="o",col="black")
+      {plot(ts$Yr[2:(ls-1)],ts$totcatch[2:(ls-1)],xlab="Year",ylab="Total catch (mt)",type="o",col="black")
         abline(h=0,col="grey")
-      for(xx in 1:nfishfleets){lines(ts$Yr[2:ls],totcatchmat[2:ls,xx],type="l",col=fleetcols[xx])}}
+      for(xx in 1:nfishfleets){lines(ts$Yr[3:(ls-1)],totcatchmat[3:(ls-1),xx],type="l",col=fleetcols[xx])}}
       if(5 %in% plot) catfunc()
       if(5 %in% print){
         png(file=paste(plotdir,"5totcatch.png",sep=""),width=pwidth,height=pheight)
@@ -667,9 +667,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       ylab <- "Predicted Discards (mt)"
       discfunc <- function()
       {
-        plot(ts$Yr[1:ls],ts$discardall[1:ls],xlab="Year",ylab=ylab,type="o",col="black")
+        plot(ts$Yr[2:(ls-1)],ts$discardall[2:(ls-1)],xlab="Year",ylab=ylab,type="o",col="black")
         abline(h=0,col="grey")
-        for(xx in 1:nfishfleets) lines(ts$Yr[3:ls],discardmat[3:ls,xx],col=fleetcols[xx])
+        for(xx in 1:nfishfleets) lines(ts$Yr[3:(ls-1)],discardmat[3:(ls-1),xx],col=fleetcols[xx])
       }
       if(5 %in% plot){discfunc()}
       if(5 %in% print)
@@ -1037,7 +1037,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   ### Plot 10: average body weight observations ###
   if(10 %in% c(plot, print))
   {
-    if(!is.na(mnwgt))
+    if(!is.na(mnwgt)[1])
     {
       for(i in unique(mnwgt$Fleet))
       {
@@ -1052,6 +1052,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           xmin <- min(yr)-3
           xmax <- max(yr)+3
           uiw <- ob*1.96*cv
+          liw <- ob*1.96*cv
+          liw[(ob-liw)<0] <- ob[(ob-liw)<0]
           ymax <- max(ob + uiw)
           ymax <- max(ymax,ex)
           ptitle <- paste("Mean weight in discard for fleet",i,sep=" ")
@@ -1059,7 +1061,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           if(j==0) ptitle <- paste("Mean weight in whole catch for fleet",i,sep=" ")
           ylab <- "Mean individual body weight (kg)"
           bdywtfunc <- function(){
-            plotCI(x=yr,y=ob,uiw=uiw,liw=ob*1.96*cv,xlab="Year",main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
+            plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab="Year",main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
             abline(h=0,col="grey")
             points(yr,ex,col="blue",cex=2,pch="-")}
           if(10 %in% plot) bdywtfunc()
@@ -1304,30 +1306,35 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     } # end area loop
 
     # plot the ageing imprecision for all age methods
-  if(!is.null(AAK)){
-    sd_vectors <- as.data.frame(AAK[,1,])
-    n_age_error_keys <- length(sd_vectors[,1])
-    xvals <- seq(0.5,length(sd_vectors[1,]),by=1)
-    ylim <- c(0,max(sd_vectors))
-    if(14 %in% plot){
-     plot(xvals,sd_vectors[1,],ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+    if(!is.null(AAK)){
+     sd_vectors <- as.data.frame(AAK[,1,])
+     n_age_error_keys <- 1
+     if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
+     if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
+     if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
+     ylim <- c(0,max(sd_vectors))
+     if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
+     if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
+     if(14 %in% plot){
+      plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
      if(n_age_error_keys > 1){
-      for(i in 2:n_age_error_keys){
-       lines(xvals,sd_vectors[i,],type="o",col=fleetcols[i])
-       } # close for n keys loop
-     } # close if more than one key statement
-  } # end if 14 in plot
-    } # close if 14 plot 
-        if(14 %in% print){
-          png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
-     plot(xvals,sd_vectors[1,],ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
-     if(n_age_error_keys > 1){
-      for(i in 2:n_age_error_keys){
-       lines(xvals,sd_vectors[i,],type="o",col=fleetcols[i])
-       } # close for n keys loop
-     } # close if more than one key statement
-          dev.off()}
-   } # end if AAK
+       for(i in 2:n_age_error_keys){
+        lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
+        } # close for n keys loop
+       } # close if more than one key statement
+      } # end if 14 in plot
+      if(14 %in% print){
+       png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
+       plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+       if(n_age_error_keys > 1){
+        for(i in 2:n_age_error_keys){
+         lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
+         } # close for n keys loop
+        } # close if more than one key statement
+       dev.off()
+       } # close if 14 in print
+      } # end if AAK
+    } # close if 14 in plot or print 
 
     if(verbose) print("Finished plot 14: numbers at age",quote=F)
     flush.console()
