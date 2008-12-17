@@ -219,6 +219,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(OS=="Mac") quartz()
   }
   if(nprints>0){
+    plotdir <- paste(inputs$dir,printfolder,"/",sep="")
     if(printfolder!="") dir.create(plotdir,showWarnings=F)
     if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)  
   }
