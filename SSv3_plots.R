@@ -219,14 +219,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(OS=="Mac") quartz()
   }
   if(nprints>0){
-    plotdir <- paste(dir,printfolder,"\\",sep="")
-    if(printfolder!=""){
-      if(OS=="Windows") shell(paste("mkdir ",plotdir),translate=T)
-      if(OS=="Linux") system(paste("mkdir -p ",plotdir))
-      if(OS=="Mac") shell(paste("mkdir ",plotdir)) # don't know correct syntax for Mac
-    }
+    if(printfolder!="") dir.create(plotdir,showWarnings=F)
+    if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)  
   }
-  if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir))  
 
   # colors
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
