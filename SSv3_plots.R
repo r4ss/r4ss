@@ -1,6 +1,6 @@
 SSv3_plots <- function(
     # plotting related inputs
-    replist="ReportObject", plot=1:19, print=0, printfolder="", fleets="all", areas="all", 
+    replist="ReportObject", plot=1:19, print=0, printfolder="", dir="default", fleets="all", areas="all", 
     fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
     aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, OS="Windows")
@@ -219,8 +219,10 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(OS=="Mac") quartz()
   }
   if(nprints>0){
-    plotdir <- paste(inputs$dir,printfolder,"/",sep="")
-    if(printfolder!="") dir.create(plotdir,showWarnings=F)
+    if(dir=="default") dir <- inputs$dir
+    dir.create(dir,showWarnings=F)
+    plotdir <- paste(dir,printfolder,"/",sep="")
+    dir.create(plotdir,showWarnings=F)
     if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)  
   }
 
@@ -1308,37 +1310,36 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 
     # plot the ageing imprecision for all age methods
     if(!is.null(AAK)){
-     sd_vectors <- as.data.frame(AAK[,1,])
-     n_age_error_keys <- 1
-     if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
-     if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
-     if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
-     ylim <- c(0,max(sd_vectors))
-     if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
-     if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
-     if(14 %in% plot){
-      plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
-     if(n_age_error_keys > 1){
-       for(i in 2:n_age_error_keys){
-        lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
-        } # close for n keys loop
-       } # close if more than one key statement
+      sd_vectors <- as.data.frame(AAK[,1,])
+      n_age_error_keys <- 1
+      if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
+      if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
+      if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
+      ylim <- c(0,max(sd_vectors))
+      if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
+      if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
+      if(14 %in% plot){
+        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+        if(n_age_error_keys > 1){
+          for(i in 2:n_age_error_keys){
+            lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
+          } # close for n keys loop
+        } # close if more than one key statement
       } # end if 14 in plot
       if(14 %in% print){
-       png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
-       plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
-       if(n_age_error_keys > 1){
-        for(i in 2:n_age_error_keys){
-         lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
-         } # close for n keys loop
+        png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
+        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+        if(n_age_error_keys > 1){
+          for(i in 2:n_age_error_keys){
+            lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
+          } # close for n keys loop
         } # close if more than one key statement
-       dev.off()
-       } # close if 14 in print
-      } # end if AAK
-    } # close if 14 in plot or print 
-
+        dev.off()
+      } # close if 14 in print
+    } # end if AAK
     if(verbose) print("Finished plot 14: numbers at age",quote=F)
     flush.console()
+  } # close if 14 in plot or print 
 
   # Plots of data only
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
@@ -2288,7 +2289,6 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     flush.console()
   } # end if 19 in plot or print
 
-
-
+  if(verbose) print("Finished all requested plots",quote=F)
   ### end of function
 }
