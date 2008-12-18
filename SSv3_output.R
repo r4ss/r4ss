@@ -1,5 +1,5 @@
 SSv3_output <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\", model="SS3", repfile="Report.SSO", 
+         dir="C:\\myfiles\\mymodels\\myrun\\", model="default", repfile="Report.SSO", 
          ncols=200, forecast=T, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
          verbose=T, printstats=T, return="Yes")
 {
@@ -44,11 +44,66 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols="all",matchcol1=1,mat
   return(out)
 }
 
-# read report file
+# get info on output files created by SSv3
+dir <- paste(dir,"/",sep="")
+shortrepfile <- repfile 
 repfile <- paste(dir,repfile,sep="")
+repfiletime <- file.info(repfile)$mtime
+if(model=="default")
+{
+  shortparfiles <- dir(dir,pattern=".par",full.names=F)
+  allparfiles <- dir(dir,pattern=".par",full.names=T)
+  if(length(allparfiles)==0) print(paste("Some stats skipped because there are no .par files found in directory:",dir))
+  if(length(allparfiles)==1){
+    parfile <- allparfiles
+    model <- strsplit(shortparfiles,split='.par')[[1]]
+  }
+  if(length(allparfiles)>1){
+    print("Multiple .par files found in directory. To get stats from parfile and corfile, specify model name in input (i.e. model='SS3')",quote=F)
+    parfile <- NA
+  }
+}else{
+  parfile <- paste(dir,model,".par",sep="")
+  if(!file.exists(parfile)){
+    print(paste("Some stats skipped because the .par file not found:",parfile),quote=F)
+    parfile <- NA
+  }
+}
+
+corfile <- NA
+if(covar){
+  # .cor file
+  if(!is.na(parfile)){
+    corfile <- sub(".par",".cor",parfile)
+    if(!file.exists(corfile)){
+      print(paste("Some stats skipped because the .cor file not found:",corfile),quote=F)
+      corfile <- NA
+    }
+  }
+  # CoVar.SSO file
+  covarfile <- paste(dir,"CoVar.SSO",sep="")
+  if(!file.exists(covarfile)){
+    print("CoVar.SSO not found. Change input to covar=F.",quote=F)
+    return()
+  }
+  
+  # time check
+  covartime <- file.info(covarfile)$mtime
+  difftimelimit <- 10
+  if(abs(as.numeric(difftime(covartime,repfiletime,units="secs")))>difftimelimit){
+    print(paste(shortrepfile,"and CoVar.SSO were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
+    return()
+  }
+}
+
+# read report file
 if(verbose) print(paste("reading",repfile),quote=F)
 flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
+SS_version <- rawrep[1,1]
+if(substr(SS_version,1,10)!="SS-V3.01-O"){
+  print(paste("! Warning, this function is built for SS-V3.01-O. You are using",substr(SS_version,1,10)),quote=F) 
+}
 
 # check empty columns
 nonblanks <- rep(NA,ncols)
@@ -69,68 +124,72 @@ flush.console()
 
 # read .CoVar file
 if(covar){
-  CoVar <- read.table(paste(dir,"CoVar.SSO",sep=""),
-    header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"))
+  CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"))
+  if(verbose) print("Got CoVar file.",quote=F)
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
-if(checkcor==T)
-{
-  corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
-  rangecor <- range(abs(corfilter$corr))
-  if(verbose) print("Got CoVar file.",quote=F)
-  corstats <- list()
-  corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
-  # search for high or low correlations in CoVar file
-  highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
-  lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
-  lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
-  lowcortestlist$name <- as.character(lowcortestlist[,1])
-  lowcortestlist$max <- NA
-  for(i in 1:length(lowcortestlist[,1]))
-   {
-     lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
-   }
-  lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
-  nhighcor <- nrow(highcor)   
-  nlowcor <- nrow(lowcor)   
-  if(printhighcor>0){
-    if(nhighcor==0) textblock <- "No correlations"  
-    if(nhighcor==1) textblock <- "1 correlation"  
-    if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")  
-    corstats$cormessage2 <-paste(textblock, " above threshold (cormax=", cormax,")",sep="")
-    if(nhighcor>0 & nhighcor<=printhighcor){
-      row.names(highcor) = paste("   ",1:nhighcor)
-      corstats$cormessage3 <- highcor
+  Nstd <- sum(stdtable$std>0)
+  if(Nstd<=1){
+    print(paste("Too few estimated quantities in CoVar file (n=",Nstd,"). Change input to covar=F.",sep=""),quote=F)
+    return()
+  }
+  if(checkcor==T)
+  {
+    corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
+    rangecor <- range(abs(corfilter$corr))
+    corstats <- list()
+    corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
+    # search for high or low correlations in CoVar file
+    highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
+    lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
+    lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
+    lowcortestlist$name <- as.character(lowcortestlist[,1])
+    lowcortestlist$max <- NA
+    for(i in 1:length(lowcortestlist[,1]))
+    {
+      lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
     }
-    if(nhighcor>0 & nhighcor>printhighcor){
-      highcorsub <- highcor[order(-abs(highcor$corr)),]
-      highcorsub <- highcorsub[1:printhighcor,]
-      row.names(highcorsub) <- paste("   ",1:printhighcor)
-      corstats$cormessage4 <- paste("Highest",printhighcor,
+    lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
+    nhighcor <- nrow(highcor)   
+    nlowcor <- nrow(lowcor)   
+    if(printhighcor>0){
+      if(nhighcor==0) textblock <- "No correlations"  
+      if(nhighcor==1) textblock <- "1 correlation"  
+      if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")  
+      corstats$cormessage2 <-paste(textblock, " above threshold (cormax=", cormax,")",sep="")
+      if(nhighcor>0 & nhighcor<=printhighcor){
+        row.names(highcor) = paste("   ",1:nhighcor)
+        corstats$cormessage3 <- highcor
+      }
+      if(nhighcor>0 & nhighcor>printhighcor){
+        highcorsub <- highcor[order(-abs(highcor$corr)),]
+        highcorsub <- highcorsub[1:printhighcor,]
+        row.names(highcorsub) <- paste("   ",1:printhighcor)
+        corstats$cormessage4 <- paste("Highest",printhighcor,
         "parameter correlations above threshold (to print more, increase 'printhighcor' input):")
-      corstats$cormessag5 <- highcorsub
+        corstats$cormessag5 <- highcorsub
+      }
+    }else{
+      corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
     }
-  }else{
-    corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
-  }
-  if(printlowcor>0){
-    if(nlowcor==0) textblock <- "No uncorrelated parameters"  
-    if(nlowcor==1) textblock <- "1 uncorrelation"  
-    if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")  
-    corstats$cormessag7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
-    if(nlowcor>0 & nlowcor<=printlowcor){
-      corstats$cormessag8 <-lowcor
-    }
-    if(nlowcor>0 & nlowcor>printlowcor){
-      lowcorsub <- lowcor[order(abs(lowcor$max)),]
-      lowcorsub <- lowcorsub[1:printlowcor,]
-      corstats$cormessag9 <- paste("Lowest",printlowcor,
+    if(printlowcor>0){
+      if(nlowcor==0) textblock <- "No uncorrelated parameters"  
+      if(nlowcor==1) textblock <- "1 uncorrelation"  
+      if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")  
+      corstats$cormessag7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
+      if(nlowcor>0 & nlowcor<=printlowcor){
+        corstats$cormessag8 <-lowcor
+      }
+      if(nlowcor>0 & nlowcor>printlowcor){
+        lowcorsub <- lowcor[order(abs(lowcor$max)),]
+        lowcorsub <- lowcorsub[1:printlowcor,]
+        corstats$cormessag9 <- paste("Lowest",printlowcor,
         "parameters uncorrelations below threshold (to print more, increase 'printlowcor' input):")
-      corstats$cormessag10 <-lowcorsub
+        corstats$cormessag10 <-lowcorsub
+      }
+    }else{
+      corstats$cormessag11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
     }
-  }else{
-    corstats$cormessag11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
-  }
   }else{if(verbose) print("You skipped the correlation check",quote=F)}
 }else{if(verbose) print("You skipped the CoVar file",quote=F)}
 flush.console()
@@ -146,7 +205,7 @@ flush.console()
 
 # read warnings file
 if(warn){
-  warnname <- paste(dir,"Warning.SSO",sep="")
+  warnname <- paste(dir,"warning.SSO",sep="")
   warn <- readLines(warnname,warn=F)
   nwarn <- length(warn)
   textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
@@ -214,7 +273,7 @@ flush.console()
 
 # stats list: items that are output to the GUI (if printstats==T) for a quick summary of results
 stats <- list()
-stats$SS_version <- rawrep[1,1]
+stats$SS_version <- SS_version
 stats$Run_time <- paste(as.vector(rawrep[2,1:6]),collapse=" ")
 
 tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
@@ -240,7 +299,9 @@ allpars <- rawpars
 allpars[allpars=="_"] <- NA
 for(i in (1:ncol(allpars))[!(names(allpars)%in%c("Label","Status"))]) allpars[,i] = as.numeric(allpars[,i])
 
-stats$N_estimated_parameters <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,6]
+if(!is.na(parfile)){ parline <- read.table(parfile,fill=T,comment.char='',nrows=1)
+}else{ parline <- matrix(NA,1,16) }
+stats$N_estimated_parameters <- parline[1,6]
 
 pars <- rawpars[!(rawpars$Phase %in% c("_","")),]
 pars[pars=="_"] <- NA
@@ -264,8 +325,8 @@ managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3
 names(managementratiolabels) <- c("Ratio","Label")
 
 
-if(covar) stats$log_det_hessian <- read.table(paste(dir,model,".cor",sep=""),nrows=1)[1,10]
-stats$maximum_gradient_component <- read.table(paste(dir,model,".par",sep=""),fill=T,comment.char='',nrows=1)[1,16]
+if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
+stats$maximum_gradient_component <- parline[1,16]
 stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SPAWN_RECRUIT")+3),1])
 stats$sigma_R_out <- as.numeric(rawrep[(matchfun("N_est")+1),2])
 
