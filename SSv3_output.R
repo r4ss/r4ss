@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 16, 2008.
+# SSv3_output BETA December 29, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -19,7 +19,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-if(verbose) print("running SSv3.output:",quote=F)
+if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
 
 # Defining internal functions: matchfun and matchfun2
@@ -116,6 +116,7 @@ maxnonblank = max(c(0,(1:ncols)[nonblanks==1]))
 if(maxnonblank==ncols){
   print(      "! Warning, all columns are used and some data may have been missed,",quote=F)
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
+return(NULL)
 }
 if((maxnonblank+1)==ncols){ print("Got all columns.",quote=F)}
 if((maxnonblank+1)<ncols){ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
