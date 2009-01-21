@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA December 29, 2008.
+# SSv3_output BETA January 20, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -13,7 +13,7 @@ SSv3_output <- function(
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.01o December, 2008; R version 2.8.0.
+# General: Updated for Stock Synthesis version 3.02b January, 2008; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -424,6 +424,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  if("retention" %in% return | return=="Yes") returndat$retention <- rawret
 
 # Age based selex
+ rawageselex <- rawrep[(matchfun("AGE_SELEX")+1):(matchfun("Average_size_selex_at_age_in_endyear")-1),1:(accuage+5)]
  rawageselex <- rawrep[(matchfun("AGE_SELEX")+1):(matchfun("AGE_SELEX_from_size_selex")-1),1:(accuage+5)]
  names(rawageselex)<- rawageselex[1,]
  ageselex <- rawageselex[-1,]

@@ -1,20 +1,19 @@
 SSv3_plots <- function(
-    # plotting related inputs
     replist="ReportObject", plot=1:19, print=0, printfolder="", dir="default", fleets="all", areas="all", 
     fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
-    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, OS="Windows")
+    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700)
 {
 ################################################################################
 #
-# SSv3_plots BETA December 17, 2008.
+# SSv3_plots BETA January 20, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.01o December, 2008; R version 2.8.0.
+# General: Updated for Stock Synthesis version 3.02b December, 2008; R version 2.8.1
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and lattice package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
@@ -213,6 +212,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # make plot window (operating system specific)
   nplots <- length(intersect(1:19,plot))
   nprints <- length(intersect(1:19,print))
+  
+  if(length(grep('linux',version$os)) > 0) OS <- "Linux"
+  if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
+  # need appropriate line to support Mac operating systems  
+    
   if(nplots>0){
     if(OS=="Windows") windows(record=TRUE)
     if(OS=="Linux") X11()
