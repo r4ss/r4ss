@@ -101,8 +101,8 @@ if(verbose) print(paste("reading",repfile),quote=F)
 flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
 SS_version <- rawrep[1,1]
-if(substr(SS_version,1,10)!="SS-V3.01-O"){
-  print(paste("! Warning, this function is built for SS-V3.01-O. You are using",substr(SS_version,1,10)),quote=F) 
+if(substr(SS_version,1,9)!="SS-V3.02B"){
+  print(paste("! Warning, this function is built for SS-V3.02B. You are using",substr(SS_version,1,9)),quote=F) 
 }
 
 # check empty columns
@@ -425,7 +425,6 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
 
 # Age based selex
  rawageselex <- rawrep[(matchfun("AGE_SELEX")+1):(matchfun("Average_size_selex_at_age_in_endyear")-1),1:(accuage+5)]
- rawageselex <- rawrep[(matchfun("AGE_SELEX")+1):(matchfun("AGE_SELEX_from_size_selex")-1),1:(accuage+5)]
  names(rawageselex)<- rawageselex[1,]
  ageselex <- rawageselex[-1,]
  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
