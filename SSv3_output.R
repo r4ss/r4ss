@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA January 20, 2008.
+# SSv3_output BETA January 22, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -53,7 +53,10 @@ if(model=="default")
 {
   shortparfiles <- dir(dir,pattern=".par",full.names=F)
   allparfiles <- dir(dir,pattern=".par",full.names=T)
-  if(length(allparfiles)==0) print(paste("Some stats skipped because there are no .par files found in directory:",dir))
+  if(length(allparfiles)==0){
+    print(paste("Some stats skipped because there are no .par files found in directory:",dir),quote=F)
+    parfile <- NA
+  }
   if(length(allparfiles)==1){
     parfile <- allparfiles
     model <- strsplit(shortparfiles,split='.par')[[1]]
@@ -207,11 +210,18 @@ flush.console()
 # read warnings file
 if(warn){
   warnname <- paste(dir,"warning.SSO",sep="")
-  warn <- readLines(warnname,warn=F)
-  nwarn <- length(warn)
-  textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
-  if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
-}else{if(verbose) print("You skipped the warnings file",quote=F)}
+  if(!file.exists(warnname)){
+    print("warning.SSO file not found",quote=F)
+    warn <- NA
+  }else{
+    warn <- readLines(warnname,warn=F)
+    nwarn <- length(warn)
+    textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
+    if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
+  }
+}else{
+  if(verbose) print("You skipped the warnings file",quote=F)
+}
 if(verbose) print("Finished reading files",quote=F)
 flush.console()
 
@@ -268,7 +278,10 @@ for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing
 if(forecast){
   grab  <- rawforcast1[,1]
   nforecastyears <- as.numeric(rawforcast1[grab %in% c("N_forecast_yrs:"),2])
-nforecastyears <- nforecastyears[1]}
+  nforecastyears <- nforecastyears[1]
+}else{
+  nforecastyears <- NA
+}
 if(verbose) print("Finished dimensioning",quote=F)
 flush.console()
 
