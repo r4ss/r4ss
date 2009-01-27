@@ -396,7 +396,7 @@ if(return=="Yes") returndat$morph_indexing <- morph_indexing
 
 # Static growth
 begin <- matchfun("N_Used_morphs",rawrep[,6])+1
-rawbio <- rawrep[begin:(begin+nlbinspop),1:7]
+rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
 names(rawbio) <- rawbio[1,]
 bio <- rawbio[-1,]
 for(i in 1:ncol(bio)) bio[,i] <- as.numeric(bio[,i])
