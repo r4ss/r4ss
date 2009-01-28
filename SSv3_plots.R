@@ -6,7 +6,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA January 20, 2008.
+# SSv3_plots BETA January 28, 2008.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -200,6 +200,12 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
   dep <- tsspaw_bio/tsspaw_bio[1]
+  tsall <- timeseries
+  tsallyears <- tsall$Yr[tsall$Seas==1]
+  tsallarea <- tsall$Area[tsall$Seas==1]
+  tsallspaw_bio <- tsall$SpawnBio[tsall$Seas==1]
+  if(nsexes==1) tsallspaw_bio <- tsallspaw_bio/2
+  depall <- tsallspaw_bio/tsallspaw_bio[1]
 
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
@@ -713,7 +719,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 
   # Plot 6: recruitment (not adapted for multi-area models)
   if(6 %in% c(plot, print))
-  {
+   {
     x <- ts$Yr
     y <- ts$Recruit_0
     ylab <- "Age-0 recruits (1,000s)"
@@ -732,18 +738,20 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       x <- timeseries$Yr
       y <- timeseries$Recruit_0
       ymax <- max(y)
+      termyr <- min(timeseries$Yr[timeseries$Era=="FORE"])
       tsfore <- timeseries$Era=="FORE"
       recfunc2 <- function(){
-        plot(x[!tsfore],y[!tsfore],xlab="Year",ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
+        plot(x[x<=termyr],y[x<=termyr],xlab="Year",ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
         abline(h=0,col="grey")
-        lines(x[tsfore],y[tsfore],lwd=1,col="red",lty="dashed")
-        points(x[tsfore],y[tsfore],col="red",pch=20)}
+        lines(x[x>termyr],y[x>termyr],lwd=1,col="red",lty="dashed")
+        points(x[x>termyr],y[x>termyr],col="red",pch=20)}
       if(6 %in% plot) recfunc2()
       if(6 %in% print){
         png(file=paste(plotdir,"6recruitswforecast.png",sep=""),width=pwidth,height=pheight)
         recfunc2()
         dev.off()}
-    }
+      }
+
     # recruitment with asymptotic interval
     if(uncertainty){
       recstd <- matchfun2("VirginRecr",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
@@ -771,10 +779,15 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         dev.off()}
 
       if(forecastplot){
-        if(6 %in% plot) recfunc3(maxyr=max(timeseries$Yr))
+      recfunc4 <- function(maxyr){
+        plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab="Year",ylo=0,
+          col="black",ylab=ylab,lty=1,main=plottitle)
+        points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=20)
+        abline(h=0,col="grey")}
+        if(6 %in% plot) recfunc4(maxyr)
         if(6 %in% print){
           png(file=paste(plotdir,"6recswforecastintervals.png",sep=""),width=pwidth,height=pheight)
-          recfunc3(maxyr=max(timeseries$Yr))
+          recfunc4(maxyr)
           dev.off()}
       }
     } # end if uncertainty
@@ -786,11 +799,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   {
     ylab <- "Spawning biomass (mt)"
     ylim <- c(0,max(tsspaw_bio))
-      tsplotyr <- ts$Yr[tsarea==1]
-      tsplotSB <- tsspaw_bio[tsarea==1]
+    tsplotyr <- ts$Yr[tsarea==1]
+    tsplotSB <- tsspaw_bio[tsarea==1]
     sbfunc <- function(){
       plot(tsplotyr[2:length(tsplotyr)],tsplotSB[2:length(tsplotSB)],xlab="Year",ylab=ylab,ylim=ylim,type="o",col=areacols[1])
-    points(tsplotyr[1],tsplotSB[1],col=areacols[1],pch=19)     
+      points(tsplotyr[1],tsplotSB[1],col=areacols[1],pch=19)     
      if(nareas>1){
         for(iarea in 2:nareas) lines(tsyears[tsarea==iarea],tsspaw_bio[tsarea==iarea],type="o",col=areacols[iarea])
         legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
@@ -802,18 +815,17 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       sbfunc()
       dev.off()}
 
-
     if(forecastplot){
-      if(nsexes==1) goodforcast$Spbio <- as.numeric(goodforcast$Spbio)/2
-      ymax <- max(as.numeric(tsspaw_bio),as.numeric(goodforcast$Spbio))
-      xmin <- min(tsyears)-1
-      yr <- as.numeric(goodforcast$Year)
-      xmax <- max(yr)+1
-      sbfunc2 <- function(){
-        plot(tsyears,tsspaw_bio,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue")
+     ylab <- "Spawning biomass (mt)"
+     ylim <- c(0,max(tsallspaw_bio))
+     xmin <- min(tsallyears)-1
+     tsplotyr <- tsall$Yr[tsarea==1]
+     xmax <- max(tsplotyr)+1
+     sbfunc2 <- function(){
+        plot(tsplotyr,tsallspaw_bio,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=ylim,type="o",col="blue")
         abline(h=0,col="grey")
-        lines(yr,goodforcast$Spbio,lwd=1,col="red",lty="dashed")
-        points(goodforcast$Year[2:(nforecastyears)],goodforcast$Spbio[2:(nforecastyears)],col="red",pch=20)}
+        lines(tsplotyr[tsplotyr>(endyr+1)],tsallspaw_bio[tsplotyr>(endyr+1)],lwd=1,col="red",lty="dashed")
+        points(tsplotyr[tsplotyr>(endyr+1)],tsallspaw_bio[tsplotyr>(endyr+1)],col="red",pch=20)}
       if(7 %in% plot) sbfunc2()
       if(7 %in% print){
         png(file=paste(plotdir,"7spawnbiowforecast.png",sep=""),width=pwidth,height=pheight)
@@ -830,9 +842,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       sbstd$Yr[2] <- as.numeric(sbstd$Yr[3])-1
       sbstd$Yr[1] <- as.numeric(sbstd$Yr[2])-1
       sbstd$Yr <- as.numeric(sbstd$Yr)
-      v <- sbstd$Value/bioscale
-      sbstd$upper <- v + 1.96*sbstd$StdDev/bioscale
-      sbstd$lower <- v - 1.96*sbstd$StdDev/bioscale
+      v <- sbstd$Value*bioscale
+      sbstd$upper <- v + 1.96*sbstd$StdDev*bioscale
+      sbstd$lower <- v - 1.96*sbstd$StdDev*bioscale
       sbstd$lower[sbstd$lower < 0] <- 0
       ymax <- max(as.numeric(sbstd$upper))
       plottitle <- "~95% Asymptotic confidence interval"
@@ -900,7 +912,6 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(verbose) print("Finished plot 7: Basic time series",quote=F)
   } # end if 7 in plot or print
 
-
   # Plot 8: depletion
   if(8 %in% c(plot, print))
   {
@@ -948,6 +959,9 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         depfunc2()
         dev.off()}
     }
+
+    if(temp_switch)
+    {
     if(forecastplot){
       ymax <- max(dep,as.numeric(goodforcast$Depletion))
       xmin <- min(tsyears)-1
@@ -1001,6 +1015,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           dev.off()}
       } # end if uncertainty==T
     } # end if forecastplot==T
+} # end temporary temp switch turn-off
 
     if(verbose) print("Finished plot 8: depletion",quote=F)
   } # end if 8 in plot or print
