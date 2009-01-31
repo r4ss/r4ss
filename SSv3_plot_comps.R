@@ -1,6 +1,6 @@
 SSv3_plot_comps <- function(
     replist="ReportObject", plot=15:16, print=0, printfolder="", dir="default", fleets="all", areas="all", 
-    datplot=T, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F)
+    datplot=T, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F, ...)
 {
 ################################################################################
 #
@@ -104,7 +104,7 @@ SSv3_plot_comps <- function(
                 # make plot
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,z=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                   sampsize=dbase$N,bars=bars,linepos=fitplot*linepos,main=ptitle,
-                  xlab=xlab,ylab="Proportion")
+                  xlab=xlab,ylab="Proportion",...)
                 if(idev==2) dev.off()
               } # end loop over devices
             } # end loop over plotting options
