@@ -1,6 +1,6 @@
 SSv3_plot_comps <- function(
     replist="ReportObject", plot=15:16, print=0, printfolder="", dir="default", fleets="all", areas="all", 
-    datplot=T, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F, ...)
+    datplot=T, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F,...)
 {
 ################################################################################
 #
@@ -34,76 +34,77 @@ SSv3_plot_comps <- function(
     return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
   }} 
 
-  if(datplot) fits <- 0:1 else fits <- 1
-  
   kinds <- NULL
   if(15 %in% c(plot,print)) kinds <- c(kinds,1) # length comps with or w/o fits
   if(16 %in% c(plot,print)) kinds <- c(kinds,2) # age comps with or w/o fits
   
-  # length data
-  for(ikind in kinds)
+  if(datplot) fits <- 0:1 else fits <- 1
+  # loop over options 0 = data only, 1 = data+fits
+  for(fitplot in fits) 
   {
-    if(ikind==1){ 
-      dbase_k <- lendbase 
-      xlab="Length bin (cm)"
-    }else{ 
-      dbase_k <- agedbase
-      xlab="Age bin (years)"
-    }
-    # loop over fleets
-    for(f in fleets) 
+    # loop over kinds (length or age data)
+    for(ikind in kinds)
     {
-      # check for the presence of data
-      if(length(dbase_k$Obs[dbase_k$Fleet==f])>0) 
+      if(ikind==1){ 
+        dbase_k <- lendbase 
+        xlab="Length bin (cm)"
+      }else{ 
+        dbase_k <- agedbase
+        xlab="Age bin (years)"
+      }
+      # loop over fleets
+      for(f in fleets) 
       {
-        dbasef <- dbase_k[dbase_k$Fleet==f,]
-        testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-        testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-        testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
-        
-        # loop over genders combinations
-        for(k in (1:3)[testor]) 
+        # check for the presence of data
+        if(length(dbase_k$Obs[dbase_k$Fleet==f])>0) 
         {
-          if(k==1){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-          if(k==2){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-          if(k==3){dbase <- dbasef[dbasef$Gender==2,]}
-          sex <- ifelse(k==3, 2, 1)
+          dbasef <- dbase_k[dbase_k$Fleet==f,]
+          testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
+          testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+          testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
           
-          # loop over partitions (discard, retain, total)
-          for(j in unique(dbase$Part)) 
+          # loop over genders combinations
+          for(k in (1:3)[testor]) 
           {
-            dbase2 <- dbase[dbase$Part==j,]
-            if(nseasons>1) dbase2$Yr <- dbase2$Yr + (dbase2$Seas - 1)*(1/nseasons) + (1/nseasons)/2
+            if(k==1){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
+            if(k==2){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+            if(k==3){dbase <- dbasef[dbasef$Gender==2,]}
+            sex <- ifelse(k==3, 2, 1)
             
-            # assemble pieces of plot title
-            if(k==1) titlesex <- "Sexes combined"
-            if(k==2) titlesex <- "Female"
-            if(k==3) titlesex <- "Male"
-              
-            if(j==0) titlepart <- "discard"
-            if(j==1) titlepart <- "retained"
-            if(j==2) titlepart <- "whole catch"
-            
-            # loop over options 0 = data only, 1 = data+fits
-            for(fitplot in fits) 
+            # loop over partitions (discard, retain, total)
+            for(j in unique(dbase$Part)) 
             {
-              if(!fitplot | fitbar) bars <- T else bars <- F # plot bars for data only and if input 'fitbar=T'
+              dbase2 <- dbase[dbase$Part==j,]
+              if(nseasons>1) dbase2$Yr <- dbase2$Yr + (dbase2$Seas - 1)*(1/nseasons) + (1/nseasons)/2
+              
+              # assemble pieces of plot title
+              if(k==1) titlesex <- "Sexes combined"
+              if(k==2) titlesex <- "Female"
+              if(k==3) titlesex <- "Male"
+                
+              if(j==0) titlepart <- "discard"
+              if(j==1) titlepart <- "retained"
+              if(j==2) titlepart <- "whole catch"
+              
               titlefit <- ifelse(fitplot,"length fits","lengths")
               if(ikind==2) titlefit <- ifelse(fitplot,"age fits","ages")
               ptitle <- paste(titlesex, titlepart, titlefit, "for", FleetNames[f]) # total title
+
+              # plot bars for data only and if input 'fitbar=T'
+              if(!fitplot | fitbar) bars <- T else bars <- F 
               
               # create and loop over list of output devices (1=R GUI, 2=png file)
               dev = NULL
               if(15 %in% plot) dev <- c(dev,1)
               if(15 %in% print) dev <- c(dev,2)
               for(idev in dev){
-                if(idev==2){ # set up plotting to file if required
+                if(idev==2){ # set up plotting to png file if required
                   filename <- paste(plotdir,"15lendat",ifelse(fitplot,"fit","bar"),"_flt",f,"sex",sex,"mkt",j,".png",sep="")
                   png(file=filename,width=pwidth,height=pheight)
                 }
                 # make plot
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,z=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-                  sampsize=dbase$N,bars=bars,linepos=fitplot*linepos,main=ptitle,
+                  sampsize=samplesizeON*dbase$N,bars=bars,linepos=fitplot*linepos,main=ptitle,
                   xlab=xlab,ylab="Proportion",...)
                 if(idev==2) dev.off()
               } # end loop over devices
