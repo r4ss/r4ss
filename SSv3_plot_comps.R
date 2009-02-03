@@ -1,6 +1,7 @@
 SSv3_plot_comps <- function(
-    replist="ReportObject", plot=15:16, print=0, printfolder="", dir="default", fleets="all", areas="all", 
-    datplot=T, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F,...)
+    replist="ReportObject", kind="LEN", png=F, printfolder="", dir="default", fleets="all", 
+    datonly=F, Natageplot=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700, linepos=1, fitbar=F,
+    xlab="default", ylab="Proportion",maxrows=6,maxcols=6,fixrows=F,fixcols=F, ...)
 {
 ################################################################################
 #
@@ -24,96 +25,95 @@ SSv3_plot_comps <- function(
   nseasons   <- replist$nseasons
   compdbase  <- replist$composition_database
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-  agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
+  agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & compdbase$Lbin_lo != compdbase$Lbin_hi,]
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
 
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
-  }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
-    return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
-  }} 
-
-  kinds <- NULL
-  if(15 %in% c(plot,print)) kinds <- c(kinds,1) # length comps with or w/o fits
-  if(16 %in% c(plot,print)) kinds <- c(kinds,2) # age comps with or w/o fits
+  }else{ 
+    if(length(intersect(fleets,1:nfleets))!=length(fleets)){
+      return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+    }
+  } 
   
-  if(datplot) fits <- 0:1 else fits <- 1
-  # loop over options 0 = data only, 1 = data+fits
-  for(fitplot in fits) 
+  # a few quantities related to whether it's length of age data
+  if(kind=="LEN"){ 
+    dbase_k <- lendbase 
+    if(xlab=="default") xlab="Length bin (cm)"
+    if(datonly){
+      filenamestart <- "15lendat"
+      titlefit <- "lengths"
+    }else{
+      filenamestart <- "17lendatfit"
+      titlefit <- "length fits"
+    }
+  }
+  if(kind=="AGE"){
+    dbase_k <- agedbase
+    if(xlab=="default") xlab="Age bin (years)"
+    if(datonly){
+      filenamestart <- "16agedat"
+      titlefit <- "ages"
+    }else{
+      filenamestart <- "17agedatfit"
+      titlefit <- "ages fits"
+    }
+  }
+  if(!(kind%in%c("LEN","AGE"))) return("Input 'kind' to SSv3_plot_comps should be 'LEN' or 'AGE'.")
+  # loop over fleets
+  for(f in fleets) 
   {
-    # loop over kinds (length or age data)
-    for(ikind in kinds)
+    # check for the presence of data
+    if(length(dbase_k$Obs[dbase_k$Fleet==f])>0) 
     {
-      if(ikind==1){ 
-        dbase_k <- lendbase 
-        xlab="Length bin (cm)"
-      }else{ 
-        dbase_k <- agedbase
-        xlab="Age bin (years)"
-      }
-      # loop over fleets
-      for(f in fleets) 
+      dbasef <- dbase_k[dbase_k$Fleet==f,]
+      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
+      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+      testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+      
+      # loop over genders combinations
+      for(k in (1:3)[testor]) 
       {
-        # check for the presence of data
-        if(length(dbase_k$Obs[dbase_k$Fleet==f])>0) 
+        if(k==1){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
+        if(k==2){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+        if(k==3){dbase <- dbasef[dbasef$Gender==2,]}
+        sex <- ifelse(k==3, 2, 1)
+        
+        # loop over partitions (discard, retain, total)
+        for(j in unique(dbase$Part)) 
         {
-          dbasef <- dbase_k[dbase_k$Fleet==f,]
-          testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-          testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-          testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+          dbase2 <- dbase[dbase$Part==j,]
+          if(nseasons>1) dbase2$Yr <- dbase2$Yr + (dbase2$Seas - 1)*(1/nseasons) + (1/nseasons)/2
           
-          # loop over genders combinations
-          for(k in (1:3)[testor]) 
-          {
-            if(k==1){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-            if(k==2){dbase <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-            if(k==3){dbase <- dbasef[dbasef$Gender==2,]}
-            sex <- ifelse(k==3, 2, 1)
+          # assemble pieces of plot title
+          if(k==1) titlesex <- "Sexes combined"
+          if(k==2) titlesex <- "Female"
+          if(k==3) titlesex <- "Male"
             
-            # loop over partitions (discard, retain, total)
-            for(j in unique(dbase$Part)) 
-            {
-              dbase2 <- dbase[dbase$Part==j,]
-              if(nseasons>1) dbase2$Yr <- dbase2$Yr + (dbase2$Seas - 1)*(1/nseasons) + (1/nseasons)/2
-              
-              # assemble pieces of plot title
-              if(k==1) titlesex <- "Sexes combined"
-              if(k==2) titlesex <- "Female"
-              if(k==3) titlesex <- "Male"
-                
-              if(j==0) titlepart <- "discard"
-              if(j==1) titlepart <- "retained"
-              if(j==2) titlepart <- "whole catch"
-              
-              titlefit <- ifelse(fitplot,"length fits","lengths")
-              if(ikind==2) titlefit <- ifelse(fitplot,"age fits","ages")
-              ptitle <- paste(titlesex, titlepart, titlefit, "for", FleetNames[f]) # total title
+          if(j==0) titlepart <- "discard"
+          if(j==1) titlepart <- "retained"
+          if(j==2) titlepart <- "whole catch"
+          
+          ptitle <- paste(titlesex, titlepart, titlefit, "for", FleetNames[f]) # total title
 
-              # plot bars for data only and if input 'fitbar=T'
-              if(!fitplot | fitbar) bars <- T else bars <- F 
-              
-              # create and loop over list of output devices (1=R GUI, 2=png file)
-              dev = NULL
-              if(15 %in% plot) dev <- c(dev,1)
-              if(15 %in% print) dev <- c(dev,2)
-              for(idev in dev){
-                if(idev==2){ # set up plotting to png file if required
-                  filename <- paste(plotdir,"15lendat",ifelse(fitplot,"fit","bar"),"_flt",f,"sex",sex,"mkt",j,".png",sep="")
-                  png(file=filename,width=pwidth,height=pheight)
-                }
-                # make plot
-                make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,z=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-                  sampsize=samplesizeON*dbase$N,bars=bars,linepos=fitplot*linepos,main=ptitle,
-                  xlab=xlab,ylab="Proportion",...)
-                if(idev==2) dev.off()
-              } # end loop over devices
-            } # end loop over plotting options
-          } # end loop over partitions
-        } # end loop over combined/not-combined genders 
-      } # end if data
-    } # end loop over fleet
-  } # end loop over kind = age or length 
+          # plot bars for data only and if input 'fitbar=T'
+          if(datonly | fitbar) bars <- T else bars <- F 
+          
+          if(png){ # set up plotting to png file if required
+            filename <- paste(plotdir,filenamestart,"_flt",f,"sex",sex,"mkt",j,".png",sep="")
+            png(file=filename,width=pwidth,height=pheight)
+          }
+          # make plot
+          make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,z=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+            sampsize=samplesizeON*dbase$N,bars=bars,linepos=(1-datonly)*linepos,main=ptitle,
+            xlab=xlab,ylab=ylab,maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+            ...)
+          if(png) dev.off() # close device if png
+        } # end loop over partitions
+      } # end loop over combined/not-combined genders 
+    }# end if data
+  } # end loop over fleet
 } # end SSv3_plot_comps function
 
 ######################################################################################################################
@@ -184,15 +184,15 @@ make_multifig <- function(ptsx,ptsy,z,linesx=0,linesy=0,sampsize=0,maxrows=6,max
 
   # define dimensions
   zvec <- sort(unique(z))
-  ncells <- length(zvec)
+  npanels <- length(zvec)
   nvals <- length(z)
 
-  nrows <- min(ceiling(sqrt(ncells)), maxrows)
-  ncols <- min(ceiling(ncells/nrows), maxcols)
+  nrows <- min(ceiling(sqrt(npanels)), maxrows)
+  ncols <- min(ceiling(npanels/nrows), maxcols)
   if(fixrows) nrows <- maxrows
   if(fixcols) ncols <- maxcols
 
-  pages <- ceiling(ncells/nrows/ncols) # how many pages full of plots
+  pages <- ceiling(npanels/nrows/ncols) # how many pages full of plots
   
   # if no input on lines, then turn linepos to 0
   if(length(linesx)==1 | length(linesy)==1){
@@ -202,7 +202,7 @@ make_multifig <- function(ptsx,ptsy,z,linesx=0,linesy=0,sampsize=0,maxrows=6,max
   }
   
   # quick and dirty formula to get width of bars (if used) based on 
-  #   number of columns and maximum number of bars within a in cell
+  #   number of columns and maximum number of bars within a in panel
   if(bars & barwidth=="default") barwidth <- 400/max(table(z)+2)/ncols 
 
   # get axis limits
@@ -219,14 +219,14 @@ make_multifig <- function(ptsx,ptsy,z,linesx=0,linesy=0,sampsize=0,maxrows=6,max
   if(axis1=="default") axis1=pretty(xrange)
   if(axis2=="default") axis2=pretty(yrange)
 
-  if(length(sampsize)==1) sampsize <- rep(sampsize,nvals)
+  if(length(sampsize)==1) sampsize <- 0
 
   # create multifigure layout and set inner margins all to 0 and add outer margins
   par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,4,2)+.1)
   
-  for(icell in 1:ncells)
+  for(ipanel in 1:npanels)
   {
-    z_i <- zvec[icell]
+    z_i <- zvec[ipanel]
     ptsx_i <- ptsx[z==z_i]
     ptsy_i <- ptsy[z==z_i]
     ptsy_i <- ptsy_i[order(ptsx_i)]
@@ -253,12 +253,13 @@ make_multifig <- function(ptsx,ptsy,z,linesx=0,linesy=0,sampsize=0,maxrows=6,max
       text_i <- ""
       legtext_i <- legtext[[i]] # grab element of list
       # elements of list can be "default" to make equal to z
-      # or vector of length 1, ncells, or the full length of the input vectors 
+      # or vector of length 1, npanels, or the full length of the input vectors 
       if(length(legtext_i)==1)           text_i <- legtext_i  # one value repeated
       if(legtext_i=="z")                 text_i <- z_i        # values in "z" input
-      if(legtext_i=="sampsize" & max(sampsize)>0)
-        text_i <- paste("n=",sampsize[z==z_i],sep="") # sample sizes
-      if(length(legtext_i)==length(zvec)) text_i <- legtext_i[icell]  # one value per cell
+      if(legtext_i=="sampsize"){
+        if(max(sampsize)>1){ text_i <- paste("n=",sampsize[z==z_i],sep="") # sample sizes
+        }else{ text_i <- ""}}
+      if(length(legtext_i)==length(zvec)) text_i <- legtext_i[ipanel]  # one value per panel
       if(length(legtext_i)==nvals)    text_i <- legtext_i[z==z_i] # one value per element
       
       if(legx[1]=="default"){ 
@@ -285,14 +286,22 @@ make_multifig <- function(ptsx,ptsy,z,linesx=0,linesy=0,sampsize=0,maxrows=6,max
       
     # add axes in left and lower outer margins
     mfg <- par("mfg")                   
-    if(mfg[1]==mfg[3] | icell==ncells) axis(side=1,at=axis1) # axis on bottom cells and final cell
-    if(mfg[2]==1) axis(side=2,at=axis2,las=horiz_lab)        # axis on left side cells
+    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) # axis on bottom panels and final panel
+    if(mfg[2]==1) axis(side=2,at=axis2,las=horiz_lab)        # axis on left side panels
     box()
+    
+    # add title after plotting first panel
+    fixcex = 1
+    if(max(nrows,ncols)==2) fixcex = 1/0.83
+    if(max(nrows,ncols)>2) fixcex = 1/0.66
+
+    if(ipanel %% (nrows*ncols) == 1){
+      title(main=main, line=c(2,0,3,3), outer=T, cex.main=1.2*fixcex)
+      title(xlab=xlab, outer=T, cex.lab=fixcex)
+      title(ylab=ylab, line=ifelse(horiz_lab,4,3.5), outer=T, cex.lab=fixcex)
+    }
   }
   par(mfcol=c(1,1))
-  title(main=main, line=c(2,0,3,3), outer=T)
-  title(xlab=xlab, outer=T)
-  title(ylab=ylab, line=ifelse(horiz_lab,4,3.5), outer=T)
 }
 
 
