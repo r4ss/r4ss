@@ -55,7 +55,8 @@ SS_parlines <- function(
 Plot_Prior <- function(
   ctlfile='c:/path/controlfilename.SS',
   activeonly=T,nrows='default',ncols='default',
-  maxrows=4, maxcols=4)
+  maxrows=4,maxcols=4,new=T,returntable=T,
+  rownum=c(),strings=c())
 {
   ################################################################################
   #
@@ -111,15 +112,29 @@ Plot_Prior <- function(
       xlab='',ylab='',main=main)
   }
 
+  # get parameter lines
   parlines <- SS_parlines(ctlfile=ctlfile)
+
+  # subset as requested
+  if(!is.null(strings)){
+    goodlines <- NULL
+    for(i in 1:length(strings))
+      goodlines <- c(goodlines,grep(strings[i],parlines$Label))
+    goodlines <- sort(unique(goodlines))
+    parlines <- parlines[goodlines,]
+  }
+  if(!is.null(rownum)) parlines <- parlines[rownames(parlines) %in% as.character(rownum),]
   if(activeonly) parlines <- parlines[parlines$PHASE > 0,]
 
   npanels <- nrow(parlines)
   if(nrows=='default') nrows <- min(ceiling(sqrt(npanels)), maxrows)
   if(ncols=='default') ncols <- min(ceiling(npanels/nrows), maxcols)
 
-  if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-  windows(record=T)
+  if(new)
+  {
+    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+    windows(record=T)
+  }
 
   par(mfcol=c(nrows,ncols),mar=c(2,2,4,1),oma=c(2,2,0,0))
 
@@ -132,4 +147,6 @@ Plot_Prior <- function(
   }
   mtext('Parameter value',side=1,line=0.5,outer=T)
   mtext('Prior density',side=2,line=0.5,outer=T)
+
+  if(returntable) return(parlines)
 }
