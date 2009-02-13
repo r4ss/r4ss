@@ -960,6 +960,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         dev.off()}
     }
 
+    temp_switch=F # temporarily turning off this section
     if(temp_switch)
     {
     if(forecastplot){
