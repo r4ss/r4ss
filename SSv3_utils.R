@@ -48,7 +48,7 @@ SS_parlines <- function(
   parlines <- parlines[order(parlines$Line_num),]
   for(i in 1:7) parlines[,i] <- as.numeric(parlines[,i])
 
-  if(active) parlines <- parlines[parlines$PHASE > 0]
+  if(active) parlines <- parlines[parlines$PHASE > 0,]
   return(parlines)
 } # end function
 
@@ -118,7 +118,7 @@ SS_PlotPriors <- function(
   } # end MakePlot
 
   ## get parameter lines
-  if(read==T){
+  if(read==T & is.null(oneline)){
       parlines <- SS_parlines(ctlfile=ctlfile)
 
       ## subset as requested
@@ -178,7 +178,8 @@ SS_splitdat <- function(
   outpattern = 'BootData'          ,
   number     = F                   ,
   verbose    = T                   ,
-  fillblank  = T
+  fillblank  = T                   ,
+  MLE        = T
   )
 {
   # this is a function to split bootstrap aggregated in the Data.SS_New file
@@ -193,16 +194,22 @@ SS_splitdat <- function(
   string    <- '#_bootstrap file'
   starts    <- grep(string, filelines)
   ends      <- c(starts[-1]-1,length(filelines)-1)
+  MLEstring <- '#_expected values with no error added'
+  MLEstart  <- grep(MLEstring, filelines)
+  MLEend    <- starts[1]-1
 
-  for(i in 1:length(starts))
-  {
-    # print(outpath)
-    # print(outpattern)
-    outfile = paste(outpath,'/',outpattern,ifelse(number,i,''),'.SS',sep='')
-    # print(outfile)
-    outline = paste('# Data file created from',infile,'to',outfile)
-    if(verbose) print(outline,)
-    writeLines(c(outline,filelines[starts[i]:ends[i]]),outfile)
+  if(!MLE){
+    for(i in 1:length(starts)) {
+      outfile = paste(outpath,'/',outpattern,ifelse(number,i,''),'.SS',sep='')
+      outline = paste('# Data file created from',infile,'to',outfile)
+      if(verbose) print(outline,quote=F)
+      writeLines(c(outline,filelines[starts[i]:ends[i]]),outfile)
+    }
+  }else{
+    outfile = paste(outpath,'/',outpattern,'.SS',sep='')
+    outline = paste('# MLE data file created from',infile,'to',outfile)
+    if(verbose) print(outline,quote=F)
+    writeLines(c(outline,filelines[MLEstart:MLEend]),outfile)
   }
 }
 
