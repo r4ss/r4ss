@@ -1,11 +1,11 @@
 SSv3_output <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\", model="default", repfile="Report.SSO", 
+         dir="C:\\myfiles\\mymodels\\myrun\\", model="default", repfile="Report.SSO", covarfile="CoVar.SSO",
          ncols=200, forecast=T, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
          verbose=T, printstats=T, return="Yes")
 {
 ################################################################################
 #
-# SSv3_output BETA January 22, 2008.
+# SSv3_output BETA February 27, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -84,9 +84,9 @@ if(covar){
     }
   }
   # CoVar.SSO file
-  covarfile <- paste(dir,"CoVar.SSO",sep="")
+  covarfile <- paste(dir,covarfile,sep="")
   if(!file.exists(covarfile)){
-    print("CoVar.SSO not found. Change input to covar=F.",quote=F)
+    print("CoVar file not found. Change input to covar=F, or modify 'covarfile' input.",quote=F)
     return()
   }
   
