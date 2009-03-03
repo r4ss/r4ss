@@ -6,7 +6,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA January 28, 2008.
+# SSv3_plots BETA March 3, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -791,7 +791,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           dev.off()}
       }
     } # end if uncertainty
-    if(verbose) print("Finished plot 6: recruitment",quote=F)
+    if(verbose) print("Finished plot 6: Recruitment",quote=F)
   } # end if 6 in plot or print
 
   # Plot 7: spawning biomass
@@ -909,7 +909,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       } # sexes==1
   } #temporarily turning off section on forecast
     } # if uncertainty==T
-    if(verbose) print("Finished plot 7: Basic time series",quote=F)
+    if(verbose) print("Finished plot 7: Spawning biomass",quote=F)
   } # end if 7 in plot or print
 
   # Plot 8: depletion
@@ -1018,15 +1018,14 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     } # end if forecastplot==T
 } # end temporary temp switch turn-off
 
-    if(verbose) print("Finished plot 8: depletion",quote=F)
+    if(verbose) print("Finished plot 8: Depletion",quote=F)
   } # end if 8 in plot or print
 
 
   # Plot 9: rec devs and asymptotic error check
   if(9 %in% c(plot, print))
   {
-    if(uncertainty){
-      recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
+    recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
       if(nrow(recdev)>0){
         recdev$Yr <- as.numeric(substring(recdev$Label,9))
         ylab <- "Log Recruitment deviation"
@@ -1038,7 +1037,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           png(file=paste(plotdir,"9recdevs.png",sep=""),width=pwidth,height=pheight)
           recdevfunc()
           dev.off()}
-        sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
+    if(uncertainty){
+      sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
         ymax <- max(recdev$Parm_StDev,sigr)
         main <- "Recruitment deviation variance check"
         ylab <- "Asymptotic standard error estimate"
@@ -1053,7 +1053,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
           dev.off()}
       } # rec devs
     } # end if uncertainty==T
-    if(verbose) print("Finished plot 9: rec devs and asymptotic error check",quote=F)
+    if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
     flush.console()
   } # end if 9 in plot or print
 
@@ -1095,7 +1095,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         } # market
       } # fleets
     } # if mean weight data exists
-    if(verbose) print("Finished plot 10: average body weight observations",quote=F)
+    if(verbose) print("Finished plot 10: Average body weight observations",quote=F)
     flush.console()
   } # end if 10 in plot or print
 
@@ -1196,7 +1196,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       png(file=paste(plotdir,"12srcurve",i,".png",sep=""),width=pwidth,height=pheight)
       recruitfun()
       dev.off()}
-    if(verbose) print("Finished plot 12: spawner-recruit curve",quote=F)
+    if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=F)
     flush.console()
   } # end if 12 in plot or print
 
@@ -1280,54 +1280,59 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       for(m in 1:nsexes)
       {
         # warning implementation of birthseasons may not be correct in this section
-        natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Morph==mainmorphs[m] & natage$Seas==1 &
-                            natage$Seas==1 & natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
-        nyrsplot <- nrow(natagetemp0)
-        resx <- rep(natagetemp0$Yr, accuage+1)
-        resy <- NULL
-        for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
-        resz <- NULL
-        for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
-        plotbub <- cbind(resx,resy,resz)
-        if(m==1 & nsexes==1) sextitle <- ""
-        if(m==1 & nsexes==2) sextitle <- "of females"
-        if(m==2) sextitle="of males"
-        if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
-        plottitle <- paste("Expected numbers ",sextitle," at age in thousands (max=",max(resz),")",sep="")
-
-        trellis.device(theme=col.whitebg(),new=F)
-        nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
-                      key.entries=c(0.0),pch=c(NA,1)[1+(resz>0)],scales=list(relation="same",alternating="1",tck=c(1,0)))
-        natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
-        ages <- 0:accuage
-        datsum <- as.vector(apply(natagetemp1,1,sum))
-        natagetemp2 <- as.data.frame(natagetemp1)
-        natagetemp2$sum <- datsum
-        prodmat <- t(natagetemp1)*ages
-        prodsum <- as.vector(apply(prodmat,2,sum))
-        natagetemp2$sumprod <- prodsum
-        natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
-        meanageyr <- sort(unique(natagetemp0$Yr))
-        meanage <- 0*meanageyr
-        for(i in 1:length(meanageyr)){ # averaging over values within a year (depending on birth season)
-          meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==meanageyr[i]]*natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])/sum(natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])}
-        ylim <- c(0,max(meanage))
-        ylab <- plottitle <- paste("Mean age ",sextitle," in the population (yr)",sep="")
-        if(14 %in% plot){
-          print(nage)
-          plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)}
-        if(14 %in% print){
-          filepart <- paste("_sex",m,sep="")
-          if(nareas > 1) filepart <- paste("_area",iarea,filepart,sep="")
-          png(file=paste(plotdir,"14natage",filepart,".png",sep=""),width=pwidth,height=pheight)
-          print(nage)
-          dev.off()
-          png(file=paste(plotdir,"14meanage",filepart,".png",sep=""),width=pwidth,height=pheight)
-          plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
-          dev.off()}
+        if(max(morph_indexing$Index) > nareas*nsexes)
+        {
+          print("Expected numbers at age plot not yet configured for multiple morphs.",quote=F)
+        }else{
+          natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 & 
+                            natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
+          nyrsplot <- nrow(natagetemp0)
+          resx <- rep(natagetemp0$Yr, accuage+1)
+          resy <- NULL
+          for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
+          resz <- NULL
+          for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
+          plotbub <- cbind(resx,resy,resz)
+          if(m==1 & nsexes==1) sextitle <- ""
+          if(m==1 & nsexes==2) sextitle <- "of females"
+          if(m==2) sextitle="of males"
+          if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
+          plottitle <- paste("Expected numbers ",sextitle," at age in thousands (max=",max(resz),")",sep="")
+          
+          trellis.device(theme=col.whitebg(),new=F)
+          nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+                        key.entries=c(0.0),pch=c(NA,1)[1+(resz>0)],scales=list(relation="same",alternating="1",tck=c(1,0)))
+          natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
+          ages <- 0:accuage
+          datsum <- as.vector(apply(natagetemp1,1,sum))
+          natagetemp2 <- as.data.frame(natagetemp1)
+          natagetemp2$sum <- datsum
+          prodmat <- t(natagetemp1)*ages
+          prodsum <- as.vector(apply(prodmat,2,sum))
+          natagetemp2$sumprod <- prodsum
+          natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
+          meanageyr <- sort(unique(natagetemp0$Yr))
+          meanage <- 0*meanageyr
+          for(i in 1:length(meanageyr)){ # averaging over values within a year (depending on birth season)
+            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==meanageyr[i]]*natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])/sum(natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])}
+          ylim <- c(0,max(meanage))
+          ylab <- plottitle <- paste("Mean age ",sextitle," in the population (yr)",sep="")
+          if(14 %in% plot){
+            print(nage)
+            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)}
+          if(14 %in% print){
+            filepart <- paste("_sex",m,sep="")
+            if(nareas > 1) filepart <- paste("_area",iarea,filepart,sep="")
+            png(file=paste(plotdir,"14natage",filepart,".png",sep=""),width=pwidth,height=pheight)
+            print(nage)
+            dev.off()
+            png(file=paste(plotdir,"14meanage",filepart,".png",sep=""),width=pwidth,height=pheight)
+            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
+            dev.off()}
+        }
       } # end gender loop
     } # end area loop
-
+ 
     # plot the ageing imprecision for all age methods
     if(!is.null(AAK)){
       sd_vectors <- as.data.frame(AAK[,1,])
@@ -1357,7 +1362,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         dev.off()
       } # close if 14 in print
     } # end if AAK
-    if(verbose) print("Finished plot 14: numbers at age",quote=F)
+    if(verbose) print("Finished plot 14: Numbers at age",quote=F)
     flush.console()
   } # close if 14 in plot or print 
 
@@ -1368,9 +1373,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
 
-  if(datplot & length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
-  {
-
+  if(length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
+  if(!datplot)
+  { 
+    print("skipped data-only plots 15 and 16 because input 'datplot=F'",quote=F) 
+  }else{ 
    # Index data plots only
     for(i in unique(cpue$Fleet)){
       cpueuse <- cpue[cpue$Obs > 0 & cpue$Fleet==i,]
@@ -1660,8 +1667,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     } # fleet loop
     if(verbose) print("Finished plot 16: age comp data ",quote=F)
     flush.console()
-  } # datplot
-
+  } # if datplot
 
   # Plot 17: length comps with fits
   if(17 %in% c(plot, print))

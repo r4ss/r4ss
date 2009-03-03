@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA February 27, 2009.
+# SSv3_output BETA March 3, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -94,7 +94,7 @@ if(covar){
   covartime <- file.info(covarfile)$mtime
   difftimelimit <- 10
   if(abs(as.numeric(difftime(covartime,repfiletime,units="secs")))>difftimelimit){
-    print(paste(shortrepfile,"and CoVar.SSO were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
+    print(paste(shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
     return()
   }
 }
@@ -121,7 +121,7 @@ if(maxnonblank==ncols){
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
 return(NULL)
 }
-if((maxnonblank+1)==ncols){ print("Got all columns.",quote=F)}
+if((maxnonblank+1)==ncols & verbose){ print("Got all columns.",quote=F)}
 if((maxnonblank+1)<ncols){ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
 if(verbose) print("Got Report file",quote=F)
 flush.console()
