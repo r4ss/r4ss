@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA March 3, 2009.
+# SSv3_output BETA March 11, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -13,7 +13,7 @@ SSv3_output <- function(
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.02b January, 2008; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.02B through 3.02F; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -104,8 +104,8 @@ if(verbose) print(paste("reading",repfile),quote=F)
 flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
 SS_version <- rawrep[1,1]
-if(substr(SS_version,1,9)!="SS-V3.02B"){
-  print(paste("! Warning, this function is built for SS-V3.02B. You are using",substr(SS_version,1,9)),quote=F) 
+if(!(substr(SS_version,1,9)%in%paste("SS-V3.02",c("B","C","D","E","F"),sep=""))){
+  print(paste("! Warning, this function tested on for SS-V3.02B-F. You are using",substr(SS_version,1,9)),quote=F) 
 }
 
 # check empty columns

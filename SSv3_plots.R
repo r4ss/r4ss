@@ -6,14 +6,14 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA March 3, 2009.
+# SSv3_plots BETA March 10, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.02b December, 2008; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.02B through 3.02F; R version 2.8.1
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and lattice package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
@@ -365,32 +365,37 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   ### plot 2: Time-varying growth
   if(2 %in% c(plot, print))
   {
-    for(i in 1:nsexes)
+    if(is.null(growthseries))
     {
-      growdatuse <- growthseries[growthseries$Morph==mainmorphs[i],]
-      x <- seq(0,accuage,by=1)
-      y <- seq(startyr,endyr-1,by=1)
-      z <- growdatuse[,-(1:4)]
-      z <- as.matrix(z)
-      time <- FALSE
-      for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- T
-      if(time)
+      print("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.",quote=F)
+    }else{
+      for(i in 1:nsexes)
       {
-        z <- t(z)
-        if(i==1){main <- "Female time-varying growth"}
-        if(nsexes==1){main <- "Time-varying growth"}
-        if(i==2){main <- "Male time-varying growth"}
-        if(nseasons > 1){main <- paste(main," season 1",sep="")}
-        if(2 %in% plot){
-          persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-        contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)}
-        if(2 %in% print){
-          png(file=paste(plotdir,"2timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
-          persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-          dev.off()
-          png(file=paste(plotdir,"2timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
-          contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)
-        dev.off()}
+        growdatuse <- growthseries[growthseries$Morph==mainmorphs[i],]
+        x <- seq(0,accuage,by=1)
+        y <- seq(startyr,endyr-1,by=1)
+        z <- growdatuse[,-(1:4)]
+        z <- as.matrix(z)
+        time <- FALSE
+        for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- T
+        if(time)
+        {
+          z <- t(z)
+          if(i==1){main <- "Female time-varying growth"}
+          if(nsexes==1){main <- "Time-varying growth"}
+          if(i==2){main <- "Male time-varying growth"}
+          if(nseasons > 1){main <- paste(main," season 1",sep="")}
+          if(2 %in% plot){
+            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)}
+          if(2 %in% print){
+            png(file=paste(plotdir,"2timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+            dev.off()
+            png(file=paste(plotdir,"2timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)
+            dev.off()}
+        }
       }
     }
     if(verbose) print("Finished plot 2: Time-varying growth",quote=F)
@@ -796,19 +801,21 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 
   # Plot 7: spawning biomass
   if(7 %in% c(plot, print))
-  {
-    ylab <- "Spawning biomass (mt)"
-    ylim <- c(0,max(tsspaw_bio))
-    tsplotyr <- ts$Yr[tsarea==1]
-    tsplotSB <- tsspaw_bio[tsarea==1]
+  {   
     sbfunc <- function(){
-      plot(tsplotyr[2:length(tsplotyr)],tsplotSB[2:length(tsplotSB)],xlab="Year",ylab=ylab,ylim=ylim,type="o",col=areacols[1])
-      points(tsplotyr[1],tsplotSB[1],col=areacols[1],pch=19)     
-     if(nareas>1){
-        for(iarea in 2:nareas) lines(tsyears[tsarea==iarea],tsspaw_bio[tsarea==iarea],type="o",col=areacols[iarea])
-        legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
+      plot(tsyears,tsspaw_bio,xlab="Year",ylab=ylab,ylim=ylim,type="n")
+
+      for(iarea in 1:nareas){
+        tsplotyr <- tsyears[tsarea==iarea]
+        tsplotSB <- tsspaw_bio[tsarea==iarea]
+        lines(tsplotyr[2:length(tsplotyr)],tsplotSB[2:length(tsplotSB)],
+             xlab="Year",ylab="Spawning biomass (mt)",ylim= c(0,max(tsspaw_bio)),
+             type="o",col=areacols[iarea])
+        points(tsplotyr[1],tsplotSB[1],col=areacols[iarea],pch=19)
       }
-      abline(h=0,col="grey")}
+      if(nareas>1) legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
+      abline(h=0,col="grey")
+    }
     if(7 %in% plot) sbfunc()
     if(7 %in% print){
       png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
