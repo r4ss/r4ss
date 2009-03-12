@@ -801,44 +801,45 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
 
   # Plot 7: spawning biomass
   if(7 %in% c(plot, print))
-  {   
-    sbfunc <- function(){
-      plot(tsyears,tsspaw_bio,xlab="Year",ylab=ylab,ylim=ylim,type="n")
-
+  {
+    sbfunc <- function(timeseries,forecastplot){
+      tsplotyr <- timeseries$Yr[!is.na(timeseries$SpawnBio)]
+      tsplotSB <- timeseries$SpawnBio[!is.na(timeseries$SpawnBio)]
+      tsplotarea <- timeseries$Area[!is.na(timeseries$SpawnBio)]
+      noforecast <- tsplotyr <= endyr+1
+      inforecast <- tsplotyr > endyr+1
+      if(forecastplot) xlim=range(tsplotyr) else xlim=range(tsplotyr[noforecast])
+      plot(0,xlab="Year", ylab="Spawning biomass (mt)",
+           xlim=xlim, ylim=c(0,max(tsplotSB)), type="n")
       for(iarea in 1:nareas){
-        tsplotyr <- tsyears[tsarea==iarea]
-        tsplotSB <- tsspaw_bio[tsarea==iarea]
-        lines(tsplotyr[2:length(tsplotyr)],tsplotSB[2:length(tsplotSB)],
-             xlab="Year",ylab="Spawning biomass (mt)",ylim= c(0,max(tsspaw_bio)),
-             type="o",col=areacols[iarea])
-        points(tsplotyr[1],tsplotSB[1],col=areacols[iarea],pch=19)
+        tsplotyrarea <- tsplotyr[tsplotarea==iarea & noforecast]
+        tsplotSBarea <- tsplotSB[tsplotarea==iarea & noforecast]
+        lines(tsplotyrarea[-1],tsplotSBarea[-1],type="o",col=areacols[iarea])
+        points(tsplotyrarea[1],tsplotSBarea[1],col=areacols[iarea],pch=19)
+        if(forecastplot){
+          tsplotyrarea <- tsplotyr[tsplotarea==iarea & inforecast]
+          tsplotSBarea <- tsplotSB[tsplotarea==iarea & inforecast]
+          lines(tsplotyrarea,tsplotSBarea,type="o",
+                lty="dashed",pch=20,col=areacols[iarea])
+        }          
       }
       if(nareas>1) legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
       abline(h=0,col="grey")
     }
-    if(7 %in% plot) sbfunc()
+    if(7 %in% plot) sbfunc(timeseries=timeseries,forecastplot=F)
     if(7 %in% print){
       png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
-      sbfunc()
+      sbfunc(timeseries=timeseries,forecastplot=F)
       dev.off()}
-
+   
     if(forecastplot){
-     ylab <- "Spawning biomass (mt)"
-     ylim <- c(0,max(tsallspaw_bio))
-     xmin <- min(tsallyears)-1
-     tsplotyr <- tsall$Yr[tsarea==1]
-     xmax <- max(tsplotyr)+1
-     sbfunc2 <- function(){
-        plot(tsplotyr,tsallspaw_bio,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=ylim,type="o",col="blue")
-        abline(h=0,col="grey")
-        lines(tsplotyr[tsplotyr>(endyr+1)],tsallspaw_bio[tsplotyr>(endyr+1)],lwd=1,col="red",lty="dashed")
-        points(tsplotyr[tsplotyr>(endyr+1)],tsallspaw_bio[tsplotyr>(endyr+1)],col="red",pch=20)}
-      if(7 %in% plot) sbfunc2()
+      if(7 %in% plot) sbfunc(timeseries=timeseries,forecastplot=T)
       if(7 %in% print){
         png(file=paste(plotdir,"7spawnbiowforecast.png",sep=""),width=pwidth,height=pheight)
-        sbfunc2()
+        sbfunc(timeseries=timeseries,forecastplot=T)
         dev.off()}
     }
+    
 
     if(uncertainty){
       bioscale <- 1 #scaling factor for single sex models
