@@ -842,6 +842,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     
 
     if(uncertainty){
+      xlab="Year"
+      ylab="Spawning biomass (mt)"
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
@@ -861,7 +863,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         plotsbstv <- v[sbstd$Yr<=(endyr+1)]
         plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+1)]
         plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+1)]
-        plot(plotsbstdyr[2:length(plotsbstdyr)],plotsbstv[2:length(plotsbstv)],main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+        plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr),main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
         lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
         lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
