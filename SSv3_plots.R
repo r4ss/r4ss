@@ -6,7 +6,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA March 10, 2009.
+# SSv3_plots BETA March 16, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -923,6 +923,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   } # end if 7 in plot or print
 
   # Plot 8: depletion
+if(nseasons ==1){ ## Temporary filter until calculations can be cleaned up
   if(8 %in% c(plot, print))
   {
     ylab <- "Spawning depletion"
@@ -1031,6 +1032,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(verbose) print("Finished plot 8: Depletion",quote=F)
   } # end if 8 in plot or print
 
+} # end temporary exclusion of multi-season models
 
   # Plot 9: rec devs and asymptotic error check
   if(9 %in% c(plot, print))
@@ -1122,7 +1124,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       png(file=paste(plotdir,"11sprseries",i,".png",sep=""),width=pwidth,height=pheight)
       sprfunc()
       dev.off()}
-
+if(nseasons==1){ # temporary disable until code cleanup
     sprfunc <- function(){
       plot(sprseries$Year,(1-sprseries$spr),xlab="Year",ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
       abline(h=(1-sprtarg),col="red",lty=2)
@@ -1183,6 +1185,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       dev.off()}
     if(verbose) print("Finished plot 11: SPR",quote=F)
     flush.console()
+} # end temporary multi-season disable of section
   } # end if 11 in plot or print
 
   ### Plot 12: spawner-recruit curve ###
