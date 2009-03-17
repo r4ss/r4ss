@@ -6,7 +6,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA March 16, 2009.
+# SSv3_plots BETA March 17, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -301,14 +301,24 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       dev.off()}
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
-    growdatF <- growdat[growdat$Morph==mainmorphs[1],]
+    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
+    #growdatF <- growdat[growdat$Morph==mainmorphs[1],]
     growdatF$Sd_Size <- growdatF$SD_Mid
     growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
     growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
+    if(nsexes > 1){
+        growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+        #growdatM <- growdat[growdat$Morph==mainmorphs[2],]
+        xm <- growdatM$Age
+        growdatM$Sd_Size <- growdatM$SD_Mid
+        growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
+        growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
+     }
     maxy <- max(growdatF$high)
+    if(nsexes > 1){maxy <- max(maxy,growdatM$high)}
     x <- growdatF$Age
     header <- "Ending year expected growth"
-    if(nseasons > 1){header <- paste(header," season 1",sep="")}
+   # if(nseasons > 1){header <- paste(header," season 1",sep="")}
     ylab <- "Length (cm, middle of the year)"
     gfunc4 <- function()
     {
@@ -319,11 +329,6 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       mtext(header,3,1.5)
       if(nsexes > 1)
       {
-        growdatM <- growdat[growdat$Morph==mainmorphs[2],]
-        xm <- growdatM$Age
-        growdatM$Sd_Size <- growdatM$SD_Mid
-        growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
-        growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
         lines(xm,growdatM$Len_Mid,col="blue",lwd=2,type="l")
         lines(xm,growdatM$high,col="blue",lwd=1,lty="dashed")
         lines(xm,growdatM$low,col="blue",lwd=1,lty="dashed")
@@ -363,6 +368,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   } # end if 1 in plot or print
 
   ### plot 2: Time-varying growth
+if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying growth
   if(2 %in% c(plot, print))
   {
     if(is.null(growthseries))
@@ -400,6 +406,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     }
     if(verbose) print("Finished plot 2: Time-varying growth",quote=F)
   } # end if 2 in plot or print
+} # end temporary disable of time-varying growth for multi-season models
 
   ### plots 3 and 4 selectivity and retention
   # Length selex and retention
