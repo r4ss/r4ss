@@ -1,12 +1,14 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:20, print=0, printfolder="", dir="default", fleets="all", areas="all", 
-    fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
-    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
-    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700)
+    replist="ReportObject", plot=1:20, print=0, printfolder="", dir="default", fleets="all", areas="all",
+    fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T,
+    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
+    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700,
+    maxrows = 6, maxcols = 6, cond.maxrows = 2, cond.maxcols = 4, fixrows = T, fixcols = T, newcompplots=F)
 {
 ################################################################################
 #
 # SSv3_plots BETA March 19, 2009.
+#
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -30,6 +32,8 @@ SSv3_plots <- function(
   # load required package
   require(lattice)
   require(plotrix)
+  if(newcompplots & !exists("SSv3_plot_comps"))
+      print("to use newcompplots=T, you need to source the file 'SSv3_plot_comps.R'")
 
   plotCI <- function(x,z=x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,sfrac = 0.01)
   {
@@ -103,11 +107,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
      }else{            out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
   return(out)
 }
-  
+
   if(replist[[1]]=="ReportObject"){
     return("The input 'replist' should refer to an R object created by the function 'SSv3_output'.")
   }
-  
+
   # get quantities from the big list
   # this could also be done using attach()
   nfleets                        <- replist$nfleets
@@ -174,11 +178,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   inputs                         <- replist$inputs
   managementratiolabels          <- replist$managementratiolabels
   equil_yield 			 <- replist$equil_yield
-  
+
   # check for internal consistency
-  if(uncertainty==T & inputs$covar==F) 
+  if(uncertainty==T & inputs$covar==F)
     return("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function")
-    
+
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
@@ -186,13 +190,13 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     fleets <- 1:nfleets
   }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
       return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
-  }} 
+  }}
   if(areas[1]=="all"){
     areas <- 1:nareas
   }else{ if(length(intersect(areas,1:nareas))!=length(areas)){
       return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
-  }} 
-    
+  }}
+
   # time series (but no forecast) quantities used for multiple plots
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
@@ -219,11 +223,11 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   # make plot window (operating system specific)
   nplots <- length(intersect(1:19,plot))
   nprints <- length(intersect(1:19,print))
-  
+
   if(length(grep('linux',version$os)) > 0) OS <- "Linux"
   if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
-  # need appropriate line to support Mac operating systems  
-    
+  # need appropriate line to support Mac operating systems
+
   if(nplots>0){
     if(OS=="Windows") windows(record=TRUE)
     if(OS=="Linux") X11()
@@ -234,7 +238,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     dir.create(dir,showWarnings=F)
     plotdir <- paste(dir,printfolder,"/",sep="")
     dir.create(plotdir,showWarnings=F)
-    if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)  
+    if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
   }
 
   # colors
@@ -248,7 +252,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     areacols  <- rich.colors.short(nareas)
     if(nfleets==3) fleetcols <- rainbow(nareas)
   }
-  
+
   #### plot 1
   # Static growth (mean weight, maturity, fecundity, spawning output)
   if(1 %in% c(plot, print))
@@ -267,7 +271,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
         lines(x,biology$Wt_len_M,col="blue",type="o")
         legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}}
     gfunc2 <- function(){
-      if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red") 
+      if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red")
       }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
     gfunc4 <- function(){
@@ -831,7 +835,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           lines(tsplotyrarea,tsplotSBarea,type="o",
                 lty="dashed",pch=20,col=areacols[iarea])
           points(tsplotyrarea,tsplotSBarea,col=areacols[iarea],pch=19)
-        }          
+        }
       }
       if(nareas>1) legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
       abline(h=0,col="grey")
@@ -841,7 +845,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
       sbfunc(timeseries=timeseries,forecastplot=F)
       dev.off()}
-   
+
     if(forecastplot){
       if(7 %in% plot) sbfunc(timeseries=timeseries,forecastplot=T)
       if(7 %in% print){
@@ -1160,8 +1164,8 @@ if(nseasons==1){ # temporary disable until code cleanup
       sprratiostd$period[sprratiostd$Yr<=(endyr)] <- "time"
       sprratiostd$upper <- sprratiostd$Value + 1.96*sprratiostd$StdDev
       sprratiostd$lower <- sprratiostd$Value - 1.96*sprratiostd$StdDev
-      ylab <- managementratiolabels[1,2] 
-      ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))     
+      ylab <- managementratiolabels[1,2]
+      ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))
       sprfunc2 <- function(){
         plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],xlab="Year",ylim=ylim,ylab=ylab,type="o",col="blue")
         abline(h=0,col="grey")
@@ -1218,7 +1222,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
       abline(h=0,col="grey")
       biasad <- recruit$bias_adj
-      lines(x[order(x)],biasad[order(x)],col="green")      
+      lines(x[order(x)],biasad[order(x)],col="green")
       lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
       points(x,recruit$pred_recr,col="red")}
     if(12 %in% plot) recruitfun()
@@ -1314,7 +1318,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         {
           print("Expected numbers at age plot not yet configured for multiple morphs.",quote=F)
         }else{
-          natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 & 
+          natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 &
                             natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
           nyrsplot <- nrow(natagetemp0)
           resx <- rep(natagetemp0$Yr, accuage+1)
@@ -1328,7 +1332,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           if(m==2) sextitle=" of males"
           if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
           plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
-          
+
           trellis.device(theme=col.whitebg(),new=F)
           nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
                         key.entries=c(0.0),pch=c(NA,1)[1+(resz>0)],scales=list(relation="same",alternating="1",tck=c(1,0)))
@@ -1362,7 +1366,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         }
       } # end gender loop
     } # end area loop
- 
+
     # plot the ageing imprecision for all age methods
     if(!is.null(AAK)){
       sd_vectors <- as.data.frame(AAK[,1,])
@@ -1394,8 +1398,11 @@ if(nseasons==1){ # temporary disable until code cleanup
     } # end if AAK
     if(verbose) print("Finished plot 14: Numbers at age",quote=F)
     flush.console()
-  } # close if 14 in plot or print 
+  } # close if 14 in plot or print
 
+
+if(!newcompplots) # switch to allow transition to new non-trellis composition plots
+{
   # Plots of data only
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
@@ -1405,9 +1412,9 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   if(length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
   if(!datplot)
-  { 
-    print("skipped data-only plots 15 and 16 because input 'datplot=F'",quote=F) 
-  }else{ 
+  {
+    print("skipped data-only plots 15 and 16 because input 'datplot=F'",quote=F)
+  }else{
    # Index data plots only
     for(i in unique(cpue$Fleet)){
       cpueuse <- cpue[cpue$Obs > 0 & cpue$Fleet==i,]
@@ -1469,6 +1476,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                                 box.ratio=100,subset=TRUE,strip=strip.custom(bg="grey"),horizontal=FALSE,groups=NULL,
                                 scales=list(y=list(limits=c(0,max(ldat2$plotobs)+0.02)),x=list(limits=c(0,(nlbins+1)),at=(usebins),labels=(binlabs)),
                                 relation="same",alternating="1",tck=c(1,0)),data=ldat2)
+
             if(15 %in% plot) print(trellis2)
             if(15 %in% print){
               sex <- 1
@@ -1550,7 +1558,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                                     box.ratio=80,subset=TRUE,strip=strip.custom(bg="grey"),horizontal=FALSE,groups=NULL,
                                     scales=list(y=list(limits=c(0,max(adat2$plotobs)+0.02)),drop.unused.levels=F,
                                    # x=list(tick.number=5,limits=c(0,(maxbin+1))),relation="same",alternating="1",tck=c(1,0)),
-                                    x=list(limits=c(0,(nagebins+1)),at=(usebins),labels=(binlabs)),relation="same",alternating="1",tck=c(1,0)),                                    
+                                    x=list(limits=c(0,(nagebins+1)),at=(usebins),labels=(binlabs)),relation="same",alternating="1",tck=c(1,0)),
                                     data=adat2)
               if(16 %in% plot) print(trellis2)
               if(16 %in% print)
@@ -1609,7 +1617,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           cadat$plotbins <- cadat$Bin
           cadat$lenbin <- cadat$Lbin_hi
           cadat <- cadat[order(cadat$lenbin),]
-          #if(Lbin_method==3) 
+          #if(Lbin_method==3)
           cadat$lenbin2 <- cadat$lenbin
           cadat$lenbin <- as.factor(cadat$lenbin2)
           cadat$group <- cadat$obsexp
@@ -1866,10 +1874,10 @@ if(nseasons==1){ # temporary disable until code cleanup
             afit2 <- afit2[!is.na(afit2$plotbins),]
             afit2$plotobs <- afit2$Obs
             afit2$plotexp <- afit2$Exp
-            
+
             # may optionally turn of sample size plots in #18
-            if(samplesizeON){ 
-              
+            if(samplesizeON){
+
               if(k==1){
                 plottitle <- paste("Sample size for sexes combined discard ages for ", FleetNames[i],sep="")
                 if(j==2){plottitle <- paste("Sample size for sexes combined retained ages for ", FleetNames[i],sep="")}
@@ -1931,9 +1939,9 @@ if(nseasons==1){ # temporary disable until code cleanup
               png(file=paste(plotdir,"18agedatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
               print(trellis1)
               dev.off()}
-            
+
             # may optionally turn of residual plots in #18
-            if(compresidsON){   
+            if(compresidsON){
                 resx <- afit2$Yr
                 resy <- afit2$plotbins
                 resz <- afit2$Pearson
@@ -1976,7 +1984,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(verbose) print("Finished traditional age comps",quote=F)
 
     ## Effective sample sizes for conditional age data
-  if(samplesizeON){ 
+  if(samplesizeON){
     for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
@@ -2045,9 +2053,9 @@ if(nseasons==1){ # temporary disable until code cleanup
                 aydat$plotbins <- aydat$Bin
                 aydat$lenbin <- aydat$Lbin_hi
                 aydat <- aydat[order(aydat$lenbin),]
-                #if(Lbin_method==1) 
+                #if(Lbin_method==1)
 		aydat$lenbin2 <- lbins[aydat$lenbin]
-                #if(Lbin_method==3) 
+                #if(Lbin_method==3)
 		aydat$lenbin2 <- aydat$lenbin
                 aydat$lenbin <- as.factor(aydat$lenbin2)
                 aydat$group <- aydat$obsexp
@@ -2171,9 +2179,9 @@ if(nseasons==1){ # temporary disable until code cleanup
             ares$lenbin <- ares$Lbin_hi
             ares <- ares[order(ares$lenbin),]
             ares$lenbin2 <- 0
-            #if(Lbin_method==1) 
+            #if(Lbin_method==1)
 		ares$lenbin2 <- lbins[ares$lenbin]
-            #if(Lbin_method==3) 
+            #if(Lbin_method==3)
 		ares$lenbin2 <- ares$lenbin
             ares$lenbin <- as.factor(ares$lenbin2)
             ares$group <- ares$obsexp
@@ -2264,6 +2272,76 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(verbose) print("Finished plot 18: age comps",quote=F)
     flush.console()
   } # end if 18 in plot or print
+
+} # end if not using newcompplots switch
+
+if(newcompplots) # switch to allow transition to new non-trellis composition plots
+{
+
+  # Composition data plots 15-18
+  lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
+  agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
+  latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
+  lendbase$effN <- as.numeric(lendbase$effN)
+  agedbase$effN <- as.numeric(agedbase$effN)
+
+  # Plots of data only
+  if(datplot) # data only aspects
+  {
+    if(15 %in% c(plot,print))
+    {
+      # length comp bar plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,
+        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir)
+      # length comp bubble plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=T,
+        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir)
+      if(verbose) print("Finished plot 15: length comp data",quote=F)
+    }
+    if(16 %in% c(plot,print))
+    {
+      # age comp bar plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,
+        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
+      # age comp bubble plot
+       SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,
+        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
+      # conditional age plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,
+        maxrows=cond.maxrows,maxcols=cond.maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
+      if(verbose) print("Finished plot 16: age comp data",quote=F)
+    }
+    flush.console()
+  } # datplot
+
+  # plot of length comp data with fits, sample size, etc.
+  if(17 %in% c(plot,print)){
+    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,samp=T,maxrows=maxrows,maxcols=maxcols,
+                    fixrows=fixrows,fixcols=fixcols,png=(17%in%print),GUI=(17%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
+    if(verbose) print("Finished plot 17: length comps with fits",quote=F)
+  }
+
+  # plot of age comp data with fits, sample size, etc.
+  if(18 %in% c(plot,print)){
+    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,samp=T,maxrows=maxrows,maxcols=maxcols,
+                    fixrows=fixrows,fixcols=fixcols,png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
+    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,samp=T,maxrows=cond.maxrows,maxcols=cond.maxcols,
+                    fixrows=fixrows,fixcols=fixcols,png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
+    if(verbose) print("Finished plot 18: age comps with fits",quote=F)
+    flush.console()
+  } # end if 18 in plot or print
+
+  # this didn't work, explore later: add a histogram of the Pearson residuals
+  #
+  # par(mfrow=c(2,2)) #pearsons <- mcmc(as.numeric(plotfems$Pearson))
+  # pearsons[pearsons > 5] <- 5 #pearsons[pearsons < -5] <- -5
+  # bins <- 30 #binwidth <- (max(pearsons) - min(pearsons))/bins
+  # truehist(pearsons,h=binwidth,col="grey",xlim=c(-5,5),xlab="Pearson/Standard normal",ylab="Relative density")
+  # # add a standard normal #distbins <- seq(-5,5,by=binwidth)
+  # dens <- dnorm(x=distbins,mean=0,sd=1,log=FALSE) #lines(distbins,dens,col="black",lwd=1.5)
+  # qq.plot(pearsons,ylab="Pearson residual",xlab="Standard normal",col=c("black")) #par(mfrow=c(1,1))
+
+} # end if using newcompplots switch
 
   # Plot 19: length at age data
   if(19 %in% c(plot, print))
