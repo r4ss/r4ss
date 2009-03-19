@@ -1,12 +1,12 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:19, print=0, printfolder="", dir="default", fleets="all", areas="all", 
+    replist="ReportObject", plot=1:20, print=0, printfolder="", dir="default", fleets="all", areas="all", 
     fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, 
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
     aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700)
 {
 ################################################################################
 #
-# SSv3_plots BETA March 17, 2009.
+# SSv3_plots BETA March 19, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -173,6 +173,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   last_years_sprmetric           <- replist$last_years_sprmetric
   inputs                         <- replist$inputs
   managementratiolabels          <- replist$managementratiolabels
+  equil_yield 			 <- replist$equil_yield
   
   # check for internal consistency
   if(uncertainty==T & inputs$covar==F) 
@@ -192,7 +193,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
   }} 
     
-  # time series quantities used for multiple plots
+  # time series (but no forecast) quantities used for multiple plots
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
   tsyears <- ts$Yr[ts$Seas==1]
@@ -753,10 +754,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       termyr <- min(timeseries$Yr[timeseries$Era=="FORE"])
       tsfore <- timeseries$Era=="FORE"
       recfunc2 <- function(){
-        plot(x[x<=termyr],y[x<=termyr],xlab="Year",ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
+        plot(x[x<=termyr+1],y[x<=termyr+1],xlab="Year",ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
         abline(h=0,col="grey")
         lines(x[x>termyr],y[x>termyr],lwd=1,col="red",lty="dashed")
-        points(x[x>termyr],y[x>termyr],col="red",pch=20)}
+        points(x[x>termyr],y[x>termyr],col="red",pch=19)}
       if(6 %in% plot) recfunc2()
       if(6 %in% print){
         png(file=paste(plotdir,"6recruitswforecast.png",sep=""),width=pwidth,height=pheight)
@@ -794,7 +795,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recfunc4 <- function(maxyr){
         plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab="Year",ylo=0,
           col="black",ylab=ylab,lty=1,main=plottitle)
-        points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=20)
+        points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=19)
         abline(h=0,col="grey")}
         if(6 %in% plot) recfunc4(maxyr)
         if(6 %in% print){
@@ -814,6 +815,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       tsplotSB <- timeseries$SpawnBio[!is.na(timeseries$SpawnBio)]
       tsplotarea <- timeseries$Area[!is.na(timeseries$SpawnBio)]
       noforecast <- tsplotyr <= endyr+1
+      if(forecastplot==T){noforecast <- tsplotyr <= endyr+2}
       inforecast <- tsplotyr > endyr+1
       if(forecastplot) xlim=range(tsplotyr) else xlim=range(tsplotyr[noforecast])
       plot(0,xlab="Year", ylab="Spawning biomass (mt)",
@@ -828,6 +830,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           tsplotSBarea <- tsplotSB[tsplotarea==iarea & inforecast]
           lines(tsplotyrarea,tsplotSBarea,type="o",
                 lty="dashed",pch=20,col=areacols[iarea])
+          points(tsplotyrarea,tsplotSBarea,col=areacols[iarea],pch=19)
         }          
       }
       if(nareas>1) legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
@@ -846,7 +849,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         sbfunc(timeseries=timeseries,forecastplot=T)
         dev.off()}
     }
-    
 
     if(uncertainty){
       xlab="Year"
@@ -884,39 +886,28 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         sbfunc3()
         dev.off()}
 
-    temp_switch=F #temporarily turning off the following section
-    if(temp_switch)
-    {
       if(forecastplot){
-        if(nforecastyears==nforecastyearswithsd){
-          sbstd <- rawstd[rawstd$name %in% c("spbio_std"),]
-          sbstdfore <- rawstd[rawstd$name %in% c("depletion"),]
-          sbstdfore <- sbstdfore[(seq(6,(6+nforecastyears-1),by=1)),]
-          v <- as.numeric(sbstd$value)
-          sbstd$upper <- v+1.96*(as.numeric(sbstd[,4]))
-          sbstdfore$upper <- as.numeric(sbstdfore$value)+1.96*(as.numeric(sbstdfore[,4]))
-          sbstd$lower <- v-1.96*(as.numeric(sbstd[,4]))
-          sbstd$lower[sbstd$lower < 0] <- 0
-          sbstdfore$lower <- as.numeric(sbstdfore$value)-1.96*(as.numeric(sbstdfore[,4]))
-          sbstdfore$lower[sbstdfore$lower < 0] <- 0
-          ymax <- max(as.numeric(sbstd$upper),as.numeric(sbstdfore$upper))
-          plottitle <- "~95% Asymptotic confidence interval with forecast"
-          xmin <- min(as.numeric(tsyears))
-          yr <- as.numeric(goodforcast$Year)
-          utsyears <- c(utsyears,min(yr))
-          v <- c(v,goodforcast$Spbio[1])
-          plotup <- c(sbstd$upper,sbstdfore$upper[1])
-          plotlow <- c(sbstd$lower, sbstdfore$lower[1])
-          xmax <- max(yr)+1
-          sbfunc4 <- function(){
-            plot(utsyears,v,main= plottitle,xlab="Year",xlim=c(xmin,xmax),ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
-            abline(h=0,col="grey")
-            lines(utsyears,plotup,lwd=1,col="blue",lty="dashed")
-            lines(utsyears,plotlow,lwd=1,col="blue",lty="dashed")
-            lines(yr,goodforcast$Spbio,lwd=1,col="red",lty="dashed")
-            points(yr,goodforcast$Spbio[1:(nforecastyears)],col="red",pch=20)
-            lines(yr,sbstdfore$upper,lwd=1,col="red",lty="dashed")
-            lines(yr,sbstdfore$lower,lwd=1,col="red",lty="dashed")}
+        if(max(sbstd$Yr>=(endyr+2))){
+          sbfunc4  <- function(){
+           plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+2)]
+           plotsbstv <- v[sbstd$Yr<=(endyr+2)]
+           plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+2)]
+           plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+2)]
+           plotsbstdyr2 <- sbstd$Yr[sbstd$Yr>=(endyr+2)]
+           plotsbstv2 <- v[sbstd$Yr>=(endyr+2)]
+           plotsbstdup2 <- sbstd$upper[sbstd$Yr>=(endyr+2)]
+           plotsbstdlo2 <- sbstd$lower[sbstd$Yr>=(endyr+2)]
+           plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr,plotsbstdyr2),main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+           abline(h=0,col="grey")
+           lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
+           lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
+           points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
+           points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
+           points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
+           points(plotsbstdyr2,plotsbstv2,col="blue",pch=19)
+           points(plotsbstdyr2,plotsbstdup2,col="blue",pch="-")
+           points(plotsbstdyr2,plotsbstdlo2,col="blue",pch="-")
+            }
           if(7 %in% plot) sbfunc4()
           if(7 %in% print){
             png(file=paste(plotdir,"7spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight)
@@ -924,17 +915,17 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             dev.off()}
         } # forecastplot
       } # sexes==1
-  } #temporarily turning off section on forecast
+
     } # if uncertainty==T
     if(verbose) print("Finished plot 7: Spawning biomass",quote=F)
   } # end if 7 in plot or print
 
   # Plot 8: depletion
-if(nseasons ==1){ ## Temporary filter until calculations can be cleaned up
-  if(8 %in% c(plot, print))
-  {
-    ylab <- "Spawning depletion"
-    depfunc <- function(iarea){
+  if(nseasons ==1){ ## Temporary filter until calculations can be cleaned up
+   if(8 %in% c(plot, print))
+    {
+     ylab <- "Spawning depletion"
+     depfunc <- function(iarea){
       plottitle <- NULL
       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
       tsplotyr <- tsyears[tsarea==iarea]
@@ -945,23 +936,22 @@ if(nseasons ==1){ ## Temporary filter until calculations can be cleaned up
       abline(h=c(btarg,minbthresh),col="red")
       text(startyr+4,btarg+0.03,"Management target",adj=0)
       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
-    }
-    for(iarea in areas){
+      }
+     for(iarea in areas){
       if(8 %in% plot) depfunc(iarea)
       if(8 %in% print){
-        png(file=paste(plotdir,"8depletion.png",sep=""),width=pwidth,height=pheight)
-        depfunc(iarea)
-        dev.off()}
-    }
-
-    if(uncertainty){
+       png(file=paste(plotdir,"8depletion.png",sep=""),width=pwidth,height=pheight)
+       depfunc(iarea)
+       dev.off()}
+      }
+     if(uncertainty){
       depstd <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
       depstd$Yr <- as.numeric(substring(depstd$LABEL,8))
       depstd$period <- "fore"
       depstd$period[depstd$Yr<=(endyr+1)] <- "time"
       depstd$upper <- depstd$Value + 1.96*depstd$StdDev
       depstd$lower <- depstd$Value - 1.96*depstd$StdDev
-      ymax <- max(dep,depstd$upper)
+      ymax <- max(dep,depstd$upper[depstd$period=="time"])
       depfunc2 <- function(){
         plot(depstd$Yr[depstd$period=="time"],depstd$Value[depstd$period=="time"],xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
         abline(h=0,col="grey")
@@ -976,69 +966,89 @@ if(nseasons ==1){ ## Temporary filter until calculations can be cleaned up
         png(file=paste(plotdir,"8depletioninterval.png",sep=""),width=pwidth,height=pheight)
         depfunc2()
         dev.off()}
-    }
+      } # end if uncertainty
 
-    temp_switch=F # temporarily turning off this section
-    if(temp_switch)
-    {
     if(forecastplot){
-      ymax <- max(dep,as.numeric(goodforcast$Depletion))
-      xmin <- min(tsyears)-1
-      yr <- as.numeric(goodforcast$Year)
-      xmax <- max(yr)+1
-      depfunc3 <- function(){
-        plot(tsyears,dep,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue")
-        abline(h=0,col="grey")
-        abline(h=c(btarg,minbthresh),col="red")
-        text((startyr+4),(btarg+0.03),"Management target",adj=0)
-        text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
-        lines(yr,goodforcast$Depletion,lwd=1,col="red",lty="dashed")
-        points(goodforcast$Year[2:nforecastyears],goodforcast$Depletion[2:nforecastyears],col="red",pch=20)}
-      if(8 %in% plot) depfunc3()
-      if(8 %in% print){
+     fts <- timeseries[timeseries$Yr >= endyr+1,]
+     ftsyears <- fts$Yr[fts$Seas==1]
+     ftsarea <- fts$Area[fts$Seas==1]
+     ftsspaw_bio <- fts$SpawnBio[fts$Seas==1]
+     if(nsexes==1) ftsspaw_bio <- ftsspaw_bio/2
+     fdep <- ftsspaw_bio/tsspaw_bio[1]
+     ymax <- max(dep,fdep)
+     xmin <- min(tsyears)-1
+     xmax <- max(ftsyears)+1
+     depfunc3 <- function(iarea){
+      plottitle <- NULL
+      tsplotyr <- tsyears[tsarea==iarea]
+      tsplotdep <- dep[tsarea==iarea]
+      if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
+              ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
+      points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
+      abline(h=0,col="grey")
+      abline(h=c(btarg,minbthresh),col="red")
+      text(startyr+4,btarg+0.03,"Management target",adj=0)
+      text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+      ftsplotyr <- ftsyears[ftsarea==iarea]
+      ftsplotdep <- fdep[ftsarea==iarea]
+      lines(ftsplotyr[1:2],ftsplotdep[1:2],lwd=1,col="blue",lty="dashed")
+      lines(ftsplotyr[2:length(ftsplotyr)],ftsplotdep[2:length(ftsplotdep)],lwd=1,col="red",lty="dashed")
+      points(ftsplotyr[2:length(ftsplotyr)],ftsplotdep[2:length(ftsplotdep)],col="red",pch=19)
+      }
+      for(iarea in areas){
+       if(8 %in% plot) {
+        depfunc3(iarea)}
+       if(8 %in% print){
         png(file=paste(plotdir,"8depletionforecast.png",sep=""),width=pwidth,height=pheight)
-        depfunc3()
+        depfunc3(iarea)
         dev.off()}
-      if(uncertainty){
-        depstdfore <- rawstd[rawstd$name=="depletion",]
-        depstdfore <- depstdfore[(6+2*nforecastyears):((6+2*nforecastyears)+nforecastyears-1),]
-        depstdfore$upper <- depstdfore$value + 1.96* depstdfore$std_dev
-        depstdfore$lower <- depstdfore$value - 1.96* depstdfore$std_dev
-        ymax <- max(c(dep,depstdfore$upper))
-        xmin <- min(tsyears)-1
-        xmax <- max(goodforcast$Year)+1
-        len <- length(tsyears)
-        yr1 <- tsyears[(len-1):len]
-        yr2 <- goodforcast$Year[2:nforecastyears]
-        yr3 <- goodforcast$Year
-        depfunc4 <- function(){
-          plot(tsyears,dep,xlab="Year",ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue")
-          abline(h=0,col="grey")
-          abline(h=c(btarg,minbthresh),col="red")
-          text((startyr+4),(btarg+0.03),"Management target",adj=0)
-          text((startyr+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
-          points(yr1,depstd$upper,pch="-",col="blue",cex=1.2)
-          lines(yr1,depstd$upper,col="blue",lty="dashed")
-          points(yr1,depstd$lower,pch="-",col="blue",cex=1.2)
-          lines(yr1,depstd$lower,col="blue",lty="dashed")
-          lines(yr3,goodforcast$Depletion,lwd=1,col="red",lty="dashed")
-          points(yr2,goodforcast$Depletion[2:(nforecastyears)],col="red",pch=20)
-          lines(yr3,depstdfore$upper,lwd=1,col="red",lty="dashed")
-          points(yr2,depstdfore$upper[2:(nforecastyears)],pch="-",col="red",cex=1.2)
-          lines(yr3,depstdfore$lower,lwd=1,col="red",lty="dashed")
-          points(yr2,depstdfore$lower[2:(nforecastyears)],pch="-",col="red",cex=1.2)}
-        if(8 %in% plot) depfunc4()
-        if(8 %in% print){
-          png(file=paste(plotdir,"8depletionforecastinterval.png",sep=""),width=pwidth,height=pheight)
-          depfunc4()
-          dev.off()}
+      } # end areas
+
+     if(uncertainty){
+      depstd <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
+      depstd$Yr <- as.numeric(substring(depstd$LABEL,8))
+      depstd$period <- "fore"
+      depstd$period[depstd$Yr<=(endyr+1)] <- "time"
+      depstd$upper <- depstd$Value + 1.96*depstd$StdDev
+      depstd$lower <- depstd$Value - 1.96*depstd$StdDev
+      ymax <- max(depstd$upper)
+      xmin <- min(tsyears)-1
+      xmax <- max(ftsyears)+1
+
+      depfunc4 <- function(iarea){
+       plottitle <- NULL
+       tsplotyr <- tsyears[tsarea==iarea]
+       tsplotdep <- dep[tsarea==iarea]
+       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+       plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
+            ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
+       points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
+       abline(h=0,col="grey")
+       abline(h=c(btarg,minbthresh),col="red")
+       text(startyr+4,btarg+0.03,"Management target",adj=0)
+       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+       ftsplotyr <- ftsyears[ftsarea==iarea]
+       ftsplotdep <- fdep[ftsarea==iarea]
+       lines(ftsplotyr[1:2],ftsplotdep[1:2],lwd=1,col="blue",lty="dashed")
+       lines(ftsplotyr[2:length(ftsplotyr)],ftsplotdep[2:length(ftsplotdep)],lwd=1,col="red",lty="dashed")
+       points(ftsplotyr[2:length(ftsplotyr)],ftsplotdep[2:length(ftsplotdep)],col="red",pch=19)
+       lines(depstd$Yr[depstd$period=="time"],depstd$upper[depstd$period=="time"],col="blue",lty="dashed")
+       lines(depstd$Yr[depstd$period=="time"],depstd$lower[depstd$period=="time"],col="blue",lty="dashed")
+       lines(depstd$Yr[depstd$Yr>=(endyr+1)],depstd$upper[depstd$Yr>=(endyr+1)],col="red",lty="dashed")
+       lines(depstd$Yr[depstd$Yr>=(endyr+1)],depstd$lower[depstd$Yr>=(endyr+1)],col="red",lty="dashed")
+       }
+      if(8 %in% plot){
+       depfunc4(iarea)}
+      if(8 %in% print){
+       png(file=paste(plotdir,"8depletionforecastinterval.png",sep=""),width=pwidth,height=pheight)
+       depfunc4(iarea)
+       dev.off()}
       } # end if uncertainty==T
     } # end if forecastplot==T
-} # end temporary temp switch turn-off
 
     if(verbose) print("Finished plot 8: Depletion",quote=F)
   } # end if 8 in plot or print
-
 } # end temporary exclusion of multi-season models
 
   # Plot 9: rec devs and asymptotic error check
@@ -1314,10 +1324,10 @@ if(nseasons==1){ # temporary disable until code cleanup
           for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
           plotbub <- cbind(resx,resy,resz)
           if(m==1 & nsexes==1) sextitle <- ""
-          if(m==1 & nsexes==2) sextitle <- "of females"
-          if(m==2) sextitle="of males"
+          if(m==1 & nsexes==2) sextitle <- " of females"
+          if(m==2) sextitle=" of males"
           if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
-          plottitle <- paste("Expected numbers ",sextitle," at age in thousands (max=",max(resz),")",sep="")
+          plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
           
           trellis.device(theme=col.whitebg(),new=F)
           nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
@@ -1336,7 +1346,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           for(i in 1:length(meanageyr)){ # averaging over values within a year (depending on birth season)
             meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==meanageyr[i]]*natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])/sum(natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])}
           ylim <- c(0,max(meanage))
-          ylab <- plottitle <- paste("Mean age ",sextitle," in the population (yr)",sep="")
+          ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
           if(14 %in% plot){
             print(nage)
             plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)}
@@ -2263,34 +2273,39 @@ if(nseasons==1){ # temporary disable until code cleanup
       if(length(latagebase$Obs[latagebase$Fleet==i])>0)
       {
         plotlens <- latagebase[latagebase$Fleet==i,]
+        plotlens <- plotlens[!plotlens$Obs %in% c(NA),]
         testor <- length(plotlens$Obs[plotlens$Gender==1])>0
-        testor[2] <- length(plotlens$Obs[plotlens$Gender==2])>0
+        testor[2] <- length(plotlens$Obs[plotlens$Gender==2])
         for(m in (1:2)[testor])
         {
-          la <- plotlens[plotlens$Gender==i,] # females or males
+          la <- plotlens[plotlens$Gender==m,] # females or males
           if(nseasons > 1){la$Yr <- la$Yr + (la$Seas - 1)*(1/nseasons) + (1/nseasons)/2}
           la$plotyear <- as.factor(la$Yr)
           la$plotbins <- la$Bin
           la <- la[!is.na(la$plotbins), ]
           la$plotobs <- la$Obs
           la$plotexp <- la$Exp
-          plottitle <- paste("Sample size for length-at-age for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
-          ymax <- max(la$effN)
-          xmax <- max(la$N)
-          lenatagefunc <- function(){
-            plot(la$N,la$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
-            abline(h=0,col="grey")
-            lines(x=c(0,ymax),y=c(0,ymax),col="black")
-            npoints <- length(la$N)
-            if(npoints > 6 & smooth & length(unique(la$N))>6){
-              psmooth <- loess(la$effN~la$N,degree=1)
-              lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
+
+          # Disable until effective N calculation is re-implemented in SS
+	  #plottitle <- paste("Sample size for length-at-age for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
+          #ymax <- max(la$effN)
+          #xmax <- max(la$N)
+          #lenatagefunc <- function(){
+            #plot(la$N,la$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
+            #abline(h=0,col="grey")
+            #lines(x=c(0,ymax),y=c(0,ymax),col="black")
+            #npoints <- length(la$N)
+            #if(npoints > 6 & smooth & length(unique(la$N))>6){
+             # psmooth <- loess(la$effN~la$N,degree=1)
+             # lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
+	  #  }
           #if(19 %in% plot){lenatagefunc()}
           #if(19 %in% print)
           # {png(file=paste(plotdir,"19lenatagesampsize_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
           # lenatagefunc()
           # dev.off()}
-          plottitle <- paste("Length-at-age fits for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
+          plottitle <- paste("Length-at-age fits for sexes combined, ", FleetNames[i],sep="")
+          if(nsexes > 1){plottitle <- paste("Length-at-age fits for ",c("fe","")[m],"males, ", FleetNames[i],sep="")}
           # trellis.device(theme=col.whitebg(),new = FALSE)
           la2 <- la
           ntrell <- length(la2[,1])
@@ -2310,7 +2325,8 @@ if(nseasons==1){ # temporary disable until code cleanup
           resx <- la$Yr
           resy <- la$plotbins
           resz <- la$Pearson
-          plottitle <- paste("Pearson residuals for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
+          plottitle <- paste("Pearson residuals for sexes combined, ", FleetNames[i],sep="")
+          if(nsexes > 1){plottitle <- paste("Pearson residuals for ",c("fe","")[m],"males, ", FleetNames[i],sep="")}
           if(length(unique(resx))<minnbubble){
             resx <- c(resx,(max(resx)+1),(min(resx)-1))
             resy <- c(resy,(min(resy)),(min(resy)))
@@ -2334,6 +2350,21 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(verbose) print("Finished plot 19: length at age data",quote=F)
     flush.console()
   } # end if 19 in plot or print
+
+  if(20 %in% c(plot, print))
+  {
+   if(!is.null(equil_yield[1,1])){
+   yieldfunc <- function(){
+   plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
+        type="l",lwd=2,col="blue")}
+   if(20 %in% plot){yieldfunc()}
+   if(20 %in% print){
+    png(file=paste(plotdir,"20yield",filepart,".png",sep=""),width=pwidth,height=pheight)
+    yieldfunc()
+    dev.off()}
+    if(verbose) print("Finished plot 20: yield curve",quote=F)
+    }
+  }
 
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of function
