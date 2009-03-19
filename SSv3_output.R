@@ -5,7 +5,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA March 11, 2009.
+# SSv3_output BETA March 19, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -202,7 +202,13 @@ flush.console()
 if(forecast){
   forcastname <- paste(dir,"Forecast-report.SSO",sep="")
   rawforcast1 <- read.table(file=forcastname,col.names=c(seq(1,ncols,by=1)),fill=T,quote="",colClasses="character",nrows=-1)
-  #rawforcast <- rawforcast1[(matchfun("Management_report",rawforcast1[,1]):(length(rawforcast1[,1]))),]
+  yieldraw <- rawforcast1[(matchfun("+",rawforcast1[,1])):(matchfun("Management_report",rawforcast1[,1])),]
+  yielddat <- yieldraw[,c(4,7)]
+  colnames(yielddat) <- c("Catch","Depletion")
+  yielddat <- yielddat[!yielddat$Depletion %in% c("","SSB/Bzero","+"),]
+  yielddat$Catch <- as.numeric(yielddat$Catch)
+  yielddat$Depletion <- as.numeric(yielddat$Depletion)
+  yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
   if(verbose) print("Got forecast file",quote=F)
 }else{if(verbose) print("You skipped the forecast file",quote=F)}
 flush.console()
@@ -517,13 +523,14 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  if("sprseries" %in% return | return=="Yes") returndat$sprseries <- spr
  stats$last_years_sprmetric <- spr$spr[length(spr$spr)]
 
- #if(forecast){
+ if(forecast){
+  returndat$equil_yield <- yielddat
   # stats$spr_at_msy <- as.numeric(rawforcast[33,2])
   # stats$exploit_at_msy <- as.numeric(rawforcast[35,2])
   # stats$bmsy_over_VLHbzero <- as.numeric(rawforcast[38,3])
   # stats$retained_msy <- as.numeric(rawforcast[43,5])
- #}else{if(verbose) print("You skipped the MSY statistics",quote=F)}
- #flush.console()
+ }else{if(verbose) print("You skipped the equilibrium yield data",quote=F)}
+ flush.console()
 
  if("managementratiolabels" %in% return | return=="Yes") returndat$managementratiolabels <- managementratiolabels
 
