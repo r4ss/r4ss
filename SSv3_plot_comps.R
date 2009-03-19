@@ -321,7 +321,6 @@ SSv3_plot_comps <- function(
       } # end loop over combined/not-combined genders
     }# end if data
   } # end loop over fleet
-  print(titles)
   if(returntitles) return(titles)
 } # end SSv3_plot_comps function
 
