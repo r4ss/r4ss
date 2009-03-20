@@ -241,7 +241,7 @@ SSv3_plot_comps <- function(
                   if(length(dbase$Obs[dbase$Yr==aalyr])>0)
                   {
                       ### subplot 4: multi-panel plot of fit to conditional age at length for specific years
-                      ptitle <- paste("Age at length bin, ",title_sexmkt,FleetNames[f],sep="")
+                      ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,FleetNames[f],sep="")
                       titles <- c(ptitle,titles) # compiling list of all plot titles
                       ydbase <- dbase[dbase$Yr==aalyr,]
                       lenbinlegend <- paste(ydbase$Lbin_lo,lenunits,sep="")

@@ -1147,7 +1147,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       sprfunc()
       dev.off()}
 
-if(nseasons>1) print("skipping 1-SPR series plot because it's not yet configured for multi-season models")
+if(nseasons>1) print("skipping 1-SPR series plot because it's not yet configured for multi-season models",quote=F)
 if(nseasons==1){ # temporary disable until code cleanup
     sprfunc <- function(){
       plot(sprseries$Year,(1-sprseries$spr),xlab="Year",ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
