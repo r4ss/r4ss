@@ -310,7 +310,7 @@ SSv3_plot_comps <- function(
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
                       make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr,linesx=abindbase$Bin,linesy=abindbase$Exp,
-                                    nlegends=2,legtext=list(dbase$YrSeasName,"sampsize"),
+                                    nlegends=2,legtext=list(abindbase$YrSeasName,"sampsize"),
                                     sampsize=showsampsize*abindbase$N,bars=bars,linepos=(1-datonly)*linepos,
                                     main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
                                     fixrows=fixrows,fixcols=fixcols,ipage=ipage,...)
