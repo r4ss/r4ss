@@ -1,9 +1,10 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:20, print=0, printfolder="", dir="default", fleets="all", areas="all",
+    replist="ReportObject", plot=1:21, print=0, printfolder="", dir="default", fleets="all", areas="all",
     fleetcols="default", areacols="default", verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
-    aalresids=F, maxneff=5000, smooth=T, samplesizeON=T, compresidsON=T, pwidth=700, pheight=700,
-    maxrows = 6, maxcols = 6, cond.maxrows = 2, cond.maxcols = 4, fixrows = T, fixcols = T, newcompplots=F)
+    aalresids=F, maxneff=5000, smooth=T, samplesizeplots=T, compresidplots=T, showsampsize=T,
+    pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
+    maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4, fixrows = T, fixcols = T, newcompplots=F,...)
 {
 ################################################################################
 #
@@ -221,8 +222,8 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
   #### prepare for plotting
   if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
   # make plot window (operating system specific)
-  nplots <- length(intersect(1:19,plot))
-  nprints <- length(intersect(1:19,print))
+  nplots <- length(intersect(1:25,plot))
+  nprints <- length(intersect(1:25,print))
 
   if(length(grep('linux',version$os)) > 0) OS <- "Linux"
   if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
@@ -292,16 +293,16 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       gfunc4()
       gfunc3()}
     if(1 %in% print){
-      png(file=paste(plotdir,"1weightatsize.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"01_weightatsize.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       gfunc1()
       dev.off()
-      png(file=paste(plotdir,"1maturity.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"01_maturity.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       gfunc2()
       dev.off()
-      png(file=paste(plotdir,"1fecundity.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"01_fecundity.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       gfunc4()
       dev.off()
-      png(file=paste(plotdir,"1spawningoutput.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"01_spawningoutput.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       gfunc3()
       dev.off()}
 
@@ -343,7 +344,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     }
     if(1 %in% plot) gfunc4()
     if(1 %in% print){
-      png(file=paste(plotdir,"1sizeatage.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"01_sizeatage.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       gfunc4()
       dev.off()}
 
@@ -365,7 +366,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
       }
       if(1 %in% plot) mfunc()
       if(1 %in% print){
-        png(file=paste(plotdir,"1natmort.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"01_natmort.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         mfunc()
         dev.off()}
     }
@@ -400,10 +401,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)}
           if(2 %in% print){
-            png(file=paste(plotdir,"2timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"02_timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
-            png(file=paste(plotdir,"2timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"02_timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)
             dev.off()}
         }
@@ -447,10 +448,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)}
           if(3 %in% print)
-          { png(file=paste(plotdir,"3timevarylenselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          { png(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
-            png(file=paste(plotdir,"3timevarylenselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"03_timevarylenselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)
             dev.off()}
         }
@@ -468,10 +469,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)}
           if(3 %in% print)
-          { png(file=paste(plotdir,"3timevaryretsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          { png(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
-            png(file=paste(plotdir,"3timevaryretcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"03_timevaryretcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)
             dev.off()}
         }
@@ -500,7 +501,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         {
           if(4 %in% plot) selfunc()
           if(4 %in% print){
-            png(file=paste(plotdir,"4lenselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"04_lenselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             selfunc()
             dev.off()}
         }
@@ -537,10 +538,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
               persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
               contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,col=ians_blues,lwd=2)}
             if(3 %in% print){
-              png(file=paste(plotdir,"3timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
-              png(file=paste(plotdir,"3timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,col=ians_blues,lwd=2)
               dev.off()}
             plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
@@ -552,7 +553,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
              legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
             if(4 %in% plot){endselfunc()}
             if(4 %in% print)
-             {png(file=paste(plotdir,"4ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+             {png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
              endselfunc()
              dev.off()}
            }
@@ -571,7 +572,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
               legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
             if(4 %in% plot) endselfunc2()
             if(4 %in% print){
-              png(file=paste(plotdir,"4ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               endselfunc2()
               dev.off()}
           }
@@ -614,10 +615,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       tbiofunc()
       sbiofunc()}
     if(5 %in% print){
-      png(file=paste(plotdir,"5totbio.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"05_totbio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       tbiofunc()
       dev.off()
-      png(file=paste(plotdir,"5summarybio.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"05_summarybio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       sbiofunc()
       dev.off()}
 
@@ -645,7 +646,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     if(5 %in% plot) landfunc()
     if(5 %in% print){
-      png(file=paste(plotdir,"5landings.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"05_landings.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       landfunc()
       dev.off()}
 
@@ -661,7 +662,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       for(xx in 1:nfishfleets){lines(ts$Yr[3:(ls-1)],totcatchmat[3:(ls-1),xx],type="l",col=fleetcols[xx])}}
       if(5 %in% plot) catfunc()
       if(5 %in% print){
-        png(file=paste(plotdir,"5totcatch.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"05_totcatch.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         catfunc()
       dev.off()}
     }
@@ -685,7 +686,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     }
     if(5 %in% plot) Hratefunc()
     if(5 %in% print){
-      png(file=paste(plotdir,"5harvestrates.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"05_harvestrates.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       Hratefunc()
       dev.off()}
 
@@ -703,7 +704,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       }
       if(5 %in% plot){discfunc()}
       if(5 %in% print)
-      {png(file=paste(plotdir,"5discards.png",sep=""),width=pwidth,height=pheight)
+      {png(file=paste(plotdir,"05_discards.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         discfunc()
       dev.off()}
     }
@@ -726,7 +727,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         }
         if(5 %in% plot){discfunc2()}
         if(5 %in% print)
-        {png(file=paste(plotdir,"5discardfraction.png",sep=""),width=pwidth,height=pheight)
+        {png(file=paste(plotdir,"05_discardfraction.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           discfunc2()
         dev.off()}
       }
@@ -747,7 +748,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       abline(h=0,col="grey")}
     if(6 %in% plot) recfunc()
     if(6 %in% print){
-      png(file=paste(plotdir,"6recruits.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"06_recruits.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       recfunc()
       dev.off()}
 
@@ -764,7 +765,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         points(x[x>termyr],y[x>termyr],col="red",pch=19)}
       if(6 %in% plot) recfunc2()
       if(6 %in% print){
-        png(file=paste(plotdir,"6recruitswforecast.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"06_recruitswforecast.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         recfunc2()
         dev.off()}
       }
@@ -791,7 +792,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         abline(h=0,col="grey")}
       if(6 %in% plot) recfunc3(maxyr=endyr+1)
       if(6 %in% print){
-        png(file=paste(plotdir,"6recswintervals.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"06_recswintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         recfunc3(maxyr=endyr+1)
         dev.off()}
 
@@ -803,7 +804,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         abline(h=0,col="grey")}
         if(6 %in% plot) recfunc4(maxyr)
         if(6 %in% print){
-          png(file=paste(plotdir,"6recswforecastintervals.png",sep=""),width=pwidth,height=pheight)
+          png(file=paste(plotdir,"06_recswforecastintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           recfunc4(maxyr)
           dev.off()}
       }
@@ -842,14 +843,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     }
     if(7 %in% plot) sbfunc(timeseries=timeseries,forecastplot=F)
     if(7 %in% print){
-      png(file=paste(plotdir,"7spawnbio.png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"07_spawnbio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       sbfunc(timeseries=timeseries,forecastplot=F)
       dev.off()}
 
     if(forecastplot){
       if(7 %in% plot) sbfunc(timeseries=timeseries,forecastplot=T)
       if(7 %in% print){
-        png(file=paste(plotdir,"7spawnbiowforecast.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"07_spawnbiowforecast.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         sbfunc(timeseries=timeseries,forecastplot=T)
         dev.off()}
     }
@@ -886,7 +887,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         }
       if(7 %in% plot) sbfunc3()
       if(7 %in% print){
-        png(file=paste(plotdir,"7spawnbiointerval.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"07_spawnbiointerval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         sbfunc3()
         dev.off()}
 
@@ -914,7 +915,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             }
           if(7 %in% plot) sbfunc4()
           if(7 %in% print){
-            png(file=paste(plotdir,"7spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"07_spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             sbfunc4()
             dev.off()}
         } # forecastplot
@@ -944,7 +945,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
      for(iarea in areas){
       if(8 %in% plot) depfunc(iarea)
       if(8 %in% print){
-       png(file=paste(plotdir,"8depletion.png",sep=""),width=pwidth,height=pheight)
+       png(file=paste(plotdir,"08_depletion.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
        depfunc(iarea)
        dev.off()}
       }
@@ -967,7 +968,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
        }
       if(8 %in% plot) depfunc2()
       if(8 %in% print){
-        png(file=paste(plotdir,"8depletioninterval.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"08_depletioninterval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         depfunc2()
         dev.off()}
       } # end if uncertainty
@@ -1004,7 +1005,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
        if(8 %in% plot) {
         depfunc3(iarea)}
        if(8 %in% print){
-        png(file=paste(plotdir,"8depletionforecast.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"08_depletionforecast.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         depfunc3(iarea)
         dev.off()}
       } # end areas
@@ -1045,7 +1046,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(8 %in% plot){
        depfunc4(iarea)}
       if(8 %in% print){
-       png(file=paste(plotdir,"8depletionforecastinterval.png",sep=""),width=pwidth,height=pheight)
+       png(file=paste(plotdir,"08_depletionforecastinterval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
        depfunc4(iarea)
        dev.off()}
       } # end if uncertainty==T
@@ -1067,7 +1068,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           abline(h=0,col="black")}
         if(9 %in% plot) recdevfunc()
         if(9 %in% print){
-          png(file=paste(plotdir,"9recdevs.png",sep=""),width=pwidth,height=pheight)
+          png(file=paste(plotdir,"09_recdevs.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           recdevfunc()
           dev.off()}
     if(uncertainty){
@@ -1081,7 +1082,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           abline(h=sigr,col="red")}
         if(9 %in% plot) recdevfunc2()
         if(9 %in% print){
-          png(file=paste(plotdir,"9recdevvarcheck.png",sep=""),width=pwidth,height=pheight)
+          png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           recdevfunc2()
           dev.off()}
       } # rec devs
@@ -1122,7 +1123,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             points(yr,ex,col="blue",cex=2,pch="-")}
           if(10 %in% plot) bdywtfunc()
           if(10 %in% print){
-            png(file=paste(plotdir,"10bodywtfit",i,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"10_bodywtfit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             bdywtfunc()
             dev.off()}
         } # market
@@ -1142,9 +1143,11 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       abline(h=1,col="grey")}
     if(11 %in% plot) sprfunc()
     if(11 %in% print){
-      png(file=paste(plotdir,"11sprseries",i,".png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"11_sprseries",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       sprfunc()
       dev.off()}
+
+if(nseasons>1) print("skipping 1-SPR series plot because it's not yet configured for multi-season models")
 if(nseasons==1){ # temporary disable until code cleanup
     sprfunc <- function(){
       plot(sprseries$Year,(1-sprseries$spr),xlab="Year",ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
@@ -1153,7 +1156,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       abline(h=1,col="grey")}
     if(11 %in% plot) sprfunc()
     if(11 %in% print){
-      png(file=paste(plotdir,"111minussprseries",i,".png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"11_1minussprseries",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       sprfunc()
       dev.off()}
 
@@ -1176,7 +1179,7 @@ if(nseasons==1){ # temporary disable until code cleanup
        }
       if(11 %in% plot) sprfunc2()
       if(11 %in% print){
-        png(file=paste(plotdir,"11sprratiointerval.png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"11_sprratiointerval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         sprfunc2()
         dev.off()}
        }
@@ -1201,7 +1204,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       abline(v=1,col="red",lty=2)}
     if(11 %in% plot) phasefunc()
     if(11 %in% print){
-      png(file=paste(plotdir,"11sprphase",i,".png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"11_sprphase",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       phasefunc()
       dev.off()}
     if(verbose) print("Finished plot 11: SPR",quote=F)
@@ -1227,7 +1230,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       points(x,recruit$pred_recr,col="red")}
     if(12 %in% plot) recruitfun()
     if(12 %in% print){
-      png(file=paste(plotdir,"12srcurve",i,".png",sep=""),width=pwidth,height=pheight)
+      png(file=paste(plotdir,"12_srcurve.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       recruitfun()
       dev.off()}
     if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=F)
@@ -1259,12 +1262,12 @@ if(nseasons==1){ # temporary disable until code cleanup
           psmooth <- loess(z~y,degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
       if(13 %in% print){
-        png(file=paste(plotdir,"13cpuefit",i,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"13_cpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
         abline(h=0,col="grey")
         lines(x,z,lwd=2,col="blue")
         dev.off()
-        png(file=paste(plotdir,"13cpuecheck",i,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"13cpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plot(y,z,xlab=xlab,main=main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
@@ -1289,11 +1292,11 @@ if(nseasons==1){ # temporary disable until code cleanup
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
       }
       if(13 %in% print){
-        png(file=paste(plotdir,"13logcpuefit",i,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"13_logcpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,lty=1)
         lines(x,log(z),lwd=2,col="blue")
         dev.off()
-        png(file=paste(plotdir,"13logcpuecheck",i,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"13_logcpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plot(log(y),log(z),xlab=xlab,main=main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
         lines(x=c(log(min(z)),log(max(z))),y=c(log(min(z)),log(max(z))),col="black")
         if(npoints > 3 & smooth){
@@ -1357,10 +1360,10 @@ if(nseasons==1){ # temporary disable until code cleanup
           if(14 %in% print){
             filepart <- paste("_sex",m,sep="")
             if(nareas > 1) filepart <- paste("_area",iarea,filepart,sep="")
-            png(file=paste(plotdir,"14natage",filepart,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             print(nage)
             dev.off()
-            png(file=paste(plotdir,"14meanage",filepart,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
             dev.off()}
         }
@@ -1386,7 +1389,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         } # close if more than one key statement
       } # end if 14 in plot
       if(14 %in% print){
-        png(file=paste(plotdir,"14ageerrorkeys",filepart,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"14_ageerrorkeys.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
         if(n_age_error_keys > 1){
           for(i in 2:n_age_error_keys){
@@ -1410,10 +1413,10 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
 
-  if(length(intersect(15:16,c(plot, print)))>0) # plots 15 and 16
+  if(length(intersect(15:17,c(plot, print)))>0) # plots 15-17
   if(!datplot)
   {
-    print("skipped data-only plots 15 and 16 because input 'datplot=F'",quote=F)
+    print("skipped data-only plots 15-17 because input 'datplot=F'",quote=F)
   }else{
    # Index data plots only
     for(i in unique(cpue$Fleet)){
@@ -1428,7 +1431,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
         plotCI(x=x,y=y,z=y,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
         abline(h=0,col="grey")}
       if(13 %in% print){
-        png(file=paste(plotdir,"13cpuedata",i,".png",sep=""),width=pwidth,height=pheight)
+        png(file=paste(plotdir,"13cpuedata",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         plotCI(x=x,y=y,z=y,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
         abline(h=0,col="grey")
         dev.off()}
@@ -1451,7 +1454,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
           for(j in unique(ldat$Part))
           {
             ldat2 <- ldat[ldat$Part%in%j,]
-            if(nseasons > 1){ldat2$Yr <- ldat2$Yr + (ldat2$Seas - 1)*(1/nseasons) + (1/nseasons)/2}
+            if(nseasons > 1){ldat2$Yr <- ldat2$Yr + (ldat2$Seas - 1)/nseasons + 0.5/nseasons}
             ldat2$plotyear <- as.factor(ldat2$Yr)
             ldat2$plotbins <- ldat2$Bin
             ldat2 <- ldat2[!is.na(ldat2$plotbins),]
@@ -1481,7 +1484,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             if(15 %in% print){
               sex <- 1
               if(k==3) sex <- 2
-              png(file=paste(plotdir,"15lendatbar_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"15lendatbar_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               print(trellis2)
               dev.off()}
             resx <- as.numeric(as.character(ldat2$plotyear))
@@ -1502,7 +1505,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             if(15 %in% print){
               sex <- 1
               if(k==3){sex <- 2}
-              png(file=paste(plotdir,"15lendatbub_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"15_lendatbub_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               print(bub)
               dev.off()}
           } # market
@@ -1531,7 +1534,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             for(j in unique(adat$Part))
             {
               adat2 <- adat[adat$Part%in%j,]
-              if(nseasons > 1){adat2$Yr <- adat2$Yr + (adat2$Seas - 1)*(1/nseasons) + (1/nseasons)/2}
+              if(nseasons > 1){adat2$Yr <- adat2$Yr + (adat2$Seas - 1)/nseasons + 0.5/nseasons}
               adat2$plotyear <- as.factor(adat2$Yr)
               adat2$plotbins <- adat2$Bin
               adat2 <- adat2[!is.na(adat2$plotbins), ]
@@ -1564,7 +1567,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               if(16 %in% print)
               { sex <- 1
                 if(k==3){sex <- 2}
-                png(file=paste(plotdir,"16agedatbar_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                png(file=paste(plotdir,"16_agedatbar_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                 print(trellis2)
                 dev.off()}
               resx <- as.numeric(as.character(adat2$plotyear))
@@ -1585,7 +1588,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               if(16 %in% print)
               { sex <- 1
                 if(k==3){sex <- 2}
-                png(file=paste(plotdir,"16lendatbub_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                png(file=paste(plotdir,"16_lendatbub_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                 print(trellis2)
                 dev.off()}
             } # market
@@ -1593,6 +1596,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
         } # non-conditional check
       } # if ages
     } # fleets
+    if(verbose) print("Finished plot 16: age comp data ",quote=F)
 
     # conditional data
     for(i in fleets)
@@ -1626,7 +1630,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
           years <- years[order(years)]
           nyears <- length(years)
 
-          if(16 %in% plot)
+          if(17 %in% plot)
           {
             plotspot <- 2
             plotspot2 <- 1
@@ -1635,7 +1639,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             for(fy in 1:nyears)
             {
               more <- T
-              if(fy==nyears | fy %in% c(8,16,24,32,40,48,56)){more<-F}
+              if(fy - (as.integer(fy/8)*8) == 0) {more <-F}
               cadatuse <- cadat[cadat$Yr %in% years[fy],]
               resx <- cadatuse$plotbins
               resy <- cadatuse$lenbin2
@@ -1660,16 +1664,16 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               if(plotspot==6){plotspot <- 2}
             } # nyears
           } # plot
-          if(16 %in% print)
+          if(17 %in% print)
           {
             page <- 1
             plotspot <- 2
             plotspot2 <- 1
-            png(file=paste(plotdir,"16ageatlen_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight)
+            png(file=paste(plotdir,"17_ageatlen_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             for(fy in 1:nyears)
             {
               more <- T
-              if(fy==nyears | fy %in% c(8,16,24,32,40,48,56)){more<-F}
+              if(fy - (as.integer(fy/8)*8) == 0) {more <-F}
               cadatuse <- cadat[cadat$Yr==years[fy],]
               resx <- cadatuse$plotbins
               resy <- cadatuse$lenbin2
@@ -1696,19 +1700,19 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 dev.off()
                 plotspot2 <- 1
                 page <- page + 1
-                if(!(fy==nyears)){png(file=paste(plotdir,"16ageatlen_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight)}
+                if(!(fy==nyears)){png(file=paste(plotdir,"17_ageatlen_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)}
               }
             } # nyears
           } # print
         } # m
       } # if fleets
     } # fleet loop
-    if(verbose) print("Finished plot 16: age comp data ",quote=F)
+    if(verbose) print("Finished plot 17: conditional age at length data ",quote=F)
     flush.console()
   } # if datplot
 
-  # Plot 17: length comps with fits
-  if(17 %in% c(plot, print))
+  # Plot 18: length comps with fits
+  if(18 %in% c(plot, print))
   {
     for(i in fleets)
     {
@@ -1726,7 +1730,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
           for(j in unique(lfit$Part))
           {
             lfit2 <- lfit[lfit$Part %in% j,]
-            if(nseasons > 1){lfit2$Yr <- lfit2$Yr + (lfit2$Seas - 1)*(1/nseasons) + (1/nseasons)/2}
+            if(nseasons > 1){lfit2$Yr <- lfit2$Yr + (lfit2$Seas - 1)/nseasons + 0.5/nseasons}
             lfit2$plotyear <- as.factor(lfit2$Yr)
             lfit2$plotbins <- lfit2$Bin
             lfit2 <- lfit2[!is.na(lfit2$plotbins),]
@@ -1746,7 +1750,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               if(j==0){plottitle <- paste("Sample size for male whole catch lengths for ", FleetNames[i],sep="")}}
             ymax <- max(lfit2$effN)
             xmax <- max(lfit2$N)
-    if(samplesizeON){
+    if(samplesizeplots){
             lfitfunc <- function()
             {
               plot(lfit2$N,lfit2$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
@@ -1757,11 +1761,11 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               { psmooth <- loess(lfit2$effN~lfit2$N,degree=1)
                 lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
             }
-            if(17 %in% plot) lfitfunc()
-            if(17 %in% print){
+            if(18 %in% plot) lfitfunc()
+            if(18 %in% print){
               sex <- 1
               if(k==3){sex <- 2}
-              png(file=paste(plotdir,"17lendatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"18_lendatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               lfitfunc()
               dev.off()}
     }
@@ -1793,11 +1797,11 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             if(17 %in% print){
               sex <- 1
               if(k==3){sex <- 2}
-              png(file=paste(plotdir,"17lendatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"18_lendatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               print(print(trellis1))
               dev.off()}
 
-            if(compresidsON){
+            if(compresidplots){
               resx <- as.numeric(lfit2$Yr)
               resy <- as.numeric(lfit2$plotbins)
               resz <- as.numeric(lfit2$Pearson)
@@ -1825,14 +1829,14 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
               bub <- bubble2(plotbub,xlab="Year",ylab="Length bin (cm)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
                            key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-              if(17 %in% plot) print(bub)
-              if(17 %in% print){
+              if(18 %in% plot) print(bub)
+              if(18 %in% print){
                 sex <- 1
                 if(k==3){sex <- 2}
-                png(file=paste(plotdir,"17lendatresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                png(file=paste(plotdir,"18_lendatresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                 print(bub)
                 dev.off()}
-            } # end if compresidsON
+            } # end if compresidplots
             ### this didn't work, explore later: add a histogram of the Pearson residuals
             #par(mfrow=c(2,2)) #pearsons <- mcmc(as.numeric(plotfems$Pearson))
             #pearsons[pearsons > 5] <- 5 #pearsons[pearsons < -5] <- -5
@@ -1845,12 +1849,12 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
         } # k loop
       } # if lengths
     } # fleet loop for lengths
-    if(verbose) print("Finished plot 17: length comps with fits",quote=F)
+    if(verbose) print("Finished plot 18: length comps with fits",quote=F)
     flush.console()
-  } # end if 17 in plot or print
+  } # end if 18 in plot or print
 
-  # Plot 18: traditional age comps
-  if(18 %in% c(plot, print))
+  # Plot 19: traditional age comps
+  if(19 %in% c(plot, print))
   {
     for(i in fleets)
     {
@@ -1868,7 +1872,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
           for(j in unique(afit$Part))
           {
             afit2 <- afit[afit$Part==j,]
-            if(nseasons > 1){afit2$Yr <- afit2$Yr + (afit2$Seas - 1)/nseasons + 1/(2*nseasons)}
+            if(nseasons > 1){afit2$Yr <- afit2$Yr + (afit2$Seas - 1)/nseasons + 0.5/nseasons}
             afit2$plotyear <- as.factor(afit2$Yr)
             afit2$plotbins <- afit2$Bin
             afit2 <- afit2[!is.na(afit2$plotbins),]
@@ -1876,7 +1880,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             afit2$plotexp <- afit2$Exp
 
             # may optionally turn of sample size plots in #18
-            if(samplesizeON){
+            if(samplesizeplots){
 
               if(k==1){
                 plottitle <- paste("Sample size for sexes combined discard ages for ", FleetNames[i],sep="")
@@ -1901,14 +1905,14 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 { psmooth <- loess(afit2$effN~afit2$N,degree=1)
                   lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
               }
-              if(18 %in% plot){afitssfunc()}
-              if(18 %in% print)
+              if(19 %in% plot){afitssfunc()}
+              if(19 %in% print)
               { sex <- 1
                 if(k==3){sex <- 2}
-                png(file=paste(plotdir,"18agedatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                png(file=paste(plotdir,"18agedatfitsampsize_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                 afitssfunc()
                 dev.off()}
-            } # end if samplesizeON
+            } # end if samplesizeplots
             if(k==1){
               plottitle <- paste("Combined sex discard age fits for ", FleetNames[i],sep="")
               if(j==2){plottitle <- paste("Combined sex retained age fits for ", FleetNames[i],sep="")}
@@ -1932,16 +1936,16 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             trellis1 <- xyplot(trellval~plotbins|plotyear,as.table=T,groups=obsexp,type=c("l","p"),pch=c(NA,1),lty=c(1,0),lwd=1.5,
                                strip=strip.custom(bg="grey"),ylab="Proportion",xlab="Age bin (yr)",col=c("red","black","red","black"),
                                cex=0.6,main=plottitle,scales=list(relation="same",alternating="1",tck=c(1,0)),data=trellfems)
-            if(18 %in% plot){print(trellis1)}
-            if(18 %in% print)
+            if(19 %in% plot){print(trellis1)}
+            if(19 %in% print)
             { sex <- 1
               if(k==3){sex <- 2}
-              png(file=paste(plotdir,"18agedatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"19_agedatfit_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               print(trellis1)
               dev.off()}
 
             # may optionally turn of residual plots in #18
-            if(compresidsON){
+            if(compresidplots){
                 resx <- afit2$Yr
                 resy <- afit2$plotbins
                 resz <- afit2$Pearson
@@ -1973,10 +1977,10 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 if(18 %in% print)
                 { sex <- 1
                   if(k==3){sex <- 2}
-                  png(file=paste(plotdir,"18agedatfitresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight)
+                  png(file=paste(plotdir,"19_agedatfitresids_flt",i,"sex",sex,"mkt",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                   print(bub)
                   dev.off()}
-            } # end if compresidsON
+            } # end if compresidplots
           } # market
         } # k loop
       } # if lengths exist
@@ -1984,7 +1988,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
     if(verbose) print("Finished traditional age comps",quote=F)
 
     ## Effective sample sizes for conditional age data
-  if(samplesizeON){
+  if(samplesizeplots){
     for(i in fleets)
     {
       if(length(agedbase$Obs[agedbase$Fleet==i])>0)
@@ -2013,15 +2017,15 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             if(npoints > 6 & smooth & length(unique(femsamps$N))>6){
               psmooth <- loess(femsamps$effN~femsamps$N,degree=1)
               lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
-          if(18 %in% plot) alenssfunc()
-          if(18 %in% print){
-            png(file=paste(plotdir,"18ageatlensamplesize_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          if(20 %in% plot) alenssfunc()
+          if(20 %in% print){
+            png(file=paste(plotdir,"20_ageatlensamplesize_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             alenssfunc()
             dev.off()}
         } # m
       } # if ages
     } # fleet loop
-   } # end if samplesizeON
+   } # end if samplesizeplots
 
     # aalyear and make year-specific key if positive
     if(aalyear[1] > 0)
@@ -2069,9 +2073,9 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 trellis1 <- xyplot(trellval~plotbins| lenbin,as.table=T,groups=group,type=typ,pch=pch,lty=lty,lwd=1.5,
                                    strip=strip.custom(bg="grey"),ylab="Proportion",xlab="Age (yrs)",col=col,cex=0.6,main=plottitle,
                                    scales=list(relation="same",alternating="1",tck=c(1,0)),data=aydat)
-                if(18 %in% plot){print(trellis1)}
-                if(18 %in% print)
-                { png(file=paste(plotdir,"18ageatlenyearfit_flt",i,"sex",m,"year",j,".png",sep=""),width=pwidth,height=pheight)
+                if(20 %in% plot){print(trellis1)}
+                if(20 %in% print)
+                { png(file=paste(plotdir,"20_ageatlenyearfit_flt",i,"sex",m,"year",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                   print(trellis1)
                   dev.off()}
                 resx <- aydat$plotbins
@@ -2086,9 +2090,9 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
                 bub <- bubble2(plotbub,xlab="Age",ylab="Length bin (cm)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
                                key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-                if(18 %in% plot){print(bub)}
-                if(18 %in% print)
-                { png(file=paste(plotdir,"18ageatlenyearresids_flt",i,"sex",m,"year",j,".png",sep=""),width=pwidth,height=pheight)
+                if(20 %in% plot){print(bub)}
+                if(20 %in% print)
+                { png(file=paste(plotdir,"20_ageatlenyearresids_flt",i,"sex",m,"year",j,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                   print(bub)
                   dev.off()}
               } # m
@@ -2099,16 +2103,21 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
     } # aalyear statement
     if(verbose) print("Finished age at length residuals",quote=F)
 
+    print('before aalbin')
+    print(aalbin)
     ## aalbin and make bin-specific key over all years if positive ###
     if(aalbin > 0)
     {
+        print(aalbin)
       if(length(agedbase$Obs[agedbase$Lbin_hi %in% aalbin])>0)
       {
         agedbase2 <- agedbase[agedbase$Lbin_hi %in% aalbin,]
+        print(head(agedbase2))
         for(i in fleets)
         {
           if(length(agedbase2$Obs[agedbase2$Fleet==i])>0)
           {
+            print(" in aalbin plot")
             agedbasefleet <- agedbase2[agedbase2$Fleet==i,]
             agedbasefleet <- agedbasefleet[(agedbasefleet$Lbin_hi==agedbasefleet$Lbin_lo),]
             testor <- length(agedbasefleet$Obs[agedbasefleet$Gender==1])>0
@@ -2137,12 +2146,12 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
               lty <- c(rep(1,ngrps),0)
               col <- c(rep("red",ngrps),"black")
               plottitle <- paste("Age at length ",lbins[aalbin]," cm, for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
-              trellis1 <- xyplot(trellval~plotbins|year,as.table=T,groups=group,type=typ,pch=pch,lty=lty,lwd=1.5,
+              trellis1 <- xyplot(trellval~plotbins|Yr,as.table=T,groups=group,type=typ,pch=pch,lty=lty,lwd=1.5,
                                  strip=strip.custom(bg="grey"),ylab="Proportion",xlab="Age (yrs)",col=col,cex=0.6,
                                  main=plottitle,scales=list(relation="same",alternating="1",tck=c(1,0)),data=abin)
-              if(18 %in% plot){print(trellis1)}
-              if(18 %in% print)
-              { png(file=paste(plotdir,"18ageatlenbinfit_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+              if(20 %in% plot){print(trellis1)}
+              if(20 %in% print)
+              { png(file=paste(plotdir,"20ageatlenbinfit_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
                 print(trellis1)
                 dev.off()}
             } # m
@@ -2189,7 +2198,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
             years <- unique(ares$Yr)
             years <- years[order(years)]
             nyears <- length(years)
-            if(18 %in% plot)
+            if(20 %in% plot)
             {
               plotspot <- 2
               plotspot2 <- 1
@@ -2224,12 +2233,12 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                 if(plotspot==6){plotspot <- 2}
               }
             } # plot
-            if(18 %in% print)
+            if(20 %in% print)
             {
               page <- 1
               plotspot <- 2
               plotspot2 <- 1
-              png(file=paste(plotdir,"18ageatlenresids_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight)
+              png(file=paste(plotdir,"20ageatlenresids_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               for(fy in 1:nyears)
               {
                 more <- T
@@ -2261,7 +2270,7 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
                   dev.off()
                   plotspot2 <- 1
                   page <- page + 1
-                  if(!(fy==nyears)){png(file=paste(plotdir,"18ageatlenresids_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight)}
+                  if(!(fy==nyears)){png(file=paste(plotdir,"20ageatlenresids_flt",i,"sex",m,"page",page,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)}
                 }
               } # nyears
             } # print
@@ -2269,67 +2278,102 @@ if(!newcompplots) # switch to allow transition to new non-trellis composition pl
         } # if fleet
       } # fleets
     } # aalresids
-    if(verbose) print("Finished plot 18: age comps",quote=F)
+    if(verbose) print("Finished plot 20: conditional age at length with fits",quote=F)
     flush.console()
-  } # end if 18 in plot or print
+  } # end if 20 in plot or print
 
 } # end if not using newcompplots switch
 
 if(newcompplots) # switch to allow transition to new non-trellis composition plots
 {
 
-  # Composition data plots 15-18
+  # Composition data plots 15-20
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
   latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
 
-  # Plots of data only
-  if(datplot) # data only aspects
+  if(!datplot)
   {
-    if(15 %in% c(plot,print))
+    print("skipped data-only plots 15-17 because input 'datplot=F'",quote=F)
+  }else{
+    if(15 %in% c(plot,print))  # data only aspects
     {
       # length comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,
-        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir)
+      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,verbose=verbose,
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                      maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                      png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # length comp bubble plot
       SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=T,
-        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir)
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                      maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                      png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) print("Finished plot 15: length comp data",quote=F)
+      flush.console()
     }
     if(16 %in% c(plot,print))
     {
       # age comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,
-        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
+      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,verbose=verbose,
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                      maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                      png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # age comp bubble plot
-       SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,
-        maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
-      # conditional age plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,
-        maxrows=cond.maxrows,maxcols=cond.maxcols,fixrows=fixrows,fixcols=fixcols,png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir)
+      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,verbose=verbose,
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                      maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                      png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) print("Finished plot 16: age comp data",quote=F)
+      flush.console()
     }
-    flush.console()
+    if(17 %in% c(plot,print))
+    {
+      # conditional age plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,verbose=verbose,
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                      maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
+                      fixrows=fixrows,fixcols=fixcols,
+                      png=(17%in%print),GUI=(17%in%plot),plotdir=plotdir,cex.main=cex.main,...)
+      if(verbose) print("Finished plot 17: conditional age at length data",quote=F)
+      flush.console()
+    }
   } # datplot
 
   # plot of length comp data with fits, sample size, etc.
-  if(17 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,samp=T,maxrows=maxrows,maxcols=maxcols,
-                    fixrows=fixrows,fixcols=fixcols,png=(17%in%print),GUI=(17%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
-    if(verbose) print("Finished plot 17: length comps with fits",quote=F)
+  if(18 %in% c(plot,print)){
+    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,verbose=verbose,
+                    samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                    maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                    png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
+                    maxneff=maxneff,cex.main=cex.main,...)
+    if(verbose) print("Finished plot 18: length comps with fits",quote=F)
+    flush.console()
   }
 
   # plot of age comp data with fits, sample size, etc.
-  if(18 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,samp=T,maxrows=maxrows,maxcols=maxcols,
-                    fixrows=fixrows,fixcols=fixcols,png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
-    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,samp=T,maxrows=cond.maxrows,maxcols=cond.maxcols,
-                    fixrows=fixrows,fixcols=fixcols,png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,maxneff=maxneff)
-    if(verbose) print("Finished plot 18: age comps with fits",quote=F)
+  if(19 %in% c(plot,print)){
+    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,
+                    samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                    maxrows=maxrows,maxcols=maxcols,fixrows=fixrows,fixcols=fixcols,
+                    png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
+                    maxneff=maxneff,cex.main=cex.main,...)
+    if(verbose) print("Finished plot 19: age comps with fits",quote=F)
     flush.console()
-  } # end if 18 in plot or print
+  } # end if 19 in plot or print
+
+  if(20 %in% c(plot,print)){
+    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,verbose=verbose,
+                    aalbin=aalbin,aalyear=aalyear,
+                    samplesizeplots=samplesizeplots,showsampsize=showsampsize,
+                    maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
+                    fixrows=fixrows,fixcols=fixcols,
+                    png=(20%in%print),GUI=(20%in%plot),smooth=smooth,plotdir=plotdir,
+                    maxneff=maxneff,cex.main=cex.main,...)
+    if(verbose) print("Finished plot 20: conditional age at length with fits",quote=F)
+    flush.console()
+  } # end if 20 in plot or print
 
   # this didn't work, explore later: add a histogram of the Pearson residuals
   #
@@ -2343,8 +2387,8 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
 
 } # end if using newcompplots switch
 
-  # Plot 19: length at age data
-  if(19 %in% c(plot, print))
+  # Plot 21: length at age data
+  if(21 %in% c(plot, print))
   {
     for(i in fleets)
     {
@@ -2357,7 +2401,7 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
         for(m in (1:2)[testor])
         {
           la <- plotlens[plotlens$Gender==m,] # females or males
-          if(nseasons > 1){la$Yr <- la$Yr + (la$Seas - 1)*(1/nseasons) + (1/nseasons)/2}
+          if(nseasons > 1){la$Yr <- la$Yr + (la$Seas - 1)/nseasons + 0.5/nseasons}
           la$plotyear <- as.factor(la$Yr)
           la$plotbins <- la$Bin
           la <- la[!is.na(la$plotbins), ]
@@ -2377,9 +2421,9 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
              # psmooth <- loess(la$effN~la$N,degree=1)
              # lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
 	  #  }
-          #if(19 %in% plot){lenatagefunc()}
-          #if(19 %in% print)
-          # {png(file=paste(plotdir,"19lenatagesampsize_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          #if(21 %in% plot){lenatagefunc()}
+          #if(21 %in% print)
+          # {png(file=paste(plotdir,"21_lenatagesampsize_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           # lenatagefunc()
           # dev.off()}
           plottitle <- paste("Length-at-age fits for sexes combined, ", FleetNames[i],sep="")
@@ -2395,9 +2439,9 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
           trellis1 <- xyplot(trellval~plotbins|plotyear,as.table=T,groups=obsexp,type=c("l","p"),pch=c(NA,1),lty=c(1,0),lwd=1.5,
                              strip=strip.custom(bg="grey"),ylab="Length (cm)",xlab="Age (yr)",col=c("red","black","red","black"),
                              cex=0.6,main=plottitle,scales=list(relation="same",alternating="1",tck=c(1,0)),data=la2)
-          if(19 %in% plot) print(trellis1)
-          if(19 %in% print){
-            png(file=paste(plotdir,"19lenatagefit_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          if(21 %in% plot) print(trellis1)
+          if(21 %in% print){
+            png(file=paste(plotdir,"21_lenatagefit_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             print(trellis1)
             dev.off()}
           resx <- la$Yr
@@ -2417,30 +2461,30 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
           plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
           bub <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
                          key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-          if(19 %in% plot) print(bub)
-          if(19 %in% print){
-            png(file=paste(plotdir,"19lenatageresids_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight)
+          if(21 %in% plot) print(bub)
+          if(21 %in% print){
+            png(file=paste(plotdir,"21_lenatageresids_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             print(bub)
             dev.off()}
         } # m
       } # if lengths
     } # fleets
-    if(verbose) print("Finished plot 19: length at age data",quote=F)
+    if(verbose) print("Finished plot 21: length at age data",quote=F)
     flush.console()
-  } # end if 19 in plot or print
+  } # end if 21 in plot or print
 
-  if(20 %in% c(plot, print))
+  if(22 %in% c(plot, print))
   {
    if(!is.null(equil_yield[1,1])){
    yieldfunc <- function(){
    plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
         type="l",lwd=2,col="blue")}
-   if(20 %in% plot){yieldfunc()}
-   if(20 %in% print){
-    png(file=paste(plotdir,"20yield",filepart,".png",sep=""),width=pwidth,height=pheight)
+   if(22 %in% plot){yieldfunc()}
+   if(22 %in% print){
+    png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
     yieldfunc()
     dev.off()}
-    if(verbose) print("Finished plot 20: yield curve",quote=F)
+    if(verbose) print("Finished plot 22: yield curve",quote=F)
     }
   }
 
