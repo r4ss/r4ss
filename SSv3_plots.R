@@ -233,6 +233,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchc
     if(OS=="Windows") windows(record=TRUE)
     if(OS=="Linux") X11()
     if(OS=="Mac") quartz()
+    plotdir <- NULL
   }
   if(nprints>0){
     if(dir=="default") dir <- inputs$dir
@@ -2300,6 +2301,7 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
   }else{
     if(15 %in% c(plot,print))  # data only aspects
     {
+        print(plotdir)
       # length comp bar plot
       SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,verbose=verbose,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,

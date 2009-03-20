@@ -37,7 +37,7 @@ SSv3_plot_comps <- function(
 ################################
 
   titles <- NULL
-  if(png & is.na(plotdir)) return("plotdir must be specified to write png files.")
+  if(png) if(is.na(plotdir)) return("plotdir must be specified to write png files.")
 
   nfleets    <- replist$nfleets
   FleetNames <- replist$FleetNames
