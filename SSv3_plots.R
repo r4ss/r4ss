@@ -1,5 +1,5 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:21, print=0, printfolder="", dir="default", fleets="all", areas="all",
+    replist="ReportObject", plot=1:22, print=0, printfolder="", dir="default", fleets="all", areas="all",
     fleetcols="default", areacols="default", verbose=T, uncertainty=T,
     forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
