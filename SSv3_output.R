@@ -46,7 +46,7 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols="all",matchcol1=1,mat
 
 # get info on output files created by SSv3
 dir <- paste(dir,"/",sep="")
-shortrepfile <- repfile 
+shortrepfile <- repfile
 repfile <- paste(dir,repfile,sep="")
 repfiletime <- file.info(repfile)$mtime
 if(model=="default")
@@ -89,10 +89,10 @@ if(covar){
     print("CoVar file not found. Change input to covar=F, or modify 'covarfile' input.",quote=F)
     return()
   }
-  
+
   # time check
   covartime <- file.info(covarfile)$mtime
-  difftimelimit <- 10
+  difftimelimit <- 20
   if(abs(as.numeric(difftime(covartime,repfiletime,units="secs")))>difftimelimit){
     print(paste(shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
     return()
@@ -105,7 +105,7 @@ flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
 SS_version <- rawrep[1,1]
 if(!(substr(SS_version,1,9)%in%paste("SS-V3.02",c("B","C","D","E","F"),sep=""))){
-  print(paste("! Warning, this function tested on for SS-V3.02B-F. You are using",substr(SS_version,1,9)),quote=F) 
+  print(paste("! Warning, this function tested on for SS-V3.02B-F. You are using",substr(SS_version,1,9)),quote=F)
 }
 
 # check empty columns
@@ -154,12 +154,12 @@ if(covar){
       lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
     }
     lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
-    nhighcor <- nrow(highcor)   
-    nlowcor <- nrow(lowcor)   
+    nhighcor <- nrow(highcor)
+    nlowcor <- nrow(lowcor)
     if(printhighcor>0){
-      if(nhighcor==0) textblock <- "No correlations"  
-      if(nhighcor==1) textblock <- "1 correlation"  
-      if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")  
+      if(nhighcor==0) textblock <- "No correlations"
+      if(nhighcor==1) textblock <- "1 correlation"
+      if(nhighcor>1)  textblock <- paste(nhighcor,"correlations")
       corstats$cormessage2 <-paste(textblock, " above threshold (cormax=", cormax,")",sep="")
       if(nhighcor>0 & nhighcor<=printhighcor){
         row.names(highcor) = paste("   ",1:nhighcor)
@@ -177,9 +177,9 @@ if(covar){
       corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
     }
     if(printlowcor>0){
-      if(nlowcor==0) textblock <- "No uncorrelated parameters"  
-      if(nlowcor==1) textblock <- "1 uncorrelation"  
-      if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")  
+      if(nlowcor==0) textblock <- "No uncorrelated parameters"
+      if(nlowcor==1) textblock <- "1 uncorrelation"
+      if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")
       corstats$cormessag7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
       if(nlowcor>0 & nlowcor<=printlowcor){
         corstats$cormessag8 <-lowcor
@@ -427,7 +427,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
    if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
    if("growthseries" %in% return | return=="Yes") returndat$growthseries <- growdat
  }
- 
+
 # Length selex and retention
  rawselex <- matchfun2("LEN_SELEX",1,"RETENTION",-1,cols=1:(nlbinspop+4))
  names(rawselex)<- rawselex[1,]
@@ -639,7 +639,7 @@ if(return=="Yes"){
    if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  }
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
-  
+
  # return the inputs to this function so they can be used by SSv3_plots or other functions
  if("inputs" %in% return | return=="Yes"){
    inputs <- list()
@@ -651,8 +651,8 @@ if(return=="Yes"){
    inputs$covar    <- covar
    inputs$verbose  <- verbose
    returndat$inputs <- inputs
- }         
- 
+ }
+
  if(verbose) print("completed SSv3.output",quote=F)
  if(return!="No"){invisible(returndat)}
 

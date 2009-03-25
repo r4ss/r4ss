@@ -5,11 +5,11 @@ SSv3_plots <- function(
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
     aalresids=F, maxneff=5000, smooth=T, showsampsize=T,showeffN=T,
     pwidth=8, pheight=8, punits="in", ptsize=12, res=300, cex.main=1,
-    maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T, newcompplots=F,...)
+    maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T, newcompplots=T,...)
 {
 ################################################################################
 #
-# SSv3_plots BETA March 19, 2009.
+# SSv3_plots BETA March 25, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
