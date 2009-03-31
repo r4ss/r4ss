@@ -1,11 +1,11 @@
 SSv3_output <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\", model="default", repfile="Report.SSO", covarfile="CoVar.SSO",
+         dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3", repfile="Report.SSO", covarfile="CoVar.SSO",
          ncols=200, forecast=T, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
          verbose=T, printstats=T, return="Yes")
 {
 ################################################################################
 #
-# SSv3_output BETA March 19, 2009.
+# SSv3_output BETA March 31, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
