@@ -1,15 +1,15 @@
-SSv3_plots <- function(
+function(
     replist="ReportObject", plot=1:22, print=0, printfolder="", dir="default", fleets="all", areas="all",
     fleetcols="default", areacols="default", verbose=T, uncertainty=T,
     forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
     aalresids=F, maxneff=5000, smooth=T, showsampsize=T,showeffN=T,
-    pwidth=8, pheight=8, punits="in", ptsize=12, res=300, cex.main=1,
+    pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
     maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T, newcompplots=T,...)
 {
 ################################################################################
 #
-# SSv3_plots BETA March 25, 2009.
+# SSv3_plots BETA March 31, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
@@ -2391,7 +2391,7 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
         plotlens <- latagebase[latagebase$Fleet==i,]
         plotlens <- plotlens[!plotlens$Obs %in% c(NA),]
         testor <- length(plotlens$Obs[plotlens$Gender==1])>0
-        testor[2] <- length(plotlens$Obs[plotlens$Gender==2])
+        testor[2] <- length(plotlens$Obs[plotlens$Gender==2])>0
         for(m in (1:2)[testor])
         {
           la <- plotlens[plotlens$Gender==m,] # females or males
@@ -2467,12 +2467,15 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
     flush.console()
   } # end if 21 in plot or print
 
+ # Yield curve
   if(22 %in% c(plot, print))
   {
    if(!is.null(equil_yield[1,1])){
    yieldfunc <- function(){
    plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
-        type="l",lwd=2,col="blue")}
+        type="l",lwd=2,col="blue")
+        abline(h=0,col="grey")
+        abline(v=0,col="grey")}
    if(22 %in% plot){yieldfunc()}
    if(22 %in% print){
     png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -2480,7 +2483,38 @@ if(newcompplots) # switch to allow transition to new non-trellis composition plo
     dev.off()}
     if(verbose) print("Finished plot 22: yield curve",quote=F)
     }
-  }
+
+  if(5 %in% c(plot, print)) # use output from above
+  {
+   if(nareas==1)
+    {
+     sprodfunc <- function(){
+      totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+      ts$totcatch <- 0
+      ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
+      ts$sprod <- NA
+      ts$sprod[3:(ls-1)] <- ts$Bio_all[4:ls]-ts$Bio_all[3:(ls-1)]+ts$totcatch[3:(ls-1)]
+      xlim <- c(0,max(ts$Bio_all[!ts$sprod %in% c(NA)],na.rm=T))
+      ylim <- c(min(0,ts$sprod[!ts$sprod %in% c(NA)],na.rm=T),max(ts$sprod[!ts$sprod %in% c(NA)],na.rm=T))
+      plot(ts$Bio_all[!ts$sprod %in% c(NA)],ts$sprod[!ts$sprod %in% c(NA)],ylim=ylim,xlim=xlim,xlab="Total biomass (mt)",ylab="Surplus production (mt)",type="l",col="black")
+      s <- seq(length(ts$sprod[!ts$sprod %in% c(NA)])-1)
+      arrows(ts$Bio_all[!ts$sprod %in% c(NA)][s],ts$sprod[!ts$sprod %in% c(NA)][s],ts$Bio_all[!ts$sprod %in% c(NA)][s+1],ts$sprod[!ts$sprod %in% c(NA)][s+1],length=0.06,angle=20,col="black",lwd=1.2)
+      abline(h=0,col="grey")
+      abline(v=0,col="grey")
+      points(ts$Bio_all[!ts$sprod %in% c(NA)][1],ts$sprod[!ts$sprod %in% c(NA)][1],col="blue",pch=19)
+
+      }
+   if(22 %in% plot){sprodfunc()}
+   if(22 %in% print){
+    png(file=paste(plotdir,"22_surplus_prod.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+    sprodfunc()
+    dev.off()}
+    if(verbose) print("Finished plot 22: Surplus production",quote=F)
+    }
+   if(nareas>1) print("Surplus production plot not implemented for multi-area models",quote=F)
+  } 
+
+  } # close plot section 22
 
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function
