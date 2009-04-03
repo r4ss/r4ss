@@ -9,7 +9,7 @@ SSv3_FishGraph <- function(replist,
     x$info$date <- replist$repfiletime
     x$info$title <- title
     x$info$species <- species
-    x$info$model <- paste("Stock Synthesis version", strsplit(replist$SS_version,";")[[1]][1]
+    x$info$model <- paste("Stock Synthesis version", strsplit(replist$SS_version,";")[[1]][1])
     x$info$base.run <- "don't know"
     # for all these units, it's probably best to read them from a file
     # (these values are just what was present in the gag example file)
