@@ -631,6 +631,8 @@ if(return=="Yes"){
    returndat$derived_quants <- der
    returndat$parameters <- allpars
    returndat$FleetNames <- FleetNames
+   returndat$repfiletime <- repfiletime
+   returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
  }
  if(covar){
    if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
