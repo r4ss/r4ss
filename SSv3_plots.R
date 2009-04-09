@@ -684,7 +684,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
     ts$totcatch <- 0
     ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
-    if(max(ts$totcatch[3:ls] - ts$totretained[3:ls] != 0))
+    ## not sure why the following line was there--why not plot when totcatch equals totretained?
+    #    if(max(ts$totcatch[3:ls] - ts$totretained[3:ls] != 0))
     {
       catfunc <- function()
       {plot(ts$Yr[2:(ls-1)],ts$totcatch[2:(ls-1)],xlab="Year",ylab="Total catch (mt)",type="o",col="black")
@@ -708,7 +709,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         ylab <- "Continuous F" # ?maybe should add "Hybrid F" label for F_method==3
     }
     Hrates <- as.matrix(ts[,substr(names(ts),1,nchar(stringmatch))==stringmatch])
-    fmax <- max(Hrates)
+    if(max(is.na(Hrates))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
+    fmax <- max(Hrates[!is.na(Hrates)])
     Hratefunc <- function(){
       plot(ts$Yr[2:(ls-1)],2:(ls-1),xlab="Year",ylim=c(0,fmax),ylab=ylab,type="n")
         abline(h=0,col="grey")
@@ -723,7 +725,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     # discard series (not adapted for multi-area models)
     ts$discardall <- ts$totcatch - ts$totretained
     discardmat <- totcatchmat - totretainedmat
-    if(!(max(ts$discardall[1:ls])==0))
+    if(max(is.na(ts$discardall))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
+    if(!(max(ts$discardall[!is.na(ts$discardall)])==0))
     {
       ylab <- "Predicted Discards (mt)"
       discfunc <- function()
@@ -745,7 +748,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     ts$discfrac[3:ls] <- ts$discardall[3:ls]/ts$totcatch[3:ls]
     ts$discfrac[ts$discfrac %in% NaN] <- 0
     ymax <- max(ts$discfrac)
-    if(max(ts$discfrac>0)){
+    if(max(is.na(ts$discfrac))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
+    if(max(ts$discfrac[!is.na(ts$discfrac)]>0)){
       for(xx in 1:nfishfleets)
       {
         ylab <- "Discard fraction by weight"
@@ -1808,7 +1812,8 @@ if(nseasons==1){ # temporary disable until code cleanup
   # now make use of embedded SSv3_plot_comps function to make composition plots
   if(!datplot)
   {
-    print("skipped data-only plots 15-17 because input 'datplot=F'",quote=F)
+    if(length(intersect(15:17,c(plot,print)))>0)
+      print("skipped data-only plots 15-17 because input 'datplot=F'",quote=F)
   }else{
     if(15 %in% c(plot,print))  # data only aspects
     {
@@ -1983,58 +1988,64 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 21 in plot or print
 
- # Yield curve
+                                        # Yield curve
   if(22 %in% c(plot, print))
   {
-   if(!is.null(equil_yield[1,1])){
-   yieldfunc <- function(){
-   plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
-        type="l",lwd=2,col="blue")
+    if(!is.null(equil_yield[1,1])){
+      yieldfunc <- function(){
+        plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
+             type="l",lwd=2,col="blue")
         abline(h=0,col="grey")
         abline(v=0,col="grey")}
-   if(22 %in% plot){yieldfunc()}
-   if(22 %in% print){
-    png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-    yieldfunc()
-    dev.off()}
-    if(verbose) print("Finished plot 22: yield curve",quote=F)
+      if(22 %in% plot){yieldfunc()}
+      if(22 %in% print){
+        png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        yieldfunc()
+        dev.off()}
+      if(verbose) print("Finished plot 22: yield curve",quote=F)
     }
 
-  if(5 %in% c(plot, print)) # use output from above
-  {
-   if(nareas==1)
+    if(nareas==1)
     {
-     sprodfunc <- function(){
-      totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
-      ts$totcatch <- 0
-      ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
-      ts$sprod <- NA
-      ts$sprod[3:(ls-1)] <- ts$Bio_all[4:ls]-ts$Bio_all[3:(ls-1)]+ts$totcatch[3:(ls-1)]
-      xlim <- c(0,max(ts$Bio_all[!ts$sprod %in% c(NA)],na.rm=T))
-      ylim <- c(min(0,ts$sprod[!ts$sprod %in% c(NA)],na.rm=T),max(ts$sprod[!ts$sprod %in% c(NA)],na.rm=T))
-      plot(ts$Bio_all[!ts$sprod %in% c(NA)],ts$sprod[!ts$sprod %in% c(NA)],ylim=ylim,xlim=xlim,xlab="Total biomass (mt)",ylab="Surplus production (mt)",type="l",col="black")
-      s <- seq(length(ts$sprod[!ts$sprod %in% c(NA)])-1)
-      arrows(ts$Bio_all[!ts$sprod %in% c(NA)][s],ts$sprod[!ts$sprod %in% c(NA)][s],ts$Bio_all[!ts$sprod %in% c(NA)][s+1],ts$sprod[!ts$sprod %in% c(NA)][s+1],length=0.06,angle=20,col="black",lwd=1.2)
-      abline(h=0,col="grey")
-      abline(v=0,col="grey")
-      points(ts$Bio_all[!ts$sprod %in% c(NA)][1],ts$sprod[!ts$sprod %in% c(NA)][1],col="blue",pch=19)
+      ls <- nrow(ts)
+      sprodfunc <- function(){
+        totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+        ts$totcatch <- 0
+        ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
+        ts$sprod <- NA
+        ts$sprod[3:(ls-1)] <- ts$Bio_all[4:ls]-ts$Bio_all[3:(ls-1)]+ts$totcatch[3:(ls-1)]
+        sprodgood <- !is.na(ts$sprod)
+        Bio_all_good <- ts$Bio_all[sprodgood]
+        sprod_good <- ts$sprod[sprodgood]
+        xlim <- c(0,max(Bio_all_good,na.rm=T))
+        ylim <- c(min(0,sprod_good,na.rm=T),max(sprod_good,na.rm=T))
+        plot(Bio_all_good,sprod_good,ylim=ylim,xlim=xlim,xlab="Total biomass (mt)",ylab="Surplus production (mt)",type="l",col="black")
 
-      }
-   if(22 %in% plot){sprodfunc()}
-   if(22 %in% print){
-    png(file=paste(plotdir,"22_surplus_prod.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-    sprodfunc()
-    dev.off()}
-    if(verbose) print("Finished plot 22: Surplus production",quote=F)
+        # make arrows
+        old_warn <- options()$warn  # previous setting
+        options(warn=-1)            # turn off "zero-length arrow" warning
+        s <- seq(length(sprod_good)-1)
+        arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
+        options(warn=old_warn)      #returning to old value
+        
+        abline(h=0,col="grey")
+        abline(v=0,col="grey")
+        points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
+
+      } # end sprodfunc
+      if(22 %in% plot){sprodfunc()}
+      if(22 %in% print){
+        png(file=paste(plotdir,"22_surplus_prod.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        sprodfunc()
+        dev.off()}
+      if(verbose) print("Finished plot 22: Surplus production",quote=F)
     }
-   if(nareas>1) print("Surplus production plot not implemented for multi-area models",quote=F)
-  }
-
+    if(nareas>1) print("Surplus production plot not implemented for multi-area models",quote=F)
   } # close plot section 22
-
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function
 }
+
 ##########
 ##########
 ##########

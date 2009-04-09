@@ -611,10 +611,11 @@ if(return=="Yes"){
      N_ageerror_defs <- length(starts)
      if(N_ageerror_defs > 0)
      {
-       AAK = array(NA,c(N_ageerror_defs,nagebins,accuage+1))
+       nrowsAAK <- nrow(rawAAK)/2 - 3
+       AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
        age_error_sd = 0:accuage
        for(i in 1:N_ageerror_defs){
-         AAKtemp <- rawAAK[starts[i] + 1 + 1:nagebins,-1]
+         AAKtemp <- rawAAK[starts[i] + 1 + 1:nrowsAAK,-1]
          # what about 2-sex model?
          for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
          AAK[i,,] <- as.matrix(AAKtemp)
