@@ -201,6 +201,12 @@ flush.console()
 # read forecast report file
 if(forecast){
   forcastname <- paste(dir,"Forecast-report.SSO",sep="")
+  if(file.info(forcastname)$size==0){
+    print("!Error: the Forecase-report.SSO file is empty.",quote=F)
+    print("        Change input to 'forecast=F' or rerun model with forecast turned on.",quote=F)
+    return()
+  }
+    
   rawforcast1 <- read.table(file=forcastname,col.names=c(seq(1,ncols,by=1)),fill=T,quote="",colClasses="character",nrows=-1)
   yieldraw <- rawforcast1[(matchfun("+",rawforcast1[,1])):(matchfun("Management_report",rawforcast1[,1])),]
   yielddat <- yieldraw[,c(4,7)]

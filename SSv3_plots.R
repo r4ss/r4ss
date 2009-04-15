@@ -212,6 +212,8 @@ SSv3_plots <- function(
   # check for internal consistency
   if(uncertainty==T & inputs$covar==F)
     return("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function")
+  if(forecastplot==T & inputs$forecast==F)
+    return("To use forecastplot=T, you need to have forecast=T in the input to the SSv3_output function")
 
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
