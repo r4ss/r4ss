@@ -615,7 +615,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       dev.off()}
 
 
-    ## embedded modified function "stackpoly" from "plotrix" used in next plot
+    ## embedded modified function "stackpoly" by Jim Lemon from "plotrix" used in next plot
+    ## see http://cran.r-project.org/web/packages/plotrix/index.html
     stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA, 
                            xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA, 
                            col=NA, axis4=F, ...) 
