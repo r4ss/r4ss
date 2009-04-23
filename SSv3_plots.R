@@ -9,7 +9,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA April 22, 2009.
+# SSv3_plots BETA April 23, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
@@ -626,12 +626,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
              ylim = range(y), type = "n", xaxs = "i", yaxs = "i", axes = FALSE,
              ...)
         box()
-
         plotlim <- par("usr")
         if (is.na(xat[1])) {
           xat <- x[, 1]
-          if (is.na(xaxlab[1]))
-            xaxlab <- xat
+          if (is.na(xaxlab[1])) xaxlab <- xat
         }
         axis(1, at = xat, labels = xaxlab)
         axis(2)
