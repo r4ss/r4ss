@@ -19,21 +19,11 @@ SSv3_plots <- function(
 # Returns: Plots with plot history in R GUI and/or .png files.
 # General: Updated for Stock Synthesilatagebases version 3.02B through 3.02F; R version 2.8.1
 # Notes:   See users guide for documentation.
-# Required SS3v_output function and lattice package
+# Required SS3v_output function and plotrix package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
 #
 ################################################################################
 
-# if you have never installed the required package,
-# copy and paste the following install.packages command (without the "#").
-# Note: this may require administrative priviledges on your computer
-#
-# install.packages("lattice")
-# install.packages("plotrix")
-
-  # load required package
-  require(lattice)
-  require(plotrix)
 
 #################################################################################
 ## embedded functions
@@ -85,34 +75,6 @@ SSv3_plots <- function(
     segments(x2 - smidge, ul, x2 + smidge, ul)
     invisible(list(x = x, y = y))
   }
-  bubble2 <- function (data,xcol=1,ycol=2,zcol=3,fill=TRUE,maxsize=3,do.sqrt=TRUE,pch,col=c(2,3),
-                       key.entries=quantile(data[,zcol]),main=ifelse(is.numeric(zcol),names(data)[zcol],zcol),
-                       identify=FALSE,labels=row.names(data),...)
-  {
-    # Modified version of bubble() from gstat to eliminate the default key
-    x = data[, xcol]
-    y = data[, ycol]
-    z = data[, zcol]
-    d = data.frame(x = x, y = y)
-    if(missing(pch)){pch = ifelse(fill, 16, 1)}
-    z.col = ifelse(z < 0, col[1], col[2])
-    q = key.entries
-    q.pch = rep(pch, length(q))
-    q.text = as.character(round(q, 3))
-    q.col = ifelse(q < 0, col[1], col[2])
-    az = abs(z)
-    q = abs(q)
-    if (do.sqrt){
-      az = sqrt(az)
-      q = sqrt(q)}
-    cex = maxsize * az/max(az)
-    q.cex = maxsize * q/max(az)
-    if (identify){
-      plot(data[,xcol],data[,ycol],asp=1,cex=cex,main=main, ...)
-      return(identify(data[, xcol], data[, ycol], labels))}
-    key = list(space="right",points=list(pch=q.pch,col=q.col,cex=q.cex),text=list(q.text))
-    xyplot(y~x,d,col=z.col,cex=cex,pch=pch,main=main,...)
-  }
 
   rich.colors.short <- function(n){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
@@ -137,13 +99,11 @@ SSv3_plots <- function(
       return(out)
   }
 
-
+  # get quantities from the big list
   if(replist[[1]]=="ReportObject"){
     return("The input 'replist' should refer to an R object created by the function 'SSv3_output'.")
   }
 
-  # get quantities from the big list
-  # this could also be done using attach()
   nfleets                        <- replist$nfleets
   nfishfleets                    <- replist$nfishfleets
   nsexes                         <- replist$nsexes
@@ -653,6 +613,45 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       png(file=paste(plotdir,"05_summarybio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       sbiofunc()
       dev.off()}
+
+
+    ## embedded function "stackpoly" from "plotrix" used in next plot
+    stackpoly <- function (x, y = NULL, main = "", xlab = "", ylab = "", xat = NA,
+                           xaxlab = NA, xlim = NA, ylim = NA, lty = 1, border = NA,
+                           col = NA, axis4 = TRUE, ...)
+      {
+        ydim <- dim(y)
+        y <- t(y, 1, cumsum)
+        plot(0, main = main, xlab = xlab, ylab = ylab, xlim = range(x),
+             ylim = range(y), type = "n", xaxs = "i", yaxs = "i", axes = FALSE,
+             ...)
+        box()
+
+        plotlim <- par("usr")
+        if (is.na(xat[1])) {
+          xat <- x[, 1]
+          if (is.na(xaxlab[1]))
+            xaxlab <- xat
+        }
+        axis(1, at = xat, labels = xaxlab)
+        axis(2)
+        if (axis4) axis(4)
+        if (is.na(col[1])) col = rainbow(ydim[2])
+        else if (length(col) < ydim[2]) col <- rep(col, length.out = ydim[2])
+        if (length(lty) < ydim[2]) lty <- rep(lty, length.out = ydim[2])
+        for (pline in seq(ydim[2], 1, by = -1)) {
+          if (pline == 1) {
+            polygon(c(x[1], x[, pline], x[ydim[1]]),
+                    c(plotlim[3], y[, pline], plotlim[3]),
+                    border = border, col = col[pline],
+                    lty = lty[pline])
+          }
+          else polygon(c(x[, pline], rev(x[, pline - 1])),
+                       c(y[, pline], rev(y[, pline - 1])), border = border,
+                       col = col[pline], lty = lty[pline])
+        }
+      }
+    ## end embedded stackpoly
 
     # total landings (not adapted for multi-area models)
     ls <- nrow(ts)
@@ -1366,16 +1365,19 @@ if(nseasons==1){ # temporary disable until code cleanup
           for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
           resz <- NULL
           for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
-          plotbub <- cbind(resx,resy,resz)
+
           if(m==1 & nsexes==1) sextitle <- ""
           if(m==1 & nsexes==2) sextitle <- " of females"
           if(m==2) sextitle=" of males"
           if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
           plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
 
-          trellis.device(theme=col.whitebg(),new=F)
-          nage <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
-                        key.entries=c(0.0),pch=c(NA,1)[1+(resz>0)],scales=list(relation="same",alternating="1",tck=c(1,0)))
+          tempfun <- function(){
+            bubble3(x=resx, y=resy, z=resz,
+                    xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+                    las=1,cex.main=cex.main,allopen=1)
+          }
+
           natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
           ages <- 0:accuage
           datsum <- as.vector(apply(natagetemp1,1,sum))
@@ -1392,13 +1394,13 @@ if(nseasons==1){ # temporary disable until code cleanup
           ylim <- c(0,max(meanage))
           ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
           if(14 %in% plot){
-            print(nage)
+            tempfun()
             plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)}
           if(14 %in% print){
             filepart <- paste("_sex",m,sep="")
             if(nareas > 1) filepart <- paste("_area",iarea,filepart,sep="")
             png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            print(nage)
+            tempfun()
             dev.off()
             png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
@@ -1441,7 +1443,7 @@ if(nseasons==1){ # temporary disable until code cleanup
   } # close if 14 in plot or print
 
 ###############################################################
-# embedded function for composition plots (plots 14 through 20)
+# embedded function for composition plots (plots 15 through 20)
 ###############################################################
   SSv3_plot_comps <- function(
       replist="ReportObject", kind="LEN", aalyear=-1, aalbin=-1, GUI=T, png=F, plotdir=NA, fleets="all",
@@ -1903,6 +1905,7 @@ if(nseasons==1){ # temporary disable until code cleanup
   # dens <- dnorm(x=distbins,mean=0,sd=1,log=FALSE) #lines(distbins,dens,col="black",lwd=1.5)
   # qq.plot(pearsons,ylab="Pearson residual",xlab="Standard normal",col=c("black")) #par(mfrow=c(1,1))
 
+
   # Plot 21: length at age data
   if(21 %in% c(plot, print))
   {
@@ -1919,11 +1922,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         {
           la <- plotlens[plotlens$Gender==m,] # females or males
           if(nseasons > 1){la$Yr <- la$Yr + (la$Seas - 1)/nseasons + 0.5/nseasons}
-          la$plotyear <- as.factor(la$Yr)
-          la$plotbins <- la$Bin
-          la <- la[!is.na(la$plotbins), ]
-          la$plotobs <- la$Obs
-          la$plotexp <- la$Exp
+          la <- la[!is.na(la$Bin), ]
 
           # Disable until effective N calculation is re-implemented in SS
           #plottitle <- paste("Sample size for length-at-age for ",c("fe","")[m],"males, ", FleetNames[i],sep="")
@@ -1945,44 +1944,41 @@ if(nseasons==1){ # temporary disable until code cleanup
           # dev.off()}
           plottitle <- paste("Length-at-age fits for sexes combined, ", FleetNames[i],sep="")
           if(nsexes > 1){plottitle <- paste("Length-at-age fits for ",c("fe","")[m],"males, ", FleetNames[i],sep="")}
-          # trellis.device(theme=col.whitebg(),new = FALSE)
-          la2 <- la
-          ntrell <- length(la2[,1])
-          la2$obsexp <- "obs"
-          la2$trellval <- la2$plotobs
-          la2 <- rbind(la2,la2)
-          la2$obsexp[1:ntrell] <- "exp"
-          la2$trellval[1:ntrell] <- la2$plotexp[1:ntrell]
-          trellis1 <- xyplot(trellval~plotbins|plotyear,as.table=T,groups=obsexp,type=c("l","p"),pch=c(NA,1),lty=c(1,0),lwd=1.5,
-                             strip=strip.custom(bg="grey"),ylab="Length (cm)",xlab="Age (yr)",col=c("red","black","red","black"),
-                             cex=0.6,main=plottitle,scales=list(relation="same",alternating="1",tck=c(1,0)),data=la2)
-          if(21 %in% plot) print(trellis1)
-          if(21 %in% print){
+
+          if(nseasons>1) la$YrSeasName <- paste(floor(la$Yr),"s",la$Seas,sep="") else la$YrSeasName <- la$Yr
+          tempfun <- function(ipage,...){
+            make_multifig(ptsx=la$Bin,ptsy=la$Obs,yr=la$Yr,linesx=la$Bin,linesy=la$Exp,
+                        sampsize=showsampsize*la$N,effN=0,
+                        nlegends=3,legtext=list(la$YrSeasName,"sampsize","effN"),
+                        bars=F,linepos=1,
+                        main=plottitle,cex.main=cex.main,xlab="Age (yr)",ylab="Length (cm)",
+                        maxrows=maxrows,maxcols=maxcols,
+                        fixdims=fixdims,ipage=ipage,...)
+          }
+          if(21 %in% plot) tempfun(ipage=0)
+          if(21 %in% print){ # set up plotting to png file if required
             png(file=paste(plotdir,"21_lenatagefit_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            print(trellis1)
-            dev.off()}
-          resx <- la$Yr
-          resy <- la$plotbins
-          resz <- la$Pearson
+            npages <- ceiling(length(unique(la$Yr))/maxrows/maxcols)
+            for(ipage in 1:npages){
+              tempfun(ipage=ipage,...)
+            }
+            dev.off()
+          }
+
           plottitle <- paste("Pearson residuals for sexes combined, ", FleetNames[i],sep="")
           if(nsexes > 1){plottitle <- paste("Pearson residuals for ",c("fe","")[m],"males, ", FleetNames[i],sep="")}
-          if(length(unique(resx))<minnbubble){
-            resx <- c(resx,(max(resx)+1),(min(resx)-1))
-            resy <- c(resy,(min(resy)),(min(resy)))
-            resz <- c(resz,0,0)}
-          plotbub <- cbind(resx,resy,resz)
-          pch <- resz
-          pch[pch==0] <- NA
-          pch[pch>0] <- 16
-          pch[pch<0] <- 1
-          plottitle <- paste(plottitle," (max=",round(abs(max(resz)),digits=2),")",sep="")
-          bub <- bubble2(plotbub,xlab="Year",ylab="Age (yr)",col=c("blue","blue"),main=plottitle,maxsize=pntscalar,
-                         key.entries=c(0.0),pch=pch,scales=list(relation="same",alternating="1",tck=c(1,0)))
-          if(21 %in% plot) print(bub)
+          plottitle <- paste(plottitle," (max=",round(abs(max(la$Pearson)),digits=2),")",sep="")
+          tempfun <- function(){
+            bubble3(x=la$Yr,y=la$Bin,z=la$Pearson,xlab="Year",ylab="Age (yr)",col=rep("blue",2),
+                    las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
+          }
+          if(21 %in% plot) tempfun()
           if(21 %in% print){
             png(file=paste(plotdir,"21_lenatageresids_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            print(bub)
-            dev.off()}
+            tempfun()
+            print('printing!')#testing
+            dev.off()
+          }
         } # m
       } # if lengths
     } # fleets
@@ -2029,7 +2025,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         s <- seq(length(sprod_good)-1)
         arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
         options(warn=old_warn)      #returning to old value
-        
+
         abline(h=0,col="grey")
         abline(v=0,col="grey")
         points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
