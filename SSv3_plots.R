@@ -615,39 +615,37 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       dev.off()}
 
 
-    ## embedded function "stackpoly" from "plotrix" used in next plot
-    stackpoly <- function (x, y = NULL, main = "", xlab = "", ylab = "", xat = NA,
-                           xaxlab = NA, xlim = NA, ylim = NA, lty = 1, border = NA,
-                           col = NA, axis4 = TRUE, ...)
+    ## embedded modified function "stackpoly" from "plotrix" used in next plot
+    stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA, 
+                           xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA, 
+                           col=NA, axis4=F, ...) 
       {
         ydim <- dim(y)
-        y <- t(y, 1, cumsum)
-        plot(0, main = main, xlab = xlab, ylab = ylab, xlim = range(x),
-             ylim = range(y), type = "n", xaxs = "i", yaxs = "i", axes = FALSE,
-             ...)
-        box()
+        x <- matrix(rep(x, ydim[2]), ncol = ydim[2])
+        y <- t(unlist(apply(as.matrix(y), 1, cumsum)))
+        if (is.na(xlim[1])) xlim <- range(x)
+        if (is.na(ylim[1])) ylim <- c(0,max(y))
+        plot(0, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim,
+             type = "n", xaxs = "i", yaxs = "i", axes = T,...)
         plotlim <- par("usr")
-        if (is.na(xat[1])) {
-          xat <- x[, 1]
-          if (is.na(xaxlab[1])) xaxlab <- xat
-        }
-        axis(1, at = xat, labels = xaxlab)
-        axis(2)
-        if (axis4) axis(4)
-        if (is.na(col[1])) col = rainbow(ydim[2])
-        else if (length(col) < ydim[2]) col <- rep(col, length.out = ydim[2])
-        if (length(lty) < ydim[2]) lty <- rep(lty, length.out = ydim[2])
+        if (is.na(col[1])) 
+          col = rainbow(ydim[2])
+        else if (length(col) < ydim[2]) 
+          col <- rep(col, length.out = ydim[2])
+        if (length(lty) < ydim[2]) 
+          lty <- rep(lty, length.out = ydim[2])
         for (pline in seq(ydim[2], 1, by = -1)) {
           if (pline == 1) {
             polygon(c(x[1], x[, pline], x[ydim[1]]),
                     c(plotlim[3], y[, pline], plotlim[3]),
-                    border = border, col = col[pline],
+                    border = border, col = col[pline], 
                     lty = lty[pline])
           }
-          else polygon(c(x[, pline], rev(x[, pline - 1])),
-                       c(y[, pline], rev(y[, pline - 1])), border = border,
+          else polygon(c(x[, pline], rev(x[, pline - 1])), 
+                       c(y[, pline], rev(y[, pline - 1])), border = border, 
                        col = col[pline], lty = lty[pline])
         }
+        if (axis4)  axis(4)
       }
     ## end embedded stackpoly
 
@@ -656,22 +654,24 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
     ts$totretained <- 0
     ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
-    polyts <- data.frame(ts$Yr[3:(ls-1)])
-    row.names(polyts) <- seq(1,length(polyts[,1]),by=1)
-    polyts <- polyts[,rep(1,nfishfleets)]
+    polyts <- totretainedmat[3:(ls-1),]
     landfunc <- function(){
       plot(ts$Yr[2:(ls-1)],ts$totretained[2:(ls-1)],xlab="Year",ylab="Landings (mt)",type="o",col="black")
       abline(h=0,col="grey")
       for(xx in 1:nfishfleets){
-       lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])
-       polyts <- cbind(polyts,totretainedmat[3:(ls-1),xx])
-       }
+        lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])
+      }
       if(nfishfleets > 1){
-      stackpoly(x=polyts[,(nfishfleets+1):(nfishfleets*2)],xaxlab=as.character(c(polyts[,1])),
-                ylim=c(0,max(ts$totretained[2:(ls-1)])),stack=T,axis4=F,
-                xlab="Year",ylab="Landings (mt)",col=fleetcols)
-       } # end if nfishfleets > 1
-          } # end landfunc
+        ## old function call to plotrix function
+        ## stackpoly(x=polyts[,(nfishfleets+1):(nfishfleets*2)],xaxlab=as.character(c(polyts[,1])),
+        ##           ylim=c(0,max(ts$totretained[2:(ls-1)])),stack=T,axis4=F,
+        ##         xlab="Year",ylab="Landings (mt)",col=fleetcols)
+
+        ## call to embedded, modified function
+        stackpoly(x=ts$Yr[3:(ls-1)],y=polyts,
+                  xlab="Year",ylab="Landings (mt)",col=fleetcols)
+      } # end if nfishfleets > 1
+    } # end landfunc
 
     if(5 %in% plot) landfunc()
     if(5 %in% print){
@@ -1974,7 +1974,6 @@ if(nseasons==1){ # temporary disable until code cleanup
           if(21 %in% print){
             png(file=paste(plotdir,"21_lenatageresids_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             tempfun()
-            print('printing!')#testing
             dev.off()
           }
         } # m
