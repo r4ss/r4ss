@@ -1809,7 +1809,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       }# end if data
     } # end loop over fleet
     if(returntitles) return(titles)
-  } # end SSv3_plot_comps function
+  } # end embedded SSv3_plot_comps function
   ###########################
 
   # now make use of embedded SSv3_plot_comps function to make composition plots
@@ -1821,12 +1821,12 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(15 %in% c(plot,print))  # data only aspects
     {
       # length comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,verbose=verbose,
+      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # length comp bubble plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=T,
+      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -1836,12 +1836,12 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(16 %in% c(plot,print))
     {
       # age comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,verbose=verbose,
+      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # age comp bubble plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,verbose=verbose,
+      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -1851,7 +1851,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(17 %in% c(plot,print))
     {
       # conditional age plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,verbose=verbose,
+      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                       fixdims=fixdims,
@@ -1863,7 +1863,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # plot of length comp data with fits, sample size, etc.
   if(18 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,verbose=verbose,
+    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
@@ -1874,7 +1874,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # plot of age comp data with fits, sample size, etc.
   if(19 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,
+    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
@@ -1884,7 +1884,7 @@ if(nseasons==1){ # temporary disable until code cleanup
   } # end if 19 in plot or print
 
   if(20 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,verbose=verbose,
+    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
                     aalbin=aalbin,aalyear=aalyear,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,
@@ -1984,7 +1984,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 21 in plot or print
 
-                                        # Yield curve
+  # Yield curve
   if(22 %in% c(plot, print))
   {
     if(!is.null(equil_yield[1,1])){
@@ -2290,7 +2290,7 @@ function(ptsx, ptsy, yr, linesx=0, linesy=0,
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=T) # bubble plot
     }else{
       if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol)  # points
-      if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=2)  # histogram-style bars
+      if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
     }
     if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
 
@@ -2410,6 +2410,7 @@ function(ptsx, ptsy, yr, linesx=0, linesy=0,
   if(ymin0) yrange <- c(0,max(ptsy,linesy)) else yrange <- range(c(ptsy,linesy,ptsy,linesy))
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
+print(yrange_big)
 
   # get axis labels
   yaxs_lab <- pretty(yrange)
@@ -2454,7 +2455,7 @@ function(ptsx, ptsy, yr, linesx=0, linesy=0,
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=T) # bubble plot
     }else{
       if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol)  # points
-      if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=2)  # histogram-style bars
+      if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
     }
     if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
 
