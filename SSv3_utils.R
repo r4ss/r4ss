@@ -1,4 +1,4 @@
-# this file contains several functions, some of which depend on each-other.
+# this file contains several functions, some of which depend on others.
 # SS_parlines:   identify the line numbers and parameter labels in a Stock Synthesis control file
 # SS_PlotPriors: make a multi-figure plot of prior distributions from a Stock Synthesis control file
 # SS_splitdat:   split bootstrap files aggregated in the Data.SS_New file
@@ -11,7 +11,7 @@ SS_parlines <- function(
 
 ################################################################################
 #
-# SS_parlines January 25, 2009.
+# SS_parlines April 20, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To identify the line numbers and parameter labels in a Stock Synthesis control file
@@ -301,6 +301,7 @@ SS_profile <- function(
 
 SS_recdevs <- function(
          fyr=NA, lyr=NA, ctl=NULL, recdevs=NULL,
+         rescale=T,
          dir="working_directory",
          ctlfile="Control.SS_New",
          newctlfile="Control_Modified.SS",
@@ -321,6 +322,14 @@ SS_recdevs <- function(
 # Required packages: none
 #
 ################################################################################
+
+# notes on inputs:
+# fyr              first year
+# lyr              last year
+# ctl              input file name?
+# recdevs          input vector of devs
+# rescale          rescale to zero center and have standard error = sigmaR?
+
   current_wd <- getwd()
   if(dir!="working_directory") setwd(dir)
 
@@ -347,7 +356,7 @@ SS_recdevs <- function(
 
   # make sure model includes recdevs and get some information
   do_recdev <- readfun("do_recdev", maxlen=1)
-  if(do_recdev!=1) return("do_recdev should be set to 1")
+  if(do_recdev==0) return("do_recdev should be set to 1 or 2")
   Nrecdevs <- lyr-fyr+1
   phase <- readfun("recdev phase", maxlen=1)
   advanced <- readfun("read 11 advanced options", maxlen=1)
@@ -381,7 +390,8 @@ SS_recdevs <- function(
   }else{
     newdevs <- rnorm(n=Nrecdevs)
   }
-  newdevs <- sigmaR*newdevs/sd(newdevs)
+  if(rescale) newdevs <- sigmaR*newdevs/sd(newdevs)
+
   # build new recdev section
   newsection <- c(
     "#_end of advanced SR options"          ,
@@ -398,7 +408,7 @@ SS_recdevs <- function(
   #ctl[(key1+1):(key2-1)] <- newsection
 
   # if maxbias is input, then replace
-  ctl[grep("max_bias",ctl)] <- paste(newmaxbias,"#_max_bias_adj_in_MPD")
+  if(!is.null(newmaxbias)) ctl[grep("max_bias",ctl)] <- paste(newmaxbias,"#_max_bias_adj_in_MPD")
   
   # write and/or return the modified control file
   if(writectl){

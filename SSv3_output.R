@@ -1,11 +1,13 @@
 SSv3_output <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3", repfile="Report.SSO", covarfile="CoVar.SSO",
-         ncols=200, forecast=T, warn=T, covar=T, checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-         verbose=T, printstats=T, return="Yes")
+  dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3",
+  repfile="Report.SSO", compfile="CompReport.SSO",covarfile="CoVar.SSO",
+  ncols=200, forecast=T, warn=T, covar=T,
+  checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
+  verbose=T, printstats=T, return="Yes",hidewarn=F)
 {
 ################################################################################
 #
-# SSv3_output BETA March 31, 2009.
+# SSv3_output BETA May 4, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -13,7 +15,7 @@ SSv3_output <- function(
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.02B through 3.02F; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.03A; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -48,30 +50,38 @@ matchfun2 <- function(string1,adjust1,string2,adjust2,cols="all",matchcol1=1,mat
 dir <- paste(dir,"/",sep="")
 shortrepfile <- repfile
 repfile <- paste(dir,repfile,sep="")
-repfiletime <- file.info(repfile)$mtime
-if(model=="default")
-{
-  shortparfiles <- dir(dir,pattern=".par",full.names=F)
-  allparfiles <- dir(dir,pattern=".par",full.names=T)
-  if(length(allparfiles)==0){
-    print(paste("Some stats skipped because there are no .par files found in directory:",dir),quote=F)
-    parfile <- NA
-  }
-  if(length(allparfiles)==1){
-    parfile <- allparfiles
-    model <- strsplit(shortparfiles,split='.par')[[1]]
-  }
-  if(length(allparfiles)>1){
-    print("Multiple .par files found in directory. To get stats from parfile and corfile, specify model name in input (i.e. model='SS3')",quote=F)
-    parfile <- NA
-  }
-}else{
-  parfile <- paste(dir,model,".par",sep="")
-  if(!file.exists(parfile)){
-    print(paste("Some stats skipped because the .par file not found:",parfile),quote=F)
-    parfile <- NA
-  }
+
+parfile <- paste(dir,model,".par",sep="")
+if(!file.exists(parfile)){
+  if(!hidewarn) print(paste("Some stats skipped because the .par file not found:",parfile),quote=F)
+  parfile <- NA
 }
+
+# read three rows to get start time and version number from rep file
+if(file.exists(repfile)){
+  if(verbose) print(paste("Getting header info from",repfile),quote=F)
+}else{
+  print(paste("!Error: can't find report file,", repfile),quote=F)
+  return()
+}
+rephead <- readLines(con=repfile,n=3)
+
+# warn if SS version used to create rep file is too old or too new for this code
+SS_version <- rephead[1]
+SS_versionshort <- toupper(substr(SS_version,1,9))
+if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B","3C"),sep=""))){
+  print(paste("! Warning, this function tested on for SS-V3.03A through V3.03C. You are using",substr(SS_version,1,9)),quote=F)
+}else{
+  print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
+  print("If you have problems, report them at http://code.google.com/p/r4ss/",quote=F)
+}
+
+findtime <- function(lines){
+  # quick function to get model start time from SSv3 output files
+  strsplit(lines[grep('ime',lines)],'ime: ')[[1]][2]
+}
+repfiletime <- findtime(rephead)
+print(paste("Report file time:",repfiletime),quote=F)
 
 corfile <- NA
 if(covar){
@@ -90,23 +100,38 @@ if(covar){
     return()
   }
 
-  # time check
-  covartime <- file.info(covarfile)$mtime
-  difftimelimit <- 20
-  if(abs(as.numeric(difftime(covartime,repfiletime,units="secs")))>difftimelimit){
-    print(paste(shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
+  # time check for CoVar file
+  covarhead <- readLines(con=covarfile,n=2)
+  covartime <- findtime(covarhead)
+  covartime2 <- as.POSIXlt(covartime, format="%a %b %d %H:%M:%S %Y")
+  repfiletime2 <- as.POSIXlt(repfiletime, format="%a %b %d %H:%M:%S %Y")
+
+  difftimelimit <- 300
+  if(abs(as.numeric(difftime(covartime2,repfiletime2,units="secs")))>difftimelimit){
+    print(paste("!Error: ",shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
+    print(paste("CoVar time:",covartime),quote=F)
     return()
   }
 }
 
-# read report file
-if(verbose) print(paste("reading",repfile),quote=F)
-flush.console()
-rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
-SS_version <- rawrep[1,1]
-if(!(substr(SS_version,1,9)%in%paste("SS-V3.02",c("B","C","D","E","F"),sep=""))){
-  print(paste("! Warning, this function tested on for SS-V3.02B-F. You are using",substr(SS_version,1,9)),quote=F)
+# time check for CompReport file
+compfile <- paste(dir,compfile,sep="")
+if(file.exists(compfile)){
+  comphead <- readLines(con=compfile,n=2)
+  if(findtime(comphead) != repfiletime){
+    print(paste(shortrepfile,"and",compfile,"have different time values. Check the input filenames."),quote=F)
+    print(paste("CompReport time:",covartime),quote=F)
+    return()
+  }
+}else{
+  print(paste("Missing",compfile,". Change the compfile input or rerun model to get the file.",sep=""),quote=F)
+  return()
 }
+
+# read report file
+if(verbose) print("Reading full report file",quote=F)
+flush.console()
+rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1,comment.char="")
 
 # check empty columns
 nonblanks <- rep(NA,ncols)
@@ -128,7 +153,7 @@ flush.console()
 
 # read .CoVar file
 if(covar){
-  CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"))
+  CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
   if(verbose) print("Got CoVar file.",quote=F)
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
@@ -201,17 +226,16 @@ flush.console()
 # read forecast report file
 if(forecast){
   forcastname <- paste(dir,"Forecast-report.SSO",sep="")
-  if(file.info(forcastname)$size==0){
+  temp <- file.info(forcastname)$size
+  if(is.na(temp) | temp==0){
     print("!Error: the Forecase-report.SSO file is empty.",quote=F)
     print("        Change input to 'forecast=F' or rerun model with forecast turned on.",quote=F)
     return()
   }
-    
   rawforcast1 <- read.table(file=forcastname,col.names=c(seq(1,ncols,by=1)),fill=T,quote="",colClasses="character",nrows=-1)
-  yieldraw <- rawforcast1[(matchfun("+",rawforcast1[,1])):(matchfun("Management_report",rawforcast1[,1])),]
-  yielddat <- yieldraw[,c(4,7)]
+  yieldraw <- rawforcast1[(matchfun("Btarget",rawforcast1[,10])):(matchfun("findFmsy",rawforcast1[,10])),]
+  yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
   colnames(yielddat) <- c("Catch","Depletion")
-  yielddat <- yielddat[!yielddat$Depletion %in% c("","SSB/Bzero","+"),]
   yielddat$Catch <- as.numeric(yielddat$Catch)
   yielddat$Depletion <- as.numeric(yielddat$Depletion)
   yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
@@ -227,7 +251,7 @@ if(warn){
     warn <- NA
   }else{
     warn <- readLines(warnname,warn=F)
-    nwarn <- length(warn)
+    nwarn <- as.numeric(strsplit(warn[grep("N warnings: ",warn)],"N warnings: ")[[1]][2])
     textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
     if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
   }
@@ -238,38 +262,38 @@ if(verbose) print("Finished reading files",quote=F)
 flush.console()
 
 # Useful dimensions
-getdim <- matchfun2("LEN_SELEX",2,"RETENTION",-1)
-nfleets <- length(unique(as.numeric(getdim[,1])))
-nfishfleets <- max(as.numeric(as.vector(matchfun2("RETENTION",2,"DISCARD_MORT",-1,cols=1))))
-nsexes <- length(unique(as.numeric(getdim[,3])))
-allbins <- matchfun2("Size_Bins_pop", 1, "Size_Bins_pop", 8, cols=1:ncols)
-
+rawselex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1)
+rawselex <- rawselex[,rawselex[1,]!=""]
+names(rawselex)<- rawselex[1,]
+selex <- rawselex[-1,]
+for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
+nfleets <- length(unique(selex$Fleet))
+nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
+nsexes <- length(unique(as.numeric(selex$gender)))
+allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=8)
 #lbins is data length bins
 lbins <- as.numeric(allbins[6,-1])
 lbins <- lbins[!is.na(lbins)]
 nlbins <- length(lbins)
-
 #lbinspop is Pop_len_mid used for selex and bio quantities
 lbinspop <- as.numeric(allbins[3,-1])
 lbinspop <- lbinspop[!is.na(lbinspop)]
 nlbinspop <- length(lbinspop)
 
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
-
 # read composition database
-rawcompdbase <- matchfun2("Composition_Database",1,"SELEX_database",-1,cols=1:19)
+rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
 names(rawcompdbase) <- rawcompdbase[1,]
-compdbase <- rawcompdbase[-1,]
+compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
 compdbase <- compdbase[compdbase$Obs!="",]
 for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
-
 lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
 agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
 latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
 Lbin_method <- as.numeric(rawrep[matchfun("Method_for_Lbin"),2])
 lendbase$effN <- as.numeric(lendbase$effN)
 agedbase$effN <- as.numeric(agedbase$effN)
-agebins <- unique(agedbase$Bin[!is.na(agedbase$Bin)])
+agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
 nagebins <- length(agebins)
 tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
@@ -303,6 +327,7 @@ stats$SS_version <- SS_version
 stats$Run_time <- paste(as.vector(rawrep[2,1:6]),collapse=" ")
 
 tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
+tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
 stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
 stats$warnings <- warn
@@ -349,7 +374,6 @@ for(i in 2:3) der[,i] = as.numeric(der[,i])
 
 managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
 names(managementratiolabels) <- c("Ratio","Label")
-
 
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
 stats$maximum_gradient_component <- parline[1,16]
@@ -435,25 +459,23 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  }
 
 # Length selex and retention
- rawselex <- matchfun2("LEN_SELEX",1,"RETENTION",-1,cols=1:(nlbinspop+4))
- names(rawselex)<- rawselex[1,]
- selex <- rawselex[-1,]
  if(!forecast) selex <- selex[selex$year <= endyr,]
- for(icol in c(1:3,5:ncol(selex))) selex[,icol] = as.numeric(selex[,icol])
  if("sizeselex" %in% return | return=="Yes") returndat$sizeselex <- selex
 
- rawret <- matchfun2("RETENTION",1,"DISCARD_MORT",-1,cols=1:(nlbinspop+4))
- names(rawret) <- rawret[1,]
- rawret <- rawret[-1,]
- if(!forecast) rawret <- rawret[rawret$year <= endyr,]
- if("retention" %in% return | return=="Yes") returndat$retention <- rawret
+# retention now part of selex
+ ## rawret <- matchfun2("RETENTION",1,"DISCARD_MORT",-1,cols=1:(nlbinspop+4))
+ ## names(rawret) <- rawret[1,]
+ ## rawret <- rawret[-1,]
+ ## if(!forecast) rawret <- rawret[rawret$year <= endyr,]
+ ## if("retention" %in% return | return=="Yes") returndat$retention <- rawret
 
 # Age based selex
- rawageselex <- rawrep[(matchfun("AGE_SELEX")+1):(matchfun("Average_size_selex_at_age_in_endyear")-1),1:(accuage+5)]
+ rawageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1)
+ rawageselex <- rawageselex[,rawageselex[1,]!=""]
  names(rawageselex)<- rawageselex[1,]
  ageselex <- rawageselex[-1,]
  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
- for(icol in c(1:3,5:ncol(ageselex))) ageselex[,icol] = as.numeric(ageselex[,icol])
+ for(i in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
  if("ageselex" %in% return | return=="Yes") returndat$ageselex <- ageselex
 
 # time series
@@ -499,16 +521,15 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  #stats$endyrlandings <- ts$totretained[ls]
 
 # depletion
- depletion_basis <- as.numeric(rawrep[matchfun("depletion_basis"),2])
- depletion_level <- as.numeric(strsplit(rawrep[matchfun("depletion_basis"),4],"*",fixed=T)[[1]][1])
+ depletion_method <- as.numeric(rawrep[matchfun("Depletion_method"),2])
+ depletion_level <- as.numeric(strsplit(rawrep[matchfun("Depletion_method"),4],"%*",fixed=T)[[1]][1])/100
  if(return=="Yes"){
-   returndat$depletion_basis <- depletion_basis
+   returndat$depletion_method <- depletion_method
    returndat$depletion_level <- depletion_level
  }
 
 # Average body weight observations
  rawmnwgt <- matchfun2("MEAN_BODY_WT",1,"FIT_LEN_COMPS",-1,cols=1:10)
- names(rawmnwgt) <- rawmnwgt[1,]
  mnwgt <- NA
  if(nrow(rawmnwgt)>1)
  {
@@ -519,9 +540,10 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  if(return=="Yes") returndat$mnwgt <- mnwgt
 
 # Yield and SPR time-series
- rawspr <- matchfun2("SPR_series",4,"SPAWN_RECRUIT",-1,cols=1:(20+2*nmorphs))
+ rawspr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,cols=1:(22+2*nmorphs))
  names(rawspr) <- rawspr[1,]
  rawspr[rawspr=="_"] <- NA
+ rawspr[rawspr=="&"] <- NA
  spr <- rawspr[-1,]
  for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
  spr <- spr[spr$Year <= endyr,]
@@ -539,7 +561,6 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  flush.console()
 
  if("managementratiolabels" %in% return | return=="Yes") returndat$managementratiolabels <- managementratiolabels
-
 
 # Spawner-recruit curve
  rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
@@ -611,7 +632,7 @@ if(return=="Yes"){
 
 # ageing error matrices
  if("AGE_AGE_KEY" %in% return | return=="Yes"){
-   rawAAK <- matchfun2("AGE_AGE_KEY",1,"Size_Bins_pop",-1,cols=1:(accuage+2))
+   rawAAK <- matchfun2("AGE_AGE_KEY",1,"SELEX_database",-1,cols=1:(accuage+2))
    if(length(rawAAK)>1){
      starts <- grep("KEY:",rawAAK[,1])
      N_ageerror_defs <- length(starts)

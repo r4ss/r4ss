@@ -9,7 +9,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA April 23, 2009.
+# SSv3_plots BETA May 4, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
@@ -17,7 +17,7 @@ SSv3_plots <- function(
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesilatagebases version 3.02B through 3.02F; R version 2.8.1
+# General: Updated for Stock Synthesilatagebases version 3.03A; R version 2.8.1
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and plotrix package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
@@ -418,13 +418,13 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(m==1 & nsexes==1) sextitle2 <- "Ending"
       if(m==1 & nsexes==2) sextitle2 <- "Female ending"
       if(m==2) sextitle2 <- "Male ending"
-      intret <- retention[retention$gender==m,]
-      intselex <- sizeselex[sizeselex$gender==m,]
+      intret <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
+      intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
       for(i in fleets)
       {
         plotselex <- intselex[intselex$Fleet==i,]
         time <- FALSE
-        for(t in 4 + 1:nlbinspop) if(length(unique(plotselex[,t]))>1){time <- TRUE}
+        for(t in 5 + 1:nlbinspop) if(length(unique(plotselex[,t]))>1){time <- TRUE}
         if(m==1 & nsexes==1) sextitle <- "Time-"
         if(m==1 & nsexes==2) sextitle <- "Female time-"
         if(m==2) sextitle="Male time-"
@@ -432,7 +432,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         {
           x <- lbinspop
           y <- plotselex$year
-          z <- plotselex[,-(1:4)]
+          z <- plotselex[,-(1:5)]
           z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
           z <- t(z)
           main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
@@ -448,12 +448,12 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             dev.off()}
         }
         time2 <- FALSE
-        for(t in 4 + 1:nlbinspop) if(length(unique(intret[intret$Fleet==i,t]))>1){time2 <- TRUE}
+        for(t in 5 + 1:nlbinspop) if(length(unique(intret[intret$Fleet==i,t]))>1){time2 <- TRUE}
         if(time2)
         {
           x <- lbinspop
-          y <- as.numeric(intret$year[intret$Fleet==i])
-          z <- intret[intret$Fleet==i,-(1:4)]
+          y <- intret$year[intret$Fleet==i]
+          z <- intret[intret$Fleet==i,-(1:5)]
           z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
           z <- t(z)
           main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
@@ -468,7 +468,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)
             dev.off()}
         }
-        plotselex <- plotselex[plotselex$year==endyr & plotselex$gender==m,-(1:4)]
+        plotselex <- plotselex[plotselex$year==endyr & plotselex$gender==m,-(1:5)]
         ylab <- "Selectivity and retention"
         bins <- as.numeric(names(plotselex))
         vals <- as.numeric(paste(plotselex))
@@ -479,14 +479,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           abline(h=0,col="grey")
           intret2 <- intret[intret$Fleet==i,]
           retchecktemp <- as.vector(unlist(intret2[1,]))
-          retcheck <- as.numeric(retchecktemp[5:length(retchecktemp)])
+          retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
           if(is.na(sum(retcheck))) retcheckuse <- 0
           if(!is.na(sum(retcheck))) retcheckuse <- max(retcheck)-min(retcheck)
           if(retcheckuse==0 & max(vals)-min(vals)!=0) legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")
           if(retcheckuse > 0){
             useret <- intret[intret$Fleet==i,]
             plotret <- useret[useret$year==max(as.numeric(useret$year)),]
-            lines((as.numeric(as.vector(names(plotret)[-(1:4)]))),(as.numeric(as.character(plotret[1,-(1:4)]))),col="red",type="l",cex=1.1)
+            lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="l",cex=1.1)
             legend("bottomright",inset=c(0,0.05),bty="n", c("Selectivity","Retention"), lty=1, col = c("blue","red"))}
         }
         if(max(vals) - min(vals) != 0) # only make plot of selectivity is not constant
@@ -513,16 +513,17 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(m==2) sextitle2 <- "Male ending"
       for(i in fleets)
       {
-        plotageselex <- ageselex[ageselex$fleet==i & ageselex$gender==m,]
+        plotageselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
         time <- FALSE
-        for(t in 5+0:accuage){if(length(unique(plotageselex[,t]))>1){time <- TRUE}}
+        for(t in (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]){
+          if(length(unique(plotageselex[,t]))>1){time <- TRUE} }
         if(time)
         {
-          if((min(as.numeric(as.vector(t(plotageselex[,-(1:4)])))) < 1))
+          if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1))
           {
             x <- seq(0,accuage,by=1)
             y <- as.numeric(plotageselex$year)
-            z <- plotageselex[,-(1:4)]
+            z <- plotageselex[,-(1:7)]
             z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
             z <- t(z)
             main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
@@ -537,7 +538,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
               contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,col=ians_blues,lwd=2)
               dev.off()}
             plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
-            plotageselex2 <- plotageselex2[,-(1:4)]
+            plotageselex2 <- plotageselex2[,-(1:7)]
             main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
             endselfunc <- function()
              {plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab="Age (yr)",ylim=c(0,1),main=main,ylab=ylab,type="o",col="blue",cex=1.1)
@@ -552,8 +553,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
          }
         if(!time)
         {
-          plotageselex <- plotageselex[as.numeric(plotageselex$year)==endyr,]
-          plotageselex <- plotageselex[,-(1:4)]
+          plotageselex <- plotageselex[plotageselex$year==endyr,]
+          plotageselex <- plotageselex[,-(1:7)]
           vals <- as.numeric(paste(c(plotageselex)))
           if(!(((max(vals))-(min(vals)))==0))
           {
@@ -806,7 +807,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     # recruitment with asymptotic interval
     if(uncertainty){
-      recstd <- matchfun2("VirginRecr",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+      recstd <- matchfun2("Recr_Virgin",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
       recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
       recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
       recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
@@ -895,7 +896,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
-      sbstd <- matchfun2("VirginSPB",0,"VirginRecr",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+      sbstd <- matchfun2("SPB_Virgin",0,"Recr_Virgin",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
       sbstd$Yr <- substring(sbstd$LABEL,5,nchar(sbstd$LABEL[1])-1)
       sbstd$Yr[2] <- as.numeric(sbstd$Yr[3])-1
       sbstd$Yr[1] <- as.numeric(sbstd$Yr[2])-1
@@ -2057,78 +2058,6 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
      legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
      ipage=0)
 {
-
-  ################################################################################
-  #
-  # make_multifig March 23, 2009
-  #
-  # Purpose: To plot a multifigure environment similar to lattice but simpler
-  #          and with easier controls over some things
-  # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-  # Returns: a plot
-  # General:
-  # Notes:
-  # Required packages: none
-  #
-  ################################################################################
-
-  # notes on inputs for make_multifig
-  # ptsx                    = vector of x values for points or bars
-  # ptsy                    = vector of y values for points or bars  of same length as ptsx
-  # yr                       = vector of category values (years) of same length as ptsx
-  # linesx=0                = optional vector of x values for lines
-  # linesy=0                = optional vector of y values for lines
-  # sampsize=0              = optional sample size vector of same length as ptsx
-  # minsampsize=0           = optional lower limit on sample sizes to be printed on the plot
-  # sampsizeround=1         = number of decimal places to include in the sample size text
-  # maxrows=6               = the maximum number of rows of plots
-  # maxcols=6               = the maximum number of columns of plots
-  # fixdims=T               = should the number of rows & columns be fixed to the maximum (T/F)
-  # main=""                 = the main title for the plot
-  # cex.main=1               = the font size multiplier for the main title
-  # xlab=""                 = the x-axis label
-  # ylab=""                 = the y-axis label
-  # horiz_lab="default"     = axis labels set horizontal all the time (T), never (F) or
-  #                           only when relatively short ("default")
-  # xbuffer=c(.1,.1)        = extra space around points on the left and right as fraction of total width of plot
-  # axis1="default"         = vector of values for x-axis, "default" chooses in typical R fashion
-  # axis2="default"         = vector of values for y-axis, "default" chooses in typical R fashion
-  # linepos=1               = position of lines relative to point/bars (0=no lines, 1=behind, 2=in front)
-  # bars=F                  = should the ptsx/ptsy values be bars instead of points (T/F)
-  # barwidth="default"      = width of bars in barplot, default method chooses based on quick and dirty formula
-  #                           also, current method of plot(...type='h') could be replaced with better approach
-  # ptscol=1                = color for points/bars
-  # linescol=2              = color for lines
-  # lty=1                   = line type
-  # lwd=1                   = line width
-  # pch=1                   = point character
-  # nlegends=2              = number of legends
-  # legtext=list("yr","sampsize") = text in legend, a list of length=nlegends values may be
-  #                           1. "yr" to make the legend for each plot equal to the yr input for the values within
-  #                           2. "sampsize" to make the legend be "n=99.9" where 99.9 is the sample size for the values
-  #                              rounded according to the input sampsizeround
-  #                           3. "effN" to make the legend be "effN=88.8" where 88.8 is the effective sample size
-  #                           4. a vector of length = ptsx
-  # legx="default"          = vector of length=nlegends of x-values of legends (default is first one on left,
-  #                           all after on right)
-  # legy="default"          = vector of length=nlegends of y-values of legends (default is top for all plots)
-  # legadjx="default"       = left/right adjustment of legends around legx
-  # legadjy="default"       = left/right adjustment of legends around legy
-  # legsize=c(1.2,1.0)      = font size for legends
-  # legfont=c(2,1)          = font type for legends, same as "font" under ?par
-
-function(ptsx, ptsy, yr, linesx=0, linesy=0,
-     sampsize=0, effN=0, minsampsize=0, sampsizeround=1,
-     maxrows=6, maxcols=6, fixdims=T, main="",cex.main=1,xlab="",ylab="",
-     size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
-     horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=T,
-     axis1="default",axis2="default",linepos=1,
-     bars=F,barwidth="default",ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
-     nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
-     legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
-     ipage=0)
-{
-
   ################################################################################
   #
   # make_multifig March 23, 2009
@@ -2246,171 +2175,6 @@ function(ptsx, ptsy, yr, linesx=0, linesy=0,
   if(ymin0) yrange <- c(0,max(ptsy,linesy)) else yrange <- range(c(ptsy,linesy,ptsy,linesy))
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
-
-  # get axis labels
-  yaxs_lab <- pretty(yrange)
-  maxchar <- max(nchar(yaxs_lab))
-  if(horiz_lab=="default") horiz_lab <- maxchar<6 # should y-axis label be horizontal?
-
-  if(axis1=="default") axis1=pretty(xrange)
-  if(axis2=="default") axis2=pretty(yrange)
-
-  if(length(sampsize)==1) sampsize <- 0
-  if(length(effN)==1) effN <- 0
-
-  # create multifigure layout and set inner margins all to 0 and add outer margins
-  par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,4,2)+.1)
-
-  panelrange <- 1:npanels
-  if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:(nrows*ncols) + nrows*ncols*(ipage-1))
-
-  for(ipanel in panelrange)
-  {
-    # subset values
-    yr_i <- yrvec[ipanel]
-    ptsx_i <- ptsx[yr==yr_i]
-    ptsy_i <- ptsy[yr==yr_i]
-
-    linesx_i <- linesx[yr==yr_i]
-    linesy_i <- linesy[yr==yr_i]
-
-    # sort values in lines
-    linesy_i <- linesy_i[order(linesx_i)]
-    linesx_i <- sort(linesx_i)
-
-    z_i <- size[yr==yr_i]
-
-    # make plot
-    plot(0,type='l',axes=F,xlab="",ylab="",xlim=xrange_big,ylim=yrange_big,
-      xaxs="i",yaxs=ifelse(bars,"i","r"))
-    abline(h=0,col="grey") # grey line at 0
-    if(linepos==1) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
-    if(diff(range(size))!=0){ # if size input is provided then use bubble function
-      bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=c(ptscol,ptscol2),
-              maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=T) # bubble plot
-    }else{
-      if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol)  # points
-      if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
-    }
-    if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
-
-    # add legends
-    usr <- par("usr")
-    for(i in 1:nlegends)
-    {
-      text_i <- ""
-      legtext_i <- legtext[[i]] # grab element of list
-      # elements of list can be "default" to make equal to yr
-      # or vector of length 1, npanels, or the full length of the input vectors
-      if(length(legtext_i)==1){      text_i <- legtext_i           # one value repeated
-        if(legtext_i=="yr")          text_i <- yr_i                # values in "yr" input
-        if(legtext_i=="sampsize"){                                 # sample sizes
-          if(max(sampsize) > minsampsize){
-            text_i <- unique(sampsize[yr==yr_i])
-            if(length(text_i)>1){
-                print(paste("Warning: sampsize values are not all equal--choosing the first value:",text_i[1]),quote=F)
-                print(paste("         yr=",yr_i,", and all sampsize values:",paste(text_i,collapse=","),sep=""),quote=F)
-                text_i <- text_i[1]
-            }
-            text_i <- paste("N=",round(sampsize[yr==yr_i],sampsizeround),sep="")
-          }else{
-            text_i <- ""
-          }
-        }
-        if(legtext_i=="effN"){                                     # effective sample sizes
-          if(max(effN) > minsampsize){
-            text_i <- unique(effN[yr==yr_i])
-            if(length(text_i)>1){
-                print(paste("Warning: effN values are not all equal--choosing the first value:",text_i[1]),quote=F)
-                print(paste("         all effN values:",paste(text_i,collapse=",")),quote=F)
-                text_i <- text_i[1]
-            }
-            text_i <- paste("effN=",round(effN[yr==yr_i],sampsizeround),sep="")
-          }else{
-            text_i <- ""
-          }
-        }
-      }
-      if(length(legtext_i)==npanels) text_i <- legtext_i[ipanel]      # one input value per panel
-      if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
-      if(length(legtext_i)==1)       text_i <- text_i[1]              # yr, sampsize, or effN
-      if(legx[1]=="default"){
-        # default is left side for first plot, right thereafter
-        textx <- ifelse(i==1, usr[1], usr[2])
-      }else{ textx <- legx[i] }
-      if(legy[1]=="default"){
-        texty <- usr[4]         # default is top for all plots
-      }else{ texty <- legy[i] }
-      if(legadjx[1]=="default"){
-        adjx <- ifelse(i==1, -.1, 1.0) # default is left side for first legend, right thereafter
-      }else{ adjx <- legadjx[i] }
-      if(legadjy[1]=="default"){
-        adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))  # default is top for first 2 legends, below thereafter
-      }else{ adjy <- legadjy[i] }
-
-      # add legend text
-      text(x=textx,y=texty,labels=text_i,adj=c(adjx,adjy),cex=legsize[i],font=legfont[i])
-    }
-
-    # add axes in left and lower outer margins
-    mfg <- par("mfg")
-    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) # axis on bottom panels and final panel
-    if(mfg[2]==1) axis(side=2,at=axis2,las=horiz_lab)        # axis on left side panels
-    box()
-
-    if(ipanel %% (nrows*ncols) == 1) # if this is the first panel of a given page
-    {
-      # add title after plotting first panel on each page of panels
-      fixcex = 1 # fixcex compensates for automatic adjustment caused by par(mfcol)
-      if(max(nrows,ncols)==2) fixcex = 1/0.83
-      if(max(nrows,ncols)>2) fixcex = 1/0.66
-
-      title(main=main, line=c(2,0,3,3), outer=T, cex.main=cex.main*fixcex)
-      title(xlab=xlab, outer=T, cex.lab=fixcex)
-      title(ylab=ylab, line=ifelse(horiz_lab,max(3,2+.4*maxchar),3.5), outer=T, cex.lab=fixcex)
-    }
-  }
-  # restore default single panel settings
-  par(mfcol=c(1,1),mar=c(5,5,4,2)+.1,oma=rep(0,4))
-
-  # return information on what was plotted
-  return(list(npages=npages, npanels=npanels, ipage=ipage))
-}
-
-  # define dimensions
-  yrvec <- sort(unique(yr))
-  npanels <- length(yrvec)
-  nvals <- length(yr)
-
-  nrows <- min(ceiling(sqrt(npanels)), maxrows)
-  ncols <- min(ceiling(npanels/nrows), maxcols)
-  if(fixdims){
-      nrows <- maxrows
-      ncols <- maxcols
-  }
-
-  npages <- ceiling(npanels/nrows/ncols) # how many pages of plots
-
-  # if no input on lines, then turn linepos to 0
-  if(length(linesx)==1 | length(linesy)==1){
-    linepos <- 0
-    linesx <- ptsx
-    linesy <- ptsy
-  }
-
-  # quick and dirty formula to get width of bars (if used) based on
-  #   number of columns and maximum number of bars within a in panel
-  if(bars & barwidth=="default") barwidth <- 400/max(table(yr)+2)/ncols
-
-  # make size vector have full length
-  if(length(size)==1) size <- rep(size,length(yr))
-
-  # get axis limits
-  xrange <- range(c(ptsx,linesx,ptsx,linesx))
-  if(ymin0) yrange <- c(0,max(ptsy,linesy)) else yrange <- range(c(ptsy,linesy,ptsy,linesy))
-  xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
-  yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
-print(yrange_big)
 
   # get axis labels
   yaxs_lab <- pretty(yrange)
