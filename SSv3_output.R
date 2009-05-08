@@ -475,7 +475,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  names(rawageselex)<- rawageselex[1,]
  ageselex <- rawageselex[-1,]
  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
- for(i in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
+ for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
  if("ageselex" %in% return | return=="Yes") returndat$ageselex <- ageselex
 
 # time series
