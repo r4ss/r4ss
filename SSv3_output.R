@@ -103,9 +103,9 @@ if(covar){
   # time check for CoVar file
   covarhead <- readLines(con=covarfile,n=2)
   covartime <- findtime(covarhead)
+  # the conversion to R time class below may no longer be necessary as strings should match
   covartime2 <- as.POSIXlt(covartime, format="%a %b %d %H:%M:%S %Y")
   repfiletime2 <- as.POSIXlt(repfiletime, format="%a %b %d %H:%M:%S %Y")
-
   difftimelimit <- 300
   if(abs(as.numeric(difftime(covartime2,repfiletime2,units="secs")))>difftimelimit){
     print(paste("!Error: ",shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
@@ -118,9 +118,10 @@ if(covar){
 compfile <- paste(dir,compfile,sep="")
 if(file.exists(compfile)){
   comphead <- readLines(con=compfile,n=2)
-  if(findtime(comphead) != repfiletime){
+  comptime <- findtime(comphead)
+  if(comptime != repfiletime){
     print(paste(shortrepfile,"and",compfile,"have different time values. Check the input filenames."),quote=F)
-    print(paste("CompReport time:",covartime),quote=F)
+    print(paste("CompReport time:",comptime),quote=F)
     return()
   }
 }else{
@@ -337,11 +338,11 @@ like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
 names(like) <- "values"
 rownames(like) <- rawlike[,1]
 like$lambdas <- rawlike[,3]
-stats$used_likelihoods <- like
+stats$likelihoods_used <- like
 
 like2 <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,cols=1:(2+nfleets))
 names(like2) <- like2[1,]
-stats$raw_likelihoods_by_fleet <- like2[2:length(like2[,1]),]
+stats$likelihoods_raw_by_fleet <- like2[2:length(like2[,1]),]
 
 rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:14)
 names(rawpars) <- rawpars[1,]
@@ -605,15 +606,6 @@ if(return=="Yes"){
   returndat$movement <- movement
 }
 
-# return list of statistics
- if(printstats){
-   print("Statistics shown below (to turn off, change input to printstats=F)",quote=F)
-   print(stats)
-   if(covar){
-     print(corstats, quote=F)
-     }
- }
-
 # age-length matrix
  if("ALK" %in% return | return=="Yes"){
    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
@@ -669,6 +661,19 @@ if(return=="Yes"){
    if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
  }
  if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
+
+
+# print list of statistics
+ if(printstats){
+   print("Statistics shown below (to turn off, change input to printstats=F)",quote=F)
+   # remove scientific notation (only for display, not returned values)
+   stats$likelihoods_used <- format(stats$likelihoods_used,scientific=20)
+   stats$estimated_non_rec_devparameters <- format(stats$estimated_non_rec_devparameters,scientific=20)
+   print(stats)
+   if(covar){
+     print(corstats, quote=F)
+     }
+ }
 
  # return the inputs to this function so they can be used by SSv3_plots or other functions
  if("inputs" %in% return | return=="Yes"){
