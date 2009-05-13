@@ -163,6 +163,7 @@ if(covar){
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
   Nstd <- sum(stdtable$std>0)
+
   if(Nstd<=1){
     print(paste("Too few estimated quantities in CoVar file (n=",Nstd,"). Change input to covar=F.",sep=""),quote=F)
     return()
@@ -178,14 +179,19 @@ if(covar){
     lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
     lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
     lowcortestlist$name <- as.character(lowcortestlist[,1])
-    lowcortestlist$max <- NA
-    for(i in 1:length(lowcortestlist[,1]))
+    nlowcor <- 0
+    lowcor <- 0
+    if(nrow(lowcortestlist)>0)
     {
+     lowcortestlist$max <- NA
+     for(i in 1:length(lowcortestlist[,1]))
+     {
       lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
+     }
+     lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
+     nlowcor <- nrow(lowcor)
     }
-    lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
     nhighcor <- nrow(highcor)
-    nlowcor <- nrow(lowcor)
     if(printhighcor>0){
       if(nhighcor==0) textblock <- "No correlations"
       if(nhighcor==1) textblock <- "1 correlation"
@@ -206,6 +212,7 @@ if(covar){
     }else{
       corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
     }
+
     if(printlowcor>0){
       if(nlowcor==0) textblock <- "No uncorrelated parameters"
       if(nlowcor==1) textblock <- "1 uncorrelation"
