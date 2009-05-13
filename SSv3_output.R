@@ -3,11 +3,11 @@ SSv3_output <- function(
   repfile="Report.SSO", compfile="CompReport.SSO",covarfile="CoVar.SSO",
   ncols=200, forecast=T, warn=T, covar=T,
   checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-  verbose=T, printstats=T, return="Yes",hidewarn=F)
+  verbose=T, printstats=T, return="Yes",hidewarn=F,NoCompOK=F)
 {
 ################################################################################
 #
-# SSv3_output BETA May 4, 2009.
+# SSv3_output BETA May 13, 2009
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -20,7 +20,8 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
-
+codedate <- "May 13, 2009"
+  
 if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
 
@@ -69,12 +70,13 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B","3C"),sep=""))){
-  print(paste("! Warning, this function tested on for SS-V3.03A through V3.03C. You are using",substr(SS_version,1,9)),quote=F)
+if(!(SS_versionshort %in% paste("SS-V3.0",c("3A"),sep=""))){
+  print(paste("! Warning, this function tested on SS-V3.03A. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
-  print("If you have problems, report them at http://code.google.com/p/r4ss/",quote=F)
 }
+print(paste("R function updated:",codedate),quote=F)
+print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
 
 findtime <- function(lines){
   # quick function to get model start time from SSv3 output files
@@ -124,9 +126,11 @@ if(file.exists(compfile)){
     print(paste("CompReport time:",comptime),quote=F)
     return()
   }
+  comp <- T
 }else{
-  print(paste("Missing",compfile,". Change the compfile input or rerun model to get the file.",sep=""),quote=F)
-  return()
+  print(paste("Missing ",compfile,". Change the compfile input or rerun model to get the file.",sep=""),quote=F)
+  #return()
+  if(NoCompOK) comp <- F else return()
 }
 
 # read report file
@@ -271,31 +275,44 @@ for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,ic
 nfleets <- length(unique(selex$Fleet))
 nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
 nsexes <- length(unique(as.numeric(selex$gender)))
-allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=8)
-#lbins is data length bins
-lbins <- as.numeric(allbins[6,-1])
-lbins <- lbins[!is.na(lbins)]
-nlbins <- length(lbins)
-#lbinspop is Pop_len_mid used for selex and bio quantities
-lbinspop <- as.numeric(allbins[3,-1])
-lbinspop <- lbinspop[!is.na(lbinspop)]
-nlbinspop <- length(lbinspop)
-
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
-# read composition database
-rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
-names(rawcompdbase) <- rawcompdbase[1,]
-compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
-compdbase <- compdbase[compdbase$Obs!="",]
-for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
-lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
-latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
-Lbin_method <- as.numeric(rawrep[matchfun("Method_for_Lbin"),2])
-lendbase$effN <- as.numeric(lendbase$effN)
-agedbase$effN <- as.numeric(agedbase$effN)
-agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
-nagebins <- length(agebins)
+
+if(comp){   # skip this stuff if no CompReport.SSO file
+  allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=8)
+  #lbins is data length bins
+  lbins <- as.numeric(allbins[6,-1])
+  lbins <- lbins[!is.na(lbins)]
+  nlbins <- length(lbins)
+  #lbinspop is Pop_len_mid used for selex and bio quantities
+  lbinspop <- as.numeric(allbins[3,-1])
+  lbinspop <- lbinspop[!is.na(lbinspop)]
+  nlbinspop <- length(lbinspop)
+
+  # read composition database
+  rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
+  names(rawcompdbase) <- rawcompdbase[1,]
+  compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
+  compdbase <- compdbase[compdbase$Obs!="",]
+  for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+  lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
+  agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
+  latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
+  Lbin_method <- as.numeric(rawrep[matchfun("Method_for_Lbin"),2])
+  lendbase$effN <- as.numeric(lendbase$effN)
+  agedbase$effN <- as.numeric(agedbase$effN)
+  agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
+  nagebins <- length(agebins)
+}else{
+  lbins <- NA
+  nlbins <- NA
+  lbinspop <- NA
+  nlbinspop <- NA
+  agebins <- NA
+  nagebins <- NA
+  compdbase <- NA
+  agedbase <- NA
+  latagebase <- NA
+}
 tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
 ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
@@ -433,10 +450,14 @@ if(return=="Yes") returndat$morph_indexing <- morph_indexing
 
 # Static growth
 begin <- matchfun("N_Used_morphs",rawrep[,6])+1
-rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
-names(rawbio) <- rawbio[1,]
-bio <- rawbio[-1,]
-for(i in 1:ncol(bio)) bio[,i] <- as.numeric(bio[,i])
+if(comp){
+  rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
+  names(rawbio) <- rawbio[1,]
+  bio <- rawbio[-1,]
+  for(i in 1:ncol(bio)) bio[,i] <- as.numeric(bio[,i])
+}else{
+  bio <- NA
+}
 if("biology" %in% return | return=="Yes") returndat$biology <- bio
 
 rawgrow <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,cols=1:18)
@@ -606,21 +627,23 @@ if(return=="Yes"){
   returndat$movement <- movement
 }
 
-# age-length matrix
- if("ALK" %in% return | return=="Yes"){
-   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-   if(length(rawALK)>1){
-     ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
-     starts <- grep("Morph:",rawALK[,3])+2
-     ends <- grep("mean",rawALK[,1])-1
-     for(i in 1:nmorphs){
-       ALKtemp <- rawALK[starts[i]:ends[i],-1]
-       for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
-       ALK[i,,] <- as.matrix(ALKtemp)
-     }
-     returndat$ALK <- ALK
-   }
- }
+if(comp){
+  # age-length matrix
+  if("ALK" %in% return | return=="Yes"){
+    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
+    if(length(rawALK)>1){
+      ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
+      starts <- grep("Morph:",rawALK[,3])+2
+      ends <- grep("mean",rawALK[,1])-1
+      for(i in 1:nmorphs){
+        ALKtemp <- rawALK[starts[i]:ends[i],-1]
+        for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+        ALK[i,,] <- as.matrix(ALKtemp)
+      }
+      returndat$ALK <- ALK
+    }
+  }
+}
 
 # ageing error matrices
  if("AGE_AGE_KEY" %in% return | return=="Yes"){

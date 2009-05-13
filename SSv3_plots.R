@@ -9,7 +9,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA May 12, 2009.
+# SSv3_plots BETA May 13, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
@@ -24,6 +24,12 @@ SSv3_plots <- function(
 #
 ################################################################################
 
+  codedate <- "May 13, 2009"
+
+  if(verbose){
+    print(paste("R function updated:",codedate),quote=F)
+    print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
+  }
 
 #################################################################################
 ## embedded functions
