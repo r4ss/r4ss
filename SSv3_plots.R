@@ -1803,10 +1803,10 @@ if(nseasons==1){ # temporary disable until code cleanup
       kindlab=agelab
       if(datonly){
         filenamestart <- "17_condAALdat_"
-        titledata <- "conditional length at age data, "
+        titledata <- "conditional age at length data, "
       }else{
         filenamestart <- "20_condAALfit_"
-        titledata <- "conditional length at age, "
+        titledata <- "conditional age at length, "
       }
     }
 
