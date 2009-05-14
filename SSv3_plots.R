@@ -9,7 +9,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA May 13, 2009.
+# SSv3_plots BETA May 14, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
@@ -818,6 +818,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
       recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
       recstd$Yr <- as.numeric(recstd$Yr)
+
+print(recstd)
+print("ok to here")
+
       v <- recstd$Value
       recstd$val1 <- log(v)
       recstd$logint <- sqrt(log(1+(recstd$StdDev/v)^2))
@@ -1102,6 +1106,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   if(9 %in% c(plot, print))
   {
     recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
+     if(!max(recdev$Value)>0){
+     if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
+     if(max(recdev$Value)>0){
       if(nrow(recdev)>0){
         recdev$Yr <- as.numeric(substring(recdev$Label,9))
         ylab <- "Log Recruitment deviation"
@@ -1131,6 +1138,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     } # end if uncertainty==T
     if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
     flush.console()
+   }
   } # end if 9 in plot or print
 
   ### Plot 10: average body weight observations ###
