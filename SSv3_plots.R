@@ -818,10 +818,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
       recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
       recstd$Yr <- as.numeric(recstd$Yr)
-
-print(recstd)
-print("ok to here")
-
       v <- recstd$Value
       recstd$val1 <- log(v)
       recstd$logint <- sqrt(log(1+(recstd$StdDev/v)^2))
