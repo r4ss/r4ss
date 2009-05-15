@@ -9,13 +9,14 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA May 14, 2009.
+# SSv3_plots BETA May 15, 2009.
 #
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+#          and other contributors to http://code.google.com/p/r4ss/
 # Returns: Plots with plot history in R GUI and/or .png files.
 # General: Updated for Stock Synthesilatagebases version 3.03A; R version 2.8.1
 # Notes:   See users guide for documentation.
@@ -24,7 +25,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "May 13, 2009"
+  codedate <- "May 15, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -137,6 +138,7 @@ SSv3_plots <- function(
   F_method                       <- replist$F_method
   depletion_basis                <- replist$depletion_basis
   depletion_level                <- replist$depletion_level
+  discard                        <- replist$discard 
   mnwgt                          <- replist$mnwgt
   sprseries                      <- replist$sprseries
   recruit                        <- replist$recruit
@@ -1137,9 +1139,38 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
    }
   } # end if 9 in plot or print
 
-  ### Plot 10: average body weight observations ###
+  ### Plot 10: discard fractions (if present) ###
   if(10 %in% c(plot, print))
   {
+    ### discard fractions ###
+    if(length(discard)>1)
+    {
+      for(i in unique(discard$Fleet))
+      {
+        usedisc <- discard[discard$Fleet==i,]
+        yr <- as.numeric(usedisc$Yr)
+        ob <- as.numeric(usedisc$Obs)
+        cv <- as.numeric(usedisc$CV)
+        xlim <- c((min(yr)-3),(max(yr)+3))
+        title <- paste("Discard fraction for",i)
+        ylab <- "Discard fraction"
+        dfracfunc <- function()
+        {
+          plotCI(x=yr,y=ob,z=0,uiw=(ob*1.96*cv),ylab=ylab,liw=(ob*1.96*cv),xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
+          abline(h=0,col="grey")
+          points(yr,usedisc$exp,col="blue",pch="-",cex=2)
+        }
+        if(10 %in% plot){dfracfunc()}
+        if(10 %in% print)
+        {
+          png(file=paste(dir,"10discfracfit",i,".png",sep=""),width=pwidth,height=pheight)
+          dfracfunc()
+          dev.off()
+        }
+      } # discard series
+    } # if discards
+  
+    ### average body weight observations ###
     if(!is.na(mnwgt)[1])
     {
       for(i in unique(mnwgt$Fleet))
@@ -1270,8 +1301,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     recruitfun <- function(){
       plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
       abline(h=0,col="grey")
-      biasad <- recruit$bias_adj
-      lines(x[order(x)],biasad[order(x)],col="green")
+      lines(x[order(x)],recruit$bias_adj[order(x)],col="green")
       lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
       points(x,recruit$pred_recr,col="red")}
     if(12 %in% plot) recruitfun()

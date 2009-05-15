@@ -7,12 +7,13 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA May 13, 2009
+# SSv3_output BETA May 15, 2009
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+#          and other contributors to http://code.google.com/p/r4ss/
 # Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
 #          formatted as R objects, and optional summary statistics to R console
 # General: Updated for Stock Synthesis version 3.03A; R version 2.8.1
@@ -20,7 +21,7 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
-codedate <- "May 13, 2009"
+codedate <- "May 15, 2009"
   
 if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
@@ -73,10 +74,10 @@ SS_versionshort <- toupper(substr(SS_version,1,9))
 if(!(SS_versionshort %in% paste("SS-V3.0",c("3A"),sep=""))){
   print(paste("! Warning, this function tested on SS-V3.03A. You are using",substr(SS_version,1,9)),quote=F)
 }else{
-  print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
+  if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
-print(paste("R function updated:",codedate),quote=F)
-print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
+if(verbose) print(paste("R function updated:",codedate),quote=F)
+if(verbose) print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
 
 findtime <- function(lines){
   # quick function to get model start time from SSv3 output files
@@ -152,7 +153,7 @@ if(maxnonblank==ncols){
 return(NULL)
 }
 if((maxnonblank+1)==ncols & verbose){ print("Got all columns.",quote=F)}
-if((maxnonblank+1)<ncols){ print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
+if((maxnonblank+1)<ncols){ if(verbose) print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
 if(verbose) print("Got Report file",quote=F)
 flush.console()
 
@@ -556,6 +557,18 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
    returndat$depletion_method <- depletion_method
    returndat$depletion_level <- depletion_level
  }
+
+# discard fractions ###
+ rawdisc <- matchfun2("DISCARD_OUTPUT",2,"MEAN_BODY_WT_OUTPUT",-1)
+ if(!((length(rawdisc[,1])) == 1))
+ {
+   rawdisc <- rawdisc[,rawdisc[1,]!=""]
+   names(rawdisc) <- rawdisc[1,]
+   discard <- rawdisc[-1,]
+ }else{
+   discard <- NA
+ }
+ if(return=="Yes") returndat$discard <- discard
 
 # Average body weight observations
  rawmnwgt <- matchfun2("MEAN_BODY_WT",1,"FIT_LEN_COMPS",-1,cols=1:10)
