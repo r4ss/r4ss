@@ -7,7 +7,7 @@ SSv3_output <- function(
 {
 ################################################################################
 #
-# SSv3_output BETA May 15, 2009
+# SSv3_output
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To import content from SSv3 model run.
@@ -21,7 +21,7 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
-codedate <- "May 15, 2009"
+codedate <- "May 18, 2009"
   
 if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
@@ -577,7 +577,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  {
    names(rawmnwgt) <- rawmnwgt[1,]
    mnwgt <- rawmnwgt[-1,]
-   for(i in 1:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
+   for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
  } # if mean weight data exists
  if(return=="Yes") returndat$mnwgt <- mnwgt
 
