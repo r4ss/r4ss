@@ -135,10 +135,12 @@ SSv3_plots <- function(
   ageselex                       <- replist$ageselex
   timeseries                     <- replist$timeseries
   F_method                       <- replist$F_method
+  depletion_method               <- replist$depletion_method
   depletion_basis                <- replist$depletion_basis
-  depletion_level                <- replist$depletion_level
-  discard                        <- replist$discard 
+  discard                        <- replist$discard
+  DF_discard                     <- replist$DF_discard
   mnwgt                          <- replist$mnwgt
+  DF_mnwgt                       <- replist$DF_mnwgt
   sprseries                      <- replist$sprseries
   recruit                        <- replist$recruit
   cpue                           <- replist$cpue
@@ -1152,12 +1154,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         yr <- as.numeric(usedisc$Yr)
         ob <- as.numeric(usedisc$Obs)
         cv <- as.numeric(usedisc$CV)
+        liw <- -ob*cv*qt(0.025,DF_discard) # quantile of t-distribution
+        uiw <- ob*cv*qt(0.975,DF_discard) # quantile of t-distribution
         xlim <- c((min(yr)-3),(max(yr)+3))
         title <- paste("Discard fraction for",i)
         ylab <- "Discard fraction"
         dfracfunc <- function()
         {
-          plotCI(x=yr,y=ob,z=0,uiw=(ob*1.96*cv),ylab=ylab,liw=(ob*1.96*cv),xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
+          plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
           abline(h=0,col="grey")
           points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
         }
@@ -1186,9 +1190,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           ex <- usemnwgt$Exp[usemnwgt$Mkt==j]
           xmin <- min(yr)-3
           xmax <- max(yr)+3
-          uiw <- ob*1.96*cv
-          liw <- ob*1.96*cv
-          liw[(ob-liw)<0] <- ob[(ob-liw)<0]
+          liw <- -ob*cv*qt(0.025,DF_mnwgt) # quantile of t-distribution
+          uiw <- ob*cv*qt(0.975,DF_mnwgt) # quantile of t-distribution
+          liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
           ymax <- max(ob + uiw)
           ymax <- max(ymax,ex)
           ptitle <- paste("Mean weight in discard for fleet",i,sep=" ")

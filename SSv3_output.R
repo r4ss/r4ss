@@ -3,7 +3,7 @@ SSv3_output <- function(
   repfile="Report.SSO", compfile="CompReport.SSO",covarfile="CoVar.SSO",
   ncols=200, forecast=T, warn=T, covar=T,
   checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-  verbose=T, printstats=T, return="Yes",hidewarn=F,NoCompOK=F)
+  verbose=T, printstats=T,hidewarn=F, NoCompOK=F)
 {
 ################################################################################
 #
@@ -150,7 +150,7 @@ maxnonblank = max(c(0,(1:ncols)[nonblanks==1]))
 if(maxnonblank==ncols){
   print(      "! Warning, all columns are used and some data may have been missed,",quote=F)
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
-return(NULL)
+  return(NULL)
 }
 if((maxnonblank+1)==ncols & verbose){ print("Got all columns.",quote=F)}
 if((maxnonblank+1)<ncols){ if(verbose) print(paste("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,sep=""),quote=F)}
@@ -435,26 +435,25 @@ flush.console()
 
 # data return object
 returndat <- list()
-if("dimensions" %in% return | return=="Yes"){
-  returndat$nfleets     <- nfleets
-  returndat$nfishfleets <- nfishfleets
-  returndat$nsexes      <- nsexes
-  returndat$lbins       <- lbins
-  returndat$lbins       <- lbins
-  returndat$nlbins      <- nlbins
-  returndat$lbinspop    <- lbinspop
-  returndat$nlbinspop   <- nlbinspop
-  returndat$agebins     <- agebins
-  returndat$nagebins    <- nagebins
-  returndat$accuage     <- accuage
-  returndat$nareas      <- nareas
-  returndat$startyr     <- startyr
-  returndat$endyr       <- endyr
-  returndat$nseasons    <- nseasons
-  returndat$seasfracs   <- seasfracs
-  returndat$nforecastyears <- nforecastyears
-}
-if(return=="Yes") returndat$morph_indexing <- morph_indexing
+
+returndat$nfleets     <- nfleets
+returndat$nfishfleets <- nfishfleets
+returndat$nsexes      <- nsexes
+returndat$lbins       <- lbins
+returndat$lbins       <- lbins
+returndat$nlbins      <- nlbins
+returndat$lbinspop    <- lbinspop
+returndat$nlbinspop   <- nlbinspop
+returndat$agebins     <- agebins
+returndat$nagebins    <- nagebins
+returndat$accuage     <- accuage
+returndat$nareas      <- nareas
+returndat$startyr     <- startyr
+returndat$endyr       <- endyr
+returndat$nseasons    <- nseasons
+returndat$seasfracs   <- seasfracs
+returndat$nforecastyears <- nforecastyears
+returndat$morph_indexing <- morph_indexing
 
 # Static growth
 begin <- matchfun("N_Used_morphs",rawrep[,6])+1
@@ -466,7 +465,7 @@ if(comp){
 }else{
   bio <- NA
 }
-if("biology" %in% return | return=="Yes") returndat$biology <- bio
+returndat$biology <- bio
 
 rawgrow <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,cols=1:18)
 names(rawgrow) <- rawgrow[1,]
@@ -475,7 +474,7 @@ for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
 nmorphs <- max(growdat$Morph)
 midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
 if(nseasons > 1){growdat <- growdat[growdat$Seas==1,]}
-if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
+returndat$endgrowth <- growdat
 
 # Time-varying growth
  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))
@@ -485,19 +484,12 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
    for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
    growdat <- growdat[growdat$Beg==1 & growdat$Yr < endyr,]
    if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
-   if("growthseries" %in% return | return=="Yes") returndat$growthseries <- growdat
+   returndat$growthseries <- growdat
  }
 
 # Length selex and retention
  if(!forecast) selex <- selex[selex$year <= endyr,]
- if("sizeselex" %in% return | return=="Yes") returndat$sizeselex <- selex
-
-# retention now part of selex
- ## rawret <- matchfun2("RETENTION",1,"DISCARD_MORT",-1,cols=1:(nlbinspop+4))
- ## names(rawret) <- rawret[1,]
- ## rawret <- rawret[-1,]
- ## if(!forecast) rawret <- rawret[rawret$year <= endyr,]
- ## if("retention" %in% return | return=="Yes") returndat$retention <- rawret
+returndat$sizeselex <- selex
 
 # Age based selex
  rawageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1)
@@ -506,7 +498,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  ageselex <- rawageselex[-1,]
  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
  for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
- if("ageselex" %in% return | return=="Yes") returndat$ageselex <- ageselex
+ returndat$ageselex <- ageselex
 
 # time series
  rawts <- matchfun2("TIME_SERIES",1,"SPR_series",-1,cols=1:ncols)
@@ -515,7 +507,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  tsfull <- tsfull[-1,]
  tsfull[tsfull=="_"] <- NA
  for(i in (1:ncol(tsfull))[names(tsfull)!="Era"]) tsfull[,i] = as.numeric(tsfull[,i])
- if("timeseries" %in% return | return=="Yes") returndat$timeseries <- tsfull
+ returndat$timeseries <- tsfull
 
 # stats and dimensions
  tsfull$Yr <- tsfull$Yr + (tsfull$Seas-1)/nseasons
@@ -540,7 +532,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
 
 # harvest rates
  F_method <- as.numeric(rawrep[matchfun("F_Method"),2])
- if(return=="Yes") returndat$F_method <- F_method
+ returndat$F_method <- F_method
  if(F_method==1){
    stringmatch <- "Hrate:_"
  }else{stringmatch <- "F:_"}
@@ -552,13 +544,21 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
 
 # depletion
  depletion_method <- as.numeric(rawrep[matchfun("Depletion_method"),2])
- depletion_level <- as.numeric(strsplit(rawrep[matchfun("Depletion_method"),4],"%*",fixed=T)[[1]][1])/100
- if(return=="Yes"){
-   returndat$depletion_method <- depletion_method
-   returndat$depletion_level <- depletion_level
+ depletion_basis <- rawrep[matchfun("B_ratio_denominator"),2]
+ if(depletion_basis=="no_depletion_basis"){
+   depletion_basis <- "none"
+ }else{
+   depletion_basis <- as.numeric(strsplit(depletion_basis,"%*",fixed=T)[[1]][1])/100
  }
+ returndat$depletion_method <- depletion_method
+ returndat$depletion_basis <- depletion_basis
 
 # discard fractions ###
+
+ # degrees of freedom for T-distribution
+ DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),2]
+ DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
+
  rawdisc <- matchfun2("DISCARD_OUTPUT",2,"MEAN_BODY_WT_OUTPUT",-1)
  if(!((length(rawdisc[,1])) == 1))
  {
@@ -568,10 +568,16 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  }else{
    discard <- NA
  }
- if(return=="Yes") returndat$discard <- discard
+ returndat$discard <- discard
+ returndat$DF_discard <- DF_discard
 
 # Average body weight observations
- rawmnwgt <- matchfun2("MEAN_BODY_WT",1,"FIT_LEN_COMPS",-1,cols=1:10)
+
+ # degrees of freedom for T-distribution
+ DF_mnwgt <- rawrep[matchfun("MEAN_BODY_WT_OUTPUT"),2]
+ DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
+
+ rawmnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",1,"FIT_LEN_COMPS",-1,cols=1:10)
  mnwgt <- NA
  if(nrow(rawmnwgt)>1)
  {
@@ -579,7 +585,10 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
    mnwgt <- rawmnwgt[-1,]
    for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
  } # if mean weight data exists
- if(return=="Yes") returndat$mnwgt <- mnwgt
+ returndat$mnwgt <- mnwgt
+ returndat$DF_mnwgt <- DF_mnwgt
+
+#testing: bad
 
 # Yield and SPR time-series
  rawspr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,cols=1:(22+2*nmorphs))
@@ -590,7 +599,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
  spr <- spr[spr$Year <= endyr,]
  spr$spr <- spr$SPR
- if("sprseries" %in% return | return=="Yes") returndat$sprseries <- spr
+ returndat$sprseries <- spr
  stats$last_years_sprmetric <- spr$spr[length(spr$spr)]
 
  if(forecast){
@@ -602,7 +611,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  }else{if(verbose) print("You skipped the equilibrium yield data",quote=F)}
  flush.console()
 
- if("managementratiolabels" %in% return | return=="Yes") returndat$managementratiolabels <- managementratiolabels
+ returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
  rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
@@ -611,7 +620,7 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
  rawsr <- rawsr[-(1:2),] # remove header rows
  sr <- rawsr[-(1:2),] # remove rows for Virg and Init
  for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
- if("recruit" %in% return | return=="Yes") returndat$recruit <- sr
+ returndat$recruit <- sr
 
 # CPUE/Survey series
  rawcpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,cols=1:10)
@@ -625,113 +634,104 @@ if("endgrowth" %in% return | return=="Yes") returndat$endgrowth <- growdat
      cpue$FleetNum[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
      cpue$FleetName[i] <- substring(cpue$Fleet[i],nchar(cpue$FleetNum[i])+2)}
  }else{cpue <- NA}
- if("cpue" %in% return | return=="Yes") returndat$cpue <- cpue
+ returndat$cpue <- cpue
 
- # Numbers at age
- if("natage" %in% return | return=="Yes"){
-   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
-   if(length(rawnatage)>1){
-     names(rawnatage) <- rawnatage[1,]
-     rawnatage <- rawnatage[-1,]
-     for(i in (1:ncol(rawnatage))[names(rawnatage)!="Era"]) rawnatage[,i] = as.numeric(rawnatage[,i])
-     returndat$natage <- rawnatage
-   }
+# Numbers at age
+ rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
+ if(length(rawnatage)>1){
+   names(rawnatage) <- rawnatage[1,]
+   rawnatage <- rawnatage[-1,]
+   for(i in (1:ncol(rawnatage))[names(rawnatage)!="Era"]) rawnatage[,i] = as.numeric(rawnatage[,i])
+   returndat$natage <- rawnatage
  }
 
 # Movement
-if(return=="Yes"){
-  movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
-  names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
-  movement <- movement[-1,]
-  for(i in 1:ncol(movement)) movement[,i] <- as.numeric(movement[,i])
-  returndat$movement <- movement
-}
+ movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
+ names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
+ movement <- movement[-1,]
+ for(i in 1:ncol(movement)) movement[,i] <- as.numeric(movement[,i])
+ returndat$movement <- movement
 
 if(comp){
   # age-length matrix
-  if("ALK" %in% return | return=="Yes"){
-    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-    if(length(rawALK)>1){
-      ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
-      starts <- grep("Morph:",rawALK[,3])+2
-      ends <- grep("mean",rawALK[,1])-1
-      for(i in 1:nmorphs){
-        ALKtemp <- rawALK[starts[i]:ends[i],-1]
-        for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
-        ALK[i,,] <- as.matrix(ALKtemp)
-      }
-      returndat$ALK <- ALK
+  rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
+  if(length(rawALK)>1){
+    ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
+    starts <- grep("Morph:",rawALK[,3])+2
+    ends <- grep("mean",rawALK[,1])-1
+    for(i in 1:nmorphs){
+      ALKtemp <- rawALK[starts[i]:ends[i],-1]
+      for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+      ALK[i,,] <- as.matrix(ALKtemp)
     }
+    returndat$ALK <- ALK
   }
 }
 
 # ageing error matrices
- if("AGE_AGE_KEY" %in% return | return=="Yes"){
-   rawAAK <- matchfun2("AGE_AGE_KEY",1,"SELEX_database",-1,cols=1:(accuage+2))
-   if(length(rawAAK)>1){
-     starts <- grep("KEY:",rawAAK[,1])
-     N_ageerror_defs <- length(starts)
-     if(N_ageerror_defs > 0)
-     {
-       nrowsAAK <- nrow(rawAAK)/2 - 3
-       AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
-       age_error_sd = 0:accuage
-       for(i in 1:N_ageerror_defs){
-         AAKtemp <- rawAAK[starts[i] + 1 + 1:nrowsAAK,-1]
-         # what about 2-sex model?
-         for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
-         AAK[i,,] <- as.matrix(AAKtemp)
-         age_error_sd <- cbind(age_error_sd,as.numeric((rawAAK[starts[i] + 2,-1])))
-       }
-       returndat$AAK <- AAK
+ rawAAK <- matchfun2("AGE_AGE_KEY",1,"SELEX_database",-1,cols=1:(accuage+2))
+ if(length(rawAAK)>1){
+   starts <- grep("KEY:",rawAAK[,1])
+   N_ageerror_defs <- length(starts)
+   if(N_ageerror_defs > 0)
+   {
+     nrowsAAK <- nrow(rawAAK)/2 - 3
+     AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
+     age_error_sd = 0:accuage
+     for(i in 1:N_ageerror_defs){
+       AAKtemp <- rawAAK[starts[i] + 1 + 1:nrowsAAK,-1]
+       # what about 2-sex model?
+       for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
+       AAK[i,,] <- as.matrix(AAKtemp)
+       age_error_sd <- cbind(age_error_sd,as.numeric((rawAAK[starts[i] + 2,-1])))
      }
+     returndat$AAK <- AAK
    }
  }
 
- if("compdbase" %in% return | return=="Yes") returndat$composition_database <- compdbase
+ returndat$composition_database <- compdbase
 
- if(return=="Yes"){
-   returndat$derived_quants <- der
-   returndat$parameters <- allpars
-   returndat$FleetNames <- FleetNames
-   returndat$repfiletime <- repfiletime
-   returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
- }
+ returndat$derived_quants <- der
+ returndat$parameters <- allpars
+ returndat$FleetNames <- FleetNames
+ returndat$repfiletime <- repfiletime
+ returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
+ 
  if(covar){
-   if("covar" %in% return | return=="Yes") returndat$CoVar <- CoVar
-   if("highcor" %in% return | return=="Yes") returndat$highcor <- highcor
-   if("lowcor" %in% return | return=="Yes") returndat$lowcor <- lowcor
-   if("stdtable" %in% return | return=="Yes") returndat$stdtable <- stdtable
+   returndat$CoVar    <- CoVar
+   returndat$highcor  <- highcor
+   returndat$lowcor   <- lowcor
+   returndat$stdtable <- stdtable
  }
- if("stats" %in% return | return=="Yes") returndat <- c(returndat,stats)
+ returndat <- c(returndat,stats)
 
 
 # print list of statistics
  if(printstats){
    print("Statistics shown below (to turn off, change input to printstats=F)",quote=F)
-   # remove scientific notation (only for display, not returned values)
+
+   # remove scientific notation (only for display, not returned values, which were added to returndat already)
    stats$likelihoods_used <- format(stats$likelihoods_used,scientific=20)
    stats$estimated_non_rec_devparameters <- format(stats$estimated_non_rec_devparameters,scientific=20)
    print(stats)
    if(covar){
      print(corstats, quote=F)
-     }
+   }
  }
 
- # return the inputs to this function so they can be used by SSv3_plots or other functions
- if("inputs" %in% return | return=="Yes"){
-   inputs <- list()
-   inputs$dir      <- dir
-   inputs$model    <- model
-   inputs$repfile  <- repfile
-   inputs$forecast <- forecast
-   inputs$warn     <- warn
-   inputs$covar    <- covar
-   inputs$verbose  <- verbose
-   returndat$inputs <- inputs
- }
+# return the inputs to this function so they can be used by SSv3_plots or other functions
+ inputs <- list()
+ inputs$dir      <- dir
+ inputs$model    <- model
+ inputs$repfile  <- repfile
+ inputs$forecast <- forecast
+ inputs$warn     <- warn
+ inputs$covar    <- covar
+ inputs$verbose  <- verbose
 
- if(verbose) print("completed SSv3.output",quote=F)
- if(return!="No"){invisible(returndat)}
+ returndat$inputs <- inputs
+
+ if(verbose) print("completed SSv3_output",quote=F)
+ invisible(returndat)
 
 } # end function
