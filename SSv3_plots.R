@@ -9,8 +9,7 @@ SSv3_plots <- function(
 {
 ################################################################################
 #
-# SSv3_plots BETA May 15, 2009.
-#
+# SSv3_plots
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To sumarize the results of an SSv3 model run.
@@ -25,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "May 15, 2009"
+  codedate <- "May 18, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -384,8 +383,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       for(i in 1:nsexes)
       {
         growdatuse <- growthseries[growthseries$Morph==mainmorphs[i],]
+
+
         x <- seq(0,accuage,by=1)
-        y <- seq(startyr,endyr-1,by=1)
+        y <- growdatuse$Yr
         z <- growdatuse[,-(1:4)]
         z <- as.matrix(z)
         time <- FALSE
@@ -1158,7 +1159,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         {
           plotCI(x=yr,y=ob,z=0,uiw=(ob*1.96*cv),ylab=ylab,liw=(ob*1.96*cv),xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
           abline(h=0,col="grey")
-          points(yr,usedisc$exp,col="blue",pch="-",cex=2)
+          points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
         }
         if(10 %in% plot){dfracfunc()}
         if(10 %in% print)
