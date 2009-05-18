@@ -1,6 +1,6 @@
 SSv3_plots <- function(
     replist="ReportObject", plot=1:23, print=0, printfolder="", dir="default", fleets="all", areas="all",
-    fleetcols="default", areacols="default", verbose=T, uncertainty=T,
+    fleetcols="default", areacols="default", areanames="default", verbose=T, uncertainty=T,
     forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
     aalresids=F, maxneff=5000, smooth=T, showsampsize=T,showeffN=T,
@@ -216,7 +216,7 @@ SSv3_plots <- function(
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
     print(paste("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")",sep=""),quote=F)
-    areanames <- paste("Area",1:nareas)
+    if(areanames[1]=="default") areanames <- paste("area",1:nareas)
   }
 
   #### prepare for plotting
@@ -979,7 +979,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
      ylab <- "Spawning depletion"
      depfunc <- function(iarea){
       plottitle <- NULL
-      if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+      if(nareas>1) plottitle <- paste("Spawning depletion in",areanames[iarea])
       tsplotyr <- tsyears[tsarea==iarea]
       tsplotdep <- dep[tsarea==iarea]
       plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
@@ -1034,7 +1034,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       plottitle <- NULL
       tsplotyr <- tsyears[tsarea==iarea]
       tsplotdep <- dep[tsarea==iarea]
-      if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+      if(nareas>1) plottitle <- paste("Spawning depletion in",areanames[iarea])
       plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
               ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
       points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
@@ -1072,7 +1072,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
        plottitle <- NULL
        tsplotyr <- tsyears[tsarea==iarea]
        tsplotdep <- dep[tsarea==iarea]
-       if(nareas>1) plottitle <- paste("Spawning depletion in area",iarea)
+       if(nareas>1) plottitle <- paste("Spawning depletion in ",areanames[iarea])
        plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
             ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
        points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
@@ -1414,7 +1414,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           if(m==1 & nsexes==1) sextitle <- ""
           if(m==1 & nsexes==2) sextitle <- " of females"
           if(m==2) sextitle=" of males"
-          if(nareas>1) sextitle <- paste("in area",iarea,sextitle)
+          if(nareas>1) sextitle <- paste(" in ",areanames[iarea],sextitle,sep="")
           plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
 
           tempfun <- function(){
@@ -1424,10 +1424,15 @@ if(nseasons==1){ # temporary disable until code cleanup
           }
 
           natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
+          
           ages <- 0:accuage
-          datsum <- as.vector(apply(natagetemp1,1,sum))
           natagetemp2 <- as.data.frame(natagetemp1)
-          natagetemp2$sum <- datsum
+          natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
+
+          # remove rows with 0 fish (i.e. no growth pattern in this area)
+          natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
+          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
+          natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
           prodmat <- t(natagetemp1)*ages
           prodsum <- as.vector(apply(prodmat,2,sum))
           natagetemp2$sumprod <- prodsum
@@ -1440,10 +1445,10 @@ if(nseasons==1){ # temporary disable until code cleanup
           ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
           if(14 %in% plot){
             tempfun()
-            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)}
+            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle,cex.main=cex.main)}
           if(14 %in% print){
             filepart <- paste("_sex",m,sep="")
-            if(nareas > 1) filepart <- paste("_area",iarea,filepart,sep="")
+            if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
             png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             tempfun()
             dev.off()
@@ -1464,22 +1469,22 @@ if(nseasons==1){ # temporary disable until code cleanup
       ylim <- c(0,max(sd_vectors))
       if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
       if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
-      if(14 %in% plot){
+      tempfun <- function()
+      {
         plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
         if(n_age_error_keys > 1){
           for(i in 2:n_age_error_keys){
             lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
           } # close for n keys loop
         } # close if more than one key statement
+        abline(h=0,col="grey") # grey line at 0
+      }
+      if(14 %in% plot){
+        tempfun()
       } # end if 14 in plot
       if(14 %in% print){
         png(file=paste(plotdir,"14_ageerrorkeys.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
-        if(n_age_error_keys > 1){
-          for(i in 2:n_age_error_keys){
-            lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
-          } # close for n keys loop
-        } # close if more than one key statement
+        tempfun()
         dev.off()
       } # close if 14 in print
     } # end if AAK
