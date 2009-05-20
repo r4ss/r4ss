@@ -21,7 +21,7 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
-codedate <- "May 18, 2009"
+codedate <- "May 19, 2009"
   
 if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
@@ -245,8 +245,11 @@ if(forecast){
     print("        Change input to 'forecast=F' or rerun model with forecast turned on.",quote=F)
     return()
   }
-  rawforcast1 <- read.table(file=forcastname,col.names=c(seq(1,ncols,by=1)),fill=T,quote="",colClasses="character",nrows=-1)
-  yieldraw <- rawforcast1[(matchfun("Btarget",rawforcast1[,10])):(matchfun("findFmsy",rawforcast1[,10])),]
+  rawforcast1 <- read.table(file=forcastname,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1)
+  endyield <- matchfun("MSY_not_calculated",rawforcast1[,1])
+  if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
+  if(yesMSY) endyield <- matchfun("findFmsy",rawforcast1[,10])
+  yieldraw <- rawforcast1[(matchfun("Btarget",rawforcast1[,10])):endyield,]
   yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
   colnames(yielddat) <- c("Catch","Depletion")
   yielddat$Catch <- as.numeric(yielddat$Catch)

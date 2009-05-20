@@ -1,9 +1,9 @@
 SSv3_plots <- function(
     replist="ReportObject", plot=1:23, print=0, printfolder="", dir="default", fleets="all", areas="all",
-    fleetcols="default", areacols="default", areanames="default", verbose=T, uncertainty=T,
-    forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
+    fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
+    verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
-    aalresids=F, maxneff=5000, smooth=T, showsampsize=T,showeffN=T,
+    aalresids=F, maxneff=5000, smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
     maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,...)
 {
@@ -206,12 +206,6 @@ SSv3_plots <- function(
   tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
   dep <- tsspaw_bio/tsspaw_bio[1]
-  tsall <- timeseries
-  tsallyears <- tsall$Yr[tsall$Seas==1]
-  tsallarea <- tsall$Area[tsall$Seas==1]
-  tsallspaw_bio <- tsall$SpawnBio[tsall$Seas==1]
-  if(nsexes==1) tsallspaw_bio <- tsallspaw_bio/2
-  depall <- tsallspaw_bio/tsallspaw_bio[1]
 
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
@@ -243,16 +237,19 @@ SSv3_plots <- function(
     if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
   }
 
-  # colors
+  # colors and line types
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
+  if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(fleetcols[1]=="default"){
-    fleetcols <- rich.colors.short(nfleets)
-    if(nareas==3) areacols <- rainbow(nareas)
+    fleetcols <- rich.colors.short(nfishfleets)
+    if(nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets+1)[-1]
   }
+  if(length(fleetlty)<nfishfleets) fleetlty <- rep(fleetlty,nfishfleets)
+  if(length(fleetpch)<nfishfleets) fleetpch <- rep(fleetpch,nfishfleets)
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)
-    if(nfleets==3) fleetcols <- rainbow(nareas)
+    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
   }
 
   #### plot 1
@@ -592,190 +589,199 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   if(5 %in% c(plot, print))
   {
     # Total and summary biomass
-    tbiofunc <- function(){
-      tsplotyr <- ts$Yr[tsarea==1]
-      tsplotbio <- ts$Bio_all[tsarea==1]
-      plot(tsplotyr[2:length(tsplotyr)],tsplotbio[2:length(tsplotbio)],xlab="Year",ylim=c(0,max(ts$Bio_all)),ylab="Total biomass",type="o",col=areacols[1])
-      points(tsplotyr[1],tsplotbio[1],col=areacols[1],pch=19)
+    biofunc <- function(totalORsummary=1){
+      plot1 <- ts$Area==1 & ts$Era!="VIRG" # T/F for in area & not virgin value
+      plot2 <- ts$Area==1 & ts$Era=="VIRG" # T/F for in area & is virgin value
+
+      # switch for total or summary
+      if(totalORsummary==1) yvals <- ts$Bio_all
+      if(totalORsummary==2) yvals <- ts$Bio_smry
+      
+      plot(ts$Yr[plot1],yvals[plot1],
+           xlab="Year",ylim=c(0,max(yvals[plot1])),
+           ylab="Total biomass",type="o",col=areacols[1])
+      points(ts$Yr[plot2],yvals[plot2],col=areacols[1],pch=19)
       if(nareas>1){
-        for(iarea in 2:nareas) lines(ts$Yr[tsarea==iarea],ts$Bio_all[tsarea==iarea],type="o",col=areacols[iarea])
-        legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
-      }
-      abline(h=0,col="grey")
-    }
-    sbiofunc <- function(){
-      tsplotyr <- ts$Yr[tsarea==1]
-      tsplotbiosum <- ts$Bio_smry[tsarea==1]
-      plot(tsplotyr[2:length(tsplotyr)],tsplotbiosum[2:length(tsplotbiosum)],xlab="Year",ylim=c(0,max(ts$Bio_smry)),ylab="Summary biomass",type="o",col=areacols[1])
-      points(tsplotyr[1],tsplotbiosum[1],col=areacols[1],pch=19)
-      if(nareas>1){
-        for(iarea in 2:nareas) lines(ts$Yr[tsarea==iarea],ts$Bio_smry[tsarea==iarea],type="o",col=areacols[iarea])
+        for(iarea in 2:nareas){
+          plot1 <- ts$Area==iarea & ts$Era!="VIRG" # T/F for in area & not virgin value
+          plot2 <- ts$Area==iarea & ts$Era=="VIRG" # T/F for in area & is virgin value
+          lines(ts$Yr[plot1],yvals[plot1],type="o",col=areacols[iarea])
+          points(ts$Yr[plot2],yvals[plot2],col=areacols[iarea],pch=19)
+        }
         legend("topright",legend=areanames,lty=1,pch=1,col=areacols,bty="n")
       }
       abline(h=0,col="grey")
     }
 
     if(5 %in% plot){
-      tbiofunc()
-      sbiofunc()}
+      biofunc(totalORsummary=1)
+      biofunc(totalORsummary=2)
+    }
     if(5 %in% print){
       png(file=paste(plotdir,"05_totbio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      tbiofunc()
+      biofunc(totalORsummary=1)
       dev.off()
       png(file=paste(plotdir,"05_summarybio.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      sbiofunc()
-      dev.off()}
-
+      biofunc(totalORsummary=2)
+      dev.off()
+    }
 
     ## embedded modified function "stackpoly" by Jim Lemon from "plotrix" used in next plot
     ## see http://cran.r-project.org/web/packages/plotrix/index.html
     stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA, 
                            xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA, 
                            col=NA, axis4=F, ...) 
-      {
-        ydim <- dim(y)
-        x <- matrix(rep(x, ydim[2]), ncol = ydim[2])
-        y <- t(unlist(apply(as.matrix(y), 1, cumsum)))
-        if (is.na(xlim[1])) xlim <- range(x)
-        if (is.na(ylim[1])) ylim <- c(0,max(y))
-        plot(0, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim,
-             type = "n", xaxs = "i", yaxs = "i", axes = T,...)
-        plotlim <- par("usr")
-        if (is.na(col[1])) 
-          col = rainbow(ydim[2])
-        else if (length(col) < ydim[2]) 
-          col <- rep(col, length.out = ydim[2])
-        if (length(lty) < ydim[2]) 
-          lty <- rep(lty, length.out = ydim[2])
-        for (pline in seq(ydim[2], 1, by = -1)) {
-          if (pline == 1) {
-            polygon(c(x[1], x[, pline], x[ydim[1]]),
-                    c(plotlim[3], y[, pline], plotlim[3]),
-                    border = border, col = col[pline], 
-                    lty = lty[pline])
-          }
-          else polygon(c(x[, pline], rev(x[, pline - 1])), 
-                       c(y[, pline], rev(y[, pline - 1])), border = border, 
-                       col = col[pline], lty = lty[pline])
+    {
+      ydim <- dim(y)
+      x <- matrix(rep(x, ydim[2]), ncol = ydim[2])
+      y <- t(unlist(apply(as.matrix(y), 1, cumsum)))
+      if (is.na(xlim[1])) xlim <- range(x)
+      if (is.na(ylim[1])) ylim <- c(0,1.1*max(y))
+      plot(0, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim,
+           type = "n", xaxs = "i", yaxs = "i", axes = T,...)
+      plotlim <- par("usr")
+      if (is.na(col[1])) 
+        col = rainbow(ydim[2])
+      else if (length(col) < ydim[2]) 
+        col <- rep(col, length.out = ydim[2])
+      if (length(lty) < ydim[2]) 
+        lty <- rep(lty, length.out = ydim[2])
+      for (pline in seq(ydim[2], 1, by = -1)) {
+        if (pline == 1) {
+          polygon(c(x[1], x[, pline], x[ydim[1]]),
+                  c(plotlim[3], y[, pline], plotlim[3]),
+                  border = border, col = col[pline], 
+                  lty = lty[pline])
         }
-        if (axis4)  axis(4)
+        else polygon(c(x[, pline], rev(x[, pline - 1])), 
+                     c(y[, pline], rev(y[, pline - 1])), border = border, 
+                     col = col[pline], lty = lty[pline])
       }
+      if (axis4)  axis(4)
+    }
     ## end embedded stackpoly
+    
+    # harvest rates
+    if(F_method==1){
+        Fstring <- "Hrate:_"
+        ylabF <- "Harvest rate/Year"
+    }else{
+        Fstring <- "F:_"
+        ylabF <- "Continuous F" # ?maybe should add "Hybrid F" label for F_method==3
+    }
 
-    # total landings (not adapted for multi-area models)
-    ls <- nrow(ts)
-    totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
-    ts$totretained <- 0
-    ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
-    polyts <- totretainedmat[3:(ls-1),]
-    landfunc <- function(){
-      plot(ts$Yr[2:(ls-1)],ts$totretained[2:(ls-1)],xlab="Year",ylab="Landings (mt)",type="o",col="black")
-      abline(h=0,col="grey")
-      for(xx in 1:nfishfleets){
-        lines(ts$Yr[3:(ls-1)],totretainedmat[3:(ls-1),xx],type="l",col=fleetcols[xx])
+    ### total landings (retained) & catch (encountered)
+    goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
+    catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
+    retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
+    totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+    Hratemat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(Fstring))==Fstring])
+
+    if(nareas > 1){
+      for(iarea in 2:nareas){
+        arearows <- ts$Area==iarea & ts$Era %in% c("INIT","TIME")
+        retmat <- retmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
+        totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+        Hratemat  <- Hratemat  + as.matrix(ts[arearows, substr(names(ts),1,nchar(Fstring))==Fstring])
       }
-      if(nfishfleets > 1){
-        ## old function call to plotrix function
-        ## stackpoly(x=polyts[,(nfishfleets+1):(nfishfleets*2)],xaxlab=as.character(c(polyts[,1])),
-        ##           ylim=c(0,max(ts$totretained[2:(ls-1)])),stack=T,axis4=F,
-        ##         xlab="Year",ylab="Landings (mt)",col=fleetcols)
+    }
+    # ghost is a fleet with no catch (or a survey for these purposes)
+    ghost <- rep(TRUE,nfleets)
+    ghost[(1:nfishfleets)[colSums(totcatchmat)>0]] <- FALSE
+    discmat <- totcatchmat - retmat 
 
-        ## call to embedded, modified function
-        stackpoly(x=ts$Yr[3:(ls-1)],y=polyts,
-                  xlab="Year",ylab="Landings (mt)",col=fleetcols)
-      } # end if nfishfleets > 1
-    } # end landfunc
+    discfracmat <- discmat/totcatchmat
+    discfracmat[totcatchmat==0] <- 0
 
-    if(5 %in% plot) landfunc()
+    # generic function to plot catch, landings, discards or harvest rates
+    linefunc <- function(ymat,ylab,addtotal=T){
+      if(addtotal & nfishfleets>1){
+        ytotal <- rowSums(ymat)
+        ymax <- max(ytotal)
+      }else{
+        ytotal <- rep(NA,nrow(ymat))
+        ymax <- max(ymat)
+      }
+      plot(catchyrs, ytotal, ylim=c(0,ymax), xlab="Year", ylab=ylab, type="o")
+      abline(h=0,col="grey")
+      for(f in 1:nfishfleets){
+        if(max(ymat[,f])>0){
+          lines(catchyrs, ymat[,f], type="o", col=fleetcols[f],
+                lty=fleetlty[f], lwd=lwd, pch=fleetpch[f])
+        }
+      }
+      if(showlegend){
+        if(nfishfleets>1 & addtotal){
+          legend('topleft', lty=fleetlty[!ghost], lwd=lwd, pch=c(1,fleetpch[!ghost]),
+                 col=c('black',fleetcols[!ghost]), legend=c('Total',fleetnames[!ghost]), bty='n')
+        }else{
+          legend('topleft', lty=1, lwd=lwd, pch=fleetpch[!ghost], col=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
+        }
+      }
+    } # end linefunc
+
+    # function for stacked polygons
+    stackfunc <- function(ymat,ylab){
+      ## call to embedded, modified function
+      stackpoly(x=catchyrs, y=ymat, border='black',
+                xlab="Year", ylab=ylab, col=fleetcols)
+      if(showlegend) legend('topleft', fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
+      print(ghost)
+      print(fleetcols[!ghost])
+      print(fleetnames[!ghost])
+
+    } # end stackfunc
+
+    if(5 %in% plot){
+      linefunc(ymat=retmat, ylab="Landings (mt)", addtotal=T)
+      if(nfishfleets>1) stackfunc(ymat=retmat, ylab="Landings (mt)")
+      # only make these plots if there are discards
+      if(max(discmat)>0){ 
+        linefunc(ymat=totcatchmat, ylab="Total catch (mt)", addtotal=T)
+        if(nfishfleets>1) stackfunc(ymat=totcatchmat, ylab="Total catch (mt)")
+        linefunc(ymat=discmat,ylab="Predicted Discards (mt)", addtotal=T)
+        if(nfishfleets>1) stackfunc(ymat=discmat,ylab="Predicted Discards (mt)")
+        linefunc(ymat=discfracmat,ylab="Discard fraction by weight", addtotal=F)
+      }
+      linefunc(ymat=Hratemat, ylab=ylabF, addtotal=F)
+      if(nfishfleets>1) stackfunc(ymat=Hratemat, ylab=ylabF)
+    }
+
     if(5 %in% print){
       png(file=paste(plotdir,"05_landings.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      landfunc()
-      dev.off()}
-
-    # total catch (not adapted for multi-area models)
-    totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
-    ts$totcatch <- 0
-    ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
-    ## not sure why the following line was there--why not plot when totcatch equals totretained?
-    #    if(max(ts$totcatch[3:ls] - ts$totretained[3:ls] != 0))
-    {
-      catfunc <- function()
-      {plot(ts$Yr[2:(ls-1)],ts$totcatch[2:(ls-1)],xlab="Year",ylab="Total catch (mt)",type="o",col="black")
-        abline(h=0,col="grey")
-      for(xx in 1:nfishfleets){lines(ts$Yr[3:(ls-1)],totcatchmat[3:(ls-1),xx],type="l",col=fleetcols[xx])}}
-      if(5 %in% plot) catfunc()
-      if(5 %in% print){
-        png(file=paste(plotdir,"05_totcatch.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        catfunc()
-      dev.off()}
-    }
-
-    # harvest rates (not adapted for multi-area models)
-    ymax <- 0
-    fmax <- 0
-    if(F_method==1){
-        stringmatch <- "Hrate:_"
-        ylab <- "Harvest rate/Year"
-    }else{
-        stringmatch <- "F:_"
-        ylab <- "Continuous F" # ?maybe should add "Hybrid F" label for F_method==3
-    }
-    Hrates <- as.matrix(ts[,substr(names(ts),1,nchar(stringmatch))==stringmatch])
-    if(max(is.na(Hrates))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
-    fmax <- max(Hrates[!is.na(Hrates)])
-    Hratefunc <- function(){
-      plot(ts$Yr[2:(ls-1)],2:(ls-1),xlab="Year",ylim=c(0,fmax),ylab=ylab,type="n")
-        abline(h=0,col="grey")
-        for(xx in 1:nfishfleets) lines(ts$Yr[2:(ls-1)],Hrates[2:(ls-1),xx],type="o",col=fleetcols[xx])
-    }
-    if(5 %in% plot) Hratefunc()
-    if(5 %in% print){
+      linefunc(ymat=retmat, ylab="Landings (mt)", addtotal=T)
+      dev.off()
       png(file=paste(plotdir,"05_harvestrates.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      Hratefunc()
-      dev.off()}
-
-    # discard series (not adapted for multi-area models)
-    ts$discardall <- ts$totcatch - ts$totretained
-    discardmat <- totcatchmat - totretainedmat
-    if(max(is.na(ts$discardall))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
-    if(!(max(ts$discardall[!is.na(ts$discardall)])==0))
-    {
-      ylab <- "Predicted Discards (mt)"
-      discfunc <- function()
-      {
-        plot(ts$Yr[2:(ls-1)],ts$discardall[2:(ls-1)],xlab="Year",ylab=ylab,type="o",col="black")
-        abline(h=0,col="grey")
-        for(xx in 1:nfishfleets) lines(ts$Yr[3:(ls-1)],discardmat[3:(ls-1),xx],col=fleetcols[xx])
+      linefunc(ymat=Hratemat, ylab=ylabF, addtotal=F)
+      dev.off()
+      if(nfishfleets>1){
+        png(file=paste(plotdir,"05_landings_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        stackfunc(ymat=retmat, ylab="Landings (mt)")
+        dev.off()
+        png(file=paste(plotdir,"05_harvestrates_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        stackfunc(ymat=Hratemat, ylab=ylabF)
+        dev.off()
       }
-      if(5 %in% plot){discfunc()}
-      if(5 %in% print)
-      {png(file=paste(plotdir,"05_discards.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        discfunc()
-      dev.off()}
-    }
-    # Discard fraction by weight
-    discfracmat <- discardmat/totcatchmat
-    discfracmat[discfracmat %in% NaN] <- 0
-    ts$discfrac <- 0
-    ts$discfrac[3:ls] <- ts$discardall[3:ls]/ts$totcatch[3:ls]
-    ts$discfrac[ts$discfrac %in% NaN] <- 0
-    ymax <- max(ts$discfrac)
-    if(max(is.na(ts$discfrac))==1) print("!warning: you have a bad value in the TIME_SERIES section of the report file")
-    if(max(ts$discfrac[!is.na(ts$discfrac)]>0)){
-      for(xx in 1:nfishfleets)
+      # only make the remaining plots if there are discards
+      if(max(discmat)>0)
       {
-        ylab <- "Discard fraction by weight"
-        discfunc2 <- function()
-        {
-          plot(ts$Yr[3:ls],ts$discfrac[3:ls],xlab="Year",ylim=c(0,ymax),ylab=ylab,type="o",col="black")
-          abline(h=0,col="grey")
-          for(xx in 1:nfishfleets) lines(ts$Yr[3:ls],discfracmat[3:ls,xx],col=fleetcols[xx])
+        png(file=paste(plotdir,"05_totcatch.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        linefunc(ymat=totcatchmat, ylab="Total catch (mt)", addtotal=T)
+        dev.off()
+        png(file=paste(plotdir,"05_discards.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        linefunc(ymat=discmat,ylab="Predicted Discards (mt)", addtotal=T)
+        dev.off()
+        png(file=paste(plotdir,"05_discardfraction.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        linefunc(ymat=discfracmat,ylab="Discard fraction by weight", addtotal=F)
+        dev.off()
+        if(nfishfleets>1){
+          png(file=paste(plotdir,"05_totcatch_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          stackfunc(ymat=totcatchmat, ylab="Total catch (mt)")
+          dev.off()
+          png(file=paste(plotdir,"05_discards_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          stackfunc(ymat=discmat,ylab="Predicted Discards (mt)")
+          dev.off()          
         }
-        if(5 %in% plot){discfunc2()}
-        if(5 %in% print)
-        {png(file=paste(plotdir,"05_discardfraction.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          discfunc2()
-        dev.off()}
       }
     }
     if(verbose) print("Finished plot 5: Basic time series",quote=F)
@@ -1501,7 +1507,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 ###############################################################
   
   make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
-       sampsize=0, effN=0, minsampsize=0, sampsizeround=1,
+       sampsize=0, effN=0, showsampsize=T, showeffN=T, sampsizeround=1,
        maxrows=6, maxcols=6, fixdims=T, main="",cex.main=1,xlab="",ylab="",
        size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
        horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=T,
@@ -1532,7 +1538,9 @@ if(nseasons==1){ # temporary disable until code cleanup
     # linesx=0                = optional vector of x values for lines
     # linesy=0                = optional vector of y values for lines
     # sampsize=0              = optional sample size vector of same length as ptsx
-    # minsampsize=0           = optional lower limit on sample sizes to be printed on the plot
+    # effNsize=0              = optional sample size vector of same length as ptsx
+    # showsampsize=T          = turns on or off sample size plotting
+    # showeffN=T              = turns on or off effN plotting
     # sampsizeround=1         = number of decimal places to include in the sample size text
     # maxrows=6               = the maximum number of rows of plots
     # maxcols=6               = the maximum number of columns of plots
@@ -1555,7 +1563,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     # lty=1                   = line type
     # lwd=1                   = line width
     # pch=1                   = point character
-    # nlegends=2              = number of legends
+    # nlegends=3              = number of legends
     # legtext=list("yr","sampsize") = text in legend, a list of length=nlegends values may be
     #                           1. "yr" to make the legend for each plot equal to the yr input for the values within
     #                           2. "sampsize" to make the legend be "n=99.9" where 99.9 is the sample size for the values
@@ -1645,7 +1653,6 @@ if(nseasons==1){ # temporary disable until code cleanup
   
     panelrange <- 1:npanels
     if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:(nrows*ncols) + nrows*ncols*(ipage-1))
-  
     for(ipanel in panelrange)
     {
       # subset values
@@ -1684,38 +1691,31 @@ if(nseasons==1){ # temporary disable until code cleanup
         legtext_i <- legtext[[i]] # grab element of list
         # elements of list can be "default" to make equal to yr
         # or vector of length 1, npanels, or the full length of the input vectors
-        if(length(legtext_i)==1){      text_i <- legtext_i           # one value repeated
-          if(legtext_i=="yr")          text_i <- yr_i                # values in "yr" input
-          if(legtext_i=="sampsize"){                                 # sample sizes
-            if(max(sampsize) > minsampsize){
-              text_i <- unique(sampsize[yr==yr_i])
-              if(length(text_i)>1){
-                  print(paste("Warning: sampsize values are not all equal--choosing the first value:",text_i[1]),quote=F)
-                  print(paste("         yr=",yr_i,", and all sampsize values:",paste(text_i,collapse=","),sep=""),quote=F)
-                  text_i <- text_i[1]
-              }
-              text_i <- paste("N=",round(sampsize[yr==yr_i],sampsizeround),sep="")
-            }else{
-              text_i <- ""
+        if(length(legtext_i)==1){
+          if(legtext_i=="yr"){ text_i <- yr_i }    # values in "yr" input
+          if(legtext_i=="sampsize" & showsampsize){             # sample sizes
+            vals <- unique(sampsize[yr==yr_i])
+            if(length(vals)>1){
+              print(paste("Warning: sampsize values are not all equal--choosing the first value:",vals[1]),quote=F)
+              print(paste("         yr=",yr_i,", and all sampsize values:",paste(vals,collapse=","),sep=""),quote=F)
+              vals <- vals[1]
             }
+            text_i <- paste("N=",round(vals,sampsizeround),sep="")
           }
-          if(legtext_i=="effN"){                                     # effective sample sizes
-            if(max(effN) > minsampsize){
-              text_i <- unique(effN[yr==yr_i])
-              if(length(text_i)>1){
-                  print(paste("Warning: effN values are not all equal--choosing the first value:",text_i[1]),quote=F)
-                  print(paste("         all effN values:",paste(text_i,collapse=",")),quote=F)
-                  text_i <- text_i[1]
-              }
-              text_i <- paste("effN=",round(effN[yr==yr_i],sampsizeround),sep="")
-            }else{
-              text_i <- ""
+          if(legtext_i=="effN" & showeffN){                                     # effective sample sizes
+            vals <- unique(effN[yr==yr_i])
+            if(length(vals)>1){
+              print(paste("Warning: effN values are not all equal--choosing the first value:",vals[1]),quote=F)
+              print(paste("         all effN values:",paste(vals,collapse=",")),quote=F)
+              vals <- vals[1]
             }
+            text_i <- paste("effN=",round(vals,sampsizeround),sep="")
           }
         }
-        if(length(legtext_i)==npanels) text_i <- legtext_i[ipanel]      # one input value per panel
-        if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
-        if(length(legtext_i)==1)       text_i <- text_i[1]              # yr, sampsize, or effN
+        #if(length(legtext_i)==npanels) text_i <- legtext_i[ipanel]      # one input value per panel
+        #if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
+        if(length(legtext_i)==1)       text_i <- text_i                 # yr, sampsize, or effN
+
         if(legx[1]=="default"){
           # default is left side for first plot, right thereafter
           textx <- ifelse(i==1, usr[1], usr[2])
@@ -1900,7 +1900,8 @@ if(nseasons==1){ # temporary disable until code cleanup
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-                                sampsize=showsampsize*dbase$N,effN=showeffN*dbase$effN,bars=bars,linepos=(1-datonly)*linepos,
+                                sampsize=dbase$N,effN=dbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+                                bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,
                                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
@@ -1959,7 +1960,7 @@ if(nseasons==1){ # temporary disable until code cleanup
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_lo,yr=dbase$Yr,size=z,
-                                sampsize=showsampsize*dbase$N,
+                                sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=F,linepos=0,main=ptitle,cex.main=cex.main,
                                 xlab=agelab,ylab=lenlab,ymin0=F,maxrows=maxrows2,maxcols=maxcols2,
@@ -1997,7 +1998,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                   tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
                     make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
                                   linesx=ydbase$Bin,linesy=ydbase$Exp,
-                                  sampsize=showsampsize*ydbase$N,effN=showeffN*ydbase$effN,
+                                  sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                   nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                   bars=F,linepos=linepos,main=ptitle,cex.main=cex.main,
                                   xlab=agelab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
@@ -2059,7 +2060,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                     titles <- c(ptitle,titles) # compiling list of all plot titles
                     tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
                         make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr,linesx=abindbase$Bin,linesy=abindbase$Exp,
-                                      sampsize=showsampsize*abindbase$N,effN=showeffN*abindbase$effN,
+                                      sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                       nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
                                       bars=bars,linepos=(1-datonly)*linepos,
                                       main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
@@ -2176,7 +2177,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     }
   } # end if datplot
 
-  # plot of length comp data with fits, sample size, etc.
+  # plot 18: length comp data with fits, sample size, etc.
   if(18 %in% c(plot,print)){
     SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -2187,7 +2188,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   }
 
-  # plot of age comp data with fits, sample size, etc.
+  # plot 19: age comp data with fits, sample size, etc.
   if(19 %in% c(plot,print)){
     SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -2198,6 +2199,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 19 in plot or print
 
+  # plot 20: conditional age at length plot with fits, sample size, etc.
   if(20 %in% c(plot,print)){
     SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
                     aalbin=aalbin,aalyear=aalyear,
@@ -2262,7 +2264,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           if(nseasons>1) la$YrSeasName <- paste(floor(la$Yr),"s",la$Seas,sep="") else la$YrSeasName <- la$Yr
           tempfun <- function(ipage,...){
             make_multifig(ptsx=la$Bin,ptsy=la$Obs,yr=la$Yr,linesx=la$Bin,linesy=la$Exp,
-                        sampsize=showsampsize*la$N,effN=0,
+                        sampsize=la$N,effN=0,showsampsize=showsampsize,showeffN=F,
                         nlegends=3,legtext=list(la$YrSeasName,"sampsize","effN"),
                         bars=F,linepos=1,
                         main=plottitle,cex.main=cex.main,xlab="Age (yr)",ylab="Length (cm)",
