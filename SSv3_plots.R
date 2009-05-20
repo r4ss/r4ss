@@ -671,9 +671,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     if(F_method==1){
         Fstring <- "Hrate:_"
         ylabF <- "Harvest rate/Year"
-    }else{
+    }else{ # for either continuous F or hybrid F (methods 2 and 3)
         Fstring <- "F:_"
-        ylabF <- "Continuous F" # ?maybe should add "Hybrid F" label for F_method==3
+        ylabF <- "Continuous F"
     }
 
     ### total landings (retained) & catch (encountered)
@@ -746,7 +746,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         linefunc(ymat=discfracmat,ylab="Discard fraction by weight", addtotal=F)
       }
       linefunc(ymat=Hratemat, ylab=ylabF, addtotal=F)
-      if(nfishfleets>1) stackfunc(ymat=Hratemat, ylab=ylabF)
     }
 
     if(5 %in% print){
@@ -759,9 +758,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(nfishfleets>1){
         png(file=paste(plotdir,"05_landings_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
         stackfunc(ymat=retmat, ylab="Landings (mt)")
-        dev.off()
-        png(file=paste(plotdir,"05_harvestrates_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        stackfunc(ymat=Hratemat, ylab=ylabF)
         dev.off()
       }
       # only make the remaining plots if there are discards
