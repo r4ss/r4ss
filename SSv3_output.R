@@ -21,12 +21,20 @@ SSv3_output <- function(
 # Required packages: none
 #
 ################################################################################
-codedate <- "May 19, 2009"
+
+codedate <- "May 20, 2009"
+
+if(verbose){
+  print(paste("R function updated:",codedate),quote=F)
+  print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
+}
   
-if(verbose) print("running SSv3_output:",quote=F)
 flush.console()
 
-# Defining internal functions: matchfun and matchfun2
+#################################################################################
+## embedded functions: matchfun and matchfun2
+#################################################################################
+
 matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
 {
   # return a line number from the report file (or other file)
@@ -71,7 +79,7 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("3A"),sep=""))){
+if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B"),sep=""))){
   print(paste("! Warning, this function tested on SS-V3.03A. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
@@ -562,7 +570,9 @@ returndat$sizeselex <- selex
  DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),2]
  DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
 
- rawdisc <- matchfun2("DISCARD_OUTPUT",2,"MEAN_BODY_WT_OUTPUT",-1)
+ rawdisc <- matchfun2("DISCARD_OUTPUT",1,"MEAN_BODY_WT_OUTPUT",-1)
+ discard_type <- rawdisc[1,1]
+ rawdisc <- rawdisc[-1,]
  if(!((length(rawdisc[,1])) == 1))
  {
    rawdisc <- rawdisc[,rawdisc[1,]!=""]
@@ -572,6 +582,7 @@ returndat$sizeselex <- selex
    discard <- NA
  }
  returndat$discard <- discard
+ returndat$discard_type <- discard_type
  returndat$DF_discard <- DF_discard
 
 # Average body weight observations

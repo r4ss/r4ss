@@ -31,8 +31,10 @@ SSv3_plots <- function(
     print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
   }
 
+  flush.console()
+
 #################################################################################
-## embedded functions
+## embedded functions: bubble3, plotCI, rich.colors.short, matchfun2
 #################################################################################
 
   bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
@@ -138,6 +140,7 @@ SSv3_plots <- function(
   depletion_method               <- replist$depletion_method
   depletion_basis                <- replist$depletion_basis
   discard                        <- replist$discard
+  discard_type                   <- replist$discard_type
   DF_discard                     <- replist$DF_discard
   mnwgt                          <- replist$mnwgt
   DF_mnwgt                       <- replist$DF_mnwgt
@@ -1155,17 +1158,24 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     ### discard fractions ###
     if(length(discard)>1)
     {
-      for(i in unique(discard$Fleet))
+      for(fleetname in unique(discard$Fleet))
       {
-        usedisc <- discard[discard$Fleet==i,]
+        usedisc <- discard[discard$Fleet==fleetname,]
         yr <- as.numeric(usedisc$Yr)
         ob <- as.numeric(usedisc$Obs)
         cv <- as.numeric(usedisc$CV)
         liw <- -ob*cv*qt(0.025,DF_discard) # quantile of t-distribution
         uiw <- ob*cv*qt(0.975,DF_discard) # quantile of t-distribution
+        liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
         xlim <- c((min(yr)-3),(max(yr)+3))
-        title <- paste("Discard fraction for",i)
-        ylab <- "Discard fraction"
+        if(discard_type=="as_biomass"){
+          title <- paste("Total discard for",fleetname)
+          ylab <- "Total discard (mt)"
+        }
+        if(discard_type=="as_fraction"){
+          title <- paste("Discard fraction for",fleetname)
+          ylab <- "Discard fraction"
+        }
         dfracfunc <- function()
         {
           plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
@@ -1175,7 +1185,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         if(10 %in% plot){dfracfunc()}
         if(10 %in% print)
         {
-          png(file=paste(dir,"10discfracfit",i,".png",sep=""),width=pwidth,height=pheight)
+          png(file=paste(dir,"10discfracfit",fleetname,".png",sep=""),width=pwidth,height=pheight)
           dfracfunc()
           dev.off()
         }
@@ -1185,9 +1195,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     ### average body weight observations ###
     if(!is.na(mnwgt)[1])
     {
-      for(i in unique(mnwgt$Fleet))
+      for(fleetname in unique(mnwgt$Fleet))
       {
-        usemnwgt <- mnwgt[mnwgt$Fleet==i & mnwgt$Obs>0,]
+        usemnwgt <- mnwgt[mnwgt$Fleet==fleetname & mnwgt$Obs>0,]
         usemnwgt$Mkt <- usemnwgt$Mkt
         for(j in unique(mnwgt$Mkt))
         {
@@ -1202,9 +1212,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
           ymax <- max(ob + uiw)
           ymax <- max(ymax,ex)
-          ptitle <- paste("Mean weight in discard for fleet",i,sep=" ")
-          if(j==2) ptitle <- paste("Mean weight in retained catch for fleet",i,sep=" ")
-          if(j==0) ptitle <- paste("Mean weight in whole catch for fleet",i,sep=" ")
+          titlepart <- "discard"
+          if(j==2) titlepart <- "retained catch"
+          if(j==0) titlepart <- "whole catch"
+          ptitle <- paste("Mean weight in",titlepart,"for fleet",fleetname,sep=" ")
           ylab <- "Mean individual body weight (kg)"
           bdywtfunc <- function(){
             plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab="Year",main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
@@ -1212,7 +1223,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             points(yr,ex,col="blue",cex=2,pch="-")}
           if(10 %in% plot) bdywtfunc()
           if(10 %in% print){
-            png(file=paste(plotdir,"10_bodywtfit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            png(file=paste(plotdir,"10_bodywtfit",fleetname,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
             bdywtfunc()
             dev.off()}
         } # market
