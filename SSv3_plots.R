@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "May 19, 2009"
+  codedate <- "May 20, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -199,6 +199,7 @@ SSv3_plots <- function(
   }}
 
   # time series (but no forecast) quantities used for multiple plots
+  SBlabelflag <- TRUE
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
   tsyears <- ts$Yr[ts$Seas==1]
@@ -263,6 +264,10 @@ SSv3_plots <- function(
     ylab2 <- "Spawning output"
     fec_ylab <- "Eggs per gram"
     fec_xlab <- "Female weight (kg)"
+    par1 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_inter_Fem"))=="Eg/gm_inter_Fem",3]
+    par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
+    if(max(par1 + par2*biology$Wt_len_F)-min(par1 + par2*biology$Wt_len_F)>0){
+      SBlabelflag <- FALSE}
     gfunc1 <- function(){
       plot(x,biology$Wt_len_F,xlab=xlab,ylab=ylab,type="o",col="red")
       abline(h=0,col="grey")
@@ -274,8 +279,6 @@ SSv3_plots <- function(
       }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
     gfunc4 <- function(){
-      par1 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_inter_Fem"))=="Eg/gm_inter_Fem",3]
-      par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
       ymin <- 0
       ymax <- max(1.1*(par1 + par2*biology$Wt_len_F))
       plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(ymin,ymax),col="blue",pch=19)
@@ -870,9 +873,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       noforecast <- tsplotyr <= endyr+1
       if(forecastplot==T){noforecast <- tsplotyr <= endyr+2}
       inforecast <- tsplotyr > endyr+1
+      ylab <- "Spawning biomass (mt)"
+      if(!SBlabelflag==TRUE){ylab <- "Spawning output (eggs)"}
       if(forecastplot) xlim=range(tsplotyr) else xlim=range(tsplotyr[noforecast])
-      plot(0,xlab="Year", ylab="Spawning biomass (mt)",
-           xlim=xlim, ylim=c(0,max(tsplotSB)), type="n")
+      plot(0,xlab="Year", ylab=ylab,xlim=xlim, ylim=c(0,max(tsplotSB)), type="n")
       for(iarea in 1:nareas){
         tsplotyrarea <- tsplotyr[tsplotarea==iarea & noforecast]
         tsplotSBarea <- tsplotSB[tsplotarea==iarea & noforecast]
@@ -905,7 +909,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     if(uncertainty){
       xlab="Year"
-      ylab="Spawning biomass (mt)"
+      ylab <- "Spawning biomass (mt)"
+      if(!SBlabelflag==TRUE){ylab <- "Spawning output (eggs)"}
       bioscale <- 1 #scaling factor for single sex models
       if(nsexes==1) bioscale <- 0.5 # should allow flexible input
       # with interval
