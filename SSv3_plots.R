@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "May 18, 2009"
+  codedate <- "May 19, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -726,10 +726,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       stackpoly(x=catchyrs, y=ymat, border='black',
                 xlab="Year", ylab=ylab, col=fleetcols)
       if(showlegend) legend('topleft', fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
-      print(ghost)
-      print(fleetcols[!ghost])
-      print(fleetnames[!ghost])
-
     } # end stackfunc
 
     if(5 %in% plot){
