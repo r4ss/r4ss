@@ -275,9 +275,14 @@ if(warn){
     warn <- NA
   }else{
     warn <- readLines(warnname,warn=F)
-    nwarn <- as.numeric(strsplit(warn[grep("N warnings: ",warn)],"N warnings: ")[[1]][2])
-    textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
-    if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
+    warnstring <- warn[grep("N warnings: ",warn)]
+    if(length(warnstring)>0){
+      nwarn <- as.numeric(strsplit(warnstring,"N warnings: ")[[1]][2])
+      textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
+      if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
+    }else{
+      print("warning.SSO file is missing the string 'N warnings'!")
+    }
   }
 }else{
   if(verbose) print("You skipped the warnings file",quote=F)

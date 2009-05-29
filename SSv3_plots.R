@@ -1721,7 +1721,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           }
         }
         #if(length(legtext_i)==npanels) text_i <- legtext_i[ipanel]      # one input value per panel
-        #if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
+        if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
         if(length(legtext_i)==1)       text_i <- text_i                 # yr, sampsize, or effN
 
         if(legx[1]=="default"){
@@ -1737,7 +1737,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         if(legadjy[1]=="default"){
           adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))  # default is top for first 2 legends, below thereafter
         }else{ adjy <- legadjy[i] }
-  
+
         # add legend text
         text(x=textx,y=texty,labels=text_i,adj=c(adjx,adjy),cex=legsize[i],font=legfont[i])
       }

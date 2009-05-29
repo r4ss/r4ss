@@ -1,9 +1,11 @@
 # this file contains several functions, some of which depend on others.
-# SS_parlines:   identify the line numbers and parameter labels in a Stock Synthesis control file
-# SS_PlotPriors: make a multi-figure plot of prior distributions from a Stock Synthesis control file
-# SS_splitdat:   split bootstrap files aggregated in the Data.SS_New file
-# SS_profile:    change one or more parameter values in the Control file for SSv3
-# SS_recdevs:    add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
+#
+# SS_parlines:    identify the line numbers and parameter labels in a Stock Synthesis control file
+# SS_changepars:     change one or more parameter values in the Control file for SSv3
+# SS_plotpriors:  make a multi-figure plot of prior distributions from a Stock Synthesis control file
+# SS_splitdat:    split bootstrap files aggregated in the Data.SS_New file
+# SS_recdevs:     add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
+
 SS_parlines <- function(
   ctlfile="C:\\myfiles\\mymodels\\myrun\\Control.SS_New",
   verbose=T, active=F)
@@ -11,7 +13,7 @@ SS_parlines <- function(
 
 ################################################################################
 #
-# SS_parlines April 20, 2009.
+# SS_parlines May 22, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To identify the line numbers and parameter labels in a Stock Synthesis control file
@@ -50,12 +52,93 @@ SS_parlines <- function(
   names(parlines14) <- namesvec
 
   parlines <- rbind(parlines7,parlines14)
-  parlines$Line_num <- as.numeric(rownames(parlines))
-  parlines <- parlines[order(parlines$Line_num),]
+  parlines$Linenum <- as.numeric(rownames(parlines))
+  parlines <- parlines[order(parlines$Linenum),]
   for(i in 1:7) parlines[,i] <- as.numeric(parlines[,i])
 
   if(active) parlines <- parlines[parlines$PHASE > 0,]
   return(parlines)
+} # end function
+
+############################################################
+############### NEXT FUNCTION ##############################
+############################################################
+
+SS_changepars <- function(
+         dir="C:\\myfiles\\mymodels\\myrun\\",
+         ctlfile="Control.SS_New",
+         newctlfile="Control_Modified.SS",
+         linenums=NULL, parnames=NULL, newvals=NULL, estimate=F,
+         verbose=T
+         )
+{
+################################################################################
+#
+# SS_changepars May 22, 2008.
+# This function comes with no warranty or guarantee of accuracy
+#
+# Purpose: To change one or more parameter values in the Control file for SSv3
+# Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+# Returns: writes a new control file and returns a table of the changes made
+# Notes:   requires SS_parlines
+#          See users guide for documentation: http://code.google.com/p/r4ss/wiki/
+# Required packages: none
+#
+################################################################################
+
+  # read control file
+  fullctlfile <- paste(dir,ctlfile,sep="/")
+  ctl = readLines(fullctlfile)
+  if(is.null(linenums) & !is.null(parnames) & class(parnames)=="character")
+  {
+    ctltable <- SS_parlines(ctlfile=fullctlfile)
+    nvals <- length(parnames)
+    for(i in 1:nvals) linenums[i] <- ctltable$Linenum[ctltable$Label==parnames[i]]
+  }else{
+    if(is.null(linenums)) return("valid input needed for either 'linenums' or 'parnames'")
+  }
+  ctlsubset <- ctl[linenums]
+
+  # define objects to store changes
+  newctlsubset <- NULL
+  cmntvec <- NULL
+  nvals <- length(linenums)
+  oldvals <- oldphase <- newphase <- rep(NA,nvals)
+
+  # check inputs
+  if(length(newvals)!=nvals) return("'newvals' and either 'linenums' or 'parnames' should have the same number of elements")
+  if(!(length(estimate) %in% c(1,nvals))) return("'estimate' should have 1 element or same number as 'newvals'")
+  if(length(estimate)==1) estimate <- rep(estimate, nvals)
+
+  # loop over line numbers to replace parameter values
+  for(i in 1:nvals)
+  {
+    splitline <- strsplit(ctlsubset[i], "#")[[1]]
+    cmnt <- paste("#",paste(splitline[-1],collapse="#"),sep='')
+    cmntvec <- c(cmntvec, cmnt)
+    vecstrings <- strsplit(splitline[1]," +")[[1]]
+    vec <- as.numeric(vecstrings[vecstrings!=""])
+    if(max(is.na(vec))==1) return(paste("There's a problem with a non-numeric value in line",linenums[i]))
+    oldvals[i] <- vec[3]
+    vec[3] <- newvals[i]
+    oldphase[i] <- as.numeric(vec[7])
+    if(estimate[i]){
+      vec[7] <- abs(oldphase[i])
+    }else{
+      vec[7] <- -abs(oldphase[i])
+    }
+    newphase[i] <- vec[7]
+    newline <- paste("",paste(vec, collapse=" "), cmnt)
+    newctlsubset <- rbind(newctlsubset, newline)
+  }
+  # write new file
+  newctl <- ctl
+  newctl[linenums] <- newctlsubset
+  writeLines(newctl, paste(dir,newctlfile,sep="/"))
+  if(verbose) print(paste('wrote new file to',newctlfile),quote=F)
+  # output table of changes
+  if(verbose) return(data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec))
+
 } # end function
 
 
@@ -63,7 +146,7 @@ SS_parlines <- function(
 ############### NEXT FUNCTION ##############################
 ############################################################
 
-SS_PlotPriors <- function(
+SS_plotpriors <- function(
   ctlfile='c:/path/controlfilename.SS',read=T,
   activeonly=T,nrows='default',ncols='default',
   maxrows=4,maxcols=4,new=T,returntable=T,
@@ -79,7 +162,7 @@ SS_PlotPriors <- function(
   #          from a Stock Synthesis control file
   # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   # Returns: Plots of prior distributions used in Stock Synthesis model
-  # Notes:   requires SS_profile
+  # Notes:   requires SS_parlines
   # Required packages: none
   #
   ################################################################################
@@ -135,7 +218,7 @@ SS_PlotPriors <- function(
       goodlines <- sort(unique(goodlines))
       parlines <- parlines[goodlines,]
     }
-    if(!is.null(rownum)) parlines <- parlines[parlines$Line_num %in% as.character(rownum),]
+    if(!is.null(rownum)) parlines <- parlines[parlines$Linenum %in% as.character(rownum),]
     if(activeonly) parlines <- parlines[parlines$PHASE > 0,]
   }else{
     if(length(oneline)%in%c(7,8))
@@ -220,77 +303,6 @@ SS_splitdat <- function(
     writeLines(c(notes,filelines[MLEstart:MLEend]),outfile)
   }
 }
-
-############################################################
-############### NEXT FUNCTION ##############################
-############################################################
-
-SS_profile <- function(
-         dir="C:\\myfiles\\mymodels\\myrun\\",
-         ctlfile="Control.SS_New",
-         newctlfile="Control_Modified.SS",
-         linenums=NULL, newvals=NULL, estimate=F,
-         verbose=T
-         )
-{
-################################################################################
-#
-# SS_profile November 21, 2008.
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: To change one or more parameter values in the Control file for SSv3
-# Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-# Returns: writes a new control file and returns a table of the changes made
-# Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/
-# Required packages: none
-#
-################################################################################
-
-  # read control file
-  ctl = readLines(paste(dir,ctlfile,sep="/"))
-  ctlsubset <- ctl[linenums]
-
-  # define objects to store changes
-  newctlsubset <- NULL
-  cmntvec <- NULL
-  nvals <- length(linenums)
-  oldvals <- oldphase <- newphase <- rep(NA,nvals)
-
-  # check inputs
-  if(length(newvals)!=nvals) return("'linenums' and 'newvals' should have the same number of elements")
-  if(!(length(estimate) %in% c(1,nvals))) return("'estimate' should have 1 element or same number as 'linenums'")
-  if(length(estimate)==1) estimate <- rep(estimate, nvals)
-
-  # loop over line numbers to replace parameter values
-  for(i in 1:nvals)
-  {
-    splitline <- strsplit(ctlsubset[i], "#")[[1]]
-    cmnt <- paste("#",paste(splitline[-1],collapse="#"),sep='')
-    cmntvec <- c(cmntvec, cmnt)
-    vecstrings <- strsplit(splitline[1]," +")[[1]]
-    vec <- as.numeric(vecstrings[vecstrings!=""])
-    if(max(is.na(vec))==1) return(paste("There's a problem with a non-numeric value in line",linenums[i]))
-    oldvals[i] <- vec[3]
-    vec[3] <- newvals[i]
-    oldphase[i] <- as.numeric(vec[7])
-    if(estimate[i]){
-      vec[7] <- abs(oldphase[i])
-    }else{
-      vec[7] <- -abs(oldphase[i])
-    }
-    newphase[i] <- vec[7]
-    newline <- paste("",paste(vec, collapse=" "), cmnt)
-    newctlsubset <- rbind(newctlsubset, newline)
-  }
-  # write new file
-  newctl <- ctl
-  newctl[linenums] <- newctlsubset
-  writeLines(newctl, paste(dir,newctlfile,sep="/"))
-  if(verbose) print(paste('wrote new file to',newctlfile))
-  # output table of changes
-  if(verbose) return(data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec))
-
-} # end function
 
 
 ############################################################
