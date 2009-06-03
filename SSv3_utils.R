@@ -149,13 +149,13 @@ SS_changepars <- function(
 SS_plotpriors <- function(
   ctlfile='c:/path/controlfilename.SS',read=T,
   activeonly=T,nrows='default',ncols='default',
-  maxrows=4,maxcols=4,new=T,returntable=T,
-  rownum=c(),strings=c(),oneline=c())
+  maxrows=4,maxcols=4,new=T,returntable=T,printlike=T,
+  initlimit=0.3,rownum=c(),strings=c(),oneline=c())
 {
   ################################################################################
   #
   # Plot_Prior
-  # February 9, 2009.
+  # June 3, 2009.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
@@ -192,19 +192,26 @@ SS_plotpriors <- function(
       Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
       if(Bprior<=1.0 | Aprior <=1.0) {print(" bad Beta prior ");}
       Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
-      -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
+        -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
     }
     return(Prior_Like)
   } # end GetPrior
 
-  MakePlot <- function(T,Pmin,Pmax,Pr,Psd,main="")
-    {
-      x <- seq(Pmin,Pmax,length=200)
-      negL_prior <- GetPrior(T=T,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=x)
-      prior <- exp(-1*negL_prior)
-      plot(x,prior,type='l',lwd=3,ylim=c(0,1.1*max(prior)),xaxs='i',yaxs='i',
-           xlab='',ylab='',main=main)
-    } # end MakePlot
+  MakePlot <- function(T,Pmin,Pmax,Pr,Psd,initval,main="")
+  {
+    x <- seq(Pmin,Pmax,length=200)
+    negL_prior <- GetPrior(T=T,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=x)
+    prior <- exp(-1*negL_prior)
+    priorinit <- exp(-1*GetPrior(T=T,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=initval))
+    if(priorinit > initlimit) bg <- 0 else bg <- 'yellow'
+    plot(x,prior,type='n',ylim=c(0,1.1*max(prior)),xaxs='i',yaxs='i',
+         xlab='',ylab='',main=main)
+    if(bg!=0) polygon(par('usr')[c(1,2,2,1)],par('usr')[c(3,3,4,4)],col=bg,border=NA)
+    lines(x,prior,lwd=3)
+    if(printlike) mtext(side=3,line=0.2,cex=.8,paste('prob@init =',round(priorinit,3)))
+    abline(v=initval,col=2,lwd=3)
+    box()
+  } # end MakePlot
 
   ## get parameter lines
   if(read==T & is.null(oneline)){
@@ -246,8 +253,7 @@ SS_plotpriors <- function(
   for(ipar in 1:npars)
   {
     irow <- parlines[ipar,]
-    MakePlot(T=irow$PR_type,Pmin=irow$LO,Pmax=irow$HI,Pr=irow$PRIOR,Psd=irow$SD,main=irow$Label)
-    abline(v=irow$INIT,col=2,lwd=3)
+    MakePlot(T=irow$PR_type,Pmin=irow$LO,Pmax=irow$HI,Pr=irow$PRIOR,Psd=irow$SD,main=irow$Label,initval=irow$INIT)
   }
   mtext('Parameter value',side=1,line=0.5,outer=T)
   mtext('Prior density',side=2,line=0.5,outer=T)
