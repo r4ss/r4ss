@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "May 20, 2009"
+  codedate <- "June 8, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -788,13 +788,34 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   # Plot 6: recruitment (not adapted for multi-area models)
   if(6 %in% c(plot, print))
    {
-    x <- ts$Yr
+    x <- ts$Yr[!duplicated(ts$Yr)]
     y <- ts$Recruit_0
+    if(nareas > 1){
+     y <- ts$Recruit_0[ts$Area == 1]
+     for(a in 2:nareas){ y <- c(y,ts$Recruit_0[ts$Area == a])
+     }}
     ylab <- "Age-0 recruits (1,000s)"
     recfunc <- function(){
-      plot(x[3:length(x)],y[3:length(y)],xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
-      points(x[1],y[1],col="blue",pch=19)
-      points(x[2],y[2],col="blue")
+      if(nareas == 1){
+       plot(x[3:length(x)],y[3:length(y)],xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
+       points(x[1],y[1],col="blue",pch=19)
+       points(x[2],y[2],col="blue")
+      }
+      if(nareas > 1){
+       arealen <- (length(y)/nareas)
+       ytemp <- y[3:arealen]
+       plot(x[3:length(x)],ytemp,xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
+       points(x[1],y[1],col="blue",pch=19)
+       points(x[2],y[2],col="blue")
+       for(a in 2:nareas)
+        {
+       ytemp <- y[(((a-1)*(arealen))+1):((a*arealen))]
+       lines(x[3:length(x)],ytemp[3:length(ytemp)],col="blue",type="o")
+       points(x[1],ytemp[1],col="blue",pch=19)
+       points(x[2],ytemp[2],col="blue")
+       }
+       }
+
       abline(h=0,col="grey")}
     if(6 %in% plot) recfunc()
     if(6 %in% print){
@@ -1805,6 +1826,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
     agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & compdbase$Lbin_lo != compdbase$Lbin_hi,]
     condbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & compdbase$Lbin_lo == compdbase$Lbin_hi,]
+    ghostagedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0 & compdbase$Lbin_lo != compdbase$Lbin_hi,]
 
     # not sure why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step a few lines above
     lendbase$effN <- as.numeric(lendbase$effN)
@@ -1854,7 +1876,18 @@ if(nseasons==1){ # temporary disable until code cleanup
       }
     }
 
-    if(!(kind%in%c("LEN","AGE","cond"))) return("Input 'kind' to SSv3_plot_comps should be 'LEN' or 'AGE'.")
+    if(kind=="GSTAGE"){
+      dbase_kind <- ghostagedbase
+      kindlab=agelab
+      if(datonly){
+        filenamestart <- "16_gstagedat_"
+        titledata <- "gst age comp data, "
+      }else{
+        filenamestart <- "19_gstagefit_"
+        titledata <- "gst age comps, "
+      }
+    }
+    if(!(kind%in%c("LEN","AGE","cond","GSTAGE"))) return("Input 'kind' to SSv3_plot_comps should be 'LEN' or 'AGE'.")
     # loop over fleets
     for(f in fleets)
     {
@@ -1907,12 +1940,22 @@ if(nseasons==1){ # temporary disable until code cleanup
               ptitle <- paste(titledata,title_sexmkt, FleetNames[f],sep="") # total title
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
+              if(kind!="GSTAGE"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                                 sampsize=dbase$N,effN=dbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,
                                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
+                   }
+              if(kind=="GSTAGE"){
+                  make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                                sampsize=dbase$N,effN=dbase$effN,showsampsize=F,showeffN=F,
+                                bars=bars,linepos=(1-datonly)*linepos,
+                                nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                                main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,
+                                maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
+                   }
               }
               if(GUI) tempfun(ipage=0,...)
               if(png){ # set up plotting to png file if required
@@ -2092,7 +2135,7 @@ if(nseasons==1){ # temporary disable until code cleanup
             } # end if plot requested
 
             ### subplot 7: sample size plot
-            if(samplesizeplots & !datonly)
+            if(samplesizeplots & !datonly & kind!="GSTAGE")
             {
               ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,FleetNames[f], sep="")
               titles <- c(ptitle,titles) # compiling list of all plot titles
@@ -2169,6 +2212,16 @@ if(nseasons==1){ # temporary disable until code cleanup
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
+      # ghost age comp bar plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="GSTAGE",bub=F,verbose=verbose,fleets=fleets,
+                      samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
+                      maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+                      png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
+      # ghost age comp bubble plot
+      SSv3_plot_comps(replist=replist,datonly=T,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
+                      samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
+                      maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+                      png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) print("Finished plot 16: age comp data",quote=F)
       flush.console()
     }
@@ -2200,6 +2253,11 @@ if(nseasons==1){ # temporary disable until code cleanup
   if(19 %in% c(plot,print)){
     SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                    maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+                    png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
+                    maxneff=maxneff,cex.main=cex.main,...)
+    SSv3_plot_comps(replist=replist,datonly=F,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
+                    samplesizeplots=F,showsampsize=F,showeffN=F,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,...)
