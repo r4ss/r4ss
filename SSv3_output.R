@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "May 20, 2009"
+codedate <- "June 4, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -529,18 +529,25 @@ returndat$sizeselex <- selex
  tsfull$Yr <- tsfull$Yr + (tsfull$Seas-1)/nseasons
  ts <- tsfull[tsfull$Yr <= endyr+1,]
  tsyears <- ts$Yr[ts$Seas==1]
- tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
- if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
- depletionseries <- tsspaw_bio/tsspaw_bio[1]
- stats$SBzero <- ts$SpawnBio[1]
- if(nsexes==1) stats$SBzero <- stats$SBzero/2
- tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
- stats$current_depletion <- depletionseries[length(depletionseries)]
+ # Depletion
+ if(nareas > 1)
+  {
+   tsspaw_bio <- ts$SpawnBio[ts$Seas==1 & ts$Area==1]
+   for(a in 2:nareas){tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas==1 & ts$Area==a]}
+  }
+ if(nareas == 1){tsspaw_bio <- ts$SpawnBio[ts$Seas==1]}
+   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
+   depletionseries <- tsspaw_bio/tsspaw_bio[1]
+   stats$SBzero <- tsspaw_bio[1]
+   if(nsexes==1) stats$SBzero <- stats$SBzero/2
+   stats$current_depletion <- depletionseries[length(depletionseries)]
+
  # total landings
  ls <- nrow(ts)-1
  totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
  ts$totretained <- 0
  ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
+
  # total catch
  totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
  ts$totcatch <- 0
