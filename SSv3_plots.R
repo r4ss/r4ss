@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "June 8, 2009"
+  codedate <- "June 9, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -207,9 +207,16 @@ SSv3_plots <- function(
   ts <- timeseries[timeseries$Yr <= endyr+1,]
   tsyears <- ts$Yr[ts$Seas==1]
   tsarea <- ts$Area[ts$Seas==1]
+
   tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
   dep <- tsspaw_bio/tsspaw_bio[1]
+  if(nareas > 1){
+   for(a in 2:nareas){
+    asb <- tsspaw_bio[tsarea==a]
+    dep[tsarea==a] <- asb/asb[1]
+    }
+   }
 
   if(verbose) print("Finished defining objects",quote=F)
   if(nareas>1){
@@ -602,10 +609,12 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       # switch for total or summary
       if(totalORsummary==1) yvals <- ts$Bio_all
       if(totalORsummary==2) yvals <- ts$Bio_smry
-      
+      if(totalORsummary==1) ylab <- "Total biomass (mt)"
+      if(totalORsummary==2) ylab <- "Summary biomass (mt)"
+
       plot(ts$Yr[plot1],yvals[plot1],
            xlab="Year",ylim=c(0,max(yvals[plot1])),
-           ylab="Total biomass",type="o",col=areacols[1])
+           ylab=ylab,type="o",col=areacols[1])
       points(ts$Yr[plot2],yvals[plot2],col=areacols[1],pch=19)
       if(nareas>1){
         for(iarea in 2:nareas){
