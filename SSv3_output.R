@@ -701,7 +701,7 @@ if(comp){
    N_ageerror_defs <- length(starts)
    if(N_ageerror_defs > 0)
    {
-     nrowsAAK <- nrow(rawAAK)/2 - 3
+     nrowsAAK <- nrow(rawAAK)/nsexes - 3
      AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
      age_error_sd = 0:accuage
      for(i in 1:N_ageerror_defs){
