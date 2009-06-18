@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "June 9, 2009"
+  codedate <- "June 18, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -272,7 +272,7 @@ SSv3_plots <- function(
     x <- biology$Mean_Size
     ylab <- "Mean weight (kg) in last year"
     ylab2 <- "Spawning output"
-    fec_ylab <- "Eggs per gram"
+    fec_ylab <- "Eggs per kg"
     fec_xlab <- "Female weight (kg)"
     par1 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_inter_Fem"))=="Eg/gm_inter_Fem",3]
     par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
