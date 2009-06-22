@@ -95,7 +95,6 @@ SSv3_plotpars <- function(
     posts <- read.table(fullpostfile,head=T)
     posts <- posts[seq(burn+1,nrow(posts),thin), ] # remove burn-in and thin the posteriors
   }
-  
   ## get parameter estimates
   if(!is.na(repfileinfo) & repfileinfo>0){
     replines <- readLines(fullrepfile,n=500)
@@ -109,13 +108,16 @@ SSv3_plotpars <- function(
       partable[,i] <- as.numeric(as.character(partable[,i]))
     }
   }
+  # subset for only active parameters
+  allnames <- partable$Label[!is.na(partable$Active_Cnt)]
 
   ## get list of subset names if vector "strings" is supplied
-  allnames <- partable$Label
   if(!is.null(strings)){
     goodnames <- NULL
-    for(i in 1:length(strings)) goodnames <- c(goodnames,grep(strings[i],allnames))
+    for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
     goodnames <- unique(goodnames)
+    print("parameters matching input vector 'strings':",quote=F)
+    print(goodnames)    
   }else{
     goodnames <- allnames
   }
@@ -136,10 +138,8 @@ SSv3_plotpars <- function(
   }else{
     goodnames <- goodnames[!substr(goodnames,1,7) %in% c("RecrDev","InitAge","ForeRec")]
   }
-  # subset for only active parameters
-  goodnames <- partable$Label[partable$Label %in% goodnames & !is.na(partable$Active_Cnt)]
-  npars <- length(goodnames)
 
+  npars <- length(goodnames)
   
   # make plot
   if(verbose){
