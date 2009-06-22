@@ -154,15 +154,16 @@ SS_plotpriors <- function(
 {
   ################################################################################
   #
-  # Plot_Prior
-  # June 3, 2009.
+  # SS_plotpriors
+  # June 19, 2009.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
   #          from a Stock Synthesis control file
   # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   # Returns: Plots of prior distributions used in Stock Synthesis model
-  # Notes:   requires SS_parlines
+  # Notes:   requires SS_parlines, also contained in the file SSv3_utils.R
+  #          hosted at http://code.google.com/p/r4ss/
   # Required packages: none
   #
   ################################################################################
