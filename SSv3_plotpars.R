@@ -5,7 +5,7 @@ SSv3_plotpars <- function(
     showpost=T,showprior=T,showmle=T,showinit=T,
     showrecdev=T,priorinit=T,priorfinal=T,
     showlegend=T,fitrange=F,verbose=T,
-    nrows=3,ncols=3,new=T,returntable=T,
+    nrows=3,ncols=3,new=T,returntable=F,
     strings=c(),burn=0,thin=1,
     ctlfile="Control.SS_New")
 {
@@ -145,7 +145,7 @@ SSv3_plotpars <- function(
   if(verbose){
     if(fitrange){
       print("Plotting range is equal to input limits on parameters.",quote=F)
-      print("  Range can be scaling to fit estimates by setting input 'fitrange=T'.",quote=F)
+      print("  Range can be scaled to fit estimates by setting input 'fitrange=T'.",quote=F)
     }else{
       print("Plotting range is scaled to fit parameter estimates.",quote=F)
       print("  Change input to 'fitrange=F' to get full parameter range.",quote=F)
