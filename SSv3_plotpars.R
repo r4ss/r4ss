@@ -12,7 +12,6 @@ SSv3_plotpars <- function(
   ################################################################################
   #
   # SSv3_plotpriors
-  # June 22, 2009.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
@@ -23,6 +22,13 @@ SSv3_plotpars <- function(
   # Required packages: none
   #
   ################################################################################
+
+  codedate <- "June 23, 2009"
+
+  if(verbose){
+    print(paste("R function updated:",codedate),quote=F)
+    print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
+  }
 
   # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval)
@@ -122,6 +128,11 @@ SSv3_plotpars <- function(
     goodnames <- allnames
   }
 
+  if(showmle & min(partable$Parm_StDev[partable$Label %in% goodnames]) <= 0){
+    print("Some parameters have std. dev. values in Report.SSO equal to 0.",quote=F)
+    print("  Asymptotic uncertainty estimates will not be shown.",quote=F)
+  }
+
   # remove RecrDevs temporarily until I add code to fill in the prior stuff
   recdevmin <- -5
   recdevmin <- 5
@@ -144,11 +155,11 @@ SSv3_plotpars <- function(
   # make plot
   if(verbose){
     if(fitrange){
-      print("Plotting range is equal to input limits on parameters.",quote=F)
-      print("  Range can be scaled to fit estimates by setting input 'fitrange=T'.",quote=F)
-    }else{
       print("Plotting range is scaled to fit parameter estimates.",quote=F)
       print("  Change input to 'fitrange=F' to get full parameter range.",quote=F)
+    }else{
+      print("Plotting range is equal to input limits on parameters.",quote=F)
+      print("  Range can be scaled to fit estimates by setting input 'fitrange=T'.",quote=F)
     }
   }
   
@@ -222,17 +233,19 @@ SSv3_plotpars <- function(
 
     # get normal distribution associated with ADMB's estimate of the parameter's asymptotic std. dev.
     if(showmle){
-      mle <- dnorm(x,finalval,parsd)
-      mlescale <- 1/(sum(mle)*mean(diff(x)))
-      mle <- mle*mlescale
-      ymax <- max(ymax,max(mle)) # update ymax
+      if(parsd>0){
+        mle <- dnorm(x,finalval,parsd)
+        mlescale <- 1/(sum(mle)*mean(diff(x)))
+        mle <- mle*mlescale
+        ymax <- max(ymax,max(mle)) # update ymax
+      }
       # update x range
       xmin <- min(xmin, qnorm(0.001,finalval,parsd))
       xmax <- max(xmax, qnorm(0.999,finalval,parsd))
     }
 
     # make plot
-    if(fitrange){
+    if(fitrange & (parsd!=0 | showpost)){
       # make sure initial value is indide limits
       if(showinit){
         xmin <- min(initval,xmin)
@@ -256,8 +269,12 @@ SSv3_plotpars <- function(
     if(showpost & goodpost) plot(posthist,add=T,freq=F,col=colval,border=colval)
     if(showprior) lines(x,prior,lwd=2,lty=1)
     if(showmle){
-      lines(x,mle,col="blue")
-      lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),col="blue")
+      if(parsd>0){
+        lines(x,mle,col="blue")
+        lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),col="blue")
+      }else{
+        abline(v=finalval,col="blue")
+      }
     }
     if(showinit){
       par(xpd=NA) # stop clipping
