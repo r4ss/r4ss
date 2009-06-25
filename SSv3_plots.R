@@ -852,6 +852,12 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     # recruitment with asymptotic interval
     if(uncertainty){
+      if(!"Recr_Virgin" %in% derived_quants$LABEL){
+        print("Error! 'Recr_Virgin' not in derived quantites.",quote=F)
+        print("        Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=F)
+        print("        Or set uncertainty=F in this function.",quote=F)
+        return()
+      }
       recstd <- matchfun2("Recr_Virgin",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
       recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
       recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
