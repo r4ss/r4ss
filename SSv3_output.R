@@ -302,7 +302,7 @@ nsexes <- length(unique(as.numeric(selex$gender)))
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 
 if(comp){   # skip this stuff if no CompReport.SSO file
-  allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=8)
+  allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=15)
   #lbins is data length bins
   lbins <- as.numeric(allbins[6,-1])
   lbins <- lbins[!is.na(lbins)]
@@ -311,7 +311,8 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   lbinspop <- as.numeric(allbins[3,-1])
   lbinspop <- lbinspop[!is.na(lbinspop)]
   nlbinspop <- length(lbinspop)
-
+  Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
+  
   # read composition database
   rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
   names(rawcompdbase) <- rawcompdbase[1,]
@@ -321,7 +322,6 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
   latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
-  Lbin_method <- as.numeric(rawrep[matchfun("Method_for_Lbin"),2])
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
   agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
@@ -336,6 +336,7 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   compdbase <- NA
   agedbase <- NA
   latagebase <- NA
+  Lbin_method <- NA
 }
 tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
@@ -456,7 +457,7 @@ returndat$nfleets     <- nfleets
 returndat$nfishfleets <- nfishfleets
 returndat$nsexes      <- nsexes
 returndat$lbins       <- lbins
-returndat$lbins       <- lbins
+returndat$Lbin_method <- Lbin_method
 returndat$nlbins      <- nlbins
 returndat$lbinspop    <- lbinspop
 returndat$nlbinspop   <- nlbinspop

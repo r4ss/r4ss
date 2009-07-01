@@ -2,7 +2,7 @@ SSv3_plots <- function(
     replist="ReportObject", plot=1:23, print=0, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
-    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
+    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
     aalresids=F, maxneff=5000, smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
     maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,...)
@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "June 18, 2009"
+  codedate <- "July 1, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -121,6 +121,7 @@ SSv3_plots <- function(
   nlbinspop                      <- replist$nlbinspop
   agebins                        <- replist$agebins
   nagebins                       <- replist$nagebins
+  Lbin_method                    <- replist$Lbin_method
   accuage                        <- replist$accuage
   nareas                         <- replist$nareas
   startyr                        <- replist$startyr
@@ -1804,7 +1805,7 @@ if(nseasons==1){ # temporary disable until code cleanup
   }
 
   SSv3_plot_comps <- function(
-      replist="ReportObject", kind="LEN", aalyear=-1, aalbin=-1, GUI=T, png=F, plotdir=NA, fleets="all",
+      kind="LEN", aalyear=-1, aalbin=-1, GUI=T, png=F, plotdir=NA, fleets="all",
       datonly=F, Natageplot=T, samplesizeplots=T, compresidplots=T, bub=F, showsampsize=T, showeffN=T,
       minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
       linepos=1, fitbar=F,maxsize=3,do.sqrt=TRUE,smooth=TRUE,
@@ -1831,22 +1832,6 @@ if(nseasons==1){ # temporary disable until code cleanup
 
     titles <- NULL
     if(png) if(is.na(plotdir)) return("plotdir must be specified to write png files.")
-
-    nfleets    <- replist$nfleets
-    FleetNames <- replist$FleetNames
-    nseasons   <- replist$nseasons
-    compdbase  <- replist$composition_database
-    if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
-
-    lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-    agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & compdbase$Lbin_lo != compdbase$Lbin_hi,]
-    condbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & compdbase$Lbin_lo == compdbase$Lbin_hi,]
-    ghostagedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0 & compdbase$Lbin_lo != compdbase$Lbin_hi,]
-
-    # not sure why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step a few lines above
-    lendbase$effN <- as.numeric(lendbase$effN)
-    agedbase$effN <- as.numeric(agedbase$effN)
-    condbase$effN <- as.numeric(condbase$effN)
 
     if(fleets[1]=="all"){
       fleets <- 1:nfleets
@@ -2025,7 +2010,7 @@ if(nseasons==1){ # temporary disable until code cleanup
               ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
-                  make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_lo,yr=dbase$Yr,size=z,
+                  make_multifig(ptsx=dbase$Bin,ptsy=0.5*(dbase$Lbin_hi_cm + dbase$Lbin_lo_cm),yr=dbase$Yr,size=z,
                                 sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=F,linepos=0,main=ptitle,cex.main=cex.main,
@@ -2060,12 +2045,13 @@ if(nseasons==1){ # temporary disable until code cleanup
                   ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,FleetNames[f],sep="")
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   ydbase <- dbase[dbase$Yr==aalyr,]
-                  lenbinlegend <- paste(ydbase$Lbin_lo,lenunits,sep="")
+                  lenbinlegend <- paste(ydbase$Lbin_lo_cm,lenunits,sep="")
+                  lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo_cm,"-",ydbase$Lbin_hi_cm,lenunits,sep="")
                   tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
-                    make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
+                    make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo_cm,
                                   linesx=ydbase$Bin,linesy=ydbase$Exp,
                                   sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
-                                  nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                                  nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                   bars=F,linepos=linepos,main=ptitle,cex.main=cex.main,
                                   xlab=agelab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
                                   fixdims=fixdims,ipage=ipage,...)
@@ -2089,7 +2075,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                   ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   tempfun <- function(){
-                    bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=agelab,ylab=lenlab,col=rep("blue",2),
+                    bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo_cm,z=z,xlab=agelab,ylab=lenlab,col=rep("blue",2),
                           las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
                   }
                   if(GUI) tempfun()
@@ -2194,6 +2180,54 @@ if(nseasons==1){ # temporary disable until code cleanup
   } # end embedded SSv3_plot_comps function
   ###########################
 
+  ### process composition data
+  # configure seasons
+  if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
+
+  # deal with Lbins
+  compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
+  
+  # divide into objects by kind
+  lendbase       <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
+  agedbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
+                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
+  condbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
+                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range <= aalmaxbinrange,]
+  ghostagedbase  <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0
+                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
+  # consider range of bins for conditional age at length data
+  print(paste("CompReport file shows",nrow(lendbase),"rows of length comp data,"),quote=F)
+  print(paste("                     ",nrow(agedbase),"rows of age comp data,"),quote=F)
+  print(paste("                     ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
+  print(paste("                     ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
+  Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
+  names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
+  if(length(unique(agedbase$Lbin_range)) > 1){
+    print("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.",quote=F)
+    print(Lbin_ranges)
+    print("  consider increasing 'aalmaxbinrange' to designate",quote=F)
+    print("  some of these data as conditional age-at-length",quote=F)
+  }
+  # convert bin indices to true lengths
+  #_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths
+  if(Lbin_method==1){
+    agedbase$Lbin_lo_cm <- lbinspop[agedbase$Lbin_lo]
+    agedbase$Lbin_hi_cm <- lbinspop[agedbase$Lbin_hi]
+  }
+  if(Lbin_method==2){
+    agedbase$Lbin_lo_cm <- lbins[agedbase$Lbin_lo]
+    agedbase$Lbin_hi_cm <- lbins[agedbase$Lbin_hi]
+  }
+  if(Lbin_method==3){
+    agedbase$Lbin_lo_cm <- agedbase$Lbin_lo
+    agedbase$Lbin_hi_cm <- agedbase$Lbin_hi
+  }
+  
+  # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
+  lendbase$effN <- as.numeric(lendbase$effN)
+  agedbase$effN <- as.numeric(agedbase$effN)
+  condbase$effN <- as.numeric(condbase$effN)
+  
   # now make use of embedded SSv3_plot_comps function to make composition plots
   if(!datplot)
   {
@@ -2203,12 +2237,12 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(15 %in% c(plot,print))  # data only aspects
     {
       # length comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=F,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="LEN",bub=F,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # length comp bubble plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -2218,22 +2252,22 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(16 %in% c(plot,print))
     {
       # age comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=F,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="AGE",bub=F,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # age comp bubble plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bar plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="GSTAGE",bub=F,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="GSTAGE",bub=F,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bubble plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                       png=(16%in%print),GUI=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -2243,7 +2277,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     if(17 %in% c(plot,print))
     {
       # conditional age plot
-      SSv3_plot_comps(replist=replist,datonly=T,kind="cond",bub=T,verbose=verbose,fleets=fleets,
+      SSv3_plot_comps(datonly=T,kind="cond",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                       fixdims=fixdims,
@@ -2255,7 +2289,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # plot 18: length comp data with fits, sample size, etc.
   if(18 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
+    SSv3_plot_comps(datonly=F,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
@@ -2266,12 +2300,12 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # plot 19: age comp data with fits, sample size, etc.
   if(19 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
+    SSv3_plot_comps(datonly=F,kind="AGE",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,...)
-    SSv3_plot_comps(replist=replist,datonly=F,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
+    SSv3_plot_comps(datonly=F,kind="GSTAGE",bub=T,verbose=verbose,fleets=fleets,
                     samplesizeplots=F,showsampsize=F,showeffN=F,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(19%in%print),GUI=(19%in%plot),smooth=smooth,plotdir=plotdir,
@@ -2282,7 +2316,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # plot 20: conditional age at length plot with fits, sample size, etc.
   if(20 %in% c(plot,print)){
-    SSv3_plot_comps(replist=replist,datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
+    SSv3_plot_comps(datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
                     aalbin=aalbin,aalyear=aalyear,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,
