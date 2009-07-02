@@ -312,7 +312,9 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   lbinspop <- lbinspop[!is.na(lbinspop)]
   nlbinspop <- length(lbinspop)
   Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
-  
+  if(is.null(Lbin_method)){
+    Lbin_method==2
+  }
   # read composition database
   rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
   names(rawcompdbase) <- rawcompdbase[1,]
@@ -336,7 +338,7 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   compdbase <- NA
   agedbase <- NA
   latagebase <- NA
-  Lbin_method <- NA
+  Lbin_method <- 2
 }
 tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
