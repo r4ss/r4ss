@@ -121,7 +121,6 @@ SSv3_plots <- function(
   nlbinspop                      <- replist$nlbinspop
   agebins                        <- replist$agebins
   nagebins                       <- replist$nagebins
-  Lbin_method                    <- replist$Lbin_method
   accuage                        <- replist$accuage
   nareas                         <- replist$nareas
   startyr                        <- replist$startyr
@@ -1575,7 +1574,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     # Required packages: none
     #
     ################################################################################
-  
+
     # notes on inputs for make_multifig
     # ptsx                    = vector of x values for points or bars
     # ptsy                    = vector of y values for points or bars  of same length as ptsx
@@ -2010,7 +2009,7 @@ if(nseasons==1){ # temporary disable until code cleanup
               ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
-                  make_multifig(ptsx=dbase$Bin,ptsy=0.5*(dbase$Lbin_hi_cm + dbase$Lbin_lo_cm),yr=dbase$Yr,size=z,
+                  make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr,size=z,
                                 sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=F,linepos=0,main=ptitle,cex.main=cex.main,
@@ -2045,10 +2044,10 @@ if(nseasons==1){ # temporary disable until code cleanup
                   ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,FleetNames[f],sep="")
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   ydbase <- dbase[dbase$Yr==aalyr,]
-                  lenbinlegend <- paste(ydbase$Lbin_lo_cm,lenunits,sep="")
-                  lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo_cm,"-",ydbase$Lbin_hi_cm,lenunits,sep="")
+                  lenbinlegend <- paste(ydbase$Lbin_lo,lenunits,sep="")
+                  lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo,"-",ydbase$Lbin_hi,lenunits,sep="")
                   tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
-                    make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo_cm,
+                    make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
                                   linesx=ydbase$Bin,linesy=ydbase$Exp,
                                   sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                   nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
@@ -2075,7 +2074,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                   ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   tempfun <- function(){
-                    bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo_cm,z=z,xlab=agelab,ylab=lenlab,col=rep("blue",2),
+                    bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=agelab,ylab=lenlab,col=rep("blue",2),
                           las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
                   }
                   if(GUI) tempfun()
@@ -2186,6 +2185,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # deal with Lbins
   compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
+  compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
   
   # divide into objects by kind
   lendbase       <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
@@ -2196,10 +2196,11 @@ if(nseasons==1){ # temporary disable until code cleanup
   ghostagedbase  <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0
                               & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
   # consider range of bins for conditional age at length data
-  print(paste("CompReport file shows",nrow(lendbase),"rows of length comp data,"),quote=F)
-  print(paste("                     ",nrow(agedbase),"rows of age comp data,"),quote=F)
-  print(paste("                     ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
-  print(paste("                     ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
+  print(paste("CompReport file separated by this code as follows (rows = num. comps * num. bins):"),quote=F)
+  print(paste("  ",nrow(lendbase),"rows of length comp data,"),quote=F)
+  print(paste("  ",nrow(agedbase),"rows of age comp data,"),quote=F)
+  print(paste("  ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
+  print(paste("  ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
   Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
   names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
   if(length(unique(agedbase$Lbin_range)) > 1){
@@ -2209,19 +2210,6 @@ if(nseasons==1){ # temporary disable until code cleanup
     print("  some of these data as conditional age-at-length",quote=F)
   }
   # convert bin indices to true lengths
-  #_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths
-  if(Lbin_method==1){
-    agedbase$Lbin_lo_cm <- lbinspop[agedbase$Lbin_lo]
-    agedbase$Lbin_hi_cm <- lbinspop[agedbase$Lbin_hi]
-  }
-  if(Lbin_method==2){
-    agedbase$Lbin_lo_cm <- lbins[agedbase$Lbin_lo]
-    agedbase$Lbin_hi_cm <- lbins[agedbase$Lbin_hi]
-  }
-  if(Lbin_method==3){
-    agedbase$Lbin_lo_cm <- agedbase$Lbin_lo
-    agedbase$Lbin_hi_cm <- agedbase$Lbin_hi
-  }
   
   # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
   lendbase$effN <- as.numeric(lendbase$effN)

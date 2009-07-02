@@ -84,8 +84,6 @@ if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B"),sep=""))){
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
-if(verbose) print(paste("R function updated:",codedate),quote=F)
-if(verbose) print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
 
 findtime <- function(lines){
   # quick function to get model start time from SSv3 output files
@@ -312,9 +310,6 @@ if(comp){   # skip this stuff if no CompReport.SSO file
   lbinspop <- lbinspop[!is.na(lbinspop)]
   nlbinspop <- length(lbinspop)
   Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
-  if(is.null(Lbin_method)){
-    Lbin_method==2
-  }
   # read composition database
   rawcompdbase <- read.table(file=compfile, col.names=1:21, fill=T, colClasses="character", skip=18, nrows=-1)
   names(rawcompdbase) <- rawcompdbase[1,]
