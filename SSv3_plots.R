@@ -3,7 +3,7 @@ SSv3_plots <- function(
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
-    aalresids=F, maxneff=5000, smooth=T, showsampsize=T, showeffN=T, showlegend=T,
+    aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
     maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,...)
 {
@@ -182,11 +182,14 @@ SSv3_plots <- function(
   equil_yield 			 <- replist$equil_yield
 
   # check for internal consistency
-  if(uncertainty==T & inputs$covar==F)
-    return("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function")
-  if(forecastplot==T & inputs$forecast==F)
-    return("To use forecastplot=T, you need to have forecast=T in the input to the SSv3_output function")
-
+  if(uncertainty==T & inputs$covar==F){
+    print("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function",quote=F)
+    return()
+  }
+  if(forecastplot==T & inputs$forecast==F){
+    print("To use forecastplot=T, you need to have forecast=T in the input to the SSv3_output function",quote=F)
+    return()
+  }
   # derived quantities
   mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
@@ -265,7 +268,7 @@ SSv3_plots <- function(
 
   #### plot 1
   # Static growth (mean weight, maturity, fecundity, spawning output)
-  if(1 %in% c(plot, print))
+  if(1 %in% c(plot, print) | length(cohortlines)>0)
   {
     growdat <- replist$endgrowth
     xlab <- "Length (cm)"
@@ -324,13 +327,13 @@ SSv3_plots <- function(
     growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
     growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
     if(nsexes > 1){
-        growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
-        #growdatM <- growdat[growdat$Morph==mainmorphs[2],]
-        xm <- growdatM$Age
-        growdatM$Sd_Size <- growdatM$SD_Mid
-        growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
-        growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
-     }
+      growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+      #growdatM <- growdat[growdat$Morph==mainmorphs[2],]
+      xm <- growdatM$Age
+      growdatM$Sd_Size <- growdatM$SD_Mid
+      growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
+      growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
+    }
     maxy <- max(growdatF$high)
     if(nsexes > 1){maxy <- max(maxy,growdatM$high)}
     x <- growdatF$Age
@@ -381,7 +384,7 @@ SSv3_plots <- function(
         mfunc()
         dev.off()}
     }
-    if(verbose) print("Finished plot 1: Static growth (mean weight, maturity, spawning output)",quote=F)
+    if(verbose & 1 %in% c(plot,print)) print("Finished plot 1: Static growth (mean weight, maturity, spawning output)",quote=F)
   } # end if 1 in plot or print
 
   ### plot 2: Time-varying growth
@@ -405,6 +408,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- T
         if(time)
         {
+          if(length(cohortlines)>0) print("Growth is time-varying, which is not yet implemented in cohortlines added to length comps.",quote=F)
           z <- t(z)
           if(i==1){main <- "Female time-varying growth"}
           if(nsexes==1){main <- "Time-varying growth"}
@@ -1807,7 +1811,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       kind="LEN", aalyear=-1, aalbin=-1, GUI=T, png=F, plotdir=NA, fleets="all",
       datonly=F, Natageplot=T, samplesizeplots=T, compresidplots=T, bub=F, showsampsize=T, showeffN=T,
       minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-      linepos=1, fitbar=F,maxsize=3,do.sqrt=TRUE,smooth=TRUE,
+      linepos=1, fitbar=F,maxsize=3,do.sqrt=TRUE,smooth=TRUE,cohortlines=c(),
       agelab="Age (years)", lenlab="Length (cm)",proplab="Proportion",yearlab="Year", lenunits="cm",
       osslab="Observed sample size",esslab="Effective sample size",printmkt=T,printsex=T,
       maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,fixdims=T,maxneff=5000,returntitles=T,verbose=T,...)
@@ -1991,13 +1995,25 @@ if(nseasons==1){ # temporary disable until code cleanup
               ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
               ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
               titles <- c(ptitle,titles) # compiling list of all plot titles
-              if(GUI) bubble3(x=dbase$Yr, y=dbase$Bin, z=z, xlab=yearlab,ylab=kindlab,col=col,
+
+              tempfun <- function(){
+                bubble3(x=dbase$Yr, y=dbase$Bin, z=z, xlab=yearlab,ylab=kindlab,col=col,
                       las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
+                # add lines for growth of individual cohorts if requested
+                if(length(cohortlines)>0){
+                  for(icohort in 1:length(cohortlines)){
+                    print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=F)
+                    if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
+                    if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
+                  }
+                }
+              }
+              
+              if(GUI) tempfun()
               if(png){ # set up plotting to png file if required
                 filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,".png",sep="")
                 png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-                bubble3(x=dbase$Yr, y=dbase$Bin, z=z, xlab=yearlab,ylab=kindlab,col=col,
-                        las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
+                tempfun()
                 dev.off() # close device if png
               }
             } # end bubble plot
@@ -2233,7 +2249,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       SSv3_plot_comps(datonly=T,kind="LEN",bub=T,verbose=verbose,fleets=fleets,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
-                      png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
+                      png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
       if(verbose) print("Finished plot 15: length comp data",quote=F)
       flush.console()
     }
@@ -2281,7 +2297,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                     png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,...)
+                    maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
     if(verbose) print("Finished plot 18: length comps with fits",quote=F)
     flush.console()
   }
