@@ -1,7 +1,8 @@
 # this file contains several functions, some of which depend on others.
 #
 # SS_parlines:    identify the line numbers and parameter labels in a Stock Synthesis control file
-# SS_changepars:     change one or more parameter values in the Control file for SSv3
+# SS_changepars:  change one or more parameter values in the Control file for SSv3
+# SS_profile:     run likelihood profile
 # SS_plotpriors:  make a multi-figure plot of prior distributions from a Stock Synthesis control file
 # SS_splitdat:    split bootstrap files aggregated in the Data.SS_New file
 # SS_recdevs:     add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
@@ -141,6 +142,92 @@ SS_changepars <- function(
 
 } # end function
 
+############################################################
+############### NEXT FUNCTION ##############################
+############################################################
+
+SS_profile <- function(
+         dir="C:\\myfiles\\mymodels\\myrun\\",
+         masterctlfile="Control.SS_New",
+         newctlfile="Control_Modified.SS", # must match entry in starter file
+         linenum=NULL, parname=NULL, profilevec=NULL,
+         command="SS3 -nox",model='ss3',saveoutput=T,
+         verbose=T)
+{
+  ################################################################################
+  #
+  # SS_profile
+  # July 30, 2009.
+  # This function comes with no warranty or guarantee of accuracy
+  #
+  # Purpose: run a likelihood profile by iteratively modifying
+  #          a Stock Synthesis control file
+  # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+  # Returns: Plots of prior distributions used in Stock Synthesis model
+  # Notes:   requires SS_parlines and SS_changepar also contained in the file SSv3_utils.R
+  #          hosted at http://code.google.com/p/r4ss/
+  # Required packages: none
+  #
+  ################################################################################
+
+  if(.Platform$OS.type=="windows") win <- T  else  win <- F
+
+  if(length(linenum)+length(parname)!=1){
+    print("one value should be input for either 'linenum' or 'parname', but not both",quote=F)
+    return()
+  }
+  n <- length(profilevec)
+  converged <- rep(NA,n)
+  totallike <- rep(NA,n)
+  liketable <- NULL
+  
+  setwd(dir) # change working directory
+  stdfile <- paste(model,'.std',sep='')
+  
+  # run loop over profile values
+  for(i in 1:n){
+    SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
+                  linenums=linenum,parnames=parname,
+                  newvals=profilevec[i], estimate=F,
+                  verbose=T)
+    if(file.exists(stdfile)) file.remove(stdfile)
+    if(file.exists('Report.SSO')) file.remove('Report.SSO')
+
+    # run model
+    if(win){
+      shell(cmd=command) 
+    }else{
+      system(command)
+    }
+    
+    converged[i] <- file.exists(stdfile)
+    onegood <- F
+    if(file.exists('Report.SSO') & file.info('Report.SSO')$size>0){
+      onegood <- T
+      Rep <- readLines('Report.SSO',n=120)
+      like <- read.table('Report.SSO',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=10,head=T,fill=T)
+      liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
+    }else{
+      liketable <- rbind(liketable,rep(NA,10))
+    }
+    
+    if(saveoutput){
+      file.copy('Report.SSO',paste('Report',i,".SSO",sep=""))
+      file.copy('CompReport.SSO',paste('CompReport',i,".SSO",sep=""))
+      file.copy('CoVar.SSO',paste('CoVar',i,".SSO",sep=""))
+    }
+  } # end loop
+  if(onegood){
+    liketable <- as.data.frame(liketable)
+    names(liketable) <- like$Component
+    bigtable <- cbind(profilevec,converged,liketable)
+    names(bigtable)[1] <- 'Value'
+    return(bigtable)
+  }else{
+    print('Error: no good Report.SSO files created in profile',quote=F)
+    return()
+  }
+} # end function
 
 ############################################################
 ############### NEXT FUNCTION ##############################
