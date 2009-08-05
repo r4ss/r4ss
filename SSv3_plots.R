@@ -721,8 +721,15 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         ytotal <- rep(NA,nrow(ymat))
         ymax <- max(ymat)
       }
+      legendloc <- 'topleft'
+      if(ymax>0.6){
+        ymax <- 1 # if discards are big, plot full range from 0 to 1
+        legendloc <- 'bottomright'
+      }
+        
       plot(catchyrs, ytotal, ylim=c(0,ymax), xlab="Year", ylab=ylab, type="o")
       abline(h=0,col="grey")
+      abline(h=1,col="grey")
       for(f in 1:nfishfleets){
         if(max(ymat[,f])>0){
           lines(catchyrs, ymat[,f], type="o", col=fleetcols[f],
@@ -731,10 +738,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       }
       if(showlegend){
         if(nfishfleets>1 & addtotal){
-          legend('topleft', lty=fleetlty[!ghost], lwd=lwd, pch=c(1,fleetpch[!ghost]),
+          legend(legendloc, lty=fleetlty[!ghost], lwd=lwd, pch=c(1,fleetpch[!ghost]),
                  col=c('black',fleetcols[!ghost]), legend=c('Total',fleetnames[!ghost]), bty='n')
         }else{
-          legend('topleft', lty=1, lwd=lwd, pch=fleetpch[!ghost], col=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
+          legend(legendloc, lty=1, lwd=lwd, pch=fleetpch[!ghost], col=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
         }
       }
     } # end linefunc
