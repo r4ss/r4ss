@@ -1503,10 +1503,10 @@ if(nseasons==1){ # temporary disable until code cleanup
         for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
           meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
         ylim <- c(0,max(meanage))
-        ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
+        ylab <- plottitle1 <- paste("Mean age",sextitle," in the population (yr)",sep="")
         if(14 %in% plot){
           tempfun()
-          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle,cex.main=cex.main)}
+          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle1,cex.main=cex.main)}
         if(14 %in% print){
           filepart <- paste("_sex",m,sep="")
           if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
@@ -1514,14 +1514,14 @@ if(nseasons==1){ # temporary disable until code cleanup
           tempfun()
           dev.off()
           png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
+          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle1)
           dev.off()}
       } # end gender loop
     } # end area loop
 
     if(nsexes>1){
       for(iarea in areas){
-        plottitle <- paste("Sex ratio of numbers at age (males/females)",sep="")
+        plottitle2 <- paste("Sex ratio of numbers at age (males/females)",sep="")
         if(nareas > 1) plottitle <- paste(plottitle," for ",areanames[iarea],sep="")
         
         natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
@@ -1529,7 +1529,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
         tempfun <- function(...){
           contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
-                  main=plottitle,cex.main=cex.main,...)
+                  main=plottitle2,cex.main=cex.main,...)
         }
         if(14 %in% plot){
           tempfun(labcex=1)
