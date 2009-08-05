@@ -1478,14 +1478,8 @@ if(nseasons==1){ # temporary disable until code cleanup
         if(nareas>1) sextitle <- paste(" in ",areanames[iarea],sextitle,sep="")
         plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
 
-        tempfun <- function(){
-          bubble3(x=resx, y=resy, z=resz,
-                  xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
-                  las=1,cex.main=cex.main,allopen=1)
-        }
-
+        # calculations related to mean age
         natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
-        
         ages <- 0:accuage
         natagetemp2 <- as.data.frame(natagetemp1)
         natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
@@ -1502,20 +1496,42 @@ if(nseasons==1){ # temporary disable until code cleanup
         meanage <- 0*natageyrs
         for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
           meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
+        if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
+    
         ylim <- c(0,max(meanage))
-        ylab <- plottitle1 <- paste("Mean age",sextitle," in the population (yr)",sep="")
+        ylab <- plottitle1 <- paste("Mean age in the population (yr)",sep="")
+        
+        tempfun <- function(){
+          # bubble plot with line
+          bubble3(x=resx, y=resy, z=resz,
+                  xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+                  las=1,cex.main=cex.main,allopen=1)
+          lines(natageyrs,meanage,col="red",lwd=3)
+        }
+        tempfun2 <- function(){
+          # mean length for males and femails
+          plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab="Year",ylim=ylim,type="o",ylab=ylab,main=plottitle1,cex.main=cex.main)
+          points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
+          legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
+        }
         if(14 %in% plot){
           tempfun()
-          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle1,cex.main=cex.main)}
+          if(m==2 & nsexes==2) tempfun2()
+        }
         if(14 %in% print){
-          filepart <- paste("_sex",m,sep="")
-          if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-          png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          filepartsex <- paste("_sex",m,sep="")
+          filepartarea <- ""
+          if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
+          png(file=paste(plotdir,"14_natage",filepartarea,filepartsex,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           tempfun()
           dev.off()
-          png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle1)
-          dev.off()}
+          # make 2-sex plot after looping over both sexes
+          if(m==2 & nsexes==2){ 
+            png(file=paste(plotdir,"14_meanage",filepartarea,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            tempfun2()
+            dev.off()
+          }
+        }
       } # end gender loop
     } # end area loop
 
