@@ -1445,74 +1445,104 @@ if(nseasons==1){ # temporary disable until code cleanup
   } # end if 13 in plot or print
 
   ### Plot 14: numbers at age ###
-  if(14 %in% c(plot, print))
-  {
-    for(iarea in areas)
-    {
-      for(m in 1:nsexes)
-      {
+  if(14 %in% c(plot, print)){
+    for(iarea in areas){
+      for(m in 1:nsexes){
         # warning implementation of birthseasons may not be correct in this section
-        if(max(morph_indexing$Index) > nareas*nsexes*nseasons)
-        {
-          print("Expected numbers at age plot not yet configured for multiple morphs.",quote=F)
+        if(max(morph_indexing$Index) > nareas*nsexes*nseasons){
+          natagetemp_morphs <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 &
+                                      natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
+          morphlist <- unique(natagetemp_morphs$SubMorph)
+          natagetemp0 <- natagetemp_morphs[natagetemp_morphs$SubMorph==morphlist[1],]
+          
+          for(imorph in 2:length(morphlist)){
+            natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_morphs[natagetemp_morphs$SubMorph==morphlist[imorph],11+0:accuage]
+          }
         }else{
           natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 &
-                            natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
-          nyrsplot <- nrow(natagetemp0)
-          resx <- rep(natagetemp0$Yr, accuage+1)
-          resy <- NULL
-          for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
-          resz <- NULL
-          for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
-
-          if(m==1 & nsexes==1) sextitle <- ""
-          if(m==1 & nsexes==2) sextitle <- " of females"
-          if(m==2) sextitle=" of males"
-          if(nareas>1) sextitle <- paste(" in ",areanames[iarea],sextitle,sep="")
-          plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
-
-          tempfun <- function(){
-            bubble3(x=resx, y=resy, z=resz,
-                    xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
-                    las=1,cex.main=cex.main,allopen=1)
-          }
-
-          natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
-          
-          ages <- 0:accuage
-          natagetemp2 <- as.data.frame(natagetemp1)
-          natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
-
-          # remove rows with 0 fish (i.e. no growth pattern in this area)
-          natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
-          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
-          natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
-          prodmat <- t(natagetemp1)*ages
-          prodsum <- as.vector(apply(prodmat,2,sum))
-          natagetemp2$sumprod <- prodsum
-          natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
-          meanageyr <- sort(unique(natagetemp0$Yr))
-          meanage <- 0*meanageyr
-          for(i in 1:length(meanageyr)){ # averaging over values within a year (depending on birth season)
-            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==meanageyr[i]]*natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])/sum(natagetemp2$sum[natagetemp0$Yr==meanageyr[i]])}
-          ylim <- c(0,max(meanage))
-          ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
-          if(14 %in% plot){
-            tempfun()
-            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle,cex.main=cex.main)}
-          if(14 %in% print){
-            filepart <- paste("_sex",m,sep="")
-            if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-            png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            tempfun()
-            dev.off()
-            png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            plot(meanageyr,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
-            dev.off()}
+                                natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
         }
+        nyrsplot <- nrow(natagetemp0)
+        resx <- rep(natagetemp0$Yr, accuage+1)
+        resy <- NULL
+        for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
+        resz <- NULL
+        for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
+
+        # assign unique name to data frame for area, sex
+        assign(paste("natagetemp0area",iarea,"sex",m,sep=""),natagetemp0)
+        
+        if(m==1 & nsexes==1) sextitle <- ""
+        if(m==1 & nsexes==2) sextitle <- " of females"
+        if(m==2) sextitle=" of males"
+        if(nareas>1) sextitle <- paste(" in ",areanames[iarea],sextitle,sep="")
+        plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
+
+        tempfun <- function(){
+          bubble3(x=resx, y=resy, z=resz,
+                  xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+                  las=1,cex.main=cex.main,allopen=1)
+        }
+
+        natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
+        
+        ages <- 0:accuage
+        natagetemp2 <- as.data.frame(natagetemp1)
+        natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
+
+        # remove rows with 0 fish (i.e. no growth pattern in this area)
+        natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
+        natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
+        natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
+        prodmat <- t(natagetemp1)*ages
+        prodsum <- as.vector(apply(prodmat,2,sum))
+        natagetemp2$sumprod <- prodsum
+        natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
+        natageyrs <- sort(unique(natagetemp0$Yr))
+        meanage <- 0*natageyrs
+        for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
+          meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
+        ylim <- c(0,max(meanage))
+        ylab <- plottitle <- paste("Mean age",sextitle," in the population (yr)",sep="")
+        if(14 %in% plot){
+          tempfun()
+          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle,cex.main=cex.main)}
+        if(14 %in% print){
+          filepart <- paste("_sex",m,sep="")
+          if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
+          png(file=paste(plotdir,"14_natage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          tempfun()
+          dev.off()
+          png(file=paste(plotdir,"14_meanage",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          plot(natageyrs,meanage,xlab="Year",ylim=ylim,type="o",ylab=ylab,col="black",main=plottitle)
+          dev.off()}
       } # end gender loop
     } # end area loop
 
+    if(nsexes>1){
+      for(iarea in areas){
+        plottitle <- paste("Sex ratio of numbers at age (males/females)",sep="")
+        if(nareas > 1) plottitle <- paste(plottitle," for ",areanames[iarea],sep="")
+        
+        natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
+        natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
+        natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
+        tempfun <- function(...){
+          contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
+                  main=plottitle,cex.main=cex.main,...)
+        }
+        if(14 %in% plot){
+          tempfun(labcex=1)
+        }
+        if(14 %in% print){
+          filepart <- ""
+          if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
+          png(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          tempfun(labcex=0.4)
+          dev.off()}
+      } # end area loop
+    } # end if nsexes>1
+    
     # plot the ageing imprecision for all age methods
     if(!is.null(AAK)){
       sd_vectors <- as.data.frame(AAK[,1,])
@@ -1523,8 +1553,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       ylim <- c(0,max(sd_vectors))
       if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
       if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
-      tempfun <- function()
-      {
+      tempfun <- function(){
         plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
         if(n_age_error_keys > 1){
           for(i in 2:n_age_error_keys){
