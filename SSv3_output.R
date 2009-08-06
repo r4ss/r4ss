@@ -302,7 +302,7 @@ FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 if(comp){   # skip this stuff if no CompReport.SSO file
   allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=15)
   #lbins is data length bins
-  lbins <- as.numeric(allbins[6,-1])
+  lbins <- as.numeric(allbins[7,-1])
   lbins <- lbins[!is.na(lbins)]
   nlbins <- length(lbins)
   #lbinspop is Pop_len_mid used for selex and bio quantities
