@@ -722,7 +722,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         ymax <- max(ymat)
       }
       legendloc <- 'topleft'
-      if(ymax>0.6){
+      if(ymax>0.6 & ymax<1.0){
         ymax <- 1 # if discards are big, plot full range from 0 to 1
         legendloc <- 'bottomright'
       }

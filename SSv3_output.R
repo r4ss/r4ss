@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "July 1, 2009"
+codedate <- "August 7, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
