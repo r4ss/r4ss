@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "August 7, 2009"
+codedate <- "August 19, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -351,6 +351,8 @@ morph_indexing <-matchfun2("MORPH_INDEXING",1,"MOVEMENT",-1,cols=1:9)
 names(morph_indexing) <- morph_indexing[1,]
 morph_indexing <- morph_indexing[-1,]
 for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
+ngpatterns <- max(morph_indexing$Gpattern)
+
 if(forecast){
   grab  <- rawforcast1[,1]
   nforecastyears <- as.numeric(rawforcast1[grab %in% c("N_forecast_yrs:"),2])
@@ -453,6 +455,7 @@ returndat <- list()
 returndat$nfleets     <- nfleets
 returndat$nfishfleets <- nfishfleets
 returndat$nsexes      <- nsexes
+returndat$ngpatterns  <- ngpatterns
 returndat$lbins       <- lbins
 returndat$Lbin_method <- Lbin_method
 returndat$nlbins      <- nlbins

@@ -1,11 +1,11 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:23, print=0, printfolder="", dir="default", fleets="all", areas="all",
+    replist="ReportObject", plot=1:23, print=0, pdf=F, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
     aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-    maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,...)
+    rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,new=T,...)
 {
 ################################################################################
 #
@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "July 1, 2009"
+  codedate <- "August 19, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -54,7 +54,7 @@ SSv3_plots <- function(
       pch[pch<0] <- 1
       if(allopen) pch[!is.na(pch)] <- 1
       if(!add){
-          plot(x,y,type='n',xlim=xlim,main=main,xlab=xlab,ylab=ylab,axes=F,cex.main=cex.main)
+          plot(x,y,type='n',xlim=xlim,main=main,cex.main=cex.main,xlab=xlab,ylab=ylab,axes=F,cex.main=cex.main)
           axis(1,at=unique(x))
           axis(2,las=las)
           box()
@@ -115,6 +115,7 @@ SSv3_plots <- function(
   nfleets                        <- replist$nfleets
   nfishfleets                    <- replist$nfishfleets
   nsexes                         <- replist$nsexes
+  ngpatterns                     <- replist$ngpatterns
   lbins                          <- replist$lbins
   nlbins                         <- replist$nlbins
   lbinspop                       <- replist$lbinspop
@@ -237,7 +238,7 @@ SSv3_plots <- function(
   if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
   # need appropriate line to support Mac operating systems
 
-  if(nplots>0){
+  if(nplots>0 & !pdf & new){
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
@@ -248,9 +249,15 @@ SSv3_plots <- function(
     dir.create(dir,showWarnings=F)
     plotdir <- paste(dir,printfolder,"/",sep="")
     dir.create(plotdir,showWarnings=F)
-    if(verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
+    if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
   }
-
+  if(pdf){
+    pdffile <- paste(inputs$dir,"/SSplots.pdf",sep="")
+    pdf(file=pdffile,width=pwidth,height=pheight)
+    if(verbose) print(paste("PDF file with plots will be:",pdffile,sep=""),quote=F)
+  }
+  par(mfcol=c(rows,cols))
+  
   # colors and line types
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
@@ -281,24 +288,23 @@ SSv3_plots <- function(
     par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
     if(max(par1 + par2*biology$Wt_len_F)-min(par1 + par2*biology$Wt_len_F)>0){
       SBlabelflag <- FALSE}
-    gfunc1 <- function(){
+    gfunc1 <- function(){ # weight
       plot(x,biology$Wt_len_F,xlab=xlab,ylab=ylab,type="o",col="red")
       abline(h=0,col="grey")
       if(nsexes > 1){
         lines(x,biology$Wt_len_M,col="blue",type="o")
         legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}}
-    gfunc2 <- function(){
+    gfunc2 <- function(){ # maturity
       if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red")
       }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
       abline(h=0,col="grey")}
-    gfunc4 <- function(){
-      ymin <- 0
+    gfunc4 <- function(){ # fecundity
       ymax <- max(1.1*(par1 + par2*biology$Wt_len_F))
-      plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(ymin,ymax),col="blue",pch=19)
+      plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(0,ymax),col="blue",pch=19)
       lines(biology$Wt_len_F,rep(par1,length(biology$Wt_len_F)),col="red")
-      text((max(biology$Wt_len_F)-min(biology$Wt_len_F))/2,par1-0.02*ymax,"Egg output proportional to spawning biomass")
+      text((max(biology$Wt_len_F)-min(biology$Wt_len_F))/2,par1-0.05*ymax,"Egg output proportional to spawning biomass")
       }
-    gfunc3 <- function(){
+    gfunc3 <- function(){ # spawning output
       plot(x,biology$Spawn,xlab="Length (cm)",ylab=ylab2,type="o",col="red")
       abline(h=0,col="grey")}
     if(1 %in% plot){
@@ -337,16 +343,15 @@ SSv3_plots <- function(
     maxy <- max(growdatF$high)
     if(nsexes > 1){maxy <- max(maxy,growdatM$high)}
     x <- growdatF$Age
-    header <- "Ending year expected growth"
-   # if(nseasons > 1){header <- paste(header," season 1",sep="")}
+    main <- "Ending year expected growth"
+    # if(nseasons > 1){main <- paste(main," season 1",sep="")}
     ylab <- "Length (cm, middle of the year)"
-    gfunc4 <- function()
+    gfunc5 <- function()
     {
-      plot(x,growdatF$Len_Mid,col="red",lwd=2,ylim=c(0,maxy),type="l",ylab=ylab,xlab="Age (yr)")
+      plot(x,growdatF$Len_Mid,col="red",lwd=2,ylim=c(0,maxy),type="l",ylab=ylab,xlab="Age (yr)",main=main,cex.main=cex.main)
       abline(h=0,col="grey")
       lines(x,growdatF$high,col="red",lwd=1,lty="dashed")
       lines(x,growdatF$low,col="red",lwd=1,lty="dashed")
-      mtext(header,3,1.5)
       if(nsexes > 1)
       {
         lines(xm,growdatM$Len_Mid,col="blue",lwd=2,type="l")
@@ -356,10 +361,10 @@ SSv3_plots <- function(
         legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))
       }
     }
-    if(1 %in% plot) gfunc4()
+    if(1 %in% plot) gfunc5()
     if(1 %in% print){
       png(file=paste(plotdir,"01_sizeatage.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      gfunc4()
+      gfunc5()
       dev.off()}
 
     # Natural mortality (if time or sex varying)
@@ -415,14 +420,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           if(i==2){main <- "Male time-varying growth"}
           if(nseasons > 1){main <- paste(main," season 1",sep="")}
           if(2 %in% plot){
-            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)}
+            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(2 %in% print){
             png(file=paste(plotdir,"02_timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
             png(file=paste(plotdir,"02_timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,col=ians_contour,lwd=2)
+            contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_contour,lwd=2)
             dev.off()}
         }
       }
@@ -462,14 +467,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           z <- t(z)
           main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
           if(3 %in% plot)
-          { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)}
+          { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
           if(3 %in% print)
           { png(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
             png(file=paste(plotdir,"03_timevarylenselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)
+            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
             dev.off()}
         }
         time2 <- FALSE
@@ -483,14 +488,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           z <- t(z)
           main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
           if(3 %in% plot)
-          { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)}
+          { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
           if(3 %in% print)
           { png(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
             png(file=paste(plotdir,"03_timevaryretcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,col=ians_blues,lwd=2)
+            contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
             dev.off()}
         }
         plotselex <- plotselex[plotselex$year==endyr & plotselex$gender==m,-(1:5)]
@@ -500,7 +505,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
         selfunc <- function()
         {
-          plot(bins,vals,xlab="Length bin (cm)",ylim=c(0,1),main=main,ylab=ylab,type="o",col="blue",cex=1.1)
+          plot(bins,vals,xlab="Length bin (cm)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
           abline(h=0,col="grey")
           intret2 <- intret[intret$Fleet==i,]
           retchecktemp <- as.vector(unlist(intret2[1,]))
@@ -553,20 +558,20 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             z <- t(z)
             main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
             if(3 %in% plot){
-              persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
-              contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,col=ians_blues,lwd=2)}
+              persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
             if(3 %in% print){
               png(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-              persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,ticktype="detailed",phi=35,theta=-10)
+              persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
               png(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-              contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,col=ians_blues,lwd=2)
+              contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
               dev.off()}
             plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
             plotageselex2 <- plotageselex2[,-(1:7)]
             main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
             endselfunc <- function()
-             {plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab="Age (yr)",ylim=c(0,1),main=main,ylab=ylab,type="o",col="blue",cex=1.1)
+             {plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab="Age (yr)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
              abline(h=0,col="grey")
              legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
             if(4 %in% plot){endselfunc()}
@@ -585,7 +590,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           {
             main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
             endselfunc2 <- function(){
-              plot((as.numeric(names(plotageselex))),vals,xlab="Age (yr)",ylim=c(0,1),main=main,ylab=ylab,type="o",col="blue",cex=1.1)
+              plot((as.numeric(names(plotageselex))),vals,xlab="Age (yr)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
               abline(h=0,col="grey")
               legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
             if(4 %in% plot) endselfunc2()
@@ -1180,7 +1185,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         main <- "Recruitment deviation variance check"
         ylab <- "Asymptotic standard error estimate"
         recdevfunc2 <- function(){
-          plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,ylab=ylab,ylim=c(0,ymax),type="b")
+          plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,ylim=c(0,ymax),type="b")
           abline(h=0,col="grey")
           abline(h=sigr,col="red")}
         if(9 %in% plot) recdevfunc2()
@@ -1393,10 +1398,10 @@ if(nseasons==1){ # temporary disable until code cleanup
       main=paste("Index ", i,sep="")
       xlab <- "Observed index"
       if(13 %in% plot){
-        plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+        plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
         abline(h=0,col="grey")
         lines(x,z,lwd=2,col="blue")
-        plot(y,z,xlab=xlab,main=main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
+        plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
         npoints <- length(z)
@@ -1405,12 +1410,12 @@ if(nseasons==1){ # temporary disable until code cleanup
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
       if(13 %in% print){
         png(file=paste(plotdir,"13_cpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+        plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
         abline(h=0,col="grey")
         lines(x,z,lwd=2,col="blue")
         dev.off()
         png(file=paste(plotdir,"13cpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        plot(y,z,xlab=xlab,main=main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
+        plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
         npoints <- length(z)
@@ -1425,9 +1430,9 @@ if(nseasons==1){ # temporary disable until code cleanup
       uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
       liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
       if(13 %in% plot){
-        plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,lty=1)
+        plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
         lines(x,log(z),lwd=2,col="blue")
-        plot(log(y),log(z),xlab=xlab,main=main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
+        plot(log(y),log(z),xlab=xlab,main=main,cex.main=cex.main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
         lines(x=c(log(min(z)),log(max(z))),y=c(log(min(z)),log(max(z))),col="black")
         if(npoints & smooth){
           psmooth <- loess(log(z)~log(y),degree=1)
@@ -1435,11 +1440,11 @@ if(nseasons==1){ # temporary disable until code cleanup
       }
       if(13 %in% print){
         png(file=paste(plotdir,"13_logcpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,lty=1)
+        plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
         lines(x,log(z),lwd=2,col="blue")
         dev.off()
         png(file=paste(plotdir,"13_logcpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        plot(log(y),log(z),xlab=xlab,main=main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
+        plot(log(y),log(z),xlab=xlab,main=main,cex.main=cex.main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
         lines(x=c(log(min(z)),log(max(z))),y=c(log(min(z)),log(max(z))),col="black")
         if(npoints > 3 & smooth){
           psmooth <- loess(log(z)~log(y),degree=1)
@@ -1453,149 +1458,165 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   ### Plot 14: numbers at age ###
   if(14 %in% c(plot, print)){
-    for(iarea in areas){
-      for(m in 1:nsexes){
-        # warning implementation of birthseasons may not be correct in this section
-        if(max(morph_indexing$Index) > nareas*nsexes*nseasons){
-          natagetemp_morphs <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 &
-                                      natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
-          morphlist <- unique(natagetemp_morphs$SubMorph)
-          natagetemp0 <- natagetemp_morphs[natagetemp_morphs$SubMorph==morphlist[1],]
+    if(is.null(natage)){
+      print("Skipped plot 14 because NUMBERS_AT_AGE unavailable in report file",quote=F)
+      print("   change starter file setting for 'detailed age-structured reports'",quote=F)
+    }else{
+      bseas <- unique(natage$BirthSeas)
+      if(length(bseas)>1) print("Numbers at age plots are for only the first birth season",quote=F)
+      if(ngpatterns>0) print("Numbers at age plots are for growth pattern 1 only",quote=F)
+      if(nseasons>1) print("Numbers at age plots are for season 1 only",quote=F)
+      for(iarea in areas){
+        for(m in 1:nsexes){
+          # warning! implementation of birthseasons may not be correct in this section
+          # data frame to combine values across factors
+          natagetemp_all <- natage[natage$Area==iarea &
+                                   natage$Gender==m &
+                                   natage$Seas==1 &
+                                   natage$Era!="VIRG" &
+                                   natage$Yr <= (endyr+1) &
+                                   natage$BirthSeas==min(bseas) &
+                                   natage$Bio_Pattern==1,]
+          # create data frame with 0 values to fill across submorphs
+          morphlist <- unique(natagetemp_all$SubMorph)
+          natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1],]
+          for(iage in 0:accuage) natagetemp0[,11 + iage] <- 0
           
-          for(imorph in 2:length(morphlist)){
-            natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_morphs[natagetemp_morphs$SubMorph==morphlist[imorph],11+0:accuage]
+          # combining across submorphs
+          for(imorph in 1:length(morphlist)){
+            natagetemp_morph <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph],]
+            natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_morph[,11+0:accuage]
+          } # end morph loop
+
+          nyrsplot <- nrow(natagetemp0)
+          resx <- rep(natagetemp0$Yr, accuage+1)
+          resy <- NULL
+          for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
+          resz <- NULL
+          for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
+
+          # assign unique name to data frame for area, sex
+          assign(paste("natagetemp0area",iarea,"sex",m,sep=""),natagetemp0)
+
+          if(m==1 & nsexes==1) sextitle <- ""
+          if(m==1 & nsexes==2) sextitle <- " of females"
+          if(m==2) sextitle=" of males"
+          if(nareas>1) sextitle <- paste(sextitle," in ",areanames[iarea],sep="")
+          plottitle <- paste("Expected numbers at age",sextitle," in thousands (max=",max(resz),")",sep="")
+
+          # calculations related to mean age
+          natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
+          ages <- 0:accuage
+          natagetemp2 <- as.data.frame(natagetemp1)
+          natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
+
+          # remove rows with 0 fish (i.e. no growth pattern in this area)
+          natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
+          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
+          natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
+          prodmat <- t(natagetemp1)*ages
+          prodsum <- as.vector(apply(prodmat,2,sum))
+          natagetemp2$sumprod <- prodsum
+          natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
+          natageyrs <- sort(unique(natagetemp0$Yr))
+          meanage <- 0*natageyrs
+          for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
+            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
+          if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
+          
+          ylim <- c(0,max(meanage))
+          
+          ylab <- "Mean age (yr)"
+          plottitle1 <- "Mean age in the population"
+          tempfun <- function(){
+            # bubble plot with line
+            bubble3(x=resx, y=resy, z=resz,
+                    xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+                    las=1,cex.main=cex.main,allopen=1)
+            lines(natageyrs,meanage,col="red",lwd=3)
           }
-        }else{
-          natagetemp0 <- natage[natage$Area==iarea & natage$Gender==m & natage$Seas==1 &
-                                natage$Era!="VIRG" & natage$Yr <= (endyr+1),]
-        }
-        nyrsplot <- nrow(natagetemp0)
-        resx <- rep(natagetemp0$Yr, accuage+1)
-        resy <- NULL
-        for(i in 0:accuage) resy <- c(resy,rep(i,nyrsplot))
-        resz <- NULL
-        for(i in 11+0:accuage) resz <- c(resz,natagetemp0[,i])
+          tempfun2 <- function(){
+            # mean length for males and femails
+            plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab="Year",ylim=ylim,type="o",ylab=ylab,main=plottitle1,cex.main=cex.main)
+            points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
+            legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
+          }
+          if(14 %in% plot){
+            tempfun()
+            if(m==2 & nsexes==2) tempfun2()
+          }
+          if(14 %in% print){
+            filepartsex <- paste("_sex",m,sep="")
+            filepartarea <- ""
+            if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
+            png(file=paste(plotdir,"14_natage",filepartarea,filepartsex,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            tempfun()
+            dev.off()
+            # make 2-sex plot after looping over both sexes
+            if(m==2 & nsexes==2){ 
+              png(file=paste(plotdir,"14_meanage",filepartarea,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              tempfun2()
+              dev.off()
+            }
+          } # end printing of plot 14
+        } # end gender loop
+      } # end area loop
+      if(nsexes>1){
+        for(iarea in areas){
+          plottitle2 <- paste("Sex ratio of numbers at age (males/females)",sep="")
+          if(nareas > 1) plottitle2 <- paste(plottitle2," for ",areanames[iarea],sep="")
 
-        # assign unique name to data frame for area, sex
-        assign(paste("natagetemp0area",iarea,"sex",m,sep=""),natagetemp0)
-        
-        if(m==1 & nsexes==1) sextitle <- ""
-        if(m==1 & nsexes==2) sextitle <- " of females"
-        if(m==2) sextitle=" of males"
-        if(nareas>1) sextitle <- paste(" in ",areanames[iarea],sextitle,sep="")
-        plottitle <- paste("Expected numbers",sextitle," at age in thousands (max=",max(resz),")",sep="")
+          natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
+          natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
+          natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])          
 
-        # calculations related to mean age
-        natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
-        ages <- 0:accuage
-        natagetemp2 <- as.data.frame(natagetemp1)
-        natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
-
-        # remove rows with 0 fish (i.e. no growth pattern in this area)
-        natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
-        natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
-        natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
-        prodmat <- t(natagetemp1)*ages
-        prodsum <- as.vector(apply(prodmat,2,sum))
-        natagetemp2$sumprod <- prodsum
-        natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
-        natageyrs <- sort(unique(natagetemp0$Yr))
-        meanage <- 0*natageyrs
-        for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
-          meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
-        if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
-    
-        ylim <- c(0,max(meanage))
-        ylab <- plottitle1 <- paste("Mean age in the population (yr)",sep="")
-        
+          tempfun <- function(...){
+            contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
+                    main=plottitle2,cex.main=cex.main,...)
+          }
+          if(14 %in% plot){
+            tempfun(labcex=1)
+          }
+          if(14 %in% print){
+            filepart <- ""
+            if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
+            png(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            tempfun(labcex=0.4)
+            dev.off()}
+        } # end area loop
+      } # end if nsexes>1
+      
+      # plot the ageing imprecision for all age methods
+      if(!is.null(AAK)){
+        sd_vectors <- as.data.frame(AAK[,1,])
+        n_age_error_keys <- 1
+        if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
+        if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
+        if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
+        ylim <- c(0,max(sd_vectors))
+        if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
+        if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
         tempfun <- function(){
-          # bubble plot with line
-          bubble3(x=resx, y=resy, z=resz,
-                  xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
-                  las=1,cex.main=cex.main,allopen=1)
-          lines(natageyrs,meanage,col="red",lwd=3)
-        }
-        tempfun2 <- function(){
-          # mean length for males and femails
-          plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab="Year",ylim=ylim,type="o",ylab=ylab,main=plottitle1,cex.main=cex.main)
-          points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
-          legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
+          plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+          if(n_age_error_keys > 1){
+            for(i in 2:n_age_error_keys){
+              lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
+            } # close for n keys loop
+          } # close if more than one key statement
+          abline(h=0,col="grey") # grey line at 0
         }
         if(14 %in% plot){
           tempfun()
-          if(m==2 & nsexes==2) tempfun2()
-        }
+        } # end if 14 in plot
         if(14 %in% print){
-          filepartsex <- paste("_sex",m,sep="")
-          filepartarea <- ""
-          if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
-          png(file=paste(plotdir,"14_natage",filepartarea,filepartsex,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          png(file=paste(plotdir,"14_ageerrorkeys.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           tempfun()
           dev.off()
-          # make 2-sex plot after looping over both sexes
-          if(m==2 & nsexes==2){ 
-            png(file=paste(plotdir,"14_meanage",filepartarea,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            tempfun2()
-            dev.off()
-          }
-        }
-      } # end gender loop
-    } # end area loop
-
-    if(nsexes>1){
-      for(iarea in areas){
-        plottitle2 <- paste("Sex ratio of numbers at age (males/females)",sep="")
-        if(nareas > 1) plottitle <- paste(plottitle," for ",areanames[iarea],sep="")
-        
-        natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
-        natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
-        natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
-        tempfun <- function(...){
-          contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
-                  main=plottitle2,cex.main=cex.main,...)
-        }
-        if(14 %in% plot){
-          tempfun(labcex=1)
-        }
-        if(14 %in% print){
-          filepart <- ""
-          if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-          png(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          tempfun(labcex=0.4)
-          dev.off()}
-      } # end area loop
-    } # end if nsexes>1
-    
-    # plot the ageing imprecision for all age methods
-    if(!is.null(AAK)){
-      sd_vectors <- as.data.frame(AAK[,1,])
-      n_age_error_keys <- 1
-      if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
-      if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
-      if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
-      ylim <- c(0,max(sd_vectors))
-      if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
-      if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
-      tempfun <- function(){
-        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
-        if(n_age_error_keys > 1){
-          for(i in 2:n_age_error_keys){
-            lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
-          } # close for n keys loop
-        } # close if more than one key statement
-        abline(h=0,col="grey") # grey line at 0
-      }
-      if(14 %in% plot){
-        tempfun()
-      } # end if 14 in plot
-      if(14 %in% print){
-        png(file=paste(plotdir,"14_ageerrorkeys.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-        tempfun()
-        dev.off()
-      } # close if 14 in print
-    } # end if AAK
-    if(verbose) print("Finished plot 14: Numbers at age",quote=F)
-    flush.console()
+        } # close if 14 in print
+      } # end if AAK
+      if(verbose) print("Finished plot 14: Numbers at age",quote=F)
+      flush.console()
+    }
   } # close if 14 in plot or print
 
 ###############################################################
@@ -1695,7 +1716,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         pch[pch<0] <- 1
         if(allopen) pch[!is.na(pch)] <- 1
         if(!add){
-            plot(x,y,type='n',xlim=xlim,main=main,xlab=xlab,ylab=ylab,axes=F,cex.main=cex.main)
+            plot(x,y,type='n',xlim=xlim,main=main,cex.main=cex.main,xlab=xlab,ylab=ylab,axes=F,cex.main=cex.main)
             axis(1,at=unique(x))
             axis(2,las=las)
             box()
@@ -1853,11 +1874,11 @@ if(nseasons==1){ # temporary disable until code cleanup
       }
     }
     # restore default single panel settings
-    par(mfcol=c(1,1),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+    par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
   
     # return information on what was plotted
     return(list(npages=npages, npanels=npanels, ipage=ipage))
-  }
+  } # end embedded function: make_multifig
 
   SSv3_plot_comps <- function(
       kind="LEN", aalyear=-1, aalbin=-1, GUI=T, png=F, plotdir=NA, fleets="all",
@@ -2472,6 +2493,9 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 21 in plot or print
 
+  # multipanel comp plots done, now reset to user choices for rows/cols
+  par(mfcol=c(rows,cols))
+  
   # Yield curve
   if(22 %in% c(plot, print))
   {
@@ -2544,11 +2568,11 @@ if(nseasons==1){ # temporary disable until code cleanup
         main=paste("Index ", i,sep="")
         xlab <- "Observed index"
         if(23 %in% plot){
-          plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+          plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
           abline(h=0,col="grey")}
         if(23 %in% print){
           png(file=paste(plotdir,"23_cpue_dataonly",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,lty=1)
+          plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
           abline(h=0,col="grey")
           dev.off()}
       } # nfleets
@@ -2557,6 +2581,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     } # end if 23 in plot or print
   }
 
+  if(pdf) dev.off()
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function
 }
