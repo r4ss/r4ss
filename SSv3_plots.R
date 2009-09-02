@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "August 19, 2009"
+  codedate <- "September 2, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -1162,42 +1162,69 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   } # end if 8 in plot or print
 
   # Plot 9: rec devs and asymptotic error check
-  if(9 %in% c(plot, print))
-  {
+  if(9 %in% c(plot, print)){
+    recdevInit <- parameters[substring(parameters$Label,1,11)=="InitAgeComp",]
     recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
-     if(!max(recdev$Value)>0){
-     if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
-     if(max(recdev$Value)>0){
+    recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
+    if(!max(recdev$Value)>0){
+      if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
+    if(max(recdev$Value)>0){
       if(nrow(recdev)>0){
         recdev$Yr <- as.numeric(substring(recdev$Label,9))
+        if(nrow(recdevInit)>0)
+          recdevInit$Yr <- min(recdev$Yr)-as.numeric(substring(recdevInit$Label,13))
+        if(nrow(recdevFore)>0)
+          recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
+        Yr <- c(recdevInit$Yr,recdev$Yr,recdevFore$Yr)
+        xlim <- range(Yr)
+        ylim <- range(recdevInit$Value,recdev$Value,recdevFore$Value)
         ylab <- "Log Recruitment deviation"
         recdevfunc <- function(){
-          plot(recdev$Yr,recdev$Value,xlab="Year",main="",ylab=ylab,type="b")
+          plot(recdev$Yr,recdev$Value,xlab="Year",main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
+          # should probably change color between early/main not before/after startyr as now
+          if(nrow(recdevInit)>0)
+            lines(recdevInit$Yr,recdevInit$Value,type='b',col='blue')
+          if(nrow(recdevFore)>0)
+            lines(recdevFore$Yr,recdevFore$Value,type='b',col='blue')
           abline(h=0,col="black")}
         if(9 %in% plot) recdevfunc()
         if(9 %in% print){
           png(file=paste(plotdir,"09_recdevs.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           recdevfunc()
           dev.off()}
-    if(uncertainty){
-      sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
-        ymax <- max(recdev$Parm_StDev,sigr)
-        main <- "Recruitment deviation variance check"
-        ylab <- "Asymptotic standard error estimate"
-        recdevfunc2 <- function(){
-          plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,ylim=c(0,ymax),type="b")
-          abline(h=0,col="grey")
-          abline(h=sigr,col="red")}
-        if(9 %in% plot) recdevfunc2()
-        if(9 %in% print){
-          png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          recdevfunc2()
-          dev.off()}
-      } # rec devs
-    } # end if uncertainty==T
-    if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
-    flush.console()
-   }
+        if(uncertainty){
+          sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
+          ymax <- 1.1*max(recdev$Parm_StDev,recdevInit$Parm_StDev,recdevFore$Parm_StDev,sigr)
+          main <- "Recruitment deviation variance check"
+          ylab <- "Asymptotic standard error estimate"
+
+          recdevfunc2 <- function(){
+            # std. dev. of recdevs
+            par(mar=par("mar")[c(1:3,2)])
+            plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,xlim=xlim,ylim=c(0,ymax),type="b")
+            if(nrow(recdevInit)>0)
+              lines(recdevInit$Yr,recdevInit$Parm_StDev,type='b',col='blue')
+            if(nrow(recdevFore)>0)
+              lines(recdevFore$Yr,recdevFore$Parm_StDev,type='b',col='blue')
+            abline(h=0,col="grey")
+            abline(h=sigr,col="red")
+            # bias correction (2nd axis, scaled by ymax)
+            lines(recruit$year,ymax*recruit$use_bias,col="green3",lwd=2)
+            abline(h=ymax*1,col="green3",lty=3)
+            ypts <- pretty(0:1)
+            axis(side=4,at=ymax*ypts,label=ypts)
+            mtext("Bias adjustment fraction",side=4,line=3)
+          }
+          if(9 %in% plot) recdevfunc2()
+          if(9 %in% print){
+            png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            recdevfunc2()
+            dev.off()}
+        } # rec devs
+      } # end if uncertainty==T
+      if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
+      flush.console()
+    }
   } # end if 9 in plot or print
 
   ### Plot 10: discard fractions (if present) ###
@@ -1569,20 +1596,23 @@ if(nseasons==1){ # temporary disable until code cleanup
           natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
           natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
           natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])          
-
-          tempfun <- function(...){
-            contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
-                    main=plottitle2,cex.main=cex.main,...)
+          if(diff(range(natageratio))!=0){
+            tempfun <- function(...){
+              contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
+                      main=plottitle2,cex.main=cex.main,...)
+            }
+            if(14 %in% plot){
+              tempfun(labcex=1)
+            }
+            if(14 %in% print){
+              filepart <- ""
+              if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
+              png(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              tempfun(labcex=0.4)
+              dev.off()}
+          }else{
+            print("skipped sex ratio contour plot because ratio=1 for all ages and years",quote=F)
           }
-          if(14 %in% plot){
-            tempfun(labcex=1)
-          }
-          if(14 %in% print){
-            filepart <- ""
-            if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-            png(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            tempfun(labcex=0.4)
-            dev.off()}
         } # end area loop
       } # end if nsexes>1
       

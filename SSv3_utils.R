@@ -132,6 +132,9 @@ SS_changepars <- function(
     newline <- paste("",paste(vec, collapse=" "), cmnt)
     newctlsubset <- rbind(newctlsubset, newline)
   }
+  # temp for SSv3.04:
+  ctl[grep("placeholder for full",ctl)] <- "#_placeholder for full parameter lines for recruitment cycles"
+  
   # write new file
   newctl <- ctl
   newctl[linenums] <- newctlsubset
@@ -191,7 +194,7 @@ SS_profile <- function(
                   newvals=profilevec[i], estimate=F,
                   verbose=T)
     if(file.exists(stdfile)) file.remove(stdfile)
-    if(file.exists('Report.SSO')) file.remove('Report.SSO')
+    if(file.exists('Report.sso')) file.remove('Report.sso')
 
     # run model
     if(win){
@@ -202,19 +205,19 @@ SS_profile <- function(
     
     converged[i] <- file.exists(stdfile)
     onegood <- F
-    if(file.exists('Report.SSO') & file.info('Report.SSO')$size>0){
+    if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
       onegood <- T
-      Rep <- readLines('Report.SSO',n=120)
-      like <- read.table('Report.SSO',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=10,head=T,fill=T)
+      Rep <- readLines('Report.sso',n=120)
+      like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=10,head=T,fill=T)
       liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
     }else{
       liketable <- rbind(liketable,rep(NA,10))
     }
     
     if(saveoutput){
-      file.copy('Report.SSO',paste('Report',i,".SSO",sep=""))
-      file.copy('CompReport.SSO',paste('CompReport',i,".SSO",sep=""))
-      file.copy('CoVar.SSO',paste('CoVar',i,".SSO",sep=""))
+      file.copy('Report.sso',paste('Report',i,".sso",sep=""))
+      file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""))
+      file.copy('CoVar.sso',paste('CoVar',i,".sso",sep=""))
     }
   } # end loop
   if(onegood){
@@ -224,7 +227,7 @@ SS_profile <- function(
     names(bigtable)[1] <- 'Value'
     return(bigtable)
   }else{
-    print('Error: no good Report.SSO files created in profile',quote=F)
+    print('Error: no good Report.sso files created in profile',quote=F)
     return()
   }
 } # end function

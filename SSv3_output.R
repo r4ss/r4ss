@@ -1,6 +1,6 @@
 SSv3_output <- function(
   dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3",
-  repfile="Report.SSO", compfile="CompReport.SSO",covarfile="CoVar.SSO",
+  repfile="Report.sso", compfile="CompReport.sso",covarfile="CoVar.sso",
   ncols=200, forecast=T, warn=T, covar=T,
   checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
   verbose=T, printstats=T,hidewarn=F, NoCompOK=F)
@@ -14,7 +14,7 @@ SSv3_output <- function(
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 #          and other contributors to http://code.google.com/p/r4ss/
-# Returns: a list containing elements of Report.SSO and/or CoVar.SSO,
+# Returns: a list containing elements of Report.sso and/or CoVar.sso,
 #          formatted as R objects, and optional summary statistics to R console
 # General: Updated for Stock Synthesis version 3.03A; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "August 19, 2009"
+codedate <- "September 1, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -79,15 +79,16 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B"),sep=""))){
-  print(paste("! Warning, this function tested on SS-V3.03A. You are using",substr(SS_version,1,9)),quote=F)
+if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B","4-"),sep=""))){
+  print(paste("! Warning, this function tested on SS-V3.03A to SS-V3.04. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
 
 findtime <- function(lines){
   # quick function to get model start time from SSv3 output files
-  strsplit(lines[grep('ime',lines)],'ime: ')[[1]][2]
+  time <- strsplit(lines[grep('ime',lines)],'ime: ')[[1]]
+  if(length(time)<2) return() else return(time[2])
 }
 repfiletime <- findtime(rephead)
 print(paste("Report file time:",repfiletime),quote=F)
@@ -102,7 +103,7 @@ if(covar){
       corfile <- NA
     }
   }
-  # CoVar.SSO file
+  # CoVar.sso file
   covarfile <- paste(dir,covarfile,sep="")
   if(!file.exists(covarfile)){
     print("CoVar file not found. Change input to covar=F, or modify 'covarfile' input.",quote=F)
@@ -214,29 +215,29 @@ if(covar){
         row.names(highcorsub) <- paste("   ",1:printhighcor)
         corstats$cormessage4 <- paste("Highest",printhighcor,
         "parameter correlations above threshold (to print more, increase 'printhighcor' input):")
-        corstats$cormessag5 <- highcorsub
+        corstats$cormessage5 <- highcorsub
       }
     }else{
-      corstats$cormessag6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
+      corstats$cormessage6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
     }
 
     if(printlowcor>0){
       if(nlowcor==0) textblock <- "No uncorrelated parameters"
       if(nlowcor==1) textblock <- "1 uncorrelation"
       if(nlowcor>1)  textblock <- paste(nlowcor,"uncorrelated parameters")
-      corstats$cormessag7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
+      corstats$cormessage7 <- paste(textblock, " below threshold (cormin=", cormin,")",sep="")
       if(nlowcor>0 & nlowcor<=printlowcor){
-        corstats$cormessag8 <-lowcor
+        corstats$cormessage8 <-lowcor
       }
       if(nlowcor>0 & nlowcor>printlowcor){
         lowcorsub <- lowcor[order(abs(lowcor$max)),]
         lowcorsub <- lowcorsub[1:printlowcor,]
-        corstats$cormessag9 <- paste("Lowest",printlowcor,
+        corstats$cormessage9 <- paste("Lowest",printlowcor,
         "parameters uncorrelations below threshold (to print more, increase 'printlowcor' input):")
-        corstats$cormessag10 <-lowcorsub
+        corstats$cormessage10 <-lowcorsub
       }
     }else{
-      corstats$cormessag11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
+      corstats$cormessage11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
     }
   }else{if(verbose) print("You skipped the correlation check",quote=F)}
 }else{if(verbose) print("You skipped the CoVar file",quote=F)}
@@ -244,10 +245,10 @@ flush.console()
 
 # read forecast report file
 if(forecast){
-  forcastname <- paste(dir,"Forecast-report.SSO",sep="")
+  forcastname <- paste(dir,"Forecast-report.sso",sep="")
   temp <- file.info(forcastname)$size
   if(is.na(temp) | temp==0){
-    print("!Error: the Forecase-report.SSO file is empty.",quote=F)
+    print("!Error: the Forecase-report.sso file is empty.",quote=F)
     print("        Change input to 'forecast=F' or rerun model with forecast turned on.",quote=F)
     return()
   }
@@ -267,9 +268,9 @@ flush.console()
 
 # read warnings file
 if(warn){
-  warnname <- paste(dir,"warning.SSO",sep="")
+  warnname <- paste(dir,"warning.sso",sep="")
   if(!file.exists(warnname)){
-    print("warning.SSO file not found",quote=F)
+    print("warning.sso file not found",quote=F)
     warn <- NA
   }else{
     warn <- readLines(warnname,warn=F)
@@ -279,7 +280,7 @@ if(warn){
       textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
       if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=F)
     }else{
-      print("warning.SSO file is missing the string 'N warnings'!")
+      print("warning.sso file is missing the string 'N warnings'!")
     }
   }
 }else{
@@ -299,7 +300,7 @@ nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
 nsexes <- length(unique(as.numeric(selex$gender)))
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 
-if(comp){   # skip this stuff if no CompReport.SSO file
+if(comp){   # skip this stuff if no CompReport.sso file
   allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=15)
   #lbins is data length bins
   lbins <- as.numeric(allbins[7,-1])
