@@ -642,7 +642,7 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
+ rawsr <- matchfun2("SPAWN_RECRUIT",7,"ERA",-1,cols=1:9)
  names(rawsr) <- rawsr[1,]
  rawsr[rawsr=="_"] <- NA
  rawsr <- rawsr[-(1:2),] # remove header rows
@@ -665,7 +665,7 @@ returndat$sizeselex <- selex
  returndat$cpue <- cpue
 
 # Numbers at age
- rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
+ rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
  if(length(rawnatage)>1){
    names(rawnatage) <- rawnatage[1,]
    rawnatage <- rawnatage[-1,]
