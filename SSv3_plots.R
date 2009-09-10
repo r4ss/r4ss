@@ -1,11 +1,11 @@
 SSv3_plots <- function(
-    replist="ReportObject", plot=1:23, print=0, pdf=F, printfolder="", dir="default", fleets="all", areas="all",
+    replist="ReportObject", plot=1:24, print=0, pdf=F, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
     aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-    rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, fixdims=T,new=T,...)
+    rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=T, new=T,...)
 {
 ################################################################################
 #
@@ -17,14 +17,14 @@ SSv3_plots <- function(
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 #          and other contributors to http://code.google.com/p/r4ss/
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesilatagebases version 3.03A; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.04; R version 2.8.1
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and plotrix package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
 #
 ################################################################################
 
-  codedate <- "September 2, 2009"
+  codedate <- "September 10, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -238,6 +238,10 @@ SSv3_plots <- function(
   if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
   # need appropriate line to support Mac operating systems
 
+  if(nprints>0 & pdf){
+    print("can't have pdf=T and print!=0: use print only or pdf & plot inputs",quote=F)
+    return()
+  }
   if(nplots>0 & !pdf & new){
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
@@ -254,7 +258,7 @@ SSv3_plots <- function(
   if(pdf){
     pdffile <- paste(inputs$dir,"/SSplots.pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) print(paste("PDF file with plots will be:",pdffile,sep=""),quote=F)
+    if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
   par(mfcol=c(rows,cols))
   
@@ -1163,68 +1167,83 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # Plot 9: rec devs and asymptotic error check
   if(9 %in% c(plot, print)){
-    recdevInit <- parameters[substring(parameters$Label,1,11)=="InitAgeComp",]
-    recdev <- parameters[substring(parameters$Label,1,7)=="RecrDev",]
-    recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
-    if(!max(recdev$Value)>0){
-      if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
-    if(max(recdev$Value)>0){
-      if(nrow(recdev)>0){
-        recdev$Yr <- as.numeric(substring(recdev$Label,9))
-        if(nrow(recdevInit)>0)
-          recdevInit$Yr <- min(recdev$Yr)-as.numeric(substring(recdevInit$Label,13))
-        if(nrow(recdevFore)>0)
-          recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
-        Yr <- c(recdevInit$Yr,recdev$Yr,recdevFore$Yr)
-        xlim <- range(Yr)
-        ylim <- range(recdevInit$Value,recdev$Value,recdevFore$Value)
-        ylab <- "Log Recruitment deviation"
-        recdevfunc <- function(){
-          plot(recdev$Yr,recdev$Value,xlab="Year",main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
-          # should probably change color between early/main not before/after startyr as now
-          if(nrow(recdevInit)>0)
-            lines(recdevInit$Yr,recdevInit$Value,type='b',col='blue')
-          if(nrow(recdevFore)>0)
-            lines(recdevFore$Yr,recdevFore$Value,type='b',col='blue')
-          abline(h=0,col="black")}
-        if(9 %in% plot) recdevfunc()
-        if(9 %in% print){
-          png(file=paste(plotdir,"09_recdevs.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-          recdevfunc()
-          dev.off()}
-        if(uncertainty){
-          sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
-          ymax <- 1.1*max(recdev$Parm_StDev,recdevInit$Parm_StDev,recdevFore$Parm_StDev,sigr)
-          main <- "Recruitment deviation variance check"
-          ylab <- "Asymptotic standard error estimate"
+    if(substr(SS_version,1,8)=="SS-V3.03"){
+      # temporary complaint--will remove later
+      print('Skipped plot 9, recdevs: upgrade to SSv3.04!',quote=F)
+    }else{
 
-          recdevfunc2 <- function(){
-            # std. dev. of recdevs
-            par(mar=par("mar")[c(1:3,2)])
-            plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,xlim=xlim,ylim=c(0,ymax),type="b")
-            if(nrow(recdevInit)>0)
-              lines(recdevInit$Yr,recdevInit$Parm_StDev,type='b',col='blue')
+      recdevEarly <- parameters[substring(parameters$Label,1,13) %in% c("Early_RecrDev","Early_InitAge"),]
+      recdev <- parameters[substring(parameters$Label,1,12) %in% c("Main_RecrDev","Main_InitAge"),]
+      recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
+      recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
+
+      if(!max(recdev$Value)>0){
+        if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
+      if(max(recdev$Value)>0){
+        if(nrow(recdev)>0){
+          recdev$Yr <- as.numeric(substring(recdev$Label,14))
+          if(nrow(recdevEarly)>0)
+            recdevEarly$Yr <- min(recdev$Yr)-as.numeric(substring(recdevEarly$Label,13))
+          if(nrow(recdevFore)>0)
+            recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
+          if(nrow(recdevLate)>0)
+            recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
+          if(nrow(recdevFore)>0 & nrow(recdevLate)>0)
+            recdevFore <- rbind(recdevFore,recdevLate)
+
+          Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
+          xlim <- range(Yr)
+          ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value)
+          ylab <- "Log Recruitment deviation"
+          recdevfunc <- function(){
+            plot(recdev$Yr,recdev$Value,xlab="Year",main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
+            # should probably change color between early/main not before/after startyr as now
+            if(nrow(recdevEarly)>0)
+              lines(recdevEarly$Yr,recdevEarly$Value,type='b',col='blue')
             if(nrow(recdevFore)>0)
-              lines(recdevFore$Yr,recdevFore$Parm_StDev,type='b',col='blue')
-            abline(h=0,col="grey")
-            abline(h=sigr,col="red")
-            # bias correction (2nd axis, scaled by ymax)
-            lines(recruit$year,ymax*recruit$use_bias,col="green3",lwd=2)
-            abline(h=ymax*1,col="green3",lty=3)
-            ypts <- pretty(0:1)
-            axis(side=4,at=ymax*ypts,label=ypts)
-            mtext("Bias adjustment fraction",side=4,line=3)
+              lines(recdevFore$Yr,recdevFore$Value,type='b',col='blue')
+            abline(h=0,col="black")
           }
-          if(9 %in% plot) recdevfunc2()
+          if(9 %in% plot) recdevfunc()
           if(9 %in% print){
-            png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-            recdevfunc2()
+            png(file=paste(plotdir,"09_recdevs.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            recdevfunc()
             dev.off()}
-        } # rec devs
-      } # end if uncertainty==T
-      if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
-      flush.console()
-    }
+          if(uncertainty){
+            sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
+            ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigr)
+            main <- "Recruitment deviation variance check"
+            ylab <- "Asymptotic standard error estimate"
+
+            recdevfunc2 <- function(){
+              # std. dev. of recdevs
+              par(mar=par("mar")[c(1:3,2)])
+              plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,xlim=xlim,ylim=c(0,ymax),type="b")
+              if(nrow(recdevEarly)>0)
+                lines(recdevEarly$Yr,recdevEarly$Parm_StDev,type='b',col='blue')
+              if(nrow(recdevFore)>0)
+                lines(recdevFore$Yr,recdevFore$Parm_StDev,type='b',col='blue')
+              abline(h=0,col="grey")
+              abline(h=sigr,col="red")
+
+              # bias correction (2nd axis, scaled by ymax)
+              lines(recruit$year,ymax*recruit$biasadj,col="green3",lwd=2)
+              abline(h=ymax*1,col="green3",lty=3)
+              ypts <- pretty(0:1)
+              axis(side=4,at=ymax*ypts,label=ypts)
+              mtext("Bias adjustment fraction",side=4,line=3)
+            }
+            if(9 %in% plot) recdevfunc2()
+            if(9 %in% print){
+              png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              recdevfunc2()
+              dev.off()}
+          } # rec devs
+        } # end if uncertainty==T
+        if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
+        flush.console()
+      } # end if max(recdev)>0
+    } # end if using current version of SS
   } # end if 9 in plot or print
 
   ### Plot 10: discard fractions (if present) ###
@@ -1681,53 +1700,6 @@ if(nseasons==1){ # temporary disable until code cleanup
     # Required packages: none
     #
     ################################################################################
-
-    # notes on inputs for make_multifig
-    # ptsx                    = vector of x values for points or bars
-    # ptsy                    = vector of y values for points or bars  of same length as ptsx
-    # yr                       = vector of category values (years) of same length as ptsx
-    # linesx=0                = optional vector of x values for lines
-    # linesy=0                = optional vector of y values for lines
-    # sampsize=0              = optional sample size vector of same length as ptsx
-    # effNsize=0              = optional sample size vector of same length as ptsx
-    # showsampsize=T          = turns on or off sample size plotting
-    # showeffN=T              = turns on or off effN plotting
-    # sampsizeround=1         = number of decimal places to include in the sample size text
-    # maxrows=6               = the maximum number of rows of plots
-    # maxcols=6               = the maximum number of columns of plots
-    # fixdims=T               = should the number of rows & columns be fixed to the maximum (T/F)
-    # main=""                 = the main title for the plot
-    # cex.main=1               = the font size multiplier for the main title
-    # xlab=""                 = the x-axis label
-    # ylab=""                 = the y-axis label
-    # horiz_lab="default"     = axis labels set horizontal all the time (T), never (F) or
-    #                           only when relatively short ("default")
-    # xbuffer=c(.1,.1)        = extra space around points on the left and right as fraction of total width of plot
-    # axis1="default"         = vector of values for x-axis, "default" chooses in typical R fashion
-    # axis2="default"         = vector of values for y-axis, "default" chooses in typical R fashion
-    # linepos=1               = position of lines relative to point/bars (0=no lines, 1=behind, 2=in front)
-    # bars=F                  = should the ptsx/ptsy values be bars instead of points (T/F)
-    # barwidth="default"      = width of bars in barplot, default method chooses based on quick and dirty formula
-    #                           also, current method of plot(...type='h') could be replaced with better approach
-    # ptscol=1                = color for points/bars
-    # linescol=2              = color for lines
-    # lty=1                   = line type
-    # lwd=1                   = line width
-    # pch=1                   = point character
-    # nlegends=3              = number of legends
-    # legtext=list("yr","sampsize") = text in legend, a list of length=nlegends values may be
-    #                           1. "yr" to make the legend for each plot equal to the yr input for the values within
-    #                           2. "sampsize" to make the legend be "n=99.9" where 99.9 is the sample size for the values
-    #                              rounded according to the input sampsizeround
-    #                           3. "effN" to make the legend be "effN=88.8" where 88.8 is the effective sample size
-    #                           4. a vector of length = ptsx
-    # legx="default"          = vector of length=nlegends of x-values of legends (default is first one on left,
-    #                           all after on right)
-    # legy="default"          = vector of length=nlegends of y-values of legends (default is top for all plots)
-    # legadjx="default"       = left/right adjustment of legends around legx
-    # legadjy="default"       = left/right adjustment of legends around legy
-    # legsize=c(1.2,1.0)      = font size for legends
-    # legfont=c(2,1)          = font type for legends, same as "font" under ?par
   
     bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
                          main="",cex.main=1,xlab="",ylab="",minnbubble=8,
@@ -1928,7 +1900,7 @@ if(nseasons==1){ # temporary disable until code cleanup
   # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
   #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   # Returns: Plots with plot history in R GUI and/or .png files.
-  # General: Updated for Stock Synthesis version 3.02f March, 2009; R version 2.8.1
+  # General: Updated for Stock Synthesis version 3.04 September, 2009; R version 2.8.1
   # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
   # Required SS3v_output function
   #
@@ -2299,42 +2271,47 @@ if(nseasons==1){ # temporary disable until code cleanup
   ###########################
 
   ### process composition data
-  # configure seasons
-  if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
+  if(length(intersect(15:21,c(plot,print)))>0){
+    # configure seasons
+    if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
 
-  # deal with Lbins
-  compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
-  compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
-  
-  # divide into objects by kind
-  lendbase       <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-  agedbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
-                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
-  condbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
-                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range <= aalmaxbinrange,]
-  ghostagedbase  <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0
-                              & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
-  # consider range of bins for conditional age at length data
-  print(paste("CompReport file separated by this code as follows (rows = num. comps * num. bins):"),quote=F)
-  print(paste("  ",nrow(lendbase),"rows of length comp data,"),quote=F)
-  print(paste("  ",nrow(agedbase),"rows of age comp data,"),quote=F)
-  print(paste("  ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
-  print(paste("  ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
-  Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
-  names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
-  if(length(unique(agedbase$Lbin_range)) > 1){
-    print("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.",quote=F)
-    print(Lbin_ranges)
-    print("  consider increasing 'aalmaxbinrange' to designate",quote=F)
-    print("  some of these data as conditional age-at-length",quote=F)
+    # deal with Lbins
+    compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
+    compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
+    
+    # divide into objects by kind
+    lendbase       <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
+    agedbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
+                                & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
+    condbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
+                                & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range <= aalmaxbinrange,]
+    ghostagedbase  <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0
+                                & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
+    tagdbase1      <- compdbase[compdbase$Kind=="TAG1",]
+    tagdbase2      <- compdbase[compdbase$Kind=="TAG2",]
+    # consider range of bins for conditional age at length data
+    print(paste("CompReport file separated by this code as follows (rows = num. comps * num. bins):"),quote=F)
+    print(paste("  ",nrow(lendbase),"rows of length comp data,"),quote=F)
+    print(paste("  ",nrow(agedbase),"rows of age comp data,"),quote=F)
+    print(paste("  ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
+    print(paste("  ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
+    print(paste("  ",nrow(tagdbase1),"rows of 'TAG1' comp data"),quote=F)
+    print(paste("  ",nrow(tagdbase2),"rows of 'TAG2' comp data"),quote=F)
+    Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
+    names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
+    if(length(unique(agedbase$Lbin_range)) > 1){
+      print("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.",quote=F)
+      print(Lbin_ranges)
+      print("  consider increasing 'aalmaxbinrange' to designate",quote=F)
+      print("  some of these data as conditional age-at-length",quote=F)
+    }
+    # convert bin indices to true lengths
+    
+    # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
+    lendbase$effN <- as.numeric(lendbase$effN)
+    agedbase$effN <- as.numeric(agedbase$effN)
+    condbase$effN <- as.numeric(condbase$effN)
   }
-  # convert bin indices to true lengths
-  
-  # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
-  lendbase$effN <- as.numeric(lendbase$effN)
-  agedbase$effN <- as.numeric(agedbase$effN)
-  condbase$effN <- as.numeric(condbase$effN)
-  
   # now make use of embedded SSv3_plot_comps function to make composition plots
   if(!datplot)
   {
@@ -2433,17 +2410,6 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 20 in plot or print
 
-  # this didn't work, explore later: add a histogram of the Pearson residuals
-  #
-  # par(mfrow=c(2,2)) #pearsons <- mcmc(as.numeric(plotfems$Pearson))
-  # pearsons[pearsons > 5] <- 5 #pearsons[pearsons < -5] <- -5
-  # bins <- 30 #binwidth <- (max(pearsons) - min(pearsons))/bins
-  # truehist(pearsons,h=binwidth,col="grey",xlim=c(-5,5),xlab="Pearson/Standard normal",ylab="Relative density")
-  # # add a standard normal #distbins <- seq(-5,5,by=binwidth)
-  # dens <- dnorm(x=distbins,mean=0,sd=1,log=FALSE) #lines(distbins,dens,col="black",lwd=1.5)
-  # qq.plot(pearsons,ylab="Pearson residual",xlab="Standard normal",col=c("black")) #par(mfrow=c(1,1))
-
-
   # Plot 21: length at age data
   if(21 %in% c(plot, print))
   {
@@ -2523,8 +2489,8 @@ if(nseasons==1){ # temporary disable until code cleanup
     flush.console()
   } # end if 21 in plot or print
 
-  # multipanel comp plots done, now reset to user choices for rows/cols
-  par(mfcol=c(rows,cols))
+  # restore default single panel settings
+  par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
   
   # Yield curve
   if(22 %in% c(plot, print))
@@ -2582,10 +2548,8 @@ if(nseasons==1){ # temporary disable until code cleanup
   } # close plot section 22
 
   ### Plot 23: CPUE data-only plots ###
-  if(23 %in% c(plot, print))
-  {
-    if(!datplot)
-    {
+  if(23 %in% c(plot, print)){
+    if(!datplot){
       print("skipped plots 23 (CPUE without fit) because input 'datplot=F'",quote=F)
     }else{
       for(i in unique(cpue$Fleet)){
@@ -2608,10 +2572,130 @@ if(nseasons==1){ # temporary disable until code cleanup
       } # nfleets
       if(verbose) print("Finished plot 23: CPUE data plots",quote=F)
       flush.console()
-    } # end if 23 in plot or print
-  }
+    } # end if datplot 
+  } # end if 23 in plot or print
 
-  if(pdf) dev.off()
+  
+  ### Plot 24: Tag plots ###
+  if(24 %in% c(plot, print)){
+    if(nrow(tagdbase2)==0){
+      print("skipped plots 24 (tags) because there's no tag-related data'",quote=F)
+    }else{
+      # calculations needed for printing to multiple PNG files
+      grouprange <- unique(tagdbase2$Rep)
+      ngroups <- length(unique(tagdbase2$Rep))
+      npages <- ceiling(ngroups/(tagrows*tagcols))
+
+      tagfun1 <- function(ipage=0){
+        # obs & exp recaps by tag group
+        par(mfcol=c(tagrows,tagcols),mar=c(2.5,2.5,2,1),cex.main=cex.main,oma=c(2,2,2,0))
+        if(npages > 1 & ipage!=0) grouprange <- intersect(grouprange, 1:(tagrows*tagcols) + tagrows*tagcols*(ipage-1))
+        for(igroup in grouprange){
+          tagtemp <- tagdbase2[tagdbase2$Rep==igroup,]
+          ylim=c(0,max(5,cbind(tagtemp$Obs,tagtemp$Exp)*1.05))
+          plot(0,type='n',xlab="",ylab="",ylim=ylim,main=paste("TG ",igroup,sep=""),
+               xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr)-0.5,max(tagtemp$Yr)+0.5))
+          for (iy in 1:length(tagtemp$Yr)){
+            xx <- c(tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]+0.5,tagtemp$Yr[iy]+0.5)
+            yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
+            polygon(xx,yy,col="grey80")
+          }
+          points(tagtemp$Yr,tagtemp$Exp,type="o",lty=1,pch=16)
+
+          # add labels in left and lower outer margins once per page
+          mfg <- par("mfg")
+          if(mfg[1]==1 & mfg[2]==1){
+            mtext("Year",side=1,line=0,outer=T)
+            mtext("Frequency",side=2,line=0,outer=T)
+            mtext("Fit to tag recaptures by tag group",side=3,line=0,outer=T,cex=cex.main,font=2)
+          }
+        }
+
+        # restore default single panel settings
+        par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+      }
+      # reconfiguring tagdbase2
+      # why? to exclude the first year for each group?
+      XRep <- -1
+      x <- NULL
+      for (irow in 1:length(tagdbase2[,1])){
+        if (tagdbase2$Rep[irow] != XRep){
+          XRep <- tagdbase2$Rep[irow]
+        }else{ 
+          x <- rbind(x,tagdbase2[irow,])
+        }
+      }
+      # alternatively, don't reconfigure by using:
+      #x <- tagdbase
+      
+      #obs vs exp tag recaptures by year aggregated across group
+      tagobs <- aggregate(x$Obs,by=list(x$Yr,x$Rep),FUN=sum,na.rm=T)
+      tagexp <- aggregate(x$Exp,by=list(x$Yr,x$Rep),FUN=sum,na.rm=T)
+      Recaps <- data.frame(Yr=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
+
+      xlim <- range(Recaps[,1])
+      xx2 <- aggregate(Recaps[,3],by=list(Recaps$Yr),FUN=sum,na.rm=T)
+      xx3 <- aggregate(Recaps[,4],by=list(Recaps$Yr),FUN=sum,na.rm=T)
+      RecAg <- data.frame(Yr=xx2[,1],Obs=xx2[,2],Exp=xx3[,2])
+
+      tagfun2 <- function(){
+        #obs vs exp tag recaptures by year aggregated across group
+        plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg[,2],RecAg[,3])*1.05),type="n",xaxs="i",yaxs="i",
+             xlab="Year",ylab="Frequency",main="Tag recaptures aggregated across tag groups",cex.main=cex.main)
+        for (iy in 1:nrow(RecAg)){
+          xx <- c(RecAg[iy,1]-0.5,RecAg[iy,1]-0.5,RecAg[iy,1]+0.5,RecAg[iy,1]+0.5)
+          yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
+          polygon(xx,yy,col="grey80")
+        }
+        lines(RecAg[,1],RecAg[,3],type="o",pch=16,lty=1,lwd=2)
+      }
+
+      Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
+      tagfun3 <- function(){
+        plottitle <- "Observed tag recaptures by year and tag group"
+        bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab="Year",ylab="Tag Group",col=rep("blue",2),
+                las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
+      }
+      tagfun4 <- function(){
+        plottitle <- "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"
+        bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab="Year",ylab="Tag Group",col=rep("blue",2),
+                las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
+      }
+        
+      if(24 %in% plot){
+        tagfun1()
+        tagfun2()
+        tagfun3()
+        tagfun4()
+      }
+      if(24 %in% print){
+        filenamestart <- "24_tags_by_group"
+        for(ipage in 1:npages){
+          if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+          filename <- paste(plotdir,filenamestart,pagetext,".png",sep="")
+          png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          tagfun1(ipage=ipage,...)
+          dev.off() # close device if png
+        }
+        filename <- paste(plotdir,"24_tags_aggregated.png",sep="")
+        png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        tagfun2()
+        dev.off()
+        filename <- paste(plotdir,"24_tags_data_bubbleplot.png",sep="")
+        png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        tagfun3()
+        dev.off()
+        filename <- paste(plotdir,"24_tags_residuals.png",sep="")
+        png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        tagfun4()
+        dev.off()
+      }
+      if(verbose) print("Finished plot 24: tags",quote=F)
+      flush.console()
+    } # end if tag data present
+  } # end if 24 in plot or print
+
+  if(pdf) dev.off() # close PDF file if it was open
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function
 }

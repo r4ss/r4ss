@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "September 1, 2009"
+codedate <- "September 10, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -79,8 +79,8 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("3A","3B","4-"),sep=""))){
-  print(paste("! Warning, this function tested on SS-V3.03A to SS-V3.04. You are using",substr(SS_version,1,9)),quote=F)
+if(!(SS_versionshort %in% paste("SS-V3.0",c("4-"),sep=""))){
+  print(paste("! Warning, this function tested on SS-V3.04. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
@@ -300,6 +300,7 @@ nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
 nsexes <- length(unique(as.numeric(selex$gender)))
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 
+# compositions
 if(comp){   # skip this stuff if no CompReport.sso file
   allbins <- read.table(file=compfile, col.names=1:ncols, fill=T, colClasses="character", skip=3, nrows=15)
   #lbins is data length bins
@@ -336,6 +337,8 @@ if(comp){   # skip this stuff if no CompReport.sso file
   latagebase <- NA
   Lbin_method <- 2
 }
+
+# more dimensions
 tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
 accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
 ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
@@ -348,12 +351,14 @@ endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginni
 nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
 seasfracs <- (0:(nseasons-1))/nseasons
 
+# info on growth morphs
 morph_indexing <-matchfun2("MORPH_INDEXING",1,"MOVEMENT",-1,cols=1:9)
 names(morph_indexing) <- morph_indexing[1,]
 morph_indexing <- morph_indexing[-1,]
 for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
 ngpatterns <- max(morph_indexing$Gpattern)
 
+# forecast
 if(forecast){
   grab  <- rawforcast1[,1]
   nforecastyears <- as.numeric(rawforcast1[grab %in% c("N_forecast_yrs:"),2])
@@ -375,6 +380,7 @@ stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
 stats$warnings <- warn
 
+# likelihoods
 rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2,cols=1:3)
 like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
 names(like) <- "values"
@@ -386,6 +392,7 @@ like2 <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,cols=1:(2+nfleets))
 names(like2) <- like2[1,]
 stats$likelihoods_raw_by_fleet <- like2[2:length(like2[,1]),]
 
+# parameters
 rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:14)
 names(rawpars) <- rawpars[1,]
 rawpars <- rawpars[-1,]
@@ -409,6 +416,7 @@ pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
 pars <- pars[pars$Phase %in% 0:25,]
 stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
 
+# derived quantities
 rawder <- matchfun2("DERIVED_QUANTITIES",4,"MGParm_Block_Assignments",-1,cols=1:3)
 names(rawder) <- rawder[1,]
 der <- rawder[-1,]
@@ -418,6 +426,12 @@ for(i in 2:3) der[,i] = as.numeric(der[,i])
 managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
 names(managementratiolabels) <- c("Ratio","Label")
 
+# time varying parameters
+MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,"selparm(Size)_By_Year_after_adjustments",-1)
+SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"selparm(Age)_By_Year_after_adjustments",-1)
+SelAgeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"RECRUITMENT_DIST",-1)
+
+# sigma_R
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
 stats$maximum_gradient_component <- parline[1,16]
 stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SPAWN_RECRUIT")+3),1])
@@ -642,7 +656,10 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- rawsr <- matchfun2("SPAWN_RECRUIT",7,"ERA",-1,cols=1:9)
+ if(SS_versionshort=="SS-V3.04-")
+   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
+ else
+   rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
  names(rawsr) <- rawsr[1,]
  rawsr[rawsr=="_"] <- NA
  rawsr <- rawsr[-(1:2),] # remove header rows
@@ -665,7 +682,10 @@ returndat$sizeselex <- selex
  returndat$cpue <- cpue
 
 # Numbers at age
- rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
+ if(SS_versionshort=="SS-V3.04-")
+   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
+ else
+   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
  if(length(rawnatage)>1){
    names(rawnatage) <- rawnatage[1,]
    rawnatage <- rawnatage[-1,]
