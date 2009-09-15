@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "September 14, 2009"
+codedate <- "September 15, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -166,9 +166,9 @@ flush.console()
 
 # read covar.sso file
 if(covar){
-  covar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
+  CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
   if(verbose) print("Got covar file.",quote=F)
-  stdtable <- covar[covar$Par..j=="Std",c(7,9,5)]
+  stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
   Nstd <- sum(stdtable$std>0)
 
@@ -178,13 +178,13 @@ if(covar){
   }
   if(checkcor==T)
   {
-    corfilter <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr",]
+    corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
     rangecor <- range(abs(corfilter$corr))
     corstats <- list()
     corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
     # search for high or low correlations in covar file
-    highcor <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr" & abs(covar$corr) >= cormax, names(covar)%in%c("label.i", "label.j", "corr")]
-    lowcorcandidates <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr" & abs(covar$corr) <= cormin, names(covar)%in%c("label.i", "label.j", "corr")]
+    highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
+    lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
     lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
     lowcortestlist$name <- as.character(lowcortestlist[,1])
     nlowcor <- 0
@@ -434,7 +434,6 @@ SelAgeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"RECRUITMENT_
 # gradient
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
 stats$maximum_gradient_component <- parline[1,16]
-
 # sigma_R
 srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
 
@@ -757,7 +756,7 @@ if(comp){
  returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
  
  if(covar){
-   returndat$covar    <- covar
+   returndat$CoVar    <- CoVar
    returndat$highcor  <- highcor
    returndat$lowcor   <- lowcor
    returndat$stdtable <- stdtable
