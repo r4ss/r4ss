@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "September 10, 2009"
+  codedate <- "September 14, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -156,7 +156,7 @@ SSv3_plots <- function(
   derived_quants                 <- replist$derived_quants
   parameters                     <- replist$parameters
   FleetNames                     <- replist$FleetNames
-  CoVar                          <- replist$CoVar
+  covar                          <- replist$covar
   stdtable                       <- replist$stdtable
   #rawstd                         <- replist$rawstd
   SS_version                     <- replist$SS_version
@@ -1171,15 +1171,13 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       # temporary complaint--will remove later
       print('Skipped plot 9, recdevs: upgrade to SSv3.04!',quote=F)
     }else{
-
       recdevEarly <- parameters[substring(parameters$Label,1,13) %in% c("Early_RecrDev","Early_InitAge"),]
       recdev <- parameters[substring(parameters$Label,1,12) %in% c("Main_RecrDev","Main_InitAge"),]
       recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
       recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
-
-      if(!max(recdev$Value)>0){
-        if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)}
-      if(max(recdev$Value)>0){
+      if(max(recdev$Value)==0){
+        if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)
+      }else{
         if(nrow(recdev)>0){
           recdev$Yr <- as.numeric(substring(recdev$Label,14))
           if(nrow(recdevEarly)>0)
@@ -2652,11 +2650,13 @@ if(nseasons==1){ # temporary disable until code cleanup
 
       Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
       tagfun3 <- function(){
+        # bubble plot of observed recapture data
         plottitle <- "Observed tag recaptures by year and tag group"
         bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab="Year",ylab="Tag Group",col=rep("blue",2),
                 las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
       }
       tagfun4 <- function(){
+        # bubble plot of residuals
         plottitle <- "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"
         bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab="Year",ylab="Tag Group",col=rep("blue",2),
                 las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)

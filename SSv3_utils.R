@@ -132,9 +132,6 @@ SS_changepars <- function(
     newline <- paste("",paste(vec, collapse=" "), cmnt)
     newctlsubset <- rbind(newctlsubset, newline)
   }
-  # temp for SSv3.04:
-  ctl[grep("placeholder for full",ctl)] <- "#_placeholder for full parameter lines for recruitment cycles"
-  
   # write new file
   newctl <- ctl
   newctl[linenums] <- newctlsubset
@@ -217,7 +214,7 @@ SS_profile <- function(
     if(saveoutput){
       file.copy('Report.sso',paste('Report',i,".sso",sep=""))
       file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""))
-      file.copy('CoVar.sso',paste('CoVar',i,".sso",sep=""))
+      file.copy('covar.sso',paste('covar',i,".sso",sep=""))
     }
   } # end loop
   if(onegood){

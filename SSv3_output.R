@@ -1,6 +1,6 @@
 SSv3_output <- function(
   dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3",
-  repfile="Report.sso", compfile="CompReport.sso",covarfile="CoVar.sso",
+  repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
   ncols=200, forecast=T, warn=T, covar=T,
   checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
   verbose=T, printstats=T,hidewarn=F, NoCompOK=F)
@@ -14,7 +14,7 @@ SSv3_output <- function(
 # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
 #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 #          and other contributors to http://code.google.com/p/r4ss/
-# Returns: a list containing elements of Report.sso and/or CoVar.sso,
+# Returns: a list containing elements of Report.sso and/or covar.sso,
 #          formatted as R objects, and optional summary statistics to R console
 # General: Updated for Stock Synthesis version 3.03A; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "September 10, 2009"
+codedate <- "September 14, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -79,8 +79,8 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("4-"),sep=""))){
-  print(paste("! Warning, this function tested on SS-V3.04. You are using",substr(SS_version,1,9)),quote=F)
+if(!(SS_versionshort %in% paste("SS-V3.0",c("4-","4A"),sep=""))){
+  print(paste("! Warning, this function tested on SS-V3.04a. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
@@ -106,7 +106,7 @@ if(covar){
   # CoVar.sso file
   covarfile <- paste(dir,covarfile,sep="")
   if(!file.exists(covarfile)){
-    print("CoVar file not found. Change input to covar=F, or modify 'covarfile' input.",quote=F)
+    print("covar file not found. Change input to covar=F, or modify 'covarfile' input.",quote=F)
     return()
   }
 
@@ -119,7 +119,7 @@ if(covar){
   difftimelimit <- 300
   if(abs(as.numeric(difftime(covartime2,repfiletime2,units="secs")))>difftimelimit){
     print(paste("!Error: ",shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
-    print(paste("CoVar time:",covartime),quote=F)
+    print(paste("covar time:",covartime),quote=F)
     return()
   }
 }
@@ -164,27 +164,27 @@ if((maxnonblank+1)<ncols){ if(verbose) print(paste("Got all columns. To speed co
 if(verbose) print("Got Report file",quote=F)
 flush.console()
 
-# read .CoVar file
+# read covar.sso file
 if(covar){
-  CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
-  if(verbose) print("Got CoVar file.",quote=F)
-  stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
+  covar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
+  if(verbose) print("Got covar file.",quote=F)
+  stdtable <- covar[covar$Par..j=="Std",c(7,9,5)]
   names(stdtable) = c('name','std','type')
   Nstd <- sum(stdtable$std>0)
 
   if(Nstd<=1){
-    print(paste("Too few estimated quantities in CoVar file (n=",Nstd,"). Change input to covar=F.",sep=""),quote=F)
+    print(paste("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=F.",sep=""),quote=F)
     return()
   }
   if(checkcor==T)
   {
-    corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
+    corfilter <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr",]
     rangecor <- range(abs(corfilter$corr))
     corstats <- list()
     corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
-    # search for high or low correlations in CoVar file
-    highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
-    lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
+    # search for high or low correlations in covar file
+    highcor <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr" & abs(covar$corr) >= cormax, names(covar)%in%c("label.i", "label.j", "corr")]
+    lowcorcandidates <- covar[covar$all.i!=covar$all.j & covar$Par..i=="Par" & covar$Par..j=="Par" & !substr(covar$label.i,1,8)=="ForeRecr" & !substr(covar$label.j,1,8)=="ForeRecr" & abs(covar$corr) <= cormin, names(covar)%in%c("label.i", "label.j", "corr")]
     lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
     lowcortestlist$name <- as.character(lowcortestlist[,1])
     nlowcor <- 0
@@ -240,7 +240,7 @@ if(covar){
       corstats$cormessage11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
     }
   }else{if(verbose) print("You skipped the correlation check",quote=F)}
-}else{if(verbose) print("You skipped the CoVar file",quote=F)}
+}else{if(verbose) print("You skipped the covar file",quote=F)}
 flush.console()
 
 # read forecast report file
@@ -393,7 +393,7 @@ names(like2) <- like2[1,]
 stats$likelihoods_raw_by_fleet <- like2[2:length(like2[,1]),]
 
 # parameters
-rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:14)
+rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:16)
 names(rawpars) <- rawpars[1,]
 rawpars <- rawpars[-1,]
 allpars <- rawpars
@@ -431,11 +431,20 @@ MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,"selparm(Size)_By_Ye
 SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"selparm(Age)_By_Year_after_adjustments",-1)
 SelAgeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"RECRUITMENT_DIST",-1)
 
-# sigma_R
+# gradient
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
 stats$maximum_gradient_component <- parline[1,16]
-stats$sigma_R_in <- as.numeric(rawrep[(matchfun("SPAWN_RECRUIT")+3),1])
-stats$sigma_R_out <- as.numeric(rawrep[(matchfun("N_est")+1),2])
+
+# sigma_R
+srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
+
+rmse_table <- as.data.frame(srhead[-(1:9),1:5])
+for(icol in 2:5) rmse_table[,icol] <- as.numeric(rmse_table[,icol])
+names(rmse_table) <- srhead[9,1:5]
+names(rmse_table)[4] <- "RMSE_over_sigmaR"
+
+stats$sigma_R_in <- as.numeric(srhead[4,1])
+stats$rmse_table <- rmse_table
 
 rawvartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21)
 names(rawvartune) <- rawvartune[1,]
@@ -595,7 +604,7 @@ returndat$sizeselex <- selex
 # discard fractions ###
 
  # degrees of freedom for T-distribution
- DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),2]
+ DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
  DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
 
  rawdisc <- matchfun2("DISCARD_OUTPUT",1,"MEAN_BODY_WT_OUTPUT",-1)
@@ -656,10 +665,11 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- if(SS_versionshort=="SS-V3.04-")
+ if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A")){
    rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
- else
+ }else{
    rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
+ }
  names(rawsr) <- rawsr[1,]
  rawsr[rawsr=="_"] <- NA
  rawsr <- rawsr[-(1:2),] # remove header rows
@@ -682,10 +692,11 @@ returndat$sizeselex <- selex
  returndat$cpue <- cpue
 
 # Numbers at age
- if(SS_versionshort=="SS-V3.04-")
+ if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A")){
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
- else
+ }else{
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
+ }
  if(length(rawnatage)>1){
    names(rawnatage) <- rawnatage[1,]
    rawnatage <- rawnatage[-1,]
@@ -746,7 +757,7 @@ if(comp){
  returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
  
  if(covar){
-   returndat$CoVar    <- CoVar
+   returndat$covar    <- covar
    returndat$highcor  <- highcor
    returndat$lowcor   <- lowcor
    returndat$stdtable <- stdtable
