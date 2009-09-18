@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "September 14, 2009"
+  codedate <- "September 17, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -170,13 +170,9 @@ SSv3_plots <- function(
   log_det_hessian                <- replist$log_det_hessian
   maximum_gradient_component     <- replist$maximum_gradient_component
   sigma_R_in                     <- replist$sigma_R_in
-  sigma_R_out                    <- replist$sigma_R_out
+  rmse_table                     <- replist$rmse_table
   SBzero                         <- replist$SBzero
   current_depletion              <- replist$current_depletion
-  #fmax                           <- replist$fmax
-  #endyrcatch                     <- replist$endyrcatch
-  #endyrlandings                  <- replist$endyrlandings
-  #endyrspr                       <- replist$endyrspr
   last_years_sprmetric           <- replist$last_years_sprmetric
   inputs                         <- replist$inputs
   managementratiolabels          <- replist$managementratiolabels
@@ -261,7 +257,7 @@ SSv3_plots <- function(
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
   par(mfcol=c(rows,cols))
-  
+
   # colors and line types
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
@@ -332,13 +328,11 @@ SSv3_plots <- function(
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
     growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
-    #growdatF <- growdat[growdat$Morph==mainmorphs[1],]
     growdatF$Sd_Size <- growdatF$SD_Mid
     growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
     growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
     if(nsexes > 1){
       growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
-      #growdatM <- growdat[growdat$Morph==mainmorphs[2],]
       xm <- growdatM$Age
       growdatM$Sd_Size <- growdatM$SD_Mid
       growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
@@ -656,9 +650,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     ## embedded modified function "stackpoly" by Jim Lemon from "plotrix" used in next plot
     ## see http://cran.r-project.org/web/packages/plotrix/index.html
-    stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA, 
-                           xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA, 
-                           col=NA, axis4=F, ...) 
+    stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
+                           xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
+                           col=NA, axis4=F, ...)
     {
       ydim <- dim(y)
       x <- matrix(rep(x, ydim[2]), ncol = ydim[2])
@@ -668,27 +662,27 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       plot(0, main = main, xlab = xlab, ylab = ylab, xlim = xlim, ylim = ylim,
            type = "n", xaxs = "i", yaxs = "i", axes = T,...)
       plotlim <- par("usr")
-      if (is.na(col[1])) 
+      if (is.na(col[1]))
         col = rainbow(ydim[2])
-      else if (length(col) < ydim[2]) 
+      else if (length(col) < ydim[2])
         col <- rep(col, length.out = ydim[2])
-      if (length(lty) < ydim[2]) 
+      if (length(lty) < ydim[2])
         lty <- rep(lty, length.out = ydim[2])
       for (pline in seq(ydim[2], 1, by = -1)) {
         if (pline == 1) {
           polygon(c(x[1], x[, pline], x[ydim[1]]),
                   c(plotlim[3], y[, pline], plotlim[3]),
-                  border = border, col = col[pline], 
+                  border = border, col = col[pline],
                   lty = lty[pline])
         }
-        else polygon(c(x[, pline], rev(x[, pline - 1])), 
-                     c(y[, pline], rev(y[, pline - 1])), border = border, 
+        else polygon(c(x[, pline], rev(x[, pline - 1])),
+                     c(y[, pline], rev(y[, pline - 1])), border = border,
                      col = col[pline], lty = lty[pline])
       }
       if (axis4)  axis(4)
     }
     ## end embedded stackpoly
-    
+
     # harvest rates
     if(F_method==1){
         Fstring <- "Hrate:_"
@@ -716,7 +710,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     # ghost is a fleet with no catch (or a survey for these purposes)
     ghost <- rep(TRUE,nfleets)
     ghost[(1:nfishfleets)[colSums(totcatchmat)>0]] <- FALSE
-    discmat <- totcatchmat - retmat 
+    discmat <- totcatchmat - retmat
 
     discfracmat <- discmat/totcatchmat
     discfracmat[totcatchmat==0] <- 0
@@ -735,7 +729,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         ymax <- 1 # if discards are big, plot full range from 0 to 1
         legendloc <- 'bottomright'
       }
-        
+
       plot(catchyrs, ytotal, ylim=c(0,ymax), xlab="Year", ylab=ylab, type="o")
       abline(h=0,col="grey")
       abline(h=1,col="grey")
@@ -767,7 +761,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       linefunc(ymat=retmat, ylab="Landings (mt)", addtotal=T)
       if(nfishfleets>1) stackfunc(ymat=retmat, ylab="Landings (mt)")
       # only make these plots if there are discards
-      if(max(discmat)>0){ 
+      if(max(discmat)>0){
         linefunc(ymat=totcatchmat, ylab="Total catch (mt)", addtotal=T)
         if(nfishfleets>1) stackfunc(ymat=totcatchmat, ylab="Total catch (mt)")
         linefunc(ymat=discmat,ylab="Predicted Discards (mt)", addtotal=T)
@@ -807,7 +801,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
           dev.off()
           png(file=paste(plotdir,"05_discards_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
           stackfunc(ymat=discmat,ylab="Predicted Discards (mt)")
-          dev.off()          
+          dev.off()
         }
       }
     }
@@ -1208,34 +1202,56 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
             recdevfunc()
             dev.off()}
           if(uncertainty){
-            sigr <- as.numeric(parameters$Value[parameters$Label=="SR_sigmaR"])
-            ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigr)
-            main <- "Recruitment deviation variance check"
-            ylab <- "Asymptotic standard error estimate"
+            ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigma_R_in)
 
             recdevfunc2 <- function(){
               # std. dev. of recdevs
               par(mar=par("mar")[c(1:3,2)])
-              plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",main=main,cex.main=cex.main,ylab=ylab,xlim=xlim,ylim=c(0,ymax),type="b")
+              plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",
+                   main="Recruitment deviation variance check",cex.main=cex.main,
+                   ylab="Asymptotic standard error estimate",xlim=xlim,ylim=c(0,ymax),type="b")
               if(nrow(recdevEarly)>0)
                 lines(recdevEarly$Yr,recdevEarly$Parm_StDev,type='b',col='blue')
               if(nrow(recdevFore)>0)
                 lines(recdevFore$Yr,recdevFore$Parm_StDev,type='b',col='blue')
               abline(h=0,col="grey")
-              abline(h=sigr,col="red")
+              abline(h=sigma_R_in,col="red")
 
               # bias correction (2nd axis, scaled by ymax)
-              lines(recruit$year,ymax*recruit$biasadj,col="green3",lwd=2)
+              lines(recruit$year,ymax*recruit$biasadj,col="green3")
               abline(h=ymax*1,col="green3",lty=3)
               ypts <- pretty(0:1)
               axis(side=4,at=ymax*ypts,label=ypts)
               mtext("Bias adjustment fraction",side=4,line=3)
             }
-            if(9 %in% plot) recdevfunc2()
+            recdevfunc3 <- function(){
+              # std. dev. of recdevs
+              par(mar=par("mar")[c(1:3,2)])
+              plot(recdev$Yr,1-(recdev$Parm_StDev/sigma_R_in)^2,xlab="Year",
+                   main="Bias adjustment check",cex.main=cex.main,
+                   ylab="Bias adjustment fraction, 1 - stddev^2 / sigmaR^2",xlim=xlim,ylim=c(0,1.05),type="b")
+              if(nrow(recdevEarly)>0)
+                lines(recdevEarly$Yr,1-(recdevEarly$Parm_StDev/sigma_R_in)^2,type='b',col='blue')
+              if(nrow(recdevFore)>0)
+                lines(recdevFore$Yr,1-(recdevFore$Parm_StDev/sigma_R_in)^2,type='b',col='blue')
+              abline(h=0,col="grey")
+              abline(h=1,col="grey")
+
+              # bias correction (2nd axis, scaled by ymax)
+              lines(recruit$year,recruit$biasadj,col="green3")
+            }
+            if(9 %in% plot){
+              recdevfunc2()
+              recdevfunc3()
+            }
             if(9 %in% print){
               png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               recdevfunc2()
-              dev.off()}
+              dev.off()
+              png(file=paste(plotdir,"09_recdevbiasadj.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              recdevfunc3()
+              dev.off()
+            }
           } # rec devs
         } # end if uncertainty==T
         if(verbose) print("Finished plot 9: Rec devs and asymptotic error check",quote=F)
@@ -1283,7 +1299,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         }
       } # discard series
     } # if discards
-  
+
     ### average body weight observations ###
     if(!is.na(mnwgt)[1])
     {
@@ -1525,7 +1541,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           morphlist <- unique(natagetemp_all$SubMorph)
           natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1],]
           for(iage in 0:accuage) natagetemp0[,11 + iage] <- 0
-          
+
           # combining across submorphs
           for(imorph in 1:length(morphlist)){
             natagetemp_morph <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph],]
@@ -1556,7 +1572,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
           # remove rows with 0 fish (i.e. no growth pattern in this area)
           natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
-          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ] 
+          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ]
           natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
           prodmat <- t(natagetemp1)*ages
           prodsum <- as.vector(apply(prodmat,2,sum))
@@ -1567,9 +1583,9 @@ if(nseasons==1){ # temporary disable until code cleanup
           for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
             meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
           if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
-          
+
           ylim <- c(0,max(meanage))
-          
+
           ylab <- "Mean age (yr)"
           plottitle1 <- "Mean age in the population"
           tempfun <- function(){
@@ -1597,7 +1613,7 @@ if(nseasons==1){ # temporary disable until code cleanup
             tempfun()
             dev.off()
             # make 2-sex plot after looping over both sexes
-            if(m==2 & nsexes==2){ 
+            if(m==2 & nsexes==2){
               png(file=paste(plotdir,"14_meanage",filepartarea,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               tempfun2()
               dev.off()
@@ -1612,7 +1628,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
           natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
           natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
-          natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])          
+          natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
           if(diff(range(natageratio))!=0){
             tempfun <- function(...){
               contour(natageyrs,0:accuage,natageratio,xaxs='i',yaxs='i',xlab='Year',ylab='Age',
@@ -1632,7 +1648,7 @@ if(nseasons==1){ # temporary disable until code cleanup
           }
         } # end area loop
       } # end if nsexes>1
-      
+
       # plot the ageing imprecision for all age methods
       if(!is.null(AAK)){
         sd_vectors <- as.data.frame(AAK[,1,])
@@ -1673,7 +1689,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 #   SSv3_plot_comps     dedicated for SS composition plots
 #
 ###############################################################
-  
+
   make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
        sampsize=0, effN=0, showsampsize=T, showeffN=T, sampsizeround=1,
        maxrows=6, maxcols=6, fixdims=T, main="",cex.main=1,xlab="",ylab="",
@@ -1698,7 +1714,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     # Required packages: none
     #
     ################################################################################
-  
+
     bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
                          main="",cex.main=1,xlab="",ylab="",minnbubble=8,
                          xlimextra=1,add=F,las=1,allopen=TRUE)
@@ -1723,55 +1739,55 @@ if(nseasons==1){ # temporary disable until code cleanup
         }
         points(x,y,pch=pch,cex=cex,col=z.col)
     }
-  
+
     # define dimensions
     yrvec <- sort(unique(yr))
     npanels <- length(yrvec)
     nvals <- length(yr)
-  
+
     nrows <- min(ceiling(sqrt(npanels)), maxrows)
     ncols <- min(ceiling(npanels/nrows), maxcols)
     if(fixdims){
         nrows <- maxrows
         ncols <- maxcols
     }
-  
+
     npages <- ceiling(npanels/nrows/ncols) # how many pages of plots
-  
+
     # if no input on lines, then turn linepos to 0
     if(length(linesx)==1 | length(linesy)==1){
       linepos <- 0
       linesx <- ptsx
       linesy <- ptsy
     }
-  
+
     # quick and dirty formula to get width of bars (if used) based on
     #   number of columns and maximum number of bars within a in panel
     if(bars & barwidth=="default") barwidth <- 400/max(table(yr)+2)/ncols
-  
+
     # make size vector have full length
     if(length(size)==1) size <- rep(size,length(yr))
-  
+
     # get axis limits
     xrange <- range(c(ptsx,linesx,ptsx,linesx))
     if(ymin0) yrange <- c(0,max(ptsy,linesy)) else yrange <- range(c(ptsy,linesy,ptsy,linesy))
     xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
     yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
-  
+
     # get axis labels
     yaxs_lab <- pretty(yrange)
     maxchar <- max(nchar(yaxs_lab))
     if(horiz_lab=="default") horiz_lab <- maxchar<6 # should y-axis label be horizontal?
-  
+
     if(axis1=="default") axis1=pretty(xrange)
     if(axis2=="default") axis2=pretty(yrange)
-  
+
     if(length(sampsize)==1) sampsize <- 0
     if(length(effN)==1) effN <- 0
-  
+
     # create multifigure layout and set inner margins all to 0 and add outer margins
     par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,4,2)+.1)
-  
+
     panelrange <- 1:npanels
     if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:(nrows*ncols) + nrows*ncols*(ipage-1))
     for(ipanel in panelrange)
@@ -1780,16 +1796,16 @@ if(nseasons==1){ # temporary disable until code cleanup
       yr_i <- yrvec[ipanel]
       ptsx_i <- ptsx[yr==yr_i]
       ptsy_i <- ptsy[yr==yr_i]
-  
+
       linesx_i <- linesx[yr==yr_i]
       linesy_i <- linesy[yr==yr_i]
-  
+
       # sort values in lines
       linesy_i <- linesy_i[order(linesx_i)]
       linesx_i <- sort(linesx_i)
-  
+
       z_i <- size[yr==yr_i]
-  
+
       # make plot
       plot(0,type='l',axes=F,xlab="",ylab="",xlim=xrange_big,ylim=yrange_big,
         xaxs="i",yaxs=ifelse(bars,"i","r"))
@@ -1803,7 +1819,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         if( bars) points(ptsx_i,ptsy_i,type='h',lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
       }
       if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
-  
+
       # add legends
       usr <- par("usr")
       for(i in 1:nlegends)
@@ -1854,20 +1870,20 @@ if(nseasons==1){ # temporary disable until code cleanup
         # add legend text
         text(x=textx,y=texty,labels=text_i,adj=c(adjx,adjy),cex=legsize[i],font=legfont[i])
       }
-  
+
       # add axes in left and lower outer margins
       mfg <- par("mfg")
       if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) # axis on bottom panels and final panel
       if(mfg[2]==1) axis(side=2,at=axis2,las=horiz_lab)        # axis on left side panels
       box()
-  
+
       if(ipanel %% (nrows*ncols) == 1) # if this is the first panel of a given page
       {
         # add title after plotting first panel on each page of panels
         fixcex = 1 # fixcex compensates for automatic adjustment caused by par(mfcol)
         if(max(nrows,ncols)==2) fixcex = 1/0.83
         if(max(nrows,ncols)>2) fixcex = 1/0.66
-  
+
         title(main=main, line=c(2,0,3,3), outer=T, cex.main=cex.main*fixcex)
         title(xlab=xlab, outer=T, cex.lab=fixcex)
         title(ylab=ylab, line=ifelse(horiz_lab,max(3,2+.4*maxchar),3.5), outer=T, cex.lab=fixcex)
@@ -1875,7 +1891,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     }
     # restore default single panel settings
     par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
-  
+
     # return information on what was plotted
     return(list(npages=npages, npanels=npanels, ipage=ipage))
   } # end embedded function: make_multifig
@@ -2081,7 +2097,7 @@ if(nseasons==1){ # temporary disable until code cleanup
                   }
                 }
               }
-              
+
               if(GUI) tempfun()
               if(png){ # set up plotting to png file if required
                 filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,".png",sep="")
@@ -2276,7 +2292,7 @@ if(nseasons==1){ # temporary disable until code cleanup
     # deal with Lbins
     compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
     compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
-    
+
     # divide into objects by kind
     lendbase       <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
     agedbase       <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
@@ -2304,7 +2320,7 @@ if(nseasons==1){ # temporary disable until code cleanup
       print("  some of these data as conditional age-at-length",quote=F)
     }
     # convert bin indices to true lengths
-    
+
     # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
     lendbase$effN <- as.numeric(lendbase$effN)
     agedbase$effN <- as.numeric(agedbase$effN)
@@ -2489,7 +2505,7 @@ if(nseasons==1){ # temporary disable until code cleanup
 
   # restore default single panel settings
   par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
-  
+
   # Yield curve
   if(22 %in% c(plot, print))
   {
@@ -2570,10 +2586,10 @@ if(nseasons==1){ # temporary disable until code cleanup
       } # nfleets
       if(verbose) print("Finished plot 23: CPUE data plots",quote=F)
       flush.console()
-    } # end if datplot 
+    } # end if datplot
   } # end if 23 in plot or print
 
-  
+
   ### Plot 24: Tag plots ###
   if(24 %in% c(plot, print)){
     if(nrow(tagdbase2)==0){
@@ -2619,13 +2635,13 @@ if(nseasons==1){ # temporary disable until code cleanup
       for (irow in 1:length(tagdbase2[,1])){
         if (tagdbase2$Rep[irow] != XRep){
           XRep <- tagdbase2$Rep[irow]
-        }else{ 
+        }else{
           x <- rbind(x,tagdbase2[irow,])
         }
       }
       # alternatively, don't reconfigure by using:
       #x <- tagdbase
-      
+
       #obs vs exp tag recaptures by year aggregated across group
       tagobs <- aggregate(x$Obs,by=list(x$Yr,x$Rep),FUN=sum,na.rm=T)
       tagexp <- aggregate(x$Exp,by=list(x$Yr,x$Rep),FUN=sum,na.rm=T)
@@ -2661,7 +2677,7 @@ if(nseasons==1){ # temporary disable until code cleanup
         bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab="Year",ylab="Tag Group",col=rep("blue",2),
                 las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
       }
-        
+
       if(24 %in% plot){
         tagfun1()
         tagfun2()
@@ -2694,7 +2710,6 @@ if(nseasons==1){ # temporary disable until code cleanup
       flush.console()
     } # end if tag data present
   } # end if 24 in plot or print
-
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function

@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "September 15, 2009"
+codedate <- "September 17, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -69,7 +69,12 @@ if(!file.exists(parfile)){
 
 # read three rows to get start time and version number from rep file
 if(file.exists(repfile)){
-  if(verbose) print(paste("Getting header info from",repfile),quote=F)
+  if(file.info(repfile)$size>0){
+    if(verbose) print(paste("Getting header info from",repfile),quote=F)
+  }else{
+    print(paste("!Error: report file is empty:",repfile),quote=F)
+    return()
+  }
 }else{
   print(paste("!Error: can't find report file,", repfile),quote=F)
   return()
@@ -147,13 +152,9 @@ flush.console()
 rawrep <- read.table(file=repfile,col.names=1:ncols,fill=T,quote="",colClasses="character",nrows=-1,comment.char="")
 
 # check empty columns
-nonblanks <- rep(NA,ncols)
-for(icol in 1:ncols){
-  temp <- unique(rawrep[,icol]!="")
-  # temp <- unique(!is.na(rawrep[,icol]))
-  nonblanks[icol] <- max(c(0,temp[!is.na(temp)]))
-}
-maxnonblank = max(c(0,(1:ncols)[nonblanks==1]))
+emptytest <- function(x){ sum(!is.na(x) & x=="")/length(x) }
+nonblanks <- apply(rawrep,2,emptytest) < 1
+maxnonblank = max(0,(1:ncols)[nonblanks==T])
 if(maxnonblank==ncols){
   print(      "! Warning, all columns are used and some data may have been missed,",quote=F)
   print(paste("  increase 'ncols' input above current value (ncols=",ncols,")",sep=""),quote=F)
@@ -413,7 +414,7 @@ pars$checkdiff2 <- pars$Max - pars$Value
 pars$checkdiff3 <- abs(pars$Value-(pars$Max-(pars$Max-pars$Min)/2))
 pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
 pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
-pars <- pars[pars$Phase %in% 0:25,]
+pars <- pars[pars$Phase %in% 0:100,]
 stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
 
 # derived quantities
@@ -427,16 +428,32 @@ managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3
 names(managementratiolabels) <- c("Ratio","Label")
 
 # time varying parameters
-MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,"selparm(Size)_By_Year_after_adjustments",-1)
-SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"selparm(Age)_By_Year_after_adjustments",-1)
-SelAgeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",1,"RECRUITMENT_DIST",-1)
+MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",2,"selparm(Size)_By_Year_after_adjustments",-1)
+MGparmAdj <- MGparmAdj[,MGparmAdj[1,]!=""]
+names(MGparmAdj) <- c("Yr",allpars$Label[1:grep("CohortGrowDev",allpars$Label)])
+
+SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,"selparm(Age)_By_Year_after_adjustments",-1)
+SelSizeAdj <- SelSizeAdj[,apply(SelSizeAdj,2,emptytest)<1]
+SelSizeAdj[SelSizeAdj==""] <- NA
+for(icol in 1:ncol(SelSizeAdj)) SelSizeAdj[,icol] <- as.numeric(SelSizeAdj[,icol])
+names(SelSizeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelSizeAdj)-2),sep=""))
+
+SelAgeAdj <- matchfun2("selparm(Age)_By_Year_after_adjustments",2,"RECRUITMENT_DIST",-1)
+SelAgeAdj <- SelAgeAdj[,apply(SelAgeAdj,2,emptytest)<1]
+SelAgeAdj[SelAgeAdj==""] <- NA
+if(SelAgeAdj[1,1]=="RECRUITMENT_DIST"){
+  SelAgeAdj <- NA
+}else{
+  for(icol in 1:ncol(SelAgeAdj)) SelAgeAdj[,icol] <- as.numeric(SelAgeAdj[,icol])
+  names(SelAgeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+}
 
 # gradient
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
 stats$maximum_gradient_component <- parline[1,16]
+
 # sigma_R
 srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
-
 rmse_table <- as.data.frame(srhead[-(1:9),1:5])
 for(icol in 2:5) rmse_table[,icol] <- as.numeric(rmse_table[,icol])
 names(rmse_table) <- srhead[9,1:5]
@@ -494,6 +511,9 @@ returndat$nseasons    <- nseasons
 returndat$seasfracs   <- seasfracs
 returndat$nforecastyears <- nforecastyears
 returndat$morph_indexing <- morph_indexing
+returndat$MGparmAdj   <- MGparmAdj 
+returndat$SelSizeAdj  <- SelSizeAdj
+returndat$SelAgeAdj   <- SelAgeAdj 
 
 # Static growth
 begin <- matchfun("N_Used_morphs",rawrep[,6])+1
