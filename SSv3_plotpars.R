@@ -50,7 +50,10 @@ SSv3_plotpars <- function(
       Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
       if(Bprior<=1.0 | Aprior <=1.0) {print(" bad Beta prior ");}
       Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
-      -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
+        -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
+    }
+    if(Ptype==3){  # lognormal
+      Prior_Like <- 0.5*((log(Pval)-Pr)/Psd)^2
     }
     return(Prior_Like)
   } # end GetPrior
