@@ -4,11 +4,11 @@
 # SS_changepars:  change one or more parameter values in the Control file for SSv3
 # SS_profile:     run likelihood profile
 # SS_plotpriors:  make a multi-figure plot of prior distributions from a Stock Synthesis control file
-# SS_splitdat:    split bootstrap files aggregated in the Data.SS_New file
+# SS_splitdat:    split bootstrap files aggregated in the data.ss_new file
 # SS_recdevs:     add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
 
 SS_parlines <- function(
-  ctlfile="C:\\myfiles\\mymodels\\myrun\\Control.SS_New",
+  ctlfile="C:\\myfiles\\mymodels\\myrun\\control.ss_new",
   verbose=T, active=F)
 {
 
@@ -67,8 +67,8 @@ SS_parlines <- function(
 
 SS_changepars <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\",
-         ctlfile="Control.SS_New",
-         newctlfile="Control_Modified.SS",
+         ctlfile="control.ss_new",
+         newctlfile="control_modified.ss",
          linenums=NULL, parnames=NULL, newvals=NULL, estimate=F,
          verbose=T
          )
@@ -148,8 +148,8 @@ SS_changepars <- function(
 
 SS_profile <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\",
-         masterctlfile="Control.SS_New",
-         newctlfile="Control_Modified.SS", # must match entry in starter file
+         masterctlfile="control.ss_new",
+         newctlfile="control_modified.ss", # must match entry in starter file
          linenum=NULL, parname=NULL, profilevec=NULL,
          command="SS3 -nox",model='ss3',saveoutput=T,
          verbose=T)
@@ -234,7 +234,7 @@ SS_profile <- function(
 ############################################################
 
 SS_plotpriors <- function(
-  ctlfile='c:/path/controlfilename.SS',read=T,
+  ctlfile='c:/path/controlfilename.ss',read=T,
   activeonly=T,nrows='default',ncols='default',
   maxrows=4,maxcols=4,new=T,returntable=T,printlike=T,
   initlimit=0.3,rownum=c(),strings=c(),oneline=c())
@@ -357,7 +357,7 @@ SS_plotpriors <- function(
 SS_splitdat <- function(
                         inpath     = 'working_directory' ,
                         outpath    = 'working_directory' ,
-                        inname     = 'Data.SS_New'       ,
+                        inname     = 'data.ss_new'       ,
                         outpattern = 'BootData'          ,
                         number     = F                   ,
                         verbose    = T                   ,
@@ -366,7 +366,7 @@ SS_splitdat <- function(
                         notes      = ""
                         )
 {
-  # this is a function to split bootstrap aggregated in the Data.SS_New file
+  # this is a function to split bootstrap aggregated in the data.ss_new file
   # which is output from Stock Synthesis into individual data files.
   if(inpath=="working_directory") inpath=getwd()
   if(outpath=="working_directory") outpath=getwd()
@@ -384,13 +384,13 @@ SS_splitdat <- function(
 
   if(!MLE){
     for(i in 1:length(starts)) {
-      outfile <- paste(outpath,'/',outpattern,ifelse(number,i,''),'.SS',sep='')
+      outfile <- paste(outpath,'/',outpattern,ifelse(number,i,''),'.ss',sep='')
       outline <- paste('# Data file created from',infile,'to',outfile)
       if(verbose) print(outline,quote=F)
       writeLines(c(outline,filelines[starts[i]:ends[i]]),outfile)
     }
   }else{
-    outfile <- paste(outpath,'/',outpattern,'.SS',sep='')
+    outfile <- paste(outpath,'/',outpattern,'.ss',sep='')
     if(notes!="") notes <- paste("#C",notes) else notes <- NULL
     notes <- c(notes,paste('#C MLE data file created from',infile,'to',outfile))
     if(verbose) print(paste('MLE data file created from',infile,'to',outfile),quote=F)
@@ -409,8 +409,8 @@ SS_recdevs <- function(
          fyr=NA, lyr=NA, ctl=NULL, recdevs=NULL,
          rescale=T,
          dir="working_directory",
-         ctlfile="Control.SS_New",
-         newctlfile="Control_Modified.SS",
+         ctlfile="control.ss_new",
+         newctlfile="control_modified.ss",
          verbose=T, writectl=T, returnctl=F,
          newmaxbias=NULL
          )

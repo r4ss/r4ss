@@ -1,7 +1,7 @@
 SSv3_plotpars <- function(
     dir="c:/path/",
-    repfile="Report.SSO",
-    postfile="posteriors.SSO",
+    repfile="Report.sso",
+    postfile="posteriors.sso",
     showpost=T,showprior=T,showmle=T,showinit=T,
     showrecdev=T,priorinit=T,priorfinal=T,
     showlegend=T,fitrange=F,verbose=T,
@@ -23,7 +23,7 @@ SSv3_plotpars <- function(
   #
   ################################################################################
 
-  codedate <- "June 23, 2009"
+  codedate <- "September 17, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -31,34 +31,29 @@ SSv3_plotpars <- function(
   }
 
   # define subfunction
-  GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval)
-    {
-      # function to calculate prior values is direct translation of code in SSv3
-      Pconst <- 0.0001
-      if(Ptype==-1) # no prior
-        {
-          Prior_Like <- rep(0.,length(Pval));
-        }
-      if(Ptype==0) # normal
-        {
-          Prior_Like <- 0.5*((Pval-Pr)/Psd)^2;
-        }
-      if(Ptype==1)  # symmetric beta    value of Psd must be >0.0
-        {
-          mu <- -(Psd*(log( (Pmax+Pmin)*0.5 - Pmin))) - (Psd*(log(0.5)));
-          Prior_Like <- -(mu+ (Psd*(log(Pval-Pmin+Pconst)))+(Psd*(log(1.-((Pval-Pmin-Pconst)/(Pmax-Pmin))))));
-        }
-      if(Ptype==2)  # CASAL's Beta;  check to be sure that Aprior and Bprior are OK before running SS2!
-        {
-          mu <- (Pr-Pmin) / (Pmax-Pmin);  # CASAL's v
-          tau <- (Pr-Pmin)*(Pmax-Pr)/(Psd^2)-1.0;
-          Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
-          if(Bprior<=1.0 | Aprior <=1.0) {print(" bad Beta prior ");}
-          Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
-          -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
-        }
-      return(Prior_Like)
-    } # end GetPrior
+  GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
+    # function to calculate prior values is direct translation of code in SSv3
+    Pconst <- 0.0001
+    if(Ptype==-1){ # no prior
+      Prior_Like <- rep(0.,length(Pval));
+    }
+    if(Ptype==0){ # normal
+      Prior_Like <- 0.5*((Pval-Pr)/Psd)^2;
+    }
+    if(Ptype==1){  # symmetric beta    value of Psd must be >0.0
+      mu <- -(Psd*(log( (Pmax+Pmin)*0.5 - Pmin))) - (Psd*(log(0.5)));
+      Prior_Like <- -(mu+ (Psd*(log(Pval-Pmin+Pconst)))+(Psd*(log(1.-((Pval-Pmin-Pconst)/(Pmax-Pmin))))));
+    }
+    if(Ptype==2){  # CASAL's Beta;  check to be sure that Aprior and Bprior are OK before running SS2!
+      mu <- (Pr-Pmin) / (Pmax-Pmin);  # CASAL's v
+      tau <- (Pr-Pmin)*(Pmax-Pr)/(Psd^2)-1.0;
+      Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
+      if(Bprior<=1.0 | Aprior <=1.0) {print(" bad Beta prior ");}
+      Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
+      -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
+    }
+    return(Prior_Like)
+  } # end GetPrior
 
   fullpostfile <- paste(dir,postfile,sep="/")
   fullrepfile  <- paste(dir,repfile,sep="/")
@@ -106,7 +101,7 @@ SSv3_plotpars <- function(
     replines <- readLines(fullrepfile,n=500)
     parstart <- grep("PARAMETERS",replines)[2]
     parend <- grep("DERIVED_QUANTITIES",replines)[2]
-    partable <- read.table(fullrepfile,head=T,nrows=parend-parstart-3,skip=parstart,as.is=T)
+    partable <- read.table(fullrepfile,head=T,nrows=parend-parstart-3,skip=parstart,as.is=T,fill=T)
     partable[partable=="_"] <- NA
     partable$Active_Cnt <- as.numeric(as.character(partable$Active_Cnt))
     partable$Label <- as.character(partable$Label)
@@ -114,6 +109,7 @@ SSv3_plotpars <- function(
       partable[,i] <- as.numeric(as.character(partable[,i]))
     }
   }
+#return(partable)
   # subset for only active parameters
   allnames <- partable$Label[!is.na(partable$Active_Cnt)]
 
@@ -123,19 +119,24 @@ SSv3_plotpars <- function(
     for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
     goodnames <- unique(goodnames)
     print("parameters matching input vector 'strings':",quote=F)
-    print(goodnames)    
+    print(goodnames)
+    if(length(goodnames)==0){
+      print("No active parameters match input vector 'strings'.",quote=F)
+      return()
+    }
   }else{
     goodnames <- allnames
   }
 
   if(showmle & min(partable$Parm_StDev[partable$Label %in% goodnames]) <= 0){
-    print("Some parameters have std. dev. values in Report.SSO equal to 0.",quote=F)
+    print("Some parameters have std. dev. values in Report.sso equal to 0.",quote=F)
     print("  Asymptotic uncertainty estimates will not be shown.",quote=F)
   }
 
   # remove RecrDevs temporarily until I add code to fill in the prior stuff
   recdevmin <- -5
   recdevmin <- 5
+  recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_","Main_RecrDev_","ForeRecr_","Late_RecrDev_")
   if(showrecdev & goodctl){
     ctllines <- readLines(fullctlfile)
     iline <- grep("#min rec_dev",ctllines)
@@ -147,10 +148,10 @@ SSv3_plotpars <- function(
       if(readrecdev==1) print("This function does not yet display recdev values read from ctl file",quote=F)
     }
   }else{
-    goodnames <- goodnames[!substr(goodnames,1,7) %in% c("RecrDev","InitAge","ForeRec")]
+    goodnames <- goodnames[!substr(goodnames,1,10) %in% substr(recdevlabels,1,10)]
   }
-
   npars <- length(goodnames)
+#  print(goodnames)
   
   # make plot
   if(verbose){
@@ -186,8 +187,7 @@ SSv3_plotpars <- function(
     Psd <- parline$Pr_SD
     Pr <- parline$Prior
 
-    if(substr(parname,1,7) %in% c("RecrDev","InitAge","ForeRec")){
-       
+    if(substr(parname,1,10) %in% substr(recdevlabels,1,10)){
       initval <- 0
       Pmin <- recdevmin
       Pmax <- recdevmax
@@ -214,23 +214,6 @@ SSv3_plotpars <- function(
       ymax <- max(ymax,max(prior)) # update ymax
     }
     
-    # get posterior
-    goodpost <- F
-    if(showpost){
-      jpar <- (1:ncol(posts))[names(posts)==parname]
-      
-      if(length(jpar)==1){
-        post <- posts[,jpar]
-        posthist <- hist(post,plot=F,breaks=50)
-        ymax <- max(ymax,max(posthist$density)) # update ymax
-        xmin <- quantile(post,0.001) # update x range
-        xmax <- quantile(post,0.999) # update x range
-        goodpost <- T
-      }else{
-        print(paste("Error! parameter '",parname,"', not found in '",postfile,"'.",sep=""))
-      }
-    }
-
     # get normal distribution associated with ADMB's estimate of the parameter's asymptotic std. dev.
     if(showmle){
       if(parsd>0){
@@ -240,13 +223,28 @@ SSv3_plotpars <- function(
         ymax <- max(ymax,max(mle)) # update ymax
       }
       # update x range
-      xmin <- min(xmin, qnorm(0.001,finalval,parsd))
-      xmax <- max(xmax, qnorm(0.999,finalval,parsd))
+      xmin <- qnorm(0.001,finalval,parsd)
+      xmax <- qnorm(0.999,finalval,parsd)
     }
 
-    # make plot
+    # get posterior
+    goodpost <- F
+    if(showpost){
+      jpar <- (1:ncol(posts))[names(posts)==parname]
+      if(length(jpar)==1){
+        post <- posts[,jpar]
+        xmin <- min(xmin, quantile(post,0.001)) # update x range
+        xmax <- max(xmax, quantile(post,0.999)) # update x range
+        goodpost <- T
+      }else{
+        print(paste("Error! parameter '",parname,"', not found in '",postfile,"'.",sep=""))
+      }
+    }
+
+    # get x-range
     if(fitrange & (parsd!=0 | showpost)){
-      # make sure initial value is indide limits
+      # if rescaling limits,
+      # make sure initial value is inside limits
       if(showinit){
         xmin <- min(initval,xmin)
         xmax <- max(initval,xmax)
@@ -254,12 +252,23 @@ SSv3_plotpars <- function(
       # keep range inside parameter limits
       xmin <- max(Pmin,xmin) 
       xmax <- min(Pmax,xmax)
-      xlim <- c(xmin,xmax)
     }else{
       # or use parameter limits
-      xlim <- range(x)
+      xmin <- Pmin
+      xmax <- Pmax
+    }
+    xlim <- c(xmin,xmax)
+
+    # get histogram for posterior based on x-range
+    if(showpost & goodpost){
+      jpar <- (1:ncol(posts))[names(posts)==parname]
+      post <- posts[,jpar]
+      breakvec <- c(min(post),seq(xmin,xmax,length=50),max(post))
+      posthist <- hist(post,plot=F,breaks=breakvec)
+      ymax <- max(ymax,max(posthist$density)) # update ymax
     }
     
+    # make plot
     plot(0,type="n",xlim=xlim,ylim=c(0,1.1*ymax),xaxs="i",yaxs="i",
          xlab="",ylab="",main=parname,cex.main=1,axes=F)
     axis(1)
@@ -293,6 +302,7 @@ SSv3_plotpars <- function(
         legend("topleft",cex=1.2,bty="n",pch=c(NA,NA,15,17)[showvec],
                lty=c(1,1,NA,NA)[showvec],lwd=c(2,1,NA,NA)[showvec],
                col=c("black","blue","grey","red")[showvec],
+               pt.cex=c(1,1,2,1)[showvec],
                legend=c("prior","max. likelihood","posterior","initial value")[showvec])
       } # end legend
     } # end first panel stuff
