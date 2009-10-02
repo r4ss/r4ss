@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "September 29, 2009"
+  codedate <- "October 1, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -255,7 +255,7 @@ SSv3_plots <- function(
     if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
   }
   if(pdf){
-    pdffile <- paste(inputs$dir,"/SSplots.pdf",sep="")
+    pdffile <- paste(inputs$dir,"/SSplots_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
@@ -1436,7 +1436,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recruitfun <- function(){
 	plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
 	abline(h=0,col="grey")
-	lines(x[order(x)],recruit$bias_adj[order(x)],col="green")
+#	lines(x[order(x)],recruit$adjusted[order(x)],col="green")
+	lines(x,recruit$adjusted,col="green")
 	lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
 	points(x,recruit$pred_recr,col="red")}
       if(12 %in% plot) recruitfun()

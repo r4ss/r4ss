@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "September 17, 2009"
+codedate <- "October 1, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -84,8 +84,8 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("4-","4A"),sep=""))){
-  print(paste("! Warning, this function tested on SS-V3.04a. You are using",substr(SS_version,1,9)),quote=F)
+if(!(SS_versionshort %in% paste("SS-V3.0",c("4-","4A","4B"),sep=""))){
+  print(paste("! Warning, this function tested on SS-V3.04b. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
@@ -318,6 +318,7 @@ if(comp){   # skip this stuff if no CompReport.sso file
   names(rawcompdbase) <- rawcompdbase[1,]
   compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
   compdbase <- compdbase[compdbase$Obs!="",]
+  compdbase$Like[compdbase$Like=="_"] <- NA
   for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
   lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
@@ -418,7 +419,7 @@ pars <- pars[pars$Phase %in% 0:100,]
 stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
 
 # derived quantities
-rawder <- matchfun2("DERIVED_QUANTITIES",4,"MGParm_Block_Assignments",-1,cols=1:3)
+rawder <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3)
 names(rawder) <- rawder[1,]
 der <- rawder[-1,]
 der[der=="_"] <- NA
@@ -429,23 +430,33 @@ names(managementratiolabels) <- c("Ratio","Label")
 
 # time varying parameters
 MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",2,"selparm(Size)_By_Year_after_adjustments",-1)
-MGparmAdj <- MGparmAdj[,MGparmAdj[1,]!=""]
-names(MGparmAdj) <- c("Yr",allpars$Label[1:grep("CohortGrowDev",allpars$Label)])
-
-SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,"selparm(Age)_By_Year_after_adjustments",-1)
-SelSizeAdj <- SelSizeAdj[,apply(SelSizeAdj,2,emptytest)<1]
-SelSizeAdj[SelSizeAdj==""] <- NA
-for(icol in 1:ncol(SelSizeAdj)) SelSizeAdj[,icol] <- as.numeric(SelSizeAdj[,icol])
-names(SelSizeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelSizeAdj)-2),sep=""))
-
-SelAgeAdj <- matchfun2("selparm(Age)_By_Year_after_adjustments",2,"RECRUITMENT_DIST",-1)
-SelAgeAdj <- SelAgeAdj[,apply(SelAgeAdj,2,emptytest)<1]
-SelAgeAdj[SelAgeAdj==""] <- NA
-if(SelAgeAdj[1,1]=="RECRUITMENT_DIST"){
-  SelAgeAdj <- NA
+if(nrow(MGparmAdj)>2){
+  MGparmAdj <- MGparmAdj[,MGparmAdj[1,]!=""]
+  names(MGparmAdj) <- c("Yr",allpars$Label[1:grep("CohortGrowDev",allpars$Label)])
 }else{
-  for(icol in 1:ncol(SelAgeAdj)) SelAgeAdj[,icol] <- as.numeric(SelAgeAdj[,icol])
-  names(SelAgeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+  MGparmAdj <- NA
+}
+SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,"selparm(Age)_By_Year_after_adjustments",-1)
+if(nrow(SelSizeAdj)>2){
+  SelSizeAdj <- SelSizeAdj[,apply(SelSizeAdj,2,emptytest)<1]
+  SelSizeAdj[SelSizeAdj==""] <- NA
+  for(icol in 1:ncol(SelSizeAdj)) SelSizeAdj[,icol] <- as.numeric(SelSizeAdj[,icol])
+  names(SelSizeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelSizeAdj)-2),sep=""))
+}else{
+  SelSizeAdj <- NA
+}
+SelAgeAdj <- matchfun2("selparm(Age)_By_Year_after_adjustments",2,"RECRUITMENT_DIST",-1)
+if(nrow(SelAgeAdj)>2){
+  SelAgeAdj <- SelAgeAdj[,apply(SelAgeAdj,2,emptytest)<1]
+  SelAgeAdj[SelAgeAdj==""] <- NA
+  if(SelAgeAdj[1,1]=="RECRUITMENT_DIST"){
+    SelAgeAdj <- NA
+  }else{
+    for(icol in 1:ncol(SelAgeAdj)) SelAgeAdj[,icol] <- as.numeric(SelAgeAdj[,icol])
+    names(SelAgeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+  }
+}else{
+  SelAgeAdj <- NA
 }
 
 # gradient
@@ -658,8 +669,6 @@ returndat$sizeselex <- selex
  returndat$mnwgt <- mnwgt
  returndat$DF_mnwgt <- DF_mnwgt
 
-#testing: bad
-
 # Yield and SPR time-series
  rawspr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,cols=1:(22+2*nmorphs))
  names(rawspr) <- rawspr[1,]
@@ -684,7 +693,7 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A")){
+ if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A", "SS-V3.04B")){
    rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
  }else{
    rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
@@ -711,7 +720,7 @@ returndat$sizeselex <- selex
  returndat$cpue <- cpue
 
 # Numbers at age
- if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A")){
+ if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A","SS-V3.04B")){
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
  }else{
    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
