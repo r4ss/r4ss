@@ -4,7 +4,7 @@ SSv3_plotpars <- function(
     postfile="posteriors.sso",
     showpost=T,showprior=T,showmle=T,showinit=T,
     showrecdev=T,priorinit=T,priorfinal=T,
-    showlegend=T,fitrange=F,verbose=T,
+    showlegend=T,fitrange=F,xaxs='i',verbose=T,
     nrows=3,ncols=3,new=T,pdf=F,
     pwidth=7,pheight=7,ptsize=12,returntable=F,
     strings=c(),burn=0,thin=1,
@@ -95,6 +95,7 @@ SSv3_plotpars <- function(
     print(      "       changing input to 'showpost=F'",quote=F)
     showpost <- F
   }
+
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     posts <- read.table(fullpostfile,head=T)
@@ -113,7 +114,6 @@ SSv3_plotpars <- function(
       partable[,i] <- as.numeric(as.character(partable[,i]))
     }
   }
-#return(partable)
   # subset for only active parameters
   allnames <- partable$Label[!is.na(partable$Active_Cnt)]
 
@@ -156,6 +156,7 @@ SSv3_plotpars <- function(
   }
   npars <- length(goodnames)
 #  print(goodnames)
+#return(partable[partable$Label %in% goodnames,])
   
   # make plot
   if(verbose){
@@ -240,7 +241,7 @@ SSv3_plotpars <- function(
       xmin <- qnorm(0.001,finalval,parsd)
       xmax <- qnorm(0.999,finalval,parsd)
     }
-
+    
     # get posterior
     goodpost <- F
     if(showpost){
@@ -281,13 +282,14 @@ SSv3_plotpars <- function(
       if(min(breakvec) > min(post)) breakvec <- c(min(post),breakvec)
       if(max(breakvec) < max(post)) breakvec <- c(breakvec,max(post))
       posthist <- hist(post,plot=F,breaks=breakvec)
-      ymax <- max(ymax,max(posthist$density)) # update ymax
+      ymax <- max(ymax,max(posthist$density),na.rm=F) # update ymax
     }
-    
+
     # make plot
-    plot(0,type="n",xlim=xlim,ylim=c(0,1.1*ymax),xaxs="i",yaxs="i",
+    plot(0,type="n",xlim=xlim,ylim=c(0,1.1*ymax),xaxs=xaxs,yaxs="i",
          xlab="",ylab="",main=parname,cex.main=1,axes=F)
     axis(1)
+    # axis(2) # don't generally show y-axis values because it's just distracting
 
     # add stuff to plot
     colval <- "grey"
@@ -295,7 +297,7 @@ SSv3_plotpars <- function(
     if(showprior) lines(x,prior,lwd=2,lty=1)
     if(showmle){
       if(parsd>0){
-        lines(x,mle,col="blue")
+        lines(x,mle,col="blue",lwd=2)
         lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),col="blue")
       }else{
         abline(v=finalval,col="blue")

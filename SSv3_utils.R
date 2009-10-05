@@ -14,7 +14,7 @@ SS_parlines <- function(
 
 ################################################################################
 #
-# SS_parlines May 22, 2009.
+# SS_parlines October 5, 2009.
 # This function comes with no warranty or guarantee of accuracy
 #
 # Purpose: To identify the line numbers and parameter labels in a Stock Synthesis control file
@@ -180,7 +180,7 @@ SS_profile <- function(
   ################################################################################
   #
   # SS_profile
-  # July 30, 2009.
+  # October 5, 2009.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: run a likelihood profile by iteratively modifying
@@ -265,7 +265,7 @@ SS_plotpriors <- function(
   ################################################################################
   #
   # SS_plotpriors
-  # June 19, 2009.
+  # October 5, 2009.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
@@ -369,6 +369,8 @@ SS_plotpriors <- function(
   mtext('Parameter value',side=1,line=0.5,outer=T)
   mtext('Prior density',side=2,line=0.5,outer=T)
 
+  print('note: this function, SS_plotpriors, has been replaced by, SSv3_plotpars,',quote=F)
+  print('      which is available in a separate file at http://code.google.com/p/r4ss/', quote=F)
   if(returntable) return(parlines)
 }
 

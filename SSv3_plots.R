@@ -2683,7 +2683,18 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab="Year",ylab="Tag Group",col=rep("blue",2),
 		las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
       }
-
+      tagfun5 <- function(){
+	# line plot by year and group
+	plottitle <- "Observed tag recaptures by year and tag group"
+	plot(0,type='n',xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab="Year",ylab="Tag Group",
+             main=plottitle,cex.main=cex.main)
+        rescale <- 5/max(Recaps$Obs,Recaps$Exp)
+        for(igroup in sort(unique(Recaps$Group))){
+          lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col='grey',lty=3)
+          points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type='o',pch=16,cex=.5)
+          lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col='red',lty='51',lwd=2)
+        }
+      }
       if(24 %in% plot){
 	tagfun1()
 	tagfun2()
