@@ -30,6 +30,7 @@ SS_parlines <- function(
   ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=T,
     quote="",colClasses="character",comment.char="", blank.lines.skip=F)
   nrows <- nrow(ctl)
+  print(nrows)
   ctl_num <- matrix(NA,nrows,ncols) # copy of ctl converted to numerical values or NA
   num_cnt <- rep(NA,nrows)          # count of number of numerical values in each row
   num_cnt7 <- rep(NA,nrows)         # count of number of numerical values in first 7 values of each row
@@ -69,7 +70,7 @@ SS_changepars <- function(
          dir="C:\\myfiles\\mymodels\\myrun\\",
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
-         linenums=NULL, parnames=NULL, newvals=NULL, estimate=F,
+         linenums=NULL, strings=NULL, newvals=NULL, estimate=F,
          verbose=T
          )
 {
@@ -90,16 +91,32 @@ SS_changepars <- function(
   # read control file
   fullctlfile <- paste(dir,ctlfile,sep="/")
   ctl = readLines(fullctlfile)
-  if(is.null(linenums) & !is.null(parnames) & class(parnames)=="character")
+
+  if(is.null(linenums) & !is.null(strings) & class(strings)=="character")
   {
     ctltable <- SS_parlines(ctlfile=fullctlfile)
-    nvals <- length(parnames)
-    for(i in 1:nvals) linenums[i] <- ctltable$Linenum[ctltable$Label==parnames[i]]
+    allnames <- ctltable$Label
+    goodnames <- NULL
+    if(!is.null(strings)){
+      for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
+      goodnames <- unique(goodnames)
+      print("parameters matching input vector 'strings':",quote=F)
+      print(paste("parameter names in control file:"),quote=F)
+      print(goodnames)
+      if(length(goodnames)==0){
+        print("No parameters names match input vector 'strings'.",quote=F)
+        return()
+      }
+    }
+    nvals <- length(goodnames)
+    print(ctltable[ctltable$Label==goodnames[i],])
+    for(i in 1:nvals) linenums[i] <- ctltable$Linenum[ctltable$Label==goodnames[i]]
   }else{
-    if(is.null(linenums)) return("valid input needed for either 'linenums' or 'parnames'")
+    if(is.null(linenums)) return("valid input needed for either 'linenums' or 'strings'")
   }
   ctlsubset <- ctl[linenums]
-
+  print(paste("line numbers in control file:"),quote=F)
+  print(linenums)
   # define objects to store changes
   newctlsubset <- NULL
   cmntvec <- NULL
@@ -107,7 +124,7 @@ SS_changepars <- function(
   oldvals <- oldphase <- newphase <- rep(NA,nvals)
 
   # check inputs
-  if(length(newvals)!=nvals) return("'newvals' and either 'linenums' or 'parnames' should have the same number of elements")
+  if(!is.null(newvals) & length(newvals)!=nvals) return("'newvals' and either 'linenums' or 'strings' should have the same number of elements")
   if(!(length(estimate) %in% c(1,nvals))) return("'estimate' should have 1 element or same number as 'newvals'")
   if(length(estimate)==1) estimate <- rep(estimate, nvals)
 
@@ -119,9 +136,10 @@ SS_changepars <- function(
     cmntvec <- c(cmntvec, cmnt)
     vecstrings <- strsplit(splitline[1]," +")[[1]]
     vec <- as.numeric(vecstrings[vecstrings!=""])
+    print(vec)
     if(max(is.na(vec))==1) return(paste("There's a problem with a non-numeric value in line",linenums[i]))
     oldvals[i] <- vec[3]
-    vec[3] <- newvals[i]
+    if(!is.null(newvals)) vec[3] <- newvals[i]
     oldphase[i] <- as.numeric(vec[7])
     if(estimate[i]){
       vec[7] <- abs(oldphase[i])
@@ -138,6 +156,11 @@ SS_changepars <- function(
   writeLines(newctl, paste(dir,newctlfile,sep="/"))
   if(verbose) print(paste('wrote new file to',newctlfile),quote=F)
   # output table of changes
+  if(is.null(newvals)) newvals <- NA
+  print(oldvals)
+  print(newvals)
+  print(oldphase)
+  print(newphase)
   if(verbose) return(data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec))
 
 } # end function

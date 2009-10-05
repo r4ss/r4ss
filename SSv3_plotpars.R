@@ -5,13 +5,14 @@ SSv3_plotpars <- function(
     showpost=T,showprior=T,showmle=T,showinit=T,
     showrecdev=T,priorinit=T,priorfinal=T,
     showlegend=T,fitrange=F,verbose=T,
-    nrows=3,ncols=3,new=T,returntable=F,
+    nrows=3,ncols=3,new=T,pdf=F,
+    pwidth=7,pheight=7,ptsize=12,returntable=F,
     strings=c(),burn=0,thin=1,
-    ctlfile="Control.SS_New")
+    ctlfile="control.ss_new")
 {
   ################################################################################
   #
-  # SSv3_plotpriors
+  # SSv3_plotpars
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
@@ -23,7 +24,7 @@ SSv3_plotpars <- function(
   #
   ################################################################################
 
-  codedate <- "September 17, 2009"
+  codedate <- "October 2, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -76,11 +77,11 @@ SSv3_plotpars <- function(
   }
   goodctl <- T
   if(is.na(ctlfileinfo)){
-    print("Error! Missing Control.SS_New file. Assuming recdev limits are -5 & 5.",quote=F)
+    print("Error! Missing control.ss_new file. Assuming recdev limits are -5 & 5.",quote=F)
     goodctl <- F
   }
   if(ctlfileinfo==0){
-    print("Error! Empty Control.SS_New file. Assuming recdev limits are -5 & 5.",quote=F)
+    print("Error! Empty control.ss_new file. Assuming recdev limits are -5 & 5.",quote=F)
     goodctl <- F
   }
   
@@ -101,7 +102,7 @@ SSv3_plotpars <- function(
   }
   ## get parameter estimates
   if(!is.na(repfileinfo) & repfileinfo>0){
-    replines <- readLines(fullrepfile,n=500)
+    replines <- readLines(fullrepfile,n=2000)
     parstart <- grep("PARAMETERS",replines)[2]
     parend <- grep("DERIVED_QUANTITIES",replines)[2]
     partable <- read.table(fullrepfile,head=T,nrows=parend-parstart-3,skip=parstart,as.is=T,fill=T)
@@ -168,9 +169,19 @@ SSv3_plotpars <- function(
   }
   
   ## make plot
-  if(new){
+  if(new & !pdf){
+    if(length(grep('linux',version$os)) > 0) OS <- "Linux"
+    if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
+    # need appropriate line to support Mac operating systems
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-    windows(record=T)
+    if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
+    if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
+    if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
+  }
+  if(pdf){
+    pdffile <- paste(dir,"/SSplotpars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
+    pdf(file=pdffile,width=pwidth,height=pheight)
+    if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
 
   par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
@@ -266,7 +277,9 @@ SSv3_plotpars <- function(
     if(showpost & goodpost){
       jpar <- (1:ncol(posts))[names(posts)==parname]
       post <- posts[,jpar]
-      breakvec <- c(min(post),seq(xmin,xmax,length=50),max(post))
+      breakvec <- seq(xmin,xmax,length=50)
+      if(min(breakvec) > min(post)) breakvec <- c(min(post),breakvec)
+      if(max(breakvec) < max(post)) breakvec <- c(breakvec,max(post))
       posthist <- hist(post,plot=F,breaks=breakvec)
       ymax <- max(ymax,max(posthist$density)) # update ymax
     }
@@ -310,7 +323,6 @@ SSv3_plotpars <- function(
       } # end legend
     } # end first panel stuff
   } # end loop over parameters
-
+  if(pdf) dev.off() # close PDF file if it was open
   if(returntable) return(partable[partable$Label %in% goodnames,])
 }
-
