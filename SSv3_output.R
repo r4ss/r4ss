@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "October 1, 2009"
+codedate <- "October 13, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -84,7 +84,7 @@ rephead <- readLines(con=repfile,n=3)
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
 SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("4-","4A","4B"),sep=""))){
+if(!(SS_versionshort %in% paste("SS-V3.0",c("4B"),sep=""))){
   print(paste("! Warning, this function tested on SS-V3.04b. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)

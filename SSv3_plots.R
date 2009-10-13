@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "October 1, 2009"
+  codedate <- "October 13, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
