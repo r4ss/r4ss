@@ -2425,9 +2425,75 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		    maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,
 		    png=(20%in%print),GUI=(20%in%plot),smooth=smooth,plotdir=plotdir,
 		    maxneff=maxneff,cex.main=cex.main,...)
-    if(verbose) print("Finished plot 20: conditional age at length with fits",quote=F)
+
+    if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=F)
+
+    # more plot 20: Andre's new conditional age-at-length plots    
+    Lens <-sort(unique(condbase$Lbin_lo))
+    Yrs <- sort(unique(condbase$Yr))
+    par(mfrow=c(2,2))
+    for (Gender in 1:2){
+      for (Yr in Yrs){
+        y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
+        Size <- NULL; Size2 <- NULL
+        Obs <- NULL; Obs2 <- NULL
+        Pred <- NULL;  Pred2 <- NULL
+        Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
+        for (Ilen in Lens){
+            z <- y[y$Lbin_lo == Ilen & y$Lbin_hi == Ilen,]
+            if (length(z[,1]) > 0){
+              weightsPred <- z$Exp/sum(z$Exp)
+              weightsObs <- z$Obs/sum(z$Obs)
+              ObsV <- sum(z$Bin*weightsObs)
+              ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
+              PredV <- sum(z$Bin*weightsPred)
+              PredV2 <- sum(z$Bin*z$Bin*weightsPred)
+              # Overdispersion on N
+              # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
+              NN <- z$N[1]
+              if (max(z$Obs) > 1.0e-4){
+                Size <- c(Size,Ilen)
+                Obs <- c(Obs,ObsV)
+                Pred <- c(Pred,PredV)
+                varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
+                Pred2 <- c(Pred2,varn)
+                varn <-sqrt(ObsV2-ObsV*ObsV)/sqrt(NN)
+                Obs2 <- c(Obs2,varn)
+                Low <- c(Low,ObsV-1.64*varn)
+                Upp <- c(Upp,ObsV+1.64*varn)
+                if (NN > 1){
+                  Size2 <- c(Size2,Ilen)
+                  Low2 <- c(Low2,varn*sqrt((NN-1)/qchisq(0.95,NN)))
+                  Upp2 <- c(Upp2,varn*sqrt((NN-1)/qchisq(0.05,NN)))
+                } 
+              } 
+            } 
+          }
+        if (length(Obs) > 0){
+          ymax <- max(Pred,Obs,Upp)*1.1 
+          plot(Size,Obs,xlab="Size (cm)",ylab="Age (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+          lines(Size,Pred)
+          lines(Size,Low,lty=3)
+          lines(Size,Upp,lty=3)
+          title(paste("Year = ",Yr,"; Gender = ",Gender))
+          
+          ymax <- max(Obs2,Pred2)*1.1
+          plot(Size,Obs2,xlab="Size (cm)",ylab="Stdev (Age) (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+          lines(Size,Pred2)
+          lines(Size2,Low2,lty=3)
+          lines(Size2,Upp2,lty=3)
+        } 
+      } # end loop over years
+    } # end loop over genders
+    if(verbose) print("Finished plot 20b: mean age and std. dev. in conditional AAL",quote=F)
+    if(verbose) print("  This is a new plot, currently in beta mode.",quote=F)
+    if(verbose) print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=F)
+    if(verbose) print("  with 90% CIs based on adding 1.64 SE of mean to the data",quote=F)
+    if(verbose) print("  Right plots in each pair are SE of mean AAL (obs. and pred.)",quote=F)
+    if(verbose) print("  with 90% CIs based on the chi-square distribution.",quote=F)
     flush.console()
   } # end if 20 in plot or print
+
 
   # Plot 21: length at age data
   if(21 %in% c(plot, print))
