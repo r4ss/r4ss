@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "October 13, 2009"
+  codedate <- "October 16, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -1195,7 +1195,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  if(nrow(recdevLate)>0)
 	    recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
 	  if(nrow(recdevFore)>0 & nrow(recdevLate)>0)
-	    recdevFore <- rbind(recdevFore,recdevLate)
+	    recdevFore <- rbind(recdevLate,recdevFore)
 
 	  Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
 	  xlim <- range(Yr)
