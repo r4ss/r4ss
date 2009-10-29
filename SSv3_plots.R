@@ -4,7 +4,7 @@ SSv3_plots <- function(
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
     aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
-    pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
+    pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=T, new=T,...)
 {
 ################################################################################
@@ -24,7 +24,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "October 16, 2009"
+  codedate <- "October 29, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -450,15 +450,15 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(m==1 & nsexes==2) sextitle2 <- "Female ending"
       if(m==2) sextitle2 <- "Male ending"
       intret <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
+      intmort <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$gender==m,]
+      intkeep <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
+      intdead <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
       intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
       for(i in fleets)
       {
 	plotselex <- intselex[intselex$Fleet==i,]
 	time <- FALSE
 	for(t in 5 + 1:nlbinspop) if(length(unique(plotselex[,t]))>1){time <- TRUE}
-	if(m==1 & nsexes==1) sextitle <- "Time-"
-	if(m==1 & nsexes==2) sextitle <- "Female time-"
-	if(m==2) sextitle="Male time-"
 	if(time)
 	{
 	  x <- lbinspop
@@ -500,25 +500,47 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    dev.off()}
 	}
 	plotselex <- plotselex[plotselex$year==endyr & plotselex$gender==m,-(1:5)]
-	ylab <- "Selectivity and retention"
+	ylab <- "Selectivity"
 	bins <- as.numeric(names(plotselex))
 	vals <- as.numeric(paste(plotselex))
 	main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
 	selfunc <- function()
 	{
-	  plot(bins,vals,xlab="Length bin (cm)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
-	  abline(h=0,col="grey")
 	  intret2 <- intret[intret$Fleet==i,]
 	  retchecktemp <- as.vector(unlist(intret2[1,]))
 	  retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
 	  if(is.na(sum(retcheck))) retcheckuse <- 0
 	  if(!is.na(sum(retcheck))) retcheckuse <- max(retcheck)-min(retcheck)
 	  if(retcheckuse==0 & max(vals)-min(vals)!=0) legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")
+	  plot(bins,vals,xlab="Length bin (cm)",ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type='n')
+	  abline(h=0,col="grey")
+          abline(h=1,col="grey")
+          if(1%in%selexlines) lines(bins,vals,type="o",col="blue",cex=1.1)
 	  if(retcheckuse > 0){
 	    useret <- intret[intret$Fleet==i,]
-	    plotret <- useret[useret$year==max(as.numeric(useret$year)),]
-	    lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="l",cex=1.1)
-	    legend("bottomright",inset=c(0,0.05),bty="n", c("Selectivity","Retention"), lty=1, col = c("blue","red"))}
+	    usekeep <- intkeep[intkeep$Fleet==i,]
+	    usemort <- intmort[intmort$Fleet==i,]
+	    usedead <- intdead[intdead$Fleet==i,]
+            plotret <- useret[useret$year==max(as.numeric(useret$year)),]
+	    plotkeep <- usekeep[usekeep$year==max(as.numeric(usekeep$year)),]
+	    plotmort <- usemort[usemort$year==max(as.numeric(usemort$year)),]
+	    plotdead <- usedead[usedead$year==max(as.numeric(usedead$year)),]
+	    if(2%in%selexlines){
+              lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="o",pch=3,cex=.9)
+              ylab <- paste(ylab,", Retention",sep="")
+            }
+	    if(3%in%selexlines){
+              lines((as.numeric(as.vector(names(plotmort)[-(1:5)]))),(as.numeric(as.character(plotmort[1,-(1:5)]))),col="orange",type="o",pch=4,cex=.9)
+              ylab <- paste(ylab,", Mortality",sep="")
+            }
+	    if(4%in%selexlines) lines((as.numeric(as.vector(names(plotkeep)[-(1:5)]))),(as.numeric(as.character(plotkeep[1,-(1:5)]))),col="purple",type="o",pch=2,cex=.9)
+	    if(5%in%selexlines) lines((as.numeric(as.vector(names(plotdead)[-(1:5)]))),(as.numeric(as.character(plotdead[1,-(1:5)]))),col="green3",type="o",pch=5,cex=.9)
+	    legend("bottomright",inset=c(0.05,0.05),bty="n",
+                   c("Selectivity","Retention","Discard mortality","Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
+                   lty=1,col=c("blue","red","orange","purple","green3")[selexlines],
+                   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
+          }
+          mtext(ylab,side=2,line=3)          
 	}
 	if(max(vals) - min(vals) != 0) # only make plot of selectivity is not constant
 	{
