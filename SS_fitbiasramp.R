@@ -1,10 +1,13 @@
-# source('y:/h_itaylor/SS/maxbias/fitbiasramp.R')
-FitBiasRamp <- function(replist){
+SS_fitbiasramp <- function(replist){
   ##################
   # function to estimate bias adjustment ramp
   # for Stock Synthesis v3.04b
   # by Ian Taylor
   # October 30, 2009
+  #
+  # Usage: run function with input that is an object from SSv3_output
+  #        from http://code.google.com/p/r4ss/
+  #
   ##################
   if(!is.list(replist) | substr(replist$SS_version,1,8)!="SS-V3.04"){
     print("!error: this function needs an input object created by SSv3_output from a SSv3.04 model")
@@ -101,11 +104,24 @@ FitBiasRamp <- function(replist){
   abline(h=0,col="grey")
   abline(h=1,col="grey")
 
+  #names
+  names <- c(
+  "#_last_early_yr_nobias_adj_in_MPD",
+  "#_first_yr_fullbias_adj_in_MPD",
+  "#_last_yr_fullbias_adj_in_MPD",
+  "#_first_recent_yr_nobias_adj_in_MPD",
+  "#_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models)")
+  
   # bias correction (2nd axis, scaled by ymax)
   lines(biasadjfun(Yr,newbias[[1]]),col=4,lwd=3,lty=1)
   lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
   legend('topleft',col=c(2,4),lwd=3,lty=2:1,inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
          leg=c('bias adjust in model','estimated alternative'))
   mtext(side=1,line=3,'Year')
-  return(newbias[[1]])
+  newvals <- newbias[[1]]
+  newvals <- round(newvals,4)
+  df <- data.frame(value=newvals,label=names)
+  print('Estimate values:',quote=F)
+  print(format(df,justify="left"),row.names=F)
+#  return(df)
 }
