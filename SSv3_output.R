@@ -1,5 +1,5 @@
 SSv3_output <- function(
-  dir="C:\\myfiles\\mymodels\\myrun\\", model="ss3",
+  dir="C:/myfiles/mymodels/myrun/", model="ss3",
   repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
   ncols=200, forecast=T, warn=T, covar=T,
   checkcor=T, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
@@ -781,7 +781,7 @@ if(comp){
  catage <- catage[,apply(catage,2,emptytest)<1]
  names(catage) <- catage[1,]
  catage <- catage[-1,]
- for(icol in (1:ncol(catage))[substr(names(x),1,2)!="XX" & names(x)!="Era"]){
+ for(icol in (1:ncol(catage))[substr(names(catage),1,2)!="XX" & names(catage)!="Era"]){
    catage[,icol] <- as.numeric(catage[,icol])
  }
  returndat$catage <- catage
