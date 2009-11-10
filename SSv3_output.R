@@ -22,7 +22,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "October 13, 2009"
+codedate <- "November 10, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -776,6 +776,17 @@ if(comp){
    }
  }
 
+ # catch at age
+ catage <- matchfun2("CATCH_AT_AGE",1,"BIOLOGY",-1)
+ catage <- catage[,apply(catage,2,emptytest)<1]
+ names(catage) <- catage[1,]
+ catage <- catage[-1,]
+ for(icol in (1:ncol(catage))[substr(names(x),1,2)!="XX" & names(x)!="Era"]){
+   catage[,icol] <- as.numeric(catage[,icol])
+ }
+ returndat$catage <- catage
+
+ # adding stuff to list which gets returned by function
  returndat$composition_database <- compdbase
 
  returndat$derived_quants <- der
