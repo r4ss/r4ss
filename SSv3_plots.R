@@ -1,4 +1,5 @@
-SSv3_plots <- function(
+SSv3_plots <-
+function(
     replist="ReportObject", plot=1:24, print=0, pdf=F, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=T, uncertainty=T, forecastplot=F, datplot=F, Natageplot=T, samplesizeplots=T, compresidplots=T,
@@ -24,7 +25,7 @@ SSv3_plots <- function(
 #
 ################################################################################
 
-  codedate <- "October 29, 2009"
+  codedate <- "November 12, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -245,7 +246,7 @@ SSv3_plots <- function(
     plotdir <- NULL
   }
   if(nplots>0 & !new){
-    print("Adding plots to existing plot window. Plot history not erased.",quote=F)
+    if(verbose) print("Adding plots to existing plot window. Plot history not erased.",quote=F)
   }
   if(nprints>0){
     if(dir=="default") dir <- inputs$dir
@@ -1196,7 +1197,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recdev <- parameters[substring(parameters$Label,1,12) %in% c("Main_RecrDev"),]
       recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
       recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
-      if(max(recdev$Value)==0){
+      if(nrow(recdev)==0 || max(recdev$Value)==0){
 	if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)
       }else{
 	if(nrow(recdev)>0){
@@ -1449,7 +1450,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   ### Plot 12: spawner-recruit curve ###
   if(12 %in% c(plot, print))
     {
-      recruit <- recruit[recruit$era=="Main",]
+      recruit <- recruit[recruit$era %in% c("Main","Fixed"),]
       ymax <- max(recruit$pred_recr)
       x <- recruit$spawn_bio
       xmax <- max(x)
@@ -2441,6 +2442,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # plot 20: conditional age at length plot with fits, sample size, etc.
   if(20 %in% c(plot,print)){
+if(3==4){
     SSv3_plot_comps(datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
 		    aalbin=aalbin,aalyear=aalyear,
 		    samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -2449,19 +2451,22 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		    maxneff=maxneff,cex.main=cex.main,...)
 
     if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=F)
-
+  }
     # more plot 20: Andre's new conditional age-at-length plots    
-    Lens <-sort(unique(condbase$Lbin_lo))
-    Yrs <- sort(unique(condbase$Yr))
-    par(mfrow=c(2,2))
-    for (Gender in 1:2){
-      for (Yr in Yrs){
-        y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
-        Size <- NULL; Size2 <- NULL
-        Obs <- NULL; Obs2 <- NULL
-        Pred <- NULL;  Pred2 <- NULL
-        Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
-        for (Ilen in Lens){
+    if(nrow(condbase)==0){
+      if(verbose) print("Skipped plot 20b: mean age and std. dev. in conditional AAL: no data of this type",quote=F)
+    }else{
+      Lens <-sort(unique(condbase$Lbin_lo))
+      Yrs <- sort(unique(condbase$Yr))
+      par(mfrow=c(2,2))
+      for (Gender in 1:2){
+        for (Yr in Yrs){
+          y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
+          Size <- NULL; Size2 <- NULL
+          Obs <- NULL; Obs2 <- NULL
+          Pred <- NULL;  Pred2 <- NULL
+          Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
+          for (Ilen in Lens){
             z <- y[y$Lbin_lo == Ilen & y$Lbin_hi == Ilen,]
             if (length(z[,1]) > 0){
               weightsPred <- z$Exp/sum(z$Exp)
@@ -2491,31 +2496,31 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
               } 
             } 
           }
-        if (length(Obs) > 0){
-          ymax <- max(Pred,Obs,Upp)*1.1 
-          plot(Size,Obs,xlab="Size (cm)",ylab="Age (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-          lines(Size,Pred)
-          lines(Size,Low,lty=3)
-          lines(Size,Upp,lty=3)
-          title(paste("Year = ",Yr,"; Gender = ",Gender))
-          
-          ymax <- max(Obs2,Pred2)*1.1
-          plot(Size,Obs2,xlab="Size (cm)",ylab="Stdev (Age) (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-          lines(Size,Pred2)
-          lines(Size2,Low2,lty=3)
-          lines(Size2,Upp2,lty=3)
-        } 
-      } # end loop over years
-    } # end loop over genders
-    if(verbose) print("Finished plot 20b: mean age and std. dev. in conditional AAL",quote=F)
-    if(verbose) print("  This is a new plot, currently in beta mode.",quote=F)
-    if(verbose) print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=F)
-    if(verbose) print("  with 90% CIs based on adding 1.64 SE of mean to the data",quote=F)
-    if(verbose) print("  Right plots in each pair are SE of mean AAL (obs. and pred.)",quote=F)
-    if(verbose) print("  with 90% CIs based on the chi-square distribution.",quote=F)
-    flush.console()
+          if (length(Obs) > 0){
+            ymax <- max(Pred,Obs,Upp)*1.1 
+            plot(Size,Obs,xlab="Size (cm)",ylab="Age (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+            lines(Size,Pred)
+            lines(Size,Low,lty=3)
+            lines(Size,Upp,lty=3)
+            title(paste("Year = ",Yr,"; Gender = ",Gender))
+            
+            ymax <- max(Obs2,Pred2)*1.1
+            plot(Size,Obs2,xlab="Size (cm)",ylab="Stdev (Age) (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+            lines(Size,Pred2)
+            lines(Size2,Low2,lty=3)
+            lines(Size2,Upp2,lty=3)
+          } 
+        } # end loop over years
+      } # end loop over genders
+      if(verbose) print("Finished plot 20b: mean age and std. dev. in conditional AAL",quote=F)
+      if(verbose) print("  This is a new plot, currently in beta mode.",quote=F)
+      if(verbose) print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=F)
+      if(verbose) print("  with 90% CIs based on adding 1.64 SE of mean to the data",quote=F)
+      if(verbose) print("  Right plots in each pair are SE of mean AAL (obs. and pred.)",quote=F)
+      if(verbose) print("  with 90% CIs based on the chi-square distribution.",quote=F)
+      flush.console()
+    }
   } # end if 20 in plot or print
-
 
   # Plot 21: length at age data
   if(21 %in% c(plot, print))
@@ -2819,3 +2824,4 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   if(verbose) print("Finished all requested plots",quote=F)
   ### end of SSv3_plots function
 }
+

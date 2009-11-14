@@ -1,4 +1,5 @@
-SSv3_output <- function(
+SSv3_output <-
+function(
   dir="C:/myfiles/mymodels/myrun/", model="ss3",
   repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
   ncols=200, forecast=T, warn=T, covar=T,
@@ -22,7 +23,7 @@ SSv3_output <- function(
 #
 ################################################################################
 
-codedate <- "November 10, 2009"
+codedate <- "November 12, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -325,7 +326,11 @@ if(comp){   # skip this stuff if no CompReport.sso file
   latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
   lendbase$effN <- as.numeric(lendbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
-  agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
+  if(nrow(agedbase)>0){
+    agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
+  }else{
+    agebins <- NA
+  }
   nagebins <- length(agebins)
 }else{
   lbins <- NA
@@ -833,3 +838,4 @@ if(comp){
  invisible(returndat)
 
 } # end function
+
