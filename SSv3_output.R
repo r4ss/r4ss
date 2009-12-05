@@ -23,13 +23,13 @@ function(
 #
 ################################################################################
 
-codedate <- "November 12, 2009"
+codedate <- "December 4, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
   print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=F)
 }
-  
+
 flush.console()
 
 #################################################################################
@@ -120,13 +120,16 @@ if(covar){
   covarhead <- readLines(con=covarfile,n=2)
   covartime <- findtime(covarhead)
   # the conversion to R time class below may no longer be necessary as strings should match
-  covartime2 <- as.POSIXlt(covartime, format="%a %b %d %H:%M:%S %Y")
-  repfiletime2 <- as.POSIXlt(repfiletime, format="%a %b %d %H:%M:%S %Y")
-  difftimelimit <- 300
-  if(abs(as.numeric(difftime(covartime2,repfiletime2,units="secs")))>difftimelimit){
-    print(paste("!Error: ",shortrepfile,"and",covarfile,"were modified more than",difftimelimit,"seconds apart. Change input to covar=F"),quote=F)
-    print(paste("covar time:",covartime),quote=F)
-    return()
+  if(is.null(covartime) || is.null(repfiletime)){
+    print("problem comparing the file creation times:",quote=F)
+    print(paste("  Report.sso:",repfiletime),quote=F)
+    print(paste("  covar.sso:",covartime),quote=F)
+  }else{
+    if( covartime != repfiletime){
+      print(paste("!Error: ",shortrepfile,"and",covarfile,"were from different model runs. Change input to covar=F"),quote=F)
+      print(paste("covar time:",covartime),quote=F)
+      return()
+    }
   }
 }
 
@@ -135,10 +138,16 @@ compfile <- paste(dir,compfile,sep="")
 if(file.exists(compfile)){
   comphead <- readLines(con=compfile,n=2)
   comptime <- findtime(comphead)
-  if(comptime != repfiletime){
-    print(paste(shortrepfile,"and",compfile,"have different time values. Check the input filenames."),quote=F)
-    print(paste("CompReport time:",comptime),quote=F)
-    return()
+  if(is.null(comptime) || is.null(repfiletime)){
+    print("problem comparing the file creation times:",quote=F)
+    print(paste("  Report.sso:",repfiletime),quote=F)
+    print(paste("  CompReport.sso:",comptime),quote=F)
+  }else{
+    if(comptime != repfiletime){
+      print(paste(shortrepfile,"and",compfile,"were from different model runs."),quote=F)
+      print(paste("CompReport time:",comptime),quote=F)
+      return()
+    }
   }
   comp <- T
 }else{
@@ -146,6 +155,7 @@ if(file.exists(compfile)){
   #return()
   if(NoCompOK) comp <- F else return()
 }
+
 
 # read report file
 if(verbose) print("Reading full report file",quote=F)
@@ -321,10 +331,14 @@ if(comp){   # skip this stuff if no CompReport.sso file
   compdbase <- compdbase[compdbase$Obs!="",]
   compdbase$Like[compdbase$Like=="_"] <- NA
   for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
-  lendbase   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-  agedbase   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0,]
-  latagebase <- compdbase[compdbase$Kind=="L@A" & compdbase$N > 0,]
+
+  # not sure why these subsets are here, considering that they're not passed into output
+  lendbase   <- compdbase[compdbase$Kind=="LEN"  & compdbase$N > 0,]
+  sizedbase  <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
+  agedbase   <- compdbase[compdbase$Kind=="AGE"  & compdbase$N > 0,]
+  latagebase <- compdbase[compdbase$Kind=="L@A"  & compdbase$N > 0,]
   lendbase$effN <- as.numeric(lendbase$effN)
+  sizedbase$effN <- as.numeric(sizedbase$effN)
   agedbase$effN <- as.numeric(agedbase$effN)
   if(nrow(agedbase)>0){
     agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
@@ -358,8 +372,12 @@ endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginni
 nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
 seasfracs <- (0:(nseasons-1))/nseasons
 
+
 # info on growth morphs
-morph_indexing <-matchfun2("MORPH_INDEXING",1,"MOVEMENT",-1,cols=1:9)
+endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
+if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
+morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,-1,cols=1:9)
+#return(morph_indexing)
 names(morph_indexing) <- morph_indexing[1,]
 morph_indexing <- morph_indexing[-1,]
 for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
@@ -527,9 +545,9 @@ returndat$nseasons    <- nseasons
 returndat$seasfracs   <- seasfracs
 returndat$nforecastyears <- nforecastyears
 returndat$morph_indexing <- morph_indexing
-returndat$MGparmAdj   <- MGparmAdj 
+returndat$MGparmAdj   <- MGparmAdj
 returndat$SelSizeAdj  <- SelSizeAdj
-returndat$SelAgeAdj   <- SelAgeAdj 
+returndat$SelAgeAdj   <- SelAgeAdj
 
 # Static growth
 begin <- matchfun("N_Used_morphs",rawrep[,6])+1
@@ -799,7 +817,7 @@ if(comp){
  returndat$FleetNames <- FleetNames
  returndat$repfiletime <- repfiletime
  returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
- 
+
  if(covar){
    returndat$CoVar    <- CoVar
    returndat$highcor  <- highcor

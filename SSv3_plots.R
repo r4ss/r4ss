@@ -7,6 +7,7 @@ function(
     aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=T, new=T,...)
+
 {
 ################################################################################
 #
@@ -25,7 +26,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "November 12, 2009"
+  codedate <- "December 4, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -98,15 +99,42 @@ function(
   matchfun2 <- function(string1,adjust1,string2,adjust2,cols=NA,matchcol1=1,matchcol2=1,
 			objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE)
   {
-      # return a subset of values from the report file (or other file)
-      # subset is defined by character strings at the start and end, with integer
-      # adjustments of the number of lines to above/below the two strings
-      line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
-      line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
-      if(!is.na(cols[1])){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
+    # return a subset of values from the report file (or other file)
+    # subset is defined by character strings at the start and end, with integer
+    # adjustments of the number of lines to above/below the two strings
+    line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
+    line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
+    if(!is.na(cols[1])){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
 		       }else{		 out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
-      return(out)
+    return(out)
   }
+
+  # label table is a step toward internationalization of the code
+  # in the future, this could be read from a file, or we could have multiple columns
+  # in the table to choose from
+  labeltable = as.data.frame(matrix(c(
+    1,	 "Length (cm)",
+    2,	 "Age (yr)",
+    3,	 "Year",
+    4,	 "Maturity",
+    5,	 "Selectivity",
+    6,	 "Landings (mt)",
+    7,	 "Total catch (mt)",
+    8,	 "Predicted Discards (mt)",
+    9,	 "Discard fraction by weight",
+    10,	  "Retention",
+    11,	  "Index",
+    12,	  "Expected index",
+    13,	  "True age (yr)",
+    14,	  "SD of observed age (yr)",
+    15,	  "Observed sample size",
+    16,	  "Effective sample size",
+    17,	  "Proportion",
+    18,	  "cm",
+    19,	  "Frequency",
+    20,	  "Weight (lbs)"
+    ),20,2,byrow=T))
+  lab = as.character(labeltable[,2])
 
   # get quantities from the big list
   if(replist[[1]]=="ReportObject"){
@@ -256,12 +284,30 @@ function(
     if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=F)
   }
   if(pdf){
-    pdffile <- paste(inputs$dir,"/SSplots_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(inputs$dir,"/SSplots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
   par(mfcol=c(rows,cols))
 
+  if(pdf){
+    mar0 <- par()$mar # current margins
+    par(mar=rep(0,4))
+    plot(0,type='n',xlab='',ylab='',axes=F,xlim=c(0,1),ylim=c(0,1))
+    y <- 0.9
+    ystep <- -.05
+    text(0,y,"Plots created using the 'r4ss' package in R",pos=4)
+    y <- y+ystep
+    text(0,y,paste("Stock Synthesis version:",substr(SS_version,1,9)),pos=4)
+    y <- y+ystep
+    text(0,y,Run_time,pos=4)
+    y <- y+ystep
+    Files2 <- strsplit(Files_used," ")[[1]]
+    text(0,y,paste("Control file:",Files2[2]),pos=4)
+    y <- y+ystep
+    text(0,y,paste("Data file:",Files2[4]),pos=4)
+    par(mar=mar0) # replace margins
+  }
   # colors and line types
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
@@ -282,35 +328,87 @@ function(
   if(1 %in% c(plot, print) | length(cohortlines)>0)
   {
     growdat <- replist$endgrowth
-    xlab <- "Length (cm)"
+    xlab <- lab[1]
     x <- biology$Mean_Size
     ylab <- "Mean weight (kg) in last year"
     ylab2 <- "Spawning output"
-    fec_ylab <- "Eggs per kg"
-    fec_xlab <- "Female weight (kg)"
-    par1 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_inter_Fem"))=="Eg/gm_inter_Fem",3]
-    par2 <- parameters[substr(parameters[,2],1,nchar("Eg/gm_slope_wt_Fem"))=="Eg/gm_slope_wt_Fem",3]
-    if(max(par1 + par2*biology$Wt_len_F)-min(par1 + par2*biology$Wt_len_F)>0){
-      SBlabelflag <- FALSE}
+
+    # determine fecundity type
+    FecType <- 4
+    if("Eg/gm_slope_wt_Fem" %in% parameters$Label) FecType <- 1
+    if("Eggs_exp_len_Fem" %in% parameters$Label) FecType <- 2
+    if("Eggs_exp_wt_Fem" %in% parameters$Label) FecType <- 3
+
+    # define labels and x-variable
+    if(FecType==1){
+      fec_ylab <- "Eggs per kg"
+      fec_xlab <- "Female weight (kg)"
+      par1name <- "Eg/gm_inter_Fem"
+      par2name <- "Eg/gm_slope_wt_Fem"
+      FecX <- biology$Wt_len_F
+    }
+    if(FecType==2){
+      fec_ylab <- "Eggs per kg"
+      fec_xlab <- "Female length (cm)"
+      par1name <- "Eggs_scalar_Fem"
+      par2name <- "Eggs_exp_len_Fem"
+      FecX <- biology$Mean_Size
+    }
+    if(FecType==3){
+      fec_ylab <- "Eggs per kg"
+      fec_xlab <- "Female weight (kg)"
+      par1name <- "Eggs_scalar_Fem"
+      par2name <- "Eggs_exp_wt_Fem"
+      FecX <- biology$Wt_len_F
+    }
+
+    par1 <- parameters$Value[parameters$Label==par1name]
+    par2 <- parameters$Value[parameters$Label==par2name]
+    if(par2!=0) SBlabelflag <- FALSE
+
+    if(FecType==1) FecY <- par1 + par2*FecX
+    if(FecType==2) FecY <- par1*FecX^par2
+    if(FecType==3) FecY <- par1*FecX^par2
+
+    # Mid year mean length at age with 95% range of lengths (by sex if applicable)
+    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
+    growdatF$Sd_Size <- growdatF$SD_Mid
+    growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
+    growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
+    if(nsexes > 1){
+      growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+      xm <- growdatM$Age
+      growdatM$Sd_Size <- growdatM$SD_Mid
+      growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
+      growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
+    }
+
     gfunc1 <- function(){ # weight
       plot(x,biology$Wt_len_F,xlab=xlab,ylab=ylab,type="o",col="red")
       abline(h=0,col="grey")
       if(nsexes > 1){
 	lines(x,biology$Wt_len_M,col="blue",type="o")
-	legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}}
+	legend("topleft",bty="n", c("Females","Males"), lty=1, col = c("red","blue"))}
+    }
     gfunc2 <- function(){ # maturity
-      if(min(biology$Mat_len)<1){ plot(x,biology$Mat_len,xlab="Length (cm)",ylab="Maturity",type="o",col="red")
-      }else{ plot(growdat$Age, growdat$Age_Mat,xlab="Age",ylab="Maturity",type="o",col="red") }
-      abline(h=0,col="grey")}
-    gfunc4 <- function(){ # fecundity
-      ymax <- max(1.1*(par1 + par2*biology$Wt_len_F))
-      plot(biology$Wt_len_F, (par1 + par2*biology$Wt_len_F),xlab=fec_xlab,ylab=fec_ylab,ylim=c(0,ymax),col="blue",pch=19)
-      lines(biology$Wt_len_F,rep(par1,length(biology$Wt_len_F)),col="red")
-      text((max(biology$Wt_len_F)-min(biology$Wt_len_F))/2,par1-0.05*ymax,"Egg output proportional to spawning biomass")
+      if(min(biology$Mat_len)<1){ # if length based
+        plot(x,biology$Mat_len,xlab=lab[1],ylab=lab[4],type="o",col="red")
+      }else{ # else is age based
+        plot(growdatF$Age, growdatF$Age_Mat,
+             xlab=lab[2],ylab=lab[4],type="o",col="red")
       }
+      abline(h=0,col="grey")
+    }
+    gfunc4 <- function(){ # fecundity
+      ymax <- 1.1*max(FecY)
+      plot(FecX, FecY,xlab=fec_xlab,ylab=fec_ylab,ylim=c(0,ymax),col="blue",pch=19)
+      lines(FecX,rep(par1,length(FecX)),col="red")
+      text(mean(range(FecX)),par1-0.05*ymax,"Egg output proportional to spawning biomass")
+    }
     gfunc3 <- function(){ # spawning output
-      plot(x,biology$Spawn,xlab="Length (cm)",ylab=ylab2,type="o",col="red")
-      abline(h=0,col="grey")}
+      plot(x,biology$Spawn,xlab=lab[1],ylab=ylab2,type="o",col="red")
+      abline(h=0,col="grey")
+    }
     if(1 %in% plot){
       gfunc1()
       gfunc2()
@@ -330,18 +428,6 @@ function(
       gfunc3()
       dev.off()}
 
-    # Mid year mean length at age with 95% range of lengths (by sex if applicable)
-    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
-    growdatF$Sd_Size <- growdatF$SD_Mid
-    growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
-    growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
-    if(nsexes > 1){
-      growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
-      xm <- growdatM$Age
-      growdatM$Sd_Size <- growdatM$SD_Mid
-      growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
-      growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
-    }
     maxy <- max(growdatF$high)
     if(nsexes > 1){maxy <- max(maxy,growdatM$high)}
     x <- growdatF$Age
@@ -350,7 +436,7 @@ function(
     ylab <- "Length (cm, middle of the year)"
     gfunc5 <- function()
     {
-      plot(x,growdatF$Len_Mid,col="red",lwd=2,ylim=c(0,maxy),type="l",ylab=ylab,xlab="Age (yr)",main=main,cex.main=cex.main)
+      plot(x,growdatF$Len_Mid,col="red",lwd=2,ylim=c(0,maxy),type="l",ylab=ylab,xlab=lab[2],main=main,cex.main=cex.main)
       abline(h=0,col="grey")
       lines(x,growdatF$high,col="red",lwd=1,lty="dashed")
       lines(x,growdatF$low,col="red",lwd=1,lty="dashed")
@@ -377,7 +463,7 @@ function(
       ylab <- "Natural mortality"
       mfunc <- function()
       {
-	plot(growdatF$Age,M,col="red",lwd=2,ylim=c(0,ymax),type="o",ylab=ylab,xlab="Age (yr)")
+	plot(growdatF$Age,M,col="red",lwd=2,ylim=c(0,ymax),type="o",ylab=ylab,xlab=lab[2])
 	abline(h=0,col="grey")
 	if(nsexes > 1){
 	  growdatM <- growdat[growdat$Morph==mainmorphs[2],]
@@ -422,14 +508,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  if(i==2){main <- "Male time-varying growth"}
 	  if(nseasons > 1){main <- paste(main," season 1",sep="")}
 	  if(2 %in% plot){
-	    persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-	    contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+	    persp(x,y,z,col="white",xlab=lab[2],ylab="",zlab=lab[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    contour(x,y,z,nlevels=12,xlab=lab[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
 	  if(2 %in% print){
 	    png(file=paste(plotdir,"02_timevarygrowthsurf",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    persp(x,y,z,col="white",xlab="Age (yr)",ylab="",zlab="Length (cm)",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    persp(x,y,z,col="white",xlab=lab[2],ylab="",zlab=lab[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
 	    dev.off()
 	    png(file=paste(plotdir,"02_timevarygrowthcontour",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    contour(x,y,z,nlevels=12,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+	    contour(x,y,z,nlevels=12,xlab=lab[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
 	    dev.off()}
 	}
       }
@@ -469,14 +555,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  z <- t(z)
 	  main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
 	  if(3 %in% plot)
-	  { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-	    contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
+	  { persp(x,y,z,col="white",xlab=lab[1],ylab=lab[3],zlab=lab[5],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    contour(x,y,z,nlevels=5,xlab=lab[1],ylab=lab[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
 	  if(3 %in% print)
 	  { png(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Selectivity",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    persp(x,y,z,col="white",xlab=lab[1],ylab=lab[3],zlab=lab[5],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
 	    dev.off()
 	    png(file=paste(plotdir,"03_timevarylenselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+	    contour(x,y,z,nlevels=5,xlab=lab[1],ylab=lab[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
 	    dev.off()}
 	}
 	time2 <- FALSE
@@ -490,18 +576,18 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  z <- t(z)
 	  main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
 	  if(3 %in% plot)
-	  { persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-	    contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
+	  { persp(x,y,z,col="white",xlab=lab[1],ylab=lab[3],zlab=lab[10],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    contour(x,y,z,nlevels=5,xlab=lab[1],ylab=lab[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
 	  if(3 %in% print)
 	  { png(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    persp(x,y,z,col="white",xlab="Length (cm)",ylab="Year",zlab="Retention",expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	    persp(x,y,z,col="white",xlab=lab[1],ylab=lab[3],zlab=lab[10],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
 	    dev.off()
 	    png(file=paste(plotdir,"03_timevaryretcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    contour(x,y,z,nlevels=5,xlab="Length (cm)",ylab="Year",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+	    contour(x,y,z,nlevels=5,xlab=lab[1],ylab=lab[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
 	    dev.off()}
 	}
 	plotselex <- plotselex[plotselex$year==endyr & plotselex$gender==m,-(1:5)]
-	ylab <- "Selectivity"
+	ylab <- lab[5]
 	bins <- as.numeric(names(plotselex))
 	vals <- as.numeric(paste(plotselex))
 	main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
@@ -512,36 +598,36 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
 	  if(is.na(sum(retcheck))) retcheckuse <- 0
 	  if(!is.na(sum(retcheck))) retcheckuse <- max(retcheck)-min(retcheck)
-	  if(retcheckuse==0 & max(vals)-min(vals)!=0) legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")
-	  plot(bins,vals,xlab="Length bin (cm)",ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type='n')
+	  if(retcheckuse==0 & max(vals)-min(vals)!=0) legend("bottomright",inset=c(0,0.05),bty="n",lab[5],pch=21,pt.bg="white",lty=1,col="blue")
+	  plot(bins,vals,xlab=lab[1],ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type='n')
 	  abline(h=0,col="grey")
-          abline(h=1,col="grey")
-          if(1%in%selexlines) lines(bins,vals,type="o",col="blue",cex=1.1)
+	  abline(h=1,col="grey")
+	  if(1%in%selexlines) lines(bins,vals,type="o",col="blue",cex=1.1)
 	  if(retcheckuse > 0){
 	    useret <- intret[intret$Fleet==i,]
 	    usekeep <- intkeep[intkeep$Fleet==i,]
 	    usemort <- intmort[intmort$Fleet==i,]
 	    usedead <- intdead[intdead$Fleet==i,]
-            plotret <- useret[useret$year==max(as.numeric(useret$year)),]
+	    plotret <- useret[useret$year==max(as.numeric(useret$year)),]
 	    plotkeep <- usekeep[usekeep$year==max(as.numeric(usekeep$year)),]
 	    plotmort <- usemort[usemort$year==max(as.numeric(usemort$year)),]
 	    plotdead <- usedead[usedead$year==max(as.numeric(usedead$year)),]
 	    if(2%in%selexlines){
-              lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="o",pch=3,cex=.9)
-              ylab <- paste(ylab,", Retention",sep="")
-            }
+	      lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="o",pch=3,cex=.9)
+	      ylab <- paste(ylab,", Retention",sep="")
+	    }
 	    if(3%in%selexlines){
-              lines((as.numeric(as.vector(names(plotmort)[-(1:5)]))),(as.numeric(as.character(plotmort[1,-(1:5)]))),col="orange",type="o",pch=4,cex=.9)
-              ylab <- paste(ylab,", Mortality",sep="")
-            }
+	      lines((as.numeric(as.vector(names(plotmort)[-(1:5)]))),(as.numeric(as.character(plotmort[1,-(1:5)]))),col="orange",type="o",pch=4,cex=.9)
+	      ylab <- paste(ylab,", Mortality",sep="")
+	    }
 	    if(4%in%selexlines) lines((as.numeric(as.vector(names(plotkeep)[-(1:5)]))),(as.numeric(as.character(plotkeep[1,-(1:5)]))),col="purple",type="o",pch=2,cex=.9)
 	    if(5%in%selexlines) lines((as.numeric(as.vector(names(plotdead)[-(1:5)]))),(as.numeric(as.character(plotdead[1,-(1:5)]))),col="green3",type="o",pch=5,cex=.9)
 	    legend("bottomright",inset=c(0.05,0.05),bty="n",
-                   c("Selectivity","Retention","Discard mortality","Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
-                   lty=1,col=c("blue","red","orange","purple","green3")[selexlines],
-                   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
-          }
-          mtext(ylab,side=2,line=3)          
+		   c(lab[5],lab[10],"Discard mortality","Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
+		   lty=1,col=c("blue","red","orange","purple","green3")[selexlines],
+		   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
+	  }
+	  mtext(ylab,side=2,line=3)
 	}
 	if(max(vals) - min(vals) != 0) # only make plot of selectivity is not constant
 	{
@@ -556,7 +642,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     if(verbose) print("Finished length based selectivity plots (subset of plots 3 and 4)",quote=F)
 
     # Age based selex
-    ylab <- "Selectivity"
+    ylab <- lab[5]
     for(m in 1:nsexes)
     {
       if(m==1 & nsexes==1) sextitle1 <- "Time-"
@@ -582,22 +668,23 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    z <- t(z)
 	    main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
 	    if(3 %in% plot){
-	      persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-	      contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
+	      persp(x,y,z,col="white",xlab=lab[2],ylab=lab[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	      contour(x,y,z,nlevels=5,xlab=lab[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
 	    if(3 %in% print){
 	      png(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	      persp(x,y,z,col="white",xlab="Age (yr)",ylab="Year",zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+	      persp(x,y,z,col="white",xlab=lab[2],ylab=lab[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
 	      dev.off()
 	      png(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	      contour(x,y,z,nlevels=5,xlab="Age (yr)",main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+	      contour(x,y,z,nlevels=5,xlab=lab[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
 	      dev.off()}
 	    plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
 	    plotageselex2 <- plotageselex2[,-(1:7)]
 	    main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
 	    endselfunc <- function()
-	     {plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab="Age (yr)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
-	     abline(h=0,col="grey")
-	     legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
+	    {
+              plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab=lab[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
+	      abline(h=0,col="grey")
+            }
 	    if(4 %in% plot){endselfunc()}
 	    if(4 %in% print)
 	     {png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -614,9 +701,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  {
 	    main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
 	    endselfunc2 <- function(){
-	      plot((as.numeric(names(plotageselex))),vals,xlab="Age (yr)",ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
+	      plot((as.numeric(names(plotageselex))),vals,xlab=lab[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
 	      abline(h=0,col="grey")
-	      legend("bottomright",inset=c(0,0.05),bty="n","Selectivity",pch=21,pt.bg="white",lty=1,col="blue")}
+	    }
 	    if(4 %in% plot) endselfunc2()
 	    if(4 %in% print){
 	      png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -646,7 +733,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       if(totalORsummary==2) ylab <- "Summary biomass (mt)"
 
       plot(ts$Yr[plot1],yvals[plot1],
-	   xlab="Year",ylim=c(0,max(yvals[plot1])),
+	   xlab=lab[3],ylim=c(0,max(yvals[plot1])),
 	   ylab=ylab,type="o",col=areacols[1])
       points(ts$Yr[plot2],yvals[plot2],col=areacols[1],pch=19)
       if(nareas>1){
@@ -756,7 +843,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	legendloc <- 'bottomright'
       }
 
-      plot(catchyrs, ytotal, ylim=c(0,ymax), xlab="Year", ylab=ylab, type="o")
+      plot(catchyrs, ytotal, ylim=c(0,ymax), xlab=lab[3], ylab=ylab, type="o")
       abline(h=0,col="grey")
       abline(h=1,col="grey")
       for(f in 1:nfishfleets){
@@ -779,54 +866,54 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     stackfunc <- function(ymat,ylab){
       ## call to embedded, modified function
       stackpoly(x=catchyrs, y=ymat, border='black',
-		xlab="Year", ylab=ylab, col=fleetcols)
+		xlab=lab[3], ylab=ylab, col=fleetcols)
       if(showlegend) legend('topleft', fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty='n')
     } # end stackfunc
 
     if(5 %in% plot){
-      linefunc(ymat=retmat, ylab="Landings (mt)", addtotal=T)
-      if(nfishfleets>1) stackfunc(ymat=retmat, ylab="Landings (mt)")
+      linefunc(ymat=retmat, ylab=lab[6], addtotal=T)
+      if(nfishfleets>1) stackfunc(ymat=retmat, ylab=lab[6])
       # only make these plots if there are discards
       if(max(discmat)>0){
-	linefunc(ymat=totcatchmat, ylab="Total catch (mt)", addtotal=T)
-	if(nfishfleets>1) stackfunc(ymat=totcatchmat, ylab="Total catch (mt)")
-	linefunc(ymat=discmat,ylab="Predicted Discards (mt)", addtotal=T)
-	if(nfishfleets>1) stackfunc(ymat=discmat,ylab="Predicted Discards (mt)")
-	linefunc(ymat=discfracmat,ylab="Discard fraction by weight", addtotal=F)
+	linefunc(ymat=totcatchmat, ylab=lab[7], addtotal=T)
+	if(nfishfleets>1) stackfunc(ymat=totcatchmat, ylab=lab[7])
+	linefunc(ymat=discmat,ylab=lab[8], addtotal=T)
+	if(nfishfleets>1) stackfunc(ymat=discmat,ylab=lab[8])
+	linefunc(ymat=discfracmat,ylab=lab[9], addtotal=F)
       }
       linefunc(ymat=Hratemat, ylab=ylabF, addtotal=F)
     }
 
     if(5 %in% print){
       png(file=paste(plotdir,"05_landings.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-      linefunc(ymat=retmat, ylab="Landings (mt)", addtotal=T)
+      linefunc(ymat=retmat, ylab=lab[6], addtotal=T)
       dev.off()
       png(file=paste(plotdir,"05_harvestrates.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
       linefunc(ymat=Hratemat, ylab=ylabF, addtotal=F)
       dev.off()
       if(nfishfleets>1){
 	png(file=paste(plotdir,"05_landings_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	stackfunc(ymat=retmat, ylab="Landings (mt)")
+	stackfunc(ymat=retmat, ylab=lab[6])
 	dev.off()
       }
       # only make the remaining plots if there are discards
       if(max(discmat)>0)
       {
 	png(file=paste(plotdir,"05_totcatch.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	linefunc(ymat=totcatchmat, ylab="Total catch (mt)", addtotal=T)
+	linefunc(ymat=totcatchmat, ylab=lab[7], addtotal=T)
 	dev.off()
 	png(file=paste(plotdir,"05_discards.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	linefunc(ymat=discmat,ylab="Predicted Discards (mt)", addtotal=T)
+	linefunc(ymat=discmat,ylab=lab[8], addtotal=T)
 	dev.off()
 	png(file=paste(plotdir,"05_discardfraction.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	linefunc(ymat=discfracmat,ylab="Discard fraction by weight", addtotal=F)
+	linefunc(ymat=discfracmat,ylab=lab[9], addtotal=F)
 	dev.off()
 	if(nfishfleets>1){
 	  png(file=paste(plotdir,"05_totcatch_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  stackfunc(ymat=totcatchmat, ylab="Total catch (mt)")
+	  stackfunc(ymat=totcatchmat, ylab=lab[7])
 	  dev.off()
 	  png(file=paste(plotdir,"05_discards_stacked.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  stackfunc(ymat=discmat,ylab="Predicted Discards (mt)")
+	  stackfunc(ymat=discmat,ylab=lab[8])
 	  dev.off()
 	}
       }
@@ -846,14 +933,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     ylab <- "Age-0 recruits (1,000s)"
     recfunc <- function(){
       if(nareas == 1){
-       plot(x[3:length(x)],y[3:length(y)],xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
+       plot(x[3:length(x)],y[3:length(y)],xlab=lab[3],ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
        points(x[1],y[1],col="blue",pch=19)
        points(x[2],y[2],col="blue")
       }
       if(nareas > 1){
        arealen <- (length(y)/nareas)
        ytemp <- y[3:arealen]
-       plot(x[3:length(x)],ytemp,xlab="Year",ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
+       plot(x[3:length(x)],ytemp,xlab=lab[3],ylab=ylab,xlim=c(x[1]-1,x[length(x)]+1),ylim=c(0,max(y)),type="o",col="blue")
        points(x[1],y[1],col="blue",pch=19)
        points(x[2],y[2],col="blue")
        for(a in 2:nareas)
@@ -879,7 +966,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       termyr <- min(timeseries$Yr[timeseries$Era=="FORE"])
       tsfore <- timeseries$Era=="FORE"
       recfunc2 <- function(){
-	plot(x[x<=termyr+1],y[x<=termyr+1],xlab="Year",ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
+	plot(x[x<=termyr+1],y[x<=termyr+1],xlab=lab[3],ylab=ylab,xlim=range(timeseries$Yr),ylim=c(0,max(y)),type="o",col="blue")
 	abline(h=0,col="grey")
 	lines(x[x>termyr],y[x>termyr],lwd=1,col="red",lty="dashed")
 	points(x[x>termyr],y[x>termyr],col="red",pch=19)}
@@ -893,38 +980,36 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     # recruitment with asymptotic interval
     if(uncertainty){
       if(!"Recr_Virgin" %in% derived_quants$LABEL){
-	print("Error! 'Recr_Virgin' not in derived quantites.",quote=F)
-	print("	       Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=F)
-	print("	       Or set uncertainty=F in this function.",quote=F)
-	return()
-      }
-      recstd <- matchfun2("Recr_Virgin",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
-      recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
-      recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
-      recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
-      recstd$Yr <- as.numeric(recstd$Yr)
-      v <- recstd$Value
-      recstd$val1 <- log(v)
-      recstd$logint <- sqrt(log(1+(recstd$StdDev/v)^2))
-      recstd$lower <- exp(recstd$val1 - 1.96*recstd$logint)
-      recstd$upper <- exp(recstd$val1 + 1.96*recstd$logint)
-      plottitle <- "~95% Asymptotic confidence interval"
-      uiw <- recstd$upper - v
-      liw <- v - recstd$lower
-      recfunc3 <- function(maxyr){
+	print("Skipping recruitment with uncertainty plot because 'Recr_Virgin' not in derived quantites.",quote=F)
+	print("  Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=F)
+      }else{
+	recstd <- matchfun2("Recr_Virgin",0,"SPRratio",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+	recstd$Yr <- substring(recstd$LABEL,6,nchar(recstd$LABEL[1])-1)
+	recstd$Yr[2] <- as.numeric(recstd$Yr[3])-1
+	recstd$Yr[1] <- as.numeric(recstd$Yr[2])-1
+	recstd$Yr <- as.numeric(recstd$Yr)
+	v <- recstd$Value
+	recstd$val1 <- log(v)
+	recstd$logint <- sqrt(log(1+(recstd$StdDev/v)^2))
+	recstd$lower <- exp(recstd$val1 - 1.96*recstd$logint)
+	recstd$upper <- exp(recstd$val1 + 1.96*recstd$logint)
+	plottitle <- "~95% Asymptotic confidence interval"
+	uiw <- recstd$upper - v
+	liw <- v - recstd$lower
+	recfunc3 <- function(maxyr){
 	plotCI(x=recstd$Yr[recstd$Yr<=(endyr+1)],y=v[recstd$Yr<=(endyr+1)],sfrac=0.001,z=2,
-	  uiw=uiw[recstd$Yr<=maxyr],liw=liw[recstd$Yr<=maxyr],xlab="Year",ylo=0,
+	  uiw=uiw[recstd$Yr<=maxyr],liw=liw[recstd$Yr<=maxyr],xlab=lab[3],ylo=0,
 	  col="black",ylab=ylab,lty=1,main=plottitle)
 	abline(h=0,col="grey")}
-      if(6 %in% plot) recfunc3(maxyr=endyr+1)
-      if(6 %in% print){
+	if(6 %in% plot) recfunc3(maxyr=endyr+1)
+	if(6 %in% print){
 	png(file=paste(plotdir,"06_recswintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 	recfunc3(maxyr=endyr+1)
 	dev.off()}
 
-      if(forecastplot){
-      recfunc4 <- function(maxyr){
-	plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab="Year",ylo=0,
+	if(forecastplot){
+	recfunc4 <- function(maxyr){
+	plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,
 	  col="black",ylab=ylab,lty=1,main=plottitle)
 	points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=19)
 	abline(h=0,col="grey")}
@@ -933,7 +1018,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  png(file=paste(plotdir,"06_recswforecastintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 	  recfunc4(maxyr)
 	  dev.off()}
-      }
+	}
+      } # end if no Recr_Virgin
     } # end if uncertainty
     if(verbose) print("Finished plot 6: Recruitment",quote=F)
   } # end if 6 in plot or print
@@ -951,7 +1037,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       ylab <- "Spawning biomass (mt)"
       if(!SBlabelflag==TRUE){ylab <- "Spawning output (eggs)"}
       if(forecastplot) xlim=range(tsplotyr) else xlim=range(tsplotyr[noforecast])
-      plot(0,xlab="Year", ylab=ylab,xlim=xlim, ylim=c(0,max(tsplotSB)), type="n")
+      plot(0,xlab=lab[3], ylab=ylab,xlim=xlim, ylim=c(0,max(tsplotSB)), type="n")
       for(iarea in 1:nareas){
 	tsplotyrarea <- tsplotyr[tsplotarea==iarea & noforecast]
 	tsplotSBarea <- tsplotSB[tsplotarea==iarea & noforecast]
@@ -983,72 +1069,77 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     }
 
     if(uncertainty){
-      xlab="Year"
-      ylab <- "Spawning biomass (mt)"
-      if(!SBlabelflag==TRUE){ylab <- "Spawning output (eggs)"}
-      bioscale <- 1 #scaling factor for single sex models
-      if(nsexes==1) bioscale <- 0.5 # should allow flexible input
-      # with interval
-      sbstd <- matchfun2("SPB_Virgin",0,"Recr_Virgin",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
-      sbstd$Yr <- substring(sbstd$LABEL,5,nchar(sbstd$LABEL[1])-1)
-      sbstd$Yr[2] <- as.numeric(sbstd$Yr[3])-1
-      sbstd$Yr[1] <- as.numeric(sbstd$Yr[2])-1
-      sbstd$Yr <- as.numeric(sbstd$Yr)
-      v <- sbstd$Value*bioscale
-      sbstd$upper <- v + 1.96*sbstd$StdDev*bioscale
-      sbstd$lower <- v - 1.96*sbstd$StdDev*bioscale
-      sbstd$lower[sbstd$lower < 0] <- 0
-      ymax <- max(as.numeric(sbstd$upper))
-      plottitle <- "~95% Asymptotic confidence interval"
-     sbfunc3 <- function(){
-	plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+1)]
-	plotsbstv <- v[sbstd$Yr<=(endyr+1)]
-	plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+1)]
-	plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+1)]
-	plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr),main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
-	abline(h=0,col="grey")
-	lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
-	lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
-	points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
-	points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
-	points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
+      if(!"SPB_Virgin" %in% derived_quants$LABEL){
+	print("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.",quote=F)
+	print("  Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=F)
+      }else{
+	xlab=lab[3]
+	ylab <- "Spawning biomass (mt)"
+	if(!SBlabelflag==TRUE){ylab <- "Spawning output (eggs)"}
+	bioscale <- 1 #scaling factor for single sex models
+	if(nsexes==1) bioscale <- 0.5 # should allow flexible input
+	# with interval
+	sbstd <- matchfun2("SPB_Virgin",0,"Recr_Virgin",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+	sbstd$Yr <- substring(sbstd$LABEL,5,nchar(sbstd$LABEL[1])-1)
+	sbstd$Yr[2] <- as.numeric(sbstd$Yr[3])-1
+	sbstd$Yr[1] <- as.numeric(sbstd$Yr[2])-1
+	sbstd$Yr <- as.numeric(sbstd$Yr)
+	v <- sbstd$Value*bioscale
+	sbstd$upper <- v + 1.96*sbstd$StdDev*bioscale
+	sbstd$lower <- v - 1.96*sbstd$StdDev*bioscale
+	sbstd$lower[sbstd$lower < 0] <- 0
+	ymax <- max(as.numeric(sbstd$upper))
+	plottitle <- "~95% Asymptotic confidence interval"
+	sbfunc3 <- function(){
+	  plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+1)]
+	  plotsbstv <- v[sbstd$Yr<=(endyr+1)]
+	  plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+1)]
+	  plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+1)]
+	  plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr),main= plottitle,xlab=lab[3],ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+	  abline(h=0,col="grey")
+	  lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
+	  lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
+	  points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
+	  points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
+	  points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
 	}
-      if(7 %in% plot) sbfunc3()
-      if(7 %in% print){
-	png(file=paste(plotdir,"07_spawnbiointerval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	sbfunc3()
-	dev.off()}
+	if(7 %in% plot) sbfunc3()
+	if(7 %in% print){
+	  png(file=paste(plotdir,"07_spawnbiointerval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	  sbfunc3()
+	  dev.off()
+	}
 
-      if(forecastplot){
-	if(max(sbstd$Yr>=(endyr+2))){
-	  sbfunc4  <- function(){
-	   plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+2)]
-	   plotsbstv <- v[sbstd$Yr<=(endyr+2)]
-	   plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+2)]
-	   plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+2)]
-	   plotsbstdyr2 <- sbstd$Yr[sbstd$Yr>=(endyr+2)]
-	   plotsbstv2 <- v[sbstd$Yr>=(endyr+2)]
-	   plotsbstdup2 <- sbstd$upper[sbstd$Yr>=(endyr+2)]
-	   plotsbstdlo2 <- sbstd$lower[sbstd$Yr>=(endyr+2)]
-	   plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr,plotsbstdyr2),main= plottitle,xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
-	   abline(h=0,col="grey")
-	   lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
-	   lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
-	   points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
-	   points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
-	   points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
-	   points(plotsbstdyr2,plotsbstv2,col="blue",pch=19)
-	   points(plotsbstdyr2,plotsbstdup2,col="blue",pch="-")
-	   points(plotsbstdyr2,plotsbstdlo2,col="blue",pch="-")
+	if(forecastplot){
+	  if(max(sbstd$Yr>=(endyr+2))){
+	    sbfunc4  <- function(){
+	      plotsbstdyr <- sbstd$Yr[sbstd$Yr<=(endyr+2)]
+	      plotsbstv <- v[sbstd$Yr<=(endyr+2)]
+	      plotsbstdup <- sbstd$upper[sbstd$Yr<=(endyr+2)]
+	      plotsbstdlo <- sbstd$lower[sbstd$Yr<=(endyr+2)]
+	      plotsbstdyr2 <- sbstd$Yr[sbstd$Yr>=(endyr+2)]
+	      plotsbstv2 <- v[sbstd$Yr>=(endyr+2)]
+	      plotsbstdup2 <- sbstd$upper[sbstd$Yr>=(endyr+2)]
+	      plotsbstdlo2 <- sbstd$lower[sbstd$Yr>=(endyr+2)]
+	      plot(plotsbstdyr[-1],plotsbstv[-1],xlim=range(plotsbstdyr,plotsbstdyr2),main= plottitle,xlab=lab[3],ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+	      abline(h=0,col="grey")
+	      lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdup[2:length(plotsbstdup)],lwd=1,col="blue",lty="dashed")
+	      lines(plotsbstdyr[2:length(plotsbstdyr)],plotsbstdlo[2:length(plotsbstdlo)],lwd=1,col="blue",lty="dashed")
+	      points(plotsbstdyr[1],plotsbstv[1],col="blue",pch=19)
+	      points(plotsbstdyr[1],plotsbstdup[1],col="blue",pch="-")
+	      points(plotsbstdyr[1],plotsbstdlo[1],col="blue",pch="-")
+	      points(plotsbstdyr2,plotsbstv2,col="blue",pch=19)
+	      points(plotsbstdyr2,plotsbstdup2,col="blue",pch="-")
+	      points(plotsbstdyr2,plotsbstdlo2,col="blue",pch="-")
 	    }
-	  if(7 %in% plot) sbfunc4()
-	  if(7 %in% print){
-	    png(file=paste(plotdir,"07_spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    sbfunc4()
-	    dev.off()}
+	    if(7 %in% plot) sbfunc4()
+	    if(7 %in% print){
+	      png(file=paste(plotdir,"07_spawnbioforecastinterval.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	      sbfunc4()
+	      dev.off()}
+	  } # if year range
 	} # forecastplot
-      } # sexes==1
-
+      } # end if missing "SPB_virgin"
     } # if uncertainty==T
     if(verbose) print("Finished plot 7: Spawning biomass",quote=F)
   } # end if 7 in plot or print
@@ -1059,25 +1150,33 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     if(nseasons > 1) print("Skipped Plot 8 (depletion) because it is not yet configured for multi-season models",quote=F)
     if(nseasons==1){ ## Temporary filter until calculations can be cleaned up
      ylab <- "Spawning depletion"
+     addtarg <- function(){
+       if(btarg>0){
+	 abline(h=btarg,col="red")
+	 text(startyr+4,btarg+0.03,"Management target",adj=0)
+       }
+       if(minbthresh>0){
+	 abline(h=minbthresh,col="red")
+	 text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+       }
+     }
      depfunc <- function(iarea){
       plottitle <- NULL
       if(nareas>1) plottitle <- paste("Spawning depletion in",areanames[iarea])
       tsplotyr <- tsyears[tsarea==iarea]
       tsplotdep <- dep[tsarea==iarea]
-      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
+      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab=lab[3],ylab=ylab,ylim=c(0,(max(dep))),type="o",col="blue",main=plottitle)
       points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
       abline(h=0,col="grey")
-      abline(h=c(btarg,minbthresh),col="red")
-      text(startyr+4,btarg+0.03,"Management target",adj=0)
-      text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
-      }
+      addtarg()
+     }
      for(iarea in areas){
       if(8 %in% plot) depfunc(iarea)
       if(8 %in% print){
        png(file=paste(plotdir,"08_depletion.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
        depfunc(iarea)
        dev.off()}
-      }
+     }
      if(uncertainty){
       depstd <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
       depstd$Yr <- as.numeric(substring(depstd$LABEL,8))
@@ -1087,11 +1186,9 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       depstd$lower <- depstd$Value - 1.96*depstd$StdDev
       ymax <- max(dep,depstd$upper[depstd$period=="time"])
       depfunc2 <- function(){
-	plot(depstd$Yr[depstd$period=="time"],depstd$Value[depstd$period=="time"],xlab="Year",ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
+	plot(depstd$Yr[depstd$period=="time"],depstd$Value[depstd$period=="time"],xlab=lab[3],ylab=ylab,ylim=c(0,ymax),type="o",col="blue")
 	abline(h=0,col="grey")
-	abline(h=c(btarg,minbthresh),col="red")
-	text((min(depstd$Yr)+4),(btarg+0.03),"Management target",adj=0)
-	text((min(depstd$Yr)+4),(minbthresh+0.03),"Minimum stock size threshold",adj=0)
+	addtarg()
 	lines(depstd$Yr[depstd$period=="time"],depstd$upper[depstd$period=="time"],col="blue",lty="dashed")
 	lines(depstd$Yr[depstd$period=="time"],depstd$lower[depstd$period=="time"],col="blue",lty="dashed")
        }
@@ -1117,13 +1214,11 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       tsplotyr <- tsyears[tsarea==iarea]
       tsplotdep <- dep[tsarea==iarea]
       if(nareas>1) plottitle <- paste("Spawning depletion in",areanames[iarea])
-      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
+      plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab=lab[3],
 	      ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
       points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
       abline(h=0,col="grey")
-      abline(h=c(btarg,minbthresh),col="red")
-      text(startyr+4,btarg+0.03,"Management target",adj=0)
-      text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+      addtarg()
       ftsplotyr <- ftsyears[ftsarea==iarea]
       ftsplotdep <- fdep[ftsarea==iarea]
       lines(ftsplotyr[1:2],ftsplotdep[1:2],lwd=1,col="blue",lty="dashed")
@@ -1155,13 +1250,11 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
        tsplotyr <- tsyears[tsarea==iarea]
        tsplotdep <- dep[tsarea==iarea]
        if(nareas>1) plottitle <- paste("Spawning depletion in ",areanames[iarea])
-       plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab="Year",
+       plot(tsplotyr[2:length(tsplotyr)],tsplotdep[2:length(tsplotdep)],xlab=lab[3],
 	    ylab=ylab,xlim=c(xmin,xmax),ylim=c(0,ymax),type="o",col="blue",main=plottitle)
        points(tsplotyr[1],tsplotdep[1],col="blue",pch=19)
        abline(h=0,col="grey")
-       abline(h=c(btarg,minbthresh),col="red")
-       text(startyr+4,btarg+0.03,"Management target",adj=0)
-       text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+       addtarg()
        ftsplotyr <- ftsyears[ftsarea==iarea]
        ftsplotdep <- fdep[ftsarea==iarea]
        lines(ftsplotyr[1:2],ftsplotdep[1:2],lwd=1,col="blue",lty="dashed")
@@ -1204,7 +1297,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  recdev$Yr <- as.numeric(substring(recdev$Label,14))
 	  if(nrow(recdevEarly)>0){
 	    recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,13))
-          }
+	  }
 	  if(nrow(early_initage)>0){
 	    early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
 	    recdevEarly <- rbind(recdevEarly,early_initage)
@@ -1225,7 +1318,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value)
 	  ylab <- "Log Recruitment deviation"
 	  recdevfunc <- function(){
-	    plot(recdev$Yr,recdev$Value,xlab="Year",main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
+	    plot(recdev$Yr,recdev$Value,xlab=lab[3],main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
 	    # should probably change color between early/main not before/after startyr as now
 	    if(nrow(recdevEarly)>0)
 	      lines(recdevEarly$Yr,recdevEarly$Value,type='b',col='blue')
@@ -1243,7 +1336,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    recdevfunc2 <- function(){
 	      # std. dev. of recdevs
 	      par(mar=par("mar")[c(1:3,2)])
-	      plot(recdev$Yr,recdev$Parm_StDev,xlab="Year",
+	      plot(recdev$Yr,recdev$Parm_StDev,xlab=lab[3],
 		   main="Recruitment deviation variance check",cex.main=cex.main,
 		   ylab="Asymptotic standard error estimate",xlim=xlim,ylim=c(0,ymax),type="b")
 	      if(nrow(recdevEarly)>0)
@@ -1263,7 +1356,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    recdevfunc3 <- function(){
 	      # std. dev. of recdevs
 	      par(mar=par("mar")[c(1:3,2)])
-	      plot(recdev$Yr,1-(recdev$Parm_StDev/sigma_R_in)^2,xlab="Year",
+	      plot(recdev$Yr,1-(recdev$Parm_StDev/sigma_R_in)^2,xlab=lab[3],
 		   main="Bias adjustment check",cex.main=cex.main,
 		   ylab="Bias adjustment fraction, 1 - stddev^2 / sigmaR^2",xlim=xlim,ylim=c(0,1.05),type="b")
 	      if(nrow(recdevEarly)>0)
@@ -1318,7 +1411,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  ylab <- "Discard fraction"
 	}
 	dfracfunc <- function(){
-	  plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab="Year",main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
+	  plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=lab[3],main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim)
 	  abline(h=0,col="grey")
 	  points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
 	}
@@ -1354,7 +1447,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  ptitle <- paste("Mean weight in",titlepart,"for fleet",fleetname,sep=" ")
 	  ylab <- "Mean individual body weight (kg)"
 	  bdywtfunc <- function(){
-	    plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab="Year",main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
+	    plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=lab[3],main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
 	    abline(h=0,col="grey")
 	    points(yr,ex,col="blue",cex=2,pch="-")}
 	  if(10 %in% plot) bdywtfunc()
@@ -1372,8 +1465,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   ### Plot 11: SPR and fishing intensity plots ###
   if(11 %in% c(plot, print)){
     sprfunc <- function(){
-      plot(sprseries$Year,sprseries$spr,xlab="Year",ylab="SPR",ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="o",col="blue")
-      abline(h=sprtarg,col="red",lty=2)
+      plot(sprseries$Year,sprseries$spr,xlab=lab[3],ylab="SPR",ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="o",col="blue")
+      if(sprtarg>0) abline(h=sprtarg,col="red",lty=2)
       abline(h=0,col="grey")
       abline(h=1,col="grey")}
     if(11 %in% plot) sprfunc()
@@ -1385,8 +1478,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     if(nseasons>1) print("Skipped 1-SPR series plot because it's not yet configured for multi-season models",quote=F)
     if(nseasons==1){ # temporary disable until code cleanup
       sprfunc <- function(){
-	plot(sprseries$Year,(1-sprseries$spr),xlab="Year",ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
-	abline(h=(1-sprtarg),col="red",lty=2)
+	plot(sprseries$Year,(1-sprseries$spr),xlab=lab[3],ylab="1-SPR",ylim=c(0,1),type="o",col="blue")
+	if(sprtarg>0) abline(h=(1-sprtarg),col="red",lty=2)
 	abline(h=0,col="grey")
 	abline(h=1,col="grey")}
       if(11 %in% plot) sprfunc()
@@ -1395,7 +1488,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	sprfunc()
 	dev.off()}
 
-      if(uncertainty){
+      if(uncertainty & sprtarg>0){
 	sprratiostd <- derived_quants[substring(derived_quants$LABEL,1,8)=="SPRratio",]
 	sprratiostd$Yr <- as.numeric(substring(sprratiostd$LABEL,10))
 	sprratiostd$period <- "fore"
@@ -1405,7 +1498,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	ylab <- managementratiolabels[1,2]
 	ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))
 	sprfunc2 <- function(){
-	  plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],xlab="Year",ylim=ylim,ylab=ylab,type="o",col="blue")
+	  plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],xlab=lab[3],ylim=ylim,ylab=ylab,type="o",col="blue")
 	  abline(h=0,col="grey")
 	  abline(h=1,col="red")
 	  text((min(sprratiostd$Yr)+4),(1+0.02),"Management target",adj=0)
@@ -1418,59 +1511,61 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  sprfunc2()
 	  dev.off()}
       }
-
-      timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
-      ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
-      tsyears <- ts$Yr[ts$Seas==1]
-      tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
-      if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
-      depletionseries <- tsspaw_bio/tsspaw_bio[1]
-      reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
-      relspr <- (1-sprseries$spr)/(1-sprtarg)
-      xmax <- 1.1*max(reldep)
-      ymax <- 1.1*max(1,relspr[!is.na(relspr)])
-      phasefunc <- function(){
-	plot(reldep,relspr,xlab="B/Btarget",xlim=c(0,xmax),ylim=c(0,ymax),ylab="(1-SPR)/(1-SPRTarget)",type="o",col="blue")
-	abline(h=0,col="grey")
-	abline(v=0,col="grey")
-	lines(reldep,relspr,type="o",col="blue")
-	points(reldep[length(reldep)],relspr[length(relspr)],col="red",pch=19)
-	abline(h=1,col="red",lty=2)
-	abline(v=1,col="red",lty=2)}
-      if(11 %in% plot) phasefunc()
-      if(11 %in% print){
-	png(file=paste(plotdir,"11_sprphase",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	phasefunc()
-	dev.off()}
-      if(verbose) print("Finished plot 11: SPR",quote=F)
+      if(btarg<=0 | sprtarg<=0){
+	print("skipped SPR phase plot (in group 11) because btarg or sprtarg <= 0",quote=F)
+      }else{
+	timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
+	ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
+	tsyears <- ts$Yr[ts$Seas==1]
+	tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
+	if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
+	depletionseries <- tsspaw_bio/tsspaw_bio[1]
+	reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
+	relspr <- (1-sprseries$spr)/(1-sprtarg)
+	xmax <- 1.1*max(reldep)
+	ymax <- 1.1*max(1,relspr[!is.na(relspr)])
+	phasefunc <- function(){
+	  plot(reldep,relspr,xlab="B/Btarget",xlim=c(0,xmax),ylim=c(0,ymax),ylab="(1-SPR)/(1-SPRTarget)",type="o",col="blue")
+	  abline(h=0,col="grey")
+	  abline(v=0,col="grey")
+	  lines(reldep,relspr,type="o",col="blue")
+	  points(reldep[length(reldep)],relspr[length(relspr)],col="red",pch=19)
+	  abline(h=1,col="red",lty=2)
+	  abline(v=1,col="red",lty=2)}
+	if(11 %in% plot) phasefunc()
+	if(11 %in% print){
+	  png(file=paste(plotdir,"11_sprphase",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	  phasefunc()
+	  dev.off()}
+	if(verbose) print("Finished plot 11: SPR",quote=F)
+      }
       flush.console()
     } # end temporary multi-season disable of section
   } # end if 11 in plot or print
 
   ### Plot 12: spawner-recruit curve ###
-  if(12 %in% c(plot, print))
-    {
-      recruit <- recruit[recruit$era %in% c("Main","Fixed"),]
-      ymax <- max(recruit$pred_recr)
-      x <- recruit$spawn_bio
-      xmax <- max(x)
-      xlab <- "Spawning biomass (mt)"
-      ylab <- "Recruitment (1,000s)"
-      recruitfun <- function(){
-	plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
-	abline(h=0,col="grey")
-#	lines(x[order(x)],recruit$adjusted[order(x)],col="green")
-	lines(x,recruit$adjusted,col="green")
-	lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
-	points(x,recruit$pred_recr,col="red")}
-      if(12 %in% plot) recruitfun()
-      if(12 %in% print){
-	png(file=paste(plotdir,"12_srcurve.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	recruitfun()
-	dev.off()}
-      if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=F)
-      flush.console()
-    } # end if 12 in plot or print
+  if(12 %in% c(plot, print)){
+    recruit <- recruit[recruit$era %in% c("Main","Fixed","Late"),]
+    ymax <- max(recruit$pred_recr)
+    x <- recruit$spawn_bio
+    xmax <- max(x)
+    xlab <- "Spawning biomass (mt)"
+    ylab <- "Recruitment (1,000s)"
+    recruitfun <- function(){
+      plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
+      abline(h=0,col="grey")
+      # lines(x[order(x)],recruit$adjusted[order(x)],col="green")
+      lines(x,recruit$adjusted,col="green")
+      lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")
+      points(x,recruit$pred_recr,col="red")}
+    if(12 %in% plot) recruitfun()
+    if(12 %in% print){
+      png(file=paste(plotdir,"12_srcurve.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+      recruitfun()
+      dev.off()}
+    if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=F)
+    flush.console()
+  } # end if 12 in plot or print
 
 
   ### Plot 13: CPUE plots ###
@@ -1486,10 +1581,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	main=paste("Index ", i,sep="")
 	xlab <- "Observed index"
 	if(13 %in% plot){
-	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,col="red",ylab=lab[11],main=main,cex.main=cex.main,lty=1)
 	  abline(h=0,col="grey")
 	  lines(x,z,lwd=2,col="blue")
-	  plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
+	  plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab=lab[12])
 	  abline(h=0,col="grey")
 	  lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
 	  npoints <- length(z)
@@ -1498,12 +1593,12 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}}
 	if(13 %in% print){
 	  png(file=paste(plotdir,"13_cpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,col="red",ylab=lab[11],main=main,cex.main=cex.main,lty=1)
 	  abline(h=0,col="grey")
 	  lines(x,z,lwd=2,col="blue")
 	  dev.off()
 	  png(file=paste(plotdir,"13cpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab="Expected index")
+	  plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab=lab[12])
 	  abline(h=0,col="grey")
 	  lines(x=c(0,max(z)),y=c(0,max(z)),col="black")
 	  npoints <- length(z)
@@ -1518,7 +1613,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
 	liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
 	if(13 %in% plot){
-	  plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
 	  lines(x,log(z),lwd=2,col="blue")
 	  plot(log(y),log(z),xlab=xlab,main=main,cex.main=cex.main,ylim=c(log(min(z)),log(max(z))),xlim=c(log(min(y)),log(max(y))),col="blue",pch=19,ylab=ylab2)
 	  lines(x=c(log(min(z)),log(max(z))),y=c(log(min(z)),log(max(z))),col="black")
@@ -1528,7 +1623,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	}
 	if(13 %in% print){
 	  png(file=paste(plotdir,"13_logcpuefit",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],col="red",ylab=ylab,main=main,cex.main=cex.main,lty=1)
 	  lines(x,log(z),lwd=2,col="blue")
 	  dev.off()
 	  png(file=paste(plotdir,"13_logcpuecheck",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -1619,13 +1714,13 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  tempfun <- function(){
 	    # bubble plot with line
 	    bubble3(x=resx, y=resy, z=resz,
-		    xlab="Year",ylab="Age (yr)",col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
+		    xlab=lab[3],ylab=lab[2],col=c("black","black"),main=plottitle,maxsize=(pntscalar+1.0),
 		    las=1,cex.main=cex.main,allopen=1)
 	    lines(natageyrs,meanage,col="red",lwd=3)
 	  }
 	  tempfun2 <- function(){
 	    # mean length for males and femails
-	    plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab="Year",ylim=ylim,type="o",ylab=ylab,main=plottitle1,cex.main=cex.main)
+	    plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab=lab[3],ylim=ylim,type="o",ylab=ylab,main=plottitle1,cex.main=cex.main)
 	    points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
 	    legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
 	  }
@@ -1659,7 +1754,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
 	  if(diff(range(natageratio))!=0){
 	    tempfun <- function(...){
-	      contour(natageyrs,0:accuage,natageratio,xaxs="i",yaxs="i",xlab="Year",ylab="Age",
+	      contour(natageyrs,0:accuage,natageratio,xaxs="i",yaxs="i",xlab=lab[3],ylab=lab[2],
 		      main=plottitle2,cex.main=cex.main,...)
 	    }
 	    if(14 %in% plot){
@@ -1688,7 +1783,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
 	if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
 	tempfun <- function(){
-	  plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab="True age (yr)",ylab="SD of observed age (yr)")
+	  plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab=lab[13],ylab=lab[14])
 	  if(n_age_error_keys > 1){
 	    for(i in 2:n_age_error_keys){
 	      lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
@@ -1929,13 +2024,13 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 			      datonly=F, Natageplot=T, samplesizeplots=T, compresidplots=T, bub=F, showsampsize=T, showeffN=T,
 			      minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
 			      linepos=1, fitbar=F,maxsize=3,do.sqrt=TRUE,smooth=TRUE,cohortlines=c(),
-			      agelab="Age (years)", lenlab="Length (cm)",proplab="Proportion",yearlab="Year", lenunits="cm",
-			      osslab="Observed sample size",esslab="Effective sample size",printmkt=T,printsex=T,
+			      agelab=lab[2], lenlab=lab[1],proplab=lab[17],yearlab=lab[3], lenunits=lab[18],
+			      osslab=lab[15],esslab=lab[16],printmkt=T,printsex=T,
 			      maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,fixdims=T,maxneff=5000,returntitles=T,verbose=T,...)
     {
       ################################################################################
       #
-      # SSv3_plot_comps BETA March 23, 2009
+      # SSv3_plot_comps BETA December 4, 2009
       # This function comes with no warranty or guarantee of accuracy
       #
       # Purpose: test subset of SSv3_plots to show compositional data with or without fits
@@ -1964,7 +2059,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       # a few quantities related to data type and plot number
       if(kind=="LEN"){
 	dbase_kind <- lendbase
-	kindlab=lenlab
+	kindlab=lab[1]
 	if(datonly){
 	  filenamestart <- "15_lendat_"
 	  titledata <- "length comp data, "
@@ -1973,9 +2068,20 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  titledata <- "length comps, "
 	}
       }
+      if(kind=="SIZE"){
+	dbase_kind <- sizedbase
+	kindlab=lab[20]
+	if(datonly){
+	  filenamestart <- "15_sizedat_"
+	  titledata <- "size comp data, "
+	}else{
+	  filenamestart <- "18_sizefit_"
+	  titledata <- "size comps, "
+	}
+      }
       if(kind=="AGE"){
 	dbase_kind <- agedbase
-	kindlab=agelab
+	kindlab=lab[2]
 	if(datonly){
 	  filenamestart <- "16_agedat_"
 	  titledata <- "age comp data, "
@@ -1986,7 +2092,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       }
       if(kind=="cond"){
 	dbase_kind <- condbase
-	kindlab=agelab
+	kindlab=lab[2]
 	if(datonly){
 	  filenamestart <- "17_condAALdat_"
 	  titledata <- "conditional age at length data, "
@@ -1998,7 +2104,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
       if(kind=="GSTAGE"){
 	dbase_kind <- ghostagedbase
-	kindlab=agelab
+	kindlab=lab[2]
 	if(datonly){
 	  filenamestart <- "16_gstagedat_"
 	  titledata <- "gst age comp data, "
@@ -2007,309 +2113,309 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  titledata <- "gst age comps, "
 	}
       }
-      if(!(kind%in%c("LEN","AGE","cond","GSTAGE"))) return("Input 'kind' to SSv3_plot_comps should be 'LEN' or 'AGE'.")
+      if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE"))) return("Input 'kind' to SSv3_plot_comps should be 'LEN' or 'AGE'.")
       # loop over fleets
       for(f in fleets)
+      {
+	# check for the presence of data
+	if(length(dbase_kind$Obs[dbase_kind$Fleet==f])>0)
 	{
-	  # check for the presence of data
-	  if(length(dbase_kind$Obs[dbase_kind$Fleet==f])>0)
-	    {
-	      dbasef <- dbase_kind[dbase_kind$Fleet==f,]
-	      testor	<- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-	      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-	      testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+	  dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+	  testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
+	  testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+	  testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
 
-	      # loop over genders combinations
-	      for(k in (1:3)[testor])
-		{
-		  if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-		  if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-		  if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
-		  sex <- ifelse(k==3, 2, 1)
+	  # loop over genders combinations
+	  for(k in (1:3)[testor])
+	  {
+	      if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
+	      if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+	      if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+	      sex <- ifelse(k==3, 2, 1)
 
-		  # loop over partitions (discard, retain, total)
-		  for(j in unique(dbase_k$Part))
-		    {
-		      # dbase is the final data.frame used in the individual plots
-		      # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
-		      dbase <- dbase_k[dbase_k$Part==j,]
+	      # loop over partitions (discard, retain, total)
+	      for(j in unique(dbase_k$Part))
+	      {
+		  # dbase is the final data.frame used in the individual plots
+		  # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+		  dbase <- dbase_k[dbase_k$Part==j,]
 
-		      ## assemble pieces of plot title
-		      # sex
-		      if(k==1) titlesex <- "sexes combined, "
-		      if(k==2) titlesex <- "female, "
-		      if(k==3) titlesex <- "male, "
-		      titlesex <- ifelse(printsex,titlesex,"")
+		  ## assemble pieces of plot title
+		  # sex
+		  if(k==1) titlesex <- "sexes combined, "
+		  if(k==2) titlesex <- "female, "
+		  if(k==3) titlesex <- "male, "
+		  titlesex <- ifelse(printsex,titlesex,"")
 
-		      # market category
-		      if(j==0) titlemkt <- "whole catch, "
-		      if(j==1) titlemkt <- "discard, "
-		      if(j==2) titlemkt <- "retained, "
-		      titlemkt <- ifelse(printmkt,titlemkt,"")
+		  # market category
+		  if(j==0) titlemkt <- "whole catch, "
+		  if(j==1) titlemkt <- "discard, "
+		  if(j==2) titlemkt <- "retained, "
+		  titlemkt <- ifelse(printmkt,titlemkt,"")
 
-		      # plot bars for data only or if input 'fitbar=T'
-		      if(datonly | fitbar) bars <- T else bars <- F
+		  # plot bars for data only or if input 'fitbar=T'
+		  if(datonly | fitbar) bars <- T else bars <- F
 
-		      # aggregating identifiers for plot titles and filenames
-		      title_sexmkt <- paste(titlesex,titlemkt,sep="")
-		      filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
+		  # aggregating identifiers for plot titles and filenames
+		  title_sexmkt <- paste(titlesex,titlemkt,sep="")
+		  filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
 
-		      ### subplot 1: multi-panel composition plot
-		      if(kind!="cond") # for age or length comps, but not conditional AAL
-			{
-			  ptitle <- paste(titledata,title_sexmkt, FleetNames[f],sep="") # total title
-			  titles <- c(ptitle,titles) # compiling list of all plot titles
-			  tempfun <- function(ipage,...){
-			    if(kind!="GSTAGE"){
+		  ### subplot 1: multi-panel composition plot
+		  if(kind!="cond") # for age or length comps, but not conditional AAL
+		  {
+		      ptitle <- paste(titledata,title_sexmkt, FleetNames[f],sep="") # total title
+		      titles <- c(ptitle,titles) # compiling list of all plot titles
+		      tempfun <- function(ipage,...){
+			  if(kind!="GSTAGE"){
 			      make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
 					    sampsize=dbase$N,effN=dbase$effN,showsampsize=showsampsize,showeffN=showeffN,
 					    bars=bars,linepos=(1-datonly)*linepos,
 					    nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
 					    main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,
 					    maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
-			    }
-			    if(kind=="GSTAGE"){
+			  }
+			  if(kind=="GSTAGE"){
 			      make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
 					    sampsize=dbase$N,effN=dbase$effN,showsampsize=F,showeffN=F,
 					    bars=bars,linepos=(1-datonly)*linepos,
 					    nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
 					    main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,
 					    maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
-			    }
 			  }
-			  if(GUI) tempfun(ipage=0,...)
-			  if(png){ # set up plotting to png file if required
-			    npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
-			    for(ipage in 1:npages)
-			      {
-				if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-				filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
-				png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-				tempfun(ipage=ipage,...)
-				dev.off()
+		      }
+		      if(GUI) tempfun(ipage=0,...)
+		      if(png){ # set up plotting to png file if required
+			  npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
+			  for(ipage in 1:npages)
+			  {
+			      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+			      filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
+			      png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+			      tempfun(ipage=ipage,...)
+			      dev.off()
+			  }
+		      }
+		  }
+
+		  # some things related to the next two bubble plots (single or multi-panel)
+		  if(datonly){
+		      z <- dbase$Obs
+		      col <- rep("black",2)
+		      titletype <- titledata
+		      filetype <- "bub"
+		      allopen <- TRUE
+		  }else{
+		      z <- dbase$Pearson
+		      col <- rep("blue",2)
+		      titletype <- "Pearson residuals, "
+		      filetype <- "resids"
+		      allopen <- FALSE
+		  }
+
+		  ### subplot 2: single panel bubble plot for numbers at length or age
+		  if(bub & kind!="cond")
+		  {
+		      ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
+		      ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+		      titles <- c(ptitle,titles) # compiling list of all plot titles
+
+		      tempfun <- function(){
+			  bubble3(x=dbase$Yr, y=dbase$Bin, z=z, xlab=yearlab,ylab=kindlab,col=col,
+				  las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
+			  # add lines for growth of individual cohorts if requested
+			  if(length(cohortlines)>0){
+			      for(icohort in 1:length(cohortlines)){
+				  print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=F)
+				  if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
+				  if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
 			      }
 			  }
-			}
-
-		      # some things related to the next two bubble plots (single or multi-panel)
-		      if(datonly){
-			z <- dbase$Obs
-			col <- rep("black",2)
-			titletype <- titledata
-			filetype <- "bub"
-			allopen <- TRUE
-		      }else{
-			z <- dbase$Pearson
-			col <- rep("blue",2)
-			titletype <- "Pearson residuals, "
-			filetype <- "resids"
-			allopen <- FALSE
 		      }
 
-		      ### subplot 2: single panel bubble plot for numbers at length or age
-		      if(bub & kind!="cond")
-			{
-			  ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
-			  ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
-			  titles <- c(ptitle,titles) # compiling list of all plot titles
+		      if(GUI) tempfun()
+		      if(png){ # set up plotting to png file if required
+			  filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,".png",sep="")
+			  png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+			  tempfun()
+			  dev.off() # close device if png
+		      }
+		  } # end bubble plot
 
-			  tempfun <- function(){
-			    bubble3(x=dbase$Yr, y=dbase$Bin, z=z, xlab=yearlab,ylab=kindlab,col=col,
-				    las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
-			    # add lines for growth of individual cohorts if requested
-			    if(length(cohortlines)>0){
-			      for(icohort in 1:length(cohortlines)){
-				print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=F)
-				if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")	#females
-				if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
+		  ### subplot 3: multi-panel bubble plots for conditional age at length
+		  if(kind=="cond")
+		  {
+		      ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
+		      ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+		      titles <- c(ptitle,titles) # compiling list of all plot titles
+		      tempfun <- function(ipage,...){
+			  make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr,size=z,
+					sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
+					nlegends=1,legtext=list(dbase$YrSeasName),
+					bars=F,linepos=0,main=ptitle,cex.main=cex.main,
+					xlab=lab[2],ylab=lab[1],ymin0=F,maxrows=maxrows2,maxcols=maxcols2,
+					fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
+					ptscol=col[1],ptscol2=col[2],ipage=ipage,...)
+		      }
+		      if(GUI) tempfun(ipage=0,...)
+		      if(png){ # set up plotting to png file if required
+			  npages <- ceiling(length(unique(dbase$Yr))/maxrows2/maxcols2)
+			  for(ipage in 1:npages)
+			  {
+			      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+			      filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
+			      png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+			      tempfun(ipage=ipage,...)
+			      dev.off() # close device if png
+			  }
+		      }
+		  } # end conditional bubble plot
+
+		  ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age at length
+		  #			and Pearson residuals of A-L key for specific years
+		  if(aalyear[1] > 0 & kind=="cond")
+		  {
+		      for(y in 1:length(aalyear))
+		      {
+			  aalyr <- aalyear[y]
+			  if(length(dbase$Obs[dbase$Yr==aalyr])>0)
+			  {
+			      ### subplot 4: multi-panel plot of fit to conditional age at length for specific years
+			      ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,FleetNames[f],sep="")
+			      titles <- c(ptitle,titles) # compiling list of all plot titles
+			      ydbase <- dbase[dbase$Yr==aalyr,]
+			      lenbinlegend <- paste(ydbase$Lbin_lo,lenunits,sep="")
+			      lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo,"-",ydbase$Lbin_hi,lenunits,sep="")
+			      tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
+				  make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
+						linesx=ydbase$Bin,linesy=ydbase$Exp,
+						sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+						nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
+						bars=F,linepos=linepos,main=ptitle,cex.main=cex.main,
+						xlab=lab[2],ylab=proplab,maxrows=maxrows,maxcols=maxcols,
+						fixdims=fixdims,ipage=ipage,...)
 			      }
-			    }
-			  }
+			      if(GUI) tempfun(ipage=0,...)
+			      if(png){
+				  npages <- ceiling(length(unique(ydbase$Yr))/maxrows/maxcols)
+				  for(ipage in 1:npages)
+				  {
+				      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+				      filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
+				      png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+				      tempfun(ipage=ipage,...)
+				      dev.off() # close device if png
+				  }
+			      }
 
-			  if(GUI) tempfun()
-			  if(png){ # set up plotting to png file if required
-			    filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,".png",sep="")
-			    png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-			    tempfun()
-			    dev.off() # close device if png
-			  }
-			} # end bubble plot
-
-		      ### subplot 3: multi-panel bubble plots for conditional age at length
-		      if(kind=="cond")
-			{
-			  ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
-			  ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
-			  titles <- c(ptitle,titles) # compiling list of all plot titles
-			  tempfun <- function(ipage,...){
-			    make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr,size=z,
-					  sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
-					  nlegends=1,legtext=list(dbase$YrSeasName),
-					  bars=F,linepos=0,main=ptitle,cex.main=cex.main,
-					  xlab=agelab,ylab=lenlab,ymin0=F,maxrows=maxrows2,maxcols=maxcols2,
-					  fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
-					  ptscol=col[1],ptscol2=col[2],ipage=ipage,...)
-			  }
-			  if(GUI) tempfun(ipage=0,...)
-			  if(png){ # set up plotting to png file if required
-			    npages <- ceiling(length(unique(dbase$Yr))/maxrows2/maxcols2)
-			    for(ipage in 1:npages)
+			      ### subplot 5: Pearson residuals for A-L key
+			      z <- ydbase$Pearson
+			      ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,FleetNames[f],sep="")
+			      ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+			      titles <- c(ptitle,titles) # compiling list of all plot titles
+			      tempfun <- function(){
+				  bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=lab[2],ylab=lab[1],col=rep("blue",2),
+					  las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
+			      }
+			      if(GUI) tempfun()
+			      if(png)
 			      {
-				if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-				filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
-				png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-				tempfun(ipage=ipage,...)
-				dev.off() # close device if png
+				  filename <- paste(plotdir,filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
+				  png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+				  tempfun()
+				  dev.off() # close device if png
 			      }
 			  }
-			} # end conditional bubble plot
+		      }
+		  }
 
-		      ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age at length
-		      #			    and Pearson residuals of A-L key for specific years
-		      if(aalyear[1] > 0 & kind=="cond")
-			{
-			  for(y in 1:length(aalyear))
-			    {
-			      aalyr <- aalyear[y]
-			      if(length(dbase$Obs[dbase$Yr==aalyr])>0)
-				{
-				  ### subplot 4: multi-panel plot of fit to conditional age at length for specific years
-				  ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,FleetNames[f],sep="")
+		  ### subplot 6: multi-panel plot of point and line fit to conditional age at length
+		  #		 for specific length bins
+		  if(aalbin[1] > 0)
+		  {
+		      badbins <- setdiff(aalbin, dbase$Lbin_hi)
+		      goodbins <- intersect(aalbin, dbase$Lbin_hi)
+		      if(length(badbins)>0){
+			  print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=F)
+			  print(paste("	      the following inputs for 'aalbin' are fine:",goodbins),quote=F)
+		      }
+		      if(length(goodbins)>0)
+		      {
+			  for(ibin in 1:length(goodbins)) # loop over good bins
+			  {
+			      ilenbin <- goodbins[ibin]
+			      abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
+			      if(nrow(abindbase)>0) # check for data associated with this bin
+			      {
+				  ptitle <- paste("Age at length ",ilenbin,lenunits,", ",title_sexmkt,FleetNames[f],sep="")
 				  titles <- c(ptitle,titles) # compiling list of all plot titles
-				  ydbase <- dbase[dbase$Yr==aalyr,]
-				  lenbinlegend <- paste(ydbase$Lbin_lo,lenunits,sep="")
-				  lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo,"-",ydbase$Lbin_hi,lenunits,sep="")
 				  tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
-				    make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
-						  linesx=ydbase$Bin,linesy=ydbase$Exp,
-						  sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
-						  nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
-						  bars=F,linepos=linepos,main=ptitle,cex.main=cex.main,
-						  xlab=agelab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
-						  fixdims=fixdims,ipage=ipage,...)
+				      make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr,linesx=abindbase$Bin,linesy=abindbase$Exp,
+						    sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+						    nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
+						    bars=bars,linepos=(1-datonly)*linepos,
+						    main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
+						    fixdims=fixdims,ipage=ipage,...)
 				  }
 				  if(GUI) tempfun(ipage=0,...)
 				  if(png){
-				    npages <- ceiling(length(unique(ydbase$Yr))/maxrows/maxcols)
-				    for(ipage in 1:npages)
+				      npages <- ceiling(length(unique(abindbase$Yr))/maxrows/maxcols)
+				      for(ipage in 1:npages)
 				      {
-					if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-					filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
-					png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-					tempfun(ipage=ipage,...)
-					dev.off() # close device if png
+					  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+					  filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_length",ilenbin,lenunits,pagetext,".png",sep="")
+					  png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+					  tempfun(ipage=ipage,...)
+					  dev.off() # close device if png
 				      }
 				  }
+			      } # end if data
+			  } # end loop over length bins
+		      } # end if length(goodbins)>0
+		  } # end if plot requested
 
-				  ### subplot 5: Pearson residuals for A-L key
-				  z <- ydbase$Pearson
-				  ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,FleetNames[f],sep="")
-				  ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
-				  titles <- c(ptitle,titles) # compiling list of all plot titles
-				  tempfun <- function(){
-				    bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=agelab,ylab=lenlab,col=rep("blue",2),
-					    las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
-				  }
-				  if(GUI) tempfun()
-				  if(png)
-				    {
-				      filename <- paste(plotdir,filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
-				      png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-				      tempfun()
-				      dev.off() # close device if png
-				    }
-				}
-			    }
-			}
-
-		      ### subplot 6: multi-panel plot of point and line fit to conditional age at length
-		      #		     for specific length bins
-		      if(aalbin[1] > 0)
-			{
-			  badbins <- setdiff(aalbin, dbase$Lbin_hi)
-			  goodbins <- intersect(aalbin, dbase$Lbin_hi)
-			  if(length(badbins)>0){
-			    print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=F)
-			    print(paste("	the following inputs for 'aalbin' are fine:",goodbins),quote=F)
+		  ### subplot 7: sample size plot
+		  if(samplesizeplots & !datonly & kind!="GSTAGE")
+		  {
+		      ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,FleetNames[f], sep="")
+		      titles <- c(ptitle,titles) # compiling list of all plot titles
+		      lfitfunc <- function()
+		      {
+			  if(kind=="cond"){
+			      # trap nonrobust effective n's
+			      # should this only be for conditional age at length or all plots?
+			      dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 & !is.na(dbase$effN) & dbase$effN<maxneff,]
+			  }else{
+			      dbasegood <- dbase
 			  }
-			  if(length(goodbins)>0)
-			    {
-			      for(ibin in 1:length(goodbins)) # loop over good bins
-				{
-				  ilenbin <- goodbins[ibin]
-				  abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
-				  if(nrow(abindbase)>0) # check for data associated with this bin
-				    {
-				      ptitle <- paste("Age at length ",ilenbin,lenunits,", ",title_sexmkt,FleetNames[f],sep="")
-				      titles <- c(ptitle,titles) # compiling list of all plot titles
-				      tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
-					make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr,linesx=abindbase$Bin,linesy=abindbase$Exp,
-						      sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
-						      nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
-						      bars=bars,linepos=(1-datonly)*linepos,
-						      main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=proplab,maxrows=maxrows,maxcols=maxcols,
-						      fixdims=fixdims,ipage=ipage,...)
-				      }
-				      if(GUI) tempfun(ipage=0,...)
-				      if(png){
-					npages <- ceiling(length(unique(abindbase$Yr))/maxrows/maxcols)
-					for(ipage in 1:npages)
-					  {
-					    if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-					    filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_length",ilenbin,lenunits,pagetext,".png",sep="")
-					    png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-					    tempfun(ipage=ipage,...)
-					    dev.off() # close device if png
-					  }
-				      }
-				    } # end if data
-				} # end loop over length bins
-			    } # end if length(goodbins)>0
-			} # end if plot requested
-
-		      ### subplot 7: sample size plot
-		      if(samplesizeplots & !datonly & kind!="GSTAGE")
-			{
-			  ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,FleetNames[f], sep="")
-			  titles <- c(ptitle,titles) # compiling list of all plot titles
-			  lfitfunc <- function()
-			    {
-			      if(kind=="cond"){
-				# trap nonrobust effective n's
-				# should this only be for conditional age at length or all plots?
-				dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 & !is.na(dbase$effN) & dbase$effN<maxneff,]
-			      }else{
-				dbasegood <- dbase
+			  if(nrow(dbasegood)>0)
+			  {
+			      plot(dbasegood$N,dbasegood$effN,xlab=osslab,main=ptitle,cex.main=cex.main,
+				   ylim=c(0,1.05*max(dbasegood$effN)),xlim=c(0,1.05*max(dbasegood$N)),
+				   col="blue",pch=19,ylab=esslab,xaxs="i",yaxs="i")
+			      abline(h=0,col="grey")
+			      abline(0,1,col="black")
+			      # add loess smoother if there's at least 6 points with a range greater than 2
+			      if(smooth & length(unique(dbasegood$N)) > 6 & diff(range(dbasegood$N))>2)
+			      {
+				  psmooth <- loess(dbasegood$effN~dbasegood$N,degree=1)
+				  lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
 			      }
-			      if(nrow(dbasegood)>0)
-				{
-				  plot(dbasegood$N,dbasegood$effN,xlab=osslab,main=ptitle,cex.main=cex.main,
-				       ylim=c(0,1.05*max(dbasegood$effN)),xlim=c(0,1.05*max(dbasegood$N)),
-				       col="blue",pch=19,ylab=esslab,xaxs="i",yaxs="i")
-				  abline(h=0,col="grey")
-				  abline(0,1,col="black")
-				  # add loess smoother if there's at least 6 points with a range greater than 2
-				  if(smooth & length(unique(dbasegood$N)) > 6 & diff(range(dbasegood$N))>2)
-				    {
-				      psmooth <- loess(dbasegood$effN~dbasegood$N,degree=1)
-				      lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
-				    }
-				}
-			    }
-			  if(GUI) lfitfunc()
-			  if(png){ # set up plotting to png file if required
-			    filename <- paste(plotdir,filenamestart,"sampsize_",filename_fltsexmkt,".png",sep="")
-			    png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-			    lfitfunc()
-			    dev.off()
 			  }
-			}
-		    } # end loop over partitions
-		} # end loop over combined/not-combined genders
-	    }# end if data
-	} # end loop over fleet
+		      }
+		      if(GUI) lfitfunc()
+		      if(png){ # set up plotting to png file if required
+			  filename <- paste(plotdir,filenamestart,"sampsize_",filename_fltsexmkt,".png",sep="")
+			  png(file=filename,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+			  lfitfunc()
+			  dev.off()
+		      }
+		  }
+	      } # end loop over partitions
+	  } # end loop over combined/not-combined genders
+      }# end if data
+    } # end loop over fleet
       if(returntitles) return(titles)
-    } # end embedded SSv3_plot_comps function
+  } # end embedded SSv3_plot_comps function
   ###########################
 
   ### process composition data
@@ -2323,6 +2429,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
     # divide into objects by kind
     lendbase	   <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
+    sizedbase	   <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
     agedbase	   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
 				& !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
     condbase	   <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
@@ -2334,6 +2441,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     # consider range of bins for conditional age at length data
     print(paste("CompReport file separated by this code as follows (rows = num. comps * num. bins):"),quote=F)
     print(paste("  ",nrow(lendbase),"rows of length comp data,"),quote=F)
+    print(paste("  ",nrow(sizedbase),"rows of generalized size comp data,"),quote=F)
     print(paste("  ",nrow(agedbase),"rows of age comp data,"),quote=F)
     print(paste("  ",nrow(condbase),"rows of conditional age-at-length data, and"),quote=F)
     print(paste("  ",nrow(ghostagedbase),"rows of ghost fleet age comp data"),quote=F)
@@ -2350,9 +2458,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     # convert bin indices to true lengths
 
     # don't remember why these are not converted to numeric in SSv3_output, nor why they aren't done in 1 step to compdbase
-    lendbase$effN <- as.numeric(lendbase$effN)
-    agedbase$effN <- as.numeric(agedbase$effN)
-    condbase$effN <- as.numeric(condbase$effN)
+    lendbase$effN  <- as.numeric(lendbase$effN)
+    sizedbase$effN <- as.numeric(sizedbase$effN)
+    agedbase$effN  <- as.numeric(agedbase$effN)
+    condbase$effN  <- as.numeric(condbase$effN)
   }
   # now make use of embedded SSv3_plot_comps function to make composition plots
   if(!datplot)
@@ -2372,7 +2481,17 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 			  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
 			  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
 			  png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
-	  if(verbose) print("Finished plot 15: length comp data",quote=F)
+	  # size comp bar plot
+	  SSv3_plot_comps(datonly=T,kind="SIZE",bub=F,verbose=verbose,fleets=fleets,
+			  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+			  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+			  png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
+	  # size comp bubble plot
+	  SSv3_plot_comps(datonly=T,kind="SIZE",bub=T,verbose=verbose,fleets=fleets,
+			  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+			  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+			  png=(15%in%print),GUI=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
+	  if(verbose) print("Finished plot 15: length and size comp data",quote=F)
 	  flush.console()
 	}
       if(16 %in% c(plot,print))
@@ -2420,7 +2539,12 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		    maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
 		    png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
 		    maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
-    if(verbose) print("Finished plot 18: length comps with fits",quote=F)
+    SSv3_plot_comps(datonly=F,kind="SIZE",bub=T,verbose=verbose,fleets=fleets,
+		    samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+		    maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
+		    png=(18%in%print),GUI=(18%in%plot),smooth=smooth,plotdir=plotdir,
+		    maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
+    if(verbose) print("Finished plot 18: length and size comps with fits",quote=F)
     flush.console()
   }
 
@@ -2452,7 +2576,7 @@ if(3==4){
 
     if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=F)
   }
-    # more plot 20: Andre's new conditional age-at-length plots    
+    # more plot 20: Andre's new conditional age-at-length plots
     if(nrow(condbase)==0){
       if(verbose) print("Skipped plot 20b: mean age and std. dev. in conditional AAL: no data of this type",quote=F)
     }else{
@@ -2460,57 +2584,57 @@ if(3==4){
       Yrs <- sort(unique(condbase$Yr))
       par(mfrow=c(2,2))
       for (Gender in 1:2){
-        for (Yr in Yrs){
-          y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
-          Size <- NULL; Size2 <- NULL
-          Obs <- NULL; Obs2 <- NULL
-          Pred <- NULL;  Pred2 <- NULL
-          Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
-          for (Ilen in Lens){
-            z <- y[y$Lbin_lo == Ilen & y$Lbin_hi == Ilen,]
-            if (length(z[,1]) > 0){
-              weightsPred <- z$Exp/sum(z$Exp)
-              weightsObs <- z$Obs/sum(z$Obs)
-              ObsV <- sum(z$Bin*weightsObs)
-              ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
-              PredV <- sum(z$Bin*weightsPred)
-              PredV2 <- sum(z$Bin*z$Bin*weightsPred)
-              # Overdispersion on N
-              # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
-              NN <- z$N[1]
-              if (max(z$Obs) > 1.0e-4){
-                Size <- c(Size,Ilen)
-                Obs <- c(Obs,ObsV)
-                Pred <- c(Pred,PredV)
-                varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
-                Pred2 <- c(Pred2,varn)
-                varn <-sqrt(ObsV2-ObsV*ObsV)/sqrt(NN)
-                Obs2 <- c(Obs2,varn)
-                Low <- c(Low,ObsV-1.64*varn)
-                Upp <- c(Upp,ObsV+1.64*varn)
-                if (NN > 1){
-                  Size2 <- c(Size2,Ilen)
-                  Low2 <- c(Low2,varn*sqrt((NN-1)/qchisq(0.95,NN)))
-                  Upp2 <- c(Upp2,varn*sqrt((NN-1)/qchisq(0.05,NN)))
-                } 
-              } 
-            } 
-          }
-          if (length(Obs) > 0){
-            ymax <- max(Pred,Obs,Upp)*1.1 
-            plot(Size,Obs,xlab="Size (cm)",ylab="Age (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-            lines(Size,Pred)
-            lines(Size,Low,lty=3)
-            lines(Size,Upp,lty=3)
-            title(paste("Year = ",Yr,"; Gender = ",Gender))
-            
-            ymax <- max(Obs2,Pred2)*1.1
-            plot(Size,Obs2,xlab="Size (cm)",ylab="Stdev (Age) (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-            lines(Size,Pred2)
-            lines(Size2,Low2,lty=3)
-            lines(Size2,Upp2,lty=3)
-          } 
-        } # end loop over years
+	for (Yr in Yrs){
+	  y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
+	  Size <- NULL; Size2 <- NULL
+	  Obs <- NULL; Obs2 <- NULL
+	  Pred <- NULL;	 Pred2 <- NULL
+	  Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
+	  for (Ilen in Lens){
+	    z <- y[y$Lbin_lo == Ilen & y$Lbin_hi == Ilen,]
+	    if (length(z[,1]) > 0){
+	      weightsPred <- z$Exp/sum(z$Exp)
+	      weightsObs <- z$Obs/sum(z$Obs)
+	      ObsV <- sum(z$Bin*weightsObs)
+	      ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
+	      PredV <- sum(z$Bin*weightsPred)
+	      PredV2 <- sum(z$Bin*z$Bin*weightsPred)
+	      # Overdispersion on N
+	      # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
+	      NN <- z$N[1]
+	      if (max(z$Obs) > 1.0e-4){
+		Size <- c(Size,Ilen)
+		Obs <- c(Obs,ObsV)
+		Pred <- c(Pred,PredV)
+		varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
+		Pred2 <- c(Pred2,varn)
+		varn <-sqrt(ObsV2-ObsV*ObsV)/sqrt(NN)
+		Obs2 <- c(Obs2,varn)
+		Low <- c(Low,ObsV-1.64*varn)
+		Upp <- c(Upp,ObsV+1.64*varn)
+		if (NN > 1){
+		  Size2 <- c(Size2,Ilen)
+		  Low2 <- c(Low2,varn*sqrt((NN-1)/qchisq(0.95,NN)))
+		  Upp2 <- c(Upp2,varn*sqrt((NN-1)/qchisq(0.05,NN)))
+		}
+	      }
+	    }
+	  }
+	  if (length(Obs) > 0){
+	    ymax <- max(Pred,Obs,Upp)*1.1
+	    plot(Size,Obs,xlab="Size (cm)",ylab=lab[2],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+	    lines(Size,Pred)
+	    lines(Size,Low,lty=3)
+	    lines(Size,Upp,lty=3)
+	    title(paste("Year = ",Yr,"; Gender = ",Gender))
+
+	    ymax <- max(Obs2,Pred2)*1.1
+	    plot(Size,Obs2,xlab="Size (cm)",ylab="Stdev (Age) (yr)",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+	    lines(Size,Pred2)
+	    lines(Size2,Low2,lty=3)
+	    lines(Size2,Upp2,lty=3)
+	  }
+	} # end loop over years
       } # end loop over genders
       if(verbose) print("Finished plot 20b: mean age and std. dev. in conditional AAL",quote=F)
       if(verbose) print("  This is a new plot, currently in beta mode.",quote=F)
@@ -2545,7 +2669,7 @@ if(3==4){
 		  #ymax <- max(la$effN)
 		  #xmax <- max(la$N)
 		  #lenatagefunc <- function(){
-		  #plot(la$N,la$effN,xlab="Observed sample size",main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab="Effective sample size")
+		  #plot(la$N,la$effN,xlab=lab[15],main=plottitle,ylim=c(0,ymax),xlim=c(0,xmax),col="blue",pch=19,ylab=lab[16])
 		  #abline(h=0,col="grey")
 		  #lines(x=c(0,ymax),y=c(0,ymax),col="black")
 		  #npoints <- length(la$N)
@@ -2567,7 +2691,7 @@ if(3==4){
 				  sampsize=la$N,effN=0,showsampsize=showsampsize,showeffN=F,
 				  nlegends=3,legtext=list(la$YrSeasName,"sampsize","effN"),
 				  bars=F,linepos=1,
-				  main=plottitle,cex.main=cex.main,xlab="Age (yr)",ylab="Length (cm)",
+				  main=plottitle,cex.main=cex.main,xlab=lab[2],ylab=lab[1],
 				  maxrows=maxrows,maxcols=maxcols,
 				  fixdims=fixdims,ipage=ipage,...)
 		  }
@@ -2585,7 +2709,7 @@ if(3==4){
 		  if(nsexes > 1){plottitle <- paste("Pearson residuals for ",c("fe","")[m],"males, ", FleetNames[i],sep="")}
 		  plottitle <- paste(plottitle," (max=",round(abs(max(la$Pearson)),digits=2),")",sep="")
 		  tempfun <- function(){
-		    bubble3(x=la$Yr,y=la$Bin,z=la$Pearson,xlab="Year",ylab="Age (yr)",col=rep("blue",2),
+		    bubble3(x=la$Yr,y=la$Bin,z=la$Pearson,xlab=lab[3],ylab=lab[2],col=rep("blue",2),
 			    las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
 		  }
 		  if(21 %in% plot) tempfun()
@@ -2605,59 +2729,57 @@ if(3==4){
   par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
 
   # Yield curve
-  if(22 %in% c(plot, print))
-    {
-      if(!is.null(equil_yield[1,1])){
-	yieldfunc <- function(){
-	  plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
-	       type="l",lwd=2,col="blue")
-	  abline(h=0,col="grey")
-	  abline(v=0,col="grey")}
-	if(22 %in% plot){yieldfunc()}
-	if(22 %in% print){
-	  png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  yieldfunc()
-	  dev.off()}
-	if(verbose) print("Finished plot 22: yield curve",quote=F)
-      }
+  if(22 %in% c(plot, print)){
+    if(!is.null(equil_yield[1,1])){
+      yieldfunc <- function(){
+	plot(equil_yield$Depletion,equil_yield$Catch,xlab="Relative depletion",ylab="Equilibrium yield (mt)",
+	     type="l",lwd=2,col="blue")
+	abline(h=0,col="grey")
+	abline(v=0,col="grey")}
+      if(22 %in% plot){yieldfunc()}
+      if(22 %in% print){
+	png(file=paste(plotdir,"22_yield.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	yieldfunc()
+	dev.off()}
+      if(verbose) print("Finished plot 22: yield curve",quote=F)
+    }
 
-      if(nareas==1)
-	{
-	  ls <- nrow(ts)
-	  sprodfunc <- function(){
-	    totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
-	    ts$totcatch <- 0
-	    ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
-	    ts$sprod <- NA
-	    ts$sprod[3:(ls-1)] <- ts$Bio_all[4:ls]-ts$Bio_all[3:(ls-1)]+ts$totcatch[3:(ls-1)]
-	    sprodgood <- !is.na(ts$sprod)
-	    Bio_all_good <- ts$Bio_all[sprodgood]
-	    sprod_good <- ts$sprod[sprodgood]
-	    xlim <- c(0,max(Bio_all_good,na.rm=T))
-	    ylim <- c(min(0,sprod_good,na.rm=T),max(sprod_good,na.rm=T))
-	    plot(Bio_all_good,sprod_good,ylim=ylim,xlim=xlim,xlab="Total biomass (mt)",ylab="Surplus production (mt)",type="l",col="black")
+    if(nareas==1){
+      ls <- nrow(ts)
+      sprodfunc <- function(){
+	totcatchmat <- as.matrix(ts[,substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+	ts$totcatch <- 0
+	ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
+	ts$sprod <- NA
+	ts$sprod[3:(ls-1)] <- ts$Bio_all[4:ls]-ts$Bio_all[3:(ls-1)]+ts$totcatch[3:(ls-1)]
+	sprodgood <- !is.na(ts$sprod)
+	Bio_all_good <- ts$Bio_all[sprodgood]
+	sprod_good <- ts$sprod[sprodgood]
+	xlim <- c(0,max(Bio_all_good,na.rm=T))
+	ylim <- c(min(0,sprod_good,na.rm=T),max(sprod_good,na.rm=T))
+	plot(Bio_all_good,sprod_good,ylim=ylim,xlim=xlim,xlab="Total biomass (mt)",ylab="Surplus production (mt)",type="l",col="black")
 
-	    # make arrows
-	    old_warn <- options()$warn	# previous setting
-	    options(warn=-1)		# turn off "zero-length arrow" warning
-	    s <- seq(length(sprod_good)-1)
-	    arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
-	    options(warn=old_warn)	#returning to old value
+	# make arrows
+	old_warn <- options()$warn	# previous setting
+	options(warn=-1)		# turn off "zero-length arrow" warning
+	s <- seq(length(sprod_good)-1)
+	arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
+	options(warn=old_warn)	#returning to old value
 
-	    abline(h=0,col="grey")
-	    abline(v=0,col="grey")
-	    points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
+	abline(h=0,col="grey")
+	abline(v=0,col="grey")
+	points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
 
-	  } # end sprodfunc
-	  if(22 %in% plot){sprodfunc()}
-	  if(22 %in% print){
-	    png(file=paste(plotdir,"22_surplus_prod.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	    sprodfunc()
-	    dev.off()}
-	  if(verbose) print("Finished plot 22: Surplus production",quote=F)
-	}
-      if(nareas>1) print("Surplus production plot not implemented for multi-area models",quote=F)
-    } # close plot section 22
+      } # end sprodfunc
+      if(22 %in% plot){sprodfunc()}
+      if(22 %in% print){
+	png(file=paste(plotdir,"22_surplus_prod.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	sprodfunc()
+	dev.off()}
+      if(verbose) print("Finished plot 22: Surplus production",quote=F)
+    }
+    if(nareas>1) print("Surplus production plot not implemented for multi-area models",quote=F)
+  } # close plot section 22
 
   ### Plot 23: CPUE data-only plots ###
   if(23 %in% c(plot, print)){
@@ -2674,11 +2796,11 @@ if(3==4){
 	main=paste("Index ", i,sep="")
 	xlab <- "Observed index"
 	if(23 %in% plot){
-	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,col="red",ylab=lab[11],main=main,cex.main=cex.main,lty=1)
 	  abline(h=0,col="grey")}
 	if(23 %in% print){
 	  png(file=paste(plotdir,"23_cpue_dataonly",i,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab="Year",ylo=0,col="red",ylab="Index",main=main,cex.main=cex.main,lty=1)
+	  plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,col="red",ylab=lab[11],main=main,cex.main=cex.main,lty=1)
 	  abline(h=0,col="grey")
 	  dev.off()}
       } # nfleets
@@ -2716,8 +2838,8 @@ if(3==4){
 	  # add labels in left and lower outer margins once per page
 	  mfg <- par("mfg")
 	  if(mfg[1]==1 & mfg[2]==1){
-	    mtext("Year",side=1,line=0,outer=T)
-	    mtext("Frequency",side=2,line=0,outer=T)
+	    mtext(lab[3],side=1,line=0,outer=T)
+	    mtext(lab[19],side=2,line=0,outer=T)
 	    mtext("Fit to tag recaptures by tag group",side=3,line=0,outer=T,cex=cex.main,font=2)
 	  }
 	}
@@ -2754,7 +2876,7 @@ if(3==4){
       tagfun2 <- function(){
 	#obs vs exp tag recaptures by year aggregated across group
 	plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg[,2],RecAg[,3])*1.05),type="n",xaxs="i",yaxs="i",
-	     xlab="Year",ylab="Frequency",main="Tag recaptures aggregated across tag groups",cex.main=cex.main)
+	     xlab=lab[3],ylab=lab[19],main="Tag recaptures aggregated across tag groups",cex.main=cex.main)
 	for (iy in 1:nrow(RecAg)){
 	  xx <- c(RecAg[iy,1]-0.5,RecAg[iy,1]-0.5,RecAg[iy,1]+0.5,RecAg[iy,1]+0.5)
 	  yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
@@ -2767,26 +2889,26 @@ if(3==4){
       tagfun3 <- function(){
 	# bubble plot of observed recapture data
 	plottitle <- "Observed tag recaptures by year and tag group"
-	bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab="Year",ylab="Tag Group",col=rep("blue",2),
+	bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab=lab[3],ylab="Tag Group",col=rep("blue",2),
 		las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
       }
       tagfun4 <- function(){
 	# bubble plot of residuals
 	plottitle <- "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"
-	bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab="Year",ylab="Tag Group",col=rep("blue",2),
+	bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab=lab[3],ylab="Tag Group",col=rep("blue",2),
 		las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
       }
       tagfun5 <- function(){
 	# line plot by year and group
 	plottitle <- "Observed tag recaptures by year and tag group"
-	plot(0,type='n',xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab="Year",ylab="Tag Group",
-             main=plottitle,cex.main=cex.main)
-        rescale <- 5/max(Recaps$Obs,Recaps$Exp)
-        for(igroup in sort(unique(Recaps$Group))){
-          lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col='grey',lty=3)
-          points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type='o',pch=16,cex=.5)
-          lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col='red',lty='51',lwd=2)
-        }
+	plot(0,type='n',xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab=lab[3],ylab="Tag Group",
+	     main=plottitle,cex.main=cex.main)
+	rescale <- 5/max(Recaps$Obs,Recaps$Exp)
+	for(igroup in sort(unique(Recaps$Group))){
+	  lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col='grey',lty=3)
+	  points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type='o',pch=16,cex=.5)
+	  lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col='red',lty='51',lwd=2)
+	}
       }
       if(24 %in% plot){
 	tagfun1()

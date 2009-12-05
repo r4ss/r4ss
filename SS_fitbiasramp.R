@@ -1,9 +1,10 @@
-SS_fitbiasramp <- function(replist){
+SS_fitbiasramp <-
+function(replist){
   ##################
   # function to estimate bias adjustment ramp
   # for Stock Synthesis v3.04b
   # by Ian Taylor
-  # October 30, 2009
+  # December 2, 2009
   #
   # Usage: run function with input that is an object from SSv3_output
   #        from http://code.google.com/p/r4ss/
@@ -22,6 +23,11 @@ SS_fitbiasramp <- function(replist){
   recruit    <- replist$recruit
   sigma_R_in <- replist$sigma_R_in
 
+  startvalues <- c(min(recruit$year),
+                   range(recruit$year[recruit$biasadj==max(recruit$biasadj)]),
+                   max(recruit$year),
+                   max(recruit$biasadj))
+
   biasadjfit <- function(pars,yr,std,sigmaR){
     biasadj <- biasadjfun(yr,pars)$biasadj
     compare <- 1 - (std/sigmaR)^2
@@ -31,15 +37,14 @@ SS_fitbiasramp <- function(replist){
 
   getrecdevs <- function(replist){
     parmat <- replist$parameters
-    rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF_1fishery1",parmat$Label)-1)
+    rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF",parmat$Label)[1]-1)
     val <- parmat$Value[rowrange]
     std <- parmat$Parm_StDev[rowrange]
     return(data.frame(val=val,std=std))
   }
 
-  optimfun <- function(yr,std){
-    pars=c(1950,1970,1995,1999,0.7)
-    biasopt <- optim(par=pars,fn=biasadjfit,yr=yr,std=std,
+  optimfun <- function(yr,std,startvalues){
+    biasopt <- optim(par=startvalues,fn=biasadjfit,yr=yr,std=std,
                      sigmaR=sigma_R_in,method="L-BFGS-B")
     return(biasopt)
   }
@@ -50,11 +55,11 @@ SS_fitbiasramp <- function(replist){
     last_full   <- vec[3]
     first_no    <- vec[4]
     max_biasadj <- vec[5]
-    
+
     biasadj <- rep(NA,length(yr))
     for(i in 1:length(yr)){
       y <- yr[i]
-      
+
       if(y<=last_no){
         biasadj[i]=0.;
       }else{
@@ -71,7 +76,7 @@ SS_fitbiasramp <- function(replist){
             }}}}}
     return(data.frame(yr=yr,biasadj=biasadj))
   }
-  
+
   recdevs <- getrecdevs(replist)
   val <- recdevs$val
   std <- recdevs$std
@@ -80,7 +85,7 @@ SS_fitbiasramp <- function(replist){
     if(verbose) print("no rec devs estimated in this model",quote=F)
     return()
   }else{
-    
+
     recdev_hi <- val + 1.96*std
     recdev_lo <- val - 1.96*std
     Yr <- recruit$year
@@ -95,12 +100,12 @@ SS_fitbiasramp <- function(replist){
   }
 
   print('estimating...',quote=F)
-  newbias <- optimfun(yr=Yr,std=std)
-  
+  newbias <- optimfun(yr=Yr,std=std,startvalues=startvalues)
+
   yvals <- 1-(std/sigma_R_in)^2
   plot(Yr,yvals,xlab="Year",
        ylab=expression(1 - italic(SE(hat(R[i]))^2 / sigma[R])^2),
-       ylim=range(0,1,1.1*yvals),type="b",yaxs='i')
+       ylim=range(0,1,1.3),type="b",yaxs='i')
   abline(h=0,col="grey")
   abline(h=1,col="grey")
 
@@ -111,7 +116,7 @@ SS_fitbiasramp <- function(replist){
   "#_last_yr_fullbias_adj_in_MPD",
   "#_first_recent_yr_nobias_adj_in_MPD",
   "#_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models)")
-  
+
   # bias correction (2nd axis, scaled by ymax)
   lines(biasadjfun(Yr,newbias[[1]]),col=4,lwd=3,lty=1)
   lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
@@ -125,3 +130,4 @@ SS_fitbiasramp <- function(replist){
   print(format(df,justify="left"),row.names=F)
 #  return(df)
 }
+
