@@ -23,7 +23,7 @@ function(
 #
 ################################################################################
 
-codedate <- "December 4, 2009"
+codedate <- "December 8, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -716,7 +716,7 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A", "SS-V3.04B")){
+ if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A", "SS-V3.04B", "SS-V3.1-T")){
    rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
  }else{
    rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
@@ -856,4 +856,3 @@ if(comp){
  invisible(returndat)
 
 } # end function
-
