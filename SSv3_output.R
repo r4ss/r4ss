@@ -17,7 +17,7 @@ function(
 #          and other contributors to http://code.google.com/p/r4ss/
 # Returns: a list containing elements of Report.sso and/or covar.sso,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.03A; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.04B and 3.1_test; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
@@ -716,11 +716,7 @@ returndat$sizeselex <- selex
  returndat$managementratiolabels <- managementratiolabels
 
 # Spawner-recruit curve
- if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A", "SS-V3.04B", "SS-V3.1-T")){
-   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
- }else{
-   rawsr <- matchfun2("SPAWN_RECRUIT",7,"N_est",-1,cols=1:9)
- }
+ rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
  names(rawsr) <- rawsr[1,]
  rawsr[rawsr=="_"] <- NA
  rawsr <- rawsr[-(1:2),] # remove header rows
@@ -743,11 +739,7 @@ returndat$sizeselex <- selex
  returndat$cpue <- cpue
 
 # Numbers at age
- if(SS_versionshort %in% c("SS-V3.04-","SS-V3.04A","SS-V3.04B")){
-   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
- }else{
-   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"CATCH_AT_AGE",-1,cols=1:(11+accuage),substr1=FALSE)
- }
+ rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
  if(length(rawnatage)>1){
    names(rawnatage) <- rawnatage[1,]
    rawnatage <- rawnatage[-1,]

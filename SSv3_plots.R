@@ -593,17 +593,18 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
 	selfunc <- function()
 	{
+          # determine whether retention was used
 	  intret2 <- intret[intret$Fleet==i,]
 	  retchecktemp <- as.vector(unlist(intret2[1,]))
 	  retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
 	  if(is.na(sum(retcheck))) retcheckuse <- 0
 	  if(!is.na(sum(retcheck))) retcheckuse <- max(retcheck)-min(retcheck)
-	  if(retcheckuse==0 & max(vals)-min(vals)!=0) legend("bottomright",inset=c(0,0.05),bty="n",lab[5],pch=21,pt.bg="white",lty=1,col="blue")
+          # make plot
 	  plot(bins,vals,xlab=lab[1],ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type='n')
 	  abline(h=0,col="grey")
 	  abline(h=1,col="grey")
 	  if(1%in%selexlines) lines(bins,vals,type="o",col="blue",cex=1.1)
-	  if(retcheckuse > 0){
+	  if(retcheckuse > 0){ # if retention, then add additional lines & legend
 	    useret <- intret[intret$Fleet==i,]
 	    usekeep <- intkeep[intkeep$Fleet==i,]
 	    usemort <- intmort[intmort$Fleet==i,]
