@@ -1,0 +1,107 @@
+
+\documentclass{article}
+
+%\usepackage{natbib}
+\usepackage{graphics}
+\usepackage{amsmath}
+%\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+\hypersetup{
+    pdftitle={r4ss_vignette},
+    pdfsubject={r4ss package vignette},
+    pdfauthor={Ian G. Taylor},
+    pdfkeywords={r4ss},
+    pdfpagemode=None,
+    plainpages=false,
+    pdfstartview=Fit,
+    breaklinks=true,
+    colorlinks=true,
+    pdfhighlight=/N,
+    % define colors, even if not used
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    citebordercolor=1 1 1,
+    filebordercolor=1 1 1,
+    linkbordercolor=1 1 1,
+    menubordercolor=1 1 1,
+    pagebordercolor=1 1 1,
+    urlbordercolor=1 1 1,
+    pdfborder=1 1 1
+  }
+
+\begin{document}
+%\VignetteIndexEntry{Using R4SS} \\
+
+<<foo,include=FALSE,echo=FALSE>>=
+options(keep.source = TRUE, width = 60)
+foo <- packageDescription("r4ss")
+@
+
+\title{R4SS Package (Version \Sexpr{foo$Version})}
+\author{Ian Taylor, Ian Stewart,\\ Tommy Garrison,  Andre Punt, John Wallace,\\ and other contributors}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+
+This vignette is associated with the r4ss package. The origins of the package were for ``on-the-fly'' modeling---alternating between command line and R and an editor when working on an assessment.  The initial goal in writing this function was to speed the process of understanding the thousands of model runs that are required to produce a good stock assessment. 
+
+It is now evolving into a more complex set of tools that includes functions for manipulating input files, exploring parameterizations. Furthermore, the figures seem to be getting used in reports although in general, some further formatting is needed.  
+
+These functions will be continually updated to run on the latest publicly available version of Stock Synthesis and R and may not be back-compatible. It is a good idea to begin with the simple example files with SSv3 to explore the various options, as it should work for output from that example.
+
+Credit due: The plotting function was originally based loosely on a combination of an early version of \verb@scape@, written by Arni Magnusson, for analysis of Coleraine model output and the ``Output viewer'' written by Rick Methot.  John Wallace provided help with R syntax and excellent programming ideas.
+
+\section{Installation}
+<<installation,eval=FALSE>>=
+install.packages("r4ss")
+@ 
+<<loading,eval=TRUE>>=
+library(r4ss)
+@
+
+\section{Usage}
+\subsection{Reading Stock Synthesis Output}
+The two main functions in \verb@r4ss@ are \verb@SSv3_output@ and \verb@SSv3_plots@. Their usage is illustrated here. 
+The \verb@SSv3_output@ function reads the Report.sso and (optionally) the covar.sso files produced by Stock Synthesis and formats the important content of these files into a list object in the R workspace. A few statistics unavailable elsewhere are taken from the .par and .cor files. Summary information and statistics can be returned to the R console or just contained within the list produced by this function. 
+
+If you haven't renamed any of the output files from Stock Synthesis, then the minimum input to \verb@SSv3_output@ is the directory where the model was run. This can either be the full path, or relative to the working directory in which R is running. Note that R requires either ``\verb@/@'' or ``\verb@\\@''.
+<<firstuse,eval=FALSE>>=
+myreplist <- SSv3_output(dir='c:/SS/SSv3.04b/Simple/') # read in the report file using SSv3_output
+@ 
+
+A set of valuable diagnostic statistics is output to the R console, but for purposes of this document they are suppressed using the \verb@printstats@ intput in this example:
+<<seconduse>>=
+myreplist <- SSv3_output(dir='data', printstats=F) # read in the report file using SSv3_output
+@ 
+
+%\pagebreak[4]
+\subsection{Making Plots}
+The \verb@SSv3_plots@ function takes the list produced by \verb@SSv3_output@ and produces plots to a graphical device in the R GUI with a plot history that can be accessed with the ``page up'' and ``page down'' keys while the device is active (see also the \verb@print@ and \verb@pdf@ arguments for writing the plots to files). Some plots need to be resized where many or few data points exist. Plots can be saved in various formats directly from the graphics window. The headers on most plots are designed to remind the user what they are, and should be cropped off when included in a document.
+
+Figure \ref{fig:fig1}
+shows a plots of the spawner-recruit relationship created using the command
+<<label=fig1plot,fig=F,include=FALSE,eval=T>>=
+SSv3_plots(replist=myreplist,plot=12)
+@
+<<label=fig1plotB,fig=T,echo=FALSE,include=FALSE>>=
+SSv3_plots(replist=myreplist,plot=12,new=F,verbose=F)
+@
+
+
+\begin{figure}
+\begin{center}
+<<label=fig1,fig=TRUE,echo=FALSE>>=
+<<fig1plotB>>
+@
+\end{center}
+\caption{Example figure}
+\label{fig:fig1}
+\end{figure}
+
+\end{document}

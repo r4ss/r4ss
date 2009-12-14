@@ -1,4 +1,5 @@
-SSv3_FishGraph <- function(replist,
+SSv3_FishGraph <-
+function(replist,
                            title="SSv3 output",
                            species="some kind of fish")
 {

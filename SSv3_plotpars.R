@@ -1,13 +1,14 @@
-SSv3_plotpars <- function(
+SSv3_plotpars <-
+function(
     dir="c:/path/",
     repfile="Report.sso",
     postfile="posteriors.sso",
     showpost=T,showprior=T,showmle=T,showinit=T,
     showrecdev=T,priorinit=T,priorfinal=T,
-    showlegend=T,fitrange=F,xaxs='i',verbose=T,
+    showlegend=T,fitrange=F,xaxs="i",verbose=T,
     nrows=3,ncols=3,new=T,pdf=F,
-    pwidth=7,pheight=7,ptsize=12,returntable=F,
-    strings=c(),burn=0,thin=1,
+    pwidth=7,pheight=7,punits="in",ptsize=12,
+    returntable=F,strings=c(),burn=0,thin=1,
     ctlfile="control.ss_new")
 {
   ################################################################################
@@ -24,7 +25,7 @@ SSv3_plotpars <- function(
   #
   ################################################################################
 
-  codedate <- "October 2, 2009"
+  codedate <- "November 19, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -84,7 +85,7 @@ SSv3_plotpars <- function(
     print("Error! Empty control.ss_new file. Assuming recdev limits are -5 & 5.",quote=F)
     goodctl <- F
   }
-  
+
   if(showpost & is.na(postfileinfo)){
     print(paste("Error! Missing post file:",fullpostfile),quote=F)
     print(      "       changing input to 'showpost=F'",quote=F)
@@ -149,7 +150,7 @@ SSv3_plotpars <- function(
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
-      if(readrecdev==1) print("This function does not yet display recdev values read from ctl file",quote=F)
+      if(is.na(readrecdev) | readrecdev==1) print("This function does not yet display recdev values read from ctl file",quote=F)
     }
   }else{
     goodnames <- goodnames[!substr(goodnames,1,10) %in% substr(recdevlabels,1,10)]
@@ -157,7 +158,7 @@ SSv3_plotpars <- function(
   npars <- length(goodnames)
 #  print(goodnames)
 #return(partable[partable$Label %in% goodnames,])
-  
+
   # make plot
   if(verbose){
     if(fitrange){
@@ -168,7 +169,7 @@ SSv3_plotpars <- function(
       print("  Range can be scaled to fit estimates by setting input 'fitrange=T'.",quote=F)
     }
   }
-  
+
   ## make plot
   if(new & !pdf){
     if(length(grep('linux',version$os)) > 0) OS <- "Linux"
@@ -181,7 +182,7 @@ SSv3_plotpars <- function(
   }
   if(pdf){
     pdffile <- paste(dir,"/SSplotpars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
-    pdf(file=pdffile,width=pwidth,height=pheight)
+    pdf(file=pdffile,width=pwidth,height=pheight,punits="in")
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
 
@@ -195,7 +196,7 @@ SSv3_plotpars <- function(
     initval <- parline$Init
     finalval <- parline$Value
     parsd <- parline$Parm_StDev
-    
+
     Pmin <- parline$Min
     Pmax <- parline$Max
     Ptype <- parline$PR_type
@@ -217,18 +218,18 @@ SSv3_plotpars <- function(
     ymax <- NULL # upper y-limit in plot
     xmin <- NULL # lower x-limit in plot
     xmax <- NULL # upper x-limit in plot
-    
+
     # get prior
     negL_prior <- GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=x)
     prior <- exp(-1*negL_prior)
     # prior likelihood at initial and final values
-    priorinit <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=initval)) 
+    priorinit <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=initval))
     priorfinal <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=finalval))
     if(showprior){
       prior <- prior/(sum(prior)*mean(diff(x)))
       ymax <- max(ymax,max(prior)) # update ymax
     }
-    
+
     # get normal distribution associated with ADMB's estimate of the parameter's asymptotic std. dev.
     if(showmle){
       if(parsd>0){
@@ -241,7 +242,7 @@ SSv3_plotpars <- function(
       xmin <- qnorm(0.001,finalval,parsd)
       xmax <- qnorm(0.999,finalval,parsd)
     }
-    
+
     # get posterior
     goodpost <- F
     if(showpost){
@@ -265,7 +266,7 @@ SSv3_plotpars <- function(
         xmax <- max(initval,xmax)
       }
       # keep range inside parameter limits
-      xmin <- max(Pmin,xmin) 
+      xmin <- max(Pmin,xmin)
       xmax <- min(Pmax,xmax)
     }else{
       # or use parameter limits
@@ -328,3 +329,4 @@ SSv3_plotpars <- function(
   if(pdf) dev.off() # close PDF file if it was open
   if(returntable) return(partable[partable$Label %in% goodnames,])
 }
+
