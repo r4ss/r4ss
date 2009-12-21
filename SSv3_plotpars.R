@@ -25,7 +25,7 @@ function(
   #
   ################################################################################
 
-  codedate <- "November 19, 2009"
+  codedate <- "December 21, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -64,6 +64,7 @@ function(
   fullrepfile  <- paste(dir,repfile,sep="/")
   fullctlfile  <- paste(dir,ctlfile,sep="/")
 
+  print(fullpostfile)
   postfileinfo <- file.info(fullpostfile)$size
   repfileinfo  <- file.info(fullrepfile)$size
   ctlfileinfo  <- file.info(fullctlfile)$size
@@ -153,11 +154,12 @@ function(
       if(is.na(readrecdev) | readrecdev==1) print("This function does not yet display recdev values read from ctl file",quote=F)
     }
   }else{
-    goodnames <- goodnames[!substr(goodnames,1,10) %in% substr(recdevlabels,1,10)]
+    goodnames <- goodnames[!substr(goodnames,1,9) %in% substr(recdevlabels,1,9)]
   }
   npars <- length(goodnames)
-#  print(goodnames)
-#return(partable[partable$Label %in% goodnames,])
+  ### debugging tools:
+  ## print(goodnames)
+  ## return(partable[partable$Label %in% goodnames,])
 
   # make plot
   if(verbose){
@@ -203,7 +205,7 @@ function(
     Psd <- parline$Pr_SD
     Pr <- parline$Prior
 
-    if(substr(parname,1,10) %in% substr(recdevlabels,1,10)){
+    if(substr(parname,1,9) %in% substr(recdevlabels,1,9)){
       initval <- 0
       Pmin <- recdevmin
       Pmax <- recdevmax

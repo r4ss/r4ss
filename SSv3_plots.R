@@ -26,7 +26,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "December 4, 2009"
+  codedate <- "December 21, 2009"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -336,6 +336,7 @@ function(
     # determine fecundity type
     FecType <- 4
     if("Eg/gm_slope_wt_Fem" %in% parameters$Label) FecType <- 1
+    if("Eg/kg_slope_wt_Fem" %in% parameters$Label) FecType <- 1 # name from SSv3.1
     if("Eggs_exp_len_Fem" %in% parameters$Label) FecType <- 2
     if("Eggs_exp_wt_Fem" %in% parameters$Label) FecType <- 3
 
@@ -346,6 +347,10 @@ function(
       par1name <- "Eg/gm_inter_Fem"
       par2name <- "Eg/gm_slope_wt_Fem"
       FecX <- biology$Wt_len_F
+    }
+    if(substr(SS_version,1,7)=="SS-V3.1"){ # fix for name change in SSv3.1
+      par1name <- "Eg/kg_inter_Fem"
+      par2name <- "Eg/kg_slope_wt_Fem"
     }
     if(FecType==2){
       fec_ylab <- "Eggs per kg"
@@ -1283,7 +1288,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   if(9 %in% c(plot, print)){
     if(substr(SS_version,1,8)=="SS-V3.03"){
       # temporary complaint--will remove later
-      print('Skipped plot 9, recdevs: upgrade to SSv3.04!',quote=F)
+      print('Skipped plot 9, recdevs: upgrade to a newer version of SS!',quote=F)
     }else{
       recdevEarly <- parameters[substring(parameters$Label,1,13) %in% c("Early_RecrDev"),]
       early_initage <- parameters[substring(parameters$Label,1,13) %in% c("Early_InitAge"),]
@@ -1291,17 +1296,19 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       recdev <- parameters[substring(parameters$Label,1,12) %in% c("Main_RecrDev"),]
       recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
       recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
+
+
       if(nrow(recdev)==0 || max(recdev$Value)==0){
 	if(verbose) print("Skipped plot 9: Rec devs and asymptotic error check - no rec devs estimated",quote=F)
       }else{
 	if(nrow(recdev)>0){
 	  recdev$Yr <- as.numeric(substring(recdev$Label,14))
 	  if(nrow(recdevEarly)>0){
-	    recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,13))
+	    recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,15))
 	  }
 	  if(nrow(early_initage)>0){
 	    early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
-	    recdevEarly <- rbind(recdevEarly,early_initage)
+	    recdevEarly <- rbind(early_initage,recdevEarly)
 	  }
 	  if(nrow(main_initage)>0){
 	    main_initage$Yr <- startyr - as.numeric(substring(main_initage$Label,14))
@@ -1315,9 +1322,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    recdevFore <- rbind(recdevLate,recdevFore)
 
 	  Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
-	  xlim <- range(Yr)
-	  ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value)
-	  ylab <- "Log Recruitment deviation"
+	  xlim <- range(Yr,na.rm=T)
+	  ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value,na.rm=T)
+	  ylab <- "Log recruitment deviation"
+
 	  recdevfunc <- function(){
 	    plot(recdev$Yr,recdev$Value,xlab=lab[3],main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
 	    # should probably change color between early/main not before/after startyr as now
@@ -1370,11 +1378,35 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	      # bias correction (2nd axis, scaled by ymax)
 	      lines(recruit$year,recruit$biasadj,col="green3")
 	    }
+	    recdevfunc4 <- function(){
+	      # recdevs with uncertainty intervals
+              alldevs <- rbind(recdevEarly,recdev,recdevFore)
+              colvec <- c(rep('blue',nrow(recdevEarly)),
+                          rep('black',nrow(recdev)),
+                          rep('blue',nrow(recdevFore)))
+              ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
+              val <- alldevs$Value
+              std <- alldevs$Parm_StDev
+              recdev_hi <- val + 1.96*std
+              recdev_lo <- val - 1.96*std
+              Yr <- alldevs$Yr
+              ylim <- range(recdev_hi,recdev_lo,na.rm=T)
+              plot(Yr,Yr,type='n',xlab="Year",
+                   ylab='Log recruitment deviation',ylim=ylim)
+              abline(h=0,col="grey")
+              arrows(Yr,recdev_lo,Yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2,col=colvec)
+              lines(Yr,val,lty=3)
+              points(Yr,val,pch=16,col=colvec)
+	    }
 	    if(9 %in% plot){
+              recdevfunc4()
 	      recdevfunc2()
 	      recdevfunc3()
 	    }
 	    if(9 %in% print){
+	      png(file=paste(plotdir,"09_recdevwithbars.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	      recdevfunc4()
+	      dev.off()
 	      png(file=paste(plotdir,"09_recdevvarcheck.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 	      recdevfunc2()
 	      dev.off()
