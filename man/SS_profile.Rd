@@ -20,14 +20,16 @@ command = "SS3 -nox", model = "ss3", saveoutput = T, verbose = T)
   \item{linenum}{ Optional line number of parameter to be changed.
     Default = NULL. }
   \item{string}{ Optional string partially matching name of parameter
-    to be changed. Default = NULL.} 
-  \item{profilevec}{ Vector of values to profile over.  Default = NULL.} 
-  \item{command}{ Call to executable. Default = "SS3 -nox".} 
-  \item{model}{ Name of executable. Default = "ss3".} 
+    to be changed. Default = NULL.}
+  \item{profilevec}{ Vector of values to profile over.  Default = NULL.}
+  \item{command}{ Call to executable. Default = "SS3 -nox".}
+  \item{model}{ Name of executable. Default = "ss3".}
+  \item{systemcmd}{ Should R call SS using "system" function intead of
+    "shell". This may be required when running R in Emacs. Default = F.}
   \item{saveoutput}{ Copy output .SSO files to unique names.
     Default = T.}
   \item{verbose}{ Controls amount of info output to command line.
-    Default = T.} 
+    Default = T.}
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~
@@ -41,7 +43,7 @@ command = "SS3 -nox", model = "ss3", saveoutput = T, verbose = T)
 % }
 % \references{ ~put references to the literature/web site here ~ }
 \author{ Ian Taylor }
-% \note{ ~~further notes~~ 
+% \note{ ~~further notes~~
 
 %  % ~Make other sections like Warning with \section{Warning }{....} ~
 % }

@@ -14,7 +14,7 @@ function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
-  if(!is.list(replist) | substr(replist$SS_version,1,8)!="SS-V3.04"){
+  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-"))){
     print("!error: this function needs an input object created by SSv3_output from a SSv3.04 model")
     return()
   }

@@ -23,7 +23,7 @@ function(
 #
 ################################################################################
 
-codedate <- "December 8, 2009"
+codedate <- "December 21, 2009"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -84,9 +84,9 @@ rephead <- readLines(con=repfile,n=3)
 
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
-SS_versionshort <- toupper(substr(SS_version,1,9))
-if(!(SS_versionshort %in% paste("SS-V3.0",c("4B"),sep=""))){
-  print(paste("! Warning, this function tested on SS-V3.04b. You are using",substr(SS_version,1,9)),quote=F)
+SS_versionshort <- toupper(substr(SS_version,1,8))
+if(!(SS_versionshort %in% c("SS-V3.04","SS-V3.1-"))){
+  print(paste("! Warning, this function tested on SS-V3.04B. You are using",substr(SS_version,1,9)),quote=F)
 }else{
   if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=F)
 }
@@ -512,7 +512,7 @@ lenntune <- rawlenntune[,c(1,2,4,5,6,8,9)]
 lenntune <- lenntune[lenntune$N > 0,]
 stats$Length_comp_Eff_N_tuning_check <- lenntune
 
-rawagentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10)
+rawagentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10)
 names(rawagentune) <- rawagentune[1,]
 rawagentune <- rawagentune[2:length(rawagentune[,1]),]
 rawagentune[,1] <- rawagentune[,10]

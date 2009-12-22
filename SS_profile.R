@@ -4,7 +4,7 @@ function(
          masterctlfile="control.ss_new",
          newctlfile="control_modified.ss", # must match entry in starter file
          linenum=NULL, string=NULL, profilevec=NULL,
-         command="SS3 -nox",model='ss3',saveoutput=T,
+         command="SS3 -nox",model='ss3',systemcmd=F,saveoutput=T,
          verbose=T)
 {
   ################################################################################
@@ -33,10 +33,10 @@ function(
   converged <- rep(NA,n)
   totallike <- rep(NA,n)
   liketable <- NULL
-  
+
   setwd(dir) # change working directory
   stdfile <- paste(model,'.std',sep='')
-  
+
   # run loop over profile values
   for(i in 1:n){
     SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
@@ -47,12 +47,12 @@ function(
     if(file.exists('Report.sso')) file.remove('Report.sso')
 
     # run model
-    if(win){
-      shell(cmd=command) 
+    if(win & !systemcmd){
+      shell(cmd=command)
     }else{
       system(command)
     }
-    
+
     converged[i] <- file.exists(stdfile)
     onegood <- F
     if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
@@ -63,7 +63,7 @@ function(
     }else{
       liketable <- rbind(liketable,rep(NA,10))
     }
-    
+
     if(saveoutput){
       file.copy('Report.sso',paste('Report',i,".sso",sep=""))
       file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""))
