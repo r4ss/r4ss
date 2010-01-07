@@ -26,7 +26,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "December 21, 2009"
+  codedate <- "January 7, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -1624,7 +1624,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
         plot(y,z,xlab=xlab,main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab=lab[12])
         abline(h=0,col="grey")
         lines(x=c(0,max(z)),y=c(0,max(z)))
-        if(npoints > 6 & smooth){
+        if(smooth && npoints > 6 && diff(range(y))>0){
           psmooth <- loess(z~y,degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
       }
@@ -1655,7 +1655,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
       cpuefun4 <- function(){
         plot(log(y),log(z),xlab=xlab,main=main,cex.main=cex.main,col="blue",pch=19,ylab=ylab2)
         lines(x=range(log(z)),y=range(log(z)))
-        if(npoints > 6 & smooth){
+        if(smooth && npoints > 6 && diff(range(y))>0){
           psmooth <- loess(log(z)~log(y),degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
       }
