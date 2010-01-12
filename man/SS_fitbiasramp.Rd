@@ -10,13 +10,20 @@ Uses standard error of estimated recruitment deviates to estimate the 5
 controls for the bias adjustment in Stock Synthesis
 }
 \usage{
-SS_fitbiasramp(replist)
+SS_fitbiasramp(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-  Object created using \code{\link{SSv3_output}}
-}
+    Object created using \code{\link{SSv3_output}} }
+  \item{verbose}{ Controls the amount of output to the screen.
+    Default=F. }
+  \item{startvalues}{ A vector of 5 values for the starting points in
+    the minimization. Default=NULL. }
+  \item{method}{ A method to apply to the 'optim' function. See ?optim
+    for options. Default='Nelder-Mead'. }
+  \item{transform}{ An experimental option to treat the transform the 5
+    quantities to improve minimization. Doesn't work well. Default=F. }
 }
 % \details{
 % %%  ~~ If necessary, more details than the description above ~~
