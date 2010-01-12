@@ -20,7 +20,7 @@ showeffN = T, showlegend = T, pwidth = 7, pheight = 7, punits = "in",
 ptsize = 12, res = 300, cex.main = 1, selexlines = 1:5,
 rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3,
-fixdims = T, new = T, ...)
+fixdims = T, new = T, catchasnumbers = F, legendloc = "topleft", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -122,13 +122,16 @@ fixdims = T, new = T, ...)
   \item{tagcols}{ Number of columns for tagging-related plots. Default=3. }
   \item{fixdims}{ Control whether multi-panel plots all have dimensions equal to maxrows by maxcols, or resized within those limits to fit number of plots. Default=T. }
   \item{new}{ Open a new window or add to existing plot windows. Default=T. }
+  \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
+    Default=F. }
+  \item{legendloc}{ Location for all legends. Default="topleft". }
   \item{\dots}{ Additional arguments that will be passed to some subfunctions. }
 }
 \details{
   \bold{List of plot groups}
 
   \enumerate{
-    \item Biology 
+    \item Biology
     \itemize{
       \item Mean weight at size in the last year (by sex if applicable)
       \item Maturity at size
@@ -176,7 +179,7 @@ fixdims = T, new = T, ...)
       \item Time series of spawning biomass estimates
       \item Time series of spawning biomass estimates with asymptotic intervals
       \item Time series of spawning biomass estimates with forecast years
-      \item Time series of spawning biomass estimates with forecast years with asymptotic intervals 
+      \item Time series of spawning biomass estimates with forecast years with asymptotic intervals
     }
     \item Depletion plots
     \itemize{
@@ -219,7 +222,7 @@ fixdims = T, new = T, ...)
     }
     \item Length-composition data plots
     \itemize{
-      \item Multi-panel bar plots of length composition data by fleet, sex, partition 
+      \item Multi-panel bar plots of length composition data by fleet, sex, partition
       \item Bubble plots of length composition data by fleet, sex, partition
     }
     \item Age-composition data plots

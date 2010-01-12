@@ -330,16 +330,16 @@ if(comp){   # skip this stuff if no CompReport.sso file
   compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
   compdbase <- compdbase[compdbase$Obs!="",]
   compdbase$Like[compdbase$Like=="_"] <- NA
-  for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("effN","Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+  for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
 
-  # not sure why these subsets are here, considering that they're not passed into output
-  lendbase   <- compdbase[compdbase$Kind=="LEN"  & compdbase$N > 0,]
-  sizedbase  <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
+  ## # not sure why these subsets are here, considering that they're not passed into output
+  ## lendbase   <- compdbase[compdbase$Kind=="LEN"  & compdbase$N > 0,]
+  ## sizedbase  <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE"  & compdbase$N > 0,]
-  latagebase <- compdbase[compdbase$Kind=="L@A"  & compdbase$N > 0,]
-  lendbase$effN <- as.numeric(lendbase$effN)
-  sizedbase$effN <- as.numeric(sizedbase$effN)
-  agedbase$effN <- as.numeric(agedbase$effN)
+  ## latagebase <- compdbase[compdbase$Kind=="L@A"  & compdbase$N > 0,]
+  ## lendbase$effN <- as.numeric(lendbase$effN)
+  ## sizedbase$effN <- as.numeric(sizedbase$effN)
+  ## agedbase$effN <- as.numeric(agedbase$effN)
   if(nrow(agedbase)>0){
     agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
   }else{
@@ -354,8 +354,8 @@ if(comp){   # skip this stuff if no CompReport.sso file
   agebins <- NA
   nagebins <- NA
   compdbase <- NA
-  agedbase <- NA
-  latagebase <- NA
+  ## agedbase <- NA
+  ## latagebase <- NA
   Lbin_method <- 2
 }
 
@@ -668,6 +668,7 @@ returndat$sizeselex <- selex
    rawdisc <- rawdisc[,rawdisc[1,]!=""]
    names(rawdisc) <- rawdisc[1,]
    discard <- rawdisc[-1,]
+   for(icol in 2:ncol(discard)) discard[,icol] <- as.numeric(discard[,icol])
  }else{
    discard <- NA
  }
