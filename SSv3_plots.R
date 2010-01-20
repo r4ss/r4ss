@@ -106,7 +106,7 @@ function(
     line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
     line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
     if(!is.na(cols[1])){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
-		       }else{		 out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
+	}else{		 out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
     return(out)
   }
 
@@ -313,9 +313,9 @@ function(
     text(0,y,Run_time,pos=4)
     y <- y+ystep
     Files2 <- strsplit(Files_used," ")[[1]]
-    text(0,y,paste("Control file:",Files2[2]),pos=4)
+    text(0,y,paste(Files2[[1]],Files2[2]),pos=4)
     y <- y+ystep
-    text(0,y,paste("Data file:",Files2[4]),pos=4)
+    text(0,y,paste(Files2[[3]],Files2[4]),pos=4)
     par(mar=mar0) # replace margins
   }
   # colors and line types
@@ -344,32 +344,38 @@ function(
     ylab2 <- "Spawning output"
 
     # determine fecundity type
-    FecType <- 4
-    if("Eg/gm_slope_wt_Fem" %in% parameters$Label) FecType <- 1
-    if("Eg/kg_slope_wt_Fem" %in% parameters$Label) FecType <- 1 # name from SSv3.1
-    if("Eggs_exp_len_Fem" %in% parameters$Label) FecType <- 2
-    if("Eggs_exp_wt_Fem" %in% parameters$Label) FecType <- 3
-
     # define labels and x-variable
-    if(FecType==1){
-      fec_ylab <- "Eggs per kg"
-      fec_xlab <- "Female weight (kg)"
+    FecType <- 4
+    if("Eg/gm_slope_wt_Fem" %in% parameters$Label){
+      FecType <- 1
       par1name <- "Eg/gm_inter_Fem"
       par2name <- "Eg/gm_slope_wt_Fem"
-      FecX <- biology$Wt_len_F
     }
-    if(substr(SS_version,1,7)=="SS-V3.1"){ # fix for name change in SSv3.1
+    if("Eg/kg_slope_wt_Fem" %in% parameters$Label){
+      FecType <- 1
       par1name <- "Eg/kg_inter_Fem"
       par2name <- "Eg/kg_slope_wt_Fem"
     }
-    if(FecType==2){
+    if("Eggs/kg_slope_wt_Fem" %in% parameters$Label){
+      FecType <- 1
+      par1name <- "Eggs/kg_inter_Fem"
+      par2name <- "Eggs/kg_slope_wt_Fem"
+    }
+    if(FecType==1){
+      fec_ylab <- "Eggs per kg"
+      fec_xlab <- "Female weight (kg)"
+      FecX <- biology$Wt_len_F
+    }
+    if("Eggs_exp_len_Fem" %in% parameters$Label){
+      FecType <- 2
       fec_ylab <- "Eggs per kg"
       fec_xlab <- "Female length (cm)"
       par1name <- "Eggs_scalar_Fem"
       par2name <- "Eggs_exp_len_Fem"
       FecX <- biology$Mean_Size
     }
-    if(FecType==3){
+    if("Eggs_exp_wt_Fem" %in% parameters$Label){
+      FecType <- 3
       fec_ylab <- "Eggs per kg"
       fec_xlab <- "Female weight (kg)"
       par1name <- "Eggs_scalar_Fem"
@@ -380,7 +386,6 @@ function(
     par1 <- parameters$Value[parameters$Label==par1name]
     par2 <- parameters$Value[parameters$Label==par2name]
     if(par2!=0) SBlabelflag <- FALSE
-
     if(FecType==1) FecY <- par1 + par2*FecX
     if(FecType==2) FecY <- par1*FecX^par2
     if(FecType==3) FecY <- par1*FecX^par2
@@ -901,7 +906,6 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
       linefunc(ymat=retmat, ylab=lab[6], addtotal=T)
       if(nfishfleets>1) stackfunc(ymat=retmat, ylab=lab[6])
-
       # if observed catch doesn't equal estimated, make plot to compare
       if(diff(range(retmat-totobscatchmat))>0){
         linefunc(ymat=retmat, ylab=paste("Observed and expected",lab[6]), addtotal=T)
@@ -1622,6 +1626,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
     recruitfun <- function(){
       plot(x[order(x)],recruit$with_env[order(x)],xlab=xlab,ylab=ylab,type="l",col="blue",ylim=c(0,ymax),xlim=c(0,xmax))
       abline(h=0,col="grey")
+      abline(v=0,col="grey")
       # lines(x[order(x)],recruit$adjusted[order(x)],col="green")
       lines(x,recruit$adjusted,col="green")
       lines(x[order(x)],recruit$exp_recr[order(x)],lwd=2,col="black")

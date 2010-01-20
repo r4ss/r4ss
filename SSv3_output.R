@@ -80,7 +80,7 @@ if(file.exists(repfile)){
   print(paste("!Error: can't find report file,", repfile),quote=F)
   return()
 }
-rephead <- readLines(con=repfile,n=3)
+rephead <- readLines(con=repfile,n=10)
 
 # warn if SS version used to create rep file is too old or too new for this code
 SS_version <- rephead[1]
@@ -93,7 +93,7 @@ if(!(SS_versionshort %in% c("SS-V3.04","SS-V3.1-"))){
 
 findtime <- function(lines){
   # quick function to get model start time from SSv3 output files
-  time <- strsplit(lines[grep('ime',lines)],'ime: ')[[1]]
+  time <- strsplit(lines[grep("ime",lines)],"ime: ")[[1]]
   if(length(time)<2) return() else return(time[2])
 }
 repfiletime <- findtime(rephead)
@@ -181,7 +181,7 @@ if(covar){
   CoVar <- read.table(covarfile,header=T,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
   if(verbose) print("Got covar file.",quote=F)
   stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
-  names(stdtable) = c('name','std','type')
+  names(stdtable) = c("name","std","type")
   Nstd <- sum(stdtable$std>0)
 
   if(Nstd<=1){
@@ -330,9 +330,10 @@ if(comp){   # skip this stuff if no CompReport.sso file
   compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
   compdbase <- compdbase[compdbase$Obs!="",]
   compdbase$Like[compdbase$Like=="_"] <- NA
+  compdbase$effN[compdbase$effN=="_"] <- NA
   for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
 
-  ## # not sure why these subsets are here, considering that they're not passed into output
+  ## # not sure why these subsets were here, considering that they weren't passed into output
   ## lendbase   <- compdbase[compdbase$Kind=="LEN"  & compdbase$N > 0,]
   ## sizedbase  <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
   agedbase   <- compdbase[compdbase$Kind=="AGE"  & compdbase$N > 0,]
@@ -372,7 +373,6 @@ endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginni
 nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
 seasfracs <- (0:(nseasons-1))/nseasons
 
-
 # info on growth morphs
 endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
 if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
@@ -397,7 +397,7 @@ flush.console()
 # stats list: items that are output to the GUI (if printstats==T) for a quick summary of results
 stats <- list()
 stats$SS_version <- SS_version
-stats$Run_time <- paste(as.vector(rawrep[2,1:6]),collapse=" ")
+stats$Run_time <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
 
 tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
 tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
@@ -425,7 +425,7 @@ allpars <- rawpars
 allpars[allpars=="_"] <- NA
 for(i in (1:ncol(allpars))[!(names(allpars)%in%c("Label","Status"))]) allpars[,i] = as.numeric(allpars[,i])
 
-if(!is.na(parfile)){ parline <- read.table(parfile,fill=T,comment.char='',nrows=1)
+if(!is.na(parfile)){ parline <- read.table(parfile,fill=T,comment.char="",nrows=1)
 }else{ parline <- matrix(NA,1,16) }
 stats$N_estimated_parameters <- parline[1,6]
 
