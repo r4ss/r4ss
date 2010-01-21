@@ -1,7 +1,7 @@
 \name{SS_parlines}
 \alias{SS_parlines}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ ~~function to do ... ~~ }
+\title{ Get parameter lines from Stock Synthesis control file }
 \description{
   A simple function which takes as input the full path and filename of a
   control file for input to Stock Synthesis. Ideally, a Control.SS_New
