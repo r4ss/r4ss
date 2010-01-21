@@ -27,7 +27,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "January 12, 2010"
+  codedate <- "January 20, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
