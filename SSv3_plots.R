@@ -1474,13 +1474,14 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	uiw <- std*qt(0.975,DF_discard) # quantile of t-distribution
 	liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
 	xlim <- c((min(yr)-3),(max(yr)+3))
-	if(discard_type=="as_biomass"){
-	  title <- paste("Total discard for",fleetname)
-	  ylab <- "Total discards"
-	}
-	if(discard_type=="as_fraction"){
+	if(grepl("as_fraction",nsp$discard_type)){
+          # discards as a fraction
 	  title <- paste("Discard fraction for",fleetname)
 	  ylab <- "Discard fraction"
+	}else{
+          # discards in same units as catch, or in numbers (should distinguish in the future)
+	  title <- paste("Total discard for",fleetname)
+	  ylab <- "Total discards"
 	}
 	dfracfunc <- function(){
           plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=lab[3],main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=T))
