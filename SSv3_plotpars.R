@@ -184,7 +184,7 @@ function(
   }
   if(pdf){
     pdffile <- paste(dir,"/SSplotpars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
-    pdf(file=pdffile,width=pwidth,height=pheight,punits="in")
+    pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
 
