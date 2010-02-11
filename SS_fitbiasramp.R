@@ -1,10 +1,12 @@
 SS_fitbiasramp <-
-function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
+function(replist, verbose=F, startvalues=NULL, method="BFGS",
+         transform=F, png=F, pdf=F,
+         pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
   # function to estimate bias adjustment ramp
   # for Stock Synthesis v3.04b
   # by Ian Taylor
-  # December 2, 2009
+  # February 5, 2010
   #
   # Usage: run function with input that is an object from SSv3_output
   #        from http://code.google.com/p/r4ss/
@@ -61,13 +63,32 @@ function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
   }
   if(verbose & transform) print(paste("transformed startvalues =",paste(startvalues,collapse=", ")),quote=F)
 
-
-
-  biasadjfit <- function(pars,yr,std,sigmaR,transform){
+  biasadjfit <- function(pars,yr,std,sigmaR,transform,eps=.1){
     # calculate the goodness of the fit of the estimated ramp and values to the model output
     biasadj <- biasadjfun(yr=yr,vec=pars, transform=transform)$biasadj
     compare <- 1 - (std/sigmaR)^2
-    fit <- sum((biasadj-compare)^2)
+
+    # penalty similar to that employed by posfun in ADMB
+    penfun <- function(xsmall,xbig,eps=.1){
+      pen <- 0
+      if(xbig < xsmall+eps) pen <- pen + (xbig - (xsmall+eps))^2
+      return(pen)
+    }
+    penalty <- 0
+    # penalize year values out of order
+    penalty <- penalty + penfun(pars[2],pars[3])
+    penalty <- penalty + penfun(pars[1],pars[2])
+    penalty <- penalty + penfun(pars[3],pars[4])
+    # penalize values outside range of years
+    penalty <- penalty + penfun(pars[3],max(yr),eps=0)
+    penalty <- penalty + penfun(min(yr),pars[2],eps=0)
+    penalty <- penalty + penfun(0,pars[5],eps=0)
+    penalty <- penalty + penfun(pars[5],1,eps=0)
+    # penalize extreme values
+    penalty <- penalty + penfun(min(yr)-diff(range(yr)),pars[1],eps=0)
+    penalty <- penalty + penfun(pars[4],max(yr)+diff(range(yr)),eps=0)
+
+    fit <- sum((biasadj-compare)^2) + penalty
     return(fit)
   }
 
@@ -84,7 +105,7 @@ function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
     # run the optimizationt to find best fit values
     biasopt <- optim(par=startvalues,fn=biasadjfit,yr=yr,std=std,
                      sigmaR=sigma_R_in,transform=transform,
-                     method=method)
+                     method=method,control=list(maxit=1000))
     return(biasopt)
   }
 
@@ -132,6 +153,14 @@ function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
     Yr <- recruit$year
     ylim <- range(recdev_hi,recdev_lo)
 
+    if(png==T & pdf==T){ print("can't have both png & pdf = T",quote=F)
+                         return()
+                       }
+print(png)
+    if(png!=F) png(file=png,width=pwidth,height=pheight,
+                   units=punits,res=res,pointsize=ptsize)
+    if(pdf!=F) png(file=pdf,width=pwidth,height=pheight,
+                   pointsize=ptsize)
     par(mfrow=c(2,1),mar=c(2,5,1,1),oma=c(3,0,0,0))
     plot(Yr,Yr,type='n',xlab="Year",
          ylab='Recruitment deviation',ylim=ylim)
@@ -164,6 +193,9 @@ function(replist,verbose=F,startvalues=NULL,method="Nelder-Mead",transform=F){
   legend('topleft',col=c(2,4),lwd=3,lty=2:1,inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
          leg=c('bias adjust in model','estimated alternative'))
   mtext(side=1,line=3,'Year')
+
+  if(pdf!=F | png!=F) dev.off()
+  
   newvals <- newbias[[1]]
   if(transform) newvals <- removeoffsets(newvals)
   newvals <- round(newvals,4)
