@@ -30,9 +30,12 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   sigma_R_in <- replist$sigma_R_in
 
   if(is.null(startvalues)){
-      startvalues <- c(min(recruit$year),
-                       c(2,-2)+range(recruit$year[recruit$biasadj==max(recruit$biasadj)]),
-                       max(recruit$year),
+      nonfixedyrs <- recruit$year[recruit$era!="Fixed"]
+      mainyrs <- recruit$year[recruit$era=="Main"]
+      startvalues <- c(min(nonfixedyrs),
+                       min(mainyrs) + .3*diff(range(mainyrs)),
+                       max(mainyrs) - .1*diff(range(mainyrs)),
+                       max(nonfixedyrs),
                        .7)
   }
   if(verbose) print(paste("startvalues =",paste(startvalues,collapse=", ")),quote=F)
@@ -195,7 +198,7 @@ print(png)
   mtext(side=1,line=3,'Year')
 
   if(pdf!=F | png!=F) dev.off()
-  
+
   newvals <- newbias[[1]]
   if(transform) newvals <- removeoffsets(newvals)
   newvals <- round(newvals,4)
