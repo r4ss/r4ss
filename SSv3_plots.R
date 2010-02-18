@@ -2668,26 +2668,26 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # plot 20: conditional age at length plot with fits, sample size, etc.
   if(20 %in% c(plot,print)){
-if(3==4){ # temporarily turning off plot
+  if(aalresids==T){ 
     SSv3_plot_comps(datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
 		    aalbin=aalbin,aalyear=aalyear,
 		    samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
 		    maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,
 		    png=(20%in%print),GUI=(20%in%plot),smooth=smooth,plotdir=plotdir,
 		    maxneff=maxneff,cex.main=cex.main,...)
-
     if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=F)
-} # end temporarily turning off plot
-    # more plot 20: Andre's new conditional age-at-length plots
+    } 
+  # more plot 20: Andre's new conditional age-at-length plots
     if(nrow(condbase)==0){
       if(verbose) print("Skipped plot 20b: mean age and std. dev. in conditional AAL: no data of this type",quote=F)
     }else{
       Lens <-sort(unique(condbase$Lbin_lo))
       Yrs <- sort(unique(condbase$Yr))
-      par(mfrow=c(2,2))
-      for (Gender in 1:2){
+      par(mfrow=c(3,2))
+      for(fleets in 1:nfleets){
+      for (Gender in 1:nsexes){
 	for (Yr in Yrs){
-	  y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender,]
+         y <- condbase[condbase$Yr==Yr & condbase$Gender==Gender & condbase$Fleet==fleets,]
 	  Size <- NULL; Size2 <- NULL
 	  Obs <- NULL; Obs2 <- NULL
 	  Pred <- NULL;	 Pred2 <- NULL
@@ -2738,6 +2738,7 @@ if(3==4){ # temporarily turning off plot
 	  }
 	} # end loop over years
       } # end loop over genders
+     } # end fleet loop
       if(verbose) print("Finished plot 20b: mean age and std. dev. in conditional AAL",quote=F)
       if(verbose) print("  This is a new plot, currently in beta mode.",quote=F)
       if(verbose) print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=F)
