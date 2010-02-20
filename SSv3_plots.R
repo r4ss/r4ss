@@ -27,7 +27,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "January 20, 2010"
+  codedate <- "February 2, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -298,7 +298,7 @@ function(
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }
-  par(mfcol=c(rows,cols))
+  if(new) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
 
   if(pdf){
     mar0 <- par()$mar # current margins
@@ -2089,7 +2089,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    }
 	}
       # restore default single panel settings
-      par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+      par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
 
       # return information on what was plotted
       return(list(npages=npages, npanels=npanels, ipage=ipage))
@@ -2668,7 +2668,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # plot 20: conditional age at length plot with fits, sample size, etc.
   if(20 %in% c(plot,print)){
-  if(aalresids==T){ 
+  if(aalresids==T){
     SSv3_plot_comps(datonly=F,kind="cond",bub=T,verbose=verbose,fleets=fleets,
 		    aalbin=aalbin,aalyear=aalyear,
 		    samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -2676,7 +2676,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		    png=(20%in%print),GUI=(20%in%plot),smooth=smooth,plotdir=plotdir,
 		    maxneff=maxneff,cex.main=cex.main,...)
     if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=F)
-    } 
+    }
   # more plot 20: Andre's new conditional age-at-length plots
     if(nrow(condbase)==0){
       if(verbose) print("Skipped plot 20b: mean age and std. dev. in conditional AAL: no data of this type",quote=F)
@@ -2766,8 +2766,10 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
   } # end if 21 in plot or print
 
 
-  # restore default single panel settings
-  par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+  # restore default single panel settings if needed
+  # conditional because if adding to existing plot may mess up layout
+  if(!unique(par()$mfcol == c(rows,cols))) par(mfcol=c(rows,cols))
+  if(!unique(par()$mar == c(5,4,4,2)+.1)) par(mar=c(5,4,4,2)+.1, oma=rep(0,4))
 
   # Yield curve
   if(22 %in% c(plot, print)){
