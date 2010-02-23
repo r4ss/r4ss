@@ -16,7 +16,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
-  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-"))){
+  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10"))){
     print("!error: this function needs an input object created by SSv3_output from a SSv3.04 model")
     return()
   }
@@ -143,6 +143,9 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   }
 
   recdevs <- getrecdevs(replist)
+  Yr <- recruit$year[!is.na(recdevs$std)]
+  recdevs <- recdevs[!is.na(recdevs$std),]
+
   val <- recdevs$val
   std <- recdevs$std
 
@@ -150,16 +153,14 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
     if(verbose) print("no rec devs estimated in this model",quote=F)
     return()
   }else{
-
     recdev_hi <- val + 1.96*std
     recdev_lo <- val - 1.96*std
-    Yr <- recruit$year
+
     ylim <- range(recdev_hi,recdev_lo)
 
     if(png==T & pdf==T){ print("can't have both png & pdf = T",quote=F)
                          return()
                        }
-print(png)
     if(png!=F) png(file=png,width=pwidth,height=pheight,
                    units=punits,res=res,pointsize=ptsize)
     if(pdf!=F) png(file=pdf,width=pwidth,height=pheight,
