@@ -17,13 +17,13 @@ function(
 #          and other contributors to http://code.google.com/p/r4ss/
 # Returns: a list containing elements of Report.sso and/or covar.sso,
 #          formatted as R objects, and optional summary statistics to R console
-# General: Updated for Stock Synthesis version 3.04B and 3.1_test; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.10; R version 2.8.1
 # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
 # Required packages: none
 #
 ################################################################################
 
-codedate <- "January 20, 2010"
+codedate <- "February 25, 2010"
 
 if(verbose){
   print(paste("R function updated:",codedate),quote=F)
@@ -429,6 +429,7 @@ if(!is.na(parfile)){ parline <- read.table(parfile,fill=T,comment.char="",nrows=
 }else{ parline <- matrix(NA,1,16) }
 stats$N_estimated_parameters <- parline[1,6]
 
+
 pars <- rawpars[!(rawpars$Phase %in% c("_","")),]
 pars[pars=="_"] <- NA
 for(i in (1:ncol(pars))[!(names(pars)%in%c("Label","Status"))]) pars[,i] = as.numeric(pars[,i])
@@ -484,7 +485,7 @@ if(nrow(SelAgeAdj)>2){
 
 # gradient
 if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
-stats$maximum_gradient_component <- parline[1,16]
+stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
 # sigma_R
 srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
