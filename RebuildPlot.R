@@ -1,4 +1,4 @@
-DoProjectPlots<-function(dirn="C:\\NWFSC\\NWFSC25D\\",fileN=c("res.csv"),Titles="",ncols=200,Plots=1:25,Options=c(1:9),LegLoc="bottomright")
+DoProjectPlots<-function(dirn="C:/NWFSC/NWFSC25D/",fileN=c("res.csv"),Titles="",ncols=200,Plots=1:25,Options=c(1:9),LegLoc="bottomright")
 {
  windows(record=T)
 
