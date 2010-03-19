@@ -377,11 +377,13 @@ seasfracs <- (0:(nseasons-1))/nseasons
 endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
 if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
 morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,-1,cols=1:9)
-#return(morph_indexing)
 names(morph_indexing) <- morph_indexing[1,]
 morph_indexing <- morph_indexing[-1,]
 for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
 ngpatterns <- max(morph_indexing$Gpattern)
+
+mainmorphs <- morph_indexing$Index[morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
+if(length(mainmorphs)==0) print("!Error with morph indexing in SSv3_output function.",quote=F)
 
 # forecast
 if(forecast){
@@ -531,6 +533,7 @@ returndat$nfleets     <- nfleets
 returndat$nfishfleets <- nfishfleets
 returndat$nsexes      <- nsexes
 returndat$ngpatterns  <- ngpatterns
+returndat$mainmorphs  <- mainmorphs
 returndat$lbins       <- lbins
 returndat$Lbin_method <- Lbin_method
 returndat$nlbins      <- nlbins
@@ -573,18 +576,21 @@ returndat$endgrowth <- growdat
 
 # Time-varying growth
  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))
+ growthvaries <- FALSE
  if(length(rawgrow)>1){
    names(rawgrow) <- rawgrow[1,]
    growdat <- rawgrow[-1,]
    for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
    growdat <- growdat[growdat$Beg==1 & growdat$Yr < endyr,]
    if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
+   if(length(unique(growdat$Yr))>1) growthvaries <- TRUE
    returndat$growthseries <- growdat
+   returndat$growthvaries <- growthvaries
  }
 
 # Length selex and retention
  if(!forecast) selex <- selex[selex$year <= endyr,]
-returndat$sizeselex <- selex
+ returndat$sizeselex <- selex
 
 # Age based selex
  rawageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1)
