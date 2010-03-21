@@ -1,5 +1,6 @@
-DoProjectPlots<-function(dirn="C:/NWFSC/NWFSC25D/",fileN=c("res.csv"),Titles="",ncols=200,Plots=1:25,Options=c(1:9),LegLoc="bottomright")
+DoProjectPlots<-function(dirn="C:/NWFSC/NWFSC25D/",fileN=c("res.csv"),Titles="",ncols=200,Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",yearmax= -1)
 {
+ if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
  windows(record=T)
 
 #  ==================================================================================================
@@ -93,91 +94,182 @@ RecHist<-function(UUU,Title)
 
 # =============================================================================================================
 
-AltStrategies<-function(UUU,Options,Title)
+AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","blue","green","orange","black","pink"))
 {
  par(mfrow=c(2,2))
 
- Ipnt <- which(UUU=="# Recovery Histogram")
- Tmax <- as.double(UUU[Ipnt-1,1])
- Yinit <-as.double(UUU[Ipnt-7,1])
- MinRev <-as.double(UUU[Ipnt-10,1])
+ Ipnt <- which(UUUs[[1]]=="# Recovery Histogram")
+ Tmax <- as.double(UUUs[[1]][Ipnt-1,1])
+ Yinit <-as.double(UUUs[[1]][Ipnt-7,1])
+ MinRev <-as.double(UUUs[[1]][Ipnt-10,1])
  Tmin <- MinRev+Yinit
 
- Ipnt <- which(UUU=="# Summary 1")+3
- Npnt <- as.double(UUU[Ipnt-2,1])
-
- titles <- UUU[Ipnt-1,3:11]
-
- Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
- Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),3])
- plot(Xvals,Yvals,xlab="Year",ylab="Probability Above Target",type='n',yaxs="i",ylim=c(0,1.05))
- for (II in 1:9)
-  if (II %in% Options)
+ if (length(FileN) > 0)
+  for (Ifile in 2:length(FileN))
    {
-    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+II])
-    lines(Xvals,Yvals,lty=II)
+    Ipnt <- which(UUUs[[1]]=="# Recovery Histogram")
+    Tmax2 <- as.double(UUUs[[1]][Ipnt-1,1])
+    Yinit2 <-as.double(UUUs[[1]][Ipnt-7,1])
+    MinRev2 <-as.double(UUUs[[1]][Ipnt-10,1])
+    Tmin2 <- MinRev2+Yinit2
+    if (Tmin != Tmin2)
+     {
+      stop("Tmin values in the different files don't match")
+     }
    }
+
+ NOpts <- 0
+ for (Ifile in 1:length(FileN)) NOpts <- NOpts+ length(Options[[Ifile]])
+
+ xmin <- 1.0e20
+ xmax <- 0
+ for (Ifile in 1:length(FileN))
+  {
+   Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+   Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+   Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+   if (yearmax > 0)
+    Use <- Xvals <= yearmax
+   else
+    Use <- rep(T,length=length(Xvals))
+   Xvals <- Xvals[Use]
+   if (min(Xvals) < xmin) xmin <- min(Xvals)
+   if (max(Xvals) > xmax) xmax <- max(Xvals)
+  }
+
+ plot(xmin,0,xlab="Year",ylab="Probability Above Target",type='n',yaxs="i",ylim=c(0,105),xlim=c(xmin,xmax))
+ IlineType <- 0
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     IlineType <- IlineType + 1
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+II])*100
+     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
+    }
  abline(h=0.5,lwd=3)
  abline(v=Tmin,lwd=1,lty=2)
  abline(v=Tmax,lwd=1,lty=2)
  title(Title)
 
- Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
  ymax <- 0
- for (II in 1:9)
-  if (II %in% Options)
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])*100
+     if (max(Yvals)  > ymax) ymax <- max(Yvals)
+    }
+ plot(xmin,0,xlab="Year",ylab="Catch (mt)",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+ IlineType <- 0
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
    {
-    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+10+II])
-    if (max(Yvals)  > ymax) ymax <- max(Yvals)
-   }
- Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+10+1])
- plot(Xvals,Yvals,xlab="Year",ylab="Catch (t)",type='n',yaxs="i",ylim=c(0,1.05*ymax))
- for (II in 1:9)
-  if (II %in% Options)
-   {
-    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+10+II])
-    lines(Xvals,Yvals,lty=II)
-   }
+     IlineType <- IlineType + 1
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])*100
+     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
+    }
 
- Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
  ymax <- 0
- for (II in 1:9)
-  if (II %in% Options)
-   {
-    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+20+II])
-    if (max(Yvals)  > ymax) ymax <- max(Yvals)
-   }
- Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+20+1])
- plot(Xvals,Yvals,xlab="Year",ylab="Spawning Output \\ Target",type='n',yaxs="i",ylim=c(0,1.05*ymax))
- for (II in 1:9)
-  if (II %in% Options)
-   {
-    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2+20+II])
-    lines(Xvals,Yvals,lty=II)
-   }
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
+     if (max(Yvals)  > ymax) ymax <- max(Yvals)
+    }
+ plot(xmin,0,xlab="Year",ylab="Spawning Output \\ Target",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+ IlineType <- 0
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     IlineType <- IlineType + 1
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
+     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
+    }
 
- plot(0,0,xlab="",ylab="",axes=F)
- legend(LegLoc,legend=titles[Options],lty=Options,cex=1)
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])
+     if (max(Yvals)  > ymax) ymax <- max(Yvals)
+    }
+ plot(xmin,0,xlab="Year",ylab="Spawning Output",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+ IlineType <- 0
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     IlineType <- IlineType + 1
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])
+     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
+    }
+ Jpnt <- which(UUUs[[1]]=="# Recruitments")-8
+ B0 <- as.double(UUUs[[1]][Jpnt,1])
+ abline(h=0.4*B0,lwd=2)
+ abline(h=0.25*B0,lwd=2)
+
+
+ plot(0,0,xlab="",ylab="",axes=F,type="n",cex=0)
+
+ Ltys <- NULL
+ legs <- NULL
+ IlineType <- 0
+ col2 <- NULL
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+    {
+     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     titles <- UUUs[[Ifile]][Ipnt-1,3:11]
+
+     IlineType <- IlineType + 1
+     titls <- titles[II]
+     if (length(FileN) > 0) titls <- paste(Titles[Ifile],": ",titls,sep="")
+     legs <- c(legs, titls)
+     Ltys <- c(Ltys,IlineType)
+     col2 <- c(col2,cols[IlineType])
+    }
+
+ legend(LegLoc,legend=legs,lty=Ltys,cex=1,col=col2,lwd=2)
 
 }
 # =============================================================================================================
 
-IndividualPlots<-function(UUU,Title)
+IndividualPlots<-function(UUU,Title,yearmax)
 {
  par(mfrow=c(2,2))
 
  Ipnt <- which(UUU=="# Individual")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
 
- PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt)
+ PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax)
  title(Title)
- PlotA(UUU,6,"Catch (t)",Ipnt,Npnt)
- PlotA(UUU,12,"Recruitment",Ipnt,Npnt)
- PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt)
- PlotA(UUU,24,"Exploitable Biomass",Ipnt,Npnt)
- PlotA(UUU,30,"Cumulative (discounted) Catch (t)",Ipnt,Npnt)
- PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt)
 
+ PlotA(UUU,6,"Catch (mt)",Ipnt,Npnt,yearmax)
+
+ PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax)
+
+ PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax)
+
+ PlotA(UUU,24,"Exploitable Biomass",Ipnt,Npnt,yearmax)
+
+ PlotA(UUU,30,"Cumulative (discounted) Catch (mt)",Ipnt,Npnt,yearmax)
+
+ PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax)
  Jpnt <- which(UUU=="# Recruitments")-8
  B0 <- as.double(UUU[Jpnt,1])
  abline(h=0.4*B0,lwd=2)
@@ -187,9 +279,14 @@ IndividualPlots<-function(UUU,Title)
 
 #  ==================================================================================================
 
-PlotA <- function(UUU,offset,title,Ipnt,Npnt)
+PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax)
 {
  Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
+ if (yearmax > 0)
+  Use <- Xvals <= yearmax
+ else
+  Use <- rep(T,length=length(Xvals))
+ Xvals <- Xvals[Use]
 
  Y1 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+2])
  Y2 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+3])
@@ -197,18 +294,18 @@ PlotA <- function(UUU,offset,title,Ipnt,Npnt)
  Y4 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+5])
  Y5 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+6])
 
- ymax <- max(Y5)*1.1
- plot(Xvals,Y5,xlab="Year",ylab=title,type='n',yaxs="i",ylim=c(0,ymax))
+ ymax <- max(Y5[Use])*1.1
+ plot(Xvals,Y5[Use],xlab="Year",ylab=title,type='n',yaxs="i",ylim=c(0,ymax))
  XX <- c(Xvals,rev(Xvals))
- polygon(XX,c(Y1,rev(Y5)),col="lightgray")
- polygon(XX,c(Y2,rev(Y4)),col="gray")
- lines(Xvals,Y3,lty=1,lwd=4)
+ polygon(XX,c(Y1[Use],rev(Y5[Use])),col="lightgray")
+ polygon(XX,c(Y2[Use],rev(Y4[Use])),col="gray")
+ lines(Xvals,Y3[Use],lty=1,lwd=4)
 
 }
 
 #  ==================================================================================================
 
-FirstFive<-function(UUU,Title)
+FirstFive<-function(UUU,Title,yearmax)
 {
  par(mfrow=c(2,2))
 
@@ -217,18 +314,24 @@ FirstFive<-function(UUU,Title)
 
  Ipnt <- which(UUU=="# First Five")+1
  Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
+ if (yearmax > 0)
+  Use <- Xvals <= yearmax
+ else
+  Use <- rep(T,length=length(Xvals))
+ Xvals <- Xvals[Use]
+
  ymax <- 0
  for (II in 1:5)
   {
    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1+II])
-   if (max(Yvals)  > ymax) ymax <- max(Yvals)
+   if (max(Yvals[Use])  > ymax) ymax <- max(Yvals[Use])
   }
  Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2])
- plot(Xvals,Yvals,xlab="Year",ylab="Spawning Output \\ Target",type='n',yaxs="i",ylim=c(0,1.05*ymax))
+ plot(Xvals,Yvals[Use],xlab="Year",ylab="Spawning Output \\ Target",type='n',yaxs="i",ylim=c(0,1.05*ymax))
  for (II in 1:5)
   {
    Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1+II])
-   lines(Xvals,Yvals,lty=II)
+   lines(Xvals,Yvals[Use],lty=II)
   }
  title(Title)
 
@@ -264,12 +367,14 @@ FinalRecovery<-function(UUU,Title)
 }
 #  ==================================================================================================
 
+ UUUs <- vector("list",5)
  for (Ifile in 1:length(fileN))
   {
 
    FileName <- paste(dirn,fileN[Ifile],sep="\\")
    print(FileName)
    UUU <- read.table(file=FileName,col.names=1:ncols,fill=T,colClass="character",comment.char="$",sep=",")
+   UUUs[[Ifile]] <- UUU
 
    # Extract key parameters
    Nsim <- as.double(UUU[3,1])
@@ -292,29 +397,22 @@ FinalRecovery<-function(UUU,Title)
    # Histogram of recovery times
    if (4 %in% Plots[[Ifile]]) RecHist(UUU,Titles[Ifile])
 
-   # Results across strategies
-   if (5 %in% Plots[[Ifile]]) AltStrategies(UUU,Options,Titles[Ifile])
-
    #Individual plots
-   if (6 %in% Plots[[Ifile]]) IndividualPlots(UUU,Titles[Ifile])
+   if (6 %in% Plots[[Ifile]]) IndividualPlots(UUU,Titles[Ifile],yearmax)
 
    # First five trajectories of SSB/target
-   if (7 %in% Plots[[Ifile]]) FirstFive(UUU,Titles[Ifile])
+   if (7 %in% Plots[[Ifile]]) FirstFive(UUU,Titles[Ifile],yearmax)
 
    # Plot of when recovery occurs
    if (8 %in% Plots[[Ifile]]) FinalRecovery(UUU,Titles[Ifile])
 
   }
+
+ # Results across strategies
+ DoStrategies <- F
+ for (Ifile in 1:length(fileN))
+  if (5 %in% Plots[[Ifile]]) DoStrategies <- T
+ if (DoStrategies==T) AltStrategies(fileN,UUUs,Options,"",yearmax,Titles)
 }
 
 # ================================================================================================================
-
-
-## # Plots - set to get specific plots
-## # Options - set to get specific strategies in the trajectory plots
-##
-## Example use:
-##
-## Titles <- c("Res1","Res2","Res3")
-## Plots <- list(c(1:8),c(6:7))
-## DoProjectPlots(fileN=c("res1.csv","res2.csv"),Titles=Titles,Plots=Plots,Options=c(1,2,3,4,5,6,7,9),LegLoc="bottomleft")
