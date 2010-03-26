@@ -1,17 +1,28 @@
-DoProjectPlots<-function(dirn="C:/NWFSC/NWFSC25D/",fileN=c("res.csv"),Titles="",ncols=200,Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",yearmax= -1)
+DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=200,Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",yearmax= -1,Outlines=c(2,2),OutlineMulti=c(2,2),AllTraj=c(1,2,3,4),AllInd=c(1,2,3,4,5,6,7),BioType="Spawning biomass",CatchUnit="(mt)",BioUnit="(mt)",BioScalar=1,ColorsUsed="default",Labels="default")
 {
  if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
  windows(record=T)
+
+ rich.colors.short <- function(n){
+    # a subset of rich.colors by Arni Magnusson from the gregmisc package
+    x <- seq(0, 1, length = n)
+    r <- 1/(1 + exp(20 - 35 * x))
+    g <- pmin(pmax(0, -0.8 + 6 * x - 5 * x^2), 1)
+    b <- dnorm(x, 0.25, 0.15)/max(dnorm(x, 0.25, 0.15))
+    rgb.m <- matrix(c(r, g, b), ncol = 3)
+    rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3]))
+  }
+
 
 #  ==================================================================================================
 
 Net_Spawn_Graph<-function(UUU,Amin,Amax,Title)
 {
- Ipnt <- which(UUU=="# Age Fecu")+1
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
+ Ipnt <- which(UUU=="# Age Fecu")+1
  Xvals <- as.double(UUU[Ipnt:(Ipnt+Amax*5-Amin),1])
  Yvals <- as.double(UUU[Ipnt:(Ipnt+Amax*5-Amin),2])
- par(mfrow=c(2,2))
  plot(Xvals,Yvals,xlab="Age (years)",ylab="Net Spawning Output",lty=1,type='l',lwd=2,xaxs="i",yaxs="i",ylim=c(0,1.05*max(Yvals)))
  title(Title)
 
@@ -21,7 +32,7 @@ Net_Spawn_Graph<-function(UUU,Amin,Amax,Title)
 
 RecruitmentPlots<-function(UUU,Title)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
  Ipnt <- which(UUU=="# Recruitments")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
@@ -34,14 +45,14 @@ RecruitmentPlots<-function(UUU,Title)
  Npnt <- as.double(UUU[Ipnt-1,1])
  Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
  Yvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),2])
- plot(Xvals,Yvals,xlab="Year",ylab="Recruits \\ Spawning Output",lty=1,type='l',lwd=2,yaxs="i",ylim=c(0,1.05*max(Yvals)))
+ plot(Xvals,Yvals,xlab="Year",ylab=paste("Recruits \\ ",BioType,sep=""),lty=1,type='l',lwd=2,yaxs="i",ylim=c(0,1.05*max(Yvals)))
 
 }
 #  ==================================================================================================
 
 B0Dist<-function(UUU,Title)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
  Ipnt <- which(UUU=="# B0 Dist")+1
  Xvals <- as.double(UUU[Ipnt:(Ipnt+19),1])
@@ -62,7 +73,7 @@ B0Dist<-function(UUU,Title)
 
 RecHist<-function(UUU,Title)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
  Ipnt <- which(UUU=="# Recovery Histogram")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
@@ -96,7 +107,7 @@ RecHist<-function(UUU,Title)
 
 AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","blue","green","orange","black","pink"))
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(OutlineMulti[1],OutlineMulti[2]))
 
  Ipnt <- which(UUUs[[1]]=="# Recovery Histogram")
  Tmax <- as.double(UUUs[[1]][Ipnt-1,1])
@@ -121,6 +132,29 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
  NOpts <- 0
  for (Ifile in 1:length(FileN)) NOpts <- NOpts+ length(Options[[Ifile]])
 
+ if (NOpts > 8) print("WARNING - you have a large number of lines - perhaps create separate plots for subsets")
+
+ Files <- NULL
+ Opts <- NULL
+ LastCatch <- NULL
+ for (Ifile in 1:length(FileN))
+  for (II in Options[[Ifile]])
+   {
+    Files <- c(Files,Ifile)
+    Opts <- c(Opts,II)
+    Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])
+     LastCatch <- c(LastCatch,Yvals[length(Yvals)])
+   }
+ Xint <- sort.int(LastCatch,index.return=T)
+ Files <- Files[Xint$ix]
+ Opts <- Opts[Xint$ix]
+ Labels <- Labels[Xint$ix]
+
+ if (ColorsUsed[1] == "default") ColorsUsed <- rich.colors.short(NOpts)
+
+ # get the x-axis right
  xmin <- 1.0e20
  xmax <- 0
  for (Ifile in 1:length(FileN))
@@ -137,92 +171,113 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
    if (max(Xvals) > xmax) xmax <- max(Xvals)
   }
 
- plot(xmin,0,xlab="Year",ylab="Probability Above Target",type='n',yaxs="i",ylim=c(0,105),xlim=c(xmin,xmax))
- IlineType <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
-    {
-     IlineType <- IlineType + 1
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+II])*100
-     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
-    }
- abline(h=0.5,lwd=3)
- abline(v=Tmin,lwd=1,lty=2)
- abline(v=Tmax,lwd=1,lty=2)
- title(Title)
+ for (ii in AllTraj)
+  {
 
- ymax <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
+   if (ii == 1)
     {
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])*100
-     if (max(Yvals)  > ymax) ymax <- max(Yvals)
-    }
- plot(xmin,0,xlab="Year",ylab="Catch (mt)",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
- IlineType <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
-   {
-     IlineType <- IlineType + 1
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])*100
-     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
-    }
+     plot(xmin,0,xlab="Year",ylab="Probability Above Target (%)",type='n',yaxs="i",ylim=c(0,105),xlim=c(xmin,xmax))
+     IlineType <- 0
+     for (Icnt in 1:NOpts)
+      {
+       Ifile <- Files[Icnt]
+       II <- Opts[Icnt]
+       IlineType <- IlineType + 1
+       Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+       Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+       Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+       Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+II])*100
+       lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=2)
+      }
+     abline(h=50,lwd=3)
+     abline(v=Tmin,lwd=1,lty=2)
+     abline(v=Tmax,lwd=1,lty=2)
+   }
 
- ymax <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
+   if (ii == 2)
     {
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
-     if (max(Yvals)  > ymax) ymax <- max(Yvals)
-    }
- plot(xmin,0,xlab="Year",ylab="Spawning Output \\ Target",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
- IlineType <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
-    {
-     IlineType <- IlineType + 1
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
-     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
+     ymax <- 0
+     for (Ifile in 1:length(FileN))
+      for (II in Options[[Ifile]])
+       {
+       Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+       Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+       Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])
+       if (max(Yvals)  > ymax) ymax <- max(Yvals)
+      }
+     plot(xmin,0,xlab="Year",ylab=paste("Catch",CatchUnit),type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+     IlineType <- 0
+     for (Icnt in 1:NOpts)
+      {
+       Ifile <- Files[Icnt]
+       II <- Opts[Icnt]
+       IlineType <- IlineType + 1
+       Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+       Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+       Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+       Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+10+II])
+       lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=2)
+      }
     }
 
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
+   if (ii == 3)
     {
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])
-     if (max(Yvals)  > ymax) ymax <- max(Yvals)
+     ymax <- 0
+     for (Ifile in 1:length(FileN))
+      for (II in Options[[Ifile]])
+       {
+        Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+        Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+        Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
+        if (max(Yvals)  > ymax) ymax <- max(Yvals)
+       }
+     plot(xmin,0,xlab="Year",ylab=paste(BioType,"\\ Target (x100)"),type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+     IlineType <- 0
+     for (Icnt in 1:NOpts)
+      {
+       Ifile <- Files[Icnt]
+       II <- Opts[Icnt]
+       IlineType <- IlineType + 1
+       Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+       Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+       Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+       Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+20+II])*100
+       lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=2)
+      }
     }
- plot(xmin,0,xlab="Year",ylab="Spawning Output",type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
- IlineType <- 0
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
-    {
-     IlineType <- IlineType + 1
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
-     Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
-     Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])
-     lines(Xvals,Yvals,lty=IlineType,col=cols[IlineType],lwd=2)
-    }
- Jpnt <- which(UUUs[[1]]=="# Recruitments")-8
- B0 <- as.double(UUUs[[1]][Jpnt,1])
- abline(h=0.4*B0,lwd=2)
- abline(h=0.25*B0,lwd=2)
 
+   if (ii == 4)
+    {
+     ymax <- 0
+     for (Ifile in 1:length(FileN))
+      for (II in Options[[Ifile]])
+       {
+        Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+        Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+        Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])/BioScalar
+        if (max(Yvals)  > ymax) ymax <- max(Yvals)
+       }
+     plot(xmin,0,xlab="Year",ylab=paste(BioType,BioUnit),type='n',yaxs="i",ylim=c(0,1.05*ymax),xlim=c(xmin,xmax))
+     IlineType <- 0
+     for (Icnt in 1:NOpts)
+      {
+       Ifile <- Files[Icnt]
+       II <- Opts[Icnt]
+       IlineType <- IlineType + 1
+       Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+       Npnt <- as.double(UUUs[[Ifile]][Ipnt-2,1])
+       Xvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),1])
+       Yvals <- as.double(UUUs[[Ifile]][Ipnt:(Ipnt+Npnt-1),2+30+II])/BioScalar
+       lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=2)
+      }
+     Jpnt <- which(UUUs[[1]]=="# Recruitments")-8
+     B0 <- as.double(UUUs[[1]][Jpnt,1])
+     abline(h=0.4*B0,lwd=2)
+     abline(h=0.25*B0,lwd=2)
+   }
+
+   if (ii == AllTraj[1]) title(Title)
+ }
 
  plot(0,0,xlab="",ylab="",axes=F,type="n",cex=0)
 
@@ -230,19 +285,26 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
  legs <- NULL
  IlineType <- 0
  col2 <- NULL
- for (Ifile in 1:length(FileN))
-  for (II in Options[[Ifile]])
-    {
-     Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
-     titles <- UUUs[[Ifile]][Ipnt-1,3:11]
+ for (Icnt in 1:NOpts)
+  {
+   Ifile <- Files[Icnt]
+   II <- Opts[Icnt]
+   Ipnt <- which(UUUs[[Ifile]]=="# Summary 1")+3
+   titles <- UUUs[[Ifile]][Ipnt-1,3:11]
 
-     IlineType <- IlineType + 1
+   IlineType <- IlineType + 1
+   if (Labels[1] == "default")
+    {
      titls <- titles[II]
      if (length(FileN) > 0) titls <- paste(Titles[Ifile],": ",titls,sep="")
-     legs <- c(legs, titls)
-     Ltys <- c(Ltys,IlineType)
-     col2 <- c(col2,cols[IlineType])
     }
+   else
+    titls <- Labels[IlineType]
+
+   legs <- c(legs, titls)
+   Ltys <- c(Ltys,IlineType)
+   col2 <- c(col2,ColorsUsed[IlineType])
+  }
 
  legend(LegLoc,legend=legs,lty=Ltys,cex=1,col=col2,lwd=2)
 
@@ -251,35 +313,42 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
 
 IndividualPlots<-function(UUU,Title,yearmax)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(OutlineMulti[1],OutlineMulti[2]))
 
  Ipnt <- which(UUU=="# Individual")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
 
- PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax)
- title(Title)
+ for (ii in AllInd)
+  {
 
- PlotA(UUU,6,"Catch (mt)",Ipnt,Npnt,yearmax)
+   if (ii==1) PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax,1)
 
- PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax)
+   if (ii==2) PlotA(UUU,6,paste("Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
- PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax)
+   if (ii==3) PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax,1)
 
- PlotA(UUU,24,"Exploitable Biomass",Ipnt,Npnt,yearmax)
+   if (ii==4) PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax,1)
 
- PlotA(UUU,30,"Cumulative (discounted) Catch (mt)",Ipnt,Npnt,yearmax)
+   if (ii==5) PlotA(UUU,24,paste("Exploitable Biomass",BioUnit),Ipnt,Npnt,yearmax,BioScalar)
 
- PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax)
- Jpnt <- which(UUU=="# Recruitments")-8
- B0 <- as.double(UUU[Jpnt,1])
- abline(h=0.4*B0,lwd=2)
- abline(h=0.25*B0,lwd=2)
+   if (ii==6) PlotA(UUU,30,paste("Cumulative (discounted) Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
+   if (ii==7)
+    {
+     PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax,BioScalar)
+     Jpnt <- which(UUU=="# Recruitments")-8
+     B0 <- as.double(UUU[Jpnt,1])
+     abline(h=0.4*B0,lwd=2)
+     abline(h=0.25*B0,lwd=2)
+    }
+
+  if (ii == AllInd[1]) title(Title)
+ }
 }
 
 #  ==================================================================================================
 
-PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax)
+PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax,BioScalar)
 {
  Xvals <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),1])
  if (yearmax > 0)
@@ -288,11 +357,11 @@ PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax)
   Use <- rep(T,length=length(Xvals))
  Xvals <- Xvals[Use]
 
- Y1 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+2])
- Y2 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+3])
- Y3 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+4])
- Y4 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+5])
- Y5 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+6])
+ Y1 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+2])/BioScalar
+ Y2 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+3])/BioScalar
+ Y3 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+4])/BioScalar
+ Y4 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+5])/BioScalar
+ Y5 <- as.double(UUU[Ipnt:(Ipnt+Npnt-1),offset+6])/BioScalar
 
  ymax <- max(Y5[Use])*1.1
  plot(Xvals,Y5[Use],xlab="Year",ylab=title,type='n',yaxs="i",ylim=c(0,ymax))
@@ -307,7 +376,7 @@ PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax)
 
 FirstFive<-function(UUU,Title,yearmax)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
  Ipnt <- which(UUU=="# Individual")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
@@ -341,7 +410,7 @@ FirstFive<-function(UUU,Title,yearmax)
 
 FinalRecovery<-function(UUU,Title)
 {
- par(mfrow=c(2,2))
+ par(mfrow=c(Outlines[1],Outlines[2]))
 
  Ipnt <- which(UUU=="# Final Recovery")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
@@ -416,3 +485,13 @@ FinalRecovery<-function(UUU,Title)
 }
 
 # ================================================================================================================
+
+
+ ## # Plots - set to get specific plots
+ ## # Options - set to get specific strategies in the trajectory plots
+
+ ## Titles <- c("Res1","Res2","Res3")
+ ## Plots <- list(c(1:9),c(6:7))
+ ## Options = list(c(7:9,3),c(5,7))
+ ## DoProjectPlots(fileN=c("res1.csv","res2.csv"),Titles=Titles,Plots=Plots,Options=Options,LegLoc="bottomleft",yearmax=-1,Outlines=c(2,2),OutlineMulti=c(3,3),AllTraj=c(1:4),AllInd=c(1:7),
+ ##                BioType="Spawning numbers",BioUnit="(lb)",BioScalar=1000,CatchUnit="(lb)",ColorsUse=rep(c("red","blue"),5),Labels=c("A","B","C","D","E","F"))

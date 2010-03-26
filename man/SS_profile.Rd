@@ -7,9 +7,10 @@
 }
 \usage{
 SS_profile(dir = "C:/myfiles/mymodels/myrun/",
-masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-linenum = NULL, string = NULL, profilevec = NULL,
-command = "SS3 -nox", model = "ss3", systemcmd = F, saveoutput = T, verbose = T)
+  masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
+  linenum = NULL, string = NULL, profilevec = NULL,
+  command = "SS3 -nox", model = "ss3", systemcmd = F,
+  saveoutput = T, verbose = T)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
