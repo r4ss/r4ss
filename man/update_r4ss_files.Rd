@@ -8,11 +8,12 @@
   mirrors.
 }
 \usage{
-update_r4ss_files()  
+update_r4ss_files(trunk=T, branches=F)
 }
-%- maybe also 'usage' for other objects documented here.
-% \arguments{
-% }
+\arguments{
+  \item{trunk}{ Get files from trunk directory? Default=T.}
+  \item{branches}{ Get files from some branches subdirectories? Default=F.}
+}
 % \details{
 %   ~~ If necessary, more details than the description above ~~
 % }
@@ -25,7 +26,7 @@ update_r4ss_files()
 % }
 % \references{ ~put references to the literature/web site here ~ }
 \author{ Ian Taylor }
-% \note{ ~~further notes~~ 
+% \note{ ~~further notes~~
 
 %  % ~Make other sections like Warning with \section{Warning }{....} ~
 % }

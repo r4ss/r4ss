@@ -1,7 +1,7 @@
 SS_recdevs <-
 function(
          fyr=NA, lyr=NA, ctl=NULL, recdevs=NULL,
-         rescale=T,
+         rescale=T,scaleyrs=NULL,
          dir="working_directory",
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
@@ -90,7 +90,10 @@ function(
   }else{
     newdevs <- rnorm(n=Nrecdevs)
   }
-  if(rescale) newdevs <- sigmaR*newdevs/sd(newdevs)
+  if(rescale){
+    if(!is.null(scaleyrs)) scaleyrs <- fyr:lyr %in% scaleyrs
+    newdevs <- sigmaR*(newdevs-mean(newdevs[scaleyrs]))/sd(newdevs[scaleyrs])
+  }
 
   # build new recdev section
   newsection <- c(
@@ -109,7 +112,7 @@ function(
 
   # if maxbias is input, then replace
   if(!is.null(newmaxbias)) ctl[grep("max_bias",ctl)] <- paste(newmaxbias,"#_max_bias_adj_in_MPD")
-  
+
   # write and/or return the modified control file
   if(writectl){
     writeLines(ctl,newctlfile)
