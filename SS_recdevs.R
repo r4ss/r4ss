@@ -1,6 +1,6 @@
 SS_recdevs <-
 function(
-         fyr=NA, lyr=NA, ctl=NULL, recdevs=NULL,
+         fyr, lyr, ctl=NULL, recdevs=NULL,
          rescale=T,scaleyrs=NULL,
          dir="working_directory",
          ctlfile="control.ss_new",
@@ -10,25 +10,25 @@ function(
          )
 {
 
-################################################################################
-#
-# SS_recdevs November 21, 2008.
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: Add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
-# Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-# Returns: writes a new control file and/or returns a character vector of all lines of the control file
-# Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/
-# Required packages: none
-#
-################################################################################
+  ################################################################################
+  #
+  # SS_recdevs March 31, 2010.
+  # This function comes with no warranty or guarantee of accuracy
+  #
+  # Purpose: Add newly generated stochastic recruitment deviation inputs to the Control file for SSv3
+  # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+  # Returns: writes a new control file and/or returns a character vector of all lines of the control file
+  # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/
+  # Required packages: none
+  #
+  ################################################################################
 
-# notes on inputs:
-# fyr              first year
-# lyr              last year
-# ctl              input file name?
-# recdevs          input vector of devs
-# rescale          rescale to zero center and have standard error = sigmaR?
+  # notes on inputs:
+  # fyr              first year
+  # lyr              last year
+  # ctl              input file name?
+  # recdevs          input vector of devs
+  # rescale          rescale to zero center and have standard error = sigmaR?
 
   current_wd <- getwd()
   if(dir!="working_directory") setwd(dir)
@@ -56,7 +56,8 @@ function(
 
   # make sure model includes recdevs and get some information
   do_recdev <- readfun("do_recdev", maxlen=1)
-  if(do_recdev==0) return("do_recdev should be set to 1 or 2")
+  if(do_recdev==0) stop("do_recdev should be set to 1 or 2")
+  yrs <- fyr:lyr
   Nrecdevs <- lyr-fyr+1
   phase <- readfun("recdev phase", maxlen=1)
   advanced <- readfun("read 11 advanced options", maxlen=1)
@@ -91,15 +92,22 @@ function(
     newdevs <- rnorm(n=Nrecdevs)
   }
   if(rescale){
-    if(!is.null(scaleyrs)) scaleyrs <- fyr:lyr %in% scaleyrs
+    if(is.null(scaleyrs)){
+      scaleyrs <- yrs %in% yrs
+    }else{
+      scaleyrs <- yrs %in% scaleyrs
+    }
+    if(verbose){
+      print(paste("rescaling recdevs vector so yrs ",min(yrs[scaleyrs]),":",max(yrs[scaleyrs]),sep=""),quote=F)
+      print(paste("have mean 0 and std. dev. = sigmaR = ",sigmaR,sep=""),quote=F)
+    }
     newdevs <- sigmaR*(newdevs-mean(newdevs[scaleyrs]))/sd(newdevs[scaleyrs])
   }
-
   # build new recdev section
   newsection <- c(
-    "#_end of advanced SR options"          ,
-    ""                                      ,
-    "# read specified recr devs"            ,
+    "#_end of advanced SR options",
+    "#",
+    "# read specified recr devs",
     "#_Yr Input_value"
   )
   #newsection <-c(newsection, rep("",(key2-key1-1)-length(newsection))) # preserve length of file

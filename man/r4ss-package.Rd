@@ -6,11 +6,11 @@
 R tools for Stock Synthesis
 }
 \description{
-A collection of R functions for use with Stock Synthesis, a fisheries stock
-assessment modeling platform written in ADMB by Dr. Rick Methot at the NMFS
-Northwest Fisheries Science Center. The functions include tools for
-summarizing and plotting results, manipulating files, visualizing model
-parameterizations, and various other tasks.
+A collection of R functions for use with Stock Synthesis, a fisheries
+stock assessment modeling platform written in ADMB by Dr. Richard D.
+Methot at the NMFS Northwest Fisheries Science Center. The functions
+include tools for summarizing and plotting results, manipulating files,
+visualizing model parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{

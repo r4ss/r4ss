@@ -20,14 +20,14 @@ function(
 #	   Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
 #	   and other contributors to http://code.google.com/p/r4ss/
 # Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.04; R version 2.8.1
+# General: Updated for Stock Synthesis version 3.10; R version 2.8.1
 # Notes:   See users guide for documentation.
 # Required SS3v_output function and plotrix package
 # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
 #
 ################################################################################
 
-  codedate <- "February 2, 2010"
+  codedate <- "April 16, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -1474,7 +1474,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	uiw <- std*qt(0.975,DF_discard) # quantile of t-distribution
 	liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
 	xlim <- c((min(yr)-3),(max(yr)+3))
-	if(grepl("as_fraction",nsp$discard_type)){
+	if(grepl("as_fraction",discard_type)){
           # discards as a fraction
 	  title <- paste("Discard fraction for",fleetname)
 	  ylab <- "Discard fraction"
