@@ -624,7 +624,7 @@ returndat$endgrowth <- growdat
    if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
    depletionseries <- tsspaw_bio/tsspaw_bio[1]
    stats$SBzero <- tsspaw_bio[1]
-   if(nsexes==1) stats$SBzero <- stats$SBzero/2
+  # if(nsexes==1) stats$SBzero <- stats$SBzero/2
    stats$current_depletion <- depletionseries[length(depletionseries)]
 
  # total landings
