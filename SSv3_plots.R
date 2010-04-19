@@ -27,7 +27,7 @@ function(
 #
 ################################################################################
 
-  codedate <- "April 16, 2010"
+  codedate <- "April 19, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -653,7 +653,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
 	  }
 	  mtext(ylab,side=2,line=3)
-	}
+        } # end selfunc
+
         # make plot if selectivity is not constant
 	if((min(vals)<1 & max(vals)>0) | (!is.na(diff(range(retvals))) && diff(range(retvals))!=0)) # only make plot of selectivity is not constant
 	{
@@ -967,13 +968,13 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # Plot 6: recruitment (not adapted for multi-area models)
   if(6 %in% c(plot, print))
-   {
+  {
     x <- ts$Yr[!duplicated(ts$Yr)]
     y <- ts$Recruit_0
     if(nareas > 1){
-     y <- ts$Recruit_0[ts$Area == 1]
-     for(a in 2:nareas){ y <- c(y,ts$Recruit_0[ts$Area == a])
-     }}
+      y <- ts$Recruit_0[ts$Area == 1]
+      for(a in 2:nareas) y <- c(y,ts$Recruit_0[ts$Area == a])
+    }
     ylab <- "Age-0 recruits (1,000s)"
     recfunc <- function(){
       if(nareas == 1){
@@ -1052,16 +1053,16 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	dev.off()}
 
 	if(forecastplot){
-	recfunc4 <- function(maxyr){
-	plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,
-	  col="black",ylab=ylab,lty=1,main=plottitle)
-	points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=19)
-	abline(h=0,col="grey")}
-	if(6 %in% plot) recfunc4(maxyr)
-	if(6 %in% print){
-	  png(file=paste(plotdir,"06_recswforecastintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-	  recfunc4(maxyr)
-	  dev.off()}
+	  recfunc4 <- function(maxyr){
+	  plotCI(x=recstd$Yr,y=v,sfrac=0.001,z=2,uiw=uiw,liw=liw,xlab=lab[3],ylo=0,
+	    col="black",ylab=ylab,lty=1,main=plottitle)
+	  points(x=recstd$Yr[recstd$Yr>(endyr+1)],y=v[recstd$Yr>(endyr+1)],col="red",pch=19)
+	  abline(h=0,col="grey")}
+	  if(6 %in% plot) recfunc4(maxyr)
+	  if(6 %in% print){
+	    png(file=paste(plotdir,"06_recswforecastintervals.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+	    recfunc4(maxyr)
+	    dev.off()}
 	}
       } # end if no Recr_Virgin
     } # end if uncertainty
@@ -1362,16 +1363,31 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
 	  Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
 	  xlim <- range(Yr,na.rm=T)
-	  ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value,na.rm=T)
+          values <- c(recdevEarly$Value,recdev$Value,recdevFore$Value)
+	  ylim <- range(values,na.rm=T)
+	  if(!forecastplot){
+            xlim=range(Yr[Yr<=endyr],na.rm=T)
+            ylim <- range(values[Yr<=endyr],na.rm=T)
+          }
 	  ylab <- "Log recruitment deviation"
 
 	  recdevfunc <- function(){
-	    plot(recdev$Yr,recdev$Value,xlab=lab[3],main="",cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
 	    # should probably change color between early/main not before/after startyr as now
-	    if(nrow(recdevEarly)>0)
-	      lines(recdevEarly$Yr,recdevEarly$Value,type="b",col="blue")
-	    if(nrow(recdevFore)>0)
-	      lines(recdevFore$Yr,recdevFore$Value,type="b",col="blue")
+            if(forecastplot){
+              plot(recdev$Yr,recdev$Value,xlab=lab[3],main="",
+                   cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
+              if(nrow(recdevEarly)>0)
+	        lines(recdevEarly$Yr,recdevEarly$Value,type="b",col="blue")
+	      if(nrow(recdevFore)>0)
+	        lines(recdevFore$Yr,recdevFore$Value,type="b",col="blue")
+            }else{
+              plot(recdev$Yr[recdev$Yr<=endyr],recdev$Value[recdev$Yr<=endyr],xlab=lab[3],main="",
+                   cex.main=cex.main,ylab=ylab,type="b",xlim=xlim,ylim=ylim)
+              if(nrow(recdevEarly)>0)
+	        lines(recdevEarly$Yr,recdevEarly$Value,type="b",col="blue")
+	      if(nrow(recdevFore)>0)
+	        lines(recdevFore$Yr[recdevFore$Yr<=endyr],recdevFore$Value[recdevFore$Yr<=endyr],type="b",col="blue")
+            }
 	    abline(h=0,col="black")
 	  }
 	  if(9 %in% plot) recdevfunc()
@@ -1380,7 +1396,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    recdevfunc()
 	    dev.off()}
 	  if(uncertainty){
-	    ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigma_R_in,na.rm=T)
+	    ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,sigma_R_in,na.rm=T)
+            if(forecastplot) ymax <- max(ymax,1.1*max(recdevFore$Parm_StDev,na.rm=T))
 	    recdevfunc2 <- function(){
 	      # std. dev. of recdevs
 	      par(mar=par("mar")[c(1:3,2)])
@@ -1409,7 +1426,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 		   ylab="Bias adjustment fraction, 1 - stddev^2 / sigmaR^2",xlim=xlim,ylim=c(0,1.05),type="b")
 	      if(nrow(recdevEarly)>0)
 		lines(recdevEarly$Yr,1-(recdevEarly$Parm_StDev/sigma_R_in)^2,type="b",col="blue")
-	      if(nrow(recdevFore)>0)
+	      if(nrow(recdevFore)>0 & forecastplot)
 		lines(recdevFore$Yr,1-(recdevFore$Parm_StDev/sigma_R_in)^2,type="b",col="blue")
 	      abline(h=0,col="grey")
 	      abline(h=1,col="grey")
@@ -1420,15 +1437,16 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	    recdevfunc4 <- function(){
 	      # recdevs with uncertainty intervals
 	      alldevs <- rbind(recdevEarly,recdev,recdevFore)
-	      colvec <- c(rep("blue",nrow(recdevEarly)),
+              colvec <- c(rep("blue",nrow(recdevEarly)),
 			  rep("black",nrow(recdev)),
-			  rep("blue",nrow(recdevFore)))
+                          rep("blue",nrow(recdevFore)))
 	      ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
-	      val <- alldevs$Value
-	      std <- alldevs$Parm_StDev
+              if(!forecastplot) goodyrs <- Yr<=endyr # T/F of in range or not
+	      val <- alldevs$Value[goodyrs]
+	      std <- alldevs$Parm_StDev[goodyrs]
 	      recdev_hi <- val + 1.96*std
 	      recdev_lo <- val - 1.96*std
-	      Yr <- alldevs$Yr
+	      Yr <- alldevs$Yr[goodyrs]
 	      ylim <- range(recdev_hi,recdev_lo,na.rm=T)
 	      plot(Yr,Yr,type="n",xlab="Year",
 		   ylab="Log recruitment deviation",ylim=ylim)
@@ -2768,8 +2786,8 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 
   # restore default single panel settings if needed
   # conditional because if adding to existing plot may mess up layout
-  if(!unique(par()$mfcol == c(rows,cols))) par(mfcol=c(rows,cols))
-  if(!unique(par()$mar == c(5,4,4,2)+.1)) par(mar=c(5,4,4,2)+.1, oma=rep(0,4))
+  if(FALSE %in% (par()$mfcol == c(rows,cols))) par(mfcol=c(rows,cols))
+  if(FALSE %in% (par()$mar == c(5,4,4,2)+.1)) par(mar=c(5,4,4,2)+.1, oma=rep(0,4))
 
   # Yield curve
   if(22 %in% c(plot, print)){
