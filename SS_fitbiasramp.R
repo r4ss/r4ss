@@ -1,6 +1,6 @@
 SS_fitbiasramp <-
 function(replist, verbose=F, startvalues=NULL, method="BFGS",
-         transform=F, png=F, pdf=F,
+         transform=F, png=F, pdf=F, oldctl=NULL, newctl=NULL,
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
   # function to estimate bias adjustment ramp
@@ -17,7 +17,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
   if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10"))){
-    print("!error: this function needs an input object created by SSv3_output from a SSv3.04 model")
+    print("!error: this function needs an input object created by SSv3_output from a SSv3.10 model")
     return()
   }
   if(replist$inputs$covar==F){
@@ -215,7 +215,20 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
 
   print('Estimated values:',quote=F)
   print(format(df,justify="left"),row.names=F)
-#  return(df)
-  if(verbose) return(newbias)
+
+  if(!is.null(oldctl) & !is.null(newctl)){
+    # modify a control file to include estimates if file names are provided
+    ctlfile <- readLines(oldctl)
+    # look for certain comments in file
+    spot1 <- grep('last_early_yr',ctlfile)
+    spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
+    if(spot1!=spot2-4) print('error! related to maxbias inputs in ctl file')
+    # replace values
+    ctlfile[spot1:spot2] <- newvals
+    # write new file
+    writeLines(ctlfile,newctl)
+    print(paste('wrote new file to',newctl,'with values',paste(newvals,collapse=" ")),quote=F)
+  }
+  return(invisible(newbias))
 }
 
