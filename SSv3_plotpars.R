@@ -1,14 +1,13 @@
 SSv3_plotpars <-
 function(
-    dir="c:/path/",
-    repfile="Report.sso",
-    postfile="posteriors.sso",
-    showpost=T,showprior=T,showmle=T,showinit=T,
-    showrecdev=T,priorinit=T,priorfinal=T,
-    showlegend=T,fitrange=F,xaxs="i",verbose=T,
-    nrows=3,ncols=3,new=T,pdf=F,
-    pwidth=7,pheight=7,punits="in",ptsize=12,
-    returntable=F,strings=c(),burn=0,thin=1,
+    dir="c:/path/", repfile="Report.sso",
+    postfile="posteriors.sso", showpost=T, showprior=T,
+    showmle=T, showinit=T, showrecdev=T, priorinit=T,
+    priorfinal=T, showlegend=T, fitrange=F, xaxs="i",
+    xlim=NULL, ylim=NULL, verbose=T, nrows=3, ncols=3,
+    new=T, pdf=F, pwidth=7, pheight=7, punits="in",
+    ptsize=12, returntable=F, strings=c(), exact=F,
+    newheaders=NULL, burn=0, thin=1,
     ctlfile="control.ss_new")
 {
   ################################################################################
@@ -25,7 +24,7 @@ function(
   #
   ################################################################################
 
-  codedate <- "December 21, 2009"
+  codedate <- "April 29, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -122,7 +121,9 @@ function(
   ## get list of subset names if vector "strings" is supplied
   if(!is.null(strings)){
     goodnames <- NULL
-    for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
+    if(exact) goodnames <- allnames[allnames %in% strings]
+    else for(i in 1:length(strings))
+       goodnames <- c(goodnames,grep(strings[i],allnames,value=TRUE))
     goodnames <- unique(goodnames)
     print("parameters matching input vector 'strings':",quote=F)
     print(goodnames)
@@ -142,7 +143,8 @@ function(
   # remove RecrDevs temporarily until I add code to fill in the prior stuff
   recdevmin <- -5
   recdevmin <- 5
-  recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_","Main_RecrDev_","ForeRecr_","Late_RecrDev_")
+  recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_",
+                    "Main_RecrDev_","ForeRecr_","Late_RecrDev_")
   if(showrecdev & goodctl){
     ctllines <- readLines(fullctlfile)
     iline <- grep("#min rec_dev",ctllines)
@@ -151,7 +153,8 @@ function(
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
-      if(is.na(readrecdev) | readrecdev==1) print("This function does not yet display recdev values read from ctl file",quote=F)
+      if(is.na(readrecdev) | readrecdev==1)
+        print("This function does not yet display recdev values read from ctl file",quote=F)
     }
   }else{
     goodnames <- goodnames[!substr(goodnames,1,9) %in% substr(recdevlabels,1,9)]
@@ -162,7 +165,7 @@ function(
   ## return(partable[partable$Label %in% goodnames,])
 
   # make plot
-  if(verbose){
+  if(verbose & is.null(xlim)){
     if(fitrange){
       print("Plotting range is scaled to fit parameter estimates.",quote=F)
       print("  Change input to 'fitrange=F' to get full parameter range.",quote=F)
@@ -232,7 +235,8 @@ function(
       ymax <- max(ymax,max(prior)) # update ymax
     }
 
-    # get normal distribution associated with ADMB's estimate of the parameter's asymptotic std. dev.
+    # get normal distribution associated with ADMB's estimate
+    # of the parameter's asymptotic std. dev.
     if(showmle){
       if(parsd>0){
         mle <- dnorm(x,finalval,parsd)
@@ -260,22 +264,26 @@ function(
     }
 
     # get x-range
-    if(fitrange & (parsd!=0 | showpost)){
-      # if rescaling limits,
-      # make sure initial value is inside limits
-      if(showinit){
-        xmin <- min(initval,xmin)
-        xmax <- max(initval,xmax)
+    if(is.null(xlim)){
+      if(fitrange & (parsd!=0 | showpost)){
+        # if rescaling limits,
+        # make sure initial value is inside limits
+        if(showinit){
+          xmin <- min(initval,xmin)
+          xmax <- max(initval,xmax)
+        }
+        # keep range inside parameter limits
+        xmin <- max(Pmin,xmin)
+        xmax <- min(Pmax,xmax)
+      }else{
+        # or use parameter limits
+        xmin <- Pmin
+        xmax <- Pmax
       }
-      # keep range inside parameter limits
-      xmin <- max(Pmin,xmin)
-      xmax <- min(Pmax,xmax)
+      xlim2 <- c(xmin,xmax)
     }else{
-      # or use parameter limits
-      xmin <- Pmin
-      xmax <- Pmax
+      xlim2 <- xlim
     }
-    xlim <- c(xmin,xmax)
 
     # get histogram for posterior based on x-range
     if(showpost & goodpost){
@@ -289,8 +297,11 @@ function(
     }
 
     # make plot
-    plot(0,type="n",xlim=xlim,ylim=c(0,1.1*ymax),xaxs=xaxs,yaxs="i",
-         xlab="",ylab="",main=parname,cex.main=1,axes=F)
+    if(is.null(newheaders)) header <- parname else header <- newheaders[ipar]
+    if(is.null(ylim)) ylim <- c(0,1.1*ymax)
+
+    plot(0,type="n",xlim=xlim2,ylim=ylim,xaxs=xaxs,yaxs="i",
+         xlab="",ylab="",main=header,cex.main=1,axes=F)
     axis(1)
     # axis(2) # don't generally show y-axis values because it's just distracting
 
