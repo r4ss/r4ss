@@ -8,15 +8,15 @@ A function to insert a vector of recruitment deviations into the control
 file for simulation studies. This can also be achieved by using the .par
 file, but Ian Taylor prefers this approach for no good reason.}
 \usage{
-SS_recdevs(fyr = NA, lyr = NA, ctl = NULL, recdevs = NULL,
+SS_recdevs(fyr, lyr, ctl = NULL, recdevs = NULL,
 rescale = T, scaleyrs = NULL, dir = "working_directory",
 ctlfile = "control.ss_new", newctlfile = "control_modified.ss",
 verbose = T, writectl = T, returnctl = F, newmaxbias = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{fyr}{First year of the recdev vector. Default=NA.}
-  \item{lyr}{Last year of the recdev vector. Default=NA.}
+  \item{fyr}{First year of the recdev vector.}
+  \item{lyr}{Last year of the recdev vector.}
   \item{ctl}{Either NULL to read anew or an already read control file.
     Default=NULL.}
   \item{recdevs}{Either NULL to generate anew or an already generated

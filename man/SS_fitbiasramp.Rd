@@ -11,8 +11,8 @@ controls for the bias adjustment in Stock Synthesis
 }
 \usage{
 SS_fitbiasramp(replist, verbose=F, startvalues=NULL, method="BFGS",
-  transform=F, png=F, pdf=F, pwidth=7, pheight=7, punits="in",
-  ptsize=12, res=300)
+  transform=F, png=F, pdf=F, oldctl=NULL, newctl=NULL, pwidth=7,
+  pheight=7, punits="in", ptsize=12, res=300)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,6 +28,10 @@ SS_fitbiasramp(replist, verbose=F, startvalues=NULL, method="BFGS",
     quantities to improve minimization. Doesn't work well. Default=F. }
   \item{png}{ Send plot to PNG file? Default=F. }
   \item{pdf}{ Send plot to PDF file? Default=F. }
+  \item{oldctl}{ Optional name of existing control file to modify.
+    Default=NULL. }
+  \item{newctl}{ Optional name of new control file to create from old
+    file with estimated bias adjustment values. Default=NULL. }
   \item{pwidth}{ Default width of plots printed to files in units of \code{punits}. Default=7. }
   \item{pheight}{ Default height width of plots printed to files in units of \code{punits}. Default=7. }
   \item{punits}{ Units for \code{pwidth} and \code{pheight}. Can be "px" (pixels), "in" (inches), "cm" or "mm". Default="in". }

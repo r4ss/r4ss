@@ -1,0 +1,81 @@
+\name{SSsummarize}
+\alias{SSsummarize}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+  Summarize the output from multiple Stock Synthesis models.
+}
+\description{
+  Summarize various quantities from the model output collected by
+  \code{\link{SSgetoutput}} and return them in a list of tables and
+  vectors.
+}
+\usage{
+SSsummarize(biglist, keyvec = NULL, numvec = NULL, selfactor =
+c("Lsel"), selfleet = NULL, selyear = "min", selgender = 1, growthyr =
+1971)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{biglist}{
+    A list of lists created by \code{\link{SSgetoutput}}.
+  }
+  \item{keyvec}{
+    Optional list of strings matching names of elements of biglist to
+    subset. Default=NULL.
+  }
+  \item{numvec}{
+    Optional list of numbers of elements from biglist to subset.
+    Default=NULL.
+  }
+  \item{selfactor}{
+    A string or vector of strings indicating which elements of the
+    selectivity at length output to summarize. Default=c("Lsel").
+  }
+  \item{selfleet}{
+    Vector of fleets for which selectivity will be summarized. NULL=all fleets. Default=NULL.
+  }
+  \item{selyear}{
+    String or vector of years for which selectivity will be summarized. NULL=all
+    years, "min" = first year, "max" = last year.  Default="min".
+  }
+  \item{selgender}{
+    Vector of genders (1 and/or 2) for which selectivity will be summarized. NULL=all genders. Default=NULL.
+  }
+  \item{growthyr}{
+    Single year for which growth is to be summarized. Default=1971
+    (works for Ian's application, but needs to be generalized).
+  }
+}
+\details{
+  %%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+  %%  ~Describe the value returned
+  %%  If it is a LIST, use
+  %%  \item{comp1 }{Description of 'comp1'}
+  %%  \item{comp2 }{Description of 'comp2'}
+  %% ...
+}
+\references{
+  %% ~put references to the literature/web site here ~
+}
+\author{
+  Ian Taylor
+}
+\note{
+  %%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+  \code{\link{SSgetoutput}}
+  \code{\link{SSrunsims}}
+}
+\examples{
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ data }
+\keyword{ manip }
+\keyword{ list }

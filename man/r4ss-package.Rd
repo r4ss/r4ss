@@ -16,8 +16,8 @@ visualizing model parameterizations, and various other tasks.
 \tabular{ll}{
 Package: \tab r4ss\cr
 Type: \tab Package\cr
-Version: \tab 1.05\cr
-Date: \tab 2010-03-25\cr
+Version: \tab 1.06\cr
+Date: \tab 2010-05-13\cr
 License: \tab MIT license\cr
 LazyLoad: \tab yes\cr
 URL: \tab http://www.r-project.org\cr \tab http://code.google.com/p/r4ss/\cr

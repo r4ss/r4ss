@@ -1,8 +1,8 @@
 Package: r4ss
 Type: Package
 Title: R code for Stock Synthesis
-Version: 1.05
-Date: 2010-03-25
+Version: 1.06
+Date: 2010-05-13
 Author: Ian Taylor, Ian Stewart, Tommy Garrison, Andre Punt, John Wallace, and other contributors
 Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 Depends: R (>= 2.10.0), tcltk
