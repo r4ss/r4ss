@@ -227,7 +227,7 @@ function(
     return()
   }
   # derived quantities
-  mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1]
+  mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1 & morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
   FleetNumNames <- paste(1:nfleets,FleetNames,sep="_")
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
@@ -1846,7 +1846,7 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	  natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
 	  natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
 	  natageratio <- as.matrix(natagem[,-(1:10)]/natagef[,-(1:10)])
-	  if(diff(range(natageratio))!=0){
+	  if(diff(range(natageratio,finite=TRUE))!=0){
 	    tempfun <- function(...){
 	      contour(natageyrs,0:accuage,natageratio,xaxs="i",yaxs="i",xlab=lab[3],ylab=lab[2],
 		      main=plottitle2,cex.main=cex.main,...)
@@ -1866,6 +1866,47 @@ if(nseasons == 1){ # temporarily disable multi-season plotting of time-varying g
 	} # end area loop
       } # end if nsexes>1
 
+      # plot of equilibrium age composition by gender and area
+      tempfun <- function(){
+        equilage <- natage[natage$Era=="VIRG",]
+        plot(0,type='n',xlim=c(0,accuage),ylim=c(0,1.05*max(equilage[,-(1:10)])),xaxs='i',yaxs='i',
+             xlab='Age',ylab='Numbers at age at equilibrium')
+        legendlty <- NULL
+        legendcol <- NULL
+        legendlegend <- NULL
+
+        for(iarea in areas){
+          for(m in 1:nsexes){
+            equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m & equilage$SubMorph==mainmorphs[m],]
+            if(nrow(equilagetemp)>1){
+              print('in plot of equilibrium age composition by gender and area',quote=F)
+              print('multiple morphs or seasons not supporting, using first row from choices below',quote=F)
+              print(equilagetemp[,1:10])
+            }
+            equilagetemp <- equilagetemp[1,-(1:10)]
+            lines(0:accuage,equilagetemp,lty=m,lwd=3,col=areacols[iarea])
+            legendlty <- c(legendlty,m)
+            legendcol <- c(legendcol,areacols[iarea])
+
+            if(m==1 & nsexes==1) sextitle <- ""
+            if(m==1 & nsexes==2) sextitle <- "Females"
+            if(m==2) sextitle="Males"
+            if(nareas>1) sextitle <- paste(sextitle," in ",areanames[iarea],sep="")
+            legendlegend <- c(legendlegend,sextitle)
+          }
+        }
+        if(length(legendlegend)>1) legend('topright',legend=legendlegend,col=legendcol,lty=legendlty,lwd=3)
+      }
+
+      if(14 %in% plot){
+        tempfun()
+      } # end if 14 in plot
+      if(14 %in% print){
+        png(file=paste(plotdir,"14_equilagecomp.png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+        tempfun()
+        dev.off()
+      } # close if 14 in print
+      
       # plot the ageing imprecision for all age methods
       if(!is.null(AAK)){
 	sd_vectors <- as.data.frame(AAK[,1,])
