@@ -328,7 +328,7 @@ function(
   } # end if 7 in plot or print
 
 
-  ### Plot 8: discard fractions and average body weight (if present) ###
+  ### Plot 8: discard fractions (if present) ###
   if(8 %in% c(plot, print)){
     SSplotDiscard(replist=replist,
                   plot=(8 %in% plot),
@@ -337,7 +337,7 @@ function(
                   fleetnames=fleetnames)
   } # end if 8 in plot or print
 
-  ### Plot 9: discard fractions and average body weight (if present) ###
+  ### Plot 9: mean body weight (if present) ###
   if(9 %in% c(plot, print)){
     SSplotMnwt(replist=replist,
                plot=(9 %in% plot),

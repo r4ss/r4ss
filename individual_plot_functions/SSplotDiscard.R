@@ -1,4 +1,4 @@
-SSplotdiscard <-
+SSplotDiscard <-
   function(replist,add=FALSE,plot=TRUE,print=FALSE,
            fleets="all",
            fleetnames="default",
@@ -40,7 +40,7 @@ SSplotdiscard <-
         ylab <- "Total discards"
       }
       dfracfunc <- function(){
-        plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=lab[3],main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
+        plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
         points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
       }

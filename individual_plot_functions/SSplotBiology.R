@@ -247,17 +247,17 @@ SSplotBiology <-
           if(i==2){main <- "Male time-varying growth"}
           if(nseasons > 1){main <- paste(main," season 1",sep="")}
           if(plot){
-            if(7 %in% subplots) persp(x,y,z,col="white",xlab=lab[2],ylab="",zlab=lab[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-            if(8 %in% subplots) contour(x,y,z,nlevels=12,xlab=lab[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+            if(7 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            if(8 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
             if(7 %in% subplots){
               pngfun(file=paste(plotdir,"02_timevarygrowthsurf",i,"sex",m,".png",sep=""))
-              persp(x,y,z,col="white",xlab=lab[2],ylab="",zlab=lab[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
             if(8 %in% subplots){
               pngfun(file=paste(plotdir,"02_timevarygrowthcontour",i,"sex",m,".png",sep=""))
-              contour(x,y,z,nlevels=12,xlab=lab[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+              contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
               dev.off()
             }
           } # end print
