@@ -1,10 +1,10 @@
-SSplotselex <- function(replist, fleets="all", fleetnames="default",
+SSplotSelex <- function(replist, fleets="all", fleetnames="default",
                         selexlines=1:5,
                         subplot=1:9,
                         plot=T, print=F, add=F,
                         cex.main=1,
-                        labels=c("Length (cm)", #1	 
-                                 "Age (yr)",    #2 
+                        labels=c("Length (cm)", #1
+                                 "Age (yr)",    #2
                                  "Year",        #3
                                  "Selectivity", #4
                                  "Retention")   #5
@@ -27,7 +27,7 @@ SSplotselex <- function(replist, fleets="all", fleetnames="default",
     }
   }
   if(fleetnames[1]=="default") fleetnames <- FleetNames
-  
+
   # selex and retention
   for(m in 1:nsexes)
   {
@@ -197,12 +197,12 @@ SSplotselex <- function(replist, fleets="all", fleetnames="default",
             if(6 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             if(7 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
           if(print){
-            if(6 %in% subplot){ 
+            if(6 %in% subplot){
               png(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
-            if(7 %in% subplot){ 
+            if(7 %in% subplot){
               png(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
               contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
               dev.off()
@@ -248,7 +248,7 @@ SSplotselex <- function(replist, fleets="all", fleetnames="default",
               dev.off()
             }
           }
-        } # end if 
+        } # end if
       } # end if not time varying
     } # fleets
   } # sexes
