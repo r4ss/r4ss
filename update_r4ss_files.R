@@ -15,7 +15,7 @@ update_r4ss_files <- function(trunk=T,branches=F){
   }
   if(trunk){
       getfilenames("http://r4ss.googlecode.com/svn/trunk/")
-      getfilenames("http://r4ss.googlecode.com/svn/trunk/individual_plot_functions/")
+      getfilenames("http://r4ss.googlecode.com/svn/trunk/newplots/")
   }
   if(branches){
       getfilenames("http://r4ss.googlecode.com/svn/branches/input_file_objects")
