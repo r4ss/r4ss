@@ -19,6 +19,8 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
   endyr      <- replist$endyr
   FleetNames <- replist$FleetNames
 
+  ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
+
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
   }else{
