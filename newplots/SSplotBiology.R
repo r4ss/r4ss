@@ -25,13 +25,18 @@ SSplotBiology <-
   # mean weight, maturity, fecundity, spawning output
 
   # get objects from replist
-  growdat <- replist$endgrowth
-  biology <- replist$biology
-  parameters <- replist$parameters
-  nsexes <- replist$nsexes
-  nseasons <- replist$nseasons
-  mainmorphs <- replist$mainmorphs
-  accuage <- replist$accuage
+  growdat      <- replist$endgrowth
+  biology      <- replist$biology
+  FecType      <- replist$FecType
+  FecPar1name  <- replist$FecPar1name
+  FecPar2name  <- replist$FecPar2name
+  FecPar1      <- replist$FecPar1
+  FecPar2      <- replist$FecPar2
+  parameters   <- replist$parameters
+  nsexes       <- replist$nsexes
+  nseasons     <- replist$nseasons
+  mainmorphs   <- replist$mainmorphs
+  accuage      <- replist$accuage
   growthseries <- replist$growthseries
 
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -45,51 +50,26 @@ SSplotBiology <-
 
   # determine fecundity type
   # define labels and x-variable
-  FecType <- 4
-  if("Eg/gm_slope_wt_Fem" %in% parameters$Label){
-    FecType <- 1
-    par1name <- "Eg/gm_inter_Fem"
-    par2name <- "Eg/gm_slope_wt_Fem"
-  }
-  if("Eg/kg_slope_wt_Fem" %in% parameters$Label){
-    FecType <- 1
-    par1name <- "Eg/kg_inter_Fem"
-    par2name <- "Eg/kg_slope_wt_Fem"
-  }
-  if("Eggs/kg_slope_wt_Fem" %in% parameters$Label){
-    FecType <- 1
-    par1name <- "Eggs/kg_inter_Fem"
-    par2name <- "Eggs/kg_slope_wt_Fem"
-  }
   if(FecType==1){
     fec_ylab <- "Eggs per kg"
     fec_xlab <- labels[8]
     FecX <- biology$Wt_len_F
   }
-  if("Eggs_exp_len_Fem" %in% parameters$Label){
-    FecType <- 2
+  if(FecType==2){
     fec_ylab <- "Eggs per kg"
     fec_xlab <- labels[9]
-    par1name <- "Eggs_scalar_Fem"
-    par2name <- "Eggs_exp_len_Fem"
     FecX <- biology$Mean_Size
   }
-  if("Eggs_exp_wt_Fem" %in% parameters$Label){
-    FecType <- 3
+  if(FecType==3){
     fec_ylab <- "Eggs per kg"
     fec_xlab <- labels[8]
-    par1name <- "Eggs_scalar_Fem"
-    par2name <- "Eggs_exp_wt_Fem"
     FecX <- biology$Wt_len_F
   }
   if(labels[10]!="Default fecundity label") fec_ylab <- labels[10]
 
-  par1 <- parameters$Value[parameters$Label==par1name]
-  par2 <- parameters$Value[parameters$Label==par2name]
-  SBlabelflag <- par2==0
-  if(FecType==1) FecY <- par1 + par2*FecX
-  if(FecType==2) FecY <- par1*FecX^par2
-  if(FecType==3) FecY <- par1*FecX^par2
+  if(FecType==1) FecY <- FecPar1 + FecPar2*FecX
+  if(FecType==2) FecY <- FecPar1*FecX^FecPar2
+  if(FecType==3) FecY <- FecPar1*FecX^FecPar2
 
   # Mid year mean length at age with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
@@ -130,9 +110,9 @@ SSplotBiology <-
   gfunc3 <- function(add=F){ # fecundity
     ymax <- 1.1*max(FecY)
     if(!add){
-      plot(FecX, FecY,xlab=fec_xlab,ylab=fec_ylab,ylim=c(0,ymax),col=col2,pch=19)
-      lines(FecX,rep(par1,length(FecX)),col=col1)
-      text(mean(range(FecX)),par1-0.05*ymax,"Egg output proportional to spawning biomass")
+      plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=col2, pch=19)
+      lines(FecX, rep(FecPar1, length(FecX)), col=col1)
+      text(mean(range(FecX)), FecPar1-0.05*ymax,"Egg output proportional to spawning biomass")
     }else{
       points(FecX, FecY,col=col2,pch=19)
     }
@@ -268,5 +248,4 @@ SSplotBiology <-
       } # end loop over sexes
     } # end of if data available for time varying growth
   }# end disable of time-varying growth for multi-season models
-  return(invisible(SBlabelflag))
 }

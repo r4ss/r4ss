@@ -9,7 +9,6 @@ SSplotTimeseries <-
              "Spawning depletion",        #4
              "Spawning output (eggs)",    #5
              "Age-0 recruits (1,000s)"),  #6
-           SBlabelflag=FALSE,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12)
 {
   # individual function for plotting time series of total or summary biomass
@@ -27,16 +26,17 @@ SSplotTimeseries <-
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get values from replist
-  timeseries                     <- replist$timeseries
-  nseasons                       <- replist$nseasons
-  startyr			 <- replist$startyr
-  endyr				 <- replist$endyr
-  nsexes			 <- replist$nsexes
-  nareas			 <- replist$nareas
-  derived_quants		 <- replist$derived_quants
+  timeseries     <- replist$timeseries
+  nseasons       <- replist$nseasons
+  startyr        <- replist$startyr
+  endyr          <- replist$endyr
+  nsexes         <- replist$nsexes
+  nareas         <- replist$nareas
+  derived_quants <- replist$derived_quants
+  FecPar2        <- replist$FecPar2
 
   if(plotdir=="default") plotdir <- replist$inputs$dir
-  if(!SBlabelflag) labels[3] <- labels[5]
+  if(FecPar2!=0) labels[3] <- labels[5]
 
   # check area subsets
   if(areas[1]=="all"){
@@ -96,7 +96,7 @@ SSplotTimeseries <-
     }
     # subplot5&6 = spawning biomass
     if(subplot %in% 5:6){
-      yvals <- ts$SpawnBio
+      yvals <- bioscale*ts$SpawnBio
       ylab <- labels[3]
     }
     # subplot7&8 = spawning depletion
@@ -137,6 +137,7 @@ SSplotTimeseries <-
         yvals <- yvals/yvals[1] # total depletion
       }
     }
+    if(forecastplot) main <- paste(main,"with forecast")
 
     # calculating intervals around spawning biomass, depletion, or recruitment
     # area specific confidence intervals?
@@ -144,7 +145,7 @@ SSplotTimeseries <-
       main <- paste(main,"with ~95% asymptotic intervals")
       if(!"SPB_Virgin" %in% derived_quants$LABEL){
         print("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.",quote=FALSE)
-        print("	 Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=FALSE)
+        print("  Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=FALSE)
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==5){ # spawning biomass
@@ -266,7 +267,7 @@ SSplotTimeseries <-
     } # end loop over areas
     if(nareas>1 & subplot%in%c(2,4,6,8,10)) legend("topright",legend=areanames[areas],lty=1,pch=1,col=areacols[areas],bty="n")
     abline(h=0,col="grey")
-    if(verbose) print(paste("finished time series subplot ",subplot,": ",main,sep=""),quote=FALSE)
+    if(verbose) print(paste("  finished time series subplot ",subplot,": ",main,sep=""),quote=FALSE)
     if(print) dev.off()
   } # end biofunc
 

@@ -1,0 +1,169 @@
+SSplotTags <-
+  function(replist=replist, subplots=1:5,
+           rows=1, cols=1,
+           tagrows=3, tagcols=3,
+           plot=TRUE, print=FALSE,
+           pntscalar=2.6,minnbubble=8,
+           pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
+           col1="blue",col2="red",col3="grey80",
+           labels = c("Year",                                   #1
+           "Frequency",                                         #2
+           "Tag Group",                                         #3
+           "Fit to tag recaptures by tag group",                #4
+           "Tag recaptures aggregated across tag groups",       #5
+           "Observed tag recaptures by year and tag group",     #6
+           "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),#7
+           printmkt=TRUE,printsex=TRUE,
+           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,
+           fixdims=TRUE,maxneff=5000,returntitles=TRUE,verbose=TRUE,
+           aalmaxbinrange=0,...)
+
+
+{
+  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+
+  tagdbase2 <- replist$tagdbase2
+  if(nrow(tagdbase2)==0){
+    print("skipping tag plots because there's no tagging data",quote=FALSE)
+  }else{
+    # calculations needed for printing to multiple PNG files
+    grouprange <- unique(tagdbase2$Rep)
+    ngroups <- length(unique(tagdbase2$Rep))
+    npages <- ceiling(ngroups/(tagrows*tagcols))
+
+    tagfun1 <- function(ipage=0){
+      # obs & exp recaps by tag group
+      par(mfcol=c(tagrows,tagcols),mar=c(2.5,2.5,2,1),cex.main=cex.main,oma=c(2,2,2,0))
+      if(npages > 1 & ipage!=0) grouprange <- intersect(grouprange, 1:(tagrows*tagcols) + tagrows*tagcols*(ipage-1))
+      for(igroup in grouprange){
+        tagtemp <- tagdbase2[tagdbase2$Rep==igroup,]
+        ylim=c(0,max(5,cbind(tagtemp$Obs,tagtemp$Exp)*1.05))
+        plot(0,type="n",xlab="",ylab="",ylim=ylim,main=paste("TG ",igroup,sep=""),
+             xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr)-0.5,max(tagtemp$Yr)+0.5))
+        for (iy in 1:length(tagtemp$Yr)){
+          xx <- c(tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]+0.5,tagtemp$Yr[iy]+0.5)
+          yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
+          polygon(xx,yy,col=col3)
+        }
+        points(tagtemp$Yr,tagtemp$Exp,type="o",lty=1,pch=16)
+
+        # add labels in left and lower outer margins once per page
+        mfg <- par("mfg")
+        if(mfg[1]==1 & mfg[2]==1){
+          mtext(labels[1],side=1,line=0,outer=TRUE)
+          mtext(labels[2],side=2,line=0,outer=TRUE)
+          mtext(labels[4],side=3,line=0,outer=TRUE,cex=cex.main,font=2)
+        }
+      }
+
+      # restore default single panel settings
+      par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+    }
+
+    print("Calculated tagging related quantities...",quote=FALSE)
+    # reconfiguring tagdbase2
+    # why? to exclude the first year for each group?
+    XRep <- -1
+    x <- NULL
+    for (irow in 1:length(tagdbase2[,1])){
+      if (tagdbase2$Rep[irow] != XRep){
+        XRep <- tagdbase2$Rep[irow]
+      }else{
+        x <- rbind(x,tagdbase2[irow,])
+      }
+    }
+    # alternatively, don't reconfigure by using:
+    #x <- tagdbase
+
+    #obs vs exp tag recaptures by year aggregated across group
+    tagobs <- aggregate(x$Obs,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
+    tagexp <- aggregate(x$Exp,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
+    Recaps <- data.frame(Yr=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
+
+    xlim <- range(Recaps[,1])
+    xx2 <- aggregate(Recaps[,3],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
+    xx3 <- aggregate(Recaps[,4],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
+    RecAg <- data.frame(Yr=xx2[,1],Obs=xx2[,2],Exp=xx3[,2])
+
+    tagfun2 <- function(){
+      #obs vs exp tag recaptures by year aggregated across group
+      plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg[,2],RecAg[,3])*1.05),type="n",xaxs="i",yaxs="i",
+           xlab=labels[1],ylab=labels[2],main=labels[5],cex.main=cex.main)
+      for (iy in 1:nrow(RecAg)){
+        xx <- c(RecAg[iy,1]-0.5,RecAg[iy,1]-0.5,RecAg[iy,1]+0.5,RecAg[iy,1]+0.5)
+        yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
+        polygon(xx,yy,col=col3)
+      }
+      lines(RecAg[,1],RecAg[,3],type="o",pch=16,lty=1,lwd=2)
+    }
+
+    Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
+    tagfun3 <- function(){
+      # bubble plot of observed recapture data
+      plottitle <- labels[6]
+      bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
+              las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
+    }
+    tagfun4 <- function(){
+      # bubble plot of residuals
+      plottitle <- labels[7]
+      bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
+              las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
+    }
+    tagfun5 <- function(){
+      # line plot by year and group
+      plottitle <- labels[6]
+      plot(0,type="n",xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab=labels[1],ylab=labels[3],
+           main=plottitle,cex.main=cex.main)
+      rescale <- 5/max(Recaps$Obs,Recaps$Exp)
+      for(igroup in sort(unique(Recaps$Group))){
+        lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col="grey",lty=3)
+        points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type="o",pch=16,cex=.5)
+        lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col=col2,lty="51",lwd=2)
+      }
+    }
+    # make plots
+    if(plot){
+      if(1 %in% subplots) tagfun1()
+      if(2 %in% subplots) tagfun2()
+      if(3 %in% subplots) tagfun3()
+      if(4 %in% subplots) tagfun4()
+      if(5 %in% subplots) tagfun5()
+    }
+    # send to files if requested
+    if(print){
+      filenamestart <- "24_tags_by_group"
+      if(1 %in% subplots){
+        for(ipage in 1:npages){
+          if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+          filename <- paste(plotdir,filenamestart,pagetext,".png",sep="")
+          pngfun(file=filename)
+          tagfun1(ipage=ipage,...)
+          dev.off() # close device if png
+        }
+      }
+      if(2 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tags_aggregated.png",sep=""))
+        tagfun2()
+        dev.off()
+      }
+      if(3 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tags_data_bubbleplot.png",sep=""))
+        tagfun3()
+        dev.off()
+      }
+      if(4 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tags_residuals.png",sep=""))
+        tagfun4()
+        dev.off()
+      }
+      if(5 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tags_lines.png",sep=""))
+        tagfun5()
+        dev.off()
+      }
+    }
+    if(verbose) print("Finished plot 24: tags",quote=FALSE)
+    flush.console()
+  } # end if data
+} # end SSplotTags

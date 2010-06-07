@@ -81,6 +81,7 @@ SSplotCatch <-
   totobscatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("obs_cat"))=="obs_cat"])
   Hratemat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(Fstring))==Fstring])
 
+  # add total across areas
   if(nareas > 1){
     for(iarea in 2:nareas){
       arearows <- ts$Area==iarea & ts$Era %in% c("INIT","TIME")
@@ -95,6 +96,7 @@ SSplotCatch <-
       Hratemat  <- Hratemat  + as.matrix(ts[arearows, substr(names(ts),1,nchar(Fstring))==Fstring])
     }
   }
+
   # ghost is a fleet with no catch (or a survey for these purposes)
   ghost <- rep(TRUE,nfleets)
   ghost[(1:nfishfleets)[colSums(totcatchmat)>0]] <- FALSE
