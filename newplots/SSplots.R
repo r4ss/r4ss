@@ -10,24 +10,25 @@ SSplots <-
     catchasnumbers=FALSE,legendloc="topleft",...)
 
 {
-################################################################################
-#
-# SSv3_plots
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: To sumarize the results of an SSv3 model run.
-# Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
-#          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-#          and other contributors to http://code.google.com/p/r4ss/
-# Returns: Plots with plot history in R GUI and/or .png files.
-# General: Updated for Stock Synthesis version 3.10; R version 2.8.1
-# Notes:   See users guide for documentation.
-# Required SS3v_output function and plotrix package
-# Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
-#
-################################################################################
+  ################################################################################
+  #
+  # SSplots
+  # This function comes with no warranty or guarantee of accuracy
+  #
+  # Purpose: A wrapper to call many plot functions which collectively
+  #          sumarize the results of a Stock Synthesis model run.
+  # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
+  #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
+  #          and other contributors to http://code.google.com/p/r4ss/
+  # Returns: Plots with plot history in R GUI and/or .png files.
+  # General: Updated for Stock Synthesis version 3.10; R version 2.8.1
+  # Notes:   See users guide for documentation.
+  # Required SS3v_output function and plotrix package
+  # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
+  #
+  ################################################################################
 
-  codedate <- "June 4, 2010"
+  codedate <- "June 7, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
