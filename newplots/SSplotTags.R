@@ -13,12 +13,7 @@ SSplotTags <-
            "Tag recaptures aggregated across tag groups",       #5
            "Observed tag recaptures by year and tag group",     #6
            "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),#7
-           printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,
-           fixdims=TRUE,maxneff=5000,returntitles=TRUE,verbose=TRUE,
-           aalmaxbinrange=0,...)
-
-
+           verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -138,7 +133,7 @@ SSplotTags <-
           if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
           filename <- paste(plotdir,filenamestart,pagetext,".png",sep="")
           pngfun(file=filename)
-          tagfun1(ipage=ipage,...)
+          tagfun1(ipage=ipage)
           dev.off() # close device if png
         }
       }

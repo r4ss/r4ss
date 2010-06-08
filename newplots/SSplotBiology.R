@@ -1,8 +1,7 @@
 SSplotBiology <-
   function(replist, plot=T,print=F,add=F,subplots=1:8,
            col1="red",col2="blue",
-           legendloc="topleft",cex.main=1,
-           cohortlines=c(),
+           legendloc="topleft",
            plotdir="default",
            labels=c("Length (cm)",              #1
              "Age (yr)",                        #2
@@ -14,7 +13,7 @@ SSplotBiology <-
              "Female weight (kg)",              #8
              "Female length (cm)",              #9
              "Default fecundity label"),        #10
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12)
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -223,7 +222,6 @@ SSplotBiology <-
         for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- T
         if(time)
         {
-          if(length(cohortlines)>0) print("Growth is time-varying, which is not yet implemented in cohortlines added to length comps.",quote=F)
           z <- t(z)
           if(i==1){main <- "Female time-varying growth"}
           if(nsexes==1){main <- "Time-varying growth"}

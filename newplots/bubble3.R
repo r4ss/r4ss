@@ -1,6 +1,6 @@
 bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
       	       main="",cex.main=1,xlab="",ylab="",minnbubble=8,
-      	       xlimextra=1,add=F,las=1,allopen=TRUE)
+      	       xlimextra=1,add=FALSE,las=1,allopen=TRUE)
 {
     # vaguely based on bubble() from gstat
     az <- abs(z)
@@ -15,7 +15,8 @@ bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
     pch[pch<0] <- 1
     if(allopen) pch[!is.na(pch)] <- 1
     if(!add){
-        plot(x,y,type="n",xlim=xlim,main=main,cex.main=cex.main,xlab=xlab,ylab=ylab,axes=F,cex.main=cex.main)
+        plot(x,y,type="n",xlim=xlim,main=main,cex.main=cex.main,
+             xlab=xlab,ylab=ylab,axes=FALSE)
         axis(1,at=unique(x))
         axis(2,las=las)
         box()

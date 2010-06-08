@@ -9,7 +9,7 @@ SSplotTimeseries <-
              "Spawning depletion",        #4
              "Spawning output (eggs)",    #5
              "Age-0 recruits (1,000s)"),  #6
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12)
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1)
 {
   # individual function for plotting time series of total or summary biomass
   # subplot1 = total biomass total
@@ -149,7 +149,7 @@ SSplotTimeseries <-
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==5){ # spawning biomass
-          stdtable <- matchfun2("SPB_Virgin",0,"Recr_Virgin",-1,cols=1:3,matchcol1=1,matchcol2=1,objmatch=derived_quants,objsubset=derived_quants,substr1=TRUE,substr2=TRUE)
+          stdtable <- derived_quants[grep("SPB_Virgin",derived_quants[,1]):(grep("Recr_Virgin",derived_quants[,1])-1),1:3]
           # year as part of the LABEL string starting with 5th character
           stdtable$Yr <- substring(stdtable$LABEL,5)
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
@@ -212,7 +212,7 @@ SSplotTimeseries <-
 
     # create an empty plot (if not adding to existing plot)
     if(!add) plot(ts$Yr[plot1 | plot2 | plot3],yvals[plot1 | plot2 | plot3],
-                  type='n',xlab=xlab,ylim=c(0,ymax),ylab=ylab,main=main)
+                  type='n', xlab=xlab, ylim=c(0,ymax), ylab=ylab, main=main, cex.main=cex.main)
 
     # add stuff to plot
     if(subplot %in% c(1,3,5,7,9)) myareas <- 1 else myareas <- areas

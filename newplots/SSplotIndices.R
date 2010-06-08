@@ -1,9 +1,8 @@
 SSplotIndices <-
   function(replist,subplots=1:6,
-           fleetnames="default",fleets="all",
-           cex.main=1,smooth=TRUE,
-           add=FALSE,plot=TRUE,print=FALSE,
-           datplot=FALSE,
+           plot=TRUE,print=FALSE,
+           fleets="all",fleetnames="default",
+           smooth=TRUE,add=FALSE,datplot=FALSE,
            labels=c("Year",        #1
              "Index",              #2
              "Observed index",     #3
@@ -11,7 +10,7 @@ SSplotIndices <-
              "Log index",          #5
              "Log observed index", #6
              "Log expected index"),#7
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="default",
            verbose=TRUE)
 {

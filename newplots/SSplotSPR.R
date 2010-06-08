@@ -7,12 +7,12 @@ SSplotSPR <-
            labels=c("Year", #1
              "SPR",         #2
              "1-SPR"),      #3
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="default",
            verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-
+  if(plotdir=="default") plotdir <- replist$inputs$dir
 
   sprseries             <- replist$sprseries
   timeseries            <- replist$timeseries

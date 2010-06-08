@@ -1,11 +1,12 @@
 SSplotNumbers <-
   function(replist,subplots=1:5,
+           plot=TRUE,print=FALSE,
            areas="all",
            areanames="default",
            areacols="default",
            cex.main=1,
            pntscalar=2.6,
-           add=FALSE,plot=TRUE,print=FALSE,
+           add=FALSE,
            labels=c("Year",              #1
              "Age",                      #2
              "True age (yr)",            #3
@@ -17,6 +18,7 @@ SSplotNumbers <-
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   natage    <- replist$natage
+  if(plotdir=="default") plotdir <- replist$inputs$dir
 
   if(is.null(natage)){
     print("Skipped plot 14 because NUMBERS_AT_AGE unavailable in report file",quote=FALSE)

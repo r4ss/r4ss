@@ -1,16 +1,15 @@
 SSplotRecdevs <-
-  function(replist, plot=TRUE, print=FALSE, add=FALSE, subplots=1:3,
+  function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
            uncertainty=T,forecastplot=F,
            col1="black",col2="blue",col3="green3",col4="red",
            legendloc="topleft",cex.main=1,
-           cohortlines=c(),
-           plotdir="default",
-           labels=c("Year",      #1
+           labels=c("Year",                        #1
              "Asymptotic standard error estimate", #2
-             "Log recruitment deviation",           #3
-             "Bias adjustment check",               #4
+             "Log recruitment deviation",          #3
+             "Bias adjustment check",              #4
              "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), #5
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           cex.main=1, plotdir="default",
            verbose=TRUE)
 {
   # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment

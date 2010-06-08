@@ -1,9 +1,9 @@
 SSplotComps <-
   function(replist=replist, subplots=1:8,
-           kind="LEN", aalyear=-1, aalbin=-1, plot=T, print=F, plotdir=NA, fleets="all",
-           datonly=F, Natageplot=T, samplesizeplots=T, compresidplots=T, bub=F, showsampsize=T, showeffN=T,
-           minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-           linepos=1, fitbar=F,maxsize=3,do.sqrt=TRUE,smooth=TRUE,cohortlines=c(),
+           kind="LEN", aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE, fleets="all",
+           datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE, showsampsize=TRUE, showeffN=TRUE,
+           minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, plotdir="default", cex.main=1,
+           linepos=1, fitbar=FALSE,maxsize=3,do.sqrt=TRUE,smooth=TRUE,cohortlines=c(),
            labels = c("Length (cm)",           #1
                       "Age (yr)",              #2
                       "Year",                  #3
@@ -17,9 +17,9 @@ SSplotComps <-
                       "(numbers x1000)",       #11
                       "Stdev (Age) (yr)",      #12
                       "Andre's conditional AAL plot, "), #13
-           printmkt=T,printsex=T,
+           printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,
-           fixdims=T,maxneff=5000,returntitles=T,verbose=T,
+           fixdims=TRUE,maxneff=5000,verbose=TRUE,
            aalmaxbinrange=0,...)
 {
   ################################################################################
@@ -47,7 +47,7 @@ SSplotComps <-
   print("you are missing the function 'make_mulitifig'")
 
   titles <- NULL
-  if(print) if(is.na(plotdir)) return("plotdir must be specified to write png files.")
+  if(plotdir=="default") plotdir <- replist$inputs$dir
 
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
@@ -169,8 +169,8 @@ SSplotComps <-
           if(j==2) titlemkt <- "retained, "
           titlemkt <- ifelse(printmkt,titlemkt,"")
 
-          # plot bars for data only or if input 'fitbar=T'
-          if(datonly | fitbar) bars <- T else bars <- F
+          # plot bars for data only or if input 'fitbar=TRUE'
+          if(datonly | fitbar) bars <- TRUE else bars <- FALSE
 
           # aggregating identifiers for plot titles and filenames
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
@@ -192,7 +192,7 @@ SSplotComps <-
               }
               if(kind=="GSTAGE"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-                                sampsize=dbase$N,effN=dbase$effN,showsampsize=F,showeffN=F,
+                                sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -200,7 +200,7 @@ SSplotComps <-
               }
               if(kind %in% c("L@A","W@A")){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-                                sampsize=dbase$N,effN=0,showsampsize=F,showeffN=F,
+                                sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -250,7 +250,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if(length(cohortlines)>0){
                   for(icohort in 1:length(cohortlines)){
-                    print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=F)
+                    print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=FALSE)
                     if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
                     if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
                   }
@@ -274,10 +274,10 @@ SSplotComps <-
             titles <- c(ptitle,titles) # compiling list of all plot titles
             tempfun <- function(ipage,...){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr,size=z,
-                        sampsize=dbase$N,showsampsize=showsampsize,showeffN=F,
+                        sampsize=dbase$N,showsampsize=showsampsize,showeffN=FALSE,
                         nlegends=1,legtext=list(dbase$YrSeasName),
-                        bars=F,linepos=0,main=ptitle,cex.main=cex.main,
-                        xlab=labels[2],ylab=labels[1],ymin0=F,maxrows=maxrows2,maxcols=maxcols2,
+                        bars=FALSE,linepos=0,main=ptitle,cex.main=cex.main,
+                        xlab=labels[2],ylab=labels[1],ymin0=FALSE,maxrows=maxrows2,maxcols=maxcols2,
                         fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
                         ptscol=col[1],ptscol2=col[2],ipage=ipage,...)
             }
@@ -316,7 +316,7 @@ SSplotComps <-
                                   linesx=ydbase$Bin,linesy=ydbase$Exp,
                                   sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                   nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
-                                  bars=F,linepos=linepos,main=ptitle,cex.main=cex.main,
+                                  bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                   xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,
                                   fixdims=fixdims,ipage=ipage,...)
                   }
@@ -341,7 +341,7 @@ SSplotComps <-
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   tempfun <- function(){
                       bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],ylab=labels[1],col=rep("blue",2),
-                              las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=F,minnbubble=minnbubble)
+                              las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
                   }
                   if(plot) tempfun()
                   if(print)
@@ -363,8 +363,8 @@ SSplotComps <-
             badbins <- setdiff(aalbin, dbase$Lbin_hi)
             goodbins <- intersect(aalbin, dbase$Lbin_hi)
             if(length(badbins)>0){
-              print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=F)
-              print(paste("            the following inputs for 'aalbin' are fine:",goodbins),quote=F)
+              print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=FALSE)
+              print(paste("            the following inputs for 'aalbin' are fine:",goodbins),quote=FALSE)
             }
             if(length(goodbins)>0)
             {
@@ -493,7 +493,7 @@ SSplotComps <-
                 ptitle <- paste(labels[13], title_sexmkt, FleetNames[f],sep="")
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
-                  title(main=ptitle,xlab=labels[1],outer=T,line=1)
+                  title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
                 }
                 ymax <- max(Obs2,Pred2)*1.1
                 plot(Size,Obs2,xlab=labels[1],ylab=labels[12],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
@@ -509,6 +509,6 @@ SSplotComps <-
       } # end loop over combined/not-combined genders
     } # end if data
   } # end loop over fleets
-  if(returntitles) return(invisible(titles))
+  return(invisible(titles))
 } # end embedded SSplotComps function
 ###########################

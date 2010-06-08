@@ -1,10 +1,11 @@
 SSplotCatch <-
   function(replist,subplots=1:9,add=FALSE,areas=1,
+           plot=TRUE,print=FALSE,
            fleetlty=1, fleetpch=1,
            fleetcols="default", fleetnames="default",
            lwd=1, areacols="default", areanames="default",
            forecastplot=TRUE,
-           plot=TRUE,print=FALSE,plotdir="default",showlegend=TRUE,
+           plotdir="default",showlegend=TRUE,
            legendloc="topleft",
            xlab="Year",
            labels=c("Harvest rate/Year", #1

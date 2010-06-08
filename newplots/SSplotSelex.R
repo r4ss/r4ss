@@ -7,7 +7,10 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
                                  "Age (yr)",    #2
                                  "Year",        #3
                                  "Selectivity", #4
-                                 "Retention")   #5
+                                 "Retention"),  #5
+                        pwidth = 7, pheight = 7, punits = "in",
+                        res = 300, ptsize = 12, plotdir = "default",
+                        verbose = TRUE)
                         )
 {
   nsexes     <- replist$nsexes
@@ -18,6 +21,9 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
   accuage    <- replist$accuage
   endyr      <- replist$endyr
   FleetNames <- replist$FleetNames
+
+  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  if(plotdir=="default") plotdir <- replist$inputs$dir
 
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
 
@@ -66,12 +72,12 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
         if(print)
         {
           if(1 %in% subplot){
-            png(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            pngfun(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""))
             persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
           }
           if(2 %in% subplot){
-            png(file=paste(plotdir,"03_timevarylenselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            pngfun(file=paste(plotdir,"03_timevarylenselcontour_flt",i,"sex",m,".png",sep=""))
             contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
             dev.off()
           }
@@ -95,12 +101,12 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
         if(print)
         {
           if(3 %in% subplot){
-            png(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            pngfun(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""))
             persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
           }
           if(4 %in% subplot){
-            png(file=paste(plotdir,"03_timevaryretcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            pngfun(file=paste(plotdir,"03_timevaryretcontour_flt",i,"sex",m,".png",sep=""))
             contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
             dev.off()
           }
@@ -160,7 +166,7 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
         if(5 %in% subplot){
           if(plot) selfunc()
           if(print){
-            png(file=paste(plotdir,"04_lenselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+            pngfun(file=paste(plotdir,"04_lenselex_flt",i,"sex",m,".png",sep=""))
             selfunc()
             dev.off()
           }
@@ -200,12 +206,12 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
             if(7 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
           if(print){
             if(6 %in% subplot){
-              png(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              pngfun(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""))
               persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
             if(7 %in% subplot){
-              png(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              pngfun(file=paste(plotdir,"03_timevaryageselcontour_flt",i,"sex",m,".png",sep=""))
               contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
               dev.off()
             }
@@ -222,7 +228,7 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
             if(plot) endselfunc()
             if(print)
             {
-              png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              pngfun(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""))
               endselfunc()
               dev.off()
             }
@@ -245,7 +251,7 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
             if(plot) endselfunc2()
             if(print)
             {
-              png(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+              pngfun(file=paste(plotdir,"04_ageselex_flt",i,"sex",m,".png",sep=""))
               endselfunc2()
               dev.off()
             }

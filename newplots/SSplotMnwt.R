@@ -1,5 +1,6 @@
 SSplotMnwt <-
   function(replist,add=FALSE,plot=TRUE,print=FALSE,
+           plotdir="default",
            fleets="all",
            fleetnames="default",
            labels=c("Year",  #1
@@ -10,7 +11,6 @@ SSplotMnwt <-
            "Mean weight in", #6
            "for fleet"),     #7
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
-           plotdir="default",
            verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
