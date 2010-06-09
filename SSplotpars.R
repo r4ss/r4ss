@@ -1,4 +1,4 @@
-SSv3_plotpars <-
+SSplotPars <-
 function(
     dir="c:/path/", repfile="Report.sso",
     postfile="posteriors.sso", showpost=T, showprior=T,
@@ -12,7 +12,7 @@ function(
 {
   ################################################################################
   #
-  # SSv3_plotpars
+  # SSplotPars
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To make a multi-figure plot of prior distributions
@@ -186,7 +186,7 @@ function(
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
   if(pdf){
-    pdffile <- paste(dir,"/SSplotpars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(dir,"/SSplotPars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=F)
   }

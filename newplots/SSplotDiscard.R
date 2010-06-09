@@ -15,6 +15,8 @@ SSplotDiscard <-
   # get stuff from replist
   discard         <- replist$discard
   FleetNames      <- replist$FleetNames
+  DF_discard      <- replist$DF_discard
+  discard_type    <- replist$discard_type
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir

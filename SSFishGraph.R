@@ -1,7 +1,7 @@
-SSv3_FishGraph <-
-function(replist,
-                           title="SSv3 output",
-                           species="some kind of fish")
+SSFishGraph <-
+  function(replist,
+           title="SSv3 output",
+           species="some kind of fish")
 {
   x <- list() # this will be the big output list
 

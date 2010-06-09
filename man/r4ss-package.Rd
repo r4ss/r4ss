@@ -16,8 +16,8 @@ visualizing model parameterizations, and various other tasks.
 \tabular{ll}{
 Package: \tab r4ss\cr
 Type: \tab Package\cr
-Version: \tab 1.06\cr
-Date: \tab 2010-05-13\cr
+Version: \tab 1.07\cr
+Date: \tab 2010-06-09\cr
 License: \tab MIT license\cr
 LazyLoad: \tab yes\cr
 URL: \tab http://www.r-project.org\cr \tab http://code.google.com/p/r4ss/\cr
@@ -25,7 +25,8 @@ URL: \tab http://www.r-project.org\cr \tab http://code.google.com/p/r4ss/\cr
 For use with Stock Synthesis version 3.10b or later.
 }
 \author{
-Ian Taylor, Ian Stewart, Tommy Garrison, Andre Punt, John Wallace, and other contributors
+Ian Taylor, Ian Stewart, Tommy Garrison, Andre Punt, John Wallace,
+and other contributors
 
 Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
@@ -39,9 +40,9 @@ Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 % }
 \examples{
 \dontrun{
-# read in the report file using SSv3_output
-myreplist <- SSv3_output(dir='c:/SS/SSv3.10b/Simple/')
-# make a collection of plots using SSv3_plots
-SSv3_plots(replist=myreplist)
+# read in the report file using SSoutput
+myreplist <- SSoutput(dir='c:/SS/SSv3.10b/Simple/')
+# make a collection of plots using SSplots
+SSplots(replist=myreplist)
 }
 }

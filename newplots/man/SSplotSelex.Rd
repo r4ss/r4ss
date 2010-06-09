@@ -10,10 +10,10 @@
 }
 \usage{
 SSplotSelex(replist, fleets = "all", fleetnames = "default", selexlines
-= 1:5, subplot = 1:9, plot = T, print = F, add = F, cex.main = 1, labels
+= 1:5, subplot = 1:9, plot = TRUE, print = FALSE, add = FALSE, labels
 = c("Length (cm)", "Age (yr)", "Year", "Selectivity", "Retention"),
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
-plotdir = "default", verbose = TRUE)
+cex.main = 1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,9 +42,6 @@ plotdir = "default", verbose = TRUE)
   }
   \item{add}{
     add to existing plot (not yet implemented)
-  }
-  \item{cex.main}{
-    character expansion for plot title
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

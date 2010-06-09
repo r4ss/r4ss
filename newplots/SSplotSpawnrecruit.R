@@ -1,11 +1,11 @@
 SSplotSpawnrecruit <-
-  function(replist,add=F,plot=T,print=F,xlim=NULL,ylim=NULL,
+  function(replist,add=FALSE,plot=TRUE,print=FALSE,xlim=NULL,ylim=NULL,
            xlab="Spawning biomass (mt)",
            ylab="Recruitment (1,000s)",
            plotdir="default",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-           verbose=T,line1="blue",line2="green",line3="black",
-           ptcol="red",virg=T,init=F)
+           verbose=TRUE,line1="blue",line2="green",line3="black",
+           ptcol="red",virg=TRUE,init=FALSE)
 {
   # plot of spawner recruit curve
 
@@ -41,5 +41,5 @@ SSplotSpawnrecruit <-
     pngfun(file=paste(plotdir,"12_srcurve.png",sep=""))
     recruitfun()
     dev.off()}
-  if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=F)
+  if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=FALSE)
 }

@@ -4,11 +4,11 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
   # function to estimate bias adjustment ramp
-  # for Stock Synthesis v3.04b
+  # for Stock Synthesis v3.10b
   # by Ian Taylor
   # February 5, 2010
   #
-  # Usage: run function with input that is an object from SSv3_output
+  # Usage: run function with input that is an object from SSoutput
   #        from http://code.google.com/p/r4ss/
   #
   ##################
@@ -17,11 +17,11 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
   if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10"))){
-    print("!error: this function needs an input object created by SSv3_output from a SSv3.10 model")
+    print("!error: this function needs an input object created by SSoutput from a SSv3.10 model")
     return()
   }
   if(replist$inputs$covar==F){
-    print("!error, you need to have covar=T in the input to the SSv3_output function",quote=F)
+    print("!error, you need to have covar=T in the input to the SSoutput function",quote=F)
     return()
   }
   parameters <- replist$parameters

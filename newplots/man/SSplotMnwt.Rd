@@ -10,11 +10,12 @@
 }
 \usage{
 SSplotMnwt(replist, add = FALSE, plot = TRUE, print = FALSE,
-plotdir = "default", fleets = "all", fleetnames = "default", labels =
+fleets = "all", fleetnames = "default", labels =
 c("Year", "discard", "retained catch", "whole catch",
 "Mean individual body weight (kg)", "Mean weight in", "for fleet"),
-pwidth = 7, pheight = 7, punits = "in", res = 300,
-ptsize = 12, verbose = TRUE)
+col1="blue", col2="red",
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+cex.main=1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,6 +43,12 @@ ptsize = 12, verbose = TRUE)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{col1}{
+    first color to use in plot
+  }
+  \item{col2}{
+    second color to use in plot
   }
   \item{pwidth}{
     width of plot written to PNG file

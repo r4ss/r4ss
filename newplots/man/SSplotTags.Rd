@@ -12,10 +12,12 @@ SSplotTags(replist = replist, subplots = 1:5, rows = 1, cols = 1,
 tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE, pntscalar = 2.6,
 minnbubble = 8, pwidth = 7, pheight = 7, punits = "in", ptsize = 12, res
 = 300, cex.main = 1, col1 = "blue", col2 = "red", col3 = "grey80",
-labels = c("Year", "Frequency", "Tag Group", "Fit to tag recaptures by
-tag group", "Tag recaptures aggregated across tag groups", "Observed tag
-recaptures by year and tag group", "Residuals for tag recaptures:
-(obs-exp)/sqrt(exp)"), verbose = TRUE)
+labels = c("Year", "Frequency", "Tag Group",
+"Fit to tag recaptures by tag group",
+"Tag recaptures aggregated across tag groups",
+"Observed tag recaptures by year and tag group",
+"Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),
+plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -82,6 +84,10 @@ recaptures by year and tag group", "Residuals for tag recaptures:
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{plotdir}{
+    directory where PNG files will be written. by default it will
+    be the directory where the model was run.
   }
   \item{verbose}{
     return updates of function progress to the R GUI?

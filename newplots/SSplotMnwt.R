@@ -1,6 +1,6 @@
 SSplotMnwt <-
-  function(replist,add=FALSE,plot=TRUE,print=FALSE,
-           plotdir="default",
+  function(replist,
+           add=FALSE,plot=TRUE,print=FALSE,
            fleets="all",
            fleetnames="default",
            labels=c("Year",  #1
@@ -10,14 +10,17 @@ SSplotMnwt <-
            "Mean individual body weight (kg)", #5
            "Mean weight in", #6
            "for fleet"),     #7
+           col1="blue", col2="red",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
-           verbose=TRUE)
+           cex.main=1,
+           plotdir="default", verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get stuff from replist
   mnwgt         <- replist$mnwgt
   FleetNames    <- replist$FleetNames
+  DF_mnwgt      <- replist$DF_mnwgt
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -42,12 +45,13 @@ SSplotMnwt <-
         titlepart <- labels[2]
         if(j==2) titlepart <- labels[3]
         if(j==0) titlepart <- labels[4]
-        ptitle <- paste(lables[6],titlepart,labels[7],fleetname,sep=" ")
+        ptitle <- paste(labels[6],titlepart,labels[7],fleetname,sep=" ")
         ylab <- labels[4]
         bdywtfunc <- function(){
-          plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,ylo=0,col="red",sfrac=0.001,z=ymax,ylab=ylab,lty=1,xlim=c(xmin,xmax))
+          plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,ylo=0,col=col2,sfrac=0.001,z=ymax,
+                 ylab=ylab,lty=1,xlim=c(xmin,xmax),cex.main=cex.main)
           abline(h=0,col="grey")
-          points(yr,ex,col="blue",cex=2,pch="-")}
+          points(yr,ex,col=col1,cex=2,pch="-")}
         if(plot) bdywtfunc()
         if(print){
           png(file=paste(plotdir,"9_bodywtfit",fleetname,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -57,7 +61,7 @@ SSplotMnwt <-
     } # loop over fleets
     if(verbose) print("Finished average body weight plot",quote=FALSE)
   }else{ # if mean weight data exists
-    if(verbose) print("No average body weight data to plot",quote=F)
+    if(verbose) print("No average body weight data to plot",quote=FALSE)
   }
   flush.console()
 } # end if 10 in plot or print

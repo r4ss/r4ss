@@ -16,7 +16,8 @@ repfile = "Report.sso", compfile = "CompReport.sso",
 covarfile = "covar.sso", ncols = 200, forecast = TRUE, warn = TRUE,
 covar = TRUE, checkcor = TRUE, cormax = 0.95, cormin = 0.01,
 printhighcor = 10, printlowcor = 10, verbose = TRUE,
-printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE)
+printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,
+aalmaxbinrange=0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,6 +50,7 @@ printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE)
   \item{printstats}{ Print summary statistics about the output to the R GUI? Default=TRUE.}
   \item{hidewarn}{ Hides some warnings output from the R GUI. Default=FALSE.}
   \item{NoCompOK}{ Allow the function to work without a CompReport file. Default=FALSE.}
+  \item{aalmaxbinrange}{ The largest length bin range allowed for composition data to be considered as conditional age-at-length data. Default=0. }
 }
 % \details{
 

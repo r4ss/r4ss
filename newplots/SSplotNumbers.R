@@ -4,7 +4,6 @@ SSplotNumbers <-
            areas="all",
            areanames="default",
            areacols="default",
-           cex.main=1,
            pntscalar=2.6,
            add=FALSE,
            labels=c("Year",              #1
@@ -12,6 +11,7 @@ SSplotNumbers <-
              "True age (yr)",            #3
              "SD of observed age (yr)"), #4
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           cex.main=1,
            plotdir="default",
            verbose=TRUE)
 {

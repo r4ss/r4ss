@@ -1,20 +1,21 @@
-SSplotSelex <- function(replist, fleets="all", fleetnames="default",
-                        selexlines=1:5,
-                        subplot=1:9,
-                        plot=T, print=F, add=F,
-                        cex.main=1,
-                        labels=c("Length (cm)", #1
-                                 "Age (yr)",    #2
-                                 "Year",        #3
-                                 "Selectivity", #4
-                                 "Retention"),  #5
-                        pwidth = 7, pheight = 7, punits = "in",
-                        res = 300, ptsize = 12, plotdir = "default",
-                        verbose = TRUE)
-                        )
+SSplotSelex <-
+  function(replist, fleets="all", fleetnames="default",
+           selexlines=1:5,
+           subplot=1:9,
+           plot=TRUE, print=FALSE, add=FALSE,
+           labels=c("Length (cm)", #1
+                    "Age (yr)",    #2
+                    "Year",        #3
+                    "Selectivity", #4
+                    "Retention"),  #5
+           pwidth = 7, pheight = 7, punits = "in",
+           res = 300, ptsize = 12,
+           cex.main=1, plotdir = "default",
+           verbose = TRUE)
 {
   nsexes     <- replist$nsexes
   nfleets    <- replist$nfleets
+  lbinspop   <- replist$lbinspop
   nlbinspop  <- replist$nlbinspop
   sizeselex  <- replist$sizeselex
   ageselex   <- replist$ageselex
@@ -66,14 +67,14 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
         main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
         if(plot)
         {
-          if(1 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+          if(1 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
           if(2 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
         }
         if(print)
         {
           if(1 %in% subplot){
             pngfun(file=paste(plotdir,"03_timevarylenselsurf_flt",i,"sex",m,".png",sep=""))
-            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
           }
           if(2 %in% subplot){
@@ -95,14 +96,14 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
         main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
         if(plot)
         {
-          if(3 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+          if(3 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
           if(4 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
         }
         if(print)
         {
           if(3 %in% subplot){
             pngfun(file=paste(plotdir,"03_timevaryretsurf_flt",i,"sex",m,".png",sep=""))
-            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
           }
           if(4 %in% subplot){
@@ -202,12 +203,12 @@ SSplotSelex <- function(replist, fleets="all", fleetnames="default",
           z <- t(z)
           main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
           if(plot){
-            if(6 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            if(6 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             if(7 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
           if(print){
             if(6 %in% subplot){
               pngfun(file=paste(plotdir,"03_timevaryageselsurf_flt",i,"sex",m,".png",sep=""))
-              persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
             if(7 %in% subplot){

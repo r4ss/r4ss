@@ -13,9 +13,11 @@ SSplotTags <-
            "Tag recaptures aggregated across tag groups",       #5
            "Observed tag recaptures by year and tag group",     #6
            "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),#7
+           plotdir="default",
            verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  if(plotdir=="default") plotdir <- replist$inputs$dir
 
   tagdbase2 <- replist$tagdbase2
   if(nrow(tagdbase2)==0){

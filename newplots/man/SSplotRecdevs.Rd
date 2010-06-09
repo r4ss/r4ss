@@ -9,9 +9,11 @@
   measures related to bias adjustment.
 }
 \usage{
-SSplotRecdevs(replist, plot = TRUE, print = FALSE, add = FALSE, subplots
-= 1:3, uncertainty = T, forecastplot = F, col1 = "black", col2 = "blue",
-col3 = "green3", col4 = "red", legendloc = "topleft", cex.main = 1,
+SSplotRecdevs(replist, subplots = 1:3,
+plot = TRUE, print = FALSE, add = FALSE,
+uncertainty = TRUE, forecastplot = FALSE,
+col1 = "black", col2 = "blue",
+col3 = "green3", col4 = "red", legendloc = "topleft",
 labels = c("Year", "Asymptotic standard error estimate",
 "Log recruitment deviation", "Bias adjustment check",
 "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"),
@@ -55,9 +57,6 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
   }
   \item{legendloc}{
     location of legend. see ?legend for more info
-  }
-  \item{cex.main}{
-    character expansion for plot title
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

@@ -13,10 +13,10 @@
 \usage{
 SSv3_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
 repfile = "Report.sso", compfile = "CompReport.sso",
-covarfile = "covar.sso", ncols = 200, forecast = T, warn = T,
-covar = T, checkcor = T, cormax = 0.95, cormin = 0.01,
-printhighcor = 10, printlowcor = 10, verbose = T,
-printstats = T, hidewarn = F, NoCompOK = F)
+covarfile = "covar.sso", ncols = 200, forecast = TRUE, warn = TRUE,
+covar = TRUE, checkcor = TRUE, cormax = 0.95, cormin = 0.01,
+printhighcor = 10, printlowcor = 10, verbose = TRUE,
+printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,11 +31,11 @@ printstats = T, hidewarn = F, NoCompOK = F)
     and errors will occur.  A warning will be output to the R command
     line if the value is too small. It should be bigger than the maximum
     age + 10 and the number of years + 10. Default=200.}
-  \item{forecast}{ Read the forecast-report file? Default=T. }
-  \item{warn}{ Read the Warning.sso file? Default=T. }
+  \item{forecast}{ Read the forecast-report file? Default=TRUE. }
+  \item{warn}{ Read the Warning.sso file? Default=TRUE. }
   \item{covar}{ Read covar.sso to get variance information and identify
-    bad correlations? Default=T. }
-  \item{checkcor}{ Check for bad correlations? Default=T. }
+    bad correlations? Default=TRUE. }
+  \item{checkcor}{ Check for bad correlations? Default=TRUE. }
   \item{cormax}{ The specified threshold for defining high correlations.
     A quantity with any correlation above this value is identified. Default=0.95. }
   \item{cormin}{ The specified threshold for defining low correlations.
@@ -45,13 +45,13 @@ printstats = T, hidewarn = F, NoCompOK = F)
   \item{printhighcor}{ The maximum number of high correlations to print to the R GUI. Default=10.}
   \item{printlowcor}{ The maximum number of low correlations to print to the R GUI. Default=10.}
   \item{verbose}{ Return updates of function progress to the R GUI?
-    Default=T.}
-  \item{printstats}{ Print summary statistics about the output to the R GUI? Default=T.}
-  \item{hidewarn}{ Hides some warnings output from the R GUI. Default=F.}
-  \item{NoCompOK}{ Allow the function to work without a CompReport file. Default=F.}
+    Default=TRUE.}
+  \item{printstats}{ Print summary statistics about the output to the R GUI? Default=TRUE.}
+  \item{hidewarn}{ Hides some warnings output from the R GUI. Default=FALSE.}
+  \item{NoCompOK}{ Allow the function to work without a CompReport file. Default=FALSE.}
 }
 % \details{
-  
+
 % }
 \value{
   Many values are returned. Complete list would be quite long, but
@@ -59,7 +59,7 @@ printstats = T, hidewarn = F, NoCompOK = F)
 }
 % \references{ ~put references to the literature/web site here ~ }
 \author{ Ian Stewart, Ian Taylor }
-% \note{ ~~further notes~~ 
+% \note{ ~~further notes~~
 
 %  % ~Make other sections like Warning with \section{Warning }{....} ~
 % }

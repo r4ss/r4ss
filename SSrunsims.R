@@ -105,7 +105,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
           # add recdevs to control files for simulations
           if(is.null(fyr) | is.null(lyr)){
-            myctl <- SS_readctl("ctl_isim_nodevs.ss")
+            myctl <- SSreadctl("ctl_isim_nodevs.ss")
             fyr <- myctl$fyr_main_recdevs
             lyr <- myctl$lyr_main_recdevs
           }
@@ -208,9 +208,9 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 if(verbose) print("applying bias adjustment based on previous model run",quote=FALSE)
                 if(file.exists(oldcovarname)){
                   # if the covar file exists, then apply fitbiasramp function
-                  replist <- SSv3_output(dir=getwd(),model=exe,repfile=oldrepfilename,
-                                         compfile=oldcompfilename,covarfile=oldcovarname,
-                                         forecast=FALSE,printstats=FALSE,verbose=FALSE)
+                  replist <- SSoutput(dir=getwd(),model=exe,repfile=oldrepfilename,
+                                      compfile=oldcompfilename,covarfile=oldcovarname,
+                                      forecast=FALSE,printstats=FALSE,verbose=FALSE)
                   SS_fitbiasramp(replist,png=paste("fitbiasramp_",key,".png",sep=""),
                                  oldctl="ctl_ifit.ss",newctl=newctl)
                   file.copy(newctl,"ctl_ifit.ss",overwrite=TRUE)

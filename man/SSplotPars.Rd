@@ -1,5 +1,5 @@
-\name{SSv3_plotpars}
-\alias{SSv3_plotpars}
+\name{SSplotPars}
+\alias{SSplotPars}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Plot distributions of priors, posteriors, and estimates. }
 \description{
@@ -7,7 +7,7 @@
   parameter distributions. MCMC not required to make function work.
 }
 \usage{
-SSv3_plotpars(dir = "c:/path/", repfile = "Report.sso",
+SSplotPars(dir = "c:/path/", repfile = "Report.sso",
 postfile = "posteriors.sso", showpost = T, showprior = T,
 showmle = T, showinit = T, showrecdev = T, priorinit = T,
 priorfinal = T, showlegend = T, fitrange = F, xaxs="i",
@@ -87,14 +87,13 @@ ctlfile = "control.ss_new")
 % \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
 \dontrun{
-pars <- SSv3_plotpars(dir='c:/SS/Simple/')
+pars <- SSplotPars(dir='c:/SS/Simple/')
 
 # strings can be partial match
-pars <- SSv3_plotpars(dir='c:/SS/Simple/',strings=c("steep"))
+pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
 }
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the
 % % R documentation directory.
-\keyword{ dplot }
 \keyword{ hplot }
 % \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

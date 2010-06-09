@@ -44,7 +44,7 @@ SSplots <-
 
   # get quantities from the big list
   if(replist[[1]]=="ReportObject"){
-    return("The input 'replist' should refer to an R object created by the function 'SSv3_output'.")
+    return("The input 'replist' should refer to an R object created by the function 'SSoutput'.")
   }
 
   nfleets     <- replist$nfleets
@@ -58,11 +58,11 @@ SSplots <-
 
   # check for internal consistency
   if(uncertainty==TRUE & inputs$covar==FALSE){
-    print("To use uncertainty=T, you need to have covar=T in the input to the SSv3_output function",quote=FALSE)
+    print("To use uncertainty=T, you need to have covar=T in the input to the SSoutput function",quote=FALSE)
     return()
   }
   if(forecastplot==TRUE & inputs$forecast==FALSE){
-    print("To use forecastplot=T, you need to have forecast=T in the input to the SSv3_output function",quote=FALSE)
+    print("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function",quote=FALSE)
     return()
   }
   if(forecastplot==TRUE & max(timeseries$Yr > endyr+1)==0){
@@ -285,23 +285,23 @@ SSplots <-
     if(15 %in% c(plot,print))  # data only aspects
     {
       # length comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=F,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+      SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=FALSE,verbose=verbose,fleets=fleets,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # length comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
       # size comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=F,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+      SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=FALSE,verbose=verbose,fleets=fleets,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # size comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
       if(verbose) print("Finished plot 15: length and size comp data",quote=FALSE)
@@ -310,23 +310,23 @@ SSplots <-
     if(16 %in% c(plot,print))
     {
       # age comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=F,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+      SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=FALSE,verbose=verbose,fleets=fleets,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # age comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=F,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
+      SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=FALSE,verbose=verbose,fleets=fleets,
+                  samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
-                  samplesizeplots=samplesizeplots,showsampsize=F,showeffN=F,
+                  samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) print("Finished plot 16: age comp data",quote=FALSE)
@@ -336,7 +336,7 @@ SSplots <-
     {
       # conditional age plot
       SSplotComps(replist=replist,datonly=TRUE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
-                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=F,
+                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                       fixdims=fixdims,
                       print=(17%in%print),plot=(17%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -347,12 +347,12 @@ SSplots <-
 
   # plot 18: length comp data with fits, sample size, etc.
   if(18 %in% c(plot,print)){
-    SSplotComps(replist=replist,datonly=F,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
+    SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
-    SSplotComps(replist=replist,datonly=F,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
+    SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
@@ -363,13 +363,13 @@ SSplots <-
 
   # plot 19: age comp data with fits, sample size, etc.
   if(19 %in% c(plot,print)){
-    SSplotComps(replist=replist,datonly=F,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
+    SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                 print=(19%in%print),plot=(19%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
-    SSplotComps(replist=replist,datonly=F,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
-                samplesizeplots=F,showsampsize=F,showeffN=F,
+    SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
+                samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,
                 print=(19%in%print),plot=(19%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)

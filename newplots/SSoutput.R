@@ -900,14 +900,14 @@ SSoutput <-
 
   # print list of statistics
   if(printstats){
-    print("Statistics shown below (to turn off, change input to printstats=F)",quote=F)
+    print("Statistics shown below (to turn off, change input to printstats=FALSE)",quote=FALSE)
 
     # remove scientific notation (only for display, not returned values, which were added to returndat already)
     stats$likelihoods_used <- format(stats$likelihoods_used,scientific=20)
     stats$estimated_non_rec_devparameters <- format(stats$estimated_non_rec_devparameters,scientific=20)
     print(stats)
     if(covar){
-      print(corstats, quote=F)
+      print(corstats, quote=FALSE)
     }
   }
 
@@ -923,7 +923,7 @@ SSoutput <-
 
   returndat$inputs <- inputs
 
-  if(verbose) print("completed SSoutput",quote=F)
+  if(verbose) print("completed SSoutput",quote=FALSE)
   invisible(returndat)
 
 } # end function

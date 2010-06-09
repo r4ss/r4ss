@@ -17,7 +17,7 @@ SS_fitbiasramp(replist, verbose=F, startvalues=NULL, method="BFGS",
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    Object created using \code{\link{SSv3_output}} }
+    Object created using \code{\link{SSoutput}} }
   \item{verbose}{ Controls the amount of output to the screen.
     Default=F. }
   \item{startvalues}{ A vector of 5 values for the starting points in
@@ -61,7 +61,7 @@ Ian Taylor
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{SSv3_output}}
+\code{\link{SSoutput}}
 }
 % \examples{
 % ##---- Should be DIRECTLY executable !! ----
@@ -72,6 +72,5 @@ Ian Taylor
 % % R documentation directory.
 \keyword{ data }
 \keyword{ manip }
-\keyword{ dplot }
 \keyword{ hplot }
 % \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

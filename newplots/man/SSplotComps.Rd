@@ -18,10 +18,10 @@ plotdir = "default",
 cex.main = 1, linepos = 1, fitbar = FALSE, maxsize = 3, do.sqrt = TRUE,
 smooth = TRUE, cohortlines = c(), labels = c("Length (cm)", "Age (yr)",
 "Year", "Observed sample size", "Effective sample size", "Proportion",
-"cm", "Frequency", "Weight (lbs)", "(mt)", "(numbers x1000)", "Stdev
-(Age) (yr)", "Andre's conditional AAL plot, "), printmkt = TRUE, printsex =
-TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4, fixdims = TRUE,
-maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
+"cm", "Frequency", "Weight (lbs)", "(mt)", "(numbers x1000)",
+"Stdev (Age) (yr)", "Andre's conditional AAL plot, "), printmkt = TRUE,
+printsex = TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4,
+fixdims = TRUE, maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

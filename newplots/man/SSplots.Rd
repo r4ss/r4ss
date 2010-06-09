@@ -11,20 +11,21 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SSplots(replist = "ReportObject", plot = 1:24, print = 0, pdf = FALSE,
-printfolder = "", dir = "default", fleets = "all", areas = "all",
-fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch =
-1, lwd = 1, areacols = "default", areanames = "default", verbose = TRUE,
-uncertainty = TRUE, forecastplot = FALSE, datplot = FALSE, Natageplot =
-TRUE, samplesizeplots = TRUE, compresidplots = TRUE, sprtarg = 0.4,
-btarg = 0.4, minbthresh = 0.25, pntscalar = 2.6, minnbubble = 8, aalyear
-= -1, aalbin = -1, aalmaxbinrange = 0, aalresids = FALSE, maxneff =
-5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE, showeffN =
-TRUE, showlegend = TRUE, pwidth = 7, pheight = 7, punits = "in", ptsize
-= 12, res = 300, cex.main = 1, selexlines = 1:5, rows = 1, cols = 1,
-maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4, tagrows = 3,
-tagcols = 3, fixdims = TRUE, new = TRUE, catchasnumbers = FALSE,
-legendloc = "topleft", ...)
+SSplots(replist = "ReportObject", plot = 1:24, print = 0,
+pdf = FALSE, printfolder = "", dir = "default", fleets = "all",
+areas = "all", fleetnames = "default", fleetcols = "default",
+fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
+areanames = "default", verbose = TRUE, uncertainty = TRUE,
+forecastplot = FALSE, datplot = FALSE, Natageplot = TRUE,
+samplesizeplots = TRUE, compresidplots = TRUE, sprtarg = 0.4,
+btarg = 0.4, minbthresh = 0.25, pntscalar = 2.6, minnbubble = 8,
+aalyear = -1, aalbin = -1, aalmaxbinrange = 0, aalresids = FALSE,
+maxneff = 5000, cohortlines = c(), smooth = TRUE,
+showsampsize = TRUE, showeffN = TRUE, showlegend = TRUE, pwidth = 7,
+pheight = 7, punits = "in", ptsize = 12, res = 300, cex.main = 1,
+selexlines = 1:5, rows = 1, cols = 1, maxrows = 6, maxcols = 6,
+maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3, fixdims = TRUE,
+new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,11 +48,16 @@ legendloc = "topleft", ...)
     must be used and input \code{print} must be 0. Default=0.}
   \item{printfolder}{ Name of subfolder to create within the working
     directory into which any PNG files specified by \code{print} will be
-    saved. By default the working directory is used with no subfolder. Default="".}
-  \item{dir}{ The directory in which any PNG files requested by \code{print} are created. By default it will be the same directory that the report file was read from by the \code{SSv3_output} function. Default="default".}
+    saved. By default the working directory is used with no subfolder.
+    Default="".}
+  \item{dir}{ The directory in which any PNG files requested by
+    \code{print} are created. By default it will be the same directory
+    that the report file was read from by the \code{SSoutput}
+    function. Default="default".}
   \item{fleets}{ Either the string "all", or a vector of numerical
     values, like c(1,3), listing fleets or surveys for which plots should
-    be made. By default, plots will be made for all fleets and surveys. Default="all".}
+    be made. By default, plots will be made for all fleets and surveys.
+    Default="all".}
   \item{areas}{ Either the string "all", or a vector of numerical
     values, like c(1,3), listing areas for which plots should be made in
     a multi-area model. By default, plots will be made for all areas
@@ -63,16 +69,18 @@ legendloc = "topleft", ...)
     to use for each fleet.  Default="default".}
   \item{fleetlty}{ Vector of line types used for each fleet in some
     plots. Default=1.}
-  \item{fleetpch}{ Vector of point types used for each fleet in some plots. Default=1.}
+  \item{fleetpch}{ Vector of point types used for each fleet in some
+    plots. Default=1.}
   \item{lwd}{ Line width for some plots. Default=1.}
   \item{areacols}{  Either the string "default", or a vector of colors
     to use for each area. Default="default".}
   \item{areanames}{ Optional vector of names for each area used in
     titles. Default="default".}
-  \item{verbose}{  Return updates of function progress to the R GUI? Default=T.}
+  \item{verbose}{  Return updates of function progress to the R GUI?
+    Default=T.}
   \item{uncertainty}{ Include values in plots showing estimates of
     uncertainty (requires positive definite hessian in model and
-    \code{covar}=T in \code{SSv3_output})?  Default=T.}
+    \code{covar}=T in \code{SSoutput})?  Default=T.}
   \item{forecastplot}{ Include forecast years in the plots? Obviously
     requires forecast options to have been used in the model.  Default=T.}
   \item{datplot}{ Plot the data by itself? This is useful in document
@@ -102,36 +110,61 @@ legendloc = "topleft", ...)
     to conditional age-at-length data will be produced for all years.
     Useful to see if growth curves are ok, or to see the information on
     year classes move through the conditional data. Default=-1. }
-  \item{aalmaxbinrange}{ The largest length bin range allowed for composition data to be considered as conditional age-at-length data. Default=0. }
-  \item{aalresids}{ Plot the full set of conditional age-at-length Pearson residuals? Default=F. }
-  \item{maxneff}{ The maximum value to include on plots of input and effective sample size. Occasionally a calculation of effective N blows up to very large numbers, rendering it impossible to observe the relationship for other data. Default=5000. }
-  \item{cohortlines}{ Optional vector of birth years for cohorts for which to add growth curves to numbers at length bubble plots. Default=c(). }
-  \item{smooth}{ Add loess smoother to observed vs. expected index plots and input vs. effective sample size? Default=T. }
-  \item{showsampsize}{ Display sample sizes on composition plots? Default=T. }
-  \item{showeffN}{ Display effective sample sizes on composition plots? Default=T. }
+  \item{aalmaxbinrange}{ The largest length bin range allowed for
+    composition data to be considered as conditional age-at-length data.
+    Default=0. }
+  \item{aalresids}{ Plot the full set of conditional age-at-length
+    Pearson residuals? Default=F. }
+  \item{maxneff}{ The maximum value to include on plots of input and
+    effective sample size. Occasionally a calculation of effective N
+    blows up to very large numbers, rendering it impossible to observe
+    the relationship for other data. Default=5000. }
+  \item{cohortlines}{ Optional vector of birth years for cohorts for
+    which to add growth curves to numbers at length bubble plots.
+    Default=c(). }
+  \item{smooth}{ Add loess smoother to observed vs. expected index plots
+    and input vs. effective sample size? Default=T. }
+  \item{showsampsize}{ Display sample sizes on composition plots?
+    Default=T. }
+  \item{showeffN}{ Display effective sample sizes on composition plots?
+    Default=T. }
   \item{showlegend}{ Display legends in various plots? Default=T. }
-  \item{pwidth}{ Default width of plots printed to files in units of \code{punits}. Default=7. }
-  \item{pheight}{ Default height width of plots printed to files in units of \code{punits}. Default=7. }
-  \item{punits}{ Units for \code{pwidth} and \code{pheight}. Can be "px" (pixels), "in" (inches), "cm" or "mm". Default="in". }
-  \item{ptsize}{ Point size for plotted text in plots printed to files (see help("png") in R for details). Default=12. }
+  \item{pwidth}{ Default width of plots printed to files in units of
+    \code{punits}. Default=7. }
+  \item{pheight}{ Default height width of plots printed to files in
+    units of \code{punits}. Default=7. }
+  \item{punits}{ Units for \code{pwidth} and \code{pheight}. Can be "px"
+    (pixels), "in" (inches), "cm" or "mm". Default="in". }
+  \item{ptsize}{ Point size for plotted text in plots printed to files
+    (see help("png") in R for details). Default=12. } =
   \item{res}{ Resolution of plots printed to files. Default=300. }
-  \item{cex.main}{ Character expansion parameter for plot titles (only implemented for composition plots so far). Default=1. }
+  \item{cex.main}{ Character expansion parameter for plot titles (only
+    implemented for composition plots so far). Default=1. }
   \item{selexlines}{ Vector controling which lines should be shown on
     selectivity plots if the model includes retention. Default=1:5. }
   \item{rows}{ Number of rows to use for single panel plots. Default=1. }
   \item{cols}{ Number of columns to use for single panel plots. Default=1. }
-  \item{maxrows}{ Maximum number of rows to for multi-panel plots. Default=6. }
-  \item{maxcols}{ Maximum number of columns for multi-panel plots. Default=6. }
-  \item{maxrows2}{ Maximum number of rows for conditional age at length multi-panel plots. Default=2. }
-  \item{maxcols2}{ Maximum number of rows for conditional age at length multi-panel plots. Default=4. }
+  \item{maxrows}{ Maximum number of rows to for multi-panel plots.
+    Default=6. }
+  \item{maxcols}{ Maximum number of columns for multi-panel plots.
+    Default=6. }
+  \item{maxrows2}{ Maximum number of rows for conditional age at length
+    multi-panel plots. Default=2. }
+  \item{maxcols2}{ Maximum number of rows for conditional age at length
+    multi-panel plots. Default=4. }
   \item{tagrows}{ Number of rows for tagging-related plots. Default=3. }
-  \item{tagcols}{ Number of columns for tagging-related plots. Default=3. }
-  \item{fixdims}{ Control whether multi-panel plots all have dimensions equal to maxrows by maxcols, or resized within those limits to fit number of plots. Default=T. }
-  \item{new}{ Open a new window or add to existing plot windows. Default=T. }
+  \item{tagcols}{ Number of columns for tagging-related plots.
+    Default=3. }
+  \item{fixdims}{ Control whether multi-panel plots all have dimensions
+    equal to maxrows by maxcols, or resized within those limits to fit
+    number of plots. Default=T. }
+  \item{new}{ Open a new window or add to existing plot windows.
+    Default=T. }
   \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
     Default=F. }
   \item{legendloc}{ Location for all legends. Default="topleft". }
-  \item{\dots}{ Additional arguments that will be passed to some subfunctions. }
+  \item{\dots}{ Additional arguments that will be passed to some
+    subfunctions. }
 }
 \details{
   %%  ~~ If necessary, more details than the description above ~~

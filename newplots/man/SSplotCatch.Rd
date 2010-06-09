@@ -14,9 +14,10 @@ plot = TRUE, print = FALSE, fleetlty = 1,
 fleetpch = 1, fleetcols = "default", fleetnames = "default", lwd = 1,
 areacols = "default", areanames = "default", forecastplot = TRUE,
 plotdir = "default", showlegend = TRUE, legendloc =
-"topleft", xlab = "Year", labels = c("Harvest rate/Year", "Continuous
-F", "Landings", "Total catch", "Predicted Discards", "Discard fraction",
-"(mt)", "(numbers x1000)"), catchasnumbers = FALSE, pwidth = 7, pheight
+"topleft", xlab = "Year", labels = c("Harvest rate/Year",
+"Continuous F", "Landings", "Total catch", "Predicted Discards",
+"Discard fraction", "(mt)", "(numbers x1000)"),
+catchasnumbers = FALSE, pwidth = 7, pheight
 = 7, punits = "in", res = 300, ptsize = 12)
 }
 %- maybe also 'usage' for other objects documented here.

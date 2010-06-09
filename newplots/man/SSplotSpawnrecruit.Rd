@@ -8,11 +8,12 @@
   Plot spawner-recruit curve based on output from Stock Synthesis model.
 }
 \usage{
-SSplotSpawnrecruit(replist, add = F, plot = T, print = F, xlim = NULL,
-ylim = NULL, xlab = "Spawning biomass (mt)", ylab = "Recruitment
-(1,000s)", plotdir = "default", pwidth = 7, pheight = 7, punits = "in",
-res = 300, ptsize = 12, cex.main = 1, verbose = T, line1 = "blue", line2
-= "green", line3 = "black", ptcol = "red", virg = T, init = F)
+SSplotSpawnrecruit(replist, add = FALSE, plot = TRUE, print = FALSE,
+xlim = NULL, ylim = NULL, xlab = "Spawning biomass (mt)",
+ylab = "Recruitment (1,000s)", plotdir = "default",
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+cex.main = 1,  verbose = TRUE, line1 = "blue", line2 = "green",
+line3 = "black", ptcol = "red", virg = TRUE, init = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

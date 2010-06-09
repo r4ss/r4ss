@@ -22,13 +22,13 @@ SSplotCatch <-
 
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
-  F_method			 <- replist$F_method
-  timeseries			 <- replist$timeseries
-  nseasons			 <- replist$nseasons
-  nareas			 <- replist$nareas
-  nfleets			 <- replist$nfleets
-  nfishfleets			 <- replist$nfishfleets
-  endyr			         <- replist$endyr
+  F_method                       <- replist$F_method
+  timeseries                     <- replist$timeseries
+  nseasons                       <- replist$nseasons
+  nareas                         <- replist$nareas
+  nfleets                        <- replist$nfleets
+  nfishfleets                    <- replist$nfishfleets
+  endyr                          <- replist$endyr
   FleetNames                     <- replist$FleetNames
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames

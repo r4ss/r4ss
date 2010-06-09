@@ -1,8 +1,8 @@
 SSplotRecdevs <-
   function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
-           uncertainty=T,forecastplot=F,
+           uncertainty=TRUE,forecastplot=FALSE,
            col1="black",col2="blue",col3="green3",col4="red",
-           legendloc="topleft",cex.main=1,
+           legendloc="topleft",
            labels=c("Year",                        #1
              "Asymptotic standard error estimate", #2
              "Log recruitment deviation",          #3
@@ -18,6 +18,7 @@ SSplotRecdevs <-
 
   parameters <- replist$parameters
   recruit    <- replist$recruit
+  startyr    <- replist$startyr
   endyr      <- replist$endyr
   sigma_R_in <- replist$sigma_R_in
 
@@ -56,7 +57,7 @@ SSplotRecdevs <-
       if(forecastplot){
           goodyrs <- rep(TRUE,length(Yr))
       }else{
-          goodyrs <- Yr<=endyr+1 # T/F of in range or not
+          goodyrs <- Yr<=endyr+1 # TRUE/FALSE of in range or not
       }
       xlim <- range(Yr,na.rm=TRUE)
       ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value,na.rm=TRUE)

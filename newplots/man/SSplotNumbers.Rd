@@ -12,10 +12,11 @@
 \usage{
 SSplotNumbers(replist, subplots = 1:5, plot = TRUE, print = FALSE,
 areas = "all", areanames = "default",
-areacols = "default", cex.main = 1, pntscalar = 2.6, add =
-FALSE,  labels = c("Year", "Age", "True age
-(yr)", "SD of observed age (yr)"), pwidth = 7, pheight = 7, punits =
-"in", res = 300, ptsize = 12, plotdir = "default", verbose = TRUE)
+areacols = "default", pntscalar = 2.6, add =
+FALSE,  labels = c("Year", "Age", "True age (yr)",
+"SD of observed age (yr)"),
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+cex.main = 1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,9 +40,6 @@ FALSE,  labels = c("Year", "Age", "True age
   }
   \item{areacols}{
     vector of colors by area
-  }
-  \item{cex.main}{
-    character expansion for plot title
   }
   \item{pntscalar}{
     maximum bubble size for bubble plots; each plot scaled independently

@@ -8,11 +8,11 @@
   Plot fit to discard fraction from Stock Synthesis output file.
 }
 \usage{
-SSplotDiscard(replist, add = FALSE, plot = TRUE, print = FALSE, plotdir
-= "default", fleets = "all",
-fleetnames = "default", labels = c("Year", "Discard fraction",
-"Total discards", "for"), pwidth = 7, pheight = 7, punits = "in", res =
-300, ptsize = 12, cex.main = 1, verbose = TRUE)
+SSplotDiscard(replist, add = FALSE, plot = TRUE, print = FALSE,
+plotdir = "default", fleets = "all", fleetnames = "default",
+labels = c("Year", "Discard fraction", "Total discards", "for"),
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+cex.main = 1, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

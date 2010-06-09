@@ -10,10 +10,10 @@
 }
 \usage{
 SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE, print =
-FALSE, labels = c("Relative depletion", "Equilibrium yield (mt)", "Total
-biomass (mt)", "Surplus production (mt)"), cex.main = 1, pwidth = 7,
-pheight = 7, punits = "in", res = 300, ptsize = 12, plotdir = "default",
-verbose = TRUE)
+FALSE, labels = c("Relative depletion", "Equilibrium yield (mt)",
+"Total biomass (mt)", "Surplus production (mt)"), cex.main = 1,
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

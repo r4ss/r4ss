@@ -17,7 +17,7 @@ function(
   #          a Stock Synthesis control file
   # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   # Returns: Plots of prior distributions used in Stock Synthesis model
-  # Notes:   requires SS_parlines and SS_changepar also contained in the file SSv3_utils.R
+  # Notes:   requires SS_parlines and SS_changepars
   #          hosted at http://code.google.com/p/r4ss/
   # Required packages: none
   #

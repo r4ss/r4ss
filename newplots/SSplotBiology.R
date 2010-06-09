@@ -1,5 +1,5 @@
 SSplotBiology <-
-  function(replist, plot=T,print=F,add=F,subplots=1:8,
+  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:8,
            col1="red",col2="blue",
            legendloc="topleft",
            plotdir="default",
@@ -13,7 +13,8 @@ SSplotBiology <-
              "Female weight (kg)",              #8
              "Female length (cm)",              #9
              "Default fecundity label"),        #10
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1)
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -41,8 +42,8 @@ SSplotBiology <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
   # check dimensions
   if(length(mainmorphs)>nsexes){
-    print("!Error with morph indexing in SSplotbiology function.",quote=F)
-    print(" Code is not set up to handle multiple growth patterns or birth seasons.",quote=F)
+    print("!Error with morph indexing in SSplotbiology function.",quote=FALSE)
+    print(" Code is not set up to handle multiple growth patterns or birth seasons.",quote=FALSE)
   }
   xlab <- labels[1]
   x <- biology$Mean_Size
@@ -83,7 +84,7 @@ SSplotBiology <-
     growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
   }
 
-  gfunc1 <- function(add=F){ # weight
+  gfunc1 <- function(add=FALSE){ # weight
     if(!add){
       ymax <- max(biology$Wt_len_F)
       if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
@@ -96,7 +97,7 @@ SSplotBiology <-
       if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
     }
   }
-  gfunc2 <- function(add=F){ # maturity
+  gfunc2 <- function(add=FALSE){ # maturity
     if(min(biology$Mat_len)<1){ # if length based
       if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=col1)
       if(add) lines(x,biology$Mat_len,type="o",col=col1)
@@ -106,7 +107,7 @@ SSplotBiology <-
     }
     if(!add) abline(h=0,col="grey")
   }
-  gfunc3 <- function(add=F){ # fecundity
+  gfunc3 <- function(add=FALSE){ # fecundity
     ymax <- 1.1*max(FecY)
     if(!add){
       plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=col2, pch=19)
@@ -116,7 +117,7 @@ SSplotBiology <-
       points(FecX, FecY,col=col2,pch=19)
     }
   }
-  gfunc4 <- function(add=F){ # spawning output
+  gfunc4 <- function(add=FALSE){ # spawning output
     if(!add){
       plot(x,biology$Spawn,xlab=labels[1],ylab=labels[5],type="o",col=col1)
       abline(h=0,col="grey")
@@ -205,11 +206,11 @@ SSplotBiology <-
 
   # Time-varying growth (formerly plot #2)
   if(nseasons > 1){
-    if(verbose) print("No check for time-varying growth in multi-season models yet",quote=F)
+    if(verbose) print("No check for time-varying growth in multi-season models yet",quote=FALSE)
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
     {
-      print("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.",quote=F)
+      print("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.",quote=FALSE)
     }else{
       if(replist$growthvaries) # if growth is time varying
       for(i in 1:nsexes)
@@ -219,7 +220,7 @@ SSplotBiology <-
         y <- growdatuse$Yr
         z <- as.matrix(growdatuse[,-(1:4)])
         time <- FALSE
-        for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- T
+        for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
         if(time)
         {
           z <- t(z)
@@ -228,16 +229,16 @@ SSplotBiology <-
           if(i==2){main <- "Male time-varying growth"}
           if(nseasons > 1){main <- paste(main," season 1",sep="")}
           if(plot){
-            if(7 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            if(7 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             if(8 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
             if(7 %in% subplots){
-              pngfun(file=paste(plotdir,"02_timevarygrowthsurf",i,"sex",m,".png",sep=""))
-              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=T,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              pngfun(file=paste(plotdir,"02_timevarygrowthsurf_sex",i,".png",sep=""))
+              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
             if(8 %in% subplots){
-              pngfun(file=paste(plotdir,"02_timevarygrowthcontour",i,"sex",m,".png",sep=""))
+              pngfun(file=paste(plotdir,"02_timevarygrowthcontour_sex",i,".png",sep=""))
               contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
               dev.off()
             }

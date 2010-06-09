@@ -1,20 +1,20 @@
-\name{SSv3_FishGraph}
-\alias{SSv3_FishGraph}
+\name{SSFishGraph}
+\alias{SSFishGraph}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ A function for converting Stock Synthesis output to the format
   used by FishGraph }
 \description{
   Only skeleton of a function right now, needs work. Intended as a
   translator to convert the output from object created by
-  \code{\link{SSv3_output}} to the format used by Michael Prager's FishGraph.
+  \code{\link{SSoutput}} to the format used by Michael Prager's FishGraph.
 }
 \usage{
-SSv3_FishGraph(replist, title = "SSv3 output",
+SSFishGraph(replist, title = "SSv3 output",
 species = "some kind of fish")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{replist}{ Object created by SSv3_output }
+  \item{replist}{ Object created by SSoutput }
   \item{title}{ Title of output }
   \item{species}{ Species name }
 }
@@ -30,7 +30,7 @@ species = "some kind of fish")
 % }
 \references{ Michael Prager's website with FishGraph downloads: http://www.sefsc.noaa.gov/mprager/rinter.html }
 \author{ Ian Taylor }
-% \note{ ~~further notes~~ 
+% \note{ ~~further notes~~
 
 %  % ~Make other sections like Warning with \section{Warning }{....} ~
 % }

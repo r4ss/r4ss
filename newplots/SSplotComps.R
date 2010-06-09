@@ -129,7 +129,7 @@ SSplotComps <-
     filenamestart <- "21_wtatagefit_"
     titledata <- "mean weight at age, "
   }
-  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) return("Input 'kind' to SSv3_plot_comps is not right.")
+  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) return("Input 'kind' to SSplotComps is not right.")
   # loop over fleets
   for(f in fleets)
   {
@@ -240,6 +240,14 @@ SSplotComps <-
           ### subplot 2: single panel bubble plot for numbers at length or age
           if(2 %in% subplots & bub & kind!="cond")
           {
+            # get growth curves if requested
+            if(length(cohortlines)>0){
+              growdat <- replist$endgrowth
+              growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
+              if(nsexes > 1){
+                growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+              }
+            }
             ptitle <- paste(titletype, title_sexmkt, FleetNames[f],sep="")
             ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
             titles <- c(ptitle,titles) # compiling list of all plot titles
@@ -249,11 +257,11 @@ SSplotComps <-
                     las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
               # add lines for growth of individual cohorts if requested
               if(length(cohortlines)>0){
-                  for(icohort in 1:length(cohortlines)){
-                    print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=FALSE)
-                    if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
-                    if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
-                  }
+                for(icohort in 1:length(cohortlines)){
+                  print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=FALSE)
+                  if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
+                  if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
+                }
               }
             }
 
