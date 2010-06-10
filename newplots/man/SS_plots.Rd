@@ -1,5 +1,5 @@
-\name{SSplots}
-\alias{SSplots}
+\name{SS_plots}
+\alias{SS_plots}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 plot many quantities related to output from Stock Synthesis
@@ -11,7 +11,7 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SSplots(replist = "ReportObject", plot = 1:24, print = 0,
+SS_plots(replist = "ReportObject", plot = 1:24, print = 0,
 pdf = FALSE, printfolder = "", dir = "default", fleets = "all",
 areas = "all", fleetnames = "default", fleetcols = "default",
 fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
@@ -30,7 +30,7 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{plot}{ Plot sets to be created, see list of plots below.  Use to
     specify only those plot sets of interest, e.g., c(1,2,5,10). Plots
@@ -52,7 +52,7 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
     Default="".}
   \item{dir}{ The directory in which any PNG files requested by
     \code{print} are created. By default it will be the same directory
-    that the report file was read from by the \code{SSoutput}
+    that the report file was read from by the \code{SS_output}
     function. Default="default".}
   \item{fleets}{ Either the string "all", or a vector of numerical
     values, like c(1,3), listing fleets or surveys for which plots should
@@ -80,7 +80,7 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
     Default=T.}
   \item{uncertainty}{ Include values in plots showing estimates of
     uncertainty (requires positive definite hessian in model and
-    \code{covar}=T in \code{SSoutput})?  Default=T.}
+    \code{covar}=T in \code{SS_output})?  Default=T.}
   \item{forecastplot}{ Include forecast years in the plots? Obviously
     requires forecast options to have been used in the model.  Default=T.}
   \item{datplot}{ Plot the data by itself? This is useful in document
@@ -189,7 +189,14 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_output}}, \code{\link{SSplotBiology}},
+  \code{\link{SSplotCatch}}, \code{\link{SSplotComps}},
+  \code{\link{SSplotDiscard}}, \code{\link{SSplotIndices}},
+  \code{\link{SSplotMnwt}}, \code{\link{SSplotNumbers}},
+  \code{\link{SSplotRecdevs}}, \code{\link{SSplotSelex}},
+  \code{\link{SSplotSpawnrecruit}}, \code{\link{SSplotSPR}},
+  \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
+  \code{\link{SSplotYield}}
 }
 \examples{
 }

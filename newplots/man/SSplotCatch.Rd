@@ -23,7 +23,7 @@ catchasnumbers = FALSE, pwidth = 7, pheight
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{subplots}{
     vector controlling which subplots to create
@@ -122,7 +122,7 @@ catchasnumbers = FALSE, pwidth = 7, pheight
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

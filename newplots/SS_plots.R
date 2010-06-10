@@ -1,4 +1,4 @@
-SSplots <-
+SS_plots <-
   function(
     replist="ReportObject", plot=1:24, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
@@ -12,7 +12,7 @@ SSplots <-
 {
   ################################################################################
   #
-  # SSplots
+  # SS_plots
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: A wrapper to call many plot functions which collectively
@@ -119,7 +119,7 @@ SSplots <-
     if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=FALSE)
   }
   if(pdf){
-    pdffile <- paste(inputs$dir,"/SSplots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(inputs$dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=FALSE)
   }
@@ -447,6 +447,6 @@ SSplots <-
   } # end if 24 in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
-  if(verbose) print("Finished all requested plots",quote=FALSE)
-  ### end of SSplots function
+  if(verbose) print("Finished all requested plots in SS_plots function",quote=FALSE)
+  ### end of SS_plots function
 }

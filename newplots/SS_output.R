@@ -1,4 +1,4 @@
-SSoutput <-
+SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE,
@@ -7,7 +7,7 @@ SSoutput <-
 {
   ################################################################################
   #
-  # SSoutput
+  # SS_output
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: To import content from Stock SYnthesis model run.
@@ -418,7 +418,7 @@ SSoutput <-
   ngpatterns <- max(morph_indexing$Gpattern)
 
   mainmorphs <- morph_indexing$Index[morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
-  if(length(mainmorphs)==0) print("!Error with morph indexing in SSoutput function.",quote=FALSE)
+  if(length(mainmorphs)==0) print("!Error with morph indexing in SS_output function.",quote=FALSE)
 
   # forecast
   if(forecast){
@@ -923,7 +923,7 @@ SSoutput <-
 
   returndat$inputs <- inputs
 
-  if(verbose) print("completed SSoutput",quote=FALSE)
+  if(verbose) print("completed SS_output",quote=FALSE)
   invisible(returndat)
 
 } # end function

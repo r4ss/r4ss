@@ -22,7 +22,7 @@ punits = "in", res = 300, ptsize = 12, cex.main = 1,verbose = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{plot}{
     plot to active plot device?
@@ -97,7 +97,7 @@ punits = "in", res = 300, ptsize = 12, cex.main = 1,verbose = TRUE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

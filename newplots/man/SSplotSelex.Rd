@@ -18,7 +18,7 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{fleets}{
     optional vector to subset fleets for which to make plots
@@ -95,7 +95,7 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

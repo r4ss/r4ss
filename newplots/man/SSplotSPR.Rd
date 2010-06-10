@@ -105,7 +105,7 @@ col4 = "red", sprtarg = 0.4, btarg = 0.4, labels = c("Year", "SPR",
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

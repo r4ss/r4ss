@@ -22,7 +22,7 @@ pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12, cex.main
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{subplots}{
     vector controlling which subplots to create
@@ -110,7 +110,7 @@ pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12, cex.main
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

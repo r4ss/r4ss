@@ -1,5 +1,5 @@
-\name{SSoutput}
-\alias{SSoutput}
+\name{SS_output}
+\alias{SS_output}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ A function to create a list object for the output from Stock Synthesis}
 \description{
@@ -11,7 +11,7 @@
   the list produced by this function.
 }
 \usage{
-SSoutput(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
+SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
 repfile = "Report.sso", compfile = "CompReport.sso",
 covarfile = "covar.sso", ncols = 200, forecast = TRUE, warn = TRUE,
 covar = TRUE, checkcor = TRUE, cormax = 0.95, cormin = 0.01,
@@ -65,10 +65,13 @@ aalmaxbinrange=0)
 
 %  % ~Make other sections like Warning with \section{Warning }{....} ~
 % }
-% \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
+\seealso{
+  \code{\link{SS_plots}}
+
+}
 \examples{
 \dontrun{
-myreplist <- SSoutput(dir='c:/SS/SSv3.10b/Simple/')
+myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
 }
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the

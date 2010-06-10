@@ -18,7 +18,7 @@ plotdir = "default", verbose = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{subplots}{
     vector controlling which subplots to create
@@ -85,7 +85,7 @@ plotdir = "default", verbose = TRUE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{\link{SSplots}}, \code{\link{SSoutput}}
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }

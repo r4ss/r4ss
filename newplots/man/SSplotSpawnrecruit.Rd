@@ -18,7 +18,7 @@ line3 = "black", ptcol = "red", virg = TRUE, init = FALSE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{add}{
     add to existing plot?
@@ -108,7 +108,7 @@ line3 = "black", ptcol = "red", virg = TRUE, init = FALSE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \examples{
 }
