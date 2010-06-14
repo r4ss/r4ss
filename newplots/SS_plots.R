@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist="ReportObject", plot=1:24, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
+    replist=ReportObject, plot=1:24, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
@@ -28,7 +28,7 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "June 7, 2010"
+  codedate <- "June 14, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -106,7 +106,7 @@ SS_plots <-
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
-    plotdir <- NULL
+    plotdir <- "No directory"
   }
   if(nplots>0 & !new){
     if(verbose) print("Adding plots to existing plot window. Plot history not erased.",quote=FALSE)
@@ -170,26 +170,30 @@ SS_plots <-
   # stats and dimensions
   if(5 %in% c(plot, print))
   {
-    for(isubplot in 1:10){ # which of 10 subplots to make
+    for(isubplot in 1:12){ # which of 12 subplots to make
       for(doforecast in unique(c(FALSE,forecastplot))){ # add forecast or not
-        if(isubplot %in% c(5,7,9)){
+        if(isubplot %in% c(7,9,11)){
           for(douncertainty in unique(c(FALSE,uncertainty))){ # add uncertainty or not
             SSplotTimeseries(replist=replist,
-                             subplots=isubplot,
+                             subplot=isubplot,
                              forecast=doforecast,
                              uncertainty=douncertainty,
                              plot=(5 %in% plot),
                              print=(5 %in% print),
-                             verbose=verbose)
+                             verbose=verbose,
+                             btarg=btarg, 
+                             minbthresh=minbthresh)
           } # end loop over uncertainty or not
         }else{ # these plots don't have the option for uncertainty
             SSplotTimeseries(replist=replist,
-                             subplots=isubplot,
+                             subplot=isubplot,
                              forecast=doforecast,
                              uncertainty=FALSE,
                              plot=(5 %in% plot),
                              print=(5 %in% print),
-                             verbose=verbose)
+                             verbose=verbose,
+                             btarg=btarg, 
+                             minbthresh=minbthresh)
         }
       }
     }
@@ -276,6 +280,7 @@ SS_plots <-
                   print=(14 %in% print))
   } # close if 14 in plot or print
 
+  ### Plot 15: Composition data plots ###
   # use of SSplotcomps function to make composition plots
   if(!datplot)
   {
