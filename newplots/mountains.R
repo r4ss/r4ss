@@ -96,7 +96,7 @@ mountains <-
         # make polygon
         polygon(x = c(xlo[2:1],xhi2),
                 y = yvec[iy]+ c(z1,z1,zhi2),
-                col = grey(1-.9*z1/zmax),border=0)
+                col = grey(1-.9*z1/zmax),border=grey(1-.9*z1/zmax))
       }
     }
     # black polygon around the outside
