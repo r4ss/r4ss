@@ -208,7 +208,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 if(verbose) print("applying bias adjustment based on previous model run",quote=FALSE)
                 if(file.exists(oldcovarname)){
                   # if the covar file exists, then apply fitbiasramp function
-                  replist <- SSoutput(dir=getwd(),model=exe,repfile=oldrepfilename,
+                  replist <- SS_output(dir=getwd(),model=exe,repfile=oldrepfilename,
                                       compfile=oldcompfilename,covarfile=oldcovarname,
                                       forecast=FALSE,printstats=FALSE,verbose=FALSE)
                   SS_fitbiasramp(replist,png=paste("fitbiasramp_",key,".png",sep=""),

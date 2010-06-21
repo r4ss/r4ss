@@ -1,5 +1,5 @@
 SSplotPars <-
-function(
+  function(
     dir="c:/path/", repfile="Report.sso",
     postfile="posteriors.sso", showpost=T, showprior=T,
     showmle=T, showinit=T, showrecdev=T, priorinit=T,

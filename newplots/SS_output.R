@@ -155,7 +155,6 @@ SS_output <-
     if(NoCompOK) comp <- FALSE else return()
   }
 
-
   # read report file
   if(verbose) print("Reading full report file",quote=FALSE)
   flush.console()
@@ -873,15 +872,17 @@ SS_output <-
   returndat$catage <- catage
 
   # adding stuff to list which gets returned by function
-  returndat$lendbase      <- lendbase
-  returndat$sizedbase     <- sizedbase
-  returndat$agedbase      <- agedbase
-  returndat$condbase      <- condbase
-  returndat$ghostagedbase <- ghostagedbase
-  returndat$ladbase       <- ladbase
-  returndat$wadbase       <- wadbase
-  returndat$tagdbase1     <- tagdbase1
-  returndat$tagdbase2     <- tagdbase2
+  if(comp){
+    returndat$lendbase      <- lendbase
+    returndat$sizedbase     <- sizedbase
+    returndat$agedbase      <- agedbase
+    returndat$condbase      <- condbase
+    returndat$ghostagedbase <- ghostagedbase
+    returndat$ladbase       <- ladbase
+    returndat$wadbase       <- wadbase
+    returndat$tagdbase1     <- tagdbase1
+    returndat$tagdbase2     <- tagdbase2
+  }
 
   returndat$derived_quants <- der
   returndat$parameters <- parameters

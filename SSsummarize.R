@@ -215,8 +215,10 @@ function(biglist,
   names(quants) <- quantstemp$LABEL
 
   # clean up the row or column names
-  colnames(bio) <- keyvec
-  colnames(depl) <- keyvec
+  bio <- as.data.frame(bio)
+  names(bio) <- keyvec
+  depl <- as.data.frame(depl)
+  names(depl) <- keyvec
 
   mylist <- list()
   mylist$listnames  <- names(biglist)
