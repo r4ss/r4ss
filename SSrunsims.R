@@ -12,11 +12,14 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          simextras="-nox -nohess",
          fitextras="-nox -gbs 1000000000 -cbs 1000000000",
          fyr=NULL, lyr=NULL,
+         printfile=TRUE,
          verbose=TRUE)
 {
   # function for running simulation and estimation models
 
   print("running SSrunsims",quote=FALSE)
+
+  # create file to save list of completed model runs
   starttime <- Sys.time()
   simnotesfile <- paste(homepath,"/simnotes_",format(starttime,'%d-%b-%Y_%H.%M' ),".csv",sep="")
   fitnotesfile <- paste(homepath,"/fitnotes_",format(starttime,'%d-%b-%Y_%H.%M' ),".csv",sep="")
@@ -137,7 +140,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           if(exists("simnotes")) simnotes[nrow(simnotes)+1,] <- data.frame(isim, isimchoice, key, Sys.time(), stringsAsFactors=FALSE)
           else simnotes <- data.frame(sim=isim, simchoice=isimchoice, key=key, time=Sys.time(), stringsAsFactors=FALSE)
 
-          write.csv(simnotes,simnotesfile)
+          # save runs completed so far
+          if(printfile) write.csv(simnotes,simnotesfile)
         } # end if file doesn't already exist
       } # end simchoices loop
     } # end isim loop
@@ -268,7 +272,9 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             # fill in or create a data frame to store notes on model runs
             if(exists("fitnotes")) fitnotes[nrow(fitnotes)+1,] <- data.frame(ifit, isimchoice, ifitchoice, key, ibiasadj, Sys.time(), stringsAsFactors=FALSE)
             else fitnotes <- data.frame(fit=ifit, simchoice=isimchoice, fitchoice=ifitchoice, key=key, fitbiasramp=ibiasadj, time=Sys.time(), stringsAsFactors=FALSE)
-            write.csv(fitnotes,fitnotesfile)
+
+            # save runs completed so far
+            if(printfile) write.csv(fitnotes,fitnotesfile)
           } # end loop over fitbiasadj options
         } # end ifitchoice
       } # end isimchoice

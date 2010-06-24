@@ -158,7 +158,7 @@ if(nseasons > 1 & subplot > 9){return("")}
     if(forecastplot) main <- paste(main,"with forecast")
     # calculating intervals around spawning biomass, depletion, or recruitment
     # area specific confidence intervals?
-    if(uncertainty & subplot %in% c(6,7,8,9,10)){
+    if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
       if(!"SPB_Virgin" %in% derived_quants$LABEL){
         print("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.",quote=FALSE)
@@ -193,6 +193,12 @@ if(nseasons > 1 & subplot > 9){return("")}
         std <- stdtable$StdDev * bioscale
         stdtable$upper <- v + 1.96*std
         stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
+
+        if(max(stdtable$Yr) < max(ts$Yr)){
+          print("  !warning:",quote=FALSE)
+          print(paste("   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$Yr),"is last year of time series."),quote=FALSE)
+          print("    Consider changing starter file input for 'max yr for sdreport outputs' to -2",quote=FALSE)
+        }
       }
     }
 

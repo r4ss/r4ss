@@ -211,7 +211,7 @@ SS_output <-
         textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
         if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=FALSE)
       }else{
-        print("warning.sso file is missing the string 'N warnings'!")
+        print("warning.sso file is missing the string 'N warnings'!",quote=FALSE)
       }
     }
   }else{
@@ -382,10 +382,13 @@ SS_output <-
   parameters[parameters=="_"] <- NA
   for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))]) parameters[,i] = as.numeric(parameters[,i])
 
-  if(!is.na(parfile)){ parline <- read.table(parfile,fill=TRUE,comment.char="",nrows=1)
-  }else{ parline <- matrix(NA,1,16) }
-  stats$N_estimated_parameters <- parline[1,6]
+  if(!is.na(parfile)){
+    parline <- read.table(parfile,fill=TRUE,comment.char="",nrows=1)
+  }else{
+    parline <- matrix(NA,1,16)
 
+  }
+  stats$N_estimated_parameters <- parline[1,6]
 
   pars <- rawpars[!(rawpars$Phase %in% c("_","")),]
   pars[pars=="_"] <- NA
@@ -405,6 +408,19 @@ SS_output <-
     if(verbose) print("Got covar file.",quote=FALSE)
     stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
     names(stdtable) = c("name","std","type")
+    N_estimated_parameters2 <- sum(stdtable$type=="Par")
+
+    if(is.na(stats$N_estimated_parameters)){
+      stats$N_estimated_parameters <- N_estimated_parameters2
+    }else{
+      if(stats$N_estimated_parameters!=N_estimated_parameters2){
+        print("!warning:",quote=FALSE)
+        print(paste(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile),quote=FALSE)
+        print(paste(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile),quote=FALSE)
+        print(paste("  returning the second value,",N_estimated_parameters2),quote=FALSE)
+        stats$N_estimated_parameters <- N_estimated_parameters2
+      }
+    }
     Nstd <- sum(stdtable$std>0)
 
     if(Nstd<=1){
@@ -828,13 +844,13 @@ SS_output <-
     # age-length matrix
     rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
     if(length(rawALK)>1){
-      ALK = array(NA,c(nmorphs,nlbinspop,accuage+1))
+      ALK = array(NA,c(nlbinspop,accuage+1,nmorphs))
       starts <- grep("Morph:",rawALK[,3])+2
       ends <- grep("mean",rawALK[,1])-1
       for(i in 1:nmorphs){
         ALKtemp <- rawALK[starts[i]:ends[i],-1]
         for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
-        ALK[i,,] <- as.matrix(ALKtemp)
+        ALK[,,i] <- as.matrix(ALKtemp)
       }
       returndat$ALK <- ALK
     }

@@ -6,6 +6,7 @@ function(biglist,
          selfleet=NULL,
          selyear="min",
          selgender=1,
+         filter=TRUE,
          growthyr=1971)
 {
   ## subfunction to extract recruitment deviations from parameter list
@@ -68,6 +69,8 @@ function(biglist,
   sim        <- NULL
   keyvec2    <- NULL
   listnames  <- NULL
+
+  warn <- FALSE # flag for whether filter warning has been printed or not
 
   # loop over outputs within biglist
   for(i in 1:n)
@@ -192,7 +195,15 @@ function(biglist,
 
     ## almost all derived quantities
     quantstemp <- stats$derived_quants
-    #quantstemp <- stats$derived_quants[stats$derived_quants$LABEL %in% derquantnames,]
+    if(filter){
+      if(!warn){
+        print("input 'filter=TRUE' will cause following derived quantities to be left out of summaries:")
+        print(unique(stats$derived_quants$LABEL[!(stats$derived_quants$LABEL %in% derquantnames)]))
+        warn <- TRUE
+      }
+      quantstemp <- stats$derived_quants[stats$derived_quants$LABEL %in% derquantnames,]
+    }
+
     quants <- rbind(quants, quantstemp$Value)
     quantstds <- rbind(quants, quantstemp$Parm_StDev)
 
