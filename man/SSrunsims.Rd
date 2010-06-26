@@ -16,7 +16,7 @@ skipfiles = TRUE, simchoices = 1, fitchoices = 1, samedatafile = FALSE,
 homepath = "c:/myfiles/", recdevmatrix = NULL, fitbiasramp = FALSE,
 exe = "ss3_opt", simextras = "-nox -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
-fyr = NULL, lyr = NULL, verbose = TRUE)
+fyr = NULL, lyr = NULL, intern = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -94,7 +94,12 @@ fyr = NULL, lyr = NULL, verbose = TRUE)
   \item{lyr}{
     Last year of stochastic recruitment deviations to include in
     simulation models. NULL will run \code{SS_readctl} to get
-    setting from control file. Default=NULL.  }
+    setting from control file. Default=NULL.
+  }
+  \item{intern}{
+    Input passed to system command. If FALSE then output from ADMB is
+    printed to screen during model run otherwise it is written to a file.
+  }
   \item{verbose}{
     Print various messages to the command line as the function runs? Default=TRUE.
   }

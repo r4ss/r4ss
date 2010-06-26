@@ -13,6 +13,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          fitextras="-nox -gbs 1000000000 -cbs 1000000000",
          fyr=NULL, lyr=NULL,
          printfile=TRUE,
+         intern=FALSE,
          verbose=TRUE)
 {
   # function for running simulation and estimation models
@@ -21,8 +22,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
   # create file to save list of completed model runs
   starttime <- Sys.time()
-  simnotesfile <- paste(homepath,"/simnotes_",format(starttime,'%d-%b-%Y_%H.%M' ),".csv",sep="")
-  fitnotesfile <- paste(homepath,"/fitnotes_",format(starttime,'%d-%b-%Y_%H.%M' ),".csv",sep="")
+  simnotesfile <- paste(homepath,"/simnotes_",format(starttime,"%d-%b-%Y_%H.%M" ),".csv",sep="")
+  fitnotesfile <- paste(homepath,"/fitnotes_",format(starttime,"%d-%b-%Y_%H.%M" ),".csv",sep="")
 
   notes <- list() # list to store notes on model runs
 
@@ -90,16 +91,16 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
         }else{
           ## run simulation model
           # copy control file
-          ctl_sim <- paste("../ctl_",filekey,".ss",sep="")
+          ctl_sim <- paste(homepath,"/ctl_",filekey,".ss",sep="")
           temp <- file.copy(ctl_sim,"ctl_isim_nodevs.ss",overwrite=TRUE)
           if(temp!=TRUE){
               print(paste("Error copying",ctl_sim),quote=FALSE)
               break()}
           # copy data file
           if(samedatafile){
-              dat_sim <- "../dat_master.ss"
+              dat_sim <- paste(homepath,"/dat_master.ss",sep="")
           }else{
-              dat_sim <- paste("../dat_",filekey,".ss",sep="")
+              dat_sim <- paste(homepath,"/dat_",filekey,".ss",sep="")
           }
           temp <- file.copy(dat_sim,"dat_isim.ss",overwrite=TRUE)
           if(temp!=TRUE){
@@ -108,7 +109,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
           # add recdevs to control files for simulations
           if(is.null(fyr) | is.null(lyr)){
-            myctl <- SSreadctl("ctl_isim_nodevs.ss")
+            myctl <- SS_readctl("ctl_isim_nodevs.ss")
             fyr <- myctl$fyr_main_recdevs
             lyr <- myctl$lyr_main_recdevs
           }
@@ -121,9 +122,12 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                      verbose=TRUE, writectl=TRUE, returnctl=FALSE)
 
           # run simulation
-          file.remove('covar.sso')
-          system(paste(exe,simextras))
-
+          if(file.exists("covar.sso")) file.remove("covar.sso")
+          if(intern) print(paste("Running model. ADMB output generated during model run will be written to ",
+                                 getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
+          ADMBoutput <- system(paste(exe,simextras),intern=intern)
+          if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
+                                  "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
           # rename files
           file.copy("Report.sso",paste("Report_",key,".sso",sep=""),overwrite=TRUE)
           file.copy("CompReport.sso",paste("CompReport_",key,".sso",sep=""),overwrite=TRUE)
@@ -159,6 +163,11 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
         for(ifitchoice in fitchoices){ # loop over estimation scenarios
           for(ibiasadj in unique(c(FALSE,fitbiasramp))){ # loop over whether to apply the bias adjustment function
 
+            if(verbose & exists("runtime")){
+              print("Duration of previous model run:",quote=FALSE)
+              print(Sys.time() - runtime)
+              runtime <- Sys.time()
+            }
             # text description of particular case
             filekey <- paste("fit",LETTERS[ifitchoice],sep="")
             key <- paste("sim",LETTERS[isimchoice],"_fit",LETTERS[ifitchoice],ifit,sep="")
@@ -172,13 +181,19 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             repfilename <- paste("Report_",key,".sso",sep="")
             compfilename <- paste("CompReport_",key,".sso",sep="")
             covarname <- paste("covar_",key,".sso",sep="")
-            repfilesize <- file.info(repfilename)$size
+            repfilesize <- file.info(paste(masterpath,repfilename,sep="/"))$size
 
             ## run estimation model
             if(!is.na(repfilesize) & repfilesize>0 & skipfiles==TRUE){
               # skip this run if a file with non-zero file size exists already
               print(paste("skipping ",repfilename," with size=",repfilesize,sep=""),quote=FALSE)
             }else{
+              # write temporary rep file to show that this run is active
+              writeLines(c("Temporary report file to show this model is currently active",
+                           as.character(Sys.time())),
+                         repfilename)
+              if(verbose) print(paste("writing temporary showing activity in",repfilename),quote=FALSE)
+
               # copy data file
               if(samedatafile){
                 dat_fit <- "../dat_master.ss"
@@ -200,6 +215,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
               # if fitbiasramp will be applied on some model runs
               # INCLUDING this one
               if(fitbiasramp & ibiasadj){
+                dorun <- FALSE # switch for whether run will be conducted or not
                 # get output from previous run
                 tempkey <- paste(key,"_nobiasadj",sep="")
 
@@ -210,16 +226,20 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 newctl <- paste("ctl_",key,".ss",sep="")
 
                 if(verbose) print("applying bias adjustment based on previous model run",quote=FALSE)
-                if(file.exists(oldcovarname)){
+                # check for covar file and a real report file
+                # (not just the temporary file written by this function)
+                if(file.exists(oldcovarname) & file.info(oldrepfilename)$size > 200){
+                  dorun <- TRUE
                   # if the covar file exists, then apply fitbiasramp function
                   replist <- SS_output(dir=getwd(),model=exe,repfile=oldrepfilename,
-                                      compfile=oldcompfilename,covarfile=oldcovarname,
-                                      forecast=FALSE,printstats=FALSE,verbose=FALSE)
+                                       compfile=oldcompfilename,covarfile=oldcovarname,
+                                       forecast=FALSE,printstats=FALSE,verbose=FALSE)
                   SS_fitbiasramp(replist,png=paste("fitbiasramp_",key,".png",sep=""),
                                  oldctl="ctl_ifit.ss",newctl=newctl)
                   file.copy(newctl,"ctl_ifit.ss",overwrite=TRUE)
                 }else{
-                  print(paste('run failed to converge: key:',tempkey),quote=FALSE)
+                  print(paste("run failed to converge (or is being run by another R process)."),quote=FALSE)
+                  print(paste("key:",tempkey),quote=FALSE)
                 }
               } # end fit of bias adjustment on the fly
 
@@ -248,8 +268,12 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 break()
               }
 
-              file.remove('covar.sso')
-              system(paste(exe,fitextras))
+              if(file.exists("covar.sso")) file.remove("covar.sso")
+              if(intern) print(paste("Running model. ADMB output generated during model run will be written to ",
+                                     getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
+              ADMBoutput <- system(paste(exe,fitextras),intern=intern)
+              if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
+                                      "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
 
               # test again
               repfilesize <- file.info("Report.sso")$size
