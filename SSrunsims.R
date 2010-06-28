@@ -181,18 +181,19 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             repfilename <- paste("Report_",key,".sso",sep="")
             compfilename <- paste("CompReport_",key,".sso",sep="")
             covarname <- paste("covar_",key,".sso",sep="")
-            repfilesize <- file.info(paste(masterpath,repfilename,sep="/"))$size
+            repmaster <- repmaster
+            repmastersize <- file.info(repmaster)$size
 
             ## run estimation model
-            if(!is.na(repfilesize) & repfilesize>0 & skipfiles==TRUE){
+            if(!is.na(repmastersize) & repmastersize>200 & skipfiles==TRUE){
               # skip this run if a file with non-zero file size exists already
-              print(paste("skipping ",repfilename," with size=",repfilesize,sep=""),quote=FALSE)
+              print(paste("skipping ",repfilename," with size=",repmastersize,sep=""),quote=FALSE)
             }else{
               # write temporary rep file to show that this run is active
               writeLines(c("Temporary report file to show this model is currently active",
                            as.character(Sys.time())),
-                         repfilename)
-              if(verbose) print(paste("writing temporary showing activity in",repfilename),quote=FALSE)
+                         repmaster)
+              if(verbose) print(paste("writing temporary showing activity in",repmaster),quote=FALSE)
 
               # copy data file
               if(samedatafile){
@@ -228,10 +229,12 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 if(verbose) print("applying bias adjustment based on previous model run",quote=FALSE)
                 # check for covar file and a real report file
                 # (not just the temporary file written by this function)
-                if(file.exists(oldcovarname) & file.info(oldrepfilename)$size > 200){
+                if(file.exists(paste(masterfolder,oldcovarname,sep='/'))
+                   & file.info(paste(masterfolder,oldrepfilename,sep='/'))$size > 200)
+                {
                   dorun <- TRUE
                   # if the covar file exists, then apply fitbiasramp function
-                  replist <- SS_output(dir=getwd(),model=exe,repfile=oldrepfilename,
+                  replist <- SS_output(dir=masterfolder,model=exe,repfile=oldrepfilename,
                                        compfile=oldcompfilename,covarfile=oldcovarname,
                                        forecast=FALSE,printstats=FALSE,verbose=FALSE)
                   SS_fitbiasramp(replist,png=paste("fitbiasramp_",key,".png",sep=""),
@@ -278,20 +281,28 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
               # test again
               repfilesize <- file.info("Report.sso")$size
 
-              # rerun if hessian doesn"t invert
+              # rerun if hessian doesn't invert
               if(!is.na(repfilesize) & repfilesize>0){
-                print(paste("run was good, non-empty report file exists: ",repfilename,sep=""),quote=FALSE)
+                print(paste("run was good, non-empty report file created: ",repfilename,sep=""),quote=FALSE)
                 file.copy("covar.sso",paste(masterpath,covarname,sep="/"),overwrite=TRUE)
               }else{
-                file.remove("covar.sso")
+                if(file.exists("covar.sso")) file.remove("covar.sso")
                 print(paste("empty report file (due to bad hessian): ",repfilename,sep=""),quote=F)
                 print("rerunning with -nohess",quote=F)
-                system(paste(exe,fitextras,"-nohess"))
+                ADMBoutput <- system(paste(exe,fitextras,"-nohess"),intern=intern)
+                if(intern) writeLines(c("###","ADMB output from run with -nohess",paste("key =",key),as.character(Sys.time()),
+                                        "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
               }
               # rename files for current fit
-              file.copy("Report.sso",paste(masterpath,repfilename,sep="/"),overwrite=TRUE)
+              file.copy("Report.sso",repmaster,overwrite=TRUE)
               file.copy("CompReport.sso",paste(masterpath,compfilename,sep="/" ),overwrite=TRUE)
             } # end if files exist but skipfiles
+            repmastersize <- file.info(repmaster)$size
+            if(!is.na(repmastersize) & repmastersize>0){
+              if(grep("Temporary report file",readLines(repmaster,n=1))){
+                file.remove(repmaster)
+              }
+            }
 
             # fill in or create a data frame to store notes on model runs
             if(exists("fitnotes")) fitnotes[nrow(fitnotes)+1,] <- data.frame(ifit, isimchoice, ifitchoice, key, ibiasadj, Sys.time(), stringsAsFactors=FALSE)

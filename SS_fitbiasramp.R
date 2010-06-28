@@ -1,12 +1,12 @@
 SS_fitbiasramp <-
-function(replist, verbose=F, startvalues=NULL, method="BFGS",
-         transform=F, png=F, pdf=F, oldctl=NULL, newctl=NULL,
+function(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
+         transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL, newctl=NULL,
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
   # function to estimate bias adjustment ramp
   # for Stock Synthesis v3.10b
   # by Ian Taylor
-  # February 5, 2010
+  # June 28, 2010
   #
   # Usage: run function with input that is an object from SSoutput
   #        from http://code.google.com/p/r4ss/
@@ -20,8 +20,8 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
     print("!error: this function needs an input object created by SSoutput from a SSv3.10 model")
     return()
   }
-  if(replist$inputs$covar==F){
-    print("!error, you need to have covar=T in the input to the SSoutput function",quote=F)
+  if(replist$inputs$covar==FALSE){
+    print("!error, you need to have covar=TRUE in the input to the SSoutput function",quote=FALSE)
     return()
   }
   parameters <- replist$parameters
@@ -38,7 +38,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
                        max(nonfixedyrs),
                        .7)
   }
-  if(verbose) print(paste("startvalues =",paste(startvalues,collapse=", ")),quote=F)
+  if(verbose) print(paste("startvalues =",paste(startvalues,collapse=", ")),quote=FALSE)
 
   makeoffsets <- function(values){
       # a function to transform parameters into offsets from adjacent values
@@ -64,7 +64,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   if(transform){
       startvalues <- makeoffsets(startvalues)
   }
-  if(verbose & transform) print(paste("transformed startvalues =",paste(startvalues,collapse=", ")),quote=F)
+  if(verbose & transform) print(paste("transformed startvalues =",paste(startvalues,collapse=", ")),quote=FALSE)
 
   biasadjfit <- function(pars,yr,std,sigmaR,transform,eps=.1){
     # calculate the goodness of the fit of the estimated ramp and values to the model output
@@ -150,7 +150,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   std <- recdevs$std
 
   if(max(val)==0 | length(val)==0){
-    if(verbose) print("no rec devs estimated in this model",quote=F)
+    if(verbose) print("no rec devs estimated in this model",quote=FALSE)
     return()
   }else{
     recdev_hi <- val + 1.96*std
@@ -158,12 +158,12 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
 
     ylim <- range(recdev_hi,recdev_lo)
 
-    if(png==T & pdf==T){ print("can't have both png & pdf = T",quote=F)
+    if(png!=FALSE & pdf!=FALSE){ print("must have either png or pdf equal to FALSE",quote=FALSE)
                          return()
                        }
-    if(png!=F) png(file=png,width=pwidth,height=pheight,
+    if(png!=FALSE) png(file=png,width=pwidth,height=pheight,
                    units=punits,res=res,pointsize=ptsize)
-    if(pdf!=F) png(file=pdf,width=pwidth,height=pheight,
+    if(pdf!=FALSE) pdf(file=pdf,width=pwidth,height=pheight,
                    pointsize=ptsize)
     par(mfrow=c(2,1),mar=c(2,5,1,1),oma=c(3,0,0,0))
     plot(Yr,Yr,type='n',xlab="Year",
@@ -173,7 +173,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
     points(Yr,val,pch=16)
   }
 
-  print('estimating...',quote=F)
+  print('estimating...',quote=FALSE)
   newbias <- optimfun(yr=Yr,std=std,startvalues=startvalues)
 
   yvals <- 1-(std/sigma_R_in)^2
@@ -198,7 +198,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
          leg=c('bias adjust in model','estimated alternative'))
   mtext(side=1,line=3,'Year')
 
-  if(pdf!=F | png!=F) dev.off()
+  if(pdf!=FALSE | png!=FALSE) dev.off()
 
   newvals <- newbias[[1]]
   if(transform) newvals <- removeoffsets(newvals)
@@ -206,15 +206,15 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
   df <- data.frame(value=newvals,label=names)
 
   if(newbias$convergence!=0){
-      print("Problem with convergence, here is output from 'optim':",quote=F)
-      print("##############################",quote=F)
+      print("Problem with convergence, here is output from 'optim':",quote=FALSE)
+      print("##############################",quote=FALSE)
       print(newbias)
-      print("##############################",quote=F)
+      print("##############################",quote=FALSE)
   }
 
 
-  print('Estimated values:',quote=F)
-  print(format(df,justify="left"),row.names=F)
+  print('Estimated values:',quote=FALSE)
+  print(format(df,justify="left"),row.names=FALSE)
 
   if(!is.null(oldctl) & !is.null(newctl)){
     # modify a control file to include estimates if file names are provided
@@ -227,7 +227,7 @@ function(replist, verbose=F, startvalues=NULL, method="BFGS",
     ctlfile[spot1:spot2] <- newvals
     # write new file
     writeLines(ctlfile,newctl)
-    print(paste('wrote new file to',newctl,'with values',paste(newvals,collapse=" ")),quote=F)
+    print(paste('wrote new file to',newctl,'with values',paste(newvals,collapse=" ")),quote=FALSE)
   }
   return(invisible(newbias))
 }
