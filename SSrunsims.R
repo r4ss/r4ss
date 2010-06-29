@@ -200,7 +200,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
               if(!skipfiles) print("running model to create",quote=FALSE)
               # write temporary rep file to show that this run is active
               writeLines(c("Temporary report file to show this model is currently active",
-                           paste("running in",getwd())
+                           paste("running in",getwd()),
                            as.character(Sys.time())),
                          repmaster)
               if(verbose) print(paste("writing temporary file showing activity in",repmaster),quote=FALSE)
