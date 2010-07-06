@@ -312,6 +312,19 @@ nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
 nsexes <- length(unique(as.numeric(selex$gender)))
 FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 
+# more dimensions
+tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
+accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
+ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
+begin <- matchfun("TIME_SERIES")+2
+end  <- matchfun("SPR_series")-1
+nareas <- max(as.numeric(rawrep[begin:end,1]))
+startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
+temptime <- rawrep[begin:end,2:3]
+endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
+nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
+seasfracs <- (0:(nseasons-1))/nseasons
+
 # compositions
 if(comp){   # skip this stuff if no CompReport.sso file
   allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE, colClasses="character", skip=3, nrows=15)
@@ -398,18 +411,6 @@ if(comp){   # skip this stuff if no CompReport.sso file
   Lbin_method <- 2
 }
 
-# more dimensions
-tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
-accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
-ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
-begin <- matchfun("TIME_SERIES")+2
-end  <- matchfun("SPR_series")-1
-nareas <- max(as.numeric(rawrep[begin:end,1]))
-startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
-temptime <- rawrep[begin:end,2:3]
-endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
-nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
-seasfracs <- (0:(nseasons-1))/nseasons
 
 # info on growth morphs
 endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)

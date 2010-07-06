@@ -833,6 +833,17 @@ SS_output <-
     returndat$natage <- rawnatage
   }
 
+  # Numbers at length
+  if(!is.na(nlbinspop)){
+    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(10+nlbinspop),substr1=FALSE)
+    if(length(rawnatlen)>1){
+      names(rawnatlen) <- rawnatlen[1,]
+      rawnatlen <- rawnatlen[-1,]
+      for(i in (1:ncol(rawnatlen))[names(rawnatlen)!="Era"]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
+      returndat$natlen <- rawnatlen
+    }
+  }
+  
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
   names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
