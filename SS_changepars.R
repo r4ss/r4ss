@@ -4,7 +4,7 @@ function(
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL,
-         estimate=F, verbose=T
+         estimate=FALSE, verbose=TRUE
          )
 {
 ################################################################################
@@ -33,22 +33,22 @@ function(
     if(!is.null(strings)){
       for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
       goodnames <- unique(goodnames)
-      print("parameters matching input vector 'strings':",quote=F)
-      print(paste("parameter names in control file:"),quote=F)
+      print(paste("parameter names in control file matching input vector 'strings':"),quote=FALSE)
       print(goodnames)
       if(length(goodnames)==0){
-        print("No parameters names match input vector 'strings'.",quote=F)
+        print("No parameters names match input vector 'strings'.",quote=FALSE)
         return()
       }
     }
     nvals <- length(goodnames)
-    print(ctltable[ctltable$Label==goodnames[i],])
+    print('These are the ctl file lines as they currently exist:',quote=FALSE)
+    print(ctltable[ctltable$Label %in% goodnames,])
     for(i in 1:nvals) linenums[i] <- ctltable$Linenum[ctltable$Label==goodnames[i]]
   }else{
     if(is.null(linenums)) return("valid input needed for either 'linenums' or 'strings'")
   }
   ctlsubset <- ctl[linenums]
-  print(paste("line numbers in control file:"),quote=F)
+  print(paste("line numbers in control file:"),quote=FALSE)
   print(linenums)
   # define objects to store changes
   newctlsubset <- NULL
@@ -57,10 +57,12 @@ function(
   oldvals <- oldphase <- newphase <- rep(NA,nvals)
 
   # check inputs
-  if(!is.null(newvals) & length(newvals)!=nvals) return("'newvals' and either 'linenums' or 'strings' should have the same number of elements")
-  if(!(length(estimate) %in% c(1,nvals))) return("'estimate' should have 1 element or same number as 'newvals'")
+  if(!is.null(newvals) & length(newvals)!=nvals) stop("'newvals' and either 'linenums' or 'strings' should have the same number of elements")
+  if(!(length(estimate) %in% c(1,nvals))) stop("'estimate' should have 1 element or same number as 'newvals'")
   if(length(estimate)==1) estimate <- rep(estimate, nvals)
 
+  if(is.data.frame(newvals)) newvals <- as.numeric(newvals)
+  
   # loop over line numbers to replace parameter values
   for(i in 1:nvals)
   {
@@ -78,6 +80,11 @@ function(
     }else{
       vec[7] <- -abs(oldphase[i])
     }
+    if(vec[3] < vec[1])
+      print(paste("!warning: new value",vec[3],"is below lower bound ",vec[1],"for",cmnt))
+    if(vec[3] > vec[2])
+      print(paste("!warning: new value",vec[3],"is above upper bound ",vec[2],"for",cmnt))
+
     newphase[i] <- vec[7]
     newline <- paste("",paste(vec, collapse=" "), cmnt)
     newctlsubset <- rbind(newctlsubset, newline)
@@ -86,10 +93,13 @@ function(
   newctl <- ctl
   newctl[linenums] <- newctlsubset
   writeLines(newctl, paste(dir,newctlfile,sep="/"))
-  if(verbose) print(paste('wrote new file to',newctlfile),quote=F)
+  if(verbose) print('',quote=FALSE)
+  if(verbose) print(paste('wrote new file to',newctlfile,'with the following changes:'),quote=FALSE)
+  results <- data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec)
   # output table of changes
   if(is.null(newvals)) newvals <- NA
-  if(verbose) return(data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec))
+  if(verbose) print(results)
+  return(invisible(results))
 
 } # end function
 

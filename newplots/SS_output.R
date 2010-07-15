@@ -320,8 +320,9 @@ SS_output <-
     # if comp option is turned off
     lbins <- NA
     nlbins <- NA
-    lbinspop <- NA
-    nlbinspop <- NA
+    temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
+    lbinspop <- as.numeric(temp[temp!=""][-(1:10)])
+    nlbinspop <- length(lbinspop)
     agebins <- NA
     nagebins <- NA
     Lbin_method <- 2
@@ -605,14 +606,10 @@ SS_output <-
 
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1
-  if(comp){
-    rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
-    names(rawbio) <- rawbio[1,]
-    biology <- rawbio[-1,]
-    for(i in 1:ncol(biology)) biology[,i] <- as.numeric(biology[,i])
-  }else{
-    biology <- NA
-  }
+  rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
+  names(rawbio) <- rawbio[1,]
+  biology <- rawbio[-1,]
+  for(i in 1:ncol(biology)) biology[,i] <- as.numeric(biology[,i])
 
   # determine fecundity type
   FecType <- 0
@@ -834,14 +831,12 @@ SS_output <-
   }
 
   # Numbers at length
-  if(!is.na(nlbinspop)){
-    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(10+nlbinspop),substr1=FALSE)
-    if(length(rawnatlen)>1){
-      names(rawnatlen) <- rawnatlen[1,]
-      rawnatlen <- rawnatlen[-1,]
-      for(i in (1:ncol(rawnatlen))[names(rawnatlen)!="Era"]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
-      returndat$natlen <- rawnatlen
-    }
+  rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(10+nlbinspop),substr1=FALSE)
+  if(length(rawnatlen)>1){
+    names(rawnatlen) <- rawnatlen[1,]
+    rawnatlen <- rawnatlen[-1,]
+    for(i in (1:ncol(rawnatlen))[names(rawnatlen)!="Era"]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
+    returndat$natlen <- rawnatlen
   }
   
   # Movement
@@ -851,20 +846,18 @@ SS_output <-
   for(i in 1:ncol(movement)) movement[,i] <- as.numeric(movement[,i])
   returndat$movement <- movement
 
-  if(comp){
-    # age-length matrix
-    rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-    if(length(rawALK)>1){
-      ALK = array(NA,c(nlbinspop,accuage+1,nmorphs))
-      starts <- grep("Morph:",rawALK[,3])+2
-      ends <- grep("mean",rawALK[,1])-1
-      for(i in 1:nmorphs){
-        ALKtemp <- rawALK[starts[i]:ends[i],-1]
-        for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
-        ALK[,,i] <- as.matrix(ALKtemp)
-      }
-      returndat$ALK <- ALK
+  # age-length matrix
+  rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
+  if(length(rawALK)>1){
+    ALK = array(NA,c(nlbinspop,accuage+1,nmorphs))
+    starts <- grep("Morph:",rawALK[,3])+2
+    ends <- grep("mean",rawALK[,1])-1
+    for(i in 1:nmorphs){
+      ALKtemp <- rawALK[starts[i]:ends[i],-1]
+      for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+      ALK[,,i] <- as.matrix(ALKtemp)
     }
+    returndat$ALK <- ALK
   }
 
   # ageing error matrices

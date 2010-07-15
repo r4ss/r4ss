@@ -70,7 +70,6 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
       output$key <- as.character(key)
     }else{
       print("!repfile doesn't exists or is empty")
-      return()
     }
     print(paste("added element '", newobject, "' to list",sep=""),quote=FALSE)
     if(listlists) biglist[[newobject]] <- output
