@@ -10,7 +10,7 @@ function(replist,subplots=1:7,
              "Log index",          #5
              "Log observed index", #6
              "Log expected index", #7
-	     "Standardized index"),#7
+	     "Standardized index"),#8
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="default",
            verbose=TRUE)

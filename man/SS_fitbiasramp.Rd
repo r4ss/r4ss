@@ -10,24 +10,24 @@ Uses standard error of estimated recruitment deviates to estimate the 5
 controls for the bias adjustment in Stock Synthesis
 }
 \usage{
-SS_fitbiasramp(replist, verbose=F, startvalues=NULL, method="BFGS",
-  transform=F, png=F, pdf=F, oldctl=NULL, newctl=NULL, pwidth=7,
+SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
+  transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL, newctl=NULL, pwidth=7,
   pheight=7, punits="in", ptsize=12, res=300)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    Object created using \code{\link{SSoutput}} }
+    Object created using \code{\link{SS_output}} }
   \item{verbose}{ Controls the amount of output to the screen.
-    Default=F. }
+    Default=FALSE. }
   \item{startvalues}{ A vector of 5 values for the starting points in
     the minimization. Default=NULL. }
   \item{method}{ A method to apply to the 'optim' function. See ?optim
     for options. Default="BFGS". }
   \item{transform}{ An experimental option to treat the transform the 5
-    quantities to improve minimization. Doesn't work well. Default=F. }
-  \item{png}{ Send plot to PNG file? Default=F. }
-  \item{pdf}{ Send plot to PDF file? Default=F. }
+    quantities to improve minimization. Doesn't work well. Default=FALSE. }
+  \item{png}{ Send plot to PNG file? Default=FALSE. }
+  \item{pdf}{ Send plot to PDF file? Default=FALSE. }
   \item{oldctl}{ Optional name of existing control file to modify.
     Default=NULL. }
   \item{newctl}{ Optional name of new control file to create from old
@@ -61,7 +61,7 @@ Ian Taylor
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-\code{\link{SSoutput}}
+\code{\link{SS_output}}
 }
 % \examples{
 % ##---- Should be DIRECTLY executable !! ----

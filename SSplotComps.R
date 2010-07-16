@@ -1,9 +1,11 @@
 SSplotComps <-
-  function(replist=replist, subplots=1:8,
+  function(replist, subplots=1:8,
            kind="LEN", aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE, fleets="all",
-           datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE, showsampsize=TRUE, showeffN=TRUE,
-           minnbubble=8, pntscalar=2.6, pwidth=7, pheight=7, punits="in", ptsize=12, res=300, plotdir="default", cex.main=1,
-           linepos=1, fitbar=FALSE,maxsize=3,do.sqrt=TRUE,smooth=TRUE,cohortlines=c(),
+           datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
+           showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
+           pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+           plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
+           do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
            labels = c("Length (cm)",           #1
                       "Age (yr)",              #2
                       "Year",                  #3
@@ -18,14 +20,14 @@ SSplotComps <-
                       "Stdev (Age) (yr)",      #12
                       "Andre's conditional AAL plot, "), #13
            printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,
+           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            fixdims=TRUE,maxneff=5000,verbose=TRUE,
            aalmaxbinrange=0,...)
 {
   ################################################################################
-  # SSplotComps June 4, 2010
+  # SSplotComps July 16, 2010
   ################################################################################
-
+ 
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   lendbase      <- replist$lendbase
@@ -188,7 +190,8 @@ SSplotComps <-
                               bars=bars,linepos=(1-datonly)*linepos,
                               nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
-                              maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
+                              maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                              fixdims=fixdims,ipage=ipage,...)
               }
               if(kind=="GSTAGE"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -196,7 +199,8 @@ SSplotComps <-
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
-                                maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
+                                maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                                fixdims=fixdims,ipage=ipage,...)
               }
               if(kind %in% c("L@A","W@A")){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -204,7 +208,8 @@ SSplotComps <-
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
-                                maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,ipage=ipage,...)
+                                maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                                fixdims=fixdims,ipage=ipage,...)
               }
 
             }
@@ -325,7 +330,8 @@ SSplotComps <-
                                   sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                   nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                   bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
-                                  xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,
+                                  xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+
                                   fixdims=fixdims,ipage=ipage,...)
                   }
                   if(plot) tempfun(ipage=0,...)
@@ -389,7 +395,7 @@ SSplotComps <-
                               sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                               nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
                               bars=bars,linepos=(1-datonly)*linepos,
-                              main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],maxrows=maxrows,maxcols=maxcols,
+                              main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims,ipage=ipage,...)
                 }
                 if(plot) tempfun(ipage=0,...)

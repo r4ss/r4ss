@@ -2,7 +2,7 @@ SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",areacols=1:10,areanames="default",
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
            plot=TRUE,print=FALSE,plotdir="default",verbose=FALSE,
-           xlab="Year",btarg,minbthresh,
+           btarg=0.4,minbthresh=0.25,xlab="Year",
            labels=c("Total biomass (mt)", #1
              "Total biomass at beginning of season 1 (mt)", #2
              "Summary biomass (mt)",      #3

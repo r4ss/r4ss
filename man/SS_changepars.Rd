@@ -3,13 +3,15 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Change parameters in the control file. }
 \description{
-  A function to take advantage of SS_parlines that could be used to create a series of control files with different parameter values. This is used by SS_profile, but may also be useful for simulation work.
+  A function to take advantage of SS_parlines that could be used to
+  create a series of control files with different parameter values. This
+  is used by SS_profile, but may also be useful for simulation work.
 }
 \usage{
 SS_changepars(dir = "C:/myfiles/mymodels/myrun/",
 ctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-linenums = NULL, strings = NULL, newvals = NULL, estimate = F,
-verbose = T)  
+linenums = NULL, strings = NULL, newvals = NULL, estimate = FALSE,
+verbose = TRUE)  
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,9 +23,9 @@ verbose = T)
     which parameters to be run. Strings correspond to the commented
     parameter names included in control.ss_new. Default=NULL. }
   \item{newvals}{ Vector of new parameter values. Default=NULL. }
-  \item{estimate}{ Vector of T/F for which changed parameters are to be
-    estimated. Default=F. }
-  \item{verbose}{ More detailed output to command line. Default=T. }
+  \item{estimate}{ Vector of TRUE/FALSE for which changed parameters are to be
+    estimated. Default=FALSE. }
+  \item{verbose}{ More detailed output to command line. Default=TRUE. }
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~

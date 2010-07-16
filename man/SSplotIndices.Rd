@@ -8,12 +8,12 @@
   Plot indices of abundance and associated quantities.
 }
 \usage{
-SSplotIndices(replist, subplots = 1:6, plot = TRUE, print = FALSE,
+SSplotIndices(replist, subplots = 1:7, plot = TRUE, print = FALSE,
 fleets = "all", fleetnames = "default",  smooth = TRUE, add = FALSE,
 datplot = FALSE, labels = c("Year", "Index", "Observed index",
 "Expected index","Log index", "Log observed index",
-"Log expected index"), pwidth = 7, pheight = 7, punits = "in",
-res = 300, ptsize = 12,
+"Log expected index", "Standardized index"), pwidth = 7, pheight = 7,
+punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.

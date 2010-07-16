@@ -7,14 +7,6 @@ mountains <-
   # Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical model for
   # stock assessment of southern bluefin tuna with temporal changes in selectivity.
   # South African Journal of Marine Science 25:331-362.
-  #
-  ## INPUTS:
-  # zmat is a matrix where the rows represent the heights of each mountain range
-  # xvec and yvec are optional inputs for the axis labels
-  # zscale controls the height of the mountains relative to the y-axis and max(zmat)
-  # addbox puts a box around the whole plot
-  # other intputs are as described in ?par
-  # extra inputs are are passed (via ...) to the plot command
 
   errors <- FALSE
   for(icol in 1:ncol(zmat)){

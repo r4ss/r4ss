@@ -6,7 +6,7 @@
 \description{
   Only skeleton of a function right now, needs work. Intended as a
   translator to convert the output from object created by
-  \code{\link{SSoutput}} to the format used by Michael Prager's FishGraph.
+  \code{\link{SS_output}} to the format used by Michael Prager's FishGraph.
 }
 \usage{
 SSFishGraph(replist, title = "SSv3 output",
@@ -14,7 +14,7 @@ species = "some kind of fish")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{replist}{ Object created by SSoutput }
+  \item{replist}{ Object created by SS_output }
   \item{title}{ Title of output }
   \item{species}{ Species name }
 }

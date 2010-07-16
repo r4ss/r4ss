@@ -9,23 +9,28 @@ Plot timeseries data contained in TIME_SERIES output from Stock
 Synthesis report file. Some values have optional uncertainty intervals.
 }
 \usage{
-SSplotTimeseries(replist, subplots = 1:5, add = FALSE, areas = "all",
+SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
 areacols = 1:10, areanames = "default", forecastplot = TRUE, uncertainty
 = TRUE, bioscale = "default", plot = TRUE, print = FALSE, plotdir =
-"default", verbose = FALSE, xlab = "Year",
-labels = c("Total biomass (mt)", "Summary biomass (mt)",
-"Spawning biomass (mt)", "Spawning depletion", "Spawning output (eggs)",
+"default", verbose = FALSE, btarg=0.4, minbthresh=0.25, xlab = "Year",
+labels=c("Total biomass (mt)",
+"Total biomass at beginning of season 1 (mt)",
+"Summary biomass (mt)",
+"Summary biomass at beginning of season 1 (mt)",
+"Spawning biomass (mt)",
+"Spawning depletion",
+"Spawning output (eggs)",
 "Age-0 recruits (1,000s)"),
-pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12, cex.main
-= 1)
+pwidth = 7, pheight = 7, punits =
+"in", res = 300, ptsize = 12, cex.main = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
     list created by \code{SS_output}
   }
-  \item{subplots}{
-    vector controlling which subplots to create
+  \item{subplot}{
+    number controlling which subplot to create
   }
   \item{add}{
     add to existing plot? (not yet implemented)
@@ -61,6 +66,13 @@ pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12, cex.main
   }
   \item{verbose}{
     report progress to R GUI?
+  }
+  \item{btarg}{
+    Target depletion to be used in plots showing
+    depletion. May be omitted by setting to 0. Default=0.4.}
+  \item{minbthresh}{
+    Threshold depletion to be used in plots showing
+    depletion. May be omitted by setting to 0. Default=0.25.
   }
   \item{xlab}{
     x axis label for all plots

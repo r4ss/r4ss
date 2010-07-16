@@ -1,6 +1,6 @@
 SSmakesims <-
 function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
-         exe="ss3.exe",steep=FALSE,M=FALSE,CV=FALSE,trend=F)
+         exe="ss3.exe",steep=FALSE,M=FALSE,CV=FALSE,trend=FALSE)
 {
   if(copymasters){
     # new directory

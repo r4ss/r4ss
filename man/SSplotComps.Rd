@@ -9,7 +9,7 @@
   Mult-figure plots depend on \code{make_multifig}.
 }
 \usage{
-SSplotComps(replist = replist, subplots = 1:8, kind = "LEN", aalyear =
+SSplotComps(replist, subplots = 1:8, kind = "LEN", aalyear =
 -1, aalbin = -1, plot = TRUE, print = FALSE, fleets = "all",
 datonly = FALSE, samplesizeplots = TRUE, compresidplots = TRUE,
 bub = FALSE, showsampsize = TRUE, showeffN = TRUE, minnbubble = 8, pntscalar =
@@ -21,6 +21,7 @@ smooth = TRUE, cohortlines = c(), labels = c("Length (cm)", "Age (yr)",
 "cm", "Frequency", "Weight (lbs)", "(mt)", "(numbers x1000)",
 "Stdev (Age) (yr)", "Andre's conditional AAL plot, "), printmkt = TRUE,
 printsex = TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4,
+rows = 1, cols = 1,
 fixdims = TRUE, maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -143,6 +144,14 @@ fixdims = TRUE, maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
   }
   \item{maxcols2}{
     maximum number of columns for conditional age at length plots
+  }
+  \item{rows}{
+    number or rows to return to as default for next plots to come or for
+    single plots
+  }
+  \item{cols}{
+    number or cols to return to as default for next plots to come or for
+    single plots
   }
   \item{fixdims}{
     fix the dimensions at maxrows by maxcols or resize based on number of

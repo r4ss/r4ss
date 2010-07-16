@@ -1,7 +1,7 @@
 make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
                           sampsize=0, effN=0, showsampsize=TRUE, showeffN=TRUE, sampsizeround=1,
-                          maxrows=6, maxcols=6, fixdims=TRUE, main="",cex.main=1,xlab="",ylab="",
-                          size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
+                          maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
+                          xlab="",ylab="",size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
                           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
                           axis1="default",axis2="default",linepos=1,
                           bars=FALSE,barwidth="default",ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
@@ -90,13 +90,6 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
   if(length(effN)==1) effN <- 0
 
   # create multifigure layout and set inner margins all to 0 and add outer margins
-
-  # current settings values
-  ## rows <- par("mfcol")[1]
-  ## cols <- par("mfcol")[2]
-  rows <- 1
-  cols <- 1
-
   # new settings
   par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,4,2)+.1)
 
