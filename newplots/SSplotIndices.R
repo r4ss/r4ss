@@ -1,5 +1,5 @@
 SSplotIndices <-
-  function(replist,subplots=1:6,
+function(replist,subplots=1:7,
            plot=TRUE,print=FALSE,
            fleets="all",fleetnames="default",
            smooth=TRUE,add=FALSE,datplot=FALSE,
@@ -9,7 +9,8 @@ SSplotIndices <-
              "Expected index",     #4
              "Log index",          #5
              "Log observed index", #6
-             "Log expected index"),#7
+             "Log expected index", #7
+	     "Standardized index"),#7
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="default",
            verbose=TRUE)
@@ -31,6 +32,13 @@ SSplotIndices <-
   # subset fleets as requested
   fleetvec <- intersect(fleets, unique(as.numeric(cpue$FleetNum)))
 
+  if(datplot){
+   allcpue <- data.frame(NA)
+   names(allcpue) <- "Index"
+   allcpue$year <- NA
+   allcpue$value <- NA
+   allcpue$stdvalue <- NA}
+
   # loop over fleets
   for(ifleet in fleetvec){
     Fleet <- fleetnames[ifleet]
@@ -38,6 +46,12 @@ SSplotIndices <-
     x <- cpueuse$Yr
     y <- cpueuse$Obs
     z <- cpueuse$Exp
+    if(datplot){
+     cpueuse$Index <- rep(ifleet,length(cpueuse$Yr))
+     cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
+     tempcpue <- cbind(cpueuse$Index,cpueuse$Yr,cpueuse$Obs,cpueuse$stdvalue)
+     colnames(tempcpue) <- c("Index","year","value","stdvalue")
+     allcpue <- rbind(allcpue,tempcpue)}
     uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
     npoints <- length(z)
@@ -116,6 +130,35 @@ SSplotIndices <-
       }
     }
   } # nfleets
+
+  ### New the standardized plot of all CPUE indices
+  if(datplot==T){
+   cpuefun5 <- function(){
+    main="All cpue plot"
+    xlim <- c(min(allcpue$year,na.rm=T)-1,max(allcpue$year,na.rm=T)+1)
+    ylim <- c(range(allcpue$stdvalue,na.rm=T))
+    usecols <- rich.colors.short(max(allcpue$Index,na.rm=T))
+    if(max(allcpue$Index,na.rm=T) >= 2) usecols <- rich.colors.short(max(allcpue$Index,na.rm=T)+1)[-1]
+     plot(x=allcpue$year[allcpue$Index %in% c(fleetvec[1])],y=allcpue$stdvalue[allcpue$Index %in% c(fleetvec[1])],
+          xlab=labels[1],main=main,cex.main=cex.main,col=usecols[1],pch=19,ylab=labels[8],xlim=xlim,ylim=ylim)
+     lines(x=allcpue$year[allcpue$Index %in% c(fleetvec[1])],y=allcpue$stdvalue[allcpue$Index %in% c(fleetvec[1])],
+           col=usecols[1],lwd=0.4,lty="dashed")
+     fleetvec2 <- fleetvec[fleetvec != fleetvec[1]]
+     for(ifleet in fleetvec2){
+      points(x=allcpue$year[allcpue$Index %in% c(ifleet)],y=allcpue$stdvalue[allcpue$Index %in% c(ifleet)],
+      pch=19,col=usecols[ifleet])
+      lines(x=allcpue$year[allcpue$Index %in% c(ifleet)],y=allcpue$stdvalue[allcpue$Index %in% c(ifleet)],
+            col=usecols[ifleet],lwd=0.4,lty="dashed")
+      }
+   } # end cpuefun5
+  if(plot & (7 %in% subplots)){cpuefun5()}
+  if(print & (7 %in% subplots)){
+   pngfun(file=paste(plotdir,"13_standcpueall",".png",sep=""))
+   cpuefun5()
+   dev.off()}
+  } # end datplot
+
   if(verbose) print("Finished plot 13: CPUE plots",quote=FALSE)
   flush.console()
+
 } # end function
