@@ -213,16 +213,6 @@ SS_plots <-
     if(verbose) print("Finished plot 5: Basic time series",quote=FALSE)
   } # end if 6 in plot or print
 
-  # Plot 7: recruitment
-  if(7 %in% c(plot, print)){
-    SSplotRecdevs(replist=replist,
-                  plot=(7 %in% plot),
-                  print=(7 %in% print),
-                  forecastplot=forecastplot,
-                  uncertainty=uncertainty)
-  } # end if 7 in plot or print
-
-
   ### Plot 8: discard fractions (if present) ###
   if(8 %in% c(plot, print)){
     SSplotDiscard(replist=replist,
@@ -250,6 +240,22 @@ SS_plots <-
               sprtarg=0.4, btarg=0.4)
   } # end if 11 in plot or print
 
+  ### Plot 7: recruitment (moved to near S-R curve, but needs renumbering) ###
+  if(7 %in% c(plot, print)){
+    SSplotRecdevs(replist=replist,
+                  plot=(7 %in% plot),
+                  print=(7 %in% print),
+                  forecastplot=forecastplot,
+                  uncertainty=uncertainty)
+  } # end if 7 in plot or print
+
+  ### Plot 25: estimating recruitment bias adjustment (probably needs renumbering) ###
+  if(25 %in% c(plot, print)){
+    SS_fitbiasramp(replist=replist,
+                   png=(25 %in% print),
+                   twoplots=FALSE)
+  } # end if 25 in plot or print                   
+
   ### Plot 12: spawner-recruit curve ###
   if(12 %in% c(plot, print)){
     SSplotSpawnrecruit(replist=replist,
@@ -258,7 +264,6 @@ SS_plots <-
                        virg=TRUE,  # add point on curve at equilibrium values (B0,R0)
                        init=FALSE) # add point on curve at initial values (B1,R1)
   } # end if 12 in plot or print
-
 
   ### Plot 13: CPUE plots ###
   if(13 %in% c(plot, print))

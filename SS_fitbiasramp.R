@@ -1,5 +1,5 @@
 SS_fitbiasramp <-
-function(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
+function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL, newctl=NULL,
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
@@ -149,6 +149,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
   val <- recdevs$val
   std <- recdevs$std
 
+  
   if(max(val)==0 | length(val)==0){
     if(verbose) print("no rec devs estimated in this model",quote=FALSE)
     return()
@@ -165,23 +166,26 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
                    units=punits,res=res,pointsize=ptsize)
     if(pdf!=FALSE) pdf(file=pdf,width=pwidth,height=pheight,
                    pointsize=ptsize)
-    par(mfrow=c(2,1),mar=c(2,5,1,1),oma=c(3,0,0,0))
-    plot(Yr,Yr,type='n',xlab="Year",
-         ylab='Recruitment deviation',ylim=ylim)
-    abline(h=0,col="grey")
-    arrows(Yr,recdev_lo,Yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2)
-    points(Yr,val,pch=16)
+    if(twoplots){
+      par(mfrow=c(2,1),mar=c(2,5,1,1),oma=c(3,0,0,0))
+      plot(Yr,Yr,type='n',xlab="Year",
+           ylab='Recruitment deviation',ylim=ylim)
+      abline(h=0,col="grey")
+      arrows(Yr,recdev_lo,Yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2)
+      points(Yr,val,pch=16)
+    }
   }
 
-  print('estimating...',quote=FALSE)
+  print('estimating alternative recruitment bias adjustment fraction...',quote=FALSE)
   newbias <- optimfun(yr=Yr,std=std,startvalues=startvalues)
 
   yvals <- 1-(std/sigma_R_in)^2
   plot(Yr,yvals,xlab="Year",
-       ylab=expression(1 - italic(SE(hat(R[i]))^2 / sigma[R])^2),
+       ylab='',
        ylim=range(0,1,1.3),type="b",yaxs='i')
   abline(h=0,col="grey")
   abline(h=1,col="grey")
+  mtext(side=2,line=2.5,expression(1 - italic(SE(hat(r[y]))^2 / sigma[R])^2))
 
   #names
   names <- c(

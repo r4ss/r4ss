@@ -273,18 +273,28 @@ SS_output <-
     compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
 
     # divide into objects by kind
+    Lbin_range <- compdbase$Lbin_range
+    if(is.null(Lbin_range)){ # if/else required to avoid warning if no comp data at all
+      notconditional <- TRUE
+      conditional <- FALSE
+    }else{
+      notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
+      conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
+    }
     lendbase         <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
     sizedbase        <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
-    agedbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
-                          & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
-    condbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0
-                          & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range <= aalmaxbinrange,]
-    ghostagedbase    <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0
-                          & !is.na(compdbase$Lbin_range) & compdbase$Lbin_range > aalmaxbinrange,]
+    agedbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & notconditional,]
+    condbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & conditional,]
+    ghostagedbase    <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0 & notconditional,]
     compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
-    ladbase          <- compdbase[compdbase$Kind=="L@A" & !is.na(compdbase$N),]
-    wadbase          <- compdbase[compdbase$Kind=="W@A" & !is.na(compdbase$N),]
+    if(is.null(compdbase$N)){
+      good <- TRUE
+    }else{
+      good <- !is.na(compdbase$N)
+    }
+    ladbase          <- compdbase[compdbase$Kind=="L@A" & good,]
+    wadbase          <- compdbase[compdbase$Kind=="W@A" & good,]
     tagdbase1        <- compdbase[compdbase$Kind=="TAG1",]
     tagdbase2        <- compdbase[compdbase$Kind=="TAG2",]
     # consider range of bins for conditional age at length data
@@ -869,15 +879,18 @@ SS_output <-
     {
       nrowsAAK <- nrow(rawAAK)/nsexes - 3
       AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
-      age_error_sd = 0:accuage
+      age_error_mean <- age_error_sd <- data.frame(age=0:accuage)
       for(i in 1:N_ageerror_defs){
-        AAKtemp <- rawAAK[starts[i] + 1 + 1:nrowsAAK,-1]
+        AAKtemp <- rawAAK[starts[i] + 2 + 1:nrowsAAK,-1]
         # what about 2-sex model?
         for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
         AAK[i,,] <- as.matrix(AAKtemp)
-        age_error_sd <- cbind(age_error_sd,as.numeric((rawAAK[starts[i] + 2,-1])))
+        age_error_mean[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 1,-1]))
+        age_error_sd[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 2,-1]))
       }
       returndat$AAK <- AAK
+      returndat$age_error_mean <- age_error_mean
+      returndat$age_error_sd <- age_error_sd
     }
   }
 
