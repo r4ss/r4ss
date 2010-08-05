@@ -307,16 +307,21 @@ SSplotSelex <-
           contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
                   main=main,cex.main=cex.main,col=ians_blues,lwd=2)
           if(m==1){
-            lines(x,growdatF$Len_Mid,col=col1,lwd=2)
+            lines(x,growdatF$Len_Mid,col='white',lwd=5)
+            lines(x,growdatF$Len_Mid,col=col1,lwd=3)
+            lines(x,growdatF$high,col='white',lwd=1,lty=1)
             lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
+            lines(x,growdatF$low,col='white',lwd=1,lty=1)
             lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
           }
           if(m==2){
-            lines(xm,growdatM$Len_Mid,col=col2,lwd=2)
+            lines(xm,growdatM$Len_Mid,col='white',lwd=5)
+            lines(xm,growdatM$Len_Mid,col=col2,lwd=3)
+            lines(xm,growdatM$high,col='white',lwd=1,lty=1)
             lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
+            lines(xm,growdatM$low,col='white',lwd=1,lty=1)
             lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
           }
-          grid()
         }
         if(plot){
           if(10 %in% subplot) agelenselcontour()

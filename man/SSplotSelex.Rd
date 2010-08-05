@@ -12,6 +12,7 @@
 SSplotSelex(replist, fleets = "all", fleetnames = "default", selexlines
 = 1:5, subplot = 1:9, plot = TRUE, print = FALSE, add = FALSE, labels
 = c("Length (cm)", "Age (yr)", "Year", "Selectivity", "Retention"),
+col1 = "red", col2 = "blue",
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }
@@ -45,6 +46,12 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{col1}{
+    color for female growth curve
+  }
+  \item{col2}{
+    color for male growth curve
   }
   \item{pwidth}{
     width of plot written to PNG file
