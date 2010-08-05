@@ -12,7 +12,8 @@ SSplotTags <-
            "Fit to tag recaptures by tag group",                #4
            "Tag recaptures aggregated across tag groups",       #5
            "Observed tag recaptures by year and tag group",     #6
-           "Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),#7
+           "Residuals for tag recaptures: (obs-exp)/sqrt(exp)", #7
+           "Observed and expected tag recaptures by year and tag group"), #8
            plotdir="default",
            verbose=TRUE)
 {
@@ -109,15 +110,17 @@ SSplotTags <-
     }
     tagfun5 <- function(){
       # line plot by year and group
-      plottitle <- labels[6]
+      plottitle <- labels[8]
       plot(0,type="n",xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab=labels[1],ylab=labels[3],
            main=plottitle,cex.main=cex.main)
       rescale <- 5/max(Recaps$Obs,Recaps$Exp)
       for(igroup in sort(unique(Recaps$Group))){
         lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col="grey",lty=3)
         points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type="o",pch=16,cex=.5)
-        lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col=col2,lty="51",lwd=2)
+        lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col=col2,lty="42",lwd=2)
       }
+      legend('topleft',bty='n',lty=c('91','42'),pch=c(16,NA),pt.cex=c(.5,NA),
+             col=c(1,2),lwd=c(1,2),legend=c('Observed','Expected'))
     }
     # make plots
     if(plot){

@@ -170,9 +170,9 @@ SSplotBiology <-
       lines(xm,growdatM$Len_Mid,col=col2,lwd=2)
       lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
       lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
-      grid()
       legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
     }
+    grid()
   }
   if(plot & 5 %in% subplots) gfunc5()
   if(print & 5 %in% subplots){

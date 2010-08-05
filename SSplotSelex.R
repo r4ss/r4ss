@@ -1,13 +1,14 @@
 SSplotSelex <-
   function(replist, fleets="all", fleetnames="default",
            selexlines=1:5,
-           subplot=1:9,
+           subplot=1:10,
            plot=TRUE, print=FALSE, add=FALSE,
            labels=c("Length (cm)", #1
                     "Age (yr)",    #2
                     "Year",        #3
                     "Selectivity", #4
                     "Retention"),  #5
+           col1="red",col2="blue",
            pwidth = 7, pheight = 7, punits = "in",
            res = 300, ptsize = 12,
            cex.main=1, plotdir = "default",
@@ -22,7 +23,9 @@ SSplotSelex <-
   accuage    <- replist$accuage
   endyr      <- replist$endyr
   FleetNames <- replist$FleetNames
-
+  growdat    <- replist$endgrowth
+  mainmorphs <- replist$mainmorphs
+  
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
@@ -261,5 +264,74 @@ SSplotSelex <-
       } # end if not time varying
     } # fleets
   } # sexes
+  flush.console()
+
+
+  # Age-length combined with growth curve
+  if(10 %in% subplot){
+
+    # Mid year mean length at age with 95% range of lengths (by sex if applicable)
+    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
+    growdatF$Sd_Size <- growdatF$SD_Mid
+    growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
+    growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
+    if(nsexes > 1){
+      growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
+      xm <- growdatM$Age
+      growdatM$Sd_Size <- growdatM$SD_Mid
+      growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
+      growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
+    }
+
+  
+    xlab <- labels[2]
+    ylab <- labels[1]
+    zlab <- labels[4]
+    for(m in 1:nsexes)
+    {
+      if(m==1 & nsexes==1) sextitle2 <- "Ending"
+      if(m==1 & nsexes==2) sextitle2 <- "Female ending"
+      if(m==2) sextitle2 <- "Male ending"
+      for(i in fleets)
+      {
+        plotageselex <- as.numeric(ageselex[ageselex$factor=="Asel" & ageselex$year==endyr & ageselex$fleet==i & ageselex$gender==m,-(1:7)])
+        plotlenselex <- as.numeric(sizeselex[sizeselex$Factor=="Lsel" & sizeselex$year==endyr & sizeselex$Fleet==i & sizeselex$gender==m,-(1:5)])
+  
+        x <- seq(0,accuage,by=1)
+        y <- lbinspop
+        z <- plotageselex %o% plotlenselex
+        
+        main <- paste(sextitle2," year selectivity and growth for ", FleetNames[i],sep="")
+  
+        agelenselcontour <- function(){
+          contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
+                  main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+          if(m==1){
+            lines(x,growdatF$Len_Mid,col=col1,lwd=2)
+            lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
+            lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
+          }
+          if(m==2){
+            lines(xm,growdatM$Len_Mid,col=col2,lwd=2)
+            lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
+            lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
+          }
+          grid()
+        }
+        if(plot){
+          if(10 %in% subplot) agelenselcontour()
+        }
+        if(print){
+          if(10 %in% subplot){
+            pngfun(file=paste(plotdir,"03_agelenselexcontour_flt",i,"sex",m,".png",sep=""))
+            agelenselcontour()
+            dev.off()
+          }
+        }
+  
+      } # fleets
+    } # sexes
+  } # if 10 in subplot
+
   flush.console()
 } # end if 3 and 4 in plot or print

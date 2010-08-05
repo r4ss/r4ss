@@ -143,7 +143,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
 
   recdevs <- getrecdevs(replist)
-  Yr <- recruit$year[!is.na(recdevs$std)]
+  Yr <- recruit$year[recruit$era=="Main"]
   recdevs <- recdevs[!is.na(recdevs$std),]
 
   val <- recdevs$val

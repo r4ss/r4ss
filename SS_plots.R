@@ -162,7 +162,7 @@ SS_plots <-
   # Length selex and retention
   if(length(intersect(c(3,4), c(plot,print)))>0)
   {
-    SSplotSelex(replist=replist, selexlines=selexlines,
+    SSplotSelex(replist=replist, selexlines=selexlines, fleets=fleets,
                 plot=(3 %in% plot), print=(3 %in% print),
                 cex.main=cex.main)
     if(verbose) print("Finished plots 3 and 4: selectivity plots",quote=FALSE)
