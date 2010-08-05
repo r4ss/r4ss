@@ -303,7 +303,6 @@ SSplotComps <-
               }
             }
           } # end conditional bubble plot
-
           ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age at length
           #                        and Pearson residuals of A-L key for specific years
           if((4 %in% subplots | 5 %in% subplots) & aalyear[1] > 0 & kind=="cond")
@@ -372,12 +371,12 @@ SSplotComps <-
           {
             badbins <- setdiff(aalbin, dbase$Lbin_hi)
             goodbins <- intersect(aalbin, dbase$Lbin_hi)
-            if(length(badbins)>0){
-              print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=FALSE)
-              print(paste("            the following inputs for 'aalbin' are fine:",goodbins),quote=FALSE)
-            }
             if(length(goodbins)>0)
             {
+              if(length(badbins)>0){
+                print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=FALSE)
+                print(paste("            the following inputs for 'aalbin' are fine:",goodbins),quote=FALSE)
+              }
               for(ibin in 1:length(goodbins)) # loop over good bins
               {
               ilenbin <- goodbins[ibin]
