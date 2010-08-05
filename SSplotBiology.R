@@ -42,7 +42,7 @@ SSplotBiology <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
   # check dimensions
   if(length(mainmorphs)>nsexes){
-    print("!Error with morph indexing in SSplotbiology function.",quote=FALSE)
+    print("!Error with morph indexing in SSplotBiology function.",quote=FALSE)
     print(" Code is not set up to handle multiple growth patterns or birth seasons.",quote=FALSE)
   }
   xlab <- labels[1]

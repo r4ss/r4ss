@@ -21,11 +21,10 @@ SSplotComps <-
                       "Andre's conditional AAL plot, "), #13
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
-           fixdims=TRUE,maxneff=5000,verbose=TRUE,
-           aalmaxbinrange=0,...)
+           fixdims=TRUE,maxneff=5000,verbose=TRUE,...)
 {
   ################################################################################
-  # SSplotComps July 16, 2010
+  # SSplotComps August 5, 2010
   ################################################################################
  
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -84,9 +83,6 @@ SSplotComps <-
   }
   if(kind=="AGE"){
     dbase_kind <- agedbase
-    dbase_kind <- dbase_kind[dbase_kind$Lbin_range > aalmaxbinrange,]
-
-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "16_agedat_"
@@ -107,7 +103,7 @@ SSplotComps <-
       titledata <- "conditional age at length, "
     }
   }
-
+  
   if(kind=="GSTAGE"){
     dbase_kind <- ghostagedbase
     kindlab=labels[2]
@@ -466,7 +462,7 @@ SSplotComps <-
               Pred <- NULL;  Pred2 <- NULL
               Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
               for (Ilen in Lens){
-                z <- y[y$Lbin_lo == Ilen & y$Lbin_hi == Ilen,]
+                z <- y[y$Lbin_lo == Ilen,]
                 if (length(z[,1]) > 0){
                   weightsPred <- z$Exp/sum(z$Exp)
                   weightsObs <- z$Obs/sum(z$Obs)

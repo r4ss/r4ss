@@ -25,6 +25,7 @@ SSplotSelex <-
   FleetNames <- replist$FleetNames
   growdat    <- replist$endgrowth
   mainmorphs <- replist$mainmorphs
+  nareas     <- replist$nareas
   
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -271,7 +272,7 @@ SSplotSelex <-
   if(10 %in% subplot){
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
-    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
+    growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1+],]
     growdatF$Sd_Size <- growdatF$SD_Mid
     growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
     growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size

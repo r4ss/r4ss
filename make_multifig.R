@@ -139,7 +139,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
               vals <- unique(sampsize[yr==yr_i])
               if(length(vals)>1){
                 print(paste("Warning: sampsize values are not all equal--choosing the first value:",vals[1]),quote=FALSE)
-                print(paste("	  yr=",yr_i,", and all sampsize values:",paste(vals,collapse=","),sep=""),quote=FALSE)
+                print(paste("  yr=",yr_i,", and all sampsize values:",paste(vals,collapse=","),sep=""),quote=FALSE)
                 vals <- vals[1]
               }
               text_i <- paste("N=",round(vals,sampsizeround),sep="")
@@ -148,7 +148,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
               vals <- unique(effN[yr==yr_i])
               if(length(vals)>1){
                 print(paste("Warning: effN values are not all equal--choosing the first value:",vals[1]),quote=FALSE)
-                print(paste("	  all effN values:",paste(vals,collapse=",")),quote=FALSE)
+                print(paste("  all effN values:",paste(vals,collapse=",")),quote=FALSE)
                 vals <- vals[1]
               }
               text_i <- paste("effN=",round(vals,sampsizeround),sep="")

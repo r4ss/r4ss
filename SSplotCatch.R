@@ -15,11 +15,14 @@ SSplotCatch <-
              "Predicted Discards",       #5  # should add units
              "Discard fraction",         #6  # need to add by weight or by length
              "(mt)",                     #7
-             "(numbers x1000)"),         #8
+             "(numbers x1000)",          #8
+             "Observed and expected"),   #9
            catchasnumbers=FALSE,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12)
 {
-
+  # plot catch-related time-series for Stock Synthesis
+  # updated August 5, 2010
+  
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   F_method                       <- replist$F_method
@@ -145,16 +148,18 @@ SSplotCatch <-
   makeplots <- function(subplot){
     if(subplot==1) linefunc(ymat=retmat, ylab=labels[3], addtotal=TRUE)
     if(subplot==2 & nfishfleets>1) stackfunc(ymat=retmat, ylab=labels[3])
-    # if observed catch doesn't equal estimated, make plot to compare
-    if(subplot==3 & diff(range(retmat-totobscatchmat))>0){
-      linefunc(ymat=retmat, ylab=paste("Observed and expected",labels[3]), addtotal=TRUE)
+    # if observed catch differs from estimated by more than 0.1%, then make plot to compare
+    if(subplot==3 & diff(range(retmat-totobscatchmat))/max(totobscatchmat) > 0.001){
+      linefunc(ymat=retmat, ylab=paste(labels[9],labels[3]), addtotal=FALSE)
       for(f in 1:nfishfleets){
         if(max(totobscatchmat[,f])>0){
           lines(catchyrs, totobscatchmat[,f], type="o", col=fleetcols[f],
                 lty=3, lwd=lwd, pch=4)
         }
       }
-      legend(legendloc, lty=c(fleetlty[!ghost],rep(3,sum(!ghost))), lwd=lwd, pch=c(fleetpch[!ghost],rep(4,sum(!ghost))), col=fleetcols[!ghost], legend=c(fleetnames[!ghost],paste(fleetnames[!ghost],"obs.")), bty="n")
+      legend(legendloc, lty=c(fleetlty[!ghost],rep(3,sum(!ghost))), lwd=lwd,
+             pch=c(fleetpch[!ghost],rep(4,sum(!ghost))), col=fleetcols[!ghost],
+             legend=c(fleetnames[!ghost],paste(fleetnames[!ghost],"obs.")), bty="n")
     }
     if(max(discmat)>0){
       if(subplot==4) linefunc(ymat=totcatchmat, ylab=labels[4], addtotal=TRUE)

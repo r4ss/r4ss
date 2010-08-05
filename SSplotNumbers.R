@@ -6,15 +6,23 @@ SSplotNumbers <-
            areacols="default",
            pntscalar=2.6,
            add=FALSE,
-           labels=c("Year",              #1
-             "Age",                      #2
-             "True age (yr)",            #3
-             "SD of observed age (yr)"), #4
+           labels=c("Year",                   #1
+             "Age",                           #2
+             "True age (yr)",                 #3
+             "SD of observed age (yr)",       #4
+             "Mean age (yr)",                 #5
+             "Mean age in the population",    #6
+             "Ageing imprecision",            #7
+             "Numbers at age at equilibrium", #8
+             "Equilibrium age distribution",  #9
+             "Sex ratio of numbers at age (males/females)"), #10
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1,
            plotdir="default",
            verbose=TRUE)
 {
+  # plot various things related to numbers-at-age for Stock Synthesis
+  
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   natage    <- replist$natage
@@ -51,7 +59,7 @@ SSplotNumbers <-
 
     bseas <- unique(natage$BirthSeas)
     if(length(bseas)>1) print("Numbers at age plots are for only the first birth season",quote=FALSE)
-    if(ngpatterns>1) print("Numbers at age plots are for growth pattern 1 only",quote=FALSE)
+    if(ngpatterns>1) print("Numbers at age plots may not deal correctly with growth patterns: no guarantees!",quote=FALSE)
     if(nseasons>1) print("Numbers at age plots are for season 1 only",quote=FALSE)
     for(iarea in areas){
       for(m in 1:nsexes){
@@ -62,18 +70,23 @@ SSplotNumbers <-
       			   natage$Seas==1 &
       			   natage$Era!="VIRG" &
       			   natage$Yr <= (endyr+1) &
-      			   natage$BirthSeas==min(bseas) &
-      			   natage$Bio_Pattern==1,]
+      			   natage$BirthSeas==min(bseas),]
+#      			   natage$Bio_Pattern==1,] # formerly filtered
+        
         # create data frame with 0 values to fill across submorphs
         morphlist <- unique(natagetemp_all$SubMorph)
-        natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1],]
+        natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1] & natagetemp_all$Bio_Pattern==1,]
         for(iage in 0:accuage) natagetemp0[,11 + iage] <- 0
 
-        # combining across submorphs
+        # combining across submorphs and growth patterns
         for(imorph in 1:length(morphlist)){
-          natagetemp_morph <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph],]
-          natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_morph[,11+0:accuage]
+          for(igp in 1:ngpatterns){
+            natagetemp_imorph_igp <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph] & 
+                                                    natagetemp_all$Bio_Pattern==igp,]
+            natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_imorph_igp[,11+0:accuage]
+          } # end growth pattern loop
         } # end morph loop
+        if(ngpatterns>0) natagetemp0$Bio_Pattern==999
 
         nyrsplot <- nrow(natagetemp0)
         resx <- rep(natagetemp0$Yr, accuage+1)
@@ -92,7 +105,7 @@ SSplotNumbers <-
         plottitle <- paste("Expected numbers at age",sextitle," in thousands (max=",max(resz),")",sep="")
 
         # calculations related to mean age
-        natagetemp1 <- as.matrix(natagetemp0[,-(1:10)])
+        natagetemp1 <- as.matrix(natagetemp0[,-(1:10)]) # removing the first columns to get just numbers
         ages <- 0:accuage
         natagetemp2 <- as.data.frame(natagetemp1)
         natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
@@ -102,6 +115,7 @@ SSplotNumbers <-
         natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ]
         natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
         prodmat <- t(natagetemp1)*ages
+
         prodsum <- as.vector(apply(prodmat,2,sum))
         natagetemp2$sumprod <- prodsum
         natagetemp2$meanage <- natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
@@ -113,8 +127,10 @@ SSplotNumbers <-
 
         ylim <- c(0,max(meanage))
 
-        ylab <- "Mean age (yr)"
-        plottitle1 <- "Mean age in the population"
+        ylab <- labels[5]
+        plottitle1 <- labels[6]
+        if(nareas>1) plottitle1 <- paste(plottitle1,"in",areanames[iarea])
+        
         tempfun <- function(){
           # bubble plot with line
           bubble3(x=resx, y=resy, z=resz,
@@ -152,7 +168,7 @@ SSplotNumbers <-
     } # end area loop
     if(nsexes>1){
       for(iarea in areas){
-        plottitle2 <- paste("Sex ratio of numbers at age (males/females)",sep="")
+        plottitle2 <- paste(labels[10],sep="")
         if(nareas > 1) plottitle2 <- paste(plottitle2," for ",areanames[iarea],sep="")
 
         natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
@@ -179,10 +195,12 @@ SSplotNumbers <-
     } # end if nsexes>1
 
     # plot of equilibrium age composition by gender and area
-    tempfun <- function(){
+    equilibfun <- function(){
       equilage <- natage[natage$Era=="VIRG",]
+      equilage <- equilage[as.vector(apply(equilage[,-(1:10)],1,sum))>0,]
+      
       plot(0,type='n',xlim=c(0,accuage),ylim=c(0,1.05*max(equilage[,-(1:10)])),xaxs='i',yaxs='i',
-           xlab='Age',ylab='Numbers at age at equilibrium')
+           xlab='Age',ylab=labels[8],main=labels[9])
 
       # now fill in legend
       legendlty <- NULL
@@ -190,7 +208,7 @@ SSplotNumbers <-
       legendlegend <- NULL
       for(iarea in areas){
         for(m in 1:nsexes){
-          equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m & equilage$Morph==mainmorphs[m],]
+          equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m,]
           if(nrow(equilagetemp)>1){
             print('in plot of equilibrium age composition by gender and area',quote=FALSE)
             print('multiple morphs or seasons not supporting, using first row from choices below',quote=FALSE)
@@ -212,11 +230,11 @@ SSplotNumbers <-
     }
 
     if(plot & 4 %in% subplots){
-      tempfun()
+      equilibfun()
     } # end if 14 in plot
     if(print & 4 %in% subplots){
       pngfun(file=paste(plotdir,"14_equilagecomp.png",sep=""))
-      tempfun()
+      equilibfun()
       dev.off()
     } # close if 14 in print
 
@@ -230,8 +248,8 @@ SSplotNumbers <-
       ylim <- c(0,max(sd_vectors))
       if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
       if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
-      tempfun <- function(){
-        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab=labels[3],ylab=labels[4])
+      ageingfun <- function(){
+        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab=labels[3],ylab=labels[4],main=labels[7])
         if(n_age_error_keys > 1){
           for(i in 2:n_age_error_keys){
             lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
@@ -240,11 +258,11 @@ SSplotNumbers <-
         abline(h=0,col="grey") # grey line at 0
       }
       if(plot & 5 %in% subplots){
-        tempfun()
+        ageingfun()
       } # end if 14 in plot
       if(print & 5 %in% subplots){
         pngfun(file=paste(plotdir,"14_ageerrorkeys.png",sep=""))
-        tempfun()
+        ageingfun()
         dev.off()
       } # close if 14 in print
     } # end if AAK

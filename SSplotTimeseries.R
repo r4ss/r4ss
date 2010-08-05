@@ -154,6 +154,7 @@ if(nseasons > 1 & subplot > 9){return("")}
         }
         yvals <- yvals/yvals[1] # total depletion
       }
+      ymax <- max(yvals)
     }
     if(forecastplot) main <- paste(main,"with forecast")
     # calculating intervals around spawning biomass, depletion, or recruitment
@@ -202,9 +203,12 @@ if(nseasons > 1 & subplot > 9){return("")}
       }
     }
 
-    # y range for plot
-    ymax <- max(yvals[plot1 | plot2 | plot3])
-
+    # y-range for plot (possibly excluding time periods that aren't plotted)
+    #   only works on single area models
+    if(nareas==1){
+      ymax <- max(yvals[plot1 | plot2 | plot3])
+    }
+    
     # correct depletion limits in multi-area models
     if(subplot==9 & length(areas)>1){
       ymax <- 0

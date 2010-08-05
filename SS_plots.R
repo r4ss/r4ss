@@ -3,7 +3,7 @@ SS_plots <-
     replist=ReportObject, plot=1:24, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
-    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalmaxbinrange=0,
+    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
     aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
@@ -28,7 +28,7 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "June 14, 2010"
+  codedate <- "August 5, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -250,7 +250,7 @@ SS_plots <-
   } # end if 7 in plot or print
 
   ### Plot 25: estimating recruitment bias adjustment (probably needs renumbering) ###
-  if(25 %in% c(plot, print)){
+  if(25 %in% c(plot, print) & uncertainty){
     SS_fitbiasramp(replist=replist,
                    png=(25 %in% print),
                    twoplots=FALSE)

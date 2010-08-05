@@ -8,7 +8,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # by Ian Taylor
   # June 28, 2010
   #
-  # Usage: run function with input that is an object from SSoutput
+  # Usage: run function with input that is an object from SS_output
   #        from http://code.google.com/p/r4ss/
   #
   ##################
@@ -17,11 +17,11 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
   if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10"))){
-    print("!error: this function needs an input object created by SSoutput from a SSv3.10 model")
+    print("!error: this function needs an input object created by SS_output from a SSv3.10 model")
     return()
   }
   if(replist$inputs$covar==FALSE){
-    print("!error, you need to have covar=TRUE in the input to the SSoutput function",quote=FALSE)
+    print("!error, you need to have covar=TRUE in the input to the SS_output function",quote=FALSE)
     return()
   }
   parameters <- replist$parameters
