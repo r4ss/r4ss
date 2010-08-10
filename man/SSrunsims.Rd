@@ -13,8 +13,8 @@
 SSrunsims(sims = 1, newrun = TRUE, sim = FALSE, fit = FALSE, simfolder =
 "sims", fitfolder = "fits", masterfolder = "fits", MLEdata = FALSE,
 skipfiles = TRUE, simchoices = 1, fitchoices = 1, samedatafile = FALSE,
-homepath = "c:/myfiles/", recdevmatrix = NULL, fitbiasramp = FALSE,
-exe = "ss3_opt", simextras = "-nox -nohess",
+homepath = "c:/myfiles/", recdevmatrix = NULL, rescale = TRUE,
+fitbiasramp = FALSE, exe = "ss3_opt", simextras = "-nox -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
 fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE, verbose = TRUE)
 }
@@ -69,6 +69,10 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE, verbose = TRUE)
   \item{recdevmatrix}{
     Matrix of recruit deviations. NULL = read from file or create new file if
     one doesn't exists. Default=NULL.
+  }
+  \item{rescale}{
+    Argument passed to \code{\link{SS_recdevs}}: should the recdevs be
+    rescaled to have mean = 0 and std. deviation = sigmaR? Default=TRUE.
   }
   \item{fitbiasramp}{
     Use the function \code{\link{SS_fitbiasramp}} to estimate bias

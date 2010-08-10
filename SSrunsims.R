@@ -7,6 +7,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          simchoices=1,fitchoices=1,samedatafile=FALSE,
          homepath="c:/myfiles/",
          recdevmatrix=NULL,
+         rescale=TRUE,
          fitbiasramp=FALSE,
          exe="ss3_opt",
          simextras="-nox -nohess",
@@ -54,6 +55,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
         }
         write.csv(recmat,recmatfile,row.names=FALSE)
       }
+    }else{
+      recmat <- recdevmatrix
     }
 
     simpath <- paste(homepath,simfolder,sep="/") # path for simulations
@@ -116,7 +119,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           recdevs <- recmat[1:(lyr-fyr+1),isim]
 
           SS_recdevs(fyr=fyr, lyr=lyr, recdevs=recdevs,
-                     rescale=TRUE, scaleyrs=NULL,
+                     rescale=rescale, scaleyrs=NULL,
                      ctlfile="ctl_isim_nodevs.ss",
                      newctlfile="ctl_isim.ss",
                      verbose=TRUE, writectl=TRUE, returnctl=FALSE)

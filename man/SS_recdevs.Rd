@@ -9,9 +9,9 @@ file for simulation studies. This can also be achieved by using the .par
 file, but Ian Taylor prefers this approach for no good reason.}
 \usage{
 SS_recdevs(fyr, lyr, ctl = NULL, recdevs = NULL,
-rescale = T, scaleyrs = NULL, dir = "working_directory",
+rescale = TRUE, scaleyrs = NULL, dir = "working_directory",
 ctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-verbose = T, writectl = T, returnctl = F, newmaxbias = NULL)
+verbose = TRUE, writectl = TRUE, returnctl = FALSE, newmaxbias = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,7 +22,7 @@ verbose = T, writectl = T, returnctl = F, newmaxbias = NULL)
   \item{recdevs}{Either NULL to generate anew or an already generated
     vector of recdevs. Default=NULL.}
   \item{rescale}{Should the recdevs be rescaled to have mean = 0 and
-    std. deviation = sigmaR? Default=T.}
+    std. deviation = sigmaR? Default=TRUE.}
   \item{scaleyrs}{Vector of years over which rescaling (if chosen)
     should occur.}
   \item{dir}{Directory where files are located. Default is to use the
@@ -31,10 +31,10 @@ verbose = T, writectl = T, returnctl = F, newmaxbias = NULL)
     Default="control.ss_new".}
   \item{newctlfile}{Name of new file to output modified control file.
     Default="control_modified.ss".}
-  \item{verbose}{Verbose output to R command line? Default=T.}
-  \item{writectl}{Write new file? Default=T.}
+  \item{verbose}{Verbose output to R command line? Default=TRUE.}
+  \item{writectl}{Write new file? Default=TRUE.}
   \item{returnctl}{Return contents ctl file as an object in the R
-    workspace. Default=F.}
+    workspace. Default=FALSE.}
   \item{newmaxbias}{Replace the maximum bias adjustment fraction with
     any non-NULL value. Default=NULL.}
 }

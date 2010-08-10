@@ -1,11 +1,11 @@
 SS_recdevs <-
 function(
          fyr, lyr, ctl=NULL, recdevs=NULL,
-         rescale=T,scaleyrs=NULL,
+         rescale=TRUE,scaleyrs=NULL,
          dir="working_directory",
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
-         verbose=T, writectl=T, returnctl=F,
+         verbose=TRUE, writectl=TRUE, returnctl=FALSE,
          newmaxbias=NULL
          )
 {
@@ -64,7 +64,7 @@ function(
   if(advanced!=1) stop("advanced options must be turned on in control file")
   if(phase>0){
     newphase <- -abs(phase)
-    if(verbose) print(paste("making recdev phase to negative:",newphase),quote=F)
+    if(verbose) print(paste("making recdev phase to negative:",newphase),quote=FALSE)
     ctl[grep("recdev phase",ctl)] <- paste(newphase,"#_recdev phase")
   }
 
@@ -75,8 +75,8 @@ function(
   # check for keyword at start of following section
   key2 <- grep("Fishing Mortality info",ctl)
   if(length(key2)==0){
-    print("The phrase 'Fishing Mortality info' does not occur after the recdev section.",quote=F)
-    print("Format of control file may be messy.",quote=F)
+    print("The phrase 'Fishing Mortality info' does not occur after the recdev section.",quote=FALSE)
+    print("Format of control file may be messy.",quote=FALSE)
   }else{
     key2==key2[1]
   }
@@ -98,8 +98,8 @@ function(
       scaleyrs <- yrs %in% scaleyrs
     }
     if(verbose){
-      print(paste("rescaling recdevs vector so yrs ",min(yrs[scaleyrs]),":",max(yrs[scaleyrs]),sep=""),quote=F)
-      print(paste("have mean 0 and std. dev. = sigmaR = ",sigmaR,sep=""),quote=F)
+      print(paste("rescaling recdevs vector so yrs ",min(yrs[scaleyrs]),":",max(yrs[scaleyrs]),sep=""),quote=FALSE)
+      print(paste("have mean 0 and std. dev. = sigmaR = ",sigmaR,sep=""),quote=FALSE)
     }
     newdevs <- sigmaR*(newdevs-mean(newdevs[scaleyrs]))/sd(newdevs[scaleyrs])
   }
@@ -124,7 +124,7 @@ function(
   # write and/or return the modified control file
   if(writectl){
     writeLines(ctl,newctlfile)
-    if(verbose) print(paste("wrote new file:",newctlfile),quote=F)
+    if(verbose) print(paste("wrote new file:",newctlfile),quote=FALSE)
   }
   #reset working directory
   setwd(current_wd)

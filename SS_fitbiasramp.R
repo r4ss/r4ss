@@ -99,9 +99,15 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     # get info on recruitment devs from the model output
     parmat <- replist$parameters
     rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF",parmat$Label)[1]-1)
+    yr <- parmat$Label[rowrange]
+    yr <- strsplit(yr,"RecrDev_")
+    yr2 <- matrix(NA,length(yr),2)
+    yr2 <- rep(NA,length(yr))
+    for(i in 1:length(yr)) yr2[i] <- as.numeric(yr[[i]][2])
+    yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
     val <- parmat$Value[rowrange]
     std <- parmat$Parm_StDev[rowrange]
-    return(data.frame(val=val,std=std))
+    return(data.frame(yr=yr2,val=val,std=std))
   }
 
   optimfun <- function(yr,std,startvalues){
@@ -143,9 +149,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
 
   recdevs <- getrecdevs(replist)
-  Yr <- recruit$year[recruit$era=="Main"]
   recdevs <- recdevs[!is.na(recdevs$std),]
-
+  yr <- recdevs$yr
   val <- recdevs$val
   std <- recdevs$std
 
@@ -168,19 +173,19 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                    pointsize=ptsize)
     if(twoplots){
       par(mfrow=c(2,1),mar=c(2,5,1,1),oma=c(3,0,0,0))
-      plot(Yr,Yr,type='n',xlab="Year",
+      plot(yr,yr,type='n',xlab="Year",
            ylab='Recruitment deviation',ylim=ylim)
       abline(h=0,col="grey")
-      arrows(Yr,recdev_lo,Yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2)
-      points(Yr,val,pch=16)
+      arrows(yr,recdev_lo,yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2)
+      points(yr,val,pch=16)
     }
   }
 
   print('estimating alternative recruitment bias adjustment fraction...',quote=FALSE)
-  newbias <- optimfun(yr=Yr,std=std,startvalues=startvalues)
+  newbias <- optimfun(yr=yr,std=std,startvalues=startvalues)
 
   yvals <- 1-(std/sigma_R_in)^2
-  plot(Yr,yvals,xlab="Year",
+  plot(yr,yvals,xlab="Year",
        ylab='',
        ylim=range(0,1,1.3),type="b",yaxs='i')
   abline(h=0,col="grey")
@@ -196,7 +201,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   "#_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models)")
 
   # bias correction (2nd axis, scaled by ymax)
-  lines(biasadjfun(Yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
+  lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
   lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
   legend('topleft',col=c(2,4),lwd=3,lty=2:1,inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
          leg=c('bias adjust in model','estimated alternative'))
