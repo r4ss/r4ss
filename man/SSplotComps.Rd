@@ -22,7 +22,7 @@ smooth = TRUE, cohortlines = c(), labels = c("Length (cm)", "Age (yr)",
 "Stdev (Age) (yr)", "Andre's conditional AAL plot, "), printmkt = TRUE,
 printsex = TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4,
 rows = 1, cols = 1,
-fixdims = TRUE, maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
+fixdims = TRUE, maxneff = 5000, verbose = TRUE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -165,9 +165,6 @@ fixdims = TRUE, maxneff = 5000, verbose = TRUE, aalmaxbinrange = 0, ...)
   }
   \item{verbose}{
     return updates of function progress to the R GUI?
-  }
-  \item{aalmaxbinrange}{
-    the largest length bin range allowed for composition data to be considered as conditional age-at-length data. Default=0.
   }
   \item{\dots}{
     additional arguments that will be passed to the plotting.

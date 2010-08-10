@@ -16,7 +16,7 @@ areacols = "default", areanames = "default", forecastplot = TRUE,
 plotdir = "default", showlegend = TRUE, legendloc =
 "topleft", xlab = "Year", labels = c("Harvest rate/Year",
 "Continuous F", "Landings", "Total catch", "Predicted Discards",
-"Discard fraction", "(mt)", "(numbers x1000)"),
+"Discard fraction", "(mt)", "(numbers x1000)", "Observed and expected"),
 catchasnumbers = FALSE, pwidth = 7, pheight
 = 7, punits = "in", res = 300, ptsize = 12)
 }

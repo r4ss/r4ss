@@ -13,10 +13,11 @@ tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE, pntscalar = 2.6,
 minnbubble = 8, pwidth = 7, pheight = 7, punits = "in", ptsize = 12, res
 = 300, cex.main = 1, col1 = "blue", col2 = "red", col3 = "grey80",
 labels = c("Year", "Frequency", "Tag Group",
-"Fit to tag recaptures by tag group",
-"Tag recaptures aggregated across tag groups",
-"Observed tag recaptures by year and tag group",
-"Residuals for tag recaptures: (obs-exp)/sqrt(exp)"),
+           "Fit to tag recaptures by tag group",
+           "Tag recaptures aggregated across tag groups",
+           "Observed tag recaptures by year and tag group",
+           "Residuals for tag recaptures: (obs-exp)/sqrt(exp)",
+           "Observed and expected tag recaptures by year and tag group"),
 plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.

@@ -11,8 +11,8 @@ controls for the bias adjustment in Stock Synthesis
 }
 \usage{
 SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
-  transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL, newctl=NULL, pwidth=7,
-  pheight=7, punits="in", ptsize=12, res=300)
+  twoplots=TRUE, transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL,
+  newctl=NULL, pwidth=7, pheight=7, punits="in", ptsize=12, res=300)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,9 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
     the minimization. Default=NULL. }
   \item{method}{ A method to apply to the 'optim' function. See ?optim
     for options. Default="BFGS". }
+  \item{twoplots}{ Make a two-panel plot showing devs as well as
+    transformed uncertainty, or just the second panel in the set?
+    Default=TRUE.}
   \item{transform}{ An experimental option to treat the transform the 5
     quantities to improve minimization. Doesn't work well. Default=FALSE. }
   \item{png}{ Send plot to PNG file? Default=FALSE. }

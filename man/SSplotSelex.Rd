@@ -10,7 +10,7 @@
 }
 \usage{
 SSplotSelex(replist, fleets = "all", fleetnames = "default", selexlines
-= 1:5, subplot = 1:9, plot = TRUE, print = FALSE, add = FALSE, labels
+= 1:5, subplot = 1:10, plot = TRUE, print = FALSE, add = FALSE, labels
 = c("Length (cm)", "Age (yr)", "Year", "Selectivity", "Retention"),
 col1 = "red", col2 = "blue",
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
