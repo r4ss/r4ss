@@ -100,10 +100,10 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     parmat <- replist$parameters
     rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF",parmat$Label)[1]-1)
     yr <- parmat$Label[rowrange]
-    yr <- strsplit(yr,"RecrDev_")
+    yr <- strsplit(yr,"_")
     yr2 <- matrix(NA,length(yr),2)
     yr2 <- rep(NA,length(yr))
-    for(i in 1:length(yr)) yr2[i] <- as.numeric(yr[[i]][2])
+    for(i in 1:length(yr)) yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
     yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
     val <- parmat$Value[rowrange]
     std <- parmat$Parm_StDev[rowrange]
@@ -150,6 +150,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   recdevs <- getrecdevs(replist)
   recdevs <- recdevs[!is.na(recdevs$std),]
+
   yr <- recdevs$yr
   val <- recdevs$val
   std <- recdevs$std
