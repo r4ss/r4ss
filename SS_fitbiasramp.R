@@ -101,9 +101,17 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF",parmat$Label)[1]-1)
     yr <- parmat$Label[rowrange]
     yr <- strsplit(yr,"_")
-    yr2 <- matrix(NA,length(yr),2)
     yr2 <- rep(NA,length(yr))
-    for(i in 1:length(yr)) yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
+    for(i in 1:length(yr)){
+      if(yr[[i]][2]!="InitAge") yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
+    }
+    # if label is something like "Main_InitAge_19" then the year
+    # is the minimum of the years from the normal RecrDev labels
+    minyr2 <- min(yr2) 
+    for(i in (1:length(yr))[is.na(yr2)]){
+      if(yr[[i]][2]=="InitAge") yr2[i] <- minyr2 - as.numeric(yr[[i]][length(yr[[i]])])
+    }
+    
     yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
     val <- parmat$Value[rowrange]
     std <- parmat$Parm_StDev[rowrange]

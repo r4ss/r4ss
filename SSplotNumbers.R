@@ -10,19 +10,20 @@ SSplotNumbers <-
              "Age",                           #2
              "True age (yr)",                 #3
              "SD of observed age (yr)",       #4
-             "Mean age (yr)",                 #5
-             "Mean age in the population",    #6
-             "Ageing imprecision",            #7
-             "Numbers at age at equilibrium", #8
-             "Equilibrium age distribution",  #9
-             "Sex ratio of numbers at age (males/females)"), #10
+             "Mean observed age (yr)",        #5
+             "Mean age (yr)",                 #6
+             "Mean age in the population",    #7
+             "Ageing imprecision",            #8
+             "Numbers at age at equilibrium", #9
+             "Equilibrium age distribution",  #10
+             "Sex ratio of numbers at age (males/females)"), #11
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1,
            plotdir="default",
            verbose=TRUE)
 {
   # plot various things related to numbers-at-age for Stock Synthesis
-  
+
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   natage    <- replist$natage
@@ -41,7 +42,10 @@ SSplotNumbers <-
     morph_indexing  <- replist$morph_indexing
     accuage         <- replist$accuage
     endyr           <- replist$endyr
+    N_ageerror_defs <- replist$N_ageerror_defs
     AAK             <- replist$AAK
+    age_error_mean  <- replist$age_error_mean
+    age_error_sd    <- replist$age_error_sd
 
     mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1 & morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
 
@@ -72,7 +76,7 @@ SSplotNumbers <-
       			   natage$Yr <= (endyr+1) &
       			   natage$BirthSeas==min(bseas),]
 #      			   natage$Bio_Pattern==1,] # formerly filtered
-        
+
         # create data frame with 0 values to fill across submorphs
         morphlist <- unique(natagetemp_all$SubMorph)
         natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1] & natagetemp_all$Bio_Pattern==1,]
@@ -81,7 +85,7 @@ SSplotNumbers <-
         # combining across submorphs and growth patterns
         for(imorph in 1:length(morphlist)){
           for(igp in 1:ngpatterns){
-            natagetemp_imorph_igp <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph] & 
+            natagetemp_imorph_igp <- natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph] &
                                                     natagetemp_all$Bio_Pattern==igp,]
             natagetemp0[,11+0:accuage] <- natagetemp0[,11+0:accuage] + natagetemp_imorph_igp[,11+0:accuage]
           } # end growth pattern loop
@@ -127,10 +131,10 @@ SSplotNumbers <-
 
         ylim <- c(0,max(meanage))
 
-        ylab <- labels[5]
-        plottitle1 <- labels[6]
+        ylab <- labels[6]
+        plottitle1 <- labels[7]
         if(nareas>1) plottitle1 <- paste(plottitle1,"in",areanames[iarea])
-        
+
         tempfun <- function(){
           # bubble plot with line
           bubble3(x=resx, y=resy, z=resz,
@@ -168,7 +172,7 @@ SSplotNumbers <-
     } # end area loop
     if(nsexes>1){
       for(iarea in areas){
-        plottitle2 <- paste(labels[10],sep="")
+        plottitle2 <- paste(labels[11],sep="")
         if(nareas > 1) plottitle2 <- paste(plottitle2," for ",areanames[iarea],sep="")
 
         natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
@@ -198,9 +202,9 @@ SSplotNumbers <-
     equilibfun <- function(){
       equilage <- natage[natage$Era=="VIRG",]
       equilage <- equilage[as.vector(apply(equilage[,-(1:10)],1,sum))>0,]
-      
+
       plot(0,type='n',xlim=c(0,accuage),ylim=c(0,1.05*max(equilage[,-(1:10)])),xaxs='i',yaxs='i',
-           xlab='Age',ylab=labels[8],main=labels[9])
+           xlab='Age',ylab=labels[9],main=labels[10])
 
       # now fill in legend
       legendlty <- NULL
@@ -239,31 +243,43 @@ SSplotNumbers <-
     } # close if 14 in print
 
     # plot the ageing imprecision for all age methods
-    if(!is.null(AAK)){
-      sd_vectors <- as.data.frame(AAK[,1,])
-      n_age_error_keys <- 1
-      if(!is.null(nrow(AAK[,1,]))){n_age_error_keys <- nrow(AAK[,1,])}
-      if(is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[,1])-0.5,by=1)}
-      if(!is.null(nrow(AAK[,1,]))){xvals <- seq(0.5,length(sd_vectors[1,]-0.5),by=1)}
-      ylim <- c(0,max(sd_vectors))
-      if(n_age_error_keys==1){ploty <- sd_vectors[,1]}
-      if(n_age_error_keys>1){ploty <- sd_vectors[1,]}
+    if(N_ageerror_defs > 0){
+      xvals <- age_error_sd$age + 0.5
+      yvals <- age_error_sd[,-1]
+      ylim <- c(0,max(yvals))
+      if(N_ageerror_defs == 1) colvec <- "black" else colvec <- rich.colors.short(N_ageerror_defs)
+
       ageingfun <- function(){
-        plot(xvals,ploty,ylim=ylim,type="o",col="black",xlab=labels[3],ylab=labels[4],main=labels[7])
-        if(n_age_error_keys > 1){
-          for(i in 2:n_age_error_keys){
-            lines(xvals,sd_vectors[i,],type="o",col=rich.colors.short(n_age_error_keys)[i])
-          } # close for n keys loop
-        } # close if more than one key statement
+        matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,xlab=labels[3],ylab=labels[4],main=labels[8])
         abline(h=0,col="grey") # grey line at 0
       }
+
+      # check for bias in ageing error pattern
+      ageingbias <- age_error_mean[,-1] - (age_error_mean$age+0.5)
+
+      if(mean(ageingbias==0)!=1){
+        ageingfun2 <- function(){
+          yvals <- age_error_mean[,-1]
+          ylim <- c(0,max(yvals))
+          matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,xlab=labels[3],ylab=labels[5],main=labels[8])
+          abline(h=0,col="grey") # grey line at 0
+          abline(0,1,col="grey") # grey line with slope = 1
+        }
+      }
+
       if(plot & 5 %in% subplots){
         ageingfun()
+        if(mean(ageingbias==0)!=1) ageingfun2()
       } # end if 14 in plot
       if(print & 5 %in% subplots){
-        pngfun(file=paste(plotdir,"14_ageerrorkeys.png",sep=""))
+        pngfun(file=paste(plotdir,"14_ageerrorSD.png",sep=""))
         ageingfun()
         dev.off()
+        if(mean(ageingbias==0)!=1){
+          pngfun(file=paste(plotdir,"14_ageerrorMeans.png",sep=""))
+          ageingfun2()
+          dev.off()
+        }
       } # close if 14 in print
     } # end if AAK
 

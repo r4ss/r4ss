@@ -11,16 +11,19 @@
 }
 \usage{
 SSplotNumbers(replist, subplots = 1:5, plot = TRUE, print = FALSE,
-areas = "all", areanames = "default",
-areacols = "default", pntscalar = 2.6, add =
-FALSE,  labels = c("Year", "Age", "True age (yr)",
-  "SD of observed age (yr)",       
-  "Mean age (yr)",                 
-  "Mean age in the population",    
-  "Ageing imprecision",            
-  "Numbers at age at equilibrium", 
-  "Equilibrium age distribution",  
-  "Sex ratio of numbers at age (males/females)"),
+areas = "all", areanames = "default", areacols = "default",
+pntscalar = 2.6, add = FALSE,
+labels = c("Year",
+           "Age",
+           "True age (yr)",
+           "SD of observed age (yr)",
+           "Mean observed age (yr)",
+           "Mean age (yr)",
+           "Mean age in the population",
+           "Ageing imprecision",
+           "Numbers at age at equilibrium",
+           "Equilibrium age distribution",
+           "Sex ratio of numbers at age (males/females)"),
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }

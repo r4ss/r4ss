@@ -888,6 +888,7 @@ SS_output <-
         age_error_mean[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 1,-1]))
         age_error_sd[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 2,-1]))
       }
+      returndat$N_ageerror_defs <- N_ageerror_defs
       returndat$AAK <- AAK
       returndat$age_error_mean <- age_error_mean
       returndat$age_error_sd <- age_error_sd
