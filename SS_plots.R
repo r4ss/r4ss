@@ -50,6 +50,7 @@ SS_plots <-
   nfleets     <- replist$nfleets
   nareas      <- replist$nareas
   timeseries  <- replist$timeseries
+  lbins       <- replist$lbins
   inputs      <- replist$inputs
   endyr       <- replist$endyr
   SS_version  <- replist$SS_version
@@ -401,7 +402,7 @@ SS_plots <-
     }
 
     # conditional age at length for a given year
-    if(length(intersect(aalyear, unique(yeg$timeseries$Yr)))>0){
+    if(length(intersect(aalyear, unique(timeseries$Yr)))>0){
       SSplotComps(replist=replist,subplot=4:5,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                   aalbin=aalbin,aalyear=aalyear,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -410,7 +411,7 @@ SS_plots <-
                   maxneff=maxneff,cex.main=cex.main,...)
     }
     # conditional age at length for a given length bin
-    if(length(intersect(aalbin, unique(yeg$lbins)))>0){
+    if(length(intersect(aalbin, unique(lbins)))>0){
       SSplotComps(replist=replist,subplot=6,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                   aalbin=aalbin,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
