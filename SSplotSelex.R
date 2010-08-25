@@ -60,8 +60,9 @@ SSplotSelex <-
     {
       plotselex <- intselex[intselex$Fleet==i,]
       plotret <- intret[intret$Fleet==i,]
-      time <- FALSE
-      for(t in 5 + 1:nlbinspop) if(length(unique(plotselex[,t]))>1){time <- TRUE}
+
+      # test for time-varying length selectivity
+      time <- any(apply(intret[-nrow(plotselex),-(1:5)], 2, function(x){any(x!=x[1])}))      
       if(time)
       {
         x <- lbinspop
@@ -89,8 +90,8 @@ SSplotSelex <-
           }
         }
       }
-      time2 <- FALSE
-      for(t in 5 + 1:nlbinspop) if(length(unique(intret[intret$Fleet==i,t]))>1){time2 <- TRUE}
+      # test for time-varying length retention
+      time2 <- any(apply(intret[-nrow(intret),-(1:5)],2,function(x){any(x!=x[1])}))      
       if(time2)
       {
         x <- lbinspop
@@ -191,12 +192,12 @@ SSplotSelex <-
     if(m==1 & nsexes==1) sextitle2 <- "Ending"
     if(m==1 & nsexes==2) sextitle2 <- "Female ending"
     if(m==2) sextitle2 <- "Male ending"
+    ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
     for(i in fleets)
     {
       plotageselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
-      time <- FALSE
-      for(t in (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]){
-        if(length(unique(plotageselex[,t]))>1){time <- TRUE} }
+      # test for time-varying age selectivity
+      time <- any(apply(plotageselex[-nrow(plotageselex),ageselexcols],2,function(x){any(x!=x[1])}))      
       if(time)
       {
         if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1))
@@ -270,7 +271,7 @@ SSplotSelex <-
 
 
   # Age-length combined with growth curve
-  if(10 %in% subplot & ngpatterns==1){
+  if(10 %in% subplot & ngpatterns==1){ # need to connect growth patterns to fleets in future
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
     growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
@@ -285,7 +286,6 @@ SSplotSelex <-
       growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
     }
 
-  
     xlab <- labels[2]
     ylab <- labels[1]
     zlab <- labels[4]
@@ -296,46 +296,47 @@ SSplotSelex <-
       if(m==2) sextitle2 <- "Male ending"
       for(i in fleets)
       {
-        plotageselex <- as.numeric(ageselex[ageselex$factor=="Asel" & ageselex$year==endyr & ageselex$fleet==i & ageselex$gender==m,-(1:7)])
         plotlenselex <- as.numeric(sizeselex[sizeselex$Factor=="Lsel" & sizeselex$year==endyr & sizeselex$Fleet==i & sizeselex$gender==m,-(1:5)])
-  
-        x <- seq(0,accuage,by=1)
-        y <- lbinspop
-        z <- plotageselex %o% plotlenselex
-        
-        main <- paste(sextitle2," year selectivity and growth for ", FleetNames[i],sep="")
-  
-        agelenselcontour <- function(){
-          contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
-                  main=main,cex.main=cex.main,col=ians_blues,lwd=2)
-          if(m==1){
-            lines(x,growdatF$Len_Mid,col='white',lwd=5)
-            lines(x,growdatF$Len_Mid,col=col1,lwd=3)
-            lines(x,growdatF$high,col='white',lwd=1,lty=1)
-            lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
-            lines(x,growdatF$low,col='white',lwd=1,lty=1)
-            lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
+        # test if there is any length-based selectivity (otherwise plot is uninformative)
+        if(any(plotlenselex!=1)){ 
+          plotageselex <- as.numeric(ageselex[ageselex$factor=="Asel" & ageselex$year==endyr & ageselex$fleet==i & ageselex$gender==m,-(1:7)])
+          x <- seq(0,accuage,by=1)
+          y <- lbinspop
+          z <- plotageselex %o% plotlenselex # outer product of age- and length-selectivity
+          
+          main <- paste(sextitle2," year selectivity and growth for ", FleetNames[i],sep="")
+    
+          agelenselcontour <- function(){
+            contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
+                    main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+            if(m==1){
+              lines(x,growdatF$Len_Mid,col='white',lwd=5)
+              lines(x,growdatF$Len_Mid,col=col1,lwd=3)
+              lines(x,growdatF$high,col='white',lwd=1,lty=1)
+              lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
+              lines(x,growdatF$low,col='white',lwd=1,lty=1)
+              lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
+            }
+            if(m==2){
+              lines(xm,growdatM$Len_Mid,col='white',lwd=5)
+              lines(xm,growdatM$Len_Mid,col=col2,lwd=3)
+              lines(xm,growdatM$high,col='white',lwd=1,lty=1)
+              lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
+              lines(xm,growdatM$low,col='white',lwd=1,lty=1)
+              lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
+            }
           }
-          if(m==2){
-            lines(xm,growdatM$Len_Mid,col='white',lwd=5)
-            lines(xm,growdatM$Len_Mid,col=col2,lwd=3)
-            lines(xm,growdatM$high,col='white',lwd=1,lty=1)
-            lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
-            lines(xm,growdatM$low,col='white',lwd=1,lty=1)
-            lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
+          if(plot){
+            if(10 %in% subplot) agelenselcontour()
           }
-        }
-        if(plot){
-          if(10 %in% subplot) agelenselcontour()
-        }
-        if(print){
-          if(10 %in% subplot){
-            pngfun(file=paste(plotdir,"03_agelenselexcontour_flt",i,"sex",m,".png",sep=""))
-            agelenselcontour()
-            dev.off()
+          if(print){
+            if(10 %in% subplot){
+              pngfun(file=paste(plotdir,"03_agelenselexcontour_flt",i,"sex",m,".png",sep=""))
+              agelenselcontour()
+              dev.off()
+            }
           }
-        }
-  
+        } # if there is any length-based selectivity
       } # fleets
     } # sexes
   } # if 10 in subplot

@@ -348,7 +348,11 @@ SS_output <-
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
 
-  mainmorphs <- morph_indexing$Index[morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
+  # set mainmorphs as those morphs with the earliest birth season
+  # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
+  temp <- morph_indexing[morph_indexing$Bseas==min(morph_indexing$Bseas) &
+                                        morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+  mainmorphs <- c(min(temp$Index[temp$Gender==1]),min(temp$Index[temp$Gender==2]))
   if(length(mainmorphs)==0) print("!Error with morph indexing in SS_output function.",quote=FALSE)
 
   # forecast
@@ -519,7 +523,7 @@ SS_output <-
   MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",2,"selparm(Size)_By_Year_after_adjustments",-1)
   if(nrow(MGparmAdj)>2){
     MGparmAdj <- MGparmAdj[,MGparmAdj[1,]!=""]
-    names(MGparmAdj) <- c("Yr",parameters$Label[1:grep("CohortGrowDev",parameters$Label)])
+    names(MGparmAdj) <- c("Yr",parameters$Label[1:(ncol(MGparmAdj)-1)])
   }else{
     MGparmAdj <- NA
   }
@@ -546,6 +550,13 @@ SS_output <-
     SelAgeAdj <- NA
   }
 
+  # recruitment distribution
+  recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1)[,1:6]
+  names(recruitment_dist) <- recruitment_dist[1,]
+  recruitment_dist <- recruitment_dist[-1,]
+  for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
+  
+  
   # gradient
   if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
@@ -613,7 +624,8 @@ SS_output <-
   returndat$MGparmAdj   <- MGparmAdj
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
-
+  returndat$recruitment_dist <- recruitment_dist
+  
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1
   rawbio <- rawrep[begin:(begin+nlbinspop),1:8]

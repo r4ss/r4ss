@@ -48,15 +48,18 @@ SS_plots <-
   }
 
   nfleets     <- replist$nfleets
+  nfishfleets <- replist$nfishfleets
   nareas      <- replist$nareas
+  nseasons    <- replist$nseasons
   timeseries  <- replist$timeseries
   lbins       <- replist$lbins
   inputs      <- replist$inputs
   endyr       <- replist$endyr
   SS_version  <- replist$SS_version
   Run_time    <- replist$Run_time
-  Files_used    <- replist$Files_used
-
+  Files_used  <- replist$Files_used
+  FleetNames  <- replist$FleetNames
+  
   # check for internal consistency
   if(uncertainty==TRUE & inputs$covar==FALSE){
     print("To use uncertainty=T, you need to have covar=T in the input to the SSoutput function",quote=FALSE)
@@ -84,10 +87,24 @@ SS_plots <-
   }}
 
   if(verbose) print("Finished defining objects",quote=FALSE)
+  
   if(nareas>1){
     print(paste("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")",sep=""),quote=FALSE)
     if(areanames[1]=="default") areanames <- paste("area",1:nareas)
   }
+  
+  if(fleetnames[1]=="default") fleetnames <- FleetNames
+  if(fleetcols[1]=="default"){
+    fleetcols <- rich.colors.short(nfishfleets)
+    if(nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets+1)[-1]
+  }
+  if(length(fleetlty)<nfishfleets) fleetlty <- rep(fleetlty,nfishfleets)
+  if(length(fleetpch)<nfishfleets) fleetpch <- rep(fleetpch,nfishfleets)
+  if(areacols[1]=="default"){
+    areacols  <- rich.colors.short(nareas)
+    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
+  }
+
 
   #### prepare for plotting
   # make plot window (operating system specific)
@@ -174,12 +191,16 @@ SS_plots <-
   # stats and dimensions
   if(5 %in% c(plot, print))
   {
+    cat("starting time series plots\n")
     for(isubplot in 1:12){ # which of 12 subplots to make
       for(doforecast in unique(c(FALSE,forecastplot))){ # add forecast or not
         if(isubplot %in% c(7,9,11)){
           for(douncertainty in unique(c(FALSE,uncertainty))){ # add uncertainty or not
             SSplotTimeseries(replist=replist,
                              subplot=isubplot,
+                             areas=areas,
+                             areacols=areacols,
+                             areanames=areanames,
                              forecast=doforecast,
                              uncertainty=douncertainty,
                              plot=(5 %in% plot),
@@ -191,6 +212,9 @@ SS_plots <-
         }else{ # these plots don't have the option for uncertainty
             SSplotTimeseries(replist=replist,
                              subplot=isubplot,
+                             areas=areas,
+                             areacols=areacols,
+                             areanames=areanames,
                              forecast=doforecast,
                              uncertainty=FALSE,
                              plot=(5 %in% plot),
@@ -248,6 +272,13 @@ SS_plots <-
                   print=(7 %in% print),
                   forecastplot=forecastplot,
                   uncertainty=uncertainty)
+
+    if(nareas>1 & nseasons>1){
+      SSplotRecdist(replist=replist,
+                    plot=(7 %in% plot),
+                    print=(7 %in% print),
+                    verbose=verbose)
+    }
   } # end if 7 in plot or print
 
   ### Plot 25: estimating recruitment bias adjustment (probably needs renumbering) ###

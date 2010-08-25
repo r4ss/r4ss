@@ -63,7 +63,6 @@ SSplotPars <-
   fullrepfile  <- paste(dir,repfile,sep="/")
   fullctlfile  <- paste(dir,ctlfile,sep="/")
 
-  print(fullpostfile)
   postfileinfo <- file.info(fullpostfile)$size
   repfileinfo  <- file.info(fullrepfile)$size
   ctlfileinfo  <- file.info(fullctlfile)$size

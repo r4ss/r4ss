@@ -111,9 +111,9 @@ SSplotTags <-
     tagfun5 <- function(){
       # line plot by year and group
       plottitle <- labels[8]
-      plot(0,type="n",xlim=range(Recaps$Yr),ylim=range(Recaps$Group),xlab=labels[1],ylab=labels[3],
+      plot(0,type="n",xlim=range(Recaps$Yr),ylim=range(Recaps$Group)+c(0,1),xlab=labels[1],ylab=labels[3],
            main=plottitle,cex.main=cex.main)
-      rescale <- 5/max(Recaps$Obs,Recaps$Exp)
+      rescale <- .9*min(ngroups-1,5)/max(Recaps$Obs,Recaps$Exp)
       for(igroup in sort(unique(Recaps$Group))){
         lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col="grey",lty=3)
         points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type="o",pch=16,cex=.5)
