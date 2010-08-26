@@ -1,29 +1,24 @@
-\name{SSplotMnwt}
-\alias{SSplotMnwt}
+\name{SSplotRecdist}
+\alias{SSplotRecdist}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  Plot mean weight data and fits.
+  Plot of recruitment distribution among areas and seasons
 }
 \description{
-  Plot mean weight data and fits from Stock Synthesis output. Intervals
-  are based on T-distributions as specified in model.
+  Image plot shows fraction of recruitment in each combination of area
+  and season. This is based on the RECRUITMENT_DIST section of the
+  Report.sso file.
 }
 \usage{
-SSplotMnwt(replist, add = FALSE, plot = TRUE, print = FALSE,
-fleets = "all", fleetnames = "default", labels =
-c("Year", "discard", "retained catch", "whole catch",
-"Mean individual body weight (kg)", "Mean weight in", "for fleet"),
-col1="blue", col2="red",
-pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
-cex.main=1, plotdir = "default", verbose = TRUE)
-}
-%- maybe also 'usage' for other objects documented here.
+function(replist, plot=TRUE, print=FALSE, areanames=NULL,
+seasnames=NULL, xlab="", ylab="",
+main="Distribution of recruitment by area and season",
+plotdir="default", pwidth=7, pheight=7, punits="in",
+res=300, ptsize=12, cex.main=1, verbose=TRUE)
+
 \arguments{
   \item{replist}{
     list created by \code{SS_output}
-  }
-  \item{add}{
-    add to exising plot (not yet implemented)
   }
   \item{plot}{
     plot to active plot device?
@@ -31,24 +26,21 @@ cex.main=1, plotdir = "default", verbose = TRUE)
   \item{print}{
     print to PNG files?
   }
+  \item{areanames}{
+    optional vector to replace c("Area1","Area2",...)
+  }
+  \item{seasonnames}{
+    optional vector to replace c("Season1","Season2",...)
+  }
+  \item{xlab}{
+    optional x-axis label (if the area names aren't informative enough)
+  }
+  \item{ylab}{
+    optional y-axis label (if the season names aren't informative enough)
+  }
   \item{plotdir}{
     directory where PNG files will be written. by default it will
     be the directory where the model was run.
-  }
-  \item{fleets}{
-    optional vector to subset fleets for which plots will be made
-  }
-  \item{fleetnames}{
-    optional replacement for fleenames used in data file
-  }
-  \item{labels}{
-    vector of labels for plots (titles and axis labels)
-  }
-  \item{col1}{
-    first color to use in plot
-  }
-  \item{col2}{
-    second color to use in plot
   }
   \item{pwidth}{
     width of plot written to PNG file
@@ -86,7 +78,7 @@ cex.main=1, plotdir = "default", verbose = TRUE)
 %% ~put references to the literature/web site here ~
 }
 \author{
-  Ian Taylor, Ian Stewart
+  Ian Taylor
 }
 \note{
 %%  ~~further notes~~

@@ -1,5 +1,5 @@
 SSplotRecdist <-
-  function(replist,add=FALSE,plot=TRUE,print=FALSE,
+  function(replist,plot=TRUE,print=FALSE,
            areanames=NULL,
            seasnames=NULL,
            xlab="",
