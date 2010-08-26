@@ -886,7 +886,7 @@ SS_output <-
   rawAAK <- matchfun2("AGE_AGE_KEY",1,"SELEX_database",-1,cols=1:(accuage+2))
   if(length(rawAAK)>1){
     starts <- grep("KEY:",rawAAK[,1])
-    N_ageerror_defs <- length(starts)
+    returndat$N_ageerror_defs <- N_ageerror_defs <- length(starts)
     if(N_ageerror_defs > 0)
     {
       nrowsAAK <- nrow(rawAAK)/nsexes - 3
@@ -900,7 +900,6 @@ SS_output <-
         age_error_mean[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 1,-1]))
         age_error_sd[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 2,-1]))
       }
-      returndat$N_ageerror_defs <- N_ageerror_defs
       returndat$AAK <- AAK
       returndat$age_error_mean <- age_error_mean
       returndat$age_error_sd <- age_error_sd

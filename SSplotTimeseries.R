@@ -67,7 +67,7 @@ SSplotTimeseries <-
   # get spawning season
   spawnseas <- unique(ts$Seas[!is.na(ts$SpawnBio)])
   if(length(spawnseas) > 1) stop("more than one season has spawning biomass in TIME_SERIES: seasons", spawnseas)
-  if(spawnseas != 1){
+  if(spawnseas != 1 & subplot %in% c(3,6,7,8,9,10) ){
     cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="") 
   }
 
@@ -75,7 +75,6 @@ SSplotTimeseries <-
   ts$period <- "time"
   ts$period[ts$Yr > endyr+1] <- "fore"
   if(!forecastplot) ts$period[ts$Yr > endyr + 1] <- "exclude"
-  if(forecastplot) xlim=range(tsyears) else xlim=range(tsyears[ts$period=="time"])
 
   # a function to make the plot
   biofunc <- function(subplot){

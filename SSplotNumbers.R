@@ -203,19 +203,24 @@ SSplotNumbers <-
       equilage <- natage[natage$Era=="VIRG",]
       equilage <- equilage[as.vector(apply(equilage[,-(1:10)],1,sum))>0,]
 
-      plot(0,type='n',xlim=c(0,accuage),ylim=c(0,1.05*max(equilage[,-(1:10)])),xaxs='i',yaxs='i',
-           xlab='Age',ylab=labels[9],main=labels[10])
+      plot(0,type='n',xlim=c(0,accuage),
+           ylim=c(0,1.05*max(equilage[equilage$BirthSeas==min(equilage$BirthSeas)
+             & equilage$Seas==1,-(1:10)])),
+           xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10])
 
       # now fill in legend
       legendlty <- NULL
       legendcol <- NULL
       legendlegend <- NULL
+      if(length(unique(equilage$BirthSeas))>1) cat("showing equilibrium age in in season 1 for only the first birth season\n")
       for(iarea in areas){
         for(m in 1:nsexes){
-          equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m,]
+          equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m
+                                   & equilage$BirthSeas==min(equilage$BirthSeas)
+                                   & equilage$Seas==1,]
           if(nrow(equilagetemp)>1){
             print('in plot of equilibrium age composition by gender and area',quote=FALSE)
-            print('multiple morphs or seasons not supporting, using first row from choices below',quote=FALSE)
+            print('multiple morphs or seasons not supported, using first row from choices below',quote=FALSE)
             print(equilagetemp[,1:10])
           }
           equilagetemp <- equilagetemp[1,-(1:10)]

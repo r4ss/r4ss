@@ -43,6 +43,8 @@ SSplotSelex <-
   if(fleetnames[1]=="default") fleetnames <- FleetNames
 
   # selex and retention
+  for(i in fleets)
+      {
   for(m in 1:nsexes)
   {
     if(m==1 & nsexes==1) sextitle1 <- "Time-"
@@ -56,8 +58,6 @@ SSplotSelex <-
     intkeep <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
     intdead <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
     intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
-    for(i in fleets)
-    {
       plotselex <- intselex[intselex$Fleet==i,]
       plotret <- intret[intret$Fleet==i,]
 

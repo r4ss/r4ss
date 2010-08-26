@@ -28,7 +28,9 @@ SSplotTags <-
     grouprange <- unique(tagdbase2$Rep)
     ngroups <- length(unique(tagdbase2$Rep))
     npages <- ceiling(ngroups/(tagrows*tagcols))
-
+    nseasons <- replist$nseasons
+    width <- 0.5/nseasons
+    
     tagfun1 <- function(ipage=0){
       # obs & exp recaps by tag group
       par(mfcol=c(tagrows,tagcols),mar=c(2.5,2.5,2,1),cex.main=cex.main,oma=c(2,2,2,0))
@@ -39,7 +41,7 @@ SSplotTags <-
         plot(0,type="n",xlab="",ylab="",ylim=ylim,main=paste("TG ",igroup,sep=""),
              xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr)-0.5,max(tagtemp$Yr)+0.5))
         for (iy in 1:length(tagtemp$Yr)){
-          xx <- c(tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]-0.5,tagtemp$Yr[iy]+0.5,tagtemp$Yr[iy]+0.5)
+          xx <- c(tagtemp$Yr[iy]-width,tagtemp$Yr[iy]-width,tagtemp$Yr[iy]+width,tagtemp$Yr[iy]+width)
           yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
           polygon(xx,yy,col=col3)
         }
@@ -88,7 +90,7 @@ SSplotTags <-
       plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg[,2],RecAg[,3])*1.05),type="n",xaxs="i",yaxs="i",
            xlab=labels[1],ylab=labels[2],main=labels[5],cex.main=cex.main)
       for (iy in 1:nrow(RecAg)){
-        xx <- c(RecAg[iy,1]-0.5,RecAg[iy,1]-0.5,RecAg[iy,1]+0.5,RecAg[iy,1]+0.5)
+        xx <- c(RecAg[iy,1]-width,RecAg[iy,1]-width,RecAg[iy,1]+width,RecAg[iy,1]+width)
         yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
         polygon(xx,yy,col=col3)
       }
