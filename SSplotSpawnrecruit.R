@@ -16,7 +16,7 @@ SSplotSpawnrecruit <-
   recruit <- recruit[recruit$era %in% c("Main","Fixed","Late"),]
   timeseries <- replist$timeseries
 
-  if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr))
+  if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr, recruit$exp_recr, recruit$adjusted))
   x <- recruit$spawn_bio
   if(is.null(xlim)) xlim=c(0, max(x))
   recruitfun <- function(){

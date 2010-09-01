@@ -126,8 +126,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
           # run simulation
           if(file.exists("covar.sso")) file.remove("covar.sso")
-          if(intern) print(paste("Running model. ADMB output generated during model run will be written to ",
-                                 getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
+          if(intern) cat(paste("Running model. ADMB output generated during model run \n   will be written to ",
+                               getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
           ADMBoutput <- system(paste(exe,simextras),intern=intern)
           if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                                   "###"," ",ADMBoutput), con = 'ADMBoutput.txt')

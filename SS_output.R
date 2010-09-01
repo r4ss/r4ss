@@ -414,6 +414,8 @@ SS_output <-
   pars$checkdiff3 <- abs(pars$Value-(pars$Max-(pars$Max-pars$Min)/2))
   pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
   pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
+
+  stats$table_of_phases <- table(pars$Phase)
   pars <- pars[pars$Phase %in% 0:100,]
   stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
 
@@ -718,7 +720,7 @@ SS_output <-
   depletionseries <- tsspaw_bio/tsspaw_bio[1]
   stats$SBzero <- tsspaw_bio[1]
   # if(nsexes==1) stats$SBzero <- stats$SBzero/2
-  stats$current_depletion <- depletionseries[length(depletionseries)]
+  stats$current_depletion <- depletionseries[length(depletionseries)] # doesn't work for spatial models
 
   # total landings
   ls <- nrow(ts)-1

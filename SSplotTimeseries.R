@@ -28,6 +28,12 @@ SSplotTimeseries <-
   # subplot11 = recruitment total (with or without uncertainty)
   # subplot12 = recruitment by area
 
+
+  # notes:
+  # 1. seems like subplots 3 and 6 should be turned off for single-season models.
+  #    I'm not sure why they aren't. -Ian T. 9/1/2010
+  #
+  
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get values from replist

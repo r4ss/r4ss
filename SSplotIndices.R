@@ -18,7 +18,7 @@ function(replist,subplots=1:7,
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   cpue        <- replist$cpue
-  if(is.na(cpue)){
+  if(is.null(dim(cpue))){
     cat("no CPUE data in this model\n")
     return()
   }

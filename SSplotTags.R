@@ -21,7 +21,7 @@ SSplotTags <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   tagdbase2 <- replist$tagdbase2
-  if(nrow(tagdbase2)==0){
+  if(is.null(tagdbase2) || nrow(tagdbase2)==0){
     print("skipping tag plots because there's no tagging data",quote=FALSE)
   }else{
     # calculations needed for printing to multiple PNG files
