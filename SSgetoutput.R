@@ -9,7 +9,8 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
   ## else print("input 'env' should be either an environment or a string",quote=FALSE)
   ## env <- ifelse(exists(env),env,get(env))
   ## if(is.environment(env)) print("assigning objects to environment:",env)
-
+  cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
+ 
   # change inputs so that keyvec and dirvec have matching lengths or keyvec=NULL
   if(listlists) biglist <- list()
   n1 <- length(keyvec)

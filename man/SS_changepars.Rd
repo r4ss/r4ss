@@ -17,14 +17,18 @@ verbose = TRUE)
 \arguments{
   \item{dir}{ Directory with control file to change. }
   \item{ctlfile}{ Control file name. Default="control.ss_new". }
-  \item{newctlfile}{ Name of new control file to be written. Default="control_modified.ss". }
-  \item{linenums}{ Line numbers of control file to be modified. Default=NULL. }
+  \item{newctlfile}{ Name of new control file to be written.
+    Default="control_modified.ss". }
+  \item{linenums}{ Line numbers of control file to be modified. Either
+    this or the Strings input are needed. Default=NULL. }
   \item{strings}{ Strings (with optional partial matching) indicating
-    which parameters to be run. Strings correspond to the commented
-    parameter names included in control.ss_new. Default=NULL. }
+    which parameters to be modified. This is an alternative to linenums.
+    Strings correspond to the commented parameter names included in
+    control.ss_new, or whatever is written as comment at the end of the
+    14 number parameter lines. Default=NULL. }
   \item{newvals}{ Vector of new parameter values. Default=NULL. }
-  \item{estimate}{ Vector of TRUE/FALSE for which changed parameters are to be
-    estimated. Default=FALSE. }
+  \item{estimate}{ Vector of TRUE/FALSE for which changed parameters are
+    to be estimated. Default=FALSE. }
   \item{verbose}{ More detailed output to command line. Default=TRUE. }
 }
 % \details{

@@ -126,8 +126,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
           # run simulation
           if(file.exists("covar.sso")) file.remove("covar.sso")
-          if(intern) cat(paste("Running model. ADMB output generated during model run \n   will be written to ",
-                               getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
+          if(intern) cat(paste("Running model. ADMB output generated during model run will be written to:\n   ",
+                               getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",sep=""))
           ADMBoutput <- system(paste(exe,simextras),intern=intern)
           if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                                   "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
@@ -169,8 +169,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             if(verbose) print("running estimation models",quote=F)
 
             if(verbose & exists("runtime")){
-              print("Duration of previous model run:",quote=FALSE)
-              print(Sys.time() - runtime)
+              cat("Duration of previous model run:",Sys.time() - runtime,"\n")
               runtime <- Sys.time()
             }
             # text description of particular case
@@ -180,7 +179,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             # if fitbiasramp will be applied on some model runs
             # but NOT this one
             if(fitbiasramp & !ibiasadj) key <- paste(key,"_nobiasadj",sep="")
-            if(verbose) print(paste("key = ",key,", max(sims) = ",max(sims),sep=""),quote=FALSE)
+            if(verbose) cat("key = ",key,", max(sims) = ",max(sims),"\n",sep="")
 
             # new names for output files
             repfilename <- paste("Report_",key,".sso",sep="")
@@ -192,15 +191,15 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             ## run estimation model
             if(!is.na(repmastersize) & repmastersize>0 & skipfiles==TRUE){
               # skip this run if a file with non-zero file size exists already
-              print(paste("skipping ",repfilename," with size=",repmastersize,sep=""),quote=FALSE)
+              cat("skipping",repfilename,"with size =",repmastersize,"\n")
             }else{
               if(is.na(repmastersize)){
-                print(paste("no rep file matching:",repfilename),quote=FALSE)
+                cat("no rep file matching:",repfilename,"\n")
               }else{
-                if(repmastersize==0) print(paste("empty rep file:",repfilename),quote=FALSE)
+                if(repmastersize==0) cat("empty rep file:",repfilename)
               }
-              if(skipfiles) print("running model to replace",quote=FALSE)
-              if(!skipfiles) print("running model to create",quote=FALSE)
+              if(skipfiles) cat("running model to replace\n")
+              if(!skipfiles) cat("running model to create\n")
               # write temporary rep file to show that this run is active
               writeLines(c("Temporary report file to show this model is currently active",
                            paste("running in",getwd()),

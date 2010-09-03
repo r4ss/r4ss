@@ -44,20 +44,20 @@ SSplotSelex <-
 
   # selex and retention
   for(i in fleets)
-      {
-  for(m in 1:nsexes)
   {
-    if(m==1 & nsexes==1) sextitle1 <- "Time-"
-    if(m==1 & nsexes==2) sextitle1 <- "Female time-"
-    if(m==2) sextitle1 <- "Male time-"
-    if(m==1 & nsexes==1) sextitle2 <- "Ending"
-    if(m==1 & nsexes==2) sextitle2 <- "Female ending"
-    if(m==2) sextitle2 <- "Male ending"
-    intret <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
-    intmort <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$gender==m,]
-    intkeep <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
-    intdead <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
-    intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
+    for(m in 1:nsexes)
+    {
+      if(m==1 & nsexes==1) sextitle1 <- "Time-"
+      if(m==1 & nsexes==2) sextitle1 <- "Female time-"
+      if(m==2) sextitle1 <- "Male time-"
+      if(m==1 & nsexes==1) sextitle2 <- "Ending"
+      if(m==1 & nsexes==2) sextitle2 <- "Female ending"
+      if(m==2) sextitle2 <- "Male ending"
+      intret <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
+      intmort <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$gender==m,]
+      intkeep <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
+      intdead <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
+      intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
       plotselex <- intselex[intselex$Fleet==i,]
       plotret <- intret[intret$Fleet==i,]
 
@@ -179,22 +179,22 @@ SSplotSelex <-
           }
         }
       }
-    } # fleets
-  } # sexes
+    } # sexes
+  } # fleets
 
   # Age based selex
   ylab <- labels[4]
-  for(m in 1:nsexes)
+  for(i in fleets)
   {
-    if(m==1 & nsexes==1) sextitle1 <- "Time-"
-    if(m==1 & nsexes==2) sextitle1 <- "Female time-"
-    if(m==2) sextitle1 <- "Male time-"
-    if(m==1 & nsexes==1) sextitle2 <- "Ending"
-    if(m==1 & nsexes==2) sextitle2 <- "Female ending"
-    if(m==2) sextitle2 <- "Male ending"
-    ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
-    for(i in fleets)
+    for(m in 1:nsexes)
     {
+      if(m==1 & nsexes==1) sextitle1 <- "Time-"
+      if(m==1 & nsexes==2) sextitle1 <- "Female time-"
+      if(m==2) sextitle1 <- "Male time-"
+      if(m==1 & nsexes==1) sextitle2 <- "Ending"
+      if(m==1 & nsexes==2) sextitle2 <- "Female ending"
+      if(m==2) sextitle2 <- "Male ending"
+      ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
       plotageselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
       # test for time-varying age selectivity
       time <- any(apply(plotageselex[-nrow(plotageselex),ageselexcols],2,function(x){any(x!=x[1])}))      
@@ -265,10 +265,9 @@ SSplotSelex <-
           }
         } # end if
       } # end if not time varying
-    } # fleets
-  } # sexes
+    } # sexes
+  } # fleets
   flush.console()
-
 
   # Age-length combined with growth curve
   if(10 %in% subplot & ngpatterns==1){ # need to connect growth patterns to fleets in future
@@ -289,13 +288,13 @@ SSplotSelex <-
     xlab <- labels[2]
     ylab <- labels[1]
     zlab <- labels[4]
-    for(m in 1:nsexes)
+    for(i in fleets)
     {
-      if(m==1 & nsexes==1) sextitle2 <- "Ending"
-      if(m==1 & nsexes==2) sextitle2 <- "Female ending"
-      if(m==2) sextitle2 <- "Male ending"
-      for(i in fleets)
+      for(m in 1:nsexes)
       {
+        if(m==1 & nsexes==1) sextitle2 <- "Ending"
+        if(m==1 & nsexes==2) sextitle2 <- "Female ending"
+        if(m==2) sextitle2 <- "Male ending"
         plotlenselex <- as.numeric(sizeselex[sizeselex$Factor=="Lsel" & sizeselex$year==endyr & sizeselex$Fleet==i & sizeselex$gender==m,-(1:5)])
         # test if there is any length-based selectivity (otherwise plot is uninformative)
         if(any(plotlenselex!=1)){ 
@@ -337,8 +336,8 @@ SSplotSelex <-
             }
           }
         } # if there is any length-based selectivity
-      } # fleets
-    } # sexes
+      } # sexes
+    } # fleets
   } # if 10 in subplot
 
   flush.console()
