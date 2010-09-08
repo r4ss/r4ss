@@ -10,12 +10,12 @@
   Report.sso file.
 }
 \usage{
-function(replist, plot=TRUE, print=FALSE, areanames=NULL,
+SSplotRecdist(replist, plot=TRUE, print=FALSE, areanames=NULL,
 seasnames=NULL, xlab="", ylab="",
 main="Distribution of recruitment by area and season",
 plotdir="default", pwidth=7, pheight=7, punits="in",
 res=300, ptsize=12, cex.main=1, verbose=TRUE)
-
+}
 \arguments{
   \item{replist}{
     list created by \code{SS_output}
@@ -29,7 +29,7 @@ res=300, ptsize=12, cex.main=1, verbose=TRUE)
   \item{areanames}{
     optional vector to replace c("Area1","Area2",...)
   }
-  \item{seasonnames}{
+  \item{seasnames}{
     optional vector to replace c("Season1","Season2",...)
   }
   \item{xlab}{
@@ -37,6 +37,9 @@ res=300, ptsize=12, cex.main=1, verbose=TRUE)
   }
   \item{ylab}{
     optional y-axis label (if the season names aren't informative enough)
+  }
+  \item{main}{
+    title for plot
   }
   \item{plotdir}{
     directory where PNG files will be written. by default it will
