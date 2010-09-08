@@ -6,7 +6,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # function to estimate bias adjustment ramp
   # for Stock Synthesis v3.10b
   # by Ian Taylor
-  # June 28, 2010
+  # September 7, 2010
   #
   # Usage: run function with input that is an object from SS_output
   #        from http://code.google.com/p/r4ss/
@@ -16,7 +16,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
-  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10"))){
+  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10","SS-V3.11"))){
     print("!error: this function needs an input object created by SS_output from a SSv3.10 model")
     return()
   }

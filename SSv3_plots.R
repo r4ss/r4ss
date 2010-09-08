@@ -28,6 +28,7 @@ function(
 ################################################################################
 
   codedate <- "April 19, 2010"
+  print("note: this function out of date. We recommend switching from SSv3_plots to SS_plots")
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)

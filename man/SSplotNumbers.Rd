@@ -12,7 +12,7 @@
 \usage{
 SSplotNumbers(replist, subplots = 1:5, plot = TRUE, print = FALSE,
 areas = "all", areanames = "default", areacols = "default",
-pntscalar = 2.6, add = FALSE,
+pntscalar = 2.6, period = c("B","M"), add = FALSE,
 labels = c("Year",
            "Age",
            "True age (yr)",
@@ -55,6 +55,11 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
     based on this maximum size and the values plotted. Often some plots
     look better with one value and others with a larger or smaller
     value. Default=2.6
+  }
+  \item{period}{
+    indicator of whether to make plots using numbers at age just from
+    the beginning ("B") or middle of the year ("M") (new option starting
+    with SSv3.11)
   }
   \item{add}{
     add to existing plot? (not yet implemented)

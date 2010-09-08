@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "June 14, 2010"
+  codedate <- "September 7, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -352,7 +352,8 @@ SS_output <-
   # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
   temp <- morph_indexing[morph_indexing$Bseas==min(morph_indexing$Bseas) &
                                         morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-  mainmorphs <- c(min(temp$Index[temp$Gender==1]),min(temp$Index[temp$Gender==2]))
+  mainmorphs <- min(temp$Index[temp$Gender==1])
+  if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
   if(length(mainmorphs)==0) print("!Error with morph indexing in SS_output function.",quote=FALSE)
 
   # forecast
@@ -845,6 +846,26 @@ SS_output <-
   }
   returndat$cpue <- cpue
 
+# temporary split in the code to work with 3.11 and 3.10
+if(SS_versionshort==c("SS-V3.11")){
+  # Numbers at age
+  rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(12+accuage),substr1=FALSE)
+  if(length(rawnatage)>1){
+    names(rawnatage) <- rawnatage[1,]
+    rawnatage <- rawnatage[-1,]
+    for(i in (1:ncol(rawnatage))[!(names(rawnatage) %in% c("Beg/Mid","Era"))]) rawnatage[,i] = as.numeric(rawnatage[,i])
+    returndat$natage <- rawnatage
+  }
+
+  # Numbers at length
+  rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(11+nlbinspop),substr1=FALSE)
+  if(length(rawnatlen)>1){
+    names(rawnatlen) <- rawnatlen[1,]
+    rawnatlen <- rawnatlen[-1,]
+    for(i in (1:ncol(rawnatlen))[!(names(rawnatlen) %in% c("Beg/Mid","Era"))]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
+    returndat$natlen <- rawnatlen
+  }
+}else{
   # Numbers at age
   rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(11+accuage),substr1=FALSE)
   if(length(rawnatage)>1){
@@ -862,6 +883,7 @@ SS_output <-
     for(i in (1:ncol(rawnatlen))[names(rawnatlen)!="Era"]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
     returndat$natlen <- rawnatlen
   }
+}
   
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
@@ -910,14 +932,19 @@ SS_output <-
 
   # catch at age
   catage <- matchfun2("CATCH_AT_AGE",1,"BIOLOGY",-1)
-  catage <- catage[,apply(catage,2,emptytest)<1]
-  names(catage) <- catage[1,]
-  catage <- catage[-1,]
-  for(icol in (1:ncol(catage))[substr(names(catage),1,2)!="XX" & names(catage)!="Era"]){
-    catage[,icol] <- as.numeric(catage[,icol])
+  if(catage[[1]][1]=="absent"){
+    catage <- NA
+    print("! Warning: no catch-at-age numbers because 'detailed age-structured reports' turned off in starter file.",quote=F)
+  }else{
+    catage <- catage[,apply(catage,2,emptytest)<1]
+    names(catage) <- catage[1,]
+    catage <- catage[-1,]
+    for(icol in (1:ncol(catage))[substr(names(catage),1,2)!="XX" & names(catage)!="Era"]){
+      catage[,icol] <- as.numeric(catage[,icol])
+    }
   }
   returndat$catage <- catage
-
+  
   # adding stuff to list which gets returned by function
   if(comp){
     returndat$lendbase      <- lendbase

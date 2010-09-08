@@ -24,7 +24,7 @@ function(
 ################################################################################
 
 codedate <- "April 16, 2010"
-
+print("note: this function out of date. We recommend switching from SSv3_output to SS_output")
 if(verbose){
   print(paste("R function updated:",codedate),quote=FALSE)
   print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=FALSE)

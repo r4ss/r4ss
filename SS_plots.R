@@ -461,7 +461,7 @@ SS_plots <-
                 maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                 print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
-    if(verbose){
+    if(nrow(replist$condbase)>0 & verbose){
       print("Finished plot 21: mean age and std. dev. in conditional AAL",quote=FALSE)
       print("  This is a new plot, currently in beta mode.",quote=FALSE)
       print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=FALSE)
