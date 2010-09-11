@@ -84,7 +84,7 @@ SS_output <-
   # warn if SS version used to create rep file is too old or too new for this code
   SS_version <- rephead[1]
   SS_versionshort <- toupper(substr(SS_version,1,8))
-  if(!(SS_versionshort %in% c("SS-V3.10"))){
+  if(!(SS_versionshort %in% c("SS-V3.10","SS-V3.11"))){
     print(paste("! Warning, this function tested on SS-V3.10. You are using",substr(SS_version,1,9)),quote=FALSE)
   }else{
     if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=FALSE)
