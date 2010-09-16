@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "September 7, 2010"
+  codedate <- "September 16, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -212,10 +212,12 @@ SS_output <-
         if(verbose) print(paste("Got warning file. There", textblock, "in", warnname),quote=FALSE)
       }else{
         print("warning.sso file is missing the string 'N warnings'!",quote=FALSE)
+        nwarn <- NA
       }
     }
   }else{
     if(verbose) print("You skipped the warnings file",quote=FALSE)
+    nwarn <- NA
   }
   if(verbose) print("Finished reading files",quote=FALSE)
   flush.console()
@@ -376,6 +378,7 @@ SS_output <-
   tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
+  stats$Nwarnings <- nwarn
   stats$warnings <- warn
 
   # likelihoods
