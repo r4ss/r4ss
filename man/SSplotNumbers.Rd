@@ -23,8 +23,6 @@ labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
 "expected numbers at length"),
 pwidth = 7, pheight = 7, punits = "in", res = 300,
 ptsize = 12, cex.main = 1, plotdir = "default", verbose = TRUE)
-pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
-cex.main = 1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
