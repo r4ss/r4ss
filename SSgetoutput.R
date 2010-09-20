@@ -9,7 +9,8 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
   ## else print("input 'env' should be either an environment or a string",quote=FALSE)
   ## env <- ifelse(exists(env),env,get(env))
   ## if(is.environment(env)) print("assigning objects to environment:",env)
-  cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
+  if(!is.null(keyvec)) cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
+  if(!is.null(dirvec)) cat('length(dirvec) as input to SSgetoutput:',length(dirvec),'\n')
  
   # change inputs so that keyvec and dirvec have matching lengths or keyvec=NULL
   if(listlists) biglist <- list()
@@ -40,7 +41,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     }
     newobject <- objectnames[i]
 
-    if(verbose) print(paste("getting files with key =",key),quote=FALSE)
+    if(verbose & !is.null(key)) print(paste("getting files with key =",key),quote=FALSE)
 
     repfilename <- paste("Report",key2,".sso",sep="")
     covarname <- paste("covar",key2,".sso",sep="")

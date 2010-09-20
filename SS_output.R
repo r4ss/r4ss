@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "September 16, 2010"
+  codedate <- "September 20, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -820,6 +820,7 @@ SS_output <-
   flush.console()
 
   returndat$managementratiolabels <- managementratiolabels
+  returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
 
   # Spawner-recruit curve
   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)

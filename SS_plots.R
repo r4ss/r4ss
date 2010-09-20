@@ -515,4 +515,5 @@ SS_plots <-
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) print("Finished all requested plots in SS_plots function",quote=FALSE)
   ### end of SS_plots function
+  return(invisible(999))
 }

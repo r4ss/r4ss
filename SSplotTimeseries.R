@@ -45,7 +45,11 @@ SSplotTimeseries <-
   nareas         <- replist$nareas
   derived_quants <- replist$derived_quants
   FecPar2        <- replist$FecPar2
+  B_ratio_denominator <- replist$B_ratio_denominator
 
+  # temporary fix for SS_output versions prior to 9/20/2010
+  if(is.null(B_ratio_denominator)) B_ratio_denominator <- 1
+  
   # check if spawning output rather than spawning biomass is plotted
   if(plotdir=="default") plotdir <- replist$inputs$dir
   if(FecPar2!=0) labels[5] <- labels[7]
@@ -63,8 +67,7 @@ SSplotTimeseries <-
 
   #scaling factor for single sex models
   if(bioscale=="default"){
-    bioscale <- 1
-    if(nsexes==1) bioscale <- 0.5
+    if(nsexes==1) bioscale <- 0.5 else bioscale <- 1
   }
   # modifying data to subset for a single season
   ts <- timeseries
@@ -182,8 +185,11 @@ SSplotTimeseries <-
         if(subplot==9){ # spawning depletion
           stdtable <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
           stdtable$Yr <- as.numeric(substring(stdtable$LABEL,8))
-          bioscale <- 1
-          if(abs(stdtable$Value[1] - 4)<.1) bioscale <- .25 # temporary fix
+
+          ### these temporary fixes now replaced using "B_ratio_denominator"
+          ## if(abs(stdtable$Value[1] - 4)<.1) bioscale <- 1/4 # temporary fix
+          ## if(abs(stdtable$Value[1] - 2.5)<.1) bioscale <- 1/2.5 # temporary fix
+          bioscale <- B_ratio_denominator
         }
         if(subplot==11){ # recruitment
           stdtable <- derived_quants[substring(derived_quants$LABEL,1,5)=="Recr_",]

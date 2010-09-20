@@ -10,20 +10,19 @@
   sex-ratio, and ageing imprecision patterns.
 }
 \usage{
-SSplotNumbers(replist, subplots = 1:5, plot = TRUE, print = FALSE,
+SSplotNumbers(replist, subplots = 1:7, plot = TRUE, print = FALSE,
 areas = "all", areanames = "default", areacols = "default",
 pntscalar = 2.6, period = c("B","M"), add = FALSE,
-labels = c("Year",
-           "Age",
-           "True age (yr)",
-           "SD of observed age (yr)",
-           "Mean observed age (yr)",
-           "Mean age (yr)",
-           "Mean age in the population",
-           "Ageing imprecision",
-           "Numbers at age at equilibrium",
-           "Equilibrium age distribution",
-           "Sex ratio of numbers at age (males/females)"),
+labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
+"Mean observed age (yr)", "Mean age (yr)", "mean age in the population",
+"Ageing imprecision", "Numbers at age at equilibrium",
+"Equilibrium age distribution",
+"Sex ratio of numbers at age (males/females)", "Length",
+"Mean length (cm)", "mean length (cm) in the population",
+"expected numbers at age", "Beginning of year", "Middle of year",
+"expected numbers at length"),
+pwidth = 7, pheight = 7, punits = "in", res = 300,
+ptsize = 12, cex.main = 1, plotdir = "default", verbose = TRUE)
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }

@@ -297,9 +297,9 @@ SSplotPars <-
 
     # make plot
     if(is.null(newheaders)) header <- parname else header <- newheaders[ipar]
-    if(is.null(ylim)) ylim <- c(0,1.1*ymax)
+    if(is.null(ylim)) ylim2 <- c(0,1.1*ymax) else ylim2 <- ylim
 
-    plot(0,type="n",xlim=xlim2,ylim=ylim,xaxs=xaxs,yaxs="i",
+    plot(0,type="n",xlim=xlim2,ylim=ylim2,xaxs=xaxs,yaxs="i",
          xlab="",ylab="",main=header,cex.main=1,axes=F)
     axis(1)
     # axis(2) # don't generally show y-axis values because it's just distracting
