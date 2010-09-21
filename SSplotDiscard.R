@@ -7,6 +7,7 @@ SSplotDiscard <-
            "Discard fraction",
            "Total discards",
            "for"),
+           yhi=1,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -28,8 +29,22 @@ SSplotDiscard <-
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
-      liw <- -std*qt(0.025,DF_discard) # quantile of t-distribution
-      uiw <- std*qt(0.975,DF_discard) # quantile of t-distribution
+      if(DF_discard == -2){ # lognormal with std as interpreted as the standard error (in log space) of the observation
+        liw <- ob - qlnorm(0.025,log(ob),std)
+        uiw <- qlnorm(0.975,log(ob),std) - ob
+      }
+      if(DF_discard == -1){ # normal with std as std
+        liw <- ob - qnorm(0.025,ob,std)
+        uiw <- qnorm(0.975,ob,std) - ob
+      }
+      if(DF_discard == 0){  # normal with std interpreted as CV
+        liw <- ob - qnorm(0.025,ob,std*ob)
+        uiw <- qnorm(0.975,ob,std*ob) - ob
+      }
+      if(DF_discard > 0){ # t-distribution with DF_discard = degrees of freedom
+        liw <- -std*qt(0.025,DF_discard) # quantile of t-distribution
+        uiw <- std*qt(0.975,DF_discard) # quantile of t-distribution
+      }
       liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
       xlim <- c((min(yr)-3),(max(yr)+3))
       if(grepl("as_fraction",discard_type)){
@@ -42,7 +57,7 @@ SSplotDiscard <-
         ylab <- "Total discards"
       }
       dfracfunc <- function(){
-        plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=1,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
+        plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=yhi,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
         points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
       }

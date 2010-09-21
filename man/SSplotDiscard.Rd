@@ -11,8 +11,8 @@
 SSplotDiscard(replist, add = FALSE, plot = TRUE, print = FALSE,
 plotdir = "default", fleets = "all", fleetnames = "default",
 labels = c("Year", "Discard fraction", "Total discards", "for"),
-pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
-cex.main = 1, verbose = TRUE)
+yhi = 1, pwidth = 7, pheight = 7, punits = "in", res = 300,
+ptsize = 12, cex.main = 1, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +40,9 @@ cex.main = 1, verbose = TRUE)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{yhi}{
+    maximum y-value to include in plot (all data included regardless). Default = 1.
   }
   \item{pwidth}{
     width of plot written to PNG file

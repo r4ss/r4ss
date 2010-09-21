@@ -762,9 +762,13 @@ SS_output <-
 
   ## discard fractions ###
 
-  # degrees of freedom for T-distribution
+  # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
   DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
-  DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
+  if(length(grep("T_distribution",DF_discard))>0)
+    DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
+  if(length(grep("_normal_with_Std_in_as_CV",DF_discard))>0)     DF_discard <- 0
+  if(length(grep("_normal_with_Std_in_as_stddev",DF_discard))>0) DF_discard <- -1
+  if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
 
   rawdisc <- matchfun2("DISCARD_OUTPUT",1,"MEAN_BODY_WT_OUTPUT",-1)
   discard_type <- rawdisc[1,1]
