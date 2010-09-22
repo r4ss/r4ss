@@ -62,7 +62,7 @@ SSplotSelex <-
       plotret <- intret[intret$Fleet==i,]
 
       # test for time-varying length selectivity
-      time <- any(apply(intret[-nrow(plotselex),-(1:5)], 2, function(x){any(x!=x[1])}))      
+      time <- any(apply(plotselex[-nrow(plotselex),-(1:5)], 2, function(x){any(x!=x[1])}))      
       if(time)
       {
         x <- lbinspop
@@ -91,7 +91,7 @@ SSplotSelex <-
         }
       }
       # test for time-varying length retention
-      time2 <- any(apply(intret[-nrow(intret),-(1:5)],2,function(x){any(x!=x[1])}))      
+      time2 <- any(apply(plotret[-nrow(plotret),-(1:5)],2,function(x){any(x!=x[1])}))
       if(time2)
       {
         x <- lbinspop
@@ -99,7 +99,7 @@ SSplotSelex <-
         z <- intret[intret$Fleet==i,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
-        main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
+        main <- paste(sextitle1,"varying retention for ", FleetNames[i],sep="")
         if(plot)
         {
           if(3 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
@@ -121,7 +121,7 @@ SSplotSelex <-
       }
       plotselex <- plotselex[plotselex$year==endyr,-(1:5)]
 
-      plotret <- plotret[nrow(plotret),-(1:5)]
+      plotret <- plotret[nrow(plotret),-(1:5)] # final year only
       ylab <- labels[4]
       bins <- as.numeric(names(plotselex))
       vals <- as.numeric(paste(plotselex))
