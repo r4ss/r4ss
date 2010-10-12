@@ -980,6 +980,42 @@ if(SS_versionshort==c("SS-V3.11")){
   }
   returndat <- c(returndat,stats)
 
+  # process annual recruit devs
+  recdevEarly   <- parameters[substring(parameters$Label,1,13)=="Early_RecrDev",]
+  early_initage <- parameters[substring(parameters$Label,1,13)=="Early_InitAge",]
+  main_initage  <- parameters[substring(parameters$Label,1,12)=="Main_InitAge",]
+  recdev        <- parameters[substring(parameters$Label,1,12)=="Main_RecrDev",]
+  recdevFore    <- parameters[substring(parameters$Label,1, 8)=="ForeRecr",]
+  recdevLate    <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
+
+  if(nrow(recdev)>0){
+    recdev$Yr        <- as.numeric(substring(recdev$Label,14))
+  }
+  if(nrow(recdevEarly)>0){
+    recdevEarly$Yr   <- as.numeric(substring(recdevEarly$Label,15))
+  }
+  if(nrow(early_initage)>0){
+    early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
+    recdevEarly <- rbind(early_initage,recdevEarly)
+  }
+  if(nrow(main_initage)>0){
+    main_initage$Yr  <- startyr - as.numeric(substring(main_initage$Label,14))
+    recdev <- rbind(main_initage,recdev)
+  }
+  if(nrow(recdevFore)>0)
+    recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
+  if(nrow(recdevLate)>0)
+    recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
+  if(nrow(recdevFore)>0 & nrow(recdevLate)>0)
+    recdevFore <- rbind(recdevLate,recdevFore)
+
+  Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
+
+  recruitpars <- rbind(recdevEarly, recdev, recdevFore)
+  returndat$recruitpars <- recruitpars
+  # process adjustments to recruit devs
+  RecrDistpars <- parameters[substring(parameters$Label,1,8)=="RecrDist",]
+  returndat$RecrDistpars <- RecrDistpars
 
   # print list of statistics
   if(printstats){

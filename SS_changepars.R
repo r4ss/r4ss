@@ -69,7 +69,7 @@ function(
     splitline <- strsplit(ctlsubset[i], "#")[[1]]
     cmnt <- paste("#",paste(splitline[-1],collapse="#"),sep='')
     cmntvec <- c(cmntvec, cmnt)
-    vecstrings <- strsplit(splitline[1]," +")[[1]]
+    vecstrings <- strsplit(splitline[1],split="[[:blank:]]+")[[1]]
     vec <- as.numeric(vecstrings[vecstrings!=""])
     if(max(is.na(vec))==1) return(paste("There's a problem with a non-numeric value in line",linenums[i]))
     oldvals[i] <- vec[3]

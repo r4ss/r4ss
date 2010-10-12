@@ -1,7 +1,7 @@
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                        xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
                        col=NA, axis4=F, ...)
-## function "stackpoly" by Jim Lemon from "plotrix" used in next plot
+## modified version of function "stackpoly" by Jim Lemon from "plotrix"
 ## see http://cran.r-project.org/web/packages/plotrix/index.html
 {
     ydim <- dim(y)
