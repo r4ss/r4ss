@@ -17,7 +17,7 @@ ptsize = 12, cex.main = 1, verbose = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{add}{
     add to existing plot (not yet implemented)

@@ -1,5 +1,5 @@
 SSplotTags <-
-  function(replist=replist, subplots=1:5,
+  function(replist=replist, subplots=1:8,
            rows=1, cols=1,
            tagrows=3, tagcols=3,
            plot=TRUE, print=FALSE,
@@ -25,11 +25,15 @@ SSplotTags <-
     print("skipping tag plots because there's no tagging data",quote=FALSE)
   }else{
     # calculations needed for printing to multiple PNG files
-    grouprange <- unique(tagdbase2$Rep)
-    ngroups <- length(unique(tagdbase2$Rep))
-    npages <- ceiling(ngroups/(tagrows*tagcols))
-    nseasons <- replist$nseasons
-    width <- 0.5/nseasons
+    grouprange     <- unique(tagdbase2$Rep)
+    ngroups        <- length(unique(tagdbase2$Rep))
+    npages         <- ceiling(ngroups/(tagrows*tagcols))
+    nseasons       <- replist$nseasons
+    width          <- 0.5/nseasons
+    tagreportrates <- replist$tagreportrates
+    tagrecap       <- replist$tagrecap
+    tagsalive      <- replist$tagsalive
+    tagtotrecap    <- replist$tagtotrecap
     
     tagfun1 <- function(ipage=0){
       # obs & exp recaps by tag group
@@ -124,6 +128,64 @@ SSplotTags <-
       legend('topleft',bty='n',lty=c('91','42'),pch=c(16,NA),pt.cex=c(.5,NA),
              col=c(1,2),lwd=c(1,2),legend=c('Observed','Expected'))
     }
+    tagfun6 <- function(){
+      # a function to plot tag parameters after transformation
+      # into reporting rate and tag loss quantities
+      
+      par(mfrow=c(2,2))
+      # first plot is reporting rate parameters
+      barplot(height=tagreportrates$Init_Reporting,
+              names.arg=tagreportrates$Fleet,ylim=c(0,1),yaxs='i',
+              ylab="Reporting rate",xlab="Fleet number",
+              main="Intial reporting rate")
+      box()
+
+      # second plot shows any decay in reporting rate over time
+      matplot(0:5, exp((0:5) %*% t(tagreportrates$Report_Decay)),
+              type='l',lwd=3,lty=1,col=rich.colors.short(nrow(tagreportrates)),
+              ylim=c(0,1.05),yaxs='i',
+              ylab="Reporting rate",xlab="Time at liberty (years)",
+              main="Reporting rate decay")
+
+      # third plot shows initial tag loss
+      barplot(height=tagrecap$Init_Loss,
+              names.arg=tagrecap$Fleet,ylim=c(0,1),yaxs='i',
+              ylab="Initial tag loss",xlab="Tag group",
+              main="Initial tag loss\n(fraction of tags lost at time of tagging)")
+      box()
+
+      # fourth plot shows chronic tag loss
+      barplot(height=tagrecap$Chron_Loss,
+              names.arg=tagrecap$Fleet,ylim=c(0,1),yaxs='i',
+              ylab="Chronic tag loss",xlab="Tag group",
+              main="Chronic tag loss\n(fraction of tags lost per year)")
+      box()
+
+      # restore default single panel settings
+      par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
+    }
+
+    tagfun7 <- function(){
+      # a function to plot the "tags alive" matrix
+      xvals <- as.numeric(substring(names(tagsalive)[-1],7))
+      matplot(xvals,t(tagsalive[,-1]),type='l',lwd=3,
+              col=rich.colors.short(nrow(tagsalive)),
+              xlab="Period at liberty",
+              ylab="Estimated number of alive tagged fish",
+              main="Tags alive' by tag group")
+      abline(h=0,col='grey')
+    }
+    tagfun8 <- function(){
+      # a function to plot the "total recaptures" matrix
+      xvals <- as.numeric(substring(names(tagtotrecap)[-1],7))
+      matplot(xvals,t(tagtotrecap[,-1]),type='l',lwd=3,
+              col=rich.colors.short(nrow(tagtotrecap)),
+              xlab="Period at liberty",
+              ylab="Estimated number of recaptures",
+              main="'Total recaptures' by tag group")
+      abline(h=0,col='grey')
+    }
+    
     # make plots
     if(plot){
       if(1 %in% subplots) tagfun1()
@@ -131,6 +193,9 @@ SSplotTags <-
       if(3 %in% subplots) tagfun3()
       if(4 %in% subplots) tagfun4()
       if(5 %in% subplots) tagfun5()
+      if(6 %in% subplots) tagfun6()
+      if(7 %in% subplots) tagfun7()
+      if(8 %in% subplots) tagfun8()
     }
     # send to files if requested
     if(print){
@@ -162,6 +227,21 @@ SSplotTags <-
       if(5 %in% subplots){
         pngfun(file=paste(plotdir,"24_tags_lines.png",sep=""))
         tagfun5()
+        dev.off()
+      }
+      if(6 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tag_parameters.png",sep=""))
+        tagfun6()
+        dev.off()
+      }
+      if(7 %in% subplots){
+        pngfun(file=paste(plotdir,"24_tags_alive.png",sep=""))
+        tagfun7()
+        dev.off()
+      }
+      if(8 %in% subplots){
+        pngfun(file=paste(plotdir,"24_total_recaptures.png",sep=""))
+        tagfun8()
         dev.off()
       }
     }

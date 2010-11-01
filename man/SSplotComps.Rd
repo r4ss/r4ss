@@ -9,8 +9,9 @@
   Mult-figure plots depend on \code{make_multifig}.
 }
 \usage{
-SSplotComps(replist, subplots = 1:8, kind = "LEN", aalyear =
+SSplotComps(replist, subplots = 1:9, kind = "LEN", aalyear =
 -1, aalbin = -1, plot = TRUE, print = FALSE, fleets = "all",
+           fleetnames="default",
 datonly = FALSE, samplesizeplots = TRUE, compresidplots = TRUE,
 bub = FALSE, showsampsize = TRUE, showeffN = TRUE, minnbubble = 8, pntscalar =
 2.6, pwidth = 7, pheight = 7, punits = "in", ptsize = 12, res = 300,
@@ -56,6 +57,9 @@ fixdims = TRUE, maxneff = 5000, verbose = TRUE, ...)
   }
   \item{fleets}{
     optional vector to subset fleets for which plots will be made
+  }
+  \item{fleetnames}{
+    optional vector of fleet names to put in the labels
   }
   \item{datonly}{
     make plots of data without fits as well as data with fits?

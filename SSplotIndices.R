@@ -1,23 +1,49 @@
 SSplotIndices <-
 function(replist,subplots=1:7,
-           plot=TRUE,print=FALSE,
-           fleets="all",fleetnames="default",
-           smooth=TRUE,add=FALSE,datplot=FALSE,
-           labels=c("Year",        #1
-             "Index",              #2
-             "Observed index",     #3
-             "Expected index",     #4
-             "Log index",          #5
-             "Log observed index", #6
-             "Log expected index", #7
-	     "Standardized index"),#8
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-           plotdir="default",
-           verbose=TRUE)
+         plot=TRUE,print=FALSE,
+         fleets="all",fleetnames="default",
+         smooth=TRUE,add=FALSE,datplot=FALSE,
+         labels=c("Year",        #1
+           "Index",              #2
+           "Observed index",     #3
+           "Expected index",     #4
+           "Log index",          #5
+           "Log observed index", #6
+           "Log expected index", #7
+           "Standardized index"),#8
+         col1="default",
+         col2="default",
+         col3="blue",
+         col4="red",
+         legend=TRUE,
+         legendloc="topright",
+         seasnames=NULL,
+         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         plotdir="default",
+         verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   cpue        <- replist$cpue
+  nseasons    <- replist$nseasons
+  cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
+
+  if(col1[1]=="default"){
+    if(nseasons==1) colvec1 <- "red"
+    if(nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
+    if(!nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
+  }else{
+    colvec1 <- col1
+  }
+  if(col2[1]=="default"){
+    if(nseasons==1) colvec2 <- "blue"
+    if(nseasons==4) colvec2 <- c("blue4","green3","orange2","red3")
+    if(!nseasons %in% c(1,4)) colvec2 <- rich.colors.short(nseasons)
+  }else{
+    colvec2 <- col2
+  }
+  if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
+
   if(is.null(dim(cpue))){
     cat("no CPUE data in this model\n")
     return()
@@ -47,32 +73,44 @@ function(replist,subplots=1:7,
   for(ifleet in fleetvec){
     Fleet <- fleetnames[ifleet]
     cpueuse <- cpue[cpue$Obs > 0 & cpue$FleetNum==ifleet,]
-    x <- cpueuse$Yr
+    cpueuse <- cpueuse[order(cpueuse$YrSeas),]
+    x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
+    s <- cpueuse$Seas
+    
     if(datplot){
-     cpueuse$Index <- rep(ifleet,length(cpueuse$Yr))
+     cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
      cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
-     tempcpue <- cbind(cpueuse$Index,cpueuse$Yr,cpueuse$Obs,cpueuse$stdvalue)
+     tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
      colnames(tempcpue) <- c("Index","year","value","stdvalue")
      allcpue <- rbind(allcpue,tempcpue)}
     uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
     npoints <- length(z)
     main=paste(labels[2], Fleet,sep=" ")
+
+    addlegend <- function(pch, colvec){
+      names <- paste(seasnames,"observations")
+    }
     cpuefun1 <- function(addexpected=TRUE){
-      plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=labels[1],ylo=0,col="red",ylab=labels[2],main=main,cex.main=cex.main,lty=1)
+      # plot of time-series of observed and expected (if requested)
+      plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=labels[1],ylo=0,col=colvec1[s],ylab=labels[2],main=main,cex.main=cex.main,lty=1)
       abline(h=0,col="grey")
-      if(addexpected) lines(x,z,lwd=2,col="blue")
+      if(addexpected) lines(x,z,lwd=2,col=col3)
+      if(addlegend & length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=1, col=colvec1)
     }
     cpuefun2 <- function(){
-      plot(y,z,xlab=labels[3],main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col="blue",pch=19,ylab=labels[4])
+      # plot of observed vs. expected with smoother
+      plot(y,z,xlab=labels[3],main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),col=colvec2[s],pch=19,ylab=labels[4])
       abline(h=0,col="grey")
       lines(x=c(0,max(z)),y=c(0,max(z)))
       if(smooth && npoints > 6 && diff(range(y))>0){
         psmooth <- loess(z~y,degree=1)
-        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
+        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col=col4,lty="dashed")}
+      if(addlegend & length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=16, col=colvec2)
     }
+
     if(plot){
       if(1 %in% subplots & datplot) cpuefun1(addexpected=FALSE)
       if(2 %in% subplots) cpuefun1()
@@ -101,15 +139,19 @@ function(replist,subplots=1:7,
     uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
     liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
     cpuefun3 <- function(addexpected=TRUE){
-      plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab=labels[1],col="red",ylab=labels[5],main=main,cex.main=cex.main,lty=1)
-      if(addexpected) lines(x,log(z),lwd=2,col="blue")
+      # plot of time-series of log(observed) and log(expected) (if requested)
+      plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,xlab=labels[1],col=colvec1[s],ylab=labels[5],main=main,cex.main=cex.main,lty=1)
+      if(addexpected) lines(x,log(z),lwd=2,col=col3)
+      if(length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=1, col=colvec1)
     }
     cpuefun4 <- function(){
-      plot(log(y),log(z),xlab=labels[6],main=main,cex.main=cex.main,col="blue",pch=19,ylab=labels[7])
+      # plot of log(observed) vs. log(expected) with smoother
+      plot(log(y),log(z),xlab=labels[6],main=main,cex.main=cex.main,col=colvec2[s],pch=19,ylab=labels[7])
       lines(x=range(log(z)),y=range(log(z)))
       if(smooth && npoints > 6 && diff(range(y))>0){
         psmooth <- loess(log(z)~log(y),degree=1)
-        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")}
+        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col=col4,lty="dashed")}
+      if(length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=16, col=colvec2)
     }
     if(plot){
       if(4 %in% subplots) cpuefun3(addexpected=FALSE)

@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "September 20, 2010"
+  codedate <- "October 18, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -900,6 +900,67 @@ if(SS_versionshort==c("SS-V3.11")){
   for(i in 1:ncol(movement)) movement[,i] <- as.numeric(movement[,i])
   returndat$movement <- movement
 
+  # reporting rates
+  tagreportrates <- matchfun2("Reporting_Rates_by_Fishery",1,
+                              "See_composition_data_output_for_tag_recapture_details",-1,
+                              cols=1:3)
+  if(tagreportrates[[1]][1]!="absent"){
+    names(tagreportrates) <- tagreportrates[1,]
+    tagreportrates <- tagreportrates[-1,]
+    for(i in 1:ncol(tagreportrates)) tagreportrates[,i] <- as.numeric(tagreportrates[,i])
+    returndat$tagreportrates <- tagreportrates
+  }else{
+    returndat$tagreportrates <- NA
+  }
+  
+  # tag recapture table
+  tagrecap <- matchfun2("TAG_Recapture",1,
+                        "Tags_Alive",-1,
+                        cols=1:10)
+  if(tagrecap[[1]][1]!="absent"){
+    tagfirstperiod <- tagrecap[1,1]
+    tagaccumperiod <- tagrecap[2,1]
+    names(tagrecap) <- tagrecap[4,]
+    tagrecap <- tagrecap[-(1:4),]
+    for(i in 1:ncol(tagrecap)) tagrecap[,i] <- as.numeric(tagrecap[,i])
+    returndat$tagrecap <- tagrecap
+    returndat$tagfirstperiod 
+    returndat$tagaccumperiod 
+  }else{
+    returndat$tagrecap <- NA
+    returndat$tagfirstperiod <- NA
+    returndat$tagaccumperiod <- NA
+  }
+
+  # tags alive
+  tagsalive <- matchfun2("Tags_Alive",1,
+                        "Total_recaptures",-1,
+                        cols=1:ncols)
+  if(tagsalive[[1]][1]!="absent"){
+    tagcols <- max((1:ncols)[apply(tagsalive,2,function(x){any(x!="")})])
+    tagsalive <- tagsalive[,1:tagcols]
+    names(tagsalive) <- c("TG",paste("period",0:(tagcols-2),sep=""))
+    for(i in 1:ncol(tagsalive)) tagsalive[,i] <- as.numeric(tagsalive[,i])
+    returndat$tagsalive <- tagsalive
+  }else{
+    returndat$tagsalive <- NA
+  }
+
+  # total recaptures
+  tagtotrecap <- matchfun2("Total_recaptures",1,
+                           "Reporting_Rates_by_Fishery",-1,
+                           cols=1:ncols)
+  if(tagtotrecap[[1]][1]!="absent"){
+    tagcols <- max((1:ncols)[apply(tagtotrecap,2,function(x){any(x!="")})])
+    tagtotrecap <- tagtotrecap[,1:tagcols]
+    names(tagtotrecap) <- c("TG",paste("period",0:(tagcols-2),sep=""))
+    for(i in 1:ncol(tagtotrecap)) tagtotrecap[,i] <- as.numeric(tagtotrecap[,i])
+    returndat$tagtotrecap <- tagtotrecap
+  }else{
+    returndat$tagtotrecap <- NA
+  }
+  
+  
   # age-length matrix
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
   if(length(rawALK)>1){

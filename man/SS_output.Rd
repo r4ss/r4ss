@@ -70,9 +70,9 @@ aalmaxbinrange=0)
 
 }
 \examples{
-\dontrun{
-myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
-}
+  \dontrun{
+    myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
+  }
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the
 % % R documentation directory.

@@ -129,7 +129,7 @@ SSplotCatch <-
     }
     if(showlegend & nfishfleets!=1){
       if(nfishfleets>1 & addtotal){
-        legend(legendloc, lty=fleetlty[!ghost], lwd=lwd, pch=c(1,fleetpch[!ghost]),
+      legend(legendloc, lty=fleetlty[!ghost], lwd=lwd, pch=c(1,fleetpch[!ghost]),
                col=c("black",fleetcols[!ghost]), legend=c("Total",fleetnames[!ghost]), bty="n")
       }else{
         legend(legendloc, lty=fleetlty[!ghost], lwd=lwd, pch=fleetpch[!ghost], col=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")

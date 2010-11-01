@@ -4,7 +4,7 @@ function(
   repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
   ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE,
   checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-  verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE)
+  verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, oldcode=FALSE)
 {
 ################################################################################
 #
@@ -25,6 +25,8 @@ function(
 
 codedate <- "April 16, 2010"
 print("note: this function out of date. We recommend switching from SSv3_output to SS_output")
+if(!oldcode) return()
+
 if(verbose){
   print(paste("R function updated:",codedate),quote=FALSE)
   print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=FALSE)

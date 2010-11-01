@@ -4,7 +4,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
                           xlab="",ylab="",size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
                           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
                           axis1="default",axis2="default",linepos=1,
-                          bars=FALSE,barwidth="default",ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
+                          bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
                           ipage=0)
@@ -115,15 +115,15 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
       plot(0,type="l",axes=FALSE,xlab="",ylab="",xlim=xrange_big,ylim=yrange_big,
            xaxs="i",yaxs=ifelse(bars,"i","r"))
       abline(h=0,col="grey") # grey line at 0
-      if(linepos==1) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
+      if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
       if(diff(range(size))!=0){ # if size input is provided then use bubble function
         bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=c(ptscol,ptscol2),
                 maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot
       }else{
-        if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol)	# points
+        if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol,cex=ptscex)	# points
         if( bars) points(ptsx_i,ptsy_i,type="h",lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
       }
-      if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
+      if(linepos==1) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
 
       # add legends
       usr <- par("usr")

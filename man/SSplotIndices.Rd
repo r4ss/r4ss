@@ -12,7 +12,10 @@ SSplotIndices(replist, subplots = 1:7, plot = TRUE, print = FALSE,
 fleets = "all", fleetnames = "default",  smooth = TRUE, add = FALSE,
 datplot = FALSE, labels = c("Year", "Index", "Observed index",
 "Expected index","Log index", "Log observed index",
-"Log expected index", "Standardized index"), pwidth = 7, pheight = 7,
+"Log expected index", "Standardized index"),
+col1="default", col2="default", col3="blue", col4="red",
+legend=TRUE, legendloc="topright", seasnames=NULL,
+pwidth = 7, pheight = 7,
 punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }
@@ -47,6 +50,33 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{col1}{
+    vector of colors for points in each season for time series plot.
+    Default is red for single season models and a rainbow using the
+    rich.colors.short function for multiple seasons.
+  }
+  \item{col2}{
+    vector of colors for points in each season for obs. vs. exp. plot.
+    Default is blue for single season models and a rainbow using the
+    rich.colors.short function for multiple seasons.
+  }
+  \item{col3}{
+    color of line showing expected index in time series plot. Default is
+    blue.
+  }
+  \item{col4}{
+    color of smoother shown in obs. vs. exp. plots. Default is red.
+  }
+  \item{legend}{
+    add a legend to seasonal colors (only for seasonal models)
+  }
+  \item{legendloc}{
+    add a legend to seasonal colors (default is "topright")
+  }
+  \item{seasnames}{
+    optional vector of names for each season to replace defaults if a
+    legend is used
   }
   \item{pwidth}{
     width of plot written to PNG file

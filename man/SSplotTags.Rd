@@ -8,7 +8,7 @@
   Plot observed and expected tag recaptures in aggregate and by tag group.
 }
 \usage{
-SSplotTags(replist = replist, subplots = 1:5, rows = 1, cols = 1,
+SSplotTags(replist = replist, subplots = 1:8, rows = 1, cols = 1,
 tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE, pntscalar = 2.6,
 minnbubble = 8, pwidth = 7, pheight = 7, punits = "in", ptsize = 12, res
 = 300, cex.main = 1, col1 = "blue", col2 = "red", col3 = "grey80",

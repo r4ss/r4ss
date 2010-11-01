@@ -20,7 +20,8 @@ showeffN = T, showlegend = T, pwidth = 7, pheight = 7, punits = "in",
 ptsize = 12, res = 300, cex.main = 1, selexlines = 1:5,
 rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3,
-fixdims = T, new = T, catchasnumbers = F, legendloc = "topleft", ...)
+fixdims = T, new = T, catchasnumbers = F, legendloc = "topleft",
+oldcode = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -125,6 +126,8 @@ fixdims = T, new = T, catchasnumbers = F, legendloc = "topleft", ...)
   \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
     Default=F. }
   \item{legendloc}{ Location for all legends. Default="topleft". }
+  \item{oldcode}{ Allow the function to run in spite of the fact that
+    it's really out of date. Default=FALSE.}
   \item{\dots}{ Additional arguments that will be passed to some subfunctions. }
 }
 \details{

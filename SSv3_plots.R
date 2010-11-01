@@ -7,7 +7,7 @@ function(
     aalresids=F, maxneff=5000, cohortlines=c(), smooth=T, showsampsize=T, showeffN=T, showlegend=T,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=T, new=T,
-    catchasnumbers=F,legendloc="topleft",...)
+    catchasnumbers=F,legendloc="topleft",oldcode=FALSE,...)
 
 {
 ################################################################################
@@ -29,6 +29,7 @@ function(
 
   codedate <- "April 19, 2010"
   print("note: this function out of date. We recommend switching from SSv3_plots to SS_plots")
+  if(!oldcode) return()
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
