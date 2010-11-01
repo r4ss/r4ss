@@ -27,7 +27,7 @@ SSplotMovementMap <-
       add=T,fill=T,col="grey")
 #  map.axes()
 
-  mtext(side=3,line=1,font=2,title,cex=1.2)
+  if(!is.null(title)) mtext(side=3,line=1,font=2,title,cex=1.2)
   box()
 
   # add arrows

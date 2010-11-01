@@ -11,7 +11,7 @@
 \usage{
 SSplotMovementMap(replist=NULL, xlim, ylim,
            polygonlist, colvec, land="grey", xytable=NULL,
-           moveage=5,moveseas=1,lwdscale=5,legend=TRUE)
+           moveage=5,moveseas=1,lwdscale=5,legend=TRUE,title=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -55,6 +55,9 @@ SSplotMovementMap(replist=NULL, xlim, ylim,
   \item{legend}{
     add a legend to show the movement rate associated with the widest
     arrows
+  }
+  \item{title}{
+    optional title to be added above map
   }
 }
 \details{

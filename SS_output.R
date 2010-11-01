@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "October 18, 2010"
+  codedate <- "November 1, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -85,7 +85,7 @@ SS_output <-
   SS_version <- rephead[1]
   SS_versionshort <- toupper(substr(SS_version,1,8))
   if(!(SS_versionshort %in% c("SS-V3.10","SS-V3.11"))){
-    print(paste("! Warning, this function tested on SS-V3.10. You are using",substr(SS_version,1,9)),quote=FALSE)
+    print(paste("! Warning, this function tested on SS-V3.11b. You are using",substr(SS_version,1,9)),quote=FALSE)
   }else{
     if(verbose) print(paste("You're using",SS_versionshort,"which should work with this R code."),quote=FALSE)
   }

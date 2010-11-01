@@ -90,15 +90,12 @@ function(replist,subplots=1:7,
     npoints <- length(z)
     main=paste(labels[2], Fleet,sep=" ")
 
-    addlegend <- function(pch, colvec){
-      names <- paste(seasnames,"observations")
-    }
     cpuefun1 <- function(addexpected=TRUE){
       # plot of time-series of observed and expected (if requested)
       plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,xlab=labels[1],ylo=0,col=colvec1[s],ylab=labels[2],main=main,cex.main=cex.main,lty=1)
       abline(h=0,col="grey")
       if(addexpected) lines(x,z,lwd=2,col=col3)
-      if(addlegend & length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=1, col=colvec1)
+      if(legend & length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=1, col=colvec1)
     }
     cpuefun2 <- function(){
       # plot of observed vs. expected with smoother
@@ -108,7 +105,7 @@ function(replist,subplots=1:7,
       if(smooth && npoints > 6 && diff(range(y))>0){
         psmooth <- loess(z~y,degree=1)
         lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col=col4,lty="dashed")}
-      if(addlegend & length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=16, col=colvec2)
+      if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=16, col=colvec2)
     }
 
     if(plot){

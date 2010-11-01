@@ -1,5 +1,5 @@
 SSplotRecdevs <-
-  function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
+  function(replist, subplots=1:4, plot=TRUE, print=FALSE, add=FALSE,
            uncertainty=TRUE,forecastplot=FALSE,
            col1="black",col2="blue",col3="green3",col4="red",
            legendloc="topleft",
@@ -59,15 +59,17 @@ SSplotRecdevs <-
       }else{
           goodyrs <- Yr<=endyr+1 # TRUE/FALSE of in range or not
       }
-      xlim <- range(Yr,na.rm=TRUE)
-      ylim <- range(recdevEarly$Value,recdev$Value,recdevFore$Value,na.rm=TRUE)
+      xlim <- range(Yr[goodyrs],na.rm=TRUE)
+      ylim <- range(c(recdevEarly$Value,recdev$Value,recdevFore$Value)[goodyrs],
+                    na.rm=TRUE)
 
       recdevfunc <- function(uncertainty){
         # recdevs with uncertainty intervals
-        alldevs <- rbind(recdevEarly,recdev,recdevFore)
+        alldevs <- rbind(recdevEarly,recdev,recdevFore)[goodyrs,]
         colvec <- c(rep(col2,nrow(recdevEarly)),
                     rep(col1,nrow(recdev)),
-                    rep(col2,nrow(recdevFore)))
+                    rep(col2,nrow(recdevFore)))[goodyrs]
+
         ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
         val <- alldevs$Value[goodyrs]
         Yr <- alldevs$Yr[goodyrs]
@@ -99,7 +101,7 @@ SSplotRecdevs <-
                ylab=labels[2],xlim=xlim,ylim=c(0,ymax),type="b")
           if(nrow(recdevEarly)>0)
               lines(recdevEarly$Yr,recdevEarly$Parm_StDev,type="b",col=col2)
-          if(nrow(recdevFore)>0)
+          if(forecastplot & nrow(recdevFore)>0)
               lines(recdevFore$Yr,recdevFore$Parm_StDev,type="b",col=col2)
           abline(h=0,col="grey")
           abline(h=sigma_R_in,col=col4)
@@ -119,7 +121,7 @@ SSplotRecdevs <-
                ylab=labels[5],xlim=xlim,ylim=c(0,1.05),type="b")
           if(nrow(recdevEarly)>0)
               lines(recdevEarly$Yr,1-(recdevEarly$Parm_StDev/sigma_R_in)^2,type="b",col=col2)
-          if(nrow(recdevFore)>0)
+          if(forecastplot & nrow(recdevFore)>0)
               lines(recdevFore$Yr,1-(recdevFore$Parm_StDev/sigma_R_in)^2,type="b",col=col2)
           abline(h=0,col="grey")
           abline(h=1,col="grey")
