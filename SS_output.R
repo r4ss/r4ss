@@ -333,7 +333,7 @@ SS_output <-
     lbins <- NA
     nlbins <- NA
     temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
-    lbinspop <- as.numeric(temp[temp!=""][-(1:10)])
+    lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
     nlbinspop <- length(lbinspop)
     agebins <- NA
     nagebins <- NA
@@ -959,7 +959,6 @@ if(SS_versionshort==c("SS-V3.11")){
   }else{
     returndat$tagtotrecap <- NA
   }
-  
   
   # age-length matrix
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))

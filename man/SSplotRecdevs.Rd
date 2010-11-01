@@ -9,7 +9,7 @@
   measures related to bias adjustment.
 }
 \usage{
-SSplotRecdevs(replist, subplots = 1:3,
+SSplotRecdevs(replist, subplots = 1:4,
 plot = TRUE, print = FALSE, add = FALSE,
 uncertainty = TRUE, forecastplot = FALSE,
 col1 = "black", col2 = "blue",
