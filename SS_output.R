@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "November 1, 2010"
+  codedate <- "November 2, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=FALSE)
@@ -672,6 +672,13 @@ SS_output <-
   midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
   if(nseasons > 1){growdat <- growdat[growdat$Seas==1,]}
   returndat$endgrowth <- growdat
+
+  # mean body weight
+  rawmean_body_wt <- matchfun2("MEAN_BODY_WT(begin)",1,"MEAN_SIZE_TIMESERIES",-1,cols=1:(accuage+4))
+  names(rawmean_body_wt) <- rawmean_body_wt[1,]
+  mean_body_wt <- rawmean_body_wt[-1,]
+  for(i in 1:ncol(mean_body_wt)) mean_body_wt[,i] <- as.numeric(mean_body_wt[,i])
+  returndat$mean_body_wt <- mean_body_wt
 
   # Time-varying growth
   rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))

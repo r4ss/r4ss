@@ -1,5 +1,6 @@
 SSplotTimeseries <-
-  function(replist,subplot,add=FALSE,areas="all",areacols=1:10,areanames="default",
+  function(replist,subplot,add=FALSE,areas="all",
+           areacols="default",areanames="default",
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
            plot=TRUE,print=FALSE,plotdir="default",verbose=FALSE,
            btarg=0.4,minbthresh=0.25,xlab="Year",
@@ -47,6 +48,11 @@ SSplotTimeseries <-
   FecPar2        <- replist$FecPar2
   B_ratio_denominator <- replist$B_ratio_denominator
 
+  if(areacols[1]=="default"){
+    areacols  <- rich.colors.short(nareas)
+    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
+  }
+  
   # temporary fix for SS_output versions prior to 9/20/2010
   if(is.null(B_ratio_denominator)) B_ratio_denominator <- 1
   
@@ -279,7 +285,8 @@ SSplotTimeseries <-
         plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
         plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
       }
-      if(length(myareas)>1) mycol <- areacols[iarea] else mycol <- "blue"
+      mycol <- areacols[iarea]
+      
       mytype <- "o" # overplotting points on lines for most time series
       if(subplot==11 & uncertainty) mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
       lines(ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle

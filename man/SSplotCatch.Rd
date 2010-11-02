@@ -56,7 +56,7 @@ catchasnumbers = FALSE, pwidth = 7, pheight
     line width
   }
   \item{areacols}{
-    vector of colors by area
+    vector of colors by area. Default uses rich.colors by Arni Magnusson
   }
   \item{areanames}{
     names for areas. Default is to use Area1, Area2,...

@@ -10,9 +10,10 @@ Synthesis report file. Some values have optional uncertainty intervals.
 }
 \usage{
 SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
-areacols = 1:10, areanames = "default", forecastplot = TRUE, uncertainty
-= TRUE, bioscale = "default", plot = TRUE, print = FALSE, plotdir =
-"default", verbose = FALSE, btarg=0.4, minbthresh=0.25, xlab = "Year",
+areacols = "default", areanames = "default", forecastplot = TRUE,
+uncertainty = TRUE, bioscale = "default", plot = TRUE, print = FALSE,
+plotdir = "default", verbose = FALSE, btarg=0.4, minbthresh=0.25,
+xlab = "Year",
 labels=c("Total biomass (mt)",
 "Total biomass at beginning of season 1 (mt)",
 "Summary biomass (mt)",
@@ -39,7 +40,7 @@ pwidth = 7, pheight = 7, punits =
     optional subset of areas to plot for spatial models
   }
   \item{areacols}{
-    vector of colors by area
+    vector of colors by area. Default uses rich.colors by Arni Magnusson
   }
   \item{areanames}{
     names for areas. Default is to use Area1, Area2,...
