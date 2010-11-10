@@ -134,7 +134,8 @@ SSplotPars <-
     goodnames <- allnames
   }
 
-  if(showmle & min(partable$Parm_StDev[partable$Label %in% goodnames]) <= 0){
+  stds <- partable$Parm_StDev[partable$Label %in% goodnames]
+  if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
     print("Some parameters have std. dev. values in Report.sso equal to 0.",quote=F)
     print("  Asymptotic uncertainty estimates will not be shown.",quote=F)
   }
@@ -237,15 +238,17 @@ SSplotPars <-
     # get normal distribution associated with ADMB's estimate
     # of the parameter's asymptotic std. dev.
     if(showmle){
-      if(parsd>0){
+      if(!is.na(parsd) & parsd>0){
         mle <- dnorm(x,finalval,parsd)
         mlescale <- 1/(sum(mle)*mean(diff(x)))
         mle <- mle*mlescale
         ymax <- max(ymax,max(mle)) # update ymax
+        # update x range
+        xmin <- qnorm(0.001,finalval,parsd)
+        xmax <- qnorm(0.999,finalval,parsd)
+      }else{
+        xmin <- xmax <- finalval
       }
-      # update x range
-      xmin <- qnorm(0.001,finalval,parsd)
-      xmax <- qnorm(0.999,finalval,parsd)
     }
 
     # get posterior
