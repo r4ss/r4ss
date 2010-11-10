@@ -138,6 +138,7 @@ SSplotPars <-
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
     print("Some parameters have std. dev. values in Report.sso equal to 0.",quote=F)
     print("  Asymptotic uncertainty estimates will not be shown.",quote=F)
+    print("  Try re-running the model with the Hessian but no MCMC.",quote=F)
   }
 
   # remove RecrDevs temporarily until I add code to fill in the prior stuff
@@ -238,7 +239,7 @@ SSplotPars <-
     # get normal distribution associated with ADMB's estimate
     # of the parameter's asymptotic std. dev.
     if(showmle){
-      if(!is.na(parsd) & parsd>0){
+      if(!is.na(parsd) && parsd>0){
         mle <- dnorm(x,finalval,parsd)
         mlescale <- 1/(sum(mle)*mean(diff(x)))
         mle <- mle*mlescale
@@ -267,7 +268,7 @@ SSplotPars <-
 
     # get x-range
     if(is.null(xlim)){
-      if(fitrange & (parsd!=0 | showpost)){
+      if(fitrange & ((!is.na(parsd) && parsd!=0) | showpost)){
         # if rescaling limits,
         # make sure initial value is inside limits
         if(showinit){
@@ -312,7 +313,7 @@ SSplotPars <-
     if(showpost & goodpost) plot(posthist,add=T,freq=F,col=colval,border=colval)
     if(showprior) lines(x,prior,lwd=2,lty=1)
     if(showmle){
-      if(parsd>0){
+      if(!is.na(parsd) && parsd>0){
         lines(x,mle,col="blue",lwd=2)
         lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),col="blue")
       }else{
