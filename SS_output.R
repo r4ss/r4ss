@@ -1077,8 +1077,9 @@ if(SS_versionshort==c("SS-V3.11")){
     recdevFore <- rbind(recdevLate,recdevFore)
 
   Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
-
-  recruitpars <- rbind(recdevEarly, recdev, recdevFore)
+  recruitpars <- rbind(if(nrow(recdevEarly)>0){recdevEarly}else{NULL},
+                       if(nrow(recdevEarly)>0){recdev}else{NULL},
+                       if(nrow(recdevEarly)>0){recdevFore}else{NULL})
   returndat$recruitpars <- recruitpars
   # process adjustments to recruit devs
   RecrDistpars <- parameters[substring(parameters$Label,1,8)=="RecrDist",]
