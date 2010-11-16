@@ -78,7 +78,7 @@ function(replist,subplots=1:7,
     y <- cpueuse$Obs
     z <- cpueuse$Exp
     s <- cpueuse$Seas
-    
+
     if(datplot){
      cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
      cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
