@@ -7,7 +7,7 @@ SS_plots <-
     aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
-    catchasnumbers=FALSE,legendloc="topleft",...)
+    catchasnumbers=FALSE,legendloc="topleft", minyr=NULL, maxyr=NULL, ...)
 
 {
   ################################################################################
@@ -207,7 +207,8 @@ SS_plots <-
                              print=(5 %in% print),
                              verbose=verbose,
                              btarg=btarg, 
-                             minbthresh=minbthresh)
+                             minbthresh=minbthresh,
+                             minyr=minyr,maxyr=maxyr)
           } # end loop over uncertainty or not
         }else{ # these plots don't have the option for uncertainty
             SSplotTimeseries(replist=replist,
@@ -221,21 +222,23 @@ SS_plots <-
                              print=(5 %in% print),
                              verbose=verbose,
                              btarg=btarg, 
-                             minbthresh=minbthresh)
+                             minbthresh=minbthresh,
+                             minyr=minyr,maxyr=maxyr)
         }
       }
     }
+    if(verbose) print("Finished plot 5: Basic time series",quote=FALSE)
   } # end if 5 in plot or print
 
   if(6 %in% c(plot, print))
   {
     # time series of catch
     SSplotCatch(replist=replist,
-                plot=(6 %in% plot),
-                print=(6 %in% print),
-                fleetnames=fleetnames)
+                plot=(6 %in% plot),print=(6 %in% print),
+                fleetnames=fleetnames,
+                minyr=minyr,maxyr=maxyr)
 
-    if(verbose) print("Finished plot 5: Basic time series",quote=FALSE)
+    if(verbose) print("Finished plot 6: catch time series",quote=FALSE)
   } # end if 6 in plot or print
 
   ### Plot 8: discard fractions (if present) ###

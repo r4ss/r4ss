@@ -4,6 +4,8 @@ SSplotCatch <-
            fleetlty=1, fleetpch=1,
            fleetcols="default", fleetnames="default",
            lwd=1, areacols="default", areanames="default",
+           minyr=NULL,maxyr=NULL,
+           annualcatch=TRUE,
            forecastplot=TRUE,
            plotdir="default",showlegend=TRUE,
            legendloc="topleft",
@@ -18,7 +20,7 @@ SSplotCatch <-
              "(numbers x1000)",          #8
              "Observed and expected"),   #9
            catchasnumbers=FALSE,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12)
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,verbose=TRUE)
 {
   # plot catch-related time-series for Stock Synthesis
   # updated August 5, 2010
@@ -75,6 +77,7 @@ SSplotCatch <-
   ### total landings (retained) & catch (encountered)
   goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
   catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
+
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("enc(N)"))=="enc(N)"])
@@ -186,4 +189,5 @@ SSplotCatch <-
     makeplots(isubplot)
     dev.off()
   }
+  # if(verbose) cat("  finished catch plots\n")
 }

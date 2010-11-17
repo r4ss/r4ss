@@ -11,7 +11,8 @@ Synthesis report file. Some values have optional uncertainty intervals.
 \usage{
 SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
 areacols = "default", areanames = "default", forecastplot = TRUE,
-uncertainty = TRUE, bioscale = "default", plot = TRUE, print = FALSE,
+uncertainty = TRUE, bioscale = "default", minyr=NULL, maxyr=NULL,
+plot = TRUE, print = FALSE,
 plotdir = "default", verbose = FALSE, btarg=0.4, minbthresh=0.25,
 xlab = "Year",
 labels=c("Total biomass (mt)",
@@ -54,6 +55,12 @@ pwidth = 7, pheight = 7, punits =
   \item{bioscale}{
     scaling for spawning biomass by default it will be set to 0.5 for
     single-sex models, and 1.0 for all others
+  }
+  \item{minyr}{
+    optional input for minimum year to show in plots
+  }
+  \item{maxyr}{
+    optional input for maximum year to show in plots
   }
   \item{plot}{
     plot to active plot device?

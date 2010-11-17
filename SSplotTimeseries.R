@@ -2,12 +2,13 @@ SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
-           plot=TRUE,print=FALSE,plotdir="default",verbose=FALSE,
+           minyr=NULL,maxyr=NULL,
+           plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg=0.4,minbthresh=0.25,xlab="Year",
            labels=c("Total biomass (mt)", #1
-             "Total biomass at beginning of season 1 (mt)", #2
+             "Total biomass (mt) at beginning of season", #2
              "Summary biomass (mt)",      #3
-             "Summary biomass at beginning of season 1 (mt)", #4
+             "Summary biomass (mt) at beginning of season", #4
              "Spawning biomass (mt)",     #5
              "Spawning depletion",        #6
              "Spawning output (eggs)",    #7
@@ -28,12 +29,6 @@ SSplotTimeseries <-
   # subplot10 = spawning depletion by area
   # subplot11 = recruitment total (with or without uncertainty)
   # subplot12 = recruitment by area
-
-
-  # notes:
-  # 1. seems like subplots 3 and 6 should be turned off for single-season models.
-  #    I'm not sure why they aren't. -Ian T. 9/1/2010
-  #
   
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -81,9 +76,14 @@ SSplotTimeseries <-
 
   # get spawning season
   spawnseas <- unique(ts$Seas[!is.na(ts$SpawnBio)])
-  if(length(spawnseas) > 1) stop("more than one season has spawning biomass in TIME_SERIES: seasons", spawnseas)
-  if(spawnseas != 1 & subplot %in% c(3,6,7,8,9,10) ){
-    cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="") 
+  spawnseas1 <- min(spawnseas)
+  ## if(length(spawnseas)>1){
+  ##   spawnseastext <- paste(spawnseas,collapse=", ")
+  ## }else{
+  ##   spawnseastext <- spawnseas
+  ## }
+  if(spawnseas1>1 & subplot %in% c(3,6,7,8,9,10) ){
+    cat("Note: spawning seems to be in season ",spawnseas1,". Some plots will show only this season.\n",sep="") 
   }
 
   # define which years are forecast or not
@@ -98,9 +98,9 @@ SSplotTimeseries <-
     plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
     plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
     if(subplot %in% c(3,6,7,9)){
-      plot1 <- ts$Area==1 & ts$Era=="VIRG" & ts$Seas == spawnseas # T/F for in area & is virgin value
-      plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
-      plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
+      plot1 <- ts$Area==1 & ts$Era=="VIRG" & ts$Seas == spawnseas1 # T/F for in area & is virgin value
+      plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
+      plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
     }
 
     # switch for which column of the TIME_SERIES table is being plotted
@@ -108,13 +108,13 @@ SSplotTimeseries <-
     if(subplot %in% 1:3){
       yvals <- ts$Bio_all
       ylab <- labels[1]
-      if(subplot==3){ylab <- labels[2]}
+      if(subplot==3){ylab <- paste(labels[2],spawnseas1)}
     }
     # subplot4,5,6 = summary biomass
     if(subplot %in% 4:6){
       yvals <- ts$Bio_smry
       ylab <- labels[3]
-      if(subplot==6){ylab <- labels[4]}
+      if(subplot==6){ylab <- paste(labels[4],spawnseas1)}
     }
     # subplot7&8 = spawning biomass
     if(subplot %in% 7:8){
@@ -137,7 +137,7 @@ SSplotTimeseries <-
 
     # sum up total across areas if needed
     if(nareas>1){
-      if(subplot%in%c(2,3,6,8,10,12)){
+      if(subplot %in% c(2,3,6,8,10,12)){
         # these plots have separate lines for each area
         main=paste(main,"by area")
       }
@@ -164,7 +164,7 @@ SSplotTimeseries <-
       # correct ymax value for plot 10 (other plots may need it too)
       if(subplot==10){
         for(iarea in 1:nareas){
-          yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas==spawnseas][1])
+          yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas1][1])
           ymax <- max(ymax,yvals,na.rm=TRUE)
         }
       }
@@ -207,6 +207,8 @@ SSplotTimeseries <-
           stdtable$Yr <- as.numeric(stdtable$Yr)
           bioscale <- 1
         }
+
+        # scaling and calculation of confidence intervals
         v <- stdtable$Value * bioscale
         std <- stdtable$StdDev * bioscale
         stdtable$upper <- v + 1.96*std
@@ -225,7 +227,6 @@ SSplotTimeseries <-
     if(nareas==1){
       ymax <- max(yvals[plot1 | plot2 | plot3], na.rm=TRUE)
     }
-    
 
     if(uncertainty & subplot %in% c(7,9,11)) ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
 
@@ -243,9 +244,18 @@ SSplotTimeseries <-
       pngfun(file=filename)
     }
 
+    
     # create an empty plot (if not adding to existing plot)
-    if(!add) plot(ts$Yr[plot1 | plot2 | plot3],yvals[plot1 | plot2 | plot3],
-                  type='n', xlab=xlab, ylim=c(0,ymax), ylab=ylab, main=main, cex.main=cex.main)
+    if(!add){
+      yrvals  <- ts$Yr[ plot1 | plot2 | plot3]
+      # axis limits
+      if(is.null(minyr)) minyr <- min(yrvals)
+      if(is.null(maxyr)) maxyr <- max(yrvals)
+      xlim <- c(minyr,maxyr)
+      plot(yrvals,yvals[plot1 | plot2 | plot3],
+           type='n', xlab=xlab, ylim=c(0,ymax), ylab=ylab,
+           main=main, cex.main=cex.main,xlim=xlim)
+    }
 
     # add stuff to plot
     if(subplot %in% c(9,10))
@@ -274,12 +284,12 @@ SSplotTimeseries <-
       #   plot3 = subset for forecast
       ###
       if(subplot==10){
-        yvals <- ts$SpawnBio/(ts$SpawnBio[ts$Area==iarea & ts$Seas==spawnseas][1])
+        yvals <- ts$SpawnBio/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas1][1])
       }
       if(subplot %in% c(3,6,7,8,9,10)){
-        plot1 <- ts$Area==iarea & ts$Era=="VIRG" & ts$Seas == spawnseas # T/F for in area & is virgin value
-        plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
-        plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
+        plot1 <- ts$Area==iarea & ts$Era=="VIRG" & ts$Seas == spawnseas1 # T/F for in area & is virgin value
+        plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
+        plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
       }else{
         plot1 <- ts$Area==iarea & ts$Era=="VIRG" # T/F for in area & is virgin value
         plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
@@ -329,10 +339,11 @@ SSplotTimeseries <-
 
   # make plots
   for(iplot in subplot){
-    # plots 2 and 5 are redundant for 1-area models
+    skip <- FALSE
+    # plots 2, 5, 8, 10, and 12 are redundant for 1-area models
+    if(nareas==1 & iplot %in% c(2,5,8,10,12)) skip <- TRUE
     # plots 3 and 6 are redundant for 1-season models
-    if(!(nareas==1 & iplot %in% c(2,5))|(nseasons==1 & iplot %in% c(3,6))){
-      biofunc(subplot=iplot)
-    }
+    if(nseasons==1 & iplot %in% c(3,6)) skip <- TRUE
+    if(!skip) biofunc(subplot=iplot)
   }
 }

@@ -12,9 +12,9 @@
 SSplotCatch(replist, subplots = 1:9, add = FALSE, areas = 1,
 plot = TRUE, print = FALSE, fleetlty = 1,
 fleetpch = 1, fleetcols = "default", fleetnames = "default", lwd = 1,
-areacols = "default", areanames = "default", forecastplot = TRUE,
-plotdir = "default", showlegend = TRUE, legendloc =
-"topleft", xlab = "Year", labels = c("Harvest rate/Year",
+areacols = "default", areanames = "default", minyr = NULL, maxyr = NULL
+forecastplot = TRUE, plotdir = "default", showlegend = TRUE,
+legendloc = "topleft", xlab = "Year", labels = c("Harvest rate/Year",
 "Continuous F", "Landings", "Total catch", "Predicted Discards",
 "Discard fraction", "(mt)", "(numbers x1000)", "Observed and expected"),
 catchasnumbers = FALSE, pwidth = 7, pheight
@@ -60,6 +60,12 @@ catchasnumbers = FALSE, pwidth = 7, pheight
   }
   \item{areanames}{
     names for areas. Default is to use Area1, Area2,...
+  }
+  \item{minyr}{
+    optional input for minimum year to show in plots
+  }
+  \item{maxyr}{
+    optional input for maximum year to show in plots
   }
   \item{forecastplot}{
     add points from forecast years
