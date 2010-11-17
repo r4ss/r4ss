@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist=ReportObject, plot=1:24, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
+    replist=ReportObject, plot=1:25, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
@@ -280,7 +280,7 @@ SS_plots <-
       SSplotRecdist(replist=replist,
                     plot=(7 %in% plot),
                     print=(7 %in% print),
-                    verbose=verbose)
+                    verbose=verbose,cex.main=cex.main)
     }
   } # end if 7 in plot or print
 
@@ -308,7 +308,8 @@ SS_plots <-
                   fleetnames=fleetnames,
                   plot=(13 %in% plot),
                   print=(13 %in% print),
-                  datplot=datplot)
+                  datplot=datplot,
+                  cex.main=cex.main)
   } # end if 13 in plot or print
 
   ### Plot 14: numbers at age ###
@@ -533,6 +534,13 @@ SS_plots <-
                plot=(24 %in% plot),
                print=(24 %in% print))
   } # end if 24 in plot or print
+
+  ### Plot 25: Movement rates ###
+  if(25 %in% plot & nrow(replist$movement)>0)
+    for(i in 1:nseasons)
+      SSplotMovementRates(replist=replist,moveseas=i,cex.main=cex.main)
+  # note! need to add png output for this funciton
+  # end if 25 in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) print("Finished all requested plots in SS_plots function",quote=FALSE)

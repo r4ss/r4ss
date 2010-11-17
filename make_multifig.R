@@ -51,6 +51,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
 
   nrows <- min(ceiling(sqrt(npanels)), maxrows)
   ncols <- min(ceiling(npanels/nrows), maxcols)
+
   if(fixdims){
     nrows <- maxrows
     ncols <- maxcols
@@ -181,18 +182,21 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0,
       if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) # axis on bottom panels and final panel
       if(mfg[2]==1) axis(side=2,at=axis2,las=horiz_lab)	   # axis on left side panels
       box()
-
-      if(ipanel %% (nrows*ncols) == 1) # if this is the first panel of a given page
-        {
-          # add title after plotting first panel on each page of panels
-          fixcex = 1 # fixcex compensates for automatic adjustment caused by par(mfcol)
-          if(max(nrows,ncols)==2) fixcex = 1/0.83
-          if(max(nrows,ncols)>2) fixcex = 1/0.66
-
+      
+      if(npanels==1 | ipanel %% (nrows*ncols) == 1) # if this is the first panel of a given page
+      {
+        # add title after plotting first panel on each page of panels
+        fixcex = 1 # fixcex compensates for automatic adjustment caused by par(mfcol)
+        if(max(nrows,ncols)==2) fixcex = 1/0.83
+        if(max(nrows,ncols)>2) fixcex = 1/0.66
+        if(npanels>1){
           title(main=main, line=c(2,0,3,3), outer=TRUE, cex.main=cex.main*fixcex)
           title(xlab=xlab, outer=TRUE, cex.lab=fixcex)
           title(ylab=ylab, line=ifelse(horiz_lab,max(3,2+.4*maxchar),3.5), outer=TRUE, cex.lab=fixcex)
+        }else{
+          title(main=main, xlab=xlab, ylab=ylab, outer=TRUE,cex.main=cex.main)
         }
+      }
     }
   # restore default single panel settings
   par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))

@@ -10,7 +10,7 @@
 }
 \usage{
 SSplotMovementRates(replist=NULL, colvec="default", ylim="default",
-  legend=TRUE, moveseas=1)
+  legend=TRUE, legendloc="topleft", moveseas=1, cex.main=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,8 +28,14 @@ SSplotMovementRates(replist=NULL, colvec="default", ylim="default",
   \item{legend}{
     add a legend designating which color goes with which pair of areas?
   }
+  \item{legendloc}{
+    location passed to legend function (if used)
+  }
   \item{moveseas}{
     choice of season for which movemement rates are shown
+  }
+  \item{cex.main}{
+    Character expansion parameter for plot titles
   }
 }
 \details{

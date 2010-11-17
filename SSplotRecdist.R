@@ -31,7 +31,8 @@ SSplotRecdist <-
   }
 
   recdistfun <- function(){
-    image(areavec,seasvec,recmat,axes=F,xlab=xlab,ylab=ylab,main=main)
+    image(areavec,seasvec,recmat,axes=F,xlab=xlab,ylab=ylab,
+          main=main,cex.main=cex.main)
     axis(1,at=areavec,lab=areanames)
     axis(2,at=seasvec,lab=seasnames)
     box()

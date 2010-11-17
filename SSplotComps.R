@@ -567,15 +567,13 @@ SSplotComps <-
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
           filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
 
-          ptitle <- paste(titledata,title_sexmkt, " aggregated across time by fleet",sep="") # total title
+          ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           # group remaining calculations as a function
           tempfun <- function(ipage,...){
             Bins <- sort(unique(dbase$Bin))
             nbins <- length(Bins)
-            sampsize <- EffN <- AggregatedObs <- AggregatedExp <- AggregatedExp2 <- matrix(0,nrow=nfleets,ncol=nbins)
-
             df <- data.frame(N=dbase$N,
                              effN=dbase$effN,
                              obs=dbase$Obs*dbase$N,
@@ -584,6 +582,15 @@ SSplotComps <-
             agg <- agg[agg$f %in% fleets,]
             agg$obs <- agg$obs/agg$N
             agg$exp <- agg$exp/agg$N
+            # note: sample sizes will be different for each bin if tail compression is used
+            #       printed sample sizes in plot will be maximum, which may or may not
+            #       represent sum of sample sizes over all years/ages
+            for(f in unique(agg$f)){
+              infleet <- agg$f==f
+              agg$N[infleet] <- max(agg$N[infleet])
+              agg$effN[infleet] <- max(agg$effN[infleet])
+            }
+
             namesvec <- fleetnames[agg$f]
             if(!(kind %in% c("GSTAGE","L@A","W@A"))){
               make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$f,

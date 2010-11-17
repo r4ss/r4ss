@@ -135,8 +135,8 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
   \item{ptsize}{ Point size for plotted text in plots printed to files
     (see help("png") in R for details). Default=12. } =
   \item{res}{ Resolution of plots printed to files. Default=300. }
-  \item{cex.main}{ Character expansion parameter for plot titles (only
-    implemented for composition plots so far). Default=1. }
+  \item{cex.main}{ Character expansion parameter for plot titles (not yet
+    implemented for all plots). Default=1. }
   \item{selexlines}{ Vector controling which lines should be shown on
     selectivity plots if the model includes retention. Default=1:5. }
   \item{rows}{ Number of rows to use for single panel plots. Default=1. }
