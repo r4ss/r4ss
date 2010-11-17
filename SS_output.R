@@ -379,6 +379,7 @@ SS_output <-
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
   stats$Nwarnings <- nwarn
+  if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
   stats$warnings <- warn
 
   # likelihoods
