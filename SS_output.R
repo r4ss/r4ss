@@ -671,7 +671,6 @@ SS_output <-
   for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
   nmorphs <- max(growdat$Morph)
   midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
-  if(nseasons > 1){growdat <- growdat[growdat$Seas==1,]}
   returndat$endgrowth <- growdat
 
   # mean body weight

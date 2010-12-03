@@ -15,6 +15,7 @@ SSplotSelex <-
            verbose = TRUE)
 {
   nsexes     <- replist$nsexes
+  nseasons   <- replist$nseasons
   nfleets    <- replist$nfleets
   lbinspop   <- replist$lbinspop
   nlbinspop  <- replist$nlbinspop
@@ -27,6 +28,11 @@ SSplotSelex <-
   mainmorphs <- replist$mainmorphs
   nareas     <- replist$nareas
   ngpatterns <- replist$ngpatterns
+
+  # subsetting for season 1 only. This is wrong. It should be replaced
+  #   by info on the growth within the season when each fleet operates.
+  growdat <- growdat[growdat$Seas==1,]
+  if(nseasons>1) cat("Warning: plots showing growth curve with selectivity are using season 1 growth,\nwhich may be innaccurate. Someday we'll update to use the growth within the right season for each fleet.\n")
   
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
   if(plotdir=="default") plotdir <- replist$inputs$dir

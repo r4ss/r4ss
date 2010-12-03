@@ -1,5 +1,5 @@
 SSplotBiology <-
-  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:8,
+  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:8,seas=1,
            col1="red",col2="blue",
            legendloc="topleft",
            plotdir="default",
@@ -25,7 +25,10 @@ SSplotBiology <-
   # mean weight, maturity, fecundity, spawning output
 
   # get objects from replist
-  growdat      <- replist$endgrowth
+  nseasons     <- replist$nseasons
+  if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
+  
+  growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   biology      <- replist$biology
   FecType      <- replist$FecType
   FecPar1name  <- replist$FecPar1name
@@ -34,7 +37,6 @@ SSplotBiology <-
   FecPar2      <- replist$FecPar2
   parameters   <- replist$parameters
   nsexes       <- replist$nsexes
-  nseasons     <- replist$nseasons
   mainmorphs   <- replist$mainmorphs
   accuage      <- replist$accuage
   growthseries <- replist$growthseries
@@ -71,7 +73,7 @@ SSplotBiology <-
   if(FecType==2) FecY <- FecPar1*FecX^FecPar2
   if(FecType==3) FecY <- FecPar1*FecX^FecPar2
 
-  # Mid year mean length at age with 95% range of lengths (by sex if applicable)
+  # Midle of season 1 mean length at age with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Mid
   growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
@@ -84,7 +86,7 @@ SSplotBiology <-
     growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
   }
 
-  gfunc1 <- function(add=FALSE){ # weight
+  gfunc1 <- function(){ # weight
     if(!add){
       ymax <- max(biology$Wt_len_F)
       if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
@@ -97,7 +99,7 @@ SSplotBiology <-
       if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
     }
   }
-  gfunc2 <- function(add=FALSE){ # maturity
+  gfunc2 <- function(){ # maturity
     if(min(biology$Mat_len)<1){ # if length based
       if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=col1)
       if(add) lines(x,biology$Mat_len,type="o",col=col1)
@@ -107,7 +109,7 @@ SSplotBiology <-
     }
     if(!add) abline(h=0,col="grey")
   }
-  gfunc3 <- function(add=FALSE){ # fecundity
+  gfunc3 <- function(){ # fecundity
     ymax <- 1.1*max(FecY)
     if(!add){
       plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=col2, pch=19)
@@ -117,7 +119,7 @@ SSplotBiology <-
       points(FecX, FecY,col=col2,pch=19)
     }
   }
-  gfunc4 <- function(add=FALSE){ # spawning output
+  gfunc4 <- function(){ # spawning output
     if(!add){
       plot(x,biology$Spawn,xlab=labels[1],ylab=labels[5],type="o",col=col1)
       abline(h=0,col="grey")
@@ -155,7 +157,7 @@ SSplotBiology <-
   main <- "Ending year expected growth"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
 
-  gfunc5 <- function(add=F) # growth
+  gfunc5 <- function() # growth
   {
     if(!add){
       plot(x,growdatF$Len_Mid,col=col1,lwd=2,ylim=c(0,ymax),type="n",
