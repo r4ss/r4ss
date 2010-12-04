@@ -27,7 +27,8 @@ SSplotBiology <-
   # get objects from replist
   nseasons     <- replist$nseasons
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
-  
+  if(nseasons>1) labels[6] <- gsub("middle of the year", paste("middle of season",seas), labels[6])
+    
   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   biology      <- replist$biology
   FecType      <- replist$FecType
