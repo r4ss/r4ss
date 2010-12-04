@@ -70,7 +70,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=T){
   mylist$ForeCatch <- ForeCatch
   # check final value
   if(allnums[i]==999) cat("read of forecast file complete (final value = 999)\n")
-  else cat(paste("Error: final value is", allnums[i]," but should be 999\n")
+  else cat("Error: final value is", allnums[i]," but should be 999\n")
 
   # all done
   return(mylist)
