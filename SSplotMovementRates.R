@@ -25,5 +25,5 @@ SSplotMovementRates <-
              legend=paste("area",move2$Source_area,"to area",move2$Dest_area)
              )
     }
-  }
+  }  
 }

@@ -5,6 +5,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          masterfolder="fits",
          MLEdata=FALSE,skipfiles=TRUE,
          simchoices=1,fitchoices=1,samedatafile=FALSE,
+         CAAL=TRUE,
          homepath="c:/myfiles/",
          recdevmatrix=NULL,
          rescale=TRUE,
@@ -19,8 +20,10 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 {
   # function for running simulation and estimation models
 
-  print("running SSrunsims",quote=FALSE)
+  cat("running SSrunsims\n")
 
+  if(0 %in% sims) cat("runs with isim 0 will have no recdevs included\n")
+  
   # create file to save list of completed model runs
   starttime <- Sys.time()
   simnotesfile <- paste(homepath,"/simnotes_",format(starttime,"%d-%b-%Y_%H.%M" ),".csv",sep="")
@@ -34,11 +37,11 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
     if(.Platform$OS.type=="windows") win <- T  else  win <- F
     if(substring(homepath,nchar(homepath)) %in% c("/","\\")) homepath <- substring(homepath,1,nchar(homepath)-1)
     if(is.na(file.info(homepath)$isdir)){
-        print(paste("need to create directory:",homepath),quote=FALSE)
-        print("  containing master control and data files",quote=FALSE)
+        cat("need to create directory:",homepath,"\n")
+        cat("  containing master control and data files\n")
         return()
     }
-    if(verbose) print(paste("setting working directory to:",homepath),quote=FALSE)
+    if(verbose) cat("setting working directory to:",homepath,"\n")
     setwd(homepath)
 
     # read large matrix of recruitment deviations if not provided
@@ -66,7 +69,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
       # create folders to store simulations and estimations
       dir.create(path=simpath)
       dir.create(path=fitpath)
-      print("put starter.ss, forecast.ss, and executable or batch file into the directories:",quote=FALSE)
+      cat("put starter.ss, forecast.ss, and executable or batch file into the directories:\n")
       return()
     }
 
@@ -78,26 +81,27 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
   # run simulation model
   if(sim){
     setwd(simpath)
-    if(verbose) print(paste("running simulations in",simpath),quote=FALSE)
+    if(verbose) cat("running simulations in",simpath,"\n")
     for(isim in sims){
+      if(isim==0) norecdevs <- TRUE # turn off recdevs for sim numbered 0
       for(isimchoice in simchoices){
-        if(verbose) print(paste("in isimchoice=",LETTERS[isimchoice],sep=""),quote=FALSE)
+        if(verbose) cat("  in isimchoice=",LETTERS[isimchoice],"\n",sep="")
         filekey <- paste("sim",LETTERS[isimchoice],sep="") # description of this sim
         key <- paste(filekey,isim,sep="") # key has index of simulation added
-        if(verbose) print(paste("key = ",key,sep=""),quote=FALSE)
+        if(verbose) cat("  key = ",key,"\n",sep="")
 
         bootdatfile <- paste("bootdat_",key,".ss",sep="")
         bootdatfilesize <- file.info(bootdatfile)$size
         if(!is.na(bootdatfilesize) & bootdatfilesize>0 & skipfiles==TRUE){
             # skip this run if a file with non-zero file size exists already
-            print(paste("skipping ",bootdatfile," with size=",bootdatfilesize,sep=""),quote=FALSE)
+            cat("skipping ",bootdatfile," with size=",bootdatfilesize,"\n",sep="")
         }else{
           ## run simulation model
           # copy control file
           ctl_sim <- paste(homepath,"/ctl_",filekey,".ss",sep="")
           temp <- file.copy(ctl_sim,"ctl_isim_nodevs.ss",overwrite=TRUE)
           if(temp!=TRUE){
-              print(paste("Error copying",ctl_sim),quote=FALSE)
+              cat("Error copying",ctl_sim,"\n")
               break()}
           # copy data file
           if(samedatafile){
@@ -107,27 +111,31 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           }
           temp <- file.copy(dat_sim,"dat_isim.ss",overwrite=TRUE)
           if(temp!=TRUE){
-              print(paste("Error copying",dat_sim),quote=FALSE)
+              cat("Error copying",dat_sim,"\n")
               break()}
 
-          # add recdevs to control files for simulations
-          if(is.null(fyr) | is.null(lyr)){
-            myctl <- SS_readctl("ctl_isim_nodevs.ss")
-            fyr <- myctl$fyr_main_recdevs
-            lyr <- myctl$lyr_main_recdevs
+          if(norecdevs){
+            # if no recdevs are to be modeled
+            file.copy("ctl_isim_nodevs.ss","ctl_isim.ss")
+          }else{
+            # add recdevs to control files for simulations
+            if(is.null(fyr) | is.null(lyr)){
+              myctl <- SS_readctl("ctl_isim_nodevs.ss")
+              fyr <- myctl$fyr_main_recdevs
+              lyr <- myctl$lyr_main_recdevs
+            }
+            recdevs <- recmat[1:(lyr-fyr+1),isim]
+
+            SS_recdevs(fyr=fyr, lyr=lyr, recdevs=recdevs,
+                       rescale=rescale, scaleyrs=NULL,
+                       ctlfile="ctl_isim_nodevs.ss",
+                       newctlfile="ctl_isim.ss",
+                       verbose=TRUE, writectl=TRUE, returnctl=FALSE)
           }
-          recdevs <- recmat[1:(lyr-fyr+1),isim]
-
-          SS_recdevs(fyr=fyr, lyr=lyr, recdevs=recdevs,
-                     rescale=rescale, scaleyrs=NULL,
-                     ctlfile="ctl_isim_nodevs.ss",
-                     newctlfile="ctl_isim.ss",
-                     verbose=TRUE, writectl=TRUE, returnctl=FALSE)
-
           # run simulation
           if(file.exists("covar.sso")) file.remove("covar.sso")
-          if(intern) cat(paste("Running model. ADMB output generated during model run will be written to:\n   ",
-                               getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",sep=""))
+          if(intern) cat("Running model. ADMB output generated during model run will be written to:\n   ",
+                          getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",sep="")
           ADMBoutput <- system(paste(exe,simextras),intern=intern)
           if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                                   "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
@@ -136,13 +144,20 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           file.copy("CompReport.sso",paste("CompReport_",key,".sso",sep=""),overwrite=TRUE)
 
           # split apart simulation results
-          SS_splitdat(inpath     = simpath,
-                      outpath    = simpath,
-                      inname     = "data.ss_new",
-                      outpattern = paste("bootdat_",key,sep=""),
-                      MLE        = MLEdata
-                      )
-
+          if(CAAL){
+            bootstrap_CAAL(master=F,
+                           infile=paste(simpath,"/data.ss_new",sep=''),
+                           outfile=paste(simpath,"/bootdat_",key,".ss",sep='')
+                           )
+            cat("doing conditional age at length sampling\n")
+          }else{
+            SS_splitdat(inpath     = simpath,
+                        outpath    = simpath,
+                        inname     = "data.ss_new",
+                        outpattern = paste("bootdat_",key,sep=""),
+                        MLE        = MLEdata
+                        )
+          }
           # fill in or create a data frame to store notes on model runs
           if(exists("simnotes")) simnotes[nrow(simnotes)+1,] <- data.frame(isim, isimchoice, key, Sys.time(), stringsAsFactors=FALSE)
           else simnotes <- data.frame(sim=isim, simchoice=isimchoice, key=key, time=Sys.time(), stringsAsFactors=FALSE)
@@ -162,11 +177,12 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
   { # if fits are requested
     setwd(fitpath) # change path
     for(ifit in sims){ # loop over number of simulations in each scenario
+      if(ifit==0) norecdevs <- TRUE
       for(isimchoice in simchoices){ # loop over simulation scenarios
         for(ifitchoice in fitchoices){ # loop over estimation scenarios
           for(ibiasadj in unique(c(FALSE,fitbiasramp))){ # loop over whether to apply the bias adjustment function
 
-            if(verbose) print("running estimation models",quote=F)
+            if(verbose) cat("running estimation models")
 
             if(verbose & exists("runtime")){
               cat("Duration of previous model run:",Sys.time() - runtime,"\n")
@@ -205,7 +221,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                            paste("running in",getwd()),
                            as.character(Sys.time())),
                          repmaster)
-              if(verbose) print(paste("writing temporary file showing activity in",repmaster),quote=FALSE)
+              if(verbose) cat("writing temporary file showing activity in",repmaster,"\n")
 
               # copy data file
               if(samedatafile){
@@ -215,20 +231,26 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
               }
               temp <- file.copy(dat_fit,"dat_ifit.ss",overwrite=TRUE)
               if(temp!=TRUE){
-                print(paste("Error copying",dat_fit),quote=FALSE)
+                cat("Error copying",dat_fit,"\n")
                 break()}
 
               # copy control file
               ctl_fit <- paste("../ctl_",filekey,".ss",sep="")
               temp <- file.copy(ctl_fit,"ctl_ifit.ss",overwrite=TRUE)
               if(temp!=TRUE){
-                print(paste("Error copying",ctl_fit),quote=FALSE)
+                cat("Error copying",ctl_fit,"\n")
                 break()}
 
+              # if NO recdevs will be estimated
+              if(norecdevs){
+                ctl <- readLines("ctl_ifit.ss")
+                ctl[grep("do_recdev", ctl)] <- "0 #do_recdev:  0=none; 1=devvector; 2=simple deviations"
+                writeLines(ctl,"ctl_ifit.ss")
+              }
               dorun <- TRUE # switch for whether run will be conducted or not
               # if fitbiasramp will be applied on some model runs
               # INCLUDING this one
-              if(fitbiasramp & ibiasadj){
+              if(!norecdevs & fitbiasramp & ibiasadj){
                 dorun <- FALSE # switch for whether run will be conducted or not
                 # get output from previous run
                 tempkey <- paste(key,"_nobiasadj",sep="")
@@ -239,7 +261,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 oldcovarname <- paste("covar_",tempkey,".sso",sep="")
                 newctl <- paste("ctl_",key,".ss",sep="")
 
-                if(verbose) print("applying bias adjustment based on previous model run",quote=FALSE)
+                if(verbose) cat("applying bias adjustment based on previous model run\n")
                 # check for covar file and a real report file
                 # (not just the temporary file written by this function)
                 if(file.exists(paste(masterpath,oldcovarname,sep='/'))
@@ -254,29 +276,29 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                                  oldctl="ctl_ifit.ss",newctl=newctl)
                   file.copy(newctl,"ctl_ifit.ss",overwrite=TRUE)
                 }else{
-                  print(paste("run failed to converge (or is being run by another R process)."),quote=FALSE)
-                  print(paste("key:",tempkey),quote=FALSE)
+                  cat("run failed to converge (or is being run by another R process).","\n")
+                  cat("key:",tempkey,"\n")
                 }
               } # end fit of bias adjustment on the fly
 
               if(!dorun){
                 # don't do this run
-                print(paste("skipping run with key =",key,
-                            "\n  because previous no previous run exists on which to base bias adjustment"))
+                cat("skipping run with key =",key,
+                            "\n  because previous no previous run exists on which to base bias adjustment")
               }else{
                 # run this run
                 repmastersize <- file.info(repmaster)$size
                 if(is.na(repmastersize)){
-                  print(paste("no rep file, running to create ",repmaster," with size=",repmastersize,sep=""),quote=FALSE)
+                  cat("no rep file, running to create ",repmaster," with size=",repmastersize,"\n",sep="")
                 }else{
                   if(repmastersize==0){
-                    print(paste("empty rep file, running to create ",repmaster," with size=",repmastersize,sep=""),quote=FALSE)
+                    cat("empty rep file, running to create ",repmaster," with size=",repmastersize,"\n",sep="")
                   }
                   if(repmastersize>0 & repmastersize<200){
-                    print("temporary rep file exists, running to replace",quote=FALSE)
+                    cat("temporary rep file exists, running to replace\n")
                   }
                   if(repmastersize>200){
-                    print("full rep file exists, replacing",quote=FALSE)
+                    cat("full rep file exists, replacing\n")
                   }
                 }
 
@@ -284,18 +306,18 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 boot1 <- paste("../",simfolder,"/bootdat_sim",LETTERS[isimchoice],ifit,".ss",sep="")
                 boot2 <- "dat_ifit.ss"
 
-                ## print("info on bootstrap data file:",quote=FALSE)
-                ## print(file.info(boot1))
-                ## print(file.info(boot2))
+                ## cat("info on bootstrap data file:\n")
+                ## cat(file.info(boot1))
+                ## cat(file.info(boot2))
                 temp <- file.copy(boot1,boot2,overwrite=TRUE)
                 if(temp!=TRUE){
-                  print("!error copying bootstrap data files: make sure simulations were run to create them",quote=FALSE)
+                  cat("!error copying bootstrap data files: make sure simulations were run to create them\n")
                   break()
                 }
 
                 if(file.exists("covar.sso")) file.remove("covar.sso")
-                if(intern) print(paste("Running model. ADMB output generated during model run will be written to ",
-                                       getwd(),"/ADMBoutput.txt. To change this, set intern=FALSE",sep=""))
+                if(intern) cat("Running model. ADMB output generated during model run will be written to:\n   ",
+                               getwd(),"/ADMBoutput.txt. \n To change this, set intern=FALSE\n",sep="")
                 ADMBoutput <- system(paste(exe,fitextras),intern=intern)
                 if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                                         "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
@@ -305,12 +327,11 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
                 # rerun if hessian doesn't invert
                 if(!is.na(repfilesize) & repfilesize>0){
-                  print(paste("run was good, non-empty report file created: ",repfilename,sep=""),quote=FALSE)
+                  cat("run was good, non-empty report file created: ",repfilename,"\n",sep="")
                   file.copy("covar.sso",paste(masterpath,covarname,sep="/"),overwrite=TRUE)
                 }else{
                   if(file.exists("covar.sso")) file.remove("covar.sso")
-                  print(paste("empty report file (due to bad hessian): ",repfilename,sep=""),quote=F)
-                  print("rerunning with -nohess",quote=F)
+                  cat("empty report file (due to bad hessian):",repfilename,"\n  rerunning with -nohess")
                   ADMBoutput <- system(paste(exe,fitextras,"-nohess"),intern=intern)
                   if(intern) writeLines(c("###","ADMB output from run with -nohess",paste("key =",key),as.character(Sys.time()),
                                           "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
@@ -323,7 +344,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             repmastersize <- file.info(repmaster)$size
             if(!is.na(repmastersize) & repmastersize>0){
               if(length(grep("Temporary report file",readLines(repmaster,n=1)))>0){
-                if(verbose) print(paste("end of run, but temporary file still exists. Deleting",repmaster),quote=FALSE)
+                if(verbose) cat("end of run, but temporary file still exists. Deleting",repmaster,"\n")
                 file.remove(repmaster)
               }
             }

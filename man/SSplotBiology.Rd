@@ -10,10 +10,11 @@
 
 }
 \usage{
-SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE, subplots
-= 1:8, col1 = "red", col2 = "blue", legendloc = "topleft",
-plotdir = "default", labels = c("Length (cm)", "Age (yr)",
-"Maturity", "Mean weight (kg) in last year", "Spawning output",
+SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
+subplots = 1:8, seas = 1, col1 = "red", col2 = "blue",
+legendloc = "topleft", plotdir = "default", labels =
+c("Length (cm)", "Age (yr)", "Maturity",
+"Mean weight (kg) in last year", "Spawning output",
 "Length (cm, middle of the year)", "Natural mortality",
 "Female weight (kg)", "Female length (cm)",
 "Default fecundity label"), pwidth = 7, pheight = 7,
@@ -35,6 +36,10 @@ punits = "in", res = 300, ptsize = 12, cex.main = 1,verbose = TRUE)
   }
   \item{subplots}{
     vector controlling which subplots to create
+  }
+  \item{seas}{
+    which season to plot (obviously only works in seasonal models, but
+    maybe not fully implemented even then)
   }
   \item{col1}{
     color of some points/lines

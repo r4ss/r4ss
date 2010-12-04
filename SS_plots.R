@@ -470,7 +470,7 @@ SS_plots <-
                   print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                   maxneff=maxneff,cex.main=cex.main,...)
     }
-    if(verbose) print("Finished plot 20a: conditional age at length with fits",quote=FALSE)
+    if(verbose) print("Finished plot 20: conditional age at length with fits",quote=FALSE)
   } #end if 20 in plot or print
   
   if(21 %in% c(plot,print)){

@@ -1,0 +1,141 @@
+\name{SS_readstarter}
+\alias{SS_readstarter}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+read Stock Synthesis starter file into list object in R
+}
+\description{
+%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+}
+\usage{
+SS_readstarter(file = "starter.ss", verbose = T)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{file}{
+    Filename either with full path or relative to working directory.
+  }
+  \item{verbose}{
+    Should there be verbose output while running the file? Default=T.
+  }
+}
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
+\value{
+%%  ~Describe the value returned
+%%  If it is a LIST, use
+%%  \item{comp1 }{Description of 'comp1'}
+%%  \item{comp2 }{Description of 'comp2'}
+%% ...
+}
+\references{
+%% ~put references to the literature/web site here ~
+}
+\author{
+%%  ~~who you are~~
+}
+\note{
+%%  ~~further notes~~
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+%% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+##---- Should be DIRECTLY executable !! ----
+##-- ==>  Define data, use random,
+##--	or do  help(data=index)  for the standard data sets.
+
+## The function is currently defined as
+function(file='starter.ss', verbose=T){
+  if(verbose) print("running SS_readstarter",quote=F)
+  starter <- readLines(file)
+  mylist <- list()
+
+  mylist$sourcefile <- file
+  mylist$type <- "Stock_Synthesis_starter_file"
+  mylist$SSversion <- "SSv3.10b_or_later"
+
+  # get strings for control and data file names
+  starter2 <- NULL
+  for(i in 1:length(starter)){
+      # get only stuff before # marks
+      mysplit <- strsplit(starter[i],split="#")[[1]][1]
+      if(!is.na(mysplit) && length(mysplit) > 0) starter2 <- c(starter2,mysplit)
+  }
+  strings <- NULL
+  for(i in 1:length(starter2)){
+      mysplit <- strsplit(starter2[i],split="[[:blank:]]+")[[1]]
+      mysplit <- mysplit[mysplit!=""]
+      strings <- c(strings,mysplit)
+  }
+  strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
+  if(length(strings)>2){
+      print("too many strings in starter file?",quote=F)
+      print(strings)
+      return()
+  }else{
+      mylist$datfile <- strings[1]
+      mylist$ctlfile <- strings[2]
+  }
+
+  # get numbers (could be better integrated with function above)
+  allnums <- NULL
+  for(i in 1:length(starter)){
+      # split apart numbers from text in file
+      mysplit <- strsplit(starter[i],split="[[:blank:]]+")[[1]]
+      mysplit <- mysplit[mysplit!=""]
+      nums <- suppressWarnings(as.numeric(mysplit))
+      if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1
+      else maxcol <- length(nums)
+      if(maxcol > 0){
+          nums <- nums[1:maxcol]
+          allnums <- c(allnums, nums)
+      }
+  }
+
+  # go through numerical values and save as elements of a big list
+  i <- 1
+
+  mylist$init_values_src <- allnums[i]; i <- i+1
+  mylist$run_display_detail <- allnums[i]; i <- i+1
+  mylist$detailed_age_structure <- allnums[i]; i <- i+1
+  mylist$checkup <- allnums[i]; i <- i+1
+  mylist$parmtrace <- allnums[i]; i <- i+1
+  mylist$cumreport <- allnums[i]; i <- i+1
+  mylist$prior_like <- allnums[i]; i <- i+1
+  mylist$soft_bounds <- allnums[i]; i <- i+1
+  mylist$N_bootstraps <- allnums[i]; i <- i+1
+  mylist$last_estimation_phase <- allnums[i]; i <- i+1
+  mylist$MCMCburn <- allnums[i]; i <- i+1
+  mylist$MCMCthin <- allnums[i]; i <- i+1
+  mylist$jitter_fraction <- allnums[i]; i <- i+1
+  mylist$minyr_sdreport <- allnums[i]; i <- i+1
+  mylist$maxyr_sdreport <- allnums[i]; i <- i+1
+  mylist$N_STD_yrs <- N_STD_yrs <- allnums[i]; i <- i+1
+  if(N_STD_yrs>0){
+      mylist$STD_yr_vec <- allnums[i:(i+N_STD_yrs-1)]; i <- i+N_STD_yrs
+  }
+  mylist$converge_criterion <- allnums[i]; i <- i+1
+  mylist$retro_yr <- allnums[i]; i <- i+1
+  mylist$min_age_summary_bio <- allnums[i]; i <- i+1
+  mylist$depl_basis <- allnums[i]; i <- i+1
+  mylist$depl_denom_frac <- allnums[i]; i <- i+1
+  mylist$SPR_basis <- allnums[i]; i <- i+1
+  mylist$F_report_units <- allnums[i]; i <- i+1
+  mylist$F_report_basis <- allnums[i]; i <- i+1
+
+  # check final value
+  if(allnums[i]==999) print("read of starter file complete (final value = 999)",quote=F)
+
+  # all done
+  return(mylist)
+  }
+}
+% Add one or more standard keywords, see file 'KEYWORDS' in the
+% R documentation directory.
+\keyword{ ~kwd1 }
+\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

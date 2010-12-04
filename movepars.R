@@ -22,7 +22,7 @@ function(nareas=4,accuage=40,getpars=T,getrates=T)
   if(!nareas %in% 2:4) stop("'nareas' input must be 2, 3, or 4")
   geterrmessage()
   
-  movecalc <- function(accuage, minage, maxage, valueA, valueB) {
+  movecalc <- function(firstage, accuage, minage, maxage, valueA, valueB) {
     # subfunction to calculate movement rates
     # can be used as a stand-alone function
     # by uncommenting the plot command near the bottom
@@ -49,7 +49,9 @@ function(nareas=4,accuage=40,getpars=T,getrates=T)
         if(agevec[iage] > minage[ipar] & agevec[iage] < maxage[ipar]) movemat1[ipar,iage] <- valueA[ipar] + (agevec[iage]-minage[ipar])*temp1[ipar]
       }
     }
+    # exponentiate
     movemat1 <- exp(movemat1)
+    # rescale
     movemat2 <- movemat1/matrix(apply(movemat1,2,sum),npars,nages,byrow=T)
 
     lty <- c('91','42','22','4222')
