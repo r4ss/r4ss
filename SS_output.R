@@ -87,7 +87,7 @@ SS_output <-
     cat("! Warning, this function tested on SS-V3.11b and SS-V3.20a.\n",
         "  you are using",substr(SS_version,1,9),"which may NOT work with this R code.\n")
   }else{
-    if(verbose){
+    if(verbose)
       cat("This function tested on SS-V3.11b and SS-V3.20a.\n",
           "  You're using",SS_versionshort,"which SHOULD work with this R code.\n")
   }
