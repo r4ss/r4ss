@@ -37,10 +37,9 @@ SSplotNumbers <-
   natage    <- replist$natage
   natlen    <- replist$natlen
   if(plotdir=="default") plotdir <- replist$inputs$dir
-
   if(is.null(natage)){
-    print("Skipped plot 14 because NUMBERS_AT_AGE unavailable in report file",quote=FALSE)
-    print("     change starter file setting for 'detailed age-structured reports'",quote=FALSE)
+    cat("Skipped plot 14 because NUMBERS_AT_AGE unavailable in report file\n",
+        "     change starter file setting for 'detailed age-structured reports'\n")
   }else{
     # get more stuff from replist
     nsexes          <- replist$nsexes
@@ -74,20 +73,19 @@ SSplotNumbers <-
       if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
     }
 
-    if(SS_versionshort!=c("SS-V3.11")) period <- "B"
+    if(SS_versionshort==c("SS-V3.10")) stop("numbers at age plots no longer supported for SS-V3.10 and earlier")
 
     ###########
     # Numbers at age plots
 
     # combining across submorphs and growth patterns
-    column1 <- 11
-    if(SS_versionshort==c("SS-V3.11")) column1 <- 12
+    column1 <- 12
     remove <- -(1:(column1-1)) # removes first group of columns
 
     bseas <- unique(natage$BirthSeas)
-    if(length(bseas)>1) print("Numbers at age plots are for only the first birth season",quote=FALSE)
-    if(ngpatterns>1) print("Numbers at age plots may not deal correctly with growth patterns: no guarantees!",quote=FALSE)
-    if(nseasons>1) print("Numbers at age plots are for season 1 only",quote=FALSE)
+    if(length(bseas)>1) cat("Numbers at age plots are for only the first birth season\n")
+    if(ngpatterns>1) cat("Numbers at age plots may not deal correctly with growth patterns: no guarantees!\n")
+    if(nseasons>1) cat("Numbers at age plots are for season 1 only\n")
     for(iarea in areas){
       for(iperiod in 1:length(period)){
         for(m in 1:nsexes){
@@ -100,7 +98,7 @@ SSplotNumbers <-
                                    natage$Yr < (endyr+2) &
                                    natage$BirthSeas==min(bseas),]
                                    # natage$Bio_Pattern==1,] # formerly filtered
-          if(SS_versionshort==c("SS-V3.11")) natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid"==period[iperiod],]
+          natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid"==period[iperiod],]
 
           # create data frame with 0 values to fill across submorphs
           morphlist <- unique(natagetemp_all$SubMorph)
@@ -210,6 +208,7 @@ SSplotNumbers <-
         natageratio <- as.matrix(natagem[,remove]/natagef[,remove])
         if(diff(range(natageratio,finite=TRUE))!=0){
           tempfun <- function(...){
+zzz <<- list(natageyrsB,0:accuage,natageratio)
             contour(natageyrsB,0:accuage,natageratio,xaxs="i",yaxs="i",xlab=labels[1],ylab=labels[2],
               main=plottitle3,cex.main=cex.main,...)
           }
@@ -223,7 +222,7 @@ SSplotNumbers <-
             tempfun(labcex=0.4)
             dev.off()}
         }else{
-          print("skipped sex ratio contour plot because ratio=1 for all ages and years",quote=FALSE)
+          cat("skipped sex ratio contour plot because ratio=1 for all ages and years\n")
         }
       } # end area loop
     } # end if nsexes>1
@@ -247,7 +246,7 @@ SSplotNumbers <-
                                      natlen$Yr < (endyr+2) &
                                      natlen$BirthSeas==min(bseas),]
                                      # natlen$Bio_Pattern==1,] # formerly filtered
-            if(SS_versionshort==c("SS-V3.11")) natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid"==period[iperiod],]
+            natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid"==period[iperiod],]
 
             # create data frame with 0 values to fill across submorphs
             morphlist <- unique(natlentemp_all$SubMorph)
@@ -368,8 +367,8 @@ SSplotNumbers <-
                                    & equilage$BirthSeas==min(equilage$BirthSeas)
                                    & equilage$Seas==1,]
           if(nrow(equilagetemp)>1){
-            print('in plot of equilibrium age composition by gender and area',quote=FALSE)
-            print('multiple morphs or seasons not supported, using first row from choices below',quote=FALSE)
+            cat("in plot of equilibrium age composition by gender and area\n",
+                "multiple morphs or seasons not supported, using first row from choices below\n")
             print(equilagetemp[,1:10])
           }
           equilagetemp <- equilagetemp[1,remove]
@@ -384,7 +383,7 @@ SSplotNumbers <-
           legendlegend <- c(legendlegend,sextitle)
         }
       }
-      if(length(legendlegend)>1) legend('topright',legend=legendlegend,col=legendcol,lty=legendlty,lwd=3)
+      if(length(legendlegend)>1) legend("topright",legend=legendlegend,col=legendcol,lty=legendlty,lwd=3)
     }
 
     if(plot & 4 %in% subplots){
@@ -437,7 +436,7 @@ SSplotNumbers <-
       } # close if 14 in print
     } # end if AAK
 
-    if(verbose) print("Finished plot 14: Numbers at age",quote=FALSE)
+    if(verbose) cat("Finished plot 14: Numbers at age\n")
     flush.console()
   } # end if data available
 } # end function

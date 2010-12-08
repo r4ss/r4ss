@@ -31,33 +31,41 @@ SSplotRecdevs <-
   recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
 
   if(nrow(recdev)==0 || max(recdev$Value)==0){
-    if(verbose) print("Skipped SSplotrecdevs - no rec devs estimated",quote=FALSE)
+    if(verbose) cat("Skipped SSplotrecdevs - no rec devs estimated\n")
   }else{
     if(nrow(recdev)>0){
+      # early
       recdev$Yr <- as.numeric(substring(recdev$Label,14))
       if(nrow(recdevEarly)>0){
-          recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,15))
+        recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,15))
+      }else{
+        recdevEarly$Yr <- integer(0) # empty value to add column to data.frame with 0 rows
       }
       if(nrow(early_initage)>0){
-          early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
-          recdevEarly <- rbind(early_initage,recdevEarly)
+        early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
+        recdevEarly <- rbind(early_initage,recdevEarly)
       }
+      # main
       if(nrow(main_initage)>0){
-          main_initage$Yr <- startyr - as.numeric(substring(main_initage$Label,14))
-          recdev <- rbind(main_initage,recdev)
+        main_initage$Yr <- startyr - as.numeric(substring(main_initage$Label,14))
+        recdev <- rbind(main_initage,recdev)
       }
-      if(nrow(recdevFore)>0)
-          recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
-      if(nrow(recdevLate)>0)
-          recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
-      if(nrow(recdevFore)>0 & nrow(recdevLate)>0)
-          recdevFore <- rbind(recdevLate,recdevFore)
+      # forecast
+      if(nrow(recdevFore)>0){
+        recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
+      }else{
+        recdevFore$Yr <- NULL
+      }
+      if(nrow(recdevLate)>0){
+        recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
+        recdevFore <- rbind(recdevLate,recdevFore)
+      }
 
       Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
       if(forecastplot){
-          goodyrs <- rep(TRUE,length(Yr))
+        goodyrs <- rep(TRUE,length(Yr))
       }else{
-          goodyrs <- Yr<=endyr+1 # TRUE/FALSE of in range or not
+        goodyrs <- Yr<=endyr+1 # TRUE/FALSE of in range or not
       }
       xlim <- range(Yr[goodyrs],na.rm=TRUE)
       ylim <- range(c(recdevEarly$Value,recdev$Value,recdevFore$Value)[goodyrs],
@@ -65,11 +73,11 @@ SSplotRecdevs <-
 
       recdevfunc <- function(uncertainty){
         # recdevs with uncertainty intervals
-        alldevs <- rbind(recdevEarly,recdev,recdevFore)[goodyrs,]
+        alldevs <- rbind(recdevEarly, recdev, recdevFore)[goodyrs,]
+
         colvec <- c(rep(col2,nrow(recdevEarly)),
                     rep(col1,nrow(recdev)),
                     rep(col2,nrow(recdevFore)))[goodyrs]
-
         ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
         val <- alldevs$Value[goodyrs]
         Yr <- alldevs$Yr[goodyrs]
@@ -87,6 +95,7 @@ SSplotRecdevs <-
         if(uncertainty) arrows(Yr,recdev_lo,Yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2,col=colvec)
         lines(Yr,val,lty=3)
         points(Yr,val,pch=16,col=colvec)
+
       }
 
       # the following code only applies when uncertainty was computed
@@ -165,6 +174,6 @@ SSplotRecdevs <-
       } # end if print
     } # end if nrow(recdevs)>0
   } # end if max(recdev)>0
-  if(verbose) print("Finished SSplotrecdevs: Rec devs and asymptotic error check",quote=FALSE)
+  if(verbose) cat("Finished SSplotrecdevs: Rec devs and asymptotic error check\n")
   flush.console()
 } # end function

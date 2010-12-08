@@ -27,15 +27,16 @@ SSplotCatch <-
   
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
-  F_method                       <- replist$F_method
-  timeseries                     <- replist$timeseries
-  nseasons                       <- replist$nseasons
-  nareas                         <- replist$nareas
-  nfleets                        <- replist$nfleets
-  nfishfleets                    <- replist$nfishfleets
-  endyr                          <- replist$endyr
-  FleetNames                     <- replist$FleetNames
-
+  F_method         <- replist$F_method
+  timeseries       <- replist$timeseries
+  nseasons         <- replist$nseasons
+  nareas           <- replist$nareas
+  nfleets          <- replist$nfleets
+  nfishfleets      <- replist$nfishfleets
+  endyr            <- replist$endyr
+  FleetNames       <- replist$FleetNames
+  SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
+  
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
@@ -67,10 +68,10 @@ SSplotCatch <-
 
   # harvest rates
   if(F_method==1){
-    Fstring <- "Hrate:_"
+    stringF <- "Hrate:_"
     ylabF <- labels[1]
   }else{ # for either continuous F or hybrid F (methods 2 and 3)
-    Fstring <- "F:_"
+    stringF <- "F:_"
     ylabF <- labels[2]
   }
 
@@ -78,15 +79,22 @@ SSplotCatch <-
   goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
   catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
 
+  if(SS_versionshort=="SS-V3.20"){
+    stringN <- "sel(N)"
+    stringB <- "sel(B)"
+  }else{
+    stringN <- "enc(N)"
+    stringB <- "enc(B)"
+  }
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
-    totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("enc(N)"))=="enc(N)"])
+    totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringN))==stringN])
   }else{
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
-    totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+    totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringB))==stringB])
   }
   totobscatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("obs_cat"))=="obs_cat"])
-  Hratemat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(Fstring))==Fstring])
+  Hratemat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringF))==stringF])
 
   # add total across areas
   if(nareas > 1){
@@ -94,13 +102,13 @@ SSplotCatch <-
       arearows <- ts$Area==iarea & ts$Era %in% c("INIT","TIME")
       if(catchasnumbers){
         retmat <- retmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
-        totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("enc(N)"))=="enc(N)"])
+        totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringN))==stringN])
       }else{
         retmat <- retmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
-        totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+        totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
       }
       totobscatchmat <- totobscatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("obs_cat"))=="obs_cat"])
-      Hratemat  <- Hratemat  + as.matrix(ts[arearows, substr(names(ts),1,nchar(Fstring))==Fstring])
+      Hratemat  <- Hratemat  + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringF))==stringF])
     }
   }
 
