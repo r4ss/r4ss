@@ -33,6 +33,7 @@ SSplotTimeseries <-
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get values from replist
+  SS_versionshort <- replist$SS_versionshort
   timeseries     <- replist$timeseries
   nseasons       <- replist$nseasons
   startyr        <- replist$startyr
@@ -42,7 +43,8 @@ SSplotTimeseries <-
   derived_quants <- replist$derived_quants
   FecPar2        <- replist$FecPar2
   B_ratio_denominator <- replist$B_ratio_denominator
-
+  seasfracs      <- replist$seasfracs
+  
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)
     if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
@@ -72,7 +74,11 @@ SSplotTimeseries <-
   }
   # modifying data to subset for a single season
   ts <- timeseries
-  ts$Yr <- ts$Yr + (ts$Seas-1)/nseasons
+  if(SS_versionshort=="SS-V3.20"){
+    ts$Yr <- ts$Yr + seasfracs
+  }else{
+    ts$Yr <- ts$Yr + (ts$Seas-1)/nseasons
+  }
 
   # get spawning season
   spawnseas <- unique(ts$Seas[!is.na(ts$SpawnBio)])
@@ -176,8 +182,8 @@ SSplotTimeseries <-
     if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
       if(!"SPB_Virgin" %in% derived_quants$LABEL){
-        print("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.",quote=FALSE)
-        print("  Try changing 'min yr for Spbio_sdreport' in starter file to -1.",quote=FALSE)
+        cat("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.\n",
+            "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==7){ # spawning biomass
@@ -214,10 +220,10 @@ SSplotTimeseries <-
         stdtable$upper <- v + 1.96*std
         stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
 
-        if(max(stdtable$Yr) < max(ts$Yr)){
-          print("  !warning:",quote=FALSE)
-          print(paste("   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$Yr),"is last year of time series."),quote=FALSE)
-          print("    Consider changing starter file input for 'max yr for sdreport outputs' to -2",quote=FALSE)
+        if(max(stdtable$Yr) < max(floor(ts$Yr))){
+          cat("  !warning:\n",
+              "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$Yr),"is last year of time series.\n",
+              "    Consider changing starter file input for 'max yr for sdreport outputs' to -2\n")
         }
       }
     }
@@ -240,7 +246,7 @@ SSplotTimeseries <-
       if(uncertainty & subplot %in% c(5,7,9)) filename <- paste(filename,"intervals")
       filename <- paste(filename,".png",sep="")
       filename <- paste(plotdir,filename,sep="")
-      if(verbose) print(paste("printing plot to file:",filename))
+      if(verbose) cat("printing plot to file:",filename,"\n")
       pngfun(file=filename)
     }
 

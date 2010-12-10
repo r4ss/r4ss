@@ -10,7 +10,7 @@ SS_output <-
   # SS_output
   # This function comes with no warranty or guarantee of accuracy
   #
-  # Purpose: To import content from Stock SYnthesis model run.
+  # Purpose: To import content from Stock Synthesis model run.
   # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
   #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   #          and other contributors to http://code.google.com/p/r4ss/
@@ -78,6 +78,12 @@ SS_output <-
     stop("!Error: can't find report file,", repfile)
   }
   rephead <- readLines(con=repfile,n=10)
+
+  # check for use of temporary files
+  logfiles <- dir(dir,pattern=".log")
+  if(length(logfiles)){
+    logfiles <- paste(dir,logfiles[grep("SS3",logfiles,ignore.case=TRUE)],sep='/')
+  }
 
   # warn if SS version used to create rep file is too old or too new for this code
   SS_version <- rephead[1]
@@ -167,13 +173,13 @@ SS_output <-
   nonblanks <- apply(rawrep,2,emptytest) < 1
   maxnonblank = max(0,(1:ncols)[nonblanks==TRUE])
   if(maxnonblank==ncols){
-    cat(      "! Warning, all columns are used and some data may have been missed,\n")
+    cat("! Warning, all columns are used and some data may been missed,\n")
     cat("  increase 'ncols' input above current value (ncols=",ncols,")",sep="\n")
     return(NULL)
   }
   if(verbose){
     if((maxnonblank+1)==ncols) cat("Got all columns.\n")
-    if((maxnonblank+1)<ncols) cat("Got all columns. To speed code, future reads of this model may use ncols=",maxnonblank+1,"\n",sep="")
+    if((maxnonblank+1)<ncols) cat("Got all columns. To speed code, use ncols=",maxnonblank+1," in the future.\n",sep="")
     cat("Got Report file\n")
   }
   flush.console()
@@ -225,29 +231,58 @@ SS_output <-
   if(verbose) cat("Finished reading files\n")
   flush.console()
 
-  # Useful dimensions
+  # positions of timeseries section
+  begin <- matchfun("TIME_SERIES")+2
+  end  <- matchfun("SPR_series")-1
+
+  # selectivity read first because it was used to get fleet info
+  # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
   rawselex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1)
   rawselex <- rawselex[,rawselex[1,]!=""]
   names(rawselex)<- rawselex[1,]
   selex <- rawselex[-1,]
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
-  nfleets <- length(unique(selex$Fleet))
-  nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
-  nsexes <- length(unique(as.numeric(selex$gender)))
-  FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
 
+  ### DEFINITIONS section (new in SSv3.20)
+  if(SS_versionshort=="SS-V3.20"){
+    rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
+    # get season stuff
+    nseasons <- as.numeric(rawdefs[1,2])
+    season_durations <- as.numeric(rawdefs[3,1+1:nseasons])
+    seasfracs <- round(12*(cumsum(season_durations) - season_durations[1]))/12 
+    # get fleet info
+    defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+    defs[defs==""] <- NA
+    lab <- defs$X1
+    fleet_ID    <- as.numeric(defs[grep("fleet_ID",lab),-1])
+    names(defs) <- c("Label",paste("Fleet",fleet_ID,sep=""))
+    FleetNames <- defs[grep("fleet_names",lab),-1]
+    fleet_area  <- as.numeric(defs[grep("fleet_area",lab),-1])
+    catch_units <- as.numeric(defs[grep("Catch_units",lab),-1])
+    catch_error <- as.numeric(defs[grep("Catch_error",lab),-1])
+    survey_units <- as.numeric(defs[grep("Survey_units",lab),-1])
+    survey_error <- as.numeric(defs[grep("Survey_error",lab),-1])
+    FishFleet   <- !is.na(Catch_units)
+    nfleets <- length(FleetNames)
+    nfishfleets <- sum(FishFleet)
+  }else{
+    # models prior to SSv3.20
+    nfleets <- length(unique(selex$Fleet))
+    nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
+    FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
+
+    nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
+    seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
+  }
   # more dimensions
-  tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
-  accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
-  ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
-  begin <- matchfun("TIME_SERIES")+2
-  end  <- matchfun("SPR_series")-1
+  nsexes <- length(unique(as.numeric(selex$gender)))
   nareas <- max(as.numeric(rawrep[begin:end,1]))
   startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
   temptime <- rawrep[begin:end,2:3]
   endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
-  nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
-  seasfracs <- (0:(nseasons-1))/nseasons
+  tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
+  accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
+  ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
 
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
@@ -376,16 +411,28 @@ SS_output <-
   # stats list: items that are output to the GUI (if printstats==T) for a quick summary of results
   stats <- list()
   stats$SS_version <- SS_version
+  stats$SS_versionshort <- SS_versionshort
+  
   stats$Run_time <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
 
   tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
   tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
 
+  # check warnings
   stats$Nwarnings <- nwarn
   if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
   stats$warnings <- warn
 
+  # check for use of temporary files
+  logfiles <- dir(dir,pattern=".log")
+  if(length(logfiles)){
+    stats$logfiles <- read.table("~/SS/Hake/12_8_10/Production 3.2a/ss3.log")[,c(4,6)]
+    names(stats$logfiles) <- c("TempFile","Size")
+  }else{
+    stats$logfiles <- NA
+  }
+  
   # likelihoods
   rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2,cols=1:3)
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
@@ -405,7 +452,8 @@ SS_output <-
   parameters <- rawpars
   parameters[parameters=="_"] <- NA
   for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))]) parameters[,i] = as.numeric(parameters[,i])
-
+  activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
+  
   if(!is.na(parfile)){
     parline <- read.table(parfile,fill=TRUE,comment.char="",nrows=1)
   }else{
@@ -436,42 +484,51 @@ SS_output <-
     names(stdtable) = c("name","std","type")
     N_estimated_parameters2 <- sum(stdtable$type=="Par")
 
-    if(is.na(stats$N_estimated_parameters)){
-      stats$N_estimated_parameters <- N_estimated_parameters2
-    }else{
-      if(stats$N_estimated_parameters!=N_estimated_parameters2){
-        cat("!warning:\n")
-        cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
-        cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
-        cat("  returning the second value,",N_estimated_parameters2,"\n")
-        stats$N_estimated_parameters <- N_estimated_parameters2
-      }
-    }
+    #### this section was muddling Derived Quants with Parameters
+    #### got work-around pending fix from Rick to use of "Par" vs. "Der"
+    #### in covar file.
+    ## if(is.na(stats$N_estimated_parameters)){
+    ##   stats$N_estimated_parameters <- N_estimated_parameters2
+    ## }else{
+    ##   if(stats$N_estimated_parameters!=N_estimated_parameters2){
+    ##     cat("!warning:\n")
+    ##     cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
+    ##     cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
+    ##     cat("  returning the second value,",N_estimated_parameters2,"\n")
+    ##     stats$N_estimated_parameters <- N_estimated_parameters2
+    ##   }
+    ## }
     Nstd <- sum(stdtable$std>0)
 
     if(Nstd<=1) stop("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=FALSE.")
     if(checkcor==TRUE & stats$N_estimated_parameters > 1)
     {
-      corfilter <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr",]
+      corfilter <- CoVar[CoVar$all.i!=CoVar$all.j &
+                         CoVar$Par..i=="Par" &
+                         CoVar$Par..j=="Par" &
+                         CoVar$label.i %in% activepars &
+                         CoVar$label.j %in% activepars &
+                         !substr(CoVar$label.i,1,8)=="ForeRecr" &
+                         !substr(CoVar$label.j,1,8)=="ForeRecr",]
       rangecor <- range(abs(corfilter$corr))
       corstats <- list()
       corstats$cormessage1 <- paste("Range of abs(parameter correlations) is",min(rangecor),"to",max(rangecor))
       # search for high or low correlations in covar file
-      highcor <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
-      lowcorcandidates <- CoVar[CoVar$all.i!=CoVar$all.j & CoVar$Par..i=="Par" & CoVar$Par..j=="Par" & !substr(CoVar$label.i,1,8)=="ForeRecr" & !substr(CoVar$label.j,1,8)=="ForeRecr" & abs(CoVar$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
+      highcor <- corfilter[abs(corfilter$corr) >= cormax, names(CoVar)%in%c("label.i", "label.j", "corr")]
+      lowcorcandidates <- corfilter[abs(corfilter$corr) <= cormin, names(CoVar)%in%c("label.i", "label.j", "corr")]
       lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i,lowcorcandidates$label.j)))
       lowcortestlist$name <- as.character(lowcortestlist[,1])
       nlowcor <- 0
       lowcor <- 0
       if(nrow(lowcortestlist)>0)
       {
-       lowcortestlist$max <- NA
-       for(i in 1:length(lowcortestlist[,1]))
-       {
-        lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
-       }
-       lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
-       nlowcor <- nrow(lowcor)
+        lowcortestlist$max <- NA
+        for(i in 1:length(lowcortestlist[,1]))
+        {
+          lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]],corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
+        }
+        lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin,2:3]
+        nlowcor <- nrow(lowcor)
       }
       nhighcor <- nrow(highcor)
       if(printhighcor>0){
@@ -563,7 +620,6 @@ SS_output <-
   names(recruitment_dist) <- recruitment_dist[1,]
   recruitment_dist <- recruitment_dist[-1,]
   for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
-
   
   # gradient
   if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
@@ -609,6 +665,17 @@ SS_output <-
   # data return object
   returndat <- list()
 
+  if(SS_versionshort=="SS-V3.20"){
+    returndat$definitions  <- defs
+    returndat$fleet_ID     <- fleet_ID
+    returndat$fleet_area   <- fleet_area
+    returndat$catch_units  <- catch_units
+    returndat$catch_error  <- catch_error
+    returndat$survey_units <- survey_units
+    returndat$survey_error <- survey_error
+    returndat$IsFishFleet  <- !is.na(Catch_units)
+  }
+  
   returndat$nfleets     <- nfleets
   returndat$nfishfleets <- nfishfleets
   returndat$nsexes      <- nsexes

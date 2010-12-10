@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist=ReportObject, plot=1:25, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:25, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
@@ -28,12 +28,10 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "November 1, 2010"
+  codedate <- "December 9, 2010"
 
-  if(verbose){
-    print(paste("R function updated:",codedate),quote=FALSE)
-    print("Check for new code and report problems at http://code.google.com/p/r4ss/",quote=FALSE)
-  }
+  if(verbose) cat("R function updated:",codedate,
+    "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
 
   flush.console()
 
@@ -41,12 +39,9 @@ SS_plots <-
   # in the future, this could be read from a file, or we could have multiple columns
   # in the table to choose from
 
+  if(is.null(replist)) stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
 
   # get quantities from the big list
-  if(replist[[1]]=="ReportObject"){
-    return("The input 'replist' should refer to an R object created by the function 'SSoutput'.")
-  }
-
   nfleets     <- replist$nfleets
   nfishfleets <- replist$nfishfleets
   nareas      <- replist$nareas
@@ -62,22 +57,21 @@ SS_plots <-
   
   # check for internal consistency
   if(uncertainty==TRUE & inputs$covar==FALSE){
-    print("To use uncertainty=T, you need to have covar=T in the input to the SSoutput function",quote=FALSE)
-    return()
+    stop("To use uncertainty=T, you need to have covar=T in the input to the SSoutput function")
   }
   if(forecastplot==TRUE & inputs$forecast==FALSE){
-    print("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function",quote=FALSE)
-    return()
+    stop("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function")
   }
   if(forecastplot==TRUE & max(timeseries$Yr > endyr+1)==0){
-    print("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default",quote=FALSE)
+    cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
     forecastplot <- FALSE
   }
 
   # derived quantities
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
-  }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
+  }else{
+    if(length(intersect(fleets,1:nfleets))!=length(fleets)){
       return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
   }}
   if(areas[1]=="all"){
@@ -86,10 +80,10 @@ SS_plots <-
       return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
   }}
 
-  if(verbose) print("Finished defining objects",quote=FALSE)
+  if(verbose) cat("Finished defining objects\n")
   
   if(nareas>1){
-    print(paste("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")",sep=""),quote=FALSE)
+    cat("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")\n",sep="")
     if(areanames[1]=="default") areanames <- paste("area",1:nareas)
   }
   
@@ -116,8 +110,7 @@ SS_plots <-
   # need appropriate line to support Mac operating systems
 
   if(nprints>0 & pdf){
-    print("can't have pdf=T and print!=0: use print only or pdf & plot inputs",quote=FALSE)
-    return()
+    stop("can't have pdf=T and print!=0: use print only or pdf & plot inputs")
   }
   if(nplots>0 & !pdf & new){
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
@@ -127,14 +120,14 @@ SS_plots <-
     plotdir <- "No directory"
   }
   if(nplots>0 & !new){
-    if(verbose) print("Adding plots to existing plot window. Plot history not erased.",quote=FALSE)
+    if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
   if(nprints>0){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
     plotdir <- paste(dir,printfolder,"/",sep="")
     dir.create(plotdir,showWarnings=FALSE)
-    if(nprints>0 & verbose) print(paste("Plots specified by 'print' will be written to",plotdir),quote=FALSE)
+    if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir)
   }
   if(pdf){
     if(dir=="default") dir <- inputs$dir
@@ -142,7 +135,7 @@ SS_plots <-
     plotdir <- paste(dir,printfolder,"/",sep="")
     pdffile <- paste(inputs$dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) print(paste("PDF file with plots will be: ",pdffile,sep=""),quote=FALSE)
+    if(verbose) cat("PDF file with plots will be: ",pdffile,sep="")
   }
   if(new) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
 
@@ -173,7 +166,7 @@ SS_plots <-
     SSplotBiology(replist=replist,
                   plot=(1 %in% plot),print=(1 %in% print),
                   cex.main=cex.main)
-    if(verbose) print("Finished plot 1: Biology (weight, maturity, spawning output, growth)",quote=FALSE)
+    if(verbose) cat("Finished plot 1: Biology (weight, maturity, spawning output, growth)\n")
   }
 
   ### plots 3 and 4 selectivity and retention
@@ -183,7 +176,7 @@ SS_plots <-
     SSplotSelex(replist=replist, selexlines=selexlines, fleets=fleets,
                 plot=(3 %in% plot), print=(3 %in% print),
                 cex.main=cex.main)
-    if(verbose) print("Finished plots 3 and 4: selectivity plots",quote=FALSE)
+    if(verbose) cat("Finished plots 3 and 4: selectivity plots\n")
   }
 
 
@@ -227,7 +220,7 @@ SS_plots <-
         }
       }
     }
-    if(verbose) print("Finished plot 5: Basic time series",quote=FALSE)
+    if(verbose) cat("Finished plot 5: Basic time series\n")
   } # end if 5 in plot or print
 
   if(6 %in% c(plot, print))
@@ -238,7 +231,7 @@ SS_plots <-
                 fleetnames=fleetnames,
                 minyr=minyr,maxyr=maxyr)
 
-    if(verbose) print("Finished plot 6: catch time series",quote=FALSE)
+    if(verbose) cat("Finished plot 6: catch time series\n")
   } # end if 6 in plot or print
 
   ### Plot 8: discard fractions (if present) ###
@@ -329,7 +322,7 @@ SS_plots <-
   if(!datplot)
   {
     if(length(intersect(15:17,c(plot,print)))>0)
-      print("skipped data-only plots 15-17 (comp data without fit) because input 'datplot=F'",quote=FALSE)
+      cat("skipped data-only plots 15-17 (comp data without fit) because input 'datplot=F'\n")
   }else{
     if(15 %in% c(plot,print))  # data only aspects
     {
@@ -357,7 +350,7 @@ SS_plots <-
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
-      if(verbose) print("Finished plot 15: length and size comp data",quote=FALSE)
+      if(verbose) cat("Finished plot 15: length and size comp data\n")
       flush.console()
     }
     if(16 %in% c(plot,print))
@@ -386,7 +379,7 @@ SS_plots <-
                   samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
-      if(verbose) print("Finished plot 16: age comp data",quote=FALSE)
+      if(verbose) cat("Finished plot 16: age comp data\n")
       flush.console()
     }
     if(17 %in% c(plot,print))
@@ -398,7 +391,7 @@ SS_plots <-
                   maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                   fixdims=fixdims,rows=rows,cols=cols,
                   print=(17%in%print),plot=(17%in%plot),plotdir=plotdir,cex.main=cex.main,...)
-      if(verbose) print("Finished plot 17: conditional age at length data",quote=FALSE)
+      if(verbose) cat("Finished plot 17: conditional age at length data\n")
       flush.console()
     }
   } # end if data plot
@@ -417,7 +410,7 @@ SS_plots <-
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
-    if(verbose) print("Finished plot 18: length and size comps with fits",quote=FALSE)
+    if(verbose) cat("Finished plot 18: length and size comps with fits\n")
     flush.console()
   }
 
@@ -435,7 +428,7 @@ SS_plots <-
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(19%in%print),plot=(19%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
-    if(verbose) print("Finished plot 19: age comps with fits",quote=FALSE)
+    if(verbose) cat("Finished plot 19: age comps with fits\n")
     flush.console()
   } # end if 19 in plot or print
 
@@ -470,7 +463,7 @@ SS_plots <-
                   print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                   maxneff=maxneff,cex.main=cex.main,...)
     }
-    if(verbose) print("Finished plot 20: conditional age at length with fits",quote=FALSE)
+    if(verbose) cat("Finished plot 20: conditional age at length with fits\n")
   } #end if 20 in plot or print
   
   if(21 %in% c(plot,print)){
@@ -483,12 +476,12 @@ SS_plots <-
                 print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
     if(nrow(replist$condbase)>0 & verbose){
-      print("Finished plot 21: mean age and std. dev. in conditional AAL",quote=FALSE)
-      print("  This is a new plot, currently in beta mode.",quote=FALSE)
-      print("  Left plots are mean AAL by size-class (obs. and pred.)",quote=FALSE)
-      print("  with 90% CIs based on adding 1.64 SE of mean to the data",quote=FALSE)
-      print("  Right plots in each pair are SE of mean AAL (obs. and pred.)",quote=FALSE)
-      print("  with 90% CIs based on the chi-square distribution.",quote=FALSE)
+      cat("Finished plot 21: mean age and std. dev. in conditional AAL\n",
+          "  This is a new plot, currently in beta mode.\n",
+          "  Left plots are mean AAL by size-class (obs. and pred.)\n",
+          "  with 90% CIs based on adding 1.64 SE of mean to the data\n",
+          "  Right plots in each pair are SE of mean AAL (obs. and pred.)\n",
+          "  with 90% CIs based on the chi-square distribution.\n")
     }
   } # end if 21 in plot or print
 
@@ -506,7 +499,7 @@ SS_plots <-
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(22%in%print),plot=(22%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
-    if(verbose) print("Finished plot 22: mean length at age and mean weight at age",quote=FALSE)
+    if(verbose) cat("Finished plot 22: mean length at age and mean weight at age\n")
     flush.console()
   } # end if 22 in plot or print
 
@@ -543,7 +536,7 @@ SS_plots <-
   # end if 25 in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
-  if(verbose) print("Finished all requested plots in SS_plots function",quote=FALSE)
+  if(verbose) cat("Finished all requested plots in SS_plots function\n")
   ### end of SS_plots function
   return(invisible(999))
 }

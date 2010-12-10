@@ -24,7 +24,7 @@ SSplotPars <-
   #
   ################################################################################
 
-  codedate <- "April 29, 2010"
+  codedate <- "November 9, 2010"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
