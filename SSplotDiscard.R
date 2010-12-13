@@ -68,8 +68,8 @@ SSplotDiscard <-
         dev.off()
       }
     } # discard series
-    if(verbose) print("Finished discard plot",quote=FALSE)
+    if(verbose) cat("Finished discard plot\n")
   }else{ # if discards
-    if(verbose) print("No discard data to plot",quote=FALSE)
+    if(verbose) cat("No discard data to plot\n")
   }
 } # end of function

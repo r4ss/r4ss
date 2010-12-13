@@ -35,7 +35,7 @@ SSplotYield <-
         yieldfunc()
         dev.off()}
     }
-    if(verbose) print("Finished plot 22: yield curve",quote=FALSE)
+    if(verbose) cat("Finished plot 22: yield curve\n")
   }
 
   ts <- timeseries
@@ -73,7 +73,7 @@ SSplotYield <-
     s <- seq(length(sprod_good)-1)
     arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
     options(warn=old_warn)  #returning to old value
-
+    
     abline(h=0,col="grey")
     abline(v=0,col="grey")
     points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
@@ -87,5 +87,5 @@ SSplotYield <-
       sprodfunc()
       dev.off()}
   }
-  if(verbose) print("Finished plot 22: Surplus production",quote=FALSE)
+  if(verbose) cat("Finished plot 22: Surplus production\n")
 } # end function

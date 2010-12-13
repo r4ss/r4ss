@@ -79,12 +79,6 @@ SS_output <-
   }
   rephead <- readLines(con=repfile,n=10)
 
-  # check for use of temporary files
-  logfiles <- dir(dir,pattern=".log")
-  if(length(logfiles)){
-    logfiles <- paste(dir,logfiles[grep("SS3",logfiles,ignore.case=TRUE)],sep='/')
-  }
-
   # warn if SS version used to create rep file is too old or too new for this code
   SS_version <- rephead[1]
   SS_versionshort <- toupper(substr(SS_version,1,8))
@@ -206,6 +200,24 @@ SS_output <-
   }else{if(verbose) cat("You skipped the forecast file\n")}
   flush.console()
 
+  # check for use of temporary files
+  logfile <- dir(dir,pattern=".log")
+  logfile <- logfile[logfile != "fmin.log"]
+  if(length(logfile)==1){
+    logfile <- read.table(paste(dir,logfile,sep='/'))[,c(4,6)]
+    names(logfile) <- c("TempFile","Size")
+    maxtemp <- max(logfile$Size)
+    if(maxtemp==0){
+      cat("Got log file. There were NO temporary files were written in this run.\n")
+    }else{
+      cat("!warning: temporary files were written in this run:\n")
+      print(logfile)
+    }
+  }else{
+    logfile <- NA
+    cat("either no log file in directory or too many files matching pattern .log\n")
+  }
+
   # read warnings file
   if(warn){
     warnname <- paste(dir,"warning.sso",sep="")
@@ -262,7 +274,7 @@ SS_output <-
     catch_error <- as.numeric(defs[grep("Catch_error",lab),-1])
     survey_units <- as.numeric(defs[grep("Survey_units",lab),-1])
     survey_error <- as.numeric(defs[grep("Survey_error",lab),-1])
-    FishFleet   <- !is.na(Catch_units)
+    FishFleet   <- !is.na(catch_units)
     nfleets <- length(FleetNames)
     nfishfleets <- sum(FishFleet)
   }else{
@@ -299,12 +311,18 @@ SS_output <-
     # read composition database
     if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
     rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=18, nrows=-1)
-    if(ncol(rawcompdbase)==22) rawcompdbase[1,22] <- "unknown"
+    if(ncol(rawcompdbase)==22) rawcompdbase[1,22] <- "Super"
     names(rawcompdbase) <- rawcompdbase[1,]
     compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
     compdbase <- compdbase[compdbase$Obs!="",]
     compdbase[compdbase=="_"] <- NA
-    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+    compdbase0 <- compdbase[is.na(compdbase$N),]
+    n <- nrow(compdbase0)
+    if(n>0){
+      cat("Removing",n,"rows from composition database with NA sample size (maybe was input as N=0):\n")
+    }
+    compdbase <- compdbase[!is.na(compdbase$N),]
+    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","Super"))]) compdbase[,i] <- as.numeric(compdbase[,i])
 
     # configure seasons
     if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
@@ -423,15 +441,6 @@ SS_output <-
   stats$Nwarnings <- nwarn
   if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
   stats$warnings <- warn
-
-  # check for use of temporary files
-  logfiles <- dir(dir,pattern=".log")
-  if(length(logfiles)){
-    stats$logfiles <- read.table("~/SS/Hake/12_8_10/Production 3.2a/ss3.log")[,c(4,6)]
-    names(stats$logfiles) <- c("TempFile","Size")
-  }else{
-    stats$logfiles <- NA
-  }
   
   # likelihoods
   rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2,cols=1:3)
@@ -673,7 +682,7 @@ SS_output <-
     returndat$catch_error  <- catch_error
     returndat$survey_units <- survey_units
     returndat$survey_error <- survey_error
-    returndat$IsFishFleet  <- !is.na(Catch_units)
+    returndat$IsFishFleet  <- !is.na(catch_units)
   }
   
   returndat$nfleets     <- nfleets

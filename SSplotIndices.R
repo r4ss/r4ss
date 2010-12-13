@@ -207,7 +207,7 @@ function(replist,subplots=1:7,
    dev.off()}
   } # end datplot
 
-  if(verbose) print("Finished plot 13: CPUE plots",quote=FALSE)
+  if(verbose) cat("Finished plot 13: CPUE plots\n")
   flush.console()
 
 } # end function

@@ -59,9 +59,9 @@ SSplotMnwt <-
           dev.off()}
       } # loop over market categories
     } # loop over fleets
-    if(verbose) print("Finished average body weight plot",quote=FALSE)
+    if(verbose) cat("Finished average body weight plot\n")
   }else{ # if mean weight data exists
-    if(verbose) print("No average body weight data to plot",quote=FALSE)
+    if(verbose) cat("No average body weight data to plot\n")
   }
   flush.console()
 } # end if 10 in plot or print

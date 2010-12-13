@@ -22,7 +22,7 @@ SSplotTags <-
 
   tagdbase2 <- replist$tagdbase2
   if(is.null(tagdbase2) || nrow(tagdbase2)==0){
-    print("skipping tag plots because there's no tagging data",quote=FALSE)
+    cat("skipping tag plots because there's no tagging data\n")
   }else{
     # calculations needed for printing to multiple PNG files
     grouprange     <- unique(tagdbase2$Rep)
@@ -64,7 +64,7 @@ SSplotTags <-
       par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
     }
 
-    print("Calculated tagging related quantities...",quote=FALSE)
+    cat("Calculated tagging related quantities...\n")
     # reconfiguring tagdbase2
     # why? to exclude the first year for each group?
     XRep <- -1
@@ -245,7 +245,7 @@ SSplotTags <-
         dev.off()
       }
     }
-    if(verbose) print("Finished plot 24: tags",quote=FALSE)
+    if(verbose) cat("Finished plot 24: tags\n")
     flush.console()
   } # end if data
 } # end SSplotTags

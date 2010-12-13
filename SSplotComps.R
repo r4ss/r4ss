@@ -129,7 +129,7 @@ SSplotComps <-
     filenamestart <- "21_wtatagefit_"
     titledata <- "mean weight at age, "
   }
-  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) return("Input 'kind' to SSplotComps is not right.")
+  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) stop("Input 'kind' to SSplotComps is not right.")
   # loop over fleets
   for(f in fleets)
   {
@@ -543,7 +543,6 @@ SSplotComps <-
         # loop over partitions (discard, retain, total)
         for(j in unique(dbase_k$Part))
         {
-          print(j)
           # dbase is the final data.frame used in the individual plots
           # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
           dbase <- dbase_k[dbase_k$Part==j,]

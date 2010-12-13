@@ -41,5 +41,5 @@ SSplotSpawnrecruit <-
     pngfun(file=paste(plotdir,"12_srcurve.png",sep=""))
     recruitfun()
     dev.off()}
-  if(verbose) print("Finished plot 12: Spawner-recruit curve",quote=FALSE)
+  if(verbose) cat("Finished plot 12: Spawner-recruit curve\n")
 }

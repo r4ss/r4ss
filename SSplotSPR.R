@@ -36,7 +36,7 @@ SSplotSPR <-
     }
   }
 
-  if(nseasons>1) print("Skipped 1-SPR series plot because it's not yet configured for multi-season models",quote=FALSE)
+  if(nseasons>1) cat("Skipped 1-SPR series plot because it's not yet configured for multi-season models\n")
   if(nseasons==1){ # temporary disable until code cleanup
     sprfunc2 <- function(){
       plot(sprseries$Year,(1-sprseries$spr),xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="o",col=col2)
@@ -81,7 +81,7 @@ SSplotSPR <-
     }
 
     if(btarg<=0 | sprtarg<=0){
-      print("skipped SPR phase plot (in group 11) because btarg or sprtarg <= 0",quote=FALSE)
+      cat("skipped SPR phase plot (in group 11) because btarg or sprtarg <= 0\n")
     }else{
       timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
       ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
@@ -111,7 +111,7 @@ SSplotSPR <-
         }
       }
 
-      if(verbose) print("Finished SPR plots",quote=FALSE)
+      if(verbose) cat("Finished SPR plots\n")
     }
     flush.console()
   } # end temporary multi-season disable of section if nseasons>1
