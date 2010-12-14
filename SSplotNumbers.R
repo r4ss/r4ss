@@ -158,7 +158,7 @@ SSplotNumbers <-
           if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
 
           ylab <- labels[6]
-          plottitle2 <- paste(periodtitle,"of year",labels[7])
+          plottitle2 <- paste(periodtitle,labels[7])
           if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
 
           tempfun <- function(){
@@ -303,7 +303,7 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
             if(m==1 & nsexes==2) meanlenf <- meanlenf <- meanlen # save value for females in 2 sex models
             
             ylab <- labels[13]
-            plottitle2 <- paste(periodtitle,"of year",labels[14])
+            plottitle2 <- paste(periodtitle,labels[14])
             if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
 
             tempfun <- function(){
@@ -354,7 +354,7 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
       plot(0,type='n',xlim=c(0,accuage),
            ylim=c(0,1.05*max(equilage[equilage$BirthSeas==min(equilage$BirthSeas)
              & equilage$Seas==1,remove])),
-           xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10])
+           xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10],cex.main=cex.main)
 
       # now fill in legend
       legendlty <- NULL
@@ -403,7 +403,7 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
       if(N_ageerror_defs == 1) colvec <- "black" else colvec <- rich.colors.short(N_ageerror_defs)
 
       ageingfun <- function(){
-        matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,xlab=labels[3],ylab=labels[4],main=labels[8])
+        matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,xlab=labels[3],ylab=labels[4],main=labels[8],cex.main=cex.main)
         abline(h=0,col="grey") # grey line at 0
       }
 

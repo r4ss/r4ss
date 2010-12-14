@@ -297,9 +297,9 @@ SSplotTimeseries <-
         plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
         plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
       }else{
-        plot1 <- ts$Area==iarea & ts$Era=="VIRG" # T/F for in area & is virgin value
-        plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
-        plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
+        plot1 <- yvals>0 & ts$Area==iarea & ts$Era=="VIRG" # T/F for in area & is virgin value
+        plot2 <- yvals>0 & ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
+        plot3 <- yvals>0 & ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
       }
       mycol <- areacols[iarea]
       

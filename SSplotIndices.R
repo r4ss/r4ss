@@ -25,31 +25,14 @@ function(replist,subplots=1:7,
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   cpue        <- replist$cpue
-  nseasons    <- replist$nseasons
-  cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
-
-  if(col1[1]=="default"){
-    if(nseasons==1) colvec1 <- "red"
-    if(nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
-    if(!nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
-  }else{
-    colvec1 <- col1
-  }
-  if(col2[1]=="default"){
-    if(nseasons==1) colvec2 <- "blue"
-    if(nseasons==4) colvec2 <- c("blue4","green3","orange2","red3")
-    if(!nseasons %in% c(1,4)) colvec2 <- rich.colors.short(nseasons)
-  }else{
-    colvec2 <- col2
-  }
-  if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
-
   if(is.null(dim(cpue))){
     cat("no CPUE data in this model\n")
     return()
   }
   FleetNames  <- replist$FleetNames
   nfleets     <- replist$nfleets
+  nseasons    <- replist$nseasons
+  cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames
@@ -58,9 +41,36 @@ function(replist,subplots=1:7,
   }else{ if(length(intersect(fleets,1:nfleets))!=length(fleets)){
       return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
   }}
-
+  
   # subset fleets as requested
   fleetvec <- intersect(fleets, unique(as.numeric(cpue$FleetNum)))
+
+  # use fancy colors only if any index spans more than one season
+  usecol <- FALSE
+  for(ifleet in fleetvec){
+    if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$FleetNum==ifleet])) > 1){
+      usecol <- TRUE
+    }else{
+      legend=FALSE
+    }
+  }
+
+  if(col1[1]=="default"){
+    colvec1 <- "red"
+    if(usecol & nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
+    if(usecol & !nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
+  }else{
+    colvec1 <- col1
+  }
+  if(col2[1]=="default"){
+    colvec2 <- "blue"
+    if(usecol & nseasons==4) colvec2 <- c("blue4","green3","orange2","red3")
+    if(usecol & !nseasons %in% c(1,4)) colvec2 <- rich.colors.short(nseasons)
+  }else{
+    colvec2 <- col2
+  }
+  if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
+
 
   if(datplot){
    allcpue <- data.frame(NA)
@@ -77,14 +87,14 @@ function(replist,subplots=1:7,
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
-    s <- cpueuse$Seas
-
+    if(usecol) s <- cpueuse$Seas else s <- 1 # only use colorvector if more than 1 season
     if(datplot){
-     cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
-     cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
-     tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
-     colnames(tempcpue) <- c("Index","year","value","stdvalue")
-     allcpue <- rbind(allcpue,tempcpue)}
+      cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
+      cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
+      tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
+      colnames(tempcpue) <- c("Index","year","value","stdvalue")
+      allcpue <- rbind(allcpue,tempcpue)
+    }
     uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
     npoints <- length(z)
