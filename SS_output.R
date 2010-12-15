@@ -191,7 +191,11 @@ SS_output <-
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
     if(yesMSY) endyield <- matchfun("findFmsy",rawforcast1[,10])
     yieldraw <- rawforcast1[(matchfun("Btarget",rawforcast1[,10])):endyield,]
-    yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+    if(SS_versionshort=="SS-V3.20"){
+      yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+    }else{
+      yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+    }
     colnames(yielddat) <- c("Catch","Depletion")
     yielddat$Catch <- as.numeric(yielddat$Catch)
     yielddat$Depletion <- as.numeric(yielddat$Depletion)
@@ -924,12 +928,15 @@ SS_output <-
   returndat$recruit <- sr
 
   # CPUE/Survey series
-  rawcpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,cols=1:10)
+  rawcpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,cols=1:13)
+  rawcpue[1,13] <- "Note"
+  rawcpue[rawcpue=="_"] <- NA
+
   if(ncpue>0)
   {
     names(rawcpue) <- rawcpue[1,]
     cpue <- rawcpue[-1,]
-    for(i in 2:ncol(cpue)) cpue[,i] <- as.numeric(cpue[,i])
+    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Note")]) cpue[,i] <- as.numeric(cpue[,i])
     cpue$FleetName <- NA
     cpue$FleetNum <- NA
     for(i in 1:nrow(cpue))

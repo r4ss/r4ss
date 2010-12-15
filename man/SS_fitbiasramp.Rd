@@ -51,9 +51,9 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
 % %%  \item{comp2 }{Description of 'comp2'}
 % %% ...
 % }
-% \references{
-% %% ~put references to the literature/web site here ~
-% }
+\references{
+  Methot, R.D. and Taylor, I.G., 2010. Modeling the variability of recruitment in fishery assessment models. In review.
+}
 \author{
 Ian Taylor
 }

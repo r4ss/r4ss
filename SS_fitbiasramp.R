@@ -16,13 +16,11 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
-  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.04","SS-V3.1-","SS-V3.10","SS-V3.11"))){
-    print("!error: this function needs an input object created by SS_output from a SSv3.10 model")
-    return()
+  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.11","SS-V3.20"))){
+    stop("this function needs an input object created by SS_output from a SSv3.11 or v3.20 model")
   }
   if(replist$inputs$covar==FALSE){
-    print("!error, you need to have covar=TRUE in the input to the SS_output function",quote=FALSE)
-    return()
+    stop("you need to have covar=TRUE in the input to the SS_output function",quote=FALSE)
   }
   parameters <- replist$parameters
   startyr    <- replist$startyr
@@ -38,7 +36,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                        max(nonfixedyrs),
                        .7)
   }
-  if(verbose) print(paste("startvalues =",paste(startvalues,collapse=", ")),quote=FALSE)
+  if(verbose) cat("startvalues =",paste(startvalues,collapse=", "),"\n")
 
   makeoffsets <- function(values){
       # a function to transform parameters into offsets from adjacent values
@@ -64,7 +62,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   if(transform){
       startvalues <- makeoffsets(startvalues)
   }
-  if(verbose & transform) print(paste("transformed startvalues =",paste(startvalues,collapse=", ")),quote=FALSE)
+  if(verbose & transform) cat("transformed startvalues =",paste(startvalues,collapse=", "),"\n")
 
   biasadjfit <- function(pars,yr,std,sigmaR,transform,eps=.1){
     # calculate the goodness of the fit of the estimated ramp and values to the model output
@@ -165,7 +163,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   
   if(max(val)==0 | length(val)==0){
-    if(verbose) print("no rec devs estimated in this model",quote=FALSE)
+    if(verbose) cat("no rec devs estimated in this model\n")
     return()
   }else{
     recdev_hi <- val + 1.96*std
@@ -173,9 +171,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
     ylim <- range(recdev_hi,recdev_lo)
 
-    if(png!=FALSE & pdf!=FALSE){ print("must have either png or pdf equal to FALSE",quote=FALSE)
-                         return()
-                       }
+    if(png!=FALSE & pdf!=FALSE) stop("must have either png or pdf equal to FALSE")
     if(png!=FALSE) png(file=png,width=pwidth,height=pheight,
                    units=punits,res=res,pointsize=ptsize)
     if(pdf!=FALSE) pdf(file=pdf,width=pwidth,height=pheight,
@@ -190,7 +186,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     }
   }
 
-  print('estimating alternative recruitment bias adjustment fraction...',quote=FALSE)
+  cat('estimating alternative recruitment bias adjustment fraction...\n')
   newbias <- optimfun(yr=yr,std=std,startvalues=startvalues)
 
   yvals <- 1-(std/sigma_R_in)^2
@@ -224,14 +220,14 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   df <- data.frame(value=newvals,label=names)
 
   if(newbias$convergence!=0){
-      print("Problem with convergence, here is output from 'optim':",quote=FALSE)
-      print("##############################",quote=FALSE)
+      cat("Problem with convergence, here is output from 'optim':\n")
+      cat("##############################\n")
       print(newbias)
-      print("##############################",quote=FALSE)
+      cat("##############################\n")
   }
 
 
-  print('Estimated values:',quote=FALSE)
+  cat('Estimated values:\n')
   print(format(df,justify="left"),row.names=FALSE)
 
   if(!is.null(oldctl) & !is.null(newctl)){
@@ -240,12 +236,12 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     # look for certain comments in file
     spot1 <- grep('last_early_yr',ctlfile)
     spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
-    if(spot1!=spot2-4) print('error! related to maxbias inputs in ctl file')
+    if(spot1!=spot2-4) stop('error related to maxbias inputs in ctl file')
     # replace values
     ctlfile[spot1:spot2] <- newvals
     # write new file
     writeLines(ctlfile,newctl)
-    print(paste('wrote new file to',newctl,'with values',paste(newvals,collapse=" ")),quote=FALSE)
+    cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
   }
   return(invisible(newbias))
 }

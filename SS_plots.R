@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist=NULL, plot=1:25, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:26, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 

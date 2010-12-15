@@ -25,6 +25,10 @@ function(replist,subplots=1:7,
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   cpue        <- replist$cpue
+  if(length(grep("superperiod",cpue$Note))){
+    cat("Note: some indices have superperiods. Values will be plotted in year/season associated with data in report file.\n")
+    cpue <- cpue[!is.na(cpue$Dev),]
+  }
   if(is.null(dim(cpue))){
     cat("no CPUE data in this model\n")
     return()

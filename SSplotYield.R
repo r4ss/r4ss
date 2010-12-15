@@ -17,10 +17,12 @@ SSplotYield <-
   nareas      <- replist$nareas
   nseasons    <- replist$nseasons
   timeseries  <- replist$timeseries
-
+  SS_versionshort <- replist$SS_versionshort
+  if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
+  
   # test if data is available
   if(!is.null(equil_yield[1,1]) && !is.na(equil_yield[1,1])){
-    # function for yeidl curve
+    # function for yeild curve
     yieldfunc <- function(){
       plot(equil_yield$Depletion,equil_yield$Catch,xlab=labels[1],ylab=labels[2],
            type="l",lwd=2,col="blue")
@@ -31,11 +33,11 @@ SSplotYield <-
     if(1 %in% subplots){
       if(plot){yieldfunc()}
       if(print){
-        pngfun(file=paste(plotdir,"22_yield.png",sep=""))
+        pngfun(file=paste(plotdir,"23_yield.png",sep=""))
         yieldfunc()
         dev.off()}
     }
-    if(verbose) cat("Finished plot 22: yield curve\n")
+    if(verbose) cat("Finished plot 23: yield curve\n")
   }
 
   ts <- timeseries
@@ -44,13 +46,15 @@ SSplotYield <-
   # get total biomass and total catch (across areas)
   arearows <- ts$Area==1
   Bio_all <- ts$Bio_all[arearows]
-  totcatchmat <- as.matrix(ts[arearows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+  if(SS_versionshort=="SS-V3.20") stringB <- "sel(B)" else stringB <- "enc(B)"
+  
+  totcatchmat <- as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
 
   if(nareas > 1){
     for(iarea in 2:nareas){
       arearows <- ts$Area==iarea
       Bio_all <- ts$Bio_all[arearows]
-      totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("enc(B)"))=="enc(B)"])
+      totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
     }
   }
 
@@ -77,15 +81,14 @@ SSplotYield <-
     abline(h=0,col="grey")
     abline(v=0,col="grey")
     points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
-
   } # end sprodfunc
 
   if(2 %in% subplots){
     if(plot){sprodfunc()}
     if(print){
-      pngfun(file=paste(plotdir,"22_surplus_prod.png",sep=""))
+      pngfun(file=paste(plotdir,"23_surplus_prod.png",sep=""))
       sprodfunc()
       dev.off()}
   }
-  if(verbose) cat("Finished plot 22: Surplus production\n")
+  if(verbose) cat("Finished plot 23: Surplus production\n")
 } # end function
