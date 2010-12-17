@@ -77,7 +77,7 @@ runmodels <-
   function(newdir="c:/newmodel/",
            folderlist=c("Example_1","Example_2"),
            exe="SS3_safe.exe",
-           extras="-nox -gbs 1000000000 -cbs 1000000000",
+           extras="-nox -gbs 100000000 -cbs 100000000",
            intern=FALSE)
 {
   for(i in 1:length(folderlist)){
@@ -98,10 +98,11 @@ addtotable <- function(dir="\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisSt
   cat("reading",paste(dir,oldtable,sep="\\"),"\n")
   summarytable <- read.csv(paste(dir,oldtable,sep="\\"))
 
-  # could make these quantities a function of the table contents
-  nquants <- 5
+  # stuff from existing table
   Model <- summarytable$Model
   Quant <- summarytable$Quantity
+  nquants <- length(unique(Quant))
+
   alloutputs <- list()
   
   for(iversion in 1:length(SSversions)){ # loop over versions of SS
@@ -154,9 +155,14 @@ addtotable <- function(dir="\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisSt
       newcolumn[Model==names(newoutput)[imodel] &
                 Quant=="LogR0"] <- newreplist$parameters$Value[newreplist$parameters$Label=="SR_R0"]
       newcolumn[Model==names(newoutput)[imodel] &
+                Quant=="LogR0_SD"] <- newreplist$parameters$Parm_StDev[newreplist$parameters$Label=="SR_R0"]
+      newcolumn[Model==names(newoutput)[imodel] &
+                Quant=="B0_SD"] <- newreplist$derived_quants$StdDev[newreplist$derived_quants$LABEL=="SPB_Virgin"]
+      newcolumn[Model==names(newoutput)[imodel] &
                 Quant=="Nwarnings"] <- newreplist$Nwarnings
       newcolumn[Model==names(newoutput)[imodel] &
                 Quant=="MaxGradient"] <- newreplist$maximum_gradient_component
+      
     }
     summarytable$newcolumn <- newcolumn
     names(summarytable)[names(summarytable)=="newcolumn"] <- SSversions[iversion]
@@ -208,32 +214,72 @@ extrastuff <- function(){
     if(nrow(reltable)>1) print(reltable) else print("none!")      
   }
 
-  quantities <- c("TotalNLL", "EndingDepl", "LogR0", "Nwarnings", "MaxGradient")
+  quantities <- c("TotalNLL", "EndingDepl", "LogR0", "LogR0_SD",
+                  "B0_SD", "Nwarnings", "MaxGradient")
   temptable <- expand.grid(quantities,folderinfo$folderlist)
   summarytable <- data.frame(Model=temptable$Var2,Quantity=temptable$Var1)
 }
 
-doeverything <- function()
-{
+checkforreport <- function(dir="default", folderlist="default"){
+  if(dir=="default") dir <- getwd()
+  if(folderlist=="default"){
+    alldir <- dir(dir)
+    folderlist <- NULL
+    for(folder in alldir){
+      if(file.info(paste(dir,folder,sep='/'))$isdir)
+        folderlist <- c(folderlist,folder)
+    }
+  }
+  cat("info on Report.sso files in",dir,"\n")
+  n <- length(folderlist)
+  sizes <- rep(-999,n)
+  for(i in 1:n){
+    file <- paste(dir,folderlist[i],"Report.sso",sep="/")
+    sizes[i] <- file.info(file)$size
+  }
+  return(data.frame(model=folderlist,filesize=sizes))
+}
+
+if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_11b_Sept23",
-                           newdir="c:/SS/modeltesting/Version_3_11c_Oct30")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec7",
+                           newdir="c:/SS/modeltesting/Version_3_20a_Dec15")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.11c_Oct30",
+  copyexe(sourcedir="c:/SS/SSv3.20a_Dec15",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
-          exe="SS3.exe")
+          exe="SS3_safe.exe")
+
+  # convert to SSv3.20
+  setwd(folderinfo$newdir)
+  for(i in 1:length(folderinfo$folderlist)){
+    model <- folderinfo$folderlist[i]
+    convert_to_v3.20(model,replace=T)
+  }
+  for(i in 1:length(folderinfo$folderlist)){
+    model <- folderinfo$folderlist[i]
+    (file.copy(paste(model,"forecast.ss",sep="/"),paste(model,"old_forecast.ss",sep="/")))
+    (file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"),overwrite=TRUE))
+  }
+  ## for(i in 1:length(folderinfo$folderlist)){
+  ##   model <- folderinfo$folderlist[i]
+  ##   dat <- SS_readdat(paste(folderinfo$olddir,model,"data.ss_new",sep="/"))
+  ##   fore <- SS_readforecast_v3.20(
+  ##   file.copy(paste(model,"forecast.ss",sep="/"),paste(model,"old_forecast.ss",sep="/"))
+  ##   file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"))
+  ## }
+
   # run new SS executable for each example model 
   runmodels(newdir=folderinfo$newdir,
-            folderlist=folderinfo$folderlist,exe="SS3.exe")
+            folderlist=folderinfo$folderlist,exe="SS3_safe.exe")
 
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
-  mydir <- "c:/SS/modeltesting/Version_3_11b_Sept23"
-  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe")
+  mydir <- "c:/SS/modeltesting/Version_3_20a_Dec7"
+  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe")
   
   # get updated package files, including the SSgetoutput function
   library(r4ss)
@@ -245,14 +291,16 @@ doeverything <- function()
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_11b_Sept23"))
+               SSversions=c("Version_3_11c_Oct30","Version_3_20a_Dec7","Version_3_20a_Dec15"))
 
-  alloutput <-
-    addtotable(dir = "c:/SS/modeltesting/", 
-               oldtable = "newsummarytable.csv", 
-               newtable = "new2summarytable.csv",
-               SSversions=c("Version_3_11c_Oct30"))
-
+  # making plots
+  for(i in length(alloutput):1){
+    models <- alloutput[[i]]
+    for(j in 1:length(models)){
+      SS_plots(models[[j]],pdf=T)
+    }
+  }
+  
   # running on linux
   newdir <- "~/h_itaylor/SS/modeltesting/Version_3_11c_Oct30/"
   copyexe(sourcedir="~/h_itaylor/SS/SSv3.11c_Oct30",

@@ -77,10 +77,13 @@ SS_output <-
   }else{
     stop("!Error: can't find report file,", repfile)
   }
-  rephead <- readLines(con=repfile,n=10)
+  rephead <- readLines(con=repfile,n=15)
 
   # warn if SS version used to create rep file is too old or too new for this code
-  SS_version <- rephead[1]
+  # note: SS_versionCode is new with V3.20
+  # perhaps in teh future we will use it to replace SS_versionshort throughout r4ss?
+  SS_versionCode <- rephead[grep("#V",rephead)] 
+  SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
   
   if(!(SS_versionshort %in% c("SS-V3.20","SS-V3.11"))){
@@ -118,7 +121,8 @@ SS_output <-
     }
 
     # time check for CoVar file
-    covarhead <- readLines(con=covarfile,n=2)
+    covarhead <- readLines(con=covarfile,n=10)
+    covarskip <- grep("active-i",covarhead)-1
     covartime <- findtime(covarhead)
     # the conversion to R time class below may no longer be necessary as strings should match
     if(is.null(covartime) || is.null(repfiletime)){
@@ -137,7 +141,8 @@ SS_output <-
   # time check for CompReport file
   compfile <- paste(dir,compfile,sep="")
   if(file.exists(compfile)){
-    comphead <- readLines(con=compfile,n=2)
+    comphead <- readLines(con=compfile,n=20)
+    compskip <- grep("Composition_Database",comphead)
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
       cat("problem comparing the file creation times:\n")
@@ -314,10 +319,9 @@ SS_output <-
     Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
     # read composition database
     if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
-    rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=18, nrows=-1)
-    if(ncol(rawcompdbase)==22) rawcompdbase[1,22] <- "Super"
+    rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
     names(rawcompdbase) <- rawcompdbase[1,]
-    compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-2),] # subtract header line and last 2 lines
+    compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-3),] # subtract header line and last 2 lines
     compdbase <- compdbase[compdbase$Obs!="",]
     compdbase[compdbase=="_"] <- NA
     compdbase0 <- compdbase[is.na(compdbase$N),]
@@ -326,7 +330,7 @@ SS_output <-
       cat("Removing",n,"rows from composition database with NA sample size (maybe was input as N=0):\n")
     }
     compdbase <- compdbase[!is.na(compdbase$N),]
-    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","Super"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used?"))]) compdbase[,i] <- as.numeric(compdbase[,i])
 
     # configure seasons
     if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
@@ -361,7 +365,6 @@ SS_output <-
     tagdbase1        <- compdbase[compdbase$Kind=="TAG1",]
     tagdbase2        <- compdbase[compdbase$Kind=="TAG2",]
     # consider range of bins for conditional age at length data
-
     if(verbose){
       cat("CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n")
       cat("  ",nrow(lendbase), "rows of length comp data,\n")
@@ -491,26 +494,25 @@ SS_output <-
 
   # read covar.sso file
   if(covar){
-    CoVar <- read.table(covarfile,header=TRUE,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=3)
+    CoVar <- read.table(covarfile,header=TRUE,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=covarskip)
     if(verbose) cat("Got covar file.\n")
     stdtable <- CoVar[CoVar$Par..j=="Std",c(7,9,5)]
     names(stdtable) = c("name","std","type")
     N_estimated_parameters2 <- sum(stdtable$type=="Par")
 
-    #### this section was muddling Derived Quants with Parameters
-    #### got work-around pending fix from Rick to use of "Par" vs. "Der"
-    #### in covar file.
-    ## if(is.na(stats$N_estimated_parameters)){
-    ##   stats$N_estimated_parameters <- N_estimated_parameters2
-    ## }else{
-    ##   if(stats$N_estimated_parameters!=N_estimated_parameters2){
-    ##     cat("!warning:\n")
-    ##     cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
-    ##     cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
-    ##     cat("  returning the second value,",N_estimated_parameters2,"\n")
-    ##     stats$N_estimated_parameters <- N_estimated_parameters2
-    ##   }
-    ## }
+    # this section was muddling Derived Quants with Parameters in early version of SSv3.20
+    # got work-around pending fix from Rick to use of "Par" vs. "Der" in covar file.
+    if(is.na(stats$N_estimated_parameters)){
+      stats$N_estimated_parameters <- N_estimated_parameters2
+    }else{
+      if(stats$N_estimated_parameters!=N_estimated_parameters2){
+        cat("!warning:\n")
+        cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
+        cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
+        cat("  returning the second value,",N_estimated_parameters2,"\n")
+        stats$N_estimated_parameters <- N_estimated_parameters2
+      }
+    }
     Nstd <- sum(stdtable$std>0)
 
     if(Nstd<=1) stop("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=FALSE.")
@@ -853,7 +855,7 @@ SS_output <-
   # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
   if(SS_versionshort=="SS-V3.20"){
     DF_discard <- NA
-    shift <- 10
+    shift <- 0
   }else{
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
     if(length(grep("T_distribution",DF_discard))>0)

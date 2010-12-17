@@ -135,7 +135,7 @@ SS_plots <-
     plotdir <- paste(dir,printfolder,"/",sep="")
     pdffile <- paste(inputs$dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) cat("PDF file with plots will be: ",pdffile,sep="")
+    if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
   }
   if(new) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
 

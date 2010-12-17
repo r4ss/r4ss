@@ -118,13 +118,13 @@ SSplotComps <-
     }
   }
   if(kind=="L@A"){
-    dbase_kind <- ladbase
+    dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "21_lenatagefit_"
     titledata <- "mean length at age, "
   }
   if(kind=="W@A"){
-    dbase_kind <- wadbase
+    dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "21_wtatagefit_"
     titledata <- "mean weight at age, "
