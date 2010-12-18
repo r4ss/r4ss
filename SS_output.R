@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "December 7, 2010"
+  codedate <- "December 17, 2010"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -35,6 +35,8 @@ SS_output <-
   ## embedded functions: matchfun and matchfun2
   #################################################################################
 
+  emptytest <- function(x){ sum(!is.na(x) & x=="")/length(x) }
+
   matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
   {
     # return a line number from the report file (or other file)
@@ -42,8 +44,8 @@ SS_output <-
     match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
   }
 
-  matchfun2 <- function(string1,adjust1,string2,adjust2,cols="all",matchcol1=1,matchcol2=1,
-    objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE)
+  matchfun2 <- function(string1,adjust1,string2,adjust2,cols="nonblank",matchcol1=1,matchcol2=1,
+    objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE,header=FALSE)
   {
     # return a subset of values from the report file (or other file)
     # subset is defined by character strings at the start and end, with integer
@@ -51,8 +53,19 @@ SS_output <-
     line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
     line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
     if(is.na(line1) | is.na(line2)) return("absent")
-    if(cols[1]!="all"){ out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
-       }else{           out <- objsubset[(line1+adjust1):(line2+adjust2), ]}
+    
+    if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
+    if(cols[1]=="all")      out <- objsubset[(line1+adjust1):(line2+adjust2),]
+    if(cols[1]=="nonblank"){
+      # returns only columns that contain at least one non-empty value
+      out <- objsubset[(line1+adjust1):(line2+adjust2),]
+      out <- out[,apply(out,2,emptytest) < 1]
+    }
+    if(header && nrow(out)>0){
+      out[1,out[1,]==""] <- "NoName"
+      names(out) <- out[1,]
+      out <- out[-1,]
+    }
     return(out)
   }
 
@@ -72,10 +85,10 @@ SS_output <-
     if(file.info(repfile)$size>0){
       if(verbose) cat("Getting header info from:\n  ",repfile,"\n")
     }else{
-      stop("!Error: report file is empty:",repfile)
+      stop("report file is empty: ",repfile)
     }
   }else{
-    stop("!Error: can't find report file,", repfile)
+    stop("can't find report file: ",repfile)
   }
   rephead <- readLines(con=repfile,n=15)
 
@@ -131,9 +144,8 @@ SS_output <-
       cat("  covar.sso:",covartime,"\n")
     }else{
       if( covartime != repfiletime){
-        cat("!Error: ",shortrepfile,"and",covarfile,"were from different model runs. Change input to covar=FALSE\n")
         cat("covar time:",covartime,"\n")
-        return()
+        stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
       }
     }
   }
@@ -150,14 +162,13 @@ SS_output <-
       cat("  CompReport.sso:",comptime,"\n")
     }else{
       if(comptime != repfiletime){
-        cat(shortrepfile,"and",compfile,"were from different model runs.\n")
         cat("CompReport time:",comptime,"\n")
-        return()
+        stop(shortrepfile," and ",compfile," were from different model runs.")
       }
     }
     comp <- TRUE
   }else{
-    cat("Missing ",compfile,". Change the compfile input or rerun model to get the file.",sep="\n")
+    cat("Missing ",compfile,". Change the compfile input or rerun model to get the file.\n",sep="")
     #return()
     if(NoCompOK) comp <- FALSE else return()
   }
@@ -168,13 +179,11 @@ SS_output <-
   rawrep <- read.table(file=repfile,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1,comment.char="")
 
   # check empty columns
-  emptytest <- function(x){ sum(!is.na(x) & x=="")/length(x) }
   nonblanks <- apply(rawrep,2,emptytest) < 1
   maxnonblank = max(0,(1:ncols)[nonblanks==TRUE])
   if(maxnonblank==ncols){
-    cat("! Warning, all columns are used and some data may been missed,\n")
-    cat("  increase 'ncols' input above current value (ncols=",ncols,")",sep="\n")
-    return(NULL)
+    stop("all columns are used and some data may been missed,\n",
+         "  increase 'ncols' input above current value (ncols=",ncols,")")
   }
   if(verbose){
     if((maxnonblank+1)==ncols) cat("Got all columns.\n")
@@ -188,8 +197,8 @@ SS_output <-
     forcastname <- paste(dir,"Forecast-report.sso",sep="")
     temp <- file.info(forcastname)$size
     if(is.na(temp) | temp==0){
-      stop("!Error: the Forecase-report.sso file is empty.\n",
-           "   Change input to 'forecast=FALSE' or rerun model with forecast turned on.")
+      stop("Forecase-report.sso file is empty.\n",
+           "Change input to 'forecast=FALSE' or rerun model with forecast turned on.")
     }
     rawforcast1 <- read.table(file=forcastname,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1)
     endyield <- matchfun("MSY_not_calculated",rawforcast1[,1])
@@ -258,10 +267,7 @@ SS_output <-
 
   # selectivity read first because it was used to get fleet info
   # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
-  rawselex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1)
-  rawselex <- rawselex[,rawselex[1,]!=""]
-  names(rawselex)<- rawselex[1,]
-  selex <- rawselex[-1,]
+  selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
 
   ### DEFINITIONS section (new in SSv3.20)
@@ -408,9 +414,7 @@ SS_output <-
   endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
   if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
   if(SS_versionshort=="SS-V3.20") shift <- -2 else shift <- -1
-  morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9)
-  names(morph_indexing) <- morph_indexing[1,]
-  morph_indexing <- morph_indexing[-1,]
+  morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=T)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
 
@@ -450,22 +454,16 @@ SS_output <-
   stats$warnings <- warn
   
   # likelihoods
-  rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2,cols=1:3)
+  rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2)
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
   names(like) <- "values"
   rownames(like) <- rawlike[,1]
   like$lambdas <- rawlike[,3]
   stats$likelihoods_used <- like
-
-  like2 <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,cols=1:(2+nfleets))
-  names(like2) <- like2[1,]
-  stats$likelihoods_raw_by_fleet <- like2[2:length(like2[,1]),]
+  stats$likelihoods_raw_by_fleet <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
 
   # parameters
-  rawpars <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,cols=1:16)
-  names(rawpars) <- rawpars[1,]
-  rawpars <- rawpars[-1,]
-  parameters <- rawpars
+  parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,header=TRUE)
   parameters[parameters=="_"] <- NA
   for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))]) parameters[,i] = as.numeric(parameters[,i])
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
@@ -478,9 +476,7 @@ SS_output <-
   }
   stats$N_estimated_parameters <- parline[1,6]
 
-  pars <- rawpars[!(rawpars$Phase %in% c("_","")),]
-  pars[pars=="_"] <- NA
-  for(i in (1:ncol(pars))[!(names(pars)%in%c("Label","Status"))]) pars[,i] = as.numeric(pars[,i])
+  pars <- parameters[!is.na(parameters$Phase) & parameters$Phase>0,]
   pars$Afterbound <- ""
   pars$checkdiff <- pars$Value - pars$Min
   pars$checkdiff2 <- pars$Max - pars$Value
@@ -590,9 +586,7 @@ SS_output <-
   flush.console()
 
   # derived quantities
-  rawder <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3)
-  names(rawder) <- rawder[1,]
-  der <- rawder[-1,]
+  der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
 
@@ -631,9 +625,7 @@ SS_output <-
   }
 
   # recruitment distribution
-  recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1)[,1:6]
-  names(recruitment_dist) <- recruitment_dist[1,]
-  recruitment_dist <- recruitment_dist[-1,]
+  recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1,header=TRUE)
   for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
   
   # gradient
@@ -650,28 +642,20 @@ SS_output <-
   stats$sigma_R_in <- as.numeric(srhead[4,1])
   stats$rmse_table <- rmse_table
 
-  rawvartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21)
-  names(rawvartune) <- rawvartune[1,]
-  rawvartune <- rawvartune[2:length(rawvartune[,1]),]
-  rawvartune[,1] <- rawvartune[,21]
-  vartune <- rawvartune[,c(1,8,11,13,16,18)]
+  vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
   vartune <- vartune[vartune$N > 0,]
+  vartune[,1] <- vartune[,21]
+  vartune <- vartune[,c(1,8,11,13,16,18)]
   stats$index_variance_tuning_check <- vartune
 
-  rawlenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10)
-  names(rawlenntune) <- rawlenntune[1,]
-  rawlenntune <- rawlenntune[2:length(rawlenntune[,1]),]
-  rawlenntune[,1] <- rawlenntune[,10]
-  lenntune <- rawlenntune[,c(1,2,4,5,6,8,9)]
-  lenntune <- lenntune[lenntune$N > 0,]
+  lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
+  lenntune[,1] <- lenntune[,10]
+  lenntune <- lenntune[lenntune$N>0, c(1,2,4,5,6,8,9)]
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
-  rawagentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10)
-  names(rawagentune) <- rawagentune[1,]
-  rawagentune <- rawagentune[2:length(rawagentune[,1]),]
-  rawagentune[,1] <- rawagentune[,10]
-  agentune <- rawagentune[,c(1,2,4,5,6,8,9)]
-  agentune <- agentune[agentune$N > 0,]
+  agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+  agentune[,1] <- agentune[,10]
+  agentune <- agentune[agentune$N>0, c(1,2,4,5,6,8,9)]
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
   if(verbose) cat("Finished primary run statistics list\n")
@@ -717,7 +701,7 @@ SS_output <-
   returndat$recruitment_dist <- recruitment_dist
   
   # Static growth
-  begin <- matchfun("N_Used_morphs",rawrep[,6])+1
+  begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough
   rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
   names(rawbio) <- rawbio[1,]
   biology <- rawbio[-1,]
@@ -748,18 +732,19 @@ SS_output <-
   returndat$FecPar1 <- parameters$Value[parameters$Label==FecPar1name]
   returndat$FecPar2 <- parameters$Value[parameters$Label==FecPar2name]
 
-  rawgrow <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,cols=1:18)
-  names(rawgrow) <- rawgrow[1,]
-  growdat <- rawgrow[-1,]
+  ## Growth_Parameters <- matchfun2["Growth_Parameters",1,"Seas_Effects",-1]
+  ## returndat$Growth_Parameters <- Growth_Parameters
+  Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
+  returndat$Seas_Effects
+    
+  growdat <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,header=TRUE)
   for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
   nmorphs <- max(growdat$Morph)
   midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
   returndat$endgrowth <- growdat
 
   # mean body weight
-  rawmean_body_wt <- matchfun2("MEAN_BODY_WT(begin)",1,"MEAN_SIZE_TIMESERIES",-1,cols=1:(accuage+4))
-  names(rawmean_body_wt) <- rawmean_body_wt[1,]
-  mean_body_wt <- rawmean_body_wt[-1,]
+  mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)",1,"MEAN_SIZE_TIMESERIES",-1,header=TRUE)
   for(i in 1:ncol(mean_body_wt)) mean_body_wt[,i] <- as.numeric(mean_body_wt[,i])
   returndat$mean_body_wt <- mean_body_wt
 
@@ -782,19 +767,13 @@ SS_output <-
   returndat$sizeselex <- selex
 
   # Age based selex
-  rawageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1)
-  rawageselex <- rawageselex[,rawageselex[1,]!=""]
-  names(rawageselex)<- rawageselex[1,]
-  ageselex <- rawageselex[-1,]
+  ageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1,header=TRUE)
   if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
 
   # time series
-  rawts <- matchfun2("TIME_SERIES",1,"SPR_series",-1,cols=1:ncols)
-  tsfull <- rawts[,rawts[1,]!=""]
-  names(tsfull) <- tsfull[1,]
-  tsfull <- tsfull[-1,]
+  tsfull <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   tsfull[tsfull=="_"] <- NA
   for(i in (1:ncol(tsfull))[names(tsfull)!="Era"]) tsfull[,i] = as.numeric(tsfull[,i])
   returndat$timeseries <- tsfull
@@ -865,13 +844,9 @@ SS_output <-
     if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
     shift <- 2
   }
-  rawdisc <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1)
-  
+  discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
   discard_type <- NA
-  if(nrow(rawdisc)>1){
-    rawdisc <- rawdisc[,rawdisc[1,]!=""]
-    names(rawdisc) <- rawdisc[1,]
-    discard <- rawdisc[-1,]
+  if(nrow(discard)>1){
     for(icol in 2:ncol(discard)) discard[,icol] <- as.numeric(discard[,icol])
   }else{
     discard <- NA
@@ -885,23 +860,15 @@ SS_output <-
   DF_mnwgt <- rawrep[matchfun("MEAN_BODY_WT_OUTPUT"),2]
   DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
 
-  rawmnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",1,"FIT_LEN_COMPS",-1,cols=1:10)
-  mnwgt <- NA
-  if(nrow(rawmnwgt)>1)
-  {
-    names(rawmnwgt) <- rawmnwgt[1,]
-    mnwgt <- rawmnwgt[-1,]
-    for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
-  } # if mean weight data exists
+  mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",1,"FIT_LEN_COMPS",-1,cols=1:10,header=TRUE)
+  if(nrow(mnwgt)>0) for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
   returndat$mnwgt <- mnwgt
   returndat$DF_mnwgt <- DF_mnwgt
 
   # Yield and SPR time-series
-  rawspr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,cols=1:(22+2*nmorphs))
-  names(rawspr) <- rawspr[1,]
-  rawspr[rawspr=="_"] <- NA
-  rawspr[rawspr=="&"] <- NA
-  spr <- rawspr[-1,]
+  spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
+  spr[spr=="_"] <- NA
+  spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
   spr <- spr[spr$Year <= endyr,]
   spr$spr <- spr$SPR
@@ -929,15 +896,11 @@ SS_output <-
   for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
   returndat$recruit <- sr
 
-  # CPUE/Survey series
-  rawcpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,cols=1:13)
-  rawcpue[1,13] <- "Note"
-  rawcpue[rawcpue=="_"] <- NA
-
   if(ncpue>0)
   {
-    names(rawcpue) <- rawcpue[1,]
-    cpue <- rawcpue[-1,]
+    # CPUE/Survey series
+    cpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,header=TRUE)
+    cpue[cpue=="_"] <- NA
     for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Note")]) cpue[,i] <- as.numeric(cpue[,i])
     cpue$FleetName <- NA
     cpue$FleetNum <- NA

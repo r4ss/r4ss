@@ -15,11 +15,12 @@ bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
     pch[pch<0] <- 1
     if(allopen) pch[!is.na(pch)] <- 1
     if(!add){
-        plot(x,y,type="n",xlim=xlim,main=main,cex.main=cex.main,
-             xlab=xlab,ylab=ylab,axes=FALSE)
-        axis(1,at=unique(x))
-        axis(2,las=las)
-        box()
+      plot(x,y,type="n",xlim=xlim,main=main,cex.main=cex.main,
+           xlab=xlab,ylab=ylab,axes=FALSE)
+      xvec <- unique(x)
+      axis(1,at=floor(unique(x))) # only printing integer values for years (or whatever)
+      axis(2,las=las)
+      box()
     }
     points(x,y,pch=pch,cex=cex,col=z.col)
-}
+  }

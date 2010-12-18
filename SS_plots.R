@@ -28,7 +28,7 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "December 9, 2010"
+  codedate <- "December 17, 2010"
 
   if(verbose) cat("R function updated:",codedate,
     "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
@@ -104,6 +104,7 @@ SS_plots <-
   # make plot window (operating system specific)
   nplots <- length(intersect(1:24,plot))
   nprints <- length(intersect(1:24,print))
+  plotdir <- paste(dir,printfolder,"/",sep="")
 
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -117,7 +118,6 @@ SS_plots <-
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
-    plotdir <- "No directory"
   }
   if(nplots>0 & !new){
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
@@ -125,14 +125,12 @@ SS_plots <-
   if(nprints>0){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
-    plotdir <- paste(dir,printfolder,"/",sep="")
     dir.create(plotdir,showWarnings=FALSE)
     if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir)
   }
   if(pdf){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
-    plotdir <- paste(dir,printfolder,"/",sep="")
     pdffile <- paste(inputs$dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
@@ -330,24 +328,28 @@ SS_plots <-
       SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=FALSE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # length comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
       # size comp bar plot
       SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=FALSE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # size comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
       if(verbose) cat("Finished plot 15: length and size comp data\n")
@@ -359,24 +361,28 @@ SS_plots <-
       SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=FALSE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # age comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bar plot
       SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=FALSE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       # ghost age comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(16%in%print),plot=(16%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) cat("Finished plot 16: age comp data\n")
@@ -388,6 +394,7 @@ SS_plots <-
       SSplotComps(replist=replist,datonly=TRUE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                   fixdims=fixdims,rows=rows,cols=cols,
                   print=(17%in%print),plot=(17%in%plot),plotdir=plotdir,cex.main=cex.main,...)
@@ -401,12 +408,14 @@ SS_plots <-
     SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
     SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
@@ -419,12 +428,14 @@ SS_plots <-
     SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(19%in%print),plot=(19%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
     SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(19%in%print),plot=(19%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
@@ -438,6 +449,7 @@ SS_plots <-
       SSplotComps(replist=replist,subplot=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                   print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                   maxneff=maxneff,cex.main=cex.main,...)
@@ -449,6 +461,7 @@ SS_plots <-
                   fleetnames=fleetnames,
                   aalbin=aalbin,aalyear=aalyear,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                   print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                   maxneff=maxneff,cex.main=cex.main,...)
@@ -459,6 +472,7 @@ SS_plots <-
                   fleetnames=fleetnames,
                   aalbin=aalbin,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                   print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                   maxneff=maxneff,cex.main=cex.main,...)
@@ -472,6 +486,7 @@ SS_plots <-
                 fleetnames=fleetnames,
                 aalbin=aalbin,aalyear=aalyear,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                 print=(20%in%print),plot=(20%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
@@ -490,12 +505,14 @@ SS_plots <-
     SSplotComps(replist=replist,datonly=FALSE,kind="L@A",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(22%in%print),plot=(22%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)
     SSplotComps(replist=replist,datonly=FALSE,kind="W@A",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
+                minnbubble=minnbubble, pntscalar=pntscalar,
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(22%in%print),plot=(22%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,...)

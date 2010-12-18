@@ -27,7 +27,7 @@ SSplotComps <-
   ################################################################################
   # SSplotComps October 21, 2010
   ################################################################################
- 
+
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   lendbase      <- replist$lendbase
@@ -45,8 +45,7 @@ SSplotComps <-
   FleetNames    <- replist$FleetNames
   nsexes        <- replist$nsexes
 
-  if(!exists("make_multifig"))
-  print("you are missing the function 'make_mulitifig'")
+  if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
 
   titles <- NULL
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -55,7 +54,7 @@ SSplotComps <-
     fleets <- 1:nfleets
   }else{
     if(length(intersect(fleets,1:nfleets))!=length(fleets)){
-      return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
+      stop("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
     }
   }
   if(fleetnames[1]=="default") fleetnames <- FleetNames
@@ -261,7 +260,7 @@ SSplotComps <-
               # add lines for growth of individual cohorts if requested
               if(length(cohortlines)>0){
                 for(icohort in 1:length(cohortlines)){
-                  print(paste("Adding line for",cohortlines[icohort],"cohort"),quote=FALSE)
+                  cat("  Adding line for",cohortlines[icohort],"cohort\n")
                   if(k %in% c(1,2)) lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
                   if(k %in% c(1,3)) lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
                 }
@@ -376,8 +375,8 @@ SSplotComps <-
             if(length(goodbins)>0)
             {
               if(length(badbins)>0){
-                print(paste("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins),quote=FALSE)
-                print(paste("            the following inputs for 'aalbin' are fine:",goodbins),quote=FALSE)
+                cat("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins,"\n",
+                    "       the following inputs for 'aalbin' are fine:",goodbins,"\n")
               }
               for(ibin in 1:length(goodbins)) # loop over good bins
               {
