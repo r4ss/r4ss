@@ -28,7 +28,7 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "December 17, 2010"
+  codedate <- "December 20, 2010"
 
   if(verbose) cat("R function updated:",codedate,
     "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
@@ -242,7 +242,7 @@ SS_plots <-
   } # end if 8 in plot or print
 
   ### Plot 9: mean body weight (if present) ###
-  if(9 %in% c(plot, print)){
+  if(9 %in% c(plot, print) & nrow(replist$mnwgt)>0){
     SSplotMnwt(replist=replist,
                plot=(9 %in% plot),
                print=(9 %in% print),
