@@ -20,13 +20,16 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     stop("this function needs an input object created by SS_output from a SSv3.11 or v3.20 model")
   }
   if(replist$inputs$covar==FALSE){
-    stop("you need to have covar=TRUE in the input to the SS_output function",quote=FALSE)
+    stop("you need to have covar=TRUE in the input to the SS_output function")
   }
   parameters <- replist$parameters
   startyr    <- replist$startyr
   recruit    <- replist$recruit
   sigma_R_in <- replist$sigma_R_in
+  rmse_table <- replist$rmse_table
 
+  if(max(rmse_table$RMSE)==0) stop("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
+  
   if(is.null(startvalues)){
       nonfixedyrs <- recruit$year[recruit$era!="Fixed"]
       mainyrs <- recruit$year[recruit$era=="Main"]

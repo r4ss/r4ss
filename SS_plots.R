@@ -54,6 +54,7 @@ SS_plots <-
   Run_time    <- replist$Run_time
   Files_used  <- replist$Files_used
   FleetNames  <- replist$FleetNames
+  rmse_table <- replist$rmse_table
   
   # check for internal consistency
   if(uncertainty==TRUE & inputs$covar==FALSE){
@@ -277,9 +278,13 @@ SS_plots <-
 
   ### Plot 26: estimating recruitment bias adjustment (probably needs renumbering) ###
   if(26 %in% c(plot, print) & uncertainty){
-    SS_fitbiasramp(replist=replist,
-                   png=(26 %in% print),
-                   twoplots=FALSE)
+    if(max(rmse_table$RMSE)>0){
+      SS_fitbiasramp(replist=replist,
+                     png=(26 %in% print),
+                     twoplots=FALSE)
+    }else{
+      cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
+    }
   } # end if 26 in plot or print                   
 
   ### Plot 12: spawner-recruit curve ###

@@ -221,7 +221,7 @@ SS_output <-
   # check for use of temporary files
   logfile <- dir(dir,pattern=".log")
   logfile <- logfile[logfile != "fmin.log"]
-  if(length(logfile)==1){
+  if(length(logfile)==1 & file.info(paste(dir,logfile,sep='/'))$size>0){
     logfile <- read.table(paste(dir,logfile,sep='/'))[,c(4,6)]
     names(logfile) <- c("TempFile","Size")
     maxtemp <- max(logfile$Size)
@@ -233,7 +233,7 @@ SS_output <-
     }
   }else{
     logfile <- NA
-    cat("either no log file in directory or too many files matching pattern .log\n")
+    cat("Either no non-empty log file in directory or too many files matching pattern *.log\n")
   }
 
   # read warnings file
@@ -275,8 +275,9 @@ SS_output <-
     rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
     # get season stuff
     nseasons <- as.numeric(rawdefs[1,2])
-    season_durations <- as.numeric(rawdefs[3,1+1:nseasons])
-    seasfracs <- round(12*(cumsum(season_durations) - season_durations[1]))/12 
+    seasdurations <- as.numeric(rawdefs[3,1+1:nseasons])
+    seasfracs <- round(12*cumsum(seasdurations))/12
+    seasfracs <- seasfracs - seasdurations/2 # should be mid-point of each season as a fraction of the year
     # get fleet info
     defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
     defs[defs==""] <- NA
@@ -693,6 +694,7 @@ SS_output <-
   returndat$endyr       <- endyr
   returndat$nseasons    <- nseasons
   returndat$seasfracs   <- seasfracs
+  returndat$seasdurations  <- seasdurations
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
   returndat$MGparmAdj   <- MGparmAdj
@@ -735,8 +737,13 @@ SS_output <-
   ## Growth_Parameters <- matchfun2["Growth_Parameters",1,"Seas_Effects",-1]
   ## returndat$Growth_Parameters <- Growth_Parameters
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
-  returndat$Seas_Effects
-    
+  if(Seas_Effects[[1]][1]!="absent"){
+    for(i in 1:ncol(Seas_Effects)) Seas_Effects[,i] <- as.numeric(Seas_Effects[,i])
+  }else{
+    Seas_Effects <- NA
+  }
+  returndat$Seas_Effects <- Seas_Effects
+  
   growdat <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,header=TRUE)
   for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
   nmorphs <- max(growdat$Morph)
@@ -844,6 +851,7 @@ SS_output <-
     if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
     shift <- 2
   }
+
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
   discard_type <- NA
   if(nrow(discard)>1){
