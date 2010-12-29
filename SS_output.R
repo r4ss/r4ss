@@ -499,7 +499,7 @@ SS_output <-
 
   stats$table_of_phases <- table(pars$Phase)
   pars <- pars[pars$Phase %in% 0:100,]
-  stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:15)]
+  stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:14,17)]
 
   # read covar.sso file
   if(covar){

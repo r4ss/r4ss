@@ -85,7 +85,7 @@ SSplotCatch <-
 
 
   # time series (but no forecast) quantities used for multiple plots
-  if(nseasons>1) timeseries$Yr <- timeseries$Yr + m5$seasfracs
+  if(nseasons>1) timeseries$Yr <- timeseries$Yr + replist$seasfracs
   ts <- timeseries[timeseries$Yr <= endyr+1,]
 
   # harvest rates
