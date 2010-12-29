@@ -5,8 +5,15 @@ SSsummarize <- function(biglist,
                         selfleet=NULL,
                         selyr="min",
                         selgender=1){
-  ## subfunction to extract recruitment deviations from parameter list
+
+  # a bunch of 'key' related stuff is more for Ian T's simulation work
+  # the goal is to be able to extract a subset of the models in biglist in
+  # a particular order as defined by a vector of strings used to rename model
+  # output files. It can be ignored in general.
+
+  if(is.null(names(biglist))) names(biglist) <- paste("replist",1:length(biglist),sep="")
   biglistkeys <- substring(names(biglist),8)
+  if(length(biglistkeys)==0 | any(is.null(biglistkeys))) biglistkeys <- 1:length(biglist)
 
   ## check inputs in keyvec or numvec
   # too many inputs
@@ -28,6 +35,7 @@ SSsummarize <- function(biglist,
   if(is.null(keyvec) & is.null(numvec)){
     keyvec <- substring(names(biglist),8)
     n <- length(biglist)
+    if(length(keyvec)==0 | any(is.null(keyvec))) keyvec <- 1:n
   }
 
   # loop over outputs to create list of parameters, derived quantities, and years
@@ -38,8 +46,8 @@ SSsummarize <- function(biglist,
   for(imodel in 1:n){
     element <- (1:length(biglist))[biglistkeys==keyvec[imodel]]
     if(length(element)!=1)
-      stop("error with keyvec, element =",element,"\n",
-           "keyvec[i] =",keyvec[imodel])
+      stop("keyvec problem, element =",element,"\n",
+           "keyvec[imodel] =",keyvec[imodel])
     stats <- biglist[[element]]
     parnames <- union(parnames,stats$parameters$Label)
     dernames <- union(dernames,stats$derived_quants$LABEL)
@@ -54,7 +62,6 @@ SSsummarize <- function(biglist,
   quants <- quantstds <- as.data.frame(matrix(NA,nrow=length(dernames),ncol=n))
   growth     <- NULL
   maxgrad    <- NULL
-  ## SpawnBio <- depl  <- as.data.frame(matrix(NA,nrow=length(allyears),ncol=n))
 
   # notes about what runs were used
   sim        <- NULL
@@ -70,9 +77,9 @@ SSsummarize <- function(biglist,
     listname <- names(biglist)[element]
 
     key <- as.character(stats$key)
-    if(length(key)==0 | is.null(key)) key <- imodel
+    if(length(key)==0 || is.null(key) || is.na(key)) key <- imodel
     keyvec2 <- c(keyvec2,key)
-    cat("imodel=",imodel,"/",n,", element=",element,",",substring("      ",nchar(i)+nchar(element)),"got ", listname,sep="")
+    cat("imodel=",imodel,"/",n,", element=",element,",",substring("      ",nchar(imodel)+nchar(element)),"got ", listname,sep="")
 
     # gradient
     maxgrad <- c(maxgrad, stats$maximum_gradient_component)
@@ -139,7 +146,6 @@ SSsummarize <- function(biglist,
   }else{
     names(pars) <- names(parstds) <- keyvec2
     names(quants) <- names(quantstds) <- keyvec2
-    ## names(SpawnBio) <- names(depl) <- keyvec2
   }
   pars$Label <- parstds$Label <- parphases$Label <- parnames
   quants$Label <- quantstds$Label <- dernames
@@ -152,10 +158,39 @@ SSsummarize <- function(biglist,
     pars$Yr[ipar] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
+  quants$Yr <- NA
+  for(iquant in 1:nrow(quants)){
+    substrings <- strsplit(as.character(quants$Label[iquant]),"_")[[1]]
+    yr <- substrings[substrings %in% allyears][1]
+    quants$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
+  }
+
+
+  # identify spawning biomass parameters
+  SpawnBio <- quants[grep("SPB_",quants$Label), ]
+  minyr <- min(SpawnBio$Yr,na.rm=TRUE)
+  SpawnBio$Yr[grep("SPB_Virgin",SpawnBio$Label)] <- minyr - 2
+  SpawnBio$Yr[grep("SPB_Initial",SpawnBio$Label)] <- minyr - 1
+  SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
+
+  if(any(is.na(SpawnBio[3,]))){
+    cat("Models have different start years, so SpawnBio values virgin and initial years are shifted\n")
+    SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
+    for(imodel in 1:n){ 
+      if(is.na(SpawnBio[3,imodel])){
+        minyr <- min(SpawnBio$Yr[-(1:2)][!is.na(SpawnBio[-(1:2),imodel])]) # first year with value
+        SpawnBio[SpawnBio$Yr==minyr-2, imodel] <- SpawnBio[1,imodel]
+        SpawnBio[SpawnBio$Yr==minyr-1, imodel] <- SpawnBio[2,imodel]
+        SpawnBio[1:2,imodel] <- NA
+      }
+    }
+  }
+  
   # identify parameters that are recruitment deviations
   pars$recdev <- FALSE
   pars$recdev[grep("RecrDev",pars$Label)] <- TRUE
   pars$recdev[grep("InitAge",pars$Label)] <- TRUE
+  pars$recdev[grep("ForeRecr",pars$Label)] <- TRUE
 
   # if there are any initial age parameters, figure out what year they're from
   InitAgeRows <- grep("InitAge",pars$Label)
@@ -176,10 +211,14 @@ SSsummarize <- function(biglist,
     pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
   }
   recdevs <- pars[pars$recdev,]
-  print(ncol(recdevs))
   recdevs <- recdevs[order(recdevs$Yr),1:(n+2)]
+
+
+
+
   
   mylist <- list()
+  mylist$n <- n
   mylist$listnames  <- names(biglist)
   mylist$keyvec     <- keyvec
   mylist$maxgrad    <- maxgrad
@@ -189,24 +228,12 @@ SSsummarize <- function(biglist,
   mylist$parphases  <- parphases
   mylist$quants     <- quants
   mylist$quantstds  <- quantstds
+  mylist$SpawnBio   <- SpawnBio
   mylist$recdevs    <- recdevs
   mylist$growth     <- growth
   mylist$InitAgeYrs <- InitAgeYrs
 
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
-
-  if(FALSE){
-    mysummary <- SSsummarize(mymodels)
-    recdevs <- mysummary$recdevs
-    plot(0,xlim=range(recdevs$Yr),ylim=range(recdevs[,1:n],na.rm=TRUE),type='n')
-    for(i in 1:n){
-      yvec <- recdevs[,i]
-      xvec <- recdevs$Yr[!is.na(yvec)]
-      yvec <- yvec[!is.na(yvec)]
-      lines(xvec,yvec,lwd=1,col=rich.colors.short(n)[i],type='o')
-    }
-  }
-  
   
   return(mylist)
 } # end function
