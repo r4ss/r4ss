@@ -16,7 +16,7 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
                               legendlabels="default",
                               legendloc="topright",
                               pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-                              plotdir="default",
+                              plotdir="workingdirectory",
                               verbose=TRUE){
   # the summaryoutput
   if(!is.list(summaryoutput) | names(summaryoutput)[1]!="n")
@@ -51,19 +51,18 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
   if(length(lwd) < nlines) lwd <- rep(lwd,nlines)
   
   if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
+  if(plotdir=="workingdirectory") plotdir <- getwd()
 
-  windows(record=TRUE)
-  
-  # subplot 1: spawning biomass
-  if(1 %in% subplots){
+  if(plot) windows(record=TRUE)
+
+  plotSpawnBio <- function(){ # spawning biomass
     matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             ylim=range(0,SpawnBio[,models],na.rm=TRUE),xlab=labels[1],ylab=labels[2])
     abline(h=0,col='grey')
     if(legend) legendfun()
   }
 
-  # subplot 2: spawning depletion
-  if(2 %in% subplots){
+  plotDepl <- function(){
     depl <- SpawnBio
     for(i in 1:n){
       depl[,i] <- depl[,i]/depl[!is.na(depl[,i]),i][1]
@@ -74,12 +73,7 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
     if(legend) legendfun()
   }
 
-  # subplot 3: recruits
-  if(3 %in% subplots){
-  }
-
-  # subplot 4: recruit devs
-  if(4 %in% subplots){
+  plotRecDevs <- function(){
     # empty plot
     plot(0,xlim=range(recdevs$Yr),ylim=c(-1,1)*max(abs(recdevs[,models]),na.rm=TRUE),
          type='n',xlab=labels[1],ylab=labels[5])
@@ -96,8 +90,42 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
     if(legend) legendfun()
   }
 
+  # subplot 1: spawning biomass
+  if(1 %in% subplots){
+    if(plot) plotSpawnBio()
+    if(print){
+      pngfun("compare1_spawnbio.png")
+      plotSpawnBio()
+      dev.off()
+    }
+  }
+
+  # subplot 2: spawning depletion
+  if(2 %in% subplots){
+    if(plot) plotDepl()
+    if(print){
+      pngfun("compare2_depl.png")
+      plotDepl()
+      dev.off()
+    }
+  }
+
+  # subplot 3: recruits
+  if(3 %in% subplots){
+  }
+
+  # subplot 4: recruit devs
+  if(4 %in% subplots){
+    if(plot) plotRecDevs()
+    if(print){
+      pngfun("compare4_recdevs.png")
+      plotRecDevs()
+      dev.off()
+    }
+  }
+
   # subplot 5: index fits
   if(5 %in% subplots){
-
   }
+
 }
