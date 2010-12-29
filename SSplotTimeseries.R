@@ -29,7 +29,8 @@ SSplotTimeseries <-
   # subplot10 = spawning depletion by area
   # subplot11 = recruitment total (with or without uncertainty)
   # subplot12 = recruitment by area
-  
+  if(missing(subplot)) stop("'subplot' input required")
+    
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get values from replist
@@ -62,7 +63,7 @@ SSplotTimeseries <-
     areas <- 1:nareas
   }else{
     if(length(intersect(areas,1:nareas))!=length(areas))
-      return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+      stop("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
   }
   if(nareas>1 & areanames[1]=="default"){
     areanames <- paste("area",1:nareas)
@@ -75,9 +76,9 @@ SSplotTimeseries <-
   # modifying data to subset for a single season
   ts <- timeseries
   if(SS_versionshort=="SS-V3.20"){
-    ts$Yr <- ts$Yr + seasfracs
+    ts$YrSeas <- ts$Yr + seasfracs
   }else{
-    ts$Yr <- ts$Yr + (ts$Seas-1)/nseasons
+    ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
   }
 
   # get spawning season
@@ -149,19 +150,19 @@ SSplotTimeseries <-
       }
       if(subplot %in% c(1,4,11)){
         # these plots have sum across areas
-        yvals2 <- rep(NA,length(ts$Yr))
+        yvals2 <- rep(NA,length(ts$YrSeas))
         for(iyr in 1:length(yvals)){
-          y <- ts$Yr[iyr]
-          yvals2[iyr] <- sum(yvals[ts$Yr==y])
+          y <- ts$YrSeas[iyr]
+          yvals2[iyr] <- sum(yvals[ts$YrSeas==y])
         }
         yvals <- yvals2
       }
       if(subplot==9){
         # sum up total across areas differently for spawning depletion
-        yvals2 <- rep(NA,length(ts$Yr))
+        yvals2 <- rep(NA,length(ts$YrSeas))
         for(iyr in 1:length(yvals)){
-          y <- ts$Yr[iyr]
-          yvals[iyr] <- sum(ts$SpawnBio[ts$Yr==y])
+          y <- ts$YrSeas[iyr]
+          yvals[iyr] <- sum(ts$SpawnBio[ts$YrSeas==y])
         }
         yvals <- yvals/yvals[!is.na(yvals)][1] # total depletion
       }
@@ -175,7 +176,7 @@ SSplotTimeseries <-
         }
       }
     }
-    
+
     if(forecastplot) main <- paste(main,"with forecast")
     # calculating intervals around spawning biomass, depletion, or recruitment
     # area specific confidence intervals?
@@ -219,10 +220,9 @@ SSplotTimeseries <-
         std <- stdtable$StdDev * bioscale
         stdtable$upper <- v + 1.96*std
         stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
-
-        if(max(stdtable$Yr) < max(floor(ts$Yr))){
+        if(max(stdtable$Yr) < max(floor(ts$YrSeas))){
           cat("  !warning:\n",
-              "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$Yr),"is last year of time series.\n",
+              "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$YrSeas),"is last year of time series.\n",
               "    Consider changing starter file input for 'max yr for sdreport outputs' to -2\n")
         }
       }
@@ -244,16 +244,16 @@ SSplotTimeseries <-
       filename <- gsub("%","",filename,fixed=TRUE)
       if(forecastplot) filename <- paste(filename,"forecast")
       if(uncertainty & subplot %in% c(5,7,9)) filename <- paste(filename,"intervals")
-      filename <- paste(filename,".png",sep="")
+      filename <- paste("ts",subplot," ",filename,".png",sep="")
       filename <- paste(plotdir,filename,sep="")
-      if(verbose) cat("printing plot to file:",filename,"\n")
+      # if(verbose) cat("printing plot to file:",filename,"\n")
       pngfun(file=filename)
     }
 
     
     # create an empty plot (if not adding to existing plot)
     if(!add){
-      yrvals  <- ts$Yr[ plot1 | plot2 | plot3]
+      yrvals  <- ts$YrSeas[ plot1 | plot2 | plot3]
       # axis limits
       if(is.null(minyr)) minyr <- min(yrvals)
       if(is.null(maxyr)) maxyr <- max(yrvals)
@@ -261,6 +261,7 @@ SSplotTimeseries <-
       plot(yrvals,yvals[plot1 | plot2 | plot3],
            type='n', xlab=xlab, ylim=c(0,ymax), ylab=ylab,
            main=main, cex.main=cex.main,xlim=xlim)
+      abline(h=0,col="grey")
     }
 
     # add stuff to plot
@@ -305,11 +306,14 @@ SSplotTimeseries <-
       
       mytype <- "o" # overplotting points on lines for most time series
       if(subplot==11 & uncertainty) mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
-      lines(ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
-      points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
-
-      # add lines for confidence intervals areas if requested
-      if(uncertainty){
+      if(!uncertainty){
+        lines(ts$YrSeas[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
+        points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
+      }else{
+        # add lines for confidence intervals areas if requested
+        # lines and points on integer years
+        lines(ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
+        points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
         if(subplot %in% c(7,9,11)){
           # subset years for confidence intervals
           plot1 <- stdtable$Yr %in% ts$Yr[plot1]
@@ -340,7 +344,6 @@ SSplotTimeseries <-
       } # end if uncertainty
     } # end loop over areas
     if(nareas>1 & subplot%in%c(2,3,5,6,8,10,12)) legend("topright",legend=areanames[areas],lty=1,pch=1,col=areacols[areas],bty="n")
-    abline(h=0,col="grey")
     if(verbose) cat("  finished time series subplot ",subplot,": ",main,"\n",sep="")
     if(print) dev.off()
 

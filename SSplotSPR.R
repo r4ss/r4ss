@@ -26,18 +26,21 @@ SSplotSPR <-
     plot(sprseries$Year,sprseries$spr,xlab=labels[1],ylab=labels[2],ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="o",col=col2)
     if(sprtarg>0) abline(h=sprtarg,col=col4,lty=2)
     abline(h=0,col="grey")
-    abline(h=1,col="grey")}
+    abline(h=1,col="grey")
+  }
+  
   if(1 %in% subplots){
     if(plot) sprfunc()
     if(print){
-      pngfun(file=paste(plotdir,"11_sprseries.png",sep=""))
+      pngfun(file=paste(plotdir,"/SPR1_series.png",sep=""))
       sprfunc()
       dev.off()
     }
   }
 
-  if(nseasons>1) cat("Skipped 1-SPR series plot because it's not yet configured for multi-season models\n")
-  if(nseasons==1){ # temporary disable until code cleanup
+  # temporary disable multi-season models until code cleanup
+  if(nseasons>1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
+  if(nseasons==1){ 
     sprfunc2 <- function(){
       plot(sprseries$Year,(1-sprseries$spr),xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="o",col=col2)
       if(sprtarg>0) abline(h=(1-sprtarg),col=col4,lty=2)
@@ -47,7 +50,7 @@ SSplotSPR <-
     if(2 %in% subplots){
       if(plot) sprfunc2()
       if(print){
-        pngfun(file=paste(plotdir,"11_1minussprseries.png",sep=""))
+        pngfun(file=paste(plotdir,"/SPR2_minusSPRseries.png",sep=""))
         sprfunc2()
         dev.off()
       }
@@ -73,7 +76,7 @@ SSplotSPR <-
       if(3 %in% subplots){
         if(plot) sprfunc3()
         if(print){
-          pngfun(file=paste(plotdir,"11_sprratiointerval.png",sep=""))
+          pngfun(file=paste(plotdir,"/SPR3_ratiointerval.png",sep=""))
           sprfunc3()
           dev.off()
         }
@@ -105,14 +108,14 @@ SSplotSPR <-
       if(4 %in% subplots){
         if(plot) phasefunc()
         if(print){
-          pngfun(file=paste(plotdir,"11_sprphase.png",sep=""))
+          pngfun(file=paste(plotdir,"/SPR4_phase.png",sep=""))
           phasefunc()
           dev.off()
         }
       }
 
-      if(verbose) cat("Finished SPR plots\n")
     }
-    flush.console()
   } # end temporary multi-season disable of section if nseasons>1
+  if(verbose) cat("Finished SPR plots\n")
+  flush.console()
 }

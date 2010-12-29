@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist=NULL, plot=1:26, print=0, pdf=FALSE, printfolder="", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:26, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
@@ -103,9 +103,8 @@ SS_plots <-
 
   #### prepare for plotting
   # make plot window (operating system specific)
-  nplots <- length(intersect(1:24,plot))
-  nprints <- length(intersect(1:24,print))
-  plotdir <- paste(dir,printfolder,"/",sep="")
+  nplots <- length(intersect(1:50,plot))
+  nprints <- length(intersect(1:50,print))
 
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -123,16 +122,18 @@ SS_plots <-
   if(nplots>0 & !new){
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
+  if(dir=="default") dir <- inputs$dir
+  plotdir <- paste(dir,printfolder,"/",sep="")
   if(nprints>0){
-    if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
     dir.create(plotdir,showWarnings=FALSE)
-    if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir)
+    if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir,"\n")
   }
+  
   if(pdf){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
-    pdffile <- paste(inputs$dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
   }
@@ -164,7 +165,7 @@ SS_plots <-
   {
     SSplotBiology(replist=replist,
                   plot=(1 %in% plot),print=(1 %in% print),
-                  cex.main=cex.main)
+                  cex.main=cex.main,plotdir=plotdir)
     if(verbose) cat("Finished plot 1: Biology (weight, maturity, spawning output, growth)\n")
   }
 
@@ -174,7 +175,7 @@ SS_plots <-
   {
     SSplotSelex(replist=replist, selexlines=selexlines, fleets=fleets,
                 plot=(3 %in% plot), print=(3 %in% print),
-                cex.main=cex.main)
+                cex.main=cex.main,plotdir=plotdir)
     if(verbose) cat("Finished plots 3 and 4: selectivity plots\n")
   }
 
@@ -183,7 +184,7 @@ SS_plots <-
   # stats and dimensions
   if(5 %in% c(plot, print))
   {
-    cat("starting time series plots\n")
+    cat("Starting time series plots (group 5)\n")
     for(isubplot in 1:12){ # which of 12 subplots to make
       for(doforecast in unique(c(FALSE,forecastplot))){ # add forecast or not
         if(isubplot %in% c(7,9,11)){
@@ -200,7 +201,8 @@ SS_plots <-
                              verbose=verbose,
                              btarg=btarg, 
                              minbthresh=minbthresh,
-                             minyr=minyr,maxyr=maxyr)
+                             minyr=minyr,maxyr=maxyr,
+                             plotdir=plotdir)
           } # end loop over uncertainty or not
         }else{ # these plots don't have the option for uncertainty
             SSplotTimeseries(replist=replist,
@@ -215,22 +217,22 @@ SS_plots <-
                              verbose=verbose,
                              btarg=btarg, 
                              minbthresh=minbthresh,
-                             minyr=minyr,maxyr=maxyr)
+                             minyr=minyr,maxyr=maxyr,
+                             plotdir=plotdir)
         }
       }
     }
-    if(verbose) cat("Finished plot 5: Basic time series\n")
   } # end if 5 in plot or print
 
   if(6 %in% c(plot, print))
   {
     # time series of catch
+    if(verbose) cat("Starting catch plots (group 6):\n")
     SSplotCatch(replist=replist,
                 plot=(6 %in% plot),print=(6 %in% print),
                 fleetnames=fleetnames,
-                minyr=minyr,maxyr=maxyr)
-
-    if(verbose) cat("Finished plot 6: catch time series\n")
+                minyr=minyr,maxyr=maxyr,
+                plotdir=plotdir)
   } # end if 6 in plot or print
 
   ### Plot 8: discard fractions (if present) ###
@@ -239,7 +241,8 @@ SS_plots <-
                   plot=(8 %in% plot),
                   print=(8 %in% print),
                   fleets=fleets,
-                  fleetnames=fleetnames)
+                  fleetnames=fleetnames,
+                  plotdir=plotdir)
   } # end if 8 in plot or print
 
   ### Plot 9: mean body weight (if present) ###
@@ -248,7 +251,8 @@ SS_plots <-
                plot=(9 %in% plot),
                print=(9 %in% print),
                fleets=fleets,
-               fleetnames=fleetnames)
+               fleetnames=fleetnames,
+               plotdir=plotdir)
   } # end if 9 in plot or print
 
   ### Plot 11: SPR and fishing intensity plots ###
@@ -257,7 +261,8 @@ SS_plots <-
               plot=(11 %in% plot),
               print=(11 %in% print),
               uncertainty=uncertainty,
-              sprtarg=0.4, btarg=0.4)
+              sprtarg=0.4, btarg=0.4,
+              plotdir=plotdir)
   } # end if 11 in plot or print
 
   ### Plot 7: recruitment (moved to near S-R curve, but needs renumbering) ###
@@ -266,13 +271,15 @@ SS_plots <-
                   plot=(7 %in% plot),
                   print=(7 %in% print),
                   forecastplot=forecastplot,
-                  uncertainty=uncertainty)
+                  uncertainty=uncertainty,
+                  plotdir=plotdir)
 
     if(nareas>1 & nseasons>1){
       SSplotRecdist(replist=replist,
                     plot=(7 %in% plot),
                     print=(7 %in% print),
-                    verbose=verbose,cex.main=cex.main)
+                    verbose=verbose,cex.main=cex.main,
+                    plotdir=plotdir)
     }
   } # end if 7 in plot or print
 
@@ -280,7 +287,7 @@ SS_plots <-
   if(26 %in% c(plot, print) & uncertainty){
     if(max(rmse_table$RMSE)>0){
       SS_fitbiasramp(replist=replist,
-                     png=(26 %in% print),
+                     png=ifelse(26 %in% print,paste(plotdir,"recdevs_fitbiasramp.png",sep="/"),FALSE),
                      twoplots=FALSE)
     }else{
       cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
@@ -292,6 +299,7 @@ SS_plots <-
     SSplotSpawnrecruit(replist=replist,
                        plot=(12 %in% plot),
                        print=(12 %in% print),
+                       plotdir=plotdir,
                        virg=TRUE,  # add point on curve at equilibrium values (B0,R0)
                        init=FALSE) # add point on curve at initial values (B1,R1)
   } # end if 12 in plot or print
@@ -305,7 +313,8 @@ SS_plots <-
                   plot=(13 %in% plot),
                   print=(13 %in% print),
                   datplot=datplot,
-                  cex.main=cex.main)
+                  cex.main=cex.main,
+                  plotdir=plotdir)
   } # end if 13 in plot or print
 
   ### Plot 14: numbers at age ###
@@ -317,7 +326,8 @@ SS_plots <-
                   pntscalar=pntscalar,
                   cex.main=cex.main,
                   plot=(14 %in% plot),
-                  print=(14 %in% print))
+                  print=(14 %in% print),
+                  plotdir=plotdir)
   } # close if 14 in plot or print
 
   ### Plot 15: Composition data plots ###

@@ -150,23 +150,23 @@ SSplotRecdevs <-
       }
       if(print){ # if printing to PNG files
         if(1 %in% subplots){
-          pngfun(file=paste(plotdir,"07_recdevs.png",sep=""))
+          pngfun(file=paste(plotdir,"/recdevs1_points.png",sep=""))
           recdevfunc(uncertainty=FALSE)
           dev.off()
         }
         if(uncertainty){
           if(2 %in% subplots){
-            pngfun(file=paste(plotdir,"07_recdevwithbars.png",sep=""))
+            pngfun(file=paste(plotdir,"/recdevs2_withbars.png",sep=""))
             recdevfunc(uncertainty=TRUE)
             dev.off()
           }
           if(3 %in% subplots){
-            pngfun(file=paste(plotdir,"07_recdevvarcheck.png",sep=""))
+            pngfun(file=paste(plotdir,"/recdevs3_varcheck.png",sep=""))
             recdevfunc3()
             dev.off()
           }
           if(4 %in% subplots){
-            pngfun(file=paste(plotdir,"07_recdevbiasadj.png",sep=""))
+            pngfun(file=paste(plotdir,"/recdevs4_biasadj.png",sep=""))
             recdevfunc4()
             dev.off()
           }

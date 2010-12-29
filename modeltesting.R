@@ -1,3 +1,5 @@
+# a collection of functions for testing a new executable
+
 copyinputs <-
   function(olddir="c:/SS/modeltesting/Version_3_11b_Sept23",
            newdir="c:/SS/modeltesting/Version_3_11c_Oct30")
@@ -85,8 +87,11 @@ runmodels <-
     cat("running model in",new,"\n")
     setwd(new)
     ADMBoutput <- system(paste(exe,extras),intern=intern)
-    if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
+    if(intern){
+      writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                             "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
+      cat("commandline stuff written to ADMBoutput.txt\n")
+    }
   } # end loop over folders
 }
 
@@ -244,15 +249,15 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec7",
-                           newdir="c:/SS/modeltesting/Version_3_20a_Dec15")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec22",
+                           newdir="c:/SS/modeltesting/Version_3_20a_Dec22b")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.20a_Dec15",
+  copyexe(sourcedir="c:/SS/SSv3.20a_Dec22b",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="SS3_safe.exe")
-
+  
   # convert to SSv3.20
   setwd(folderinfo$newdir)
   for(i in 1:length(folderinfo$folderlist)){
@@ -274,24 +279,26 @@ if(FALSE){
 
   # run new SS executable for each example model 
   runmodels(newdir=folderinfo$newdir,
-            folderlist=folderinfo$folderlist,exe="SS3_safe.exe")
+            folderlist=folderinfo$folderlist,exe="SS3_safe.exe",extras="-nox")
 
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
-  mydir <- "c:/SS/modeltesting/Version_3_20a_Dec7"
-  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe")
+  mydir <- "c:/SS/modeltesting/Version_3_20a_Dec22b"
+  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe",extras="-nox")
   
   # get updated package files, including the SSgetoutput function
   library(r4ss)
   update_r4ss_files()
 
+  #for(folder in dir(mydir)) file.remove(paste(folder,"SS3_safe.log",sep="/"))
+  
   # read the output from the new runs and add it to the summary table
   alloutput <-
     addtotable(dir = "c:/SS/modeltesting/", 
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_11c_Oct30","Version_3_20a_Dec7","Version_3_20a_Dec15"))
+               SSversions=c("Version_3_20a_Dec22"))
 
   # making plots
   for(i in length(alloutput):1){

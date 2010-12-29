@@ -135,19 +135,19 @@ SSplotBiology <-
     if(4 %in% subplots) gfunc4()}
   if(print){ # print to PNG files
     if(1 %in% subplots){
-      pngfun(file=paste(plotdir,"01_weightatsize.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio1_weightatsize.png",sep=""))
       gfunc1()
       dev.off()}
     if(2 %in% subplots){
-      pngfun(file=paste(plotdir,"01_maturity.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio2_maturity.png",sep=""))
       gfunc2()
       dev.off()}
     if(3 %in% subplots){
-      pngfun(file=paste(plotdir,"01_fecundity.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio3_fecundity.png",sep=""))
       gfunc3()
       dev.off()}
     if(4 %in% subplots){
-      pngfun(file=paste(plotdir,"01_spawningoutput.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio4_spawningoutput.png",sep=""))
       gfunc4()
       dev.off()}
   }
@@ -179,7 +179,7 @@ SSplotBiology <-
   }
   if(plot & 5 %in% subplots) gfunc5()
   if(print & 5 %in% subplots){
-    pngfun(file=paste(plotdir,"01_sizeatage.png",sep=""))
+    pngfun(file=paste(plotdir,"/bio5_sizeatage.png",sep=""))
     gfunc5()
     dev.off()}
 
@@ -202,7 +202,7 @@ SSplotBiology <-
     }
     if(plot & 6 %in% subplots) mfunc()
     if(print & 6 %in% subplots){
-      pngfun(file=paste(plotdir,"01_natmort.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio6_natmort.png",sep=""))
       mfunc()
       dev.off()}
   }
@@ -236,12 +236,12 @@ SSplotBiology <-
             if(8 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
             if(7 %in% subplots){
-              pngfun(file=paste(plotdir,"02_timevarygrowthsurf_sex",i,".png",sep=""))
+              pngfun(file=paste(plotdir,"/bio7_timevarygrowthsurf_sex",i,".png",sep=""))
               persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
             if(8 %in% subplots){
-              pngfun(file=paste(plotdir,"02_timevarygrowthcontour_sex",i,".png",sep=""))
+              pngfun(file=paste(plotdir,"/bio8_timevarygrowthcontour_sex",i,".png",sep=""))
               contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
               dev.off()
             }

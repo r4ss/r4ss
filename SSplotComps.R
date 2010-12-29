@@ -64,10 +64,10 @@ SSplotComps <-
     dbase_kind <- lendbase
     kindlab=labels[1]
     if(datonly){
-      filenamestart <- "15_lendat_"
+      filenamestart <- "comp_lendat_"
       titledata <- "length comp data, "
     }else{
-      filenamestart <- "18_lenfit_"
+      filenamestart <- "comp_lenfit_"
       titledata <- "length comps, "
     }
   }
@@ -75,10 +75,10 @@ SSplotComps <-
     dbase_kind <- sizedbase
     kindlab=labels[9]
     if(datonly){
-      filenamestart <- "15_sizedat_"
+      filenamestart <- "comp_sizedat_"
       titledata <- "size comp data, "
     }else{
-      filenamestart <- "18_sizefit_"
+      filenamestart <- "comp_sizefit_"
       titledata <- "size comps, "
     }
   }
@@ -86,10 +86,10 @@ SSplotComps <-
     dbase_kind <- agedbase
     kindlab=labels[2]
     if(datonly){
-      filenamestart <- "16_agedat_"
+      filenamestart <- "comp_agedat_"
       titledata <- "age comp data, "
     }else{
-      filenamestart <- "19_agefit_"
+      filenamestart <- "comp_agefit_"
       titledata <- "age comps, "
     }
   }
@@ -97,38 +97,60 @@ SSplotComps <-
     dbase_kind <- condbase
     kindlab=labels[2]
     if(datonly){
-      filenamestart <- "17_condAALdat_"
-      titledata <- "conditional age at length data, "
+      filenamestart <- "comp_condAALdat_"
+      titledata <- "conditional age-at-length data, "
     }else{
-      filenamestart <- "20_condAALfit_"
-      titledata <- "conditional age at length, "
+      filenamestart <- "comp_condAALfit_"
+      titledata <- "conditional age-at-length, "
     }
   }
-  
   if(kind=="GSTAGE"){
     dbase_kind <- ghostagedbase
     kindlab=labels[2]
     if(datonly){
-      filenamestart <- "16_gstagedat_"
-      titledata <- "gst age comp data, "
+      filenamestart <- "comp_gstagedat_"
+      titledata <- "ghost age comp data, "
     }else{
-      filenamestart <- "19_gstagefit_"
-      titledata <- "gst age comps, "
+      filenamestart <- "comp_gstagefit_"
+      titledata <- "ghost age comps, "
+    }
+  }
+  if(kind=="GSTcond"){
+    dbase_kind <- ghostagedbase
+    kindlab=labels[2]
+    if(datonly){
+      filenamestart <- "comp_gstCAALdat_"
+      titledata <- "ghost conditional age-at-length data, "
+    }else{
+      filenamestart <- "comp_gstCAALfit_"
+      titledata <- "ghost conditional age-at-length comps, "
     }
   }
   if(kind=="L@A"){
     dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
-    filenamestart <- "21_lenatagefit_"
+    filenamestart <- "comp_LAAfit_"
     titledata <- "mean length at age, "
+    dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(kind=="W@A"){
     dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
-    filenamestart <- "21_wtatagefit_"
+    filenamestart <- "comp_WAAfit_"
     titledata <- "mean weight at age, "
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) stop("Input 'kind' to SSplotComps is not right.")
+
+  # add asterix to indicate super periods and then remove rows labeled "skip"
+  # would be better to somehow show the range of years, but that seems difficult
+  # at this point
+  if(any(dbase_kind$Used=="skip")){
+    cat("Note: removing composition values labeled 'skip'\n",
+        "     and designating super-period values with a '*'\n")
+    dbase_kind <- dbase_kind[dbase_kind$Used!="skip",]
+    dbase_kind$YrSeasName <- paste(dbase_kind$YrSeasName,ifelse(dbase_kind$SuprPer=="Sup","*",""),sep="")
+  }
+
   # loop over fleets
   for(f in fleets)
   {
@@ -201,6 +223,7 @@ SSplotComps <-
               }
               if(kind %in% c("L@A","W@A")){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                                ptsSD=dbase$SD,
                                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
                                 nlegends=1,legtext=list(dbase$YrSeasName),
                                 bars=bars,linepos=(1-datonly)*linepos,
@@ -216,7 +239,7 @@ SSplotComps <-
               for(ipage in 1:npages)
               {
                   if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                  filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
+                  filename <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
                   pngfun(file=filename)
                   tempfun(ipage=ipage,...)
                   dev.off()
@@ -269,14 +292,14 @@ SSplotComps <-
 
             if(plot) tempfun()
             if(print){ # set up plotting to png file if required
-              filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,".png",sep="")
+              filename <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,".png",sep="")
               pngfun(file=filename)
               tempfun()
               dev.off() # close device if png
             }
           } # end bubble plot
 
-          ### subplot 3: multi-panel bubble plots for conditional age at length
+          ### subplot 3: multi-panel bubble plots for conditional age-at-length
           if(3 %in% subplots & kind=="cond")
           {
             ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
@@ -297,14 +320,14 @@ SSplotComps <-
               for(ipage in 1:npages)
               {
                   if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                  filename <- paste(plotdir,filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
+                  filename <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
                   pngfun(file=filename)
                   tempfun(ipage=ipage,...)
                   dev.off() # close device if png
               }
             }
           } # end conditional bubble plot
-          ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age at length
+          ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age-at-length
           #                        and Pearson residuals of A-L key for specific years
           if((4 %in% subplots | 5 %in% subplots) & aalyear[1] > 0 & kind=="cond")
           {
@@ -314,8 +337,8 @@ SSplotComps <-
               if(length(dbase$Obs[dbase$Yr==aalyr])>0)
               {
                 if(4 %in% subplots){
-                  ### subplot 4: multi-panel plot of fit to conditional age at length for specific years
-                  ptitle <- paste(aalyr," age at length bin, ",title_sexmkt,fleetnames[f],sep="")
+                  ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
+                  ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
                   titles <- c(ptitle,titles) # compiling list of all plot titles
                   ydbase <- dbase[dbase$Yr==aalyr,]
                   lenbinlegend <- paste(ydbase$Lbin_lo,labels[7],sep="")
@@ -336,7 +359,7 @@ SSplotComps <-
                     for(ipage in 1:npages)
                     {
                       if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                      filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
+                      filename <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
                       pngfun(file=filename)
                       tempfun(ipage=ipage,...)
                       dev.off() # close device if print
@@ -356,7 +379,7 @@ SSplotComps <-
                   if(plot) tempfun()
                   if(print)
                   {
-                      filename <- paste(plotdir,filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
+                      filename <- paste(plotdir,"/",filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
                       pngfun(file=filename)
                       tempfun()
                       dev.off() # close device if print
@@ -366,7 +389,7 @@ SSplotComps <-
             }
           }
 
-          ### subplot 6: multi-panel plot of point and line fit to conditional age at length
+          ### subplot 6: multi-panel plot of point and line fit to conditional age-at-length
           #                   for specific length bins
           if(6 %in% subplots & aalbin[1] > 0)
           {
@@ -375,7 +398,7 @@ SSplotComps <-
             if(length(goodbins)>0)
             {
               if(length(badbins)>0){
-                cat("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age at length data:",badbins,"\n",
+                cat("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data:",badbins,"\n",
                     "       the following inputs for 'aalbin' are fine:",goodbins,"\n")
               }
               for(ibin in 1:length(goodbins)) # loop over good bins
@@ -384,7 +407,7 @@ SSplotComps <-
               abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
               if(nrow(abindbase)>0) # check for data associated with this bin
               {
-                ptitle <- paste("Age at length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun <- function(ipage,...){ # temporary function to aid repeating the big function call
                     make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr,linesx=abindbase$Bin,linesy=abindbase$Exp,
@@ -420,7 +443,7 @@ SSplotComps <-
             {
               if(kind=="cond"){
                   # trap nonrobust effective n's
-                  # should this only be for conditional age at length or all plots?
+                  # should this only be for conditional age-at-length or all plots?
                   dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 & !is.na(dbase$effN) & dbase$effN<maxneff,]
               }else{
                   dbasegood <- dbase

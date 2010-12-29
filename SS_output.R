@@ -226,14 +226,16 @@ SS_output <-
     names(logfile) <- c("TempFile","Size")
     maxtemp <- max(logfile$Size)
     if(maxtemp==0){
-      cat("Got log file. There were NO temporary files were written in this run.\n")
+      if(verbose) cat("Got log file. There were NO temporary files were written in this run.\n")
     }else{
-      cat("!warning: temporary files were written in this run:\n")
-      print(logfile)
+      if(verbose){
+        cat("!warning: temporary files were written in this run:\n")
+        print(logfile)
+      }
     }
   }else{
     logfile <- NA
-    cat("Either no non-empty log file in directory or too many files matching pattern *.log\n")
+    if(verbose) cat("Either no non-empty log file in directory or too many files matching pattern *.log\n")
   }
 
   # read warnings file
@@ -298,7 +300,12 @@ SS_output <-
     nfleets <- length(unique(selex$Fleet))
     nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
     FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
-
+    ## fleet_area <- NA
+    ## catch_units <- NA
+    ## catch_error <- NA
+    ## survey_units <- NA
+    ## survey_error <- NA
+    ## FishFleet <- NA
     nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
     seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }
@@ -328,16 +335,19 @@ SS_output <-
     if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
     rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
     names(rawcompdbase) <- rawcompdbase[1,]
+    names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
+    
     compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-3),] # subtract header line and last 2 lines
     compdbase <- compdbase[compdbase$Obs!="",]
     compdbase[compdbase=="_"] <- NA
-    compdbase0 <- compdbase[is.na(compdbase$N),]
-    n <- nrow(compdbase0)
+    compdbase$Used[is.na(compdbase$Used)] <- "yes"
+    compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
+    
+    n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
     if(n>0){
-      cat("Removing",n,"rows from composition database with NA sample size (maybe was input as N=0):\n")
+      cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
     }
-    compdbase <- compdbase[!is.na(compdbase$N),]
-    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used?"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]) compdbase[,i] <- as.numeric(compdbase[,i])
 
     # configure seasons
     if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
@@ -355,11 +365,12 @@ SS_output <-
       notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
       conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
     }
-    lendbase         <- compdbase[compdbase$Kind=="LEN" & compdbase$N > 0,]
-    sizedbase        <- compdbase[compdbase$Kind=="SIZE" & compdbase$N > 0,]
-    agedbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & notconditional,]
-    condbase         <- compdbase[compdbase$Kind=="AGE" & compdbase$N > 0 & conditional,]
-    ghostagedbase    <- compdbase[compdbase$Kind=="AGE" & compdbase$N < 0 & notconditional,]
+    lendbase         <- compdbase[compdbase$Kind=="LEN"  & (is.na(compdbase$N) | compdbase$N > 0),]
+    sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (is.na(compdbase$N) | compdbase$N > 0),]
+    agedbase         <- compdbase[compdbase$Kind=="AGE"  & (is.na(compdbase$N) | compdbase$N > 0) & notconditional,]
+    condbase         <- compdbase[compdbase$Kind=="AGE"  & (is.na(compdbase$N) | compdbase$N > 0) & conditional,]
+    ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & (!is.na(compdbase$N)& compdbase$N < 0) & notconditional,]
+    ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & (!is.na(compdbase$N)& compdbase$N < 0) & conditional,]
     compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
     if(is.null(compdbase$N)){
@@ -373,16 +384,17 @@ SS_output <-
     tagdbase2        <- compdbase[compdbase$Kind=="TAG2",]
     # consider range of bins for conditional age at length data
     if(verbose){
-      cat("CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n")
-      cat("  ",nrow(lendbase), "rows of length comp data,\n")
-      cat("  ",nrow(sizedbase),"rows of generalized size comp data,\n")
-      cat("  ",nrow(agedbase), "rows of age comp data,\n")
-      cat("  ",nrow(condbase), "rows of conditional age-at-length data, and\n")
-      cat("  ",nrow(ghostagedbase),"rows of ghost fleet age comp data\n")
-      cat("  ",nrow(ladbase),  "rows of mean length at age data\n")
-      cat("  ",nrow(wadbase),  "rows of mean weight at age data\n")
-      cat("  ",nrow(tagdbase1),"rows of 'TAG1' comp data\n")
-      cat("  ",nrow(tagdbase2),"rows of 'TAG2' comp data\n")
+      cat("CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n",
+          "  ",nrow(lendbase), "rows of length comp data,\n",
+          "  ",nrow(sizedbase),"rows of generalized size comp data,\n",
+          "  ",nrow(agedbase), "rows of age comp data,\n",
+          "  ",nrow(condbase), "rows of conditional age-at-length data,\n",
+          "  ",nrow(ghostagedbase),"rows of ghost fleet age comp data,\n",
+          "  ",nrow(ghostcondbase),"rows of ghost fleet conditional age-at-length data,\n",
+          "  ",nrow(ladbase),  "rows of mean length at age data,\n",
+          "  ",nrow(wadbase),  "rows of mean weight at age data,\n",
+          "  ",nrow(tagdbase1),"rows of 'TAG1' comp data, and\n",
+          "  ",nrow(tagdbase2),"rows of 'TAG2' comp data.\n")
     }
     Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
     names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
@@ -909,7 +921,7 @@ SS_output <-
     # CPUE/Survey series
     cpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,header=TRUE)
     cpue[cpue=="_"] <- NA
-    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Note")]) cpue[,i] <- as.numeric(cpue[,i])
+    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
     cpue$FleetName <- NA
     cpue$FleetNum <- NA
     for(i in 1:nrow(cpue))
@@ -1067,6 +1079,7 @@ SS_output <-
     returndat$agedbase      <- agedbase
     returndat$condbase      <- condbase
     returndat$ghostagedbase <- ghostagedbase
+    returndat$ghostcondbase <- ghostcondbase
     returndat$ladbase       <- ladbase
     returndat$wadbase       <- wadbase
     returndat$tagdbase1     <- tagdbase1

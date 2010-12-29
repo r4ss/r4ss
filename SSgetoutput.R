@@ -35,7 +35,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     key <- keyvec[i]
     mydir <- dirvec[i]
     if(is.null(key)){
-      key2 <- key
+      key2 <- NULL
     }else{
       key2 <- paste("_",key,sep="")
     }

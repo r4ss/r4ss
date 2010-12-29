@@ -184,13 +184,13 @@ SSplotNumbers <-
             filepartarea <- ""
             if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
             if(1 %in% subplots){
-              pngfun(file=paste(plotdir,"14_natage",filepartarea,filepartsex,".png",sep=""))
+              pngfun(file=paste(plotdir,"/numbers1",filepartarea,filepartsex,".png",sep=""))
               tempfun()
               dev.off()
             }
             # make 2-sex plot after looping over both sexes
             if(2 %in% subplots & m==2 & nsexes==2){
-              pngfun(file=paste(plotdir,"14_meanage",filepartarea,".png",sep=""))
+              pngfun(file=paste(plotdir,"/numbers2_meanage",filepartarea,".png",sep=""))
               tempfun2()
               dev.off()
             }
@@ -208,7 +208,6 @@ SSplotNumbers <-
         natageratio <- as.matrix(natagem[,remove]/natagef[,remove])
         if(diff(range(natageratio,finite=TRUE))!=0){
           tempfun <- function(...){
-zzz <<- list(natageyrsB,0:accuage,natageratio)
             contour(natageyrsB,0:accuage,natageratio,xaxs="i",yaxs="i",xlab=labels[1],ylab=labels[2],
               main=plottitle3,cex.main=cex.main,...)
           }
@@ -218,7 +217,7 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
           if(print & 3 %in% subplots){
             filepart <- ""
             if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-            pngfun(file=paste(plotdir,"14_natageratio",filepart,".png",sep=""))
+            pngfun(file=paste(plotdir,"/numbers3_ratio",filepart,".png",sep=""))
             tempfun(labcex=0.4)
             dev.off()}
         }else{
@@ -329,13 +328,13 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
               filepartarea <- ""
               if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
               if(6 %in% subplots){
-                pngfun(file=paste(plotdir,"14_natlen",filepartarea,filepartsex,".png",sep=""))
+                pngfun(file=paste(plotdir,"/numbers6_len",filepartarea,filepartsex,".png",sep=""))
                 tempfun()
                 dev.off()
               }
               # make 2-sex plot after looping over both sexes
               if(7 %in% subplots & m==2 & nsexes==2){
-                pngfun(file=paste(plotdir,"14_meanlen",filepartarea,".png",sep=""))
+                pngfun(file=paste(plotdir,"/numbers7_meanlen",filepartarea,".png",sep=""))
                 tempfun2()
                 dev.off()
               }
@@ -390,7 +389,7 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
       equilibfun()
     } # end if 14 in plot
     if(print & 4 %in% subplots){
-      pngfun(file=paste(plotdir,"14_equilagecomp.png",sep=""))
+      pngfun(file=paste(plotdir,"/numbers4_equilagecomp.png",sep=""))
       equilibfun()
       dev.off()
     } # close if 14 in print
@@ -425,11 +424,11 @@ zzz <<- list(natageyrsB,0:accuage,natageratio)
         if(mean(ageingbias==0)!=1) ageingfun2()
       } # end if 14 in plot
       if(print & 5 %in% subplots){
-        pngfun(file=paste(plotdir,"14_ageerrorSD.png",sep=""))
+        pngfun(file=paste(plotdir,"/numbers5_ageerrorSD.png",sep=""))
         ageingfun()
         dev.off()
         if(mean(ageingbias==0)!=1){
-          pngfun(file=paste(plotdir,"14_ageerrorMeans.png",sep=""))
+          pngfun(file=paste(plotdir,"/numbers5_ageerrorMeans.png",sep=""))
           ageingfun2()
           dev.off()
         }

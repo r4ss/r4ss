@@ -25,7 +25,7 @@ function(replist,subplots=1:7,
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   cpue        <- replist$cpue
-  if(length(grep("superperiod",cpue$Note))){
+  if(length(grep("supr_per",cpue$Supr_Per))){
     cat("Note: some indices have superperiods. Values will be plotted in year/season associated with data in report file.\n")
     cpue <- cpue[!is.na(cpue$Dev),]
   }
@@ -135,17 +135,17 @@ function(replist,subplots=1:7,
     }
     if(print){
       if(1 %in% subplots){
-        pngfun(file=paste(plotdir,"13_cpuedata",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index1_cpuedata",Fleet,".png",sep=""))
         cpuefun1(addexpected=FALSE)
         dev.off()
       }
       if(2 %in% subplots){
-        pngfun(file=paste(plotdir,"13_cpuefit",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index2_cpuefit",Fleet,".png",sep=""))
         cpuefun1()
         dev.off()
       }
       if(3 %in% subplots){
-        pngfun(file=paste(plotdir,"13_cpuecheck",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index3_cpuecheck",Fleet,".png",sep=""))
         cpuefun2()
         dev.off()
       }
@@ -177,17 +177,17 @@ function(replist,subplots=1:7,
     }
     if(print){
       if(4 %in% subplots & datplot){
-        pngfun(file=paste(plotdir,"13_logcpuedata",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index4_logcpuedata",Fleet,".png",sep=""))
         cpuefun3(addexpected=FALSE)
         dev.off()
       }
       if(5 %in% subplots){
-        pngfun(file=paste(plotdir,"13_logcpuefit",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index5_logcpuefit",Fleet,".png",sep=""))
         cpuefun3()
         dev.off()
       }
       if(6 %in% subplots){
-        pngfun(file=paste(plotdir,"13_logcpuecheck",Fleet,".png",sep=""))
+        pngfun(file=paste(plotdir,"/index6_logcpuecheck",Fleet,".png",sep=""))
         cpuefun4()
         dev.off()
       }
@@ -216,7 +216,7 @@ function(replist,subplots=1:7,
    } # end cpuefun5
   if(plot & (7 %in% subplots)){cpuefun5()}
   if(print & (7 %in% subplots)){
-   pngfun(file=paste(plotdir,"13_standcpueall",".png",sep=""))
+   pngfun(file=paste(plotdir,"/index7_standcpueall",".png",sep=""))
    cpuefun5()
    dev.off()}
   } # end datplot
