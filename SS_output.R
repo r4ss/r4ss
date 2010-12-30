@@ -307,6 +307,7 @@ SS_output <-
     ## survey_error <- NA
     ## FishFleet <- NA
     nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
+    seasdurations <- 1/nseasons
     seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }
   # more dimensions
@@ -341,6 +342,7 @@ SS_output <-
     compdbase <- compdbase[compdbase$Obs!="",]
     compdbase[compdbase=="_"] <- NA
     compdbase$Used[is.na(compdbase$Used)] <- "yes"
+    if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
     compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
     
     n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
@@ -518,8 +520,8 @@ SS_output <-
         cat("!warning:\n")
         cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
         cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
-        cat("  returning the second value,",N_estimated_parameters2,"\n")
-        stats$N_estimated_parameters <- N_estimated_parameters2
+        cat("  returning the first value,",N_estimated_parameters2,"\n")
+        stats$N_estimated_parameters <- N_estimated_parameters
       }
     }
     Nstd <- sum(stdtable$std>0)

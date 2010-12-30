@@ -58,7 +58,7 @@ SS_plots <-
   
   # check for internal consistency
   if(uncertainty==TRUE & inputs$covar==FALSE){
-    stop("To use uncertainty=T, you need to have covar=T in the input to the SSoutput function")
+    stop("To use uncertainty=T, you need to have covar=T in the input to the SS_output function")
   }
   if(forecastplot==TRUE & inputs$forecast==FALSE){
     stop("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function")

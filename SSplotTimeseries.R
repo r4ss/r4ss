@@ -131,7 +131,7 @@ SSplotTimeseries <-
     # subplot9&10 = spawning depletion
     if(subplot %in% 9:10){
       # yvals for spatial models are corrected later within loop over areas
-      yvals <- ts$SpawnBio/ts$SpawnBio[1]
+      yvals <- ts$SpawnBio/ts$SpawnBio[!is.na(ts$SpawnBio)][1]
       ylab <- labels[6]
     }
 
