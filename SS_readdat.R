@@ -1,4 +1,4 @@
-SS_readdat <- function(file,verbose=T,section=NULL){
+SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readdat\n")
@@ -17,7 +17,8 @@ SS_readdat <- function(file,verbose=T,section=NULL){
     }
   }
 
-  if(strsplit(dat[2]," ")[[1]][1]=="Start_time:") dat <- dat[-(1:2)]
+  temp <- strsplit(dat[2]," ")[[1]][1]
+  if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
   for(i in 1:length(dat)){
     mysplit <- strsplit(dat[i],split="[[:blank:]]+")[[1]]
@@ -35,7 +36,7 @@ SS_readdat <- function(file,verbose=T,section=NULL){
 
   datlist$sourcefile <- file
   datlist$type <- "Stock_Synthesis_data_file"
-  datlist$SSversion <- "SSv3.10b_or_later"
+  datlist$SSversion <- "SSv3.20"
 
   if(verbose) cat("SSversion =",datlist$SSversion,"\n")
   # model dimensions
@@ -86,25 +87,38 @@ SS_readdat <- function(file,verbose=T,section=NULL){
   Nvals <- N_catch*(Nfleet+2)
   catch <- data.frame(matrix(
     allnums[i:(i+Nvals-1)],nrow=N_catch,ncol=(Nfleet+2),byrow=T))
-  names(catch) <- c(paste("fleet",1:Nfleet,sep=""),"year","seas")
+  names(catch) <- c(fleetnames[1:Nfleet],"year","seas")
   datlist$catch <- catch
   i <- i+Nvals
-
+  if(echoall) print(catch)
+  
   # CPUE
   datlist$N_cpue <- N_cpue <- allnums[i]; i <- i+1
   if(verbose) cat("N_cpue =",N_cpue,"\n")
   if(N_cpue > 0){
+    CPUEinfo <- data.frame(matrix(allnums[i:(i+Ntypes*3-1)],
+                                  nrow=Ntypes,ncol=3,byrow=T))
+    i <- i+Ntypes*3
+    names(CPUEinfo) <- c("Fleet","Units","Errtype")
     CPUE <- data.frame(matrix(
       allnums[i:(i+N_cpue*5-1)],nrow=N_cpue,ncol=5,byrow=T))
     i <- i+N_cpue*5
     names(CPUE) <- c('year','seas','index','obs','se_log')
   }else{
+    CPUEinfo <- NULL
     CPUE <- NULL
   }
+  datlist$CPUEinfo <- CPUEinfo
   datlist$CPUE <- CPUE
+  if(echoall){
+    print(CPUEinfo)
+    print(CPUE)
+  }
 
   # discards
-  datlist$discard_units <- discard_units <- allnums[i]; i <- i+1
+  # datlist$discard_units <- discard_units <- allnums[i]; i <- i+1
+  datlist$N_discard_fleets <- N_discard_fleets <- allnums[i]; i <- i+1
+  if(verbose) cat("N_discard_fleets =",N_discard_fleets,"\n")
   datlist$N_discard <- N_discard <- allnums[i]; i <- i+1
   if(verbose) cat("N_discard =",N_discard,"\n")
   if(N_discard > 0){
@@ -132,6 +146,10 @@ SS_readdat <- function(file,verbose=T,section=NULL){
   }
   datlist$meanbodywt <- meanbodywt
 
+  datlist$DF_for_meanbodywt <- allnums[i]
+  i <- i+1
+  if(echoall) print(datlist$DF_for_meanbodywt)
+  
   # length data
   datlist$lbin_method <- lbin_method <- allnums[i]; i <- i+1
   if(lbin_method==2){
@@ -150,12 +168,17 @@ SS_readdat <- function(file,verbose=T,section=NULL){
     datlist$N_lbinspop <- NA
     datlist$lbin_vector_pop <- NA
   }
-  
+  if(echoall){
+    cat("N_lbinspop =",N_lbinspop,"\nlbin_vector_pop:\n")
+    print(datlist$lbin_vector_pop)
+  }
   datlist$comp_tail_compression <- allnums[i]; i <- i+1
   datlist$add_to_comp <- allnums[i]; i <- i+1
   datlist$max_combined_age <- allnums[i]; i <- i+1
   datlist$N_lbins <- N_lbins <- allnums[i]; i <- i+1
   datlist$lbin_vector <- lbin_vector <- allnums[i:(i+N_lbins-1)]; i <- i+N_lbins
+  if(echoall) print(lbin_vector)
+  
   datlist$N_lencomp <- N_lencomp <- allnums[i]; i <- i+1
 
   # if(verbose) cat(datlist[-15:0 + length(datlist)])

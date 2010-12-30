@@ -1,23 +1,20 @@
-SSplotComparisons <- function(summaryoutput,subplots=1:5,
-                              plot=TRUE,print=FALSE,
-                              models="all",
-                              labels=c("Year",             #1
-                                "Spawning biomass (mt)",   #2
-                                "Spawning depletion",      #3
-                                "Age-0 recruits (1,000s)", #4
-                                "Recruitment deviations",  #5
-                                "Index"),                  #6
-                              col="default",
-                              pch="default",
-                              lty=1,
-                              lwd=2,
-                              type="o",
-                              legend=TRUE,
-                              legendlabels="default",
-                              legendloc="topright",
-                              pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-                              plotdir="workingdirectory",
-                              verbose=TRUE){
+SSplotComparisons <-
+  function(summaryoutput,subplots=1:5,
+           plot=TRUE,print=FALSE,
+           models="all",
+           labels=c("Year",             #1
+             "Spawning biomass (mt)",   #2
+             "Spawning depletion",      #3
+             "Age-0 recruits (1,000s)", #4
+             "Recruitment deviations",  #5
+             "Index"),                  #6
+           col="default", pch="default", lty=1, lwd=2, type="o",
+           legend=TRUE, legendlabels="default", legendloc="topright",
+           btarg=0.4, minbthresh=0.25,
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           plotdir="workingdirectory",
+           verbose=TRUE)
+{
   # the summaryoutput
   if(!is.list(summaryoutput) | names(summaryoutput)[1]!="n")
     stop("'summaryoutput' should be the result of the SSsummarize function")
@@ -35,8 +32,9 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
   parphases <- summaryoutput$parphases
   quants    <- summaryoutput$quants
   quantstds <- summaryoutput$quantstds
-  recdevs   <- summaryoutput$recdevs
   SpawnBio  <- summaryoutput$SpawnBio
+  recruits  <- summaryoutput$recruits
+  recdevs   <- summaryoutput$recdevs
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
@@ -55,14 +53,14 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
 
   if(plot) windows(record=TRUE)
 
-  plotSpawnBio <- function(){ # spawning biomass
+  plotSpawnBio <- function(){ # plot spawning biomass
     matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             ylim=range(0,SpawnBio[,models],na.rm=TRUE),xlab=labels[1],ylab=labels[2])
     abline(h=0,col='grey')
     if(legend) legendfun()
   }
 
-  plotDepl <- function(){
+  plotDepl <- function(){ # plot spawning depletion
     depl <- SpawnBio
     for(i in 1:n){
       depl[,i] <- depl[,i]/depl[!is.na(depl[,i]),i][1]
@@ -70,10 +68,27 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
     matplot(depl$Yr,depl[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             ylim=range(0,depl[,models],na.rm=TRUE),xlab=labels[1],ylab=labels[3])
     abline(h=0,col='grey')
+
+    if(btarg>0){
+      abline(h=btarg,col="red")
+      text(min(depl$Yr)+4,btarg+0.03,"Management target",adj=0)
+    }
+    if(minbthresh>0){
+      abline(h=minbthresh,col="red")
+      text(min(depl$Yr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+    }
+
     if(legend) legendfun()
   }
 
-  plotRecDevs <- function(){
+  plotRecruits <- function(){ # plot recruitment
+    matplot(recruits$Yr,recruits[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
+            ylim=range(0,recruits[,models],na.rm=TRUE),xlab=labels[1],ylab=labels[4])
+    abline(h=0,col='grey')
+    if(legend) legendfun()
+  }
+
+  plotRecDevs <- function(){ # plot recruit deviations
     # empty plot
     plot(0,xlim=range(recdevs$Yr),ylim=c(-1,1)*max(abs(recdevs[,models]),na.rm=TRUE),
          type='n',xlab=labels[1],ylab=labels[5])
@@ -89,7 +104,7 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
     }
     if(legend) legendfun()
   }
-
+  
   # subplot 1: spawning biomass
   if(1 %in% subplots){
     if(plot) plotSpawnBio()
@@ -112,6 +127,12 @@ SSplotComparisons <- function(summaryoutput,subplots=1:5,
 
   # subplot 3: recruits
   if(3 %in% subplots){
+    if(plot) plotRecruits()
+    if(print){
+      pngfun("compare3_recruits.png")
+      plotDepl()
+      dev.off()
+    }
   }
 
   # subplot 4: recruit devs

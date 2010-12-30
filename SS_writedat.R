@@ -65,12 +65,19 @@ SS_writedat <- function(datlist,outfile,overwrite=F,verbose=T){
   wl("N_catch")
   if(!is.null(datlist$catch)) printdf(datlist$catch)
   wl("N_cpue")
-  if(!is.null(datlist$CPUE)) printdf(datlist$CPUE)
-  wl("discard_units")
+  if(datlist$N_cpue>0){
+    printdf(datlist$CPUEinfo)
+    printdf(datlist$CPUE)
+  }
+  # wl("discard_units")
+  wl("N_discard_fleets")
   wl("N_discard")
   if(!is.null(datlist$discard_data)) printdf(datlist$discard_data)
   wl("N_meanbodywt")
   if(!is.null(datlist$meanbodywt)) printdf(datlist$meanbodywt)
+
+  wl("DF_for_meanbodywt")
+  
   # length data
   wl("lbin_method")
   if(datlist$lbin_method==2){
@@ -79,6 +86,7 @@ SS_writedat <- function(datlist,outfile,overwrite=F,verbose=T){
     wl("maximum_size")
   }
   if(datlist$lbin_method==3){
+    wl("N_lbinspop")
     writeLines("#_lbin_vector_pop")
     writeLines(paste(datlist$lbin_vector_pop,collapse=" "))
   }

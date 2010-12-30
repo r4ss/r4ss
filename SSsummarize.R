@@ -174,7 +174,7 @@ SSsummarize <- function(biglist,
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
 
   if(any(is.na(SpawnBio[3,]))){
-    cat("Models have different start years, so SpawnBio values virgin and initial years are shifted\n")
+    cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
     SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
     for(imodel in 1:n){ 
       if(is.na(SpawnBio[3,imodel])){
@@ -185,7 +185,28 @@ SSsummarize <- function(biglist,
       }
     }
   }
-  
+
+  # identify recruitment parameters
+  recruits <- quants[grep("^Recr_",quants$Label), ]
+  recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
+  minyr <- min(recruits$Yr,na.rm=TRUE)
+  recruits$Yr[grep("Recr_Virgin",recruits$Label)] <- minyr - 2
+  recruits$Yr[grep("Recr_Initial",recruits$Label)] <- minyr - 1
+  recruits <- recruits[order(recruits$Yr),]
+
+  if(any(is.na(recruits[3,]))){
+    cat("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year\n")
+    recruits$Label[1:2] <- c("Recr_Virgin*","Recr_Initial*")
+    for(imodel in 1:n){ 
+      if(is.na(recruits[3,imodel])){
+        minyr <- min(recruits$Yr[-(1:2)][!is.na(recruits[-(1:2),imodel])]) # first year with value
+        recruits[recruits$Yr==minyr-2, imodel] <- recruits[1,imodel]
+        recruits[recruits$Yr==minyr-1, imodel] <- recruits[2,imodel]
+        recruits[1:2,imodel] <- NA
+      }
+    }
+  }
+
   # identify parameters that are recruitment deviations
   pars$recdev <- FALSE
   pars$recdev[grep("RecrDev",pars$Label)] <- TRUE
@@ -229,6 +250,7 @@ SSsummarize <- function(biglist,
   mylist$quants     <- quants
   mylist$quantstds  <- quantstds
   mylist$SpawnBio   <- SpawnBio
+  mylist$recruits   <- recruits
   mylist$recdevs    <- recdevs
   mylist$growth     <- growth
   mylist$InitAgeYrs <- InitAgeYrs
