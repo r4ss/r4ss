@@ -41,6 +41,7 @@ SSsummarize <- function(biglist,
   # loop over outputs to create list of parameters, derived quantities, and years
   parnames <- NULL
   dernames <- NULL
+  likenames <- NULL
   allyears <- NULL
 
   for(imodel in 1:n){
@@ -52,17 +53,20 @@ SSsummarize <- function(biglist,
     parnames <- union(parnames,stats$parameters$Label)
     dernames <- union(dernames,stats$derived_quants$LABEL)
     allyears <- union(allyears,stats$timeseries$Yr)
+    likenames <- union(likenames,rownames(stats$likelihoods_used))
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
   # objects to store quantities
   sel        <- NULL
   selexlist  <- list()
-  pars <- parstds <- parphases <- as.data.frame(matrix(NA,nrow=length(parnames),ncol=n))
-  quants <- quantstds <- as.data.frame(matrix(NA,nrow=length(dernames),ncol=n))
+  pars <- parsSD <- parphases <- as.data.frame(matrix(NA,nrow=length(parnames),ncol=n))
+  quants <- quantsSD <- as.data.frame(matrix(NA,nrow=length(dernames),ncol=n))
   growth     <- NULL
   maxgrad    <- NULL
-
+  likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
+  indices <- NULL
+  
   # notes about what runs were used
   sim        <- NULL
   keyvec2    <- NULL
@@ -70,7 +74,7 @@ SSsummarize <- function(biglist,
 
   warn <- FALSE # flag for whether filter warning has been printed or not
 
-  # loop over outputs within biglist
+  # loop over models within biglist
   for(imodel in 1:n){
     element <- (1:length(biglist))[biglistkeys==keyvec[imodel]]
     stats <- biglist[[element]]
@@ -119,13 +123,18 @@ SSsummarize <- function(biglist,
     growthtemp <- growthtemp[growthtemp$Morph==imorphf,-(1:4)]
     growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp),]))
 
+    ## likelihoods
+    liketemp <- stats$likelihoods_used
+    for(irow in 1:nrow(liketemp)){
+      likelihoods[likenames==rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
+      likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
+    }
+
     ## compile parameters
     parstemp <- stats$parameters
-    # print(head(parstemp))
-    
     for(ipar in 1:nrow(parstemp)){
       pars[parnames==parstemp$Label[ipar], imodel] <- parstemp$Value[ipar]
-      parstds[parnames==parstemp$Label[ipar], imodel] <- parstemp$Parm_StDev[ipar]
+      parsSD[parnames==parstemp$Label[ipar], imodel] <- parstemp$Parm_StDev[ipar]
       parphases[parnames==parstemp$Label[ipar], imodel] <- parstemp$Phase[ipar]
     }
     cat(",  N active pars=",sum(!is.na(parstemp$Active_Cnt)),"\n",sep="")
@@ -134,9 +143,15 @@ SSsummarize <- function(biglist,
     quantstemp <- stats$derived_quants
     for(iquant in 1:nrow(quantstemp)){
       quants[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$Value[iquant]
-      quantstds[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
+      quantsSD[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
     }
-  } # end loop over keys
+
+    ## indices
+    indextemp <- stats$cpue
+    indextemp$Model <- keyvec2[i]
+    indextemp$imodel <- imodel
+    indices <- rbind(indices, indextemp)
+  } # end loop over models
 
   if(!setequal(keyvec,keyvec2)){
     cat("problem with keys!\nkeyvec:\n")
@@ -144,12 +159,13 @@ SSsummarize <- function(biglist,
     cat("keyvec2:\n")
     print(keyvec2)
   }else{
-    names(pars) <- names(parstds) <- keyvec2
-    names(quants) <- names(quantstds) <- keyvec2
+    names(pars) <- names(parsSD) <- keyvec2
+    names(quants) <- names(quantsSD) <- keyvec2
+    names(likelihoods) <- names(likelambdas) <- keyvec2
   }
-  pars$Label <- parstds$Label <- parphases$Label <- parnames
-  quants$Label <- quantstds$Label <- dernames
-
+  pars$Label <- parsSD$Label <- parphases$Label <- parnames
+  quants$Label <- quantsSD$Label <- dernames
+  likelihoods$Label <- likelambdas$Label <- likenames
   # extract year values from labels for some parameters associated with years
   pars$Yr <- NA
   for(ipar in 1:nrow(pars)){
@@ -168,23 +184,36 @@ SSsummarize <- function(biglist,
 
   # identify spawning biomass parameters
   SpawnBio <- quants[grep("SPB_",quants$Label), ]
+  SpawnBioSD <- quantsSD[grep("SPB_",quants$Label), ]
+  # add year values for Virgin and Initial years
   minyr <- min(SpawnBio$Yr,na.rm=TRUE)
   SpawnBio$Yr[grep("SPB_Virgin",SpawnBio$Label)] <- minyr - 2
   SpawnBio$Yr[grep("SPB_Initial",SpawnBio$Label)] <- minyr - 1
+  SpawnBioSD$Yr <- SpawnBio$Yr
+
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
+  SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr),]
 
   if(any(is.na(SpawnBio[3,]))){
     cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
     SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
+    SpawnBioSD$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
     for(imodel in 1:n){ 
       if(is.na(SpawnBio[3,imodel])){
         minyr <- min(SpawnBio$Yr[-(1:2)][!is.na(SpawnBio[-(1:2),imodel])]) # first year with value
         SpawnBio[SpawnBio$Yr==minyr-2, imodel] <- SpawnBio[1,imodel]
         SpawnBio[SpawnBio$Yr==minyr-1, imodel] <- SpawnBio[2,imodel]
         SpawnBio[1:2,imodel] <- NA
+        SpawnBioSD[SpawnBio$Yr==minyr-2, imodel] <- SpawnBioSD[1,imodel]
+        SpawnBioSD[SpawnBio$Yr==minyr-1, imodel] <- SpawnBioSD[2,imodel]
+        SpawnBioSD[1:2,imodel] <- NA
       }
     }
   }
+
+  # identify biomass ratio parameters
+  Bratio <- quants[grep("^Bratio_",quants$Label),]
+  BratioSD <- quantsSD[grep("^Bratio_",quantsSD$Label),]
 
   # identify recruitment parameters
   recruits <- quants[grep("^Recr_",quants$Label), ]
@@ -239,21 +268,27 @@ SSsummarize <- function(biglist,
 
   
   mylist <- list()
-  mylist$n <- n
-  mylist$listnames  <- names(biglist)
-  mylist$keyvec     <- keyvec
-  mylist$maxgrad    <- maxgrad
-  #mylist            <- c(mylist,selexlist)
-  mylist$pars       <- pars
-  mylist$parstds    <- parstds
-  mylist$parphases  <- parphases
-  mylist$quants     <- quants
-  mylist$quantstds  <- quantstds
-  mylist$SpawnBio   <- SpawnBio
-  mylist$recruits   <- recruits
-  mylist$recdevs    <- recdevs
-  mylist$growth     <- growth
-  mylist$InitAgeYrs <- InitAgeYrs
+  mylist$n           <- n
+  mylist$listnames   <- names(biglist)
+  mylist$keyvec      <- keyvec
+  mylist$maxgrad     <- maxgrad
+  #mylist             <- c(mylist,selexlist)
+  mylist$pars        <- pars
+  mylist$parsSD      <- parsSD
+  mylist$parphases   <- parphases
+  mylist$quants      <- quants
+  mylist$quantsSD    <- quantsSD
+  mylist$likelihoods <- likelihoods
+  mylist$likelambdas <- likelambdas
+  mylist$SpawnBio    <- SpawnBio
+  mylist$SpawnBioSD  <- SpawnBioSD
+  mylist$Bratio      <- Bratio
+  mylist$BratioSD    <- BratioSD
+  mylist$recruits    <- recruits
+  mylist$recdevs     <- recdevs
+  mylist$growth      <- growth
+  mylist$indices     <- indices
+  mylist$InitAgeYrs  <- InitAgeYrs
 
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
   

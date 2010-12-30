@@ -249,11 +249,11 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec22",
-                           newdir="c:/SS/modeltesting/Version_3_20a_Dec22b")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec22b",
+                           newdir="c:/SS/modeltesting/Version_3_20_Dec29")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.20a_Dec22b",
+  copyexe(sourcedir="c:/SS/SSv3.20_Dec29",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="SS3_safe.exe")
@@ -283,7 +283,8 @@ if(FALSE){
 
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
-  mydir <- "c:/SS/modeltesting/Version_3_20a_Dec22b"
+  source("c:/SS/R/r4ss/trunk/modeltesting.R")
+  mydir <- "c:/SS/modeltesting/Version_3_20_Dec29"
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe",extras="-nox")
   
   # get updated package files, including the SSgetoutput function

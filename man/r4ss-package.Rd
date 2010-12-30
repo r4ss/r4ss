@@ -40,9 +40,9 @@ Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 % }
 \examples{
 \dontrun{
-# read in the report file using SSoutput
-myreplist <- SSoutput(dir='c:/SS/SSv3.10b/Simple/')
-# make a collection of plots using SSplots
-SSplots(replist=myreplist)
+# read in the report file using SS_output
+myreplist <- SS_output(dir='c:/SS/SSv3.20/simple/')
+# make a collection of plots using SS_plots
+SS_plots(replist=myreplist)
 }
 }
