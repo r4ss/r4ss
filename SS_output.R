@@ -520,8 +520,8 @@ SS_output <-
         cat("!warning:\n")
         cat(" ",stats$N_estimated_parameters,"estimated parameters indicated by",parfile,"\n")
         cat(" ",N_estimated_parameters2,"estimated parameters shown in",covarfile,"\n")
-        cat("  returning the first value,",N_estimated_parameters2,"\n")
-        stats$N_estimated_parameters <- N_estimated_parameters
+        cat("  returning the first value,",stats$N_estimated_parameters,"\n")
+        stats$N_estimated_parameters <- stats$N_estimated_parameters
       }
     }
     Nstd <- sum(stdtable$std>0)
