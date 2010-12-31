@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:5,
+  function(summaryoutput,subplots=1:7,
            plot=TRUE,print=FALSE,
            models="all",
            labels=c("Year",             #1
@@ -11,7 +11,7 @@ SSplotComparisons <-
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
            xlim="default", xaxs='i', yaxs='r',
-           type="o", shading=TRUE, shadealpha=0.1,
+           type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
            btarg=0.4, minbthresh=0.25,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
@@ -24,7 +24,7 @@ SSplotComparisons <-
     stop("'summaryoutput' should be the result of the SSsummarize function")
 
   # subfunction to write png files
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # subfunction to add legend
   legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty='n')
@@ -74,11 +74,11 @@ SSplotComparisons <-
     }
   }
   
-  plotSpawnBio <- function(){ # plot spawning biomass
+  plotSpawnBio <- function(uncertainty=TRUE){ # plot spawning biomass
     if(xlim[1]=="default") xlim <- range(SpawnBio$Yr)
     plot(0,type='n',xlim=xlim,ylim=range(0,SpawnBio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
-    if(shading) addpoly(SpawnBio, SpawnBioSD, SpawnBio$Yr)
+    if(uncertainty) addpoly(SpawnBio, SpawnBioSD, SpawnBio$Yr)
     matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             add=TRUE)
     abline(h=0,col='grey')
@@ -93,7 +93,6 @@ SSplotComparisons <-
     }
     plot(0,type='n',xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
-    # if(shading) addpoly(Bratio, BratioSD, Bratio$Yr) # could be added if Bratio has denominator 1
     matplot(depl$Yr,depl[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col='grey')
 
@@ -109,11 +108,11 @@ SSplotComparisons <-
     if(legend) legendfun()
   }
 
-  plotBratio <- function(){ # plot biomass ratio (may be identical to previous plot)
+  plotBratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
     if(xlim[1]=="default") xlim <- range(Bratio$Yr)
     plot(0,type='n',xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
-    if(shading) addpoly(Bratio, BratioSD, Bratio$Yr)
+    if(uncertainty) addpoly(Bratio, BratioSD, Bratio$Yr)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col='grey')
 
@@ -176,56 +175,71 @@ SSplotComparisons <-
 
   # subplot 1: spawning biomass
   if(1 %in% subplots){
-    if(plot) plotSpawnBio()
+    if(plot) plotSpawnBio(uncertainty=FALSE)
     if(print){
       pngfun("compare1_spawnbio.png")
-      plotSpawnBio()
+      plotSpawnBio(uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 2: spawning depletion
-  if(2 %in% subplots){
+  # subplot 2: spawning biomass with uncertainty intervals
+  if(2 %in% subplots & uncertainty){
+    if(plot) plotSpawnBio(uncertainty=uncertainty)
+    if(print){
+      pngfun("compare2_spawnbio_uncertainty.png")
+      plotSpawnBio(uncertainty=uncertainty)
+      dev.off()
+    }
+  }
+
+  # subplot 3: spawning depletion
+  if(3 %in% subplots){
     if(plot) plotDepl()
     if(print){
-      pngfun("compare2_depl.png")
+      pngfun("compare3_depl.png")
       plotDepl()
-      dev.off()
-    }
-  }
-
-  # subplot 3: biomass ratio (probably equal to spawning depletion)
-  if(3 %in% subplots){
-    if(plot) plotBratio()
-    if(print){
-      pngfun("compare3_Bratio.png")
-      plotBratio()
       dev.off()
     }
   }
   
-  # subplot 4: recruits
+  # subplot 4: biomass ratio (probably equal to spawning depletion)
   if(4 %in% subplots){
+    if(plot) plotBratio(uncertainty=FALSE)
+    if(print){
+      pngfun("compare4_Bratio.png")
+      plotBratio(uncertainty=FALSE)
+      dev.off()
+    }
+  }
+
+  # subplot 5: biomass ratio with uncertainty
+  if(5 %in% subplots){
+    if(plot) plotBratio(uncertainty=uncertainty)
+    if(print){
+      pngfun("compare5_Bratio_uncertainty.png")
+      plotBratio(uncertainty=uncertainty)
+      dev.off()
+    }
+  }
+  
+  # subplot 6: recruits
+  if(6 %in% subplots){
     if(plot) plotRecruits()
     if(print){
-      pngfun("compare4_recruits.png")
+      pngfun("compare6_recruits.png")
       plotDepl()
       dev.off()
     }
   }
 
-  # subplot 5: recruit devs
-  if(5 %in% subplots){
+  # subplot 7: recruit devs
+  if(7 %in% subplots){
     if(plot) plotRecDevs()
     if(print){
-      pngfun("compare5_recdevs.png")
+      pngfun("compare7_recdevs.png")
       plotRecDevs()
       dev.off()
     }
   }
-
-  # subplot 6: index fits
-  if(6 %in% subplots){
-  }
-
 }

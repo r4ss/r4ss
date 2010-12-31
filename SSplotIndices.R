@@ -11,18 +11,11 @@ function(replist,subplots=1:7,
            "Log observed index", #6
            "Log expected index", #7
            "Standardized index"),#8
-         col1="default",
-         col2="default",
-         col3="blue",
-         col4="red",
-         pch1=1,
-         pch2=16,
-         legend=TRUE,
-         legendloc="topright",
-         seasnames=NULL,
+         col1="default", col2="default", col3="blue", col4="red",
+         pch1=1, pch2=16, cex=1,
+         legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-         plotdir="default",
-         verbose=TRUE)
+         plotdir="default", verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -115,23 +108,27 @@ function(replist,subplots=1:7,
       if(!add) plot(x=x,y=y,type='n',xlab=labels[1],ylab=labels[2],
                     main=main,cex.main=cex.main,ylim=c(0,max(y+uiw,na.rm=TRUE)))
       plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,ylo=0,col=colvec1[s],
-             main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1)
+             main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,cex=cex)
       abline(h=0,col="grey")
       if(addexpected) lines(x,z,lwd=2,col=col3)
-      if(legend & length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1)
+      if(legend & length(colvec1)>1) legend(x=legendloc, legend=seasnames,
+                                            pch=pch1, col=colvec1, cex=cex)
     }
     cpuefun2 <- function(){
       # plot of observed vs. expected with smoother
-      if(!add) plot(y,z,xlab=labels[3],main=main,cex.main=cex.main,ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4])
-      points(y,z,col=colvec2[s],pch=pch2)
+      if(!add) plot(y,z,xlab=labels[3],main=main,cex.main=cex.main,
+                    ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4])
+      points(y,z,col=colvec2[s],pch=pch2,cex=cex)
       abline(h=0,col="grey")
       lines(x=c(0,max(z)),y=c(0,max(z)))
       if(smooth && npoints > 6 && diff(range(y))>0)
       {
         psmooth <- loess(z~y,degree=1)
-        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col=col4,lty="dashed")
+        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
+              lwd=1.2,col=col4,lty="dashed")
       }
-      if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2)
+      if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames,
+                                            pch=pch2, col=colvec2, cex=cex)
     }
 
     if(plot){
@@ -166,19 +163,23 @@ function(replist,subplots=1:7,
       if(!add) plot(x=x,y=log(y),type='n',xlab=labels[1],ylab=labels[5],
                     main=main,cex.main=cex.main,ylim=range(log(y)-liw,log(y)+uiw,na.rm=TRUE))
       plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,
-             col=colvec1[s],lty=1,add=TRUE,pch=pch1)
+             col=colvec1[s],lty=1,add=TRUE,pch=pch1,cex=cex)
       if(addexpected) lines(x,log(z),lwd=2,col=col3)
-      if(length(colvec1)>1) legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1)
+      if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,
+                                   pch=pch1, col=colvec1, cex=cex)
     }
     cpuefun4 <- function(){
       # plot of log(observed) vs. log(expected) with smoother
-      if(!add) plot(log(y),log(z),type='n',xlab=labels[6],main=main,cex.main=cex.main,ylab=labels[7])
+      if(!add) plot(log(y),log(z),type='n',xlab=labels[6],main=main,
+                    cex.main=cex.main,ylab=labels[7])
       points(log(y),log(z),col=colvec2[s],pch=pch2)
       lines(x=range(log(z)),y=range(log(z)))
       if(smooth && npoints > 6 && diff(range(y))>0){
         psmooth <- loess(log(z)~log(y),degree=1)
-        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col=col4,lty="dashed")}
-      if(length(colvec2)>1) legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2)
+        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
+              lwd=1.2,col=col4,lty="dashed")}
+      if(length(colvec2)>1) legend(x=legendloc, legend=seasnames,
+                                   pch=pch2, col=colvec2, cex=cex)
     }
     if(plot){
       if(4 %in% subplots) cpuefun3(addexpected=FALSE)
@@ -212,16 +213,11 @@ function(replist,subplots=1:7,
       ylim <- c(range(allcpue$stdvalue,na.rm=T))
       usecols <- rich.colors.short(max(allcpue$Index,na.rm=T))
       if(max(allcpue$Index,na.rm=T) >= 2) usecols <- rich.colors.short(max(allcpue$Index,na.rm=T)+1)[-1]
-      if(!add) plot(x=allcpue$year[allcpue$Index %in% c(fleetvec[1])],y=allcpue$stdvalue[allcpue$Index %in% c(fleetvec[1])],
-                    xlab=labels[1],main=main,cex.main=cex.main,col=usecols[1],pch=pch2,ylab=labels[8],xlim=xlim,ylim=ylim)
-      lines(x=allcpue$year[allcpue$Index %in% c(fleetvec[1])],y=allcpue$stdvalue[allcpue$Index %in% c(fleetvec[1])],
-            col=usecols[1],lwd=0.4,lty="dashed")
-      fleetvec2 <- fleetvec[fleetvec != fleetvec[1]]
-      for(ifleet in fleetvec2){
-        points(x=allcpue$year[allcpue$Index %in% c(ifleet)],y=allcpue$stdvalue[allcpue$Index %in% c(ifleet)],
-               pch=pch2,col=usecols[ifleet])
-        lines(x=allcpue$year[allcpue$Index %in% c(ifleet)],y=allcpue$stdvalue[allcpue$Index %in% c(ifleet)],
-              col=usecols[ifleet],lwd=0.4,lty="dashed")
+      if(!add) plot(0, type="n", xlab=labels[1], main=main, cex.main=cex.main,
+                    col=usecols[1], ylab=labels[8], xlim=xlim,ylim=ylim)
+      for(ifleet in fleetvec){
+        points(x=allcpue$year[allcpue$Index==ifleet],y=allcpue$stdvalue[allcpue$Index==ifleet],
+               pch=pch2,col=usecols[ifleet], cex=cex, lwd=0.4,lty="dashed", type="o")
       }
     } # end cpuefun5
     if(plot & (7 %in% subplots)){cpuefun5()}

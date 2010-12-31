@@ -35,6 +35,7 @@ SSplotComps <-
   agedbase      <- replist$agedbase
   condbase      <- replist$condbase
   ghostagedbase <- replist$ghostagedbase
+  ghostlendbase <- replist$ghostlendbase
   ladbase       <- replist$ladbase
   wadbase       <- replist$wadbase
   tagdbase1     <- replist$tagdbase1
@@ -69,6 +70,17 @@ SSplotComps <-
     }else{
       filenamestart <- "comp_lenfit_"
       titledata <- "length comps, "
+    }
+  }
+  if(kind=="GSTLEN"){
+    dbase_kind <- ghostlendbase
+    kindlab=labels[1]
+    if(datonly){
+      filenamestart <- "comp_gstlendat_"
+      titledata <- "ghost length comp data, "
+    }else{
+      filenamestart <- "comp_gstlenfit_"
+      titledata <- "ghost length comps, "
     }
   }
   if(kind=="SIZE"){
@@ -139,18 +151,18 @@ SSplotComps <-
     filenamestart <- "comp_WAAfit_"
     titledata <- "mean weight at age, "
   }
-  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","L@A","W@A"))) stop("Input 'kind' to SSplotComps is not right.")
+  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))) stop("Input 'kind' to SSplotComps is not right.")
 
   # add asterix to indicate super periods and then remove rows labeled "skip"
   # would be better to somehow show the range of years, but that seems difficult
   # at this point
-  if(any(dbase_kind$Used=="skip")){
-    cat("Note: removing composition values labeled 'skip'\n",
+  if(any(dbase_kind$SuprPer=="Sup" & dbase_kind$Used=="skip")){
+    cat("Note: removing super-period composition values labeled 'skip'\n",
         "     and designating super-period values with a '*'\n")
-    dbase_kind <- dbase_kind[dbase_kind$Used!="skip",]
+    dbase_kind <- dbase_kind[dbase_kind$SuprPer=="No" | dbase_kind$Used!="skip",]
     dbase_kind$YrSeasName <- paste(dbase_kind$YrSeasName,ifelse(dbase_kind$SuprPer=="Sup","*",""),sep="")
   }
-
+  
   # loop over fleets
   for(f in fleets)
   {
@@ -203,7 +215,7 @@ SSplotComps <-
             ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
             titles <- c(ptitle,titles) # compiling list of all plot titles
             tempfun <- function(ipage,...){
-              if(!(kind %in% c("GSTAGE","L@A","W@A"))){
+              if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                               sampsize=dbase$N,effN=dbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                               bars=bars,linepos=(1-datonly)*linepos,
@@ -213,6 +225,15 @@ SSplotComps <-
                               fixdims=fixdims,ipage=ipage,...)
               }
               if(kind=="GSTAGE"){
+                  make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                                sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                                bars=bars,linepos=(1-datonly)*linepos,
+                                nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                                main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
+                                maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                                fixdims=fixdims,ipage=ipage,...)
+              }
+              if(kind=="GSTLEN"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
                                 bars=bars,linepos=(1-datonly)*linepos,
@@ -435,7 +456,7 @@ SSplotComps <-
           } # end if plot requested
 
           ### subplot 7: sample size plot
-          if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","L@A","W@A")))
+          if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A")))
           {
             ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
             titles <- c(ptitle,titles) # compiling list of all plot titles
@@ -614,7 +635,7 @@ SSplotComps <-
               }
   
               namesvec <- fleetnames[agg$f]
-              if(!(kind %in% c("GSTAGE","L@A","W@A"))){
+              if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$f,
                               linesx=agg$bin,linesy=agg$exp,
                               sampsize=agg$N,effN=agg$effN,

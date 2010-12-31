@@ -427,6 +427,13 @@ SS_plots <-
                 maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
+    SSplotComps(replist=replist,datonly=FALSE,kind="GSTLEN",bub=TRUE,verbose=verbose,fleets=fleets,
+                fleetnames=fleetnames,
+                samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
+                minnbubble=minnbubble, pntscalar=pntscalar,
+                maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
+                maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,...)
     SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
                 fleetnames=fleetnames,
                 samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,

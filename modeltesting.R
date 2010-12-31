@@ -299,7 +299,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_20a_Dec22"))
+               SSversions=c("Version_3_20_Dec29"))
 
   # making plots
   for(i in length(alloutput):1){

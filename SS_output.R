@@ -367,12 +367,13 @@ SS_output <-
       notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
       conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
     }
-    lendbase         <- compdbase[compdbase$Kind=="LEN"  & (is.na(compdbase$N) | compdbase$N > 0),]
-    sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (is.na(compdbase$N) | compdbase$N > 0),]
-    agedbase         <- compdbase[compdbase$Kind=="AGE"  & (is.na(compdbase$N) | compdbase$N > 0) & notconditional,]
-    condbase         <- compdbase[compdbase$Kind=="AGE"  & (is.na(compdbase$N) | compdbase$N > 0) & conditional,]
-    ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & (!is.na(compdbase$N)& compdbase$N < 0) & notconditional,]
-    ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & (!is.na(compdbase$N)& compdbase$N < 0) & conditional,]
+    lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+    sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+    agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
+    condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+    ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
+    ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
+    ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
     compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
     if(is.null(compdbase$N)){
@@ -393,6 +394,7 @@ SS_output <-
           "  ",nrow(condbase), "rows of conditional age-at-length data,\n",
           "  ",nrow(ghostagedbase),"rows of ghost fleet age comp data,\n",
           "  ",nrow(ghostcondbase),"rows of ghost fleet conditional age-at-length data,\n",
+          "  ",nrow(ghostlendbase),"rows of ghost fleet length comp data,\n",
           "  ",nrow(ladbase),  "rows of mean length at age data,\n",
           "  ",nrow(wadbase),  "rows of mean weight at age data,\n",
           "  ",nrow(tagdbase1),"rows of 'TAG1' comp data, and\n",
@@ -1082,6 +1084,7 @@ SS_output <-
     returndat$condbase      <- condbase
     returndat$ghostagedbase <- ghostagedbase
     returndat$ghostcondbase <- ghostcondbase
+    returndat$ghostlendbase <- ghostlendbase
     returndat$ladbase       <- ladbase
     returndat$wadbase       <- wadbase
     returndat$tagdbase1     <- tagdbase1
