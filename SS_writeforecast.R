@@ -1,11 +1,12 @@
-SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss", nareas=1, nfleets=1,
-                              overwrite=F, verbose=T){
+SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
+                              nareas=1, nfleets=1,
+                              overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files
   # updated for SSv3.20 test on 12/6/2010
-  if(verbose) cat("running SS_writeforecast",quote=F)
+  if(verbose) cat("running SS_writeforecast",quote=FALSE)
 
   if(mylist$type!="Stock_Synthesis_forecast_file"){
-    cat("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'",quote=F)
+    cat("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'",quote=FALSE)
     return()
   }
 
@@ -18,7 +19,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss", nareas=1, nf
   outfile <- paste(dir,file,sep="/")
   if(file.exists(outfile)){
     if(!overwrite){
-      stop(paste("file exists:",outfile,"\n  set overwrite=T to replace\n"))
+      stop(paste("file exists:",outfile,"\n  set overwrite=TRUE to replace\n"))
     }else{
       cat("overwriting file:",outfile,"\n")
       file.remove(outfile)
@@ -42,7 +43,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss", nareas=1, nf
   printdf <- function(dataframe){
     # function to print data frame with hash mark before first column name
     names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    cat(dataframe, row.names=F, strip.white=T)
+    cat(dataframe, row.names=FALSE, strip.white=TRUE)
   }
 
   writeLines("#C forecast file written by R function SS_writeforecast")

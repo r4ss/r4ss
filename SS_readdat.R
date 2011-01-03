@@ -1,8 +1,8 @@
-SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
+SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readdat\n")
-  dat <- readLines(file,warn=F)
+  dat <- readLines(file,warn=FALSE)
 
   if(!is.null(section)){
     Nsections <- as.numeric(substring(dat[grep("Number_of_datafiles",dat)],24))
@@ -86,7 +86,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(verbose) cat("N_catch =",N_catch,"\n")
   Nvals <- N_catch*(Nfleet+2)
   catch <- data.frame(matrix(
-    allnums[i:(i+Nvals-1)],nrow=N_catch,ncol=(Nfleet+2),byrow=T))
+    allnums[i:(i+Nvals-1)],nrow=N_catch,ncol=(Nfleet+2),byrow=TRUE))
   names(catch) <- c(fleetnames[1:Nfleet],"year","seas")
   datlist$catch <- catch
   i <- i+Nvals
@@ -97,11 +97,11 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(verbose) cat("N_cpue =",N_cpue,"\n")
   if(N_cpue > 0){
     CPUEinfo <- data.frame(matrix(allnums[i:(i+Ntypes*3-1)],
-                                  nrow=Ntypes,ncol=3,byrow=T))
+                                  nrow=Ntypes,ncol=3,byrow=TRUE))
     i <- i+Ntypes*3
     names(CPUEinfo) <- c("Fleet","Units","Errtype")
     CPUE <- data.frame(matrix(
-      allnums[i:(i+N_cpue*5-1)],nrow=N_cpue,ncol=5,byrow=T))
+      allnums[i:(i+N_cpue*5-1)],nrow=N_cpue,ncol=5,byrow=TRUE))
     i <- i+N_cpue*5
     names(CPUE) <- c('year','seas','index','obs','se_log')
   }else{
@@ -124,7 +124,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(N_discard > 0){
     Ncols <- 5
     discard_data <- data.frame(matrix(
-      allnums[i:(i+N_discard*Ncols-1)],nrow=N_discard,ncol=Ncols,byrow=T))
+      allnums[i:(i+N_discard*Ncols-1)],nrow=N_discard,ncol=Ncols,byrow=TRUE))
     i <- i+N_discard*Ncols
     names(discard_data) <- c('Yr','Seas','Flt','Discard','Std_in')
   }else{
@@ -138,7 +138,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(N_meanbodywt > 0){
     Ncols <- 6
     meanbodywt <- data.frame(matrix(
-      allnums[i:(i+N_meanbodywt*Ncols-1)],nrow=N_meanbodywt,ncol=Ncols,byrow=T))
+      allnums[i:(i+N_meanbodywt*Ncols-1)],nrow=N_meanbodywt,ncol=Ncols,byrow=TRUE))
     i <- i+N_discard*Ncols
     names(meanbodywt) <- c('Year','Seas','Type','Partition','Value','CV')
   }else{
@@ -187,7 +187,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(N_lencomp > 0){
     Ncols <- N_lbins*Ngenders+6
     lencomp <- data.frame(matrix(
-                                 allnums[i:(i+N_lencomp*Ncols-1)],nrow=N_lencomp,ncol=Ncols,byrow=T))
+                                 allnums[i:(i+N_lencomp*Ncols-1)],nrow=N_lencomp,ncol=Ncols,byrow=TRUE))
     i <- i+N_lencomp*Ncols
     names(lencomp) <- c("Yr","Seas","FltSvy","Gender","Part","Nsamp",
                         if(Ngenders==1){paste("l",lbin_vector,sep="")}else{NULL},
@@ -212,7 +212,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
     Ncols <- Nages+1
     ageerror <- data.frame(matrix(
       allnums[i:(i+2*N_ageerror_definitions*Ncols-1)],
-      nrow=2*N_ageerror_definitions,ncol=Ncols,byrow=T))
+      nrow=2*N_ageerror_definitions,ncol=Ncols,byrow=TRUE))
     i <- i+2*N_ageerror_definitions*Ncols
     names(ageerror) <- paste("age",0:Nages,sep="")
   }else{
@@ -230,7 +230,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
     if(N_agebins==0) stop("N_agecomp =",N_agecomp," but N_agebins = 0")
     Ncols <- N_agebins*Ngenders+9
     agecomp <- data.frame(matrix(
-      allnums[i:(i+N_agecomp*Ncols-1)],nrow=N_agecomp,ncol=Ncols,byrow=T))
+      allnums[i:(i+N_agecomp*Ncols-1)],nrow=N_agecomp,ncol=Ncols,byrow=TRUE))
     i <- i+N_agecomp*Ncols
     names(agecomp) <- c("Yr","Seas","FltSvy","Gender","Part","Ageerr","Lbin_lo","Lbin_hi","Nsamp",
                         if(Ngenders==1){paste("a",agebin_vector,sep="")}else{NULL},
@@ -246,7 +246,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
   if(N_MeanSize_at_Age_obs > 0){
     Ncols <- 2*N_agebins*Ngenders + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
-      allnums[i:(i+N_MeanSize_at_Age_obs*Ncols-1)],nrow=N_MeanSize_at_Age_obs,ncol=Ncols,byrow=T))
+      allnums[i:(i+N_MeanSize_at_Age_obs*Ncols-1)],nrow=N_MeanSize_at_Age_obs,ncol=Ncols,byrow=TRUE))
     i <- i+N_MeanSize_at_Age_obs*Ncols
     names(MeanSize_at_Age_obs) <- c('Yr','Seas','Fleet','Gender','Part','AgeErr','Ignore',
                                     if(Ngenders==1){paste("a",agebin_vector,sep="")}else{NULL},
@@ -272,7 +272,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
     # read tag release data
     if(N_tag_groups > 0){
       Ncols <- 8
-      tag_releases <- data.frame(matrix(allnums[i:(i+N_tag_groups*Ncols-1)],nrow=N_tag_groups,ncol=Ncols,byrow=T))
+      tag_releases <- data.frame(matrix(allnums[i:(i+N_tag_groups*Ncols-1)],nrow=N_tag_groups,ncol=Ncols,byrow=TRUE))
       i <- i+N_tag_groups*Ncols
       names(tag_releases) <- c('TG', 'Area', 'Yr', 'Season', 'tfill', 'Gender', 'Age', 'Nrelease')
     }else{
@@ -283,7 +283,7 @@ SS_readdat <- function(file,verbose=T,echoall=FALSE,section=NULL){
     # read tag recapture data
     if(N_recap_events > 0){
       Ncols <- 5
-      tag_recaps <- data.frame(matrix(allnums[i:(i+N_recap_events*Ncols-1)],nrow=N_recap_events,ncol=Ncols,byrow=T))
+      tag_recaps <- data.frame(matrix(allnums[i:(i+N_recap_events*Ncols-1)],nrow=N_recap_events,ncol=Ncols,byrow=TRUE))
       i <- i+N_recap_events*Ncols
       names(tag_recaps) <- c('TG', 'Yr', 'Season', 'Fleet', 'Nrecap')
     }else{

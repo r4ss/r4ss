@@ -11,7 +11,7 @@
 \usage{
 SSgetoutput(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE,
 forecast = FALSE, verbose = TRUE, ncols = 210, global = FALSE, replace =
-FALSE, listlists = TRUE)
+FALSE, listlists = TRUE, underscore=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -48,6 +48,9 @@ FALSE, listlists = TRUE)
   \item{listlists}{
     Save output from each model as a element of a list (i.e. make a list of
     lists). Default = TRUE.
+  }
+  \item{underscore}{
+    Add an underscore '_' between any file names and any keys in keyvec. Default=FALSE.
   }
 }
 \details{

@@ -10,39 +10,42 @@
 }
 \usage{
 plotCI(x, z = x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
-sfrac = 0.01, ymax = NULL)
+sfrac = 0.01, ymax = NULL, add = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-The x coordinates of points in the plot
+    The x coordinates of points in the plot
   }
   \item{z}{
     Not sure.
   }
   \item{y}{
-The y coordinates of the points in the plot.
+    The y coordinates of the points in the plot.
   }
   \item{uiw}{
-The width of the upper portion of the confidence region.
+    The width of the upper portion of the confidence region.
   }
   \item{liw}{
-The width of the lower portion of the confidence region.
+    The width of the lower portion of the confidence region.
   }
   \item{ylo}{
-Lower limit of y range.
+    Lower limit of y range.
   }
   \item{yhi}{
-Upper limit of y range.
+    Upper limit of y range.
   }
   \item{\dots}{
-Additional inputs that will be passed to the function \code{plot(x,y,ylim=ylim,...)}
+    Additional inputs that will be passed to the function \code{plot(x,y,ylim=ylim,...)}
   }
   \item{sfrac}{
-Fraction of width of plot to be used for bar ends.
+    Fraction of width of plot to be used for bar ends.
   }
   \item{ymax}{
-Additional input for Upper limit of y range.
+    Additional input for Upper limit of y range.
+  }
+  \item{add}{
+    Add points and intervals to existing plot? Default=FALSE.
   }
 }
 \details{

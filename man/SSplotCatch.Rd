@@ -10,15 +10,17 @@
 }
 \usage{
 SSplotCatch(replist, subplots = 1:9, add = FALSE, areas = 1,
-plot = TRUE, print = FALSE, fleetlty = 1,
-fleetpch = 1, fleetcols = "default", fleetnames = "default", lwd = 1,
-areacols = "default", areanames = "default", minyr = NULL, maxyr = NULL
-forecastplot = TRUE, plotdir = "default", showlegend = TRUE,
-legendloc = "topleft", xlab = "Year", labels = c("Harvest rate/Year",
-"Continuous F", "Landings", "Total catch", "Predicted Discards",
-"Discard fraction", "(mt)", "(numbers x1000)", "Observed and expected"),
-catchasnumbers = FALSE, pwidth = 7, pheight
-= 7, punits = "in", res = 300, ptsize = 12)
+plot = TRUE, print = FALSE, type = "l", fleetlty = 1,
+fleetpch = 1, fleetcols = "default", fleetnames = "default", lwd = 3,
+areacols = "default", areanames = "default", minyr = NULL, maxyr = NULL,
+annualcatch = TRUE, forecastplot = TRUE, plotdir = "default",
+showlegend = TRUE, legendloc = "topleft", xlab = "Year",
+labels = c("Harvest rate/Year", "Continuous F", "Landings",
+"Total catch", "Predicted Discards", "Discard fraction", "(mt)",
+"(numbers x1000)", "Observed and expected",
+"aggregated across seasons"),
+catchasnumbers = FALSE, pwidth = 7, pheight = 7, punits = "in",
+res = 300, ptsize = 12, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +41,10 @@ catchasnumbers = FALSE, pwidth = 7, pheight
   }
   \item{print}{
     print to PNG files?
+  }
+  \item{type}{
+    type parameter passed to plot function. Default "l" is lines only.
+    Other options include "o" for overplotting points on lines.
   }
   \item{fleetlty}{
     vector of line type by fleet
@@ -66,6 +72,9 @@ catchasnumbers = FALSE, pwidth = 7, pheight
   }
   \item{maxyr}{
     optional input for maximum year to show in plots
+  }
+  \item{annualcatch}{
+    include plot of catch aggregated across seasons within each year
   }
   \item{forecastplot}{
     add points from forecast years
@@ -103,6 +112,9 @@ catchasnumbers = FALSE, pwidth = 7, pheight
   }
   \item{ptsize}{
     ptsize for PNG file
+  }
+  \item{verbose}{
+    report progress to R console?
   }
 }
 \details{

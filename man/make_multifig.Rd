@@ -9,10 +9,10 @@
   plots of composition data and fits from Stock Synthesis output.
 }
 \usage{
-make_multifig(ptsx, ptsy, yr, linesx = 0, linesy = 0, sampsize = 0, effN
-= 0, showsampsize = TRUE, showeffN = TRUE, sampsizeround = 1, maxrows = 6,
-maxcols = 6, rows = 1, cols = 1, fixdims = TRUE, main = "", cex.main =
-1, xlab = "", ylab = "",
+make_multifig(ptsx, ptsy, yr, linesx = 0, linesy = 0, ptsSD = 0,
+sampsize = 0, effN = 0, showsampsize = TRUE, showeffN = TRUE,
+sampsizeround = 1, maxrows = 6, maxcols = 6, rows = 1, cols = 1,
+fixdims = TRUE, main = "", cex.main = 1, xlab = "", ylab = "",
 size = 1, maxsize = 3, do.sqrt = TRUE, minnbubble = 8, allopen = TRUE,
 horiz_lab = "default", xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15),
 ymin0 = TRUE, axis1 = "default", axis2 = "default", linepos = 1, bars = FALSE,
@@ -38,6 +38,11 @@ legsize = c(1.2, 1), legfont = c(2, 1), ipage = 0)
   }
   \item{linesy}{
     optional vector of y values for lines
+  }
+  \item{ptsSD}{
+    optional vector of standard deviations used to plot error bars
+    on top of each point under the assumption of normally distributed
+    error
   }
   \item{sampsize}{
     optional sample size vector of same length as ptsx

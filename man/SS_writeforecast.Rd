@@ -8,7 +8,8 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-SS_writeforecast(mylist, dir = NULL, file = "forecast.ss", overwrite = F, verbose = T)
+SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
+nareas = 1, nfleets = 1, overwrite = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,11 +22,17 @@ SS_writeforecast(mylist, dir = NULL, file = "forecast.ss", overwrite = F, verbos
   \item{file}{
     Filename for new forecast file. Default="forecast.ss".
   }
+  \item{nareas}{
+    Number of areas in the model (necessary to get formatting correct).
+  }
+  \item{nfleets}{
+    Number of fleets in the model (necessary to get formatting correct).
+  }
   \item{overwrite}{
-    Should existing files be overwritten? Default=F.
+    Should existing files be overwritten? Default=FALSE.
   }
   \item{verbose}{
-    Should there be verbose output while running the file? Default=T.
+    Should there be verbose output while running the file? Default=TRUE.
   }
 }
 \details{

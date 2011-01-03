@@ -11,8 +11,7 @@
 }
 \usage{
 SSsummarize(biglist, keyvec = NULL, numvec = NULL, selfactor =
-c("Lsel"), selfleet = NULL, selyear = "min", selgender = 1, filter=TRUE,
-growthyr = 1971)
+c("Lsel"), selfleet = NULL, selyr = "min", selgender = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -34,21 +33,13 @@ growthyr = 1971)
   \item{selfleet}{
     Vector of fleets for which selectivity will be summarized. NULL=all fleets. Default=NULL.
   }
-  \item{selyear}{
-    String or vector of years for which selectivity will be summarized. NULL=all
-    years, "min" = first year, "max" = last year.  Default="min".
+  \item{selyr}{
+    String or vector of years for which selectivity will be summarized.
+    NOTE: NOT CURRENTLY WORKING. Options: NULL=all years,
+    "min" = first year, "max" = last year.  Default="min".
   }
   \item{selgender}{
     Vector of genders (1 and/or 2) for which selectivity will be summarized. NULL=all genders. Default=NULL.
-  }
-  \item{filter}{
-    Switch to control whether columns in derived quantities are filtered
-    so they match between models with different numbers of estimated
-    parameters. Warning: not generalized at all.
-  }
-  \item{growthyr}{
-    Single year for which growth is to be summarized. Default=1971
-    (works for Ian's application, but needs to be generalized).
   }
 }
 \details{

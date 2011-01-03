@@ -11,8 +11,8 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SS_plots(replist = "ReportObject", plot = 1:24, print = 0,
-pdf = FALSE, printfolder = "", dir = "default", fleets = "all",
+SS_plots(replist = NULL, plot = 1:26, print = 0,
+pdf = FALSE, printfolder = "plots", dir = "default", fleets = "all",
 areas = "all", fleetnames = "default", fleetcols = "default",
 fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
 areanames = "default", verbose = TRUE, uncertainty = TRUE,
@@ -25,7 +25,8 @@ showsampsize = TRUE, showeffN = TRUE, showlegend = TRUE, pwidth = 7,
 pheight = 7, punits = "in", ptsize = 12, res = 300, cex.main = 1,
 selexlines = 1:5, rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3, fixdims = TRUE,
-new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
+new = TRUE, catchasnumbers = FALSE, legendloc = "topleft",
+minyr = NULL, maxyr = NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -160,6 +161,10 @@ new = TRUE, catchasnumbers = FALSE, legendloc = "topleft", ...)
   \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
     Default=F. }
   \item{legendloc}{ Location for all legends. Default="topleft". }
+  \item{minyr}{ First year to show in time-series plots
+    (changes xlim parameters). }
+  \item{maxyr}{ Last year to show in time-series plots
+    (changes xlim parameters). }
   \item{\dots}{ Additional arguments that will be passed to some
     subfunctions. }
 }

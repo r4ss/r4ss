@@ -13,8 +13,9 @@
 SSrunsims(sims = 1, newrun = TRUE, sim = FALSE, fit = FALSE, simfolder =
 "sims", fitfolder = "fits", masterfolder = "fits", MLEdata = FALSE,
 skipfiles = TRUE, simchoices = 1, fitchoices = 1, samedatafile = FALSE,
-homepath = "c:/myfiles/", recdevmatrix = NULL, rescale = TRUE,
-fitbiasramp = FALSE, exe = "ss3_opt", simextras = "-nox -nohess",
+CAAL = TRUE, homepath = "c:/myfiles/", recdevmatrix = NULL,
+rescale = TRUE, fitbiasramp = FALSE, exe = "ss3_opt",
+simextras = "-nox -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
 fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE, verbose = TRUE)
 }
@@ -65,6 +66,14 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE, verbose = TRUE)
   \item{homepath}{
     Location where the input files are located, and in which the above
     inputs for simfolder and fitfolder are located.
+  }
+  \item{CAAL}{
+    Do additional bootstrapping of any conditional age-at-length (CAAL)
+    data. This involves bootstrapping the sample sizes across length
+    bins from a multinomial distribution with proportions determined by
+    existing sample sizes, then using the resuling sample sizes to
+    bootstrap composition data using MLE proportions within each length
+    bin.
   }
   \item{recdevmatrix}{
     Matrix of recruit deviations. NULL = read from file or create new file if

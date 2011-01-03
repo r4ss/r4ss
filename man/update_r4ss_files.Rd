@@ -8,11 +8,9 @@
   mirrors.
 }
 \usage{
-update_r4ss_files(trunk=T, branches=F)
+update_r4ss_files()
 }
 \arguments{
-  \item{trunk}{ Get files from trunk directory? Default=T.}
-  \item{branches}{ Get files from some branches subdirectories? Default=F.}
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~
@@ -36,19 +34,20 @@ update_r4ss_files(trunk=T, branches=F)
 \examples{
 \dontrun{
 update_r4ss_files()
-# [1] sourcing SS_changepars.R
-# [1] sourcing SS_fitbiasramp.R
-# [1] sourcing SS_parlines.R
-# [1] sourcing SS_profile.R
-# [1] sourcing SS_recdevs.R
-# [1] sourcing SS_splitdat.R
-# [1] sourcing SSv3_FishGraph.R
-# [1] sourcing SSv3_output.R
-# [1] sourcing SSv3_plotpars.R
-# [1] sourcing SSv3_plots.R
-# [1] sourcing lines.sel.R
-# [1] sourcing movepars.R
-# [1] sourcing selfit.R}
+#  sourcing updated functions from http://r4ss.googlecode.com/svn/trunk/ 
+#  57 files found:
+#    sourcing IOTCmove.R
+#    sourcing RebuildPlot.R
+#    sourcing SSFishGraph.R
+#    sourcing SS_changepars.R
+#    sourcing SS_fitbiasramp.R
+#    sourcing SS_makedatlist.R
+#    sourcing SS_output.R
+#    ...
+#    sourcing stackpoly.R
+#    sourcing update_r4ss_files.R
+#  update complete.
+}
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the
 % % R documentation directory.

@@ -12,19 +12,18 @@ Synthesis report file. Some values have optional uncertainty intervals.
 SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
 areacols = "default", areanames = "default", forecastplot = TRUE,
 uncertainty = TRUE, bioscale = "default", minyr=NULL, maxyr=NULL,
-plot = TRUE, print = FALSE,
-plotdir = "default", verbose = FALSE, btarg=0.4, minbthresh=0.25,
-xlab = "Year",
-labels=c("Total biomass (mt)",
-"Total biomass at beginning of season 1 (mt)",
+plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
+btarg=0.4, minbthresh=0.25, xlab = "Year",
+labels = c("Total biomass (mt)",
+"Total biomass (mt) at beginning of season",
 "Summary biomass (mt)",
-"Summary biomass at beginning of season 1 (mt)",
+"Summary biomass (mt) at beginning of season",
 "Spawning biomass (mt)",
 "Spawning depletion",
 "Spawning output (eggs)",
 "Age-0 recruits (1,000s)"),
-pwidth = 7, pheight = 7, punits =
-"in", res = 300, ptsize = 12, cex.main = 1)
+pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
+cex.main = 1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

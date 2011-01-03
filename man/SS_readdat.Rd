@@ -8,7 +8,7 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-SS_readdat(file, verbose = T, section = NULL)
+SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,9 +16,12 @@ SS_readdat(file, verbose = T, section = NULL)
     Filename either with full path or relative to working directory.
   }
   \item{verbose}{
-    Should there be verbose output while running the file? Default=T.
+    Should there be verbose output while running the file? Default=TRUE.
   }
-  \item(section){
+  \item{echoall}{
+    Debugging tool (not fully implemented) of echoing blocks of
+    data as it is being read. }
+  \item{section}{
     Which data set to read. Only applies for a data.ss_new file created
     by Stock Synthesis. Allows the choice of either expected values
     (section=2) or bootstrap data (section=3+). Leaving default of
@@ -54,5 +57,4 @@ SS_readdat(file, verbose = T, section = NULL)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ data }

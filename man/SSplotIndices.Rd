@@ -9,20 +9,21 @@
 }
 \usage{
 SSplotIndices(replist, subplots = 1:7, plot = TRUE, print = FALSE,
-fleets = "all", fleetnames = "default",  smooth = TRUE, add = FALSE,
-datplot = FALSE, labels = c("Year", "Index", "Observed index",
-"Expected index","Log index", "Log observed index",
-"Log expected index", "Standardized index"),
-col1="default", col2="default", col3="blue", col4="red",
-legend=TRUE, legendloc="topright", seasnames=NULL,
-pwidth = 7, pheight = 7,
-punits = "in", res = 300, ptsize = 12,
-cex.main = 1, plotdir = "default", verbose = TRUE)
+fleets = "all", fleetnames = "default", smooth = TRUE,
+add = FALSE, datplot = FALSE, labels = c("Year", "Index",
+"Observed index", "Expected index", "Log index",
+"Log observed index", "Log expected index",
+"Standardized index"), col1 = "default", col2 = "default",
+col3 = "blue", col4 = "red", pch1 = 1, pch2 = 16,
+cex = 1, legend = TRUE, legendloc = "topright",
+seasnames = NULL, pwidth = 7, pheight = 7, punits =
+"in", res = 300, ptsize = 12, cex.main = 1,
+plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SSoutput}
+    list created by \code{SS_output}
   }
   \item{subplots}{
     vector controlling which subplots to create
@@ -43,7 +44,7 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
     add smoothed line to plots of observed vs. expected sample sizes
   }
   \item{add}{
-  add to existing plot (not yet implemented)
+    add to existing plot (not yet implemented)
   }
   \item{datplot}{
     make plot of data only?
@@ -67,6 +68,17 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
   }
   \item{col4}{
     color of smoother shown in obs. vs. exp. plots. Default is red.
+  }
+  \item{pch1}{
+    single value or vector of plotting characters (pch parameter) for
+    time-series plots of index fit. Default=1.
+  }
+  \item{pch2}{
+    single value or vector of plotting characters (pch parameter) for
+    sample size plots of index fit. Default=16.
+  }
+  \item{cex}{
+    character expansion factor for points showing observed values. Default=1.
   }
   \item{legend}{
     add a legend to seasonal colors (only for seasonal models)
