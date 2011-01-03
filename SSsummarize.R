@@ -148,7 +148,7 @@ SSsummarize <- function(biglist,
 
     ## indices
     indextemp <- stats$cpue
-    indextemp$Model <- keyvec2[i]
+    indextemp$Model <- keyvec2[imodel]
     indextemp$imodel <- imodel
     indices <- rbind(indices, indextemp)
   } # end loop over models
