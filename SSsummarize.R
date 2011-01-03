@@ -244,21 +244,25 @@ SSsummarize <- function(biglist,
 
   # if there are any initial age parameters, figure out what year they're from
   InitAgeRows <- grep("InitAge",pars$Label)
-  temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_")) # separate out values from string
-  InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)]) # get odd entries in above separation
-  InitAgeYrs <- matrix(NA,nrow=length(InitAgeRows),ncol=n)
-  for(imodel in 1:n){
-    modelpars <- pars[,imodel]
-    devyears <- pars$Yr[!is.na(modelpars) & pars$recdev]
-    if(any(!is.na(devyears))) minyr <- min(devyears,na.rm=TRUE) else minyr <- NA
-    good <- !is.na(modelpars[InitAgeRows])
-    if(!is.na(minyr) & minyr>0 & any(good)) InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
-  }
-  # check for differences in assignment of initial ages
-  if(max(apply(InitAgeYrs,1,sd,na.rm=TRUE),na.rm=TRUE)>0){
-    cat("warning: years for InitAge parameters are differ between models, use InitAgeYrs matrix\n")
+  if(length(InitAgeRows)>0){
+    temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_")) # separate out values from string
+    InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)]) # get odd entries in above separation
+    InitAgeYrs <- matrix(NA,nrow=length(InitAgeRows),ncol=n)
+    for(imodel in 1:n){
+      modelpars <- pars[,imodel]
+      devyears <- pars$Yr[!is.na(modelpars) & pars$recdev]
+      if(any(!is.na(devyears))) minyr <- min(devyears,na.rm=TRUE) else minyr <- NA
+      good <- !is.na(modelpars[InitAgeRows])
+      if(!is.na(minyr) & minyr>0 & any(good)) InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
+    }
+    # check for differences in assignment of initial ages
+    if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) - apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
+      cat("warning: years for InitAge parameters are differ between models, use InitAgeYrs matrix\n")
+    }else{
+      pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
+    }
   }else{
-    pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
+    InitAgeYrs <- NA
   }
   recdevs <- pars[pars$recdev,]
   recdevs <- recdevs[order(recdevs$Yr),1:(n+2)]

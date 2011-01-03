@@ -1,6 +1,7 @@
 SSgetoutput <-
 function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
-         verbose=TRUE,ncols=210,global=FALSE,replace=FALSE,listlists=TRUE)
+         verbose=TRUE,ncols=210,global=FALSE,replace=FALSE,listlists=TRUE,
+         underscore=FALSE)
 {
   # a function to run the function SS_output to create a list in the R workspace
   # for a Stock Synthesis model with output filenames ending with the same "key"
@@ -22,7 +23,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
   }
   if(n1==1) keyvec <- rep(keyvec,n)
-  objectnames <- paste("replist_",keyvec,sep="")
+  objectnames <- paste("replist",keyvec,sep="")
   if(n1==0) objectnames <- paste("replist",1:n,sep="")
 
   if(n2==0) dirvec <- getwd()
@@ -37,7 +38,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     if(is.null(key)){
       key2 <- NULL
     }else{
-      key2 <- paste("_",key,sep="")
+      key2 <- ifelse(underscore,paste("_",key,sep=""),key)
     }
     newobject <- objectnames[i]
 
