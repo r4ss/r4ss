@@ -6,7 +6,8 @@
 }
 \description{
   Given a set of x and y values and upper and lower bounds, this function
-  plots the points with error bars.
+  plots the points with error bars. This was Written by Venables and
+  modified to add access to ylim and contents.
 }
 \usage{
 plotCI(x, z = x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,

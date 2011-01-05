@@ -5,7 +5,8 @@
   Make a vector of colors.
 }
 \description{
-  A subset of rich.colors by Arni Magnusson from the gregmisc package.
+  A subset of rich.colors by Arni Magnusson from the gplots package,
+  with the addition of alpha transparency.
 }
 \usage{
 rich.colors.short(n, alpha = 1)

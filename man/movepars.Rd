@@ -1,9 +1,10 @@
 \name{movepars}
 \alias{movepars}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ A function to visual parameterization of movement in Stock Synthesis }
+\title{ explore movement parameterizations }
 \description{
-  GUI interface for movement exploration.
+  A function to visualize parameterization of movement in Stock
+  Synthesis. It creates a GUI interface for movement exploration.
 }
 \usage{
 movepars(nareas = 4, accuage = 40, getpars = T, getrates = T)

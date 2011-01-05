@@ -1,10 +1,9 @@
 \name{SSv3_plots}
 \alias{SSv3_plots}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ function to plot many quantities related to output from Stock Synthesis }
+\title{ old plot funciton }
 \description{
-  Creates a user-chosen set of plots, including biological quantities,
-  time series, and fits to data.  Plots are sent to R GUI, single PDF file, or multiple PNG files.
+  Deprecated function has since been replaced by \code{\link{SS_plots}}
 }
 \usage{
 SSv3_plots(replist = "ReportObject", plot = 1:24, print = 0, pdf = F,
@@ -131,159 +130,161 @@ oldcode = FALSE, ...)
   \item{\dots}{ Additional arguments that will be passed to some subfunctions. }
 }
 \details{
-  \bold{List of plot groups}
+  % \bold{List of plot groups}
 
-  \enumerate{
-    \item Biology
-    \itemize{
-      \item Mean weight at size in the last year (by sex if applicable)
-      \item Maturity at size
-      \item Spawning output at size
-      \item Mid year mean length at age with 95\% range of lengths (by sex if applicable)
-      \item Natural mortality at age if variable (by sex if applicable)
-    }
-    \item Time-varying growth
-    \itemize{
-      \item 3-D plot of mean length at age over time (by sex if applicable)
-      \item Contour plot of mean length at age over time (by sex if applicable)
-    }
-    \item Time-varying selectivity and retention
-    \itemize{
-      \item 3-D plot of selectivity at length (or age or both) over time (by sex if applicable)
-      \item Contour plot of selectivity at length (or age or both) over time (by sex if applicable)
-      \item 3-D plot of retention at length over time (by sex if applicable)
-      \item Contour plot of retention at length over time (by sex if
-      applicable)
-    }
-    \item Ending selectivity and retention
-    \itemize{
-      \item Ending year selectivity at length (or age or both) and
-      retention (by sex if applicable)
-    }
-    \item Basic time series
-    \itemize{
-      \item Time series of total biomass
-      \item Time series of summary biomass
-      \item Time series of landings by fleet with total
-      \item Time series of catch by fleet with total
-      \item Time series of discards by fleet with total
-      \item Time series of discard fraction by fleet with total
-      \item Time series of harvest rate by fleet
-    }
-    \item Recruitment plots
-    \itemize{
-      \item Time series of recruitment estimates
-      \item Time series of recruitment estimates with forecast years (optional)
-      \item Time series of recruitments with asymptotic 95% intervals
-      \item Time series of recruitments with asymptotic 95% intervals and forecast years (optional)
-    }
-    \item Spawning biomass plots
-    \itemize{
-      \item Time series of spawning biomass estimates
-      \item Time series of spawning biomass estimates with asymptotic intervals
-      \item Time series of spawning biomass estimates with forecast years
-      \item Time series of spawning biomass estimates with forecast years with asymptotic intervals
-    }
-    \item Depletion plots
-    \itemize{
-      \item Time series of depletion estimates
-      \item Time series of depletion estimates with asymptotic intervals
-      \item Time series of depletion estimates with forecast years
-      \item Time series of depletion estimates with forecast years with asymptotic intervals
-    }
-    \item Recruitment deviation plots
-    \itemize{
-      \item Time series of recruitment deviations
-      \item Time series of recruitment deviation variances with sigma R
-    }
-    \item Discard fractions and mean body weights
-    \itemize{
-      \item Fit to discard fractions by fleet (if applicable)
-      \item Fit to mean body weight observations by fleet and partition (if applicable)
-    }
-    \item Management plots
-    \itemize{
-      \item Time series of SPR estimates
-      \item Phase plot of 1-SPR and B/B40 with targets
-    }
-    \item Stock-recruit curve
-    \itemize{
-      \item Stock-recruit curve and estimated recruitments
-    }
-    \item CPUE plots
-    \itemize{
-      \item Fit to CPUE/Survey data by fleet (if applicable)
-      \item Observed vs. expected CPUE/Survey by fleet (if applicable)
-      \item Log fit to CPUE/Survey data by fleet (if applicable)
-      \item Log observed vs. log expected CPUE/Survey by fleet (if applicable)
-    }
-    \item Numbers at age plots
-    \itemize{
-      \item Bubble plots of expected numbers at age by year (by sex if applicable)
-      \item Time series of mean age in the population (by sex if applicable)
-      \item Ageing imprecison standard deviations by ageing error key
-    }
-    \item Length-composition data plots
-    \itemize{
-      \item Multi-panel bar plots of length composition data by fleet, sex, partition
-      \item Bubble plots of length composition data by fleet, sex, partition
-    }
-    \item Age-composition data plots
-    \itemize{
-      \item Multi-panel bar plots of age composition data by fleet, sex, partition
-      \item Bubble plots of age composition data by fleet, sex, partition
-    }
-    \item Conditional age-at-length data plots
-    \itemize{
-      \item Multi-panel plots of conditional age-at length data by fleet, sex, partition
-    }
-    \item Fit to length-composition plots
-    \itemize{
-      \item Input vs. effective sample size for fit to length composition data by fleet, sex, partition
-      \item Multi-panel plots of fit to length composition data by fleet, sex, partition
-      \item Bubble plots of Pearson residuals for fit to length composition data by fleet, sex, partition
-    }
-    \item Fit to age-composition plots
-    \itemize{
-      \item Input vs. effective sample size plots for fit to age composition data by fleet, sex, partition
-      \item Multi-panel plots of fit to age composition data by fleet, sex, partition
-      \item Bubble plots of Pearson residuals for fit to age composition data by fleet, sex, partition
-      \item Input vs. effective sample size for conditional age-at-length data by fleet, sex, partition
-    }
-    \item Fit to conditional age-at-length data
-    \itemize{
-      \item Multi-panel fit to age-at-length data by fleet, sex, partition for input years (optional)
-      \item Bubbles of Pearsons for age-at-length by fleet, sex, partition for input years (optional)
-      \item Multi-panel fit to age-at-length data by fleet, sex, partition for input length bin (optional)
-      \item Multi-panel bubble plots of Pearsons for fit to age-at-length data by fleet, sex, partition
-    }
-    \item Fit to length-at-age plots
-    \itemize{
-      \item Multi-panel plots of fit to length-at-age data by fleet, sex, partition
-      \item Bubble plots of Pearson residuals for fit to length-at-age data by fleet, sex, partition
-    }
-    \item Production
-    \itemize{
-      \item Yield curve
-      \item Surplus production vs. biomass (Walters, et al. 2008)
-    }
-    \item CPUE data-only plots
-    \item Tagging-related plots
-    \itemize{
-      \item Multi-panel plot of obs & exp recaps by tag group
-      \item Plot of obs vs exp tag recaptures by year aggregated across group
-      \item Bubble plot of observed recapture data
-      \item Bubble plot of residuals
-    }
-  }
+  % \enumerate{
+  %   \item Biology
+  %   \itemize{
+  %     \item Mean weight at size in the last year (by sex if applicable)
+  %     \item Maturity at size
+  %     \item Spawning output at size
+  %     \item Mid year mean length at age with 95\% range of lengths (by sex if applicable)
+  %     \item Natural mortality at age if variable (by sex if applicable)
+  %   }
+  %   \item Time-varying growth
+  %   \itemize{
+  %     \item 3-D plot of mean length at age over time (by sex if applicable)
+  %     \item Contour plot of mean length at age over time (by sex if applicable)
+  %   }
+  %   \item Time-varying selectivity and retention
+  %   \itemize{
+  %     \item 3-D plot of selectivity at length (or age or both) over time (by sex if applicable)
+  %     \item Contour plot of selectivity at length (or age or both) over time (by sex if applicable)
+  %     \item 3-D plot of retention at length over time (by sex if applicable)
+  %     \item Contour plot of retention at length over time (by sex if
+  %     applicable)
+  %   }
+  %   \item Ending selectivity and retention
+  %   \itemize{
+  %     \item Ending year selectivity at length (or age or both) and
+  %     retention (by sex if applicable)
+  %   }
+  %   \item Basic time series
+  %   \itemize{
+  %     \item Time series of total biomass
+  %     \item Time series of summary biomass
+  %     \item Time series of landings by fleet with total
+  %     \item Time series of catch by fleet with total
+  %     \item Time series of discards by fleet with total
+  %     \item Time series of discard fraction by fleet with total
+  %     \item Time series of harvest rate by fleet
+  %   }
+  %   \item Recruitment plots
+  %   \itemize{
+  %     \item Time series of recruitment estimates
+  %     \item Time series of recruitment estimates with forecast years (optional)
+  %     \item Time series of recruitments with asymptotic 95% intervals
+  %     \item Time series of recruitments with asymptotic 95% intervals and forecast years (optional)
+  %   }
+  %   \item Spawning biomass plots
+  %   \itemize{
+  %     \item Time series of spawning biomass estimates
+  %     \item Time series of spawning biomass estimates with asymptotic intervals
+  %     \item Time series of spawning biomass estimates with forecast years
+  %     \item Time series of spawning biomass estimates with forecast years with asymptotic intervals
+  %   }
+  %   \item Depletion plots
+  %   \itemize{
+  %     \item Time series of depletion estimates
+  %     \item Time series of depletion estimates with asymptotic intervals
+  %     \item Time series of depletion estimates with forecast years
+  %     \item Time series of depletion estimates with forecast years with asymptotic intervals
+  %   }
+  %   \item Recruitment deviation plots
+  %   \itemize{
+  %     \item Time series of recruitment deviations
+  %     \item Time series of recruitment deviation variances with sigma R
+  %   }
+  %   \item Discard fractions and mean body weights
+  %   \itemize{
+  %     \item Fit to discard fractions by fleet (if applicable)
+  %     \item Fit to mean body weight observations by fleet and partition (if applicable)
+  %   }
+  %   \item Management plots
+  %   \itemize{
+  %     \item Time series of SPR estimates
+  %     \item Phase plot of 1-SPR and B/B40 with targets
+  %   }
+  %   \item Stock-recruit curve
+  %   \itemize{
+  %     \item Stock-recruit curve and estimated recruitments
+  %   }
+  %   \item CPUE plots
+  %   \itemize{
+  %     \item Fit to CPUE/Survey data by fleet (if applicable)
+  %     \item Observed vs. expected CPUE/Survey by fleet (if applicable)
+  %     \item Log fit to CPUE/Survey data by fleet (if applicable)
+  %     \item Log observed vs. log expected CPUE/Survey by fleet (if applicable)
+  %   }
+  %   \item Numbers at age plots
+  %   \itemize{
+  %     \item Bubble plots of expected numbers at age by year (by sex if applicable)
+  %     \item Time series of mean age in the population (by sex if applicable)
+  %     \item Ageing imprecison standard deviations by ageing error key
+  %   }
+  %   \item Length-composition data plots
+  %   \itemize{
+  %     \item Multi-panel bar plots of length composition data by fleet, sex, partition
+  %     \item Bubble plots of length composition data by fleet, sex, partition
+  %   }
+  %   \item Age-composition data plots
+  %   \itemize{
+  %     \item Multi-panel bar plots of age composition data by fleet, sex, partition
+  %     \item Bubble plots of age composition data by fleet, sex, partition
+  %   }
+  %   \item Conditional age-at-length data plots
+  %   \itemize{
+  %     \item Multi-panel plots of conditional age-at length data by fleet, sex, partition
+  %   }
+  %   \item Fit to length-composition plots
+  %   \itemize{
+  %     \item Input vs. effective sample size for fit to length composition data by fleet, sex, partition
+  %     \item Multi-panel plots of fit to length composition data by fleet, sex, partition
+  %     \item Bubble plots of Pearson residuals for fit to length composition data by fleet, sex, partition
+  %   }
+  %   \item Fit to age-composition plots
+  %   \itemize{
+  %     \item Input vs. effective sample size plots for fit to age composition data by fleet, sex, partition
+  %     \item Multi-panel plots of fit to age composition data by fleet, sex, partition
+  %     \item Bubble plots of Pearson residuals for fit to age composition data by fleet, sex, partition
+  %     \item Input vs. effective sample size for conditional age-at-length data by fleet, sex, partition
+  %   }
+  %   \item Fit to conditional age-at-length data
+  %   \itemize{
+  %     \item Multi-panel fit to age-at-length data by fleet, sex, partition for input years (optional)
+  %     \item Bubbles of Pearsons for age-at-length by fleet, sex, partition for input years (optional)
+  %     \item Multi-panel fit to age-at-length data by fleet, sex, partition for input length bin (optional)
+  %     \item Multi-panel bubble plots of Pearsons for fit to age-at-length data by fleet, sex, partition
+  %   }
+  %   \item Fit to length-at-age plots
+  %   \itemize{
+  %     \item Multi-panel plots of fit to length-at-age data by fleet, sex, partition
+  %     \item Bubble plots of Pearson residuals for fit to length-at-age data by fleet, sex, partition
+  %   }
+  %   \item Production
+  %   \itemize{
+  %     \item Yield curve
+  %     \item Surplus production vs. biomass (Walters, et al. 2008)
+  %   }
+  %   \item CPUE data-only plots
+  %   \item Tagging-related plots
+  %   \itemize{
+  %     \item Multi-panel plot of obs & exp recaps by tag group
+  %     \item Plot of obs vs exp tag recaptures by year aggregated across group
+  %     \item Bubble plot of observed recapture data
+  %     \item Bubble plot of residuals
+  %   }
+  % }
 }
 \value{
-  Plots returned to R GUI, to single PDF file, or to multiple PNG files
-  depending on the inputs chosen.
+  % Plots returned to R GUI, to single PDF file, or to multiple PNG files
+  % depending on the inputs chosen.
 }
-\references{ Walters, Hilborn, and  Christensen, 2008, Surplus
-    production dynamics in declining and recovering fish populations.
-    Can. J. Fish. Aquat. Sci. 65: 2536-2551 }
+\references{
+  % Walters, Hilborn, and  Christensen, 2008, Surplus
+  %   production dynamics in declining and recovering fish populations.
+  %   Can. J. Fish. Aquat. Sci. 65: 2536-2551
+  }
 \author{
   Ian Stewart, Ian Taylor, Andre Punt, and other contributors
 }
@@ -291,14 +292,14 @@ oldcode = FALSE, ...)
 % \seealso{ %~~objects to See Also as \code{\link{help}}, ~~~
 % }
 \examples{
-\dontrun{
-SSv3_plots(replist = myreplist)
-SSv3_plots(replist = myreplist, pdf=T, pwidth=8, pheight=8, rows=2,
-    cols=2)
-}
+% \dontrun{
+% SSv3_plots(replist = myreplist)
+% SSv3_plots(replist = myreplist, pdf=T, pwidth=8, pheight=8, rows=2,
+%     cols=2)
+% }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ dplot }
-\keyword{ hplot }
+% \keyword{ dplot }
+% \keyword{ hplot }
 % \keyword{ }% __ONLY ONE__ keyword per line

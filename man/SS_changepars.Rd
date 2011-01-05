@@ -3,9 +3,10 @@
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{ Change parameters in the control file. }
 \description{
-  A function to take advantage of SS_parlines that could be used to
-  create a series of control files with different parameter values. This
-  is used by SS_profile, but may also be useful for simulation work.
+  A function to take advantage of \code{\link{SS_parlines}} that could be
+  used to create a series of control files with different parameter
+  values. This is used by \code{\link{SS_profile}}, but may also be useful
+  for simulation work.
 }
 \usage{
 SS_changepars(dir = "C:/myfiles/mymodels/myrun/",

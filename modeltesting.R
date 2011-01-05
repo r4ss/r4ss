@@ -5,7 +5,7 @@ copyinputs <-
            newdir="c:/SS/modeltesting/Version_3_11c_Oct30")
 {
   # source the SS_readstarter function
-  source("http://r4ss.googlecode.com/svn/branches/input_file_objects/SS_readstarter.R")
+  source("http://r4ss.googlecode.com/svn/trunk/SS_readstarter.R")
   if(!file.exists(newdir)) dir.create(newdir)
 
   if(is.na(file.info(olddir)$isdir)) stop("not a directory:",olddir)
@@ -249,15 +249,23 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20a_Dec22b",
-                           newdir="c:/SS/modeltesting/Version_3_20_Dec29")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Dec29",
+                           newdir="c:/SS/modeltesting/Version_3_20_Jan3")
 
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Dec29",
+                           newdir="y:/h_itaylor/SS/modeltesting/Version_3_20_Jan3")
+  
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.20_Dec29",
+  copyexe(sourcedir="c:/SS/SSv3.20_Jan3",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="SS3_safe.exe")
-  
+
+  copyexe(sourcedir="y:/h_itaylor/SS/SSv3.20_Jan3",
+          newdir=folderinfo$newdir,
+          folderlist=folderinfo$folderlist,
+          exe="SS3")
+
   # convert to SSv3.20
   setwd(folderinfo$newdir)
   for(i in 1:length(folderinfo$folderlist)){
@@ -286,6 +294,11 @@ if(FALSE){
   source("c:/SS/R/r4ss/trunk/modeltesting.R")
   mydir <- "c:/SS/modeltesting/Version_3_20_Dec29"
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe",extras="-nox")
+
+  # on sysiphus
+  source("http://r4ss.googlecode.com/svn/trunk/modeltesting.R")
+  mydir <- "~/h_itaylor/SS/modeltesting/Version_3_20_Jan3"
+  runmodels(newdir=mydir, folderlist=dir(mydir),exe="./SS3",extras="-nox")
   
   # get updated package files, including the SSgetoutput function
   library(r4ss)
@@ -301,6 +314,13 @@ if(FALSE){
                newtable = "newsummarytable.csv",
                SSversions=c("Version_3_20_Dec29"))
 
+  # example on sysiphus
+  alloutput <-
+    addtotable(dir = "y:/h_itaylor/SS/modeltesting/", 
+               oldtable = "summarytable.csv", 
+               newtable = "newsummarytable.csv",
+               SSversions=c("Version_3_20_Jan3"))
+  
   # making plots
   for(i in length(alloutput):1){
     models <- alloutput[[i]]

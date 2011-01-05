@@ -1,4 +1,4 @@
-SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=T){
+SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=TRUE){
   # function to read Stock Synthesis forecast files
 
   if(verbose) cat("running SS_readsforecast\n")
@@ -62,7 +62,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=T){
   if(Ncatch>0){
     mylist$InputBasis <- allnums[i]; i <- i+1
     ForeCatch <- data.frame(matrix(
-      allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=T))
+      allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=TRUE))
     names(ForeCatch) <- c("Year","Seas","Fleet","Catch")
   }else{
     ForeCatch <- NULL

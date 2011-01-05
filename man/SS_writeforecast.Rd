@@ -2,10 +2,11 @@
 \alias{SS_writeforecast}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  write Stock Synthesis forecast file from list object in R
+  write forecast file
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  write Stock Synthesis forecast file from list object in R which was
+  probably created using \code{\link{SS_readforecast}}
 }
 \usage{
 SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
@@ -49,7 +50,7 @@ nareas = 1, nfleets = 1, overwrite = FALSE, verbose = TRUE)
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Ian Taylor
 }
 \note{
 %%  ~~further notes~~
@@ -58,11 +59,14 @@ nareas = 1, nfleets = 1, overwrite = FALSE, verbose = TRUE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+ \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
+ \code{\link{SS_writestarter}}, 
+ \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
 \examples{
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ data }
+\keyword{ manip }

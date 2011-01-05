@@ -10,23 +10,32 @@ plot model comparisons
   \code{SSsummarize} function.
 }
 \usage{
-SSplotComparisons(summaryoutput,subplots=1:7,
+SSplotComparisons(summaryoutput,subplots=1:10,
            plot=TRUE,print=FALSE,
            models="all",
+           endyrvec=NULL,
+           indexfleets="default",
+           indexUncertainty=FALSE,
+           indexSEvec="default",
            labels=c("Year",             #1
              "Spawning biomass (mt)",   #2
              "Spawning depletion",      #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
-             "Index"),                  #6
+             "Index",                   #6
+             "Log index",               #7
+             "Density"),                #8
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
-           xlim="default", xaxs='i', yaxs='r',
+           xlim="default", xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
            btarg=0.4, minbthresh=0.25,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="workingdirectory",
+           densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
+           densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
+           densityscale=1,
            new=TRUE,
            verbose=TRUE)
 }
@@ -36,19 +45,37 @@ SSplotComparisons(summaryoutput,subplots=1:7,
     list created by \code{SSsummarize}
   }
   \item{subplots}{
-    Vector of subplots to be created. Default=1:7.
+    Vector of subplots to be created.
   }
   \item{plot}{
     plot to active plot device?
   }
   \item{print}{
-    print to PNG files?
+    send plots to PNG files in directory specified by \code{plotdir}
   }
   \item{models}{
     optional subset of the models described in \code{summaryoutput}.
     Either "all" or a vector of numbers indicating columns in summary
     tables.
   }
+  \item{endyrvec}{
+    optional single year or vector of years representing the final year
+    of values to show for each model
+  }
+  \item{indexfleets}{
+    vector of fleets for each model for which to compare indices of
+    abundance. Only necessary if any model has more than one index.
+  }
+  \item{indexUncertainty}{
+    show uncertainty intervals on index data? Default=FALSE because if
+    models have any extra standard deviations added, these intervals may
+    differ across models.
+  }
+  \item{indexSEvec}{
+    optional replacement for the SE values in summaryoutput$indices to
+    deal with the issue of differing uncertainty by models described
+    above.
+  } 
   \item{labels}{
     vector of labels for plots (titles and axis labels)
   }
@@ -124,8 +151,22 @@ SSplotComparisons(summaryoutput,subplots=1:7,
     character expansion for plot titles
   }
   \item{plotdir}{
-    directory where PNG or PDF files will be written. by default it will
+    directory where PNG or PDF files will be written. By default it will
     be the directory where the model was run.
+  }
+  \item{densitynames}{
+    vector of names of parameters or derived quantities contained in
+    summaryoutput$pars$Label or summaryoutput$quants$Label for which to
+    make density plots
+  }
+  \item{densityxlabs}{
+    vector of x-axis labels to use in the density plots (must be equal
+    in length to \code{densitynames})
+  }
+  \item{densityscale}{
+    scalar for upper y-limit in density plots (values below 1 will cut
+    of top of highest peaks to provide better contrast among broader
+    distributions
   }
   \item{new}{
     create new empty plot window (Windows only)
@@ -159,7 +200,7 @@ SSplotComparisons(summaryoutput,subplots=1:7,
 
 \seealso{
   \code{\link{SS_plots}}, \code{\link{SSsummarize}},
-  \code{\link{SS_output}}, \code{\link{SSplotIndices}},
+  \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
 \examples{
 }

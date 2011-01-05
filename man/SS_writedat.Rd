@@ -2,13 +2,14 @@
 \alias{SS_writedat}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  write Stock Synthesis data file from list object in R
+  write data file
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  write Stock Synthesis data file from list object in R which was
+  probably created using \code{\link{SS_readdat}}
 }
 \usage{
-SS_writedat(datlist, outfile, overwrite = F, verbose = T)
+SS_writedat(datlist, outfile, overwrite = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,10 +20,10 @@ SS_writedat(datlist, outfile, overwrite = F, verbose = T)
     Filename for where to write new data file.
   }
   \item{overwrite}{
-    Should existing files be overwritten? Default=F.
+    Should existing files be overwritten? Default=FALSE.
   }
   \item{verbose}{
-    Should there be verbose output while running the file? Default=T.
+    Should there be verbose output while running the file?
   }
 }
 \details{
@@ -54,5 +55,5 @@ SS_writedat(datlist, outfile, overwrite = F, verbose = T)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ data }
+\keyword{ manip }% __ONLY ONE__ keyword per line

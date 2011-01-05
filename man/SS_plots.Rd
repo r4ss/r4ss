@@ -179,7 +179,9 @@ minyr = NULL, maxyr = NULL,...)
   %% ...
 }
 \references{
-  %% ~put references to the literature/web site here ~
+  Walters, Hilborn, and  Christensen, 2008, Surplus production dynamics
+  in declining and recovering fish populations. Can. J. Fish. Aquat.
+  Sci. 65: 2536-2551.
 }
 \author{
   Ian Stewart, Ian Taylor

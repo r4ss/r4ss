@@ -2,10 +2,10 @@
 \alias{SS_readctl}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  read Stock Synthesis control file into list object in R
+  read control file
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  read Stock Synthesis control file into list object in R
 }
 \usage{
 SS_readctl(file)
@@ -17,7 +17,10 @@ SS_readctl(file)
   }
 }
 \details{
-%%  ~~ If necessary, more details than the description above ~~
+  This function is not fully implemented. The logic to figure out all
+  the details of a Stock Synthesis control file is very complex, so this
+  function may be completed in a way that is not totally consistent with
+  the other similar files.
 }
 \value{
 %%  ~Describe the value returned
@@ -39,7 +42,10 @@ SS_readctl(file)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+ \code{\link{SS_readdat}},
+ \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
+ \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
 \examples{
 }

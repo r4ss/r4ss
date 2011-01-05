@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:9,
+  function(summaryoutput,subplots=1:10,
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
@@ -12,15 +12,19 @@ SSplotComparisons <-
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
-             "Log index"),              #7
+             "Log index",               #7
+             "Density"),                #8
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
-           xlim="default", xaxs='r', yaxs='r',
+           xlim="default", xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
            btarg=0.4, minbthresh=0.25,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="workingdirectory",
+           densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
+           densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
+           densityscale=1,
            new=TRUE,
            verbose=TRUE)
 {
@@ -32,7 +36,7 @@ SSplotComparisons <-
   pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # subfunction to add legend
-  legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty='n')
+  legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
   
   # get stuff from summary output
   n           <- summaryoutput$n
@@ -104,12 +108,12 @@ SSplotComparisons <-
       xlim <- range(SpawnBio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    plot(0,type='n',xlim=xlim,ylim=range(0,SpawnBio[,models],na.rm=TRUE),
+    plot(0,type="n",xlim=xlim,ylim=range(0,SpawnBio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty) addpoly(SpawnBio, SpawnBioSD, SpawnBio$Yr)
     matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             add=TRUE)
-    abline(h=0,col='grey')
+    abline(h=0,col="grey")
     if(legend) legendfun()
   }
 
@@ -122,10 +126,10 @@ SSplotComparisons <-
     for(i in 1:n){
       depl[,i] <- depl[,i]/depl[!is.na(depl[,i]),i][1]
     }
-    plot(0,type='n',xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
+    plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
     matplot(depl$Yr,depl[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-    abline(h=0,col='grey')
+    abline(h=0,col="grey")
 
     if(btarg>0){
       abline(h=btarg,col="red")
@@ -144,11 +148,11 @@ SSplotComparisons <-
       xlim <- range(Bratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    plot(0,type='n',xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
+    plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty) addpoly(Bratio, BratioSD, Bratio$Yr)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-    abline(h=0,col='grey')
+    abline(h=0,col="grey")
 
     if(btarg>0){
       abline(h=btarg,col="red")
@@ -170,7 +174,7 @@ SSplotComparisons <-
     matplot(recruits$Yr,recruits[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             xlim=xlim,ylim=range(0,recruits[,models],na.rm=TRUE),
             xlab=labels[1],ylab=labels[4],xaxs=xaxs,yaxs=yaxs)
-    abline(h=0,col='grey')
+    abline(h=0,col="grey")
     if(legend) legendfun()
   }
 
@@ -182,8 +186,8 @@ SSplotComparisons <-
     }
 
     plot(0,xlim=xlim,ylim=c(-1,1)*max(abs(recdevs[,models]),na.rm=TRUE),
-         type='n',xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs)
-    abline(h=0,col='grey')
+         type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs)
+    abline(h=0,col="grey")
     # loop over vector of models to add lines
     for(iline in 1:nlines){
       imodel <- models[iline]
@@ -250,8 +254,8 @@ SSplotComparisons <-
     ylim <- range(obs,exp,lower,upper)
     if(!log) ylim <- range(0,ylim) # 0 included if not in log space
     
-    plot(0,type='n',xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=F)
-    if(!log) abline(h=0,col='grey')
+    plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
+    if(!log) abline(h=0,col="grey")
     for(iline in 1:nlines){
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
@@ -268,17 +272,87 @@ SSplotComparisons <-
       
     # put observed values on top
     subset <- indices2$imodel==1
-    points(yr[subset],obs[subset],pch=16,cex=1.5,type='o',lty=3)
+    # points(yr[subset],obs[subset],pch=16,cex=1.5,type="o",lty=3) # connected by dashed lines
+    points(yr[subset],obs[subset],pch=16,cex=1.5)
 
     axis(1,at=yr)
     axis(2)
     box()
-  }  
+  } # end plotIndices function
+  
+  plotDensities <- function(parname,xlab,limit0=TRUE){
+    vals <- rbind(pars[grep(parname,pars$Label),],
+                  quants[grep(parname,quants$Label),])
+    if(nrow(vals)!=1){
+      cat("problem getting values for parameter:",parname,"\n")
+      if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities")
+      if(nrow(vals)>0){
+        cat("Too many matching Labels:")
+        print(vals)
+      }
+    }else{
+      valSDs <- rbind(parsSD[grep(parname,pars$Label),],
+                      quantsSD[grep(parname,quants$Label),])
 
-  plotDensities <- function(){
-    
-  }
+      xmax <- xmin <- ymax <- NULL # placeholder for limits
 
+      # loop over models to set range
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        parval <- vals[1,imodel]
+        parSD <- valSDs[1,imodel]
+        if(!is.na(parSD) && parSD>0){ # if non-zero SD available
+          # update x range
+          xmin <- min(xmin, qnorm(0.001,parval,parSD))
+          xmax <- max(xmax, qnorm(0.999,parval,parSD))
+          # calculate density to get y range
+          x <- seq(xmin,xmax,length=500)
+          mle <- dnorm(x,parval,parSD)
+          mlescale <- 1/(sum(mle)*mean(diff(x)))
+          mle <- mle*mlescale
+          # update ymax
+          ymax <- max(ymax,max(mle)) 
+        }else{ # if no SD, at least make sure interval includes MLE estimate
+          xmin <- min(xmin, parval)
+          xmax <- max(xmax, parval)
+        }
+      }
+      if(length(grep("Bratio",parname))>0) xmin <- 0 # xmin=0 for depletion plots
+      if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+      
+      # make empty plot
+      plot(0,type="n",xlim=c(xmin,xmax),axes=FALSE,xaxs="i",
+           ylim=c(0,1.1*ymax*densityscale),xlab=xlab,ylab="")
+      x <- seq(xmin,xmax,length=500)
+      
+      # loop again to make plots
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        parval <- vals[1,imodel]
+        parSD <- valSDs[1,imodel]
+        if(!is.na(parSD) && parSD>0){
+          x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
+          mle <- dnorm(x,parval,parSD)  # smooth line
+          mle2 <- dnorm(x2,parval,parSD) # symbols
+          mlescale <- 1/(sum(mle)*mean(diff(x)))
+          mle <- mle*mlescale
+          mle2 <- mle2*mlescale
+          polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
+          lines(x,mle,col=col[iline],lwd=2)
+          points(x2,mle2,col=col[iline],pch=pch[iline])
+          lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline]) #
+                #,pch=pch[iline],type='o')
+        }else{
+          abline(v=parval,col=col[iline])
+        }
+      }
+      abline(h=0,col="grey")
+      axis(1)
+      mtext(side=2,line=1,labels[8])
+      box()
+      legendfun()
+    }
+  } # end plotDensities function
   
   # subplot 1: spawning biomass
   if(1 %in% subplots){
@@ -370,5 +444,18 @@ SSplotComparisons <-
     }
   }
 
+  # subplot 10: B0 densities
+  if(10 %in% subplots){
+    ndensities <- length(densitynames)
+    for(iplot in 1:ndensities){
+      name <- densitynames[iplot]
+      if(plot) plotDensities(parname=name,xlab=densityxlabs[iplot])
+      if(print){
+        pngfun(paste("compare10_densities_",name,".png"))
+        plotDensities(parname=name,xlab=densityxlabs[iplot])
+        dev.off()
+      }
+    }
+  }
 
 }

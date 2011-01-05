@@ -10,14 +10,15 @@
   model using this data.
 }
 \usage{
-SSrunsims(sims = 1, newrun = TRUE, sim = FALSE, fit = FALSE, simfolder =
-"sims", fitfolder = "fits", masterfolder = "fits", MLEdata = FALSE,
-skipfiles = TRUE, simchoices = 1, fitchoices = 1, samedatafile = FALSE,
-CAAL = TRUE, homepath = "c:/myfiles/", recdevmatrix = NULL,
-rescale = TRUE, fitbiasramp = FALSE, exe = "ss3_opt",
-simextras = "-nox -nohess",
+SSrunsims(sims = 1, newrun = TRUE, sim = FALSE, fit = FALSE,
+simfolder = "sims", fitfolder = "fits", masterfolder = "fits",
+MLEdata = FALSE, skipfiles = TRUE, simchoices = 1, fitchoices = 1,
+samedatafile = FALSE, CAAL = TRUE, homepath = "c:/myfiles/",
+recdevmatrix = NULL, rescale = TRUE, fitbiasramp = FALSE,
+exe = "ss3_opt", simextras = "-nox -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
-fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE, verbose = TRUE)
+fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
+ verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

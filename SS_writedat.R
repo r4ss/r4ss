@@ -1,4 +1,4 @@
-SS_writedat <- function(datlist,outfile,overwrite=F,verbose=T){
+SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   # function to write Stock Synthesis data files
 
   if(verbose) cat("running SS_writedat\n")
@@ -14,7 +14,7 @@ SS_writedat <- function(datlist,outfile,overwrite=F,verbose=T){
 
   if(file.exists(outfile)){
     if(!overwrite){
-      cat("File exists and input 'overwrite'=F:",outfile,"\n")
+      cat("File exists and input 'overwrite'=FALSE:",outfile,"\n")
       return()
     }else{
       file.remove(outfile)
@@ -23,7 +23,7 @@ SS_writedat <- function(datlist,outfile,overwrite=F,verbose=T){
   printdf <- function(dataframe){
     # function to print data frame with hash mark before first column name
     names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    print(dataframe, row.names=F, strip.white=T)
+    print(dataframe, row.names=FALSE, strip.white=TRUE)
   }
   oldwidth <- options()$width
   oldmax.print <- options()$max.print

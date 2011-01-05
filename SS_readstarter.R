@@ -1,4 +1,4 @@
-SS_readstarter <-  function(file='starter.ss', verbose=T){
+SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("running SS_readstarter\n")
   starter <- readLines(file,warn=F)
   mylist <- list()

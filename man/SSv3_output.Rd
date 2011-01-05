@@ -1,14 +1,9 @@
 \name{SSv3_output}
 \alias{SSv3_output}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ A function to create a list object for the output from Stock Synthesis}
+\title{ Old output reader}
 \description{
-  Reads the Report.sso and (optionally) the covar.sso files produced by
-  Stock Synthesis and formats the important content of these files into
-  a "list" in the R workspace. A few statistics unavailable elsewhere
-  are taken from the .par and .cor files. Summary information and
-  statistics can be returned to the R console or just contained within
-  the list produced by this function.
+  Deprecated function has since been replaced by \code{\link{SS_output}}
 }
 \usage{
 SSv3_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
@@ -57,8 +52,8 @@ printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,oldcode=FALSE)
 
 % }
 \value{
-  Many values are returned. Complete list would be quite long, but
-  should probably be created at some point in the future.
+  % Many values are returned. Complete list would be quite long, but
+  % should probably be created at some point in the future.
 }
 % \references{ ~put references to the literature/web site here ~ }
 \author{ Ian Stewart, Ian Taylor }
@@ -68,13 +63,13 @@ printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,oldcode=FALSE)
 % }
 % \seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
 \examples{
-\dontrun{
-myreplist <- SSv3_output(dir='c:/SS/SSv3.02d/Simple/')
-}
+% \dontrun{
+% myreplist <- SSv3_output(dir='c:/SS/SSv3.02d/Simple/')
+% }
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the
 % % R documentation directory.
-\keyword{ data }
-\keyword{ manip }
-\keyword{ list }
+% \keyword{ data }
+% \keyword{ manip }
+% \keyword{ list }
 % \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

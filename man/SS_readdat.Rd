@@ -2,10 +2,10 @@
 \alias{SS_readdat}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  read Stock Synthesis data file into list object in R
+  read data file
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  read Stock Synthesis data file into list object in R
 }
 \usage{
 SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
@@ -42,7 +42,7 @@ SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+  Ian Taylor
 }
 \note{
 %%  ~~further notes~~
@@ -51,7 +51,10 @@ SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+ \code{\link{SS_readctl}},
+ \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
+ \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
 \examples{
 }

@@ -2,13 +2,13 @@
 \alias{SS_readforecast}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-  read Stock Synthesis forecast file into list object in R
+  read forecast file
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  read Stock Synthesis forecast file into list object in R
 }
 \usage{
-SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = T)
+SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,7 +20,7 @@ SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = T)
     Default=NULL.
   }
   \item{verbose}{
-    Should there be verbose output while running the file? Default=T.
+    Should there be verbose output while running the file?
   }
 }
 \details{
@@ -37,7 +37,7 @@ SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = T)
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+  Ian Taylor
 }
 \note{
 %%  ~~further notes~~
@@ -46,11 +46,13 @@ SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = T)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{SS_readstarter}},
+ \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
+ \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
+ \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
 \examples{
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{ data }
