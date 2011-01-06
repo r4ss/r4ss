@@ -71,7 +71,8 @@ SSsummarize <- function(biglist,
   sim        <- NULL
   keyvec2    <- NULL
   listnames  <- NULL
-
+  npars      <- NULL
+  
   warn <- FALSE # flag for whether filter warning has been printed or not
 
   # loop over models within biglist
@@ -151,6 +152,8 @@ SSsummarize <- function(biglist,
     indextemp$Model <- keyvec2[imodel]
     indextemp$imodel <- imodel
     indices <- rbind(indices, indextemp)
+
+    npars <- c(npars, stats$N_estimated_parameters)
   } # end loop over models
 
   if(!setequal(keyvec,keyvec2)){
@@ -273,6 +276,7 @@ SSsummarize <- function(biglist,
   
   mylist <- list()
   mylist$n           <- n
+  mylist$npars       <- npars
   mylist$listnames   <- names(biglist)
   mylist$keyvec      <- keyvec
   mylist$maxgrad     <- maxgrad
