@@ -11,7 +11,8 @@
 \usage{
 SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE, print =
 FALSE, labels = c("Relative depletion", "Equilibrium yield (mt)",
-"Total biomass (mt)", "Surplus production (mt)"), cex.main = 1,
+"Total biomass (mt)", "Surplus production (mt)"),
+col = "blue", lty = 1, lwd = 2, cex.main = 1,
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 plotdir = "default", verbose = TRUE)
 }
@@ -34,6 +35,15 @@ plotdir = "default", verbose = TRUE)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
+  }
+  \item{col}{
+    line color (only applied to equilbrium yield plot at this time)
+  }
+  \item{lty}{
+    line type (only applied to equilbrium yield plot at this time)
+  }
+  \item{lwd}{
+    line width (only applied to equilbrium yield plot at this time)
   }
   \item{cex.main}{
     character expansion for plot titles

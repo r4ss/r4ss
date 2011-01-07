@@ -6,7 +6,7 @@ SSplotYield <-
              "Equilibrium yield (mt)",    #2
              "Total biomass (mt)",        #3
              "Surplus production (mt)"),  #4
-           cex.main=1,
+           col="blue", lty=1, lwd=2, cex.main=1,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            plotdir="default",
            verbose=TRUE)
@@ -19,16 +19,23 @@ SSplotYield <-
   timeseries  <- replist$timeseries
   SS_versionshort <- replist$SS_versionshort
   if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
-  
+
   # test if data is available
   if(!is.null(equil_yield[1,1]) && !is.na(equil_yield[1,1])){
     # function for yeild curve
     yieldfunc <- function(){
-      plot(equil_yield$Depletion,equil_yield$Catch,xlab=labels[1],ylab=labels[2],
-           type="l",lwd=2,col="blue")
-      abline(h=0,col="grey")
-      abline(v=0,col="grey")}
-
+      if(!add){
+        # empty plot
+        plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1)),
+             ylim=c(0,max(equil_yield$Catch)),
+             xlab=labels[1],ylab=labels[2])
+        abline(h=0,col="grey")
+        abline(v=0,col="grey")
+      }
+      # add lines
+      lines(equil_yield$Depletion,equil_yield$Catch,
+            lwd=lwd,col=col,lty=lty)
+    }
     # make plot
     if(1 %in% subplots){
       if(plot){yieldfunc()}
@@ -47,7 +54,7 @@ SSplotYield <-
   arearows <- ts$Area==1
   Bio_all <- ts$Bio_all[arearows]
   if(SS_versionshort=="SS-V3.20") stringB <- "sel(B)" else stringB <- "enc(B)"
-  
+
   totcatchmat <- as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
 
   if(nareas > 1){
@@ -77,7 +84,7 @@ SSplotYield <-
     s <- seq(length(sprod_good)-1)
     arrows(Bio_all_good[s],sprod_good[s],Bio_all_good[s+1],sprod_good[s+1],length=0.06,angle=20,col="black",lwd=1.2)
     options(warn=old_warn)  #returning to old value
-    
+
     abline(h=0,col="grey")
     abline(v=0,col="grey")
     points(Bio_all_good[1],sprod_good[1],col="blue",pch=19)
