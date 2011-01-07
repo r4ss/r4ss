@@ -33,22 +33,21 @@ function(
     if(!is.null(strings)){
       for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
       goodnames <- unique(goodnames)
-      print(paste("parameter names in control file matching input vector 'strings':"),quote=FALSE)
+      cat("parameter names in control file matching input vector 'strings' (n=",length(goodnames),"):\n",sep="")
       print(goodnames)
       if(length(goodnames)==0){
-        print("No parameters names match input vector 'strings'.",quote=FALSE)
-        return()
+        stop("No parameters names match input vector 'strings'")
       }
     }
     nvals <- length(goodnames)
-    print('These are the ctl file lines as they currently exist:',quote=FALSE)
+    cat('These are the ctl file lines as they currently exist:\n')
     print(ctltable[ctltable$Label %in% goodnames,])
     for(i in 1:nvals) linenums[i] <- ctltable$Linenum[ctltable$Label==goodnames[i]]
   }else{
-    if(is.null(linenums)) return("valid input needed for either 'linenums' or 'strings'")
+    if(is.null(linenums)) stop("valid input needed for either 'linenums' or 'strings'")
   }
   ctlsubset <- ctl[linenums]
-  print(paste("line numbers in control file:"),quote=FALSE)
+  cat("line numbers in control file (n=",length(linenums),"):\n",sep="")
   print(linenums)
   # define objects to store changes
   newctlsubset <- NULL
@@ -62,6 +61,7 @@ function(
   if(length(estimate)==1) estimate <- rep(estimate, nvals)
 
   if(is.data.frame(newvals)) newvals <- as.numeric(newvals)
+  if(is.null(newvals)) stop("Nothing input for 'newvals'")
   
   # loop over line numbers to replace parameter values
   for(i in 1:nvals)
@@ -71,7 +71,7 @@ function(
     cmntvec <- c(cmntvec, cmnt)
     vecstrings <- strsplit(splitline[1],split="[[:blank:]]+")[[1]]
     vec <- as.numeric(vecstrings[vecstrings!=""])
-    if(max(is.na(vec))==1) return(paste("There's a problem with a non-numeric value in line",linenums[i]))
+    if(max(is.na(vec))==1) stop("There's a problem with a non-numeric value in line",linenums[i])
     oldvals[i] <- vec[3]
     if(!is.null(newvals)) vec[3] <- newvals[i]
     oldphase[i] <- as.numeric(vec[7])
@@ -81,9 +81,9 @@ function(
       vec[7] <- -abs(oldphase[i])
     }
     if(vec[3] < vec[1])
-      print(paste("!warning: new value",vec[3],"is below lower bound ",vec[1],"for",cmnt))
+      cat("!warning: new value",vec[3],"is below lower bound ",vec[1],"for",cmnt,"\n")
     if(vec[3] > vec[2])
-      print(paste("!warning: new value",vec[3],"is above upper bound ",vec[2],"for",cmnt))
+      cat("!warning: new value",vec[3],"is above upper bound ",vec[2],"for",cmnt,"\n")
 
     newphase[i] <- vec[7]
     newline <- paste("",paste(vec, collapse=" "), cmnt)
@@ -93,8 +93,7 @@ function(
   newctl <- ctl
   newctl[linenums] <- newctlsubset
   writeLines(newctl, paste(dir,newctlfile,sep="/"))
-  if(verbose) print('',quote=FALSE)
-  if(verbose) print(paste('wrote new file to',newctlfile,'with the following changes:'),quote=FALSE)
+  if(verbose) cat('\nwrote new file to',newctlfile,'with the following changes:\n')
   results <- data.frame(oldvals, newvals, oldphase, newphase, comment=cmntvec)
   # output table of changes
   if(is.null(newvals)) newvals <- NA

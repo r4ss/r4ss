@@ -74,12 +74,20 @@ SS_output <-
   shortrepfile <- repfile
   repfile <- paste(dir,repfile,sep="")
 
-  parfile <- paste(dir,model,".par",sep="")
-  if(!file.exists(parfile)){
+  parfile <- dir(dir,pattern=".par")
+  if(length(parfile)>1){
+    filetimes <- file.info(paste(dir,parfile,sep="/"))$mtime
+    parfile <- parfile[filetimes==max(filetimes)]
+    if(verbose) cat("Multiple files in directory match pattern *.par\n",
+                    "choosing most recently modified:",parfile,"\n")
+  }    
+  if(length(parfile)==0){
     if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
     parfile <- NA
+  }else{
+    parfile <- paste(dir,parfile,sep="/")
   }
-
+  
   # read three rows to get start time and version number from rep file
   if(file.exists(repfile)){
     if(file.info(repfile)$size>0){
@@ -200,15 +208,22 @@ SS_output <-
       stop("Forecase-report.sso file is empty.\n",
            "Change input to 'forecast=FALSE' or rerun model with forecast turned on.")
     }
+    # read the file
     rawforcast1 <- read.table(file=forcastname,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1)
     endyield <- matchfun("MSY_not_calculated",rawforcast1[,1])
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
     if(yesMSY) endyield <- matchfun("findFmsy",rawforcast1[,10])
-    yieldraw <- rawforcast1[(matchfun("Btarget",rawforcast1[,10])):endyield,]
-    if(SS_versionshort=="SS-V3.20"){
-      yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+    # this section move to Report.sso on Jan 6
+    startline <- matchfun("profile",rawforcast1[,11])
+    if(!is.na(startline)){ # before the Jan 6 fix to benchmarks
+      yieldraw <- rawforcast1[(startline+1):endyield,]
     }else{
-      yielddat <- yieldraw[c(3:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+      yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
+    }
+    if(SS_versionshort=="SS-V3.20"){
+      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+    }else{
+      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
     }
     colnames(yielddat) <- c("Catch","Depletion")
     yielddat$Catch <- as.numeric(yielddat$Catch)
@@ -221,7 +236,13 @@ SS_output <-
   # check for use of temporary files
   logfile <- dir(dir,pattern=".log")
   logfile <- logfile[logfile != "fmin.log"]
-  if(length(logfile)==1 & file.info(paste(dir,logfile,sep='/'))$size>0){
+  if(length(logfile)>1){
+    filetimes <- file.info(paste(dir,logfile,sep="/"))$mtime
+    logfile <- logfile[filetimes==max(filetimes)]
+    if(verbose) cat("Multiple files in directory match pattern *.log\n",
+                    "choosing most recently modified file:",logfile,"\n")
+  }    
+  if(length(logfile)==1 && file.info(paste(dir,logfile,sep='/'))$size>0){
     logfile <- read.table(paste(dir,logfile,sep='/'))[,c(4,6)]
     names(logfile) <- c("TempFile","Size")
     maxtemp <- max(logfile$Size)
@@ -235,7 +256,7 @@ SS_output <-
     }
   }else{
     logfile <- NA
-    if(verbose) cat("Either no non-empty log file in directory or too many files matching pattern *.log\n")
+    if(verbose) cat("No non-empty log file in directory or too many files matching pattern *.log\n")
   }
 
   # read warnings file
@@ -337,8 +358,7 @@ SS_output <-
     rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
     names(rawcompdbase) <- rawcompdbase[1,]
     names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
-    
-    compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-3),] # subtract header line and last 2 lines
+    compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-4),] # subtract header line and last 4 lines
     compdbase <- compdbase[compdbase$Obs!="",]
     compdbase[compdbase=="_"] <- NA
     compdbase$Used[is.na(compdbase$Used)] <- "yes"
