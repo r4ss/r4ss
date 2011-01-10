@@ -4,9 +4,9 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300){
   ##################
   # function to estimate bias adjustment ramp
-  # for Stock Synthesis v3.10b
+  # for Stock Synthesis v3.11b - v3.20a
   # by Ian Taylor
-  # September 7, 2010
+  # January 10, 2011
   #
   # Usage: run function with input that is an object from SS_output
   #        from http://code.google.com/p/r4ss/
@@ -99,7 +99,10 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   getrecdevs <- function(replist){
     # get info on recruitment devs from the model output
     parmat <- replist$parameters
-    rowrange <- (grep("SR_autocorr",parmat$Label)+1):(grep("InitF",parmat$Label)[1]-1)
+    rowrange <- (grep("SR_autocorr",parmat$Label)+1):((grep("InitF",parmat$Label)[1]-1))
+    Impl_err_rows <- grep("Impl_err",parmat$Label)
+    if(length(Impl_err_rows)>0)
+      rowrange <- (grep("SR_autocorr",parmat$Label)+1):(Impl_err_rows[1]-1)
     yr <- parmat$Label[rowrange]
     yr <- strsplit(yr,"_")
     yr2 <- rep(NA,length(yr))

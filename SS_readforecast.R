@@ -1,19 +1,19 @@
 SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=TRUE){
   # function to read Stock Synthesis forecast files
-
   if(verbose) cat("running SS_readsforecast\n")
-  starter <- readLines(file,warn=F)
+  cat("This file needs updating for SSv3.20\n")
+  forecast <- readLines(file,warn=F)
   mylist <- list()
 
   mylist$sourcefile <- file
   mylist$type <- "Stock_Synthesis_forecast_file"
-  mylist$SSversion <- "SSv3.10b_or_later"
+  mylist$SSversion <- "SSv3.20_or_later"
 
   # get numbers (could be better integrated with function above)
   allnums <- NULL
-  for(i in 1:length(starter)){
+  for(i in 1:length(forecast)){
       # split apart numbers from text in file
-      mysplit <- strsplit(starter[i],split="[[:blank:]]+")[[1]]
+      mysplit <- strsplit(forecast[i],split="[[:blank:]]+")[[1]]
       mysplit <- mysplit[mysplit!=""]
       nums <- suppressWarnings(as.numeric(mysplit))
       if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1

@@ -24,7 +24,8 @@ SSplotComparisons <-
            plotdir="workingdirectory",
            densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
            densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
-           densityscale=1,
+           densityscalex=1,
+           densityscaley=1,
            new=TRUE,
            verbose=TRUE)
 {
@@ -321,9 +322,21 @@ SSplotComparisons <-
       if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
       
       # make empty plot
-      plot(0,type="n",xlim=c(xmin,xmax),axes=FALSE,xaxs="i",
-           ylim=c(0,1.1*ymax*densityscale),xlab=xlab,ylab="")
+      plot(0,type="n",xlim=c(xmin,xmin+(xmax-xmin)*densityscalex),axes=FALSE,xaxs="i",
+           ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
       x <- seq(xmin,xmax,length=500)
+
+      # add vertical lines for target and threshold depletion values
+      if(length(grep("Bratio",parname))>0){
+        if(btarg>0){
+          abline(v=btarg,col="red")
+          text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
+        }
+        if(minbthresh>0){
+          abline(v=minbthresh,col="red")
+          text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
+        }
+      }
       
       # loop again to make plots
       for(iline in 1:nlines){

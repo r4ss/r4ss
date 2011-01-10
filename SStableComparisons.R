@@ -20,15 +20,19 @@ SStableComparisons <-
            modelnames="default",
            csv=FALSE,
            csvdir="workingdirectory",
-           csvfile="parameter_comparison_table.csv")
+           csvfile="parameter_comparison_table.csv",
+           verbose=FALSE)
 {
+  if(verbose) cat("running SStableComparisons\n")
+  
   # get stuff from summary output
   n           <- summaryoutput$n
   pars        <- summaryoutput$pars
   quants      <- summaryoutput$quants
   likelihoods <- summaryoutput$likelihoods
   npars       <- summaryoutput$npars
-
+  indices     <- summaryoutput$indices
+  
   likenames <- paste(likenames,"_like",sep="")
   likelihoods$Label <- paste(likelihoods$Label,"_like",sep="")
   names <- c(likenames, names)
@@ -46,7 +50,7 @@ SStableComparisons <-
   # loop over big list of names to get values
   for(iname in 1:nnames){
     name <- names[iname]
-    
+    if(verbose) cat("name=",name,": ",sep="")
     # get values 
     vals <- bigtable[grep(name, bigtable$Label),]
 
@@ -63,10 +67,10 @@ SStableComparisons <-
     if(name=="Q"){
       vals <- rbind(NA,vals)
       vals[1,1] <- "Q_from_indices"
-      Calc_Q <- aggregate(mysummary$indices$Calc_Q,by=list(model=mysummary$indices$Model),FUN=mean)$x
+      Calc_Q <- aggregate(indices$Calc_Q,by=list(model=indices$Model),FUN=mean)$x
       vals[1,-1] <- Calc_Q[models]
     }
-    
+    if(verbose) cat("added ",nrow(vals)," row",ifelse(nrow(vals)!=1,"s",""),"\n",sep="")
     # add to table
     tab <- rbind(tab, vals)
   }

@@ -121,7 +121,8 @@ SSplotComparisons(summaryoutput,subplots=1:10,
     add a legend?
   }
   \item{legendlabels}{
-    optional vector of labels to include in legend. Default is 'model1','model2',etc.
+    optional vector of labels to include in legend. Default is
+    'model1','model2',etc.
   }
   \item{legendloc}{
     location of legend. See ?legend for more info.
@@ -130,7 +131,8 @@ SSplotComparisons(summaryoutput,subplots=1:10,
     target biomass value at which to show a line (set to 0 to remove)
   }
   \item{minbthresh}{
-    minimum biomass threshhold at which to show a line (set to 0 to remove)
+    minimum biomass threshhold at which to show a line (set to 0 to
+    remove)
   }
   \item{pwidth}{
     width of plot written to PNG file
