@@ -27,6 +27,7 @@ SStableComparisons <-
   
   # get stuff from summary output
   n           <- summaryoutput$n
+  nsexes      <- summaryoutput$nsexes
   pars        <- summaryoutput$pars
   quants      <- summaryoutput$quants
   likelihoods <- summaryoutput$likelihoods
@@ -62,6 +63,10 @@ SStableComparisons <-
     if(name=="SPB_Virg"){
       vals[-1] <- as.numeric(vals[-1])/1e6
       vals[1] <- "SB0_million_mt"
+    }
+    if(length(grep("SPB",name))>0 & any(nsexes==1)){
+      cat("dividing name by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
+      for(i in (1:n)[nsexes==1]) vals[1+i] <- vals[1+i]/2
     }
 
     if(name=="Q"){

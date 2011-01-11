@@ -56,10 +56,13 @@ SSplotComparisons <-
   indices     <- summaryoutput$indices
 
   # fix biomass for single-sex models
-  fixratio <- (1:n)[nsexes==1]
-  SpawnBio[,fixratio]    <- SpawnBio[,fixratio]/2
-  SpawnBioSD[,fixratio]  <- SpawnBioSD[,fixratio]/2
-  if(any(nsexes==1)) cat("dividing SpawnBio by 2 for single-sex models:",fixratio,"\n")
+  if(any(nsexes==1)){
+    cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
+    for(i in (1:n)[nsexes==1]){
+      SpawnBio[,i]    <- SpawnBio[,i]/2
+      SpawnBioSD[,i]  <- SpawnBioSD[,i]/2
+    }
+  }
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
