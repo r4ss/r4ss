@@ -74,7 +74,7 @@ SS_output <-
   shortrepfile <- repfile
   repfile <- paste(dir,repfile,sep="")
 
-  parfile <- dir(dir,pattern=".par")
+  parfile <- dir(dir,pattern=".par$")
   if(length(parfile)>1){
     filetimes <- file.info(paste(dir,parfile,sep="/"))$mtime
     parfile <- parfile[filetimes==max(filetimes)]
@@ -234,7 +234,7 @@ SS_output <-
   flush.console()
 
   # check for use of temporary files
-  logfile <- dir(dir,pattern=".log")
+  logfile <- dir(dir,pattern=".log$")
   logfile <- logfile[logfile != "fmin.log"]
   if(length(logfile)>1){
     filetimes <- file.info(paste(dir,logfile,sep="/"))$mtime

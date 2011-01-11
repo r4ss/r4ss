@@ -41,6 +41,7 @@ SSplotComparisons <-
   
   # get stuff from summary output
   n           <- summaryoutput$n
+  nsexes      <- summaryoutput$nsexes
   pars        <- summaryoutput$pars
   parsSD      <- summaryoutput$parsSD
   parphases   <- summaryoutput$parphases
@@ -53,6 +54,12 @@ SSplotComparisons <-
   recruits    <- summaryoutput$recruits
   recdevs     <- summaryoutput$recdevs
   indices     <- summaryoutput$indices
+
+  # fix biomass for single-sex models
+  fixratio <- (1:n)[nsexes==1]
+  SpawnBio[,fixratio]    <- SpawnBio[,fixratio]/2
+  SpawnBioSD[,fixratio]  <- SpawnBioSD[,fixratio]/2
+  if(any(nsexes==1)) cat("dividing SpawnBio by 2 for single-sex models:",fixratio,"\n")
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
@@ -286,7 +293,7 @@ SSplotComparisons <-
                   quants[grep(parname,quants$Label),])
     if(nrow(vals)!=1){
       cat("problem getting values for parameter:",parname,"\n")
-      if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities")
+      if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities\n")
       if(nrow(vals)>0){
         cat("Too many matching Labels:")
         print(vals)
@@ -387,15 +394,15 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 3: spawning depletion
-  if(3 %in% subplots){
-    if(plot) plotDepl()
-    if(print){
-      pngfun("compare3_depl.png")
-      plotDepl()
-      dev.off()
-    }
-  }
+  ## # subplot 3: spawning depletion
+  ## if(3 %in% subplots){
+  ##   if(plot) plotDepl()
+  ##   if(print){
+  ##     pngfun("compare3_depl.png")
+  ##     plotDepl()
+  ##     dev.off()
+  ##   }
+  ## }
   
   # subplot 4: biomass ratio (probably equal to spawning depletion)
   if(4 %in% subplots){

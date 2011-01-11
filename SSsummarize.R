@@ -64,6 +64,7 @@ SSsummarize <- function(biglist,
   quants <- quantsSD <- as.data.frame(matrix(NA,nrow=length(dernames),ncol=n))
   growth     <- NULL
   maxgrad    <- NULL
+  nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
   indices <- NULL
   
@@ -88,6 +89,9 @@ SSsummarize <- function(biglist,
 
     # gradient
     maxgrad <- c(maxgrad, stats$maximum_gradient_component)
+
+    # nsexes
+    nsexes <- c(nsexes, stats$nsexes)
 
     # selex
     if(FALSE){
@@ -280,6 +284,7 @@ SSsummarize <- function(biglist,
   mylist$listnames   <- names(biglist)
   mylist$keyvec      <- keyvec
   mylist$maxgrad     <- maxgrad
+  mylist$nsexes      <- nsexes
   #mylist             <- c(mylist,selexlist)
   mylist$pars        <- pars
   mylist$parsSD      <- parsSD
