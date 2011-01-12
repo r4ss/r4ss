@@ -125,38 +125,15 @@ SSplotComparisons <-
       xlim <- range(SpawnBio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    plot(0,type="n",xlim=xlim,ylim=range(0,SpawnBio[,models],na.rm=TRUE),
-         xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
+    ylim <- range(0, SpawnBio[,models], na.rm=TRUE)
+    if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
+    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty) addpoly(SpawnBio, yrvec=SpawnBio$Yr, lower=SpawnBioLower, upper=SpawnBioUpper)
-    matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
-            add=TRUE)
+    matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+            col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    points(x=rep(SpawnBio$Yr[2],nlines),SpawnBio[1, models],col=col,pch=1,cex=1.2)
+    points(x=rep(SpawnBio$Yr[2],nlines),SpawnBio[1, models],col=col,pch=pch)
     abline(h=0,col="grey")
-    if(legend) legendfun()
-  }
-
-  plotDepl <- function(){ # plot spawning depletion
-    depl <- SpawnBio
-    if(xlim[1]=="default"){
-      xlim <- range(SpawnBio$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
-    for(i in 1:n){
-      depl[,i] <- depl[,i]/depl[!is.na(depl[,i]),i][1]
-    }
-    plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
-         xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
-    matplot(depl$Yr,depl[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-    abline(h=0:1,col="grey")
-
-    if(btarg>0){
-      abline(h=btarg,col="red")
-      text(min(depl$Yr)+4,btarg+0.03,"Management target",adj=0)
-    }
-    if(minbthresh>0){
-      abline(h=minbthresh,col="red")
-      text(min(depl$Yr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
-    }
-
     if(legend) legendfun()
   }
 
@@ -165,8 +142,9 @@ SSplotComparisons <-
       xlim <- range(Bratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
-         xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
+    ylim <- range(0, Bratio[,models], na.rm=TRUE)
+    if(uncertainty) ylim=range(ylim, BratioUpper[,models], na.rm=TRUE)
+    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty) addpoly(Bratio, Bratio$Yr, lower=BratioLower, upper=BratioUpper)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col="grey")
@@ -405,15 +383,8 @@ SSplotComparisons <-
   }
 
   ## # subplot 3: spawning depletion
-  ## if(3 %in% subplots){
-  ##   if(plot) plotDepl()
-  ##   if(print){
-  ##     pngfun("compare3_depl.png")
-  ##     plotDepl()
-  ##     dev.off()
-  ##   }
-  ## }
-  
+  # removed because subplot 4 turned out to be better and redundant
+
   # subplot 4: biomass ratio (probably equal to spawning depletion)
   if(4 %in% subplots){
     if(plot) plotBratio(uncertainty=FALSE)
@@ -439,7 +410,7 @@ SSplotComparisons <-
     if(plot) plotRecruits()
     if(print){
       pngfun("compare6_recruits.png")
-      plotDepl()
+      plotRecruits()
       dev.off()
     }
   }
