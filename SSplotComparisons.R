@@ -29,10 +29,6 @@ SSplotComparisons <-
            new=TRUE,
            verbose=TRUE)
 {
-  # the summaryoutput
-  if(!is.list(summaryoutput) | names(summaryoutput)[1]!="n")
-    stop("'summaryoutput' should be the result of the SSsummarize function")
-
   # subfunction to write png files
   pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -40,27 +36,30 @@ SSplotComparisons <-
   legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
   
   # get stuff from summary output
-  n           <- summaryoutput$n
-  nsexes      <- summaryoutput$nsexes
-  pars        <- summaryoutput$pars
-  parsSD      <- summaryoutput$parsSD
-  parphases   <- summaryoutput$parphases
-  quants      <- summaryoutput$quants
-  quantsSD    <- summaryoutput$quantsSD
-  SpawnBio    <- summaryoutput$SpawnBio
-  SpawnBioSD  <- summaryoutput$SpawnBioSD
-  Bratio      <- summaryoutput$Bratio
-  BratioSD    <- summaryoutput$BratioSD
-  recruits    <- summaryoutput$recruits
-  recdevs     <- summaryoutput$recdevs
-  indices     <- summaryoutput$indices
+  n             <- summaryoutput$n
+  nsexes        <- summaryoutput$nsexes
+  pars          <- summaryoutput$pars
+  parsSD        <- summaryoutput$parsSD
+  parphases     <- summaryoutput$parphases
+  quants        <- summaryoutput$quants
+  quantsSD      <- summaryoutput$quantsSD
+  SpawnBio      <- summaryoutput$SpawnBio
+  SpawnBioLower <- summaryoutput$SpawnBioLower
+  SpawnBioUpper <- summaryoutput$SpawnBioUpper
+  Bratio        <- summaryoutput$Bratio
+  BratioLower   <- summaryoutput$BratioLower
+  BratioUpper   <- summaryoutput$BratioUpper
+  recruits      <- summaryoutput$recruits
+  recdevs       <- summaryoutput$recdevs
+  indices       <- summaryoutput$indices
 
   # fix biomass for single-sex models
   if(any(nsexes==1)){
     cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
     for(i in (1:n)[nsexes==1]){
       SpawnBio[,i]    <- SpawnBio[,i]/2
-      SpawnBioSD[,i]  <- SpawnBioSD[,i]/2
+      SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
+      SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
     }
   }
   
@@ -72,17 +71,23 @@ SSplotComparisons <-
       endyr <- endyrvec[iline]
       imodel <- models[iline]
       SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
-      SpawnBioSD[SpawnBio$Yr > endyr, imodel] <- NA
+      SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
+      SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
       Bratio[Bratio$Yr > endyr, imodel] <- NA
-      BratioSD[Bratio$Yr > endyr, imodel] <- NA
+      BratioLower[Bratio$Yr > endyr, imodel] <- NA
+      BratioUpper[Bratio$Yr > endyr, imodel] <- NA
       recruits[recruits$Yr > endyr, imodel] <- NA
       recdevs[recdevs$Yr > endyr, imodel] <- NA
     }
   }
   
-  if(col[1]=="default" & nlines!=2) col <- rich.colors.short(nlines+1)[-1]
+  if(col[1]=="default" & nlines>3) col <- rich.colors.short(nlines+1)[-1]
   if(col[1]=="default" & nlines==2) col <- rich.colors.short(nlines)
-  if(shadecol[1]=="default") shadecol <- rich.colors.short(nlines+1,alpha=shadealpha)[-1]
+  if(col[1]=="default" & nlines==3) col <- c("blue","red","green3")
+  if(shadecol[1]=="default" & nlines>3) shadecol <- rich.colors.short(nlines+1,alpha=shadealpha)[-1]
+  if(shadecol[1]=="default" & nlines==2) shadecol <- rich.colors.short(nlines)
+  if(shadecol[1]=="default" & nlines==3) shadecol <- rgb(red=c(0,1,0),green=c(0,0,0.8),blue=c(1,0,0),alpha=shadealpha)
+
   if(pch[1]=="default") pch <- 1:nlines
   if(lty[1]=="default") lty <- 1:nlines
 
@@ -99,9 +104,10 @@ SSplotComparisons <-
     windows(record=TRUE)
   }
 
-  addpoly <- function(vals, SDs, yrvec){ # add shaded uncertainty intervals behind line
-    upper <- vals[,1:n] + 1.96*SDs[,1:n]
-    lower <- vals[,1:n] - 1.96*SDs[,1:n]
+  addpoly <- function(vals, yrvec, lower=NULL, upper=NULL){ # add shaded uncertainty intervals behind line
+    if(is.null(upper)) upper <- vals[,1:n] + 1.96*SDs[,1:n]
+    if(is.null(lower)) lower <- vals[,1:n] - 1.96*SDs[,1:n]
+
     lower[lower<0] <- 0 # max of value or 0
     for(iline in 1:nlines){
       imodel <- models[iline]
@@ -121,7 +127,7 @@ SSplotComparisons <-
     }
     plot(0,type="n",xlim=xlim,ylim=range(0,SpawnBio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
-    if(uncertainty) addpoly(SpawnBio, SpawnBioSD, SpawnBio$Yr)
+    if(uncertainty) addpoly(SpawnBio, yrvec=SpawnBio$Yr, lower=SpawnBioLower, upper=SpawnBioUpper)
     matplot(SpawnBio$Yr,SpawnBio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             add=TRUE)
     abline(h=0,col="grey")
@@ -140,7 +146,7 @@ SSplotComparisons <-
     plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
     matplot(depl$Yr,depl[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-    abline(h=0,col="grey")
+    abline(h=0:1,col="grey")
 
     if(btarg>0){
       abline(h=btarg,col="red")
@@ -161,9 +167,10 @@ SSplotComparisons <-
     }
     plot(0,type="n",xlim=xlim,ylim=range(0,Bratio[,models],na.rm=TRUE),
          xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
-    if(uncertainty) addpoly(Bratio, BratioSD, Bratio$Yr)
+    if(uncertainty) addpoly(Bratio, Bratio$Yr, lower=BratioLower, upper=BratioUpper)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col="grey")
+    abline(h=1,col="grey",lty=2)
 
     if(btarg>0){
       abline(h=btarg,col="red")

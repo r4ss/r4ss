@@ -1,5 +1,5 @@
 SSplotCatch <-
-  function(replist,subplots=1:9,add=FALSE,areas=1,
+  function(replist,subplots=1:15,add=FALSE,areas=1,
            plot=TRUE,print=FALSE,
            type="l",
            fleetlty=1, fleetpch=1,
@@ -240,10 +240,10 @@ SSplotCatch <-
     return(a)
   } # end makeplots
 
-  if(plot) for(isubplot in 1:15) makeplots(isubplot)
+  if(plot) for(isubplot in subplots) makeplots(isubplot)
 
   if(print){
-    for(isubplot in 1:15){
+    for(isubplot in subplots){
       a <- FALSE
       myname <- subplot_names[isubplot]
       badstrings <- c(":","  ","__")
@@ -257,5 +257,13 @@ SSplotCatch <-
       if(!a) file.remove(filename)
     }
   }
+
+  totcatchmat <- as.data.frame(totcatchmat)
+  names(totcatchmat) <- fleetnames[1:nfishfleets]
+  totcatchmat$Yr <- catchyrs
+  returnlist <- list()
+  returnlist[["totcatchmat"]] <- totcatchmat
+  if(nseasons > 1) returnlist[["totcatchmat2"]] <- totcatchmat2
+  return(invisible(returnlist))
   # if(verbose) cat("  finished catch plots\n")
 }

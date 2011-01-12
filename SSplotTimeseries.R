@@ -75,12 +75,16 @@ SSplotTimeseries <-
   }
   # modifying data to subset for a single season
   ts <- timeseries
-  if(SS_versionshort=="SS-V3.20"){
-    ts$YrSeas <- ts$Yr + seasfracs
+  if(nseasons>1){
+    if(SS_versionshort=="SS-V3.20"){
+      ts$YrSeas <- ts$Yr + seasfracs
+    }else{
+      ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
+    }
   }else{
-    ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
+    ts$YrSeas <- ts$Yr
   }
-
+  
   # get spawning season
   spawnseas <- unique(ts$Seas[!is.na(ts$SpawnBio)])
   spawnseas1 <- min(spawnseas)
@@ -95,7 +99,9 @@ SSplotTimeseries <-
 
   # define which years are forecast or not
   ts$period <- "time"
+  ts$period[ts$Yr < startyr] <- "equilibria"
   ts$period[ts$Yr > endyr+1] <- "fore"
+
   if(!forecastplot) ts$period[ts$Yr > endyr + 1] <- "exclude"
 
   # a function to make the plot
@@ -176,7 +182,10 @@ SSplotTimeseries <-
         }
       }
     }
-
+    if(subplot==10){
+      yvals[1] <- NA
+    }
+    
     if(forecastplot) main <- paste(main,"with forecast")
     # calculating intervals around spawning biomass, depletion, or recruitment
     # area specific confidence intervals?
@@ -250,7 +259,10 @@ SSplotTimeseries <-
       pngfun(file=filename)
     }
 
-    
+    # move VIRG value from startyr-2 to startyr-1 to show closer to plot
+    ts$Yr[plot1] <- ts$Yr[plot1]+1
+    ts$YrSeas[plot1] <- ts$YrSeas[plot1]+1
+
     # create an empty plot (if not adding to existing plot)
     if(!add){
       yrvals  <- ts$YrSeas[ plot1 | plot2 | plot3]
@@ -302,16 +314,22 @@ SSplotTimeseries <-
         plot2 <- yvals>0 & ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
         plot3 <- yvals>0 & ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
       }
+      if(subplot %in% 9:10){
+        plot1 <- NULL
+        plot2[3] <- FALSE
+      }
       mycol <- areacols[iarea]
       
       mytype <- "o" # overplotting points on lines for most time series
       if(subplot==11 & uncertainty) mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
       if(!uncertainty){
+        points(ts$YrSeas[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
         lines(ts$YrSeas[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
         points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
       }else{
         # add lines for confidence intervals areas if requested
         # lines and points on integer years
+        points(ts$Yr[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
         lines(ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
         points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
         if(subplot %in% c(7,9,11)){

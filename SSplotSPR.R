@@ -62,7 +62,7 @@ SSplotSPR <-
       sprratiostd$period <- "fore"
       sprratiostd$period[sprratiostd$Yr<=(endyr)] <- "time"
       sprratiostd$upper <- sprratiostd$Value + 1.96*sprratiostd$StdDev
-      sprratiostd$lower <- sprratiostd$Value - 1.96*sprratiostd$StdDev
+      sprratiostd$lower <- pmax(sprratiostd$Value - 1.96*sprratiostd$StdDev,0) # max of value or 0
       ylab <- managementratiolabels[1,2]
       ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))
       sprfunc3 <- function(){

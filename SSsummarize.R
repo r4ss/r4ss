@@ -4,7 +4,9 @@ SSsummarize <- function(biglist,
                         selfactor=c("Lsel"),
                         selfleet=NULL,
                         selyr="min",
-                        selgender=1){
+                        selgender=1,
+                        lowerCI=0.025,
+                        upperCI=0.975){
 
   # a bunch of 'key' related stuff is more for Ian T's simulation work
   # the goal is to be able to extract a subset of the models in biglist in
@@ -217,10 +219,22 @@ SSsummarize <- function(biglist,
       }
     }
   }
+  
+  SpawnBioLower <- SpawnBioUpper <- SpawnBioSD
+  SpawnBioLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(SpawnBio[,1:n]),
+                               sd=as.matrix(SpawnBioSD[,1:n]))
+  SpawnBioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(SpawnBio[,1:n]),
+                               sd=as.matrix(SpawnBioSD[,1:n]))
 
   # identify biomass ratio parameters
   Bratio <- quants[grep("^Bratio_",quants$Label),]
   BratioSD <- quantsSD[grep("^Bratio_",quantsSD$Label),]
+
+  BratioLower <- BratioUpper <- BratioSD
+  BratioLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(Bratio[,1:n]),
+                             sd=as.matrix(BratioSD[,1:n]))
+  BratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Bratio[,1:n]),
+                             sd=as.matrix(BratioSD[,1:n]))
 
   # identify recruitment parameters
   recruits <- quants[grep("^Recr_",quants$Label), ]
@@ -279,29 +293,33 @@ SSsummarize <- function(biglist,
 
   
   mylist <- list()
-  mylist$n           <- n
-  mylist$npars       <- npars
-  mylist$listnames   <- names(biglist)
-  mylist$keyvec      <- keyvec
-  mylist$maxgrad     <- maxgrad
-  mylist$nsexes      <- nsexes
-  #mylist             <- c(mylist,selexlist)
-  mylist$pars        <- pars
-  mylist$parsSD      <- parsSD
-  mylist$parphases   <- parphases
-  mylist$quants      <- quants
-  mylist$quantsSD    <- quantsSD
-  mylist$likelihoods <- likelihoods
-  mylist$likelambdas <- likelambdas
-  mylist$SpawnBio    <- SpawnBio
-  mylist$SpawnBioSD  <- SpawnBioSD
-  mylist$Bratio      <- Bratio
-  mylist$BratioSD    <- BratioSD
-  mylist$recruits    <- recruits
-  mylist$recdevs     <- recdevs
-  mylist$growth      <- growth
-  mylist$indices     <- indices
-  mylist$InitAgeYrs  <- InitAgeYrs
+  mylist$n              <- n
+  mylist$npars          <- npars
+  mylist$listnames      <- names(biglist)
+  mylist$keyvec         <- keyvec
+  mylist$maxgrad        <- maxgrad
+  mylist$nsexes         <- nsexes
+  #mylist                <- c(mylist,selexlist)
+  mylist$pars           <- pars
+  mylist$parsSD         <- parsSD
+  mylist$parphases      <- parphases
+  mylist$quants         <- quants
+  mylist$quantsSD       <- quantsSD
+  mylist$likelihoods    <- likelihoods
+  mylist$likelambdas    <- likelambdas
+  mylist$SpawnBio       <- SpawnBio
+  mylist$SpawnBioSD     <- SpawnBioSD
+  mylist$SpawnBioLower  <- SpawnBioLower
+  mylist$SpawnBioUpper  <- SpawnBioUpper
+  mylist$Bratio         <- Bratio
+  mylist$BratioSD       <- BratioSD
+  mylist$BratioLower    <- BratioLower
+  mylist$BratioUpper    <- BratioUpper
+  mylist$recruits       <- recruits
+  mylist$recdevs        <- recdevs
+  mylist$growth         <- growth
+  mylist$indices        <- indices
+  mylist$InitAgeYrs     <- InitAgeYrs
 
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
   
