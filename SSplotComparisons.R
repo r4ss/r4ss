@@ -104,10 +104,7 @@ SSplotComparisons <-
     windows(record=TRUE)
   }
 
-  addpoly <- function(vals, yrvec, lower=NULL, upper=NULL){ # add shaded uncertainty intervals behind line
-    if(is.null(upper)) upper <- vals[,1:n] + 1.96*SDs[,1:n]
-    if(is.null(lower)) lower <- vals[,1:n] - 1.96*SDs[,1:n]
-
+  addpoly <- function(yrvec, lower, upper){ # add shaded uncertainty intervals behind line
     lower[lower<0] <- 0 # max of value or 0
     for(iline in 1:nlines){
       imodel <- models[iline]
@@ -119,6 +116,8 @@ SSplotComparisons <-
       lines(yrvec[good],upper[good,imodel],lty=3,col=col[iline])
     }
   }
+
+  equ <- -(1:2)
   
   plotSpawnBio <- function(uncertainty=TRUE){ # plot spawning biomass
     if(xlim[1]=="default"){
@@ -128,11 +127,21 @@ SSplotComparisons <-
     ylim <- range(0, SpawnBio[,models], na.rm=TRUE)
     if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
-    if(uncertainty) addpoly(SpawnBio, yrvec=SpawnBio$Yr, lower=SpawnBioLower, upper=SpawnBioUpper)
+    if(uncertainty){
+      # add shading for undertainty
+      addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),], upper=SpawnBioUpper[-(1:2),])
+      xEqu <- SpawnBio$Yr[2] - (1:nlines)/nlines # equilibrium spawning biomass year by model
+    }else{
+      xEqu <- rep(SpawnBio$Yr[2], nlines)  # equilibrium spawning biomass year by model
+    }
+    # add arrows for equilibrium values
     matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
             col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-    points(x=rep(SpawnBio$Yr[2],nlines),SpawnBio[1, models],col=col,pch=1,cex=1.2)
-    points(x=rep(SpawnBio$Yr[2],nlines),SpawnBio[1, models],col=col,pch=pch)
+    if(uncertainty) arrows(x0=xEqu, y0=as.numeric(SpawnBioLower[1,models]),
+                           x1=xEqu, y1=as.numeric(SpawnBioUpper[1,models]),
+                           length=0.01, angle=90, code=3, col=col)
+    # add points at equilibrium values
+    points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
     if(legend) legendfun()
   }
@@ -145,7 +154,7 @@ SSplotComparisons <-
     ylim <- range(0, Bratio[,models], na.rm=TRUE)
     if(uncertainty) ylim=range(ylim, BratioUpper[,models], na.rm=TRUE)
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
-    if(uncertainty) addpoly(Bratio, Bratio$Yr, lower=BratioLower, upper=BratioUpper)
+    if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col="grey")
     abline(h=1,col="grey",lty=2)
@@ -167,9 +176,12 @@ SSplotComparisons <-
       xlim <- range(recruits$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    matplot(recruits$Yr,recruits[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
+    # plot lines showing recruitment
+    matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
             xlim=xlim,ylim=range(0,recruits[,models],na.rm=TRUE),
             xlab=labels[1],ylab=labels[4],xaxs=xaxs,yaxs=yaxs)
+    # add points at equilibrium values
+    points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
     if(legend) legendfun()
   }
