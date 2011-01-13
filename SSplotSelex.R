@@ -1,7 +1,7 @@
 SSplotSelex <-
   function(replist, fleets="all", fleetnames="default",
            selexlines=1:5,
-           subplot=1:10,
+           subplot=1:11,
            plot=TRUE, print=FALSE, add=FALSE,
            labels=c("Length (cm)", #1
                     "Age (yr)",    #2
@@ -14,20 +14,21 @@ SSplotSelex <-
            cex.main=1, plotdir = "default",
            verbose = TRUE)
 {
-  nsexes       <- replist$nsexes
-  nseasons     <- replist$nseasons
-  nfleets      <- replist$nfleets
-  lbinspop     <- replist$lbinspop
-  nlbinspop    <- replist$nlbinspop
-  sizeselex    <- replist$sizeselex
-  ageselex     <- replist$ageselex
-  accuage      <- replist$accuage
-  endyr        <- replist$endyr
-  FleetNames   <- replist$FleetNames
-  growdat      <- replist$endgrowth
-  mainmorphs   <- replist$mainmorphs
-  nareas       <- replist$nareas
-  ngpatterns   <- replist$ngpatterns
+  nsexes         <- replist$nsexes
+  nseasons       <- replist$nseasons
+  nfleets        <- replist$nfleets
+  lbinspop       <- replist$lbinspop
+  nlbinspop      <- replist$nlbinspop
+  sizeselex      <- replist$sizeselex
+  ageselex       <- replist$ageselex
+  accuage        <- replist$accuage
+  endyr          <- replist$endyr
+  FleetNames     <- replist$FleetNames
+  growdat        <- replist$endgrowth
+  mainmorphs     <- replist$mainmorphs
+  nareas         <- replist$nareas
+  ngpatterns     <- replist$ngpatterns
+  derived_quants <- replist$derived_quants
   
   # subsetting for season 1 only. This could be replaced
   #   by info on the growth within the season when each fleet operates.
@@ -145,7 +146,7 @@ SSplotSelex <-
         plot(bins,vals,xlab=labels[1],ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type="n")
         abline(h=0,col="grey")
         abline(h=1,col="grey")
-        if(1%in%selexlines) lines(bins,vals,type="o",col="blue",cex=1.1)
+        if(1%in%selexlines) lines(bins,vals,type="o",col=col2,cex=1.1)
         if(retcheckuse > 0){
           # if retention, then add additional lines & legend
           useret <- intret[intret$Fleet==i,]
@@ -234,7 +235,7 @@ SSplotSelex <-
           main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
           endselfunc <- function()
           {
-            plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
+            plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
             abline(h=0,col="grey")
           }
           if(8 %in% subplot){
@@ -257,7 +258,7 @@ SSplotSelex <-
         {
           main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
           endselfunc2 <- function(){
-            plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col="blue",cex=1.1)
+            plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
             abline(h=0,col="grey")
           }
           if(9 %in% subplot){
@@ -346,5 +347,51 @@ SSplotSelex <-
     } # fleets
   } # if 10 in subplot
 
+  # Extra SD reporting plot
+  if(11 %in% subplot){
+    # get values from Extra SD reporting if created by request at bottom of control file
+    rows <- grep("Selex_std",derived_quants$LABEL)
+    if(length(rows)>0){
+      plot_extra_selex_SD <- function(){
+        sel <- derived_quants[rows,]
+        names <- sel$LABEL
+        splitnames <- strsplit(names,"_")
+        namesDF <- as.data.frame(matrix(unlist(strsplit(names,"_")),ncol=6,byrow=T))
+        sel$fleet   <- as.numeric(as.character(namesDF$V3))
+        sel$sex     <- as.character(namesDF$V4)
+        sel$agelen  <- as.character(namesDF$V5)
+        sel$bin     <- as.numeric(as.character(namesDF$V6))
+        sel$lower   <- qnorm(0.025, mean=sel$Value, sd=sel$StdDev)
+        sel$upper   <- pmin(qnorm(0.975, mean=sel$Value, sd=sel$StdDev),1)
+        i <- sel$fleet[1]
+        m <- sel$sex[1]
+        agelen <- sel$agelen[1]
+        xlab <- labels[1:2][1 + (sel$agelen[1]=="A")] # decide label between length and age
+        if(m=="Fem" & nsexes==1) sextitle3 <- ""
+        if(m=="Fem" & nsexes==2) sextitle3 <- "females"
+        if(m=="Mal") sextitle3 <- "males"
+        main <- paste("Uncertainty in selectivity for",FleetNames[i],sextitle3)
+        no0 <- sel$StdDev>0
+
+        if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$fleet==i & sizeselex$gender==m,]
+        if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
+        #Ian T.: finish this part to add full selectivity line, including bins for which
+        #        no uncertainty was requested
+        plot(sel$bin,sel$Value,xlab=,ylim=c(0,1),main=main,cex.main=cex.main,
+             ylab=ylab,type="o",col=col2,cex=1.1,xlim=c(0,max(sel$bin)))
+        arrows(x0=sel$bin[no0], y0=sel$lower[no0], x1=sel$bin[no0], y1=sel$upper[no0],
+               length=0.01, angle=90, code=3, col=col2)
+        abline(h=0,col="grey")
+        return(sel)
+      }
+    }
+    if(plot) plot_extra_selex_SD()
+    if(print){
+      pngfun(file=paste(plotdir,"sel11_uncertainty","sex",m,".png",sep=""))
+      plot_extra_selex_SD()
+      dev.off()
+    }
+  }
+  
   flush.console()
-} # end if 3 and 4 in plot or print
+} 
