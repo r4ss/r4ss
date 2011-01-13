@@ -34,6 +34,18 @@ SSplotComparisons <-
 
   # subfunction to add legend
   legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
+
+  rc <- function(n,alpha=1){
+    # a subset of rich.colors by Arni Magnusson from the gregmisc package
+    # a.k.a. rich.colors.short, but put directly in this function
+    # to try to diagnose problem with transparency on one computer
+    x <- seq(0, 1, length = n)
+    r <- 1/(1 + exp(20 - 35 * x))
+    g <- pmin(pmax(0, -0.8 + 6 * x - 5 * x^2), 1)
+    b <- dnorm(x, 0.25, 0.15)/max(dnorm(x, 0.25, 0.15))
+    rgb.m <- matrix(c(r, g, b), ncol = 3)
+    rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3], alpha=alpha))
+  }
   
   # get stuff from summary output
   n             <- summaryoutput$n
@@ -81,11 +93,11 @@ SSplotComparisons <-
     }
   }
   
-  if(col[1]=="default" & nlines>3) col <- rich.colors.short(nlines+1)[-1]
-  if(col[1]=="default" & nlines==2) col <- rich.colors.short(nlines)
+  if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
+  if(col[1]=="default" & nlines==2) col <- rc(nlines)
   if(col[1]=="default" & nlines==3) col <- c("blue","red","green3")
-  if(shadecol[1]=="default" & nlines>3) shadecol <- rich.colors.short(nlines+1,alpha=shadealpha)[-1]
-  if(shadecol[1]=="default" & nlines==2) shadecol <- rich.colors.short(nlines)
+  if(shadecol[1]=="default" & nlines>3) shadecol <- rc(nlines+1,alpha=shadealpha)[-1]
+  if(shadecol[1]=="default" & nlines==2) shadecol <- rc(nlines,alpha=shadealpha)
   if(shadecol[1]=="default" & nlines==3) shadecol <- rgb(red=c(0,1,0),green=c(0,0,0.8),blue=c(1,0,0),alpha=shadealpha)
 
   if(pch[1]=="default") pch <- 1:nlines
