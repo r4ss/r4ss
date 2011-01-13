@@ -384,12 +384,12 @@ SSplotSelex <-
         abline(h=0,col="grey")
         return(sel)
       }
-    }
-    if(plot) plot_extra_selex_SD()
-    if(print){
-      pngfun(file=paste(plotdir,"sel11_uncertainty","sex",m,".png",sep=""))
-      plot_extra_selex_SD()
-      dev.off()
+      if(plot) plot_extra_selex_SD()
+      if(print){
+        pngfun(file=paste(plotdir,"sel11_uncertainty","sex",m,".png",sep=""))
+        plot_extra_selex_SD()
+        dev.off()
+      }
     }
   }
   
