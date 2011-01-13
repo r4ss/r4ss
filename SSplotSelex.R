@@ -377,8 +377,8 @@ SSplotSelex <-
         if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
         #Ian T.: finish this part to add full selectivity line, including bins for which
         #        no uncertainty was requested
-        plot(sel$bin,sel$Value,xlab=,ylim=c(0,1),main=main,cex.main=cex.main,
-             ylab=ylab,type="o",col=col2,cex=1.1,xlim=c(0,max(sel$bin)))
+        plot(sel$bin,sel$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+             ylab=labels[1],type="o",col=col2,cex=1.1,xlim=c(0,max(sel$bin)))
         arrows(x0=sel$bin[no0], y0=sel$lower[no0], x1=sel$bin[no0], y1=sel$upper[no0],
                length=0.01, angle=90, code=3, col=col2)
         abline(h=0,col="grey")
