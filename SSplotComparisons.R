@@ -473,10 +473,7 @@ SSplotComparisons <-
         if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
         }
-        print("here")
-        print(x2)
         x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
-        print(x2)
         #find the positions in the density that are closest to these quantiles
         x <- mcmcDens[[iline]]$x
         y <- mcmcDens[[iline]]$y
@@ -486,7 +483,6 @@ SSplotComparisons <-
         for(ii in x2) {
             y2 <- c(y2,y[abs(x-ii)==min(abs(x-ii))])
         }
-        print(x);print(y);print(x2);print(y2)
         polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
         lines(x,y,col=col[iline],lwd=2)
         points(x2,y2,col=col[iline],pch=pch[iline])
