@@ -183,11 +183,12 @@ SSsummarize <- function(biglist,
     pars$Yr[ipar] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
-  quants$Yr <- NA
+  quants$Yr <- quantsSD$Yr <- NA
   for(iquant in 1:nrow(quants)){
     substrings <- strsplit(as.character(quants$Label[iquant]),"_")[[1]]
     yr <- substrings[substrings %in% allyears][1]
     quants$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
+    quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
 
@@ -325,5 +326,3 @@ SSsummarize <- function(biglist,
   
   return(mylist)
 } # end function
-
-
