@@ -1,4 +1,4 @@
-SSplotData <- function(replist,col="grey",datatypes="all"){
+SSplotData <- function(replist,col="grey",datatypes="all",fleets="all"){
 
   ### get info from replist
   # dimensions
@@ -9,8 +9,8 @@ SSplotData <- function(replist,col="grey",datatypes="all"){
   
   # catch
   catch <- SSplotCatch(replist,plot=F,print=F,verbose=F)
-  if(!is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
-                                   catch <- catch$totcatchmat2
+  if(is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
+                                  catch <- catch$totcatchmat2
   # index
   cpue          <- replist$cpue
   
@@ -31,25 +31,37 @@ SSplotData <- function(replist,col="grey",datatypes="all"){
                  "ghostagedbase","ghostcondbase","ghostlendbase","ladbase",
                  "wadbase","tagdbase1","tagdbase2")
 
+  # loop over types to make a database of years with comp data
   ntypes <- 0
   typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5))
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
     typename <- typenames[itype]
-    print(typename)
-    print(head(dat))
     if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
       ntypes <- ntypes+1
       for(ifleet in 1:nfleets){
+        # identify years from different data types
         if(typename=="catch") allyrs <- dat$Yr[dat[,ifleet]>0]
         if(typename=="cpue") allyrs <- dat$Yr[dat$FleetNum==ifleet]
         if(length(grep("dbase",typename))>1) allyrs <- dat$Yr
+        # expand table of years with data
         yrs <- sort(unique(floor(allyrs)))
-        typetable <- rbind(typetable,
-                           data.frame(yr=yrs,ifleet=ifleet,
-                                      itype=ntypes,typename=typename))
+        if(length(yrs)>0)
+          typetable <- rbind(typetable,
+                             data.frame(yr=yrs,fleet=ifleet,
+                                        itype=ntypes,typename=typename))
       }
     }
   }
-  return(typetable)
+  # typetable is full data frame of all fleets and data types
+  # typetable2 has been subset according to requested choices
+  
+  # subset by fleets and data types if requested
+  if(fleets[1]=="all") fleets <- 1:nfleets
+  if(datatypes[1]=="all") datatypes <- typenames
+  typetable2 <- typetable[typetable$fleet %in% fleets &
+                          typetable$typename %in% datatypes,]
+  
+  return(invisible(typetable2))
+  
 }
