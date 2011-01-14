@@ -35,7 +35,7 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
     post <- read.table(paste(dir[imodel],postname,sep="/"),header=TRUE)
     derpost <- read.table(paste(dir[imodel],derpostname,sep="/"),header=TRUE)
     # remove redundant values
-    derpost <- derpost[,-(names(derpost) %in% c("Iter","Objective_function"))]
+    derpost <- derpost[,!(names(derpost) %in% c("Iter","Objective_function"))]
 
     # combine two dataframes
     allpost <- cbind(post,derpost)
@@ -46,6 +46,7 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
     nuisancelabels <- NULL
     for(istring in 1:length(keystrings))
       keylabels <- c(keylabels,names(allpost)[grep(keystrings[istring],names(allpost))])
+    for(istring in 1:length(nuisancestrings))
       nuisancelabels <- c(nuisancelabels,names(allpost)[grep(nuisancestrings[istring],names(allpost))])
     keypost <- allpost[,names(allpost) %in% keylabels]
     nuisancepost <- allpost[,names(allpost) %in% nuisancelabels]
