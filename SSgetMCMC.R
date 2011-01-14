@@ -13,7 +13,9 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
            "SPB_",
            "InitAge",
            "RecrDev"),
-         modelnames="default"
+         modelnames="default",
+         burnin = 0,            #the number of values to discard for burnin
+         thin = 1               #the thinning interval
          )
 
 {
@@ -39,6 +41,10 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
 
     # combine two dataframes
     allpost <- cbind(post,derpost)
+
+    #apply burnin and thinning
+    allpost <- allpost[seq((burnin+1),nrow(allpost),thin),]
+
     # make list of all dataframes
     postlist[[imodel]] <- allpost
 
