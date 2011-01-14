@@ -47,12 +47,16 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
     for(istring in 1:length(keystrings))
       keylabels <- c(keylabels,names(allpost)[grep(keystrings[istring],names(allpost))])
       nuisancelabels <- c(nuisancelabels,names(allpost)[grep(nuisancestrings[istring],names(allpost))])
-    keypost <- allpost[names(allpost) %in% keylabels,]
-    nuisancepost <- allpost[names(allpost) %in% nuisancelabels,]
+    keypost <- allpost[,names(allpost) %in% keylabels]
+    nuisancepost <- allpost[,names(allpost) %in% nuisancelabels]
 
     if(writecsv){
-      write.csv(keypost,paste(dir[imodel],csv1,sep="/"),row.names=FALSE)
-      write.csv(nuisancepost,paste(dir[imodel],csv2,sep="/"),row.names=FALSE)
+      file1 <- paste(dir[imodel],csv1,sep="/")
+      file2 <- paste(dir[imodel],csv2,sep="/")
+      if(verbose) cat("writing subset of posteriors to files:\n  ",
+                      file1,"\n  ",file2,"\n")
+      write.csv(keypost,file1,row.names=FALSE)
+      write.csv(nuisancepost,file2,row.names=FALSE)
     }
   }
   if(modelnames[1]=="default") names(postlist) <- paste("model",1:n,sep="")
