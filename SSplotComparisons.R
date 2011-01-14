@@ -6,6 +6,7 @@ SSplotComparisons <-
            indexfleets="default",
            indexUncertainty=FALSE,
            indexSEvec="default",
+           indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
            labels=c("Year",             #1
              "Spawning biomass (mt)",   #2
              "Spawning depletion",      #3
@@ -27,7 +28,8 @@ SSplotComparisons <-
            densityscalex=1,
            densityscaley=1,
            new=TRUE,
-           verbose=TRUE)
+           verbose=TRUE,
+           mcmcVec="default")
 {
   # subfunction to write png files
   pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -65,6 +67,7 @@ SSplotComparisons <-
   recruits      <- summaryoutput$recruits
   recdevs       <- summaryoutput$recdevs
   indices       <- summaryoutput$indices
+  mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
 
   # fix biomass for single-sex models
   if(any(nsexes==1)){
@@ -123,6 +126,8 @@ SSplotComparisons <-
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
 
+  if(mcmcVec[1]=="default") mcmcVec <- rep(F,nlines)
+
   addpoly <- function(yrvec, lower, upper){ # add shaded uncertainty intervals behind line
     lower[lower<0] <- 0 # max of value or 0
     for(iline in 1:nlines){
@@ -144,7 +149,31 @@ SSplotComparisons <-
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- range(0, SpawnBio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
+    if(uncertainty) {
+        #use mcmc results in available
+        for(iline in 1:nlines){
+            imodel <- models[iline]
+            if(mcmcVec[iline]) {
+                tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
+                if(length(tmp) > 0) {   #there are some mcmc values to use
+                    mcmclabs <- names(mcmc[[imodel]][tmp])
+                    lower <- apply(mcmc[[imodel]][,grep("SPB",names(mcmc[[imodel]]))],2,quantile,prob=0.025)   #hard-wired probability
+                    med <- apply(mcmc[[imodel]][,grep("SPB",names(mcmc[[imodel]]))],2,quantile,prob=0.5)   #hard-wired probability
+                    upper <- apply(mcmc[[imodel]][,grep("SPB",names(mcmc[[imodel]]))],2,quantile,prob=0.975)   #hard-wired probability
+                    if(nsexes[iline] == 1) {
+                        lower <- lower/2
+                        upper <- upper/2
+                        med <- med/2
+                    }
+                    SpawnBioLower[,imodel] <- SpawnBioUpper[,imodel] <- SpawnBio[,imodel] <- NA
+                    SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
+                    SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
+                    SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
+                }
+            }
+        }
+        ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
+    }
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty){
       # add shading for undertainty
@@ -171,7 +200,26 @@ SSplotComparisons <-
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- range(0, Bratio[,models], na.rm=TRUE)
-    if(uncertainty) ylim=range(ylim, BratioUpper[,models], na.rm=TRUE)
+    if(uncertainty) {
+        #use mcmc results in available
+        for(iline in 1:nlines){
+            imodel <- models[iline]
+            if(mcmcVec[iline]) {
+                tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
+                if(length(tmp) > 0) {   #there are some mcmc values to use
+                    mcmclabs <- names(mcmc[[imodel]][tmp])
+                    lower <- apply(mcmc[[imodel]][,grep("Bratio",names(mcmc[[imodel]]))],2,quantile,prob=0.025)   #hard-wired probability
+                    med <- apply(mcmc[[imodel]][,grep("Bratio",names(mcmc[[imodel]]))],2,quantile,prob=0.5)   #hard-wired probability
+                    upper <- apply(mcmc[[imodel]][,grep("Bratio",names(mcmc[[imodel]]))],2,quantile,prob=0.975)   #hard-wired probability
+                    BratioLower[,imodel] <- BratioUpper[,imodel] <- SpawnBio[,imodel] <- NA
+                    Bratio[,imodel] <- med[match(Bratio$Label,mcmclabs)]
+                    BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
+                    BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
+                }
+            }
+        }
+        ylim=range(ylim, BratioUpper[,models], na.rm=TRUE)
+    }
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
     if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
@@ -262,15 +310,27 @@ SSplotComparisons <-
 
     # get uncertainty intervals if requested
     if(indexUncertainty){
-      subset <- indices2$imodel==models[1]
-      if(indexSEvec[1]=="default") indexSEvec <- indices2$SE[subset]
-      y <- obs[subset]
-      if(log){
-        upper <- qnorm(.975,mean=y,sd=indexSEvec)
-        lower <- qnorm(.025,mean=y,sd=indexSEvec)
-      }else{
-        upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
-        lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
+      if(indexPlotEach) {
+        if(indexSEvec[1]=="default") indexSEvec <- indices2$SE    #there may be a little bit of confusion from using just the first element of indexSEvec
+        y <- obs
+        if(log){
+            upper <- qnorm(.975,mean=y,sd=indexSEvec)
+            lower <- qnorm(.025,mean=y,sd=indexSEvec)
+        }else{
+            upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
+            lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
+        }
+      }else {      
+        subset <- indices2$imodel==models[1]
+        if(indexSEvec[1]=="default") indexSEvec <- indices2$SE[subset]
+        y <- obs[subset]
+        if(log){
+            upper <- qnorm(.975,mean=y,sd=indexSEvec)
+            lower <- qnorm(.025,mean=y,sd=indexSEvec)
+        }else{
+            upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
+            lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
+        }
       }
     }else{
       upper <- NULL
@@ -294,13 +354,25 @@ SSplotComparisons <-
     }
     
     # get uncertainty intervals if requested
-    if(indexUncertainty)
-      arrows(x0=x, y0=lower, x1=x, y1=upper, length=0.01, angle=90, code=3, col=1)
       
     # put observed values on top
-    subset <- indices2$imodel==1
+    #subset <- indices2$imodel==1
     # points(yr[subset],obs[subset],pch=16,cex=1.5,type="o",lty=3) # connected by dashed lines
-    points(yr[subset],obs[subset],pch=16,cex=1.5)
+    if(indexPlotEach) {  #plot observed values for each model or just the first model
+        for(iline in 1:nlines) {
+            imodel <- models[iline]
+            subset <- indices2$imodel==imodel
+            if(indexUncertainty)
+                arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=shadecol[iline])
+            points(yr[subset],obs[subset],pch=16,cex=1.5,col=shadecol[iline])
+        }
+    }else {
+        imodel <- models[1]
+        subset <- indices2$imodel==imodel
+        if(indexUncertainty)
+            arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=1)
+        points(yr[subset],obs[subset],pch=16,cex=1.5)
+    }
 
     axis(1,at=yr)
     axis(2)
@@ -308,27 +380,53 @@ SSplotComparisons <-
   } # end plotIndices function
   
   plotDensities <- function(parname,xlab,limit0=TRUE){
-    vals <- rbind(pars[grep(parname,pars$Label),],
+    if(any(!mcmcVec)) { 
+        vals <- rbind(pars[grep(parname,pars$Label),],
                   quants[grep(parname,quants$Label),])
-    if(nrow(vals)!=1){
-      cat("problem getting values for parameter:",parname,"\n")
-      if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities\n")
-      if(nrow(vals)>0){
-        cat("Too many matching Labels:")
-        print(vals)
-      }
-    }else{
-      valSDs <- rbind(parsSD[grep(parname,pars$Label),],
+        if(nrow(vals)!=1){
+            cat("problem getting values for parameter:",parname,"\n")
+            if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities\n")
+            if(nrow(vals)>0){
+                cat("Too many matching Labels:")
+                print(vals)
+            }
+            return(NULL)  #previous versions had an else statement, but this will end the function here instead and saves indenting
+        }
+        valSDs <- rbind(parsSD[grep(parname,pars$Label),],
                       quantsSD[grep(parname,quants$Label),])
+    }
 
-      xmax <- xmin <- ymax <- NULL # placeholder for limits
-
-      # loop over models to set range
-      for(iline in 1:nlines){
-        imodel <- models[iline]
+    xmax <- xmin <- ymax <- NULL # placeholder for limits
+    mcmcDens <- vector(mode="list",length=nlines)   #placeholder for the mcmc density estimates, if there are any
+    # loop over models to set range
+    for(iline in 1:nlines){
+      imodel <- models[iline]
+      if(mcmcVec[iline]) {
+        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
+        if(length(mcmcColumn)!=1) {
+            cat("Too many columns selected from MCMC for model",imodel,". Please specify a unique label in the mcmc dataframe\nor specify mcmcVec=F for model",imodel,"or specify mcmcVec='default'.\n")
+            return(NULL) #exit this function
+        }
+        mcmcVals <- mcmc[[imodel]][,mcmcColumn]
+        if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+            mcmcVals <- mcmcVals/2
+        }
+        xmin <- min(xmin, quantile(mcmcVals,0.001))
+        xmax <- max(xmax, quantile(mcmcVals,0.999))
+        z <- density(mcmcVals,from=0)      #density estimate of mcmc sample (posterior)
+        z$x <- z$x[c(1,1:length(z$x),length(z$x))]
+        z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
+        ymax <- max(ymax,max(z$y))  #update ymax
+        mcmcDens[[iline]] <- z      #save the density estimate for later plotting
+      }else{
         parval <- vals[1,imodel]
         parSD <- valSDs[1,imodel]
+        if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
+          if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+            parval <- parval/2
+            parSD <- parSD/2
+          }
           # update x range
           xmin <- min(xmin, qnorm(0.001,parval,parSD))
           xmax <- max(xmax, qnorm(0.999,parval,parSD))
@@ -344,33 +442,65 @@ SSplotComparisons <-
           xmax <- max(xmax, parval)
         }
       }
-      if(length(grep("Bratio",parname))>0) xmin <- 0 # xmin=0 for depletion plots
-      if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+    }
+    if(length(grep("Bratio",parname))>0) xmin <- 0 # xmin=0 for depletion plots
+    if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
       
-      # make empty plot
-      plot(0,type="n",xlim=c(xmin,xmin+(xmax-xmin)*densityscalex),axes=FALSE,xaxs="i",
-           ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
-      x <- seq(xmin,xmax,length=500)
+    # make empty plot
+    plot(0,type="n",xlim=c(xmin,xmin+(xmax-xmin)*densityscalex),axes=FALSE,xaxs="i",
+         ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+    x <- seq(xmin,xmax,length=500)
 
-      # add vertical lines for target and threshold depletion values
-      if(length(grep("Bratio",parname))>0){
-        if(btarg>0){
-          abline(v=btarg,col="red")
-          text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
-        }
-        if(minbthresh>0){
-          abline(v=minbthresh,col="red")
-          text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
-        }
+    # add vertical lines for target and threshold depletion values
+    if(length(grep("Bratio",parname))>0){
+      if(btarg>0){
+        abline(v=btarg,col="red")
+        text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
       }
+      if(minbthresh>0){
+        abline(v=minbthresh,col="red")
+        text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
+      }
+    }
       
-      # loop again to make plots
-      for(iline in 1:nlines){
-        imodel <- models[iline]
+    symbolsQuants <- c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)
+    # loop again to make plots
+    for(iline in 1:nlines){
+      imodel <- models[iline]
+      if(mcmcVec[iline]) {
+        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
+        mcmcVals <- mcmc[[imodel]][,mcmcColumn]
+        if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+            mcmcVals <- mcmcVals/2
+        }
+        print("here")
+        print(x2)
+        x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
+        print(x2)
+        #find the positions in the density that are closest to these quantiles
+        x <- mcmcDens[[iline]]$x
+        y <- mcmcDens[[iline]]$y
+        yscale <- 1/(sum(y)*mean(diff(x)))
+        y <- y*yscale
+        y2 <- NULL
+        for(ii in x2) {
+            y2 <- c(y2,y[abs(x-ii)==min(abs(x-ii))])
+        }
+        print(x);print(y);print(x2);print(y2)
+        polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
+        lines(x,y,col=col[iline],lwd=2)
+        points(x2,y2,col=col[iline],pch=pch[iline])
+        lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
+      }else{
         parval <- vals[1,imodel]
         parSD <- valSDs[1,imodel]
         if(!is.na(parSD) && parSD>0){
-          x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
+          if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+            parval <- parval/2
+            parSD <- parSD/2
+          }
+          #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
+          x2 <- qnorm(symbolsQuants,parval,parSD)
           mle <- dnorm(x,parval,parSD)  # smooth line
           mle2 <- dnorm(x2,parval,parSD) # symbols
           mlescale <- 1/(sum(mle)*mean(diff(x)))
@@ -393,6 +523,7 @@ SSplotComparisons <-
     }
   } # end plotDensities function
   
+
   # subplot 1: spawning biomass
   if(1 %in% subplots){
     if(plot) plotSpawnBio(uncertainty=FALSE)
@@ -481,7 +612,9 @@ SSplotComparisons <-
     ndensities <- length(densitynames)
     for(iplot in 1:ndensities){
       name <- densitynames[iplot]
-      if(plot) plotDensities(parname=name,xlab=densityxlabs[iplot])
+      if(plot) {
+        plotDensities(parname=name,xlab=densityxlabs[iplot])
+      }
       if(print){
         pngfun(paste("compare10_densities_",name,".png"))
         plotDensities(parname=name,xlab=densityxlabs[iplot])
