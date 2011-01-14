@@ -21,7 +21,7 @@ SSplotComparisons <-
            legend=TRUE, legendlabels="default", legendloc="topright",
            btarg=0.4, minbthresh=0.25,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-           plotdir="workingdirectory",
+           plotdir=NULL,
            densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
            densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
            densityscalex=1,
@@ -31,7 +31,8 @@ SSplotComparisons <-
 {
   # subfunction to write png files
   pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-
+  if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
+  
   # subfunction to add legend
   legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
 
@@ -109,11 +110,17 @@ SSplotComparisons <-
   if(length(lwd) < nlines) lwd <- rep(lwd,nlines)
   
   if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
-  if(plotdir=="workingdirectory") plotdir <- getwd()
+
+  # determine operating system and open new window if requested
+  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
+  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+  # need appropriate line to support Mac operating systems
 
   if(plot & new){
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-    windows(record=TRUE)
+    if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
+    if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
+    if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
 
   addpoly <- function(yrvec, lower, upper){ # add shaded uncertainty intervals behind line

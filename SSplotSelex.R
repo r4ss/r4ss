@@ -361,8 +361,8 @@ SSplotSelex <-
         sel$sex     <- as.character(namesDF$V4)
         sel$agelen  <- as.character(namesDF$V5)
         sel$bin     <- as.numeric(as.character(namesDF$V6))
-        sel$lower   <- qnorm(0.025, mean=sel$Value, sd=sel$StdDev)
-        sel$upper   <- pmin(qnorm(0.975, mean=sel$Value, sd=sel$StdDev),1)
+        sel$lower   <- pmax(qnorm(0.025, mean=sel$Value, sd=sel$StdDev),0) # trim at 0
+        sel$upper   <- pmin(qnorm(0.975, mean=sel$Value, sd=sel$StdDev),1) # trim at 1
         i <- sel$fleet[1]
         m <- sel$sex[1]
         agelen <- sel$agelen[1]
