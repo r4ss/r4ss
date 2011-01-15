@@ -1,16 +1,21 @@
-SSplotData <- function(replist,col="grey",datatypes="all",fleets="all"){
+SSplotData <- function(replist,fleetcol="default",
+                       datatypes="all",fleets="all",ghost=FALSE)
+{
 
   ### get info from replist
   # dimensions
   startyr       <- replist$startyr
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
+  nfishfleets   <- replist$nfishfleets
   fleetnames    <- replist$FleetNames
   
   # catch
   catch <- SSplotCatch(replist,plot=F,print=F,verbose=F)
-  if(is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
-                                  catch <- catch$totcatchmat2
+  catch <- catch$totcatchmat
+  ## if(is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
+  ##                                 catch <- catch$totcatchmat
+
   # index
   cpue          <- replist$cpue
   
@@ -27,10 +32,24 @@ SSplotData <- function(replist,col="grey",datatypes="all",fleets="all"){
   tagdbase1     <- replist$tagdbase1
   tagdbase2     <- replist$tagdbase2
 
-  typenames <- c("catch","cpue","lendbase","sizedbase","agedbase","condbase",
-                 "ghostagedbase","ghostcondbase","ghostlendbase","ladbase",
-                 "wadbase","tagdbase1","tagdbase2")
-
+  typetable <- matrix(c(
+      "catch",         "Catch",                                         #1  
+      "cpue",          "Abundance indices",                             #2 
+      "lendbase",      "Length compositions",                           #3 
+      "sizedbase",     "Size compositions",                             #4 
+      "agedbase",      "Age compositions",                              #5 
+      "condbase",      "Conditional age-at-length compositions",        #6 
+      "ghostagedbase", "Ghost age compositions",                        #7 
+      "ghostcondbase", "Ghost conditional age-at-length  compositions", #8 
+      "ghostlendbase", "Ghost length compositions",                     #9 
+      "ladbase",       "Mean length-at-age",                            #10 
+      "wadbase",       "Mean weight-at-age",                            #11 
+      "tagdbase1",     "Tagging data",                                  #12 
+      "tagdbase2",     "Tagging data"),ncol=2,byrow=TRUE)               #13
+  if(!ghost) typetable <- typetable[-grep("ghost",typetable[,1]),]
+  typenames <- typetable[,1]
+  typelabels <- typetable[,2]
+  
   # loop over types to make a database of years with comp data
   ntypes <- 0
   typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5))
@@ -40,16 +59,18 @@ SSplotData <- function(replist,col="grey",datatypes="all",fleets="all"){
     if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
       ntypes <- ntypes+1
       for(ifleet in 1:nfleets){
+        allyrs <- NULL
         # identify years from different data types
-        if(typename=="catch") allyrs <- dat$Yr[dat[,ifleet]>0]
+        if(typename=="catch" & ifleet<=nfishfleets) allyrs <- dat$Yr[dat[,ifleet]>0]
         if(typename=="cpue") allyrs <- dat$Yr[dat$FleetNum==ifleet]
-        if(length(grep("dbase",typename))>1) allyrs <- dat$Yr
+        if(length(grep("dbase",typename))>0) allyrs <- dat$Yr[dat$Fleet==ifleet]
         # expand table of years with data
-        yrs <- sort(unique(floor(allyrs)))
-        if(length(yrs)>0)
+        if(!is.null(allyrs) & length(allyrs)>0){
+          yrs <- sort(unique(floor(allyrs)))
           typetable <- rbind(typetable,
                              data.frame(yr=yrs,fleet=ifleet,
                                         itype=ntypes,typename=typename))
+        }
       }
     }
   }
@@ -61,7 +82,61 @@ SSplotData <- function(replist,col="grey",datatypes="all",fleets="all"){
   if(datatypes[1]=="all") datatypes <- typenames
   typetable2 <- typetable[typetable$fleet %in% fleets &
                           typetable$typename %in% datatypes,]
-  
+
+  # define dimensions of plot
+  ntypes <- max(typetable2$itype)
+  fleets <- sort(unique(typetable2$fleet))
+  nfleets2 <- length(fleets)
+
+  # define colors
+  if(fleetcol[1]=="default"){
+    if(nfleets2>3) fleetcol <- rich.colors.short(nfleets2+1)[-1]
+    if(nfleets2==2) fleetcol <- rich.colors.short(nfleets2)
+    if(nfleets2==3) fleetcol <- c("blue","red","green3")
+  }else{
+    if(length(fleetcol) < nfleets2) fleetcol=rep(fleetcol,nfleets2)
+  }
+    
+  par(mar=c(5,2,4,8)+0.1) # multi-panel plot
+  xlim <- c(-1,1)+range(typetable2$yr,na.rm=TRUE)
+  yval <- 0
+  # count number of unique combinations of fleet and data type
+  ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
+  plot(0,xlim=xlim,ylim=c(0,ymax+ntypes),axes=F,xaxs='i',yaxs='i',
+       type="n",xlab="Year",ylab="",main="Data by type and year")
+  xticks <- 5*round(xlim[1]:xlim[2]/5)
+  abline(v=xticks,col='grey',lty=3)
+  axistable <- data.frame(fleet=rep(NA,ymax),yval=NA)
+  itick <- 1
+  for(itype in ntypes:1){
+    typename <- unique(typetable2$typename[typetable2$itype==itype])
+    #fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
+    for(ifleet in rev(fleets)){
+      yrs <- typetable2$yr[typetable2$fleet==ifleet & typetable2$itype==itype]
+      if(length(yrs)>0){
+        yval <- yval+1
+        x <- min(yrs):max(yrs)
+        n <- length(x)
+        y <- rep(yval,n)
+        y[!x%in%yrs] <- NA
+        # identify solo points (no data from adjacent years)
+        solo <- rep(FALSE,n)
+        for(i in 2:(n-1)) if(is.na(y[i-1]) & is.na(y[i+1])) solo[i] <- TRUE
+        if(is.na(y[2])) solo[1] <- TRUE
+        if(is.na(y[n-1])) solo[n] <- TRUE
+        # add points and lines
+        points(x[solo], y[solo], pch=16, cex=2,col=fleetcol[ifleet])
+        lines(x, y, lwd=12, col=fleetcol[ifleet])
+        axistable[itick,] <- c(ifleet,yval)
+        itick <- itick+1
+      }
+    }
+    text(mean(xlim),yval+.7,typelabels[typenames==typename],font=2)
+    yval <- yval+1
+    if(itype!=1) abline(h=yval,col='grey',lty=3)
+  }
+  axis(4,at=axistable$yval,label=fleetnames[axistable$fleet],las=1)
+  box()
+  axis(1,at=xticks)
   return(invisible(typetable2))
-  
 }

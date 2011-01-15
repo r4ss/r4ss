@@ -149,6 +149,7 @@ SSplotCatch <-
     subset <- ts$Seas[goodrows]==1
     retmat2         <- retmat[subset,]
     totcatchmat2    <- totcatchmat[subset,]
+    totcatchmat2Yr  <- ts$Yr[subset]
     totobscatchmat2 <- totobscatchmat[subset,]
     discmat2        <- discmat[subset,]
     for(iseason in 2:nseasons){
@@ -263,7 +264,12 @@ SSplotCatch <-
   totcatchmat$Yr <- catchyrs
   returnlist <- list()
   returnlist[["totcatchmat"]] <- totcatchmat
-  if(nseasons > 1) returnlist[["totcatchmat2"]] <- totcatchmat2
+  if(nseasons > 1){
+    totcatchmat2 <- as.data.frame(totcatchmat2)
+    names(totcatchmat2) <- fleetnames[1:nfishfleets]
+    #totcatchmat2$Yr <- totcatchmat2Yr
+    returnlist[["totcatchmat2"]] <- totcatchmat2
+  }
   return(invisible(returnlist))
   # if(verbose) cat("  finished catch plots\n")
 }

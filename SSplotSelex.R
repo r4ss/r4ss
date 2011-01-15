@@ -371,7 +371,7 @@ SSplotSelex <-
         if(m=="Fem" & nsexes==2) sextitle3 <- "females"
         if(m=="Mal") sextitle3 <- "males"
         main <- paste("Uncertainty in selectivity for",FleetNames[i],sextitle3)
-        no0 <- sel$StdDev>0
+        no0 <- sel$StdDev>0.001
 
         if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$fleet==i & sizeselex$gender==m,]
         if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
@@ -392,6 +392,4 @@ SSplotSelex <-
       }
     }
   }
-  
-  flush.console()
 } 

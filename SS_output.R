@@ -1095,6 +1095,23 @@ SS_output <-
     }
   }
   returndat$catage <- catage
+
+  # Dynamic_Bzero output "with fishery"
+  Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2",1,"NUMBERS_AT_AGE_Annual_2",-1)
+  # Dynamic_Bzero output "no fishery"
+  Dynamic_Bzero2 <- matchfun2("Spawning_Biomass_Report_1",1,"NUMBERS_AT_AGE_Annual_1",-1)
+  if(Dynamic_Bzero1[[1]][1]=="absent"){
+    Dynamic_Bzero <- NA
+  }else{
+    Dynamic_Bzero <- cbind(Dynamic_Bzero1,Dynamic_Bzero2[,3])
+    names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+    if(nareas==1 & ngpatterns==1){ # for simpler models, do some cleanup
+      Dynamic_Bzero <- Dynamic_Bzero[-(1:2),]
+      for(icol in c(1,3,4)) Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
+      names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+    }
+  }
+  returndat$Dynamic_Bzero <- Dynamic_Bzero
   
   # adding stuff to list which gets returned by function
   if(comp){

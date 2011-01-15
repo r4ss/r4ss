@@ -1,6 +1,6 @@
 SS_plots <-
   function(
-    replist=NULL, plot=1:26, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:27, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
@@ -574,6 +574,12 @@ SS_plots <-
   # note! need to add png output for this funciton
   # end if 25 in plot or print
 
+  ### Plot 27: Data availability ###
+  if(27 %in% plot)
+      SSplotData(replist=replist)
+  # note! need to add png output for this funciton
+  # end if 27 in plot or print
+  
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
   ### end of SS_plots function
