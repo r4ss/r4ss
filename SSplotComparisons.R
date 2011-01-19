@@ -24,7 +24,7 @@ SSplotComparisons <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
            densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
-           densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
+           densityxlabs=c("B0 (mt)","Spawning Biomass in 2011 (mt)","depletion in 2011","log(R0)","MSY (mt)"),
            densityscalex=1,
            densityscaley=1,
            new=TRUE,
@@ -115,8 +115,8 @@ SSplotComparisons <-
   if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
 
   # determine operating system and open new window if requested
-  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
-  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+  if(grepl("linux",version$os)) OS <- "Linux"
+  if(grepl("mingw",version$os)) OS <- "Windows"
   # need appropriate line to support Mac operating systems
 
   if(plot & new){
@@ -174,7 +174,19 @@ SSplotComparisons <-
         }
         ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
     }
-    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[2],xaxs=xaxs,yaxs=yaxs)
+
+    # do some scaling of y-axis
+    ylab <- labels[2]
+    yunits <- 1
+    if(ylim[2] > 1e3 & ylim[2] < 1e6){
+      yunits <- 1e3
+      ylab <- gsub("mt","x1000 mt",ylab)
+    }
+    if(ylim[2] > 1e6){
+      yunits <- 1e6
+      ylab <- gsub("mt","million mt",ylab)
+    }
+    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
     if(uncertainty){
       # add shading for undertainty
       addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),], upper=SpawnBioUpper[-(1:2),])
@@ -192,6 +204,12 @@ SSplotComparisons <-
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
     if(legend) legendfun()
+
+    # add axes
+    axis(1)
+    yticks <- pretty(ylim)
+    axis(2,at=yticks,lab=format(yticks/yunits),las=1)
+    box()
   }
 
   plotBratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
@@ -220,7 +238,7 @@ SSplotComparisons <-
         }
         ylim=range(ylim, BratioUpper[,models], na.rm=TRUE)
     }
-    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs)
+    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
     matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     abline(h=0,col="grey")
@@ -239,18 +257,35 @@ SSplotComparisons <-
   }
 
   plotRecruits <- function(){ # plot recruitment
+    # do some automatic scaling of the units
+    ylim <- range(0,recruits[,models],na.rm=TRUE)
+    ylab <- labels[4]
+    yunits <- 1
+    if(ylim[2] > 1e3 & ylim[2] < 1e6){
+      yunits <- 1e3
+      ylab <- gsub("1,000s","millions",ylab)
+    }
+    if(ylim[2] > 1e6){
+      yunits <- 1e6
+      ylab <- gsub("1,000s","billions",ylab)
+    }
+
     if(xlim[1]=="default"){
       xlim <- range(recruits$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     # plot lines showing recruitment
     matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
-            xlim=xlim,ylim=range(0,recruits[,models],na.rm=TRUE),
-            xlab=labels[1],ylab=labels[4],xaxs=xaxs,yaxs=yaxs)
+            xlim=xlim,ylim=ylim,
+            xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
     # add points at equilibrium values
     points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
     if(legend) legendfun()
+    axis(1)
+    yticks <- pretty(ylim)
+    axis(2,at=yticks,lab=format(yticks/yunits),las=1)
+    box()
   }
 
   plotRecDevs <- function(){ # plot recruit deviations
@@ -261,7 +296,7 @@ SSplotComparisons <-
     }
 
     plot(0,xlim=xlim,ylim=c(-1,1)*max(abs(recdevs[,models]),na.rm=TRUE),
-         type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs)
+         type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
     abline(h=0,col="grey")
     # loop over vector of models to add lines
     for(iline in 1:nlines){
@@ -408,7 +443,7 @@ SSplotComparisons <-
             return(NULL) #exit this function
         }
         mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-        if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+        if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
         }
         xmin <- min(xmin, quantile(mcmcVals,0.001))
@@ -423,7 +458,7 @@ SSplotComparisons <-
         parSD <- valSDs[1,imodel]
         if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
             parval <- parval/2
             parSD <- parSD/2
           }
@@ -443,16 +478,29 @@ SSplotComparisons <-
         }
       }
     }
-    if(length(grep("Bratio",parname))>0) xmin <- 0 # xmin=0 for depletion plots
+    if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for depletion plots
     if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
       
-    # make empty plot
-    plot(0,type="n",xlim=c(xmin,xmin+(xmax-xmin)*densityscalex),axes=FALSE,xaxs="i",
-         ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+    # calculate x-limits and vector of values for densities
+    xlim <- c(xmin,xmin+(xmax-xmin)*densityscalex)
     x <- seq(xmin,xmax,length=500)
+    
+    # calculate some scaling stuff
+    xunits <- 1
+    if(xmax > 1e3 & xmax < 1e6){
+      xunits <- 1e3
+      xlab <- gsub("mt","x1000 mt",xlab)
+    }
+    if(xmax > 1e6){
+      xunits <- 1e6
+      xlab <- gsub("mt","million mt",xlab)
+    }
+    # make empty plot
+    plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
+         ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
 
     # add vertical lines for target and threshold depletion values
-    if(length(grep("Bratio",parname))>0){
+    if(grepl("Bratio",parname)){
       if(btarg>0){
         abline(v=btarg,col="red")
         text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
@@ -470,7 +518,7 @@ SSplotComparisons <-
       if(mcmcVec[iline]) {
         mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
         mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-        if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+        if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
         }
         x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
@@ -491,7 +539,7 @@ SSplotComparisons <-
         parval <- vals[1,imodel]
         parSD <- valSDs[1,imodel]
         if(!is.na(parSD) && parSD>0){
-          if(nsexes[imodel]==1 &&  length(grep("SPB",parname))>0) {   #divide by 2 for feamle only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
             parval <- parval/2
             parSD <- parSD/2
           }
@@ -512,7 +560,8 @@ SSplotComparisons <-
         }
       }
       abline(h=0,col="grey")
-      axis(1)
+      xticks <- pretty(xlim)
+      axis(1,at=xticks,lab=format(xticks/xunits))
       mtext(side=2,line=1,labels[8])
       box()
       legendfun()
