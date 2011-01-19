@@ -10,7 +10,8 @@ mcmc.nuisance2 <- function (
           thin=1,  							# can specify further thinning, default is none
           trace=0,							# plot trace for param # (to help sort out problem parameters)
           labelstrings="all",                                           # vector of strings that partially match the labels you want
-          columnnumbers="all"                                           # vector of strings that partially match the labels you want
+          columnnumbers="all",                                          # vector of strings that partially match the labels you want
+          sep=""		        			        # sep for data file
          )
   # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
 
@@ -29,11 +30,11 @@ mcmc.nuisance2 <- function (
 
   mcmcdata <- read.table(filename, 				# make data table of whole file
                          header = header, 			# no headers 
-                         sep = "", 				# space delimited
+                         sep = sep, 				# space delimited
                          fill = TRUE)				# fill empty cells to make a symmetrical array
   mcmcdata2 <- read.table(filename2, 				# make data table of whole file
                          header = header, 			# no headers 
-                         sep = "", 				# space delimited
+                         sep = sep, 				# space delimited
                          fill = TRUE)				# fill empty cells to make a symmetrical array
 
   mcmcdata <- cbind(mcmcdata,mcmcdata2)

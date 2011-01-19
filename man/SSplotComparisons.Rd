@@ -17,6 +17,7 @@ SSplotComparisons(summaryoutput,subplots=1:10,
            indexfleets="default",
            indexUncertainty=FALSE,
            indexSEvec="default",
+           indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
            labels=c("Year",             #1
              "Spawning biomass (mt)",   #2
              "Spawning depletion",      #3
@@ -34,10 +35,13 @@ SSplotComparisons(summaryoutput,subplots=1:10,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir="workingdirectory",
            densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
-           densityxlabs=c("B0","Spawning Biomass in 2011","depletion in 2011","log(R0)","MSY"),
-           densityscale=1,
+           densityxlabs=c("B0 (mt)","Spawning Biomass in 2011 (mt)","depletion in 2011","log(R0)","MSY (mt)"),
+           densityscalex=1,
+           densityscaley=1,
+           fix0=TRUE,
            new=TRUE,
-           verbose=TRUE)
+           verbose=TRUE,
+           mcmcVec="default")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -76,6 +80,10 @@ SSplotComparisons(summaryoutput,subplots=1:10,
     deal with the issue of differing uncertainty by models described
     above.
   } 
+  \item{indexPlotEach}{
+    TRUE plots the observed index for each model with colors,
+    or FALSE just plots observed once in black dots.
+  }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
   }
@@ -170,11 +178,18 @@ SSplotComparisons(summaryoutput,subplots=1:10,
     of top of highest peaks to provide better contrast among broader
     distributions
   }
+  \item{fix0}{
+    always include 0 in the density plots?
+  }
   \item{new}{
-    create new empty plot window (Windows only)
+    create new empty plot window
   }
   \item{verbose}{
     report progress to R GUI?
+  }
+  \item{mcmcVec}{
+    vector of TRUE/FALSE values (or single value) indicating whether
+    input values are from MCMC or to use normal distribution around MLE
   }
   
 }

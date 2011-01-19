@@ -27,6 +27,7 @@ SSplotComparisons <-
            densityxlabs=c("B0 (mt)","Spawning Biomass in 2011 (mt)","depletion in 2011","log(R0)","MSY (mt)"),
            densityscalex=1,
            densityscaley=1,
+           fix0=TRUE,
            new=TRUE,
            verbose=TRUE,
            mcmcVec="default")
@@ -245,11 +246,11 @@ SSplotComparisons <-
     abline(h=1,col="grey",lty=2)
 
     if(btarg>0){
-      abline(h=btarg,col="red")
+      abline(h=btarg,col="red",lty=2)
       text(min(Bratio$Yr)+4,btarg+0.03,"Management target",adj=0)
     }
     if(minbthresh>0){
-      abline(h=minbthresh,col="red")
+      abline(h=minbthresh,col="red",lty=2)
       text(min(Bratio$Yr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
     }
 
@@ -480,7 +481,8 @@ SSplotComparisons <-
     }
     if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for depletion plots
     if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
-      
+    if(fix0 & !grepl("SR_R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
+    
     # calculate x-limits and vector of values for densities
     xlim <- c(xmin,xmin+(xmax-xmin)*densityscalex)
     x <- seq(xmin,xmax,length=500)
@@ -502,11 +504,11 @@ SSplotComparisons <-
     # add vertical lines for target and threshold depletion values
     if(grepl("Bratio",parname)){
       if(btarg>0){
-        abline(v=btarg,col="red")
+        abline(v=btarg,col="red",lty=2)
         text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
       }
       if(minbthresh>0){
-        abline(v=minbthresh,col="red")
+        abline(v=minbthresh,col="red",lty=2)
         text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
       }
     }
