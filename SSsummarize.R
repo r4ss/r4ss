@@ -237,13 +237,18 @@ SSsummarize <- function(biglist,
   BratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Bratio[,1:n]),
                              sd=as.matrix(BratioSD[,1:n]))
 
-  # identify recruitment parameters
+  # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
   recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
+  recruitsSD <- quantsSD[grep("^Recr_",quantsSD$Label), ]
+  recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label),]
   minyr <- min(recruits$Yr,na.rm=TRUE)
   recruits$Yr[grep("Recr_Virgin",recruits$Label)] <- minyr - 2
   recruits$Yr[grep("Recr_Initial",recruits$Label)] <- minyr - 1
+  recruitsSD$Yr[grep("Recr_Virgin",recruitsSD$Label)] <- minyr - 2
+  recruitsSD$Yr[grep("Recr_Initial",recruitsSD$Label)] <- minyr - 1
   recruits <- recruits[order(recruits$Yr),]
+  recruitsSD <- recruitsSD[order(recruitsSD$Yr),]
 
   if(any(is.na(recruits[3,]))){
     cat("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year\n")
@@ -254,9 +259,18 @@ SSsummarize <- function(biglist,
         recruits[recruits$Yr==minyr-2, imodel] <- recruits[1,imodel]
         recruits[recruits$Yr==minyr-1, imodel] <- recruits[2,imodel]
         recruits[1:2,imodel] <- NA
+        recruitsSD[recruitsSD$Yr==minyr-2, imodel] <- recruitsSD[1,imodel]
+        recruitsSD[recruitsSD$Yr==minyr-1, imodel] <- recruitsSD[2,imodel]
+        recruitsSD[1:2,imodel] <- NA
       }
     }
   }
+  recruitsLower <- recruitsUpper <- recruitsSD
+  recruitsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recruits[,1:n]),
+                               sd=as.matrix(recruitsSD[,1:n]))
+  recruitsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recruits[,1:n]),
+                               sd=as.matrix(recruitsSD[,1:n]))
+
 
   # identify parameters that are recruitment deviations
   pars$recdev <- FALSE
@@ -287,10 +301,16 @@ SSsummarize <- function(biglist,
     InitAgeYrs <- NA
   }
   recdevs <- pars[pars$recdev,]
-  recdevs <- recdevs[order(recdevs$Yr),1:(n+2)]
-
-
-
+  recdevsSD <- parsSD[pars$recdev,]
+  myorder <- order(recdevs$Yr) # save order for use in both values and SDs
+  recdevs <- recdevs[myorder,1:(n+2)]
+  recdevsSD <- recdevsSD[myorder,1:(n+1)]
+  recdevsSD$Yr <- recdevs$Yr
+  recdevsLower <- recdevsUpper <- recdevsSD
+  recdevsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recdevs[,1:n]),
+                              sd=as.matrix(recdevsSD[,1:n]))
+  recdevsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recdevs[,1:n]),
+                              sd=as.matrix(recdevsSD[,1:n]))
 
   
   mylist <- list()
@@ -317,7 +337,13 @@ SSsummarize <- function(biglist,
   mylist$BratioLower    <- BratioLower
   mylist$BratioUpper    <- BratioUpper
   mylist$recruits       <- recruits
+  mylist$recruitsSD     <- recruitsSD
+  mylist$recruitsLower  <- recruitsLower
+  mylist$recruitsUpper  <- recruitsUpper
   mylist$recdevs        <- recdevs
+  mylist$recdevsSD      <- recdevsSD
+  mylist$recdevsLower   <- recdevsLower
+  mylist$recdevsUpper   <- recdevsUpper
   mylist$growth         <- growth
   mylist$indices        <- indices
   mylist$InitAgeYrs     <- InitAgeYrs
