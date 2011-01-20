@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:10,
+  function(summaryoutput,subplots=1:12,
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
@@ -358,8 +358,11 @@ SSplotComparisons <-
       xlim <- range(recdevs$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-
-    plot(0,xlim=xlim,ylim=c(-1,1)*max(abs(recdevs[,models]),na.rm=TRUE),
+    ylim <- range(recdevs[,models],na.rm=TRUE)
+    if(uncertainty) ylim <- range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
+    ylim <- range(-ylim,ylim) # make symmetric
+                   
+    plot(0,xlim=xlim,ylim=ylim,
          type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
     abline(h=0,col="grey")
 
@@ -380,8 +383,7 @@ SSplotComparisons <-
       yvec <- recdevs[,imodel]
       xvec <- recdevs$Yr[!is.na(yvec)]
       yvec <- yvec[!is.na(yvec)]
-      lines(xvec,yvec,pch=pch[iline],lwd=lwd[iline],
-            lty=lty[iline],col=col[iline],type=type)
+      points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
     if(legend) legendfun()
   }
@@ -709,58 +711,58 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 6b: recruits with uncertainty
-  if(6 %in% subplots){
+  # subplot 7: recruits with uncertainty
+  if(7 %in% subplots){
     if(plot) plotRecruits()
     if(print){
-      pngfun("compare6b_recruits_uncertainty.png")
+      pngfun("compare7_recruits_uncertainty.png")
       plotRecruits()
       dev.off()
     }
   }
   
-  # subplot 7: recruit devs
-  if(7 %in% subplots){
+  # subplot 8: recruit devs
+  if(8 %in% subplots){
     if(plot) plotRecDevs(uncertainty=FALSE)
     if(print){
-      pngfun("compare7_recdevs.png")
+      pngfun("compare8_recdevs.png")
       plotRecDevs(uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 7b: recruit devs with uncertainty
-  if(7 %in% subplots){
+  # subplot 9: recruit devs with uncertainty
+  if(9 %in% subplots){
     if(plot) plotRecDevs()
     if(print){
-      pngfun("compare7_recdevs_uncertainty.png")
+      pngfun("compare9_recdevs_uncertainty.png")
       plotRecDevs()
       dev.off()
     }
   }
   
-  # subplot 8: index fits
-  if(8 %in% subplots){
+  # subplot 10: index fits
+  if(10 %in% subplots){
     if(plot) plotIndices()
     if(print){
-      pngfun("compare8_indices.png")
+      pngfun("compare10_indices.png")
       plotIndices()
       dev.off()
     }
   }
 
-  # subplot 9: index fits
-  if(9 %in% subplots){
+  # subplot 11: index fits
+  if(11 %in% subplots){
     if(plot) plotIndices(log=TRUE)
     if(print){
-      pngfun("compare9_indices_log.png")
+      pngfun("compare11_indices_log.png")
       plotIndices(log=TRUE)
       dev.off()
     }
   }
 
-  # subplot 10: B0 densities
-  if(10 %in% subplots){
+  # subplot 12: densities
+  if(12 %in% subplots){
     ndensities <- length(densitynames)
     for(iplot in 1:ndensities){
       name <- densitynames[iplot]
@@ -768,7 +770,7 @@ SSplotComparisons <-
         plotDensities(parname=name,xlab=densityxlabs[iplot])
       }
       if(print){
-        pngfun(paste("compare10_densities_",name,".png"))
+        pngfun(paste("compare12_densities_",name,".png"))
         plotDensities(parname=name,xlab=densityxlabs[iplot])
         dev.off()
       }
