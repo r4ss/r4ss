@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:12,
+  function(summaryoutput,subplots=1:13,
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
@@ -65,6 +65,9 @@ SSplotComparisons <-
   Bratio        <- summaryoutput$Bratio
   BratioLower   <- summaryoutput$BratioLower
   BratioUpper   <- summaryoutput$BratioUpper
+  SPRratio      <- summaryoutput$SPRratio
+  SPRratioLower <- summaryoutput$SPRratioLower
+  SPRratioUpper <- summaryoutput$SPRratioUpper
   recruits      <- summaryoutput$recruits
   recruitsLower <- summaryoutput$recruitsLower
   recruitsUpper <- summaryoutput$recruitsUpper
@@ -73,7 +76,9 @@ SSplotComparisons <-
   recdevsUpper  <- summaryoutput$recdevsUpper
   indices       <- summaryoutput$indices
   mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
-
+  lowerCI       <- summaryoutput$lowerCI
+  upperCI       <- summaryoutput$upperCI
+  
   # fix biomass for single-sex models
   if(any(nsexes==1)){
     cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
@@ -86,21 +91,6 @@ SSplotComparisons <-
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
-  if(length(endyrvec)==1) endyrvec <- rep(endyrvec,nlines)
-  if(!is.null(endyrvec)){
-    for(iline in 1:nlines){
-      endyr <- endyrvec[iline]
-      imodel <- models[iline]
-      SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
-      SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
-      SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
-      Bratio[Bratio$Yr > endyr, imodel] <- NA
-      BratioLower[Bratio$Yr > endyr, imodel] <- NA
-      BratioUpper[Bratio$Yr > endyr, imodel] <- NA
-      recruits[recruits$Yr > endyr, imodel] <- NA
-      recdevs[recdevs$Yr > endyr, imodel] <- NA
-    }
-  }
   
   if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
   if(col[1]=="default" & nlines<3) col <- rc(nlines)
@@ -131,8 +121,133 @@ SSplotComparisons <-
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
 
-  if(mcmcVec[1]=="default") mcmcVec <- rep(F,nlines)
+  if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
+  # reset values to NA
+  cols <- (1:n)[mcmcVec]
+  SpawnBioLower[,cols] <- SpawnBioUpper[,cols] <- SpawnBio[,cols] <- NA
+  BratioLower[,cols] <- BratioUpper[,cols] <- Bratio[,cols] <- NA
+  SPRratioLower[,cols] <- SPRratioUpper[,cols] <- SPRratio[,cols] <- NA
+  recruitsLower[,cols] <- recruitsUpper[,cols] <- recruits[,cols] <- NA
+  recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
 
+
+
+  # get MCMC results if requested
+  for(iline in (1:nlines)[mcmcVec]){
+    imodel <- models[iline]
+    
+    ### get MCMC for SpawnBio
+    tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
+    if(length(tmp) > 0) {   #there are some mcmc values to use
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmclabs <- names(mcmc.tmp)
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      if(nsexes[iline] == 1) {
+        lower <- lower/2
+        upper <- upper/2
+        med <- med/2
+      }
+      SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
+      SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
+      SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
+    }
+
+    ### get MCMC for Bratio
+    for(iline in (1:nlines)[mcmcVec]){
+      imodel <- models[iline]
+      # get values from mcmc to replace
+      tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
+      if(length(tmp) > 0) {   #there are some mcmc values to use
+        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+        upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+        Bratio[,imodel] <- med[match(Bratio$Label,mcmclabs)]
+        BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
+        BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
+      }
+    }
+
+    ### get MCMC for SPRratio
+    for(iline in (1:nlines)[mcmcVec]){
+      imodel <- models[iline]
+      # get values from mcmc to replace
+      tmp <- grep("SPRratio",names(mcmc[[imodel]]))   #try it to see what you get
+      if(length(tmp) > 0) {   #there are some mcmc values to use
+        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+        upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+        SPRratio[,imodel] <- med[match(SPRratio$Label,mcmclabs)]
+        SPRratioLower[,imodel] <- lower[match(SPRratioLower$Label,mcmclabs)]
+        SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
+      }
+    }
+
+    ### get MCMC for recruits
+    # get values from mcmc to replace
+    tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
+    tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
+    tmp <- setdiff(tmp,tmp2)
+    if(length(tmp) > 0) { #there are some mcmc values to use
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmclabs <- names(mcmc.tmp)
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
+      recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
+      recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
+    }
+
+    ### get MCMC for recdevs
+    for(iline in (1:nlines)[mcmcVec]){
+      imodel <- models[iline]
+      # get values from mcmc to replace
+      tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
+                      grep("_InitAge_",names(mcmc[[imodel]])),
+                      grep("ForeRecr_",names(mcmc[[imodel]]))))
+      if(length(tmp) > 0) { #there are some mcmc values to use
+        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+        upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+        recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
+        recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
+        recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
+      }
+    }
+  }
+
+  if(length(endyrvec)==1) endyrvec <- rep(endyrvec,nlines)
+  if(!is.null(endyrvec)){
+    for(iline in 1:nlines){
+      endyr <- endyrvec[iline]
+      imodel <- models[iline]
+      SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
+      SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
+      SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
+      Bratio[Bratio$Yr > endyr, imodel] <- NA
+      BratioLower[Bratio$Yr > endyr, imodel] <- NA
+      BratioUpper[Bratio$Yr > endyr, imodel] <- NA
+      SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
+      SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
+      SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
+      recruits[recruits$Yr > endyr, imodel] <- NA
+      recruitsLower[recruits$Yr > endyr, imodel] <- NA
+      recruitsUpper[recruits$Yr > endyr, imodel] <- NA
+      recdevs[recdevs$Yr > endyr, imodel] <- NA
+      recdevsLower[recdevs$Yr > endyr, imodel] <- NA
+      recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+    }
+  }
+  
+  
   addpoly <- function(yrvec, lower, upper){ # add shaded uncertainty intervals behind line
     lower[lower<0] <- 0 # max of value or 0
     for(iline in 1:nlines){
@@ -149,31 +264,6 @@ SSplotComparisons <-
   equ <- -(1:2)
   
   plotSpawnBio <- function(uncertainty=TRUE){ # plot spawning biomass
-
-    #use mcmc results if available
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
-      # reset values to NA
-      SpawnBioLower[,imodel] <- SpawnBioUpper[,imodel] <- SpawnBio[,imodel] <- NA
-      # get values from mcmc to replace
-      tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
-      if(length(tmp) > 0) {   #there are some mcmc values to use
-        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
-        mcmclabs <- names(mcmc.tmp)
-        lower <- apply(mcmc.tmp,2,quantile,prob=0.025)   #hard-wired probability
-        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-        upper <- apply(mcmc.tmp,2,quantile,prob=0.975)   #hard-wired probability
-        if(nsexes[iline] == 1) {
-          lower <- lower/2
-          upper <- upper/2
-          med <- med/2
-        }
-        SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
-        SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
-        SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
-      }
-    }
-
     # get axis limits
     if(xlim[1]=="default"){
       xlim <- range(SpawnBio$Yr)
@@ -220,24 +310,6 @@ SSplotComparisons <-
   }
 
   plotBratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
-    #use mcmc results if available
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
-      # reset values to NA
-      BratioLower[,imodel] <- BratioUpper[,imodel] <- Bratio[,imodel] <- NA
-      # get values from mcmc to replace
-      tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
-      if(length(tmp) > 0) {   #there are some mcmc values to use
-        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
-        mcmclabs <- names(mcmc.tmp)
-        lower <- apply(mcmc.tmp,2,quantile,prob=0.025)   #hard-wired probability
-        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-        upper <- apply(mcmc.tmp,2,quantile,prob=0.975)   #hard-wired probability
-        Bratio[,imodel] <- med[match(Bratio$Label,mcmclabs)]
-        BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
-        BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
-      }
-    }
     # get axis limits
     if(xlim[1]=="default"){
       xlim <- range(Bratio$Yr)
@@ -265,27 +337,32 @@ SSplotComparisons <-
     if(legend) legendfun()
   }
 
-  plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
-    #use mcmc results if available
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
-      # reset values to NA
-      recruitsLower[,imodel] <- recruitsUpper[,imodel] <- recruits[,imodel] <- NA
-      # get values from mcmc to replace
-      tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
-      tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
-      tmp <- setdiff(tmp,tmp2)
-      if(length(tmp) > 0) { #there are some mcmc values to use
-        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
-        mcmclabs <- names(mcmc.tmp)
-        lower <- apply(mcmc.tmp,2,quantile,prob=0.025)   #hard-wired probability
-        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-        upper <- apply(mcmc.tmp,2,quantile,prob=0.975)   #hard-wired probability
-        recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
-        recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
-        recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
-      }
+  plotSPRratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+    # get axis limits
+    if(xlim[1]=="default"){
+      xlim <- range(SPRratio$Yr)
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
+    ylim <- range(0, SPRratio[,models], na.rm=TRUE)
+    if(uncertainty) ylim <- range(ylim, SPRratioUpper[,models], na.rm=TRUE)
+
+    # make plot
+    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab="(1-SPR)/(1-SPR_40%)" ,xaxs=xaxs,yaxs=yaxs,las=1)
+    if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+    matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    abline(h=0,col="grey")
+    abline(h=1,col="grey",lty=2)
+
+    if(btarg>0){
+      abline(h=0,col="grey")
+      abline(h=1,col="red",lty=2)
+      text(SPRratio$Yr[1]+4,(1+0.02),"Management target",adj=0)
+    }
+
+    if(legend) legendfun()
+  }
+  
+  plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
     # determine y-limits
     ylim <- range(0,recruits[,models],na.rm=TRUE)
     if(uncertainty) ylim <- range(ylim, recruits[,models], recruitsUpper[,models], na.rm=TRUE)
@@ -333,26 +410,6 @@ SSplotComparisons <-
   }
 
   plotRecDevs <- function(uncertainty=TRUE){ # plot recruit deviations
-    #use mcmc results if available
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
-      # reset values to NA
-      recdevsLower[,imodel] <- recdevsUpper[,imodel] <- recdevs[,imodel] <- NA
-      # get values from mcmc to replace
-      tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
-                      grep("_InitAge_",names(mcmc[[imodel]])),
-                      grep("ForeRecr_",names(mcmc[[imodel]]))))
-      if(length(tmp) > 0) { #there are some mcmc values to use
-        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
-        mcmclabs <- names(mcmc.tmp)
-        lower <- apply(mcmc.tmp,2,quantile,prob=0.025)   #hard-wired probability
-        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-        upper <- apply(mcmc.tmp,2,quantile,prob=0.975)   #hard-wired probability
-        recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
-        recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
-        recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
-      }
-    }
     # empty plot
     if(xlim[1]=="default"){
       xlim <- range(recdevs$Yr)
@@ -678,91 +735,108 @@ SSplotComparisons <-
     }
   }
 
-  ## # subplot 3: spawning depletion
-  # removed because subplot 4 turned out to be better and redundant
-
-  # subplot 4: biomass ratio (probably equal to spawning depletion)
-  if(4 %in% subplots){
+  # subplot 3: biomass ratio (hopefully equal to spawning depletion)
+  if(3 %in% subplots){
     if(plot) plotBratio(uncertainty=FALSE)
     if(print){
-      pngfun("compare4_Bratio.png")
+      pngfun("compare3_Bratio.png")
       plotBratio(uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 5: biomass ratio with uncertainty
-  if(5 %in% subplots){
+  # subplot 4: biomass ratio with uncertainty
+  if(4 %in% subplots){
     if(plot) plotBratio(uncertainty=uncertainty)
     if(print){
-      pngfun("compare5_Bratio_uncertainty.png")
+      pngfun("compare4_Bratio_uncertainty.png")
       plotBratio(uncertainty=uncertainty)
       dev.off()
     }
   }
-  
-  # subplot 6: recruits
+
+  # subplot 5: SPR ratio
+  if(5 %in% subplots){
+    if(plot) plotSPRratio(uncertainty=FALSE)
+    if(print){
+      pngfun("compare5_SPRratio.png")
+      plotSPRratio(uncertainty=FALSE)
+      dev.off()
+    }
+  }
+
+  # subplot 6: SPR ratio with uncertainty
   if(6 %in% subplots){
+    if(plot) plotSPRratio(uncertainty=uncertainty)
+    if(print){
+      pngfun("compare6_SPRratio_uncertainty.png")
+      plotSPRratio(uncertainty=uncertainty)
+      dev.off()
+    }
+  }
+
+  # subplot 7: recruits
+  if(7 %in% subplots){
     if(plot) plotRecruits(uncertainty=FALSE)
     if(print){
-      pngfun("compare6_recruits.png")
+      pngfun("compare7_recruits.png")
       plotRecruits(uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 7: recruits with uncertainty
-  if(7 %in% subplots){
+  # subplot 8: recruits with uncertainty
+  if(8 %in% subplots){
     if(plot) plotRecruits()
     if(print){
-      pngfun("compare7_recruits_uncertainty.png")
+      pngfun("compare8_recruits_uncertainty.png")
       plotRecruits()
       dev.off()
     }
   }
   
-  # subplot 8: recruit devs
-  if(8 %in% subplots){
+  # subplot 9: recruit devs
+  if(9 %in% subplots){
     if(plot) plotRecDevs(uncertainty=FALSE)
     if(print){
-      pngfun("compare8_recdevs.png")
+      pngfun("compare9_recdevs.png")
       plotRecDevs(uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 9: recruit devs with uncertainty
-  if(9 %in% subplots){
+  # subplot 10: recruit devs with uncertainty
+  if(10 %in% subplots){
     if(plot) plotRecDevs()
     if(print){
-      pngfun("compare9_recdevs_uncertainty.png")
+      pngfun("compare10_recdevs_uncertainty.png")
       plotRecDevs()
       dev.off()
     }
   }
   
-  # subplot 10: index fits
-  if(10 %in% subplots){
+  # subplot 11: index fits
+  if(11 %in% subplots){
     if(plot) plotIndices()
     if(print){
-      pngfun("compare10_indices.png")
+      pngfun("compare11_indices.png")
       plotIndices()
       dev.off()
     }
   }
 
-  # subplot 11: index fits
-  if(11 %in% subplots){
+  # subplot 12: index fits
+  if(12 %in% subplots){
     if(plot) plotIndices(log=TRUE)
     if(print){
-      pngfun("compare11_indices_log.png")
+      pngfun("compare12_indices_log.png")
       plotIndices(log=TRUE)
       dev.off()
     }
   }
 
-  # subplot 12: densities
-  if(12 %in% subplots){
+  # subplot 13: densities
+  if(13 %in% subplots){
     ndensities <- length(densitynames)
     for(iplot in 1:ndensities){
       name <- densitynames[iplot]
@@ -770,7 +844,7 @@ SSplotComparisons <-
         plotDensities(parname=name,xlab=densityxlabs[iplot])
       }
       if(print){
-        pngfun(paste("compare12_densities_",name,".png"))
+        pngfun(paste("compare13_densities_",name,".png"))
         plotDensities(parname=name,xlab=densityxlabs[iplot])
         dev.off()
       }

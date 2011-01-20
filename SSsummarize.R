@@ -237,6 +237,16 @@ SSsummarize <- function(biglist,
   BratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Bratio[,1:n]),
                              sd=as.matrix(BratioSD[,1:n]))
 
+  # identify biomass ratio parameters
+  SPRratio <- quants[grep("^SPRratio_",quants$Label),]
+  SPRratioSD <- quantsSD[grep("^SPRratio_",quantsSD$Label),]
+
+  SPRratioLower <- SPRratioUpper <- SPRratioSD
+  SPRratioLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(SPRratio[,1:n]),
+                             sd=as.matrix(SPRratioSD[,1:n]))
+  SPRratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(SPRratio[,1:n]),
+                             sd=as.matrix(SPRratioSD[,1:n]))
+  
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
   recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
@@ -336,6 +346,10 @@ SSsummarize <- function(biglist,
   mylist$BratioSD       <- BratioSD
   mylist$BratioLower    <- BratioLower
   mylist$BratioUpper    <- BratioUpper
+  mylist$SPRratio       <- SPRratio
+  mylist$SPRratioSD     <- SPRratioSD
+  mylist$SPRratioLower  <- SPRratioLower
+  mylist$SPRratioUpper  <- SPRratioUpper
   mylist$recruits       <- recruits
   mylist$recruitsSD     <- recruitsSD
   mylist$recruitsLower  <- recruitsLower
@@ -347,7 +361,8 @@ SSsummarize <- function(biglist,
   mylist$growth         <- growth
   mylist$indices        <- indices
   mylist$InitAgeYrs     <- InitAgeYrs
-
+  mylist$lowerCI        <- lowerCI
+  mylist$upperCI        <- upperCI
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
   
   return(mylist)

@@ -32,20 +32,22 @@ mcmc.nuisance2 <- function (
                          header = header, 			# no headers 
                          sep = sep, 				# space delimited
                          fill = TRUE)				# fill empty cells to make a symmetrical array
-  mcmcdata2 <- read.table(filename2, 				# make data table of whole file
+  if(bothfiles){
+    mcmcdata2 <- read.table(filename2, 				# make data table of whole file
                          header = header, 			# no headers 
                          sep = sep, 				# space delimited
                          fill = TRUE)				# fill empty cells to make a symmetrical array
 
-  mcmcdata <- cbind(mcmcdata,mcmcdata2)
-  ## mcmcdata <- cbind(mcmcdata2)
+    mcmcdata <- cbind(mcmcdata,mcmcdata2)
+  }
+
   if(header & labelstrings[1]!="all"){
     labels <- NULL
     for(istring in 1:length(labelstrings)){
       labels <- c(labels,names(mcmcdata)[grep(labelstrings[istring],names(mcmcdata))])
     }
-    
-print(labels)    
+    cat("All labels matching the input 'labelstrings':\n")
+    print(labels)
     mcmcdata <- mcmcdata[,names(mcmcdata)%in%labels]
   }
   
