@@ -187,21 +187,24 @@ SSplotComparisons <-
         SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
       }
     }
-
+  
     ### get MCMC for recruits
     # get values from mcmc to replace
-    tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
-    tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
-    tmp <- setdiff(tmp,tmp2)
-    if(length(tmp) > 0) { #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
-      recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
-      recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
-      recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
+    for(iline in (1:nlines)[mcmcVec]){
+      imodel <- models[iline]
+      tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
+      tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
+      tmp <- setdiff(tmp,tmp2)
+      if(length(tmp) > 0) { #there are some mcmc values to use
+        mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+        med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+        upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+        recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
+        recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
+        recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
+      }
     }
 
     ### get MCMC for recdevs
