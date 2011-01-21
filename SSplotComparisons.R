@@ -155,8 +155,8 @@ SSplotComparisons <-
     }
 
     ### get MCMC for Bratio
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
+    #for(iline in (1:nlines)[mcmcVec]){
+    #  imodel <- models[iline]
       # get values from mcmc to replace
       tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
       if(length(tmp) > 0) {   #there are some mcmc values to use
@@ -169,11 +169,11 @@ SSplotComparisons <-
         BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
         BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
       }
-    }
+    #}
 
     ### get MCMC for SPRratio
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
+    #for(iline in (1:nlines)[mcmcVec]){
+    #  imodel <- models[iline]
       # get values from mcmc to replace
       tmp <- grep("SPRratio",names(mcmc[[imodel]]))   #try it to see what you get
       if(length(tmp) > 0) {   #there are some mcmc values to use
@@ -186,12 +186,12 @@ SSplotComparisons <-
         SPRratioLower[,imodel] <- lower[match(SPRratioLower$Label,mcmclabs)]
         SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
       }
-    }
+    #}
   
     ### get MCMC for recruits
     # get values from mcmc to replace
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
+    #for(iline in (1:nlines)[mcmcVec]){
+    #  imodel <- models[iline]
       tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
       tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
       tmp <- setdiff(tmp,tmp2)
@@ -205,11 +205,11 @@ SSplotComparisons <-
         recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
         recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
       }
-    }
+    #}
 
     ### get MCMC for recdevs
-    for(iline in (1:nlines)[mcmcVec]){
-      imodel <- models[iline]
+    #for(iline in (1:nlines)[mcmcVec]){
+    #  imodel <- models[iline]
       # get values from mcmc to replace
       tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
                       grep("_InitAge_",names(mcmc[[imodel]])),
@@ -224,7 +224,7 @@ SSplotComparisons <-
         recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
         recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
       }
-    }
+    #}
   }
 
   if(length(endyrvec)==1) endyrvec <- rep(endyrvec,nlines)
