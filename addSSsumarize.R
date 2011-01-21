@@ -48,6 +48,9 @@ addSSsummarize <- function(origModels,newModels) {
 #       recruits:       Recruitment matrix
 #                           1st column is year
 #                           2nd column is recruitment as in original models (SS reports age-0 recruits)
+#                           3rd column is the standard deviation (optional)
+#                           4th column is a lower bound of the confidence interval to be plotted (say from an MCMC)
+#                           5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
 #       recdevs:        Recruitment deviate matrix
 #                           1st column is year
 #                           2nd column is deviate (matched with original models)
@@ -144,6 +147,9 @@ addSSsummarize <- function(origModels,newModels) {
         models$BratioUpper <- models$BratioUpper[order(models$BratioUpper[,"Yr"]),]
         #add recruits        
         models$recruits <- addColumn(models$recruits,x$recruits,"Yr",1,n,2)
+        models$recruitsSD <- addColumn(models$recruitsLower,x$recruits,"Yr",1,n,3)
+        models$recruitsLower <- addColumn(models$recruitsLower,x$recruits,"Yr",1,n,4)
+        models$recruitsUpper <- addColumn(models$recruitsUpper,x$recruits,"Yr",1,n,5)
         models$recdevs <- addColumn(models$recdevs,x$recdevs,"Yr",1,n,2)
         models$growth <- cbind(models$growth,NA)  #NEED TO IMPLEMENT
         
