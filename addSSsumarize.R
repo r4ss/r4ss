@@ -147,7 +147,7 @@ addSSsummarize <- function(origModels,newModels) {
         models$BratioUpper <- models$BratioUpper[order(models$BratioUpper[,"Yr"]),]
         #add recruits        
         models$recruits <- addColumn(models$recruits,x$recruits,"Yr",1,n,2)
-        models$recruitsSD <- addColumn(models$recruitsLower,x$recruits,"Yr",1,n,3)
+        models$recruitsSD <- addColumn(models$recruitsSD,x$recruits,"Yr",1,n,3)
         models$recruitsLower <- addColumn(models$recruitsLower,x$recruits,"Yr",1,n,4)
         models$recruitsUpper <- addColumn(models$recruitsUpper,x$recruits,"Yr",1,n,5)
         models$recdevs <- addColumn(models$recdevs,x$recdevs,"Yr",1,n,2)
