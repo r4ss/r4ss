@@ -45,6 +45,12 @@ addSSsummarize <- function(origModels,newModels) {
 #                           3rd column is the standard deviation of depletion (optional)
 #                           4th column is a lower bound of the confidence interval to be plotted (say from an MCMC)
 #                           5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
+#       SPRratio:         SPR ratio matrix
+#                           1st column is year
+#                           2nd column is depletion
+#                           3rd column is the standard deviation (optional)
+#                           4th column is a lower bound of the confidence interval to be plotted (say from an MCMC)
+#                           5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
 #       recruits:       Recruitment matrix
 #                           1st column is year
 #                           2nd column is recruitment as in original models (SS reports age-0 recruits)
@@ -151,6 +157,13 @@ addSSsummarize <- function(origModels,newModels) {
         models$recruitsLower <- addColumn(models$recruitsLower,x$recruits,"Yr",1,n,4)
         models$recruitsUpper <- addColumn(models$recruitsUpper,x$recruits,"Yr",1,n,5)
         models$recdevs <- addColumn(models$recdevs,x$recdevs,"Yr",1,n,2)
+        #add SPR
+        models$SPRratio <- addColumn(models$SPRratio,x$SPRratio,"Yr",1,n,2)
+        models$SPRratioSD <- addColumn(models$SPRratioSD,x$SPRratio,"Yr",1,n,3)
+        models$SPRratioLower <- addColumn(models$SPRratioLower,x$SPRratio,"Yr",1,n,4)
+        models$SPRratioUpper <- addColumn(models$SPRratioUpper,x$SPRratio,"Yr",1,n,5)
+
+
         models$growth <- cbind(models$growth,NA)  #NEED TO IMPLEMENT
         
         #Indices
