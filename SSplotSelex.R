@@ -364,24 +364,29 @@ SSplotSelex <-
         sel$lower   <- pmax(qnorm(0.025, mean=sel$Value, sd=sel$StdDev),0) # trim at 0
         sel$upper   <- pmin(qnorm(0.975, mean=sel$Value, sd=sel$StdDev),1) # trim at 1
         i <- sel$fleet[1]
-        m <- sel$sex[1]
         agelen <- sel$agelen[1]
         xlab <- labels[1:2][1 + (sel$agelen[1]=="A")] # decide label between length and age
-        if(m=="Fem" & nsexes==1) sextitle3 <- ""
-        if(m=="Fem" & nsexes==2) sextitle3 <- "females"
-        if(m=="Mal") sextitle3 <- "males"
-        main <- paste("Uncertainty in selectivity for",FleetNames[i],sextitle3)
-        no0 <- sel$StdDev>0.001
+        for(m in unique(sel$sex)){
+          seltemp <- sel[sel$sex==m,]
+          if(m=="Fem" & nsexes==1) sextitle3 <- ""
+          if(m=="Fem" & nsexes==2) sextitle3 <- "females"
+          if(m=="Mal") sextitle3 <- "males"
+          main <- paste("Uncertainty in selectivity for",FleetNames[i],sextitle3)
+          no0 <- seltemp$StdDev>0.001
 
-        if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$fleet==i & sizeselex$gender==m,]
-        if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
-        #Ian T.: finish this part to add full selectivity line, including bins for which
-        #        no uncertainty was requested
-        plot(sel$bin,sel$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
-             ylab=labels[4],type="o",col=col2,cex=1.1,xlim=c(0,max(sel$bin)))
-        arrows(x0=sel$bin[no0], y0=sel$lower[no0], x1=sel$bin[no0], y1=sel$upper[no0],
-               length=0.01, angle=90, code=3, col=col2)
-        abline(h=0,col="grey")
+          if(FALSE){
+            #Ian T.: this is the beginning of code to add the full selectivity line, 
+            #        including bins for which no uncertainty was requested
+            if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$fleet==i & sizeselex$gender==m,]
+            if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
+          }
+          
+          plot(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+               ylab=labels[4],type="o",col=col2,cex=1.1,xlim=c(0,max(seltemp$bin)))
+          arrows(x0=seltemp$bin[no0], y0=seltemp$lower[no0], x1=seltemp$bin[no0], y1=seltemp$upper[no0],
+                 length=0.01, angle=90, code=3, col=col2)
+          abline(h=0,col="grey")
+        }
         return(sel)
       }
       if(plot) plot_extra_selex_SD()
