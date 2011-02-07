@@ -918,7 +918,7 @@ SS_output <-
   spr$spr <- spr$SPR
   returndat$sprseries <- spr
   stats$last_years_SPR <- spr$spr[nrow(spr)]
-  stats$SPRratioLabel <- EA$managementratiolabels[1,2]
+  stats$SPRratioLabel <- managementratiolabels[1,2]
   stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]
 
   if(forecast){
