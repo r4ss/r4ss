@@ -91,6 +91,7 @@ SSplotComparisons <-
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
+  if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
   
   if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
   if(col[1]=="default" & nlines<3) col <- rc(nlines)
@@ -122,20 +123,20 @@ SSplotComparisons <-
   }
 
   if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
-  # reset values to NA
-  cols <- (1:n)[mcmcVec]
-  SpawnBioLower[,cols] <- SpawnBioUpper[,cols] <- SpawnBio[,cols] <- NA
-  BratioLower[,cols] <- BratioUpper[,cols] <- Bratio[,cols] <- NA
-  SPRratioLower[,cols] <- SPRratioUpper[,cols] <- SPRratio[,cols] <- NA
-  recruitsLower[,cols] <- recruitsUpper[,cols] <- recruits[,cols] <- NA
-  recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
-
 
 
   # get MCMC results if requested
   for(iline in (1:nlines)[mcmcVec]){
     imodel <- models[iline]
-    
+
+    # reset values to NA for mcmc columns only
+    cols <- imodel
+    SpawnBioLower[,cols] <- SpawnBioUpper[,cols] <- SpawnBio[,cols] <- NA
+    BratioLower[,cols] <- BratioUpper[,cols] <- Bratio[,cols] <- NA
+    SPRratioLower[,cols] <- SPRratioUpper[,cols] <- SPRratio[,cols] <- NA
+    recruitsLower[,cols] <- recruitsUpper[,cols] <- recruits[,cols] <- NA
+    recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
+
     ### get MCMC for SpawnBio
     tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
     if(length(tmp) > 0) {   #there are some mcmc values to use
@@ -274,7 +275,6 @@ SSplotComparisons <-
     }
     ylim <- range(0, SpawnBio[,models], na.rm=TRUE)
     if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
-
     # do some scaling of y-axis
     ylab <- labels[2]
     yunits <- 1
@@ -527,7 +527,6 @@ SSplotComparisons <-
     }
     
     # get uncertainty intervals if requested
-      
     # put observed values on top
     #subset <- indices2$imodel==1
     # points(yr[subset],obs[subset],pch=16,cex=1.5,type="o",lty=3) # connected by dashed lines
