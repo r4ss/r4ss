@@ -1,25 +1,25 @@
-mcmc.nuisance2 <- function (
-          directory="D:\\Working documents\\Flatfish\\english_results2\\", # directory to use
-          run="flat_tag_model1\\",					# folder with ADMB run files
-          file="posteriors.sso",					# the file name of the posteriors
-          file2="derived_posteriors.sso",				# the file name of the posteriors
-          bothfiles=FALSE,                                              # read and combine both file and file2                 
-          printstats=FALSE, 						# return all the statistics for a closer look
-          burn=0, 							# can specify a burn in to remove
-          header=F,							# header on data file?
-          thin=1,  							# can specify further thinning, default is none
-          trace=0,							# plot trace for param # (to help sort out problem parameters)
-          labelstrings="all",                                           # vector of strings that partially match the labels you want
-          columnnumbers="all",                                          # vector of strings that partially match the labels you want
-          sep=""		        			        # sep for data file
+mcmc.nuisance <- function (
+          directory="c:\\mydirectory\\",    # directory to use
+          run="mymodel\\",		    # folder with ADMB run files
+          file="posteriors.sso",	    # the file name of the posteriors
+          file2="derived_posteriors.sso",   # the file name of the posteriors
+          bothfiles=FALSE,                  # read and combine both file and file2                 
+          printstats=FALSE, 		    # return all the statistics for a closer look
+          burn=0, 			    # can specify a burn in to remove
+          header=F,			    # header on data file?
+          thin=1,  			    # can specify further thinning, default is none
+          trace=0,			    # plot trace for param # (to help sort out problem parameters)
+          labelstrings="all",               # vector of strings that partially match the columns you want to consider
+          columnnumbers="all",              # vector of column numbers indicating the columns you want to consider
+          sep=""		            # sep for data file
          )
   # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
 
 ##############################################################################################################
-	# Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
-	# Written: Ian Stewart, August 2003
-     # Arguments: See above
-     # Returns: Graphical devices containing summaries and plots
+    # Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
+    # Written: Ian Stewart, August 2003
+    # Arguments: See above
+    # Returns: Graphical devices containing summaries and plots
 ##############################################################################################################
  {
   filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use

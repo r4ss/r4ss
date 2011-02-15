@@ -47,7 +47,7 @@ SSplotSelex <-
       return("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
     }
   }
-  if(fleetnames[1]=="default") fleetnames <- FleetNames
+  if(fleetnames[1]=="default") fleetnames <- FleetNames # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
   # selex and retention
   for(i in fleets)
@@ -77,7 +77,7 @@ SSplotSelex <-
         z <- plotselex[,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
-        main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
+        main <- paste(sextitle1,"varying selectivity for ", fleetnames[i],sep="")
         if(plot)
         {
           if(1 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[4],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
@@ -106,7 +106,7 @@ SSplotSelex <-
         z <- intret[intret$Fleet==i,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
-        main <- paste(sextitle1,"varying retention for ", FleetNames[i],sep="")
+        main <- paste(sextitle1,"varying retention for ", fleetnames[i],sep="")
         if(plot)
         {
           if(3 %in% subplot) persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
@@ -133,7 +133,7 @@ SSplotSelex <-
       bins <- as.numeric(names(plotselex))
       vals <- as.numeric(paste(plotselex))
       retvals <- as.numeric(plotret)
-      main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
+      main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
       selfunc <- function()
       {
         # determine whether retention was used
@@ -214,7 +214,7 @@ SSplotSelex <-
           z <- plotageselex[,-(1:7)]
           z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
           z <- t(z)
-          main <- paste(sextitle1,"varying selectivity for ", FleetNames[i],sep="")
+          main <- paste(sextitle1,"varying selectivity for ", fleetnames[i],sep="")
           if(plot){
             if(6 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             if(7 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=2)}
@@ -232,7 +232,7 @@ SSplotSelex <-
           }
           plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
           plotageselex2 <- plotageselex2[,-(1:7)]
-          main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
+          main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
           endselfunc <- function()
           {
             plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
@@ -256,7 +256,7 @@ SSplotSelex <-
         vals <- as.numeric(paste(c(plotageselex)))
         if(diff(range(vals))!=0)
         {
-          main <- paste(sextitle2," year selectivity for ", FleetNames[i],sep="")
+          main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
           endselfunc2 <- function(){
             plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
             abline(h=0,col="grey")
@@ -310,7 +310,7 @@ SSplotSelex <-
           y <- lbinspop
           z <- plotageselex %o% plotlenselex # outer product of age- and length-selectivity
           
-          main <- paste(sextitle2," year selectivity and growth for ", FleetNames[i],sep="")
+          main <- paste(sextitle2," year selectivity and growth for ", fleetnames[i],sep="")
     
           agelenselcontour <- function(){
             contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
@@ -371,7 +371,7 @@ SSplotSelex <-
           if(m=="Fem" & nsexes==1) sextitle3 <- ""
           if(m=="Fem" & nsexes==2) sextitle3 <- "females"
           if(m=="Mal") sextitle3 <- "males"
-          main <- paste("Uncertainty in selectivity for",FleetNames[i],sextitle3)
+          main <- paste("Uncertainty in selectivity for",fleetnames[i],sextitle3)
           no0 <- seltemp$StdDev>0.001
 
           if(FALSE){

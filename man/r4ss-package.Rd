@@ -16,8 +16,8 @@
   \tabular{ll}{
     Package: \tab r4ss\cr
     Type: \tab Package\cr
-    Version: \tab 1.13\cr
-    Date: \tab 2011-01-04\cr
+    Version: \tab 1.14\cr
+    Date: \tab 2011-02-15\cr
     License: \tab MIT license\cr
     LazyLoad: \tab yes\cr
     URL: \tab http://www.r-project.org\cr \tab http://code.google.com/p/r4ss/\cr
@@ -25,8 +25,8 @@
   Should be compatible with Stock Synthesis versions 3.11 and 3.20
 }
 \author{
-  Ian Taylor, Ian Stewart, Tommy Garrison, Andre Punt, John Wallace,
-  and other contributors
+  Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre Punt,
+  John Wallace, Chantel Wetzel, and other contributors
 
   Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }

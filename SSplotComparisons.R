@@ -373,11 +373,11 @@ SSplotComparisons <-
     # do some automatic scaling of the units
     ylab <- labels[4]
     yunits <- 1
-    if(ylim[2] > 1e3 & ylim[2] < 1e6){
+    if(ylim[2] > 1e3 & ylim[2] < 1e6){ # if max recruits a million and a billion
       yunits <- 1e3
       ylab <- gsub("1,000s","millions",ylab)
     }
-    if(ylim[2] > 1e6){
+    if(ylim[2] > 1e6){ # if max is greater than a billion (e.g. pacific hake)
       yunits <- 1e6
       ylab <- gsub("1,000s","billions",ylab)
     }
