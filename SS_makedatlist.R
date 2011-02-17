@@ -68,7 +68,7 @@ SS_makedatlist <-
         names(fleetinfo2)[1] <- paste("#",names(fleetinfo2)[1],sep="")
         fleetinfo2$input <- c("#_units_of_catch","#_se_log_catch")
 
-        names(ageerror) <- c("#_age0",paste("age",1:nages,sep=""))
+        names(ageerror) <- c("#_age0",paste("age",1:Nages,sep=""))
 
         datlist <- list(SSversion = SSversion,
                         styr = styr,

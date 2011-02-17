@@ -9,7 +9,7 @@
   harvest rate, continuous F, landings, and discard fraction.
 }
 \usage{
-SSplotCatch(replist, subplots = 1:9, add = FALSE, areas = 1,
+SSplotCatch(replist, subplots = 1:15, add = FALSE, areas = 1,
 plot = TRUE, print = FALSE, type = "l", fleetlty = 1,
 fleetpch = 1, fleetcols = "default", fleetnames = "default", lwd = 3,
 areacols = "default", areanames = "default", minyr = NULL, maxyr = NULL,

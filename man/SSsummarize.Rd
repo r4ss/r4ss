@@ -10,8 +10,9 @@
   vectors.
 }
 \usage{
-SSsummarize(biglist, keyvec = NULL, numvec = NULL, selfactor =
-c("Lsel"), selfleet = NULL, selyr = "min", selgender = 1)
+SSsummarize(biglist, keyvec = NULL, numvec = NULL,
+selfactor = "Lsel", selfleet = NULL, selyr = "min", selgender = 1,
+lowerCI = 0.025, upperCI = 0.975)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +41,14 @@ c("Lsel"), selfleet = NULL, selyr = "min", selgender = 1)
   }
   \item{selgender}{
     Vector of genders (1 and/or 2) for which selectivity will be summarized. NULL=all genders. Default=NULL.
+  }
+  \item{lowerCI}{
+    Quantile for lower bound on calculated intervals. Default = 0.025
+    for 95\% intervals.
+  }
+  \item{upperCI}{
+    Quantile for upper bound on calculated intervals. Default = 0.975
+    for 95\% intervals.
   }
 }
 \details{

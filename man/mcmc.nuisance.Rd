@@ -7,14 +7,15 @@
 \description{
   Summarize nuisance MCMC output (used in combination with
   \code{\link{mcmc.out}} for key parameters).
+
 }
 \usage{
-mcmc.nuisance(directory = "c:\\mydirectory\\", run = "mymodel\\",
+mcmc.nuisance(directory = "c:/mydirectory/", run = "mymodel/",
 file = "posteriors.sso", file2 = "derived_posteriors.sso",
 bothfiles = FALSE, printstats = FALSE, burn = 0, header = F, thin = 1,
 trace = 0, labelstrings = "all", columnnumbers = "all", sep = "")
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{directory}{
     Directory where all results are located, one level above directory
@@ -48,7 +49,7 @@ trace = 0, labelstrings = "all", columnnumbers = "all", sep = "")
   }
   \item{thin}{
     Optional thinning value to apply on top of the option in the
-    starter file, in the \code{-mcsave} runtime command, and in
+    starter file, in the \code{mcsave} runtime command, and in
     \code{\link{SSgetMCMC}}.
   }
   \item{trace}{
@@ -62,19 +63,13 @@ trace = 0, labelstrings = "all", columnnumbers = "all", sep = "")
     Vector of column numbers indicating the columns you want to consider.
   }
   \item{sep}{
-    Separator for data file passed to the \code{\link{read.table}}
-    function.
+    Separator for data file passed to the \code{read.table} function.
   }
 }
 \details{
   %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-  %%  ~Describe the value returned
-  %%  If it is a LIST, use
-  %%  \item{comp1 }{Description of 'comp1'}
-  %%  \item{comp2 }{Description of 'comp2'}
-  %% ...
 }
 \references{
   %% ~put references to the literature/web site here ~

@@ -1,6 +1,6 @@
 mcmc.nuisance <- function (
-          directory="c:\\mydirectory\\",    # directory to use
-          run="mymodel\\",		    # folder with ADMB run files
+          directory="c:/mydirectory/",    # directory to use
+          run="mymodel/",		    # folder with ADMB run files
           file="posteriors.sso",	    # the file name of the posteriors
           file2="derived_posteriors.sso",   # the file name of the posteriors
           bothfiles=FALSE,                  # read and combine both file and file2                 
@@ -21,7 +21,10 @@ mcmc.nuisance <- function (
     # Arguments: See above
     # Returns: Graphical devices containing summaries and plots
 ##############################################################################################################
- {
+{
+  require(coda) || stop("package coda is required")
+  geterrmessage()
+
   filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use
   filename2  <- paste(directory,run,file2,sep="")			# put directory,run and file names together for use
 

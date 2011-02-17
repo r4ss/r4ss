@@ -11,7 +11,7 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SS_plots(replist = NULL, plot = 1:26, print = 0,
+SS_plots(replist = NULL, plot = 1:27, print = 0,
 pdf = FALSE, printfolder = "plots", dir = "default", fleets = "all",
 areas = "all", fleetnames = "default", fleetcols = "default",
 fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",

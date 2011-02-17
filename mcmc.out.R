@@ -1,6 +1,6 @@
 mcmc.out <- function (
-          directory="c:\\mydirectory\\",
-          run="mymodel\\",			# folder with ADMB run files
+          directory="c:/mydirectory/",
+          run="mymodel/",			# folder with ADMB run files
           file="keyposteriors.sso",		# the file name of the posteriors
           namefile="postplotnames.sso",		# the (optional) file name of the dimension and names of posteriors
           names=FALSE, 				# read in names file (T) or use generic naming (F)
@@ -30,7 +30,9 @@ mcmc.out <- function (
      	#          parameter plots are stacked in the history, page up and down scrolls through them
      	# Notes: columns with fixed values will cause the diagnostic tests to crash
 ##############################################################################################################
- {
+{
+  require(coda) || stop("package coda is required")
+  geterrmessage()
      
   # add section to set up for printing or display to screen (default)
   if(print==TRUE){}# not implemented

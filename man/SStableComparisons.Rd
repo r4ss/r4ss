@@ -31,7 +31,8 @@ SStableComparisons(summaryoutput,
            modelnames="default",
            csv=FALSE,
            csvdir="workingdirectory",
-           csvfile="parameter_comparison_table.csv")
+           csvfile="parameter_comparison_table.csv",
+           verbose=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,7 +48,7 @@ SStableComparisons(summaryoutput,
     Labels for likelihood values to include, should match substring of
     labels in \code{summaryoutput$likelihoods}.
   }
-  \item{likenames}{
+  \item{names}{
     Labels for parameters or derived quantities to include, should match
     substring of labels in \code{summaryoutput$pars} or
     \code{summaryoutput$quants}. 
@@ -92,7 +93,7 @@ SStableComparisons(summaryoutput,
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  \code{\link{SSsummarize}}, \code{\link{SS_plotComparisons}},
+  \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
   \code{\link{SS_output}}
 }
 \examples{

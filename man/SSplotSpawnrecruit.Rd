@@ -13,7 +13,7 @@ print = FALSE, xlim = NULL, ylim = NULL, xlab = "Spawning biomass (mt)",
 ylab = "Recruitment (1,000s)", plotdir = "default",
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1,  verbose = TRUE, line1 = "blue", line2 = "green3",
-line3 = "black", minyr = "default", textmindev = 0.7, ptcol = "red",
+line3 = "black", minyr = "default", textmindev = 0.5, ptcol = "red",
 virg = TRUE, init = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

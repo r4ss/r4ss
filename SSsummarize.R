@@ -1,7 +1,7 @@
 SSsummarize <- function(biglist,
                         keyvec=NULL,
                         numvec=NULL,
-                        selfactor=c("Lsel"),
+                        selfactor="Lsel",
                         selfleet=NULL,
                         selyr="min",
                         selgender=1,
