@@ -630,14 +630,16 @@ SS_output <-
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
-  # time varying parameters
-  MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",2,"selparm(Size)_By_Year_after_adjustments",-1)
-  if(nrow(MGparmAdj)>2){
-    MGparmAdj <- MGparmAdj[,MGparmAdj[1,]!=""]
-    names(MGparmAdj) <- c("Yr",parameters$Label[1:(ncol(MGparmAdj)-1)])
+  # time-varying parameters
+  MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,
+                         "selparm(Size)_By_Year_after_adjustments",-1,header=TRUE)
+  if(nrow(MGparmAdj)>0){
+    for(icol in 1:ncol(MGparmAdj)) MGparmAdj[,icol] <- as.numeric(MGparmAdj[,icol])
   }else{
     MGparmAdj <- NA
   }
+
+  # time-varying size-selectivity parameters
   SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,"selparm(Age)_By_Year_after_adjustments",-1)
   if(nrow(SelSizeAdj)>2){
     SelSizeAdj <- SelSizeAdj[,apply(SelSizeAdj,2,emptytest)<1]
@@ -647,6 +649,8 @@ SS_output <-
   }else{
     SelSizeAdj <- NA
   }
+
+  # time-varying age-selectivity parameters
   SelAgeAdj <- matchfun2("selparm(Age)_By_Year_after_adjustments",2,"RECRUITMENT_DIST",-1)
   if(nrow(SelAgeAdj)>2){
     SelAgeAdj <- SelAgeAdj[,apply(SelAgeAdj,2,emptytest)<1]

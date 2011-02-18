@@ -229,12 +229,12 @@ SSplotCatch <-
     if(subplot==9) a <- linefunc(ymat=Hratemat, ylab=ylabF, addtotal=FALSE)
     if(nseasons>1){
       if(subplot==10) a <- linefunc(ymat=retmat2, ylab=paste(labels[3],labels[10]), addtotal=TRUE, x=catchyrs2)
-      if(subplot==11 & nfishfleets>1) a <- stackfunc(ymat=retmat2, ylab=labels[3], x=catchyrs2)
+      if(subplot==11 & nfishfleets>1) a <- stackfunc(ymat=retmat2, ylab=paste(labels[3],labels[10]), x=catchyrs2)
       if(max(discmat)>0){
-        if(subplot==12) a <- linefunc(ymat=totcatchmat2, ylab=labels[4], addtotal=TRUE, x=catchyrs2)
-        if(subplot==13 & nfishfleets>1) a <- stackfunc(ymat=totcatchmat2, ylab=labels[4], x=catchyrs2)
-        if(subplot==14) a <- linefunc(ymat=discmat2,ylab=labels[5], addtotal=TRUE, x=catchyrs2)
-        if(subplot==15 & nfishfleets>1) a <- stackfunc(ymat=discmat2,ylab=labels[5], x=catchyrs2)
+        if(subplot==12) a <- linefunc(ymat=totcatchmat2, ylab=paste(labels[4],labels[10]), addtotal=TRUE, x=catchyrs2)
+        if(subplot==13 & nfishfleets>1) a <- stackfunc(ymat=totcatchmat2, ylab=paste(labels[4],labels[10]), x=catchyrs2)
+        if(subplot==14) a <- linefunc(ymat=discmat2,ylab=paste(labels[5],labels[10]), addtotal=TRUE, x=catchyrs2)
+        if(subplot==15 & nfishfleets>1) a <- stackfunc(ymat=discmat2,ylab=paste(labels[5],labels[10]), x=catchyrs2)
       }
     }
     if(verbose & a) cat("  finished catch subplot",subplot_names[subplot],"\n")

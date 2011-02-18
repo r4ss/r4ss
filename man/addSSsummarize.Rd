@@ -31,7 +31,7 @@ addSSsummarize(origModels,newModels)
   The models to add do not need to contain all of the entries.
   Missing entries are given NA values, so are not plotted.  Each
   model is a list with the following elements:
-  \decribe{
+  \describe{
   	\item{npars}{the number of parameters in the model}
   	\item{maxgrad}{the maximum gradient component (if used)}
   	\item{nsexes}{the number of sexes}
@@ -77,7 +77,7 @@ addSSsummarize(origModels,newModels)
                \item 5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
            }
        \item{SPRratio}{SPR ratio matrix}
-           \itemize {
+           \itemize{
                \item 1st column is year
                \item 2nd column is depletion
                \item 3rd column is the standard deviation (optional)
@@ -85,7 +85,7 @@ addSSsummarize(origModels,newModels)
                \item 5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
            }
        \item{recruits}{Recruitment matrix}
-			\itemize {
+			\itemize{
             	\item 1st column is year
             	\item 2nd column is recruitment as in original models (SS reports age-0 recruits)
             	\item 3rd column is the standard deviation (optional)
@@ -93,13 +93,13 @@ addSSsummarize(origModels,newModels)
             	\item 5th column is an upper bound of the confidence interval to be plotted (say from an MCMC)
 			}
        \item{recdevs}{Recruitment deviate matrix}
-       		\itemize {
+       		\itemize{
        			\item 1st column is year
        			\item 2nd column is deviate (matched with original models)
        		}
        \item{growth}{NOT IMPLEMENTED}
        \item{indices}{Matrix of fits to indices}
-       		\itemize {
+       		\itemize{
        			\item 1st column is year
        			\item 2nd column is observed index (data)
        			\item 3rd column is expected index (prediction)
@@ -141,9 +141,9 @@ addSSsummarize(origModels,newModels)
 \seealso{
   \code{\link{SSsummarize}}
   \code{\link{SSplotComparisons}}
-  \code{\link{list}}
 }
 \examples{
+  \dontrun{
   ######################################
   #DO NOT RUN
   tinss1 <- list(npars=A$fit$npar,maxgrad=A$fit$maxgrad,nsexes=1,
@@ -169,7 +169,7 @@ addSSsummarize(origModels,newModels)
   SSplotComparisons(SSnTINSS, legendlabels=modelnames, subplot=4,endyr=2011,mcmcVec=c(T,T,F))
   title(main="MCMC")
   ###############################################
-
+  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

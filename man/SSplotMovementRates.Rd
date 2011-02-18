@@ -9,13 +9,17 @@
   movement rates between cells.
 }
 \usage{
-SSplotMovementRates(replist=NULL, colvec="default", ylim="default",
-  legend=TRUE, legendloc="topleft", moveseas=1, cex.main=1)
+SSplotMovementRates(replist, subplots=1:2, colvec="default",
+  ylim="default", legend=TRUE, legendloc="topleft", moveseas="all",
+  cex.main=1, verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
     list created by \code{\link{SS_output}}
+  }
+  \item{subplots}{
+    which subplots to create
   }
   \item{colvec}{
     vector of colors for each movement rate in the plot
@@ -36,6 +40,9 @@ SSplotMovementRates(replist=NULL, colvec="default", ylim="default",
   }
   \item{cex.main}{
     Character expansion parameter for plot titles
+  }
+  \item{verbose}{
+    Print information on function progress.
   }
 }
 \details{
