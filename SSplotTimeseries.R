@@ -37,6 +37,7 @@ SSplotTimeseries <-
   SS_versionshort <- replist$SS_versionshort
   timeseries     <- replist$timeseries
   nseasons       <- replist$nseasons
+  spawnseas      <- replist$spawnseas
   startyr        <- replist$startyr
   endyr          <- replist$endyr
   nsexes         <- replist$nsexes
@@ -84,17 +85,10 @@ SSplotTimeseries <-
   }else{
     ts$YrSeas <- ts$Yr
   }
-  
-  # get spawning season
-  spawnseas <- unique(ts$Seas[!is.na(ts$SpawnBio)])
-  spawnseas1 <- min(spawnseas)
-  ## if(length(spawnseas)>1){
-  ##   spawnseastext <- paste(spawnseas,collapse=", ")
-  ## }else{
-  ##   spawnseastext <- spawnseas
-  ## }
-  if(spawnseas1>1 & subplot %in% c(3,6,7,8,9,10) ){
-    cat("Note: spawning seems to be in season ",spawnseas1,". Some plots will show only this season.\n",sep="") 
+
+  # warn about spawning season
+  if(spawnseas>1 & subplot %in% c(3,6,7,8,9,10) ){
+    cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="") 
   }
 
   # define which years are forecast or not
@@ -111,9 +105,9 @@ SSplotTimeseries <-
     plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value
     plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" # T/F for in area & not virgin value
     if(subplot %in% c(3,6,7,9)){
-      plot1 <- ts$Area==1 & ts$Era=="VIRG" & ts$Seas == spawnseas1 # T/F for in area & is virgin value
-      plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
-      plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
+      plot1 <- ts$Area==1 & ts$Era=="VIRG" & ts$Seas == spawnseas # T/F for in area & is virgin value
+      plot2 <- ts$Area==1 & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
+      plot3 <- ts$Area==1 & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
     }
 
     # switch for which column of the TIME_SERIES table is being plotted
@@ -121,13 +115,13 @@ SSplotTimeseries <-
     if(subplot %in% 1:3){
       yvals <- ts$Bio_all
       ylab <- labels[1]
-      if(subplot==3){ylab <- paste(labels[2],spawnseas1)}
+      if(subplot==3){ylab <- paste(labels[2],spawnseas)}
     }
     # subplot4,5,6 = summary biomass
     if(subplot %in% 4:6){
       yvals <- ts$Bio_smry
       ylab <- labels[3]
-      if(subplot==6){ylab <- paste(labels[4],spawnseas1)}
+      if(subplot==6){ylab <- paste(labels[4],spawnseas)}
     }
     # subplot7&8 = spawning biomass
     if(subplot %in% 7:8){
@@ -177,7 +171,7 @@ SSplotTimeseries <-
       # correct ymax value for plot 10 (other plots may need it too)
       if(subplot==10){
         for(iarea in 1:nareas){
-          yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas1][1])
+          yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas][1])
           ymax <- max(ymax,yvals,na.rm=TRUE)
         }
       }
@@ -303,12 +297,12 @@ SSplotTimeseries <-
       #   plot3 = subset for forecast
       ###
       if(subplot==10){
-        yvals <- ts$SpawnBio/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas1][1])
+        yvals <- ts$SpawnBio/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas][1])
       }
       if(subplot %in% c(3,6,7,8,9,10)){
-        plot1 <- ts$Area==iarea & ts$Era=="VIRG" & ts$Seas == spawnseas1 # T/F for in area & is virgin value
-        plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
-        plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas1 # T/F for in area & not virgin value
+        plot1 <- ts$Area==iarea & ts$Era=="VIRG" & ts$Seas == spawnseas # T/F for in area & is virgin value
+        plot2 <- ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
+        plot3 <- ts$Area==iarea & ts$period=="fore" & ts$Era!="VIRG" & ts$Seas == spawnseas # T/F for in area & not virgin value
       }else{
         plot1 <- yvals>0 & ts$Area==iarea & ts$Era=="VIRG" # T/F for in area & is virgin value
         plot2 <- yvals>0 & ts$Area==iarea & ts$period=="time" & ts$Era!="VIRG" # T/F for in area & not virgin value

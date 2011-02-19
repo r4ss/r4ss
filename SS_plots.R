@@ -569,8 +569,7 @@ SS_plots <-
 
   ### Plot 25: Movement rates ###
   if(25 %in% plot & nrow(replist$movement)>0)
-    for(i in 1:nseasons)
-      SSplotMovementRates(replist=replist,moveseas=i,cex.main=cex.main)
+    SSplotMovementRates(replist=replist,cex.main=cex.main)
   # note! need to add png output for this funciton
   # end if 25 in plot or print
 

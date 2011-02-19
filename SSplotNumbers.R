@@ -45,6 +45,7 @@ SSplotNumbers <-
     nsexes          <- replist$nsexes
     nareas          <- replist$nareas
     nseasons        <- replist$nseasons
+    spawnseas       <- replist$spawnseas
     ngpatterns      <- replist$ngpatterns
     morphlist       <- replist$morphlist
     morph_indexing  <- replist$morph_indexing
@@ -351,8 +352,8 @@ SSplotNumbers <-
       equilage <- equilage[as.vector(apply(equilage[,remove],1,sum))>0,]
 
       plot(0,type='n',xlim=c(0,accuage),
-           ylim=c(0,1.05*max(equilage[equilage$BirthSeas==min(equilage$BirthSeas)
-             & equilage$Seas==1,remove])),
+           ylim=c(0,1.05*max(equilage[equilage$BirthSeas==spawnseas
+             & equilage$Seas==spawnseas,remove])),
            xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10],cex.main=cex.main)
 
       # now fill in legend
@@ -363,11 +364,11 @@ SSplotNumbers <-
       for(iarea in areas){
         for(m in 1:nsexes){
           equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m
-                                   & equilage$BirthSeas==min(equilage$BirthSeas)
-                                   & equilage$Seas==1,]
+                                   & equilage$BirthSeas==spawnseas
+                                   & equilage$Seas==spawnseas,]
           if(nrow(equilagetemp)>1){
             cat("in plot of equilibrium age composition by gender and area\n",
-                "multiple morphs or seasons not supported, using first row from choices below\n")
+                "multiple morphs are not supported, using first row from choices below\n")
             print(equilagetemp[,1:10])
           }
           equilagetemp <- equilagetemp[1,remove]

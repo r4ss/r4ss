@@ -74,7 +74,7 @@ SSplotBiology <-
   if(FecType==2) FecY <- FecPar1*FecX^FecPar2
   if(FecType==3) FecY <- FecPar1*FecX^FecPar2
 
-  # Midle of season 1 mean length at age with 95% range of lengths (by sex if applicable)
+  # Midle of season 1 (or specified season) mean length at age with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Mid
   growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size

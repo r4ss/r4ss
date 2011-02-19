@@ -112,7 +112,7 @@ SS_output <-
         "  you are using",substr(SS_version,1,9),"which may NOT work with this R code.\n")
   }else{
     if(verbose)
-      cat("This function tested on SS-V3.11b and SS-V3.20a.\n",
+      cat("This function tested on SS-V3.11b through SS-V3.20b.\n",
           "  You're using",SS_versionshort,"which SHOULD work with this R code.\n")
   }
 
@@ -447,21 +447,13 @@ SS_output <-
     Lbin_method <- 2
   }
 
-  # info on growth morphs
+  # info on growth morphs (see also section setting mainmorphs below)
   endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
   if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
   if(SS_versionshort=="SS-V3.20") shift <- -2 else shift <- -1
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=T)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
-
-  # set mainmorphs as those morphs with the earliest birth season
-  # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
-  temp <- morph_indexing[morph_indexing$Bseas==min(morph_indexing$Bseas) &
-                                        morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-  mainmorphs <- min(temp$Index[temp$Gender==1])
-  if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
-  if(length(mainmorphs)==0) cat("!Error with morph indexing in SS_output function.\n")
 
   # forecast
   if(forecast){
@@ -720,7 +712,6 @@ SS_output <-
   returndat$nfishfleets <- nfishfleets
   returndat$nsexes      <- nsexes
   returndat$ngpatterns  <- ngpatterns
-  returndat$mainmorphs  <- mainmorphs
   returndat$lbins       <- lbins
   returndat$Lbin_method <- Lbin_method
   returndat$nlbins      <- nlbins
@@ -820,27 +811,41 @@ SS_output <-
   returndat$ageselex <- ageselex
 
   # time series
-  tsfull <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
-  tsfull[tsfull=="_"] <- NA
-  for(i in (1:ncol(tsfull))[names(tsfull)!="Era"]) tsfull[,i] = as.numeric(tsfull[,i])
-  returndat$timeseries <- tsfull
+  timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
+  timeseries[timeseries=="_"] <- NA
+  for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]) timeseries[,i] = as.numeric(timeseries[,i])
+  returndat$timeseries <- timeseries
+
+  # get spawning season
+  # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
+  returndat$spawnseas <- spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+
+  # set mainmorphs as those morphs born in the spawning season
+  # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
+  temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
+                         morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+  mainmorphs <- min(temp$Index[temp$Gender==1])
+  if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
+  if(length(mainmorphs)==0) cat("!Error with morph indexing in SS_output function.\n")
+  returndat$mainmorphs  <- mainmorphs
 
   # stats and dimensions
-  tsfull$Yr <- tsfull$Yr + (tsfull$Seas-1)/nseasons
-  ts <- tsfull[tsfull$Yr <= endyr+1,]
+  timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
+  ts <- timeseries[timeseries$Yr <= endyr+1,]
   tsyears <- ts$Yr[ts$Seas==1]
+
   # Depletion
-  if(nareas > 1)
+  tsspaw_bio <- ts$SpawnBio[ts$Seas==spawnseas & ts$Area==1]
+  if(nareas > 1) # loop over areas if necessary to sum spawning biomass
   {
-    tsspaw_bio <- ts$SpawnBio[ts$Seas==1 & ts$Area==1]
-    for(a in 2:nareas){tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas==1 & ts$Area==a]}
+    for(a in 2:nareas){
+      tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas==spawnseas & ts$Area==a]
+    }
   }
-  if(nareas == 1){tsspaw_bio <- ts$SpawnBio[ts$Seas==1]}
   if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
   depletionseries <- tsspaw_bio/tsspaw_bio[1]
   stats$SBzero <- tsspaw_bio[1]
-  # if(nsexes==1) stats$SBzero <- stats$SBzero/2
-  stats$current_depletion <- depletionseries[length(depletionseries)] # doesn't work for spatial models
+  stats$current_depletion <- depletionseries[length(depletionseries)]
 
   # total landings
   ls <- nrow(ts)-1
