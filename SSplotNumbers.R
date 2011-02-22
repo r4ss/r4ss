@@ -32,7 +32,10 @@ SSplotNumbers <-
 {
   # plot various things related to numbers-at-age for Stock Synthesis
 
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file){
+    cat('writing to',file,'\n')
+    png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  }
 
   natage    <- replist$natage
   natlen    <- replist$natlen

@@ -3,7 +3,7 @@ SSplotComparisons <-
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
-           indexfleets="default",
+           indexfleets=NULL,
            indexUncertainty=FALSE,
            indexSEvec="default",
            indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
@@ -91,6 +91,7 @@ SSplotComparisons <-
   
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
+  if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
   if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
   
   if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
@@ -121,9 +122,6 @@ SSplotComparisons <-
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
-
-  if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
-
 
   # get MCMC results if requested
   for(iline in (1:nlines)[mcmcVec]){

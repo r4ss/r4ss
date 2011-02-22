@@ -74,6 +74,8 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$depl_denom_frac <- allnums[i]; i <- i+1
   mylist$SPR_basis <- allnums[i]; i <- i+1
   mylist$F_report_units <- allnums[i]; i <- i+1
+  mylist$F_age_range <- allnums[i]; i <- i+1
+  mylist$F_age_range[2] <- allnums[i]; i <- i+1
   mylist$F_report_basis <- allnums[i]; i <- i+1
 
   # check final value
