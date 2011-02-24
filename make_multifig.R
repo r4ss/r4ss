@@ -3,7 +3,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
                           xlab="",ylab="",size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
                           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
-                          axis1="default",axis2="default",linepos=1,
+                          axis1="default",axis2="default",linepos=1,type="p",
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
@@ -120,8 +120,15 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
       bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=c(ptscol,ptscol2),
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot
     }else{
-      if(!bars) points(ptsx_i,ptsy_i,pch=pch,col=ptscol,cex=ptscex)	# points
-      if( bars) points(ptsx_i,ptsy_i,type="h",lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
+      if(FALSE){
+        # turning off old way
+        if(!bars) points(ptsx_i,ptsy_i,type=type,pch=pch,col=ptscol,cex=ptscex)	# points
+        if( bars) points(ptsx_i,ptsy_i,type="o",lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
+      }
+      # new way
+      polygon(c(ptsx_i[1],ptsx_i,tail(ptsx_i,1)),c(0,ptsy_i,0),col='grey80')  # polygon
+      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.7,col=ptscol)  # histogram-style bars
+      #
       if(doSD){
         arrows(x0=ptsx_i,y0=qnorm(p=0.05,mean=ptsy_i,sd=ptsSD_i),
                x1=ptsx_i,y1=qnorm(p=0.95,mean=ptsy_i,sd=ptsSD_i),

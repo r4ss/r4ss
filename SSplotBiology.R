@@ -45,8 +45,8 @@ SSplotBiology <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
   # check dimensions
   if(length(mainmorphs)>nsexes){
-    print("!Error with morph indexing in SSplotBiology function.",quote=FALSE)
-    print(" Code is not set up to handle multiple growth patterns or birth seasons.",quote=FALSE)
+    cat("!Error with morph indexing in SSplotBiology function.\n",
+        " Code is not set up to handle multiple growth patterns or birth seasons.\n")
   }
   xlab <- labels[1]
   x <- biology$Mean_Size
@@ -209,11 +209,11 @@ SSplotBiology <-
 
   # Time-varying growth (formerly plot #2)
   if(nseasons > 1){
-    if(verbose) print("No check for time-varying growth in multi-season models yet",quote=FALSE)
+    if(verbose) cat("No check for time-varying growth in multi-season models yet\n")
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
     {
-      print("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.",quote=FALSE)
+      cat("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.\n")
     }else{
       if(replist$growthvaries) # if growth is time varying
       for(i in 1:nsexes)

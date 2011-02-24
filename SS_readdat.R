@@ -59,23 +59,34 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   }else{
     fleetnames <- "fleet1"
   }
+  if(verbose) cat("fleetnames:",fleetnames,'\n')
   datlist$fleetnames <- fleetnames
   datlist$surveytiming <- surveytiming <- allnums[i:(i+Ntypes-1)]; i <- i+Ntypes
   datlist$areas <- areas <- allnums[i:(i+Ntypes-1)]; i <- i+Ntypes
+  if(verbose) cat("areas:",areas,'\n')
 
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming,areas))
   names(fleetinfo1) <- fleetnames
   fleetinfo1$input <- c("#_surveytiming","#_areas")
   datlist$fleetinfo1 <- fleetinfo1
-
+  ## if(verbose){
+  ##   cat("fleetinfo1:\n")
+  ##   print(t(fleetinfo1))
+  ## }
+  
   datlist$units_of_catch <- units_of_catch <- allnums[i:(i+Nfleet-1)]; i <- i+Nfleet
   datlist$se_log_catch <- se_log_catch <- allnums[i:(i+Nfleet-1)]; i <- i+Nfleet
   fleetinfo2 <- data.frame(rbind(units_of_catch,se_log_catch))
   names(fleetinfo2) <- fleetnames[1:Nfleet]
   fleetinfo2$input <- c("#_units_of_catch","#_se_log_catch")
   datlist$fleetinfo2 <- fleetinfo2
+  ## if(verbose){
+  ##   cat("fleetinfo2:\n")
+  ##   print(t(fleetinfo2))
+  ## }
 
+  
   # more dimensions
   datlist$Ngenders <- Ngenders <- allnums[i]; i <- i+1
   datlist$Nages <- Nages <- allnums[i]; i <- i+1
@@ -262,6 +273,11 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   datlist$N_environ_variables <- N_environ_variables <- allnums[i]; i <- i+1
   datlist$N_environ_obs <- N_environ_obs <- allnums[i]; i <- i+1
   datlist$N_sizefreq_methods <- N_sizefreq_methods <- allnums[i]; i <- i+1
+  if(verbose) cat("N_sizefreq_methods =",N_sizefreq_methods,"\n")
+  if(N_sizefreq_methods > 0){
+    print('no support for generalized size frequency data yet')
+  }
+    
   datlist$do_tags <- do_tags <- allnums[i]; i <- i+1
   if(do_tags != 0){
     datlist$N_tag_groups <- N_tag_groups <- allnums[i]; i <- i+1

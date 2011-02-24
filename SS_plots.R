@@ -340,33 +340,19 @@ SS_plots <-
     if(15 %in% c(plot,print))  # data only aspects
     {
       # length comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=FALSE,verbose=verbose,fleets=fleets,
-                  fleetnames=fleetnames,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                  minnbubble=minnbubble, pntscalar=pntscalar,
-                  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                  print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
-      # length comp bubble plot
       SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                  print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
-      # size comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=FALSE,verbose=verbose,fleets=fleets,
-                  fleetnames=fleetnames,
-                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                  minnbubble=minnbubble, pntscalar=pntscalar,
-                  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
-      # size comp bubble plot
+      # size comp bar plot
       SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                  print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,cohortlines=cohortlines,...)
+                  print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,...)
       if(verbose) cat("Finished plot 15: length and size comp data\n")
       flush.console()
     }
