@@ -28,6 +28,8 @@ SSplotComps <-
   # SSplotComps October 21, 2010
   ################################################################################
 
+  if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
+
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   lendbase      <- replist$lendbase
@@ -46,8 +48,6 @@ SSplotComps <-
   seasfracs     <- replist$seasfracs
   FleetNames    <- replist$FleetNames
   nsexes        <- replist$nsexes
-
-  if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
 
   titles <- NULL
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -689,7 +689,7 @@ SSplotComps <-
   } # end subplot 9
 
   ### subplot 10: by fleet aggregating across years
-  if(10 %in% subplots & kind!="cond") # for age or length comps, but not conditional AAL
+  if(10 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
     # check for the presence of data
@@ -815,7 +815,7 @@ SSplotComps <-
   } # end subplot 10
   
   ### subplot 11: by fleet aggregating across years
-  if(11 %in% subplots & kind!="cond") # for age or length comps, but not conditional AAL
+  if(11 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
     # check for the presence of data
@@ -859,10 +859,7 @@ SSplotComps <-
             # aggregating identifiers for plot titles and filenames
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
             filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
-  
-            ptitle <- paste(titledata,title_sexmkt, "aggregating across seasons within year by fleet",sep="") # total title
-            titles <- c(ptitle,titles) # compiling list of all plot titles
-  
+    
             # group remaining calculations as a function
             tempfun <- function(ipage,...){
               Bins <- sort(unique(dbase$Bin))
@@ -886,9 +883,11 @@ SSplotComps <-
                 }
               }
               agg$fy <- agg$f + agg$y/10000
-              for(ifleet in sort(unique(agg$f[agg$f%in%fleets]))){
-                aggsub <- agg[agg$f==ifleet,]
-                namesvec <- paste(fleetnames[ifleet],aggsub$y)
+              for(f in sort(unique(agg$f[agg$f%in%fleets]))){
+                ptitle <- paste(titledata,title_sexmkt,fleetnames[f], "\naggregated across seasons within year",sep="") # total title
+                titles <- c(ptitle,titles) # compiling list of all plot titles
+
+                aggsub <- agg[agg$f==f,]
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                   make_multifig(ptsx=aggsub$bin,ptsy=aggsub$obs,yr=aggsub$fy,
                                 linesx=aggsub$bin,linesy=aggsub$exp,
@@ -896,7 +895,7 @@ SSplotComps <-
                                 showsampsize=showsampsize,showeffN=showeffN,
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,
-                                legtext=list(namesvec,"sampsize","effN"),
+                                legtext=list(aggsub$y,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                                 fixdims=fixdims2,ipage=ipage,lwd=2,...)
@@ -923,7 +922,7 @@ SSplotComps <-
               ##                 fixdims=fixdims,ipage=ipage,...)
               ## }
   
-            }
+            } # end tempfun
             if(plot) tempfun(ipage=0,...) 
             if(print){ # set up plotting to png file if required
               npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)

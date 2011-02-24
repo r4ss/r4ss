@@ -7,7 +7,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
-                          ipage=0){
+                          ipage=0,scalebins=TRUE){
   ################################################################################
   #
   # make_multifig June 11, 2010
@@ -65,6 +65,27 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     linesy <- ptsy
   }
 
+  scaled <- FALSE
+  if(scalebins){
+    bins <- unique(ptsx)
+    binwidths <- diff(bins)
+    if(diff(range(binwidths))>0){
+      binwidths <- c(binwidths,tail(binwidths,1))
+      allbinwidths <- apply(as.matrix(ptsx),1,function(x) (binwidths)[bins==x])
+      ptsy <- ptsy/allbinwidths
+      scaled <- TRUE
+    }
+    bins <- unique(linesx)
+    binwidths <- diff(bins)
+    if(diff(range(binwidths))>0){
+      binwidths <- c(binwidths,tail(binwidths,1))
+      allbinwidths <- apply(as.matrix(linesx),1,function(x) (binwidths)[bins==x])
+      linesy <- linesy/allbinwidths
+      scaled <- TRUE
+    }
+    if(scaled & ylab=="Proportion") ylab <- "Proportion scaled by bin width"
+  }
+  
   # quick and dirty formula to get width of bars (if used) based on
   #	  number of columns and maximum number of bars within a in panel
   if(bars & barwidth=="default") barwidth <- 400/max(table(yr)+2)/ncols
@@ -91,7 +112,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
 
   # create multifigure layout and set inner margins all to 0 and add outer margins
   # new settings
-  par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,4,2)+.1)
+  par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,5,2)+.1)
 
   panelrange <- 1:npanels
   if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:(nrows*ncols) + nrows*ncols*(ipage-1))
