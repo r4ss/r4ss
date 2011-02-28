@@ -115,7 +115,7 @@ function (minLength=10, maxLength=65, silent = FALSE)
 
     entry.sp1 <- tkentry(frame3, textvariable = sp1, width="8")
     tkpack(ts2 <- tkscale(frame3, label = "Parameter 1 :", command = replot,
-        from = 5, to = 100, showvalue = 1, variable = sp1,
+        from = 5, to = 200, showvalue = 1, variable = sp1,
         resolution = 0.01, orient = "horiz", relief = "groove"),
         fill = "x", expand = 1, padx = 3, ipadx = 30, pady = 2, ipady = 2, side = "left")
     tkpack(entry.sp1, side = "right")

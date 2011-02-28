@@ -734,7 +734,7 @@ SSplotComps <-
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
             filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
   
-            ptitle <- paste(titledata,title_sexmkt, "aggregated within season by fleet",sep="") # total title
+            ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
             titles <- c(ptitle,titles) # compiling list of all plot titles
   
             # group remaining calculations as a function

@@ -22,6 +22,7 @@ SSplotSelex <-
   sizeselex      <- replist$sizeselex
   ageselex       <- replist$ageselex
   accuage        <- replist$accuage
+  startyr        <- replist$startyr
   endyr          <- replist$endyr
   FleetNames     <- replist$FleetNames
   growdat        <- replist$endgrowth
@@ -60,16 +61,16 @@ SSplotSelex <-
       if(m==1 & nsexes==1) sextitle2 <- "Ending"
       if(m==1 & nsexes==2) sextitle2 <- "Female ending"
       if(m==2) sextitle2 <- "Male ending"
-      intret <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
-      intmort <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$gender==m,]
-      intkeep <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
-      intdead <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
+      intret   <- sizeselex[sizeselex$Factor=="Ret" & sizeselex$gender==m,]
+      intmort  <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$gender==m,]
+      intkeep  <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$gender==m,]
+      intdead  <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$gender==m,]
       intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
       plotselex <- intselex[intselex$Fleet==i,]
       plotret <- intret[intret$Fleet==i,]
 
       # test for time-varying length selectivity
-      time <- any(apply(plotselex[-nrow(plotselex),-(1:5)], 2, function(x){any(x!=x[1])}))      
+      time <- any(apply(plotselex[-c(1,nrow(plotselex)),-(1:5)], 2, function(x){any(x!=x[1])}))      
       if(time)
       {
         x <- lbinspop
@@ -204,7 +205,7 @@ SSplotSelex <-
       ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
       plotageselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
       # test for time-varying age selectivity
-      time <- any(apply(plotageselex[-nrow(plotageselex),ageselexcols],2,function(x){any(x!=x[1])}))      
+      time <- any(apply(plotageselex[-c(1,nrow(plotageselex)),ageselexcols],2,function(x){any(x!=x[1])}))      
       if(time)
       {
         if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1))
