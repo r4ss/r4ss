@@ -7,7 +7,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
-                          ipage=0,scalebins=TRUE){
+                          ipage=0,scalebins=FALSE){
   ################################################################################
   #
   # make_multifig June 11, 2010
@@ -17,7 +17,6 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
   # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
   #
   ################################################################################
-
   bubble3 <- function (x,y,z,col=c(1,1),maxsize=3,do.sqrt=TRUE,
                        main="",cex.main=1,xlab="",ylab="",minnbubble=8,
                        xlimextra=1,add=FALSE,las=1,allopen=TRUE){
@@ -64,27 +63,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     linesx <- ptsx
     linesy <- ptsy
   }
-
-  scaled <- FALSE
-  if(scalebins){
-    bins <- unique(ptsx)
-    binwidths <- diff(bins)
-    if(diff(range(binwidths))>0){
-      binwidths <- c(binwidths,tail(binwidths,1))
-      allbinwidths <- apply(as.matrix(ptsx),1,function(x) (binwidths)[bins==x])
-      ptsy <- ptsy/allbinwidths
-      scaled <- TRUE
-    }
-    bins <- unique(linesx)
-    binwidths <- diff(bins)
-    if(diff(range(binwidths))>0){
-      binwidths <- c(binwidths,tail(binwidths,1))
-      allbinwidths <- apply(as.matrix(linesx),1,function(x) (binwidths)[bins==x])
-      linesy <- linesy/allbinwidths
-      scaled <- TRUE
-    }
-    if(scaled & ylab=="Proportion") ylab <- "Proportion scaled by bin width"
-  }
+  anyscaled <- FALSE
   
   # quick and dirty formula to get width of bars (if used) based on
   #	  number of columns and maximum number of bars within a in panel
@@ -131,6 +110,24 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     linesx_i <- sort(linesx_i)
 
     z_i <- size[yr==yr_i]
+
+    # optional rescaling of bins for line plots
+    scaled <- FALSE
+    if(scalebins){
+      bins <- sort(unique(ptsx_i))
+      binwidths <- diff(bins)
+      if(diff(range(binwidths))>0){
+        binwidths <- c(binwidths,tail(binwidths,1))
+        allbinwidths <- apply(as.matrix(ptsx_i),1,function(x) (binwidths)[bins==x])
+        ptsy_i <- ptsy_i/allbinwidths
+        linesy_i <- linesy_i/allbinwidths
+        scaled <- TRUE
+      }
+      if(scaled){
+        anyscaled <- TRUE
+        if(ylab=="Proportion") ylab <- "Proportion / bin width"
+      }
+    }
 
     # make plot
     plot(0,type="n",axes=FALSE,xlab="",ylab="",xlim=xrange_big,ylim=yrange_big,
@@ -231,6 +228,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
   # restore default single panel settings
   par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
 
+  if(anyscaled) cat("Note: compositions have been rescaled by dividing by binwidth\n")
   # return information on what was plotted
   return(list(npages=npages, npanels=npanels, ipage=ipage))
 } # end embedded function: make_multifig

@@ -219,6 +219,8 @@ SS_output <-
       yieldraw <- rawforcast1[(startline+1):endyield,]
     }else{
       yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
+      # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
+      # in this case, the output can be read only with forecast=F. A warning should be given.
     }
     if(SS_versionshort=="SS-V3.20"){
       yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]

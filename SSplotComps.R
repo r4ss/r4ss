@@ -22,14 +22,13 @@ SSplotComps <-
                       "Andre's conditional AAL plot, "), #13
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
-           fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,...)
+           fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
+           scalebins=FALSE,...)
 {
   ################################################################################
   # SSplotComps October 21, 2010
   ################################################################################
-
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
-
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   lendbase      <- replist$lendbase
@@ -216,6 +215,7 @@ SSplotComps <-
             ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
             titles <- c(ptitle,titles) # compiling list of all plot titles
             tempfun <- function(ipage,...){
+              # a function to combine a bunch of repeated commands
               if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                               sampsize=dbase$N,effN=dbase$effN,showsampsize=showsampsize,showeffN=showeffN,
@@ -223,7 +223,7 @@ SSplotComps <-
                               nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                              fixdims=fixdims,ipage=ipage,...)
+                              fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
               }
               if(kind=="GSTAGE"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -232,7 +232,7 @@ SSplotComps <-
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
               }
               if(kind=="GSTLEN"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -241,7 +241,7 @@ SSplotComps <-
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
               }
               if(kind %in% c("L@A","W@A")){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -251,10 +251,10 @@ SSplotComps <-
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
               }
-
-            }
+            } # end tempfun
+            
             if(plot) tempfun(ipage=0,...)
             if(print){ # set up plotting to png file if required
               npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
