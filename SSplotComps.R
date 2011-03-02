@@ -334,7 +334,7 @@ SSplotComps <-
                         bars=FALSE,linepos=0,main=ptitle,cex.main=cex.main,
                         xlab=labels[2],ylab=labels[1],ymin0=FALSE,maxrows=maxrows2,maxcols=maxcols2,
                         fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
-                        ptscol=col[1],ptscol2=col[2],ipage=ipage,...)
+                        ptscol=col[1],ptscol2=col[2],ipage=ipage,scalebins=scalebins,...)
             }
             if(plot) tempfun(ipage=0,...)
             if(print){ # set up plotting to png file if required
@@ -372,8 +372,7 @@ SSplotComps <-
                                   nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                   bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                   xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-
-                                  fixdims=fixdims,ipage=ipage,...)
+                                  fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
                   }
                   if(plot) tempfun(ipage=0,...)
                   if(print){
@@ -437,7 +436,7 @@ SSplotComps <-
                               nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
                               bars=bars,linepos=(1-datonly)*linepos,
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                              fixdims=fixdims,ipage=ipage,...)
+                              fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
                 }
                 if(plot) tempfun(ipage=0,...)
                 if(print){
@@ -646,7 +645,7 @@ SSplotComps <-
                               legtext=list(namesvec,"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                              fixdims=fixdims2,ipage=ipage,lwd=2,...)
+                              fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
               }
   
          # haven't configured this aggregated plot for other types
@@ -772,7 +771,7 @@ SSplotComps <-
                               legtext=list(namesvec,"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                              fixdims=fixdims2,ipage=ipage,lwd=2,...)
+                              fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
               }
   
          # haven't configured this aggregated plot for other types
@@ -898,7 +897,7 @@ SSplotComps <-
                                 legtext=list(aggsub$y,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims2,ipage=ipage,lwd=2,...)
+                                fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
                 }
               } # end loop over fleets
   
