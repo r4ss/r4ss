@@ -26,7 +26,7 @@ pheight = 7, punits = "in", ptsize = 12, res = 300, cex.main = 1,
 selexlines = 1:5, rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3, fixdims = TRUE,
 new = TRUE, catchasnumbers = FALSE, legendloc = "topleft",
-minyr = NULL, maxyr = NULL,...)
+minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -165,6 +165,11 @@ minyr = NULL, maxyr = NULL,...)
     (changes xlim parameters). }
   \item{maxyr}{ Last year to show in time-series plots
     (changes xlim parameters). }
+  \item{scalebins}{
+    Rescale expected and observed proportions in composition plots by
+    dividing by bin width for models where bins have different widths?
+    Caution!: May not work correctly in all cases.
+  }
   \item{\dots}{ Additional arguments that will be passed to some
     subfunctions. }
 }

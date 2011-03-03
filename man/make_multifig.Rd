@@ -20,7 +20,7 @@ barwidth = "default", ptscex = 1, ptscol = 1, ptscol2 = 1, linescol = 2,
 lty = 1, lwd = 1, pch = 1, nlegends = 3,
 legtext = list("yr","sampsize", "effN"), legx = "default",
 legy = "default", legadjx = "default", legadjy = "default",
-legsize = c(1.2, 1), legfont = c(2, 1), ipage = 0) 
+legsize = c(1.2, 1), legfont = c(2, 1), ipage = 0, scalebins = FALSE) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -183,7 +183,13 @@ legsize = c(1.2, 1), legfont = c(2, 1), ipage = 0)
     font type for legends, same as "font" under ?par
   }
   \item{ipage}{
-    which page of plots when covering more than will fit within maxrows by maxcols.
+    which page of plots when covering more than will fit within maxrows
+    by maxcols.
+  }
+  \item{scalebins}{
+    Rescale expected and observed proportions by dividing by bin width
+    for models where bins have different widths? Caution!: May not work
+    correctly in all cases.
   }
 }
 \details{

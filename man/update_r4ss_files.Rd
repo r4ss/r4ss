@@ -8,9 +8,13 @@
   mirrors.
 }
 \usage{
-update_r4ss_files()
+update_r4ss_files(local = NULL, save = FALSE)
 }
 \arguments{
+  \item{local}{ A local directory from which to source the files instead
+  of getting them from the web.}
+  \item{save}{ If TRUE, then copy files from web to local directory,
+    then source from this same local directory }
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~
@@ -34,19 +38,26 @@ update_r4ss_files()
 \examples{
 \dontrun{
 update_r4ss_files()
-#  sourcing updated functions from http://r4ss.googlecode.com/svn/trunk/ 
-#  57 files found:
-#    sourcing IOTCmove.R
-#    sourcing RebuildPlot.R
-#    sourcing SSFishGraph.R
-#    sourcing SS_changepars.R
-#    sourcing SS_fitbiasramp.R
-#    sourcing SS_makedatlist.R
-#    sourcing SS_output.R
-#    ...
-#    sourcing stackpoly.R
-#    sourcing update_r4ss_files.R
-#  update complete.
+# getting file names from http://r4ss.googlecode.com/svn/trunk/ 
+# most recent change: Today (6 hours ago) 
+# 64 files found in http://r4ss.googlecode.com/svn/trunk/ 
+#   sourcing IOTCmove.R
+#   sourcing RebuildPlot.R
+#   sourcing SSFishGraph.R
+#   sourcing SS_changepars.R
+#   sourcing SS_fitbiasramp.R
+#   sourcing SS_makedatlist.R
+#   ...
+#   sourcing stackpoly.R
+#   sourcing update_r4ss_files.R
+# update complete.
+
+# copy files from web to local directory and then source them
+update_r4ss_files(local='c:/SS/R/r4ss_files/',save=T)
+
+# source files from a local directory (i.e. if no network available)
+update_r4ss_files(local='c:/SS/R/r4ss_files/',save=F)
+
 }
 }
 % % Add one or more standard keywords, see file 'KEYWORDS' in the

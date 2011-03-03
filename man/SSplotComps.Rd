@@ -25,7 +25,8 @@ labels = c("Length (cm)", "Age (yr)", "Year",
 "Andre's conditional AAL plot, "), printmkt = TRUE,
 printsex = TRUE, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, rows = 1, cols = 1,
-fixdims = TRUE, maxneff = 5000, verbose = TRUE, ...)
+fixdims = TRUE, maxneff = 5000, verbose = TRUE,
+scalebins = FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -171,6 +172,11 @@ fixdims = TRUE, maxneff = 5000, verbose = TRUE, ...)
   }
   \item{verbose}{
     return updates of function progress to the R GUI?
+  }
+  \item{scalebins}{
+    Rescale expected and observed proportions by dividing by bin width
+    for models where bins have different widths? Caution!: May not work
+    correctly in all cases.
   }
   \item{\dots}{
     additional arguments that will be passed to the plotting.
