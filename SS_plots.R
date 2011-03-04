@@ -184,7 +184,7 @@ SS_plots <-
   if(5 %in% c(plot, print))
   {
     cat("Starting time series plots (group 5)\n")
-    for(isubplot in 1:12){ # which of 12 subplots to make
+    for(isubplot in 1:15){ # which of 12 subplots to make
       for(doforecast in unique(c(FALSE,forecastplot))){ # add forecast or not
         if(isubplot %in% c(7,9,11)){
           for(douncertainty in unique(c(FALSE,uncertainty))){ # add uncertainty or not

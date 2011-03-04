@@ -821,6 +821,8 @@ SS_output <-
   # get spawning season
   # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
   returndat$spawnseas <- spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+  # get birth seasons as vector of seasons with non-zero recruitment
+  returndat$birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
 
   # set mainmorphs as those morphs born in the spawning season
   # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
