@@ -154,10 +154,15 @@ SSplotSelex <-
           usekeep <- intkeep[intkeep$Fleet==i,]
           usemort <- intmort[intmort$Fleet==i,]
           usedead <- intdead[intdead$Fleet==i,]
-          plotret <- useret[useret$year==max(as.numeric(useret$year)),]
-          plotkeep <- usekeep[usekeep$year==max(as.numeric(usekeep$year)),]
-          plotmort <- usemort[usemort$year==max(as.numeric(usemort$year)),]
-          plotdead <- usedead[usedead$year==max(as.numeric(usedead$year)),]
+          if(endyr %in% as.numeric(useret$year)){
+            useyr <- endyr
+          }else{
+            useyr <- max(as.numeric(useret$year))
+          }
+          plotret <- useret[useret$year==useyr,]
+          plotkeep <- usekeep[usekeep$year==useyr,]
+          plotmort <- usemort[usemort$year==useyr,]
+          plotdead <- usedead[usedead$year==useyr,]
           if(2%in%selexlines){
             lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="o",pch=3,cex=.9)
             ylab <- paste(ylab,", Retention",sep="")
