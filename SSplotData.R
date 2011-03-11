@@ -52,7 +52,7 @@ SSplotData <- function(replist,fleetcol="default",
   
   # loop over types to make a database of years with comp data
   ntypes <- 0
-  typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5))
+  typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5)) # replace typetable object
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
     typename <- typenames[itype]
@@ -74,6 +74,9 @@ SSplotData <- function(replist,fleetcol="default",
       }
     }
   }
+  # not sure how typename became a factor, but need to make it character
+  typetable$typename <- as.character(typetable$typename)
+  
   # typetable is full data frame of all fleets and data types
   # typetable2 has been subset according to requested choices
   
@@ -82,7 +85,6 @@ SSplotData <- function(replist,fleetcol="default",
   if(datatypes[1]=="all") datatypes <- typenames
   typetable2 <- typetable[typetable$fleet %in% fleets &
                           typetable$typename %in% datatypes,]
-
   # define dimensions of plot
   ntypes <- max(typetable2$itype)
   fleets <- sort(unique(typetable2$fleet))
@@ -108,7 +110,7 @@ SSplotData <- function(replist,fleetcol="default",
   abline(v=xticks,col='grey',lty=3)
   axistable <- data.frame(fleet=rep(NA,ymax),yval=NA)
   itick <- 1
-  for(itype in ntypes:1){
+  for(itype in rev(unique(typetable2$itype))){
     typename <- unique(typetable2$typename[typetable2$itype==itype])
     #fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
     for(ifleet in rev(fleets)){
@@ -135,6 +137,7 @@ SSplotData <- function(replist,fleetcol="default",
         itick <- itick+1
       }
     }
+    
     text(mean(xlim),yval+.7,typelabels[typenames==typename],font=2)
     yval <- yval+1
     if(itype!=1) abline(h=yval,col='grey',lty=3)

@@ -146,27 +146,30 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # meanbodywt
   datlist$N_meanbodywt <- N_meanbodywt <- allnums[i]; i <- i+1
   if(verbose) cat("N_meanbodywt =",N_meanbodywt,"\n")
+  datlist$DF_for_meanbodywt <- allnums[i]
+  i <- i+1
+  if(echoall) cat("DF_for_meanbodywt =",datlist$DF_for_meanbodywt,"\n")
+  
   if(N_meanbodywt > 0){
     Ncols <- 6
     meanbodywt <- data.frame(matrix(
       allnums[i:(i+N_meanbodywt*Ncols-1)],nrow=N_meanbodywt,ncol=Ncols,byrow=TRUE))
-    i <- i+N_discard*Ncols
+    i <- i+N_meanbodywt*Ncols
     names(meanbodywt) <- c('Year','Seas','Type','Partition','Value','CV')
   }else{
     meanbodywt <- NULL
   }
   datlist$meanbodywt <- meanbodywt
-
-  datlist$DF_for_meanbodywt <- allnums[i]
-  i <- i+1
-  if(echoall) print(datlist$DF_for_meanbodywt)
+  if(echoall) print(meanbodywt)
   
   # length data
   datlist$lbin_method <- lbin_method <- allnums[i]; i <- i+1
+  if(echoall) cat("lbin_method =",lbin_method,"\n")
   if(lbin_method==2){
     datlist$binwidth <- allnums[i]; i <- i+1
     datlist$minimum_size <- allnums[i]; i <- i+1
     datlist$maximum_size <- allnums[i]; i <- i+1
+    if(echoall) cat("bin width, min, max =",datlist$binwidth,", ",datlist$minimum_size,", ",datlist$maximum_size,"\n")
   }else{
     datlist$binwidth <- NA
     datlist$minimum_size <- NA
@@ -175,14 +178,12 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   if(lbin_method==3){
     datlist$N_lbinspop <- N_lbinspop <- allnums[i]; i <- i+1
     datlist$lbin_vector_pop <- allnums[i:(i+N_lbinspop-1)]; i <- i+N_lbinspop
+    if(echoall) cat("N_lbinspop =",N_lbinspop,"\nlbin_vector_pop:\n")
   }else{
     datlist$N_lbinspop <- NA
     datlist$lbin_vector_pop <- NA
   }
-  if(echoall){
-    cat("N_lbinspop =",N_lbinspop,"\nlbin_vector_pop:\n")
-    print(datlist$lbin_vector_pop)
-  }
+
   datlist$comp_tail_compression <- allnums[i]; i <- i+1
   datlist$add_to_comp <- allnums[i]; i <- i+1
   datlist$max_combined_age <- allnums[i]; i <- i+1
@@ -217,6 +218,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
     agebin_vector <- NULL
   }
   datlist$agebin_vector <- agebin_vector
+  if(echoall) print(agebin_vector)
   
   datlist$N_ageerror_definitions <- N_ageerror_definitions <- allnums[i]; i <- i+1
   if(N_ageerror_definitions > 0){

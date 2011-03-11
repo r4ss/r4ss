@@ -759,6 +759,16 @@ SS_output <-
     FecPar1name <- "Eggs_scalar_Fem"
     FecPar2name <- "Eggs_exp_wt_Fem"
   }
+  if("Eggs_slope_len_Fem" %in% parameters$Label){
+    FecType <- 4
+    FecPar1name <- "Eggs_intercept_Fem"
+    FecPar2name <- "Eggs_slope_len_Fem"
+  }
+  if("Eggs_slope_Wt_Fem" %in% parameters$Label){
+    FecType <- 5
+    FecPar1name <- "Eggs_intercept_Fem"
+    FecPar2name <- "Eggs_slope_Wt_Fem"
+  }
   returndat$biology <- biology
   returndat$FecType <- FecType
   returndat$FecPar1name <- FecPar1name

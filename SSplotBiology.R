@@ -1,5 +1,5 @@
 SSplotBiology <-
-  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:8,seas=1,
+  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
            col1="red",col2="blue",
            legendloc="topleft",
            plotdir="default",
@@ -12,7 +12,8 @@ SSplotBiology <-
              "Natural mortality",               #7
              "Female weight (kg)",              #8
              "Female length (cm)",              #9
-             "Default fecundity label"),        #10
+             "Fecundity",                       #10
+             "Default fecundity label"),        #11
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -31,6 +32,7 @@ SSplotBiology <-
     
   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   biology      <- replist$biology
+  startyr      <- replist$startyr
   FecType      <- replist$FecType
   FecPar1name  <- replist$FecPar1name
   FecPar2name  <- replist$FecPar2name
@@ -41,7 +43,8 @@ SSplotBiology <-
   mainmorphs   <- replist$mainmorphs
   accuage      <- replist$accuage
   growthseries <- replist$growthseries
-
+  ageselex     <- replist$ageselex
+  
   if(plotdir=="default") plotdir <- replist$inputs$dir
   # check dimensions
   if(length(mainmorphs)>nsexes){
@@ -51,28 +54,19 @@ SSplotBiology <-
   xlab <- labels[1]
   x <- biology$Mean_Size
 
+  ## # stuff from selectivity that is not used
+  ## FecundAtAge <- ageselex[ageselex$factor=="Fecund", names(ageselex)%in%0:accuage]
+  ## WtAtAge <- ageselex[ageselex$factor=="bodywt", names(ageselex)%in%0:accuage]
+ 
   # determine fecundity type
   # define labels and x-variable
   if(FecType==1){
     fec_ylab <- "Eggs per kg"
     fec_xlab <- labels[8]
     FecX <- biology$Wt_len_F
+    FecY <- FecPar1 + FecPar2*FecX
   }
-  if(FecType==2){
-    fec_ylab <- "Eggs per kg"
-    fec_xlab <- labels[9]
-    FecX <- biology$Mean_Size
-  }
-  if(FecType==3){
-    fec_ylab <- "Eggs per kg"
-    fec_xlab <- labels[8]
-    FecX <- biology$Wt_len_F
-  }
-  if(labels[10]!="Default fecundity label") fec_ylab <- labels[10]
-
-  if(FecType==1) FecY <- FecPar1 + FecPar2*FecX
-  if(FecType==2) FecY <- FecPar1*FecX^FecPar2
-  if(FecType==3) FecY <- FecPar1*FecX^FecPar2
+  if(labels[11]!="Default fecundity label") fec_ylab <- labels[11]
 
   # Midle of season 1 (or specified season) mean length at age with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
@@ -110,14 +104,34 @@ SSplotBiology <-
     }
     if(!add) abline(h=0,col="grey")
   }
-  gfunc3 <- function(){ # fecundity
+  gfunc3a <- function(){ # fecundity from model parameters
     ymax <- 1.1*max(FecY)
     if(!add){
       plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=col2, pch=19)
       lines(FecX, rep(FecPar1, length(FecX)), col=col1)
       text(mean(range(FecX)), FecPar1-0.05*ymax,"Egg output proportional to spawning biomass")
-    }else{
+   }else{
       points(FecX, FecY,col=col2,pch=19)
+    }
+  }
+  gfunc3b <- function(){ # fecundity at weight from BIOLOGY section
+    ymax <- 1.1*max(biology$Fecundity)
+    if(!add){
+      plot(biology$Wt_len_F, biology$Fecundity, xlab=labels[8], ylab=labels[10],
+           ylim=c(0,ymax), col=col1, type='o')
+      abline(h=0,col="grey")
+    }else{
+      points(biology$Mean_Size, biology$Fecundity, col=col1, type='o')
+    }
+  }
+  gfunc3c <- function(){ # fecundity at length from BIOLOGY section
+    ymax <- 1.1*max(biology$Fecundity)
+    if(!add){
+      plot(biology$Mean_Size, biology$Fecundity, xlab=labels[9], ylab=labels[10],
+           ylim=c(0,ymax), col=col1, type='o')
+      abline(h=0,col="grey")
+    }else{
+      points(biology$Mean_Size, biology$Fecundity, col=col1, type='o')
     }
   }
   gfunc4 <- function(){ # spawning output
@@ -131,8 +145,11 @@ SSplotBiology <-
   if(plot){ # plot to screen or to PDF file
     if(1 %in% subplots) gfunc1()
     if(2 %in% subplots) gfunc2()
-    if(3 %in% subplots) gfunc3()
-    if(4 %in% subplots) gfunc4()}
+    if(3 %in% subplots & FecType==1) gfunc3a()
+    if(4 %in% subplots) gfunc3b()
+    if(5 %in% subplots) gfunc3c()
+    if(6 %in% subplots) gfunc4()
+  }
   if(print){ # print to PNG files
     if(1 %in% subplots){
       pngfun(file=paste(plotdir,"/bio1_weightatsize.png",sep=""))
@@ -142,12 +159,20 @@ SSplotBiology <-
       pngfun(file=paste(plotdir,"/bio2_maturity.png",sep=""))
       gfunc2()
       dev.off()}
-    if(3 %in% subplots){
+    if(3 %in% subplots & FecType==1){
       pngfun(file=paste(plotdir,"/bio3_fecundity.png",sep=""))
-      gfunc3()
+      gfunc3a()
       dev.off()}
     if(4 %in% subplots){
-      pngfun(file=paste(plotdir,"/bio4_spawningoutput.png",sep=""))
+      pngfun(file=paste(plotdir,"/bio4_fecundity_wt.png",sep=""))
+      gfunc3b()
+      dev.off()}
+    if(5 %in% subplots){
+      pngfun(file=paste(plotdir,"/bio5_fecundity_len.png",sep=""))
+      gfunc3c()
+      dev.off()}
+    if(6 %in% subplots){
+      pngfun(file=paste(plotdir,"/bio6_spawningoutput.png",sep=""))
       gfunc4()
       dev.off()}
   }
@@ -177,15 +202,15 @@ SSplotBiology <-
     }
     grid()
   }
-  if(plot & 5 %in% subplots) gfunc5()
-  if(print & 5 %in% subplots){
-    pngfun(file=paste(plotdir,"/bio5_sizeatage.png",sep=""))
+  if(plot & 7 %in% subplots) gfunc5()
+  if(print & 7 %in% subplots){
+    pngfun(file=paste(plotdir,"/bio7_sizeatage.png",sep=""))
     gfunc5()
     dev.off()}
 
   # Natural mortality (if time or sex varying)
   M <- growdatF$M
-  if(min(M)!=max(M) & 6 %in% subplots)
+  if(min(M)!=max(M) & 8 %in% subplots)
   {
     ymax <- max(M)
     mfunc <- function()
@@ -200,9 +225,9 @@ SSplotBiology <-
         lines(growdatM$Age,growdatM$M,col=col2,lwd=2,type="o")
       }
     }
-    if(plot & 6 %in% subplots) mfunc()
-    if(print & 6 %in% subplots){
-      pngfun(file=paste(plotdir,"/bio6_natmort.png",sep=""))
+    if(plot & 8 %in% subplots) mfunc()
+    if(print & 8 %in% subplots){
+      pngfun(file=paste(plotdir,"/bio8_natmort.png",sep=""))
       mfunc()
       dev.off()}
   }
@@ -218,7 +243,8 @@ SSplotBiology <-
       if(replist$growthvaries) # if growth is time varying
       for(i in 1:nsexes)
       {
-        growdatuse <- growthseries[growthseries$Morph==mainmorphs[i],]
+        growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
+                                   growthseries$Morph==mainmorphs[i],]
         x <- 0:accuage
         y <- growdatuse$Yr
         z <- as.matrix(growdatuse[,-(1:4)])
@@ -232,16 +258,16 @@ SSplotBiology <-
           if(i==2){main <- "Male time-varying growth"}
           if(nseasons > 1){main <- paste(main," season 1",sep="")}
           if(plot){
-            if(7 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-            if(8 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+            if(9 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            if(10 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
-            if(7 %in% subplots){
-              pngfun(file=paste(plotdir,"/bio7_timevarygrowthsurf_sex",i,".png",sep=""))
+            if(9 %in% subplots){
+              pngfun(file=paste(plotdir,"/bio9_timevarygrowthsurf_sex",i,".png",sep=""))
               persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
               dev.off()
             }
-            if(8 %in% subplots){
-              pngfun(file=paste(plotdir,"/bio8_timevarygrowthcontour_sex",i,".png",sep=""))
+            if(10 %in% subplots){
+              pngfun(file=paste(plotdir,"/bio10_timevarygrowthcontour_sex",i,".png",sep=""))
               contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
               dev.off()
             }
