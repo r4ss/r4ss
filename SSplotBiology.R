@@ -114,6 +114,7 @@ SSplotBiology <-
       points(FecX, FecY,col=col2,pch=19)
     }
   }
+  fecundityOK <- all(!is.na(biology$Fecundity))
   gfunc3b <- function(){ # fecundity at weight from BIOLOGY section
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
@@ -146,8 +147,8 @@ SSplotBiology <-
     if(1 %in% subplots) gfunc1()
     if(2 %in% subplots) gfunc2()
     if(3 %in% subplots & FecType==1) gfunc3a()
-    if(4 %in% subplots) gfunc3b()
-    if(5 %in% subplots) gfunc3c()
+    if(4 %in% subplots & fecundityOK) gfunc3b()
+    if(5 %in% subplots & fecundityOK) gfunc3c()
     if(6 %in% subplots) gfunc4()
   }
   if(print){ # print to PNG files
@@ -163,11 +164,11 @@ SSplotBiology <-
       pngfun(file=paste(plotdir,"/bio3_fecundity.png",sep=""))
       gfunc3a()
       dev.off()}
-    if(4 %in% subplots){
+    if(4 %in% subplots & fecundityOK){
       pngfun(file=paste(plotdir,"/bio4_fecundity_wt.png",sep=""))
       gfunc3b()
       dev.off()}
-    if(5 %in% subplots){
+    if(5 %in% subplots & fecundityOK){
       pngfun(file=paste(plotdir,"/bio5_fecundity_len.png",sep=""))
       gfunc3c()
       dev.off()}
