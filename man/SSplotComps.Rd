@@ -10,6 +10,7 @@
 }
 \usage{
 SSplotComps(replist, subplots = 1:9, kind = "LEN",
+sizemethod = 1,
 aalyear = -1, aalbin = -1, plot = TRUE, print = FALSE,
 fleets = "all", fleetnames="default", datonly = FALSE,
 samplesizeplots = TRUE, compresidplots = TRUE,
@@ -39,6 +40,10 @@ scalebins = FALSE, ...)
   \item{kind}{
     indicator of type of plot can be "LEN", "SIZE", "AGE", "cond", "GSTAGE",
     "L@A", or "W@A".
+  }
+  \item{sizemethod}{
+    if kind = "SIZE" then this switch chooses which of the generalized
+    size bin methods will be plotted.
   }
   \item{aalyear}{
     Years to plot multi-panel conditional age-at-length

@@ -1,7 +1,7 @@
 SSplotComps <-
   function(replist, subplots=1:11,
-           kind="LEN", aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE, fleets="all",
-           fleetnames="default",
+           kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
+           fleets="all", fleetnames="default",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
            showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
@@ -15,11 +15,12 @@ SSplotComps <-
                       "Proportion",            #6
                       "cm",                    #7
                       "Frequency",             #8
-                      "Weight (lbs)",          #9
-                      "(mt)",                  #10
-                      "(numbers x1000)",       #11
-                      "Stdev (Age) (yr)",      #12
-                      "Andre's conditional AAL plot, "), #13
+                      "Weight",                #9
+                      "Length",                #10
+                      "(mt)",                  #11
+                      "(numbers x1000)",       #12
+                      "Stdev (Age) (yr)",      #13
+                      "Andre's conditional AAL plot, "), #14
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
@@ -84,8 +85,15 @@ SSplotComps <-
     }
   }
   if(kind=="SIZE"){
-    dbase_kind <- sizedbase
-    kindlab=labels[9]
+    dbase_kind <- sizedbase[sizedbase$method==sizemethod,]
+    sizeunits <- unique(dbase_kind$units)
+    if(length(sizeunits)>1)
+      stop("!error with size units in generalized size comp plots:\n",
+           "    more than one unit value per method.\n")
+    if(sizeunits %in% c("in","cm"))
+      kindlab <- paste(labels[10]," (",sizeunits,")",sep="")
+    if(sizeunits %in% c("lb","kg"))
+        kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
     if(datonly){
       filenamestart <- "comp_sizedat_"
       titledata <- "size comp data, "
@@ -544,13 +552,13 @@ SSplotComps <-
                 lines(Size,Upp,lty=3)
                 #title(paste("Year = ",Yr,"; Gender = ",Gender))
 
-                ptitle <- paste(labels[13], title_sexmkt, fleetnames[f],sep="")
+                ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
                   title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
                 }
                 ymax <- max(Obs2,Pred2)*1.1
-                plot(Size,Obs2,xlab=labels[1],ylab=labels[12],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                plot(Size,Obs2,xlab=labels[1],ylab=labels[13],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
                 lines(Size,Pred2)
                 lines(Size2,Low2,lty=3)
                 lines(Size2,Upp2,lty=3)

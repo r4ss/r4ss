@@ -249,11 +249,11 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Dec29",
-                           newdir="c:/SS/modeltesting/Version_3_20_Jan3")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
+                           newdir="c:/SS/modeltesting/Version_3_20e_Mar15")
 
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Dec29",
-                           newdir="y:/h_itaylor/SS/modeltesting/Version_3_20_Jan3")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
+                           newdir="y:/h_itaylor/SS/modeltesting/Version_3_20e_Mar15")
   
   # copy executables into subfolders where each new model will be run
   copyexe(sourcedir="c:/SS/SSv3.20_Jan3",

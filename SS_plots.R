@@ -347,13 +347,15 @@ SS_plots <-
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,
                   scalebins=scalebins,...)
       # size comp bar plot
-      SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
-                  fleetnames=fleetnames,
+      for(sizemethod in sort(unique(replist$sizedbase$method))){
+        SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",sizemethod=sizemethod,
+                  bub=TRUE,verbose=verbose,fleets=fleets,fleetnames=fleetnames,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                   minnbubble=minnbubble, pntscalar=pntscalar,
                   maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                   print=(15%in%print),plot=(15%in%plot),plotdir=plotdir,cex.main=cex.main,
                   scalebins=scalebins,...)
+      }
       if(verbose) cat("Finished plot 15: length and size comp data\n")
       flush.console()
     }
@@ -428,14 +430,16 @@ SS_plots <-
                 print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
                 maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
                 scalebins=scalebins,...)
-    SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",bub=TRUE,verbose=verbose,fleets=fleets,
-                fleetnames=fleetnames,
-                samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                minnbubble=minnbubble, pntscalar=pntscalar,
-                maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
-                maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                scalebins=scalebins,...)
+    for(sizemethod in sort(unique(replist$sizedbase$method))){
+      SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",sizemethod=sizemethod,
+                  bub=TRUE,verbose=verbose,fleets=fleets, fleetnames=fleetnames,
+                  samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                  minnbubble=minnbubble, pntscalar=pntscalar,
+                  maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                  print=(18%in%print),plot=(18%in%plot),smooth=smooth,plotdir=plotdir,
+                  maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
+                  scalebins=scalebins,...)
+    }
     if(verbose) cat("Finished plot 18: length and size comps with fits\n")
     flush.console()
   }

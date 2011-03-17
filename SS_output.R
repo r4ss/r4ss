@@ -398,6 +398,26 @@ SS_output <-
     ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
     compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
+    # extra processing for sizedbase
+    if(!is.null(sizedbase)){
+      sizedbase$bio.or.num=c("bio","num")[sizedbase$Lbin_lo]
+      sizedbase$units=c("kg","lb","cm","in")[sizedbase$Lbin_hi]
+      sizedbase$method=sizedbase$Ageerr
+
+      if(any(sizedbase$units %in% c("lb","in"))){
+        if(verbose)
+          cat("Note: converting bins in generalized size comp data in sizedbase\n",
+              " back to the original units of lbs or inches.\n")
+      }
+      # convert bins from kg to lbs when that was the original unit
+      sizedbase$Bin[sizedbase$units=="lb"] <- 
+          sizedbase$Bin[sizedbase$units=="lb"]/0.4536
+      # convert bins from cm to inches when that was the original unit
+      sizedbase$Bin[sizedbase$units=="in"] <- 
+          sizedbase$Bin[sizedbase$units=="in"]/2.54
+
+    }
+                
     if(is.null(compdbase$N)){
       good <- TRUE
     }else{

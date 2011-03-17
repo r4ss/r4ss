@@ -144,13 +144,16 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
         if( bars) points(ptsx_i,ptsy_i,type="o",lwd=barwidth,col=ptscol,lend=1)  # histogram-style bars
       }
       # new way
-      polygon(c(ptsx_i[1],ptsx_i,tail(ptsx_i,1)),c(0,ptsy_i,0),col='grey80')  # polygon
-      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.7,col=ptscol)  # histogram-style bars
-      #
+      if(!doSD) polygon(c(ptsx_i[1],ptsx_i,tail(ptsx_i,1)),c(0,ptsy_i,0),col='grey80')  # polygon
+      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.8,col=ptscol)  # histogram-style bars
+      # adding uncertainty for mean length or weight at age plots
       if(doSD){
+        old_warn <- options()$warn      # previous setting
+        options(warn=-1)                # turn off "zero-length arrow" warning
         arrows(x0=ptsx_i,y0=qnorm(p=0.05,mean=ptsy_i,sd=ptsSD_i),
                x1=ptsx_i,y1=qnorm(p=0.95,mean=ptsy_i,sd=ptsSD_i),
                length=0.01, angle=90, code=3, col=ptscol)
+        options(warn=old_warn)  #returning to old value
       }
     }
     if(linepos==1) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty)
