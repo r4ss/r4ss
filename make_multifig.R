@@ -145,7 +145,8 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
       }
       # new way
       if(!doSD) polygon(c(ptsx_i[1],ptsx_i,tail(ptsx_i,1)),c(0,ptsy_i,0),col='grey80')  # polygon
-      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.8,col=ptscol)  # histogram-style bars
+      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
+
       # adding uncertainty for mean length or weight at age plots
       if(doSD){
         old_warn <- options()$warn      # previous setting
