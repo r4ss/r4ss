@@ -1,5 +1,7 @@
 SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("running SS_readstarter\n")
+  size <- file.info(file)$size
+  if(is.na(size) || size==0) stop("file empty or missing:",file)
   starter <- readLines(file,warn=F)
   mylist <- list()
 
@@ -29,7 +31,8 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
       mylist$datfile <- strings[1]
       mylist$ctlfile <- strings[2]
   }
-
+  if(verbose) cat("  data, control files: ",mylist$datfile,", ",mylist$ctlfile,"\n",sep="")
+  
   # get numbers (could be better integrated with function above)
   allnums <- NULL
   for(i in 1:length(starter)){
@@ -68,16 +71,19 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
       mylist$STD_yr_vec <- allnums[i:(i+N_STD_yrs-1)]; i <- i+N_STD_yrs
   }
   mylist$converge_criterion <- allnums[i]; i <- i+1
+  if(verbose) cat("  converge_criterion =",mylist$converge_criterion,"\n")
   mylist$retro_yr <- allnums[i]; i <- i+1
   mylist$min_age_summary_bio <- allnums[i]; i <- i+1
   mylist$depl_basis <- allnums[i]; i <- i+1
   mylist$depl_denom_frac <- allnums[i]; i <- i+1
   mylist$SPR_basis <- allnums[i]; i <- i+1
+  if(verbose) cat("  SPR_basis =",mylist$SPR_basis,"\n")
   mylist$F_report_units <- allnums[i]; i <- i+1
   mylist$F_age_range <- allnums[i]; i <- i+1
   mylist$F_age_range[2] <- allnums[i]; i <- i+1
   mylist$F_report_basis <- allnums[i]; i <- i+1
-
+  if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
+  
   # check final value
   if(allnums[i]==999){
     if(verbose) cat("read of starter file complete (final value = 999)\n")

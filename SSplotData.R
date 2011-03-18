@@ -122,10 +122,10 @@ SSplotData <- function(replist,fleetcol="default",
         y <- rep(yval,n)
         y[!x%in%yrs] <- NA
         # identify solo points (no data from adjacent years)
-        if(n==1){
-          solo <- 1
-        }else{
-          solo <- rep(FALSE,n)
+        solo <- rep(FALSE,n)
+        if(n==1) solo <- 1
+        if(n==2 & yrs[2]!=yrs[1]+1) solo <- rep(TRUE,2)
+        if(n>=3){
           for(i in 2:(n-1)) if(is.na(y[i-1]) & is.na(y[i+1])) solo[i] <- TRUE
           if(is.na(y[2])) solo[1] <- TRUE
           if(is.na(y[n-1])) solo[n] <- TRUE
