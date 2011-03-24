@@ -35,6 +35,9 @@ update_r4ss_files <- function(local=NULL,save=FALSE,revision="newest"){
     if(save) cat("saving all files to",local,"\n")
     for(i in 1:n){
       webfile <- paste(webdir,filenames[i],sep="/")
+      # hard wiring the updator file to be the latest version
+      if(filenames[i]=="update_r4ss_files.R")
+        webfile <- "http://r4ss.googlecode.com/svn/trunk/update_r4ss_files.R"
       if(save){
         localfile <- paste(local,filenames[i],sep="/")
         temp <- readLines(webfile)
