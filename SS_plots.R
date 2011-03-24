@@ -257,7 +257,7 @@ SS_plots <-
   } # end if 8 in plot or print
 
   ### Plot 9: mean body weight (if present) ###
-  if(9 %in% c(plot, print) & nrow(replist$mnwgt)>0){
+  if(9 %in% c(plot, print) & !is.na(replist$mnwgt) && nrow(replist$mnwgt)>0){
     SSplotMnwt(replist=replist,
                plot=(9 %in% plot),
                print=(9 %in% print),
