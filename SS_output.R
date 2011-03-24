@@ -697,6 +697,7 @@ SS_output <-
   stats$sigma_R_in <- as.numeric(srhead[4,1])
   stats$rmse_table <- rmse_table
 
+  # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
   vartune <- vartune[vartune$N > 0,]
   vartune[,1] <- vartune[,21]
@@ -712,6 +713,11 @@ SS_output <-
   agentune[,1] <- agentune[,10]
   agentune <- agentune[agentune$N>0, c(1,2,4,5,6,8,9)]
   stats$Age_comp_Eff_N_tuning_check <- agentune
+
+  sizentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10,header=TRUE)
+  sizentune[,1] <- sizentune[,10]
+  sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
+  stats$Size_comp_Eff_N_tuning_check <- sizentune
 
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
