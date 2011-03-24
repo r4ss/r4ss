@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "December 17, 2010"
+  codedate <- "March 23, 2010"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -446,7 +446,7 @@ SS_output <-
     names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
     if(length(unique(agedbase$Lbin_range)) > 1){
       cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
-      cat(Lbin_ranges)
+      print(Lbin_ranges)
       cat("  consider increasing 'aalmaxbinrange' to designate\n")
       cat("  some of these data as conditional age-at-length\n")
     }
@@ -635,7 +635,7 @@ SS_output <-
     }else{if(verbose) cat("You skipped the correlation check\n")}
   }else{if(verbose) cat("You skipped the covar file\n")}
   flush.console()
-
+  
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
@@ -920,8 +920,11 @@ SS_output <-
   # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
   if(SS_versionshort=="SS-V3.20"){
     DF_discard <- NA
-    shift <- 0
-  }else{
+    shift <- 1
+    discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
+                                  cols=1:3,header=TRUE)
+    names(discard_spec)[1] <- "Fleet"
+  }else{ # older versions had different header
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
     if(length(grep("T_distribution",DF_discard))>0)
       DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
@@ -929,6 +932,7 @@ SS_output <-
     if(length(grep("_normal_with_Std_in_as_stddev",DF_discard))>0) DF_discard <- -1
     if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
     shift <- 2
+    discard_spec <- NULL
   }
 
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
@@ -941,17 +945,23 @@ SS_output <-
   returndat$discard <- discard
   returndat$discard_type <- discard_type
   returndat$DF_discard <- DF_discard
+  returndat$discard_spec <- discard_spec
 
   ## Average body weight observations
   # degrees of freedom for T-distribution
-  DF_mnwgt <- rawrep[matchfun("MEAN_BODY_WT_OUTPUT"),2]
-  DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
-
-  mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",1,"FIT_LEN_COMPS",-1,cols=1:10,header=TRUE)
-  if(nrow(mnwgt)>0) for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
+  # old way: DF_mnwgt <- rawrep[matchfun("MEAN_BODY_WT_OUTPUT")+1,1]
+  DF_mnwgt <- rawrep[matchfun("log(L)_based_on_T_distribution"),1]
+  if(!is.na(DF_mnwgt)){
+    DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
+    mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",2,"FIT_LEN_COMPS",-1,cols=1:10,header=TRUE)
+    for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
+  }else{
+    DF_mnwgt <- NA
+    mnwgt <- NA
+  }
   returndat$mnwgt <- mnwgt
   returndat$DF_mnwgt <- DF_mnwgt
-
+  
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
   spr[spr=="_"] <- NA
@@ -1141,6 +1151,23 @@ SS_output <-
   }
   returndat$catage <- catage
 
+  # Z at age
+  #With_fishery
+  #No_fishery_for_Z=M_and_dynamic_Bzero
+  Z_at_age <- matchfun2("Z_AT_AGE_Annual_2",1,"Spawning_Biomass_Report_1",-2,header=TRUE)
+  M_at_age <- matchfun2("Z_AT_AGE_Annual_1",1,"-ln(Nt+1",-1,matchcol2=5, header=TRUE)
+  Z_at_age[Z_at_age=="_"] <- NA
+  M_at_age[M_at_age=="_"] <- NA
+  if(Z_at_age[[1]][1]!="absent"){
+    for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
+    for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])
+  }else{
+    Z_at_age <- NA
+    M_at_age <- NA
+  }
+  returndat$Z_at_age <- Z_at_age
+  returndat$M_at_age <- M_at_age
+  
   # Dynamic_Bzero output "with fishery"
   Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2",1,"NUMBERS_AT_AGE_Annual_2",-1)
   # Dynamic_Bzero output "no fishery"

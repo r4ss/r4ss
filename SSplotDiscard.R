@@ -11,20 +11,28 @@ SSplotDiscard <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
+  # updated March 23, 2011
+
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   # get stuff from replist
   discard         <- replist$discard
   FleetNames      <- replist$FleetNames
-  DF_discard      <- replist$DF_discard
-  discard_type    <- replist$discard_type
-
+  DF_discard      <- replist$DF_discard   # used in SSv3.11
+  discard_type    <- replist$discard_type # used in SSv3.11
+  discard_spec    <- replist$discard_spec # used in SSv3.20
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   # if discards exist
   if(length(discard)>1){
     for(fleetname in unique(discard$Fleet)){
+      fleetnum <- as.numeric(strsplit(fleetname,"_")[[1]][1])
+      # table availabe beginning with SSv3.20 has fleet-specific discard specs
+      if(!is.null(discard_spec)){ 
+        DF_discard <- discard_spec$errtype[fleetnum]
+        
+      }
       usedisc <- discard[discard$Fleet==fleetname,]
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
@@ -47,14 +55,36 @@ SSplotDiscard <-
       }
       liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
       xlim <- c((min(yr)-3),(max(yr)+3))
-      if(grepl("as_fraction",discard_type)){
-        # discards as a fraction
-        title <- paste("Discard fraction for",fleetname)
-        ylab <- "Discard fraction"
-      }else{
-        # discards in same units as catch, or in numbers (should distinguish in the future)
-        title <- paste("Total discard for",fleetname)
-        ylab <- "Total discards"
+      if(!is.na(discard_type)){ # SSv3.11
+        if(grepl("as_fraction",discard_type)){
+          # discards as a fraction
+          title <- paste("Discard fraction for",fleetname)
+          ylab <- "Discard fraction"
+        }else{
+          # discards in same units as catch, or in numbers (should distinguish in the future)
+          title <- paste("Total discard for",fleetname)
+          ylab <- "Total discards"
+        }
+      }else{ # SSv3.20
+        ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
+        ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
+        ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
+        if(discard_spec$units[fleetnum]==1){
+          # type 1: biomass or numbers
+          #         someday could make labels more specific based on catch units
+          title <- paste("Total discard for",fleetname)
+          ylab <- "Total discards"
+        }
+        if(discard_spec$units[fleetnum]==2){
+          # type 2: discards as fractions
+          title <- paste("Discard fraction for",fleetname)
+          ylab <- "Discard fraction"
+        }
+        if(discard_spec$units[fleetnum]==3){
+          # type 3: discards as numbers
+          title <- paste("Total discard for",fleetname)
+          ylab <- "Total discards (1000's)"
+        }
       }
       dfracfunc <- function(){
         plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=yhi,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
@@ -63,7 +93,7 @@ SSplotDiscard <-
       }
       if(plot) dfracfunc()
       if(print) {
-        png(file=paste(dir,"discfracfit",fleetname,".png",sep=""),width=pwidth,height=pheight)
+        pngfun(file=paste(plotdir,"discfracfit",fleetname,".png",sep=""))
         dfracfunc()
         dev.off()
       }

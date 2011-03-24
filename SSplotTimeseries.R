@@ -235,7 +235,6 @@ SSplotTimeseries <-
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
           stdtable$Yr[1:2] <- as.numeric(stdtable$Yr[3])-(2:1)
           stdtable$Yr <- as.numeric(stdtable$Yr)
-print(head(stdtable)          )
         }
         if(subplot==9){ # spawning depletion
           stdtable <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]

@@ -27,7 +27,7 @@ SSplotComps <-
            scalebins=FALSE,...)
 {
   ################################################################################
-  # SSplotComps October 21, 2010
+  # SSplotComps March 23, 2011
   ################################################################################
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -215,7 +215,7 @@ SSplotComps <-
 
           # aggregating identifiers for plot titles and filenames
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
-          filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
+          filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
 
           ### subplot 1: multi-panel composition plot
           if(1 %in% subplots & kind!="cond") # for age or length comps, but not conditional AAL
@@ -616,33 +616,33 @@ SSplotComps <-
   
             # aggregating identifiers for plot titles and filenames
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
-            filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
+            filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
   
             ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
             titles <- c(ptitle,titles) # compiling list of all plot titles
   
+            Bins <- sort(unique(dbase$Bin))
+            nbins <- length(Bins)
+            df <- data.frame(N=dbase$N,
+                             effN=dbase$effN,
+                             obs=dbase$Obs*dbase$N,
+                             exp=dbase$Exp*dbase$N)
+            agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet), FUN=sum)
+            agg <- agg[agg$f %in% fleets,]
+            agg$obs <- agg$obs/agg$N
+            agg$exp <- agg$exp/agg$N
+            # note: sample sizes will be different for each bin if tail compression is used
+            #       printed sample sizes in plot will be maximum, which may or may not
+            #       represent sum of sample sizes over all years/ages
+            for(f in unique(agg$f)){
+              infleet <- agg$f==f
+              agg$N[infleet] <- max(agg$N[infleet])
+              agg$effN[infleet] <- max(agg$effN[infleet])
+            }
+
+            namesvec <- fleetnames[agg$f]
             # group remaining calculations as a function
             tempfun <- function(ipage,...){
-              Bins <- sort(unique(dbase$Bin))
-              nbins <- length(Bins)
-              df <- data.frame(N=dbase$N,
-                               effN=dbase$effN,
-                               obs=dbase$Obs*dbase$N,
-                               exp=dbase$Exp*dbase$N)
-              agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet), FUN=sum)
-              agg <- agg[agg$f %in% fleets,]
-              agg$obs <- agg$obs/agg$N
-              agg$exp <- agg$exp/agg$N
-              # note: sample sizes will be different for each bin if tail compression is used
-              #       printed sample sizes in plot will be maximum, which may or may not
-              #       represent sum of sample sizes over all years/ages
-              for(f in unique(agg$f)){
-                infleet <- agg$f==f
-                agg$N[infleet] <- max(agg$N[infleet])
-                agg$effN[infleet] <- max(agg$effN[infleet])
-              }
-
-              namesvec <- fleetnames[agg$f]
               if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$f,
                               linesx=agg$bin,linesy=agg$exp,
@@ -679,11 +679,11 @@ SSplotComps <-
             }
             if(plot) tempfun(ipage=0,...) 
             if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
+              npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
               for(ipage in 1:npages)
               {
                 if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
+                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,"aggregated across time.png",sep="")
                 pngfun(file=filename)
                 tempfun(ipage=ipage,...)
                 dev.off()
@@ -739,36 +739,37 @@ SSplotComps <-
   
             # aggregating identifiers for plot titles and filenames
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
-            filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
+            filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
   
             ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
             titles <- c(ptitle,titles) # compiling list of all plot titles
   
+            Bins <- sort(unique(dbase$Bin))
+            nbins <- length(Bins)
+            df <- data.frame(N=dbase$N,
+                             effN=dbase$effN,
+                             obs=dbase$Obs*dbase$N,
+                             exp=dbase$Exp*dbase$N)
+            agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,s=dbase$Seas), FUN=sum)
+            agg <- agg[agg$f %in% fleets,]
+            agg$obs <- agg$obs/agg$N
+            agg$exp <- agg$exp/agg$N
+            # note: sample sizes will be different for each bin if tail compression is used
+            #       printed sample sizes in plot will be maximum, which may or may not
+            #       represent sum of sample sizes over all years/ages
+            for(f in unique(agg$f)){
+              for(s in unique(agg$s[agg$ff==f])){
+                infleetseas <- agg$f==f & agg$s==s
+                agg$N[infleetseas] <- max(agg$N[infleetseas])
+                agg$effN[infleetseas] <- max(agg$effN[infleetseas])
+              }
+            }
+            agg$fseas <- agg$f + seasfracs[agg$s]
+
+            namesvec <- paste(fleetnames[agg$f]," s",agg$s,sep="")
+
             # group remaining calculations as a function
             tempfun <- function(ipage,...){
-              Bins <- sort(unique(dbase$Bin))
-              nbins <- length(Bins)
-              df <- data.frame(N=dbase$N,
-                               effN=dbase$effN,
-                               obs=dbase$Obs*dbase$N,
-                               exp=dbase$Exp*dbase$N)
-              agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,s=dbase$Seas), FUN=sum)
-              agg <- agg[agg$f %in% fleets,]
-              agg$obs <- agg$obs/agg$N
-              agg$exp <- agg$exp/agg$N
-              # note: sample sizes will be different for each bin if tail compression is used
-              #       printed sample sizes in plot will be maximum, which may or may not
-              #       represent sum of sample sizes over all years/ages
-              for(f in unique(agg$f)){
-                for(s in unique(agg$s[agg$ff==f])){
-                  infleetseas <- agg$f==f & agg$s==s
-                  agg$N[infleetseas] <- max(agg$N[infleetseas])
-                  agg$effN[infleetseas] <- max(agg$effN[infleetseas])
-                }
-              }
-              agg$fseas <- agg$f + seasfracs[agg$s]
-
-              namesvec <- paste(fleetnames[agg$f]," s",agg$s,sep="")
               if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fseas,
                               linesx=agg$bin,linesy=agg$exp,
@@ -805,11 +806,12 @@ SSplotComps <-
             }
             if(plot) tempfun(ipage=0,...) 
             if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
+              npages <- ceiling(length(unique(agg$fseas))/maxrows/maxcols)
               for(ipage in 1:npages)
               {
                 if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
+                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                                  "aggregated within season.png",sep="")
                 pngfun(file=filename)
                 tempfun(ipage=ipage,...)
                 dev.off()
@@ -822,53 +824,48 @@ SSplotComps <-
   } # end subplot 10
   
   ### subplot 11: by fleet aggregating across years
-  if(11 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
-  {
-    dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
-    # check for the presence of data
-    if(nrow(dbasef)>0)
-    {
-      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-      testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+  if(11 %in% subplots & kind!="cond" & nseasons>1){ # for age or length comps, but not conditional AAL
+    # loop over fleets
+    for(f in fleets){
+      dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+      # check for the presence of data
+      if(nrow(dbasef)>0){
+        testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
+        testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+        testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+        # loop over genders combinations
+        for(k in (1:3)[testor]){
+          if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
+          if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+          if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+          sex <- ifelse(k==3, 2, 1)
 
-      # loop over genders combinations
-      for(k in (1:3)[testor])
-      {
-        if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-        if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-        if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
-        sex <- ifelse(k==3, 2, 1)
+          # loop over partitions (discard, retain, total)
+          for(j in unique(dbase_k$Part)){
+            # dbase is the final data.frame used in the individual plots
+            # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+            dbase <- dbase_k[dbase_k$Part==j,]
+            if(nrow(dbase)>0){
+              ## assemble pieces of plot title
+              # sex
+              if(k==1) titlesex <- "sexes combined, "
+              if(k==2) titlesex <- "female, "
+              if(k==3) titlesex <- "male, "
+              titlesex <- ifelse(printsex,titlesex,"")
+              
+              # market category
+              if(j==0) titlemkt <- "whole catch, "
+              if(j==1) titlemkt <- "discard, "
+              if(j==2) titlemkt <- "retained, "
+              titlemkt <- ifelse(printmkt,titlemkt,"")
+              
+              # plot bars for data only or if input 'fitbar=TRUE'
+              if(datonly | fitbar) bars <- TRUE else bars <- FALSE
+              
+              # aggregating identifiers for plot titles and filenames
+              title_sexmkt <- paste(titlesex,titlemkt,sep="")
+              filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
 
-        # loop over partitions (discard, retain, total)
-        for(j in unique(dbase_k$Part))
-        {
-          # dbase is the final data.frame used in the individual plots
-          # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
-          dbase <- dbase_k[dbase_k$Part==j,]
-          if(nrow(dbase)>0){
-            ## assemble pieces of plot title
-            # sex
-            if(k==1) titlesex <- "sexes combined, "
-            if(k==2) titlesex <- "female, "
-            if(k==3) titlesex <- "male, "
-            titlesex <- ifelse(printsex,titlesex,"")
-  
-            # market category
-            if(j==0) titlemkt <- "whole catch, "
-            if(j==1) titlemkt <- "discard, "
-            if(j==2) titlemkt <- "retained, "
-            titlemkt <- ifelse(printmkt,titlemkt,"")
-  
-            # plot bars for data only or if input 'fitbar=TRUE'
-            if(datonly | fitbar) bars <- TRUE else bars <- FALSE
-  
-            # aggregating identifiers for plot titles and filenames
-            title_sexmkt <- paste(titlesex,titlemkt,sep="")
-            filename_fltsexmkt <- paste("flt",f,"sex",sex,"mkt",j,sep="")
-    
-            # group remaining calculations as a function
-            tempfun <- function(ipage,...){
               Bins <- sort(unique(dbase$Bin))
               nbins <- length(Bins)
               df <- data.frame(N=dbase$N,
@@ -890,62 +887,65 @@ SSplotComps <-
                 }
               }
               agg$fy <- agg$f + agg$y/10000
-              for(f in sort(unique(agg$f[agg$f%in%fleets]))){
+
+              # group remaining calculations as a function
+              tempfun <- function(ipage,...){
                 ptitle <- paste(titledata,title_sexmkt,fleetnames[f], "\naggregated across seasons within year",sep="") # total title
                 titles <- c(ptitle,titles) # compiling list of all plot titles
 
-                aggsub <- agg[agg$f==f,]
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-                  make_multifig(ptsx=aggsub$bin,ptsy=aggsub$obs,yr=aggsub$fy,
-                                linesx=aggsub$bin,linesy=aggsub$exp,
-                                sampsize=aggsub$N,effN=aggsub$effN,
+                  make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fy,
+                                linesx=agg$bin,linesy=agg$exp,
+                                sampsize=agg$N,effN=agg$effN,
                                 showsampsize=showsampsize,showeffN=showeffN,
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,
-                                legtext=list(aggsub$y,"sampsize","effN"),
+                                legtext=list(agg$y,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                                 fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
                 }
-              } # end loop over fleets
-  
-         # haven't configured this aggregated plot for other types
-              ## if(kind=="GSTAGE"){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
-              ##                 bars=bars,linepos=(1-datonly)*linepos,
-              ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
-              ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
-              ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-              ##                 fixdims=fixdims,ipage=ipage,...)
-              ## }
-              ## if(kind %in% c("L@A","W@A")){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
-              ##                 nlegends=1,legtext=list(dbase$YrSeasName),
-              ##                 bars=bars,linepos=(1-datonly)*linepos,
-              ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
-              ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-              ##                 fixdims=fixdims,ipage=ipage,...)
-              ## }
-  
-            } # end tempfun
-            if(plot) tempfun(ipage=0,...) 
-            if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
-              for(ipage in 1:npages)
-              {
-                if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
-                pngfun(file=filename)
-                tempfun(ipage=ipage,...)
-                dev.off()
-              }
-            } # end print function
-          } # end test for presence of observations in this partition
-        } # end loop over partitions
-      } # end loop over combined/not-combined genders
-    } # end if data
+                
+                # haven't configured this aggregated plot for other types
+                ## if(kind=="GSTAGE"){
+                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                ##                 bars=bars,linepos=(1-datonly)*linepos,
+                ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
+                ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                ##                 fixdims=fixdims,ipage=ipage,...)
+                ## }
+                ## if(kind %in% c("L@A","W@A")){
+                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+                ##                 nlegends=1,legtext=list(dbase$YrSeasName),
+                ##                 bars=bars,linepos=(1-datonly)*linepos,
+                ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
+                ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                ##                 fixdims=fixdims,ipage=ipage,...)
+                ## }
+                
+              } # end tempfun
+
+              if(plot) tempfun(ipage=0,...) 
+              if(print){ # set up plotting to png file if required
+                npages <- ceiling(length(unique(agg$fy))/maxrows/maxcols)
+                for(ipage in 1:npages)
+                    {
+                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                      filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                                        "aggregated across seasons within year.png",sep="")
+                      pngfun(file=filename)
+                      tempfun(ipage=ipage,...)
+                      dev.off()
+                    }
+              } # end print function
+            } # end test for presence of observations in this partition
+          } # end loop over partitions
+        } # end loop over combined/not-combined genders
+      } # end if data
+    } # end loop over fleets
   } # end subplot 11
 
   return(invisible(titles))

@@ -22,7 +22,9 @@ SSplotCatch <-
              "Observed and expected",     #9
              "aggregated across seasons"),#10
            catchasnumbers=FALSE,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,verbose=TRUE)
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           cex.main=1, # note: no plot titles yet implemented
+           verbose=TRUE)
 {
   # plot catch-related time-series for Stock Synthesis
   # updated December 27, 2010
