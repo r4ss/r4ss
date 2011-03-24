@@ -79,8 +79,13 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$SPR_basis <- allnums[i]; i <- i+1
   if(verbose) cat("  SPR_basis =",mylist$SPR_basis,"\n")
   mylist$F_report_units <- allnums[i]; i <- i+1
-  mylist$F_age_range <- allnums[i]; i <- i+1
-  mylist$F_age_range[2] <- allnums[i]; i <- i+1
+  if(mylist$F_report_units==4){
+    mylist$F_age_range <- allnums[i]; i <- i+1
+    mylist$F_age_range[2] <- allnums[i]; i <- i+1
+  }else{
+    mylist$F_age_range <- NA
+    mylist$F_age_range[2] <- NA
+  }
   mylist$F_report_basis <- allnums[i]; i <- i+1
   if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
   
