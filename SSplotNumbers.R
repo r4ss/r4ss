@@ -99,6 +99,7 @@ SSplotNumbers <-
                                    natage$Gender==m &
                                    natage$Seas==1 &
                                    natage$Era!="VIRG" &
+                                   !is.na(natage$"0") &
                                    natage$Yr < (endyr+2) &
                                    natage$BirthSeas==min(bseas),]
                                    # natage$Bio_Pattern==1,] # formerly filtered
@@ -156,8 +157,12 @@ SSplotNumbers <-
           if(iperiod==1) natageyrsB <- natageyrs # unique name for beginning of year
 
           meanage <- 0*natageyrs
+
           for(i in 1:length(natageyrs)){ # averaging over values within a year (depending on birth season)
-            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])}
+            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*
+                              natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/
+                                sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])
+          }
 
           if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
 
@@ -174,7 +179,7 @@ SSplotNumbers <-
           }
           tempfun2 <- function(){
             # mean length for males and femails
-            ylim <- c(0, max(meanage, meanagef))
+            ylim <- c(0, max(meanage, meanagef, na.rm=TRUE))
             plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab=labels[1],ylim=ylim,type="o",ylab=ylab,main=plottitle2,cex.main=cex.main)
             points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
             legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))

@@ -531,7 +531,7 @@ SSplotComps <-
                     Pred <- c(Pred,PredV)
                     varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
                     Pred2 <- c(Pred2,varn)
-                    varn <-sqrt(ObsV2-ObsV*ObsV)/sqrt(NN)
+                    varn <-sqrt(max(0,ObsV2-ObsV*ObsV))/sqrt(NN)
                     Obs2 <- c(Obs2,varn)
                     Low <- c(Low,ObsV-1.64*varn)
                     Upp <- c(Upp,ObsV+1.64*varn)
