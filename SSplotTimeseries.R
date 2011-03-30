@@ -259,8 +259,16 @@ SSplotTimeseries <-
         # scaling and calculation of confidence intervals
         v <- stdtable$Value * bioscale
         std <- stdtable$StdDev * bioscale
-        stdtable$upper <- v + 1.96*std
-        stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
+        if(subplot==11){
+          # assume recruitments have log-normal distribution 
+          # from first principals (multiplicative survival probabilities)
+          stdtable$logint <- sqrt(log(1+(std/v)^2))
+          stdtable$lower <- exp(log(v) - 1.96*stdtable$logint)
+          stdtable$upper <- exp(log(v) + 1.96*stdtable$logint)
+        }else{ # assume normal distribution matching internal assumptions of ADMB
+          stdtable$upper <- v + 1.96*std
+          stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
+        }
         if(max(stdtable$Yr) < max(floor(ts$YrSeas))){
           cat("  !warning:\n",
               "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$YrSeas),"is last year of time series.\n",
