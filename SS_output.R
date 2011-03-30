@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "March 23, 2010"
+  codedate <- "March 29, 2010"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -928,7 +928,8 @@ SS_output <-
     DF_discard <- NA
     shift <- 1
     discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
-                                  cols=1:3,header=TRUE)
+                              cols=1:3,header=TRUE)
+    for(icol in 1:3) discard_spec[,icol] <- as.numeric(discard_spec[,icol])
     names(discard_spec)[1] <- "Fleet"
   }else{ # older versions had different header
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]

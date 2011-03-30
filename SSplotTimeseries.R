@@ -293,10 +293,10 @@ SSplotTimeseries <-
     }
 
     # move VIRG value from startyr-2 to startyr-1 to show closer to plot
+    if(exists("stdtable")) stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]] <- stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]]+1
     ts$Yr[plot1] <- ts$Yr[plot1]+1
     ts$YrSeas[plot1] <- ts$YrSeas[plot1]+1
-    #stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]] <- stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]]+1
-
+    
              
     # create an empty plot (if not adding to existing plot)
     if(!add){
@@ -384,7 +384,7 @@ SSplotTimeseries <-
           points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
           if(subplot %in% c(7,9,11)){
             # subset years for confidence intervals
-            plot1 <- stdtable$Yr %in% (ts$Yr[plot1]-1) # -1 is because VIRG was shifted right 1 year
+            plot1 <- stdtable$Yr %in% ts$Yr[plot1]
             plot2 <- stdtable$Yr %in% ts$Yr[plot2]
             plot3 <- stdtable$Yr %in% ts$Yr[plot3]
             plotall <- plot1 | plot2 | plot3 # all years that are within ts$Yr

@@ -11,7 +11,7 @@ SSplotDiscard <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
-  # updated March 23, 2011
+  # updated March 29, 2011
 
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
@@ -31,7 +31,6 @@ SSplotDiscard <-
       # table availabe beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
         DF_discard <- discard_spec$errtype[fleetnum]
-        
       }
       usedisc <- discard[discard$Fleet==fleetname,]
       yr <- as.numeric(usedisc$Yr)

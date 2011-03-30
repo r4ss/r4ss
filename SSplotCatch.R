@@ -27,7 +27,7 @@ SSplotCatch <-
            verbose=TRUE)
 {
   # plot catch-related time-series for Stock Synthesis
-  # updated December 27, 2010
+  # updated March 23, 2011
 
   # note: stacked plots only shown with multiple fleets
   subplot_names <- c("1: landings",
