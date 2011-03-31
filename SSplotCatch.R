@@ -264,10 +264,14 @@ SSplotCatch <-
   }
 
   totcatchmat <- as.data.frame(totcatchmat)
+  totobscatchmat <- as.data.frame(totobscatchmat)
   names(totcatchmat) <- fleetnames[1:nfishfleets]
+  names(totobscatchmat) <- fleetnames[1:nfishfleets]
   totcatchmat$Yr <- catchyrs
+  totobscatchmat$Yr <- catchyrs
   returnlist <- list()
   returnlist[["totcatchmat"]] <- totcatchmat
+  returnlist[["totobscatchmat"]] <- totobscatchmat
   if(nseasons > 1){
     totcatchmat2 <- as.data.frame(totcatchmat2)
     names(totcatchmat2) <- fleetnames[1:nfishfleets]

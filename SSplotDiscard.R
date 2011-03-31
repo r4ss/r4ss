@@ -30,7 +30,7 @@ SSplotDiscard <-
       fleetnum <- as.numeric(strsplit(fleetname,"_")[[1]][1])
       # table availabe beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
-        DF_discard <- discard_spec$errtype[fleetnum]
+        DF_discard <- discard_spec$errtype[discard_spec$Fleet==fleetnum]
       }
       usedisc <- discard[discard$Fleet==fleetname,]
       yr <- as.numeric(usedisc$Yr)
@@ -68,18 +68,19 @@ SSplotDiscard <-
         ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
         ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
         ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
-        if(discard_spec$units[fleetnum]==1){
+        discard_units <- discard_spec$units[discard_spec$Fleet==fleetnum]
+        if(discard_units==1){
           # type 1: biomass or numbers
           #         someday could make labels more specific based on catch units
           title <- paste("Total discard for",fleetname)
           ylab <- "Total discards"
         }
-        if(discard_spec$units[fleetnum]==2){
+        if(discard_units==2){
           # type 2: discards as fractions
           title <- paste("Discard fraction for",fleetname)
           ylab <- "Discard fraction"
         }
-        if(discard_spec$units[fleetnum]==3){
+        if(discard_units==3){
           # type 3: discards as numbers
           title <- paste("Total discard for",fleetname)
           ylab <- "Total discards (1000's)"

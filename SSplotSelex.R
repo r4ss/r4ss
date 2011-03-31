@@ -14,6 +14,21 @@ SSplotSelex <-
            cex.main=1, plotdir = "default",
            verbose = TRUE)
 {
+  # subplots:
+  # 1. selectivity at length time-varying surface
+  # 2. selectivity at length time-varying contour
+  # 3. retention at length time-varying surface
+  # 4. retention at length time-varying surface
+  # 3. discard mortality time-varying surface # needs new subplot number
+  # 4. discard mortality time-varying contour # needs new subplot number
+  # 5. selectivity, retention, and discard mortality at length in ending year
+  # 6. selectivity at age time-varying surface
+  # 7. selectivity at age time-varying contour
+  # 8. selectivity at age in ending year
+  # 9. selectivity at age in ending year (redundant with subplot 8?)
+  # 10. selecitivity at age and length contour with overlaid growth curve
+  # 11. selectivity with uncertainty if requested at end of control file
+  
   nsexes         <- replist$nsexes
   nseasons       <- replist$nseasons
   nfleets        <- replist$nfleets
@@ -68,6 +83,7 @@ SSplotSelex <-
       intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$gender==m,]
       plotselex <- intselex[intselex$Fleet==i,]
       plotret <- intret[intret$Fleet==i,]
+      plotmort <- intmort[intmort$Fleet==i,]
 
       # test for time-varying length selectivity
       time <- any(apply(plotselex[-c(1,nrow(plotselex)),-(1:5)], 2, function(x){any(x!=x[1])}))      
@@ -127,6 +143,41 @@ SSplotSelex <-
           }
         }
       }
+      # test for time-varying discard mortality rates
+      time3 <- any(apply(plotmort[-nrow(plotmort),-(1:5)],2,function(x){any(x!=x[1])}))
+      if(time3)
+      {
+        x <- lbinspop
+        y <- intmort$year[intmort$Fleet==i]
+        z <- intmort[intmort$Fleet==i,-(1:5)]
+        z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
+        z <- t(z)
+        main <- paste(sextitle1,"varying discard mortality for ", fleetnames[i],sep="")
+        if(plot)
+        {
+          if(3 %in% subplot)
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],
+                  expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                  phi=35,theta=-10,zlim=c(0,max(z)))
+          if(4 %in% subplot)
+            contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,
+                    cex.main=cex.main,col=ians_blues,lwd=2)
+        }
+        if(print)
+        {
+          if(3 %in% subplot){
+            pngfun(file=paste(plotdir,"sel3b_timevary_mort_surf_flt",i,"sex",m,".png",sep=""))
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            dev.off()
+          }
+          if(4 %in% subplot){
+            pngfun(file=paste(plotdir,"sel4b_timevary_mort_contour_flt",i,"sex",m,".png",sep=""))
+            contour(x,y,z,nlevels=5,xlab=labels[1],ylab=labels[3],main=main,cex.main=cex.main,col=ians_blues,lwd=2)
+            dev.off()
+          }
+        }
+      }
+      
       plotselex <- plotselex[plotselex$year==endyr,-(1:5)]
 
       plotret <- plotret[nrow(plotret),-(1:5)] # final year only

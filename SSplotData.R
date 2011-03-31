@@ -20,7 +20,7 @@ SSplotData <- function(replist,
   
   # catch
   catch <- SSplotCatch(replist,plot=F,print=F,verbose=FALSE)
-  catch <- catch$totcatchmat
+  catch <- catch$totobscatchmat
   ## if(is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
   ##                                 catch <- catch$totcatchmat
 
