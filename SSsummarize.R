@@ -157,7 +157,11 @@ SSsummarize <- function(biglist,
     indextemp <- stats$cpue
     indextemp$Model <- keyvec2[imodel]
     indextemp$imodel <- imodel
-    indices <- rbind(indices, indextemp)
+    if(is.null(indices) || ncol(indextemp)==ncol(indices)){
+      indices <- rbind(indices, indextemp)
+    }else{
+      cat("problem summarizing indices due to mismatched columns\n")
+    }
 
     npars <- c(npars, stats$N_estimated_parameters)
   } # end loop over models
