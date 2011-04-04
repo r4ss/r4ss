@@ -6,7 +6,7 @@ SSplotData <- function(replist,
                        pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
                        verbose=TRUE)
 {
-  # updated March 23, 2011
+  # updated April 4, 2011
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 
   ### get info from replist
@@ -40,6 +40,12 @@ SSplotData <- function(replist,
   tagdbase1     <- replist$tagdbase1
   tagdbase2     <- replist$tagdbase2
 
+  # mean body weight
+  mnwgt         <- replist$mnwgt
+
+  # discards
+  discard       <- replist$discard
+
   typetable <- matrix(c(
       "catch",         "Catch",                                         #1  
       "cpue",          "Abundance indices",                             #2 
@@ -48,19 +54,23 @@ SSplotData <- function(replist,
       "agedbase",      "Age compositions",                              #5 
       "condbase",      "Conditional age-at-length compositions",        #6 
       "ghostagedbase", "Ghost age compositions",                        #7 
-      "ghostcondbase", "Ghost conditional age-at-length  compositions", #8 
+      "ghostcondbase", "Ghost conditional age-at-length compositions",  #8 
       "ghostlendbase", "Ghost length compositions",                     #9 
       "ladbase",       "Mean length-at-age",                            #10 
-      "wadbase",       "Mean weight-at-age",                            #11 
-      "tagdbase1",     "Tagging data",                                  #12 
-      "tagdbase2",     "Tagging data"),ncol=2,byrow=TRUE)               #13
+      "wadbase",       "Mean weight-at-age",                            #11
+      "mnwgt",         "Mean body weight",                              #12
+      "discard",       "Discards",                                      #13
+      "tagdbase1",     "Tagging data",                                  #14 
+      "tagdbase2",     "Tagging data"),ncol=2,byrow=TRUE)               #15
   if(!ghost) typetable <- typetable[-grep("ghost",typetable[,1]),]
   typenames <- typetable[,1]
   typelabels <- typetable[,2]
   
   # loop over types to make a database of years with comp data
   ntypes <- 0
-  typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5)) # replace typetable object
+  # replace typetable object with empty table
+  typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5))
+  # now loop over typenames looking for presence of this data type
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
     typename <- typenames[itype]
@@ -70,7 +80,7 @@ SSplotData <- function(replist,
         allyrs <- NULL
         # identify years from different data types
         if(typename=="catch" & ifleet<=nfishfleets) allyrs <- dat$Yr[dat[,ifleet]>0]
-        if(typename=="cpue") allyrs <- dat$Yr[dat$FleetNum==ifleet]
+        if(typename %in% c("cpue","mnwgt","discard")) allyrs <- dat$Yr[dat$FleetNum==ifleet]
         if(length(grep("dbase",typename))>0) allyrs <- dat$Yr[dat$Fleet==ifleet]
         # expand table of years with data
         if(!is.null(allyrs) & length(allyrs)>0){

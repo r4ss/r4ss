@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "March 29, 2010"
+  codedate <- "April 4, 2011"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -946,6 +946,13 @@ SS_output <-
   discard_type <- NA
   if(nrow(discard)>1){
     for(icol in 2:ncol(discard)) discard[,icol] <- as.numeric(discard[,icol])
+    for(i in 2:ncol(discard)) discard[,i] <- as.numeric(discard[,i])
+    discard$FleetName <- NA
+    discard$FleetNum <- NA
+    for(i in 1:nrow(discard)){
+      discard$FleetNum[i] <- strsplit(discard$Fleet[i],"_")[[1]][1]
+      discard$FleetName[i] <- substring(discard$Fleet[i],nchar(discard$FleetNum[i])+2)
+    }
   }else{
     discard <- NA
   }
@@ -961,7 +968,15 @@ SS_output <-
   if(!is.na(DF_mnwgt)){
     DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
     mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",2,"FIT_LEN_COMPS",-1,cols=1:10,header=TRUE)
-    for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
+    if(nrow(mnwgt)>0){
+      for(i in 2:ncol(mnwgt)) mnwgt[,i] <- as.numeric(mnwgt[,i])
+      mnwgt$FleetName <- NA
+      mnwgt$FleetNum <- NA
+      for(i in 1:nrow(mnwgt)){
+        mnwgt$FleetNum[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
+        mnwgt$FleetName[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$FleetNum[i])+2)
+      }
+    }
   }else{
     DF_mnwgt <- NA
     mnwgt <- NA

@@ -193,7 +193,9 @@ SSplotSelex <-
         retchecktemp <- as.vector(unlist(intret2[1,]))
         retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
         if(is.na(sum(retcheck))) retcheckuse <- 0
-        if(!is.na(sum(retcheck))) retcheckuse <- max(retcheck)-min(retcheck)
+        # if minimum retention is less than 1, show additional stuff in plot
+        if(!is.na(sum(retcheck))) retcheckuse <- 1 - min(retcheck)
+        
         # make plot
         plot(bins,vals,xlab=labels[1],ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type="n")
         abline(h=0,col="grey")
