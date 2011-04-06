@@ -266,6 +266,7 @@ SS_output <-
     warnname <- paste(dir,"warning.sso",sep="")
     if(!file.exists(warnname)){
       cat("warning.sso file not found\n")
+      nwarn <- NA
       warn <- NA
     }else{
       warn <- readLines(warnname,warn=FALSE)
