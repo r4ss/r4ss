@@ -96,6 +96,11 @@ function(replist,subplots=1:7,
       allcpue <- rbind(allcpue,tempcpue)
     }
     uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
+    if(max(uiw)==Inf){
+      cat("removing upper interval on indices with infinite upper quantile values\n",
+          "check the uncertainty inputs to for the indices\n")
+      uiw[uiw==Inf] <- 1000*max(cpueuse$Obs[uiw==Inf])
+    }
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
     npoints <- length(z)
     main=paste(labels[2], Fleet,sep=" ")
@@ -103,7 +108,8 @@ function(replist,subplots=1:7,
     addlegend <- function(pch, colvec){
       names <- paste(seasnames,"observations")
     }
-
+    # print(cbind(x, y, liw, uiw)) # debugging line
+    
     cpuefun1 <- function(addexpected=TRUE){
       # plot of time-series of observed and expected (if requested)
       if(!add) plot(x=x,y=y,type='n',xlab=labels[1],ylab=labels[2],

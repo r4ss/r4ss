@@ -7,7 +7,8 @@ SSplotSelex <-
                     "Age (yr)",    #2
                     "Year",        #3
                     "Selectivity", #4
-                    "Retention"),  #5
+                    "Retention",   #5
+                    "Discard mortality"),  #6
            col1="red",col2="blue",
            pwidth = 7, pheight = 7, punits = "in",
            res = 300, ptsize = 12,
@@ -156,7 +157,7 @@ SSplotSelex <-
         if(plot)
         {
           if(3 %in% subplot)
-            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[6],
                   expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
                   phi=35,theta=-10,zlim=c(0,max(z)))
           if(4 %in% subplot)
@@ -167,7 +168,7 @@ SSplotSelex <-
         {
           if(3 %in% subplot){
             pngfun(file=paste(plotdir,"sel3b_timevary_mort_surf_flt",i,"sex",m,".png",sep=""))
-            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[5],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+            persp(x,y,z,col="white",xlab=labels[1],ylab=labels[3],zlab=labels[6],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
             dev.off()
           }
           if(4 %in% subplot){
@@ -227,7 +228,7 @@ SSplotSelex <-
           if(4%in%selexlines) lines((as.numeric(as.vector(names(plotkeep)[-(1:5)]))),(as.numeric(as.character(plotkeep[1,-(1:5)]))),col="purple",type="o",pch=2,cex=.9)
           if(5%in%selexlines) lines((as.numeric(as.vector(names(plotdead)[-(1:5)]))),(as.numeric(as.character(plotdead[1,-(1:5)]))),col="green3",type="o",pch=5,cex=.9)
           legend("bottomright",inset=c(0.05,0.05),bty="n",
-      	   c(labels[4],labels[5],"Discard mortality","Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
+      	   c(labels[4],labels[5],labels[6],"Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
       	   lty=1,col=c("blue","red","orange","purple","green3")[selexlines],
       	   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
         }
