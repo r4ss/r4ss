@@ -97,8 +97,8 @@ function(replist,subplots=1:7,
     }
     uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
     if(max(uiw)==Inf){
-      cat("removing upper interval on indices with infinite upper quantile values\n",
-          "check the uncertainty inputs to for the indices\n")
+      cat("!warning: removing upper interval on indices with infinite upper quantile values\n",
+          "         check the uncertainty inputs to for the indices\n")
       uiw[uiw==Inf] <- 1000*max(cpueuse$Obs[uiw==Inf])
     }
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
