@@ -163,6 +163,9 @@ SS_output <-
   if(file.exists(compfile)){
     comphead <- readLines(con=compfile,n=20)
     compskip <- grep("Composition_Database",comphead)
+    # compend value helps diagnose when no comp data exists in CompReport.sso file.
+    compend <- grep(" end ",comphead) 
+    if(length(compend)==0) compend <- 999
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
       cat("problem comparing the file creation times:\n")
@@ -356,108 +359,115 @@ SS_output <-
     lbinspop <- lbinspop[!is.na(lbinspop)]
     nlbinspop <- length(lbinspop)
     Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
-    # read composition database
-    if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
-    rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
-    names(rawcompdbase) <- rawcompdbase[1,]
-    names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
-    compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-4),] # subtract header line and last 4 lines
-    compdbase <- compdbase[compdbase$Obs!="",]
-    compdbase[compdbase=="_"] <- NA
-    compdbase$Used[is.na(compdbase$Used)] <- "yes"
-    if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
-    compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-    
-    n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
-    if(n>0){
-      cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
-    }
-    for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]) compdbase[,i] <- as.numeric(compdbase[,i])
-
-    # configure seasons
-    if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
-
-    # deal with Lbins
-    compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
-    compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
-
-    # divide into objects by kind
-    Lbin_range <- compdbase$Lbin_range
-    if(is.null(Lbin_range)){ # if/else required to avoid warning if no comp data at all
-      notconditional <- TRUE
-      conditional <- FALSE
+    if(compend==20){
+      cat("It appears that there is no composition data in CompReport.sso\n")
+      comp <- FALSE # turning off switch to function doesn't look for comp data later on
+      agebins <- NA
+      nagebins <- length(agebins)
     }else{
-      notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
-      conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
-    }
-    lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-    sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-    agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
-    condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
-    ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
-    ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
-    ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
-    compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
-
-    # extra processing for sizedbase
-    if(!is.null(sizedbase)){
-      sizedbase$bio.or.num=c("bio","num")[sizedbase$Lbin_lo]
-      sizedbase$units=c("kg","lb","cm","in")[sizedbase$Lbin_hi]
-      sizedbase$method=sizedbase$Ageerr
-
-      if(any(sizedbase$units %in% c("lb","in"))){
-        if(verbose)
-          cat("Note: converting bins in generalized size comp data in sizedbase\n",
-              " back to the original units of lbs or inches.\n")
+      # read composition database
+      if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
+      rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
+      names(rawcompdbase) <- rawcompdbase[1,]
+      names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
+      compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-4),] # subtract header line and last 4 lines
+      compdbase <- compdbase[compdbase$Obs!="",]
+      compdbase[compdbase=="_"] <- NA
+      compdbase$Used[is.na(compdbase$Used)] <- "yes"
+      if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
+      compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
+      
+      n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
+      if(n>0){
+        cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
       }
-      # convert bins from kg to lbs when that was the original unit
-      sizedbase$Bin[sizedbase$units=="lb"] <- 
+      for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+
+      # configure seasons
+      if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
+
+      # deal with Lbins
+      compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
+      compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)
+
+      # divide into objects by kind
+      Lbin_range <- compdbase$Lbin_range
+      if(is.null(Lbin_range)){ # if/else required to avoid warning if no comp data at all
+        notconditional <- TRUE
+        conditional <- FALSE
+      }else{
+        notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
+        conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
+      }
+      lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+      sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+      agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
+      condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+      ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
+      ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
+      ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
+      compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
+
+      # extra processing for sizedbase
+      if(!is.null(sizedbase)){
+        sizedbase$bio.or.num=c("bio","num")[sizedbase$Lbin_lo]
+        sizedbase$units=c("kg","lb","cm","in")[sizedbase$Lbin_hi]
+        sizedbase$method=sizedbase$Ageerr
+
+        if(any(sizedbase$units %in% c("lb","in"))){
+          if(verbose)
+            cat("Note: converting bins in generalized size comp data in sizedbase\n",
+                " back to the original units of lbs or inches.\n")
+        }
+        # convert bins from kg to lbs when that was the original unit
+        sizedbase$Bin[sizedbase$units=="lb"] <- 
           sizedbase$Bin[sizedbase$units=="lb"]/0.4536
-      # convert bins from cm to inches when that was the original unit
-      sizedbase$Bin[sizedbase$units=="in"] <- 
+        # convert bins from cm to inches when that was the original unit
+        sizedbase$Bin[sizedbase$units=="in"] <- 
           sizedbase$Bin[sizedbase$units=="in"]/2.54
 
+      }
+      
+      if(is.null(compdbase$N)){
+        good <- TRUE
+      }else{
+        good <- !is.na(compdbase$N)
+      }
+      ladbase          <- compdbase[compdbase$Kind=="L@A" & good,]
+      wadbase          <- compdbase[compdbase$Kind=="W@A" & good,]
+      tagdbase1        <- compdbase[compdbase$Kind=="TAG1",]
+      tagdbase2        <- compdbase[compdbase$Kind=="TAG2",]
+      # consider range of bins for conditional age at length data
+      if(verbose){
+        cat("CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n",
+            "  ",nrow(lendbase), "rows of length comp data,\n",
+            "  ",nrow(sizedbase),"rows of generalized size comp data,\n",
+            "  ",nrow(agedbase), "rows of age comp data,\n",
+            "  ",nrow(condbase), "rows of conditional age-at-length data,\n",
+            "  ",nrow(ghostagedbase),"rows of ghost fleet age comp data,\n",
+            "  ",nrow(ghostcondbase),"rows of ghost fleet conditional age-at-length data,\n",
+            "  ",nrow(ghostlendbase),"rows of ghost fleet length comp data,\n",
+            "  ",nrow(ladbase),  "rows of mean length at age data,\n",
+            "  ",nrow(wadbase),  "rows of mean weight at age data,\n",
+            "  ",nrow(tagdbase1),"rows of 'TAG1' comp data, and\n",
+            "  ",nrow(tagdbase2),"rows of 'TAG2' comp data.\n")
+      }
+      Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
+      names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
+      if(length(unique(agedbase$Lbin_range)) > 1){
+        cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
+        print(Lbin_ranges)
+        cat("  consider increasing 'aalmaxbinrange' to designate\n")
+        cat("  some of these data as conditional age-at-length\n")
+      }
+      # convert bin indices to true lengths
+      if(nrow(agedbase)>0){
+        agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
+      }else{
+        agebins <- NA
+      }
+      nagebins <- length(agebins)
     }
-                
-    if(is.null(compdbase$N)){
-      good <- TRUE
-    }else{
-      good <- !is.na(compdbase$N)
-    }
-    ladbase          <- compdbase[compdbase$Kind=="L@A" & good,]
-    wadbase          <- compdbase[compdbase$Kind=="W@A" & good,]
-    tagdbase1        <- compdbase[compdbase$Kind=="TAG1",]
-    tagdbase2        <- compdbase[compdbase$Kind=="TAG2",]
-    # consider range of bins for conditional age at length data
-    if(verbose){
-      cat("CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n",
-          "  ",nrow(lendbase), "rows of length comp data,\n",
-          "  ",nrow(sizedbase),"rows of generalized size comp data,\n",
-          "  ",nrow(agedbase), "rows of age comp data,\n",
-          "  ",nrow(condbase), "rows of conditional age-at-length data,\n",
-          "  ",nrow(ghostagedbase),"rows of ghost fleet age comp data,\n",
-          "  ",nrow(ghostcondbase),"rows of ghost fleet conditional age-at-length data,\n",
-          "  ",nrow(ghostlendbase),"rows of ghost fleet length comp data,\n",
-          "  ",nrow(ladbase),  "rows of mean length at age data,\n",
-          "  ",nrow(wadbase),  "rows of mean weight at age data,\n",
-          "  ",nrow(tagdbase1),"rows of 'TAG1' comp data, and\n",
-          "  ",nrow(tagdbase2),"rows of 'TAG2' comp data.\n")
-    }
-    Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
-    names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
-    if(length(unique(agedbase$Lbin_range)) > 1){
-      cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
-      print(Lbin_ranges)
-      cat("  consider increasing 'aalmaxbinrange' to designate\n")
-      cat("  some of these data as conditional age-at-length\n")
-    }
-    # convert bin indices to true lengths
-    if(nrow(agedbase)>0){
-      agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
-    }else{
-      agebins <- NA
-    }
-    nagebins <- length(agebins)
   }else{
     # if comp option is turned off
     lbins <- NA
@@ -1163,7 +1173,8 @@ SS_output <-
   catage <- matchfun2("CATCH_AT_AGE",1,"BIOLOGY",-1)
   if(catage[[1]][1]=="absent"){
     catage <- NA
-    cat("! Warning: no catch-at-age numbers because 'detailed age-structured reports' turned off in starter file.",quote=F)
+    cat("! Warning: no catch-at-age numbers because 'detailed age-structured reports'\n",
+        "          is turned off in starter file.\n")
   }else{
     catage <- catage[,apply(catage,2,emptytest)<1]
     names(catage) <- catage[1,]
@@ -1210,6 +1221,7 @@ SS_output <-
   
   # adding stuff to list which gets returned by function
   if(comp){
+    returndat$comp_data_exists <- TRUE
     returndat$lendbase      <- lendbase
     returndat$sizedbase     <- sizedbase
     returndat$agedbase      <- agedbase
@@ -1221,6 +1233,8 @@ SS_output <-
     returndat$wadbase       <- wadbase
     returndat$tagdbase1     <- tagdbase1
     returndat$tagdbase2     <- tagdbase2
+  }else{
+    returndat$comp_data_exists <- FALSE
   }
 
   returndat$derived_quants <- der
