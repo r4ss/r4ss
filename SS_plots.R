@@ -27,7 +27,7 @@ SS_plots <-
   #
   ################################################################################
 
-  codedate <- "March 23, 2011"
+  codedate <- "April 13, 2011"
 
   if(verbose) cat("R function updated:",codedate,
     "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
@@ -296,7 +296,7 @@ SS_plots <-
       SSplotRecdist(replist=replist,
                     plot=(7 %in% plot),
                     print=(7 %in% print),
-                    verbose=verbose,cex.main=cex.main,
+                    verbose=verbose,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,cex.main=cex.main,
                     plotdir=plotdir)

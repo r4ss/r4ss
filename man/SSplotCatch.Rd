@@ -20,7 +20,7 @@ labels = c("Harvest rate/Year", "Continuous F", "Landings",
 "(numbers x1000)", "Observed and expected",
 "aggregated across seasons"),
 catchasnumbers = FALSE, pwidth = 7, pheight = 7, punits = "in",
-res = 300, ptsize = 12, verbose = TRUE)
+res = 300, ptsize = 12, cex.main = 1, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -112,6 +112,9 @@ res = 300, ptsize = 12, verbose = TRUE)
   }
   \item{ptsize}{
     ptsize for PNG file
+  }
+  \item{cex.main}{
+    character expansion for plot titles
   }
   \item{verbose}{
     report progress to R console?

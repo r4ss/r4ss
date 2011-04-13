@@ -10,13 +10,26 @@
   from the model, not the input data file.
 }
 \usage{
-SSplotData(replist, fleetcol = "default", datatypes = "all", fleets =
-"all", ghost = FALSE)
+SSplotData(replist, plot=TRUE,print=FALSE,
+  plotdir="default", fleetcol="default",
+  datatypes="all",fleets="all",ghost=FALSE,
+  pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+  verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
     list created by \code{\link{SS_output}}
+  }
+  \item{plot}{
+    plot to active plot device?
+  }
+  \item{print}{
+    print to PNG files?
+  }
+  \item{plotdir}{
+    directory where PNG files will be written. by default it will
+    be the directory where the model was run.
   }
   \item{fleetcol}{
     Either the string "default", or a vector of colors
@@ -26,7 +39,7 @@ SSplotData(replist, fleetcol = "default", datatypes = "all", fleets =
     Either the string "all", or a vector including some subset of the
     following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
     "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase",
-    "ladbase", "wadbase", "tagdbase1", "tagdbase2".
+    "ladbase", "wadbase", "mnwgt", "discard", "tagdbase1", "tagdbase2".
   }
   \item{fleets}{
     Either the string "all", or a vector of numerical values, like
@@ -36,6 +49,27 @@ SSplotData(replist, fleetcol = "default", datatypes = "all", fleets =
     TRUE/FALSE indicator for whether to show presence of composition
     data from ghost fleets (data for which the fit is shown, but is not
     included in the likelihood calculations).
+  }
+  \item{pwidth}{
+    width of plot written to PNG file
+  }
+  \item{pheight}{
+    height of plot written to PNG file
+  }
+  \item{punits}{
+    units for PNG file
+  }
+  \item{res}{
+    resolution for PNG file
+  }
+  \item{ptsize}{
+    ptsize for PNG file
+  }
+  \item{cex.main}{
+    character expansion for plot titles
+  }
+  \item{verbose}{
+    report progress to R GUI?
   }
 }
 \details{

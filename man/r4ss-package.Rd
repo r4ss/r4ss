@@ -16,11 +16,11 @@
   \tabular{ll}{
     Package: \tab r4ss\cr
     Type: \tab Package\cr
-    Version: \tab 1.14\cr
-    Date: \tab 2011-02-17\cr
+    Version: \tab 1.15\cr
+    Date: \tab 2011-04-13\cr
     License: \tab MIT license\cr
     LazyLoad: \tab yes\cr
-    URL: \tab http://www.r-project.org\cr \tab http://code.google.com/p/r4ss/\cr
+    URL: \tab \url{http://www.r-project.org}\cr \tab \url{http://code.google.com/p/r4ss/}\cr
   }
   Should be compatible with Stock Synthesis versions 3.11 and 3.20
 }
@@ -31,8 +31,8 @@
   Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
 \references{
-  More info on the R code: http://code.google.com/p/r4ss/ \cr
-  Download Stock Synthesis: http://nft.nefsc.noaa.gov/
+  More info on the R code: \url{http://code.google.com/p/r4ss/} \cr
+  Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 }
 
 \keyword{ package }

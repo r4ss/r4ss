@@ -9,7 +9,8 @@
   probably created using \code{\link{SS_readstarter}}
 }
 \usage{
-SS_writestarter(mylist, dir = NULL, file = "starter.ss", overwrite = F, verbose = T)
+SS_writestarter(mylist, dir = NULL, file = "starter.ss", overwrite = F,
+verbose = T)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

@@ -8,17 +8,26 @@
   Plot indices of abundance and associated quantities.
 }
 \usage{
-SSplotIndices(replist, subplots = 1:7, plot = TRUE, print = FALSE,
-fleets = "all", fleetnames = "default", smooth = TRUE,
-add = FALSE, datplot = FALSE, labels = c("Year", "Index",
-"Observed index", "Expected index", "Log index",
-"Log observed index", "Log expected index",
-"Standardized index"), col1 = "default", col2 = "default",
-col3 = "blue", col4 = "red", pch1 = 1, pch2 = 16,
-cex = 1, legend = TRUE, legendloc = "topright",
-seasnames = NULL, pwidth = 7, pheight = 7, punits =
-"in", res = 300, ptsize = 12, cex.main = 1,
-plotdir = "default", verbose = TRUE)
+SSplotIndices(replist,subplots=1:8,
+  plot=TRUE,print=FALSE,
+  fleets="all",fleetnames="default",
+  smooth=TRUE,add=FALSE,datplot=FALSE,
+  labels=c("Year",         
+    "Index",               
+    "Observed index",      
+    "Expected index",      
+    "Log index",           
+    "Log observed index",  
+    "Log expected index",  
+    "Standardized index",  
+    "Catchability (Q)",    
+    "Time-varying catchability"),
+  col1="default", col2="default", col3="blue", col4="red",
+  pch1=1, pch2=16, cex=1,
+  legend=TRUE, legendloc="topright", seasnames=NULL,
+  pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+  plotdir="default", verbose=TRUE)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

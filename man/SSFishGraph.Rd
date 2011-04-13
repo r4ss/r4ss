@@ -6,7 +6,7 @@
 \description{
   Only skeleton of a function right now, needs work. Intended as a
   translator to convert the output from object created by
-  \code{\link{SS_output}} to the format used by Michael Prager's FishGraph.
+  \code{\link{SS_output}} to the format used by FishGraph.
 }
 \usage{
 SSFishGraph(replist, title = "SSv3 output",
@@ -28,7 +28,7 @@ species = "some kind of fish")
 %   \item{comp2 }{Description of 'comp2'}
 %   ...
 % }
-\references{ Michael Prager's website with FishGraph downloads: http://www.sefsc.noaa.gov/mprager/rinter.html }
+\references{ A website related to FishGraph is \url{http://r-forge.r-project.org/projects/fishgraph/} }
 \author{ Ian Taylor }
 % \note{ ~~further notes~~
 

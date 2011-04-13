@@ -249,45 +249,39 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
-                           newdir="c:/SS/modeltesting/Version_3_20e_Mar22")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20e_Mar22",
+                           newdir="c:/SS/modeltesting/Version_3_21beta_Apr13")
 
+  # on sysiphus
   folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
                            newdir="y:/h_itaylor/SS/modeltesting/Version_3_20e_Mar15")
   
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.20e_Mar22",
+  copyexe(sourcedir="c:/SS/SSv3.21beta_Apr13/Ver321beta",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
-          exe="SS3.exe")
+          exe="ss3.exe")
 
   copyexe(sourcedir="y:/h_itaylor/SS/SSv3.20_Jan3",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="SS3")
 
-  # convert to SSv3.20
-  setwd(folderinfo$newdir)
-  for(i in 1:length(folderinfo$folderlist)){
-    model <- folderinfo$folderlist[i]
-    convert_to_v3.20(model,replace=T)
-  }
-  for(i in 1:length(folderinfo$folderlist)){
-    model <- folderinfo$folderlist[i]
-    (file.copy(paste(model,"forecast.ss",sep="/"),paste(model,"old_forecast.ss",sep="/")))
-    (file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"),overwrite=TRUE))
-  }
+  ## # convert to SSv3.20
+  ## setwd(folderinfo$newdir)
   ## for(i in 1:length(folderinfo$folderlist)){
   ##   model <- folderinfo$folderlist[i]
-  ##   dat <- SS_readdat(paste(folderinfo$olddir,model,"data.ss_new",sep="/"))
-  ##   fore <- SS_readforecast_v3.20(
-  ##   file.copy(paste(model,"forecast.ss",sep="/"),paste(model,"old_forecast.ss",sep="/"))
-  ##   file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"))
+  ##   convert_to_v3.20(model,replace=T)
+  ## }
+  ## for(i in 1:length(folderinfo$folderlist)){
+  ##   model <- folderinfo$folderlist[i]
+  ##   (file.copy(paste(model,"forecast.ss",sep="/"),paste(model,"old_forecast.ss",sep="/")))
+  ##   (file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"),overwrite=TRUE))
   ## }
 
   # run new SS executable for each example model 
   runmodels(newdir=folderinfo$newdir,
-            folderlist=folderinfo$folderlist,exe="SS3.exe",extras="-nox")
+            folderlist=folderinfo$folderlist,exe="ss3.exe",extras="-nox")
 
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
@@ -325,7 +319,8 @@ if(FALSE){
   for(i in length(alloutput):1){
     models <- alloutput[[i]]
     for(j in 1:length(models)){
-      SS_plots(models[[j]],pdf=T)
+      test <- SS_plots(models[[j]],pdf=T)
+      if(test!=999) cat("!!!! plot code failed on model",j)
     }
   }
   

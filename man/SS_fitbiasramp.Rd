@@ -12,7 +12,8 @@ controls for the bias adjustment in Stock Synthesis
 \usage{
 SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
   twoplots=TRUE, transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL,
-  newctl=NULL, pwidth=7, pheight=7, punits="in", ptsize=12, res=300)
+  newctl=NULL, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+  cex.main=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -40,6 +41,7 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
   \item{punits}{ Units for \code{pwidth} and \code{pheight}. Can be "px" (pixels), "in" (inches), "cm" or "mm". Default="in". }
   \item{ptsize}{ Point size for plotted text in plots printed to files (see help("png") in R for details). Default=12. }
   \item{res}{ Resolution of plots printed to files. Default=300. }
+  \item{cex.main}{ Character expansion for plot titles. }
 }
 % \details{
 % %%  ~~ If necessary, more details than the description above ~~

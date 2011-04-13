@@ -230,13 +230,15 @@ function(replist,subplots=1:8,
   } # nfleets
 
   ### New the standardized plot of all CPUE indices
-  if(datplot==T){
+  if(datplot==TRUE){
     cpuefun6 <- function(){
       main="All cpue plot"
-      xlim <- c(min(allcpue$year,na.rm=T)-1,max(allcpue$year,na.rm=T)+1)
-      ylim <- c(range(allcpue$stdvalue,na.rm=T))
-      usecols <- rich.colors.short(max(allcpue$Index,na.rm=T))
-      if(max(allcpue$Index,na.rm=T) >= 2) usecols <- rich.colors.short(max(allcpue$Index,na.rm=T)+1)[-1]
+      xlim <- c(min(allcpue$year,na.rm=TRUE)-1,max(allcpue$year,na.rm=TRUE)+1)
+      ylim <- c(range(allcpue$stdvalue,na.rm=TRUE))
+      usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE))
+      if(max(allcpue$Index,na.rm=TRUE) >= 2){
+        usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE)+1)[-1]
+      }
       if(!add) plot(0, type="n", xlab=labels[1], main=main, cex.main=cex.main,
                     col=usecols[1], ylab=labels[8], xlim=xlim,ylim=ylim)
       for(ifleet in fleetvec){

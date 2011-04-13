@@ -3,7 +3,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
                           xlab="",ylab="",size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
                           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
-                          axis1="default",axis2="default",linepos=1,type="p",
+                          axis1="default",axis2="default",linepos=1,type="o",
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
@@ -145,7 +145,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
       }
       # new way
       if(!doSD) polygon(c(ptsx_i[1],ptsx_i,tail(ptsx_i,1)),c(0,ptsy_i,0),col='grey80')  # polygon
-      points(ptsx_i,ptsy_i,type="o",lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
+      points(ptsx_i,ptsy_i,type=type,lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
 
       # adding uncertainty for mean length or weight at age plots
       if(doSD){

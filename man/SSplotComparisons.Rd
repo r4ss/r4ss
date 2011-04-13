@@ -14,18 +14,18 @@ SSplotComparisons(summaryoutput,subplots=1:13,
   plot=TRUE,print=FALSE,
   models="all",
   endyrvec=NULL,
-  indexfleets="default",
+  indexfleets=NULL,
   indexUncertainty=FALSE,
   indexSEvec="default",
   indexPlotEach=FALSE,         
-  labels=c("Year",             #1
-    "Spawning biomass (mt)",   #2
-    "Spawning depletion",      #3
-    "Age-0 recruits (1,000s)", #4
-    "Recruitment deviations",  #5
-    "Index",                   #6
-    "Log index",               #7
-    "Density"),                #8
+  labels=c("Year",             
+    "Spawning biomass (mt)",   
+    "Spawning depletion",      
+    "Age-0 recruits (1,000s)", 
+    "Recruitment deviations",  
+    "Index",                   
+    "Log index",               
+    "Density"),                
   col="default", shadecol="default",
   pch="default", lty=1, lwd=2,
   xlim="default", xaxs="r", yaxs="r",

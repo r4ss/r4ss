@@ -9,25 +9,32 @@
   Mult-figure plots depend on \code{make_multifig}.
 }
 \usage{
-SSplotComps(replist, subplots = 1:9, kind = "LEN",
-sizemethod = 1,
-aalyear = -1, aalbin = -1, plot = TRUE, print = FALSE,
-fleets = "all", fleetnames="default", datonly = FALSE,
-samplesizeplots = TRUE, compresidplots = TRUE,
-bub = FALSE, showsampsize = TRUE, showeffN = TRUE,
-minnbubble = 8, pntscalar = 2.6, pwidth = 7, pheight = 7,
-punits = "in", ptsize = 12, res = 300, plotdir = "default",
-cex.main = 1, linepos = 1, fitbar = FALSE, maxsize = 3,
-do.sqrt = TRUE, smooth = TRUE, cohortlines = c(),
-labels = c("Length (cm)", "Age (yr)", "Year",
-"Observed sample size", "Effective sample size",
-"Proportion", "cm", "Frequency", "Weight (lbs)", "(mt)",
-"(numbers x1000)", "Stdev (Age) (yr)",
-"Andre's conditional AAL plot, "), printmkt = TRUE,
-printsex = TRUE, maxrows = 6, maxcols = 6,
-maxrows2 = 2, maxcols2 = 4, rows = 1, cols = 1,
-fixdims = TRUE, maxneff = 5000, verbose = TRUE,
-scalebins = FALSE, ...)
+SSplotComps(replist, subplots=1:11,
+  kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE,
+  print=FALSE, fleets="all", fleetnames="default",
+  datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
+  showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
+  pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+  plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
+  do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
+  labels = c("Length (cm)",            
+             "Age (yr)",               
+             "Year",                   
+             "Observed sample size",   
+             "Effective sample size",  
+             "Proportion",             
+             "cm",                     
+             "Frequency",              
+             "Weight",                 
+             "Length",                 
+             "(mt)",                   
+             "(numbers x1000)",        
+             "Stdev (Age) (yr)",       
+             "Andre's conditional AAL plot, "),
+  printmkt=TRUE,printsex=TRUE,
+  maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
+  fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
+  scalebins=FALSE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -168,6 +175,10 @@ scalebins = FALSE, ...)
   \item{fixdims}{
     fix the dimensions at maxrows by maxcols or resize based on number of
     years of data
+  }
+  \item{fixdims2}{
+    fix the dimensions at maxrows by maxcols in aggregate plots or
+    resize based on number of fleets
   }
   \item{maxneff}{
     the maximum value to include on plots of input and effective sample
