@@ -1,5 +1,5 @@
 SSplotIndices <-
-function(replist,subplots=1:7,
+function(replist,subplots=1:8,
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
          smooth=TRUE,add=FALSE,datplot=FALSE,
@@ -10,7 +10,9 @@ function(replist,subplots=1:7,
            "Log index",          #5
            "Log observed index", #6
            "Log expected index", #7
-           "Standardized index"),#8
+           "Standardized index", #8
+           "Catchability (Q)",   #9
+           "Time-varying catchability"), #10
          col1="default", col2="default", col3="blue", col4="red",
          pch1=1, pch2=16, cex=1,
          legend=TRUE, legendloc="topright", seasnames=NULL,
@@ -84,6 +86,7 @@ function(replist,subplots=1:7,
     Fleet <- fleetnames[ifleet]
     cpueuse <- cpue[cpue$Obs > 0 & cpue$FleetNum==ifleet,]
     cpueuse <- cpueuse[order(cpueuse$YrSeas),]
+    time <- diff(range(cpueuse$Calc_Q))>0
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
@@ -188,10 +191,19 @@ function(replist,subplots=1:7,
       if(length(colvec2)>1) legend(x=legendloc, legend=seasnames,
                                    pch=pch2, col=colvec2, cex=cex)
     }
+    cpuefun5 <- function(){
+      # plot of time-varying catchability (if present)
+      main <- paste(labels[10], Fleet, sep=" ")
+      q <- cpueuse$Calc_Q
+      if(!add) plot(x,q,type='n',xlab=labels[1],main=main,
+                    cex.main=cex.main,ylab=labels[9])
+      points(x,q,col=colvec2[1],pch=pch2,type='o')
+    }
     if(plot){
       if(4 %in% subplots) cpuefun3(addexpected=FALSE)
       if(5 %in% subplots) cpuefun3()
       if(6 %in% subplots) cpuefun4()
+      if(7 %in% subplots & time) cpuefun5()
     }
     if(print){
       if(4 %in% subplots & datplot){
@@ -209,12 +221,17 @@ function(replist,subplots=1:7,
         cpuefun4()
         dev.off()
       }
+      if(7 %in% subplots & time){
+        pngfun(file=paste(plotdir,"/index7_timevaryingQ",Fleet,".png",sep=""))
+        cpuefun4()
+        dev.off()
+      }
     }
   } # nfleets
 
   ### New the standardized plot of all CPUE indices
   if(datplot==T){
-    cpuefun5 <- function(){
+    cpuefun6 <- function(){
       main="All cpue plot"
       xlim <- c(min(allcpue$year,na.rm=T)-1,max(allcpue$year,na.rm=T)+1)
       ylim <- c(range(allcpue$stdvalue,na.rm=T))
@@ -226,11 +243,11 @@ function(replist,subplots=1:7,
         points(x=allcpue$year[allcpue$Index==ifleet],y=allcpue$stdvalue[allcpue$Index==ifleet],
                pch=pch2,col=usecols[ifleet], cex=cex, lwd=0.4,lty="dashed", type="o")
       }
-    } # end cpuefun5
-    if(plot & (7 %in% subplots)){cpuefun5()}
-    if(print & (7 %in% subplots)){
-      pngfun(file=paste(plotdir,"/index7_standcpueall",".png",sep=""))
-      cpuefun5()
+    } # end cpuefun6
+    if(plot & (8 %in% subplots)){cpuefun6()}
+    if(print & (8 %in% subplots)){
+      pngfun(file=paste(plotdir,"/index8_standcpueall",".png",sep=""))
+      cpuefun6()
       dev.off()}
   } # end datplot
 
