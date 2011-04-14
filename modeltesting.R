@@ -320,7 +320,11 @@ if(FALSE){
     models <- alloutput[[i]]
     for(j in 1:length(models)){
       test <- SS_plots(models[[j]],pdf=T)
-      if(test!=999) cat("!!!! plot code failed on model",j)
+      if(test==999){
+        cat("!!!! plot code succeeded on model",j,"\n")
+      }else{
+        cat("!!!! plot code failed on model",j,"\n")
+      }
     }
   }
   

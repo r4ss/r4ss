@@ -216,25 +216,34 @@ SS_output <-
     endyield <- matchfun("MSY_not_calculated",rawforcast1[,1])
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
     if(yesMSY) endyield <- matchfun("findFmsy",rawforcast1[,10])
-    # this section move to Report.sso on Jan 6
+    if(verbose) cat("Got forecast file\n")
+
+    # this section on equilibrium yield moved to Report.sso on Jan 6
     startline <- matchfun("profile",rawforcast1[,11])
     if(!is.na(startline)){ # before the Jan 6 fix to benchmarks
       yieldraw <- rawforcast1[(startline+1):endyield,]
     }else{
       yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
       # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
-      # in this case, the output can be read only with forecast=F. A warning should be given.
     }
-    if(SS_versionshort=="SS-V3.11"){
-      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+    if(yieldraw[[1]][1]=="absent"){
+      cat("!warning: Report.sso appears to be early version from before Hessian was estimated.\n",
+          "         equilibrium yield estimates not included in output.\n")
+      yieldraw <- NA
+    }
+    if(is.na(yieldraw[[1]][1])){
+      yielddat <- NA
     }else{
-      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+      if(SS_versionshort=="SS-V3.11"){
+        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+      }else{
+        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+      }
+      colnames(yielddat) <- c("Catch","Depletion")
+      yielddat$Catch <- as.numeric(yielddat$Catch)
+      yielddat$Depletion <- as.numeric(yielddat$Depletion)
+      yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
     }
-    colnames(yielddat) <- c("Catch","Depletion")
-    yielddat$Catch <- as.numeric(yielddat$Catch)
-    yielddat$Depletion <- as.numeric(yielddat$Depletion)
-    yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
-    if(verbose) cat("Got forecast file\n")
   }else{if(verbose) cat("You skipped the forecast file\n")}
   flush.console()
 
@@ -1251,6 +1260,7 @@ SS_output <-
     returndat$stdtable <- stdtable
   }
   returndat <- c(returndat,stats)
+  returndat$logfile <- logfile
 
   # process annual recruit devs
   recdevEarly   <- parameters[substring(parameters$Label,1,13)=="Early_RecrDev",]

@@ -21,7 +21,7 @@ SSplotYield <-
   if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
 
   # test if data is available
-  if(!is.null(equil_yield[1,1]) && !is.na(equil_yield[1,1])){
+  if(!is.null(equil_yield[[1]][1]) && !is.na(equil_yield[[1]][1])){
     # function for yeild curve
     yieldfunc <- function(){
       if(!add){
@@ -45,6 +45,8 @@ SSplotYield <-
         dev.off()}
     }
     if(verbose) cat("Finished plot 23: yield curve\n")
+  }else{
+    cat("Skipped equilibrium yield plot: no equil_yield results in this model\n")
   }
 
   ts <- timeseries
