@@ -306,7 +306,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_20e_Mar22"))
+               SSversions=c("Version_3_21beta_Apr13"))
 
   # example on sysiphus
   alloutput <-

@@ -28,7 +28,7 @@ SSplotDiscard <-
   if(length(discard)>1){
     for(fleetname in unique(discard$Fleet)){
       fleetnum <- as.numeric(strsplit(fleetname,"_")[[1]][1])
-      # table availabe beginning with SSv3.20 has fleet-specific discard specs
+      # table available beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
         DF_discard <- discard_spec$errtype[discard_spec$Fleet==fleetnum]
       }

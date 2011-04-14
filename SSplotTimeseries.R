@@ -87,10 +87,10 @@ SSplotTimeseries <-
   # modifying data to subset for a single season
   ts <- timeseries
   if(nseasons>1){
-    if(SS_versionshort=="SS-V3.20"){
-      ts$YrSeas <- ts$Yr + seasfracs
-    }else{
+    if(SS_versionshort=="SS-V3.11"){
       ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
+    }else{
+      ts$YrSeas <- ts$Yr + seasfracs
     }
   }else{
     ts$YrSeas <- ts$Yr

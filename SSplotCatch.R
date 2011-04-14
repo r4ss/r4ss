@@ -103,12 +103,12 @@ SSplotCatch <-
   goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
   catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
 
-  if(SS_versionshort=="SS-V3.20"){
-    stringN <- "sel(N)"
-    stringB <- "sel(B)"
-  }else{
+  if(SS_versionshort=="SS-V3.11"){
     stringN <- "enc(N)"
     stringB <- "enc(B)"
+  }else{
+    stringN <- "sel(N)"
+    stringB <- "sel(B)"
   }
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])

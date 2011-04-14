@@ -107,12 +107,12 @@ SS_output <-
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
   
-  if(!(SS_versionshort %in% c("SS-V3.20","SS-V3.11"))){
-    cat("! Warning, this function tested on SS-V3.11b and SS-V3.20a.\n",
+  if(!(SS_versionshort %in% c("SS-V3.21","SS-V3.20","SS-V3.11"))){
+    cat("! Warning, this function tested on SS-V3.11 through SS-V3.21.\n",
         "  you are using",substr(SS_version,1,9),"which may NOT work with this R code.\n")
   }else{
     if(verbose)
-      cat("This function tested on SS-V3.11b through SS-V3.20b.\n",
+      cat("This function tested on SS-V3.11 through SS-V3.21.\n",
           "  You're using",SS_versionshort,"which SHOULD work with this R code.\n")
   }
 
@@ -225,10 +225,10 @@ SS_output <-
       # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
       # in this case, the output can be read only with forecast=F. A warning should be given.
     }
-    if(SS_versionshort=="SS-V3.20"){
-      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
-    }else{
+    if(SS_versionshort=="SS-V3.11"){
       yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+    }else{
+      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
     }
     colnames(yielddat) <- c("Catch","Depletion")
     yielddat$Catch <- as.numeric(yielddat$Catch)
@@ -300,7 +300,21 @@ SS_output <-
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
 
   ### DEFINITIONS section (new in SSv3.20)
-  if(SS_versionshort=="SS-V3.20"){
+  if(SS_versionshort=="SS-V3.11"){    
+    nfleets <- length(unique(selex$Fleet))
+    nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
+    FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
+    ## fleet_area <- NA
+    ## catch_units <- NA
+    ## catch_error <- NA
+    ## survey_units <- NA
+    ## survey_error <- NA
+    ## FishFleet <- NA
+    nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
+    seasdurations <- 1/nseasons
+    seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
+  }else{
+    # version 3.20 or 3.21
     rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
     # get season stuff
     nseasons <- as.numeric(rawdefs[1,2])
@@ -322,20 +336,6 @@ SS_output <-
     FishFleet   <- !is.na(catch_units)
     nfleets <- length(FleetNames)
     nfishfleets <- sum(FishFleet)
-  }else{
-    # models prior to SSv3.20
-    nfleets <- length(unique(selex$Fleet))
-    nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
-    FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
-    ## fleet_area <- NA
-    ## catch_units <- NA
-    ## catch_error <- NA
-    ## survey_units <- NA
-    ## survey_error <- NA
-    ## FishFleet <- NA
-    nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
-    seasdurations <- 1/nseasons
-    seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }
   # more dimensions
   nsexes <- length(unique(as.numeric(selex$gender)))
@@ -366,7 +366,7 @@ SS_output <-
       nagebins <- length(agebins)
     }else{
       # read composition database
-      if(SS_versionshort=="SS-V3.20") col.names=1:22 else col.names=1:21
+      if(SS_versionshort=="SS-V3.11") col.names=1:21 else col.names=1:22
       rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
       names(rawcompdbase) <- rawcompdbase[1,]
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
@@ -483,7 +483,7 @@ SS_output <-
   # info on growth morphs (see also section setting mainmorphs below)
   endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
   if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
-  if(SS_versionshort=="SS-V3.20") shift <- -2 else shift <- -1
+  if(SS_versionshort=="SS-V3.11") shift <- -1 else shift <- -2
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=T)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
@@ -736,7 +736,7 @@ SS_output <-
   # data return object
   returndat <- list()
 
-  if(SS_versionshort=="SS-V3.20"){
+  if(SS_versionshort!="SS-V3.11"){ # these things didn't exist in 3.11
     returndat$definitions  <- defs
     returndat$fleet_ID     <- fleet_ID
     returndat$fleet_area   <- fleet_area
@@ -935,14 +935,8 @@ SS_output <-
   ## discard fractions ###
 
   # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
-  if(SS_versionshort=="SS-V3.20"){
-    DF_discard <- NA
-    shift <- 1
-    discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
-                              cols=1:3,header=TRUE)
-    for(icol in 1:3) discard_spec[,icol] <- as.numeric(discard_spec[,icol])
-    names(discard_spec)[1] <- "Fleet"
-  }else{ # older versions had different header
+  if(SS_versionshort=="SS-V3.11"){
+    # old header
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
     if(length(grep("T_distribution",DF_discard))>0)
       DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
@@ -951,6 +945,13 @@ SS_output <-
     if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
     shift <- 2
     discard_spec <- NULL
+  }else{ # newer header in 3.20 and 3.21
+    DF_discard <- NA
+    shift <- 1
+    discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
+                              cols=1:3,header=TRUE)
+    for(icol in 1:3) discard_spec[,icol] <- as.numeric(discard_spec[,icol])
+    names(discard_spec)[1] <- "Fleet"
   }
 
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)

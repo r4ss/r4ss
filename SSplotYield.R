@@ -53,7 +53,7 @@ SSplotYield <-
   # get total biomass and total catch (across areas)
   arearows <- ts$Area==1
   Bio_all <- ts$Bio_all[arearows]
-  if(SS_versionshort=="SS-V3.20") stringB <- "sel(B)" else stringB <- "enc(B)"
+  if(SS_versionshort=="SS-V3.11") stringB <- "enc(B)" else stringB <- "sel(B)"
 
   totcatchmat <- as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
 
