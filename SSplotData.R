@@ -111,6 +111,7 @@ SSplotData <- function(replist,
   # define colors
   if(fleetcol[1]=="default"){
     if(nfleets2>3) fleetcol <- rich.colors.short(nfleets2+1)[-1]
+    if(nfleets2==1) fleetcol <- "grey40"
     if(nfleets2==2) fleetcol <- rich.colors.short(nfleets2)
     if(nfleets2==3) fleetcol <- c("blue","red","green3")
   }else{
