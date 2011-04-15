@@ -26,13 +26,15 @@ SSplotDiscard <-
 
   # if discards exist
   if(length(discard)>1){
-    for(fleetname in unique(discard$Fleet)){
-      fleetnum <- as.numeric(strsplit(fleetname,"_")[[1]][1])
+    for(fleet in unique(discard$Fleet)){
+      FleetNum <- as.numeric(strsplit(fleet,"_")[[1]][1])
+      FleetName <- substring(fleet,nchar(FleetNum)+2)
+      
       # table available beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
-        DF_discard <- discard_spec$errtype[discard_spec$Fleet==fleetnum]
+        DF_discard <- discard_spec$errtype[discard_spec$Fleet==FleetNum]
       }
-      usedisc <- discard[discard$Fleet==fleetname,]
+      usedisc <- discard[discard$Fleet==fleet,]
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
@@ -57,32 +59,32 @@ SSplotDiscard <-
       if(!is.na(discard_type)){ # SSv3.11
         if(grepl("as_fraction",discard_type)){
           # discards as a fraction
-          title <- paste("Discard fraction for",fleetname)
+          title <- paste("Discard fraction for",FleetName)
           ylab <- "Discard fraction"
         }else{
           # discards in same units as catch, or in numbers (should distinguish in the future)
-          title <- paste("Total discard for",fleetname)
+          title <- paste("Total discard for",FleetName)
           ylab <- "Total discards"
         }
       }else{ # SSv3.20
         ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
         ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
         ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
-        discard_units <- discard_spec$units[discard_spec$Fleet==fleetnum]
+        discard_units <- discard_spec$units[discard_spec$Fleet==FleetNum]
         if(discard_units==1){
           # type 1: biomass or numbers
           #         someday could make labels more specific based on catch units
-          title <- paste("Total discard for",fleetname)
+          title <- paste("Total discard for",FleetName)
           ylab <- "Total discards"
         }
         if(discard_units==2){
           # type 2: discards as fractions
-          title <- paste("Discard fraction for",fleetname)
+          title <- paste("Discard fraction for",FleetName)
           ylab <- "Discard fraction"
         }
         if(discard_units==3){
           # type 3: discards as numbers
-          title <- paste("Total discard for",fleetname)
+          title <- paste("Total discard for",FleetName)
           ylab <- "Total discards (1000's)"
         }
       }
@@ -93,7 +95,7 @@ SSplotDiscard <-
       }
       if(plot) dfracfunc()
       if(print) {
-        pngfun(file=paste(plotdir,"discfracfit",fleetname,".png",sep=""))
+        pngfun(file=paste(plotdir,"discfracfit",FleetName,".png",sep=""))
         dfracfunc()
         dev.off()
       }

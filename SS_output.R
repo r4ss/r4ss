@@ -964,6 +964,12 @@ SS_output <-
   }
 
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
+  # rerun read of discard if in SSv3.20b which had missing line break
+  if(names(discard)[1]!="Fleet"){
+    discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=FALSE)
+    names(discard) <- c("Fleet","Yr","Seas","Obs","Exp","Std_in","Std_use","Dev")
+  }
+
   discard_type <- NA
   if(nrow(discard)>1){
     for(icol in 2:ncol(discard)) discard[,icol] <- as.numeric(discard[,icol])
