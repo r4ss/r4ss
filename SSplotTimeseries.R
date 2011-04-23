@@ -255,7 +255,7 @@ SSplotTimeseries <-
           stdtable$Yr <- as.numeric(stdtable$Yr)
           bioscale <- 1
         }
-
+print(stdtable)
         # scaling and calculation of confidence intervals
         v <- stdtable$Value * bioscale
         std <- stdtable$StdDev * bioscale

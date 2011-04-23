@@ -62,10 +62,12 @@ SSplotNumbers <-
     age_error_sd    <- replist$age_error_sd
     lbinspop        <- replist$lbinspop
     nlbinspop       <- replist$nlbinspop
-
+    recruitment_dist <- replist$recruitment_dist
+    # this logic is now out of date, not sure why it wasn't coming from replist anyway
+    #mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1 & morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
+    mainmorphs <- replist$mainmorphs
+      
     SS_versionshort <- toupper(substr(replist$SS_version,1,8))
-
-    mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1 & morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
 
     if(areas[1]=="all"){
       areas <- 1:nareas
@@ -410,21 +412,25 @@ SSplotNumbers <-
       equilage <- natage[natage$Era=="VIRG",]
       equilage <- equilage[as.vector(apply(equilage[,remove],1,sum))>0,]
 
+
+      BirthSeas <- spawnseas
+      if(!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
+      if(length(bseas)>1) cat("showing equilibrium age for first birth season",BirthSeas,"\n")
+
       plot(0,type='n',xlim=c(0,accuage),
-           ylim=c(0,1.05*max(equilage[equilage$BirthSeas==spawnseas
-             & equilage$Seas==spawnseas,remove])),
+           ylim=c(0,1.05*max(equilage[equilage$BirthSeas==BirthSeas
+             & equilage$Seas==BirthSeas,remove])),
            xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10],cex.main=cex.main)
 
       # now fill in legend
       legendlty <- NULL
       legendcol <- NULL
       legendlegend <- NULL
-      if(length(unique(equilage$BirthSeas))>1) cat("showing equilibrium age in in season 1 for only the first birth season\n")
       for(iarea in areas){
         for(m in 1:nsexes){
           equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m
-                                   & equilage$BirthSeas==spawnseas
-                                   & equilage$Seas==spawnseas,]
+                                   & equilage$BirthSeas==BirthSeas
+                                   & equilage$Seas==BirthSeas,]
           if(nrow(equilagetemp)>1){
             cat("in plot of equilibrium age composition by gender and area\n",
                 "multiple morphs are not supported, using first row from choices below\n")

@@ -884,7 +884,13 @@ SS_output <-
   # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
   temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
                          morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-  mainmorphs <- min(temp$Index[temp$Gender==1])
+  # however, if there are no fish born in the spawning season, then it should be the first birth season
+  if(recruitment_dist$Used[spawnseas]==0)
+    temp <- morph_indexing[morph_indexing$Bseas==min(recruitment_dist$Seas[recruitment_dist$Used==1]) &
+                         morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+
+  # filter in case multiple growth patterns (would cause problems)
+  mainmorphs <- min(temp$Index[temp$Gender==1]) 
   if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
   if(length(mainmorphs)==0) cat("!Error with morph indexing in SS_output function.\n")
   returndat$mainmorphs  <- mainmorphs
@@ -962,16 +968,18 @@ SS_output <-
     for(icol in 1:3) discard_spec[,icol] <- as.numeric(discard_spec[,icol])
     names(discard_spec)[1] <- "Fleet"
   }
-
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
-  # rerun read of discard if in SSv3.20b which had missing line break
-  if(names(discard)[1]!="Fleet"){
+  if(names(discard)[1]=="MEAN_BODY_WT_OUTPUT"){
+    discard <- NA
+  }
+  if(!is.na(discard) && names(discard)[1]!="Fleet"){
+    # rerun read of discard if in SSv3.20b which had missing line break
     discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=FALSE)
     names(discard) <- c("Fleet","Yr","Seas","Obs","Exp","Std_in","Std_use","Dev")
   }
 
   discard_type <- NA
-  if(nrow(discard)>1){
+  if(!is.na(discard) && nrow(discard)>1){
     for(icol in 2:ncol(discard)) discard[,icol] <- as.numeric(discard[,icol])
     for(i in 2:ncol(discard)) discard[,i] <- as.numeric(discard[,i])
     discard$FleetName <- NA
