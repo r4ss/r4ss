@@ -851,7 +851,7 @@ SS_output <-
     names(rawgrow) <- rawgrow[1,]
     growdat <- rawgrow[-1,]
     for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
-    growdat <- growdat[growdat$Beg==1 & growdat$Yr < endyr,]
+    growdat <- growdat[growdat$Beg==1 & growdat$Yr >= startyr & growdat$Yr < endyr,]
     if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
     if(length(unique(growdat$Yr))>1) growthvaries <- TRUE
     returndat$growthseries <- growdat
