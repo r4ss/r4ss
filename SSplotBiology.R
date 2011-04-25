@@ -39,6 +39,7 @@ SSplotBiology <-
   nsexes       <- replist$nsexes
   mainmorphs   <- replist$mainmorphs
   accuage      <- replist$accuage
+  growthvaries <- replist$growthvaries
   growthseries <- replist$growthseries
   ageselex     <- replist$ageselex
 
@@ -240,14 +241,14 @@ SSplotBiology <-
   }
 
   # Time-varying growth (formerly plot #2)
-  if(is.null(psard$growthvaries)){
+  if(is.null(growthvaries)){
     if(verbose) cat("No check for time-varying growth for this type of model (not sure why)\n")
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
     {
       cat("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.\n")
     }else{
-      if(replist$growthvaries) # if growth is time varying
+      if(growthvaries) # if growth is time varying
       for(i in 1:nsexes)
       {
         growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
