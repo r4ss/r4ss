@@ -249,15 +249,15 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20e_Mar22",
-                           newdir="c:/SS/modeltesting/Version_3_21beta_Apr13")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_21beta_Apr13",
+                           newdir="c:/SS/modeltesting/Version_3_21a_Apr24")
 
   # on sysiphus
   folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
                            newdir="y:/h_itaylor/SS/modeltesting/Version_3_20e_Mar15")
   
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.21beta_Apr13/Ver321beta",
+  copyexe(sourcedir="c:/SS/SSv3.21a_Apr24/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3.exe")
@@ -306,7 +306,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_21beta_Apr13"))
+               SSversions=c("Version_3_21a_Apr24"))
 
   # example on sysiphus
   alloutput <-
@@ -318,15 +318,19 @@ if(FALSE){
   # making plots
   for(i in length(alloutput):1){
     models <- alloutput[[i]]
+    testvec <- rep(NA, length(models))
     for(j in 1:length(models)){
-      test <- SS_plots(models[[j]],pdf=T)
+      test <- SS_plots(models[[j]],pdf=T,verbose=F,forecast=F,datplot=T)
       if(test==999){
         cat("!!!! plot code succeeded on model",j,"\n")
       }else{
         cat("!!!! plot code failed on model",j,"\n")
       }
+      testvec[j] <- test
     }
+    print(testvec)
   }
+
   
   # running on linux
   newdir <- "~/h_itaylor/SS/modeltesting/Version_3_11c_Oct30/"

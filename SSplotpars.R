@@ -34,6 +34,13 @@ SSplotPars <-
   # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
     # function to calculate prior values is direct translation of code in SSv3
+    if(is.character(Ptype)){
+      if(Ptype=="No_prior") Ptype2 <- -1
+      if(Ptype=="Normal") Ptype2 <- 0
+      if(Ptype=="Sym_Beta") Ptype2 <- 1
+      if(Ptype=="Full_Beta") Ptype2 <- 2
+    }
+       
     Pconst <- 0.0001
     if(Ptype==-1){ # no prior
       Prior_Like <- rep(0.,length(Pval));

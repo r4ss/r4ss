@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "April 4, 2011"
+  codedate <- "April 28, 2011"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -536,7 +536,15 @@ SS_output <-
   # parameters
   parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,header=TRUE)
   parameters[parameters=="_"] <- NA
-  for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))]) parameters[,i] = as.numeric(parameters[,i])
+  if(SS_versionshort %in% c("SS-V3.11","SS-V3.20")){
+    # old parameters section
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
+      parameters[,i] <- as.numeric(parameters[,i])
+  }else{
+    # revised section as of SS-V3.21 which text description of PR_type instead of number
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
+      parameters[,i] <- as.numeric(parameters[,i])
+  }
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
   
   if(!is.na(parfile)){
@@ -557,8 +565,11 @@ SS_output <-
 
   stats$table_of_phases <- table(pars$Phase)
   pars <- pars[pars$Phase %in% 0:100,]
-  stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:14,17)]
-
+  #stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:14,17)]
+  stats$estimated_non_rec_devparameters <- pars[,names(pars) %in%
+      c("Label","Value","Phase","Min","Max","Init","Prior","PR_type",
+        "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
+  
   # read covar.sso file
   if(covar){
     CoVar <- read.table(covarfile,header=TRUE,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=covarskip)
