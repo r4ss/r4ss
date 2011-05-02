@@ -106,9 +106,9 @@ SS_plots <-
   nplots <- length(intersect(1:50,plot))
   nprints <- length(intersect(1:50,print))
 
+  OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
-  # need appropriate line to support Mac operating systems
 
   if(nprints>0 & pdf){
     stop("can't have pdf=T and print!=0: use print only or pdf & plot inputs")
