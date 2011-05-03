@@ -69,7 +69,7 @@ SSplotData <- function(replist,
   # loop over types to make a database of years with comp data
   ntypes <- 0
   # replace typetable object with empty table
-  typetable <- as.data.frame(matrix(NA,nrow=0,ncol=5))
+  typetable <- NULL
   # now loop over typenames looking for presence of this data type
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
@@ -87,14 +87,12 @@ SSplotData <- function(replist,
           yrs <- sort(unique(floor(allyrs)))
           typetable <- rbind(typetable,
                              data.frame(yr=yrs,fleet=ifleet,
-                                        itype=ntypes,typename=typename))
+                                        itype=ntypes,typename=typename,
+                                        stringsAsFactors=FALSE))
         }
       }
     }
   }
-  # not sure how typename became a factor, but need to make it character
-  typetable$typename <- as.character(typetable$typename)
-  
   # typetable is full data frame of all fleets and data types
   # typetable2 has been subset according to requested choices
   
