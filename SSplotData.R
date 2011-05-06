@@ -173,5 +173,6 @@ SSplotData <- function(replist,
     dev.off()
   }
 
+  if(verbose) cat("Finished plot 27: data table\n")
   return(invisible(typetable2))
 }

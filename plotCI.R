@@ -1,4 +1,4 @@
-plotCI <- function(x,z=x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,
+plotCI <- function(x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,
                    sfrac = 0.01,ymax=NULL,add=FALSE)
 {
   # Written by Venables; modified for access to ylim and contents
@@ -11,7 +11,7 @@ plotCI <- function(x,z=x,y=NULL,uiw,liw=uiw,ylo=NULL,yhi=NULL,...,
     x <- seq(along = x)}
   ui <- y + uiw
   li <- y - liw
-  ylim <- range(c(y,ui,li,ylo,yhi,z,ymax))
+  ylim <- range(c(y,ui,li,ylo,yhi,ymax))
   if(!add) plot(x,y,ylim=ylim,...) else points(x,y,...)  
   smidge <- diff(par("usr")[1:2]) * sfrac
   segments(x,li,x,ui)

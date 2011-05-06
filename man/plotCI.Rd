@@ -10,16 +10,13 @@
   modified to add access to ylim and contents.
 }
 \usage{
-plotCI(x, z = x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
+plotCI(x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
 sfrac = 0.01, ymax = NULL, add = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
     The x coordinates of points in the plot
-  }
-  \item{z}{
-    Not sure.
   }
   \item{y}{
     The y coordinates of the points in the plot.
