@@ -158,9 +158,9 @@ addtotable <- function(dir="\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisSt
       newcolumn[Model==names(newoutput)[imodel] &
                 Quant=="EndingDepl"] <- newreplist$current_depletion
       newcolumn[Model==names(newoutput)[imodel] &
-                Quant=="LogR0"] <- newreplist$parameters$Value[newreplist$parameters$Label=="SR_R0"]
+                Quant=="LogR0"] <- newreplist$parameters$Value[newreplist$parameters$Label %in% c("SR_LN(R0)","SR_R0")]
       newcolumn[Model==names(newoutput)[imodel] &
-                Quant=="LogR0_SD"] <- newreplist$parameters$Parm_StDev[newreplist$parameters$Label=="SR_R0"]
+                Quant=="LogR0_SD"] <- newreplist$parameters$Parm_StDev[newreplist$parameters$Label %in% c("SR_LN(R0)","SR_R0")]
       newcolumn[Model==names(newoutput)[imodel] &
                 Quant=="B0_SD"] <- newreplist$derived_quants$StdDev[newreplist$derived_quants$LABEL=="SPB_Virgin"]
       newcolumn[Model==names(newoutput)[imodel] &
@@ -249,15 +249,15 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_21beta_Apr13",
-                           newdir="c:/SS/modeltesting/Version_3_21a_Apr24")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_21a_Apr24",
+                           newdir="c:/SS/modeltesting/Version_3_21d_May11")
 
   # on sysiphus
   folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
                            newdir="y:/h_itaylor/SS/modeltesting/Version_3_20e_Mar15")
   
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.21a_Apr24/",
+  copyexe(sourcedir="c:/SS/SSv3.21d_May11/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3.exe")
@@ -279,6 +279,10 @@ if(FALSE){
   ##   (file.copy("generic_forecast.ss",paste(model,"forecast.ss",sep="/"),overwrite=TRUE))
   ## }
 
+  # run new SS executable for each example model without estimating anything
+  runmodels(newdir=folderinfo$newdir,
+            folderlist=folderinfo$folderlist,exe="ss3.exe",extras="-noest -nohess -nox")
+
   # run new SS executable for each example model 
   runmodels(newdir=folderinfo$newdir,
             folderlist=folderinfo$folderlist,exe="ss3.exe",extras="-nox")
@@ -286,8 +290,9 @@ if(FALSE){
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
   source("c:/SS/R/r4ss/trunk/modeltesting.R")
-  mydir <- "c:/SS/modeltesting/Version_3_20_Dec29"
-  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3_safe.exe",extras="-nox")
+  mydir <- "c:/SS/modeltesting/Version_3_21d_May11"
+  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-nox")
+  runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-noest -nohess -nox")
 
   # on sysiphus
   source("http://r4ss.googlecode.com/svn/trunk/modeltesting.R")
@@ -306,7 +311,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_21a_Apr24"))
+               SSversions=c("Version_3_21d_May11_newSR"))
 
   # example on sysiphus
   alloutput <-

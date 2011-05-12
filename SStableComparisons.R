@@ -8,6 +8,8 @@ SStableComparisons <-
              "priors",
              "Size_at_age"),
            names=c("SR_R0",
+             "SR_LN(R0)",
+             "SR_BH_steep",
              "SR_steep",
              "NatM",
              "Q",
@@ -56,7 +58,7 @@ SStableComparisons <-
     vals <- bigtable[grep(name, bigtable$Label),]
 
     # fix scale on a few things
-    if(name=="SR_R0"){
+    if(name %in% c("SR_LN(R0)","SR_R0")){
       vals[-1] <- round(exp(vals[-1])/1e6,6)
       vals[1] <- "R0_billions"
     }

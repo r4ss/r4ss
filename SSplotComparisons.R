@@ -23,7 +23,7 @@ SSplotComparisons <-
            btarg=0.4, minbthresh=0.25,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
-           densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","TotYield_MSY"),
+           densitynames=c("SPB_Virgin","SPB_2011","Bratio_2011","SR_R0","SR_LN(R0)","TotYield_MSY"),
            densityxlabs=c("B0 (mt)","Spawning Biomass in 2011 (mt)","depletion in 2011","log(R0)","MSY (mt)"),
            densityscalex=1,
            densityscaley=1,
@@ -625,7 +625,7 @@ SSplotComparisons <-
     }
     if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for depletion plots
     if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
-    if(fix0 & !grepl("SR_R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
+    if(fix0 & !grepl("SR_LN(R0)",parname) & !grepl("SR_R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
     
     # calculate x-limits and vector of values for densities
     xlim <- c(xmin,xmin+(xmax-xmin)*densityscalex)

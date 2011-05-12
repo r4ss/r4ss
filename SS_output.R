@@ -745,11 +745,13 @@ SS_output <-
   agentune <- agentune[agentune$N>0, c(1,2,4,5,6,8,9)]
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
+if(FALSE){   # !! Ian, fix this:
   sizentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10,header=TRUE)
   sizentune[,1] <- sizentune[,10]
   sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
   stats$Size_comp_Eff_N_tuning_check <- sizentune
-
+}
+  
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
 
@@ -1032,6 +1034,7 @@ SS_output <-
   
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
+  if(grep("Kobe_Plot",rawrep[,1])) spr <- matchfun2("SPR_series",5,"Kobe_Plot",-1,header=TRUE)
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])

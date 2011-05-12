@@ -54,6 +54,8 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   if(Ntypes>1){
     fleetnames <- dat[grep('%',dat)[1]]
     fleetnames <- strsplit(fleetnames,'%')[[1]]
+    # strip any white space off the end of the fleetnames
+    fleetnames[length(fleetnames)] <- strsplit(fleetnames[length(fleetnames)],"[[:blank:]]+")[[1]][1]
     if(length(fleetnames)!=Ntypes)
       fleetnames <- c(paste("fishery",1:Nfleet),paste("survey",1:Nsurveys))
   }else{
