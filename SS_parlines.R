@@ -19,7 +19,7 @@ function(
 
   # read control file
   if(!is.null(dir)) ctlfile <- paste(dir,'control.ss_new',sep='/')
-  ncols = 30
+  ncols = 100 # !!this should by more dynamic--if it's too small, the function dies
   ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=T,
     quote="",colClasses="character",comment.char="", blank.lines.skip=F)
 

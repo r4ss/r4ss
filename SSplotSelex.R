@@ -1,5 +1,6 @@
 SSplotSelex <-
   function(replist, fleets="all", fleetnames="default",
+           sexes="all", 
            selexlines=1:5,
            subplot=1:11,
            plot=TRUE, print=FALSE, add=FALSE,
@@ -66,10 +67,18 @@ SSplotSelex <-
   }
   if(fleetnames[1]=="default") fleetnames <- FleetNames # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
+  if(sexes[1]=="all"){
+    sexes <- 1:nsexes
+  }else{
+    if(length(intersect(sexes,1:nsexes))!=length(sexes)){
+      return("Input 'sexes' should be 'all' or a vector of values between 1 and nsexes.")
+    }
+  }
+
   # selex and retention
   for(i in fleets)
   {
-    for(m in 1:nsexes)
+    for(m in sexes)
     {
       if(m==1 & nsexes==1) sextitle1 <- "Time-"
       if(m==1 & nsexes==2) sextitle1 <- "Female time-"
@@ -198,7 +207,8 @@ SSplotSelex <-
         if(!is.na(sum(retcheck))) retcheckuse <- 1 - min(retcheck)
         
         # make plot
-        plot(bins,vals,xlab=labels[1],ylim=c(0,1),main=main,cex.main=cex.main,ylab="",type="n")
+        if(!add) plot(bins,vals,xlab=labels[1],ylim=c(0,1),
+                      main=main,cex.main=cex.main,ylab="",type="n")
         abline(h=0,col="grey")
         abline(h=1,col="grey")
         if(1%in%selexlines) lines(bins,vals,type="o",col=col2,cex=1.1)
@@ -253,7 +263,7 @@ SSplotSelex <-
   ylab <- labels[4]
   for(i in fleets)
   {
-    for(m in 1:nsexes)
+    for(m in sexes)
     {
       if(m==1 & nsexes==1) sextitle1 <- "Time-"
       if(m==1 & nsexes==2) sextitle1 <- "Female time-"
@@ -295,7 +305,11 @@ SSplotSelex <-
           main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
           endselfunc <- function()
           {
-            plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
+            if(!add) plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
+                          xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,
+                          type="n",col=col2,cex=1.1)
+            lines((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
+                  type="o",col=col2,cex=1.1)
             abline(h=0,col="grey")
           }
           if(8 %in% subplot){
@@ -318,7 +332,10 @@ SSplotSelex <-
         {
           main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
           endselfunc2 <- function(){
-            plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,type="o",col=col2,cex=1.1)
+            if(!add)
+              plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),
+                   main=main,cex.main=cex.main,ylab=ylab,type="n")
+            lines((as.numeric(names(plotageselex))),vals,type="o",col=col2,cex=1.1)
             abline(h=0,col="grey")
           }
           if(9 %in% subplot){
@@ -357,7 +374,7 @@ SSplotSelex <-
     zlab <- labels[4]
     for(i in fleets)
     {
-      for(m in 1:nsexes)
+      for(m in sexes)
       {
         if(m==1 & nsexes==1) sextitle2 <- "Ending"
         if(m==1 & nsexes==2) sextitle2 <- "Female ending"
@@ -441,7 +458,10 @@ SSplotSelex <-
             if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$gender==m,]
           }
           
-          plot(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+          if(!add)
+            plot(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+               ylab=labels[4],type="n",col=col2,cex=1.1,xlim=c(0,max(seltemp$bin)))
+            lines(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
                ylab=labels[4],type="o",col=col2,cex=1.1,xlim=c(0,max(seltemp$bin)))
           arrows(x0=seltemp$bin[no0], y0=seltemp$lower[no0], x1=seltemp$bin[no0], y1=seltemp$upper[no0],
                  length=0.01, angle=90, code=3, col=col2)

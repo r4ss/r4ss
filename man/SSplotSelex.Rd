@@ -10,8 +10,8 @@
 }
 \usage{
 SSplotSelex(replist, fleets = "all", fleetnames = "default",
-selexlines = 1:5, subplot = 1:11, plot = TRUE, print = FALSE,
-add = FALSE,
+sexes="all", selexlines = 1:5, subplot = 1:11,
+plot = TRUE, print = FALSE, add = FALSE,
 labels=c("Length (cm)",
   "Age (yr)",     
   "Year",         
@@ -32,6 +32,10 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
   }
   \item{fleetnames}{
     optional replacement for fleenames used in data file
+  }
+  \item{sexes}{
+    optional vector to subset genders for which to make plots
+    (1=females, 2=males)
   }
   \item{selexlines}{
     vector to select which lines get plotted. values are 1. Selectivity,
