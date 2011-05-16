@@ -132,9 +132,22 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # datlist$discard_units <- discard_units <- allnums[i]; i <- i+1
   datlist$N_discard_fleets <- N_discard_fleets <- allnums[i]; i <- i+1
   if(verbose) cat("N_discard_fleets =",N_discard_fleets,"\n")
-  datlist$N_discard <- N_discard <- allnums[i]; i <- i+1
-  if(verbose) cat("N_discard =",N_discard,"\n")
+  N_discard <- 0 # temporarily set to 0
+  if(N_discard_fleets > 0){
+    # fleet info
+    Ncols <- 3
+    discard_fleet_info <- data.frame(matrix(
+      allnums[i:(i+N_discard_fleets*Ncols-1)],nrow=N_discard_fleets,ncol=Ncols,byrow=TRUE))
+    i <- i+N_discard_fleets*Ncols
+    names(discard_fleet_info) <- c("Fleet","units","errtype")
+print(discard_fleet_info)
+    datlist$N_discard <- N_discard <- allnums[i]; i <- i+1
+    if(verbose) cat("N_discard =",N_discard,"\n")
+  }else{
+    discard_fleet_info <- NULL
+  }
   if(N_discard > 0){
+    # discard data
     Ncols <- 5
     discard_data <- data.frame(matrix(
       allnums[i:(i+N_discard*Ncols-1)],nrow=N_discard,ncol=Ncols,byrow=TRUE))
@@ -143,6 +156,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   }else{
     discard_data <- NULL
   }
+  datlist$discard_fleet_info <- discard_fleet_info
   datlist$discard_data <- discard_data
 
   # meanbodywt

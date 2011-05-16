@@ -465,7 +465,6 @@ SSplotComparisons <-
         indices2 <- rbind(indices2,indices[subset,])
       }
     }
-       
     # get quantities for plot
     yr <- indices2$Yr
     obs <- indices2$Obs

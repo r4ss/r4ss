@@ -72,7 +72,9 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("depl_denom_frac")
   wl("SPR_basis")
   wl("F_report_units")
-  cat(mylist[["F_age_range"]],"#_F_age_range\n")
+  if(mylist$F_report_units==4){
+    cat(mylist[["F_age_range"]],"#_F_age_range\n")
+  }    
   wl("F_report_basis")
   writeLines("#")
   writeLines("999")
