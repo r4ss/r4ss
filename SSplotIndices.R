@@ -18,7 +18,7 @@ function(replist,subplots=1:9,
          col1="default", col2="default", col3="blue", col4="red",
          pch1=1, pch2=16, cex=1,
          legend=TRUE, legendloc="topright", seasnames=NULL,
-         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,addmain=T,
          plotdir="default", verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
@@ -60,7 +60,7 @@ function(replist,subplots=1:9,
   }
 
   if(col1[1]=="default"){
-    colvec1 <- "red"
+    colvec1 <- "black"
     if(usecol & nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
     if(usecol & !nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
   }else{
@@ -110,6 +110,7 @@ function(replist,subplots=1:9,
     liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
     npoints <- length(z)
     main=paste(labels[2], Fleet,sep=" ")
+    if(!addmain) main <- ""
 
     addlegend <- function(pch, colvec){
       names <- paste(seasnames,"observations")
@@ -169,6 +170,7 @@ function(replist,subplots=1:9,
 
     # same plots again in log space
     main <- paste(labels[5], Fleet, sep=" ")
+    if(!addmain) main <- ""
     uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
     liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
     cpuefun3 <- function(addexpected=TRUE){
@@ -197,6 +199,7 @@ function(replist,subplots=1:9,
     cpuefun5 <- function(){
       # plot of time-varying catchability (if present)
       main <- paste(labels[10], Fleet, sep=" ")
+      if(!addmain) main <- ""
       q <- cpueuse$Calc_Q
       if(!add) plot(x,q,type='o',xlab=labels[1],main=main,
                     cex.main=cex.main,ylab=labels[9],
@@ -205,6 +208,7 @@ function(replist,subplots=1:9,
     cpuefun6 <- function(){
       # plot of time-varying catchability (if present)
       main <- paste(labels[12], Fleet, sep=" ")
+      if(!addmain) main <- ""
       v <- cpueuse$Vuln_bio
       q1 <- cpueuse$Calc_Q
       q2 <- cpueuse$Eff_Q
@@ -253,6 +257,7 @@ function(replist,subplots=1:9,
   if(datplot==TRUE){
     all_cpue_fun <- function(){
       main="All cpue plot"
+      if(!addmain) main <- ""
       xlim <- c(min(allcpue$year,na.rm=TRUE)-1,max(allcpue$year,na.rm=TRUE)+1)
       ylim <- c(range(allcpue$stdvalue,na.rm=TRUE))
       usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE))

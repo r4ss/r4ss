@@ -23,7 +23,9 @@ SSplotSPR <-
   managementratiolabels	<- replist$managementratiolabels
 
   sprfunc <- function(){
-    plot(sprseries$Year,sprseries$spr,xlab=labels[1],ylab=labels[2],ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="o",col=col2)
+    if(!add) plot(sprseries$Year,sprseries$spr,xlab=labels[1],ylab=labels[2],
+                  ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="n")
+    lines(sprseries$Year,sprseries$spr,type="o",col=col2)
     if(sprtarg>0) abline(h=sprtarg,col=col4,lty=2)
     abline(h=0,col="grey")
     abline(h=1,col="grey")
@@ -42,7 +44,9 @@ SSplotSPR <-
   if(nseasons>1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
   if(nseasons==1){ 
     sprfunc2 <- function(){
-      plot(sprseries$Year,(1-sprseries$spr),xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="o",col=col2)
+      if(!add) plot(sprseries$Year,(1-sprseries$spr),
+                    xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="n")
+      lines(sprseries$Year,(1-sprseries$spr),type="o",col=col2)
       if(sprtarg>0) abline(h=(1-sprtarg),col=col4,lty=2)
       abline(h=0,col="grey")
       abline(h=1,col="grey")}
@@ -66,7 +70,10 @@ SSplotSPR <-
       ylab <- managementratiolabels[1,2]
       ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))
       sprfunc3 <- function(){
-        plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],xlab=labels[1],ylim=ylim,ylab=ylab,type="o",col=col2)
+        if(!add) plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],
+                      xlab=labels[1],ylim=ylim,ylab=ylab,type="n")
+        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],
+              type="o",col=col2)
         abline(h=0,col="grey")
         abline(h=1,col=col4)
         text((min(sprratiostd$Yr)+4),(1+0.02),"Management target",adj=0)
@@ -97,7 +104,9 @@ SSplotSPR <-
       xmax <- 1.1*max(reldep)
       ymax <- 1.1*max(1,relspr[!is.na(relspr)])
       phasefunc <- function(){
-        plot(reldep,relspr,xlab="B/Btarget",xlim=c(0,xmax),ylim=c(0,ymax),ylab="(1-SPR)/(1-SPRTarget)",type="o",col=col2)
+        if(!add) plot(reldep,relspr,xlab="B/Btarget",
+                      xlim=c(0,xmax),ylim=c(0,ymax),ylab="(1-SPR)/(1-SPRTarget)",type="n")
+        lines(reldep,relspr,type="o",col=col2)
         abline(h=0,col="grey")
         abline(v=0,col="grey")
         lines(reldep,relspr,type="o",col=col2)

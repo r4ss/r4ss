@@ -308,8 +308,8 @@ SSplotTimeseries <-
 
     # move VIRG value from startyr-2 to startyr-1 to show closer to plot
     # this one didn't work:   if(exists("stdtable")) stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]] <- stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]]+1
-    ts$Yr[plot1] <- ts$Yr[plot1]+1
-    ts$YrSeas[plot1] <- ts$YrSeas[plot1]+1
+    ts$Yr[ts$Era=="VIRG"] <- ts$Yr[ts$Era=="VIRG"]+1
+    ts$YrSeas[ts$Era=="VIRG"] <- ts$YrSeas[ts$Era=="VIRG"]+1
     
              
     # create an empty plot (if not adding to existing plot)
@@ -383,7 +383,6 @@ SSplotTimeseries <-
           plot2[3] <- FALSE
         }
         mycol <- areacols[iarea]
-        
         mytype <- "o" # overplotting points on lines for most time series
         if(subplot==11 & uncertainty) mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
         if(!uncertainty){
