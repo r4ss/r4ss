@@ -140,12 +140,11 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
       allnums[i:(i+N_discard_fleets*Ncols-1)],nrow=N_discard_fleets,ncol=Ncols,byrow=TRUE))
     i <- i+N_discard_fleets*Ncols
     names(discard_fleet_info) <- c("Fleet","units","errtype")
-print(discard_fleet_info)
-    datlist$N_discard <- N_discard <- allnums[i]; i <- i+1
-    if(verbose) cat("N_discard =",N_discard,"\n")
   }else{
     discard_fleet_info <- NULL
   }
+  datlist$N_discard <- N_discard <- allnums[i]; i <- i+1
+  if(verbose) cat("N_discard =",N_discard,"\n")
   if(N_discard > 0){
     # discard data
     Ncols <- 5

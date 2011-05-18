@@ -112,6 +112,7 @@ SSplotComparisons <-
   if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
 
   # determine operating system and open new window if requested
+  OS <- "Mac"
   if(grepl("linux",version$os)) OS <- "Linux"
   if(grepl("mingw",version$os)) OS <- "Windows"
   # need appropriate line to support Mac operating systems
