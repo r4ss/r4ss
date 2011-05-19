@@ -331,11 +331,11 @@ SSplotTimeseries <-
       addtarg <- function(){
         if(btarg>0){
           abline(h=btarg,col="red")
-          text(startyr+4,btarg+0.03,"Management target",adj=0)
+          text(max(startyr,minyr)+4,btarg+0.03,"Management target",adj=0)
         }
         if(minbthresh>0){
           abline(h=minbthresh,col="red")
-          text(startyr+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+          text(max(startyr,minyr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
         }
       }
       addtarg()
