@@ -1,7 +1,7 @@
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE,
+           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, allpars=FALSE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, aalmaxbinrange=4)
 {
@@ -556,15 +556,16 @@ SS_output <-
   stats$N_estimated_parameters <- parline[1,6]
 
   pars <- parameters[!is.na(parameters$Phase) & parameters$Phase>0,]
-  pars$Afterbound <- ""
-  pars$checkdiff <- pars$Value - pars$Min
-  pars$checkdiff2 <- pars$Max - pars$Value
-  pars$checkdiff3 <- abs(pars$Value-(pars$Max-(pars$Max-pars$Min)/2))
-  pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
-  pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
-
-  stats$table_of_phases <- table(pars$Phase)
-  pars <- pars[pars$Phase %in% 0:100,]
+  if(nrow(pars)>0){
+    pars$Afterbound <- ""
+    pars$checkdiff <- pars$Value - pars$Min
+    pars$checkdiff2 <- pars$Max - pars$Value
+    pars$checkdiff3 <- abs(pars$Value-(pars$Max-(pars$Max-pars$Min)/2))
+    pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
+    pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
+  }
+  stats$table_of_phases <- table(parameters$Phase)
+  #pars <- pars[pars$Phase %in% 0:100,]
   #stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:14,17)]
   stats$estimated_non_rec_devparameters <- pars[,names(pars) %in%
       c("Label","Value","Phase","Min","Max","Init","Prior","PR_type",
