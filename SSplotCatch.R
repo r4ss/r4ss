@@ -29,6 +29,8 @@ SSplotCatch <-
   # plot catch-related time-series for Stock Synthesis
   # updated March 23, 2011
 
+  # note from Ian Taylor to himself: "make minyr and maxyr connect to something!"
+  
   # note: stacked plots only shown with multiple fleets
   subplot_names <- c("1: landings",
                      "2: landings stacked",

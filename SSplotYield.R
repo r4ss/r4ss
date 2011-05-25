@@ -21,13 +21,13 @@ SSplotYield <-
   if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
 
   # test if data is available
-  if(!is.null(equil_yield[[1]][1]) && !is.na(equil_yield[[1]][1])){
+  if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
     # function for yeild curve
     yieldfunc <- function(){
       if(!add){
         # empty plot
-        plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1)),
-             ylim=c(0,max(equil_yield$Catch)),
+        plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
+             ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
              xlab=labels[1],ylab=labels[2])
         abline(h=0,col="grey")
         abline(v=0,col="grey")

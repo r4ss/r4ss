@@ -36,7 +36,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
 
   datlist$sourcefile <- file
   datlist$type <- "Stock_Synthesis_data_file"
-  datlist$SSversion <- "SSv3.20"
+  datlist$SSversion <- NULL # "SSv3.21"
 
   if(verbose) cat("SSversion =",datlist$SSversion,"\n")
   # model dimensions
