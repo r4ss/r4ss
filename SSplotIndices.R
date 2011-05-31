@@ -36,7 +36,13 @@ function(replist,subplots=1:9,
   FleetNames  <- replist$FleetNames
   nfleets     <- replist$nfleets
   nseasons    <- replist$nseasons
-  cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
+  if(nseasons>1){
+    # if seasons, put CPUE at season midpoint
+    cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
+  }else{
+    # if no seasons, put at integer year value
+    cpue$YrSeas <- cpue$Yr
+  }
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames

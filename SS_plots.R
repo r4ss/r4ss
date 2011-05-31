@@ -380,7 +380,7 @@ SS_plots <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-        # size comp bar plot
+        # size comp bubble plot
         for(sizemethod in sort(unique(replist$sizedbase$method))){
           SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",sizemethod=sizemethod,
                       bub=TRUE,verbose=verbose,fleets=fleets,fleetnames=fleetnames,
