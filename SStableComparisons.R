@@ -21,7 +21,7 @@ SStableComparisons <-
            csv=FALSE,
            csvdir="workingdirectory",
            csvfile="parameter_comparison_table.csv",
-           verbose=FALSE)
+           verbose=TRUE)
 {
   if(verbose) cat("running SStableComparisons\n")
   
