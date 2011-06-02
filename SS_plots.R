@@ -3,7 +3,7 @@ SS_plots <-
     replist=NULL, plot=1:27, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
-    sprtarg=0.4, btarg=0.4, minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
+    sprtarg="default", btarg="default", minbthresh=0.25, pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1, 
     aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
@@ -275,7 +275,7 @@ SS_plots <-
               plot=(11 %in% plot),
               print=(11 %in% print),
               uncertainty=uncertainty,
-              sprtarg=0.4, btarg=0.4,
+              sprtarg=sprtarg, btarg=btarg,
               pwidth=pwidth, pheight=pheight, punits=punits,
               ptsize=ptsize, res=res,cex.main=cex.main,
               plotdir=plotdir)

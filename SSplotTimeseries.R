@@ -4,7 +4,7 @@ SSplotTimeseries <-
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
            minyr=NULL,maxyr=NULL,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
-           btarg=0.4,minbthresh=0.25,xlab="Year",
+           btarg="default",minbthresh=0.25,xlab="Year",
            labels=c("Total biomass (mt)", #1
              "Total biomass (mt) at beginning of season", #2
              "Summary biomass (mt)",      #3
@@ -52,6 +52,8 @@ SSplotTimeseries <-
   B_ratio_denominator <- replist$B_ratio_denominator
   seasfracs      <- replist$seasfracs
   recruitment_dist <- replist$recruitment_dist
+
+  if(btarg=="default") btarg <- replist$btarg
   
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)

@@ -205,23 +205,25 @@ SS_output <-
 
   # read forecast report file
   if(forecast){
-    forcastname <- paste(dir,"Forecast-report.sso",sep="")
-    temp <- file.info(forcastname)$size
+    forecastname <- paste(dir,"Forecast-report.sso",sep="")
+    temp <- file.info(forecastname)$size
     if(is.na(temp) | temp==0){
       stop("Forecase-report.sso file is empty.\n",
            "Change input to 'forecast=FALSE' or rerun model with forecast turned on.")
     }
     # read the file
-    rawforcast1 <- read.table(file=forcastname,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1)
-    endyield <- matchfun("MSY_not_calculated",rawforcast1[,1])
+    rawforecast1 <- read.table(file=forecastname,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1)
+    sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target",rawforecast1[,1]),2])
+    btarg   <- as.numeric(rawforecast1[matchfun("Btarget",rawforecast1[,1]),2])
+    endyield <- matchfun("MSY_not_calculated",rawforecast1[,1])
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
-    if(yesMSY) endyield <- matchfun("findFmsy",rawforcast1[,10])
+    if(yesMSY) endyield <- matchfun("findFmsy",rawforecast1[,10])
     if(verbose) cat("Got forecast file\n")
 
     # this section on equilibrium yield moved to Report.sso on Jan 6
-    startline <- matchfun("profile",rawforcast1[,11])
+    startline <- matchfun("profile",rawforecast1[,11])
     if(!is.na(startline)){ # before the Jan 6 fix to benchmarks
-      yieldraw <- rawforcast1[(startline+1):endyield,]
+      yieldraw <- rawforecast1[(startline+1):endyield,]
     }else{
       yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
       # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
@@ -244,7 +246,12 @@ SS_output <-
       yielddat$Depletion <- as.numeric(yielddat$Depletion)
       yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
     }
-  }else{if(verbose) cat("You skipped the forecast file\n")}
+  }else{
+    if(verbose) cat("You skipped the forecast file\n",
+                    "setting sprtarg and btarg to 0.4 (can override in SS_plots)")
+    sprtarg <- 0.4
+    btarg <- 0.4
+  }
   flush.console()
 
   # check for use of temporary files
@@ -499,8 +506,8 @@ SS_output <-
 
   # forecast
   if(forecast){
-    grab  <- rawforcast1[,1]
-    nforecastyears <- as.numeric(rawforcast1[grab %in% c("N_forecast_yrs:"),2])
+    grab  <- rawforecast1[,1]
+    nforecastyears <- as.numeric(rawforecast1[grab %in% c("N_forecast_yrs:"),2])
     nforecastyears <- nforecastyears[1]
   }else{
     nforecastyears <- NA
@@ -1048,16 +1055,18 @@ if(FALSE){   # !! Ian, fix this:
 
   if(forecast){
    returndat$equil_yield <- yielddat
-   # stats$spr_at_msy <- as.numeric(rawforcast[33,2])
-   # stats$exploit_at_msy <- as.numeric(rawforcast[35,2])
-   # stats$bmsy_over_VLHbzero <- as.numeric(rawforcast[38,3])
-   # stats$retained_msy <- as.numeric(rawforcast[43,5])
+   # stats$spr_at_msy <- as.numeric(rawforecast[33,2])
+   # stats$exploit_at_msy <- as.numeric(rawforecast[35,2])
+   # stats$bmsy_over_VLHbzero <- as.numeric(rawforecast[38,3])
+   # stats$retained_msy <- as.numeric(rawforecast[43,5])
   }else{if(verbose) cat("You skipped the equilibrium yield data\n")}
   flush.console()
 
   returndat$managementratiolabels <- managementratiolabels
   returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
-
+  returndat$sprtarg <- sprtarg
+  returndat$btarg <- btarg
+  
   # Spawner-recruit curve
   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
   names(rawsr) <- rawsr[1,]
