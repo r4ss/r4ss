@@ -2,7 +2,7 @@ SSplotData <- function(replist,
                        plot=TRUE,print=FALSE,
                        plotdir="default",
                        fleetcol="default",
-                       datatypes="all",fleets="all",ghost=FALSE,
+                       datatypes="all",fleets="all",fleetnames="default",ghost=FALSE,
                        pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
                        verbose=TRUE)
 {
@@ -15,7 +15,7 @@ SSplotData <- function(replist,
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
   nfishfleets   <- replist$nfishfleets
-  fleetnames    <- replist$FleetNames
+  if(fleetnames[1]=="default") fleetnames  <- replist$FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
   
   # catch
@@ -123,7 +123,7 @@ SSplotData <- function(replist,
     yval <- 0
     # count number of unique combinations of fleet and data type
     ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
-    plot(0,xlim=xlim,ylim=c(0,ymax+ntypes),axes=FALSE,xaxs='i',yaxs='i',
+    plot(0,xlim=xlim,ylim=c(0,ymax+ntypes+.5),axes=FALSE,xaxs='i',yaxs='i',
          type="n",xlab="Year",ylab="",main="Data by type and year")
     xticks <- 5*round(xlim[1]:xlim[2]/5)
     abline(v=xticks,col='grey',lty=3)
@@ -157,9 +157,9 @@ SSplotData <- function(replist,
         }
       }
       
-      text(mean(xlim),yval+.7,typelabels[typenames==typename],font=2)
       yval <- yval+1
       if(itype!=1) abline(h=yval,col='grey',lty=3)
+      text(mean(xlim),yval-.3,typelabels[typenames==typename],font=2)
     }
     axis(4,at=axistable$yval,label=fleetnames[axistable$fleet],las=1)
     box()
