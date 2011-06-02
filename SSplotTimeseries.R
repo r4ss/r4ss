@@ -4,7 +4,7 @@ SSplotTimeseries <-
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
            minyr=NULL,maxyr=NULL,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
-           btarg="default",minbthresh=0.25,xlab="Year",
+           btarg="default",minbthresh="default",xlab="Year",
            labels=c("Total biomass (mt)", #1
              "Total biomass (mt) at beginning of season", #2
              "Summary biomass (mt)",      #3
@@ -54,6 +54,7 @@ SSplotTimeseries <-
   recruitment_dist <- replist$recruitment_dist
 
   if(btarg=="default") btarg <- replist$btarg
+  if(minbthresh=="default") minbthresh <- replist$minbthresh
   
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)

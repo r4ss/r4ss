@@ -1066,6 +1066,8 @@ if(FALSE){   # !! Ian, fix this:
   returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
+  returndat$minbthresh <- ifelse(btarg==0.25,0.125,0.25)
+  
   
   # Spawner-recruit curve
   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
