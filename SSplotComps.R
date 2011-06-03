@@ -50,6 +50,7 @@ SSplotComps <-
   nsexes        <- replist$nsexes
 
   titles <- NULL
+  titlemkt <- ""
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   if(fleets[1]=="all"){
