@@ -78,7 +78,11 @@ SSplotComparisons <-
   mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
   lowerCI       <- summaryoutput$lowerCI
   upperCI       <- summaryoutput$upperCI
-  
+
+  if(all(quantsSD==0)){
+    cat("setting uncertainty to FALSE because no uncertainty includes in the model results")
+    uncertainty <- FALSE
+  }
   # fix biomass for single-sex models
   if(any(nsexes==1)){
     cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
@@ -296,9 +300,12 @@ SSplotComparisons <-
     # add arrows for equilibrium values
     matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
             col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    old_warn <- options()$warn      # previous setting
+    options(warn=-1)                # turn off "zero-length arrow" warning
     if(uncertainty) arrows(x0=xEqu, y0=as.numeric(SpawnBioLower[1,models]),
                            x1=xEqu, y1=as.numeric(SpawnBioUpper[1,models]),
                            length=0.01, angle=90, code=3, col=col)
+    options(warn=old_warn)  #returning to old value
     # add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
@@ -398,9 +405,12 @@ SSplotComparisons <-
         imodel <- models[iline]
         xvec <- recruits$Yr
         if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
+        old_warn <- options()$warn      # previous setting
+        options(warn=-1)                # turn off "zero-length arrow" warning
         arrows(x0=xvec, y0=pmax(as.numeric(recruitsLower[,imodel]),0),
                x1=xvec, y1=as.numeric(recruitsUpper[,imodel]),
                length=0.01, angle=90, code=3, col=col[iline])
+        options(warn=old_warn)  #returning to old value
       }
     }
     abline(h=0,col="grey")
@@ -418,7 +428,10 @@ SSplotComparisons <-
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- range(recdevs[,models],na.rm=TRUE)
-    if(uncertainty) ylim <- range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
+    if(uncertainty){
+      if(all(is.na(recdevsLower[,models]))) return() # can't do uncertainty if no range present
+      ylim <- range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
+    }
     ylim <- range(-ylim,ylim) # make symmetric
                    
     plot(0,xlim=xlim,ylim=ylim,
@@ -460,7 +473,8 @@ SSplotComparisons <-
           ifleet <- indexfleets[imodel]
           indices2 <- rbind(indices2,indices[subset & indices$FleetNum==ifleet,])
         }else{
-          stop("some models have multiple indices, 'indexfleets' required\n  for all models in summaryoutput")
+          cat("some models have multiple indices, 'indexfleets' required\n  for all models in summaryoutput\n")
+          return()
         }
       }else{
         indices2 <- rbind(indices2,indices[subset,])
@@ -521,8 +535,8 @@ SSplotComparisons <-
       y <- exp[subset]
       lines(x, y, pch=pch[iline], lwd=lwd[iline],
             lty=lty[iline], col=col[iline], type=type)
-      if(legend) legendfun()
     }
+    if(legend) legendfun()
     
     # get uncertainty intervals if requested
     # put observed values on top
@@ -642,75 +656,77 @@ SSplotComparisons <-
       xlab <- gsub("mt","million mt",xlab)
     }
     # make empty plot
-    plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
-         ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+    if(!is.null(ymax)){
+      plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
+           ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
 
-    # add vertical lines for target and threshold depletion values
-    if(grepl("Bratio",parname)){
-      if(btarg>0){
-        abline(v=btarg,col="red",lty=2)
-        text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
+      # add vertical lines for target and threshold depletion values
+      if(grepl("Bratio",parname)){
+        if(btarg>0){
+          abline(v=btarg,col="red",lty=2)
+          text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
+        }
+        if(minbthresh>0){
+          abline(v=minbthresh,col="red",lty=2)
+          text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
+        }
       }
-      if(minbthresh>0){
-        abline(v=minbthresh,col="red",lty=2)
-        text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
-      }
-    }
       
-    symbolsQuants <- c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)
-    # loop again to make plots
-    for(iline in (1:nlines)[good]){
-      imodel <- models[iline]
-      if(mcmcVec[iline]) {
-        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
-        mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-        if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
-            mcmcVals <- mcmcVals/2
-        }
-        x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
-        #find the positions in the density that are closest to these quantiles
-        x <- mcmcDens[[iline]]$x
-        y <- mcmcDens[[iline]]$y
-        yscale <- 1/(sum(y)*mean(diff(x)))
-        y <- y*yscale
-        y2 <- NULL
-        for(ii in x2) {
-            y2 <- c(y2,y[abs(x-ii)==min(abs(x-ii))])
-        }
-        polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
-        lines(x,y,col=col[iline],lwd=2)
-        points(x2,y2,col=col[iline],pch=pch[iline])
-        lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
-      }else{
-        parval <- vals[1,imodel]
-        parSD <- valSDs[1,imodel]
-        if(!is.na(parSD) && parSD>0){
+      symbolsQuants <- c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)
+      # loop again to make plots
+      for(iline in (1:nlines)[good]){
+        imodel <- models[iline]
+        if(mcmcVec[iline]) {
+          mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
+          mcmcVals <- mcmc[[imodel]][,mcmcColumn]
           if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
-            parval <- parval/2
-            parSD <- parSD/2
+            mcmcVals <- mcmcVals/2
           }
-          #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
-          x2 <- qnorm(symbolsQuants,parval,parSD)
-          mle <- dnorm(x,parval,parSD)  # smooth line
-          mle2 <- dnorm(x2,parval,parSD) # symbols
-          mlescale <- 1/(sum(mle)*mean(diff(x)))
-          mle <- mle*mlescale
-          mle2 <- mle2*mlescale
-          polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
-          lines(x,mle,col=col[iline],lwd=2)
-          points(x2,mle2,col=col[iline],pch=pch[iline])
-          lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline]) #
-                #,pch=pch[iline],type='o')
+          x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
+          #find the positions in the density that are closest to these quantiles
+          x <- mcmcDens[[iline]]$x
+          y <- mcmcDens[[iline]]$y
+          yscale <- 1/(sum(y)*mean(diff(x)))
+          y <- y*yscale
+          y2 <- NULL
+          for(ii in x2) {
+            y2 <- c(y2,y[abs(x-ii)==min(abs(x-ii))])
+          }
+          polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
+          lines(x,y,col=col[iline],lwd=2)
+          points(x2,y2,col=col[iline],pch=pch[iline])
+          lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
         }else{
-          abline(v=parval,col=col[iline])
+          parval <- vals[1,imodel]
+          parSD <- valSDs[1,imodel]
+          if(!is.na(parSD) && parSD>0){
+            if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
+              parval <- parval/2
+              parSD <- parSD/2
+            }
+            #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
+            x2 <- qnorm(symbolsQuants,parval,parSD)
+            mle <- dnorm(x,parval,parSD)  # smooth line
+            mle2 <- dnorm(x2,parval,parSD) # symbols
+            mlescale <- 1/(sum(mle)*mean(diff(x)))
+            mle <- mle*mlescale
+            mle2 <- mle2*mlescale
+            polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
+            lines(x,mle,col=col[iline],lwd=2)
+            points(x2,mle2,col=col[iline],pch=pch[iline])
+            lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline]) #
+            #,pch=pch[iline],type='o')
+          }else{
+            abline(v=parval,col=col[iline])
+          }
         }
+        abline(h=0,col="grey")
+        xticks <- pretty(xlim)
+        axis(1,at=xticks,lab=format(xticks/xunits))
+        mtext(side=2,line=1,labels[8])
+        box()
+        legendfun()
       }
-      abline(h=0,col="grey")
-      xticks <- pretty(xlim)
-      axis(1,at=xticks,lab=format(xticks/xunits))
-      mtext(side=2,line=1,labels[8])
-      box()
-      legendfun()
     }
   } # end plotDensities function
   

@@ -1,7 +1,7 @@
 SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(verbose) cat("running SS_readsforecast\n")
-  cat("This file needs updating for SSv3.20\n")
+  cat("This function needs updating for SSv3.21\n")
   forecast <- readLines(file,warn=F)
   mylist <- list()
 

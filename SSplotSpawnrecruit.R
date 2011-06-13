@@ -6,7 +6,7 @@ SSplotSpawnrecruit <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE,line1="blue",line2="green3",line3="black",
            minyr="default",textmindev=0.5,
-           ptcol="red",virg=TRUE,init=FALSE)
+           ptcol="red",virg=TRUE,init=FALSE,forecast=FALSE)
 {
   # plot of spawner recruit curve
 
@@ -17,8 +17,10 @@ SSplotSpawnrecruit <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
   if(minyr=="default") minyr <- min(recruit$year)
 
-  recruit <- recruit[recruit$era %in% c("Early","Main","Fixed","Late") &
+  recruit <- recruit[recruit$era %in% c("Early","Main","Fixed","Late",
+                                        ifelse(forecast,"Forecast",NA)) &
                      recruit$year>=minyr,]
+  
   timeseries <- replist$timeseries
 
   if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr, recruit$exp_recr, recruit$adjusted))

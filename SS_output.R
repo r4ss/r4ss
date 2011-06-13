@@ -498,8 +498,12 @@ SS_output <-
 
   # info on growth morphs (see also section setting mainmorphs below)
   endcode <- "SIZEFREQ_TRANSLATION" #(this section heading not present in all models)
-  if(is.na(matchfun(endcode))) endcode <- "MOVEMENT"
-  if(SS_versionshort=="SS-V3.11") shift <- -1 else shift <- -2
+  #if(SS_versionshort=="SS-V3.11") shift <- -1 else shift <- -2
+  shift <- -1
+  if(is.na(matchfun(endcode))){
+    endcode <- "MOVEMENT"
+    shift <- -2
+  }
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=T)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
