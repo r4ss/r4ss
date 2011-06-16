@@ -5,6 +5,8 @@ SSplotComparisons <-
            endyrvec=NULL,
            indexfleets=NULL,
            indexUncertainty=FALSE,
+           indexQlabel=TRUE,
+           indexQdigits=4,
            indexSEvec="default",
            indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
            labels=c("Year",             #1
@@ -37,7 +39,7 @@ SSplotComparisons <-
   if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
   
   # subfunction to add legend
-  legendfun <- function() legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
+  legendfun <- function(legendlabels) legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
 
   rc <- function(n,alpha=1){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
@@ -309,7 +311,7 @@ SSplotComparisons <-
     # add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     abline(h=0,col="grey")
-    if(legend) legendfun()
+    if(legend) legendfun(legendlabels)
 
     # add axes
     axis(1)
@@ -343,7 +345,7 @@ SSplotComparisons <-
       text(min(Bratio$Yr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
     }
 
-    if(legend) legendfun()
+    if(legend) legendfun(legendlabels)
   }
 
   plotSPRratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
@@ -368,7 +370,7 @@ SSplotComparisons <-
       text(SPRratio$Yr[1]+4,(1+0.02),"Management target",adj=0)
     }
 
-    if(legend) legendfun()
+    if(legend) legendfun(legendlabels)
   }
   
   plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
@@ -414,7 +416,7 @@ SSplotComparisons <-
       }
     }
     abline(h=0,col="grey")
-    if(legend) legendfun()
+    if(legend) legendfun(legendlabels)
     axis(1)
     yticks <- pretty(ylim)
     axis(2,at=yticks,lab=format(yticks/yunits),las=1)
@@ -457,7 +459,7 @@ SSplotComparisons <-
       yvec <- yvec[!is.na(yvec)]
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
-    if(legend) legendfun()
+    if(legend) legendfun(legendlabels)
   }
 
   plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
@@ -485,6 +487,7 @@ SSplotComparisons <-
     obs <- indices2$Obs
     exp <- indices2$Exp
     imodel <- indices2$imodel
+    Q <- indices2$Calc_Q
     if(log){
       obs <- log(obs)
       exp <- log(exp)
@@ -525,18 +528,22 @@ SSplotComparisons <-
     # make plot
     ylim <- range(obs,exp,lower,upper)
     if(!log) ylim <- range(0,ylim) # 0 included if not in log space
+    meanQ <- rep(NA,nlines)
     
     plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
     if(!log) abline(h=0,col="grey")
     for(iline in (1:nlines)[!mcmcVec]){
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
+      meanQ[iline] <- mean(Q[subset])
       x <- yr[subset]
       y <- exp[subset]
       lines(x, y, pch=pch[iline], lwd=lwd[iline],
             lty=lty[iline], col=col[iline], type=type)
     }
-    if(legend) legendfun()
+    legendlabels2 <- legendlabels
+    if(indexQlabel) legendlabels2 <- paste(legendlabels,"(mean Q =",format(meanQ,digits=indexQdigits),")")
+    if(legend) legendfun(legendlabels2)
     
     # get uncertainty intervals if requested
     # put observed values on top
@@ -725,7 +732,7 @@ SSplotComparisons <-
         axis(1,at=xticks,lab=format(xticks/xunits))
         mtext(side=2,line=1,labels[8])
         box()
-        legendfun()
+        legendfun(legendlabels)
       }
     }
   } # end plotDensities function
