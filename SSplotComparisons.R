@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:13,
+  function(summaryoutput,subplots=1:14,
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
@@ -79,8 +79,8 @@ SSplotComparisons <-
   lowerCI       <- summaryoutput$lowerCI
   upperCI       <- summaryoutput$upperCI
 
-  if(all(quantsSD==0)){
-    cat("setting uncertainty to FALSE because no uncertainty includes in the model results")
+  if(all(quantsSD[,1:n]==0)){
+    cat("setting uncertainty to FALSE because no uncertainty includes in the model results\n")
     uncertainty <- FALSE
   }
   # fix biomass for single-sex models
@@ -731,8 +731,11 @@ SSplotComparisons <-
   } # end plotDensities function
   
 
+  uncertaintyplots <- intersect(c(2,4,6,8,10,13),subplots)
+  if(!uncertainty) cat("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","),"\n")
   # subplot 1: spawning biomass
   if(1 %in% subplots){
+    if(verbose) cat("subplot 1: spawning biomass\n")
     if(plot) plotSpawnBio(uncertainty=FALSE)
     if(print){
       pngfun("compare1_spawnbio.png")
@@ -742,17 +745,21 @@ SSplotComparisons <-
   }
 
   # subplot 2: spawning biomass with uncertainty intervals
-  if(2 %in% subplots & uncertainty){
-    if(plot) plotSpawnBio(uncertainty=uncertainty)
-    if(print){
-      pngfun("compare2_spawnbio_uncertainty.png")
-      plotSpawnBio(uncertainty=uncertainty)
-      dev.off()
+  if(2 %in% subplots){
+    if(uncertainty){
+      if(verbose) cat("subplot 2: spawning biomass with uncertainty intervals\n")
+      if(plot) plotSpawnBio(uncertainty=uncertainty)
+      if(print){
+        pngfun("compare2_spawnbio_uncertainty.png")
+        plotSpawnBio(uncertainty=uncertainty)
+        dev.off()
+      }
     }
   }
 
   # subplot 3: biomass ratio (hopefully equal to spawning depletion)
   if(3 %in% subplots){
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to spawning depletion)\n")
     if(plot) plotBratio(uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")
@@ -763,16 +770,20 @@ SSplotComparisons <-
 
   # subplot 4: biomass ratio with uncertainty
   if(4 %in% subplots){
-    if(plot) plotBratio(uncertainty=uncertainty)
-    if(print){
-      pngfun("compare4_Bratio_uncertainty.png")
-      plotBratio(uncertainty=uncertainty)
-      dev.off()
+    if(uncertainty){
+      if(verbose) cat("subplot 4: biomass ratio with uncertainty\n")
+      if(plot) plotBratio(uncertainty=uncertainty)
+      if(print){
+        pngfun("compare4_Bratio_uncertainty.png")
+        plotBratio(uncertainty=uncertainty)
+        dev.off()
+      }
     }
   }
 
   # subplot 5: SPR ratio
   if(5 %in% subplots){
+    if(verbose) cat("subplot 5: SPR ratio\n")
     if(plot) plotSPRratio(uncertainty=FALSE)
     if(print){
       pngfun("compare5_SPRratio.png")
@@ -783,16 +794,20 @@ SSplotComparisons <-
 
   # subplot 6: SPR ratio with uncertainty
   if(6 %in% subplots){
-    if(plot) plotSPRratio(uncertainty=uncertainty)
-    if(print){
-      pngfun("compare6_SPRratio_uncertainty.png")
-      plotSPRratio(uncertainty=uncertainty)
-      dev.off()
+    if(uncertainty){
+      if(verbose) cat("subplot 6: SPR ratio with uncertainty\n")
+      if(plot) plotSPRratio(uncertainty=uncertainty)
+      if(print){
+        pngfun("compare6_SPRratio_uncertainty.png")
+        plotSPRratio(uncertainty=uncertainty)
+        dev.off()
+      }
     }
   }
 
   # subplot 7: recruits
   if(7 %in% subplots){
+    if(verbose) cat("subplot 7: recruits\n")
     if(plot) plotRecruits(uncertainty=FALSE)
     if(print){
       pngfun("compare7_recruits.png")
@@ -803,16 +818,20 @@ SSplotComparisons <-
 
   # subplot 8: recruits with uncertainty
   if(8 %in% subplots){
-    if(plot) plotRecruits()
-    if(print){
-      pngfun("compare8_recruits_uncertainty.png")
-      plotRecruits()
-      dev.off()
+    if(uncertainty){
+      if(verbose) cat("subplot 8: recruits with uncertainty\n")
+      if(plot) plotRecruits()
+      if(print){
+        pngfun("compare8_recruits_uncertainty.png")
+        plotRecruits()
+        dev.off()
+      }
     }
   }
   
   # subplot 9: recruit devs
   if(9 %in% subplots){
+    if(verbose) cat("subplot 9: recruit devs\n")
     if(plot) plotRecDevs(uncertainty=FALSE)
     if(print){
       pngfun("compare9_recdevs.png")
@@ -823,16 +842,20 @@ SSplotComparisons <-
 
   # subplot 10: recruit devs with uncertainty
   if(10 %in% subplots){
-    if(plot) plotRecDevs()
-    if(print){
-      pngfun("compare10_recdevs_uncertainty.png")
-      plotRecDevs()
-      dev.off()
+    if(uncertainty){
+      if(verbose) cat("subplot 10: recruit devs with uncertainty\n")
+      if(plot) plotRecDevs()
+      if(print){
+        pngfun("compare10_recdevs_uncertainty.png")
+        plotRecDevs()
+        dev.off()
+      }
     }
   }
   
   # subplot 11: index fits
   if(11 %in% subplots){
+    if(verbose) cat("subplot 11: index fits\n")
     if(plot) plotIndices()
     if(print){
       pngfun("compare11_indices.png")
@@ -841,8 +864,9 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 12: index fits
+  # subplot 12: index fits on a log scale
   if(12 %in% subplots){
+    if(verbose) cat("subplot 12: index fits on a log scale\n")
     if(plot) plotIndices(log=TRUE)
     if(print){
       pngfun("compare12_indices_log.png")
@@ -851,20 +875,48 @@ SSplotComparisons <-
     }
   }
 
+  #### unfinished addition of growth comparisons
+  ## # subplot 13: growth, females
+  ## if(13 %in% subplots){
+  ##   if(verbose) cat("subplot 13: growth, females\n")
+  ##   if(plot) plotIndices(log=TRUE)
+  ##   if(print){
+  ##     pngfun("compare13_growth_females.png")
+  ##     plotgrowth(sex='f')
+  ##     dev.off()
+  ##   }
+  ## }
+
+  ## # subplot 14: growth, females
+  ## if(13 %in% subplots){
+  ##   if(verbose) cat("subplot 13: growth, females\n")
+  ##   if(plot) plotIndices(log=TRUE)
+  ##   if(print){
+  ##     pngfun("compare13_growth_females.png")
+  ##     plotgrowth(sex='f')
+  ##     dev.off()
+  ##   }
+  ## }
+  
+  
   # subplot 13: densities
   if(13 %in% subplots){
-    ndensities <- length(densitynames)
-    for(iplot in 1:ndensities){
-      name <- densitynames[iplot]
-      if(plot) {
-        plotDensities(parname=name,xlab=densityxlabs[iplot])
-      }
-      if(print){
-        pngfun(paste("compare13_densities_",name,".png"))
-        plotDensities(parname=name,xlab=densityxlabs[iplot])
-        dev.off()
+    if(uncertainty){
+      if(verbose) cat("subplot 13: densities\n")
+      ndensities <- length(densitynames)
+      for(iplot in 1:ndensities){
+        name <- densitynames[iplot]
+        if(plot) {
+          plotDensities(parname=name,xlab=densityxlabs[iplot])
+        }
+        if(print){
+          pngfun(paste("compare13_densities_",name,".png"))
+          plotDensities(parname=name,xlab=densityxlabs[iplot])
+          dev.off()
+        }
       }
     }
   }
+
 
 }
