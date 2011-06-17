@@ -24,7 +24,7 @@ SSplotPars <-
   #
   ################################################################################
 
-  codedate <- "November 9, 2010"
+  codedate <- "June 17, 2011"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -105,6 +105,7 @@ SSplotPars <-
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     posts <- read.table(fullpostfile,head=T)
+    names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
     posts <- posts[seq(burn+1,nrow(posts),thin), ] # remove burn-in and thin the posteriors
   }
   ## get parameter estimates
@@ -114,7 +115,7 @@ SSplotPars <-
     parend <- grep("DERIVED_QUANTITIES",replines)[2]
     nrows2 <- parend-parstart-3
     partable <- read.table(fullrepfile,head=F,nrows=nrows2,skip=parstart,as.is=T,
-                           fill=T,row.names=paste(1:nrows2))
+                           fill=T,row.names=paste(1:nrows2),col.names=1:60)
     partable <- partable[,1:15]
     names(partable) <- partable[1,]
     partable <- partable[-1,]
@@ -146,8 +147,8 @@ SSplotPars <-
   }else{
     goodnames <- allnames
   }
-  goodnames <- goodnames[-grep("Impl_err_",goodnames)]
-
+  badpars <- grep("Impl_err_",goodnames)
+  if(length(badpars)>0) goodnames <- goodnames[-badpars]
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
     print("Some parameters have std. dev. values in Report.sso equal to 0.",quote=F)
