@@ -39,6 +39,7 @@ SSplotPars <-
       if(Ptype=="Normal") Ptype2 <- 0
       if(Ptype=="Sym_Beta") Ptype2 <- 1
       if(Ptype=="Full_Beta") Ptype2 <- 2
+      if(Ptype=="Log_Norm") Ptype2 <- 3
     }
     Pconst <- 0.0001
     if(Ptype2==-1){ # no prior
