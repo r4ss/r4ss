@@ -107,7 +107,15 @@ SSplotPars <-
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     posts <- read.table(fullpostfile,head=T)
     names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
-    posts <- posts[seq(burn+1,nrow(posts),thin), ] # remove burn-in and thin the posteriors
+    # some stuff specific to Vlada and Ian's dogfish model.
+    # a more permanent solution would be good
+    names(posts)[names(posts)=="SizeSel_4P_1_A.SHOP"] <- "SizeSel_4P_1_A-SHOP"
+    names(posts)[names(posts)=="SizeSel_4P_2_A.SHOP"] <- "SizeSel_4P_2_A-SHOP"
+    names(posts)[names(posts)=="SizeSel_4P_3_A.SHOP"] <- "SizeSel_4P_3_A-SHOP"
+    names(posts)[names(posts)=="SizeSel_4P_4_A.SHOP"] <- "SizeSel_4P_4_A-SHOP"
+    names(posts)[names(posts)=="SizeSel_4P_5_A.SHOP"] <- "SizeSel_4P_5_A-SHOP"
+    # remove burn-in and thin the posteriors if requested
+    posts <- posts[seq(burn+1,nrow(posts),thin), ] 
   }
   ## get parameter estimates
   if(!is.na(repfileinfo) & repfileinfo>0){
@@ -118,7 +126,9 @@ SSplotPars <-
     partable <- read.table(fullrepfile,head=F,nrows=nrows2,skip=parstart,as.is=T,
                            fill=T,row.names=paste(1:nrows2),col.names=1:60)
     partable <- partable[,1:15]
-    names(partable) <- partable[1,]
+    temp <- as.character(partable[1,])
+    temp <- c(temp[1:12],"PR_type_code",temp[13:14])
+    names(partable) <- temp
     partable <- partable[-1,]
     rownames(partable) <- 1:nrow(partable)
     partable[partable=="_"] <- NA

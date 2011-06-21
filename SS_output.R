@@ -555,6 +555,11 @@ SS_output <-
     # revised section as of SS-V3.21 which text description of PR_type instead of number
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
+    temp <- names(parameters)
+    cat("Note: inserting new 13th column heading in parameters section due to error in Report.sso in SSv3.21f\n")
+    temp <- c(temp[1:12],"PR_type_code",temp[-(1:12)])
+    temp <- temp[-length(temp)]
+    names(parameters) <- temp
   }
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
   
