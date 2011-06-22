@@ -4,6 +4,7 @@ SSplotData <- function(replist,
                        fleetcol="default",
                        datatypes="all",fleets="all",fleetnames="default",ghost=FALSE,
                        pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+                       margins=c(5.1,2.1,4.1,8.1),
                        verbose=TRUE)
 {
   # updated April 4, 2011
@@ -118,7 +119,7 @@ SSplotData <- function(replist,
 
   # function containing plotting commands
   plotdata <- function(){
-    par(mar=c(5,2,4,8)+0.1) # multi-panel plot
+    par(mar=margins) # multi-panel plot
     xlim <- c(-1,1)+range(typetable2$yr,na.rm=TRUE)
     yval <- 0
     # count number of unique combinations of fleet and data type

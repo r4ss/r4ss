@@ -7,6 +7,7 @@ SS_plots <-
     aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
+    SSplotDatMargin=8,
     catchasnumbers=FALSE,legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
 {
   ################################################################################
@@ -672,7 +673,8 @@ SS_plots <-
                print=(27 %in% print),
                pwidth=pwidth, pheight=pheight, punits=punits,
                ptsize=ptsize, res=res, cex.main=cex.main,
-               plotdir=plotdir)
+               plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
+               fleetnames=fleetnames)
   # end if 27 in plot or print
   
   if(pdf) dev.off() # close PDF file if it was open
