@@ -19,6 +19,8 @@ SSplotComparisons <-
              "Density"),                #8
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
+           spacepoints=10,
+           staggerpoints=1,
            xlim="default", xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
@@ -299,9 +301,22 @@ SSplotComparisons <-
     }else{
       xEqu <- rep(SpawnBio$Yr[2], nlines)  # equilibrium spawning biomass year by model
     }
+    # draw points and lines
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+              col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+              col=col,lty=lty,lwd=lwd,type="l",add=TRUE)
+      SpawnBio2 <- SpawnBio
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        SpawnBio2[SpawnBio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      }
+      matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
+              col=col,pch=pch,lwd=lwd,type="p",add=TRUE)
+    }
     # add arrows for equilibrium values
-    matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
-            col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     old_warn <- options()$warn      # previous setting
     options(warn=-1)                # turn off "zero-length arrow" warning
     if(uncertainty) arrows(x0=xEqu, y0=as.numeric(SpawnBioLower[1,models]),
@@ -332,7 +347,19 @@ SSplotComparisons <-
     # make plot
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
-    matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      Bratio2 <- Bratio
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        Bratio2[Bratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      }
+      matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+    }
+
     abline(h=0,col="grey")
     abline(h=1,col="grey",lty=2)
 
@@ -360,7 +387,17 @@ SSplotComparisons <-
     # make plot
     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab="(1-SPR)/(1-SPR_40%)" ,xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
-    matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      SPRratio2 <- SPRratio
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      }
+      matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+    }
     abline(h=0,col="grey")
     abline(h=1,col="grey",lty=2)
 
@@ -396,9 +433,24 @@ SSplotComparisons <-
     }
 
     # plot lines showing recruitment
-    matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
-            xlim=xlim,ylim=ylim,
-            xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
+              xlim=xlim,ylim=ylim,
+              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",
+              xlim=xlim,ylim=ylim,
+              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+      recruits2 <- recruits
+      for(iline in 1:nlines){
+        imodel <- models[iline]
+        recruits2[recruits2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      }
+      matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
+              xlim=xlim,ylim=ylim,
+              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=TRUE)
+    }
+
     # add points at equilibrium values
     points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)    
 
