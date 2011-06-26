@@ -208,8 +208,11 @@ SSplotComparisons <-
         mcmclabs <- names(mcmc.tmp)
         lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
         med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+        mean  <- apply(mcmc.tmp,2,mean)   #mean recruitment should be more comparable
         upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
-        recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
+        cat("note: using mean recruitment from MCMC instead of median, because it is more comparable to MLE\n")
+        #recruits[,imodel] <- med[match(recruits$Label,mcmclabs)]
+        recruits[,imodel] <- mean[match(recruits$Label,mcmclabs)]
         recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
         recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
       }
