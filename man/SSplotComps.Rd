@@ -11,7 +11,7 @@
 \usage{
 SSplotComps(replist, subplots=1:11,
   kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE,
-  print=FALSE, fleets="all", fleetnames="default",
+  print=FALSE, fleets="all", fleetnames="default", sexes="all",
   datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
   showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
   pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
@@ -75,6 +75,11 @@ SSplotComps(replist, subplots=1:11,
   }
   \item{fleetnames}{
     optional vector of fleet names to put in the labels
+  }
+  \item{sexes}{
+    which sexes to show plots for. Default="all" which will include
+    males, females, and unsexed. This options is not fully implemented
+    for all plots.
   }
   \item{datonly}{
     make plots of data without fits as well as data with fits?

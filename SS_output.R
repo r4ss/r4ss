@@ -1,7 +1,7 @@
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, allpars=FALSE,
+           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, 
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, aalmaxbinrange=4)
 {
@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "April 28, 2011"
+  codedate <- "June 28, 2011"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")

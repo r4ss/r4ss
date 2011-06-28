@@ -10,9 +10,10 @@
 \usage{
 SSplotSPR(replist, add = FALSE, plot = TRUE, print = FALSE, uncertainty
 = TRUE, subplots = 1:4, col1 = "black", col2 = "blue", col3 = "green3",
-col4 = "red", sprtarg = 0.4, btarg = 0.4, labels = c("Year", "SPR",
-"1-SPR"), pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize =
-12, cex.main = 1, plotdir = "default", verbose = TRUE)
+col4 = "red", sprtarg = "default", btarg = "default",
+labels = c("Year", "SPR", "1-SPR"), pwidth = 7, pheight = 7,
+punits = "in", res = 300, ptsize = 12, cex.main = 1,
+plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,11 +48,11 @@ col4 = "red", sprtarg = 0.4, btarg = 0.4, labels = c("Year", "SPR",
     fourth color used
   }
   \item{sprtarg}{
-    F/SPR proxy target. Default=0.4.
+    F/SPR proxy target. "default" chooses based on model output.
   }
   \item{btarg}{
-    target depletion to be used in plots showing
-    depletion. May be omitted by setting to NA.  Default=0.4.
+    target depletion to be used in plots showing depletion. May be
+    omitted by setting to NA. "default" chooses based on model output.
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

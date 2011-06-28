@@ -18,8 +18,8 @@ function(replist,subplots=1:9,
          col1="default", col2="default", col3="blue", col4="red",
          pch1=1, pch2=16, cex=1,
          legend=TRUE, legendloc="topright", seasnames=NULL,
-         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,addmain=T,
-         plotdir="default", verbose=TRUE)
+         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         addmain=TRUE,plotdir="default", verbose=TRUE)
 {
   pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
 

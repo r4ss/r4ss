@@ -10,12 +10,14 @@ plot model comparisons
   \code{SSsummarize} function.
 }
 \usage{
-SSplotComparisons(summaryoutput,subplots=1:13,
+SSplotComparisons(summaryoutput,subplots=1:14,
   plot=TRUE,print=FALSE,
   models="all",
   endyrvec=NULL,
   indexfleets=NULL,
   indexUncertainty=FALSE,
+  indexQlabel = TRUE,
+  indexQdigits = 4, 
   indexSEvec="default",
   indexPlotEach=FALSE,         
   labels=c("Year",             
@@ -28,6 +30,7 @@ SSplotComparisons(summaryoutput,subplots=1:13,
     "Density"),                
   col="default", shadecol="default",
   pch="default", lty=1, lwd=2,
+  spacepoints = 10, staggerpoints = 1, 
   xlim="default", xaxs="r", yaxs="r",
   type="o", uncertainty=TRUE, shadealpha=0.1,
   legend=TRUE, legendlabels="default", legendloc="topright",
@@ -84,6 +87,13 @@ SSplotComparisons(summaryoutput,subplots=1:13,
     models have any extra standard deviations added, these intervals may
     differ across models.
   }
+  \item{indexQlabel}{
+    add catchability to legend in plot of index fits (TRUE/FALSE)?
+  }
+  \item{indexQdigits}{
+    number of significant digits for catchability in legend
+    (if \code{indexQlabel=TRUE})
+  }
   \item{indexSEvec}{
     optional replacement for the SE values in summaryoutput$indices to
     deal with the issue of differing uncertainty by models described
@@ -113,6 +123,15 @@ SSplotComparisons(summaryoutput,subplots=1:13,
   }
   \item{lwd}{
     optional vector of line widths
+  }
+  \item{spacepoints}{
+    number of years between points shown on top of lines (for long
+    timeseries, points every year get mashed together)
+  }
+  \item{staggerpoints}{
+    number of years to stagger the first point
+    (if \code{spacepoints > 1}) for each line
+    (so that adjacent lines have points in different years)
   }
   \item{xlim}{
     optional x limits

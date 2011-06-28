@@ -8,7 +8,7 @@
   Plot indices of abundance and associated quantities.
 }
 \usage{
-SSplotIndices(replist,subplots=1:8,
+SSplotIndices(replist,subplots=1:9,
   plot=TRUE,print=FALSE,
   fleets="all",fleetnames="default",
   smooth=TRUE,add=FALSE,datplot=FALSE,
@@ -21,12 +21,14 @@ SSplotIndices(replist,subplots=1:8,
     "Log expected index",  
     "Standardized index",  
     "Catchability (Q)",    
-    "Time-varying catchability"),
+    "Time-varying catchability",
+    "Vulnerable biomass",
+    "Catchability vs. vulnerable biomass"),
   col1="default", col2="default", col3="blue", col4="red",
   pch1=1, pch2=16, cex=1,
   legend=TRUE, legendloc="topright", seasnames=NULL,
   pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-  plotdir="default", verbose=TRUE)
+  addmain=TRUE, plotdir="default", verbose=TRUE)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -116,6 +118,9 @@ SSplotIndices(replist,subplots=1:8,
   }
   \item{cex.main}{
     character expansion for plot titles
+  }
+  \item{addmain}{
+    switch which allows the plot title to be left off
   }
   \item{plotdir}{
     directory where PNG files will be written. by default it will

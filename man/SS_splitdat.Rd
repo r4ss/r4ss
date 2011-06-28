@@ -10,7 +10,7 @@
 \usage{
 SS_splitdat(inpath = "working_directory", outpath = "working_directory",
 inname = "data.ss_new", outpattern = "BootData", number = F,
-verbose = T, fillblank = T, MLE = T, notes = "")
+verbose = T, fillblank = T, MLE = T, inputs = F, notes = "")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,7 +21,10 @@ verbose = T, fillblank = T, MLE = T, notes = "")
   \item{number}{ Append bootstrap number to the file name chosen in \code{outpattern}? Default=F.}
   \item{verbose}{ Provide richer command line info of function progress? Default=T.}
   \item{fillblank}{ Replace blank lines with "#". Helps with running on linux. Default=T.}
-  \item{MLE}{ Grab the maximum likelihood values from the second block in Data.SS_New? Default=T.}
+  \item{MLE}{ Grab the maximum likelihood values from the second block
+    in Data.SS_New (instead of bootstrap values or copies of inputs)? Default=T.}
+  \item{inputs}{ Grab the copy of the input values values from the first
+    block in Data.SS_New (instead of MLE or bootstrap values)? Default=F.}
   \item{notes}{ Notes to the top of the new file (comment indicator "#C" will be added). Default="".}
 }
 % \details{

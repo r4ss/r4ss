@@ -13,7 +13,7 @@ SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
 areacols = "default", areanames = "default", forecastplot = TRUE,
 uncertainty = TRUE, bioscale = "default", minyr=NULL, maxyr=NULL,
 plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
-btarg=0.4, minbthresh=0.25, xlab = "Year",
+btarg="default", minbthresh="default", xlab = "Year",
            labels=c("Total biomass (mt)", 
              "Total biomass (mt) at beginning of season", 
              "Summary biomass (mt)",      
@@ -77,10 +77,13 @@ cex.main = 1)
   }
   \item{btarg}{
     Target depletion to be used in plots showing
-    depletion. May be omitted by setting to 0. Default=0.4.}
+    depletion. May be omitted by setting to 0. "default" chooses value
+    based on modeloutput.}
   \item{minbthresh}{
     Threshold depletion to be used in plots showing
-    depletion. May be omitted by setting to 0. Default=0.25.
+    depletion. May be omitted by setting to 0. "default" assumes 0.25
+    unless btarg in model output is 0.25 in which case minbthresh =
+    0.125 (U.S. west coast flatfish).
   }
   \item{xlab}{
     x axis label for all plots

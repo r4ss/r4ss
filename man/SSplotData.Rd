@@ -12,9 +12,9 @@
 \usage{
 SSplotData(replist, plot=TRUE,print=FALSE,
   plotdir="default", fleetcol="default",
-  datatypes="all",fleets="all",ghost=FALSE,
+  datatypes="all",fleets="all",fleetnames="default",ghost=FALSE,
   pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-  verbose=TRUE)
+  margins = c(5.1,2.1,4.1,8.1), verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,6 +45,10 @@ SSplotData(replist, plot=TRUE,print=FALSE,
     Either the string "all", or a vector of numerical values, like
     c(1,3), listing fleets or surveys to be included in the plot.
   }
+  \item{fleetnames}{
+    A vector of alternative names to use in the plot. By default the
+    parameter names in the data file are used.
+  }
   \item{ghost}{
     TRUE/FALSE indicator for whether to show presence of composition
     data from ghost fleets (data for which the fit is shown, but is not
@@ -67,6 +71,10 @@ SSplotData(replist, plot=TRUE,print=FALSE,
   }
   \item{cex.main}{
     character expansion for plot titles
+  }
+  \item{margins}{
+    margins of plot (passed to par() function), which may need to be
+    increased if fleet names run off right-hand margin
   }
   \item{verbose}{
     report progress to R GUI?

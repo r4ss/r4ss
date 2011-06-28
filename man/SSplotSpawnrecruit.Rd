@@ -14,7 +14,7 @@ ylab = "Recruitment (1,000s)", plotdir = "default",
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1,  verbose = TRUE, line1 = "blue", line2 = "green3",
 line3 = "black", minyr = "default", textmindev = 0.5, ptcol = "red",
-virg = TRUE, init = FALSE)
+virg = TRUE, init = FALSE, forecast = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -97,6 +97,9 @@ virg = TRUE, init = FALSE)
   }
   \item{init}{
     add point for initial conditions (x=B1,y=R1)
+  }
+  \item{forecast}{
+    include forecast years in the curve?
   }
 }
 \details{

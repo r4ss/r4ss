@@ -18,10 +18,8 @@ SStableComparisons(summaryoutput,
              "Age_comp",
              "priors",
              "Size_at_age"),
-           names=c("SR_R0",
-             "SR_LN(R0)",
-             "SR_steep",
-             "SR_BH_steep",
+           names=c("R0",
+             "steep",
              "NatM",
              "Q",
              "L_at_Amax",
@@ -34,7 +32,7 @@ SStableComparisons(summaryoutput,
            csv=FALSE,
            csvdir="workingdirectory",
            csvfile="parameter_comparison_table.csv",
-           verbose=FALSE)
+           verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

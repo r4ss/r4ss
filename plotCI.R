@@ -1,5 +1,5 @@
 plotCI <-
-function (x, z = x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL,
+function (x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL,
      ..., sfrac = 0.01, ymax = NULL, add = FALSE, col = "black") {
      # Written by Venables; modified for access to ylim and contents, and color
      if (is.list(x)) {
