@@ -16,8 +16,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
 
-  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.11","SS-V3.20","SS-V3.21"))){
-    stop("this function needs an input object created by SS_output from SS v3.11 through v3.21")
+  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.11","SS-V3.20","SS-V3.21","SS-V3.22"))){
+    stop("this function needs an input object created by SS_output from SS v3.11 through v3.22")
   }
   if(replist$inputs$covar==FALSE){
     stop("you need to have covar=TRUE in the input to the SS_output function")

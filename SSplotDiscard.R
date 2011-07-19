@@ -89,7 +89,7 @@ SSplotDiscard <-
         }
       }
       dfracfunc <- function(){
-        plotCI(x=yr,y=ob,z=0,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=yhi,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
+        plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=yhi,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
         points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
       }

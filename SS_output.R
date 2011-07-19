@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "June 28, 2011"
+  codedate <- "July 19, 2011"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -107,12 +107,12 @@ SS_output <-
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
   
-  if(!(SS_versionshort %in% c("SS-V3.21","SS-V3.20","SS-V3.11"))){
+  if(!(SS_versionshort %in% c("SS-V3.22","SS-V3.21","SS-V3.20","SS-V3.11"))){
     cat("! Warning, this function tested on SS-V3.11 through SS-V3.21.\n",
         "  you are using",substr(SS_version,1,9),"which may NOT work with this R code.\n")
   }else{
     if(verbose)
-      cat("This function tested on SS-V3.11 through SS-V3.21.\n",
+      cat("This function tested on SS-V3.11 through SS-V3.22.\n",
           "  You're using",SS_versionshort,"which SHOULD work with this R code.\n")
   }
 
@@ -187,8 +187,11 @@ SS_output <-
   # read report file
   if(verbose) cat("Reading full report file\n")
   flush.console()
-  rawrep <- read.table(file=repfile,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1,comment.char="")
+  rawrep <- read.table(file=repfile,col.names=1:ncols,fill=TRUE,quote="",
+                       colClasses="character",nrows=-1,comment.char="")
 
+  # Ian T.: if the read.table command above had "blank.lines.skip=TRUE" then blank lines could play a role in parsing the report file
+  
   # check empty columns
   nonblanks <- apply(rawrep,2,emptytest) < 1
   maxnonblank = max(0,(1:ncols)[nonblanks==TRUE])
@@ -330,7 +333,7 @@ SS_output <-
     seasdurations <- 1/nseasons
     seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }else{
-    # version 3.20 or 3.21
+    # version 3.20-3.22
     rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
     # get season stuff
     nseasons <- as.numeric(rawdefs[1,2])
@@ -343,7 +346,7 @@ SS_output <-
     lab <- defs$X1
     fleet_ID    <- as.numeric(defs[grep("fleet_ID",lab),-1])
     names(defs) <- c("Label",paste("Fleet",fleet_ID,sep=""))
-    FleetNames <- defs[grep("fleet_names",lab),-1]
+    FleetNames <- as.character(defs[grep("fleet_names",lab),-1])
     fleet_area  <- as.numeric(defs[grep("fleet_area",lab),-1])
     catch_units <- as.numeric(defs[grep("Catch_units",lab),-1])
     catch_error <- as.numeric(defs[grep("Catch_error",lab),-1])
@@ -545,14 +548,19 @@ SS_output <-
   stats$likelihoods_raw_by_fleet <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
 
   # parameters
-  parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",-1,header=TRUE)
+  shift <- -1
+  if(SS_versionshort %in% c("SS-V3.22")) shift <- -2
+  parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",shift,header=TRUE)
+
   parameters[parameters=="_"] <- NA
-  if(SS_versionshort %in% c("SS-V3.11","SS-V3.20")){
-    # old parameters section
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
+  parameters[parameters==" "] <- NA
+
+  if(SS_versionshort %in% c("SS-V3.22")){
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
-  }else{
-    # revised section as of SS-V3.21 which text description of PR_type instead of number
+  }
+  if(SS_versionshort %in% c("SS-V3.21")){
+    # revised section in SS-V3.21 where text description of PR_type instead of number
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
     temp <- names(parameters)
@@ -560,6 +568,11 @@ SS_output <-
     temp <- c(temp[1:12],"PR_type_code",temp[-(1:12)])
     temp <- temp[-length(temp)]
     names(parameters) <- temp
+  }
+  if(SS_versionshort %in% c("SS-V3.11","SS-V3.20")){
+    # old parameters section
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
+      parameters[,i] <- as.numeric(parameters[,i])
   }
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
   
@@ -753,16 +766,23 @@ SS_output <-
   stats$index_variance_tuning_check <- vartune
 
   lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
-  lenntune[,1] <- lenntune[,10]
-  lenntune <- lenntune[lenntune$N>0, c(1,2,4,5,6,8,9)]
+  names(lenntune)[10] <- "FleetName"
+  lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
+  for(i in 2:ncol(lenntune)) lenntune[,i] <- as.numeric(lenntune[,i])
+  lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
   agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
-  agentune[,1] <- agentune[,10]
-  agentune <- agentune[agentune$N>0, c(1,2,4,5,6,8,9)]
+  names(agentune)[10] <- "FleetName"
+  agentune <- agentune[agentune$N>0, c(10,1,4:9)]
+  for(i in 2:ncol(agentune)) agentune[,i] <- as.numeric(agentune[,i])
+  agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
-if(FALSE){   # !! Ian, fix this:
+if(FALSE){
+  # !! Ian T., fix this to read tuning for generalized size comp data
+  #            this can be done with a shift in strategy of using blank.lines.skip=TRUE
+  #            in read.table, but that will require additional revisions throughout
   sizentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10,header=TRUE)
   sizentune[,1] <- sizentune[,10]
   sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
@@ -1051,13 +1071,19 @@ if(FALSE){   # !! Ian, fix this:
   
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
-  if(length(grep("Kobe_Plot",rawrep[,1]))!=0) spr <- matchfun2("SPR_series",5,"Kobe_Plot",-1,header=TRUE)
+  if(length(grep("Kobe_Plot",rawrep[,1]))!=0){
+    spr <- matchfun2("SPR_series",5,"Kobe_Plot",-1,header=TRUE)
+    Kobe <- matchfun2("Kobe_Plot",2,"SPAWN_RECRUIT",-1,header=TRUE)
+  }else{
+    Kobe <- NA
+  }
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
   spr <- spr[spr$Year <= endyr,]
   spr$spr <- spr$SPR
   returndat$sprseries <- spr
+  returndat$Kobe <- Kobe
   stats$last_years_SPR <- spr$spr[nrow(spr)]
   stats$SPRratioLabel <- managementratiolabels[1,2]
   stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]

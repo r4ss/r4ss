@@ -127,7 +127,7 @@ function(replist,subplots=1:9,
       # plot of time-series of observed and expected (if requested)
       if(!add) plot(x=x,y=y,type='n',xlab=labels[1],ylab=labels[2],
                     main=main,cex.main=cex.main,ylim=c(0,max(y+uiw,na.rm=TRUE)))
-      plotCI(x=x,y=y,z=z,sfrac=0.001,uiw=uiw,liw=liw,ylo=0,col=colvec1[s],
+      plotCI(x=x,y=y,sfrac=0.001,uiw=uiw,liw=liw,ylo=0,col=colvec1[s],
              main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,cex=cex)
       abline(h=0,col="grey")
       if(addexpected) lines(x,z,lwd=2,col=col3)
@@ -183,7 +183,7 @@ function(replist,subplots=1:9,
       # plot of time-series of log(observed) and log(expected) (if requested)
       if(!add) plot(x=x,y=log(y),type='n',xlab=labels[1],ylab=labels[5],
                     main=main,cex.main=cex.main,ylim=range(log(y)-liw,log(y)+uiw,na.rm=TRUE))
-      plotCI(x=x,y=log(y),z=log(z),sfrac=0.001,uiw=uiw,liw=liw,
+      plotCI(x=x,y=log(y),sfrac=0.001,uiw=uiw,liw=liw,
              col=colvec1[s],lty=1,add=TRUE,pch=pch1,cex=cex)
       if(addexpected) lines(x,log(z),lwd=2,col=col3)
       if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,

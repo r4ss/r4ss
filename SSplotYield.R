@@ -40,7 +40,7 @@ SSplotYield <-
     if(1 %in% subplots){
       if(plot){yieldfunc()}
       if(print){
-        pngfun(file=paste(plotdir,"23_yield.png",sep=""))
+        pngfun(file=paste(plotdir,"yield1_yield_curve.png",sep=""))
         yieldfunc()
         dev.off()}
     }
@@ -95,7 +95,7 @@ SSplotYield <-
   if(2 %in% subplots){
     if(plot){sprodfunc()}
     if(print){
-      pngfun(file=paste(plotdir,"23_surplus_prod.png",sep=""))
+      pngfun(file=paste(plotdir,"yield2_Hilborn_surplus_production.png",sep=""))
       sprodfunc()
       dev.off()}
   }

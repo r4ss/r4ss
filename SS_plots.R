@@ -176,7 +176,8 @@ SS_plots <-
   # Length selex and retention
   if(length(intersect(c(3,4), c(plot,print)))>0)
   {
-    SSplotSelex(replist=replist, selexlines=selexlines, fleets=fleets,
+    SSplotSelex(replist=replist, selexlines=selexlines,
+                fleets=fleets, fleetnames=fleetnames,
                 plot=(3 %in% plot), print=(3 %in% print),
                 pwidth=pwidth, pheight=pheight, punits=punits,
                 ptsize=ptsize, res=res, cex.main=cex.main,
@@ -240,6 +241,9 @@ SS_plots <-
     SSplotCatch(replist=replist,
                 plot=(6 %in% plot),print=(6 %in% print),
                 fleetnames=fleetnames,
+                fleetlty=fleetlty,
+                fleetpch=fleetpch,
+                fleetcols=fleetcols, 
                 minyr=minyr,maxyr=maxyr,
                 pwidth=pwidth, pheight=pheight, punits=punits,
                 ptsize=ptsize, res=res,cex.main=cex.main,
@@ -642,9 +646,11 @@ SS_plots <-
   # Yield curve
   if(23 %in% c(plot, print)){
     SSplotYield(replist=replist,
-                cex.main=cex.main,
                 plot=(23 %in% plot),
-                print=(23 %in% print))
+                print=(23 %in% print),
+                pwidth=pwidth, pheight=pheight, punits=punits,
+                ptsize=ptsize, res=res, cex.main=cex.main,
+                plotdir=plotdir)
   } # close plot section 23
 
   ### Plot 24: Tag plots ###
