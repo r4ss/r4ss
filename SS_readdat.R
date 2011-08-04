@@ -289,6 +289,17 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # other stuff
   datlist$N_environ_variables <- N_environ_variables <- allnums[i]; i <- i+1
   datlist$N_environ_obs <- N_environ_obs <- allnums[i]; i <- i+1
+  if(N_environ_obs > 0){
+    Ncols <- 3
+    envdat <- data.frame(matrix(
+      allnums[i:(i+Ncols*N_environ_obs-1)],nrow=N_environ_obs,ncol=Ncols,byrow=TRUE))
+    i <- i+N_environ_obs*Ncols
+    names(envdat) <- c("Yr","Variable","Value")
+  }else{
+    envdat <- NULL
+  }
+  datlist$envdat <- envdat
+  
   datlist$N_sizefreq_methods <- N_sizefreq_methods <- allnums[i]; i <- i+1
   if(verbose) cat("N_sizefreq_methods =",N_sizefreq_methods,"\n")
   if(N_sizefreq_methods > 0){
