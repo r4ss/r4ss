@@ -701,7 +701,7 @@ SS_output <-
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
-
+  
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
@@ -765,16 +765,22 @@ SS_output <-
   vartune <- vartune[,c(1,8,11,13,16,18)]
   stats$index_variance_tuning_check <- vartune
 
+  # Length comp effective N tuning check
   lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
   names(lenntune)[10] <- "FleetName"
   lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
+  # avoid NA warnings by removing #IND values
+  lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
   for(i in 2:ncol(lenntune)) lenntune[,i] <- as.numeric(lenntune[,i])
   lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
+  # Age comp effective N tuning check
   agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
   names(agentune)[10] <- "FleetName"
   agentune <- agentune[agentune$N>0, c(10,1,4:9)]
+  # avoid NA warnings by removing #IND values
+  agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
   for(i in 2:ncol(agentune)) agentune[,i] <- as.numeric(agentune[,i])
   agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
   stats$Age_comp_Eff_N_tuning_check <- agentune
@@ -788,6 +794,7 @@ if(FALSE){
   sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
   stats$Size_comp_Eff_N_tuning_check <- sizentune
 }
+
   
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
@@ -882,7 +889,14 @@ if(FALSE){
     Seas_Effects <- NA
   }
   returndat$Seas_Effects <- Seas_Effects
-  
+
+  # ending year growth, including pattern for the CV (added in SSv3.22b_Aug3)
+  growthCVtype <- matchfun2("Biology_at_age",0,"Biology_at_age",0,header=FALSE)
+  if(nchar(growthCVtype)>31){
+    returndat$growthCVtype <- substring(growthCVtype,30)
+  }else{
+    returndat$growthCVtype <- "unknown"
+  }
   growdat <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,header=TRUE)
   for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
   nmorphs <- max(growdat$Morph)
