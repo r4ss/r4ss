@@ -134,7 +134,7 @@ function(nareas=4,accuage=40,getpars=T,getrates=T)
     plot(0,type='n',xlim=c(0,accuage),ylim=c(0,1),xaxs='i',yaxs='i',
          xlab='Age',ylab='Movement rate')
 
-    rates <- movecalc(accuage,
+    rates <- movecalc(firstage=0, accuage=accuage,
              minage=c(minage1,minage2,minage3,minage4)[1:nareas],
              maxage=c(maxage1,maxage2,maxage3,maxage4)[1:nareas],
              valueA=c(valueA1,valueA2,valueA3,valueA4)[1:nareas],
