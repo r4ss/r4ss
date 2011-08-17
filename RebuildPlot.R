@@ -1,8 +1,20 @@
-DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=200,Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",yearmax= -1,Outlines=c(2,2),OutlineMulti=c(2,2),AllTraj=c(1,2,3,4),AllInd=c(1,2,3,4,5,6,7),BioType="Spawning biomass",CatchUnit="(mt)",BioUnit="(mt)",BioScalar=1,ColorsUsed="default",Labels="default")
+DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=200,
+                         Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",
+                         yearmax= -1,Outlines=c(2,2),OutlineMulti=c(2,2),
+                         AllTraj=c(1,2,3,4),AllInd=c(1,2,3,4,5,6,7),
+                         BioType="Spawning biomass",CatchUnit="(mt)",BioUnit="(mt)",
+                         BioScalar=1,ColorsUsed="default",Labels="default",
+                         pdf=FALSE,pwidth=7,pheight=7)
 {
- if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
- windows(record=T)
-
+  if(pdf){
+    pdffile <- paste(dirn,"/rebuild_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdf(file=pdffile,width=pwidth,height=pheight)
+    cat("PDF file with plots will be:",pdffile,'\n')
+  }else{
+    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+    windows(record=T,width=pwidth,height=pheight)
+  }
+  
  rich.colors.short <- function(n){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
     x <- seq(0, 1, length = n)
@@ -132,7 +144,7 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
  NOpts <- 0
  for (Ifile in 1:length(FileN)) NOpts <- NOpts+ length(Options[[Ifile]])
 
- if (NOpts > 8) print("WARNING - you have a large number of lines - perhaps create separate plots for subsets")
+ if (NOpts > 8) cat("WARNING - you have a large number of lines - perhaps create separate plots for subsets\n")
 
  Files <- NULL
  Opts <- NULL
@@ -176,7 +188,10 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
 
    if (ii == 1)
     {
-     plot(xmin,0,xlab="Year",ylab="Probability Above Target (%)",type='n',yaxs="i",ylim=c(0,105),xlim=c(xmin,xmax))
+     plot(xmin,0,xlab="Year",ylab="Probability Above Target (%)",type='n',yaxs="i",ylim=c(0,105),xlim=c(xmin,xmax),axes=F)
+     axis(1)
+     axis(2,at=seq(0,100,25))
+     box()
      IlineType <- 0
      for (Icnt in 1:NOpts)
       {
@@ -293,7 +308,7 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
    titles <- UUUs[[Ifile]][Ipnt-1,3:11]
 
    IlineType <- IlineType + 1
-   if (Labels[1] == "default")
+   if (any(Labels == "default"))
     {
      titls <- titles[II]
      if (length(FileN) > 0) titls <- paste(Titles[Ifile],": ",titls,sep="")
@@ -441,7 +456,7 @@ FinalRecovery<-function(UUU,Title)
   {
 
    FileName <- paste(dirn,fileN[Ifile],sep="\\")
-   print(FileName)
+   cat("FileName:",FileName,"\n")
    UUU <- read.table(file=FileName,col.names=1:ncols,fill=T,colClass="character",comment.char="$",sep=",")
    UUUs[[Ifile]] <- UUU
 
@@ -482,6 +497,8 @@ FinalRecovery<-function(UUU,Title)
  for (Ifile in 1:length(fileN))
   if (5 %in% Plots[[Ifile]]) DoStrategies <- T
  if (DoStrategies==T) AltStrategies(fileN,UUUs,Options,"",yearmax,Titles)
+
+ if(pdf) dev.off()
 }
 
 # ================================================================================================================
