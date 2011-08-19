@@ -279,9 +279,13 @@ if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
   
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_21e_June9",
-                           newdir="c:/SS/modeltesting/Version_3_21e_June9_temp")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_22b_Aug3",
+                           newdir="c:/SS/modeltesting/Version_3_22c_Aug12")
 
+  source('c:/SS/R/r4ss/trunk/modeltesting.R')
+  setwd("c:/SS/modeltesting/Version_3_22c_Aug12")
+  folderinfo <- list(newdir=getwd(),
+                     folderlist=dir())
   # on sysiphus
   folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_20_Jan3",
                            newdir="y:/h_itaylor/SS/modeltesting/Version_3_20e_Mar15")
@@ -294,7 +298,7 @@ if(FALSE){
                            newdir="c:/SS/modeltesting/Version_3_21e_June9_examples_test")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.21e_June9/",
+  copyexe(sourcedir="c:/SS/SSv3.22c_Aug12/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3.exe")
@@ -327,7 +331,7 @@ if(FALSE){
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
   source("c:/SS/R/r4ss/trunk/modeltesting.R")
-  mydir <- "c:/SS/modeltesting/Version_3_21e_June9"
+  mydir <- "c:/SS/modeltesting/Version_3_22c_Aug12"
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-nox")
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-noest -nohess -nox")
 
@@ -348,7 +352,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_21e_June9"))
+               SSversions=c("Version_3_22c_Aug12"))
 
   # example on sysiphus
   alloutput <-

@@ -147,7 +147,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           if(CAAL){
             bootstrap_CAAL(master=F,
                            infile=paste(simpath,"/data.ss_new",sep=''),
-                           outfile=paste(simpath,"/bootdat_",key,".ss",sep='')
+                           outfile=paste(simpath,"/bootdat_",key,".ss",sep=''),
+                           MLE=MLEdata
                            )
             cat("doing conditional age at length sampling\n")
           }else{
@@ -323,10 +324,9 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                                         "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
 
                 # test again
-                repfilesize <- file.info("Report.sso")$size
-
                 # rerun if hessian doesn't invert
-                if(!is.na(repfilesize) & repfilesize>0){
+                if(!file.exists("covar.sso")){
+                #if(!is.na(repfilesize) & repfilesize>0){
                   cat("run was good, non-empty report file created: ",repfilename,"\n",sep="")
                   file.copy("covar.sso",paste(masterpath,covarname,sep="/"),overwrite=TRUE)
                 }else{
