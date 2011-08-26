@@ -207,7 +207,6 @@ SSsummarize <- function(biglist,
 
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
   SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr),]
-
   if(any(is.na(SpawnBio[3,]))){
     cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
     SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
@@ -253,17 +252,19 @@ SSsummarize <- function(biglist,
   
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
-  recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
   recruitsSD <- quantsSD[grep("^Recr_",quantsSD$Label), ]
-  recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label),]
+  if(length(grep("Recr_Unfished",recruits$Label))>0)
+    recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
+  if(length(grep("Recr_Unfished",recruitsSD$Label))>0)
+    recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label),]
   minyr <- min(recruits$Yr,na.rm=TRUE)
+  
   recruits$Yr[grep("Recr_Virgin",recruits$Label)] <- minyr - 2
   recruits$Yr[grep("Recr_Initial",recruits$Label)] <- minyr - 1
   recruitsSD$Yr[grep("Recr_Virgin",recruitsSD$Label)] <- minyr - 2
   recruitsSD$Yr[grep("Recr_Initial",recruitsSD$Label)] <- minyr - 1
   recruits <- recruits[order(recruits$Yr),]
   recruitsSD <- recruitsSD[order(recruitsSD$Yr),]
-
   if(any(is.na(recruits[3,]))){
     cat("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year\n")
     recruits$Label[1:2] <- c("Recr_Virgin*","Recr_Initial*")
@@ -284,7 +285,6 @@ SSsummarize <- function(biglist,
                                sd=as.matrix(recruitsSD[,1:n]))
   recruitsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recruits[,1:n]),
                                sd=as.matrix(recruitsSD[,1:n]))
-
 
   # identify parameters that are recruitment deviations
   pars$recdev <- FALSE
@@ -314,19 +314,21 @@ SSsummarize <- function(biglist,
   }else{
     InitAgeYrs <- NA
   }
-  recdevs <- pars[pars$recdev,]
-  recdevsSD <- parsSD[pars$recdev,]
-  myorder <- order(recdevs$Yr) # save order for use in both values and SDs
-  recdevs <- recdevs[myorder,1:(n+2)]
-  recdevsSD <- recdevsSD[myorder,1:(n+1)]
-  recdevsSD$Yr <- recdevs$Yr
-  recdevsLower <- recdevsUpper <- recdevsSD
-  recdevsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recdevs[,1:n]),
-                              sd=as.matrix(recdevsSD[,1:n]))
-  recdevsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recdevs[,1:n]),
-                              sd=as.matrix(recdevsSD[,1:n]))
-
-  
+  if(any(pars$recdev)){
+    recdevs <- pars[pars$recdev,]
+    recdevsSD <- parsSD[pars$recdev,]
+    myorder <- order(recdevs$Yr) # save order for use in both values and SDs
+    recdevs <- recdevs[myorder,1:(n+2)]
+    recdevsSD <- recdevsSD[myorder,1:(n+1)]
+    recdevsSD$Yr <- recdevs$Yr
+    recdevsLower <- recdevsUpper <- recdevsSD
+    recdevsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recdevs[,1:n]),
+                                sd=as.matrix(recdevsSD[,1:n]))
+    recdevsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recdevs[,1:n]),
+                                sd=as.matrix(recdevsSD[,1:n]))
+  }else{
+    recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
+  }
   mylist <- list()
   mylist$n              <- n
   mylist$npars          <- npars

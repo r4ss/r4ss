@@ -8,6 +8,7 @@ SSplotDiscard <-
            "Total discards",
            "for"),
            yhi=1,
+           col1="blue", col2="red",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -89,9 +90,11 @@ SSplotDiscard <-
         }
       }
       dfracfunc <- function(){
-        plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,ylo=0,yhi=yhi,col="red",sfrac=0.001,lty=1,xlim=xlim,ymax=max(usedisc$Exp,na.rm=TRUE))
+        plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,
+               ylo=0,yhi=yhi,col=col2,sfrac=0.001,lty=1,xlim=xlim,
+               ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
-        points(yr,usedisc$Exp,col="blue",pch="-",cex=2)
+        points(yr,usedisc$Exp,col=col1,pch="-",cex=2)
       }
       if(plot) dfracfunc()
       if(print) {

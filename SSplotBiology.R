@@ -17,9 +17,11 @@ SSplotBiology <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,
+                               units=punits,res=res,pointsize=ptsize)
 
-  ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
+  ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",
+                  topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
 
   #### plot function 1
@@ -259,7 +261,8 @@ SSplotBiology <-
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
     {
-      cat("! Warning: no time-varying growth info because 'detailed age-structured reports' turned off in starter file.\n")
+      cat("! Warning: no time-varying growth info because\n",
+          "          'detailed age-structured reports' turned off in starter file.\n")
     }else{
       if(growthvaries) # if growth is time varying
       for(i in 1:nsexes)
@@ -279,17 +282,25 @@ SSplotBiology <-
           if(i==2){main <- "Male time-varying growth"}
           if(nseasons > 1){main <- paste(main," season 1",sep="")}
           if(plot){
-            if(9 %in% subplots) persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-            if(10 %in% subplots) contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+            if(9 %in% subplots)
+              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                    box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                    phi=35,theta=-10)
+            if(10 %in% subplots)
+              contour(x,y,z,nlevels=12,xlab=labels[2],
+                      main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
             if(9 %in% subplots){
               pngfun(file=paste(plotdir,"/bio9_timevarygrowthsurf_sex",i,".png",sep=""))
-              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                    box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                    phi=35,theta=-10)
               dev.off()
             }
             if(10 %in% subplots){
               pngfun(file=paste(plotdir,"/bio10_timevarygrowthcontour_sex",i,".png",sep=""))
-              contour(x,y,z,nlevels=12,xlab=labels[2],main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+              contour(x,y,z,nlevels=12,xlab=labels[2],
+                      main=main,cex.main=cex.main,col=ians_contour,lwd=2)
               dev.off()
             }
           } # end print

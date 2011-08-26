@@ -84,10 +84,10 @@ SS_plots <-
 
   if(verbose) cat("Finished defining objects\n")
   
-  if(nareas>1){
-    cat("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")\n",sep="")
-    if(areanames[1]=="default") areanames <- paste("area",1:nareas)
-  }
+  ## if(nareas>1){
+  ##   cat("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")\n",sep="")
+  ##   if(areanames[1]=="default") areanames <- paste("area",1:nareas)
+  ## }
   
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(fleetcols[1]=="default"){

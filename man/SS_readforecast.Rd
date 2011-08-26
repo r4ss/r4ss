@@ -8,7 +8,7 @@
   read Stock Synthesis forecast file into list object in R
 }
 \usage{
-SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = TRUE)
+SS_readforecast(file = "forecast.ss", Nfleets, Nareas, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -16,8 +16,10 @@ SS_readforecast(file = "forecast.ss", Nfleets = NULL, verbose = TRUE)
     Filename either with full path or relative to working directory.
   }
   \item{Nfleets}{
-    Number of fleets. Only required if fleet allocation option is used.
-    Default=NULL.
+    Number of fleets.
+  }
+  \item{Nareas}{
+    Number of areas.
   }
   \item{verbose}{
     Should there be verbose output while running the file?

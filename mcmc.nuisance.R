@@ -6,7 +6,7 @@ mcmc.nuisance <- function (
           bothfiles=FALSE,                  # read and combine both file and file2                 
           printstats=FALSE, 		    # return all the statistics for a closer look
           burn=0, 			    # can specify a burn in to remove
-          header=F,			    # header on data file?
+          header=TRUE,			    # header on data file?
           thin=1,  			    # can specify further thinning, default is none
           trace=0,			    # plot trace for param # (to help sort out problem parameters)
           labelstrings="all",               # vector of strings that partially match the columns you want to consider
@@ -53,7 +53,7 @@ mcmc.nuisance <- function (
     print(labels)
     mcmcdata <- mcmcdata[,names(mcmcdata)%in%labels]
   }
-  
+print(head(mcmcdata))  
   ##### change to mcmc object for coda #####
    mcmcfirst <- mcmc(mcmcdata)					# make the mcmc object from the data table
    mcmctemp <- window(mcmcfirst,thin=thin,start=(1+burn))       # thin the chain  and remove burn in

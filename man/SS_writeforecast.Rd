@@ -10,7 +10,7 @@
 }
 \usage{
 SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
-nareas = 1, nfleets = 1, overwrite = FALSE, verbose = TRUE)
+overwrite = FALSE, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,12 +22,6 @@ nareas = 1, nfleets = 1, overwrite = FALSE, verbose = TRUE)
   }
   \item{file}{
     Filename for new forecast file. Default="forecast.ss".
-  }
-  \item{nareas}{
-    Number of areas in the model (necessary to get formatting correct).
-  }
-  \item{nfleets}{
-    Number of fleets in the model (necessary to get formatting correct).
   }
   \item{overwrite}{
     Should existing files be overwritten? Default=FALSE.

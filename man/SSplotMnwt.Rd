@@ -45,10 +45,10 @@ cex.main=1, plotdir = "default", verbose = TRUE)
     vector of labels for plots (titles and axis labels)
   }
   \item{col1}{
-    first color to use in plot
+    first color to use in plot (for expected values)
   }
   \item{col2}{
-    second color to use in plot
+    second color to use in plot (for observations and intervals)
   }
   \item{pwidth}{
     width of plot written to PNG file
