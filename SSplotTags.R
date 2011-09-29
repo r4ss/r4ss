@@ -1,11 +1,11 @@
 SSplotTags <-
-  function(replist=replist, subplots=1:8,
+  function(replist=replist, subplots=1:8, latency=0,
            rows=1, cols=1,
            tagrows=3, tagcols=3,
            plot=TRUE, print=FALSE,
            pntscalar=2.6,minnbubble=8,
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-           col1="blue",col2="red",col3="grey80",
+           col1="blue",col2="red",col3="grey95",col4="grey70",
            labels = c("Year",                                   #1
            "Frequency",                                         #2
            "Tag Group",                                         #3
@@ -22,8 +22,12 @@ SSplotTags <-
 
   tagdbase2 <- replist$tagdbase2
   if(is.null(tagdbase2) || nrow(tagdbase2)==0){
-    cat("skipping tag plots because there's no tagging data\n")
+    if(verbose) cat("skipping tag plots because there's no tagging data\n")
   }else{
+    if(verbose) cat("Running tag plot code.\n",
+                    "  Tag latency (mixing period) is set to ",latency,".\n",
+                    "  To change value, use the 'latency' input to the SSplotTags function.\n",sep="")
+    
     # calculations needed for printing to multiple PNG files
     grouprange     <- unique(tagdbase2$Rep)
     ngroups        <- length(unique(tagdbase2$Rep))
@@ -34,8 +38,9 @@ SSplotTags <-
     tagrecap       <- replist$tagrecap
     tagsalive      <- replist$tagsalive
     tagtotrecap    <- replist$tagtotrecap
-    
+
     tagfun1 <- function(ipage=0){
+      if(verbose) cat("Note: lighter colored bars is plot indicate latency period excluded from likelihood\n")
       # obs & exp recaps by tag group
       par(mfcol=c(tagrows,tagcols),mar=c(2.5,2.5,2,1),cex.main=cex.main,oma=c(2,2,2,0))
       if(npages > 1 & ipage!=0) grouprange <- intersect(grouprange, 1:(tagrows*tagcols) + tagrows*tagcols*(ipage-1))
@@ -47,7 +52,7 @@ SSplotTags <-
         for (iy in 1:length(tagtemp$Yr)){
           xx <- c(tagtemp$Yr[iy]-width,tagtemp$Yr[iy]-width,tagtemp$Yr[iy]+width,tagtemp$Yr[iy]+width)
           yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
-          polygon(xx,yy,col=col3)
+          polygon(xx,yy,col=ifelse(iy<=latency,col3,col4))
         }
         points(tagtemp$Yr,tagtemp$Exp,type="o",lty=1,pch=16)
 
@@ -66,24 +71,33 @@ SSplotTags <-
 
     cat("Calculated tagging related quantities...\n")
     # reconfiguring tagdbase2
-    # why? to exclude the first year for each group?
-    XRep <- -1
-    x <- NULL
-    for (irow in 1:length(tagdbase2[,1])){
-      if (tagdbase2$Rep[irow] != XRep){
-        XRep <- tagdbase2$Rep[irow]
-      }else{
-        x <- rbind(x,tagdbase2[irow,])
-      }
-    }
-    # alternatively, don't reconfigure by using:
-    #x <- tagdbase
+    ## # old system from Andre which exclude exactly 1 year for each group as the latency period
+    ## XRep <- -1
+    ## x <- NULL
+    ## for (irow in 1:length(tagdbase2[,1])){
+    ##   if (tagdbase2$Rep[irow] != XRep){
+    ##     XRep <- tagdbase2$Rep[irow]
+    ##   }else{
+    ##     x <- rbind(x,tagdbase2[irow,])
+    ##   }
+    ## }
+    ## # alternatively, don't reconfigure by using:
+    ## #x <- tagdbase
 
+    # new system which takes latency value as input
+    tgroups <- sort(unique(tagdbase2$Rep))
+    x <- NULL
+    for(igroup in tgroups){
+      temp <- tagdbase2[tagdbase2$Rep==igroup,] # subset results for only 1 tag group
+      temp <- temp[-(1:latency),] # remove the first rows corresponding to the latency period
+      x <- rbind(x, temp)
+    }
+    
     #obs vs exp tag recaptures by year aggregated across group
     tagobs <- aggregate(x$Obs,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
     tagexp <- aggregate(x$Exp,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
     Recaps <- data.frame(Yr=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
-
+    
     xlim <- range(Recaps[,1])
     xx2 <- aggregate(Recaps[,3],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
     xx3 <- aggregate(Recaps[,4],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
@@ -96,12 +110,14 @@ SSplotTags <-
       for (iy in 1:nrow(RecAg)){
         xx <- c(RecAg[iy,1]-width,RecAg[iy,1]-width,RecAg[iy,1]+width,RecAg[iy,1]+width)
         yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
-        polygon(xx,yy,col=col3)
+        polygon(xx,yy,col=col4)
       }
       lines(RecAg[,1],RecAg[,3],type="o",pch=16,lty=1,lwd=2)
     }
 
     Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
+    Recaps$Pearson[Recaps$Exp==0] <- NA
+
     tagfun3 <- function(){
       # bubble plot of observed recapture data
       plottitle <- labels[6]
@@ -172,7 +188,7 @@ SSplotTags <-
               col=rich.colors.short(nrow(tagsalive)),
               xlab="Period at liberty",
               ylab="Estimated number of alive tagged fish",
-              main="Tags alive' by tag group")
+              main="'Tags alive' by tag group")
       abline(h=0,col='grey')
     }
     tagfun8 <- function(){
