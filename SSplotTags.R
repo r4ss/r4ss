@@ -55,6 +55,7 @@ SSplotTags <-
           polygon(xx,yy,col=ifelse(iy<=latency,col3,col4))
         }
         points(tagtemp$Yr,tagtemp$Exp,type="o",lty=1,pch=16)
+        if(latency>0) points(tagtemp$Yr[1:latency],tagtemp$Exp[1:latency],type="o",lty=1,pch=21,bg="white")
 
         # add labels in left and lower outer margins once per page
         mfg <- par("mfg")
