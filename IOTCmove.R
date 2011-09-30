@@ -1,6 +1,8 @@
 IOTCmove <-
   function(replist=NULL,moveage=5,
-           moveseas=1,legend=FALSE,title=NULL)
+           moveseas=1,legend=FALSE,title=NULL,
+           areanames=c("R1","R2","R3","R4","R5"),
+           ...)
 {
   # Indian Ocean Tuna Commission 5-area model:
   polygonlist <- list(
@@ -43,6 +45,8 @@ IOTCmove <-
                     moveage=moveage,
                     moveseas=moveseas,
                     legend=legend,
-                    title=title
+                    title=title,
+                    areanames=areanames,
+                    ...
                     )
 }
