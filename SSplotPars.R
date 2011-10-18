@@ -24,7 +24,7 @@ SSplotPars <-
   #
   ################################################################################
 
-  codedate <- "June 17, 2011"
+  codedate <- "October 18, 2011"
 
   if(verbose){
     print(paste("R function updated:",codedate),quote=F)
@@ -34,13 +34,23 @@ SSplotPars <-
   # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
     # function to calculate prior values is direct translation of code in SSv3
+
+    # Ptype used to be a numeric value and is now a character string
+    # hopefully this function is robust to either option
+    Ptype2 <- NA
     if(is.character(Ptype)){
       if(Ptype=="No_prior") Ptype2 <- -1
       if(Ptype=="Normal") Ptype2 <- 0
       if(Ptype=="Sym_Beta") Ptype2 <- 1
       if(Ptype=="Full_Beta") Ptype2 <- 2
       if(Ptype=="Log_Norm") Ptype2 <- 3
+    }else{
+      Ptype2 <- Ptype
     }
+    # fix cases where numeric value was read as character (from older SS versions, I think)
+    if(is.na(Ptype2)) Ptype2 <- as.numeric(Ptype)
+    if(is.na(Ptype2)) cat("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2,"\n")
+    
     Pconst <- 0.0001
     if(Ptype2==-1){ # no prior
       Prior_Like <- rep(0.,length(Pval));
@@ -134,6 +144,7 @@ SSplotPars <-
     partable[partable=="_"] <- NA
     partable$Active_Cnt <- as.numeric(as.character(partable$Active_Cnt))
     partable$Label <- as.character(partable$Label)
+    partable <- partable[partable$Num!="Number_of_active_parameters_on_or_near_bounds:",]
     for(i in (1:ncol(partable))[!names(partable) %in% c("Label","Status","PR_type")] ){
       partable[,i] <- as.numeric(as.character(partable[,i]))
     }
@@ -167,7 +178,7 @@ SSplotPars <-
     print("  Try re-running the model with the Hessian but no MCMC.",quote=F)
   }
 
-  # remove RecrDevs temporarily until I add code to fill in the prior stuff
+  # Recruitment Devs
   recdevmin <- -5
   recdevmin <- 5
   recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_",
