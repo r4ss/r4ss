@@ -137,7 +137,8 @@ SSplotPars <-
                            fill=T,row.names=paste(1:nrows2),col.names=1:60)
     partable <- partable[,1:15]
     temp <- as.character(partable[1,])
-    temp <- c(temp[1:12],"PR_type_code",temp[13:14])
+    # this command was necessary for some intermediate version of SS (but I forget which)
+    #temp <- c(temp[1:12],"PR_type_code",temp[13:14])
     names(partable) <- temp
     partable <- partable[-1,]
     rownames(partable) <- 1:nrow(partable)
@@ -172,6 +173,7 @@ SSplotPars <-
   badpars <- grep("Impl_err_",goodnames)
   if(length(badpars)>0) goodnames <- goodnames[-badpars]
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
+
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
     print("Some parameters have std. dev. values in Report.sso equal to 0.",quote=F)
     print("  Asymptotic uncertainty estimates will not be shown.",quote=F)
