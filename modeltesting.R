@@ -3,7 +3,8 @@
 copyinputs <-
   function(olddir="c:/SS/Version_A",
            newdir="c:/SS/Version_B",
-           use_ss_new=FALSE)
+           use_ss_new=FALSE,
+           copy_sso=FALSE)
 {
   # source the SS_readstarter function
   source("http://r4ss.googlecode.com/svn/trunk/SS_readstarter.R")
@@ -76,6 +77,14 @@ copyinputs <-
         for(ifile in 1:length(oldfilelist)){
           copyfile(filename1=oldfilelist[ifile],
                    filename2=newfilelist[ifile])
+        }
+        if(copy_sso){
+          old_sso_list <- dir(oldsubfolder)[grep(".sso",dir(oldsubfolder))]
+          # loop over output files
+          for(ifile in 1:length(old_sso_list)){
+            copyfile(filename1=old_sso_list[ifile],
+                     filename2=old_sso_list[ifile])
+          }          
         }
       }else{ # if check for starter file fails
         cat("  !no starter.ss file in this directory\n")
