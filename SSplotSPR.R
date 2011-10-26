@@ -11,7 +11,16 @@ SSplotSPR <-
            plotdir="default",
            verbose=TRUE)
 {
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  # plot SPR-related quantities
+  
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
+
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   sprseries             <- replist$sprseries
@@ -37,7 +46,9 @@ SSplotSPR <-
   if(1 %in% subplots){
     if(plot) sprfunc()
     if(print){
-      pngfun(file=paste(plotdir,"/SPR1_series.png",sep=""))
+      file <- paste(plotdir,"/SPR1_series.png",sep="")
+      caption <- "Timeseries of SPR"
+      plotinfo <- pngfun(file=file, caption=caption)
       sprfunc()
       dev.off()
     }
@@ -57,7 +68,9 @@ SSplotSPR <-
     if(2 %in% subplots){
       if(plot) sprfunc2()
       if(print){
-        pngfun(file=paste(plotdir,"/SPR2_minusSPRseries.png",sep=""))
+        file <- paste(plotdir,"/SPR2_minusSPRseries.png",sep="")
+        caption <- "Timeseries of 1-SPR"
+        plotinfo <- pngfun(file=file, caption=caption)
         sprfunc2()
         dev.off()
       }
@@ -86,7 +99,9 @@ SSplotSPR <-
       if(3 %in% subplots){
         if(plot) sprfunc3()
         if(print){
-          pngfun(file=paste(plotdir,"/SPR3_ratiointerval.png",sep=""))
+          file <- paste(plotdir,"/SPR3_ratiointerval.png",sep="")
+          caption <- "Timeseries of SPR ratio"
+          plotinfo <- pngfun(file=file, caption=caption)
           sprfunc3()
           dev.off()
         }
@@ -94,7 +109,7 @@ SSplotSPR <-
     }
 
     if(btarg<=0 | sprtarg<=0){
-      cat("skipped SPR phase plot (in group 11) because btarg or sprtarg <= 0\n")
+      cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
     }else{
       timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
       ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
@@ -121,14 +136,15 @@ SSplotSPR <-
       if(4 %in% subplots){
         if(plot) phasefunc()
         if(print){
-          pngfun(file=paste(plotdir,"/SPR4_phase.png",sep=""))
+          file <- paste(plotdir,"/SPR4_phase.png",sep="")
+          caption <- "Phase plot of biomass ratio vs. SPR ratio"
+          plotinfo <- pngfun(file=file, caption=caption)
           phasefunc()
           dev.off()
         }
       }
-
-    }
-  } # end temporary multi-season disable of section if nseasons>1
-  if(verbose) cat("Finished SPR plots\n")
-  flush.console()
+    } # end test for making phase plot
+  } # end check for number of seasons=1
+  if(!is.null(plotinfo)) plotinfo$category <- "SPR"
+  return(invisible(plotinfo))
 }

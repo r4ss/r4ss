@@ -1,19 +1,24 @@
 SSplotRecdevs <-
-  function(replist, subplots=1:4, plot=TRUE, print=FALSE, add=FALSE,
+  function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
            uncertainty=TRUE,forecastplot=FALSE,
            col1="black",col2="blue",col3="green3",col4="red",
            legendloc="topleft",
            labels=c("Year",                        #1
              "Asymptotic standard error estimate", #2
              "Log recruitment deviation",          #3
-             "Bias adjustment check",              #4
-             "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), #5
+             "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), #4
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1, plotdir="default",
            verbose=TRUE)
 {
   # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   parameters <- replist$parameters
@@ -115,28 +120,12 @@ SSplotRecdevs <-
           abline(h=0,col="grey")
           abline(h=sigma_R_in,col=col4)
 
-          # bias correction (2nd axis, scaled by ymax)
-          lines(recruit$year,ymax*recruit$biasadj,col=col3)
-          abline(h=ymax*1,col=col3,lty=3)
-          ypts <- pretty(0:1)
-          axis(side=4,at=ymax*ypts,label=ypts)
-          mtext("Bias adjustment fraction",side=4,line=3,cex=par()$cex)
-        }
-        recdevfunc4 <- function(){
-          # std. dev. of recdevs
-          par(mar=par("mar")[c(1:3,2)])
-          plot(recdev$Yr,1-(recdev$Parm_StDev/sigma_R_in)^2,xlab=labels[1],
-               main=labels[4],cex.main=cex.main,
-               ylab=labels[5],xlim=xlim,ylim=c(0,1.05),type="b")
-          if(nrow(recdevEarly)>0)
-              lines(recdevEarly$Yr,1-(recdevEarly$Parm_StDev/sigma_R_in)^2,type="b",col=col2)
-          if(forecastplot & nrow(recdevFore)>0)
-              lines(recdevFore$Yr,1-(recdevFore$Parm_StDev/sigma_R_in)^2,type="b",col=col2)
-          abline(h=0,col="grey")
-          abline(h=1,col="grey")
-
-          # bias correction (2nd axis, scaled by ymax)
-          lines(recruit$year,recruit$biasadj,col=col3)
+          ## # bias correction (2nd axis, scaled by ymax)
+          ## lines(recruit$year,ymax*recruit$biasadj,col=col3)
+          ## abline(h=ymax*1,col=col3,lty=3)
+          ## ypts <- pretty(0:1)
+          ## axis(side=4,at=ymax*ypts,label=ypts)
+          ## mtext("Bias adjustment fraction",side=4,line=3,cex=par()$cex)
         }
       } # end if uncertainty==TRUE
 
@@ -145,35 +134,35 @@ SSplotRecdevs <-
         if(uncertainty){
           if(2 %in% subplots) recdevfunc(uncertainty=TRUE)
           if(3 %in% subplots) recdevfunc3()
-          if(4 %in% subplots) recdevfunc4()
         }
       }
       if(print){ # if printing to PNG files
         if(1 %in% subplots){
-          pngfun(file=paste(plotdir,"/recdevs1_points.png",sep=""))
+          file <- paste(plotdir,"/recdevs1_points.png",sep="")
+          caption <- "Recruitment deviations"
+          plotinfo <- pngfun(file=file, caption=caption)
           recdevfunc(uncertainty=FALSE)
           dev.off()
         }
         if(uncertainty){
           if(2 %in% subplots){
-            pngfun(file=paste(plotdir,"/recdevs2_withbars.png",sep=""))
+            file <- paste(plotdir,"/recdevs2_withbars.png",sep="")
+            caption <- "Recruitment deviations with uncertainty"
+            plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc(uncertainty=TRUE)
             dev.off()
           }
           if(3 %in% subplots){
-            pngfun(file=paste(plotdir,"/recdevs3_varcheck.png",sep=""))
+            file <- paste(plotdir,"/recdevs3_varcheck.png",sep="")
+            caption <- "Recruitment deviations variance check"
+            plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc3()
-            dev.off()
-          }
-          if(4 %in% subplots){
-            pngfun(file=paste(plotdir,"/recdevs4_biasadj.png",sep=""))
-            recdevfunc4()
             dev.off()
           }
         } # end if uncertinaty
       } # end if print
     } # end if nrow(recdevs)>0
   } # end if max(recdev)>0
-  if(verbose) cat("Finished SSplotrecdevs: Rec devs and asymptotic error check\n")
-  flush.console()
+  if(!is.null(plotinfo)) plotinfo$category <- "RecDev"
+  return(invisible(plotinfo))
 } # end function

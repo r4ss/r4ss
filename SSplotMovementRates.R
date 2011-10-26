@@ -1,8 +1,24 @@
 SSplotMovementRates <-
-  function(replist, subplots=1:2, colvec="default", ylim="default",
-           legend=TRUE, legendloc="topleft", moveseas="all", cex.main=1, verbose=TRUE)
+  function(replist, plot=TRUE, print=FALSE, subplots=1:2,
+           plotdir="default",
+           colvec="default", ylim="default", 
+           legend=TRUE, legendloc="topleft",
+           moveseas="all",
+           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           verbose=TRUE)
 {
-  if(verbose) cat("Running SSplotMovementRates function\n")
+  #if(verbose) cat("Running SSplotMovementRates function\n")
+
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
+
+  if(plotdir=="default") plotdir <- replist$inputs$dir
+  
   # get values from replist
   accuage    <- replist$accuage
   move       <- replist$movement
@@ -36,17 +52,29 @@ SSplotMovementRates <-
         
         if(colvec[1]=="default") colvec=rich.colors.short(nrow(move2))
         if(ylim[1]=="default") ylim=c(0,1.1*max(move))
-        matplot(0:accuage,t(move3),
-                type='l',lwd=3,lty=1,col=colvec,
-                ylab="Movement rate",xlab="Age (years)",
-                main=paste("Movement rates\n(fraction moving per year in season ",moveseas[iseas],")",sep=""),
-                cex.main=cex.main)
-        abline(h=0,col='grey')
-        if(legend){
-          legend(legendloc,lwd=3,bty="n",
-                 col=colvec,
-                 legend=paste("area",move2$Source_area,"to area",move2$Dest_area)
-                 )
+        main <- paste("Movement rates\n(fraction moving per year in season ",moveseas[iseas],")",sep="")
+        # bundle plot as function below
+        tempfun <- function(){
+          matplot(0:accuage,t(move3),
+                  type='l',lwd=3,lty=1,col=colvec,
+                  ylab="Movement rate",xlab="Age (years)",
+                  main=main,
+                  cex.main=cex.main)
+          abline(h=0,col='grey')
+          if(legend){
+            legend(legendloc,lwd=3,bty="n",
+                   col=colvec,
+                   legend=paste("area",move2$Source_area,"to area",move2$Dest_area)
+                   )
+          }
+        }
+        if(plot) tempfun()
+        if(print){
+          file <- paste(plotdir,"/move1_movement_rates.png",sep="")
+          caption <- main
+          plotinfo <- pngfun(file=file, caption=caption)
+          tempfun()
+          dev.off()
         }
       }
     } # end loop over seasons
@@ -152,12 +180,31 @@ SSplotMovementRates <-
         Dest_area <- moveinfo$Dest_area[imove]
         movetable <- moveByYr[dimnames(moveByYr)$area==Dest_area, ,imove,]
         movetable <- moveByYr[1, ,imove,]
-        mountains(zmat=t(movetable),xvec=0:accuage,yvec=yrvec,xlab='Age',ylab='Year')
-        title(main=paste("Time-varying movement from area",Source_area,"to area",Dest_area),cex.main=cex.main)
+        main <- paste("Time-varying movement from area",Source_area,"to area",Dest_area)
+        tempfun <- function(){
+          mountains(zmat=t(movetable),xvec=0:accuage,yvec=yrvec,xlab='Age',ylab='Year')
+          title(main=main,cex.main=cex.main)
+        }
+        
+        if(plot) tempfun()
+        if(print){
+          file <- paste(plotdir,"/move2_time-varying_movement_rates.png",sep="")
+          caption <- main
+          plotinfo <- pngfun(file=file, caption=caption)
+          tempfun()
+          dev.off()
+        }
       }
     }else{
-      if(verbose) cat("no time-varying movement--skipped SSplotMovementRates subplot 2\n")
+      if(verbose) cat("  no time-varying movement--skipped SSplotMovementRates subplot 2\n")
     } # end check for time-varying movement
   } # end subplot 2
-  if(!is.null(moveByYr)) return(invisible(list(moveinfo=moveinfo,moveByYr=moveByYr)))
+  returnlist <- list()
+  if(!is.null(moveByYr))
+    returnlist <- list(moveinfo=moveinfo, moveByYr=moveByYr)
+  if(!is.null(plotinfo)){
+    plotinfo$category <- "Move"
+    returnlist$plotinfo <- plotinfo
+  }
+  return(invisible(returnlist))
 }

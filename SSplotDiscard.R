@@ -12,9 +12,13 @@ SSplotDiscard <-
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
-  # updated March 29, 2011
-
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   # get stuff from replist
   discard         <- replist$discard
@@ -26,7 +30,7 @@ SSplotDiscard <-
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   # if discards exist
-  if(length(discard)>1){
+  if(!is.na(discard) && nrow(discard)>0){
     for(fleet in unique(discard$Fleet)){
       FleetNum <- as.numeric(strsplit(fleet,"_")[[1]][1])
       FleetName <- substring(fleet,nchar(FleetNum)+2)
@@ -98,13 +102,15 @@ SSplotDiscard <-
       }
       if(plot) dfracfunc()
       if(print) {
-        pngfun(file=paste(plotdir,"discfracfit",FleetName,".png",sep=""))
+        file <- paste(plotdir,"discfracfit",FleetName,".png",sep="")
+        caption <- title
+        plotinfo <- pngfun(file=file, caption=caption)
         dfracfunc()
         dev.off()
       }
     } # discard series
-    if(verbose) cat("Finished discard plot\n")
-  }else{ # if discards
-    if(verbose) cat("No discard data to plot\n")
+    #if(verbose) cat("Finished discard plot\n")
   }
+  if(!is.null(plotinfo)) plotinfo$category <- "Discard"
+  return(invisible(plotinfo))
 } # end of function

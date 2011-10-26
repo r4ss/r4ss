@@ -10,7 +10,14 @@ SSplotRecdist <-
            verbose=TRUE)
 {
   # plot of recruitment distribution between seasons and areas
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
+
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   nareas <- replist$nareas
@@ -51,8 +58,13 @@ SSplotRecdist <-
   
   if(plot) recdistfun()
   if(print){
-    pngfun(file=paste(plotdir,"recruitment_distribution.png",sep=""))
+    file <- paste(plotdir,"recruitment_distribution.png",sep="")
+    caption <- "Recruitment distribution by area and season"
+    plotinfo <- pngfun(file=file, caption=caption)
     recdistfun()
-    dev.off()}
-  if(verbose) cat("Finished recruitment distribution plot\n")
+    dev.off()
+  }
+
+  if(!is.null(plotinfo)) plotinfo$category <- "Recruitment"
+  return(invisible(plotinfo))
 }

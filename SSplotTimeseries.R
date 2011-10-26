@@ -35,7 +35,13 @@ SSplotTimeseries <-
   # subplot15 = fraction of recruitment by birth season
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   # get values from replist
   SS_versionshort <- replist$SS_versionshort
@@ -306,7 +312,7 @@ SSplotTimeseries <-
       filename <- paste("ts",subplot," ",filename,".png",sep="")
       filename <- paste(plotdir,filename,sep="")
       # if(verbose) cat("printing plot to file:",filename,"\n")
-      pngfun(file=filename)
+      plotinfo <- pngfun(file=filename,caption=main)
     }
 
     # move VIRG value from startyr-2 to startyr-1 to show closer to plot
@@ -439,7 +445,7 @@ SSplotTimeseries <-
     } # end test for birthseason plots or not
     if(verbose) cat("  finished time series subplot ",subplot,": ",main,"\n",sep="")
     if(print) dev.off()
-
+    return(plotinfo)
   } # end biofunc
 
   # make plots
@@ -451,5 +457,9 @@ SSplotTimeseries <-
   if(nseasons==1 & subplot %in% c(3,6)) skip <- TRUE
   if(subplot %in% c(14:15) & (is.null(birthseas) || nbirthseas==1)) skip <- TRUE
 
-  if(!skip) biofunc(subplot=subplot)
+  if(!skip){
+    plotinfo <- biofunc(subplot=subplot)
+    plotinfo$category <- "Timeseries"
+    return(invisible(plotinfo))
+  }
 }

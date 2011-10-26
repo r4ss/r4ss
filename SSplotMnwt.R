@@ -15,7 +15,13 @@ SSplotMnwt <-
            cex.main=1,
            plotdir="default", verbose=TRUE)
 {
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   # get stuff from replist
   mnwgt         <- replist$mnwgt
@@ -25,7 +31,7 @@ SSplotMnwt <-
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
-  # average body weight observations ###
+  # mean body weight observations ###
   if(!is.na(mnwgt)[1]){
     for(fleetname in unique(mnwgt$Fleet)){
       usemnwgt <- mnwgt[mnwgt$Fleet==fleetname & mnwgt$Obs>0,]
@@ -54,14 +60,16 @@ SSplotMnwt <-
           points(yr,ex,col=col1,cex=2,pch="-")}
         if(plot) bdywtfunc()
         if(print){
-          png(file=paste(plotdir,"9_bodywtfit",fleetname,".png",sep=""),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+          file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")
+          pngfun(file=file, caption=caption)
           bdywtfunc()
           dev.off()}
-      } # loop over market categories
-    } # loop over fleets
-    if(verbose) cat("Finished average body weight plot\n")
-  }else{ # if mean weight data exists
-    if(verbose) cat("No average body weight data to plot\n")
+      } # end loop over market categories
+    } # end loop over fleets
+  ##   if(verbose) cat("Finished mean body weight plot\n")
+  ## }else{ # if mean weight data exists
+  ##   if(verbose) cat("No mean body weight data to plot\n")
   }
-  flush.console()
-} # end if 10 in plot or print
+  if(!is.null(plotinfo)) plotinfo$category <- "Mnwt"
+  return(invisible(plotinfo))
+}

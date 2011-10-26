@@ -30,7 +30,14 @@ SSplotComps <-
   # SSplotComps March 23, 2011
   ################################################################################
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   lendbase      <- replist$lendbase
   sizedbase     <- replist$sizedbase
@@ -275,14 +282,14 @@ SSplotComps <-
               if(plot) tempfun(ipage=0,...)
               if(print){ # set up plotting to png file if required
                 npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
-                for(ipage in 1:npages)
-                    {
-                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                      filename <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
-                      pngfun(file=filename)
-                      tempfun(ipage=ipage,...)
-                      dev.off()
-                    }
+                for(ipage in 1:npages){
+                  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                  file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,".png",sep="")
+                  caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                  plotinfo <- pngfun(file=file, caption=caption)
+                  tempfun(ipage=ipage,...)
+                  dev.off()
+                }
               }
             } # end subplot 1
             
@@ -330,8 +337,9 @@ SSplotComps <-
               
               if(plot) tempfun()
               if(print){ # set up plotting to png file if required
-                filename <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,".png",sep="")
-                pngfun(file=filename)
+                file <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,".png",sep="")
+                caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                plotinfo <- pngfun(file=file, caption=caption)
                 tempfun()
                 dev.off() # close device if png
               }
@@ -354,14 +362,14 @@ SSplotComps <-
               if(plot) tempfun(ipage=0,...)
               if(print){ # set up plotting to png file if required
                 npages <- ceiling(length(unique(dbase$Yr))/maxrows2/maxcols2)
-                for(ipage in 1:npages)
-                    {
-                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                      filename <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
-                      pngfun(file=filename)
-                      tempfun(ipage=ipage,...)
-                      dev.off() # close device if png
-                    }
+                for(ipage in 1:npages){
+                  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                  file <- paste(plotdir,"/",filenamestart,filetype,filename_fltsexmkt,pagetext,".png",sep="")
+                  caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                  plotinfo <- pngfun(file=file, caption=caption)
+                  tempfun(ipage=ipage,...)
+                  dev.off() # close device if png
+                }
               }
             } # end conditional bubble plot
             ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age-at-length
@@ -391,8 +399,9 @@ SSplotComps <-
                       npages <- ceiling(length(unique(ydbase$Yr))/maxrows/maxcols)
                       for(ipage in 1:npages){
                         if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                        filename <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
-                        pngfun(file=filename)
+                        file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,"_",aalyr,"_",pagetext,".png",sep="")
+                        caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                        plotinfo <- pngfun(file=file, caption=caption)
                         tempfun(ipage=ipage,...)
                         dev.off() # close device if print
                       }
@@ -410,8 +419,9 @@ SSplotComps <-
                     }
                     if(plot) tempfun()
                     if(print){
-                      filename <- paste(plotdir,"/",filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
-                      pngfun(file=filename)
+                      file <- paste(plotdir,"/",filenamestart,"yearresids_",filename_fltsexmkt,"_",aalyr,".png",sep="")
+                      caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                      plotinfo <- pngfun(file=file, caption=caption)
                       tempfun()
                       dev.off() # close device if print
                     }
@@ -449,8 +459,9 @@ SSplotComps <-
                       npages <- ceiling(length(unique(abindbase$Yr))/maxrows/maxcols)
                       for(ipage in 1:npages){
                         if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                        filename <- paste(plotdir,filenamestart,filename_fltsexmkt,"_length",ilenbin,labels[7],pagetext,".png",sep="")
-                        pngfun(file=filename)
+                        file <- paste(plotdir,filenamestart,filename_fltsexmkt,"_length",ilenbin,labels[7],pagetext,".png",sep="")
+                        caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                        plotinfo <- pngfun(file=file, caption=caption)
                         tempfun(ipage=ipage,...)
                         dev.off() # close device if print
                       }
@@ -487,8 +498,9 @@ SSplotComps <-
               }
               if(plot) lfitfunc()
               if(print){ # set up plotting to png file if required
-                filename <- paste(plotdir,filenamestart,"sampsize_",filename_fltsexmkt,".png",sep="")
-                pngfun(file=filename)
+                file <- paste(plotdir,filenamestart,"sampsize_",filename_fltsexmkt,".png",sep="")
+                caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                plotinfo <- pngfun(file=file, caption=caption)
                 lfitfunc()
                 dev.off()
               }
@@ -496,6 +508,7 @@ SSplotComps <-
     
             ### subplot 8: Andre's mean age and std. dev. in conditional AAL
             if(8 %in% subplots & kind=="cond"){
+              if(print) cat("Note: Andre's conditional AAL plots can't yet be printed to PNG files\n")
               Lens <-sort(unique(dbase$Lbin_lo))
               Yrs <- sort(unique(dbase$Yr))
               par(mfrow=c(3,2),mar=c(2,4,1,1),oma=c(3,0,3,0))
@@ -545,7 +558,6 @@ SSplotComps <-
                   #title(paste("Year = ",Yr,"; Gender = ",Gender))
                   
                   ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
-                  titles <- c(ptitle,titles) # compiling list of all plot titles
                   if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
                     title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
                   }
@@ -554,10 +566,10 @@ SSplotComps <-
                   lines(Size,Pred2)
                   lines(Size2,Low2,lty=3)
                   lines(Size2,Upp2,lty=3)
+
+                  
                 } # end if data exist
               } # end loop over years
-              flush.console()
-              
             } # end subplot 8
           } # end loop over partitions
         } # end test for whether gender in vector of requested sexes
@@ -634,9 +646,9 @@ SSplotComps <-
             }
 
             namesvec <- fleetnames[agg$f]
-            # group remaining calculations as a function
-            tempfun <- function(ipage,...){
-              if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
+            if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
+              # group remaining calculations as a function
+              tempfun <- function(ipage,...){
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$f,
                               linesx=agg$bin,linesy=agg$exp,
                               sampsize=agg$N,effN=agg$effN,
@@ -648,40 +660,40 @@ SSplotComps <-
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
               }
-  
-         # haven't configured this aggregated plot for other types
-              ## if(kind=="GSTAGE"){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
-              ##                 bars=bars,linepos=(1-datonly)*linepos,
-              ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
-              ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
-              ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-              ##                 fixdims=fixdims,ipage=ipage,...)
-              ## }
-              ## if(kind %in% c("L@A","W@A")){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
-              ##                 nlegends=1,legtext=list(dbase$YrSeasName),
-              ##                 bars=bars,linepos=(1-datonly)*linepos,
-              ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
-              ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-              ##                 fixdims=fixdims,ipage=ipage,...)
-              ## }
-  
+              if(plot) tempfun(ipage=0,...) 
+              if(print){ # set up plotting to png file if required
+                npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
+                for(ipage in 1:npages)
+                    {
+                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                      file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,"aggregated across time.png",sep="")
+                      caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                      plotinfo <- pngfun(file=file, caption=caption)
+                      tempfun(ipage=ipage,...)
+                      dev.off()
+                    }
+              } # end print function
+            }else{
+             # haven't configured this aggregated plot for other types
+                ## if(kind=="GSTAGE"){
+                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                ##                 bars=bars,linepos=(1-datonly)*linepos,
+                ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
+                ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                ##                 fixdims=fixdims,ipage=ipage,...)
+                ## }
+                ## if(kind %in% c("L@A","W@A")){
+                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
+                ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+                ##                 nlegends=1,legtext=list(dbase$YrSeasName),
+                ##                 bars=bars,linepos=(1-datonly)*linepos,
+                ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
+                ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                ##                 fixdims=fixdims,ipage=ipage,...)
+                ## }
             }
-            if(plot) tempfun(ipage=0,...) 
-            if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
-              for(ipage in 1:npages)
-              {
-                if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,"aggregated across time.png",sep="")
-                pngfun(file=filename)
-                tempfun(ipage=ipage,...)
-                dev.off()
-              }
-            } # end print function
           } # end test for presence of observations in this partition
         } # end loop over partitions
       } # end loop over combined/not-combined genders
@@ -745,6 +757,10 @@ SSplotComps <-
                              exp=dbase$Exp*dbase$N)
             agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,s=dbase$Seas), FUN=sum)
             agg <- agg[agg$f %in% fleets,]
+            if(any(agg$s<=0)){
+              cat("super-periods may not work correctly in plots of aggregated comps\n")
+              agg <- agg[agg$s > 0,]
+            }
             agg$obs <- agg$obs/agg$N
             agg$exp <- agg$exp/agg$N
             # note: sample sizes will be different for each bin if tail compression is used
@@ -803,9 +819,10 @@ SSplotComps <-
               for(ipage in 1:npages)
               {
                 if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
-                                  "aggregated within season.png",sep="")
-                pngfun(file=filename)
+                file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                              "aggregated within season.png",sep="")
+                caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                plotinfo <- pngfun(file=file, caption=caption)
                 tempfun(ipage=ipage,...)
                 dev.off()
               }
@@ -884,8 +901,6 @@ SSplotComps <-
               # group remaining calculations as a function
               tempfun <- function(ipage,...){
                 ptitle <- paste(titledata,title_sexmkt,fleetnames[f], "\naggregated across seasons within year",sep="") # total title
-                titles <- c(ptitle,titles) # compiling list of all plot titles
-
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                   make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fy,
                                 linesx=agg$bin,linesy=agg$exp,
@@ -924,15 +939,14 @@ SSplotComps <-
               if(plot) tempfun(ipage=0,...) 
               if(print){ # set up plotting to png file if required
                 npages <- ceiling(length(unique(agg$fy))/maxrows/maxcols)
-                for(ipage in 1:npages)
-                    {
-                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                      filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
-                                        "aggregated across seasons within year.png",sep="")
-                      pngfun(file=filename)
-                      tempfun(ipage=ipage,...)
-                      dev.off()
-                    }
+                for(ipage in 1:npages){
+                  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                  filename <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                                    "aggregated across seasons within year.png",sep="")
+                  pngfun(file=filename)
+                  tempfun(ipage=ipage,...)
+                  dev.off()
+                }
               } # end print function
             } # end test for presence of observations in this partition
           } # end loop over partitions
@@ -940,7 +954,7 @@ SSplotComps <-
       } # end if data
     } # end loop over fleets
   } # end subplot 11
-
-  return(invisible(titles))
+  if(!is.null(plotinfo)) plotinfo$category <- "Comp"
+  return(invisible(plotinfo))
 } # end embedded SSplotComps function
 ###########################

@@ -7,8 +7,13 @@ SSplotData <- function(replist,
                        margins=c(5.1,2.1,4.1,8.1),
                        verbose=TRUE)
 {
-  # updated April 4, 2011
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   ### get info from replist
   # dimensions
@@ -169,11 +174,18 @@ SSplotData <- function(replist,
 
   if(plot) plotdata()
   if(print) {
-    pngfun(file=paste(plotdir,"data_plot.png",sep=""))
+    file <- paste(plotdir,"data_plot.png",sep="")
+    caption <- "Data presence by year for each fleet"
+    plotinfo <- pngfun(file=file, caption=caption)
     plotdata()
     dev.off()
   }
 
-  if(verbose) cat("Finished plot 27: data table\n")
-  return(invisible(typetable2))
+  returnlist <- list(typetable2=typetable2)
+  
+  if(!is.null(plotinfo)){
+    plotinfo$category <- "Data"
+    returnlist$plotinfo <- plotinfo
+  }
+  return(invisible(returnlist))
 }

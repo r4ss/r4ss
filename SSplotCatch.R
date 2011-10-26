@@ -27,8 +27,6 @@ SSplotCatch <-
            verbose=TRUE)
 {
   # plot catch-related time-series for Stock Synthesis
-  # updated March 23, 2011
-
   # note from Ian Taylor to himself: "make minyr and maxyr connect to something!"
   
   # note: stacked plots only shown with multiple fleets
@@ -50,7 +48,13 @@ SSplotCatch <-
                      "14: discards aggregated across seasons",
                      "15: discards aggregated across seasons stacked")
   
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
 
   F_method         <- replist$F_method
   timeseries       <- replist$timeseries
@@ -61,7 +65,7 @@ SSplotCatch <-
   endyr            <- replist$endyr
   FleetNames       <- replist$FleetNames
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
-  if(nfishfleets==1 & verbose) cat("note: skipping stacked plots of catch for single-fleet model\n")
+  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
     
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -258,10 +262,15 @@ SSplotCatch <-
         myname <- gsub(pattern=badstrings[i],replacement=" ",x=myname,fixed=T)
       }
       filename <- paste(plotdir,"catch",myname,".png",sep="")
-      pngfun(filename)
+      plotinfo2 <- pngfun(filename, caption=substring(myname,3))
+      # "a" is TRUE/FALSE indicator that plot got produced
       a <- makeplots(isubplot)
       dev.off()
-      if(!a) file.remove(filename)
+      # delete empty files if the somehow got created
+      if(!a & file.exists(filename)){
+        file.remove(filename)
+      }
+      if(a) plotinfo <- plotinfo2
     }
   }
 
@@ -280,6 +289,8 @@ SSplotCatch <-
     #totcatchmat2$Yr <- totcatchmat2Yr
     returnlist[["totcatchmat2"]] <- totcatchmat2
   }
+  if(!is.null(plotinfo)) plotinfo$category <- "Catch"
+  returnlist$plotinfo <- plotinfo
   return(invisible(returnlist))
   # if(verbose) cat("  finished catch plots\n")
 }

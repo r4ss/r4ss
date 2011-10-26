@@ -17,7 +17,14 @@ SSplotTags <-
            plotdir="default",
            verbose=TRUE)
 {
-  pngfun <- function(file) png(file=file,width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file,caption=NA){
+    png(file=file,width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+    return(plotinfo)
+  }
+  plotinfo <- NULL
+
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   tagdbase2 <- replist$tagdbase2
