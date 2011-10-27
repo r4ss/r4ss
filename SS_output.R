@@ -22,7 +22,7 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "July 19, 2011"
+  codedate <- "October 26, 2011"
 
   if(verbose){
     cat("R function updated:",codedate,"\n")
@@ -106,14 +106,20 @@ SS_output <-
   SS_versionCode <- rephead[grep("#V",rephead)] 
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
-  
-  if(!(SS_versionshort %in% c("SS-V3.22","SS-V3.21","SS-V3.20","SS-V3.11"))){
-    cat("! Warning, this function tested on SS-V3.11 through SS-V3.21.\n",
-        "  you are using",substr(SS_version,1,9),"which may NOT work with this R code.\n")
+  SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
+
+  # rough limits on compatibility of this code
+  SS_versionMax <- 3.23
+  SS_versionMin <- 3.11 # may no longer work
+
+  # test for version compatibility with this code
+  if(SS_versionNumeric < SS_versionMin  | SS_versionMax > 3.23){
+    cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
+        "  you are using ",substr(SS_version,1,9)," which may NOT work with this R code.\n",sep="")
   }else{
     if(verbose)
-      cat("This function tested on SS-V3.11 through SS-V3.22.\n",
-          "  You're using",SS_versionshort,"which SHOULD work with this R code.\n")
+    cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
+        "  you are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
   }
 
   findtime <- function(lines){
@@ -333,7 +339,7 @@ SS_output <-
     seasdurations <- 1/nseasons
     seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }else{
-    # version 3.20-3.22
+    # version 3.20-3.23
     rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
     # get season stuff
     nseasons <- as.numeric(rawdefs[1,2])
@@ -548,18 +554,23 @@ SS_output <-
   stats$likelihoods_raw_by_fleet <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
 
   # parameters
-  shift <- -1
-  if(SS_versionshort %in% c("SS-V3.22")) shift <- -2
+  if(SS_versionNumeric== 3.22) shift <- -2
+  if(SS_versionNumeric < 3.22) shift <- -1
   parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",shift,header=TRUE)
 
+  if(SS_versionNumeric >= 3.23){
+    temp <- tail(parameters,2)[,1:3]
+    parameters <- parameters[1:(nrow(parameters)-2),]
+  }
+  
   parameters[parameters=="_"] <- NA
   parameters[parameters==" "] <- NA
 
-  if(SS_versionshort %in% c("SS-V3.22")){
+  if(SS_versionNumeric >= 3.22){ # current approach to parameter section
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
-  if(SS_versionshort %in% c("SS-V3.21")){
+  if(SS_versionNumeric==3.21){
     # revised section in SS-V3.21 where text description of PR_type instead of number
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
@@ -569,13 +580,13 @@ SS_output <-
     temp <- temp[-length(temp)]
     names(parameters) <- temp
   }
-  if(SS_versionshort %in% c("SS-V3.11","SS-V3.20")){
-    # old parameters section
+  if(SS_versionNumeric <= 3.20){
+    # really old parameters section
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
-  
+
   if(!is.na(parfile)){
     parline <- read.table(parfile,fill=TRUE,comment.char="",nrows=1)
   }else{
@@ -585,6 +596,7 @@ SS_output <-
   stats$N_estimated_parameters <- parline[1,6]
 
   pars <- parameters[!is.na(parameters$Phase) & parameters$Phase>0,]
+
   if(nrow(pars)>0){
     pars$Afterbound <- ""
     pars$checkdiff <- pars$Value - pars$Min
@@ -1014,8 +1026,8 @@ if(FALSE){
   ## discard fractions ###
 
   # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
-  if(SS_versionshort=="SS-V3.11"){
-    # old header
+  if(SS_versionNumeric < 3.20){
+    # old header from 3.11
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
     if(length(grep("T_distribution",DF_discard))>0)
       DF_discard <- as.numeric(strsplit(DF_discard,"=_")[[1]][2])
@@ -1024,7 +1036,7 @@ if(FALSE){
     if(length(grep("_lognormal",DF_discard))>0)                    DF_discard <- -2
     shift <- 2
     discard_spec <- NULL
-  }else{ # newer header in 3.20 and 3.21
+  }else{ # newer header in 3.20 and beyond
     DF_discard <- NA
     shift <- 1
     discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
@@ -1086,7 +1098,9 @@ if(FALSE){
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
   if(length(grep("Kobe_Plot",rawrep[,1]))!=0){
-    spr <- matchfun2("SPR_series",5,"Kobe_Plot",-1,header=TRUE)
+    shift <- -3
+    if(SS_versionNumeric < 3.23) shift <- -1
+    spr <- matchfun2("SPR_series",5,"Kobe_Plot",shift,header=TRUE)
     Kobe <- matchfun2("Kobe_Plot",2,"SPAWN_RECRUIT",-1,header=TRUE)
   }else{
     Kobe <- NA

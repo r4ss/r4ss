@@ -1,7 +1,7 @@
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",
-         oldctl=NULL, newctl=NULL,
+         oldctl=NULL, newctl=NULL, png=NULL,
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1){
   ##################
   # function to estimate bias adjustment ramp
@@ -24,8 +24,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   plotinfo <- NULL
 
-  if(!is.list(replist) | !(substr(replist$SS_version,1,8) %in% c("SS-V3.11","SS-V3.20","SS-V3.21","SS-V3.22"))){
-    stop("this function needs an input object created by SS_output from SS v3.11 through v3.22")
+  if(!is.list(replist) | !(as.numeric(substr(replist$SS_version,5,8)) > 3.11)){
+    stop("this function needs an input object created by SS_output from SS version 3.11 or greater")
   }
   if(replist$inputs$covar==FALSE){
     stop("you need to have covar=TRUE in the input to the SS_output function")
