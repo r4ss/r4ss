@@ -132,7 +132,7 @@ SS_plots_test <-
     if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir,"\n")
   }
 
-  plotinfoAll <- NULL
+  plotInfoTable <- NULL
   if(pdf){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
@@ -174,7 +174,7 @@ SS_plots_test <-
                               pwidth=pwidth, pheight=pheight, punits=punits,
                               ptsize=ptsize, res=res, cex.main=cex.main,
                               plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     #if(verbose) cat("Finished biology plots\n")
   }
 
@@ -193,7 +193,7 @@ SS_plots_test <-
                   plotdir=plotdir)
     plotinfo <- selexinfo$plotinfo
     if(!is.null(plotinfo))
-      plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   ##########################################
@@ -224,7 +224,7 @@ SS_plots_test <-
                                pwidth=pwidth, pheight=pheight, punits=punits,
                                ptsize=ptsize, res=res, cex.main=cex.main,
                                plotdir=plotdir)
-            if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+            if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
           } # end loop over uncertainty or not
         }else{ # these plots don't have the option for uncertainty
           plotinfo <-
@@ -244,7 +244,7 @@ SS_plots_test <-
                              pwidth=pwidth, pheight=pheight, punits=punits,
                              ptsize=ptsize, res=res, cex.main=cex.main,
                              plotdir=plotdir)
-          if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }
       }
     } # end loop over timeseries subplots
@@ -265,7 +265,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,cex.main=cex.main,
                     plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
     if(nareas>1 & nseasons>1){
       plotinfo <-
@@ -276,7 +276,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,cex.main=cex.main,
                       plotdir=plotdir)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }
   } # end if igroup in plot or print
 
@@ -297,7 +297,7 @@ SS_plots_test <-
                          ptsize=ptsize, res=res,cex.main=cex.main,
                          plotdir=plotdir)
         plotinfo <- temp$plotinfo
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }else{
         cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
       }
@@ -321,7 +321,7 @@ SS_plots_test <-
                          pwidth=pwidth, pheight=pheight, punits=punits,
                          ptsize=ptsize, res=res,cex.main=cex.main,
                          plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
   
   ##########################################
@@ -343,7 +343,7 @@ SS_plots_test <-
                   ptsize=ptsize, res=res,cex.main=cex.main,
                   plotdir=plotdir)
     plotinfo <- temp$plotinfo
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   ##########################################
@@ -361,7 +361,7 @@ SS_plots_test <-
                 pwidth=pwidth, pheight=pheight, punits=punits,
                 ptsize=ptsize, res=res,cex.main=cex.main,
                 plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   ##########################################
@@ -380,7 +380,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,cex.main=cex.main,
                       plotdir=plotdir)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
       if(verbose) cat("Skipping discard plot (group ",igroup,") because no discard data\n",sep="")
     }
@@ -402,7 +402,7 @@ SS_plots_test <-
                    pwidth=pwidth, pheight=pheight, punits=punits,
                    ptsize=ptsize, res=res,cex.main=cex.main,
                    plotdir=plotdir)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
       if(verbose) cat("Skipping mean weight plot (group ",igroup,") because no mean weight data\n",sep="")
     }
@@ -425,7 +425,7 @@ SS_plots_test <-
                                 pwidth=pwidth, pheight=pheight, punits=punits,
                                 ptsize=ptsize, res=res,cex.main=cex.main,
                                 plotdir=plotdir)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
       if(verbose) cat("Skipping index plots (group ",igroup,") because no indices in model\n",sep="")
     }
@@ -448,7 +448,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,cex.main=cex.main,
                     plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   ##########################################
@@ -483,7 +483,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         # size comp bubble plot
         for(sizemethod in sort(unique(replist$sizedbase$method))){
           plotinfo <-
@@ -498,7 +498,7 @@ SS_plots_test <-
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
-          if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }
       }
       if(ageCompDatGroup %in% c(plot,print)){
@@ -516,7 +516,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         # age comp bubble plot
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -530,7 +530,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         # ghost age comp bar plot
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=FALSE,verbose=verbose,fleets=fleets,
@@ -544,7 +544,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         # ghost age comp bubble plot
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -558,7 +558,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         flush.console()
       }
       if(condCompDatGroup %in% c(plot,print)){
@@ -576,9 +576,9 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
-        if(!is.null(plotinfoAll))
-          plotinfoAll$category[plotinfoAll$category=="Comp"] <- "CompDat"
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        if(!is.null(plotInfoTable))
+          plotInfoTable$category[plotInfoTable$category=="Comp"] <- "CompDat"
         flush.console()
       } # end conditional data plots
     } # end if data plot
@@ -601,7 +601,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTLEN",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -615,7 +615,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
       # loop over size methods for generalized size comp data
       for(sizemethod in sort(unique(replist$sizedbase$method))){
@@ -631,10 +631,10 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }
-      if(!is.null(plotinfoAll))
-        plotinfoAll$category[plotinfoAll$category=="Comp"] <- "LenComp"
+      if(!is.null(plotInfoTable))
+        plotInfoTable$category[plotInfoTable$category=="Comp"] <- "LenComp"
     }
 
     ##########################################
@@ -655,7 +655,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -668,9 +668,9 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
-      if(!is.null(plotinfoAll))
-        plotinfoAll$category[plotinfoAll$category=="Comp"] <- "AgeComp"
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      if(!is.null(plotInfoTable))
+        plotInfoTable$category[plotInfoTable$category=="Comp"] <- "AgeComp"
     } # end if igroup in plot or print
 
     ##########################################
@@ -692,7 +692,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }
       # conditional age at length for a given year
       if(length(intersect(aalyear, unique(timeseries$Yr)))>0){
@@ -709,7 +709,7 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }
       # conditional age at length for a given length bin
       if(length(intersect(aalbin, unique(lbins)))>0){
@@ -726,10 +726,10 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }
-      if(!is.null(plotinfoAll))
-        plotinfoAll$category[plotinfoAll$category=="Comp"] <- "A@LComp"
+      if(!is.null(plotInfoTable))
+        plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
     } #end if igroup in plot or print
 
     ##########################################
@@ -759,9 +759,9 @@ SS_plots_test <-
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
-        if(!is.null(plotinfoAll))
-          plotinfoAll$category[plotinfoAll$category=="Comp"] <- "A@LComp"
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        if(!is.null(plotInfoTable))
+          plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
       }else{
         if(verbose) cat("Skipping Andre's conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
@@ -785,7 +785,7 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="W@A",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -798,10 +798,10 @@ SS_plots_test <-
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     } # end if length-at-age and weight-at-age comps in plot or print
-    if(!is.null(plotinfoAll))
-      plotinfoAll$category[plotinfoAll$category=="Comp"] <- "Mean@A"
+    if(!is.null(plotInfoTable))
+      plotInfoTable$category[plotInfoTable$category=="Comp"] <- "Mean@A"
 
     # restore default single panel settings if needed
     # conditional because if adding to existing plot may mess up layout
@@ -827,7 +827,7 @@ SS_plots_test <-
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res, cex.main=cex.main,
                      plotdir=plotdir)
-        if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       } # end if data present
     } # end if igroup in plot or print
   } # end if comp data
@@ -845,7 +845,7 @@ SS_plots_test <-
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
                   plotdir=plotdir)
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
 
@@ -865,7 +865,7 @@ SS_plots_test <-
                             ptsize=ptsize, res=res, cex.main=cex.main,
                             plotdir=plotdir)
       plotinfo <- temp$plotinfo
-      if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
       if(verbose) cat("Skipping movement plots (group ",igroup,") because no movement in model\n",sep="")
     } # end if movement included in model
@@ -886,16 +886,17 @@ SS_plots_test <-
                  plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
                  fleetnames=fleetnames)
     if(!is.null(temp) & length(temp)>0) plotinfo <- temp$plotinfo
-    if(!is.null(plotinfo)) plotinfoAll <- rbind(plotinfoAll,plotinfo)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
   ### end of SS_plots function
-  if(!is.null(plotinfoAll)){
-    plotinfoAll$file <- as.character(plotinfoAll$file)
-    plotinfoAll$caption <- as.character(plotinfoAll$caption)
-    return(invisible(plotinfoAll))
+  if(!is.null(plotInfoTable)){
+    plotInfoTable$file <- as.character(plotInfoTable$file)
+    plotInfoTable$caption <- as.character(plotInfoTable$caption)
+    write.csv(plotInfoTable, paste(plotdir,"/plotInfoTable.csv",sep=""),row.names=FALSE)
+    return(invisible(plotInfoTable))
   }else{
     return(invisible(999))
   }

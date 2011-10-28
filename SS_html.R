@@ -1,21 +1,39 @@
-SS_html <- function(plotinfoAll,
-                    replist=NULL,
+SS_html <- function(replist=NULL,
+                    plotdir="plots",
+                    plotInfoTable=NULL,
                     title="SS Output",
                     width=500,
                     verbose=TRUE){
-  if(!is.data.frame(plotinfoAll)) stop("Input 'plotinfoAll' needs to be a data frame")
-  
-  plotinfoAll$basename <- basename(as.character(plotinfoAll$file))
-  plotinfoAll$dirname <- dirname(as.character(plotinfoAll$file))
-  plotinfoAll$dirname2 <- basename(dirname(as.character(plotinfoAll$file)))
-  plotinfoAll$path <- paste(plotinfoAll$dirname2,plotinfoAll$basename,sep="/")
-  dir <- dirname(plotinfoAll$dirname)[1]
+  # check for table in directory with PNG files
+  if(is.null(plotInfoTable)){
+    if(!is.null(replist)){
+      dir <- replist$inputs$dir
+      filename <- paste(dir,plotdir,"plotInfoTable.csv",sep="/")
+      fileinfo <- file.info(filename)
+      if(is.na(fileinfo$size)){
+        stop("File missing:",filename)
+      }else{
+        plotInfoTable <- read.csv(filename,colClasses = "character")
+      }
+    }else{
+      stop("Need input for 'replist' or 'plotInfoTable'")
+    }
+  }
+  if(!is.data.frame(plotInfoTable))
+    stop("'plotInfoTable' needs to be a data frame")
+
+  plotInfoTable$basename <- basename(as.character(plotInfoTable$file))
+  plotInfoTable$dirname <- dirname(as.character(plotInfoTable$file))
+  plotInfoTable$dirname2 <- basename(dirname(as.character(plotInfoTable$file)))
+  plotInfoTable$path <- paste(plotInfoTable$dirname2,plotInfoTable$basename,sep="/")
+  dir <- dirname(plotInfoTable$dirname)[1]
+
   #htmlfile <- paste("SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),sep="")
   htmlhome <- paste(dir,"SS_output.html",sep="/")
   if(verbose) cat("Home HTML file with output will be:\n",htmlhome,'\n')
 
   # write unique HTML file for each category of plots (or whatever)
-  categories <- unique(plotinfoAll$category)
+  categories <- unique(plotInfoTable$category)
   for(icat in 0:length(categories)){
     if(icat==0){
       category <- "Home"
@@ -179,7 +197,7 @@ SS_html <- function(plotinfoAll,
         }
       }
     }else{
-      plotinfo <- plotinfoAll[plotinfoAll$category==category,]
+      plotinfo <- plotInfoTable[plotInfoTable$category==category,]
       
       cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
       for(i in 1:nrow(plotinfo)){
