@@ -111,7 +111,6 @@ SS_plots_test <-
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
-  pdf <- FALSE
   if(nprints>0 & pdf){
     stop("can't have pdf=T and print!=0: use print only or pdf & plot inputs")
   }

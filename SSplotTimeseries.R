@@ -459,7 +459,7 @@ SSplotTimeseries <-
 
   if(!skip){
     plotinfo <- biofunc(subplot=subplot)
-    plotinfo$category <- "Timeseries"
+    if(!is.null(plotinfo)) plotinfo$category <- "Timeseries"
     return(invisible(plotinfo))
   }
 }
