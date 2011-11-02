@@ -100,6 +100,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     yr_i <- yrvec[ipanel]
     ptsx_i <- ptsx[yr==yr_i]
     ptsy_i <- ptsy[yr==yr_i]
+    ptsy_i[ptsy_i < 0] <- NA
     if(doSD) ptsSD_i <- ptsSD[yr==yr_i]
       
     linesx_i <- linesx[yr==yr_i]
