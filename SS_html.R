@@ -3,6 +3,7 @@ SS_html <- function(replist=NULL,
                     plotInfoTable=NULL,
                     title="SS Output",
                     width=500,
+                    openfile=TRUE,
                     verbose=TRUE){
   # check for table in directory with PNG files
   if(is.null(plotInfoTable)){
@@ -28,19 +29,17 @@ SS_html <- function(replist=NULL,
   plotInfoTable$path <- paste(plotInfoTable$dirname2,plotInfoTable$basename,sep="/")
   dir <- dirname(plotInfoTable$dirname)[1]
 
-  #htmlfile <- paste("SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),sep="")
-  htmlhome <- paste(dir,"SS_output.html",sep="/")
-  if(verbose) cat("Home HTML file with output will be:\n",htmlhome,'\n')
-
   # write unique HTML file for each category of plots (or whatever)
   categories <- unique(plotInfoTable$category)
   for(icat in 0:length(categories)){
     if(icat==0){
       category <- "Home"
-      htmlfile <- paste(dir,"/SS_output.html",sep="")
+      htmlfile <- paste(dir,plotdir,"SS_output.html",sep="/")
+      htmlhome <- htmlfile
+      if(verbose) cat("Home HTML file with output will be:\n",htmlhome,'\n')
     }else{
       category <- categories[icat]
-      htmlfile <- paste(dir,"/SS_output_",category,".html",sep="")
+      htmlfile <- paste(dir,"/",plotdir,"/SS_output_",category,".html",sep="")
     }
     # write HTML head including some CSS stuff about fonts and whatnot
     # source for text below is http://unraveled.com/publications/css_tabs/
@@ -201,8 +200,8 @@ SS_html <- function(replist=NULL,
       
       cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
       for(i in 1:nrow(plotinfo)){
-        cat("<p align=left><img src='",plotinfo$path[i],
-            "' border=1 width=",width,"><br>",plotinfo$caption[i],"<br><i><small>file: ",plotinfo$basename[i],"</small></i>\n",
+        cat("<p align=left><a href='",plotinfo$basename[i],"'><img src='",plotinfo$basename[i],
+            "' border=0 width=",width,"></a><br>",plotinfo$caption[i],"<br><i><small>file: <a href='",plotinfo$basename[i],"'>",plotinfo$basename[i],"</a></small></i>\n",
             sep="", file=htmlfile, append=TRUE)
       }
     }
@@ -212,4 +211,13 @@ SS_html <- function(replist=NULL,
   ## </div></div>
   
   cat("\n\n</body>\n</html>", file=htmlfile, append=TRUE)
+
+  # open HTML file automatically:
+  if(openfile){
+    if(.Platform$OS.type=="windows"){
+      shell(cmd=htmlhome)
+    }else{
+      system(htmlhome)
+    }
+  }
 }

@@ -22,10 +22,11 @@ SS_output <-
   #
   ################################################################################
 
-  codedate <- "October 26, 2011"
-
+  ## Ian T.: I've failed to reliably update the codedate variable,
+  ## perhaps this should be replaced with a check for a newer file version on the web
+  ## codedate <- "October 26, 2011"
   if(verbose){
-    cat("R function updated:",codedate,"\n")
+    ## cat("R function updated:",codedate,"\n") 
     cat("Check for new code and report problems at http://code.google.com/p/r4ss/\n")
   }
 
@@ -1363,6 +1364,7 @@ if(FALSE){
     returndat$stdtable <- stdtable
   }
   returndat <- c(returndat,stats)
+  if(covar) returndat$corstats <- corstats
   returndat$logfile <- logfile
 
   # process annual recruit devs
@@ -1415,6 +1417,7 @@ if(FALSE){
       if(stats$N_estimated_parameters > 1){print(corstats, quote=FALSE)}else{cat("Too few estimated parameters to report correlations")}
     }
   }
+
 
   # return the inputs to this function so they can be used by SSplots or other functions
   inputs <- list()

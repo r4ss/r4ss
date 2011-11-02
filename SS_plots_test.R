@@ -28,10 +28,11 @@ SS_plots_test <-
   #
   ################################################################################
 
-  codedate <- "Oct 26, 2011"
-
-  if(verbose) cat("R function updated:",codedate,
-    "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
+  ## Ian T.: I've failed to reliably update the codedate variable,
+  ## perhaps this should be replaced with a check for a newer file version on the web
+  ## codedate <- "Oct 26, 2011"
+  ## if(verbose) cat("R function updated:",codedate,
+  ##   "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
 
   flush.console()
 
@@ -890,7 +891,10 @@ SS_plots_test <-
 
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
-  ### end of SS_plots function
+
+  ##########################################
+  # Write and return table of plot info for any PNG files that got created
+  #
   if(!is.null(plotInfoTable)){
     plotInfoTable$file <- as.character(plotInfoTable$file)
     plotInfoTable$caption <- as.character(plotInfoTable$caption)
@@ -899,6 +903,7 @@ SS_plots_test <-
   }else{
     return(invisible(999))
   }
+  ### end of SS_plots function
 }
 
 
