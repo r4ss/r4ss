@@ -685,6 +685,9 @@ SS_plots <-
   
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
+
+  cat("\nNote: an update to 'SS_plots' is available in test version called 'SS_plots_test'.\n",
+      "     Please try it out and report any issues you might find\n")
   ### end of SS_plots function
   return(invisible(999))
 }

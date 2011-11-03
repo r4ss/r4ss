@@ -1,6 +1,6 @@
 SS_plots_test <-
   function(
-    replist=NULL, plot=1:27, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:24, pdf=FALSE, png=FALSE, html=png, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg="default", btarg="default", minbthresh="default", pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
@@ -34,6 +34,9 @@ SS_plots_test <-
   ## if(verbose) cat("R function updated:",codedate,
   ##   "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
 
+  cat("Note: 'SS_plots_test' is a test version of an update of 'SS_plots'.\n",
+      "     It has reorganized plot groups and new output used by 'SS_html'\n")
+  
   flush.console()
 
   # label table is a step toward internationalization of the code
@@ -59,6 +62,12 @@ SS_plots_test <-
   comp_data_exists <- replist$comp_data_exists
 
   # check for internal consistency
+  if(pdf & png){
+    stop("Inputs 'pdf' and 'png' are mututally exclusive. You need to set one of them to FALSE")
+  }
+  if(html & !png){
+    stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
+  }
   if(uncertainty==TRUE & inputs$covar==FALSE){
     stop("To use uncertainty=T, you need to have covar=T in the input to the SS_output function")
   }
@@ -85,11 +94,6 @@ SS_plots_test <-
 
   if(verbose) cat("Finished defining objects\n")
 
-  ## if(nareas>1){
-  ##   cat("! Warning: some plots are not configured for mult-area models (nareas=",nareas,")\n",sep="")
-  ##   if(areanames[1]=="default") areanames <- paste("area",1:nareas)
-  ## }
-
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(fleetcols[1]=="default"){
     fleetcols <- rich.colors.short(nfishfleets)
@@ -102,19 +106,16 @@ SS_plots_test <-
     if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
   }
 
-
   #### prepare for plotting
-  # make plot window (operating system specific)
-  nplots <- length(intersect(1:50,plot))
-  nprints <- length(intersect(1:50,print))
 
+  # number of plot groups
+  nplots <- length(intersect(1:50,plot))
+
+  # make plot window (operating system specific)
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
-  if(nprints>0 & pdf){
-    stop("can't have pdf=T and print!=0: use print only or pdf & plot inputs")
-  }
   if(nplots>0 & !pdf & new){
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
@@ -126,10 +127,10 @@ SS_plots_test <-
   }
   if(dir=="default") dir <- inputs$dir
   plotdir <- paste(dir,"/",printfolder,"/",sep="")
-  if(nprints>0){
+  if(png){
     dir.create(dir,showWarnings=FALSE)
     dir.create(plotdir,showWarnings=FALSE)
-    if(nprints>0 & verbose) cat("Plots specified by 'print' will be written to",plotdir,"\n")
+    if(verbose) cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
   }
 
   plotInfoTable <- NULL
@@ -166,11 +167,11 @@ SS_plots_test <-
   # and Time-varying growth
   #
   igroup <- 1
-  if(igroup %in% c(plot, print) | length(cohortlines)>0)
+  if(igroup %in% plot | length(cohortlines)>0)
   {
     if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
     plotinfo <- SSplotBiology(replist=replist,
-                              plot=(igroup %in% plot),print=(igroup %in% print),
+                              plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
                               ptsize=ptsize, res=res, cex.main=cex.main,
                               plotdir=plotdir)
@@ -182,12 +183,12 @@ SS_plots_test <-
   # Selectivity and retention plots
   #
   igroup <- 2
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting selectivity and retention plots (group ",igroup,")\n",sep="")
     selexinfo <-
       SSplotSelex(replist=replist, selexlines=selexlines,
                   fleets=fleets, fleetnames=fleetnames,
-                  plot=(igroup %in% plot), print=(igroup %in% print),
+                  plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
                   plotdir=plotdir)
@@ -200,7 +201,7 @@ SS_plots_test <-
   # Basic time series
   #
   igroup <- 3
-  if(igroup %in% c(plot, print))
+  if(igroup %in% plot)
   {
     if(verbose) cat("Starting timeseries plots (group ",igroup,")\n",sep="")
     for(isubplot in 1:15){ # which of 12 subplots to make
@@ -215,8 +216,7 @@ SS_plots_test <-
                                areanames=areanames,
                                forecast=doforecast,
                                uncertainty=douncertainty,
-                               plot=(igroup %in% plot),
-                               print=(igroup %in% print),
+                               plot=!png, print=png,
                                verbose=verbose,
                                btarg=btarg,
                                minbthresh=minbthresh,
@@ -235,8 +235,7 @@ SS_plots_test <-
                              areanames=areanames,
                              forecast=doforecast,
                              uncertainty=FALSE,
-                             plot=(igroup %in% plot),
-                             print=(igroup %in% print),
+                             plot=!png, print=png,
                              verbose=verbose,
                              btarg=btarg,
                              minbthresh=minbthresh,
@@ -254,12 +253,11 @@ SS_plots_test <-
   # Recruitment deviation plots
   #
   igroup <- 4
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting recruitment deviation plots (group ",igroup,")\n",sep="")
     plotinfo <-
       SSplotRecdevs(replist=replist,
-                    plot=(igroup %in% plot),
-                    print=(igroup %in% print),
+                    plot=!png, print=png,
                     forecastplot=forecastplot,
                     uncertainty=uncertainty,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -270,8 +268,7 @@ SS_plots_test <-
     if(nareas>1 & nseasons>1){
       plotinfo <-
         SSplotRecdist(replist=replist,
-                      plot=(igroup %in% plot),
-                      print=(igroup %in% print),
+                      plot=!png, print=png,
                       verbose=verbose,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,cex.main=cex.main,
@@ -284,14 +281,13 @@ SS_plots_test <-
   # Estimating recruitment bias adjustment plots
   #
   igroup <- 5
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(uncertainty){
       if(verbose) cat("Starting estimation of recruitment bias adjustment and associated plots (group ",igroup,")\n",sep="")
       if(max(rmse_table$RMSE)>0){
         temp <-
           SS_fitbiasramp(replist=replist,
-                         plot=(igroup %in% plot),
-                         print=(igroup %in% print),
+                         plot=!png, print=png,
                          twoplots=FALSE,
                          pwidth=pwidth, pheight=pheight, punits=punits,
                          ptsize=ptsize, res=res,cex.main=cex.main,
@@ -310,12 +306,11 @@ SS_plots_test <-
   # spawner-recruit curve
   #
   igroup <- 6
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting spawner-recruit curve plot (group ",igroup,")\n",sep="")
     plotinfo <-
       SSplotSpawnrecruit(replist=replist,
-                         plot=(igroup %in% plot),
-                         print=(igroup %in% print),
+                         plot=!png, print=png,
                          virg=TRUE,  # add point on curve at equilibrium values (B0,R0)
                          init=FALSE, # add point on curve at initial values (B1,R1)
                          pwidth=pwidth, pheight=pheight, punits=punits,
@@ -328,12 +323,12 @@ SS_plots_test <-
   # time series of catch
   #
   igroup <- 7
-  if(igroup %in% c(plot, print))
+  if(igroup %in% plot)
   {
     if(verbose) cat("Starting catch plots (group ",igroup,")\n",sep="")
     temp <-
       SSplotCatch(replist=replist,
-                  plot=(igroup %in% plot),print=(igroup %in% print),
+                  plot=!png, print=png,
                   fleetnames=fleetnames,
                   fleetlty=fleetlty,
                   fleetpch=fleetpch,
@@ -350,12 +345,11 @@ SS_plots_test <-
   # SPR and fishing intensity plots
   #
   igroup <- 8
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting SPR plots (group ",igroup,")\n",sep="")
     plotinfo <-
       SSplotSPR(replist=replist,
-                plot=(igroup %in% plot),
-                print=(igroup %in% print),
+                plot=!png, print=png,
                 uncertainty=uncertainty,
                 sprtarg=sprtarg, btarg=btarg,
                 pwidth=pwidth, pheight=pheight, punits=punits,
@@ -368,13 +362,12 @@ SS_plots_test <-
   # discard fit plots (if present)
   #
   igroup <- 9
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(!is.na(replist$discard) && nrow(replist$discard)>0){
       if(verbose) cat("Starting discard plot (group ",igroup,")\n",sep="")
       plotinfo <-
         SSplotDiscard(replist=replist,
-                      plot=(igroup %in% plot),
-                      print=(igroup %in% print),
+                      plot=!png, print=png,
                       fleets=fleets,
                       fleetnames=fleetnames,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -390,13 +383,12 @@ SS_plots_test <-
   # mean body weight (if present)
   #
   igroup <- 10
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(!is.na(replist$mnwgt) && nrow(replist$mnwgt)>0){
       if(verbose) cat("Starting mean body weight plot (group ",igroup,")\n",sep="")
       plotinfo <-
         SSplotMnwt(replist=replist,
-                   plot=(igroup %in% plot),
-                   print=(igroup %in% print),
+                   plot=!png, print=png,
                    fleets=fleets,
                    fleetnames=fleetnames,
                    pwidth=pwidth, pheight=pheight, punits=punits,
@@ -413,14 +405,13 @@ SS_plots_test <-
   # Index plots
   #
   igroup <- 11
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(!is.null(dim(replist$cpue))){
       if(verbose) cat("Starting index plots (group ",igroup,")\n",sep="")
       plotinfo <- SSplotIndices(replist=replist,
                                 fleets=fleets,
                                 fleetnames=fleetnames,
-                                plot=(igroup %in% plot),
-                                print=(igroup %in% print),
+                                plot=!png, print=png,
                                 datplot=datplot,
                                 pwidth=pwidth, pheight=pheight, punits=punits,
                                 ptsize=ptsize, res=res,cex.main=cex.main,
@@ -435,7 +426,7 @@ SS_plots_test <-
   # Numbers at age plots
   #
   igroup <- 12
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting numbers at age plots (group ",igroup,")\n",sep="")
     plotinfo <- 
       SSplotNumbers(replist=replist,
@@ -443,8 +434,7 @@ SS_plots_test <-
                     areanames=areanames,
                     areacols=areacols,
                     pntscalar=pntscalar,
-                    plot=(igroup %in% plot),
-                    print=(igroup %in% print),
+                    plot=!png, print=png,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,cex.main=cex.main,
                     plotdir=plotdir)
@@ -464,10 +454,10 @@ SS_plots_test <-
     if(!datplot)
     {
       if(length(intersect(c(lenCompDatGroup, ageCompDatGroup, condCompDatGroup),
-                          c(plot,print)))>0)
+                          plot))>0)
         cat("Skipping plot groups ",lenCompDatGroup,"-",condCompDatGroup," (comp data without fit) because input 'datplot=F'\n",sep="")
     }else{
-      if(lenCompDatGroup %in% c(plot,print))  # data only aspects
+      if(lenCompDatGroup %in% plot)  # data only aspects
       {
         if(verbose) cat("Starting length comp data plots (group ",lenCompDatGroup,")\n",sep="")
         # length comp bar plot
@@ -477,8 +467,8 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(lenCompDatGroup%in%print),
-                      plot=(lenCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -492,8 +482,8 @@ SS_plots_test <-
                         samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                         minnbubble=minnbubble, pntscalar=pntscalar,
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                        print=(lenCompDatGroup%in%print),
-                        plot=(lenCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                        plot=!png, print=png,
+                        plotdir=plotdir,cex.main=cex.main,
                         scalebins=scalebins,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
@@ -501,7 +491,7 @@ SS_plots_test <-
           if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }
       }
-      if(ageCompDatGroup %in% c(plot,print)){
+      if(ageCompDatGroup %in% plot){
         if(verbose) cat("Starting age comp data plots (group ",ageCompDatGroup,")\n",sep="")
         # age comp bar plot
         plotinfo <-
@@ -510,8 +500,8 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(ageCompDatGroup%in%print),
-                      plot=(ageCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -524,8 +514,8 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(ageCompDatGroup%in%print),
-                      plot=(ageCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -538,8 +528,8 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(ageCompDatGroup%in%print),
-                      plot=(ageCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -552,8 +542,8 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(ageCompDatGroup%in%print),
-                      plot=(ageCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -561,7 +551,7 @@ SS_plots_test <-
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         flush.console()
       }
-      if(condCompDatGroup %in% c(plot,print)){
+      if(condCompDatGroup %in% plot){
         if(verbose) cat("Starting conditional comp data plots (group ",condCompDatGroup,")\n",sep="")
         # conditional age plot
         plotinfo <-
@@ -571,7 +561,8 @@ SS_plots_test <-
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                       fixdims=fixdims,rows=rows,cols=cols,
-                      print=(condCompDatGroup%in%print),plot=(condCompDatGroup%in%plot),plotdir=plotdir,cex.main=cex.main,
+                      plot=!png, print=png,
+                      plotdir=plotdir,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
@@ -587,7 +578,7 @@ SS_plots_test <-
     # Length comp fits
     #
     igroup <- 16
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(verbose) cat("Starting fit to length comp plots (group ",igroup,")\n",sep="")
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -595,7 +586,7 @@ SS_plots_test <-
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -609,7 +600,7 @@ SS_plots_test <-
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -625,7 +616,7 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -641,7 +632,7 @@ SS_plots_test <-
     # Age comp fits
     #
     igroup <- 17
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(verbose) cat("Starting fit to age comp plots (group ",igroup,")\n",sep="")
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -649,7 +640,7 @@ SS_plots_test <-
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -662,7 +653,7 @@ SS_plots_test <-
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -677,7 +668,7 @@ SS_plots_test <-
     # Conditional age-at-length comp fits
     #
     igroup <- 18
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(verbose) cat("Starting fit to conditional age-at-length comp plots (group ",igroup,")\n",sep="")
       if(aalresids==TRUE){
         plotinfo <- 
@@ -686,7 +677,7 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -703,7 +694,7 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -720,7 +711,7 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -736,7 +727,7 @@ SS_plots_test <-
     # Andre's conditional age-at-length comp fits
     #
     igroup <- 19
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(nrow(replist$condbase)>0 & verbose){
         if(verbose){
           cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
@@ -753,7 +744,7 @@ SS_plots_test <-
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
-                      print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
                       scalebins=FALSE,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -771,7 +762,7 @@ SS_plots_test <-
     # Mean length-at-age and mean weight-at-age plots
     #
     igroup <- 20
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(verbose) cat("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")\n",sep="")
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="L@A",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -779,7 +770,7 @@ SS_plots_test <-
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -792,7 +783,7 @@ SS_plots_test <-
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                    print=(igroup%in%print),plot=(igroup%in%plot),smooth=smooth,plotdir=plotdir,
+                    plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -812,7 +803,7 @@ SS_plots_test <-
     # Tag plots
     #
     igroup <- 21
-    if(igroup %in% c(plot, print)){
+    if(igroup %in% plot){
       if(is.null(replist$tagdbase2) || nrow(replist$tagdbase2)==0){
         if(verbose) cat("Skipping tag plots (group ",igroup,") because no tag data in model\n",sep="")
       }else{
@@ -822,8 +813,7 @@ SS_plots_test <-
                      rows=rows,cols=cols,
                      tagrows=tagrows,tagcols=tagcols,
                      pntscalar=pntscalar,minnbubble=minnbubble,
-                     plot=(igroup %in% plot),
-                     print=(igroup %in% print),
+                     plot=!png, print=png,
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res, cex.main=cex.main,
                      plotdir=plotdir)
@@ -836,12 +826,11 @@ SS_plots_test <-
   # Yield plots
   #
   igroup <- 22
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting yield plots (group ",igroup,")\n",sep="")
     plotinfo <- 
       SSplotYield(replist=replist,
-                  plot=(igroup %in% plot),
-                  print=(igroup %in% print),
+                  plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
                   plotdir=plotdir)
@@ -853,14 +842,13 @@ SS_plots_test <-
   # Movement rate plots
   #
   igroup <- 23
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(nrow(replist$movement)>0){
       if(verbose) cat("Starting movement rate plots (group ",igroup,")\n",sep="")
       plotinfo <- NULL
       temp <- 
         SSplotMovementRates(replist=replist,
-                            plot=(igroup %in% plot),
-                            print=(igroup %in% print),
+                            plot=!png, print=png,
                             pwidth=pwidth, pheight=pheight, punits=punits,
                             ptsize=ptsize, res=res, cex.main=cex.main,
                             plotdir=plotdir)
@@ -875,12 +863,11 @@ SS_plots_test <-
   # Data range plots
   #
   igroup <- 24
-  if(igroup %in% c(plot, print)){
+  if(igroup %in% plot){
     if(verbose) cat("Starting data range plots (group ",igroup,")\n",sep="")
     temp <- 
       SSplotData(replist=replist,
-                 plot=(igroup %in% plot),
-                 print=(igroup %in% print),
+                 plot=!png, print=png,
                  pwidth=pwidth, pheight=pheight, punits=punits,
                  ptsize=ptsize, res=res, cex.main=cex.main,
                  plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
@@ -898,7 +885,14 @@ SS_plots_test <-
   if(!is.null(plotInfoTable)){
     plotInfoTable$file <- as.character(plotInfoTable$file)
     plotInfoTable$caption <- as.character(plotInfoTable$caption)
-    write.csv(plotInfoTable, paste(plotdir,"/plotInfoTable.csv",sep=""),row.names=FALSE)
+    png_time <- Sys.time()
+    #png_time2 <- format(writetime,'%d-%b-%Y_%H.%M')
+    plotInfoTable$png_time <- png_time
+    plotInfoTable$Run_time <- Run_time
+    csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
+    write.csv(plotInfoTable, csvname, row.names=FALSE)
+    cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
+    if(html) SS_html(replist)
     return(invisible(plotInfoTable))
   }else{
     return(invisible(999))

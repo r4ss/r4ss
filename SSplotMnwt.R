@@ -61,7 +61,8 @@ SSplotMnwt <-
         if(plot) bdywtfunc()
         if(print){
           file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")
-          pngfun(file=file, caption=caption)
+          caption <- ptitle
+          plotinfo <- pngfun(file=file, caption=caption)
           bdywtfunc()
           dev.off()}
       } # end loop over market categories

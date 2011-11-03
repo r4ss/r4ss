@@ -508,68 +508,90 @@ SSplotComps <-
     
             ### subplot 8: Andre's mean age and std. dev. in conditional AAL
             if(8 %in% subplots & kind=="cond"){
-              if(print) cat("Note: Andre's conditional AAL plots can't yet be printed to PNG files\n")
-              Lens <-sort(unique(dbase$Lbin_lo))
-              Yrs <- sort(unique(dbase$Yr))
-              par(mfrow=c(3,2),mar=c(2,4,1,1),oma=c(3,0,3,0))
-              for (Yr in Yrs){
-                y <- dbase[dbase$Yr==Yr,]
-                Size <- NULL; Size2 <- NULL
-                Obs <- NULL; Obs2 <- NULL
-                Pred <- NULL;  Pred2 <- NULL
-                Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
-                for (Ilen in Lens){
-                  z <- y[y$Lbin_lo == Ilen,]
-                  if (length(z[,1]) > 0){
-                    weightsPred <- z$Exp/sum(z$Exp)
-                    weightsObs <- z$Obs/sum(z$Obs)
-                    ObsV <- sum(z$Bin*weightsObs)
-                    ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
-                    PredV <- sum(z$Bin*weightsPred)
-                    PredV2 <- sum(z$Bin*z$Bin*weightsPred)
-                    # Overdispersion on N
-                    # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
-                    NN <- z$N[1]
-                    if (max(z$Obs) > 1.0e-4){
-                      Size <- c(Size,Ilen)
-                      Obs <- c(Obs,ObsV)
-                      Pred <- c(Pred,PredV)
-                      varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
-                      Pred2 <- c(Pred2,varn)
-                      varn <-sqrt(max(0,ObsV2-ObsV*ObsV))/sqrt(NN)
-                      Obs2 <- c(Obs2,varn)
-                      Low <- c(Low,ObsV-1.64*varn)
-                      Upp <- c(Upp,ObsV+1.64*varn)
-                      if (NN > 1){
-                        Size2 <- c(Size2,Ilen)
-                        Low2 <- c(Low2,varn*sqrt((NN-1)/qchisq(0.95,NN)))
-                        Upp2 <- c(Upp2,varn*sqrt((NN-1)/qchisq(0.05,NN)))
+              ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+              andrefun <- function(ipage=0){
+                Lens <-sort(unique(dbase$Lbin_lo))
+                Yrs <- sort(unique(dbase$Yr))
+
+                # do some stuff so that figures that span multiple pages can be output as separate PNG files
+                npanels <- length(Yrs)
+                andrerows <- 3
+                npages <- npanels/andrerows
+                panelrange <- 1:npanels
+                if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:andrerows + andrerows*(ipage-1))
+                Yrs2 <- Yrs[panelrange]
+
+                par(mfrow=c(andrerows,2),mar=c(2,4,1,1),oma=c(3,0,3,0))
+                for (Yr in Yrs2){
+                  y <- dbase[dbase$Yr==Yr,]
+                  Size <- NULL; Size2 <- NULL
+                  Obs <- NULL; Obs2 <- NULL
+                  Pred <- NULL;  Pred2 <- NULL
+                  Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
+                  for (Ilen in Lens){
+                    z <- y[y$Lbin_lo == Ilen,]
+                    if (length(z[,1]) > 0){
+                      weightsPred <- z$Exp/sum(z$Exp)
+                      weightsObs <- z$Obs/sum(z$Obs)
+                      ObsV <- sum(z$Bin*weightsObs)
+                      ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
+                      PredV <- sum(z$Bin*weightsPred)
+                      PredV2 <- sum(z$Bin*z$Bin*weightsPred)
+                      # Overdispersion on N
+                      # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
+                      NN <- z$N[1]
+                      if (max(z$Obs) > 1.0e-4){
+                        Size <- c(Size,Ilen)
+                        Obs <- c(Obs,ObsV)
+                        Pred <- c(Pred,PredV)
+                        varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
+                        Pred2 <- c(Pred2,varn)
+                        varn <-sqrt(max(0,ObsV2-ObsV*ObsV))/sqrt(NN)
+                        Obs2 <- c(Obs2,varn)
+                        Low <- c(Low,ObsV-1.64*varn)
+                        Upp <- c(Upp,ObsV+1.64*varn)
+                        if (NN > 1){
+                          Size2 <- c(Size2,Ilen)
+                          Low2 <- c(Low2,varn*sqrt((NN-1)/qchisq(0.95,NN)))
+                          Upp2 <- c(Upp2,varn*sqrt((NN-1)/qchisq(0.05,NN)))
+                        }
                       }
                     }
                   }
-                }
-                if (length(Obs) > 0){
-                  ymax <- max(Pred,Obs,Upp)*1.1
-                  plot(Size,Obs,xlab="",ylab="Age",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-                  text(x=par("usr")[1],y=.9*ymax,labels=Yr,adj=c(-.5,0),font=2,cex=1.2)
-                  lines(Size,Pred)
-                  lines(Size,Low,lty=3)
-                  lines(Size,Upp,lty=3)
-                  #title(paste("Year = ",Yr,"; Gender = ",Gender))
-                  
-                  ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
-                  if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
-                    title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
-                  }
-                  ymax <- max(Obs2,Pred2)*1.1
-                  plot(Size,Obs2,xlab=labels[1],ylab=labels[13],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-                  lines(Size,Pred2)
-                  lines(Size2,Low2,lty=3)
-                  lines(Size2,Upp2,lty=3)
+                  if (length(Obs) > 0){
+                    ymax <- max(Pred,Obs,Upp)*1.1
+                    plot(Size,Obs,xlab="",ylab="Age",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    text(x=par("usr")[1],y=.9*ymax,labels=Yr,adj=c(-.5,0),font=2,cex=1.2)
+                    lines(Size,Pred)
+                    lines(Size,Low,lty=3)
+                    lines(Size,Upp,lty=3)
+                    #title(paste("Year = ",Yr,"; Gender = ",Gender))
+                    
+                    if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
+                      title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
+                    }
+                    ymax <- max(Obs2,Pred2)*1.1
+                    plot(Size,Obs2,xlab=labels[1],ylab=labels[13],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    lines(Size,Pred2)
+                    lines(Size2,Low2,lty=3)
+                    lines(Size2,Upp2,lty=3)
 
-                  
-                } # end if data exist
-              } # end loop over years
+                    
+                  } # end if data exist
+                } # end loop over years
+              } # end andrefun
+              if(plot) andrefun()
+              if(print){ # set up plotting to png file if required
+                npages <- ceiling(length(unique(dbase$Yr))/3)
+                for(ipage in 1:npages){
+                  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                  file <- paste(plotdir,"/",filenamestart,"Andre_plots",filename_fltsexmkt,pagetext,".png",sep="")
+                  caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                  plotinfo <- pngfun(file=file, caption=caption)
+                  andrefun(ipage=ipage)
+                  dev.off() # close device if png
+                } # end loop over pages
+              } # end test for print to PNG option
             } # end subplot 8
           } # end loop over partitions
         } # end test for whether gender in vector of requested sexes
@@ -663,18 +685,17 @@ SSplotComps <-
               if(plot) tempfun(ipage=0,...) 
               if(print){ # set up plotting to png file if required
                 npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
-                for(ipage in 1:npages)
-                    {
-                      if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-                      file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,"aggregated across time.png",sep="")
-                      caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
-                      plotinfo <- pngfun(file=file, caption=caption)
-                      tempfun(ipage=ipage,...)
-                      dev.off()
-                    }
+                for(ipage in 1:npages){
+                  if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
+                  file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,"aggregated across time.png",sep="")
+                  caption <- paste(ptitle, " (plot ",ipage,"of ",npages,")",sep="")
+                  plotinfo <- pngfun(file=file, caption=caption)
+                  tempfun(ipage=ipage,...)
+                  dev.off()
+                }
               } # end print function
             }else{
-             # haven't configured this aggregated plot for other types
+            # haven't configured this aggregated plot for other types
                 ## if(kind=="GSTAGE"){
                 ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr,linesx=dbase$Bin,linesy=dbase$Exp,
                 ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,

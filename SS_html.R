@@ -4,17 +4,62 @@ SS_html <- function(replist=NULL,
                     title="SS Output",
                     width=500,
                     openfile=TRUE,
+                    multimodel=FALSE,
                     verbose=TRUE){
+  cat("Running 'SS_html':\n",
+      "  By default, this function will look in the directory where PNG files were created\n",
+      "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots_test.'\n",
+      "  HTML files are written to link to these plots and put in the same directory.\n",
+      "  Please provide feedback on any bugs, annoyances, or suggestions for improvement.\n\n")
+  
   # check for table in directory with PNG files
   if(is.null(plotInfoTable)){
     if(!is.null(replist)){
       dir <- replist$inputs$dir
-      filename <- paste(dir,plotdir,"plotInfoTable.csv",sep="/")
-      fileinfo <- file.info(filename)
-      if(is.na(fileinfo$size)){
-        stop("File missing:",filename)
-      }else{
-        plotInfoTable <- read.csv(filename,colClasses = "character")
+      filenames <- dir(paste(dir,plotdir,sep="/"))
+      # look for all files beginning with the name 'plotInfoTable'
+      filenames <- filenames[grep("plotInfoTable",filenames)]
+      filenames <- filenames[grep(".csv",filenames)]
+      if(length(filenames)==0) stop("No CSV files with name 'plotInfoTable...'")
+      plotInfoTable <- NULL
+      # loop over matching CSV files and combine them
+      for(ifile in 1:length(filenames)){
+        filename <- paste(dir,plotdir,filenames[ifile],sep="/")
+        temp <- read.csv(filename,colClasses = "character")
+        plotInfoTable <- rbind(plotInfoTable,temp)
+      }
+      plotInfoTable$png_time <- as.POSIXlt(plotInfoTable$png_time)
+      # look for duplicate models
+      runs <- unique(plotInfoTable$Run_time)
+      if(length(runs)>1){
+        if(multimodel){
+          msg <- c("Warning!: CSV files with name 'plotInfoTable...' are from multiple model runs.\n",
+                   "    Hopefully you know what you're doing, or change to 'multimodel=FALSE.\n",
+                   "    Runs:\n")
+          for(irun in 1:length(runs)) msg <- c(msg,paste("    ",runs[irun],"\n"))
+          cat(msg)
+        }else{
+          msg <- c("CSV files with name 'plotInfoTable...' are from multiple model runs.\n",
+                   "    Delete old files or (if you really know what you're doing) override with 'multimodel=TRUE.\n",
+                   "    Runs:\n")
+          for(irun in 1:length(runs)) msg <- c(msg,paste("    ",runs[irun],"\n"))
+          stop(msg)
+        }
+      }
+      # look for duplicate file names
+      filetable <- table(plotInfoTable$file)
+      duplicates <- names(filetable[filetable>1])
+      # loop over duplicates and remove rows for older instance
+      if(length(duplicates)>0){
+        if(verbose) cat("Removing duplicate rows in combined plotInfoTable based on mutliple CSV files\n")
+        for(idup in 1:length(duplicates)){
+          duprows <- grep(duplicates[idup], plotInfoTable$file, fixed=TRUE)
+          duptimes <- plotInfoTable$png_time[duprows]
+          # keep duplicates with the most recent time
+          dupbad <- duprows[duptimes!=max(duptimes)]
+          goodrows <- setdiff(1:nrow(plotInfoTable),dupbad)
+          plotInfoTable <- plotInfoTable[goodrows,]
+        }
       }
     }else{
       stop("Need input for 'replist' or 'plotInfoTable'")
@@ -214,10 +259,11 @@ SS_html <- function(replist=NULL,
 
   # open HTML file automatically:
   if(openfile){
+    cat("Opening HTML file in your default web-browser.\n")
     if(.Platform$OS.type=="windows"){
-      shell(cmd=htmlhome)
+      shell(cmd=htmlhome, wait=FALSE)
     }else{
-      system(htmlhome)
+      system(htmlhome, wait=FALSE)
     }
   }
 }
