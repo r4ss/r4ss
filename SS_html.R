@@ -263,7 +263,8 @@ SS_html <- function(replist=NULL,
     if(.Platform$OS.type=="windows"){
       shell(cmd=htmlhome, wait=FALSE)
     }else{
-      system(htmlhome, wait=FALSE)
+      if(.Platform$GUI=="X11") system(paste("firefox",htmlhome), wait=FALSE)
+      if(.Platform$GUI=="Aqua") system(paste("open",htmlhome), wait=FALSE)
     }
   }
 }

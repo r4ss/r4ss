@@ -47,7 +47,7 @@ SSplotTags <-
     tagtotrecap    <- replist$tagtotrecap
 
     tagfun1 <- function(ipage=0){
-      if(verbose) cat("Note: lighter colored bars is plot indicate latency period excluded from likelihood\n")
+      if(verbose) cat("Note: lighter colored bars in tag plot indicate latency period excluded from likelihood\n")
       # obs & exp recaps by tag group
       par(mfcol=c(tagrows,tagcols),mar=c(2.5,2.5,2,1),cex.main=cex.main,oma=c(2,2,2,0))
       if(npages > 1 & ipage!=0) grouprange <- intersect(grouprange, 1:(tagrows*tagcols) + tagrows*tagcols*(ipage-1))
@@ -162,7 +162,7 @@ SSplotTags <-
       barplot(height=tagreportrates$Init_Reporting,
               names.arg=tagreportrates$Fleet,ylim=c(0,1),yaxs='i',
               ylab="Reporting rate",xlab="Fleet number",
-              main="Intial reporting rate")
+              main="Initial reporting rate")
       box()
 
       # second plot shows any decay in reporting rate over time
@@ -224,53 +224,71 @@ SSplotTags <-
     }
     # send to files if requested
     if(print){
-      filenamestart <- "24_tags_by_group"
+      filenamestart <- "tags_by_group"
       if(1 %in% subplots){
         for(ipage in 1:npages){
           if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-          filename <- paste(plotdir,filenamestart,pagetext,".png",sep="")
-          pngfun(file=filename)
+          file <- paste(plotdir,filenamestart,pagetext,".png",sep="")
+          caption <- paste(labels[4],"(lighter colored bars indicate latency period excluded from likelihood)")
+          if(npages>1) caption <- paste(caption, ", (plot ",ipage,"of ",npages,")",sep="")
+          plotinfo <- pngfun(file=file, caption=caption)
           tagfun1(ipage=ipage)
           dev.off() # close device if png
         }
       }
       if(2 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tags_aggregated.png",sep=""))
+        file <- paste(plotdir,"tags_aggregated.png",sep="")
+        caption <- labels[5]
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun2()
         dev.off()
       }
       if(3 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tags_data_bubbleplot.png",sep=""))
+        file <- paste(plotdir,"tags_data_bubbleplot.png",sep="")
+        caption <- labels[6]
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun3()
         dev.off()
       }
       if(4 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tags_residuals.png",sep=""))
+        file <- paste(plotdir,"tags_residuals.png",sep="")
+        caption <- labels[7]
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun4()
         dev.off()
       }
       if(5 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tags_lines.png",sep=""))
+        file <-paste(plotdir,"tags_lines.png",sep="")
+        caption <- labels[8]
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun5()
         dev.off()
       }
       if(6 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tag_parameters.png",sep=""))
+        file <-paste(plotdir,"tags_parameters.png",sep="")
+        caption <- "Tag-related parameters"
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun6()
         dev.off()
       }
       if(7 %in% subplots){
-        pngfun(file=paste(plotdir,"24_tags_alive.png",sep=""))
+        file <-paste(plotdir,"tags_alive.png",sep="")
+        caption <- "'Tags alive' by tag group"
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun7()
         dev.off()
       }
       if(8 %in% subplots){
-        pngfun(file=paste(plotdir,"24_total_recaptures.png",sep=""))
+        file <-paste(plotdir,"tags_total_recaptures.png",sep="")
+        caption <- "Total tag recaptures"
+        plotinfo <- pngfun(file=file, caption=caption)
         tagfun8()
         dev.off()
       }
     }
-    if(verbose) cat("Finished plot 24: tags\n")
     flush.console()
+    
   } # end if data
+  if(!is.null(plotinfo)) plotinfo$category <- "Tag"
+  return(invisible(plotinfo))
 } # end SSplotTags
