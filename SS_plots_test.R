@@ -1,6 +1,6 @@
 SS_plots_test <-
   function(
-    replist=NULL, plot=1:24, pdf=FALSE, png=FALSE, html=png, printfolder="plots", dir="default", fleets="all", areas="all",
+    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=FALSE, html=png, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg="default", btarg="default", minbthresh="default", pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
@@ -35,8 +35,11 @@ SS_plots_test <-
   ##   "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
 
   cat("Note: 'SS_plots_test' is a test version of an update of 'SS_plots'.\n",
-      "     It has reorganized plot groups and new output used by 'SS_html'\n")
-  
+      "     It has reorganized plot groups and new output used by 'SS_html'\n",
+      "     To get HTML viewer of plots, use the input 'png=TRUE'\n\n")
+
+  if(!is.null(print)) stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
+                           "  which is combined with the vector of numbers input to 'plot'")
   flush.console()
 
   # label table is a step toward internationalization of the code
@@ -116,7 +119,7 @@ SS_plots_test <-
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
-  if(nplots>0 & !pdf & new){
+  if(nplots>0 & !png & !pdf & new){
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
@@ -141,7 +144,7 @@ SS_plots_test <-
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
   }
-  if(new) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
+  if(new & !png) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
 
   if(pdf){
     mar0 <- par()$mar # current margins
