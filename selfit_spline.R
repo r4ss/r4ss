@@ -5,14 +5,15 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
 
   ################################################################################
   #
-  # selfit   November, 2011.
+  # selfit_spline   November, 2011.
   # This function comes with no warranty or guarantee of accuracy
   #
   # Purpose: Provide GUI for the plot function, sel.line
   # Written: Tommy Garrison and Ian Taylor
   # Returns: plots spline selectivity
   # General: parameterization matched Stock Synthesis v.3
-  # Notes:   For documentation go to: http://code.google.com/p/r4ss/
+  # Notes:   Based on "selfit" function by Tommy Garrison
+  #          For documentation go to: http://code.google.com/p/r4ss/
   # Required packages: none
   #
   ################################################################################
@@ -35,8 +36,8 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
   minLB <- tclVar(minBin)
   maxLB <- tclVar(maxBin)
   diffL <- maxBin - minBin
-  if(is.null(knots)) knots <- round(minBin+(1:n-1)*diffL/n)
-  if(is.null(params)) params <- c(0,.5,rep(3,n-2))
+  if(is.null(knots)) knots <- round(minBin+(1:n-0.7)*diffL/n)
+  if(is.null(params)) params <- c(-3,-2,0,rep(-1,n-3))
 
   for(i in 1:n){
     # assign initial values
