@@ -22,8 +22,10 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
   if(n<3 | n>7 | as.integer(n)!=n) stop("Number of knots must be an integer from 3 to 7")
   if(!("spline_selex.exe" %in% dir(dir)))
     stop("File 'spline_selex.exe' needs to be in the directory 'dir'\n",
-         "  You can get this file from\n",
-         "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe")
+         "  If you have a 64 bit Windows computer, you can get this file from\n",
+         "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe\n",
+         "  For other operating systems, you will need to compile the executable in ADMB\n",
+         "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
   
   geterrmessage()
   done <- tclVar(0)
