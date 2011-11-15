@@ -81,27 +81,25 @@ SSplotPars <-
   repfileinfo  <- file.info(fullrepfile)$size
   ctlfileinfo  <- file.info(fullctlfile)$size
 
-  if(is.na(repfileinfo)) stop("Error! Missing rep file:",fullrepfile)
-  if(repfileinfo==0) stop("Error! Empty rep file:",fullrepfile)
+  if(is.na(repfileinfo)) stop("Missing rep file:",fullrepfile)
+  if(repfileinfo==0) stop("Empty rep file:",fullrepfile)
   
   goodctl <- TRUE
   if(is.na(ctlfileinfo)){
-    cat("Error! Missing control.ss_new file. Assuming recdev limits are -5 & 5.\n")
+    cat("Missing control.ss_new file. Assuming recdev limits are -5 & 5.\n")
     goodctl <- FALSE
   }else{
     if(ctlfileinfo==0){
-      cat("Error! Empty control.ss_new file. Assuming recdev limits are -5 & 5.\n")
+      cat("Empty control.ss_new file. Assuming recdev limits are -5 & 5.\n")
       goodctl <- FALSE
     }
   }
   if(showpost & is.na(postfileinfo)){
-    cat("Error! Missing posteriors file:",fullpostfile,"\n",
-        "      Changing input to 'showpost=FALSE'\n")
+    cat("Missing posteriors file: ",postfile,", changing input to 'showpost=FALSE'\n",sep="")
     showpost <- FALSE
   }
   if(showpost & !is.na(postfile) & postfileinfo==0){
-    cat("Error! Empty posteriors file:",fullpostfile,"\n",
-        "      Changing input to 'showpost=FALSE'\n")
+    cat("Empty posteriors file: ",postfile,", changing input to 'showpost=FALSE'\n",sep="")
     showpost <- FALSE
   }
 
