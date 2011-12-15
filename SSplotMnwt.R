@@ -52,7 +52,7 @@ SSplotMnwt <-
         if(j==2) titlepart <- labels[3]
         if(j==0) titlepart <- labels[4]
         ptitle <- paste(labels[6],titlepart,labels[7],fleetname,sep=" ")
-        ylab <- labels[4]
+        ylab <- labels[5]
         bdywtfunc <- function(){
           plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,ylo=0,col=col2,sfrac=0.001,
                  ylab=ylab,lty=1,xlim=c(xmin,xmax),cex.main=cex.main,ymax=ymax)
