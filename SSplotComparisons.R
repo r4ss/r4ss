@@ -975,33 +975,37 @@ SSplotComparisons <-
         matchingnames <- c(pars$Label,quants$Label)[grep(densitynames[i],c(pars$Label,quants$Label))]
         expandednames <- c(expandednames,matchingnames)
       }
-      cat("  parameter/quantity names matching 'densitynames' input:\n")
-      print(expandednames)
-      ndensities <- length(expandednames)
-      # make a table to store associated x-labels
-      densitytable <- data.frame(name=expandednames,label=expandednames,stringsAsFactors=FALSE)
-      if(length(densityxlabs)==ndensities & densityxlabs[1]!="default"){
-        densitytable$label <- densityxlabs
-        cat("  table of parameter/quantity labels with associated x-axis label:\n")
-        print(densitytable)
+      if(length(expandednames)==0){
+        cat("  No parameter/quantity names matching 'densitynames' input.\n")
       }else{
-        if(densityxlabs[1]!="default"){
-          cat("  length of 'densityxlabs' doesn't match the number of values matching 'densitynames'\n",
-              "    parameter labels will be used instead\n")
+        cat("  parameter/quantity names matching 'densitynames' input:\n")
+        print(expandednames)
+        ndensities <- length(expandednames)
+        # make a table to store associated x-labels
+        densitytable <- data.frame(name=expandednames,label=expandednames,stringsAsFactors=FALSE)
+        if(length(densityxlabs)==ndensities & densityxlabs[1]!="default"){
+          densitytable$label <- densityxlabs
+          cat("  table of parameter/quantity labels with associated x-axis label:\n")
+          print(densitytable)
+        }else{
+          if(densityxlabs[1]!="default"){
+            cat("  length of 'densityxlabs' doesn't match the number of values matching 'densitynames'\n",
+                "    parameter labels will be used instead\n")
+          }
         }
-      }
-      for(iplot in 1:ndensities){
-        # find matching parameter
-        name <- densitytable[iplot,1]
-        xlab <- densitytable[iplot,2]
-        #if(verbose) cat("  quantity name=",name,"\n",sep="")
-        if(plot) {
-          plotDensities(parname=name,xlab=xlab)
-        }
-        if(print){
-          pngfun(paste("compare13_densities_",name,".png"))
-          plotDensities(parname=name,xlab=xlab)
-          dev.off()
+        for(iplot in 1:ndensities){
+          # find matching parameter
+          name <- densitytable[iplot,1]
+          xlab <- densitytable[iplot,2]
+          #if(verbose) cat("  quantity name=",name,"\n",sep="")
+          if(plot) {
+            plotDensities(parname=name,xlab=xlab)
+          }
+          if(print){
+            pngfun(paste("compare13_densities_",name,".png"))
+            plotDensities(parname=name,xlab=xlab)
+            dev.off()
+          }
         }
       }
     }
