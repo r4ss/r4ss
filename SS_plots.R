@@ -312,7 +312,8 @@ SS_plots <-
   if(26 %in% c(plot, print) & uncertainty){
     if(max(rmse_table$RMSE)>0){
       SS_fitbiasramp(replist=replist,
-                     png=ifelse(26 %in% print,paste(plotdir,"recdevs_fitbiasramp.png",sep="/"),FALSE),
+                     plot=(26 %in% plot),
+                     print=(26 %in% print),
                      twoplots=FALSE,
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res,cex.main=cex.main)
