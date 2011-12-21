@@ -83,7 +83,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
     setwd(simpath)
     if(verbose) cat("running simulations in",simpath,"\n")
     for(isim in sims){
-      if(isim==0) norecdevs <- TRUE # turn off recdevs for sim numbered 0
+      norecdevs <- isim %in% c(0,999) # turn off recdevs for sim numbered 0 or 999
       for(isimchoice in simchoices){
         if(verbose) cat("  in isimchoice=",LETTERS[isimchoice],"\n",sep="")
         filekey <- paste("sim",LETTERS[isimchoice],sep="") # description of this sim
@@ -116,7 +116,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
 
           if(norecdevs){
             # if no recdevs are to be modeled
-            file.copy("ctl_isim_nodevs.ss","ctl_isim.ss")
+            file.copy("ctl_isim_nodevs.ss","ctl_isim.ss",overwrite=TRUE)
           }else{
             # add recdevs to control files for simulations
             if(is.null(fyr) | is.null(lyr)){
@@ -143,6 +143,9 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
           file.copy("Report.sso",paste("Report_",key,".sso",sep=""),overwrite=TRUE)
           file.copy("CompReport.sso",paste("CompReport_",key,".sso",sep=""),overwrite=TRUE)
 
+          
+          MLEdata.temp <- MLEdata # save existing value
+          if(isim==999) MLEdata <- TRUE # if sim number is 999, then use MLE data instead of bootstrap
           # split apart simulation results
           if(CAAL){
             bootstrap_CAAL(master=F,
@@ -159,6 +162,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                         MLE        = MLEdata
                         )
           }
+          MLEdata <- MLEdata.temp # restore old value
+          
           # fill in or create a data frame to store notes on model runs
           if(exists("simnotes")) simnotes[nrow(simnotes)+1,] <- data.frame(isim, isimchoice, key, Sys.time(), stringsAsFactors=FALSE)
           else simnotes <- data.frame(sim=isim, simchoice=isimchoice, key=key, time=Sys.time(), stringsAsFactors=FALSE)
@@ -178,7 +183,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
   { # if fits are requested
     setwd(fitpath) # change path
     for(ifit in sims){ # loop over number of simulations in each scenario
-      if(ifit==0) norecdevs <- TRUE
+      norecdevs <- ifit %in% c(0,999) # turn off recdevs for sim numbered 0 or 999
       for(isimchoice in simchoices){ # loop over simulation scenarios
         for(ifitchoice in fitchoices){ # loop over estimation scenarios
           for(ibiasadj in unique(c(FALSE,fitbiasramp))){ # loop over whether to apply the bias adjustment function
@@ -273,8 +278,9 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                   replist <- SS_output(dir=masterpath,model=exe,repfile=oldrepfilename,
                                        compfile=oldcompfilename,covarfile=oldcovarname,
                                        forecast=FALSE,printstats=FALSE,verbose=FALSE)
-                  SS_fitbiasramp(replist,pdf=paste("fitbiasramp_",key,".pdf",sep=""),
+                  SS_fitbiasramp(replist,print=TRUE,
                                  oldctl="ctl_ifit.ss",newctl=newctl)
+                  file.copy('recruit_fit_bias_adjust.png',paste('recruit_fit_bias_adjust',key,'.png',sep=""))
                   file.copy(newctl,"ctl_ifit.ss",overwrite=TRUE)
                 }else{
                   cat("run failed to converge (or is being run by another R process).","\n")
@@ -285,7 +291,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
               if(!dorun){
                 # don't do this run
                 cat("skipping run with key =",key,
-                            "\n  because previous no previous run exists on which to base bias adjustment")
+                    "\n  because previous no previous run exists on which to base bias adjustment")
               }else{
                 # run this run
                 repmastersize <- file.info(repmaster)$size
@@ -323,32 +329,29 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 if(intern) writeLines(c("###","ADMB output",paste("key =",key),as.character(Sys.time()),
                                         "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
 
-                # test again
-                # rerun if hessian doesn't invert
-                if(!file.exists("covar.sso")){
-                #if(!is.na(repfilesize) & repfilesize>0){
-                  cat("run was good, non-empty report file created: ",repfilename,"\n",sep="")
+                # copy covar (or not)
+                if(file.exists("covar.sso")){
+                  cat("run was good, non-empty covar.sso file created: ",repfilename,"\n",sep="")
                   file.copy("covar.sso",paste(masterpath,covarname,sep="/"),overwrite=TRUE)
                 }else{
-                  if(file.exists("covar.sso")) file.remove("covar.sso")
-                  cat("empty report file (due to bad hessian):",repfilename,"\n  rerunning with -nohess")
-                  ADMBoutput <- system(paste(exe,fitextras,"-nohess"),intern=intern)
-                  if(intern) writeLines(c("###","ADMB output from run with -nohess",paste("key =",key),as.character(Sys.time()),
-                                          "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
+                  cat("no covar.sso file (presumably due to bad hessian):",repfilename,"\n",
+                      "  Assuming Report.sso is good enough (no re-running needed).\n")
                 }
                 # rename files for current fit
                 file.copy("Report.sso",repmaster,overwrite=TRUE)
                 file.copy("CompReport.sso",paste(masterpath,compfilename,sep="/" ),overwrite=TRUE)
               }
-            } # end if files exist but skipfiles
-            repmastersize <- file.info(repmaster)$size
-            if(!is.na(repmastersize) & repmastersize>0){
-              if(length(grep("Temporary report file",readLines(repmaster,n=1)))>0){
-                if(verbose) cat("end of run, but temporary file still exists. Deleting",repmaster,"\n")
-                file.remove(repmaster)
+              
+              repmastersize <- file.info(repmaster)$size
+              if(!is.na(repmastersize) & repmastersize>0){
+                if(length(grep("Temporary report file",readLines(repmaster,n=1)))>0){
+                  if(verbose) cat("end of run, but temporary file still exists. Deleting",repmaster,"\n")
+                  file.remove(repmaster)
+                }
               }
             }
-
+            # end if files exist but skipfiles
+            
             # fill in or create a data frame to store notes on model runs
             if(exists("fitnotes")) fitnotes[nrow(fitnotes)+1,] <- data.frame(ifit, isimchoice, ifitchoice, key, ibiasadj, Sys.time(), stringsAsFactors=FALSE)
             else fitnotes <- data.frame(fit=ifit, simchoice=isimchoice, fitchoice=ifitchoice, key=key, fitbiasramp=ibiasadj, time=Sys.time(), stringsAsFactors=FALSE)

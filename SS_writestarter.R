@@ -1,9 +1,8 @@
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
                             overwrite=F, verbose=T){
-  if(verbose) cat("running SS_writestarter",quote=F)
+  if(verbose) cat("running SS_writestarter\n")
   if(mylist$type!="Stock_Synthesis_starter_file"){
-    cat("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'",quote=F)
-    return()
+    stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
   }
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection

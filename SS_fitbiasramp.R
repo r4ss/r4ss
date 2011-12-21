@@ -1,7 +1,7 @@
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",
-         oldctl=NULL, newctl=NULL, png=NULL,
+         oldctl=NULL, newctl=NULL, 
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1){
   ##################
   # function to estimate bias adjustment ramp
