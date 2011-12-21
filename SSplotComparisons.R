@@ -31,6 +31,7 @@ SSplotComparisons <-
            densityxlabs="default",
            densityscalex=1,
            densityscaley=1,
+           densityadjust=1,
            fix0=TRUE,
            new=TRUE,
            verbose=TRUE,
@@ -650,7 +651,7 @@ SSplotComparisons <-
       imodel <- models[iline]
       if(mcmcVec[iline]) {
         
-        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
+        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
         if(length(mcmcColumn)==0) {
             cat("No columns selected from MCMC for '",parname,"' in model ",imodel,".\n",sep="")
             good[iline] <- FALSE 
@@ -668,7 +669,7 @@ SSplotComparisons <-
           }
           xmin <- min(xmin, quantile(mcmcVals,0.001))
           xmax <- max(xmax, quantile(mcmcVals,0.999))
-          z <- density(mcmcVals,from=0)      #density estimate of mcmc sample (posterior)
+          z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
           z$x <- z$x[c(1,1:length(z$x),length(z$x))]
           z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
           ymax <- max(ymax,max(z$y))  #update ymax
@@ -742,7 +743,7 @@ SSplotComparisons <-
       for(iline in (1:nlines)[good]){
         imodel <- models[iline]
         if(mcmcVec[iline]) {
-          mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]))
+          mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
           if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
@@ -972,7 +973,7 @@ SSplotComparisons <-
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
       for(i in 1:length(densitynames)){
-        matchingnames <- c(pars$Label,quants$Label)[grep(densitynames[i],c(pars$Label,quants$Label))]
+        matchingnames <- c(pars$Label,quants$Label)[grep(densitynames[i],c(pars$Label,quants$Label),fixed=TRUE)]
         expandednames <- c(expandednames,matchingnames)
       }
       if(length(expandednames)==0){

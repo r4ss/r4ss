@@ -106,7 +106,7 @@ SSplotPars <-
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     test <- readLines(fullpostfile,n=10) # test for presence of file with at least 10 rows
-    if(length(test)==5){
+    if(length(test)>5){
       posts <- read.table(fullpostfile,head=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       # remove burn-in and thin the posteriors if requested

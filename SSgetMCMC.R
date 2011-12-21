@@ -35,6 +35,8 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
     # get MCMC output
     if(verbose) cat("getting files from",dir[imodel],"\n")
     post <- read.table(paste(dir[imodel],postname,sep="/"),header=TRUE)
+    names(post)[names(post)=="SR_LN.R0."] <- "SR_LN(R0)"
+
     derpost <- read.table(paste(dir[imodel],derpostname,sep="/"),header=TRUE)
     # remove redundant values
     derpost <- derpost[,!(names(derpost) %in% c("Iter","Objective_function"))]
