@@ -667,8 +667,8 @@ SSplotComparisons <-
           if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for female only spawning biomass
             mcmcVals <- mcmcVals/2
           }
-          xmin <- min(xmin, quantile(mcmcVals,0.001))
-          xmax <- max(xmax, quantile(mcmcVals,0.999))
+          xmin <- min(xmin, quantile(mcmcVals,0.005))
+          xmax <- max(xmax, quantile(mcmcVals,0.995))
           z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
           z$x <- z$x[c(1,1:length(z$x),length(z$x))]
           z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
@@ -685,15 +685,17 @@ SSplotComparisons <-
             parSD <- parSD/2
           }
           # update x range
-          xmin <- min(xmin, qnorm(0.001,parval,parSD))
-          xmax <- max(xmax, qnorm(0.999,parval,parSD))
+          xmin <- min(xmin, qnorm(0.005,parval,parSD))
+          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
+          xmax <- max(xmax, qnorm(0.995,parval,parSD))
           # calculate density to get y range
           x <- seq(xmin,xmax,length=500)
           mle <- dnorm(x,parval,parSD)
           mlescale <- 1/(sum(mle)*mean(diff(x)))
           mle <- mle*mlescale
           # update ymax
-          ymax <- max(ymax,max(mle)) 
+          ymax <- max(ymax,max(mle))
         }else{ # if no SD, at least make sure interval includes MLE estimate
           xmin <- min(xmin, parval)
           xmax <- max(xmax, parval)
@@ -756,8 +758,11 @@ SSplotComparisons <-
           y <- y*yscale
           y2 <- NULL
           for(ii in x2) {
-            y2 <- c(y2,y[abs(x-ii)==min(abs(x-ii))])
+            # find y-value associated with closest matching x-value
+            # "min" was added for a rare case where two values were equally close
+            y2 <- c(y2,min(y[abs(x-ii)==min(abs(x-ii))]))
           }
+          
           polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
           lines(x,y,col=col[iline],lwd=2)
           points(x2,y2,col=col[iline],pch=pch[iline])
