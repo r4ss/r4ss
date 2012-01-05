@@ -1,9 +1,10 @@
 SSsummarize <- function(biglist,
                         keyvec=NULL,
                         numvec=NULL,
-                        selfactor="Lsel",
+                        sizeselfactor="Lsel",
+                        ageselfactor="Asel",
                         selfleet=NULL,
-                        selyr="min",
+                        selyr="startyr",
                         selgender=1,
                         lowerCI=0.025,
                         upperCI=0.975){
@@ -60,8 +61,6 @@ SSsummarize <- function(biglist,
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
   # objects to store quantities
-  sel        <- NULL
-  selexlist  <- list()
   pars <- parsSD <- parphases <- as.data.frame(matrix(NA,nrow=length(parnames),ncol=n))
   quants <- quantsSD <- as.data.frame(matrix(NA,nrow=length(dernames),ncol=n))
   growth     <- NULL
@@ -69,6 +68,8 @@ SSsummarize <- function(biglist,
   nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
   indices <- NULL
+  sizesel    <- NULL
+  agesel     <- NULL
   
   # notes about what runs were used
   sim        <- NULL
@@ -95,36 +96,40 @@ SSsummarize <- function(biglist,
     # nsexes
     nsexes <- c(nsexes, stats$nsexes)
 
-    # selex
-    if(FALSE){
-      seltemp <- stats$sizeselex
-      if(is.null(selfactor)) selfactor <- unique(seltemp$Factor)
-      if(is.null(selfleet))  selfleet  <- unique(seltemp$Fleet)
-      if(is.null(selgender)) selgender <- unique(seltemp$gender)
-      if(is.null(selyr))   selyr   <- unique(seltemp$year)
-      if(selyr[1]=="min")  selyr   <- min(seltemp$year)
-      if(selyr[1]=="max")  selyr   <- max(seltemp$year)
-
-      for(iselfactor in 1:length(selfactor)){
-        for(iselfleet in 1:length(selfleet)){
-          for(iselyr in 1:length(selyr)){
-            for(iselgender in 1:length(selgender)){
-              seltemp_i <- seltemp[seltemp$Factor==selfactor[iselfactor] &
-                                   seltemp$Fleet==selfleet[iselfleet] &
-                                   seltemp$gender==selgender[iselgender] &
-                                   seltemp$year==selyr[iselyr],]
-              mylabel <- seltemp_i$label
-              myname <- paste("sizeselex_",mylabel,sep="")
-              seltemp_i2 <- as.numeric(seltemp_i[-(1:5)])
-              selexlist[[myname]] <- rbind(selexlist[[myname]],seltemp_i2)
-              rownames(selexlist[[myname]])[nrow(selexlist[[myname]])] <- key
-            }
-          }
-        }
+    # size selectivity
+    sizeseltemp <- stats$sizeselex
+    if(is.null(sizeselfactor)) sizeselfactor <- unique(sizeseltemp$Factor)
+    for(iselfactor in 1:length(sizeselfactor)){
+      seltemp_i <- sizeseltemp[sizeseltemp$Factor==sizeselfactor[iselfactor],]
+      seltemp_i$imodel <- imodel
+      seltemp_i$key <- key
+      # if sizesel is not NULL, then check for whether columns of new addition match existing file
+      if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) && all(names(seltemp_i)==names(sizesel)))){
+        sizesel <- rbind(sizesel,seltemp_i)
+      }else{
+        cat("problem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
       }
     }
+    rownames(sizesel) <- 1:nrow(sizesel)
+
+    # age selectivity
+    ageseltemp  <- stats$ageselex
+    if(is.null(ageselfactor)) ageselfactor <- unique(ageseltemp$Factor)
+    for(iselfactor in 1:length(ageselfactor)){
+      seltemp_i <- ageseltemp[ageseltemp$factor==ageselfactor[iselfactor],]
+      seltemp_i$imodel <- imodel
+      seltemp_i$key <- key
+      # if agesel is not NULL, then check for whether columns of new addition match existing file
+      if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) && all(names(seltemp_i)==names(agesel)))){
+        agesel <- rbind(agesel,seltemp_i)
+      }else{
+        cat("problem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
+      }
+    }
+    rownames(agesel) <- 1:nrow(agesel)
+
     
-    ## growth
+    ## growth (females only)
     growthtemp <- stats$growthseries
     imorphf <- ifelse(max(stats$morph_indexing$Index)==10,3,1)
     growthtemp <- growthtemp[growthtemp$Morph==imorphf,-(1:4)]
@@ -336,7 +341,6 @@ SSsummarize <- function(biglist,
   mylist$keyvec         <- keyvec
   mylist$maxgrad        <- maxgrad
   mylist$nsexes         <- nsexes
-  #mylist                <- c(mylist,selexlist)
   mylist$pars           <- pars
   mylist$parsSD         <- parsSD
   mylist$parphases      <- parphases
@@ -365,6 +369,9 @@ SSsummarize <- function(biglist,
   mylist$recdevsLower   <- recdevsLower
   mylist$recdevsUpper   <- recdevsUpper
   mylist$growth         <- growth
+  mylist$sizesel        <- sizesel
+  mylist$agesel         <- agesel
+  mylist$agesel         <- agesel
   mylist$indices        <- indices
   mylist$InitAgeYrs     <- InitAgeYrs
   mylist$lowerCI        <- lowerCI

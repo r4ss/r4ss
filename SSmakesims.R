@@ -31,6 +31,7 @@ function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
     makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simD.ss',selex='a',Nmorphs=1,overwrite=T,fixed=T,note='simulation model CaseD')
 
     estimated=c('R0','steep','VonBert','L_at_A','NatM_p_1_Fem','CV_young_Fem_GP_1')
+    estimated=c('R0','steep','VonBert','L_at_A','NatM_p_1_Fem','CV_young_Fem_GP_1','CV_old_Fem_GP_1')
     if(!steep) estimated <- estimated[estimated!="steep"]
     if(!M) estimated <- estimated[estimated!="NatM_p_1_Fem"]
     if(!CV) estimated <- estimated[estimated!="CV_young_Fem_GP_1"]

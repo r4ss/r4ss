@@ -97,12 +97,14 @@ SSplotComparisons <-
       SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
     }
   }
-  
+
+  # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
   if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
   if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
-  
+
+  # setup colors, points, and line types
   if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
   if(col[1]=="default" & nlines<3) col <- rc(nlines)
   if(col[1]=="default" & nlines==3) col <- c("blue","red","green3")
@@ -110,13 +112,13 @@ SSplotComparisons <-
   if(shadecol[1]=="default" & nlines<3) shadecol <- rc(nlines,alpha=shadealpha)
   if(shadecol[1]=="default" & nlines==3) shadecol <- rgb(red=c(0,1,0),green=c(0,0,0.8),blue=c(1,0,0),alpha=shadealpha)
 
-  if(pch[1]=="default") pch <- 1:nlines
+  if(pch[1]=="default") pch <- rep(1:25,10)[1:nlines]
   if(lty[1]=="default") lty <- 1:nlines
 
-  if(length(col) < nlines) col <- rep(col,nlines)
-  if(length(pch) < nlines) pch <- rep(pch,nlines)
-  if(length(lty) < nlines) lty <- rep(lty,nlines)
-  if(length(lwd) < nlines) lwd <- rep(lwd,nlines)
+  if(length(col) < nlines) col <- rep(col,nlines)[1:nlines]
+  if(length(pch) < nlines) pch <- rep(pch,nlines)[1:nlines]
+  if(length(lty) < nlines) lty <- rep(lty,nlines)[1:nlines]
+  if(length(lwd) < nlines) lwd <- rep(lwd,nlines)[1:nlines]
   
   if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
 
