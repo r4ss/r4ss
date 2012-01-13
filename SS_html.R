@@ -5,6 +5,7 @@ SS_html <- function(replist=NULL,
                     width=500,
                     openfile=TRUE,
                     multimodel=FALSE,
+                    filenotes=NULL,
                     verbose=TRUE){
   cat("Running 'SS_html':\n",
       "  By default, this function will look in the directory where PNG files were created\n",
@@ -217,6 +218,14 @@ SS_html <- function(replist=NULL,
             '<p><b>Starting time of model:</b>\n',
             substring(replist$Run_time,12),'</p>\n\n',
             sep="", file=htmlfile, append=TRUE)
+        if(!is.null(filenotes)){
+          for(i in 1:length(filenotes)){
+            cat('<p><b>Notes:</b>\n',
+                paste(filenotes,collapse='</b>\n'),
+                '</p>\n\n',
+                sep="", file=htmlfile, append=TRUE)
+          }
+        }
         nwarn <- replist$Nwarnings
         if(nwarn==0){
           cat('<p><b>Warnings (from file warnings.sso):</b> None</p>\n\n',

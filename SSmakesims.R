@@ -1,6 +1,6 @@
 SSmakesims <-
-function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
-         exe="ss3.exe",steep=FALSE,M=FALSE,CV=FALSE,trend=FALSE)
+function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,make4=FALSE,
+         exe="ss3.exe",steep=FALSE,M=FALSE,CV=FALSE,trend=FALSE,morphratio=1)
 {
   if(copymasters){
     # new directory
@@ -16,8 +16,10 @@ function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
     copyfile('dat_master.ss',overwrite=T)
     copyfile('ctl_master.ss',overwrite=T)
 
-    copyfile(paste('sims',exe,sep='/'),overwrite=T)
-    copyfile(paste('fits',exe,sep='/'),overwrite=T)
+    for(i in 1:length(exe)){
+      copyfile(paste('sims',exe[i],sep='/'),overwrite=T)
+      copyfile(paste('fits',exe[i],sep='/'),overwrite=T)
+    }
   }
   if(makecases){
     setwd(newdir)
@@ -25,10 +27,10 @@ function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
     source('c:/SS/morphs/R/make_ctl_files.R')
     wd <- getwd()
     # simulation models
-    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simA.ss',selex='d',Nmorphs=5,overwrite=T,fixed=T,note='simulation model CaseA')
-    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simB.ss',selex='d',Nmorphs=1,overwrite=T,fixed=T,note='simulation model CaseB')
-    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simC.ss',selex='a',Nmorphs=5,overwrite=T,fixed=T,note='simulation model CaseC')
-    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simD.ss',selex='a',Nmorphs=1,overwrite=T,fixed=T,note='simulation model CaseD')
+    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simA.ss',selex='d',Nmorphs=5,overwrite=T,fixed=T,note='simulation model CaseA',morphratio=morphratio)
+    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simB.ss',selex='d',Nmorphs=1,overwrite=T,fixed=T,note='simulation model CaseB',morphratio=morphratio)
+    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simC.ss',selex='a',Nmorphs=5,overwrite=T,fixed=T,note='simulation model CaseC',morphratio=morphratio)
+    makectl(newmaxbias=1,indir=wd,outdir='same',outname='ctl_simD.ss',selex='a',Nmorphs=1,overwrite=T,fixed=T,note='simulation model CaseD',morphratio=morphratio)
 
     estimated=c('R0','steep','VonBert','L_at_A','NatM_p_1_Fem','CV_young_Fem_GP_1')
     estimated=c('R0','steep','VonBert','L_at_A','NatM_p_1_Fem','CV_young_Fem_GP_1','CV_old_Fem_GP_1')
@@ -37,17 +39,17 @@ function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
     if(!CV) estimated <- estimated[estimated!="CV_young_Fem_GP_1"]
 
     # estimation models
-    makectl(indir=wd,outdir='same',outname='ctl_fitA.ss',selex='d',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseA')
-    makectl(indir=wd,outdir='same',outname='ctl_fitB.ss',selex='d',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseB')
-    makectl(indir=wd,outdir='same',outname='ctl_fitC.ss',selex='a',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseC')
-    makectl(indir=wd,outdir='same',outname='ctl_fitD.ss',selex='a',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseD')
+    makectl(indir=wd,outdir='same',outname='ctl_fitA.ss',selex='d',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseA',morphratio=morphratio)
+    makectl(indir=wd,outdir='same',outname='ctl_fitB.ss',selex='d',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseB',morphratio=morphratio)
+    makectl(indir=wd,outdir='same',outname='ctl_fitC.ss',selex='a',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseC',morphratio=morphratio)
+    makectl(indir=wd,outdir='same',outname='ctl_fitD.ss',selex='a',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,note='estimation model CaseD',morphratio=morphratio)
 
     # estimation models with trend in selectivity
     if(trend){
-      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitA_trend.ss',selex='d',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseA with trend in selectivity')
-      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitB_trend.ss',selex='d',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseB with trend in selectivity')
-      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitC_trend.ss',selex='a',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseC with trend in selectivity')
-      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitD_trend.ss',selex='a',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseD with trend in selectivity')
+      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitA_trend.ss',selex='d',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseA with trend in selectivity',morphratio=morphratio)
+      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitB_trend.ss',selex='d',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseB with trend in selectivity',morphratio=morphratio)
+      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitC_trend.ss',selex='a',Nmorphs=5,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseC with trend in selectivity',morphratio=morphratio)
+      makectl(newmaxbias=maxb,newramp=newr,indir=wd,outdir='same',outname='ctl_fitD_trend.ss',selex='a',Nmorphs=1,overwrite=T,estimated=estimated,fixed=F,seltrend=T,note='CaseD with trend in selectivity',morphratio=morphratio)
     }
 
     ## file.copy('dat_master.ss','dat_simA.ss')
@@ -76,5 +78,19 @@ function(copymasters=TRUE,makecases=FALSE,olddir=NULL,newdir=NULL,
     s1fit$last_estimation_phase <- 25
     SS_writestarter(s1fit, dir='fits', overwrite=T)
     SS_writestarter(s1sim, dir='sims', overwrite=T)
+
+    if(make4){
+      dirnames <- c("fits3even", "fits3odd", "fits4even", "fits4odd")
+      for(idir in 1:4){
+        dirname <- dirnames[idir]
+        dir.create(dirnames[idir])
+        file.copy('fits/forecast.ss',paste(dirname,'/forecast.ss',sep=""))
+        file.copy('fits/starter.ss',paste(dirname,'/starter.ss',sep=""))
+        for(i in 1:length(exe)){
+          file.copy(paste('fits',exe[i],sep='/'),paste('dirname',exe[i],sep='/'))
+        }
+      }
+    }
+    
   }
 } # end of function

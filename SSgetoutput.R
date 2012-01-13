@@ -18,7 +18,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
   n1 <- length(keyvec)
   n2 <- length(dirvec)
   if(n1>1 & n2>1 & n1!=n2){
-    print("inputs 'keyvec' and 'dirvec' have unmatched lengths > 1",quote=FALSE)
+    cat("inputs 'keyvec' and 'dirvec' have unmatched lengths > 1\n")
   }else{
     n <- max(1, n1, n2) # n=1 or n=length of either optional input vector
   }
@@ -42,7 +42,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     }
     newobject <- objectnames[i]
 
-    if(verbose & !is.null(key)) print(paste("getting files with key =",key),quote=FALSE)
+    if(verbose & !is.null(key)) cat("getting files with key =",key,"\n")
 
     repfilename <- paste("Report",key2,".sso",sep="")
     covarname <- paste("covar",key2,".sso",sep="")
@@ -56,7 +56,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
 
     if(file.exists(paste(mydir,covarname,sep="")) & getcovar) mycovar=TRUE else mycovar=FALSE
     fullfile <- paste(mydir,repfilename,sep="")
-    if(verbose) print(paste("reading output from ",fullfile,sep=""),quote=FALSE)
+    if(verbose) cat("reading output from",fullfile,"\n")
     repfilesize <- file.info(fullfile)$size
 
     if(!is.na(repfilesize) && repfilesize>0){ # if there's a non-empty file
@@ -65,25 +65,25 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
                             covar=mycovar, forecast=forecast, verbose=FALSE, ncols=ncols)
       if(is.null(output)){
         # for some reason covarfile exists, but is old so SS_output rejects
-        print("output==NULL so trying again with covar=FALSE",quote=FALSE)
+        cat("output==NULL so trying again with covar=FALSE\n")
         output <- SS_output(dir=mydir, repfile=repfilename, covarfile=covarname,
                               compfile=compfilename, NoCompOK=NoCompOK, printstats=FALSE,
                               covar=FALSE, forecast=forecast, verbose=FALSE, ncols=ncols)
       }
       output$key <- as.character(key)
     }else{
-      print("!repfile doesn't exists or is empty")
+      cat("!repfile doesn't exists or is empty\n")
     }
-    print(paste("added element '", newobject, "' to list",sep=""),quote=FALSE)
+    cat("added element '", newobject, "' to list\n",sep="")
     if(listlists) biglist[[newobject]] <- output
     if(global)
     {
       if(exists(newobject) && !is.null(get(newobject)) & !replace)
       {
-        print(paste("exists and not replacing:",newobject),quote=FALSE)
+        cat("exists and not replacing:",newobject,"\n")
       }else{
         assign(newobject,output,pos=1)
-        print(paste("created new object:",newobject),quote=FALSE)
+        cat("created new object:",newobject,"\n")
       }
     }
   }

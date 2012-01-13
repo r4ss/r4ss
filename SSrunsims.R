@@ -6,12 +6,13 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          MLEdata=FALSE,skipfiles=TRUE,
          simchoices=1,fitchoices=1,samedatafile=FALSE,
          CAAL=TRUE,
+         fit_add_to_comp = 0.001,
          homepath="c:/myfiles/",
          recdevmatrix=NULL,
          rescale=TRUE,
          fitbiasramp=FALSE,
          exe="ss3_opt",
-         simextras="-nox -nohess",
+         simextras="-nox -gbs 1000000000 -cbs 1000000000 -nohess",
          fitextras="-nox -gbs 1000000000 -cbs 1000000000",
          fyr=NULL, lyr=NULL,
          printfile=TRUE,
@@ -163,6 +164,12 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                         )
           }
           MLEdata <- MLEdata.temp # restore old value
+
+          newdatfile <- paste(simpath,"/bootdat_",key,".ss",sep='')
+          temp <- readLines(newdatfile)
+          temp[grep("add_to_comp",temp)] <- paste(fit_add_to_comp," #_add_to_comp")
+          cat("changing 'add_to_comp' input in bootstrap data file to",fit_add_to_comp,"\n")
+          writeLines(temp, newdatfile)
           
           # fill in or create a data frame to store notes on model runs
           if(exists("simnotes")) simnotes[nrow(simnotes)+1,] <- data.frame(isim, isimchoice, key, Sys.time(), stringsAsFactors=FALSE)
@@ -278,9 +285,10 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                   replist <- SS_output(dir=masterpath,model=exe,repfile=oldrepfilename,
                                        compfile=oldcompfilename,covarfile=oldcovarname,
                                        forecast=FALSE,printstats=FALSE,verbose=FALSE)
-                  SS_fitbiasramp(replist,print=TRUE,
+                  SS_fitbiasramp(replist,print=TRUE,plotdir=fitpath,
                                  oldctl="ctl_ifit.ss",newctl=newctl)
-                  file.copy('recruit_fit_bias_adjust.png',paste('recruit_fit_bias_adjust',key,'.png',sep=""))
+                  file.copy('recruit_fit_bias_adjust.png',
+                            paste(masterpath,'/recruit_fit_bias_adjust',key,'.png',sep=""))
                   file.copy(newctl,"ctl_ifit.ss",overwrite=TRUE)
                 }else{
                   cat("run failed to converge (or is being run by another R process).","\n")
@@ -317,9 +325,10 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
                 ## cat(file.info(boot1))
                 ## cat(file.info(boot2))
                 temp <- file.copy(boot1,boot2,overwrite=TRUE)
-                if(temp!=TRUE){
-                  cat("!error copying bootstrap data files: make sure simulations were run to create them\n")
-                  break()
+                if(temp==TRUE){
+                  cat("copied",boot1,"to",boot2,"\n")
+                }else{
+                  stop("!error copying bootstrap data files: make sure simulations were run to create them\n")
                 }
 
                 if(file.exists("covar.sso")) file.remove("covar.sso")

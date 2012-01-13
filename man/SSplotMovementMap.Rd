@@ -11,7 +11,8 @@
 \usage{
 SSplotMovementMap(replist=NULL, xlim, ylim,
            polygonlist, colvec, land="grey", xytable=NULL,
-           moveage=5,moveseas=1,lwdscale=5,legend=TRUE,title=NULL)
+           moveage=5,moveseas=1,lwdscale=5,legend=TRUE,title=NULL,
+           areanames=NULL,cex=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -58,6 +59,13 @@ SSplotMovementMap(replist=NULL, xlim, ylim,
   }
   \item{title}{
     optional title to be added above map
+  }
+  \item{areanames}{
+    optional vector of names to be shown on map at coordinates matching
+    xytable values
+  }
+  \item{cex}{
+    character expansion to apply to text shown by areanames (if used)
   }
 }
 \details{

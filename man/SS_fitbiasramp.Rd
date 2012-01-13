@@ -11,7 +11,7 @@ controls for the bias adjustment in Stock Synthesis
 }
 \usage{
 SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
-  twoplots=TRUE, transform=FALSE, png=FALSE, pdf=FALSE, oldctl=NULL,
+  twoplots=TRUE, transform=FALSE, plot=TRUE, print=FALSE, oldctl=NULL,
   newctl=NULL, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
   cex.main=1)
 }
@@ -30,8 +30,10 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
     Default=TRUE.}
   \item{transform}{ An experimental option to treat the transform the 5
     quantities to improve minimization. Doesn't work well. Default=FALSE. }
-  \item{png}{ Send plot to PNG file? Default=FALSE. }
-  \item{pdf}{ Send plot to PDF file? Default=FALSE. }
+  \item{plot}{ Plot to active plot device?  }
+  \item{print}{ Print to PNG files?  }
+  \item{plotdir}{ Directory where PNG files will be written. By default
+    it will be the directory where the model was run. }
   \item{oldctl}{ Optional name of existing control file to modify.
     Default=NULL. }
   \item{newctl}{ Optional name of new control file to create from old
@@ -54,7 +56,9 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
 % %% ...
 % }
 \references{
-  Methot, R.D. and Taylor, I.G., 2010. Modeling the variability of recruitment in fishery assessment models. In review.
+  Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
+  variability of estimated recruitments in fishery assessment models.
+  Can. J. Fish. Aquat. Sci., 68:1744-1760.
 }
 \author{
 Ian Taylor

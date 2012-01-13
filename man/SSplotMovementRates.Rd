@@ -18,6 +18,12 @@ SSplotMovementRates(replist, subplots=1:2, colvec="default",
   \item{replist}{
     list created by \code{\link{SS_output}}
   }
+  \item{plot}{
+    plot to active plot device?
+  }
+  \item{print}{
+    print to PNG files?
+  }
   \item{subplots}{
     which subplots to create
   }

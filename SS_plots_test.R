@@ -7,7 +7,7 @@ SS_plots_test <-
     aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
     pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
     rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
-    SSplotDatMargin=8,
+    SSplotDatMargin=8,filenotes=NULL,
     catchasnumbers=FALSE,legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
 {
   ################################################################################
@@ -162,6 +162,14 @@ SS_plots_test <-
     text(0,y,paste(Files2[[1]],Files2[2]),pos=4)
     y <- y+ystep
     text(0,y,paste(Files2[[3]],Files2[4]),pos=4)
+    if(!is.null(filenotes)){
+      y <- y+ystep
+      text(0,y,"Notes:",pos=4)
+      for(i in 1:length(filenotes)){
+        y <- y+ystep
+        text(0,y,filenotes[i],pos=4)
+      }
+    }
     par(mar=mar0) # replace margins
   }
 
@@ -895,7 +903,7 @@ SS_plots_test <-
     csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
-    if(html) SS_html(replist)
+    if(html) SS_html(replist,filenotes=filenotes)
     return(invisible(plotInfoTable))
   }else{
     return(invisible(999))

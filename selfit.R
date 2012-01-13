@@ -1,5 +1,5 @@
 selfit <-
-function (minLength=10, maxLength=65, silent = FALSE)
+function (minLength=10, maxLength=65, silent=FALSE,init=NULL)
 {
 
 ################################################################################
@@ -25,15 +25,30 @@ function (minLength=10, maxLength=65, silent = FALSE)
     kernel <- tclVar("Double_Normal")
     minLB <- tclVar(minLength)
     maxLB <- tclVar(maxLength)
-    sp1 <- tclVar(40)
-    sp2 <- tclVar(0)
-    sp3 <- tclVar(4.86)
-    sp4 <- tclVar(5.68)
-    sp5 <- tclVar(-10)
-    sp6 <- tclVar(0.8)
-    sp7 <- tclVar(-2.22)
-    sp8 <- tclVar(10)
-
+    if(!is.null(init)){
+      if(length(init)==6) init <- c(init,0,0)
+      if(length(init)==8){
+        sp1 <- tclVar(init[1])
+        sp2 <- tclVar(init[2])
+        sp3 <- tclVar(init[3])
+        sp4 <- tclVar(init[4])
+        sp5 <- tclVar(init[5])
+        sp6 <- tclVar(init[6])
+        sp7 <- tclVar(init[7])
+        sp8 <- tclVar(init[8])
+      }else{
+        stop("'init' input should be of length 8 (with dummy values in last 2 spots for double-normal)")
+      }
+    }else{
+      sp1 <- tclVar(40)
+      sp2 <- tclVar(0)
+      sp3 <- tclVar(4.86)
+      sp4 <- tclVar(5.68)
+      sp5 <- tclVar(-10)
+      sp6 <- tclVar(0.8)
+      sp7 <- tclVar(-2.22)
+      sp8 <- tclVar(10)
+    }
     replot <- function(...) {
         k <- as.character(tclObj(kernel))
         minL <- as.numeric(tclObj(minLB))
@@ -147,16 +162,16 @@ function (minLength=10, maxLength=65, silent = FALSE)
     frame7 <- tkframe(left.frm, relief = "groove", borderwidth = 2)
     entry.sp5 <- tkentry(frame7, textvariable = sp5, width="8")
     tkpack(ts6 <- tkscale(frame7, label = "Parameter 5 :", command = replot,
-        from = -10, to = 10, showvalue = 1, variable = sp5,
-        resolution = 0.01, orient = "horiz", relief = "groove"),
+        from = -999, to = 10, showvalue = 1, variable = sp5,
+        resolution = 0.1, orient = "horiz", relief = "groove"),
         fill = "x", expand = 1, padx = 3, ipadx = 30, pady = 2, ipady = 2, side = "left")
     tkpack(entry.sp5, side = "right")
 
     frame8 <- tkframe(left.frm, relief = "groove", borderwidth = 2)
     entry.sp6 <- tkentry(frame8, textvariable = sp6, width="8")
     tkpack(ts7 <- tkscale(frame8, label = "Parameter 6 :", command = replot,
-        from = -10, to = 10, showvalue = 1, variable = sp6,
-        resolution = 0.01, orient = "horiz", relief = "groove"),
+        from = -999, to = 10, showvalue = 1, variable = sp6,
+        resolution = 0.1, orient = "horiz", relief = "groove"),
         fill = "x", expand = 1, padx = 3, ipadx = 30, pady = 2, ipady = 2, side = "left")
     tkpack(entry.sp6, side = "right")
 

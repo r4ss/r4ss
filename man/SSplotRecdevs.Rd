@@ -9,13 +9,13 @@
   measures related to bias adjustment.
 }
 \usage{
-SSplotRecdevs(replist, subplots = 1:4,
+SSplotRecdevs(replist, subplots = 1:3,
 plot = TRUE, print = FALSE, add = FALSE,
 uncertainty = TRUE, forecastplot = FALSE,
 col1 = "black", col2 = "blue",
 col3 = "green3", col4 = "red", legendloc = "topleft",
 labels = c("Year", "Asymptotic standard error estimate",
-"Log recruitment deviation", "Bias adjustment check",
+"Log recruitment deviation",
 "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"),
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)

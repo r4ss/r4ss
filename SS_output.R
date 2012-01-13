@@ -16,7 +16,6 @@ SS_output <-
   #          and other contributors to http://code.google.com/p/r4ss/
   # Returns: a list containing elements of Report.sso and/or covar.sso,
   #          formatted as R objects, and optional summary statistics to R console
-  # General: Updated for Stock Synthesis version 3.10; R version 2.8.1
   # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
   # Required packages: none
   #
@@ -258,7 +257,7 @@ SS_output <-
     }
   }else{
     if(verbose) cat("You skipped the forecast file\n",
-                    "setting sprtarg and btarg to 0.4 (can override in SS_plots)")
+                    "setting sprtarg and btarg to 0.4 (can override in SS_plots)\n")
     sprtarg <- 0.4
     btarg <- 0.4
   }
@@ -425,10 +424,19 @@ SS_output <-
         notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
         conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
       }
-      lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-      sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-      agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
-      condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+      if(SS_versionNumeric >= 3.22){
+        # new designation of ghost fleets from negative samp size to negative fleet
+        lendbase         <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used!="skip",]
+        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & compdbase$Used!="skip",]
+        agedbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & notconditional,]
+        condbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & conditional,]
+      }else{
+        # older designation of ghost fleets from negative samp size to negative fleet
+        lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
+        agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
+        condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+      }
       ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
       ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
       ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
