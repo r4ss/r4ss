@@ -563,6 +563,7 @@ SS_output <-
   stats$likelihoods_raw_by_fleet <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
 
   # parameters
+  if(SS_versionNumeric>= 3.23) shift <- -1
   if(SS_versionNumeric== 3.22) shift <- -2
   if(SS_versionNumeric < 3.22) shift <- -1
   parameters <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES",shift,header=TRUE)
@@ -571,7 +572,7 @@ SS_output <-
     temp <- tail(parameters,2)[,1:3]
     parameters <- parameters[1:(nrow(parameters)-2),]
   }
-  
+
   parameters[parameters=="_"] <- NA
   parameters[parameters==" "] <- NA
 
