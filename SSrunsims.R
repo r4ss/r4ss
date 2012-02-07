@@ -11,6 +11,7 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
          recdevmatrix=NULL,
          rescale=TRUE,
          fitbiasramp=FALSE,
+         trend=FALSE,
          exe="ss3_opt",
          simextras="-nox -gbs 1000000000 -cbs 1000000000 -nohess",
          fitextras="-nox -gbs 1000000000 -cbs 1000000000",
@@ -204,6 +205,8 @@ function(sims=1,newrun=TRUE,sim=FALSE,fit=FALSE,
             # text description of particular case
             filekey <- paste("fit",LETTERS[ifitchoice],sep="")
             key <- paste("sim",LETTERS[isimchoice],"_fit",LETTERS[ifitchoice],ifit,sep="")
+            if(trend) key <- paste(key,"_trend",sep="")
+            if(trend) filekey <- paste(filekey,"_trend",sep="")
 
             # if fitbiasramp will be applied on some model runs
             # but NOT this one
