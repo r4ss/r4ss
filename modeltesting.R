@@ -286,10 +286,11 @@ checkforreport <- function(dir="default", folderlist="default"){
 
 if(FALSE){
   ## this stuff should be pasted directly into R instead of run as a function
-  
+  source('c:/SS/R/r4ss/trunk/modeltesting.R')
+
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_23a_Oct31",
-                           newdir="c:/SS/modeltesting/Version_3_23b_Nov8")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_23b_Nov8",
+                           newdir="c:/SS/modeltesting/Version_3_24a_Feb10")
 
   source('c:/SS/R/r4ss/trunk/modeltesting.R')
   setwd("c:/SS/modeltesting/Version_3_23b_Nov8")
@@ -307,7 +308,7 @@ if(FALSE){
                            newdir="c:/SS/modeltesting/Version_3_21e_June9_examples_test")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.23b_Nov8/",
+  copyexe(sourcedir="c:/SS/SSv3.24a_Feb10/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3.exe")
@@ -361,7 +362,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_23b_Nov8"))
+               SSversions=c("Version_3_24a_Nov8"))
 
   # example on sysiphus
   alloutput <-

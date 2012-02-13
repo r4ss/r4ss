@@ -109,13 +109,13 @@ SS_output <-
   SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
 
   # rough limits on compatibility of this code
-  SS_versionMax <- 3.23
+  SS_versionMax <- 3.24
   SS_versionMin <- 3.11 # may no longer work
 
   # test for version compatibility with this code
-  if(SS_versionNumeric < SS_versionMin  | SS_versionMax > 3.23){
-    cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
-        "  you are using ",substr(SS_version,1,9)," which may NOT work with this R code.\n",sep="")
+  if(SS_versionNumeric < SS_versionMin  | SS_versionNumeric > SS_versionMax){
+    cat("\n! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
+        "  you are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
   }else{
     if(verbose)
     cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
@@ -167,7 +167,7 @@ SS_output <-
   # time check for CompReport file
   compfile <- paste(dir,compfile,sep="")
   if(file.exists(compfile)){
-    comphead <- readLines(con=compfile,n=20)
+    comphead <- readLines(con=compfile,n=30)
     compskip <- grep("Composition_Database",comphead)
     # compend value helps diagnose when no comp data exists in CompReport.sso file.
     compend <- grep(" end ",comphead) 
@@ -339,7 +339,7 @@ SS_output <-
     seasdurations <- 1/nseasons
     seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
   }else{
-    # version 3.20-3.23
+    # version 3.20-3.24
     rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
     # get season stuff
     nseasons <- as.numeric(rawdefs[1,2])
@@ -392,6 +392,7 @@ SS_output <-
     }else{
       # read composition database
       if(SS_versionshort=="SS-V3.11") col.names=1:21 else col.names=1:22
+      if(SS_versionshort=="SS-V3.24") col.names=1:23
       rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
       names(rawcompdbase) <- rawcompdbase[1,]
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
@@ -1156,13 +1157,19 @@ if(FALSE){
     # CPUE/Survey series
     cpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,header=TRUE)
     cpue[cpue=="_"] <- NA
-    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
     cpue$FleetName <- NA
     cpue$FleetNum <- NA
-    for(i in 1:nrow(cpue))
-    {
-      cpue$FleetNum[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
-      cpue$FleetName[i] <- substring(cpue$Fleet[i],nchar(cpue$FleetNum[i])+2)
+    if(SS_versionNumeric < 3.24){
+      for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
+      for(i in 1:nrow(cpue)){
+        cpue$FleetNum[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
+        cpue$FleetName[i] <- substring(cpue$Fleet[i],nchar(cpue$FleetNum[i])+2)
+      }
+    }else{
+      for(i in (1:ncol(cpue))[!names(cpue) %in% c("Name","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
+      # redundant columns are used to easily maintain backwards compatibility of plotting code
+      cpue$FleetNum <- cpue$Fleet
+      cpue$FleetName <- cpue$Name
     }
   }else{
     cpue <- NA
