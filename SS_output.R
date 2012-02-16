@@ -1,6 +1,7 @@
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
+           forefile="Forecast-report.sso",
            ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, 
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, aalmaxbinrange=4)
@@ -214,7 +215,7 @@ SS_output <-
 
   # read forecast report file
   if(forecast){
-    forecastname <- paste(dir,"Forecast-report.sso",sep="")
+    forecastname <- paste(dir,forefile,sep="")
     temp <- file.info(forecastname)$size
     if(is.na(temp) | temp==0){
       stop("Forecase-report.sso file is empty.\n",
