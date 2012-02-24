@@ -144,10 +144,9 @@ SS_output <-
     # CoVar.sso file
     covarfile <- paste(dir,covarfile,sep="")
     if(!file.exists(covarfile)){
-      cat("covar file not found. Change input to covar=FALSE, or modify 'covarfile' input.\n")
-      return()
+      stop("covar file not found. Change input to covar=FALSE, or modify 'covarfile' input.\n")
     }
-
+    
     # time check for CoVar file
     covarhead <- readLines(con=covarfile,n=10)
     covarskip <- grep("active-i",covarhead)-1
@@ -162,6 +161,13 @@ SS_output <-
         cat("covar time:",covartime,"\n")
         stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
       }
+    }
+    # covar file exists, but has problems
+    nowrite <- grep("do not write",covarhead)
+    if(length(nowrite)>0){
+      stop("problem with covar file: file contains the warning\n",
+           "'",covarhead[nowrite],"'\n",
+           "Change input to covar=FALSE, or modify 'covarfile' input.\n",sep="")
     }
   }
 
