@@ -2,7 +2,7 @@ SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, 
+           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, aalmaxbinrange=4)
 {
@@ -26,7 +26,7 @@ SS_output <-
   ## perhaps this should be replaced with a check for a newer file version on the web
   ## codedate <- "October 26, 2011"
   if(verbose){
-    ## cat("R function updated:",codedate,"\n") 
+    ## cat("R function updated:",codedate,"\n")
     cat("Check for new code and report problems at http://code.google.com/p/r4ss/\n")
   }
 
@@ -54,7 +54,7 @@ SS_output <-
     line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
     line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
     if(is.na(line1) | is.na(line2)) return("absent")
-    
+
     if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
     if(cols[1]=="all")      out <- objsubset[(line1+adjust1):(line2+adjust2),]
     if(cols[1]=="nonblank"){
@@ -81,14 +81,14 @@ SS_output <-
     parfile <- parfile[filetimes==max(filetimes)]
     if(verbose) cat("Multiple files in directory match pattern *.par\n",
                     "choosing most recently modified:",parfile,"\n")
-  }    
+  }
   if(length(parfile)==0){
     if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
     parfile <- NA
   }else{
     parfile <- paste(dir,parfile,sep="/")
   }
-  
+
   # read three rows to get start time and version number from rep file
   if(file.exists(repfile)){
     if(file.info(repfile)$size>0){
@@ -104,7 +104,7 @@ SS_output <-
   # warn if SS version used to create rep file is too old or too new for this code
   # note: SS_versionCode is new with V3.20
   # perhaps in teh future we will use it to replace SS_versionshort throughout r4ss?
-  SS_versionCode <- rephead[grep("#V",rephead)] 
+  SS_versionCode <- rephead[grep("#V",rephead)]
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
   SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
@@ -146,7 +146,7 @@ SS_output <-
     if(!file.exists(covarfile)){
       stop("covar file not found. Change input to covar=FALSE, or modify 'covarfile' input.\n")
     }
-    
+
     # time check for CoVar file
     covarhead <- readLines(con=covarfile,n=10)
     covarskip <- grep("active-i",covarhead)-1
@@ -177,7 +177,7 @@ SS_output <-
     comphead <- readLines(con=compfile,n=30)
     compskip <- grep("Composition_Database",comphead)
     # compend value helps diagnose when no comp data exists in CompReport.sso file.
-    compend <- grep(" end ",comphead) 
+    compend <- grep(" end ",comphead)
     if(length(compend)==0) compend <- 999
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
@@ -204,7 +204,7 @@ SS_output <-
                        colClasses="character",nrows=-1,comment.char="")
 
   # Ian T.: if the read.table command above had "blank.lines.skip=TRUE" then blank lines could play a role in parsing the report file
-  
+
   # check empty columns
   nonblanks <- apply(rawrep,2,emptytest) < 1
   maxnonblank = max(0,(1:ncols)[nonblanks==TRUE])
@@ -278,7 +278,7 @@ SS_output <-
     logfile <- logfile[filetimes==max(filetimes)]
     if(verbose) cat("Multiple files in directory match pattern *.log\n",
                     "choosing most recently modified file:",logfile,"\n")
-  }    
+  }
   if(length(logfile)==1 && file.info(paste(dir,logfile,sep='/'))$size>0){
     logfile <- read.table(paste(dir,logfile,sep='/'))[,c(4,6)]
     names(logfile) <- c("TempFile","Size")
@@ -332,7 +332,7 @@ SS_output <-
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
 
   ### DEFINITIONS section (new in SSv3.20)
-  if(SS_versionshort=="SS-V3.11"){    
+  if(SS_versionshort=="SS-V3.11"){
     nfleets <- length(unique(selex$Fleet))
     nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
     FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
@@ -409,7 +409,7 @@ SS_output <-
       compdbase$Used[is.na(compdbase$Used)] <- "yes"
       if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-      
+
       n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
       if(n>0){
         cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
@@ -462,14 +462,14 @@ SS_output <-
                 " back to the original units of lbs or inches.\n")
         }
         # convert bins from kg to lbs when that was the original unit
-        sizedbase$Bin[sizedbase$units=="lb"] <- 
+        sizedbase$Bin[sizedbase$units=="lb"] <-
           sizedbase$Bin[sizedbase$units=="lb"]/0.4536
         # convert bins from cm to inches when that was the original unit
-        sizedbase$Bin[sizedbase$units=="in"] <- 
+        sizedbase$Bin[sizedbase$units=="in"] <-
           sizedbase$Bin[sizedbase$units=="in"]/2.54
 
       }
-      
+
       if(is.null(compdbase$N)){
         good <- TRUE
       }else{
@@ -549,7 +549,7 @@ SS_output <-
   stats <- list()
   stats$SS_version <- SS_version
   stats$SS_versionshort <- SS_versionshort
-  
+
   stats$Run_time <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
 
   tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
@@ -560,7 +560,7 @@ SS_output <-
   stats$Nwarnings <- nwarn
   if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
   stats$warnings <- warn
-  
+
   # likelihoods
   rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2)
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
@@ -629,7 +629,7 @@ SS_output <-
   stats$estimated_non_rec_devparameters <- pars[,names(pars) %in%
       c("Label","Value","Phase","Min","Max","Init","Prior","PR_type",
         "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
-  
+
   # read covar.sso file
   if(covar){
     CoVar <- read.table(covarfile,header=TRUE,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=covarskip)
@@ -726,12 +726,12 @@ SS_output <-
     }else{if(verbose) cat("You skipped the correlation check\n")}
   }else{if(verbose) cat("You skipped the covar file\n")}
   flush.console()
-  
+
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
-  
+
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
@@ -773,7 +773,7 @@ SS_output <-
   # recruitment distribution
   recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1,header=TRUE)
   for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
-  
+
   # gradient
   if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
@@ -825,7 +825,7 @@ if(FALSE){
   stats$Size_comp_Eff_N_tuning_check <- sizentune
 }
 
-  
+
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
 
@@ -842,7 +842,7 @@ if(FALSE){
     returndat$survey_error <- survey_error
     returndat$IsFishFleet  <- !is.na(catch_units)
   }
-  
+
   returndat$nfleets     <- nfleets
   returndat$nfishfleets <- nfishfleets
   returndat$nsexes      <- nsexes
@@ -867,7 +867,7 @@ if(FALSE){
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
-  
+
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough
   rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
@@ -984,7 +984,7 @@ if(FALSE){
                          morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
 
   # filter in case multiple growth patterns (would cause problems)
-  mainmorphs <- min(temp$Index[temp$Gender==1]) 
+  mainmorphs <- min(temp$Index[temp$Gender==1])
   if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
   if(length(mainmorphs)==0) cat("!Error with morph indexing in SS_output function.\n")
   returndat$mainmorphs  <- mainmorphs
@@ -1112,7 +1112,7 @@ if(FALSE){
   }
   returndat$mnwgt <- mnwgt
   returndat$DF_mnwgt <- DF_mnwgt
-  
+
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
   if(length(grep("Kobe_Plot",rawrep[,1]))!=0){
@@ -1148,8 +1148,8 @@ if(FALSE){
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
   returndat$minbthresh <- ifelse(btarg==0.25,0.125,0.25)
-  
-  
+
+
   # Spawner-recruit curve
   rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
   names(rawsr) <- rawsr[1,]
@@ -1200,7 +1200,7 @@ if(FALSE){
     for(i in (1:ncol(rawnatlen))[!(names(rawnatlen) %in% c("Beg/Mid","Era"))]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
     returndat$natlen <- rawnatlen
   }
-  
+
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
   names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
@@ -1220,7 +1220,7 @@ if(FALSE){
   }else{
     returndat$tagreportrates <- NA
   }
-  
+
   # tag recapture table
   tagrecap <- matchfun2("TAG_Recapture",1,
                         "Tags_Alive",-1,
@@ -1232,8 +1232,8 @@ if(FALSE){
     tagrecap <- tagrecap[-(1:4),]
     for(i in 1:ncol(tagrecap)) tagrecap[,i] <- as.numeric(tagrecap[,i])
     returndat$tagrecap <- tagrecap
-    returndat$tagfirstperiod 
-    returndat$tagaccumperiod 
+    returndat$tagfirstperiod
+    returndat$tagaccumperiod
   }else{
     returndat$tagrecap <- NA
     returndat$tagfirstperiod <- NA
@@ -1267,7 +1267,7 @@ if(FALSE){
   }else{
     returndat$tagtotrecap <- NA
   }
-  
+
   # age-length matrix
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
   if(length(rawALK)>1){
@@ -1338,7 +1338,7 @@ if(FALSE){
   }
   returndat$Z_at_age <- Z_at_age
   returndat$M_at_age <- M_at_age
-  
+
   # Dynamic_Bzero output "with fishery"
   Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2",1,"NUMBERS_AT_AGE_Annual_2",-1)
   # Dynamic_Bzero output "no fishery"
@@ -1355,7 +1355,7 @@ if(FALSE){
     }
   }
   returndat$Dynamic_Bzero <- Dynamic_Bzero
-  
+
   # adding stuff to list which gets returned by function
   if(comp){
     returndat$comp_data_exists <- TRUE

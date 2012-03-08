@@ -67,10 +67,9 @@ SSsummarize <- function(biglist,
   maxgrad    <- NULL
   nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
-  indices <- NULL
+  indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
-  
   # notes about what runs were used
   sim        <- NULL
   keyvec2    <- NULL
@@ -370,7 +369,6 @@ SSsummarize <- function(biglist,
   mylist$recdevsUpper   <- recdevsUpper
   mylist$growth         <- growth
   mylist$sizesel        <- sizesel
-  mylist$agesel         <- agesel
   mylist$agesel         <- agesel
   mylist$indices        <- indices
   mylist$InitAgeYrs     <- InitAgeYrs

@@ -362,7 +362,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_24a_Nov8"))
+               SSversions=c("Version_3_24a_Feb10"))
 
   # example on sysiphus
   alloutput <-
@@ -376,7 +376,7 @@ if(FALSE){
     models <- alloutput[[i]]
     testvec <- rep(NA, length(models))
     for(j in 1:length(models)){
-      test <- SS_plots(models[[j]],pdf=T,verbose=F,forecast=F,datplot=T)
+      test <- SS_plots_test(models[[j]],pdf=T,verbose=F,forecast=F,datplot=T)
       if(test==999){
         cat("!!!! plot code succeeded on model",j,"\n")
       }else{
