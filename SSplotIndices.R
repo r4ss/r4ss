@@ -19,7 +19,8 @@ function(replist,subplots=1:9,
          pch1=1, pch2=16, cex=1,
          legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-         addmain=TRUE,plotdir="default", verbose=TRUE)
+         addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
+         verbose=TRUE)
 {
   cpue        <- replist$cpue
   if(is.null(dim(cpue))){
@@ -132,8 +133,10 @@ function(replist,subplots=1:9,
     
     cpuefun1 <- function(addexpected=TRUE){
       # plot of time-series of observed and expected (if requested)
-      if(!add) plot(x=x,y=y,type='n',xlab=labels[1],ylab=labels[2],
-                    main=main,cex.main=cex.main,ylim=c(0,max(y+uiw,na.rm=TRUE)))
+      xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
+      if(!add) plot(x=x, y=y, type='n', xlab=labels[1], ylab=labels[2],
+                    main=main, cex.main=cex.main,
+                    xlim=xlim, ylim=c(0,max(y+uiw,na.rm=TRUE)))
       plotCI(x=x,y=y,sfrac=0.001,uiw=uiw,liw=liw,ylo=0,col=colvec1[s],
              main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,cex=cex)
       abline(h=0,col="grey")
@@ -164,7 +167,7 @@ function(replist,subplots=1:9,
       if(3 %in% subplots) cpuefun2()
     }
     if(print){
-      if(1 %in% subplots){
+      if(1 %in% subplots & datplot){
         file <- paste(plotdir,"/index1_cpuedata_",Fleet,".png",sep="")
         caption <- paste("Index data for",Fleet)
         plotinfo <- pngfun(file=file, caption=caption)
@@ -194,8 +197,10 @@ function(replist,subplots=1:9,
     liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
     cpuefun3 <- function(addexpected=TRUE){
       # plot of time-series of log(observed) and log(expected) (if requested)
-      if(!add) plot(x=x,y=log(y),type='n',xlab=labels[1],ylab=labels[5],
-                    main=main,cex.main=cex.main,ylim=range(log(y)-liw,log(y)+uiw,na.rm=TRUE))
+      xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
+      if(!add) plot(x=x, y=log(y), type='n', xlab=labels[1], ylab=labels[5],
+                    main=main, cex.main=cex.main,
+                    xlim=xlim, ylim=range(log(y)-liw,log(y)+uiw,na.rm=TRUE))
       plotCI(x=x,y=log(y),sfrac=0.001,uiw=uiw,liw=liw,
              col=colvec1[s],lty=1,add=TRUE,pch=pch1,cex=cex)
       if(addexpected) lines(x,log(z),lwd=2,col=col3)
@@ -237,7 +242,7 @@ function(replist,subplots=1:9,
                     col=colvec2[1],pch=pch2)
     }
     if(plot){
-      if(4 %in% subplots) cpuefun3(addexpected=FALSE)
+      if(4 %in% subplots & datplot) cpuefun3(addexpected=FALSE)
       if(5 %in% subplots) cpuefun3()
       if(6 %in% subplots) cpuefun4()
       if(7 %in% subplots & time) cpuefun5()
@@ -292,6 +297,11 @@ function(replist,subplots=1:9,
       main="All cpue plot"
       if(!addmain) main <- ""
       xlim <- c(min(allcpue$year,na.rm=TRUE)-1,max(allcpue$year,na.rm=TRUE)+1)
+
+      # change range if requested
+      xlim[1] <- max(xlim[1],minyr)
+      xlim[2] <- min(xlim[2],maxyr)
+      
       ylim <- c(range(allcpue$stdvalue,na.rm=TRUE))
       usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE))
       if(max(allcpue$Index,na.rm=TRUE) >= 2){

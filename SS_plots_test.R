@@ -426,7 +426,9 @@ SS_plots_test <-
                                 datplot=datplot,
                                 pwidth=pwidth, pheight=pheight, punits=punits,
                                 ptsize=ptsize, res=res,cex.main=cex.main,
-                                plotdir=plotdir)
+                                plotdir=plotdir,
+                                minyr=minyr,
+                                maxyr=maxyr)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
       if(verbose) cat("Skipping index plots (group ",igroup,") because no indices in model\n",sep="")

@@ -346,7 +346,9 @@ SS_plots <-
                   datplot=datplot,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res,cex.main=cex.main,
-                  plotdir=plotdir)
+                  plotdir=plotdir,
+                  minyr=minyr,
+                  maxyr=maxyr)
   } # end if 13 in plot or print
 
   ### Plot 14: numbers at age ###
