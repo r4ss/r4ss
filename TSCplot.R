@@ -11,9 +11,12 @@ TSCplot <- function(SSout,
                     pchSpace = 5,
                     ht=5,wd=7,
                     labelLines=2.8,
-                    makePDF=NULL)  {
+                    makePDF=NULL,
+                    makePNG=NULL)  {
                     
     ### Plots the barchart of catches and depletion trajctory for the TSC report
+
+    if(!is.null(makePDF) & !is.null(makePNG)) stop("Cannot specify both makePDF and makePNG. Choose only one.\n")
 
     tmp <- SSout$timeseries[base$timeseries$Era=="TIME",]
     deadCatch <- tmp[,grep("dead\\(B\\)",names(tmp))]
@@ -25,6 +28,7 @@ TSCplot <- function(SSout,
 
     if(is.null(makePDF)) { windows(height=ht,width=wd) }
     if(!is.null(makePDF)) { pdf(file=makePDF,width=wd,height=ht) }
+    if(!is.null(makePNG)) { png(file=makePNG,width=wd,height=ht,units = "in", pointsize = 10, res=300) }
     par(mar=c(4,5,2,5))
     barplot(SP$Dead_Catch[-length(SP$Yr)],  names.arg = SP$Yr[-length(SP$Yr)], ylim=ylimBar, ylab="", col='yellow', cex=cexBarLabels, cex.axis=cex.axis, space=space)
 
@@ -38,6 +42,10 @@ TSCplot <- function(SSout,
     if(!is.null(makePDF)) {
         dev.off()
         cat("The plot is in pdf file",makePDF,"\n")
+    }
+    if(!is.null(makePNG)) {
+        dev.off()
+        cat("The plot is in png file",makePNG,"\n")
     }
 
     invisible(SP)
