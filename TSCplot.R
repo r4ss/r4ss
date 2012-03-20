@@ -18,7 +18,9 @@ TSCplot <- function(SSout,
 
     if(!is.null(makePDF) & !is.null(makePNG)) stop("Cannot specify both makePDF and makePNG. Choose only one.\n")
 
-    tmp <- SSout$timeseries[base$timeseries$Era=="TIME",]
+    ind <- which(SSout$timeseries$Era=="TIME")
+    ind <- c(ind,max(ind)+1)
+    tmp <- SSout$timeseries[ind,]
     deadCatch <- tmp[,grep("dead\\(B\\)",names(tmp))]
     SP <- data.frame(Yr=tmp$Yr, SpawnBio=tmp$SpawnBio, Dead_Catch=apply(deadCatch,1,sum))
     if(ylimBar=="default") {
