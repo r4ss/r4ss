@@ -26,29 +26,38 @@ TSCplot <- function(SSout,
     ind <- c(ind,max(ind)+1)
     if(yrs[1]=="default") yrs <- unique(sort(SSout$timeseries$Yr[ind]))
     
-    deadCatch <- SSplotCatch(SSout,plot=F)$totcatchmat     #get catches + discards summed over areas
+    deadCatch <- SSplotCatch(SSout,plot=F,verbose=F)$totcatchmat     #get catches + discards summed over areas
     if(ncol(deadCatch) > 2) {  #sum over fisheries
         deadCatch <- cbind(apply(deadCatch[,-ncol(deadCatch)],1,sum),deadCatch[,ncol(deadCatch)])
     }
     deadCatch <- deadCatch[match(yrs,deadCatch[,2]),]
     rownames(deadCatch) <- yrs
 
-    SSout$SBzero
-    SB <- SSout$derived_quants[substring(SSout$derived_quants$LABEL,1,4)=="SPB_",]
-    SB <- SB[match(as.character(yrs),substring(SB$LABEL,5)),]
-
-    SP <- data.frame(Yr=yrs, SpawnBio=SB[,"Value"], Dead_Catch=deadCatch[,1])
-    print(SP)
+    if(!MCMC) {
+        SBzero <- SSout$SBzero
+        SB <- SSout$derived_quants[substring(SSout$derived_quants$LABEL,1,4)=="SPB_",]
+        SB <- SB[match(as.character(yrs),substring(SB$LABEL,5)),]
+        depl <- SSout$derived_quants[substring(SSout$derived_quants$LABEL,1,7)=="Bratio_",]
+        depl <- depl[match(as.character(yrs),substring(depl$LABEL,8)),]
+        SP <- data.frame(Yr=yrs, SpawnBio=SB[,"Value"], Depl=depl[,"Value"],Dead_Catch=deadCatch[,1])
+    }
+    if(MCMC) {
+        if(is.null(SSout$mcmc)) stop("There is no mcmc element on the model list.\nSet MCMC=F or add in the mcmc element to the list.\n")
+        SBzero <- median(SSout$mcmc$SPB_Virgin)
+        SB <- SSout$mcmc[,substring(names(SSout$mcmc),1,4)=="SPB_"]
+        SB <- apply(SB[,match(as.character(yrs),substring(names(SB),5))],2,median)
+        depl <- SSout$mcmc[,substring(names(SSout$mcmc),1,7)=="Bratio_"]
+        tmp1 <- match(as.character(yrs),substring(names(depl),8))  #can have an NA in it and will cause an error
+        tmp2 <- tmp1[!is.na(tmp1)]   #remove NA's to get the medians
+        depl <- apply(depl[,tmp2],2,median)
+        depl <- depl[match(as.character(yrs),substring(names(depl),8))]
+        SP <- data.frame(Yr=yrs, SpawnBio=SB, Depl=depl, Dead_Catch=deadCatch[,1])
+    }
+    
     if(ylimBar=="default") {
         ylimBar <- c(0,max(SP$Dead_Catch,na.rm=T)*1.05)
     }
     ind <- seq(1,nrow(SP),pchSpace)
-
-    if(MCMC) {
-        if(is.null(SSout$mcmc)) stop("There is no mcmc element on the model list.\nSet MCMC=F or add in the mcmc element to the list.\n")
-        tmp <- SSout$mcmc
-        #mcmcYrs <- 
-    }
     
     if(is.null(makePDF)) { windows(height=ht,width=wd) }
     if(!is.null(makePDF)) { pdf(file=makePDF,width=wd,height=ht) }
@@ -58,10 +67,10 @@ TSCplot <- function(SSout,
     axis(1,at=barOut[ind,1],labels=yrs[ind])
     par(new=T)
     xpts <- (0:(nrow(SP)-1))+shiftDepl
-    plot(xpts, SP$SpawnBio/SSout$SBzero, yaxt='n', yaxs='i', xaxt = 'n', ylab="", xlab="",
+    plot(xpts, SP$Depl, yaxt='n', yaxs='i', xaxt = 'n', ylab="", xlab="",
            ylim=ylimDepl, type='l', lwd=lwdDepl,  cex.axis=cex.axis, xlim=c(0,nrow(SP)))
-    points(xpts[ind], SP$SpawnBio[ind]/SSout$SBzero, pch=pchDepl, col=colDepl)
-    axis(4, at=seq(0, 1, 0.1), cex.axis=cex.axis)
+    points(xpts[ind], SP$Depl[ind], pch=pchDepl, col=colDepl)
+    axis(4, at=seq(ylimDepl[1], ylimDepl[2], 0.1), cex.axis=cex.axis)
     mtext(c("Year","Total mortality catch (mt)", "Depletion"), side=c(1,2,4), line=labelLines, cex=1.5)
 
     if(!is.null(makePDF)) {
