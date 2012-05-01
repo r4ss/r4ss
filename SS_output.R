@@ -103,7 +103,7 @@ SS_output <-
 
   # warn if SS version used to create rep file is too old or too new for this code
   # note: SS_versionCode is new with V3.20
-  # perhaps in teh future we will use it to replace SS_versionshort throughout r4ss?
+  # perhaps in the future we will use it to replace SS_versionshort throughout r4ss?
   SS_versionCode <- rephead[grep("#V",rephead)]
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_versionshort <- toupper(substr(SS_version,1,8))
