@@ -28,7 +28,6 @@ SS_plots <-
   #
   ################################################################################
 
-
   codedate <- "April 13, 2011"
 
   if(verbose) cat("R function updated:",codedate,
