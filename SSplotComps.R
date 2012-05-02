@@ -209,11 +209,11 @@ SSplotComps <-
             # dbase is the final data.frame used in the individual plots
             # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
 
-            # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
-            if(!"Yr.S" %in% names(dbase)){
-              # add fraction of season to distinguish between samples
-              dbase$Yr.S <- dbase$Yr + (0.5/nseasons)*dbase$Seas
-            }
+            ## # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
+            ## if(!"Yr.S" %in% names(dbase)){
+            ##   # add fraction of season to distinguish between samples
+            ##   dbase$Yr.S <- dbase$Yr + (0.5/nseasons)*dbase$Seas
+            ## }
             # check for multiple ageing error types within a year to plot separately
             max_n_ageerr <- max(apply(table(dbase$Yr.S,dbase$Ageerr)>0,1,sum))
 
@@ -506,7 +506,10 @@ SSplotComps <-
                   abline(0,1,col="black")
                   # add loess smoother if there's at least 6 points with a range greater than 2
                   if(smooth & length(unique(dbasegood$N)) > 6 & diff(range(dbasegood$N))>2){
+                    old_warn <- options()$warn      # previous warnings setting
+                    options(warn=-1)                # turn off loess warnings
                     psmooth <- loess(dbasegood$effN~dbasegood$N,degree=1)
+                    options(warn=old_warn)  #returning to old value
                     lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
                   }
                 }

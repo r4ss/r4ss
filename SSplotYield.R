@@ -104,10 +104,11 @@ SSplotYield <-
     if(print){
       file <- paste(plotdir,"yield2_Hilborn_surplus_production.png",sep="")
       caption <-
-        paste("Surplus production plot (for interpretation, see",
-              "Walters, Hilborn, and  Christensen, 2008,",
+        paste("Surplus production plot. For interpretation, see<br>",
+              "<blockquote>Walters, Hilborn, and  Christensen, 2008,",
               "Surplus production dynamics in declining and",
-              "recovering fish populations. Can. J. Fish. Aquat. Sci. 65: 2536-2551)")
+              "recovering fish populations. <i>Can. J. Fish. Aquat. Sci.</i>",
+              "65: 2536-2551.</blockquote>")
       plotinfo <- pngfun(file=file, caption=caption)
       sprodfunc()
       dev.off()

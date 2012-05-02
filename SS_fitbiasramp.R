@@ -252,8 +252,14 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   if(print){
     file <- paste(plotdir,"/recruit_fit_bias_adjust.png",sep="")
     caption <-
-      paste("Least squares estimate of alternative bias adjustment relationship for recruitment deviations.<br> \n",
-            "Estimated alternative inputs to SS control file associated with blue line in figure: \n<pre>",
+      paste("Least squares estimate of alternative bias adjustment relationship ",
+            "for recruitment deviations. For more information, see<br> \n",
+            "<blockquote>Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias ",
+            "due to variability of estimated recruitments in fishery assessment ",
+            "models. <i>Can. J. Fish. Aquat. Sci.</i>, 68:1744-1760.",
+            "</blockquote><br> \n",
+            "Estimated alternative inputs to SS control file associated ",
+            "with blue line in figure: \n<pre>",
             sep="")
     for(iline in 1:4){
       caption <- paste(caption, format(round(df$value[iline],1),nsmall=1), "   ",
@@ -261,6 +267,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     }
     caption <- paste(caption, df$value[5], "   ", df$label[5], sep="")
     caption <- paste(caption,"  </pre>")
+    
     plotinfo <- pngfun(file=file, caption=caption)
     plotbiasadj()
     dev.off()

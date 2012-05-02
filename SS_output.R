@@ -419,6 +419,12 @@ SS_output <-
       # configure seasons
       if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
 
+      # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
+      if(!"Yr.S" %in% names(compdbase)){
+        # add fraction of season to distinguish between samples
+        compdbase$Yr.S <- compdbase$Yr + (0.5/nseasons)*compdbase$Seas
+      }
+
       # deal with Lbins
       compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
       compdbase$Lbin_mid <- 0.5*(compdbase$Lbin_lo + compdbase$Lbin_hi)

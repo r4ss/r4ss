@@ -227,26 +227,31 @@ SS_html <- function(replist=NULL,
           }
         }
         nwarn <- replist$Nwarnings
-        if(nwarn==0){
-          cat('<p><b>Warnings (from file warnings.sso):</b> None</p>\n\n',
+        if(is.na(nwarn)){
+          cat('<p><b>Warnings (from file warnings.sso):</b> NA</p>\n\n',
               sep="", file=htmlfile, append=TRUE)
-        }          
-        if(nwarn > 0){
-          if(nwarn <= 20){
-            cat('<p><b>Warnings (from file warnings.sso):</b></p>\n\n',
-                '<pre>\n',
+        }else{
+          if(nwarn==0){
+            cat('<p><b>Warnings (from file warnings.sso):</b> None</p>\n\n',
                 sep="", file=htmlfile, append=TRUE)
-          }else{
-            cat('<p><b>Warnings (first 20 from file warnings.sso):</b></p>\n\n',
-                '<pre>\n',
+          }          
+          if(nwarn > 0){
+            if(nwarn <= 20){
+              cat('<p><b>Warnings (from file warnings.sso):</b></p>\n\n',
+                  '<pre>\n',
+                  sep="", file=htmlfile, append=TRUE)
+            }else{
+              cat('<p><b>Warnings (first 20 from file warnings.sso):</b></p>\n\n',
+                  '<pre>\n',
+                  sep="", file=htmlfile, append=TRUE)
+            }
+            for(irow in 3+(1:nwarn)){
+              cat(replist$warnings[irow],'\n',
+                  sep="", file=htmlfile, append=TRUE)
+            }
+            cat('</pre>\n',
                 sep="", file=htmlfile, append=TRUE)
           }
-          for(irow in 3+(1:nwarn)){
-            cat(replist$warnings[irow],'\n',
-                sep="", file=htmlfile, append=TRUE)
-          }
-          cat('</pre>\n',
-              sep="", file=htmlfile, append=TRUE)
         }
       }
     }else{
