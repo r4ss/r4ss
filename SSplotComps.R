@@ -930,7 +930,7 @@ SSplotComps <-
               #       printed sample sizes in plot will be maximum, which may or may not
               #       represent sum of sample sizes over all years/ages
               for(f in unique(agg$f)){
-                for(y in unique(agg$y[agg$ff==f])){
+                for(y in unique(agg$y[agg$f==f])){
                   infleetyr <- agg$f==f & agg$y==y
                   agg$N[infleetyr] <- max(agg$N[infleetyr])
                   agg$effN[infleetyr] <- max(agg$effN[infleetyr])
