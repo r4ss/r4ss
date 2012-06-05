@@ -17,9 +17,10 @@ SS_makedatlist <-
              init_equil=0,
              catch=NULL,
              CPUE=NULL,
-             discard_units=2,
+             N_discard_fleets=0,
              discard_data=NULL,
              meanbodywt=NULL,
+             DF_for_meanbodywt=30,
              lbin_method=2,
              binwidth=2,
              minimum_size=2,
@@ -38,16 +39,16 @@ SS_makedatlist <-
              N_environ_variables=0,
              N_environ_obs=0,
              N_sizefreq_methods=0,
-             tag_data=0,
+             do_tags=0,
              morphcomp_data=0
              ){
-        SSversion <- "SSv3.04B"
-
+        SSversion <- "SSv3.24B"
         N_lbins <- length(lbin_vector)
         N_agebins <- length(agebin_vector)
 
         N_catch <- ifelse(is.null(catch), 0, nrow(catch))
         N_cpue <- ifelse(is.null(CPUE), 0, nrow(CPUE))
+        CPUEinfo <- data.frame(Fleet=1:(Nfleet+Nsurveys),Units=1,Errtype=0)
         N_discard <- ifelse(is.null(discard_data), 0, nrow(discard_data))
         N_meanbodywt <- ifelse(is.null(meanbodywt), 0, nrow(meanbodywt))
         N_lencomp <- ifelse(is.null(lencomp), 0, nrow(lencomp))
@@ -71,6 +72,7 @@ SS_makedatlist <-
         names(ageerror) <- c("#_age0",paste("age",1:Nages,sep=""))
 
         datlist <- list(SSversion = SSversion,
+                        type = "Stock_Synthesis_data_file",
                         styr = styr,
                         endyr = endyr,
                         nseas = nseas,
@@ -92,12 +94,14 @@ SS_makedatlist <-
                         N_catch = N_catch,
                         catch = catch,
                         N_cpue = N_cpue,
+                        CPUEinfo = CPUEinfo,
                         CPUE = CPUE,
-                        discard_units = discard_units,
+                        N_discard_fleets = N_discard_fleets,
                         N_discard = N_discard,
                         discard_data = discard_data,
                         N_meanbodywt = N_meanbodywt,
                         meanbodywt = meanbodywt,
+                        DF_for_meanbodywt=DF_for_meanbodywt,
                         lbin_method = lbin_method,
                         binwidth = binwidth,
                         minimum_size = minimum_size,
@@ -122,7 +126,7 @@ SS_makedatlist <-
                         N_environ_variables = N_environ_variables,
                         N_environ_obs = N_environ_obs,
                         N_sizefreq_methods = N_sizefreq_methods,
-                        tag_data = tag_data,
+                        do_tags = do_tags,
                         morphcomp_data = morphcomp_data
                         )
         return(datlist)
