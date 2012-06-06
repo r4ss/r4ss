@@ -20,58 +20,58 @@ TSCplot(SSout,yrs="default",ylimBar="default",ylimDepl=c(0,1.025),colBar= "yello
   \item{SSout}{
     The output from \code{\link{SS_output}}
   }
-  \item{yrs="default"}{
+  \item{yrs}{
     The vector of years to plot
   }
-  \item{ylimBar="default"}{
+  \item{ylimBar}{
     y-axis limits for catch barplot
   }
-  \item{ylimDepl=c(0,1.025)}{
+  \item{ylimDepl}{
     y-axis limits for depletion line
   }
-  \item{colBar= "yellow"}{
+  \item{colBar}{
     colors of the bars
   }
-  \item{cexBarLabels=1.1}{
+  \item{cexBarLabels}{
     character expansion for the labels underneath the bars (years)
   }
-  \item{cex.axis=1.1}{
+  \item{cex.axis}{
     character expansion for the axis labels
   }
-  \item{space=0.0}{
+  \item{space}{
     space between bars (see space argument of \code{\link{barplot}})
   }
-  \item{pchDepl=19}{
+  \item{pchDepl}{
     character type for points on the depletion line
   }
-  \item{colDepl="red"}{
+  \item{colDepl}{
     color of the points on the depletion line
   }
-  \item{lwdDepl=3}{
+  \item{lwdDepl}{
     width of the depletion line
   }
-  \item{shiftDepl = 0.25}{
+  \item{shiftDepl}{
     shift from beginning of the year for the points on the depletion line. Helps to guide the eye for exactly which year it corresponds to.
   }
-  \item{pchSpace = 5}{
+  \item{pchSpace}{
     number of years between points on the depletion line. Higher numbers help tidy up the plot when plotting many years.
   }
-  \item{ht=4}{
+  \item{ht}{
     Height of the plot in inches
   }
-  \item{wd=7}{
+  \item{wd}{
     Width of the plot in inches
   }
-  \item{labelLines=2.8}{
+  \item{labelLines}{
     line argument for \code{\link{mtext}} to move the axis labels
   }
-  \item{makePDF=NULL}{
+  \item{makePDF}{
     filename for a pdf file. If NULL it does not make a pdf.  Can specify a pdf filename or a png filename. Not both at the same time.
   }
-  \item{makePNG=NULL}{
+  \item{makePNG}{
     filename for a png image. If NULL it does not make a png.  Can specify a pdf filename or a png filename. Not both at the same time.
   }
-  \item{MCMC=F}{
+  \item{MCMC}{
     If TRUE, will use mcmc results. It needs a list element called 'mcmc' on SSout.
   }
 }

@@ -29,8 +29,7 @@ SS_profile(dir = "C:/myfiles/mymodels/myrun/",
     "shell". This may be required when running R in Emacs. Default = FALSE.}
   \item{saveoutput}{ Copy output .SSO files to unique names.
     Default = TRUE.}
-  \item{overwrite}{ Overwrite any existing .SSO files. }
-    Default = FALSE.}
+  \item{overwrite}{ Overwrite any existing .SSO files. Default = FALSE.}
   \item{verbose}{ Controls amount of info output to command line.
     Default = TRUE.}
 }

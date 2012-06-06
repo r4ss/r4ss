@@ -20,12 +20,26 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
 
   require(tcltk) || stop("package tcltk is required")
   if(n<3 | n>7 | as.integer(n)!=n) stop("Number of knots must be an integer from 3 to 7")
-  if(!("spline_selex.exe" %in% dir(dir)))
-    stop("File 'spline_selex.exe' needs to be in the directory 'dir'\n",
-         "  If you have a 64 bit Windows computer, you can get this file from\n",
-         "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe\n",
-         "  For other operating systems, you will need to compile the executable in ADMB\n",
-         "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+  if(.Platform$OS.type=="windows"){
+    if(!("spline_selex.exe" %in% dir(dir)))
+      stop("File 'spline_selex.exe' needs to be in the directory 'dir'\n",
+           "  If you have a 64 bit Windows computer, you can get this file from\n",
+           "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe\n",
+           "  For other operating systems, you will need to compile the executable in ADMB\n",
+           "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+  }else{
+    if(.Platform$GUI=="X11")
+      if(!("spline_selex" %in% dir(dir)))
+        stop("File 'spline_selex' needs to be in the directory 'dir'\n",
+             "  If you have a 64 bit Windows computer, you can get this file from\n",
+             "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex\n",
+             "  For other operating systems, you will need to compile the executable in ADMB\n",
+             "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+    if(.Platform$GUI=="Aqua")
+      stop("Sorry, this function is not yet supported for the Mac\n",
+           "      email Ian.Taylor@noaa.gov to discuss how to add support.")
+  }
+
   
   geterrmessage()
   done <- tclVar(0)
@@ -64,7 +78,15 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
         "# x-values",
         paste(x))
     writeLines(dat,file)
-    system("spline_selex -maxfn 0 -nohess")
+    if(.Platform$OS.type=="windows"){
+      system("spline_selex -maxfn 0 -nohess")
+    }else{
+      if(.Platform$GUI=="X11")
+        system("./spline_selex -maxfn 0 -nohess")
+      if(.Platform$GUI=="Aqua")
+        return() # add something here once Mac support developed
+    }
+
     Sys.sleep(0.1) # wait a second to let everything finish running
     outfile <- "spline_selex.txt"
     shift <- as.numeric(substring(readLines(outfile,n=1),9))

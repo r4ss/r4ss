@@ -309,7 +309,8 @@ SS_output <-
       if(length(warnstring)>0){
         nwarn <- as.numeric(strsplit(warnstring,"N warnings: ")[[1]][2])
         textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
-        if(verbose) cat("Got warning file. There", textblock, "in", warnname,"\n")
+        if(verbose) cat("Got warning file.\n",
+                        " There", textblock, "in", warnname,"\n")
       }else{
         cat("warning.sso file is missing the string 'N warnings'!\n")
         nwarn <- NA

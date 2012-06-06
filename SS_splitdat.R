@@ -3,11 +3,11 @@ SS_splitdat <-
            outpath    = 'working_directory',
            inname     = 'data.ss_new',
            outpattern = 'BootData',
-           number     = F,
-           verbose    = T,
-           fillblank  = T,
-           MLE        = T,
-           inputs     = F,
+           number     = FALSE,
+           verbose    = TRUE,
+           fillblank  = TRUE,
+           MLE        = TRUE,
+           inputs     = FALSE,
            notes      = ""
            )
 {
@@ -42,7 +42,7 @@ SS_splitdat <-
     for(i in 1:length(starts)) {
       outfile <- paste(outpath,'/',outpattern,ifelse(number,i,''),'.ss',sep='')
       outline <- paste('# Data file created from',infile,'to',outfile)
-      if(verbose) print(outline,quote=F)
+      if(verbose) cat(outline,"\n")
       writeLines(c(outline,filelines[starts[i]:ends[i]]),outfile)
     }
   }else{
@@ -50,14 +50,14 @@ SS_splitdat <-
       outfile <- paste(outpath,'/',outpattern,'.ss',sep='')
       if(notes!="") notes <- paste("#C",notes) else notes <- NULL
       notes <- c(notes,paste('#C MLE data file created from',infile,'to',outfile))
-      if(verbose) print(paste('MLE data file created from',infile,'to',outfile),quote=F)
+      if(verbose) cat('MLE data file created from',infile,'to',outfile,"\n")
       writeLines(c(notes,filelines[MLEstart:MLEend]),outfile)
     }
     if(inputs){
       outfile <- paste(outpath,'/',outpattern,'.ss',sep='')
       if(notes!="") notes <- paste("#C",notes) else notes <- NULL
       notes <- c(notes,paste('#C data file created from',infile,'to',outfile))
-      if(verbose) print(paste('file with copies of input data created from',infile,'to',outfile),quote=F)
+      if(verbose) cat('file with copies of input data created from',infile,'to',outfile,"\n")
       writeLines(c(notes,filelines[inputstart:inputend]),outfile)
     }
   }
