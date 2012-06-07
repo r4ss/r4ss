@@ -11,8 +11,10 @@ Make files and set up folders for simulations
   especially if they adapt it to their own needs
 }
 \usage{
-SSmakesims(copymasters=TRUE, makecases=FALSE, olddir=NULL, newdir=NULL, 
-         exe="ss3.exe", steep=FALSE, M=FALSE, CV=FALSE, trend=FALSE)
+SSmakesims(copymasters=TRUE, makecases=FALSE, olddir=NULL,
+newdir=NULL, make4=FALSE,
+exe="ss3.exe", steep=FALSE, M=FALSE, CV=FALSE, trend=FALSE,
+morphratio=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,11 +26,14 @@ SSmakesims(copymasters=TRUE, makecases=FALSE, olddir=NULL, newdir=NULL,
     Default = NULL = current working directory.}
   \item{newdir}{ Optional new directory to put files in. Default = NULL
     = current working directory. }
+  \item{make4}{ Make 4 cases that Ian used for his analysis? }
   \item{exe}{ Name of Stock Synthesis executable. Default="ss3.exe". }
   \item{steep}{ Estimate steepness? Default=FALSE. }
   \item{M}{ Estimate natural mortality? Default=FALSE. }
   \item{CV}{ Estimate CV in growth? Default=FALSE. }
   \item{trend}{ Create files for trend in selectivity? Default=FALSE. }
+  \item{morphratio}{ Ratio of variability within to between growth
+    morphs (platoons). }
 }
 % \details{
 % %%  ~~ If necessary, more details than the description above ~~

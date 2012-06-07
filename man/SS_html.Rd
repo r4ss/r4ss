@@ -7,15 +7,15 @@
 
 }
 \usage{
-SS_html <- function(replist=NULL,
-                    plotdir="plots",
-                    plotInfoTable=NULL,
-                    title="SS Output",
-                    width=500,
-                    openfile=TRUE,
-                    multimodel=FALSE,
-                    filenotes=NULL,
-                    verbose=TRUE)
+SS_html(replist=NULL,
+        plotdir="plots",
+        plotInfoTable=NULL,
+        title="SS Output",
+        width=500,
+        openfile=TRUE,
+        multimodel=FALSE,
+        filenotes=NULL,
+        verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

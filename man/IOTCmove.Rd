@@ -13,7 +13,7 @@
   might be written for any other model.
 }
 \usage{
-IOTCmove(replist=NULL, moveage=5, moveseas=1, legend=FALSE, title=NULL)
+IOTCmove(replist=NULL, moveage=5, moveseas=1, legend=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,9 +29,6 @@ IOTCmove(replist=NULL, moveage=5, moveseas=1, legend=FALSE, title=NULL)
   \item{legend}{
     add a legend to show the movement rate associated with the widest
     arrows
-  }
-  \item{title}{
-    optional title to be added above map
   }
 }
 \details{

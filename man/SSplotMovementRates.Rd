@@ -9,9 +9,14 @@
   movement rates between cells.
 }
 \usage{
-SSplotMovementRates(replist, subplots=1:2, colvec="default",
-  ylim="default", legend=TRUE, legendloc="topleft", moveseas="all",
-  cex.main=1, verbose=TRUE)
+SSplotMovementRates(replist, plot=TRUE, print=FALSE, subplots=1:2,
+           plotdir="default",
+           colvec="default", ylim="default", 
+           legend=TRUE, legendloc="topleft",
+           moveseas="all",
+           pwidth=7,pheight=7,punits="in",res=300,
+           ptsize=12,cex.main=1,
+           verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,6 +31,9 @@ SSplotMovementRates(replist, subplots=1:2, colvec="default",
   }
   \item{subplots}{
     which subplots to create
+  }
+  \item{plotdir}{
+    where to put the plots (uses model directory by default)
   }
   \item{colvec}{
     vector of colors for each movement rate in the plot

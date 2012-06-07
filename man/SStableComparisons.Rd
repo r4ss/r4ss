@@ -26,13 +26,14 @@ SStableComparisons(summaryoutput,
              "VonBert_K",
              "RecrDev_2008",
              "SPB_Virg",
-             "Bratio_2011",
-             "SPRratio_2010"),
+             "Bratio_2012",
+             "SPRratio_2011"),
            modelnames="default",
            csv=FALSE,
            csvdir="workingdirectory",
            csvfile="parameter_comparison_table.csv",
-           verbose=TRUE)
+           verbose=TRUE,
+           mcmc=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -68,6 +69,9 @@ SStableComparisons(summaryoutput,
   }
   \item{verbose}{
     report progress to R GUI?
+  }
+  \item{verbose}{
+    summarize MCMC output in table?
   }
 }
 \details{

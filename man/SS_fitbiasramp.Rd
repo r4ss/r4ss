@@ -11,9 +11,10 @@ controls for the bias adjustment in Stock Synthesis
 }
 \usage{
 SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
-  twoplots=TRUE, transform=FALSE, plot=TRUE, print=FALSE, oldctl=NULL,
-  newctl=NULL, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-  cex.main=1)
+  twoplots=TRUE, transform=FALSE, plot=TRUE, print=FALSE,
+  plotdir="default", oldctl=NULL,
+  newctl=NULL, nlminb=TRUE, pwidth=7, pheight=7, punits="in",
+  ptsize=12, res=300, cex.main=1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +39,8 @@ SS_fitbiasramp(replist, verbose=FALSE, startvalues=NULL, method="BFGS",
     Default=NULL. }
   \item{newctl}{ Optional name of new control file to create from old
     file with estimated bias adjustment values. Default=NULL. }
+  \item{nlminb}{ Use the 'nlminb' function instead of 'optim'?
+    Default=TRUE }
   \item{pwidth}{ Default width of plots printed to files in units of \code{punits}. Default=7. }
   \item{pheight}{ Default height width of plots printed to files in units of \code{punits}. Default=7. }
   \item{punits}{ Units for \code{pwidth} and \code{pheight}. Can be "px" (pixels), "in" (inches), "cm" or "mm". Default="in". }

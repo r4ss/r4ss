@@ -9,8 +9,11 @@
   additional plots for time-varying selectivity.
 }
 \usage{
-SSplotSelex(replist, fleets = "all", fleetnames = "default",
-sexes="all", selexlines = 1:5, subplot = 1:11,
+SSplotSelex(replist, infotable = NULL, fleets = "all",
+fleetnames = "default", sizefactors = c("Lsel"),
+agefactors = c("Asel"), years = "endyr", season = 1,
+sexes="all", selexlines = 1:5, subplot = 1:25,
+skipAgeSelex10 = TRUE,
 plot = TRUE, print = FALSE, add = FALSE,
 labels=c("Length (cm)",
   "Age (yr)",     
@@ -19,40 +22,84 @@ labels=c("Length (cm)",
   "Retention",    
   "Discard mortality"),
 col1 = "red", col2 = "blue",
+lwd = 2, fleetcols = "default", fleetpch = "default",
+fleetlty = "default", spacepoints = 5,
+staggerpoints = 1, legendloc = "bottomright", 
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1, plotdir = "default", verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SS_output}
+    List created by \code{SS_output}
   }
   \item{fleets}{
-    optional vector to subset fleets for which to make plots
+    Optional vector to subset fleets for which to make plots
+  }
+  \item{infotable}{
+    Optional table of information controlling appearance of plot and
+    legend. Is produced as output and can be modified and entered as
+    input.
   }
   \item{fleetnames}{
-    optional replacement for fleenames used in data file
+    Optional replacement for fleenames used in data file
+  }
+  \item{sizefactors}{
+    Which elements of the factors column of SIZE_SELEX should be
+    included in plot of selectivity across multiple fleets?
+  }
+  \item{agefactors}{
+    Which elements of the factors column of AGE_SELEX should be
+    included in plot of selectivity across multiple fleets?
   }
   \item{sexes}{
-    optional vector to subset genders for which to make plots
+    Optional vector to subset genders for which to make plots
     (1=females, 2=males)
   }
   \item{selexlines}{
-    vector to select which lines get plotted. values are 1. Selectivity,
+    Vector to select which lines get plotted. values are 1. Selectivity,
     2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead =
     Sel*(Ret+(1-Ret)*Mort).
   }
   \item{subplot}{
-    vector controlling which subplots to create
+    Vector controlling which subplots to create
+  }
+  \item{skipAgeSelex10}{
+    Exclude plots for age selectivity type 10 (selectivity = 1.0 for all
+    ages beginning at age 1)?
+  }
+  \item{lwd}{
+    Line widths for plots
+  }
+  \item{fleetcols}{ Optional vector of colors for each fleet (in
+    multi-fleet plots)
+  } 
+  \item{fleetpch}{ Optional vector of plot characters for each fleet (in
+    multi-fleet plots)
+  } 
+  \item{fleetlty}{ Optional vector of line types for each fleet (in
+    multi-fleet plots) 
+  }
+  \item{spacepoints}{
+    number of years between points shown on top of lines (for long
+    timeseries, points every year get mashed together)
+  }
+  \item{staggerpoints}{
+    number of years to stagger the first point
+    (if \code{spacepoints > 1}) for each line
+    (so that adjacent lines have points in different years)
+  }
+  \item{legendloc}{
+    location of legend. See ?legend for more info.
   }
   \item{plot}{
-    plot to active plot device?
+    Plot to active plot device?
   }
   \item{print}{
-    print to PNG files?
+    Print to PNG files?
   }
   \item{add}{
-    add to existing plot (not yet implemented)
+    Add to existing plot (not yet implemented)
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

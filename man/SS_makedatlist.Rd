@@ -14,14 +14,15 @@ SS_makedatlist(styr = 1971, endyr = 2001, nseas = 1, months_per_seas =
 12, spawn_seas = 1, Nfleet = 1, Nsurveys = 1, N_areas = 1, fleetnames =
 c("fishery1", "survey1"), surveytiming = 0.5, areas = 1, units_of_catch
 = 1, se_log_catch = 0.01, Ngenders = 2, Nages = 40, init_equil = 0,
-catch = NULL, CPUE = NULL, discard_units = 2, discard_data = NULL,
-meanbodywt = NULL, lbin_method = 2, binwidth = 2, minimum_size = 2,
+catch = NULL, CPUE = NULL, N_discard_fleets = 0, discard_data = NULL,
+meanbodywt = NULL, DF_for_meanbodywt = 30, lbin_method = 2,
+binwidth = 2, minimum_size = 2,
 maximum_size = 90, comp_tail_compression = -1e-04, add_to_comp = 1e-04,
 max_combined_lbin = 0, lbin_vector = seq(22, 90, 2), lencomp = NULL,
 agebin_vector = 1:25, ageerror = data.frame(rbind(0:40 + 0.5, 0.001,
 0:40 + 0.5, seq(0.525, 2.525, 0.05))), agecomp = NULL, Lbin_method = 3,
 max_combined_age = 1, MeanSize_at_Age_obs = NULL, N_environ_variables =
-0, N_environ_obs = 0, N_sizefreq_methods = 0, tag_data = 0,
+0, N_environ_obs = 0, N_sizefreq_methods = 0, do_tags = 0,
 morphcomp_data = 0)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -80,11 +81,11 @@ morphcomp_data = 0)
   \item{CPUE}{
         ... description to be added ... %%     ~~Describe \code{CPUE} here~~
   }
-  \item{discard_units}{
-        ... description to be added ... %%     ~~Describe \code{discard_units} here~~
+  \item{N_discard_fleets}{
+    Number of fleets with discard data.
   }
   \item{discard_data}{
-        ... description to be added ... %%     ~~Describe \code{discard_data} here~~
+    Discard data (if exists).
   }
   \item{meanbodywt}{
         ... description to be added ... %%     ~~Describe \code{meanbodywt} here~~
@@ -143,8 +144,8 @@ morphcomp_data = 0)
   \item{N_sizefreq_methods}{
         ... description to be added ... %%     ~~Describe \code{N_sizefreq_methods} here~~
   }
-  \item{tag_data}{
-        ... description to be added ... %%     ~~Describe \code{tag_data} here~~
+  \item{do_tags}{
+    Include tag data? NOT IMPLEMENTED YET.
   }
   \item{morphcomp_data}{
         ... description to be added ... %%     ~~Describe \code{morphcomp_data} here~~

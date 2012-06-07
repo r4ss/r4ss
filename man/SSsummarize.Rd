@@ -11,7 +11,8 @@
 }
 \usage{
 SSsummarize(biglist, keyvec = NULL, numvec = NULL,
-selfactor = "Lsel", selfleet = NULL, selyr = "min", selgender = 1,
+sizeselfactor = "Lsel", ageselfactor = "Asel",
+selfleet = NULL, selyr = "startyr", selgender = 1,
 lowerCI = 0.025, upperCI = 0.975)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -36,8 +37,8 @@ lowerCI = 0.025, upperCI = 0.975)
   }
   \item{selyr}{
     String or vector of years for which selectivity will be summarized.
-    NOTE: NOT CURRENTLY WORKING. Options: NULL=all years,
-    "min" = first year, "max" = last year.  Default="min".
+    NOTE: NOT CURRENTLY WORKING.
+    Options: NULL=all years, "startyr" = first year.
   }
   \item{selgender}{
     Vector of genders (1 and/or 2) for which selectivity will be summarized. NULL=all genders. Default=NULL.

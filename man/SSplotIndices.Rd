@@ -28,8 +28,8 @@ SSplotIndices(replist,subplots=1:9,
   pch1=1, pch2=16, cex=1,
   legend=TRUE, legendloc="topright", seasnames=NULL,
   pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-  addmain=TRUE, plotdir="default", verbose=TRUE)
-
+  addmain=TRUE, plotdir="default",
+  minyr = NULL, maxyr = NULL, verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -125,6 +125,12 @@ SSplotIndices(replist,subplots=1:9,
   \item{plotdir}{
     directory where PNG files will be written. by default it will
     be the directory where the model was run.
+  }
+  \item{minyr}{
+    First year to show in plot (for zooming in on a subset of values)
+  }
+  \item{maxyr}{
+    Last year to show in plot (for zooming in on a subset of values)
   }
   \item{verbose}{
     report progress to R GUI?

@@ -22,7 +22,7 @@ SStableComparisons <-
            csvdir="workingdirectory",
            csvfile="parameter_comparison_table.csv",
            verbose=TRUE,
-           mcmc=F)
+           mcmc=FALSE)
 {
   if(verbose) cat("running SStableComparisons\n")
   

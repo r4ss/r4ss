@@ -13,7 +13,8 @@
 SSrunsims(sims = 1, newrun = TRUE, sim = FALSE, fit = FALSE,
 simfolder = "sims", fitfolder = "fits", masterfolder = "fits",
 MLEdata = FALSE, skipfiles = TRUE, simchoices = 1, fitchoices = 1,
-samedatafile = FALSE, CAAL = TRUE, homepath = "c:/myfiles/",
+samedatafile = FALSE, CAAL = TRUE, fit_add_to_comp = 0.001,
+homepath = "c:/myfiles/",
 recdevmatrix = NULL, rescale = TRUE, fitbiasramp = FALSE,
 exe = "ss3_opt", simextras = "-nox -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
@@ -63,6 +64,10 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
   \item{samedatafile}{
     Use the same data file for all simulations? (Alternative is one data
     file for each control file). Default=FALSE.
+  }
+  \item{fit_add_to_comp}{
+    Replacement for the robustifying constant to add to the composition
+    data in the estimation models.
   }
   \item{homepath}{
     Location where the input files are located, and in which the above

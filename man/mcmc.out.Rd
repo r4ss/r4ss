@@ -11,10 +11,10 @@
 }
 \usage{
 mcmc.out(directory = "c:/mydirectory/", run = "mymodel/",
-file = "keyposteriors.sso", namefile = "postplotnames.sso",
+file = "keyposteriors.csv", namefile = "postplotnames.csv",
 names = FALSE, headernames = TRUE, numparams = 1, closeall = TRUE,
 burn = 0, thin = 1, scatter = FALSE, surface = FALSE, surf1 = 1,
-surf2 = 2, stats = FALSE, plots = TRUE, header = F, sep = "",
+surf2 = 2, stats = FALSE, plots = TRUE, header = FALSE, sep = ",",
 print = FALSE)
 }
 \arguments{

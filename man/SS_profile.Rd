@@ -8,7 +8,9 @@
 \usage{
 SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-  linenum = NULL, string = NULL, profilevec = NULL,
+  linenum = NULL, string = NULL,
+  usepar = TRUE, dircopy = TRUE, exe.delete = FALSE,
+  profilevec = NULL,
   command = "SS3 -nox", model = "ss3", systemcmd = FALSE,
   saveoutput = TRUE, overwrite=FALSE, verbose = TRUE)
 }
@@ -22,6 +24,11 @@ SS_profile(dir = "C:/myfiles/mymodels/myrun/",
     Default = NULL. }
   \item{string}{ Optional string partially matching name of parameter
     to be changed. Default = NULL.}
+  \item{usepar}{ Use PAR file from previous profile step for starting
+    values? NOT IMPLEMENTED YET.}
+  \item{dircopy}{ Copy directories for each run? NOT IMPLEMENTED YET.}
+  \item{exe.delete}{ Delete exe files in each directory?
+    NOT IMPLEMENTED YET. }
   \item{profilevec}{ Vector of values to profile over.  Default = NULL.}
   \item{command}{ Call to executable. Default = "SS3 -nox".}
   \item{model}{ Name of executable. Default = "ss3".}

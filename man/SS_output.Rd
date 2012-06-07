@@ -13,7 +13,8 @@
 \usage{
 SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
 repfile = "Report.sso", compfile = "CompReport.sso",
-covarfile = "covar.sso", ncols = 200, forecast = TRUE, warn = TRUE,
+covarfile = "covar.sso", forefile = "Forecast-report.sso",
+ncols = 200, forecast = TRUE, warn = TRUE,
 covar = TRUE, checkcor = TRUE, cormax = 0.95, cormin = 0.01,
 printhighcor = 10, printlowcor = 10, verbose = TRUE,
 printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,
@@ -31,6 +32,8 @@ aalmaxbinrange = 4)
     Default="CompReport.sso".}
   \item{covarfile}{ Name of the covariance output file.
     Default="covar.sso".}
+  \item{forefile}{ Name of the forecast file.
+    Default="Forecast-report.sso".}
   \item{ncols}{ The maximum number of columns in files being read in.
     If this value is too big the function runs more slowly, too small
     and errors will occur.  A warning will be output to the R command

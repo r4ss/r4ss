@@ -8,10 +8,11 @@
   Plot observed and expected tag recaptures in aggregate and by tag group.
 }
 \usage{
-SSplotTags(replist = replist, subplots = 1:8, rows = 1, cols = 1,
-tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE, pntscalar = 2.6,
-minnbubble = 8, pwidth = 7, pheight = 7, punits = "in", ptsize = 12, res
-= 300, cex.main = 1, col1 = "blue", col2 = "red", col3 = "grey80",
+SSplotTags(replist = replist, subplots = 1:8, latency = 0, rows = 1,
+cols = 1, tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE,
+pntscalar = 2.6, minnbubble = 8, pwidth = 7, pheight = 7, punits = "in",
+ptsize = 12, res = 300, cex.main = 1, col1 = "blue", col2 = "red",
+col3 = "grey80", col4 = "grey70", 
 labels = c("Year", "Frequency", "Tag Group",
            "Fit to tag recaptures by tag group",
            "Tag recaptures aggregated across tag groups",
@@ -27,6 +28,10 @@ plotdir = "default", verbose = TRUE)
   }
   \item{subplots}{
     vector controlling which subplots to create
+  }
+  \item{latency}{
+    period of tag mixing to exclude from plots (in future could be
+    included in SS output)
   }
   \item{rows}{
     number or rows of panels for regular plots
@@ -82,6 +87,9 @@ plotdir = "default", verbose = TRUE)
   }
   \item{col3}{
     third color used
+  }
+  \item{col4}{
+    shading color for boxplots
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)
