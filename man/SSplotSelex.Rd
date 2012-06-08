@@ -52,6 +52,14 @@ cex.main = 1, plotdir = "default", verbose = TRUE)
     Which elements of the factors column of AGE_SELEX should be
     included in plot of selectivity across multiple fleets?
   }
+  \item{years}{
+    Which years for selectivity are shown in multi-line plot (default =
+    last year of model).
+  }
+  \item{season}{
+    Which season (if seasonal model) for selectivity shown in multi-line
+    plot (default = 1).
+  }
   \item{sexes}{
     Optional vector to subset genders for which to make plots
     (1=females, 2=males)

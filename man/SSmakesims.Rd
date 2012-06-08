@@ -1,5 +1,4 @@
 \name{SSmakesims}
-\Rdversion{1.1}
 \alias{SSmakesims}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{

@@ -7,13 +7,14 @@
   A GUI interface for exploring selectivity.
 }
 \usage{
-selfit(minLength = 10, maxLength = 65, silent = FALSE)
+selfit(minLength = 10, maxLength = 65, silent = FALSE, init = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{minLength}{ Minimum size to show }
   \item{maxLength}{ Maximum size to show }
   \item{silent}{ T/F switch to return fit at the end }
+  \item{init}{ Optional initial values for the parameters }
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~

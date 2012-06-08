@@ -28,9 +28,13 @@ lowerCI = 0.025, upperCI = 0.975)
     Optional list of numbers of elements from biglist to subset.
     Default=NULL.
   }
-  \item{selfactor}{
+  \item{sizeselfactor}{
     A string or vector of strings indicating which elements of the
     selectivity at length output to summarize. Default=c("Lsel").
+  }
+  \item{ageselfactor}{
+    A string or vector of strings indicating which elements of the
+    selectivity at age output to summarize. Default=c("Asel").
   }
   \item{selfleet}{
     Vector of fleets for which selectivity will be summarized. NULL=all fleets. Default=NULL.

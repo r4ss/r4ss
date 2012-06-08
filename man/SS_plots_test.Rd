@@ -11,9 +11,9 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SS_plots(replist = NULL, plot = 1:24, print = NULL,
-pdf = FALSE, png=FALSE, printfolder = "plots", dir = "default",
-fleets = "all",
+SS_plots_test(replist = NULL, plot = 1:24, print = NULL,
+pdf = FALSE, png=FALSE, html=png, printfolder = "plots",
+dir = "default", fleets = "all",
 areas = "all", fleetnames = "default", fleetcols = "default",
 fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
 areanames = "default", verbose = TRUE, uncertainty = TRUE,
@@ -26,7 +26,7 @@ showsampsize = TRUE, showeffN = TRUE, showlegend = TRUE, pwidth = 7,
 pheight = 7, punits = "in", ptsize = 12, res = 300, cex.main = 1,
 selexlines = 1:5, rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3, fixdims = TRUE,
-new = TRUE, SSplotDatMargin = 8, catchasnumbers = FALSE,
+new = TRUE, SSplotDatMargin = 8, filenotes=NULL, catchasnumbers = FALSE,
 legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -41,6 +41,8 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
   \item{print}{ Deprecated input for backward compatability, now replaced by \code{png = TRUE/FALSE}.}
   \item{pdf}{ Send plots to PDF file instead of R GUI?}
   \item{png}{ Send plots to PNG files instead of R GUI?}
+  \item{html}{ Run \code{\link{SS_html}} on completion? By default has
+    same value as \code{png}.}
   \item{printfolder}{ Name of subfolder to create within the working
     directory into which any PNG files specified by \code{print} will be
     saved. By default the working directory is used with no subfolder.
@@ -153,7 +155,9 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
   \item{new}{ Open a new window or add to existing plot windows.
     Default=T. }
   \item{SSplotDatMargin}{ Size of right-hand margin in data plot (may be
-    too small if fleet names are long) } 
+    too small if fleet names are long) }
+  \item{filenotes}{ Optional vector of character strings to be added to
+    intro HTML page (if created) with notes about the model. }
   \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
     Default=F. }
   \item{legendloc}{ Location for all legends. Default="topleft". }

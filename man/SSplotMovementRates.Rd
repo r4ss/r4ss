@@ -52,6 +52,21 @@ SSplotMovementRates(replist, plot=TRUE, print=FALSE, subplots=1:2,
   \item{moveseas}{
     choice of season for which movemement rates are shown
   }
+  \item{pwidth}{
+    width of plot written to PNG file
+  }
+  \item{pheight}{
+    height of plot written to PNG file
+  }
+  \item{punits}{
+    units for PNG file
+  }
+  \item{res}{
+    resolution for PNG file
+  }
+  \item{ptsize}{
+    ptsize for PNG file
+  }
   \item{cex.main}{
     Character expansion parameter for plot titles
   }

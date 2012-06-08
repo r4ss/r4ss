@@ -12,7 +12,7 @@ SSplotTags(replist = replist, subplots = 1:8, latency = 0, rows = 1,
 cols = 1, tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE,
 pntscalar = 2.6, minnbubble = 8, pwidth = 7, pheight = 7, punits = "in",
 ptsize = 12, res = 300, cex.main = 1, col1 = "blue", col2 = "red",
-col3 = "grey80", col4 = "grey70", 
+col3 = "grey95", col4 = "grey70", 
 labels = c("Year", "Frequency", "Tag Group",
            "Fit to tag recaptures by tag group",
            "Tag recaptures aggregated across tag groups",
@@ -80,16 +80,16 @@ plotdir = "default", verbose = TRUE)
     character expansion parameter for plot titles
   }
   \item{col1}{
-    first color used
+    color for bubbles
   }
   \item{col2}{
-    second color used
+    color for lines with expected values
   }
   \item{col3}{
-    third color used
+    shading color for observations within latency period
   }
   \item{col4}{
-    shading color for boxplots
+    shading color for observations after latency period
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

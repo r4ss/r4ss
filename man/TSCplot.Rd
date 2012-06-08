@@ -12,7 +12,10 @@
 }
 
 \usage{
-TSCplot(SSout,yrs="default",ylimBar="default",ylimDepl=c(0,1.025),colBar= "yellow",cexBarLabels=1.1,cex.axis=1.1,space=0.0,pchDepl=19,colDepl="red",lwdDepl=3,shiftDepl = 0.25,pchSpace = 5,ht=4,wd=7,labelLines=2.8,makePDF=NULL,makePNG=NULL,MCMC=F)
+TSCplot(SSout,yrs="default",ylimBar="default",ylimDepl=c(0,1.025),
+colBar="yellow",cexBarLabels=1.1,cex.axis=1.1,space=0.0,pchDepl=19,
+colDepl="red",lwdDepl=3,shiftDepl = 0.25,pchSpace = 5,ht=4,wd=7,
+labelLines=2.8,makePDF=NULL,makePNG=NULL,MCMC=F)
 }
 %- maybe also 'usage' for other objects documented here.
 
@@ -39,7 +42,7 @@ TSCplot(SSout,yrs="default",ylimBar="default",ylimDepl=c(0,1.025),colBar= "yello
     character expansion for the axis labels
   }
   \item{space}{
-    space between bars (see space argument of \code{\link{barplot}})
+    space between bars (see space argument of \code{barplot})
   }
   \item{pchDepl}{
     character type for points on the depletion line
@@ -63,7 +66,7 @@ TSCplot(SSout,yrs="default",ylimBar="default",ylimDepl=c(0,1.025),colBar= "yello
     Width of the plot in inches
   }
   \item{labelLines}{
-    line argument for \code{\link{mtext}} to move the axis labels
+    line argument for \code{mtext} to move the axis labels
   }
   \item{makePDF}{
     filename for a pdf file. If NULL it does not make a pdf.  Can specify a pdf filename or a png filename. Not both at the same time.
@@ -142,9 +145,7 @@ It expects the SS results read in by \code{\link{SS_output}}.  If MCMC results a
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ SS }
 \keyword{ data }
 \keyword{ manip }
 \keyword{ list }
-\keyword{ TSC }
 \keyword{ plot }

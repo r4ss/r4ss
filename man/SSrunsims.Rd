@@ -16,7 +16,8 @@ MLEdata = FALSE, skipfiles = TRUE, simchoices = 1, fitchoices = 1,
 samedatafile = FALSE, CAAL = TRUE, fit_add_to_comp = 0.001,
 homepath = "c:/myfiles/",
 recdevmatrix = NULL, rescale = TRUE, fitbiasramp = FALSE,
-exe = "ss3_opt", simextras = "-nox -nohess",
+trend=FALSE, exe = "ss3_opt",
+simextras = "-nox -gbs 1000000000 -cbs 1000000000 -nohess",
 fitextras = "-nox -gbs 1000000000 -cbs 1000000000",
 fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
  verbose = TRUE)
@@ -95,6 +96,9 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
     requires running each model twice: once with no change to control
     file, and again with bias adjustment updated based on previous model
     run. Default=FALSE.
+  }
+  \item{trend}{
+    run models with trend in selectivity?
   }
   \item{exe}{
     Command to run executable. Default="ss3_opt".

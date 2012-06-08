@@ -12,7 +12,7 @@
 \usage{
 mcmc.nuisance(directory = "c:/mydirectory/", run = "mymodel/",
 file = "posteriors.sso", file2 = "derived_posteriors.sso",
-bothfiles = FALSE, printstats = FALSE, burn = 0, header = FALSE, thin = 1,
+bothfiles = FALSE, printstats = FALSE, burn = 0, header = TRUE, thin = 1,
 trace = 0, labelstrings = "all", columnnumbers = "all", sep = "")
 }
 

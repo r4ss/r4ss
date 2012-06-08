@@ -11,10 +11,10 @@
 }
 \usage{
 mcmc.out(directory = "c:/mydirectory/", run = "mymodel/",
-file = "keyposteriors.csv", namefile = "postplotnames.csv",
+file = "keyposteriors.csv", namefile = "postplotnames.sso",
 names = FALSE, headernames = TRUE, numparams = 1, closeall = TRUE,
 burn = 0, thin = 1, scatter = FALSE, surface = FALSE, surf1 = 1,
-surf2 = 2, stats = FALSE, plots = TRUE, header = FALSE, sep = ",",
+surf2 = 2, stats = FALSE, plots = TRUE, header = TRUE, sep = ",",
 print = FALSE)
 }
 \arguments{
@@ -75,7 +75,7 @@ print = FALSE)
     Data file with header?
   }
   \item{sep}{
-    Separator for data file passed to the \code{\link{read.table}} function.
+    Separator for data file passed to the \code{read.table} function.
   }
   \item{print}{
     Send to screen unless asked to print.

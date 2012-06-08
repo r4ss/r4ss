@@ -70,7 +70,7 @@ SStableComparisons(summaryoutput,
   \item{verbose}{
     report progress to R GUI?
   }
-  \item{verbose}{
+  \item{mcmc}{
     summarize MCMC output in table?
   }
 }

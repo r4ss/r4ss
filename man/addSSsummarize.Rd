@@ -112,8 +112,8 @@ addSSsummarize(origModels,newModels)
 }
 
 \value{
-  Returns list as is returned from \code{\link{SSsummarize}}, but contains
-    additions for the new models.  
+  Returns list as is returned from \code{\link{SSsummarize}}, but
+  contains additions for the new models.  
 
   %%  ~Describe the value returned
   %%  If it is a LIST, use
@@ -146,34 +146,58 @@ addSSsummarize(origModels,newModels)
   \dontrun{
   ######################################
   #DO NOT RUN
-  tinss1 <- list(npars=A$fit$npar,maxgrad=A$fit$maxgrad,nsexes=1,
-                SpawnBio=data.frame(c(1964,1965,A$yrs),c(A$sbo,A$sbo,A$sbt)*1e6,0,qnorm(0.025,c(A$so,A$so,A$sbt)*1e6,0),qnorm(0.975,c(A$so,A$so,A$sbt)*1e6,0)),     #there is an estimated parameter called sd_sbt, but it is a single value
-                Bratio=data.frame(A$yrs,A$sbt/A$sbo,0,qnorm(0.025,A$sbt/A$sbo,0),qnorm(0.975,A$sbt/A$sbo,0)),
-                SPRratio=data.frame(A$yr,A$spr,0,qnorm(0.025,A$spr,0),qnorm(0.975,A$spr,0)),
-                recruits=data.frame(A$yr,A$nt[,1]*1e6,0,qnorm(0.025,A$nt[,1]*1e5,0),qnorm(0.975,A$nt[,1]*1e6,0)),
-                recdevs=data.frame(A$recYrs,A$wt),  #I'm not sure exactly what wt are, but it is important to line them up correctly
-                indices = data.frame(A$iyr,1e6*A$yt,1e6*A$qbt,rep(A$q,length(A$iyr)),rep(0.4,length(A$iyr)),rep(0,length(A$iyr)),rep(1,length(A$iyr)))
-            )
+tinss1 <- list(npars=A$fit$npar,maxgrad=A$fit$maxgrad,nsexes=1,
+               #note, there is an estimated parameter called sd_sbt,
+               #      but it is a single value
+               SpawnBio=data.frame(c(1964,1965,A$yrs),
+                                   c(A$sbo,A$sbo,A$sbt)*1e6,0,
+                                   qnorm(0.025,c(A$so,A$so,A$sbt)*1e6,0),
+                                   qnorm(0.975,c(A$so,A$so,A$sbt)*1e6,0)),
+               Bratio=data.frame(A$yrs,A$sbt/A$sbo,0,
+                                 qnorm(0.025,A$sbt/A$sbo,0),
+                                 qnorm(0.975,A$sbt/A$sbo,0)),
+               SPRratio=data.frame(A$yr,A$spr,0,qnorm(0.025,A$spr,0),
+                                   qnorm(0.975,A$spr,0)),
+               recruits=data.frame(A$yr,A$nt[,1]*1e6,0,qnorm(0.025,A$nt[,1]*1e5,0),
+                                   qnorm(0.975,A$nt[,1]*1e6,0)),
+               #I'm not sure exactly what wt are,
+               #   but it is important to line them up correctly
+               recdevs=data.frame(A$recYrs,A$wt),  
+               indices = data.frame(A$iyr,1e6*A$yt,1e6*A$qbt,
+                                    rep(A$q,length(A$iyr)),rep(0.4,length(A$iyr)),
+                                    rep(0,length(A$iyr)),rep(1,length(A$iyr)))
+               )
   tinss <- list(tinss1,tinss1)   #can add more models here
 
 
   #add TINSS model to SS models already summarized                
   SSnTINSS <- addSSsummarize(models,tinss)
   mcmcInd <- seq(burnin+1,nrow(A$mc.sbt),thin)
-  SSnTINSS$mcmc[[2]] <- data.frame(A$mc.sb0[mcmcInd],A$mc.sbt[mcmcInd,],A$mc.depl[mcmcInd,],A$mc.spr[mcmcInd,],A$mc.rt[mcmcInd,],log(A$mcmc[mcmcInd,"Ro"]*1e6),A$mcmc[mcmcInd,"msy"]*1e6)  
-  names(SSnTINSS$mcmc[[2]]) <- c("SPB_Virgin",paste("SPB",A$yrs,sep="_"),paste("Bratio",A$yrs,sep="_"),paste("SPRratio",A$yr,sep="_"),paste("Recr",A$yr,sep="_"),"SR_R0","TotYield_MSY")
+  SSnTINSS$mcmc[[2]] <- data.frame(A$mc.sb0[mcmcInd],
+                                   A$mc.sbt[mcmcInd,],
+                                   A$mc.depl[mcmcInd,],
+                                   A$mc.spr[mcmcInd,],
+                                   A$mc.rt[mcmcInd,],
+                                   log(A$mcmc[mcmcInd,"Ro"]*1e6),
+                                   A$mcmc[mcmcInd,"msy"]*1e6)  
+  names(SSnTINSS$mcmc[[2]]) <-
+    c("SPB_Virgin",paste("SPB",A$yrs,sep="_"),
+      paste("Bratio",A$yrs,sep="_"),
+      paste("SPRratio",A$yr,sep="_"),
+      paste("Recr",A$yr,sep="_"),"SR_R0","TotYield_MSY")
   modelnames <- c("SS", "TINSS","TINSS.MLE")
   
-  SSplotComparisons(SSnTINSS, legendlabels=modelnames, subplot=2,endyr=2011,mcmcVec=c(T,T,F))
+  SSplotComparisons(SSnTINSS, legendlabels=modelnames,
+                    subplot=2,endyr=2011,mcmcVec=c(T,T,F))
   title(main="MCMC")
-  SSplotComparisons(SSnTINSS, legendlabels=modelnames, subplot=4,endyr=2011,mcmcVec=c(T,T,F))
+  SSplotComparisons(SSnTINSS, legendlabels=modelnames,
+                    subplot=4,endyr=2011,mcmcVec=c(T,T,F))
   title(main="MCMC")
   ###############################################
   }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ SS }
 \keyword{ data }
 \keyword{ manip }
 \keyword{ list }

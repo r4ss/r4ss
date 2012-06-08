@@ -6,13 +6,13 @@
   Iteratively changes the control file using SS_changepars.
 }
 \usage{
-SS_profile(dir = "C:/myfiles/mymodels/myrun/",
-  masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-  linenum = NULL, string = NULL,
+SS_profile(dir = "C:/myfiles/mymodels/myrun/", masterctlfile =
+  "control.ss_new", newctlfile = "control_modified.ss",
+  linenum = NULL, string = NULL, profilevec = NULL,
   usepar = TRUE, dircopy = TRUE, exe.delete = FALSE,
-  profilevec = NULL,
-  command = "SS3 -nox", model = "ss3", systemcmd = FALSE,
-  saveoutput = TRUE, overwrite=FALSE, verbose = TRUE)
+  command = "SS3 -nox", model = "ss3", systemcmd =
+  FALSE, saveoutput = TRUE, overwrite = FALSE, verbose =
+  TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

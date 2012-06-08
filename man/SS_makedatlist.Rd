@@ -64,22 +64,22 @@ morphcomp_data = 0)
     units of catch for each fleet
   }
   \item{se_log_catch}{
-    ... description to be added ...
+    Uncertainty in catch (standard error in log space).
   }
   \item{Ngenders}{
-    ... description to be added ...
+    Number of genders.
   }
   \item{Nages}{
-    ... description to be added ...
+    Number of ages.
   }
   \item{init_equil}{
-    ... description to be added ...
+    Initial equilibrium catch.
   }
   \item{catch}{
-    ... description to be added ...
+    Catch data
   }
   \item{CPUE}{
-        ... description to be added ... %%     ~~Describe \code{CPUE} here~~
+    Indices of abundance (if present).
   }
   \item{N_discard_fleets}{
     Number of fleets with discard data.
@@ -88,67 +88,73 @@ morphcomp_data = 0)
     Discard data (if exists).
   }
   \item{meanbodywt}{
-        ... description to be added ... %%     ~~Describe \code{meanbodywt} here~~
+    Mean body weight data (if exists)
+  }
+  \item{DF_for_meanbodywt}{
+    Degrees of freedom for mean body weight t-distribution.
   }
   \item{lbin_method}{
-        ... description to be added ... %%     ~~Describe \code{lbin_method} here~~
+    Method for entering length bins. (1=use databins; 2=generate from
+    binwidth,min,max below; 3=read vector). Not sure if all options
+    implemented.
   }
   \item{binwidth}{
-        ... description to be added ... %%     ~~Describe \code{binwidth} here~~
+    Bin width for length bins.
   }
   \item{minimum_size}{
-        ... description to be added ... %%     ~~Describe \code{minimum_size} here~~
+    Lower bound of length bins.
   }
   \item{maximum_size}{
-        ... description to be added ... %%     ~~Describe \code{maximum_size} here~~
+    Upper bound of length bins.
   }
   \item{comp_tail_compression}{
-        ... description to be added ... %%     ~~Describe \code{comp_tail_compression} here~~
+    Value below which tails of composition data will be compressed
+    (negative to turn off).
   }
   \item{add_to_comp}{
-        ... description to be added ... %%     ~~Describe \code{add_to_comp} here~~
+    Robustifying constant added to multinomial composition likelihoods.
   }
   \item{max_combined_lbin}{
-        ... description to be added ... %%     ~~Describe \code{max_combined_lbin} here~~
+    Maximum length bin below which length composition data will have genders combined.
   }
   \item{lbin_vector}{
-        ... description to be added ... %%     ~~Describe \code{lbin_vector} here~~
+    Vector of length bins.
   }
   \item{lencomp}{
-        ... description to be added ... %%     ~~Describe \code{lencomp} here~~
+    Length composition data (if exists).
   }
   \item{agebin_vector}{
-        ... description to be added ... %%     ~~Describe \code{agebin_vector} here~~
+    Vector of age bins.
   }
   \item{ageerror}{
-        ... description to be added ... %%     ~~Describe \code{ageerror} here~~
+    Ageing error matrices.
   }
   \item{agecomp}{
-        ... description to be added ... %%     ~~Describe \code{agecomp} here~~
+    Age composition data (if exists).
   }
   \item{Lbin_method}{
-        ... description to be added ... %%     ~~Describe \code{Lbin_method} here~~
+    Method of specifying length bins in conditional age-at-length data.
   }
   \item{max_combined_age}{
-        ... description to be added ... %%     ~~Describe \code{max_combined_age} here~~
+    Maximum age below which age composition data will have genders combined.
   }
   \item{MeanSize_at_Age_obs}{
-        ... description to be added ... %%     ~~Describe \code{MeanSize_at_Age_obs} here~~
+    Data on mean size at age (if exists).
   }
   \item{N_environ_variables}{
-        ... description to be added ... %%     ~~Describe \code{N_environ_variables} here~~
+    Number of environmental variables.
   }
   \item{N_environ_obs}{
-        ... description to be added ... %%     ~~Describe \code{N_environ_obs} here~~
+    Number of environmental observations.
   }
   \item{N_sizefreq_methods}{
-        ... description to be added ... %%     ~~Describe \code{N_sizefreq_methods} here~~
+    Number of size frequency methods.
   }
   \item{do_tags}{
     Include tag data? NOT IMPLEMENTED YET.
   }
   \item{morphcomp_data}{
-        ... description to be added ... %%     ~~Describe \code{morphcomp_data} here~~
+    Morph composition data. NOT IMPLEMENTED YET.
   }
 }
 \details{

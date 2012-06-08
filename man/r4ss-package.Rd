@@ -17,12 +17,12 @@
     Package: \tab r4ss\cr
     Type: \tab Package\cr
     Version: \tab 1.17\cr
-    Date: \tab 2012-04-05\cr
+    Date: \tab 2012-06-04\cr
     License: \tab MIT license\cr
     LazyLoad: \tab yes\cr
     URL: \tab \url{http://www.r-project.org}\cr \tab \url{http://code.google.com/p/r4ss/}\cr
   }
-  Should be compatible with Stock Synthesis versions 3.11, 3.20, and 3.21.
+  Should be compatible with Stock Synthesis versions 3.11 through 3.24.
 }
 \author{
   Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre Punt,
