@@ -13,7 +13,10 @@
   might be written for any other model.
 }
 \usage{
-IOTCmove(replist=NULL, moveage=5, moveseas=1, legend=FALSE)
+IOTCmove(replist = NULL, moveage = 5, moveseas = 1,
+         legend = FALSE, title = NULL,
+         areanames = c("R1","R2","R3","R4","R5"),
+         ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,6 +32,15 @@ IOTCmove(replist=NULL, moveage=5, moveseas=1, legend=FALSE)
   \item{legend}{
     add a legend to show the movement rate associated with the widest
     arrows
+  }
+  \item{title}{
+    optional title to add at top of figure
+  }
+  \item{areanames}{
+    vector of names for each area
+  }
+  \item{...}{
+    Additional arguments can get passed to \code{\link{SSplotMovementMap}}
   }
 }
 \details{

@@ -1,10 +1,12 @@
 \name{SS_html}
 \alias{SS_html}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{ A function for converting Stock Synthesis output to the format
-  used by _html }
+\title{ Create HTML files to view figures in browser.  }
 \description{
-
+  Writes a set of HTML files with tabbed navigation between them.
+  Depends on \code{\link{SS_plots_test}} with settings in place to write
+  figures to PNG files. Should open main file in default browser
+  automatically.
 }
 \usage{
 SS_html(replist=NULL,
