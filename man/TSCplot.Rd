@@ -95,16 +95,16 @@ It expects the SS results read in by \code{\link{SS_output}}.  If MCMC results a
   %% ...
 }
 
-\references{
-  %% ~put references to the literature/web site here ~
-}
+% \references{
+%   %% ~put references to the literature/web site here ~
+% }
 
 \author{
   Allan Hicks
 }
 
-\note{
-}
+% \note{
+% }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 

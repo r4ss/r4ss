@@ -122,9 +122,9 @@ addSSsummarize(origModels,newModels)
   %% ...
 }
 
-\references{
-  %% ~put references to the literature/web site here ~
-}
+% \references{
+%   %% ~put references to the literature/web site here ~
+% }
 
 \author{
   Allan Hicks

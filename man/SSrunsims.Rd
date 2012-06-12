@@ -131,25 +131,25 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
     Print various messages to the command line as the function runs? Default=TRUE.
   }
 }
-\details{
-  %%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-  %%  ~Describe the value returned
-  %%  If it is a LIST, use
-  %%  \item{comp1 }{Description of 'comp1'}
-  %%  \item{comp2 }{Description of 'comp2'}
-  %% ...
-}
-\references{
-  %% ~put references to the literature/web site here ~
-}
-\author{
-  %%  ~~who you are~~
-}
-\note{
-  %%  ~~further notes~~
-}
+% \details{
+%   %%  ~~ If necessary, more details than the description above ~~
+% }
+% \value{
+%   %%  ~Describe the value returned
+%   %%  If it is a LIST, use
+%   %%  \item{comp1 }{Description of 'comp1'}
+%   %%  \item{comp2 }{Description of 'comp2'}
+%   %% ...
+% }
+% \references{
+%   %% ~put references to the literature/web site here ~
+% }
+% \author{
+%   %%  ~~who you are~~
+% }
+% \note{
+%   %%  ~~further notes~~
+% }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
@@ -157,8 +157,8 @@ fyr = NULL, lyr = NULL, printfile=TRUE, intern = FALSE,
   \code{\link{SSgetoutput}}
   \code{\link{SSsummarize}}
 }
-\examples{
-}
+% \examples{
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ data }

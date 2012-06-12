@@ -54,8 +54,8 @@ Ian Taylor
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{
-}
+% \seealso{
+% }
 % \examples{
 % ##---- Should be DIRECTLY executable !! ----
 % ##-- ==>  Define data, use random,
