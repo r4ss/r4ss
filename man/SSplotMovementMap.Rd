@@ -68,19 +68,19 @@ SSplotMovementMap(replist=NULL, xlim, ylim,
     character expansion to apply to text shown by areanames (if used)
   }
 }
-\details{
-  %%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-  %%  ~Describe the value returned
-  %%  If it is a LIST, use
-  %%  \item{comp1 }{Description of 'comp1'}
-  %%  \item{comp2 }{Description of 'comp2'}
-  %% ...
-}
-\references{
-  %% ~put references to the literature/web site here ~
-}
+% \details{
+%   %%  ~~ If necessary, more details than the description above ~~
+% }
+% \value{
+%   %%  ~Describe the value returned
+%   %%  If it is a LIST, use
+%   %%  \item{comp1 }{Description of 'comp1'}
+%   %%  \item{comp2 }{Description of 'comp2'}
+%   %% ...
+% }
+% \references{
+%   %% ~put references to the literature/web site here ~
+% }
 \author{
   Ian Taylor
 }
@@ -92,12 +92,14 @@ SSplotMovementMap(replist=NULL, xlim, ylim,
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_output}},
+  \code{\link{SSplotMovementRates}},
+  \code{\link{IOTCmove}}
 }
-\examples{
-  % \dontrun{
-  % }
-}
+% \examples{
+%   % \dontrun{
+%   % }
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ hplot }

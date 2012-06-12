@@ -49,10 +49,14 @@ SS_writedat(datlist, outfile, overwrite = FALSE, verbose = TRUE)
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+ \code{\link{SS_makedatlist}},
+ \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+ \code{\link{SS_readctl}},
+ \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
+ \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
-\examples{
-}
+% \examples{
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ data }

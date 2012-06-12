@@ -34,7 +34,7 @@ SS_html(replist=NULL,
   \item{filenotes}{ Add additional notes to home page. }
   \item{verbose}{ Display more info while running this function? }
 }
-\references{ }
+% \references{ }
 \author{ Ian Taylor }
 \note{
   By default, this function will look in the directory where PNG files
@@ -46,8 +46,8 @@ SS_html(replist=NULL,
 \seealso{
   \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\examples{
-}
+% \examples{
+% }
 \keyword{ aplot }
 \keyword{ hplot }% __ONLY ONE__ keyword per line
 % \keyword{ ~kwd2 }% __ONLY ONE__ keyword per line

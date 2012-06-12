@@ -64,9 +64,9 @@ IOTCmove(replist = NULL, moveage = 5, moveseas = 1,
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-\seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
-}
+% \seealso{
+%   %% ~~objects to See Also as \code{\link{help}}, ~~~
+% }
 % \examples{
 %   % \dontrun{
 %   %   IOTCmove(myreplist)

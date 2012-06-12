@@ -28,25 +28,25 @@ SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
     section=NULL will read input data, (equivalent to section=1).
   }
 }
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
+% \details{
+% %%  ~~ If necessary, more details than the description above ~~
+% }
+% \value{
+% %%  ~Describe the value returned
+% %%  If it is a LIST, use
+% %%  \item{comp1 }{Description of 'comp1'}
+% %%  \item{comp2 }{Description of 'comp2'}
+% %% ...
+% }
+% \references{
+% %% ~put references to the literature/web site here ~
+% }
 \author{
   Ian Taylor
 }
-\note{
-%%  ~~further notes~~
-}
+% \note{
+% %%  ~~further notes~~
+% }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
@@ -56,8 +56,8 @@ SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
  \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
  \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
 }
-\examples{
-}
+% \examples{
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ data }

@@ -80,7 +80,6 @@ lowerCI = 0.025, upperCI = 0.975)
 
 \seealso{
   \code{\link{SSgetoutput}}
-  \code{\link{SSrunsims}}
 }
 % \examples{
 % }

@@ -228,8 +228,8 @@ SSplotComps(replist, subplots=1:11,
 \seealso{
   \code{\link{SS_plots}}, \code{\link{make_multifig}}
 }
-\examples{
-}
+% \examples{
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ hplot }% __ONLY ONE__ keyword per line

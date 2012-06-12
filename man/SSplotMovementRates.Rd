@@ -74,29 +74,31 @@ SSplotMovementRates(replist, plot=TRUE, print=FALSE, subplots=1:2,
     Print information on function progress.
   }
 }
-\details{
-  %%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-  %%  ~Describe the value returned
-  %%  If it is a LIST, use
-  %%  \item{comp1 }{Description of 'comp1'}
-  %%  \item{comp2 }{Description of 'comp2'}
-  %% ...
-}
-\references{
-  %% ~put references to the literature/web site here ~
-}
+% \details{
+%   %%  ~~ If necessary, more details than the description above ~~
+% }
+% \value{
+%   %%  ~Describe the value returned
+%   %%  If it is a LIST, use
+%   %%  \item{comp1 }{Description of 'comp1'}
+%   %%  \item{comp2 }{Description of 'comp2'}
+%   %% ...
+% }
+% \references{
+%   %% ~put references to the literature/web site here ~
+% }
 \author{
   Ian Taylor
 }
-\note{
-}
+% \note{
+% }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-  %% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{SS_output}},
+  \code{\link{SSplotMovementRates}},
+  \code{\link{IOTCmove}}
 }
 \examples{
   \dontrun{

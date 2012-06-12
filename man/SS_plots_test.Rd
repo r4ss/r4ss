@@ -173,16 +173,16 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
   \item{\dots}{ Additional arguments that will be passed to some
     subfunctions. }
 }
-\details{
-  %%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-  %%  ~Describe the value returned
-  %%  If it is a LIST, use
-  %%  \item{comp1 }{Description of 'comp1'}
-  %%  \item{comp2 }{Description of 'comp2'}
-  %% ...
-}
+% \details{
+%   %%  ~~ If necessary, more details than the description above ~~
+% }
+% \value{
+%   %%  ~Describe the value returned
+%   %%  If it is a LIST, use
+%   %%  \item{comp1 }{Description of 'comp1'}
+%   %%  \item{comp2 }{Description of 'comp2'}
+%   %% ...
+% }
 \references{
   Walters, Hilborn, and  Christensen, 2008, Surplus production dynamics
   in declining and recovering fish populations. Can. J. Fish. Aquat.
@@ -191,9 +191,9 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
 \author{
   Ian Stewart, Ian Taylor
 }
-\note{
-  %%  ~~further notes~~
-}
+% \note{
+%   %%  ~~further notes~~
+% }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
@@ -207,8 +207,8 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
   \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
   \code{\link{SSplotYield}}
 }
-\examples{
-}
+% \examples{
+% }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ hplot }

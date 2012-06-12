@@ -77,7 +77,6 @@ FALSE, listlists = TRUE, underscore=FALSE)
 
 \seealso{
   \code{\link{SS_output}}
-  \code{\link{SSrunsims}}
   \code{\link{SSsummarize}}
 }
 % \examples{
