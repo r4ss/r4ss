@@ -11,7 +11,7 @@ SSplotRecdist <-
 {
   # plot of recruitment distribution between seasons and areas
   pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)
@@ -40,8 +40,8 @@ SSplotRecdist <-
   recdistfun <- function(){
     image(areavec,seasvec,recmat,axes=F,xlab=xlab,ylab=ylab,
           main=main,cex.main=cex.main)
-    axis(1,at=areavec,lab=areanames)
-    axis(2,at=seasvec,lab=seasnames)
+    axis(1,at=areavec,labels=areanames)
+    axis(2,at=seasvec,labels=seasnames)
     box()
 
     for(iarea in areavec){

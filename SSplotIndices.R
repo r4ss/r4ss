@@ -28,8 +28,8 @@ function(replist,subplots=1:9,
     return()
   }
 
-  pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+  pngfun <- function(filename,caption=NA){
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)

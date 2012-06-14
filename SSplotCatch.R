@@ -49,7 +49,7 @@ SSplotCatch <-
                      "15: discards aggregated across seasons stacked")
   
   pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)
@@ -158,7 +158,7 @@ SSplotCatch <-
     subset <- ts$Seas[goodrows]==1
     retmat2         <- retmat[subset,]
     totcatchmat2    <- totcatchmat[subset,]
-    totcatchmat2Yr  <- ts$Yr[subset]
+    #totcatchmat2Yr  <- ts$Yr[subset]
     totobscatchmat2 <- totobscatchmat[subset,]
     discmat2        <- discmat[subset,]
     for(iseason in 2:nseasons){

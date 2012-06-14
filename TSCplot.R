@@ -61,7 +61,7 @@ TSCplot <- function(SSout,
     
     if(is.null(makePDF) & is.null(makePNG)) { windows(height=ht,width=wd) }
     if(!is.null(makePDF)) { pdf(file=makePDF,width=wd,height=ht) }
-    if(!is.null(makePNG)) { png(file=makePNG,width=wd,height=ht,units = "in", pointsize = 10, res=300) }
+    if(!is.null(makePNG)) { png(filename=makePNG,width=wd,height=ht,units = "in", pointsize = 10, res=300) }
     par(mar=c(4,5,2,5))
     barOut <- barplot(SP$Dead_Catch,  names.arg = SP$Yr, ylim=ylimBar, ylab="", col='yellow', cex=cexBarLabels, cex.axis=cex.axis, space=space,xlim=c(0,nrow(SP)),axisnames=F)
     axis(1,at=barOut[ind,1],labels=yrs[ind])

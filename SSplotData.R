@@ -8,7 +8,7 @@ SSplotData <- function(replist,
                        verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)
@@ -167,7 +167,7 @@ SSplotData <- function(replist,
       if(itype!=1) abline(h=yval,col='grey',lty=3)
       text(mean(xlim),yval-.3,typelabels[typenames==typename],font=2)
     }
-    axis(4,at=axistable$yval,label=fleetnames[axistable$fleet],las=1)
+    axis(4,at=axistable$yval,labels=fleetnames[axistable$fleet],las=1)
     box()
     axis(1,at=xticks)
   }

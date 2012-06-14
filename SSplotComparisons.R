@@ -38,11 +38,16 @@ SSplotComparisons <-
            mcmcVec="default")
 {
   # subfunction to write png files
-  pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-  if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
+  pngfun <- function(file)
+    png(filename=paste(plotdir,file,sep="/"),
+        width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  if(print & is.null(plotdir))
+    stop("to print PNG files, you must supply a directory as 'plotdir'")
   
   # subfunction to add legend
-  legendfun <- function(legendlabels) legend(legendloc, legend=legendlabels, col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
+  legendfun <- function(legendlabels)
+    legend(legendloc, legend=legendlabels,
+           col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
 
   rc <- function(n,alpha=1){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
@@ -337,7 +342,7 @@ SSplotComparisons <-
     # add axes
     axis(1)
     yticks <- pretty(ylim)
-    axis(2,at=yticks,lab=format(yticks/yunits),las=1)
+    axis(2,at=yticks,labels=format(yticks/yunits),las=1)
     box()
   }
 
@@ -477,7 +482,7 @@ SSplotComparisons <-
     if(legend) legendfun(legendlabels)
     axis(1)
     yticks <- pretty(ylim)
-    axis(2,at=yticks,lab=format(yticks/yunits),las=1)
+    axis(2,at=yticks,labels=format(yticks/yunits),las=1)
     box()
   }
 
@@ -796,7 +801,7 @@ SSplotComparisons <-
       }
       abline(h=0,col="grey")
       xticks <- pretty(xlim)
-      axis(1,at=xticks,lab=format(xticks/xunits))
+      axis(1,at=xticks,labels=format(xticks/xunits))
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",xunits," (so may be in units of ",xlab2,")\n",sep="")
       mtext(side=2,line=1,labels[8])
       box()

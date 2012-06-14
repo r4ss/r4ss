@@ -273,7 +273,8 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
                 as.numeric(tclObj(slope2)))
     
     aux <- list(knots = kvec, slopes=slopes, params = pvec)
-    assign("selfit.tmp", c(get("selfit.tmp", env = selfit.env), aux), envir = selfit.env)
+    assign("selfit.tmp", c(get("selfit.tmp", envir = selfit.env), aux),
+           envir = selfit.env)
 
     tclvalue(done) <- 2
   }

@@ -107,7 +107,7 @@ SSplotPars <-
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     test <- readLines(fullpostfile,n=10) # test for presence of file with at least 10 rows
     if(length(test)>5){
-      posts <- read.table(fullpostfile,head=TRUE)
+      posts <- read.table(fullpostfile,header=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       # remove burn-in and thin the posteriors if requested
       posts <- posts[seq(burn+1,nrow(posts),thin), ]
@@ -122,7 +122,7 @@ SSplotPars <-
     parstart <- grep("PARAMETERS",replines)[2]
     parend <- grep("DERIVED_QUANTITIES",replines)[2]
     nrows2 <- parend - parstart - 3
-    partable <- read.table(fullrepfile,head=FALSE,nrows=nrows2,skip=parstart,as.is=TRUE,
+    partable <- read.table(fullrepfile,header=FALSE,nrows=nrows2,skip=parstart,as.is=TRUE,
                            fill=TRUE,row.names=paste(1:nrows2),col.names=1:60)
     partable <- partable[,1:15]
     temp <- as.character(partable[1,])

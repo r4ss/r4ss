@@ -201,7 +201,7 @@ SS_plots <-
                              areas=areas,
                              areacols=areacols,
                              areanames=areanames,
-                             forecast=doforecast,
+                             forecastplot=doforecast,
                              uncertainty=douncertainty,
                              plot=(5 %in% plot),
                              print=(5 %in% print),
@@ -219,7 +219,7 @@ SS_plots <-
                              areas=areas,
                              areacols=areacols,
                              areanames=areanames,
-                             forecast=doforecast,
+                             forecastplot=doforecast,
                              uncertainty=FALSE,
                              plot=(5 %in% plot),
                              print=(5 %in% print),
@@ -544,7 +544,7 @@ SS_plots <-
     # plot 20: conditional age at length plot with fits, sample size, etc.
     if(20 %in% c(plot,print)){
       if(aalresids==TRUE){
-        SSplotComps(replist=replist,subplot=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+        SSplotComps(replist=replist,subplots=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                     minnbubble=minnbubble, pntscalar=pntscalar,
@@ -558,7 +558,7 @@ SS_plots <-
       }
       # conditional age at length for a given year
       if(length(intersect(aalyear, unique(timeseries$Yr)))>0){
-        SSplotComps(replist=replist,subplot=4:5,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+        SSplotComps(replist=replist,subplots=4:5,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     aalbin=aalbin,aalyear=aalyear,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -573,7 +573,7 @@ SS_plots <-
       }
       # conditional age at length for a given length bin
       if(length(intersect(aalbin, unique(lbins)))>0){
-        SSplotComps(replist=replist,subplot=6,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+        SSplotComps(replist=replist,subplots=6,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     aalbin=aalbin,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -591,7 +591,7 @@ SS_plots <-
     
     if(21 %in% c(plot,print)){
       # plot 21: Andre's new conditional age-at-length plots
-      SSplotComps(replist=replist,subplot=8,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+      SSplotComps(replist=replist,subplots=8,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                   fleetnames=fleetnames,
                   aalbin=aalbin,aalyear=aalyear,
                   samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,

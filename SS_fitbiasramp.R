@@ -17,7 +17,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
   pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)
@@ -221,7 +221,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
     lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
     legend('topleft',col=c(2,4),lwd=3,lty=2:1,inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
-           leg=c('bias adjust in model','estimated alternative'))
+           legend=c('bias adjust in model','estimated alternative'))
     mtext(side=1,line=3,'Year')
   }
 

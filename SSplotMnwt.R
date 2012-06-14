@@ -16,7 +16,7 @@ SSplotMnwt <-
            plotdir="default", verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
-    png(file=file,width=pwidth,height=pheight,
+    png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
     return(plotinfo)

@@ -483,7 +483,8 @@ FinalRecovery<-function(UUU,Title)
 
    FileName <- paste(dirn,fileN[Ifile],sep="\\")
    cat("FileName:",FileName,"\n")
-   UUU <- read.table(file=FileName,col.names=1:ncols,fill=T,colClass="character",comment.char="$",sep=",")
+   UUU <- read.table(file=FileName,col.names=1:ncols,fill=T,
+                     colClasses="character",comment.char="$",sep=",")
    UUUs[[Ifile]] <- UUU
 
    # Extract key parameters
