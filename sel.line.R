@@ -78,8 +78,7 @@ sel.line <-
                 sel[1:startbin] <- (x[1:startbin] / x[startbin])^2 * sel[startbin]
             }
 
-            # what is nlength in the following line?
-            if(j2 < length(x)) sel[j2+1:nlength] <- sel[j2]
+            if(j2 < length(x)) sel[(j2+1):length(x)] <- sel[j2]
             return(sel)
         }}
 

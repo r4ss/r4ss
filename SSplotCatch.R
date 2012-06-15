@@ -204,8 +204,8 @@ SSplotCatch <-
 
   # function for stacked polygons
   stackfunc <- function(ymat,ylab,x=catchyrs){
-    ## call to embedded, modified function
-    stackpoly(x=x, y=ymat, border="black",
+    ## call to function in plotrix (formerly copied into r4ss)
+    stackpoly(x=x, y=ymat, border="black", 
               xlab=xlab, ylab=ylab, col=fleetcols)
     if(showlegend) legend(legendloc, fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")
     return(TRUE)

@@ -227,12 +227,12 @@ SSplotNumbers <-
         natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
         natageratio <- as.matrix(natagem[,remove]/natagef[,remove])
         if(diff(range(natageratio,finite=TRUE))!=0){
-          tempfun <- function(...){
+          tempfun3 <- function(...){
             contour(natageyrsB,0:accuage,natageratio,xaxs="i",yaxs="i",xlab=labels[1],ylab=labels[2],
               main=plottitle3,cex.main=cex.main,...)
           }
           if(plot & 3 %in% subplots){
-            tempfun(labcex=1)
+            tempfun3(labcex=1)
           }
           if(print & 3 %in% subplots){
             filepart <- ""
@@ -240,7 +240,7 @@ SSplotNumbers <-
             file <- paste(plotdir,"/numbers3_ratio_age",filepart,".png",sep="")
             caption <- plottitle3
             plotinfo <- pngfun(file=file, caption=caption)
-            tempfun(labcex=0.4)
+            tempfun3(labcex=0.4)
             dev.off()}
         }else{
           cat("skipped sex ratio contour plot because ratio=1 for all ages and years\n")
@@ -329,7 +329,7 @@ SSplotNumbers <-
             plottitle2 <- paste(periodtitle,labels[14])
             if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
 
-            tempfun <- function(){
+            tempfun4 <- function(){
               # bubble plot with line
               bubble3(x=resx, y=resy, z=resz,
                       xlab=labels[1],ylab=labels[12],col=c("black","black"),
@@ -337,7 +337,7 @@ SSplotNumbers <-
                       las=1,cex.main=cex.main,allopen=1)
               lines(natlenyrs,meanlen,col="red",lwd=3)
             }
-            tempfun2 <- function(){
+            tempfun5 <- function(){
               # mean length for males and females
               ylim <- c(0, max(meanlen, meanlenf))
               plot(natlenyrs,meanlen,col="blue",lty=1,pch=4,xlab=labels[1],ylim=ylim,
@@ -346,8 +346,8 @@ SSplotNumbers <-
               legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
             }
             if(plot){
-              if(6 %in% subplots) tempfun()
-              if(7 %in% subplots & m==2 & nsexes==2) tempfun2()
+              if(6 %in% subplots) tempfun4()
+              if(7 %in% subplots & m==2 & nsexes==2) tempfun5()
             }
             if(print){
               filepartsex <- paste("_sex",m,sep="")
@@ -357,7 +357,7 @@ SSplotNumbers <-
                 file <- paste(plotdir,"/numbers6_len",filepartarea,filepartsex,".png",sep="")
                 caption <- plottitle1
                 plotinfo <- pngfun(file=file, caption=caption)
-                tempfun()
+                tempfun4()
                 dev.off()
               }
               # make 2-sex plot after looping over both sexes
@@ -365,7 +365,7 @@ SSplotNumbers <-
                 file <- paste(plotdir,"/numbers7_meanlen",filepartarea,".png",sep="")
                 caption <- plottitle2
                 plotinfo <- pngfun(file=file, caption=caption)
-                tempfun2()
+                tempfun5()
                 dev.off()
               }
             } # end printing of plot 14
@@ -380,7 +380,7 @@ SSplotNumbers <-
           natlenm <- get(paste("natlentemp0area",iarea,"sex",2,sep=""))
           natlenratio <- as.matrix(natlenm[,remove]/natlenf[,remove])
           if(diff(range(natlenratio,finite=TRUE))!=0){
-            tempfun <- function(males.to.females=TRUE,...){
+            tempfun6 <- function(males.to.females=TRUE,...){
               if(males.to.females){
                 main <- labels[19]
                 z <- natlenratio
@@ -394,10 +394,10 @@ SSplotNumbers <-
                       main=main,cex.main=cex.main,...)
             }
             if(plot & 8 %in% subplots){
-              tempfun(males.to.females=TRUE,labcex=1)
+              tempfun6(males.to.females=TRUE,labcex=1)
             }
             if(plot & 9 %in% subplots){
-              tempfun(males.to.females=FALSE,labcex=1)
+              tempfun6(males.to.females=FALSE,labcex=1)
             }
             if(print & 8 %in% subplots){
               filepart <- ""
@@ -405,7 +405,7 @@ SSplotNumbers <-
               file <- paste(plotdir,"/numbers8_ratio_len1",filepart,".png",sep="")
               caption <- labels[19]
               plotinfo <- pngfun(file=file, caption=caption)
-              tempfun(labcex=0.4)
+              tempfun6(labcex=0.4)
               dev.off()
             }
             if(print & 9 %in% subplots){
@@ -414,7 +414,7 @@ SSplotNumbers <-
               file <- paste(plotdir,"/numbers8_ratio_len2",filepart,".png",sep="")
               caption <- labels[20]
               plotinfo <- pngfun(file=file, caption=caption)
-              tempfun(labcex=0.4)
+              tempfun6(labcex=0.4)
               dev.off()
             }
           }else{

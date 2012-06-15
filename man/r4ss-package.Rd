@@ -17,8 +17,8 @@
     Package: \tab r4ss\cr
     Type: \tab Package\cr
     Version: \tab 1.17\cr
-    Date: \tab 2012-06-08\cr
-    License: \tab MIT license\cr
+    Date: \tab 2012-06-14\cr
+    License: \tab GPL-3\cr
     LazyLoad: \tab yes\cr
     URL: \tab \url{http://www.r-project.org}\cr \tab \url{http://code.google.com/p/r4ss/}\cr
   }

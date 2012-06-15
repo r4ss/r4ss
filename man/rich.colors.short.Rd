@@ -6,7 +6,8 @@
 }
 \description{
   A subset of rich.colors by Arni Magnusson from the gplots package,
-  with the addition of alpha transparency.
+  with the addition of alpha transparency (which is now available in
+  the gplots version as well)
 }
 \usage{
 rich.colors.short(n, alpha = 1)

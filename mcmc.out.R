@@ -33,6 +33,8 @@ mcmc.out <- function (
 {
   require(coda) || stop("package coda is required")
   geterrmessage()
+  require(gtools) || stop("package gtools is required")
+  geterrmessage()
      
   # add section to set up for printing or display to screen (default)
   if(print==TRUE){}# not implemented

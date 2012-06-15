@@ -31,4 +31,4 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
     }
     if (axis4)  axis(4)
 }
-## end embedded stackpoly
+## end stackpoly
