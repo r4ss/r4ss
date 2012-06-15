@@ -2,6 +2,7 @@ SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,xlim=NULL,ylim=NULL,
            xlab="Spawning biomass (mt)",
            ylab="Recruitment (1,000s)",
+           bioscale="default",
            plotdir="default",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE,line1="blue",line2="green3",line3="black",
@@ -19,6 +20,13 @@ SSplotSpawnrecruit <-
   plotinfo <- NULL
 
   recruit <- replist$recruit
+  nsexes <- replist$nsexes
+  
+  #scaling factor for single sex models
+  if(bioscale=="default"){
+    if(nsexes==1) bioscale <- 0.5 else bioscale <- 1
+  }
+  
 
   if(plotdir=="default") plotdir <- replist$inputs$dir
   if(minyr=="default") minyr <- min(recruit$year)
@@ -28,7 +36,9 @@ SSplotSpawnrecruit <-
                      recruit$year>=minyr,]
   
   timeseries <- replist$timeseries
-
+  recruit$spawn_bio <- bioscale*recruit$spawn_bio
+  timeseries$SpawnBio <- bioscale*timeseries$SpawnBio
+  
   if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr, recruit$exp_recr, recruit$adjusted))
   x <- recruit$spawn_bio
   if(is.null(xlim)) xlim=c(0, max(x))

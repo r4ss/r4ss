@@ -76,7 +76,9 @@ SSplotSPR <-
       }
     }
 
-    if(uncertainty & sprtarg>0){
+    if(!uncertainty | sprtarg<=0){
+      cat("skipped SPR ratio timeseries: requires both sprtarg>0 and uncertainty=TRUE.\n")
+    }else{
       sprratiostd <- derived_quants[substring(derived_quants$LABEL,1,8)=="SPRratio",]
       sprratiostd$Yr <- as.numeric(substring(sprratiostd$LABEL,10))
       sprratiostd$period <- "fore"
@@ -108,7 +110,7 @@ SSplotSPR <-
       }
     }
 
-    if(btarg<=0 | sprtarg<=0){
+    if(4 %in% subplots & (btarg<=0 | sprtarg<=0)){
       cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
     }else{
       timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons

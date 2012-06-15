@@ -263,11 +263,30 @@ SS_output <-
       yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
     }
   }else{
-    if(verbose) cat("You skipped the forecast file\n",
-                    "setting sprtarg and btarg to 0.4 (can override in SS_plots)\n")
-    sprtarg <- 0.4
-    btarg <- 0.4
+    if(verbose)
+      cat("You skipped the forecast file\n",
+          "  setting SPR target and Biomass target to -999\n",
+          "  lines won't be drawn for these targets\n",
+          "  (can replace or override in SS_plots by setting 'sprtarg' and 'btarg')\n")
+    sprtarg <- -999
+    btarg <- -999
   }
+  minbthresh <- -999
+  if(btarg==0.4){
+    if(verbose)
+      cat("Setting minimum biomass threshhold to 0.25\n",
+          "  based on US west coast assumption associated with biomass target of 0.4.\n",
+          "  (can replace or override in SS_plots by setting 'minbthresh')\n")
+    minbthresh <- 0.25 # west coast assumption for non flatfish
+  }
+  if(btarg==0.25){
+    if(verbose)
+      cat("Setting minimum biomass threshhold to 0.25\n",
+          "  based on US west coast assumption associated with flatfish target of 0.25.\n",
+          "  (can replace or override in SS_plots by setting 'minbthresh')\n")
+    minbthresh <- 0.125 # west coast assumption for flatfish
+  }
+  
   flush.console()
 
   # check for use of temporary files
@@ -1154,7 +1173,7 @@ if(FALSE){
   returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
-  returndat$minbthresh <- ifelse(btarg==0.25,0.125,0.25)
+  returndat$minbthresh <- minbthresh
 
 
   # Spawner-recruit curve
