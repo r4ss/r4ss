@@ -21,6 +21,7 @@ SSplotDiscard <-
   plotinfo <- NULL
 
   # get stuff from replist
+  nfishfleets     <- replist$nfishfleets
   discard         <- replist$discard
   FleetNames      <- replist$FleetNames
   DF_discard      <- replist$DF_discard   # used in SSv3.11
@@ -31,15 +32,16 @@ SSplotDiscard <-
 
   # if discards exist
   if(!is.na(discard) && nrow(discard)>0){
-    for(fleet in unique(discard$Fleet)){
-      FleetNum <- as.numeric(strsplit(fleet,"_")[[1]][1])
-      FleetName <- substring(fleet,nchar(FleetNum)+2)
-      
+    if(fleets[1]=="all") fleets <- 1:nfishfleets
+    fleets <- intersect(fleets,discard$FleetNum)
+    for(FleetNum in fleets){
       # table available beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
         DF_discard <- discard_spec$errtype[discard_spec$Fleet==FleetNum]
       }
-      usedisc <- discard[discard$Fleet==fleet,]
+      usedisc <- discard[discard$FleetNum==FleetNum,]
+      FleetName <- usedisc$FleetName[1]
+
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
