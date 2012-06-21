@@ -1,4 +1,12 @@
 SS_readctl <- function(file){
+  cat("Warning!\n",
+      "  SS_readctl is not fully implemented. The logic to figure out\n",
+      "  all the details of a Stock Synthesis control file is very complex,\n",
+      "  so this function may be completed in a way that is not totally\n",
+      "  consistent with the other similar files. Or it may never be\n",
+      "  completed at all. The functions 'SS_changepars' and 'SS_parlines'\n",
+      "  offer alternatives for working with SS control files.\n")
+
   ctl <- readLines(file,warn=FALSE)
 
   if(strsplit(ctl[2]," ")[[1]][1]=="Start_time:") ctl <- ctl[-(1:2)]

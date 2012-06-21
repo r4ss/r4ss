@@ -21,7 +21,8 @@ SSplotCatch <-
              "(numbers x1000)",           #8
              "Observed and expected",     #9
              "aggregated across seasons"),#10
-           catchasnumbers=FALSE,
+           catchasnumbers=NULL,
+           catchbars=TRUE,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1, # note: no plot titles yet implemented
            verbose=TRUE)
@@ -29,7 +30,7 @@ SSplotCatch <-
   # plot catch-related time-series for Stock Synthesis
   # note from Ian Taylor to himself: "make minyr and maxyr connect to something!"
   
-  # note: stacked plots only shown with multiple fleets
+  # note: stacked plots depend on multiple fleets
   subplot_names <- c("1: landings",
                      "2: landings stacked",
                      "3: observed and expected landings (if different)",
@@ -37,10 +38,10 @@ SSplotCatch <-
                      "4: total catch (including discards)",
                      "5: total catch (including discards) stacked",
                      "6: discards",
-                     "7: discards stacked plot (depends on multiple fleets)",
+                     "7: discards stacked plot (depends on multiple fleets)" ,
                      "8: discard fraction",
                      "9: harvest rate",
-                     # note: subplots 10-12 are only for seasonal models
+                     # note: subplots 10-15 are only for seasonal models
                      "10: landings aggregated across seasons",
                      "11: landings aggregated across seasons stacked",
                      "12: total catch (if discards present) aggregated across seasons",
@@ -62,11 +63,26 @@ SSplotCatch <-
   nareas           <- replist$nareas
   nfleets          <- replist$nfleets
   nfishfleets      <- replist$nfishfleets
+  catch_units      <- replist$catch_units
   endyr            <- replist$endyr
   FleetNames       <- replist$FleetNames
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
+
+  if(is.null(catchasnumbers)){
+    if(min(catch_units,na.rm=TRUE)==2){
+      catchasnumbers <- TRUE
+      cat("  Note: catch_units ")
+    }else{
+      catchasnumbers <- FALSE
+      if(2 %in% catch_units){
+        cat("  Note: catch is in numbers for some, but not all fleets,\n",
+            "       so be careful interpreting catch plots.\n")
+      }
+    }
+  }
+
   if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
-    
+  
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
@@ -211,6 +227,34 @@ SSplotCatch <-
     return(TRUE)
   } # end stackfunc
 
+  barfunc <- function(ymat,ylab,x=catchyrs){
+    # adding labels to barplot as suggested by Mike Prager on R email list:
+    #    http://tolstoy.newcastle.edu.au/R/e2/help/07/03/13013.html
+    mp <- barplot(t(ymat), xlab=xlab, ylab=ylab,axisnames=FALSE,
+                  col=fleetcols,space=0,yaxs='i')
+    # Get major and minor multiples for choosing labels:
+    ntick <- length(mp) 
+      { if (ntick < 16) mult = c(2, 2)
+      else if(ntick < 41) mult = c(5, 5) 
+      else if (ntick < 101) mult = c(10, 5) else mult = c(20, 5)
+      } 
+    label.index <- which(x %% mult[1] == 0)
+    minor.index <- which(x %% mult[2] == 0)
+    # Draw all ticks: 
+    axis(side = 1, at = mp, labels = FALSE, tcl = -0.2)
+    # Draw minor ticks: 
+    axis(side = 1, at = mp[minor.index], labels = FALSE, tcl = -0.5)
+    # Draw major ticks & labels: 
+    axis(side = 1, at = mp[label.index], labels = x[label.index], tcl = -0.7)
+
+    # add legend
+    if(showlegend) legend(legendloc, fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")
+    return(TRUE)
+  }
+
+  # choose one of the above functions
+  if(catchbars) stackfunc <- barfunc # unsophisticated way to implement choice of plot type
+  
   makeplots <- function(subplot){
     a <- FALSE
     if(subplot==1) a <- linefunc(ymat=retmat, ylab=labels[3], addtotal=TRUE)

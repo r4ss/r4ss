@@ -1,14 +1,19 @@
 SS_plots_test <-
   function(
-    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=FALSE, html=png, printfolder="plots", dir="default", fleets="all", areas="all",
-    fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
-    verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE, datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
-    sprtarg="default", btarg="default", minbthresh="default", pntscalar=2.6, minnbubble=8, aalyear=-1, aalbin=-1,
-    aalresids=FALSE, maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE, showlegend=TRUE,
-    pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,selexlines=1:5,
-    rows=1, cols=1, maxrows=6, maxcols=6, maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
-    SSplotDatMargin=8,filenotes=NULL,
-    catchasnumbers=FALSE,legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
+    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=FALSE, html=png,
+    printfolder="plots", dir="default", fleets="all", areas="all",
+    fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
+    lwd=1, areacols="default", areanames="default",
+    verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
+    datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
+    sprtarg="default", btarg="default", minbthresh="default", pntscalar=2.6,
+    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
+    cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
+    showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+    cex.main=1,selexlines=1:5, rows=1, cols=1, maxrows=6, maxcols=6,
+    maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
+    SSplotDatMargin=8, filenotes=NULL, catchasnumbers=FALSE, catchbars=TRUE,
+    legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
 {
   ################################################################################
   #
@@ -347,6 +352,8 @@ SS_plots_test <-
                   minyr=minyr,maxyr=maxyr,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res,cex.main=cex.main,
+                  catchasnumbers=catchasnumbers,
+                  catchbars=catchbars,
                   plotdir=plotdir)
     plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
