@@ -388,6 +388,7 @@ SS_plots_test <-
                       plot=!png, print=png,
                       fleets=fleets,
                       fleetnames=fleetnames,
+                      datplot=datplot,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,cex.main=cex.main,
                       plotdir=plotdir)
@@ -409,6 +410,7 @@ SS_plots_test <-
                    plot=!png, print=png,
                    fleets=fleets,
                    fleetnames=fleetnames,
+                   datplot=datplot,
                    pwidth=pwidth, pheight=pheight, punits=punits,
                    ptsize=ptsize, res=res,cex.main=cex.main,
                    plotdir=plotdir)

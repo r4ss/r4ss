@@ -1,8 +1,10 @@
 SSplotDiscard <-
-  function(replist,add=FALSE,plot=TRUE,print=FALSE,
+  function(replist,subplots=1:2,
+           plot=TRUE,print=FALSE,
            plotdir="default",
            fleets="all",
            fleetnames="default",
+           datplot=FALSE,
            labels=c("Year",
            "Discard fraction",
            "Total discards",
@@ -73,7 +75,7 @@ SSplotDiscard <-
           title <- paste("Total discard for",FleetName)
           ylab <- "Total discards"
         }
-      }else{ # SSv3.20
+      }else{ # SSv3.20 and beyond
         ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
         ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
         ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
@@ -95,21 +97,33 @@ SSplotDiscard <-
           ylab <- "Total discards (1000's)"
         }
       }
-      dfracfunc <- function(){
+
+      # wrap up plot command in function
+      dfracfunc <- function(addfit){
         plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,
                ylo=0,yhi=yhi,col=col2,sfrac=0.001,lty=1,xlim=xlim,
                ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
-        points(yr,usedisc$Exp,col=col1,pch="-",cex=2)
+        if(addfit) points(yr,usedisc$Exp,col=col1,pch="-",cex=2)
       }
-      if(plot) dfracfunc()
-      if(print) {
-        file <- paste(plotdir,"discfracfit",FleetName,".png",sep="")
-        caption <- title
-        plotinfo <- pngfun(file=file, caption=caption)
-        dfracfunc()
-        dev.off()
-      }
+
+      # make plots
+      if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+      for(isubplot in subplots){ # loop over subplots (data only or with fit)
+        if(isubplot==1) addfit <- FALSE else addfit <- TRUE
+        if(plot) dfracfunc(addfit=addfit)
+        if(print) {
+          if(datplot){
+            file <- paste(plotdir,"discfracdata",FleetName,".png",sep="")
+          }else{
+            file <- paste(plotdir,"discfracfit",FleetName,".png",sep="")
+          }
+          caption <- title
+          plotinfo <- pngfun(file=file, caption=caption)
+          dfracfunc(addfit=addfit)
+          dev.off()
+        }
+      } # end loop over subplots
     } # discard series
     #if(verbose) cat("Finished discard plot\n")
   }

@@ -9,9 +9,9 @@
   are based on T-distributions as specified in model.
 }
 \usage{
-SSplotMnwt(replist, add = FALSE, plot = TRUE, print = FALSE,
-fleets = "all", fleetnames = "default", labels =
-c("Year", "discard", "retained catch", "whole catch",
+SSplotMnwt(replist, subplots = 1:2, plot = TRUE, print = FALSE,
+fleets = "all", fleetnames = "default", datplot = FALSE,
+labels = c("Year", "discard", "retained catch", "whole catch",
 "Mean individual body weight (kg)", "Mean weight in", "for fleet"),
 col1="blue", col2="red",
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
@@ -22,8 +22,10 @@ cex.main=1, plotdir = "default", verbose = TRUE)
   \item{replist}{
     list created by \code{SS_output}
   }
-  \item{add}{
-    add to exising plot (not yet implemented)
+  \item{subplots}{
+    Vector of which plots to make (1 = data only, 2 = with fit). If
+    \code{plotdat = FALSE} then subplot 1 is not created, regardless of
+    choice of \code{subplots}.
   }
   \item{plot}{
     plot to active plot device?
@@ -40,6 +42,10 @@ cex.main=1, plotdir = "default", verbose = TRUE)
   }
   \item{fleetnames}{
     optional replacement for fleenames used in data file
+  }
+  \item{datplot}{
+    Make data-only plot of discards? This can override the choice of
+    \code{subplots}.
   }
   \item{labels}{
     vector of labels for plots (titles and axis labels)

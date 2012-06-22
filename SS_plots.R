@@ -260,6 +260,7 @@ SS_plots <-
                   print=(8 %in% print),
                   fleets=fleets,
                   fleetnames=fleetnames,
+                  datplot=datplot,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res,cex.main=cex.main,
                   plotdir=plotdir)
@@ -272,6 +273,7 @@ SS_plots <-
                print=(9 %in% print),
                fleets=fleets,
                fleetnames=fleetnames,
+               datplot=datplot,
                pwidth=pwidth, pheight=pheight, punits=punits,
                ptsize=ptsize, res=res,cex.main=cex.main,
                plotdir=plotdir)

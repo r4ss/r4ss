@@ -8,8 +8,9 @@
   Plot fit to discard fraction from Stock Synthesis output file.
 }
 \usage{
-SSplotDiscard(replist, add = FALSE, plot = TRUE, print = FALSE,
+SSplotDiscard(replist, subplots = 1:2, plot = TRUE, print = FALSE,
 plotdir = "default", fleets = "all", fleetnames = "default",
+datplot = FALSE,
 labels = c("Year", "Discard fraction", "Total discards", "for"),
 yhi = 1, col1="blue", col2="red",
 pwidth = 7, pheight = 7, punits = "in", res = 300,
@@ -18,59 +19,65 @@ ptsize = 12, cex.main = 1, verbose = TRUE)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{\link{SS_output}}
+    List created by \code{\link{SS_output}}
   }
-  \item{add}{
-    add to existing plot (not yet implemented)
+  \item{subplots}{
+    Vector of which plots to make (1 = data only, 2 = with fit). If
+    \code{plotdat = FALSE} then subplot 1 is not created, regardless of
+    choice of \code{subplots}.
   }
   \item{plot}{
-    plot to active plot device?
+    Plot to active plot device?
   }
   \item{print}{
-    print to PNG files?
+    Print to PNG files?
   }
   \item{plotdir}{
-    directory where PNG files will be written. by default it will
+    Directory where PNG files will be written. by default it will
     be the directory where the model was run.
   }
   \item{fleets}{
-    optional vector to subset fleets for which plots will be made
+    Optional vector to subset fleets for which plots will be made
   }
   \item{fleetnames}{
-    optional replacement for fleenames used in data file
+    Optional replacement for fleenames used in data file
+  }
+  \item{plotdat}{
+    Make data-only plot of discards? This can override the choice of
+    \code{subplots}.
   }
   \item{labels}{
-    vector of labels for plots (titles and axis labels)
+    Vector of labels for plots (titles and axis labels)
   }
   \item{yhi}{
-    maximum y-value to include in plot (all data included regardless). Default = 1.
+    Maximum y-value to include in plot (all data included regardless). Default = 1.
   }
   \item{col1}{
-    first color to use in plot (for expected values)
+    First color to use in plot (for expected values)
   }
   \item{col2}{
-    second color to use in plot (for observations and intervals)
+    Second color to use in plot (for observations and intervals)
   }
   \item{pwidth}{
-    width of plot written to PNG file
+    Width of plot written to PNG file
   }
   \item{pheight}{
-    height of plot written to PNG file
+    Height of plot written to PNG file
   }
   \item{punits}{
-    units for PNG file
+    Units for PNG file
   }
   \item{res}{
-    resolution for PNG file
+    Resolution for PNG file
   }
   \item{ptsize}{
-    ptsize for PNG file
+    Point size for PNG file
   }
   \item{cex.main}{
-    character expansion for plot titles
+    Character expansion for plot titles
   }
   \item{verbose}{
-    report progress to R GUI?
+    Report progress to R GUI?
   }
 }
 % \details{

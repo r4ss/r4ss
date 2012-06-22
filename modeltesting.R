@@ -289,11 +289,12 @@ if(FALSE){
   source('c:/SS/R/r4ss/trunk/modeltesting.R')
 
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_23b_Nov8",
-                           newdir="c:/SS/modeltesting/Version_3_24a_Feb10")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_24b_May15",
+                           newdir="c:/SS/modeltesting/Version_3_24d_June21")
 
+  # starting after making directories
   source('c:/SS/R/r4ss/trunk/modeltesting.R')
-  setwd("c:/SS/modeltesting/Version_3_23b_Nov8")
+  setwd("c:/SS/modeltesting/Version_3_24d_June21")
   folderinfo <- list(newdir=getwd(),
                      folderlist=dir())
   # on sysiphus
@@ -308,7 +309,7 @@ if(FALSE){
                            newdir="c:/SS/modeltesting/Version_3_21e_June9_examples_test")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.24a_Feb10/",
+  copyexe(sourcedir="c:/SS/SSv3.24d_June21/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3.exe")
@@ -341,7 +342,7 @@ if(FALSE){
   # alternatively, run models in all subfolders
   #   if the folderinfo object is not available
   source("c:/SS/R/r4ss/trunk/modeltesting.R")
-  mydir <- "c:/SS/modeltesting/Version_3_23b_Nov8"
+  mydir <- "c:/SS/modeltesting/Version_3_24b_May15"
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-nox")
   runmodels(newdir=mydir, folderlist=dir(mydir),exe="SS3.exe",extras="-noest -nohess -nox")
 
@@ -362,7 +363,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_24a_Feb10"))
+               SSversions=c("Version_3_24b_May15"))
 
   # example on sysiphus
   alloutput <-

@@ -1,8 +1,9 @@
 SSplotMnwt <-
-  function(replist,
-           add=FALSE,plot=TRUE,print=FALSE,
+  function(replist, subplots=1:2,
+           plot=TRUE, print=FALSE,
            fleets="all",
            fleetnames="default",
+           datplot=FALSE,
            labels=c("Year",  #1
            "discard",        #2
            "retained catch", #3
@@ -53,18 +54,28 @@ SSplotMnwt <-
         if(j==0) titlepart <- labels[4]
         ptitle <- paste(labels[6],titlepart,labels[7],fleetname,sep=" ")
         ylab <- labels[5]
-        bdywtfunc <- function(){
-          plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,ylo=0,col=col2,sfrac=0.001,
-                 ylab=ylab,lty=1,xlim=c(xmin,xmax),cex.main=cex.main,ymax=ymax)
+
+        # wrap up plot command in function
+        bdywtfunc <- function(addfit){
+          plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,
+                 ylo=0,col=col2,sfrac=0.001,ylab=ylab,lty=1,
+                 xlim=c(xmin,xmax),cex.main=cex.main,ymax=ymax)
           abline(h=0,col="grey")
-          points(yr,ex,col=col1,cex=2,pch="-")}
-        if(plot) bdywtfunc()
-        if(print){
-          file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")
-          caption <- ptitle
-          plotinfo <- pngfun(file=file, caption=caption)
-          bdywtfunc()
-          dev.off()}
+          if(addfit) points(yr,ex,col=col1,cex=2,pch="-")
+        }
+
+        # make plots
+        if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+        for(isubplot in subplots){ # loop over subplots (data only or with fit)
+          if(plot) bdywtfunc(addfit=addfit)
+          if(print){
+            file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")
+            caption <- ptitle
+            plotinfo <- pngfun(file=file, caption=caption)
+            bdywtfunc(addfit=addfit)
+            dev.off()
+          }
+        } # end loop over subplots
       } # end loop over market categories
     } # end loop over fleets
   ##   if(verbose) cat("Finished mean body weight plot\n")
