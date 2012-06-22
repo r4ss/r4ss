@@ -19,105 +19,111 @@ labels = c("Harvest rate/Year", "Continuous F", "Landings",
 "Total catch", "Predicted Discards", "Discard fraction", "(mt)",
 "(numbers x1000)", "Observed and expected",
 "aggregated across seasons"),
-catchasnumbers = FALSE, pwidth = 7, pheight = 7, punits = "in",
-res = 300, ptsize = 12, cex.main = 1, verbose = TRUE)
+catchasnumbers = NULL, catchbars = TRUE, pwidth = 7, pheight = 7,
+punits = "in", res = 300, ptsize = 12, cex.main = 1, verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SS_output}
+    List created by \code{SS_output}
   }
   \item{subplots}{
-    vector controlling which subplots to create
+    Vector controlling which subplots to create
   }
   \item{add}{
-    add to existing plot? (not yet implemented)
+    Add to existing plot? (not yet implemented)
   }
   \item{areas}{
-    optional subset of areas to plot for spatial models
+    Optional subset of areas to plot for spatial models
   }
   \item{plot}{
-    plot to active plot device?
+    Plot to active plot device?
   }
   \item{print}{
-    print to PNG files?
+    Print to PNG files?
   }
   \item{type}{
-    type parameter passed to plot function. Default "l" is lines only.
+    Type parameter passed to plot function. Default "l" is lines only.
     Other options include "o" for overplotting points on lines.
   }
   \item{fleetlty}{
-    vector of line type by fleet
+    Vector of line type by fleet
   }
   \item{fleetpch}{
-    vector of plot character by fleet
+    Vector of plot character by fleet
   }
   \item{fleetcols}{
-    vector of colors by fleet
+    Vector of colors by fleet
   }
   \item{fleetnames}{
-    optional replacement for fleenames used in data file
+    Optional replacement for fleenames used in data file
   }
   \item{lwd}{
-    line width
+    Line width
   }
   \item{areacols}{
-    vector of colors by area. Default uses rich.colors by Arni Magnusson
+    Vector of colors by area. Default uses rich.colors by Arni Magnusson
   }
   \item{areanames}{
-    names for areas. Default is to use Area1, Area2,...
+    Names for areas. Default is to use Area1, Area2,...
   }
   \item{minyr}{
-    optional input for minimum year to show in plots
+    Optional input for minimum year to show in plots
   }
   \item{maxyr}{
-    optional input for maximum year to show in plots
+    Optional input for maximum year to show in plots
   }
   \item{annualcatch}{
-    include plot of catch aggregated across seasons within each year
+    Include plot of catch aggregated across seasons within each year
   }
   \item{forecastplot}{
-    add points from forecast years
+    Add points from forecast years
   }
   \item{plotdir}{
-    directory where PNG or PDF files will be written. by default it will
+    Directory where PNG or PDF files will be written. By default it will
     be the directory where the model was run.
   }
   \item{showlegend}{
-    put legend on plot
+    Put legend on plot
   }
   \item{legendloc}{
-    location of legend (see ?legend for more info)
+    Location of legend (see ?legend for more info)
   }
   \item{xlab}{
     x-label for all plots
   }
   \item{labels}{
-    vector of labels for plots (titles and axis labels)
+    Vector of labels for plots (titles and axis labels)
   }
   \item{catchasnumbers}{
-    is catch in numbers instead of biomass?
+    Is catch in numbers instead of biomass? Should be set automatically
+    if set to NULL. If fleets include a mix of biomass and numbers, then
+    catch plots should be interpreted carefully.
+  }
+  \item{catchbars}{
+    Show catch by fleet as barplot instead of stacked polygons?
+    (default=TRUE)
   }
   \item{pwidth}{
-    width of plot written to PNG file
+    Width of plot written to PNG file
   }
   \item{pheight}{
-    height of plot written to PNG file
+    Height of plot written to PNG file
   }
   \item{punits}{
-    units for PNG file
+    Units for PNG file
   }
   \item{res}{
-    resolution for PNG file
+    Resolution for PNG file
   }
   \item{ptsize}{
     ptsize for PNG file
   }
   \item{cex.main}{
-    character expansion for plot titles
+    Character expansion for plot titles
   }
   \item{verbose}{
-    report progress to R console?
+    Report progress to R console?
   }
 }
 % \details{

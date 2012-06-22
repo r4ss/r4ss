@@ -25,7 +25,8 @@ showsampsize = TRUE, showeffN = TRUE, showlegend = TRUE, pwidth = 7,
 pheight = 7, punits = "in", ptsize = 12, res = 300, cex.main = 1,
 selexlines = 1:5, rows = 1, cols = 1, maxrows = 6, maxcols = 6,
 maxrows2 = 2, maxcols2 = 4, tagrows = 3, tagcols = 3, fixdims = TRUE,
-new = TRUE, SSplotDatMargin = 8, catchasnumbers = FALSE,
+new = TRUE, SSplotDatMargin = 8, catchasnumbers = NULL,
+catchbars = TRUE,
 legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -162,6 +163,8 @@ legendloc = "topleft", minyr = NULL, maxyr = NULL, scalebins=FALSE, ...)
     too small if fleet names are long) } 
   \item{catchasnumbers}{ Is catch input in numbers instead of biomass?
     Default=F. }
+  \item{catchbars}{ show catch by fleet as barplot instead of stacked
+    polygons (default=TRUE)  }
   \item{legendloc}{ Location for all legends. Default="topleft". }
   \item{minyr}{ First year to show in time-series plots
     (changes xlim parameters). }
