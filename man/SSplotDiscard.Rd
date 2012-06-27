@@ -42,7 +42,7 @@ ptsize = 12, cex.main = 1, verbose = TRUE)
   \item{fleetnames}{
     Optional replacement for fleenames used in data file
   }
-  \item{plotdat}{
+  \item{datplot}{
     Make data-only plot of discards? This can override the choice of
     \code{subplots}.
   }
