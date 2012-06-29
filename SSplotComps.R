@@ -1194,7 +1194,7 @@ SSplotComps <-
                 axis(1,at=xaxislab)
               }else{
                 # or just tick marks for other panels
-                axis(1,at=xaxislab,lab=rep("",length(xaxislab)))
+                axis(1,at=xaxislab,labels=rep("",length(xaxislab)))
               }
               if(par()$mfg[1]==1)
                 # add title after making first panel

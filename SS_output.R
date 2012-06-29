@@ -1,10 +1,11 @@
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
-           forefile="Forecast-report.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE,
+           forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
+           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-           verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE, aalmaxbinrange=4)
+           verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
+           aalmaxbinrange=4)
 {
   ################################################################################
   #
@@ -17,23 +18,13 @@ SS_output <-
   #          and other contributors to http://code.google.com/p/r4ss/
   # Returns: a list containing elements of Report.sso and/or covar.sso,
   #          formatted as R objects, and optional summary statistics to R console
-  # Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/Documentation
-  # Required packages: none
   #
   ################################################################################
-
-  ## Ian T.: I've failed to reliably update the codedate variable,
-  ## perhaps this should be replaced with a check for a newer file version on the web
-  ## codedate <- "October 26, 2011"
-  if(verbose){
-    ## cat("R function updated:",codedate,"\n")
-    cat("Check for new code and report problems at http://code.google.com/p/r4ss/\n")
-  }
 
   flush.console()
 
   #################################################################################
-  ## embedded functions: matchfun and matchfun2
+  ## embedded functions: emptytest, matchfun and matchfun2
   #################################################################################
 
   emptytest <- function(x){ sum(!is.na(x) & x=="")/length(x) }
@@ -272,14 +263,14 @@ SS_output <-
     btarg <- -999
   }
   minbthresh <- -999
-  if(btarg==0.4){
+  if(!is.na(btarg) & btarg==0.4){
     if(verbose)
       cat("Setting minimum biomass threshhold to 0.25\n",
           "  based on US west coast assumption associated with biomass target of 0.4.\n",
           "  (can replace or override in SS_plots by setting 'minbthresh')\n")
     minbthresh <- 0.25 # west coast assumption for non flatfish
   }
-  if(btarg==0.25){
+  if(!is.na(btarg) & btarg==0.25){
     if(verbose)
       cat("Setting minimum biomass threshhold to 0.25\n",
           "  based on US west coast assumption associated with flatfish target of 0.25.\n",
@@ -556,7 +547,7 @@ SS_output <-
     endcode <- "MOVEMENT"
     shift <- -2
   }
-  morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=T)
+  morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=TRUE)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   ngpatterns <- max(morph_indexing$Gpattern)
 
@@ -753,6 +744,22 @@ SS_output <-
   }else{if(verbose) cat("You skipped the covar file\n")}
   flush.console()
 
+  # read weight-at-age file
+  wtatage <- NULL
+  if(readwt){
+    wtfile <- paste(dir,wtfile,sep="/")
+    if(!file.exists(wtfile)){
+      cat(wtfile,"file not found\n")
+    }else{
+      # read top few lines to figure out how many to skip
+      wtatagelines <- readLines(wtfile,n=20)
+      # read full file
+      wtatage <- read.table(wtfile,header=TRUE,comment.char="",
+                            skip=(grep("yr seas gender",wtatagelines)-1))
+      names(wtatage)[1] <- "yr" # replacing "X.yr" created by presence of #
+    }
+  }
+  
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
@@ -1469,6 +1476,9 @@ if(FALSE){
   # process adjustments to recruit devs
   RecrDistpars <- parameters[substring(parameters$Label,1,8)=="RecrDist",]
   returndat$RecrDistpars <- RecrDistpars
+
+  # adding read of wtatage file
+  returndat$wtatage <- wtatage
 
   # print list of statistics
   if(printstats){

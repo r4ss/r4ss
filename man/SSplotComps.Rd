@@ -9,7 +9,7 @@
   Mult-figure plots depend on \code{make_multifig}.
 }
 \usage{
-SSplotComps(replist, subplots=1:11,
+SSplotComps(replist, subplots=1:12,
   kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE,
   print=FALSE, fleets="all", fleetnames="default", sexes="all",
   datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,

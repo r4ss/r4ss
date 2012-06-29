@@ -11,7 +11,8 @@
 }
 \usage{
 bubble3(x, y, z, col = c(1, 1), maxsize = 3, do.sqrt = TRUE, main = "",
-cex.main = 1, xlab = "", ylab = "", minnbubble = 8, xlimextra = 1,
+cex.main = 1, xlab = "", ylab = "", minnbubble = 8,
+xlim = NULL, ylim = NULL, axis1 = TRUE, xlimextra = 1,
 add = FALSE, las = 1, allopen = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -51,6 +52,16 @@ add = FALSE, las = 1, allopen = TRUE)
   \item{minnbubble}{
     Minimum number of unique x values below which extra space is added
     to horizontal axis (to make plot look better). Default = 8.
+  }
+  \item{xlim}{
+    Optional limits on x-range.
+  }
+  \item{ylim}{
+    Optional limits on y-range.
+  }
+  \item{axis1}{
+    Show the horizontal axis on plot? Option allows turning off for use
+    in multi-figure plots.
   }
   \item{xlimextra}{
     Extra space (see minnbubble above). Default = 1.

@@ -12,7 +12,7 @@ SS_plots_test <-
     showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
     cex.main=1,selexlines=1:5, rows=1, cols=1, maxrows=6, maxcols=6,
     maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
-    SSplotDatMargin=8, filenotes=NULL, catchasnumbers=FALSE, catchbars=TRUE,
+    SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
     legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
 {
   ################################################################################

@@ -14,10 +14,10 @@
 SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
 repfile = "Report.sso", compfile = "CompReport.sso",
 covarfile = "covar.sso", forefile = "Forecast-report.sso",
-ncols = 200, forecast = TRUE, warn = TRUE,
-covar = TRUE, checkcor = TRUE, cormax = 0.95, cormin = 0.01,
-printhighcor = 10, printlowcor = 10, verbose = TRUE,
-printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,
+wtfile = "wtatage.ss_new", ncols = 200, forecast = TRUE, warn = TRUE,
+covar = TRUE, readwt = TRUE, checkcor = TRUE,
+cormax = 0.95, cormin = 0.01, printhighcor = 10, printlowcor = 10,
+verbose = TRUE, printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,
 aalmaxbinrange = 4)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -34,6 +34,8 @@ aalmaxbinrange = 4)
     Default="covar.sso".}
   \item{forefile}{ Name of the forecast file.
     Default="Forecast-report.sso".}
+  \item{wtfile}{ Name of the file containing weight at age data.
+    Default="wtatage.ss_new".}
   \item{ncols}{ The maximum number of columns in files being read in.
     If this value is too big the function runs more slowly, too small
     and errors will occur.  A warning will be output to the R command
@@ -43,6 +45,7 @@ aalmaxbinrange = 4)
   \item{warn}{ Read the Warning.sso file? Default=TRUE. }
   \item{covar}{ Read covar.sso to get variance information and identify
     bad correlations? Default=TRUE. }
+  \item{readwt}{ Read the weight-at-age file? Default=TRUE. }
   \item{checkcor}{ Check for bad correlations? Default=TRUE. }
   \item{cormax}{ The specified threshold for defining high correlations.
     A quantity with any correlation above this value is identified.
