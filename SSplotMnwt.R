@@ -67,6 +67,7 @@ SSplotMnwt <-
         # make plots
         if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
         for(isubplot in subplots){ # loop over subplots (data only or with fit)
+          if(isubplot==1) addfit <- FALSE else addfit <- TRUE
           if(plot) bdywtfunc(addfit=addfit)
           if(print){
             file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")

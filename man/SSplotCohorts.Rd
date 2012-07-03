@@ -18,7 +18,7 @@ SSplotCohorts(replist,subplots=1:2,add=FALSE,
            cohortlabfrac=0.1,
            cohortlabvec=NULL,
            lwd=3, 
-           plotdir="default",showlegend=TRUE,
+           plotdir="default",
            xlab="Year",
            labels=c("Age",
              "Cumulative catch by cohort (in numbers x1000)",
@@ -43,6 +43,10 @@ SSplotCohorts(replist,subplots=1:2,add=FALSE,
   }
   \item{print}{
     Print to PNG files?
+  }
+  \item{cohortcols}{
+    Vector of colors to show for each cohort. Default is range of colors
+    shade indicating time period.
   }
   \item{cohortfrac}{
     What fraction of the cohorts to include in plot. If value < 1 is
