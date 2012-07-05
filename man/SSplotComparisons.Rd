@@ -51,44 +51,44 @@ SSplotComparisons(summaryoutput,subplots=1:14,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{summaryoutput}{
-    list created by \code{SSsummarize}
+    List created by \code{SSsummarize}
   }
   \item{subplots}{
     Vector of subplots to be created.
   }
   \item{plot}{
-    plot to active plot device?
+    Plot to active plot device?
   }
   \item{print}{
-    send plots to PNG files in directory specified by \code{plotdir}
+    Send plots to PNG files in directory specified by \code{plotdir}
   }
   \item{models}{
-    optional subset of the models described in \code{summaryoutput}.
+    Optional subset of the models described in \code{summaryoutput}.
     Either "all" or a vector of numbers indicating columns in summary
     tables.
   }
   \item{endyrvec}{
-    optional single year or vector of years representing the final year
+    Optional single year or vector of years representing the final year
     of values to show for each model
   }
   \item{indexfleets}{
-    vector of fleets for each model for which to compare indices of
+    Vector of fleets for each model for which to compare indices of
     abundance. Only necessary if any model has more than one index.
   }
   \item{indexUncertainty}{
-    show uncertainty intervals on index data? Default=FALSE because if
+    Show uncertainty intervals on index data? Default=FALSE because if
     models have any extra standard deviations added, these intervals may
     differ across models.
   }
   \item{indexQlabel}{
-    add catchability to legend in plot of index fits (TRUE/FALSE)?
+    Add catchability to legend in plot of index fits (TRUE/FALSE)?
   }
   \item{indexQdigits}{
-    number of significant digits for catchability in legend
+    Number of significant digits for catchability in legend
     (if \code{indexQlabel=TRUE})
   }
   \item{indexSEvec}{
-    optional replacement for the SE values in summaryoutput$indices to
+    Optional replacement for the SE values in summaryoutput$indices to
     deal with the issue of differing uncertainty by models described
     above.
   } 
@@ -97,129 +97,129 @@ SSplotComparisons(summaryoutput,subplots=1:14,
     or FALSE just plots observed once in black dots.
   }
   \item{labels}{
-    vector of labels for plots (titles and axis labels)
+    Vector of labels for plots (titles and axis labels)
   }
   \item{col}{
-    optional vector of colors to be used for lines. Input 'default'
+    Optional vector of colors to be used for lines. Input 'default'
     makes use of \code{rich.colors.short} function.
   }
   \item{shadecol}{
-    optional vector of colors to be used for shading uncertainty
+    Optional vector of colors to be used for shading uncertainty
     intervals. Input 'default' makes use of \code{rich.colors.short}
     function with alpha transparency.
   }
   \item{pch}{
-    optional vector of plot character values
+    Optional vector of plot character values
   }
   \item{lty}{
-    optional vector of line types
+    Optional vector of line types
   }
   \item{lwd}{
-    optional vector of line widths
+    Optional vector of line widths
   }
   \item{spacepoints}{
-    number of years between points shown on top of lines (for long
+    Number of years between points shown on top of lines (for long
     timeseries, points every year get mashed together)
   }
   \item{staggerpoints}{
-    number of years to stagger the first point
+    Number of years to stagger the first point
     (if \code{spacepoints > 1}) for each line
     (so that adjacent lines have points in different years)
   }
   \item{xlim}{
-    optional x limits
+    Optional x limits
   }
   \item{xaxs}{
-    choice of xaxs parameter (see ?par for more info)
+    Choice of xaxs parameter (see ?par for more info)
   }
   \item{yaxs}{
-    choice of yaxs parameter (see ?par for more info)
+    Choice of yaxs parameter (see ?par for more info)
   }
   \item{type}{
-    type parameter passed to points (default 'o' overplots points on top
+    Type parameter passed to points (default 'o' overplots points on top
     of lines)
   }
   \item{uncertainty}{
-    show plots with uncertainty intervals
+    Show plots with uncertainty intervals
   }
   \item{shadealpha}{
-    transparency parameter used to make default shadecol values (see
+    Transparency parameter used to make default shadecol values (see
     ?rgb for more info)
   }
   \item{legend}{
-    add a legend?
+    Add a legend?
   }
   \item{legendlabels}{
-    optional vector of labels to include in legend. Default is
+    Optional vector of labels to include in legend. Default is
     'model1','model2',etc.
   }
   \item{legendloc}{
-    location of legend. See ?legend for more info.
+    Location of legend. See ?legend for more info.
   }
   \item{btarg}{
-    target biomass value at which to show a line (set to 0 to remove)
+    Target biomass value at which to show a line (set to 0 to remove)
   }
   \item{minbthresh}{
-    minimum biomass threshhold at which to show a line (set to 0 to
+    Minimum biomass threshhold at which to show a line (set to 0 to
     remove)
   }
   \item{pwidth}{
-    width of plot written to PNG file
+    Width of plot written to PNG file
   }
   \item{pheight}{
-    height of plot written to PNG file
+    Height of plot written to PNG file
   }
   \item{punits}{
-    units for PNG file
+    Units for PNG file
   }
   \item{res}{
-    resolution for PNG file
+    Resolution for PNG file
   }
   \item{ptsize}{
-    ptsize for PNG file
+    Point size for PNG file
   }
   \item{cex.main}{
-    character expansion for plot titles
+    Character expansion for plot titles
   }
   \item{plotdir}{
-    directory where PNG or PDF files will be written. By default it will
+    Directory where PNG or PDF files will be written. By default it will
     be the directory where the model was run.
   }
   \item{densitynames}{
-    vector of names (or subset of names) of parameters or derived
+    Vector of names (or subset of names) of parameters or derived
     quantities contained in summaryoutput$pars$Label or
     summaryoutput$quants$Label for which to make density plots
   }
   \item{densityxlabs}{
-    optional vector of x-axis labels to use in the density plots (must
+    Optional vector of x-axis labels to use in the density plots (must
     be equal in length to the printed vector of quantities that match
     the \code{densitynames} input)
   }
   \item{densityscalex}{
-    scalar for upper x-limit in density plots (values below 1 will cut
+    Scalar for upper x-limit in density plots (values below 1 will cut
     off the right tail to provide better contrast among narrower
     distributions
   }
   \item{densityscaley}{
-    scalar for upper y-limit in density plots (values below 1 will cut
+    Scalar for upper y-limit in density plots (values below 1 will cut
     off top of highest peaks to provide better contrast among broader
     distributions
   }
   \item{densityadjust}{
-    multiplier on bandwidth of kernel in density function used for
+    Multiplier on bandwidth of kernel in density function used for
     smoothing MCMC posteriors. See 'adjust' in ?density for details.
   }
   \item{fix0}{
-    always include 0 in the density plots?
+    Always include 0 in the density plots?
   }
   \item{new}{
-    create new empty plot window
+    Create new empty plot window
   }
   \item{verbose}{
-    report progress to R GUI?
+    Report progress to R GUI?
   }
   \item{mcmcVec}{
-    vector of TRUE/FALSE values (or single value) indicating whether
+    Vector of TRUE/FALSE values (or single value) indicating whether
     input values are from MCMC or to use normal distribution around MLE
   }
   

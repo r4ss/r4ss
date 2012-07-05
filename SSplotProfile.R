@@ -1,12 +1,50 @@
 SSplotProfile <-
-  function(summaryoutput,subplots=1,
+  function(summaryoutput,
            plot=TRUE,print=FALSE,
            models="all",
            profile.string="steep",
            profile.label="Spawner-recruit steepness (h)",
            ylab="Change in -log-likelihood",
-           components=c("TOTAL","Catch","Equil_catch","Survey","Mean_body_wt","Length_comp","Age_comp","Recruitment","Forecast_Recruitment","Parm_priors","Parm_softbounds","Parm_devs","Crash_Pen"),
-           component.labels=c("Total","Catch","Equilibrium catch","Index data","Mean body weight","Length data","Age data","Recruitment","Forecast recruitment","Priors","Soft bounds","Parameter deviations","Crash penalty"),
+           components=
+           c("TOTAL",
+             "Catch",
+             "Equil_catch",
+             "Survey",
+             "Discard",
+             "Mean_body_wt",
+             "Length_comp",
+             "Age_comp",
+             "Size_at_age",
+             "SizeFreq",
+             "Morphcomp",
+             "Tag_comp",
+             "Tag_negbin",
+             "Recruitment",
+             "Forecast_Recruitment",
+             "Parm_priors",
+             "Parm_softbounds",
+             "Parm_devs",
+             "Crash_Pen"),
+           component.labels=
+           c("Total",
+             "Catch",
+             "Equilibrium catch",
+             "Index data",
+             "Discard",
+             "Mean body weight",
+             "Length data",
+             "Age data",
+             "Size-at-age data",
+             "Generalized size data",
+             "Morph composition data",
+             "Tag recapture distribution",
+             "Tag recapture total",
+             "Recruitment",
+             "Forecast recruitment",
+             "Priors",
+             "Soft bounds",
+             "Parameter deviations",
+             "Crash penalty"),
            minfraction=0.01,
            sort.by.max.change=TRUE,
            col="default",
@@ -18,45 +56,31 @@ SSplotProfile <-
            ymax="default",
            xaxs="r", yaxs="r",
            type="o",
-           legend=TRUE, legendlabels="default", legendloc="topright",
+           legend=TRUE, legendloc="topright",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
-           new=TRUE,
            verbose=TRUE)
 {
   # subfunction to write png files
   pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
   if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
 
+  if(length(components) != length(component.labels))
+    stop("Inputs 'components' and 'component.labels' should have equal length")
+
   # get stuff from summary output
   n             <- summaryoutput$n
-  nsexes        <- summaryoutput$nsexes
   likelihoods   <- summaryoutput$likelihoods
   pars          <- summaryoutput$pars
-  parsSD        <- summaryoutput$parsSD
-  parphases     <- summaryoutput$parphases
-  quants        <- summaryoutput$quants
-  quantsSD      <- summaryoutput$quantsSD
-  SpawnBio      <- summaryoutput$SpawnBio
-  SpawnBioLower <- summaryoutput$SpawnBioLower
-  SpawnBioUpper <- summaryoutput$SpawnBioUpper
-  Bratio        <- summaryoutput$Bratio
-  BratioLower   <- summaryoutput$BratioLower
-  BratioUpper   <- summaryoutput$BratioUpper
-  SPRratio      <- summaryoutput$SPRratio
-  SPRratioLower <- summaryoutput$SPRratioLower
-  SPRratioUpper <- summaryoutput$SPRratioUpper
-  recruits      <- summaryoutput$recruits
-  recruitsLower <- summaryoutput$recruitsLower
-  recruitsUpper <- summaryoutput$recruitsUpper
-  recdevs       <- summaryoutput$recdevs
-  recdevsLower  <- summaryoutput$recdevsLower
-  recdevsUpper  <- summaryoutput$recdevsUpper
-  indices       <- summaryoutput$indices
-  mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
-  lowerCI       <- summaryoutput$lowerCI
-  upperCI       <- summaryoutput$upperCI
 
+  # check number of models to be plotted
+  if(models[1]=="all"){
+    models <- 1:n
+  }else{
+    if(!all(models %in% 1:n))
+      stop("Input 'models' should be a vector of values from 1 to n=",n," (for your inputs).\n")
+  }
+  
   # find the parameter that the profile was over
   parnumber <- grep(profile.string,pars$Label)
   if(length(parnumber)<=0) stop("No parameters matching profile.string='",profile.string,"'",sep="")
@@ -64,16 +88,20 @@ SSplotProfile <-
   if(length(parlabel) > 1)
     stop("Multiple parameters matching profile.string='",profile.string,"': ",paste(parlabel,collapse=", "),sep="")
 
-  parvec <- as.numeric(pars[pars$Label==parlabel,1:n])
+  parvec <- as.numeric(pars[pars$Label==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")
-  cat("Values:\n")
+  cat("Parameter values (after subsetting based on input 'models'):\n")
   print(parvec)
   if(xlim[1]=="default") xlim <- range(parvec)
 
   # rearange likelihoods to be in columns by type
-  prof.table <- data.frame(t(likelihoods[,1:n]))
+  prof.table <- data.frame(t(likelihoods[,models]))
   names(prof.table) <- likelihoods[,ncol(likelihoods)]
-  
+  component.labels.good <- rep("",ncol(prof.table))
+  for(icol in 1:ncol(prof.table)){
+    ilabel <- which(components==names(prof.table)[icol])
+    component.labels.good[icol] <- component.labels[ilabel]
+  }
   
   # subtract minimum value from each likelihood component (over requested parameter range)
   subset <- parvec >= xlim[1] & parvec <= xlim[2]
@@ -87,9 +115,11 @@ SSplotProfile <-
   column.max <- apply(prof.table[subset,],2,max)
   change.fraction <- column.max / column.max[1]
   include <- change.fraction >= minfraction
-  cat("Likelihood components with max. change as fraction of max. total change.\n",sep="")
-  print(data.frame(fraction_of_total_change=round(change.fraction,4),include=include,label=component.labels))
-  component.labels <- component.labels[include]
+  
+  cat("\nLikelihood components showing max change as fraction of total change.\n",
+      "To change which components are included, change input 'minfraction'.\n\n",sep="")
+  print(data.frame(frac_change=round(change.fraction,4),include=include,label=component.labels.good))
+  component.labels.used <- component.labels.good[include]
 
   # reorder values
   prof.table <- prof.table[order(parvec),include]
@@ -100,7 +130,7 @@ SSplotProfile <-
   if(sort.by.max.change){
     neworder <- c(1,1+order(change.fraction[-1],decreasing=TRUE))
     prof.table <- prof.table[,neworder]
-    component.labels <- component.labels[neworder]
+    component.labels.used <- component.labels.used[neworder]
   }
     
   nlines <- ncol(prof.table)
@@ -119,8 +149,9 @@ SSplotProfile <-
     matplot(parvec, prof.table, type=type,
             pch=pch, col=col,
             cex=cex, lty=lty, lwd=lwd, add=T)
-    legend('topleft',bty='n',legend=component.labels,
-           lwd=lwd, pt.cex=cex, lty=lty, pch=pch, col=col)
+    if(legend)
+      legend(legendloc,bty='n',legend=component.labels.used,
+             lwd=lwd, pt.cex=cex, lty=lty, pch=pch, col=col)
     box()
   }
 

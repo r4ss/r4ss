@@ -748,8 +748,8 @@ SS_output <-
   wtatage <- NULL
   if(readwt){
     wtfile <- paste(dir,wtfile,sep="/")
-    if(!file.exists(wtfile)){
-      cat(wtfile,"file not found\n")
+    if(!file.exists(wtfile) | file.info(wtfile)$size==0){
+      if(verbose) cat("Skipping weight-at-age file. File missing or empty:",wtfile,"\n")
     }else{
       # read top few lines to figure out how many to skip
       wtatagelines <- readLines(wtfile,n=20)
@@ -1145,8 +1145,8 @@ if(FALSE){
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
       mnwgt$FleetNum <- NA
       for(i in 1:nrow(mnwgt)){
-        mnwgt$FleetNum[i] <- strsplit(mnwgt$Name[i],"_")[[1]][1]
-        mnwgt$FleetName[i] <- substring(mnwgt$Name[i],nchar(mnwgt$FleetNum[i])+2)
+        mnwgt$FleetNum[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
+        mnwgt$FleetName[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$FleetNum[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Name"))])

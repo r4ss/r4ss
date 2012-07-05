@@ -32,13 +32,13 @@ SSplotBiology(replist,
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{replist}{
-    list created by \code{SS_output}
+    List created by \code{SS_output}
   }
   \item{plot}{
-    plot to active plot device?
+    Plot to active plot device?
   }
   \item{print}{
-    print to PNG files?
+    Print to PNG files?
   }
   \item{add}{
     add to existing plot
@@ -57,35 +57,35 @@ SSplotBiology(replist,
     color of other points/lines
   }
   \item{legendloc}{
-    location of legend (see ?legend for more info)
+    Location of legend (see ?legend for more info)
   }
   \item{plotdir}{
-    directory where PNG files will be written. by default it will
+    Directory where PNG files will be written. by default it will
     be the directory where the model was run.
   }
   \item{labels}{
-    vector of labels for plots (titles and axis labels)
+    Vector of labels for plots (titles and axis labels)
   }
   \item{pwidth}{
-    width of plot written to PNG file
+    Width of plot written to PNG file
   }
   \item{pheight}{
-    height of plot written to PNG file
+    Height of plot written to PNG file
   }
   \item{punits}{
-    units for PNG file
+    Units for PNG file
   }
   \item{res}{
-    resolution for PNG file
+    Resolution for PNG file
   }
   \item{ptsize}{
-    ptsize for PNG file
+    Point size for PNG file
   }
   \item{cex.main}{
-    character expansion for plot titles
+    Character expansion for plot titles
   }
   \item{verbose}{
-    return updates of function progress to the R GUI?
+    Return updates of function progress to the R GUI?
   }
 }
 % \details{
