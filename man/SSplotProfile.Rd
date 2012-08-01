@@ -17,17 +17,19 @@ components = c("TOTAL", "Catch", "Equil_catch", "Survey", "Discard",
 "Mean_body_wt", "Length_comp", "Age_comp", "Size_at_age", "SizeFreq",
 "Morphcomp", "Tag_comp", "Tag_negbin", "Recruitment",
 "Forecast_Recruitment", "Parm_priors", "Parm_softbounds", "Parm_devs",
-"Crash_Pen"), component.labels = c("Total", "Catch", "Equilibrium
-catch", "Index data", "Discard", "Mean body weight", "Length data", "Age
-data", "Size-at-age data", "Generalized size data", "Morph composition
-data", "Tag recapture distribution", "Tag recapture total",
-"Recruitment", "Forecast recruitment", "Priors", "Soft bounds",
-"Parameter deviations", "Crash penalty"), minfraction = 0.01,
+"Crash_Pen"),
+component.labels = c("Total", "Catch", "Equilibrium catch",
+"Index data", "Discard", "Mean body weight", "Length data",
+"Age data", "Size-at-age data", "Generalized size data",
+"Morph composition data", "Tag recapture distribution",
+"Tag recapture total", "Recruitment", "Forecast recruitment", "Priors",
+"Soft bounds", "Parameter deviations", "Crash penalty"),
+minfraction = 0.01,
 sort.by.max.change = TRUE, col = "default", pch = "default", lty = 1,
 lty.total = 1, lwd = 2, lwd.total = 3, cex = 1, cex.total = 1.5, xlim =
 "default", ymax = "default", xaxs = "r", yaxs = "r", type = "o", legend
 = TRUE, legendloc = "topright", pwidth = 7, pheight = 7, punits = "in",
-res = 300, ptsize = 12, cex.main = 1, plotdir = NULL, new = TRUE,
+res = 300, ptsize = 12, cex.main = 1, plotdir = NULL,
 verbose = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
