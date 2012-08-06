@@ -193,11 +193,11 @@ SSplotTimeseries <-
     
     # sum up total across areas if needed
     if(nareas>1){
-      if(subplot %in% c(2,3,6,8,10,12,13)){
+      if(subplot %in% c(2,3,5,6,8,10,12,13)){
         # these plots have separate lines for each area
         main=paste(main,"by area")
       }
-      if(subplot %in% c(1,4,11,13)){
+      if(subplot %in% c(1,4,7,11,13)){
         # these plots have sum across areas
         yvals2 <- rep(NA,length(ts$YrSeas))
         for(iyr in 1:length(yvals)){

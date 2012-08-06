@@ -217,7 +217,7 @@ SSplotPars <-
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
   }
   if(pdf){
-    pdffile <- paste(dir,"/SSplotPars_",format(Sys.time(),'%d-%h-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(dir,"/SSplotPars_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be: ",pdffile,"\n")
   }
