@@ -409,8 +409,13 @@ SSplotTimeseries <-
             if(subplot==7){
               plot1 <- stdtable$LABEL=="SPB_Virgin"
               stdtable$Yr[plot1] <- stdtable$Yr[plot1]+yrshift
-            }else{
-              plot1 <- stdtable$Yr %in% ts$Yr[plot1]
+            }
+            if(subplot==9){
+              plot1 <- stdtable$LABEL=="Bratio_Virgin" # note: this doesn't exist
+            }
+            if(subplot==11){
+              plot1 <- stdtable$LABEL=="Recr_Virgin"
+              stdtable$Yr[plot1] <- stdtable$Yr[plot1]+1 # shifting as in other cases to make Virgin year adjacent to first year of timeseries
             }
             plot2 <- stdtable$Yr %in% ts$Yr[plot2]
             plot3 <- stdtable$Yr %in% ts$Yr[plot3]
