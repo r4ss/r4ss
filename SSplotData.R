@@ -156,8 +156,8 @@ SSplotData <- function(replist,
             if(is.na(y[n-1])) solo[n] <- TRUE
           }
           # add points and lines
-          points(x[solo], y[solo], pch=16, cex=2,col=fleetcol[ifleet])
-          lines(x, y, lwd=12, col=fleetcol[ifleet])
+          points(x[solo], y[solo], pch=16, cex=2,col=fleetcol[fleets==ifleet])
+          lines(x, y, lwd=12, col=fleetcol[fleets==ifleet])
           axistable[itick,] <- c(ifleet,yval)
           itick <- itick+1
         }
