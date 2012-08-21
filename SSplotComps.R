@@ -58,7 +58,7 @@ SSplotComps <-
   FleetNames    <- replist$FleetNames
   nsexes        <- replist$nsexes
   accuage       <- replist$accuage
-  
+
   titles <- NULL
   titlemkt <- ""
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -183,7 +183,7 @@ SSplotComps <-
     dbase_kind$YrSeasName <- paste(dbase_kind$YrSeasName,ifelse(dbase_kind$SuprPer=="Sup","*",""),sep="")
   }
   ageerr_warning <- TRUE
-  
+
   # loop over fleets
   for(f in fleets)
   {
@@ -917,7 +917,7 @@ SSplotComps <-
                 }
                 file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
                               "aggregated within season.png",sep="")
-                
+
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun8(ipage=ipage,...)
                 dev.off()
@@ -929,7 +929,7 @@ SSplotComps <-
     } # end if data
   } # end subplot 10
 
-  ### subplot 11: by fleet aggregating across years
+  ### subplot 11: by fleet aggregating across seasons within a year
   if(11 %in% subplots & kind!="cond" & nseasons>1){ # for age or length comps, but not conditional AAL
     # loop over fleets
     for(f in fleets){
@@ -982,6 +982,7 @@ SSplotComps <-
               agg <- agg[agg$f %in% fleets,]
               agg$obs <- agg$obs/agg$N
               agg$exp <- agg$exp/agg$N
+
               # note: sample sizes will be different for each bin if tail compression is used
               #       printed sample sizes in plot will be maximum, which may or may not
               #       represent sum of sample sizes over all years/ages
@@ -995,11 +996,11 @@ SSplotComps <-
               agg$fy <- agg$f + agg$y/10000
               # total title
               ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
-                              "\naggregated across seasons within year",sep="") 
-              
+                              "\naggregated across seasons within year",sep="")
+
               # group remaining calculations as a function
               tempfun9 <- function(ipage,...){
-                
+
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                   make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fy,
                                 linesx=agg$bin,linesy=agg$exp,
@@ -1082,10 +1083,10 @@ SSplotComps <-
           dbase_fleets <- dbase_k[dbase_k$Part==j,]
           fleetvec <- intersect(fleets,dbase_fleets$Fleet)
           npanels <- length(fleetvec)
-          
+
           xlim <- range(dbase_fleets$Yr.S) # set xlim based on range across all fleets
           xaxislab <- sort(unique(floor(dbase_fleets$Yr.S))) # label with all years
-          
+
           # get growth curves if requested
           if(length(cohortlines)>0){
             growdat <- replist$endgrowth
@@ -1094,7 +1095,7 @@ SSplotComps <-
               growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
             }
           }
-          
+
           ## assemble pieces of plot title
           # sex
           if(k==1) titlesex <- "sexes combined, "
@@ -1108,23 +1109,23 @@ SSplotComps <-
           if(j==2) titlemkt <- "retained"
           titlemkt <- ifelse(printmkt,titlemkt,"")
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
-          
+
           ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
           titles <- c(ptitle,titles) # compiling list of all plot titles
           filename_sexmkt <- paste("sex",k,"mkt",j,sep="")
-          
+
           tempfun11 <- function(ipage=0){
             # a function to wrap up multi-fleet bubble plots
 
             # multi-figure plot with as many rows as fleets, or the maxrows value
             par(mfrow=c(min(npanels,maxrows),1), mar=c(0.5,0,0,0),oma=c(4,6,3,1))
-            
+
             # set up some stuff for cases where there are more fleets than panels in one plot
             panelrange <- 1:npanels
             npages <- ceiling(npanels/maxrows) # how many pages of plots
             if(npages > 1 & ipage!=0) # range of which panels to print for each page
               panelrange <- intersect(panelrange, 1:maxrows + maxrows*(ipage-1))
-            
+
             # loop over fleets
             for(f in fleetvec[panelrange]){
               dbase <- dbase_fleets[dbase_fleets$Fleet==f,]
@@ -1145,7 +1146,7 @@ SSplotComps <-
                 dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/(1000*max_n_ageerr)
                 dbase$YrSeasName <- paste(dbase$YrSeasName,"a",dbase$Ageerr,sep="")
               }
-              
+
               # determine bubble size and colors
               if(datonly){
                 z <- dbase$Obs
@@ -1171,7 +1172,7 @@ SSplotComps <-
               #legend('top',title=fleetnames[f],legend=NA,bty='n') # old way with label within each panel
               mtext(fleetnames[f],side=2,line=4.5,cex=par()$cex)
 
-              
+
               # add lines for growth of individual cohorts if requested
               if(length(cohortlines)>0){
                 for(icohort in 1:length(cohortlines)){
@@ -1188,7 +1189,7 @@ SSplotComps <-
                   }
                 }
               }
-              
+
               if(par()$mfg[1]==par()$mfg[3] | f==tail(fleetvec,1)){
                 # label all years on x-axis of last panel
                 axis(1,at=xaxislab)
@@ -1229,7 +1230,7 @@ SSplotComps <-
     # restore default single panel settings
     par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
   } # end subplot 12
-  
+
   if(!is.null(plotinfo)) plotinfo$category <- "Comp"
   return(invisible(plotinfo))
 } # end embedded SSplotComps function

@@ -432,9 +432,16 @@ SS_output <-
 
       # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
       if(!"Yr.S" %in% names(compdbase)){
-        # add fraction of season to distinguish between samples
-        compdbase$Yr.S <- compdbase$Yr + (0.5/nseasons)*compdbase$Seas
+        if(any(floor(compdbase$Yr)!=compdbase$Yr)){
+          # in some cases, year is already a decimal number
+          compdbase$Yr.S <- compdbase$Yr
+          compdbase$Yr <- floor(compdbase$Yr)
+        }else{
+          # add fraction of season to distinguish between samples
+          compdbase$Yr.S <- compdbase$Yr + (0.5/nseasons)*compdbase$Seas
+        }
       }
+
 
       # deal with Lbins
       compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
