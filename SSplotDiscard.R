@@ -114,9 +114,9 @@ SSplotDiscard <-
         if(plot) dfracfunc(addfit=addfit)
         if(print) {
           if(datplot){
-            file <- paste(plotdir,"discfracdata",FleetName,".png",sep="")
+            file <- paste(plotdir,"discard_data",FleetName,".png",sep="")
           }else{
-            file <- paste(plotdir,"discfracfit",FleetName,".png",sep="")
+            file <- paste(plotdir,"discard_fit",FleetName,".png",sep="")
           }
           caption <- title
           plotinfo <- pngfun(file=file, caption=caption)
