@@ -1,5 +1,5 @@
-\name{SS_plots}
-\alias{SS_plots}
+\name{SS_plots_old}
+\alias{SS_plots_old}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 plot many quantities related to output from Stock Synthesis
@@ -11,7 +11,7 @@ plot many quantities related to output from Stock Synthesis
   separate functions to make all the plots.
 }
 \usage{
-SS_plots(replist = NULL, plot = 1:27, print = 0,
+SS_plots_old(replist = NULL, plot = 1:27, print = 0,
 pdf = FALSE, printfolder = "plots", dir = "default", fleets = "all",
 areas = "all", fleetnames = "default", fleetcols = "default",
 fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",

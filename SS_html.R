@@ -9,7 +9,7 @@ SS_html <- function(replist=NULL,
                     verbose=TRUE){
   cat("Running 'SS_html':\n",
       "  By default, this function will look in the directory where PNG files were created\n",
-      "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots_test.'\n",
+      "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n",
       "  HTML files are written to link to these plots and put in the same directory.\n",
       "  Please provide feedback on any bugs, annoyances, or suggestions for improvement.\n\n")
   

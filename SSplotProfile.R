@@ -62,7 +62,11 @@ SSplotProfile <-
            verbose=TRUE)
 {
   # subfunction to write png files
-  pngfun <- function(file) png(file=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+  pngfun <- function(file){
+    png(filename=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,
+        units=punits,res=res,pointsize=ptsize)
+  }
+  
   if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
 
   if(length(components) != length(component.labels))

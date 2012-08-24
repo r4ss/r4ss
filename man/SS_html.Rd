@@ -4,7 +4,7 @@
 \title{ Create HTML files to view figures in browser.  }
 \description{
   Writes a set of HTML files with tabbed navigation between them.
-  Depends on \code{\link{SS_plots_test}} with settings in place to write
+  Depends on \code{\link{SS_plots}} with settings in place to write
   figures to PNG files. Should open main file in default browser
   automatically.
 }
@@ -39,7 +39,7 @@ SS_html(replist=NULL,
 \note{
   By default, this function will look in the directory where PNG files
   were created for CSV files with the name 'plotInfoTable...' written by
-  'SS_plots_test. HTML files are written to link to these plots and put
+  'SS_plots. HTML files are written to link to these plots and put
   in the same directory. Please provide feedback on any bugs,
   annoyances, or suggestions for improvement.
 } 
