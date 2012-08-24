@@ -1,4 +1,4 @@
-SS_plots <-
+SS_plots_old <-
   function(
     replist=NULL, plot=1:27, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1, lwd=1, areacols="default", areanames="default",
@@ -692,10 +692,9 @@ SS_plots <-
   # end if 27 in plot or print
   
   if(pdf) dev.off() # close PDF file if it was open
-  if(verbose) cat("Finished all requested plots in SS_plots function\n")
+  if(verbose) cat("Finished all requested plots in SS_plots_old function\n")
 
-  cat("\nNote: an update to 'SS_plots' is available in test version called 'SS_plots_test'.\n",
-      "     Please try it out and report any issues you might find\n")
+  cat("\nNote: this function is no longer in development. Try 'SS_plots' instead.\n")
   ### end of SS_plots function
   return(invisible(999))
 }
