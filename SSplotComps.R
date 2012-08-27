@@ -372,6 +372,10 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
+                if(length(grep("Pearson",caption))>0){
+                  caption <- paste(caption,
+                                   "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                }
                 file <- paste(plotdir,"/",filenamestart,filetype,
                               filename_fltsexmkt,pagetext,".png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
@@ -444,6 +448,10 @@ SSplotComps <-
                           pagetext <- paste("_page",ipage,sep="")
                           caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                         }
+                        if(length(grep("Pearson",caption))>0){
+                          caption <- paste(caption,
+                                           "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                        }
                         file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
                                       "_",aalyr,"_",pagetext,".png",sep="")
                         plotinfo <- pngfun(file=file, caption=caption)
@@ -469,6 +477,10 @@ SSplotComps <-
                       if(npages>1){
                         pagetext <- paste("_page",ipage,sep="")
                         caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+                      }
+                      if(length(grep("Pearson",caption))>0){
+                        caption <- paste(caption,
+                                         "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
                       }
                       file <- paste(plotdir,"/",filenamestart,"yearresids_",
                                     filename_fltsexmkt,"_",aalyr,pagetext,".png",sep="")
@@ -1213,6 +1225,10 @@ SSplotComps <-
               if(npages>1){
                 pagetext <- paste("_page",ipage,sep="")
                 caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+              }
+              if(length(grep("Pearson",caption))>0){
+                caption <- paste(caption,
+                                 "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
               }
               caption <- paste(caption,
                                "<br>Note: bubble sizes are scaled to maximum within each panel.",

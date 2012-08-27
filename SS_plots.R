@@ -913,7 +913,7 @@ SS_plots <-
     csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
-    if(html) SS_html(replist,filenotes=filenotes)
+    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder)
     return(invisible(plotInfoTable))
   }else{
     return(invisible(999))
