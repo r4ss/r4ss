@@ -32,10 +32,14 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   if(verbose) cat("opening connection to",outfile,"\n")
   zz <- file(outfile, open="at")
   sink(zz)
-  wl <- function(name){
+  wl <- function(name,comment=NULL){
     # simple function to clean up many repeated commands
     value = datlist[names(datlist)==name]
-    writeLines(paste(value," #_",name,sep=""),con=zz,)
+    if(is.null(comment)){
+      writeLines(paste(value," #_",name,sep=""))
+    }else{
+      writeLines(paste(value,comment))
+    }
   }
 
   # write a header
@@ -54,14 +58,14 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("Nsurveys")
   wl("N_areas")
   writeLines(paste(paste(datlist$fleetnames,collapse="%"),"#_fleetnames"))
-  writeLines(paste(paste(datlist$surveytiming,collapse=" "),"#_surveytiming"))
-  writeLines(paste(paste(datlist$areas,collapse=" "),"#_areas"))
-  writeLines(paste(paste(datlist$units_of_catch,collapse=" "),"#_units_of_catch"))
-  writeLines(paste(paste(datlist$se_log_catch,collapse=" "),"#_se_log_catch"))
+  writeLines(paste(paste(datlist$surveytiming,collapse=" "),"#_surveytiming_in_season"))
+  writeLines(paste(paste(datlist$areas,collapse=" "),"#_area_assignments_for_each_fishery_and_survey"))
+  writeLines(paste(paste(datlist$units_of_catch,collapse=" "),"#_units of catch:  1=bio; 2=num"))
+  writeLines(paste(paste(datlist$se_log_catch,collapse=" "),"#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3"))
   wl("Ngenders")
   wl("Nages")
-  writeLines(paste(paste(datlist$init_equil,collapse=" "),"#_init_equil_catch"))
-  wl("N_catch")
+  writeLines(paste(paste(datlist$init_equil,collapse=" "),"#_init_equil_catch_for_each_fishery"))
+  wl("N_catch",comment="#_N_lines_of_catch_to_read")
   if(!is.null(datlist$catch)) printdf(datlist$catch)
   wl("N_cpue")
   if(datlist$N_cpue>0){
@@ -70,19 +74,21 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   }
   # wl("discard_units")
   wl("N_discard_fleets")
+  writeLines("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
+  writeLines("#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal")
   wl("N_discard")
   if(!is.null(datlist$discard_data)) printdf(datlist$discard_data)
   wl("N_meanbodywt")
   if(!is.null(datlist$meanbodywt)) printdf(datlist$meanbodywt)
 
-  wl("DF_for_meanbodywt")
+  wl("DF_for_meanbodywt", comment="#_DF_for_meanbodywt_T-distribution_like")
   
   # length data
-  wl("lbin_method")
+  wl("lbin_method",comment="# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector")
   if(datlist$lbin_method==2){
-    wl("binwidth")
-    wl("minimum_size")
-    wl("maximum_size")
+    wl("binwidth",comment="# binwidth for population size comp")
+    wl("minimum_size",comment="# minimum size in the population (lower edge of first bin and size at age 0.00)")
+    wl("maximum_size",comment="# maximum size in the population (lower edge of last bin)")
   }
   if(datlist$lbin_method==3){
     wl("N_lbinspop")
@@ -91,11 +97,11 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   }
   wl("comp_tail_compression")
   wl("add_to_comp")
-  wl("max_combined_lbin")
+  wl("max_combined_lbin",comment="#_combine males into females at or below this bin number")
   wl("N_lbins")
   writeLines("#_lbin_vector")
   writeLines(paste(datlist$lbin_vector,collapse=" "))
-  wl("N_lencomp")
+  wl("N_lencomp",comment="#_N_Length_comp_observations")
   if(!is.null(datlist$lencomp)) printdf(datlist$lencomp)
   wl("N_agebins")
   writeLines("#_agebin_vector")
@@ -103,8 +109,8 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("N_ageerror_definitions")
   if(!is.null(datlist$ageerror)) printdf(datlist$ageerror)
   wl("N_agecomp")
-  wl("Lbin_method")
-  wl("max_combined_age")
+  wl("Lbin_method", comment="#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
+  wl("max_combined_age", comment="#_combine males into females at or below this bin number")
   if(!is.null(datlist$agecomp)) printdf(datlist$agecomp)
   wl("N_MeanSize_at_Age_obs")
   #    datlist$MeanSize_at_Age_obs2 <- matrix(datlist$N_MeanSize_at_Age_obs)
