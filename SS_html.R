@@ -245,7 +245,7 @@ SS_html <- function(replist=NULL,
                   '<pre>\n',
                   sep="", file=htmlfile, append=TRUE)
             }
-            for(irow in 3+(1:nwarn)){
+            for(irow in 3:length(replist$warnings)){
               cat(replist$warnings[irow],'\n',
                   sep="", file=htmlfile, append=TRUE)
             }
