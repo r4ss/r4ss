@@ -354,7 +354,6 @@ SSplotTimeseries <-
     {
       addtarg <- function(){
         if(btarg>1){
-          print('test')
           abline(h=btarg,col="red")
           text(max(startyr,minyr)+4,btarg+0.02*diff(par()$usr[3:4]),
                "Management target",adj=0)
