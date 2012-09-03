@@ -334,17 +334,35 @@ SSplotTimeseries <-
       abline(h=0,col="grey")
     }
 
-    # add stuff to plot
+    # add references points to plot of depletion
     if(subplot %in% c(9,10))
     {
       addtarg <- function(){
-        if(btarg>0){
+        if(btarg>0 & btarg<1){
           abline(h=btarg,col="red")
           text(max(startyr,minyr)+4,btarg+0.03,"Management target",adj=0)
         }
-        if(minbthresh>0){
+        if(minbthresh>0 & minbthresh<1){
           abline(h=minbthresh,col="red")
           text(max(startyr,minyr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+        }
+      }
+      addtarg()
+    }
+    # add references points to plot of abundance
+    if(subplot %in% 7:9)
+    {
+      addtarg <- function(){
+        if(btarg>1){
+          print('test')
+          abline(h=btarg,col="red")
+          text(max(startyr,minyr)+4,btarg+0.02*diff(par()$usr[3:4]),
+               "Management target",adj=0)
+        }
+        if(minbthresh>1){
+          abline(h=minbthresh,col="red")
+          text(max(startyr,minyr)+4,minbthresh+0.02*diff(par()$usr[3:4]),
+               "Minimum stock size threshold",adj=0)
         }
       }
       addtarg()
