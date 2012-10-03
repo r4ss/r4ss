@@ -55,14 +55,14 @@ SSplotTags <-
         tagtemp <- tagdbase2[tagdbase2$Rep==igroup,]
         ylim=c(0,max(5,cbind(tagtemp$Obs,tagtemp$Exp)*1.05))
         plot(0,type="n",xlab="",ylab="",ylim=ylim,main=paste("TG ",igroup,sep=""),
-             xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr)-0.5,max(tagtemp$Yr)+0.5))
-        for (iy in 1:length(tagtemp$Yr)){
-          xx <- c(tagtemp$Yr[iy]-width,tagtemp$Yr[iy]-width,tagtemp$Yr[iy]+width,tagtemp$Yr[iy]+width)
+             xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr.S)-0.5,max(tagtemp$Yr.S)+0.5))
+        for (iy in 1:length(tagtemp$Yr.S)){
+          xx <- c(tagtemp$Yr.S[iy]-width,tagtemp$Yr.S[iy]-width,tagtemp$Yr.S[iy]+width,tagtemp$Yr.S[iy]+width)
           yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
           polygon(xx,yy,col=ifelse(iy<=latency,col3,col4))
         }
-        points(tagtemp$Yr,tagtemp$Exp,type="o",lty=1,pch=16)
-        if(latency>0) points(tagtemp$Yr[1:latency],tagtemp$Exp[1:latency],type="o",lty=1,pch=21,bg="white")
+        points(tagtemp$Yr.S,tagtemp$Exp,type="o",lty=1,pch=16)
+        if(latency>0) points(tagtemp$Yr.S[1:latency],tagtemp$Exp[1:latency],type="o",lty=1,pch=21,bg="white")
         box()
         
         # add labels in left and lower outer margins once per page
@@ -103,25 +103,25 @@ SSplotTags <-
     }
     
     #obs vs exp tag recaptures by year aggregated across group
-    tagobs <- aggregate(x$Obs,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
-    tagexp <- aggregate(x$Exp,by=list(x$Yr,x$Rep),FUN=sum,na.rm=TRUE)
-    Recaps <- data.frame(Yr=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
-    
-    xlim <- range(Recaps[,1])
-    xx2 <- aggregate(Recaps[,3],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
-    xx3 <- aggregate(Recaps[,4],by=list(Recaps$Yr),FUN=sum,na.rm=TRUE)
-    RecAg <- data.frame(Yr=xx2[,1],Obs=xx2[,2],Exp=xx3[,2])
+    tagobs <- aggregate(x$Obs,by=list(x$Yr.S,x$Rep),FUN=sum,na.rm=TRUE)
+    tagexp <- aggregate(x$Exp,by=list(x$Yr.S,x$Rep),FUN=sum,na.rm=TRUE)
+    Recaps <- data.frame(Yr.S=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
+
+    xlim <- range(Recaps$Yr.S)
+    xx2 <- aggregate(Recaps$Obs,by=list(Recaps$Yr.S),FUN=sum,na.rm=TRUE)
+    xx3 <- aggregate(Recaps$Exp,by=list(Recaps$Yr.S),FUN=sum,na.rm=TRUE)
+    RecAg <- data.frame(Yr.S=xx2[,1],Obs=xx2[,2],Exp=xx3[,2])
 
     tagfun2 <- function(){
       #obs vs exp tag recaptures by year aggregated across group
-      plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg[,2],RecAg[,3])*1.05),type="n",xaxs="i",yaxs="i",
+      plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg$Obs,RecAg$Exp)*1.05),type="n",xaxs="i",yaxs="i",
            xlab=labels[1],ylab=labels[2],main=labels[5],cex.main=cex.main)
       for (iy in 1:nrow(RecAg)){
-        xx <- c(RecAg[iy,1]-width,RecAg[iy,1]-width,RecAg[iy,1]+width,RecAg[iy,1]+width)
-        yy <- c(0,RecAg[iy,2],RecAg[iy,2],0)
+        xx <- c(RecAg$Yr.S[iy]-width,RecAg$Yr.S[iy]-width,RecAg$Yr.S[iy]+width,RecAg$Yr.S[iy]+width)
+        yy <- c(0,RecAg$Obs[iy],RecAg$Obs[iy],0)
         polygon(xx,yy,col=col4)
       }
-      lines(RecAg[,1],RecAg[,3],type="o",pch=16,lty=1,lwd=2)
+      lines(RecAg$Yr.S,RecAg$Exp,type="o",pch=16,lty=1,lwd=2)
     }
 
     Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
@@ -130,25 +130,25 @@ SSplotTags <-
     tagfun3 <- function(){
       # bubble plot of observed recapture data
       plottitle <- labels[6]
-      bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Obs,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
+      bubble3(x=Recaps$Yr.S,y=Recaps$Group,z=Recaps$Obs,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
               las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
     }
     tagfun4 <- function(){
       # bubble plot of residuals
       plottitle <- labels[7]
-      bubble3(x=Recaps$Yr,y=Recaps$Group,z=Recaps$Pearson,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
+      bubble3(x=Recaps$Yr.S,y=Recaps$Group,z=Recaps$Pearson,xlab=labels[1],ylab=labels[3],col=rep(col1,2),
               las=1,main=plottitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
     }
     tagfun5 <- function(){
       # line plot by year and group
       plottitle <- labels[8]
-      plot(0,type="n",xlim=range(Recaps$Yr),ylim=range(Recaps$Group)+c(0,1),xlab=labels[1],ylab=labels[3],
+      plot(0,type="n",xlim=range(Recaps$Yr.S),ylim=range(Recaps$Group)+c(0,1),xlab=labels[1],ylab=labels[3],
            main=plottitle,cex.main=cex.main)
       rescale <- .9*min(ngroups-1,5)/max(Recaps$Obs,Recaps$Exp)
       for(igroup in sort(unique(Recaps$Group))){
-        lines(Recaps$Yr[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col="grey",lty=3)
-        points(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type="o",pch=16,cex=.5)
-        lines(Recaps$Yr[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col=col2,lty="42",lwd=2)
+        lines(Recaps$Yr.S[Recaps$Group==igroup],igroup+0*Recaps$Obs[Recaps$Group==igroup],col="grey",lty=3)
+        points(Recaps$Yr.S[Recaps$Group==igroup],igroup+rescale*Recaps$Obs[Recaps$Group==igroup],type="o",pch=16,cex=.5)
+        lines(Recaps$Yr.S[Recaps$Group==igroup],igroup+rescale*Recaps$Exp[Recaps$Group==igroup],col=col2,lty="42",lwd=2)
       }
       legend('topleft',bty='n',lty=c('91','42'),pch=c(16,NA),pt.cex=c(.5,NA),
              col=c(1,2),lwd=c(1,2),legend=c('Observed','Expected'))
