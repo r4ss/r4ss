@@ -13,7 +13,8 @@ SS_plots <-
     cex.main=1,selexlines=1:5, rows=1, cols=1, maxrows=6, maxcols=6,
     maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-    legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE, ...)
+    legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE,
+    scalebubbles=FALSE,...)
 {
   ################################################################################
   #
@@ -505,7 +506,7 @@ SS_plots <-
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,
                         plotdir=plotdir,cex.main=cex.main,
-                        scalebins=scalebins,
+                        scalebins=scalebins, scalebubbles=scalebubbles,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
@@ -537,7 +538,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -565,7 +566,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -584,7 +585,7 @@ SS_plots <-
                       fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)

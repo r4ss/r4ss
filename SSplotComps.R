@@ -4,6 +4,7 @@ SSplotComps <-
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
            showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
+           scalebubbles=FALSE,
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
@@ -317,6 +318,7 @@ SSplotComps <-
             # some things related to the next two bubble plots (single or multi-panel)
             if(datonly){
               z <- dbase$Obs
+              if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
               col <- rep("black",2)
               titletype <- titledata
               filetype <- "bub"
