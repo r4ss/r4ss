@@ -973,6 +973,12 @@ if(FALSE){
   midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
   returndat$endgrowth <- growdat
 
+
+  # test for use of empirical weight-at-age input file (wtatage.ss)
+  test <- matchfun2("MEAN_BODY_WT(begin)",0,"MEAN_BODY_WT(begin)",0,header=FALSE)
+  wtatage_switch <- length(grep("wtatage.ss",test))>0
+  returndat$wtatage_switch <- wtatage_switch
+  
   # mean body weight
   mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)",1,"MEAN_SIZE_TIMESERIES",-1,header=TRUE)
   for(i in 1:ncol(mean_body_wt)) mean_body_wt[,i] <- as.numeric(mean_body_wt[,i])
@@ -1119,6 +1125,7 @@ if(FALSE){
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))])
         discard[,icol] <- as.numeric(discard[,icol])
       discard$FleetNum <- NA
+      if(!"Name"%in%names(discard)) discard$Name <- discard$Fleet
       for(i in 1:nrow(discard)){
         discard$FleetNum[i] <- strsplit(discard$Name[i],"_")[[1]][1]
         discard$FleetName[i] <- substring(discard$Name[i],nchar(discard$FleetNum[i])+2)
