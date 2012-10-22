@@ -158,7 +158,6 @@ SSplotCatch <-
     }
   }
 
-
   # ghost is a fleet with no catch (or a survey for these purposes)
   ghost <- rep(TRUE,nfleets)
   ghost[(1:nfishfleets)[colSums(totcatchmat)>0]] <- FALSE
@@ -186,9 +185,9 @@ SSplotCatch <-
     }
   }
 
-  
   # generic function to plot catch, landings, discards or harvest rates
   linefunc <- function(ymat,ylab,addtotal=TRUE,x=catchyrs,ymax=NULL){
+    ymat <- as.matrix(ymat)
     if(addtotal & nfishfleets>1){
       ytotal <- rowSums(ymat)
       if(is.null(ymax)) ymax <- max(ytotal)
