@@ -402,7 +402,7 @@ SS_output <-
     lbinspop <- lbinspop[!is.na(lbinspop)]
     nlbinspop <- length(lbinspop)
     Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
-    if(compend==20){
+    if(compend==compskip+2){
       cat("It appears that there is no composition data in CompReport.sso\n")
       comp <- FALSE # turning off switch to function doesn't look for comp data later on
       agebins <- NA
