@@ -14,6 +14,7 @@ SSplotComps(replist, subplots=1:12,
   print=FALSE, fleets="all", fleetnames="default", sexes="all",
   datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
   showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
+  scalebubbles=FALSE,
   pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
   plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
   do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
@@ -107,6 +108,10 @@ SSplotComps(replist, subplots=1:12,
     based on this maximum size and the values plotted. Often some plots
     look better with one value and others with a larger or smaller
     value. Default=2.6
+  }
+  \item{scalebubbles}{
+    scale data-only bubbles by sample size, not just proportion within
+    sample? Default=FALSE.
   }
   \item{pwidth}{
     default width of plots printed to files in units of \code{punits}. Default=7.
