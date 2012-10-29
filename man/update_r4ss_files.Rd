@@ -35,7 +35,7 @@ update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
     Default is "updated_r4ss_files". To use the global environment,
     set env=.GlobalEnv.
   }
-  item{pos}{
+  \item{pos}{
     Integer specifying position in 'search()' where new environment will
     go. Default=2, which is just after .GlobalEnv but before the r4ss
     package (so that sourced files will override package files).
