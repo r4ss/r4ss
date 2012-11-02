@@ -415,12 +415,25 @@ SS_output <-
       names(rawcompdbase) <- rawcompdbase[1,]
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
       compdbase <- rawcompdbase[2:(nrow(rawcompdbase)-4),] # subtract header line and last 4 lines
+
+      # make correction to tag output associated with 3.24f (fixed in later versions)
+      if(SS_versionshort=="SS-V3.24"){
+        tag1rows <- compdbase$Pick_gender=="TAG1"
+        if(any(tag1rows)){
+          tag1 <- compdbase[tag1rows,]
+          tag1new <- tag1
+          tag1new[,4:23] <- tag1new[,3:22] # shift columns over
+          tag1new$Yr.S <- tag1new$Yr # move Yr.S
+          tag1new$Yr <- floor(as.numeric(tag1new$Yr)) # turn Yr.S into Yr
+          compdbase[tag1rows,] <- tag1new
+        }
+      }
+
       compdbase <- compdbase[compdbase$Obs!="",]
       compdbase[compdbase=="_"] <- NA
       compdbase$Used[is.na(compdbase$Used)] <- "yes"
       if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-
       n <- sum(is.na(compdbase$N) & compdbase$Used!="skip")
       if(n>0){
         cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
@@ -456,6 +469,7 @@ SS_output <-
         notconditional <- !is.na(Lbin_range) & Lbin_range >  aalmaxbinrange
         conditional    <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
       }
+
       if(SS_versionNumeric >= 3.22){
         # new designation of ghost fleets from negative samp size to negative fleet
         lendbase         <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used!="skip",]
