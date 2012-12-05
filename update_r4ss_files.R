@@ -7,8 +7,11 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
       stop("'env' must be an environment or a character vector.",
            "Use default if not sure to assign objects into global workspace\n")
     if(is.character(env)) {
-      cat('Creating environment "',env,'", to store updated r4ss files.\n',sep="")
-      cat('To put the files in the global environment, set "env=.GlobalEnv"\n')
+      cat('Creating environment "',env,'", to store updated r4ss files.\n',
+          'To put the files in the global environment, set "env=.GlobalEnv"\n',
+          'If you edit any functions, you should make sure any wrappers\n',
+          'that call them (like "SS_plots") are also in the global environment.\n\n',
+          sep="")
       env <- attach(NULL,pos=pos,name=env)
     }
   }
@@ -47,8 +50,13 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
     webdir <- fileinfo$webdir
     n <- length(filenames)
     cat(n, "files found\n")
-    if (save) 
+    if (save){
+      if(is.null(local)) local <- getwd()
       cat("saving all files to", local, "\n")
+      cat("  saving...\n   ")
+    }else{
+      cat("  sourcing...\n   ")
+    }
     for (i in 1:n) {
       webfile <- paste(webdir, filenames[i], sep = "/")
       if (filenames[i] == "update_r4ss_files.R") 
@@ -57,10 +65,10 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
         localfile <- paste(local, filenames[i], sep = "/")
         temp <- readLines(webfile)
         writeLines(temp, localfile)
-        cat("  writing ", localfile, "\n", sep = "")
+        cat(filenames[i], ",",ifelse(i==n | i%%4==0,"\n   "," "), sep = "")
       }
       else {
-        cat("  sourcing ", filenames[i], "\n", sep = "")
+        cat(filenames[i], ",",ifelse(i==n | i%%4==0,"\n   "," "), sep = "")
         source(webfile,local=env)
       }
       flush.console()
@@ -70,8 +78,9 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
     filenames <- dir(local, pattern = "*.R$")
     n <- length(filenames)
     cat(n, "files found in", local, "\n")
+    cat("  sourcing...\n")
     for (i in 1:n) {
-      cat("  sourcing ", filenames[i], "\n", sep = "")
+      cat(filenames[i], ",",ifelse(i==n | i%%4==0,"\n   "," "), sep = "")
       source(paste(local, filenames[i], sep = "/"),local=env)
       flush.console()
     }
@@ -87,5 +96,5 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
     }
     getlocalfiles(local)
   }
-  cat("update complete.\n")
+  cat("\n  r4ss update complete.\n")
 }
