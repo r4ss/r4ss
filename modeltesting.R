@@ -289,8 +289,8 @@ if(FALSE){
   source('c:/SS/R/r4ss/trunk/modeltesting.R')
 
   # make directories and copy input files from one folder to the next
-  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_24d_June21",
-                           newdir="c:/SS/modeltesting/Version_3_24f_Aug3")
+  folderinfo <- copyinputs(olddir="c:/SS/modeltesting/Version_3_24j_Nov14",
+                           newdir="c:/SS/modeltesting/Version_3_24l_Dec5")
 
   # starting after making directories
   source('c:/SS/R/r4ss/trunk/modeltesting.R')
@@ -309,7 +309,7 @@ if(FALSE){
                            newdir="c:/SS/modeltesting/Version_3_21e_June9_examples_test")
 
   # copy executables into subfolders where each new model will be run
-  copyexe(sourcedir="c:/SS/SSv3.24f_Aug3/",
+  copyexe(sourcedir="c:/SS/SSv3.24l_Dec5/",
           newdir=folderinfo$newdir,
           folderlist=folderinfo$folderlist,
           exe="ss3_safe.exe")
@@ -363,7 +363,7 @@ if(FALSE){
                #dir = "\\\\nwcfs2\\assessment\\FramPublic\\StockSynthesisStuff\\modeltesting\\", 
                oldtable = "summarytable.csv", 
                newtable = "newsummarytable.csv",
-               SSversions=c("Version_3_24d_June21"))
+               SSversions=c("Version_3_24l_Dec5"))
 
   # example on sysiphus
   alloutput <-
@@ -377,7 +377,7 @@ if(FALSE){
     models <- alloutput[[i]]
     testvec <- rep(NA, length(models))
     for(j in 1:length(models)){
-      test <- SS_plots_test(models[[j]],pdf=T,verbose=F,forecast=F,datplot=T)
+      test <- SS_plots(models[[j]],pdf=T,verbose=F,forecast=F,datplot=T)
       if(test==999){
         cat("!!!! plot code succeeded on model",j,"\n")
       }else{
