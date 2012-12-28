@@ -45,6 +45,7 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   densityadjust=1,
   fix0=TRUE,
   new=TRUE,
+  add=FALSE,
   verbose=TRUE,
   mcmcVec="default")
 }
@@ -211,6 +212,14 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   }
   \item{fix0}{
     Always include 0 in the density plots?
+  }
+  \item{new}{
+    Create new empty plot window 
+  }
+  \item{new}{
+    Allows single plot to be added to existing figure. This needs to be
+    combined with specific 'subplots' input to make sure only one thing
+    gets added.
   }
   \item{new}{
     Create new empty plot window
