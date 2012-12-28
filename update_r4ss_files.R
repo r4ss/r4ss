@@ -7,7 +7,7 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
       stop("'env' must be an environment or a character vector.",
            "Use default if not sure to assign objects into global workspace\n")
     if(is.character(env)) {
-      cat('Creating environment "',env,'", to store updated r4ss files.\n',
+      cat('Creating environment "',env,'", to store updated r4ss functions.\n',
           'To put the files in the global environment, set "env=.GlobalEnv"\n',
           'If you edit any functions, you should make sure any wrappers\n',
           'that call them (like "SS_plots") are also in the global environment.\n\n',

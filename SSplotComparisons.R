@@ -34,6 +34,7 @@ SSplotComparisons <-
            densityadjust=1,
            fix0=TRUE,
            new=TRUE,
+           add=FALSE,
            verbose=TRUE,
            mcmcVec="default")
 {
@@ -89,13 +90,15 @@ SSplotComparisons <-
   lowerCI       <- summaryoutput$lowerCI
   upperCI       <- summaryoutput$upperCI
 
-  if(all(quantsSD[,1:n]==0)){
-    cat("setting uncertainty to FALSE because no uncertainty includes in the model results\n")
-    uncertainty <- FALSE
+  if(uncertainty){
+    if(all(is.na(quantsSD[,1:n]) | quantsSD[,1:n]==0)){
+      cat("setting uncertainty to FALSE because no uncertainty includes in the model results\n")
+      uncertainty <- FALSE
+    }
   }
   # fix biomass for single-sex models
   if(any(nsexes==1)){
-    cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
+    if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
     for(i in (1:n)[nsexes==1]){
       SpawnBio[,i]    <- SpawnBio[,i]/2
       SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
@@ -304,7 +307,7 @@ SSplotComparisons <-
       yunits <- 1e6
       ylab <- gsub("mt","million mt",ylab)
     }
-    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
     if(uncertainty){
       # add shading for undertainty
       addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),], upper=SpawnBioUpper[-(1:2),])
@@ -340,9 +343,9 @@ SSplotComparisons <-
     if(legend) legendfun(legendlabels)
 
     # add axes
-    axis(1)
+    if(!add) axis(1)
     yticks <- pretty(ylim)
-    axis(2,at=yticks,labels=format(yticks/yunits),las=1)
+    if(!add) axis(2,at=yticks,labels=format(yticks/yunits),las=1)
     box()
   }
 
@@ -356,19 +359,22 @@ SSplotComparisons <-
     if(uncertainty) ylim <- range(ylim, BratioUpper[,models], na.rm=TRUE)
 
     # make plot
-    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],xaxs=xaxs,yaxs=yaxs,las=1)
+    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
+                  xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
 
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
       matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
-      Bratio2 <- Bratio
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        Bratio2[Bratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      if(type!="l"){
+        Bratio2 <- Bratio
+        for(iline in 1:nlines){
+          imodel <- models[iline]
+          Bratio2[Bratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        }
+        matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
       }
-      matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
     }
 
     abline(h=0,col="grey")
@@ -396,18 +402,21 @@ SSplotComparisons <-
     if(uncertainty) ylim <- range(ylim, SPRratioUpper[,models], na.rm=TRUE)
 
     # make plot
-    plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab="(1-SPR)/(1-SPR_40%)" ,xaxs=xaxs,yaxs=yaxs,las=1)
+    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+                  ylab="(1-SPR)/(1-SPR_40%)" ,xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
       matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
-      SPRratio2 <- SPRratio
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      if(type!="l"){
+        SPRratio2 <- SPRratio
+        for(iline in 1:nlines){
+          imodel <- models[iline]
+          SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        }
+        matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
       }
-      matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
     }
     abline(h=0,col="grey")
     abline(h=1,col="grey",lty=2)
@@ -447,19 +456,21 @@ SSplotComparisons <-
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
               xlim=xlim,ylim=ylim,
-              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=add)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
       matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",
               xlim=xlim,ylim=ylim,
-              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
-      recruits2 <- recruits
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        recruits2[recruits2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=add)
+      if(type!="l"){
+        recruits2 <- recruits
+        for(iline in 1:nlines){
+          imodel <- models[iline]
+          recruits2[recruits2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        }
+        matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
+                xlim=xlim,ylim=ylim,
+                xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=TRUE)
       }
-      matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
-              xlim=xlim,ylim=ylim,
-              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=TRUE)
     }
 
     # add points at equilibrium values
@@ -480,9 +491,9 @@ SSplotComparisons <-
     }
     abline(h=0,col="grey")
     if(legend) legendfun(legendlabels)
-    axis(1)
+    if(!add) axis(1)
     yticks <- pretty(ylim)
-    axis(2,at=yticks,labels=format(yticks/yunits),las=1)
+    if(!add) axis(2,at=yticks,labels=format(yticks/yunits),las=1)
     box()
   }
 
@@ -499,7 +510,7 @@ SSplotComparisons <-
     }
     ylim <- range(-ylim,ylim) # make symmetric
                    
-    plot(0,xlim=xlim,ylim=ylim,
+    if(!add) plot(0,xlim=xlim,ylim=ylim,
          type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
     abline(h=0,col="grey")
 
@@ -593,7 +604,7 @@ SSplotComparisons <-
     if(!log) ylim <- range(0,ylim) # 0 included if not in log space
     meanQ <- rep(NA,nlines)
     
-    plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
+    if(!add) plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
     if(!log) abline(h=0,col="grey")
     for(iline in (1:nlines)[!mcmcVec]){
       imodel <- models[iline]
@@ -628,8 +639,8 @@ SSplotComparisons <-
         points(yr[subset],obs[subset],pch=16,cex=1.5)
     }
 
-    axis(1,at=yr)
-    axis(2)
+    if(!add) axis(1,at=yr)
+    if(!add) axis(2)
     box()
   } # end plotIndices function
   
@@ -733,8 +744,8 @@ SSplotComparisons <-
     if(is.null(ymax)){
       cat("  skipping plot of",parname,"because it seems to not be estimated in any model\n")
     }else{
-      plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
-           ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+      if(!add) plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
+                    ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
       # add vertical lines for target and threshold depletion values
       if(grepl("Bratio",parname)){
         if(btarg>0){
@@ -801,7 +812,7 @@ SSplotComparisons <-
       }
       abline(h=0,col="grey")
       xticks <- pretty(xlim)
-      axis(1,at=xticks,labels=format(xticks/xunits))
+      if(!add) axis(1,at=xticks,labels=format(xticks/xunits))
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",xunits," (so may be in units of ",xlab2,")\n",sep="")
       mtext(side=2,line=1,labels[8])
       box()
@@ -811,7 +822,8 @@ SSplotComparisons <-
   
 
   uncertaintyplots <- intersect(c(2,4,6,8,10,13),subplots)
-  if(!uncertainty) cat("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","),"\n")
+  if(!uncertainty & length(uncertaintyplots)>0)
+    cat("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","),"\n")
   # subplot 1: spawning biomass
   if(1 %in% subplots){
     if(verbose) cat("subplot 1: spawning biomass\n")

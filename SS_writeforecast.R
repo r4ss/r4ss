@@ -1,7 +1,6 @@
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
                               overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files
-  # updated for SSv3.20 test on 12/6/2010
   if(verbose) cat("running SS_writeforecast\n")
 
   if(mylist$type!="Stock_Synthesis_forecast_file"){
@@ -87,7 +86,10 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
   writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
   writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
-  if(any(mylist$fleet_assignment_to_allocation_group!=0)) stop("SS_readforecast doesn't yet support allocation group inputs'")
+  if(any(mylist$fleet_assignment_to_allocation_group!=0)){
+    writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
+    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
+  }
   wl("Ncatch")
   if(mylist$Ncatch>0){
     wl("InputBasis")

@@ -1,7 +1,6 @@
 SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(verbose) cat("running SS_readsforecast\n")
-  cat("This function needs updating for SSv3.21\n")
   forecast <- readLines(file,warn=F)
   mylist <- list()
 
@@ -58,22 +57,29 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   mylist$max_totalcatch_by_area <- allnums[i:(i+Nareas-1)]; i <- i+Nareas
   if(verbose) cat("  max_totalcatch_by_area =",mylist$max_totalcatch_by_area,"\n")
   mylist$fleet_assignment_to_allocation_group <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
+  # allocation groups
   if(verbose) cat("  fleet_assignment_to_allocation_group =",mylist$fleet_assignment_to_allocation_group,"\n")
-  if(any(mylist$fleet_assignment_to_allocation_group!=0)) stop("SS_readforecast doesn't yet support allocation group inputs'")
+  if(any(mylist$fleet_assignment_to_allocation_group!=0)){
+    mylist$N_allocation_groups <- max(mylist$fleet_assignment_to_allocation_group)
+    mylist$allocation_among_groups <- allnums[i:(i+mylist$N_allocation_groups-1)]; i <- i+mylist$N_allocation_groups
+  }else{
+    mylist$N_allocation_groups <- 0
+    mylist$allocation_among_groups <- NULL
+  }
   mylist$Ncatch <- Ncatch <- allnums[i]; i <- i+1
   # forcast catch levels
-  if(Ncatch>0){
+  if(Ncatch==0){
+    ForeCatch <- NULL
+  }else{
     mylist$InputBasis <- allnums[i]; i <- i+1
     ForeCatch <- data.frame(matrix(
-      allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=TRUE))
+                                   allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=TRUE))
     i <- i+Ncatch*4
     names(ForeCatch) <- c("Year","Seas","Fleet","Catch_or_F")
     if(verbose){
       cat("  Catch inputs\n")
       print(ForeCatch)
     }
-  }else{
-    ForeCatch <- NULL
   }
   
   mylist$ForeCatch <- ForeCatch

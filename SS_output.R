@@ -183,9 +183,9 @@ SS_output <-
     }
     comp <- TRUE
   }else{
-    cat("Missing ",compfile,". Change the compfile input or rerun model to get the file.\n",sep="")
-    #return()
-    if(NoCompOK) comp <- FALSE else return()
+    if(!NoCompOK) stop("Missing ",compfile,
+                       ". Change the compfile input or rerun model to get the file.\n",sep="")
+    else comp <- FALSE
   }
 
   # read report file
@@ -1384,7 +1384,7 @@ if(FALSE){
     returndat$N_ageerror_defs <- N_ageerror_defs <- length(starts)
     if(N_ageerror_defs > 0)
     {
-      nrowsAAK <- nrow(rawAAK)/nsexes - 3
+      nrowsAAK <- nrow(rawAAK)/N_ageerror_defs - 3
       AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
       age_error_mean <- age_error_sd <- data.frame(age=0:accuage)
       for(i in 1:N_ageerror_defs){
@@ -1422,12 +1422,18 @@ if(FALSE){
   #No_fishery_for_Z=M_and_dynamic_Bzero
   Z_at_age <- matchfun2("Z_AT_AGE_Annual_2",1,"Spawning_Biomass_Report_1",-2,header=TRUE)
   M_at_age <- matchfun2("Z_AT_AGE_Annual_1",1,"-ln(Nt+1",-1,matchcol2=5, header=TRUE)
-  Z_at_age[Z_at_age=="_"] <- NA
-  M_at_age[M_at_age=="_"] <- NA
-  if(Z_at_age[[1]][1]!="absent"){
-    for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
-    for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])
+  if(nrow(Z_at_age)>0){  
+    Z_at_age[Z_at_age=="_"] <- NA
+    M_at_age[M_at_age=="_"] <- NA
+    if(Z_at_age[[1]][1]!="absent" && nrow(Z_at_age>0)){
+      for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
+      for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])
+    }else{
+      Z_at_age <- NA
+      M_at_age <- NA
+    }
   }else{
+    # this could be cleaned up
     Z_at_age <- NA
     M_at_age <- NA
   }
