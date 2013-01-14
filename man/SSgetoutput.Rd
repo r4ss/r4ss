@@ -10,8 +10,8 @@
 }
 \usage{
 SSgetoutput(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE,
-forecast = FALSE, verbose = TRUE, ncols = 210, global = FALSE, replace =
-FALSE, listlists = TRUE, underscore=FALSE)
+forecast = FALSE, verbose = TRUE, ncols = 210, listlists = TRUE,
+underscore=FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,12 +38,6 @@ FALSE, listlists = TRUE, underscore=FALSE)
   \item{ncols}{
     Maximum number of columns in Report.sso (same input as for \code{\link{SS_output}}).
     Default=210.
-  }
-  \item{global}{
-    Save output from each model as a global variable with a unique name. Default=FALSE.
-  }
-  \item{replace}{
-    Replace existing global variables if they already exist. Default=FALSE.
   }
   \item{listlists}{
     Save output from each model as a element of a list (i.e. make a list of

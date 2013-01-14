@@ -1,15 +1,10 @@
 SSgetoutput <-
 function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
-         verbose=TRUE,ncols=210,global=FALSE,replace=FALSE,listlists=TRUE,
-         underscore=FALSE)
+         verbose=TRUE,ncols=210,listlists=TRUE,underscore=FALSE)
 {
   # a function to run the function SS_output to create a list in the R workspace
   # for a Stock Synthesis model with output filenames ending with the same "key"
 
-  ## if(!is.environment(env) && is.character(env)) assign(env,new.env(parent = baseenv()),env=.GlobalEnv)
-  ## else print("input 'env' should be either an environment or a string",quote=FALSE)
-  ## env <- ifelse(exists(env),env,get(env))
-  ## if(is.environment(env)) print("assigning objects to environment:",env)
   if(!is.null(keyvec)) cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
   if(!is.null(dirvec)) cat('length(dirvec) as input to SSgetoutput:',length(dirvec),'\n')
  
@@ -76,16 +71,16 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     }
     cat("added element '", newobject, "' to list\n",sep="")
     if(listlists) biglist[[newobject]] <- output
-    if(global)
-    {
-      if(exists(newobject) && !is.null(get(newobject)) & !replace)
-      {
-        cat("exists and not replacing:",newobject,"\n")
-      }else{
-        assign(newobject,output,pos=1)
-        cat("created new object:",newobject,"\n")
-      }
-    }
+    ## if(global)
+    ## {
+    ##   if(exists(newobject) && !is.null(get(newobject)) & !replace)
+    ##   {
+    ##     cat("exists and not replacing:",newobject,"\n")
+    ##   }else{
+    ##     assign(newobject,output,pos=1)
+    ##     cat("created new object:",newobject,"\n")
+    ##   }
+    ## }
   }
   return(invisible(biglist))
 }

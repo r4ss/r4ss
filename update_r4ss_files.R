@@ -1,20 +1,5 @@
-update_r4ss_files <- function (local = NULL, save = FALSE,
-                               revision = "newest",env="updated_r4ss_files",pos=2){
+update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest"){
 
-  #if env is an environment simply wirte to that. If not, create a new environment
-  if(!is.environment(env)) {  
-    if(!is.character(env))
-      stop("'env' must be an environment or a character vector.",
-           "Use default if not sure to assign objects into global workspace\n")
-    if(is.character(env)) {
-      cat('Creating environment "',env,'", to store updated r4ss functions.\n',
-          'To put the files in the global environment, set "env=.GlobalEnv"\n',
-          'If you edit any functions, you should make sure any wrappers\n',
-          'that call them (like "SS_plots") are also in the global environment.\n\n',
-          sep="")
-      env <- attach(NULL,pos=pos,name=env)
-    }
-  }
   getwebnames <- function() {
     changes <- readLines("http://code.google.com/p/r4ss/source/list")
     line <- changes[grep("detail?", changes)[6]]
@@ -69,7 +54,7 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
       }
       else {
         cat(filenames[i], ",",ifelse(i==n | i%%4==0,"\n   "," "), sep = "")
-        source(webfile,local=env)
+        source(webfile)
       }
       flush.console()
     }
@@ -81,7 +66,7 @@ update_r4ss_files <- function (local = NULL, save = FALSE,
     cat("  sourcing...\n")
     for (i in 1:n) {
       cat(filenames[i], ",",ifelse(i==n | i%%4==0,"\n   "," "), sep = "")
-      source(paste(local, filenames[i], sep = "/"),local=env)
+      source(paste(local, filenames[i], sep = "/"))
       flush.console()
     }
   }

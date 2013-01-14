@@ -9,8 +9,7 @@
   the r4ss library.
 }
 \usage{
-update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
-                  env="updated_r4ss_files",pos=2)
+update_r4ss_files(local = NULL, save = FALSE, revision = "newest")
 }
 \arguments{
   \item{local}{
@@ -30,16 +29,16 @@ update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
     to the code isn't working for your model, an older revision may
     help. Otherwise, we recommend using the newest revision.
   }
-  \item{env}{
-    An environment or a character vector in which to source files.
-    Default is "updated_r4ss_files". To use the global environment,
-    set env=.GlobalEnv.
-  }
-  \item{pos}{
-    Integer specifying position in 'search()' where new environment will
-    go. Default=2, which is just after .GlobalEnv but before the r4ss
-    package (so that sourced files will override package files).
-  }
+  % \item{env}{
+  %   An environment or a character vector in which to source files.
+  %   Default is "updated_r4ss_files". To use the global environment,
+  %   set env=.GlobalEnv.
+  % }
+  % \item{pos}{
+  %   Integer specifying position in 'search()' where new environment will
+  %   go. Default=2, which is just after .GlobalEnv but before the r4ss
+  %   package (so that sourced files will override package files).
+  % }
 }
 % \details{
 %   ~~ If necessary, more details than the description above ~~
