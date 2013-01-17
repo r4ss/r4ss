@@ -1198,21 +1198,46 @@ if(FALSE){
     shift <- -3
     if(SS_versionNumeric < 3.23) shift <- -1
     spr <- matchfun2("SPR_series",5,"Kobe_Plot",shift,header=TRUE)
-    Kobe <- matchfun2("Kobe_Plot",2,"SPAWN_RECRUIT",-1,header=TRUE)
+    Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
+    if(length(grep("F_report_basis_is_not",Kobe_head[1,1]))>0){
+      shift <- 2
+      Kobe_warn <- Kobe_head[1,1]
+    }else{
+      shift <- 1
+      Kobe_warn <- NA
+    }
+    Kobe <- matchfun2("Kobe_Plot",shift,"SPAWN_RECRUIT",-1,header=TRUE)
+    Kobe_MSY_basis <- names(Kobe)[1]
+    names(Kobe) <- Kobe[1,]
+    Kobe <- Kobe[-1,]
+    Kobe[Kobe=="_"] <- NA
+    for(icol in 1:3){
+      names(Kobe)[icol] <- sub("/",".",names(Kobe)[icol],fixed=TRUE)
+      Kobe[,icol] <- as.numeric(Kobe[,icol])
+    }
   }else{
     Kobe <- NA
   }
+  returndat$Kobe_warn <- Kobe_warn
+  returndat$Kobe_MSY_basis <- Kobe_MSY_basis
+  returndat$Kobe <- Kobe
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
   spr <- spr[spr$Year <= endyr,]
   spr$spr <- spr$SPR
   returndat$sprseries <- spr
-  returndat$Kobe <- Kobe
   stats$last_years_SPR <- spr$spr[nrow(spr)]
   stats$SPRratioLabel <- managementratiolabels[1,2]
   stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]
 
+  returndat$managementratiolabels <- managementratiolabels
+  returndat$F_report_basis <- managementratiolabels$Label[2]
+  returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
+  returndat$sprtarg <- sprtarg
+  returndat$btarg <- btarg
+  returndat$minbthresh <- minbthresh
+  
   if(forecast){
    returndat$equil_yield <- yielddat
    # stats$spr_at_msy <- as.numeric(rawforecast[33,2])
@@ -1222,11 +1247,6 @@ if(FALSE){
   }else{if(verbose) cat("You skipped the equilibrium yield data\n")}
   flush.console()
 
-  returndat$managementratiolabels <- managementratiolabels
-  returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
-  returndat$sprtarg <- sprtarg
-  returndat$btarg <- btarg
-  returndat$minbthresh <- minbthresh
 
 
   # Spawner-recruit curve
