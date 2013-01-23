@@ -1,8 +1,11 @@
 SS_doRetro <- function(olddir, masterdir=getwd(), newdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
                        extras="-nox",intern=TRUE){
+
+  olddir <- paste(masterdir,olddir,sep="/")
+  newdir <- paste(masterdir,newdir,sep="/")
+  
   # make directories, modify starter file, and start retrospective analyses
-  setwd(masterdir)
   
   # get model file names from olddir
   exefile <- dir(olddir)[grep(".exe",dir(olddir))]
@@ -22,21 +25,21 @@ SS_doRetro <- function(olddir, masterdir=getwd(), newdir='retrospectives',
       
     
   if(!file.exists(newdir)) dir.create(newdir)
-  setwd(newdir)
   
   subdirnames <- paste(subdirstart, years, sep='')
 
   for(iyr in 1:length(years)){
     # create directory
-    if(!file.exists(subdirnames[iyr])) dir.create(subdirnames[iyr])
+    if(!file.exists(paste(newdir,subdirnames[iyr],sep="/")))
+       dir.create(paste(newdir,subdirnames[iyr],sep="/"))
     # copy files
-    file.copy(paste(masterdir,olddir,filenames,sep='/'),
-              paste(masterdir,newdir,subdirnames[iyr],filenames,sep='/'),
+    file.copy(paste(olddir,filenames,sep='/'),
+              paste(newdir,subdirnames[iyr],filenames,sep='/'),
               overwrite=TRUE)
     # change starter file to do retrospectives
     starter$retro_yr <- years[iyr]
     setwd(subdirnames[iyr])
-    SS_writestarter(starter,verbose=FALSE,overwrite=TRUE)
+    SS_writestarter(paste(newdir,starter,sep="/"),verbose=FALSE,overwrite=TRUE)
 
     ## # someday the code could be expanded to fix data file if it has blocks
     ## ctl <- SS_parlines(ctlfile) # doesn't currently read columns with block info
@@ -59,6 +62,7 @@ SS_doRetro <- function(olddir, masterdir=getwd(), newdir='retrospectives',
     setwd('..')
     
   }
+  setwd(oldwd)
 }
 
 
