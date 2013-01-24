@@ -76,6 +76,7 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("N_discard_fleets")
   writeLines("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
   writeLines("#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal")
+  if(!is.null(datlist$discard_fleet_info)) printdf(datlist$discard_fleet_info)
   wl("N_discard")
   if(!is.null(datlist$discard_data)) printdf(datlist$discard_data)
   wl("N_meanbodywt")
