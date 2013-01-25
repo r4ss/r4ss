@@ -1,5 +1,5 @@
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:14,
+  function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,
            models="all",
            endyrvec=NULL,
@@ -16,7 +16,10 @@ SSplotComparisons <-
              "Recruitment deviations",  #5
              "Index",                   #6
              "Log index",               #7
-             "Density"),                #8
+             "SPR ratio",               #8 could be dynamic to match model value (e.g. "(1-SPR)/(1-SPR_40%)")
+             "Density",                 #9
+             "Management target",       #10
+             "Minimum stock size threshold"), #11 
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
            spacepoints=10,
@@ -24,7 +27,7 @@ SSplotComparisons <-
            xlim="default", xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
-           btarg=0.4, minbthresh=0.25,
+           btarg=0.4, minbthresh=0.25, sprtarg=1,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
            densitynames=c("SPB_Virgin","R0"),
@@ -382,11 +385,11 @@ SSplotComparisons <-
 
     if(btarg>0){
       abline(h=btarg,col="red",lty=2)
-      text(min(Bratio$Yr)+4,btarg+0.03,"Management target",adj=0)
+      text(min(Bratio$Yr)+4,btarg+0.03,labels[10],adj=0)
     }
     if(minbthresh>0){
       abline(h=minbthresh,col="red",lty=2)
-      text(min(Bratio$Yr)+4,minbthresh+0.03,"Minimum stock size threshold",adj=0)
+      text(min(Bratio$Yr)+4,minbthresh+0.03,labels[11],adj=0)
     }
 
     if(legend) legendfun(legendlabels)
@@ -403,7 +406,7 @@ SSplotComparisons <-
 
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-                  ylab="(1-SPR)/(1-SPR_40%)" ,xaxs=xaxs,yaxs=yaxs,las=1)
+                  ylab=labels[8] ,xaxs=xaxs,yaxs=yaxs,las=1)
     if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
@@ -424,7 +427,7 @@ SSplotComparisons <-
     if(btarg>0){
       abline(h=0,col="grey")
       abline(h=1,col="red",lty=2)
-      text(SPRratio$Yr[1]+4,(1+0.02),"Management target",adj=0)
+      text(SPRratio$Yr[1]+4,(1+0.02),labels[10],adj=0)
     }
 
     if(legend) legendfun(legendlabels)
@@ -533,6 +536,57 @@ SSplotComparisons <-
       yvec <- yvec[!is.na(yvec)]
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
+    if(legend) legendfun(legendlabels)
+  }
+
+
+      ## xmax <- 1.1*max(reldep)
+      ## ymax <- 1.1*max(1,relspr[!is.na(relspr)])
+      ## ylab <- managementratiolabels[1,2]
+      ## phasefunc <- function(){
+      ##   if(!add) plot(reldep,relspr,xlab="B/Btarget",
+      ##                 xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
+      ##   lines(reldep,relspr,type="o",col=col2)
+      ##   abline(h=0,col="grey")
+      ##   abline(v=0,col="grey")
+      ##   lines(reldep,relspr,type="o",col=col2)
+      ##   points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
+      ##   abline(h=1,col=col4,lty=2)
+      ##   abline(v=1,col=col4,lty=2)}
+  
+  plotPhase <- function(uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
+    # get axis limits
+    xlim <- range(0, Bratio[,models], na.rm=TRUE)
+    ylim <- range(0, SPRratio[,models], na.rm=TRUE)
+
+    # make plot
+    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[3],ylab=labels[8],
+                  xaxs=xaxs,yaxs=yaxs,las=1)
+
+    goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
+    lastyr <- max(goodyrs)
+    for(iline in 1:nlines){
+      imodel <- models[iline]
+      # no option get to stagger points in phase plots, only the last point is marked
+      xvals <- Bratio[Bratio$Yr %in% goodyrs, imodel]
+      yvals <- SPRratio[SPRratio$Yr %in% goodyrs, imodel]
+      lines(xvals,
+            yvals,
+            col=col[iline],
+            lty=lty[iline],lwd=lwd[iline],
+            type='l') # no user control of type to add points
+      # NA values and missing points will occur if final year is different
+      points(tail(xvals,1), 
+             tail(yvals,1),
+             col=col[iline],
+             pch=pch[iline],lwd=lwd[iline])
+    }
+
+    abline(h=1,v=1,col="grey",lty=2)
+
+    if(btarg>0) abline(v=btarg,col="red",lty=2)
+    if(sprtarg>0) abline(h=sprtarg,col="red",lty=2)
+
     if(legend) legendfun(legendlabels)
   }
 
@@ -750,11 +804,11 @@ SSplotComparisons <-
       if(grepl("Bratio",parname)){
         if(btarg>0){
           abline(v=btarg,col="red",lty=2)
-          text(btarg+0.03,par()$usr[4],"Management target",adj=1.05,srt=90)
+          text(btarg+0.03,par()$usr[4],labels[10],adj=1.05,srt=90)
         }
         if(minbthresh>0){
           abline(v=minbthresh,col="red",lty=2)
-          text(minbthresh+0.03,par()$usr[4],"Minimum stock size threshold",adj=1.05,srt=90)
+          text(minbthresh+0.03,par()$usr[4],labels[11],adj=1.05,srt=90)
         }
       }
       
@@ -814,7 +868,7 @@ SSplotComparisons <-
       xticks <- pretty(xlim)
       if(!add) axis(1,at=xticks,labels=format(xticks/xunits))
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",xunits," (so may be in units of ",xlab2,")\n",sep="")
-      mtext(side=2,line=1,labels[8])
+      mtext(side=2,line=1,labels[9])
       box()
       legendfun(legendlabels)
     }
@@ -966,34 +1020,46 @@ SSplotComparisons <-
     }
   }
 
+  #### unfinished addition of phase plot comparisons
+  ## # subplot 13: phase plot
+  if(13 %in% subplots){
+    if(verbose) cat("subplot 13: phase plot\n")
+    if(plot) plotPhase()
+    if(print){
+      pngfun("compare13_phase_plot.png")
+      plotPhase()
+      dev.off()
+    }
+  }
+
   #### unfinished addition of growth comparisons
-  ## # subplot 13: growth, females
-  ## if(13 %in% subplots){
-  ##   if(verbose) cat("subplot 13: growth, females\n")
-  ##   if(plot) plotIndices(log=TRUE)
+  ## # subplot 14: growth, females
+  ## if(14 %in% subplots){
+  ##   if(verbose) cat("subplot 14: growth, females\n")
+  ##   if(plot) plotgrowth(sex='f')
   ##   if(print){
-  ##     pngfun("compare13_growth_females.png")
+  ##     pngfun("compare14_growth_females.png")
   ##     plotgrowth(sex='f')
   ##     dev.off()
   ##   }
   ## }
 
-  ## # subplot 14: growth, females
-  ## if(13 %in% subplots){
-  ##   if(verbose) cat("subplot 13: growth, females\n")
-  ##   if(plot) plotIndices(log=TRUE)
+  ## # subplot 15: growth, males
+  ## if(15 %in% subplots){
+  ##   if(verbose) cat("subplot 15: growth, males\n")
+  ##   if(plot) plotgrowth(sex='m')
   ##   if(print){
-  ##     pngfun("compare13_growth_females.png")
-  ##     plotgrowth(sex='f')
+  ##     pngfun("compare15_growth_males.png")
+  ##     plotgrowth(sex='m')
   ##     dev.off()
   ##   }
   ## }
   
   
-  # subplot 13: densities
-  if(13 %in% subplots){
+  # subplot 14: densities
+  if(14 %in% subplots){
     if(uncertainty){
-      if(verbose) cat("subplot 13: densities\n")
+      if(verbose) cat("subplot 14: densities\n")
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
       for(i in 1:length(densitynames)){
@@ -1027,7 +1093,7 @@ SSplotComparisons <-
             plotDensities(parname=name,xlab=xlab)
           }
           if(print){
-            pngfun(paste("compare13_densities_",name,".png"))
+            pngfun(paste("compare14_densities_",name,".png"))
             plotDensities(parname=name,xlab=xlab)
             dev.off()
           }

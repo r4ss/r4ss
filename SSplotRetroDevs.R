@@ -1,15 +1,16 @@
-SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),
+SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),main="default",
                             relative=FALSE,labels=TRUE,legend=FALSE,leg.ncols=4){
   n <- retroSummary$n
   colvec <- rich.colors.short(length(cohorts),alpha=.7)
   ylab <- ifelse(relative,
                  'Recruitment deviation relative to recent estimate',
                  'Recruitment deviation')
+  if(main=="default") main <- ylab
   xlim <- c(0,max(endyrvec)-min(cohorts))
   if(labels) xlim <- xlim + c(-.8,.8) # expand x-axis to make room for labels
   if(legend) ylim <- ylim + c(0,1)
   
-  plot(0,type='n',xlim=xlim,ylim=ylim,xlab='Age',ylab=ylab,main=ylab)
+  plot(0,type='n',xlim=xlim,ylim=ylim,xlab='Age',ylab=ylab,main=main)
   abline(h=0,col='grey',lty=3)
   for(iy in 1:length(cohorts)){
     y <- cohorts[iy]
