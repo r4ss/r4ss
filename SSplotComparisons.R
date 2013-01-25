@@ -597,17 +597,18 @@ SSplotComparisons <-
     indices2 <- NULL
     for(iline in 1:nlines){
       imodel <- models[iline]
-      subset <- indices$imodel==imodel & !is.na(indices$Like)
-      if(length(unique(indices$FleetNum[subset])) > 1){
+      subset1 <- indices$imodel==imodel & !is.na(indices$Like)
+      subset2 <- indices$imodel==imodel
+      if(length(unique(indices$FleetNum[subset2])) > 1){
         if(!is.null(indexfleets[imodel])){
           ifleet <- indexfleets[imodel]
-          indices2 <- rbind(indices2,indices[subset & indices$FleetNum==ifleet,])
+          indices2 <- rbind(indices2,indices[subset2 & indices$FleetNum==ifleet,])
         }else{
           cat("some models have multiple indices, 'indexfleets' required\n  for all models in summaryoutput\n")
           return()
         }
       }else{
-        indices2 <- rbind(indices2,indices[subset,])
+        indices2 <- rbind(indices2,indices[subset2,])
       }
     }
     # get quantities for plot
@@ -654,7 +655,7 @@ SSplotComparisons <-
     }
     
     # make plot
-    ylim <- range(obs,exp,lower,upper)
+    ylim <- range(obs[!is.na(indices2$Like)],exp,lower,upper)
     if(!log) ylim <- range(0,ylim) # 0 included if not in log space
     meanQ <- rep(NA,nlines)
     
@@ -680,14 +681,14 @@ SSplotComparisons <-
     if(indexPlotEach) {  #plot observed values for each model or just the first model
         for(iline in (1:nlines)[!mcmcVec]){
             imodel <- models[iline]
-            subset <- indices2$imodel==imodel
+            subset <- indices2$imodel==imodel & !is.na(indices2$Like)
             if(indexUncertainty)
                 arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=shadecol[iline])
             points(yr[subset],obs[subset],pch=16,cex=1.5,col=shadecol[iline])
         }
     }else {
         imodel <- models[1]
-        subset <- indices2$imodel==imodel
+        subset <- indices2$imodel==imodel & !is.na(indices2$Like)
         if(indexUncertainty)
             arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=1)
         points(yr[subset],obs[subset],pch=16,cex=1.5)

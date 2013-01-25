@@ -107,6 +107,7 @@ function(replist,subplots=1:9,
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
+    include <- !is.na(cpueuse$Like)
     if(usecol) s <- cpueuse$Seas else s <- 1 # only use colorvector if more than 1 season
     if(datplot){
       cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
@@ -134,10 +135,11 @@ function(replist,subplots=1:9,
     cpuefun1 <- function(addexpected=TRUE){
       # plot of time-series of observed and expected (if requested)
       xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-      if(!add) plot(x=x, y=y, type='n', xlab=labels[1], ylab=labels[2],
+      if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1], ylab=labels[2],
                     main=main, cex.main=cex.main,
                     xlim=xlim, ylim=c(0,max(y+uiw,na.rm=TRUE)))
-      plotCI(x=x,y=y,sfrac=0.001,uiw=uiw,liw=liw,ylo=0,col=colvec1[s],
+      plotCI(x=x[include],y=y[include],sfrac=0.001,uiw=uiw[include],liw=liw[include],
+             ylo=0,col=colvec1[s],
              main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,cex=cex)
       abline(h=0,col="grey")
       if(addexpected) lines(x,z,lwd=2,col=col3)
@@ -146,17 +148,16 @@ function(replist,subplots=1:9,
     }
     cpuefun2 <- function(){
       # plot of observed vs. expected with smoother
-      if(!add) plot(y,z,xlab=labels[3],main=main,cex.main=cex.main,
+      if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
                     ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4])
-      points(y,z,col=colvec2[s],pch=pch2,cex=cex)
+      points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
       abline(h=0,col="grey")
-      lines(x=c(0,max(z)),y=c(0,max(z)))
-      if(smooth && npoints > 6 && diff(range(y))>0)
-          {
-            psmooth <- loess(z~y,degree=1)
-            lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
-                  lwd=1.2,col=col4,lty="dashed")
-          }
+      lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
+      if(smooth && npoints > 6 && diff(range(y))>0){
+        psmooth <- loess(z[include]~y[include],degree=1)
+        lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
+              lwd=1.2,col=col4,lty="dashed")
+      }
       if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames,
                                             pch=pch2, col=colvec2, cex=cex)
     }
@@ -190,7 +191,7 @@ function(replist,subplots=1:9,
       }
     }
 
-    # same plots again in log space
+    # same plots again in log space (someday should create generalized set of commands)
     main <- paste(labels[5], Fleet, sep=" ")
     if(!addmain) main <- ""
     uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
@@ -198,10 +199,13 @@ function(replist,subplots=1:9,
     cpuefun3 <- function(addexpected=TRUE){
       # plot of time-series of log(observed) and log(expected) (if requested)
       xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-      if(!add) plot(x=x, y=log(y), type='n', xlab=labels[1], ylab=labels[5],
+      if(!add) plot(x=x[include], y=log(y[include]), type='n',
+                    xlab=labels[1], ylab=labels[5],
                     main=main, cex.main=cex.main,
-                    xlim=xlim, ylim=range(log(y)-liw,log(y)+uiw,na.rm=TRUE))
-      plotCI(x=x,y=log(y),sfrac=0.001,uiw=uiw,liw=liw,
+                    xlim=xlim, ylim=range(log(y[include])-liw[include],
+                                 log(y[include])+uiw[include],na.rm=TRUE))
+      plotCI(x=x[include],y=log(y[include]),sfrac=0.001,uiw=uiw[include],
+             liw=liw[include],
              col=colvec1[s],lty=1,add=TRUE,pch=pch1,cex=cex)
       if(addexpected) lines(x,log(z),lwd=2,col=col3)
       if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,
@@ -209,12 +213,12 @@ function(replist,subplots=1:9,
     }
     cpuefun4 <- function(){
       # plot of log(observed) vs. log(expected) with smoother
-      if(!add) plot(log(y),log(z),type='n',xlab=labels[6],main=main,
+      if(!add) plot(log(y[include]),log(z[include]),type='n',xlab=labels[6],main=main,
                     cex.main=cex.main,ylab=labels[7])
-      points(log(y),log(z),col=colvec2[s],pch=pch2)
-      lines(x=range(log(z)),y=range(log(z)))
+      points(log(y[include]),log(z[include]),col=colvec2[s],pch=pch2)
+      lines(x=range(log(z[include])),y=range(log(z[include])))
       if(smooth && npoints > 6 && diff(range(y))>0){
-        psmooth <- loess(log(z)~log(y),degree=1)
+        psmooth <- loess(log(z[include])~log(y[include]),degree=1)
         lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
               lwd=1.2,col=col4,lty="dashed")}
       if(length(colvec2)>1) legend(x=legendloc, legend=seasnames,

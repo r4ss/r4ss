@@ -67,17 +67,17 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
     mylist$allocation_among_groups <- NULL
   }
   mylist$Ncatch <- Ncatch <- allnums[i]; i <- i+1
+  mylist$InputBasis <- allnums[i]; i <- i+1
   # forcast catch levels
   if(Ncatch==0){
     ForeCatch <- NULL
   }else{
-    mylist$InputBasis <- allnums[i]; i <- i+1
     ForeCatch <- data.frame(matrix(
                                    allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=TRUE))
     i <- i+Ncatch*4
     names(ForeCatch) <- c("Year","Seas","Fleet","Catch_or_F")
     if(verbose){
-      cat("  Catch inputs\n")
+      cat("  Catch inputs (Ncatch =",Ncatch,"\n")
       print(ForeCatch)
     }
   }
