@@ -661,17 +661,19 @@ SSplotComparisons <-
     
     if(!add) plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
     if(!log) abline(h=0,col="grey")
+    Qtext <- rep("(Q =",nlines)
     for(iline in (1:nlines)[!mcmcVec]){
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
       meanQ[iline] <- mean(Q[subset])
+      if(any(Q[subset]!=mean(Q[subset]))) Qtext[iline] <- "(mean Q ="
       x <- yr[subset]
       y <- exp[subset]
       lines(x, y, pch=pch[iline], lwd=lwd[iline],
             lty=lty[iline], col=col[iline], type=type)
     }
     legendlabels2 <- legendlabels
-    if(indexQlabel) legendlabels2 <- paste(legendlabels,"(mean Q =",format(meanQ,digits=indexQdigits),")")
+    if(indexQlabel) legendlabels2 <- paste(legendlabels,Qtext,format(meanQ,digits=indexQdigits),")")
     if(legend) legendfun(legendlabels2)
     
     # get uncertainty intervals if requested
