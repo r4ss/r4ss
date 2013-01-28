@@ -1,6 +1,6 @@
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
-           plot=TRUE,print=FALSE,png=print,pdf=TRUE,
+           plot=TRUE,print=FALSE,png=print,pdf=FALSE,
            models="all",
            endyrvec=NULL,
            indexfleets=NULL,
@@ -374,7 +374,7 @@ SSplotComparisons <-
 
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
-                  xaxs=xaxs,yaxs=yaxs,las=1)
+                  xaxs=xaxs,yaxs=yaxs,axes=FALSE)
     if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
 
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
@@ -394,16 +394,21 @@ SSplotComparisons <-
     abline(h=0,col="grey")
     abline(h=1,col="grey",lty=2)
 
+    yticks <- pretty(par()$yaxp[1:2])
     if(btarg>0){
       abline(h=btarg,col="red",lty=2)
       text(min(Bratio$Yr)+4,btarg+0.03,labels[10],adj=0)
+      yticks <- sort(c(btarg,yticks))
     }
     if(minbthresh>0){
       abline(h=minbthresh,col="red",lty=2)
       text(min(Bratio$Yr)+4,minbthresh+0.03,labels[11],adj=0)
+      yticks <- sort(c(minbthresh,yticks))
     }
-
+    axis(1)
+    axis(2,at=yticks, las=1)
     if(legend) legendfun(legendlabels)
+    box()
   }
 
   plotSPRratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
