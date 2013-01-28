@@ -38,7 +38,7 @@ SSplotComparisons <-
            fix0=TRUE,
            new=TRUE,
            add=FALSE,
-           mar=c(5,4,1,1)+.1,
+           par=list(mar=c(5,4,1,1)+.1),
            verbose=TRUE,
            mcmcVec="default")
 {
@@ -46,7 +46,7 @@ SSplotComparisons <-
   pngfun <- function(file){
     png(filename=paste(plotdir,file,sep="/"),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-    par(mar=mar)
+    par(par)
   }
   
   if(png) print <- TRUE
@@ -62,7 +62,7 @@ SSplotComparisons <-
     pdffile <- paste(plotdir,"/SSplotComparisons_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
-    par(mar=mar)
+    par(par)
   }
   
   # subfunction to add legend
@@ -161,7 +161,7 @@ SSplotComparisons <-
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
-    par(mar=mar)
+    par(par)
   }
 
   # get MCMC results if requested
