@@ -1,6 +1,6 @@
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
-           plot=TRUE,print=FALSE,
+           plot=TRUE,print=FALSE,png=print,pdf=TRUE,
            models="all",
            endyrvec=NULL,
            indexfleets=NULL,
@@ -45,8 +45,19 @@ SSplotComparisons <-
   pngfun <- function(file)
     png(filename=paste(plotdir,file,sep="/"),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-  if(print & is.null(plotdir))
+  if(png & is.null(plotdir))
     stop("to print PNG files, you must supply a directory as 'plotdir'")
+
+  # check for internal consistency
+  if(pdf & png){
+    stop("To use 'pdf', set 'print' or 'png' to FALSE.")
+  }
+  if(pdf){
+    if(is.null(plotdir)) stop("to write to a PDF, you must supply a directory as 'plotdir'")
+    pdffile <- paste(plotdir,"/SSplotComparisons_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdf(file=pdffile,width=pwidth,height=pheight)
+    if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
+  }
   
   # subfunction to add legend
   legendfun <- function(legendlabels)
@@ -139,7 +150,7 @@ SSplotComparisons <-
   if(grepl("mingw",version$os)) OS <- "Windows"
   # need appropriate line to support Mac operating systems
 
-  if(plot & new){
+  if(plot & new & !pdf){
     if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
@@ -1104,6 +1115,5 @@ SSplotComparisons <-
       }
     }
   }
-
-
+  if(pdf) dev.off()
 }

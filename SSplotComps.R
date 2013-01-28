@@ -25,7 +25,7 @@ SSplotComps <-
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,...)
+           scalebins=FALSE,addMeans=TRUE,...)
 {
   ################################################################################
   # SSplotComps
@@ -566,6 +566,10 @@ SSplotComps <-
                     psmooth <- loess(dbasegood$effN~dbasegood$N,degree=1)
                     options(warn=old_warn)  #returning to old value
                     lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
+                  }
+                  if(addMeans){
+                    abline(v=mean(dbasegood$N),lty=3,col='green3')
+                    abline(h=1/mean(1/dbasegood$effN),lty=3,col='green3')
                   }
                 }
               }
