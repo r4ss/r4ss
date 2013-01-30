@@ -1,49 +1,120 @@
-SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),main="default",
-                            relative=FALSE,labels=TRUE,legend=FALSE,leg.ncols=4){
-  n <- retroSummary$n
-  colvec <- rich.colors.short(length(cohorts),alpha=.7)
-  ylab <- ifelse(relative,
-                 'Recruitment deviation relative to recent estimate',
-                 'Recruitment deviation')
-  if(main=="default") main <- ylab
-  xlim <- c(0,max(endyrvec)-min(cohorts))
-  if(labels) xlim <- xlim + c(-.8,.8) # expand x-axis to make room for labels
-  if(legend) ylim <- ylim + c(0,1)
+SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertainty=FALSE,
+                            labels=c('Recruitment deviation relative to recent estimate',
+                              'Recruitment deviation',
+                              'Age'),
+                            main="Retrospective analysis of recruitment deviations",
+                            mcmcVec=FALSE,
+                            relative=FALSE,labelyears=TRUE,legend=FALSE,leg.ncols=4){
+
   
-  plot(0,type='n',xlim=xlim,ylim=ylim,xlab='Age',ylab=ylab,main=main)
-  abline(h=0,col='grey',lty=3)
+  addpoly <- function(yrvec, lower, upper, shadecol=rgb(0,0,0,.1),col=1){
+    # add shaded uncertainty intervals behind line
+    # modified from SSplotComparisons in r4ss package
+    polygon(x=c(yrvec,rev(yrvec)),
+            y=c(lower,rev(upper)),
+            border=NA,col=shadecol)
+    lines(yrvec,lower,lty=3,col=col)
+    lines(yrvec,upper,lty=3,col=col)
+  }
+
+  n             <- retroSummary$n
+  recdevs       <- retroSummary$recdevs
+  recdevsLower  <- retroSummary$recdevsLower
+  recdevsUpper  <- retroSummary$recdevsUpper
+  lowerCI       <- retroSummary$lowerCI
+  upperCI       <- retroSummary$upperCI
+
+  colvec      <- rich.colors.short(length(cohorts),alpha=.7)
+  shadecolvec <- rich.colors.short(length(cohorts),alpha=.1)
+  
+  ylab <- ifelse(relative,labels[1],labels[2])
+  maxage <- max(endyrvec)-min(cohorts)
+  xlim <- c(0,maxage)
+  if(labelyears) xlim <- xlim + c(-.8,.8) # expand x-axis to make room for labels
+  
+  plot(0,type='n',xlim=xlim,ylim=ylim,xlab=labels[3],
+       ylab=ylab,main=main,axes=FALSE)
+  axis(1,at=0:maxage)
+  axis(2,at=ylim[1]:ylim[2],las=1)
+  abline(h=0,col='grey')
+  box()
+  
+  if(legend) ylim <- ylim + c(0,1)
+
+  if(length(mcmcVec)==1) mcmcVec <- rep(mcmcVec,n)
+  if(any(mcmcVec)) mcmc <- retroSummary$mcmc
+  for(imodel in (1:n)[mcmcVec]){
+    tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
+                    grep("_InitAge_",names(mcmc[[imodel]])),
+                    grep("ForeRecr_",names(mcmc[[imodel]]))))
+    if(length(tmp) > 0) { #there are some mcmc values to use
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmclabs <- names(mcmc.tmp)
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
+      recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
+      recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
+    }
+  }
+  
   for(iy in 1:length(cohorts)){
     y <- cohorts[iy]
-    cohortdevs <- retroSummary$recdevs[retroSummary$recdevs$Yr==y,1:n]
+    cohortdevs      <- recdevs[recdevs$Yr==y,1:n]
+    cohortdevsLower <- recdevsLower[recdevsLower$Yr==y,1:n]
+    cohortdevsUpper <- recdevsUpper[recdevsUpper$Yr==y,1:n]
     # combine rows where the parameter labels may differ
     if(nrow(cohortdevs)>1){
-      cohortdevs2 <- rep(NA,n)
-      for(icol in 1:n) cohortdevs2[icol] <- cohortdevs[!is.na(cohortdevs[,icol]),icol]
+      cohortdevs2      <- rep(NA,n)
+      cohortdevsLower2 <- rep(NA,n)
+      cohortdevsUpper2 <- rep(NA,n)
+      for(icol in 1:n){
+        cohortdevs2[icol]      <- cohortdevs[!is.na(cohortdevs[,icol]),icol]
+        cohortdevsLower2[icol] <- cohortdevsLower[!is.na(cohortdevsLower[,icol]),icol]
+        cohortdevsUpper2[icol] <- cohortdevsUpper[!is.na(cohortdevsUpper[,icol]),icol]
+      }
       cohortdevs <- cohortdevs2
+      cohortdevsLower <- cohortdevsLower2
+      cohortdevsUpper <- cohortdevsUpper2
     }
     cohortdevs <- as.numeric(cohortdevs)
+    cohortdevsLower <- as.numeric(cohortdevsLower)
+    cohortdevsUpper <- as.numeric(cohortdevsUpper)
 
     goodmodels <- (1:n)[endyrvec-y>=0]
     if(relative){
       #relative to final estimate
+      if(uncertainty)
+        addpoly(yrvec=endyrvec[goodmodels] - y,
+                lower=cohortdevsLower[goodmodels] - cohortdevs[max(goodmodels)],
+                upper=cohortdevsUpper[goodmodels] - cohortdevs[max(goodmodels)],
+                shadecol=shadecolvec[iy],col=colvec[iy])
       lines(endyrvec[goodmodels] - y,
             cohortdevs[goodmodels] - cohortdevs[max(goodmodels)],
             type='o',col=colvec[iy],lwd=3,pch=16)
-      if(labels) text(x=(endyrvec[goodmodels] - y)[1] - 0.5,
-                      y=(cohortdevs[goodmodels] - cohortdevs[max(goodmodels)])[1],
-                      labels=y,
-                      col=colvec[iy],
-                      cex=.7)
+      if(labelyears)
+        text(x=(endyrvec[goodmodels] - y)[1] - 0.5,
+             y=(cohortdevs[goodmodels] - cohortdevs[max(goodmodels)])[1],
+             labels=y,
+             col=colvec[iy],
+             cex=.7)
     }else{
       #true value
+      if(uncertainty)
+        addpoly(yrvec=endyrvec[goodmodels] - y,
+                lower=cohortdevsLower[goodmodels],
+                upper=cohortdevsUpper[goodmodels],
+                shadecol=shadecolvec[iy],col=colvec[iy])
       lines(endyrvec[goodmodels] - y,
             cohortdevs[goodmodels],
             type='o',col=colvec[iy],lwd=3,pch=16)
-      if(labels) text(x=rev(endyrvec[goodmodels] - y)[1] + 0.5,
-                      y=rev(cohortdevs[goodmodels])[1],
-                      labels=y,
-                      col=colvec[iy],
-                      cex=.7)
+      if(labelyears)
+        text(x=rev(endyrvec[goodmodels] - y)[1] + 0.5,
+             y=rev(cohortdevs[goodmodels])[1],
+             labels=y,
+             col=colvec[iy],
+             cex=.7)
     }
   }
   if(legend) legend('topright',lwd=3,lty=1,pch=16,col=colvec,legend=cohorts,

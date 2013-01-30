@@ -1119,7 +1119,7 @@ SSplotComparisons <-
             plotDensities(parname=name,xlab=xlab)
           }
           if(print){
-            pngfun(paste("compare14_densities_",name,".png"))
+            pngfun(paste("compare14_densities_",name,".png",sep=""))
             plotDensities(parname=name,xlab=xlab)
             dev.off()
           }
