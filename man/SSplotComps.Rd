@@ -13,8 +13,8 @@ SSplotComps(replist, subplots=1:12,
   kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE,
   print=FALSE, fleets="all", fleetnames="default", sexes="all",
   datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
-  showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
-  scalebubbles=FALSE,
+  showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=NULL,
+  scalebubbles=FALSE,bub.scale.pearson=1.5,bub.scale.dat=3,
   pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
   plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
   do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
@@ -103,11 +103,18 @@ SSplotComps(replist, subplots=1:12,
   \item{minnbubble}{
     number of unique x values before adding buffer. see ?bubble3 for more info.
   }
-  \item{pntscalar}{
-    maximum bubble size for bubble plots; each plot scaled independently
-    based on this maximum size and the values plotted. Often some plots
-    look better with one value and others with a larger or smaller
-    value. Default=2.6
+  \item{pntscalar}{ This scalar defines the maximum bubble size for
+    bubble plots. This option is still available but a better choice is
+    to use bub.scale.pearson and bub.scale.dat, which are allow the same
+    scaling throughout all plots.
+  }
+  \item{bub.scale.pearson}{
+    Character expansion (cex) value for a proportion of 1.0 in bubble plot of
+    Pearson residuals. Default=1.5.
+  }
+  \item{bub.scale.dat}{
+    Character expansion (cex) value for a proportion of 1.0 in bubble plot of
+    composition data. Default=3.
   }
   \item{scalebubbles}{
     scale data-only bubbles by sample size, not just proportion within
@@ -140,9 +147,6 @@ SSplotComps(replist, subplots=1:12,
   }
   \item{fitbar}{
     show fit to bars instead of points
-  }
-  \item{maxsize}{
-    maximum size of bubble plots
   }
   \item{do.sqrt}{
     scale bubbles based on sqrt of size vector. see ?bubble3 for more info.

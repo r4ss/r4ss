@@ -3,10 +3,10 @@ SSplotComps <-
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
-           showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=2.6,
-           scalebubbles=FALSE,
+           showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=NULL,
+           scalebubbles=FALSE,bub.scale.pearson=1.5,bub.scale.dat=3,
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-           plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
+           plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, 
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
            labels = c("Length (cm)",           #1
                       "Age (yr)",              #2
@@ -319,13 +319,15 @@ SSplotComps <-
             if(datonly){
               z <- dbase$Obs
               if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
-              col <- rep("black",2)
+              col <- 1
+              cexZ1 <- bub.scale.dat
               titletype <- titledata
               filetype <- "bub"
               allopen <- TRUE
             }else{
               z <- dbase$Pearson
-              col <- rep("blue",2)
+              col <- "blue"
+              cexZ1 <- bub.scale.pearson
               titletype <- "Pearson residuals, "
               filetype <- "resids"
               allopen <- FALSE
@@ -346,8 +348,10 @@ SSplotComps <-
               titles <- c(ptitle,titles) # compiling list of all plot titles
 
               tempfun2 <- function(){
-                bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, xlab=labels[3],ylab=kindlab,col=col,
-                        las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=allopen,minnbubble=minnbubble)
+                bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, xlab=labels[3],
+                        ylab=kindlab,col=col,cexZ1=cexZ1,
+                        las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,
+                        allopen=allopen,minnbubble=minnbubble)
                 # add lines for growth of individual cohorts if requested
                 if(length(cohortlines)>0){
                   for(icohort in 1:length(cohortlines)){
@@ -469,8 +473,11 @@ SSplotComps <-
                     ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
                     titles <- c(ptitle,titles) # compiling list of all plot titles
                     tempfun5 <- function(){
-                      bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],ylab=labels[1],col=rep("blue",2),
-                              las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,allopen=FALSE,minnbubble=minnbubble)
+                      bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
+                              ylab=labels[1],col="blue",las=1,main=ptitle,
+                              cex.main=cex.main,maxsize=pntscalar,
+                              cexZ1=bub.scale.pearson,
+                              allopen=FALSE,minnbubble=minnbubble)
                     }
                     if(plot) tempfun5()
                     if(print){
@@ -1168,13 +1175,16 @@ SSplotComps <-
               # determine bubble size and colors
               if(datonly){
                 z <- dbase$Obs
-                col <- rep("black",2)
+                if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
+                col <- 1
+                cexZ1 <- bub.scale.dat
                 titletype <- titledata
                 filetype <- "bub"
                 allopen <- TRUE
               }else{
                 z <- dbase$Pearson
-                col <- rep("blue",2)
+                col <- "blue"
+                cexZ1 <- bub.scale.pearson
                 titletype <- "Pearson residuals, "
                 filetype <- "resids"
                 allopen <- FALSE
@@ -1184,7 +1194,7 @@ SSplotComps <-
               # this section is a modified version of tempfun2 above
               ylim <- range(dbase$Bin)
               ylim[2] <- ylim[2]+0.2*diff(ylim) # add buffer of 10% at the top for fleet name
-              bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, col=col,
+              bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, col=col, cexZ1=cexZ1,
                       las=1,main="",cex.main=cex.main,maxsize=pntscalar,allopen=allopen,
                       xlim=xlim,ylim=ylim,axis1=FALSE)
               #legend('top',title=fleetnames[f],legend=NA,bty='n') # old way with label within each panel

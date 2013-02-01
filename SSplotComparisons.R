@@ -24,9 +24,11 @@ SSplotComparisons <-
            pch="default", lty=1, lwd=2,
            spacepoints=10,
            staggerpoints=1,
-           xlim="default", xaxs="r", yaxs="r",
+           xlim="default", ylimAdj=1,
+           xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
+           legendorder="default",legendncol=1,
            btarg=0.4, minbthresh=0.25, sprtarg=1,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
@@ -67,8 +69,9 @@ SSplotComparisons <-
   
   # subfunction to add legend
   legendfun <- function(legendlabels)
-    legend(legendloc, legend=legendlabels,
-           col=col, lty=lty, lwd=lwd, pch=pch, bty="n")
+    legend(legendloc, legend=legendlabels[legendorder],
+           col=col[legendorder], lty=lty[legendorder],
+           lwd=lwd[legendorder], pch=pch[legendorder], bty="n", ncol=legendncol)
 
   rc <- function(n,alpha=1){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
@@ -147,8 +150,10 @@ SSplotComparisons <-
   if(length(pch) < nlines) pch <- rep(pch,nlines)[1:nlines]
   if(length(lty) < nlines) lty <- rep(lty,nlines)[1:nlines]
   if(length(lwd) < nlines) lwd <- rep(lwd,nlines)[1:nlines]
-  
-  if(legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
+
+  if(!is.expression(legendlabels[1]) &&
+     legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
+  if(legendorder[1]=="default") legendorder <- 1:nlines
 
   # determine operating system and open new window if requested
   OS <- "Mac"
@@ -315,7 +320,7 @@ SSplotComparisons <-
       xlim <- range(SpawnBio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- range(0, SpawnBio[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
     if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
     # do some scaling of y-axis
     ylab <- labels[2]
@@ -376,8 +381,8 @@ SSplotComparisons <-
       xlim <- range(Bratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- range(0, Bratio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- range(ylim, BratioUpper[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, Bratio[,models], na.rm=TRUE)
+    if(uncertainty) ylim <- ylimAdj*range(ylim, BratioUpper[,models], na.rm=TRUE)
 
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
@@ -424,8 +429,8 @@ SSplotComparisons <-
       xlim <- range(SPRratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- range(0, SPRratio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- range(ylim, SPRratioUpper[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
+    if(uncertainty) ylim <- ylimAdj*range(ylim, SPRratioUpper[,models], na.rm=TRUE)
 
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
@@ -458,8 +463,8 @@ SSplotComparisons <-
   
   plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
     # determine y-limits
-    ylim <- range(0,recruits[,models],na.rm=TRUE)
-    if(uncertainty) ylim <- range(ylim, recruits[,models], recruitsUpper[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0,recruits[,models],na.rm=TRUE)
+    if(uncertainty) ylim <- ylimAdj*range(ylim, recruits[,models], recruitsUpper[,models], na.rm=TRUE)
 
     # do some automatic scaling of the units
     ylab <- labels[4]
@@ -529,10 +534,10 @@ SSplotComparisons <-
       xlim <- range(recdevs$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- range(recdevs[,models],na.rm=TRUE)
+    ylim <- ylimAdj*range(recdevs[,models],na.rm=TRUE)
     if(uncertainty){
       if(all(is.na(recdevsLower[,models]))) return() # can't do uncertainty if no range present
-      ylim <- range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
+      ylim <- ylimAdj*range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
     }
     ylim <- range(-ylim,ylim) # make symmetric
                    
@@ -579,8 +584,8 @@ SSplotComparisons <-
   
   plotPhase <- function(uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
     # get axis limits
-    xlim <- range(0, Bratio[,models], na.rm=TRUE)
-    ylim <- range(0, SPRratio[,models], na.rm=TRUE)
+    xlim <- range(0, ylimAdj*Bratio[,models], na.rm=TRUE)
+    ylim <- range(0, ylimAdj*SPRratio[,models], na.rm=TRUE)
 
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[3],ylab=labels[8],
@@ -678,7 +683,7 @@ SSplotComparisons <-
     }
     
     # make plot
-    ylim <- range(obs[!is.na(indices2$Like)],exp,lower,upper)
+    ylim <- ylimAdj*range(obs[!is.na(indices2$Like)],exp,lower,upper)
     if(!log) ylim <- range(0,ylim) # 0 included if not in log space
     meanQ <- rep(NA,nlines)
     

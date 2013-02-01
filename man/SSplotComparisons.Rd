@@ -31,7 +31,8 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   col="default", shadecol="default",
   pch="default", lty=1, lwd=2,
   spacepoints = 10, staggerpoints = 1, 
-  xlim="default", xaxs="r", yaxs="r",
+  xlim="default", ylimAdj=1,
+  xaxs="r", yaxs="r",
   type="o", uncertainty=TRUE, shadealpha=0.1,
   legend=TRUE, legendlabels="default", legendloc="topright",
   btarg=0.4, minbthresh=0.25,
@@ -129,6 +130,10 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   }
   \item{xlim}{
     Optional x limits
+  }
+  \item{ylim}{
+    Multiplier for ylim parameter. Allows additional white space to fit
+    legend if necessary. Default=1.
   }
   \item{xaxs}{
     Choice of xaxs parameter (see ?par for more info)

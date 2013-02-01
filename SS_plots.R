@@ -6,7 +6,8 @@ SS_plots <-
     lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
     datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
-    sprtarg="default", btarg="default", minbthresh="default", pntscalar=2.6,
+    sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
+    bub.scale.pearson=1.5,bub.scale.dat=3,
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
@@ -133,6 +134,7 @@ SS_plots <-
   if(nplots>0 & !new){
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
+  
   if(dir=="default") dir <- inputs$dir
   plotdir <- paste(dir,"/",printfolder,"/",sep="")
   if(png){
@@ -150,7 +152,6 @@ SS_plots <-
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
   }
   if(new & !png) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
-
   if(pdf){
     mar0 <- par()$mar # current margins
     par(mar=rep(0,4))

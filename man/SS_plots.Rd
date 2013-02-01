@@ -19,7 +19,9 @@ fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
 areanames = "default", verbose = TRUE, uncertainty = TRUE,
 forecastplot = FALSE, datplot = FALSE, Natageplot = TRUE,
 samplesizeplots = TRUE, compresidplots = TRUE, sprtarg = "default",
-btarg = "default", minbthresh = "default", pntscalar = 2.6, minnbubble = 8,
+btarg = "default", minbthresh = "default", pntscalar = NULL,
+bub.scale.pearson=1.5,bub.scale.dat=3,
+minnbubble = 8,
 aalyear = -1, aalbin = -1, aalresids = FALSE,
 maxneff = 5000, cohortlines = c(), smooth = TRUE,
 showsampsize = TRUE, showeffN = TRUE, showlegend = TRUE, pwidth = 7,
@@ -94,9 +96,17 @@ scalebins=FALSE, ...)
   \item{minbthresh}{  Threshold depletion to be used in plots showing
     depletion. May be omitted by setting to NA. Default=0.25.}
   \item{pntscalar}{ This scalar defines the maximum bubble size for
-    balloon plots; each plot scaled independently based on this maximum
-    size and the values plotted. Often some plots look better with one
-    value and others with a larger or smaller value. Default=2.6}
+    bubble plots. This option is still available but a better choice is
+    to use bub.scale.pearson and bub.scale.dat, which are allow the same
+    scaling throughout all plots.}
+  \item{bub.scale.pearson}{
+    Character expansion (cex) value for a proportion of 1.0 in bubble plot of
+    Pearson residuals. Default=1.5.
+  }
+  \item{bub.scale.dat}{
+    Character expansion (cex) value for a proportion of 1.0 in bubble plot of
+    composition data. Default=3.
+  }
   \item{minnbubble}{ This defines the minimum number of years below
     which blank years will be added to bubble plots to avoid cropping.
     Default=8.}
