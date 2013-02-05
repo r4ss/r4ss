@@ -37,6 +37,8 @@ SSplotComparisons <-
            densityscalex=1,
            densityscaley=1,
            densityadjust=1,
+           densitysymbols=TRUE,
+           densitytails=TRUE,
            fix0=TRUE,
            new=TRUE,
            add=FALSE,
@@ -771,6 +773,8 @@ SSplotComparisons <-
             mcmcVals <- mcmcVals/2
           }
           xmin <- min(xmin, quantile(mcmcVals,0.005))
+          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
           xmax <- max(xmax, quantile(mcmcVals,0.995))
           z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
           z$x <- z$x[c(1,1:length(z$x),length(z$x))]
@@ -868,7 +872,7 @@ SSplotComparisons <-
           
           polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
           lines(x,y,col=col[iline],lwd=2)
-          points(x2,y2,col=col[iline],pch=pch[iline])
+          if(densitysymbols) points(x2,y2,col=col[iline],pch=pch[iline])
           lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
         }else{
           parval <- vals[1,imodel]
@@ -878,28 +882,43 @@ SSplotComparisons <-
               parval <- parval/2
               parSD <- parSD/2
             }
+            xmin <- min(xmin, qnorm(0.005,parval,parSD))
+            if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+            if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
+            x <- seq(xmin,xmax,length=500)
             #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
             x2 <- qnorm(symbolsQuants,parval,parSD)
             mle <- dnorm(x,parval,parSD)  # smooth line
             mle2 <- dnorm(x2,parval,parSD) # symbols
             mlescale <- 1/(sum(mle)*mean(diff(x)))
-            mle <- mle*mlescale
-            mle2 <- mle2*mlescale
+            y <- mle <- mle*mlescale
+            y2 <- mle2 <- mle2*mlescale
             polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
             lines(x,mle,col=col[iline],lwd=2)
-            points(x2,mle2,col=col[iline],pch=pch[iline])
+            if(densitysymbols) points(x2,mle2,col=col[iline],pch=pch[iline])
             lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline]) #
-            #,pch=pch[iline],type='o')
           }else{
             abline(v=parval,col=col[iline])
           }
         }
+        # should be able to move more stuff into this section that applies to both MLE and MCMC
+        if(densitytails){
+          x.lower <- x[x<=x2[1]]
+          y.lower <- y[x<=x2[1]]
+          x.upper <- x[x>=rev(x2)[1]]
+          y.upper <- y[x>=rev(x2)[1]]
+          polygon(c(x.lower[1],x.lower,rev(x.lower)[1]),
+                  c(0,y.lower,0),col=shadecol[iline],border=NA)
+          polygon(c(x.upper[1],x.upper,rev(x.upper)[1]),
+                  c(0,y.upper,0),col=shadecol[iline],border=NA)
+        }
+  
       }
       abline(h=0,col="grey")
       xticks <- pretty(xlim)
       if(!add) axis(1,at=xticks,labels=format(xticks/xunits))
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",xunits," (so may be in units of ",xlab2,")\n",sep="")
-      mtext(side=2,line=1,labels[9])
+      if(!add) mtext(side=2,line=1,labels[9])
       box()
       legendfun(legendlabels)
     }
