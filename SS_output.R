@@ -1217,6 +1217,8 @@ if(FALSE){
     }
   }else{
     Kobe <- NA
+    Kobe_warn <- NA
+    Kobe_MSY_basis <- NA
   }
   returndat$Kobe_warn <- Kobe_warn
   returndat$Kobe_MSY_basis <- Kobe_MSY_basis
