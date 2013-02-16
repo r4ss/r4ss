@@ -1,6 +1,7 @@
 SSplotPars <-
   function(
     dir="c:/path/", repfile="Report.sso",
+           xlab="Parameter value",ylab="Density",
     postfile="posteriors.sso", showpost=TRUE, showprior=TRUE,
     showmle=TRUE, showinit=TRUE, showrecdev=TRUE, priorinit=TRUE,
     priorfinal=TRUE, showlegend=TRUE, fitrange=FALSE, xaxs="i",
@@ -41,6 +42,7 @@ SSplotPars <-
       if(Ptype=="Sym_Beta") Ptype2 <- 1
       if(Ptype=="Full_Beta") Ptype2 <- 2
       if(Ptype=="Log_Norm") Ptype2 <- 3
+      if(Ptype=="Log_Norm_adjusted") Ptype2 <- 4
     }else{
       Ptype2 <- Ptype
     }
@@ -65,11 +67,35 @@ SSplotPars <-
       Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
       if(Bprior<=1.0 | Aprior <=1.0) {cat(" bad Beta prior\n");}
       Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
-        -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
+      -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
     }
     if(Ptype2==3){  # lognormal
       Prior_Like <- 0.5*((log(Pval)-Pr)/Psd)^2
     }
+    if(Ptype2==4){  # lognormal with bias correction (from Larry Jacobson)
+      if(Pmin>0.0){
+        Prior_Like <- 0.5*((log(Pval)-Pr+0.5*Psd^2)/Psd)^2;
+      }else{
+        cat("cannot do prior in log space for parm with min <=0.0\n")
+      }
+    }
+    if(Ptype2==5){  # gamma  (from Larry Jacobson)
+      warnif <- 1e-15;
+      if(Pmin<0.0){
+        cat("Lower bound for gamma prior must be >=0.  Suggestion ",warnif*10.0,"\n")
+      }else{
+        # Gamma is defined over [0,+inf) but x=zero causes trouble for some mean/variance combos.
+        if(Pval < warnif){
+          cat("Pval too close to zero in gamma prior - can not guarantee reliable calculations.\n",
+              "Suggest rescaling data (e.g. * 1000)?\n")
+        }else{
+          scale <- (Psd^2)/Pr;  #  gamma parameters by method of moments
+          shape <- Pr/scale;
+          Prior_Like <- -shape*log(scale)-gammln(shape)+(shape-1.0)*log(Pval)-Pval/scale;
+        }
+      }
+    }
+
     return(Prior_Like)
   } # end GetPrior
 
@@ -222,7 +248,7 @@ SSplotPars <-
     if(verbose) cat("PDF file with plots will be: ",pdffile,"\n")
   }
 
-  par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
+  if(new) par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
   if(verbose) cat("Making plots of parameters:\n")
   for(ipar in 1:npars){
     # grab name and full parameter line
@@ -361,8 +387,8 @@ SSplotPars <-
     box()
 
     if(max(par("mfg")[1:2])==1){ # first panel on page
-      mtext("Parameter value",side=1,line=0.5,outer=TRUE)
-      mtext("Density",side=2,line=0.5,outer=TRUE)
+      mtext(xlab,side=1,line=0.5,outer=TRUE)
+      mtext(ylab,side=2,line=0.5,outer=TRUE)
       if(showlegend){
         showvec <- c(showprior,showmle,showpost,showinit)
         legend("topleft",cex=1.2,bty="n",pch=c(NA,NA,15,17)[showvec],

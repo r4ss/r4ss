@@ -4,6 +4,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   if(verbose) cat("running SS_readdat\n")
   dat <- readLines(file,warn=FALSE)
 
+  # split apart any bootstrap or expected value sections in data.ss_new
   if(!is.null(section)){
     Nsections <- as.numeric(substring(dat[grep("Number_of_datafiles",dat)],24))
     if(!section %in% 1:Nsections) stop("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n")
@@ -17,12 +18,19 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
     }
   }
 
+  # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
   for(i in 1:length(dat)){
+    # split along blank spaces
     mysplit <- strsplit(dat[i],split="[[:blank:]]+")[[1]]
     mysplit <- mysplit[mysplit!=""]
+    # if final value is a number is followed immediately by a pound ("1#"),
+    # this needs to be split
+    nvals <- length(mysplit)
+    if(nvals>0) mysplit[nvals] <- strsplit(mysplit[nvals],"#")[[1]][1]
+    # convert to numeric
     nums <- suppressWarnings(as.numeric(mysplit))
     if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1
     else maxcol <- length(nums)
@@ -31,14 +39,18 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
       allnums <- c(allnums, nums)
     }
   }
+  # set initial position in the vector of numeric values
   i <- 1
+  # create empty list to store quantities
   datlist <- list()
 
+  # specifications
   datlist$sourcefile <- file
   datlist$type <- "Stock_Synthesis_data_file"
   datlist$SSversion <- NULL # "SSv3.21"
 
   if(verbose) cat("SSversion =",datlist$SSversion,"\n")
+
   # model dimensions
   datlist$styr  <- allnums[i]; i <- i+1
   datlist$endyr <- allnums[i]; i <- i+1

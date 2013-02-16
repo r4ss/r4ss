@@ -97,9 +97,9 @@ SS_output <-
   # perhaps in the future we will use it to replace SS_versionshort throughout r4ss?
   SS_versionCode <- rephead[grep("#V",rephead)]
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
+  SS_version <- SS_version[substring(SS_version,1,2)!="#C"] # remove any version numbering in the comments
   SS_versionshort <- toupper(substr(SS_version,1,8))
   SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
-
   # rough limits on compatibility of this code
   SS_versionMax <- 3.24
   SS_versionMin <- 3.21 # a stab in the dark at which versions still work

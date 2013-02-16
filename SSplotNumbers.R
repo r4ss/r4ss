@@ -180,12 +180,13 @@ SSplotNumbers <-
           tempfun <- function(){
             # bubble plot with line
             bubble3(x=resx, y=resy, z=resz,
-                    xlab=labels[1],ylab=labels[2],col=c("black","black"),main=plottitle1,maxsize=(pntscalar+1.0),
+                    xlab=labels[1],ylab=labels[2],
+                    main=plottitle1,maxsize=(pntscalar+1.0),
                     las=1,cex.main=cex.main,allopen=1)
             lines(natageyrs,meanage,col="red",lwd=3)
           }
           tempfun2 <- function(){
-            # mean length for males and femails
+            # mean age for males and femails
             ylim <- c(0, max(meanage, meanagef, na.rm=TRUE))
             plot(natageyrs,meanage,col="blue",lty=1,pch=4,xlab=labels[1],ylim=ylim,type="o",ylab=ylab,main=plottitle2,cex.main=cex.main)
             points(natageyrs,meanagef,col="red",lty=2,pch=1,type="o")
@@ -332,7 +333,7 @@ SSplotNumbers <-
             tempfun4 <- function(){
               # bubble plot with line
               bubble3(x=resx, y=resy, z=resz,
-                      xlab=labels[1],ylab=labels[12],col=c("black","black"),
+                      xlab=labels[1],ylab=labels[12],
                       main=plottitle1,maxsize=(pntscalar+1.0),
                       las=1,cex.main=cex.main,allopen=1)
               lines(natlenyrs,meanlen,col="red",lwd=3)

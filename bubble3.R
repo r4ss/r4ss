@@ -8,13 +8,21 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
     # Not sure anymore what happened to bubble2.
     if(diff(range(length(x),length(y),length(z)))>0)
       stop("x, y, and z should all be equal in length")
+    # filter NA values
+    x <- x[!is.na(z)]
+    y <- y[!is.na(z)]
+    z <- z[!is.na(z)]
+
     n <- length(x)
+    if(n==0) return()
 
     az <- abs(z)
     if(legend && legend.z[1]=="default"){
       # set sequence of points to use in legend
-      maxaz <- max(az)
-      if(maxaz>1) legend.z <- c(.1,1:3) # something like Pearsons
+      maxaz <- max(az,na.rm=TRUE)
+      if(maxaz>1)  legend.z <- c(.1,1:3) # something like Pearsons
+      if(maxaz>5)  legend.z <- c(.1,seq(1,maxaz,2)) # big Pearsons
+      if(maxaz>10) legend.z <- pretty(c(0,maxaz)) # something like numbers
       if(maxaz<=1) legend.z <- c(0.01,0.1*(1:floor(10*maxaz))) # something like proportions
       if(any(z<0)) legend.z <- c(-rev(legend.z[-1]),legend.z) # add negatives
     }
