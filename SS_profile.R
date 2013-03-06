@@ -5,8 +5,8 @@ function(
          newctlfile="control_modified.ss", # must match entry in starter file
          linenum=NULL, string=NULL, profilevec=NULL, usepar=TRUE,
          dircopy=TRUE, exe.delete=FALSE,
-         command="SS3 -nox",model='ss3',systemcmd=FALSE,saveoutput=TRUE,
-         overwrite=FALSE,
+         model='ss3',extras="-nox",systemcmd=FALSE,saveoutput=TRUE,
+         overwrite=TRUE,
          verbose=TRUE)
 {
   ################################################################################
@@ -28,6 +28,15 @@ function(
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+
+  # figure out name of executable based on 'model' input which may contain .exe
+  if(length(grep(".exe",tolower(model)))){
+    exe <- model
+  }else{
+    exe <- tolower(paste(model,ifelse(OS=="Windows",".exe",""),sep=""))
+  }
+  # check whether exe is in directory
+  if(!exe %in% tolower(dir())) stop("Executable ",exe," not found in ",dir)
 
   if(length(linenum)+length(string)!=1)
     stop("one value should be input for either 'linenum' or 'string', but not both")
@@ -60,8 +69,9 @@ function(
     if(file.exists('Report.sso')) file.remove('Report.sso')
 
     # run model
+    command <- paste(model, extras)
     cat("Running model in directory:",getwd(),"\n")
-    cat("Using the command:",command,"\n")
+    cat("Using the command: '",command,"'\n",sep="")
     if(OS=="Windows" & !systemcmd){
       shell(cmd=command)
     }else{

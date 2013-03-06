@@ -2,7 +2,7 @@ SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,
            models="all",
-           endyrvec=NULL,
+           endyrvec="default",
            indexfleets=NULL,
            indexUncertainty=FALSE,
            indexQlabel=TRUE,
@@ -90,6 +90,8 @@ SSplotComparisons <-
   # get stuff from summary output
   n             <- summaryoutput$n
   nsexes        <- summaryoutput$nsexes
+  startyrs      <- summaryoutput$startyrs
+  endyrs        <- summaryoutput$endyrs
   pars          <- summaryoutput$pars
   parsSD        <- summaryoutput$parsSD
   parphases     <- summaryoutput$parphases
@@ -277,6 +279,7 @@ SSplotComparisons <-
     #}
   }
 
+  if(endyrvec[1]=="default") endyrvec <- endyrs
   if(length(endyrvec)==1) endyrvec <- rep(endyrvec,nlines)
   if(!is.null(endyrvec)){
     for(iline in 1:nlines){

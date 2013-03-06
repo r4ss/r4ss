@@ -75,6 +75,8 @@ SSsummarize <- function(biglist,
   keyvec2    <- NULL
   listnames  <- NULL
   npars      <- NULL
+  startyrs   <- NULL
+  endyrs     <- NULL
   
   warn <- FALSE # flag for whether filter warning has been printed or not
 
@@ -95,6 +97,10 @@ SSsummarize <- function(biglist,
     # nsexes
     nsexes <- c(nsexes, stats$nsexes)
 
+    # start and end years
+    startyrs <- c(startyrs, stats$startyr)
+    endyrs   <- c(endyrs,   stats$endyr)
+    
     # size selectivity
     sizeseltemp <- stats$sizeselex
     if(is.null(sizeselfactor)) sizeselfactor <- unique(sizeseltemp$Factor)
@@ -340,6 +346,8 @@ SSsummarize <- function(biglist,
   mylist$keyvec         <- keyvec
   mylist$maxgrad        <- maxgrad
   mylist$nsexes         <- nsexes
+  mylist$startyrs       <- startyrs
+  mylist$endyrs         <- endyrs
   mylist$pars           <- pars
   mylist$parsSD         <- parsSD
   mylist$parphases      <- parphases
