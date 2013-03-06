@@ -26,6 +26,15 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
 
   colvec      <- rich.colors.short(length(cohorts),alpha=.7)
   shadecolvec <- rich.colors.short(length(cohorts),alpha=.1)
+  colvec      <- rainbow(length(cohorts),alpha=.7)
+  shadecolvec <- rainbow(length(cohorts),alpha=.1)
+  colvec.txt <- colvec
+  # make text darker
+  for(i in 1:length(colvec)){
+    tmp <- col2rgb(colvec[i])/255
+    colvec.txt[i] <- rgb(tmp[1]/2,tmp[2]/2,tmp[3]/2,alpha=.7)
+  }
+  print(cbind(colvec,colvec.txt))
   
   ylab <- ifelse(relative,labels[1],labels[2])
   maxage <- max(endyrvec)-min(cohorts)
@@ -97,7 +106,7 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
         text(x=(endyrvec[goodmodels] - y)[1] - 0.5,
              y=(cohortdevs[goodmodels] - cohortdevs[max(goodmodels)])[1],
              labels=y,
-             col=colvec[iy],
+             col=colvec.txt[iy],
              cex=.7)
     }else{
       #true value
@@ -113,7 +122,7 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
         text(x=rev(endyrvec[goodmodels] - y)[1] + 0.5,
              y=rev(cohortdevs[goodmodels])[1],
              labels=y,
-             col=colvec[iy],
+             col=colvec.txt[iy],
              cex=.7)
     }
   }

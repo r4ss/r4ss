@@ -245,12 +245,16 @@ SS_output <-
     }else{
       if(SS_versionshort=="SS-V3.11"){
         yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
+        colnames(yielddat) <- c("Catch","Depletion")
       }else{
-        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(5,8)]
+        names <- yieldraw[1,1:9]
+        names[names=="SSB/Bzero"] <- "Depletion"
+        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),1:9]
+        names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
       }
-      colnames(yielddat) <- c("Catch","Depletion")
-      yielddat$Catch <- as.numeric(yielddat$Catch)
-      yielddat$Depletion <- as.numeric(yielddat$Depletion)
+      for(icol in 1:ncol(yielddat)){
+        yielddat[,icol] <- as.numeric(yielddat[,icol])
+      }
       yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
     }
   }else{
@@ -1226,7 +1230,7 @@ if(FALSE){
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
-  spr <- spr[spr$Year <= endyr,]
+  #spr <- spr[spr$Year <= endyr,]
   spr$spr <- spr$SPR
   returndat$sprseries <- spr
   stats$last_years_SPR <- spr$spr[nrow(spr)]

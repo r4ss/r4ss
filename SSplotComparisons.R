@@ -419,8 +419,10 @@ SSplotComparisons <-
       text(min(Bratio$Yr)+4,minbthresh+0.03,labels[11],adj=0)
       yticks <- sort(c(minbthresh,yticks))
     }
-    axis(1)
-    axis(2,at=yticks, las=1)
+    if(!add){
+      axis(1)
+      axis(2,at=yticks, las=1)
+    }
     if(legend) legendfun(legendlabels)
     box()
   }
