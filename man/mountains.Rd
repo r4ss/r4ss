@@ -3,32 +3,62 @@
 \alias{mountains}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Make shaded polygons with a mountain-like appearance
+  Make shaded polygons with a mountain-like appearance
 }
 \description{
-Designed to replicate like the cool-looking Figure 7 in Butterworth et
-al. (2003).
+  Designed to replicate like the cool-looking Figure 7 in Butterworth et
+  al. (2003).
 }
 \usage{
-mountains(zmat, xvec=NULL, yvec=NULL, zscale=3, nshades=100,
-           xaxs='i', yaxs='i', xlab="", ylab="", las=1, addbox=FALSE, ...)
+mountains(zmat, xvec=NULL, yvec=NULL, zscale=3, rev=TRUE, nshades=100,
+  axes=TRUE, xaxs='i', yaxs='i', xlab="", ylab="", las=1, addbox=FALSE,
+  ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{zmat}{ a matrix where the rows represent the heights of each mountain range }
-  \item{xvec}{ optional input for the x variable }
-  \item{yvec}{ optional input for the y variable }
-  \item{zscale}{ controls the height of the mountains relative to the
-    y-axis and max(zmat) }
-  \item{nshades}{ number of levels of shading }
-  \item{xaxs}{ x-axis as internal or regular (see ?par for details) }
-  \item{yaxs}{ y-axis as internal or regular (see ?par for details)  }
-  \item{xlab}{ optional label for x-axis }
-  \item{ylab}{ optional label for y-axis }
-  \item{las}{ axis label style (see ?par for details). Default = 1 =
+  \item{zmat}{
+    A matrix where the rows represent the heights of each mountain range
+  }
+  \item{xvec}{
+    Optional input for the x variable
+  }
+  \item{yvec}{
+    Optional input for the y variable
+  }
+  \item{zscale}{
+    Controls the height of the mountains relative to the
+    y-axis and max(zmat)
+  }
+  \item{rev}{
+    Reverse the order of the display of yvec values. 
+  }
+  \item{nshades}{
+    Number of levels of shading
+  }
+  \item{axes}{
+    Add axes to the plot?
+  }
+  \item{xaxs}{
+    X-axis as internal or regular (see ?par for details)
+  }
+  \item{yaxs}{
+    Y-axis as internal or regular (see ?par for details) 
+  }
+  \item{xlab}{
+    Optional label for x-axis
+  }
+  \item{ylab}{
+    Optional label for y-axis
+  }
+  \item{las}{
+    Xxis label style (see ?par for details). Default = 1 =
     horizontal axis labels.}
-  \item{addbox}{ puts a box around the whole plot }
-  \item{...}{ extra inputs passed to the plot command }
+  \item{addbox}{
+    Puts a box around the whole plot
+  }
+  \item{...}{
+    Extra inputs passed to the plot command
+  }
 }
 % \details{
 % %%  ~~ If necessary, more details than the description above ~~
@@ -46,7 +76,7 @@ mountains(zmat, xvec=NULL, yvec=NULL, zscale=3, nshades=100,
   selectivity. South African Journal of Marine Science 25:331-362.
 }
 \author{
-Ian Taylor
+  Ian Taylor
 }
 % \note{
 % %%  ~~further notes~~

@@ -87,6 +87,9 @@ trace = 0, labelstrings = "all", columnnumbers = "all", sep = "")
   \code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
 }
 % \examples{
+%   \dontrun{
+%     mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
+%   }
 % }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

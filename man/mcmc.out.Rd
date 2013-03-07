@@ -107,7 +107,10 @@ print = FALSE)
   \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
 }
 % \examples{
+%   \dontrun{
+%   }
 % }
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 \keyword{ hplot }

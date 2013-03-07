@@ -8,6 +8,7 @@
 }
 \usage{
 SSplotPars(dir = "c:/path/", repfile = "Report.sso",
+xlab="Parameter value",ylab="Density",
 postfile = "posteriors.sso", showpost = TRUE, showprior = TRUE,
 showmle = TRUE, showinit = TRUE, showrecdev = TRUE, priorinit = TRUE,
 priorfinal = TRUE, showlegend = TRUE, fitrange = FALSE, xaxs="i",
@@ -21,6 +22,8 @@ ctlfile = "control.ss_new")
 \arguments{
   \item{dir}{ Directory where all files are located. }
   \item{repfile}{ Name of report file. Default="Report.sso".}
+  \item{xlab}{ Label on horizontal axis. }
+  \item{ylab}{ Label on vertical axis. }
   \item{postfile}{ Name of MCMC posteriors file (not required).
     Default="posteriors.sso".}
   \item{showpost}{ Show posterior distribution as bar graph? Default=TRUE. }

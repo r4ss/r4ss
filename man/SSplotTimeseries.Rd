@@ -22,7 +22,8 @@ btarg="default", minbthresh="default", xlab = "Year",
              "Spawning depletion",        
              "Spawning output (eggs)",    
              "Age-0 recruits (1,000s)",  
-             "Fraction of total Age-0 recruits"),  
+             "Fraction of total Age-0 recruits",
+             "Management target", "Minimum stock size threshold"),  
 pwidth = 7, pheight = 7, punits = "in", res = 300, ptsize = 12,
 cex.main = 1)
 }

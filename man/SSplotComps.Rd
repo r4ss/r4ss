@@ -16,7 +16,7 @@ SSplotComps(replist, subplots=1:12,
   showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=NULL,
   scalebubbles=FALSE,bub.scale.pearson=1.5,bub.scale.dat=3,
   pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-  plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, maxsize=3,
+  plotdir="default", cex.main=1, linepos=1, fitbar=FALSE,
   do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
   labels = c("Length (cm)",            
              "Age (yr)",               
@@ -35,7 +35,7 @@ SSplotComps(replist, subplots=1:12,
   printmkt=TRUE,printsex=TRUE,
   maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
   fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-  scalebins=FALSE,...)
+  scalebins=FALSE,addMeans=TRUE,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -207,6 +207,10 @@ SSplotComps(replist, subplots=1:12,
     Rescale expected and observed proportions by dividing by bin width
     for models where bins have different widths? Caution!: May not work
     correctly in all cases.
+  }
+  \item{addMeans}{
+    Add parameter means in addition to medians for MCMC posterior
+    distributions in which the median and mean differ.
   }
   \item{\dots}{
     additional arguments that will be passed to the plotting.

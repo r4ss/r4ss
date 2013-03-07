@@ -18,16 +18,10 @@ SStableComparisons(summaryoutput,
              "Age_comp",
              "priors",
              "Size_at_age"),
-           names=c("R0",
-             "steep",
-             "NatM",
-             "Q",
-             "L_at_Amax",
-             "VonBert_K",
-             "RecrDev_2008",
-             "SPB_Virg",
-             "Bratio_2012",
-             "SPRratio_2011"),
+           names=c("R0", "steep", "NatM", "Q_calc", "L_at_Amax",
+             "VonBert_K", "RecrDev_2008", "SPB_Virg", "Bratio_2012",
+             "SPRratio_2011"), 
+           digits=NULL,
            modelnames="default",
            csv=FALSE,
            csvdir="workingdirectory",
@@ -53,6 +47,10 @@ SStableComparisons(summaryoutput,
     Labels for parameters or derived quantities to include, should match
     substring of labels in \code{summaryoutput$pars} or
     \code{summaryoutput$quants}. 
+  }
+  \item{digits}{
+    Optional vector of the number of decimal digits to use in reporting
+    each quantity.
   }
   \item{modelnames}{
     optional vector of labels to use as column names. Default is

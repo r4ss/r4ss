@@ -10,7 +10,7 @@
   negative values have open bubbles.
 }
 \usage{
-bubble3(x, y, z, col = 1, maxsize = NULL, do.sqrt = TRUE,
+bubble3(x, y, z, col = 1, cexZ1=5, maxsize = NULL, do.sqrt = TRUE,
 legend=TRUE, legend.z="default", legend.yadj=1.1, main = "",
 cex.main = 1, xlab = "", ylab = "", minnbubble = 8,
 xlim = NULL, ylim = NULL, axis1 = TRUE, xlimextra = 1,

@@ -10,10 +10,10 @@ plot model comparisons
   \code{SSsummarize} function.
 }
 \usage{
-SSplotComparisons(summaryoutput,subplots=1:14,
-  plot=TRUE,print=FALSE,
+SSplotComparisons(summaryoutput,subplots=1:20,
+  plot=TRUE,print=FALSE,png=print,pdf=FALSE,
   models="all",
-  endyrvec=NULL,
+  endyrvec="default",
   indexfleets=NULL,
   indexUncertainty=FALSE,
   indexQlabel = TRUE,
@@ -27,7 +27,10 @@ SSplotComparisons(summaryoutput,subplots=1:14,
     "Recruitment deviations",  
     "Index",                   
     "Log index",               
-    "Density"),                
+    "SPR ratio",
+    "Density",
+    "Management target",
+    "Minimum stock size threshold"),
   col="default", shadecol="default",
   pch="default", lty=1, lwd=2,
   spacepoints = 10, staggerpoints = 1, 
@@ -35,22 +38,26 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   xaxs="r", yaxs="r",
   type="o", uncertainty=TRUE, shadealpha=0.1,
   legend=TRUE, legendlabels="default", legendloc="topright",
-  btarg=0.4, minbthresh=0.25,
+  legendorder="default",legendncol=1,
+  btarg=0.4, minbthresh=0.25, sprtarg=1,
   pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
   plotdir=NULL,
-  densitynames=c("SPB_Virgin",
-                 "R0"),
+  densitynames=c("SPB_Virgin","R0"),
   densityxlabs="default",
   densityscalex=1,
   densityscaley=1,
   densityadjust=1,
+  densitysymbols = TRUE,
+  densitytails = TRUE,
   fix0=TRUE,
   new=TRUE,
   add=FALSE,
+  par = list(mar = c(5, 4, 1, 1) + 0.1),
   verbose=TRUE,
   mcmcVec="default")
 }
 %- maybe also 'usage' for other objects documented here.
+
 \arguments{
   \item{summaryoutput}{
     List created by \code{SSsummarize}
@@ -62,7 +69,15 @@ SSplotComparisons(summaryoutput,subplots=1:14,
     Plot to active plot device?
   }
   \item{print}{
-    Send plots to PNG files in directory specified by \code{plotdir}
+    Send plots to PNG files in directory specified by \code{plotdir}?
+  }
+  \item{png}{
+    Has same result as \code{print}, included for consistency with
+    \code{SS_plots}.
+  }
+  \item{pdf}{
+    Write output to PDF file? Can't be used in conjunction with
+    \code{png} or \code{print}.
   }
   \item{models}{
     Optional subset of the models described in \code{summaryoutput}.
@@ -71,7 +86,8 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   }
   \item{endyrvec}{
     Optional single year or vector of years representing the final year
-    of values to show for each model
+    of values to show for each model. By default it is set to the ending
+    year specified in each model.
   }
   \item{indexfleets}{
     Vector of fleets for each model for which to compare indices of
@@ -131,7 +147,7 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   \item{xlim}{
     Optional x limits
   }
-  \item{ylim}{
+  \item{ylimAdj}{
     Multiplier for ylim parameter. Allows additional white space to fit
     legend if necessary. Default=1.
   }
@@ -162,12 +178,24 @@ SSplotComparisons(summaryoutput,subplots=1:14,
   \item{legendloc}{
     Location of legend. See ?legend for more info.
   }
+  \item{legendorder}{
+    Optional vector of model numbers that can be used to have the legend
+    display the model names in an order that is different than that
+    which is represented in the summary input object.
+  }
+  \item{legendncol}{
+    Number of columns for the legend.
+  }
   \item{btarg}{
     Target biomass value at which to show a line (set to 0 to remove)
   }
   \item{minbthresh}{
     Minimum biomass threshhold at which to show a line (set to 0 to
     remove)
+  }
+  \item{sprtarg}{
+    Target value for SPR-ratio where line is drawn in the SPR plots and
+    phase plot.
   }
   \item{pwidth}{
     Width of plot written to PNG file
@@ -215,19 +243,26 @@ SSplotComparisons(summaryoutput,subplots=1:14,
     Multiplier on bandwidth of kernel in density function used for
     smoothing MCMC posteriors. See 'adjust' in ?density for details.
   }
+  \item{densitysymbols}{
+    Add symbols along lines in density plots. Quantiles are
+    \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.
+  }
+  \item{densitytails}{
+    Shade tails outside of 95\% interval in density plots.
+  }
   \item{fix0}{
     Always include 0 in the density plots?
   }
   \item{new}{
     Create new empty plot window 
   }
-  \item{new}{
+  \item{add}{
     Allows single plot to be added to existing figure. This needs to be
     combined with specific 'subplots' input to make sure only one thing
     gets added.
   }
-  \item{new}{
-    Create new empty plot window
+  \item{par}{
+    list of graphics parameter values passed to the \code{par} function
   }
   \item{verbose}{
     Report progress to R GUI?
