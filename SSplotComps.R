@@ -644,22 +644,32 @@ SSplotComps <-
                   }
                   if (length(Obs) > 0){
                     ymax <- max(Pred,Obs,Upp)*1.1
-                    plot(Size,Obs,xlab="",ylab="Age",pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    plot(Size,Obs,type='n',xlab="",ylab="Age",xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
                     text(x=par("usr")[1],y=.9*ymax,labels=Yr,adj=c(-.5,0),font=2,cex=1.2)
-                    lines(Size,Pred)
+                    polygon(c(Size,rev(Size)),c(Low,rev(Upp)),col='grey95',border=NA)
+                    lines(Size,Pred,col=4,lwd=3)
+                    points(Size,Obs,pch=16)
                     lines(Size,Low,lty=3)
                     lines(Size,Upp,lty=3)
                     #title(paste("Year = ",Yr,"; Gender = ",Gender))
-
-                    if(par("mfg")[1] & par("mfg")[2]==1){ # first plot on any new page
+                    if(par("mfg")[1]==1){
                       title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
                     }
+                    box()
+
                     ymax <- max(Obs2,Pred2)*1.1
-                    plot(Size,Obs2,xlab=labels[1],ylab=labels[13],pch=16,xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
-                    lines(Size,Pred2)
+                    plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    #if(
+                    polygon(c(Size2,rev(Size2)),c(Low2,rev(Upp2)),col='grey95',border=NA)
+                    lines(Size,Pred2,col=4,lwd=3)
+                    points(Size,Obs2,pch=16)
                     lines(Size2,Low2,lty=3)
                     lines(Size2,Upp2,lty=3)
-
+                    if(par("mfg")[1]==1){
+                      legend('topleft',legend=c("Observed (with 95% interval)","Expected"),
+                             bty='n',col=c(1,4),pch=c(16,NA),lwd=c(NA,3))
+                    }
+                    box()
 
                   } # end if data exist
                 } # end loop over years
