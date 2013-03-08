@@ -46,7 +46,7 @@ SSplotSPR <-
   if(1 %in% subplots){
     if(plot) sprfunc()
     if(print){
-      file <- paste(plotdir,"/SPR1_series.png",sep="")
+      file <- file.path(plotdir,"/SPR1_series.png")
       caption <- "Timeseries of SPR"
       plotinfo <- pngfun(file=file, caption=caption)
       sprfunc()
@@ -68,7 +68,7 @@ SSplotSPR <-
     if(2 %in% subplots){
       if(plot) sprfunc2()
       if(print){
-        file <- paste(plotdir,"/SPR2_minusSPRseries.png",sep="")
+        file <- file.path(plotdir,"/SPR2_minusSPRseries.png")
         caption <- "Timeseries of 1-SPR"
         plotinfo <- pngfun(file=file, caption=caption)
         sprfunc2()
@@ -101,7 +101,7 @@ SSplotSPR <-
       if(3 %in% subplots){
         if(plot) sprfunc3()
         if(print){
-          file <- paste(plotdir,"/SPR3_ratiointerval.png",sep="")
+          file <- file.path(plotdir,"/SPR3_ratiointerval.png")
           caption <- "Timeseries of SPR ratio"
           plotinfo <- pngfun(file=file, caption=caption)
           sprfunc3()
@@ -110,35 +110,37 @@ SSplotSPR <-
       }
     }
 
-    if(4 %in% subplots & (btarg<=0 | sprtarg<=0)){
-      cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
-    }else{
-      timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
-      ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr+1,] #!subsetting to area 1 only. This should be generalized
-      tsyears <- ts$Yr[ts$Seas==1]
-      tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
-      if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
-      depletionseries <- tsspaw_bio/tsspaw_bio[1]
-      reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
-      relspr <- (1-sprseries$spr)/(1-sprtarg)
-      xmax <- 1.1*max(reldep)
-      ymax <- 1.1*max(1,relspr[!is.na(relspr)])
-      ylab <- managementratiolabels[1,2]
-      phasefunc <- function(){
-        if(!add) plot(reldep,relspr,xlab="B/Btarget",
-                      xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
-        lines(reldep,relspr,type="o",col=col2)
-        abline(h=0,col="grey")
-        abline(v=0,col="grey")
-        lines(reldep,relspr,type="o",col=col2)
-        points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
-        abline(h=1,col=col4,lty=2)
-        abline(v=1,col=col4,lty=2)}
+    if(4 %in% subplots){
+      if(btarg<=0 | sprtarg<=0){
+        cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
+      }else{
+        timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
+        #!subsetting to area 1 only. This should be generalized
+        ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr,] 
+        tsyears <- ts$Yr[ts$Seas==1]
+        tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
+        if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
+        depletionseries <- tsspaw_bio/tsspaw_bio[1]
+        reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
+        relspr <- (1-sprseries$spr[sprseries$Year <= endyr])/(1-sprtarg)
+        xmax <- 1.1*max(reldep)
+        ymax <- 1.1*max(1,relspr[!is.na(relspr)])
+        ylab <- managementratiolabels[1,2]
+        phasefunc <- function(){
+          if(!add) plot(reldep,relspr,xlab="B/Btarget",
+                        xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
+          lines(reldep,relspr,type="o",col=col2)
+          abline(h=0,col="grey")
+          abline(v=0,col="grey")
+          lines(reldep,relspr,type="o",col=col2)
+          points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
+          abline(h=1,col=col4,lty=2)
+          abline(v=1,col=col4,lty=2)
+        }
 
-      if(4 %in% subplots){
         if(plot) phasefunc()
         if(print){
-          file <- paste(plotdir,"/SPR4_phase.png",sep="")
+          file <- file.path(plotdir,"/SPR4_phase.png")
           caption <- "Phase plot of biomass ratio vs. SPR ratio"
           plotinfo <- pngfun(file=file, caption=caption)
           phasefunc()
