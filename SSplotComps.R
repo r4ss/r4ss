@@ -5,6 +5,7 @@ SSplotComps <-
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
            showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=NULL,
            scalebubbles=FALSE,bub.scale.pearson=1.5,bub.scale.dat=3,
+           blue=rgb(0,0,1,0.7),
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, 
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
@@ -326,7 +327,7 @@ SSplotComps <-
               allopen <- TRUE
             }else{
               z <- dbase$Pearson
-              col <- "blue"
+              col <- blue
               cexZ1 <- bub.scale.pearson
               titletype <- "Pearson residuals, "
               filetype <- "resids"
@@ -474,7 +475,7 @@ SSplotComps <-
                     titles <- c(ptitle,titles) # compiling list of all plot titles
                     tempfun5 <- function(){
                       bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
-                              ylab=labels[1],col="blue",las=1,main=ptitle,
+                              ylab=labels[1],col=blue,las=1,main=ptitle,
                               cex.main=cex.main,maxsize=pntscalar,
                               cexZ1=bub.scale.pearson,
                               allopen=FALSE,minnbubble=minnbubble)
@@ -563,7 +564,7 @@ SSplotComps <-
                 if(nrow(dbasegood)>0){
                   plot(dbasegood$N,dbasegood$effN,xlab=labels[4],main=ptitle,cex.main=cex.main,
                        ylim=c(0,1.05*max(dbasegood$effN)),xlim=c(0,1.05*max(dbasegood$N)),
-                       col="blue",pch=19,ylab=labels[5],xaxs="i",yaxs="i")
+                       col=blue,pch=19,ylab=labels[5],xaxs="i",yaxs="i")
                   abline(h=0,col="grey")
                   abline(0,1,col="black")
                   # add loess smoother if there's at least 6 points with a range greater than 2
@@ -1193,7 +1194,7 @@ SSplotComps <-
                 allopen <- TRUE
               }else{
                 z <- dbase$Pearson
-                col <- "blue"
+                col <- blue
                 cexZ1 <- bub.scale.pearson
                 titletype <- "Pearson residuals, "
                 filetype <- "resids"
