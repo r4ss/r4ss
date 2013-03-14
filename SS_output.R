@@ -62,14 +62,13 @@ SS_output <-
   }
 
   # get info on output files created by Stock Synthesis
-  dir <- paste(dir,"/",sep="")
   shortrepfile <- repfile
-  repfile <- paste(dir,repfile,sep="")
+  repfile <- file.path(dir,repfile)
 
   parfile <- dir(dir,pattern=".par$")
   if(length(parfile)>1){
-    filetimes <- file.info(paste(dir,parfile,sep="/"))$mtime
-    parfile <- parfile[filetimes==max(filetimes)]
+    filetimes <- file.info(file.path(dir,parfile))$mtime
+    parfile <- parfile[filetimes==max(filetimes)][1]
     if(verbose) cat("Multiple files in directory match pattern *.par\n",
                     "choosing most recently modified:",parfile,"\n")
   }
@@ -77,7 +76,7 @@ SS_output <-
     if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
     parfile <- NA
   }else{
-    parfile <- paste(dir,parfile,sep="/")
+    parfile <- file.path(dir,parfile)
   }
 
   # read three rows to get start time and version number from rep file
@@ -133,7 +132,7 @@ SS_output <-
       }
     }
     # CoVar.sso file
-    covarfile <- paste(dir,covarfile,sep="")
+    covarfile <- file.path(dir,covarfile)
     if(!file.exists(covarfile)){
       stop("covar file not found. Change input to covar=FALSE, or modify 'covarfile' input.\n")
     }
@@ -163,7 +162,7 @@ SS_output <-
   }
 
   # time check for CompReport file
-  compfile <- paste(dir,compfile,sep="")
+  compfile <- file.path(dir,compfile)
   if(file.exists(compfile)){
     comphead <- readLines(con=compfile,n=30)
     compskip <- grep("Composition_Database",comphead)
@@ -212,7 +211,7 @@ SS_output <-
 
   # read forecast report file
   if(forecast){
-    forecastname <- paste(dir,forefile,sep="")
+    forecastname <- file.path(dir,forefile)
     temp <- file.info(forecastname)$size
     if(is.na(temp) | temp==0){
       stop("Forecase-report.sso file is empty.\n",
@@ -288,13 +287,13 @@ SS_output <-
   logfile <- dir(dir,pattern=".log$")
   logfile <- logfile[logfile != "fmin.log"]
   if(length(logfile)>1){
-    filetimes <- file.info(paste(dir,logfile,sep="/"))$mtime
+    filetimes <- file.info(file.path(dir,logfile))$mtime
     logfile <- logfile[filetimes==max(filetimes)]
     if(verbose) cat("Multiple files in directory match pattern *.log\n",
                     "choosing most recently modified file:",logfile,"\n")
   }
-  if(length(logfile)==1 && file.info(paste(dir,logfile,sep='/'))$size>0){
-    logfile <- read.table(paste(dir,logfile,sep='/'))[,c(4,6)]
+  if(length(logfile)==1 && file.info(file.path(dir,logfile))$size>0){
+    logfile <- read.table(file.path(dir,logfile))[,c(4,6)]
     names(logfile) <- c("TempFile","Size")
     maxtemp <- max(logfile$Size)
     if(maxtemp==0){
@@ -312,7 +311,7 @@ SS_output <-
 
   # read warnings file
   if(warn){
-    warnname <- paste(dir,"warning.sso",sep="")
+    warnname <- file.path(dir,"warning.sso")
     if(!file.exists(warnname)){
       cat("warning.sso file not found\n")
       nwarn <- NA
@@ -610,9 +609,23 @@ SS_output <-
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
   names(like) <- "values"
   rownames(like) <- rawlike[,1]
-  like$lambdas <- rawlike[,3]
+  lambdas <- rawlike[,3]
+  lambdas[lambdas==""] <- NA
+  lambdas <- as.numeric(lambdas)
+  like$lambdas <- lambdas
   stats$likelihoods_used <- like
-  stats$likelihoods_raw_by_fleet <- matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+  stats$likelihoods_raw_by_fleet <-
+    likelihoods_by_fleet <-
+      matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+  likelihoods_by_fleet[likelihoods_by_fleet=="_"] <- NA
+  for(icol in 2:ncol(likelihoods_by_fleet)) likelihoods_by_fleet[,icol] <- as.numeric(likelihoods_by_fleet[,icol])
+  names(likelihoods_by_fleet) <- c("Label","ALL",FleetNames)
+  labs <- likelihoods_by_fleet$Label
+  # removing ":" at the end of likelihood components
+  for(irow in 1:length(labs)) labs[irow] <- substr(labs[irow],1,nchar(labs[irow])-1)
+  likelihoods_by_fleet$Label <- labs
+  stats$likelihoods_by_fleet <- likelihoods_by_fleet
+  
 
   # parameters
   if(SS_versionNumeric>= 3.23) shift <- -1
@@ -774,7 +787,7 @@ SS_output <-
   # read weight-at-age file
   wtatage <- NULL
   if(readwt){
-    wtfile <- paste(dir,wtfile,sep="/")
+    wtfile <- file.path(dir,wtfile)
     if(!file.exists(wtfile) | file.info(wtfile)$size==0){
       if(verbose) cat("Skipping weight-at-age file. File missing or empty:",wtfile,"\n")
     }else{

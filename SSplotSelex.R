@@ -2,7 +2,7 @@ SSplotSelex <-
   function(replist, infotable=NULL,
            fleets="all", fleetnames="default",
            sizefactors=c("Lsel"),
-           agefactors=c("Asel"),
+           agefactors=c("Asel","Asel2"),
            years="endyr",
            season=1,
            sexes="all", 
@@ -58,6 +58,7 @@ SSplotSelex <-
   # 21. selecitivity at age and length contour with overlaid growth curve
   # 22. selectivity with uncertainty if requested at end of control file
 
+    
   
   nsexes         <- replist$nsexes
   nseasons       <- replist$nseasons
@@ -183,7 +184,7 @@ SSplotSelex <-
       years <- endyr
     }
     allselex <- allselex2 <- allselex[allselex$year %in% years,]
-
+#print(allselex)
     # do some processing
     if(!agebased){
       allselex <- allselex[,-(1:5)]
@@ -194,60 +195,62 @@ SSplotSelex <-
       xlab <- labels[2]
     }
 
-    if(is.null(infotable)){
+    if(!is.null(infotable)){
+      infotable2 <- infotable
+    }else{
       # make table of info for each row (unless it is supplied already)
-      infotable <- allselex2[c("fleet","gender","year")]
-      infotable$ifleet <- NA
-      infotable$FleetName <- fleetnames[infotable$fleet]
-      infotable$longname <- infotable$FleetName
-      for(i in 1:nrow(infotable)) infotable$year_range[i] <- year_ranges[years==infotable$year[i]]
+      infotable2 <- allselex2[c("fleet","gender","year")]
+      infotable2$ifleet <- NA
+      infotable2$FleetName <- fleetnames[infotable2$fleet]
+      infotable2$longname <- infotable2$FleetName
+      for(i in 1:nrow(infotable2)) infotable2$year_range[i] <- year_ranges[years==infotable2$year[i]]
 
-      if(length(unique(infotable$year)) > 1){
-        infotable$longname <- paste(infotable$FleetName,infotable$year_range)
+      if(length(unique(infotable2$year)) > 1){
+        infotable2$longname <- paste(infotable2$FleetName,infotable2$year_range)
       }
-      
       # check for whether there are differences between males and females
-      twosex <- all(1:2 %in% infotable$gender) && any(allselex[infotable$gender==1,]!=allselex[infotable$gender==2,])
+      twosex <- all(1:2 %in% infotable2$gender) && any(allselex[infotable2$gender==1,]!=allselex[infotable2$gender==2,])
       if(!twosex){ # show only sex with lowest number if no differences between genders
-        good <- infotable$gender==min(infotable$gender)
+        good <- infotable2$gender==min(infotable2$gender)
         allselex <- allselex[good,]
         allselex2 <- allselex2[good,]
-        infotable <- infotable[good,]
+        infotable2 <- infotable2[good,]
       }else{
-        infotable$longname <- paste(infotable$longname, c("(f)","(m)")[infotable$gender])
+        infotable2$longname <- paste(infotable2$longname, c("(f)","(m)")[infotable2$gender])
       }
       
       # add index from 1 up to number of fleets plotted
-      allfleets <- sort(unique(infotable$fleet))
+      allfleets <- sort(unique(infotable2$fleet))
       for(ifleet in 1:length(allfleets))
-        infotable$ifleet[infotable$fleet==allfleets[ifleet]] <- ifleet
+        infotable2$ifleet[infotable2$fleet==allfleets[ifleet]] <- ifleet
       # choose colors
       colvec <- rich.colors.short(length(allfleets))
-      infotable$col <- colvec[infotable$ifleet]
+      infotable2$col <- colvec[infotable2$ifleet]
       # choose line types
-      infotable$lty <- 1
+      infotable2$lty <- 1
       # either line by gender
-      infotable$lwd <- lwd
-      if(twosex) infotable$lty <- infotable$gender
+      infotable2$lwd <- lwd
+      if(twosex) infotable2$lty <- infotable2$gender
       # or line by year (with line width by gender)
-      allyears <- sort(unique(infotable$year))
+      allyears <- sort(unique(infotable2$year))
       if(length(allyears)>1){
         for(iyear in 1:length(allyears))
-          infotable$lty[infotable$year==allyears[iyear]] <- iyear
-        if(twosex) infotable$lwd[infotable$gender==2] <- lwd/2
+          infotable2$lty[infotable2$year==allyears[iyear]] <- iyear
+        if(twosex) infotable2$lwd[infotable2$gender==2] <- lwd/2
       }
       # choose plot characters
-      infotable$pch <- infotable$ifleet %% 25
+      infotable2$pch <- infotable2$ifleet %% 25
     }
     
     if(factor=="Lsel") main <- paste("Length-based selectivity by fleet")
     if(factor=="Asel") main <- paste("Age-based selectivity by fleet")
     if(factor=="Asel2") main <- paste("Derived age-based from length-based selectivity by fleet")
-    if(length(unique(infotable$year))==1){
+
+    if(length(unique(infotable2$year))==1){
       main <- paste(main,"in",years)
     }
 ## cat("info on plot for debugging:\n")    
-## print(infotable)
+## print(infotable2)
     
     bins <- as.numeric(names(allselex))
 
@@ -258,46 +261,49 @@ SSplotSelex <-
     abline(h=0,col="grey")
     abline(h=1,col="grey")
     # add lines for selectivities
-    matplot(x=bins, y=t(allselex), col=infotable$col, 
-            lty=infotable$lty, lwd=infotable$lwd, type="l",add=TRUE)
+    matplot(x=bins, y=t(allselex), col=infotable2$col, 
+            lty=infotable2$lty, lwd=infotable2$lwd, type="l",add=TRUE)
     # add points on top of lines (first subsetting to optionally show fewer points)
     allselex2 <- allselex
     if(spacepoints > 0){
       for(iline in 1:nrow(allselex))
         allselex2[iline,(1:ncol(allselex))%%spacepoints != (staggerpoints*iline)%%spacepoints] <- NA
-      matplot(x=bins, y=t(allselex2), col=infotable$col,
-              lwd=infotable$lwd, pch=infotable$pch, type="p",add=TRUE)
+      matplot(x=bins, y=t(allselex2), col=infotable2$col,
+              lwd=infotable2$lwd, pch=infotable2$pch, type="p",add=TRUE)
     }else{
       # if 'spacepoints' is less than or equal to 0, don't show points
-      infotable$pch <- NA
+      infotable2$pch <- NA
     }
     # add legend
-    if(nrow(infotable)>1)
-      legend(legendloc, inset=c(0,0.05), legend=infotable$longname, col=infotable$col,
-             lty=infotable$lty, pch=infotable$pch, lwd=infotable$lwd, bty='n')
-    return(infotable)
+    if(nrow(infotable2)>1)
+      legend(legendloc, inset=c(0,0.05), legend=infotable2$longname, col=infotable2$col,
+             lty=infotable2$lty, pch=infotable2$pch, lwd=infotable2$lwd, bty='n')
+    return(infotable2)
   }
 
   if(1 %in% subplot){
     for(ifactor in 1:length(sizefactors)){
-      if(plot) infotable <- plotAllSel(factor=sizefactors[ifactor])
+      if(plot) infotable2 <- plotAllSel(factor=sizefactors[ifactor])
       if(print){
         file <- paste(plotdir,"sel01_multiple_fleets_length",ifactor,".png",sep="")
         caption <- "Selectivity at length for multiple fleets."
         plotinfo <- pngfun(file=file, caption=caption)
-        infotable <- plotAllSel(factor="Lsel")
+        infotable2 <- plotAllSel(factor="Lsel")
         dev.off()
       }
     }
   }
   if(2 %in% subplot){
     for(ifactor in 1:length(agefactors)){
-      if(plot) infotable <- plotAllSel(factor=agefactors[ifactor])
+      factor <- agefactors[ifactor]
+      if(plot) infotable2 <- plotAllSel(factor=factor)
       if(print){
         file <- paste(plotdir,"sel02_multiple_fleets_age",ifactor,".png",sep="")
         caption <- "Selectivity at age for multiple fleets."
+        if(factor=="Asel2")
+          caption <- paste("Selectivity at age derived from selectivity at length for multiple fleets.")
         plotinfo <- pngfun(file=file, caption=caption)
-        infotable <- plotAllSel(factor="Asel")
+        infotable2 <- plotAllSel(factor=factor)
         dev.off()
       }
     }
@@ -510,109 +516,103 @@ SSplotSelex <-
   
   # Age based selex
   ylab <- labels[4]
-  for(i in fleets)
-  {
-    for(m in sexes)
-    {
-      if(m==1 & nsexes==1) sextitle1 <- "Time-"
-      if(m==1 & nsexes==2) sextitle1 <- "Female time-"
-      if(m==2) sextitle1 <- "Male time-"
-      if(m==1 & nsexes==1) sextitle2 <- "Ending"
-      if(m==1 & nsexes==2) sextitle2 <- "Female ending"
-      if(m==2) sextitle2 <- "Male ending"
-      ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
-      plotageselex <- ageselex[ageselex$factor=="Asel" & ageselex$fleet==i & ageselex$year!=startyr-3 & ageselex$gender==m,]
-      # test for time-varying age selectivity
-      time <- any(apply(plotageselex[-c(1,nrow(plotageselex)),ageselexcols],2,function(x){any(x!=x[1])}))      
-      if(time)
-      {
-        if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1))
-        {
-          x <- seq(0,accuage,by=1)
-          y <- as.numeric(plotageselex$year)
-          z <- plotageselex[,-(1:7)]
-          z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
-          z <- t(z)
-          main <- paste(sextitle1,"varying selectivity for ", fleetnames[i],sep="")
-          if(plot){
-            if(11 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-            if(12 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=lwd)}
-          if(print){
-            if(11 %in% subplot){
-              file <- paste(plotdir,"sel11_timevary_surf_flt",i,"sex",m,".png",sep="")
-              caption <- main
-              plotinfo <- pngfun(file=file, caption=caption)
-              persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
-              dev.off()
+  for(facnum in 1){
+    factor <- c("Asel","Asel2")[facnum]
+    for(i in fleets){
+      for(m in sexes){
+        if(m==1 & nsexes==1) sextitle1 <- "Time-"
+        if(m==1 & nsexes==2) sextitle1 <- "Female time-"
+        if(m==2) sextitle1 <- "Male time-"
+        if(m==1 & nsexes==1) sextitle2 <- "Ending"
+        if(m==1 & nsexes==2) sextitle2 <- "Female ending"
+        if(m==2) sextitle2 <- "Male ending"
+        ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
+        plotageselex <- ageselex[ageselex$factor==factor & ageselex$fleet==i & ageselex$year!=startyr-3 & ageselex$gender==m,]
+        # test for time-varying age selectivity
+        time <- any(apply(plotageselex[-c(1,nrow(plotageselex)),ageselexcols],2,function(x){any(x!=x[1])}))      
+        if(time){
+          if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1)){
+            x <- seq(0,accuage,by=1)
+            y <- as.numeric(plotageselex$year)
+            z <- plotageselex[,-(1:7)]
+            z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
+            z <- t(z)
+            main <- paste(sextitle1,"varying selectivity for ", fleetnames[i],sep="")
+            if(plot){
+              if(11 %in% subplot) persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+              if(12 %in% subplot) contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=lwd)}
+            if(print){
+              if(11 %in% subplot){
+                file <- paste(plotdir,"sel11_timevary_surf_flt",i,"sex",m,".png",sep="")
+                caption <- main
+                plotinfo <- pngfun(file=file, caption=caption)
+                persp(x,y,z,col="white",xlab=labels[2],ylab=labels[3],zlab=ylab,expand=0.5,box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",phi=35,theta=-10)
+                dev.off()
+              }
+              if(12 %in% subplot){
+                file <- paste(plotdir,"sel12_timevary_contour_flt",i,"sex",m,".png",sep="")
+                caption <- main
+                plotinfo <- pngfun(file=file, caption=caption)
+                contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=lwd)
+                dev.off()
+              }
             }
-            if(12 %in% subplot){
-              file <- paste(plotdir,"sel12_timevary_contour_flt",i,"sex",m,".png",sep="")
-              caption <- main
-              plotinfo <- pngfun(file=file, caption=caption)
-              contour(x,y,z,nlevels=5,xlab=labels[2],main=main,cex.main=cex.main,col=ians_blues,lwd=lwd)
-              dev.off()
+            plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
+            plotageselex2 <- plotageselex2[,-(1:7)]
+            main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
+            endselfunc <- function(){
+              if(!add) plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
+                            xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,
+                            type="n",col=col2,cex=1.1)
+              lines((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
+                    type="o",col=col2,cex=1.1)
+              abline(h=0,col="grey")
             }
-          }
-          plotageselex2 <- plotageselex[plotageselex$year %in% c(max(as.numeric(plotageselex$year))),]
-          plotageselex2 <- plotageselex2[,-(1:7)]
-          main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
-          endselfunc <- function()
-          {
-            if(!add) plot((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
-                          xlab=labels[2],ylim=c(0,1),main=main,cex.main=cex.main,ylab=ylab,
-                          type="n",col=col2,cex=1.1)
-            lines((as.numeric(names(plotageselex2))),(as.numeric(paste(c(plotageselex2)))),
-                  type="o",col=col2,cex=1.1)
-            abline(h=0,col="grey")
-          }
-          if(13 %in% subplot){
-            if(plot) endselfunc()
-            if(print)
-            {
-              file <- paste(plotdir,"sel13_age_flt",i,"sex",m,".png",sep="")
-              caption <- main
-              plotinfo <- pngfun(file=file, caption=caption)
-              endselfunc()
-              dev.off()
+            if(13 %in% subplot){
+              if(plot) endselfunc()
+              if(print){
+                file <- paste(plotdir,"sel13_age_flt",i,"sex",m,".png",sep="")
+                caption <- main
+                plotinfo <- pngfun(file=file, caption=caption)
+                endselfunc()
+                dev.off()
+              }
             }
           }
         }
-      }
-      if(!time)
-      {
-        plotageselex <- plotageselex[plotageselex$year==endyr,]
-        plotageselex <- plotageselex[,-(1:7)]
-        vals <- as.numeric(paste(c(plotageselex)))
-        doplot <- diff(range(vals))!=0
-        if(doplot & skipAgeSelex10) doplot <- !(vals[1]==0 & all(vals[-1]==1))
-#
-        if(doplot)
-        {
-          main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
-          endselfunc2 <- function(){
-            if(!add)
-              plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),
-                   main=main,cex.main=cex.main,ylab=ylab,type="n")
-            lines((as.numeric(names(plotageselex))),vals,type="o",col=col2,cex=1.1)
-            abline(h=0,col="grey")
-          }
-          if(14 %in% subplot){
-            if(plot) endselfunc2()
-            if(print)
-            {
-              file <- paste(plotdir,"sel14_age_flt",i,"sex",m,".png",sep="")
-              caption <- main
-              plotinfo <- pngfun(file=file, caption=caption)
-              endselfunc2()
-              dev.off()
+        if(!time){
+          plotageselex <- plotageselex[plotageselex$year==endyr,]
+          plotageselex <- plotageselex[,-(1:7)]
+          vals <- as.numeric(paste(c(plotageselex)))
+          doplot <- diff(range(vals))!=0
+          if(doplot & skipAgeSelex10) doplot <- !(vals[1]==0 & all(vals[-1]==1))
+          #
+          if(doplot){
+            main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
+            endselfunc2 <- function(){
+              if(!add)
+                plot((as.numeric(names(plotageselex))),vals,xlab=labels[2],ylim=c(0,1),
+                     main=main,cex.main=cex.main,ylab=ylab,type="n")
+              lines((as.numeric(names(plotageselex))),vals,type="o",col=col2,cex=1.1)
+              abline(h=0,col="grey")
             }
-          }
-        } # end if
-      } # end if not time varying
-    } # sexes
-  } # fleets
-  flush.console()
-
+            if(14 %in% subplot){
+              if(plot) endselfunc2()
+              if(print){
+                file <- paste(plotdir,"sel14_age_flt",i,"sex",m,".png",sep="")
+                caption <- main
+                plotinfo <- pngfun(file=file, caption=caption)
+                endselfunc2()
+                dev.off()
+              }
+            }
+          } # end if
+        } # end if not time varying
+      } # sexes
+    } # fleets
+    flush.console()
+  } # factor (Asel vs. Asel2)
+  
   ################################################################################
   ### Selectivity contours over age and length shown with growth curve
   
@@ -712,7 +712,8 @@ SSplotSelex <-
       i <- sel$fleet[1]
       agelen <- sel$agelen[1]
       xlab <- labels[1:2][1 + (sel$agelen[1]=="A")] # decide label between length and age
-      for(m in unique(sel$sex)){
+
+      for(m in intersect(unique(sel$sex),c("Fem","Mal")[sexes])){
         seltemp <- sel[sel$sex==m,]
         if(m=="Fem" & nsexes==1) sextitle3 <- ""
         if(m=="Fem" & nsexes==2) sextitle3 <- "females"
@@ -749,5 +750,5 @@ SSplotSelex <-
     } # end test for presence of selectivity uncertainty output
   } # check check for subplot in list
   if(!is.null(plotinfo)) plotinfo$category <- "Sel"
-  return(invisible(list(infotable=infotable,plotinfo=plotinfo)))
+  return(invisible(list(infotable=infotable2,plotinfo=plotinfo)))
 } 
