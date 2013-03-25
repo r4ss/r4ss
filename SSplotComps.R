@@ -576,8 +576,8 @@ SSplotComps <-
                     lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
                   }
                   if(addMeans){
-                    abline(v=mean(dbasegood$N),lty=3,col='green3')
-                    abline(h=1/mean(1/dbasegood$effN),lty=3,col='green3')
+                    abline(v=mean(dbasegood$N),lty="22",col='green3')
+                    abline(h=1/mean(1/dbasegood$effN),lty="22",col='green3')
                   }
                 }
               }
@@ -1268,7 +1268,7 @@ SSplotComps <-
                 dev.off()
               } # end loop over pages within printing PNG
             } # end printing to PNG files
-          } # end if non-zero number of fleets
+          } # end test for non-zero number of fleets
         } # end loop over partitions
       } # end loop over sexes
     } # end loop over gender combinations

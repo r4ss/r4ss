@@ -16,7 +16,7 @@ function(replist,subplots=1:9,
            "Vulnerable biomass", #11
            "Catchability vs. vulnerable biomass"), #12
          col1="default", col2="default", col3="blue", col4="red",
-         pch1=1, pch2=16, cex=1,
+         pch1=21, pch2=16, cex=1, bg="white",
          legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
          addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
@@ -138,9 +138,10 @@ function(replist,subplots=1:9,
       if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1], ylab=labels[2],
                     main=main, cex.main=cex.main,
                     xlim=xlim, ylim=c(0,max(y+uiw,na.rm=TRUE)))
-      plotCI(x=x[include],y=y[include],sfrac=0.001,uiw=uiw[include],liw=liw[include],
+      plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
              ylo=0,col=colvec1[s],
-             main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,cex=cex)
+             main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
+             bg=bg,cex=cex)
       abline(h=0,col="grey")
       if(addexpected) lines(x,z,lwd=2,col=col3)
       if(legend & length(colvec1)>1) legend(x=legendloc, legend=seasnames,
@@ -204,9 +205,9 @@ function(replist,subplots=1:9,
                     main=main, cex.main=cex.main,
                     xlim=xlim, ylim=range(log(y[include])-liw[include],
                                  log(y[include])+uiw[include],na.rm=TRUE))
-      plotCI(x=x[include],y=log(y[include]),sfrac=0.001,uiw=uiw[include],
+      plotCI(x=x[include],y=log(y[include]),sfrac=0.005,uiw=uiw[include],
              liw=liw[include],
-             col=colvec1[s],lty=1,add=TRUE,pch=pch1,cex=cex)
+             col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
       if(addexpected) lines(x,log(z),lwd=2,col=col3)
       if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,
                                    pch=pch1, col=colvec1, cex=cex)

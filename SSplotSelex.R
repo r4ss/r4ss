@@ -6,7 +6,7 @@ SSplotSelex <-
            years="endyr",
            season=1,
            sexes="all", 
-           selexlines=1:5,
+           selexlines=1:6,
            subplot=1:25,
            skipAgeSelex10=TRUE,
            plot=TRUE, print=FALSE, add=FALSE,
@@ -33,6 +33,9 @@ SSplotSelex <-
   #### all fleets grouped (length, and then age)
   # 1.  selectivity at length in end year for all fleets shown together
   # 2.  selectivity at age in end year for all fleets shown together
+  #     (this includes both age-based selectivity "Asel" and age values derived
+  #      from length-based, "Asel2". You can choose only one using
+  #      "agefactors" if needed.)
 
   ## time-varying stuff
   # 3.  selectivity at length time-varying surface
@@ -58,7 +61,8 @@ SSplotSelex <-
   # 21. selecitivity at age and length contour with overlaid growth curve
   # 22. selectivity with uncertainty if requested at end of control file
 
-    
+  # empty table into which information on line types etc. might be copied
+  infotable2 <- NULL
   
   nsexes         <- replist$nsexes
   nseasons       <- replist$nseasons
@@ -477,6 +481,10 @@ SSplotSelex <-
           plotkeep <- usekeep[usekeep$year==useyr,]
           plotmort <- usemort[usemort$year==useyr,]
           plotdead <- usedead[usedead$year==useyr,]
+          # compute discard as function of size: selectivity*(1 - retention)
+          plotdisc <- plotret
+          plotdisc[-(1:5)] <- vals*(1-plotret[,-(1:5)])
+          # add additional lines if requested
           if(2%in%selexlines){
             lines((as.numeric(as.vector(names(plotret)[-(1:5)]))),(as.numeric(as.character(plotret[1,-(1:5)]))),col="red",type="o",pch=3,cex=.9)
             ylab <- paste(ylab,", Retention",sep="")
@@ -487,10 +495,13 @@ SSplotSelex <-
           }
           if(4%in%selexlines) lines((as.numeric(as.vector(names(plotkeep)[-(1:5)]))),(as.numeric(as.character(plotkeep[1,-(1:5)]))),col="purple",type="o",pch=2,cex=.9)
           if(5%in%selexlines) lines((as.numeric(as.vector(names(plotdead)[-(1:5)]))),(as.numeric(as.character(plotdead[1,-(1:5)]))),col="green3",type="o",pch=5,cex=.9)
+          if(6%in%selexlines) lines((as.numeric(as.vector(names(plotdead)[-(1:5)]))),(as.numeric(as.character(plotdisc[1,-(1:5)]))),col="grey50",type="o",pch=6,cex=.9)
+          # add legend
           legend(legendloc,inset=c(0,0.05),bty="n",
-      	   c(labels[4],labels[5],labels[6],"Keep = Sel*Ret","Dead = Sel*(Ret+(1-Ret)*Mort)")[selexlines],
-      	   lty=1,col=c("blue","red","orange","purple","green3")[selexlines],
-      	   pch=c(1,3,4,2,5)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9)[selexlines])
+      	   c(labels[4], labels[5], labels[6], "Keep = Sel*Ret",
+             "Dead = Sel*(Ret+(1-Ret)*Mort)","Discard = Sel*(1-Ret)")[selexlines],
+      	   lty=1,col=c("blue","red","orange","purple","green3","grey50")[selexlines],
+      	   pch=c(1,3,4,2,5,6)[selexlines], pt.cex=c(1.1,.9,.9,.9,.9,.9)[selexlines])
         }
         mtext(ylab,side=2,line=3)
       }

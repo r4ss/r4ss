@@ -11,7 +11,7 @@ SSplotMnwt <-
            "Mean individual body weight (kg)", #5
            "Mean weight in", #6
            "for fleet"),     #7
-           col1="blue", col2="red",
+           col1="blue", col2="black",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1,
            plotdir="default", verbose=TRUE)
@@ -58,7 +58,7 @@ SSplotMnwt <-
         # wrap up plot command in function
         bdywtfunc <- function(addfit){
           plotCI(x=yr,y=ob,uiw=uiw,liw=liw,xlab=labels[1],main=ptitle,
-                 ylo=0,col=col2,sfrac=0.001,ylab=ylab,lty=1,
+                 ylo=0,col=col2,sfrac=0.005,ylab=ylab,lty=1,pch=21,bg="white",
                  xlim=c(xmin,xmax),cex.main=cex.main,ymax=ymax)
           abline(h=0,col="grey")
           if(addfit) points(yr,ex,col=col1,cex=2,pch="-")

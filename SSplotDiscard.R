@@ -10,7 +10,7 @@ SSplotDiscard <-
            "Total discards",
            "for"),
            yhi=1,
-           col1="blue", col2="red",
+           col1="blue", col2="black",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -101,7 +101,7 @@ SSplotDiscard <-
       # wrap up plot command in function
       dfracfunc <- function(addfit){
         plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,
-               ylo=0,yhi=yhi,col=col2,sfrac=0.001,lty=1,xlim=xlim,
+               ylo=0,yhi=yhi,col=col2,sfrac=0.005,lty=1,xlim=xlim,pch=21,bg="white",
                ymax=max(usedisc$Exp,na.rm=TRUE))
         abline(h=0,col="grey")
         if(addfit) points(yr,usedisc$Exp,col=col1,pch="-",cex=2)

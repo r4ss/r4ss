@@ -113,7 +113,7 @@ SSsummarize <- function(biglist,
       if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) && all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("problem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("\nproblem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
       }
     }
     rownames(sizesel) <- 1:nrow(sizesel)
@@ -129,7 +129,7 @@ SSsummarize <- function(biglist,
       if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) && all(names(seltemp_i)==names(agesel)))){
         agesel <- rbind(agesel,seltemp_i)
       }else{
-        cat("problem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("\nproblem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
       }
     }
     rownames(agesel) <- 1:nrow(agesel)
@@ -148,10 +148,11 @@ SSsummarize <- function(biglist,
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
     liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
-    if(is.null(likelihoods_by_fleet) || names(likelihoods_by_fleet)==names(liketemp2)){
+    if(is.null(likelihoods_by_fleet) ||
+         length(setdiff(names(likelihoods_by_fleet), names(liketemp2)))==0){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
-      cat("problem summarizing likelihoods by fleet due to mismatched columns\n")
+      cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
     }
 
     ## compile parameters
