@@ -1243,30 +1243,32 @@ SSplotComps <-
           } # end function wrapping up a single page of the residual comparison plot
 
           # make plots or write to PNG file
-          if(plot) tempfun11(ipage=0)
-          if(print){ # set up plotting to png file if required
-            npages <- ceiling(length(fleetvec)/maxrows)
-            for(ipage in 1:npages){
-              caption <- ptitle
-              pagetext <- ""
-              if(npages>1){
-                pagetext <- paste("_page",ipage,sep="")
-                caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
-              }
-              if(length(grep("Pearson",caption))>0){
+          if(length(fleetvec)>0){
+            if(plot) tempfun11(ipage=0)
+            if(print){ # set up plotting to png file if required
+              npages <- ceiling(length(fleetvec)/maxrows)
+              for(ipage in 1:npages){
+                caption <- ptitle
+                pagetext <- ""
+                if(npages>1){
+                  pagetext <- paste("_page",ipage,sep="")
+                  caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+                }
+                if(length(grep("Pearson",caption))>0){
+                  caption <- paste(caption,
+                                   "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                }
                 caption <- paste(caption,
-                                 "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
-              }
-              caption <- paste(caption,
-                               "<br>Note: bubble sizes are scaled to maximum within each panel.",
-                               "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
-              file <- paste(plotdir,filenamestart,filename_sexmkt,pagetext,
-                            "_multi-fleet_comparison.png",sep="")
-              plotinfo <- pngfun(file=file, caption=caption)
-              tempfun11(ipage=ipage)
-              dev.off()
-            } # end loop over pages within printing PNG
-          } # end printing to PNG files
+                                 "<br>Note: bubble sizes are scaled to maximum within each panel.",
+                                 "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
+                file <- paste(plotdir,filenamestart,filename_sexmkt,pagetext,
+                              "_multi-fleet_comparison.png",sep="")
+                plotinfo <- pngfun(file=file, caption=caption)
+                tempfun11(ipage=ipage)
+                dev.off()
+              } # end loop over pages within printing PNG
+            } # end printing to PNG files
+          } # end if non-zero number of fleets
         } # end loop over partitions
       } # end loop over sexes
     } # end loop over gender combinations

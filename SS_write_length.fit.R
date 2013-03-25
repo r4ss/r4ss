@@ -16,9 +16,9 @@ SS_write_length.fit <- function(replist=NULL,
   # read composition output since some info was filtered in the SS_output function
   if(!file.exists(compfile)) stop("Missing ",compfile,". Change the compfile input or rerun model to get the file.\n",sep="")
 
-  comphead <- readLines(con=compfile,n=20)
+  comphead <- readLines(con=compfile,n=30)
   compskip <- grep("Composition_Database",comphead)
-  col.names <- 1:22
+  col.names <- 1:30
   rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
   names(rawcompdbase) <- rawcompdbase[1,]
   names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
