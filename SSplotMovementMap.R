@@ -5,20 +5,7 @@ SSplotMovementMap <-
            areanames=NULL,cex=1)
 {
   # plot movement rates on map to help visualize patterns
-  # note: requires R package "maps"
-  # which can be installed using command
-  # > install.packages("maps")
-  
-  ## library(maps)
-  if(!exists("map")){
-    cat("The function 'SSplotMovementMap' depends on the 'maps' package.
-  In order to allow the package to be loaded without depending on the
-  maps package, it is left to the user to install and load the maps library
-  themselves. This can be done with
-    > install.packages('maps')
-    > library(maps)\n")
-  }
-  
+ 
   par(mar=c(3,3,3,3))
   map(xlim=xlim,ylim=ylim,xaxs='i',yaxs='i')
   for(i in 1:length(polygonlist)){

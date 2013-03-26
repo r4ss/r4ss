@@ -11,7 +11,10 @@ DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=2
     pdf(file=pdffile,width=pwidth,height=pheight)
     cat("PDF file with plots will be:",pdffile,'\n')
   }else{
-    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+    
+    ### Note: the following line has been commented out because it was identified
+    ###       by Brian Ripley as "against CRAN policies".
+    #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     windows(record=T,width=pwidth,height=pheight)
   }
   

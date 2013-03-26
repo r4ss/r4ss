@@ -12,8 +12,9 @@ SSbootstrap <- function(){
   # Directory where bootstrap will be run.
   # You probably want to use a copy of the directory where you ran it,
   # so as not to overwrite the true results.
-  inpath <- 'c:/SS/SSv3.24f_Aug3/Examples_tested/Simple'
-  setwd(inpath) # change working directory
+  inpath <- 'c:/Simple'
+
+  #setwd(inpath) # change working directory (commented out to avoid violating CRAN policy)
 
   # split apart data.ss_new into multiple data files with names like "BootData1.ss"
   SS_splitdat(inpath=inpath, outpath=inpath, number=TRUE, MLE=FALSE)

@@ -55,6 +55,9 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
   if(is.null(knots)) knots <- round(minBin+(1:n-0.7)*diffL/n)
   if(is.null(params)) params <- c(-3,-2,0,rep(-1,n-3))
 
+  kt1 <- NULL
+  sp1 <- NULL
+
   for(i in 1:n){
     # assign initial values
     assign(paste("kt",i,sep=""), tclVar(knots[i]))
@@ -279,27 +282,36 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
     tclvalue(done) <- 2
   }
 
-  # Don't know how to generalize the following commands
-  if(n==3)
-    tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, 
-           SlopeFrame1, SlopeFrame2,
-           ParFrame1, ParFrame2, ParFrame3, fill = "x")
-  if(n==4)
-    tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4,
-           SlopeFrame1, SlopeFrame2,
-           ParFrame1, ParFrame2, ParFrame3, ParFrame4, fill = "x")
-  if(n==5)
-    tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5,
-           SlopeFrame1, SlopeFrame2,
-           ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, fill = "x")
-  if(n==6)
-    tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5, KnotFrame6,
-           SlopeFrame1, SlopeFrame2,
-           ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, ParFrame6, fill = "x")
-  if(n==7)
-    tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5, KnotFrame6, KnotFrame7,
-           SlopeFrame1, SlopeFrame2,
-           ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, ParFrame6, ParFrame7, fill = "x")
+  # this is the generalized version of the commented stuff below
+  expr <- "tkpack(frame0, frame1, "
+  for(i in 1:n) expr <- paste(expr, "KnotFrame",i,", ",sep="")
+  expr <- paste(expr, "SlopeFrame1, SlopeFrame2, ")
+  for(i in 1:n) expr <- paste(expr, "ParFrame",i,", ",sep="")
+  expr <- paste(expr,'fill = "x")')
+
+  eval(parse(text=expr))
+  
+  ## # Don't know how to generalize the following commands
+  ## if(n==3)
+  ##   tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, 
+  ##          SlopeFrame1, SlopeFrame2,
+  ##          ParFrame1, ParFrame2, ParFrame3, fill = "x")
+  ## if(n==4)
+  ##   tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4,
+  ##          SlopeFrame1, SlopeFrame2,
+  ##          ParFrame1, ParFrame2, ParFrame3, ParFrame4, fill = "x")
+  ## if(n==5)
+  ##   tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5,
+  ##          SlopeFrame1, SlopeFrame2,
+  ##          ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, fill = "x")
+  ## if(n==6)
+  ##   tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5, KnotFrame6,
+  ##          SlopeFrame1, SlopeFrame2,
+  ##          ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, ParFrame6, fill = "x")
+  ## if(n==7)
+  ##   tkpack(frame0, frame1, KnotFrame1, KnotFrame2, KnotFrame3, KnotFrame4, KnotFrame5, KnotFrame6, KnotFrame7,
+  ##          SlopeFrame1, SlopeFrame2,
+  ##          ParFrame1, ParFrame2, ParFrame3, ParFrame4, ParFrame5, ParFrame6, ParFrame7, fill = "x")
   
   tkpack(left.frm, right.frm, side = "left", anchor = "n")
 

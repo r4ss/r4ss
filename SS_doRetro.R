@@ -1,26 +1,36 @@
-SS_doRetro <- function(olddir, masterdir=getwd(), newdir='retrospectives',
+SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
-                       extras="-nox",intern=TRUE){
+                       extras="-nox",intern=FALSE){
 
-  olddir <- paste(masterdir,olddir,sep="/")
-  newdir <- paste(masterdir,newdir,sep="/")
+  # save working directory
+  oldwd <- getwd()
+  on.exit(setwd(oldwd))
+  
+  olddir <- file.path(masterdir,oldsubdir)
+  newdir <- file.path(masterdir,newsubdir)
   
   # make directories, modify starter file, and start retrospective analyses
   
   # get model file names from olddir
   exefile <- dir(olddir)[grep(".exe",dir(olddir))]
-  forefile <- dir(olddir)[tolower(dir(olddir))=="forecast.ss"]
   startfile <- dir(olddir)[tolower(dir(olddir))=="starter.ss"]
+  forefile <- dir(olddir)[tolower(dir(olddir))=="forecast.ss"]
   wtatagefile <- dir(olddir)[tolower(dir(olddir))=="wtatage.ss"]
   testfile <- dir(olddir)[tolower(dir(olddir))=="test.ss"]
 
+  if(length(startfile)==0) stop("No starter.ss file found in ",olddir)
+
 ## print(getwd())
-## print(startfile)  
-  starter <- SS_readstarter(paste(olddir,startfile,sep='/'),verbose=FALSE)
+## print(startfile)
+  startfile <- file.path(olddir,startfile)
+  
+  cat("Get input file names from starter file:",startfile,"\n")
+  starter <- SS_readstarter(startfile,verbose=FALSE)
   ctlfile <- starter$ctlfile
   datfile <- starter$datfile
 
   filenames <- c(exefile,forefile,ctlfile,datfile,wtatagefile,testfile)
+  cat('copying model files from\n',olddir,'\nto\n',newdir,'\n')
   cat('model files to copy:',filenames,sep='\n ')
       
     
@@ -30,16 +40,16 @@ SS_doRetro <- function(olddir, masterdir=getwd(), newdir='retrospectives',
 
   for(iyr in 1:length(years)){
     # create directory
-    if(!file.exists(paste(newdir,subdirnames[iyr],sep="/")))
-       dir.create(paste(newdir,subdirnames[iyr],sep="/"))
+    if(!file.exists(file.path(newdir,subdirnames[iyr])))
+      dir.create(file.path(newdir,subdirnames[iyr]))
     # copy files
-    file.copy(paste(olddir,filenames,sep='/'),
-              paste(newdir,subdirnames[iyr],filenames,sep='/'),
+    file.copy(file.path(olddir,filenames),
+              file.path(newdir,subdirnames[iyr],filenames),
               overwrite=TRUE)
     # change starter file to do retrospectives
     starter$retro_yr <- years[iyr]
-    setwd(subdirnames[iyr])
-    SS_writestarter(paste(newdir,starter,sep="/"),verbose=FALSE,overwrite=TRUE)
+    setwd(file.path(newdir,subdirnames[iyr]))
+    SS_writestarter(starter, dir=getwd(), verbose=FALSE, overwrite=TRUE)
 
     ## # someday the code could be expanded to fix data file if it has blocks
     ## ctl <- SS_parlines(ctlfile) # doesn't currently read columns with block info

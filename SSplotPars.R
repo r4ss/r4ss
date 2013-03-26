@@ -79,22 +79,25 @@ SSplotPars <-
         cat("cannot do prior in log space for parm with min <=0.0\n")
       }
     }
-    if(Ptype2==5){  # gamma  (from Larry Jacobson)
-      warnif <- 1e-15;
-      if(Pmin<0.0){
-        cat("Lower bound for gamma prior must be >=0.  Suggestion ",warnif*10.0,"\n")
-      }else{
-        # Gamma is defined over [0,+inf) but x=zero causes trouble for some mean/variance combos.
-        if(Pval < warnif){
-          cat("Pval too close to zero in gamma prior - can not guarantee reliable calculations.\n",
-              "Suggest rescaling data (e.g. * 1000)?\n")
-        }else{
-          scale <- (Psd^2)/Pr;  #  gamma parameters by method of moments
-          shape <- Pr/scale;
-          Prior_Like <- -shape*log(scale)-gammln(shape)+(shape-1.0)*log(Pval)-Pval/scale;
-        }
-      }
-    }
+
+    #### need to work out the following code, including replacing "gammln"
+    
+    ## if(Ptype2==5){  # gamma  (from Larry Jacobson)
+    ##   warnif <- 1e-15;
+    ##   if(Pmin<0.0){
+    ##     cat("Lower bound for gamma prior must be >=0.  Suggestion ",warnif*10.0,"\n")
+    ##   }else{
+    ##     # Gamma is defined over [0,+inf) but x=zero causes trouble for some mean/variance combos.
+    ##     if(Pval < warnif){
+    ##       cat("Pval too close to zero in gamma prior - can not guarantee reliable calculations.\n",
+    ##           "Suggest rescaling data (e.g. * 1000)?\n")
+    ##     }else{
+    ##       scale <- (Psd^2)/Pr;  #  gamma parameters by method of moments
+    ##       shape <- Pr/scale;
+    ##       Prior_Like <- -shape*log(scale)-gammln(shape)+(shape-1.0)*log(Pval)-Pval/scale;
+    ##     }
+    ##   }
+    ## }
 
     return(Prior_Like)
   } # end GetPrior
@@ -234,10 +237,13 @@ SSplotPars <-
 
   ## make plot
   if(new & !pdf){
+    OS <- "Mac"
     if(length(grep('linux',version$os)) > 0) OS <- "Linux"
     if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
-    # need appropriate line to support Mac operating systems
-    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+
+    ### Note: the following line has been commented out because it was identified
+    ###       by Brian Ripley as "against CRAN policies".
+    #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)

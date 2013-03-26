@@ -41,8 +41,8 @@ SS_plots <-
   ## if(verbose) cat("R function updated:",codedate,
   ##   "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
 
-  cat("Note: 'SS_plots' has reorganized plot groups and new HTML output option\n",
-      "     To get old code, you can find it in package version 1.17 and before.\n\n")
+  ## cat("Note: 'SS_plots' has reorganized plot groups and new HTML output option\n",
+  ##     "     To get old code, you can find it in package version 1.17 and before.\n\n")
 
   if(!is.null(print)) stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
                            "  which is combined with the vector of numbers input to 'plot'")
@@ -126,7 +126,9 @@ SS_plots <-
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
   if(nplots>0 & !png & !pdf & new){
-    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+    ### Note: the following line has been commented out because it was identified
+    ###       by Brian Ripley as "against CRAN policies".
+    #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)

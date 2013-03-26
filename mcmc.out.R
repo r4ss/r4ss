@@ -41,7 +41,9 @@ mcmc.out <- function (
 
   if(closeall==TRUE)						# see if the user asked to retain open graphics devices
    {								# useful to compare multiple runs
-    rm(.SavedPlots,pos=1) 					# remove any plotting history
+    ### Note: the following line has been commented out because it was identified
+    ###       by Brian Ripley as "against CRAN policies".
+    #rm(.SavedPlots,pos=1) 					# remove any plotting history
    }
   	
   filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use

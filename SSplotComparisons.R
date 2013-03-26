@@ -166,7 +166,10 @@ SSplotComparisons <-
   # need appropriate line to support Mac operating systems
 
   if(plot & new & !pdf){
-    if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+    ### Note: the following line has been commented out because it was identified
+    ###       by Brian Ripley as "against CRAN policies".
+    #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
+
     if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
     if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
@@ -457,11 +460,11 @@ SSplotComparisons <-
       }
     }
     abline(h=0,col="grey")
-    abline(h=1,col="grey",lty=2)
+    abline(h=sprtarg,col="grey",lty=2)
 
     if(btarg>0){
       abline(h=0,col="grey")
-      abline(h=1,col="red",lty=2)
+      abline(h=sprtarg,col="red",lty=2)
       text(SPRratio$Yr[1]+4,(1+0.02),labels[10],adj=0)
     }
 

@@ -60,16 +60,12 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
            xlab=xlab,ylab=ylab,axes=FALSE)
       xvec <- unique(x)
       if(axis1) axis(1,at=floor(unique(x))) # only printing integer values for years
-      if(length(unique(y))<30){
-        axis(2,at=sort(unique(y)),las=las)
-      }else{
-        axis(2,las=las,at=pretty(unique(y),n=20))
-      }
+      axis(2,at=sort(unique(y)),las=las)
       box()
-      if(legend){
-        legend('top',legend=legend.z,pch=legend.pch,col=col,
-               pt.cex=legend.cex,ncol=legend.n,bty='n')
-      }
     }
     points(x,y,pch=pch,cex=cex,col=col)
+    if(legend){
+      legend('top',legend=legend.z,pch=legend.pch,col=col,
+             pt.cex=legend.cex,ncol=legend.n,bty='n')
+    }
   }

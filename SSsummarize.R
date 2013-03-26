@@ -67,7 +67,6 @@ SSsummarize <- function(biglist,
   maxgrad    <- NULL
   nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
-  likelihoods_by_fleet <- NULL
   indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
@@ -113,7 +112,7 @@ SSsummarize <- function(biglist,
       if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) && all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("\nproblem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("problem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
       }
     }
     rownames(sizesel) <- 1:nrow(sizesel)
@@ -129,7 +128,7 @@ SSsummarize <- function(biglist,
       if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) && all(names(seltemp_i)==names(agesel)))){
         agesel <- rbind(agesel,seltemp_i)
       }else{
-        cat("\nproblem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("problem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
       }
     }
     rownames(agesel) <- 1:nrow(agesel)
@@ -146,13 +145,6 @@ SSsummarize <- function(biglist,
     for(irow in 1:nrow(liketemp)){
       likelihoods[likenames==rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
-    }
-    liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
-    if(is.null(likelihoods_by_fleet) ||
-         length(setdiff(names(likelihoods_by_fleet), names(liketemp2)))==0){
-      likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
-    }else{
-      cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
     }
 
     ## compile parameters
@@ -363,7 +355,6 @@ SSsummarize <- function(biglist,
   mylist$quantsSD       <- quantsSD
   mylist$likelihoods    <- likelihoods
   mylist$likelambdas    <- likelambdas
-  mylist$likelihoods_by_fleet <- likelihoods_by_fleet
   mylist$SpawnBio       <- SpawnBio
   mylist$SpawnBioSD     <- SpawnBioSD
   mylist$SpawnBioLower  <- SpawnBioLower

@@ -47,9 +47,19 @@ SSplotBiology <-
   nsexes       <- replist$nsexes
   mainmorphs   <- replist$mainmorphs
   accuage      <- replist$accuage
+  startyr      <- replist$startyr
+  endyr        <- replist$endyr
   growthvaries <- replist$growthvaries
   growthseries <- replist$growthseries
   ageselex     <- replist$ageselex
+  MGparmAdj    <- replist$MGparmAdj
+  wtatage      <- replist$wtatage
+  if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
+  else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
+  
+  if(wtatage_switch) cat("Note: this model uses the emperical weight-at-age input.\n",
+                         "     Therefore many of the parametric biology quantities which are plotted\n",
+                         "     are not used in the model.\n")
 
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
@@ -107,29 +117,99 @@ SSplotBiology <-
     }
   }
 
-  gfunc1 <- function(){ # weight
-    if(!add){
-      ymax <- max(biology$Wt_len_F)
-      if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
-      plot(x,x,ylim=c(0,1.1*ymax),xlab=xlab,ylab=labels[4],type="n")
-      abline(h=0,col="grey")
-    }
-    lines(x,biology$Wt_len_F,type="o",col=col1)
-    if(nsexes > 1){
-      lines(x,biology$Wt_len_M,type="o",col=col2)
-      if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
+  weight_plot <- function(){ # weight
+    if(!wtatage_switch){ # if empirical weight-at-age is not used
+      if(!add){
+        ymax <- max(biology$Wt_len_F)
+        if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
+        plot(x,x,ylim=c(0,1.1*ymax),xlab=xlab,ylab=labels[4],type="n")
+        abline(h=0,col="grey")
+      }
+      lines(x,biology$Wt_len_F,type="o",col=col1)
+      if(nsexes > 1){
+        lines(x,biology$Wt_len_M,type="o",col=col2)
+        if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
+      }
+    }else{
+      # if empirical weight-at-age IS used
+      wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==1,-(2:6)]
+      if(all(wtmat[1,]==wtmat[2,])) wtmat <- wtmat[-1,] # remove redundant first row
+      persp(x=abs(wtmat$yr),
+            y=0:accuage,
+            z=as.matrix(wtmat[,-1]),
+            theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight",
+            main="Empirical weight at age in middle of the year")
+      
+      makeimage(wtmat, main="Empirical weight at age in middle of the year")
     }
   }
-  gfunc2 <- function(){ # maturity
-    if(min(biology$Mat_len)<1){ # if length based
-      if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=col1)
-      if(add) lines(x,biology$Mat_len,type="o",col=col1)
-    }else{ # else is age based
-      if(!add) plot(growdatF$Age, growdatF$Age_Mat,xlab=labels[2],ylab=labels[3],type="o",col=col1)
-      if(add) lines(growdatF$Age, growdatF$Age_Mat,type="o",col=col1)
+  maturity_plot <- function(){ # maturity
+    if(!wtatage_switch){ # if empirical weight-at-age is not used
+      if(min(biology$Mat_len)<1){ # if length based
+        if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=col1)
+        if(add) lines(x,biology$Mat_len,type="o",col=col1)
+      }else{ # else is age based
+        if(!add) plot(growdatF$Age, growdatF$Age_Mat,xlab=labels[2],ylab=labels[3],type="o",col=col1)
+        if(add) lines(growdatF$Age, growdatF$Age_Mat,type="o",col=col1)
+      }
+      if(!add) abline(h=0,col="grey")
+    }else{
+      # if empirical weight-at-age IS used
+      fecmat <- wtatage[wtatage$fleet==-2 & wtatage$seas==seas & wtatage$gender==1,-(2:6)]
+      if(all(fecmat[1,]==fecmat[2,])) fecmat <- fecmat[-1,] # remove redundant first row
+      persp(x=abs(fecmat[,1]),
+            y=0:accuage,
+            z=as.matrix(fecmat[,-1]),
+            theta=70,phi=30,xlab="Year",ylab="Age",zlab="",
+            main="Maturity x fecundity")
+
+      makeimage(fecmat, main="Maturity x fecundity")
+
     }
-    if(!add) abline(h=0,col="grey")
   }
+
+  makeimage <- function(mat,main=""){
+
+    yrvec <- abs(mat$yr)
+
+    ##### this stuff was used to add a row of mean values
+    ## if(is.null(meanvec)){
+    ##   meanvec <- mat[,1]
+    ##   mat <- mat[,-1]
+    ## }
+    ## yrvec2 <- c(-2:-1+min(yrvec), yrvec)
+    ## mat2 <- cbind(meanvec,NA,mat)
+    yrvec2 <- yrvec
+    mat2 <- mat[,-1]
+
+    par(mar=c(4.2,4.2,4,1)+.1)
+
+    ## print(length(0:accuage))
+    ## print(length(yrvec2))
+    ## print(dim(mat2))
+    
+    image(x=0:accuage,y=yrvec2,z=t(mat2),axes=F,xlab='Age',ylab='Year',
+          col=rainbow(60)[1:50], breaks=seq(0,4,length=51),main=main)
+    # add text
+    zdataframe <- expand.grid(yr=yrvec2,age=0:accuage)
+    zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
+    zdataframe$z <- c(t(mat2))
+    zdataframe$font <- 1
+    
+    ztext <- format(round(zdataframe$z,2))
+    ztext[ztext=="  NA"] <- ""
+    ztext[ztext=="   NA"] <- ""
+    text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
+
+    # finish plot
+    axis(1,at=0:accuage,cex.axis=.7);
+    axis(2,at=yrvec2,las=1,cex.axis=.7)
+    box()
+  }
+
+
+
+  
   gfunc3a <- function(){ # fecundity from model parameters
     ymax <- 1.1*max(FecY)
     if(!add){
@@ -170,8 +250,8 @@ SSplotBiology <-
     }
   }
   if(plot){ # plot to screen or to PDF file
-    if(1 %in% subplots) gfunc1()
-    if(2 %in% subplots) gfunc2()
+    if(1 %in% subplots) weight_plot()
+    if(2 %in% subplots) maturity_plot()
     if(3 %in% subplots & FecType==1) gfunc3a()
     if(4 %in% subplots & fecundityOK) gfunc3b()
     if(5 %in% subplots & fecundityOK) gfunc3c()
@@ -182,14 +262,14 @@ SSplotBiology <-
       file <- paste(plotdir,"/bio1_weightatsize.png",sep="")
       caption <- "Weight-length relationship"
       plotinfo <- pngfun(file=file, caption=caption)
-      gfunc1()
+      weight_plot()
       dev.off()
     }
     if(2 %in% subplots){
       file <- paste(plotdir,"/bio2_maturity.png",sep="")
       caption <- paste("Maturity at",ifelse(min(biology$Mat_len)<1,"length","age"))
       plotinfo <- pngfun(file=file, caption=caption)
-      gfunc2()
+      maturity_plot()
       dev.off()
     }
     if(3 %in% subplots & FecType==1){
@@ -257,30 +337,33 @@ SSplotBiology <-
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
-  # Natural mortality (if time or sex varying)
-  M <- growdatF$M
-  if(min(M)!=max(M) & 8 %in% subplots)
-  {
-    ymax <- max(M)
-    mfunc <- function()
-    {
-      if(!add){
-        plot(growdatF$Age,M,col=col1,lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
-        abline(h=0,col="grey")
+  # Natural mortality (if time varying)
+  M <- growdatF$M # female mortality in the ending year
+  M2 <- MGparmAdj[,c(1,grep("NatM",names(MGparmAdj)))]
+  # if dimension is NULL there were no time-varying natural mortality parameters
+  if(!is.null(ncol(M2))){ 
+    M2f <- M2[,c(1,grep("Fem",names(M2)))]
+    if(min(M)!=max(M) & 8 %in% subplots){
+      ymax <- max(M)
+      mfunc <- function(){
+        if(!add){
+          plot(growdatF$Age,M,col=col1,lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
+          abline(h=0,col="grey")
+        }
+        lines(growdatF$Age,M,col=col1,lwd=2,type="o")
+        if(nsexes > 1){
+          growdatM <- growdat[growdat$Morph==mainmorphs[2],]
+          lines(growdatM$Age,growdatM$M,col=col2,lwd=2,type="o")
+        }
       }
-      lines(growdatF$Age,M,col=col1,lwd=2,type="o")
-      if(nsexes > 1){
-        growdatM <- growdat[growdat$Morph==mainmorphs[2],]
-        lines(growdatM$Age,growdatM$M,col=col2,lwd=2,type="o")
+      if(plot & 8 %in% subplots) mfunc()
+      if(print & 8 %in% subplots){
+        file <- paste(plotdir,"/bio8_natmort.png",sep="")
+        caption <- "Natural mortality"
+        plotinfo <- pngfun(file=file, caption=caption) 
+        mfunc()
+        dev.off()
       }
-    }
-    if(plot & 8 %in% subplots) mfunc()
-    if(print & 8 %in% subplots){
-      file <- paste(plotdir,"/bio8_natmort.png",sep="")
-      caption <- "Natural mortality"
-      plotinfo <- pngfun(file=file, caption=caption) 
-      mfunc()
-      dev.off()
     }
   }
 
