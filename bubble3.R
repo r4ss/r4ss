@@ -21,9 +21,11 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
       # set sequence of points to use in legend
       maxaz <- max(az,na.rm=TRUE)
       if(maxaz>1)  legend.z <- c(.1,1:3) # something like Pearsons
-      if(maxaz>5)  legend.z <- c(.1,seq(1,maxaz,2)) # big Pearsons
+      if(maxaz>5)  legend.z <- c(.1,pretty(c(1,maxaz),n=2)) # big Pearsons
       if(maxaz>10) legend.z <- pretty(c(0,maxaz)) # something like numbers
-      if(maxaz<=1) legend.z <- c(0.01,0.1*(1:floor(10*maxaz))) # something like proportions
+      if(maxaz<=1) legend.z <- c(0.01,.1*pretty(c(1,10*maxaz),n=2)) # something like proportions
+      # if legend is too long, cut in half
+      if(length(legend.z)>4) legend.z <- legend.z[seq(1,length(legend.z),2)]
       if(any(z<0)) legend.z <- c(-rev(legend.z[-1]),legend.z) # add negatives
     }
     legend.n <- length(legend.z)
