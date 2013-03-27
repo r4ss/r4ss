@@ -5,17 +5,7 @@ SSplotTimeseries <-
            minyr=NULL,maxyr=NULL,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg="default",minbthresh="default",xlab="Year",
-           labels=c("Total biomass (mt)", #1
-             "Total biomass (mt) at beginning of season", #2
-             "Summary biomass (mt)",      #3
-             "Summary biomass (mt) at beginning of season", #4
-             "Spawning biomass (mt)",     #5
-             "Spawning depletion",        #6
-             "Spawning output (eggs)",    #7
-             "Age-0 recruits (1,000s)",  #8
-             "Fraction of total Age-0 recruits",  #9
-             "Management target",       #10
-             "Minimum stock size threshold"), #11 
+           labels=NULL,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1)
 {
 

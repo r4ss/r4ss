@@ -11,16 +11,7 @@ SSplotCatch <-
            plotdir="default",showlegend=TRUE,
            legendloc="topleft",
            xlab="Year",
-           labels=c("Harvest rate/Year",  #1
-             "Continuous F",              #2
-             "Landings",                  #3
-             "Total catch",               #4
-             "Predicted Discards",        #5  # should add units
-             "Discard fraction",          #6  # need to add by weight or by length
-             "(mt)",                      #7
-             "(numbers x1000)",           #8
-             "Observed and expected",     #9
-             "aggregated across seasons"),#10
+           labels=NULL,
            catchasnumbers=NULL,
            catchbars=TRUE,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,

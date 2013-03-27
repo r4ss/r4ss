@@ -15,7 +15,7 @@ SS_plots <-
     maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
     legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE,
-    scalebubbles=FALSE,...)
+    scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
 {
   ################################################################################
   #
@@ -181,6 +181,33 @@ SS_plots <-
     par(mar=mar0) # replace margins
   }
 
+if(length(tslabels)==0){
+  tslabels <- c("Total biomass (mt)", #1
+             "Total biomass (mt) at beginning of season", #2
+             "Summary biomass (mt)",      #3
+             "Summary biomass (mt) at beginning of season", #4
+             "Spawning biomass (mt)",     #5
+             "Spawning depletion",        #6
+             "Spawning output (eggs)",    #7
+             "Age-0 recruits (1,000s)",  #8
+             "Fraction of total Age-0 recruits",  #9
+             "Management target",       #10
+             "Minimum stock size threshold") #11
+  }
+
+if(length(catlabels)==0){
+  catlabels <- c("Harvest rate/Year",  #1
+             "Continuous F",              #2
+             "Landings",                  #3
+             "Total catch",               #4
+             "Predicted Discards",        #5  # should add units
+             "Discard fraction",          #6  # need to add by weight or by length
+             "(mt)",                      #7
+             "(numbers x1000)",           #8
+             "Observed and expected",     #9
+             "aggregated across seasons")
+  }
+
   ##########################################
   # Biology plots (mean weight, maturity, fecundity, spawning output)
   # and Time-varying growth
@@ -242,6 +269,7 @@ SS_plots <-
                                minyr=minyr,maxyr=maxyr,
                                pwidth=pwidth, pheight=pheight, punits=punits,
                                ptsize=ptsize, res=res, cex.main=cex.main,
+                               labels=tslabels,
                                plotdir=plotdir)
             if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
           } # end loop over uncertainty or not
@@ -261,6 +289,7 @@ SS_plots <-
                              minyr=minyr,maxyr=maxyr,
                              pwidth=pwidth, pheight=pheight, punits=punits,
                              ptsize=ptsize, res=res, cex.main=cex.main,
+                             labels=tslabels,
                              plotdir=plotdir)
           if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }
@@ -357,6 +386,8 @@ SS_plots <-
                   ptsize=ptsize, res=res,cex.main=cex.main,
                   catchasnumbers=catchasnumbers,
                   catchbars=catchbars,
+                  labels=catlabels,
+                  legendloc=legendloc,
                   plotdir=plotdir)
     plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)

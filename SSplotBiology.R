@@ -1,5 +1,5 @@
 SSplotBiology <-
-  function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
+function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
            col1="red",col2="blue",
            legendloc="topleft",
            plotdir="default",
@@ -134,13 +134,25 @@ SSplotBiology <-
       # if empirical weight-at-age IS used
       wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==1,-(2:6)]
       if(all(wtmat[1,]==wtmat[2,])) wtmat <- wtmat[-1,] # remove redundant first row
+      main <- "Empirical weight at age in middle of the year"
+      if(nsexes > 1){main <- "Female Empirical weight at age in middle of the year"}
       persp(x=abs(wtmat$yr),
             y=0:accuage,
             z=as.matrix(wtmat[,-1]),
             theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight",
-            main="Empirical weight at age in middle of the year")
-      
-      makeimage(wtmat, main="Empirical weight at age in middle of the year")
+            main=main)
+      makeimage(wtmat, main=main)
+
+      if(nsexes > 1){
+      wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==2,-(2:6)]
+      if(all(wtmat[1,]==wtmat[2,])) wtmat <- wtmat[-1,] # remove redundant first row
+      persp(x=abs(wtmat$yr),
+            y=0:accuage,
+            z=as.matrix(wtmat[,-1]),
+            theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight",
+            main="Male Empirical weight at age in middle of the year")
+      makeimage(wtmat, main="Male Empirical weight at age in middle of the year")
+      }
     }
   }
   maturity_plot <- function(){ # maturity
@@ -188,8 +200,10 @@ SSplotBiology <-
     ## print(length(yrvec2))
     ## print(dim(mat2))
     
+    lastbin <- max(mat2)
+
     image(x=0:accuage,y=yrvec2,z=t(mat2),axes=F,xlab='Age',ylab='Year',
-          col=rainbow(60)[1:50], breaks=seq(0,4,length=51),main=main)
+          col=rainbow(60)[1:50], breaks=seq(0,lastbin,length=51),main=main)
     # add text
     zdataframe <- expand.grid(yr=yrvec2,age=0:accuage)
     zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
