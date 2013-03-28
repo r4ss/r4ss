@@ -146,6 +146,14 @@ SSsummarize <- function(biglist,
       likelihoods[likenames==rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
+    liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
+    if(is.null(likelihoods_by_fleet) ||
+       (ncol(likelihoods_by_fleet)==ncol(liketemp2) &&
+         any(names(likelihoods_by_fleet)!=names(liketemp2)))){
+      likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
+    }else{
+      cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
+    }
 
     ## compile parameters
     parstemp <- stats$parameters
@@ -355,7 +363,8 @@ SSsummarize <- function(biglist,
   mylist$quantsSD       <- quantsSD
   mylist$likelihoods    <- likelihoods
   mylist$likelambdas    <- likelambdas
-  mylist$SpawnBio       <- SpawnBio
+  mylist$likelihoods_by_fleet <- likelihoods_by_fleet
+  mylist$likelihoods_by_fleet <- likelihoods_by_fleet  mylist$SpawnBio       <- SpawnBio
   mylist$SpawnBioSD     <- SpawnBioSD
   mylist$SpawnBioLower  <- SpawnBioLower
   mylist$SpawnBioUpper  <- SpawnBioUpper
