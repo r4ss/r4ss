@@ -90,12 +90,7 @@ function(replist,subplots=1:9,
   if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
 
-  if(datplot){
-    allcpue <- data.frame(NA)
-    names(allcpue) <- "Index"
-    allcpue$year <- NA
-    allcpue$value <- NA
-    allcpue$stdvalue <- NA}
+  allcpue <- data.frame()
 
   # loop over fleets
   for(ifleet in fleetvec){
@@ -297,7 +292,7 @@ function(replist,subplots=1:9,
   } # nfleets
 
   ### New the standardized plot of all CPUE indices
-  if(datplot==TRUE){
+  if(datplot==TRUE & nrow(allcpue)>0){
     all_cpue_fun <- function(){
       main="All cpue plot"
       if(!addmain) main <- ""

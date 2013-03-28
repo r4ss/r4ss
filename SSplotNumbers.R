@@ -5,6 +5,7 @@ SSplotNumbers <-
            areanames="default",
            areacols="default",
            pntscalar=2.6,
+           bublegend=TRUE,
            period=c("B","M"),
            add=FALSE,
            labels=c("Year",                   #1
@@ -181,6 +182,7 @@ SSplotNumbers <-
             # bubble plot with line
             bubble3(x=resx, y=resy, z=resz,
                     xlab=labels[1],ylab=labels[2],
+                    legend=bublegend,
                     main=plottitle1,maxsize=(pntscalar+1.0),
                     las=1,cex.main=cex.main,allopen=1)
             lines(natageyrs,meanage,col="red",lwd=3)
@@ -334,6 +336,7 @@ SSplotNumbers <-
               # bubble plot with line
               bubble3(x=resx, y=resy, z=resz,
                       xlab=labels[1],ylab=labels[12],
+                      legend=bublegend,
                       main=plottitle1,maxsize=(pntscalar+1.0),
                       las=1,cex.main=cex.main,allopen=1)
               lines(natlenyrs,meanlen,col="red",lwd=3)

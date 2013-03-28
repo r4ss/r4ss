@@ -1,12 +1,14 @@
 make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           sampsize=0, effN=0, showsampsize=TRUE, showeffN=TRUE, sampsizeround=1,
                           maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
-                          xlab="",ylab="",size=1,maxsize=3,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
+                          xlab="",ylab="",size=1,cexZ1=1.5,bublegend=TRUE,
+                          maxsize=NULL,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
                           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
                           axis1="default",axis2="default",linepos=1,type="o",
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
+                          sampsizeline=FALSE,effNline=FALSE,
                           ipage=0,scalebins=FALSE){
   ################################################################################
   #
@@ -17,34 +19,6 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
   # Written: Ian Taylor
   #
   ################################################################################
-
-#### not sure why bubble3 used to be embedded into this function,
-#### but will now revert to using the main version of bubble3 used by other functions
-  
-##   bubble3 <- function (x,y,z,col=4,maxsize=3,do.sqrt=TRUE,
-##                        main="",cex.main=1,xlab="",ylab="",minnbubble=8,
-##                        xlimextra=1,add=FALSE,las=1,allopen=TRUE){
-##     # vaguely based on bubble() from gstat
-##     az <- abs(z)
-##     if (do.sqrt) az <- sqrt(az)
-##     cex <- maxsize * az/max(az)
-##     z.col <- col
-##     xlim <- range(x)
-##     if(length(unique(x))<minnbubble) xlim=xlim+c(-1,1)*xlimextra
-##     pch <- z
-##     pch[pch==0] <- NA
-##     pch[pch>0] <- 16
-##     pch[pch<0] <- 1
-## #bublist <<- data.frame(x=x,y=y,pch=pch,cex,z.col)
-##     if(allopen) pch[!is.na(pch)] <- 1
-##     if(!add){
-##       plot(x,y,type="n",xlim=xlim,main=main,cex.main=cex.main,xlab=xlab,ylab=ylab,axes=FALSE)
-##       axis(1,at=unique(x))
-##       axis(2,las=las)
-##       box()
-##     }
-##     points(x,y,pch=pch,cex=cex,col=z.col)
-##   }
 
   # define dimensions
   yrvec <- sort(unique(yr))
@@ -117,6 +91,11 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
 
     z_i <- size[yr==yr_i]
 
+    ### Ian T.: add here a trick from Allan like:
+    ##   stuff <-  unlist(lapply(split(test2$effN, test2$ptsy),unique))
+    ## if(sampsizeline) sampsize_i <- sampsize[yr==yr_i][ptsx_i==min(ptsx_i)]
+    ## if(effNline)     effN_i     <- effN[yr==yr_i]
+          
     # optional rescaling of bins for line plots
     scaled <- FALSE
     if(scalebins){
@@ -141,8 +120,12 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     abline(h=0,col="grey") # grey line at 0
     if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
     if(diff(range(size))!=0){ # if size input is provided then use bubble function
-      bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=c(ptscol,ptscol2),
+      bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=ptscol,cexZ1=cexZ1,legend.yadj=1.5,
+              legend=bublegend,
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot
+      ## if(sampsizeline) lines(sampsize_i,ptsy_i,col=2)
+      ## if(sampsizeline) lines(effN_i,ptsy_i,col='green3')
+#if(yr_i==2012.5) print(data.frame(sampsize_i,effN_i))
     }else{
       if(FALSE){
         # turning off old way

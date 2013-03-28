@@ -11,7 +11,7 @@ SS_plots <-
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-    cex.main=1,selexlines=1:5, rows=1, cols=1, maxrows=6, maxcols=6,
+    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=6, maxcols=6,
     maxrows2=2, maxcols2=4, tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
     legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE,
@@ -490,6 +490,7 @@ if(length(catlabels)==0){
                     areanames=areanames,
                     areacols=areacols,
                     pntscalar=pntscalar.nums,
+                    bublegend=showlegend,
                     plot=!png, print=png,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,cex.main=cex.main,
@@ -516,27 +517,29 @@ if(length(catlabels)==0){
       if(lenCompDatGroup %in% plot)  # data only aspects
       {
         if(verbose) cat("Starting length comp data plots (group ",lenCompDatGroup,")\n",sep="")
-        # length comp bar plot
+        # length comp polygon and bubble plots
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.dat,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # size comp bubble plot
+        # size comp polygon and bubble plots
         for(sizemethod in sort(unique(replist$sizedbase$method))){
           plotinfo <-
             SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",sizemethod=sizemethod,
                         bub=TRUE,verbose=verbose,fleets=fleets,fleetnames=fleetnames,
                         samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                        minnbubble=minnbubble, pntscalar=pntscalar,
+                        minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.dat,
+                        bublegend=showlegend,
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,
                         plotdir=plotdir,cex.main=cex.main,
@@ -549,26 +552,13 @@ if(length(catlabels)==0){
       }
       if(ageCompDatGroup %in% plot){
         if(verbose) cat("Starting age comp data plots (group ",ageCompDatGroup,")\n",sep="")
-        # age comp bar plot
-        plotinfo <-
-          SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=FALSE,verbose=verbose,fleets=fleets,
-                      fleetnames=fleetnames,
-                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
-                      maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
-                      pwidth=pwidth, pheight=pheight, punits=punits,
-                      ptsize=ptsize, res=res,
-                      ...)
-        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # age comp bubble plot
+        # age comp polygon and bubble plots
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.dat,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
@@ -577,26 +567,13 @@ if(length(catlabels)==0){
                       ptsize=ptsize, res=res,
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # ghost age comp bar plot
-        plotinfo <-
-          SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=FALSE,verbose=verbose,fleets=fleets,
-                      fleetnames=fleetnames,
-                      samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
-                      maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins,
-                      pwidth=pwidth, pheight=pheight, punits=punits,
-                      ptsize=ptsize, res=res,
-                      ...)
-        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # ghost age comp bubble plot
+        # ghost age comp polygon and bubble plots
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=FALSE,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.dat,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
@@ -614,7 +591,8 @@ if(length(catlabels)==0){
           SSplotComps(replist=replist,datonly=TRUE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=FALSE,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.dat,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,
                       fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
@@ -640,7 +618,8 @@ if(length(catlabels)==0){
         SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                    minnbubble=minnbubble, pntscalar=pntscalar,
+                    minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                    bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
@@ -654,7 +633,8 @@ if(length(catlabels)==0){
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTLEN",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
-                    minnbubble=minnbubble, pntscalar=pntscalar,
+                    minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                    bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
@@ -670,7 +650,8 @@ if(length(catlabels)==0){
           SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",sizemethod=sizemethod,
                       bub=TRUE,verbose=verbose,fleets=fleets, fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
@@ -694,7 +675,8 @@ if(length(catlabels)==0){
         SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                    minnbubble=minnbubble, pntscalar=pntscalar,
+                    minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                    bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
@@ -707,7 +689,8 @@ if(length(catlabels)==0){
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
-                    minnbubble=minnbubble, pntscalar=pntscalar,
+                    minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                    bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
@@ -731,7 +714,8 @@ if(length(catlabels)==0){
           SSplotComps(replist=replist,subplots=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
@@ -748,7 +732,8 @@ if(length(catlabels)==0){
                       fleetnames=fleetnames,
                       aalbin=aalbin,aalyear=aalyear,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
@@ -765,7 +750,8 @@ if(length(catlabels)==0){
                       fleetnames=fleetnames,
                       aalbin=aalbin,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
+                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                      bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
