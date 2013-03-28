@@ -364,7 +364,7 @@ SSsummarize <- function(biglist,
   mylist$likelihoods    <- likelihoods
   mylist$likelambdas    <- likelambdas
   mylist$likelihoods_by_fleet <- likelihoods_by_fleet
-  mylist$likelihoods_by_fleet <- likelihoods_by_fleet  mylist$SpawnBio       <- SpawnBio
+  mylist$SpawnBio       <- SpawnBio
   mylist$SpawnBioSD     <- SpawnBioSD
   mylist$SpawnBioLower  <- SpawnBioLower
   mylist$SpawnBioUpper  <- SpawnBioUpper
