@@ -147,6 +147,7 @@ SSsummarize <- function(biglist,
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
     liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
+    likelihoods_by_fleet <- NULL
     if(is.null(likelihoods_by_fleet) ||
        (ncol(likelihoods_by_fleet)==ncol(liketemp2) &&
          any(names(likelihoods_by_fleet)!=names(liketemp2)))){
