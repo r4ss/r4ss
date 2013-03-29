@@ -1460,20 +1460,22 @@ if(FALSE){
   }
   returndat$catage <- catage
 
-  # Z at age
-  #With_fishery
-  #No_fishery_for_Z=M_and_dynamic_Bzero
-  Z_at_age <- matchfun2("Z_AT_AGE_Annual_2",1,"Spawning_Biomass_Report_1",-2,header=TRUE)
-  M_at_age <- matchfun2("Z_AT_AGE_Annual_1",1,"-ln(Nt+1",-1,matchcol2=5, header=TRUE)
-  if(nrow(Z_at_age)>0){  
-    Z_at_age[Z_at_age=="_"] <- NA
-    M_at_age[M_at_age=="_"] <- NA
-    if(Z_at_age[[1]][1]!="absent" && nrow(Z_at_age>0)){
-      for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
-      for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])
-    }else{
-      Z_at_age <- NA
-      M_at_age <- NA
+  if(!is.na(matchfun("Z_AT_AGE"))){
+    # Z at age
+    #With_fishery
+    #No_fishery_for_Z=M_and_dynamic_Bzero
+    Z_at_age <- matchfun2("Z_AT_AGE_Annual_2",1,"Spawning_Biomass_Report_1",-2,header=TRUE)
+    M_at_age <- matchfun2("Z_AT_AGE_Annual_1",1,"-ln(Nt+1",-1,matchcol2=5, header=TRUE)
+    if(nrow(Z_at_age)>0){  
+      Z_at_age[Z_at_age=="_"] <- NA
+      M_at_age[M_at_age=="_"] <- NA
+      if(Z_at_age[[1]][1]!="absent" && nrow(Z_at_age>0)){
+        for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
+        for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])
+      }else{
+        Z_at_age <- NA
+        M_at_age <- NA
+      }
     }
   }else{
     # this could be cleaned up
