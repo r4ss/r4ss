@@ -130,7 +130,10 @@ SSplotSelex <-
                            ageselex$fleet %in% fleets &
                            ageselex$gender %in% sexes,]
     }
-    if(!factor %in% unique(c(sizeselex$Factor,ageselex$factor))) stop("bad factor")
+    if(!factor %in% unique(c(sizeselex$Factor,ageselex$factor))){
+      cat("In selectivity plots, factor ",factor,"not found in age- or length-based selectivity.\n")
+      return()
+    }
     if(nrow(allselex)==0){
       cat("combination of season, fleets, & sexes didn't produce any results\n")
       return()

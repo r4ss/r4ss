@@ -557,9 +557,13 @@ SS_output <-
     # if comp option is turned off
     lbins <- NA
     nlbins <- NA
-    temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
-    lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
-    nlbinspop <- length(lbinspop)
+
+    #### need to get length bins from somewhere
+    ## temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
+    ## lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
+    ## nlbinspop <- length(lbinspop)
+    lbinspop <- NA
+    nlbinspop <- ncol(selex)-6
     agebins <- NA
     nagebins <- NA
     Lbin_method <- 2
