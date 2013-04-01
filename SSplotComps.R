@@ -417,9 +417,9 @@ SSplotComps <-
                 if(!datonly && is.logical(effNline) && effNline){
                   # scaling when displaying both input and effective
                   sampsizeline <- effNline  <- max(dbase$Bin)/max(dbase$N,dbase$effN,na.rm=TRUE)
-                  cat("Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
+                  cat("  Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
                 }else{
-                  cat("Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")
+                  cat("  Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")
                 }
               }
               # function to make plots
