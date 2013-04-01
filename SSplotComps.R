@@ -3,7 +3,8 @@ SSplotComps <-
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
-           showsampsize=TRUE, showeffN=TRUE, minnbubble=8, pntscalar=NULL,
+           showsampsize=TRUE, showeffN=TRUE, sampsizeline=FALSE,effNline=FALSE,
+           minnbubble=8, pntscalar=NULL,
            scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,blue=rgb(0,0,1,0.7),
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, 
@@ -60,6 +61,8 @@ SSplotComps <-
   nsexes        <- replist$nsexes
   accuage       <- replist$accuage
 
+  Age_tuning    <- replist$Age_comp_Eff_N_tuning_check
+  
   titles <- NULL
   titlemkt <- ""
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -196,6 +199,17 @@ SSplotComps <-
       testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
       testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
 
+      #get mean sample quantities to show in conditional age-at-length figures
+      if(kind %in% c("cond","GSTcond") && f %in% Age_tuning$Fleet){
+        #### these values not to be trusted in the presence of ghost data:
+        ## HarmEffNage <- Age_tuning$"HarMean(effN)"[Age_tuning$Fleet==f]
+        ## MeanNage    <- Age_tuning$"mean(inputN*Adj)"[Age_tuning$Fleet==f]
+        HarmEffNage <- NULL
+        MeanNage <- NULL
+      }else{
+        HarmEffNage <- NULL
+        MeanNage <- NULL
+      }
       # loop over genders combinations
       for(k in (1:3)[testor])
       {
@@ -394,6 +408,21 @@ SSplotComps <-
               ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
               ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
               titles <- c(ptitle,titles) # compiling list of all plot titles
+              # calculate scaling of lines showing effect and input sample size
+              sampsizeline.old <- sampsizeline
+              effNline.old <- effNline
+              if(is.logical(sampsizeline) && sampsizeline){
+                # scaling when displaying only adjusted input sample size
+                sampsizeline <- accuage/max(dbase$N,na.rm=TRUE)
+                if(is.logical(effNline) && effNline){
+                  # scaling when displaying both input and effective
+                  sampsizeline <- effNline  <- accuage/max(dbase$N,dbase$effN,na.rm=TRUE)
+                  cat("Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
+                }else{
+                  cat("Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")
+                }
+              }
+              # function to make plots
               tempfun3 <- function(ipage,...){
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr.S,size=z,
                               sampsize=dbase$N,showsampsize=showsampsize,effN=dbase$effN,
@@ -405,7 +434,8 @@ SSplotComps <-
                               xlab=labels[2],ylab=labels[1],ymin0=FALSE,maxrows=maxrows2,maxcols=maxcols2,
                               fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
                               ptscol=col[1],ptscol2=col[2],ipage=ipage,scalebins=scalebins,
-                              sampsizeline=TRUE,effNline=TRUE,...)
+                              sampsizeline=sampsizeline,effNline=effNline,
+                              sampsizemean=MeanNage,effNmean=HarmEffNage,...)
               }
               if(plot) tempfun3(ipage=0,...)
               if(print){ # set up plotting to png file if required
@@ -424,6 +454,8 @@ SSplotComps <-
                   dev.off() # close device if png
                 }
               }
+              sampsizeline <- sampsizeline.old
+              effNline <- effNline.old
             } # end conditional bubble plot
             ### subplots 4 and 5: multi-panel plot of point and line fit to conditional age-at-length
             #                        and Pearson residuals of A-L key for specific years

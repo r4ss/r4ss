@@ -8,7 +8,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,linescol=2,lty=1,lwd=1,pch=1,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
-                          sampsizeline=FALSE,effNline=FALSE,
+                          sampsizeline=FALSE,effNline=FALSE,sampsizemean=NULL,effNmean=NULL,
                           ipage=0,scalebins=FALSE){
   ################################################################################
   #
@@ -91,11 +91,6 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
 
     z_i <- size[yr==yr_i]
 
-    ### Ian T.: add here a trick from Allan like:
-    ##   stuff <-  unlist(lapply(split(test2$effN, test2$ptsy),unique))
-    ## if(sampsizeline) sampsize_i <- sampsize[yr==yr_i][ptsx_i==min(ptsx_i)]
-    ## if(effNline)     effN_i     <- effN[yr==yr_i]
-          
     # optional rescaling of bins for line plots
     scaled <- FALSE
     if(scalebins){
@@ -121,11 +116,27 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
     if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
     if(diff(range(size))!=0){ # if size input is provided then use bubble function
       bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=ptscol,cexZ1=cexZ1,legend.yadj=1.5,
-              legend=bublegend,
+              legend=bublegend,legendloc='topright',
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot
-      ## if(sampsizeline) lines(sampsize_i,ptsy_i,col=2)
-      ## if(sampsizeline) lines(effN_i,ptsy_i,col='green3')
-#if(yr_i==2012.5) print(data.frame(sampsize_i,effN_i))
+      # add optional lines showing (adjusted) input sample size 
+      if(effNline>0 && length(effN)>0){
+        effN_i         <- effN[yr==yr_i]
+        effN_i_vec     <- unlist(lapply(split(effN_i,ptsy_i),unique))
+        ptsy_i_vec     <- sort(unique(ptsy_i))
+        lines(effNline*effN_i_vec,ptsy_i_vec,col='green3')
+        if(!is.null(effNmean))
+          lines(rep(effNline*effNmean,length(ptsy_i_vec)),ptsy_i_vec,col='green3',lty=2)
+      }
+      # add optional lines showing effective sample size 
+      if(sampsizeline>0 && length(sampsize)>0){
+        sampsize_i     <- sampsize[yr==yr_i]
+        sampsize_i_vec <- unlist(lapply(split(sampsize_i,ptsy_i),unique))
+        ptsy_i_vec     <- sort(unique(ptsy_i))
+
+        lines(sampsizeline*sampsize_i_vec,ptsy_i_vec,col=2)
+        if(!is.null(sampsizemean))
+          lines(rep(sampsizeline*sampsizemean,length(ptsy_i_vec)),ptsy_i_vec,col=2,lty=3)
+      }
     }else{
       if(FALSE){
         # turning off old way

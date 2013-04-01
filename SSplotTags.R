@@ -5,7 +5,7 @@ SSplotTags <-
            plot=TRUE, print=FALSE,
            pntscalar=2.6,minnbubble=8,
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1,
-           col1="blue",col2="red",col3="grey95",col4="grey70",
+           col1=rgb(0,0,1,.7),col2="red",col3="grey95",col4="grey70",
            labels = c("Year",                                   #1
            "Frequency",                                         #2
            "Tag Group",                                         #3

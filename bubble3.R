@@ -43,6 +43,7 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
 
     # set scale
     if(!is.null(maxsize)) cexZ1 <- maxsize/max(az)
+    
     cex <- cexZ1*az
     legend.cex <- cexZ1*legend.z2
     
@@ -81,7 +82,7 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
     # add points
     points(x,y,pch=pch,cex=cex,col=col)
     # add legend
-    if(legend){
+    if(legend & all(par()$mfg[1:2]==1)){
       legend(x=legendloc,legend=legend.z,pch=legend.pch,col=col,
              pt.cex=legend.cex,ncol=legend.n,bty='n')
       ## next line for debugging legends
