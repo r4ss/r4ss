@@ -413,10 +413,10 @@ SSplotComps <-
               effNline.old <- effNline
               if(is.logical(sampsizeline) && sampsizeline){
                 # scaling when displaying only adjusted input sample size
-                sampsizeline <- accuage/max(dbase$N,na.rm=TRUE)
-                if(is.logical(effNline) && effNline){
+                sampsizeline <- max(dbase$Bin)/max(dbase$N,na.rm=TRUE)
+                if(!datonly && is.logical(effNline) && effNline){
                   # scaling when displaying both input and effective
-                  sampsizeline <- effNline  <- accuage/max(dbase$N,dbase$effN,na.rm=TRUE)
+                  sampsizeline <- effNline  <- max(dbase$Bin)/max(dbase$N,dbase$effN,na.rm=TRUE)
                   cat("Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
                 }else{
                   cat("Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")

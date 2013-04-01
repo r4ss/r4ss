@@ -118,7 +118,8 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
       bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=ptscol,cexZ1=cexZ1,legend.yadj=1.5,
               legend=bublegend,legendloc='topright',
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot
-      # add optional lines showing (adjusted) input sample size 
+      # add optional lines showing (adjusted) input sample size
+      if(linepos==0) effNline <- 0
       if(effNline>0 && length(effN)>0){
         effN_i         <- effN[yr==yr_i]
         effN_i_vec     <- unlist(lapply(split(effN_i,ptsy_i),unique))
