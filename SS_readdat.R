@@ -63,12 +63,18 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   datlist$N_areas <- allnums[i]; i <- i+1
 
   # an attempt at getting the fleet names based on occurance of %-sign
+  fleetnames.good <- NULL
   if(Ntypes>1){
-    fleetnames <- dat[grep('%',dat)[1]]
-    fleetnames <- strsplit(fleetnames,'%')[[1]]
-    # strip any white space off the end of the fleetnames
-    fleetnames[length(fleetnames)] <- strsplit(fleetnames[length(fleetnames)],"[[:blank:]]+")[[1]][1]
-    if(length(fleetnames)!=Ntypes)
+    percentlines <- grep('%',dat)
+    for(iline in percentlines){
+      fleetnames <- dat[iline]
+      fleetnames <- strsplit(fleetnames,'%')[[1]]
+      # strip any white space off the end of the fleetnames
+      fleetnames[length(fleetnames)] <- strsplit(fleetnames[length(fleetnames)],"[[:blank:]]+")[[1]][1]
+      if(length(fleetnames)==Ntypes) fleetnames.good <- fleetnames
+    }
+    fleetnames <- fleetnames.good
+    if(is.null(fleetnames))
       fleetnames <- c(paste("fishery",1:Nfleet),paste("survey",1:Nsurveys))
   }else{
     fleetnames <- "fleet1"

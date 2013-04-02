@@ -633,6 +633,10 @@ SSplotComps <-
                 Lens <-sort(unique(dbase$Lbin_lo))
                 Yrs <- sort(unique(dbase$Yr.S))
 
+                ymax <- 1.1*max(dbase$Bin,na.rm=TRUE)
+                xmax <- max(condbase$Lbin_hi,na.rm=TRUE)
+                xmin <- min(condbase$Lbin_lo,na.rm=TRUE)
+                
                 # do some stuff so that figures that span multiple pages can be output as separate PNG files
                 npanels <- length(Yrs)
                 andrerows <- 3
@@ -679,8 +683,10 @@ SSplotComps <-
                     }
                   }
                   if (length(Obs) > 0){
-                    ymax <- max(Pred,Obs,Upp)*1.1
-                    plot(Size,Obs,type='n',xlab="",ylab="Age",xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    ## next line was replaced with setting at the top,
+                    ## for consistency across years
+                    #ymax <- max(Pred,Obs,Upp)*1.1
+                    plot(Size,Obs,type='n',xlab="",ylab="Age",xlim=c(xmin,xmax),ylim=c(0,ymax),yaxs="i")
                     label <- ifelse(nseasons==1, floor(Yr), Yr)
                     text(x=par("usr")[1],y=.9*ymax,labels=label,adj=c(-.5,0),font=2,cex=1.2)
                     if(length(Low)>1) polygon(c(Size,rev(Size)),c(Low,rev(Upp)),col='grey95',border=NA)
@@ -694,8 +700,8 @@ SSplotComps <-
                     }
                     box()
 
-                    ymax <- max(Obs2,Pred2)*1.1
-                    plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax),yaxs="i")
+                    ymax2 <- max(Obs2,Pred2)*1.1
+                    plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax2),yaxs="i")
                     if(length(Low2)>1) polygon(c(Size2,rev(Size2)),c(Low2,rev(Upp2)),col='grey95',border=NA)
                     if(!datonly) lines(Size,Pred2,col=4,lwd=3)
                     points(Size,Obs2,pch=16)
