@@ -24,7 +24,7 @@ SSplotComps <-
                       "Stdev (Age) (yr)",      #13
                       "Andre's conditional AAL plot, "), #14
            printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
+           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
            scalebins=FALSE,addMeans=TRUE,...)
 {
@@ -639,7 +639,6 @@ SSplotComps <-
                 
                 # do some stuff so that figures that span multiple pages can be output as separate PNG files
                 npanels <- length(Yrs)
-                andrerows <- 3
                 npages <- npanels/andrerows
                 panelrange <- 1:npanels
                 if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:andrerows + andrerows*(ipage-1))
@@ -701,7 +700,7 @@ SSplotComps <-
                     box()
 
                     ymax2 <- max(Obs2,Pred2)*1.1
-                    plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(min(Lens),max(Lens)),ylim=c(0,ymax2),yaxs="i")
+                    plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(xmin,xmax),ylim=c(0,ymax2),yaxs="i")
                     if(length(Low2)>1) polygon(c(Size2,rev(Size2)),c(Low2,rev(Upp2)),col='grey95',border=NA)
                     if(!datonly) lines(Size,Pred2,col=4,lwd=3)
                     points(Size,Obs2,pch=16)
@@ -718,7 +717,7 @@ SSplotComps <-
               } # end andrefun
               if(plot) andrefun()
               if(print){ # set up plotting to png file if required
-                npages <- ceiling(length(unique(dbase$Yr.S))/3)
+                npages <- ceiling(length(unique(dbase$Yr.S))/andrerows)
                 for(ipage in 1:npages){
                   caption <- ptitle
                   pagetext <- ""
