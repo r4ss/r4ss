@@ -563,7 +563,7 @@ SS_output <-
     ## lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
     ## nlbinspop <- length(lbinspop)
     lbinspop <- NA
-    nlbinspop <- ncol(selex)-6
+    nlbinspop <- ncol(selex)-5 # hopefully this works alright
     agebins <- NA
     nagebins <- NA
     Lbin_method <- 2
@@ -1414,6 +1414,8 @@ if(FALSE){
     ends <- grep("mean",rawALK[,1])-1
     for(i in 1:nmorphs){
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
+print(dim(ALKtemp))
+print(dim(ALK))      
       for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
       ALK[,,i] <- as.matrix(ALKtemp)
     }
