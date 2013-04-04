@@ -1414,8 +1414,6 @@ if(FALSE){
     ends <- grep("mean",rawALK[,1])-1
     for(i in 1:nmorphs){
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
-print(dim(ALKtemp))
-print(dim(ALK))      
       for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
       ALK[,,i] <- as.matrix(ALKtemp)
     }
