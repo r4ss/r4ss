@@ -4,7 +4,7 @@ function(
          masterctlfile="control.ss_new",
          newctlfile="control_modified.ss", # must match entry in starter file
          linenum=NULL, string=NULL, profilevec=NULL,
-         usepar=FALSE, globalpar=TRUE, parfile=NULL,
+         usepar=FALSE, globalpar=FALSE, parfile=NULL,
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
          model='ss3',extras="-nox",systemcmd=FALSE,saveoutput=TRUE,

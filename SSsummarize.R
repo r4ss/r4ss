@@ -67,6 +67,7 @@ SSsummarize <- function(biglist,
   maxgrad    <- NULL
   nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
+  likelihoods_by_fleet <- NULL
   indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
@@ -147,10 +148,9 @@ SSsummarize <- function(biglist,
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
     liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
-    likelihoods_by_fleet <- NULL
     if(is.null(likelihoods_by_fleet) ||
        (ncol(likelihoods_by_fleet)==ncol(liketemp2) &&
-         any(names(likelihoods_by_fleet)!=names(liketemp2)))){
+         all(names(likelihoods_by_fleet)==names(liketemp2)))){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
       cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
