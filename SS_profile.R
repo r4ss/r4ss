@@ -88,8 +88,11 @@ function(
     if(usepar){
       # alternatively change initial values in the par file
       # read file
-      if(globalpar) par <- readLines("parfile_original_backup.sso")
-      par <- readLines(parfile)
+      if(globalpar){
+        par <- readLines("parfile_original_backup.sso")
+      }else{
+        par <- readLines(parfile)
+      }
       # find value
       if(!is.null(parstring)) parlinenum <- grep(parstring,par,fixed=TRUE)+1
       if(length(parlinenum)!=1) stop("Problem with input parstring = '",parstring,"'",sep="")
