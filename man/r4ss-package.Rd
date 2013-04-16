@@ -16,8 +16,8 @@
   \tabular{ll}{
     Package: \tab r4ss\cr
     Type: \tab Package\cr
-    Version: \tab 1.19\cr
-    Date: \tab 2013-03-07\cr
+    Version: \tab 1.20\cr
+    Date: \tab 2013-03-09\cr
     License: \tab GPL-3\cr
     LazyLoad: \tab yes\cr
     URL: \tab \url{http://www.r-project.org}\cr \tab \url{http://code.google.com/p/r4ss/}\cr
