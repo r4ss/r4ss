@@ -79,7 +79,7 @@ PinerPlot <-
   for(icol in 3:ncol(prof.table)){
     prof.table[,icol] <- prof.table[,icol] - min(prof.table[subset,icol])
   }
-  if(ymax=="default") ymax <- 1.1*max(prof.table[subset,-(1:2)])
+  if(ymax=="default") ymax <- 1.1*max(prof.table[subset,-(1:2)],na.rm=TRUE)
   ylim <- c(0,ymax)
   
   # reorder values

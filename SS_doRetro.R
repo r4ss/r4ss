@@ -1,6 +1,6 @@
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
-                       extras="-nox",intern=FALSE){
+                       extras="-nox",intern=FALSE,CallType="system"){
 
   # save working directory
   oldwd <- getwd()
@@ -48,6 +48,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
               overwrite=TRUE)
     # change starter file to do retrospectives
     starter$retro_yr <- years[iyr]
+    starter$init_values_src = 0
     setwd(file.path(newdir,subdirnames[iyr]))
     SS_writestarter(starter, dir=getwd(), verbose=FALSE, overwrite=TRUE)
 
@@ -66,7 +67,8 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                    getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
                    "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
                    sep="")
-    ADMBoutput <- system(paste(exefile,extras),intern=intern)
+    if(CallType=="system") ADMBoutput <- system(paste(exefile,extras),intern=intern)
+    if(CallType=="shell") ADMBoutput <- shell(paste(exefile,extras),intern=intern)
     if(intern) writeLines(c("###","ADMB output",as.character(Sys.time()),
                             "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
     setwd('..')
