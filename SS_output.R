@@ -1469,6 +1469,9 @@ if(FALSE){
     if(nrow(Z_at_age)>0){  
       Z_at_age[Z_at_age=="_"] <- NA
       M_at_age[M_at_age=="_"] <- NA
+      # if birth season is not season 1, you can get infinite values
+      Z_at_age[Z_at_age=="-1.#INF"] <- NA
+      M_at_age[M_at_age=="-1.#INF"] <- NA
       if(Z_at_age[[1]][1]!="absent" && nrow(Z_at_age>0)){
         for(i in 1:ncol(Z_at_age)) Z_at_age[,i] <- as.numeric(Z_at_age[,i])
         for(i in 1:ncol(M_at_age)) M_at_age[,i] <- as.numeric(M_at_age[,i])

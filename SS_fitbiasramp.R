@@ -193,9 +193,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   recdev_lo <- val - 1.96*std
 
   ylim <- range(recdev_hi,recdev_lo)
-  cat("Note: the default optimizer has been changed to 'nlminb' from 'optim'\n",
-      "     if you have problems with this, set input 'nlminb' to FALSE\n",
-      "     and write to Ian.Taylor@noaa.gov to let me know of the issue.\n")
   cat('Now estimating alternative recruitment bias adjustment fraction...\n')
   newbias <- optimfun(yr=yr,std=std,startvalues=startvalues)
 
