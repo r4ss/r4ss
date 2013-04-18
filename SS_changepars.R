@@ -4,22 +4,9 @@ function(
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL,
-         estimate=FALSE, verbose=TRUE
+         estimate=FALSE, verbose=TRUE, repeat_vals=FALSE
          )
 {
-################################################################################
-#
-# SS_changepars November 19, 2008.
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: To change one or more parameter values in the Control file for SSv3
-# Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-# Returns: writes a new control file and returns a table of the changes made
-# Notes:   requires SS_parlines
-#          See users guide for documentation: http://code.google.com/p/r4ss/wiki/
-# Required packages: none
-#
-################################################################################
 
   # read control file
   fullctlfile <- paste(dir,ctlfile,sep="/")
@@ -56,8 +43,15 @@ function(
   oldvals <- oldphase <- newphase <- rep(NA,nvals)
 
   # check inputs
-  if(!is.null(newvals) & length(newvals)!=nvals) stop("'newvals' and either 'linenums' or 'strings' should have the same number of elements")
-  if(!(length(estimate) %in% c(1,nvals))) stop("'estimate' should have 1 element or same number as 'newvals'")
+  if(!is.null(newvals) & length(newvals)!=nvals){
+    if(repeat_vals){
+      newvals <- rep(newvals, nvals)
+    }else{
+      stop("'newvals' and either 'linenums' or 'strings' should have the same number of elements")
+    }
+  }     
+  if(!(length(estimate) %in% c(1,nvals)))
+    stop("'estimate' should have 1 element or same number as 'newvals'")
   if(length(estimate)==1) estimate <- rep(estimate, nvals)
 
   if(is.data.frame(newvals)) newvals <- as.numeric(newvals)

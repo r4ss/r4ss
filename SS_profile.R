@@ -84,7 +84,7 @@ function(
     SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
                   linenums=linenum,strings=string,
                   newvals=profilevec[i], estimate=FALSE,
-                  verbose=TRUE)
+                  verbose=TRUE, repeat_vals=TRUE)
     if(usepar){
       # alternatively change initial values in the par file
       # read file

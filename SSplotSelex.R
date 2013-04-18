@@ -248,13 +248,17 @@ SSplotSelex <-
       # choose plot characters
       infotable2$pch <- infotable2$ifleet %% 25
     }
-    
-    if(factor=="Lsel") main <- paste("Length-based selectivity by fleet")
-    if(factor=="Asel") main <- paste("Age-based selectivity by fleet")
-    if(factor=="Asel2") main <- paste("Derived age-based from length-based selectivity by fleet")
 
+    main <- factor
+    if(factor=="Lsel") main <- paste("Length-based selectivity")
+    if(factor=="Asel") main <- paste("Age-based selectivity")
+    if(factor=="Asel2") main <- paste("Derived age-based from length-based selectivity")
+    if(factor=="Ret") main <- paste("Retention")
+    if(length(fleets)>1) main <- paste(main, "by fleet")
+    if(length(fleets)==1) main <- paste(main, "for", fleetnames[fleets])
+       
     if(length(unique(infotable2$year))==1){
-      main <- paste(main,"in",years)
+      main <- paste(main,"in",unique(infotable2$year))
     }
 ## cat("info on plot for debugging:\n")    
 ## print(infotable2)
