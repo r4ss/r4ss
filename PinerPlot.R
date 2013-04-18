@@ -53,7 +53,7 @@ PinerPlot <-
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
   }else{
-    if(!all(fleets %in% 1:n))
+    if(!all(fleets %in% 1:nfleets))
       stop("Input 'fleets' should be a vector of values from 1 to nfleets=",nfleets," (for your inputs).\n")
   }
   
