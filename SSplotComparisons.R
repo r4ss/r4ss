@@ -19,7 +19,8 @@ SSplotComparisons <-
              "SPR ratio",               #8 could be dynamic to match model value (e.g. "(1-SPR)/(1-SPR_40%)")
              "Density",                 #9
              "Management target",       #10
-             "Minimum stock size threshold"), #11 
+             "Minimum stock size threshold", #11 
+             "Spawning output (eggs)"), #12
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
            spacepoints=10,
@@ -116,6 +117,7 @@ SSplotComparisons <-
   mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
   lowerCI       <- summaryoutput$lowerCI
   upperCI       <- summaryoutput$upperCI
+  SpawnOutputUnits <- summaryoutput$SpawnOutputUnits
 
   if(uncertainty){
     if(all(is.na(quantsSD[,1:n]) | quantsSD[,1:n]==0)){
@@ -330,16 +332,31 @@ SSplotComparisons <-
     }
     ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
     if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
+
+    # set units on spawning biomass plot
+    if(length(unique(SpawnOutputUnits))!=1)
+      cat("Warning, some models may have different units for spawning output than others!\n")
+    if(any(SpawnOutputUnits=="numbers")){
+      ylab <- labels[12] # numbers
+    }else{
+      ylab <- labels[2] # biomass
+    }
+
     # do some scaling of y-axis
-    ylab <- labels[2]
     yunits <- 1
     if(ylim[2] > 1e3 & ylim[2] < 1e6){
       yunits <- 1e3
       ylab <- gsub("mt","x1000 mt",ylab)
+      ylab <- gsub("eggs","x1000 eggs",ylab)
     }
     if(ylim[2] > 1e6){
       yunits <- 1e6
       ylab <- gsub("mt","million mt",ylab)
+      ylab <- gsub("eggs","millions of eggs",ylab)
+    }
+    if(ylim[2] > 1e9){
+      yunits <- 1e9
+      ylab <- gsub("million","billion",ylab)
     }
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
     if(uncertainty){
