@@ -537,16 +537,16 @@ SS_output <-
             "  ",nrow(tagdbase1),"rows of 'TAG1' comp data, and\n",
             "  ",nrow(tagdbase2),"rows of 'TAG2' comp data.\n")
       }
-      Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
-      names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
-      if(length(unique(agedbase$Lbin_range)) > 1){
-        cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
-        print(Lbin_ranges)
-        cat("  consider increasing 'aalmaxbinrange' to designate\n")
-        cat("  some of these data as conditional age-at-length\n")
-      }
       # convert bin indices to true lengths
       if(nrow(agedbase)>0){
+        Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
+        names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
+        if(length(unique(agedbase$Lbin_range)) > 1){
+          cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
+          print(Lbin_ranges)
+          cat("  consider increasing 'aalmaxbinrange' to designate\n")
+          cat("  some of these data as conditional age-at-length\n")
+        }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
       }else{
         agebins <- NA
