@@ -878,10 +878,15 @@ SS_output <-
   lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
   # avoid NA warnings by removing #IND values
   lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-  for(i in 2:ncol(lenntune)) lenntune[,i] <- as.numeric(lenntune[,i])
+  for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
   lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
+  # FIT_AGE_COMPS
+  fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
+  fit_age_comps[fit_age_comps=="_"] <- NA
+  for(icol in 1:ncol(fit_age_comps)) fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
+  
   # Age comp effective N tuning check
   agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
   names(agentune)[10] <- "FleetName"
@@ -947,7 +952,8 @@ if(FALSE){
 
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough
-  rawbio <- rawrep[begin:(begin+nlbinspop),1:8]
+  rawbio <- rawrep[begin:(begin+nlbinspop),1:10]
+  rawbio <- rawbio[,apply(rawbio,2,emptytest) < 1]
   names(rawbio) <- rawbio[1,]
   biology <- rawbio[-1,]
   for(i in 1:ncol(biology)) biology[,i] <- as.numeric(biology[,i])
@@ -1522,6 +1528,8 @@ if(FALSE){
   }else{
     returndat$comp_data_exists <- FALSE
   }
+  # tables on fit to comps and mean age stuff from within Report.sso
+  returndat$age_comp_fit_table <- fit_age_comps
 
   returndat$derived_quants <- der
   returndat$parameters <- parameters
