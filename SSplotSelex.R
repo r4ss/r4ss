@@ -76,6 +76,7 @@ SSplotSelex <-
   endyr          <- replist$endyr
   FleetNames     <- replist$FleetNames
   growdat        <- replist$endgrowth
+  growthCVtype   <- replist$growthCVtype
   mainmorphs     <- replist$mainmorphs
   nareas         <- replist$nareas
   ngpatterns     <- replist$ngpatterns
@@ -643,14 +644,24 @@ SSplotSelex <-
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
     growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
     growdatF$Sd_Size <- growdatF$SD_Mid
-    growdatF$high <- growdatF$Len_Mid + 1.96*growdatF$Sd_Size
-    growdatF$low <- growdatF$Len_Mid - 1.96*growdatF$Sd_Size
+    if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
+      growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
+      growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
+    }else{                        # normal distribution of length at age
+      growdatF$high <- qnorm(0.975, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
+      growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
+    }
     if(nsexes > 1){
       growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
       xm <- growdatM$Age
       growdatM$Sd_Size <- growdatM$SD_Mid
-      growdatM$high <- growdatM$Len_Mid + 1.96*growdatM$Sd_Size
-      growdatM$low <- growdatM$Len_Mid - 1.96*growdatM$Sd_Size
+      if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
+        growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
+        growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
+      }else{                        # normal distribution of length at age
+        growdatM$high <- qnorm(0.975, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
+        growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
+      }
     }
 
     xlab <- labels[2]
