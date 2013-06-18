@@ -882,10 +882,14 @@ SS_output <-
   lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
-  # FIT_AGE_COMPS
+  ## # FIT_AGE_COMPS
   fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
-  fit_age_comps[fit_age_comps=="_"] <- NA
-  for(icol in 1:ncol(fit_age_comps)) fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
+  if(nrow(fit_age_comps)>0){
+    fit_age_comps[fit_age_comps=="_"] <- NA
+    for(icol in 1:ncol(fit_age_comps)) fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
+  }else{
+    fit_age_comps <- NA
+  }
   
   # Age comp effective N tuning check
   agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
