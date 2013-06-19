@@ -20,10 +20,12 @@ SSplotRecdist <-
 
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
-  nareas <- replist$nareas
+  nareas   <- replist$nareas
   nseasons <- replist$nseasons
-  recdist <- replist$recruitment_dist
-
+  recdist  <- replist$recruitment_dist
+  # if version 3.24Q or beyond, recdist is a list, so taking just the first element for now
+  if("recruit_dist_endyr" %in% names(recdist)) recdist <- recdist$recruit_dist_endyr
+  
   areavec <- 1:nareas
   seasvec <- 1:nseasons
   if(is.null(areanames)) areanames <- paste("Area",1:nareas,sep="")

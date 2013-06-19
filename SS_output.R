@@ -849,8 +849,34 @@ SS_output <-
 
   # recruitment distribution
   recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1,header=TRUE)
-  for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
-
+  # starting in SSv3.24Q there are additional outputs that get combined as a list
+  if(length(grep("RECRUITMENT_DIST_BENCHMARK",recruitment_dist[,1]))==0){
+    for(i in 1:6) recruitment_dist[,i] <- as.numeric(recruitment_dist[,i])
+  }else{
+    recruitment_dist <- matchfun2("RECRUITMENT_DIST",0,"MORPH_INDEXING",-1,header=FALSE)
+    # start empty list
+    rd <- list()
+    # find break points in table
+    rd.line.top   <- 1
+    rd.line.bench <- grep("RECRUITMENT_DIST_BENCHMARK", recruitment_dist[,1])
+    rd.line.fore  <- grep("RECRUITMENT_DIST_FORECAST", recruitment_dist[,1])
+    rd.line.end   <- nrow(recruitment_dist)
+    # split apart table
+    rd$recruit_dist_endyr      <- recruitment_dist[(rd.line.top+1):(rd.line.bench-1),]
+    rd$recruit_dist_benchmarks <- recruitment_dist[(rd.line.bench+1):(rd.line.fore-1),]
+    rd$recruit_dist_forecast   <- recruitment_dist[(rd.line.fore+1):(rd.line.end),]
+    for(i in 1:length(rd)){
+      # convert first row to header
+      tmp <- rd[[i]]
+      names(tmp) <- tmp[1,]
+      tmp <- tmp[-1,]
+      for(icol in 1:6) tmp[,icol] <- as.numeric(tmp[,icol])
+      rd[[i]] <- tmp
+    }
+    # provide as same name
+    recruitment_dist <- rd
+  }
+    
   # gradient
   if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
@@ -1072,9 +1098,14 @@ if(FALSE){
   temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
                          morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
   # however, if there are no fish born in the spawning season, then it should be the first birth season
-  if(recruitment_dist$Used[spawnseas]==0)
-    temp <- morph_indexing[morph_indexing$Bseas==min(recruitment_dist$Seas[recruitment_dist$Used==1]) &
-                         morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+  if("recruit_dist_endyr" %in% names(recruitment_dist)){
+    rd <- recruitment_dist$recruit_dist_endyr
+  }else{
+    rd <- recruitment_dist
+  }
+  if(rd$Used[spawnseas]==0)
+    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
+                           morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
 
   # filter in case multiple growth patterns (would cause problems)
   mainmorphs <- min(temp$Index[temp$Gender==1])
