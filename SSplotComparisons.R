@@ -40,6 +40,7 @@ SSplotComparisons <-
            densityadjust=1,
            densitysymbols=TRUE,
            densitytails=TRUE,
+           densitylwd=1,
            fix0=TRUE,
            new=TRUE,
            add=FALSE,
@@ -756,7 +757,7 @@ SSplotComparisons <-
     box()
   } # end plotIndices function
   
-  plotDensities <- function(parname,xlab,limit0=TRUE){
+  plotDensities <- function(parname,xlab,denslwd,limit0=TRUE){
     if(any(!mcmcVec)) { 
       vals <- rbind(pars[grep(parname,pars$Label,fixed=TRUE),],
                     quants[grep(parname,quants$Label,fixed=TRUE),])
@@ -921,9 +922,9 @@ SSplotComparisons <-
             polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
             lines(x,mle,col=col[iline],lwd=2)
             if(densitysymbols) points(x2,mle2,col=col[iline],pch=pch[iline])
-            lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline]) #
+            lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline],lwd=denslwd) #
           }else{
-            abline(v=parval,col=col[iline])
+            abline(v=parval,col=col[iline],lwd=denslwd)
           }
         }
         # should be able to move more stuff into this section that applies to both MLE and MCMC
@@ -1165,11 +1166,11 @@ SSplotComparisons <-
           xlab <- densitytable[iplot,2]
           #if(verbose) cat("  quantity name=",name,"\n",sep="")
           if(plot) {
-            plotDensities(parname=name,xlab=xlab)
+            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
           }
           if(print){
             pngfun(paste("compare14_densities_",name,".png",sep=""))
-            plotDensities(parname=name,xlab=xlab)
+            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
             dev.off()
           }
         }
