@@ -911,7 +911,7 @@ SSplotComparisons <-
             xmin <- min(xmin, qnorm(0.005,parval,parSD))
             if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
             if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-            x <- seq(xmin,xmax,length=500)
+            x <- seq(xmin,max(xmax,xlim),length=500)
             #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
             x2 <- qnorm(symbolsQuants,parval,parSD)
             mle <- dnorm(x,parval,parSD)  # smooth line
