@@ -1,6 +1,6 @@
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
-         transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",
+         transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
          oldctl=NULL, newctl=NULL, altmethod="nlminb",
          pwidth=7, pheight=7, punits="in", ptsize=12, res=300, cex.main=1){
   ##################
@@ -223,10 +223,13 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     mtext(side=2,line=2.5,expression(1 - italic(SE(hat(r[y]))^2 / sigma[R])^2))
     
     # bias correction (2nd axis, scaled by ymax)
-    lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
+    if(shownew) lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
+    legendlines <- 1
+    if(shownew) legendlines <- 1:2
     lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
-    legend('topleft',col=c(2,4),lwd=3,lty=2:1,inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
-           legend=c('bias adjust in model','estimated alternative'))
+    legend('topleft',col=c(2,4)[legendlines],lwd=3,lty=(2:1)[legendlines],
+           inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
+           legend=c('bias adjust in model','estimated alternative')[legendlines])
     mtext(side=1,line=3,'Year')
   }
 
