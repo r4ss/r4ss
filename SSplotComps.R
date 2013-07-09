@@ -3,7 +3,8 @@ SSplotComps <-
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
-           showsampsize=TRUE, showeffN=TRUE, sampsizeline=FALSE,effNline=FALSE,
+           showyears=TRUE, showsampsize=TRUE, showeffN=TRUE,
+           sampsizeline=FALSE,effNline=FALSE,
            minnbubble=8, pntscalar=NULL,
            scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,blue=rgb(0,0,1,0.7),
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
@@ -600,6 +601,9 @@ SSplotComps <-
                   plot(dbasegood$N,dbasegood$effN,xlab=labels[4],main=ptitle,cex.main=cex.main,
                        ylim=c(0,1.05*max(dbasegood$effN)),xlim=c(0,1.05*max(dbasegood$N)),
                        col=blue,pch=19,ylab=labels[5],xaxs="i",yaxs="i")
+                  if(showyears)
+                    text(x=dbasegood$N,y=dbasegood$effN,
+                         dbasegood$YrSeasName,adj=c(-0.2,0.5))
                   abline(h=0,col="grey")
                   abline(0,1,col="black")
                   # add loess smoother if there's at least 6 points with a range greater than 2
@@ -707,7 +711,7 @@ SSplotComps <-
                     lines(Size2,Low2,lty=3)
                     lines(Size2,Upp2,lty=3)
                     if(!datonly & par("mfg")[1]==1){
-                      legend('topleft',legend=c("Observed (with 95% interval)","Expected"),
+                      legend('topleft',legend=c("Observed (with 90% interval)","Expected"),
                              bty='n',col=c(1,4),pch=c(16,NA),lty=c(NA,1),lwd=3)
                     }
                     box()
