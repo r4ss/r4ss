@@ -3,7 +3,13 @@
 ##################
 SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
-                         Njitter, Intern=TRUE){
+                         Njitter, Intern=TRUE, systemcmd=FALSE){
+
+  # determine operating system in a relatively brute force way
+  OS <- "Mac" # don't know the version$os info for Mac
+  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
+  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+
   setwd(mydir)
   # read starter file to test for non-zero jitter value
   starter <- SS_readstarter("starter.ss")
