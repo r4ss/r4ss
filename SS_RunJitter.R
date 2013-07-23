@@ -5,6 +5,11 @@ SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
                          Njitter, Intern=TRUE){
   setwd(mydir)
+  # read starter file to test for non-zero jitter value
+  starter <- SS_readstarter("starter.ss")
+  if(starter$jitter_fraction == 0){
+    stop("Change starter file to have jitter value > 0")
+  }
   file.copy(from="CompReport.sso", to="CompReport0.sso", overwrite=TRUE)
   file.copy(from="covar.sso", to="covar0.sso", overwrite=TRUE)
   file.copy(from="Report.sso", to="Report0.sso", overwrite=TRUE)
