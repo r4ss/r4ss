@@ -12,13 +12,22 @@ SS_RunJitter <- function(mydir, model="ss3",
   for(i in 1:Njitter){
     print(paste("Jitter=",i,date()))
     file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""), overwrite=TRUE)
-    shell(paste(model,extras,sep=" "),intern=Intern)
+    # run model
+    command <- paste(model,extras,sep=" ")
+    cat("Running model in directory:",getwd(),"\n")
+    cat("Using the command: '",command,"'\n",sep="")
+    if(OS=="Windows" & !systemcmd){
+      shell(cmd=command, intern=Intern)
+    }else{
+      system(command, intern=Intern)
+    }
+    # rename output files
     file.copy(from=paste("CompReport.sso"), to=paste("CompReport",i,".sso",sep=""), overwrite=TRUE)
     file.copy(from=paste("covar.sso"), to=paste("covar",i,".sso",sep=""), overwrite=TRUE)
     file.copy(from=paste("Report.sso"), to=paste("Report",i,".sso",sep=""), overwrite=TRUE)
     file.copy(from=paste(model,".par",sep=""), to=paste(model,".par_",i,".sso",sep=""), overwrite=TRUE)
   }
-  # Move things back
+  # Move original files back
   file.copy(from="CompReport0.sso", to="CompReport.sso", overwrite=TRUE)
   file.copy(from="covar0.sso", to="covar.sso", overwrite=TRUE)
   file.copy(from="Report0.sso", to="Report.sso", overwrite=TRUE)
