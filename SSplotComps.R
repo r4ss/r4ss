@@ -667,7 +667,7 @@ SSplotComps <-
                       # Overdispersion on N
                       # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
                       NN <- z$N[1]
-                      if (max(z$Obs) > 1.0e-4){
+                      if (max(z$Obs) > 1.0e-4 & NN>0){
                         Size <- c(Size,Ilen)
                         Obs <- c(Obs,ObsV)
                         Pred <- c(Pred,PredV)

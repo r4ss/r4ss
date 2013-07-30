@@ -114,7 +114,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
          xaxs="i",yaxs=ifelse(bars,"i","r"))
     abline(h=0,col="grey") # grey line at 0
     if(linepos==2) lines(linesx_i,linesy_i,col=linescol,lwd=lwd,lty=lty) # lines first
-    if(diff(range(size))!=0){ # if size input is provided then use bubble function
+    if(diff(range(size,na.rm=TRUE))!=0){ # if size input is provided then use bubble function
       bubble3(x=ptsx_i,y=ptsy_i,z=z_i,col=ptscol,cexZ1=cexZ1,legend.yadj=1.5,
               legend=bublegend,legendloc='topright',
               maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE) # bubble plot

@@ -3,7 +3,8 @@
 ##################
 SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
-                         Njitter, Intern=TRUE, systemcmd=FALSE){
+                         Njitter, Intern=TRUE, systemcmd=FALSE,
+                         printlikes=TRUE){
 
   # determine operating system in a relatively brute force way
   OS <- "Mac" # don't know the version$os info for Mac
@@ -25,12 +26,20 @@ SS_RunJitter <- function(mydir, model="ss3",
     file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""), overwrite=TRUE)
     # run model
     command <- paste(model,extras,sep=" ")
-    cat("Running model in directory:",getwd(),"\n")
-    cat("Using the command: '",command,"'\n",sep="")
+    if(i==1){
+      cat("Running model in directory:",getwd(),"\n")
+      cat("Using the command: '",command,"'\n",sep="")
+    }
     if(OS=="Windows" & !systemcmd){
       shell(cmd=command, intern=Intern)
     }else{
       system(command, intern=Intern)
+    }
+    if(printlikes){
+      Rep.head <- readLines("Report.sso",n=100)
+      likeline <- Rep.head[which(Rep.head=="Component logL*Lambda Lambda")-1]
+      like <- as.numeric(substring(likeline,11))
+      cat("Likelihood = ",like,"\n")
     }
     # rename output files
     file.copy(from=paste("CompReport.sso"), to=paste("CompReport",i,".sso",sep=""), overwrite=TRUE)
