@@ -9,7 +9,7 @@ make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
                           legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
                           sampsizeline=FALSE,effNline=FALSE,sampsizemean=NULL,effNmean=NULL,
-                          ipage=0,scalebins=FALSE){
+                          ipage=0,scalebins=FALSE,...){
   ################################################################################
   #
   # make_multifig

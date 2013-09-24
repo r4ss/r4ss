@@ -387,6 +387,7 @@ if(length(catlabels)==0){
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res,cex.main=cex.main,
                   catchasnumbers=catchasnumbers,
+		  order="default",
                   catchbars=catchbars,
                   labels=catlabels,
                   legendloc=legendloc,
