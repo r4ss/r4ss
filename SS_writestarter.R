@@ -1,5 +1,5 @@
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
-                            overwrite=F, verbose=T){
+                            overwrite=F, verbose=T, warn=T){
   if(verbose) cat("running SS_writestarter\n")
   if(mylist$type!="Stock_Synthesis_starter_file"){
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
@@ -15,7 +15,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
     if(!overwrite){
       stop(paste("file exists:",outfile,"\n  set overwrite=T to replace\n"))
     }else{
-      cat("overwriting file:",outfile,"\n")
+      if(warn) {cat("overwriting file:",outfile,"\n")}
       file.remove(outfile)
     }
   }else{
