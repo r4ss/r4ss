@@ -1,6 +1,7 @@
 SSgetoutput <-
 function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
-         verbose=TRUE,ncols=210,listlists=TRUE,underscore=FALSE)
+         verbose=TRUE,ncols=210,listlists=TRUE,underscore=FALSE,
+         save.lists=FALSE)
 {
   # a function to run the function SS_output to create a list in the R workspace
   # for a Stock Synthesis model with output filenames ending with the same "key"
@@ -81,6 +82,11 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     ##     cat("created new object:",newobject,"\n")
     ##   }
     ## }
+
+    if(save.lists){
+      biglist.file <- paste("biglist",i,"_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".Rdata",sep="")
+      save(biglist, file=biglist.file)
+    }
   }
   return(invisible(biglist))
 }
