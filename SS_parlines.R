@@ -1,7 +1,7 @@
 SS_parlines <-
 function(
   ctlfile="C:/myfiles/mymodels/myrun/control.ss_new",
-  dir=NULL, verbose=T, active=F)
+  dir=NULL, verbose=T, active=F, print14=FALSE)
 {
 
 ################################################################################
@@ -40,17 +40,27 @@ function(
   parlines7  <- ctl[num_cnt7==7 & is.na(ctl_num[,8]), ]
   parlines14 <- ctl[num_cnt14==14 & is.na(ctl_num[,15]), ]
 
-  parlines7  <- parlines7[,c(1:7,8:9)]
-  parlines14 <- parlines14[,c(1:7,15:16)]
+  parlines7   <- parlines7[, 1:9]
+  parlines14  <- parlines14[,1:16]
   
-  namesvec <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE", "Label", "Label2")
+  namesvec7  <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE", "Label", "Label2")
+  namesvec14 <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+                  "env-var", "use_dev", "dev_minyr", "dev_maxyr", "dev_stddev", "Block", "Block_Fxn",
+                  "Label", "Label2")
 
-  names(parlines7 ) <- namesvec
-  names(parlines14) <- namesvec
+  names(parlines7 ) <- namesvec7
+  names(parlines14) <- namesvec14
 
-  parlines <- rbind(parlines7,parlines14)
+  if(print14){
+    parlines7 <- cbind(parlines7[,1:7],matrix(NA,nrow=1,ncol=7),parlines7[,8:9])
+    names(parlines7) <- namesvec14
+    parlines <- rbind(parlines7,parlines14)
+  }else{
+    parlines <- rbind(parlines7,parlines14[,c(1:7,15:16)])
+  }
+  
   parlines$Label[parlines$Label=="#"] <- parlines$Label2[parlines$Label=="#"]
-  parlines <- parlines[,1:8] # dropping the Label2 column
+  parlines <- parlines[,names(parlines)!="Label2"] # dropping the Label2 column
   
   parlines$Linenum <- as.numeric(rownames(parlines))
   parlines <- parlines[order(parlines$Linenum),]

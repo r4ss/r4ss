@@ -5,6 +5,7 @@ PinerPlot <-
            main="Changes in length-composition likelihoods by fleet",
            models="all",
            fleets="all",
+           fleetnames="default",
            profile.string="R0",
            profile.label=expression(log(italic(R)[0])),
            ylab="Change in -log-likelihood",
@@ -38,9 +39,13 @@ PinerPlot <-
   lbf  <- summaryoutput$likelihoods_by_fleet
   nfleets <- ncol(lbf)-3
   pars <- summaryoutput$pars
+  FleetNames     <- summaryoutput$FleetNames[[1]]
 
   if(!component %in% lbf$Label) stop("input 'component' needs to be one of the following\n",
                                      paste("    ",unique(lbf$Label),"\n"))
+
+  
+  if(fleetnames[1]=="default") fleetnames <- FleetNames # note lower-case value is the one used below (either equal to vector from replist, or input by user)
 
   # check number of models to be plotted
   if(models[1]=="all"){
@@ -84,7 +89,15 @@ PinerPlot <-
   prof.table <- prof.table[order(parvec),]
   nfleets <- ncol(prof.table)-3
   prof.table <- prof.table[,c(1:3,3+(1:nfleets)[fleets])]
-
+  for(icol in 3:ncol(prof.table)){
+    if(names(prof.table)[icol] %in% FleetNames){
+      names(prof.table)[icol] <- fleetnames[which(FleetNames==names(prof.table)[icol])]
+    }
+    if(names(prof.table)[icol] %in% paste("X",FleetNames,sep="")){
+      names(prof.table)[icol] <- fleetnames[which(paste("X",FleetNames,sep="")==names(prof.table)[icol])]
+    }
+  }
+  
   if(ymax=="default") ymax <- 1.1*max(prof.table[subset,-(1:2)],na.rm=TRUE)
   ylim <- c(0,ymax)
   

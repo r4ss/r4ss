@@ -79,6 +79,11 @@ SSsummarize <- function(biglist,
   npars      <- NULL
   startyrs   <- NULL
   endyrs     <- NULL
+  SPRratioLabels <- NULL
+  sprtargs   <- NULL
+  btargs     <- NULL
+  minbthreshs <- NULL
+  FleetNames <- list()
   
   warn <- FALSE # flag for whether filter warning has been printed or not
 
@@ -172,7 +177,12 @@ SSsummarize <- function(biglist,
       quants[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$Value[iquant]
       quantsSD[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
     }
-
+    SPRratioLabels <- c(SPRratioLabels, stats$SPRratioLabel)
+    sprtargs       <- c(sprtargs,       stats$sprtarg)
+    btargs         <- c(btargs,         stats$btarg)
+    minbthreshs    <- c(minbthreshs,    stats$minbthresh)
+    FleetNames[[imodel]] <- stats$FleetNames
+    
     ## indices
     indextemp <- stats$cpue
     indextemp$Model <- keyvec2[imodel]
@@ -290,6 +300,7 @@ SSsummarize <- function(biglist,
   SPRratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(SPRratio[,1:n]),
                              sd=as.matrix(SPRratioSD[,1:n]))
   
+  
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
   recruitsSD <- quantsSD[grep("^Recr_",quantsSD$Label), ]
@@ -399,6 +410,10 @@ SSsummarize <- function(biglist,
   mylist$SPRratioSD     <- SPRratioSD
   mylist$SPRratioLower  <- SPRratioLower
   mylist$SPRratioUpper  <- SPRratioUpper
+  mylist$SPRratioLabels <- SPRratioLabels
+  mylist$sprtargs       <- sprtargs
+  mylist$btargs         <- btargs
+  mylist$minbthreshs    <- minbthreshs
   mylist$recruits       <- recruits
   mylist$recruitsSD     <- recruitsSD
   mylist$recruitsLower  <- recruitsLower
@@ -415,6 +430,7 @@ SSsummarize <- function(biglist,
   mylist$lowerCI        <- lowerCI
   mylist$upperCI        <- upperCI
   mylist$SpawnOutputUnits <- SpawnOutputUnits
+  mylist$FleetNames     <- FleetNames
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
   
   return(mylist)

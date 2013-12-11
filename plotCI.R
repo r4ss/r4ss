@@ -15,7 +15,8 @@ plotCI <-
     }
     ui <- y + uiw
     li <- y - liw
-    ylim <- range(c(y, ui, li, ylo, yhi, ymax))
+    ylim <- range(c(y, ui, li, ylo, yhi))
+    if(!is.null(ymax)) ylim[2] <- ymax
     if (!add) plot(x, y, type='n', ylim = ylim, col= col,...)
     segments(x, li, x, ui, col= col)
     smidge <- diff(par("usr")[1:2]) * sfrac

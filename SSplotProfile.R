@@ -24,6 +24,7 @@ SSplotProfile <-
              "Parm_priors",
              "Parm_softbounds",
              "Parm_devs",
+             "F_Ballpark",
              "Crash_Pen"),
            component.labels=
            c("Total",
@@ -44,6 +45,7 @@ SSplotProfile <-
              "Priors",
              "Soft bounds",
              "Parameter deviations",
+             "F Ballpark",
              "Crash penalty"),
            minfraction=0.01,
            sort.by.max.change=TRUE,
@@ -104,6 +106,9 @@ SSplotProfile <-
   component.labels.good <- rep("",ncol(prof.table))
   for(icol in 1:ncol(prof.table)){
     ilabel <- which(components==names(prof.table)[icol])
+    #print(names(prof.table)[icol])
+    #print(ilabel)
+    #print(component.labels[ilabel])
     component.labels.good[icol] <- component.labels[ilabel]
   }
   

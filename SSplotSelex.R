@@ -25,7 +25,7 @@ SSplotSelex <-
            legendloc="bottomright",
            pwidth = 7, pheight = 7, punits = "in",
            res = 300, ptsize = 12,
-           cex.main=1, plotdir = "default",
+           cex.main=1, showmain=TRUE, plotdir = "default",
            verbose = TRUE)
 {
   # subplots:
@@ -192,8 +192,9 @@ SSplotSelex <-
       years <- endyr
     }
     allselex <- allselex2 <- allselex[allselex$year %in% years,]
-#print(allselex)
+
     # do some processing
+    gender <- allselex$gender
     if(!agebased){
       allselex <- allselex[,-(1:5)]
       xlab <- labels[1]
@@ -202,9 +203,14 @@ SSplotSelex <-
       allselex <- allselex[,-(1:7)]
       xlab <- labels[2]
     }
-
     if(!is.null(infotable)){
       infotable2 <- infotable
+      good <- gender %in% infotable$gender
+      allselex <- allselex[good,]
+      allselex2 <- allselex2[good,]
+      if(nrow(infotable2)!=nrow(allselex)){
+        stop("Problem with input 'infotable'. Number of rows doesn't match.")
+      }
     }else{
       # make table of info for each row (unless it is supplied already)
       infotable2 <- allselex2[c("fleet","gender","year")]
@@ -261,6 +267,7 @@ SSplotSelex <-
     if(length(unique(infotable2$year))==1){
       main <- paste(main,"in",unique(infotable2$year))
     }
+    if(!showmain) main <- NULL
 ## cat("info on plot for debugging:\n")    
 ## print(infotable2)
     
@@ -289,6 +296,7 @@ SSplotSelex <-
     # add legend
     if(nrow(infotable2)>1)
       legend(legendloc, inset=c(0,0.05), legend=infotable2$longname, col=infotable2$col,
+             seg.len=4,
              lty=infotable2$lty, pch=infotable2$pch, lwd=infotable2$lwd, bty='n')
     return(infotable2)
   }

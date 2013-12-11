@@ -4,7 +4,8 @@ SSplotData <- function(replist,
                        fleetcol="default",
                        datatypes="all",fleets="all",fleetnames="default",ghost=FALSE,
                        pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-                       margins=c(5.1,2.1,4.1,8.1),
+                       margins=c(5.1,2.1,2.1,8.1),
+                       cex=2,lwd=12,
                        verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
@@ -129,7 +130,7 @@ SSplotData <- function(replist,
     yval <- 0
     # count number of unique combinations of fleet and data type
     ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
-    plot(0,xlim=xlim,ylim=c(0,ymax+ntypes+.5),axes=FALSE,xaxs='i',yaxs='i',
+    plot(0,xlim=xlim,ylim=c(0,ymax+2*ntypes+.5),axes=FALSE,xaxs='i',yaxs='i',
          type="n",xlab="Year",ylab="",main="Data by type and year",cex.main=cex.main)
     xticks <- 5*round(xlim[1]:xlim[2]/5)
     abline(v=xticks,col='grey',lty=3)
@@ -156,16 +157,17 @@ SSplotData <- function(replist,
             if(is.na(y[n-1])) solo[n] <- TRUE
           }
           # add points and lines
-          points(x[solo], y[solo], pch=16, cex=2,col=fleetcol[fleets==ifleet])
-          lines(x, y, lwd=12, col=fleetcol[fleets==ifleet])
+          points(x[solo], y[solo], pch=16, cex=cex,col=fleetcol[fleets==ifleet])
+          lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
           axistable[itick,] <- c(ifleet,yval)
           itick <- itick+1
         }
       }
       
-      yval <- yval+1
-      if(itype!=1) abline(h=yval,col='grey',lty=3)
+      yval <- yval+2
+      if(itype!=1) abline(h=yval+.3,col='grey',lty=3)
       text(mean(xlim),yval-.3,typelabels[typenames==typename],font=2)
+      #text(mean(xlim),yval,typelabels[typenames==typename],font=2)
     }
     axis(4,at=axistable$yval,labels=fleetnames[axistable$fleet],las=1)
     box()
@@ -174,7 +176,7 @@ SSplotData <- function(replist,
 
   if(plot) plotdata()
   if(print) {
-    file <- paste(plotdir,"data_plot.png",sep="")
+    file <- file.path(plotdir,"data_plot.png")
     caption <- "Data presence by year for each fleet"
     plotinfo <- pngfun(file=file, caption=caption)
     plotdata()

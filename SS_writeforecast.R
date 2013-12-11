@@ -91,8 +91,8 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
   }
   wl("Ncatch")
+  wl("InputBasis")
   if(mylist$Ncatch>0){
-    wl("InputBasis")
     printdf(mylist$ForeCatch)
   }
   writeLines("#")

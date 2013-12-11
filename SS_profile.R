@@ -40,10 +40,16 @@ function(
   # check whether exe is in directory
   if(!exe %in% tolower(dir(dir))) stop("Executable ",exe," not found in ",dir)
 
-  if(length(linenum)+length(string)!=1)
-    stop("one value should be input for either 'linenum' or 'string', but not both")
-  if(usepar & length(parlinenum)+length(parstring)!=1)
-    stop("one value should be input for either 'parlinenum' or 'parstring', but not both")
+  if(is.null(linenum) & is.null(string))
+    stop("You should input either 'linenum' or 'string' (but not both)")
+  if(!is.null(linenum) & !is.null(string))
+    stop("You should input either 'linenum' or 'string', but not both")
+  if(usepar){
+    if(is.null(parlinenum) & is.null(parstring))
+      stop("Using par file. You should input either 'parlinenum' or 'parstring', but not both")
+    if(!is.null(parlinenum) & !is.null(parstring))
+      stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+  }
   n <- length(profilevec)
   if(n==0) stop("Missing input 'profilevec'")
   converged <- rep(NA,n)
@@ -95,7 +101,7 @@ function(
       }
       # find value
       if(!is.null(parstring)) parlinenum <- grep(parstring,par,fixed=TRUE)+1
-      if(length(parlinenum)!=1) stop("Problem with input parstring = '",parstring,"'",sep="")
+      if(length(parlinenum)==0) stop("Problem with input parstring = '",parstring,"'",sep="")
       parline <- par[parlinenum]
       parval <- as.numeric(parline)
       if(is.na(parval))

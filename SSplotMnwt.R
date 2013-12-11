@@ -1,5 +1,5 @@
 SSplotMnwt <-
-  function(replist, subplots=1:2,
+  function(replist, subplots=1:2, ymax=NULL,
            plot=TRUE, print=FALSE,
            fleets="all",
            fleetnames="default",
@@ -10,7 +10,7 @@ SSplotMnwt <-
            "whole catch",    #4
            "Mean individual body weight (kg)", #5
            "Mean weight in", #6
-           "for fleet"),     #7
+           "for"),     #7
            col1="blue", col2="black",
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
            cex.main=1,
@@ -34,8 +34,8 @@ SSplotMnwt <-
 
   # mean body weight observations ###
   if(!is.na(mnwgt)[1]){
-    for(fleetname in unique(mnwgt$Fleet)){
-      usemnwgt <- mnwgt[mnwgt$Fleet==fleetname & mnwgt$Obs>0,]
+    for(ifleet in intersect(fleets,unique(mnwgt$FleetNum))){
+      usemnwgt <- mnwgt[mnwgt$FleetNum==ifleet & mnwgt$Obs>0,]
       usemnwgt$Mkt <- usemnwgt$Mkt
       for(j in unique(mnwgt$Mkt)){
         yr <- usemnwgt$Yr[usemnwgt$Mkt==j]
@@ -47,12 +47,14 @@ SSplotMnwt <-
         liw <- -ob*cv*qt(0.025,DF_mnwgt) # quantile of t-distribution
         uiw <- ob*cv*qt(0.975,DF_mnwgt) # quantile of t-distribution
         liw[(ob-liw)<0] <- ob[(ob-liw)<0] # no negative limits
-        ymax <- max(ob + uiw)
-        ymax <- max(ymax,ex)
+        if(is.null(ymax)){
+          ymax <- max(ob + uiw)
+          ymax <- max(ymax,ex)
+        }
         titlepart <- labels[2]
         if(j==2) titlepart <- labels[3]
         if(j==0) titlepart <- labels[4]
-        ptitle <- paste(labels[6],titlepart,labels[7],fleetname,sep=" ")
+        ptitle <- paste(labels[6],titlepart,labels[7],fleetnames[ifleet],sep=" ")
         ylab <- labels[5]
 
         # wrap up plot command in function
@@ -70,7 +72,7 @@ SSplotMnwt <-
           if(isubplot==1) addfit <- FALSE else addfit <- TRUE
           if(plot) bdywtfunc(addfit=addfit)
           if(print){
-            file <- paste(plotdir,"bodywtfit_flt",fleetname,".png",sep="")
+            file <- paste(plotdir,"bodywtfit_flt",fleetnames[ifleet],".png",sep="")
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             bdywtfunc(addfit=addfit)

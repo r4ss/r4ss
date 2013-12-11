@@ -1,7 +1,7 @@
 SSplotSPR <-
   function(replist,add=FALSE,plot=TRUE,print=FALSE,
            uncertainty=TRUE,
-           subplots=1:4,
+           subplots=1:4,forecastplot=FALSE,
            col1="black",col2="blue",col3="green3",col4="red",
            sprtarg="default", btarg="default",
            labels=c("Year", #1
@@ -33,11 +33,15 @@ SSplotSPR <-
 
   if(sprtarg=="default") sprtarg <- replist$sprtarg
   if(btarg=="default") btarg <- replist$btarg
-    
+
+  # choose which points to plot
+  good <- sprseries$Year <= endyr
+  if(forecastplot) good <- rep(TRUE,nrow(sprseries))
+  
   sprfunc <- function(){
-    if(!add) plot(sprseries$Year,sprseries$spr,xlab=labels[1],ylab=labels[2],
+    if(!add) plot(0,xlab=labels[1],ylab=labels[2],xlim=range(sprseries$Year[good]),
                   ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="n")
-    lines(sprseries$Year,sprseries$spr,type="o",col=col2)
+    lines(sprseries$Year[good],sprseries$spr[good],type="o",col=col2)
     if(sprtarg>0) abline(h=sprtarg,col=col4,lty=2)
     abline(h=0,col="grey")
     abline(h=1,col="grey")
@@ -58,9 +62,9 @@ SSplotSPR <-
   if(nseasons>1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
   if(nseasons==1){ 
     sprfunc2 <- function(){
-      if(!add) plot(sprseries$Year,(1-sprseries$spr),
+      if(!add) plot(0,xlim=range(sprseries$Year[good]),
                     xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="n")
-      lines(sprseries$Year,(1-sprseries$spr),type="o",col=col2)
+      lines(sprseries$Year[good],(1-sprseries$spr[good]),type="o",col=col2)
       if(sprtarg>0) abline(h=(1-sprtarg),col=col4,lty=2)
       abline(h=0,col="grey")
       abline(h=1,col="grey")}

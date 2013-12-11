@@ -35,14 +35,13 @@ SSplotDiscard <-
   # if discards exist
   if(!is.na(discard) && nrow(discard)>0){
     if(fleets[1]=="all") fleets <- 1:nfishfleets
-    fleets <- intersect(fleets,discard$FleetNum)
-    for(FleetNum in fleets){
+    for(ifleet in intersect(fleets,unique(discard$FleetNum))){
       # table available beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){ 
-        DF_discard <- discard_spec$errtype[discard_spec$Fleet==FleetNum]
+        DF_discard <- discard_spec$errtype[discard_spec$Fleet==ifleet]
       }
-      usedisc <- discard[discard$FleetNum==FleetNum,]
-      FleetName <- usedisc$FleetName[1]
+      usedisc <- discard[discard$FleetNum==ifleet,]
+      FleetName <- fleetnames[ifleet]
 
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
@@ -79,7 +78,7 @@ SSplotDiscard <-
         ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
         ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
         ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
-        discard_units <- discard_spec$units[discard_spec$Fleet==FleetNum]
+        discard_units <- discard_spec$units[discard_spec$Fleet==ifleet]
         if(discard_units==1){
           # type 1: biomass or numbers
           #         someday could make labels more specific based on catch units
@@ -101,8 +100,7 @@ SSplotDiscard <-
       # wrap up plot command in function
       dfracfunc <- function(addfit){
         plotCI(x=yr,y=ob,uiw=uiw,liw=liw,ylab=ylab,xlab=labels[1],main=title,
-               ylo=0,yhi=yhi,col=col2,sfrac=0.005,lty=1,xlim=xlim,pch=21,bg="white",
-               ymax=max(usedisc$Exp,na.rm=TRUE))
+               ylo=0,yhi=yhi,col=col2,sfrac=0.005,lty=1,xlim=xlim,pch=21,bg="white")
         abline(h=0,col="grey")
         if(addfit) points(yr,usedisc$Exp,col=col1,pch="-",cex=2)
       }

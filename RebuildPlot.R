@@ -11,13 +11,13 @@ DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=2
     pdf(file=pdffile,width=pwidth,height=pheight)
     cat("PDF file with plots will be:",pdffile,'\n')
   }else{
-    
+
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     windows(record=T,width=pwidth,height=pheight)
   }
-  
+
  rich.colors.short <- function(n){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
     x <- seq(0, 1, length = n)
@@ -28,6 +28,9 @@ DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=2
     rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3]))
   }
 
+ # empty list to store output
+ OutputList <- list()
+ ind.list <- list()
 
 #  ==================================================================================================
 
@@ -187,10 +190,10 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
   }
 
  # define empty list to store values collected in loops below
- OutputList <- list(ProbRecovery=NULL,
-                    Catch=NULL,
-                    Depletion=NULL,
-                    Bio=NULL)
+ AltStrat.output <- list(ProbRecovery=NULL,
+                         Catch=NULL,
+                         Depletion=NULL,
+                         Bio=NULL)
  for (ii in AllTraj)
   {
 
@@ -201,7 +204,7 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
      axis(2,at=seq(0,100,25))
      box()
      IlineType <- 0
-     
+
      for (Icnt in 1:NOpts)
       {
        Ifile <- Files[Icnt]
@@ -214,8 +217,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(OutputList$ProbRecovery)) OutputList$ProbRecovery <- data.frame(Yr=Xvals)
-       OutputList$ProbRecovery[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output$ProbRecovery)) AltStrat.output$ProbRecovery <- data.frame(Yr=Xvals)
+       AltStrat.output$ProbRecovery[,Icnt+1] <- Yvals
       }
      abline(h=50,lwd=3)
      abline(v=Tmin,lwd=1,lty=2)
@@ -247,8 +250,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(OutputList$Catch)) OutputList$Catch <- data.frame(Yr=Xvals)
-       OutputList$Catch[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output$Catch)) AltStrat.output$Catch <- data.frame(Yr=Xvals)
+       AltStrat.output$Catch[,Icnt+1] <- Yvals
       }
     }
 
@@ -277,8 +280,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(OutputList$Depletion)) OutputList$Depletion <- data.frame(Yr=Xvals)
-       OutputList$Depletion[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output$Depletion)) AltStrat.output$Depletion <- data.frame(Yr=Xvals)
+       AltStrat.output$Depletion[,Icnt+1] <- Yvals
       }
     }
 
@@ -307,8 +310,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(OutputList$Bio)) OutputList$Bio <- data.frame(Yr=Xvals)
-       OutputList$Bio[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output$Bio)) AltStrat.output$Bio <- data.frame(Yr=Xvals)
+       AltStrat.output$Bio[,Icnt+1] <- Yvals
       }
      Jpnt <- which(UUUs[[1]]=="# Recruitments")-8
      B0 <- as.double(UUUs[[1]][Jpnt,1])
@@ -349,45 +352,52 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
   }
 
  legend(LegLoc,legend=legs,lty=Ltys,cex=1,col=col2,lwd=lwd)
- for(i in 1:4) if(!is.null(OutputList[[i]])) names(OutputList[[i]])[-1]  <- legs
+ for(i in 1:4) if(!is.null(AltStrat.output[[i]])) names(AltStrat.output[[i]])[-1]  <- legs
 
- return(OutputList)
+ return(AltStrat.output)
 }
 # =============================================================================================================
 
 IndividualPlots<-function(UUU,Title,yearmax)
 {
+ # this function makes plots of confidence intervals of individual trajectories 
  par(mfrow=c(OutlineMulti[1],OutlineMulti[2]))
 
  Ipnt <- which(UUU=="# Individual")+2
  Npnt <- as.double(UUU[Ipnt-1,1])
 
+ # make an empty list to store values used in figures
+ ind <- list()
  for (ii in AllInd)
   {
 
-   if (ii==1) PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax,1)
+   if (ii==1) ind$ratio     <- PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax,1)
 
-   if (ii==2) PlotA(UUU,6,paste("Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
+   if (ii==2) ind$catch     <- PlotA(UUU,6,paste("Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
-   if (ii==3) PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax,1)
+   if (ii==3) ind$rec       <- PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax,1)
 
-   if (ii==4) PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax,1)
+   if (ii==4) ind$mort      <- PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax,1)
 
-   if (ii==5) PlotA(UUU,24,paste("Exploitable Biomass",BioUnit),Ipnt,Npnt,yearmax,BioScalar)
+   if (ii==5) ind$expl.bio  <- PlotA(UUU,24,paste("Exploitable Biomass",BioUnit),Ipnt,Npnt,yearmax,BioScalar)
 
-   if (ii==6) PlotA(UUU,30,paste("Cumulative (discounted) Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
+   if (ii==6) ind$cum.catch <- PlotA(UUU,30,paste("Cumulative (discounted) Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
    if (ii==7)
     {
-     PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax,BioScalar)
+     ind$sb <- PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax,BioScalar)
      Jpnt <- which(UUU=="# Recruitments")-8
      B0 <- as.double(UUU[Jpnt,1])
+     ind$sb$B0 <- B0/BioScalar
      abline(h=0.4*B0/BioScalar,lwd=1,lty=2)
      abline(h=0.25*B0/BioScalar,lwd=1,lty=2)
+     cat("Making spawning biomass plot for run",ii,"\n")
     }
 
   if (ii == AllInd[1]) title(Title)
  }
+ # return values used in figures
+ return(ind)
 }
 
 #  ==================================================================================================
@@ -414,6 +424,8 @@ PlotA <- function(UUU,offset,title,Ipnt,Npnt,yearmax,BioScalar)
  polygon(XX,c(Y2[Use],rev(Y4[Use])),col="gray")
  lines(Xvals,Y3[Use],lty=1,lwd=4)
 
+ # return these values that have been extracted from deep inside the output files
+ return(data.frame(Xvals=Xvals, Y1=Y1[Use], Y2=Y2[Use], Y3=Y3[Use], Y4=Y4[Use], Y5=Y5[Use]))
 }
 
 #  ==================================================================================================
@@ -512,7 +524,12 @@ FinalRecovery<-function(UUU,Title)
    if (4 %in% Plots[[Ifile]]) RecHist(UUU,Titles[Ifile])
 
    #Individual plots
-   if (6 %in% Plots[[Ifile]]) IndividualPlots(UUU,Titles[Ifile],yearmax)
+   if (6 %in% Plots[[Ifile]]){
+     ind.list[[Ifile]] <- IndividualPlots(UUU,Titles[Ifile],yearmax)
+     cat("Running IndividualPlots for file",Ifile,"\n")
+   }else{
+     ind.list[[Ifile]] <- NULL
+   }
 
    # First five trajectories of SSB/target
    if (7 %in% Plots[[Ifile]]) FirstFive(UUU,Titles[Ifile],yearmax)
@@ -523,13 +540,17 @@ FinalRecovery<-function(UUU,Title)
   }
 
  # Results across strategies
- DoStrategies <- F
+ DoStrategies <- FALSE
  for (Ifile in 1:length(fileN))
-  if (5 %in% Plots[[Ifile]]) DoStrategies <- T
- if (DoStrategies==T) OutputList <- AltStrategies(fileN,UUUs,Options,"",yearmax,Titles)
-
+  if (5 %in% Plots[[Ifile]]) DoStrategies <- TRUE
+ if (DoStrategies==T){
+   OutputList$AltStrategies <- AltStrategies(fileN,UUUs,Options,"",
+                                             yearmax,Titles)
+ }
  if(pdf) dev.off()
- if (DoStrategies==T) return(invisible(OutputList))
+
+ OutputList$ind.list <- ind.list
+ return(invisible(OutputList))
 }
 
 # ================================================================================================================
