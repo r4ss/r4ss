@@ -297,6 +297,16 @@ if(length(catlabels)==0){
         }
       }
     } # end loop over timeseries subplots
+
+    plotinfo <- SSplotSummaryF(replist=replist,
+                               uncertainty=uncertainty,
+                               plot=!png, print=png,
+                               verbose=verbose,
+                               pwidth=pwidth, pheight=pheight, punits=punits,
+                               ptsize=ptsize, res=res, 
+                               plotdir=plotdir)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+
   } # end if igroup in plot or print
 
   ##########################################
