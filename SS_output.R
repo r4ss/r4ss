@@ -345,28 +345,40 @@ SS_output <-
   selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
 
-  ### DEFINITIONS section (new in SSv3.20)
-  if(SS_versionshort=="SS-V3.11"){
-    nfleets <- length(unique(selex$Fleet))
-    nfishfleets <- max(selex$Fleet[selex$Factor=="Ret"])
-    FleetNames <- matchfun2("FleetNames",1,"FleetNames",nfleets,cols=2)
-    ## fleet_area <- NA
-    ## catch_units <- NA
-    ## catch_error <- NA
-    ## survey_units <- NA
-    ## survey_error <- NA
-    ## FishFleet <- NA
-    nseasons <- max(as.numeric(rawrep[(begin+3):end,4]))
-    seasdurations <- 1/nseasons
-    seasfracs <- (0:(nseasons-1))/nseasons # only true of all equal in length
+  ## DEFINITIONS section (new in SSv3.20)
+  rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
+  # get season stuff
+  nseasons <- as.numeric(rawdefs[1,2])
+  seasdurations <- as.numeric(rawdefs[3,1+1:nseasons])
+  seasfracs <- round(12*cumsum(seasdurations))/12
+  seasfracs <- seasfracs - seasdurations/2 # should be mid-point of each season as a fraction of the year
+  if(SS_versionNumeric >= 3.3){
+    # version 3.3 (fleet info switched from columns to rows starting with 3.3)
+    # get fleet info
+    defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+    defs[defs==""] <- NA
+    FleetNames <- as.character(defs[grep("fleet_names",defs$X1),-1])
+    FleetNames <- FleetNames[!is.na(FleetNames)]
+    nfleets <- length(FleetNames)
+    fleet_ID    <- 1:nfleets
+    defs <- defs[-(1:3),1:8] # hardwiring dimensions, this may change in future versions
+    names(defs) <- c("fleet_type", "timing", "area", "units",
+                     "equ_catch_se", "catch_se", "survey_units", "survey_error")
+    for(icol in 1:ncol(defs)){
+      defs[,icol] <- as.numeric(defs[,icol])
+    }
+    fleet_type   <- defs$fleet_type
+    fleet_timing <- defs$timing
+    fleet_area   <- defs$area
+    catch_units  <- defs$units
+    equ_catch_se <- defs$equ_catch_se
+    catch_se     <- defs$catch_se
+    survey_units <- defs$survey_units
+    survey_error <- defs$survey_error
+    ## FishFleet    <- !is.na(catch_units)
+    nfishfleets  <- nfleets
   }else{
     # version 3.20-3.24
-    rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
-    # get season stuff
-    nseasons <- as.numeric(rawdefs[1,2])
-    seasdurations <- as.numeric(rawdefs[3,1+1:nseasons])
-    seasfracs <- round(12*cumsum(seasdurations))/12
-    seasfracs <- seasfracs - seasdurations/2 # should be mid-point of each season as a fraction of the year
     # get fleet info
     defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
     defs[defs==""] <- NA
@@ -383,6 +395,7 @@ SS_output <-
     nfleets <- length(FleetNames)
     nfishfleets <- sum(FishFleet)
   }
+
   # more dimensions
   nsexes <- length(unique(as.numeric(selex$gender)))
   nareas <- max(as.numeric(rawrep[begin:end,1]))
@@ -413,13 +426,17 @@ SS_output <-
     }else{
       # read composition database
       if(SS_versionshort=="SS-V3.11") col.names=1:21 else col.names=1:22
-      if(SS_versionshort=="SS-V3.24") col.names=1:23
+      #if(SS_versionshort=="SS-V3.24") col.names=1:23
+      if(SS_versionNumeric >= 3.24) col.names=1:23
       rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
       names(rawcompdbase) <- rawcompdbase[1,]
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
-
+      # split Pick_gender=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
+      compdbase$sex <- compdbase$Pick_gender
+      compdbase$sex[compdbase$Pick_gender==3] <- compdbase$Gender[compdbase$Pick_gender==3]
+      
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
         cat('Correcting for bug in tag data output associated with SSv3.24f\n')
@@ -579,7 +596,11 @@ SS_output <-
   }
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=TRUE)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
-  ngpatterns <- max(morph_indexing$Gpattern)
+  if(SS_versionNumeric < 3.3){
+    ngpatterns <- max(morph_indexing$Gpattern)
+  }else{
+    ngpatterns <- max(morph_indexing$GP)
+  }
 
   # forecast
   if(forecast){
@@ -944,7 +965,7 @@ if(FALSE){
   # data return object
   returndat <- list()
 
-  if(SS_versionshort!="SS-V3.11"){ # these things didn't exist in 3.11
+  if(SS_versionNumeric <= 3.24){
     returndat$definitions  <- defs
     returndat$fleet_ID     <- fleet_ID
     returndat$fleet_area   <- fleet_area
@@ -953,10 +974,24 @@ if(FALSE){
     returndat$survey_units <- survey_units
     returndat$survey_error <- survey_error
     returndat$IsFishFleet  <- !is.na(catch_units)
+    returndat$nfishfleets  <- nfishfleets
+  }
+  if(SS_versionNumeric >= 3.3){
+    returndat$definitions  <- defs
+    returndat$fleet_ID     <- fleet_ID
+    returndat$fleet_type   <- fleet_area
+    returndat$fleet_timing <- fleet_area
+    returndat$fleet_area   <- fleet_area
+    returndat$catch_units  <- catch_units
+    returndat$catch_se     <- catch_se
+    returndat$equ_catch_se <- equ_catch_se
+    returndat$survey_units <- survey_units
+    returndat$survey_error <- survey_error
+    #returndat$IsFishFleet  <- !is.na(catch_units)
+    returndat$nfishfleets  <- nfishfleets
   }
 
   returndat$nfleets     <- nfleets
-  returndat$nfishfleets <- nfishfleets
   returndat$nsexes      <- nsexes
   returndat$ngpatterns  <- ngpatterns
   returndat$lbins       <- lbins
@@ -1103,6 +1138,9 @@ if(FALSE){
   }else{
     rd <- recruitment_dist
   }
+  # this work around needed for 12/2/2013 version of 3.3
+  # which has simpler recruitment_dist than 3.24S
+  if(is.null(rd$Used)) rd$Used <- 1
   if(rd$Used[spawnseas]==0)
     temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
                            morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
@@ -1451,7 +1489,9 @@ if(FALSE){
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
   if(length(rawALK)>1){
     ALK = array(NA,c(nlbinspop,accuage+1,nmorphs))
-    starts <- grep("Morph:",rawALK[,3])+2
+    morph_col <- 5
+    if(SS_versionNumeric < 3.3) morph_col <- 3
+    starts <- grep("Morph:",rawALK[,morph_col])+2
     ends <- grep("mean",rawALK[,1])-1
     for(i in 1:nmorphs){
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
