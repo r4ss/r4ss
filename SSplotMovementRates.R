@@ -54,26 +54,26 @@ SSplotMovementRates <-
         if(ylim[1]=="default") ylim=c(0,1.1*max(move))
         main <- paste("Movement rates\n(fraction moving per year in season ",moveseas[iseas],")",sep="")
         # bundle plot as function below
-        tempfun <- function(){
+        move.endyr.fn <- function(){
           matplot(0:accuage,t(move3),
-                  type='l',lwd=3,lty=1,col=colvec,
+                  type='l',lwd=3,col=colvec,
                   ylab="Movement rate",xlab="Age (years)",
                   main=main,
                   cex.main=cex.main)
           abline(h=0,col='grey')
           if(legend){
             legend(legendloc,lwd=3,bty="n",
-                   col=colvec,
+                   col=colvec,lty=1:nrow(move2),
                    legend=paste("area",move2$Source_area,"to area",move2$Dest_area)
                    )
           }
         }
-        if(plot) tempfun()
+        if(plot) move.endyr.fn()
         if(print){
           file <- paste(plotdir,"/move1_movement_rates.png",sep="")
           caption <- main
           plotinfo <- pngfun(file=file, caption=caption)
-          tempfun()
+          move.endyr.fn()
           dev.off()
         }
       }
@@ -181,17 +181,17 @@ SSplotMovementRates <-
         movetable <- moveByYr[dimnames(moveByYr)$area==Dest_area, ,imove,]
         movetable <- moveByYr[1, ,imove,]
         main <- paste("Time-varying movement from area",Source_area,"to area",Dest_area)
-        tempfun <- function(){
+        move.mountains.fn <- function(){
           mountains(zmat=t(movetable),xvec=0:accuage,yvec=yrvec,xlab='Age',ylab='Year')
           title(main=main,cex.main=cex.main)
         }
         
-        if(plot) tempfun()
+        if(plot) move.mountains.fn()
         if(print){
           file <- paste(plotdir,"/move2_time-varying_movement_rates.png",sep="")
           caption <- main
           plotinfo <- pngfun(file=file, caption=caption)
-          tempfun()
+          move.mountains.fn()
           dev.off()
         }
       }
