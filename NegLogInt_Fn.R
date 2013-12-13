@@ -1,7 +1,6 @@
 ##' Work some of Jim Thorson's Laplace magic
 ##'
 ##' Jim will need to fill in stuff here.
-##' @title 
 ##' @param File 
 ##' @param Input_SD_Group_Vec 
 ##' @param CTL_linenum_List 
@@ -14,7 +13,6 @@
 ##' @param ReDoBiasRamp 
 ##' @param BiasRamp_linenum_Vec 
 ##' @param CTL_linenum_Type 
-##' @return 
 ##' @author James Thorson
 NegLogInt_Fn <-
   function(File=NA, Input_SD_Group_Vec,
