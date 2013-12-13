@@ -1,3 +1,32 @@
+#' make table comparing quantities across models
+#' 
+#' Creates a table comparing key quantities from multiple models, which is a
+#' reduction of the full information in various parts of the list created using
+#' the \code{SSsummarize} function.
+#' 
+#' 
+#' @param summaryoutput list created by \code{SSsummarize}
+#' @param models optional subset of the models described in
+#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' columns in summary tables.
+#' @param likenames Labels for likelihood values to include, should match
+#' substring of labels in \code{summaryoutput$likelihoods}.
+#' @param names Labels for parameters or derived quantities to include, should
+#' match substring of labels in \code{summaryoutput$pars} or
+#' \code{summaryoutput$quants}.
+#' @param digits Optional vector of the number of decimal digits to use in
+#' reporting each quantity.
+#' @param modelnames optional vector of labels to use as column names. Default
+#' is 'model1','model2',etc.
+#' @param csv write resulting table to CSV file?
+#' @param csvdir directory for optional CSV file
+#' @param csvfile filename for CSV file
+#' @param verbose report progress to R GUI?
+#' @param mcmc summarize MCMC output in table?
+#' @author Ian Taylor
+#' @seealso \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
+#' \code{\link{SS_output}}
+#' @keywords data
 SStableComparisons <-  function(summaryoutput,
                                 models="all",
                                 likenames=c("TOTAL",

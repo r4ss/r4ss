@@ -1,3 +1,18 @@
+#' read forecast file
+#' 
+#' read Stock Synthesis forecast file into list object in R
+#' 
+#' 
+#' @param file Filename either with full path or relative to working directory.
+#' @param Nfleets Number of fleets.
+#' @param Nareas Number of areas.
+#' @param verbose Should there be verbose output while running the file?
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
+#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+#' \code{\link{SS_writectl}}
+#' @keywords data
 SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(verbose) cat("running SS_readsforecast\n")

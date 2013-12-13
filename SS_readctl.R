@@ -1,3 +1,21 @@
+#' read control file
+#' 
+#' read Stock Synthesis control file into list object in R
+#' 
+#' This function is not fully implemented. The logic to figure out all the
+#' details of a Stock Synthesis control file is very complex, so this function
+#' may be completed in a way that is not totally consistent with the other
+#' similar files. Or it may never be completed at all. The functions
+#' \code{\link{SS_changepars}} and \code{\link{SS_parlines}} offer alternatives
+#' for working with SS control files.
+#' 
+#' @param file Filename either with full path or relative to working directory.
+#' @seealso \code{\link{SS_changepars}}, \code{\link{SS_parlines}},
+#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+#' \code{\link{SS_readdat}}, \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+#' \code{\link{SS_writectl}}
+#' @keywords data
 SS_readctl <- function(file){
   cat("Warning!\n",
       "  SS_readctl is not fully implemented. The logic to figure out\n",

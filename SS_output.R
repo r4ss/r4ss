@@ -1,3 +1,64 @@
+#' A function to create a list object for the output from Stock Synthesis
+#' 
+#' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
+#' other files files produced by Stock Synthesis and formats the important
+#' content of these files into a list in the R workspace. A few statistics
+#' unavailable elsewhere are taken from the .par and .cor files. Summary
+#' information and statistics can be returned to the R console or just
+#' contained within the list produced by this function.
+#' 
+#' 
+#' @param dir Locates the directory of the files to be read in, double
+#' backslashes (or forwardslashes) and quotes necessary.
+#' @param model Name of the executable (leaving off the .exe).  Deafult="ss3"
+#' @param repfile Name of the big report file (could be renamed by user).
+#' Default="Report.sso".
+#' @param compfile Name of the composition report file.
+#' Default="CompReport.sso".
+#' @param covarfile Name of the covariance output file.  Default="covar.sso".
+#' @param forefile Name of the forecast file.  Default="Forecast-report.sso".
+#' @param wtfile Name of the file containing weight at age data.
+#' Default="wtatage.ss_new".
+#' @param ncols The maximum number of columns in files being read in.  If this
+#' value is too big the function runs more slowly, too small and errors will
+#' occur.  A warning will be output to the R command line if the value is too
+#' small. It should be bigger than the maximum age + 10 and the number of years
+#' + 10. Default=200.
+#' @param forecast Read the forecast-report file? Default=TRUE.
+#' @param warn Read the Warning.sso file? Default=TRUE.
+#' @param covar Read covar.sso to get variance information and identify bad
+#' correlations? Default=TRUE.
+#' @param readwt Read the weight-at-age file? Default=TRUE.
+#' @param checkcor Check for bad correlations? Default=TRUE.
+#' @param cormax The specified threshold for defining high correlations.  A
+#' quantity with any correlation above this value is identified.  Default=0.95.
+#' @param cormin The specified threshold for defining low correlations.  Only
+#' quantities with all correlations below this value are identified (to find
+#' variables that appear too independent from the model results). Default=0.01.
+#' @param printhighcor The maximum number of high correlations to print to the
+#' R GUI. Default=10.
+#' @param printlowcor The maximum number of low correlations to print to the R
+#' GUI. Default=10.
+#' @param verbose Return updates of function progress to the R GUI?
+#' Default=TRUE.
+#' @param printstats Print summary statistics about the output to the R GUI?
+#' Default=TRUE.
+#' @param hidewarn Hides some warnings output from the R GUI.  Default=FALSE.
+#' @param NoCompOK Allow the function to work without a CompReport file.
+#' Default=FALSE.
+#' @param aalmaxbinrange The largest length bin range allowed for composition
+#' data to be considered as conditional age-at-length data.  Default=4.
+#' @return Many values are returned. Complete list would be quite long, but
+#' should probably be created at some point in the future.
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}
+#' @keywords data manip list
+#' @examples
+#' 
+#'   \dontrun{
+#'     myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
+#'   }
+#' 
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",

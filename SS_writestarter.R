@@ -1,3 +1,21 @@
+#' write starter file
+#' 
+#' write Stock Synthesis starter file from list object in R which was probably
+#' created using \code{\link{SS_readstarter}}
+#' 
+#' 
+#' @param mylist List object created by \code{\link{SS_readstarter}}.
+#' @param dir Directory for new starter file. Default=NULL (working directory).
+#' @param file Filename for new starter file. Default="starter.ss".
+#' @param overwrite Should existing files be overwritten? Default=F.
+#' @param verbose Should there be verbose output while running the file?
+#' Default=T.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+#' \code{\link{SS_writectl}}
+#' @keywords data manip
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
                             overwrite=F, verbose=T, warn=T){
   if(verbose) cat("running SS_writestarter\n")

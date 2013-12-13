@@ -1,3 +1,19 @@
+#' write data file
+#' 
+#' write Stock Synthesis data file from list object in R which was probably
+#' created using \code{\link{SS_readdat}}
+#' 
+#' 
+#' @param datlist List object created by \code{\link{SS_readdat}}.
+#' @param outfile Filename for where to write new data file.
+#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @param verbose Should there be verbose output while running the file?
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
+#' \code{\link{SS_readforecast}}, \code{\link{SS_readctl}},
+#' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
+#' \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
+#' @keywords data manip
 SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   # function to write Stock Synthesis data files
 

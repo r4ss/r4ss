@@ -1,3 +1,41 @@
+#' Timeline of presence/absence of data by type, year, and fleet.
+#' 
+#' Plot shows graphical display of what data is being used in the model.  Some
+#' data types may not yet be included. Note, this is based on output from the
+#' model, not the input data file.
+#' 
+#' 
+#' @param replist list created by \code{\link{SS_output}}
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param fleetcol Either the string "default", or a vector of colors to use
+#' for each fleet.
+#' @param datatypes Either the string "all", or a vector including some subset
+#' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
+#' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
+#' "wadbase", "mnwgt", "discard", "tagdbase1", "tagdbase2".
+#' @param fleets Either the string "all", or a vector of numerical values, like
+#' c(1,3), listing fleets or surveys to be included in the plot.
+#' @param fleetnames A vector of alternative names to use in the plot. By
+#' default the parameter names in the data file are used.
+#' @param ghost TRUE/FALSE indicator for whether to show presence of
+#' composition data from ghost fleets (data for which the fit is shown, but is
+#' not included in the likelihood calculations).
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param margins margins of plot (passed to par() function), which may need to
+#' be increased if fleet names run off right-hand margin
+#' @param verbose report progress to R GUI?
+#' @author Ian Taylor, Chantel Wetzel
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
+#' \code{\link{SS_readdat}}
+#' @keywords hplot
 SSplotData <- function(replist,
                        plot=TRUE,print=FALSE,
                        plotdir="default",

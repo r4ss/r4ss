@@ -1,3 +1,35 @@
+#' Summarize nuisance MCMC output
+#' 
+#' Summarize nuisance MCMC output (used in combination with
+#' \code{\link{mcmc.out}} for key parameters).
+#' 
+#' 
+#' @param directory Directory where all results are located, one level above
+#' directory for particular run.
+#' @param run Directory with files from a particular run.
+#' @param file File containing posterior samples for nuisance parameters. This
+#' could be posteriors.sso or something written by the function
+#' \code{\link{SSgetMCMC}}.
+#' @param file2 Optional second file containing posterior samples for nuisance
+#' parameters. This could be derived_posteriors.sso.
+#' @param bothfiles TRUE/FALSE indicator on whether to read \code{file2} in
+#' addition to \code{file1}.
+#' @param printstats Return all the statistics for a closer look.
+#' @param burn Optional burn-in value to apply on top of the option in the
+#' starter file and \code{\link{SSgetMCMC}}.
+#' @param header Data file with header?
+#' @param thin Optional thinning value to apply on top of the option in the
+#' starter file, in the \code{mcsave} runtime command, and in
+#' \code{\link{SSgetMCMC}}.
+#' @param trace Plot trace for param # (to help sort out problem parameters).
+#' @param labelstrings Vector of strings that partially match the labels of the
+#' parameters you want to consider.
+#' @param columnnumbers Vector of column numbers indicating the columns you
+#' want to consider.
+#' @param sep Separator for data file passed to the \code{read.table} function.
+#' @author Ian Stewart
+#' @seealso \code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
+#' @keywords data
 mcmc.nuisance <- function (
           directory="c:/mydirectory/",    # directory to use
           run="mymodel/",		    # folder with ADMB run files

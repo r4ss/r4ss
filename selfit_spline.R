@@ -1,3 +1,28 @@
+#' visualize parameterization of cubic spline selectivity in SS
+#' 
+#' A GUI interface for exploring spline selectivity.
+#' 
+#' 
+#' @param n Number of knots.
+#' @param minBin Minimum length or age to show.
+#' @param maxBin Maximum length or age to show.
+#' @param knots Vector giving location of each knot.
+#' @param slopevec Optional initial values parameters controlling slope at
+#' first and last knot.
+#' @param params Optional initial values for the parameters controlling
+#' selectivity at each knot.
+#' @param dir Directory in which the spline_selex executable is located
+#' (default = working directory).
+#' @param silent TRUE/FALSE switch to return fit at the end.
+#' @author Ian Taylor
+#' @seealso \code{\link{selfit}}
+#' @keywords dplot hplot dynamic
+#' @examples
+#' 
+#' \dontrun{
+#' selfit_spline()
+#' }
+#' 
 selfit_spline <- function (n=4, minBin=10, maxBin=65,
                            knots=NULL, slopevec=c(0.01,-0.01), params=NULL,
                            dir=getwd(),

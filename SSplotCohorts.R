@@ -1,3 +1,44 @@
+#' Plot cumulative catch by cohort.
+#' 
+#' Cumulative catch contributions for each cohort are plotted based on
+#' estimated catch-at-age matrix and weight-at-age values by fleet.  Curves are
+#' shown in units of both numbers and biomass.
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param subplots Vector controlling which subplots to create
+#' @param add Add to existing plot? (not yet implemented)
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param cohortcols Vector of colors to show for each cohort. Default is range
+#' of colors shade indicating time period.
+#' @param cohortfrac What fraction of the cohorts to include in plot. If value
+#' < 1 is used, then cohorts are filtered to only include those with the
+#' highest maximum cumulative catch. Value will be overridden by
+#' \code{cohortvec}.
+#' @param cohortvec Optional vector of birth years for cohorts to include in
+#' plot. Value overrides \code{cohortfrac}.
+#' @param cohortlabfrac What fraction of the cohorts to label in plot. By
+#' default, top 10\% of cohorts are labeled. Value will be overridden by
+#' \code{cohortlabvec}.
+#' @param cohortlabvec Optional vector of birth years for cohorts to label in
+#' plot. Value overrides \code{cohortlabfrac}.
+#' @param lwd Line width
+#' @param plotdir Directory where PNG or PDF files will be written. By default
+#' it will be the directory where the model was run.
+#' @param xlab x-label for all plots
+#' @param labels Vector of labels for plots (titles and axis labels)
+#' @param pwidth Width of plot written to PNG file
+#' @param pheight Height of plot written to PNG file
+#' @param punits Units for PNG file
+#' @param res Resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main Character expansion for plot titles (no titles in this
+#' function yet)
+#' @param verbose Report progress to R console?
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords aplot hplot
 SSplotCohorts <-
   function(replist,subplots=1:2,add=FALSE,
            plot=TRUE,print=FALSE,

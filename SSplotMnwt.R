@@ -1,3 +1,34 @@
+#' Plot mean weight data and fits.
+#' 
+#' Plot mean weight data and fits from Stock Synthesis output. Intervals are
+#' based on T-distributions as specified in model.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
+#' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
+#' choice of \code{subplots}.
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param fleets optional vector to subset fleets for which plots will be made
+#' @param fleetnames optional replacement for fleenames used in data file
+#' @param datplot Make data-only plot of discards? This can override the choice
+#' of \code{subplots}.
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param col1 first color to use in plot (for expected values)
+#' @param col2 second color to use in plot (for observations and intervals)
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param verbose report progress to R GUI?
+#' @author Ian Taylor, Ian Stewart
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotMnwt <-
   function(replist, subplots=1:2, ymax=NULL,
            plot=TRUE, print=FALSE,

@@ -1,3 +1,33 @@
+#' Plot yield and surplus production.
+#' 
+#' Plot yield and surplus production from Stock Synthesis output. Surplus
+#' production is based on Walters et al. (2008).
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplots vector controlling which subplots to create
+#' @param add add to existing plot? (not yet implemented)
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param col line color (only applied to equilbrium yield plot at this time)
+#' @param lty line type (only applied to equilbrium yield plot at this time)
+#' @param lwd line width (only applied to equilbrium yield plot at this time)
+#' @param cex.main character expansion for plot titles
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @references Walters, Hilborn, and Christensen, 2008, Surplus production
+#' dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
+#' Sci. 65: 2536-2551
+#' @keywords hplot
 SSplotYield <-
   function(replist,
            subplots=1:2,

@@ -1,3 +1,31 @@
+#' Split apart bootstrap data to make input file.
+#' 
+#' A function to split apart bootstrap data files created in data.ss_new.  To
+#' get bootstraps, the input "N bootstrap file to produce" in starter.ss needs
+#' to be 3 or greater.
+#' 
+#' 
+#' @param inpath Directory containing the input file. By default the working
+#' directory given by getwd() is used. Default="working_directory".
+#' @param outpath Directory into which the output file will be written.
+#' Default="working_directory".
+#' @param inname File name of input data file to be split.
+#' Default="Data.SS_New".
+#' @param outpattern File name of output data file. Default="BootData".
+#' @param number Append bootstrap number to the file name chosen in
+#' \code{outpattern}? Default=F.
+#' @param verbose Provide richer command line info of function progress?
+#' Default=TRUE.
+#' @param fillblank Replace blank lines with "#". Helps with running on linux.
+#' Default=TRUE.
+#' @param MLE Grab the maximum likelihood values from the second block in
+#' Data.SS_New (instead of bootstrap values or copies of inputs)? Default=TRUE.
+#' @param inputs Grab the copy of the input values values from the first block
+#' in Data.SS_New (instead of MLE or bootstrap values)? Default=F.
+#' @param notes Notes to the top of the new file (comment indicator "#C" will
+#' be added). Default="".
+#' @author Ian Taylor
+#' @keywords data manip
 SS_splitdat <-
   function(inpath     = 'working_directory',
            outpath    = 'working_directory',

@@ -1,3 +1,26 @@
+#' a function for drawing selecitivity curves
+#' 
+#' This function is primarily inteded for use by the selfit function.
+#' 
+#' 
+#' @param x vector of x values (age or length)
+#' @param model selectivity model "Double_Normal" or "Double_Logistic"
+#' @param sp vector of parameters
+#' @param min.dist minimum value for selectivity
+#' @param max.dist maximum value for selectivity
+#' @author Tommy Garrison
+#' @seealso \code{\link{selfit}}
+#' @keywords dplot
+#' @examples
+#' 
+#' \dontrun{
+#' plot(0, xlim = c(0, 50), ylim = c(0, 1),
+#' xlab = 'Length', ylab = 'Selectivity', type = 'n',
+#' xaxs = 'i', yaxs = 'i') 
+#' sel.line(model = 'Double_Normal', min.dist = 10, max.dist = 50,
+#' sp = c(25, -0.5, 3, 3, -5, 0))
+#' }
+#' 
 sel.line <-
     function(x, model, sp, min.dist, max.dist)
 {

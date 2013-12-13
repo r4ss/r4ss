@@ -1,3 +1,23 @@
+#' read data file
+#' 
+#' read Stock Synthesis data file into list object in R
+#' 
+#' 
+#' @param file Filename either with full path or relative to working directory.
+#' @param verbose Should there be verbose output while running the file?
+#' Default=TRUE.
+#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
+#' data as it is being read.
+#' @param section Which data set to read. Only applies for a data.ss_new file
+#' created by Stock Synthesis. Allows the choice of either expected values
+#' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
+#' will read input data, (equivalent to section=1).
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+#' \code{\link{SS_writectl}}
+#' @keywords data
 SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 

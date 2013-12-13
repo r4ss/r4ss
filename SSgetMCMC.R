@@ -1,3 +1,34 @@
+#' Read MCMC output.
+#' 
+#' Reads the MCMC output (in the posteriors.sso and derived_posteriors.sso
+#' files) from one or more models.
+#' 
+#' 
+#' @param dir A string (or vector of strings) of the directory (or directories)
+#' with MCMC output.
+#' @param verbose TRUE/FALSE switch to get more or less information about the
+#' progress of the function.
+#' @param writecsv Write key parameters and certainty nuisance quantities to a
+#' CSV file.
+#' @param csv1 First CSV file for key parameters.
+#' @param csv2 Second CSV file for nuisance quantities.
+#' @param keystrings Vector of strings that partially match parameter names to
+#' write to the file csv1. This file intended to feed into
+#' \code{\link{mcmc.out}}.
+#' @param nuisancestrings Vector of strings that partially match derived
+#' quantity names to write to the file csv2. This file intended to feed into
+#' \code{\link{mcmc.nuisance}}.
+#' @param modelnames Either "default" or a vector of names to use in naming
+#' elements of list that is output by the function. Default is "model1",
+#' "model2", etc.
+#' @param burnin Optional burn-in value to apply on top of the option in the
+#' starter file.
+#' @param thin Optional thinning value to apply on top of the option in the
+#' starter file and in the \code{-mcsave} runtime command.
+#' @author Ian Taylor
+#' @seealso \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
+#' \code{\link{SSplotPars}}
+#' @keywords data
 SSgetMCMC <-
 function(dir=NULL,verbose=TRUE, writecsv=FALSE,
          csv1="keyposteriors.csv",

@@ -1,3 +1,23 @@
+#' Make a map of movement for a 5-area Indian Ocean model
+#' 
+#' Run the \code{\link{SSplotMovementMap}} function with defaults related to a
+#' 5-area model for tunas in the Indian Ocean as discussed at the Indian Ocean
+#' Tuna Commission Working Party on Tropical Tunas in October, 2010. Obviously
+#' this is not useful for the majority of r4ss users, but it could serve as an
+#' example of how a wrapper function might be written for any other model.
+#' 
+#' 
+#' @param replist optional list created by \code{SS_output}
+#' @param moveage age for which movemement rates will be represented
+#' @param moveseas season for which movement rates will be represented
+#' @param legend add a legend to show the movement rate associated with the
+#' widest arrows
+#' @param title optional title to add at top of figure
+#' @param areanames vector of names for each area
+#' @param ...  Additional arguments can get passed to
+#' \code{\link{SSplotMovementMap}}
+#' @author Ian Taylor
+#' @keywords hplot
 IOTCmove <-
   function(replist=NULL,moveage=5,
            moveseas=1,legend=FALSE,title=NULL,

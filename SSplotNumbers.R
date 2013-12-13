@@ -1,3 +1,38 @@
+#' Plot numbers-at-age related data and fits.
+#' 
+#' Plot numbers-at-age related data and fits from Stock Synthesis output.
+#' Plots include bubble plots, mean age, equilibrium age composition,
+#' sex-ratio, and ageing imprecision patterns.
+#' 
+#' 
+#' @param replist list created by \code{SSoutput}
+#' @param subplots vector controlling which subplots to create
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param areas optional subset of areas to plot for spatial models
+#' @param areanames names for areas. Default is to use Area1, Area2,...
+#' @param areacols vector of colors by area
+#' @param pntscalar maximum bubble size for bubble plots; each plot scaled
+#' independently based on this maximum size and the values plotted. Often some
+#' plots look better with one value and others with a larger or smaller value.
+#' Default=2.6
+#' @param period indicator of whether to make plots using numbers at age just
+#' from the beginning ("B") or middle of the year ("M") (new option starting
+#' with SSv3.11)
+#' @param add add to existing plot? (not yet implemented)
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_output}}, \code{\link{SS_plots}}
+#' @keywords hplot
 SSplotNumbers <-
   function(replist,subplots=1:9,
            plot=TRUE,print=FALSE,

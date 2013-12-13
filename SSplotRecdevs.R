@@ -1,3 +1,34 @@
+#' Plot recruitment deviations
+#' 
+#' Plot recruitment deviations and associated quantities including derived
+#' measures related to bias adjustment.
+#' 
+#' 
+#' @param replist list created by \code{SSoutput}
+#' @param subplots vector controlling which subplots to create
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param add add to existing plot (not yet implemented)
+#' @param uncertainty include plots showing uncertainty?
+#' @param forecastplot include points from forecast years?
+#' @param col1 first color used
+#' @param col2 second color used
+#' @param col3 third color used
+#' @param col4 fourth color used
+#' @param legendloc location of legend. see ?legend for more info
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @author Ian Taylor, Ian Stewart
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
+#' @keywords hplot dplot
 SSplotRecdevs <-
   function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
            uncertainty=TRUE,forecastplot=FALSE,

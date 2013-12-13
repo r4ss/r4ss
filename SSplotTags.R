@@ -1,3 +1,45 @@
+#' Plot tagging data and fits
+#' 
+#' Plot observed and expected tag recaptures in aggregate and by tag group.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplots vector controlling which subplots to create
+#' @param latency period of tag mixing to exclude from plots (in future could
+#' be included in SS output)
+#' @param rows number or rows of panels for regular plots
+#' @param cols number or columns of panels for regular plots
+#' @param tagrows number or rows of panels for multi-panel plots
+#' @param tagcols number or columns of panels for multi-panel plots
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param pntscalar maximum bubble size for balloon plots; each plot scaled
+#' independently based on this maximum size and the values plotted. Often some
+#' plots look better with one value and others with a larger or smaller value.
+#' Default=2.6
+#' @param minnbubble minimum number of years below which blank years will be
+#' added to bubble plots to avoid cropping
+#' @param pwidth default width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param pheight default height width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param punits units for \code{pwidth} and \code{pheight}. Can be "px"
+#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @param ptsize point size for plotted text in plots printed to files (see
+#' help("png") in R for details). Default=12.
+#' @param res resolution of plots printed to files. Default=300
+#' @param cex.main character expansion parameter for plot titles
+#' @param col1 color for bubbles
+#' @param col2 color for lines with expected values
+#' @param col3 shading color for observations within latency period
+#' @param col4 shading color for observations after latency period
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose return updates of function progress to the R GUI?
+#' @author Andre Punt, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotTags <-
   function(replist=replist, subplots=1:8, latency=0,
            rows=1, cols=1,

@@ -1,3 +1,151 @@
+#' plot many quantities related to output from Stock Synthesis
+#' 
+#' Creates a user-chosen set of plots, including biological quantities, time
+#' series, and fits to data.  Plots are sent to R GUI, single PDF file, or
+#' multiple PNG files. This is now just a wrapper which calls on separate
+#' functions to make all the plots.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param plot Plot sets to be created, see list of plots below.  Use to
+#' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
+#' not available in the model run will automatically be skipped, whether called
+#' or not. Default=1:24.
+#' @param print Plot set to be printed to files?  PNG files are created in the
+#' specified directory for one or more requested plots.  Each plot has a unique
+#' name starting with the number of the set it comes from and attempting to be
+#' mildly descriptive.  This argument is independent of "plot" in that plots
+#' can be created on screen, or printed to file or both.  Manual rescaling
+#' cannot be done after printing, so this option may not be the best choice for
+#' each plot; saving files from the screen allows more control. Default=0.
+#' @param pdf Send plots to PDF file instead of R GUI? Input \code{plot} must
+#' be used and input \code{print} must be 0. Default=0.
+#' @param printfolder Name of subfolder to create within the working directory
+#' into which any PNG files specified by \code{print} will be saved. By default
+#' the working directory is used with no subfolder.  Default="".
+#' @param dir The directory in which any PNG files requested by \code{print}
+#' are created. By default it will be the same directory that the report file
+#' was read from by the \code{SS_output} function. Default="default".
+#' @param fleets Either the string "all", or a vector of numerical values, like
+#' c(1,3), listing fleets or surveys for which plots should be made. By
+#' default, plots will be made for all fleets and surveys.  Default="all".
+#' @param areas Either the string "all", or a vector of numerical values, like
+#' c(1,3), listing areas for which plots should be made in a multi-area model.
+#' By default, plots will be made for all areas (excepting cases where the
+#' function has not yet been updated for multi-area models). Default="all".
+#' @param fleetnames Either the string "default", or a vector of characters
+#' strings to use for each fleet name. Default="default".
+#' @param fleetcols Either the string "default", or a vector of colors to use
+#' for each fleet.  Default="default".
+#' @param fleetlty Vector of line types used for each fleet in some plots.
+#' Default=1.
+#' @param fleetpch Vector of point types used for each fleet in some plots.
+#' Default=1.
+#' @param lwd Line width for some plots. Default=1.
+#' @param areacols Either the string "default", or a vector of colors to use
+#' for each area. Default="default".
+#' @param areanames Optional vector of names for each area used in titles.
+#' Default="default".
+#' @param verbose Return updates of function progress to the R GUI?  Default=T.
+#' @param uncertainty Include values in plots showing estimates of uncertainty
+#' (requires positive definite hessian in model and \code{covar}=T in
+#' \code{SS_output})?  Default=T.
+#' @param forecastplot Include forecast years in the plots? Obviously requires
+#' forecast options to have been used in the model.  Default=T.
+#' @param datplot Plot the data by itself? This is useful in document
+#' preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
+#' Default=F.
+#' @param Natageplot Plot the expected numbers at age bubble plots and mean-age
+#' time series?  Default=T.
+#' @param samplesizeplots Show sample size plots?  Default=T.
+#' @param compresidplots Show residuals for composition plots?
+#' @param sprtarg Specify the F/SPR proxy target. Default=0.4.
+#' @param btarg Target depletion to be used in plots showing depletion. May be
+#' omitted by setting to NA.  Default=0.4.
+#' @param minbthresh Threshold depletion to be used in plots showing depletion.
+#' May be omitted by setting to NA. Default=0.25.
+#' @param pntscalar This scalar defines the maximum bubble size for balloon
+#' plots; each plot scaled independently based on this maximum size and the
+#' values plotted. Often some plots look better with one value and others with
+#' a larger or smaller value. Default=2.6
+#' @param minnbubble This defines the minimum number of years below which blank
+#' years will be added to bubble plots to avoid cropping.  Default=8.
+#' @param aalyear Years to plot multi-panel conditional age-at-length fits for
+#' all length bins; must be in a "c(YYYY,YYYY)" format. Useful for checking the
+#' fit of a dominant year class, critical time period, etc. Default=-1.
+#' @param aalbin The length bin for which multi-panel plots of the fit to
+#' conditional age-at-length data will be produced for all years.  Useful to
+#' see if growth curves are ok, or to see the information on year classes move
+#' through the conditional data. Default=-1.
+#' @param aalresids Plot the full set of conditional age-at-length Pearson
+#' residuals? Default=F.
+#' @param maxneff The maximum value to include on plots of input and effective
+#' sample size. Occasionally a calculation of effective N blows up to very
+#' large numbers, rendering it impossible to observe the relationship for other
+#' data. Default=5000.
+#' @param cohortlines Optional vector of birth years for cohorts for which to
+#' add growth curves to numbers at length bubble plots.  Default=c().
+#' @param smooth Add loess smoother to observed vs. expected index plots and
+#' input vs. effective sample size? Default=T.
+#' @param showsampsize Display sample sizes on composition plots?  Default=T.
+#' @param showeffN Display effective sample sizes on composition plots?
+#' Default=T.
+#' @param showlegend Display legends in various plots? Default=T.
+#' @param pwidth Default width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param pheight Default height width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
+#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @param ptsize Point size for plotted text in plots printed to files (see
+#' help("png") in R for details). Default=12.
+#' @param res Resolution of plots printed to files. Default=300.
+#' @param cex.main Character expansion parameter for plot titles (not yet
+#' implemented for all plots). Default=1.
+#' @param selexlines Vector controling which lines should be shown on
+#' selectivity plots if the model includes retention. Default=1:5.
+#' @param rows Number of rows to use for single panel plots. Default=1.
+#' @param cols Number of columns to use for single panel plots. Default=1.
+#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=6.
+#' @param maxcols Maximum number of columns for multi-panel plots.  Default=6.
+#' @param maxrows2 Maximum number of rows for conditional age at length
+#' multi-panel plots. Default=2.
+#' @param maxcols2 Maximum number of rows for conditional age at length
+#' multi-panel plots. Default=4.
+#' @param tagrows Number of rows for tagging-related plots. Default=3.
+#' @param tagcols Number of columns for tagging-related plots.  Default=3.
+#' @param fixdims Control whether multi-panel plots all have dimensions equal
+#' to maxrows by maxcols, or resized within those limits to fit number of
+#' plots. Default=T.
+#' @param new Open a new window or add to existing plot windows.  Default=T.
+#' @param SSplotDatMargin Size of right-hand margin in data plot (may be too
+#' small if fleet names are long)
+#' @param catchasnumbers Is catch input in numbers instead of biomass?
+#' Default=F.
+#' @param catchbars show catch by fleet as barplot instead of stacked polygons
+#' (default=TRUE)
+#' @param legendloc Location for all legends. Default="topleft".
+#' @param minyr First year to show in time-series plots (changes xlim
+#' parameters).
+#' @param maxyr Last year to show in time-series plots (changes xlim
+#' parameters).
+#' @param scalebins Rescale expected and observed proportions in composition
+#' plots by dividing by bin width for models where bins have different widths?
+#' Caution!: May not work correctly in all cases.
+#' @param \dots Additional arguments that will be passed to some subfunctions.
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_output}}, \code{\link{SSplotBiology}},
+#' \code{\link{SSplotCatch}}, \code{\link{SSplotComps}},
+#' \code{\link{SSplotDiscard}}, \code{\link{SSplotIndices}},
+#' \code{\link{SSplotMnwt}}, \code{\link{SSplotNumbers}},
+#' \code{\link{SSplotRecdevs}}, \code{\link{SSplotSelex}},
+#' \code{\link{SSplotSpawnrecruit}}, \code{\link{SSplotSPR}},
+#' \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
+#' \code{\link{SSplotYield}}
+#' @references Walters, Hilborn, and Christensen, 2008, Surplus production
+#' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
+#' Sci. 65: 2536-2551.
+#' @keywords hplot
 SS_plots_old <-
   function(
     replist=NULL, plot=1:27, print=0, pdf=FALSE, printfolder="plots", dir="default", fleets="all", areas="all",

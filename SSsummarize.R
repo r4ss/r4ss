@@ -1,3 +1,32 @@
+#' Summarize the output from multiple Stock Synthesis models.
+#' 
+#' Summarize various quantities from the model output collected by
+#' \code{\link{SSgetoutput}} and return them in a list of tables and vectors.
+#' 
+#' 
+#' @param biglist A list of lists created by \code{\link{SSgetoutput}}.
+#' @param keyvec Optional list of strings matching names of elements of biglist
+#' to subset. Default=NULL.
+#' @param numvec Optional list of numbers of elements from biglist to subset.
+#' Default=NULL.
+#' @param sizeselfactor A string or vector of strings indicating which elements
+#' of the selectivity at length output to summarize. Default=c("Lsel").
+#' @param ageselfactor A string or vector of strings indicating which elements
+#' of the selectivity at age output to summarize. Default=c("Asel").
+#' @param selfleet Vector of fleets for which selectivity will be summarized.
+#' NULL=all fleets. Default=NULL.
+#' @param selyr String or vector of years for which selectivity will be
+#' summarized.  NOTE: NOT CURRENTLY WORKING.  Options: NULL=all years,
+#' "startyr" = first year.
+#' @param selgender Vector of genders (1 and/or 2) for which selectivity will
+#' be summarized. NULL=all genders. Default=NULL.
+#' @param lowerCI Quantile for lower bound on calculated intervals. Default =
+#' 0.025 for 95\% intervals.
+#' @param upperCI Quantile for upper bound on calculated intervals. Default =
+#' 0.975 for 95\% intervals.
+#' @author Ian Taylor
+#' @seealso \code{\link{SSgetoutput}}
+#' @keywords data manip list
 SSsummarize <- function(biglist,
                         keyvec=NULL,
                         numvec=NULL,

@@ -1,3 +1,18 @@
+#' A function for converting Stock Synthesis output to the format used by
+#' FishGraph
+#' 
+#' Only skeleton of a function right now, needs work. Intended as a translator
+#' to convert the output from object created by \code{\link{SS_output}} to the
+#' format used by FishGraph.
+#' 
+#' 
+#' @param replist Object created by SS_output
+#' @param title Title of output
+#' @param species Species name
+#' @author Ian Taylor
+#' @references A website related to FishGraph is
+#' \url{http://r-forge.r-project.org/projects/fishgraph/}
+#' @keywords data manip
 SSFishGraph <-
   function(replist,
            title="SSv3 output",

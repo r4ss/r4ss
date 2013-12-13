@@ -1,3 +1,75 @@
+#' Plot likelihood profile results
+#' 
+#' Makes a plot of change in negative-log-likelihood for each likelihood
+#' component that contributes more than some minimum fraction of change in
+#' total.
+#' 
+#' 
+#' @param summaryoutput List created by the function \code{\link{SSsummarize}}.
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param models Optional subset of the models described in
+#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' columns in summary tables.
+#' @param profile.string Character string used to find parameter over which the
+#' profile was conducted. Needs to match substring of one of the SS parameter
+#' labels found in the Report.sso file. For instance, the default input 'steep'
+#' matches the parameter 'SR_BH_steep'.
+#' @param profile.label Label for x-axis describing the parameter over which
+#' the profile was conducted.
+#' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
+#' @param components Vector of likelihood components that may be included in
+#' plot. List is further refined by any components that are not present in
+#' model or have little change over range of profile (based on limit
+#' \code{minfraction}). Hopefully this doesn't need to be changed.
+#' @param component.labels Vector of labels for use in the legend that matches
+#' the vector in \code{components}.
+#' @param minfraction Minimum change in likelihood (over range considered) as a
+#' fraction of change in total likelihood for a component to be included in the
+#' figure.
+#' @param sort.by.max.change Switch giving option to sort components in legend
+#' in order of maximum amount of change in likelihood (over range considered).
+#' Default=TRUE.
+#' @param col Optional vector of colors for each line.
+#' @param pch Optional vector of plot characters for the points.
+#' @param lty Line total for the liklihood components.
+#' @param lty.total Line type for the total likelihood.
+#' @param lwd Line width for the liklihood components.
+#' @param lwd.total Line width for the total likelihood.
+#' @param cex Character expansion for the points representing the likelihood
+#' components.
+#' @param cex.total Character expansion for the points representing the total
+#' likelihood.
+#' @param xlim Range for x-axis. Change in likelihood is calculated relative to
+#' values within this range.
+#' @param ymax Maximum y-value. Default is 10\% greater than largest value
+#' plotted.
+#' @param xaxs The style of axis interval calculation to be used for the x-axis
+#' (see ?par for more info)
+#' @param yaxs The style of axis interval calculation to be used for the y-axis
+#' (see ?par for more info).
+#' @param type Line type (see ?plot for more info).
+#' @param legend Include legend?
+#' @param legendloc Location of legend (see ?legend for more info).
+#' @param pwidth Width of plot written to PNG file
+#' @param pheight Height of plot written to PNG file
+#' @param punits Units for PNG file
+#' @param res Resolution for PNG file
+#' @param ptsize Point size for PNG file
+#' @param cex.main Character expansion for plot titles
+#' @param plotdir Directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose Return updates of function progress to the R GUI? (Doesn't do
+#' anything yet.)
+#' @note Someday the function \code{\link{SS_profile}} will be improved and
+#' made to work directly with this plotting function, but they don't yet work
+#' well together. Thus, even if \code{\link{SS_profile}} is used, the output
+#' should be read using \code{\link{SSgetoutput}} or by multiple calls to
+#' \code{\link{SS_output}}.
+#' @author Ian Taylor, Ian Stewart
+#' @seealso \code{\link{SSsummarize}}, \code{\link{SS_profile}},
+#' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @keywords aplot hplot
 SSplotProfile <-
   function(summaryoutput,
            plot=TRUE,print=FALSE,

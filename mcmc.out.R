@@ -1,3 +1,37 @@
+#' Summarize, analyze and plot key MCMC output.
+#' 
+#' Makes four panel plot showing trace plots, moving average, autocorrelations,
+#' and densities for chosen parameters from MCMC output.
+#' 
+#' 
+#' @param directory Directory where all results are located, one level above
+#' directory for particular run.
+#' @param run Directory with files from a particular run.
+#' @param file File containing posterior samples for key parameters. This could
+#' be written by the function \code{\link{SSgetMCMC}}.
+#' @param namefile The (optional) file name of the dimension and names of
+#' posteriors.
+#' @param names Read in names file (T) or use generic naming (F).
+#' @param headernames Use the names in the header of \code{file}?
+#' @param numparams The number of parameters to analyze.
+#' @param closeall By default close all open devices.
+#' @param burn Optional burn-in value to apply on top of the option in the
+#' starter file and \code{\link{SSgetMCMC}}.
+#' @param thin Optional thinning value to apply on top of the option in the
+#' starter file, in the \code{-mcsave} runtime command, and in
+#' \code{\link{SSgetMCMC}}.
+#' @param scatter Can add a scatter-plot of all params at end, default is none.
+#' @param surface Add a surface plot of 2-way correlations.
+#' @param surf1 The first parameter for the surface plot.
+#' @param surf2 The second parameter for the surface plot.
+#' @param stats Print stats if desired.
+#' @param plots Show plots or not.
+#' @param header Data file with header?
+#' @param sep Separator for data file passed to the \code{read.table} function.
+#' @param print Send to screen unless asked to print.
+#' @author Ian Stewart
+#' @seealso \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
+#' @keywords hplot
 mcmc.out <- function (
           directory="c:/mydirectory/",
           run="mymodel/",			# folder with ADMB run files

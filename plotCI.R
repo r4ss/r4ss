@@ -1,3 +1,24 @@
+#' Plot points with confidence intervals.
+#' 
+#' Given a set of x and y values and upper and lower bounds, this function
+#' plots the points with error bars. This was Written by Venables and modified
+#' to add access to ylim and contents.
+#' 
+#' 
+#' @param x The x coordinates of points in the plot
+#' @param y The y coordinates of the points in the plot.
+#' @param uiw The width of the upper portion of the confidence region.
+#' @param liw The width of the lower portion of the confidence region.
+#' @param ylo Lower limit of y range.
+#' @param yhi Upper limit of y range.
+#' @param \dots Additional inputs that will be passed to the function
+#' \code{plot(x,y,ylim=ylim,...)}
+#' @param sfrac Fraction of width of plot to be used for bar ends.
+#' @param ymax Additional input for Upper limit of y range.
+#' @param add Add points and intervals to existing plot? Default=FALSE.
+#' @param col Color for the points and lines.
+#' @author Bill Venables, Ian Stewart, Ian Taylor, John Wallace
+#' @keywords aplot hplot
 plotCI <-
   function (x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL,
             ..., sfrac = 0.01, ymax = NULL, add = FALSE, col = "black") {

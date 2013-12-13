@@ -1,3 +1,29 @@
+#' function "stackpoly" by Jim Lemon from "plotrix" package
+#' 
+#' Plot one or more columns of numeric values as the top edges of polygons
+#' instead of lines.
+#' 
+#' 
+#' @param x A numeric data frame or matrix with the 'x' values. If 'y' is NULL,
+#' these will become the 'y' values and the 'x' positions will be the integers
+#' from 1 to dim(x)[1].
+#' @param y The 'y' values.
+#' @param main The title for the plot.
+#' @param xlab x axis labels for the plot.
+#' @param ylab y axis labels for the plot.
+#' @param xat Where to put the optional xaxlabs.
+#' @param xaxlab Optional labels for the x positions.
+#' @param xlim Optional x limits.
+#' @param ylim Optional y limits.
+#' @param lty Line type for the polygon borders.
+#' @param border Color for the polygon borders.
+#' @param col Color to fill the polygons. If NULL, 'rainbow' will be called to
+#' generate the colors. If NA, the polygons will not be filled.
+#' @param axis4 option to add an axis on the right hand side
+#' @param \dots Additional arguments passed to 'plot'.
+#' @author Jim Lemon
+#' @references \url{http://cran.r-project.org/web/packages/plotrix/index.html}
+#' @keywords hplot
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                        xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
                        col=NA, axis4=F, ...)

@@ -1,3 +1,43 @@
+#' Plot spawner-recruit curve.
+#' 
+#' Plot spawner-recruit curve based on output from Stock Synthesis model.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplot vector of which subplots to show.  1=plot without labels,
+#' 2=plot with year labels.
+#' @param add add to existing plot?
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param xlim optional control of x range
+#' @param ylim optional control of y range
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
+#' models
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param verbose report progress to R GUI?
+#' @param line1 first line color
+#' @param line2 second line color
+#' @param line3 third line color
+#' @param minyr minimum year of recruitment deviation to show in plot
+#' @param textmindev minimum recruitment deviation for label to be added so
+#' only extreme devs are labeled (labels are added to first and last years as
+#' well).  Default=0.7.
+#' @param ptcol point color
+#' @param virg add point for equilibrium conditions (x=B0,y=R0)
+#' @param init add point for initial conditions (x=B1,y=R1)
+#' @param forecast include forecast years in the curve?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,xlim=NULL,ylim=NULL,
            xlab="Spawning biomass (mt)",

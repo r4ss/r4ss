@@ -1,3 +1,20 @@
+#' Write length.fit file to be used by the MFCL length-comp viewer.
+#' 
+#' Writes files in the format used by the MFCL length-composition viewer.
+#' Inspired by Simon Hoyle's demonstration. Still needs work.
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param outfile Name of file to create.
+#' @param compfile SS output file with composition data info.
+#' @param dir Directory where stuff happens. Defaults to directory where model
+#' was run.
+#' @param overwrite Overwrite existing file?
+#' @param verbose More verbose info on progress of the function?
+#' @author Ian Taylor
+#' @references \url{http://www.multifan-cl.org/},
+#' \url{http://www.spc.int/OceanFish/en/ofpsection/sam/research/272-mfcl-viewer}
+#' @keywords data manip
 SS_write_length.fit <- function(replist=NULL,
                                outfile="length.fit",
                                compfile="CompReport.sso",

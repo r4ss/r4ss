@@ -1,3 +1,22 @@
+#' A function to visual parameterization of double normal and double logistic
+#' selectivity in Stock Synthesis
+#' 
+#' A GUI interface for exploring selectivity.
+#' 
+#' 
+#' @param minLength Minimum size to show
+#' @param maxLength Maximum size to show
+#' @param silent T/F switch to return fit at the end
+#' @param init Optional initial values for the parameters
+#' @author Tommy Garrison
+#' @seealso \code{\link{sel.line}}
+#' @keywords dplot hplot dynamic
+#' @examples
+#' 
+#' \dontrun{
+#' selfit()
+#' }
+#' 
 selfit <-
 function (minLength=10, maxLength=65, silent=FALSE,init=NULL)
 {

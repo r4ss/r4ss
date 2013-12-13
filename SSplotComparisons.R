@@ -1,3 +1,116 @@
+#' plot model comparisons
+#' 
+#' Creates a user-chosen set of plots comparing model output from a summary of
+#' multiple models, where the collection was created using the
+#' \code{SSsummarize} function.
+#' 
+#' 
+#' @param summaryoutput List created by \code{SSsummarize}
+#' @param subplots Vector of subplots to be created.
+#' @param plot Plot to active plot device?
+#' @param print Send plots to PNG files in directory specified by
+#' \code{plotdir}?
+#' @param png Has same result as \code{print}, included for consistency with
+#' \code{SS_plots}.
+#' @param pdf Write output to PDF file? Can't be used in conjunction with
+#' \code{png} or \code{print}.
+#' @param models Optional subset of the models described in
+#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' columns in summary tables.
+#' @param endyrvec Optional single year or vector of years representing the
+#' final year of values to show for each model. By default it is set to the
+#' ending year specified in each model.
+#' @param indexfleets Vector of fleets for each model for which to compare
+#' indices of abundance. Only necessary if any model has more than one index.
+#' @param indexUncertainty Show uncertainty intervals on index data?
+#' Default=FALSE because if models have any extra standard deviations added,
+#' these intervals may differ across models.
+#' @param indexQlabel Add catchability to legend in plot of index fits
+#' (TRUE/FALSE)?
+#' @param indexQdigits Number of significant digits for catchability in legend
+#' (if \code{indexQlabel=TRUE})
+#' @param indexSEvec Optional replacement for the SE values in
+#' summaryoutput$indices to deal with the issue of differing uncertainty by
+#' models described above.
+#' @param indexPlotEach TRUE plots the observed index for each model with
+#' colors, or FALSE just plots observed once in black dots.
+#' @param labels Vector of labels for plots (titles and axis labels)
+#' @param col Optional vector of colors to be used for lines. Input 'default'
+#' makes use of \code{rich.colors.short} function.
+#' @param shadecol Optional vector of colors to be used for shading uncertainty
+#' intervals. Input 'default' makes use of \code{rich.colors.short} function
+#' with alpha transparency.
+#' @param pch Optional vector of plot character values
+#' @param lty Optional vector of line types
+#' @param lwd Optional vector of line widths
+#' @param spacepoints Number of years between points shown on top of lines (for
+#' long timeseries, points every year get mashed together)
+#' @param staggerpoints Number of years to stagger the first point (if
+#' \code{spacepoints > 1}) for each line (so that adjacent lines have points in
+#' different years)
+#' @param xlim Optional x limits
+#' @param ylimAdj Multiplier for ylim parameter. Allows additional white space
+#' to fit legend if necessary. Default=1.
+#' @param xaxs Choice of xaxs parameter (see ?par for more info)
+#' @param yaxs Choice of yaxs parameter (see ?par for more info)
+#' @param type Type parameter passed to points (default 'o' overplots points on
+#' top of lines)
+#' @param uncertainty Show plots with uncertainty intervals
+#' @param shadealpha Transparency parameter used to make default shadecol
+#' values (see ?rgb for more info)
+#' @param legend Add a legend?
+#' @param legendlabels Optional vector of labels to include in legend. Default
+#' is 'model1','model2',etc.
+#' @param legendloc Location of legend. See ?legend for more info.
+#' @param legendorder Optional vector of model numbers that can be used to have
+#' the legend display the model names in an order that is different than that
+#' which is represented in the summary input object.
+#' @param legendncol Number of columns for the legend.
+#' @param btarg Target biomass value at which to show a line (set to 0 to
+#' remove)
+#' @param minbthresh Minimum biomass threshhold at which to show a line (set to
+#' 0 to remove)
+#' @param sprtarg Target value for SPR-ratio where line is drawn in the SPR
+#' plots and phase plot.
+#' @param pwidth Width of plot written to PNG file
+#' @param pheight Height of plot written to PNG file
+#' @param punits Units for PNG file
+#' @param res Resolution for PNG file
+#' @param ptsize Point size for PNG file
+#' @param cex.main Character expansion for plot titles
+#' @param plotdir Directory where PNG or PDF files will be written. By default
+#' it will be the directory where the model was run.
+#' @param densitynames Vector of names (or subset of names) of parameters or
+#' derived quantities contained in summaryoutput$pars$Label or
+#' summaryoutput$quants$Label for which to make density plots
+#' @param densityxlabs Optional vector of x-axis labels to use in the density
+#' plots (must be equal in length to the printed vector of quantities that
+#' match the \code{densitynames} input)
+#' @param densityscalex Scalar for upper x-limit in density plots (values below
+#' 1 will cut off the right tail to provide better contrast among narrower
+#' distributions
+#' @param densityscaley Scalar for upper y-limit in density plots (values below
+#' 1 will cut off top of highest peaks to provide better contrast among broader
+#' distributions
+#' @param densityadjust Multiplier on bandwidth of kernel in density function
+#' used for smoothing MCMC posteriors. See 'adjust' in ?density for details.
+#' @param densitysymbols Add symbols along lines in density plots. Quantiles
+#' are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.
+#' @param densitytails Shade tails outside of 95\% interval in density plots.
+#' @param fix0 Always include 0 in the density plots?
+#' @param new Create new empty plot window
+#' @param add Allows single plot to be added to existing figure. This needs to
+#' be combined with specific 'subplots' input to make sure only one thing gets
+#' added.
+#' @param par list of graphics parameter values passed to the \code{par}
+#' function
+#' @param verbose Report progress to R GUI?
+#' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
+#' whether input values are from MCMC or to use normal distribution around MLE
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
+#' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @keywords hplot
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,

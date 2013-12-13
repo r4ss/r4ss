@@ -1,3 +1,98 @@
+#' Run a likelihood profile in Stock Synthesis.
+#' 
+#' Iteratively changes the control file using SS_changepars.
+#' 
+#' 
+#' @param dir Directory where input files and executable are located.
+#' @param masterctlfile Source control file. Default = "control.ss_new"
+#' @param newctlfile Destination for new control files (must match entry in
+#' starter file). Default = "control_modified.ss".
+#' @param linenum Line number of parameter to be changed.  Can be used instead
+#' of \code{string} or left as NULL.
+#' @param string String partially matching name of parameter to be changed. Can
+#' be used instead of \code{linenum} or left as NULL.
+#' @param usepar Use PAR file from previous profile step for starting values?
+#' NOT IMPLEMENTED YET.
+#' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
+#' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
+#' @param profilevec Vector of values to profile over.  Default = NULL.
+#' @param model Name of executable. Default = "ss3".
+#' @param extras Additional commands to use when running SS. Default = "-nox"
+#' will reduce the amound of command-line output.
+#' @param systemcmd Should R call SS using "system" function intead of "shell".
+#' This may be required when running R in Emacs. Default = FALSE.
+#' @param saveoutput Copy output .SSO files to unique names.  Default = TRUE.
+#' @param overwrite Overwrite any existing .SSO files.
+#' @param verbose Controls amount of info output to command line.  Default =
+#' TRUE.
+#' @note The starting values used in this profile are not ideal and some models
+#' may not converge. Care should be taken in using an automated tool like this,
+#' and some models are likely to require rerunning with alternate starting
+#' values.
+#' 
+#' Also, someday this function will be improved to work directly with the
+#' plotting function \code{\link{SSplotProfile}}, but they don't yet work well
+#' together. Thus, even if \code{\link{SS_profile}} is used, the output should
+#' be read using \code{\link{SSgetoutput}} or by multiple calls to
+#' \code{\link{SS_output}} before sending to \code{\link{SSplotProfile}}.
+#' @author Ian Taylor
+#' @seealso \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
+#' \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
+#' @keywords data manip
+#' @examples
+#' 
+#'   \dontrun{
+#' # note: don't run this in your main directory
+#' # make a copy in case something goes wrong
+#' mydir <- "C:/ss/Simple - Copy"
+#' 
+#' # the following commands related to starter.ss could be done by hand
+#' # read starter file
+#' starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
+#' # change control file name in the starter file
+#' starter$ctlfile <- "control_modified.ss"
+#' # make sure the prior likelihood is calculated
+#' # for non-estimated quantities
+#' starter$prior_like <- 1
+#' # write modified starter file
+#' SS_writestarter(starter, dir=mydir, overwrite=TRUE)
+#' 
+#' # vector of values to profile over
+#' h.vec <- seq(0.3,0.9,.1)
+#' Nprofile <- length(h.vec)
+#' 
+#' # run SS_profile command
+#' profile <- SS_profile(dir=mydir, # directory
+#'                       # "NatM" is a subset of one of the
+#'                       # parameter labels in control.ss_new
+#'                       model="ss3_safe",
+#'                       masterctlfile="control.ss_new",
+#'                       newctlfile="control_modified.ss",
+#'                       string="steep",
+#'                       profilevec=h.vec)
+#' 
+#' 
+#' # read the output files (with names like Report1.sso, Report2.sso, etc.)
+#' profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Nprofile)
+#' # summarize output
+#' profilesummary <- SSsummarize(profilemodels)
+#' 
+#' # OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED
+#' MLEmodel <- SS_output("C:/ss/SSv3.24l_Dec5/Simple")
+#' profilemodels$MLE <- MLEmodel
+#' profilesummary <- SSsummarize(profilemodels)
+#' # END OPTIONAL COMMANDS
+#' 
+#' # plot profile using summary created above
+#' SSplotProfile(profilesummary,           # summary object
+#'               profile.string = "steep", # substring of profile parameter
+#'               profile.label="Stock-recruit steepness (h)") # axis label
+#' 
+#' # make timeseries plots comparing models in profile
+#' SSplotComparisons(profilesummary,legendlabels=paste("h =",h.vec))
+#' 
+#' }
+#' 
 SS_profile <-
 function(
          dir="C:/myfiles/mymodels/myrun/",

@@ -1,3 +1,34 @@
+#' Plot SPR quantities.
+#' 
+#' Plot SPR quantities, including 1-SPR and phase plot.
+#' 
+#' 
+#' @param replist list created by \code{SSoutput}
+#' @param add add to existing plot (not yet implemented)
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param uncertainty include plots showing uncertainty?
+#' @param subplots vector controlling which subplots to create
+#' @param col1 first color used
+#' @param col2 second color used
+#' @param col3 third color used
+#' @param col4 fourth color used
+#' @param sprtarg F/SPR proxy target. "default" chooses based on model output.
+#' @param btarg target depletion to be used in plots showing depletion. May be
+#' omitted by setting to NA. "default" chooses based on model output.
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotSPR <-
   function(replist,add=FALSE,plot=TRUE,print=FALSE,
            uncertainty=TRUE,

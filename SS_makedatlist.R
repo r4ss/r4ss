@@ -1,3 +1,63 @@
+#' make a list for SS data
+#' 
+#' create a list similar to those built by \code{\link{SS_readdat}} which can
+#' be written to a Stock Synthesis data file using \code{\link{SS_writedat}}.
+#' In hindsight, this function doesn't seem very useful and I haven't taken
+#' time to describe the arguments below.
+#' 
+#' 
+#' @param styr start year of the model
+#' @param endyr end year of the model
+#' @param nseas number of seasons
+#' @param months_per_seas months per seasons
+#' @param spawn_seas spawning season
+#' @param Nfleet number of fishing fleets
+#' @param Nsurveys number of surveys
+#' @param N_areas number of areas
+#' @param fleetnames names of fleets
+#' @param surveytiming vector of survey timings
+#' @param areas area definitions for each fleet or survey
+#' @param units_of_catch units of catch for each fleet
+#' @param se_log_catch Uncertainty in catch (standard error in log space).
+#' @param Ngenders Number of genders.
+#' @param Nages Number of ages.
+#' @param init_equil Initial equilibrium catch.
+#' @param catch Catch data
+#' @param CPUE Indices of abundance (if present).
+#' @param N_discard_fleets Number of fleets with discard data.
+#' @param discard_data Discard data (if exists).
+#' @param meanbodywt Mean body weight data (if exists)
+#' @param DF_for_meanbodywt Degrees of freedom for mean body weight
+#' t-distribution.
+#' @param lbin_method Method for entering length bins. (1=use databins;
+#' 2=generate from binwidth,min,max below; 3=read vector). Not sure if all
+#' options implemented.
+#' @param binwidth Bin width for length bins.
+#' @param minimum_size Lower bound of length bins.
+#' @param maximum_size Upper bound of length bins.
+#' @param comp_tail_compression Value below which tails of composition data
+#' will be compressed (negative to turn off).
+#' @param add_to_comp Robustifying constant added to multinomial composition
+#' likelihoods.
+#' @param max_combined_lbin Maximum length bin below which length composition
+#' data will have genders combined.
+#' @param lbin_vector Vector of length bins.
+#' @param lencomp Length composition data (if exists).
+#' @param agebin_vector Vector of age bins.
+#' @param ageerror Ageing error matrices.
+#' @param agecomp Age composition data (if exists).
+#' @param Lbin_method Method of specifying length bins in conditional
+#' age-at-length data.
+#' @param max_combined_age Maximum age below which age composition data will
+#' have genders combined.
+#' @param MeanSize_at_Age_obs Data on mean size at age (if exists).
+#' @param N_environ_variables Number of environmental variables.
+#' @param N_environ_obs Number of environmental observations.
+#' @param N_sizefreq_methods Number of size frequency methods.
+#' @param do_tags Include tag data? NOT IMPLEMENTED YET.
+#' @param morphcomp_data Morph composition data. NOT IMPLEMENTED YET.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_readdat}}, \code{\link{SS_writedat}}
 SS_makedatlist <-
     function(styr=1971,
              endyr=2001,

@@ -1,3 +1,38 @@
+#' Show movement rates on a map.
+#' 
+#' Make a map with colored spatial cells and add arrows representing movement
+#' rates between cells.
+#' 
+#' 
+#' @param replist optional list created by \code{\link{SS_output}}
+#' @param xlim range of longitude values in the map
+#' @param ylim range of latitude values in the map
+#' @param polygonlist a list of data frames, each with two columns representing
+#' the longitude and latitude values of the colored polygons. The order of
+#' elements in the list should match the numbering of areas in the SS model.
+#' @param colvec vector of colors for each polygon (if \code{replist} is
+#' provided)
+#' @param land color of landmasses in the map
+#' @param xytable data frame of latitude and longitude values which will be
+#' connected by the arrows representing movement rates. The order should match
+#' the order of areas in \code{polygonlist} and in the SS model. Not necessary
+#' if no arrows are shown on the map.
+#' @param moveage age for which movemement rates will be represented
+#' @param moveseas season for which movement rates will be represented
+#' @param lwdscale scaling factor for arrows in the plot. The largest rate of
+#' movement shown will be scaled to have a line width equal to this value.
+#' @param legend add a legend to show the movement rate associated with the
+#' widest arrows
+#' @param title optional title to be added above map
+#' @param areanames optional vector of names to be shown on map at coordinates
+#' matching xytable values
+#' @param cex character expansion to apply to text shown by areanames (if used)
+#' @note Inspired by plots of MULTIFAN-CL movement patterns presented by Adam
+#' Langley
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
+#' \code{\link{IOTCmove}}
+#' @keywords hplot
 SSplotMovementMap <-
   function(replist=NULL, xlim, ylim,
            polygonlist, colvec, land="grey", xytable=NULL,

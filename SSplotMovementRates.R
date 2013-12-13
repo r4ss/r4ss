@@ -1,3 +1,39 @@
+#' Show movement rates on a map.
+#' 
+#' Make a map with colored spatial cells and add arrows representing movement
+#' rates between cells.
+#' 
+#' 
+#' @param replist list created by \code{\link{SS_output}}
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param subplots which subplots to create
+#' @param plotdir where to put the plots (uses model directory by default)
+#' @param colvec vector of colors for each movement rate in the plot
+#' @param ylim optional input for y range of the plot. By default plot ranges
+#' from 0 to 10\% above highest movement rate (not including fish staying in an
+#' area).
+#' @param legend add a legend designating which color goes with which pair of
+#' areas?
+#' @param legendloc location passed to legend function (if used)
+#' @param moveseas choice of season for which movemement rates are shown
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main Character expansion parameter for plot titles
+#' @param verbose Print information on function progress.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
+#' \code{\link{IOTCmove}}
+#' @keywords hplot
+#' @examples
+#' 
+#'   \dontrun{
+#'     SSplotMovementRates(myreplist)
+#'   }
+#' 
 SSplotMovementRates <-
   function(replist, plot=TRUE, print=FALSE, subplots=1:2,
            plotdir="default",

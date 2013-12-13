@@ -1,3 +1,30 @@
+#' Create HTML files to view figures in browser.
+#' 
+#' Writes a set of HTML files with tabbed navigation between them.  Depends on
+#' \code{\link{SS_plots}} with settings in place to write figures to PNG files.
+#' Should open main file in default browser automatically.
+#' 
+#' 
+#' @param replist Object created by \code{\link{SS_output}}
+#' @param plotdir Directory where PNG files are located.
+#' @param plotInfoTable CSV file with info on PNG files. By default, the
+#' \code{plotdir} directory will be searched for files with name beginning
+#' 'plotInfoTable*'
+#' @param title Title for HTML page.
+#' @param width Width of plots (in pixels).
+#' @param openfile Automatically open index.html in default browser?
+#' @param multimodel Override errors associated with plots from multiple model
+#' runs. Only do this if you know what you're doing.
+#' @param filenotes Add additional notes to home page.
+#' @param verbose Display more info while running this function?
+#' @note By default, this function will look in the directory where PNG files
+#' were created for CSV files with the name 'plotInfoTable...' written by
+#' 'SS_plots. HTML files are written to link to these plots and put in the same
+#' directory. Please provide feedback on any bugs, annoyances, or suggestions
+#' for improvement.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords aplot hplot
 SS_html <- function(replist=NULL,
                     plotdir="plots",
                     plotInfoTable=NULL,

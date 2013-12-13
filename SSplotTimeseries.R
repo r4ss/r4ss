@@ -1,3 +1,44 @@
+#' Plot timeseries data
+#' 
+#' Plot timeseries data contained in TIME_SERIES output from Stock Synthesis
+#' report file. Some values have optional uncertainty intervals.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplot number controlling which subplot to create
+#' @param add add to existing plot? (not yet implemented)
+#' @param areas optional subset of areas to plot for spatial models
+#' @param areacols vector of colors by area. Default uses rich.colors by Arni
+#' Magnusson
+#' @param areanames names for areas. Default is to use Area1, Area2,...
+#' @param forecastplot add points from forecast years
+#' @param uncertainty add intervals around quantities for which uncertainty is
+#' available
+#' @param bioscale scaling for spawning biomass by default it will be set to
+#' 0.5 for single-sex models, and 1.0 for all others
+#' @param minyr optional input for minimum year to show in plots
+#' @param maxyr optional input for maximum year to show in plots
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param plotdir directory where PNG or PDF files will be written. by default
+#' it will be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @param btarg Target depletion to be used in plots showing depletion. May be
+#' omitted by setting to 0. "default" chooses value based on modeloutput.
+#' @param minbthresh Threshold depletion to be used in plots showing depletion.
+#' May be omitted by setting to 0. "default" assumes 0.25 unless btarg in model
+#' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
+#' @param xlab x axis label for all plots
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @author Ian Taylor, Ian Stewart
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",

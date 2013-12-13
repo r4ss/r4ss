@@ -1,3 +1,22 @@
+#' write forecast file
+#' 
+#' write Stock Synthesis forecast file from list object in R which was probably
+#' created using \code{\link{SS_readforecast}}
+#' 
+#' 
+#' @param mylist List object created by \code{\link{SS_readforecast}}.
+#' @param dir Directory for new forecast file. Default=NULL (working
+#' directory).
+#' @param file Filename for new forecast file. Default="forecast.ss".
+#' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @param verbose Should there be verbose output while running the file?
+#' Default=TRUE.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+#' \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
+#' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}},
+#' \code{\link{SS_writectl}}
+#' @keywords data manip
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
                               overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files

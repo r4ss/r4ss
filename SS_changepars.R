@@ -1,3 +1,40 @@
+#' Change parameters in the control file.
+#' 
+#' A function to take advantage of \code{\link{SS_parlines}} that could be used
+#' to create a series of control files with different parameter values. This is
+#' used by \code{\link{SS_profile}}, but may also be useful for simulation
+#' work.
+#' 
+#' 
+#' @param dir Directory with control file to change.
+#' @param ctlfile Control file name. Default="control.ss_new".
+#' @param newctlfile Name of new control file to be written.
+#' Default="control_modified.ss".
+#' @param linenums Line numbers of control file to be modified. Either this or
+#' the Strings input are needed. Default=NULL.
+#' @param strings Strings (with optional partial matching) indicating which
+#' parameters to be modified. This is an alternative to linenums.  Strings
+#' correspond to the commented parameter names included in control.ss_new, or
+#' whatever is written as comment at the end of the 14 number parameter lines.
+#' Default=NULL.
+#' @param newvals Vector of new parameter values. Default=NULL.
+#' @param estimate Vector of TRUE/FALSE for which changed parameters are to be
+#' estimated. Default=FALSE.
+#' @param verbose More detailed output to command line. Default=TRUE.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
+#' @keywords data manip
+#' @examples
+#' 
+#' \dontrun{
+#' SS_changepars(dir='Y:/ss/SSv3.03a/Simple/',ctlfile='Control.SS_New',
+#'               strings=c('SR_steep','SR_sigmaR'),newvals=c(.35,.6))
+#' # [1] wrote new file to Control_Modified.SS
+#' #    oldvals newvals oldphase newphase     comment
+#' # 1 0.609048    0.35        4       -4  # SR_steep
+#' # 2 0.600000    0.60       -4       -4 # SR_sigmaR
+#' }
+#' 
 SS_changepars <-
 function(
          dir="C:/myfiles/mymodels/myrun/",

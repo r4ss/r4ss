@@ -1,3 +1,85 @@
+#' Create multi-figure plots.
+#' 
+#' Function created as an alternative to lattice package for multi-figure plots
+#' of composition data and fits from Stock Synthesis output.
+#' 
+#' 
+#' @param ptsx vector of x values for points or bars
+#' @param ptsy vector of y values for points or bars of same length as ptsx
+#' @param yr vector of category values (years) of same length as ptsx
+#' @param linesx optional vector of x values for lines
+#' @param linesy optional vector of y values for lines
+#' @param ptsSD optional vector of standard deviations used to plot error bars
+#' on top of each point under the assumption of normally distributed error
+#' @param sampsize optional sample size vector of same length as ptsx
+#' @param effN optional effective sample size vector of same length as ptsx
+#' @param showsampsize show sample size values on plot?
+#' @param showeffN show effective sample size values on plot?
+#' @param sampsizeround rounding level for sample size values
+#' @param maxrows maximum (or fixed) number or rows of panels in the plot
+#' @param maxcols maximum (or fixed) number or columns of panels in the plot
+#' @param rows number or rows to return to as default for next plots to come or
+#' for single plots
+#' @param cols number or cols to return to as default for next plots to come or
+#' for single plots
+#' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
+#' number of elements in \code{yr} input.
+#' @param main title of plot
+#' @param cex.main character expansion for title
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param size vector of bubbles sizes if making a bubble plot
+#' @param maxsize maximum size of bubbles
+#' @param do.sqrt scale bubbles based on sqrt of size vector. see ?bubble3 for
+#' more info.
+#' @param minnbubble number of unique x values before adding buffer. see
+#' ?bubble3 for more info.
+#' @param allopen should all bubbles be open? see ?bubble3 for more info.
+#' @param horiz_lab axis labels set horizontal all the time (TRUE), never
+#' (FALSE) or only when relatively short ("default")
+#' @param xbuffer extra space around points on the left and right as fraction
+#' of total width of plot
+#' @param ybuffer like xbuffer
+#' @param ymin0 fix minimum y-value at 0?
+#' @param axis1 position of bottom axis values
+#' @param axis2 position of left size axis values
+#' @param linepos should lines be added on top of points (linepos=1) or behind
+#' (linepos=2)?
+#' @param type type of line/points used for observed values (see 'type' in
+#' ?plot for details) on top of a grey polygon. Default is "o" for overplotting
+#' points on lines.
+#' @param bars should the ptsx/ptsy values be bars instead of points
+#' (TRUE/FALSE)
+#' @param barwidth width of bars in barplot, default method chooses based on
+#' quick and dirty formula also, current method of plot(...type='h') could be
+#' replaced with better approach
+#' @param ptscex character expansion factor for points (default=1)
+#' @param ptscol color for points/bars
+#' @param ptscol2 color for negative value points in bubble plots
+#' @param linescol color for lines
+#' @param lty line type
+#' @param lwd line width
+#' @param pch point character type
+#' @param nlegends number of lines of text to add as legends in each plot
+#' @param legtext text in legend, a list of length=nlegends. values may be any
+#' of 1.  "yr", 2. "sampsize", 3. "effN", or a vector of length = ptsx.
+#' @param legx vector of length=nlegends of x-values of legends (default is
+#' first one on left, all after on right)
+#' @param legy vector of length=nlegends of y-values of legends (default is top
+#' for all plots)
+#' @param legadjx left/right adjustment of legends around legx
+#' @param legadjy left/right adjustment of legends around legy
+#' @param legsize font size for legends. default=c(1.2,1.0) (larger for year
+#' and normal for others)
+#' @param legfont font type for legends, same as "font" under ?par
+#' @param ipage which page of plots when covering more than will fit within
+#' maxrows by maxcols.
+#' @param scalebins Rescale expected and observed proportions by dividing by
+#' bin width for models where bins have different widths? Caution!: May not
+#' work correctly in all cases.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
+#' @keywords aplot hplot
 make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
                           sampsize=0, effN=0, showsampsize=TRUE, showeffN=TRUE, sampsizeround=1,
                           maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,

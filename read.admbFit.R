@@ -1,5 +1,14 @@
-
-read.admbFit<-function(file){
+##' Read ADMB .par and .cor files.
+##'
+##' This function will parse the .par and .cor files to provide
+##' things like parameter estimates, standard deviations,
+##' and correlations. Required for Jim Thorson's Laplace
+##' Approximation but likely useful for other purposes.
+##' @param file Name of ADMB executable such that files to read will
+##' have format file.par and file.cor.
+##' @return List of various things from these files.
+##' @author Jim?
+read.admbFit <- function(file){
   ret<-list()
   # read par file
   parfile<-as.numeric(scan(paste(file,'.par', sep=''),

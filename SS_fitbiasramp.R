@@ -1,3 +1,44 @@
+#' Estimate bias adjustment for recruitment deviates
+#' 
+#' Uses standard error of estimated recruitment deviates to estimate the 5
+#' controls for the bias adjustment in Stock Synthesis
+#' 
+#' 
+#' @param replist Object created using \code{\link{SS_output}}
+#' @param verbose Controls the amount of output to the screen.  Default=FALSE.
+#' @param startvalues A vector of 5 values for the starting points in the
+#' minimization. Default=NULL.
+#' @param method A method to apply to the 'optim' function. See ?optim for
+#' options. Default="BFGS".
+#' @param twoplots Make a two-panel plot showing devs as well as transformed
+#' uncertainty, or just the second panel in the set?  Default=TRUE.
+#' @param transform An experimental option to treat the transform the 5
+#' quantities to improve minimization. Doesn't work well. Default=FALSE.
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param plotdir Directory where PNG files will be written. By default it will
+#' be the directory where the model was run.
+#' @param oldctl Optional name of existing control file to modify.
+#' Default=NULL.
+#' @param newctl Optional name of new control file to create from old file with
+#' estimated bias adjustment values. Default=NULL.
+#' @param nlminb Use the 'nlminb' function instead of 'optim'?  Default=TRUE
+#' @param pwidth Default width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param pheight Default height width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
+#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @param ptsize Point size for plotted text in plots printed to files (see
+#' help("png") in R for details). Default=12.
+#' @param res Resolution of plots printed to files. Default=300.
+#' @param cex.main Character expansion for plot titles.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_output}}
+#' @references Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
+#' variability of estimated recruitments in fishery assessment models.  Can. J.
+#' Fish. Aquat. Sci., 68:1744-1760.
+#' @keywords data manip hplot
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,

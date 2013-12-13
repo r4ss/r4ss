@@ -1,3 +1,67 @@
+#' Make plots from Rebuilder program
+#' 
+#' Make a set of plots based on output from Andre Punt's Rebuilder program.
+#' 
+#' 
+#' @param dirn Directory where rebuilder output files are stored.
+#' @param fileN Vector of filenames containing rebuilder output.
+#' Default=c("res.csv").
+#' @param Titles Titles for plots when using multiple filenames. Default="".
+#' @param ncols Number of columns to read in output file (fileN). Deafult=200.
+#' @param Plots List to get specific plots (currently 1 through 8).
+#' Default=list(1:25). If there are multiple files, supply a list of vectors,
+#' e.g. list(c(1,5),c(2:5))
+#' @param Options List to get specific strategies in the trajectory plots.
+#' Default=list(c(1:9)).If there are multiple files, supply a list of vectors,
+#' e.g. list(c(1,5),c(2:5))
+#' @param LegLoc Location for the legend (for plots with a legend).
+#' Default="bottomright".
+#' @param yearmax Maximum year to show in the plots. Set negative to show all
+#' years.  Default=-1.
+#' @param Outlines Number of rows, columns for some of the plots.
+#' Default=c(2,2).
+#' @param OutlineMulti Number of rows, columns for other plots.
+#' Default=c(2,2).
+#' @param AllTraj Vector of trajectories to show. Default=c(1,2,3,4).
+#' @param AllInd Vector of individual plots to show. Default=c(1,2,3,4,5,6,7).
+#' @param BioType Label for biomass type. Default="Spawning biomass".
+#' @param CatchUnit Units of catch. Default="(mt)".
+#' @param BioUnit Units of biomass. Default="(mt)".
+#' @param BioScalar Scalar for biomass plot. Default=1.
+#' @param ColorsUsed Optional vector for alternative line colors.
+#' Default="default".
+#' @param Labels Optional vector for alternative legend labels.
+#' Default="default".
+#' @param pdf Option to send figures to pdf file instead of plot window in
+#' Rgui. Default=FALSE.
+#' @param pwidth Width of the plot window or PDF file (in inches). Default=7.
+#' @param pheight Height of the plot window or PDF file (in inches). Default=7.
+#' @param lwd Line width for many of the plot elements. Default=2.
+#' @author Andre Punt
+#' @keywords dplot hplot
+#' @examples
+#' 
+#' \dontrun{
+#' # example with one file
+#'  DoProjectPlots(dirn="c:/myfiles/", Plots=1:8,
+#'                 Options=c(1,2,3,4,5,9), LegLoc="bottomleft")
+#' 
+#' # example with multiple files
+#'  # Plots - set to get specific plots
+#'  # Options - set to get specific strategies in the trajectory plots
+#' 
+#'  Titles <- c("Res1","Res2","Res3")
+#'  Plots <- list(c(1:9),c(6:7))
+#'  Options <- list(c(7:9,3),c(5,7))
+#'  DoProjectPlots(fileN=c("res1.csv","res2.csv"),Titles=Titles,Plots=Plots,
+#'                 Options=Options,LegLoc="bottomleft",yearmax=-1,
+#'                 Outlines=c(2,2),OutlineMulti=c(3,3),AllTraj=c(1:4),
+#'                 AllInd=c(1:7),BioType="Spawning numbers",BioUnit="(lb)",
+#'                 BioScalar=1000,CatchUnit="(lb)",
+#'                 ColorsUse=rep(c("red","blue"),5),
+#'                 Labels=c("A","B","C","D","E","F"))
+#' }
+#' 
 DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=200,
                          Plots=list(1:25),Options=list(c(1:9)),LegLoc="bottomright",
                          yearmax= -1,Outlines=c(2,2),OutlineMulti=c(2,2),

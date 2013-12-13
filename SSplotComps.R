@@ -1,3 +1,98 @@
+#' Plot composition data and fits.
+#' 
+#' Plot composition data and fits from Stock Synthesis output.  Mult-figure
+#' plots depend on \code{make_multifig}.
+#' 
+#' 
+#' @param replist list created by \code{SSoutput}
+#' @param subplots vector controlling which subplots to create
+#' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
+#' "GSTAGE", "L@A", or "W@A".
+#' @param sizemethod if kind = "SIZE" then this switch chooses which of the
+#' generalized size bin methods will be plotted.
+#' @param aalyear Years to plot multi-panel conditional age-at-length fits for
+#' all length bins; must be in a "c(YYYY,YYYY)" format. Useful for checking the
+#' fit of a dominant year class, critical time period, etc. Default=-1.
+#' @param aalbin The length bin for which multi-panel plots of the fit to
+#' conditional age-at-length data will be produced for all years.  Useful to
+#' see if growth curves are ok, or to see the information on year classes move
+#' through the conditional data. Default=-1.
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param fleets optional vector to subset fleets for which plots will be made
+#' @param fleetnames optional vector of fleet names to put in the labels
+#' @param sexes which sexes to show plots for. Default="all" which will include
+#' males, females, and unsexed. This options is not fully implemented for all
+#' plots.
+#' @param datonly make plots of data without fits as well as data with fits?
+#' @param samplesizeplots make sample size plots?
+#' @param compresidplots make plots of residuals for fit to composition data?
+#' @param bub make bubble plot for numbers at age or size?
+#' @param showsampsize add sample sizes to plot
+#' @param showeffN add effective sample sizes to plot
+#' @param minnbubble number of unique x values before adding buffer. see
+#' ?bubble3 for more info.
+#' @param pntscalar This scalar defines the maximum bubble size for bubble
+#' plots. This option is still available but a better choice is to use
+#' bub.scale.pearson and bub.scale.dat, which are allow the same scaling
+#' throughout all plots.
+#' @param bub.scale.pearson Character expansion (cex) value for a proportion of
+#' 1.0 in bubble plot of Pearson residuals. Default=1.5.
+#' @param bub.scale.dat Character expansion (cex) value for a proportion of 1.0
+#' in bubble plot of composition data. Default=3.
+#' @param scalebubbles scale data-only bubbles by sample size, not just
+#' proportion within sample? Default=FALSE.
+#' @param pwidth default width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param pheight default height width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param punits units for \code{pwidth} and \code{pheight}. Can be "px"
+#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @param ptsize point size for plotted text in plots printed to files (see
+#' help("png") in R for details). Default=12.
+#' @param res resolution of plots printed to files. Default=300
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param cex.main character expansion parameter for plot titles
+#' @param linepos should lines be added before points (linepos=1) or after
+#' (linepos=2)?
+#' @param fitbar show fit to bars instead of points
+#' @param do.sqrt scale bubbles based on sqrt of size vector. see ?bubble3 for
+#' more info.
+#' @param smooth add loess smoother to observed vs. expected index plots and
+#' input vs. effective sample size?
+#' @param cohortlines optional vector of birth years for cohorts for which to
+#' add growth curves to numbers at length bubble plots
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param printmkt show market categories in plot titles?
+#' @param printsex show gender in plot titles?
+#' @param maxrows maximum (or fixed) number or rows of panels in the plot
+#' @param maxcols maximum (or fixed) number or columns of panels in the plot
+#' @param maxrows2 maximum number of rows for conditional age at length plots
+#' @param maxcols2 maximum number of columns for conditional age at length
+#' plots
+#' @param rows number or rows to return to as default for next plots to come or
+#' for single plots
+#' @param cols number or cols to return to as default for next plots to come or
+#' for single plots
+#' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
+#' number of years of data
+#' @param fixdims2 fix the dimensions at maxrows by maxcols in aggregate plots
+#' or resize based on number of fleets
+#' @param maxneff the maximum value to include on plots of input and effective
+#' sample size. Occasionally a calculation of effective N blows up to very
+#' large numbers, rendering it impossible to observe the relationship for other
+#' data. Default=5000.
+#' @param verbose return updates of function progress to the R GUI?
+#' @param scalebins Rescale expected and observed proportions by dividing by
+#' bin width for models where bins have different widths? Caution!: May not
+#' work correctly in all cases.
+#' @param addMeans Add parameter means in addition to medians for MCMC
+#' posterior distributions in which the median and mean differ.
+#' @param \dots additional arguments that will be passed to the plotting.
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
+#' @keywords hplot
 SSplotComps <-
   function(replist, subplots=1:12,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,

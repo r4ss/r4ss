@@ -1,3 +1,5 @@
+# this function replaced by SSplotRetroRecruits
+
 SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertainty=FALSE,
                             labels=c('Recruitment deviation relative to recent estimate',
                               'Recruitment deviation',

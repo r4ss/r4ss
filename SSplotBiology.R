@@ -1,3 +1,32 @@
+#' Plot biology related quantities.
+#' 
+#' Plot biology related quantities from Stock Synthesis model output, including
+#' mean weight, maturity, fecundity, and spawning output.
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param add add to existing plot
+#' @param subplots vector controlling which subplots to create
+#' @param seas which season to plot (obviously only works in seasonal models,
+#' but maybe not fully implemented even then)
+#' @param col1 color of some points/lines
+#' @param col2 color of other points/lines
+#' @param legendloc Location of legend (see ?legend for more info)
+#' @param plotdir Directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param labels Vector of labels for plots (titles and axis labels)
+#' @param pwidth Width of plot written to PNG file
+#' @param pheight Height of plot written to PNG file
+#' @param punits Units for PNG file
+#' @param res Resolution for PNG file
+#' @param ptsize Point size for PNG file
+#' @param cex.main Character expansion for plot titles
+#' @param verbose Return updates of function progress to the R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords aplot hplot
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
            col1="red",col2="blue",

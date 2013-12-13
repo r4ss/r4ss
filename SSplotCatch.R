@@ -1,3 +1,51 @@
+#' Plot catch related quantities.
+#' 
+#' Plot catch related quantities from Stock Synthesis output. Plots include
+#' harvest rate, continuous F, landings, and discard fraction.
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param subplots Vector controlling which subplots to create
+#' @param add Add to existing plot? (not yet implemented)
+#' @param areas Optional subset of areas to plot for spatial models
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param type Type parameter passed to plot function. Default "l" is lines
+#' only.  Other options include "o" for overplotting points on lines.
+#' @param fleetlty Vector of line type by fleet
+#' @param fleetpch Vector of plot character by fleet
+#' @param fleetcols Vector of colors by fleet
+#' @param fleetnames Optional replacement for fleenames used in data file
+#' @param lwd Line width
+#' @param areacols Vector of colors by area. Default uses rich.colors by Arni
+#' Magnusson
+#' @param areanames Names for areas. Default is to use Area1, Area2,...
+#' @param minyr Optional input for minimum year to show in plots
+#' @param maxyr Optional input for maximum year to show in plots
+#' @param annualcatch Include plot of catch aggregated across seasons within
+#' each year
+#' @param forecastplot Add points from forecast years
+#' @param plotdir Directory where PNG or PDF files will be written. By default
+#' it will be the directory where the model was run.
+#' @param showlegend Put legend on plot
+#' @param legendloc Location of legend (see ?legend for more info)
+#' @param xlab x-label for all plots
+#' @param labels Vector of labels for plots (titles and axis labels)
+#' @param catchasnumbers Is catch in numbers instead of biomass? Should be set
+#' automatically if set to NULL. If fleets include a mix of biomass and
+#' numbers, then catch plots should be interpreted carefully.
+#' @param catchbars Show catch by fleet as barplot instead of stacked polygons?
+#' (default=TRUE)
+#' @param pwidth Width of plot written to PNG file
+#' @param pheight Height of plot written to PNG file
+#' @param punits Units for PNG file
+#' @param res Resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main Character expansion for plot titles
+#' @param verbose Report progress to R console?
+#' @author Ian Taylor, Ian Stewart
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords aplot hplot
 SSplotCatch <-
   function(replist,subplots=1:15,add=FALSE,areas=1,
            plot=TRUE,print=FALSE,

@@ -1,3 +1,43 @@
+#' Run retrospective analyses
+#' 
+#' Do retrospective analyses by creating new directories, copying model files,
+#' and iteratively changing the starter file to set the number of years of data
+#' to exclude.
+#' 
+#' 
+#' @param masterdir Directory where everything takes place.
+#' @param oldsubdir Subdirectory within \code{masterdir} with existing model
+#' files.
+#' @param newsubdir Subdirectory within \code{masterdir} where retrospectives
+#' will be run. Default is 'retrospectives'.
+#' @param subdirstart First part of the pattern of names for the directories in
+#' which the models will actually be run.
+#' @param years Vector of values to iteratively enter into the starter file for
+#' retrospective year. Should be zero or negative values.
+#' @param overwrite Overwrite any input files with matching names in the
+#' subdirectories where models will be run.
+#' @param extras Additional commands to use when running SS. Default = "-nox"
+#' will reduce the amound of command-line output.
+#' @param intern Display runtime information from SS in the R console (vs.
+#' saving to a file).
+#' @author Ian Taylor
+#' @seealso \code{\link{SSgetoutput}}
+#' @keywords data manip
+#' @examples
+#' 
+#'   \dontrun{
+#'     # note: don't run this in your main directory--make a copy in case something goes wrong
+#'     mydir <- "C:/Simple"
+#' 
+#'     ## retrospective analyses
+#'     SS_doRetro(masterdir=mydir, oldsubdir="", newsubdir="retrospectives", years=0:-5)
+#'     
+#'     retroModels <- SSgetoutput(dirvec=file.path(mydir, "retrospectives",paste("retro",0:-5,sep="")))
+#'     retroSummary <- SSsummarize(retroModels)
+#'     endyrvec <- retroSummary$endyrs + 0:-5
+#'     SSplotComparisons(retroSummary, endyrvec=endyrvec, legendlabels=paste("Data",0:-5,"years"))
+#'   }
+#' 
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
                        extras="-nox",intern=FALSE,CallType="system"){

@@ -1,3 +1,15 @@
+#' explore movement parameterizations
+#' 
+#' A function to visualize parameterization of movement in Stock Synthesis. It
+#' creates a GUI interface for movement exploration.
+#' 
+#' 
+#' @param nareas Number of areas
+#' @param accuage Accumulator age
+#' @param getpars T/F switch to get chosen parameters as output
+#' @param getrates T/F switch to get derived movement rates as output
+#' @author Ian Taylor
+#' @keywords dplot hplot dynamic
 movepars <-
 function(nareas=4,accuage=40,getpars=T,getrates=T)
 {

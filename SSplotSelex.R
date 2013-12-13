@@ -1,3 +1,62 @@
+#' Plot selectivity
+#' 
+#' Plot selectivity, including retention and other quantities, with additional
+#' plots for time-varying selectivity.
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param fleets Optional vector to subset fleets for which to make plots
+#' @param infotable Optional table of information controlling appearance of
+#' plot and legend. Is produced as output and can be modified and entered as
+#' input.
+#' @param fleetnames Optional replacement for fleenames used in data file
+#' @param sizefactors Which elements of the factors column of SIZE_SELEX should
+#' be included in plot of selectivity across multiple fleets?
+#' @param agefactors Which elements of the factors column of AGE_SELEX should
+#' be included in plot of selectivity across multiple fleets?
+#' @param years Which years for selectivity are shown in multi-line plot
+#' (default = last year of model).
+#' @param season Which season (if seasonal model) for selectivity shown in
+#' multi-line plot (default = 1).
+#' @param sexes Optional vector to subset genders for which to make plots
+#' (1=females, 2=males)
+#' @param selexlines Vector to select which lines get plotted. values are 1.
+#' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead
+#' = Sel*(Ret+(1-Ret)*Mort).
+#' @param subplot Vector controlling which subplots to create
+#' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
+#' = 1.0 for all ages beginning at age 1)?
+#' @param lwd Line widths for plots
+#' @param fleetcols Optional vector of colors for each fleet (in multi-fleet
+#' plots)
+#' @param fleetpch Optional vector of plot characters for each fleet (in
+#' multi-fleet plots)
+#' @param fleetlty Optional vector of line types for each fleet (in multi-fleet
+#' plots)
+#' @param spacepoints number of years between points shown on top of lines (for
+#' long timeseries, points every year get mashed together)
+#' @param staggerpoints number of years to stagger the first point (if
+#' \code{spacepoints > 1}) for each line (so that adjacent lines have points in
+#' different years)
+#' @param legendloc location of legend. See ?legend for more info.
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param add Add to existing plot (not yet implemented)
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param col1 color for female growth curve
+#' @param col2 color for male growth curve
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param verbose report progress to R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotSelex <-
   function(replist, infotable=NULL,
            fleets="all", fleetnames="default",

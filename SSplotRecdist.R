@@ -1,3 +1,32 @@
+#' Plot of recruitment distribution among areas and seasons
+#' 
+#' Image plot shows fraction of recruitment in each combination of area and
+#' season. This is based on the RECRUITMENT_DIST section of the Report.sso
+#' file.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param areanames optional vector to replace c("Area1","Area2",...)
+#' @param seasnames optional vector to replace c("Season1","Season2",...)
+#' @param xlab optional x-axis label (if the area names aren't informative
+#' enough)
+#' @param ylab optional y-axis label (if the season names aren't informative
+#' enough)
+#' @param main title for plot
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param verbose report progress to R GUI?
+#' @author Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
+#' @keywords hplot
 SSplotRecdist <-
   function(replist,plot=TRUE,print=FALSE,
            areanames=NULL,

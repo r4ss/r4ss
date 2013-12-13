@@ -1,3 +1,55 @@
+#' Plot indices of abundance and associated quantities.
+#' 
+#' Plot indices of abundance and associated quantities.
+#' 
+#' 
+#' @param replist list created by \code{SS_output}
+#' @param subplots vector controlling which subplots to create
+#' @param plot plot to active plot device?
+#' @param print print to PNG files?
+#' @param fleets optional vector to subset fleets for which plots will be made
+#' @param fleetnames optional replacement for fleenames used in data file
+#' @param smooth add smoothed line to plots of observed vs. expected sample
+#' sizes
+#' @param add add to existing plot (not yet implemented)
+#' @param datplot make plot of data only?
+#' @param labels vector of labels for plots (titles and axis labels)
+#' @param col1 vector of colors for points in each season for time series plot.
+#' Default is red for single season models and a rainbow using the
+#' rich.colors.short function for multiple seasons.
+#' @param col2 vector of colors for points in each season for obs. vs. exp.
+#' plot.  Default is blue for single season models and a rainbow using the
+#' rich.colors.short function for multiple seasons.
+#' @param col3 color of line showing expected index in time series plot.
+#' Default is blue.
+#' @param col4 color of smoother shown in obs. vs. exp. plots. Default is red.
+#' @param pch1 single value or vector of plotting characters (pch parameter)
+#' for time-series plots of index fit. Default=1.
+#' @param pch2 single value or vector of plotting characters (pch parameter)
+#' for sample size plots of index fit. Default=16.
+#' @param cex character expansion factor for points showing observed values.
+#' Default=1.
+#' @param legend add a legend to seasonal colors (only for seasonal models)
+#' @param legendloc add a legend to seasonal colors (default is "topright")
+#' @param seasnames optional vector of names for each season to replace
+#' defaults if a legend is used
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
+#' @param cex.main character expansion for plot titles
+#' @param addmain switch which allows the plot title to be left off
+#' @param plotdir directory where PNG files will be written. by default it will
+#' be the directory where the model was run.
+#' @param minyr First year to show in plot (for zooming in on a subset of
+#' values)
+#' @param maxyr Last year to show in plot (for zooming in on a subset of
+#' values)
+#' @param verbose report progress to R GUI?
+#' @author Ian Stewart, Ian Taylor
+#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @keywords hplot
 SSplotIndices <-
 function(replist,subplots=1:9,
          plot=TRUE,print=FALSE,

@@ -1,3 +1,70 @@
+#' Plot distributions of priors, posteriors, and estimates.
+#' 
+#' Make multi-figure plots of prior, posterior, and estimated asymptotic
+#' parameter distributions. MCMC not required to make function work.
+#' 
+#' 
+#' @param dir Directory where all files are located.
+#' @param repfile Name of report file. Default="Report.sso".
+#' @param xlab Label on horizontal axis.
+#' @param ylab Label on vertical axis.
+#' @param postfile Name of MCMC posteriors file (not required).
+#' Default="posteriors.sso".
+#' @param showpost Show posterior distribution as bar graph? Default=TRUE.
+#' @param showprior Show prior distribution as black line? Default=TRUE.
+#' @param showmle Show MLE estimate and asymptotic variance estimate with blue
+#' lines? Default=TRUE.
+#' @param showinit Show initial value as red triangle? Default=TRUE.
+#' @param showrecdev Include recdevs in the plot? Default=TRUE.
+#' @param priorinit TRUE/FALSE for prior probability at initial value (not
+#' implemented).
+#' @param priorfinal TRUE/FALSE for prior probability at final value (not
+#' implemented).
+#' @param showlegend Show the legend? Default=TRUE.
+#' @param fitrange Fit range tightly around MLE & posterior distributions,
+#' instead of full parameter range? Default=FALSE.
+#' @param xaxs Parameter input for x-axis. See \code{?par} for more info.
+#' Default="i".
+#' @param xlim Optional x-axis limits to be applied to all plots.  Otherwise,
+#' limits are based on the model results. Default=NULL.
+#' @param ylim Optional y-axis limits to be applied to all plots.  Otherwise,
+#' limits are based on the model results. Default=NULL.
+#' @param verbose Controls amount of text output (maybe). Default=TRUE.
+#' @param nrows How many rows in multi-figure plot. Default=3.
+#' @param ncols How many columns in multi-figure plot. Default=3.
+#' @param new Open new window for plotting? Default=TRUE.
+#' @param pdf Write to PDF file instead of R GUI? Default=FALSE.
+#' @param pwidth Default width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param pheight Default height width of plots printed to files in units of
+#' \code{punits}. Default=7.
+#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
+#' (pixels), "in" (inches), "cm" or "mm". Default="in".
+#' @param ptsize Point size for plotted text in plots printed to files (see
+#' help("png") in R for details). Default=12.
+#' @param returntable Return table of parameter info? Default=FALSE.
+#' @param strings Subset parameters included in the plot using substring from
+#' parameter names (i.e. "SR" will get "SR_R0" and "SR_steep" if they are both
+#' estimated quantities in this model). Default=c().
+#' @param exact Should strings input match parameter names exactly?  Otherwise
+#' substrings are allowed. Default=FALSE.
+#' @param newheaders Optional vector of headers for each panel to replace the
+#' parameter names. Default=NULL.
+#' @param burn Additional burn-in applied to MCMC posteriors. Default=0.
+#' @param thin Additional thinning applied to MCMC posteriors. Default=1.
+#' @param ctlfile Specify control file to get min and max recdev values
+#' (otherwise assumed to be -5 and 5). Default="control.ss_new".
+#' @author Ian Taylor
+#' @keywords hplot
+#' @examples
+#' 
+#' \dontrun{
+#' pars <- SSplotPars(dir='c:/SS/Simple/')
+#' 
+#' # strings can be partial match
+#' pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
+#' }
+#' 
 SSplotPars <-
   function(
     dir="c:/path/", repfile="Report.sso",

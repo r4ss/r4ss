@@ -1,3 +1,31 @@
+#' Make shaded polygons with a mountain-like appearance
+#' 
+#' Designed to replicate like the cool-looking Figure 7 in Butterworth et al.
+#' (2003).
+#' 
+#' 
+#' @param zmat A matrix where the rows represent the heights of each mountain
+#' range
+#' @param xvec Optional input for the x variable
+#' @param yvec Optional input for the y variable
+#' @param zscale Controls the height of the mountains relative to the y-axis
+#' and max(zmat)
+#' @param rev Reverse the order of the display of yvec values.
+#' @param nshades Number of levels of shading
+#' @param axes Add axes to the plot?
+#' @param xaxs X-axis as internal or regular (see ?par for details)
+#' @param yaxs Y-axis as internal or regular (see ?par for details)
+#' @param xlab Optional label for x-axis
+#' @param ylab Optional label for y-axis
+#' @param las Xxis label style (see ?par for details). Default = 1 = horizontal
+#' axis labels.
+#' @param addbox Puts a box around the whole plot
+#' @param ...  Extra inputs passed to the plot command
+#' @author Ian Taylor
+#' @references Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical
+#' model for stock assessment of southern bluefin tuna with temporal changes in
+#' selectivity. South African Journal of Marine Science 25:331-362.
+#' @keywords hplot
 mountains <- function(zmat, xvec=NULL, yvec=NULL, zscale=3, rev=TRUE,
                       nshades=100,axes=TRUE, xaxs='i', yaxs='i',
                       xlab="", ylab="", las=1, addbox=FALSE, ...){

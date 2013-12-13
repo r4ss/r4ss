@@ -1,3 +1,16 @@
+#' Plot the summary F (or harvest rate).
+#' 
+#' Plots the summary F (or harvest rate) as set up in the starter file Needs a
+#' lot of work to be generalized
+#' 
+#' 
+#' @param replist List created by \code{SS_output}
+#' @param yrs Which years to include.
+#' @param Ftgt Target F where horizontal line is shown.
+#' @param ylab Y-axis label.
+#' @author Allan Hicks
+#' @seealso \code{\link{SSplotTimeseries}}, ~~~
+#' @keywords hplot
 SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Mortality",
                            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
                            uncertainty=TRUE,

@@ -1,3 +1,33 @@
+#' Insert a vector of recruitment deviations into the control file.
+#' 
+#' A function to insert a vector of recruitment deviations into the control
+#' file for simulation studies. This can also be achieved by using the .par
+#' file, but Ian Taylor prefers this approach for no good reason.
+#' 
+#' 
+#' @param fyr First year of the recdev vector.
+#' @param lyr Last year of the recdev vector.
+#' @param ctl Either NULL to read anew or an already read control file.
+#' Default=NULL.
+#' @param recdevs Either NULL to generate anew or an already generated vector
+#' of recdevs. Default=NULL.
+#' @param rescale Should the recdevs be rescaled to have mean = 0 and std.
+#' deviation = sigmaR? Default=TRUE.
+#' @param scaleyrs Vector of years over which rescaling (if chosen) should
+#' occur.
+#' @param dir Directory where files are located. Default is to use the working
+#' directory in use by R. Default="working_directory".
+#' @param ctlfile Name of control file to modify.  Default="control.ss_new".
+#' @param newctlfile Name of new file to output modified control file.
+#' Default="control_modified.ss".
+#' @param verbose Verbose output to R command line? Default=TRUE.
+#' @param writectl Write new file? Default=TRUE.
+#' @param returnctl Return contents ctl file as an object in the R workspace.
+#' Default=FALSE.
+#' @param newmaxbias Replace the maximum bias adjustment fraction with any
+#' non-NULL value. Default=NULL.
+#' @author Ian Taylor
+#' @keywords data manip
 SS_recdevs <-
 function(
          fyr, lyr, ctl=NULL, recdevs=NULL,

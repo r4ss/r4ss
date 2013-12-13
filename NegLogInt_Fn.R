@@ -1,4 +1,28 @@
-NegLogInt_Fn = function(File=NA, Input_SD_Group_Vec, CTL_linenum_List, ESTPAR_num_List, PAR_num_Vec, Int_Group_List, Version=5, StartFromPar=TRUE, Intern=TRUE, ReDoBiasRamp=FALSE, BiasRamp_linenum_Vec=NULL, CTL_linenum_Type=NULL){
+##' Work some of Jim Thorson's Laplace magic
+##'
+##' Jim will need to fill in stuff here.
+##' @title 
+##' @param File 
+##' @param Input_SD_Group_Vec 
+##' @param CTL_linenum_List 
+##' @param ESTPAR_num_List 
+##' @param PAR_num_Vec 
+##' @param Int_Group_List 
+##' @param Version 
+##' @param StartFromPar 
+##' @param Intern 
+##' @param ReDoBiasRamp 
+##' @param BiasRamp_linenum_Vec 
+##' @param CTL_linenum_Type 
+##' @return 
+##' @author James Thorson
+NegLogInt_Fn <-
+  function(File=NA, Input_SD_Group_Vec,
+           CTL_linenum_List, ESTPAR_num_List,
+           PAR_num_Vec, Int_Group_List, Version=5,
+           StartFromPar=TRUE, Intern=TRUE,
+           ReDoBiasRamp=FALSE, BiasRamp_linenum_Vec=NULL,
+           CTL_linenum_Type=NULL){
 
   # Directory
   if(is.na(File)) File = paste(getwd(),"/",sep="")

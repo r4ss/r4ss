@@ -1,4 +1,13 @@
-
+##' Read admodel.hes file
+##'
+##' This function reads in all of the information contained in the
+##' admodel.hes file. Some of this is needed for relaxing the
+##' covariance matrix, and others just need to be recorded and
+##' rewritten to file so ADMB "sees" what it's expecting.
+##' @param File Directory in which .hes file is located.
+##' @param FileName Nmae of .hes file.
+##' @return A list with elements num.pars, hes, hybrid_bounded_flag, and scale. 
+##' @author James Thorson?
 getADMBHessian <- function(File, FileName){
     ## This function reads in all of the information contained in the
     ## admodel.hes file. Some of this is needed for relaxing the
