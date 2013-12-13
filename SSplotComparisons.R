@@ -133,7 +133,8 @@ SSplotComparisons <-
              "Density",                 #9
              "Management target",       #10
              "Minimum stock size threshold", #11 
-             "Spawning output (eggs)"), #12
+             "Spawning output (eggs)",  #12
+             "Harvest rate"),           #13
            col="default", shadecol="default",
            pch="default", lty=1, lwd=2,
            spacepoints=10,
@@ -143,7 +144,7 @@ SSplotComparisons <-
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
            legendorder="default",legendncol=1,
-           btarg=0.4, minbthresh=0.25, sprtarg=1,
+           sprtarg=NULL, btarg=NULL, minbthresh=NULL,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            plotdir=NULL,
            densitynames=c("SPB_Virgin","R0"),
@@ -187,7 +188,7 @@ SSplotComparisons <-
   # subfunction to add legend
   legendfun <- function(legendlabels)
     legend(legendloc, legend=legendlabels[legendorder],
-           col=col[legendorder], lty=lty[legendorder],
+           col=col[legendorder], lty=lty[legendorder],seg.len = 3,
            lwd=lwd[legendorder], pch=pch[legendorder], bty="n", ncol=legendncol)
 
   rc <- function(n,alpha=1){
@@ -232,7 +233,33 @@ SSplotComparisons <-
   lowerCI       <- summaryoutput$lowerCI
   upperCI       <- summaryoutput$upperCI
   SpawnOutputUnits <- summaryoutput$SpawnOutputUnits
+  btargs         <- summaryoutput$btargs
+  minbthreshs    <- summaryoutput$minbthreshs
+  sprtargs       <- summaryoutput$sprtargs
+  SPRratioLabels <- summaryoutput$SPRratioLabels
 
+  # checking for the same reference points across models
+  btarg <- unique(btargs)
+  if(length(btarg)>1){
+    cat("setting btarg = -999 because models don't have matching values\n")
+    btarg <- -999
+  }
+  minbthresh <- unique(minbthreshs)
+  if(length(minbthresh)>1){
+    cat("setting minbthresh = -999 because models don't have matching values\n")
+    minbthresh <- -999
+  }
+  sprtarg <- unique(sprtargs)
+  if(length(sprtarg)>1){
+    cat("setting sprtarg = -999 because models don't have matching values\n")
+    sprtarg <- -999
+  }
+  SPRratioLabel <- unique(SPRratioLabels)
+  if(length(SPRratioLabel)>1){
+    cat("setting SPRratioLabel = NA because models don't have matching labels\n")
+    SPRratioLabel <- NA
+  }
+  
   if(uncertainty){
     if(all(is.na(quantsSD[,1:n]) | quantsSD[,1:n]==0)){
       cat("setting uncertainty to FALSE because no uncertainty includes in the model results\n")
@@ -255,6 +282,14 @@ SSplotComparisons <-
   if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
   if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
 
+  if(!is.null(indexfleets) && length(indexfleets) < n){
+    if(length(indexfleets)==1){
+      indexfleets <- rep(indexfleets, n)
+    }else{
+      warning("'indexfleets' needs to have length either 1 or n=",n)
+      indexfleets <- NULL
+    }
+  }
   # setup colors, points, and line types
   if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
   if(col[1]=="default" & nlines<3) col <- rc(nlines)
@@ -574,8 +609,13 @@ SSplotComparisons <-
     if(uncertainty) ylim <- ylimAdj*range(ylim, SPRratioUpper[,models], na.rm=TRUE)
 
     # make plot
-    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-                  ylab=labels[8] ,xaxs=xaxs,yaxs=yaxs,las=1)
+    if(!add){
+      newmar <- oldmar <- par()$mar
+      newmar[4] <- newmar[2]
+      par(mar=newmar)
+      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+           ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+    }
     if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
@@ -591,16 +631,68 @@ SSplotComparisons <-
       }
     }
     abline(h=0,col="grey")
-    abline(h=sprtarg,col="grey",lty=2)
-
-    if(btarg>0){
-      abline(h=0,col="grey")
-      abline(h=sprtarg,col="red",lty=2)
-      text(SPRratio$Yr[1]+4,(1+0.02),labels[10],adj=0)
-    }
-
+    if(sprtarg>0){
+      if(sprtarg==1){
+        # draw line at ratio = 1
+        abline(h=sprtarg,col="red",lty=2)
+        text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
+        mtext(side=2,line=3,labels[8])
+      }else{
+        # draw line at sprtarg
+        yticks <- pretty(ylim)
+        if(!is.na(SPRratioLabels) &&
+           SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
+          abline(h=1,col="red",lty=2)
+          text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
+          axis(4,at=yticks,lab=yticks*(1-sprtarg),las=1)
+          mtext(side=4,line=3,"1 - SPR")
+          mtext(side=2,line=3,SPRratioLabel)
+        }
+      }
+    }else{
+      mtext(side=2,line=3,SPRratioLabel)
+    }      
     if(legend) legendfun(legendlabels)
+    if(exists("oldmar")) par(mar=oldmar)
   }
+
+  ## plotF <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+  ##   # get axis limits
+  ##   if(xlim[1]=="default"){
+  ##     xlim <- range(SPRratio$Yr)
+  ##     if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+  ##   }
+  ##   ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
+  ##   if(uncertainty) ylim <- ylimAdj*range(ylim, SPRratioUpper[,models], na.rm=TRUE)
+
+  ##   # make plot
+  ##   if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+  ##                 ylab=labels[8] ,xaxs=xaxs,yaxs=yaxs,las=1)
+  ##   if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+  ##   if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+  ##   }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+  ##     if(type!="l"){
+  ##       SPRratio2 <- SPRratio
+  ##       for(iline in 1:nlines){
+  ##         imodel <- models[iline]
+  ##         SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+  ##       }
+  ##       matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+  ##     }
+  ##   }
+  ##   abline(h=0,col="grey")
+  ##   abline(h=sprtarg,col="grey",lty=2)
+
+  ##   if(btarg>0){
+  ##     abline(h=0,col="grey")
+  ##     abline(h=sprtarg,col="red",lty=2)
+  ##     text(SPRratio$Yr[1]+4,(1+0.02),labels[10],adj=0)
+  ##   }
+
+  ##   if(legend) legendfun(legendlabels)
+  ## }
   
   plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
     # determine y-limits
@@ -858,7 +950,7 @@ SSplotComparisons <-
             points(yr[subset],obs[subset],pch=16,cex=1.5,col=shadecol[iline])
         }
     }else {
-        imodel <- models[1]
+        imodel <- models[which(endyrvec==max(endyrvec))[1]]
         subset <- indices2$imodel==imodel & !is.na(indices2$Like)
         if(indexUncertainty)
             arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=1)
@@ -1186,13 +1278,17 @@ SSplotComparisons <-
       }
     }
   }
-  
+
+  # filename extension for index plots
+  val <- paste("_flt",unique(indexfleets),sep="")
+  if(length(val)!=1) val <- NULL
+
   # subplot 11: index fits
   if(11 %in% subplots){
     if(verbose) cat("subplot 11: index fits\n")
     if(plot) plotIndices()
     if(print){
-      pngfun("compare11_indices.png")
+      pngfun(paste("compare11_indices",val,".png",sep=""))
       plotIndices()
       dev.off()
     }
@@ -1203,7 +1299,7 @@ SSplotComparisons <-
     if(verbose) cat("subplot 12: index fits on a log scale\n")
     if(plot) plotIndices(log=TRUE)
     if(print){
-      pngfun("compare12_indices_log.png")
+      pngfun(paste("compare12_indices_log",val,".png",sep=""))
       plotIndices(log=TRUE)
       dev.off()
     }

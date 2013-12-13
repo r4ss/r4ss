@@ -9,16 +9,17 @@
 #' parameterizations, and various other tasks.
 #' 
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.20\cr Date: \tab 2013-03-09\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.21\cr Date: \tab 2013-12-13\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{http://www.r-project.org}\cr \tab
 #' \url{http://code.google.com/p/r4ss/}\cr } Should be compatible with Stock
-#' Synthesis versions 3.11 through 3.24.
+#' Synthesis versions 3.20 through 3.3.
 #' 
 #' @name r4ss-package
 #' @aliases r4ss-package r4ss
 #' @docType package
 #' @author Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre Punt,
-#' John Wallace, Chantel Wetzel, and other contributors
+#' John Wallace, Chantel Wetzel, James Thorson, Yukio Takeuchi, Kotaro Ono, 
+#' and other contributors
 #' 
 #' Package maintainer: Ian Taylor <Ian.Taylor@@noaa.gov>
 #' @references More info on the R code: \url{http://code.google.com/p/r4ss/}
