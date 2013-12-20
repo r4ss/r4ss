@@ -186,11 +186,13 @@ SSplotComparisons <-
   }
   
   # subfunction to add legend
-  legendfun <- function(legendlabels)
+  legendfun <- function(legendlabels,cumulative=FALSE) {
+    if(cumulative) legendloc="topleft"
     legend(legendloc, legend=legendlabels[legendorder],
            col=col[legendorder], lty=lty[legendorder],seg.len = 3,
            lwd=lwd[legendorder], pch=pch[legendorder], bty="n", ncol=legendncol)
-
+  }
+  
   rc <- function(n,alpha=1){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
     # a.k.a. rich.colors.short, but put directly in this function
@@ -962,7 +964,7 @@ SSplotComparisons <-
     box()
   } # end plotIndices function
   
-  plotDensities <- function(parname,xlab,denslwd,limit0=TRUE){
+  plotDensities <- function(parname,xlab,denslwd,limit0=TRUE,cumulative=F){
     if(any(!mcmcVec)) { 
       vals <- rbind(pars[grep(parname,pars$Label,fixed=TRUE),],
                     quants[grep(parname,quants$Label,fixed=TRUE),])
@@ -1064,8 +1066,13 @@ SSplotComparisons <-
     if(is.null(ymax)){
       cat("  skipping plot of",parname,"because it seems to not be estimated in any model\n")
     }else{
-      if(!add) plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",
-                    ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+      if(!add) {
+        if(cumulative) {
+            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1),xlab=xlab,ylab="")        
+        } else {
+            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+        }
+      }
       # add vertical lines for target and threshold depletion values
       if(grepl("Bratio",parname)){
         if(btarg>0){
@@ -1091,9 +1098,13 @@ SSplotComparisons <-
           x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
           #find the positions in the density that are closest to these quantiles
           x <- mcmcDens[[iline]]$x
-          y <- mcmcDens[[iline]]$y
-          yscale <- 1/(sum(y)*mean(diff(x)))
-          y <- y*yscale
+          if(!cumulative) {
+            y <- mcmcDens[[iline]]$y
+            yscale <- 1/(sum(y)*mean(diff(x)))
+            y <- y*yscale
+          } else {
+            y <- cumsum(mcmcDens[[iline]]$y)/sum(mcmcDens[[iline]]$y)
+          }
           y2 <- NULL
           for(ii in x2) {
             # find y-value associated with closest matching x-value
@@ -1101,10 +1112,19 @@ SSplotComparisons <-
             y2 <- c(y2,min(y[abs(x-ii)==min(abs(x-ii))]))
           }
           
-          polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
+          if(!cumulative) {
+              polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
+          } else {
+              polygon(c(x[1],x,rev(x)[1]),c(0,y,1),col=shadecol[iline],border=NA)
+          }
           lines(x,y,col=col[iline],lwd=2)
-          if(densitysymbols) points(x2,y2,col=col[iline],pch=pch[iline])
-          lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
+          if(!cumulative) {
+              if(densitysymbols) points(x2,y2,col=col[iline],pch=pch[iline])
+              lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) #really hokey and assumes that the middle value of the vector is the median
+          } else {
+              if(densitysymbols) points(x2,symbolsQuants,col=col[iline],pch=pch[iline])
+              lines(rep(median(mcmcVals),2),c(0,0.5),col=col[iline])
+          }
         }else{
           parval <- vals[1,imodel]
           parSD <- valSDs[1,imodel]
@@ -1119,15 +1139,26 @@ SSplotComparisons <-
             x <- seq(xmin,max(xmax,xlim),length=500)
             #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
             x2 <- qnorm(symbolsQuants,parval,parSD)
-            mle <- dnorm(x,parval,parSD)  # smooth line
-            mle2 <- dnorm(x2,parval,parSD) # symbols
-            mlescale <- 1/(sum(mle)*mean(diff(x)))
-            y <- mle <- mle*mlescale
-            y2 <- mle2 <- mle2*mlescale
+            if(cumulative) {
+                y <- mle <- pnorm(x,parval,parSD)  # smooth line
+                y2 <- mle2 <- pnorm(x2,parval,parSD) # symbols
+            } else {
+                mle <- dnorm(x,parval,parSD)  # smooth line
+                mle2 <- dnorm(x2,parval,parSD) # symbols
+                mlescale <- 1/(sum(mle)*mean(diff(x)))
+                y <- mle <- mle*mlescale
+                y2 <- mle2 <- mle2*mlescale
+            }
+
             polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
             lines(x,mle,col=col[iline],lwd=2)
-            if(densitysymbols) points(x2,mle2,col=col[iline],pch=pch[iline])
-            lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline],lwd=denslwd) #
+            if(!cumulative) {
+                if(densitysymbols) points(x2,mle2,col=col[iline],pch=pch[iline])
+                lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline],lwd=denslwd) #
+            } else {
+                if(densitysymbols) points(x2,symbolsQuants,col=col[iline],pch=pch[iline])
+                lines(rep(parval,2),c(0,0.5),col=col[iline],lwd=denslwd) #
+            }
           }else{
             abline(v=parval,col=col[iline],lwd=denslwd)
           }
@@ -1147,11 +1178,18 @@ SSplotComparisons <-
       }
       abline(h=0,col="grey")
       xticks <- pretty(xlim)
-      if(!add) axis(1,at=xticks,labels=format(xticks/xunits))
+      if(!add) {
+        axis(1,at=xticks,labels=format(xticks/xunits))
+        theLine <- 1
+        if(cumulative) {
+            axis(2,at=symbolsQuants,labels=format(symbolsQuants),las=1,cex.axis=0.9)
+            theLine <- 3
+        }
+        mtext(side=2,line=theLine,labels[9])
+      }
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",xunits," (so may be in units of ",xlab2,")\n",sep="")
-      if(!add) mtext(side=2,line=1,labels[9])
       box()
-      legendfun(legendlabels)
+      legendfun(legendlabels,cumulative)
     }
   } # end plotDensities function
   
@@ -1317,30 +1355,6 @@ SSplotComparisons <-
     }
   }
 
-  #### unfinished addition of growth comparisons
-  ## # subplot 14: growth, females
-  ## if(14 %in% subplots){
-  ##   if(verbose) cat("subplot 14: growth, females\n")
-  ##   if(plot) plotgrowth(sex='f')
-  ##   if(print){
-  ##     pngfun("compare14_growth_females.png")
-  ##     plotgrowth(sex='f')
-  ##     dev.off()
-  ##   }
-  ## }
-
-  ## # subplot 15: growth, males
-  ## if(15 %in% subplots){
-  ##   if(verbose) cat("subplot 15: growth, males\n")
-  ##   if(plot) plotgrowth(sex='m')
-  ##   if(print){
-  ##     pngfun("compare15_growth_males.png")
-  ##     plotgrowth(sex='m')
-  ##     dev.off()
-  ##   }
-  ## }
-  
-  
   # subplot 14: densities
   if(14 %in% subplots){
     if(uncertainty){
@@ -1386,5 +1400,80 @@ SSplotComparisons <-
       }
     }
   }
+
+  # subplot 15: cumulative probability plots
+  #  draws cumulative plots of the same parameters drawn in density plots
+  #  uses some same objects and names as densityplots
+  if(15 %in% subplots){
+    if(uncertainty){
+      if(verbose) cat("subplot 15: cumulative probability\n")
+      # look for all parameters or derived quantities matching the input list of names
+      expandednames <- NULL
+      for(i in 1:length(densitynames)){
+        matchingnames <- c(pars$Label,quants$Label)[grep(densitynames[i],c(pars$Label,quants$Label),fixed=TRUE)]
+        expandednames <- c(expandednames,matchingnames)
+      }
+      if(length(expandednames)==0){
+        cat("  No parameter/quantity names matching 'densitynames' input.\n")
+      }else{
+        cat("  parameter/quantity names matching 'densitynames' input:\n")
+        print(expandednames)
+        ndensities <- length(expandednames)
+        # make a table to store associated x-labels
+        densitytable <- data.frame(name=expandednames,label=expandednames,stringsAsFactors=FALSE)
+        if(length(densityxlabs)==ndensities & densityxlabs[1]!="default"){
+          densitytable$label <- densityxlabs
+          cat("  table of parameter/quantity labels with associated x-axis label:\n")
+          print(densitytable)
+        }else{
+          if(densityxlabs[1]!="default"){
+            cat("  length of 'densityxlabs' doesn't match the number of values matching 'densitynames'\n",
+                "    parameter labels will be used instead\n")
+          }
+        }
+        for(iplot in 1:ndensities){
+          # find matching parameter
+          name <- densitytable[iplot,1]
+          xlab <- densitytable[iplot,2]
+          #if(verbose) cat("  quantity name=",name,"\n",sep="")
+          if(plot) {
+            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=T)
+          }
+          if(print){
+            pngfun(paste("compare14_densities_",name,".png",sep=""))
+            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumualtive=T)
+            dev.off()
+          }
+        }
+      }
+    }
+  }
+
+
+  #### unfinished addition of growth comparisons
+  ## # subplot 14: growth, females
+  ## if(14 %in% subplots){
+  ##   if(verbose) cat("subplot 14: growth, females\n")
+  ##   if(plot) plotgrowth(sex='f')
+  ##   if(print){
+  ##     pngfun("compare14_growth_females.png")
+  ##     plotgrowth(sex='f')
+  ##     dev.off()
+  ##   }
+  ## }
+
+  ## # subplot 15: growth, males
+  ## if(15 %in% subplots){
+  ##   if(verbose) cat("subplot 15: growth, males\n")
+  ##   if(plot) plotgrowth(sex='m')
+  ##   if(print){
+  ##     pngfun("compare15_growth_males.png")
+  ##     plotgrowth(sex='m')
+  ##     dev.off()
+  ##   }
+  ## }
+  
+  
+
   if(pdf) dev.off()
 }

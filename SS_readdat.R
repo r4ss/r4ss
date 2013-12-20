@@ -103,8 +103,8 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   datlist$fleetnames <- fleetnames
   datlist$surveytiming <- surveytiming <- allnums[i:(i+Ntypes-1)]; i <- i+Ntypes
   datlist$areas <- areas <- allnums[i:(i+Ntypes-1)]; i <- i+Ntypes
-  cat("areas:",areas,'\n')
   if(verbose){
+    cat("areas:",areas,'\n')
     cat("fleet info:\n")
     print(data.frame(fleet  = 1:Ntypes,
                      name   = fleetnames,
