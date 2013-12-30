@@ -132,7 +132,7 @@ mountains <- function(zmat, xvec=NULL, yvec=NULL, zscale=3, rev=TRUE,
   if(axes){
     axis(1,at=xvec)
     axis(2,at=yvec,labels=abs(yvec),las=las)
-    axis(4,at=yvec,lasels=las,labels=FALSE) # extra ticks on right hand side
+    axis(4,at=yvec,labels=FALSE) # extra ticks on right hand side
   }
   if(addbox) box() # add box if desired
 }
