@@ -241,20 +241,26 @@ SSplotComparisons <-
   SPRratioLabels <- summaryoutput$SPRratioLabels
 
   # checking for the same reference points across models
-  btarg <- unique(btargs)
-  if(length(btarg)>1){
-    cat("setting btarg = -999 because models don't have matching values\n")
-    btarg <- -999
+  if(is.null(btarg)) {
+    btarg <- unique(btargs)
+    if(length(btarg)>1){
+      cat("setting btarg = -999 because models don't have matching values\n")
+      btarg <- -999
+    }
   }
-  minbthresh <- unique(minbthreshs)
-  if(length(minbthresh)>1){
-    cat("setting minbthresh = -999 because models don't have matching values\n")
-    minbthresh <- -999
+  if(is.null(minbthresh)) {
+    minbthresh <- unique(minbthreshs)
+    if(length(minbthresh)>1){
+      cat("setting minbthresh = -999 because models don't have matching values\n")
+      minbthresh <- -999
+    }
   }
-  sprtarg <- unique(sprtargs)
-  if(length(sprtarg)>1){
-    cat("setting sprtarg = -999 because models don't have matching values\n")
-    sprtarg <- -999
+  if(is.null(sprtarg)) {
+    sprtarg <- unique(sprtargs)
+    if(length(sprtarg)>1){
+      cat("setting sprtarg = -999 because models don't have matching values\n")
+      sprtarg <- -999
+    }
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
