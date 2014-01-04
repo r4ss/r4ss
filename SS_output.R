@@ -746,6 +746,8 @@ SS_output <-
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
+  rownames(parameters) <- parameters$Label
+  
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
 
   if(!is.na(parfile)){
@@ -890,7 +892,8 @@ SS_output <-
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
-
+  rownames(der) <- der$LABEL
+  
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
