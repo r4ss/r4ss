@@ -85,6 +85,7 @@ SSplotRetroRecruits <-
     recvals       <- retroSummary$recdevs
     recvalsLower  <- retroSummary$recdevsLower
     recvalsUpper  <- retroSummary$recdevsUpper
+    scale <- 1
   }else{
     # recruits
     recvals       <- retroSummary$recruits

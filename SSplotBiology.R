@@ -28,7 +28,7 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
 SSplotBiology <-
-function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
+function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
            col1="red",col2="blue",
            legendloc="topleft",
            plotdir="default",
@@ -42,7 +42,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
              "Female weight (kg)",              #8
              "Female length (cm)",              #9
              "Fecundity",                       #10
-             "Default fecundity label"),        #11
+             "Default fecundity label",         #11
+             "Year"),                           #12
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -379,21 +380,22 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
     dev.off()
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
-
-  # Natural mortality (if time varying)
-  M <- growdatF$M # female mortality in the ending year
+  
+  # Natural mortality (if age-dependent -- need to add time-varying M plot)
+  MatAge <- growdatF$M # female mortality in the ending year
+  # not sure what role M2 is playing here
   M2 <- MGparmAdj[,c(1,grep("NatM",names(MGparmAdj)))]
-  # if dimension is NULL there were no time-varying natural mortality parameters
+  # not sure when you could have ncol(M2) = NULL
   if(!is.null(ncol(M2))){ 
     M2f <- M2[,c(1,grep("Fem",names(M2)))]
-    if(min(M)!=max(M) & 8 %in% subplots){
-      ymax <- max(M)
+    if(min(MatAge)!=max(MatAge) & 8 %in% subplots){
+      ymax <- max(MatAge)
       mfunc <- function(){
         if(!add){
-          plot(growdatF$Age,M,col=col1,lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
+          plot(growdatF$Age,MatAge,col=col1,lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
           abline(h=0,col="grey")
         }
-        lines(growdatF$Age,M,col=col1,lwd=2,type="o")
+        lines(growdatF$Age,MatAge,col=col1,lwd=2,type="o")
         if(nsexes > 1){
           growdatM <- growdat[growdat$Morph==mainmorphs[2],]
           lines(growdatM$Age,growdatM$M,col=col2,lwd=2,type="o")
@@ -467,6 +469,38 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:10,seas=1,
       } # end loop over sexes
     } # end of if data available for time varying growth
   }# end disable of time-varying growth for multi-season models
+
+  # plot time-series of any time-varying quantities
+  if(11 %in% subplots){
+    # general function to work for any parameter
+    timeVaryingParmFunc <- function(parmlabel){
+      plot(MGparmAdj$Year, MGparmAdj[[parmlabel]],
+           xlab=labels[11], ylab=parmlabel, type="l", lwd=3, col=col2)
+    }
+    # check to make sure MGparmAdj looks as expected
+    # (maybe had different or conditional format in old SS versions)
+    if(!is.null(ncol(MGparmAdj)) && ncol(MGparmAdj)>1){
+      # loop over columns looking for time-varying parameters
+      for(icol in 2:ncol(MGparmAdj)){
+        parmlabel <- names(MGparmAdj)[icol]
+        parmvals  <- MGparmAdj[,icol]
+        # check for changes
+        if(length(unique(parmvals)) > 1){
+          # make plot
+          if(plot) timeVaryingParmFunc(parmlabel)
+          if(print){
+            file <- paste(plotdir, "/bio11_time-varying_", parmlabel, ".png", sep="")
+            caption <- "Time-varying mortality and growth parameters"
+            plotinfo <- pngfun(file=file, caption=caption) 
+            timeVaryingParmFunc(parmlabel)
+            dev.off()
+          }
+        }
+      }
+    }
+  }
+
+  # add category and return plotinfo
   if(!is.null(plotinfo)) plotinfo$category <- "Bio"
   return(invisible(plotinfo))
 }
