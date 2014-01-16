@@ -97,6 +97,7 @@ SSplotRetroRecruits <-
   lowerCI       <- retroSummary$lowerCI
   upperCI       <- retroSummary$upperCI
 
+  # figure out colors (using the r4ss adaptation of Arni's function)
   colvec      <- rich.colors.short(length(cohorts),alpha=.7)
   shadecolvec <- rich.colors.short(length(cohorts),alpha=.1)
   colvec      <- rainbow(length(cohorts),alpha=.7)
@@ -107,7 +108,7 @@ SSplotRetroRecruits <-
     tmp <- col2rgb(colvec[i])/255
     colvec.txt[i] <- rgb(tmp[1]/2,tmp[2]/2,tmp[3]/2,alpha=.7)
   }
-  print(cbind(colvec,colvec.txt))
+  #print(cbind(colvec,colvec.txt))
 
   ylab <- ifelse(devs,labels[1],labels[2])
   if(relative) ylab <- paste(ylab,labels[3])
@@ -121,10 +122,10 @@ SSplotRetroRecruits <-
     if(uncertainty){
       ylim <- c(min(recvalsLower[,1:n]),max(recvalsUpper[,1:n]))
     }else{
-      ylim <- c(min(recvals[,1:n]),max(recvals[,1:n]))
+      ylim <- c(min(recvals[,1:n],na.rm=TRUE),max(recvals[,1:n],na.rm=TRUE))
     }
     if(devs){
-      ylim <- 1.1*range(c(ylim,-ylim)) # make symmetric for devs
+      ylim <- c(-1,1)*ceiling(1.1*max(abs(ylim))) # make symmetric for devs
     }else{
       if(relative){
         ylim <- c(-1.0*max(ylim),1.0*max(ylim)) # include 0 for recruitments
@@ -193,40 +194,50 @@ SSplotRetroRecruits <-
     cohortvalsUpper <- as.numeric(cohortvalsUpper)/scale
 
     goodmodels <- (1:n)[endyrvec-y>=0]
+    # which of the values is the final and initial
+    final <- which(endyrvec==max(endyrvec[goodmodels]))
+    initial <- which(endyrvec==min(endyrvec[goodmodels]))
     if(relative){
       #relative to final estimate
-      if(uncertainty)
+      if(uncertainty){
+        # polygon showing uncertainty
         addpoly(yrvec=endyrvec[goodmodels] - y,
-                lower=cohortvalsLower[goodmodels] - cohortvals[max(goodmodels)],
-                upper=cohortvalsUpper[goodmodels] - cohortvals[max(goodmodels)],
+                lower=cohortvalsLower[goodmodels] - cohortvals[final],
+                upper=cohortvalsUpper[goodmodels] - cohortvals[final],
                 shadecol=shadecolvec[iy],col=colvec[iy])
+      }
+      # line with estimates
       lines(endyrvec[goodmodels] - y,
-            cohortvals[goodmodels] - cohortvals[max(goodmodels)],
+            cohortvals[goodmodels] - cohortvals[final],
             type='o',col=colvec[iy],lwd=3,pch=16)
-      if(labelyears)
-        text(x=(endyrvec[goodmodels] - y)[1] - 0.5,
-             y=(cohortvals[goodmodels] - cohortvals[max(goodmodels)])[1],
+      if(labelyears){
+        text(x=endyrvec[initial] - y - 0.5,
+             y=cohortvals[initial] - cohortvals[final],
              labels=y,
              col=colvec.txt[iy],
              cex=.7)
+      }
     }else{
       #true value
-      if(uncertainty)
+      if(uncertainty){
         addpoly(yrvec=endyrvec[goodmodels] - y,
                 lower=cohortvalsLower[goodmodels],
                 upper=cohortvalsUpper[goodmodels],
                 shadecol=shadecolvec[iy],col=colvec[iy])
+      }
       lines(endyrvec[goodmodels] - y,
             cohortvals[goodmodels],
             type='o',col=colvec[iy],lwd=3,pch=16)
-      if(labelyears)
-        text(x=rev(endyrvec[goodmodels] - y)[1] + 0.5,
-             y=rev(cohortvals[goodmodels])[1],
+      if(labelyears){
+        text(x=endyrvec[final] - y + 0.5,
+             y=cohortvals[final],
              labels=y,
              col=colvec.txt[iy],
              cex=.7)
+      }
     }
   }
+  # add legend if requested
   if(legend) legend('topright',lwd=3,lty=1,pch=16,col=colvec,legend=cohorts,
                     title='Cohort birth year',ncol=leg.ncols,
                     bg=rgb(1,1,1,.3),box.col=NA)

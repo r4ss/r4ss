@@ -1402,6 +1402,15 @@ if(FALSE){
   returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
+
+  # override minbthresh = 0.25 if it looks like hake
+  if(!is.na(btarg) & btarg==0.4 & startyr==1966 & sprtarg==0.4 &
+     accuage==20 & wtatage_switch){
+    if(verbose)
+      cat("Setting minimum biomass threshhold to 0.10 because this looks like hake\n",
+          "  (can replace or override in SS_plots by setting 'minbthresh')\n")
+    minbthresh <- 0.1 # treaty value for hake
+  }
   returndat$minbthresh <- minbthresh
   
   if(forecast){
