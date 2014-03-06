@@ -130,11 +130,15 @@ function(
   if(length(grep(".exe",tolower(model)))){
     exe <- model
   }else{
-    exe <- tolower(paste(model,ifelse(OS=="Windows",".exe",""),sep=""))
+    exe <- paste(model,ifelse(OS=="Windows",".exe",""),sep="")
   }
   # check whether exe is in directory
-  if(!exe %in% tolower(dir(dir))) stop("Executable ",exe," not found in ",dir)
-
+  if(OS=="Windows"){
+    if(!tolower(exe) %in% tolower(dir(dir))) stop("Executable ",exe," not found in ",dir)
+  }else{
+    if(!exe %in% dir(dir)) stop("Executable ",exe," not found in ",dir)
+  }
+  
   if(is.null(linenum) & is.null(string))
     stop("You should input either 'linenum' or 'string' (but not both)")
   if(!is.null(linenum) & !is.null(string))
@@ -151,6 +155,7 @@ function(
   totallike <- rep(NA,n)
   liketable <- NULL
 
+  cat("changing working directory to",dir,"\n")
   setwd(dir) # change working directory
   stdfile <- paste(model,'.std',sep='')
 
@@ -218,6 +223,7 @@ function(
 
     # run model
     command <- paste(model, extras)
+    if(OS!="Windows") command <- paste("./",command,sep="")
     cat("Running model in directory:",getwd(),"\n")
     cat("Using the command: '",command,"'\n",sep="")
     if(OS=="Windows" & !systemcmd){
