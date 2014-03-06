@@ -173,8 +173,9 @@ SSplotProfile <-
   if(xlim[1]=="default") xlim <- range(parvec)
 
   # rearange likelihoods to be in columns by type
-  prof.table <- data.frame(t(likelihoods[,models]))
-  names(prof.table) <- likelihoods[,ncol(likelihoods)]
+  # Fixed bug that crashes plot when only a subset of components are listed (Steve Teo)
+  prof.table <- data.frame(t(likelihoods[likelihoods$Label %in% components,models])) 
+  names(prof.table) <- likelihoods[likelihoods$Label %in% components,ncol(likelihoods)]
   component.labels.good <- rep("",ncol(prof.table))
   for(icol in 1:ncol(prof.table)){
     ilabel <- which(components==names(prof.table)[icol])
