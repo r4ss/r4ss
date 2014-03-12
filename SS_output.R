@@ -589,8 +589,16 @@ SS_output <-
         sizedbase$Bin[sizedbase$units=="in"] <-
           sizedbase$Bin[sizedbase$units=="in"]/2.54
 
+        sizebinlist <- list()
+        for(imethod in 1:max(sizedbase$method)){
+          tmp <- sort(unique(sizedbase$Bin[sizedbase$method==imethod]))
+          if(length(tmp)==0) tmp <- NULL
+          sizebinlist[[paste("size_method_",imethod,sep="")]] <- tmp
+        }
+      }else{
+        sizebinlist <- NULL
       }
-
+      
       if(is.null(compdbase$N)){
         good <- TRUE
       }else{
@@ -635,7 +643,7 @@ SS_output <-
     # if comp option is turned off
     lbins <- NA
     nlbins <- NA
-
+    
     #### need to get length bins from somewhere
     ## temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
     ## lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
@@ -645,6 +653,7 @@ SS_output <-
     agebins <- NA
     nagebins <- NA
     Lbin_method <- 2
+    sizebinlist <- NA
   }
 
   # info on growth morphs (see also section setting mainmorphs below)
@@ -1063,6 +1072,7 @@ if(FALSE){
   returndat$nlbins      <- nlbins
   returndat$lbinspop    <- lbinspop
   returndat$nlbinspop   <- nlbinspop
+  returndat$sizebinlist <- sizebinlist
   returndat$agebins     <- agebins
   returndat$nagebins    <- nagebins
   returndat$accuage     <- accuage
