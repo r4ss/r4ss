@@ -896,9 +896,10 @@ SS_output <-
       names(wtatage)[1] <- "yr" # replacing "X.yr" created by presence of #
     }
   }
-  
+
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
+  der <- der[der$LABEL!="Bzero_again",]
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
   rownames(der) <- der$LABEL
