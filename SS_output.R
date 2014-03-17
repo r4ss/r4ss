@@ -572,7 +572,7 @@ SS_output <-
       compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
       # extra processing for sizedbase
-      if(!is.null(sizedbase)){
+      if(!is.null(sizedbase) && nrow(sizedbase)>0){
         sizedbase$bio.or.num=c("bio","num")[sizedbase$Lbin_lo]
         sizedbase$units=c("kg","lb","cm","in")[sizedbase$Lbin_hi]
         sizedbase$method=sizedbase$Ageerr
