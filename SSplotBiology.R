@@ -374,7 +374,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
   if(plot & 7 %in% subplots) gfunc5()
   if(print & 7 %in% subplots){
     file <- paste(plotdir,"/bio7_sizeatage.png",sep="")
-    caption <- "Length at age"
+    caption <- "Length at age (dashed lines are 95% intervals)"
     plotinfo <- pngfun(file=file, caption=caption)
     gfunc5()
     dev.off()
