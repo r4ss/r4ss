@@ -22,7 +22,12 @@
 #' @param systemcmd Should R call SS using "system" function intead of "shell".
 #' This may be required when running R in Emacs. Default = FALSE.
 #' @param saveoutput Copy output .SSO files to unique names.  Default = TRUE.
-#' @param overwrite Overwrite any existing .SSO files.
+#' @param overwrite Overwrite any existing .SSO files. Default = TRUE. If FALSE,
+#' then some runs may be skipped.
+#' @param whichruns Optional vector of run indices to do. This can be used to
+#' re-run a subset of the cases in situations where the function was
+#' interupted or some runs fail to converge. Must be a subset of 1:n, where n
+#' is the length of profilevec.
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models
@@ -103,7 +108,7 @@ function(
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
          model='ss3',extras="-nox",systemcmd=FALSE,saveoutput=TRUE,
-         overwrite=TRUE,
+         overwrite=TRUE,whichruns=NULL,
          verbose=TRUE)
 {
   ################################################################################
@@ -138,7 +143,8 @@ function(
   }else{
     if(!exe %in% dir(dir)) stop("Executable ",exe," not found in ",dir)
   }
-  
+
+  # figure out which line to change in control file
   if(is.null(linenum) & is.null(string))
     stop("You should input either 'linenum' or 'string' (but not both)")
   if(!is.null(linenum) & !is.null(string))
@@ -149,8 +155,19 @@ function(
     if(!is.null(parlinenum) & !is.null(parstring))
       stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
   }
+  
+  # figure out length of profile vec and sort out which runs to do
   n <- length(profilevec)
   if(n==0) stop("Missing input 'profilevec'")
+  if(is.null(whichruns)){
+    whichruns <- 1:n
+  }else{
+    if(!all(whichruns %in% 1:n)){
+      stop("input whichruns should be NULL or a subset of 1:",n,"\n",sep="")
+    }
+  }
+  cat("doing runs: ",paste(whichruns,collapse=","),",\n  out of n=",n,"\n",sep="")
+  
   converged <- rep(NA,n)
   totallike <- rep(NA,n)
   liketable <- NULL
@@ -184,72 +201,82 @@ function(
   if(usepar) file.copy(parfile, "parfile_original_backup.sso")
 
   # run loop over profile values
-  for(i in 1:n){
-    # change initial values in the control file
-    # this also sets phase negative which is needed even when par file is used
-    SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
-                  linenums=linenum,strings=string,
-                  newvals=profilevec[i], estimate=FALSE,
-                  verbose=TRUE, repeat_vals=TRUE)
-    if(usepar){
-      # alternatively change initial values in the par file
-      # read file
-      if(globalpar){
-        par <- readLines("parfile_original_backup.sso")
-      }else{
-        par <- readLines(parfile)
+  for(i in whichruns){
+    # check for presence of ReportN.sso files. If present and overwrite=FALSE,
+    # then don't bother running anything
+    newrepfile <- paste('Report',i,".sso",sep="")
+    if(!overwrite & file.exists(newrepfile)){
+      cat("skipping profile i=",i,"/",n," because overwrite=FALSE\n",
+          "  and file exists: ", newrepfile, "\n", sep="")
+    }else{
+      cat("running profile i=",i,"/",n,"\n", sep="")
+      
+      # change initial values in the control file
+      # this also sets phase negative which is needed even when par file is used
+      SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
+                    linenums=linenum,strings=string,
+                    newvals=profilevec[i], estimate=FALSE,
+                    verbose=TRUE, repeat_vals=TRUE)
+      if(usepar){
+        # alternatively change initial values in the par file
+        # read file
+        if(globalpar){
+          par <- readLines("parfile_original_backup.sso")
+        }else{
+          par <- readLines(parfile)
+        }
+        # find value
+        if(!is.null(parstring)) parlinenum <- grep(parstring,par,fixed=TRUE)+1
+        if(length(parlinenum)==0) stop("Problem with input parstring = '",parstring,"'",sep="")
+        parline <- par[parlinenum]
+        parval <- as.numeric(parline)
+        if(is.na(parval))
+          stop("Problem with parlinenum or parstring for par file.\n",
+               "line as read: ", parline)
+        # replace value
+        par[parlinenum] <- profilevec[i]
+        # add new header
+        note <- c(paste("# New par file created by SS_profile with the value on line number",linenum),
+                  paste("# changed from",parval,"to",profilevec[i]))
+        par <- c(par,"#",note)
+        print(note)
+        # write new file
+        writeLines(par, paste("ss3.par_input_",i,".ss",sep=""))
+        writeLines(par, "ss3.par")
       }
-      # find value
-      if(!is.null(parstring)) parlinenum <- grep(parstring,par,fixed=TRUE)+1
-      if(length(parlinenum)==0) stop("Problem with input parstring = '",parstring,"'",sep="")
-      parline <- par[parlinenum]
-      parval <- as.numeric(parline)
-      if(is.na(parval))
-        stop("Problem with parlinenum or parstring for par file.\n",
-             "line as read: ", parline)
-      # replace value
-      par[parlinenum] <- profilevec[i]
-      # add new header
-      note <- c(paste("# New par file created by SS_profile with the value on line number",linenum),
-               paste("# changed from",parval,"to",profilevec[i]))
-      par <- c(par,"#",note)
-      print(note)
-      # write new file
-      writeLines(par, paste("ss3.par_input_",i,".ss",sep=""))
-      writeLines(par, "ss3.par")
-    }
-    if(file.exists(stdfile)) file.remove(stdfile)
-    if(file.exists('Report.sso')) file.remove('Report.sso')
+      if(file.exists(stdfile)) file.remove(stdfile)
+      if(file.exists('Report.sso')) file.remove('Report.sso')
 
-    # run model
-    command <- paste(model, extras)
-    if(OS!="Windows") command <- paste("./",command,sep="")
-    cat("Running model in directory:",getwd(),"\n")
-    cat("Using the command: '",command,"'\n",sep="")
-    if(OS=="Windows" & !systemcmd){
-      shell(cmd=command)
-    }else{
-      system(command)
-    }
+      # run model
+      command <- paste(model, extras)
+      if(OS!="Windows") command <- paste("./",command,sep="")
+      cat("Running model in directory:",getwd(),"\n")
+      cat("Using the command: '",command,"'\n",sep="")
+      if(OS=="Windows" & !systemcmd){
+        shell(cmd=command)
+      }else{
+        system(command)
+      }
 
-    converged[i] <- file.exists(stdfile)
-    onegood <- FALSE
-    if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
-      onegood <- TRUE
-      Rep <- readLines('Report.sso',n=120)
-      like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=11,header=TRUE,fill=TRUE)
-      liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
-    }else{
-      liketable <- rbind(liketable,rep(NA,10))
-    }
+      converged[i] <- file.exists(stdfile)
+      onegood <- FALSE
+      if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
+        onegood <- TRUE
+        Rep <- readLines('Report.sso',n=120)
+        like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=11,header=TRUE,fill=TRUE)
+        liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
+      }else{
+        liketable <- rbind(liketable,rep(NA,10))
+      }
 
-    if(saveoutput){
-      file.copy('Report.sso',paste('Report',i,".sso",sep=""),overwrite=overwrite)
-      file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""),overwrite=overwrite)
-      file.copy('covar.sso',paste('covar',i,".sso",sep=""),overwrite=overwrite)
-      file.copy(parfile,paste(model,'.par_',i,'.sso',sep=""),overwrite=overwrite)
-    }
-  } # end loop
+      if(saveoutput){
+        file.copy('Report.sso',paste('Report',i,".sso",sep=""),overwrite=overwrite)
+        file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""),overwrite=overwrite)
+        file.copy('covar.sso',paste('covar',i,".sso",sep=""),overwrite=overwrite)
+        file.copy(parfile,paste(model,'.par_',i,'.sso',sep=""),overwrite=overwrite)
+      }
+    } # end running stuff
+  } # end loop of whichruns
   if(onegood){
     liketable <- as.data.frame(liketable)
     names(liketable) <- like$Component
