@@ -483,6 +483,7 @@ SS_output <-
       cat("It appears that there is no composition data in CompReport.sso\n")
       comp <- FALSE # turning off switch to function doesn't look for comp data later on
       agebins <- NA
+      sizebinlist <- NA
       nagebins <- length(agebins)
     }else{
       # read composition database
@@ -596,9 +597,9 @@ SS_output <-
           sizebinlist[[paste("size_method_",imethod,sep="")]] <- tmp
         }
       }else{
-        sizebinlist <- NULL
+        sizebinlist <- NA
       }
-      
+
       if(is.null(compdbase$N)){
         good <- TRUE
       }else{
