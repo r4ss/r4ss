@@ -30,11 +30,12 @@ function (minLength=10, maxLength=65, silent=FALSE,init=NULL)
 # Written: Tommy Garrison, UW
 # Returns: plots double normal or double logistic selectivity
 # General: parameterization matched Stock Synthesis v.3
-# Required packages: none
+# Required packages: tcltk
 #
 ################################################################################
 
-    require(tcltk) || stop("package tcltk is required")
+  #### the following commands no longer needed since packages are required by r4ss
+    ## require(tcltk) || stop("package tcltk is required")
     geterrmessage()
     done <- tclVar(0)
     selfit.env <- new.env()

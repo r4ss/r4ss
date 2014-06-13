@@ -22,6 +22,8 @@
 #' make a list of lists). Default = TRUE.
 #' @param underscore Add an underscore '_' between any file names and any keys
 #' in keyvec. Default=FALSE.
+#' @param save.lists Save each list of parsed output as a .Rdata file (with default
+#' filenaming convention based on iteration and date stamp.
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_output}} \code{\link{SSsummarize}}
 #' @keywords data manip list

@@ -20,7 +20,6 @@
 #' @author Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre Punt,
 #' John Wallace, Chantel Wetzel, James Thorson, Yukio Takeuchi, Kotaro Ono, 
 #' and other contributors
-#' 
 #' Package maintainer: Ian Taylor <Ian.Taylor@@noaa.gov>
 #' @references More info on the R code: \url{http://code.google.com/p/r4ss/}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}

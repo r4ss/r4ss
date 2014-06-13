@@ -16,6 +16,7 @@
 #' independently based on this maximum size and the values plotted. Often some
 #' plots look better with one value and others with a larger or smaller value.
 #' Default=2.6
+#' @param bublegend Add legend with example bubble sizes?
 #' @param period indicator of whether to make plots using numbers at age just
 #' from the beginning ("B") or middle of the year ("M") (new option starting
 #' with SSv3.11)

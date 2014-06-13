@@ -15,6 +15,7 @@
 #' @param main Title for plot.
 #' @param mcmcVec Either vector of TRUE/FALSE values indicating which models
 #' use MCMC.  Or single value applied to all models.
+#' @param devs Plot deviations instead of absolute recruitment values?
 #' @param relative Show deviations relative to most recent estimate or relative
 #' to 0.
 #' @param labelyears Label cohorts with text at the end of each line?

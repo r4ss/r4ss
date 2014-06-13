@@ -5,6 +5,7 @@
 #' 
 #' 
 #' @param replist list created by \code{SS_output}
+#' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
 #' choice of \code{subplots}.

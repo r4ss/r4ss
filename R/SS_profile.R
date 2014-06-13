@@ -12,7 +12,12 @@
 #' @param string String partially matching name of parameter to be changed. Can
 #' be used instead of \code{linenum} or left as NULL.
 #' @param usepar Use PAR file from previous profile step for starting values?
-#' NOT IMPLEMENTED YET.
+#' @param globalpar Use global par file for all runs instead of the par file
+#' from each successive run
+#' @param parfile Name of par file to use (Ian says "I don't remember how this
+#' interacts with the globalpar input")
+#' @param parlinenum Line number in par file to change.
+#' @param parstring String in par file preceding line number to change.
 #' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
 #' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
 #' @param profilevec Vector of values to profile over.  Default = NULL.
@@ -216,7 +221,7 @@ function(
       SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
                     linenums=linenum,strings=string,
                     newvals=profilevec[i], estimate=FALSE,
-                    verbose=TRUE, repeat_vals=TRUE)
+                    verbose=TRUE, repeat.vals=TRUE)
       if(usepar){
         # alternatively change initial values in the par file
         # read file

@@ -65,10 +65,11 @@ mcmc.out <- function (
      	# Notes: columns with fixed values will cause the diagnostic tests to crash
 ##############################################################################################################
 {
-  require(coda) || stop("package coda is required")
-  geterrmessage()
-  require(gtools) || stop("package gtools is required")
-  geterrmessage()
+  #### the following commands no longer needed since packages are required by r4ss
+  ## require(coda) || stop("package coda is required")
+  ## geterrmessage()
+  ## require(gtools) || stop("package gtools is required")
+  ## geterrmessage()
      
   # add section to set up for printing or display to screen (default)
   if(print==TRUE){}# not implemented

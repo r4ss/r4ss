@@ -29,6 +29,8 @@
 #' @param xlab x-axis label
 #' @param ylab y-axis label
 #' @param size vector of bubbles sizes if making a bubble plot
+#' @param cexZ1 Character expansion (cex) for point associated with value of 1.
+#' @param bublegend Add legend with example bubble sizes to bubble plots.
 #' @param maxsize maximum size of bubbles
 #' @param do.sqrt scale bubbles based on sqrt of size vector. see ?bubble3 for
 #' more info.
@@ -72,11 +74,18 @@
 #' @param legsize font size for legends. default=c(1.2,1.0) (larger for year
 #' and normal for others)
 #' @param legfont font type for legends, same as "font" under ?par
+#' @param sampsizeline show line for input sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE/scalar, still in development)
+#' @param effNline show line for effective sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE/scalar, still in development)
+#' @param sampsizemean mean input sample size value (used when sampsizeline=TRUE)
+#' @param effNmean mean effective sample size value (used when effNline=TRUE)
 #' @param ipage which page of plots when covering more than will fit within
 #' maxrows by maxcols.
 #' @param scalebins Rescale expected and observed proportions by dividing by
 #' bin width for models where bins have different widths? Caution!: May not
 #' work correctly in all cases.
+#' @param \dots additional arguments (NOT YET IMPLEMENTED).
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
 #' @keywords aplot hplot

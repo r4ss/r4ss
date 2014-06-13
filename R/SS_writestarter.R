@@ -7,9 +7,10 @@
 #' @param mylist List object created by \code{\link{SS_readstarter}}.
 #' @param dir Directory for new starter file. Default=NULL (working directory).
 #' @param file Filename for new starter file. Default="starter.ss".
-#' @param overwrite Should existing files be overwritten? Default=F.
+#' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
-#' Default=T.
+#' Default=TRUE.
+#' @param warn Print warning if overwriting file?
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
@@ -17,7 +18,7 @@
 #' \code{\link{SS_writectl}}
 #' @keywords data manip
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
-                            overwrite=F, verbose=T, warn=T){
+                            overwrite=FALSE, verbose=TRUE, warn=TRUE){
   if(verbose) cat("running SS_writestarter\n")
   if(mylist$type!="Stock_Synthesis_starter_file"){
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
@@ -31,7 +32,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   outfile <- paste(dir,file,sep="/")
   if(file.exists(outfile)){
     if(!overwrite){
-      stop(paste("file exists:",outfile,"\n  set overwrite=T to replace\n"))
+      stop(paste("file exists:",outfile,"\n  set overwrite=TRUE to replace\n"))
     }else{
       if(warn) {cat("overwriting file:",outfile,"\n")}
       file.remove(outfile)

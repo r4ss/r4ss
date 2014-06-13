@@ -3,11 +3,21 @@
 #' Plots the summary F (or harvest rate) as set up in the starter file Needs a
 #' lot of work to be generalized
 #' 
-#' 
 #' @param replist List created by \code{SS_output}
 #' @param yrs Which years to include.
 #' @param Ftgt Target F where horizontal line is shown.
 #' @param ylab Y-axis label.
+#' @param plot Plot to active plot device?
+#' @param print Print to PNG files?
+#' @param plotdir Directory where PNG files will be written. By default it will
+#' be the directory where the model was run.
+#' @param verbose Verbose output to R console?
+#' @param uncertainty Show 95\% uncertainty intervals around point estimates?
+#' @param pwidth width of plot written to PNG file
+#' @param pheight height of plot written to PNG file
+#' @param punits units for PNG file
+#' @param res resolution for PNG file
+#' @param ptsize ptsize for PNG file
 #' @author Allan Hicks
 #' @seealso \code{\link{SSplotTimeseries}}, ~~~
 #' @keywords hplot

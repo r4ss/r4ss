@@ -37,9 +37,6 @@
 #' 'mcmc' on SSout.
 #' @return Returns a data frame with the years, spawning biomass, depletion,
 #' and total dead catch.
-#' 
-#' %% ~Describe the value returned %% If it is a LIST, use %% \item{comp1
-#' }{Description of 'comp1'} %% \item{comp2 }{Description of 'comp2'} %% ...
 #' @author Allan Hicks
 #' @seealso \code{\link{SS_output}} \code{\link{SSgetMCMC}}
 #' @keywords data manip list plot

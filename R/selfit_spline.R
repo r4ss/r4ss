@@ -43,7 +43,8 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
   #
   ################################################################################
 
-  require(tcltk) || stop("package tcltk is required")
+  #### the following commands no longer needed since packages are required by r4ss
+  ## require(tcltk) || stop("package tcltk is required")
   if(n<3 | n>7 | as.integer(n)!=n) stop("Number of knots must be an integer from 3 to 7")
   if(.Platform$OS.type=="windows"){
     if(!("spline_selex.exe" %in% dir(dir)))

@@ -97,6 +97,7 @@
 #' @param densitysymbols Add symbols along lines in density plots. Quantiles
 #' are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.
 #' @param densitytails Shade tails outside of 95\% interval in density plots.
+#' @param densitylwd Line width for density plots
 #' @param fix0 Always include 0 in the density plots?
 #' @param new Create new empty plot window
 #' @param add Allows single plot to be added to existing figure. This needs to
@@ -652,7 +653,7 @@ SSplotComparisons <-
            SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
           abline(h=1,col="red",lty=2)
           text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
-          axis(4,at=yticks,lab=yticks*(1-sprtarg),las=1)
+          axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
           mtext(side=4,line=3,"1 - SPR")
           mtext(side=2,line=3,SPRratioLabel)
         }

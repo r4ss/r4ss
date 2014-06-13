@@ -9,7 +9,8 @@
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for
-#' options. Default="BFGS".
+#' options. Default="BFGS". By default, optim is not used, and the optimization
+#' is based on the input \code{altmethod}.
 #' @param twoplots Make a two-panel plot showing devs as well as transformed
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
@@ -18,11 +19,14 @@
 #' @param print Print to PNG files?
 #' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
+#' @param shownew Include new estimated bias adjustment values on top of values
+#' used in the model? (TRUE/FALSE)
 #' @param oldctl Optional name of existing control file to modify.
 #' Default=NULL.
 #' @param newctl Optional name of new control file to create from old file with
 #' estimated bias adjustment values. Default=NULL.
-#' @param nlminb Use the 'nlminb' function instead of 'optim'?  Default=TRUE
+#' @param altmethod Optimization tool to use in place of optim, either "nlminb"
+#' or "psoptim". If not equal to either of these, then optim is used.
 #' @param pwidth Default width of plots printed to files in units of
 #' \code{punits}. Default=7.
 #' @param pheight Default height width of plots printed to files in units of
@@ -181,7 +185,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                         yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
     }
     if(altmethod=="psoptim"){
-      require(pso)
+      #### the following commands no longer needed since packages are required by r4ss
+      ## require(pso)
       biasadjfit(pars=startvalues,yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
       biasopt <- psoptim(par=startvalues,fn=biasadjfit,yr=yr,std=std,
                        sigmaR=sigma_R_in,transform=transform,

@@ -9,6 +9,7 @@
 #' @param print print to PNG files?
 #' @param uncertainty include plots showing uncertainty?
 #' @param subplots vector controlling which subplots to create
+#' @param forecastplot Include forecast years in plot?
 #' @param col1 first color used
 #' @param col2 second color used
 #' @param col3 third color used

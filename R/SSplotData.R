@@ -31,6 +31,8 @@
 #' @param cex.main character expansion for plot titles
 #' @param margins margins of plot (passed to par() function), which may need to
 #' be increased if fleet names run off right-hand margin
+#' @param cex Character expansion for points showing isolated years of data
+#' @param lwd Line width for lines showing ranges of years of data
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor, Chantel Wetzel
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},

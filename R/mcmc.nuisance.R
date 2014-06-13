@@ -54,8 +54,9 @@ mcmc.nuisance <- function (
     # Returns: Graphical devices containing summaries and plots
 ##############################################################################################################
 {
-  require(coda) || stop("package coda is required")
-  geterrmessage()
+  #### the following commands no longer needed since packages are required by r4ss
+  ## require(coda) || stop("package coda is required")
+  ## geterrmessage()
 
   filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use
   filename2  <- paste(directory,run,file2,sep="")			# put directory,run and file names together for use

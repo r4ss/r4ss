@@ -20,6 +20,8 @@
 #' "startyr" = first year.
 #' @param selgender Vector of genders (1 and/or 2) for which selectivity will
 #' be summarized. NULL=all genders. Default=NULL.
+#' @param SpawnOutputUnits Optional single value or vector of "biomass" or
+#' "numbers" giving units of spawning for each model.
 #' @param lowerCI Quantile for lower bound on calculated intervals. Default =
 #' 0.025 for 95\% intervals.
 #' @param upperCI Quantile for upper bound on calculated intervals. Default =

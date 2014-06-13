@@ -7,7 +7,7 @@
 #' @param replist list created by \code{SSoutput}
 #' @param subplots vector controlling which subplots to create
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-#' "GSTAGE", "L@A", or "W@A".
+#' "GSTAGE", "L[at]A", or "W[at]A".
 #' @param sizemethod if kind = "SIZE" then this switch chooses which of the
 #' generalized size bin methods will be plotted.
 #' @param aalyear Years to plot multi-panel conditional age-at-length fits for
@@ -28,20 +28,24 @@
 #' @param samplesizeplots make sample size plots?
 #' @param compresidplots make plots of residuals for fit to composition data?
 #' @param bub make bubble plot for numbers at age or size?
+#' @param showyears Add labels for years to sample size plots?
 #' @param showsampsize add sample sizes to plot
 #' @param showeffN add effective sample sizes to plot
+#' @param sampsizeline show line for input sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development)
+#' @param effNline show line for effective sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development)
 #' @param minnbubble number of unique x values before adding buffer. see
 #' ?bubble3 for more info.
 #' @param pntscalar This scalar defines the maximum bubble size for bubble
-#' plots. This option is still available but a better choice is to use
-#' bub.scale.pearson and bub.scale.dat, which are allow the same scaling
-#' throughout all plots.
-#' @param bub.scale.pearson Character expansion (cex) value for a proportion of
-#' 1.0 in bubble plot of Pearson residuals. Default=1.5.
-#' @param bub.scale.dat Character expansion (cex) value for a proportion of 1.0
-#' in bubble plot of composition data. Default=3.
+#' plots. This option is still available but a better choice is to use cexZ1
+#' which allow the same scaling throughout all plots.
 #' @param scalebubbles scale data-only bubbles by sample size, not just
 #' proportion within sample? Default=FALSE.
+#' @param cexZ1 Character expansion (cex) for point associated with value of 1.
+#' @param bublegend Add legend with example bubble sizes to bubble plots.
+#' @param blue What color to use for bubble plots (default is slightly
+#' transparent blue)
 #' @param pwidth default width of plots printed to files in units of
 #' \code{punits}. Default=7.
 #' @param pheight default height width of plots printed to files in units of
@@ -75,6 +79,8 @@
 #' for single plots
 #' @param cols number or cols to return to as default for next plots to come or
 #' for single plots
+#' @param andrerows Number of rows of Andre's conditional age-at-length plots
+#' within each page. Default=3.
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
 #' @param fixdims2 fix the dimensions at maxrows by maxcols in aggregate plots

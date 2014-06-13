@@ -3,60 +3,12 @@
 #' Adds specified quantities from any model to the list of models returned from
 #' \code{\link{SSsummarize}} for further comparison.
 #' 
-#' The models to add do not need to contain all of the entries.  Missing
-#' entries are given NA values, so are not plotted.  Each model is a list with
-#' the following elements: \describe{ \item{npars}{the number of parameters in
-#' the model} \item{maxgrad}{the maximum gradient component (if used)}
-#' \item{nsexes}{the number of sexes} \item{likelihoods}{likelihoods from the
-#' model. A data.frame with the 2nd column as names, which matches on names
-#' from origModels. Names which do not match will be added SS uses the
-#' following names} \itemize{ \item TOTAL \item Equil_catch \item Survey \item
-#' Length_comp \item Age_comp \item Recruitment \item recast_Recruitment \item
-#' Parm_priors \item Parm_softbounds \item Parm_devs \item Crash_Pen \item
-#' Size_at_age} \item{likelambdas}{NOT IMPLEMENTED} \item{pars}{NOT IMPLEMENTED
-#' YET FOR DIFFICULTY IN MATCHING PARAMETERS} \item{parsSD}{NOT IMPLEMENTED YET
-#' FOR DIFFICULTY IN MATCHING PARAMETERS} \item{parsphases}{NOT IMPLEMENTED YET
-#' FOR DIFFICULTY IN MATCHING PARAMETERS} \item{SpawnBio}{Spawning biomass
-#' matrix} \itemize{ \item 1st column is year \item 2nd column is spawning
-#' biomass in same units as original models (SS reports female spawning
-#' biomass) \item 3rd column is the standard deviation of estimated spawning
-#' biomass \item 4th column is a lower bound of the confidence interval to be
-#' plotted (say from an MCMC) \item 5th column is an upper bound of the
-#' confidence interval to be plotted (say from an MCMC) }
-#' \item{Bratio}{Depletion matrix} \itemize{ \item 1st column is year \item 2nd
-#' column is depletion \item 3rd column is the standard deviation of depletion
-#' (optional) \item 4th column is a lower bound of the confidence interval to
-#' be plotted (say from an MCMC) \item 5th column is an upper bound of the
-#' confidence interval to be plotted (say from an MCMC) } \item{SPRratio}{SPR
-#' ratio matrix} \itemize{ \item 1st column is year \item 2nd column is
-#' depletion \item 3rd column is the standard deviation (optional) \item 4th
-#' column is a lower bound of the confidence interval to be plotted (say from
-#' an MCMC) \item 5th column is an upper bound of the confidence interval to be
-#' plotted (say from an MCMC) } \item{recruits}{Recruitment matrix} \itemize{
-#' \item 1st column is year \item 2nd column is recruitment as in original
-#' models (SS reports age-0 recruits) \item 3rd column is the standard
-#' deviation (optional) \item 4th column is a lower bound of the confidence
-#' interval to be plotted (say from an MCMC) \item 5th column is an upper bound
-#' of the confidence interval to be plotted (say from an MCMC) }
-#' \item{recdevs}{Recruitment deviate matrix} \itemize{ \item 1st column is
-#' year \item 2nd column is deviate (matched with original models) }
-#' \item{growth}{NOT IMPLEMENTED} \item{indices}{Matrix of fits to indices}
-#' \itemize{ \item 1st column is year \item 2nd column is observed index (data)
-#' \item 3rd column is expected index (prediction) \item 4th column is
-#' catchability coefficient (q) \item 5th column is standard error of index
-#' (total used in fitting) \item 6th column is a likelihood for this point, or
-#' enter any value to make sure it plots, or enter NA not to plot the estimate
-#' } \item{InitAgeYrs}{NOT IMPLEMENTED} }
-#' 
 #' @param origModels A list of models created by \code{\link{SSsummarize}}.
 #' @param newModels A list of models to add to the originals models list.  Each
 #' new model is an element of the list, and is a list itself with possible
 #' components described in the details below.
 #' @return Returns list as is returned from \code{\link{SSsummarize}}, but
 #' contains additions for the new models.
-#' 
-#' %% ~Describe the value returned %% If it is a LIST, use %% \item{comp1
-#' }{Description of 'comp1'} %% \item{comp2 }{Description of 'comp2'} %% ...
 #' @note This function was made to compare TINSS results and SS results, and
 #' assumed that you would always start with a list of SS models output from
 #' \code{\link{SSsummarize}}.  It has not been tested to see how it works when

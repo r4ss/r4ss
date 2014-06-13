@@ -67,13 +67,10 @@
 #' throughout all plots.
 #' @param pntscalar.nums This scalar defines the maximum bubble size for
 #' numbers-at-age and numbers-at-length plots.
-#' 
 #' @param bub.scale.pearson Character expansion (cex) value for a proportion of
 #' 1.0 in bubble plot of Pearson residuals. Default=1.5.
-#' 
 #' @param bub.scale.dat Character expansion (cex) value for a proportion of 1.0
 #' in bubble plot of composition data. Default=3.
-#' 
 #' @param minnbubble This defines the minimum number of years below which blank
 #' years will be added to bubble plots to avoid cropping.  Default=8.
 #' @param aalyear Years to plot multi-panel conditional age-at-length fits for
@@ -96,6 +93,10 @@
 #' @param showsampsize Display sample sizes on composition plots?  Default=T.
 #' @param showeffN Display effective sample sizes on composition plots?
 #' Default=T.
+#' @param sampsizeline show line for input sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development)
+#' @param effNline show line for effective sample sizes on top of conditional
+#' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots? Default=T.
 #' @param pwidth Default width of plots printed to files in units of
 #' \code{punits}. Default=7.
@@ -114,10 +115,12 @@
 #' @param cols Number of columns to use for single panel plots. Default=1.
 #' @param maxrows Maximum number of rows to for multi-panel plots.  Default=6.
 #' @param maxcols Maximum number of columns for multi-panel plots.  Default=6.
-#' @param maxrows2 Maximum number of rows for conditional age at length
+#' @param maxrows2 Maximum number of rows for conditional age-at-length
 #' multi-panel plots. Default=2.
-#' @param maxcols2 Maximum number of rows for conditional age at length
+#' @param maxcols2 Maximum number of rows for conditional age-at-length
 #' multi-panel plots. Default=4.
+#' @param andrerows Number of rows of Andre's conditional age-at-length plots
+#' within each page. Default=3.
 #' @param tagrows Number of rows for tagging-related plots. Default=3.
 #' @param tagcols Number of columns for tagging-related plots.  Default=3.
 #' @param fixdims Control whether multi-panel plots all have dimensions equal
@@ -142,6 +145,10 @@
 #' Caution!: May not work correctly in all cases.
 #' @param scalebubbles scale data-only bubbles by sample size, not just
 #' proportion within sample? Default=FALSE.
+#' @param tslabels Either NULL to have default labels for timeseries plots or
+#' a vector of appropriate length (currently 11) with labels for each figure
+#' @param catlabels Either NULL to have default labels for catch plots or
+#' a vector of appropriate length (currently 10) with labels for each figure
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotBiology}},
@@ -342,21 +349,21 @@ SS_plots <-
   }
 
 if(length(tslabels)==0){
-  tslabels <- c("Total biomass (mt)", #1
+  tslabels <- c("Total biomass (mt)",        #1
              "Total biomass (mt) at beginning of season", #2
-             "Summary biomass (mt)",      #3
+             "Summary biomass (mt)",         #3
              "Summary biomass (mt) at beginning of season", #4
-             "Spawning biomass (mt)",     #5
-             "Spawning depletion",        #6
-             "Spawning output (eggs)",    #7
-             "Age-0 recruits (1,000s)",  #8
+             "Spawning biomass (mt)",        #5
+             "Spawning depletion",           #6
+             "Spawning output (eggs)",       #7
+             "Age-0 recruits (1,000s)",      #8
              "Fraction of total Age-0 recruits",  #9
-             "Management target",       #10
+             "Management target",            #10
              "Minimum stock size threshold") #11
   }
 
 if(length(catlabels)==0){
-  catlabels <- c("Harvest rate/Year",  #1
+  catlabels <- c("Harvest rate/Year",     #1
              "Continuous F",              #2
              "Landings",                  #3
              "Total catch",               #4
@@ -365,7 +372,7 @@ if(length(catlabels)==0){
              "(mt)",                      #7
              "(numbers x1000)",           #8
              "Observed and expected",     #9
-             "aggregated across seasons")
+             "aggregated across seasons") #10
   }
 
   ##########################################

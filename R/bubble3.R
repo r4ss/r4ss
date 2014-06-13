@@ -15,6 +15,7 @@
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
 #' @param legend Add a legend to the plot?
+#' @param legendloc Location for legend (default='top')
 #' @param legend.z If a legend is added, what z values will be shown. Default
 #' is c(-3,-2,-1,.1,1,2,3) for Pearson-like quantities and a smaller range for
 #' proportions that are all less than 1.

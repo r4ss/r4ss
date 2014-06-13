@@ -29,6 +29,7 @@
 #' it will be the directory where the model was run.
 #' @param showlegend Put legend on plot
 #' @param legendloc Location of legend (see ?legend for more info)
+#' @param order Optional input to change the order of fleets in stacked plots.
 #' @param xlab x-label for all plots
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param catchasnumbers Is catch in numbers instead of biomass? Should be set
@@ -36,6 +37,9 @@
 #' numbers, then catch plots should be interpreted carefully.
 #' @param catchbars Show catch by fleet as barplot instead of stacked polygons?
 #' (default=TRUE)
+#' @param addmax Add a point on the y-axis for the maximum catch (default=TRUE)
+#' @param ymax Optional input for ymax value (can be used to add or subtract
+#' white space at the top of the figure)
 #' @param pwidth Width of plot written to PNG file
 #' @param pheight Height of plot written to PNG file
 #' @param punits Units for PNG file

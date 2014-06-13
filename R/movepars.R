@@ -30,7 +30,8 @@ function(nareas=4,accuage=40,getpars=T,getrates=T)
 
   # run this next line if package not installed
   #   install.packages("tcltk")
-  require(tcltk) || stop("package tcltk is required")
+  #### the following commands no longer needed since packages are required by r4ss
+## require(tcltk) || stop("package tcltk is required")
   if(!nareas %in% 2:4) stop("'nareas' input must be 2, 3, or 4")
   geterrmessage()
   

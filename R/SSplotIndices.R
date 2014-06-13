@@ -24,11 +24,12 @@
 #' Default is blue.
 #' @param col4 color of smoother shown in obs. vs. exp. plots. Default is red.
 #' @param pch1 single value or vector of plotting characters (pch parameter)
-#' for time-series plots of index fit. Default=1.
+#' for time-series plots of index fit. Default=21.
 #' @param pch2 single value or vector of plotting characters (pch parameter)
 #' for sample size plots of index fit. Default=16.
 #' @param cex character expansion factor for points showing observed values.
 #' Default=1.
+#' @param bg Background color for points with pch=21.
 #' @param legend add a legend to seasonal colors (only for seasonal models)
 #' @param legendloc add a legend to seasonal colors (default is "topright")
 #' @param seasnames optional vector of names for each season to replace

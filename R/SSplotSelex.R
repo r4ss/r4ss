@@ -51,7 +51,8 @@
 #' @param res resolution for PNG file
 #' @param ptsize ptsize for PNG file
 #' @param cex.main character expansion for plot titles
-#' @param plotdir directory where PNG files will be written. by default it will
+#' @param showmain Include main title at top of plot?
+#' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor

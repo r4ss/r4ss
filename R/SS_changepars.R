@@ -18,6 +18,8 @@
 #' whatever is written as comment at the end of the 14 number parameter lines.
 #' Default=NULL.
 #' @param newvals Vector of new parameter values. Default=NULL.
+#' @param repeat.vals If multiple parameter lines match criteria, repeat the
+#' \code{newvals} input for each line
 #' @param estimate Vector of TRUE/FALSE for which changed parameters are to be
 #' estimated. Default=FALSE.
 #' @param verbose More detailed output to command line. Default=TRUE.
@@ -40,8 +42,8 @@ function(
          dir="C:/myfiles/mymodels/myrun/",
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
-         linenums=NULL, strings=NULL, newvals=NULL,
-         estimate=FALSE, verbose=TRUE, repeat_vals=FALSE
+         linenums=NULL, strings=NULL, newvals=NULL, repeat.vals=FALSE,
+         estimate=FALSE, verbose=TRUE
          )
 {
 
@@ -81,7 +83,7 @@ function(
 
   # check inputs
   if(!is.null(newvals) & length(newvals)!=nvals){
-    if(repeat_vals){
+    if(repeat.vals){
       newvals <- rep(newvals, nvals)
     }else{
       stop("'newvals' and either 'linenums' or 'strings' should have the same number of elements")

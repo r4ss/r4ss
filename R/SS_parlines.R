@@ -18,10 +18,11 @@
 #' @param ctlfile File name of control file including path.
 #' @param dir Alternative input of path, where file is assumed to be
 #' "control.ss_new". Default=NULL.
-#' @param verbose T/F switch for amount of detail produced by function.
-#' Default=T.
+#' @param verbose TRUE/FALSE switch for amount of detail produced by function.
+#' Default=TRUE.
 #' @param active Should only active parameters (those with positive phase) be
-#' output? Default=F.
+#' output? Default=FALSE.
+#' @param print14 Print 14 columns or just 7 (TRUE/FALSE)
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_changepars}}
 #' @keywords data manip
@@ -42,7 +43,7 @@
 SS_parlines <-
 function(
   ctlfile="C:/myfiles/mymodels/myrun/control.ss_new",
-  dir=NULL, verbose=T, active=F, print14=FALSE)
+  dir=NULL, verbose=TRUE, active=FALSE, print14=FALSE)
 {
 
 ################################################################################
@@ -61,8 +62,8 @@ function(
   # read control file
   if(!is.null(dir)) ctlfile <- paste(dir,'control.ss_new',sep='/')
   ncols = 100 # !!this should by more dynamic--if it's too small, the function dies
-  ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=T,
-    quote="",colClasses="character",comment.char="", blank.lines.skip=F)
+  ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=TRUE,
+    quote="",colClasses="character",comment.char="", blank.lines.skip=FALSE)
 
   nrows <- nrow(ctl)
   #print(nrows)
