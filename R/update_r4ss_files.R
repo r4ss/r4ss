@@ -47,7 +47,6 @@
 #' 
 #' # get version 523 (for latest version, no "revision" input is needed)
 #' update_r4ss_files(revision=523) 
-#' 
 #' }
 #' 
 update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest"){
