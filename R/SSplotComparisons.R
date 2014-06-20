@@ -319,20 +319,12 @@ SSplotComparisons <-
      legendlabels[1]=="default") legendlabels <- paste("model",1:nlines)
   if(legendorder[1]=="default") legendorder <- 1:nlines
 
-  # determine operating system and open new window if requested
-  OS <- "Mac"
-  if(grepl("linux",version$os)) OS <- "Linux"
-  if(grepl("mingw",version$os)) OS <- "Windows"
-  # need appropriate line to support Mac operating systems
-
+  # open new window if requested
   if(plot & new & !pdf){
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-
-    if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
-    if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
-    if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
+    dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     par(par)
   }
 

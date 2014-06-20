@@ -24,7 +24,7 @@
 #' @references More info on the R code: \url{http://code.google.com/p/r4ss/}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 #' @keywords package
-#' @import tcltk coda gtools maps pso
+#' @import tcltk coda gtools gplots maps pso
 #' @examples
 #' 
 #' \dontrun{

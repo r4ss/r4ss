@@ -133,7 +133,7 @@ TSCplot <- function(SSout,
     }
     ind <- seq(1,nrow(SP),pchSpace)
     
-    if(is.null(makePDF) & is.null(makePNG)) { windows(height=ht,width=wd) }
+    if(is.null(makePDF) & is.null(makePNG)) { dev.new(height=ht,width=wd) }
     if(!is.null(makePDF)) { pdf(file=makePDF,width=wd,height=ht) }
     if(!is.null(makePNG)) { png(filename=makePNG,width=wd,height=ht,units = "in", pointsize = 10, res=300) }
     par(mar=c(4,5,2,5))

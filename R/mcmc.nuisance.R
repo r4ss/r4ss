@@ -202,7 +202,7 @@ print(head(mcmcdata))
   ##### Trace section #####
   if(trace > 0)
    {
-    windows()
+    dev.new()
     par(new=FALSE)
     traceplot(mcmcobject[,trace],                        	 # trace plot of parameters
               smooth = TRUE)                         		 # add a smoothing line

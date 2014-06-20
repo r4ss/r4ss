@@ -287,18 +287,12 @@ SS_plots <-
   # number of plot groups
   nplots <- length(intersect(1:50,plot))
 
-  # make plot window (operating system specific)
-  OS <- "Mac" # don't know the version$os info for Mac
-  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
-  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
-
+  # make plot window (hopefully no-longer operating system specific)
   if(nplots>0 & !png & !pdf & new){
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-    if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
-    if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
-    if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
+    dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
   }
   if(nplots>0 & !new){
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")

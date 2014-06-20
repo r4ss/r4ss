@@ -304,16 +304,10 @@ SSplotPars <-
 
   ## make plot
   if(new & !pdf){
-    OS <- "Mac"
-    if(length(grep('linux',version$os)) > 0) OS <- "Linux"
-    if(length(grep('mingw',version$os)) > 0) OS <- "Windows"
-
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
-    if(OS=="Windows") windows(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
-    if(OS=="Linux") X11(width=pwidth,height=pheight,pointsize=ptsize)
-    if(OS=="Mac") quartz(width=pwidth,height=pheight,pointsize=ptsize)
+    dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
   }
   if(pdf){
     pdffile <- paste(dir,"/SSplotPars_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")

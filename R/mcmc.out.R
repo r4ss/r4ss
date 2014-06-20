@@ -121,7 +121,7 @@ mcmc.out <- function (
   ##### plotting section #####
   if(plots==TRUE) 					# have plots been activated by user
    {  
-    windows(record=TRUE) 				# keep the window open for each parameter
+    dev.new(record=TRUE) 				# keep the window open for each parameter
   if(numparams==5||numparams==9||numparams==13||numparams==17) 	# plots a blank plot if 5,9,13, or 17 plots created
    {							# this avoids the loss of plot n-1 in history (is this an R bug??)
     plot(0,0,
@@ -235,7 +235,7 @@ mcmc.out <- function (
    #### Statistics section #####				
     if(stats == TRUE) 				
      {
-      x11()						# opens a new graphics device
+      dev.new()						# opens a new graphics device
       par(mar=c(0,0,3,0)) 				# makes the margins large 
       plot(0,  						# plot a graph of a single point
            ylab="",					# label the y-axis for whole screen
@@ -336,7 +336,7 @@ mcmc.out <- function (
    ##### Scatter plot section #####
     if(scatter == TRUE) 				
      {
-      windows()
+      dev.new()
       par(xaxt="n",yaxt="n") 				# suppress the axis labels
       pairs(mcmcdata[1:numparams], 			# make the scatterplot
             cex=0.1,
@@ -346,7 +346,7 @@ mcmc.out <- function (
    ##### Surface plot section #####
     if(surface == TRUE)
      {
-      windows()
+      dev.new()
       par(new=FALSE) 					# use a new window
       hist2d(mcmcobject[,surf1],			# x data as a vector
              mcmcobject[,surf2], 			# y data as a vector
