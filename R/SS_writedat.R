@@ -96,10 +96,9 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("N_discard")
   if(!is.null(datlist$discard_data)) printdf(datlist$discard_data)
   wl("N_meanbodywt")
+  wl("DF_for_meanbodywt", comment="#_DF_for_meanbodywt_T-distribution_like")
   if(!is.null(datlist$meanbodywt)) printdf(datlist$meanbodywt)
 
-  wl("DF_for_meanbodywt", comment="#_DF_for_meanbodywt_T-distribution_like")
-  
   # length data
   wl("lbin_method",comment="# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector")
   if(datlist$lbin_method==2){
