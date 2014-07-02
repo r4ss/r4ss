@@ -149,6 +149,10 @@ SSplotProfile <-
   # get stuff from summary output
   n             <- summaryoutput$n
   likelihoods   <- summaryoutput$likelihoods
+  if (is.null(likelihoods)) {
+    stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
+         "and have an element named 'likelihoods'.")
+  }
   pars          <- summaryoutput$pars
 
   # check number of models to be plotted

@@ -94,6 +94,10 @@ PinerPlot <-
   # get stuff from summary output
   n    <- summaryoutput$n
   lbf  <- summaryoutput$likelihoods_by_fleet
+  if (is.null(lbf)) {
+    stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
+         "and have an element named 'likelihoods_by_fleet'.")
+  }
   nfleets <- ncol(lbf)-3
   pars <- summaryoutput$pars
   FleetNames     <- summaryoutput$FleetNames[[1]]
