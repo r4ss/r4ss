@@ -9,7 +9,7 @@
 #' parameterizations, and various other tasks.
 #' 
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.21\cr Date: \tab 2013-12-13\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.22\cr Date: \tab 2014-07-02\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{http://www.r-project.org}\cr \tab
 #' \url{http://code.google.com/p/r4ss/}\cr } Should be compatible with Stock
 #' Synthesis versions 3.20 through 3.3.
@@ -24,7 +24,11 @@
 #' @references More info on the R code: \url{http://code.google.com/p/r4ss/}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 #' @keywords package
-#' @import tcltk coda gtools gplots maps pso
+#' @import tcltk coda maps
+#' @importFrom gplots hist2d
+#' @importFrom gtools running
+#' @importFrom corpcor pseudoinverse
+#' @importFrom pso psoptim
 #' @examples
 #' 
 #' \dontrun{
