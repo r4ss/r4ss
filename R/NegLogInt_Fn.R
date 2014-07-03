@@ -64,10 +64,16 @@ NegLogInt_Fn <-
   # Make sure print is high enough for when passing values to ADMB
   options(digits=15)
 
-  # Iteration tracker
-  Iteration = Iteration + 1
-  assign("Iteration", value=Iteration, envir=.GlobalEnv)
-
+  # Iteration tracker (setting as a global variable for reasons that Jim Thorson can explain)
+  Iteration <- Iteration + 1
+  #  writing Iteration to a file to avoid CRAN rules about global variables
+  write("Iteration",file=file.path(File,"Iteration.txt"))
+  #  alternative method would be to read it out of Optimization_record.txt using code
+  #  like the following:
+  #    record <- readLines(file.path(File,"Optimization_record.txt"))
+  #    Iterations <- as.numeric(substring(record[grep("Iteration",record)],11))
+  #    Iteration <- max(Iterations)
+  
   # Transform parameter vector
   SD_Group_Vec = Input_SD_Group_Vec
 
