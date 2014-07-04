@@ -56,6 +56,12 @@ NegLogInt_Fn <-
   # Directory
   if(is.na(File)) File = paste(getwd(),"/",sep="")
 
+  if( "Iteration.txt" %in% list.files(File)){
+      Iteration <- read.table(file=file.path(File,"Iteration.txt"))[[1]]
+  }else{
+      Iteration <- 0
+  }
+  
   # Error messages
   if(ReDoBiasRamp==TRUE & is.null(BiasRamp_linenum_Vec)){
       stop("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")

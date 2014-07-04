@@ -22,6 +22,8 @@ Synthesis versions 3.20 through 3.3.
 \dontrun{
 # source updated files from the web (not always needed, but often helps)
 update_r4ss_files()
+# NOTE: this process may change with an upcoming switch to GitHub instead of
+#       Google Code
 
 # read in the report file using SS_output
 myreplist <- SS_output(dir='c:/SS/simple/')

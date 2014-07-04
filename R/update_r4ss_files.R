@@ -15,6 +15,7 @@
 #' If you're using an out-of-date version of SS, or some recent update to the
 #' code isn't working for your model, an older revision may help. Otherwise, we
 #' recommend using the newest revision.
+#' @param override Override the message about how you should get code from github?
 #' @author Ian Taylor
 #' @keywords file
 #' @examples
@@ -48,8 +49,18 @@
 #' update_r4ss_files(revision=523)
 #' }
 #'
-update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest"){
+update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
+                               override = FALSE){
 
+  check <- function(){
+    if(as.numeric(as.character(packageVersion("r4ss"))) >= 1.22){
+      cat('r4ss is moving to GitHub from Google Code. You should no longer run\n',
+          'update_r4ss_files and instead install the "devtools" package to get\n',
+          'updated code by running the following command:\n',
+          '  devtools::install_github("r4ss/r4ss")\n',
+          'to override this message, use the argument "override=TRUE"\n')
+    }
+  }
   getwebnames <- function() {
     changes <- readLines("http://code.google.com/p/r4ss/source/list")
     line <- changes[grep("detail?", changes)[6]]
@@ -120,16 +131,24 @@ update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest"){
       flush.console()
     }
   }
+  
   if (is.null(local)) {
-    fileinfo <- getwebnames()
-    getwebfiles(fileinfo)
+    check()
+    if(override){
+      fileinfo <- getwebnames()
+      getwebfiles(fileinfo)
+      cat("\n  r4ss update complete.\n")
+    }
   }
   else {
     if (save) {
-      fileinfo <- getwebnames()
-      getwebfiles(fileinfo)
+      check()
+      if(override){
+        fileinfo <- getwebnames()
+        getwebfiles(fileinfo)
+      }
     }
     getlocalfiles(local)
+    cat("\n  r4ss update complete.\n")
   }
-  cat("\n  r4ss update complete.\n")
 }

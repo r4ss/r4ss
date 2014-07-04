@@ -3,7 +3,8 @@
 \alias{update_r4ss_files}
 \title{Updates r4ss files to newest versions on web.}
 \usage{
-update_r4ss_files(local = NULL, save = FALSE, revision = "newest")
+update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
+  override = FALSE)
 }
 \arguments{
 \item{local}{A local directory from which to source the files instead of
@@ -18,6 +19,8 @@ changes to the r4ss code at \url{http://code.google.com/p/r4ss/source/list}.
 If you're using an out-of-date version of SS, or some recent update to the
 code isn't working for your model, an older revision may help. Otherwise, we
 recommend using the newest revision.}
+
+\item{override}{Override the message about how you should get code from github?}
 }
 \description{
 Sources files containing R functions r4ss package from the google code
