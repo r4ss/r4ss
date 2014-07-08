@@ -3,6 +3,7 @@
 import(coda)
 import(maps)
 import(tcltk)
+importFrom(RCurl,getURL)
 importFrom(corpcor,pseudoinverse)
 importFrom(gplots,hist2d)
 importFrom(gtools,running)

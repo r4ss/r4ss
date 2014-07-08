@@ -1,5 +1,3 @@
-
-
 #' R tools for Stock Synthesis
 #' 
 #' A collection of R functions for use with Stock Synthesis, a fisheries stock
@@ -9,7 +7,7 @@
 #' parameterizations, and various other tasks.
 #' 
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.22\cr Date: \tab 2014-07-03\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.22\cr Date: \tab 2014-07-08\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{http://www.r-project.org}\cr \tab
 #' \url{http://code.google.com/p/r4ss/}\cr } Should be compatible with Stock
 #' Synthesis versions 3.20 through 3.3.
@@ -25,10 +23,11 @@
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 #' @keywords package
 #' @import tcltk coda maps
+#' @importFrom corpcor pseudoinverse
 #' @importFrom gplots hist2d
 #' @importFrom gtools running
-#' @importFrom corpcor pseudoinverse
 #' @importFrom pso psoptim
+#' @importFrom RCurl getURL
 #' @examples
 #' 
 #' \dontrun{

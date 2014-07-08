@@ -13,7 +13,7 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.22\cr Date: \tab 2014-07-02\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.22\cr Date: \tab 2014-07-08\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{http://www.r-project.org}\cr \tab
 \url{http://code.google.com/p/r4ss/}\cr } Should be compatible with Stock
 Synthesis versions 3.20 through 3.3.
