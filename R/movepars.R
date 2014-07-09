@@ -1,4 +1,4 @@
-#' explore movement parameterizations
+#' Explore movement parameterizations in a GUI
 #' 
 #' A function to visualize parameterization of movement in Stock Synthesis. It
 #' creates a GUI interface for movement exploration.
