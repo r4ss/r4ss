@@ -27,6 +27,7 @@
 #' @param newmaxbias Replace the maximum bias adjustment fraction with any
 #' non-NULL value. Default=NULL.
 #' @author Ian Taylor
+#' @export
 #' @keywords data manip
 SS_recdevs <-
 function(

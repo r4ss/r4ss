@@ -37,6 +37,7 @@
 #' function yet)
 #' @param verbose Report progress to R console?
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
 SSplotCohorts <-

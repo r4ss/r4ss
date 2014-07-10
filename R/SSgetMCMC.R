@@ -26,6 +26,7 @@
 #' @param thin Optional thinning value to apply on top of the option in the
 #' starter file and in the \code{-mcsave} runtime command.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
 #' \code{\link{SSplotPars}}
 #' @keywords data

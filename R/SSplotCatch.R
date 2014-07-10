@@ -48,6 +48,7 @@
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R console?
 #' @author Ian Taylor, Ian Stewart
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
 SSplotCatch <-

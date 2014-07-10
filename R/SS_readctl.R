@@ -15,6 +15,8 @@
 #' \code{\link{SS_readdat}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
+#' @author Ian Taylor
+#' @export
 #' @keywords data
 SS_readctl <- function(file){
   cat("Warning!\n",

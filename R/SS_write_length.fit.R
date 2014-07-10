@@ -12,6 +12,7 @@
 #' @param overwrite Overwrite existing file?
 #' @param verbose More verbose info on progress of the function?
 #' @author Ian Taylor
+#' @export
 #' @references \url{http://www.multifan-cl.org/},
 #' \url{http://www.spc.int/OceanFish/en/ofpsection/sam/research/272-mfcl-viewer}
 #' @keywords data manip
