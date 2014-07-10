@@ -38,6 +38,7 @@
 #' @param pheight Height of the plot window or PDF file (in inches). Default=7.
 #' @param lwd Line width for many of the plot elements. Default=2.
 #' @author Andre Punt
+#' @export
 #' @keywords dplot hplot
 #' @examples
 #' 

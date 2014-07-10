@@ -25,6 +25,7 @@
 #' @param verbose More detailed output to command line. Default=TRUE.
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
+#' @export
 #' @keywords data manip
 #' @examples
 #' 

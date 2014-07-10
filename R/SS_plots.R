@@ -151,6 +151,7 @@
 #' a vector of appropriate length (currently 10) with labels for each figure
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotBiology}},
 #' \code{\link{SSplotCatch}}, \code{\link{SSplotComps}},
 #' \code{\link{SSplotDiscard}}, \code{\link{SSplotIndices}},

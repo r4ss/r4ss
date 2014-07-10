@@ -55,6 +55,7 @@
 ##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 ##' anything yet.)
 ##' @author Ian Taylor, Kevin Piner
+##' @export
 PinerPlot <-
   function(summaryoutput,
            plot=TRUE,print=FALSE,

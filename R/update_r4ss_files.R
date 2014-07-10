@@ -16,6 +16,7 @@
 #' @param override Override the message about how you should get code from
 #' GitHub using function in devtools package?
 #' @author Ian Taylor
+#' @export
 #' @keywords file
 #' @examples
 #'
