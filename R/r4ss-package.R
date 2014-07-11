@@ -8,9 +8,8 @@
 #' 
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
 #' 1.22\cr Date: \tab 2014-07-08\cr License: \tab GPL-3\cr LazyLoad: \tab
-#' yes\cr URL: \tab \url{http://www.r-project.org}\cr \tab
-#' \url{http://code.google.com/p/r4ss/}\cr } Should be compatible with Stock
-#' Synthesis versions 3.20 through 3.3.
+#' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
+#' Should be compatible with Stock Synthesis versions 3.20 through 3.3.
 #' 
 #' @name r4ss-package
 #' @aliases r4ss-package r4ss
@@ -19,7 +18,7 @@
 #' John Wallace, Chantel Wetzel, James Thorson, Yukio Takeuchi, Kotaro Ono, 
 #' and other contributors
 #' Package maintainer: Ian Taylor <Ian.Taylor@@noaa.gov>
-#' @references More info on the R code: \url{http://code.google.com/p/r4ss/}
+#' @references r4ss on GitHub: \url{https://github.com/r4ss}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 #' @keywords package
 #' @import tcltk coda maps
@@ -31,11 +30,6 @@
 #' @examples
 #' 
 #' \dontrun{
-#' # source updated files from the web (not always needed, but often helps)
-#' update_r4ss_files()
-#' # NOTE: this process may change with an upcoming switch to GitHub instead of
-#' #       Google Code
-#' 
 #' # read in the report file using SS_output
 #' myreplist <- SS_output(dir='c:/SS/simple/')
 #' 
