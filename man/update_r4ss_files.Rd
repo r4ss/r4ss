@@ -14,49 +14,50 @@ getting them from the web.}
 source from this same local directory}
 
 \item{revision}{Either "newest" (the default), or an optional revision
-number of the files to source.
-NOTE: revision number option doesn't yet work from GitHub.}
+number of the files to source. These numbers are found within the list of
+changes to the r4ss code at \url{http://code.google.com/p/r4ss/source/list}.
+If you're using an out-of-date version of SS, or some recent update to the
+code isn't working for your model, an older revision may help. Otherwise, we
+recommend using the newest revision.}
 
-\item{GitHub}{Get files from GitHub (as opposed to Google Code)?}
+\item{GitHub}{Get files from GitHub (as opposed to Google Code)}
 
-\item{override}{Override the message about how you should get code from
-GitHub using function in devtools package?}
+\item{override}{Override the message about how you should get code from github?}
 }
 \description{
-Sources files containing R functions r4ss package from the online code
+Sources files containing R functions r4ss package from the google code
 repository. These may often be newer than those available form CRAN mirrors.
-With a switch to GitHub from Google Code, it might be better to use this
-option from the devtools package: devtools::install_github("r4ss/r4ss").
+It is probably wise to run this function every time you load the r4ss
+library.
 }
 \examples{
 \dontrun{
-# run with no arguments
 update_r4ss_files()
-r4ss is moving to GitHub from Google Code. You should no longer run
- update_r4ss_files and instead install the "devtools" package to get
- updated code by running the following command:
-   devtools::install_github("r4ss/r4ss")
- to override this message, use the argument "override=TRUE"
-
-# update anyway
-update_r4ss_files(override=TRUE)
-most recent change: July 03, 2014
-77 files found
-  sourcing...
-   IOTCmove.R, NegLogInt_Fn.R, PinerPlot.R, RebuildPlot.R,
-   SSFishGraph.R, SS_RunJitter.R, SS_changepars.R, SS_doRetro.R,
-   ...
-   sel.line.R, selfit.R, selfit_spline.R, stackpoly.R,
-   update_r4ss_files.R,
-
-  r4ss update complete.
-
+# getting file names from http://r4ss.googlecode.com/svn/trunk/
+# most recent change: Today (6 hours ago)
+# 64 files found in http://r4ss.googlecode.com/svn/trunk/
+#   sourcing IOTCmove.R
+#   sourcing RebuildPlot.R
+#   sourcing SSFishGraph.R
+#   sourcing SS_changepars.R
+#   sourcing SS_fitbiasramp.R
+#   sourcing SS_makedatlist.R
+#   ...
+#   sourcing stackpoly.R
+#   sourcing update_r4ss_files.R
+# update complete.
 
 # copy files from web to local directory and then source them
-update_r4ss_files(local='c:/SS/R/r4ss_files/',save=TRUE, override=TRUE)
+update_r4ss_files(local='c:/SS/R/r4ss_files/',save=T)
 
 # source files from a local directory (i.e. if no network available)
-update_r4ss_files(local='c:/SS/R/r4ss_files/',save=FALSE)
+update_r4ss_files(local='c:/SS/R/r4ss_files/',save=F)
+
+# update the updater function to get the new options:
+source("http://r4ss.googlecode.com/svn/trunk/update_r4ss_files.R")
+
+# get version 523 (for latest version, no "revision" input is needed)
+update_r4ss_files(revision=523)
 }
 }
 \author{

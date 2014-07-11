@@ -1,8 +1,7 @@
-#' Plot movement rates from model output
+#' Show movement rates on a map.
 #' 
-#' Plots estimated movement rates in final year for each area/seaon with movement as
-#' reported in Report.sso. If movement is time-varying, an additional figure shows
-#' pattern across years.
+#' Make a map with colored spatial cells and add arrows representing movement
+#' rates between cells.
 #' 
 #' 
 #' @param replist list created by \code{\link{SS_output}}
