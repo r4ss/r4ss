@@ -1,51 +1,37 @@
 #' Explore movement parameterizations in a GUI
-#' 
+#'
 #' A function to visualize parameterization of movement in Stock Synthesis. It
-#' creates a GUI interface for movement exploration.
-#' 
-#' 
+#' creates a GUI interface for movement exploration. Based on selectivity GUI
+#' by Tommy Garrison
+#'
+#'
 #' @param nareas Number of areas
 #' @param accuage Accumulator age
-#' @param getpars T/F switch to get chosen parameters as output
-#' @param getrates T/F switch to get derived movement rates as output
+#' @param season.duration Length of season (annual rates are scaled by
+#' this value in SS).
+#' @param min.move.age Minimum age of movement.
 #' @author Ian Taylor
+#' @export
 #' @keywords dplot hplot dynamic
+#'
 movepars <-
-function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age=0.5)
+function(nareas=4,accuage=40,season.duration=1,min.move.age=0.5)
 {
-  ################################################################################
-  #
-  # movement   June 23, 2009.
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: Provide GUI for exploring movement rate parameters in Stock Synthesis
-  # Written: Ian Taylor, NMFS NWFSC/UW
-  #          based on selectivity GUI by Tommy Garrison, UW
-  # Returns: plot of double normal or double logistic selectivity
-  # General: parameterization matched Stock Synthesis v3.03
-  # Notes:   For more information go to: http://code.google.com/p/r4ss/
-  # Required packages: tcltk
-  #
-  ################################################################################
-
-  # run this next line if package not installed
-  #   install.packages("tcltk")
-  #### the following commands no longer needed since packages are required by r4ss
-## require(tcltk) || stop("package tcltk is required")
   if(!nareas %in% 2:4) stop("'nareas' input must be 2, 3, or 4")
   geterrmessage()
-  
-  movecalc <- function(firstage, accuage, minage, maxage, valueA, valueB) {
+
+  movecalc <- function(firstage, accuage, minage, maxage, valueA, valueB,
+                       destination=1) {
     # subfunction to calculate movement rates
     # can be used as a stand-alone function
     # by uncommenting the plot command near the bottom
     veclengths <- unique(c(length(minage),length(maxage),length(valueA),length(valueB)))
     if(length(veclengths)!=1){
-      print("Error! input vectors  minage, maxage, valueA, valueB need to all have the same length",quote=F)
+      stop("Input vectors  minage, maxage, valueA, valueB need to all have the same length")
     }else{
       npars <- veclengths
     }
-    
+
     agevec <- 0:accuage
     nages <- length(agevec)
 
@@ -54,18 +40,30 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
 
     temp <- 1/(maxage-minage)
     temp1 <- temp*(valueB-valueA)
-    
+
     for(iage in 1:nages){
       for(ipar in 1:npars){
-        if(agevec[iage] <= minage[ipar]) movemat1[ipar,iage] <- valueA[ipar]
-        if(agevec[iage] >= maxage[ipar]) movemat1[ipar,iage] <- valueB[ipar]
-        if(agevec[iage] > minage[ipar] & agevec[iage] < maxage[ipar]) movemat1[ipar,iage] <- valueA[ipar] + (agevec[iage]-minage[ipar])*temp1[ipar]
+        if(agevec[iage] <= minage[ipar]){
+          movemat1[ipar,iage] <- valueA[ipar]
+        }
+        if(agevec[iage] >= maxage[ipar]){
+          movemat1[ipar,iage] <- valueB[ipar]
+        }
+        if(agevec[iage] > minage[ipar] & agevec[iage] < maxage[ipar]){
+          movemat1[ipar,iage] <- valueA[ipar] + (agevec[iage]-minage[ipar])*temp1[ipar]
+        }
       }
     }
     # exponentiate
     movemat1 <- exp(movemat1)
+    # scale by season duration
+    scale <- matrix(season.duration, npars, nages)
+    scale[1,] <- 1
+    movemat1 <- scale*movemat1
     # rescale
-    movemat2 <- movemat1/matrix(apply(movemat1,2,sum),npars,nages,byrow=T)
+    movemat2 <- movemat1/matrix(apply(movemat1,2,sum),npars,nages,byrow=TRUE)
+    # stop youngest fish from moving if requested
+    movemat2[-1 , agevec < min.move.age] <- 0
 
     lty <- c('91','42','22','4222')
     lwd <- rep(3,npars)
@@ -79,10 +77,10 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
     return(movemat2)
 
   } # end movecalc subfunction
-  
+
   ## don't know how to print to command line while GUI is open
   # print(paste("running movement parameter GUI for Stock Synthesis with nareas=",nareas," and accumulator age=",accuage,sep=""),quote=F)
-  
+
   done <- tclVar(0)
   movepars <- new.env()
 
@@ -109,14 +107,14 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
     valueA4 <- tclVar(-4)
     valueB4 <- tclVar(-3)
   }
-  
+
   replot <- function(...) {
     # subfunction to remake the plot
     minage1 <- as.numeric(tclObj(minage1))
     maxage1 <- as.numeric(tclObj(maxage1))
     valueA1 <- as.numeric(tclObj(valueA1))
     valueB1 <- as.numeric(tclObj(valueB1))
-    
+
     minage2 <- as.numeric(tclObj(minage2))
     maxage2 <- as.numeric(tclObj(maxage2))
     valueA2 <- as.numeric(tclObj(valueA2))
@@ -201,13 +199,13 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
                         from = -5, to = 5, showvalue = 1, variable = valueB1,
                         resolution = 0.01, orient = "horiz", relief = "groove"),
          fill = "x", expand = 1, padx = 3, ipadx = 30, pady = 2, ipady = 2, side = "left")
-  
+
   # entry boxes
   tkpack(entry.valueB1, side = "right")
   tkpack(entry.valueA1, side = "right")
   tkpack(entry.maxage1,  side = "right")
   tkpack(entry.minage1,  side = "right")
-  
+
   # frame2:
   frame2 <- tkframe(left.frm, relief = "groove", borderwidth = 2)
   tkpack(tklabel(frame2, text = "Parameters for movement from area 1 to area 2",font="variable 12 bold"), fill = "both", side = "top")
@@ -323,9 +321,9 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
     tkpack(entry.valueB4, side = "right")
     tkpack(entry.valueA4, side = "right")
     tkpack(entry.maxage4, side = "right")
-    tkpack(entry.minage4, side = "right")    
+    tkpack(entry.minage4, side = "right")
   }
-  
+
   OnOK <- function() {
     replot()
   }
@@ -351,12 +349,12 @@ function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age
   tkbind(base, "<Destroy>", function() tclvalue(done) <- 2)
   tkwait.variable(done)
   tkdestroy(base)
-  dat <- get('dat',envir=movepars)   
-  if(getpars | getrates){
-    if (getpars & !getrates) dat <- dat$pars
-    if (!getpars & getrates) dat <- dat$rates
-    return(dat)
-  }
-  else return(invisible())
-} # end selfit function
+
+  # compile info about the results
+  dat <- get('dat',envir=movepars)
+  dat$season.duration <- season.duration
+  dat$min.move.age <- min.move.age
+  # return stuff
+  return(dat)
+} # end movepars function
 

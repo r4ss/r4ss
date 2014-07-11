@@ -1,3 +1,11 @@
+#' Make a simple logo for r4ss organization on GitHub
+#' 
+#' I was tired of the automatically generated symbol
+#' that appeared by default.
+#' 
+#' @author Ian Taylor
+#' 
+
 r4ss_logo <- function(){
   png('r4ss_logo.png',res=300,units='in',width=3,height=3)
   par(mar=rep(0,4))

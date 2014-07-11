@@ -5,9 +5,9 @@
 \usage{
 SSplotMovementRates(replist, plot = TRUE, print = FALSE, subplots = 1:2,
   plotdir = "default", colvec = "default", ylim = "default",
-  legend = TRUE, legendloc = "topleft", moveseas = "all", pwidth = 7,
-  pheight = 7, punits = "in", res = 300, ptsize = 12, cex.main = 1,
-  verbose = TRUE)
+  legend = TRUE, legendloc = "topleft", moveseas = "all",
+  min.move.age = 0.5, pwidth = 7, pheight = 7, punits = "in",
+  res = 300, ptsize = 12, cex.main = 1, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{\link{SS_output}}}
@@ -32,6 +32,8 @@ areas?}
 \item{legendloc}{location passed to legend function (if used)}
 
 \item{moveseas}{choice of season for which movemement rates are shown}
+
+\item{min.move.age}{Minimum age of movement (in future will come from Report file)}
 
 \item{pwidth}{width of plot written to PNG file}
 

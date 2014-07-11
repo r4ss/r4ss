@@ -18,6 +18,7 @@
 #' areas?
 #' @param legendloc location passed to legend function (if used)
 #' @param moveseas choice of season for which movemement rates are shown
+#' @param min.move.age Minimum age of movement (in future will come from Report file)
 #' @param pwidth width of plot written to PNG file
 #' @param pheight height of plot written to PNG file
 #' @param punits units for PNG file
@@ -26,6 +27,7 @@
 #' @param cex.main Character expansion parameter for plot titles
 #' @param verbose Print information on function progress.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 #' \code{\link{IOTCmove}}
 #' @keywords hplot
@@ -40,7 +42,7 @@ SSplotMovementRates <-
            plotdir="default",
            colvec="default", ylim="default", 
            legend=TRUE, legendloc="topleft",
-           moveseas="all",
+           moveseas="all", min.move.age=0.5,
            pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
            verbose=TRUE)
 {
@@ -60,10 +62,8 @@ SSplotMovementRates <-
   accuage    <- replist$accuage
   move       <- replist$movement
   nseasons   <- replist$nseasons
-  firstage   <- 0.5 # need to get firstage into repfile somewhere
-  # firstage   <- 0 # need to get firstage into repfile somewhere
+  min.move.age   <- min.move.age # need to get min.move.age into repfile somewhere
   seasdur    <- replist$seasdurations
-  move       <- replist$movement
   parameters <- replist$parameters
   accuage    <- replist$accuage
   nareas     <- replist$nareas
@@ -143,7 +143,8 @@ SSplotMovementRates <-
       ##                nrow(movepars)  =",nrow(movepars),"\n")
       ## }
 
-      movecalc <- function(firstage, accuage, minage, maxage, valueA, valueB, from, to, seasdur) {
+      movecalc <- function(min.move.age, accuage, minage, maxage,
+                           valueA, valueB, from, to, seasdur) {
         # subfunction to calculate movement rates
         # similar to one in the "movepars" function.
         # in the future, these could be generalized and stand-alone in the r4ss package
@@ -177,7 +178,7 @@ SSplotMovementRates <-
         movemat2 <- movemat1/matrix(apply(movemat1,2,sum),npars,nages,byrow=T)
         names <- paste("from_",from,"to_",to,sep="")
         # fix movement at 0 for when from and to areas don't match
-        movemat2[,0:accuage < firstage] <- from==to
+        movemat2[,0:accuage < min.move.age] <- from==to
         rownames(movemat2) <- names
 
         return(movemat2)
@@ -191,13 +192,14 @@ SSplotMovementRates <-
         for(imove in 1:nmoves){
           LabelA <- paste("MoveParm_A_",moveinfo$LabelBase2[imove],sep="")
           LabelB <- paste("MoveParm_B_",moveinfo$LabelBase2[imove],sep="")
+          seas <- moveinfo$Seas[imove]
           basevalueA <- movepars$Value[movepars$Label==LabelA]
           basevalueB <- movepars$Value[movepars$Label==LabelB]
           valueA <- MGparmAdj[[LabelA]][MGparmAdj$Year==y]
           valueB <- MGparmAdj[[LabelB]][MGparmAdj$Year==y]
           #print(c(imove,valueA,valueB))
           moveByYr[,,imove,iyr] <-
-            movecalc(firstage = firstage,
+            movecalc(min.move.age = min.move.age,
                      accuage  = accuage,
                      minage   = rep(moveinfo$minage[imove],2),
                      maxage   = rep(moveinfo$maxage[imove],2),
@@ -205,7 +207,7 @@ SSplotMovementRates <-
                      valueB   = c(valueB,0),
                      from     = rep(moveinfo$Source_area[imove],2),
                      to       = c(moveinfo$Dest_area[imove],moveinfo$Source_area[imove]),
-                     seasdur = 0.25
+                     seasdur  = seasdur[seas]
                      )
         }
       } # end loop over years to calculate moveByYr array

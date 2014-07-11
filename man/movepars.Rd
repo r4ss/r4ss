@@ -3,20 +3,23 @@
 \alias{movepars}
 \title{Explore movement parameterizations in a GUI}
 \usage{
-movepars(nareas = 4, accuage = 40, getpars = T, getrates = T)
+movepars(nareas = 4, accuage = 40, season.duration = 1,
+  min.move.age = 0.5)
 }
 \arguments{
 \item{nareas}{Number of areas}
 
 \item{accuage}{Accumulator age}
 
-\item{getpars}{T/F switch to get chosen parameters as output}
+\item{season.duration}{Length of season (annual rates are scaled by
+this value in SS).}
 
-\item{getrates}{T/F switch to get derived movement rates as output}
+\item{min.move.age}{Minimum age of movement.}
 }
 \description{
 A function to visualize parameterization of movement in Stock Synthesis. It
-creates a GUI interface for movement exploration.
+creates a GUI interface for movement exploration. Based on selectivity GUI
+by Tommy Garrison
 }
 \author{
 Ian Taylor
