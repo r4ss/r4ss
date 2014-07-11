@@ -11,7 +11,7 @@
 #' @author Ian Taylor
 #' @keywords dplot hplot dynamic
 movepars <-
-function(nareas=4,accuage=40,getpars=T,getrates=T)
+function(nareas=4,accuage=40,getpars=T,getrates=T,season.duration=1,min.move.age=0.5)
 {
   ################################################################################
   #

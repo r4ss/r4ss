@@ -475,7 +475,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
     # general function to work for any parameter
     timeVaryingParmFunc <- function(parmlabel){
       plot(MGparmAdj$Year, MGparmAdj[[parmlabel]],
-           xlab=labels[11], ylab=parmlabel, type="l", lwd=3, col=col2)
+           xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=col2)
     }
     # check to make sure MGparmAdj looks as expected
     # (maybe had different or conditional format in old SS versions)
