@@ -38,6 +38,7 @@
 #' @param res Resolution of plots printed to files. Default=300.
 #' @param cex.main Character expansion for plot titles.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_output}}
 #' @references Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
 #' variability of estimated recruitments in fishery assessment models.  Can. J.

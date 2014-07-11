@@ -97,6 +97,7 @@
 #' posterior distributions in which the median and mean differ.
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
 #' @keywords hplot
 SSplotComps <-

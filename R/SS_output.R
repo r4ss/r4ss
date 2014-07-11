@@ -51,6 +51,7 @@
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}
 #' @keywords data manip list
 #' @examples

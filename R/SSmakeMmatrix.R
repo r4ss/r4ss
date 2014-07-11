@@ -10,6 +10,7 @@
 ##' @param  yrs.in.columns  an indicator of whether the matrix has years in columns or rows
 ##' @return Prints inputs with option to write to chosen file
 ##' @author Ian Taylor
+##' @export
 SSmakeMmatrix <- function(mat, startyr, outfile=NULL, 
                           overwrite=FALSE, yrs.in.columns=TRUE){
   # A function for converting a matrix of natural mortality values

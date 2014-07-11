@@ -25,6 +25,7 @@
 #' @param save.lists Save each list of parsed output as a .Rdata file (with default
 #' filenaming convention based on iteration and date stamp.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_output}} \code{\link{SSsummarize}}
 #' @keywords data manip list
 SSgetoutput <-

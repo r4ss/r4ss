@@ -15,6 +15,7 @@
 ##' @param systemcmd Option to switch between 'shell' and 'system'
 ##' @param printlikes Print likelihood values to console
 ##' @author Jim Thorson
+##' @export
 SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
                          Njitter, Intern=TRUE, systemcmd=FALSE,

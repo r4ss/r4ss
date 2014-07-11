@@ -109,6 +109,7 @@
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
 #' whether input values are from MCMC or to use normal distribution around MLE
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 #' @keywords hplot

@@ -17,6 +17,7 @@
 #' @param ...  Additional arguments can get passed to
 #' \code{\link{SSplotMovementMap}}
 #' @author Ian Taylor
+#' @export
 #' @keywords hplot
 IOTCmove <-
   function(replist=NULL,moveage=5,

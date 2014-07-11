@@ -23,6 +23,7 @@
 #' directory. Please provide feedback on any bugs, annoyances, or suggestions
 #' for improvement.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
 SS_html <- function(replist=NULL,

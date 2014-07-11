@@ -57,6 +57,7 @@
 #' @param do_tags Include tag data? NOT IMPLEMENTED YET.
 #' @param morphcomp_data Morph composition data. NOT IMPLEMENTED YET.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_readdat}}, \code{\link{SS_writedat}}
 SS_makedatlist <-
     function(styr=1971,

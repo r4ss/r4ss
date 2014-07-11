@@ -25,6 +25,7 @@
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
 SSplotBiology <-

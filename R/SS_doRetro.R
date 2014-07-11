@@ -23,6 +23,7 @@
 #' @param CallType Either "system" or "shell" (choice depends on how you're running
 #' R. Default is "system".
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SSgetoutput}}
 #' @keywords data manip
 #' @examples

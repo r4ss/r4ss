@@ -25,6 +25,7 @@
 #' @param print14 Print 14 columns or just 7 (TRUE/FALSE)
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_changepars}}
+#' @export
 #' @keywords data manip
 #' @examples
 #' 

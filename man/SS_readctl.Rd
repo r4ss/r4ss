@@ -19,6 +19,9 @@ similar files. Or it may never be completed at all. The functions
 \code{\link{SS_changepars}} and \code{\link{SS_parlines}} offer alternatives
 for working with SS control files.
 }
+\author{
+Ian Taylor
+}
 \seealso{
 \code{\link{SS_changepars}}, \code{\link{SS_parlines}},
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},

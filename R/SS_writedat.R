@@ -9,6 +9,7 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
 #' \code{\link{SS_readforecast}}, \code{\link{SS_readctl}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},

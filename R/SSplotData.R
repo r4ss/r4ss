@@ -35,6 +35,7 @@
 #' @param lwd Line width for lines showing ranges of years of data
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor, Chantel Wetzel
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
 #' \code{\link{SS_readdat}}
 #' @keywords hplot

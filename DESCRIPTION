@@ -1,26 +1,26 @@
 Package: r4ss
 Type: Package
 Title: R code for Stock Synthesis
-Version: 1.22
-Date: 2014-07-08
+Version: 1.22.1
+Date: 2014-07-11
 Author: Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre
     Punt, John Wallace, Chantel Wetzel, James Thorson, Yukio Takeuchi,
     and other contributors
 Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 Depends:
-    R (>= 2.10.0),
-    tcltk,
-    coda,
-    maps
+    R (>= 2.10.0)
 Imports:
+    coda,
     corpcor,
     gplots,
     gtools,
+    maps,
     pso,
-    RCurl
+    RCurl,
+    tcltk
 Description: Functions for reading output, plotting, exploring and
     manipulating input files for Stock Synthesis fisheries stock
     assessment modeling platform, developed by Richard Methot.
 License: GPL-3
 LazyLoad: yes
-URL: http://code.google.com/p/r4ss/
+URL: https://github.com/r4ss

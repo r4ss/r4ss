@@ -28,6 +28,7 @@
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R GUI?
 #' @author Ian Taylor, Ian Stewart
+#' @export
 #' @seealso \code{\link{SS_plots}}
 #' @keywords hplot
 SSplotDiscard <-

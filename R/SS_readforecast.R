@@ -8,6 +8,7 @@
 #' @param Nareas Number of areas.
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},

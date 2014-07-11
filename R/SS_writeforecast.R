@@ -12,6 +12,7 @@
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}},

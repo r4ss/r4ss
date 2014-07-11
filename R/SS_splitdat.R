@@ -25,6 +25,7 @@
 #' @param notes Notes to the top of the new file (comment indicator "#C" will
 #' be added). Default="".
 #' @author Ian Taylor
+#' @export
 #' @keywords data manip
 SS_splitdat <-
   function(inpath     = 'working_directory',
