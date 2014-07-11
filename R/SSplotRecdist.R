@@ -25,6 +25,7 @@
 #' @param cex.main character expansion for plot titles
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
 #' @keywords hplot
 SSplotRecdist <-

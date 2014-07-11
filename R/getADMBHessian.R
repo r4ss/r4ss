@@ -8,7 +8,7 @@
 ##' @param FileName Name of .hes file.
 ##' @return A list with elements num.pars, hes, hybrid_bounded_flag, and scale. 
 ##' @author Cole Monnahan
-##' @note Published by Cole online in
+##' @note Also published here:
 ##' \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
 getADMBHessian <- function(File, FileName){
     ## This function reads in all of the information contained in the

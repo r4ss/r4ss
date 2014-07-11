@@ -20,7 +20,7 @@ covariance matrix, and others just need to be recorded and
 rewritten to file so ADMB "sees" what it's expecting.
 }
 \note{
-Published by Cole online in
+Also published here:
 \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
 }
 \author{

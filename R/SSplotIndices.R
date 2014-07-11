@@ -49,6 +49,7 @@
 #' values)
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotIndices <-
