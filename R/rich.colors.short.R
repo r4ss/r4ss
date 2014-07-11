@@ -9,9 +9,9 @@
 #' @param alpha Alpha transparency value for all colors in vector. Value is
 #' passed to rgb function.
 #' @author Arni Magnusson, Ian Taylor
+#' @export
 #' @keywords color
 rich.colors.short <- function(n,alpha=1){
-  # a subset of rich.colors by Arni Magnusson from the gregmisc package
   x <- seq(0, 1, length = n)
   r <- 1/(1 + exp(20 - 35 * x))
   g <- pmin(pmax(0, -0.8 + 6 * x - 5 * x^2), 1)

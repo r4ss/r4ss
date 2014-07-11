@@ -9,6 +9,7 @@
 #' @param silent T/F switch to return fit at the end
 #' @param init Optional initial values for the parameters
 #' @author Tommy Garrison
+#' @export
 #' @seealso \code{\link{sel.line}}
 #' @keywords dplot hplot dynamic
 #' @examples

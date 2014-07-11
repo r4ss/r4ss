@@ -15,6 +15,7 @@
 #' (default = working directory).
 #' @param silent TRUE/FALSE switch to return fit at the end.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{selfit}}
 #' @keywords dplot hplot dynamic
 #' @examples

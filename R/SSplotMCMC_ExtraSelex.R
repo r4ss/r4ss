@@ -16,6 +16,7 @@
 #' something like "Fleet 1", using the numbering from the model.
 #' @param col Color for points and lines.
 #' @author Ian Taylor
+#' @export
 #' @keywords aplot hplot
 SSplotMCMC_ExtraSelex <- function(post, add=FALSE, nsexes=1,shift=0,
                                   fleetname="default",col="blue"){

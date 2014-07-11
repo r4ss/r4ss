@@ -14,6 +14,7 @@
 #' \code{\link{SSsummarize}}.  It has not been tested to see how it works when
 #' starting with an empty list.
 #' @author Allan Hicks
+#' @export
 #' @seealso \code{\link{SSsummarize}} \code{\link{SSplotComparisons}}
 #' @keywords data manip list
 #' @examples

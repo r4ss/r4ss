@@ -28,6 +28,7 @@
 #' be the directory where the model was run.
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotSPR <-

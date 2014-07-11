@@ -27,6 +27,7 @@
 #' be the directory where the model was run.
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor, Ian Stewart
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
 #' @keywords hplot dplot
 SSplotRecdevs <-

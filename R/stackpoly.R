@@ -22,6 +22,7 @@
 #' @param axis4 option to add an axis on the right hand side
 #' @param \dots Additional arguments passed to 'plot'.
 #' @author Jim Lemon
+#' @export
 #' @references \url{http://cran.r-project.org/web/packages/plotrix/index.html}
 #' @keywords hplot
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,

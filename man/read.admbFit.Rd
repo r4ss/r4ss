@@ -19,6 +19,6 @@ and correlations. Required for Jim Thorson's Laplace
 Approximation but likely useful for other purposes.
 }
 \author{
-Jim?
+James Thorson
 }
 

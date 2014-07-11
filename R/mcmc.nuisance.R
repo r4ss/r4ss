@@ -28,6 +28,7 @@
 #' want to consider.
 #' @param sep Separator for data file passed to the \code{read.table} function.
 #' @author Ian Stewart
+#' @export
 #' @seealso \code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
 #' @keywords data
 mcmc.nuisance <- function (

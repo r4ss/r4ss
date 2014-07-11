@@ -30,6 +30,7 @@
 #' @note Inspired by plots of MULTIFAN-CL movement patterns presented by Adam
 #' Langley
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 #' \code{\link{IOTCmove}}
 #' @keywords hplot

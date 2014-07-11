@@ -38,6 +38,7 @@
 #' @return Returns a data frame with the years, spawning biomass, depletion,
 #' and total dead catch.
 #' @author Allan Hicks
+#' @export
 #' @seealso \code{\link{SS_output}} \code{\link{SSgetMCMC}}
 #' @keywords data manip list plot
 #' @examples

@@ -24,6 +24,7 @@
 #' @param verbose report progress to R GUI?
 #' @param mcmc summarize MCMC output in table?
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
 #' \code{\link{SS_output}}
 #' @keywords data

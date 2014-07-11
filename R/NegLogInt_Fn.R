@@ -41,6 +41,7 @@
 ##' detect these automatically based on the length of relevant lines from the CTL
 ##' file.
 ##' @author James Thorson
+##' @export
 ##' @references Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random
 ##' effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
 ##' Sci.

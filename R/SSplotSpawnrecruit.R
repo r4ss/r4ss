@@ -36,6 +36,7 @@
 #' @param init add point for initial conditions (x=B1,y=R1)
 #' @param forecast include forecast years in the curve?
 #' @author Ian Stewart, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotSpawnrecruit <-

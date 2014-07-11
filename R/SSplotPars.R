@@ -55,6 +55,7 @@
 #' @param ctlfile Specify control file to get min and max recdev values
 #' (otherwise assumed to be -5 and 5). Default="control.ss_new".
 #' @author Ian Taylor
+#' @export
 #' @keywords hplot
 #' @examples
 #' 

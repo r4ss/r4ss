@@ -27,6 +27,7 @@
 #' @param upperCI Quantile for upper bound on calculated intervals. Default =
 #' 0.975 for 95\% intervals.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SSgetoutput}}
 #' @keywords data manip list
 SSsummarize <- function(biglist,

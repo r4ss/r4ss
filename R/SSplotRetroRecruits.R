@@ -50,9 +50,11 @@
 #'  pdf('retrospectives/retrospective_dev_plots.pdf',width=7,height=10)
 #'  par(mfrow=c(2,1))
 #'  # first scaled relative to most recent estimate
-#'  SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012, relative=TRUE, legend=FALSE)
+#'  SSplotRetroRecruits(retroSummary, endyrvec=endyrvec, cohorts=1999:2012,
+#'                      relative=TRUE, legend=FALSE)
 #'  # second without scaling
-#'  SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012, relative=FALSE, legend=FALSE)
+#'  SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012,
+#'                  relative=FALSE, legend=FALSE)
 #'  dev.off()
 #'  }
 #'

@@ -8,7 +8,7 @@ getADMBHessian(File, FileName)
 \arguments{
 \item{File}{Directory in which .hes file is located.}
 
-\item{FileName}{Nmae of .hes file.}
+\item{FileName}{Name of .hes file.}
 }
 \value{
 A list with elements num.pars, hes, hybrid_bounded_flag, and scale.
@@ -19,7 +19,11 @@ admodel.hes file. Some of this is needed for relaxing the
 covariance matrix, and others just need to be recorded and
 rewritten to file so ADMB "sees" what it's expecting.
 }
+\note{
+Published by Cole online in
+\url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
+}
 \author{
-Jim?, Cole?
+Cole Monnahan
 }
 

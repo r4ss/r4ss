@@ -87,6 +87,7 @@
 #' work correctly in all cases.
 #' @param \dots additional arguments (NOT YET IMPLEMENTED).
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
 #' @keywords aplot hplot
 make_multifig <- function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,

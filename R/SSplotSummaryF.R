@@ -19,6 +19,7 @@
 #' @param res resolution for PNG file
 #' @param ptsize ptsize for PNG file
 #' @author Allan Hicks
+#' @export
 #' @seealso \code{\link{SSplotTimeseries}}, ~~~
 #' @keywords hplot
 SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Mortality",

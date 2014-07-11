@@ -7,7 +7,8 @@
 ##' @param file Name of ADMB executable such that files to read will
 ##' have format file.par and file.cor.
 ##' @return List of various things from these files.
-##' @author Jim?
+##' @author James Thorson
+##' @export
 read.admbFit <- function(file){
   ret<-list()
   # read par file

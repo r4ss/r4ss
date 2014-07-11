@@ -30,6 +30,7 @@
 #' @param sep Separator for data file passed to the \code{read.table} function.
 #' @param print Send to screen unless asked to print.
 #' @author Ian Stewart
+#' @export
 #' @seealso \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
 #' @keywords hplot
 mcmc.out <- function (

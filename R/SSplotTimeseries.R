@@ -37,6 +37,7 @@
 #' @param ptsize ptsize for PNG file
 #' @param cex.main character expansion for plot titles
 #' @author Ian Taylor, Ian Stewart
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotTimeseries <-

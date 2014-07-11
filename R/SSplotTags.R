@@ -38,6 +38,7 @@
 #' be the directory where the model was run.
 #' @param verbose return updates of function progress to the R GUI?
 #' @author Andre Punt, Ian Taylor
+#' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotTags <-

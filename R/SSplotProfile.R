@@ -67,6 +67,7 @@
 #' should be read using \code{\link{SSgetoutput}} or by multiple calls to
 #' \code{\link{SS_output}}.
 #' @author Ian Taylor, Ian Stewart
+#' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SS_profile}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 #' @keywords aplot hplot

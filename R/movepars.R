@@ -4,7 +4,6 @@
 #' creates a GUI interface for movement exploration. Based on selectivity GUI
 #' by Tommy Garrison
 #'
-#'
 #' @param nareas Number of areas
 #' @param accuage Accumulator age
 #' @param season.duration Length of season (annual rates are scaled by

@@ -9,6 +9,7 @@
 #' @param min.dist minimum value for selectivity
 #' @param max.dist maximum value for selectivity
 #' @author Tommy Garrison
+#' @export
 #' @seealso \code{\link{selfit}}
 #' @keywords dplot
 #' @examples
