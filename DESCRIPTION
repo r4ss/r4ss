@@ -8,7 +8,7 @@ Author: Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre
     and other contributors
 Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 Depends:
-    R (>= 2.10.0),
+    R (>= 2.10.0)
 Imports:
     coda,
     corpcor,
