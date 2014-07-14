@@ -52,6 +52,9 @@
 #'
 update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
                                GitHub = TRUE, override = FALSE){
+  require(RCurl)
+  options(RCurlOptions = list(ssl.verifypeer = FALSE))
+
   if(GitHub && revision!="newest") {
     stop("There's not yet an option to source older revisions from GitHub")
   }
@@ -59,15 +62,12 @@ update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
   check <- function(){
     # function to produce messages if needed
     if (!override) {
-      if ("package:r4ss" %in% search() &&
-          as.numeric(as.character(packageVersion("r4ss"))) >= 1.22) {
-        cat('r4ss has moved from Google Code to GitHub.\n',
-            'Among other benefits, this allows an alternative to update_r4ss_files.\n',
-            'If you install the "devtools" package, you can get updated code as\n',
-            'a complete package by running the following command:\n',
-            '  devtools::install_github("r4ss/r4ss")\n',
-            'to override this message, use the argument "override=TRUE"\n')
-      }
+      cat('Note: r4ss has moved from Google Code to GitHub\n',
+          'which allows an alternative to this update_r4ss_files funtion.\n',
+          'If you install the "devtools" package, you can get updated code as\n',
+          'a complete package by running the following command:\n',
+          '  devtools::install_github("r4ss/r4ss")\n',
+          'to make this message go away, use the argument "override=TRUE"\n')
     }
   }
   getGitHubNames <- function() {
@@ -202,27 +202,23 @@ update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
   # now do stuff using functions defined above
   if (is.null(local)) { # if not using local folders, source from web
     check()
-    if (override){
+    if (GitHub) {
+      fileinfo <- getGitHubNames()
+    } else {
+      fileinfo <- getwebnames()
+    }
+    #print(fileinfo)
+    getwebfiles(fileinfo)
+    cat("\n  r4ss update complete.\n")
+  } else { # if using local folders...
+    if (save) { # and saving from web
+      check()
       if (GitHub) {
         fileinfo <- getGitHubNames()
       } else {
         fileinfo <- getwebnames()
       }
-      #print(fileinfo)
       getwebfiles(fileinfo)
-      cat("\n  r4ss update complete.\n")
-    }
-  } else { # if using local folders...
-    if (save) { # and saving from web
-      check()
-      if(override){
-        if (GitHub) {
-          fileinfo <- getGitHubNames()
-        } else {
-          fileinfo <- getwebnames()
-        }
-        getwebfiles(fileinfo)
-      }
     }
     # source from local folder (whether newly saved or not)
     getlocalfiles(local)

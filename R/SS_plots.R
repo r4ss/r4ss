@@ -820,21 +820,23 @@ if(length(catlabels)==0){
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
       # loop over size methods for generalized size comp data
-      for(sizemethod in sort(unique(replist$sizedbase$method))){
-        plotinfo <-
-          SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",sizemethod=sizemethod,
-                      bub=TRUE,verbose=verbose,fleets=fleets, fleetnames=fleetnames,
-                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
-                      bublegend=showlegend,
-                      maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
-                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                      maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                      scalebins=scalebins,
-                      pwidth=pwidth, pheight=pheight, punits=punits,
-                      ptsize=ptsize, res=res,
-                      ...)
-        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      if(nrow(replist$sizedbase)>0){
+        for(sizemethod in sort(unique(replist$sizedbase$method))){
+          plotinfo <-
+            SSplotComps(replist=replist,datonly=FALSE,kind="SIZE",sizemethod=sizemethod,
+                        bub=TRUE,verbose=verbose,fleets=fleets, fleetnames=fleetnames,
+                        samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                        minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                        bublegend=showlegend,
+                        maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                        plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                        maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
+                        scalebins=scalebins,
+                        pwidth=pwidth, pheight=pheight, punits=punits,
+                        ptsize=ptsize, res=res,
+                        ...)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        }
       }
       if(!is.null(plotInfoTable))
         plotInfoTable$category[plotInfoTable$category=="Comp"] <- "LenComp"
