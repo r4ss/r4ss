@@ -5,8 +5,9 @@ r4ss
 
 The r4ss package version 1.22.1 is on CRAN and can be installed in R using a command like
 
-    install.packages("r4ss")
-    
+```S
+install.packages("r4ss")
+```
 To get notifications about r4ss, you can watch this GitHub project and/or join the r4ss email list: <https://groups.google.com/forum/#!forum/r4ss>
 
 Additional information about r4ss at the old Google Code page, <https://code.google.com/p/r4ss/>, will be migrated over to GitHub in the future.
@@ -21,10 +22,10 @@ devtools::install_github("r4ss/r4ss")
 Once you have installed the r4ss package, it can be loaded in the regular manner:
 
 ```S
-library(rstar)
+library(r4ss)
 ````
 
-It should also be possible to install previous versions of the r4ss package using:
+From version 1.22 onwards, it should also be possible to install previous versions of the r4ss package using, for example:
 
 ```S
 devtools::install_github("r4ss/r4ss", ref="v1.22.1")
