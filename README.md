@@ -25,7 +25,7 @@ Once you have installed the r4ss package, it can be loaded in the regular manner
 library(r4ss)
 ````
 
-From version 1.22 onwards, it should also be possible to install previous versions of the r4ss package using, for example:
+From version 1.22, it should also be possible to install previous versions of r4ss using, for example:
 
 ```S
 devtools::install_github("r4ss/r4ss", ref="v1.22.1")
