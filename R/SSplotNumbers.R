@@ -96,6 +96,7 @@ SSplotNumbers <-
     morphlist       <- replist$morphlist
     morph_indexing  <- replist$morph_indexing
     accuage         <- replist$accuage
+    agebins         <- replist$agebins
     endyr           <- replist$endyr
     N_ageerror_defs <- replist$N_ageerror_defs
     AAK             <- replist$AAK
@@ -533,6 +534,9 @@ SSplotNumbers <-
         matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,
                 xlab=labels[3],ylab=labels[4],main=labels[8],cex.main=cex.main)
         abline(h=0,col="grey") # grey line at 0
+        legend('topleft',bty='n',pch=1,lty=1,col=colvec,
+               ncol=ifelse(N_ageerror_defs<20,1,2), # more columns for crazy models like hake
+               legend=paste("Ageing method",1:N_ageerror_defs))
       }
 
       # check for bias in ageing error pattern
@@ -546,27 +550,74 @@ SSplotNumbers <-
                   xlab=labels[3],ylab=labels[5],main=labels[8])
           abline(h=0,col="grey") # grey line at 0
           abline(0,1,col="grey") # grey line with slope = 1
+          legend('topleft',bty='n',pch=1,lty=1,col=colvec,
+                 ncol=ifelse(N_ageerror_defs<20,1,2), # more columns for crazy models like hake
+                 legend=paste("Ageing method",1:N_ageerror_defs))
         }
       }
 
+      ageing_matrix_fun <- function(i_ageerror_def){
+        ## function to make shaded image illustrating true vs. obs. age
+        
+        # change label from "Mean observered age" to "Observed age"
+        # this could be additional input instead
+        ylab <- gsub(pattern="Mean o", replacement="O", x=labels[5])
+        # take subset of age-age-key that for particular method
+        # but only the rows for females because males should always be identical
+        z <- t(AAK[i_ageerror_def, rev(1:length(agebins)), ])
+        # make image
+        image(x=as.numeric(rownames(z)),
+              y=as.numeric(colnames(z)),
+              z=z,
+              xlab=labels[3],
+              ylab=ylab,
+              main=paste(labels[8], ": matrix for method ", i_ageerror_def, sep=""),
+              axes=FALSE)
+        axis(1, at=0:accuage)
+        axis(2, at=agebins, las=2)
+        box()
+      }
+
+      # run functions to make requested plots
+      
       if(plot & 5 %in% subplots){
+        # make plots of age error standard deviations
         ageingfun()
+        # make plots of age error means
         if(mean(ageingbias==0)!=1) ageingfun2()
+        # make plots of age error matrices
+        for(i_ageerror_def in 1:N_ageerror_defs){
+          ageing_matrix_fun(i_ageerror_def)
+        }
       }
       if(print & 5 %in% subplots){
+        # make files with plots of age error standard deviations
         file <- paste(plotdir,"/numbers5_ageerrorSD.png",sep="")
-        caption <- labels[8]
+        caption <- paste(labels[8], ": ", labels[4], sep="")
         plotinfo <- pngfun(file=file, caption=caption)
         ageingfun()
         dev.off()
 
+        # make files with plots of age error means
         if(mean(ageingbias==0)!=1){
           file <- paste(plotdir,"/numbers5_ageerrorMeans.png",sep="")
-          caption <- labels[8]
+          caption <- paste(labels[8], ": ", labels[5], sep="")
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun2()
           dev.off()
         }
+
+        # make files with plots of age error matrices
+        for(i_ageerror_def in 1:N_ageerror_defs){
+          file <- paste(plotdir,"/numbers5_ageerror_matrix_",
+                        i_ageerror_def,".png",sep="")
+          caption <- paste(labels[8], ": matrix for method ", i_ageerror_def, sep="")
+          plotinfo <- pngfun(file=file, caption=caption)
+          ageingfun()
+          ageing_matrix_fun(i_ageerror_def)
+          dev.off()
+        } # end loop over ageing error methods
+        
       } # end print to PNG
     } # end if AAK
   } # end if data available

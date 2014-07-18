@@ -162,7 +162,7 @@ SS_output <-
   SS_versionshort <- toupper(substr(SS_version,1,8))
   SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
   # rough limits on compatibility of this code
-  SS_versionMax <- 3.24
+  SS_versionMax <- 3.30
   SS_versionMin <- 3.21 # a stab in the dark at which versions still work
 
   # test for version compatibility with this code
@@ -1594,6 +1594,7 @@ if(FALSE){
     returndat$N_ageerror_defs <- N_ageerror_defs <- length(starts)
     if(N_ageerror_defs > 0)
     {
+      # loop over ageing error types to get definitions
       nrowsAAK <- nrow(rawAAK)/N_ageerror_defs - 3
       AAK = array(NA,c(N_ageerror_defs,nrowsAAK,accuage+1))
       age_error_mean <- age_error_sd <- data.frame(age=0:accuage)
@@ -1605,6 +1606,10 @@ if(FALSE){
         age_error_mean[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 1,-1]))
         age_error_sd[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 2,-1]))
       }
+      # add names to 3 dimensions of age-age-key
+      dimnames(AAK) <- list(AgeingErrorType=1:N_ageerror_defs,
+                            ObsAgeBin=rep(rev(agebins), nsexes),
+                            TrueAge=0:accuage)
       returndat$AAK <- AAK
       returndat$age_error_mean <- age_error_mean
       returndat$age_error_sd <- age_error_sd
