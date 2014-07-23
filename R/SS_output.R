@@ -1600,16 +1600,18 @@ if(FALSE){
       age_error_mean <- age_error_sd <- data.frame(age=0:accuage)
       for(i in 1:N_ageerror_defs){
         AAKtemp <- rawAAK[starts[i] + 2 + 1:nrowsAAK,-1]
-        # what about 2-sex model?
+        rownames.tmp <- rawAAK[starts[i] + 2 + 1:nrowsAAK,1]
         for(icol in 1:(accuage+1)) AAKtemp[,icol] <- as.numeric(AAKtemp[,icol])
         AAK[i,,] <- as.matrix(AAKtemp)
         age_error_mean[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 1,-1]))
         age_error_sd[[paste("type",i,sep="")]] <- as.numeric((rawAAK[starts[i] + 2,-1]))
       }
       # add names to 3 dimensions of age-age-key
-      dimnames(AAK) <- list(AgeingErrorType=1:N_ageerror_defs,
-                            ObsAgeBin=rep(rev(agebins), nsexes),
-                            TrueAge=0:accuage)
+      if(!is.null(AAK)){
+        dimnames(AAK) <- list(AgeingErrorType=1:N_ageerror_defs,
+                              ObsAgeBin=rownames.tmp,
+                              TrueAge=0:accuage)
+      }
       returndat$AAK <- AAK
       returndat$age_error_mean <- age_error_mean
       returndat$age_error_sd <- age_error_sd

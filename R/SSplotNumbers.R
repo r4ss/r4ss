@@ -564,7 +564,8 @@ SSplotNumbers <-
         ylab <- gsub(pattern="Mean o", replacement="O", x=labels[5])
         # take subset of age-age-key that for particular method
         # but only the rows for females because males should always be identical
-        z <- t(AAK[i_ageerror_def, rev(1:length(agebins)), ])
+        agebins.tmp <- sort(unique(as.numeric(dimnames(AAK)$ObsAgeBin)))
+        z <- t(AAK[i_ageerror_def, rev(1:length(agebins.tmp)), ])
         # make image
         image(x=as.numeric(rownames(z)),
               y=as.numeric(colnames(z)),
@@ -573,8 +574,16 @@ SSplotNumbers <-
               ylab=ylab,
               main=paste(labels[8], ": matrix for method ", i_ageerror_def, sep=""),
               axes=FALSE)
-        axis(1, at=0:accuage)
-        axis(2, at=agebins, las=2)
+        if(accuage<=40){
+          axis(1, at=0:accuage)
+          axis(2, at=agebins.tmp, las=2)
+        }          
+        if(accuage>40){
+          axis(1, at=0:accuage, labels=rep("",accuage+1))
+          axis(1, at=seq(0,accuage,5))
+          axis(2, at=agebins.tmp, labels=rep("",length(agebins.tmp)))
+          axis(2, at=agebins.tmp[agebins.tmp %in% seq(0,accuage,5)], las=2)
+        }
         box()
       }
 

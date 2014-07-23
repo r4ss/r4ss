@@ -3,7 +3,8 @@
 #' Make a set of plots based on output from Andre Punt's Rebuilder program.
 #' 
 #' 
-#' @param dirn Directory where rebuilder output files are stored.
+#' @param dirn Directory (or vector of directories) where rebuilder output
+#' files are stored.
 #' @param fileN Vector of filenames containing rebuilder output.
 #' Default=c("res.csv").
 #' @param Titles Titles for plots when using multiple filenames. Default="".
@@ -37,7 +38,7 @@
 #' @param pwidth Width of the plot window or PDF file (in inches). Default=7.
 #' @param pheight Height of the plot window or PDF file (in inches). Default=7.
 #' @param lwd Line width for many of the plot elements. Default=2.
-#' @author Andre Punt
+#' @author Andre Punt, Ian Taylor
 #' @export
 #' @keywords dplot hplot
 #' @examples
@@ -72,7 +73,7 @@ DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=2
                          pdf=FALSE,pwidth=7,pheight=7,lwd=2)
 {
   if(pdf){
-    pdffile <- paste(dirn,"/rebuild_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(dirn[1],"/rebuild_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     cat("PDF file with plots will be:",pdffile,'\n')
   }else{
@@ -556,12 +557,22 @@ FinalRecovery<-function(UUU,Title)
 
 }
 #  ==================================================================================================
-
+ # make empty list
  UUUs <- vector("list",5)
- for (Ifile in 1:length(fileN))
+ # number of files to read
+ Nfiles <- length(fileN)
+ # if only 1 directory was input, repeat for each file
+ if(length(dirn)==1){
+   dirn <- rep(dirn, Nfiles)
+ }
+ # check to make sure number of directories matches number of files
+ if(length(dirn)!=Nfiles){
+   stop("length of 'dirn' should equal 1 or length of fileN:",Nfiles)
+ }
+ for (Ifile in 1:Nfiles)
   {
 
-   FileName <- paste(dirn,fileN[Ifile],sep="\\")
+   FileName <- file.path(dirn[Ifile], fileN[Ifile])
    cat("FileName:",FileName,"\n")
    UUU <- read.table(file=FileName,col.names=1:ncols,fill=T,
                      colClasses="character",comment.char="$",sep=",")
@@ -606,7 +617,7 @@ FinalRecovery<-function(UUU,Title)
 
  # Results across strategies
  DoStrategies <- FALSE
- for (Ifile in 1:length(fileN))
+ for (Ifile in 1:Nfiles)
   if (5 %in% Plots[[Ifile]]) DoStrategies <- TRUE
  if (DoStrategies==T){
    OutputList$AltStrategies <- AltStrategies(fileN,UUUs,Options,"",
