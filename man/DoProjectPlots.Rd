@@ -12,7 +12,8 @@ DoProjectPlots(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = "",
   Labels = "default", pdf = FALSE, pwidth = 7, pheight = 7, lwd = 2)
 }
 \arguments{
-\item{dirn}{Directory where rebuilder output files are stored.}
+\item{dirn}{Directory (or vector of directories) where rebuilder output
+files are stored.}
 
 \item{fileN}{Vector of filenames containing rebuilder output.
 Default=c("res.csv").}
@@ -94,7 +95,7 @@ Make a set of plots based on output from Andre Punt's Rebuilder program.
 }
 }
 \author{
-Andre Punt
+Andre Punt, Ian Taylor
 }
 \keyword{dplot}
 \keyword{hplot}

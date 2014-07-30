@@ -52,8 +52,8 @@
 #'
 update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
                                GitHub = TRUE, override = FALSE){
-  require(RCurl)
-  options(RCurlOptions = list(ssl.verifypeer = FALSE))
+  #library(RCurl)
+  #options(RCurlOptions = list(ssl.verifypeer = FALSE))
 
   if(GitHub && revision!="newest") {
     stop("There's not yet an option to source older revisions from GitHub")

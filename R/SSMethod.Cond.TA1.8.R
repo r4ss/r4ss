@@ -37,14 +37,17 @@
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
-#' @param seas - string indicating how to treat data from multiple seasons
+#' @param pick.gender SS code for sex (0=unsexed, 1=female, 2=male, 3=females, males)
+#' @param seas string indicating how to treat data from multiple seasons
 #' 'comb' - combine seasonal data for each year and plot against Yr
 #' 'sep' - treat seasons separately, plotting against Yr.S
 #' If is.null(seas) it is assumed that there is only one season in
 #' the selected data (a warning is output if this is not true) and
 #' option 'comb' is used.
-#' @param  plotit if TRUE, make an illustrative plot like one or more
+#' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in Francis (2011).
+#' @param maxpanel maximum number of panels within a plot
+#' @param FullDiagOut Print full diagnostics?
 #' @author Andre Punt, Chris Francis, Ian Taylor
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
@@ -53,7 +56,7 @@
 #'
 SSMethod.Cond.TA1.8 <-
   function(fit,fleet,part=0:2,pick.gender=0:3,seas=NULL,
-           plotit=T,maxpanel=1000,FullDiagOut=F)
+           plotit=TRUE,maxpanel=1000,FullDiagOut=FALSE)
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -131,14 +134,14 @@ SSMethod.Cond.TA1.8 <-
     pldat[i,'EffN'] <- 1/var(Intermediate[,'Resid'] )
     AllRes <- c(AllRes,Intermediate[,'Resid'] )
   }
-  Nmult <- 1/var(pldat[,'Std.res'],na.rm=T)
+  Nmult <- 1/var(pldat[,'Std.res'],na.rm=TRUE)
 
   # Find the adjusted confidence intervals
   for(i in 1:length(uindx)){
     pldat[i,'ObsloAdj'] <- pldat[i,'Obsmn']-2*pldat[i,'semn']/sqrt(Nmult)
     pldat[i,'ObshiAdj'] <- pldat[i,'Obsmn']+2*pldat[i,'semn']/sqrt(Nmult)
   }
-  if (FullDiagOut==T) print(pldat)
+  if (FullDiagOut==TRUE) print(pldat)
 
   Nfleet <- length(unique(pldat[,'Fleet']))
   if(plotit){
@@ -154,7 +157,7 @@ SSMethod.Cond.TA1.8 <-
         las=1)
     par(cex=1)
     for(i in 1:Npanel){
-      subpldat <- pldat[plindx==uplindx[i],,drop=F]
+      subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,'Yr']
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
@@ -176,15 +179,15 @@ SSMethod.Cond.TA1.8 <-
     mtext('Mean age',side=2,outer=TRUE,las=0)
     mtext('Year',side=1,outer=TRUE)
   }
-  tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),repl=T),nrow(pldat))
-  confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=T)),
+  tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
+  confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                 c(0.025,0.975)))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
 
   # Original Francis method
-  Nmult2 <- 1/var(AllRes,na.rm=T)
-  tmp <- matrix(sample(AllRes,1000*length(AllRes),repl=T),length(AllRes))
-  confint2 <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=T)),
+  Nmult2 <- 1/var(AllRes,na.rm=TRUE)
+  tmp <- matrix(sample(AllRes,1000*length(AllRes),replace=TRUE),length(AllRes))
+  confint2 <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                  c(0.025,0.975)))
 
   Outs <- paste("Francis CAA Weights-A:",fit$FleetNames[fleet],":",

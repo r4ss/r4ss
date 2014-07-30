@@ -31,7 +31,7 @@
 #' 4. A single multiplier is calculated to apply to all the comps.
 #'
 #' @param fit Stock Synthesis output as read by r4SS function SS_output
-#' @param either 'len' (for length composition data), 'size' (for
+#' @param type either 'len' (for length composition data), 'size' (for
 #' generalized size composition data), 'age' (for age composition data),
 #' or 'con' (for conditional age at length data)
 #' @param fleet vector of one or more fleet numbers whose data are to
@@ -53,8 +53,9 @@
 #' (ignored unless type = 'size').
 #' If !is.null(method), analysis is restricted to size-frequency
 #' methods in this vector.  NB comps are separated by method
-#' @param  plotit if TRUE, make an illustrative plot like one or more
+#' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in the Francis (2011).
+#' @param maxpanel maximum number of panels within a plot
 #' @author Andre Punt, Chris Francis, Ian Taylor
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
@@ -77,7 +78,7 @@
 #' 
 SSMethod.TA1.8 <-
   function(fit,type,fleet,part=0:2,pick.gender=0:3,seas=NULL,
-           method=NULL,plotit=T,maxpanel=1000,FullDiagOut=F)
+           method=NULL,plotit=TRUE,maxpanel=1000)
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -104,7 +105,7 @@ SSMethod.TA1.8 <-
   indx <- paste(dbase$Fleet,dbase$Yr,if(type=='con')dbase$'Lbin_lo' else
                 '',if(seas=='sep')dbase$Seas else '')
   if(gender.flag)indx <- paste(indx,dbase$'Pick_gender')
-  method.flag <- if(type=='size') length(unique(dbase$method))>1 else F
+  method.flag <- if(type=='size') length(unique(dbase$method))>1 else FALSE
   if(method.flag)
     indx <- paste(indx,dbase$method)
   uindx <- unique(indx)
@@ -137,7 +138,7 @@ SSMethod.TA1.8 <-
     if(method.flag)
       pldat[i,'method'] <- mean(subdbase$method)
   }
-  Nmult <- 1/var(pldat[,'Std.res'],na.rm=T)
+  Nmult <- 1/var(pldat[,'Std.res'],na.rm=TRUE)
 
   # Find the adjusted confidence intervals
   for(i in 1:length(uindx)){
@@ -166,7 +167,7 @@ SSMethod.TA1.8 <-
         las=1)
     par(cex=1)
     for(i in 1:Npanel){
-      subpldat <- pldat[plindx==uplindx[i],,drop=F]
+      subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
@@ -192,8 +193,8 @@ SSMethod.TA1.8 <-
           side=2,las=0,outer=TRUE)
     mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
   }
-  tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),repl=T),nrow(pldat))
-  confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=T)),
+  tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
+  confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                 c(0.025,0.975)))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
   Outs <- paste("Francis Weights - ",type,":",fit$FleetNames[fleet],":",
