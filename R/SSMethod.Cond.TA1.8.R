@@ -1,18 +1,13 @@
-#' Apply Francis composition weighting method TA1.8
+#' Apply Francis composition weighting method TA1.8 for conditional age-at-length fits
 #'
 #' Uses method TA1.8 (described in Appendix A of Francis 2011) to do
 #' stage-2 weighting of composition data from a Stock Synthesis model.
-#' 6-2-14 Added argument seas to deal with multi-season data
-#' 12-3-14 Allowed type = 'size' to deal with generalized size comps
-#' 12-3-14 Added argument method to allow the user to restrict which
-#'         size-frequency methods are included
-#'
 #' Outputs a mutiplier, w (with bootstrap 95% confidence interval),
 #' so that N2y = w x N1y, where N1y and N2y are the stage-1 and stage-2
 #' multinomial sample sizes for the data set in year y.  Optionally
 #' makes a plot of observed (with confidence limits, based on N1y)
 #' and expected mean lengths (or ages).
-#'
+#' \cr\cr
 #' CAUTIONARY/EXPLANATORY NOTE.
 #' The large number of options available in SS makes it very
 #' difficult to be sure that what this function does is
@@ -48,7 +43,7 @@
 #' panels of Fig. 4 in Francis (2011).
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?
-#' @author Andre Punt, Chris Francis, Ian Taylor
+#' @author Chris Francis, Andre Punt, Ian Taylor
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of
