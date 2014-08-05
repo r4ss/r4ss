@@ -18,6 +18,8 @@ function(nareas=4,accuage=40,season.duration=1,min.move.age=0.5)
 {
   if(!nareas %in% 2:4) stop("'nareas' input must be 2, 3, or 4")
   geterrmessage()
+  if(season.duration > 1) stop("'season.duration' should <= 1 (a fraction of the year).")
+  geterrmessage()
 
   movecalc <- function(firstage, accuage, minage, maxage, valueA, valueB,
                        destination=1) {
