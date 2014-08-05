@@ -143,7 +143,7 @@ SSplotRecdevs <-
           par(mar=par("mar")[c(1:3,2)])
           ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigma_R_in,na.rm=TRUE)
           plot(recdev$Yr,recdev$Parm_StDev,xlab=labels[1],
-               main="Recruitment deviation variance check",cex.main=cex.main,
+               main="Recruitment deviation variance",cex.main=cex.main,
                ylab=labels[2],xlim=xlim,ylim=c(0,ymax),type="b")
           if(nrow(recdevEarly)>0)
               lines(recdevEarly$Yr,recdevEarly$Parm_StDev,type="b",col=col2)
@@ -179,14 +179,17 @@ SSplotRecdevs <-
         if(uncertainty){
           if(2 %in% subplots){
             file <- paste(plotdir,"/recdevs2_withbars.png",sep="")
-            caption <- "Recruitment deviations with uncertainty"
+            caption <- "Recruitment deviations with 95% intervals"
             plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc(uncertainty=TRUE)
             dev.off()
           }
           if(3 %in% subplots){
             file <- paste(plotdir,"/recdevs3_varcheck.png",sep="")
-            caption <- "Recruitment deviations variance check"
+            caption <-
+              paste("Recruitment deviations variance check.<br>",
+                    "See later figure of transformed variance values for comparison",
+                    "with bias adjustment settings in the model."
             plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc3()
             dev.off()

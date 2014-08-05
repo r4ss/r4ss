@@ -307,8 +307,11 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   if(print){
     file <- paste(plotdir,"/recruit_fit_bias_adjust.png",sep="")
     caption <-
-      paste("Least squares estimate of alternative bias adjustment relationship ",
-            "for recruitment deviations. For more information, see<br> \n",
+      paste("Points are transformed variances. Red line shows current settings for",
+            "for bias adjustment specified in control file.",
+            "Blue line shows least squares estimate of alternative bias adjustment",
+            "relationship for recruitment deviations (which may or may not be an",
+            "improvement. For more information, see<br> \n",
             "<blockquote>Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias ",
             "due to variability of estimated recruitments in fishery assessment ",
             "models. <i>Can. J. Fish. Aquat. Sci.</i>, 68:1744-1760.",
