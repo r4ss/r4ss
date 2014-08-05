@@ -1135,6 +1135,11 @@ if(FALSE){
   returndat$FecPar1 <- parameters$Value[parameters$Label==FecPar1name]
   returndat$FecPar2 <- parameters$Value[parameters$Label==FecPar2name]
 
+  # simple test to figure out if fecundity is proportional to spawning biomass:
+  returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
+                                       all(biology$Wt_len_F==biology$Fecundity),
+                                       "biomass", "numbers")
+  
   ## Growth_Parameters <- matchfun2["Growth_Parameters",1,"Seas_Effects",-1]
   ## returndat$Growth_Parameters <- Growth_Parameters
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)

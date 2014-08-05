@@ -240,12 +240,9 @@ SSsummarize <- function(biglist,
       SpawnOutputUnits <- rep(NA,n)
     }
     # if NA value in vector for current model, replace with value from model
-    if(is.na(SpawnOutputUnits[imodel]))
-      if(stats$FecPar2==0){
-        SpawnOutputUnits[imodel] <- "biomass"
-      }else{
-        SpawnOutputUnits[imodel] <- "numbers"
-      }
+    if(is.na(SpawnOutputUnits[imodel])){
+      SpawnOutputUnits[imodel] <- stats$SpawnOutputUnits
+    }
   } # end loop over models
 
   if(!setequal(keyvec,keyvec2)){

@@ -77,6 +77,22 @@ SSplotTimeseries <-
   }
   plotinfo <- NULL
 
+  # default labels that are passed from SS_plots but available if running
+  # this function independently
+  if(is.null(labels)){
+    labels <- c("Total biomass (mt)",           #1
+                "Total biomass (mt) at beginning of season", #2
+                "Summary biomass (mt)",         #3
+                "Summary biomass (mt) at beginning of season", #4
+                "Spawning biomass (mt)",        #5
+                "Spawning depletion",           #6
+                "Spawning output",              #7
+                "Age-0 recruits (1,000s)",      #8
+                "Fraction of total Age-0 recruits",  #9
+                "Management target",            #10
+                "Minimum stock size threshold") #11
+  }
+
   # get values from replist
   SS_versionshort <- replist$SS_versionshort
   timeseries     <- replist$timeseries
@@ -88,7 +104,7 @@ SSplotTimeseries <-
   nsexes         <- replist$nsexes
   nareas         <- replist$nareas
   derived_quants <- replist$derived_quants
-  FecPar2        <- replist$FecPar2
+  #FecPar2        <- replist$FecPar2
   B_ratio_denominator <- replist$B_ratio_denominator
   seasfracs      <- replist$seasfracs
   recruitment_dist <- replist$recruitment_dist
@@ -108,10 +124,17 @@ SSplotTimeseries <-
   
   # temporary fix for SS_output versions prior to 9/20/2010
   if(is.null(B_ratio_denominator)) B_ratio_denominator <- 1
-  
+
+  # directory where PNG files will go
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
+
   # check if spawning output rather than spawning biomass is plotted
-  if(plotdir=="default") plotdir <- replist$inputs$dir
-  if(FecPar2!=0) labels[5] <- labels[7]
+  #if(FecPar2!=0){ # old test based on parameter values not robust to all options
+  if(replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
+    labels[5] <- labels[7]
+  }
 
   # check area subsets
   if(areas[1]=="all"){
