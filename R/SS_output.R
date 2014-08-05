@@ -1574,12 +1574,17 @@ if(FALSE){
   # age-length matrix
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
   if(length(rawALK)>1){
-    ALK = array(NA,c(nlbinspop,accuage+1,nmorphs))
     morph_col <- 5
-    if(SS_versionNumeric < 3.3) morph_col <- 3
+    if(SS_versionNumeric < 3.3 &
+       length(grep("Sub_Seas", rawALK[,3]))==0){
+      morph_col <- 3
+    }
     starts <- grep("Morph:",rawALK[,morph_col])+2
     ends <- grep("mean",rawALK[,1])-1
-    for(i in 1:nmorphs){
+    N_ALKs <- length(starts)
+    # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
+    ALK = array(NA,c(nlbinspop,accuage+1,length(starts)))
+    for(i in 1:N_ALKs){
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
       for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
       ALK[,,i] <- as.matrix(ALKtemp)
