@@ -189,7 +189,7 @@ SSplotRecdevs <-
             caption <-
               paste("Recruitment deviations variance check.<br>",
                     "See later figure of transformed variance values for comparison",
-                    "with bias adjustment settings in the model."
+                    "with bias adjustment settings in the model.")
             plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc3()
             dev.off()
