@@ -151,8 +151,13 @@ function(replist,subplots=1:9,
     Fleet <- fleetnames[ifleet]
     cpueuse <- cpue[cpue$Obs > 0 & cpue$FleetNum==ifleet,]
     cpueuse <- cpueuse[order(cpueuse$YrSeas),]
+    # look for time-vary
     time <- diff(range(cpueuse$Calc_Q))>0
+    # look for time-varying effective Q
     time2 <- diff(range(cpueuse$Eff_Q))>0
+    # Teresa's model had NA values in Eff_Q for unknown reasons
+    # line below will allow model to play on
+    if(is.na(time2)) time2 <- FALSE
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
