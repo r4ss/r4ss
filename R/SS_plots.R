@@ -185,33 +185,6 @@ SS_plots <-
     legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE,
     scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
 {
-  ################################################################################
-  #
-  # SS_plots
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: A wrapper to call many plot functions which collectively
-  #          sumarize the results of a Stock Synthesis model run.
-  # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
-  #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-  #          and other contributors to http://code.google.com/p/r4ss/
-  # Returns: Plots with plot history in R GUI and/or .png files.
-  # General: Updated for Stock Synthesis version 3.10; R version 2.8.1
-  # Notes:   See users guide for documentation.
-  # Required other functions in r4ss package
-  # Credit:  Based loosely on an early version of "Scape" (A. Magnusson) and "Output viewer" (R. Methot)
-  #
-  ################################################################################
-
-  ## Ian T.: I've failed to reliably update the codedate variable,
-  ## perhaps this should be replaced with a check for a newer file version on the web
-  ## codedate <- "Oct 26, 2011"
-  ## if(verbose) cat("R function updated:",codedate,
-  ##   "\nCheck for new code and report problems at http://code.google.com/p/r4ss/\n")
-
-  ## cat("Note: 'SS_plots' has reorganized plot groups and new HTML output option\n",
-  ##     "     To get old code, you can find it in package version 1.17 and before.\n\n")
-
   if(!is.null(print)) stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
                            "  which is combined with the vector of numbers input to 'plot'")
   flush.console()
@@ -235,7 +208,7 @@ SS_plots <-
   Run_time    <- replist$Run_time
   Files_used  <- replist$Files_used
   FleetNames  <- replist$FleetNames
-  rmse_table <- replist$rmse_table
+  rmse_table  <- replist$rmse_table
   comp_data_exists <- replist$comp_data_exists
 
   # check for internal consistency
@@ -343,31 +316,31 @@ SS_plots <-
     par(mar=mar0) # replace margins
   }
 
-if(length(tslabels)==0){
-  tslabels <- c("Total biomass (mt)",        #1
-             "Total biomass (mt) at beginning of season", #2
-             "Summary biomass (mt)",         #3
-             "Summary biomass (mt) at beginning of season", #4
-             "Spawning biomass (mt)",        #5
-             "Spawning depletion",           #6
-             "Spawning output (eggs)",       #7
-             "Age-0 recruits (1,000s)",      #8
-             "Fraction of total Age-0 recruits",  #9
-             "Management target",            #10
-             "Minimum stock size threshold") #11
+  if(length(tslabels)==0){
+    tslabels <- c("Total biomass (mt)",           #1
+                  "Total biomass (mt) at beginning of season", #2
+                  "Summary biomass (mt)",         #3
+                  "Summary biomass (mt) at beginning of season", #4
+                  "Spawning biomass (mt)",        #5
+                  "Spawning depletion",           #6
+                  "Spawning output",              #7
+                  "Age-0 recruits (1,000s)",      #8
+                  "Fraction of total Age-0 recruits",  #9
+                  "Management target",            #10
+                  "Minimum stock size threshold") #11
   }
 
-if(length(catlabels)==0){
-  catlabels <- c("Harvest rate/Year",     #1
-             "Continuous F",              #2
-             "Landings",                  #3
-             "Total catch",               #4
-             "Predicted Discards",        #5  # should add units
-             "Discard fraction",          #6  # need to add by weight or by length
-             "(mt)",                      #7
-             "(numbers x1000)",           #8
-             "Observed and expected",     #9
-             "aggregated across seasons") #10
+  if(length(catlabels)==0){
+    catlabels <- c("Harvest rate/Year",         #1
+                   "Continuous F",              #2
+                   "Landings",                  #3
+                   "Total catch",               #4
+                   "Predicted Discards",        #5  # should add units
+                   "Discard fraction",          #6  # need to add by weight or by length
+                   "(mt)",                      #7
+                   "(numbers x1000)",           #8
+                   "Observed and expected",     #9
+                   "aggregated across seasons") #10
   }
 
   ##########################################
@@ -789,6 +762,7 @@ if(length(catlabels)==0){
     igroup <- 16
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to length comp plots (group ",igroup,")\n",sep="")
+      # regular length comps
       plotinfo <- 
         SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -804,6 +778,7 @@ if(length(catlabels)==0){
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
+      # ghost length comps
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTLEN",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -950,14 +925,14 @@ if(length(catlabels)==0){
     igroup <- 19
     if(igroup %in% plot){
       if(nrow(replist$condbase)>0 & verbose){
-        if(verbose){
-          cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
-              "  This plot shows mean age and std. dev. in conditional A@L.\n",
-              "    Left plots are mean A@L by size-class (obs. and pred.)\n",
-              "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
-              "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
-              "    with 90% CIs based on the chi-square distribution.\n")
-        }
+        ## if(verbose){
+        ##   cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
+        ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
+        ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
+        ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
+        ##       "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
+        ##       "    with 90% CIs based on the chi-square distribution.\n")
+        ## }
         plotinfo <-
           SSplotComps(replist=replist,subplots=8,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
@@ -976,7 +951,7 @@ if(length(catlabels)==0){
         if(!is.null(plotInfoTable))
           plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
       }else{
-        if(verbose) cat("Skipping Andre's conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
+        if(verbose) cat("Skipping conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
     } # end if igroup in plot or print
     

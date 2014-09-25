@@ -101,7 +101,7 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
 #' @keywords hplot
 SSplotComps <-
-  function(replist, subplots=1:12,
+  function(replist, subplots=1:13,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
@@ -125,7 +125,7 @@ SSplotComps <-
                       "(mt)",                  #11
                       "(numbers x1000)",       #12
                       "Stdev (Age) (yr)",      #13
-                      "Andre's conditional AAL plot, "), #14
+                      "Conditional AAL plot, "), #14
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
@@ -134,6 +134,50 @@ SSplotComps <-
   ################################################################################
   # SSplotComps
   ################################################################################
+
+  ###### current definitions of subplots
+  ### 
+  ### # loop over fleets {
+  ### subplot 1: multi-panel composition plot
+  ### subplot 2: single panel bubble plot for numbers at length or age
+  ### subplot 3: multi-panel bubble plots for conditional age-at-length
+  ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
+  ### subplot 5: Pearson residuals for A-L key
+  ### subplot 6: multi-panel plot of point and line fit to conditional
+  ###            age-at-length for specific length bins
+  ### subplot 7: sample size plot
+  ### subplot 8: Andre's mean age and std. dev. in conditional AAL
+  ### subplot 9: by fleet aggregating across years
+  ### } # end loop over fleets
+  ### subplot 10: by fleet aggregating across years within each season
+  ### subplot 11: by fleet aggregating across seasons within a year
+  ### subplot 12: bubble plot comparison of length or age residuals
+  ###             across fleets within gender/partition
+
+
+  ###### new definitions of subplots
+  ### 
+  ### # loop over fleets {
+  ### subplot 1: multi-panel composition plot
+  ### subplot 2: single panel bubble plot for numbers at length or age
+  ### subplot 3: multi-panel bubble plots for conditional age-at-length
+  ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
+  ### subplot 5: Pearson residuals for A-L key
+  ### subplot 6: multi-panel plot of point and line fit to conditional
+  ###            age-at-length for specific length bins
+  ### subplot 7: sample size plot
+  ### NEW subplot 8: TA1.8 Francis weighting plot 
+  ### subplot 9: Andre's mean age and std. dev. in conditional AAL
+  ### subplot 10: by fleet aggregating across years
+  ### } # end loop over fleets
+  ### subplot 11: by fleet aggregating across years within each season
+  ### subplot 12: by fleet aggregating across seasons within a year
+  ### subplot 13: bubble plot comparison of length or age residuals
+  ###             across fleets within gender/partition
+  
+
+
+
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
 
   pngfun <- function(file,caption=NA){
@@ -641,8 +685,8 @@ SSplotComps <-
               }
             }
 
-            ### subplot 6: multi-panel plot of point and line fit to conditional age-at-length
-            #                   for specific length bins
+            ### subplot 6: multi-panel plot of point and line fit to conditional
+            ###            age-at-length for specific length bins
             if(6 %in% subplots & aalbin[1] > 0){
               badbins <- setdiff(aalbin, dbase$Lbin_hi)
               goodbins <- intersect(aalbin, dbase$Lbin_hi)
@@ -695,30 +739,46 @@ SSplotComps <-
                 if(kind=="cond"){
                   # trap nonrobust effective n's
                   # should this only be for conditional age-at-length or all plots?
-                  dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 & !is.na(dbase$effN) & dbase$effN<maxneff,]
+                  dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 &
+                                     !is.na(dbase$effN) & dbase$effN<maxneff,]
                 }else{
                   dbasegood <- dbase
                 }
                 if(nrow(dbasegood)>0){
-                  plot(dbasegood$N,dbasegood$effN,xlab=labels[4],main=ptitle,cex.main=cex.main,
-                       ylim=c(0,1.05*max(dbasegood$effN)),xlim=c(0,1.05*max(dbasegood$N)),
+                  # thinning out columns and removing rows with redundant information
+                  # (for the purposes of this function)
+                  dbasegood2 <- dbasegood[,c("YrSeasName","N","effN")]
+                  dbasegood2 <- unique(dbasegood2)
+                  plot(dbasegood2$N,dbasegood2$effN,xlab=labels[4],main=ptitle,cex.main=cex.main,
+                       ylim=c(0,1.05*max(dbasegood2$effN)),xlim=c(0,1.05*max(dbasegood2$N)),
                        col=blue,pch=19,ylab=labels[5],xaxs="i",yaxs="i")
-                  if(showyears)
-                    text(x=dbasegood$N,y=dbasegood$effN,
-                         dbasegood$YrSeasName,adj=c(-0.2,0.5))
-                  abline(h=0,col="grey")
+                  # add labels for the years if requested
+                  if(showyears){
+                    par(xpd=TRUE) # allows the label to go over plot boundary
+                    text(x=dbasegood2$N,y=dbasegood2$effN,
+                         dbasegood2$YrSeasName,adj=c(-0.2,0.5))
+                    par(xpd=FALSE) # restores default clipping
+                  }
                   abline(0,1,col="black")
                   # add loess smoother if there's at least 6 points with a range greater than 2
-                  if(smooth & length(unique(dbasegood$N)) > 6 & diff(range(dbasegood$N))>2){
+                  if(smooth & length(unique(dbasegood2$N)) > 6 & diff(range(dbasegood2$N))>2){
                     old_warn <- options()$warn      # previous warnings setting
                     options(warn=-1)                # turn off loess warnings
-                    psmooth <- loess(dbasegood$effN~dbasegood$N,degree=1)
+                    psmooth <- loess(dbasegood2$effN~dbasegood2$N,degree=1)
                     options(warn=old_warn)  #returning to old value
                     lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
                   }
                   if(addMeans){
-                    abline(v=mean(dbasegood$N),lty="22",col='green3')
-                    abline(h=1/mean(1/dbasegood$effN),lty="22",col='green3')
+                    # vertical line with label for mean input sample size
+                    abline(v=mean(dbasegood2$N),lty="22",col='green3')
+                    text(x=mean(dbasegood2$N),y=par()$usr[4],
+                         col='green3',"arithmetic mean of observed sample size",
+                         srt=90, adj=c(1.1,-0.3))
+                    # horizontal line with label for harmonic effective sample size
+                    abline(h=1/mean(1/dbasegood2$effN),lty="22",col='green3')
+                    text(x=par()$usr[2], y=1/mean(1/dbasegood2$effN),
+                         col='green3',"harmonic mean of effective sample size",
+                         adj=c(1.1,-0.3))
                   }
                 }
               }
@@ -732,8 +792,25 @@ SSplotComps <-
               }
             } # end subplot 7
 
-            ### subplot 8: Andre's mean age and std. dev. in conditional AAL
-            if(8 %in% subplots & kind=="cond"){
+            ### subplot 8: Chris Francis TA1.8 method
+            if(8 %in% subplots & kind %in% c("LEN","SIZE","AGE","COND")){
+              ptitle <- paste("Francis data weighting method TA1.8 ", fleetnames[f],sep="")
+              # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
+              kind2 <- tolower(kind)
+              if(plot){
+                SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+              }
+              if(print){ # set up plotting to png file if required
+                caption <- ptitle
+                file <- paste(plotdir,"/",filenamestart,
+                              "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
+                plotinfo <- pngfun(file=file, caption=caption)
+                SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+                dev.off() # close device if png
+              } # end test for print to PNG option
+            }
+            ### subplot 9: Andre's mean age and std. dev. in conditional AAL
+            if(9 %in% subplots & kind=="cond"){
               ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
               andrefun <- function(ipage=0){
                 Lens <-sort(unique(dbase$Lbin_lo))
@@ -838,15 +915,15 @@ SSplotComps <-
                   dev.off() # close device if png
                 } # end loop over pages
               } # end test for print to PNG option
-            } # end subplot 8
+            } # end subplot 9
           } # end loop over partitions
         } # end test for whether gender in vector of requested sexes
       } # end loop over combined/not-combined genders
     } # end if data
   } # end loop over fleets
 
-  ### subplot 9: by fleet aggregating across years
-  if(9 %in% subplots & kind!="cond") # for age or length comps, but not conditional AAL
+  ### subplot 10: by fleet aggregating across years
+  if(10 %in% subplots & kind!="cond") # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
     # check for the presence of data
@@ -970,10 +1047,10 @@ SSplotComps <-
         } # end loop over partitions
       } # end loop over combined/not-combined genders
     } # end if data
-  } # end subplot 9
+  } # end subplot 10
 
-  ### subplot 10: by fleet aggregating across years within each season
-  if(10 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
+  ### subplot 11: by fleet aggregating across years within each season
+  if(11 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
     # check for the presence of data
@@ -1109,10 +1186,10 @@ SSplotComps <-
         } # end loop over partitions
       } # end loop over combined/not-combined genders
     } # end if data
-  } # end subplot 10
+  } # end subplot 11
 
-  ### subplot 11: by fleet aggregating across seasons within a year
-  if(11 %in% subplots & kind!="cond" & nseasons>1){ # for age or length comps, but not conditional AAL
+  ### subplot 12: by fleet aggregating across seasons within a year
+  if(12 %in% subplots & kind!="cond" & nseasons>1){ # for age or length comps, but not conditional AAL
     # loop over fleets
     for(f in fleets){
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
@@ -1240,11 +1317,11 @@ SSplotComps <-
         } # end loop over combined/not-combined genders
       } # end if data
     } # end loop over fleets
-  } # end subplot 11
+  } # end subplot 12
 
-  ### subplot 12: bubble plot comparison of length or age residuals
-  #               across fleets within gender/partition
-  if(12 %in% subplots & kind %in% c("LEN","AGE")){
+  ### subplot 13: bubble plot comparison of length or age residuals
+  ###             across fleets within gender/partition
+  if(13 %in% subplots & kind %in% c("LEN","AGE")){
 
     # check for the presence of data
     testor    <- length(dbase_kind$Gender[dbase_kind$Gender==1 &
@@ -1296,7 +1373,7 @@ SSplotComps <-
           titles <- c(ptitle,titles) # compiling list of all plot titles
           filename_sexmkt <- paste("sex",k,"mkt",j,sep="")
 
-          tempfun11 <- function(ipage=0){
+          multifleet.bubble.fun <- function(ipage=0){
             # a function to wrap up multi-fleet bubble plots
 
             # multi-figure plot with as many rows as fleets, or the maxrows value
@@ -1389,7 +1466,7 @@ SSplotComps <-
 
           # make plots or write to PNG file
           if(length(fleetvec)>0){
-            if(plot) tempfun11(ipage=0)
+            if(plot) multifleet.bubble.fun(ipage=0)
             if(print){ # set up plotting to png file if required
               npages <- ceiling(length(fleetvec)/maxrows)
               for(ipage in 1:npages){
@@ -1409,7 +1486,7 @@ SSplotComps <-
                 file <- paste(plotdir,filenamestart,filename_sexmkt,pagetext,
                               "_multi-fleet_comparison.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
-                tempfun11(ipage=ipage)
+                multifleet.bubble.fun(ipage=ipage)
                 dev.off()
               } # end loop over pages within printing PNG
             } # end printing to PNG files
@@ -1419,7 +1496,7 @@ SSplotComps <-
     } # end loop over gender combinations
     # restore default single panel settings
     par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
-  } # end subplot 12
+  } # end subplot 13
 
   if(!is.null(plotinfo)) plotinfo$category <- "Comp"
   return(invisible(plotinfo))

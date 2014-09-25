@@ -85,6 +85,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
     if(verbose) cat("reading output from",fullfile,"\n")
     repfilesize <- file.info(fullfile)$size
 
+    output <- NA
     if(!is.na(repfilesize) && repfilesize>0){ # if there's a non-empty file
       output <- SS_output(dir=mydir, repfile=repfilename, covarfile=covarname,
                             compfile=compfilename, NoCompOK=NoCompOK, printstats=FALSE,

@@ -2,10 +2,11 @@
 #'
 #' Uses method TA1.8 (described in Appendix A of Francis 2011) to do
 #' stage-2 weighting of composition data from a Stock Synthesis model.
-#' Outputs a mutiplier, w (with bootstrap 95% confidence interval),
-#' so that N2y = w x N1y, where N1y and N2y are the stage-1 and stage-2
+#' Outputs a mutiplier, \emph{w} (with bootstrap 95% confidence interval),
+#' so that \emph{N2y} = \emph{w} x \emph{N1y}, where \emph{N1y} and
+#' \emph{N2y} are the stage-1 and stage-2
 #' multinomial sample sizes for the data set in year y.  Optionally
-#' makes a plot of observed (with confidence limits, based on N1y)
+#' makes a plot of observed (with confidence limits, based on \emph{N1y})
 #' and expected mean lengths (or ages).
 #' \cr\cr
 #' CAUTIONARY/EXPLANATORY NOTE.
@@ -13,17 +14,19 @@
 #' difficult to be sure that what this function does is
 #' appropriate for all combinations of options.  The following
 #' notes might help anyone wanting to check or correct the code.
-#' 1. The code first takes the appropriate database (lendbase, sizedbase,
-#'    agedbase, or condbase) and removes un-needed rows.
-#' 2. The remaining rows of the database are grouped into individual
-#'    comps (indexed by vector indx) and relevant statistics (e.g.,
-#'    observed and expected mean length or age), and ancillary data,
-#'    are calculated for each comp (these are stored in pldat - one row
-#'    per comp).
-#' 3. If the data are to be plotted, the comps are grouped, with each
-#'    group corresponding to a panel in the plot, and groups are indexed
-#'    by plindx.
-#' 4. A single multiplier is calculated to apply to all the comps.
+#' \enumerate{
+#'   \item The code first takes the appropriate database (lendbase, sizedbase,
+#'         agedbase, or condbase) and removes un-needed rows.
+#'   \item The remaining rows of the database are grouped into individual
+#'         comps (indexed by vector indx) and relevant statistics (e.g.,
+#'         observed and expected mean length or age), and ancillary data,
+#'         are calculated for each comp (these are stored in pldat - one row
+#'         per comp).
+#'         If the data are to be plotted, the comps are grouped, with each
+#'         group corresponding to a panel in the plot, and groups are indexed
+#'         by plindx.
+#'   \item A single multiplier is calculated to apply to all the comps.
+#' }
 #'
 #' @param fit Stock Synthesis output as read by r4SS function SS_output
 #' @param type either 'len' (for length composition data), 'size' (for
@@ -155,9 +158,12 @@ SSMethod.TA1.8 <-
 
     # Select number of panels
     Npanel <- length(uplindx)
-    NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    ## Ian T. 9/25/14: changing from having at least 4 panels to no minimum
+    #NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
+# need to save previous par settings and restore them at the end of this function    
     par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),
         las=1)
     par(cex=1)
@@ -171,10 +177,13 @@ SSMethod.TA1.8 <-
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3)
       arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
              length=0.03, angle=90, code=3)
-      points(x,subpldat[,'Obsmn'],pch=21,bg='grey')
+      points(x,subpldat[,'Obsmn'],pch=21,bg='grey80')
       ord <- order(x)
-      if(length(x)>1)lines(x[ord],subpldat[ord,'Expmn'])
-      else lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2))
+      if(length(x)>1){
+        lines(x[ord],subpldat[ord,'Expmn'],col=4)
+      }else{
+        lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2),col=4)
+      }
       # Lines
       fl <- fit$FleetNames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
