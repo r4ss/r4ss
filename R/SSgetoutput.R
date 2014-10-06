@@ -80,7 +80,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
       NoCompOK <- TRUE
     }
 
-    if(file.exists(paste(mydir,covarname,sep="")) & getcovar) mycovar=TRUE else mycovar=FALSE
+    if(file.exists(paste(mydir,covarname,sep="")) && getcovar) mycovar=TRUE else mycovar=FALSE
     fullfile <- paste(mydir,repfilename,sep="")
     if(verbose) cat("reading output from",fullfile,"\n")
     repfilesize <- file.info(fullfile)$size
