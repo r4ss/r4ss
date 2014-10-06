@@ -40,6 +40,8 @@
 ##' Default is NULL, and if not explicitly specified the program will attempt to
 ##' detect these automatically based on the length of relevant lines from the CTL
 ##' file.
+##' @param systemcmd Should R call SS using "system" function intead of "shell".
+##' This may be required when running R in Emacs on Windows. Default = FALSE.
 ##' @author James Thorson
 ##' @export
 ##' @references Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random
@@ -52,7 +54,11 @@ NegLogInt_Fn <-
            PAR_num_Vec, Int_Group_List, Version=5,
            StartFromPar=TRUE, Intern=TRUE,
            ReDoBiasRamp=FALSE, BiasRamp_linenum_Vec=NULL,
-           CTL_linenum_Type=NULL){
+           CTL_linenum_Type=NULL,systemcmd=FALSE){
+  # figure out operating system
+  OS <- "Mac" # don't know the version$os info for Mac
+  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
+  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
   # Directory
   if(is.na(File)) File = paste(getwd(),"/",sep="")
@@ -157,8 +163,16 @@ NegLogInt_Fn <-
 
   # Run SS
   setwd(File)
-    shell("ss3 -nohess -cbs 500000000 -gbs 500000000",intern=Intern)
-    Sys.sleep(1)
+  command <- "ss3 -nohess -cbs 500000000 -gbs 500000000"
+  if(OS!="Windows"){
+    command <- paste("./",command,sep="")
+  }
+  if(OS=="Windows" & !systemcmd){
+    shell(cmd=command,intern=Intern)
+  }else{
+    system(command,intern=Intern)
+  }
+  Sys.sleep(1)
 
   # Check convergence
   Converged = FALSE
@@ -210,7 +224,15 @@ NegLogInt_Fn <-
           write(PAR_0, file=paste(File,"ss3.par",sep=""), ncolumns=10)
       }
       # Run SS
-      shell("ss3.exe -nohess -cbs 500000000 -gbs 500000000",intern=Intern)
+      command <- "ss3 -nohess -cbs 500000000 -gbs 500000000"
+      if(OS!="Windows"){
+        command <- paste("./",command,sep="")
+      }
+      if(OS=="Windows" & !systemcmd){
+        shell(cmd=command,intern=Intern)
+      }else{
+        system(command,intern=Intern)
+      }
       Sys.sleep(1)
       # Check convergence
       if("ss3.par" %in% list.files(File)){
@@ -246,7 +268,15 @@ NegLogInt_Fn <-
       file.copy(from=paste(File,"ss3_",Iteration,"-first.par",sep=""),
                 to=paste(File,"ss3.par",sep=""), overwrite=TRUE)
       file.remove(paste(File,"ss3.std",sep=""))
-      shell("ss3 -maxfn 0 -cbs 500000000 -gbs 500000000",intern=Intern)
+      command <- "ss3 -maxfn 0 -cbs 500000000 -gbs 500000000"
+      if(OS!="Windows"){
+        command <- paste("./",command,sep="")
+      }
+      if(OS=="Windows" & !systemcmd){
+        shell(cmd=command,intern=Intern)
+      }else{
+        system(command,intern=Intern)
+      }
       Sys.sleep(1)
 
     # Estimate new bias ramp
@@ -260,7 +290,15 @@ NegLogInt_Fn <-
         CTL[BiasRamp_linenum_Vec] = apply(BiasRamp$df, MARGIN=1, FUN=paste, collapse=" ")
       writeLines(CTL,paste(File,STARTER$ctlfile,sep=""))
       # Re-run to get Hessian
-      shell("ss3 -cbs 500000000 -gbs 500000000",intern=Intern)
+      command <- "ss3 -cbs 500000000 -gbs 500000000"
+      if(OS!="Windows"){
+        command <- paste("./",command,sep="")
+      }
+      if(OS=="Windows" & !systemcmd){
+        shell(cmd=command,intern=Intern)
+      }else{
+        system(command,intern=Intern)
+      }
       Sys.sleep(1)
     }
   }
