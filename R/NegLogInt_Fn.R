@@ -23,7 +23,7 @@
 ##' random effect coefficient. 
 ##' @param Int_Group_List List where each element is a vector, providing a way of
 ##' grouping different random effect groups into a single category. This is not
-##' used when \code{Version=1}.
+##' used (but input is still required) when \code{Version=1}.
 ##' @param Version Integer (options are 1, 5, and 6) giving the type of Laplace
 ##' Approximation. I recommend 1.
 ##' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
@@ -74,7 +74,7 @@ NegLogInt_Fn <-
   # Iteration tracker (setting as a global variable for reasons that Jim Thorson can explain)
   Iteration <- Iteration + 1
   #  writing Iteration to a file to avoid CRAN rules about global variables
-  write("Iteration",file=file.path(File,"Iteration.txt"))
+  write(Iteration,file=file.path(File,"Iteration.txt"))
   #  alternative method would be to read it out of Optimization_record.txt using code
   #  like the following:
   #    record <- readLines(file.path(File,"Optimization_record.txt"))
