@@ -6,6 +6,7 @@
 #' this is not useful for the majority of r4ss users, but it could serve as an
 #' example of how a wrapper function might be written for any other model.
 #' 
+#'
 #' 
 #' @param replist optional list created by \code{SS_output}
 #' @param moveage age for which movemement rates will be represented
