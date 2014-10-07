@@ -9,19 +9,21 @@
 #' @param styr start year of the model
 #' @param endyr end year of the model
 #' @param nseas number of seasons
-#' @param months_per_seas months per seasons
+#' @param months_per_seas vector of months per season
 #' @param spawn_seas spawning season
 #' @param Nfleet number of fishing fleets
 #' @param Nsurveys number of surveys
 #' @param N_areas number of areas
-#' @param fleetnames names of fleets
+#' @param fleetnames names of fleets and surveys (alphanumeric only,
+#' no spaces or special characters)
 #' @param surveytiming vector of survey timings
-#' @param areas area definitions for each fleet or survey
+#' @param areas area definitions for each fleet and survey
 #' @param units_of_catch units of catch for each fleet
-#' @param se_log_catch Uncertainty in catch (standard error in log space).
+#' @param se_log_catch Uncertainty in catch (standard error in log space)
+#' for each fleet
 #' @param Ngenders Number of genders.
 #' @param Nages Number of ages.
-#' @param init_equil Initial equilibrium catch.
+#' @param init_equil Initial equilibrium catch for each fleet
 #' @param catch Catch data
 #' @param CPUE Indices of abundance (if present).
 #' @param N_discard_fleets Number of fleets with discard data.
@@ -53,7 +55,7 @@
 #' @param MeanSize_at_Age_obs Data on mean size at age (if exists).
 #' @param N_environ_variables Number of environmental variables.
 #' @param N_environ_obs Number of environmental observations.
-#' @param N_sizefreq_methods Number of size frequency methods.
+#' @param N_sizefreq_methods Number of size frequency methods. NOT IMPLEMENTED YET.
 #' @param do_tags Include tag data? NOT IMPLEMENTED YET.
 #' @param morphcomp_data Morph composition data. NOT IMPLEMENTED YET.
 #' @author Ian Taylor
