@@ -67,6 +67,8 @@
 #' throughout all plots.
 #' @param pntscalar.nums This scalar defines the maximum bubble size for
 #' numbers-at-age and numbers-at-length plots.
+#' @param pntscalar.tags This scalar defines the maximum bubble size for
+#' tagging plots.
 #' @param bub.scale.pearson Character expansion (cex) value for a proportion of
 #' 1.0 in bubble plot of Pearson residuals. Default=1.5.
 #' @param bub.scale.dat Character expansion (cex) value for a proportion of 1.0
@@ -173,7 +175,7 @@ SS_plots <-
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
     datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
     sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
-    bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,
+    bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     sampsizeline=FALSE,effNline=FALSE,
@@ -1010,7 +1012,7 @@ SS_plots <-
                      rows=rows,cols=cols,
                      tagrows=tagrows,tagcols=tagcols,
                      latency=replist$tagfirstperiod,
-                     pntscalar=pntscalar,minnbubble=minnbubble,
+                     pntscalar=pntscalar.tags,minnbubble=minnbubble,
                      plot=!png, print=png,
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res, cex.main=cex.main,

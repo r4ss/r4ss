@@ -53,10 +53,10 @@ SSplotTags <-
            "Frequency",                                         #2
            "Tag Group",                                         #3
            "Fit to tag recaptures by tag group",                #4
-           "Tag recaptures aggregated across tag groups",       #5
+           "Post-latency tag recaptures aggregated across tag groups", #5
            "Observed tag recaptures by year and tag group",     #6
-           "Residuals for tag recaptures: (obs-exp)/sqrt(exp)", #7
-           "Observed and expected tag recaptures by year and tag group"), #8
+           "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)", #7
+           "Observed and expected post-latency tag recaptures by year and tag group"), #8
            plotdir="default",
            verbose=TRUE)
 {
@@ -100,12 +100,20 @@ SSplotTags <-
         plot(0,type="n",xlab="",ylab="",ylim=ylim,main=paste("TG ",igroup,sep=""),
              xaxs="i",yaxs="i",xlim=c(min(tagtemp$Yr.S)-0.5,max(tagtemp$Yr.S)+0.5))
         for (iy in 1:length(tagtemp$Yr.S)){
-          xx <- c(tagtemp$Yr.S[iy]-width,tagtemp$Yr.S[iy]-width,tagtemp$Yr.S[iy]+width,tagtemp$Yr.S[iy]+width)
+          xx <- c(tagtemp$Yr.S[iy]-width,tagtemp$Yr.S[iy]-width,
+                  tagtemp$Yr.S[iy]+width,tagtemp$Yr.S[iy]+width)
           yy <- c(0,tagtemp$Obs[iy],tagtemp$Obs[iy],0)
           polygon(xx,yy,col=ifelse(iy<=latency,col3,col4))
         }
         points(tagtemp$Yr.S,tagtemp$Exp,type="o",lty=1,pch=16)
-        if(latency>0) points(tagtemp$Yr.S[1:latency],tagtemp$Exp[1:latency],type="o",lty=1,pch=21,bg="white")
+        if(latency>0){
+          points(tagtemp$Yr.S[1:latency], tagtemp$Exp[1:latency],
+                 type="o", lty=1, pch=21, bg="white")
+          if(all(par()$mfg[1:2]==1)){
+            legend('topright', fill=c(col3,col4),
+                   c("Latency period","Post-latency"), bty='n')
+          }
+        }
         box()
         
         # add labels in left and lower outer margins once per page
@@ -160,7 +168,8 @@ SSplotTags <-
       plot(0,xlim=xlim+c(-0.5,0.5),ylim=c(0,max(RecAg$Obs,RecAg$Exp)*1.05),type="n",xaxs="i",yaxs="i",
            xlab=labels[1],ylab=labels[2],main=labels[5],cex.main=cex.main)
       for (iy in 1:nrow(RecAg)){
-        xx <- c(RecAg$Yr.S[iy]-width,RecAg$Yr.S[iy]-width,RecAg$Yr.S[iy]+width,RecAg$Yr.S[iy]+width)
+        xx <- c(RecAg$Yr.S[iy]-width, RecAg$Yr.S[iy]-width,
+                RecAg$Yr.S[iy]+width, RecAg$Yr.S[iy]+width)
         yy <- c(0,RecAg$Obs[iy],RecAg$Obs[iy],0)
         polygon(xx,yy,col=col4)
       }
