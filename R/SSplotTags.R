@@ -74,9 +74,9 @@ SSplotTags <-
   if(is.null(tagdbase2) || nrow(tagdbase2)==0){
     if(verbose) cat("skipping tag plots because there's no tagging data\n")
   }else{
-    if(verbose) cat("Running tag plot code.\n",
-                    "  Tag latency (mixing period) is set to ",latency,".\n",
-                    "  To change value, use the 'latency' input to the SSplotTags function.\n",sep="")
+    ## if(verbose) cat("Running tag plot code.\n",
+    ##                 "  Tag latency (mixing period) is set to ",latency,".\n",
+    ##                 "  To change value, use the 'latency' input to the SSplotTags function.\n",sep="")
     
     # calculations needed for printing to multiple PNG files
     grouprange     <- unique(tagdbase2$Rep)

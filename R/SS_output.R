@@ -1534,14 +1534,14 @@ if(FALSE){
                         "Tags_Alive",-1,
                         cols=1:10)
   if(tagrecap[[1]][1]!="absent"){
-    tagfirstperiod <- tagrecap[1,1]
-    tagaccumperiod <- tagrecap[2,1]
+    tagfirstperiod <- as.numeric(tagrecap[1,1])
+    tagaccumperiod <- as.numeric(tagrecap[2,1])
     names(tagrecap) <- tagrecap[4,]
     tagrecap <- tagrecap[-(1:4),]
     for(i in 1:ncol(tagrecap)) tagrecap[,i] <- as.numeric(tagrecap[,i])
     returndat$tagrecap <- tagrecap
-    returndat$tagfirstperiod
-    returndat$tagaccumperiod
+    returndat$tagfirstperiod <- tagfirstperiod
+    returndat$tagaccumperiod <- tagaccumperiod
   }else{
     returndat$tagrecap <- NA
     returndat$tagfirstperiod <- NA
