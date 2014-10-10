@@ -11,8 +11,9 @@
 #' @param subplots vector controlling which subplots to create
 #' @param seas which season to plot (obviously only works in seasonal models,
 #' but maybe not fully implemented even then)
-#' @param col1 color of some points/lines
-#' @param col2 color of other points/lines
+#' @param colvec vector of length 3 with colors for various points/lines
+#' @param shadealpha Transparency parameter used to make default shadecol
+#' values (see ?rgb for more info)
 #' @param legendloc Location of legend (see ?legend for more info)
 #' @param plotdir Directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
@@ -30,10 +31,10 @@
 #' @keywords aplot hplot
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
-           col1="red",col2="blue",
-           legendloc="topleft",
-           plotdir="default",
-           labels=c("Length (cm)",              #1
+         colvec=c("red","blue","grey20"),shadealpha=0.1,
+         legendloc="topleft",
+         plotdir="default",
+         labels=c("Length (cm)",              #1
              "Age (yr)",                        #2
              "Maturity",                        #3
              "Mean weight (kg) in last year",   #4
@@ -45,9 +46,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
              "Fecundity",                       #10
              "Default fecundity label",         #11
              "Year"),                           #12
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
-           verbose=TRUE)
-{
+         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         verbose=TRUE)
+  {
   pngfun <- function(file,caption=NA){
     png(filename=file,width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
@@ -59,7 +60,13 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",
                   topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
-
+  # convert colvec to semi-transparent colors for shading polygons
+  shadecolvec <- rep(NA,length(colvec))
+  for(icol in 1:length(colvec)){
+    tmp <- col2rgb(colvec[icol])/255
+    shadecolvec[icol] <- rgb(red=tmp[1], green=tmp[2], blue=tmp[3],
+                             alpha=shadealpha)
+  }
   #### plot function 1
   # mean weight, maturity, fecundity, spawning output
 
@@ -156,10 +163,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
         plot(x,x,ylim=c(0,1.1*ymax),xlab=xlab,ylab=labels[4],type="n")
         abline(h=0,col="grey")
       }
-      lines(x,biology$Wt_len_F,type="o",col=col1)
+      lines(x,biology$Wt_len_F,type="o",col=colvec[1])
       if(nsexes > 1){
-        lines(x,biology$Wt_len_M,type="o",col=col2)
-        if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
+        lines(x,biology$Wt_len_M,type="o",col=colvec[2])
+        if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(colvec[1],colvec[2]))
       }
     }else{
       # if empirical weight-at-age IS used
@@ -189,11 +196,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
   maturity_plot <- function(){ # maturity
     if(!wtatage_switch){ # if empirical weight-at-age is not used
       if(min(biology$Mat_len)<1){ # if length based
-        if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=col1)
-        if(add) lines(x,biology$Mat_len,type="o",col=col1)
+        if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=colvec[1])
+        if(add) lines(x,biology$Mat_len,type="o",col=colvec[1])
       }else{ # else is age based
-        if(!add) plot(growdatF$Age, growdatF$Age_Mat,xlab=labels[2],ylab=labels[3],type="o",col=col1)
-        if(add) lines(growdatF$Age, growdatF$Age_Mat,type="o",col=col1)
+        if(!add) plot(growdatF$Age, growdatF$Age_Mat,xlab=labels[2],ylab=labels[3],type="o",col=colvec[1])
+        if(add) lines(growdatF$Age, growdatF$Age_Mat,type="o",col=colvec[1])
       }
       if(!add) abline(h=0,col="grey")
     }else{
@@ -273,11 +280,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
   gfunc3a <- function(){ # fecundity from model parameters
     ymax <- 1.1*max(FecY)
     if(!add){
-      plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=col2, pch=19)
-      lines(FecX, rep(FecPar1, length(FecX)), col=col1)
+      plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=colvec[2], pch=19)
+      lines(FecX, rep(FecPar1, length(FecX)), col=colvec[1])
       text(mean(range(FecX)), FecPar1-0.05*ymax,"Egg output proportional to spawning biomass")
     }else{
-      points(FecX, FecY,col=col2,pch=19)
+      points(FecX, FecY,col=colvec[2],pch=19)
     }
   }
   fecundityOK <- all(!is.na(biology$Fecundity))
@@ -285,28 +292,28 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
       plot(biology$Wt_len_F, biology$Fecundity, xlab=labels[8], ylab=labels[10],
-           ylim=c(0,ymax), col=col1, type='o')
+           ylim=c(0,ymax), col=colvec[1], type='o')
       abline(h=0,col="grey")
     }else{
-      points(biology$Mean_Size, biology$Fecundity, col=col1, type='o')
+      points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
     }
   }
   gfunc3c <- function(){ # fecundity at length from BIOLOGY section
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
       plot(biology$Mean_Size, biology$Fecundity, xlab=labels[9], ylab=labels[10],
-           ylim=c(0,ymax), col=col1, type='o')
+           ylim=c(0,ymax), col=colvec[1], type='o')
       abline(h=0,col="grey")
     }else{
-      points(biology$Mean_Size, biology$Fecundity, col=col1, type='o')
+      points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
     }
   }
   gfunc4 <- function(){ # spawning output
     if(!add){
-      plot(x,biology$Spawn,xlab=labels[1],ylab=labels[5],type="o",col=col1)
+      plot(x,biology$Spawn,xlab=labels[1],ylab=labels[5],type="o",col=colvec[1])
       abline(h=0,col="grey")
     }else{
-      lines(x,biology$Spawn,type="o",col=col1)
+      lines(x,biology$Spawn,type="o",col=colvec[1])
     }
   }
   if(plot){ # plot to screen or to PDF file
@@ -365,34 +372,43 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
   ymax <- max(growdatF$high)
   if(nsexes > 1) ymax <- max(ymax,growdatM$high)
   x <- growdatF$Age
-  main <- "Ending year expected growth"
+  main <- "Ending year expected growth (with 95% intervals)"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
 
-  gfunc5 <- function() # growth
+  growth_curve_fn <- function() # growth
   {
     if(!add){
-      plot(x,growdatF$Len_Mid,col=col1,lwd=2,ylim=c(0,ymax),type="n",
+      plot(x,growdatF$Len_Mid,col=colvec[1],lwd=2,ylim=c(0,ymax),type="n",
            ylab=labels[6],xlab=labels[2],main=main,cex.main=cex.main)
       abline(h=0,col="grey")
     }
-    lines(x,growdatF$Len_Mid,col=col1,lwd=2)
-    lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
-    lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
-    if(nsexes > 1)
-    {
-      lines(xm,growdatM$Len_Mid,col=col2,lwd=2)
-      lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
-      lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
-      legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(col1,col2))
+    col_index1 <- 3 # default is grey for single-sex model
+    lty <- 1
+    if(nsexes > 1){
+      col_index1 <- 1 # change line for females to red
+    }
+    polygon(c(x, rev(x)), c(growdatF$low, rev(growdatF$high)),
+            border=NA, col=shadecolvec[col_index1])
+    lines(x,growdatF$Len_Mid,col=colvec[col_index1],lwd=2,lty=1)
+    lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
+    lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
+    if(nsexes > 1){
+      polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
+              border=NA, col=shadecolvec[2])
+      lines(xm,growdatM$Len_Mid,col=colvec[2],lwd=2,lty=2)
+      lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
+      lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
+      legend(legendloc,bty="n", c("Females","Males"), lty=c(1,2), lwd=2,
+             col=c(colvec[1],colvec[2]))
     }
     grid()
   }
-  if(plot & 7 %in% subplots) gfunc5()
+  if(plot & 7 %in% subplots) growth_curve_fn()
   if(print & 7 %in% subplots){
     file <- paste(plotdir,"/bio7_sizeatage.png",sep="")
     caption <- "Length at age (dashed lines are 95% intervals)"
     plotinfo <- pngfun(file=file, caption=caption)
-    gfunc5()
+    growth_curve_fn()
     dev.off()
     plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
@@ -408,13 +424,13 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
       ymax <- max(MatAge)
       mfunc <- function(){
         if(!add){
-          plot(growdatF$Age,MatAge,col=col1,lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
+          plot(growdatF$Age,MatAge,col=colvec[1],lwd=2,ylim=c(0,ymax),type="n",ylab=labels[7],xlab=labels[2])
           abline(h=0,col="grey")
         }
-        lines(growdatF$Age,MatAge,col=col1,lwd=2,type="o")
+        lines(growdatF$Age,MatAge,col=colvec[1],lwd=2,type="o")
         if(nsexes > 1){
           growdatM <- growdat[growdat$Morph==mainmorphs[2],]
-          lines(growdatM$Age,growdatM$M,col=col2,lwd=2,type="o")
+          lines(growdatM$Age,growdatM$M,col=colvec[2],lwd=2,type="o")
         }
       }
       if(plot & 8 %in% subplots) mfunc()
@@ -491,7 +507,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:11,seas=1,
     # general function to work for any parameter
     timeVaryingParmFunc <- function(parmlabel){
       plot(MGparmAdj$Year, MGparmAdj[[parmlabel]],
-           xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=col2)
+           xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected
     # (maybe had different or conditional format in old SS versions)
