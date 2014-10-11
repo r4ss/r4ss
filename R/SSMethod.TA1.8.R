@@ -97,7 +97,10 @@ SSMethod.TA1.8 <-
     if(length(unique(dbase$Seas))>1)
       cat('Warning: combining data from multiple seasons\n')
   }
-
+  # create label for partitions
+  partitions <- sort(unique(dbase$Part)) # values are 0, 1, or 2
+  partition.labels <- c("whole","discarded","retained")[partitions+1]
+  partition.labels <- paste("(",paste(partition.labels,collapse="&")," catch)",sep="")
   gender.flag <- type!='con' & max(tapply(dbase$'Pick_gender',
                      dbase$Fleet,function(x)length(unique(x))))>1
   indx <- paste(dbase$Fleet,dbase$Yr,if(type=='con')dbase$'Lbin_lo' else
@@ -163,7 +166,9 @@ SSMethod.TA1.8 <-
     NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
-# need to save previous par settings and restore them at the end of this function    
+    # save current graphical parameters
+    par_current <- par()
+    # set new parameters
     par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),
         las=1)
     par(cex=1)
@@ -172,11 +177,11 @@ SSMethod.TA1.8 <-
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=range(subpldat[,c('ObsloAdj','ObshiAdj','Expmn')]),
+           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')]),
            xlab='',ylab='')
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3)
       arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
-             length=0.03, angle=90, code=3)
+             length=0.04, angle=90, code=3)
       points(x,subpldat[,'Obsmn'],pch=21,bg='grey80')
       ord <- order(x)
       if(length(x)>1){
@@ -191,18 +196,23 @@ SSMethod.TA1.8 <-
       if(gender.flag)lab <-
         paste(lab,ifelse(subpldat[1,'pick.gender']==0,'comb','sex'))
       if(method.flag)lab <- paste(lab,'meth',subpldat[1,'method'])
+      lab <- paste(lab,partition.labels)
       mtext(lab,side=3,at=mean(x))
     }
     mtext(paste('Mean',ifelse(is.in(type,c('len','size')),'length','age')),
           side=2,las=0,outer=TRUE)
     mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
+    # restore previous graphics parameters
+    par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
+        oma=par_current$oma, las=par_current$las)
   }
   tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
   confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                 c(0.025,0.975)))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
-  Outs <- paste("Francis Weights - ",type,":",fit$FleetNames[fleet],":",
-                round(Nmult,5),round(confint[1],5),round(confint[2],5))
+  Outs <- paste("Francis Weights - ", type, ": ", fit$FleetNames[fleet],": ",
+                round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
+                sep="")
   print(Outs)
   return(Output)
 }

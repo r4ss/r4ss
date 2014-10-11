@@ -44,6 +44,7 @@
 #' proportion within sample? Default=FALSE.
 #' @param cexZ1 Character expansion (cex) for point associated with value of 1.
 #' @param bublegend Add legend with example bubble sizes to bubble plots.
+#' @param colvec Vector of length 3 with colors for females, males, unsexed fish
 #' @param blue What color to use for bubble plots (default is slightly
 #' transparent blue)
 #' @param pwidth default width of plots printed to files in units of
@@ -101,14 +102,16 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
 #' @keywords hplot
 SSplotComps <-
-  function(replist, subplots=1:13,
+  function(replist, subplots=1:9, #subplots=1:13,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
            showyears=TRUE, showsampsize=TRUE, showeffN=TRUE,
            sampsizeline=FALSE,effNline=FALSE,
-           minnbubble=8, pntscalar=NULL,
-           scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,blue=rgb(0,0,1,0.7),
+           minnbubble=3, pntscalar=NULL,
+           scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,
+           colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
+           blue=rgb(0,0,1,0.7),red=rgb(1,0,0,0.7),
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, 
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
@@ -342,10 +345,6 @@ SSplotComps <-
     if(length(dbase_kind$Obs[dbase_kind$Fleet==f])>0)
     {
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
-      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-      testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
-
       #get mean sample quantities to show in conditional age-at-length figures
       if(kind %in% c("cond","GSTcond") && f %in% Age_tuning$Fleet){
         #### these values not to be trusted in the presence of ghost data:
@@ -358,13 +357,17 @@ SSplotComps <-
         MeanNage <- NULL
       }
       # loop over genders combinations
-      for(k in (1:3)[testor])
-      {
-        if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-        if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-        if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
-        sex <- ifelse(k==3, 2, 1)
-        if(sex %in% sexes){
+      ## for(k in (1:3)[testor])
+      ## {
+      ##   if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
+      ##   if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+      ##   if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+      ##   sex <- ifelse(k==3, 2, 1)
+      ##   if(sex %in% sexes){
+      ##     cat('sex',sex,'\n')
+
+      dbase_k <- dbasef
+      
           # loop over partitions (discard, retain, total)
           for(j in unique(dbase_k$Part))
           {
@@ -388,16 +391,20 @@ SSplotComps <-
                 ageerr_warning <- FALSE
               }
               # add 1/1000 of a year for each ageing error type to distinguish between types within a year
-              dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/(1000*max_n_ageerr)
+              dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/1000
               dbase$YrSeasName <- paste(dbase$YrSeasName,"a",dbase$Ageerr,sep="")
             }
+            ## dbase$Yr.S[dbase_k$Pick_gender==1] <- dbase$Yr.S[dbase_k$Pick_gender==1] + 1e-6
+            ## dbase$Yr.S[dbase_k$Pick_gender==2] <- dbase$Yr.S[dbase_k$Pick_gender==2] + 2e-6
 
             ## assemble pieces of plot title
-            # sex
-            if(k==1) titlesex <- "sexes combined, "
-            if(k==2) titlesex <- "female, "
-            if(k==3) titlesex <- "male, "
-            titlesex <- ifelse(printsex,titlesex,"")
+            ## # sex
+            ## if(k==1) titlesex <- "sexes combined, "
+            ## if(k==2) titlesex <- "female, "
+            ## if(k==3) titlesex <- "male, "
+            ## titlesex <- ifelse(printsex,titlesex,"")
+      # temporary permanent setting
+      titlesex <- ""
 
             # market category
             if(j==0) titlemkt <- "whole catch, "
@@ -410,13 +417,15 @@ SSplotComps <-
 
             # aggregating identifiers for plot titles and filenames
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
-            filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
+            #filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
+            filename_fltsexmkt <- paste("flt",f,"mkt",j,sep="")
 
             ### subplot 1: multi-panel composition plot
             if(1 %in% subplots & kind!="cond"){ # for age or length comps, but not conditional AAL
               ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
               titles <- c(ptitle,titles) # compiling list of all plot titles
               tempfun <- function(ipage,...){
+                sexvec <- dbase$sex
                 # a function to combine a bunch of repeated commands
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -425,7 +434,7 @@ SSplotComps <-
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,sexvec=sexvec,...)
                 }
                 if(kind=="GSTAGE"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -434,7 +443,7 @@ SSplotComps <-
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,sexvec=sexvec,...)
                 }
                 if(kind=="GSTLEN"){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -443,7 +452,7 @@ SSplotComps <-
                                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,sexvec=sexvec,...)
                 }
                 if(kind %in% c("L@A","W@A")){
                   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -453,7 +462,7 @@ SSplotComps <-
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,sexvec=sexvec,...)
                 }
               } # end tempfun
 
@@ -479,14 +488,16 @@ SSplotComps <-
             # some things related to the next two bubble plots (single or multi-panel)
             if(datonly){
               z <- dbase$Obs
-              if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
-              col <- 1
+              if(scalebubbles){
+                z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
+              }
+              col <- rep("black",2)
               titletype <- titledata
               filetype <- "bub"
               allopen <- TRUE
             }else{
               z <- dbase$Pearson
-              col <- blue
+              col <- rep(colvec[3],2)
               titletype <- "Pearson residuals, "
               filetype <- "resids"
               allopen <- FALSE
@@ -507,24 +518,38 @@ SSplotComps <-
               titles <- c(ptitle,titles) # compiling list of all plot titles
 
               tempfun2 <- function(){
-                bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, xlab=labels[3],
-                        ylab=kindlab,col=col,cexZ1=cexZ1,
+                xvals <- dbase$Yr.S
+                xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)))))[1]
+                cols <- rep(colvec[3],nrow(dbase))
+                if(nsexes > 1){
+                  xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
+                    (dbase$sex[dbase$sex>0]-1.5)*xdiff
+                  cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
+                }
+#print(table(xvals,is.na(z)))
+                bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
+                        ylab=kindlab, col=cols, cexZ1=cexZ1,
                         legend=bublegend,
-                        las=1,main=ptitle,cex.main=cex.main,maxsize=pntscalar,
-                        allopen=allopen,minnbubble=minnbubble)
+                        las=1, main=ptitle, cex.main=cex.main, maxsize=pntscalar,
+                        allopen=allopen, minnbubble=minnbubble)
                 # add lines for growth of individual cohorts if requested
                 if(length(cohortlines)>0){
                   for(icohort in 1:length(cohortlines)){
                     cat("  Adding line for",cohortlines[icohort],"cohort\n")
                     if(kind=="LEN"){
-                      if(k %in% c(1,2))
-                        lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
-                      if(nsexes>1 & k %in% c(1,3))
-                        lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
+                      if(nsexes>1){
+                        lines(growdatF$Age+cohortlines[icohort],
+                              growdatF$Len_Mid, col=colvec[1]) #females
+                        lines(growdatM$Age+cohortlines[icohort],
+                              growdatM$Len_Mid, col=colvec[2]) #males
+                      }else{
+                        lines(growdatF$Age+cohortlines[icohort],
+                              growdatF$Len_Mid, col=colvec[3]) #single-sex growth
+                      }
                     }
-                    if(kind=="AGE"){
+                    if(kind %in% c("AGE","GSTAGE")){
                       lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),
-                            c(0,accuage),col="red")
+                            c(0,accuage),col=colvec[3],lty=3) # one-one line for age
                     }
                   }
                 }
@@ -549,7 +574,6 @@ SSplotComps <-
                 dev.off() # close device if png
               }
             } # end bubble plot
-
             ### subplot 3: multi-panel bubble plots for conditional age-at-length
             if(3 %in% subplots & kind=="cond"){
               ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
@@ -571,7 +595,12 @@ SSplotComps <-
               }
               # function to make plots
               tempfun3 <- function(ipage,...){
-                make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=dbase$Yr.S,size=z,
+                sexvec <- dbase$sex
+                col.index <- sexvec
+                col.index[col.index==0] <- 3
+                cols <- colvec[col.index]
+                yrvec <- dbase$Yr.S + dbase$sex*1e-6
+                make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=yrvec,size=z,
                               sampsize=dbase$N,showsampsize=showsampsize,effN=dbase$effN,
                               showeffN=FALSE,
                               cexZ1=cexZ1,
@@ -580,9 +609,11 @@ SSplotComps <-
                               bars=FALSE,linepos=0,main=ptitle,cex.main=cex.main,
                               xlab=labels[2],ylab=labels[1],ymin0=FALSE,maxrows=maxrows2,maxcols=maxcols2,
                               fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
-                              ptscol=col[1],ptscol2=col[2],ipage=ipage,scalebins=scalebins,
+                              #ptscol=col[1],ptscol2=col[2],
+                              ptscol=cols,
+                              ipage=ipage,scalebins=scalebins,
                               sampsizeline=sampsizeline,effNline=effNline,
-                              sampsizemean=MeanNage,effNmean=HarmEffNage,...)
+                              sampsizemean=MeanNage,effNmean=HarmEffNage,sexvec=sexvec,...)
               }
               if(plot) tempfun3(ipage=0,...)
               if(print){ # set up plotting to png file if required
@@ -656,7 +687,7 @@ SSplotComps <-
                     titles <- c(ptitle,titles) # compiling list of all plot titles
                     tempfun5 <- function(){
                       bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
-                              ylab=labels[1],col=blue,las=1,main=ptitle,
+                              ylab=labels[1],col=colvec[3],las=1,main=ptitle,
                               cex.main=cex.main,maxsize=pntscalar,
                               cexZ1=cexZ1,
                               legend=bublegend,
@@ -749,9 +780,10 @@ SSplotComps <-
                   # (for the purposes of this function)
                   dbasegood2 <- dbasegood[,c("YrSeasName","N","effN")]
                   dbasegood2 <- unique(dbasegood2)
-                  plot(dbasegood2$N,dbasegood2$effN,xlab=labels[4],main=ptitle,cex.main=cex.main,
-                       ylim=c(0,1.05*max(dbasegood2$effN)),xlim=c(0,1.05*max(dbasegood2$N)),
-                       col=blue,pch=19,ylab=labels[5],xaxs="i",yaxs="i")
+                  plot(dbasegood2$N,dbasegood2$effN,xlab=labels[4],main=ptitle,
+                       cex.main=cex.main,
+                       ylim=c(0,1.15*max(dbasegood2$effN)),xlim=c(0,1.15*max(dbasegood2$N)),
+                       col=colvec[3],pch=19,ylab=labels[5],xaxs="i",yaxs="i")
                   # add labels for the years if requested
                   if(showyears){
                     par(xpd=TRUE) # allows the label to go over plot boundary
@@ -759,7 +791,7 @@ SSplotComps <-
                          dbasegood2$YrSeasName,adj=c(-0.2,0.5))
                     par(xpd=FALSE) # restores default clipping
                   }
-                  abline(0,1,col="black")
+                  abline(0,1,col="black",lty=1)
                   # add loess smoother if there's at least 6 points with a range greater than 2
                   if(smooth & length(unique(dbasegood2$N)) > 6 & diff(range(dbasegood2$N))>2){
                     old_warn <- options()$warn      # previous warnings setting
@@ -771,14 +803,14 @@ SSplotComps <-
                   if(addMeans){
                     # vertical line with label for mean input sample size
                     abline(v=mean(dbasegood2$N),lty="22",col='green3')
-                    text(x=mean(dbasegood2$N),y=par()$usr[4],
-                         col='green3',"arithmetic mean of observed sample size",
-                         srt=90, adj=c(1.1,-0.3))
+                    text(x=mean(dbasegood2$N),y=0,
+                         col='green3',"arithmetic mean",
+                         srt=90, adj=c(-0.1,-0.3))
                     # horizontal line with label for harmonic effective sample size
                     abline(h=1/mean(1/dbasegood2$effN),lty="22",col='green3')
-                    text(x=par()$usr[2], y=1/mean(1/dbasegood2$effN),
-                         col='green3',"harmonic mean of effective sample size",
-                         adj=c(1.1,-0.3))
+                    text(x=0, y=1/mean(1/dbasegood2$effN),
+                         col='green3',"harmonic mean",
+                         adj=c(-0.1,-0.3))
                   }
                 }
               }
@@ -917,8 +949,8 @@ SSplotComps <-
               } # end test for print to PNG option
             } # end subplot 9
           } # end loop over partitions
-        } # end test for whether gender in vector of requested sexes
-      } # end loop over combined/not-combined genders
+#        } # end test for whether gender in vector of requested sexes
+#      } # end loop over combined/not-combined genders
     } # end if data
   } # end loop over fleets
 
@@ -1416,7 +1448,7 @@ SSplotComps <-
                 allopen <- TRUE
               }else{
                 z <- dbase$Pearson
-                col <- blue
+                col <- colvec[3]
                 titletype <- "Pearson residuals, "
                 filetype <- "resids"
                 allopen <- FALSE
@@ -1440,9 +1472,11 @@ SSplotComps <-
                   cat("  Adding line for",cohortlines[icohort],"cohort\n")
                   if(kind=="LEN"){
                     if(k %in% c(1,2))
-                      lines(growdatF$Age+cohortlines[icohort],growdatF$Len_Mid, col="red")  #females
+                      lines(growdatF$Age+cohortlines[icohort],
+                            growdatF$Len_Mid, col=colvec[1]) #females
                     if(nsexes>1 & k %in% c(1,3))
-                      lines(growdatM$Age+cohortlines[icohort],growdatM$Len_Mid, col="blue") #males
+                      lines(growdatM$Age+cohortlines[icohort],
+                            growdatM$Len_Mid, col=colvec[2]) #males
                   }
                   if(kind=="AGE"){
                     lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),

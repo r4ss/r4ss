@@ -113,8 +113,8 @@
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
 #' @param cols Number of columns to use for single panel plots. Default=1.
-#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=6.
-#' @param maxcols Maximum number of columns for multi-panel plots.  Default=6.
+#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=4.
+#' @param maxcols Maximum number of columns for multi-panel plots.  Default=4.
 #' @param maxrows2 Maximum number of rows for conditional age-at-length
 #' multi-panel plots. Default=2.
 #' @param maxcols2 Maximum number of rows for conditional age-at-length
@@ -178,7 +178,7 @@ SS_plots <-
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     sampsizeline=FALSE,effNline=FALSE,
     showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=6, maxcols=6,
+    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
     maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
     new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
@@ -1009,6 +1009,7 @@ SS_plots <-
           SSplotTags(replist=replist,
                      rows=rows,cols=cols,
                      tagrows=tagrows,tagcols=tagcols,
+                     latency=replist$tagfirstperiod,
                      pntscalar=pntscalar,minnbubble=minnbubble,
                      plot=!png, print=png,
                      pwidth=pwidth, pheight=pheight, punits=punits,
