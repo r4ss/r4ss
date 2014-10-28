@@ -1140,8 +1140,11 @@ if(FALSE){
                                        all(biology$Wt_len_F==biology$Fecundity),
                                        "biomass", "numbers")
   
-  ## Growth_Parameters <- matchfun2["Growth_Parameters",1,"Seas_Effects",-1]
-  ## returndat$Growth_Parameters <- Growth_Parameters
+  Growth_Parameters <- matchfun2("Growth_Parameters",1,
+                                 "Growth_Parameters",1+nrow(morph_indexing),
+                                 header=TRUE)
+  returndat$Growth_Parameters <- Growth_Parameters
+  
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
   if(Seas_Effects[[1]][1]!="absent"){
     for(i in 1:ncol(Seas_Effects)) Seas_Effects[,i] <- as.numeric(Seas_Effects[,i])
