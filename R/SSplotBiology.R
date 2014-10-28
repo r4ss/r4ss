@@ -122,6 +122,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ageselex     <- replist$ageselex
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
+  Growth_Parameters <- replist$Growth_Parameters
   if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
   else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
   
@@ -354,6 +355,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   growth_curve_fn <- function(add_labels=TRUE) # growth
   {
+    x <- growdatF$Age
     # make empty plot unless this is being added to existing figure 
     if(!add){
       plot(x, growdatF$Len_Mid, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
@@ -546,6 +548,97 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     #plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
+
+  growth_curve_labeled_fn <- function(option=1) # growth
+  {
+    # save current parameter settings
+    par_old <- par()
+    par(mar=c(4,4,1,4))
+
+    AminF <- Growth_Parameters$A1[1]
+    AmaxF <- Growth_Parameters$A2[1]
+    AminM <- Growth_Parameters$A1[2]
+    AmaxM <- Growth_Parameters$A2[2]
+    L_at_AminF <- Growth_Parameters$L_a_A1[1]
+    L_at_AmaxF <- Growth_Parameters$L_a_A2[1]
+    L_at_AminM <- Growth_Parameters$L_a_A1[2]
+    L_at_AmaxM <- Growth_Parameters$L_a_A2[2]
+    LinfF <- Growth_Parameters$Linf[1]
+    LinfM <- Growth_Parameters$Linf[2]
+    plot(0, type="n",
+         xlim=c(0,1+max(growdatF$Age_Mid)),
+         ylim=c(0,1.1*ymax), 
+         xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
+    abline(h=0,col="grey")
+    #title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
+    axis(1, at=c(0,AminF,AmaxF,accuage),
+         labels=expression(0[ ],italic(A[1]),italic(A[2]),
+         italic(N[ages])))
+    axis(2, at=c(0, L_at_AminF, L_at_AmaxF, LinfF),
+         labels=expression(0, italic(L[A[1]]), italic(L[A[2]]),
+           italic(L[infinity])), las=1)
+    axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
+         labels=expression(0, italic(L[A[1]]), italic(L[A[2]])),
+         las=1)
+    if(option==1){
+      # lines connecting axes to curve
+      lines(c(AminF,AminF,0),c(0,L_at_AminF,L_at_AminF),lty=3)
+      lines(c(AmaxF,AmaxF,0),c(0,L_at_AmaxF,L_at_AmaxF),lty=3)
+      abline(h=LinfF,lty=3)
+    }
+    if(option==2){
+      # lines connecting two curves
+      lines(c(0,AminF), c(L_at_AminF,L_at_AminF),lty=3)
+      lines(c(0,AmaxF), c(L_at_AmaxF,L_at_AmaxF),lty=3)
+      lines(c(accuage+10,AmaxM), c(L_at_AmaxM,L_at_AmaxM),
+            lty=3)
+      lines(c(accuage+10,AminM), c(L_at_AminM,L_at_AminM),
+            lty=3)
+      lines(c(AminF,AminF),c(L_at_AminF,L_at_AminM),
+            lty='11',lwd=3,col=3)
+      lines(c(AmaxF,AmaxF),c(L_at_AmaxF,L_at_AmaxM),
+            lty='11',lwd=3,col=3)
+      text(AminF, mean(c(L_at_AminF,L_at_AminM)),
+           "Male offset parameter 1", pos=4, col=3)
+      text(AmaxF, mean(c(L_at_AmaxF,L_at_AmaxM)),
+           "Male offset parameter 2", pos=4, col=3)
+      abline(h=LinfF,lty=3)
+    }
+    # add growth curve itself
+    lines(growdatF$Age_Mid,growdatF$Len_Mid,
+          col=1,lwd=3,lty=1)
+    # add growth curve for males
+    if(nsexes > 1 & option==2){
+      lines(growdatM$Age_Mid,growdatM$Len_Mid,
+            col=1,lwd=2,lty=2)
+    }
+    box()
+    ## if(nsexes > 1 & option==2){
+    ##   legend(legendloc,bty="n", c("Females","Males"),
+    ##          lty=c(1,2), lwd=2,
+    ##          col=1)
+    ## }
+    # restore old parameter settings
+    par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+  }
+  if(plot & 100 %in% subplots) growth_curve_labeled_fn(option=1)
+  if(print & 100 %in% subplots){
+    file <- paste(plotdir,"/bio100_growth_illustration.png",sep="")
+    caption <- "Illustration of growth parameters"
+    plotinfo <- pngfun(file=file, caption=caption)
+    growth_curve_labeled_fn(option=1)
+    dev.off()
+  }
+  if(plot & 101 %in% subplots) growth_curve_labeled_fn(option=2)
+  if(print & 101 %in% subplots){
+    file <- paste(plotdir,"/bio101_growth_illustration2.png",sep="")
+    caption <- "Illustration of growth parameters with male offsets"
+    plotinfo <- pngfun(file=file, caption=caption)
+    growth_curve_labeled_fn(option=2)
+    dev.off()
+  }
+
+  
   x <- biology$Mean_Size
   
   if(plot){ # plot to screen or to PDF file

@@ -1143,6 +1143,9 @@ if(FALSE){
   Growth_Parameters <- matchfun2("Growth_Parameters",1,
                                  "Growth_Parameters",1+nrow(morph_indexing),
                                  header=TRUE)
+  for(icol in 1:ncol(Growth_Parameters)){
+    Growth_Parameters[,icol] <- as.numeric(Growth_Parameters[,icol])
+  }
   returndat$Growth_Parameters <- Growth_Parameters
   
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
