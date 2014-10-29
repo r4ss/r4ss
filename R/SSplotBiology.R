@@ -551,10 +551,13 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   growth_curve_labeled_fn <- function(option=1) # growth
   {
+    if(is.null(Growth_Parameters)){
+      cat("Need updated SS_output function to get Growth_Parameters output\n")
+      return()
+    }
     # save current parameter settings
     par_old <- par()
     par(mar=c(4,4,1,4))
-
     AminF <- Growth_Parameters$A1[1]
     AmaxF <- Growth_Parameters$A2[1]
     AminM <- Growth_Parameters$A1[2]
@@ -572,14 +575,28 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     abline(h=0,col="grey")
     #title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
     axis(1, at=c(0,AminF,AmaxF,accuage),
-         labels=expression(0[ ],italic(A[1]),italic(A[2]),
-         italic(N[ages])))
+         labels=expression(0,italic(A[1]),italic(A[2]),italic(N[ages])))
     axis(2, at=c(0, L_at_AminF, L_at_AmaxF, LinfF),
          labels=expression(0, italic(L[A[1]]), italic(L[A[2]]),
            italic(L[infinity])), las=1)
     axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
-         labels=expression(0, italic(L[A[1]]), italic(L[A[2]])),
+         labels=expression(0, italic(L[A[1]]^male), italic(L[A[2]]^male)),
          las=1)
+    ####### longer labels with equations didn't look good
+    ## par(mar=c(4,4,1,8))
+    ## axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
+    ##      labels=expression(0,
+    ##          italic(L[A[1]]^male==L[A[1]]*e^p[1]^male),
+    ##          italic(L[A[2]]^male==L[A[2]]*e^p[2]^male)),
+    ##      las=1)
+    # add growth curve itself
+    lines(growdatF$Age_Mid,growdatF$Len_Mid,
+          col=1,lwd=3,lty=1)
+    # add growth curve for males
+    if(nsexes > 1 & option==2){
+      lines(growdatM$Age_Mid,growdatM$Len_Mid,
+            col=1,lwd=2,lty=2)
+    }
     if(option==1){
       # lines connecting axes to curve
       lines(c(AminF,AminF,0),c(0,L_at_AminF,L_at_AminF),lty=3)
@@ -599,18 +616,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       lines(c(AmaxF,AmaxF),c(L_at_AmaxF,L_at_AmaxM),
             lty='11',lwd=3,col=3)
       text(AminF, mean(c(L_at_AminF,L_at_AminM)),
-           "Male offset parameter 1", pos=4, col=3)
+           "Male parameter 1", col=3, adj=c(-.2,0))
       text(AmaxF, mean(c(L_at_AmaxF,L_at_AmaxM)),
-           "Male offset parameter 2", pos=4, col=3)
+           "Male parameter 2", col=3, adj=c(-.2,0))
       abline(h=LinfF,lty=3)
-    }
-    # add growth curve itself
-    lines(growdatF$Age_Mid,growdatF$Len_Mid,
-          col=1,lwd=3,lty=1)
-    # add growth curve for males
-    if(nsexes > 1 & option==2){
-      lines(growdatM$Age_Mid,growdatM$Len_Mid,
-            col=1,lwd=2,lty=2)
     }
     box()
     ## if(nsexes > 1 & option==2){
