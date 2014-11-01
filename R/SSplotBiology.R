@@ -370,7 +370,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
 
   ymax <- max(biology$Mean_Size)
-  if(nsexes > 1) ymax <- max(ymax,growdatM$high)
   x <- growdatF$Age
   main <- "Ending year expected growth (with 95% intervals)"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
