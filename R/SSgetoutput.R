@@ -80,11 +80,14 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
       NoCompOK <- TRUE
     }
 
-    if(file.exists(paste(mydir,covarname,sep="")) && getcovar) mycovar=TRUE else mycovar=FALSE
+    # mycovar = TRUE/FALSE based on presence of file and user input
+    mycovar <- file.exists(file.path(mydir,covarname)) & getcovar
+    
     fullfile <- paste(mydir,repfilename,sep="")
     if(verbose) cat("reading output from",fullfile,"\n")
     repfilesize <- file.info(fullfile)$size
 
+    output <- NA
     if(!is.na(repfilesize) && repfilesize>0){ # if there's a non-empty file
       output <- SS_output(dir=mydir, repfile=repfilename, covarfile=covarname,
                             compfile=compfilename, NoCompOK=NoCompOK, printstats=FALSE,

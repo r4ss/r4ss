@@ -46,22 +46,8 @@ function(
   ctlfile="C:/myfiles/mymodels/myrun/control.ss_new",
   dir=NULL, verbose=TRUE, active=FALSE, print14=FALSE)
 {
-
-################################################################################
-#
-# SS_parlines October 5, 2009.
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: To identify the line numbers and parameter labels in a Stock Synthesis control file
-# Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-# Returns: Table of line numbers and parameter labels
-# Notes:   See users guide for documentation: http://code.google.com/p/r4ss/wiki/
-# Required packages: none
-#
-################################################################################
-
   # read control file
-  if(!is.null(dir)) ctlfile <- paste(dir,'control.ss_new',sep='/')
+  if(!is.null(dir)) ctlfile <- file.path(dir,'control.ss_new')
   ncols = 100 # !!this should by more dynamic--if it's too small, the function dies
   ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=TRUE,
     quote="",colClasses="character",comment.char="", blank.lines.skip=FALSE)

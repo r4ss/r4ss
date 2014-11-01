@@ -110,7 +110,9 @@ SS_html <- function(replist=NULL,
       category <- "Home"
       htmlfile <- file.path(dir,plotdir,"SS_output.html")
       htmlhome <- htmlfile
-      if(verbose) cat("Home HTML file with output will be:\n",htmlhome,'\n')
+      if(verbose){
+        cat("Home HTML file with output will be:\n",htmlhome,'\n')
+      }
     }else{
       category <- categories[icat]
       htmlfile <- file.path(dir,plotdir,paste("SS_output_",category,".html",sep=""))
@@ -300,8 +302,16 @@ SS_html <- function(replist=NULL,
   cat("\n\n</body>\n</html>", file=htmlfile, append=TRUE)
 
   # open HTML file automatically:
+  # thanks John Wallace for finding the browseURL command
   if(openfile){
     cat("Opening HTML file in your default web-browser.\n")
-    browseURL(htmlhome) # thanks John Wallace for finding this command
+    # check for presence of file
+    # alternative location for file in the path is relative to the working directory
+    htmlhome2 <- file.path(getwd(), htmlhome)
+    if(is.na(file.info(htmlhome2)$size)){
+      browseURL(htmlhome)
+    }else{
+      browseURL(htmlhome2) 
+    }
   }
 }
