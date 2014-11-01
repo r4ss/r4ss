@@ -123,6 +123,32 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
   Growth_Parameters <- replist$Growth_Parameters
+  
+  # get any derived quantities related to growth curve uncertainty
+  Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$LABEL),]
+  if(nrow(Grow_std)==0){
+    Grow_std <- NULL
+  }else{
+    # convert things like "Grow_std_1_Fem_A_25" into
+    # "pattern 1, female, age 25"
+    Grow_std$pattern <- NA
+    Grow_std$sex_char <- NA
+    Grow_std$sex <- NA
+    Grow_std$age <- NA
+    for(irow in 1:nrow(Grow_std)){
+      tmp <- strsplit(Grow_std$LABEL[irow], split="_")[[1]]
+      Grow_std$pattern[irow] <- as.numeric(tmp[3])
+      Grow_std$sex_char[irow] <- tmp[4]
+      Grow_std$age[irow] <- as.numeric(tmp[6])
+    }
+    Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
+    Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
+    #### now it should look something like this:
+    ##                                   LABEL Value   StdDev pattern sex_char sex age
+    ## Grow_std_1_Fem_A_5   Grow_std_1_Fem_A_5     0 1.772300       1      Fem   1   5
+    ## Grow_std_1_Fem_A_10 Grow_std_1_Fem_A_10     0 1.039320       1      Fem   1  10
+  }
+  
   if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
   else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
   
@@ -353,9 +379,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     col_index1 <- 1 # change line for females to red
   }
 
-  growth_curve_fn <- function(add_labels=TRUE) # growth
+  growth_curve_fn <- function(add_labels=TRUE, add_uncertainty=TRUE) # growth
   {
-    x <- growdatF$Age
+    x <- growdatF$Age_Mid
     # make empty plot unless this is being added to existing figure 
     if(!add){
       plot(x, growdatF$Len_Mid, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
@@ -374,12 +400,47 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     lines(x,growdatF$Len_Mid,col=colvec[col_index1],lwd=2,lty=1)
     lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
     lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
+    # add uncertainty intervals around growth curve
+    if(!is.null(Grow_std) & add_uncertainty){
+      Grow_std.f <- Grow_std[Grow_std$sex==1,]
+      if(!is.null(Grow_std.f)){
+        for(irow in 1:nrow(Grow_std.f)){
+          std.age <- Grow_std.f$age[irow]
+          # this might not work for long-normal length at age
+          mean <- growdatF$Len_Mid[growdatF$Age==std.age]
+          age.mid <- growdatF$Age_Mid[growdatF$Age==std.age]
+          high <- qnorm(0.975, mean=mean, sd=Grow_std.f$StdDev[irow])
+          low  <- qnorm(0.025, mean=mean, sd=Grow_std.f$StdDev[irow])
+          arrows(x0=age.mid, x1=age.mid,
+                 y0=low,     y1=high,
+                 length=0.04, angle=90, code=3, col=colvec[col_index1])
+        }
+      }
+    }
+    # add males if they are present in the model
     if(nsexes > 1){
       polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
               border=NA, col=shadecolvec[2])
       lines(xm,growdatM$Len_Mid,col=colvec[2],lwd=2,lty=2)
       lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
       lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
+      # add uncertainty intervals around growth curve for males
+      if(!is.null(Grow_std) & add_uncertainty){
+        Grow_std.m <- Grow_std[Grow_std$sex==2,]
+        if(!is.null(Grow_std.m)){
+          for(irow in 1:nrow(Grow_std.m)){
+            std.age <- Grow_std.m$age[irow]
+            # this might not work for long-normal length at age
+            mean <- growdatM$Len_Mid[growdatM$Age==std.age]
+            age.mid <- 0.2 + growdatM$Age_Mid[growdatM$Age==std.age]
+            high <- qnorm(0.975, mean=mean, sd=Grow_std.m$StdDev[irow])
+            low  <- qnorm(0.025, mean=mean, sd=Grow_std.m$StdDev[irow])
+            arrows(x0=age.mid, x1=age.mid,
+                   y0=low,     y1=high,
+                   length=0.04, angle=90, code=3, col=colvec[2])
+          }
+        }
+      }
     }
     if(!add){
       grid()
@@ -393,13 +454,21 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   if(plot & 1 %in% subplots) growth_curve_fn()
   if(print & 1 %in% subplots){
     file <- paste(plotdir,"/bio1_sizeatage.png",sep="")
-    caption <- "Length at age (dashed lines are 95% intervals)"
+    caption <- paste("Length at age in the middle of the year (or season) in the ending",
+                     "year of the model. Shaded area indicates 95% distribution of",
+                     "length at age around estimated growth curve.")
+    if(!is.null(Grow_std)){
+      caption <- paste(caption,
+                       "Vertical intervals around growth curve indicate",
+                       "estimated 95% uncertainty intervals in estimated mean growth.")
+    }
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_fn()
     dev.off()
     #plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
+  
   growth_curve_plus_fn <- function(add_labels=TRUE, option=1){
     # function to add panels to growth curve with info on variability in
     # length at age or info on maturity, weight, and fecundity
@@ -427,6 +496,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       lab2long <- "CV of lengths"
       lab1max <- 1.1*max(growdat[[lab1]])
       lab2max <- 1.05*max(growdat[[lab2]])
+# temporary stuff for growth workshop
+lab1max <- 8
+lab2max <- 0.25
+      
       lab1_axis_vec <- NULL
     }
     if(option==2){
@@ -487,23 +560,23 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
     # make empty plot in lower-left position
     plot(0, type='n',
-         xaxs='i', xlim=range(growdat$Age),
+         xaxs='i', xlim=range(growdat$Age_Mid),
          yaxs='i', ylim=c(0,1.0*lab1max),
          axes=FALSE)
     # add line for lab1 vs. Age
-    lines(growdatF$Age, growdatF[[lab1]], col=colvec[col_index1],
+    lines(growdatF$Age_Mid, growdatF[[lab1]], col=colvec[col_index1],
           lwd=1, lty='12')
     # add line for lab2 vs. Age
-    lines(growdatF$Age, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
+    lines(growdatF$Age_Mid, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
           lwd=3)
     if(nsexes > 1){ # add lines for males
       if(option==1){
         # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
-        lines(growdatM$Age, growdatM[[lab1]], col=colvec[2],
+        lines(growdatM$Age_Mid, growdatM[[lab1]], col=colvec[2],
               lwd=1, lty='13')
       }
       # add line for lab2 vs. Age
-      lines(growdatM$Age, growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
+      lines(growdatM$Age_Mid, growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
             lwd=3, lty=2)
     }
     # add axes and labels
