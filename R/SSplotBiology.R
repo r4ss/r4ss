@@ -1,9 +1,9 @@
 #' Plot biology related quantities.
-#' 
+#'
 #' Plot biology related quantities from Stock Synthesis model output, including
 #' mean weight, maturity, fecundity, and spawning output.
-#' 
-#' 
+#'
+#'
 #' @param replist List created by \code{SS_output}
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
@@ -60,7 +60,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   # subplot 8: mfunc   - Natural mortality (if age-dependent)
   # subplot 9:  [no function] - Time-varying growth persp
   # subplot 10: [no function] - Time-varying growth contour
-  # subplot 11: timeVaryingParmFunc - plot time-series of any time-varying quantities  
+  # subplot 11: timeVaryingParmFunc - plot time-series of any time-varying quantities
 
   #### new (24-Oct-14) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
@@ -75,7 +75,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   # subplot 11: mfunc   - Natural mortality (if age-dependent)
   # subplot 12: [no function] - Time-varying growth persp
   # subplot 13: [no function] - Time-varying growth contour
-  # subplot 14: timeVaryingParmFunc - plot time-series of any time-varying quantities  
+  # subplot 14: timeVaryingParmFunc - plot time-series of any time-varying quantities
+  # EXTRA PLOTS NOT PRODUCED BY DEFAULT
+  # subplot 101: diagram with labels showing female growth curve
+  # subplot 102: diagram with labels showing female growth curve & male offsets
+  # subplot 103: diagram with labels showing female CV = f(A) (offset type 2)
+  # subplot 104: diagram with labels showing female CV = f(A) & male offset (type 2)
+  # subplot 105: diagram with labels showing female CV = f(A) (offset type 3)
+  # subplot 106: diagram with labels showing female CV = f(A) & male offset (type 3)
 
   pngfun <- function(file,caption=NA){
     png(filename=file,width=pwidth,height=pheight,
@@ -84,7 +91,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     return(plotinfo)
   }
   plotinfo <- NULL
-  
+
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",
                   topo.colors(6),"blue","blue2","blue3","blue4","black")
   ians_contour <- c("white",rep("blue",100))
@@ -123,7 +130,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
   Growth_Parameters <- replist$Growth_Parameters
-  
+
   # get any derived quantities related to growth curve uncertainty
   Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$LABEL),]
   if(nrow(Grow_std)==0){
@@ -148,10 +155,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     ## Grow_std_1_Fem_A_5   Grow_std_1_Fem_A_5     0 1.772300       1      Fem   1   5
     ## Grow_std_1_Fem_A_10 Grow_std_1_Fem_A_10     0 1.039320       1      Fem   1  10
   }
-  
+
   if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
   else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
-  
+
   if(wtatage_switch) cat("Note: this model uses the emperical weight-at-age input.\n",
                          "     Therefore many of the parametric biology quantities which are plotted\n",
                          "     are not used in the model.\n")
@@ -164,7 +171,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
   ## }
   if(nseasons>1) labels[6] <- gsub("middle of the year", paste("middle of season",seas), labels[6])
-  
+
   if(plotdir=="default") plotdir <- replist$inputs$dir
   # check dimensions
   if(length(mainmorphs)>nsexes){
@@ -175,7 +182,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ## # stuff from selectivity that is not used
   ## FecundAtAge <- ageselex[ageselex$factor=="Fecund", names(ageselex)%in%0:accuage]
   ## WtAtAge <- ageselex[ageselex$factor=="bodywt", names(ageselex)%in%0:accuage]
- 
+
   # determine fecundity type
   # define labels and x-variable
   if(FecType==1){
@@ -196,7 +203,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     growdatF$high <- qnorm(0.975, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
     growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
   }
-  
+
   if(nsexes > 1){ # do males if 2-sex model
     growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
     xm <- growdatM$Age
@@ -260,7 +267,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       }
       if(!add) abline(h=0,col="grey")
     }else{
-      #print(seas)      
+      #print(seas)
       # if empirical weight-at-age IS used
       fecmat <- wtatage[wtatage$fleet==-2 & wtatage$gender==1,]
       # figure out which seasons have fecundity values (maybe always only one?)
@@ -299,11 +306,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     mat2 <- mat[,-1]
 
     par(mar=c(4.2,4.2,4,1)+.1)
-
-    ## print(length(0:accuage))
-    ## print(length(yrvec2))
-    ## print(dim(mat2))
-    
     lastbin <- max(mat2)
 
     image(x=0:accuage,y=yrvec2,z=t(mat2),axes=F,xlab='Age',ylab='Year',
@@ -313,7 +315,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
     zdataframe$z <- c(t(mat2))
     zdataframe$font <- 1
-    
+
     ztext <- format(round(zdataframe$z,2))
     ztext[ztext=="  NA"] <- ""
     ztext[ztext=="   NA"] <- ""
@@ -325,9 +327,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     box()
   }
 
-
-
-  
   gfunc3a <- function(){ # fecundity from model parameters
     ymax <- 1.1*max(FecY)
     if(!add){
@@ -381,7 +380,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   growth_curve_fn <- function(add_labels=TRUE, add_uncertainty=TRUE) # growth
   {
     x <- growdatF$Age_Mid
-    # make empty plot unless this is being added to existing figure 
+    # make empty plot unless this is being added to existing figure
     if(!add){
       plot(x, growdatF$Len_Mid, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
            #ylab=labels[6], xlab=labels[2], main=main, cex.main=cex.main,
@@ -467,15 +466,15 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     #plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
-  
+
   growth_curve_plus_fn <- function(add_labels=TRUE, option=1){
     # function to add panels to growth curve with info on variability in
     # length at age or info on maturity, weight, and fecundity
 
     # save current parameter settings
     par_old <- par()
-    
-    # create 4-panel layout 
+
+    # create 4-panel layout
     layout(mat=matrix(1:4,byrow=TRUE,ncol=2),widths=c(2,1),heights=c(2,1))
     par(mar=c(1,1,1,1),oma=c(5,5,5,4))
     # plot growth curve
@@ -495,10 +494,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       lab2long <- "CV of lengths"
       lab1max <- 1.1*max(growdat[[lab1]])
       lab2max <- 1.05*max(growdat[[lab2]])
-# temporary stuff for growth workshop
-lab1max <- 8
-lab2max <- 0.25
-      
+      # temporary stuff for growth workshop
+      if(exists("lab1max",where=1)){
+        lab1max <- get("lab1max",pos=1)
+      }
+      if(exists("lab2max",where=1)){
+        lab2max <- get("lab2max",pos=1)
+      }
+      # end temporary stuff
       lab1_axis_vec <- NULL
     }
     if(option==2){
@@ -621,6 +624,7 @@ lab2max <- 0.25
   }
 
 
+  # function for illustrating parameterization of growth curves
   growth_curve_labeled_fn <- function(option=1) # growth
   {
     if(is.null(Growth_Parameters)){
@@ -640,9 +644,10 @@ lab2max <- 0.25
     L_at_AmaxM <- Growth_Parameters$L_a_A2[2]
     LinfF <- Growth_Parameters$Linf[1]
     LinfM <- Growth_Parameters$Linf[2]
+    ymax <- max(biology$Mean_Size)
     plot(0, type="n",
          xlim=c(0,1+max(growdatF$Age_Mid)),
-         ylim=c(0,1.1*ymax), 
+         ylim=c(0,1.1*ymax),
          xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
     abline(h=0,col="grey")
     #title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
@@ -651,16 +656,6 @@ lab2max <- 0.25
     axis(2, at=c(0, L_at_AminF, L_at_AmaxF, LinfF),
          labels=expression(0, italic(L[A[1]]), italic(L[A[2]]),
            italic(L[infinity])), las=1)
-    axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
-         labels=expression(0, italic(L[A[1]]^male), italic(L[A[2]]^male)),
-         las=1)
-    ####### longer labels with equations didn't look good
-    ## par(mar=c(4,4,1,8))
-    ## axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
-    ##      labels=expression(0,
-    ##          italic(L[A[1]]^male==L[A[1]]*e^p[1]^male),
-    ##          italic(L[A[2]]^male==L[A[2]]*e^p[2]^male)),
-    ##      las=1)
     # add growth curve itself
     lines(growdatF$Age_Mid,growdatF$Len_Mid,
           col=1,lwd=3,lty=1)
@@ -683,45 +678,185 @@ lab2max <- 0.25
             lty=3)
       lines(c(accuage+10,AminM), c(L_at_AminM,L_at_AminM),
             lty=3)
-      lines(c(AminF,AminF),c(L_at_AminF,L_at_AminM),
-            lty='11',lwd=3,col=3)
-      lines(c(AmaxF,AmaxF),c(L_at_AmaxF,L_at_AmaxM),
-            lty='11',lwd=3,col=3)
+      arrows(x0=AminF,      x1=AminF,
+             y0=L_at_AminF, y1=L_at_AminM,
+            lwd=3,col=3,length=0.1)
+      arrows(x0=AmaxF,      x1=AmaxF,
+             y0=L_at_AmaxF, y1=L_at_AmaxM,
+            lwd=3,col=3,length=0.1)
       text(AminF, mean(c(L_at_AminF,L_at_AminM)),
-           "Male parameter 1", col=3, adj=c(-.2,0))
+           "Male parameter 1\n(exponential offset)", col=3, adj=c(-.1,0))
       text(AmaxF, mean(c(L_at_AmaxF,L_at_AmaxM)),
-           "Male parameter 2", col=3, adj=c(-.2,0))
+           "Male parameter 2\n(exponential offset)", col=3, adj=c(-.1,0))
+      axis(4, at=c(0, L_at_AminM, L_at_AmaxM),
+           labels=expression(0, italic(L[A[1]]^male), italic(L[A[2]]^male)),
+           las=1)
       abline(h=LinfF,lty=3)
     }
     box()
-    ## if(nsexes > 1 & option==2){
-    ##   legend(legendloc,bty="n", c("Females","Males"),
-    ##          lty=c(1,2), lwd=2,
-    ##          col=1)
-    ## }
     # restore old parameter settings
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
   }
-  if(plot & 100 %in% subplots) growth_curve_labeled_fn(option=1)
-  if(print & 100 %in% subplots){
-    file <- paste(plotdir,"/bio100_growth_illustration.png",sep="")
+  if(plot & 101 %in% subplots) growth_curve_labeled_fn(option=1)
+  if(print & 101 %in% subplots){
+    file <- paste(plotdir,"/bio101_growth_illustration.png",sep="")
     caption <- "Illustration of growth parameters"
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_labeled_fn(option=1)
     dev.off()
   }
-  if(plot & 101 %in% subplots) growth_curve_labeled_fn(option=2)
-  if(print & 101 %in% subplots){
-    file <- paste(plotdir,"/bio101_growth_illustration2.png",sep="")
+  if(plot & 102 %in% subplots) growth_curve_labeled_fn(option=2)
+  if(print & 102 %in% subplots){
+    file <- paste(plotdir,"/bio102_growth_illustration2.png",sep="")
     caption <- "Illustration of growth parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_labeled_fn(option=2)
     dev.off()
   }
 
-  
+
+  # function for illustrating parameterization of CVs around growth curves
+  CV_values_labeled_fn <- function(option=1) # growth
+  {
+    if(is.null(Growth_Parameters)){
+      cat("Need updated SS_output function to get Growth_Parameters output\n")
+      return()
+    }
+    # save current parameter settings
+    par_old <- par()
+    par(mar=c(4,4,1,4))
+    AminF <- Growth_Parameters$A1[1]
+    AmaxF <- Growth_Parameters$A2[1]
+    AminM <- Growth_Parameters$A1[2]
+    AmaxM <- Growth_Parameters$A2[2]
+    CV_at_AminF <- Growth_Parameters$CVmin[1]
+    CV_at_AmaxF <- Growth_Parameters$CVmax[1]
+    CV_at_AminM <- Growth_Parameters$CVmin[2]
+    CV_at_AmaxM <- Growth_Parameters$CVmax[2]
+    ymax <- max(CV_at_AminF,CV_at_AmaxF,CV_at_AminM,CV_at_AmaxM)
+    plot(0, type="n",
+         xlim=c(0,1+max(growdatF$Age_Mid)),
+         ylim=c(0,1.1*ymax),
+         xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
+    abline(h=0,col="grey")
+    #title(main=main, xlab=labels[2], ylab=labels[6], cex.main=cex.main)
+    axis(1, at=c(0,AminF,AmaxF,accuage),
+         labels=expression(0,italic(A[1]),italic(A[2]),italic(N[ages])))
+    axis(2, at=c(0, CV_at_AminF, CV_at_AmaxF),
+         labels=expression(0, italic(CV[A[1]]), italic(CV[A[2]])), las=1)
+    # add growth curve itself
+    lines(growdatF$Age_Mid,growdatF$CV_Mid,
+          col=1,lwd=3,lty=1)
+    # add growth curve for males
+    if(nsexes > 1 & option%in%c(2,4)){
+      lines(growdatM$Age_Mid,growdatM$CV_Mid,
+            col=1,lwd=2,lty=2)
+    }
+    if(option==1){
+      # lines connecting axes to curve
+      lines(c(AminF,AminF,0),c(0,CV_at_AminF,CV_at_AminF),lty=3)
+      lines(c(AmaxF,AmaxF,0),c(0,CV_at_AmaxF,CV_at_AmaxF),lty=3)
+    }
+    if(option==2){
+      # lines connecting two curves
+      lines(c(0,AminF), c(CV_at_AminF,CV_at_AminF),lty=3)
+      lines(c(0,AmaxF), c(CV_at_AmaxF,CV_at_AmaxF),lty=3)
+      lines(c(accuage+10,AmaxM), c(CV_at_AmaxM,CV_at_AmaxM),
+            lty=3)
+      lines(c(accuage+10,AminM), c(CV_at_AminM,CV_at_AminM),
+            lty=3)
+      arrows(x0=AminF,      x1=AminF,
+             y0=CV_at_AminF, y1=CV_at_AminM,
+            lwd=3,col=3,length=0.1)
+      arrows(x0=AmaxF,      x1=AmaxF,
+             y0=CV_at_AmaxF, y1=CV_at_AmaxM,
+            lwd=3,col=3,length=0.1)
+      text(AminF, mean(c(CV_at_AminM)),
+           "Male parameter 1\n(exponential offset)", col=3, adj=c(0,1.5))
+      text(AmaxF, mean(c(CV_at_AmaxM)),
+           "Male parameter 2\n(exponential offset)", col=3, adj=c(0,1.5))
+      axis(4, at=c(0, CV_at_AminM, CV_at_AmaxM),
+           labels=expression(0, italic(CV[A[1]]^male), italic(CV[A[2]]^male)),
+           las=1)
+    }
+    if(option==3){
+      # lines connecting axes to curve
+      lines(c(AminF,AminF,0),c(0,CV_at_AminF,CV_at_AminF),lty=3)
+      lines(c(AmaxF,AmaxF,0),c(0,CV_at_AmaxF,CV_at_AmaxF),lty=3)
+      lines(c(0,AmaxF), c(CV_at_AminF,CV_at_AminF),lty=3)
+      arrows(x0=AmaxF, x1=AmaxF,
+             y0=CV_at_AminF, y1=CV_at_AmaxF,
+             lwd=3, col=3, length=0.1)
+      text(AmaxF, mean(c(CV_at_AminF,CV_at_AmaxF)),
+           "Female parameter 2\n(exponential offset)", col=3, adj=c(-.1,0))
+    }
+    if(option==4){
+      # lines connecting two curves
+      arrows(x0=AmaxF, x1=AmaxF,
+             y0=CV_at_AminF, y1=CV_at_AmaxF,
+             lwd=3, col=3, length=0.1)
+      text(AmaxF, mean(c(CV_at_AminF,CV_at_AmaxF)),
+           "Female parameter 2\n(exponential offset)", col=3, adj=c(-.1,0))
+      lines(c(0,AmaxF), c(CV_at_AminF,CV_at_AminF),lty=3)
+      lines(c(0,AmaxF), c(CV_at_AmaxF,CV_at_AmaxF),lty=3)
+      lines(c(accuage+10,AmaxM), c(CV_at_AmaxM,CV_at_AmaxM),
+            lty=3)
+      lines(c(accuage+10,AminM), c(CV_at_AminM,CV_at_AminM),
+            lty=3)
+      arrows(x0=AminF,      x1=AminF,
+             y0=CV_at_AminF, y1=CV_at_AminM,
+            lwd=3,col=3,length=0.1)
+      arrows(x0=AmaxF,      x1=AmaxF,
+             y0=CV_at_AminM, y1=CV_at_AmaxM,
+            lwd=3,col=3,length=0.1)
+      text(AminF, mean(c(CV_at_AminF,CV_at_AminM)),
+           "Male parameter 1\n(exponential offset)", col=3, adj=c(0,1.5))
+      text(AmaxF, mean(c(CV_at_AminM,CV_at_AmaxM)),
+           "Male parameter 2\n(exponential offset)", col=3, adj=c(0,1.5))
+      axis(4, at=c(0, CV_at_AminM, CV_at_AmaxM),
+           labels=expression(0, italic(CV[A[1]]^male), italic(CV[A[2]]^male)),
+           las=1)
+    }
+    box()
+    # restore old parameter settings
+    par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+  }
+  if(plot & 103 %in% subplots) CV_values_labeled_fn(option=1)
+  if(print & 103 %in% subplots){
+    file <- paste(plotdir,"/bio103_CV_illustration.png",sep="")
+    caption <- "Illustration of growth variability parameters"
+    plotinfo <- pngfun(file=file, caption=caption)
+    CV_values_labeled_fn(option=1)
+    dev.off()
+  }
+  if(plot & 104 %in% subplots) CV_values_labeled_fn(option=2)
+  if(print & 104 %in% subplots){
+    file <- paste(plotdir,"/bio104_CV_illustration2.png",sep="")
+    caption <- "Illustration of growth variability parameters with male offsets"
+    plotinfo <- pngfun(file=file, caption=caption)
+    CV_values_labeled_fn(option=2)
+    dev.off()
+  }
+  if(plot & 105 %in% subplots) CV_values_labeled_fn(option=3)
+  if(print & 105 %in% subplots){
+    file <- paste(plotdir,"/bio105_CV_illustration.png",sep="")
+    caption <- "Illustration of growth variability parameters for offset type 3"
+    plotinfo <- pngfun(file=file, caption=caption)
+    CV_values_labeled_fn(option=3)
+    dev.off()
+  }
+  if(plot & 106 %in% subplots) CV_values_labeled_fn(option=4)
+  if(print & 106 %in% subplots){
+    file <- paste(plotdir,"/bio106_CV_illustration2.png",sep="")
+    caption <- "Illustration of growth variability parameters with male offsets"
+    plotinfo <- pngfun(file=file, caption=caption)
+    CV_values_labeled_fn(option=4)
+    dev.off()
+  }
+
+
   x <- biology$Mean_Size
-  
+
   if(plot){ # plot to screen or to PDF file
     if(4 %in% subplots) weight_plot()
     if(5 %in% subplots) maturity_plot()
@@ -774,13 +909,13 @@ lab2max <- 0.25
       dev.off()
     }
   }
-  
+
   # Natural mortality (if age-dependent -- need to add time-varying M plot)
   MatAge <- growdatF$M # female mortality in the ending year
   # not sure what role M2 is playing here
   M2 <- MGparmAdj[,c(1,grep("NatM",names(MGparmAdj)))]
   # not sure when you could have ncol(M2) = NULL
-  if(!is.null(ncol(M2))){ 
+  if(!is.null(ncol(M2))){
     M2f <- M2[,c(1,grep("Fem",names(M2)))]
     if(min(MatAge)!=max(MatAge) & 11 %in% subplots){
       ymax <- max(MatAge)
@@ -805,7 +940,7 @@ lab2max <- 0.25
       if(print & 11 %in% subplots){
         file <- paste(plotdir,"/bio11_natmort.png",sep="")
         caption <- "Natural mortality"
-        plotinfo <- pngfun(file=file, caption=caption) 
+        plotinfo <- pngfun(file=file, caption=caption)
         mfunc()
         dev.off()
       }
@@ -891,7 +1026,7 @@ lab2max <- 0.25
           if(print){
             file <- paste(plotdir, "/bio14_time-varying_", parmlabel, ".png", sep="")
             caption <- "Time-varying mortality and growth parameters"
-            plotinfo <- pngfun(file=file, caption=caption) 
+            plotinfo <- pngfun(file=file, caption=caption)
             timeVaryingParmFunc(parmlabel)
             dev.off()
           }
