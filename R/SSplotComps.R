@@ -1,9 +1,9 @@
 #' Plot composition data and fits.
-#' 
+#'
 #' Plot composition data and fits from Stock Synthesis output.  Mult-figure
 #' plots depend on \code{make_multifig}.
-#' 
-#' 
+#'
+#'
 #' @param replist list created by \code{SSoutput}
 #' @param subplots vector controlling which subplots to create
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
@@ -113,7 +113,7 @@ SSplotComps <-
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
            blue=rgb(0,0,1,0.7),red=rgb(1,0,0,0.7),
            pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-           plotdir="default", cex.main=1, linepos=1, fitbar=FALSE, 
+           plotdir="default", cex.main=1, linepos=1, fitbar=FALSE,
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
            labels = c("Length (cm)",           #1
                       "Age (yr)",              #2
@@ -139,7 +139,7 @@ SSplotComps <-
   ################################################################################
 
   ###### current definitions of subplots
-  ### 
+  ###
   ### # loop over fleets {
   ### subplot 1: multi-panel composition plot
   ### subplot 2: single panel bubble plot for numbers at length or age
@@ -159,7 +159,7 @@ SSplotComps <-
 
 
   ###### new definitions of subplots
-  ### 
+  ###
   ### # loop over fleets {
   ### subplot 1: multi-panel composition plot
   ### subplot 2: single panel bubble plot for numbers at length or age
@@ -169,7 +169,7 @@ SSplotComps <-
   ### subplot 6: multi-panel plot of point and line fit to conditional
   ###            age-at-length for specific length bins
   ### subplot 7: sample size plot
-  ### NEW subplot 8: TA1.8 Francis weighting plot 
+  ### NEW subplot 8: TA1.8 Francis weighting plot
   ### subplot 9: Andre's mean age and std. dev. in conditional AAL
   ### subplot 10: by fleet aggregating across years
   ### } # end loop over fleets
@@ -177,7 +177,7 @@ SSplotComps <-
   ### subplot 12: by fleet aggregating across seasons within a year
   ### subplot 13: bubble plot comparison of length or age residuals
   ###             across fleets within gender/partition
-  
+
 
 
 
@@ -212,7 +212,7 @@ SSplotComps <-
   accuage       <- replist$accuage
 
   Age_tuning    <- replist$Age_comp_Eff_N_tuning_check
-  
+
   titles <- NULL
   titlemkt <- ""
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -367,7 +367,7 @@ SSplotComps <-
       ##     cat('sex',sex,'\n')
 
       dbase_k <- dbasef
-      
+
           # loop over partitions (discard, retain, total)
           for(j in unique(dbase_k$Part))
           {
@@ -520,13 +520,15 @@ SSplotComps <-
               tempfun2 <- function(){
                 xvals <- dbase$Yr.S
                 xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)))))[1]
+                if(is.na(xdiff)){
+                  xdiff <- 1
+                }
                 cols <- rep(colvec[3],nrow(dbase))
                 if(nsexes > 1){
                   xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
                     (dbase$sex[dbase$sex>0]-1.5)*xdiff
                   cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
                 }
-#print(table(xvals,is.na(z)))
                 bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
                         ylab=kindlab, col=cols, cexZ1=cexZ1,
                         legend=bublegend,
@@ -554,7 +556,6 @@ SSplotComps <-
                   }
                 }
               }
-
               if(plot) tempfun2()
               if(print){ # set up plotting to png file if required
                 caption <- ptitle
@@ -575,6 +576,7 @@ SSplotComps <-
               }
             } # end bubble plot
             ### subplot 3: multi-panel bubble plots for conditional age-at-length
+
             if(3 %in% subplots & kind=="cond"){
               ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
               ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
@@ -851,7 +853,7 @@ SSplotComps <-
                 ymax <- 1.1*max(dbase$Bin,na.rm=TRUE)
                 xmax <- max(condbase$Lbin_hi,na.rm=TRUE)
                 xmin <- min(condbase$Lbin_lo,na.rm=TRUE)
-                
+
                 # do some stuff so that figures that span multiple pages can be output as separate PNG files
                 npanels <- length(Yrs)
                 npages <- npanels/andrerows

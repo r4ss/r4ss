@@ -810,9 +810,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
              y0=CV_at_AminM, y1=CV_at_AmaxM,
             lwd=3,col=3,length=0.1)
       text(AminF, mean(c(CV_at_AminF,CV_at_AminM)),
-           "Male parameter 1\n(exponential offset)", col=3, adj=c(0,1.5))
+           "Male parameter 1\n(exponential offset)", col=3, adj=c(0,2))
       text(AmaxF, mean(c(CV_at_AminM,CV_at_AmaxM)),
-           "Male parameter 2\n(exponential offset)", col=3, adj=c(0,1.5))
+           "Male parameter 2\n(exponential offset)", col=3, adj=c(0,2))
       axis(4, at=c(0, CV_at_AminM, CV_at_AmaxM),
            labels=expression(0, italic(CV[A[1]]^male), italic(CV[A[2]]^male)),
            las=1)
