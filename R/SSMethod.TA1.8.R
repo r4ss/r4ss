@@ -110,7 +110,10 @@ SSMethod.TA1.8 <-
   if(method.flag)
     indx <- paste(indx,dbase$method)
   uindx <- unique(indx)
-  if(length(uindx)==1)stop('Only one point to plot')
+  if(length(uindx)==1){
+    cat('Warning: only one point to plot\n')
+    return()
+  }
 
   pldat <- matrix(0,length(uindx),10,
                   dimnames=list(uindx,
