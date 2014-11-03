@@ -198,7 +198,9 @@ make_multifig <-
     ptsy_i2[ptsy_i2 < 0] <- NA
     
     if(doSD){
-      ptsSD_i <- ptsSD[yr==yr_i]
+      ptsSD_i0 <- ptsSD[yr==yr_i & sexvec==0]
+      ptsSD_i1 <- ptsSD[yr==yr_i & sexvec==1]
+      ptsSD_i2 <- ptsSD[yr==yr_i & sexvec==2]
     }
     sexvec_i <- sexvec[yr==yr_i]
     linesx_i0 <- linesx[yr==yr_i & sexvec==0]
@@ -315,9 +317,21 @@ make_multifig <-
       if(doSD){
         old_warn <- options()$warn      # previous setting
         options(warn=-1)                # turn off "zero-length arrow" warning
-        arrows(x0=ptsx_i1,y0=qnorm(p=0.05,mean=ptsy_i1,sd=ptsSD_i),
-               x1=ptsx_i1,y1=qnorm(p=0.95,mean=ptsy_i1,sd=ptsSD_i),
-               length=0.01, angle=90, code=3, col=ptscol)
+        if(length(ptsx_i0)>0){
+          arrows(x0=ptsx_i0,y0=qnorm(p=0.05,mean=ptsy_i0,sd=ptsSD_i0),
+                 x1=ptsx_i0,y1=qnorm(p=0.95,mean=ptsy_i0,sd=ptsSD_i0),
+                 length=0.01, angle=90, code=3, col=ptscol)
+        }
+        if(length(ptsx_i1)>0){
+          arrows(x0=ptsx_i1,y0=qnorm(p=0.05,mean=ptsy_i1,sd=ptsSD_i1),
+                 x1=ptsx_i1,y1=qnorm(p=0.95,mean=ptsy_i1,sd=ptsSD_i1),
+                 length=0.01, angle=90, code=3, col=ptscol)
+        }
+        if(twosex & length(ptsx_i2)>0){
+          arrows(x0=ptsx_i2,y0=-qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
+                 x1=ptsx_i2,y1=-qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
+                 length=0.01, angle=90, code=3, col=ptscol)
+        }
         options(warn=old_warn)  #returning to old value
       }
     }
