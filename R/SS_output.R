@@ -1140,8 +1140,14 @@ if(FALSE){
                                        all(biology$Wt_len_F==biology$Fecundity),
                                        "biomass", "numbers")
   
-  ## Growth_Parameters <- matchfun2["Growth_Parameters",1,"Seas_Effects",-1]
-  ## returndat$Growth_Parameters <- Growth_Parameters
+  Growth_Parameters <- matchfun2("Growth_Parameters",1,
+                                 "Growth_Parameters",1+nrow(morph_indexing),
+                                 header=TRUE)
+  for(icol in 1:ncol(Growth_Parameters)){
+    Growth_Parameters[,icol] <- as.numeric(Growth_Parameters[,icol])
+  }
+  returndat$Growth_Parameters <- Growth_Parameters
+  
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
   if(Seas_Effects[[1]][1]!="absent"){
     for(i in 1:ncol(Seas_Effects)) Seas_Effects[,i] <- as.numeric(Seas_Effects[,i])
@@ -1206,7 +1212,12 @@ if(FALSE){
 
   # get spawning season
   # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
-  returndat$spawnseas <- spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+  spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+  # probablem with spawning season calculation when NA values in SpawnBio
+  if(length(spawnseas)==0){
+    spawnseas <- NA
+  }
+  returndat$spawnseas <- spawnseas
   # get birth seasons as vector of seasons with non-zero recruitment
   returndat$birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
 
@@ -1222,11 +1233,14 @@ if(FALSE){
   }
   # this work around needed for 12/2/2013 version of 3.3
   # which has simpler recruitment_dist than 3.24S
-  if(is.null(rd$Used)) rd$Used <- 1
-  if(rd$Used[spawnseas]==0)
+  if(is.null(rd$Used)){
+    rd$Used <- 1
+  }
+  if(!is.na(spawnseas) & rd$Used[spawnseas]==0){
     temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
                            morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-
+  }
+  
   # filter in case multiple growth patterns (would cause problems)
   mainmorphs <- min(temp$Index[temp$Gender==1])
   if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
