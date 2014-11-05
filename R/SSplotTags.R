@@ -42,7 +42,7 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
 SSplotTags <-
-  function(replist=replist, subplots=1:8, latency=0,
+  function(replist=replist, subplots=1:8, latency=NULL,
            rows=1, cols=1,
            tagrows=3, tagcols=3,
            plot=TRUE, print=FALSE,
@@ -88,7 +88,10 @@ SSplotTags <-
     tagrecap       <- replist$tagrecap
     tagsalive      <- replist$tagsalive
     tagtotrecap    <- replist$tagtotrecap
-
+    if(is.null(latency)){
+      latency <- replist$tagfirstperiod
+    }
+    
     tagfun1 <- function(ipage=0){
       if(verbose) cat("Note: lighter colored bars in tag plot indicate latency period excluded from likelihood\n")
       # obs & exp recaps by tag group
