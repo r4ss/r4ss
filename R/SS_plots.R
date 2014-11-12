@@ -920,26 +920,22 @@ SS_plots <-
     } #end if igroup in plot or print
 
     ##########################################
-    # Andre's conditional age-at-length comp fits
+    # Fancis and Punt conditional age-at-length comp fits
     #
     igroup <- 19
     if(igroup %in% plot){
       if(nrow(replist$condbase)>0 & verbose){
-        ## if(verbose){
-        ##   cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
-        ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
-        ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
-        ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
-        ##       "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
-        ##       "    with 90% CIs based on the chi-square distribution.\n")
-        ## }
         plotinfo <-
-          SSplotComps(replist=replist,subplots=8,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+          SSplotComps(replist=replist,subplots=9:10,datonly=FALSE,kind="cond",
+                      bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       aalbin=aalbin,aalyear=aalyear,
-                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                      samplesizeplots=samplesizeplots,
+                      showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
-                      maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
+                      maxrows=maxrows,maxcols=maxcols,
+                      maxrows2=maxrows2,maxcols2=maxcols2,
+                      fixdims=fixdims,rows=rows,cols=cols,
                       andrerows=andrerows,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,

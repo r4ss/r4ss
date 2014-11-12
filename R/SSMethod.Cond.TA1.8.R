@@ -63,7 +63,7 @@ SSMethod.Cond.TA1.8 <-
   is.in <- function (x, y)!is.na(match(x, y))
 
   # Select the type of datbase
-  dbase <- fit[[paste("condbase",sep='')]]
+  dbase <- fit[["condbase"]]
   sel <- is.in(dbase$Fleet,fleet) & is.in(dbase$Part,part)
   if(sum(sel)==0) return()
 
@@ -76,7 +76,12 @@ SSMethod.Cond.TA1.8 <-
 
   indx <- paste(dbase$Fleet,dbase$Yr,if(seas=='sep')dbase$Seas else '')
   uindx <- unique(indx)
-  if(length(uindx)==1)stop('Only one point to plot')
+  if(length(uindx)==1){
+    # presumably the method is meaningless of there's only 1 point,
+    # but it's good to be able to have the function play through
+    cat('Warning: only one point to plot\n')
+    return()
+  }
 
   pldat <- matrix(0,length(uindx),12,
                   dimnames=list(uindx,
@@ -148,7 +153,9 @@ SSMethod.Cond.TA1.8 <-
 
     # Select number of panels
     Npanel <- length(uplindx)
-    NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    ## Ian T. 9/25/14: changing from having at least 4 panels to no minimum
+    #NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
     par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),

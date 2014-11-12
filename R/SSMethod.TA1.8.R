@@ -52,7 +52,7 @@
 #' If !is.null(method), analysis is restricted to size-frequency
 #' methods in this vector.  NB comps are separated by method
 #' @param plotit if TRUE, make an illustrative plot like one or more
-#' panels of Fig. 4 in the Francis (2011).
+#' panels of Fig. 4 in Francis (2011).
 #' @param maxpanel maximum number of panels within a plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
@@ -80,9 +80,13 @@ SSMethod.TA1.8 <-
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
-  if(!is.in(type,c('age','len','size','con')))stop('Illegal value for type')
-  else if(sum(!is.in(pick.gender,c(0:3)))>0)
-    stop('Unrecognised value for pick.gender')
+  if(!is.in(type,c('age','len','size','con'))){
+    stop('Illegal value for type')
+  }else{
+    if(sum(!is.in(pick.gender,c(0:3)))>0){
+      stop('Unrecognised value for pick.gender')
+    }
+  }
 
   # Select the type of datbase
   dbase <- fit[[paste(type,'dbase',sep='')]]
@@ -111,6 +115,8 @@ SSMethod.TA1.8 <-
     indx <- paste(indx,dbase$method)
   uindx <- unique(indx)
   if(length(uindx)==1){
+    # presumably the method is meaningless of there's only 1 point,
+    # but it's good to be able to have the function play through
     cat('Warning: only one point to plot\n')
     return()
   }
@@ -123,7 +129,7 @@ SSMethod.TA1.8 <-
   if(gender.flag)pldat <- cbind(pldat,pick.gender=0)
   if(method.flag)pldat <- cbind(pldat,method=0)
 
-  # Find the wieghting factor for this combination of factors
+  # Find the weighting factor for this combination of factors
   for(i in 1:length(uindx)){  # each row of pldat is an individual comp
     subdbase <- dbase[indx==uindx[i],]
     xvar <- subdbase$Bin
