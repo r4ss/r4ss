@@ -53,12 +53,13 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                     c(plotlim[3], y[, pline], plotlim[3]),
                     border = border, col = col[pline],
                     lty = lty[pline],
-                    density=ifelse(x[1]%in%x.hash, density, NULL)
+                    density=ifelse(x[1]%in%x.hash, density, NULL))
+        } else {
+          polygon(c(x[, pline], rev(x[, pline - 1])),
+                  c(y[, pline], rev(y[, pline - 1])), border = border,
+                  col = col[pline], lty = lty[pline],
+                  density=ifelse(x[1,pline]%in%x.hash, density, NULL))
         }
-        else polygon(c(x[, pline], rev(x[, pline - 1])),
-                     c(y[, pline], rev(y[, pline - 1])), border = border,
-                     col = col[pline], lty = lty[pline],
-                     density=ifelse(x[1,pline]%in%x.hash, density, NULL)
     }
     if (axis4)  axis(4)
 }
