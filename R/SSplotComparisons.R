@@ -435,8 +435,12 @@ SSplotComparisons <-
     #}
   }
 
-  if(endyrvec[1]=="default") endyrvec <- endyrs
-  if(length(endyrvec)==1) endyrvec <- rep(endyrvec,nlines)
+  if(endyrvec[1]=="default"){
+    endyrvec <- endyrs
+  }
+  if(length(endyrvec)==1){
+    endyrvec <- rep(endyrvec,nlines)
+  }
   if(!is.null(endyrvec)){
     for(iline in 1:nlines){
       endyr <- endyrvec[iline]
@@ -447,6 +451,13 @@ SSplotComparisons <-
       Bratio[Bratio$Yr > endyr, imodel] <- NA
       BratioLower[Bratio$Yr > endyr, imodel] <- NA
       BratioUpper[Bratio$Yr > endyr, imodel] <- NA
+      #### note: add generalized startyrvec option in the future
+      ## if(exists("startyrvec")){
+      ##   startyr <- startyrvec[iline]
+      ##   Bratio[Bratio$Yr < startyr, imodel] <- NA
+      ##   BratioLower[Bratio$Yr < startyr, imodel] <- NA
+      ##   BratioUpper[Bratio$Yr < startyr, imodel] <- NA
+      ## }
       SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
@@ -559,7 +570,7 @@ SSplotComparisons <-
     }
     ylim <- ylimAdj*range(0, Bratio[,models], na.rm=TRUE)
     if(uncertainty) ylim <- ylimAdj*range(ylim, BratioUpper[,models], na.rm=TRUE)
-
+print(ylim)
     # make plot
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
                   xaxs=xaxs,yaxs=yaxs,axes=FALSE)

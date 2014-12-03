@@ -60,7 +60,7 @@ SSplotCatch <-
            lwd=3, areacols="default", areanames="default",
            minyr=NULL,maxyr=NULL,
            annualcatch=TRUE,
-           forecastplot=TRUE,
+           forecastplot=FALSE,
            plotdir="default",showlegend=TRUE,
            legendloc="topleft",
            order="default",
@@ -168,7 +168,11 @@ SSplotCatch <-
   # time series (but no forecast) quantities used for multiple plots
   if(nseasons>1) timeseries$Yr <- timeseries$Yr + replist$seasfracs
   ts <- timeseries[timeseries$Yr <= endyr+1,]
-
+  #ts.fore <- timeseries[timeseries$Yr >= endyr+1,]
+  if(forecastplot){
+    ts <- timeseries
+  }
+      
   # harvest rates
   if(F_method==1){
     stringF <- "Hrate:_"
@@ -180,6 +184,9 @@ SSplotCatch <-
 
   ### total landings (retained) & catch (encountered)
   goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
+  if(forecastplot){
+    goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME","FORE")
+  }
   catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
 
   if(SS_versionshort=="SS-V3.11"){
@@ -274,12 +281,14 @@ SSplotCatch <-
   } # end linefunc
 
   # function for stacked polygons
-  stackfunc <- function(ymat,ylab,x=catchyrs){
+  stackfunc <- function(ymat, ylab, x=catchyrs, hashyrs=NULL){
     ## call to function in plotrix (formerly copied into r4ss)
     if(length(order)==ncol(ymat)) ymat <- ymat[,order]
     stackpoly(x=x, y=ymat, border="black",
-              xlab=xlab, ylab=ylab, col=fleetcols[order])
-    if(showlegend) legend(legendloc, fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")
+              xlab=xlab, ylab=ylab, col=fleetcols[order], x.hash=hashyrs)
+    if(showlegend){
+      legend(legendloc, fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")
+    }
     return(TRUE)
   } # end stackfunc
 

@@ -55,6 +55,7 @@
 #' panels of Fig. 4 in Francis (2011).
 #' @param maxpanel maximum number of panels within a plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
+#' @export
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of

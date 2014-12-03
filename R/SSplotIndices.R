@@ -157,7 +157,9 @@ function(replist,subplots=1:9,
     time2 <- diff(range(cpueuse$Eff_Q))>0
     # Teresa's model had NA values in Eff_Q for unknown reasons
     # line below will allow model to play on
-    if(is.na(time2)) time2 <- FALSE
+    if(is.na(time2)){
+      time2 <- FALSE
+    }
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
@@ -197,9 +199,12 @@ function(replist,subplots=1:9,
              main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
              bg=bg,cex=cex)
       abline(h=0,col="grey")
-      if(addexpected) lines(x,z,lwd=2,col=col3)
-      if(legend & length(colvec1)>1) legend(x=legendloc, legend=seasnames,
-                                            pch=pch1, col=colvec1, cex=cex)
+      if(addexpected){
+        lines(x,z,lwd=2,col=col3)
+      }
+      if(legend & length(colvec1)>1){
+        legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
+      }
     }
     cpuefun2 <- function(){
       # plot of observed vs. expected with smoother
