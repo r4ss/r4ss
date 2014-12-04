@@ -187,7 +187,8 @@ SSMethod.TA1.8 <-
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')]),
+           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
+               na.rm=TRUE),
            xlab='',ylab='')
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3)
       arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
@@ -218,7 +219,7 @@ SSMethod.TA1.8 <-
   }
   tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
   confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
-                                c(0.025,0.975)))
+                                c(0.025,0.975),na.rm=TRUE))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
   Outs <- paste("Francis Weights - ", type, ": ", fit$FleetNames[fleet],": ",
                 round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
