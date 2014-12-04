@@ -45,7 +45,9 @@
 #' @param cexZ1 Character expansion (cex) for point associated with value of 1.
 #' @param bublegend Add legend with example bubble sizes to bubble plots.
 #' @param colvec Vector of length 3 with colors for females, males, unsexed fish
-#' @param blue What color to use for bubble plots (default is slightly
+#' @param red What color to use for females in bubble plots (default is slightly
+#' transparent red)
+#' @param blue What color to use for males in bubble plots (default is slightly
 #' transparent blue)
 #' @param pwidth default width of plots printed to files in units of
 #' \code{punits}. Default=7.

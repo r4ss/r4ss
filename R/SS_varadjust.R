@@ -1,25 +1,15 @@
-#' Get parameter lines from Stock Synthesis control file
+#' Modify variance and sample size adjustments in the control file
 #' 
-#' A simple function which takes as input the full path and filename of a
-#' control file for input to Stock Synthesis. Ideally, a Control.SS_New file
-#' will be used, so that it represents what SS thinks the inputs are, and not
-#' what the user thinks the inputs are.
-#' 
-#' It returns a table which should contain one line for each parameter in the
-#' model. Currently, only the first 7 values are returned, because all
-#' parameters have those values. In the future, extended parameter lines could
-#' be returned.
-#' 
-#' Parameter lines are identified as those which have 7 or 14 numeric elements
-#' followed by a non-numeric element. It's possible that this system could
-#' break down under certain circumstances
-#' 
+#' Incomplete function in process of development.
 #' 
 #' @param dir Directory with control file to change.
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
 #' Default="control_modified.ss".
-#' 
+#' @param keyword Keyword to use as reference for start of section on
+#' variance adjustments
+#' @param maxcols Maximum number of columns to search among (may need to
+#' increase from default if you have a huge number of fleets)
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
 #' @author Ian Taylor
@@ -29,15 +19,6 @@
 #' @examples
 #' 
 #' \dontrun{
-#' x <- SS_parlines(ctlfile='Y:/ss/SSv3.03a/Simple/Control.SS_New')
-#' head(x)
-#' #       LO    HI     INIT PRIOR PR_type   SD PHASE              Label Line_num
-#' # 42  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_1_Fem_GP_1       42
-#' # 43  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_2_Fem_GP_1       43
-#' # 44  1.00 45.00 32.28100 36.00       0 10.0     2 L_at_Amin_Fem_GP_1       44
-#' # 45 40.00 90.00 71.34260 70.00       0 10.0     4 L_at_Amax_Fem_GP_1       45
-#' # 46  0.05  0.25  0.15199  0.15       0  0.8     4 VonBert_K_Fem_GP_1       46
-#' # 47  0.05  0.25  0.10000  0.10       0  0.8    -3  CV_young_Fem_GP_1       47
 #' }
 #' 
 SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
@@ -45,7 +26,6 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
                          newctlfile="control_modified.ss",
                          keyword="Variance_adjustments",
                          maxcols=50, 
-                         writenew="control_modified.ss",
                          verbose=TRUE)
 {
   # read control file as a table of values

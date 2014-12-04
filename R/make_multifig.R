@@ -76,6 +76,7 @@
 #' @param legsize font size for legends. default=c(1.2,1.0) (larger for year
 #' and normal for others)
 #' @param legfont font type for legends, same as "font" under ?par
+#' @param venusmars Label females and males with venus and mars symbols?
 #' @param sampsizeline show line for input sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE/scalar, still in development)
 #' @param effNline show line for effective sample sizes on top of conditional
@@ -273,24 +274,25 @@ make_multifig <-
                 maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE)
       }
       # add optional lines showing (adjusted) input sample size
+      # IAN: these need to be generalized to deal with different sexes
       if(linepos==0) effNline <- 0
       if(effNline>0 && length(effN)>0){
-        effN_i         <- effN[yr==yr_i]
-        effN_i_vec     <- unlist(lapply(split(effN_i,ptsy_i),unique))
-        ptsy_i_vec     <- sort(unique(ptsy_i))
-        lines(effNline*effN_i_vec,ptsy_i_vec,col='green3')
+        effN_i1         <- effN[yr==yr_i]
+        effN_i1_vec     <- unlist(lapply(split(effN_i1,ptsy_i1),unique))
+        ptsy_i1_vec     <- sort(unique(ptsy_i1))
+        lines(effNline*effN_i1_vec,ptsy_i1_vec,col='green3')
         if(!is.null(effNmean))
-          lines(rep(effNline*effNmean,length(ptsy_i_vec)),ptsy_i_vec,col='green3',lty=2)
+          lines(rep(effNline*effNmean,length(ptsy_i1_vec)),ptsy_i1_vec,col='green3',lty=2)
       }
       # add optional lines showing effective sample size 
       if(sampsizeline>0 && length(sampsize)>0){
-        sampsize_i     <- sampsize[yr==yr_i]
-        sampsize_i_vec <- unlist(lapply(split(sampsize_i,ptsy_i),unique))
-        ptsy_i_vec     <- sort(unique(ptsy_i))
+        sampsize_i1     <- sampsize[yr==yr_i]
+        sampsize_i1_vec <- unlist(lapply(split(sampsize_i1,ptsy_i1),unique))
+        ptsy_i1_vec     <- sort(unique(ptsy_i1))
 
-        lines(sampsizeline*sampsize_i_vec,ptsy_i_vec,col=2)
+        lines(sampsizeline*sampsize_i1_vec,ptsy_i1_vec,col=2)
         if(!is.null(sampsizemean))
-          lines(rep(sampsizeline*sampsizemean,length(ptsy_i_vec)),ptsy_i_vec,col=2,lty=3)
+          lines(rep(sampsizeline*sampsizemean,length(ptsy_i1_vec)),ptsy_i1_vec,col=2,lty=3)
       }
     }else{
       # make polygons and points if this isn't mean len or wt with std. dev. intervals
