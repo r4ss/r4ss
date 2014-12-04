@@ -466,7 +466,13 @@ SS_output <-
   endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
   tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
   accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
-  ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,11]))
+  if(SS_versionNumeric >= 3.3){
+    ncpue_column <- 14
+    # IAN T.: this will need updating in revised version
+  }else{
+    ncpue_column <- 11
+  }
+  ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
 
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
@@ -979,9 +985,16 @@ SS_output <-
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
   # sigma_R
-  srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
-  rmse_table <- as.data.frame(srhead[-(1:9),1:5])
-  for(icol in 2:5) rmse_table[,icol] <- as.numeric(rmse_table[,icol])
+  if(SS_versionNumeric >= 3.3){
+    srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",11,cols=1:6)
+    rmse_table <- as.data.frame(srhead[-(1:10),1:5])
+  }else{
+    srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
+    rmse_table <- as.data.frame(srhead[-(1:9),1:5])
+  }    
+  for(icol in 2:5){
+    rmse_table[,icol] <- as.numeric(rmse_table[,icol])
+  }
   names(rmse_table) <- srhead[9,1:5]
   names(rmse_table)[4] <- "RMSE_over_sigmaR"
 
@@ -1223,8 +1236,15 @@ if(FALSE){
 
   # set mainmorphs as those morphs born in the spawning season
   # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
-  temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
-                         morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+  if(SS_versionNumeric >= 3.3){
+    # new "platoon" label
+    temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
+                           morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
+  }else{
+    # old "sub_morph" label
+    temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
+                           morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+  }
   # however, if there are no fish born in the spawning season, then it should be the first birth season
   if("recruit_dist_endyr" %in% names(recruitment_dist)){
     rd <- recruitment_dist$recruit_dist_endyr
@@ -1237,14 +1257,29 @@ if(FALSE){
     rd$Used <- 1
   }
   if(!is.na(spawnseas) & rd$Used[spawnseas]==0){
-    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
-                           morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+    if(SS_versionNumeric >= 3.3){
+      # new "platoon" label
+      temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
+                             morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
+    }else{
+      # old "sub_morph" label
+      temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
+                             morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+    }
   }
-  
   # filter in case multiple growth patterns (would cause problems)
-  mainmorphs <- min(temp$Index[temp$Gender==1])
-  if(nsexes==2) mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
-  if(length(mainmorphs)==0) cat("!Error with morph indexing in SS_output function.\n")
+  if(SS_versionNumeric >= 3.3){
+    column_label <- "Sex"
+  }else{
+    column_label <- "Gender"
+  }
+  mainmorphs <- min(temp$Index[temp[[column_label]]==1])
+  if(nsexes==2){
+    mainmorphs <- c(mainmorphs, min(temp$Index[temp[[column_label]]==2]))
+  }
+  if(length(mainmorphs)==0){
+    cat("!Error with morph indexing in SS_output function.\n")
+  }
   returndat$mainmorphs  <- mainmorphs
 
   # stats and dimensions
@@ -1457,7 +1492,11 @@ if(FALSE){
 
 
   # Spawner-recruit curve
-  rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
+  if(SS_versionNumeric >= 3.3){
+    rawsr <- matchfun2("SPAWN_RECRUIT",12,"INDEX_2",-1,cols=1:9)
+  }else{
+    rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
+  }
   names(rawsr) <- rawsr[1,]
   rawsr[rawsr=="_"] <- NA
   rawsr <- rawsr[-(1:2),] # remove header rows

@@ -206,7 +206,12 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   if(nsexes > 1){ # do males if 2-sex model
     growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
+    # IAN T. this should probably be generalized
     xm <- growdatM$Age
+    if(is.null(xm)){ # "Age" column gone in 3.3
+      xm <- growdatM$Age_Mid
+    }
+
     growdatM$Sd_Size <- growdatM$SD_Mid
     if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
       growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
@@ -370,6 +375,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   ymax <- max(biology$Mean_Size)
   x <- growdatF$Age
+  if(is.null(x)){ # "Age" column gone in 3.3
+    x <- growdatF$Age_Mid
+  }
+    
   main <- "Ending year expected growth (with 95% intervals)"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
   col_index1 <- 3 # default is grey for single-sex model

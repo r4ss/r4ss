@@ -20,7 +20,7 @@ Imports:
     tcltk
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr. Richard
-    D.  Methot at the NMFS Northwest Fisheries Science Center. The functions
+    D.  Methot at the NOAA Northwest Fisheries Science Center. The functions
     include tools for summarizing and plotting results, manipulating files,
     visualizing model parameterizations, and various other tasks.
 License: GPL-3
