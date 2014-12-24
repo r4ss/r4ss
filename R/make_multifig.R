@@ -112,11 +112,20 @@ make_multifig <-
            ipage=0,scalebins=FALSE,sexvec=NULL,...)
 {
   # switch to determine whether to show males below 0 line in same plot
-  twosex <- !is.null(sexvec)
+  twosex <- TRUE
+  if(is.null(sexvec)){
+    twosex <- FALSE
+  }
   # if all observations are the same sex then don't waste space below 0 line
   if(length(unique(sexvec))==1){
     twosex <- FALSE
   }
+  male_mult <- 1
+  if(twosex){
+    male_mult <- -1
+  }
+
+#print(paste("twosex: ",twosex)  )
   # define dimensions
   yrvec <- sort(unique(yr))
   npanels <- length(yrvec)
@@ -213,12 +222,10 @@ make_multifig <-
     # sort values in lines
     linesy_i0 <- linesy_i0[order(linesx_i0)]
     linesx_i0 <- sort(linesx_i0)
-    if(twosex){
-      linesy_i1 <- linesy_i1[order(linesx_i1)]
-      linesx_i1 <- sort(linesx_i1)
-      linesy_i2 <- linesy_i2[order(linesx_i2)]
-      linesx_i2 <- sort(linesx_i2)
-    }
+    linesy_i1 <- linesy_i1[order(linesx_i1)]
+    linesx_i1 <- sort(linesx_i1)
+    linesy_i2 <- linesy_i2[order(linesx_i2)]
+    linesx_i2 <- sort(linesx_i2)
     
     z_i0 <- size[yr==yr_i & sexvec==0]
     z_i1 <- size[yr==yr_i & sexvec==1]
@@ -248,30 +255,28 @@ make_multifig <-
          xaxs="i",yaxs=ifelse(bars,"i","r"))
     abline(h=0,col="grey") # grey line at 0
     if(linepos==2){ # add lines behind points
-      lines(linesx_i0,linesy_i0,col=linescol[1],lwd=lwd,lty=lty) # lines first
-      lines(linesx_i1,linesy_i1,col=linescol[2],lwd=lwd,lty=lty) # lines first
-      if(twosex){
-        lines(linesx_i2,-linesy_i2,col=linescol[3],lwd=lwd,lty=lty)
-      }
+      lines(linesx_i0, linesy_i0, col=linescol[1], lwd=lwd, lty=lty) # lines first
+      lines(linesx_i1, linesy_i1, col=linescol[2], lwd=lwd, lty=lty) # lines first
+      lines(linesx_i2, male_mult*linesy_i2, col=linescol[3], lwd=lwd, lty=lty)
     }
     if(bub){ # if size input is provided then use bubble function
       # bubble plot for unsexed fish
       if(length(z_i0)>0){
-        bubble3(x=ptsx_i0,y=ptsy_i0,z=z_i0,col=colvec[3],cexZ1=cexZ1,legend.yadj=1.5,
-                legend=bublegend,legendloc='topright',
-                maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE)
+        bubble3(x=ptsx_i0, y=ptsy_i0, z=z_i0, col=colvec[3], cexZ1=cexZ1, legend.yadj=1.5,
+                legend=bublegend, legendloc='topright',
+                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
       }
       # bubble plot for females fish
       if(length(z_i1)>0){
-        bubble3(x=ptsx_i1,y=ptsy_i1,z=z_i1,col=colvec[1],cexZ1=cexZ1,legend.yadj=1.5,
-                legend=bublegend,legendloc='topright',
-                maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE)
+        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, col=colvec[1], cexZ1=cexZ1, legend.yadj=1.5, 
+                legend=bublegend, legendloc='topright', 
+                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
       }
       # bubble plot for males fish
       if(length(z_i2)>0){
-        bubble3(x=ptsx_i2,y=ptsy_i2,z=z_i2,col=colvec[2],cexZ1=cexZ1,legend.yadj=1.5,
-                legend=bublegend,legendloc='topright',
-                maxsize=maxsize,minnbubble=minnbubble,allopen=allopen,add=TRUE)
+        bubble3(x=ptsx_i2, y=ptsy_i2, z=z_i2, col=colvec[2], cexZ1=cexZ1, legend.yadj=1.5, 
+                legend=bublegend, legendloc='topright', 
+                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
       }
       # add optional lines showing (adjusted) input sample size
       # IAN: these need to be generalized to deal with different sexes
@@ -309,9 +314,11 @@ make_multifig <-
         }
         points(ptsx_i1,ptsy_i1,type=type,lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
         # add male polygon and points below the 0 line
-        if(twosex & length(ptsx_i2)>0){
-          polygon(c(ptsx_i2[1],ptsx_i2,tail(ptsx_i2,1)),c(0,-ptsy_i2,0),col='grey60')  # polygon
-          points(ptsx_i2,-ptsy_i2,type=type,lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
+        if(length(ptsx_i2)>0){
+          polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2,1)),
+                  c(0, male_mult*ptsy_i2,0), col='grey60')  # polygon
+          points(ptsx_i2, male_mult*ptsy_i2,
+                 type=type, lwd=1, pch=16, cex=0.7, col=ptscol)  # lines with solid points on top
         }
       }
       
@@ -329,7 +336,7 @@ make_multifig <-
                  x1=ptsx_i1,y1=qnorm(p=0.95,mean=ptsy_i1,sd=ptsSD_i1),
                  length=0.01, angle=90, code=3, col=ptscol)
         }
-        if(twosex & length(ptsx_i2)>0){
+        if(length(ptsx_i2)>0){
           arrows(x0=ptsx_i2,y0=-qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
                  x1=ptsx_i2,y1=-qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
                  length=0.01, angle=90, code=3, col=ptscol)
