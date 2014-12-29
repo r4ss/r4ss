@@ -1454,9 +1454,12 @@ SSplotComps <-
 
           multifleet.bubble.fun <- function(ipage=0){
             # a function to wrap up multi-fleet bubble plots
-
+            # old graphics parameter settings
+            par_old <- par()
             # multi-figure plot with as many rows as fleets, or the maxrows value
-            par(mfrow=c(min(npanels,maxrows),1), mar=c(0.5,0,0,0),oma=c(4,6,3,1))
+            par(mfrow=c(min(npanels,maxrows),1),
+                mar=c(0.5,0,0,0),
+                oma=c(4,6,3,1))
 
             # set up some stuff for cases where there are more fleets than panels in one plot
             panelrange <- 1:npanels
@@ -1543,6 +1546,8 @@ SSplotComps <-
                 # add title after making first panel
                 title(main=ptitle, outer=TRUE, xlab=labels[3], ylab=kindlab)
             } # end loop over fleets
+            # restore previous graphics parameter settings
+            par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
           } # end function wrapping up a single page of the residual comparison plot
 
           # make plots or write to PNG file

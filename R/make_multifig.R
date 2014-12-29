@@ -175,15 +175,25 @@ make_multifig <-
   # get axis labels
   yaxs_lab <- pretty(yrange)
   maxchar <- max(nchar(yaxs_lab))
-  if(horiz_lab=="default") horiz_lab <- maxchar<6 # should y-axis label be horizontal?
+  if(horiz_lab=="default"){
+    horiz_lab <- maxchar<6 # should y-axis label be horizontal?
+  }
+  if(axis1=="default"){
+    axis1 <- pretty(xrange)
+  }
+  if(axis2=="default"){
+    axis2 <- pretty(yrange)
+  }
+  if(length(sampsize)==1){
+    sampsize <- 0
+  }
+  if(length(effN)==1){
+    effN <- 0
+  }
 
-  if(axis1=="default") axis1=pretty(xrange)
-  if(axis2=="default") axis2=pretty(yrange)
-
-  if(length(sampsize)==1) sampsize <- 0
-  if(length(effN)==1) effN <- 0
-
-  # create multifigure layout and set inner margins all to 0 and add outer margins
+  # create multifigure layout, set inner margins all to 0 and add outer margins
+  # old graphics parameter settings
+  par_old <- par()
   # new settings
   par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,5,2)+.1)
 
@@ -194,39 +204,45 @@ make_multifig <-
   for(ipanel in panelrange){
     # subset values for a given year
     yr_i <- yrvec[ipanel]
+    sexvec_i <- sexvec[yr==yr_i]
     # separate vectors for females and males shown in the same plot
     ptsx_i0 <- ptsx[yr==yr_i & sexvec==0]
     ptsx_i1 <- ptsx[yr==yr_i & sexvec==1]
     ptsx_i2 <- ptsx[yr==yr_i & sexvec==2]
+    # again for y-values
     ptsy_i0 <- ptsy[yr==yr_i & sexvec==0]
     ptsy_i1 <- ptsy[yr==yr_i & sexvec==1]
-    ptsy_i2 <- ptsy[yr==yr_i & sexvec==2]
-    
-    # change 0 values to NA
-    ptsy_i0[ptsy_i0 < 0] <- NA
-    ptsy_i1[ptsy_i1 < 0] <- NA
-    ptsy_i2[ptsy_i2 < 0] <- NA
-    
+    ptsy_i2 <- ptsy[yr==yr_i & sexvec==2]*male_mult
+
+    #### not sure why this was previously needed, taking it out for now
+    ## # change negative values to NA
+    ## ptsy_i0[ptsy_i0 < 0] <- NA
+    ## ptsy_i1[ptsy_i1 < 0] <- NA
+    ## ptsy_i2[ptsy_i2 < 0] <- NA
+
+    # standard deviations
+    # for use in mean length or weight at age plots
     if(doSD){
       ptsSD_i0 <- ptsSD[yr==yr_i & sexvec==0]
       ptsSD_i1 <- ptsSD[yr==yr_i & sexvec==1]
       ptsSD_i2 <- ptsSD[yr==yr_i & sexvec==2]
     }
-    sexvec_i <- sexvec[yr==yr_i]
+    # x-values for lines
     linesx_i0 <- linesx[yr==yr_i & sexvec==0]
     linesx_i1 <- linesx[yr==yr_i & sexvec==1]
     linesx_i2 <- linesx[yr==yr_i & sexvec==2]
+    # y-values for lines
     linesy_i0 <- linesy[yr==yr_i & sexvec==0]
     linesy_i1 <- linesy[yr==yr_i & sexvec==1]
-    linesy_i2 <- linesy[yr==yr_i & sexvec==2]
-    # sort values in lines
+    linesy_i2 <- linesy[yr==yr_i & sexvec==2]*male_mult
+    # sort based on order of x-values (perhaps not needed)
     linesy_i0 <- linesy_i0[order(linesx_i0)]
     linesx_i0 <- sort(linesx_i0)
     linesy_i1 <- linesy_i1[order(linesx_i1)]
     linesx_i1 <- sort(linesx_i1)
     linesy_i2 <- linesy_i2[order(linesx_i2)]
     linesx_i2 <- sort(linesx_i2)
-    
+    # subset size (z) values
     z_i0 <- size[yr==yr_i & sexvec==0]
     z_i1 <- size[yr==yr_i & sexvec==1]
     z_i2 <- size[yr==yr_i & sexvec==2]
@@ -238,56 +254,74 @@ make_multifig <-
       bins <- sort(unique(ptsx_i1))
       binwidths <- diff(bins)
       if(diff(range(binwidths))>0){
-        binwidths <- c(binwidths,tail(binwidths,1))
-        allbinwidths <- apply(as.matrix(ptsx_i1),1,function(x) (binwidths)[bins==x])
-        ptsy_i1 <- ptsy_i1/allbinwidths
-        linesy_i1 <- linesy_i1/allbinwidths
-        scaled <- TRUE
+        warn("NOTE: scaling comps based on variable bin widths\n",
+             "hasn't yet been adapted to 2-sex plots")
+        if(FALSE){
+          binwidths <- c(binwidths,tail(binwidths,1))
+          allbinwidths <- apply(as.matrix(ptsx_i1),1,
+                                function(x){(binwidths)[bins==x]})
+          ptsy_i1   <- ptsy_i1/allbinwidths
+          linesy_i1 <- linesy_i1/allbinwidths
+          scaled <- TRUE
+        }
       }
       if(scaled){
+        # change y-axis label if comps are scaled
         anyscaled <- TRUE
-        if(ylab=="Proportion") ylab <- "Proportion / bin width"
+        if(ylab=="Proportion"){
+          ylab <- "Proportion / bin width"
+        }
       }
     }
 
     # make plot
-    plot(0,type="n",axes=FALSE,xlab="",ylab="",xlim=xrange_big,ylim=yrange_big,
-         xaxs="i",yaxs=ifelse(bars,"i","r"))
+    plot(0,type="n", axes=FALSE, xlab="",ylab="", xlim=xrange_big,
+         ylim=yrange_big, xaxs="i", yaxs=ifelse(bars,"i","r"))
     abline(h=0,col="grey") # grey line at 0
     if(linepos==2){ # add lines behind points
-      lines(linesx_i0, linesy_i0, col=linescol[1], lwd=lwd, lty=lty) # lines first
-      lines(linesx_i1, linesy_i1, col=linescol[2], lwd=lwd, lty=lty) # lines first
-      lines(linesx_i2, male_mult*linesy_i2, col=linescol[3], lwd=lwd, lty=lty)
+      lines(linesx_i0, linesy_i0, col=linescol[1], lwd=lwd, lty=lty)
+      lines(linesx_i1, linesy_i1, col=linescol[2], lwd=lwd, lty=lty)
+      lines(linesx_i2, linesy_i2, col=linescol[3], lwd=lwd, lty=lty)
     }
     if(bub){ # if size input is provided then use bubble function
       # bubble plot for unsexed fish
       if(length(z_i0)>0){
-        bubble3(x=ptsx_i0, y=ptsy_i0, z=z_i0, col=colvec[3], cexZ1=cexZ1, legend.yadj=1.5,
+        bubble3(x=ptsx_i0, y=ptsy_i0, z=z_i0, col=colvec[3],
+                cexZ1=cexZ1, legend.yadj=1.5,
                 legend=bublegend, legendloc='topright',
-                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
+                maxsize=maxsize, minnbubble=minnbubble,
+                allopen=allopen, add=TRUE)
       }
       # bubble plot for females fish
       if(length(z_i1)>0){
-        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, col=colvec[1], cexZ1=cexZ1, legend.yadj=1.5, 
+        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, col=colvec[1],
+                cexZ1=cexZ1, legend.yadj=1.5, 
                 legend=bublegend, legendloc='topright', 
-                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
+                maxsize=maxsize, minnbubble=minnbubble,
+                allopen=allopen, add=TRUE)
       }
       # bubble plot for males fish
       if(length(z_i2)>0){
-        bubble3(x=ptsx_i2, y=ptsy_i2, z=z_i2, col=colvec[2], cexZ1=cexZ1, legend.yadj=1.5, 
+        bubble3(x=ptsx_i2, y=ptsy_i2, z=z_i2, col=colvec[2],
+                cexZ1=cexZ1, legend.yadj=1.5, 
                 legend=bublegend, legendloc='topright', 
-                maxsize=maxsize, minnbubble=minnbubble, allopen=allopen, add=TRUE)
+                maxsize=maxsize, minnbubble=minnbubble,
+                allopen=allopen, add=TRUE)
       }
-      # add optional lines showing (adjusted) input sample size
-      # IAN: these need to be generalized to deal with different sexes
+      # add optional lines to bubble plots showing
+      # (adjusted) input sample size
+      # IAN T.: these need to be generalized to deal
+      #         with different sexes
       if(linepos==0) effNline <- 0
       if(effNline>0 && length(effN)>0){
         effN_i1         <- effN[yr==yr_i]
         effN_i1_vec     <- unlist(lapply(split(effN_i1,ptsy_i1),unique))
         ptsy_i1_vec     <- sort(unique(ptsy_i1))
         lines(effNline*effN_i1_vec,ptsy_i1_vec,col='green3')
-        if(!is.null(effNmean))
-          lines(rep(effNline*effNmean,length(ptsy_i1_vec)),ptsy_i1_vec,col='green3',lty=2)
+        if(!is.null(effNmean)){
+          lines(rep(effNline*effNmean, length(ptsy_i1_vec)),
+                ptsy_i1_vec, col='green3', lty=2)
+        }
       }
       # add optional lines showing effective sample size 
       if(sampsizeline>0 && length(sampsize)>0){
@@ -296,46 +330,56 @@ make_multifig <-
         ptsy_i1_vec     <- sort(unique(ptsy_i1))
 
         lines(sampsizeline*sampsize_i1_vec,ptsy_i1_vec,col=2)
-        if(!is.null(sampsizemean))
-          lines(rep(sampsizeline*sampsizemean,length(ptsy_i1_vec)),ptsy_i1_vec,col=2,lty=3)
+        if(!is.null(sampsizemean)){
+          lines(rep(sampsizeline*sampsizemean, length(ptsy_i1_vec)),
+                ptsy_i1_vec, col=2, lty=3)
+        }
       }
     }else{
-      # make polygons and points if this isn't mean len or wt with std. dev. intervals
+      # make polygons and points
+      # (if this isn't mean len or wt with std. dev. intervals)
       if(!doSD){
-        ## print(c(length(ptsx_i0),length(ptsy_i0)))
-        ## print(c(length(ptsx_i1),length(ptsy_i1)))
         # make polygons
         if(length(ptsx_i0)>0){
-          polygon(c(ptsx_i0[1],ptsx_i0,tail(ptsx_i0,1)),c(0,ptsy_i0,0),col='grey80')  # polygon
+          # polygon for unsexed fish
+          polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
+                  col='grey70')
+          # line with solid points on top for unsexed fish
+          points(ptsx_i0, ptsy_i0, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
-        points(ptsx_i0,ptsy_i0,type=type,lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
         if(length(ptsx_i1)>0){
-          polygon(c(ptsx_i1[1],ptsx_i1,tail(ptsx_i1,1)),c(0,ptsy_i1,0),col='grey80')  # polygon
+          # polygon for females
+          polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
+                  col='grey80')
+          # lines with solid points on top for females
+          points(ptsx_i1, ptsy_i1, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
-        points(ptsx_i1,ptsy_i1,type=type,lwd=1,pch=16,cex=0.7,col=ptscol)  # lines with solid points on top
-        # add male polygon and points below the 0 line
         if(length(ptsx_i2)>0){
-          polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2,1)),
-                  c(0, male_mult*ptsy_i2,0), col='grey60')  # polygon
-          points(ptsx_i2, male_mult*ptsy_i2,
-                 type=type, lwd=1, pch=16, cex=0.7, col=ptscol)  # lines with solid points on top
+          # polygon for males (possibly below 0 line
+          polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
+                  col='grey60')  # polygon
+          # lines with solid points on top for males
+          points(ptsx_i2, ptsy_i2, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
       }
       
       # adding uncertainty for mean length or weight at age plots
       if(doSD){
-        old_warn <- options()$warn      # previous setting
-        options(warn=-1)                # turn off "zero-length arrow" warning
+        old_warn <- options()$warn   # previous settings for warnings
+        options(warn=-1)             # turn off "zero-length arrow" warning
+        # make arrows showing uncertainty for unsexed fish
         if(length(ptsx_i0)>0){
           arrows(x0=ptsx_i0,y0=qnorm(p=0.05,mean=ptsy_i0,sd=ptsSD_i0),
                  x1=ptsx_i0,y1=qnorm(p=0.95,mean=ptsy_i0,sd=ptsSD_i0),
                  length=0.01, angle=90, code=3, col=ptscol)
         }
+        # make arrows showing uncertainty for females
         if(length(ptsx_i1)>0){
           arrows(x0=ptsx_i1,y0=qnorm(p=0.05,mean=ptsy_i1,sd=ptsSD_i1),
                  x1=ptsx_i1,y1=qnorm(p=0.95,mean=ptsy_i1,sd=ptsSD_i1),
                  length=0.01, angle=90, code=3, col=ptscol)
         }
+        # make arrows showing uncertainty for males
         if(length(ptsx_i2)>0){
           arrows(x0=ptsx_i2,y0=-qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
                  x1=ptsx_i2,y1=-qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
@@ -345,15 +389,13 @@ make_multifig <-
       }
     }
     if(linepos==1){ # add lines on top of points
-      lines(linesx_i0,linesy_i0,col=linescol[1],lwd=lwd,lty=lty)
-      lines(linesx_i1,linesy_i1,col=linescol[2],lwd=lwd,lty=lty)
-      if(twosex){
-        lines(linesx_i2,-linesy_i2,col=linescol[3],lwd=lwd,lty=lty)
-      }
+      lines(linesx_i0, linesy_i0, col=linescol[1], lwd=lwd, lty=lty)
+      lines(linesx_i1, linesy_i1, col=linescol[2], lwd=lwd, lty=lty)
+      lines(linesx_i2, linesy_i2, col=linescol[3], lwd=lwd, lty=lty)
     }
 
     # add legends
-    usr <- par("usr")
+    usr <- par("usr") # get dimensions of panel
     for(i in 1:nlegends){
       text_i <- ""
       text_i2 <- ""
@@ -366,57 +408,72 @@ make_multifig <-
           if(legtext_i=="sampsize" & showsampsize){	      # sample sizes
             vals <- unique(sampsize[sexvec==sex & yr==yr_i])
             if(length(vals)>1){
-              print(paste("Warning: sampsize values are not all equal--choosing the first value:",vals[1]),quote=FALSE)
-              print(paste("  yr=",yr_i,", and all sampsize values:",paste(vals,collapse=","),sep=""),quote=FALSE)
+              cat("Warning: sampsize values are not all equal",
+                  "--choosing the first value: ",vals[1], "\n",
+                  "  yr=",yr_i,", and all sampsize values:",
+                  paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
-            if(sex!=2){
-              text_i <- paste("N=",round(vals,sampsizeround),sep="")
-            }else{
+            text_i <- paste("N=",round(vals,sampsizeround),sep="")
+            if(twosex & sex==2){
               text_i2 <- paste("N=",round(vals,sampsizeround),sep="")
             }
           }
-          if(legtext_i=="effN" & showeffN){				      # effective sample sizes
+          if(legtext_i=="effN" & showeffN){          # effective sample sizes
             vals <- unique(effN[sexvec==sex & yr==yr_i])
             if(length(vals)>1){
-              print(paste("Warning: effN values are not all equal--choosing the first value:",vals[1]),quote=FALSE)
-              print(paste("  all effN values:",paste(vals,collapse=",")),quote=FALSE)
+              cat("Warning: effN values are not all equal",
+                  "--choosing the first value: ",vals[1], "\n",
+                  "  yr=",yr_i,", and all effN values:",
+                  paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
-            if(sex!=2){
-              text_i <- paste("effN=",round(vals,sampsizeround),sep="")
-            }else{
+            text_i <- paste("effN=",round(vals,sampsizeround),sep="")
+            if(twosex & sex==2){
               text_i2 <- paste("effN=",round(vals,sampsizeround),sep="")
             }
           }
         }
       }
-      #if(length(legtext_i)==npanels) text_i <- legtext_i[ipanel]      # one input value per panel
-      if(length(legtext_i)==nvals)   text_i <- legtext_i[yr==yr_i][1] # one input value per element
-      if(length(legtext_i)==1)	     text_i <- text_i		       # yr, sampsize, or effN
-
+      ## if(length(legtext_i)==npanels){
+      ##   text_i <- legtext_i[ipanel]      # one input value per panel
+      ## }
+      if(length(legtext_i)==nvals){
+        text_i <- legtext_i[yr==yr_i][1] # one input value per element
+      }
+      if(length(legtext_i)==1){
+        text_i <- text_i		 # yr, sampsize, or effN
+      }
+      # location of legend
       if(legx[1]=="default"){
         # default is left side for first plot, right thereafter
         textx <- ifelse(i==1, usr[1], usr[2])
       }else{ textx <- legx[i] }
       if(legy[1]=="default"){
-        texty  <- usr[4]		# default is top for all plots
-        texty2 <- usr[3]	# default is bottom legends associated with males
+        texty  <- usr[4] # default is top for all plots
+        texty2 <- usr[3] # default is bottom legends associated with males
       }else{
-        texty <- legy[i]
+        texty  <- legy[i]
         texty2 <- -legy[i] # this setting probably won't work too well
       }
       if(legadjx[1]=="default"){
-        adjx <- ifelse(i==1, -.1, 1.0) # default is left side for first legend, right thereafter
-      }else{ adjx <- legadjx[i] }
+        # default x-value is left side for first legend, right thereafter
+        adjx <- ifelse(i==1, -.1, 1.0) 
+      }else{
+        adjx <- legadjx[i]
+      }
       if(legadjy[1]=="default"){
-        adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))  # default is top for first 2 legends, below thereafter
+        # default y-value is top for first 2 legends, below thereafter
+        adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))  
       }else{ adjy <- legadjy[i] }
 
       # add legend text
-      text(x=textx,y=texty,labels=text_i,adj=c(adjx,adjy),cex=legsize[i],font=legfont[i])
+      text(x=textx, y=texty, labels=text_i, adj=c(adjx, adjy),
+           cex=legsize[i], font=legfont[i])
+      # add legend for males (if different from one already added)
       if(text_i2!=text_i & text_i2!=""){
-        text(x=textx,y=texty2,labels=text_i,adj=c(adjx,-adjy),cex=legsize[i],font=legfont[i])
+        text(x=textx, y=texty2, labels=text_i, adj=c(adjx, -adjy),
+             cex=legsize[i], font=legfont[i])
       }
 
       # add venus and mars symbols if there are male or female values
@@ -440,34 +497,48 @@ make_multifig <-
 
     # add axes in left and lower outer margins
     mfg <- par("mfg")
-    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) # axis on bottom panels and final panel
+    # axis on bottom panels and final panel
+    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) 
     if(mfg[2]==1){
-      axis(side=2,at=axis2,las=horiz_lab)	     # axis on left side panels
+      # axis on left side panels
+      axis(side=2,at=axis2,las=horiz_lab)	    
       if(twosex){
-        axis(side=2,at=-axis2[axis2>0],labels=format(axis2[axis2>0]),las=horiz_lab) # axis for negative values on left side panels
-        #axis(side=2,at=-axis2,las=horiz_lab) # axis for negative values on left side panels
+        # axis for negative values on left side panels
+        axis(side=2, at=-axis2[axis2>0], labels=format(axis2[axis2>0]),
+             las=horiz_lab)
+        ## # axis for negative values on left side panels
+        ## axis(side=2,at=-axis2,las=horiz_lab) 
       }
     }
-    box()
-    
-    if(npanels==1 | ipanel %% (nrows*ncols) == 1){ # if this is the first panel of a given page
+    box() # add box around panel
+
+    # if this is the first panel of a given page, then do a few things
+    if(npanels==1 | ipanel %% (nrows*ncols) == 1){ 
       # add title after plotting first panel on each page of panels
-      fixcex = 1 # fixcex compensates for automatic adjustment caused by par(mfcol)
-      if(max(nrows,ncols)==2) fixcex = 1/0.83
-      if(max(nrows,ncols)>2) fixcex = 1/0.66
+      fixcex <- 1 # compensates for automatic adjustment caused by par(mfcol)
+      if(max(nrows,ncols)==2){
+        fixcex <- 1/0.83
+      }
+      if(max(nrows,ncols)>2){
+        fixcex <- 1/0.66
+      }
       if(npanels>1){
         title(main=main, line=c(2,0,3,3), outer=TRUE, cex.main=cex.main*fixcex)
         title(xlab=xlab, outer=TRUE, cex.lab=fixcex)
-        title(ylab=ylab, line=ifelse(horiz_lab,max(3,2+.4*maxchar),3.5), outer=TRUE, cex.lab=fixcex)
+        title(ylab=ylab, line=ifelse(horiz_lab,max(3,2+.4*maxchar),3.5),
+              outer=TRUE, cex.lab=fixcex)
       }else{
-        title(main=main, xlab=xlab, ylab=ylab, outer=TRUE,cex.main=cex.main)
+        title(main=main, xlab=xlab, ylab=ylab, outer=TRUE, cex.main=cex.main)
       }
     }
   }
-  # restore default single panel settings
-  par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
+  # restore previous graphics parameter settings
+  par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+  #par(mfcol=c(rows,cols), mar=c(5,4,4,2)+.1, oma=rep(0,4))
 
-  if(anyscaled) cat("Note: compositions have been rescaled by dividing by binwidth\n")
+  if(anyscaled){
+    cat("Note: compositions have been rescaled by dividing by binwidth\n")
+  }
   # return information on what was plotted
   return(list(npages=npages, npanels=npanels, ipage=ipage))
 } # end embedded function: make_multifig

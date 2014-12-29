@@ -1078,18 +1078,24 @@ SS_plots <-
   # Write and return table of plot info for any PNG files that got created
   #
   if(!is.null(plotInfoTable)){
+    # make sure there are no factors
     plotInfoTable$file <- as.character(plotInfoTable$file)
     plotInfoTable$caption <- as.character(plotInfoTable$caption)
+    # record the current time and the model run time
     png_time <- Sys.time()
     #png_time2 <- format(writetime,'%d-%b-%Y_%H.%M')
     plotInfoTable$png_time <- png_time
     plotInfoTable$Run_time <- Run_time
+    # create a name for the file and write it to the plot directory
     csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
+    # write HTML files to display the images
     if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder)
+    # return notes on the plots
     return(invisible(plotInfoTable))
   }else{
+    # if there's some problem (perhaps if no plots were created), return a 999 code 
     return(invisible(999))
   }
   ### end of SS_plots function
