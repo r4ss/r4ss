@@ -55,7 +55,8 @@
 #' @param yaxs Choice of yaxs parameter (see ?par for more info)
 #' @param type Type parameter passed to points (default 'o' overplots points on
 #' top of lines)
-#' @param uncertainty Show plots with uncertainty intervals
+#' @param uncertainty Show plots with uncertainty intervals? Either a single
+#' value or a vector.
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
 #' @param legend Add a legend?
@@ -269,11 +270,19 @@ SSplotComparisons <-
     cat("setting SPRratioLabel = NA because models don't have matching labels\n")
     SPRratioLabel <- NA
   }
-  
-  if(uncertainty){
-    if(all(is.na(quantsSD[,1:n]) | quantsSD[,1:n]==0)){
-      cat("setting uncertainty to FALSE because no uncertainty includes in the model results\n")
-      uncertainty <- FALSE
+
+  # process input for which models have uncertainty shown
+  if(length(uncertainty)==1){
+    uncertainty <- rep(uncertainty, n)
+  }
+  if(length(uncertainty)!=n){
+    stop("length of 'uncertainty' should be 1 or n. It is",length(uncertainty))
+  }
+  for(i in 1:n){
+    if(all(is.na(quantsSD[,i]) | quantsSD[,i]==0)){
+      cat("No uncertainty available for model ",
+          i,".\n",sep="")
+      uncertainty[i] <- FALSE
     }
   }
   # fix biomass for single-sex models
@@ -471,9 +480,11 @@ SSplotComparisons <-
   }
   
   
-  addpoly <- function(yrvec, lower, upper){ # add shaded uncertainty intervals behind line
+  # function to add shaded uncertainty intervals behind line
+  # requires the existence of the TRUE/FALSE vector "uncertainty"
+  addpoly <- function(yrvec, lower, upper){
     lower[lower<0] <- 0 # max of value or 0
-    for(iline in 1:nlines){
+    for(iline in (1:nlines)[uncertainty]){
       imodel <- models[iline]
       good <- !is.na(lower[,imodel]) & !is.na(upper[,imodel])
       polygon(x=c(yrvec[good],rev(yrvec[good])),
@@ -485,15 +496,22 @@ SSplotComparisons <-
   }
 
   equ <- -(1:2)
-  
-  plotSpawnBio <- function(uncertainty=TRUE){ # plot spawning biomass
+
+  # function to plot spawning biomass
+  plotSpawnBio <- function(show_uncertainty=TRUE){
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # get axis limits
     if(xlim[1]=="default"){
       xlim <- range(SpawnBio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- range(ylim, SpawnBioUpper[,models], na.rm=TRUE)
+    if(show_uncertainty){
+      ylim <- range(ylim, SpawnBioUpper[,models[uncertainty]], na.rm=TRUE)
+    }
 
     # set units on spawning biomass plot
     if(length(unique(SpawnOutputUnits))!=1)
@@ -521,9 +539,10 @@ SSplotComparisons <-
       ylab <- gsub("million","billion",ylab)
     }
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE)
-    if(uncertainty){
+    if(show_uncertainty){
       # add shading for undertainty
-      addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),], upper=SpawnBioUpper[-(1:2),])
+      addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),],
+              upper=SpawnBioUpper[-(1:2),])
       xEqu <- SpawnBio$Yr[2] - (1:nlines)/nlines # equilibrium spawning biomass year by model
     }else{
       xEqu <- rep(SpawnBio$Yr[2], nlines)  # equilibrium spawning biomass year by model
@@ -546,9 +565,13 @@ SSplotComparisons <-
     # add arrows for equilibrium values
     old_warn <- options()$warn      # previous setting
     options(warn=-1)                # turn off "zero-length arrow" warning
-    if(uncertainty) arrows(x0=xEqu, y0=as.numeric(SpawnBioLower[1,models]),
-                           x1=xEqu, y1=as.numeric(SpawnBioUpper[1,models]),
-                           length=0.01, angle=90, code=3, col=col)
+    if(show_uncertainty){
+      arrows(x0=xEqu[models[uncertainty]],
+             y0=as.numeric(SpawnBioLower[1,models[uncertainty]]),
+             x1=xEqu[models[uncertainty]],
+             y1=as.numeric(SpawnBioUpper[1,models[uncertainty]]),
+             length=0.01, angle=90, code=3, col=col)
+    }
     options(warn=old_warn)  #returning to old value
     # add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
@@ -562,19 +585,30 @@ SSplotComparisons <-
     box()
   }
 
-  plotBratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+  # function to plot biomass ratio (may be identical to previous plot)
+  plotBratio <- function(show_uncertainty=TRUE){
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # get axis limits
     if(xlim[1]=="default"){
       xlim <- range(Bratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(0, Bratio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- ylimAdj*range(ylim, BratioUpper[,models], na.rm=TRUE)
-print(ylim)
+    if(show_uncertainty){
+      ylim <- ylimAdj*range(ylim, BratioUpper[,models[uncertainty]], na.rm=TRUE)
+    }
+
     # make plot
-    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
-                  xaxs=xaxs,yaxs=yaxs,axes=FALSE)
-    if(uncertainty) addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
+    if(!add){
+      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
+           xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    }
+    if(show_uncertainty){
+      addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
+    }
 
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
@@ -612,14 +646,20 @@ print(ylim)
     box()
   }
 
-  plotSPRratio <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+  plotSPRratio <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # get axis limits
     if(xlim[1]=="default"){
       xlim <- range(SPRratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
-    if(uncertainty) ylim <- ylimAdj*range(ylim, SPRratioUpper[,models], na.rm=TRUE)
+    if(show_uncertainty){
+      ylim <- ylimAdj*range(ylim, SPRratioUpper[,models[uncertainty]], na.rm=TRUE)
+    }
 
     # make plot
     if(!add){
@@ -629,7 +669,9 @@ print(ylim)
       plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
            ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
     }
-    if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+    if(show_uncertainty){
+      addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+    }
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
@@ -669,7 +711,7 @@ print(ylim)
     if(exists("oldmar")) par(mar=oldmar)
   }
 
-  ## plotF <- function(uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+  ## plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
   ##   # get axis limits
   ##   if(xlim[1]=="default"){
   ##     xlim <- range(SPRratio$Yr)
@@ -707,10 +749,17 @@ print(ylim)
   ##   if(legend) legendfun(legendlabels)
   ## }
   
-  plotRecruits <- function(uncertainty=TRUE){ # plot recruitment
+  plotRecruits <- function(show_uncertainty=TRUE){ # plot recruitment
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # determine y-limits
     ylim <- ylimAdj*range(0,recruits[,models],na.rm=TRUE)
-    if(uncertainty) ylim <- ylimAdj*range(ylim, recruits[,models], recruitsUpper[,models], na.rm=TRUE)
+    if(show_uncertainty){
+      ylim <- ylimAdj*range(ylim, recruits[,models[uncertainty]],
+                            recruitsUpper[,models[uncertainty]], na.rm=TRUE)
+    }
 
     # do some automatic scaling of the units
     ylab <- labels[4]
@@ -753,17 +802,19 @@ print(ylim)
     # add points at equilibrium values
     points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)    
 
-    if(uncertainty){
+    if(show_uncertainty){
       for(iline in 1:nlines){
         imodel <- models[iline]
-        xvec <- recruits$Yr
-        if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
-        old_warn <- options()$warn      # previous setting
-        options(warn=-1)                # turn off "zero-length arrow" warning
-        arrows(x0=xvec, y0=pmax(as.numeric(recruitsLower[,imodel]),0),
-               x1=xvec, y1=as.numeric(recruitsUpper[,imodel]),
-               length=0.01, angle=90, code=3, col=col[iline])
-        options(warn=old_warn)  #returning to old value
+        if(uncertainty[imodel]){
+          xvec <- recruits$Yr
+          if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
+          old_warn <- options()$warn      # previous setting
+          options(warn=-1)                # turn off "zero-length arrow" warning
+          arrows(x0=xvec, y0=pmax(as.numeric(recruitsLower[,imodel]),0),
+                 x1=xvec, y1=as.numeric(recruitsUpper[,imodel]),
+                 length=0.01, angle=90, code=3, col=col[iline])
+          options(warn=old_warn)  #returning to old value
+        }
       }
     }
     abline(h=0,col="grey")
@@ -774,15 +825,22 @@ print(ylim)
     box()
   }
 
-  plotRecDevs <- function(uncertainty=TRUE){ # plot recruit deviations
+  plotRecDevs <- function(show_uncertainty=TRUE){ # plot recruit deviations
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # empty plot
     if(xlim[1]=="default"){
       xlim <- range(recdevs$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(recdevs[,models],na.rm=TRUE)
-    if(uncertainty){
-      if(all(is.na(recdevsLower[,models]))) return() # can't do uncertainty if no range present
+    if(show_uncertainty){
+      if(all(is.na(recdevsLower[,models]))){
+        # can't do uncertainty if no range present
+        return() 
+      }
       ylim <- ylimAdj*range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
     }
     ylim <- range(-ylim,ylim) # make symmetric
@@ -791,14 +849,16 @@ print(ylim)
          type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
     abline(h=0,col="grey")
 
-    if(uncertainty){
+    if(show_uncertainty){
       for(iline in 1:nlines){
         imodel <- models[iline]
-        xvec <- recdevs$Yr
-        if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
-        arrows(x0=xvec, y0=as.numeric(recdevsLower[,imodel]),
-               x1=xvec, y1=as.numeric(recdevsUpper[,imodel]),
-               length=0.01, angle=90, code=3, col=col[iline])
+        if(uncertainty[imodel]){
+          xvec <- recdevs$Yr
+          if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
+          arrows(x0=xvec, y0=as.numeric(recdevsLower[,imodel]),
+                 x1=xvec, y1=as.numeric(recdevsUpper[,imodel]),
+                 length=0.01, angle=90, code=3, col=col[iline])
+        }
       }
     }
     
@@ -828,7 +888,11 @@ print(ylim)
       ##   abline(h=1,col=col4,lty=2)
       ##   abline(v=1,col=col4,lty=2)}
   
-  plotPhase <- function(uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
+  plotPhase <- function(show_uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
     # get axis limits
     xlim <- range(0, ylimAdj*Bratio[,models], na.rm=TRUE)
     ylim <- range(0, ylimAdj*SPRratio[,models], na.rm=TRUE)
@@ -1206,27 +1270,31 @@ print(ylim)
   
 
   uncertaintyplots <- intersect(c(2,4,6,8,10,13),subplots)
-  if(!uncertainty & length(uncertaintyplots)>0)
+  if(!any(uncertainty) & length(uncertaintyplots)>0){
+    # warn if uncertainty is off but uncertainty plots are requested
     cat("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","),"\n")
+  }
   # subplot 1: spawning biomass
   if(1 %in% subplots){
     if(verbose) cat("subplot 1: spawning biomass\n")
-    if(plot) plotSpawnBio(uncertainty=FALSE)
+    if(plot) plotSpawnBio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare1_spawnbio.png")
-      plotSpawnBio(uncertainty=FALSE)
+      plotSpawnBio(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
+
+  ######### IAN: add uncertainty test here!!!!!!!
   # subplot 2: spawning biomass with uncertainty intervals
   if(2 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 2: spawning biomass with uncertainty intervals\n")
-      if(plot) plotSpawnBio(uncertainty=uncertainty)
+      if(plot) plotSpawnBio(show_uncertainty=TRUE)
       if(print){
         pngfun("compare2_spawnbio_uncertainty.png")
-        plotSpawnBio(uncertainty=uncertainty)
+        plotSpawnBio(show_uncertainty=TRUE)
         dev.off()
       }
     }
@@ -1235,22 +1303,22 @@ print(ylim)
   # subplot 3: biomass ratio (hopefully equal to spawning depletion)
   if(3 %in% subplots){
     if(verbose) cat("subplot 3: biomass ratio (hopefully equal to spawning depletion)\n")
-    if(plot) plotBratio(uncertainty=FALSE)
+    if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")
-      plotBratio(uncertainty=FALSE)
+      plotBratio(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
   # subplot 4: biomass ratio with uncertainty
   if(4 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 4: biomass ratio with uncertainty\n")
-      if(plot) plotBratio(uncertainty=uncertainty)
+      if(plot) plotBratio(show_uncertainty=TRUE)
       if(print){
         pngfun("compare4_Bratio_uncertainty.png")
-        plotBratio(uncertainty=uncertainty)
+        plotBratio(show_uncertainty=TRUE)
         dev.off()
       }
     }
@@ -1259,22 +1327,22 @@ print(ylim)
   # subplot 5: SPR ratio
   if(5 %in% subplots){
     if(verbose) cat("subplot 5: SPR ratio\n")
-    if(plot) plotSPRratio(uncertainty=FALSE)
+    if(plot) plotSPRratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare5_SPRratio.png")
-      plotSPRratio(uncertainty=FALSE)
+      plotSPRratio(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
   # subplot 6: SPR ratio with uncertainty
   if(6 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 6: SPR ratio with uncertainty\n")
-      if(plot) plotSPRratio(uncertainty=uncertainty)
+      if(plot) plotSPRratio(show_uncertainty=TRUE)
       if(print){
         pngfun("compare6_SPRratio_uncertainty.png")
-        plotSPRratio(uncertainty=uncertainty)
+        plotSPRratio(show_uncertainty=TRUE)
         dev.off()
       }
     }
@@ -1283,17 +1351,17 @@ print(ylim)
   # subplot 7: recruits
   if(7 %in% subplots){
     if(verbose) cat("subplot 7: recruits\n")
-    if(plot) plotRecruits(uncertainty=FALSE)
+    if(plot) plotRecruits(show_uncertainty=FALSE)
     if(print){
       pngfun("compare7_recruits.png")
-      plotRecruits(uncertainty=FALSE)
+      plotRecruits(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
   # subplot 8: recruits with uncertainty
   if(8 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 8: recruits with uncertainty\n")
       if(plot) plotRecruits()
       if(print){
@@ -1307,17 +1375,17 @@ print(ylim)
   # subplot 9: recruit devs
   if(9 %in% subplots){
     if(verbose) cat("subplot 9: recruit devs\n")
-    if(plot) plotRecDevs(uncertainty=FALSE)
+    if(plot) plotRecDevs(show_uncertainty=FALSE)
     if(print){
       pngfun("compare9_recdevs.png")
-      plotRecDevs(uncertainty=FALSE)
+      plotRecDevs(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
   # subplot 10: recruit devs with uncertainty
   if(10 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 10: recruit devs with uncertainty\n")
       if(plot) plotRecDevs()
       if(print){
@@ -1368,7 +1436,7 @@ print(ylim)
 
   # subplot 14: densities
   if(14 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 14: densities\n")
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
@@ -1416,7 +1484,7 @@ print(ylim)
   #  draws cumulative plots of the same parameters drawn in density plots
   #  uses some same objects and names as densityplots
   if(15 %in% subplots){
-    if(uncertainty){
+    if(any(uncertainty)){
       if(verbose) cat("subplot 15: cumulative probability\n")
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
@@ -1483,8 +1551,6 @@ print(ylim)
   ##     dev.off()
   ##   }
   ## }
-  
-  
 
   if(pdf) dev.off()
 }
