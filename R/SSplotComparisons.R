@@ -56,7 +56,8 @@
 #' @param type Type parameter passed to points (default 'o' overplots points on
 #' top of lines)
 #' @param uncertainty Show plots with uncertainty intervals? Either a single
-#' value or a vector.
+#' TRUE/FALSE value, or a vector of TRUE/FALSE values for each model,
+#' or a set of integers corresponding to the choice of models.
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
 #' @param legend Add a legend?
@@ -271,12 +272,41 @@ SSplotComparisons <-
     SPRratioLabel <- NA
   }
 
-  # process input for which models have uncertainty shown
-  if(length(uncertainty)==1){
+  ### process input for which models have uncertainty shown
+  ##
+  # if vector is numeric rather than logical, convert to logical
+  if(!is.logical(uncertainty) & is.numeric(uncertainty)){
+    if(any(!uncertainty %in% 1:n)){
+      # stop if numerical values aren't integers <= n
+      stop("'uncertainty' should be vector of integers from 1 to n=",n,"\n",
+           "  or a single TRUE/FALSE value,\n",
+           "  or a vector of TRUE/FALSE, of length n=",n)
+    }else{
+      # convert integers to logical
+      uncertainty <- 1:n %in% uncertainty
+    }
+  }
+
+  # if a single value, repeat for all models
+  if(is.logical(uncertainty) & length(uncertainty)==1){
     uncertainty <- rep(uncertainty, n)
   }
+  # if all that hasn't yet made it length n, then stop
   if(length(uncertainty)!=n){
-    stop("length of 'uncertainty' should be 1 or n. It is",length(uncertainty))
+    stop("'uncertainty' as TRUE/FALSE should have length 1 or n.\n",
+         "  length(uncertainty) = ",length(uncertainty))
+  }
+  # some feedback about uncertainty settings
+  if(all(uncertainty)){
+    cat("showing uncertainty for all models\n")
+  }
+  if(!any(uncertainty)){
+    cat("now showing uncertainty for any models\n")
+  }
+  if(any(uncertainty) & !all(uncertainty)){
+    cat("showing uncertainty for model",
+        ifelse(sum(uncertainty)>1,"s: "," "),
+        paste(which(uncertainty),collapse=","),"\n",sep="")
   }
   for(i in 1:n){
     if(all(is.na(quantsSD[,i]) | quantsSD[,i]==0)){
@@ -570,7 +600,7 @@ SSplotComparisons <-
              y0=as.numeric(SpawnBioLower[1,models[uncertainty]]),
              x1=xEqu[models[uncertainty]],
              y1=as.numeric(SpawnBioUpper[1,models[uncertainty]]),
-             length=0.01, angle=90, code=3, col=col)
+             length=0.01, angle=90, code=3, col=col[uncertainty])
     }
     options(warn=old_warn)  #returning to old value
     # add points at equilibrium values
