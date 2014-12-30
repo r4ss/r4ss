@@ -22,7 +22,7 @@
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
 #' @param sexes which sexes to show plots for. Default="all" which will include
-#' males, females, and unsexed. This options is not fully implemented for all
+#' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
 #' @param datonly make plots of data without fits as well as data with fits?
 #' @param samplesizeplots make sample size plots?
@@ -162,7 +162,7 @@ SSplotComps <-
 
   ###### new definitions of subplots
   ###
-  ### { # loop over fleets 
+  ### { # loop over fleets
   ### subplot 1: multi-panel composition plot
   ### subplot 2: single panel bubble plot for numbers at length or age
   ### subplot 3: multi-panel bubble plots for conditional age-at-length
@@ -223,6 +223,7 @@ SSplotComps <-
     plotdir <- replist$inputs$dir
   }
 
+  # sort out which fleets will be included
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
   }else{
@@ -230,12 +231,40 @@ SSplotComps <-
       stop("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
     }
   }
-  if(sexes[1]=="all"){
-    sexes <- 0:2 # this can be used to subset stuff below
-  }
   if(fleetnames[1]=="default"){
     fleetnames <- FleetNames
   }
+
+  # sort out which sexes will be included, and associated labels
+  if(sexes[1]=="all"){
+    sexes <- 0:2 # this can be used to subset stuff below
+  }
+  if(nsexes==1){
+    sexes <- 0
+  }
+  if(nsexes==1 | length(sexes)>1){
+    # single-sex models, or models with all sexes shown
+    # on the same plot, don't need sex-specific title
+    titlesex <- ""
+    filesex  <- ""
+  }
+  if(nsexes>1 & length(sexes)==1){
+    # multi-sex models with only 1 sex shown need
+    # title and filename info
+    if(sexes==0){
+      titlesex <- "sexes combined, "
+      filesex  <- "sex0"
+    }
+    if(sexes==1){
+      titlesex <- "female, "
+      filesex  <- "sex1"
+    }
+    if(sexes==2){
+      titlesex <- "male, "
+      filesex  <- "sex2"
+    }
+  }
+  titlesex <- ifelse(printsex,titlesex,"")
 
   # a few quantities related to data type and plot number
   if(kind=="LEN"){
@@ -347,9 +376,9 @@ SSplotComps <-
   }
   ageerr_warning <- TRUE
 
-  # subset based on requested range of sexes
+  # subset data based on requested range of sexes
   dbase_kind <- dbase_kind[dbase_kind$sex %in% sexes,]
-#print(head(dbase_kind))  
+
   # loop over fleets
   for(f in fleets){
     # check for the presence of data
@@ -407,14 +436,6 @@ SSplotComps <-
         ## dbase$Yr.S[dbase_k$Pick_gender==2] <- dbase$Yr.S[dbase_k$Pick_gender==2] + 2e-6
 
         ## assemble pieces of plot title
-        ## # sex
-        ## if(k==1) titlesex <- "sexes combined, "
-        ## if(k==2) titlesex <- "female, "
-        ## if(k==3) titlesex <- "male, "
-        ## titlesex <- ifelse(printsex,titlesex,"")
-        # temporary permanent setting
-        titlesex <- ""
-
         # market category
         if(j==0) titlemkt <- "whole catch, "
         if(j==1) titlemkt <- "discard, "
@@ -426,8 +447,7 @@ SSplotComps <-
 
         # aggregating identifiers for plot titles and filenames
         title_sexmkt <- paste(titlesex,titlemkt,sep="")
-        #filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
-        filename_fltsexmkt <- paste("flt",f,"mkt",j,sep="")
+        filename_fltsexmkt <- paste("flt",f,filesex,"mkt",j,sep="")
 
         ### subplot 1: multi-panel composition plot
         if(1 %in% subplots & kind!="cond"){ # for age or length comps, but not conditional AAL
@@ -575,7 +595,10 @@ SSplotComps <-
             }
             if(length(grep("Pearson",caption))>0){
               caption <- paste(caption,
-                               "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                               "<br> \nClosed bubbles are positive residuals",
+                               "(observed > expected)",
+                               "and open bubbles are negative residuals",
+                               "(observed < expected).")
             }
             file <- paste(plotdir,"/",filenamestart,filetype,
                           filename_fltsexmkt,pagetext,".png",sep="")
@@ -682,7 +705,10 @@ SSplotComps <-
                     }
                     if(length(grep("Pearson",caption))>0){
                       caption <- paste(caption,
-                                       "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                                       "<br> \nClosed bubbles are positive residuals",
+                                       "(observed > expected)",
+                                       "and open bubbles are negative residuals",
+                                       "(observed < expected).")
                     }
                     file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
                                   "_",aalyr,"_",pagetext,".png",sep="")
@@ -716,7 +742,10 @@ SSplotComps <-
                   }
                   if(length(grep("Pearson",caption))>0){
                     caption <- paste(caption,
-                                     "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                                     "<br> \nClosed bubbles are positive residuals",
+                                     "(observed > expected)",
+                                     "and open bubbles are negative residuals",
+                                     "(observed < expected).")
                   }
                   file <- paste(plotdir,"/",filenamestart,"yearresids_",
                                 filename_fltsexmkt,"_",aalyr,pagetext,".png",sep="")
@@ -1023,13 +1052,13 @@ SSplotComps <-
         # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
         dbase <- dbase_k[dbase_k$Part==j,]
         if(nrow(dbase)>0){
-          ## assemble pieces of plot title
-          # sex
-          ## if(k==1) titlesex <- "sexes combined, "
-          ## if(k==2) titlesex <- "female, "
-          ## if(k==3) titlesex <- "male, "
-          ## titlesex <- ifelse(printsex,titlesex,"")
-          titlesex <- ""
+          ## ## assemble pieces of plot title
+          ## # sex
+          ## ## if(k==1) titlesex <- "sexes combined, "
+          ## ## if(k==2) titlesex <- "female, "
+          ## ## if(k==3) titlesex <- "male, "
+          ## ## titlesex <- ifelse(printsex,titlesex,"")
+          ## titlesex <- ""
 
           # market category
           if(j==0) titlemkt <- "whole catch, "
@@ -1044,10 +1073,11 @@ SSplotComps <-
             bars <- FALSE
           }
 
-          # aggregating identifiers for plot titles and filenames
+          ## aggregating identifiers for plot titles and filenames
+          ## note: titlesex is set at the top of this function
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
           #filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
-          filename_fltsexmkt <- paste("mkt",j,sep="")
+          filename_fltsexmkt <- paste(filesex, "mkt",j,sep="")
 
           ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
           titles <- c(ptitle,titles) # compiling list of all plot titles
@@ -1102,7 +1132,7 @@ SSplotComps <-
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
                 file <- paste(plotdir,filenamestart,filename_fltsexmkt,
-                              pagetext,"aggregated across time.png",sep="")
+                              pagetext,"_aggregated_across_time.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun7(ipage=ipage,...)
                 dev.off()
@@ -1261,7 +1291,7 @@ SSplotComps <-
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
                 file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
-                              "aggregated within season.png",sep="")
+                              "_aggregated_within_season.png",sep="")
 
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun8(ipage=ipage,...)
@@ -1392,7 +1422,7 @@ SSplotComps <-
                     caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                   }
                   file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
-                                "aggregated across seasons within year.png",sep="")
+                                "_aggregated_across_seasons_within_year.png",sep="")
                   pngfun(file=file, caption=caption)
                   tempfun9(ipage=ipage,...)
                   dev.off()
@@ -1571,7 +1601,10 @@ SSplotComps <-
                 }
                 if(length(grep("Pearson",caption))>0){
                   caption <- paste(caption,
-                                   "<br> \nClosed bubbles are positive residuals and open bubbles are negative residuals.")
+                                   "<br> \nClosed bubbles are positive residuals",
+                                   "(observed > expected)",
+                                   "and open bubbles are negative residuals",
+                                   "(observed < expected).")
                 }
                 caption <- paste(caption,
                                  "<br>Note: bubble sizes are scaled to maximum within each panel.",
