@@ -140,7 +140,8 @@ make_multifig <-
   }
 
   npages <- ceiling(npanels/nrows/ncols) # how many pages of plots
-  doSD <- length(ptsSD)==length(ptsx) & max(ptsSD) > 0 # T/F on whether to add error bars on points
+  # doSD is TRUE/FALSE switch for whether to add error bars on points
+  doSD <- length(ptsSD)==length(ptsx) & max(ptsSD) > 0 
   
   # if no input on lines, then turn linepos to 0
   if(length(linesx)==1 | length(linesy)==1){
@@ -155,8 +156,11 @@ make_multifig <-
   if(bars & barwidth=="default") barwidth <- 400/max(table(yr)+2)/ncols
 
   # make size vector have full length
-  if(length(size)==1) size <- rep(size,length(yr))
-  # determinant on whether this is a bubble plot for conditional age-at-length data
+  if(length(size)==1){
+    size <- rep(size,length(yr))
+  }
+  # determinant on whether this is a bubble plot for
+  # conditional age-at-length data
   bub <- diff(range(size,na.rm=TRUE))!=0
   
   # get axis limits
@@ -302,7 +306,9 @@ make_multifig <-
       }
       # bubble plot for males fish
       if(length(z_i2)>0){
-        bubble3(x=ptsx_i2, y=ptsy_i2, z=z_i2, col=colvec[2],
+        # note: ptsy_i2 may be negative for other plots, so taking
+        #       absolute values for conditional age-at-length bubble plots
+        bubble3(x=ptsx_i2, y=abs(ptsy_i2), z=z_i2, col=colvec[2],
                 cexZ1=cexZ1, legend.yadj=1.5, 
                 legend=bublegend, legendloc='topright', 
                 maxsize=maxsize, minnbubble=minnbubble,

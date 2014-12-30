@@ -1094,8 +1094,7 @@ SSplotComps <-
           agg <- agg[agg$f %in% fleets,]
           agg$obs <- agg$obs/agg$N
           agg$exp <- agg$exp/agg$N
-#print('test')
-#print(str(agg))
+
           # note: sample sizes will be different for each bin if tail compression is used
           #       printed sample sizes in plot will be maximum, which may or may not
           #       represent sum of sample sizes over all years/ages
