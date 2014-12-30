@@ -216,9 +216,12 @@ SSplotComps <-
 
   Age_tuning    <- replist$Age_comp_Eff_N_tuning_check
 
+  # define a variety of titles and labels
   titles <- NULL
   titlemkt <- ""
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   if(fleets[1]=="all"){
     fleets <- 1:nfleets
@@ -227,8 +230,12 @@ SSplotComps <-
       stop("Input 'fleets' should be 'all' or a vector of values between 1 and nfleets.")
     }
   }
-  if(sexes[1]=="all") sexes <- 0:3 # this can be used to subset stuff below
-  if(fleetnames[1]=="default") fleetnames <- FleetNames
+  if(sexes[1]=="all"){
+    sexes <- 0:2 # this can be used to subset stuff below
+  }
+  if(fleetnames[1]=="default"){
+    fleetnames <- FleetNames
+  }
 
   # a few quantities related to data type and plot number
   if(kind=="LEN"){

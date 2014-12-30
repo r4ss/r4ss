@@ -217,7 +217,7 @@ SSsummarize <- function(biglist,
     
     ## indices
     indextemp <- stats$cpue
-    if(is.na(indextemp)){
+    if(is.na(indextemp[[1]][1])){
       cat("no index data\n")
     }else{
       indextemp$Model <- keyvec2[imodel]
