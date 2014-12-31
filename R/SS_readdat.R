@@ -322,7 +322,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
     MeanSize_at_Age_obs <- data.frame(matrix(
                                              allnums[i:(i+N_MeanSize_at_Age_obs*Ncols-1)],nrow=N_MeanSize_at_Age_obs,ncol=Ncols,byrow=TRUE))
     i <- i+N_MeanSize_at_Age_obs*Ncols
-    names(MeanSize_at_Age_obs) <- c('Yr','Seas','Fleet','Gender','Part','AgeErr','Ignore',
+    names(MeanSize_at_Age_obs) <- c('Yr','Seas','FltSvy','Gender','Part','AgeErr','Ignore',
                                     if(Ngenders==1){paste("a",agebin_vector,sep="")}else{NULL},
                                     if(Ngenders>1){ c(paste("f",agebin_vector,sep=""),paste("m",agebin_vector,sep="")) }else{ NULL },
                                     if(Ngenders==1){paste("N_a",agebin_vector,sep="")}else{NULL},
