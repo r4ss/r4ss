@@ -29,8 +29,16 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   if(!is.null(section)){
     Nsections <- as.numeric(substring(dat[grep("Number_of_datafiles",dat)],24))
     if(!section %in% 1:Nsections) stop("The 'section' input should be within the 'Number_of_datafiles' in a data.ss_new file.\n")
-    if(section==1) dat <- dat[grep("#_observed data:",dat):grep("#_expected values with no error added",dat)]
-    if(section==2) dat <- dat[grep("#_expected values with no error added",dat):grep("#_bootstrap file: 1",dat)]
+    if(section==1){
+      end <- grep("#_expected values with no error added",dat)
+      if (length(end) == 0) end <- length(dat)
+      dat <- dat[grep("#_observed data:",dat):end]
+    }
+    if(section==2){
+      end <- grep("#_bootstrap file: 1",dat)
+      if (length(end) == 0) end <- length(dat)
+      dat <- dat[grep("#_expected values with no error added",dat):end]
+    }
     if(section>=3){
       start <- grep(paste("#_bootstrap file:",section-2),dat)
       end <- grep(paste("#_bootstrap file:",section-1),dat)
@@ -111,7 +119,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
                      name   = fleetnames,
                      area   = areas,
                      timing = surveytiming,
-                     type   = c(rep("FISHERY",Nfleet), rep("FISHERY",Nsurveys))))
+                     type   = c(rep("FISHERY",Nfleet), rep("SURVEY",Nsurveys))))
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming,areas))
