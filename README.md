@@ -48,8 +48,5 @@ Changes include
 * new growth plots that facilitate comparison of mean growth to variability in growth and mean growth with maturity
 * new composition plots that show females, males, and unsexed fish in the same plot
 * automatic generation of data-weighting plots contributed by Chris Francis
-Some of these things surely won't work right for any particular model configuration. If so, please email Ian Taylor or post an "issue" on this GitHub site at https://github.com/r4ss/r4ss/issues
 
-```S
-devtools::install_github("r4ss/r4ss", ref="v1.22.1")
-````
+Some of these things surely won't work right for any particular model configuration. If so, please email Ian Taylor or post an "issue" on this GitHub site at https://github.com/r4ss/r4ss/issues
