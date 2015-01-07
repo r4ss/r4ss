@@ -474,6 +474,7 @@ SS_output <-
   }
   ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
 
+  
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
     allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE, colClasses="character", skip=3, nrows=15)
@@ -985,22 +986,30 @@ SS_output <-
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
   # sigma_R
-  if(SS_versionNumeric >= 3.3){
-    srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",11,cols=1:6)
-    rmse_table <- as.data.frame(srhead[-(1:10),1:5])
+  if(SS_versionNumeric >= 3.3 | substring(SS_version,1,9)=="SS-V3.24U"){
+    last_row_index <- 11
   }else{
-    srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",10,cols=1:6)
-    rmse_table <- as.data.frame(srhead[-(1:9),1:5])
+    last_row_index <- 10
   }    
+  srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",last_row_index,cols=1:6)
+  rmse_table <- as.data.frame(srhead[-(1:(last_row_index-1)),1:5])
   for(icol in 2:5){
     rmse_table[,icol] <- as.numeric(rmse_table[,icol])
   }
-  names(rmse_table) <- srhead[9,1:5]
+  names(rmse_table) <- srhead[last_row_index-1,1:5]
   names(rmse_table)[4] <- "RMSE_over_sigmaR"
 
   stats$sigma_R_in <- as.numeric(srhead[4,1])
   stats$rmse_table <- rmse_table
 
+  # Spawner-recruit curve
+  rawsr <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
+  names(rawsr) <- rawsr[1,]
+  rawsr[rawsr=="_"] <- NA
+  rawsr <- rawsr[-(1:2),] # remove header rows
+  sr <- rawsr[-(1:2),] # remove rows for Virg and Init
+  for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
+  
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
   vartune <- vartune[vartune$N > 0,]
@@ -1104,6 +1113,7 @@ if(FALSE){
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
+  returndat$recruit     <- sr
 
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough
@@ -1488,21 +1498,6 @@ if(FALSE){
    # stats$retained_msy <- as.numeric(rawforecast[43,5])
   }else{if(verbose) cat("You skipped the equilibrium yield data\n")}
   flush.console()
-
-
-
-  # Spawner-recruit curve
-  if(SS_versionNumeric >= 3.3){
-    rawsr <- matchfun2("SPAWN_RECRUIT",12,"INDEX_2",-1,cols=1:9)
-  }else{
-    rawsr <- matchfun2("SPAWN_RECRUIT",11,"INDEX_2",-1,cols=1:9)
-  }
-  names(rawsr) <- rawsr[1,]
-  rawsr[rawsr=="_"] <- NA
-  rawsr <- rawsr[-(1:2),] # remove header rows
-  sr <- rawsr[-(1:2),] # remove rows for Virg and Init
-  for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
-  returndat$recruit <- sr
 
   if(ncpue>0)
   {
