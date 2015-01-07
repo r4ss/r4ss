@@ -37,6 +37,9 @@ Specific versions of r4ss can be installed from GitHub using a command like the 
 devtools::install_github("r4ss/r4ss", ref="v1.22.1")
 ````
 
+### Testing
+
+Note on January 7th, 2015:
 Please help test an experimental version of r4ss that will soon be merged into the main code. You can install it using the command:
 
 ```S
