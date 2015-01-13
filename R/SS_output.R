@@ -998,8 +998,7 @@ SS_output <-
   }
   names(rmse_table) <- srhead[last_row_index-1,1:5]
   names(rmse_table)[4] <- "RMSE_over_sigmaR"
-
-  stats$sigma_R_in <- as.numeric(srhead[4,1])
+  stats$sigma_R_in <- as.numeric(srhead[last_row_index-6,1])
   stats$rmse_table <- rmse_table
 
   # Spawner-recruit curve

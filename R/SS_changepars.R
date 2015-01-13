@@ -52,13 +52,23 @@ function(
   fullctlfile <- paste(dir,ctlfile,sep="/")
   ctl = readLines(fullctlfile)
 
+  # check for valid input
   if(is.null(linenums) & !is.null(strings) & class(strings)=="character")
   {
+    # get table of parameter lines
     ctltable <- SS_parlines(ctlfile=fullctlfile)
+    # list of all parameter labels
     allnames <- ctltable$Label
+    # empty list of "good" labels to be added to 
     goodnames <- NULL
+    # if strings are provided, look for matching subset of labels
     if(!is.null(strings)){
-      for(i in 1:length(strings)) goodnames <- c(goodnames,allnames[grep(strings[i],allnames)])
+      # loop over vector of strings to add to goodnames vector
+      for(i in 1:length(strings)){
+        # fixed matching on string
+        goodnames <- c(goodnames, allnames[grep(strings[i], allnames, fixed=TRUE)])
+      }
+      # remove duplicates and print some feedback
       goodnames <- unique(goodnames)
       cat("parameter names in control file matching input vector 'strings' (n=",length(goodnames),"):\n",sep="")
       print(goodnames)
