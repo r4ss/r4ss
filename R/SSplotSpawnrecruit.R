@@ -27,10 +27,6 @@
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' @param legend add a legend to the figure?
 #' @param legendloc location of legend. See ?legend for more info
-## #' @param line1 first line color
-## #' @param line2 second line color
-## #' @param line3 third line color
-## #' @param ptcol point color
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
 #' only extreme devs are labeled (labels are added to first and last years as

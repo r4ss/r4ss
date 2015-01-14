@@ -258,8 +258,8 @@ make_multifig <-
       bins <- sort(unique(ptsx_i1))
       binwidths <- diff(bins)
       if(diff(range(binwidths))>0){
-        warn("NOTE: scaling comps based on variable bin widths\n",
-             "hasn't yet been adapted to 2-sex plots")
+        warning("NOTE: scaling comps based on variable bin widths\n",
+                "hasn't yet been adapted to 2-sex plots")
         if(FALSE){
           binwidths <- c(binwidths,tail(binwidths,1))
           allbinwidths <- apply(as.matrix(ptsx_i1),1,

@@ -1118,7 +1118,7 @@ SSplotComps <-
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
-                            sex=agg$sex, ...)
+                            sexvec=agg$sex, ...)
             }
             if(plot) tempfun7(ipage=0,...)
             if(print){ # set up plotting to png file if required
