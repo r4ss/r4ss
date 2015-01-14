@@ -722,7 +722,6 @@ SSplotSelex <-
     }
     if(nsexes > 1){
       growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
-      xm <- growdatM$Age
       growdatM$Sd_Size <- growdatM$SD_Mid
       if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
         growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
@@ -747,6 +746,7 @@ SSplotSelex <-
         # test if there is any length-based selectivity (otherwise plot is uninformative)
         if(any(plotlenselex!=1)){ 
           plotageselex <- as.numeric(ageselex[ageselex$factor=="Asel" & ageselex$year==endyr & ageselex$fleet==i & ageselex$gender==m,-(1:7)])
+          # x here should probably be replaced by $Age_Mid or some more informative value
           x <- seq(0,accuage,by=1)
           y <- lbinspop
           z <- plotageselex %o% plotlenselex # outer product of age- and length-selectivity
@@ -765,12 +765,12 @@ SSplotSelex <-
               lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
             }
             if(m==2){
-              lines(xm,growdatM$Len_Mid,col='white',lwd=5)
-              lines(xm,growdatM$Len_Mid,col=col2,lwd=3)
-              lines(xm,growdatM$high,col='white',lwd=1,lty=1)
-              lines(xm,growdatM$high,col=col2,lwd=1,lty="dashed")
-              lines(xm,growdatM$low,col='white',lwd=1,lty=1)
-              lines(xm,growdatM$low,col=col2,lwd=1,lty="dashed")
+              lines(x,growdatM$Len_Mid,col='white',lwd=5)
+              lines(x,growdatM$Len_Mid,col=col2,lwd=3)
+              lines(x,growdatM$high,col='white',lwd=1,lty=1)
+              lines(x,growdatM$high,col=col2,lwd=1,lty="dashed")
+              lines(x,growdatM$low,col='white',lwd=1,lty=1)
+              lines(x,growdatM$low,col=col2,lwd=1,lty="dashed")
             }
           }
           if(plot){

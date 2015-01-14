@@ -40,7 +40,7 @@
 bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
                      legend=TRUE,legendloc='top',
                      legend.z="default",legend.yadj=1.1,
-                     main="",cex.main=1,xlab="",ylab="",minnbubble=8,
+                     main="",cex.main=1,xlab="",ylab="",minnbubble=3,
                      xlim=NULL,ylim=NULL,axis1=TRUE,xlimextra=1,
                      add=FALSE,las=1,allopen=TRUE)
   {
@@ -69,7 +69,9 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
       # if legend is too long, cut in half
       if(length(legend.z)>3) legend.z <- legend.z[seq(1,length(legend.z),2)]
       # add negatives
-      if(any(z<0)) legend.z <- c(-rev(legend.z[-1]),legend.z) 
+      if(any(z<0)){
+        legend.z <- c(-rev(legend.z[-1]),legend.z)
+      }
     }
     legend.n <- length(legend.z)
     legend.z2 <- legend.z

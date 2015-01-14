@@ -2,10 +2,11 @@
 #'
 #' Uses method TA1.8 (described in Appendix A of Francis 2011) to do
 #' stage-2 weighting of composition data from a Stock Synthesis model.
-#' Outputs a mutiplier, w (with bootstrap 95% confidence interval),
-#' so that N2y = w x N1y, where N1y and N2y are the stage-1 and stage-2
+#' Outputs a mutiplier, \emph{w} (with bootstrap 95% confidence interval),
+#' so that \emph{N2y} = \emph{w} x \emph{N1y}, where \emph{N1y} and
+#' \emph{N2y} are the stage-1 and stage-2
 #' multinomial sample sizes for the data set in year y.  Optionally
-#' makes a plot of observed (with confidence limits, based on N1y)
+#' makes a plot of observed (with confidence limits, based on \emph{N1y})
 #' and expected mean lengths (or ages).
 #' \cr\cr
 #' CAUTIONARY/EXPLANATORY NOTE.
@@ -13,17 +14,19 @@
 #' difficult to be sure that what this function does is
 #' appropriate for all combinations of options.  The following
 #' notes might help anyone wanting to check or correct the code.
-#' 1. The code first takes the appropriate database (lendbase, sizedbase,
-#'    agedbase, or condbase) and removes un-needed rows.
-#' 2. The remaining rows of the database are grouped into individual
-#'    comps (indexed by vector indx) and relevant statistics (e.g.,
-#'    observed and expected mean length or age), and ancillary data,
-#'    are calculated for each comp (these are stored in pldat - one row
-#'    per comp).
-#' 3. If the data are to be plotted, the comps are grouped, with each
-#'    group corresponding to a panel in the plot, and groups are indexed
-#'    by plindx.
-#' 4. A single multiplier is calculated to apply to all the comps.
+#' \enumerate{
+#'   \item The code first takes the appropriate database (lendbase, sizedbase,
+#'         agedbase, or condbase) and removes un-needed rows.
+#'   \item The remaining rows of the database are grouped into individual
+#'         comps (indexed by vector indx) and relevant statistics (e.g.,
+#'         observed and expected mean length or age), and ancillary data,
+#'         are calculated for each comp (these are stored in pldat - one row
+#'         per comp).
+#'         If the data are to be plotted, the comps are grouped, with each
+#'         group corresponding to a panel in the plot, and groups are indexed
+#'         by plindx.
+#'   \item A single multiplier is calculated to apply to all the comps.
+#' }
 #'
 #' @param fit Stock Synthesis output as read by r4SS function SS_output
 #' @param type either 'len' (for length composition data), 'size' (for
@@ -49,9 +52,10 @@
 #' If !is.null(method), analysis is restricted to size-frequency
 #' methods in this vector.  NB comps are separated by method
 #' @param plotit if TRUE, make an illustrative plot like one or more
-#' panels of Fig. 4 in the Francis (2011).
+#' panels of Fig. 4 in Francis (2011).
 #' @param maxpanel maximum number of panels within a plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
+#' @export
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of
@@ -77,9 +81,13 @@ SSMethod.TA1.8 <-
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
-  if(!is.in(type,c('age','len','size','con')))stop('Illegal value for type')
-  else if(sum(!is.in(pick.gender,c(0:3)))>0)
-    stop('Unrecognised value for pick.gender')
+  if(!is.in(type,c('age','len','size','con'))){
+    stop('Illegal value for type')
+  }else{
+    if(sum(!is.in(pick.gender,c(0:3)))>0){
+      stop('Unrecognised value for pick.gender')
+    }
+  }
 
   # Select the type of datbase
   dbase <- fit[[paste(type,'dbase',sep='')]]
@@ -94,7 +102,10 @@ SSMethod.TA1.8 <-
     if(length(unique(dbase$Seas))>1)
       cat('Warning: combining data from multiple seasons\n')
   }
-
+  # create label for partitions
+  partitions <- sort(unique(dbase$Part)) # values are 0, 1, or 2
+  partition.labels <- c("whole","discarded","retained")[partitions+1]
+  partition.labels <- paste("(",paste(partition.labels,collapse="&")," catch)",sep="")
   gender.flag <- type!='con' & max(tapply(dbase$'Pick_gender',
                      dbase$Fleet,function(x)length(unique(x))))>1
   indx <- paste(dbase$Fleet,dbase$Yr,if(type=='con')dbase$'Lbin_lo' else
@@ -104,7 +115,12 @@ SSMethod.TA1.8 <-
   if(method.flag)
     indx <- paste(indx,dbase$method)
   uindx <- unique(indx)
-  if(length(uindx)==1)stop('Only one point to plot')
+  if(length(uindx)==1){
+    # presumably the method is meaningless of there's only 1 point,
+    # but it's good to be able to have the function play through
+    cat('Warning: only one point to plot\n')
+    return()
+  }
 
   pldat <- matrix(0,length(uindx),10,
                   dimnames=list(uindx,
@@ -114,7 +130,7 @@ SSMethod.TA1.8 <-
   if(gender.flag)pldat <- cbind(pldat,pick.gender=0)
   if(method.flag)pldat <- cbind(pldat,method=0)
 
-  # Find the wieghting factor for this combination of factors
+  # Find the weighting factor for this combination of factors
   for(i in 1:length(uindx)){  # each row of pldat is an individual comp
     subdbase <- dbase[indx==uindx[i],]
     xvar <- subdbase$Bin
@@ -155,9 +171,14 @@ SSMethod.TA1.8 <-
 
     # Select number of panels
     Npanel <- length(uplindx)
-    NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    ## Ian T. 9/25/14: changing from having at least 4 panels to no minimum
+    #NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
+    # save current graphical parameters
+    par_current <- par()
+    # set new parameters
     par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),
         las=1)
     par(cex=1)
@@ -166,15 +187,19 @@ SSMethod.TA1.8 <-
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=range(subpldat[,c('ObsloAdj','ObshiAdj','Expmn')]),
+           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
+               na.rm=TRUE),
            xlab='',ylab='')
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3)
       arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
-             length=0.03, angle=90, code=3)
-      points(x,subpldat[,'Obsmn'],pch=21,bg='grey')
+             length=0.04, angle=90, code=3)
+      points(x,subpldat[,'Obsmn'],pch=21,bg='grey80')
       ord <- order(x)
-      if(length(x)>1)lines(x[ord],subpldat[ord,'Expmn'])
-      else lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2))
+      if(length(x)>1){
+        lines(x[ord],subpldat[ord,'Expmn'],col=4)
+      }else{
+        lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2),col=4)
+      }
       # Lines
       fl <- fit$FleetNames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
@@ -182,18 +207,23 @@ SSMethod.TA1.8 <-
       if(gender.flag)lab <-
         paste(lab,ifelse(subpldat[1,'pick.gender']==0,'comb','sex'))
       if(method.flag)lab <- paste(lab,'meth',subpldat[1,'method'])
+      lab <- paste(lab,partition.labels)
       mtext(lab,side=3,at=mean(x))
     }
     mtext(paste('Mean',ifelse(is.in(type,c('len','size')),'length','age')),
           side=2,las=0,outer=TRUE)
     mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
+    # restore previous graphics parameters
+    par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
+        oma=par_current$oma, las=par_current$las)
   }
   tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
   confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
-                                c(0.025,0.975)))
+                                c(0.025,0.975),na.rm=TRUE))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
-  Outs <- paste("Francis Weights - ",type,":",fit$FleetNames[fleet],":",
-                round(Nmult,5),round(confint[1],5),round(confint[2],5))
+  Outs <- paste("Francis Weights - ", type, ": ", fit$FleetNames[fleet],": ",
+                round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
+                sep="")
   print(Outs)
   return(Output)
 }

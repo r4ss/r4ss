@@ -109,6 +109,12 @@ SSplotNumbers <-
     #mainmorphs <- morph_indexing$Index[morph_indexing$Bseas==1 & morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist)]
     mainmorphs <- replist$mainmorphs
 
+    if(!"BirthSeas" %in% names(natage)){
+      cat("Numbers at age plots haven't been updated to work with SS version 3.30\n")
+      return()
+    }
+
+
     SS_versionshort <- toupper(substr(replist$SS_version,1,8))
 
     if(areas[1]=="all"){

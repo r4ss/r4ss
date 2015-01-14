@@ -1,4 +1,4 @@
-#' function "stackpoly" by Jim Lemon from "plotrix" package
+#' modified from "stackpoly" by Jim Lemon from "plotrix" package
 #' 
 #' Plot one or more columns of numeric values as the top edges of polygons
 #' instead of lines.
@@ -19,15 +19,17 @@
 #' @param border Color for the polygon borders.
 #' @param col Color to fill the polygons. If NULL, 'rainbow' will be called to
 #' generate the colors. If NA, the polygons will not be filled.
-#' @param axis4 option to add an axis on the right hand side
+#' @param axis4 option to add an axis on the right hand side.
+#' @param x.hash values from x for which the bars have hash marks instead of solid fill
+#' @param density density value for hashed areas
 #' @param \dots Additional arguments passed to 'plot'.
-#' @author Jim Lemon
+#' @author Jim Lemon, Ian Taylor
 #' @export
 #' @references \url{http://cran.r-project.org/web/packages/plotrix/index.html}
 #' @keywords hplot
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                        xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
-                       col=NA, axis4=F, ...)
+                       col=NA, axis4=F, x.hash=NULL, density=20, ...)
 ## modified version of function "stackpoly" by Jim Lemon from "plotrix"
 ## see http://cran.r-project.org/web/packages/plotrix/index.html
 {
@@ -50,11 +52,14 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
             polygon(c(x[1], x[, pline], x[ydim[1]]),
                     c(plotlim[3], y[, pline], plotlim[3]),
                     border = border, col = col[pline],
-                    lty = lty[pline])
+                    lty = lty[pline],
+                    density=ifelse(x[1]%in%x.hash, density, NULL))
+        } else {
+          polygon(c(x[, pline], rev(x[, pline - 1])),
+                  c(y[, pline], rev(y[, pline - 1])), border = border,
+                  col = col[pline], lty = lty[pline],
+                  density=ifelse(x[1,pline]%in%x.hash, density, NULL))
         }
-        else polygon(c(x[, pline], rev(x[, pline - 1])),
-                     c(y[, pline], rev(y[, pline - 1])), border = border,
-                     col = col[pline], lty = lty[pline])
     }
     if (axis4)  axis(4)
 }

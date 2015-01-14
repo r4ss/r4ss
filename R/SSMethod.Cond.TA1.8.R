@@ -1,29 +1,36 @@
 #' Apply Francis composition weighting method TA1.8 for conditional age-at-length fits
 #'
-#' Uses method TA1.8 (described in Appendix A of Francis 2011) to do
-#' stage-2 weighting of composition data from a Stock Synthesis model.
-#' Outputs a mutiplier, w (with bootstrap 95% confidence interval),
-#' so that N2y = w x N1y, where N1y and N2y are the stage-1 and stage-2
-#' multinomial sample sizes for the data set in year y.  Optionally
-#' makes a plot of observed (with confidence limits, based on N1y)
-#' and expected mean lengths (or ages).
-#' \cr\cr
-#' CAUTIONARY/EXPLANATORY NOTE.
-#' The large number of options available in SS makes it very
-#' difficult to be sure that what this function does is
-#' appropriate for all combinations of options.  The following
-#' notes might help anyone wanting to check or correct the code.
-#' 1. The code first takes the appropriate database (lendbase, sizedbase,
-#'    agedbase, or condbase) and removes un-needed rows.
-#' 2. The remaining rows of the database are grouped into individual
-#'    comps (indexed by vector indx) and relevant statistics (e.g.,
-#'    observed and expected mean length or age), and ancillary data,
-#'    are calculated for each comp (these are stored in pldat - one row
-#'    per comp).
-#' 3. If the data are to be plotted, the comps are grouped, with each
-#'    group corresponding to a panel in the plot, and groups are indexed
-#'    by plindx.
-#' 4. A single multiplier is calculated to apply to all the comps.
+#' Uses an extension of method TA1.8 (described in Appendix A of Francis 2011)
+#' to do stage-2 weighting of conditional age at length composition data from a
+#' Stock Synthesis model. Outputs two versions (A and B) of a mutiplier, \emph{w},
+#' (with bootstrap 95\% confidence intervals) so that
+#' \emph{N2i} = \emph{w} x \emph{N1i},
+#' where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
+#' sample sizes for the \emph{i}th composition. Optionally makes a plot
+#' (for version A) of observed and expected mean ages, with two alternative
+#' sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
+#' (thick lines) - for the observed values.\cr
+#' \cr
+#' The two versions of w differ according to whether the calculated mean ages are
+#' indexed by year (version A) or by year and length bin (version B).  Version A is
+#' recommended; version B is included for historical reasons.\cr
+#' \cr
+#' CAUTIONARY/EXPLANATORY NOTE. The large number of options available in SS makes it
+#' very difficult to be sure that what this function does is appropriate for all
+#' combinations of options. The following notes (for version A) might help anyone
+#' wanting to check or correct the code.
+#' \enumerate{
+#'   \item The code first removes un-needed rows
+#' from database condbase.
+#'   \item The remaining rows of the database are grouped
+#' (indexed by vector indx) and relevant statistics (e.g., observed and expected
+#' mean age), and ancillary data, are calculated for each group (these are stored
+#' in pldat - one row per group).
+#'   \item If the data are to be plotted they are further
+#' grouped by fleet, with one panel of the plot per fleet.
+#'   \item A single multiplier, \emph{w}, is calculated to apply to all the
+#' selected data.
+#' }
 #'
 #' @param fit Stock Synthesis output as read by r4SS function SS_output
 #' @param fleet vector of one or more fleet numbers whose data are to
@@ -32,7 +39,6 @@
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
-#' @param pick.gender SS code for sex (0=unsexed, 1=female, 2=male, 3=females, males)
 #' @param seas string indicating how to treat data from multiple seasons
 #' 'comb' - combine seasonal data for each year and plot against Yr
 #' 'sep' - treat seasons separately, plotting against Yr.S
@@ -44,21 +50,21 @@
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?
 #' @author Chris Francis, Andre Punt, Ian Taylor
+#' @export
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Canadian Journal of
 #' Fisheries and Aquatic Sciences 68: 1124-1138.
 #'
 SSMethod.Cond.TA1.8 <-
-  function(fit,fleet,part=0:2,pick.gender=0:3,seas=NULL,
+  function(fit,fleet,part=0:2,seas=NULL,
            plotit=TRUE,maxpanel=1000,FullDiagOut=FALSE)
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
-  if(sum(!is.in(pick.gender,c(0:3)))>0)  stop('Unrecognised value for pick.gender')
 
   # Select the type of datbase
-  dbase <- fit[[paste("condbase",sep='')]]
+  dbase <- fit[["condbase"]]
   sel <- is.in(dbase$Fleet,fleet) & is.in(dbase$Part,part)
   if(sum(sel)==0) return()
 
@@ -71,11 +77,17 @@ SSMethod.Cond.TA1.8 <-
 
   indx <- paste(dbase$Fleet,dbase$Yr,if(seas=='sep')dbase$Seas else '')
   uindx <- unique(indx)
-  if(length(uindx)==1)stop('Only one point to plot')
+  if(length(uindx)==1){
+    # presumably the method is meaningless of there's only 1 point,
+    # but it's good to be able to have the function play through
+    cat('Warning: only one point to plot\n')
+    return()
+  }
 
-  pldat <- matrix(0,length(uindx),12,dimnames=list(uindx,
-                                         c('Obsmn','Obslo','Obshi','semn','Expmn','Std.res','ObsloAdj',
-                                           'ObshiAdj','Total','Fleet','Yr',"EffN")))
+  pldat <- matrix(0,length(uindx),12,
+                  dimnames=list(uindx,
+                      c('Obsmn','Obslo','Obshi','semn','Expmn','Std.res','ObsloAdj',
+                        'ObshiAdj','Total','Fleet','Yr',"EffN")))
   pldat <- cbind(pldat,Lbin=0)
 
   # Find the wieghting factor for this combination of factors
@@ -86,35 +98,32 @@ SSMethod.Cond.TA1.8 <-
     Lbins <- unique(subdbase$Lbin_lo)
     Intermediate <- matrix(0,length(Lbins),5,
                            dimnames=list(Lbins,c('Obsmn','Varn','Expmn','N',"Resid")))
-    for (j in 1:length(Lbins))
-        {
-          ILbin <- Lbins[j]
-          subsubdbase <- subdbase[subdbase$Lbin_lo==ILbin,]
-          if (length(subsubdbase$Yr) > 0)
-              {
-                xvar <- subsubdbase$Bin
-                AbarNObs <- sum(subsubdbase$Obs*xvar)/sum(subsubdbase$Obs)
-                AbarNPre <- sum(subsubdbase$Exp*xvar)/sum(subsubdbase$Exp)
-                AbarVarn <- (sum(subsubdbase$Exp*xvar^2)/sum(subsubdbase$Exp)-AbarNPre^2)
-                Intermediate[j,'Obsmn'] <- AbarNObs
-                Intermediate[j,'Expmn'] <- AbarNPre
-                Intermediate[j,'Varn'] <- AbarVarn
-                Intermediate[j,'N'] <- mean(subsubdbase$N)
-                Intermediate[j,'Resid'] <- (AbarNObs-AbarNPre)/sqrt(AbarVarn/mean(subsubdbase$N))
-              }
-        }
+    for (j in 1:length(Lbins)){
+      ILbin <- Lbins[j]
+      subsubdbase <- subdbase[subdbase$Lbin_lo==ILbin,]
+      if (length(subsubdbase$Yr) > 0){
+        xvar <- subsubdbase$Bin
+        AbarNObs <- sum(subsubdbase$Obs*xvar)/sum(subsubdbase$Obs)
+        AbarNPre <- sum(subsubdbase$Exp*xvar)/sum(subsubdbase$Exp)
+        AbarVarn <- (sum(subsubdbase$Exp*xvar^2)/sum(subsubdbase$Exp)-AbarNPre^2)
+        Intermediate[j,'Obsmn'] <- AbarNObs
+        Intermediate[j,'Expmn'] <- AbarNPre
+        Intermediate[j,'Varn'] <- AbarVarn
+        Intermediate[j,'N'] <- mean(subsubdbase$N)
+        Intermediate[j,'Resid'] <- (AbarNObs-AbarNPre)/sqrt(AbarVarn/mean(subsubdbase$N))
+      }
+    }
     Total <- sum(Intermediate[,'N'])
     Weights <- Intermediate[,'N']/Total
 
     AbarNObs <- 0
     AbarNPre <- 0
     AbarVarn <- 0
-    for (j in 1:length(Lbins))
-        {
-          AbarNObs <- AbarNObs + as.double(Intermediate[j,'Obsmn'] * Weights[j])
-          AbarNPre <- AbarNPre + as.double(Intermediate[j,'Expmn'] * Weights[j])
-          AbarVarn <- AbarVarn + as.double(Weights[j]^2*Intermediate[j,'Varn'])
-        }
+    for (j in 1:length(Lbins)){
+      AbarNObs <- AbarNObs + as.double(Intermediate[j,'Obsmn'] * Weights[j])
+      AbarNPre <- AbarNPre + as.double(Intermediate[j,'Expmn'] * Weights[j])
+      AbarVarn <- AbarVarn + as.double(Weights[j]^2*Intermediate[j,'Varn'])
+    }
     AbarVarn <- sqrt(AbarVarn/Total)
 
     pldat[i,'Obsmn'] <- AbarNObs
@@ -145,7 +154,9 @@ SSMethod.Cond.TA1.8 <-
 
     # Select number of panels
     Npanel <- length(uplindx)
-    NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    ## Ian T. 9/25/14: changing from having at least 4 panels to no minimum
+    #NpanelSet <- max(4,min(length(uplindx),maxpanel))
+    NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
     par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),

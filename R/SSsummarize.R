@@ -217,12 +217,16 @@ SSsummarize <- function(biglist,
     
     ## indices
     indextemp <- stats$cpue
-    indextemp$Model <- keyvec2[imodel]
-    indextemp$imodel <- imodel
-    if(is.null(indices) || ncol(indextemp)==ncol(indices)){
-      indices <- rbind(indices, indextemp)
+    if(is.na(indextemp[[1]][1])){
+      cat("no index data\n")
     }else{
-      cat("problem summarizing indices due to mismatched columns\n")
+      indextemp$Model <- keyvec2[imodel]
+      indextemp$imodel <- imodel
+      if(is.null(indices) || ncol(indextemp)==ncol(indices)){
+        indices <- rbind(indices, indextemp)
+      }else{
+        cat("problem summarizing indices due to mismatched columns\n")
+      }
     }
 
     # number of parameters

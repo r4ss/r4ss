@@ -115,8 +115,8 @@
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
 #' @param cols Number of columns to use for single panel plots. Default=1.
-#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=6.
-#' @param maxcols Maximum number of columns for multi-panel plots.  Default=6.
+#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=4.
+#' @param maxcols Maximum number of columns for multi-panel plots.  Default=4.
 #' @param maxrows2 Maximum number of rows for conditional age-at-length
 #' multi-panel plots. Default=2.
 #' @param maxcols2 Maximum number of rows for conditional age-at-length
@@ -142,6 +142,7 @@
 #' parameters).
 #' @param maxyr Last year to show in time-series plots (changes xlim
 #' parameters).
+#' @param sexes Which sexes to show in composition plots. Default="all".
 #' @param scalebins Rescale expected and observed proportions in composition
 #' plots by dividing by bin width for models where bins have different widths?
 #' Caution!: May not work correctly in all cases.
@@ -180,11 +181,11 @@ SS_plots <-
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     sampsizeline=FALSE,effNline=FALSE,
     showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
-    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=6, maxcols=6,
+    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
     maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
     new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-    legendloc="topleft", minyr=NULL, maxyr=NULL, scalebins=FALSE,
+    legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
     scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
 {
   if(!is.null(print)) stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
@@ -675,7 +676,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -691,7 +692,7 @@ SS_plots <-
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,
                         plotdir=plotdir,cex.main=cex.main,
-                        scalebins=scalebins, scalebubbles=scalebubbles,
+                        sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
@@ -710,7 +711,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -725,7 +726,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -747,7 +748,7 @@ SS_plots <-
                       andrerows=andrerows,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -774,7 +775,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -790,7 +791,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -808,7 +809,7 @@ SS_plots <-
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                         maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                        scalebins=scalebins,
+                        sexes=sexes, scalebins=scalebins,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
@@ -834,7 +835,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -848,7 +849,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -874,7 +875,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      scalebins=scalebins,
+                      sexes=sexes, scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -893,7 +894,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      scalebins=scalebins,
+                      sexes=sexes, scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -911,7 +912,7 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      scalebins=scalebins,
+                      sexes=sexes, scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -922,7 +923,7 @@ SS_plots <-
     } #end if igroup in plot or print
 
     ##########################################
-    # Andre's conditional age-at-length comp fits
+    # Fancis and Punt conditional age-at-length comp fits
     #
     igroup <- 19
     if(igroup %in% plot){
@@ -936,16 +937,20 @@ SS_plots <-
         ##       "    with 90% CIs based on the chi-square distribution.\n")
         ## }
         plotinfo <-
-          SSplotComps(replist=replist,subplots=8,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
+          SSplotComps(replist=replist,subplots=9:10,datonly=FALSE,kind="cond",
+                      bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       aalbin=aalbin,aalyear=aalyear,
-                      samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                      samplesizeplots=samplesizeplots,
+                      showsampsize=showsampsize,showeffN=showeffN,
                       minnbubble=minnbubble, pntscalar=pntscalar,
-                      maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
+                      maxrows=maxrows,maxcols=maxcols,
+                      maxrows2=maxrows2,maxcols2=maxcols2,
+                      fixdims=fixdims,rows=rows,cols=cols,
                       andrerows=andrerows,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      scalebins=FALSE,
+                      sexes=sexes, scalebins=FALSE,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -971,7 +976,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -984,7 +989,7 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    scalebins=scalebins,
+                    sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -1083,21 +1088,25 @@ SS_plots <-
   # Write and return table of plot info for any PNG files that got created
   #
   if(!is.null(plotInfoTable)){
+    # make sure there are no factors
     plotInfoTable$file <- as.character(plotInfoTable$file)
     plotInfoTable$caption <- as.character(plotInfoTable$caption)
+    # record the current time and the model run time
     png_time <- Sys.time()
     #png_time2 <- format(writetime,'%d-%b-%Y_%H.%M')
     plotInfoTable$png_time <- png_time
     plotInfoTable$Run_time <- Run_time
+    # create a name for the file and write it to the plot directory
     csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
+    # write HTML files to display the images
     if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder)
+    # return notes on the plots
     return(invisible(plotInfoTable))
   }else{
+    # if there's some problem (perhaps if no plots were created), return a 999 code 
     return(invisible(999))
   }
   ### end of SS_plots function
 }
-
-

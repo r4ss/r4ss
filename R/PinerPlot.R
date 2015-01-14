@@ -54,6 +54,8 @@
 ##' be the directory where the model was run.
 ##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 ##' anything yet.)
+##' @references Kevin Piner says that he's not the originator of this idea so
+##' Athol Whitten is going to add a reference here.
 ##' @author Ian Taylor, Kevin Piner
 ##' @export
 PinerPlot <-
