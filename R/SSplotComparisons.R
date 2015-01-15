@@ -128,7 +128,7 @@ SSplotComparisons <-
            indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
            labels=c("Year",             #1
              "Spawning biomass (mt)",   #2
-             "Spawning depletion",      #3
+             "Relative spawning biomass", #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
