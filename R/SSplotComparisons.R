@@ -1147,7 +1147,7 @@ SSplotComparisons <-
         }
       }
     }
-    if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for depletion plots
+    if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for relative spawning biomass plots
     if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
     if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
     
@@ -1178,7 +1178,7 @@ SSplotComparisons <-
             plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
         }
       }
-      # add vertical lines for target and threshold depletion values
+      # add vertical lines for target and threshold relative spawning biomass values
       if(grepl("Bratio",parname)){
         if(btarg>0){
           abline(v=btarg,col="red",lty=2)
@@ -1315,8 +1315,6 @@ SSplotComparisons <-
     }
   }
 
-
-  ######### IAN: add uncertainty test here!!!!!!!
   # subplot 2: spawning biomass with uncertainty intervals
   if(2 %in% subplots){
     if(any(uncertainty)){
@@ -1330,9 +1328,9 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 3: biomass ratio (hopefully equal to spawning depletion)
+  # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
   if(3 %in% subplots){
-    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to spawning depletion)\n")
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to relative spawning biomass)\n")
     if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")
