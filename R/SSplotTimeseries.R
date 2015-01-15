@@ -85,7 +85,7 @@ SSplotTimeseries <-
                 "Summary biomass (mt)",         #3
                 "Summary biomass (mt) at beginning of season", #4
                 "Spawning biomass (mt)",        #5
-                "Spawning depletion",           #6
+                "Relative spawning biomass",    #6
                 "Spawning output",              #7
                 "Age-0 recruits (1,000s)",      #8
                 "Fraction of total Age-0 recruits",  #9
@@ -134,6 +134,7 @@ SSplotTimeseries <-
   #if(FecPar2!=0){ # old test based on parameter values not robust to all options
   if(replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
     labels[5] <- labels[7]
+    labels[6] <- gsub("biomass","output",labels[6])
   }
 
   # check area subsets
