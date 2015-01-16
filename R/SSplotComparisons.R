@@ -1548,7 +1548,7 @@ SSplotComparisons <-
           }
           if(print){
             pngfun(paste("compare14_densities_",name,".png",sep=""))
-            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumualtive=T)
+            plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=T)
             dev.off()
           }
         }
