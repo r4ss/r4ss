@@ -31,25 +31,19 @@ Once you have installed the r4ss package, it can be loaded in the regular manner
 library(r4ss)
 ````
 
-Specific versions of r4ss can be installed from GitHub using a command like the following:
+### Changes
+
+Note on January 15th, 2015:
+A variety of changes that were in a branch on this GitHub site have now been merged into the main code. If anything doesn't work for you, you can install an earlier version using the command.
 
 ```S
 devtools::install_github("r4ss/r4ss", ref="v1.22.1")
 ````
 
-### Testing
-
-Note on January 7th, 2015:
-Please help test an experimental version of r4ss that will soon be merged into the main code. You can install it using the command:
-
-```S
-devtools::install_github("r4ss/r4ss", ref="TA1.8testing")
-````
-
 Changes include
-* various minor tweaks
 * new growth plots that facilitate comparison of mean growth to variability in growth and mean growth with maturity
 * new composition plots that show females, males, and unsexed fish in the same plot
 * automatic generation of data-weighting plots contributed by Chris Francis
+* a variety of other minor refinements
 
 Some of these things surely won't work right for any particular model configuration. If so, please email Ian Taylor or post an "issue" on this GitHub site at https://github.com/r4ss/r4ss/issues
