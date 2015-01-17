@@ -23,7 +23,8 @@
 ##' random effect coefficient. 
 ##' @param Int_Group_List List where each element is a vector, providing a way of
 ##' grouping different random effect groups into a single category. This is not
-##' used (but input is still required) when \code{Version=1}.
+##' used (but input is still required) when \code{Version=1}. The default value
+##' will work fine generically when \code{Version=1}.
 ##' @param Version Integer (options are 1, 5, and 6) giving the type of Laplace
 ##' Approximation. I recommend 1.
 ##' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
@@ -52,7 +53,7 @@
 NegLogInt_Fn <-
   function(File=NA, Input_SD_Group_Vec,
            CTL_linenum_List, ESTPAR_num_List,
-           PAR_num_Vec, Int_Group_List, Version=5,
+           PAR_num_Vec, Int_Group_List=list(1), Version=1,
            StartFromPar=TRUE, Intern=TRUE,
            ReDoBiasRamp=FALSE, BiasRamp_linenum_Vec=NULL,
            CTL_linenum_Type=NULL,systemcmd=FALSE){
@@ -349,12 +350,12 @@ NegLogInt_Fn <-
     DIAG <- read.admbFit(paste(File,"ss3_",Iteration,sep=""))
     HESS <- getADMBHessian(File=File,FileName=paste("admodel_",Iteration,".hes",sep=""))
     # Calculate Hessian
-    cov <- pseudoinverse(HESS$hes)
+    cov <- corpcor::pseudoinverse(HESS$hes)
     scale <- HESS$scale
     cov.bounded <- cov*(scale %o% scale)
     #se <- sqrt(diag(cov.bounded))
     #cor <- cov.bounded/(se %o% se)
-    Hess <- pseudoinverse(cov.bounded)
+    Hess <-  corpcor::pseudoinverse(cov.bounded)
 
     # Confirm that correct parameters are being included in Hessian
     if(Iteration==1){
@@ -380,7 +381,7 @@ NegLogInt_Fn <-
     # Add in constant of proportionality for recruitment (i.e. to account for
     # Rick's bias-correction ramp)
     BiasAdj <- readLines(paste(File,"Report_",Iteration,".sso",sep=""))
-    BiasAdjStart <- pmatch("SPAWN_RECRUIT",BiasAdj) + 7
+    BiasAdjStart <- pmatch("SPAWN_RECRUIT",BiasAdj) + 8
     BiasAdjTable <- read.table(paste(File,"Report_",Iteration,".sso",sep=""),
         header=TRUE, nrows=2, skip=BiasAdjStart, comment.char="#")
     SigmaR <- as.numeric(strsplit(BiasAdj[BiasAdjStart-4]," ")[[1]][1])
