@@ -74,4 +74,7 @@ Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random
 effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
 Sci.
 }
+\seealso{
+\code{\link{read.admbFit}}, \code{\link{getADMBHessian}}
+}
 

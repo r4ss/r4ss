@@ -22,4 +22,7 @@ Approximation but likely useful for other purposes.
 \author{
 James Thorson
 }
+\seealso{
+\code{\link{getADMBHessian}}, \code{\link{NegLogInt_Fn}}
+}
 
