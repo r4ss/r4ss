@@ -27,4 +27,7 @@ Also published here:
 \author{
 Cole Monnahan
 }
+\seealso{
+\code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}
+}
 
