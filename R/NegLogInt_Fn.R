@@ -1,18 +1,18 @@
 ##' Perform SS implementation of Laplace Approximation
 ##'
 ##' (Attempt to) perform the SS implementation of the Laplace Approximation
-##' from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci. 
+##' from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
 ##'
 ##' @param File Directory containing Stock Synthesis files
-##' (e.g., "C:/Users/James Thorson/Desktop/") 
+##' (e.g., "C:/Users/James Thorson/Desktop/")
 ##' @param Input_SD_Group_Vec Vector where each element is the standard deviation
 ##' for a group of random effects (e.g., a model with a single group of random
-##' effects will have Input_SD_Group_Vec be a vector of length one) 
+##' effects will have Input_SD_Group_Vec be a vector of length one)
 ##' @param CTL_linenum_List List (same length as \code{Input_SD_Group_Vec}),
 ##' where each
 ##' element is a vector giving the line number(s) for the random effect standard
 ##' deviation parameter or penalty in the CTL file (and where each line will
-##' correspond to a 7-parameter or 14-parameter line). 
+##' correspond to a 7-parameter or 14-parameter line).
 ##' @param ESTPAR_num_List List (same length as \code{Input_SD_Group_Vec}),
 ##' where each
 ##' element is a vector giving the parameter number for the random effect
@@ -20,21 +20,20 @@
 ##' correspond to the number of these parameters in the list of parameters in the
 ##' "ss3.std" output file.
 ##' @param PAR_num_Vec Vector giving the number in the "ss3.par" vector for each
-##' random effect coefficient. 
+##' random effect coefficient.
 ##' @param Int_Group_List List where each element is a vector, providing a way of
 ##' grouping different random effect groups into a single category. This is not
-##' used (but input is still required) when \code{Version=1}. The default value
-##' will work fine generically when \code{Version=1}.
+##' used (but input is still required) when \code{Version=1}.
 ##' @param Version Integer (options are 1, 5, and 6) giving the type of Laplace
 ##' Approximation. I recommend 1.
 ##' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
-##' round of optimization from a "ss3.par" file (I recommend TRUE) 
+##' round of optimization from a "ss3.par" file (I recommend TRUE)
 ##' @param Intern Logical flag saying whether to display all ss3 runtime output
 ##' in the R terminal
 ##' @param ReDoBiasRamp Logical flag saying whether to re-do the bias ramp
 ##' (using \code{\link{SS_fitbiasramp}}) each time Stock Synthesis is run.
 ##' @param BiasRamp_linenum_Vec Vector giving the line numbers from the CTL file
-##' that contain the information about the bias ramp. 
+##' that contain the information about the bias ramp.
 ##' @param CTL_linenum_Type Character vector (same length as
 ##' \code{Input_SD_Group_Vec}),
 ##' where each element is either "Short_Param", "Long_Penalty", "Long_Penalty".
@@ -64,7 +63,7 @@ NegLogInt_Fn <-
 
   # Directory
   if(is.na(File)){
-      File = paste(getwd(),"/",sep="")
+      File = getwd()
   }
 
   if( "Iteration.txt" %in% list.files(File)){
@@ -72,7 +71,7 @@ NegLogInt_Fn <-
   }else{
       Iteration <- 0
   }
-  
+
   # Error messages
   if(ReDoBiasRamp==TRUE & is.null(BiasRamp_linenum_Vec)){
       stop("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")
@@ -81,16 +80,16 @@ NegLogInt_Fn <-
   # Make sure print is high enough for when passing values to ADMB
   options(digits=15)
 
-  # Iteration tracker (setting as a global variable for reasons that Jim Thorson can explain)
+  # Iteration tracker (previously set as a global variable)
   Iteration <- Iteration + 1
   #  writing Iteration to a file to avoid CRAN rules about global variables
   write(Iteration,file=file.path(File,"Iteration.txt"))
   #  alternative method would be to read it out of Optimization_record.txt using code
   #  like the following:
-  #    record <- readLines(file.path(File,"Optimization_record.txt"))
+  #    record <- readLines(OptRecord)
   #    Iterations <- as.numeric(substring(record[grep("Iteration",record)],11))
   #    Iteration <- max(Iterations)
-  
+
   # Transform parameter vector
   SD_Group_Vec = Input_SD_Group_Vec
 
@@ -99,32 +98,36 @@ NegLogInt_Fn <-
     CTL_linenum_Type = rep(NA, length(SD_Group_Vec))
   }
 
+  # define some filenames with full path
+  OptRecord <- file.path(File, "Optimization_record.txt")
+  ParFile   <- file.path(File, "ss3.par")
+
   # Write record to file (part 1)
   if(!("Optimization_record.txt" %in% list.files(File))){
-      write("Start optimization",file=file.path(File,"Optimization_record.txt"),
+      write("Start optimization",file=OptRecord,
             append=FALSE)
   }
-  write("",file=file.path(File,"Optimization_record.txt"),append=TRUE)
-  write(date(),file=file.path(File,"Optimization_record.txt"),append=TRUE)
-  write(paste("Iteration",Iteration),file=file.path(File,"Optimization_record.txt"),
+  write("",file=OptRecord,append=TRUE)
+  write(date(),file=OptRecord,append=TRUE)
+  write(paste("Iteration",Iteration),file=OptRecord,
         append=TRUE)
   write(paste("SD_Group_Vec",paste(SD_Group_Vec,collapse=" ")),
-        file=paste(File,"Optimization_record.txt",sep=""),append=TRUE)
+        file=OptRecord,append=TRUE)
 
   # If ss3.par is availabile from the last iteration then use it as starting point
-  STARTER <- SS_readstarter(paste(File,"Starter.SS",sep=""), verbose=FALSE)
+  STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
   if( paste("ss3_",Iteration-1,".par",sep="") %in% list.files(File) &
      StartFromPar==TRUE ){
     STARTER$init_values_src <- 1
-    PAR_0 <- scan(paste(File,"ss3_",Iteration-1,".par",sep=""), comment.char="#",
-                  quiet=TRUE)
+    PAR_0 <- scan(file.path(File,paste("ss3_",Iteration-1,".par",sep="")),
+                  comment.char="#", quiet=TRUE)
   }else{
     STARTER$init_values_src = 0
   }
   SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE, verbose=FALSE)
 
   # Read CTL
-  CTL <- readLines(paste(File,STARTER$ctlfile,sep=""))
+  CTL <- readLines(file.path(File,STARTER$ctlfile))
   # Modify CTL
   for(ParI in 1:length(SD_Group_Vec)){
     for(CtlLineI in 1:length(CTL_linenum_List[[ParI]])){
@@ -172,9 +175,9 @@ NegLogInt_Fn <-
   #assign("CTL", value=CTL, envir=.GlobalEnv)
   #stop()
   # Write CTL
-  writeLines(CTL,paste(File,STARTER$ctlfile,sep=""))
+  writeLines(CTL, file.path(File,STARTER$ctlfile))
   if( "PAR_0" %in% ls() ){
-      write(PAR_0, file=paste(File,"ss3.par",sep=""), ncolumns=10)
+      write(PAR_0, file=ParFile, ncolumns=10)
   }
 
   # Run SS
@@ -194,23 +197,23 @@ NegLogInt_Fn <-
   Converged <- FALSE
   if("ss3.par" %in% list.files(File)){
     # Move PAR files
-    file.rename(from=paste(File,"ss3.par",sep=""),
-                to=paste(File,"ss3_",Iteration,"-first.par",sep=""))
+    file.rename(from=ParFile,
+                to=file.path(File,paste("ss3_",Iteration,"-first.par",sep="")))
     # Read and check
-    PAR <- scan(paste(File,"ss3_",Iteration,"-first.par",sep=""),
-        what="character", quiet=TRUE)
+    PAR <- scan(file.path(File,paste("ss3_",Iteration,"-first.par",sep="")),
+                what="character", quiet=TRUE)
     if( ifelse(is.na(as.numeric(PAR[11])),FALSE,as.numeric(PAR[16])<1) ){
       Converged <- TRUE
     }else{
       write(paste("*** Optimization ",1," didn't converge ***",sep=""),
-            file=file.path(File,"Optimization_record.txt"),append=TRUE)
+            file=OptRecord,append=TRUE)
     }
   }
 
   # Try re-running with default starting values
   if(Converged==FALSE){
     # Change starter to take PAR file
-    STARTER <- SS_readstarter(paste(File,"Starter.SS",sep=""), verbose=FALSE)
+    STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
     STARTER$init_values_src <- 1
     SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE, verbose=FALSE)
     # Loop through all previous start values
@@ -218,15 +221,15 @@ NegLogInt_Fn <-
     while(Converged==FALSE & PreviousIteration<=Iteration){
       # Read in original estimate
       if(PreviousIteration==0){
-          PAR_0 <- scan(paste(File,"ss3_",PreviousIteration,".par", sep=""),
-              comment.char="#", quiet=TRUE)
+        PAR_0 <- scan(file.path(File, paste("ss3_",PreviousIteration,".par", sep="")),
+                      comment.char="#", quiet=TRUE)
       }
       if(PreviousIteration>=1 & PreviousIteration<Iteration){
-          PAR_0 <- scan(paste(File,"ss3_",PreviousIteration,"-first.par",sep=""),
-              comment.char="#", quiet=TRUE)
+        PAR_0 <- scan(file.path(File, paste("ss3_",PreviousIteration,"-first.par",sep="")),
+                      comment.char="#", quiet=TRUE)
       }
       if(PreviousIteration==Iteration & "ss3_init.par"%in%list.files(File)){
-          PAR_0 <- scan(paste(File,"ss3_init.par",sep=""), comment.char="#", quiet=TRUE)
+        PAR_0 <- scan(file.path(File, "ss3_init.par"), comment.char="#", quiet=TRUE)
       }
       # Modify values of PAR file for short-line values
       for(ParI in 1:length(SD_Group_Vec)){
@@ -237,7 +240,7 @@ NegLogInt_Fn <-
         }
       }
       if( "PAR_0" %in% ls() ){
-          write(PAR_0, file=paste(File,"ss3.par",sep=""), ncolumns=10)
+        write(PAR_0, file=ParFile, ncolumns=10)
       }
       # Run SS
       command <- "ss3 -nohess -cbs 500000000 -gbs 500000000"
@@ -253,20 +256,21 @@ NegLogInt_Fn <-
       # Check convergence
       if("ss3.par" %in% list.files(File)){
         # Move PAR files
-        file.copy(from=paste(File,"ss3.par",sep=""),
-                  to=paste(File,"ss3_",Iteration,"-first.par",sep=""), overwrite=TRUE)
-        file.remove(paste(File,"ss3.par",sep=""))
+        file.copy(from=ParFile,
+                  to=file.path(File,paste("ss3_",Iteration,"-first.par",sep="")),
+                  overwrite=TRUE)
+        file.remove(ParFile)
         # Read and check
-        PAR <- scan(paste(File,"ss3_",Iteration,"-first.par",sep=""),
-            what="character", quiet=TRUE)
+        PAR <- scan(file.path(File, paste("ss3_",Iteration,"-first.par",sep="")),
+                    what="character", quiet=TRUE)
         if( ifelse(is.na(as.numeric(PAR[11])),FALSE,as.numeric(PAR[16])<1) ){
           Converged <- TRUE
           write(paste("*** Optimization ",2,"-",PreviousIteration," did converge ***",
-                      sep=""),file=paste(File,"Optimization_record.txt",sep=""),
+                      sep=""),file=OptRecord,
                 append=TRUE)
         }else{
           write(paste("*** Optimization ",2,"-",PreviousIteration," didn't converge ***",sep=""),
-                file=paste(File,"Optimization_record.txt",sep=""),append=TRUE)
+                file=OptRecord,append=TRUE)
         }
       }
       # Increment
@@ -277,13 +281,13 @@ NegLogInt_Fn <-
   # Only calculate Integral if model is converged
   if(Converged==TRUE){
     # Re-run to get Hessian
-    STARTER <- SS_readstarter(paste(File,"Starter.SS",sep=""), verbose=FALSE)
+    STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
     STARTER$init_values_src <- 1
     SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE,
                     verbose=FALSE)
-    file.copy(from=paste(File,"ss3_",Iteration,"-first.par",sep=""),
-              to=paste(File,"ss3.par",sep=""), overwrite=TRUE)
-    file.remove(paste(File,"ss3.std",sep=""))
+    file.copy(from=file.path(File, paste("ss3_",Iteration,"-first.par",sep="")),
+              to=ParFile, overwrite=TRUE)
+    file.remove(file.path(File, "ss3.std"))
     command <- "ss3 -maxfn 0 -cbs 500000000 -gbs 500000000"
     if(OS!="Windows"){
         command <- paste("./",command,sep="")
@@ -296,76 +300,83 @@ NegLogInt_Fn <-
     Sys.sleep(1)
 
     # Estimate new bias ramp
-    SsOutput <- try(SS_output(File, covar=TRUE, forecast=FALSE), silent=TRUE)
-    if( "ss3.std" %in% list.files(File) 
-       & file.info(paste(File,"ss3.std",sep=""))$size>0
-       & ReDoBiasRamp==TRUE & class(SsOutput)!='try-error' ){
-      BiasRamp <- SS_fitbiasramp(SsOutput, altmethod="psoptim", print=FALSE, plot=FALSE)
-      file.remove(paste(File,"ss3.std",sep=""))
-      # Put into CTL
-      CTL <- readLines(paste(File,STARTER$ctlfile,sep=""))
+    if( ReDoBiasRamp==TRUE
+       & "ss3.std" %in% list.files(File)
+       & file.info(file.path(File, "ss3.std"))$size>0 ){
+      # try reading output
+      SsOutput <- try(SS_output(File, covar=TRUE, forecast=FALSE), silent=TRUE)
+      if( class(SsOutput)!='try-error' ){
+        BiasRamp <- SS_fitbiasramp(SsOutput, altmethod="psoptim", print=FALSE, plot=FALSE)
+        file.remove(file.path(File, "ss3.std"))
+        # Put into CTL
+        CTL <- readLines(file.path(File, STARTER$ctlfile))
         CTL[BiasRamp_linenum_Vec] <- apply(BiasRamp$df, MARGIN=1, FUN=paste, collapse=" ")
-      writeLines(CTL,paste(File,STARTER$ctlfile,sep=""))
-      # Re-run to get Hessian
-      command <- "ss3 -cbs 500000000 -gbs 500000000"
-      if(OS!="Windows"){
-        command <- paste("./",command,sep="")
+        writeLines(CTL, file.path(File, STARTER$ctlfile))
+        # Re-run to get Hessian
+        command <- "ss3 -cbs 500000000 -gbs 500000000"
+        if(OS!="Windows"){
+          command <- paste("./",command,sep="")
+        }
+        if(OS=="Windows" & !systemcmd){
+          shell(cmd=command,intern=Intern)
+        }else{
+          system(command,intern=Intern)
+        }
+        Sys.sleep(1)
       }
-      if(OS=="Windows" & !systemcmd){
-        shell(cmd=command,intern=Intern)
-      }else{
-        system(command,intern=Intern)
-      }
-      Sys.sleep(1)
     }
   }
 
   # Check for STD
   Converged <- FALSE
-  if( "ss3.std"%in%list.files(File) & file.info(paste(File,"ss3.std",sep=""))$size>0 ) Converged=TRUE
+  if( "ss3.std"%in%list.files(File) & file.info(file.path(File, "ss3.std"))$size>0 ){
+    Converged=TRUE
+  }
 
   # If STD exists, then approximate marginal likelihood
   if(Converged==TRUE){
     # Save objects for replicating analysis
-    file.rename(from=file.path(File,"ss3.par"),
-                to=paste(File,"ss3_",Iteration,".par",sep=""))
+    file.rename(from=ParFile,
+                to=file.path(File, paste("ss3_",Iteration,".par",sep="")))
     file.rename(from=file.path(File,"ss3.std"),
-                to=paste(File,"ss3_",Iteration,".std",sep=""))
+                to=file.path(File, paste("ss3_",Iteration,".std",sep="")))
     file.rename(from=file.path(File,"ss3.cor"),
-                to=paste(File,"ss3_",Iteration,".cor",sep=""))
+                to=file.path(File, paste("ss3_",Iteration,".cor",sep="")))
     file.rename(from=file.path(File,"admodel.hes"),
-                to=paste(File,"admodel_",Iteration,".hes",sep=""))
+                to=file.path(File, paste("admodel_",Iteration,".hes",sep="")))
     file.rename(from=file.path(File,"Report.sso"),
-                to=paste(File,"Report_",Iteration,".sso",sep=""))
+                to=file.path(File, paste("Report_",Iteration,".sso",sep="")))
     file.copy(from=file.path(File,STARTER$datfile),
-              to=paste(File,STARTER$datfile,"_",Iteration,".dat",sep=""))
+              to=file.path(File, paste(STARTER$datfile,"_",Iteration,".dat",sep="")))
     file.copy(from=file.path(File,STARTER$ctlfile),
-              to=paste(File,STARTER$ctlfile,"_",Iteration,".ctl",sep=""))
+              to=file.path(File, paste(STARTER$ctlfile,"_",Iteration,".ctl",sep="")))
 
     # Read in some stuff
-    STD <- scan(paste(File,"ss3_",Iteration,".std",sep=""), what="character", quiet=TRUE)
+    STD <- scan(file.path(File, paste("ss3_",Iteration,".std",sep="")),
+                what="character", quiet=TRUE)
     STD <- data.frame(matrix(STD[-c(1:(which(STD=="1")[1]-1))], ncol=4, byrow=TRUE),
         stringsAsFactors=FALSE)
-    PAR <- scan(paste(File,"ss3_",Iteration,".par",sep=""), comment.char="#", quiet=TRUE)
-    DIAG <- read.admbFit(paste(File,"ss3_",Iteration,sep=""))
-    HESS <- getADMBHessian(File=File,FileName=paste("admodel_",Iteration,".hes",sep=""))
+    PAR <- scan(file.path(File, paste("ss3_",Iteration,".par",sep="")),
+                          comment.char="#", quiet=TRUE)
+    DIAG <- read.admbFit(file.path(File, paste("ss3_",Iteration,sep="")))
+    HESS <- getADMBHessian(File=File, FileName=paste("admodel_",Iteration,".hes",sep=""))
     # Calculate Hessian
     cov <- corpcor::pseudoinverse(HESS$hes)
     scale <- HESS$scale
     cov.bounded <- cov*(scale %o% scale)
     #se <- sqrt(diag(cov.bounded))
     #cor <- cov.bounded/(se %o% se)
-    Hess <-  corpcor::pseudoinverse(cov.bounded)
+    Hess <- corpcor::pseudoinverse(cov.bounded)
 
     # Confirm that correct parameters are being included in Hessian
     if(Iteration==1){
       write("RECORD FOR PARAMETERS IN INTEGRAL",
-            file=paste(File,"Optimization_record.txt",sep=""),append=TRUE)
+            file=OptRecord,append=TRUE)
       for(IntI in 1:length(Int_Group_List)){
         Temp <- unlist(ESTPAR_num_List[Int_Group_List[[IntI]]])
-        write(paste("Group",IntI),file=paste(File,"Optimization_record.txt",sep=""),
+        write(paste("Group",IntI),file=OptRecord,
               append=TRUE)
-        write.table(STD[Temp,],file=paste(File,"Optimization_record.txt",sep=""),
+        write.table(STD[Temp,],file=OptRecord,
                     append=TRUE, col.names=FALSE, row.names=FALSE)
       }
     }
@@ -380,14 +391,19 @@ NegLogInt_Fn <-
     }
     # Add in constant of proportionality for recruitment (i.e. to account for
     # Rick's bias-correction ramp)
-    BiasAdj <- readLines(paste(File,"Report_",Iteration,".sso",sep=""))
-    BiasAdjStart <- pmatch("SPAWN_RECRUIT",BiasAdj) + 8
-    BiasAdjTable <- read.table(paste(File,"Report_",Iteration,".sso",sep=""),
+    BiasAdj <- readLines(file.path(File, paste("Report_",Iteration,".sso",sep="")))
+    if(BiasAdj[1]=="#V3.24U"){
+      shift <- 8
+    }else{
+      shift <- 7
+    }
+    BiasAdjStart <- pmatch("SPAWN_RECRUIT",BiasAdj) + shift
+    BiasAdjTable <- read.table(file.path(File, paste("Report_",Iteration,".sso",sep="")),
         header=TRUE, nrows=2, skip=BiasAdjStart, comment.char="#")
     SigmaR <- as.numeric(strsplit(BiasAdj[BiasAdjStart-4]," ")[[1]][1])
     # Deal with eras
     RecDevPen <- matrix(NA,nrow=3,ncol=2,dimnames=list(c("Early","Main","Forecast"),
-                                            c("negative-Rick","full")))
+                                             c("negative-Rick","full")))
     # Deal with early era
     RecDevPen['Early','full'] <- -1 * (-log(SigmaR) * BiasAdjTable[2,2])
     RecDevPen['Early','negative-Rick'] <- -log(SigmaR) * BiasAdjTable[2,2]*BiasAdjTable[2,5]
@@ -399,9 +415,9 @@ NegLogInt_Fn <-
     RecDevPen['Forecast','negative-Rick'] <- 0
     # Add into NLL and record
     NLL <- NLL + sum(RecDevPen)
-    write.table(RecDevPen, file=paste(File,"ss3_",Iteration,".pen",sep=""))
+    write.table(RecDevPen, file=file.path(File, paste("ss3_",Iteration,".pen",sep="")))
     write(c("","sum(RecDevPen) = ",sum(RecDevPen)),
-          file=paste(File,"ss3_",Iteration,".pen",sep=""), append=TRUE)
+          file=file.path(File, paste("ss3_",Iteration,".pen",sep="")), append=TRUE)
 
     # Approximate integral using Laplace Approximation
     Int_num_List <- vector("list", length=length(Int_Group_List))
@@ -439,17 +455,17 @@ NegLogInt_Fn <-
     #Integral <- 2*pi * sqrt(1/exp(LnDet)) * exp(-NLL)
 
     # Write record to file (part 2)
-    write(paste("LnLike",-NLL),file=paste(File,"Optimization_record.txt",sep=""),
+    write(paste("LnLike",-NLL),file=OptRecord,
           append=TRUE)
     write(paste("NegLnDet",paste(-LnDet,collapse=" ")),
-          file=paste(File,"Optimization_record.txt",sep=""),append=TRUE)
+          file=OptRecord,append=TRUE)
   }else{
     # Indicate that this model didn't converge
-    if("ss3.par" %in% list.files(File)) file.remove(paste(File,"ss3.par",sep=""))
+    if("ss3.par" %in% list.files(File)) file.remove(ParFile)
     Ln_Integral <- -1e10 * sum( SD_Group_Vec )
   }
   write(paste("Ln_Integral",Ln_Integral),
-        file=paste(File,"Optimization_record.txt",sep=""),append=TRUE)
+        file=OptRecord,append=TRUE)
 
   return(-1*Ln_Integral)
 }
