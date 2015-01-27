@@ -18,7 +18,7 @@
 ##' element is a vector giving the parameter number for the random effect
 ##' coefficients in that group of random effects. These "parameter numbers"
 ##' correspond to the number of these parameters in the list of parameters in the
-##' "ss3.std" output file.
+##' "ss3.cor" output file.
 ##' @param PAR_num_Vec Vector giving the number in the "ss3.par" vector for each
 ##' random effect coefficient.
 ##' @param Int_Group_List List where each element is a vector, providing a way of
@@ -48,6 +48,23 @@
 ##' @references Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random
 ##' effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
 ##' Sci.
+#' @examples
+#'
+#'   \dontrun{
+#'     direc <- "C:/Models/LaplaceApprox/base"  #need the full path because wd is changed in function
+#'     if("Optimization_record.txt" %in% list.files(direc)) {
+#'          file.remove(file.path(direc,"Optimization_record.txt"))
+#'     }
+#'     Opt = optimize(f=NegLogInt_Fn,
+#'                    interval=c(0.001, 0.12),
+#'                    maximum=FALSE,
+#'                    File=direc,
+#'                    CTL_linenum_List=list(127:131),
+#'                    ESTPAR_num_List=list(86:205),
+#'                    Int_Group_List=1,
+#'                    PAR_num_Vec=NA,
+#'                    Version=1, Intern=TRUE)
+#'   }
 
 NegLogInt_Fn <-
   function(File=NA, Input_SD_Group_Vec,
