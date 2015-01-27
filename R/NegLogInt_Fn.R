@@ -287,7 +287,7 @@ NegLogInt_Fn <-
                     verbose=FALSE)
     file.copy(from=file.path(File, paste("ss3_",Iteration,"-first.par",sep="")),
               to=ParFile, overwrite=TRUE)
-    file.remove(file.path(File, "ss3.std"))
+    if(file.exists(file.path(File, "ss3.std"))) { file.remove(file.path(File, "ss3.std")) }
     command <- "ss3 -maxfn 0 -cbs 500000000 -gbs 500000000"
     if(OS!="Windows"){
         command <- paste("./",command,sep="")
@@ -304,7 +304,7 @@ NegLogInt_Fn <-
        & "ss3.std" %in% list.files(File)
        & file.info(file.path(File, "ss3.std"))$size>0 ){
       # try reading output
-      SsOutput <- try(SS_output(File, covar=TRUE, forecast=FALSE), silent=TRUE)
+      SsOutput <- try(SS_output(File, covar=TRUE, forecast=FALSE, verbose=F, printstats=F), silent=TRUE)
       if( class(SsOutput)!='try-error' ){
         BiasRamp <- SS_fitbiasramp(SsOutput, altmethod="psoptim", print=FALSE, plot=FALSE)
         file.remove(file.path(File, "ss3.std"))
