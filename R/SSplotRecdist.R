@@ -17,11 +17,11 @@
 #' @param main title for plot
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor
@@ -36,7 +36,7 @@ SSplotRecdist <-
            ylab="",
            main="Distribution of recruitment by area and season",
            plotdir="default",
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            verbose=TRUE)
 {
   # plot of recruitment distribution between seasons and areas

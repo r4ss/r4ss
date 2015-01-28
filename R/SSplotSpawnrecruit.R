@@ -17,11 +17,11 @@
 #' models
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param verbose report progress to R GUI?
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
@@ -46,7 +46,7 @@ SSplotSpawnrecruit <-
            ylab="Recruitment (1,000s)",
            bioscale="default",
            plotdir="default",
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            verbose=TRUE,colvec=c("blue","green3","black","red"),
            legend=TRUE, legendloc="topleft",
            #line1="blue",line2="green3",line3="black",ptcol="red",

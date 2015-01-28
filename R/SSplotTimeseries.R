@@ -30,11 +30,11 @@
 #' output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).
 #' @param xlab x axis label for all plots
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @author Ian Taylor, Ian Stewart
 #' @export
@@ -48,7 +48,7 @@ SSplotTimeseries <-
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg="default",minbthresh="default",xlab="Year",
            labels=NULL,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1)
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
 {
 
   # individual function for plotting time series of total or summary biomass

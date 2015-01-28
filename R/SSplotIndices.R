@@ -34,11 +34,11 @@
 #' @param legendloc add a legend to seasonal colors (default is "topright")
 #' @param seasnames optional vector of names for each season to replace
 #' defaults if a legend is used
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param addmain switch which allows the plot title to be left off
 #' @param plotdir directory where PNG files will be written. by default it will
@@ -72,7 +72,7 @@ function(replist,subplots=1:9,
          col1="default", col2="default", col3="blue", col4="red",
          pch1=21, pch2=16, cex=1, bg="white",
          legend=TRUE, legendloc="topright", seasnames=NULL,
-         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
          verbose=TRUE)
 {

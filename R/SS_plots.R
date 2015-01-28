@@ -100,14 +100,14 @@
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots? Default=T.
-#' @param pwidth Default width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param pheight Default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
+#' @param pwidth Width of plots printed to files in units of
+#' \code{punits}. Default recently changed from 7 to 6.5.
+#' @param pheight Height width of plots printed to files in units of
+#' \code{punits}. Default recently changed from 7 to 5.0
 #' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
+#' help("png") in R for details). Default recently changed from 12 to 10.
 #' @param res Resolution of plots printed to files. Default=300.
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.
@@ -169,7 +169,7 @@
 #' @keywords hplot
 SS_plots <-
   function(
-    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=FALSE, html=png,
+    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,
     printfolder="plots", dir="default", fleets="all", areas="all",
     fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
     lwd=1, areacols="default", areanames="default",
@@ -180,7 +180,7 @@ SS_plots <-
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     sampsizeline=FALSE,effNline=FALSE,
-    showlegend=TRUE, pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+    showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
     cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
     maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
     new=TRUE,
@@ -188,8 +188,10 @@ SS_plots <-
     legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
     scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
 {
-  if(!is.null(print)) stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
-                           "  which is combined with the vector of numbers input to 'plot'")
+  if(!is.null(print)){
+    stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
+         "  which is combined with the vector of numbers input to 'plot'")
+  }
   flush.console()
 
   # label table is a step toward internationalization of the code

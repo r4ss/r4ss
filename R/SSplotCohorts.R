@@ -28,11 +28,11 @@
 #' it will be the directory where the model was run.
 #' @param xlab x-label for all plots
 #' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main Character expansion for plot titles (no titles in this
 #' function yet)
 #' @param verbose Report progress to R console?
@@ -54,7 +54,7 @@ SSplotCohorts <-
            labels=c("Age",
              "Cumulative catch by cohort (in numbers x1000)",
              "Cumulative catch by cohort (x1000 mt)"),
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            cex.main=1, # note: no plot titles yet implemented
            verbose=TRUE)
 {

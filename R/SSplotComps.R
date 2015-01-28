@@ -114,7 +114,7 @@ SSplotComps <-
            scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
            blue=rgb(0,0,1,0.7),red=rgb(1,0,0,0.7),
-           pwidth=7, pheight=7, punits="in", ptsize=12, res=300,
+           pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE,
            do.sqrt=TRUE, smooth=TRUE, cohortlines=c(),
            labels = c("Length (cm)",           #1

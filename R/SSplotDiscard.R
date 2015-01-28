@@ -20,8 +20,8 @@
 #' regardless). Default = 1.
 #' @param col1 First color to use in plot (for expected values)
 #' @param col2 Second color to use in plot (for observations and intervals)
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
@@ -44,7 +44,7 @@ SSplotDiscard <-
            "for"),
            yhi=1,
            col1="blue", col2="black",
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){

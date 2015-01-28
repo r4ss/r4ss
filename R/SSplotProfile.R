@@ -51,8 +51,8 @@
 #' @param type Line type (see ?plot for more info).
 #' @param legend Include legend?
 #' @param legendloc Location of legend (see ?legend for more info).
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
@@ -132,7 +132,7 @@ SSplotProfile <-
            xaxs="r", yaxs="r",
            type="o",
            legend=TRUE, legendloc="topright",
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            verbose=TRUE)
 {

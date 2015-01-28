@@ -19,11 +19,11 @@
 #' @param legendloc location passed to legend function (if used)
 #' @param moveseas choice of season for which movemement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main Character expansion parameter for plot titles
 #' @param verbose Print information on function progress.
 #' @author Ian Taylor
@@ -43,7 +43,7 @@ SSplotMovementRates <-
            colvec="default", ylim="default", 
            legend=TRUE, legendloc="topleft",
            moveseas="all", min.move.age=0.5,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            verbose=TRUE)
 {
   #if(verbose) cat("Running SSplotMovementRates function\n")

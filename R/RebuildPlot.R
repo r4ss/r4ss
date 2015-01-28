@@ -70,7 +70,7 @@ DoProjectPlots<-function(dirn="C:/myfiles/",fileN=c("res.csv"),Titles="",ncols=2
                          AllTraj=c(1,2,3,4),AllInd=c(1,2,3,4,5,6,7),
                          BioType="Spawning biomass",CatchUnit="(mt)",BioUnit="(mt)",
                          BioScalar=1,ColorsUsed="default",Labels="default",
-                         pdf=FALSE,pwidth=7,pheight=7,lwd=2)
+                         pdf=FALSE,pwidth=6.5,pheight=5.0,lwd=2)
 {
   if(pdf){
     pdffile <- paste(dirn[1],"/rebuild_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")

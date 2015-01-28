@@ -74,8 +74,8 @@
 #' 0 to remove)
 #' @param sprtarg Target value for SPR-ratio where line is drawn in the SPR
 #' plots and phase plot.
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
@@ -149,7 +149,7 @@ SSplotComparisons <-
            legend=TRUE, legendlabels="default", legendloc="topright",
            legendorder="default",legendncol=1,
            sprtarg=NULL, btarg=NULL, minbthresh=NULL,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            densitynames=c("SPB_Virgin","R0"),
            densityxlabs="default",

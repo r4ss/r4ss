@@ -14,11 +14,11 @@
 #' @param lty line type (only applied to equilbrium yield plot at this time)
 #' @param lwd line width (only applied to equilbrium yield plot at this time)
 #' @param cex.main character expansion for plot titles
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param verbose report progress to R GUI?
@@ -38,7 +38,7 @@ SSplotYield <-
              "Total biomass (mt)",        #3
              "Surplus production (mt)"),  #4
            col="blue", lty=1, lwd=2, cex.main=1,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            plotdir="default",
            verbose=TRUE)
 {

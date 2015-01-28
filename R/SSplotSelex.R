@@ -45,11 +45,11 @@
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col1 color for female growth curve
 #' @param col2 color for male growth curve
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param showmain Include main title at top of plot?
 #' @param plotdir Directory where PNG files will be written. By default it will

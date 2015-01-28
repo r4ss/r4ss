@@ -13,11 +13,11 @@
 #' be the directory where the model was run.
 #' @param verbose Verbose output to R console?
 #' @param uncertainty Show 95\% uncertainty intervals around point estimates?
-#' @param pwidth width of plot written to PNG file
-#' @param pheight height of plot written to PNG file
+#' @param pwidth width of plot
+#' @param pheight height of plot
 #' @param punits units for PNG file
 #' @param res resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @author Allan Hicks
 #' @export
 #' @seealso \code{\link{SSplotTimeseries}}, ~~~
@@ -25,7 +25,7 @@
 SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Mortality",
                            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
                            uncertainty=TRUE,
-                           pwidth=7,pheight=7,punits="in",res=300,ptsize=12) {
+                           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10) {
   #plots the summary F (or harvest rate) as set up in the starter file
   #needs a lot of work to be generalized
 

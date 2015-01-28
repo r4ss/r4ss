@@ -40,11 +40,11 @@
 #' @param addmax Add a point on the y-axis for the maximum catch (default=TRUE)
 #' @param ymax Optional input for ymax value (can be used to add or subtract
 #' white space at the top of the figure)
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
-#' @param ptsize ptsize for PNG file
+#' @param ptsize point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R console?
 #' @author Ian Taylor, Ian Stewart
@@ -79,7 +79,7 @@ SSplotCatch <-
            catchbars=TRUE,
            addmax=TRUE,
            ymax=NULL,
-           pwidth=7,pheight=7,punits="in",res=300,ptsize=12,
+           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            cex.main=1, # note: no plot titles yet implemented
            verbose=TRUE)
 {

@@ -74,8 +74,8 @@ SSplotPars <-
     showmle=TRUE, showinit=TRUE, showrecdev=TRUE, priorinit=TRUE,
     priorfinal=TRUE, showlegend=TRUE, fitrange=FALSE, xaxs="i",
     xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
-    new=TRUE, pdf=FALSE, pwidth=7, pheight=7, punits="in",
-    ptsize=12, returntable=FALSE, strings=c(), exact=FALSE,
+    new=TRUE, pdf=FALSE, pwidth=6.5, pheight=5.0, punits="in",
+    ptsize=10, returntable=FALSE, strings=c(), exact=FALSE,
     newheaders=NULL, burn=0, thin=1,
     ctlfile="control.ss_new")
 {

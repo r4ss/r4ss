@@ -18,8 +18,8 @@
 #' @param plotdir Directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param labels Vector of labels for plots (titles and axis labels)
-#' @param pwidth Width of plot written to PNG file
-#' @param pheight Height of plot written to PNG file
+#' @param pwidth Width of plot
+#' @param pheight Height of plot
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
@@ -46,7 +46,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
              "Fecundity",                       #10
              "Default fecundity label",         #11
              "Year"),                           #12
-         pwidth=7,pheight=7,punits="in",res=300,ptsize=12,cex.main=1,
+         pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          verbose=TRUE)
 {
   #### previous order of plots:
