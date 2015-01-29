@@ -30,10 +30,24 @@
 #' @param sep Separator for data file passed to the \code{read.table} function.
 #' @param print Send to screen unless asked to print.
 #' @param new Logical whether or not to open a new plot window before plotting
-#' @author Ian Stewart
+#' @param colNames Specific names of the \code{file} to extract and work with. \code{NULL} keeps all columns
+#' @author Ian Stewart, Allan Hicks (modifications)
 #' @export
 #' @seealso \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
 #' @keywords hplot
+#' @examples
+#'
+#'   \dontrun{
+#'       mcmc.df <- SSgetMCMC(dir="mcmcRun", writecsv=T,
+#'                   keystrings = c("NatM", "R0", "steep", "Q_extraSD"),
+#'                   nuisancestrings = c("Objective_function", "SPB_", "InitAge", "RecrDev"))
+#'       mcmc.out("mcmcRun",run="",numparams=4,closeall=F)
+#'
+#'   #Or for more control
+#'       par(mar=c(5,3.5,0,0.5),oma=c(0,2.5,0.2,0))
+#'       mcmc.out("mcmcRun",run="",numparams=1,closeall=F,new=F,colNames=c("NatM_p_1_Fem_GP_1"))
+#'       mtext("M (natural mortality)",side=2,outer=T,line=1.5,cex=1.1)
+#'   }
 mcmc.out <- function (
           directory="c:/mydirectory/",
           run="mymodel/",			# folder with ADMB run files
@@ -78,12 +92,12 @@ mcmc.out <- function (
   # add section to set up for printing or display to screen (default)
   if(print==TRUE){}# not implemented
 
-  if(closeall==TRUE)						# see if the user asked to retain open graphics devices
-   {								# useful to compare multiple runs
+  if(closeall==TRUE) {						# see if the user asked to retain open graphics devices
+		# useful to compare multiple runs
     ### Note: the following line has been commented out because it was identified
     ###       by Brian Ripley as "against CRAN policies".
     #rm(.SavedPlots,pos=1) 					# remove any plotting history
-   }
+  }
 
   filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use
   if(!file.exists(filename))
@@ -93,7 +107,6 @@ mcmc.out <- function (
                          header = header, 			# choice of header or not
                          sep = sep, 				# space delimited
                          fill = TRUE)				# fill empty cells to make a symmetrical array
-
 
   #### Naming section ####
   if(names == TRUE) {
@@ -123,30 +136,28 @@ mcmc.out <- function (
   }
 
   ##### change to mcmc object for coda #####
-   mcmcfirst <- mcmc(mcmcdata)					# make the mcmc object from the data table
-   mcmctemp <- window(mcmcfirst,thin=thin,start=(1+burn))       # thin the chain  and remove burn in
-   mcthinned  <- as.matrix(mcmctemp)        			# get rid of iteration labels
-   mcmcobject <- mcmc(mcthinned)				# send back to mcmc object
+  mcmcfirst <- mcmc(mcmcdata)					# make the mcmc object from the data table
+  mcmctemp <- window(mcmcfirst,thin=thin,start=(1+burn))       # thin the chain  and remove burn in
+  mcthinned  <- as.matrix(mcmctemp)        			# get rid of iteration labels
+  mcmcobject <- mcmc(mcthinned)				# send back to mcmc object
 
   draws <- length(mcmcobject[,1]) 			# define the post thinning and burn in length of the chain
 
   ##### plotting section #####
-  if(plots==TRUE) 					# have plots been activated by user
-   {
+  if(plots==TRUE) {					# have plots been activated by user
     if(new) dev.new(record=TRUE) 				# keep the window open for each parameter
-  if(numparams==5||numparams==9||numparams==13||numparams==17) 	# plots a blank plot if 5,9,13, or 17 plots created
-   {							# this avoids the loss of plot n-1 in history (is this an R bug??)
-    plot(0,0,
+    if(numparams==5||numparams==9||numparams==13||numparams==17) {	# plots a blank plot if 5,9,13, or 17 plots created
+   		# this avoids the loss of plot n-1 in history (is this an R bug??)
+      plot(0,0,
          xlab="",
          ylab="",
          frame.plot=FALSE,
          yaxt="n", 					# turn off this axis
          xaxt="n",
          type="n") 					# plot nothing
-   }
+    }
 
-    for(i in 1:numparams) 				# loop over the number of parameters
-     {
+    for(i in 1:numparams) { 				# loop over the number of parameters
       par(new=FALSE,					# make sure to use a new graphical window
           mfrow=c(2,2), 				# set up "cells" to graph into
           ann=TRUE) 					# annotate plots
@@ -160,22 +171,21 @@ mcmc.out <- function (
             font=1, 					# make the font regular
             cex=0.8) 					# scale the text size
 
-      if(names | headernames)
-       {
-         mtext(names(mcmcdata)[i], 			# label for whole plotting page
+      if(names | headernames) {
+        mtext(names(mcmcdata)[i], 			# label for whole plotting page
                side=3,					# place it on left of the graph
                adj=0,					# left adjust the text
                line=2, 					# set the distance above the graph
                font=2, 					# make the font regular
                cex=1) 					# scale the text size
-       }else{
+      }else{
          mtext(paste("param",i),	# label for whole plotting page
                side=3,					# place it on left of the graph
                adj=0,					# left adjust the text
                line=2, 					# set the distance above the graph
                font=2, 					# make the font regular
                cex=1) 					# scale the text size
-       }
+      }
 
       #### Cumulative plot section ####
       lowest <- min(mcmcobject[,i]) 			# minimum value in chain
@@ -229,21 +239,21 @@ mcmc.out <- function (
       lines(seq(1,20,by=1),rep(0.1,20),col="GREY") 	# plot the 0.1 line
       lines(seq(1,20,by=1),rep(-0.1,20),col="GREY")     # plot the -0.1 line
 
-     ##### Density plot section #####
-     densplot(mcmcobject[,i],
+      ##### Density plot section #####
+      densplot(mcmcobject[,i],
               show.obs=TRUE) 				# show the x axis
-     mtext("Density", 					# label for y-axis
+      mtext("Density", 					# label for y-axis
            side=2,					# place it on left of the graph
            line=3, 					# set the distance above the graph
            font=1, 					# make the font regular
            cex=0.8) 					# scale the text size
-     mtext("Value", 					# label for y-axis
+      mtext("Value", 					# label for y-axis
            side=1,					# place it on left of the graph
            line=3, 					# set the distance above the graph
            font=1, 					# make the font regular
            cex=0.8) 					# scale the text size
-     } 						# end parameter loop
-   } 					# end plotting loop
+    } 						# end parameter loop
+  } 					# end plotting loop
 
    #### Statistics section #####
     if(stats == TRUE)
