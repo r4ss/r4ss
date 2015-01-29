@@ -54,7 +54,8 @@ mcmc.out <- function (
           header=TRUE,				# data file with header?
           sep=",",				# sep for data file
           print=FALSE, 				# send to screen unless asked to print
-          new=T                 #open a new window
+          new=T,              # open a new window
+          colNames=NULL       #specific column names to subset on
          )
 
   # sample call: mcmc.out(run="english_8.4\\",names=T,burn=10,thin=1,scatter=F,stats=T,plots=T)
@@ -95,8 +96,7 @@ mcmc.out <- function (
 
 
   #### Naming section ####
-  if(names == TRUE)
-   {
+  if(names == TRUE) {
     nameout  <- paste(directory,run,namefile,sep="")		# put directory,run and file names together for use
     namedata <- read.table(nameout, 				# make data table of whole file
                            header = FALSE, 			# no headers
@@ -107,11 +107,20 @@ mcmc.out <- function (
     numparams <- as.numeric(namedata[1,1]) 			# get the dimension of the output
 
     # add names to the data table, only used in the scatterplot of all parameters
-    for (j in 1:numparams) 					# loop over the moveparam columns
-     {
+    for (j in 1:numparams) {					# loop over the moveparam columns
       names(mcmcdata)[j] <- namedata[(j+1),1]			# name each column
-     }
-   }
+    }
+  }
+
+  if(!is.null(colNames)) {
+    if(length(colNames)!=numparams) cat("numparams argument overidden by length of colNames argument\n")
+    numparams <- length(colNames)
+    mcmcdata <- mcmcdata[,colNames]
+    if(length(colNames)==1) {
+      mcmcdata <- data.frame(mcmcdata)
+      names(mcmcdata) <- colNames
+    }
+  }
 
   ##### change to mcmc object for coda #####
    mcmcfirst <- mcmc(mcmcdata)					# make the mcmc object from the data table
@@ -150,6 +159,7 @@ mcmc.out <- function (
             line=3, 					# set the distance above the graph
             font=1, 					# make the font regular
             cex=0.8) 					# scale the text size
+
       if(names | headernames)
        {
          mtext(names(mcmcdata)[i], 			# label for whole plotting page
