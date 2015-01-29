@@ -368,6 +368,8 @@ SSplotTimeseries <-
       if(forecastplot) filename <- paste(filename,"forecast")
       if(uncertainty & subplot %in% c(5,7,9)) filename <- paste(filename,"intervals")
       filename <- paste("ts",subplot,"_",filename,".png",sep="")
+      # replace any spaces with underscores
+      filename <- gsub(pattern=" ", replacement="_", x=filename, fixed=TRUE)
       filename <- paste(plotdir,filename,sep="")
       # if(verbose) cat("printing plot to file:",filename,"\n")
       plotinfo <- pngfun(file=filename,caption=main)
