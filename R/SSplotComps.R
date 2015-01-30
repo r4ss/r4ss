@@ -237,10 +237,10 @@ SSplotComps <-
 
   # sort out which sexes will be included, and associated labels
   if(sexes[1]=="all"){
-    sexes <- 0:2 # this can be used to subset stuff below
+    sexes <- 0:nsexes # this can be used to subset stuff below
   }
   if(nsexes==1){
-    sexes <- 0
+    sexes <- 0:nsexes
   }
   if(nsexes==1 | length(sexes)>1){
     # single-sex models, or models with all sexes shown
@@ -364,7 +364,9 @@ SSplotComps <-
     filenamestart <- "comp_WAAfit_"
     titledata <- "mean weight at age, "
   }
-  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))) stop("Input 'kind' to SSplotComps is not right.")
+  if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
+    stop("Input 'kind' to SSplotComps is not right.")
+  }
 
   # Add asterix to indicate super periods and then remove rows labeled "skip".
   # It would be better to somehow show the range of years, but that seems difficult.
@@ -378,7 +380,6 @@ SSplotComps <-
 
   # subset data based on requested range of sexes
   dbase_kind <- dbase_kind[dbase_kind$sex %in% sexes,]
-
   # loop over fleets
   for(f in fleets){
     # check for the presence of data

@@ -91,10 +91,10 @@ SSplotSpawnrecruit <-
   # from expected recruitment without environmental link
   show_env <- any(recruit$with_env!=recruit$exp_recr)
   # store virgin and initial values
-  B0 <- sum(timeseries$SpawnBio[timeseries$Era=="VIRG"])
-  B1 <- sum(timeseries$SpawnBio[timeseries$Era=="INIT"])
-  R0 <- sum(timeseries$Recruit_0[timeseries$Era=="VIRG"])
-  R1 <- sum(timeseries$Recruit_0[timeseries$Era=="INIT"])
+  B0 <- sum(timeseries$SpawnBio[timeseries$Era=="VIRG"], na.rm=TRUE)
+  B1 <- sum(timeseries$SpawnBio[timeseries$Era=="INIT"], na.rm=TRUE)
+  R0 <- sum(timeseries$Recruit_0[timeseries$Era=="VIRG"], na.rm=TRUE)
+  R1 <- sum(timeseries$Recruit_0[timeseries$Era=="INIT"], na.rm=TRUE)
   if(B0==B1 & R0==R1){
     init <- FALSE
   }
