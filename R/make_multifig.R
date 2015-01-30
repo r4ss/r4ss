@@ -101,10 +101,11 @@ make_multifig <-
            xlab="",ylab="",size=1,cexZ1=1.5,bublegend=TRUE,
            maxsize=NULL,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
            horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
-           axis1="default",axis2="default",linepos=1,type="o",
+           axis1=NULL,axis2=NULL,linepos=1,type="o",
            bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
-           linescol=c('green3',2,4),lty=1,lwd=2,pch=1,
+           linescol=c(rgb(0,.8,0,.7),rgb(1,0,0,.7),rgb(0,0,1,.7)),
+           lty=1,lwd=2,pch=1,
            nlegends=3,legtext=list("yr","sampsize","effN"),legx="default",legy="default",
            legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
            venusmars=TRUE,
@@ -182,10 +183,10 @@ make_multifig <-
   if(horiz_lab=="default"){
     horiz_lab <- maxchar<6 # should y-axis label be horizontal?
   }
-  if(axis1=="default"){
+  if(is.null(axis1)){
     axis1 <- pretty(xrange)
   }
-  if(axis2=="default"){
+  if(is.null(axis2)){
     axis2 <- pretty(yrange)
   }
   if(length(sampsize)==1){
