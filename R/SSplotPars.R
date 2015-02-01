@@ -74,6 +74,8 @@ SSplotPars <-
     showmle=TRUE, showinit=TRUE, showrecdev=TRUE, priorinit=TRUE,
     priorfinal=TRUE, showlegend=TRUE, fitrange=FALSE, xaxs="i",
     xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
+      ltyvec=c(1,1,3,4),
+      colvec=c("blue","red","black","gray60",rgb(0,0,0,.5)),
     new=TRUE, pdf=FALSE, pwidth=6.5, pheight=5.0, punits="in",
     ptsize=10, returntable=FALSE, strings=c(), exact=FALSE,
     newheaders=NULL, burn=0, thin=1,
@@ -422,6 +424,7 @@ SSplotPars <-
       if(min(breakvec) > min(post)) breakvec <- c(min(post),breakvec)
       if(max(breakvec) < max(post)) breakvec <- c(breakvec,max(post))
       posthist <- hist(post,plot=FALSE,breaks=breakvec)
+      postmedian <- median(post)
       ymax <- max(ymax,max(posthist$density),na.rm=FALSE) # update ymax
     }
 
@@ -434,20 +437,26 @@ SSplotPars <-
     # axis(2) # don't generally show y-axis values because it's just distracting
 
     # add stuff to plot
-    colval <- "grey"
-    if(showpost & goodpost) plot(posthist,add=TRUE,freq=FALSE,col=colval,border=colval)
-    if(showprior) lines(x,prior,lwd=2,lty=1)
+    colval <- colvec[4]
+    if(showpost & goodpost){
+      plot(posthist,add=TRUE,freq=FALSE,col=colval,border=colval)
+      abline(v=postmedian,col=colvec[5],lwd=2,lty=ltyvec[3])
+    }
+    if(showprior){
+      lines(x,prior,lwd=2,lty=ltyvec[2])
+    }
     if(showmle){
       if(!is.na(parsd) && parsd>0){
-        lines(x,mle,col="blue",lwd=2)
-        lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),col="blue")
+        lines(x,mle,col=colvec[1],lwd=1,lty=ltyvec[1])
+        lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),
+              col=colvec[1],lty=ltyvec[1])
       }else{
-        abline(v=finalval,col="blue")
+        abline(v=finalval,col=colvec[1],ltyvec[1])
       }
     }
     if(showinit){
       par(xpd=NA) # stop clipping
-      points(initval,-0.02*ymax,col="red",pch=17,cex=1.2)
+      points(initval,-0.02*ymax,col=colvec[2],pch=17,cex=1.2)
       par(xpd=FALSE)  # restore original value
     }
     ##     if(printlike) mtext(side=3,line=0.2,cex=.8,adj=0,paste("prob@init =",round(priorinit,3)))
@@ -458,12 +467,13 @@ SSplotPars <-
       mtext(xlab,side=1,line=0.5,outer=TRUE)
       mtext(ylab,side=2,line=0.5,outer=TRUE)
       if(showlegend){
-        showvec <- c(showprior,showmle,showpost,showinit)
-        legend("topleft",cex=1.2,bty="n",pch=c(NA,NA,15,17)[showvec],
-               lty=c(1,1,NA,NA)[showvec],lwd=c(2,1,NA,NA)[showvec],
-               col=c("black","blue","grey","red")[showvec],
-               pt.cex=c(1,1,2,1)[showvec],
-               legend=c("prior","max. likelihood","posterior","initial value")[showvec])
+        showvec <- c(showprior,showmle,showpost,showpost,showinit)
+        legend("topleft",cex=1.2,bty="n",pch=c(NA,NA,15,NA,17)[showvec],
+               lty=c(ltyvec[2],ltyvec[1],NA,ltyvec[3],NA)[showvec],lwd=c(2,1,NA,2,NA)[showvec],
+               col=c(colvec[3],colvec[1],colvec[4],colvec[5],colvec[2])[showvec],
+               pt.cex=c(1,1,2,1,1)[showvec],
+               legend=c("prior","max. likelihood","posterior",
+                   "posterior median","initial value")[showvec])
       } # end legend
     } # end first panel stuff
   } # end loop over parameters
