@@ -81,24 +81,6 @@ SSplotPars <-
     newheaders=NULL, burn=0, thin=1,
     ctlfile="control.ss_new")
 {
-  ################################################################################
-  #
-  # SSplotPars
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: To make a multi-figure plot of prior distributions
-  #          from a Stock Synthesis control file
-  # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-  # Returns: Plots of prior distributions used in Stock Synthesis model
-  # Notes:   hosted at http://code.google.com/p/r4ss/
-  # Required packages: none
-  #
-  ################################################################################
-
-  if(verbose){
-    cat("Check for new code and report problems at http://code.google.com/p/r4ss/\n")
-  }
-
   # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
     # function to calculate prior values is direct translation of code in SSv3
@@ -117,8 +99,12 @@ SSplotPars <-
       Ptype2 <- Ptype
     }
     # fix cases where numeric value was read as character (from older SS versions, I think)
-    if(is.na(Ptype2)) Ptype2 <- as.numeric(Ptype)
-    if(is.na(Ptype2)) cat("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2,"\n")
+    if(is.na(Ptype2)){
+      Ptype2 <- as.numeric(Ptype)
+    }
+    if(is.na(Ptype2)){
+      cat("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2,"\n")
+    }
     
     Pconst <- 0.0001
     if(Ptype2==-1){ # no prior
@@ -204,14 +190,18 @@ SSplotPars <-
 
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
-    test <- readLines(fullpostfile,n=10) # test for presence of file with at least 10 rows
-    if(length(test)>5){
+    test <- readLines(fullpostfile,n=20) # test for presence of file with at least 10 rows
+    if(length(test)>10){
       posts <- read.table(fullpostfile,header=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
+      cat("read",nrow(posts),"lines in",postfile,"\n")
       # remove burn-in and thin the posteriors if requested
       posts <- posts[seq(burn+1,nrow(posts),thin), ]
+      if(burn > 0 | thin > 1){
+        cat("length of posteriors after burnin-in and thinning:",nrow(posts),"\n")
+      }
     }else{
-      cat("Posteriors file has too few rows, changing input to 'showpost=FALSE'\n")
+      cat("Posteriors file has fewer than 10 rows, changing input to 'showpost=FALSE'\n")
       showpost <- FALSE
     }
   }
@@ -477,7 +467,11 @@ SSplotPars <-
       } # end legend
     } # end first panel stuff
   } # end loop over parameters
-  if(pdf) dev.off() # close PDF file if it was open
-  if(returntable) return(partable[partable$Label %in% goodnames,])
+  if(pdf){
+    dev.off() # close PDF file if it was open
+  }
+  if(returntable){
+    return(partable[partable$Label %in% goodnames,])
+  }
 }
 
