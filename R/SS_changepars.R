@@ -44,17 +44,20 @@
 #'
 SS_changepars <-
 function(
-         dir="C:/myfiles/mymodels/myrun/",
+         dir=NULL,
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL, repeat.vals=FALSE,
          newlos=NULL, newhis=NULL, estimate=FALSE, verbose=TRUE
          )
 {
-
+  # set directory to working directory if not provided
+  if (is.null(dir)){
+    dir <- getwd()
+  }
   # read control file
-  fullctlfile <- paste(dir,ctlfile,sep="/")
-  ctl = readLines(fullctlfile)
+  fullctlfile <- file.path(dir, ctlfile)
+  ctl <- readLines(fullctlfile)
 
   # check for valid input
   if(is.null(linenums) & !is.null(strings) & class(strings)=="character")
@@ -208,7 +211,7 @@ function(
   # write new file
   newctl <- ctl
   newctl[linenums] <- newctlsubset
-  writeLines(newctl, paste(dir,newctlfile,sep="/"))
+  writeLines(newctl, file.path(dir, newctlfile))
   if(verbose){
     cat('\nwrote new file to',newctlfile,'with the following changes:\n')
   }
