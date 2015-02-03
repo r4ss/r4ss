@@ -894,8 +894,24 @@ SSplotComps <-
             caption <- ptitle
             file <- paste(plotdir,"/",filenamestart,
                           "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
-            plotinfo <- pngfun(file=file, caption=caption)
-            SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+            # not using pngfun because caption isn't available until after
+            # plot is created
+            # old command: plotinfo <- pngfun(file=file, caption=caption)
+            png(filename=file,width=pwidth,height=pheight,
+                units=punits,res=res,pointsize=ptsize)
+            # run function
+            tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+            # put additional info into caption for figure
+            vals <- paste("Suggested sample size adjustment ",
+                          "(with 95% interval) for ", kind2, " data from ",
+                          fleetnames[f],":<br>",
+                          round(tmp[1],4), " (",
+                          round(tmp[2],4),"-",round(tmp[3],4),")",
+                          sep="")
+            caption <- paste(caption,"<br>",vals)
+            # add caption to the plotinfo table (normally done by pngfun)
+            plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+
             dev.off() # close device if png
           } # end test for print to PNG option
         }
