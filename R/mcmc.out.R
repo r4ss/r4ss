@@ -99,10 +99,12 @@ mcmc.out <- function (
     #rm(.SavedPlots,pos=1) 					# remove any plotting history
   }
 
-  filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use
-  if(!file.exists(filename))
-    stop("file doesn't exist, try again jackass:\n",filename)   # warning if file does not exist
-
+  filename  <- file.path(directory,run,file)			# put directory,run and file names together for use
+  # warning if file does not exist
+  if(!file.exists(filename)){
+    stop("file doesn't exist:\n",filename)   
+  }
+  
   mcmcdata <- read.table(filename, 				# make data table of whole file
                          header = header, 			# choice of header or not
                          sep = sep, 				# space delimited
@@ -110,7 +112,7 @@ mcmc.out <- function (
 
   #### Naming section ####
   if(names == TRUE) {
-    nameout  <- paste(directory,run,namefile,sep="")		# put directory,run and file names together for use
+    nameout  <- file.path(directory,run,namefile)		# put directory,run and file names together for use
     namedata <- read.table(nameout, 				# make data table of whole file
                            header = FALSE, 			# no headers
                            sep = "", 				# space delimited

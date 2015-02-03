@@ -59,11 +59,13 @@ mcmc.nuisance <- function (
   ## require(coda) || stop("package coda is required")
   ## geterrmessage()
 
-  filename  <- paste(directory,run,file,sep="")			# put directory,run and file names together for use
-  filename2  <- paste(directory,run,file2,sep="")			# put directory,run and file names together for use
+  filename   <- file.path(directory,run,file)			# put directory,run and file names together for use
+  filename2  <- file.path(directory,run,file2)			# put directory,run and file names together for use
 
-  if(!file.exists(filename))
-    stop("file doesn't exist, try again jackass")		# warning if file does not exist
+  # warning if file does not exist
+  if(!file.exists(filename)){
+    stop("file doesn't exist:\n",filename)   
+  }
 
   mcmcdata <- read.table(filename, 				# make data table of whole file
                          header = header, 			# no headers 
@@ -87,7 +89,7 @@ mcmc.nuisance <- function (
     print(labels)
     mcmcdata <- mcmcdata[,names(mcmcdata)%in%labels]
   }
-print(head(mcmcdata))  
+#print(head(mcmcdata))  
   ##### change to mcmc object for coda #####
    mcmcfirst <- mcmc(mcmcdata)					# make the mcmc object from the data table
    mcmctemp <- window(mcmcfirst,thin=thin,start=(1+burn))       # thin the chain  and remove burn in
