@@ -23,6 +23,7 @@
 #' alternative to \code{labelyears}).
 #' @param leg.ncols Number of columns for the legend.
 #' @author Ian Taylor
+#' @export
 #' @seealso \code{\link{SSsummarize}}
 #' @references Ianelli et al. (2011) Assessment of the walleye pollock stock in
 #' the Eastern Bering Sea.
