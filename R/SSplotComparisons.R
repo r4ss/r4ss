@@ -35,10 +35,10 @@
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
 #' @param labels Vector of labels for plots (titles and axis labels)
-#' @param col Optional vector of colors to be used for lines. Input 'default'
+#' @param col Optional vector of colors to be used for lines. Input NULL
 #' makes use of \code{rich.colors.short} function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty
-#' intervals. Input 'default' makes use of \code{rich.colors.short} function
+#' intervals. Input NULL makes use of \code{rich.colors.short} function
 #' with alpha transparency.
 #' @param pch Optional vector of plot character values
 #' @param lty Optional vector of line types
@@ -139,8 +139,8 @@ SSplotComparisons <-
              "Minimum stock size threshold", #11 
              "Spawning output",         #12
              "Harvest rate"),           #13
-           col="default", shadecol="default",
-           pch="default", lty=1, lwd=2,
+           col=NULL, shadecol=NULL,
+           pch=NULL, lty=1, lwd=2,
            spacepoints=10,
            staggerpoints=1,
            xlim="default", ylimAdj=1,
@@ -340,16 +340,23 @@ SSplotComparisons <-
     }
   }
   # setup colors, points, and line types
-  if(col[1]=="default" & nlines>3) col <- rc(nlines+1)[-1]
-  if(col[1]=="default" & nlines<3) col <- rc(nlines)
-  if(col[1]=="default" & nlines==3) col <- c("blue","red","green3")
-  if(shadecol[1]=="default" & nlines>3) shadecol <- rc(nlines+1,alpha=shadealpha)[-1]
-  if(shadecol[1]=="default" & nlines<3) shadecol <- rc(nlines,alpha=shadealpha)
-  if(shadecol[1]=="default" & nlines==3) shadecol <- rgb(red=c(0,1,0),green=c(0,0,0.8),blue=c(1,0,0),alpha=shadealpha)
+  if(is.null(col) & nlines>3)  col <- rc(nlines+1)[-1]
+  if(is.null(col) & nlines<3)  col <- rc(nlines)
+  if(is.null(col) & nlines==3) col <- c("blue","red","green3")
+  if(is.null(shadecol)){
+    # if no input for shadecol, then add alpha to vector col
+    for(icol in 1:length(col)){
+      # convert to rgb
+      tmp <- col2rgb(col[icol])/255
+      shadecol[icol] <- rgb(red=tmp[1], green=tmp[2], blue=tmp[3], alpha=shadealpha)
+    }
+  }
+  # set pch values if no input
+  if(is.null(pch)){
+    pch <- rep(1:25,10)[1:nlines]
+  }
 
-  if(pch[1]=="default") pch <- rep(1:25,10)[1:nlines]
-  if(lty[1]=="default") lty <- 1:nlines
-
+  # if line stuff is shorter than number of lines, recycle as needed
   if(length(col) < nlines) col <- rep(col,nlines)[1:nlines]
   if(length(pch) < nlines) pch <- rep(pch,nlines)[1:nlines]
   if(length(lty) < nlines) lty <- rep(lty,nlines)[1:nlines]
