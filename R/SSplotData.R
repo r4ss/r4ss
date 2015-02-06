@@ -127,9 +127,18 @@ SSplotData <- function(replist,
       for(ifleet in 1:nfleets){
         allyrs <- NULL
         # identify years from different data types
-        if(typename=="catch" & ifleet<=nfishfleets) allyrs <- dat$Yr[dat[,ifleet]>0]
-        if(typename %in% c("cpue","mnwgt","discard")) allyrs <- dat$Yr[dat$FleetNum==ifleet]
-        if(length(grep("dbase",typename))>0) allyrs <- dat$Yr[dat$Fleet==ifleet]
+        if(typename=="catch" & ifleet<=nfishfleets){
+          allyrs <- dat$Yr[dat[,ifleet]>0]
+        }
+        if(typename %in% c("cpue")){
+          allyrs <- dat$Yr[dat$Use>0 & dat$FleetNum==ifleet]
+        }
+        if(typename %in% c("mnwgt","discard")){
+          allyrs <- dat$Yr[dat$FleetNum==ifleet]
+        }
+        if(length(grep("dbase",typename))>0){
+          allyrs <- dat$Yr[dat$Fleet==ifleet]
+        }
         # expand table of years with data
         if(!is.null(allyrs) & length(allyrs)>0){
           yrs <- sort(unique(floor(allyrs)))
