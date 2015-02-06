@@ -177,6 +177,8 @@ SSplotRetroRecruits <-
       recvalsUpper[,imodel] <- upper[match(recvalsUpper$Label,mcmclabs)]
     }
   }
+
+  outputTable <- NULL
   
   for(iy in 1:length(cohorts)){
     y <- cohorts[iy]
@@ -214,6 +216,11 @@ SSplotRetroRecruits <-
                 upper=cohortvalsUpper[goodmodels] - cohortvals[final],
                 shadecol=shadecolvec[iy],col=colvec[iy])
       }
+      # output the points that were plotted
+      outputTable <- rbind(outputTable,
+                           data.frame(cohort=y,
+                                      age=endyrvec[goodmodels] - y,
+                                      yval=cohortvals[goodmodels] - cohortvals[final]))
       # line with estimates
       lines(endyrvec[goodmodels] - y,
             cohortvals[goodmodels] - cohortvals[final],
@@ -233,6 +240,12 @@ SSplotRetroRecruits <-
                 upper=cohortvalsUpper[goodmodels],
                 shadecol=shadecolvec[iy],col=colvec[iy])
       }
+      # output the points that were plotted
+      outputTable <- rbind(outputTable,
+                           data.frame(cohort=y,
+                                      age=endyrvec[goodmodels] - y,
+                                      yval=cohortvals[goodmodels]))
+      # line with estimates
       lines(endyrvec[goodmodels] - y,
             cohortvals[goodmodels],
             type='o',col=colvec[iy],lwd=3,pch=16)
@@ -249,4 +262,5 @@ SSplotRetroRecruits <-
   if(legend) legend('topright',lwd=3,lty=1,pch=16,col=colvec,legend=cohorts,
                     title='Cohort birth year',ncol=leg.ncols,
                     bg=rgb(1,1,1,.3),box.col=NA)
+  return(invisible(outputTable))
 }
