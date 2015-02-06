@@ -115,7 +115,9 @@ SSplotRetroRecruits <-
   #print(cbind(colvec,colvec.txt))
 
   ylab <- ifelse(devs,labels[1],labels[2])
-  if(relative) ylab <- paste(ylab,labels[3])
+  if(relative){
+    ylab <- paste(ylab,labels[3])
+  }
   
   maxage <- max(endyrvec)-min(cohorts)
   xlim <- c(0,maxage)
@@ -124,12 +126,12 @@ SSplotRetroRecruits <-
   # determine y-limits
   if(is.null(ylim)){
     if(uncertainty){
-      ylim <- c(min(recvalsLower[,1:n]),max(recvalsUpper[,1:n]))
+      ylim <- c(min(recvalsLower[,1:n],na.rm=TRUE),max(recvalsUpper[,1:n],na.rm=TRUE))
     }else{
       ylim <- c(min(recvals[,1:n],na.rm=TRUE),max(recvals[,1:n],na.rm=TRUE))
     }
     if(devs){
-      ylim <- c(-1,1)*ceiling(1.1*max(abs(ylim))) # make symmetric for devs
+      ylim <- c(-1,1)*1.1*max(abs(ylim)) # make symmetric for devs
     }else{
       if(relative){
         ylim <- c(-1.0*max(ylim),1.0*max(ylim)) # include 0 for recruitments
@@ -140,10 +142,12 @@ SSplotRetroRecruits <-
     ylim <- ylim/scale
   }
   yticks <- NULL
-  if(devs) yticks <- ylim[1]:ylim[2]
+  if(devs){
+    yticks <- floor(ylim[1]):ceiling(ylim[2])
+  }
 
   # make empty plot with axes
-  plot(0,type='n',xlim=xlim,ylim=ylim,xlab=labels[3],
+  plot(0,type='n',xlim=xlim,ylim=ylim,xlab=labels[4],
        ylab=ylab,main=main,axes=FALSE)
   axis(1,at=0:maxage)
   axis(2,at=yticks,las=1)
@@ -199,8 +203,8 @@ SSplotRetroRecruits <-
 
     goodmodels <- (1:n)[endyrvec-y>=0]
     # which of the values is the final and initial
-    final <- which(endyrvec==max(endyrvec[goodmodels]))
-    initial <- which(endyrvec==min(endyrvec[goodmodels]))
+    final <- which(endyrvec==max(endyrvec[goodmodels], na.rm=TRUE))
+    initial <- which(endyrvec==min(endyrvec[goodmodels], na.rm=TRUE))
     if(relative){
       #relative to final estimate
       if(uncertainty){
