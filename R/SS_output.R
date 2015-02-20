@@ -1361,7 +1361,9 @@ if(FALSE){
     shift <- 1
     discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
                               cols=1:3,header=TRUE)
-    for(icol in 1:3) discard_spec[,icol] <- as.numeric(discard_spec[,icol])
+    for(icol in 1:3){
+      discard_spec[,icol] <- as.numeric(discard_spec[,icol])
+    }
     names(discard_spec)[1] <- "Fleet"
   }
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
