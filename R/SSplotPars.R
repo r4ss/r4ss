@@ -441,7 +441,7 @@ SSplotPars <-
         lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),
               col=colvec[1],lty=ltyvec[1])
       }else{
-        abline(v=finalval,col=colvec[1],ltyvec[1])
+        abline(v=finalval, col=colvec[1], lty=ltyvec[1])
       }
     }
     if(showinit){
