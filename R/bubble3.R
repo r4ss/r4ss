@@ -122,9 +122,9 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
       # (if not all open)
       bg[z>0] <- col[z>0]
     }
-    legend.pch <- rep(21,legend.n)
-    legend.bg <- bg.open
-    legend.bg[legend.z>0] <- col
+    legend.pch <- rep(21, legend.n)
+    legend.bg <- rep(bg.open, legend.n)
+    legend.bg[legend.z>0] <- col[1] # error occured when full vector was used
 
     # if only open points to be shown
     if(allopen){

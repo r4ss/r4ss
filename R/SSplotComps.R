@@ -1637,9 +1637,13 @@ SSplotComps <-
                                    "and open bubbles are negative residuals",
                                    "(observed < expected).")
                 }
-                caption <- paste(caption,
-                                 "<br>Note: bubble sizes are scaled to maximum within each panel.",
-                                 "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
+                caption <- paste("Note: this plot doesn't seem to be working right",
+                                 "for some models.<br><br>", caption)
+                #### current scaling allows comparison across panels, so warning below
+                #### has been turned off
+                ## caption <- paste(caption,
+                ##                  "<br>Note: bubble sizes are scaled to maximum within each panel.",
+                ##                  "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
                 file <- paste(plotdir,filenamestart,filename_sexmkt,pagetext,
                               "_multi-fleet_comparison.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
