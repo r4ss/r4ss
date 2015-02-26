@@ -20,7 +20,7 @@
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
 #' ending year specified in each model.
-#' @param indexfleets Vector of fleets for each model for which to compare
+#' @param indexfleets Vector of fleet numbers for each model for which to compare
 #' indices of abundance. Only necessary if any model has more than one index.
 #' @param indexUncertainty Show uncertainty intervals on index data?
 #' Default=FALSE because if models have any extra standard deviations added,
@@ -331,6 +331,9 @@ SSplotComparisons <-
   if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
   if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
 
+  if(any(!indexfleets %in% 1:n)){
+    stop("'uncertainty' should be vector of integers from 1 to n=",n)
+  }
   if(!is.null(indexfleets) && length(indexfleets) < n){
     if(length(indexfleets)==1){
       indexfleets <- rep(indexfleets, n)
@@ -339,6 +342,7 @@ SSplotComparisons <-
       indexfleets <- NULL
     }
   }
+
   # setup colors, points, and line types
   if(is.null(col) & nlines>3)  col <- rc(nlines+1)[-1]
   if(is.null(col) & nlines<3)  col <- rc(nlines)
@@ -1056,19 +1060,25 @@ SSplotComparisons <-
     #subset <- indices2$imodel==1
     # points(yr[subset],obs[subset],pch=16,cex=1.5,type="o",lty=3) # connected by dashed lines
     if(indexPlotEach) {  #plot observed values for each model or just the first model
-        for(iline in (1:nlines)[!mcmcVec]){
-            imodel <- models[iline]
-            subset <- indices2$imodel==imodel & !is.na(indices2$Like)
-            if(indexUncertainty)
-                arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=shadecol[iline])
-            points(yr[subset],obs[subset],pch=16,cex=1.5,col=shadecol[iline])
-        }
-    }else {
-        imodel <- models[which(endyrvec==max(endyrvec))[1]]
+      for(iline in (1:nlines)[!mcmcVec]){
+        adj <- 0.2*iline/nlines - 0.1
+        imodel <- models[iline]
         subset <- indices2$imodel==imodel & !is.na(indices2$Like)
-        if(indexUncertainty)
-            arrows(x0=yr[subset], y0=lower[subset], x1=yr[subset], y1=upper[subset], length=0.01, angle=90, code=3, col=1)
-        points(yr[subset],obs[subset],pch=16,cex=1.5)
+        if(indexUncertainty){
+          arrows(x0=yr[subset]+adj, y0=lower[subset],
+                 x1=yr[subset]+adj, y1=upper[subset],
+                 length=0.01, angle=90, code=3, col=shadecol[iline])
+        }
+        points(yr[subset]+adj, obs[subset], pch=21, cex=1.5, col=1, bg=shadecol[iline])
+      }
+    }else {
+      imodel <- models[which(endyrvec==max(endyrvec))[1]]
+      subset <- indices2$imodel==imodel & !is.na(indices2$Like)
+      if(indexUncertainty)
+        arrows(x0=yr[subset], y0=lower[subset],
+               x1=yr[subset], y1=upper[subset],
+               length=0.01, angle=90, code=3, col=1)
+      points(yr[subset],obs[subset],pch=16,cex=1.5)
     }
 
     if(!add) axis(1,at=yr)
