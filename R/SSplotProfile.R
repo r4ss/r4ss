@@ -61,6 +61,7 @@
 #' be the directory where the model was run.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
+#' @param dots Additional arguments passed to the \code{plot} command.
 #' @note Someday the function \code{\link{SS_profile}} will be improved and
 #' made to work directly with this plotting function, but they don't yet work
 #' well together. Thus, even if \code{\link{SS_profile}} is used, the output
@@ -134,7 +135,7 @@ SSplotProfile <-
            legend=TRUE, legendloc="topright",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
-           verbose=TRUE)
+           verbose=TRUE,...)
 {
   # subfunction to write png files
   pngfun <- function(file){
@@ -231,7 +232,7 @@ SSplotProfile <-
   # make plot
   plotprofile <- function(){
     plot(0,type='n',xlim=xlim,ylim=ylim,xlab=profile.label, ylab=ylab,
-         yaxs=yaxs,xaxs=xaxs)
+         yaxs=yaxs,xaxs=xaxs,...)
     abline(h=0,col='grey')
     matplot(parvec, prof.table, type=type,
             pch=pch, col=col,
