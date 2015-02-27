@@ -192,9 +192,14 @@ SSplotComparisons <-
   # subfunction to add legend
   legendfun <- function(legendlabels,cumulative=FALSE) {
     if(cumulative) legendloc="topleft"
+    # if type input is "l" then turn off points on top of lines in legend
+    legend.pch <- pch
+    if(type=="l"){
+      legend.pch <- rep(NA,length(pch))
+    }
     legend(legendloc, legend=legendlabels[legendorder],
            col=col[legendorder], lty=lty[legendorder],seg.len = 3,
-           lwd=lwd[legendorder], pch=pch[legendorder], bty="n", ncol=legendncol)
+           lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol)
   }
   
   rc <- function(n,alpha=1){
@@ -1033,9 +1038,15 @@ SSplotComparisons <-
       lower <- NULL
     }
     
-    # make plot
-    ylim <- ylimAdj*range(obs[!is.na(indices2$Like)],exp,lower,upper)
-    if(!log) ylim <- range(0,ylim) # 0 included if not in log space
+    ### make plot of index fits
+    # calculate ylim (excluding dummy observations from observed but not expected)
+    sub <- !is.na(indices2$Like)
+    ylim <- ylimAdj*range(exp, obs[sub], lower[sub], upper[sub])
+    if(!log){
+      # 0 included if not in log space
+      ylim <- range(0,ylim)
+    }
+    
     meanQ <- rep(NA,nlines)
     
     if(!add) plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
@@ -1045,15 +1056,22 @@ SSplotComparisons <-
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
       meanQ[iline] <- mean(Q[subset])
-      if(any(Q[subset]!=mean(Q[subset]))) Qtext[iline] <- "(mean Q ="
+      if(any(Q[subset]!=mean(Q[subset]))){
+        Qtext[iline] <- "(mean Q ="
+      }
       x <- yr[subset]
       y <- exp[subset]
       lines(x, y, pch=pch[iline], lwd=lwd[iline],
             lty=lty[iline], col=col[iline], type=type)
     }
     legendlabels2 <- legendlabels
-    if(indexQlabel) legendlabels2 <- paste(legendlabels,Qtext,format(meanQ,digits=indexQdigits),")")
-    if(legend) legendfun(legendlabels2)
+    if(indexQlabel){
+      legendlabels2 <- paste(legendlabels, Qtext,
+                             format(meanQ, digits=indexQdigits), ")")
+    }
+    if(legend){
+      legendfun(legendlabels2)
+    }
     
     # get uncertainty intervals if requested
     # put observed values on top
