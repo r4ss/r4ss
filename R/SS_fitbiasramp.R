@@ -83,7 +83,12 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   rmse_table <- replist$rmse_table
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
-  if(max(rmse_table$RMSE)==0) stop("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
+  if(!is.numeric(rmse_table$RMSE)){
+    stop("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
+  }
+  if(max(rmse_table$RMSE)==0){
+    stop("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
+  }
   
   if(is.null(startvalues)){
       nonfixedyrs <- recruit$year[recruit$era!="Fixed"]

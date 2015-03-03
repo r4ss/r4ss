@@ -482,18 +482,23 @@ SS_plots <-
   if(igroup %in% plot){
     if(uncertainty){
       if(verbose) cat("Starting estimation of recruitment bias adjustment and associated plots (group ",igroup,")\n",sep="")
-      if(max(rmse_table$RMSE)>0){
-        temp <-
-          SS_fitbiasramp(replist=replist,
-                         plot=!png, print=png,
-                         twoplots=FALSE,
-                         pwidth=pwidth, pheight=pheight, punits=punits,
-                         ptsize=ptsize, res=res,cex.main=cex.main,
-                         plotdir=plotdir)
-        plotinfo <- temp$plotinfo
-        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      if(is.numeric(rmse_table$RMSE)){
+        if(max(rmse_table$RMSE)>0){
+          temp <-
+            SS_fitbiasramp(replist=replist,
+                           plot=!png, print=png,
+                           twoplots=FALSE,
+                           pwidth=pwidth, pheight=pheight, punits=punits,
+                           ptsize=ptsize, res=res,cex.main=cex.main,
+                           plotdir=plotdir)
+          plotinfo <- temp$plotinfo
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        }else{
+          cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
+        }
       }else{
-        cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
+        cat("skipping bias adjustment fit because\n",
+            "input list element 'rmse_table' has non-numeric 'RMSE' column\n")
       }
     }else{
       if(verbose) cat("Skipping estimation of recruitment bias adjustment (group ",igroup,") because uncertainty=FALSE\n",sep="")
