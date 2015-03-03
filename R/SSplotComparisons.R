@@ -58,8 +58,8 @@
 #' @param uncertainty Show plots with uncertainty intervals? Either a single
 #' TRUE/FALSE value, or a vector of TRUE/FALSE values for each model,
 #' or a set of integers corresponding to the choice of models.
-#' @param shadealpha Transparency parameter used to make default shadecol
-#' values (see ?rgb for more info)
+#' @param shadealpha Transparency adjustment used to make default shadecol
+#' values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})
 #' @param legend Add a legend?
 #' @param legendlabels Optional vector of labels to include in legend. Default
 #' is 'model1','model2',etc.
@@ -358,11 +358,13 @@ SSplotComparisons <-
   if(is.null(col) & nlines==3) col <- c("blue","red","green3")
   if(is.null(shadecol)){
     # if no input for shadecol, then add alpha to vector col
-    for(icol in 1:length(col)){
-      # convert to rgb
-      tmp <- col2rgb(col[icol])/255
-      shadecol[icol] <- rgb(red=tmp[1], green=tmp[2], blue=tmp[3], alpha=shadealpha)
-    }
+    ## for(icol in 1:length(col)){
+    ## # convert to rgb
+    ## tmp <- col2rgb(col[icol])/255
+    ## shadecol[icol] <- rgb(red=tmp[1], green=tmp[2], blue=tmp[3], alpha=shadealpha)
+    ## }
+    # new approach thanks to Trevor Branch
+    shadecol <- adjustcolor(col, alpha.f=shadealpha)
   }
   # set pch values if no input
   if(is.null(pch)){
