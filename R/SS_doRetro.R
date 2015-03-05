@@ -43,7 +43,7 @@
 #' 
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
-                       extras="-nox",intern=FALSE,CallType="system"){
+                       extras="-nox",intern=FALSE,CallType="system",RemoveBlocks=FALSE){
 
   # save working directory
   oldwd <- getwd()
@@ -98,8 +98,10 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     ## # someday the code could be expanded to fix data file if it has blocks
     ## ctl <- SS_parlines(ctlfile) # doesn't currently read columns with block info
     ctl <- readLines(ctlfile)
-    ctl[grep('block designs',ctl)] <- "0 # Number of block designs for time varying parameters"
-    ctl[grep('blocks per design',ctl)+0:2] <- "# blocks deleted"
+    if(RemoveBlocks==TRUE){
+      ctl[grep('block designs',ctl)] <- "0 # Number of block designs for time varying parameters"
+      ctl[grep('blocks per design',ctl)+0:2] <- "# blocks deleted"
+    }
     file.remove(ctlfile)
     writeLines(ctl, ctlfile)
     
