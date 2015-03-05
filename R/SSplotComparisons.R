@@ -287,7 +287,7 @@ SSplotComparisons <-
   if(!is.logical(uncertainty) & is.numeric(uncertainty)){
     if(any(!uncertainty %in% 1:n)){
       # stop if numerical values aren't integers <= n
-      stop("'uncertainty' should be a subset of the integers\n"
+      stop("'uncertainty' should be a subset of the integers\n",
            " 1-",n,", where n=",n," is the number of models.\n",
            "  Or it can be a single TRUE/FALSE value.\n",
            "  Or a vector of TRUE/FALSE, of length n=",n)
