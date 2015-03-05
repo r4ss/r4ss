@@ -22,7 +22,11 @@
 #' saving to a file).
 #' @param CallType Either "system" or "shell" (choice depends on how you're running
 #' R. Default is "system".
-#' @author Ian Taylor
+#' @param RemoveBlocks Logical switch determining whether specifications of
+#' blocks is removed from top of control file. Blocks can cause problems for
+#' retrospective analyses, but the method for removing them is overly
+#' simplistic and probably won't work in most cases. Default=FALSE.
+#' @author Ian Taylor, Jim Thorson
 #' @export
 #' @seealso \code{\link{SSgetoutput}}
 #' @keywords data manip
@@ -43,7 +47,8 @@
 #' 
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
-                       extras="-nox",intern=FALSE,CallType="system",RemoveBlocks=FALSE){
+                       extras="-nox",intern=FALSE,CallType="system",
+                       RemoveBlocks=FALSE){
 
   # save working directory
   oldwd <- getwd()
