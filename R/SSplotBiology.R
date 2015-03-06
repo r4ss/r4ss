@@ -1034,6 +1034,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
           if(plot) timeVaryingParmFunc(parmlabel)
           if(print){
             file <- paste(plotdir, "/bio14_time-varying_", parmlabel, ".png", sep="")
+            # replace % sign which cause problems for filename
+            file <- gsub(pattern="%", replacement="percent", x=file,
+                         fixed=TRUE)
             caption <- "Time-varying mortality and growth parameters"
             plotinfo <- pngfun(file=file, caption=caption)
             timeVaryingParmFunc(parmlabel)
