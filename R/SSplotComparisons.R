@@ -341,14 +341,12 @@ SSplotComparisons <-
   if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
   if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
 
-  if(any(!indexfleets %in% 1:n)){
-    stop("'uncertainty' should be vector of integers from 1 to n=",n)
-  }
   if(!is.null(indexfleets) && length(indexfleets) < n){
     if(length(indexfleets)==1){
       indexfleets <- rep(indexfleets, n)
     }else{
-      warning("'indexfleets' needs to have length either 1 or n=",n)
+      warning("'indexfleets' needs to have length either 1 or n=",n,"\n",
+           "with each value a fleet number for the index to compare.\n")
       indexfleets <- NULL
     }
   }
@@ -990,7 +988,8 @@ SSplotComparisons <-
           ifleet <- indexfleets[imodel]
           indices2 <- rbind(indices2,indices[subset2 & indices$FleetNum==ifleet,])
         }else{
-          cat("some models have multiple indices, 'indexfleets' required\n  for all models in summaryoutput\n")
+          cat("some models have multiple indices, 'indexfleets' required\n",
+              "to compare fits to indices.\n")
           return()
         }
       }else{
