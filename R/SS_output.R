@@ -986,7 +986,8 @@ SS_output <-
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
   # sigma_R
-  if(SS_versionNumeric >= 3.3 | substring(SS_version,1,9)=="SS-V3.24U"){
+  if(SS_versionNumeric >= 3.3 |
+     substring(SS_version,1,9) %in% c("SS-V3.24U", "SS-V3.24V")){
     last_row_index <- 11
   }else{
     last_row_index <- 10

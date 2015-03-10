@@ -409,7 +409,7 @@ NegLogInt_Fn <-
     # Add in constant of proportionality for recruitment (i.e. to account for
     # Rick's bias-correction ramp)
     BiasAdj <- readLines(file.path(File, paste("Report_",Iteration,".sso",sep="")))
-    if(BiasAdj[1]=="#V3.24U"){
+    if(BiasAdj[1] %in% c("#V3.24U","#V3.24V")){
       shift <- 8
     }else{
       shift <- 7
