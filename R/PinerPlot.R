@@ -54,9 +54,12 @@
 ##' be the directory where the model was run.
 ##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 ##' anything yet.)
+##' @param fleetgroups Optional character vector, with length equal to
+##' the number of declared fleets, where fleets with the same value are
+##' aggregated
 ##' @references Kevin Piner says that he's not the originator of this idea so
 ##' Athol Whitten is going to add a reference here.
-##' @author Ian Taylor, Kevin Piner
+##' @author Ian Taylor, Kevin Piner, Jim Thorson
 ##' @export
 PinerPlot <-
   function(summaryoutput,
@@ -81,7 +84,8 @@ PinerPlot <-
            legend=TRUE, legendloc="topright",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
-           verbose=TRUE)
+           verbose=TRUE,
+           fleetgroups=NULL)
 {
   # this function is very similar to SSplotProfile, but shows fleet-specific likelihoods
   # for a single components rather than multiple components aggregated across fleets
@@ -104,6 +108,17 @@ PinerPlot <-
   nfleets <- ncol(lbf)-3
   pars <- summaryoutput$pars
   FleetNames     <- summaryoutput$FleetNames[[1]]
+
+  # Aggregate by input fleetgroups (a character vector, where two fleets with the same value are aggregated)
+  if( !is.null(fleetgroups) ){
+    if( length(fleetgroups)!=nfleets ) stop("fleetgroups, if specified, must have length equal to the number of declared fleets")
+    FleetNames <- unique(fleetgroups)
+    lbf_new <- data.frame( matrix(nrow=nrow(lbf),ncol=3+length(unique(fleetgroups)),dimnames=list(rownames(lbf),c(colnames(lbf)[1:3],unique(fleetgroups)))) )
+    lbf_new[,1:3] <- lbf[,1:3]
+    for(rowI in 1:nrow(lbf)) lbf_new[rowI,-c(1:3)] <- tapply( as.numeric(lbf[rowI,-c(1:3)]), FUN=sum, INDEX=as.numeric(factor(fleetgroups,levels=unique(fleetgroups))))
+    lbf <- lbf_new
+    nfleets <- ncol(lbf)-3
+  }
 
   if(!component %in% lbf$Label) stop("input 'component' needs to be one of the following\n",
                                      paste("    ",unique(lbf$Label),"\n"))
