@@ -249,16 +249,29 @@ SS_plots <-
 
   if(verbose) cat("Finished defining objects\n")
 
-  if(fleetnames[1]=="default") fleetnames <- FleetNames
+  # set fleet-specific names, and plotting parameters
+  if(fleetnames[1]=="default"){
+    fleetnames <- FleetNames
+  }
   if(fleetcols[1]=="default"){
     fleetcols <- rich.colors.short(nfishfleets)
     if(nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets+1)[-1]
   }
-  if(length(fleetlty)<nfishfleets) fleetlty <- rep(fleetlty,nfishfleets)
-  if(length(fleetpch)<nfishfleets) fleetpch <- rep(fleetpch,nfishfleets)
+  if(length(fleetlty)<nfishfleets){
+    fleetlty <- rep(fleetlty,nfishfleets)
+  }
+  if(length(fleetpch)<nfishfleets){
+    fleetpch <- rep(fleetpch,nfishfleets)
+  }
+  # set default area-specific colors if not specified
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)
-    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
+    if(nareas == 3){
+      areacols <- c("blue","red","green3")
+    }
+    if(nareas > 3){
+      areacols <- rich.colors.short(nareas+1)[-1]
+    }
   }
 
   #### prepare for plotting

@@ -111,10 +111,16 @@ SSplotTimeseries <-
 
   if(btarg=="default") btarg <- replist$btarg
   if(minbthresh=="default") minbthresh <- replist$minbthresh
-  
+
+  # set default colors if not specified
   if(areacols[1]=="default"){
     areacols  <- rich.colors.short(nareas)
-    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
+    if(nareas == 3){
+      areacols <- c("blue","red","green3")
+    }
+    if(nareas > 3){
+      areacols <- rich.colors.short(nareas+1)[-1]
+    }
   }
   if(!is.null(birthseas)){
     nbirthseas <- length(birthseas)
