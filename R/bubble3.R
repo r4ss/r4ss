@@ -7,7 +7,8 @@
 #' 
 #' @param x Vector of x-values.
 #' @param y Vector of y-values.
-#' @param z Vector of bubble sizes.
+#' @param z Vector of bubble sizes, where positive sizes will be plotted as
+#' closed bubbles and negative as open unless \code{allopen==TRUE}.
 #' @param col Color for bubbles.
 #' @param cexZ1 Character expansion (cex) value for a proportion of 1.0.
 #' @param maxsize Size of largest bubble. Prefered option is now an expansion

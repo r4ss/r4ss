@@ -291,7 +291,8 @@ make_multifig <-
     if(bub){ # if size input is provided then use bubble function
       # bubble plot for unsexed fish
       if(length(z_i0)>0){
-        bubble3(x=ptsx_i0, y=ptsy_i0, z=z_i0, col=colvec[3],
+        bubble3(x=ptsx_i0, y=ptsy_i0, z=z_i0,
+                col=rep(colvec[3], length(z_i0)),
                 cexZ1=cexZ1, legend.yadj=1.5,
                 legend=bublegend, legendloc='topright',
                 maxsize=maxsize, minnbubble=minnbubble,
@@ -299,7 +300,8 @@ make_multifig <-
       }
       # bubble plot for females fish
       if(length(z_i1)>0){
-        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, col=colvec[1],
+        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, 
+                col=rep(colvec[1], length(z_i1)),
                 cexZ1=cexZ1, legend.yadj=1.5, 
                 legend=bublegend, legendloc='topright', 
                 maxsize=maxsize, minnbubble=minnbubble,
@@ -309,7 +311,8 @@ make_multifig <-
       if(length(z_i2)>0){
         # note: ptsy_i2 may be negative for other plots, so taking
         #       absolute values for conditional age-at-length bubble plots
-        bubble3(x=ptsx_i2, y=abs(ptsy_i2), z=z_i2, col=colvec[2],
+        bubble3(x=ptsx_i2, y=abs(ptsy_i2), z=z_i2, 
+                col=rep(colvec[2], length(z_i2)),
                 cexZ1=cexZ1, legend.yadj=1.5, 
                 legend=bublegend, legendloc='topright', 
                 maxsize=maxsize, minnbubble=minnbubble,
