@@ -333,6 +333,8 @@ SS_plots <-
     }
     par(mar=mar0) # replace margins
   }
+  mar0 <- par()$mar # current inner margins
+  oma0 <- par()$oma # current outer margins
 
   if(length(tslabels)==0){
     tslabels <- c("Total biomass (mt)",           #1
@@ -1020,8 +1022,15 @@ SS_plots <-
 
     # restore default single panel settings if needed
     # conditional because if adding to existing plot may mess up layout
-    if(any(par()$mfcol != c(rows,cols))) par(mfcol=c(rows,cols))
-    if(any(par()$mar != c(5,4,4,2)+.1)) par(mar=c(5,4,4,2)+.1, oma=rep(0,4))
+    if(any(par()$mfcol != c(rows,cols))){
+      par(mfcol=c(rows,cols))
+    }
+    if(any(par()$mar != mar0)){
+      par(mar=mar0)
+    }
+    if(any(par()$oma != oma0)){
+      par(oma=oma0)
+    }
 
     ##########################################
     # Tag plots
