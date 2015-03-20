@@ -708,7 +708,10 @@ SSplotComparisons <-
 
     # make plot
     if(!add){
+      # store current margin parameters
       newmar <- oldmar <- par()$mar
+      # make right-hand y-axis match the left hand side for this one
+      # plot that has labels on both left and right
       newmar[4] <- newmar[2]
       par(mar=newmar)
       plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
@@ -752,23 +755,45 @@ SSplotComparisons <-
     }else{
       mtext(side=2,line=3,SPRratioLabel)
     }      
-    if(legend) legendfun(legendlabels)
-    if(exists("oldmar")) par(mar=oldmar)
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
+    if(exists("oldmar")){
+      # restore old margin parameters
+      par(mar=oldmar)
+    }
   }
 
+
+  #### plotF below should be revised to show timeseries of
+  #### fishing mortality (however it is specified in the models)
   ## plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+  ##   # only show uncertainty if values are present for at least one model
+  ##   if(!any(uncertainty)){
+  ##     show_uncertainty <- FALSE
+  ##   }
   ##   # get axis limits
   ##   if(xlim[1]=="default"){
   ##     xlim <- range(SPRratio$Yr)
   ##     if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
   ##   }
   ##   ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
-  ##   if(uncertainty) ylim <- ylimAdj*range(ylim, SPRratioUpper[,models], na.rm=TRUE)
+  ##   if(show_uncertainty){
+  ##     ylim <- ylimAdj*range(ylim, SPRratioUpper[,models[uncertainty]], na.rm=TRUE)
+  ##   }
 
   ##   # make plot
-  ##   if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-  ##                 ylab=labels[8] ,xaxs=xaxs,yaxs=yaxs,las=1)
-  ##   if(uncertainty) addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+  ##   if(!add){
+  ##     newmar <- oldmar <- par()$mar
+  ##     newmar[4] <- newmar[2]
+  ##     par(mar=newmar)
+  ##     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+  ##          ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+  ##   }
+  ##   if(show_uncertainty){
+  ##     addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
+  ##   }
   ##   if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
   ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
   ##   }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
@@ -783,15 +808,29 @@ SSplotComparisons <-
   ##     }
   ##   }
   ##   abline(h=0,col="grey")
-  ##   abline(h=sprtarg,col="grey",lty=2)
-
-  ##   if(btarg>0){
-  ##     abline(h=0,col="grey")
-  ##     abline(h=sprtarg,col="red",lty=2)
-  ##     text(SPRratio$Yr[1]+4,(1+0.02),labels[10],adj=0)
-  ##   }
-
+  ##   if(sprtarg>0){
+  ##     if(sprtarg==1){
+  ##       # draw line at ratio = 1
+  ##       abline(h=sprtarg,col="red",lty=2)
+  ##       text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
+  ##       mtext(side=2,line=3,labels[8])
+  ##     }else{
+  ##       # draw line at sprtarg
+  ##       yticks <- pretty(ylim)
+  ##       if(!is.na(SPRratioLabels) &&
+  ##          SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
+  ##         abline(h=1,col="red",lty=2)
+  ##         text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
+  ##         axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
+  ##         mtext(side=4,line=3,"1 - SPR")
+  ##         mtext(side=2,line=3,SPRratioLabel)
+  ##       }
+  ##     }
+  ##   }else{
+  ##     mtext(side=2,line=3,SPRratioLabel)
+  ##   }      
   ##   if(legend) legendfun(legendlabels)
+  ##   if(exists("oldmar")) par(mar=oldmar)
   ## }
   
   plotRecruits <- function(show_uncertainty=TRUE, recruit_lines=TRUE){ # plot recruitment
@@ -1327,7 +1366,7 @@ SSplotComparisons <-
           warning("You are shading both tails and central 95% of density plots",
                   "which is illogical")
         }
-        if(densitytails){
+        if(densitytails & !is.na(parSD) && parSD>0){
           # figure out which points are in the tails of the distibutions
           x.lower <- x[x<=x2[1]]
           y.lower <- y[x<=x2[1]]
@@ -1339,7 +1378,7 @@ SSplotComparisons <-
           polygon(c(x.upper[1],x.upper,rev(x.upper)[1]),
                   c(0,y.upper,0),col=shadecol[iline],border=NA)
         }
-        if(densitymiddle){
+        if(densitymiddle & !is.na(parSD) && parSD>0){
           x.middle <- x[x>=x2[1] & x<=rev(x2)[1]]
           y.middle <- y[x>=x2[1] & x<=rev(x2)[1]]
           polygon(c(x.middle[1],x.middle,rev(x.middle)[1]),
