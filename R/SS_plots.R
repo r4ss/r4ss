@@ -56,6 +56,9 @@
 #' time series?  Default=T.
 #' @param samplesizeplots Show sample size plots?  Default=T.
 #' @param compresidplots Show residuals for composition plots?
+#' @param comp.yupper Upper limit on ymax for polygon/histogram composition
+#' plots. This avoids scaling all plots to have max=1 if there is a vector
+#' with only a single observed fish in it. Default=0.4.
 #' @param sprtarg Specify the F/SPR proxy target. Default=0.4.
 #' @param btarg Target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA.  Default=0.4.
@@ -175,6 +178,7 @@ SS_plots <-
     lwd=1, areacols="default", areanames="default",
     verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
     datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
+    comp.yupper=0.4,
     sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
     bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
     minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
@@ -698,7 +702,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -714,7 +719,8 @@ SS_plots <-
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,
                         plotdir=plotdir,cex.main=cex.main,
-                        sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
+                        sexes=sexes, yupper=comp.yupper,
+                        scalebins=scalebins, scalebubbles=scalebubbles,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
@@ -733,7 +739,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -748,7 +755,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -770,7 +778,8 @@ SS_plots <-
                       andrerows=andrerows,
                       plot=!png, print=png,
                       plotdir=plotdir,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins, scalebubbles=scalebubbles,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -797,7 +806,8 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                    sexes=sexes, scalebins=scalebins,
+                    sexes=sexes, yupper=comp.yupper,
+                    scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -813,7 +823,8 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                    sexes=sexes, scalebins=scalebins,
+                    sexes=sexes, yupper=comp.yupper,
+                    scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -831,7 +842,8 @@ SS_plots <-
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                         maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
-                        sexes=sexes, scalebins=scalebins,
+                        sexes=sexes, yupper=comp.yupper,
+                        scalebins=scalebins,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
                         ...)
@@ -857,7 +869,8 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    sexes=sexes, scalebins=scalebins,
+                    sexes=sexes, yupper=comp.yupper,
+                    scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -871,7 +884,8 @@ SS_plots <-
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                     maxneff=maxneff,cex.main=cex.main,
-                    sexes=sexes, scalebins=scalebins,
+                    sexes=sexes, yupper=comp.yupper,
+                    scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
                     ...)
@@ -897,7 +911,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -916,7 +931,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)
@@ -934,7 +950,8 @@ SS_plots <-
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
                       maxneff=maxneff,cex.main=cex.main,
-                      sexes=sexes, scalebins=scalebins,
+                      sexes=sexes, yupper=comp.yupper,
+                      scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
                       ptsize=ptsize, res=res,
                       ...)

@@ -24,6 +24,7 @@
 #' @param sexes which sexes to show plots for. Default="all" which will include
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
+#' @param yupper upper limit on ymax for polygon/histogram composition plots
 #' @param datonly make plots of data without fits as well as data with fits?
 #' @param samplesizeplots make sample size plots?
 #' @param compresidplots make plots of residuals for fit to composition data?
@@ -110,6 +111,7 @@ SSplotComps <-
   function(replist, subplots=c(1:21,24), #subplots=1:13,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
            fleets="all", fleetnames="default", sexes="all",
+           yupper=0.4,
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
            showyears=TRUE, showsampsize=TRUE, showeffN=TRUE,
            sampsizeline=FALSE,effNline=FALSE,
@@ -471,7 +473,7 @@ SSplotComps <-
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
                             colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
-                            sexvec=sexvec,...)
+                            sexvec=sexvec, yupper=yupper, ...)
             }
             if(kind=="GSTAGE"){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -482,7 +484,7 @@ SSplotComps <-
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
                             colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
-                            sexvec=sexvec,...)
+                            sexvec=sexvec, yupper=yupper, ...)
             }
             if(kind=="GSTLEN"){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
@@ -1150,7 +1152,7 @@ SSplotComps <-
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
-                            sexvec=agg$sex, ...)
+                            sexvec=agg$sex, yupper=yupper, ...)
             }
             if(plot) tempfun7(ipage=0,...)
             if(print){ # set up plotting to png file if required
@@ -1286,7 +1288,8 @@ SSplotComps <-
                               legtext=list(namesvec,"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                              fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
+                              fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
+                              yupper=yupper,...)
               }
 
          # haven't configured this aggregated plot for other types
@@ -1417,7 +1420,8 @@ SSplotComps <-
                                 legtext=list(agg$y,"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,...)
+                                fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
+                                yupper=yupper, ...)
                 }
 
                 # haven't configured this aggregated plot for other types

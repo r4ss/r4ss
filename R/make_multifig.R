@@ -43,6 +43,7 @@
 #' of total width of plot
 #' @param ybuffer extra space around points on the bottom and top as fraction
 #' of total height of plot
+#' @param yupper upper limit on ymax (applied before addition of ybuffer)
 #' @param ymin0 fix minimum y-value at 0?
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
@@ -100,7 +101,8 @@ make_multifig <-
            maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="",ylab="",size=1,cexZ1=1.5,bublegend=TRUE,
            maxsize=NULL,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
-           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),ymin0=TRUE,
+           horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),
+           yupper=NULL, ymin0=TRUE,
            axis1=NULL,axis2=NULL,linepos=1,type="o",
            bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
@@ -171,6 +173,10 @@ make_multifig <-
   }else{
     yrange <- range(c(ptsy,linesy,ptsy,linesy))
   }
+  # reduce range to <= yupper (no impact if yupper=NULL)
+  yrange <- c(min(yrange[1],yupper),
+              min(yrange[2],yupper))
+  
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
   if(twosex & !bub){
