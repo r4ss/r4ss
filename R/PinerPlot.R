@@ -168,20 +168,20 @@ PinerPlot <-
     prof.table <- lbf[which(lbf$model %in% models & lbf$Label==component), ]
     prof.table[,-c(1:3)] <- prof.table[,-c(1:3)] * lbf[which(lbf$model %in% models & lbf$Label==component)-1, ][,-c(1:3)]
   }
-  # remove columns that have change less than minfraction change relative to total
-  column.max <- apply(prof.table[,-c(1:3)],2,max)
-  change.fraction <- column.max / column.max[1]
-  include <- change.fraction >= minfraction
-  cat("\nLikelihood components showing max change as fraction of total change.\n",
-     "To change which components are included, change input 'minfraction'.\n\n",sep="")
-  print(data.frame(frac_change=round(change.fraction,4),include=include))
-
   # subtract minimum value from each likelihood component (over requested parameter range)
   subset <- parvec >= xlim[1] & parvec <= xlim[2]
   for(icol in 3:ncol(prof.table)){
     prof.table[,icol] <- prof.table[,icol] -
       min(prof.table[subset,icol], na.rm=TRUE)
   }
+  # remove columns that have change less than minfraction change relative to total
+  column.max <- apply(prof.table[,-c(1:2)],2,max)
+  change.fraction <- column.max / column.max[1]
+  include <- change.fraction >= minfraction
+  cat("\nLikelihood components showing max change as fraction of total change.\n",
+     "To change which components are included, change input 'minfraction'.\n\n",sep="")
+  print(data.frame(frac_change=round(change.fraction,4),include=include))
+
   # subset values and reorder values
   prof.table <- prof.table[order(parvec),]
   nfleets <- ncol(prof.table)-3
