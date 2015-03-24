@@ -1031,12 +1031,16 @@ SS_output <-
   ## # FIT_AGE_COMPS
   fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
   if(nrow(fit_age_comps)>0){
+    # replace underscores with NA
     fit_age_comps[fit_age_comps=="_"] <- NA
-    for(icol in 1:ncol(fit_age_comps)) fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
+    # make columns numeric (except "Used", which may contain "skip")
+    for(icol in which(!names(fit_age_comps) %in% "Use")){
+      fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
+    }
   }else{
     fit_age_comps <- NA
   }
-  
+
   # Age comp effective N tuning check
   agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
   names(agentune)[10] <- "FleetName"
