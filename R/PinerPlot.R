@@ -184,9 +184,10 @@ PinerPlot <-
 
   # subset values and reorder values
   prof.table <- prof.table[order(parvec),]
-  nfleets <- ncol(prof.table)-3
-  prof.table <- prof.table[,c(1:3,3+intersect((1:nfleets)[fleets],
+  prof.table <- prof.table[,c(1:2,2+intersect((1:nfleets)[fleets],
                                               (1:nfleets)[include]))]
+  nfleets <- ncol(prof.table)-2
+                                              
   # figure out some things related to column names and fleet names
   for(icol in 3:ncol(prof.table)){
     if(names(prof.table)[icol] %in% FleetNames){
