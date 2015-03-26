@@ -52,8 +52,10 @@
 #' @param type type of line/points used for observed values (see 'type' in
 #' ?plot for details) on top of a grey polygon. Default is "o" for overplotting
 #' points on lines.
+#' @param polygons should polygons be added to the
+#' (turning off is required for sex-ratio plot)
 #' @param bars should the ptsx/ptsy values be bars instead of points
-#' (TRUE/FALSE)
+#' (TRUE/FALSE) NOT CURRENTLY FUNCTIONAL
 #' @param barwidth width of bars in barplot, default method chooses based on
 #' quick and dirty formula also, current method of plot(...type='h') could be
 #' replaced with better approach
@@ -104,6 +106,7 @@ make_multifig <-
            horiz_lab="default",xbuffer=c(.1,.1),ybuffer=c(0,0.15),
            yupper=NULL, ymin0=TRUE,
            axis1=NULL,axis2=NULL,linepos=1,type="o",
+           polygons=TRUE,
            bars=FALSE,barwidth="default",ptscex=1,ptscol=1,ptscol2=1,
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
            linescol=c(rgb(0,.8,0,.7),rgb(1,0,0,.7),rgb(0,0,1,.7)),
@@ -358,22 +361,28 @@ make_multifig <-
         # make polygons
         if(length(ptsx_i0)>0){
           # polygon for unsexed fish
-          polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
-                  col='grey70')
+          if(polygons){
+            polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
+                    col='grey70')
+          }
           # line with solid points on top for unsexed fish
           points(ptsx_i0, ptsy_i0, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
         if(length(ptsx_i1)>0){
           # polygon for females
-          polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
-                  col='grey80')
+          if(polygons){
+            polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
+                    col='grey80')
+          }
           # lines with solid points on top for females
           points(ptsx_i1, ptsy_i1, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
         if(length(ptsx_i2)>0){
           # polygon for males (possibly below 0 line
-          polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
-                  col='grey60')  # polygon
+          if(polygons){
+            polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
+                    col='grey60')  # polygon
+          }
           # lines with solid points on top for males
           points(ptsx_i2, ptsy_i2, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
