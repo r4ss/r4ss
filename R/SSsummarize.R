@@ -5,10 +5,6 @@
 #' 
 #' 
 #' @param biglist A list of lists created by \code{\link{SSgetoutput}}.
-#' @param keyvec Optional list of strings matching names of elements of biglist
-#' to subset. Default=NULL.
-#' @param numvec Optional list of numbers of elements from biglist to subset.
-#' Default=NULL.
 #' @param sizeselfactor A string or vector of strings indicating which elements
 #' of the selectivity at length output to summarize. Default=c("Lsel").
 #' @param ageselfactor A string or vector of strings indicating which elements
@@ -31,7 +27,6 @@
 #' @seealso \code{\link{SSgetoutput}}
 #' @keywords data manip list
 SSsummarize <- function(biglist,
-                        keyvec=NULL,
                         numvec=NULL,
                         sizeselfactor="Lsel",
                         ageselfactor="Asel",
@@ -41,51 +36,20 @@ SSsummarize <- function(biglist,
                         SpawnOutputUnits=NULL,
                         lowerCI=0.025,
                         upperCI=0.975){
-
-  # a bunch of 'key' related stuff is more for Ian T's simulation work
-  # the goal is to be able to extract a subset of the models in biglist in
-  # a particular order as defined by a vector of strings used to rename model
-  # output files. It can be ignored in general.
-
-  if(is.null(names(biglist))) names(biglist) <- paste("replist",1:length(biglist),sep="")
-  biglistkeys <- substring(names(biglist),8)
-  if(length(biglistkeys)==0 | any(is.null(biglistkeys))) biglistkeys <- 1:length(biglist)
-
-  ## check inputs in keyvec or numvec
-  # too many inputs
-  if(!is.null(keyvec) & !is.null(numvec))
-    stop("don't input both 'keyvec' and 'numvec'")
-  if(!is.null(keyvec) & is.null(numvec)){
-    # if only keyvec is supplied, check to make sure it works
-    if(length(setdiff(keyvec,biglistkeys)) > 0)
-      stop("'keyvec' should include strings that follow 'replist_' in names(biglist)")
-    n <- length(keyvec)
-  }
-  if(is.null(keyvec) & !is.null(numvec)){
-    # if only numvec is supplied, check to make sure it works
-    if(length(setdiff(numvec,1:length(biglist))) > 0)
-      stop("'numvec' should include indices of elements of biglist")
-    n <- length(numvec)
-  }
-  # no inputs to subset elements
-  if(is.null(keyvec) & is.null(numvec)){
-    keyvec <- substring(names(biglist),8)
-    n <- length(biglist)
-    if(length(keyvec)==0 | any(is.null(keyvec))) keyvec <- 1:n
-  }
-
   # loop over outputs to create list of parameters, derived quantities, and years
   parnames <- NULL
   dernames <- NULL
   likenames <- NULL
   allyears <- NULL
 
+  # figure out how many models and give them names if they don't have them already
+  n <- length(biglist)
+  modelnames <- names(biglist)
+  if(is.null(modelnames)){
+    modelnames <- paste0("model",1:n)
+  }
   for(imodel in 1:n){
-    element <- (1:length(biglist))[biglistkeys==keyvec[imodel]]
-    if(length(element)!=1)
-      stop("keyvec problem, element =",element,"\n",
-           "keyvec[imodel] =",keyvec[imodel])
-    stats <- biglist[[element]]
+    stats <- biglist[[imodel]]
     parnames <- union(parnames,stats$parameters$Label)
     dernames <- union(dernames,stats$derived_quants$LABEL)
     allyears <- union(allyears,stats$timeseries$Yr)
@@ -106,7 +70,6 @@ SSsummarize <- function(biglist,
   agesel     <- NULL
   # notes about what runs were used
   sim        <- NULL
-  keyvec2    <- NULL
   listnames  <- NULL
   npars      <- NULL
   startyrs   <- NULL
@@ -121,14 +84,9 @@ SSsummarize <- function(biglist,
 
   # loop over models within biglist
   for(imodel in 1:n){
-    element <- (1:length(biglist))[biglistkeys==keyvec[imodel]]
-    stats <- biglist[[element]]
-    listname <- names(biglist)[element]
-
-    key <- as.character(stats$key)
-    if(length(key)==0 || is.null(key) || is.na(key)) key <- imodel
-    keyvec2 <- c(keyvec2,key)
-    cat("imodel=",imodel,"/",n,", element=",element,",",substring("      ",nchar(imodel)+nchar(element)),"got ", listname,sep="")
+    stats <- biglist[[imodel]]
+    listname <- names(biglist)[imodel]
+    cat("imodel=", imodel, "/", n, sep="")
 
     # gradient
     maxgrad <- c(maxgrad, stats$maximum_gradient_component)
@@ -146,12 +104,15 @@ SSsummarize <- function(biglist,
     for(iselfactor in 1:length(sizeselfactor)){
       seltemp_i <- sizeseltemp[sizeseltemp$Factor==sizeselfactor[iselfactor],]
       seltemp_i$imodel <- imodel
-      seltemp_i$key <- key
-      # if sizesel is not NULL, then check for whether columns of new addition match existing file
-      if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) && all(names(seltemp_i)==names(sizesel)))){
+      seltemp_i$name <- modelnames[imodel]
+      # if sizesel is not NULL, then check for whether columns of new addition
+      # match existing file
+      if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) &&
+                                all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("problem summarizing size selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("problem summarizing size selectivity due to mismatched columns ",
+            "(perhaps different bins)\n")
       }
     }
     rownames(sizesel) <- 1:nrow(sizesel)
@@ -162,12 +123,15 @@ SSsummarize <- function(biglist,
     for(iselfactor in 1:length(ageselfactor)){
       seltemp_i <- ageseltemp[ageseltemp$factor==ageselfactor[iselfactor],]
       seltemp_i$imodel <- imodel
-      seltemp_i$key <- key
-      # if agesel is not NULL, then check for whether columns of new addition match existing file
-      if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) && all(names(seltemp_i)==names(agesel)))){
+      seltemp_i$name <- modelnames[imodel]
+      # if agesel is not NULL, then check for whether columns of new addition
+      # match existing file
+      if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) &&
+                               all(names(seltemp_i)==names(agesel)))){
         agesel <- rbind(agesel,seltemp_i)
       }else{
-        cat("problem summarizing age selectivity due to mismatched columns (perhaps different bins)\n")
+        cat("problem summarizing age selectivity due to mismatched columns ",
+            "(perhaps different bins)\n")
       }
     }
     rownames(agesel) <- 1:nrow(agesel)
@@ -220,7 +184,7 @@ SSsummarize <- function(biglist,
     if(is.na(indextemp[[1]][1])){
       cat("no index data\n")
     }else{
-      indextemp$Model <- keyvec2[imodel]
+      indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
       if(is.null(indices) || ncol(indextemp)==ncol(indices)){
         indices <- rbind(indices, indextemp)
@@ -249,16 +213,10 @@ SSsummarize <- function(biglist,
     }
   } # end loop over models
 
-  if(!setequal(keyvec,keyvec2)){
-    cat("problem with keys!\nkeyvec:\n")
-    print(keyvec)
-    cat("keyvec2:\n")
-    print(keyvec2)
-  }else{
-    names(pars) <- names(parsSD) <- keyvec2
-    names(quants) <- names(quantsSD) <- keyvec2
-    names(likelihoods) <- names(likelambdas) <- keyvec2
-  }
+  names(pars) <- names(parsSD) <- modelnames
+  names(quants) <- names(quantsSD) <- modelnames
+  names(likelihoods) <- names(likelambdas) <- modelnames
+
   pars$Label <- parsSD$Label <- parphases$Label <- parnames
   quants$Label <- quantsSD$Label <- dernames
   likelihoods$Label <- likelambdas$Label <- likenames
@@ -417,8 +375,7 @@ SSsummarize <- function(biglist,
   mylist <- list()
   mylist$n              <- n
   mylist$npars          <- npars
-  mylist$listnames      <- names(biglist)
-  mylist$keyvec         <- keyvec
+  mylist$modelnames     <- modelnames
   mylist$maxgrad        <- maxgrad
   mylist$nsexes         <- nsexes
   mylist$startyrs       <- startyrs
@@ -466,5 +423,5 @@ SSsummarize <- function(biglist,
   mylist$FleetNames     <- FleetNames
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
   
-  return(mylist)
+  return(invisible(mylist))
 } # end function
