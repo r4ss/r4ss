@@ -117,17 +117,6 @@ PinerPlot <-
   pars <- summaryoutput$pars
   FleetNames     <- summaryoutput$FleetNames[[1]]
 
-  # Aggregate by input fleetgroups (a character vector, where two fleets with the same value are aggregated)
-  if( !is.null(fleetgroups) ){
-    if( length(fleetgroups)!=nfleets ) stop("fleetgroups, if specified, must have length equal to the number of declared fleets")
-    FleetNames <- unique(fleetgroups)
-    lbf_new <- data.frame( matrix(nrow=nrow(lbf),ncol=3+length(unique(fleetgroups)),dimnames=list(rownames(lbf),c(colnames(lbf)[1:3],unique(fleetgroups)))) )
-    lbf_new[,1:3] <- lbf[,1:3]
-    for(rowI in 1:nrow(lbf)) lbf_new[rowI,-c(1:3)] <- tapply( as.numeric(lbf[rowI,-c(1:3)]), FUN=sum, INDEX=as.numeric(factor(fleetgroups,levels=unique(fleetgroups))))
-    lbf <- lbf_new
-    nfleets <- ncol(lbf)-3
-  }
-
   if(!component %in% lbf$Label) stop("input 'component' needs to be one of the following\n",
                                      paste("    ",unique(lbf$Label),"\n"))
 
@@ -168,6 +157,18 @@ PinerPlot <-
     prof.table <- lbf[which(lbf$model %in% models & lbf$Label==component), ]
     prof.table[,-c(1:3)] <- prof.table[,-c(1:3)] * lbf[which(lbf$model %in% models & lbf$Label==component)-1, ][,-c(1:3)]
   }
+
+  # Aggregate by input fleetgroups (a character vector, where two fleets with the same value are aggregated)
+  if( !is.null(fleetgroups) ){
+    if( length(fleetgroups)!=nfleets ) stop("fleetgroups, if specified, must have length equal to the number of declared fleets")
+    FleetNames <- unique(fleetgroups)
+    prof.table_new <- data.frame( matrix(nrow=nrow(prof.table),ncol=3+length(unique(fleetgroups)),dimnames=list(rownames(prof.table),c(colnames(prof.table)[1:3],unique(fleetgroups)))) )
+    prof.table_new[,1:3] <- prof.table[,1:3]
+    for(rowI in 1:nrow(prof.table)) prof.table_new[rowI,-c(1:3)] <- tapply( as.numeric(prof.table[rowI,-c(1:3)]), FUN=sum, INDEX=as.numeric(factor(fleetgroups,levels=unique(fleetgroups))))
+    prof.table <- prof.table_new
+    nfleets <- ncol(prof.table)-3
+  }
+
   # subtract minimum value from each likelihood component (over requested parameter range)
   subset <- parvec >= xlim[1] & parvec <= xlim[2]
   for(icol in 3:ncol(prof.table)){
