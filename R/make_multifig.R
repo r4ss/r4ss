@@ -115,7 +115,7 @@ make_multifig <-
            legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
            venusmars=TRUE,
            sampsizeline=FALSE,effNline=FALSE,sampsizemean=NULL,effNmean=NULL,
-           ipage=0,scalebins=FALSE,sexvec=NULL,...)
+           ipage=0,scalebins=FALSE,sexvec=NULL,multifig_colpolygon=c("grey60","grey70","grey80"),multifig_oma=c(5,5,5,2)+.1,...)
 {
   # switch to determine whether to show males below 0 line in same plot
   twosex <- TRUE
@@ -209,7 +209,7 @@ make_multifig <-
   # old graphics parameter settings
   par_old <- par()
   # new settings
-  par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=c(5,5,5,2)+.1)
+  par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=multifig_oma)
 
   panelrange <- 1:npanels
   if(npages > 1 & ipage!=0){
@@ -363,16 +363,16 @@ make_multifig <-
           # polygon for unsexed fish
           if(polygons){
             polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
-                    col='grey70')
+                    col=multifig_colpolygon[3])
           }
           # line with solid points on top for unsexed fish
           points(ptsx_i0, ptsy_i0, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
         }
         if(length(ptsx_i1)>0){
-          # polygon for females
+          # polygon for females             
           if(polygons){
             polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
-                    col='grey80')
+                    col=multifig_colpolygon[1])
           }
           # lines with solid points on top for females
           points(ptsx_i1, ptsy_i1, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
@@ -381,7 +381,7 @@ make_multifig <-
           # polygon for males (possibly below 0 line
           if(polygons){
             polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
-                    col='grey60')  # polygon
+                    col=multifig_colpolygon[2])  # polygon
           }
           # lines with solid points on top for males
           points(ptsx_i2, ptsy_i2, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
