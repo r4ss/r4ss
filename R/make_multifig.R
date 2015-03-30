@@ -92,6 +92,11 @@
 #' bin width for models where bins have different widths? Caution!: May not
 #' work correctly in all cases.
 #' @param sexvec vector of sex codes if more than one present (otherwise NULL)
+#' @param multifig_colpolygon vector of polygon fill colors of length 3
+#' (for females, males, and unsexed fish). Can be input to SS_plots and will be
+#' passed to this function via the ... argument.
+#' @param multifig_oma vector of outer margins. Can be input to SS_plots and will be
+#' passed to this function via the ... argument.
 #' @param \dots additional arguments (NOT YET IMPLEMENTED).
 #' @author Ian Taylor
 #' @export
@@ -115,7 +120,9 @@ make_multifig <-
            legadjx="default",legadjy="default",legsize=c(1.2,1.0),legfont=c(2,1),
            venusmars=TRUE,
            sampsizeline=FALSE,effNline=FALSE,sampsizemean=NULL,effNmean=NULL,
-           ipage=0,scalebins=FALSE,sexvec=NULL,multifig_colpolygon=c("grey60","grey70","grey80"),multifig_oma=c(5,5,5,2)+.1,...)
+           ipage=0,scalebins=FALSE,sexvec=NULL,
+           multifig_colpolygon=c("grey60","grey80","grey70"),
+           multifig_oma=c(5,5,5,2)+.1,...)
 {
   # switch to determine whether to show males below 0 line in same plot
   twosex <- TRUE
