@@ -141,7 +141,7 @@ SSplotComps <-
            printmkt=TRUE,printsex=TRUE,
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,addMeans=TRUE,...)
+           scalebins=FALSE,addMeans=TRUE,andre_oma=c(3,0,3,0),...)
 {
   ################################################################################
   # SSplotComps
@@ -956,7 +956,7 @@ SSplotComps <-
             if(npages > 1 & ipage!=0) panelrange <- intersect(panelrange, 1:andrerows + andrerows*(ipage-1))
             Yrs2 <- Yrs[panelrange]
 
-            par(mfrow=c(andrerows,2),mar=c(2,4,1,1),oma=c(3,0,3,0))
+            par(mfrow=c(andrerows,2),mar=c(2,4,1,1),oma=andre_oma)
             for (Yr in Yrs2){
               y <- dbase[dbase$Yr.S==Yr,]
               Size <- NULL; Size2 <- NULL
