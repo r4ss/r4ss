@@ -86,6 +86,8 @@
 #' for single plots
 #' @param cols number or cols to return to as default for next plots to come or
 #' for single plots
+#' @param andre_oma Outer margins passed to Andre's multi-panel conditional
+#' age-at-length plots.
 #' @param andrerows Number of rows of Andre's conditional age-at-length plots
 #' within each page. Default=3.
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
@@ -139,9 +141,10 @@ SSplotComps <-
                       "Stdev (Age) (yr)",      #13
                       "Conditional AAL plot, "), #14
            printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,andrerows=3,
+           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
+           andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,addMeans=TRUE,andre_oma=c(3,0,3,0),...)
+           scalebins=FALSE,addMeans=TRUE,...)
 {
   ################################################################################
   # SSplotComps

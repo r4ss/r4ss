@@ -27,7 +27,6 @@
 #' @seealso \code{\link{SSgetoutput}}
 #' @keywords data manip list
 SSsummarize <- function(biglist,
-                        numvec=NULL,
                         sizeselfactor="Lsel",
                         ageselfactor="Asel",
                         selfleet=NULL,

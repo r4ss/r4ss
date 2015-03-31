@@ -32,6 +32,10 @@
 #' @param verbose Controls amount of text output (maybe). Default=TRUE.
 #' @param nrows How many rows in multi-figure plot. Default=3.
 #' @param ncols How many columns in multi-figure plot. Default=3.
+#' @param ltyvec Vector of line types used for lines showing MLE and prior
+#' distributions and the median of the posterior distribution
+#' @param colvec Vector of colors used for lines and polygons showing MLE, 
+#' initial value, prior, posterior, and median of the posterior. 
 #' @param new Open new window for plotting? Default=TRUE.
 #' @param pdf Write to PDF file instead of R GUI? Default=FALSE.
 #' @param pwidth Default width of plots printed to files in units of
@@ -74,8 +78,8 @@ SSplotPars <-
     showmle=TRUE, showinit=TRUE, showrecdev=TRUE, priorinit=TRUE,
     priorfinal=TRUE, showlegend=TRUE, fitrange=FALSE, xaxs="i",
     xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
-      ltyvec=c(1,1,3,4),
-      colvec=c("blue","red","black","gray60",rgb(0,0,0,.5)),
+    ltyvec=c(1,1,3,4),
+    colvec=c("blue","red","black","gray60",rgb(0,0,0,.5)),
     new=TRUE, pdf=FALSE, pwidth=6.5, pheight=5.0, punits="in",
     ptsize=10, returntable=FALSE, strings=c(), exact=FALSE,
     newheaders=NULL, burn=0, thin=1,
@@ -428,22 +432,28 @@ SSplotPars <-
 
     # add stuff to plot
     colval <- colvec[4]
+    # posterior with median
     if(showpost & goodpost){
       plot(posthist,add=TRUE,freq=FALSE,col=colval,border=colval)
       abline(v=postmedian,col=colvec[5],lwd=2,lty=ltyvec[3])
     }
+    # prior
     if(showprior){
       lines(x,prior,lwd=2,lty=ltyvec[2])
     }
+    # MLE
     if(showmle){
+      # full normal distribution if uncertainty is present
       if(!is.na(parsd) && parsd>0){
         lines(x,mle,col=colvec[1],lwd=1,lty=ltyvec[1])
         lines(rep(finalval,2),c(0,dnorm(finalval,finalval,parsd)*mlescale),
               col=colvec[1],lty=ltyvec[1])
       }else{
+        # just point estimate otherwise
         abline(v=finalval, col=colvec[1], lty=ltyvec[1])
       }
     }
+    # marker for initial value
     if(showinit){
       par(xpd=NA) # stop clipping
       points(initval,-0.02*ymax,col=colvec[2],pch=17,cex=1.2)
@@ -453,6 +463,7 @@ SSplotPars <-
     ##     if(printlike) mtext(side=3,line=0.2,cex=.8,adj=1,paste("prob@final =",round(priorfinal,3)))
     box()
 
+    # add margin text and legend
     if(max(par("mfg")[1:2])==1){ # first panel on page
       mtext(xlab,side=1,line=0.5,outer=TRUE)
       mtext(ylab,side=2,line=0.5,outer=TRUE)

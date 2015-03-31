@@ -61,7 +61,7 @@
 #' be the directory where the model was run.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
-#' @param dots Additional arguments passed to the \code{plot} command.
+#' @param \dots Additional arguments passed to the \code{plot} command.
 #' @note Someday the function \code{\link{SS_profile}} will be improved and
 #' made to work directly with this plotting function, but they don't yet work
 #' well together. Thus, even if \code{\link{SS_profile}} is used, the output
