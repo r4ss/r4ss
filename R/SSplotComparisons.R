@@ -128,7 +128,7 @@ SSplotComparisons <-
            indexSEvec="default",
            indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
            labels=c("Year",             #1
-             "Spawning biomass (mt)",   #2
+             "Spawning biomass (t)",   #2
              "Relative spawning biomass", #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
@@ -565,17 +565,17 @@ SSplotComparisons <-
     yunits <- 1
     if(ylim[2] > 1e3 & ylim[2] < 1e6){
       yunits <- 1e3
-      ylab <- gsub("t","x1000 t",ylab)
-      ylab <- gsub("eggs","x1000 eggs",ylab)
+      ylab <- gsub("(t)","(x1000 t)", ylab, fixed=TRUE)
+      ylab <- gsub("eggs","x1000 eggs", ylab, fixed=TRUE)
     }
     if(ylim[2] > 1e6){
       yunits <- 1e6
-      ylab <- gsub("t","million t",ylab)
-      ylab <- gsub("eggs","millions of eggs",ylab)
+      ylab <- gsub("(t)","(million t)", ylab, fixed=TRUE)
+      ylab <- gsub("eggs","millions of eggs", ylab, fixed=TRUE)
     }
     if(ylim[2] > 1e9){
       yunits <- 1e9
-      ylab <- gsub("million","billion",ylab)
+      ylab <- gsub("million","billion", ylab, fixed=TRUE)
     }
     if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,
                   xaxs=xaxs,yaxs=yaxs,axes=FALSE)
