@@ -61,6 +61,7 @@ SSplotSPR <-
   derived_quants        <- replist$derived_quants
   nsexes                <- replist$nsexes
   nseasons              <- replist$nseasons
+  nareas                <- replist$nareas
   endyr                 <- replist$endyr
   managementratiolabels	<- replist$managementratiolabels
 
@@ -152,17 +153,33 @@ SSplotSPR <-
         cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
       }else{
         timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
-        #!subsetting to area 1 only. This should be generalized
-        ts <- timeseries[timeseries$Area==1 & timeseries$Yr <= endyr,] 
-        tsyears <- ts$Yr[ts$Seas==1]
-        tsspaw_bio <- ts$SpawnBio[ts$Seas==1]
-        if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
-        depletionseries <- tsspaw_bio/tsspaw_bio[1]
-        reldep <- depletionseries[tsyears %in% sprseries$Year]/btarg
+        #!subsetting to season 1 only, initially just getting area 1
+        ts <- timeseries[timeseries$Seas==1 &
+                           timeseries$Area==1 &
+                             timeseries$Yr <= endyr,]
+        # if there is more than 1 area, add them in now
+        # this could be done using "aggregate" but this approach is more foolproof (hopefully)
+        if(nareas>1){
+          for(iarea in 2:nareas){
+            ts_area_i <- timeseries[timeseries$Seas==1 &
+                                      timeseries$Area==iarea &
+                                        timeseries$Yr <= endyr,]
+            ts$SpawnBio <- ts$SpawnBio + ts_area_i$SpawnBio
+          }
+        }
+        # divide spawning biomass by 2 for single-sex models
+        if(nsexes==1){
+          ts$SpawnBio <- ts$SpawnBio/2
+        }
+        # calculate depletion
+        depletionseries <- ts$SpawnBio/ts$SpawnBio[1]
+        reldep <- depletionseries[ts$Yr %in% sprseries$Year]/btarg
         relspr <- (1-sprseries$spr[sprseries$Year <= endyr])/(1-sprtarg)
+        # set axis limits
         xmax <- 1.1*max(reldep)
         ymax <- 1.1*max(1,relspr[!is.na(relspr)])
         ylab <- managementratiolabels[1,2]
+        # function to make the plot
         phasefunc <- function(){
           if(!add) plot(reldep,relspr,xlab="B/Btarget",
                         xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
