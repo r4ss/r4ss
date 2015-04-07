@@ -1,13 +1,13 @@
 #' A function to create a list object for the output from Stock Synthesis
-#' 
+#'
 #' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
 #' other files files produced by Stock Synthesis and formats the important
 #' content of these files into a list in the R workspace. A few statistics
 #' unavailable elsewhere are taken from the .par and .cor files. Summary
 #' information and statistics can be returned to the R console or just
 #' contained within the list produced by this function.
-#' 
-#' 
+#'
+#'
 #' @param dir Locates the directory of the files to be read in, double
 #' backslashes (or forwardslashes) and quotes necessary.
 #' @param model Name of the executable (leaving off the .exe).  Deafult="ss3"
@@ -55,11 +55,11 @@
 #' @seealso \code{\link{SS_plots}}
 #' @keywords data manip list
 #' @examples
-#' 
+#'
 #'   \dontrun{
 #'     myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
 #'   }
-#' 
+#'
 SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
@@ -342,7 +342,7 @@ SS_output <-
           "  (can replace or override in SS_plots by setting 'minbthresh')\n")
     minbthresh <- 0.125 # west coast assumption for flatfish
   }
-  
+
   flush.console()
 
   # check for use of temporary files
@@ -474,7 +474,7 @@ SS_output <-
   }
   ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
 
-  
+
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
     allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE, colClasses="character", skip=3, nrows=15)
@@ -506,7 +506,7 @@ SS_output <-
       # split Pick_gender=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
       compdbase$sex <- compdbase$Pick_gender
       compdbase$sex[compdbase$Pick_gender==3] <- compdbase$Gender[compdbase$Pick_gender==3]
-      
+
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
         cat('Correcting for bug in tag data output associated with SSv3.24f\n')
@@ -652,7 +652,7 @@ SS_output <-
     # if comp option is turned off
     lbins <- NA
     nlbins <- NA
-    
+
     #### need to get length bins from somewhere
     ## temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
     ## lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
@@ -699,7 +699,7 @@ SS_output <-
 
   stats$StartTime <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
   stats$RunTime <- paste(as.character(matchfun2("StartTime",2,"StartTime",2,cols=4:9)),collapse=" ")
-  
+
   tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
   tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
@@ -730,7 +730,7 @@ SS_output <-
   for(irow in 1:length(labs)) labs[irow] <- substr(labs[irow],1,nchar(labs[irow])-1)
   likelihoods_by_fleet$Label <- labs
   stats$likelihoods_by_fleet <- likelihoods_by_fleet
-  
+
 
   # parameters
   if(SS_versionNumeric>= 3.23) shift <- -1
@@ -766,7 +766,7 @@ SS_output <-
       parameters[,i] <- as.numeric(parameters[,i])
   }
   rownames(parameters) <- parameters$Label
-  
+
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
 
   if(!is.na(parfile)){
@@ -913,7 +913,7 @@ SS_output <-
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
   rownames(der) <- der$LABEL
-  
+
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
@@ -981,7 +981,7 @@ SS_output <-
     # provide as same name
     recruitment_dist <- rd
   }
-    
+
   # gradient
   if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
   stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
@@ -992,7 +992,8 @@ SS_output <-
     last_row_index <- 11
   }else{
     last_row_index <- 10
-  }    
+  }
+
   srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",last_row_index,cols=1:6)
   rmse_table <- as.data.frame(srhead[-(1:(last_row_index-1)),1:5])
   for(icol in 2:5){
@@ -1003,6 +1004,14 @@ SS_output <-
   stats$sigma_R_in <- as.numeric(srhead[last_row_index-6,1])
   stats$rmse_table <- rmse_table
 
+  # Bias adjustment ramp
+  biascol <- grep("breakpoints_for_bias", srhead)
+  breakpoints_for_bias_adjustment_ramp <- srhead[
+    grep("breakpoints_for_bias", srhead[, biascol]), 1:5]
+  colnames(breakpoints_for_bias_adjustment_ramp) <- c("last_yr_early",
+    "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj")
+  rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
+
   # Spawner-recruit curve
   rawsr <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
   names(rawsr) <- rawsr[1,]
@@ -1010,7 +1019,7 @@ SS_output <-
   rawsr <- rawsr[-(1:2),] # remove header rows
   sr <- rawsr[-(1:2),] # remove rows for Virg and Init
   for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
-  
+
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
   vartune <- vartune[vartune$N > 0,]
@@ -1119,6 +1128,8 @@ if(FALSE){
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
   returndat$recruit     <- sr
+  returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
+
 
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough
@@ -1167,7 +1178,7 @@ if(FALSE){
   returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
                                        all(biology$Wt_len_F==biology$Fecundity),
                                        "biomass", "numbers")
-  
+
   Growth_Parameters <- matchfun2("Growth_Parameters",1,
                                  "Growth_Parameters",1+nrow(morph_indexing),
                                  header=TRUE)
@@ -1175,7 +1186,7 @@ if(FALSE){
     Growth_Parameters[,icol] <- as.numeric(Growth_Parameters[,icol])
   }
   returndat$Growth_Parameters <- Growth_Parameters
-  
+
   Seas_Effects <- matchfun2("Seas_Effects",1,"Biology_at_age_in_endyr",-1,header=TRUE)
   if(Seas_Effects[[1]][1]!="absent"){
     for(i in 1:ncol(Seas_Effects)) Seas_Effects[,i] <- as.numeric(Seas_Effects[,i])
@@ -1202,7 +1213,7 @@ if(FALSE){
   test <- matchfun2("MEAN_BODY_WT(begin)",0,"MEAN_BODY_WT(begin)",0,header=FALSE)
   wtatage_switch <- length(grep("wtatage.ss",test))>0
   returndat$wtatage_switch <- wtatage_switch
-  
+
   # mean body weight
   mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)",1,"MEAN_SIZE_TIMESERIES",-1,header=TRUE)
   for(i in 1:ncol(mean_body_wt)) mean_body_wt[,i] <- as.numeric(mean_body_wt[,i])
@@ -1381,7 +1392,7 @@ if(FALSE){
     discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=FALSE)
     names(discard) <- c("Fleet","Yr","Seas","Obs","Exp","Std_in","Std_use","Dev")
   }
-  
+
   discard_type <- NA
   if(!is.na(discard) && nrow(discard)>1){
     discard[discard=="_"] <- NA
@@ -1496,7 +1507,7 @@ if(FALSE){
     minbthresh <- 0.1 # treaty value for hake
   }
   returndat$minbthresh <- minbthresh
-  
+
   if(forecast){
    returndat$equil_yield <- yielddat
    # stats$spr_at_msy <- as.numeric(rawforecast[33,2])
@@ -1563,7 +1574,7 @@ if(FALSE){
     }
   }
 
-  
+
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
   names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
@@ -1705,7 +1716,7 @@ if(FALSE){
     #No_fishery_for_Z=M_and_dynamic_Bzero
     Z_at_age <- matchfun2("Z_AT_AGE_Annual_2",1,"Spawning_Biomass_Report_1",-2,header=TRUE)
     M_at_age <- matchfun2("Z_AT_AGE_Annual_1",1,"-ln(Nt+1",-1,matchcol2=5, header=TRUE)
-    if(nrow(Z_at_age)>0){  
+    if(nrow(Z_at_age)>0){
       Z_at_age[Z_at_age=="_"] <- NA
       M_at_age[M_at_age=="_"] <- NA
       # if birth season is not season 1, you can get infinite values
