@@ -47,6 +47,9 @@
 #' values)
 #' @param maxyr Last year to show in plot (for zooming in on a subset of
 #' values)
+#' @param maximum_ymax_ratio Maximum allowed value for ymax (specified 
+#' as ratio of y), which overrides any 
+#' value of ymax that is greater (default = Inf)
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -74,8 +77,9 @@ function(replist,subplots=1:9,
          legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
-         verbose=TRUE)
+         maximum_ymax_ratio=Inf,verbose=TRUE, ...)
 {
+  require(r4ss)
   cpue        <- replist$cpue
   if(is.null(dim(cpue))){
     cat("skipping index plots: no CPUE data in this model\n")
@@ -188,12 +192,12 @@ function(replist,subplots=1:9,
     }
     # print(cbind(x, y, liw, uiw)) # debugging line
     
-    cpuefun1 <- function(addexpected=TRUE){
+    cpuefun1 <- function(addexpected=TRUE, ...){
       # plot of time-series of observed and expected (if requested)
       xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
       if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1], ylab=labels[2],
                     main=main, cex.main=cex.main,
-                    xlim=xlim, ylim=c(0,max(y+uiw,na.rm=TRUE)))
+                    xlim=xlim, ylim=c(0,min(max(y+uiw,na.rm=TRUE),max(maximum_ymax_ratio*y))), ...)
       plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
              ylo=0,col=colvec1[s],
              main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
@@ -206,10 +210,10 @@ function(replist,subplots=1:9,
         legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
       }
     }
-    cpuefun2 <- function(){
+    cpuefun2 <- function(...){
       # plot of observed vs. expected with smoother
       if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
-                    ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4])
+                    ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
       points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
       abline(h=0,col="grey")
       lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
