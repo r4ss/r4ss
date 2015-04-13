@@ -289,7 +289,8 @@ SSplotTimeseries <-
       if(subplot==10){
         for(iarea in 1:nareas){
           yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas][1])
-          ymax <- max(ymax,yvals,na.rm=TRUE)
+          #ymax <- max(ymax,yvals,na.rm=TRUE)
+          ymax <- max(yvals,na.rm=TRUE)
         }
       }
     }
