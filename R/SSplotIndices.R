@@ -51,7 +51,7 @@
 #' as ratio of y), which overrides any 
 #' value of ymax that is greater (default = Inf)
 #' @param verbose report progress to R GUI?
-#' @author Ian Stewart, Ian Taylor
+#' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords hplot
