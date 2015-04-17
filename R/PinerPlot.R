@@ -171,13 +171,21 @@ PinerPlot <-
   if( !is.null(fleetgroups) ){
     if( length(fleetgroups)!=nfleets ) stop("fleetgroups, if specified, must have length equal to the number of declared fleets")
     FleetNames <- unique(fleetgroups)
-    prof.table_new <- data.frame( matrix(nrow=nrow(prof.table),ncol=3+length(unique(fleetgroups)),dimnames=list(rownames(prof.table),c(colnames(prof.table)[1:3],unique(fleetgroups)))) )
+    prof.table_new <- data.frame( matrix(nrow=nrow(prof.table),
+                                         ncol=3+length(unique(fleetgroups)),
+                                         dimnames=list(rownames(prof.table),
+                                             c(colnames(prof.table)[1:3],
+                                               unique(fleetgroups)))) )
     prof.table_new[,1:3] <- prof.table[,1:3]
-    for(rowI in 1:nrow(prof.table)) prof.table_new[rowI,-c(1:3)] <- tapply( as.numeric(prof.table[rowI,-c(1:3)]), FUN=sum, INDEX=as.numeric(factor(fleetgroups,levels=unique(fleetgroups))))
+    for(rowI in 1:nrow(prof.table)){
+      prof.table_new[rowI,-c(1:3)] <- tapply( as.numeric(prof.table[rowI,-c(1:3)]),
+                                             FUN=sum,
+                                             INDEX=as.numeric(factor(fleetgroups,
+                                                 levels=unique(fleetgroups))))
+    }
     prof.table <- prof.table_new
     nfleets <- ncol(prof.table)-3
   }
-
   # subtract minimum value from each likelihood component (over requested parameter range)
   subset <- parvec >= xlim[1] & parvec <= xlim[2]
   for(icol in 3:ncol(prof.table)){
@@ -200,13 +208,15 @@ PinerPlot <-
   prof.table <- prof.table[,c(1:3,3+intersect((1:nfleets)[fleets],
                                               (1:nfleets)[include]))]
   nfleets <- ncol(prof.table)-3
-  # figure out some things related to column names and fleet names
-  for(icol in 4:ncol(prof.table)){
-    if(names(prof.table)[icol] %in% FleetNames){
-      names(prof.table)[icol] <- fleetnames[which(FleetNames==names(prof.table)[icol])]
-    }
-    if(names(prof.table)[icol] %in% paste("X",FleetNames,sep="")){
-      names(prof.table)[icol] <- fleetnames[which(paste("X",FleetNames,sep="")==names(prof.table)[icol])]
+  # replace column names with fleetnames unless "fleetgroup" is used
+  if(is.null(fleetgroups)){
+    for(icol in 4:ncol(prof.table)){
+      if(names(prof.table)[icol] %in% FleetNames){
+        names(prof.table)[icol] <- fleetnames[which(FleetNames==names(prof.table)[icol])]
+      }
+      if(names(prof.table)[icol] %in% paste("X",FleetNames,sep="")){
+        names(prof.table)[icol] <- fleetnames[which(paste("X",FleetNames,sep="")==names(prof.table)[icol])]
+      }
     }
   }
 
