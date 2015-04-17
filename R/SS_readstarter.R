@@ -38,14 +38,15 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   }
   strings <- strings[is.na(suppressWarnings(as.numeric(strings)))]
   if(length(strings)>2){
-      cat("too many strings in starter file?\n")
-      print(strings)
-      return()
-  }else{
-      mylist$datfile <- strings[1]
-      mylist$ctlfile <- strings[2]
+    warning("Too many strings in starter file?\n",
+            "Choosing first 2 of these as data and control file names:\n",
+            paste(strings, collapse="\n"))
   }
-  if(verbose) cat("  data, control files: ",mylist$datfile,", ",mylist$ctlfile,"\n",sep="")
+  mylist$datfile <- strings[1]
+  mylist$ctlfile <- strings[2]
+  if(verbose){
+    cat("  data, control files: ",mylist$datfile,", ",mylist$ctlfile,"\n",sep="")
+  }
   
   # get numbers (could be better integrated with function above)
   allnums <- NULL
@@ -93,7 +94,7 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$SPR_basis <- allnums[i]; i <- i+1
   if(verbose) cat("  SPR_basis =",mylist$SPR_basis,"\n")
   mylist$F_report_units <- allnums[i]; i <- i+1
-  if(mylist$F_report_units==4){
+  if(!is.na(mylist$F_report_units) && mylist$F_report_units==4){
     mylist$F_age_range <- allnums[i]; i <- i+1
     mylist$F_age_range[2] <- allnums[i]; i <- i+1
   }else{
@@ -104,10 +105,12 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
   
   # check final value
-  if(allnums[i]==999){
-    if(verbose) cat("read of starter file complete (final value = 999)\n")
+  if(!is.na(allnums[i]) && allnums[i]==999){
+    if(verbose){
+      cat("read of starter file complete (final value = 999)\n")
+    }
   }else{
-    cat("Error: final value is", allnums[i]," but should be 999\n")
+    warning("Final value is ", allnums[i]," but should be 999\n")
   }
 
   # all done
