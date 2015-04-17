@@ -1,12 +1,13 @@
 Package: r4ss
 Type: Package
 Title: R code for Stock Synthesis
-Version: 1.23.2
-Date: 2015-3-31
-Author: Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison,
-    Andre Punt, John Wallace, Chantel Wetzel, James Thorson,
-    Yukio Takeuchi, Cole Monnahan, Christine Stawitz, 
-    Teresa A'mar, Athol Whitten, and other contributors.
+Version: 1.23.3
+Date: 2015-4-13
+Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
+    Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
+    Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
+    Z. Teresa A'mar, Athol R. Whitten,
+    and other contributors.
 Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 2.10.0)

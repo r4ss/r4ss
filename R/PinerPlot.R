@@ -113,12 +113,21 @@ PinerPlot <-
     stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
          "and have an element named 'likelihoods_by_fleet'.")
   }
+  # count of fleets
   nfleets <- ncol(lbf)-3
   pars <- summaryoutput$pars
+  # names of fleets
   FleetNames     <- summaryoutput$FleetNames[[1]]
-
-  if(!component %in% lbf$Label) stop("input 'component' needs to be one of the following\n",
-                                     paste("    ",unique(lbf$Label),"\n"))
+  # stop if lengths don't match
+  if(length(FleetNames)!=nfleets){
+    stop("problem with FleetNames: length!= ",nfleets,"\n",
+         paste(FleetNames,collapse="\n"))
+  }
+  # stop of component input isn't found in table
+  if(!component %in% lbf$Label){
+    stop("input 'component' needs to be one of the following\n",
+         paste("    ",unique(lbf$Label),"\n"))
+  }
 
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames # note lower-case value is the one used below (either equal to vector from replist, or input by user)
@@ -176,7 +185,7 @@ PinerPlot <-
       min(prof.table[subset,icol], na.rm=TRUE)
   }
   # remove columns that have change less than minfraction change relative to total
-  column.max <- apply(prof.table[,-c(1:2)],2,max)
+  column.max <- apply(prof.table[,-c(1:3)],2,max)
   change.fraction <- column.max / column.max[1]
   include <- change.fraction >= minfraction
   cat("\nLikelihood components showing max change as fraction of total change.\n",
@@ -184,13 +193,15 @@ PinerPlot <-
   print(data.frame(frac_change=round(change.fraction,4),include=include))
 
   # subset values and reorder values
+  # Note: first 3 columns are "model", "Label", and "ALL", and
+  # are excluded from subsetting process
+  # a future option to exclude the "ALL" column is possible if requested
   prof.table <- prof.table[order(parvec),]
-  prof.table <- prof.table[,c(1:2,2+intersect((1:nfleets)[fleets],
+  prof.table <- prof.table[,c(1:3,3+intersect((1:nfleets)[fleets],
                                               (1:nfleets)[include]))]
-  nfleets <- ncol(prof.table)-2
-                                              
+  nfleets <- ncol(prof.table)-3
   # figure out some things related to column names and fleet names
-  for(icol in 3:ncol(prof.table)){
+  for(icol in 4:ncol(prof.table)){
     if(names(prof.table)[icol] %in% FleetNames){
       names(prof.table)[icol] <- fleetnames[which(FleetNames==names(prof.table)[icol])]
     }
