@@ -1,9 +1,9 @@
 #' Create multi-figure plots.
-#' 
+#'
 #' Function created as an alternative to lattice package for multi-figure plots
 #' of composition data and fits from Stock Synthesis output.
-#' 
-#' 
+#'
+#'
 #' @param ptsx vector of x values for points or bars
 #' @param ptsy vector of y values for points or bars of same length as ptsx
 #' @param yr vector of category values (years) of same length as ptsx
@@ -154,8 +154,13 @@ make_multifig <-
 
   npages <- ceiling(npanels/nrows/ncols) # how many pages of plots
   # doSD is TRUE/FALSE switch for whether to add error bars on points
-  doSD <- length(ptsSD)==length(ptsx) & max(ptsSD) > 0 
-  
+  doSD <- length(ptsSD)==length(ptsx) & max(ptsSD) > 0
+  # turn off polygons for any plots with uncertainty
+  # such as mean length at age
+  if(doSD){
+    polygons <- FALSE
+  }
+
   # if no input on lines, then turn linepos to 0
   if(length(linesx)==1 | length(linesy)==1){
     linepos <- 0
@@ -163,7 +168,7 @@ make_multifig <-
     linesy <- ptsy
   }
   anyscaled <- FALSE
-  
+
   # quick and dirty formula to get width of bars (if used) based on
   #	  number of columns and maximum number of bars within a in panel
   if(bars & barwidth=="default") barwidth <- 400/max(table(yr)+2)/ncols
@@ -175,7 +180,7 @@ make_multifig <-
   # determinant on whether this is a bubble plot for
   # conditional age-at-length data
   bub <- diff(range(size,na.rm=TRUE))!=0
-  
+
   # get axis limits
   xrange <- range(c(ptsx,linesx,ptsx,linesx))
   if(ymin0){
@@ -186,7 +191,7 @@ make_multifig <-
   # reduce range to <= yupper (no impact if yupper=NULL)
   yrange <- c(min(yrange[1],yupper),
               min(yrange[2],yupper))
-  
+
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
   if(twosex & !bub){
@@ -316,10 +321,10 @@ make_multifig <-
       }
       # bubble plot for females fish
       if(length(z_i1)>0){
-        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1, 
+        bubble3(x=ptsx_i1, y=ptsy_i1, z=z_i1,
                 col=rep(colvec[1], length(z_i1)),
-                cexZ1=cexZ1, legend.yadj=1.5, 
-                legend=bublegend, legendloc='topright', 
+                cexZ1=cexZ1, legend.yadj=1.5,
+                legend=bublegend, legendloc='topright',
                 maxsize=maxsize, minnbubble=minnbubble,
                 allopen=allopen, add=TRUE)
       }
@@ -327,10 +332,10 @@ make_multifig <-
       if(length(z_i2)>0){
         # note: ptsy_i2 may be negative for other plots, so taking
         #       absolute values for conditional age-at-length bubble plots
-        bubble3(x=ptsx_i2, y=abs(ptsy_i2), z=z_i2, 
+        bubble3(x=ptsx_i2, y=abs(ptsy_i2), z=z_i2,
                 col=rep(colvec[2], length(z_i2)),
-                cexZ1=cexZ1, legend.yadj=1.5, 
-                legend=bublegend, legendloc='topright', 
+                cexZ1=cexZ1, legend.yadj=1.5,
+                legend=bublegend, legendloc='topright',
                 maxsize=maxsize, minnbubble=minnbubble,
                 allopen=allopen, add=TRUE)
       }
@@ -349,7 +354,7 @@ make_multifig <-
                 ptsy_i1_vec, col='green3', lty=2)
         }
       }
-      # add optional lines showing effective sample size 
+      # add optional lines showing effective sample size
       if(sampsizeline>0 && length(sampsize)>0){
         sampsize_i1     <- sampsize[yr==yr_i]
         sampsize_i1_vec <- unlist(lapply(split(sampsize_i1,ptsy_i1),unique))
@@ -362,39 +367,36 @@ make_multifig <-
         }
       }
     }else{
-      # make polygons and points
-      # (if this isn't mean len or wt with std. dev. intervals)
-      if(!doSD){
-        # make polygons
-        if(length(ptsx_i0)>0){
-          # polygon for unsexed fish
-          if(polygons){
-            polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
-                    col=multifig_colpolygon[3])
-          }
-          # line with solid points on top for unsexed fish
-          points(ptsx_i0, ptsy_i0, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
+      # make polygons (unless turned off) and points
+      # make polygons
+      if(length(ptsx_i0)>0){
+        # polygon for unsexed fish
+        if(polygons){
+          polygon(c(ptsx_i0[1], ptsx_i0, tail(ptsx_i0, 1)), c(0, ptsy_i0, 0),
+                  col=multifig_colpolygon[3])
         }
-        if(length(ptsx_i1)>0){
-          # polygon for females             
-          if(polygons){
-            polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
-                    col=multifig_colpolygon[1])
-          }
-          # lines with solid points on top for females
-          points(ptsx_i1, ptsy_i1, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
-        }
-        if(length(ptsx_i2)>0){
-          # polygon for males (possibly below 0 line
-          if(polygons){
-            polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
-                    col=multifig_colpolygon[2])  # polygon
-          }
-          # lines with solid points on top for males
-          points(ptsx_i2, ptsy_i2, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
-        }
+        # line with solid points on top for unsexed fish
+        points(ptsx_i0, ptsy_i0, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
       }
-      
+      if(length(ptsx_i1)>0){
+        # polygon for females
+        if(polygons){
+          polygon(c(ptsx_i1[1], ptsx_i1, tail(ptsx_i1, 1)), c(0, ptsy_i1, 0),
+                  col=multifig_colpolygon[1])
+        }
+        # lines with solid points on top for females
+        points(ptsx_i1, ptsy_i1, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
+      }
+      if(length(ptsx_i2)>0){
+        # polygon for males (possibly below 0 line
+        if(polygons){
+          polygon(c(ptsx_i2[1], ptsx_i2, tail(ptsx_i2, 1)), c(0, ptsy_i2, 0),
+                  col=multifig_colpolygon[2])  # polygon
+        }
+        # lines with solid points on top for males
+        points(ptsx_i2, ptsy_i2, type=type, lwd=1, pch=16, cex=0.7, col=ptscol)
+      }
+
       # adding uncertainty for mean length or weight at age plots
       if(doSD){
         old_warn <- options()$warn   # previous settings for warnings
@@ -490,13 +492,13 @@ make_multifig <-
       }
       if(legadjx[1]=="default"){
         # default x-value is left side for first legend, right thereafter
-        adjx <- ifelse(i==1, -.1, 1.0) 
+        adjx <- ifelse(i==1, -.1, 1.0)
       }else{
         adjx <- legadjx[i]
       }
       if(legadjy[1]=="default"){
         # default y-value is top for first 2 legends, below thereafter
-        adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))  
+        adjy <- ifelse(i<3, 1.3, 1.3 + 1.3*(i-2))
       }else{ adjy <- legadjy[i] }
 
       # add legend text
@@ -530,22 +532,22 @@ make_multifig <-
     # add axes in left and lower outer margins
     mfg <- par("mfg")
     # axis on bottom panels and final panel
-    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1) 
+    if(mfg[1]==mfg[3] | ipanel==npanels) axis(side=1,at=axis1)
     if(mfg[2]==1){
       # axis on left side panels
-      axis(side=2,at=axis2,las=horiz_lab)	    
+      axis(side=2,at=axis2,las=horiz_lab)
       if(twosex){
         # axis for negative values on left side panels
         axis(side=2, at=-axis2[axis2>0], labels=format(axis2[axis2>0]),
              las=horiz_lab)
         ## # axis for negative values on left side panels
-        ## axis(side=2,at=-axis2,las=horiz_lab) 
+        ## axis(side=2,at=-axis2,las=horiz_lab)
       }
     }
     box() # add box around panel
 
     # if this is the first panel of a given page, then do a few things
-    if(npanels==1 | ipanel %% (nrows*ncols) == 1){ 
+    if(npanels==1 | ipanel %% (nrows*ncols) == 1){
       # add title after plotting first panel on each page of panels
       fixcex <- 1 # compensates for automatic adjustment caused by par(mfcol)
       if(max(nrows,ncols)==2){
