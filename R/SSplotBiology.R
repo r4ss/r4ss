@@ -39,7 +39,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
              "Maturity",                        #3
              "Mean weight (kg) in last year",   #4
              "Spawning output",                 #5
-             "Length (cm, middle of the year)", #6
+             "Length (cm, beginning of the year)", #6
              "Natural mortality",               #7
              "Female weight (kg)",              #8
              "Female length (cm)",              #9
@@ -109,7 +109,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   nseasons     <- replist$nseasons
   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   # calculate CVs from SD and mean length
-  growdat$CV_Mid <- growdat$SD_Mid/growdat$Len_Mid
+  growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
   growthCVtype <- replist$growthCVtype
   biology      <- replist$biology
   startyr      <- replist$startyr
@@ -170,9 +170,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ##   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
   ## }
-  if(nseasons>1) labels[6] <- gsub("middle of the year", paste("middle of season",seas), labels[6])
+  if(nseasons>1){
+    labels[6] <- gsub("beginning of the year",
+                      paste("beginning of season",seas), labels[6])
+  }
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
   # check dimensions
   if(length(mainmorphs)>nsexes){
     cat("!Error with morph indexing in SSplotBiology function.\n",
@@ -193,32 +198,29 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(labels[11]!="Default fecundity label") fec_ylab <- labels[11]
 
-  # Midle of season 1 (or specified season) mean length at age with 95% range of lengths (by sex if applicable)
+  # Begle of season 1 (or specified season) mean length at age with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
-  growdatF$Sd_Size <- growdatF$SD_Mid
+  growdatF$Sd_Size <- growdatF$SD_Beg
   if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-    growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
-    growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
+    growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
+    growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
   }else{                        # normal distribution of length at age
-    growdatF$high <- qnorm(0.975, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
-    growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
+    growdatF$high <- qnorm(0.975, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
+    growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
   }
 
   if(nsexes > 1){ # do males if 2-sex model
     growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
     # IAN T. this should probably be generalized
-    xm <- growdatM$Age
-    if(is.null(xm)){ # "Age" column gone in 3.3
-      xm <- growdatM$Age_Mid
-    }
+    xm <- growdatM$Age_Beg
 
-    growdatM$Sd_Size <- growdatM$SD_Mid
+    growdatM$Sd_Size <- growdatM$SD_Beg
     if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-      growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
-      growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
+      growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
+      growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
     }else{                        # normal distribution of length at age
-      growdatM$high <- qnorm(0.975, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
-      growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
+      growdatM$high <- qnorm(0.975, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
+      growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
     }
   }
   weight_plot <- function(){ # weight
@@ -267,8 +269,13 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
         if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=colvec[1])
         if(add) lines(x,biology$Mat_len,type="o",col=colvec[1])
       }else{ # else is age based
-        if(!add) plot(growdatF$Age, growdatF$Age_Mat,xlab=labels[2],ylab=labels[3],type="o",col=colvec[1])
-        if(add) lines(growdatF$Age, growdatF$Age_Mat,type="o",col=colvec[1])
+        if(!add){
+          plot(growdatF$Age_Beg, growdatF$Age_Mat, xlab=labels[2],
+               ylab=labels[3], type="o", col=colvec[1])
+        }else{
+          lines(growdatF$Age_Beg, growdatF$Age_Mat,
+                type="o",col=colvec[1])
+        }
       }
       if(!add) abline(h=0,col="grey")
     }else{
@@ -374,10 +381,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
 
   ymax <- max(biology$Mean_Size)
-  x <- growdatF$Age
-  if(is.null(x)){ # "Age" column gone in 3.3
-    x <- growdatF$Age_Mid
-  }
+  x <- growdatF$Age_Beg
     
   main <- "Ending year expected growth (with 95% intervals)"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
@@ -388,10 +392,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   growth_curve_fn <- function(add_labels=TRUE, add_uncertainty=TRUE) # growth
   {
-    x <- growdatF$Age_Mid
+    x <- growdatF$Age_Beg
     # make empty plot unless this is being added to existing figure
     if(!add){
-      plot(x, growdatF$Len_Mid, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
+      plot(x, growdatF$Len_Beg, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
            #ylab=labels[6], xlab=labels[2], main=main, cex.main=cex.main,
            xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
       abline(h=0,col="grey")
@@ -404,7 +408,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     lty <- 1
     polygon(c(x, rev(x)), c(growdatF$low, rev(growdatF$high)),
             border=NA, col=shadecolvec[col_index1])
-    lines(x,growdatF$Len_Mid,col=colvec[col_index1],lwd=2,lty=1)
+    lines(x,growdatF$Len_Beg,col=colvec[col_index1],lwd=2,lty=1)
     lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
     lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
     # add uncertainty intervals around growth curve
@@ -413,9 +417,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       if(!is.null(Grow_std.f)){
         for(irow in 1:nrow(Grow_std.f)){
           std.age <- Grow_std.f$age[irow]
-          # this might not work for long-normal length at age
-          mean <- growdatF$Len_Mid[growdatF$Age==std.age]
-          age.mid <- growdatF$Age_Mid[growdatF$Age==std.age]
+          # this might not work for log-normal length at age
+          mean <- growdatF$Len_Beg[growdatF$Age_Beg==std.age]
+          age.mid <- growdatF$Age_Beg[growdatF$Age_Beg==std.age]
           high <- qnorm(0.975, mean=mean, sd=Grow_std.f$StdDev[irow])
           low  <- qnorm(0.025, mean=mean, sd=Grow_std.f$StdDev[irow])
           arrows(x0=age.mid, x1=age.mid,
@@ -428,7 +432,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     if(nsexes > 1){
       polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
               border=NA, col=shadecolvec[2])
-      lines(xm,growdatM$Len_Mid,col=colvec[2],lwd=2,lty=2)
+      lines(xm,growdatM$Len_Beg,col=colvec[2],lwd=2,lty=2)
       lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
       lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
       # add uncertainty intervals around growth curve for males
@@ -438,8 +442,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
           for(irow in 1:nrow(Grow_std.m)){
             std.age <- Grow_std.m$age[irow]
             # this might not work for long-normal length at age
-            mean <- growdatM$Len_Mid[growdatM$Age==std.age]
-            age.mid <- 0.2 + growdatM$Age_Mid[growdatM$Age==std.age]
+            mean <- growdatM$Len_Beg[growdatM$Age_Beg==std.age]
+            age.mid <- 0.2 + growdatM$Age_Beg[growdatM$Age_Beg==std.age]
             high <- qnorm(0.975, mean=mean, sd=Grow_std.m$StdDev[irow])
             low  <- qnorm(0.025, mean=mean, sd=Grow_std.m$StdDev[irow])
             arrows(x0=age.mid, x1=age.mid,
@@ -461,7 +465,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   if(plot & 1 %in% subplots) growth_curve_fn()
   if(print & 1 %in% subplots){
     file <- paste(plotdir,"/bio1_sizeatage.png",sep="")
-    caption <- paste("Length at age in the middle of the year (or season) in the ending",
+    caption <- paste("Length at age in the beginning of the year (or season) in the ending",
                      "year of the model. Shaded area indicates 95% distribution of",
                      "length at age around estimated growth curve.")
     if(!is.null(Grow_std)){
@@ -497,9 +501,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     box()
 
     if(option==1){
-      lab1 <- "SD_Mid"
+      lab1 <- "SD_Beg"
       lab1long <- "SD of lengths"
-      lab2 <- "CV_Mid"
+      lab2 <- "CV_Beg"
       lab2long <- "CV of lengths"
       lab1max <- 1.1*max(growdat[[lab1]])
       lab2max <- 1.05*max(growdat[[lab2]])
@@ -516,7 +520,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     if(option==2){
       lab1 <- "Len_Mat"
       lab1long <- "Frac. mature"
-      lab2 <- "Wt_Mid"
+      lab2 <- "Wt_Beg"
       lab2long <- "Mean weight"
       lab1max <- 1
       lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M))
@@ -533,19 +537,19 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     if(option==1){
       # if plotting SD and CV, then get it from age-based data
       # add line for lab1 vs. Len
-      lines(growdatF[[lab1]], growdatF$Len_Mid, col=colvec[col_index1],
+      lines(growdatF[[lab1]], growdatF$Len_Beg, col=colvec[col_index1],
             lwd=1, lty='12')
       # add line for lab2 vs. Len
-      lines(growdatF[[lab2]]*lab2_to_lab1_scale, growdatF$Len_Mid,
+      lines(growdatF[[lab2]]*lab2_to_lab1_scale, growdatF$Len_Beg,
             col=colvec[col_index1], lwd=3)
       if(nsexes > 1){ # add lines for males
         if(option==1){
           # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
-          lines(growdatM[[lab1]], growdatM$Len_Mid, col=colvec[2],
+          lines(growdatM[[lab1]], growdatM$Len_Beg, col=colvec[2],
                 lwd=1, lty='13')
         }
         # add line for lab2 vs. Len
-        lines(growdatM[[lab2]]*lab2_to_lab1_scale, growdatM$Len_Mid, col=colvec[2],
+        lines(growdatM[[lab2]]*lab2_to_lab1_scale, growdatM$Len_Beg, col=colvec[2],
               lwd=3, lty=2)
       }
     }
@@ -571,23 +575,23 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
     # make empty plot in lower-left position
     plot(0, type='n',
-         xaxs='i', xlim=range(growdat$Age_Mid),
+         xaxs='i', xlim=range(growdat$Age_Beg),
          yaxs='i', ylim=c(0,1.0*lab1max),
          axes=FALSE)
     # add line for lab1 vs. Age
-    lines(growdatF$Age_Mid, growdatF[[lab1]], col=colvec[col_index1],
+    lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
           lwd=1, lty='12')
     # add line for lab2 vs. Age
-    lines(growdatF$Age_Mid, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
+    lines(growdatF$Age_Beg, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
           lwd=3)
     if(nsexes > 1){ # add lines for males
       if(option==1){
         # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
-        lines(growdatM$Age_Mid, growdatM[[lab1]], col=colvec[2],
+        lines(growdatM$Age_Beg, growdatM[[lab1]], col=colvec[2],
               lwd=1, lty='13')
       }
       # add line for lab2 vs. Age
-      lines(growdatM$Age_Mid, growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
+      lines(growdatM$Age_Beg, growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
             lwd=3, lty=2)
     }
     # add axes and labels
@@ -655,7 +659,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     LinfM <- Growth_Parameters$Linf[2]
     ymax <- max(biology$Mean_Size)
     plot(0, type="n",
-         xlim=c(0,1+max(growdatF$Age_Mid)),
+         xlim=c(0,1+max(growdatF$Age_Beg)),
          ylim=c(0,1.1*ymax),
          xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
     abline(h=0,col="grey")
@@ -666,11 +670,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
          labels=expression(0, italic(L[A[1]]), italic(L[A[2]]),
            italic(L[infinity])), las=1)
     # add growth curve itself
-    lines(growdatF$Age_Mid,growdatF$Len_Mid,
+    lines(growdatF$Age_Beg,growdatF$Len_Beg,
           col=1,lwd=3,lty=1)
     # add growth curve for males
     if(nsexes > 1 & option==2){
-      lines(growdatM$Age_Mid,growdatM$Len_Mid,
+      lines(growdatM$Age_Beg,growdatM$Len_Beg,
             col=1,lwd=2,lty=2)
     }
     if(option==1){
@@ -744,7 +748,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     CV_at_AmaxM <- Growth_Parameters$CVmax[2]
     ymax <- max(CV_at_AminF,CV_at_AmaxF,CV_at_AminM,CV_at_AmaxM)
     plot(0, type="n",
-         xlim=c(0,1+max(growdatF$Age_Mid)),
+         xlim=c(0,1+max(growdatF$Age_Beg)),
          ylim=c(0,1.1*ymax),
          xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
     abline(h=0,col="grey")
@@ -754,11 +758,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     axis(2, at=c(0, CV_at_AminF, CV_at_AmaxF),
          labels=expression(0, italic(CV[A[1]]), italic(CV[A[2]])), las=1)
     # add growth curve itself
-    lines(growdatF$Age_Mid,growdatF$CV_Mid,
+    lines(growdatF$Age_Beg,growdatF$CV_Beg,
           col=1,lwd=3,lty=1)
     # add growth curve for males
     if(nsexes > 1 & option%in%c(2,4)){
-      lines(growdatM$Age_Mid,growdatM$CV_Mid,
+      lines(growdatM$Age_Beg,growdatM$CV_Beg,
             col=1,lwd=2,lty=2)
     }
     if(option==1){
@@ -931,14 +935,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       # function to plut natural mortality
       mfunc <- function(){
         if(!add){
-          plot(growdatF$Age,MatAge,col=colvec[1],lwd=2,ylim=c(0,ymax),type="n",
+          plot(growdatF$Age_Beg,MatAge,col=colvec[1],lwd=2,ylim=c(0,ymax),type="n",
                ylab=labels[7],xlab=labels[2])
           abline(h=0,col="grey")
         }
-        lines(growdatF$Age,MatAge,col=colvec[1],lwd=2,type="o")
+        lines(growdatF$Age_Beg, MatAge, col=colvec[1],lwd=2,type="o")
         if(nsexes > 1){
           growdatM <- growdat[growdat$Morph==mainmorphs[2],]
-          lines(growdatM$Age,growdatM$M,col=colvec[2],lwd=2,type="o")
+          lines(growdatM$Age_Beg,growdatM$M,col=colvec[2],lwd=2,type="o")
         }
       }
       # run function if requested to make plot
