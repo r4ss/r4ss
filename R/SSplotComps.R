@@ -672,7 +672,8 @@ SSplotComps <-
           }
           if(plot) tempfun3(ipage=0,...)
           if(print){ # set up plotting to png file if required
-            npages <- ceiling(length(unique(dbase$Yr.S))/maxrows2/maxcols2)
+            npages <- ceiling(length(unique(dbase$Yr.S))*
+                                length(unique(dbase$sex))/maxrows2/maxcols2)
             for(ipage in 1:npages){
               caption <- ptitle
               pagetext <- ""

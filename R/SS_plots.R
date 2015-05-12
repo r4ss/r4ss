@@ -86,7 +86,8 @@
 #' see if growth curves are ok, or to see the information on year classes move
 #' through the conditional data. Default=-1.
 #' @param aalresids Plot the full set of conditional age-at-length Pearson
-#' residuals? Default=F.
+#' residuals? Turn to FALSE if plots are taking too long and you don't want
+#' them.
 #' @param maxneff The maximum value to include on plots of input and effective
 #' sample size. Occasionally a calculation of effective N blows up to very
 #' large numbers, rendering it impossible to observe the relationship for other
@@ -181,7 +182,7 @@ SS_plots <-
     comp.yupper=0.4,
     sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
     bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
-    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=FALSE, maxneff=5000,
+    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE, maxneff=5000,
     cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
     sampsizeline=FALSE,effNline=FALSE,
     showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
@@ -227,13 +228,13 @@ SS_plots <-
   if(html & !png){
     stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
   }
-  if(uncertainty==TRUE & inputs$covar==FALSE){
+  if(uncertainty & !inputs$covar){
     stop("To use uncertainty=T, you need to have covar=T in the input to the SS_output function")
   }
-  if(forecastplot==TRUE & inputs$forecast==FALSE){
+  if(forecastplot & !inputs$forecast){
     stop("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function")
   }
-  if(forecastplot==TRUE & max(timeseries$Yr > endyr+1)==0){
+  if(forecastplot & max(timeseries$Yr > endyr+1)==0){
     cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
     forecastplot <- FALSE
   }
@@ -900,7 +901,7 @@ SS_plots <-
     igroup <- 18
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to conditional age-at-length comp plots (group ",igroup,")\n",sep="")
-      if(aalresids==TRUE){
+      if(aalresids){
         plotinfo <- 
           SSplotComps(replist=replist,subplots=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
