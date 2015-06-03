@@ -37,7 +37,9 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="Report.sso", to="Report0.sso", overwrite=TRUE)
   file.copy(from=paste0(model,".par"), to=paste0(model,".par_0.sso"), overwrite=TRUE)
   file.remove( c("CompReport.sso","covar.sso","Report.sso",paste0(model,".par")) )
-  for(i in 1:Njitter){
+
+  if (length(Njitter) == 1) Njitter <- 1:Njitter
+  for(i in Njitter){
     print(paste("Jitter=",i,date()))
     file.copy(from=paste0(model,".par_0.sso"), to=paste0(model,".par"), overwrite=TRUE)
     # run model
