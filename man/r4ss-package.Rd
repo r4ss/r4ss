@@ -28,11 +28,12 @@ SS_plots(replist=myreplist)
 }
 }
 \author{
-Ian Taylor, Ian Stewart, Allan Hicks, Tommy Garrison, Andre Punt,
-John Wallace, Chantel Wetzel, James Thorson, Yukio Takeuchi, Kotaro Ono,
-Cole Monnahan, Christine Stawitz, Teresa A'mar, Athol Whitten,
+Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
+Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
+Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
+Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson
 and other contributors.
- Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
+Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
 \references{
 r4ss on GitHub: \url{https://github.com/r4ss}

@@ -34,6 +34,6 @@ Iteratively runs SS model with different jittered starting parameter values
 in the format Report1.sso, Report2.sso, etc.
 }
 \author{
-Jim Thorson
+James T. Thorson, Kelli F. Johnson
 }
 

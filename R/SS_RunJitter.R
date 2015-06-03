@@ -16,7 +16,7 @@
 ##' @param Intern Show command line info in R console or keep hidden (Internal=TRUE)
 ##' @param systemcmd Option to switch between 'shell' and 'system'
 ##' @param printlikes Print likelihood values to console
-##' @author Jim Thorson
+##' @author James T. Thorson, Kelli F. Johnson
 ##' @return A vector of likelihoods for each jitter iteration.
 ##' @export
 SS_RunJitter <- function(mydir, model="ss3",
