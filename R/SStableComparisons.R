@@ -118,7 +118,7 @@ SStableComparisons <-  function(summaryoutput,
         }
 
         if(name %in% c("Q","Q_calc")){
-          Calc_Q <- aggregate(Calc_Q ~ Model+FleetNum,data=indices,FUN=mean)
+          Calc_Q <- aggregate(Calc_Q ~ name+FleetNum,data=indices,FUN=mean)
           cat("\n")
           fleetvec <- sort(as.numeric(unique(Calc_Q$FleetNum)))
           vals <- data.frame(matrix(NA,nrow=length(fleetvec),ncol=ncol(bigtable)))
