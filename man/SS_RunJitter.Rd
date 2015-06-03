@@ -25,6 +25,9 @@ else \code{1:Njitter} will be executed.}
 
 \item{printlikes}{Print likelihood values to console}
 }
+\value{
+A vector of likelihoods for each jitter iteration.
+}
 \description{
 Iteratively runs SS model with different jittered starting parameter values
 (jitter value must be mannually set in starter.ss). Output files are renamed

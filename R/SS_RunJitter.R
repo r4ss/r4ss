@@ -17,6 +17,7 @@
 ##' @param systemcmd Option to switch between 'shell' and 'system'
 ##' @param printlikes Print likelihood values to console
 ##' @author Jim Thorson
+##' @return A vector of likelihoods for each jitter iteration.
 ##' @export
 SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
@@ -41,6 +42,7 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.remove( c("CompReport.sso","covar.sso","Report.sso",paste0(model,".par")) )
 
   if (length(Njitter) == 1) Njitter <- 1:Njitter
+  likesaved <- rep(NA, length(Njitter))
   for(i in Njitter){
     print(paste("Jitter=",i,date()))
     file.copy(from=paste0(model,".par_0.sso"), to=paste0(model,".par"), overwrite=TRUE)
@@ -61,6 +63,7 @@ SS_RunJitter <- function(mydir, model="ss3",
         Rep.head <- readLines("Report.sso",n=100)
         likeline <- Rep.head[which(Rep.head=="Component logL*Lambda Lambda")-1]
         like <- as.numeric(substring(likeline,11))
+        likesaved[i] <- like
         cat("Likelihood = ",like,"\n")
       }
       # rename output files
@@ -77,6 +80,7 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="covar0.sso", to="covar.sso", overwrite=TRUE)
   file.copy(from="Report0.sso", to="Report.sso", overwrite=TRUE)
   file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""), overwrite=TRUE)
+  invisible(likesaved)
 }
 
 
