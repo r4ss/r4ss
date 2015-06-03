@@ -15,7 +15,9 @@ SS_RunJitter(mydir, model = "ss3",
 
 \item{extras}{Additional command line arguments passed to executable}
 
-\item{Njitter}{Number of jitters}
+\item{Njitter}{Number of jitters, or a vector of jitter iterations.
+If \code{length(Njitter) > 1} only the iterations specified will be ran,
+else \code{1:Njitter} will be executed.}
 
 \item{Intern}{Show command line info in R console or keep hidden (Internal=TRUE)}
 

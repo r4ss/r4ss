@@ -10,7 +10,9 @@
 ##' @param mydir Directory where model files are located
 ##' @param model Executable name
 ##' @param extras Additional command line arguments passed to executable
-##' @param Njitter Number of jitters
+##' @param Njitter Number of jitters, or a vector of jitter iterations.
+##'   If \code{length(Njitter) > 1} only the iterations specified will be ran,
+##'   else \code{1:Njitter} will be executed.
 ##' @param Intern Show command line info in R console or keep hidden (Internal=TRUE)
 ##' @param systemcmd Option to switch between 'shell' and 'system'
 ##' @param printlikes Print likelihood values to console
