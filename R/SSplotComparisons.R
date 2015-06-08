@@ -48,6 +48,9 @@
 #' @param staggerpoints Number of years to stagger the first point (if
 #' \code{spacepoints > 1}) for each line (so that adjacent lines have points in
 #' different years)
+#' @param initpoint Year value for first point to be added to lines.
+#' Points added to plots are those that satisfy
+#' (Yr-initpoint)%%spacepoints == (staggerpoints*iline)%%spacepoints
 #' @param xlim Optional x limits
 #' @param ylimAdj Multiplier for ylim parameter. Allows additional white space
 #' to fit legend if necessary. Default=1.
@@ -144,6 +147,7 @@ SSplotComparisons <-
            pch=NULL, lty=1, lwd=2,
            spacepoints=10,
            staggerpoints=1,
+           initpoint=0,
            xlim="default", ylimAdj=1,
            xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
@@ -195,7 +199,9 @@ SSplotComparisons <-
   
   # subfunction to add legend
   legendfun <- function(legendlabels,cumulative=FALSE) {
-    if(cumulative) legendloc="topleft"
+    if(cumulative){
+      legendloc="topleft"
+    }
     # if type input is "l" then turn off points on top of lines in legend
     legend.pch <- pch
     if(type=="l"){
@@ -512,9 +518,11 @@ SSplotComparisons <-
       recruits[recruits$Yr > endyr, imodel] <- NA
       recruitsLower[recruits$Yr > endyr, imodel] <- NA
       recruitsUpper[recruits$Yr > endyr, imodel] <- NA
-      recdevs[recdevs$Yr > endyr, imodel] <- NA
-      recdevsLower[recdevs$Yr > endyr, imodel] <- NA
-      recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+      if(!is.null(recdevs)){
+        recdevs[recdevs$Yr > endyr, imodel] <- NA
+        recdevsLower[recdevs$Yr > endyr, imodel] <- NA
+        recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+      }
     }
   }
   
@@ -529,8 +537,8 @@ SSplotComparisons <-
       polygon(x=c(yrvec[good],rev(yrvec[good])),
               y=c(lower[good,imodel],rev(upper[good,imodel])),
               border=NA,col=shadecol[iline])
-      lines(yrvec[good],lower[good,imodel],lty=3,col=col[iline])
-      lines(yrvec[good],upper[good,imodel],lty=3,col=col[iline])
+#      lines(yrvec[good],lower[good,imodel],lty=3,col=col[iline])
+#      lines(yrvec[good],upper[good,imodel],lty=3,col=col[iline])
     }
   }
 
@@ -601,7 +609,7 @@ SSplotComparisons <-
       SpawnBio2 <- SpawnBio
       for(iline in 1:nlines){
         imodel <- models[iline]
-        SpawnBio2[SpawnBio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints,
+        SpawnBio2[(SpawnBio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints,
                   imodel] <- NA
       }
       matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
@@ -615,19 +623,24 @@ SSplotComparisons <-
              y0=as.numeric(SpawnBioLower[1,models[uncertainty]]),
              x1=xEqu[models[uncertainty]],
              y1=as.numeric(SpawnBioUpper[1,models[uncertainty]]),
-             length=0.01, angle=90, code=3, col=col[uncertainty])
+             length=0.01, angle=90, code=3, col=col[uncertainty],
+             lwd=2)
     }
     options(warn=old_warn)  #returning to old value
     # add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
-    abline(h=0,col="grey")
-    if(legend) legendfun(legendlabels)
-
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
     # add axes
-    if(!add) axis(1)
-    yticks <- pretty(ylim)
-    if(!add) axis(2,at=yticks,labels=format(yticks/yunits),las=1)
-    box()
+    if(!add){
+      abline(h=0,col="grey")
+      axis(1)
+      yticks <- pretty(ylim)
+      axis(2,at=yticks,labels=format(yticks/yunits),las=1)
+      box()
+    }
   }
 
   # function to plot biomass ratio (may be identical to previous plot)
@@ -663,14 +676,12 @@ SSplotComparisons <-
         Bratio2 <- Bratio
         for(iline in 1:nlines){
           imodel <- models[iline]
-          Bratio2[Bratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+          Bratio2[(Bratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
         matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
       }
     }
 
-    abline(h=0,col="grey")
-    abline(h=1,col="grey",lty=2)
 
     yticks <- pretty(par()$yaxp[1:2])
     if(btarg>0){
@@ -684,11 +695,16 @@ SSplotComparisons <-
       yticks <- sort(c(minbthresh,yticks))
     }
     if(!add){
+      abline(h=0,col="grey")
+      abline(h=1,col="grey",lty=2)
       axis(1)
       axis(2,at=yticks, las=1)
+      box()
     }
-    if(legend) legendfun(legendlabels)
-    box()
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
   }
 
   plotSPRratio <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
@@ -728,7 +744,7 @@ SSplotComparisons <-
         SPRratio2 <- SPRratio
         for(iline in 1:nlines){
           imodel <- models[iline]
-          SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+          SPRratio2[(SPRratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
         matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
       }
@@ -874,7 +890,7 @@ SSplotComparisons <-
         recruits2 <- recruits
         for(iline in 1:nlines){
           imodel <- models[iline]
-          recruits2[recruits2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+          recruits2[(recruits2$Yr%%spacepoints-initpoint) != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
         matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
                 xlim=xlim,ylim=ylim,
@@ -903,11 +919,16 @@ SSplotComparisons <-
       }
     }
     abline(h=0,col="grey")
-    if(legend) legendfun(legendlabels)
-    if(!add) axis(1)
-    yticks <- pretty(ylim)
-    if(!add) axis(2,at=yticks,labels=format(yticks/yunits),las=1)
-    box()
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
+    if(!add){
+      axis(1)
+      yticks <- pretty(ylim)
+      axis(2,at=yticks,labels=format(yticks/yunits),las=1)
+      box()
+    }
   }
 
   plotRecDevs <- function(show_uncertainty=TRUE){ # plot recruit deviations
@@ -955,7 +976,10 @@ SSplotComparisons <-
       yvec <- yvec[!is.na(yvec)]
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
-    if(legend) legendfun(legendlabels)
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
   }
 
 
@@ -1010,7 +1034,10 @@ SSplotComparisons <-
     if(btarg>0) abline(v=btarg,col="red",lty=2)
     if(sprtarg>0) abline(h=sprtarg,col="red",lty=2)
 
-    if(legend) legendfun(legendlabels)
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
+    }
   }
 
   plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
@@ -1114,7 +1141,8 @@ SSplotComparisons <-
                              format(meanQ, digits=indexQdigits), ")")
     }
     if(legend){
-      legendfun(legendlabels2)
+      # add legend if requested
+      legendfun(legendlabels)
     }
     
     # get uncertainty intervals if requested
@@ -1143,9 +1171,11 @@ SSplotComparisons <-
       points(yr[subset],obs[subset],pch=16,cex=1.5)
     }
 
-    if(!add) axis(1,at=yr)
-    if(!add) axis(2)
-    box()
+    if(!add){
+      axis(1,at=yr)
+      axis(2)
+      box()
+    }
   } # end plotIndices function
   
   plotDensities <- function(parname,xlab,denslwd,limit0=TRUE,cumulative=FALSE){
@@ -1387,9 +1417,9 @@ SSplotComparisons <-
   
       }
       # add axes and labels
-      abline(h=0,col="grey")
-      xticks <- pretty(xlim)
       if(!add) {
+        abline(h=0,col="grey")
+        xticks <- pretty(xlim)
         axis(1,at=xticks,labels=format(xticks/xunits))
         theLine <- 1
         if(cumulative) {
@@ -1397,12 +1427,14 @@ SSplotComparisons <-
             theLine <- 3
         }
         mtext(side=2,line=theLine,labels[9])
+        box()
       }
       if(xunits!=1) cat("  note: x-axis for ",parname," has been divided by ",
              xunits," (so may be in units of ",xlab2,")\n",sep="")
-      box()
       # add legend
-      legendfun(legendlabels,cumulative)
+      if(legend){
+        legendfun(legendlabels,cumulative)
+      }
     }
   } # end plotDensities function
   
@@ -1510,11 +1542,15 @@ SSplotComparisons <-
   # subplot 9: recruit devs
   if(9 %in% subplots){
     if(verbose) cat("subplot 9: recruit devs\n")
-    if(plot) plotRecDevs(show_uncertainty=FALSE)
-    if(print){
-      pngfun("compare9_recdevs.png")
-      plotRecDevs(show_uncertainty=FALSE)
-      dev.off()
+    if(is.null(recdevs)){
+      cat("No recdevs present in the model summary, skipping plot.\n")
+    }else{
+      if(plot) plotRecDevs(show_uncertainty=FALSE)
+      if(print){
+        pngfun("compare9_recdevs.png")
+        plotRecDevs(show_uncertainty=FALSE)
+        dev.off()
+      }
     }
   }
 

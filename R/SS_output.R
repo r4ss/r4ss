@@ -817,7 +817,9 @@ SS_output <-
     }
     Nstd <- sum(stdtable$std>0)
 
-    if(Nstd<=1) stop("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=FALSE.")
+    if(Nstd<=1){
+      stop("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=FALSE.")
+    }
     if(checkcor==TRUE & stats$N_estimated_parameters > 1)
     {
       corfilter <- CoVar[CoVar$all.i!=CoVar$all.j &
@@ -1855,7 +1857,7 @@ if(FALSE){
       if(stats$N_estimated_parameters > 1){
         print(corstats, quote=FALSE)
       }else{
-        cat("Too few estimated parameters to report correlations")
+        cat("Too few estimated parameters to report correlations.\n")
       }
     }
   }
