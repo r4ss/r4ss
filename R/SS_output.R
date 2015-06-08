@@ -887,8 +887,17 @@ SS_output <-
       }else{
         corstats$cormessage11 <-"Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
       }
-    }else{if(verbose) cat("You skipped the correlation check\n")}
-  }else{if(verbose) cat("You skipped the covar file\n")}
+    }else{
+      corstats <- NA
+      if(verbose){
+        cat("You skipped the correlation check (or have only 1 parameter)\n")
+      }
+    }
+  }else{
+    if(verbose){
+      cat("You skipped the covar file\n")
+    }
+  }
   flush.console()
 
   # read weight-at-age file
@@ -1783,12 +1792,14 @@ if(FALSE){
 
   if(covar){
     returndat$CoVar    <- CoVar
-    if(stats$N_estimated_parameters > 1){returndat$highcor  <- highcor}
-    if(stats$N_estimated_parameters > 1){returndat$lowcor   <- lowcor}
+    if(stats$N_estimated_parameters > 1){
+      returndat$highcor  <- highcor
+      returndat$lowcor   <- lowcor
+      returndat$corstats <- corstats
+    }
     returndat$stdtable <- stdtable
   }
   returndat <- c(returndat,stats)
-  if(covar) returndat$corstats <- corstats
   returndat$logfile <- logfile
 
   # process annual recruit devs
@@ -1841,7 +1852,11 @@ if(FALSE){
     stats$estimated_non_rec_devparameters <- format(stats$estimated_non_rec_devparameters,scientific=20)
     print(stats)
     if(covar){
-      if(stats$N_estimated_parameters > 1){print(corstats, quote=FALSE)}else{cat("Too few estimated parameters to report correlations")}
+      if(stats$N_estimated_parameters > 1){
+        print(corstats, quote=FALSE)
+      }else{
+        cat("Too few estimated parameters to report correlations")
+      }
     }
   }
 
