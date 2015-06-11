@@ -1,7 +1,7 @@
 #' Change parameters, bounds, or phases in the control file.
 #'
 #' Loops over a subset of control file to change parameter lines.
-#' Current initial value, lower and upper bounds, and sign of phase can be modified,
+#' Current initial value, lower and upper bounds, and phase can be modified,
 #' but function could be expanded to control other columns.
 #' Depends on \code{\link{SS_parlines}}.
 #' Used by \code{\link{SS_profile}} and the \code{ss3sim} package.
@@ -26,6 +26,12 @@
 #' @param newlos Vector of new lo bounds. Default=NULL.
 #' @param newhis Vector of new hi bounds. Must be the same length as newhis
 #'   Default=NULL.
+#' @param newphs Vector of new phases. Can be a single value, which will be
+#'   repeated for each parameter, the same length as newvals, where each
+#'   value corresponds to a single parameter, or \code{NULL}, where the
+#'   phases will not be changed. If one wants to strictly turn parameters
+#'   on or off and not change the phase in which they are estimated use
+#'   \code{estimate = TRUE} or \code{estimate = FALSE}, respectively.
 #' @param verbose More detailed output to command line. Default=TRUE.
 #' @author Ian Taylor, Christine Stawitz
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
@@ -48,7 +54,8 @@ function(
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL, repeat.vals=FALSE,
-         newlos=NULL, newhis=NULL, estimate=FALSE, verbose=TRUE
+         newlos=NULL, newhis=NULL, estimate=FALSE, verbose=TRUE,
+         newphs = NULL
          )
 {
   # set directory to working directory if not provided
@@ -111,7 +118,7 @@ function(
   oldvals <- oldlos <- oldhis <- oldphase <- newphase <- rep(NA, nvals)
 
   # check all inputs
-  # check values and make repeate if requested
+  # check values and make repeat if requested
   if (!is.null(newvals) & length(newvals)!=nvals){
     if (repeat.vals){
       newvals <- rep(newvals, nvals)
@@ -142,6 +149,14 @@ function(
     }
     if (length(estimate)==1){
       estimate <- rep(estimate, nvals)
+    }
+  }
+  if (!is.null(newphs)){
+    if (!(length(newphs) %in% c(1, nvals))){
+      stop("'newphs' should have 1 element or same number as 'newvals'")
+    }
+    if (length(newphs)==1){
+      newphs <- rep(newphs, nvals)
     }
   }
   if (is.data.frame(newvals)){
@@ -186,14 +201,17 @@ function(
     if (!is.null(newhis)){
       vec[2] <- newhis[i]
     }
-    
+
     # change phase (unless NULL)
     oldphase[i] <- as.numeric(vec[7])
+    if (!is.null(newphs)) {
+      vec[7] <- newphs[i]
+    }
     if (!is.null(estimate)){
       if (estimate[i]){
-        vec[7] <- abs(oldphase[i])
+        vec[7] <- abs(as.numeric(vec[7]))
       }else{
-        vec[7] <- -abs(oldphase[i])
+        vec[7] <- -abs(as.numeric(vec[7]))
       }
     }
     # check bounds relative to new values
