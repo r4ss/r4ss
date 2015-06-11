@@ -201,7 +201,7 @@ function(
     if (!is.null(newhis)){
       vec[2] <- newhis[i]
     }
-    
+
     # change phase (unless NULL)
     oldphase[i] <- as.numeric(vec[7])
     if (!is.null(newphs)) {
@@ -209,9 +209,9 @@ function(
     }
     if (!is.null(estimate)){
       if (estimate[i]){
-        vec[7] <- abs(oldphase[i])
+        vec[7] <- abs(as.numeric(vec[7]))
       }else{
-        vec[7] <- -abs(oldphase[i])
+        vec[7] <- -abs(as.numeric(vec[7]))
       }
     }
     # check bounds relative to new values
