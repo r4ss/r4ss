@@ -151,6 +151,14 @@ function(
       estimate <- rep(estimate, nvals)
     }
   }
+  if (!is.null(newphs)){
+    if (!(length(newphs) %in% c(1, nvals))){
+      stop("'newphs' should have 1 element or same number as 'newvals'")
+    }
+    if (length(newphs)==1){
+      newphs <- rep(newphs, nvals)
+    }
+  }
   if (is.data.frame(newvals)){
     newvals <- as.numeric(newvals)
   }
