@@ -111,7 +111,7 @@ function(
   oldvals <- oldlos <- oldhis <- oldphase <- newphase <- rep(NA, nvals)
 
   # check all inputs
-  # check values and make repeate if requested
+  # check values and make repeat if requested
   if (!is.null(newvals) & length(newvals)!=nvals){
     if (repeat.vals){
       newvals <- rep(newvals, nvals)
