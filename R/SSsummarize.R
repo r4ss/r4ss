@@ -370,6 +370,15 @@ SSsummarize <- function(biglist,
   }else{
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
   }
+
+  # function to sort by year 
+  sort.fn <- function(x){
+    if(!is.null(x)){
+      return( x[order(x$Yr),] )
+    }else{
+      return()
+    }
+  }
   
   mylist <- list()
   mylist$n              <- n
@@ -387,30 +396,30 @@ SSsummarize <- function(biglist,
   mylist$likelihoods    <- likelihoods
   mylist$likelambdas    <- likelambdas
   mylist$likelihoods_by_fleet <- likelihoods_by_fleet
-  mylist$SpawnBio       <- SpawnBio
-  mylist$SpawnBioSD     <- SpawnBioSD
-  mylist$SpawnBioLower  <- SpawnBioLower
-  mylist$SpawnBioUpper  <- SpawnBioUpper
-  mylist$Bratio         <- Bratio
-  mylist$BratioSD       <- BratioSD
-  mylist$BratioLower    <- BratioLower
-  mylist$BratioUpper    <- BratioUpper
-  mylist$SPRratio       <- SPRratio
-  mylist$SPRratioSD     <- SPRratioSD
-  mylist$SPRratioLower  <- SPRratioLower
-  mylist$SPRratioUpper  <- SPRratioUpper
+  mylist$SpawnBio       <- sort.fn(SpawnBio)
+  mylist$SpawnBioSD     <- sort.fn(SpawnBioSD)
+  mylist$SpawnBioLower  <- sort.fn(SpawnBioLower)
+  mylist$SpawnBioUpper  <- sort.fn(SpawnBioUpper)
+  mylist$Bratio         <- sort.fn(Bratio)
+  mylist$BratioSD       <- sort.fn(BratioSD)
+  mylist$BratioLower    <- sort.fn(BratioLower)
+  mylist$BratioUpper    <- sort.fn(BratioUpper)
+  mylist$SPRratio       <- sort.fn(SPRratio)
+  mylist$SPRratioSD     <- sort.fn(SPRratioSD)
+  mylist$SPRratioLower  <- sort.fn(SPRratioLower)
+  mylist$SPRratioUpper  <- sort.fn(SPRratioUpper)
   mylist$SPRratioLabels <- SPRratioLabels
   mylist$sprtargs       <- sprtargs
   mylist$btargs         <- btargs
   mylist$minbthreshs    <- minbthreshs
-  mylist$recruits       <- recruits
-  mylist$recruitsSD     <- recruitsSD
-  mylist$recruitsLower  <- recruitsLower
-  mylist$recruitsUpper  <- recruitsUpper
-  mylist$recdevs        <- recdevs
-  mylist$recdevsSD      <- recdevsSD
-  mylist$recdevsLower   <- recdevsLower
-  mylist$recdevsUpper   <- recdevsUpper
+  mylist$recruits       <- sort.fn(recruits)
+  mylist$recruitsSD     <- sort.fn(recruitsSD)
+  mylist$recruitsLower  <- sort.fn(recruitsLower)
+  mylist$recruitsUpper  <- sort.fn(recruitsUpper)
+  mylist$recdevs        <- sort.fn(recdevs)
+  mylist$recdevsSD      <- sort.fn(recdevsSD)
+  mylist$recdevsLower   <- sort.fn(recdevsLower)
+  mylist$recdevsUpper   <- sort.fn(recdevsUpper)
   mylist$growth         <- growth
   mylist$sizesel        <- sizesel
   mylist$agesel         <- agesel

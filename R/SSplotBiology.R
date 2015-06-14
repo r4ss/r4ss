@@ -395,8 +395,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     x <- growdatF$Age_Beg
     # make empty plot unless this is being added to existing figure
     if(!add){
-      plot(x, growdatF$Len_Beg, col=colvec[1], lwd=2, ylim=c(0,1.1*ymax), type="n",
-           #ylab=labels[6], xlab=labels[2], main=main, cex.main=cex.main,
+      plot(x, growdatF$Len_Beg, ylim=c(0,1.1*ymax), type="n",
            xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
       abline(h=0,col="grey")
       if(add_labels){

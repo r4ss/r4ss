@@ -40,7 +40,7 @@
 #' @author Ian Stewart and Ian Taylor
 #' @keywords aplot hplot
 bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
-                     bg.open=gray(0.95,0.5),
+                     bg.open=gray(0.95,0.3),
                      legend=TRUE,legendloc='top',
                      legend.z="default",legend.yadj=1.1,
                      main="",cex.main=1,xlab="",ylab="",minnbubble=3,

@@ -1,10 +1,10 @@
 #' plot model comparisons
-#' 
+#'
 #' Creates a user-chosen set of plots comparing model output from a summary of
 #' multiple models, where the collection was created using the
 #' \code{SSsummarize} function.
-#' 
-#' 
+#'
+#'
 #' @param summaryoutput List created by \code{SSsummarize}
 #' @param subplots Vector of subplots to be created.
 #' @param plot Plot to active plot device?
@@ -51,6 +51,8 @@
 #' @param initpoint Year value for first point to be added to lines.
 #' Points added to plots are those that satisfy
 #' (Yr-initpoint)%%spacepoints == (staggerpoints*iline)%%spacepoints
+#' @param tickendyr TRUE/FALSE switch to turn on/off extra axis mark at final
+#' year in timeseries plots.
 #' @param xlim Optional x limits
 #' @param ylimAdj Multiplier for ylim parameter. Allows additional white space
 #' to fit legend if necessary. Default=1.
@@ -85,6 +87,8 @@
 #' @param cex.main Character expansion for plot titles
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.
+#' @param filenameprefix Additional text to append to PNG or PDF file names.
+#' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or
 #' derived quantities contained in summaryoutput$pars$Label or
 #' summaryoutput$quants$Label for which to make density plots
@@ -140,7 +144,7 @@ SSplotComparisons <-
              "SPR ratio",               #8 could be dynamic to match model value (e.g. "(1-SPR)/(1-SPR_40%)")
              "Density",                 #9
              "Management target",       #10
-             "Minimum stock size threshold", #11 
+             "Minimum stock size threshold", #11
              "Spawning output",         #12
              "Harvest rate"),           #13
            col=NULL, shadecol=NULL,
@@ -148,6 +152,7 @@ SSplotComparisons <-
            spacepoints=10,
            staggerpoints=1,
            initpoint=0,
+           tickendyr=TRUE,
            xlim="default", ylimAdj=1,
            xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
@@ -156,6 +161,7 @@ SSplotComparisons <-
            sprtarg=NULL, btarg=NULL, minbthresh=NULL,
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
+           filenameprefix="",
            densitynames=c("SPB_Virgin","R0"),
            densityxlabs="default",
            densityscalex=1,
@@ -173,14 +179,18 @@ SSplotComparisons <-
            mcmcVec="default")
 {
   meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
-  
+
   # subfunction to write png files
   pngfun <- function(file){
+    # if extra text requested, add it before extention in file name
+    file <- paste0(filenameprefix, file)
+    # open png file
     png(filename=paste(plotdir,file,sep="/"),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
+    # change graphics parameters to input value
     par(par)
   }
-  
+
   if(png) print <- TRUE
   if(png & is.null(plotdir))
     stop("to print PNG files, you must supply a directory as 'plotdir'")
@@ -190,13 +200,16 @@ SSplotComparisons <-
     stop("To use 'pdf', set 'print' or 'png' to FALSE.")
   }
   if(pdf){
-    if(is.null(plotdir)) stop("to write to a PDF, you must supply a directory as 'plotdir'")
-    pdffile <- paste(plotdir,"/SSplotComparisons_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    if(is.null(plotdir)){
+      stop("to write to a PDF, you must supply a directory as 'plotdir'")
+    }
+    pdffile <- paste0(plotdir,"/", filenameprefix, "SSplotComparisons_",
+                      format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
     par(par)
   }
-  
+
   # subfunction to add legend
   legendfun <- function(legendlabels,cumulative=FALSE) {
     if(cumulative){
@@ -211,7 +224,7 @@ SSplotComparisons <-
            col=col[legendorder], lty=lty[legendorder],seg.len = 2,
            lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol)
   }
-  
+
   rc <- function(n,alpha=1){
     # a subset of rich.colors by Arni Magnusson from the gregmisc package
     # a.k.a. rich.colors.short, but put directly in this function
@@ -223,7 +236,7 @@ SSplotComparisons <-
     rgb.m <- matrix(c(r, g, b), ncol = 3)
     rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3], alpha=alpha))
   }
-  
+
   # get stuff from summary output
   n             <- summaryoutput$n
   nsexes        <- summaryoutput$nsexes
@@ -410,7 +423,7 @@ SSplotComparisons <-
     ### get MCMC for SpawnBio
     tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
     if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
@@ -428,7 +441,7 @@ SSplotComparisons <-
     ### get MCMC for Bratio
     tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
     if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
@@ -441,7 +454,7 @@ SSplotComparisons <-
     ### get MCMC for SPRratio
     tmp <- grep("SPRratio",names(mcmc[[imodel]]))   #try it to see what you get
     if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
@@ -450,13 +463,13 @@ SSplotComparisons <-
       SPRratioLower[,imodel] <- lower[match(SPRratioLower$Label,mcmclabs)]
       SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
     }
-    
+
     ### get MCMC for recruits
     tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
     tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
     tmp <- setdiff(tmp,tmp2)
     if(length(tmp) > 0) { #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
@@ -478,7 +491,7 @@ SSplotComparisons <-
                     grep("_InitAge_",names(mcmc[[imodel]])),
                     grep("ForeRecr_",names(mcmc[[imodel]]))))
     if(length(tmp) > 0) { #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model 
+      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
@@ -525,8 +538,8 @@ SSplotComparisons <-
       }
     }
   }
-  
-  
+
+
   # function to add shaded uncertainty intervals behind line
   # requires the existence of the TRUE/FALSE vector "uncertainty"
   addpoly <- function(yrvec, lower, upper){
@@ -592,10 +605,10 @@ SSplotComparisons <-
       addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),],
               upper=SpawnBioUpper[-(1:2),])
       # equilibrium spawning biomass year by model
-      xEqu <- SpawnBio$Yr[2] - (1:nlines)/nlines 
+      xEqu <- SpawnBio$Yr[2] - (1:nlines)/nlines
     }else{
       # equilibrium spawning biomass year by model
-      xEqu <- rep(SpawnBio$Yr[2], nlines)  
+      xEqu <- rep(SpawnBio$Yr[2], nlines)
     }
     # draw points and lines
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
@@ -637,6 +650,9 @@ SSplotComparisons <-
     if(!add){
       abline(h=0,col="grey")
       axis(1)
+      if(tickendyr){
+        axis(1, at=max(endyrvec))
+      }
       yticks <- pretty(ylim)
       axis(2,at=yticks,labels=format(yticks/yunits),las=1)
       box()
@@ -698,6 +714,9 @@ SSplotComparisons <-
       abline(h=0,col="grey")
       abline(h=1,col="grey",lty=2)
       axis(1)
+      if(tickendyr){
+        axis(1, at=max(endyrvec))
+      }
       axis(2,at=yticks, las=1)
       box()
     }
@@ -770,7 +789,7 @@ SSplotComparisons <-
       }
     }else{
       mtext(side=2,line=3,SPRratioLabel)
-    }      
+    }
     if(legend){
       # add legend if requested
       legendfun(legendlabels)
@@ -844,11 +863,11 @@ SSplotComparisons <-
   ##     }
   ##   }else{
   ##     mtext(side=2,line=3,SPRratioLabel)
-  ##   }      
+  ##   }
   ##   if(legend) legendfun(legendlabels)
   ##   if(exists("oldmar")) par(mar=oldmar)
   ## }
-  
+
   plotRecruits <- function(show_uncertainty=TRUE, recruit_lines=TRUE){ # plot recruitment
     # only show uncertainty if values are present for at least one model
     if(!any(uncertainty)){
@@ -899,7 +918,7 @@ SSplotComparisons <-
     }
 
     # add points at equilibrium values
-    points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)    
+    points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
 
     # add uncertainty intervals when requested
     if(show_uncertainty){
@@ -925,6 +944,9 @@ SSplotComparisons <-
     }
     if(!add){
       axis(1)
+      if(tickendyr){
+        axis(1, at=max(endyrvec))
+      }
       yticks <- pretty(ylim)
       axis(2,at=yticks,labels=format(yticks/yunits),las=1)
       box()
@@ -945,12 +967,12 @@ SSplotComparisons <-
     if(show_uncertainty){
       if(all(is.na(recdevsLower[,models]))){
         # can't do uncertainty if no range present
-        return() 
+        return()
       }
       ylim <- ylimAdj*range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
     }
     ylim <- range(-ylim,ylim) # make symmetric
-                   
+
     if(!add) plot(0,xlim=xlim,ylim=ylim,
          type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
     abline(h=0,col="grey")
@@ -967,7 +989,7 @@ SSplotComparisons <-
         }
       }
     }
-    
+
     # loop over vector of models to add lines
     for(iline in 1:nlines){
       imodel <- models[iline]
@@ -996,7 +1018,7 @@ SSplotComparisons <-
       ##   points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
       ##   abline(h=1,col=col4,lty=2)
       ##   abline(v=1,col=col4,lty=2)}
-  
+
   plotPhase <- function(show_uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
     # only show uncertainty if values are present for at least one model
     if(!any(uncertainty)){
@@ -1023,7 +1045,7 @@ SSplotComparisons <-
             lty=lty[iline],lwd=lwd[iline],
             type='l') # no user control of type to add points
       # NA values and missing points will occur if final year is different
-      points(tail(xvals,1), 
+      points(tail(xvals,1),
              tail(yvals,1),
              col=col[iline],
              pch=pch[iline],lwd=lwd[iline])
@@ -1088,7 +1110,7 @@ SSplotComparisons <-
             upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
             lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
         }
-      }else {      
+      }else {
         subset <- indices2$imodel==models[1]
         if(indexSEvec[1]=="default") indexSEvec <- indices2$SE[subset]
         y <- obs[subset]
@@ -1104,7 +1126,7 @@ SSplotComparisons <-
       upper <- NULL
       lower <- NULL
     }
-    
+
     ### make plot of index fits
     # calculate ylim (excluding dummy observations from observed but not expected)
     sub <- !is.na(indices2$Like)
@@ -1117,9 +1139,9 @@ SSplotComparisons <-
       # 0 included if not in log space
       ylim <- range(0,ylim)
     }
-    
+
     meanQ <- rep(NA,nlines)
-    
+
     if(!add) plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
     if(!log) abline(h=0,col="grey")
     Qtext <- rep("(Q =",nlines)
@@ -1144,7 +1166,7 @@ SSplotComparisons <-
       # add legend if requested
       legendfun(legendlabels)
     }
-    
+
     # get uncertainty intervals if requested
     # put observed values on top
     #subset <- indices2$imodel==1
@@ -1173,13 +1195,16 @@ SSplotComparisons <-
 
     if(!add){
       axis(1,at=yr)
+      if(tickendyr){
+        axis(1, at=max(endyrvec))
+      }
       axis(2)
       box()
     }
   } # end plotIndices function
-  
+
   plotDensities <- function(parname,xlab,denslwd,limit0=TRUE,cumulative=FALSE){
-    if(any(!mcmcVec)) { 
+    if(any(!mcmcVec)) {
       vals <- rbind(pars[grep(parname,pars$Label,fixed=TRUE),],
                     quants[grep(parname,quants$Label,fixed=TRUE),])
       if(nrow(vals)!=1){
@@ -1207,7 +1232,7 @@ SSplotComparisons <-
         # warn if it can't find the columns
         if(length(mcmcColumn)==0) {
             cat("No columns selected from MCMC for '",parname,"' in model ",imodel,".\n",sep="")
-            good[iline] <- FALSE 
+            good[iline] <- FALSE
         }
         # warn if too many columns
         if(length(mcmcColumn)>1) {
@@ -1216,7 +1241,7 @@ SSplotComparisons <-
             cat("Please specify a unique label in the mcmc dataframe\n",
                 "or specify mcmcVec=FALSE for model ",
                 imodel," or specify mcmcVec='default'.\n",sep="")
-            good[iline] <- FALSE 
+            good[iline] <- FALSE
         }
         # add density
         if(good[iline]){
@@ -1225,7 +1250,7 @@ SSplotComparisons <-
             mcmcVals <- mcmcVals/2
           }
           xmin <- min(xmin, quantile(mcmcVals,0.005))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
           if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
           xmax <- max(xmax, quantile(mcmcVals,0.995))
           z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
@@ -1245,7 +1270,7 @@ SSplotComparisons <-
           }
           # update x range
           xmin <- min(xmin, qnorm(0.005,parval,parSD))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
           if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
           xmax <- max(xmax, qnorm(0.995,parval,parSD))
           # calculate density to get y range
@@ -1262,13 +1287,13 @@ SSplotComparisons <-
       }
     }
     if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for relative spawning biomass plots
-    if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+    if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
     if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-    
+
     # calculate x-limits and vector of values for densities
     xlim <- c(xmin,xmin+(xmax-xmin)*densityscalex)
     x <- seq(xmin,xmax,length=500)
-    
+
     # calculate some scaling stuff
     xunits <- 1
     if(xmax > 1e3 & xmax < 3e6){
@@ -1287,7 +1312,7 @@ SSplotComparisons <-
     }else{
       if(!add) {
         if(cumulative) {
-            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1),xlab=xlab,ylab="")        
+            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1),xlab=xlab,ylab="")
         } else {
             plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
         }
@@ -1303,7 +1328,7 @@ SSplotComparisons <-
           text(minbthresh+0.03,par()$usr[4],labels[11],adj=1.05,srt=90)
         }
       }
-      
+
       symbolsQuants <- c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)
       # loop again to make plots
       for(iline in (1:nlines)[good]){
@@ -1344,7 +1369,7 @@ SSplotComparisons <-
           if(!cumulative) {
               if(densitysymbols) points(x2,y2,col=col[iline],pch=pch[iline])
               #really hokey and assumes that the middle value of the vector of quantiles is the median
-              lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline]) 
+              lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline])
           } else {
               if(densitysymbols) points(x2,symbolsQuants,col=col[iline],pch=pch[iline])
               lines(rep(median(mcmcVals),2),c(0,0.5),col=col[iline])
@@ -1359,7 +1384,7 @@ SSplotComparisons <-
               parSD <- parSD/2
             }
             xmin <- min(xmin, qnorm(0.005,parval,parSD))
-            if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0 
+            if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
             if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
             x <- seq(xmin,max(xmax,xlim),length=500)
             #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
@@ -1414,7 +1439,7 @@ SSplotComparisons <-
           polygon(c(x.middle[1],x.middle,rev(x.middle)[1]),
                   c(0,y.middle,0),col=shadecol[iline],border=NA)
         }
-  
+
       }
       # add axes and labels
       if(!add) {
@@ -1437,7 +1462,7 @@ SSplotComparisons <-
       }
     }
   } # end plotDensities function
-  
+
   uncertaintyplots <- intersect(c(2,4,6,8,10,13),subplots)
   if(!any(uncertainty) & length(uncertaintyplots)>0){
     # warn if uncertainty is off but uncertainty plots are requested
@@ -1538,7 +1563,7 @@ SSplotComparisons <-
       }
     }
   }
-  
+
   # subplot 9: recruit devs
   if(9 %in% subplots){
     if(verbose) cat("subplot 9: recruit devs\n")
