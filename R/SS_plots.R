@@ -307,7 +307,7 @@ SS_plots <-
   if(pdf){
     if(dir=="default") dir <- inputs$dir
     dir.create(dir,showWarnings=FALSE)
-    pdffile <- paste(dir,"/SS_plots_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- paste(dir,"/SS_plots_",format(Sys.time(),'%d-%m-%Y_%H.%M' ),".pdf",sep="")
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
   }
@@ -1140,11 +1140,11 @@ SS_plots <-
     plotInfoTable$caption <- as.character(plotInfoTable$caption)
     # record the current time and the model run time
     png_time <- Sys.time()
-    #png_time2 <- format(writetime,'%d-%b-%Y_%H.%M')
+    #png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')
     plotInfoTable$png_time <- png_time
     plotInfoTable$Run_time <- Run_time
     # create a name for the file and write it to the plot directory
-    csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%b-%Y_%H.%M.%S'),".csv",sep="")
+    csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images
