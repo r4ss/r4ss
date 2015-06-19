@@ -51,8 +51,10 @@
 #' @param initpoint Year value for first point to be added to lines.
 #' Points added to plots are those that satisfy
 #' (Yr-initpoint)%%spacepoints == (staggerpoints*iline)%%spacepoints
-#' @param tickendyr TRUE/FALSE switch to turn on/off extra axis mark at final
+#' @param tickEndYr TRUE/FALSE switch to turn on/off extra axis mark at final
 #' year in timeseries plots.
+#' @param shadeForecast TRUE/FALSE switch to turn on off shading of years beyond
+#' the maximum ending year of the models
 #' @param xlim Optional x limits
 #' @param ylimAdj Multiplier for ylim parameter. Allows additional white space
 #' to fit legend if necessary. Default=1.
@@ -152,7 +154,8 @@ SSplotComparisons <-
            spacepoints=10,
            staggerpoints=1,
            initpoint=0,
-           tickendyr=TRUE,
+           tickEndYr=TRUE,
+           shadeForecast=TRUE,
            xlim="default", ylimAdj=1,
            xaxs="r", yaxs="r",
            type="o", uncertainty=TRUE, shadealpha=0.1,
@@ -650,8 +653,14 @@ SSplotComparisons <-
     if(!add){
       abline(h=0,col="grey")
       axis(1)
-      if(tickendyr){
+      if(tickEndYr){
         axis(1, at=max(endyrvec))
+      }
+      # add shaded area over forecast years if at more than 1 forecast year is shown
+      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
+        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
+             xright=par()$usr[2], ytop=par()$usr[4],
+             col=gray(0, alpha=0.1), border=NA)
       }
       yticks <- pretty(ylim)
       axis(2,at=yticks,labels=format(yticks/yunits),las=1)
@@ -714,8 +723,14 @@ SSplotComparisons <-
       abline(h=0,col="grey")
       abline(h=1,col="grey",lty=2)
       axis(1)
-      if(tickendyr){
+      if(tickEndYr){
         axis(1, at=max(endyrvec))
+      }
+      # add shaded area over forecast years if at more than 1 forecast year is shown
+      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
+        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
+             xright=par()$usr[2], ytop=par()$usr[4],
+             col=gray(0, alpha=0.1), border=NA)
       }
       axis(2,at=yticks, las=1)
       box()
@@ -789,6 +804,17 @@ SSplotComparisons <-
       }
     }else{
       mtext(side=2,line=3,SPRratioLabel)
+    }
+    if(!add){
+      if(tickEndYr){
+        axis(1, at=max(endyrvec))
+      }
+      # add shaded area over forecast years if at more than 1 forecast year is shown
+      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
+        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
+             xright=par()$usr[2], ytop=par()$usr[4],
+             col=gray(0, alpha=0.1), border=NA)
+      }
     }
     if(legend){
       # add legend if requested
@@ -944,8 +970,14 @@ SSplotComparisons <-
     }
     if(!add){
       axis(1)
-      if(tickendyr){
+      if(tickEndYr){
         axis(1, at=max(endyrvec))
+      }
+      # add shaded area over forecast years if at more than 1 forecast year is shown
+      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
+        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
+             xright=par()$usr[2], ytop=par()$usr[4],
+             col=gray(0, alpha=0.1), border=NA)
       }
       yticks <- pretty(ylim)
       axis(2,at=yticks,labels=format(yticks/yunits),las=1)
@@ -997,6 +1029,17 @@ SSplotComparisons <-
       xvec <- recdevs$Yr[!is.na(yvec)]
       yvec <- yvec[!is.na(yvec)]
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
+    }
+    if(!add){
+      if(tickEndYr){
+        axis(1, at=max(endyrvec))
+      }
+      # add shaded area over forecast years if at more than 1 forecast year is shown
+      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
+        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
+             xright=par()$usr[2], ytop=par()$usr[4],
+             col=gray(0, alpha=0.1), border=NA)
+      }
     }
     if(legend){
       # add legend if requested
@@ -1195,7 +1238,7 @@ SSplotComparisons <-
 
     if(!add){
       axis(1,at=yr)
-      if(tickendyr){
+      if(tickEndYr){
         axis(1, at=max(endyrvec))
       }
       axis(2)
