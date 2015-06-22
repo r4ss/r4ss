@@ -814,7 +814,7 @@ SSplotComps <-
                       pagetext <- paste("_page",ipage,sep="")
                       caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                     }
-                    file <- paste(plotdir,filenamestart,filename_fltsexmkt,
+                    file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
                                   "_length",ilenbin,labels[7],pagetext,".png",sep="")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun6(ipage=ipage,...)
@@ -880,7 +880,8 @@ SSplotComps <-
           }
           if(plot) lfitfunc()
           if(print){ # set up plotting to png file if required
-            file <- paste(plotdir,filenamestart,"sampsize_",filename_fltsexmkt,".png",sep="")
+            file <- paste(plotdir,"/",filenamestart,"sampsize_",
+                          filename_fltsexmkt,".png",sep="")
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             lfitfunc()
@@ -1168,7 +1169,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,filenamestart,filename_fltsexmkt,
+                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun7(ipage=ipage,...)
@@ -1328,7 +1329,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
                               "_aggregated_within_season.png",sep="")
 
                 plotinfo <- pngfun(file=file, caption=caption)
@@ -1460,7 +1461,7 @@ SSplotComps <-
                     pagetext <- paste("_page",ipage,sep="")
                     caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                   }
-                  file <- paste(plotdir,filenamestart,filename_fltsexmkt,pagetext,
+                  file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
                                 "_aggregated_across_seasons_within_year.png",sep="")
                   pngfun(file=file, caption=caption)
                   tempfun9(ipage=ipage,...)
@@ -1568,13 +1569,13 @@ SSplotComps <-
               if(datonly){
                 z <- dbase$Obs
                 if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
-                col <- 1
+                cols <- rep('black',nrow(dbase))
                 titletype <- titledata
                 filetype <- "bub"
                 allopen <- TRUE
               }else{
                 z <- dbase$Pearson
-                col <- colvec[3]
+                cols <- rep(colvec[3],nrow(dbase))
                 titletype <- "Pearson residuals, "
                 filetype <- "resids"
                 allopen <- FALSE
@@ -1584,7 +1585,7 @@ SSplotComps <-
               # this section is a modified version of tempfun2 above
               ylim <- range(dbase$Bin)
               ylim[2] <- ylim[2]+0.2*diff(ylim) # add buffer of 10% at the top for fleet name
-              bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, col=col, cexZ1=cexZ1,
+              bubble3(x=dbase$Yr.S, y=dbase$Bin, z=z, col=cols, cexZ1=cexZ1,
                       legend=bublegend,
                       las=1,main="",cex.main=cex.main,maxsize=pntscalar,allopen=allopen,
                       xlim=xlim,ylim=ylim,axis1=FALSE)
@@ -1652,7 +1653,7 @@ SSplotComps <-
                 ## caption <- paste(caption,
                 ##                  "<br>Note: bubble sizes are scaled to maximum within each panel.",
                 ##                  "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
-                file <- paste(plotdir,filenamestart,filename_sexmkt,pagetext,
+                file <- paste(plotdir,"/",filenamestart,filename_sexmkt,pagetext,
                               "_multi-fleet_comparison.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 multifleet.bubble.fun(ipage=ipage)
