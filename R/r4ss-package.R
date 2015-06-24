@@ -7,7 +7,7 @@
 #' parameterizations, and various other tasks.
 #' 
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.23.3\cr Date: \tab 2015-4-13\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.23.4\cr Date: \tab 2015-6-24\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 #' Should be compatible with Stock Synthesis versions 3.20 through 3.30.
 #' 
