@@ -105,12 +105,13 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
   
   # check final value
-  if(!is.na(allnums[i]) && allnums[i]==999){
+  mylist$final <- final <- allnums[i]
+  if(!is.na(final) && final %in% c(3.30, 999)){
     if(verbose){
-      cat("read of starter file complete (final value = 999)\n")
+      cat("Read of starter file complete. Final value: ",final,"\n")
     }
   }else{
-    warning("Final value is ", allnums[i]," but should be 999\n")
+    warning("Final value is ", allnums[i]," but should be either 3.30 or 999\n")
   }
 
   # all done

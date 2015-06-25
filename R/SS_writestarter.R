@@ -42,17 +42,19 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
     cat("writing new file:",outfile,"\n")
   }
 
-  # preliminary setup
+  # record current max characters per line and then expand in case of long lines
   oldwidth <- options()$width
   options(width=1000)
 
   if(verbose) cat("opening connection to",outfile,"\n")
   zz <- file(outfile, open="at")
   sink(zz)
+
+  # simple function to clean up many repeated commands
+  # writes the content of an R object, followed by the object name with "#_" in front
   wl <- function(name){
-    # simple function to clean up many repeated commands
     value = mylist[names(mylist)==name]
-    writeLines(paste(value," #_",name,sep=""),con=zz)
+    writeLines(paste0(value," #_",name),con=zz)
   }
 
   writeLines("#C starter file written by R function SS_writestarter")
@@ -65,6 +67,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("datfile")
   wl("ctlfile")
 
+  # lots of single numerical values
   wl("init_values_src")
   wl("run_display_detail")
   wl("detailed_age_structure")
@@ -96,7 +99,9 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   }    
   wl("F_report_basis")
   writeLines("#")
-  writeLines("999")
+  wl("final")
+
+  # restore printing width to whatever the user had before
   options(width=oldwidth)
   sink()
   close(zz)
