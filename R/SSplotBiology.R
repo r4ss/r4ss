@@ -159,7 +159,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
   else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
 
-  if(wtatage_switch) cat("Note: this model uses the emperical weight-at-age input.\n",
+  if(wtatage_switch) cat("Note: this model uses the empirical weight-at-age input.\n",
                          "     Therefore many of the parametric biology quantities which are plotted\n",
                          "     are not used in the model.\n")
 

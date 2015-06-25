@@ -158,12 +158,18 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   getrecdevs <- function(replist){
     # get info on recruitment devs from the model output
-    parmat <- replist$parameters
-    rowrange <- (grep("SR_autocorr",parmat$Label)+1):((grep("InitF",parmat$Label)[1]-1))
-    Impl_err_rows <- grep("Impl_err",parmat$Label)
+    par_mat   <- replist$parameters
+    par_start <- grep("SR_autocorr",par_mat$Label)+1
+    par_end   <- grep("InitF",par_mat$Label)[1]-1
+    if(is.na(par_end)){
+      # InitF parameters have gone away in SSv3.3 (at least for one model)
+      par_end <- grep("Impl_err",par_mat$Label)[1]-1
+    }
+    rowrange <- par_start:par_end
+    Impl_err_rows <- grep("Impl_err",par_mat$Label)
     if(length(Impl_err_rows)>0)
-      rowrange <- (grep("SR_autocorr",parmat$Label)+1):(Impl_err_rows[1]-1)
-    yr <- parmat$Label[rowrange]
+      rowrange <- (grep("SR_autocorr",par_mat$Label)+1):(Impl_err_rows[1]-1)
+    yr <- par_mat$Label[rowrange]
     yr <- strsplit(yr,"_")
     yr2 <- rep(NA,length(yr))
     for(i in 1:length(yr)){
@@ -177,8 +183,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     }
     
     yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
-    val <- parmat$Value[rowrange]
-    std <- parmat$Parm_StDev[rowrange]
+    val <- par_mat$Value[rowrange]
+    std <- par_mat$Parm_StDev[rowrange]
     return(data.frame(yr=yr2,val=val,std=std))
   }
 

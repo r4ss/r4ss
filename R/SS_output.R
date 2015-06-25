@@ -286,7 +286,7 @@ SS_output <-
     endyield <- matchfun("MSY_not_calculated",rawforecast1[,1])
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
     if(yesMSY) endyield <- matchfun("findFmsy",rawforecast1[,10])
-    if(verbose) cat("Got forecast file\n")
+    if(verbose) cat("Got Forecast-report file\n")
 
     # this section on equilibrium yield moved to Report.sso on Jan 6
     startline <- matchfun("profile",rawforecast1[,11])
@@ -308,9 +308,9 @@ SS_output <-
         yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
         colnames(yielddat) <- c("Catch","Depletion")
       }else{
-        names <- yieldraw[1,1:9]
+        names <- yieldraw[1,]
         names[names=="SSB/Bzero"] <- "Depletion"
-        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),1:9]
+        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
         names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
       }
       for(icol in 1:ncol(yielddat)){
@@ -919,7 +919,17 @@ SS_output <-
   }
 
   # derived quantities
-  der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,cols=1:3,header=TRUE)
+  if(SS_versionNumeric < 3.3){
+    der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
+                     header=TRUE)
+    MGParm_dev_details <- NA
+  }else{
+    der <- matchfun2("DERIVED_QUANTITIES",4,"MGParm_dev_details",0,
+                     header=TRUE)
+    MGParm_dev_details <- matchfun2("MGParm_dev_details",1,
+                                    "MGparm_By_Year_after_adjustments",-1,
+                                    header=TRUE)
+  }
   der <- der[der$LABEL!="Bzero_again",]
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
@@ -1134,6 +1144,7 @@ if(FALSE){
   returndat$seasdurations  <- seasdurations
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
+  returndat$MGParm_dev_details <- MGParm_dev_details
   returndat$MGparmAdj   <- MGparmAdj
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj

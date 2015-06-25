@@ -185,7 +185,7 @@ SSsummarize <- function(biglist,
     }else{
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
-      if(is.null(indices) || ncol(indextemp)==ncol(indices)){
+      if(is.null(indices) || all(names(indextemp)==names(indices))){
         indices <- rbind(indices, indextemp)
       }else{
         cat("problem summarizing indices due to mismatched columns\n")
