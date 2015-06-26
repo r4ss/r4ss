@@ -51,6 +51,10 @@ SSplotYield <-
   plotinfo <- NULL
 
   equil_yield <- replist$equil_yield
+  # column named changed from Catch to Tot_Catch in SSv3.30
+  if("Tot_Catch" %in% names(equil_yield)){
+    equil_yield$Catch <- equil_yield$Tot_Catch
+  }
   nareas      <- replist$nareas
   nseasons    <- replist$nseasons
   timeseries  <- replist$timeseries
