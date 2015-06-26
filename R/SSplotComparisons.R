@@ -1192,7 +1192,7 @@ SSplotComparisons <-
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
       meanQ[iline] <- mean(Q[subset])
-      if(any(Q[subset]!=mean(Q[subset]))){
+      if(indexQlabel && any(Q[subset]!=mean(Q[subset]))){
         Qtext[iline] <- "(mean Q ="
       }
       x <- yr[subset]
