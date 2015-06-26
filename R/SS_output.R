@@ -429,6 +429,9 @@ SS_output <-
     for(icol in 1:ncol(defs)){
       defs[,icol] <- as.numeric(defs[,icol])
     }
+    # fleet_type definitions from TPL:
+    # 1=fleet with catch; 2=discard only fleet with F;
+    # 3=survey(ignore catch); 4=ignore completely
     fleet_type   <- defs$fleet_type
     fleet_timing <- defs$timing
     fleet_area   <- defs$area
@@ -437,28 +440,27 @@ SS_output <-
     catch_se     <- defs$catch_se
     survey_units <- defs$survey_units
     survey_error <- defs$survey_error
-    ## FishFleet    <- !is.na(catch_units)
-    nfishfleets  <- nfleets
+    IsFishFleet  <- fleet_type <= 2 # based on definitions above
   }else{
     # version 3.20-3.24
     # get fleet info
     defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
     defs[defs==""] <- NA
     lab <- defs$X1
-    fleet_ID    <- as.numeric(defs[grep("fleet_ID",lab),-1])
-    names(defs) <- c("Label",paste("Fleet",fleet_ID,sep=""))
-    FleetNames <- as.character(defs[grep("fleet_names",lab),-1])
-    fleet_area  <- as.numeric(defs[grep("fleet_area",lab),-1])
-    catch_units <- as.numeric(defs[grep("Catch_units",lab),-1])
-    catch_error <- as.numeric(defs[grep("Catch_error",lab),-1])
+    fleet_ID     <- as.numeric(defs[grep("fleet_ID",lab),-1])
+    names(defs)  <- c("Label",paste("Fleet",fleet_ID,sep=""))
+    FleetNames   <- as.character(defs[grep("fleet_names",lab),-1])
+    fleet_area   <- as.numeric(defs[grep("fleet_area",lab),-1])
+    catch_units  <- as.numeric(defs[grep("Catch_units",lab),-1])
+    catch_error  <- as.numeric(defs[grep("Catch_error",lab),-1])
     survey_units <- as.numeric(defs[grep("Survey_units",lab),-1])
     survey_error <- as.numeric(defs[grep("Survey_error",lab),-1])
-    FishFleet   <- !is.na(catch_units)
-    nfleets <- length(FleetNames)
-    nfishfleets <- sum(FishFleet)
+    IsFishFleet  <- !is.na(catch_units)
+    nfleets      <- length(FleetNames)
   }
 
   # more dimensions
+  nfishfleets  <- sum(IsFishFleet)
   nsexes <- length(unique(as.numeric(selex$gender)))
   nareas <- max(as.numeric(rawrep[begin:end,1]))
   startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
@@ -1104,10 +1106,6 @@ if(FALSE){
     returndat$fleet_area   <- fleet_area
     returndat$catch_units  <- catch_units
     returndat$catch_error  <- catch_error
-    returndat$survey_units <- survey_units
-    returndat$survey_error <- survey_error
-    returndat$IsFishFleet  <- !is.na(catch_units)
-    returndat$nfishfleets  <- nfishfleets
   }
   if(SS_versionNumeric >= 3.3){
     returndat$definitions  <- defs
@@ -1118,11 +1116,11 @@ if(FALSE){
     returndat$catch_units  <- catch_units
     returndat$catch_se     <- catch_se
     returndat$equ_catch_se <- equ_catch_se
-    returndat$survey_units <- survey_units
-    returndat$survey_error <- survey_error
-    #returndat$IsFishFleet  <- !is.na(catch_units)
-    returndat$nfishfleets  <- nfishfleets
   }
+  returndat$survey_units <- survey_units
+  returndat$survey_error <- survey_error
+  returndat$IsFishFleet  <- IsFishFleet
+  returndat$nfishfleets  <- nfishfleets
 
   returndat$nfleets     <- nfleets
   returndat$nsexes      <- nsexes
