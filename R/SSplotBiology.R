@@ -198,7 +198,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(labels[11]!="Default fecundity label") fec_ylab <- labels[11]
 
-  # Begle of season 1 (or specified season) mean length at age with 95% range of lengths (by sex if applicable)
+  # Beginning of season 1 (or specified season) mean length at age
+  #   with 95% range of lengths (by sex if applicable)
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Beg
   if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
