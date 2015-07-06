@@ -645,10 +645,6 @@ SSplotComparisons <-
     options(warn=old_warn)  #returning to old value
     # add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
     # add axes
     if(!add){
       abline(h=0,col="grey")
@@ -665,6 +661,10 @@ SSplotComparisons <-
       yticks <- pretty(ylim)
       axis(2,at=yticks,labels=format(yticks/yunits),las=1)
       box()
+    }
+    if(legend){
+      # add legend if requested
+      legendfun(legendlabels)
     }
   }
 
