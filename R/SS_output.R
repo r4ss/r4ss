@@ -818,6 +818,14 @@ SS_output <-
       }
     }
     Nstd <- sum(stdtable$std>0)
+    checkbadrun <- unique(stdtable$std)
+    if (length(checkbadrun) == 1) {
+      if (checkbadrun %in% c(NA, "NaN", "na")) {
+        stop(paste0("No quantities were estimated in the covar file \nand all",
+          "estimates of standard deviation are ", checkbadrun, ". \nTry re-running",
+          "stock synthesis."))
+      }
+    }
 
     if(Nstd<=1){
       stop("Too few estimated quantities in covar file (n=",Nstd,"). Change input to covar=FALSE.")
