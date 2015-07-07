@@ -25,6 +25,8 @@ install.packages("devtools")
 devtools::install_github("r4ss/r4ss")
 ```
 
+Note: devtools will give this message: "*WARNING: Rtools is required to build R packages, but is not currently installed.*" However, Rtools is NOT required for installing r4ss via devtools, so ignore the warning.
+
 Once you have installed the r4ss package, it can be loaded in the regular manner:
 
 ```S
