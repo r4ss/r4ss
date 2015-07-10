@@ -1148,7 +1148,8 @@ SS_plots <-
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images
-    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder,...)
+    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder,...,
+      verbose = verbose)
     # return notes on the plots
     return(invisible(plotInfoTable))
   }else{
