@@ -50,7 +50,7 @@
 #' different years)
 #' @param initpoint Year value for first point to be added to lines.
 #' Points added to plots are those that satisfy
-#' (Yr-initpoint)%%spacepoints == (staggerpoints*iline)%%spacepoints
+#' (Yr-initpoint)\%\%spacepoints == (staggerpoints*iline)\%\%spacepoints
 #' @param tickEndYr TRUE/FALSE switch to turn on/off extra axis mark at final
 #' year in timeseries plots.
 #' @param shadeForecast TRUE/FALSE switch to turn on off shading of years beyond
