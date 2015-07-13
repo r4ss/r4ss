@@ -98,6 +98,8 @@ as ratio of y), which overrides any
 value of ymax that is greater (default = Inf)}
 
 \item{verbose}{report progress to R GUI?}
+
+\item{\dots}{Extra arguments to pass to calls to \code{plot}}
 }
 \description{
 Plot indices of abundance and associated quantities.

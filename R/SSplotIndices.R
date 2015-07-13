@@ -51,6 +51,7 @@
 #' as ratio of y), which overrides any 
 #' value of ymax that is greater (default = Inf)
 #' @param verbose report progress to R GUI?
+#' @param \dots Extra arguments to pass to calls to \code{plot}
 #' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
@@ -169,7 +170,11 @@ function(replist,subplots=1:9,
     z <- cpueuse$Exp
     include <- !is.na(cpueuse$Like)
     if(any(include)){
-      if(usecol) s <- cpueuse$Seas else s <- 1 # only use colorvector if more than 1 season
+      if(usecol){
+        s <- cpueuse$Seas
+      }else{
+        s <- 1 # only use colorvector if more than 1 season
+      }
       if(datplot){
         cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
         cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
@@ -196,9 +201,10 @@ function(replist,subplots=1:9,
       cpuefun1 <- function(addexpected=TRUE, ...){
         # plot of time-series of observed and expected (if requested)
         xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-        if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1], ylab=labels[2],
-                      main=main, cex.main=cex.main,
-                      xlim=xlim, ylim=c(0,min(max(y+uiw,na.rm=TRUE),max(maximum_ymax_ratio*y))), ...)
+        if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
+                      ylab=labels[2], main=main, cex.main=cex.main, xlim=xlim,
+                      ylim=c(0,min(max(y+uiw,na.rm=TRUE), max(maximum_ymax_ratio*y))),
+                      ...)
         plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
                ylo=0,col=colvec1[s],
                main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
@@ -349,10 +355,11 @@ function(replist,subplots=1:9,
         }
         if(8 %in% subplots & time){
           file <- paste(plotdir,"/index8_Q_vs_Vuln_bio_",Fleet,".png",sep="")
-          caption <- paste("Catchability vs. vulnerable biomass for fleet ",Fleet,"<br> \n",
-                           "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
-                           "Or reveal patterns associated with random-walk catchability<br> \n",
-                           "It was inspired by Jim Thorson, so blame him if you don't like it.",sep="")
+          caption <-
+            paste("Catchability vs. vulnerable biomass for fleet ",Fleet,"<br> \n",
+                  "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
+                  "Or reveal patterns associated with random-walk catchability<br> \n",
+                  "It was inspired by Jim Thorson, so blame him if you don't like it.",sep="")
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun6()
           dev.off()
@@ -380,8 +387,9 @@ function(replist,subplots=1:9,
       if(!add) plot(0, type="n", xlab=labels[1], main=main, cex.main=cex.main,
                     col=usecols[1], ylab=labels[8], xlim=xlim,ylim=ylim)
       for(ifleet in fleetvec){
-        points(x=allcpue$year[allcpue$Index==ifleet],y=allcpue$stdvalue[allcpue$Index==ifleet],
-               pch=pch2,col=usecols[ifleet], cex=cex, lwd=0.4,lty="dashed", type="o")
+        points(x=allcpue$year[allcpue$Index==ifleet],
+               y=allcpue$stdvalue[allcpue$Index==ifleet],
+               pch=pch2, col=usecols[ifleet], cex=cex, lwd=0.4, lty="dashed", type="o")
       }
     } # end all_cpue_fun
     if(plot & (9 %in% subplots)){all_cpue_fun()}
