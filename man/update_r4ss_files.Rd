@@ -2,66 +2,15 @@
 % Please edit documentation in R/update_r4ss_files.R
 \name{update_r4ss_files}
 \alias{update_r4ss_files}
-\title{Updates r4ss files to newest versions on web.}
+\title{Old function to updates r4ss files, deprecated in favor of devtools method}
 \usage{
 update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
   GitHub = TRUE, override = FALSE)
 }
-\arguments{
-\item{local}{A local directory from which to source the files instead of
-getting them from the web.}
-
-\item{save}{If TRUE, then copy files from web to local directory, then
-source from this same local directory}
-
-\item{revision}{Either "newest" (the default), or an optional revision
-number of the files to source.
-NOTE: revision number option doesn't yet work from GitHub.}
-
-\item{GitHub}{Get files from GitHub (as opposed to Google Code)?}
-
-\item{override}{Override the message about how you should get code from
-GitHub using function in devtools package?}
-}
 \description{
-Sources files containing R functions r4ss package from the online code
-repository. These may often be newer than those available form CRAN mirrors.
-With a switch to GitHub from Google Code, it might be better to use this
-option from the devtools package: devtools::install_github("r4ss/r4ss").
-}
-\examples{
-\dontrun{
-# run with no arguments
-update_r4ss_files()
-r4ss is moving to GitHub from Google Code. You should no longer run
- update_r4ss_files and instead install the "devtools" package to get
- updated code by running the following command:
-   devtools::install_github("r4ss/r4ss")
- to override this message, use the argument "override=TRUE"
-
-# update anyway
-update_r4ss_files(override=TRUE)
-most recent change: July 03, 2014
-77 files found
-  sourcing...
-   IOTCmove.R, NegLogInt_Fn.R, PinerPlot.R, RebuildPlot.R,
-   SSFishGraph.R, SS_RunJitter.R, SS_changepars.R, SS_doRetro.R,
-   ...
-   sel.line.R, selfit.R, selfit_spline.R, stackpoly.R,
-   update_r4ss_files.R,
-
-  r4ss update complete.
-
-
-# copy files from web to local directory and then source them
-update_r4ss_files(local='c:/SS/R/r4ss_files/',save=TRUE, override=TRUE)
-
-# source files from a local directory (i.e. if no network available)
-update_r4ss_files(local='c:/SS/R/r4ss_files/',save=FALSE)
-}
+Left in place only as a pointer to the new installation approach.
 }
 \author{
 Ian Taylor
 }
-\keyword{file}
 
