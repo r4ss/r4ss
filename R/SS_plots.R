@@ -1,11 +1,11 @@
 #' plot many quantities related to output from Stock Synthesis
-#' 
+#'
 #' Creates a user-chosen set of plots, including biological quantities, time
 #' series, and fits to data.  Plots are sent to R GUI, single PDF file, or
 #' multiple PNG files. This is now just a wrapper which calls on separate
 #' functions to make all the plots.
-#' 
-#' 
+#'
+#'
 #' @param replist List created by \code{SS_output}
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
@@ -294,7 +294,7 @@ SS_plots <-
   if(nplots>0 & !new){
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
-  
+
   if(dir=="default") dir <- inputs$dir
   plotdir <- paste(dir,"/",printfolder,"/",sep="")
   if(png){
@@ -461,7 +461,7 @@ SS_plots <-
                                plot=!png, print=png,
                                verbose=verbose,
                                pwidth=pwidth, pheight=pheight, punits=punits,
-                               ptsize=ptsize, res=res, 
+                               ptsize=ptsize, res=res,
                                plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
@@ -541,7 +541,7 @@ SS_plots <-
                          plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
-  
+
   ##########################################
   # time series of catch
   #
@@ -660,7 +660,7 @@ SS_plots <-
   igroup <- 12
   if(igroup %in% plot){
     if(verbose) cat("Starting numbers at age plots (group ",igroup,")\n",sep="")
-    plotinfo <- 
+    plotinfo <-
       SSplotNumbers(replist=replist,
                     areas=areas,
                     areanames=areanames,
@@ -798,7 +798,7 @@ SS_plots <-
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to length comp plots (group ",igroup,")\n",sep="")
       # regular length comps
-      plotinfo <- 
+      plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -861,7 +861,7 @@ SS_plots <-
     igroup <- 17
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to age comp plots (group ",igroup,")\n",sep="")
-      plotinfo <- 
+      plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -876,7 +876,7 @@ SS_plots <-
                     ptsize=ptsize, res=res,
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-      plotinfo <- 
+      plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
@@ -902,7 +902,7 @@ SS_plots <-
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to conditional age-at-length comp plots (group ",igroup,")\n",sep="")
       if(aalresids){
-        plotinfo <- 
+        plotinfo <-
           SSplotComps(replist=replist,subplots=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -921,7 +921,7 @@ SS_plots <-
       }
       # conditional age at length for a given year
       if(length(intersect(aalyear, unique(timeseries$Yr)))>0){
-        plotinfo <- 
+        plotinfo <-
           SSplotComps(replist=replist,subplots=4:5,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       aalbin=aalbin,aalyear=aalyear,
@@ -941,7 +941,7 @@ SS_plots <-
       }
       # conditional age at length for a given length bin
       if(length(intersect(aalbin, unique(lbins)))>0){
-        plotinfo <- 
+        plotinfo <-
           SSplotComps(replist=replist,subplots=6,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
                       aalbin=aalbin,
@@ -1001,14 +1001,14 @@ SS_plots <-
         if(verbose) cat("Skipping conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
     } # end if igroup in plot or print
-    
+
     ##########################################
     # Mean length-at-age and mean weight-at-age plots
     #
     igroup <- 20
     if(igroup %in% plot){
       if(verbose) cat("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")\n",sep="")
-      plotinfo <- 
+      plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="L@A",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
@@ -1021,7 +1021,7 @@ SS_plots <-
                     ptsize=ptsize, res=res,
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-      plotinfo <- 
+      plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="W@A",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
                     samplesizeplots=FALSE,showsampsize=FALSE,showeffN=FALSE,
@@ -1059,7 +1059,7 @@ SS_plots <-
         if(verbose) cat("Skipping tag plots (group ",igroup,") because no tag data in model\n",sep="")
       }else{
         if(verbose) cat("Starting tag plots (group ",igroup,")\n",sep="")
-        plotinfo <- 
+        plotinfo <-
           SSplotTags(replist=replist,
                      rows=rows,cols=cols,
                      tagrows=tagrows,tagcols=tagcols,
@@ -1073,14 +1073,14 @@ SS_plots <-
       } # end if data present
     } # end if igroup in plot or print
   } # end if comp data
-  
+
   ##########################################
   # Yield plots
   #
   igroup <- 22
   if(igroup %in% plot){
     if(verbose) cat("Starting yield plots (group ",igroup,")\n",sep="")
-    plotinfo <- 
+    plotinfo <-
       SSplotYield(replist=replist,
                   plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1098,7 +1098,7 @@ SS_plots <-
     if(nrow(replist$movement)>0){
       if(verbose) cat("Starting movement rate plots (group ",igroup,")\n",sep="")
       plotinfo <- NULL
-      temp <- 
+      temp <-
         SSplotMovementRates(replist=replist,
                             plot=!png, print=png,
                             pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1117,7 +1117,7 @@ SS_plots <-
   igroup <- 24
   if(igroup %in% plot){
     if(verbose) cat("Starting data range plots (group ",igroup,")\n",sep="")
-    temp <- 
+    temp <-
       SSplotData(replist=replist,
                  plot=!png, print=png,
                  pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1148,11 +1148,12 @@ SS_plots <-
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images
-    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder)
+    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder,...,
+      verbose = verbose)
     # return notes on the plots
     return(invisible(plotInfoTable))
   }else{
-    # if there's some problem (perhaps if no plots were created), return a 999 code 
+    # if there's some problem (perhaps if no plots were created), return a 999 code
     return(invisible(999))
   }
   ### end of SS_plots function
