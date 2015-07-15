@@ -31,9 +31,10 @@
 
 
 
-plotIndices <- function(x, fleets, xlim=NULL, ylim=NULL, 
+plotIndices <- function(x, fleets, xlim=NULL, ylim=NULL,
                         cols="default", alpha=1, div=1, legX=NULL, legY=NULL, legCex=1,
-                        plotExpect=T, shift=rep(0,length(fleets)), ...) {
+                        plotExpect=T, shift=rep(0,length(fleets)),
+                        scale=c("none","mean","max"), ...) {
 
     #I may want to figure out how to plot one series that has a break in q as two series
     #how to plot the input CI and the output CI with additional variance
@@ -53,6 +54,12 @@ plotIndices <- function(x, fleets, xlim=NULL, ylim=NULL,
 
     for(i in 1:length(fleets)) {
       tmp <- cpue[cpue$Fleet == fleets[i],]
+      if(is.character(scale)) {  #if they enter a number, you can scale specifically by that
+        tmp$Obs <- switch(scale[1],
+                            none=tmp$Obs,
+                            mean=tmp$Obs/mean(tmp$Obs),
+                            max=tmp$Obs/max(tmp$Obs))
+      }
       xx <- tmp$Yr + shift[i]
       segments(x0 = xx,
              y0=qlnorm(.025,meanlog=log(tmp$Obs/div),sdlog=tmp$SE),
