@@ -1,4 +1,4 @@
-################## 
+##################
 # SS_RunJitter
 ##################
 ##' Iteratively apply the jitter option in SS
@@ -6,7 +6,7 @@
 ##' Iteratively runs SS model with different jittered starting parameter values
 ##' (jitter value must be mannually set in starter.ss). Output files are renamed
 ##' in the format Report1.sso, Report2.sso, etc.
-##' 
+##'
 ##' @param mydir Directory where model files are located
 ##' @param model Executable name
 ##' @param extras Additional command line arguments passed to executable
@@ -23,6 +23,9 @@ SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
                          Njitter, Intern=TRUE, systemcmd=FALSE,
                          printlikes=TRUE){
+  # Determine working directory on start and return upon exit
+  startdir <- getwd()
+  on.exit(setwd(startdir))
 
   # determine operating system in a relatively brute force way
   OS <- "Mac" # don't know the version$os info for Mac
