@@ -1406,6 +1406,11 @@ if(FALSE){
     shift <- 1
     discard_spec <- matchfun2("DISCARD_SPECIFICATION",9,"DISCARD_OUTPUT",-2,
                               cols=1:3,header=TRUE)
+    # test for Robbie Emmet's experimental new discard option
+    if(length(grep("trunc_normal", names(discard_spec)))>0){
+      discard_spec <- matchfun2("DISCARD_SPECIFICATION",10,"DISCARD_OUTPUT",-2,
+                                cols=1:3,header=TRUE)
+    }
     for(icol in 1:3){
       discard_spec[,icol] <- as.numeric(discard_spec[,icol])
     }
