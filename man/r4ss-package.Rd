@@ -31,7 +31,7 @@ SS_plots(replist=myreplist)
 Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
 Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
 Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
-Z. Teresa A'mar, Athol R. Whitten,
+Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 and other contributors.
  Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }

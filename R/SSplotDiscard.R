@@ -27,7 +27,7 @@
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R GUI?
-#' @author Ian Taylor, Ian Stewart
+#' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
 #' @seealso \code{\link{SS_plots}}
 #' @keywords hplot
@@ -84,7 +84,12 @@ SSplotDiscard <-
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
-      if(DF_discard == -2){ # lognormal with std as interpreted as the standard error (in log space) of the observation
+      if(DF_discard == -3){ # truncated normal thanks to Robbie Emmet
+        liw <- ob - qtruncnorm(0.025, 0, 1, ob, std * ob)
+        uiw <- qtruncnorm(0.975, 0, 1, ob, std * ob) - ob
+      }
+      if(DF_discard == -2){ # lognormal with std as interpreted as
+                            # the standard error (in log space) of the observation
         liw <- ob - qlnorm(0.025,log(ob),std)
         uiw <- qlnorm(0.975,log(ob),std) - ob
       }
