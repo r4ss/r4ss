@@ -122,9 +122,10 @@ SSMethod.Cond.TA1.8 <-
     for (j in 1:length(Lbins)){
       AbarNObs <- AbarNObs + as.double(Intermediate[j,'Obsmn'] * Weights[j])
       AbarNPre <- AbarNPre + as.double(Intermediate[j,'Expmn'] * Weights[j])
-      AbarVarn <- AbarVarn + as.double(Weights[j]^2*Intermediate[j,'Varn'])
+      AbarVarn <- AbarVarn + as.double(Weights[j]^2*Intermediate[j,'Varn'])/
+        as.double(Intermediate[j,'N'])
     }
-    AbarVarn <- sqrt(AbarVarn/Total)
+    AbarVarn <- sqrt(AbarVarn)
 
     pldat[i,'Obsmn'] <- AbarNObs
     pldat[i,'Expmn'] <- AbarNPre
