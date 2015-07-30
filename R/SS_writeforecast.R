@@ -1,9 +1,9 @@
 #' write forecast file
-#' 
+#'
 #' write Stock Synthesis forecast file from list object in R which was probably
 #' created using \code{\link{SS_readforecast}}
-#' 
-#' 
+#'
+#'
 #' @param mylist List object created by \code{\link{SS_readforecast}}.
 #' @param dir Directory for new forecast file. Default=NULL (working
 #' directory).
@@ -38,11 +38,11 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     if(!overwrite){
       stop(paste("file exists:",outfile,"\n  set overwrite=TRUE to replace\n"))
     }else{
-      cat("overwriting file:",outfile,"\n")
+      if(verbose) cat("overwriting file:",outfile,"\n")
       file.remove(outfile)
     }
   }else{
-    cat("writing new file:",outfile,"\n")
+    if(verbose) cat("writing new file:",outfile,"\n")
   }
 
   # preliminary setup
