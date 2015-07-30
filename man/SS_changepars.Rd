@@ -26,15 +26,27 @@ correspond to the commented parameter names included in control.ss_new, or
 whatever is written as comment at the end of the 14 number parameter lines.
 Default=NULL.}
 
-\item{newvals}{Vector of new parameter values. Default=NULL.}
+\item{newvals}{Vector of new parameter values. Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{repeat.vals}{If multiple parameter lines match criteria, repeat the
 \code{newvals} input for each line}
 
-\item{newlos}{Vector of new lo bounds. Default=NULL.}
+\item{newlos}{Vector of new lo bounds. Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{newhis}{Vector of new hi bounds. Must be the same length as newhis
-Default=NULL.}
+Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{estimate}{Vector of TRUE/FALSE for which changed parameters are to be
 estimated. Default=FALSE. Can also be NULL.}
@@ -46,7 +58,11 @@ repeated for each parameter, the same length as newvals, where each
 value corresponds to a single parameter, or \code{NULL}, where the
 phases will not be changed. If one wants to strictly turn parameters
 on or off and not change the phase in which they are estimated use
-\code{estimate = TRUE} or \code{estimate = FALSE}, respectively.}
+\code{estimate = TRUE} or \code{estimate = FALSE}, respectively.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 }
 \description{
 Loops over a subset of control file to change parameter lines.
