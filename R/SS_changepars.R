@@ -173,6 +173,8 @@ function(
   ##   stop("Nothing input for 'newvals'")
   ## }
 
+  navar <- c(NA, "NA", "NAN", "Nan")
+
   # loop over line numbers to replace parameter values
   for(i in 1:nvals)
   {
@@ -190,21 +192,33 @@ function(
     # store information on old value and replace with new value (unless NULL)
     oldvals[i] <- vec[3]
     if(!is.null(newvals)){
+      if (newvals[i] %in% navar) {
+        newvals[i] <- vec[3]
+      }
       vec[3] <- newvals[i]
     }
     # store information on old bounds and replace with new bounds (unless NULL)
     oldlos[i] <- vec[1]
     oldhis[i] <- vec[2]
     if(!is.null(newlos)){
+      if (newlos[i] %in% navar) {
+        newlos[i] <- vec[1]
+      }
       vec[1] <- newlos[i]
     }
     if (!is.null(newhis)){
+      if (newhis[i] %in% navar) {
+        newhis[i] <- vec[2]
+      }
       vec[2] <- newhis[i]
     }
 
     # change phase (unless NULL)
     oldphase[i] <- as.numeric(vec[7])
     if (!is.null(newphs)) {
+      if (newphs[i] %in% navar) {
+        newphs[i] <- vec[7]
+      }
       vec[7] <- newphs[i]
     }
     if (!is.null(estimate)){
