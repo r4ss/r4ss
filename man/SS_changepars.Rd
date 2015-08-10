@@ -18,26 +18,38 @@ SS_changepars(dir = NULL, ctlfile = "control.ss_new",
 Default="control_modified.ss".}
 
 \item{linenums}{Line numbers of control file to be modified. Either this or
-the Strings input are needed. Default=NULL.}
+the \code{strings} argument are needed. Default=NULL.}
 
 \item{strings}{Strings (with optional partial matching) indicating which
-parameters to be modified. This is an alternative to linenums.  Strings
-correspond to the commented parameter names included in control.ss_new, or
-whatever is written as comment at the end of the 14 number parameter lines.
-Default=NULL.}
+parameters to be modified. This is an alternative to \code{linenums}.
+\code{strings} correspond to the commented parameter names included in
+\code{control.ss_new}, or whatever is written as comment at the end
+of the 14 number parameter lines. Default=NULL.}
 
-\item{newvals}{Vector of new parameter values. Default=NULL.}
+\item{newvals}{Vector of new parameter values. Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{repeat.vals}{If multiple parameter lines match criteria, repeat the
-\code{newvals} input for each line}
+\code{newvals} input for each line.}
 
-\item{newlos}{Vector of new lo bounds. Default=NULL.}
+\item{newlos}{Vector of new lo bounds. Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{newhis}{Vector of new hi bounds. Must be the same length as newhis
-Default=NULL.}
+Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 
 \item{estimate}{Vector of TRUE/FALSE for which changed parameters are to be
-estimated. Default=FALSE. Can also be NULL.}
+estimated. Default=FALSE. Can also be \code{NULL}.}
 
 \item{verbose}{More detailed output to command line. Default=TRUE.}
 
@@ -46,14 +58,18 @@ repeated for each parameter, the same length as newvals, where each
 value corresponds to a single parameter, or \code{NULL}, where the
 phases will not be changed. If one wants to strictly turn parameters
 on or off and not change the phase in which they are estimated use
-\code{estimate = TRUE} or \code{estimate = FALSE}, respectively.}
+\code{estimate = TRUE} or \code{estimate = FALSE}, respectively.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
 }
 \description{
 Loops over a subset of control file to change parameter lines.
 Current initial value, lower and upper bounds, and phase can be modified,
 but function could be expanded to control other columns.
 Depends on \code{\link{SS_parlines}}.
-Used by \code{\link{SS_profile}} and the \code{ss3sim} package.
+Used by \code{\link{SS_profile}} and the \pkg{\link{ss3sim}} package.
 }
 \examples{
 \dontrun{

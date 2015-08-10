@@ -4,34 +4,50 @@
 #' Current initial value, lower and upper bounds, and phase can be modified,
 #' but function could be expanded to control other columns.
 #' Depends on \code{\link{SS_parlines}}.
-#' Used by \code{\link{SS_profile}} and the \code{ss3sim} package.
+#' Used by \code{\link{SS_profile}} and the \pkg{\link{ss3sim}} package.
 #'
 #'
 #' @param dir Directory with control file to change.
 #' @param ctlfile Control file name. Default="control.ss_new".
 #' @param newctlfile Name of new control file to be written.
-#' Default="control_modified.ss".
+#'   Default="control_modified.ss".
 #' @param linenums Line numbers of control file to be modified. Either this or
-#' the Strings input are needed. Default=NULL.
+#'   the \code{strings} argument are needed. Default=NULL.
 #' @param strings Strings (with optional partial matching) indicating which
-#' parameters to be modified. This is an alternative to linenums.  Strings
-#' correspond to the commented parameter names included in control.ss_new, or
-#' whatever is written as comment at the end of the 14 number parameter lines.
-#' Default=NULL.
+#'   parameters to be modified. This is an alternative to \code{linenums}.
+#'   \code{strings} correspond to the commented parameter names included in
+#'   \code{control.ss_new}, or whatever is written as comment at the end
+#'   of the 14 number parameter lines. Default=NULL.
 #' @param newvals Vector of new parameter values. Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
 #' @param repeat.vals If multiple parameter lines match criteria, repeat the
-#' \code{newvals} input for each line
+#'   \code{newvals} input for each line.
 #' @param estimate Vector of TRUE/FALSE for which changed parameters are to be
-#' estimated. Default=FALSE. Can also be NULL.
+#'   estimated. Default=FALSE. Can also be \code{NULL}.
 #' @param newlos Vector of new lo bounds. Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
 #' @param newhis Vector of new hi bounds. Must be the same length as newhis
 #'   Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
 #' @param newphs Vector of new phases. Can be a single value, which will be
 #'   repeated for each parameter, the same length as newvals, where each
 #'   value corresponds to a single parameter, or \code{NULL}, where the
 #'   phases will not be changed. If one wants to strictly turn parameters
 #'   on or off and not change the phase in which they are estimated use
 #'   \code{estimate = TRUE} or \code{estimate = FALSE}, respectively.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
 #' @param verbose More detailed output to command line. Default=TRUE.
 #' @author Ian Taylor, Christine Stawitz
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
@@ -173,6 +189,8 @@ function(
   ##   stop("Nothing input for 'newvals'")
   ## }
 
+  navar <- c(NA, "NA", "NAN", "Nan")
+
   # loop over line numbers to replace parameter values
   for(i in 1:nvals)
   {
@@ -190,21 +208,33 @@ function(
     # store information on old value and replace with new value (unless NULL)
     oldvals[i] <- vec[3]
     if(!is.null(newvals)){
+      if (newvals[i] %in% navar) {
+        newvals[i] <- vec[3]
+      }
       vec[3] <- newvals[i]
     }
     # store information on old bounds and replace with new bounds (unless NULL)
     oldlos[i] <- vec[1]
     oldhis[i] <- vec[2]
     if(!is.null(newlos)){
+      if (newlos[i] %in% navar) {
+        newlos[i] <- vec[1]
+      }
       vec[1] <- newlos[i]
     }
     if (!is.null(newhis)){
+      if (newhis[i] %in% navar) {
+        newhis[i] <- vec[2]
+      }
       vec[2] <- newhis[i]
     }
 
     # change phase (unless NULL)
     oldphase[i] <- as.numeric(vec[7])
     if (!is.null(newphs)) {
+      if (newphs[i] %in% navar) {
+        newphs[i] <- vec[7]
+      }
       vec[7] <- newphs[i]
     }
     if (!is.null(estimate)){
