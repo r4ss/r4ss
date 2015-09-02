@@ -246,7 +246,7 @@ SS_html <- function(replist=NULL,
         cat('<p><b>SS version:</b>\n',
             replist$SS_version,'</p>\n\n',
             '<p><b>Starting time of model:</b>\n',
-            substring(replist$Run_time,12),'</p>\n\n',
+            substring(replist$StartTime,12),'</p>\n\n',
             sep="", file=htmlfile, append=TRUE)
         if(!is.null(filenotes)){
           for(i in 1:length(filenotes)){
