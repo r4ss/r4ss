@@ -1019,7 +1019,10 @@ SS_output <-
 
   # sigma_R
   if(SS_versionNumeric >= 3.3 |
-     substring(SS_version,1,9) %in% c("SS-V3.24U", "SS-V3.24V")){
+     substring(SS_version,1,9) %in% c("SS-V3.24U", "SS-V3.24V",
+                                      "SS-V3.24W", "SS-V3.24X",
+                                      "SS-V3.24Y", "SS-V3.24Z")){
+    # accounting for additional line introduced in 3.24U
     last_row_index <- 11
   }else{
     last_row_index <- 10
