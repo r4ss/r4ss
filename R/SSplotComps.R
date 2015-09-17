@@ -909,12 +909,16 @@ SSplotComps <-
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
             # put additional info into caption for figure
-            vals <- paste("Suggested sample size adjustment ",
-                          "(with 95% interval) for ", kind2, " data from ",
-                          fleetnames[f],":<br>",
-                          round(tmp[1],4), " (",
-                          round(tmp[2],4),"-",round(tmp[3],4),")",
-                          sep="")
+            if(!is.null(tmp[1])){
+              vals <- paste("Suggested sample size adjustment ",
+                            "(with 95% interval) for ", kind2, " data from ",
+                            fleetnames[f],":<br>",
+                            round(tmp[1],4), " (",
+                            round(tmp[2],4),"-",round(tmp[3],4),")",
+                            sep="")
+            }else{
+              vals <- "Too few points to calculate adjustments"
+            }
             caption <- paste(caption,"<br>",vals)
             # add caption to the plotinfo table (normally done by pngfun)
             plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
