@@ -103,6 +103,23 @@ function(replist,subplots=1:9,
   FleetNames  <- replist$FleetNames
   nfleets     <- replist$nfleets
   nseasons    <- replist$nseasons
+
+  # find any extra SD parameters
+  parameters  <- replist$parameters
+  Q_extraSD_info <- parameters[grep("Q_extraSD", parameters$Label),]
+  # calculate how many of these parameters there are
+  nSDpars <- nrow(Q_extraSD_info)
+  if(nSDpars > 0){
+    # parse the parameter label to get the fleet number
+    Q_extraSD_info$FleetNum <- NA
+    for(ipar in 1:nSDpars){
+      num <- strsplit(substring(test, nchar("Q_extraSD_")+1),
+                      split="_", fixed=TRUE)[[1]][1]
+      Q_extraSD_info$FleetNum[ipar] <- as.numeric(num)
+    }
+    # NOTE: important columns in Q_extraSD_info to use below are $Value and $FleetNum
+  }
+  
   if(nseasons>1){
     # if seasons, put CPUE at season midpoint
     cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
