@@ -43,7 +43,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
       file.remove(outfile)
     }
   }else{
-    cat("writing new file:",outfile,"\n")
+    if(verbose)cat("writing new file:",outfile,"\n")
   }
 
   # record current max characters per line and then expand in case of long lines
