@@ -1,9 +1,9 @@
 #' write starter file
-#' 
+#'
 #' write Stock Synthesis starter file from list object in R which was probably
 #' created using \code{\link{SS_readstarter}}
-#' 
-#' 
+#'
+#'
 #' @param mylist List object created by \code{\link{SS_readstarter}}.
 #' @param dir Directory for new starter file. Default=NULL (working directory).
 #' @param file Filename for new starter file. Default="starter.ss".
@@ -30,7 +30,11 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   on.exit({if(sink.number()>0) sink()})
 
   if(is.null(dir)) dir <- getwd() # set to working directory if no input provided
-  outfile <- paste(dir,file,sep="/")
+  if(grepl("/$", dir)) {
+    outfile <- paste0(dir, file) # bc trailing backslash
+  } else {
+    outfile <- paste(dir,file,sep="/")
+  }
   if(file.exists(outfile)){
     if(!overwrite){
       stop(paste("file exists:",outfile,"\n  set overwrite=TRUE to replace\n"))
@@ -96,7 +100,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("F_report_units")
   if(mylist$F_report_units==4){
     cat(mylist[["F_age_range"]],"#_F_age_range\n")
-  }    
+  }
   wl("F_report_basis")
   writeLines("#")
   wl("final")
