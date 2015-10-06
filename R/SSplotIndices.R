@@ -113,7 +113,7 @@ function(replist,subplots=1:9,
     # parse the parameter label to get the fleet number
     Q_extraSD_info$FleetNum <- NA
     for(ipar in 1:nSDpars){
-      num <- strsplit(substring(test, nchar("Q_extraSD_")+1),
+      num <- strsplit(substring(Q_extraSD_info$Label, nchar("Q_extraSD_")+1),
                       split="_", fixed=TRUE)[[1]][1]
       Q_extraSD_info$FleetNum[ipar] <- as.numeric(num)
     }
