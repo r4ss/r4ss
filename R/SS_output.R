@@ -468,9 +468,10 @@ SS_output <-
   endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
   tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
   accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
+  # which column of INDEX_1 has number of CPUE values (used in reading INDEX_2)
   if(SS_versionNumeric >= 3.3){
-    ncpue_column <- 14
-    # IAN T.: this will need updating in revised version
+    ncpue_column <- 13
+    # IAN T.: this may need updating in revised version
   }else{
     ncpue_column <- 11
   }
@@ -698,6 +699,7 @@ SS_output <-
   stats <- list()
   stats$SS_version <- SS_version
   stats$SS_versionshort <- SS_versionshort
+  stats$SS_versionNumeric <- SS_versionNumeric
 
   stats$StartTime <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
   stats$RunTime <- paste(as.character(matchfun2("StartTime",2,"StartTime",2,cols=4:9)),collapse=" ")
@@ -1278,6 +1280,25 @@ if(FALSE){
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   timeseries[timeseries=="_"] <- NA
   for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]) timeseries[,i] = as.numeric(timeseries[,i])
+
+  ## # sum catches and other quantities across fleets
+  ## # commented out pending additional test for more than one fleet with catch,
+  ## # without which the apply function has errors
+  ## timeseries$dead_B_sum <- apply(timeseries[,grep("dead(B)",names(timeseries),
+  ##                                                 fixed=TRUE)], 1, sum)
+  ## timeseries$dead_N_sum <- apply(timeseries[,grep("dead(N)",names(timeseries),
+  ##                                                 fixed=TRUE)], 1, sum)
+  ## timeseries$retain_B_sum <- apply(timeseries[,grep("retain(B)",names(timeseries),
+  ##                                                   fixed=TRUE)], 1, sum)
+  ## timeseries$retain_N_sum <- apply(timeseries[,grep("retain(N)",names(timeseries),
+  ##                                                   fixed=TRUE)], 1, sum)
+  ## timeseries$sel_B_sum <- apply(timeseries[,grep("sel(B)",names(timeseries),
+  ##                                                fixed=TRUE)], 1, sum)
+  ## timeseries$sel_N_sum <- apply(timeseries[,grep("sel(N)",names(timeseries),
+  ##                                                fixed=TRUE)], 1, sum)
+  ## timeseries$obs_cat_sum <- apply(timeseries[,grep("obs_cat",names(timeseries),
+  ##                                                  fixed=TRUE)], 1, sum)
+
   returndat$timeseries <- timeseries
 
   # get spawning season
@@ -1357,7 +1378,8 @@ if(FALSE){
   stats$SBzero <- tsspaw_bio[1]
   stats$current_depletion <- depletionseries[length(depletionseries)]
 
-  # total landings
+  # total landings (in the future, this section should be cleaned up to take advantage of
+  # new columns that are in process of being added above, such as $dead_B_sum
   ls <- nrow(ts)-1
   totretainedmat <- as.matrix(ts[,substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
   ts$totretained <- 0
