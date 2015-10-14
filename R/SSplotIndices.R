@@ -50,6 +50,10 @@
 #' @param maximum_ymax_ratio Maximum allowed value for ymax (specified 
 #' as ratio of y), which overrides any 
 #' value of ymax that is greater (default = Inf)
+#' @param show_input_uncertainty switch controlling whether to add thicker
+#' uncertainty interval lines indicating the input uncertainty relative to
+#' the total uncertainty which may result from estimating a parameter for
+#' extra standard deviations
 #' @param verbose report progress to R GUI?
 #' @param \dots Extra arguments to pass to calls to \code{plot}
 #' @author Ian Stewart, Ian Taylor, James Thorson
@@ -78,10 +82,13 @@ function(replist,subplots=1:9,
          legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
-         maximum_ymax_ratio=Inf,verbose=TRUE, ...)
+         maximum_ymax_ratio=Inf, show_input_uncertainty=TRUE, verbose=TRUE, ...)
 {
-  require(r4ss)
-  cpue        <- replist$cpue
+  # get some quantities from replist
+  cpue              <- replist$cpue
+  SS_versionNumeric <- replist$SS_versionNumeric
+
+  # confirm that some CPUE values are present
   if(is.null(dim(cpue))){
     cat("skipping index plots: no CPUE data in this model\n")
     return()
@@ -113,13 +120,17 @@ function(replist,subplots=1:9,
     # parse the parameter label to get the fleet number
     Q_extraSD_info$FleetNum <- NA
     for(ipar in 1:nSDpars){
-      num <- strsplit(substring(Q_extraSD_info$Label, nchar("Q_extraSD_")+1),
-                      split="_", fixed=TRUE)[[1]][1]
+      if(SS_versionNumeric >= 3.3){
+        # parsing label with ending like "(2)" assuming only one set of parentheses
+        num <- strsplit(Q_extraSD_info$Label[ipar], split="[()]", fixed=FALSE)[[1]][2]
+      }else{
+        num <- strsplit(substring(Q_extraSD_info$Label[ipar], nchar("Q_extraSD_")+1),
+                        split="_", fixed=TRUE)[[1]][1]
+      }
       Q_extraSD_info$FleetNum[ipar] <- as.numeric(num)
     }
     # NOTE: important columns in Q_extraSD_info to use below are $Value and $FleetNum
   }
-  
   if(nseasons>1){
     # if seasons, put CPUE at season midpoint
     cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
@@ -182,6 +193,14 @@ function(replist,subplots=1:9,
     if(is.na(time2)){
       time2 <- FALSE
     }
+    # look for extra SD and calculate input SD (if different from final value)
+    if(exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info$FleetNum){
+      # input uncertainty is final value minus extra SD parameter (if present)
+      cpueuse$SE_input <- cpueuse$SE - Q_extraSD_info$Value[Q_extraSD_info$FleetNum==ifleet]
+    }else{
+      cpueuse$SE_input <- NULL # could also set equal to $SE but then additional test required to not display
+    }
+    # use short variable names for often-used quantities
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
@@ -214,7 +233,6 @@ function(replist,subplots=1:9,
         names <- paste(seasnames,"observations")
       }
       # print(cbind(x, y, liw, uiw)) # debugging line
-      
       cpuefun1 <- function(addexpected=TRUE, ...){
         # plot of time-series of observed and expected (if requested)
         xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
@@ -222,6 +240,13 @@ function(replist,subplots=1:9,
                       ylab=labels[2], main=main, cex.main=cex.main, xlim=xlim,
                       ylim=c(0,min(max(y+uiw,na.rm=TRUE), max(maximum_ymax_ratio*y))),
                       ...)
+        # show thicker lines behind final lines for input uncertainty (if different)
+        if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
+          segments(x[include], qlnorm(.025,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
+                   x[include], qlnorm(.975,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
+                   col = colvec1[s], lwd = 3, lend = 1)
+        }
+        # add intervals
         plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
                ylo=0,col=colvec1[s],
                main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
@@ -258,14 +283,20 @@ function(replist,subplots=1:9,
       if(print){
         if(1 %in% subplots & datplot){
           file <- paste(plotdir,"/index1_cpuedata_",Fleet,".png",sep="")
-          caption <- paste("Index data for",Fleet)
+          caption <- paste0("Index data for ", Fleet, ". ",
+                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Thicker lines (if present) indicate input uncertainty before addition of ",
+                            "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun1(addexpected=FALSE)
           dev.off()
         }
         if(2 %in% subplots){
           file <- paste(plotdir,"/index2_cpuefit_",Fleet,".png",sep="")
-          caption <- paste("Fit to index data for",Fleet)
+          caption <- paste0("Fit to index data for ", Fleet,". ",
+                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Thicker lines (if present) indicate input uncertainty before addition of ",
+                            "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun1()
           dev.off()
@@ -292,6 +323,12 @@ function(replist,subplots=1:9,
                       main=main, cex.main=cex.main,
                       xlim=xlim, ylim=range(log(y[include])-liw[include],
                                      log(y[include])+uiw[include],na.rm=TRUE))
+        # show thicker lines behind final lines for input uncertainty (if different)
+        if(show_input_uncertainty & any(!is.null(cpueuse$SE_input[include]))){
+          segments(x[include], qnorm(.025,mean=log(y[include]),sd=cpueuse$SE_input[include]),
+                   x[include], qnorm(.975,mean=log(y[include]),sd=cpueuse$SE_input[include]),
+                   col = colvec1[s], lwd = 3, lend = 1)
+        }
         plotCI(x=x[include],y=log(y[include]),sfrac=0.005,uiw=uiw[include],
                liw=liw[include],
                col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
@@ -344,14 +381,20 @@ function(replist,subplots=1:9,
       if(print){
         if(4 %in% subplots & datplot){
           file <- paste(plotdir,"/index4_logcpuedata_",Fleet,".png",sep="")
-          caption <- paste("Log index data for",Fleet)
+          caption <- paste0("Log index data for ", Fleet, ". ",
+                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Thicker lines (if present) indicate input uncertainty before addition of ",
+                            "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun3(addexpected=FALSE)
           dev.off()
         }
         if(5 %in% subplots){
           file <- paste(plotdir,"/index5_logcpuefit_",Fleet,".png",sep="")
-          caption <- paste("Fit to index data on log scale for",Fleet)
+          caption <- paste0("Fit to log index data on log scale for ", Fleet, ". ",
+                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Thicker lines (if present) indicate input uncertainty before addition of ",
+                            "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun3()
           dev.off()

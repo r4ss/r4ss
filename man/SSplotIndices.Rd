@@ -15,7 +15,8 @@ SSplotIndices(replist, subplots = 1:9, plot = TRUE, print = FALSE,
   legendloc = "topright", seasnames = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", res = 300, ptsize = 10, cex.main = 1, addmain = TRUE,
   plotdir = "default", minyr = NULL, maxyr = NULL,
-  maximum_ymax_ratio = Inf, verbose = TRUE, ...)
+  maximum_ymax_ratio = Inf, show_input_uncertainty = TRUE, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -96,6 +97,11 @@ values)}
 \item{maximum_ymax_ratio}{Maximum allowed value for ymax (specified
 as ratio of y), which overrides any
 value of ymax that is greater (default = Inf)}
+
+\item{show_input_uncertainty}{switch controlling whether to add thicker
+uncertainty interval lines indicating the input uncertainty relative to
+the total uncertainty which may result from estimating a parameter for
+extra standard deviations}
 
 \item{verbose}{report progress to R GUI?}
 
