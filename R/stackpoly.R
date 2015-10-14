@@ -49,16 +49,31 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
         lty <- rep(lty, length.out = ydim[2])
     for (pline in seq(ydim[2], 1, by = -1)) {
         if (pline == 1) {
+          if(x[1]%in%x.hash){
             polygon(c(x[1], x[, pline], x[ydim[1]]),
                     c(plotlim[3], y[, pline], plotlim[3]),
                     border = border, col = col[pline],
                     lty = lty[pline],
-                    density=ifelse(x[1]%in%x.hash, density, NULL))
+                    density=density)
+          }else{
+            polygon(c(x[1], x[, pline], x[ydim[1]]),
+                    c(plotlim[3], y[, pline], plotlim[3]),
+                    border = border, col = col[pline],
+                    lty = lty[pline])
+          }
+            
         } else {
-          polygon(c(x[, pline], rev(x[, pline - 1])),
-                  c(y[, pline], rev(y[, pline - 1])), border = border,
-                  col = col[pline], lty = lty[pline],
-                  density=ifelse(x[1,pline]%in%x.hash, density, NULL))
+          if(x[1,pline]%in%x.hash){
+            polygon(c(x[, pline], rev(x[, pline - 1])),
+                    c(y[, pline], rev(y[, pline - 1])), border = border,
+                    col = col[pline], lty = lty[pline],
+                    density=density)
+          }else{
+            polygon(c(x[, pline], rev(x[, pline - 1])),
+                    c(y[, pline], rev(y[, pline - 1])), border = border,
+                    col = col[pline], lty = lty[pline])
+          }
+          
         }
     }
     if (axis4)  axis(4)
