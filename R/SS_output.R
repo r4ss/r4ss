@@ -1373,7 +1373,9 @@ if(FALSE){
       tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas==spawnseas & ts$Area==a]
     }
   }
-  if(nsexes==1) tsspaw_bio <- tsspaw_bio/2
+  if(nsexes==1){
+    tsspaw_bio <- tsspaw_bio/2
+  }
   depletionseries <- tsspaw_bio/tsspaw_bio[1]
   stats$SBzero <- tsspaw_bio[1]
   stats$current_depletion <- depletionseries[length(depletionseries)]
@@ -1838,6 +1840,16 @@ if(FALSE){
   returndat$FleetNames <- FleetNames
   returndat$repfiletime <- repfiletime
   returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
+
+  # get "sigma" used by Pacific Council in P-star calculations
+  SPB_final_Label <- paste0("SPB_",endyr+1)
+  if(SPB_final_Label %in% der$LABEL){
+    SPB_final_EST <- der$Value[der$LABEL==SPB_final_Label]
+    SPB_final_SD <- der$StdDev[der$LABEL==SPB_final_Label]
+    returndat$Pstar_sigma <- sqrt(log((SPB_final_SD/SPB_final_EST)^2+1))
+  }else{
+    returndat$Pstar_sigma <- NULL
+  }
 
   if(covar){
     returndat$CoVar    <- CoVar
