@@ -30,7 +30,6 @@
 #' @importFrom gplots hist2d
 #' @importFrom gtools running
 #' @importFrom pso psoptim
-#' @importFrom RCurl getURL
 #' @examples
 #' 
 #' \dontrun{
