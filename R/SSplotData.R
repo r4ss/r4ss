@@ -36,6 +36,8 @@
 #' @param verbose report progress to R GUI?
 #' @param datasize Add second data plot whose circles are proportional
 #' to either catch or relative uncertainty? Produced as data_plot2.png.
+#' @param maxsize The size of the largest bubble in the datasize
+#' plot. Default is 1/2.
 #' @author Ian Taylor, Chantel Wetzel
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
@@ -50,6 +52,7 @@ SSplotData <- function(replist,
                        margins=c(5.1,2.1,2.1,8.1),
                        cex=2,lwd=12,
                        datasize=TRUE,
+                       maxsize=0.5,
                        verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
@@ -241,7 +244,7 @@ SSplotData <- function(replist,
               ## contained in size, NA's don't work for symbols so remove them
               x <- x[!is.na(y)]
               y <- y[!is.na(y)]
-              symbols(x=x, y=y, circles=size.cex*0.5,
+              symbols(x=x, y=y, circles=size.cex*maxsize,
                       bg=fleetcol[fleets==ifleet], add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
