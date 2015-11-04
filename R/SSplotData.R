@@ -238,7 +238,9 @@ SSplotData <- function(replist,
               lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
           } else {
               ## make circle sizes propotional to the uncertainty,
-              ## contained in size
+              ## contained in size, NA's don't work for symbols so remove them
+              x <- x[!is.na(y)]
+              y <- y[!is.na(y)]
               symbols(x=x, y=y, circles=size.cex*0.5,
                       bg=fleetcol[fleets==ifleet], add=TRUE, inches=FALSE)
           }
