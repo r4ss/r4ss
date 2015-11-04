@@ -35,7 +35,10 @@
 #' @param lwd Line width for lines showing ranges of years of data
 #' @param verbose report progress to R GUI?
 #' @param datasize Add second data plot whose circles are proportional
-#' to either catch or relative uncertainty? Produced as data_plot2.png.
+#' to either catch or relative uncertainty? Produced as
+#' data_plot2.png. Circle sizes are relative within a data category (e.g.,
+#' catches, indices) and are proportional to: absolute catch for catches,
+#' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1/2.
 #' @author Ian Taylor, Chantel Wetzel
