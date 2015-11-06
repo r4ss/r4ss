@@ -36,7 +36,7 @@
 #' @param verbose report progress to R GUI?
 #' @param datasize Add second data plot whose circles are proportional
 #' to either catch or relative uncertainty? Produced as
-#' data_plot2.png. Circle sizes are relative within a data category (e.g.,
+#' data_plot2.png. Circle areas are relative within a data category (e.g.,
 #' catches, indices) and are proportional to: absolute catch for catches,
 #' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
@@ -204,7 +204,7 @@ SSplotData <- function(replist,
     # count number of unique combinations of fleet and data type
     ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
     main.temp <- if(datasize) {
-        "Data by type and year, circle size relative within data type"
+        "Data by type and year, circle area is relative to precision within data type"
     } else {
         "Data by type and year"
     }
@@ -247,7 +247,7 @@ SSplotData <- function(replist,
               ## contained in size, NA's don't work for symbols so remove them
               x <- x[!is.na(y)]
               y <- y[!is.na(y)]
-              symbols(x=x, y=y, circles=size.cex*maxsize,
+              symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
                       bg=fleetcol[fleets==ifleet], add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
@@ -277,7 +277,10 @@ SSplotData <- function(replist,
       if(plot) plotdata(datasize=TRUE)
       if(print) {
           file <- file.path(plotdir,"data_plot2.png")
-          caption <- "Data presence by year for each fleet"
+          caption <- paste(
+              "Data presence by year for each fleet, where circle area is relative <br> ",
+              "within a data type, and proportional to precision for indices and compositions, <br> ",
+              "and absolute catch for catches")
           plotinfo <- pngfun(file=file, caption=caption)
           plotdata(datasize)
           dev.off()

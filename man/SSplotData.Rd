@@ -60,7 +60,7 @@ be increased if fleet names run off right-hand margin}
 
 \item{datasize}{Add second data plot whose circles are proportional
 to either catch or relative uncertainty? Produced as
-data_plot2.png. Circle sizes are relative within a data category (e.g.,
+data_plot2.png. Circle areas are relative within a data category (e.g.,
 catches, indices) and are proportional to: absolute catch for catches,
 1/SE of indices, and \code{N} for compositions.}
 
