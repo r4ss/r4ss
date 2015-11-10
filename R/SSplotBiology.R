@@ -223,8 +223,25 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       growdatM$high <- qnorm(0.975, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
       growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
     }
+}
+
+  clean_wtatage<- function(x){
+      ## quick function to check for valid wtatage matrix and remove first
+      ## redundant row if it's there. Used in weight_plot and maturity_plot.
+      if(nrow(x)<2){
+          cat("not enough rows in weight-at-age matrix to plot\n")
+          return(NULL)
+      }
+      if(all(x[1,]==x[2,])){
+          x <- x[-1,]
+      }
+      return(x)
   }
-  weight_plot <- function(){ # weight
+
+  weight_plot <- function(gender){ # weight
+      ## This needs to be a function of gender since it can be called
+      ## either once for a single sex model or twice to produce plots for
+      ## each one.
       x <- biology$Mean_Size
       if(!wtatage_switch){ # if empirical weight-at-age is not used
           if(!add){
@@ -238,54 +255,22 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
               lines(x,biology$Wt_len_M,type="o",col=colvec[2])
               if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(colvec[1],colvec[2]))
           }
-      } else {
-          ## if empirical weight-at-age IS used
-
-          ## hake model in SSv3.30 (6-22-15) had gender=2 for some reason
-          ## (haven't tested on 2-sex model with empirical weight-at-age inputs)
-
-          ## If only one sex
-          ## wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==1,-(2:6)]
-          wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas,-(2:6)]
-          ## remove redundant first row if present
-          if(nrow(wtmat)>1 && all(wtmat[1,]==wtmat[2,])){
-              wtmat <- wtmat[-1,]
-          }
-          if(nrow(wtmat)<2){
-              cat("not enough rows in weight-at-age matrix per to plot\n")
-          } else {
-              main <- "Empirical weight at age in middle of the year"
-              if(nsexes > 1){
-                  main <- "Female Empirical weight at age in middle of the year"
-              }
-              persp(x=abs(wtmat$yr),
-                    y=0:accuage,
+      } else { ## if empirical weight-at-age IS used
+          main <- ifelse(gender==1,
+                         "Female Empirical weight at age in middle of the year",
+                         "Male Empirical weight at age in middle of the year")
+          wtmat <- wtatage[wtatage$fleet==-1 & wtatage$gender==gender & wtatage$seas==seas,-(2:6)]
+          wtmat <- clean_wtatage(wtmat)
+          if(!is.null(wtmat)){
+              persp(x=abs(wtmat$yr), y=0:accuage,
                     z=as.matrix(wtmat[,-1]),
-                    theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight",
-                    main=main)
+                    theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main=main)
               makeimage(wtmat, main=main)
-          }
-          if(nsexes > 1){
-              wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas &
-                                   wtatage$gender==2,-(2:6)]
-              ## remove redundant first row if present
-              if(nrow(wtmat)>1 && all(wtmat[1,]==wtmat[2,])){
-                  wtmat <- wtmat[-1,]
-                  print('test')
-              }
-              if(nrow(wtmat)<2){
-                  cat("not enough rows in weight-at-age matrix per to plot\n")
-              }else{
-                  persp(x=abs(wtmat$yr),
-                        y=0:accuage,
-                        z=as.matrix(wtmat[,-1]),
-                        theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight",
-                        main="Male Empirical weight at age in middle of the year")
-                  makeimage(wtmat, main="Male Empirical weight at age in middle of the year")
-              }
           }
       }
   }
+
+
   maturity_plot <- function(){ # maturity
     if(!wtatage_switch){ # if empirical weight-at-age is not used
       x <- biology$Mean_Size
@@ -318,7 +303,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
         }
         main <- paste("Maturity x fecundity",seas_label)
         #print(head(fecmat))
-        if(all(fecmat_seas[1,]==fecmat_seas[2,])) fecmat_seas <- fecmat_seas[-1,] # remove redundant first row
+        fecmat_seas <- clean_wtatage(fecmat_seas)
         persp(x=abs(fecmat_seas[,1]),
               y=0:accuage,
               z=as.matrix(fecmat_seas[,-1]),
@@ -892,9 +877,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
 
   x <- biology$Mean_Size
-
+  ## NOTE: weight plots are now a special case since they are broken down
+  ## by whether the model is 1 or two gender. In the latter two separate
+  ## plots need to be made.
   if(plot){ # plot to screen or to PDF file
-    if(4 %in% subplots) weight_plot()
+    if(4 %in% subplots) {
+        weight_plot(gender=1)
+        if(!wtatage_switch & nsexes==2) weight_plot(gender=2)
+    }
     if(5 %in% subplots) maturity_plot()
     if(6 %in% subplots & FecType==1) gfunc3a()
     if(7 %in% subplots & fecundityOK) gfunc3b()
@@ -903,11 +893,18 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(print){ # print to PNG files
     if(4 %in% subplots){
-      file <- paste(plotdir,"/bio4_weightatsize.png",sep="")
-      caption <- "Weight-length relationship"
-      plotinfo <- pngfun(file=file, caption=caption)
-      weight_plot()
-      dev.off()
+        file <- paste(plotdir,"/bio4_weightatsize1.png",sep="")
+        caption <- "Weight-length relationship for females"
+        plotinfo <- pngfun(file=file, caption=caption)
+        weight_plot(gender=1)
+        dev.off()
+        if(wtatage_switch & nsexes==2){
+            file <- paste(plotdir,"/bio4_weightatsize2.png",sep="")
+            caption <- "Weight-length relationship for males"
+            plotinfo <- pngfun(file=file, caption=caption)
+            weight_plot(gender=2)
+            dev.off()
+        }
     }
     if(5 %in% subplots){
       file <- paste(plotdir,"/bio5_maturity.png",sep="")
