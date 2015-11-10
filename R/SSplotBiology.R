@@ -257,8 +257,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
           }
       } else { ## if empirical weight-at-age IS used
           main <- ifelse(gender==1,
-                         "Female Empirical weight at age in middle of the year",
-                         "Male Empirical weight at age in middle of the year")
+                         "Female empirical weight at age, in middle of the year",
+                         "Male empirical weight at age in, middle of the year")
           wtmat <- wtatage[wtatage$fleet==-1 & wtatage$gender==gender & wtatage$seas==seas,-(2:6)]
           wtmat <- clean_wtatage(wtmat)
           if(!is.null(wtmat)){
@@ -898,7 +898,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(print){ # print to PNG files
     if(4 %in% subplots){
-        file <- paste(plotdir,"/bio4_weightatsize1.png",sep="")
+        file <- paste(plotdir,"/bio4_weightatsize.png",sep="")
         caption <- "Weight-length relationship for females"
         plotinfo <- pngfun(file=file, caption=caption)
         weight_plot(gender=1)
