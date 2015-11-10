@@ -243,6 +243,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
           ## hake model in SSv3.30 (6-22-15) had gender=2 for some reason
           ## (haven't tested on 2-sex model with empirical weight-at-age inputs)
+
+          ## If only one sex
           ## wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==1,-(2:6)]
           wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas,-(2:6)]
           ## remove redundant first row if present
@@ -256,7 +258,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
               if(nsexes > 1){
                   main <- "Female Empirical weight at age in middle of the year"
               }
-              browser()
               persp(x=abs(wtmat$yr),
                     y=0:accuage,
                     z=as.matrix(wtmat[,-1]),
@@ -265,10 +266,12 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
               makeimage(wtmat, main=main)
           }
           if(nsexes > 1){
-              wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas & wtatage$gender==2,-(2:6)]
+              wtmat <- wtatage[wtatage$fleet==-1 & wtatage$seas==seas &
+                                   wtatage$gender==2,-(2:6)]
               ## remove redundant first row if present
               if(nrow(wtmat)>1 && all(wtmat[1,]==wtmat[2,])){
                   wtmat <- wtmat[-1,]
+                  print('test')
               }
               if(nrow(wtmat)<2){
                   cat("not enough rows in weight-at-age matrix per to plot\n")
