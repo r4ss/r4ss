@@ -337,7 +337,12 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     zdataframe$z <- c(t(mat2))
     zdataframe$font <- 1
 
-    ztext <- format(round(zdataframe$z,2))
+    ## Rounding should depend on how big the numbers get. This is untested
+    ## and may need to be adjusted.
+    round.temp <- 0
+    if(max(zdataframe$z) < 10) round.temp <-  1
+
+    ztext <- format(round(zdataframe$z, round.temp))
     ztext[ztext=="  NA"] <- ""
     ztext[ztext=="   NA"] <- ""
     text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
