@@ -24,6 +24,12 @@
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
+#' @param imageplot_text Whether to add numerical text to the image plots
+#' when using weight at age. Defaults to FALSE.
+#' @param imageplot_text_round The number of significant digits to which
+#' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
+#' all your values are small and there's no contrast in the text, you might
+#' want to make this 1 or 2.
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -32,6 +38,8 @@
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
          colvec=c("red","blue","grey20"),shadealpha=0.1,
+         imageplot_text=FALSE,
+         imageplot_text_round=0,
          legendloc="topleft",
          plotdir="default",
          labels=c("Length (cm)",              #1
@@ -325,32 +333,49 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     ## mat2 <- cbind(meanvec,NA,mat)
     yrvec2 <- yrvec
     mat2 <- mat[,-1]
-
-    par(mar=c(4.2,4.2,4,1)+.1)
     lastbin <- max(mat2)
-
-    image(x=0:accuage,y=yrvec2,z=t(mat2),axes=F,xlab='Age',ylab='Year',
-          col=rainbow(60)[1:50], breaks=seq(0,lastbin,length=51),main=main)
-    # add text
-    zdataframe <- expand.grid(yr=yrvec2,age=0:accuage)
-    zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
-    zdataframe$z <- c(t(mat2))
-    zdataframe$font <- 1
-
-    ## Rounding should depend on how big the numbers get. This is untested
-    ## and may need to be adjusted.
-    round.temp <- 0
-    if(max(zdataframe$z) < 10) round.temp <-  1
-
-    ztext <- format(round(zdataframe$z, round.temp))
-    ztext[ztext=="  NA"] <- ""
-    ztext[ztext=="   NA"] <- ""
-    text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
-
-    # finish plot
-    axis(1,at=0:accuage,cex.axis=.7);
-    axis(2,at=yrvec2,las=1,cex.axis=.7)
+    z <- t(mat2)
+    breaks <- seq(0,lastbin,length=51)
+    col <- rainbow(60)[1:50]
+    ## Make a two panel plot, for plot and then legend
+    layout(matrix(c(1,2), nrow=1, ncol=2), widths=c(4,.5), heights=c(4,4))
+    par(mar=c(4.2,4.2,4,.5)+.1)
+    image(x=0:accuage,y=yrvec2,z=z, axes=F,xlab='Age',ylab='Year',
+          col=col, breaks=breaks,main=main)
+    axis(1, cex.axis=.7)
+    axis(2, las=1,cex.axis=.7)
     box()
+
+    ## add text if desired
+    if(imageplot_text){
+        zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
+        zdataframe$z <- c(t(mat2))
+        zdataframe$font <- 1
+        ## Rounding should depend on how big the numbers get. This is untested
+        ## and may need to be adjusted.
+        ztext <- format(round(zdataframe$z, imageplot_round))
+        ztext[ztext=="   NA" | ztext=="  NA"] <- ""
+        text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
+    }
+
+    ## add a legend to the image plot
+    ## Code adapated from online function. Taken on 11/10/2015 from:
+    ## http://menugget.blogspot.com/2011/08/adding-scale-to-image-plot.html#more
+    ## ------------------------------------------------------------
+    zlim <- range(z, na.rm=TRUE)
+    zlim[2] <- zlim[2]+c(zlim[2]-zlim[1])*(1E-3)#adds a bit to the range in both directions
+    zlim[1] <- zlim[1]-c(zlim[2]-zlim[1])*(1E-3)
+    poly <- vector(mode="list", length(col))
+    for(i in seq(poly)) poly[[i]] <- c(breaks[i], breaks[i+1], breaks[i+1], breaks[i])
+    ylim <- range(breaks); xlim <- c(0,1)
+    par(mar=c(4.3,.5, 4.3,3))
+    plot(1, 1, type="n", ylim=ylim, xlim=xlim, axes=FALSE, ann=FALSE, xaxs="i", yaxs="i")
+    for(i in seq(poly))
+            polygon(c(0,0,1,1), poly[[i]], col=col[i], border=NA)
+    axis(4, cex.axis=.7, las=2)
+    box()
+    ## turn off the matrix plot
+    layout(mat=c(1,1))
   }
 
   gfunc3a <- function(){ # fecundity from model parameters
