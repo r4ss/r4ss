@@ -41,6 +41,9 @@
 #' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1/2.
+#' @param alphasize The transparency of the bubbles in the datasize
+#' plot. Defaults to 1 (no transparency). Useful for models with lots of
+#' overlapping points.
 #' @author Ian Taylor, Chantel Wetzel
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
@@ -56,6 +59,7 @@ SSplotData <- function(replist,
                        cex=2,lwd=12,
                        datasize=TRUE,
                        maxsize=0.5,
+                       alphasize=1,
                        verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
@@ -248,7 +252,8 @@ SSplotData <- function(replist,
               x <- x[!is.na(y)]
               y <- y[!is.na(y)]
               symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
-                      bg=fleetcol[fleets==ifleet], add=TRUE, inches=FALSE)
+                      bg=adjustcolor(fleetcol[fleets==ifleet], alpha.f=alphasize),
+                      add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
           itick <- itick+1
