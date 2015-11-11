@@ -6,9 +6,9 @@
 \usage{
 SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
   subplots = 1:14, seas = 1, colvec = c("red", "blue", "grey20"),
-  shadealpha = 0.1, legendloc = "topleft", plotdir = "default",
-  labels = c("Length (cm)", "Age (yr)", "Maturity",
-  "Mean weight (kg) in last year", "Spawning output",
+  shadealpha = 0.1, imageplot_text = FALSE, imageplot_text_round = 0,
+  legendloc = "topleft", plotdir = "default", labels = c("Length (cm)",
+  "Age (yr)", "Maturity", "Mean weight (kg) in last year", "Spawning output",
   "Length (cm, beginning of the year)", "Natural mortality",
   "Female weight (kg)", "Female length (cm)", "Fecundity",
   "Default fecundity label", "Year"), pwidth = 6.5, pheight = 5,
@@ -32,6 +32,14 @@ but maybe not fully implemented even then)}
 
 \item{shadealpha}{Transparency parameter used to make default shadecol
 values (see ?rgb for more info)}
+
+\item{imageplot_text}{Whether to add numerical text to the image plots
+when using weight at age. Defaults to FALSE.}
+
+\item{imageplot_text_round}{The number of significant digits to which
+the image plot text is rounded. Defaults to 0, meaning whole numbers. If
+all your values are small and there's no contrast in the text, you might
+want to make this 1 or 2.}
 
 \item{legendloc}{Location of legend (see ?legend for more info)}
 
