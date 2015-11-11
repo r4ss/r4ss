@@ -573,8 +573,12 @@ SSplotComparisons <-
     }
     # get axis limits
     if(xlim[1]=="default"){
-      xlim <- range(SpawnBio$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+        if(show_equilibrium){
+            xlim <- range(SpawnBio$Yr)
+        } else {
+            xlim <- range(SpawnBio$Yr[-c(1,2)])
+        }
+        if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
     if(show_uncertainty){
@@ -926,7 +930,11 @@ SSplotComparisons <-
       ylab <- gsub("1,000s","billions",ylab)
     }
     if(xlim[1]=="default"){
-      xlim <- range(recruits$Yr)
+        if(show_equilibrium){
+            xlim <- range(recruits$Yr)
+        } else {
+            xlim <- range(recruits$Yr[-c(1,2)])
+        }
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     # plot lines showing recruitment
