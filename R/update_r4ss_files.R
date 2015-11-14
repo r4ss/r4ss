@@ -5,8 +5,9 @@
 #' @author Ian Taylor
 #' @export
 #'
-update_r4ss_files <- function (local = NULL, save = FALSE, revision = "newest",
-                               GitHub = TRUE, override = FALSE){
+#' @param ... Any arguments that you would have passed to the function.
+#'
+update_r4ss_files <- function (...){
   stop('\nr4ss is now hosted on GitHub\n',
        'If you install the "devtools" package, you can get updated code as\n',
        'a complete package by running the following command:\n',
