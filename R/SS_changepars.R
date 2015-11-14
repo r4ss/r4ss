@@ -4,7 +4,7 @@
 #' Current initial value, lower and upper bounds, and phase can be modified,
 #' but function could be expanded to control other columns.
 #' Depends on \code{\link{SS_parlines}}.
-#' Used by \code{\link{SS_profile}} and the \pkg{\link{ss3sim}} package.
+#' Used by \code{\link{SS_profile}} and the \pkg{ss3sim} package.
 #'
 #'
 #' @param dir Directory with control file to change.
@@ -285,4 +285,3 @@ function(
   return(invisible(results))
 
 } # end function
-
