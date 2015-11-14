@@ -52,7 +52,7 @@ instead of lines.
 Jim Lemon, Ian Taylor
 }
 \references{
-\url{http://cran.r-project.org/web/packages/plotrix/index.html}
+\url{https://cran.r-project.org/package=plotrix}
 }
 \keyword{hplot}
 
