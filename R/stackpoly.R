@@ -1,9 +1,9 @@
 #' modified from "stackpoly" by Jim Lemon from "plotrix" package
-#' 
+#'
 #' Plot one or more columns of numeric values as the top edges of polygons
 #' instead of lines.
-#' 
-#' 
+#'
+#'
 #' @param x A numeric data frame or matrix with the 'x' values. If 'y' is NULL,
 #' these will become the 'y' values and the 'x' positions will be the integers
 #' from 1 to dim(x)[1].
@@ -25,13 +25,13 @@
 #' @param \dots Additional arguments passed to 'plot'.
 #' @author Jim Lemon, Ian Taylor
 #' @export
-#' @references \url{http://cran.r-project.org/web/packages/plotrix/index.html}
+#' @references \url{https://cran.r-project.org/package=plotrix}
 #' @keywords hplot
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                        xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
                        col=NA, axis4=F, x.hash=NULL, density=20, ...)
 ## modified version of function "stackpoly" by Jim Lemon from "plotrix"
-## see http://cran.r-project.org/web/packages/plotrix/index.html
+## see https://cran.r-project.org/package=plotrix
 {
     ydim <- dim(y)
     x <- matrix(rep(x, ydim[2]), ncol = ydim[2])
@@ -61,7 +61,7 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                     border = border, col = col[pline],
                     lty = lty[pline])
           }
-            
+
         } else {
           if(x[1,pline]%in%x.hash){
             polygon(c(x[, pline], rev(x[, pline - 1])),
@@ -73,7 +73,7 @@ stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                     c(y[, pline], rev(y[, pline - 1])), border = border,
                     col = col[pline], lty = lty[pline])
           }
-          
+
         }
     }
     if (axis4)  axis(4)

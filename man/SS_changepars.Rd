@@ -69,7 +69,7 @@ Loops over a subset of control file to change parameter lines.
 Current initial value, lower and upper bounds, and phase can be modified,
 but function could be expanded to control other columns.
 Depends on \code{\link{SS_parlines}}.
-Used by \code{\link{SS_profile}} and the \pkg{\link{ss3sim}} package.
+Used by \code{\link{SS_profile}} and the \pkg{ss3sim} package.
 }
 \examples{
 \dontrun{

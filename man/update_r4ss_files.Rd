@@ -4,8 +4,10 @@
 \alias{update_r4ss_files}
 \title{Old function to updates r4ss files, deprecated in favor of devtools method}
 \usage{
-update_r4ss_files(local = NULL, save = FALSE, revision = "newest",
-  GitHub = TRUE, override = FALSE)
+update_r4ss_files(...)
+}
+\arguments{
+\item{...}{Any arguments that you would have passed to the function.}
 }
 \description{
 Left in place only as a pointer to the new installation approach.

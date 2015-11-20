@@ -1,8 +1,8 @@
 #' Plot fit to discard fraction.
-#' 
+#'
 #' Plot fit to discard fraction from Stock Synthesis output file.
-#' 
-#' 
+#'
+#'
 #' @param replist List created by \code{\link{SS_output}}
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
@@ -85,11 +85,11 @@ SSplotDiscard <-
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
       if(DF_discard == -3){ # truncated normal thanks to Robbie Emmet
-        ## liw <- ob - qtruncnorm(0.025, 0, 1, ob, std * ob)
-        ## uiw <- qtruncnorm(0.975, 0, 1, ob, std * ob) - ob
+        ## liw <- ob - truncnorm::qtruncnorm(0.025, 0, 1, ob, std * ob)
+        ## uiw <- truncnorm::qtruncnorm(0.975, 0, 1, ob, std * ob) - ob
         # correction from Robbie on 7/30/15
-        liw <- ob - qtruncnorm(0.025, 0, 1, ob, std) 
-        uiw <- qtruncnorm(0.975, 0, 1, ob, std) - ob
+        liw <- ob - truncnorm::qtruncnorm(0.025, 0, 1, ob, std)
+        uiw <- truncnorm::qtruncnorm(0.975, 0, 1, ob, std) - ob
       }
       if(DF_discard == -2){ # lognormal with std as interpreted as
                             # the standard error (in log space) of the observation
