@@ -48,11 +48,6 @@ Ian Taylor
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\keyword{0px}
-\keyword{20px}
-\keyword{20px;\n',}
-\keyword{5px}
 \keyword{aplot}
 \keyword{hplot}
-\keyword{margin:}
 

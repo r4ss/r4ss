@@ -26,6 +26,7 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' @keywords aplot hplot
+#' 
 SS_html <- function(replist=NULL,
                     plotdir="plots",
                     plotInfoTable=NULL,
@@ -189,7 +190,6 @@ SS_html <- function(replist=NULL,
         '    h2 {\n',
         '    font-size: 20px;\n',
         '    color: #4c994c;\n',
-        #'    margin: 0px 20px 5px 20px;\n',
         '    padding-top: 1px;\n',
         '    font-weight: bold;\n',
         '    border-bottom-width: 1px;\n',
