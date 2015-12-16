@@ -1,13 +1,13 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.23.5
-Date: 2015-7-11
+Version: 1.24.0
+Date: 2015-12-15
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
     Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
-    and other contributors.
+    Sean C. Anderson, and other contributors.
 Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 2.10.0)
@@ -29,3 +29,4 @@ Description: A collection of R functions for use with Stock Synthesis, a
 License: GPL-3
 LazyLoad: yes
 URL: https://github.com/r4ss
+RoxygenNote: 5.0.1
