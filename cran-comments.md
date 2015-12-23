@@ -1,4 +1,5 @@
 ## Test environments
+* Mac, R 3.2.3
 * Windows 7, R 3.2.3 without Rtools
 * win-builder (devel and release)
 
