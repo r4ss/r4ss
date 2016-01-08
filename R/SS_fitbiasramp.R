@@ -351,7 +351,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
     if(spot1!=spot2-4) stop('error related to maxbias inputs in ctl file')
     # replace values
-    ctlfile[spot1:spot2] <- newvals
+    ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
     # write new file
     writeLines(ctlfile,newctl)
     cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
