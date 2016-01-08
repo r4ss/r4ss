@@ -8,7 +8,8 @@ SSplotData(replist, plot = TRUE, print = FALSE, plotdir = "default",
   fleetcol = "default", datatypes = "all", fleets = "all",
   fleetnames = "default", ghost = FALSE, pwidth = 6.5, pheight = 5,
   punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  margins = c(5.1, 2.1, 2.1, 8.1), cex = 2, lwd = 12, verbose = TRUE)
+  margins = c(5.1, 2.1, 2.1, 8.1), cex = 2, lwd = 12, datasize = TRUE,
+  maxsize = 0.5, alphasize = 1, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{\link{SS_output}}}
@@ -56,6 +57,19 @@ be increased if fleet names run off right-hand margin}
 \item{cex}{Character expansion for points showing isolated years of data}
 
 \item{lwd}{Line width for lines showing ranges of years of data}
+
+\item{datasize}{Add second data plot whose circles are proportional
+to either catch or relative uncertainty? Produced as
+data_plot2.png. Circle areas are relative within a data category (e.g.,
+catches, indices) and are proportional to: absolute catch for catches,
+1/SE of indices, and \code{N} for compositions.}
+
+\item{maxsize}{The size of the largest bubble in the datasize
+plot. Default is 1/2.}
+
+\item{alphasize}{The transparency of the bubbles in the datasize
+plot. Defaults to 1 (no transparency). Useful for models with lots of
+overlapping points.}
 
 \item{verbose}{report progress to R GUI?}
 }

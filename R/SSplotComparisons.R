@@ -119,7 +119,11 @@
 #' function
 #' @param verbose Report progress to R GUI?
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
-#' whether input values are from MCMC or to use normal distribution around MLE
+#' whether input values are from MCMC or to use normal distribution around
+#' MLE
+#' @param show_equilibrium Whether to show the equilibrium values for
+#' SSB. For some model comparisons, these might not be comparable and thus
+#' useful to turn off. Defaults to TRUE.
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
@@ -179,7 +183,8 @@ SSplotComparisons <-
            add=FALSE,
            par=list(mar=c(5,4,1,1)+.1),
            verbose=TRUE,
-           mcmcVec="default")
+           mcmcVec="default",
+           show_equilibrium=TRUE)
 {
   meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
 
@@ -568,8 +573,12 @@ SSplotComparisons <-
     }
     # get axis limits
     if(xlim[1]=="default"){
-      xlim <- range(SpawnBio$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+        if(show_equilibrium){
+            xlim <- range(SpawnBio$Yr)
+        } else {
+            xlim <- range(SpawnBio$Yr[-c(1,2)])
+        }
+        if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
     if(show_uncertainty){
@@ -631,7 +640,9 @@ SSplotComparisons <-
       matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
               col=col,pch=pch,lwd=lwd,type="p",add=TRUE)
     }
-    # add arrows for equilibrium values
+
+    if(show_equilibrium){
+    ## add arrows for equilibrium values
     old_warn <- options()$warn      # previous setting
     options(warn=-1)                # turn off "zero-length arrow" warning
     if(show_uncertainty){
@@ -643,8 +654,9 @@ SSplotComparisons <-
              lwd=2)
     }
     options(warn=old_warn)  #returning to old value
-    # add points at equilibrium values
+    ## add points at equilibrium values
     points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
+    }
     # add axes
     if(!add){
       abline(h=0,col="grey")
@@ -917,9 +929,12 @@ SSplotComparisons <-
       yunits <- 1e6
       ylab <- gsub("1,000s","billions",ylab)
     }
-
     if(xlim[1]=="default"){
-      xlim <- range(recruits$Yr)
+        if(show_equilibrium){
+            xlim <- range(recruits$Yr)
+        } else {
+            xlim <- range(recruits$Yr[-c(1,2)])
+        }
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     # plot lines showing recruitment
@@ -943,26 +958,41 @@ SSplotComparisons <-
       }
     }
 
-    # add points at equilibrium values
-    points(x=rep(recruits$Yr[1],nlines), recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
-
+    ## Add points at equilibrium values. Note: I adapted this logic from the
+    ## SSB plot above.
+    if(show_uncertainty){
+        xEqu <- recruits$Yr[2] - (1:nlines)/nlines
+    }else{
+        xEqu <- rep(recruits$Yr[1], nlines)
+    }
+    if(show_equilibrium)
+        points(x=xEqu, y=recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
     # add uncertainty intervals when requested
     if(show_uncertainty){
       for(iline in 1:nlines){
         imodel <- models[iline]
         if(uncertainty[imodel]){
+            ## plot all but equilbrium values
           xvec <- recruits$Yr
           if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
           old_warn <- options()$warn      # previous setting
           options(warn=-1)                # turn off "zero-length arrow" warning
           # arrows (-2 in vectors below is to remove initial year recruitment)
-          arrows(x0=xvec[-2], y0=pmax(as.numeric(recruitsLower[-2,imodel]),0),
-                 x1=xvec[-2], y1=as.numeric(recruitsUpper[-2,imodel]),
-                 length=0.01, angle=90, code=3, col=col[iline])
+          arrows(x0=xvec[-c(1,2)], y0=pmax(as.numeric(recruitsLower[-c(1,2),imodel]),0),
+                 x1=xvec[-c(1,2)], y1=as.numeric(recruitsUpper[-c(1,2),imodel]),
+                 length=0.01, angle=90, code=3, col=col[imodel])
           options(warn=old_warn)  #returning to old value
+        if(show_equilibrium){
+            arrows(x0=xEqu[imodel],
+                   y0=pmax(as.numeric(recruitsLower[1,imodel]),0),
+                   x1=xEqu[imodel],
+                   y1=as.numeric(recruitsUpper[1,imodel]),
+                   length=0.01, angle=90, code=3, col=col[imodel])
         }
       }
     }
+  }
+
     abline(h=0,col="grey")
     if(legend){
       # add legend if requested

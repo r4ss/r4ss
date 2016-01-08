@@ -156,6 +156,13 @@
 #' a vector of appropriate length (currently 11) with labels for each figure
 #' @param catlabels Either NULL to have default labels for catch plots or
 #' a vector of appropriate length (currently 10) with labels for each figure
+#' @param datasize Add second data plot whose circles are proportional
+#' to either catch or relative uncertainty? Produced as
+#' data_plot2.png. Circle areas are relative within a data category (e.g.,
+#' catches, indices) and are proportional to: absolute catch for catches,
+#' 1/SE of indices, and \code{N} for compositions.
+#' @param maxsize The size of the largest bubble in the datasize
+#' plot. Default is 1/2.
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -191,7 +198,9 @@ SS_plots <-
     new=TRUE,
     SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
     legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
-    scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
+    scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
+      maxsize=.5,
+      ...)
 {
   if(!is.null(print)){
     stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
@@ -1123,7 +1132,7 @@ SS_plots <-
                  pwidth=pwidth, pheight=pheight, punits=punits,
                  ptsize=ptsize, res=res, cex.main=cex.main,
                  plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
-                 fleetnames=fleetnames)
+                 fleetnames=fleetnames, datasize=datasize, maxsize=maxsize)
     if(!is.null(temp) & length(temp)>0) plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print

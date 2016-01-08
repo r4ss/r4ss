@@ -25,7 +25,7 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
   densityadjust = 1, densitysymbols = TRUE, densitytails = TRUE,
   densitymiddle = FALSE, densitylwd = 1, fix0 = TRUE, new = TRUE,
   add = FALSE, par = list(mar = c(5, 4, 1, 1) + 0.1), verbose = TRUE,
-  mcmcVec = "default")
+  mcmcVec = "default", show_equilibrium = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}}
@@ -204,7 +204,12 @@ function}
 \item{verbose}{Report progress to R GUI?}
 
 \item{mcmcVec}{Vector of TRUE/FALSE values (or single value) indicating
-whether input values are from MCMC or to use normal distribution around MLE}
+whether input values are from MCMC or to use normal distribution around
+MLE}
+
+\item{show_equilibrium}{Whether to show the equilibrium values for
+SSB. For some model comparisons, these might not be comparable and thus
+useful to turn off. Defaults to TRUE.}
 }
 \description{
 Creates a user-chosen set of plots comparing model output from a summary of
