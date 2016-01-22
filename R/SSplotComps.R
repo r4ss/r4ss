@@ -104,6 +104,7 @@
 #' work correctly in all cases.
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
+#' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Ian Taylor
 #' @export
@@ -144,7 +145,7 @@ SSplotComps <-
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,addMeans=TRUE,...)
+           scalebins=FALSE,addMeans=TRUE,mainTitle=TRUE,...)
 {
   ################################################################################
   # SSplotComps
@@ -462,7 +463,11 @@ SSplotComps <-
 
         ### subplot 1: multi-panel composition plot
         if(1 %in% subplots & kind!="cond"){ # for age or length comps, but not conditional AAL
-          ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
+          if(mainTitle) {
+            ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           tempfun <- function(ipage,...){
             sexvec <- dbase$sex
@@ -561,8 +566,12 @@ SSplotComps <-
               growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
             }
           }
-          ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-          ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           tempfun2 <- function(){
@@ -629,8 +638,12 @@ SSplotComps <-
         ### subplot 3: multi-panel bubble plots for conditional age-at-length
 
         if(3 %in% subplots & kind=="cond"){
-          ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-          ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           # calculate scaling of lines showing effect and input sample size
           sampsizeline.old <- sampsizeline
@@ -701,7 +714,11 @@ SSplotComps <-
             if(length(dbase$Obs[dbase$Yr==aalyr])>0){
               if(4 %in% subplots){
                 ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-                ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
+                if(mainTitle) {
+                  ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 ydbase <- dbase[dbase$Yr==aalyr,]
                 lenbinlegend <- paste(ydbase$Lbin_lo,labels[7],sep="")
@@ -743,8 +760,12 @@ SSplotComps <-
               if(5 %in% subplots){
                 ### subplot 5: Pearson residuals for A-L key
                 z <- ydbase$Pearson
-                ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
-                ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+                if(mainTitle) {
+                  ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
+                  ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun5 <- function(){
                   bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
@@ -794,7 +815,11 @@ SSplotComps <-
               ilenbin <- goodbins[ibin]
               abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
               if(nrow(abindbase)>0){ # check for data associated with this bin
-                ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                if(mainTitle) {
+                  ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun6 <- function(ipage,...){ # temporary function to aid repeating the big function call
                   make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr.S,linesx=abindbase$Bin,linesy=abindbase$Exp,
@@ -828,7 +853,11 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-          ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+          if(mainTitle) {
+            ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           lfitfunc <- function(){
             if(kind=="cond"){
@@ -949,7 +978,11 @@ SSplotComps <-
         }
         ### subplot 10: Andre's mean age and std. dev. in conditional AAL
         if(10 %in% subplots & kind=="cond"){
-          ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+          if(mainTitle) {
+            ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+          } else {
+            ptitle <- ""
+          }
           andrefun <- function(ipage=0){
             Lens <-sort(unique(dbase$Lbin_lo))
             Yrs <- sort(unique(dbase$Yr.S))
@@ -1122,7 +1155,11 @@ SSplotComps <-
           #filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
           filename_fltsexmkt <- paste(filesex, "mkt",j,sep="")
 
-          ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+          if(mainTitle) {
+            ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           Bins <- sort(unique(dbase$Bin))
@@ -1253,7 +1290,11 @@ SSplotComps <-
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
             filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
 
-            ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
+            if(mainTitle) {
+              ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
+            } else {
+              ptitle <- ""
+            }
             titles <- c(ptitle,titles) # compiling list of all plot titles
 
             Bins <- sort(unique(dbase$Bin))
@@ -1413,8 +1454,12 @@ SSplotComps <-
               }
               agg$fy <- agg$f + agg$y/10000
               # total title
-              ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
-                              "\naggregated across seasons within year",sep="")
+              if(mainTitle) {
+                ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
+                                "\naggregated across seasons within year",sep="")
+              } else {
+                ptitle <- ""
+              }
 
               # group remaining calculations as a function
               tempfun9 <- function(ipage,...){
@@ -1529,7 +1574,11 @@ SSplotComps <-
           titlemkt <- ifelse(printmkt,titlemkt,"")
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
 
-          ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           filename_sexmkt <- paste("sex",k,"mkt",j,sep="")
 
