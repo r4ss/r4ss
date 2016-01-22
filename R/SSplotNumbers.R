@@ -34,6 +34,7 @@
 #' @param cex.main character expansion for plot titles
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
+#' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -74,6 +75,7 @@ SSplotNumbers <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            cex.main=1,
            plotdir="default",
+           mainTitle=TRUE,
            verbose=TRUE)
 {
   # plot various things related to numbers-at-age for Stock Synthesis
@@ -218,9 +220,13 @@ SSplotNumbers <-
             periodtitle <- labels[17]
             fileperiod <- "_mid"
           }
-          plottitle1 <- paste(periodtitle, " ", labels[15], sextitle,
+          if(mainTitle) {
+            plottitle1 <- paste(periodtitle, " ", labels[15], sextitle,
                               " in (max ~ ",format(round(max(resz),1),nsmall=1),
                               " ",units,")",sep="")
+          } else {
+            plottitle1 <- ""
+          }
 
           # calculations related to mean age
           natagetemp1 <- as.matrix(natagetemp0[,remove]) # removing the first columns to get just numbers
@@ -250,8 +256,12 @@ SSplotNumbers <-
           if(m==1 & nsexes==2) meanagef <- meanage # save value for females in 2 sex models
 
           ylab <- labels[6]
-          plottitle2 <- paste(periodtitle,labels[7])
-          if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
+          if(mainTitle) {
+            plottitle2 <- paste(periodtitle,labels[7])
+            if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
+          } else {
+            plottitle2 <- ""
+          }
 
           ageBubble.fn <- function(){
             # bubble plot with line
@@ -300,8 +310,12 @@ SSplotNumbers <-
     } # end area loop
     if(nsexes>1){
       for(iarea in areas){
-        plottitle3 <- paste(labels[11],sep="")
-        if(nareas > 1) plottitle3 <- paste(plottitle3," for ",areanames[iarea],sep="")
+        if(mainTitle) {
+          plottitle3 <- paste(labels[11],sep="")
+          if(nareas > 1) plottitle3 <- paste(plottitle3," for ",areanames[iarea],sep="")
+        } else {
+          plottitle3 <- ""
+        }
 
         natagef <- get(paste("natagetemp0area",iarea,"sex",1,sep=""))
         natagem <- get(paste("natagetemp0area",iarea,"sex",2,sep=""))
@@ -399,9 +413,13 @@ SSplotNumbers <-
             if(period[iperiod]=="B") periodtitle <- labels[16] else
             if(period[iperiod]=="M") periodtitle <- labels[17] else
             stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
-            plottitle1 <- paste(periodtitle, " ", labels[18], sextitle,
+            if(mainTitle) {
+              plottitle1 <- paste(periodtitle, " ", labels[18], sextitle,
                                 " in (max ~ ",format(round(max(resz),1),nsmall=1),
                                 " ",units,")",sep="")
+            } else {
+              plottitle1 <- ""
+            }
 
             # calculations related to mean len
             natlentemp1 <- as.matrix(natlentemp0[,remove]) # removing the first columns to get just numbers
@@ -427,8 +445,12 @@ SSplotNumbers <-
             if(m==1 & nsexes==2) meanlenf <- meanlenf <- meanlen # save value for females in 2 sex models
 
             ylab <- labels[13]
-            plottitle2 <- paste(periodtitle,labels[14])
-            if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
+            if(mainTitle) {
+              plottitle2 <- paste(periodtitle,labels[14])
+              if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
+            } else {
+              plottitle2 <- ""
+            }
 
             lenBubble.fn <- function(){
               # bubble plot with line
@@ -483,14 +505,19 @@ SSplotNumbers <-
           natlenratio <- as.matrix(natlenm[,remove]/natlenf[,remove])
           if(diff(range(natlenratio,finite=TRUE))!=0){
             numbersRatioLen.fn <- function(males.to.females=TRUE,...){
-              if(males.to.females){
-                main <- labels[19]
-                z <- natlenratio
-              }else{
-                main <- labels[20]
-                z <- 1/natlenratio
+              if(mainTitle) {
+                if(males.to.females){
+                  main <- labels[19]
+                  z <- natlenratio
+                }else{
+                  main <- labels[20]
+                  z <- 1/natlenratio
+                }
+                if(nareas > 1) main <- paste(main," for ",areanames[iarea],sep="")
+              } else {
+                main <- ""
               }
-              if(nareas > 1) main <- paste(main," for ",areanames[iarea],sep="")
+
               contour(natlenyrsB,lbinspop,z,
                       xaxs="i",yaxs="i",xlab=labels[1],ylab=labels[12],
                       main=main,cex.main=cex.main,...)
@@ -538,10 +565,16 @@ SSplotNumbers <-
       if(!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
       if(length(bseas)>1) cat("showing equilibrium age for first birth season",BirthSeas,"\n")
 
+      if(mainTitle) {
+        pt1 <- labels[10]
+      } else {
+        pt1 <- ""
+      }
+
       plot(0,type='n',xlim=c(0,accuage),
            ylim=c(0,1.05*max(equilage[equilage$BirthSeas==BirthSeas
              & equilage$Seas==BirthSeas,remove])),
-           xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=labels[10],cex.main=cex.main)
+           xaxs='i',yaxs='i',xlab='Age',ylab=labels[9],main=pt1,cex.main=cex.main)
 
       # now fill in legend
       legendlty <- NULL
@@ -590,9 +623,15 @@ SSplotNumbers <-
       ylim <- c(0,max(yvals))
       if(N_ageerror_defs == 1) colvec <- "black" else colvec <- rich.colors.short(N_ageerror_defs)
 
+      if(mainTitle) {
+        pt1 <- labels[8]
+      } else {
+        pt1 <- ""
+      }
+
       ageingfun <- function(){
         matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,
-                xlab=labels[3],ylab=labels[4],main=labels[8],cex.main=cex.main)
+                xlab=labels[3],ylab=labels[4],main=pt1,cex.main=cex.main)
         abline(h=0,col="grey") # grey line at 0
         legend('topleft',bty='n',pch=1,lty=1,col=colvec,
                ncol=ifelse(N_ageerror_defs<20,1,2), # more columns for crazy models like hake
@@ -607,7 +646,7 @@ SSplotNumbers <-
           yvals <- age_error_mean[,-1]
           ylim <- c(0,max(yvals))
           matplot(xvals,yvals,ylim=ylim,type="o",pch=1,lty=1,col=colvec,
-                  xlab=labels[3],ylab=labels[5],main=labels[8])
+                  xlab=labels[3],ylab=labels[5],main=pt1)
           abline(h=0,col="grey") # grey line at 0
           abline(0,1,col="grey") # grey line with slope = 1
           legend('topleft',bty='n',pch=1,lty=1,col=colvec,
@@ -632,7 +671,7 @@ SSplotNumbers <-
               z=z,
               xlab=labels[3],
               ylab=ylab,
-              main=paste(labels[8], ": matrix for method ", i_ageerror_def, sep=""),
+              main=paste(pt1, ": matrix for method ", i_ageerror_def, sep=""),
               axes=FALSE)
         if(accuage<=40){
           axis(1, at=0:accuage)
