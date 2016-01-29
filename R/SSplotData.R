@@ -153,7 +153,7 @@ SSplotData <- function(replist,
               }
               if(typename %in% c("mnwgt","discard")){
                   allyrs <- dat$Yr[dat$FleetNum==ifleet]
-                  size <- rep(1, len=length(allyears))
+                  size <- rep(1, len=length(allyrs))
               }
               if(length(grep("dbase",typename))>0){
                   allyrs <- dat$Yr[dat$Fleet==ifleet]

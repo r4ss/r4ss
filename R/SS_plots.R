@@ -410,6 +410,16 @@ SS_plots <-
     plotinfo <- selexinfo$plotinfo
     if(!is.null(plotinfo))
       plotInfoTable <- rbind(plotInfoTable,plotinfo)
+
+    plotinfo <-
+      SSunavailableSpawningOutput(replist=replist, 
+                                  plot=!png, print=png,
+                                  plotdir=plotdir,
+                                  pwidth=pwidth, pheight=pheight,
+                                  punits=punits, res=res,
+                                  ptsize=ptsize, cex.main=cex.main)
+    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+    
   } # end if igroup in plot or print
 
   ##########################################
