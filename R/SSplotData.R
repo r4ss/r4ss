@@ -44,6 +44,7 @@
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
+#' @param both Logcal to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.
 #' @author Ian Taylor, Chantel Wetzel
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
@@ -60,6 +61,7 @@ SSplotData <- function(replist,
                        datasize=TRUE,
                        maxsize=0.5,
                        alphasize=1,
+                       both=T,
                        verbose=TRUE)
 {
   pngfun <- function(file,caption=NA){
@@ -269,7 +271,7 @@ SSplotData <- function(replist,
     axis(1,at=xticks)
   }
   ## Always make the original one
-  if(plot) plotdata(datasize=FALSE)
+  if(plot & (!datasize | both)) plotdata(datasize=FALSE)
   if(print) {
     file <- file.path(plotdir,"data_plot.png")
     caption <- "Data presence by year for each fleet"
