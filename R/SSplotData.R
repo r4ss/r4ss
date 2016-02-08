@@ -45,7 +45,7 @@
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
 #' @param both Logcal to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.
-#' @author Ian Taylor, Chantel Wetzel
+#' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
 #' \code{\link{SS_readdat}}
@@ -155,7 +155,7 @@ SSplotData <- function(replist,
               }
               if(typename %in% c("mnwgt","discard")){
                   allyrs <- dat$Yr[dat$FleetNum==ifleet]
-                  size <- rep(1, len=length(allyears))
+                  size <- rep(1, len=length(allyrs))
               }
               if(length(grep("dbase",typename))>0){
                   allyrs <- dat$Yr[dat$Fleet==ifleet]
