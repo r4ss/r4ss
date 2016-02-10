@@ -1494,7 +1494,15 @@ SSplotComparisons <-
           warning("You are shading both tails and central 95% of density plots",
                   "which is illogical")
         }
-        if(densitytails & !is.na(parSD) && parSD>0){
+
+        if(mcmcVec[iline]) {
+          doShade <- T
+        } else {
+          if(!is.na(parSD) && parSD>0) {
+            doShade <- T
+          }
+        }
+        if(densitytails & doShade) {
           # figure out which points are in the tails of the distibutions
           x.lower <- x[x<=x2[1]]
           y.lower <- y[x<=x2[1]]
@@ -1506,7 +1514,7 @@ SSplotComparisons <-
           polygon(c(x.upper[1],x.upper,rev(x.upper)[1]),
                   c(0,y.upper,0),col=shadecol[iline],border=NA)
         }
-        if(densitymiddle & !is.na(parSD) && parSD>0){
+        if(densitymiddle & doShade) {#} & !is.na(parSD) && parSD>0){
           x.middle <- x[x>=x2[1] & x<=rev(x2)[1]]
           y.middle <- y[x>=x2[1] & x<=rev(x2)[1]]
           polygon(c(x.middle[1],x.middle,rev(x.middle)[1]),
