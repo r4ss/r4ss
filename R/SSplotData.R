@@ -72,14 +72,25 @@ SSplotData <- function(replist,
   }
   plotinfo <- NULL
 
+  ### override datasize variable in seasonal models
+  if(replist$nseasons > 1){
+    cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
+    datasize <- FALSE
+  }
+
   ### get info from replist
   # dimensions
   startyr       <- replist$startyr
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
   nfishfleets   <- replist$nfishfleets
-  if(fleetnames[1]=="default") fleetnames  <- replist$FleetNames
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  
+  if(fleetnames[1]=="default"){
+    fleetnames  <- replist$FleetNames
+  }
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   # catch
   catch <- SSplotCatch(replist,plot=F,print=F,verbose=FALSE)

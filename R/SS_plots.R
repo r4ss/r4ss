@@ -1126,6 +1126,7 @@ SS_plots <-
   igroup <- 24
   if(igroup %in% plot){
     if(verbose) cat("Starting data range plots (group ",igroup,")\n",sep="")
+    plotinfo <- NULL
     temp <-
       SSplotData(replist=replist,
                  plot=!png, print=png,
