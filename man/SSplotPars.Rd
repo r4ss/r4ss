@@ -67,7 +67,7 @@ limits are based on the model results. Default=NULL.}
 \item{ltyvec}{Vector of line types used for lines showing MLE and prior
 distributions and the median of the posterior distribution}
 
-\item{colvec}{Vector of colors used for lines and polygons showing MLE, 
+\item{colvec}{Vector of colors used for lines and polygons showing MLE,
 initial value, prior, posterior, and median of the posterior.}
 
 \item{new}{Open new window for plotting? Default=TRUE.}

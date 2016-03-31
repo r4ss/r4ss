@@ -20,7 +20,7 @@ write Stock Synthesis data file from list object in R which was probably
 created using \code{\link{SS_readdat}}
 }
 \author{
-Ian Taylor
+Ian Taylor, Yukio Takeuchi
 }
 \seealso{
 \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},

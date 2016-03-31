@@ -24,7 +24,7 @@ SSplotComps(replist, subplots = c(1:21, 24), kind = "LEN", sizemethod = 1,
   maxrows2 = 2, maxcols2 = 4, rows = 1, cols = 1, andre_oma = c(3, 0,
   3, 0), andrerows = 3, fixdims = TRUE, fixdims2 = FALSE,
   maxneff = 5000, verbose = TRUE, scalebins = FALSE, addMeans = TRUE,
-  ...)
+  mainTitle = TRUE, ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -187,6 +187,8 @@ work correctly in all cases.}
 
 \item{addMeans}{Add parameter means in addition to medians for MCMC
 posterior distributions in which the median and mean differ.}
+
+\item{mainTitle}{Logical indicating if a title for the plot should be produced}
 
 \item{\dots}{additional arguments that will be passed to the plotting.}
 }

@@ -18,7 +18,7 @@ SSplotNumbers(replist, subplots = 1:9, plot = TRUE, print = FALSE,
   "Sex ratio of numbers at length (males/females)",
   "Sex ratio of numbers at length (females/males)"), pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  plotdir = "default", verbose = TRUE)
+  plotdir = "default", mainTitle = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -70,6 +70,8 @@ with SSv3.11)}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
+
+\item{mainTitle}{Logical indicating if a title for the plot should be produced}
 
 \item{verbose}{report progress to R GUI?}
 }
