@@ -402,7 +402,7 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
         stop("Problem with method in size frequency data:\n",
              "Expecting method: ",imethod,"\n",
              "Read method(s): ",paste(unique(sizefreq_data_tmp$Method),collapse=", "))
-      sizefreq_data_list[[i]] <- sizefreq_data_tmp
+      sizefreq_data_list[[imethod]] <- sizefreq_data_tmp
       i <- i+Nrows*Ncols
     }
     datlist$sizefreq_data_list <- sizefreq_data_list
