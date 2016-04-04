@@ -60,7 +60,7 @@ SS_html <- function(replist=NULL,
       }
       plotInfoTable$png_time <- as.POSIXlt(plotInfoTable$png_time)
       # look for duplicate models
-      runs <- unique(plotInfoTable$Run_time)
+      runs <- unique(plotInfoTable$StartTime)
       if(length(runs)>1){
         if(multimodel){
           msg <- c("Warning!: CSV files with name 'plotInfoTable...' are from multiple model runs.\n",

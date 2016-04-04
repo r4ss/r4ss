@@ -224,7 +224,7 @@ SS_plots <-
   inputs      <- replist$inputs
   endyr       <- replist$endyr
   SS_version  <- replist$SS_version
-  Run_time    <- replist$Run_time
+  StartTime   <- replist$StartTime
   Files_used  <- replist$Files_used
   FleetNames  <- replist$FleetNames
   rmse_table  <- replist$rmse_table
@@ -331,7 +331,7 @@ SS_plots <-
     y <- y+ystep
     text(0,y,paste("Stock Synthesis version:",substr(SS_version,1,9)),pos=4)
     y <- y+ystep
-    text(0,y,Run_time,pos=4)
+    text(0,y,StartTime,pos=4)
     y <- y+ystep
     Files2 <- strsplit(Files_used," ")[[1]]
     text(0,y,paste(Files2[[1]],Files2[2]),pos=4)
@@ -1152,7 +1152,7 @@ SS_plots <-
     png_time <- Sys.time()
     #png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')
     plotInfoTable$png_time <- png_time
-    plotInfoTable$Run_time <- Run_time
+    plotInfoTable$StartTime <- StartTime
     # create a name for the file and write it to the plot directory
     csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv",sep="")
     write.csv(plotInfoTable, csvname, row.names=FALSE)
