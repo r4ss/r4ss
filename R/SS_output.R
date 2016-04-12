@@ -746,7 +746,9 @@ SS_output <-
                                                names(likelihoods_by_tag_group)[-(1:2)]))
     # remove colon from "Tag_Group:"
     likelihoods_by_tag_group$Label[1] <- "Tag_Group"
+    stats$likelihoods_by_tag_group <- likelihoods_by_tag_group
   }
+
   # clean up fleet-specific likelihoods
   likelihoods_by_fleet[likelihoods_by_fleet=="_"] <- NA
   for(icol in 2:ncol(likelihoods_by_fleet)){
@@ -760,8 +762,6 @@ SS_output <-
   likelihoods_by_fleet$Label <- labs
 
   stats$likelihoods_by_fleet <- likelihoods_by_fleet
-  stats$likelihoods_by_tag_group <- likelihoods_by_tag_group
-
 
   # parameters
   if(SS_versionNumeric>= 3.23) shift <- -1
