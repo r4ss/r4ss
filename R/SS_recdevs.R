@@ -91,7 +91,7 @@ function(
   yrs <- fyr:lyr
   Nrecdevs <- lyr-fyr+1
   phase <- readfun("recdev phase", maxlen=1)
-  advanced <- readfun("read 11 advanced options", maxlen=1)
+  advanced <- readfun("advanced options", maxlen=1)
   if(advanced!=1) stop("advanced options must be turned on in control file")
   if(phase>0){
     newphase <- -abs(phase)
