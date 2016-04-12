@@ -723,17 +723,44 @@ SS_output <-
   lambdas <- as.numeric(lambdas)
   like$lambdas <- lambdas
   stats$likelihoods_used <- like
-  stats$likelihoods_raw_by_fleet <-
+  # read fleet-specific likelihoods
+  likelihoods_by_fleet <-
+    matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+
+  # check for presence of tag data likelihood which has different column structure
+  if(length(grep("Tag_Group", likelihoods_by_fleet[,1]))>0){
+    # read fleet-specific likelihoods again
     likelihoods_by_fleet <-
-      matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+      matchfun2("Fleet:",0,"Tag_Group:",-2,header=TRUE)
+    # read tag-group-specific likelihoods
+    likelihoods_by_tag_group <-
+      matchfun2("Tag_Group:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+    # clean up tag group likelihoods
+    likelihoods_by_tag_group[likelihoods_by_tag_group=="_"] <- NA
+    for(icol in 2:ncol(likelihoods_by_tag_group)){
+      likelihoods_by_tag_group[,icol] <- as.numeric(likelihoods_by_tag_group[,icol])
+    }
+    # rename columns from numbers to "TagGroup_1", etc.
+    names(likelihoods_by_tag_group) <- c("Label","ALL",
+                                         paste0("TagGroup_",
+                                               names(likelihoods_by_tag_group)[-(1:2)]))
+    # remove colon from "Tag_Group:"
+    likelihoods_by_tag_group$Label[1] <- "Tag_Group"
+  }
+  # clean up fleet-specific likelihoods
   likelihoods_by_fleet[likelihoods_by_fleet=="_"] <- NA
-  for(icol in 2:ncol(likelihoods_by_fleet)) likelihoods_by_fleet[,icol] <- as.numeric(likelihoods_by_fleet[,icol])
+  for(icol in 2:ncol(likelihoods_by_fleet)){
+    likelihoods_by_fleet[,icol] <- as.numeric(likelihoods_by_fleet[,icol])
+  }
+  # replace numeric column names with fleet names 
   names(likelihoods_by_fleet) <- c("Label","ALL",FleetNames)
   labs <- likelihoods_by_fleet$Label
   # removing ":" at the end of likelihood components
   for(irow in 1:length(labs)) labs[irow] <- substr(labs[irow],1,nchar(labs[irow])-1)
   likelihoods_by_fleet$Label <- labs
+
   stats$likelihoods_by_fleet <- likelihoods_by_fleet
+  stats$likelihoods_by_tag_group <- likelihoods_by_tag_group
 
 
   # parameters
