@@ -109,7 +109,7 @@ sel.line <-
     if(model == "Double_Normal") col <- "blue"
     if(model == "Double_Logistic") col <- "red"
 
-    curve(sel, add=TRUE, from=c(min.dist, max.dist), type='l', lwd=1, col=col)
+    curve(sel, add=TRUE, from=min.dist, to=max.dist, type='l', lwd=1, col=col)
 
 } # end sel.line function
 
