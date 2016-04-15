@@ -58,7 +58,7 @@
 #' @param thin Additional thinning applied to MCMC posteriors. Default=1.
 #' @param ctlfile Specify control file to get min and max recdev values
 #' (otherwise assumed to be -5 and 5). Default="control.ss_new".
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Cole C. Monnahan
 #' @export
 #' @keywords hplot
 #' @examples
@@ -314,15 +314,17 @@ SSplotPars <-
 
   if(new) par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
   if(verbose) cat("Making plots of parameters:\n")
-  if(length(grep('DEVrwalk', x=goodnames))>0){
-      cat('\nNOTE: This model contains random walk deviates which are not\n',
-          'fully implemented. Prior and bounds unavailable, so these are skipped\n',
-          'and fitrange is set to TRUE for those parameters.\n\n')
+  if(length(grep('DEVrwalk', x=goodnames))>0 |
+     length(grep('DEVadd', x=goodnames))>0 |
+     length(grep('DEVmult', x=goodnames))>0){
+    cat('\nNOTE: This model contains random walk deviates which are not\n',
+        'fully implemented. Prior and bounds unavailable, so these are skipped\n',
+        'and fitrange is set to TRUE for those parameters.\n\n')
   }
 
   for(ipar in 1:npars){
     # grab name and full parameter line
-      parname <- goodnames[ipar]
+    parname <- goodnames[ipar]
 
     if(verbose) cat("    ",parname,"\n")
     parline <- partable[partable$Label==parname,]
@@ -347,15 +349,17 @@ SSplotPars <-
       Psd <- partable$Value[partable$Label=="SR_sigmaR"]
     }
 
-      ## Random devations on parameters (not rec devs) are a special case
-      ## too. For now the sigma value specified in the ctl file is not
-      ## recorded anywhere so we skip the prior.
-      isdev <- FALSE
-      if(length(grep('DEVrwalk', x=parname))==1){
-          initval <- 0
-          isdev <- TRUE
-      }
-
+    ## Devations on parameters (either random-walk, additive, or multiplicative)
+    ## are a special case (as opposed to rec devs)
+    ## too. For now the sigma value specified in the ctl file is not
+    ## recorded anywhere so we skip the prior.
+    isdev <- FALSE
+    if(length(grep('DEVrwalk', x=parname))>0 |
+       length(grep('DEVadd', x=parname))>0 |
+       length(grep('DEVmult', x=parname))>0){
+      initval <- 0
+      isdev <- TRUE
+    }
     # make empty holders for future information
     ymax <- 0 # upper y-limit in plot
     xmin <- NULL # lower x-limit in plot
