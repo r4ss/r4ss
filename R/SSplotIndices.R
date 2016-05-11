@@ -413,7 +413,7 @@ function(replist,subplots=1:9,
           cpuefun5()
           dev.off()
         }
-        if(8 %in% subplots & time){
+        if(8 %in% subplots & time2){
           file <- paste(plotdir,"/index8_Q_vs_Vuln_bio_",Fleet,".png",sep="")
           caption <-
             paste("Catchability vs. vulnerable biomass for fleet ",Fleet,"<br> \n",
