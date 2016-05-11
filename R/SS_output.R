@@ -470,13 +470,14 @@ SS_output <-
   accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
   # which column of INDEX_1 has number of CPUE values (used in reading INDEX_2)
   if(SS_versionNumeric >= 3.3){
-    ncpue_column <- 13
+    ncpue_column <- 11
+    INDEX_1 <- matchfun2("INDEX_1",1,"INDEX_3",-4, header=TRUE)
+    ncpue <- sum(as.numeric(INDEX_1$N), na.rm=TRUE)
     # IAN T.: this may need updating in revised version
   }else{
     ncpue_column <- 11
+    ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
   }
-  ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
-
 
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
@@ -958,17 +959,8 @@ SS_output <-
   }
 
   # derived quantities
-  if(SS_versionNumeric < 3.3){
-    der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
-                     header=TRUE)
-    MGParm_dev_details <- NA
-  }else{
-    der <- matchfun2("DERIVED_QUANTITIES",4,"MGParm_dev_details",0,
-                     header=TRUE)
-    MGParm_dev_details <- matchfun2("MGParm_dev_details",1,
-                                    "MGparm_By_Year_after_adjustments",-1,
-                                    header=TRUE)
-  }
+  der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
+                   header=TRUE)
   der <- der[der$LABEL!="Bzero_again",]
   der[der=="_"] <- NA
   for(i in 2:3) der[,i] = as.numeric(der[,i])
@@ -1091,13 +1083,27 @@ SS_output <-
   stats$index_variance_tuning_check <- vartune
 
   # Length comp effective N tuning check
-  lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
-  names(lenntune)[10] <- "FleetName"
-  lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
-  # avoid NA warnings by removing #IND values
-  lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-  for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
-  lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
+  if(SS_versionNumeric < 3.3){
+    # old way didn't have key word and had parantheses and other issues with column names
+    lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
+    names(lenntune)[10] <- "FleetName"
+    # reorder columns (leaving out sample sizes perhaps to save space)
+    lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
+    # avoid NA warnings by removing #IND values
+    lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
+    for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
+    lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
+  }else{
+    # new in 3.30 is keyword at top
+    lenntune <- matchfun2("Length_Comp_Fit_Summary",2,"FIT_AGE_COMPS",-1,header=TRUE)
+    # reorder columns (leaving out sample sizes perhaps to save space)
+    lenntune <- lenntune[lenntune$N>0, c(9,1,4:8)]
+    # avoid NA warnings by removing #IND values (not sure if they're occur in 3.30)
+    lenntune$"Recommend_Var_Adj"[lenntune$"Recommend_Var_Adj"=="-1.#IND"] <- NA
+    for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
+    ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
+    #lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+  }
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
   ## # FIT_AGE_COMPS
@@ -1182,7 +1188,7 @@ if(FALSE){
   returndat$seasdurations  <- seasdurations
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
-  returndat$MGParm_dev_details <- MGParm_dev_details
+#  returndat$MGParm_dev_details <- MGParm_dev_details
   returndat$MGparmAdj   <- MGparmAdj
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
@@ -1298,7 +1304,13 @@ if(FALSE){
   returndat$sizeselex <- selex
 
   # Age based selex
-  ageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1,header=TRUE)
+  if(!is.na(matchfun("ENVIRONMENTAL_DATA"))){
+    ageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1,header=TRUE)
+  }else{
+    ageselex <- matchfun2("AGE_SELEX",4,"TAG_Recapture",-1,header=TRUE)
+  }
+  # filter forecast years from selectivity if no forecast
+  # NOTE: maybe refine this in 3.30
   if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
