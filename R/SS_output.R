@@ -104,8 +104,18 @@ SS_output <-
     # return a subset of values from the report file (or other file)
     # subset is defined by character strings at the start and end, with integer
     # adjustments of the number of lines to above/below the two strings
-    line1 <- match(string1,if(substr1){substring(objmatch[,matchcol1],1,nchar(string1))}else{objmatch[,matchcol1]})
-    line2 <- match(string2,if(substr2){substring(objmatch[,matchcol2],1,nchar(string2))}else{objmatch[,matchcol2]})
+    line1 <- match(string1,
+                   if(substr1){
+                     substring(objmatch[,matchcol1],1,nchar(string1))
+                   }else{
+                     objmatch[,matchcol1]
+                   })
+    line2 <- match(string2,
+                   if(substr2){
+                     substring(objmatch[,matchcol2],1,nchar(string2))
+                   }else{
+                     objmatch[,matchcol2]
+                   })
     if(is.na(line1) | is.na(line2)) return("absent")
 
     if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
@@ -289,11 +299,16 @@ SS_output <-
     if(verbose) cat("Got Forecast-report file\n")
 
     # this section on equilibrium yield moved to Report.sso on Jan 6
+    # [Ian T.: I have no idea what year or SS version this hack was associated with]
     startline <- matchfun("profile",rawforecast1[,11])
     if(!is.na(startline)){ # before the Jan 6 fix to benchmarks
       yieldraw <- rawforecast1[(startline+1):endyield,]
     }else{
-      yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
+      if(SS_versionNumeric >= 3.3){
+        yieldraw <- matchfun2("SPR/YPR_Profile",1,"Finish",-2)
+      }else{
+        yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
+      }
       # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
     }
     if(yieldraw[[1]][1]=="absent"){
@@ -304,15 +319,10 @@ SS_output <-
     if(is.na(yieldraw[[1]][1])){
       yielddat <- NA
     }else{
-      if(SS_versionshort=="SS-V3.11"){
-        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),c(4,7)]
-        colnames(yielddat) <- c("Catch","Depletion")
-      }else{
-        names <- yieldraw[1,]
-        names[names=="SSB/Bzero"] <- "Depletion"
-        yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
-        names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
-      }
+      names <- yieldraw[1,]
+      names[names=="SSB/Bzero"] <- "Depletion"
+      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
+      names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
       for(icol in 1:ncol(yielddat)){
         yielddat[,icol] <- as.numeric(yielddat[,icol])
       }
@@ -1095,12 +1105,12 @@ SS_output <-
     lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   }else{
     # new in 3.30 is keyword at top
-    lenntune <- matchfun2("Length_Comp_Fit_Summary",2,"FIT_AGE_COMPS",-1,header=TRUE)
+    lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
     # reorder columns (leaving out sample sizes perhaps to save space)
-    lenntune <- lenntune[lenntune$N>0, c(9,1,4:8)]
-    # avoid NA warnings by removing #IND values (not sure if they're occur in 3.30)
-    lenntune$"Recommend_Var_Adj"[lenntune$"Recommend_Var_Adj"=="-1.#IND"] <- NA
-    for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
+    lenntune <- lenntune[lenntune$N>0, ]
+    for(icol in 1:8){
+      lenntune[,icol] <- as.numeric(lenntune[,icol])
+    }
     ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
     #lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
   }
@@ -1343,6 +1353,7 @@ if(FALSE){
   # get spawning season
   # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
   spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+
   # probablem with spawning season calculation when NA values in SpawnBio
   if(length(spawnseas)==0){
     spawnseas <- NA
@@ -1351,48 +1362,34 @@ if(FALSE){
   # get birth seasons as vector of seasons with non-zero recruitment
   returndat$birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
 
-  # set mainmorphs as those morphs born in the spawning season
-  # and the largest fraction of the submorphs (should equal middle morph when using sub-morphs)
-  if(SS_versionNumeric >= 3.3){
-    # new "platoon" label
-    temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
-                           morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
-  }else{
-    # old "sub_morph" label
-    temp <- morph_indexing[morph_indexing$Bseas==min(spawnseas) &
-                           morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-  }
-  # however, if there are no fish born in the spawning season, then it should be the first birth season
+  # Ian T.: not sure if/when the "recruit_dist_endyr" stuff below does anything
   if("recruit_dist_endyr" %in% names(recruitment_dist)){
     rd <- recruitment_dist$recruit_dist_endyr
   }else{
     rd <- recruitment_dist
   }
-  # this work around needed for 12/2/2013 version of 3.3
-  # which has simpler recruitment_dist than 3.24S
-  if(is.null(rd$Used)){
-    rd$Used <- 1
-  }
-  if(!is.na(spawnseas) & rd$Used[spawnseas]==0){
-    if(SS_versionNumeric >= 3.3){
-      # new "platoon" label
-      temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
+  # orphaned note: if there are no fish born in the spawning season,
+  #                then it [mainmorph?] should be the first birth season
+
+  # set mainmorphs as those morphs born in the spawning season
+  # and the largest fraction of the platoons (should equal middle platoon when present)
+  if(SS_versionNumeric >= 3.3){
+    # new "platoon" label
+    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas) &
                              morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
-    }else{
-      # old "sub_morph" label
-      temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Used==1]) &
-                             morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+    mainmorphs <- min(temp$Index[temp$Sex==1])
+    if(nsexes==2){
+      mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex==2]))
     }
   }
-  # filter in case multiple growth patterns (would cause problems)
-  if(SS_versionNumeric >= 3.3){
-    column_label <- "Sex"
-  }else{
-    column_label <- "Gender"
-  }
-  mainmorphs <- min(temp$Index[temp[[column_label]]==1])
-  if(nsexes==2){
-    mainmorphs <- c(mainmorphs, min(temp$Index[temp[[column_label]]==2]))
+  if(SS_versionNumeric < 3.3){
+    # old "sub_morph" label
+    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas) &
+                             morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
+    mainmorphs <- min(temp$Index[temp$Gender==1])
+    if(nsexes==2){
+      mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
+    }
   }
   if(length(mainmorphs)==0){
     cat("!Error with morph indexing in SS_output function.\n")
