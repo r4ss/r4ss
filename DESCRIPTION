@@ -1,8 +1,8 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.24.0
-Date: 2015-12-15
+Version: 1.24.1
+Date: 2016-05-17
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,

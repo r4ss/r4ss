@@ -120,7 +120,7 @@ pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
 
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Cole C. Monnahan
 }
 \keyword{hplot}
 
