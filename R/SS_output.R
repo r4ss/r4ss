@@ -276,7 +276,7 @@ SS_output <-
     forecastname <- file.path(dir,forefile)
     temp <- file.info(forecastname)$size
     if(is.na(temp) | temp==0){
-      stop("Forecase-report.sso file is empty.\n",
+      stop("Forecast-report.sso file is empty.\n",
            "Change input to 'forecast=FALSE' or rerun model with forecast turned on.")
     }
     # read the file

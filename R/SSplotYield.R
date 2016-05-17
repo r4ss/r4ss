@@ -62,33 +62,38 @@ SSplotYield <-
   if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
 
   # test if data is available
-  if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
-    # function for yeild curve
-    yieldfunc <- function(){
-      if(!add){
-        # empty plot
-        plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
-             ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
-             xlab=labels[1],ylab=labels[2])
-        abline(h=0,col="grey")
-        abline(v=0,col="grey")
+  if(1 %in% subplots){
+    if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
+      # further test
+      if(any(!is.na(equil_yield$Depletion)) & any(!is.na(equil_yield$Catch))){
+        # function for yield curve
+        yieldfunc <- function(){
+          if(!add){
+            # empty plot
+            plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
+                 ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
+                 xlab=labels[1],ylab=labels[2])
+            abline(h=0,col="grey")
+            abline(v=0,col="grey")
+          }
+          # add lines
+          lines(equil_yield$Depletion,equil_yield$Catch,
+                lwd=lwd,col=col,lty=lty)
+        }
+        # make plot
+        if(plot){yieldfunc()}
+        if(print){
+          file <- paste(plotdir,"yield1_yield_curve.png",sep="")
+          caption <- "Yield curve"
+          plotinfo <- pngfun(file=file, caption=caption)
+          yieldfunc()
+          dev.off()}
+      }else{
+        cat("Skipped equilibrium yield plot: equil_yield has all NA values\n")
       }
-      # add lines
-      lines(equil_yield$Depletion,equil_yield$Catch,
-            lwd=lwd,col=col,lty=lty)
+    }else{
+      cat("Skipped equilibrium yield plot: no equil_yield results in this model\n")
     }
-    # make plot
-    if(1 %in% subplots){
-      if(plot){yieldfunc()}
-      if(print){
-        file <- paste(plotdir,"yield1_yield_curve.png",sep="")
-        caption <- "Yield curve"
-        plotinfo <- pngfun(file=file, caption=caption)
-        yieldfunc()
-        dev.off()}
-    }
-  }else{
-    cat("Skipped equilibrium yield plot: no equil_yield results in this model\n")
   }
 
   ts <- timeseries
@@ -105,7 +110,9 @@ SSplotYield <-
     for(iarea in 2:nareas){
       arearows <- ts$Area==iarea
       Bio_all <- ts$Bio_all[arearows]
-      totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
+      totcatchmat <- totcatchmat +
+        as.matrix(ts[arearows,
+                     substr(names(ts),1,nchar(stringB))==stringB])
     }
   }
 

@@ -106,9 +106,11 @@ PinerPlot <-
 
   if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
 
-  # get stuff from summary output
+  # get stuff from summary output into shorter variable names
   n    <- summaryoutput$n
   lbf  <- summaryoutput$likelihoods_by_fleet
+  lbtg <- summaryoutput$likelihoods_by_tag_group
+
   if (is.null(lbf)) {
     stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
          "and have an element named 'likelihoods_by_fleet'.")
@@ -123,10 +125,12 @@ PinerPlot <-
     stop("problem with FleetNames: length!= ",nfleets,"\n",
          paste(FleetNames,collapse="\n"))
   }
-  # stop of component input isn't found in table
-  if(!component %in% lbf$Label){
+  # stop if component input isn't found in table
+  component_options <- c(unique(lbf$Label[-grep("_lambda", lbf$Label)]),
+                         unique(lbtg$Label[-grep("_lambda", lbtg$Label)]))
+  if(!component %in% component_options){
     stop("input 'component' needs to be one of the following\n",
-         paste("    ",unique(lbf$Label),"\n"))
+         paste("    ", component_options, "\n"))
   }
 
 
@@ -151,9 +155,9 @@ PinerPlot <-
   parnumber <- grep(profile.string,pars$Label)
   if(length(parnumber)<=0) stop("No parameters matching profile.string='",profile.string,"'",sep="")
   parlabel <- pars$Label[parnumber]
-  if(length(parlabel) > 1)
+  if(length(parlabel) > 1){
     stop("Multiple parameters matching profile.string='",profile.string,"': ",paste(parlabel,collapse=", "),sep="")
-
+  }
   parvec <- as.numeric(pars[pars$Label==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")
   cat("Parameter values (after subsetting based on input 'models'):\n")
@@ -192,11 +196,12 @@ PinerPlot <-
     prof.table[,icol] <- prof.table[,icol] -
       min(prof.table[subset,icol], na.rm=TRUE)
   }
+
   # remove columns that have change less than minfraction change relative to total
-  column.max <- apply(prof.table[,-c(1:3)],2,max)
-  change.fraction <- column.max / column.max[1]
+  column.max <- apply(prof.table[,-c(1:3)],2,max, na.rm=TRUE)
+  change.fraction <- column.max / max(prof.table[,3], na.rm=TRUE)
   include <- change.fraction >= minfraction
-  cat("\nLikelihood components showing max change as fraction of total change.\n",
+  cat("\nFleets-specific likelihoods showing max change as fraction of total change.\n",
      "To change which components are included, change input 'minfraction'.\n\n",sep="")
   print(data.frame(frac_change=round(change.fraction,4),include=include))
 
@@ -242,14 +247,16 @@ PinerPlot <-
     abline(h=0,col='grey')
     matplot(parvec, prof.table[,-(1:2)], type=type,
             pch=pch, col=col,
-            cex=cex, lty=lty, lwd=lwd, add=T)
+            cex=cex, lty=lty, lwd=lwd, add=TRUE)
     if(legend)
       legend(legendloc,bty='n',legend=names(prof.table)[-(1:2)],
              lwd=lwd, pt.cex=cex, lty=lty, pch=pch, col=col)
     box()
   }
 
-  if(plot) plotprofile()
+  if(plot){
+    plotprofile()
+  }
   if(print){
     pngfun("profile_plot_likelihood.png")
     plotprofile()
