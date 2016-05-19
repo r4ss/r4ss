@@ -201,6 +201,8 @@ SSsummarize <- function(biglist,
     if(is.na(indextemp[[1]][1])){
       cat("no index data\n")
     }else{
+      # switch column name used in 3.24 to new value used in 3.30 to allow comparisons
+      names(indextemp)[ names(indextemp)=="Yr.S"] <- "Yr.frac"
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
       if(is.null(indices) || all(names(indextemp)==names(indices))){
