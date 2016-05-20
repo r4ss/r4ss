@@ -433,9 +433,9 @@ SS_output <-
     FleetNames <- FleetNames[!is.na(FleetNames)]
     nfleets <- length(FleetNames)
     fleet_ID    <- 1:nfleets
-    defs <- defs[-(1:3),1:8] # hardwiring dimensions, this may change in future versions
+    defs <- defs[-(1:3),1:7] # hardwiring dimensions, this may change in future versions
     names(defs) <- c("fleet_type", "timing", "area", "units",
-                     "equ_catch_se", "catch_se", "survey_units", "survey_error")
+                     "catch_mult", "survey_units", "survey_error")
     for(icol in 1:ncol(defs)){
       defs[,icol] <- as.numeric(defs[,icol])
     }
@@ -1354,7 +1354,7 @@ if(FALSE){
   # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
   spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
 
-  # probablem with spawning season calculation when NA values in SpawnBio
+  # problem with spawning season calculation when NA values in SpawnBio
   if(length(spawnseas)==0){
     spawnseas <- NA
   }
@@ -1553,18 +1553,23 @@ if(FALSE){
     shift <- -3
     if(SS_versionNumeric < 3.23) shift <- -1
     spr <- matchfun2("SPR_series",5,"Kobe_Plot",shift,header=TRUE)
+
+    # head of Kobe_Plot section differs by SS version,
+    # but I haven't kept track of which is which
     Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
-    if(length(grep("F_report_basis_is_not",Kobe_head[1,1]))>0){
-      shift <- 2
+    shift <- 2
+    Kobe_warn <- NA
+    Kobe_MSY_basis <- NA
+    if(length(grep("_basis_is_not",Kobe_head[1,1]))>0){
+      shift <- shift+1
       Kobe_warn <- Kobe_head[1,1]
-    }else{
-      shift <- 1
-      Kobe_warn <- NA
+    }
+    if(length(grep("MSY_basis",Kobe_head[2,1]))>0){
+      shift <- shift+1
+      Kobe_MSY_basis <- Kobe_head[2,1]
+      print(Kobe_MSY_basis)
     }
     Kobe <- matchfun2("Kobe_Plot",shift,"SPAWN_RECRUIT",-1,header=TRUE)
-    Kobe_MSY_basis <- names(Kobe)[1]
-    names(Kobe) <- Kobe[1,]
-    Kobe <- Kobe[-1,]
     Kobe[Kobe=="_"] <- NA
     for(icol in 1:3){
       names(Kobe)[icol] <- sub("/",".",names(Kobe)[icol],fixed=TRUE)
