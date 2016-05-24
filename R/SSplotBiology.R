@@ -57,19 +57,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          verbose=TRUE)
 {
-  #### previous order of plots:
-  # subplot 1: weight-length
-  # subplot 2: maturity
-  # subplot 3: gfunc3a - fecundity from model parameters
-  # subplot 4: gfunc3b - fecundity at weight from BIOLOGY section
-  # subplot 5: gfunc3c - fecundity at length from BIOLOGY section
-  # subplot 6: gfunc4  - spawning output
-  # subplot 7: growth_curve_fn - growth curve
-  # subplot 8: mfunc   - Natural mortality (if age-dependent)
-  # subplot 9:  [no function] - Time-varying growth persp
-  # subplot 10: [no function] - Time-varying growth contour
-  # subplot 11: timeVaryingParmFunc - plot time-series of any time-varying quantities
-
   #### new (24-Oct-14) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
   # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
@@ -91,6 +78,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   # subplot 104: diagram with labels showing female CV = f(A) & male offset (type 2)
   # subplot 105: diagram with labels showing female CV = f(A) (offset type 3)
   # subplot 106: diagram with labels showing female CV = f(A) & male offset (type 3)
+
+  #### addition on 3-Mar-16 
+  # subplot 15: [no function] - matrix of M by age and time 
 
   pngfun <- function(file,caption=NA){
     png(filename=file,width=pwidth,height=pheight,
@@ -137,6 +127,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ageselex     <- replist$ageselex
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
+  M_at_age     <- replist$M_at_age
   Growth_Parameters <- replist$Growth_Parameters
 
   # get any derived quantities related to growth curve uncertainty
@@ -208,6 +199,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
 
   # Beginning of season 1 (or specified season) mean length at age
   #   with 95% range of lengths (by sex if applicable)
+
+## Ian T.: consider somehow generalizing to allow looping over growth pattern
   growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Beg
   if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
@@ -1101,6 +1094,71 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     }
   }
 
+  ## ### Ian T.: finish this stuff
+
+  ##   # Matrix of M-at-age if mortality varies with age and time
+  ##   # strip off forecast years in M-at-age matrix
+  ##   M_at_age <- M_at_age[M_at_age$Year <= endyr,]
+
+  
+  ##   if(any(M_at_age$Bio_Pattern!=1)){}
+  
+  ##   for(i in unique(M_at_age$Bio_Pattern)){
+  ##     for(isex in unique(
+  ##   M_at_age_tmpYear <- M_at_age$Year
+  ##   M_at_age_ages <- 0:accuage
+  ##   M_at_age_matrix <- as.matrix(M_at_age[,-
+
+  #### this stuff can be canibalized to get the M-at-age matrix working
+  ## if(growthvaries){ # if growth is time varying
+  ##     for(i in 1:nsexes)
+  ##     {
+  ##       growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
+  ##                                  growthseries$Morph==mainmorphs[i],]
+  ##       x <- 0:accuage
+  ##       y <- growdatuse$Yr
+  ##       z <- as.matrix(growdatuse[,-(1:4)])
+  ##       time <- FALSE
+  ##       for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
+  ##       if(time)
+  ##       {
+  ##         z <- t(z)
+  ##         if(i==1){main <- "Female time-varying growth"}
+  ##         if(nsexes==1){main <- "Time-varying growth"}
+  ##         if(i==2){main <- "Male time-varying growth"}
+  ##         if(nseasons > 1){main <- paste(main," season 1",sep="")}
+  ##         if(plot){
+  ##           if(12 %in% subplots)
+  ##             persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+  ##                   box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+  ##                   phi=35,theta=-10)
+  ##           if(13 %in% subplots)
+  ##             contour(x,y,z,nlevels=12,xlab=labels[2],
+  ##                     main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+  ##         if(print){
+  ##           if(12 %in% subplots){
+  ##             file <- paste(plotdir,"/bio12_timevarygrowthsurf_sex",i,".png",sep="")
+  ##             caption <- "Perspective plot of time-varying growth"
+  ##             plotinfo <- pngfun(file=file, caption=caption)
+  ##             persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+  ##                   box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+  ##                   phi=35,theta=-10)
+  ##             dev.off()
+  ##           }
+  ##           if(13 %in% subplots){
+  ##             file <- paste(plotdir,"/bio13_timevarygrowthcontour_sex",i,".png",sep="")
+  ##             caption <- "Contour plot of time-varying growth"
+  ##             plotinfo <- pngfun(file=file, caption=caption)
+  ##             contour(x,y,z,nlevels=12,xlab=labels[2],
+  ##                     main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+  ##             dev.off()
+  ##           }
+  ##         } # end print
+  ##       } # end if time-varying
+  ##     } # end loop over sexes
+  ##   } # end of if data available for time varying growth
+  ## }# end disable of time-varying growth for multi-season models
+  
   # add category and return plotinfo
   if(!is.null(plotinfo)) plotinfo$category <- "Bio"
   return(invisible(plotinfo))
