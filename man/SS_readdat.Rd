@@ -24,7 +24,7 @@ will read input data, (equivalent to section=1).}
 read Stock Synthesis data file into list object in R
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
 }
 \seealso{
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},

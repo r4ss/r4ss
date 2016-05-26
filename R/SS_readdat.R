@@ -12,7 +12,7 @@
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
@@ -387,13 +387,19 @@ SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
     # read generalized size frequency data
     sizefreq_data_list <- list()
     for(imethod in 1:N_sizefreq_methods){
-      Ncols <- 7+2*nbins_per_method[imethod]
+      Ncols <- 7+Ngenders*nbins_per_method[imethod]
       Nrows <- Nobs_per_method[imethod]
       sizefreq_data_tmp <- data.frame(matrix(allnums[i:(i+Nrows*Ncols-1)],
                                              nrow=Nrows,ncol=Ncols,byrow=TRUE))
-      names(sizefreq_data_tmp) <- c("Method","Yr","Seas","FltSvy","Gender","Part","Nsamp",
-                                    paste("f",sizefreq_bins_list[[imethod]],sep=""),
-                                    paste("m",sizefreq_bins_list[[imethod]],sep=""))
+      names(sizefreq_data_tmp) <-
+        c("Method","Yr","Seas","FltSvy","Gender","Part","Nsamp",
+          if(Ngenders==1){
+            paste("a",sizefreq_bins_list[[imethod]],sep="")
+          }else{NULL},
+          if(Ngenders>1){
+            c(paste("f",sizefreq_bins_list[[imethod]],sep=""),
+              paste("m",sizefreq_bins_list[[imethod]],sep=""))
+          }else{NULL})
       if(verbose){
         cat("Method =",imethod,"  (first two rows, ten columns):\n")
         print(sizefreq_data_tmp[1:min(Nrows,2),1:min(Ncols,10)])
