@@ -1,6 +1,9 @@
-#' read data file
+#' read data file from SS version 3.24
 #' 
-#' read Stock Synthesis data file into list object in R
+#' Read Stock Synthesis (version 3.24) data file into list object in R.
+#' This function was formerly called SS_readdat. That name is now used
+#' for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
+#' (and potentially additional functions in the future).
 #' 
 #' 
 #' @param file Filename either with full path or relative to working directory.
@@ -14,12 +17,13 @@
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
 #' @export
-#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+#' @seealso \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
+#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
 #' @keywords data
-SS_readdat <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
+SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readdat\n")
