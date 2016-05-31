@@ -51,20 +51,18 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
     if(!("spline_selex.exe" %in% dir(dir)))
       stop("File 'spline_selex.exe' needs to be in the directory 'dir'\n",
            "  If you have a 64 bit Windows computer, you can get this file from\n",
-           "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe\n",
+           "  https://github.com/r4ss/testing/blob/master/spline_selex.exe\n",
            "  For other operating systems, you will need to compile the executable in ADMB\n",
-           "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+           "  from the file https://github.com/r4ss/testing/blob/master/spline_selex.tpl\n")
   }else{
     if(.Platform$GUI=="X11")
       if(!("spline_selex" %in% dir(dir)))
         stop("File 'spline_selex' needs to be in the directory 'dir'\n",
-             "  If you have a 64 bit Windows computer, you can get this file from\n",
-             "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex\n",
-             "  For other operating systems, you will need to compile the executable in ADMB\n",
-             "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+             "  For non-Windows operating systems, you will need to compile the executable in ADMB\n",
+             "  from the file https://github.com/r4ss/testing/blob/master/spline_selex.tpl\n")
     if(.Platform$GUI=="Aqua")
       stop("Sorry, this function is not yet supported for the Mac\n",
-           "      email Ian.Taylor@noaa.gov to discuss how to add support.")
+           "      see discussion at https://github.com/r4ss/r4ss/issues/48 for discussion of this issue.")
   }
 
   
