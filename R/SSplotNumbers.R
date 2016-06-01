@@ -720,6 +720,8 @@ SSplotNumbers <-
           file <- paste(plotdir,"/numbers5_ageerror_matrix_",
                         i_ageerror_def,".png",sep="")
           caption <- paste(labels[8], ": matrix for method ", i_ageerror_def, sep="")
+          caption <- paste(caption,
+                           "<br>(White = 1.0, Orange = 0.5, Red = 0.0)")
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun()
           ageing_matrix_fun(i_ageerror_def)
