@@ -1,6 +1,6 @@
-#' read data file from SS version 3.24
+#' read data file from SS version 3.30 (function still in development)
 #' 
-#' Read Stock Synthesis (version 3.24) data file into list object in R.
+#' Read Stock Synthesis (version 3.30) data file into list object in R.
 #' This function was formerly called SS_readdat. That name is now used
 #' for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 #' (and potentially additional functions in the future).
@@ -23,10 +23,15 @@
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
 #' @keywords data
-SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
+SS_readdat_3.30 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 
-  if(verbose) cat("running SS_readdat_3.24\n")
+  if(verbose) cat("running SS_readdat_3.30\n")
+
+  # stop function since it's not yet complete
+  stop("SS_readdat_3.30 is still in development")
+
+  #everything below needs to be revised to work with SSv3.30
   dat <- readLines(file,warn=FALSE)
 
   # split apart any bootstrap or expected value sections in data.ss_new
