@@ -13,6 +13,8 @@
 # par(las=1,mar=c(5, 4, 1, 1) + 0.1,cex.axis=0.9)
 # plotIndices(base, ind, cols=indCols[ind],div=1, xlim=c(1983,2000),ylim=c(20,800), alpha=0.6,
 #              xlab="Year",ylab="CPUE index",log="y", legX="bottomleft", legCex=legCex)
+# plotIndices(base, ind, cols=indCols[ind],div=1, alpha=0.6,
+#              xlab="Year",ylab="CPUE index",log="y", legX="bottomleft", legCex=legCex)
 # if(doPNG) {dev.off()}
 
 # #Hake and Foreign
@@ -46,9 +48,8 @@ plotIndices <- function(x, fleets, xlim=NULL, ylim=NULL,
     colsAlpha <- adjustcolor(cols, alpha.f=alpha)
     cpue <- x$cpue[x$cpue$Fleet %in% fleets,]
     if(is.null(xlim)) xlim <- range(cpue$Yr)
-        #I don't think this si working right????????
-    if(is.null(ylim)) xlim <- range(c(qlnorm(.025,meanlog=log(tmp$Obs/div),sdlog=tmp$SE),
-                                      qlnorm(.975,meanlog=log(tmp$Obs/div),sdlog=tmp$SE)))
+    if(is.null(ylim)) ylim <- range(c(qlnorm(.025,meanlog=log(cpue$Obs/div),sdlog=cpue$SE),
+                                      qlnorm(.975,meanlog=log(cpue$Obs/div),sdlog=cpue$SE)))
 
     plot(0.001, type='n', xlim=xlim, xaxs='i', ylim=ylim, yaxs='i', ...)
 
