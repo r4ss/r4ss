@@ -965,9 +965,14 @@ SS_output <-
       wtatage <- read.table(wtfile,header=FALSE,comment.char="",
                             skip=grep("yr seas gender",wtatagelines),
                             stringsAsFactors=FALSE)
-      names(wtatage) <- c("yr", "seas", "gender", "growpattern", "birthseas", "fleet",
-                          0:accuage, "comment")
-      #names(wtatage)[1] <- "yr" # replacing "X.yr" created by presence of #
+      # problems with header so simply manually replacing column names
+      wtatage_names <- c("yr", "seas", "gender", "growpattern", "birthseas", "fleet",
+                         0:accuage)
+      # new comment line in 3.30
+      if(SS_versionNumeric >= 3.3){
+        wtatage_names <- c(wtatage_names, "comment")
+      }
+      names(wtatage) <- wtatage_names
     }
   }
 

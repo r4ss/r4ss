@@ -127,7 +127,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
   # remove comments on each line of wtatage that were added with SSv3.30
-  wtatage <- wtatage[,-grep("comment",names(wtatage))]
+  if("comment" %in% names(wtatage)){
+    wtatage <- wtatage[,-grep("comment",names(wtatage))]
+  }
   M_at_age     <- replist$M_at_age
   Growth_Parameters <- replist$Growth_Parameters
 
