@@ -34,7 +34,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords aplot hplot
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
          colvec=c("red","blue","grey20"),shadealpha=0.1,
@@ -127,6 +126,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ageselex     <- replist$ageselex
   MGparmAdj    <- replist$MGparmAdj
   wtatage      <- replist$wtatage
+  # remove comments on each line of wtatage that were added with SSv3.30
+  wtatage <- wtatage[,-grep("comment",names(wtatage))]
   M_at_age     <- replist$M_at_age
   Growth_Parameters <- replist$Growth_Parameters
 
@@ -332,6 +333,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     col <- rainbow(60)[1:50]
     ## Make a two panel plot, for plot and then legend
     layout(matrix(c(1,2), nrow=1, ncol=2), widths=c(4,.5), heights=c(4,4))
+
+    # save current parameter settings
+    par_old <- par()
+    # change parameters
     par(mar=c(4.2,4.2,4,.5)+.1)
     image(x=0:accuage,y=yrvec2,z=z, axes=F,xlab='Age',ylab='Year',
           col=col, breaks=breaks,main=main)
@@ -346,7 +351,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
         zdataframe$font <- 1
         ## Rounding should depend on how big the numbers get. This is untested
         ## and may need to be adjusted.
-        ztext <- format(round(zdataframe$z, imageplot_round))
+        ztext <- format(round(zdataframe$z, imageplot_text_round))
         ztext[ztext=="   NA" | ztext=="  NA"] <- ""
         text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
     }
@@ -369,6 +374,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     box()
     ## turn off the matrix plot
     layout(mat=c(1,1))
+    # restore default single panel settings
+    par(mfcol=c(1,1), mar=par_old$mar, oma=par_old$oma)
   }
 
   gfunc3a <- function(){ # fecundity from model parameters

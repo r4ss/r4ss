@@ -962,9 +962,12 @@ SS_output <-
       # read top few lines to figure out how many to skip
       wtatagelines <- readLines(wtfile,n=20)
       # read full file
-      wtatage <- read.table(wtfile,header=TRUE,comment.char="",
-                            skip=(grep("yr seas gender",wtatagelines)-1))
-      names(wtatage)[1] <- "yr" # replacing "X.yr" created by presence of #
+      wtatage <- read.table(wtfile,header=FALSE,comment.char="",
+                            skip=grep("yr seas gender",wtatagelines),
+                            stringsAsFactors=FALSE)
+      names(wtatage) <- c("yr", "seas", "gender", "growpattern", "birthseas", "fleet",
+                          0:accuage, "comment")
+      #names(wtatage)[1] <- "yr" # replacing "X.yr" created by presence of #
     }
   }
 
@@ -1567,7 +1570,6 @@ if(FALSE){
     if(length(grep("MSY_basis",Kobe_head[2,1]))>0){
       shift <- shift+1
       Kobe_MSY_basis <- Kobe_head[2,1]
-      print(Kobe_MSY_basis)
     }
     Kobe <- matchfun2("Kobe_Plot",shift,"SPAWN_RECRUIT",-1,header=TRUE)
     Kobe[Kobe=="_"] <- NA
