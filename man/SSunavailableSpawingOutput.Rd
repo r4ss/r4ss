@@ -36,7 +36,7 @@ are unavailable because they're too small to be selected from ones that are
 too big to be selected
 }
 \author{
-Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian Taylor
+Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 }
 \keyword{cryptic}
 
