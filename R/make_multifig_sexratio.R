@@ -1,10 +1,11 @@
 #' Create multi-figure sex ratio plots.
 #'
-#' Function created as an alternative to lattice package for multi-figure
+#' Modified version of \code{\link{make_multifig}} for multi-figure
 #' plots of sex ratio data with crude confidence intervals (+/i 1 se) and
 #' fits from Stock Synthesis output.
 #'
-#'
+#' @param dbase eleemnt of list created by \code{\link{SS_output}} passed from
+#' \code{\link{SSplotSexRatio}}
 #' @param sampsizeround rounding level for sample size values
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
@@ -32,7 +33,6 @@
 #' @param linescol color for fitted model
 #' @param lty line type
 #' @param lwd line width
-#' @param pch point character type
 #' @param nlegends number of lines of text to add as legends in each plot
 #' @param legtext text in legend, a list of length=nlegends. values may be any
 #' of 1.  "yr", 2. "sampsize", 3. "effN", or a vector of length = ptsx.
@@ -50,7 +50,7 @@
 #' @param multifig_oma vector of outer margins. Can be input to SS_plots and will be
 #' passed to this function via the ... argument.
 #' @param \dots additional arguments (NOT YET IMPLEMENTED).
-#' @author Cole Monnahan. Adapted from \code{\link{make_multifig2.R}}.
+#' @author Cole Monnahan. Adapted from \code{\link{make_multifig}}.
 #' @export
 #' @details The SE of the sex ratio is crude and calculated as
 #' follows. First, assume a multinomial which as MLEs of proportions. Then
@@ -63,15 +63,14 @@
 #'
 #' This function was derived from make_multifig and hence has a lot of
 #' overlap in functionality and arguments.
-#' @seealso \code{\link{SS_plots}},\code{\link{SSplotSexRatios}}
-#' @keywords aplot hplot
+#' @seealso \code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
 make_multifig_sexratio <-
   function(dbase,
-           sampsize=0, effN=0, sampsizeround=1, maxrows=6, maxcols=6,
+           sampsizeround=1, maxrows=6, maxcols=6,
            rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="", ylab="Female:Male Ratio", horiz_lab="default", xbuffer=c(.1,.1),
-           ybuffer=c(0,0.15), yupper=NULL, ymin0=TRUE, axis1=NULL,
-           axis2=NULL, bars=FALSE, barwidth="default", ptscex=1,
+           ybuffer=c(0,0.15), yupper=NULL, axis1=NULL,
+           axis2=NULL, ptscex=1,
            ptscol=gray(.5), linescol=1, lty=1, lwd=2, nlegends=3,
            legtext=list("yr","sampsize","effN"),
            legx="default",legy="default",
@@ -131,9 +130,12 @@ make_multifig_sexratio <-
     }
   }
   df <- do.call(rbind, df.list)
+  # "df$" shouldn't be required in within function but added to make package check
+  # warning go away. Feel free to change if there's a better solution.
+  # Warning was "make_multifig_sexratio: no visible binding for global variable 'Obs'"
   df <- within(df, {
-               lwr <- Obs-1*se.ratio
-               upr <- Obs+1*se.ratio})
+               lwr <- df$Obs - 1*df$se.ratio
+               upr <- df$Obs + 1*df$se.ratio}) 
   ## Calculate ranges of plots
   xrange <- range(df$Bin, na.rm=TRUE)
   if(nrow(df[!is.na(df$se.ratio),])==0){

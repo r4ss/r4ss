@@ -4,18 +4,20 @@
 \alias{make_multifig_sexratio}
 \title{Create multi-figure sex ratio plots.}
 \usage{
-make_multifig_sexratio(dbase, sampsize = 0, effN = 0, sampsizeround = 1,
-  maxrows = 6, maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
-  main = "", cex.main = 1, xlab = "", ylab = "Female:Male Ratio",
-  horiz_lab = "default", xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15),
-  yupper = NULL, ymin0 = TRUE, axis1 = NULL, axis2 = NULL,
-  bars = FALSE, barwidth = "default", ptscex = 1, ptscol = gray(0.5),
+make_multifig_sexratio(dbase, sampsizeround = 1, maxrows = 6, maxcols = 6,
+  rows = 1, cols = 1, fixdims = TRUE, main = "", cex.main = 1,
+  xlab = "", ylab = "Female:Male Ratio", horiz_lab = "default",
+  xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15), yupper = NULL,
+  axis1 = NULL, axis2 = NULL, ptscex = 1, ptscol = gray(0.5),
   linescol = 1, lty = 1, lwd = 2, nlegends = 3, legtext = list("yr",
   "sampsize", "effN"), legx = "default", legy = "default",
   legadjx = "default", legadjy = "default", legsize = c(1.2, 1),
   legfont = c(2, 1), ipage = 0, multifig_oma = c(5, 5, 5, 2) + 0.1, ...)
 }
 \arguments{
+\item{dbase}{eleemnt of list created by \code{\link{SS_output}} passed from
+\code{\link{SSplotSexRatio}}}
+
 \item{sampsizeround}{rounding level for sample size values}
 
 \item{maxrows}{maximum (or fixed) number or rows of panels in the plot}
@@ -90,12 +92,10 @@ maxrows by maxcols.}
 \item{multifig_oma}{vector of outer margins. Can be input to SS_plots and will be
 passed to this function via the ... argument.}
 
-\item{pch}{point character type}
-
 \item{\dots}{additional arguments (NOT YET IMPLEMENTED).}
 }
 \description{
-Function created as an alternative to lattice package for multi-figure
+Modified version of \code{\link{make_multifig}} for multi-figure
 plots of sex ratio data with crude confidence intervals (+/i 1 se) and
 fits from Stock Synthesis output.
 }
@@ -113,11 +113,9 @@ This function was derived from make_multifig and hence has a lot of
 overlap in functionality and arguments.
 }
 \author{
-Cole Monnahan. Adapted from \code{\link{make_multifig2.R}}.
+Cole Monnahan. Adapted from \code{\link{make_multifig}}.
 }
 \seealso{
-\code{\link{SS_plots}},\code{\link{SSplotSexRatios}}
+\code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
 }
-\keyword{aplot}
-\keyword{hplot}
 

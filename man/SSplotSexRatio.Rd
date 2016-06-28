@@ -5,12 +5,12 @@
 \title{Plot sex-ratio data and fits for two sex models}
 \usage{
 SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
-  fleets = "all", fleetnames = "default", yupper = NULL, linescol = 1,
+  fleets = "all", fleetnames = "default", yupper = 4, linescol = 1,
   lwd = 1, axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", ptsize = 10, res = 300, plotdir = "default",
-  cex.main = 1, linepos = 1, labels = c("Length (cm)", "Age (yr)"),
-  maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4, rows = 1,
-  cols = 1, fixdims = TRUE, verbose = TRUE, ...)
+  cex.main = 1, labels = c("Length (cm)", "Age (yr)"), maxrows = 6,
+  maxcols = 6, rows = 1, cols = 1, fixdims = TRUE, verbose = TRUE,
+  ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -29,6 +29,8 @@ SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
 \item{yupper}{upper limit on ymax for polygon/histogram composition plots}
 
 \item{linescol}{Color for lines on top of polygons}
+
+\item{lwd}{line width}
 
 \item{axis1}{position of bottom axis values}
 
