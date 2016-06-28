@@ -4,12 +4,12 @@
 \alias{SSplotTags}
 \title{Plot tagging data and fits}
 \usage{
-SSplotTags(replist = replist, subplots = 1:8, latency = NULL, rows = 1,
-  cols = 1, tagrows = 3, tagcols = 3, plot = TRUE, print = FALSE,
-  pntscalar = 2.6, minnbubble = 8, pwidth = 6.5, pheight = 5,
-  punits = "in", ptsize = 10, res = 300, cex.main = 1, col1 = rgb(0,
-  0, 1, 0.7), col2 = "red", col3 = "grey95", col4 = "grey70",
-  labels = c("Year", "Frequency", "Tag Group",
+SSplotTags(replist = replist, subplots = 1:8, latency = NULL,
+  taggroups = NULL, rows = 1, cols = 1, tagrows = 3, tagcols = 3,
+  plot = TRUE, print = FALSE, pntscalar = 2.6, minnbubble = 8,
+  pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10, res = 300,
+  cex.main = 1, col1 = rgb(0, 0, 1, 0.7), col2 = "red", col3 = "grey95",
+  col4 = "grey70", labels = c("Year", "Frequency", "Tag Group",
   "Fit to tag recaptures by tag group",
   "Post-latency tag recaptures aggregated across tag groups",
   "Observed tag recaptures by year and tag group",
@@ -24,6 +24,9 @@ SSplotTags(replist = replist, subplots = 1:8, latency = NULL, rows = 1,
 
 \item{latency}{period of tag mixing to exclude from plots (in future could
 be included in SS output)}
+
+\item{taggroups}{which tag groups to include in the plots. Default=NULL
+causes all groups to be included.}
 
 \item{rows}{number or rows of panels for regular plots}
 
