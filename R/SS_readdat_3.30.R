@@ -100,7 +100,9 @@ SS_readdat_3.30 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # no longer separation of fleets and surveys
   datlist$Nfleets <- Nfleets <- allnums[i]; i <- i+1
 
-### Ian, continue here
+  ### Ian, continue here (line below is temporary just to avoid warning about
+  ### "no visible binding for global variable 'fleetnames'"
+  fleetnames <- paste0("Fleet", Nfleets)
   
   #if(verbose) cat("fleetnames:",fleetnames,'\n')
   datlist$fleetnames <- fleetnames
@@ -109,11 +111,11 @@ SS_readdat_3.30 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   if(verbose){
     cat("areas:",areas,'\n')
     cat("fleet info:\n")
-    print(data.frame(fleet  = 1:Nfleets,
-                     name   = fleetnames,
-                     area   = areas,
-                     timing = surveytiming,
-                     type   = c(rep("FISHERY",Nfleets), rep("SURVEY",Nsurveys))))
+    ## print(data.frame(fleet  = 1:Nfleets,
+    ##                  name   = fleetnames,
+    ##                  area   = areas,
+    ##                  timing = surveytiming,
+    ##                  type   = c(rep("FISHERY",Nfleets), rep("SURVEY",Nsurveys))))
   }
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming,areas))
