@@ -1134,6 +1134,20 @@ SSplotComparisons <-
     }
   }
 
+  ###
+  ## notes from Ian on revised approach to indices:
+  #    
+  #    this function was originally written for the 2011 hake assessment
+  #    where models with different fleet structures were being compared
+  #    however, that represents a relatively rare case.
+  #    in general, it should be possible to loop over all fleets with indices
+  #    and compare them across all models
+  #    instead of checking for alignment of indices$FleetNum within the
+  #    plotIndices() function itself, this function can occur within a loop over
+  #    fleet numbers. An initial check for matching sets of fleets could be used
+  #    and only revert to requiring the indexfleets input if there is a mismatch
+  #
+  
   plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
 
     # get a subset of index table including only 1 index per model
