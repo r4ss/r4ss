@@ -59,7 +59,6 @@
 #' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotIndices <-
 function(replist,subplots=1:9,
          plot=TRUE,print=FALSE,

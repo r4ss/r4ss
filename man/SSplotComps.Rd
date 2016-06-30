@@ -202,5 +202,4 @@ Ian Taylor
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig}}
 }
-\keyword{hplot}
 

@@ -26,7 +26,6 @@
 #' @author Ian Taylor
 #' @seealso \code{\link{SS_changepars}}
 #' @export
-#' @keywords data manip
 #' @examples
 #' 
 #' \dontrun{

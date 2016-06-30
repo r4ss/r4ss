@@ -17,7 +17,6 @@
 #' @param col Color for points and lines.
 #' @author Ian Taylor
 #' @export
-#' @keywords aplot hplot
 SSplotMCMC_ExtraSelex <- function(post, add=FALSE, nsexes=1,shift=0,
                                   fleetname="default",col="blue"){
   # post is a data.frame containing either derived_posteriors.sso or a good subset of it

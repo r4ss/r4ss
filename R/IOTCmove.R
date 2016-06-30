@@ -19,7 +19,6 @@
 #' \code{\link{SSplotMovementMap}}
 #' @author Ian Taylor
 #' @export
-#' @keywords hplot
 IOTCmove <-
   function(replist=NULL,moveage=5,
            moveseas=1,legend=FALSE,title=NULL,

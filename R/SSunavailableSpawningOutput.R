@@ -17,7 +17,6 @@
 #' @param cex.main Character expansion for plot titles
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export
-#' @keywords cryptic
 
 SSunavailableSpawingOutput <-
   function(replist,

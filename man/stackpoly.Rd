@@ -54,5 +54,4 @@ Jim Lemon, Ian Taylor
 \references{
 \url{https://cran.r-project.org/package=plotrix}
 }
-\keyword{hplot}
 

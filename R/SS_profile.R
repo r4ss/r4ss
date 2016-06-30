@@ -49,7 +49,6 @@
 #' @export
 #' @seealso \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
 #' \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
-#' @keywords data manip
 #' @examples
 #' 
 #'   \dontrun{

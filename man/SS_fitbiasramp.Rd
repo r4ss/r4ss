@@ -78,7 +78,4 @@ Fish. Aquat. Sci., 68:1744-1760.
 \seealso{
 \code{\link{SS_output}}
 }
-\keyword{data}
-\keyword{hplot}
-\keyword{manip}
 

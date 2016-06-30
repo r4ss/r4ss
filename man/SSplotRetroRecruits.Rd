@@ -90,5 +90,4 @@ which is on an absolute, rather than log scale.)
 \seealso{
 \code{\link{SSsummarize}}
 }
-\keyword{hplot}
 

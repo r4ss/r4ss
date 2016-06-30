@@ -110,8 +110,4 @@ Allan Hicks
 \seealso{
 \code{\link{SS_output}} \code{\link{SSgetMCMC}}
 }
-\keyword{data}
-\keyword{list}
-\keyword{manip}
-\keyword{plot}
 

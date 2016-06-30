@@ -100,6 +100,4 @@ Make a set of plots based on output from Andre Punt's Rebuilder program.
 \author{
 Andre Punt, Ian Taylor
 }
-\keyword{dplot}
-\keyword{hplot}
 

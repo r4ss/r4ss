@@ -39,7 +39,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SS_plots}}
-#' @keywords hplot
 SSplotNumbers <-
   function(replist,subplots=1:9,
            plot=TRUE,print=FALSE,

@@ -15,7 +15,6 @@
 #' \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 #' \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
-#' @keywords data manip
 SS_writectl <- function(ctllist,outfile,overwrite=F,verbose=T){
   # function to write Stock Synthesis control files
 

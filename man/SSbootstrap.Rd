@@ -23,6 +23,4 @@ Ian Taylor
 (A description is on page 41 and Figures 55-56 (pg 139-140) show some
 results.)
 }
-\keyword{data}
-\keyword{manip}
 

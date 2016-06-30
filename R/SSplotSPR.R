@@ -30,7 +30,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotSPR <-
   function(replist,add=FALSE,plot=TRUE,print=FALSE,
            uncertainty=TRUE,

@@ -49,7 +49,6 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
 #' \code{\link{SS_readdat}}
-#' @keywords hplot
 SSplotData <- function(replist,
                        plot=TRUE,print=FALSE,
                        plotdir="default",

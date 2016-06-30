@@ -44,7 +44,4 @@ Ian Taylor
 \seealso{
 \code{\link{selfit}}
 }
-\keyword{dplot}
-\keyword{dynamic}
-\keyword{hplot}
 

@@ -11,7 +11,6 @@
 #' @author Tommy Garrison
 #' @export
 #' @seealso \code{\link{selfit}}
-#' @keywords dplot
 #' @examples
 #' 
 #' \dontrun{

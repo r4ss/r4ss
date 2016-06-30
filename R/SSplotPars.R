@@ -60,7 +60,6 @@
 #' (otherwise assumed to be -5 and 5). Default="control.ss_new".
 #' @author Ian G. Taylor, Cole C. Monnahan
 #' @export
-#' @keywords hplot
 #' @examples
 #'
 #' \dontrun{

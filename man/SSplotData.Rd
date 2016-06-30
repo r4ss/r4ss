@@ -87,5 +87,4 @@ Ian Taylor, Chantel Wetzel, Cole Monnahan
 \code{\link{SS_plots}}, \code{\link{SS_output}},
 \code{\link{SS_readdat}}
 }
-\keyword{hplot}
 

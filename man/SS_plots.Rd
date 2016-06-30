@@ -288,5 +288,4 @@ Sci. 65: 2536-2551.
 \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
 \code{\link{SSplotYield}}
 }
-\keyword{hplot}
 

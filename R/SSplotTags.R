@@ -42,7 +42,6 @@
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotTags <-
   function(replist=replist, subplots=1:8, latency=NULL, taggroups=NULL,
            rows=1, cols=1,

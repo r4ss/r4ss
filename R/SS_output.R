@@ -53,7 +53,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}
-#' @keywords data manip list
 #' @examples
 #'
 #'   \dontrun{

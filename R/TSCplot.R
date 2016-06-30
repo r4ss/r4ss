@@ -40,7 +40,6 @@
 #' @author Allan Hicks
 #' @export
 #' @seealso \code{\link{SS_output}} \code{\link{SSgetMCMC}}
-#' @keywords data manip list plot
 #' @examples
 #' 
 #'   \dontrun{

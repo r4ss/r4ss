@@ -223,5 +223,4 @@ Ian Taylor
 \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
-\keyword{hplot}
 

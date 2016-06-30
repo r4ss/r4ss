@@ -30,7 +30,6 @@
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 #' \code{\link{IOTCmove}}
-#' @keywords hplot
 #' @examples
 #' 
 #'   \dontrun{

@@ -26,7 +26,6 @@
 #' @author Jim Lemon, Ian Taylor
 #' @export
 #' @references \url{https://cran.r-project.org/package=plotrix}
-#' @keywords hplot
 stackpoly <- function (x, y, main="", xlab="", ylab="", xat=NA,
                        xaxlab=NA, xlim=NA, ylim=NA, lty=1, border=NA,
                        col=NA, axis4=F, x.hash=NULL, density=20, ...)

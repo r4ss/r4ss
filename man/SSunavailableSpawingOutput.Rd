@@ -31,12 +31,11 @@ be the directory where the model was run.}
 \item{cex.main}{Character expansion for plot titles}
 }
 \description{
-Calculate and plot the unavailable spawning output- separating out ones that 
+Calculate and plot the unavailable spawning output- separating out ones that
 are unavailable because they're too small to be selected from ones that are
 too big to be selected
 }
 \author{
 Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 }
-\keyword{cryptic}
 

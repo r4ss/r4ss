@@ -29,7 +29,6 @@
 #' @author Ian Taylor, Jim Thorson
 #' @export
 #' @seealso \code{\link{SSgetoutput}}
-#' @keywords data manip
 #' @examples
 #' 
 #'   \dontrun{

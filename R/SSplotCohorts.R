@@ -39,7 +39,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords aplot hplot
 SSplotCohorts <-
   function(replist,subplots=1:2,add=FALSE,
            plot=TRUE,print=FALSE,

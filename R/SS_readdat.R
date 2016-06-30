@@ -25,7 +25,6 @@
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
-#' @keywords data
 
 SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=NULL){
   # wrapper function to call old or new version of SS_readdat

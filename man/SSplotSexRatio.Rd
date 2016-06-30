@@ -85,5 +85,4 @@ Cole Monnahan
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
 }
-\keyword{hplot}
 

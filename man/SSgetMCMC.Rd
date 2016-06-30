@@ -53,5 +53,4 @@ Ian Taylor
 \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
 \code{\link{SSplotPars}}
 }
-\keyword{data}
 

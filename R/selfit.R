@@ -11,7 +11,6 @@
 #' @author Tommy Garrison
 #' @export
 #' @seealso \code{\link{sel.line}}
-#' @keywords dplot hplot dynamic
 #' @examples
 #' 
 #' \dontrun{

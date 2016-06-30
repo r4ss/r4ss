@@ -109,7 +109,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
-#' @keywords hplot
 SSplotComps <-
   function(replist, subplots=c(1:21,24), #subplots=1:13,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,

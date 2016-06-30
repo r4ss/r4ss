@@ -34,7 +34,6 @@
 #' @author Ian Stewart, Allan Hicks (modifications)
 #' @export
 #' @seealso \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
-#' @keywords hplot
 #' @examples
 #'
 #'   \dontrun{

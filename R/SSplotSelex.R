@@ -58,7 +58,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotSelex <-
   function(replist, infotable=NULL,
            fleets="all", fleetnames="default",

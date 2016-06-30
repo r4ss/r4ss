@@ -39,7 +39,6 @@
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",

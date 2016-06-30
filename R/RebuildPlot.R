@@ -40,7 +40,6 @@
 #' @param lwd Line width for many of the plot elements. Default=2.
 #' @author Andre Punt, Ian Taylor
 #' @export
-#' @keywords dplot hplot
 #' @examples
 #' 
 #' \dontrun{

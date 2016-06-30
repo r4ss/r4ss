@@ -17,7 +17,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{selfit}}
-#' @keywords dplot hplot dynamic
 #' @examples
 #' 
 #' \dontrun{

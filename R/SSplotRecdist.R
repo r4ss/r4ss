@@ -27,7 +27,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
-#' @keywords hplot
 SSplotRecdist <-
   function(replist,plot=TRUE,print=FALSE,
            areanames=NULL,

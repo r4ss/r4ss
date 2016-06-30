@@ -11,7 +11,6 @@
 #' @param min.move.age Minimum age of movement.
 #' @author Ian Taylor
 #' @export
-#' @keywords dplot hplot dynamic
 #'
 movepars <-
 function(nareas=4,accuage=40,season.duration=1,min.move.age=0.5)

@@ -43,7 +43,6 @@
 #' @author Cole Monnahan
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
-#' @keywords hplot
 SSplotSexRatio <-
   function(replist, kind="AGE", plot=TRUE, print=FALSE, fleets="all",
            fleetnames="default",  yupper=4, linescol=1, lwd=1,

@@ -30,7 +30,6 @@
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotMnwt <-
   function(replist, subplots=1:2, ymax=NULL,
            plot=TRUE, print=FALSE,

@@ -27,7 +27,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}} \code{\link{SSsummarize}}
-#' @keywords data manip list
 SSgetoutput <-
 function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
          verbose=TRUE,ncols=210,listlists=TRUE,underscore=FALSE,

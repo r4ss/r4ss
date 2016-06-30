@@ -41,5 +41,4 @@ Ian G. Taylor, Allan C. Hicks
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 \code{\link{SS_writectl}}
 }
-\keyword{data}
 

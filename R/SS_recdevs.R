@@ -28,7 +28,6 @@
 #' non-NULL value. Default=NULL.
 #' @author Ian Taylor
 #' @export
-#' @keywords data manip
 SS_recdevs <-
 function(
          fyr, lyr, ctl=NULL, recdevs=NULL,

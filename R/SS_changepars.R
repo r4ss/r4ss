@@ -52,7 +52,6 @@
 #' @author Ian Taylor, Christine Stawitz
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
 #' @export
-#' @keywords data manip
 #' @examples
 #'
 #' \dontrun{

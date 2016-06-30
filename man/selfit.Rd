@@ -32,7 +32,4 @@ Tommy Garrison
 \seealso{
 \code{\link{sel.line}}
 }
-\keyword{dplot}
-\keyword{dynamic}
-\keyword{hplot}
 

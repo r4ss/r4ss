@@ -21,7 +21,6 @@
 #' @author Allan Hicks
 #' @export
 #' @seealso \code{\link{SSplotTimeseries}}, ~~~
-#' @keywords hplot
 SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Mortality",
                            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
                            uncertainty=TRUE,

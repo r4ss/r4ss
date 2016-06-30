@@ -29,7 +29,6 @@
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
-#' @keywords hplot dplot
 SSplotRecdevs <-
   function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
            uncertainty=TRUE,forecastplot=FALSE,

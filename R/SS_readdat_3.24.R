@@ -22,7 +22,6 @@
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
-#' @keywords data
 SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   # function to read Stock Synthesis data files
 

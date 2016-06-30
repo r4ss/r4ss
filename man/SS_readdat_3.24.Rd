@@ -36,5 +36,4 @@ Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 \code{\link{SS_writectl}}
 }
-\keyword{data}
 

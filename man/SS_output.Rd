@@ -101,7 +101,4 @@ Ian Stewart, Ian Taylor
 \seealso{
 \code{\link{SS_plots}}
 }
-\keyword{data}
-\keyword{list}
-\keyword{manip}
 

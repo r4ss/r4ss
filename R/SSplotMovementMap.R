@@ -33,7 +33,6 @@
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 #' \code{\link{IOTCmove}}
-#' @keywords hplot
 SSplotMovementMap <-
   function(replist=NULL, xlim, ylim,
            polygonlist, colvec, land="grey", xytable=NULL,

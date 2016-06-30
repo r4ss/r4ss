@@ -58,6 +58,4 @@ Ian Taylor
 \seealso{
 \code{\link{SS_changepars}}
 }
-\keyword{data}
-\keyword{manip}
 

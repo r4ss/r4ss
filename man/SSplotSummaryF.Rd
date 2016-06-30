@@ -49,5 +49,4 @@ Allan Hicks
 \seealso{
 \code{\link{SSplotTimeseries}}, ~~~
 }
-\keyword{hplot}
 

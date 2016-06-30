@@ -25,7 +25,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SSgetoutput}}
-#' @keywords data manip list
 SSsummarize <- function(biglist,
                         sizeselfactor="Lsel",
                         ageselfactor="Asel",

@@ -26,7 +26,6 @@
 #' be added). Default="".
 #' @author Ian Taylor
 #' @export
-#' @keywords data manip
 SS_splitdat <-
   function(inpath     = 'working_directory',
            outpath    = 'working_directory',

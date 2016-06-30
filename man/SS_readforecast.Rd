@@ -27,5 +27,4 @@ Ian Taylor
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 \code{\link{SS_writectl}}
 }
-\keyword{data}
 

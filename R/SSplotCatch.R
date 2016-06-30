@@ -50,7 +50,6 @@
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords aplot hplot
 SSplotCatch <-
   function(replist,subplots=1:15,add=FALSE,areas=1,
            plot=TRUE,print=FALSE,

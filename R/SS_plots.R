@@ -177,7 +177,6 @@
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
-#' @keywords hplot
 SS_plots <-
   function(
     replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,

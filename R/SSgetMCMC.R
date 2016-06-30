@@ -29,7 +29,6 @@
 #' @export
 #' @seealso \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
 #' \code{\link{SSplotPars}}
-#' @keywords data
 SSgetMCMC <-
 function(dir=NULL,verbose=TRUE, writecsv=FALSE,
          csv1="keyposteriors.csv",

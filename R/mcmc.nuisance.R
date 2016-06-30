@@ -30,7 +30,6 @@
 #' @author Ian Stewart
 #' @export
 #' @seealso \code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
-#' @keywords data
 mcmc.nuisance <- function (
           directory="c:/mydirectory/",    # directory to use
           run="mymodel/",		    # folder with ADMB run files

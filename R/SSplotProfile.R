@@ -71,7 +71,6 @@
 #' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SS_profile}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
-#' @keywords aplot hplot
 SSplotProfile <-
   function(summaryoutput,
            plot=TRUE,print=FALSE,

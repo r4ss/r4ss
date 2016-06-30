@@ -17,7 +17,6 @@
 #' \code{\link{SS_writectl}}
 #' @author Ian Taylor
 #' @export
-#' @keywords data
 SS_readctl <- function(file){
   cat("Warning!\n",
       "  SS_readctl is not fully implemented. The logic to figure out\n",

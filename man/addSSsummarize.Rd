@@ -89,7 +89,4 @@ Allan Hicks
 \seealso{
 \code{\link{SSsummarize}} \code{\link{SSplotComparisons}}
 }
-\keyword{data}
-\keyword{list}
-\keyword{manip}
 

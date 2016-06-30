@@ -30,7 +30,6 @@
 #' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
 #' @seealso \code{\link{SS_plots}}
-#' @keywords hplot
 SSplotDiscard <-
   function(replist,subplots=1:2,
            plot=TRUE,print=FALSE,

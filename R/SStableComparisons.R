@@ -27,7 +27,6 @@
 #' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
 #' \code{\link{SS_output}}
-#' @keywords data
 SStableComparisons <-  function(summaryoutput,
                                 models="all",
                                 likenames=c("TOTAL",

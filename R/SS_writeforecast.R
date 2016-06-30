@@ -17,7 +17,6 @@
 #' \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
-#' @keywords data manip
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
                               overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files

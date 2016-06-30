@@ -25,7 +25,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords aplot hplot
 #' 
 SS_html <- function(replist=NULL,
                     plotdir="plots",

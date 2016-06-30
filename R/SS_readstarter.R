@@ -11,7 +11,6 @@
 #' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 #' \code{\link{SS_writectl}}
-#' @keywords data
 SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("running SS_readstarter\n")
   size <- file.info(file)$size

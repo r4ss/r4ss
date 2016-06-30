@@ -38,7 +38,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,
            xlim=NULL,ylim=NULL,

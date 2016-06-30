@@ -84,5 +84,4 @@ Ian Stewart, Allan Hicks (modifications)
 \seealso{
 \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
 }
-\keyword{hplot}
 

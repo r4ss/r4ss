@@ -68,6 +68,4 @@ Ian Taylor, Jim Thorson
 \seealso{
 \code{\link{SSgetoutput}}
 }
-\keyword{data}
-\keyword{manip}
 
