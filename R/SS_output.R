@@ -829,10 +829,9 @@ SS_output <-
     pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
   }
   stats$table_of_phases <- table(parameters$Phase)
-  #pars <- pars[pars$Phase %in% 0:100,]
-  #stats$estimated_non_rec_devparameters <- pars[,c(2,3,5:14,17)]
+  # subset columns for printed table of estimated parameters
   stats$estimated_non_rec_devparameters <- pars[,names(pars) %in%
-      c("Label","Value","Phase","Min","Max","Init","Prior","PR_type",
+      c("Label","Value","Phase","Min","Max","Init","Prior","Gradient","PR_type",
         "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
 
   # read covar.sso file
@@ -1052,8 +1051,11 @@ SS_output <-
   }
 
   # gradient
-  if(covar & !is.na(corfile)) stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
-  stats$maximum_gradient_component <- as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
+  if(covar & !is.na(corfile)){
+    stats$log_det_hessian <- read.table(corfile,nrows=1)[1,10]
+  }
+  stats$maximum_gradient_component <-
+    as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
   # sigma_R
   if(SS_versionNumeric >= 3.3 |
