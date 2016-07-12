@@ -10,7 +10,7 @@
 ##' @author Cole Monnahan
 ##' @export
 ##' @seealso \code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}
-##' @note Also published here:
+##' @note Explanation of the methods (in PDF form) published here:
 ##' \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
 getADMBHessian <- function(File, FileName){
     ## This function reads in all of the information contained in the
