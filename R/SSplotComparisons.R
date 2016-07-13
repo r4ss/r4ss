@@ -812,7 +812,7 @@ SSplotComparisons <-
           mtext(side=4,line=3,"1 - SPR")
           # line below has round to be more accurate than the floor which is used
           # in the test above and in SS
-          mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep=""))
+          mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",100*sprtarg,"%)",sep=""))
         } 
       }
     }else{
