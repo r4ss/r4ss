@@ -68,10 +68,11 @@ SSplotTimeseries <-
   # subplot15 = fraction of recruitment by birth season
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -376,7 +377,6 @@ SSplotTimeseries <-
       filename <- paste("ts",subplot,"_",filename,".png",sep="")
       # replace any spaces with underscores
       filename <- gsub(pattern=" ", replacement="_", x=filename, fixed=TRUE)
-      filename <- paste(plotdir,filename,sep="")
       # if(verbose) cat("printing plot to file:",filename,"\n")
       plotinfo <- pngfun(file=filename,caption=main)
     }

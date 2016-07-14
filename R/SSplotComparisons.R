@@ -192,7 +192,7 @@ SSplotComparisons <-
     # if extra text requested, add it before extention in file name
     file <- paste0(filenameprefix, file)
     # open png file
-    png(filename=paste(plotdir,file,sep="/"),
+    png(filename=file.path(plotdir,file),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
     # change graphics parameters to input value
     par(par)

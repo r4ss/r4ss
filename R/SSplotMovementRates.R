@@ -47,10 +47,11 @@ SSplotMovementRates <-
 {
   #if(verbose) cat("Running SSplotMovementRates function\n")
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -106,7 +107,7 @@ SSplotMovementRates <-
         }
         if(plot) move.endyr.fn()
         if(print){
-          file <- paste(plotdir,"/move1_movement_rates.png",sep="")
+          file <- "move1_movement_rates.png"
           caption <- main
           plotinfo <- pngfun(file=file, caption=caption)
           move.endyr.fn()
@@ -247,7 +248,7 @@ SSplotMovementRates <-
           
           if(plot) move.mountains.fn()
           if(print){
-            file <- paste(plotdir,"/move2_time-varying_movement_rates.png",sep="")
+            file <- "move2_time-varying_movement_rates.png"
             caption <- main
             plotinfo <- pngfun(file=file, caption=caption)
             move.mountains.fn()

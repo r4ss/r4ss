@@ -79,10 +79,11 @@ SSplotNumbers <-
 {
   # plot various things related to numbers-at-age for Stock Synthesis
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -287,8 +288,8 @@ SSplotNumbers <-
             filepartarea <- ""
             if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
             if(1 %in% subplots){
-              file <- paste(plotdir,"/numbers1",filepartarea,filepartsex,fileperiod,
-                            ".png",sep="")
+              file <- paste0("numbers1",filepartarea,filepartsex,fileperiod,
+                            ".png")
               caption <- plottitle1
               plotinfo <- pngfun(file=file, caption=caption)
               ageBubble.fn()
@@ -296,8 +297,8 @@ SSplotNumbers <-
             }
             # make 2-sex plot after looping over both sexes
             if(2 %in% subplots & m==2 & nsexes==2){
-              file <- paste(plotdir,"/numbers2_meanage",filepartarea,fileperiod,
-                            ".png",sep="")
+              file <- paste0("numbers2_meanage",filepartarea,fileperiod,
+                            ".png")
               caption <- plottitle2
               plotinfo <- pngfun(file=file, caption=caption)
               meanAge.fn()
@@ -332,7 +333,7 @@ SSplotNumbers <-
           if(print & 3 %in% subplots){
             filepart <- ""
             if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-            file <- paste(plotdir,"/numbers3_ratio_age",filepart,".png",sep="")
+            file <- paste0("numbers3_ratio_age",filepart,".png")
             caption <- plottitle3
             plotinfo <- pngfun(file=file, caption=caption)
             numbersRatioAge.fn(labcex=0.4)
@@ -477,7 +478,7 @@ SSplotNumbers <-
               filepartarea <- ""
               if(nareas > 1) filepartarea <- paste("_",areanames[iarea],sep="")
               if(6 %in% subplots){
-                file <- paste(plotdir,"/numbers6_len",filepartarea,filepartsex,".png",sep="")
+                file <- paste0("numbers6_len",filepartarea,filepartsex,".png")
                 caption <- plottitle1
                 plotinfo <- pngfun(file=file, caption=caption)
                 lenBubble.fn()
@@ -485,7 +486,7 @@ SSplotNumbers <-
               }
               # make 2-sex plot after looping over both sexes
               if(7 %in% subplots & m==2 & nsexes==2){
-                file <- paste(plotdir,"/numbers7_meanlen",filepartarea,".png",sep="")
+                file <- paste0("numbers7_meanlen",filepartarea,".png")
                 caption <- plottitle2
                 plotinfo <- pngfun(file=file, caption=caption)
                 meanLen.fn()
@@ -530,7 +531,7 @@ SSplotNumbers <-
             if(print & 8 %in% subplots){
               filepart <- ""
               if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-              file <- paste(plotdir,"/numbers8_ratio_len1",filepart,".png",sep="")
+              file <- paste0("numbers8_ratio_len1",filepart,".png")
               caption <- labels[19]
               plotinfo <- pngfun(file=file, caption=caption)
               numbersRatioLen.fn(labcex=0.4)
@@ -539,7 +540,7 @@ SSplotNumbers <-
             if(print & 9 %in% subplots){
               filepart <- ""
               if(nareas > 1) filepart <- paste("_",areanames[iarea],filepart,sep="")
-              file <- paste(plotdir,"/numbers8_ratio_len2",filepart,".png",sep="")
+              file <- paste0("numbers8_ratio_len2",filepart,".png")
               caption <- labels[20]
               plotinfo <- pngfun(file=file, caption=caption)
               numbersRatioLen.fn(labcex=0.4)
@@ -608,7 +609,7 @@ SSplotNumbers <-
       equilibfun()
     }
     if(print & 4 %in% subplots){
-      file=paste(plotdir,"/numbers4_equilagecomp.png",sep="")
+      file <- "numbers4_equilagecomp.png"
       caption <- labels[10]
       plotinfo <- pngfun(file=file, caption=caption)
       equilibfun()
@@ -699,7 +700,7 @@ SSplotNumbers <-
       }
       if(print & 5 %in% subplots){
         # make files with plots of age error standard deviations
-        file <- paste(plotdir,"/numbers5_ageerrorSD.png",sep="")
+        file <- "numbers5_ageerrorSD.png"
         caption <- paste(labels[8], ": ", labels[4], sep="")
         plotinfo <- pngfun(file=file, caption=caption)
         ageingfun()
@@ -707,7 +708,7 @@ SSplotNumbers <-
 
         # make files with plots of age error means
         if(mean(ageingbias==0)!=1){
-          file <- paste(plotdir,"/numbers5_ageerrorMeans.png",sep="")
+          file <- "numbers5_ageerrorMeans.png"
           caption <- paste(labels[8], ": ", labels[5], sep="")
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun2()
@@ -716,8 +717,7 @@ SSplotNumbers <-
 
         # make files with plots of age error matrices
         for(i_ageerror_def in 1:N_ageerror_defs){
-          file <- paste(plotdir,"/numbers5_ageerror_matrix_",
-                        i_ageerror_def,".png",sep="")
+          file <- paste0("numbers5_ageerror_matrix_", i_ageerror_def,".png")
           caption <- paste(labels[8], ": matrix for method ", i_ageerror_def, sep="")
           caption <- paste(caption,
                            "<br>(White = 1.0, Orange = 0.5, Red = 0.0)")

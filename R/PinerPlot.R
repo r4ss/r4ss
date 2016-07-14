@@ -100,7 +100,7 @@ PinerPlot <-
 
   # subfunction to write png files
   pngfun <- function(file){
-    png(filename=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,
+    png(filename=file.path(plotdir,file),width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
   }
 

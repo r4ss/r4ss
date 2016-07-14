@@ -61,10 +61,11 @@ SSplotTags <-
            plotdir="default",
            verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -289,7 +290,7 @@ print(head(Recaps))
       if(1 %in% subplots){
         for(ipage in 1:npages){
           if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-          file <- paste(plotdir,filenamestart,pagetext,".png",sep="")
+          file <- paste(filenamestart,pagetext,".png",sep="")
           caption <- paste(labels[4],"(lighter colored bars indicate latency period excluded from likelihood)")
           if(npages>1) caption <- paste(caption, ", (plot ",ipage,"of ",npages,")",sep="")
           plotinfo <- pngfun(file=file, caption=caption)
@@ -298,49 +299,49 @@ print(head(Recaps))
         }
       }
       if(2 %in% subplots){
-        file <- paste(plotdir,"tags_aggregated.png",sep="")
+        file <- "tags_aggregated.png"
         caption <- labels[5]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun2()
         dev.off()
       }
       if(3 %in% subplots){
-        file <- paste(plotdir,"tags_data_bubbleplot.png",sep="")
+        file <- "tags_data_bubbleplot.png"
         caption <- labels[6]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun3()
         dev.off()
       }
       if(4 %in% subplots){
-        file <- paste(plotdir,"tags_residuals.png",sep="")
+        file <- "tags_residuals.png"
         caption <- labels[7]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun4()
         dev.off()
       }
       if(5 %in% subplots){
-        file <-paste(plotdir,"tags_lines.png",sep="")
+        file <- "tags_lines.png"
         caption <- labels[8]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun5()
         dev.off()
       }
       if(6 %in% subplots){
-        file <-paste(plotdir,"tags_parameters.png",sep="")
+        file <- "tags_parameters.png"
         caption <- "Tag-related parameters"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun6()
         dev.off()
       }
       if(7 %in% subplots){
-        file <-paste(plotdir,"tags_alive.png",sep="")
+        file <- "tags_alive.png"
         caption <- "'Tags alive' by tag group"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun7()
         dev.off()
       }
       if(8 %in% subplots){
-        file <-paste(plotdir,"tags_total_recaptures.png",sep="")
+        file <- "tags_total_recaptures.png"
         caption <- "Total tag recaptures"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun8()

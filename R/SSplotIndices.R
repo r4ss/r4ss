@@ -93,10 +93,11 @@ function(replist,subplots=1:9,
     return()
   }
 
-  pngfun <- function(filename,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -281,7 +282,7 @@ function(replist,subplots=1:9,
       }
       if(print){
         if(1 %in% subplots & datplot){
-          file <- paste(plotdir,"/index1_cpuedata_",Fleet,".png",sep="")
+          file <- paste0("index1_cpuedata_",Fleet,".png")
           caption <- paste0("Index data for ", Fleet, ". ",
                             "Lines indicate 95% uncertainty interval around index values. ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
@@ -291,7 +292,7 @@ function(replist,subplots=1:9,
           dev.off()
         }
         if(2 %in% subplots){
-          file <- paste(plotdir,"/index2_cpuefit_",Fleet,".png",sep="")
+          file <- paste0("index2_cpuefit_",Fleet,".png")
           caption <- paste0("Fit to index data for ", Fleet,". ",
                             "Lines indicate 95% uncertainty interval around index values. ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
@@ -301,7 +302,7 @@ function(replist,subplots=1:9,
           dev.off()
         }
         if(3 %in% subplots){
-          file <- paste(plotdir,"/index3_cpuecheck_",Fleet,".png",sep="")
+          file <- paste0("index3_cpuecheck_",Fleet,".png")
           caption <- paste("Observed vs. expected index values with smoother for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun2()
@@ -379,7 +380,7 @@ function(replist,subplots=1:9,
       
       if(print){
         if(4 %in% subplots & datplot){
-          file <- paste(plotdir,"/index4_logcpuedata_",Fleet,".png",sep="")
+          file <- paste0("index4_logcpuedata_",Fleet,".png")
           caption <- paste0("Log index data for ", Fleet, ". ",
                             "Lines indicate 95% uncertainty interval around index values. ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
@@ -389,7 +390,7 @@ function(replist,subplots=1:9,
           dev.off()
         }
         if(5 %in% subplots){
-          file <- paste(plotdir,"/index5_logcpuefit_",Fleet,".png",sep="")
+          file <- paste0("index5_logcpuefit_",Fleet,".png")
           caption <- paste0("Fit to log index data on log scale for ", Fleet, ". ",
                             "Lines indicate 95% uncertainty interval around index values. ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
@@ -399,21 +400,21 @@ function(replist,subplots=1:9,
           dev.off()
         }
         if(6 %in% subplots){
-          file <- paste(plotdir,"/index6_logcpuecheck_",Fleet,".png",sep="")
+          file <- paste0("index6_logcpuecheck_",Fleet,".png")
           caption <- paste("log(observed) vs. log(expected) index values with smoother for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun4()
           dev.off()
         }
         if(7 %in% subplots & time){
-          file <- paste(plotdir,"/index7_timevaryingQ_",Fleet,".png",sep="")
+          file <- paste0("index7_timevaryingQ_",Fleet,".png")
           caption <- paste("Timeseries of catchability for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
           cpuefun5()
           dev.off()
         }
         if(8 %in% subplots & time2){
-          file <- paste(plotdir,"/index8_Q_vs_Vuln_bio_",Fleet,".png",sep="")
+          file <- paste0("index8_Q_vs_Vuln_bio_",Fleet,".png")
           caption <-
             paste("Catchability vs. vulnerable biomass for fleet ",Fleet,"<br> \n",
                   "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
@@ -453,7 +454,7 @@ function(replist,subplots=1:9,
     } # end all_cpue_fun
     if(plot & (9 %in% subplots)){all_cpue_fun()}
     if(print & (9 %in% subplots)){
-      file <- paste(plotdir,"/index9_standcpueall",".png",sep="")
+      file <- paste0("index9_standcpueall",".png")
       caption <- "Standardized indices overlaid"
       plotinfo <- pngfun(file=file, caption=caption)
       all_cpue_fun()

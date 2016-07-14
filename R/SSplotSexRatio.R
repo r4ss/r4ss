@@ -58,10 +58,11 @@ SSplotSexRatio <-
 
   if(!exists("make_multifig_sexratio")) stop("you are missing the function 'make_muliti_sexratio'")
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -173,8 +174,7 @@ SSplotSexRatio <-
               pagetext <- paste("_page",ipage,sep="")
               caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
             }
-            file <- paste(plotdir,"/",filenamestart,
-                          filename_fltmkt,pagetext,".png",sep="")
+            file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
             plotinfo <- pngfun(file=file, caption=caption)
             tempfun(ipage=ipage,...)
             dev.off()
