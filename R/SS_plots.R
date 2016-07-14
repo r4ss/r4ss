@@ -46,11 +46,12 @@
 #' @param html Run \code{\link{SS_html}} on completion? By default has same
 #' value as \code{png}.
 #' @param printfolder Name of subfolder to create within the working directory
-#' into which any PNG files specified by \code{print} will be saved. By default
-#' the working directory is used with no subfolder.  Default="".
+#' into which any PNG files specified by \code{print} will be saved.
+#' The default is "plots".
 #' @param dir The directory in which any PNG files requested by \code{print}
 #' are created. By default it will be the same directory that the report file
-#' was read from by the \code{SS_output } function. Default="default".
+#' was read from by the \code{SS_output} function. Alternatives to the default
+#' can be either relative or absolute paths.
 #' @param fleets Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing fleets or surveys for which plots should be made. By
 #' default, plots will be made for all fleets and surveys.  Default="all".

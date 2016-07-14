@@ -73,12 +73,13 @@ Current grouping of plots is as follows:
 value as \code{png}.}
 
 \item{printfolder}{Name of subfolder to create within the working directory
-into which any PNG files specified by \code{print} will be saved. By default
-the working directory is used with no subfolder.  Default="".}
+into which any PNG files specified by \code{print} will be saved.
+The default is "plots".}
 
 \item{dir}{The directory in which any PNG files requested by \code{print}
 are created. By default it will be the same directory that the report file
-was read from by the \code{SS_output } function. Default="default".}
+was read from by the \code{SS_output} function. Alternatives to the default
+can be either relative or absolute paths.}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys for which plots should be made. By
