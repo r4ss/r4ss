@@ -210,9 +210,10 @@ SSplotComparisons <-
     if(is.null(plotdir)){
       stop("to write to a PDF, you must supply a directory as 'plotdir'")
     }
-    pdffile <- paste0(plotdir,"/", filenameprefix, "SSplotComparisons_",
-                      format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf")
-    pdf(file=pdffile,width=pwidth,height=pheight)
+    pdffile <- file.path(plotdir,
+                         paste0(filenameprefix, "SSplotComparisons_",
+                                format(Sys.time(), '%d-%b-%Y_%H.%M' ), ".pdf"))
+    pdf(file=pdffile, width=pwidth, height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
     par(par)
   }

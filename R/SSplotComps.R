@@ -933,7 +933,7 @@ SSplotComps <-
             # not using pngfun because caption isn't available until after
             # plot is created
             # old command: plotinfo <- pngfun(file=file, caption=caption)
-            png(filename=file,width=pwidth,height=pheight,
+            png(filename=file.path(plotdir, file),width=pwidth,height=pheight,
                 units=punits,res=res,pointsize=ptsize)
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)

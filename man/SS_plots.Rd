@@ -72,14 +72,19 @@ Current grouping of plots is as follows:
 \item{html}{Run \code{\link{SS_html}} on completion? By default has same
 value as \code{png}.}
 
-\item{printfolder}{Name of subfolder to create within the working directory
-into which any PNG files specified by \code{print} will be saved.
-The default is "plots".}
+\item{printfolder}{The sub-directory under 'dir' (see below) in which the
+PNG files will be located.  The default sub-directory is "plots".
+The directory will be created if it doesn't exist.
+If 'printfolder' is set to '', it is ignored and the PNG files will be located
+in the directory specified by 'dir'.}
 
-\item{dir}{The directory in which any PNG files requested by \code{print}
-are created. By default it will be the same directory that the report file
+\item{dir}{The directory in which a PDF file (if requested) will be created
+and within which the printfolder sub-directory (see above) will be created
+if png=TRUE. By default it will be the same directory that the report file
 was read from by the \code{SS_output} function. Alternatives to the default
-can be either relative or absolute paths.}
+can be either relative (to the working directory) or absolute paths.
+The function will attempt to create the directory it doesn't exist, but it
+does not do so recursively.}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys for which plots should be made. By

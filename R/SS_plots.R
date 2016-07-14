@@ -45,13 +45,18 @@
 #' @param png Send plots to PNG files instead of R GUI?
 #' @param html Run \code{\link{SS_html}} on completion? By default has same
 #' value as \code{png}.
-#' @param printfolder Name of subfolder to create within the working directory
-#' into which any PNG files specified by \code{print} will be saved.
-#' The default is "plots".
-#' @param dir The directory in which any PNG files requested by \code{print}
-#' are created. By default it will be the same directory that the report file
+#' @param printfolder The sub-directory under 'dir' (see below) in which the
+#' PNG files will be located.  The default sub-directory is "plots".
+#' The directory will be created if it doesn't exist.
+#' If 'printfolder' is set to '', it is ignored and the PNG files will be located
+#' in the directory specified by 'dir'.
+#' @param dir The directory in which a PDF file (if requested) will be created
+#' and within which the printfolder sub-directory (see above) will be created
+#' if png=TRUE. By default it will be the same directory that the report file
 #' was read from by the \code{SS_output} function. Alternatives to the default
-#' can be either relative or absolute paths.
+#' can be either relative (to the working directory) or absolute paths.
+#' The function will attempt to create the directory it doesn't exist, but it
+#' does not do so recursively.
 #' @param fleets Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing fleets or surveys for which plots should be made. By
 #' default, plots will be made for all fleets and surveys.  Default="all".
@@ -1218,7 +1223,9 @@ SS_plots <-
     plotInfoTable$png_time <- png_time
     plotInfoTable$StartTime <- StartTime
     # create a name for the file and write it to the plot directory
-    csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv",sep="")
+    csvname <- file.path(plotdir,
+                         paste0("plotInfoTable_",
+                                format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv"))
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images

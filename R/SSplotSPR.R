@@ -45,10 +45,11 @@ SSplotSPR <-
 {
   # plot SPR-related quantities
   
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -83,7 +84,7 @@ SSplotSPR <-
   if(1 %in% subplots){
     if(plot) sprfunc()
     if(print){
-      file <- file.path(plotdir,"/SPR1_series.png")
+      file <- "SPR1_series.png"
       caption <- "Timeseries of SPR"
       plotinfo <- pngfun(file=file, caption=caption)
       sprfunc()
@@ -105,7 +106,7 @@ SSplotSPR <-
     if(2 %in% subplots){
       if(plot) sprfunc2()
       if(print){
-        file <- file.path(plotdir,"/SPR2_minusSPRseries.png")
+        file <- "SPR2_minusSPRseries.png"
         caption <- "Timeseries of 1-SPR"
         plotinfo <- pngfun(file=file, caption=caption)
         sprfunc2()
@@ -138,7 +139,7 @@ SSplotSPR <-
       if(3 %in% subplots){
         if(plot) sprfunc3()
         if(print){
-          file <- file.path(plotdir,"/SPR3_ratiointerval.png")
+          file <- "SPR3_ratiointerval.png"
           caption <- "Timeseries of SPR ratio"
           plotinfo <- pngfun(file=file, caption=caption)
           sprfunc3()
@@ -193,7 +194,7 @@ SSplotSPR <-
 
         if(plot) phasefunc()
         if(print){
-          file <- file.path(plotdir,"/SPR4_phase.png")
+          file <- "SPR4_phase.png"
           caption <- "Phase plot of biomass ratio vs. SPR ratio"
           plotinfo <- pngfun(file=file, caption=caption)
           phasefunc()
