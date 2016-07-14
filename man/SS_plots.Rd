@@ -33,7 +33,34 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
 \item{plot}{Plot sets to be created, see list of plots below.  Use to
 specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 not available in the model run will automatically be skipped, whether called
-or not.}
+or not.
+Current grouping of plots is as follows:
+\enumerate{
+  \item Biology
+  \item Selectivity and retention
+  \item Timeseries
+  \item Recruitment deviations
+  \item Recruitment bias adjustment
+  \item Spawner-recruit
+  \item Catch
+  \item SPR
+  \item Discards
+  \item Mean weight
+  \item Indices
+  \item Numbers at age
+  \item Length comp data
+  \item Age comp data
+  \item Conditional age-at-length data
+  \item Length comp fits
+  \item Age comp fits
+  \item Conditional age-at-length fits
+  \item Fancis and Punt conditional age-at-length comp fits
+  \item Mean length-at-age and mean weight-at-age
+  \item Tags
+  \item Yield
+  \item Movement
+  \item Data range
+}}
 
 \item{print}{Deprecated input for backward compatability, now replaced by
 \code{png = TRUE/FALSE}.}

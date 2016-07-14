@@ -11,6 +11,34 @@
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called
 #' or not.
+#' Current grouping of plots is as follows:
+#' \enumerate{
+#'   \item Biology
+#'   \item Selectivity and retention
+#'   \item Timeseries
+#'   \item Recruitment deviations
+#'   \item Recruitment bias adjustment
+#'   \item Spawner-recruit
+#'   \item Catch
+#'   \item SPR
+#'   \item Discards
+#'   \item Mean weight
+#'   \item Indices
+#'   \item Numbers at age
+#'   \item Length comp data
+#'   \item Age comp data
+#'   \item Conditional age-at-length data
+#'   \item Length comp fits
+#'   \item Age comp fits
+#'   \item Conditional age-at-length fits
+#'   \item Fancis and Punt conditional age-at-length comp fits
+#'   \item Mean length-at-age and mean weight-at-age
+#'   \item Tags
+#'   \item Yield
+#'   \item Movement
+#'   \item Data range
+#' }
+#' 
 #' @param print Deprecated input for backward compatability, now replaced by
 #' \code{png = TRUE/FALSE}.
 #' @param pdf Send plots to PDF file instead of R GUI?
@@ -303,23 +331,59 @@ SS_plots <-
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
 
-  if(dir=="default") dir <- inputs$dir
-  plotdir <- paste(dir,"/",printfolder,"/",sep="")
-  if(png){
-    dir.create(dir,showWarnings=FALSE)
-    dir.create(plotdir,showWarnings=FALSE)
-    if(verbose) cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
+  ### deal with directories in which to create PNG or PDF files
+  if(dir=="default"){
+    # directory within which printfolder will be created
+    # by default it is assumed to be the location of the model files
+    dir <- inputs$dir
+  }
+  if(png | pdf){
+    # get info on directory where subfolder will go
+    # (typically folder with model output files)
+    dir.isdir <- file.info(dir)$isdir
+    # create directory
+    if(is.na(dir.isdir) | !dir.isdir){
+      cat("Directory doesn't exist, attempting to create:\n", dir, "\n")
+      dir.create(dir)
+    }
+    # test again (even though failure to create dir should have already caused error)
+    # get info on directory where subfolder will go
+    # (typically folder with model output files)
+    dir.isdir <- file.info(dir)$isdir
+    # create 
+    if(is.na(dir.isdir) | !dir.isdir){
+      stop("Not able to create directory:\n", dir, "\n")
+    }
   }
 
-  plotInfoTable <- NULL
-  if(pdf){
-    if(dir=="default") dir <- inputs$dir
-    dir.create(dir,showWarnings=FALSE)
-    pdffile <- paste(dir,"/SS_plots_",format(Sys.time(),'%d-%m-%Y_%H.%M' ),".pdf",sep="")
-    pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
+  # now add subdirectory for PNG and HTML files if that option is chosen
+  plotdir <- "default" # dummy value passed to function that ignore it if png=FALSE
+  if(png){
+    plotdir <- file.path(dir,printfolder)
+    plotdir.isdir <- file.info(plotdir)$isdir
+    if(is.na(plotdir.isdir) | !plotdir.isdir){
+      dir.create(plotdir)
+    }
+    if(verbose){
+      cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
+    }
   }
-  if(new & !png) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
+
+  # create PDF file if requested
+  if(pdf){
+    pdffile <- file.path(dir,paste("SS_plots_",format(Sys.time(),'%d-%m-%Y_%H.%M' ),".pdf",sep=""))
+    pdf(file=pdffile, width=pwidth, height=pheight)
+    if(verbose){
+      cat("PDF file with plots will be:",pdffile,'\n')
+    }
+  }
+
+  # blank table to store plot info
+  plotInfoTable <- NULL
+
+  if(new & !png){
+    par(mfcol=c(rows,cols)) # make multi-panel plot if requested (not available for PNG files)
+  }
   if(pdf){
     mar0 <- par()$mar # current margins
     par(mar=rep(0,4))
@@ -977,7 +1041,7 @@ SS_plots <-
     if(igroup %in% plot){
       if(nrow(replist$condbase)>0 & verbose){
         ## if(verbose){
-        ##   cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
+        ##   cat("Starting Andre's conditional age-at-length plots (group ",igroup,")\n",
         ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
         ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
         ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
@@ -1006,7 +1070,7 @@ SS_plots <-
         if(!is.null(plotInfoTable))
           plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
       }else{
-        if(verbose) cat("Skipping conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
+        if(verbose) cat("Skipping conditional A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
     } # end if igroup in plot or print
 
@@ -1157,7 +1221,7 @@ SS_plots <-
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images
-    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder,...,
+    if(html) SS_html(replist,filenotes=filenotes,plotdir=plotdir,...,
       verbose = verbose)
     # return notes on the plots
     return(invisible(plotInfoTable))
