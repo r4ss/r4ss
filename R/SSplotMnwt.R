@@ -48,10 +48,11 @@ SSplotMnwt <-
            cex.main=1,
            plotdir="default", verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -104,7 +105,7 @@ SSplotMnwt <-
           if(isubplot==1) addfit <- FALSE else addfit <- TRUE
           if(plot) bdywtfunc(addfit=addfit)
           if(print){
-            file <- paste(plotdir,"bodywtfit_flt",fleetnames[ifleet],".png",sep="")
+            file <- paste0("bodywtfit_flt",fleetnames[ifleet],".png")
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             bdywtfunc(addfit=addfit)

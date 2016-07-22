@@ -4,7 +4,7 @@
 \alias{SS_html}
 \title{Create HTML files to view figures in browser.}
 \usage{
-SS_html(replist = NULL, plotdir = "plots", plotInfoTable = NULL,
+SS_html(replist = NULL, plotdir = NULL, plotInfoTable = NULL,
   title = "SS Output", width = 500, openfile = TRUE, multimodel = FALSE,
   filenotes = NULL, verbose = TRUE)
 }

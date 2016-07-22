@@ -27,7 +27,7 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 #' 
 SS_html <- function(replist=NULL,
-                    plotdir="plots",
+                    plotdir=NULL,
                     plotInfoTable=NULL,
                     title="SS Output",
                     width=500,
@@ -38,14 +38,14 @@ SS_html <- function(replist=NULL,
   cat("Running 'SS_html':\n",
       "  By default, this function will look in the directory where PNG files were created\n",
       "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n",
-      "  HTML files are written to link to these plots and put in the same directory.\n",
-      "  Please provide feedback on any bugs, annoyances, or suggestions for improvement.\n\n")
-  
+      "  HTML files are written to link to these plots and put in the same directory.\n\n")
+  if(is.null(plotdir)){
+    stop("input 'plotdir' required")
+  }
   # check for table in directory with PNG files
   if(is.null(plotInfoTable)){
     if(!is.null(replist)){
-      dir <- replist$inputs$dir
-      filenames <- dir(file.path(dir,plotdir))
+      filenames <- dir(plotdir)
       # look for all files beginning with the name 'plotInfoTable'
       filenames <- filenames[grep("plotInfoTable",filenames)]
       filenames <- filenames[grep(".csv",filenames)]
@@ -53,7 +53,7 @@ SS_html <- function(replist=NULL,
       plotInfoTable <- NULL
       # loop over matching CSV files and combine them
       for(ifile in 1:length(filenames)){
-        filename <- file.path(dir,plotdir,filenames[ifile])
+        filename <- file.path(plotdir,filenames[ifile])
         temp <- read.csv(filename,colClasses = "character")
         plotInfoTable <- rbind(plotInfoTable,temp)
       }
@@ -108,14 +108,14 @@ SS_html <- function(replist=NULL,
   for(icat in 0:length(categories)){
     if(icat==0){
       category <- "Home"
-      htmlfile <- file.path(dir,plotdir,"SS_output.html")
+      htmlfile <- file.path(plotdir,"SS_output.html")
       htmlhome <- htmlfile
       if(verbose){
         cat("Home HTML file with output will be:\n",htmlhome,'\n')
       }
     }else{
       category <- categories[icat]
-      htmlfile <- file.path(dir,plotdir,paste("SS_output_",category,".html",sep=""))
+      htmlfile <- file.path(plotdir,paste("SS_output_",category,".html",sep=""))
     }
     # write HTML head including some CSS stuff about fonts and whatnot
     # source for text below is http://unraveled.com/publications/css_tabs/

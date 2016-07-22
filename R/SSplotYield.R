@@ -41,10 +41,11 @@ SSplotYield <-
            plotdir="default",
            verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -82,7 +83,7 @@ SSplotYield <-
         # make plot
         if(plot){yieldfunc()}
         if(print){
-          file <- paste(plotdir,"yield1_yield_curve.png",sep="")
+          file <- "yield1_yield_curve.png"
           caption <- "Yield curve"
           plotinfo <- pngfun(file=file, caption=caption)
           yieldfunc()
@@ -143,7 +144,7 @@ SSplotYield <-
   if(2 %in% subplots){
     if(plot){sprodfunc()}
     if(print){
-      file <- paste(plotdir,"yield2_Hilborn_surplus_production.png",sep="")
+      file <- "yield2_Hilborn_surplus_production.png"
       caption <-
         paste("Surplus production plot. For interpretation, see<br>",
               "<blockquote>Walters, Hilborn, and  Christensen, 2008,",

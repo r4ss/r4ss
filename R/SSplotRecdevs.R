@@ -43,10 +43,12 @@ SSplotRecdevs <-
            verbose=TRUE)
 {
   # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -169,7 +171,7 @@ SSplotRecdevs <-
       }
       if(print){ # if printing to PNG files
         if(1 %in% subplots){
-          file <- paste(plotdir,"/recdevs1_points.png",sep="")
+          file <- "recdevs1_points.png"
           caption <- "Recruitment deviations"
           plotinfo <- pngfun(file=file, caption=caption)
           recdevfunc(uncertainty=FALSE)
@@ -177,14 +179,14 @@ SSplotRecdevs <-
         }
         if(uncertainty){
           if(2 %in% subplots){
-            file <- paste(plotdir,"/recdevs2_withbars.png",sep="")
+            file <- "recdevs2_withbars.png"
             caption <- "Recruitment deviations with 95% intervals"
             plotinfo <- pngfun(file=file, caption=caption)
             recdevfunc(uncertainty=TRUE)
             dev.off()
           }
           if(3 %in% subplots){
-            file <- paste(plotdir,"/recdevs3_varcheck.png",sep="")
+            file <- "recdevs3_varcheck.png"
             caption <-
               paste("Recruitment deviations variance check.<br>",
                     "See later figure of transformed variance values for comparison",

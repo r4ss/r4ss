@@ -60,10 +60,11 @@ SSplotCohorts <-
   # plot catch-at-age contributions by cohort in units of numbers and biomass
 
   subplot_names <- c("1: catch by cohort")  
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -233,11 +234,11 @@ SSplotCohorts <-
   if(print){
     for(isubplot in subplots){
       if(isubplot==1){
-        file <- paste(plotdir,"/catch_cohort_numbers.png",sep="")
+        file <- paste("catch_cohort_numbers.png",sep="")
         caption <- labels[2]
       }
       if(isubplot==2){
-        file <- paste(plotdir,"/catch_cohort_biomass.png",sep="")
+        file <- paste("catch_cohort_biomass.png",sep="")
         caption <- labels[3]
       }
       plotinfo <- pngfun(file=file, caption=caption)

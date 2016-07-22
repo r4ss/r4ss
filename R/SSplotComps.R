@@ -196,10 +196,11 @@ SSplotComps <-
 
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -528,7 +529,7 @@ SSplotComps <-
                 pagetext <- paste("_page",ipage,sep="")
                 caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
               }
-              file <- paste(plotdir,"/",filenamestart,
+              file <- paste(filenamestart,
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               tempfun(ipage=ipage,...)
@@ -627,7 +628,7 @@ SSplotComps <-
                                "and open bubbles are negative residuals",
                                "(observed < expected).")
             }
-            file <- paste(plotdir,"/",filenamestart,filetype,
+            file <- paste(filenamestart,filetype,
                           filename_fltsexmkt,pagetext,".png",sep="")
             plotinfo <- pngfun(file=file, caption=caption)
             tempfun2()
@@ -693,7 +694,7 @@ SSplotComps <-
                 pagetext <- paste("_page",ipage,sep="")
                 caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
               }
-              file <- paste(plotdir,"/",filenamestart,filetype,
+              file <- paste(filenamestart,filetype,
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               tempfun3(ipage=ipage,...)
@@ -748,7 +749,7 @@ SSplotComps <-
                                        "and open bubbles are negative residuals",
                                        "(observed < expected).")
                     }
-                    file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                    file <- paste(filenamestart,filename_fltsexmkt,
                                   "_",aalyr,"_",pagetext,".png",sep="")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun4(ipage=ipage,...)
@@ -789,7 +790,7 @@ SSplotComps <-
                                      "and open bubbles are negative residuals",
                                      "(observed < expected).")
                   }
-                  file <- paste(plotdir,"/",filenamestart,"yearresids_",
+                  file <- paste(filenamestart,"yearresids_",
                                 filename_fltsexmkt,"_",aalyr,pagetext,".png",sep="")
                   plotinfo <- pngfun(file=file, caption=caption)
                   tempfun5()
@@ -838,7 +839,7 @@ SSplotComps <-
                       pagetext <- paste("_page",ipage,sep="")
                       caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                     }
-                    file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                    file <- paste(filenamestart,filename_fltsexmkt,
                                   "_length",ilenbin,labels[7],pagetext,".png",sep="")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun6(ipage=ipage,...)
@@ -908,7 +909,7 @@ SSplotComps <-
           }
           if(plot) lfitfunc()
           if(print){ # set up plotting to png file if required
-            file <- paste(plotdir,"/",filenamestart,"sampsize_",
+            file <- paste(filenamestart,"sampsize_",
                           filename_fltsexmkt,".png",sep="")
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
@@ -927,12 +928,12 @@ SSplotComps <-
           }
           if(print){ # set up plotting to png file if required
             caption <- ptitle
-            file <- paste(plotdir,"/",filenamestart,
+            file <- paste(filenamestart,
                           "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
             # not using pngfun because caption isn't available until after
             # plot is created
             # old command: plotinfo <- pngfun(file=file, caption=caption)
-            png(filename=file,width=pwidth,height=pheight,
+            png(filename=file.path(plotdir, file),width=pwidth,height=pheight,
                 units=punits,res=res,pointsize=ptsize)
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
@@ -968,7 +969,7 @@ SSplotComps <-
                              "Data weighting in statistical fisheries stock assessment",
                              "models. <i>Can. J. Fish. Aquat. Sci.</i>",
                              "68: 1124-1138.</blockquote>")
-            file <- paste(plotdir,"/",filenamestart,
+            file <- paste(filenamestart,
                           "data_weighting_TA1.8_condAge",fleetnames[f],".png",sep="")
             plotinfo <- pngfun(file=file, caption=caption)
             SSMethod.Cond.TA1.8(fit=replist, fleet=f)
@@ -1085,7 +1086,7 @@ SSplotComps <-
                 "with 90% CIs based on the chi-square distribution.",sep="")
 
               }
-              file <- paste(plotdir,"/",filenamestart,"Andre_plots",
+              file <- paste(filenamestart,"Andre_plots",
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               andrefun(ipage=ipage)
@@ -1209,7 +1210,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                file <- paste(filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun7(ipage=ipage,...)
@@ -1373,7 +1374,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
+                file <- paste(filenamestart,filename_fltsexmkt,pagetext,
                               "_aggregated_within_season.png",sep="")
 
                 plotinfo <- pngfun(file=file, caption=caption)
@@ -1509,7 +1510,7 @@ SSplotComps <-
                     pagetext <- paste("_page",ipage,sep="")
                     caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                   }
-                  file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
+                  file <- paste(filenamestart,filename_fltsexmkt,pagetext,
                                 "_aggregated_across_seasons_within_year.png",sep="")
                   pngfun(file=file, caption=caption)
                   tempfun9(ipage=ipage,...)
@@ -1705,7 +1706,7 @@ SSplotComps <-
                 ## caption <- paste(caption,
                 ##                  "<br>Note: bubble sizes are scaled to maximum within each panel.",
                 ##                  "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
-                file <- paste(plotdir,"/",filenamestart,filename_sexmkt,pagetext,
+                file <- paste(filenamestart,filename_sexmkt,pagetext,
                               "_multi-fleet_comparison.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 multifleet.bubble.fun(ipage=ipage)

@@ -81,10 +81,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   #### addition on 3-Mar-16 
   # subplot 15: [no function] - matrix of M by age and time 
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -504,7 +505,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 1 %in% subplots) growth_curve_fn()
   if(print & 1 %in% subplots){
-    file <- paste(plotdir,"/bio1_sizeatage.png",sep="")
+    file <- "bio1_sizeatage.png"
     caption <- paste("Length at age in the beginning of the year (or season) in the ending",
                      "year of the model. Shaded area indicates 95% distribution of",
                      "length at age around estimated growth curve.")
@@ -651,7 +652,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     growth_curve_plus_fn(option=1)
   }
   if(print & 2 %in% subplots){
-    file <- paste(plotdir,"/bio2_sizeatage_plus_CV_and_SD.png",sep="")
+    file <- "bio2_sizeatage_plus_CV_and_SD.png"
     caption <- paste("Length at age (top-left panel) with",
                      "CV (thick line) and SD (thin line) of",
                      "length at age shown in top-right and lower-left panels")
@@ -666,7 +667,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
     growth_curve_plus_fn(option=2)
   }
   if(print & 3 %in% subplots){
-    file <- paste(plotdir,"/bio3_sizeatage_plus_WT_and_MAT.png",sep="")
+    file <- "bio3_sizeatage_plus_WT_and_MAT.png"
     caption <- paste("Length at age (top-left panel) with",
                      "weight (thick line) and maturity (thin line)",
                      "shown in top-right and lower-left panels")
@@ -752,7 +753,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 101 %in% subplots) growth_curve_labeled_fn(option=1)
   if(print & 101 %in% subplots){
-    file <- paste(plotdir,"/bio101_growth_illustration.png",sep="")
+    file <- "bio101_growth_illustration.png"
     caption <- "Illustration of growth parameters"
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_labeled_fn(option=1)
@@ -760,7 +761,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 102 %in% subplots) growth_curve_labeled_fn(option=2)
   if(print & 102 %in% subplots){
-    file <- paste(plotdir,"/bio102_growth_illustration2.png",sep="")
+    file <- "bio102_growth_illustration2.png"
     caption <- "Illustration of growth parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_labeled_fn(option=2)
@@ -876,7 +877,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 103 %in% subplots) CV_values_labeled_fn(option=1)
   if(print & 103 %in% subplots){
-    file <- paste(plotdir,"/bio103_CV_illustration.png",sep="")
+    file <- "bio103_CV_illustration.png"
     caption <- "Illustration of growth variability parameters"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=1)
@@ -884,7 +885,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 104 %in% subplots) CV_values_labeled_fn(option=2)
   if(print & 104 %in% subplots){
-    file <- paste(plotdir,"/bio104_CV_illustration2.png",sep="")
+    file <- "bio104_CV_illustration2.png"
     caption <- "Illustration of growth variability parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=2)
@@ -892,7 +893,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 105 %in% subplots) CV_values_labeled_fn(option=3)
   if(print & 105 %in% subplots){
-    file <- paste(plotdir,"/bio105_CV_illustration.png",sep="")
+    file <- "bio105_CV_illustration.png"
     caption <- "Illustration of growth variability parameters for offset type 3"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=3)
@@ -900,7 +901,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(plot & 106 %in% subplots) CV_values_labeled_fn(option=4)
   if(print & 106 %in% subplots){
-    file <- paste(plotdir,"/bio106_CV_illustration2.png",sep="")
+    file <- "bio106_CV_illustration2.png"
     caption <- "Illustration of growth variability parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=4)
@@ -925,13 +926,13 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   }
   if(print){ # print to PNG files
     if(4 %in% subplots){
-        file <- paste(plotdir,"/bio4_weightatsize.png",sep="")
+        file <- "bio4_weightatsize.png"
         caption <- "Weight-length relationship for females"
         plotinfo <- pngfun(file=file, caption=caption)
         weight_plot(gender=1)
         dev.off()
         if(wtatage_switch & nsexes==2){
-            file <- paste(plotdir,"/bio4_weightatsize2.png",sep="")
+            file <- "bio4_weightatsize2.png"
             caption <- "Weight-length relationship for males"
             plotinfo <- pngfun(file=file, caption=caption)
             weight_plot(gender=2)
@@ -939,35 +940,35 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
         }
     }
     if(5 %in% subplots){
-      file <- paste(plotdir,"/bio5_maturity.png",sep="")
+      file <- "bio5_maturity.png"
       caption <- paste("Maturity at",ifelse(min(biology$Mat_len)<1,"length","age"))
       plotinfo <- pngfun(file=file, caption=caption)
       maturity_plot()
       dev.off()
     }
     if(6 %in% subplots & FecType==1){
-      file <- paste(plotdir,"/bio6_fecundity.png",sep="")
+      file <- "bio6_fecundity.png"
       caption <- "Fecundity"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3a()
       dev.off()
     }
     if(7 %in% subplots & fecundityOK){
-      file <- paste(plotdir,"/bio7_fecundity_wt.png",sep="")
+      file <- "bio7_fecundity_wt.png"
       caption <- "Fecundity as a function of weight"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3b()
       dev.off()
     }
     if(8 %in% subplots & fecundityOK){
-      file <- paste(plotdir,"/bio8_fecundity_len.png",sep="")
+      file <- "bio8_fecundity_len.png"
       caption <- "Fecundity as a function of length"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3c()
       dev.off()
     }
     if(9 %in% subplots){
-      file <- paste(plotdir,"/bio9_spawningoutput.png",sep="")
+      file <- "bio9_spawningoutput.png"
       caption <- "Spawning output at length"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc4()
@@ -1003,7 +1004,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
       }
       # run function if requested to write figure to PNG file
       if(print & 11 %in% subplots){
-        file <- paste(plotdir,"/bio11_natmort.png",sep="")
+        file <- "bio11_natmort.png"
         caption <- "Natural mortality"
         plotinfo <- pngfun(file=file, caption=caption)
         mfunc()
@@ -1048,7 +1049,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
                       main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
           if(print){
             if(12 %in% subplots){
-              file <- paste(plotdir,"/bio12_timevarygrowthsurf_sex",i,".png",sep="")
+              file <- paste("bio12_timevarygrowthsurf_sex",i,".png",sep="")
               caption <- "Perspective plot of time-varying growth"
               plotinfo <- pngfun(file=file, caption=caption)
               persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
@@ -1057,7 +1058,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
               dev.off()
             }
             if(13 %in% subplots){
-              file <- paste(plotdir,"/bio13_timevarygrowthcontour_sex",i,".png",sep="")
+              file <- paste("bio13_timevarygrowthcontour_sex",i,".png",sep="")
               caption <- "Contour plot of time-varying growth"
               plotinfo <- pngfun(file=file, caption=caption)
               contour(x,y,z,nlevels=12,xlab=labels[2],
@@ -1089,7 +1090,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
           # make plot
           if(plot) timeVaryingParmFunc(parmlabel)
           if(print){
-            file <- paste(plotdir, "/bio14_time-varying_", parmlabel, ".png", sep="")
+            file <- paste("bio14_time-varying_", parmlabel, ".png", sep="")
             # replace % sign which cause problems for filename
             file <- gsub(pattern="%", replacement="percent", x=file,
                          fixed=TRUE)
@@ -1146,7 +1147,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ##                     main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
   ##         if(print){
   ##           if(12 %in% subplots){
-  ##             file <- paste(plotdir,"/bio12_timevarygrowthsurf_sex",i,".png",sep="")
+  ##             file <- paste("bio12_timevarygrowthsurf_sex",i,".png",sep="")
   ##             caption <- "Perspective plot of time-varying growth"
   ##             plotinfo <- pngfun(file=file, caption=caption)
   ##             persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
@@ -1155,7 +1156,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:14,seas=1,
   ##             dev.off()
   ##           }
   ##           if(13 %in% subplots){
-  ##             file <- paste(plotdir,"/bio13_timevarygrowthcontour_sex",i,".png",sep="")
+  ##             file <- paste("bio13_timevarygrowthcontour_sex",i,".png",sep="")
   ##             caption <- "Contour plot of time-varying growth"
   ##             plotinfo <- pngfun(file=file, caption=caption)
   ##             contour(x,y,z,nlevels=12,xlab=labels[2],

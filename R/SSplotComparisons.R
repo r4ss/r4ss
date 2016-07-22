@@ -192,7 +192,7 @@ SSplotComparisons <-
     # if extra text requested, add it before extention in file name
     file <- paste0(filenameprefix, file)
     # open png file
-    png(filename=paste(plotdir,file,sep="/"),
+    png(filename=file.path(plotdir,file),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
     # change graphics parameters to input value
     par(par)
@@ -210,9 +210,10 @@ SSplotComparisons <-
     if(is.null(plotdir)){
       stop("to write to a PDF, you must supply a directory as 'plotdir'")
     }
-    pdffile <- paste0(plotdir,"/", filenameprefix, "SSplotComparisons_",
-                      format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf")
-    pdf(file=pdffile,width=pwidth,height=pheight)
+    pdffile <- file.path(plotdir,
+                         paste0(filenameprefix, "SSplotComparisons_",
+                                format(Sys.time(), '%d-%b-%Y_%H.%M' ), ".pdf"))
+    pdf(file=pdffile, width=pwidth, height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
     par(par)
   }
@@ -804,14 +805,16 @@ SSplotComparisons <-
       }else{
         # draw line at sprtarg
         yticks <- pretty(ylim)
-        if(!is.na(SPRratioLabels) &&
-           SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
+        if(!is.na(SPRratioLabel) &&
+           SPRratioLabel==paste("(1-SPR)/(1-SPR_",floor(100*sprtarg),"%)",sep="")){
           abline(h=1,col="red",lty=2)
           text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
           axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
           mtext(side=4,line=3,"1 - SPR")
-          mtext(side=2,line=3,SPRratioLabel)
-        }
+          # line below has round to be more accurate than the floor which is used
+          # in the test above and in SS
+          mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",100*sprtarg,"%)",sep=""))
+        } 
       }
     }else{
       mtext(side=2,line=3,SPRratioLabel)

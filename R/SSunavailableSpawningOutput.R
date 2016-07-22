@@ -25,11 +25,11 @@ SSunavailableSpawingOutput <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
 {
 
-  # Function for plotting the pnf
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo, data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
 
@@ -341,7 +341,7 @@ SSunavailableSpawingOutput <-
 
     if(print){
 
-      file <- paste(plotdir,"/UnavailableSpawningOutput_Area",area, ".png",sep="")
+      file <- paste0("UnavailableSpawningOutput_Area",area, ".png")
       caption <- paste('Cryptic Spawning Output, Area', area)
       plotinfo <- pngfun(file=file, caption=caption)
       CrypticPlots()
