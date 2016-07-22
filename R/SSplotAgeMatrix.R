@@ -90,13 +90,9 @@ SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
   # length of vector (always accuage+1, but convenient to name)
   nages <- length(agevec)
 
-  colvec <- rev(rich.colors.short(n=nages,alpha=.8))
-  ## # alternate colors to improve contrast
-  ## colvec <- rich.colors.short(n=2*ceiling(nages/2),alpha=.8)
-  ## colvec1 <- colvec[1:ceiling(nages/2)]
-  ## colvec2 <- colvec[-(1:ceiling(nages/2))]
-  ## colvec <- as.vector(matrix(c(colvec1,colvec2), 2,
-  ##                            ceiling(nages/2), byrow=TRUE))[1:nages]
+  #### rainbow colors (worked better with grey background commented-out further down)
+  ## colvec <- rev(rich.colors.short(n=nages,alpha=.8))
+  colvec <- rep(grey(0, alpha=.5), nages)
 
   ymax <- 1.1*(ybins[nybins] + ybins[nybins] - ybins[nybins-1])
 
@@ -119,11 +115,14 @@ SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
       title <- ""
     }
 
-    plot(0, type='n', las=1,
+    plot(0, type='n', las=1, 
          xlim=c(0,1.1*accuage), xaxs='i',
          ylim=c(0, ymax), yaxs='i',
          xlab=xlab, ylab=ylab, main=title)
-    abline(h=ybins, v=0:accuage, col='grey90')
+    #### grey background
+    ## rect(par("usr")[1], par("usr")[3],
+    ##      par("usr")[2], par("usr")[4], col = grey(.8))
+    abline(h=ybins, v=0:accuage, col='grey90', lwd=0.5)
     for(iage in nages:1){
       #print(iage)
       #print(dim(mat))
@@ -147,7 +146,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
              ybottom = ybin_lo,
              xright = a + scale*yvec[iybin],
              ytop = ybin_hi,
-             col=colvec[iage])
+             col=colvec[iage], border=NA)
       } # end loop over bins (length or observed age)
       #lines(a+yvec*scale, ybins)
     } # end loop over true ages
