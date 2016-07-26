@@ -10,9 +10,9 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
-#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
+#' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
+
 SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(verbose) cat("running SS_readsforecast\n")

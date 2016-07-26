@@ -14,9 +14,8 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_readctl}},
-#' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
+#' \code{\link{SS_readdat}}, 
+#' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
                               overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files

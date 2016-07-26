@@ -22,9 +22,8 @@
 #' @export
 #' @seealso \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}}
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
+#' \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 
 SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=NULL){
   # wrapper function to call old or new version of SS_readdat
