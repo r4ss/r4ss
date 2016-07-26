@@ -138,7 +138,9 @@ SSplotComparisons <-
            indexQlabel=TRUE,
            indexQdigits=4,
            indexSEvec="default",
-           indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
+           #TRUE in following command plots the observed index for each model
+           # with colors, or FALSE just plots observed once in black dots
+           indexPlotEach=FALSE,
            labels=c("Year",             #1
              "Spawning biomass (t)",   #2
              "Relative spawning biomass", #3
@@ -146,7 +148,7 @@ SSplotComparisons <-
              "Recruitment deviations",  #5
              "Index",                   #6
              "Log index",               #7
-             "SPR ratio",               #8 could be dynamic to match model value (e.g. "(1-SPR)/(1-SPR_40%)")
+             "1 - SPR",                 #8 may not always be accurate
              "Density",                 #9
              "Management target",       #10
              "Minimum stock size threshold", #11
@@ -304,8 +306,9 @@ SSplotComparisons <-
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
-    cat("setting SPRratioLabel = NA because models don't have matching labels\n")
-    SPRratioLabel <- NA
+    cat("setting SPRratioLabel to default input because models",
+        "don't have matching labels\n")
+    SPRratioLabel <- labels[8]
   }
 
   ### process input for which models have uncertainty shown
@@ -797,11 +800,11 @@ SSplotComparisons <-
     }
     abline(h=0,col="grey")
     if(sprtarg>0){
-      if(sprtarg==1){
-        # draw line at ratio = 1
+      if(SPRratioLabel=="1-SPR"){
+        # if starter file chooses raw SPR as the option for reporting, don't show ratio
         abline(h=sprtarg,col="red",lty=2)
         text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
-        mtext(side=2,line=3,labels[8])
+        mtext(side=2,line=3,SPRratioLabel)
       }else{
         # draw line at sprtarg
         yticks <- pretty(ylim)
@@ -814,7 +817,11 @@ SSplotComparisons <-
           # line below has round to be more accurate than the floor which is used
           # in the test above and in SS
           mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",100*sprtarg,"%)",sep=""))
-        } 
+        }else{
+          cat("No line added to SPR ratio plot, as the settings used in this model",
+              "have not yet been tested.\n")
+          mtext(side=2,line=3,SPRratioLabel)
+        }
       }
     }else{
       mtext(side=2,line=3,SPRratioLabel)
@@ -1104,8 +1111,10 @@ SSplotComparisons <-
     ylim <- range(0, ylimAdj*SPRratio[,models], na.rm=TRUE)
 
     # make plot
-    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[3],ylab=labels[8],
-                  xaxs=xaxs,yaxs=yaxs,las=1)
+    if(!add){
+      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[3],
+           ylab=SPRratioLabel, xaxs=xaxs, yaxs=yaxs, las=1)
+    }
 
     goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
     lastyr <- max(goodyrs)
@@ -1139,7 +1148,7 @@ SSplotComparisons <-
 
   ###
   ## notes from Ian on revised approach to indices:
-  #    
+  #
   #    this function was originally written for the 2011 hake assessment
   #    where models with different fleet structures were being compared
   #    however, that represents a relatively rare case.
@@ -1150,7 +1159,7 @@ SSplotComparisons <-
   #    fleet numbers. An initial check for matching sets of fleets could be used
   #    and only revert to requiring the indexfleets input if there is a mismatch
   #
-  
+
   plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
 
     # get a subset of index table including only 1 index per model
