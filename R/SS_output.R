@@ -786,6 +786,7 @@ SS_output <-
 
   parameters[parameters=="_"] <- NA
   parameters[parameters==" "] <- NA
+  parameters[parameters=="1.#INF"] <- Inf # set infinite values equal to R's infinity
 
   if(SS_versionNumeric >= 3.22){ # current approach to parameter section
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
