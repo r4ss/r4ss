@@ -22,6 +22,10 @@
 #' @param addmain switch which allows the plot title to be left off
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
+#' @author Ian G. Taylor
+#' @export
+#' @seealso \code{\link{SSplotNumbers}}
+
 
 SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
                             labels=c("Age",          #1
