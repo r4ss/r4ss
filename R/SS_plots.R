@@ -48,7 +48,7 @@
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
 #' The directory will be created if it doesn't exist.
-#' If 'printfolder' is set to '', it is ignored and the PNG files will be located
+#' If 'printfolder' is set to "", it is ignored and the PNG files will be located
 #' in the directory specified by 'dir'.
 #' @param dir The directory in which a PDF file (if requested) will be created
 #' and within which the printfolder sub-directory (see above) will be created
