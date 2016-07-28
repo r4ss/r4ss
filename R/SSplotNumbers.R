@@ -91,7 +91,9 @@ SSplotNumbers <-
 
   natage    <- replist$natage
   natlen    <- replist$natlen
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
   if(is.null(natage)){
     cat("Skipped some plots because NUMBERS_AT_AGE unavailable in report file\n",
         "     change starter file setting for 'detailed age-structured reports'\n")
@@ -330,7 +332,7 @@ SSplotNumbers <-
               filepartarea <- paste0("_", areanames[iarea])
             }
             if(1 %in% subplots){
-              file <- paste0(plotdir, "/numbers1", filepartarea, filepartsex,
+              file <- paste0("numbers1", filepartarea, filepartsex,
                              fileperiod, ".png")
               caption <- plottitle1
               plotinfo <- pngfun(file=file, caption=caption)
@@ -339,7 +341,7 @@ SSplotNumbers <-
             }
             # make 2-sex plot after looping over both sexes
             if(2 %in% subplots & m==2 & nsexes==2){
-              file <- paste0(plotdir, "/numbers2_meanage", filepartarea,
+              file <- paste0("numbers2_meanage", filepartarea,
                              fileperiod, ".png", sep="")
               caption <- plottitle2
               plotinfo <- pngfun(file=file, caption=caption)
@@ -378,7 +380,7 @@ SSplotNumbers <-
           if(print & 3 %in% subplots){
             filepart <- ""
             if(nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
-            file <- paste0(plotdir, "/numbers3_ratio_age", filepart, ".png")
+            file <- paste0("numbers3_ratio_age", filepart, ".png")
             caption <- plottitle3
             plotinfo <- pngfun(file=file, caption=caption)
             numbersRatioAge.fn(labcex=0.4)
@@ -541,7 +543,7 @@ SSplotNumbers <-
                 filepartarea <- paste0("_",areanames[iarea])
               }
               if(6 %in% subplots){
-                file <- paste0(plotdir, "/numbers6_len", filepartarea,
+                file <- paste0("numbers6_len", filepartarea,
                                filepartsex, ".png")
                 caption <- plottitle1
                 plotinfo <- pngfun(file=file, caption=caption)
@@ -550,7 +552,7 @@ SSplotNumbers <-
               }
               # make 2-sex plot after looping over both sexes
               if(7 %in% subplots & m==2 & nsexes==2){
-                file <- paste0(plotdir, "/numbers7_meanlen", filepartarea, ".png")
+                file <- paste0("numbers7_meanlen", filepartarea, ".png")
                 caption <- plottitle2
                 plotinfo <- pngfun(file=file, caption=caption)
                 meanLen.fn()
@@ -599,7 +601,7 @@ SSplotNumbers <-
               if(nareas > 1){
                 filepart <- paste0("_", areanames[iarea], filepart)
               }
-              file <- paste0(plotdir, "/numbers8_ratio_len1", filepart, ".png")
+              file <- paste0("numbers8_ratio_len1", filepart, ".png")
               caption <- labels[19]
               plotinfo <- pngfun(file=file, caption=caption)
               numbersRatioLen.fn(labcex=0.4)
@@ -610,7 +612,7 @@ SSplotNumbers <-
               if(nareas > 1){
                 filepart <- paste0("_", areanames[iarea], filepart)
               }
-              file <- paste0(plotdir, "/numbers8_ratio_len2", filepart, ".png")
+              file <- paste0("numbers8_ratio_len2", filepart, ".png")
               caption <- labels[20]
               plotinfo <- pngfun(file=file, caption=caption)
               numbersRatioLen.fn(labcex=0.4)
@@ -687,7 +689,7 @@ SSplotNumbers <-
       equilibfun()
     }
     if(print & 4 %in% subplots){
-      file=paste0(plotdir, "/numbers4_equilagecomp.png")
+      file="numbers4_equilagecomp.png"
       caption <- labels[10]
       plotinfo <- pngfun(file=file, caption=caption)
       equilibfun()
@@ -783,7 +785,7 @@ SSplotNumbers <-
       }
       if(print & 5 %in% subplots){
         # make files with plots of age error standard deviations
-        file <- paste0(plotdir, "/numbers5_ageerrorSD.png")
+        file <- "numbers5_ageerrorSD.png"
         caption <- paste0(labels[8], ": ", labels[4])
         plotinfo <- pngfun(file=file, caption=caption)
         ageingfun()
@@ -791,7 +793,7 @@ SSplotNumbers <-
 
         # make files with plots of age error means
         if(mean(ageingbias==0)!=1){
-          file <- paste0(plotdir, "/numbers5_ageerrorMeans.png")
+          file <- "numbers5_ageerrorMeans.png"
           caption <- paste0(labels[8], ": ", labels[5])
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun2()
@@ -800,7 +802,7 @@ SSplotNumbers <-
 
         # make files with plots of age error matrices
         for(i_ageerror_def in 1:N_ageerror_defs){
-          file <- paste0(plotdir, "/numbers5_ageerror_matrix_",
+          file <- paste0("numbers5_ageerror_matrix_",
                         i_ageerror_def, ".png")
           caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
           caption <- paste0(caption,
