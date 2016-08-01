@@ -132,7 +132,7 @@ SSplotNumbers <-
       }
     }
     if(areanames[1]=="default"){
-      areanames <- paste("area",1:nareas)
+      areanames <- paste0("area",1:nareas)
     }
 
     if(areacols[1]=="default"){
