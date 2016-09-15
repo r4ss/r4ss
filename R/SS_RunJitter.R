@@ -16,9 +16,39 @@
 ##' @param Intern Show command line info in R console or keep hidden (Internal=TRUE)
 ##' @param systemcmd Option to switch between 'shell' and 'system'
 ##' @param printlikes Print likelihood values to console
-##' @author James T. Thorson, Kelli F. Johnson
+##' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 ##' @return A vector of likelihoods for each jitter iteration.
 ##' @export
+##' @examples
+##'   \dontrun{
+##'     #### Change starter file appropriately (can also edit file directly)
+##'     starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
+##'     # CHANGE THIS FOR GLOBAL_PAR START
+##'     starter$init_values_src = 1
+##'     # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
+##'     starter$jitter_fraction = 0.1
+##'     # write modified starter file
+##'     SS_writestarter(starter, dir=mydir, overwrite=TRUE)
+##'
+##'     #### Run jitter using this function
+##'     mydir <- RunFile
+##'     extras <- "-nohess -cbs 500000000 -gbs 500000000"
+##'     model <- "ss3"
+##'     Njitter <- 25
+##'
+##'     SS_RunJitter(mydir=mydir, model=model, extras=extras,
+##'                  Njitter=Njitter, Intern=TRUE)
+##'
+##'     #### Read in results using other r4ss functions
+##'     profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
+##'     # summarize output
+##'     profilesummary <- SSsummarize(profilemodels)
+##'     # Likelihoods
+##'     profilesummary$likelihoods[1,]
+##'     # Parameters
+##'     profilesummary$pars
+##'   }
+
 SS_RunJitter <- function(mydir, model="ss3",
                          extras="-nohess -cbs 500000000 -gbs 500000000",
                          Njitter, Intern=TRUE, systemcmd=FALSE,
@@ -41,8 +71,10 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="CompReport.sso", to="CompReport0.sso", overwrite=TRUE)
   file.copy(from="covar.sso", to="covar0.sso", overwrite=TRUE)
   file.copy(from="Report.sso", to="Report0.sso", overwrite=TRUE)
+  file.copy(from="ParmTrace.sso", to="ParmTrace0.sso", overwrite=TRUE)
   file.copy(from=paste0(model,".par"), to=paste0(model,".par_0.sso"), overwrite=TRUE)
-  file.remove( c("CompReport.sso","covar.sso","Report.sso",paste0(model,".par")) )
+  file.remove( c("CompReport.sso", "covar.sso"," Report.sso",
+                 "ParmTrace.sso", paste0(model,".par")) )
 
   if (length(Njitter) == 1) Njitter <- 1:Njitter
   likesaved <- rep(NA, length(Njitter))
@@ -73,6 +105,7 @@ SS_RunJitter <- function(mydir, model="ss3",
       file.copy(from="CompReport.sso", to=paste0("CompReport",i,".sso"), overwrite=TRUE)
       file.copy(from="covar.sso", to=paste0("covar",i,".sso"), overwrite=TRUE)
       file.copy(from="Report.sso", to=paste0("Report",i,".sso"), overwrite=TRUE)
+      file.copy(from="ParmTrace.sso", to=paste0("ParmTrace",i,".sso"), overwrite=TRUE)
       file.copy(from=paste0(model,".par"), to=paste0(model,".par_",i,".sso"), overwrite=TRUE)
     }else{
       cat("Run = ",i," didn't converge \n")
@@ -82,37 +115,10 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="CompReport0.sso", to="CompReport.sso", overwrite=TRUE)
   file.copy(from="covar0.sso", to="covar.sso", overwrite=TRUE)
   file.copy(from="Report0.sso", to="Report.sso", overwrite=TRUE)
-  file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""), overwrite=TRUE)
-  invisible(likesaved)
+  file.copy(from="ParmTrace0.sso", to="ParmTrace.sso", overwrite=TRUE)
+  file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""),
+            overwrite=TRUE)
+
+  # Return (invisibly), the vector of likelihoods
+  return(invisible(likesaved))
 }
-
-
-## ##################
-## # Example for help page
-## ##################
-
-## #### Change starter file appropriately
-## starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
-## # CHANGE THIS FOR GLOBAL_PAR START
-## starter$init_values_src = 1
-## # Change jitter
-## starter$jitter_fraction = 0.1
-## # write modified starter file
-## SS_writestarter(starter, dir=mydir, overwrite=TRUE)
-
-## # Run jitter
-## mydir <- RunFile
-## extras = "-nohess -cbs 500000000 -gbs 500000000"
-## model = "ss3"
-## Njitter = 25
-
-## SS_RunJitter(mydir=mydir, model=model, extras=extras, Njitter=Njitter, Intern=TRUE)
-
-## # Read in results
-## profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
-## # summarize output
-## profilesummary <- SSsummarize(profilemodels)
-## # Likelihoods
-## profilesummary$likelihoods[1,]
-## # Parameters
-## profilesummary$pars
