@@ -14,6 +14,8 @@
 #'  explicitly available in control file
 
 #' @author Yukio Takeuchi
+#' @importFrom gdata write.fwf
+#' @importFrom stringr str_c
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
 # ' \code{\link{SS_readforecast}},
@@ -24,7 +26,9 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     nseas=1,
     N_areas=1
 ){
-  library("gdata")
+#  require("gdata")
+#  require("magrittr")
+#  require("stringr")
   # function to write Stock Synthesis ctl files
   if(verbose) cat("running SS_writectl\n")
 
@@ -87,8 +91,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
  #      write.table(file=zz,x=t(value),append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
      }
    }
-  require("magrittr")
-  require("stringr")
+
   wl.list<-function(name,comment=NULL,header=NULL){
     if(!is.null(header)){
       writeLines(paste0("#_",header),con=zz)
@@ -110,7 +113,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
      if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
   #   write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
-     write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
+     gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
   }
 
@@ -377,7 +380,19 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   if(is.null(ctllist$more_stddev_reporting))ctllist$more_stddev_reporting<-0
   wl("more_stddev_reporting")
   if(ctllist$more_stddev_reporting != 0){
-
+    wl.vector("stddev_reporting_specs",comment="# selex type, len/age, year, N selex bins, Growth pattern, N growth ages, NatAge_area(-1 for all), NatAge_yr, N Natages")
+    ## Selex bin
+    if(ctllist$stddev_reporting_specs[4]>0){
+      wl.vector("stddev_reporting_selex",comment="# selex bins to be reported (-1 in first bin to self-generate)")
+    }
+    ## Growth bin
+    if(ctllist$stddev_reporting_specs[6]>0){
+      wl.vector("stddev_reporting_growth",comment="# growth bins to be reported (-1 in first bin to self-generate)")
+    }
+    ## N at age
+    if(ctllist$stddev_reporting_specs[9]>0){
+      wl.vector("stddev_reporting_N_at_A",comment="# N@A to be reported (-1 in first bin to self-generate)")
+    }
   }else{
     writeComment("# 0 1 -1 5 1 5 1 -1 5 # placeholder for selex type, len/age, year, N selex bins, Growth pattern, N growth ages, NatAge_area(-1 for all), NatAge_yr, N Natages")
     writeComment("# placeholder for vector of selex bins to be reported")

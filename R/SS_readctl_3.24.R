@@ -574,10 +574,27 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   }
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
-    stop("Currently additional reporting of derived quantities is not implemented in this R code")
+  #  stop("Currently additional reporting of derived quantities is not implemented in this R code")
+    ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
+    ## Selex bin
+    if(ctllist$stddev_reporting_specs[4]>0){
+      ctllist<-
+        add_vec(ctllist,name="stddev_reporting_selex",length=ctllist$stddev_reporting_specs[4])
+    }
+    ## Growth bin
+    if(ctllist$stddev_reporting_specs[6]>0){
+      ctllist<-
+        add_vec(ctllist,name="stddev_reporting_growth",length=ctllist$stddev_reporting_specs[6])
+    }
+    ## N at age
+    if(ctllist$stddev_reporting_specs[9]>0){
+      ctllist<-
+        add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
+    }
   }
   if(ctllist$'.dat'[ctllist$'.i']==999){
     if(verbose) cat("read of control file complete (final value = 999)\n")
+
   }else{
     cat("Error: final value is", ctllist$'.dat'[ctllist$'.i']," but should be 999\n")
   }
