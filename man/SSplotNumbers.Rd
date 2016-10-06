@@ -4,7 +4,7 @@
 \alias{SSplotNumbers}
 \title{Plot numbers-at-age related data and fits.}
 \usage{
-SSplotNumbers(replist, subplots = 1:9, plot = TRUE, print = FALSE,
+SSplotNumbers(replist, subplots = 1:10, plot = TRUE, print = FALSE,
   numbers.unit = 1000, areas = "all", areanames = "default",
   areacols = "default", pntscalar = 2.6, bub.bg = gray(0.5, alpha = 0.5),
   bublegend = TRUE, period = c("B", "M"), add = FALSE,

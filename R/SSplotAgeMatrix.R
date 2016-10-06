@@ -27,7 +27,7 @@
 #' @seealso \code{\link{SSplotNumbers}}
 
 
-SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
+SSplotAgeMatrix <- function(replist, option=1, scale=1, plot=TRUE, print=FALSE,
                             labels=c("Age",          #1
                                 "Length",            #2
                                 "True age",          #3
@@ -83,7 +83,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=3, plot=TRUE, print=FALSE,
     # first part of title (can have addition info appended)
     titleStart <- paste(labels[6], tolower(paste(labels[4], labels[7], labels[3])))
     # first part of PNG file name (only used if print=TRUE)
-    filenameStart <- "numbers6_ageerror_matrix_"
+    filenameStart <- "numbers10_ageerror_matrix_"
   }
   nybins <- length(ybins)
 

@@ -40,7 +40,7 @@
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SS_plots}}
 SSplotNumbers <-
-  function(replist,subplots=1:9,
+  function(replist,subplots=1:10,
            plot=TRUE,print=FALSE,
            numbers.unit=1000,
            areas="all",
@@ -813,6 +813,15 @@ SSplotNumbers <-
           dev.off()
         } # end loop over ageing error methods
 
+        if(10 %in% subplots){
+          # newer plot of ageing matrix as histogram-style figure
+          plotinfo <- SSplotAgeMatrix(replist = replist, option = 2,
+                                      plot = plot, print = print,
+                                      plotdir = plotdir, pwidth = pwidth,
+                                      pheight = pheight, punits = punits,
+                                      res = res, ptsize = ptsize,
+                                      cex.main = cex.main, addmain = TRUE)
+        }
       } # end print to PNG
     } # end if AAK
   } # end if data available

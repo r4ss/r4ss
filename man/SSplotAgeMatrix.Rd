@@ -4,7 +4,7 @@
 \alias{SSplotAgeMatrix}
 \title{Plot matrix of either length or observed age at true age}
 \usage{
-SSplotAgeMatrix(replist, option = 1, scale = 3, plot = TRUE,
+SSplotAgeMatrix(replist, option = 1, scale = 1, plot = TRUE,
   print = FALSE, labels = c("Age", "Length", "True age", "Observed age",
   "for ageing error type", "Distribution of", "at"), pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
