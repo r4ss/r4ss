@@ -20,7 +20,13 @@ data as it is being read.}
 \item{nseas}{number of season in the model. This information is not
 explicitly available in control file}
 
+\item{N_areas}{number of spatial areas in the model. This information is also not
+explicitly available in control file}
+
 \item{Nages}{oldest age in the model. This information is also not
+explicitly available in control file}
+
+\item{Ngenders}{number of genders in the model. This information is also not
 explicitly available in control file}
 
 \item{Npopbins}{number of population bins in the model. This information is also not
@@ -31,9 +37,6 @@ maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 explicitly available in control file}
 
 \item{Nsurv}{number of survey fleets in the model. This information is also not
-explicitly available in control file}
-
-\item{Ns}{number of genders in the model. This information is also not
 explicitly available in control file}
 }
 \description{

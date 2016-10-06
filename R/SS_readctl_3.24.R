@@ -12,9 +12,11 @@
 #' data as it is being read.
 #' @param nseas number of season in the model. This information is not
 #'  explicitly available in control file
+#' @param N_areas number of spatial areas in the model. This information is also not
+#'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
-#' @param Ns number of genders in the model. This information is also not
+#' @param Ngenders number of genders in the model. This information is also not
 #'  explicitly available in control file
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
@@ -175,6 +177,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     # recruitment interaction requested
     ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=3,
       col.names=c("GP","seas","area"))
+  }else{
+    ctllist$recr_dist_inx<-FALSE
   }
   if(ctllist$N_areas>1){
     #stop("Multi areas are not yet implemented")
@@ -194,7 +198,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   ctllist<-add_elem(ctllist,"fracfemale") #_fracfemale
   ctllist<-add_elem(ctllist,"natM_type") #_natM_type
   if(ctllist$natM_type==0){
-    N_natMparms<-0
+    N_natMparms<-1
   }else if(ctllist$natM_type==1){
     ctllist<-add_elem(ctllist,name="N_natM") #_Number of M_segments
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
@@ -316,6 +320,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                                 "PR_type", "SD", "PHASE",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+  }else{
+    ctllist$Move_parms<-NULL
   }
 
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
@@ -394,6 +400,14 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
 #_Den-dep  env-var  extra_se  Q_type
   ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfish+Nsurv,ncol=4,
               col.names=c("Den_dep","env_var","extra_se","Q_type"))
+  if(sum(ctllist$Q_setup[,3])>0){
+    ctllist<-add_df(ctllist,name="Q_extraSD",nrow=sum(ctllist$Q_setup[,3]),ncol=7,
+              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  }
+  if(sum(ctllist$Q_setup[,4] %in% c(1,2))>0){
+    ctllist<-add_df(ctllist,name="Q_base",nrow=sum(ctllist$Q_setup[,4] %in% c(1,2)),ncol=7,
+              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  }
 # size_selex_types
   ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfish+Nsurv,ncol=4,
               col.names=c("Pattern","Discard","Male","Special"))
