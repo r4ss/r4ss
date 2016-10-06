@@ -1326,8 +1326,12 @@ if(FALSE){
   # Age based selex
   if(!is.na(matchfun("ENVIRONMENTAL_DATA"))){
     ageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1,header=TRUE)
-  }else{
+  } else if(!is.na(matchfun("TAG_Recapture"))){
     ageselex <- matchfun2("AGE_SELEX",4,"TAG_Recapture",-1,header=TRUE)
+  } else if(!is.na(matchfun("NUMBERS_AT_AGE"))){
+    ageselex <- matchfun2("AGE_SELEX",4,"NUMBERS_AT_AGE",-1,header=TRUE)
+  } else {
+    ageselex <- matchfun2("AGE_SELEX",4,"BIOLOGY",-1,header=TRUE)
   }
   # filter forecast years from selectivity if no forecast
   # NOTE: maybe refine this in 3.30
