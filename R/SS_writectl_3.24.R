@@ -198,7 +198,9 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   ## One cohort specific growth parameter
   printdf("cohortG_parm")
   ## Movement parameters
-  printdf("Move_parms")
+  if(N_areas>1){
+    printdf("Move_parms")
+  }
   writeComment("#")
   writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
   writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
@@ -217,7 +219,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }else{
     writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters","#"))
   }
-  if(sum(ctllist$MG_parms[,9])>0){
+  DoParmDev<-sum(ctllist$M_parms[,9])+
+             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
+             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
+  if(DoParmDev>0){
     if(is.null(ctllist$MGparm_Dev_Phase))ctllist$MGparm_Dev_Phase<- -4
     wl("MGparm_Dev_Phase")
     writeComment("#")
@@ -277,6 +282,12 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_for_env-var:_enter_index_of_the_env-var_to_be_linked")
 #  writeComment("#_Den-dep  env-var  extra_se  Q_type")
   printdf("Q_setup")
+  if(sum(ctllist$Q_setup[,3])>0){
+    printdf("Q_extraSD")
+  }
+  if(sum(ctllist$Q_setup[,4] %in% c(1,2))>0){
+    printdf("Q_base")
+  }
   writeComment("#_size_selex_types")
   writeComment("#discard_options:_0=none;_1=define_retention;_2=retention&mortality;_3=all_discarded_dead")
 #  writeComment("#_Pattern Discard Male Special")
