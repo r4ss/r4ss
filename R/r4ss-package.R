@@ -7,7 +7,7 @@
 #' parameterizations, and various other tasks.
 #'
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.24.4\cr Date: \tab 2016-07-26\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.24.5\cr Date: \tab 2016-10-06\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 #' Should be compatible with Stock Synthesis versions 3.21 through 3.30.
 #'
@@ -27,19 +27,22 @@
 #' @import coda
 #' @importFrom maps map
 #' @importFrom corpcor pseudoinverse
+#' @importFrom gdata write.fwf
 #' @importFrom gplots hist2d
 #' @importFrom gtools running
 #' @importFrom pso psoptim
-#' @importFrom grDevices adjustcolor col2rgb dev.new dev.off
+#' @importFrom grDevices adjustcolor col2rgb colorRampPalette
+#'   dev.new dev.off
 #'   gray grey pdf png rainbow rgb topo.colors
 #' @importFrom graphics abline arrows axis barplot box
 #'   contour curve grid hist image layout
 #'   legend lines matplot mtext pairs par
 #'   persp plot points polygon rect segments
-#'   text title
+#'   symbols text title
 #' @importFrom stats acf aggregate density dnorm loess
-#'   median nlminb optim pnorm qchisq qlnorm
+#'   median na.omit nlminb optim pnorm qchisq qlnorm
 #'   qnorm qt quantile rnorm sd var window
+#' @importFrom stringr str_c
 #' @importFrom utils browseURL flush.console head read.csv
 #'   read.table tail write.csv write.table
 #'
