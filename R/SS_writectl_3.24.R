@@ -4,7 +4,7 @@
 #' created using \code{\link{SS_readctl}}
 #'
 #'
-#' @param  List object created by \code{\link{SS_readctl}}.
+#' @param ctllist object created by \code{\link{SS_readctl}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?

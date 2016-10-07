@@ -25,6 +25,8 @@
 #'  explicitly available in control file
 #' @param Nsurv number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
+#' @param TG_Nrelgrp number of tag release groups in the model. This information is also not
+#'  explicitly available in control file
 #' @author Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}

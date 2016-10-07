@@ -8,6 +8,8 @@ SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = TRUE,
   nseas = 1, N_areas = 1)
 }
 \arguments{
+\item{ctllist}{object created by \code{\link{SS_readctl}}.}
+
 \item{outfile}{Filename for where to write new data file.}
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
@@ -19,8 +21,6 @@ explicitly available in control file}
 
 \item{N_areas}{number of spatial areas in the model. This information is also not
 explicitly available in control file}
-
-\item{List}{object created by \code{\link{SS_readctl}}.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was probably
