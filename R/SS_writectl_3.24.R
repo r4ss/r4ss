@@ -97,7 +97,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       writeLines(paste0("#_",header),con=zz)
     }
     value = ctllist[names(ctllist)==name][[1]]
-    value1<-sapply(value,function(x){stringr::str_c(paste(x),collapse=" ")},simplify=TRUE)
+    value1<-sapply(value,function(x){str_c(paste(x),collapse=" ")},simplify=TRUE)
     writeLines(value1,con=zz)
   }
 
@@ -113,7 +113,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
      if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
   #   write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
-     gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
+     write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
   }
 
