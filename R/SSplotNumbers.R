@@ -815,12 +815,13 @@ SSplotNumbers <-
 
         if(10 %in% subplots){
           # newer plot of ageing matrix as histogram-style figure
-          plotinfo <- SSplotAgeMatrix(replist = replist, option = 2,
-                                      plot = plot, print = print,
-                                      plotdir = plotdir, pwidth = pwidth,
-                                      pheight = pheight, punits = punits,
-                                      res = res, ptsize = ptsize,
-                                      cex.main = cex.main, addmain = TRUE)
+          plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 2,
+                                          plot = plot, print = print,
+                                          plotdir = plotdir, pwidth = pwidth,
+                                          pheight = pheight, punits = punits,
+                                          res = res, ptsize = ptsize,
+                                          cex.main = cex.main, addmain = TRUE)
+          plotinfo <- rbind(plotinfo, plotinfo.tmp)
         }
       } # end print to PNG
     } # end if AAK
