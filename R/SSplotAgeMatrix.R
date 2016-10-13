@@ -75,6 +75,9 @@ SSplotAgeMatrix <- function(replist, option=1, scale=1, plot=TRUE, print=FALSE,
     array <- replist$AAK
     # age bins
     ybins <- replist$agebins
+    if(is.na(ybins)){
+      return(NULL)
+    }
     # number of slices is the number of ageing error matrices
     nslices <- dim(array)[1]
     # axis labels
