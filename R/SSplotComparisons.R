@@ -266,6 +266,9 @@ SSplotComparisons <-
   SPRratio      <- summaryoutput$SPRratio
   SPRratioLower <- summaryoutput$SPRratioLower
   SPRratioUpper <- summaryoutput$SPRratioUpper
+  Fvalue      <- summaryoutput$Fvalue
+  FvalueLower <- summaryoutput$FvalueLower
+  FvalueUpper <- summaryoutput$FvalueUpper
   recruits      <- summaryoutput$recruits
   recruitsLower <- summaryoutput$recruitsLower
   recruitsUpper <- summaryoutput$recruitsUpper
@@ -281,6 +284,7 @@ SSplotComparisons <-
   minbthreshs    <- summaryoutput$minbthreshs
   sprtargs       <- summaryoutput$sprtargs
   SPRratioLabels <- summaryoutput$SPRratioLabels
+  FvalueLabels <- summaryoutput$FvalueLabels
 
   # checking for the same reference points across models
   if(is.null(btarg)) {
@@ -306,9 +310,17 @@ SSplotComparisons <-
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
-    cat("setting SPRratioLabel to default input because models",
+    cat("setting label for SPR plot to default input because models",
         "don't have matching labels\n")
     SPRratioLabel <- labels[8]
+  }
+  FvalueLabel <- unique(FvalueLabels)
+  if(length(FvalueLabel)>1){
+    cat("setting label for F plot to default input because models",
+        "don't have matching labels\n")
+    FvalueLabel <- labels[13]
+  }else{
+    FvalueLabel <- gsub("_", " ", FvalueLabel)
   }
 
   ### process input for which models have uncertainty shown
@@ -824,7 +836,7 @@ SSplotComparisons <-
         }
       }
     }else{
-      mtext(side=2,line=3,SPRratioLabel)
+      mtext(side=2,line=3,FvalueLabel)
     }
     if(!add){
       if(tickEndYr){
@@ -848,72 +860,51 @@ SSplotComparisons <-
   }
 
 
-  #### plotF below should be revised to show timeseries of
   #### fishing mortality (however it is specified in the models)
-  ## plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
-  ##   # only show uncertainty if values are present for at least one model
-  ##   if(!any(uncertainty)){
-  ##     show_uncertainty <- FALSE
-  ##   }
-  ##   # get axis limits
-  ##   if(xlim[1]=="default"){
-  ##     xlim <- range(SPRratio$Yr)
-  ##     if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-  ##   }
-  ##   ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
-  ##   if(show_uncertainty){
-  ##     ylim <- ylimAdj*range(ylim, SPRratioUpper[,models[uncertainty]], na.rm=TRUE)
-  ##   }
+  plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
+    # get axis limits
+    if(xlim[1]=="default"){
+      xlim <- range(Fvalue$Yr)
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+    }
+    ylim <- ylimAdj*range(0, Fvalue[,models], na.rm=TRUE)
+    if(show_uncertainty){
+      ylim <- ylimAdj*range(ylim, FvalueUpper[,models[uncertainty]], na.rm=TRUE)
+    }
 
-  ##   # make plot
-  ##   if(!add){
-  ##     newmar <- oldmar <- par()$mar
-  ##     newmar[4] <- newmar[2]
-  ##     par(mar=newmar)
-  ##     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-  ##          ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
-  ##   }
-  ##   if(show_uncertainty){
-  ##     addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
-  ##   }
-  ##   if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-  ##   }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
-  ##     if(type!="l"){
-  ##       SPRratio2 <- SPRratio
-  ##       for(iline in 1:nlines){
-  ##         imodel <- models[iline]
-  ##         SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
-  ##       }
-  ##       matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
-  ##     }
-  ##   }
-  ##   abline(h=0,col="grey")
-  ##   if(sprtarg>0){
-  ##     if(sprtarg==1){
-  ##       # draw line at ratio = 1
-  ##       abline(h=sprtarg,col="red",lty=2)
-  ##       text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
-  ##       mtext(side=2,line=3,labels[8])
-  ##     }else{
-  ##       # draw line at sprtarg
-  ##       yticks <- pretty(ylim)
-  ##       if(!is.na(SPRratioLabels) &&
-  ##          SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
-  ##         abline(h=1,col="red",lty=2)
-  ##         text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
-  ##         axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
-  ##         mtext(side=4,line=3,"1 - SPR")
-  ##         mtext(side=2,line=3,SPRratioLabel)
-  ##       }
-  ##     }
-  ##   }else{
-  ##     mtext(side=2,line=3,SPRratioLabel)
-  ##   }
-  ##   if(legend) legendfun(legendlabels)
-  ##   if(exists("oldmar")) par(mar=oldmar)
-  ## }
+    # make plot
+    if(!add){
+      newmar <- oldmar <- par()$mar
+      newmar[4] <- newmar[2]
+      par(mar=newmar)
+      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+           ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+    }
+    if(show_uncertainty){
+      addpoly(Fvalue$Yr, lower=FvalueLower, upper=FvalueUpper)
+    }
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      if(type!="l"){
+        Fvalue2 <- Fvalue
+        for(iline in 1:nlines){
+          imodel <- models[iline]
+          Fvalue2[Fvalue2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        }
+        matplot(Fvalue2$Yr,Fvalue2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+      }
+    }
+    abline(h=0,col="grey")
+    mtext(side=2,line=3,FvalueLabel)
+    if(legend) legendfun(legendlabels)
+    if(exists("oldmar")) par(mar=oldmar)
+  }
 
   plotRecruits <- function(show_uncertainty=TRUE, recruit_lines=TRUE){ # plot recruitment
     # only show uncertainty if values are present for at least one model
@@ -1520,11 +1511,12 @@ SSplotComparisons <-
                   "which is illogical")
         }
 
+        doShade <- FALSE
         if(mcmcVec[iline]) {
-          doShade <- T
+          doShade <- TRUE
         } else {
           if(!is.na(parSD) && parSD>0) {
-            doShade <- T
+            doShade <- TRUE
           }
         }
         if(densitytails & doShade) {
@@ -1646,6 +1638,19 @@ SSplotComparisons <-
     }
   }
 
+  # subplot 18: F (harvest rate or fishing mortality, however defined)
+  if(18 %in% subplots){
+    if(any(uncertainty)){
+      if(verbose) cat("subplot 18: F value with uncertainty\n")
+      if(plot) plotF(show_uncertainty=TRUE)
+      if(print){
+        pngfun("compare18_Fvalue_uncertainty.png")
+        plotF(show_uncertainty=TRUE)
+        dev.off()
+      }
+    }
+  }
+  
   # subplot 7: recruits
   if(7 %in% subplots){
     if(verbose) cat("subplot 7: recruits\n")

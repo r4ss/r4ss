@@ -74,6 +74,7 @@ SSsummarize <- function(biglist,
   startyrs   <- NULL
   endyrs     <- NULL
   SPRratioLabels <- NULL
+  FvalueLabels <- NULL
   sprtargs   <- NULL
   btargs     <- NULL
   minbthreshs <- NULL
@@ -110,7 +111,7 @@ SSsummarize <- function(biglist,
                                 all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("problem summarizing size selectivity due to mismatched columns ",
+        cat("\nproblem summarizing size selectivity due to mismatched columns ",
             "(perhaps different bins)\n")
       }
     }
@@ -190,6 +191,7 @@ SSsummarize <- function(biglist,
       quantsSD[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
     }
     SPRratioLabels <- c(SPRratioLabels, stats$SPRratioLabel)
+    FvalueLabels   <- c(FvalueLabels,   stats$F_report_basis)
     sprtargs       <- c(sprtargs,       stats$sprtarg)
     btargs         <- c(btargs,         stats$btarg)
     minbthreshs    <- c(minbthreshs,    stats$minbthresh)
@@ -299,7 +301,7 @@ SSsummarize <- function(biglist,
   BratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Bratio[,1:n]),
                              sd=as.matrix(BratioSD[,1:n]))
 
-  # identify biomass ratio parameters
+  # identify SPR ratio derived quantities
   SPRratio <- quants[grep("^SPRratio_",quants$Label),]
   SPRratioSD <- quantsSD[grep("^SPRratio_",quantsSD$Label),]
 
@@ -309,6 +311,16 @@ SSsummarize <- function(biglist,
   SPRratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(SPRratio[,1:n]),
                              sd=as.matrix(SPRratioSD[,1:n]))
 
+  # identify F derived quantities
+  Fvalue <- quants[grep("^F_",quants$Label),]
+  FvalueSD <- quantsSD[grep("^F_",quantsSD$Label),]
+
+  FvalueLower <- FvalueUpper <- FvalueSD
+  FvalueLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(Fvalue[,1:n]),
+                             sd=as.matrix(FvalueSD[,1:n]))
+  FvalueUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Fvalue[,1:n]),
+                             sd=as.matrix(FvalueSD[,1:n]))
+  
 
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
@@ -429,6 +441,11 @@ SSsummarize <- function(biglist,
   mylist$SPRratioLower  <- sort.fn(SPRratioLower)
   mylist$SPRratioUpper  <- sort.fn(SPRratioUpper)
   mylist$SPRratioLabels <- SPRratioLabels
+  mylist$Fvalue         <- sort.fn(Fvalue)
+  mylist$FvalueSD       <- sort.fn(FvalueSD)
+  mylist$FvalueLower    <- sort.fn(FvalueLower)
+  mylist$FvalueUpper    <- sort.fn(FvalueUpper)
+  mylist$FvalueLabels   <- FvalueLabels
   mylist$sprtargs       <- sprtargs
   mylist$btargs         <- btargs
   mylist$minbthreshs    <- minbthreshs
