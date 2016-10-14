@@ -27,7 +27,7 @@
 #' @seealso \code{\link{SSplotNumbers}}
 
 
-SSplotAgeMatrix <- function(replist, option=1, scale=1, plot=TRUE, print=FALSE,
+SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE,
                             labels=c("Age",          #1
                                 "Length",            #2
                                 "True age",          #3
@@ -74,8 +74,8 @@ SSplotAgeMatrix <- function(replist, option=1, scale=1, plot=TRUE, print=FALSE,
     # option 2 is plotting distribution of observed age at true age
     array <- replist$AAK
     # age bins
-    ybins <- replist$agebins
-    if(is.na(ybins)){
+    ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)$ObsAgeBin)))
+    if(is.na(ybins[1])){
       return(NULL)
     }
     # number of slices is the number of ageing error matrices
