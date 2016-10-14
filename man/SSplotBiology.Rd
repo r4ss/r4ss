@@ -5,14 +5,15 @@
 \title{Plot biology related quantities.}
 \usage{
 SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
-  subplots = 1:14, seas = 1, colvec = c("red", "blue", "grey20"),
+  subplots = 1:17, seas = 1, colvec = c("red", "blue", "grey20"),
   shadealpha = 0.1, imageplot_text = FALSE, imageplot_text_round = 0,
   legendloc = "topleft", plotdir = "default", labels = c("Length (cm)",
   "Age (yr)", "Maturity", "Mean weight (kg) in last year", "Spawning output",
   "Length (cm, beginning of the year)", "Natural mortality",
   "Female weight (kg)", "Female length (cm)", "Fecundity",
-  "Default fecundity label", "Year"), pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
+  "Default fecundity label", "Year", "Hermaphroditism transition rate",
+  "Fraction females by age"), pwidth = 6.5, pheight = 5, punits = "in",
+  res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
