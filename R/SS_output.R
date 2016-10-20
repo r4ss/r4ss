@@ -522,7 +522,8 @@ SS_output <-
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
-        cat('Correcting for bug in tag data output associated with SSv3.24f\n')
+        if(!hidewarn)
+          cat('Correcting for bug in tag data output associated with SSv3.24f\n')
         tag1rows <- compdbase$Pick_gender=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]
