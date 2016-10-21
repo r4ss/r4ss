@@ -36,7 +36,9 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
     return(plotinfo)
   }
   plotinfo <- NULL
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   if(yrs[1]=="all") {yrs <- replist$startyr:replist$endyr}
   Ftot <- replist$derived_quants[match(paste("F_",yrs,sep=""),replist$derived_quants$LABEL),]
@@ -61,9 +63,8 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
   }
   if(plot) plotfun()
   if(print){
-    file <- file.path(plotdir,"ts_summaryF.png")
     caption <- "Summary F (definition of F depends on setting in starter.ss)"
-    plotinfo <- pngfun(file=file, caption=caption)
+    plotinfo <- pngfun(file="ts_summaryF.png", caption=caption)
     plotfun()
     dev.off()
     if(!is.null(plotinfo)) plotinfo$category <- "Timeseries"
