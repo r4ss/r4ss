@@ -284,9 +284,8 @@ SSplotData <- function(replist,
   ## Always make the original one
   if(plot & (!datasize | both)) plotdata(datasize=FALSE)
   if(print) {
-    file <- file.path(plotdir,"data_plot.png")
     caption <- "Data presence by year for each fleet"
-    plotinfo <- pngfun(file=file, caption=caption)
+    plotinfo <- pngfun(file="data_plot.png", caption=caption)
     plotdata(datasize=FALSE)
     dev.off()
   }
@@ -294,12 +293,13 @@ SSplotData <- function(replist,
   if(datasize){
       if(plot) plotdata(datasize=TRUE)
       if(print) {
-          file <- file.path(plotdir,"data_plot2.png")
           caption <- paste(
               "Data presence by year for each fleet, where circle area is relative <br> ",
               "within a data type, and proportional to precision for indices and compositions, <br> ",
-              "and absolute catch for catches")
-          plotinfo <- pngfun(file=file, caption=caption)
+              "and absolute catch for catches.<br> ",
+              "Note that since the circles are are scaled relative to maximum,<br> ",
+              "scaling within separate plots should not be compared.")
+          plotinfo <- pngfun(file="data_plot2.png", caption=caption)
           plotdata(datasize)
           dev.off()
       }

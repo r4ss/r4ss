@@ -138,7 +138,9 @@ SSplotCatch <-
     }
   }
 
-  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
+  if(nfishfleets==1 & verbose){
+    cat("  Note: skipping stacked plots of catch for single-fleet model\n")
+  }
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -331,8 +333,10 @@ SSplotCatch <-
   }
 
   # choose one of the above functions
-  if(catchbars) stackfunc <- barfunc # unsophisticated way to implement choice of plot type
-
+  if(catchbars){
+    stackfunc <- barfunc # unsophisticated way to implement choice of plot type
+  }
+  
   makeplots <- function(subplot){
     a <- FALSE
     if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
@@ -383,12 +387,12 @@ SSplotCatch <-
       for(i in 1:length(badstrings)){
         myname <- gsub(pattern=badstrings[i],replacement=" ",x=myname,fixed=T)
       }
-      filename <- file.path(plotdir,paste("catch",myname,".png",sep=""))
+      filename <- paste0("catch", myname, ".png")
       plotinfo2 <- pngfun(filename, caption=substring(myname,3))
       # "a" is TRUE/FALSE indicator that plot got produced
       a <- makeplots(isubplot)
       dev.off()
-      # delete empty files if the somehow got created
+      # delete empty files if they somehow got created
       if(!a & file.exists(filename)){
         file.remove(filename)
       }
