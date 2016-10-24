@@ -61,7 +61,7 @@ SSplotNumbers <-
                "Ageing imprecision",            #8
                "Numbers at age at equilibrium", #9
                "Equilibrium age distribution",  #10
-               "Sex ratio of numbers at age (males/females)", #11
+               "Fraction female in numbers at age", #11
                "Length",                        #12
                "Mean length (cm)",              #13
                "mean length (cm) in the population", #14
@@ -70,8 +70,7 @@ SSplotNumbers <-
                "Middle of year",                #17
                "expected numbers at length",   #18
                # 19 and 20 below are out of order, runumbering others would be tedious
-               "Sex ratio of numbers at length (males/females)", #19
-               "Sex ratio of numbers at length (females/males)"), #20
+               "Fraction female in numbers at length"), #19
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            cex.main=1,
            plotdir="default",
@@ -366,7 +365,8 @@ SSplotNumbers <-
         natagef <- get(paste0("natagetemp0area", iarea, "sex", 1))
         natagem <- get(paste0("natagetemp0area", iarea, "sex", 2))
         natagefyrs <- natagef$Yr
-        natageratio <- as.matrix(natagem[,remove]/natagef[,remove])
+        natageratio <- as.matrix(natagef[,remove]/
+                                   (natagem[,remove] + natagef[,remove]))
         natageratio[is.nan(natageratio)] <- NA
         if(diff(range(natageratio,finite=TRUE))!=0){
           numbersRatioAge.fn <- function(...){
@@ -380,13 +380,14 @@ SSplotNumbers <-
           if(print & 3 %in% subplots){
             filepart <- ""
             if(nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
-            file <- paste0("numbers3_ratio_age", filepart, ".png")
+            file <- paste0("numbers3_frac_female_age", filepart, ".png")
             caption <- plottitle3
             plotinfo <- pngfun(file=file, caption=caption)
-            numbersRatioAge.fn(labcex=0.4)
+            numbersRatioAge.fn(labcex=0.6)
             dev.off()}
         }else{
-          cat("skipped sex ratio contour plot because ratio=1 for all ages and years\n")
+          cat("skipped sex ratio contour plot because females=males\n",
+              "for all ages and years\n")
         }
       } # end area loop
     } # end if nsexes>1
@@ -568,58 +569,39 @@ SSplotNumbers <-
           # get objects that were assigned earlier
           natlenf <- get(paste0("natlentemp0area", iarea, "sex", 1))
           natlenm <- get(paste0("natlentemp0area", iarea, "sex", 2))
-          natlenratio <- as.matrix(natlenm[, remove]/natlenf[, remove])
+          natlenratio <- as.matrix(natlenf[, remove]/
+                                     (natlenm[, remove]+natlenf[, remove]))
           if(diff(range(natlenratio, finite=TRUE))!=0){
-            numbersRatioLen.fn <- function(males.to.females=TRUE, ...){
+            numbersRatioLen.fn <- function(...){
               if(mainTitle) {
-                if(males.to.females){
-                  main <- labels[19]
-                  z <- natlenratio
-                }else{
-                  main <- labels[20]
-                  z <- 1/natlenratio
-                }
+                main <- labels[19]
+                z <- natlenratio
                 if(nareas > 1){
                   main <- paste0(main, " for ", areanames[iarea])
                 }
               } else {
                 main <- ""
               }
-
               contour(natlenyrsB, lbinspop, z,
                       xaxs="i", yaxs="i", xlab=labels[1], ylab=labels[12],
                       main=main, cex.main=cex.main, ...)
             }
             if(plot & 8 %in% subplots){
-              numbersRatioLen.fn(males.to.females=TRUE, labcex=1)
-            }
-            if(plot & 9 %in% subplots){
-              numbersRatioLen.fn(males.to.females=FALSE, labcex=1)
+              numbersRatioLen.fn(labcex=1)
             }
             if(print & 8 %in% subplots){
               filepart <- ""
               if(nareas > 1){
                 filepart <- paste0("_", areanames[iarea], filepart)
               }
-              file <- paste0("numbers8_ratio_len1", filepart, ".png")
+              file <- paste0("numbers8_frac_female_len", filepart, ".png")
               caption <- labels[19]
               plotinfo <- pngfun(file=file, caption=caption)
-              numbersRatioLen.fn(labcex=0.4)
-              dev.off()
-            }
-            if(print & 9 %in% subplots){
-              filepart <- ""
-              if(nareas > 1){
-                filepart <- paste0("_", areanames[iarea], filepart)
-              }
-              file <- paste0("numbers8_ratio_len2", filepart, ".png")
-              caption <- labels[20]
-              plotinfo <- pngfun(file=file, caption=caption)
-              numbersRatioLen.fn(labcex=0.4)
+              numbersRatioLen.fn(labcex=0.6)
               dev.off()
             }
           }else{
-            cat("skipped sex ratio contour plot because ratio=1",
+            cat("skipped sex ratio contour plot because females=males",
                 "for all lengths and years\n")
           }
         } # end area loop
