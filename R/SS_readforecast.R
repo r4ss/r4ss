@@ -1,11 +1,12 @@
 #' read forecast file
-#' 
+#'
 #' read Stock Synthesis forecast file into list object in R
-#' 
-#' 
+#'
+#'
 #' @param file Filename either with full path or relative to working directory.
 #' @param Nfleets Number of fleets.
 #' @param Nareas Number of areas.
+#' @param nseas number of seasons
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
 #' @export
@@ -13,7 +14,7 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 
-SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
+SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(verbose) cat("running SS_readsforecast\n")
   forecast <- readLines(file,warn=F)
@@ -22,6 +23,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   mylist$sourcefile <- file
   mylist$type <- "Stock_Synthesis_forecast_file"
   mylist$SSversion <- "SSv3.21_or_later"
+
 
   # get numbers (could be better integrated with function above)
   allnums <- NULL
@@ -76,7 +78,10 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
   if(verbose) cat("  fleet_assignment_to_allocation_group =",mylist$fleet_assignment_to_allocation_group,"\n")
   if(any(mylist$fleet_assignment_to_allocation_group!=0)){
     mylist$N_allocation_groups <- max(mylist$fleet_assignment_to_allocation_group)
-    mylist$allocation_among_groups <- allnums[i:(i+mylist$N_allocation_groups-1)]; i <- i+mylist$N_allocation_groups
+    allocation_among_groups <- allnums[i:(i+mylist$N_allocation_groups*nseas-1)]; i <- i+mylist$N_allocation_groups*nseas
+    mylist$allocation_among_groups<-
+      as.data.frame(t(array(data=allocation_among_groups,dim=c(mylist$N_allocation_groups,nseas))))
+    colnames(mylist$allocation_among_groups)<-paste0("Grp",1:mylist$N_allocation_groups) 
   }else{
     mylist$N_allocation_groups <- 0
     mylist$allocation_among_groups <- NULL
@@ -96,7 +101,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, verbose=TRUE){
       print(ForeCatch)
     }
   }
-  
+
   mylist$ForeCatch <- ForeCatch
   # check final value
   if(allnums[i]==999){

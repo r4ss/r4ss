@@ -5,10 +5,10 @@
 \title{write control file}
 \usage{
 SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = TRUE,
-  nseas = 1, N_areas = 1)
+  nseas = 1, N_areas = 1, Do_AgeKey = FALSE)
 }
 \arguments{
-\item{ctllist}{object created by \code{\link{SS_readctl}}.}
+\item{ctllist}{List object created by \code{\link{SS_readctl}}.}
 
 \item{outfile}{Filename for where to write new data file.}
 
@@ -21,6 +21,10 @@ explicitly available in control file}
 
 \item{N_areas}{number of spatial areas in the model. This information is also not
 explicitly available in control file}
+
+\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
+set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
+to disable them. This information is not explicitly available in control file, too.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was probably

@@ -4,7 +4,8 @@
 \alias{SS_readforecast}
 \title{read forecast file}
 \usage{
-SS_readforecast(file = "forecast.ss", Nfleets, Nareas, verbose = TRUE)
+SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
+  verbose = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -12,6 +13,8 @@ SS_readforecast(file = "forecast.ss", Nfleets, Nareas, verbose = TRUE)
 \item{Nfleets}{Number of fleets.}
 
 \item{Nareas}{Number of areas.}
+
+\item{nseas}{number of seasons}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }

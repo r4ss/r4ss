@@ -14,7 +14,7 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readdat}}, 
+#' \code{\link{SS_readdat}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
                               overwrite=FALSE, verbose=TRUE){
@@ -57,8 +57,9 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   }
   printdf <- function(dataframe){
     # function to print data frame with hash mark before first column name
+    if(is.character(dataframe))dataframe<-mylist[names(mylist)==dataframe][[1]]
     names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    print(dataframe, row.names=FALSE, strip.white=TRUE)
+    print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
   }
 
   writeLines("#C forecast file written by R function SS_writeforecast")
@@ -106,7 +107,8 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
   if(any(mylist$fleet_assignment_to_allocation_group!=0)){
     writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
+#    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
+    printdf("allocation_among_groups")
   }
   wl("Ncatch")
   wl("InputBasis")

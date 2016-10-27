@@ -5,8 +5,9 @@
 \title{read control file from SS version 3.24}
 \usage{
 SS_readctl_3.24(file, verbose = TRUE, echoall = FALSE, nseas = 4,
-  N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA, Nfish = 2,
-  Nsurv = 2, TG_Nrelgrp = NA)
+  N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA, Nfleet = 2,
+  Nsurveys = 2, Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0,
+  0, 9, 12), use_datlist = FALSE, datlist = NULL)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -17,10 +18,10 @@ Default=TRUE.}
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
 data as it is being read.}
 
-\item{nseas}{number of season in the model. This information is not
+\item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. This information is also not
+\item{N_areas}{number of spatial areas in the model. Default = 1. This information is also not
 explicitly available in control file}
 
 \item{Nages}{oldest age in the model. This information is also not
@@ -33,14 +34,25 @@ explicitly available in control file}
 explicitly available in control file and this information is only required if length based
 maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfish}{number of fisheries in the model. This information is also not
+\item{Nfleet}{number of fisheries in the model. This information is also not
 explicitly available in control file}
 
-\item{Nsurv}{number of survey fleets in the model. This information is also not
+\item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{TG_Nrelgrp}{number of tag release groups in the model. This information is also not
-explicitly available in control file}
+\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
+set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
+to disable them. This information is not explicitly available in control file, too.}
+
+\item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
+control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
+
+\item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series}
+
+\item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
+determined from control file}
+
+\item{datlist}{list or character. if list : produced from SS_writedat or character : file name of dat file.}
 }
 \description{
 Read Stock Synthesis (version 3.24) control file into list object in R.

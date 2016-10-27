@@ -1,9 +1,9 @@
 #' write data file
-#' 
+#'
 #' write Stock Synthesis data file from list object in R which was probably
 #' created using \code{\link{SS_readdat}}
-#' 
-#' 
+#'
+#'
 #' @param datlist List object created by \code{\link{SS_readdat}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
@@ -11,7 +11,7 @@
 #' @author Ian Taylor, Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
-#' \code{\link{SS_readforecast}}, 
+#' \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 #' \code{\link{SS_writedat}}
 SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
@@ -170,8 +170,8 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   writeLines(paste(paste(datlist$Nobs_per_method,collapse=" "),"#_Nobs_per_method"))
   writeLines("#_Sizefreq bins")
 #  wl("size_freq_bins_list")
-  writeLines("#_size_freq_bins_list")
-  lapply(datlist$size_freq_bins_list,FUN=function(line){writeLines(paste(line,collapse=" "))})
+  writeLines("#_sizefreq_bins_list")
+  lapply(datlist$sizefreq_bins_list,FUN=function(line){writeLines(paste(line,collapse=" "))})
 
 #  writeLines("#_Year season Fleet Gender Partition SampleSize <data> ")
 

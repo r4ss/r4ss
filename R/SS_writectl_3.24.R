@@ -4,7 +4,7 @@
 #' created using \code{\link{SS_readctl}}
 #'
 #'
-#' @param ctllist object created by \code{\link{SS_readctl}}.
+#' @param ctllist  List object created by \code{\link{SS_readctl}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
@@ -12,7 +12,9 @@
 #'  explicitly available in control file
 #' @param N_areas number of spatial areas in the model. This information is also not
 #'  explicitly available in control file
-
+#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
+#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
+#'  to disable them. This information is not explicitly available in control file, too.
 #' @author Yukio Takeuchi
 #' @importFrom gdata write.fwf
 #' @importFrom stringr str_c
@@ -23,8 +25,11 @@
 # ' \code{\link{SS_writedat}}
 SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## Parameters that are not defined in control file
+## if ctllist is an output of SS_readctl these three inputs will be overriden by
+## nseas,N_areas and Do_AgeKey in ctllist
     nseas=1,
-    N_areas=1
+    N_areas=1,
+    Do_AgeKey=FALSE
 ){
 #  require("gdata")
 #  require("magrittr")
@@ -41,6 +46,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   ## on.exit({if(sink.number()>0) sink(); close(zz)})
   nseas<-ifelse(is.null(ctllist$nseas),nseas,ctllist$nseas)
   N_areas<-ifelse(is.null(ctllist$N_areas),N_areas,ctllist$N_areas)
+  Do_AgeKey<-ifelse(is.null(ctllist$Do_AgeKey),Do_AgeKey,ctllist$Do_AgeKey)
 
   if(file.exists(outfile)){
     if(!overwrite){
@@ -62,7 +68,6 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 #  sink(zz)
   writeComment<-function(text,...){
     if(length(grep(x=text,pattern="^#"))!=length(text))text<-paste("#_",text,sep="")
-
     writeLines(text=text,con=zz,...)
   }
   wl <- function(name,comment=NULL,con=stdout){
@@ -97,7 +102,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       writeLines(paste0("#_",header),con=zz)
     }
     value = ctllist[names(ctllist)==name][[1]]
-    value1<-sapply(value,function(x){str_c(paste(x),collapse=" ")},simplify=TRUE)
+    value1<-sapply(value,function(x){stringr::str_c(paste(x),collapse=" ")},simplify=TRUE)
     writeLines(value1,con=zz)
   }
 
@@ -113,7 +118,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
      if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
   #   write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
-     write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
+     gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
   }
 
@@ -200,7 +205,8 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   printdf("RecrDist_parms")
   ## One cohort specific growth parameter
   printdf("cohortG_parm")
-  ## Movement parameters
+  ## 7 Age Key parameters
+  if(Do_AgeKey)printdf("AgeKey_parms")  ## 7 age keys parameters
   if(N_areas>1){
     printdf("Move_parms")
   }
@@ -243,7 +249,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("recdev_phase",comment="recdev phase")
   wl("recdev_adv",comment="(0/1) to read 13 advanced options")
   if(ctllist$recdev_adv){
-    cat("reading 13 advanced SRR options\n")
+  #  cat("writing 13 advanced SRR options\n")
     wl("recdev_early_start",comment="#_recdev_early_start (0=none; neg value makes relative to recdev_start)")
     wl("recdev_early_phase",comment="#_recdev_early_phase")
     wl("Fcast_recr_phase",comment="#_forecast_recruitment phase (incl. late recr) (0 value resets to maxphase+1)")
@@ -256,12 +262,15 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     wl("period_of_cycles_in_recr",comment="#_period of cycles in recruitment (N parms read below)")
     wl("min_rec_dev",comment="#min rec_dev")
     wl("max_rec_dev",comment="#max rec_dev")
-    wl("DoRead_recdevs",comment="#_read_recdevs")
+    wl("N_Read_recdevs",comment="#_read_recdevs")
   }
   writeComment("#_end of advanced SR options")
   writeComment("#_placeholder for full parameter lines for recruitment cycles")
   writeComment("# read specified recr devs")
   writeComment("#_Yr Input_value")
+  if(ctllist$N_Read_recdevs>0){
+    printdf("recdev_input")
+  }
 
 ##
 # F part
@@ -270,10 +279,15 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("F_ballpark_year",comment="F ballpark year (neg value to disable)")
   wl("F_Method",comment="F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)")
   wl("maxF",comment="max F or harvest rate, depends on F_Method")
-    if(ctllist$F_Method==1){
-    stop("stop currently F_method:1 is not implemented")
+  if(ctllist$F_Method==1){
+  #  Fmethod:1 does not need any additional information
+  #  stop("stop currently F_method:1 is not implemented")
   }else if(ctllist$F_Method==2){
-    stop("stop currently F_method:2 is not implemented")
+  #  stop("stop currently F_method:2 is not implemented")
+    writeComment("overall start F value; overall phase; N detailed inputs to read")
+    wl.vec("F_setup")
+    writeComment("fleet, yr, seas, Fvalue, se, phase")
+    printdf("F_setup2")
   }else if(ctllist$F_Method==3){
     wl("F_iter",comment="N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
@@ -285,12 +299,41 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_for_env-var:_enter_index_of_the_env-var_to_be_linked")
 #  writeComment("#_Den-dep  env-var  extra_se  Q_type")
   printdf("Q_setup")
+##
+## First of all to check if random Q parameters are used.
+## If yes, read 1 number for flag to see if to read single parameter for each random Q or
+## one parameter for each data point
+  if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
+    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
+    wl("Do_Q_detail",comment=
+        "If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
+  }else{
+    writeComment("#")
+    writeComment("#_Cond 0 #_If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
+  }
+  # Density dependant Q(Q-power)
+  if(sum(ctllist$Q_setup[,1])>0){
+    if(any(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2)){
+      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2))
+      stop()
+    }
+    printdf("Q_power")
+  }
+# Q-env
+  if(sum(ctllist$Q_setup[,2])>0){
+    if(any(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2)){
+      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2))
+      stop()
+    }
+    printdf("Q_env")
+  }
+# Q_extraSD
   if(sum(ctllist$Q_setup[,3])>0){
     printdf("Q_extraSD")
   }
-  if(sum(ctllist$Q_setup[,4] %in% c(1,2))>0){
-    printdf("Q_base")
-  }
+# Q-type
+  if(!is.null(ctllist$Q_parms))printdf("Q_parms")
+
   writeComment("#_size_selex_types")
   writeComment("#discard_options:_0=none;_1=define_retention;_2=retention&mortality;_3=all_discarded_dead")
 #  writeComment("#_Pattern Discard Male Special")

@@ -10,9 +10,9 @@
 #' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
 #' data as it is being read.
-#' @param nseas number of season in the model. This information is not
+#' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. This information is also not
+#' @param N_areas number of spatial areas in the model. Default = 1. This information is also not
 #'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
@@ -21,12 +21,19 @@
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfish number of fisheries in the model. This information is also not
+#' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
-#' @param Nsurv number of survey fleets in the model. This information is also not
+#' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param TG_Nrelgrp number of tag release groups in the model. This information is also not
-#'  explicitly available in control file
+#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
+#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
+#'  to disable them. This information is not explicitly available in control file, too.
+#' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
+#'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
+#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
+#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
+#'        determined from control file
+#' @param datlist list or character. if list : produced from SS_writedat or character : file name of dat file.
 #' @author Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
@@ -41,14 +48,19 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     Nages=20,
     Ngenders=1,
     Npopbins=NA,
-    Nfish=2,
-    Nsurv=2,
-    TG_Nrelgrp=NA){
+    Nfleet=2,
+    Nsurveys=2,
+    Do_AgeKey=FALSE,
+    N_tag_groups=NA,
+    N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
+##################################
+    use_datlist=FALSE,
+    datlist=NULL
+    ){
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readctl_3.24\n")
   dat <- readLines(file,warn=FALSE)
-
 
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2]," ")[[1]][1]
@@ -135,14 +147,35 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   ctllist <- list()
   ctllist$'.i'<-i
   ctllist$'.dat'<-allnums
-  ctllist$nseas<-nseas
-  ctllist$N_areas<-N_areas
-  ctllist$Nages<-Nages
-  ctllist$Ngenders<-Ngenders
-  ctllist$Npopbins<-Npopbins
-  ctllist$Nfish<-Nfish
-  ctllist$Nsurv<-Nsurv
-  ctllist$TG_Nrelgrp<-TG_Nrelgrp
+  if(!use_datlist){
+    ctllist$nseas<-nseas
+    ctllist$N_areas<-N_areas
+    ctllist$Nages<-Nages
+    ctllist$Ngenders<-Ngenders
+    ctllist$Npopbins<-Npopbins
+    ctllist$Nfleet<-Nfleet
+    ctllist$Nsurveys<-Nsurveys
+    ctllist$Do_AgeKey<-Do_AgeKey
+    ctllist$N_tag_groups<-N_tag_groups
+    ctllist$N_CPUE_obs<-N_CPUE_obs
+  }else{
+    if(is.character(datlist))datlist<-SS_readdat(file=datlist)
+    if(is.null(datlist))stop("datlist from SS_readdat is needed is use_datlist is TRUE")
+    ctllist$nseas<-nseas<-datlist$nseas
+    ctllist$N_areas<-N_areas<-datlist$N_areas
+    ctllist$Nages<-Nages<-datlist$Nages
+    ctllist$Ngenders<-Ngenders<-datlist$Ngenders
+    ctllist$Npopbins<-Npopbins<-datlist$Npopbins
+    ctllist$Nfleet<-Nfleet<-datlist$Nfleet
+    ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
+    if(datlist$N_ageerror_definition>0){
+      ctllist$Do_AgeKey<-Do_AgeKey<-ifelse(any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2,1]<0),1,0)
+    }
+    ctllist$N_tag_groups<-N_tag_groups<-datlist$N_tag_groups
+    N_CPUE_obs<-vector(mode="numeric",length=Nfleet+Nfleet)
+    N_CPUE_obs<-sapply(1:(Nfleet+Nfleet),function(i){sum(datlist$CPUE[,"index"]==i)})
+    ctllist$N_CPUE_obs<-N_CPUE_obs
+  }
   # specifications
   ctllist$sourcefile <- file
   ctllist$type <- "Stock_Synthesis_control_file"
@@ -243,7 +276,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     k1<-ctllist$N_GP*Ngenders  # for reading age_natmort
     ctllist<-add_df(ctllist,name="Len_At_Age_rd",nrow=k1,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
   #!!if(k1>0) echoinput<<"  Len_At_Age_rd"<<Len_At_Age_rd<<endl; Need check
-
   }else{
     cat("GrowthModel;",ctllist$GrowthModel," ")
     stop("is not supported yet")
@@ -313,7 +345,15 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                                 "PR_type", "SD", "PHASE",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-
+## 7 AgeKey parameters if requested
+  if(Do_AgeKey){
+    if(verbose)cat("reading 7 ageKey parameters as requested in dat file\n")
+    ctllist<-add_df(ctllist,name="AgeKey_parms",nrow=7,ncol=14,
+                    col.names=c("LO", "HI", "INIT", "PRIOR",
+                                "PR_type", "SD", "PHASE",
+                                "env_var","use_dev", "dev_minyr",
+                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+  }
  ## Movement parameters
   if(N_areas>1){
     N_Move_parms<-ctllist$N_moveDef*2
@@ -368,14 +408,15 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist<-add_elem(ctllist,"period_of_cycles_in_recr") #_period of cycles in recruitment (N parms read below)
     ctllist<-add_elem(ctllist,"min_rec_dev") #min rec_dev
     ctllist<-add_elem(ctllist,"max_rec_dev") #max rec_dev
-    ctllist<-add_elem(ctllist,"DoRead_recdevs") #_read_recdevs
+    ctllist<-add_elem(ctllist,"N_Read_recdevs") #_read_recdevs
     #_end of advanced SR options
 #
     if(ctllist$period_of_cycles_in_recr>0){
       stop("Reading full parameters for recr cycles is not yet coded")
     }
-    if(ctllist$DoRead_recdevs>0){
-      stop("Reading specific recdev is not coded in this R code")
+    if(ctllist$N_Read_recdevs>0){
+  #    stop("Reading specific recdev is not coded in this R code")
+      ctllist<-add_df(ctllist,"recdev_input",ncol=2,nrow=ctllist$N_Read_recdevs,col.names=c("Year","recdev"))
     }
   }
   # F Part
@@ -384,40 +425,93 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   ctllist<-add_elem(ctllist,"F_Method") # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
   ctllist<-add_elem(ctllist,"maxF") # max F or harvest rate, depends on F_Method
   if(ctllist$F_Method==1){
-    stop("stop currently F_method:1 is not implemented")
+ #   stop("stop currently F_method:1 is not implemented")
   }else if(ctllist$F_Method==2){
-    stop("stop currently F_method:2 is not implemented")
+ #   stop("stop currently F_method:2 is not implemented")
+    ctllist<-add_vec(ctllist,"F_setup",length=3) # overall start F value; overall phase; N detailed inputs to read
+    ctllist<-add_df(ctllist,name="F_setup2",nrow=ctllist$F_setup[3],ncol=6,
+                    col.names=c("fleet", "yr", "seas", "Fvalue", "se", "phase"))
   }else if(ctllist$F_Method==3){
     ctllist<-add_elem(ctllist,"F_iter") # N iterations for tuning F in hybrid method (recommend 3 to 7)
   }
   #
   #_initial_F_parms
   #_LO HI INIT PRIOR PR_type SD PHASE
-  ctllist<-add_df(ctllist,name="init_F",nrow=Nfish,ncol=7,col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
   #
   #_Q_setup
   # Q_type options:  <0=mirror, 0=float_nobiasadj, 1=float_biasadj, 2=parm_nobiasadj, 3=parm_w_random_dev, 4=parm_w_randwalk, 5=mean_unbiased_float_assign_to_parm
   ## currently only float_nobiasadj (Q_type==0) is suppoerted
 #_for_env-var:_enter_index_of_the_env-var_to_be_linked
 #_Den-dep  env-var  extra_se  Q_type
-  ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfish+Nsurv,ncol=4,
+  ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfleet+Nsurveys,ncol=4,
               col.names=c("Den_dep","env_var","extra_se","Q_type"))
+## Then check if random Q parameters are used.
+## If yes, read 1 number for flag to see if to read single parameter for each random Q or
+## one parameter for each data point
+  if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
+    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
+  }
+# Density dependant Q(Q-power)
+  if(sum(ctllist$Q_setup[,1])>0){
+    if(any(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2)){
+      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2))
+      stop()
+    }
+    N_Q_power<-sum(ctllist$Q_setup[,1]>0)
+    ctllist<-add_df(ctllist,name="Q_power",nrow=N_Q_power,ncol=7,
+              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  }
+# Q-env
+  if(sum(ctllist$Q_setup[,2])>0){
+    if(any(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2)){
+      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2))
+      stop()
+    }
+    N_Q_env<-sum(ctllist$Q_setup[,2]>0)
+    ctllist<-add_df(ctllist,name="Q_env",nrow=N_Q_env,ncol=7,
+              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  }
+# extra-se
   if(sum(ctllist$Q_setup[,3])>0){
     ctllist<-add_df(ctllist,name="Q_extraSD",nrow=sum(ctllist$Q_setup[,3]),ncol=7,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
   }
-  if(sum(ctllist$Q_setup[,4] %in% c(1,2))>0){
-    ctllist<-add_df(ctllist,name="Q_base",nrow=sum(ctllist$Q_setup[,4] %in% c(1,2)),ncol=7,
+# Q-type
+  N_Q_parms<-0
+
+  if(sum(ctllist$Q_setup[,4]==2)>0){ # One Q parameter
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[,4]==2)
+  }else if(sum(ctllist$Q_setup[,4]==3)>0){ # Random Q deviations
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==3)
+    if(Do_Q_detail){
+      for(i in which(ctllist$Q_setup[i,4]==3)){
+        N_Q_parms<-N_Q_parms+N_CPUE_obs[i]
+      }
+    }
+  }else if(sum(ctllist$Q_setup[,4]==4)>0){# Random walk W
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==4)
+    if(Do_Q_detail){
+      for(i in which(ctllist$Q_setup[i,4]==4)){
+        N_Q_parms<-N_Q_parms+N_CPUE_obs[i]-1
+      }
+    }
+  }else if(sum(ctllist$Q_setup[,4]==5)>0){
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==5)
+  }
+
+  if(N_Q_parms>0){
+    ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=7,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
   }
 # size_selex_types
-  ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfish+Nsurv,ncol=4,
+  ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
               col.names=c("Pattern","Discard","Male","Special"))
   size_selex_pattern_vec<-as.vector(ctllist$size_selex_types[,1])
 #
 #_age_selex_types
 #_Pattern ___ Male Special
-  ctllist<-add_df(ctllist,name="age_selex_types",nrow=Nfish+Nsurv,ncol=4,
+  ctllist<-add_df(ctllist,name="age_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
               col.names=c("Pattern","___","Male","Special"))
   age_selex_pattern_vec<-as.vector(ctllist$age_selex_types[,1])
 
@@ -431,8 +525,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   #                31 32 33 34
                     0, 0, 0, 0)
 #########################################################
-  size_selex_Nparms<-vector(mode="numeric",length=Nfish+Nsurv)
-  for(j in 1:(Nfish+Nsurv)){
+  size_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  for(j in 1:(Nfleet+Nsurveys)){
        #    size_selex_pattern_vec
     size_selex_Nparms[j]<-selex_patterns[size_selex_pattern_vec[j]+1]
     ## spline needs special treatment
@@ -440,8 +534,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
       size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]
     }
   }
-  age_selex_Nparms<-vector(mode="numeric",length=Nfish+Nsurv)
-  for(j in 1:(Nfish+Nsurv)){
+  age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  for(j in 1:(Nfleet+Nsurveys)){
     age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j]==27){
@@ -465,7 +559,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                            "Block", "Block_Fxn"))
   }
 ##########################
-## Following pars are not yet implemented in this R code
+## Following pars are not yet  implemented in this R code
 #_Cond 0 #_custom_sel-env_setup (0/1)
 #_Cond -2 2 0 0 -1 99 -2 #_placeholder when no enviro fxns
   DoAdjust<-FALSE
@@ -478,10 +572,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
         col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
     }
   }else{
-#_Cond 0 #_custom_sel-blk_setup (0/1)
+    #_Cond 0 #_custom_sel-blk_setup (0/1)
+    #_Cond -2 2 0 0 -1 99 -2 #_placeholder when no block usage
   }
 
-#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no block usage
 #_Cond No selex parm trends
   if(sum(ctllist$age_selex_parms[,9])+sum(ctllist$size_selex_parms[,9])>0){
     DoAdjust<-TRUE
@@ -508,57 +602,41 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ##  . one tag reporting rate paramater
     ##  . one tag reporting rate decay paramater
     ##
-    ##  In total TG_Nrelgrp*3+ Nfish*2 parameters are needed to read
+    ##  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
     ##
     # Initial tag loss
-    ctllist<-add_df(ctllist,name="TG_Loss_init",nrow=TG_Nrelgrp,ncol=14,
+    ctllist<-add_df(ctllist,name="TG_Loss_init",nrow=N_tag_groups,ncol=14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
     # continuous tag loss
-    ctllist<-add_df(ctllist,name="TG_Loss_chronic",nrow=TG_Nrelgrp,ncol=14,
+    ctllist<-add_df(ctllist,name="TG_Loss_chronic",nrow=N_tag_groups,ncol=14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
-                           comments=paste0("#_TG_Loss_chronic_",1:TG_Nrelgrp))
+                           comments=paste0("#_TG_Loss_chronic_",1:N_tag_groups))
 
     # NB over-dispersion
-#    k<-TG_Nrelgrp*14
-#    TG_overdispersion0<-as.data.frame(array(allnums[i+1:k-1],dim=c(TG_Nrelgrp,14)))
-#    colnames(TG_overdispersion0)<-c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-#                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum")
-#    ctllist$TG_overdispersion<-TG_overdispersion0
-    ctllist<-add_df(ctllist,name="TG_overdispersion",nrow=TG_Nrelgrp,ncol=14,
+    ctllist<-add_df(ctllist,name="TG_overdispersion",nrow=N_tag_groups,ncol=14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
-              comments=paste0("#_TG_overdispersion_",1:TG_Nrelgrp))
+              comments=paste0("#_TG_overdispersion_",1:N_tag_groups))
 
     # TG_Report_fleet
-#    k<-TG_Nrelgrp*14
-#    TG_Report_fleet0<-as.data.frame(array(allnums[i+1:k-1],dim=c(TG_Report_fleet,14)))
-#    colnames(TG_Report_fleet0)<-c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-#                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum")
-#    ctllist$TG_Report_fleet<-TG_Report_fleet0
-    ctllist<-add_df(ctllist,name="TG_Report_fleet",nrow=Nfish,14,
+    ctllist<-add_df(ctllist,name="TG_Report_fleet",nrow=Nfleet,14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
 
     # TG_Report_fleet_decay
-#    k<-TG_Nrelgrp*14
-#    TG_Report_fleet_decay0<-as.data.frame(array(allnums[i+1:k-1],dim=c(TG_Report_fleet_decay,14)))
-#    colnames(TG_Report_fleet_decay0)<-c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-#                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum")
-#    ctllist$TG_Report_fleet_decay<-TG_Report_fleet_decay0
-    ctllist<-add_df(ctllist,name="TG_Report_fleet_decay",nrow=Nfish,14,
+    ctllist<-add_df(ctllist,name="TG_Report_fleet_decay",nrow=Nfleet,14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
   }else{
     #_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters
     #
   }
-#  ctllist$DoVar_adjust<-allnums[i]; i <- i+1
   ctllist<-add_elem(ctllist,"DoVar_adjust")  #_Variance_adjustments_to_input_values
   if(ctllist$DoVar_adjust>0){
-    ctllist<-add_df(ctllist,name="Variance_adjustments",nrow=6,ncol=Nfish+Nsurv,
-                      col.names=paste0("Fleet",1:(Nfish+Nsurv)))
+    ctllist<-add_df(ctllist,name="Variance_adjustments",nrow=6,ncol=Nfleet+Nsurveys,
+                      col.names=paste0("Fleet",1:(Nfleet+Nsurveys)))
     rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",
                                                           "add_to_discard_stddev",
                                                           "add_to_bodywt_CV",
