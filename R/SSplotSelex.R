@@ -194,11 +194,13 @@ SSplotSelex <-
                            ageselex$gender %in% sexes,]
     }
     if(!factor %in% unique(c(sizeselex$Factor,ageselex$factor))){
-      cat("In selectivity plots, factor ",factor,"not found in age- or length-based selectivity.\n")
+      cat("  Factor '",factor,"' not found in age- or length-based selectivity.\n",
+          "  This may be due to having 'detailed age-structured reports'\n",
+          "  turned off in the starter file.\n", sep="")
       return()
     }
     if(nrow(allselex)==0){
-      cat("combination of season, fleets, & sexes didn't produce any results\n")
+      cat("  combination of season, fleets, & sexes didn't produce any results\n")
       return()
     }
     # make lowercase to remove inconsistensies between data frames
