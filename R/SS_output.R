@@ -734,10 +734,19 @@ SS_output <-
   lambdas <- as.numeric(lambdas)
   like$lambdas <- lambdas
   stats$likelihoods_used <- like
-  # read fleet-specific likelihoods
-  likelihoods_by_fleet <-
-    matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
 
+  # read fleet-specific likelihoods and detail on parameters devs (3.30 only)
+  if(SS_versionNumeric < 3.3){
+    likelihoods_by_fleet <-
+      matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+    Parm_devs_detail <- NA
+  }else{
+    likelihoods_by_fleet <-
+      matchfun2("Fleet:",0,"Parm_devs_detail",-1,header=TRUE)
+    Parm_devs_detail <-
+      matchfun2("Parm_devs_detail",1,"Input_Variance_Adjustment",-1,header=TRUE)
+  }
+  
   # check for presence of tag data likelihood which has different column structure
   if(length(grep("Tag_Group", likelihoods_by_fleet[,1]))>0){
     # read fleet-specific likelihoods again
@@ -773,6 +782,7 @@ SS_output <-
   likelihoods_by_fleet$Label <- labs
 
   stats$likelihoods_by_fleet <- likelihoods_by_fleet
+  stats$Parm_devs_detail <- Parm_devs_detail
 
   # parameters
   if(SS_versionNumeric>= 3.23) shift <- -1
