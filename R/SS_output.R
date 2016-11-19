@@ -735,18 +735,19 @@ SS_output <-
   like$lambdas <- lambdas
   stats$likelihoods_used <- like
 
-  # read fleet-specific likelihoods and detail on parameters devs (3.30 only)
-  if(SS_versionNumeric < 3.3){
-    likelihoods_by_fleet <-
-      matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
-    Parm_devs_detail <- NA
-  }else{
+  # read fleet-specific likelihoods
+  likelihoods_by_fleet <-
+    matchfun2("Fleet:",0,"Input_Variance_Adjustment",-1,header=TRUE)
+  Parm_devs_detail <- NA
+  # read detail on parameters devs (if present, 3.30 only)
+  if(length(grep("Parm_devs_detail", likelihoods_by_fleet[,1]))>0){
     likelihoods_by_fleet <-
       matchfun2("Fleet:",0,"Parm_devs_detail",-1,header=TRUE)
     Parm_devs_detail <-
       matchfun2("Parm_devs_detail",1,"Input_Variance_Adjustment",-1,header=TRUE)
   }
-  
+  print(likelihoods_by_fleet)
+  print(Parm_devs_detail)
   # check for presence of tag data likelihood which has different column structure
   if(length(grep("Tag_Group", likelihoods_by_fleet[,1]))>0){
     # read fleet-specific likelihoods again
@@ -1044,8 +1045,6 @@ SS_output <-
 
   # recruitment distribution
   recruitment_dist <- matchfun2("RECRUITMENT_DIST",1,"MORPH_INDEXING",-1,header=TRUE)
-  print(length(grep("RECRUITMENT_DIST",recruitment_dist[,1])))
-  print('test')
   # models prior to SSv3.24Q have no additional outputs
   if(length(grep("RECRUITMENT_DIST",recruitment_dist[,1]))==0){
     for(i in 1:6){
