@@ -746,8 +746,7 @@ SS_output <-
     Parm_devs_detail <-
       matchfun2("Parm_devs_detail",1,"Input_Variance_Adjustment",-1,header=TRUE)
   }
-  print(likelihoods_by_fleet)
-  print(Parm_devs_detail)
+
   # check for presence of tag data likelihood which has different column structure
   if(length(grep("Tag_Group", likelihoods_by_fleet[,1]))>0){
     # read fleet-specific likelihoods again
