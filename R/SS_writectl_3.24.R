@@ -109,17 +109,26 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## Internal function to write formatted data.frame
   printdf <- function(dataframe,header=TRUE,headerLine=NA){
     # function to print data frame with hash mark before first column name
-    if(is.character(dataframe))dataframe<-ctllist[names(ctllist)==dataframe][[1]]
-    if(header){
-      names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-      writeLines(paste(names(dataframe),collapse="\t"),con=zz)
+    if(is.character(dataframe)){
+      tmp<-ctllist[names(ctllist)==dataframe]
+      if(length(tmp)>0){
+        dataframe<-tmp[[1]]
+      }else{
+        dataframe<-NULL
+      }
     }
-    if(!is.na(headerLine))xxx<-2
+    if(!is.null(dataframe)){
+      if(header){
+        names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
+        writeLines(paste(names(dataframe),collapse="\t"),con=zz)
+      }
+      if(!is.na(headerLine))xxx<-2
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
-     if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
-  #   write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
-     gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
+      if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
+  #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
+        gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
+    }
   }
 
   # write a header
@@ -304,7 +313,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
 ## one parameter for each data point
   if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
-    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
+#    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
     wl("Do_Q_detail",comment=
         "If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
   }else{
@@ -373,7 +382,11 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }
   writeComment("#_Cond No selex parm trends ")
 
-  writeComment("#_Cond -4 # placeholder for selparm_Dev_Phase")
+  if(!is.null(ctllist$selparm_Dev_Phase) & ctllist$selparm_Dev_Phase){
+    wl("selparm_Dev_Phase",comment="#selparm_dev_PH")
+  }else{
+    writeComment("#_Cond -4 # placeholder for selparm_Dev_Phase")
+  }
   if(ctllist$DoAdjust){
     wl("selex_adjust_method",comment="env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)")
   }else{

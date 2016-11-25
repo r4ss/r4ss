@@ -317,11 +317,13 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   }
   ## natural mortality parameters by growth pattern and gender
   N_M_parms<-N_natMparms*ctllist$N_GP*Ngenders #
-  ctllist<-add_df(ctllist,name="M_parms",nrow=N_M_parms,ncol=14,
+  if(N_M_parms>0){
+    ctllist<-add_df(ctllist,name="M_parms",nrow=N_M_parms,ncol=14,
                     col.names=c("LO", "HI", "INIT", "PRIOR",
                                 "PR_type", "SD", "PHASE",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+  }
   ## Growth curve parameters and reproduction parameters
   N_G_parms<-N_growparms*ctllist$N_GP*Ngenders # Growth curve parameters by growth pattern and gender
   N_G_parms<-N_G_parms+2*Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs #
@@ -449,9 +451,12 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
 ## Then check if random Q parameters are used.
 ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
 ## one parameter for each data point
+  Do_Q_detail<-FALSE
   if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
     ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
+    Do_Q_detail<-ctllist$Do_Q_detail
   }
+
 # Density dependant Q(Q-power)
   if(sum(ctllist$Q_setup[,1])>0){
     if(any(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2)){
@@ -483,23 +488,22 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   if(sum(ctllist$Q_setup[,4]==2)>0){ # One Q parameter
     N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[,4]==2)
   }else if(sum(ctllist$Q_setup[,4]==3)>0){ # Random Q deviations
-    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==3)
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[,4]==3)
     if(Do_Q_detail){
-      for(i in which(ctllist$Q_setup[i,4]==3)){
+      for(i in which(ctllist$Q_setup[,4]==3)){
         N_Q_parms<-N_Q_parms+N_CPUE_obs[i]
       }
     }
   }else if(sum(ctllist$Q_setup[,4]==4)>0){# Random walk W
-    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==4)
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[,4]==4)
     if(Do_Q_detail){
-      for(i in which(ctllist$Q_setup[i,4]==4)){
+      for(i in which(ctllist$Q_setup[,4]==4)){
         N_Q_parms<-N_Q_parms+N_CPUE_obs[i]-1
       }
     }
   }else if(sum(ctllist$Q_setup[,4]==5)>0){
-    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[i,4]==5)
+    N_Q_parms<-N_Q_parms+sum(ctllist$Q_setup[,4]==5)
   }
-
   if(N_Q_parms>0){
     ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=7,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
