@@ -125,8 +125,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       if(!is.na(headerLine))xxx<-2
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
       if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
-  #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE,col.names=FALSE)
-        gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,rownames=FALSE,colnames=FALSE)
+      #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
+      #                 row.names=FALSE,col.names=FALSE)
+      gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
+                       rownames=FALSE,colnames=FALSE,digits=6)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
     }
   }
