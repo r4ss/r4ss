@@ -15,7 +15,7 @@
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
-#' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
+#' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin
 #' @export
 #' @seealso \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
@@ -29,33 +29,33 @@ SS_readdat_3.30 <-
 
   dat <- readLines(file, warn = FALSE)
 
-  if(!is.null(section)) {
-    Nsections <- as.numeric(substring(dat[grep("Number_of_datafiles", dat)], 24))
-    if(!section %in% 1:Nsections){
-      stop("The 'section' input should be within the ",
-           "'Number_of_datafiles' in a data.ss_new file.\n")
+  ###############################################################################
+  sec.end.inds <- grep("^999$", dat)
+  Nsections <- length(sec.end.inds)
+  if(!Nsections){
+    stop("Error - There was no EOF marker (999) in the data file.")
+  }
+  if(is.null(section)){
+    warning("The supplied data file has ", Nsections,
+            ifelse(Nsections == 1, " section. ", " sections. "),
+            " Using section = 1.")
+      section <- 1
+  }
+  if(!section %in% 1:Nsections){
+    if(Nsections == 1){
+      stop("The 'section' input must be 1 for this data file.\n")
+    }else{
+      stop("The 'section' input must be between 1 and ", Nsections,
+           " for this data file.\n")
     }
-    if(section == 1){
-      end <- grep("#_expected values with no error added", dat)
-      if(length(end) == 0){
-        end <- length(dat)
-      }
-      dat <- dat[grep("#_observed data:", dat):end]
+  }
+  if(!is.null(section)){
+    start <- 1
+    end <- sec.end.inds[section]
+    if(section > 1){
+      start <- sec.end.inds[section - 1] + 1
     }
-    if(section == 2){
-      end <- grep("#_bootstrap file: 1", dat)
-      if (length(end) == 0)
-        end <- length(dat)
-      dat <- dat[grep("#_expected values with no error added", dat):end]
-    }
-    if(section >= 3){
-      start <- grep(paste("#_bootstrap file:", section - 2), dat)
-      end <- grep(paste("#_bootstrap file:", section - 1), dat)
-      if(length(end) == 0){
-        end <- length(dat)
-      }
-      dat <- dat[start:end]
-    }
+    dat <- dat[start:end]
   }
 
   ## Retrieve start time
@@ -128,7 +128,7 @@ SS_readdat_3.30 <-
     as.data.frame(df, stringsAsFactors = FALSE)
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Set up the data lines for parsing
   ## Remove any preceeding whitespace on all lines.
   dat <- gsub("^[[:blank:]]+", "", dat)
@@ -161,7 +161,7 @@ SS_readdat_3.30 <-
   d$N_areas <- get.val(dat, ind)
   d$Nfleets <- get.val(dat, ind)
 
-  ##############################################################################
+  ###############################################################################
   ## Fleet data
   d$fleetinfo <- get.df(dat, ind, d$Nfleets)
   colnames(d$fleetinfo) <- c("type",
@@ -187,7 +187,7 @@ SS_readdat_3.30 <-
   rownames(d$fleetinfo1) <- c("surveytiming", "areas")
   colnames(d$fleetinfo1) <- c(d$fleetinfo$fleetname, "input")
 
-  ##############################################################################
+  ###############################################################################
   ## Catch data
   c.df <- get.df(dat, ind)
   ## Reform catch matrix so each fleet has its own column
@@ -206,8 +206,8 @@ SS_readdat_3.30 <-
                        se})
   se.and.initeq <- do.call("cbind", se.and.initeq)
   fleet.nums.with.catch <- as.numeric(se.and.initeq[1,])
-  d$se_log_catch <- se.and.initeq[2,]
-  d$init_equil <- se.and.initeq[3,]
+  d$se_log_catch <- as.numeric(se.and.initeq[2,])
+  d$init_equil <- as.numeric(se.and.initeq[3,])
 
   ## Remove all instances of -999 from all catch data frames
   c.list <- lapply(c.list, function(x){x[-(x[,1] == -999),]})
@@ -229,12 +229,13 @@ SS_readdat_3.30 <-
   ## For backwards compatability add the fleetinfo2 data frame
   ## This comes after the catch matrix because the SE is read from there.
   d$fleetinfo2 <- do.call("rbind",
-                          list(d$units_of_catch[fleet.nums.with.catch], d$se_log_catch))
-  d$fleetinfo2 <- cbind(d$fleetinfo2, c("#_units_of_catch", "#_se_log_catch"))
+                          list(d$units_of_catch[fleet.nums.with.catch],
+                               as.numeric(d$se_log_catch)))
+  d$fleetinfo2 <- data.frame(d$fleetinfo2, c("#_units_of_catch", "#_se_log_catch"))
   rownames(d$fleetinfo2) <- c("units_of_catch", "se_log_catch")
   colnames(d$fleetinfo2) <- c(colnames(se.and.initeq), "input")
 
-  ##############################################################################
+  ###############################################################################
   ## CPUE data
   d$CPUEinfo <- get.df(dat, ind, d$Nfleets)
   colnames(d$CPUEinfo) <- c("Fleet", "Units", "Errtype")
@@ -254,7 +255,7 @@ SS_readdat_3.30 <-
     print(d$CPUE)
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Discard data
   ## fleet.nums.with.catch is defined in the catch section above.
   d$N_discard_fleets <- get.val(dat, ind)
@@ -272,19 +273,20 @@ SS_readdat_3.30 <-
     d$discard_data <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Mean body weight data
   d$N_meanbodywt <- get.val(dat, ind)
   if(d$N_meanbodywt){
     d$DF_for_meanbodywt <- get.val(dat, ind)
     d$meanbodywt <- get.df(dat, ind)
-    colnames(d$meanbodywt) <- c("Year", "Seas", "Type", "Partition", "Value", "CV")
+    colnames(d$meanbodywt) <- c("Year", "Seas", "Type",
+                                "Partition", "Value", "CV")
   }else{
     d$DF_for_meanbodywt <- NULL
     d$meanbodywt <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Population size structure - Length
   d$lbin_method <- get.val(dat, ind)
   if(d$lbin_method == 2){
@@ -321,7 +323,7 @@ SS_readdat_3.30 <-
                              paste0("m", d$lbin_vector))}else{NULL})
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Population size structure - Age
   d$N_agebins <- get.val(dat, ind)
   if(d$N_agebins){
@@ -339,31 +341,48 @@ SS_readdat_3.30 <-
     d$ageerror <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Age Comp information matrix
-  d$age_info <- get.df(dat, ind, d$Nfleets)
-  colnames(d$age_info) <- c("mintailcomp",
-                            "addtocomp",
-                            "combine_M_F",
-                            "compressbins",
-                            "comperror",
-                            "parmselect")
-  rownames(d$age_info) <- d$fleetnames
-  ## Length bin method
-  d$Lbin_method <- get.val(dat, ind)
-
-  ##############################################################################
-  ## Age comp matrix
-  d$agecomp <- get.df(dat, ind)
-  if(!is.null(d$agecomp)){
-    colnames(d$agecomp) <-
-      c("Yr", "Seas", "FltSvy", "Gender",
-        "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-        if(d$Ngenders == 1){paste0("a", d$agebin_vector)}else{NULL},
-        if(d$Ngenders > 1){c(paste0("f", agebin_vector),
-                             paste0("m", agebin_vector))}else{NULL})
+  ## If section 1 in a multi-section file, the age comp matrix does not exist
+  ##  at all. If in section greater than 1, the age comp matrix will exist,
+  ##  even if it is only -9999 to signal no entries. The call to get.df()
+  ##  will return NULL in that case.
+  if(section > 1 | Nsections == 1){
+    d$age_info <- get.df(dat, ind, d$Nfleets)
+    colnames(d$age_info) <- c("mintailcomp",
+                              "addtocomp",
+                              "combine_M_F",
+                              "compressbins",
+                              "comperror",
+                              "parmselect")
+    rownames(d$age_info) <- d$fleetnames
+    ## Length bin method
+    d$Lbin_method <- get.val(dat, ind)
   }
 
+  ###############################################################################
+  ## Age comp matrix
+  ## If section 1 in a multi-section file, the age comp info matrix does not
+  ## exist at all. If in section greater than 1, the age comp matrix will exist,
+  ## If the number of agebins is zero, we must decrement ind because the code
+  ##  incremented it in the previous section.
+  if(section > 1 | Nsections == 1){
+    d$agecomp <- get.df(dat, ind)
+    if(!is.null(d$agecomp)){
+      colnames(d$agecomp) <-
+        c("Yr", "Seas", "FltSvy", "Gender",
+          "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
+          if(d$Ngenders == 1){paste0("a", d$agebin_vector)}else{NULL},
+          if(d$Ngenders > 1){c(paste0("f", agebin_vector),
+                               paste0("m", agebin_vector))}else{NULL})
+    }
+  }else{
+    if(!d$N_agebins){
+      ind <- ind - 1
+    }
+  }
+
+  ###############################################################################
   ## Mean size-at-age data
   d$N_MeanSize_at_Age_obs <- get.val(dat, ind)
   if(d$N_MeanSize_at_Age_obs){
@@ -380,7 +399,7 @@ SS_readdat_3.30 <-
     d$MeanSize_at_Age_obs <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Environment variables
   d$N_environ_variables <- get.val(dat, ind)
   if(d$N_environ_variables){
@@ -390,9 +409,14 @@ SS_readdat_3.30 <-
     d$envdat <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Size frequency methods
-  d$N_sizefreq_methods <- get.val(dat, ind)
+  d$N_sizefreq_methods <- 0
+  if(section != 2){
+    ## This appears to be a special case. The sizefreq method doesn't exist in
+    ##  section 2.
+    d$N_sizefreq_methods <- get.val(dat, ind)
+  }
   if(d$N_sizefreq_methods){
     ## Get details of generalized size frequency methods
     d$nbins_per_method <- get.vec(dat, ind)
@@ -423,9 +447,12 @@ SS_readdat_3.30 <-
       colnames(d$sizefreq_data_list) <-
         c("Method", "Yr", "Seas", "FltSvy",
           "Gender", "Part", "Nsamp",
-          if(d$Ngenders == 1){paste0("a", d$sizefreq_bins_list[[imethod]])}else{NULL},
-          if(d$Ngenders > 1){c(paste0("f", d$sizefreq_bins_list[[imethod]]),
-                               paste0("m", sizefreq_bins_list[[imethod]]))}else{NULL})
+          if(d$Ngenders == 1){paste0("a",
+                                     d$sizefreq_bins_list[[imethod]])}else{NULL},
+          if(d$Ngenders > 1){c(paste0("f",
+                                      d$sizefreq_bins_list[[imethod]]),
+                               paste0("m",
+                                      sizefreq_bins_list[[imethod]]))}else{NULL})
       if(verbose){
         message("Method =", imethod, "  (first two rows, ten columns):")
         print(d$sizefreq_data_list[1:min(Nrows,2), 1:min(Ncols, 10)])
@@ -447,7 +474,7 @@ SS_readdat_3.30 <-
     d$sizefreq_data_list <- NULL
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Tag data
   d$do_tags <- get.val(dat, ind)
   if(d$do_tags){
@@ -482,16 +509,21 @@ SS_readdat_3.30 <-
     }
   }
 
-  ##############################################################################
+  ###############################################################################
   ## Morphometrics composition data
   d$morphcomp_data <- get.val(dat, ind)
 
-  ##############################################################################
+  ###############################################################################
   ## Selectivity priors
   d$use_selectivity_priors <- get.val(dat, ind)
 
-  ##############################################################################
+  ###############################################################################
   eof <- get.val(dat, ind)
-  message("Read of data file complete. Final value = ", eof)
+  if(Nsections == 1){
+    message("Read of data file complete. Final value = ", eof)
+  }else{
+    message("Read of section ", section,
+            " of data file complete. Final value = ", eof)
+  }
   d
 }
