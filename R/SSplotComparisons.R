@@ -551,6 +551,9 @@ SSplotComparisons <-
       SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
+      Fvalue[Fvalue$Yr >= endyr, imodel] <- NA
+      FvalueLower[Fvalue$Yr >= endyr, imodel] <- NA
+      FvalueUpper[Fvalue$Yr >= endyr, imodel] <- NA
       recruits[recruits$Yr > endyr, imodel] <- NA
       recruitsLower[recruits$Yr > endyr, imodel] <- NA
       recruitsUpper[recruits$Yr > endyr, imodel] <- NA
