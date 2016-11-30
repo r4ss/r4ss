@@ -535,7 +535,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     size_selex_Nparms[j]<-selex_patterns[size_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(size_selex_pattern_vec[j]==27){
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]
+      size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]*2
     }
   }
   age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
@@ -543,9 +543,11 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j]==27){
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]
+      age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
     }
   }
+  if(verbose){cat("size_selex_Nparms\n");print(size_selex_Nparms)}
+  if(verbose){cat("age_selex_Nparms\n");print(age_selex_Nparms)}
 # Selex parameters
 #_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
 # Size selex
