@@ -279,7 +279,8 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_placeholder for full parameter lines for recruitment cycles")
   writeComment("# read specified recr devs")
   writeComment("#_Yr Input_value")
-  if(ctllist$N_Read_recdevs>0){
+
+  if(ctllist$recdev_adv && ctllist$N_Read_recdevs>0){
     printdf("recdev_input")
   }
 
@@ -384,7 +385,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }
   writeComment("#_Cond No selex parm trends ")
 
-  if(!is.null(ctllist$selparm_Dev_Phase) & ctllist$selparm_Dev_Phase){
+  if(!is.null(ctllist$selparm_Dev_Phase) && ctllist$selparm_Dev_Phase){
     wl("selparm_Dev_Phase",comment="#selparm_dev_PH")
   }else{
     writeComment("#_Cond -4 # placeholder for selparm_Dev_Phase")
