@@ -442,7 +442,7 @@ SS_readdat_3.30 <-
     d$sizefreq_data_list <- list()
     for(imethod in 1:d$N_sizefreq_methods){
       Ncols <- 7 + d$Ngenders * d$nbins_per_method[imethod]
-      Nrows <- Nobs_per_method[imethod]
+      Nrows <- Nrows <- d$Nobs_per_method[imethod]
       d$sizefreq_data_list <- get.df(dat, ind, Nrows)
       colnames(d$sizefreq_data_list) <-
         c("Method", "Yr", "Seas", "FltSvy",

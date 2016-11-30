@@ -27,7 +27,7 @@ for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 (and potentially additional functions in the future).
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
+Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin
 }
 \seealso{
 \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
