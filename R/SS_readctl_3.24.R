@@ -276,6 +276,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     #  points at which age-specific multipliers to K will be applied
 
   }else if(ctllist$GrowthModel==4){
+  ##  I found some portion of source code for GrowthModel=4
+  ##  But for now I disabled it
+    stop("GrowthModel==4 is not implemented")
     N_growparms<-2  # for the two CV parameters
     k1<-ctllist$N_GP*Ngenders  # for reading age_natmort
     ctllist<-add_df(ctllist,name="Len_At_Age_rd",nrow=k1,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
@@ -403,61 +406,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
                                 comments=MGparmLabel)
-#  cat("L406\n");browser()
-#  ## natural mortality parameters by growth pattern and gender
-#  N_M_parms<-N_natMparms*ctllist$N_GP*Ngenders #
-#
-#  if(N_M_parms>0){
-#    ctllist<-add_df(ctllist,name="M_parms",nrow=N_M_parms,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#  }
-#  ## Growth curve parameters and reproduction parameters
-#  N_G_parms<-N_growparms*ctllist$N_GP*Ngenders # Growth curve parameters by growth pattern and gender
-#  N_G_parms<-N_G_parms+2*Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs #
-#  ctllist<-add_df(ctllist,name="G_parms",nrow=N_G_parms,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#
-#  ## Recruitment distribution parameters N_areas+nseas +interaction(if requested)
-#
-#  ctllist<-add_df(ctllist,name="RecrDist_parms",nrow=N_RecrDist_parms,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-# ## 1 parameter for cohort-specific growth parameter
-# ctllist<-add_df(ctllist,name="cohortG_parm",nrow=1,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#
-# ## Movement parameters
-#  if(N_areas>1){
-#    N_Move_parms<-ctllist$N_moveDef*2
-#    ctllist<-add_df(ctllist,name="Move_parms",nrow=N_Move_parms,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#  }else{
-#    ctllist$Move_parms<-NULL
-#  }
-#
-### 7 AgeKey parameters if requested
-#  if(Do_AgeKey){
-#    if(verbose)cat("reading 7 ageKey parameters as requested in dat file\n")
-#    ctllist<-add_df(ctllist,name="AgeKey_parms",nrow=7,ncol=14,
-#                    col.names=c("LO", "HI", "INIT", "PRIOR",
-#                                "PR_type", "SD", "PHASE",
-#                                "env_var","use_dev", "dev_minyr",
-#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#  }
+
 
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
 
@@ -794,7 +743,39 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   if(ctllist$N_lambdas>0){
     ctllist<-add_df(ctllist,name="lambdas",nrow=ctllist$N_lambdas,ncol=5,
                       col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
+    for(i in 1:ctllist$N_lambdas){
+      like_comp<-ctllist$lambdas[i,1]
+      fl<-ctllist$lambdas[i,2]
+      if(like_comp==1){
+        rownames(ctllist$lambdas)[i]<-paste0("Surv_",fleetnames[fl])
+      }else if(like_comp==4){
+        rownames(ctllist$lambdas)[i]<-paste0("length_",fleetnames[fl])
+      }else if(like_comp==5){
+        rownames(ctllist$lambdas)[i]<-paste0("age_",fleetnames[fl])
+      }else if(like_comp==5){
+        sizefreq_method<-ctllist$lambdas[i,5]
+        rownames(ctllist$lambdas)[i]<-paste0("SizeFreq_",fleetnames[fl],"_sizefreq_method_",sizefreq_method)
+      }else if(like_comp==8){
+        rownames(ctllist$lambdas)[i]<-paste0("catch_",fleetnames[fl])
+      }else if(like_comp==9){
+        rownames(ctllist$lambdas)[i]<-paste0("init_equ_catch_",fleetnames[fl],"_lambda_for_init_equ_catch_can_only_enable/disable for_all_fleets")
+      }else if(like_comp==10){
+        rownames(ctllist$lambdas)[i]<-paste0("recrdev")
+      }else if(like_comp==11){
+        rownames(ctllist$lambdas)[i]<-paste0("parm_prior")
+      }else if(like_comp==12){
+        rownames(ctllist$lambdas)[i]<-paste0("parm_dev")
+      }else if(like_comp==13){
+        rownames(ctllist$lambdas)[i]<-paste0("CrashPen")
+      }else if(like_comp==15){
+        rownames(ctllist$lambdas)[i]<-paste0("Tag-comp")
+      }else if(like_comp==16){
+        rownames(ctllist$lambdas)[i]<-paste0("Tag-negbin")
+      }
+    }
   }
+  # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
+# 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
   #  stop("Currently additional reporting of derived quantities is not implemented in this R code")

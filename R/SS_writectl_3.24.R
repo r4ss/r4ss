@@ -124,7 +124,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       }
       if(!is.na(headerLine))xxx<-2
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
-      if(!is.null(rownames(dataframe)))dataframe$comments<-rownames(dataframe)
+      if(!is.null(rownames(dataframe))){
+        rownames(dataframe)<-sapply(rownames(dataframe),function(z){ifelse(length(grep(x=z,pattern="^#"))==1,z,paste0("#_",z))})
+        dataframe$comments<-rownames(dataframe)
+      }
       #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
       #                 row.names=FALSE,col.names=FALSE)
       gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
@@ -140,8 +143,8 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#")
 
   # write the contents
-  wl("N_GP") # N_Growth_Patterns
-  wl("N_platoon") # number of platoons  1, 3, 5 are best values to use
+  wl("N_GP",comment="# N_Growth_Patterns") # N_Growth_Patterns
+  wl("N_platoon",comment="#_N_Morphs_Within_GrowthPattern") # number of platoons  1, 3, 5 are best values to use
   if(ctllist$N_platoon>1){
     stop("currently sub morphs are not supported yet in this R code")
     wl("sd_ratio")
@@ -208,19 +211,20 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     "env/block/dev_adjust_method (1=standard; 2=logistic transform keeps in base parm bounds; 3=standard w/ no bound check)")
   writeComment(c("#","#_growth_parms"))
   #writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
-  ## Natural mortality paramaters
-  printdf("M_parms")
-  ## Growth and reproduction parameters
-  printdf("G_parms")
-  ## Recruitment distribution parameters
-  printdf("RecrDist_parms")
-  ## One cohort specific growth parameter
-  printdf("cohortG_parm")
-  ## 7 Age Key parameters
-  if(Do_AgeKey)printdf("AgeKey_parms")  ## 7 age keys parameters
-  if(N_areas>1){
-    printdf("Move_parms")
-  }
+  printdf("MG_parms")
+#  ## Natural mortality paramaters
+#  printdf("M_parms")
+#  ## Growth and reproduction parameters
+#  printdf("G_parms")
+#  ## Recruitment distribution parameters
+#  printdf("RecrDist_parms")
+#  ## One cohort specific growth parameter
+#  printdf("cohortG_parm")
+#  ## 7 Age Key parameters
+#  if(Do_AgeKey)printdf("AgeKey_parms")  ## 7 age keys parameters
+#  if(N_areas>1){
+#    printdf("Move_parms")
+#  }
   writeComment("#")
   writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
   writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
