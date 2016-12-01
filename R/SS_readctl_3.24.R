@@ -158,6 +158,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist$Do_AgeKey<-Do_AgeKey
     ctllist$N_tag_groups<-N_tag_groups
     ctllist$N_CPUE_obs<-N_CPUE_obs
+    ctllist$fleetnames<-fleetnames<-c(paste0("FL",1:Nfleet),paste0("S",1:Nsurveys))
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
     if(is.null(datlist))stop("datlist from SS_readdat is needed is use_datlist is TRUE")
@@ -175,6 +176,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     N_CPUE_obs<-vector(mode="numeric",length=Nfleet+Nfleet)
     N_CPUE_obs<-sapply(1:(Nfleet+Nfleet),function(i){sum(datlist$CPUE[,"index"]==i)})
     ctllist$N_CPUE_obs<-N_CPUE_obs
+    fleetnames<-datlist$fleetnames
   }
   # specifications
   ctllist$sourcefile <- file
@@ -185,6 +187,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
+  # Currently I do not how MGparms are sorted when N_GP>1
+  if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
     stop("currently sub morphs are not supported yet")
@@ -266,8 +270,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   }else if(ctllist$GrowthModel==3){ # 3=age_specific_K
   #  AFIX=tempvec5(1);
   #  AFIX2=tempvec5(2);
-    Age_K_count<-ctllist$N_ageK;
-    N_growparms=5+Age_K_count;
+    Age_K_count<-ctllist$N_ageK
+    N_growparms=5+Age_K_count
     ctllist<-add_vec(ctllist,name="Age_K_points",length=Age_K_count)
     #  points at which age-specific multipliers to K will be applied
 
@@ -298,75 +302,162 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
   ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method
 
-  N_MGparm<-MGparm_per_def*ctllist$N_GP*Ngenders
+  N_MGparm<-MGparm_per_def*ctllist$N_GP*Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
+  MGparmLabel<-list()
+  cnt<-1
+  GenderLabel<-c("Fem","Mal")
+  for(i in 1:Ngenders){
+    for(j in 1:ctllist$N_GP){
+      MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
+      cnt<-cnt+N_natMparms
+      if(ctllist$GrowthModel==1){ # VB
+        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","CV_young_","CV_old_")
+        MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+        cnt<-cnt+5
+      }else if(ctllist$GrowthModel==2){ # Richards
+        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","Richards_","CV_young_","CV_old_")
+        MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+        cnt<-cnt+6
+      }else if(ctllist$GrowthModel==3){
+        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:Age_K_count),"CV_young_","CV_old_")
+        MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+        cnt<-cnt+5+Age_K_count
+      }
+    }
+  }
   N_MGparm<-N_MGparm+2*Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
+  MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[1]);cnt<-cnt+1
+  MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[1]);cnt<-cnt+1
+  MGparmLabel[cnt]<-paste0("Mat50%_",GenderLabel[1]);cnt<-cnt+1
+  MGparmLabel[cnt]<-paste0("Mat_slope_",GenderLabel[1]);cnt<-cnt+1
+  if(ctllist$maturity_option==1){
+    MGparmLabel[cnt]<-paste0("Eggs/kg_inter_",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Eggs/kg_slope_wt_",GenderLabel[1]);cnt<-cnt+1
+  }else if(ctllist$maturity_option==2){
+    MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Eggs_exp_len_",GenderLabel[1]);cnt<-cnt+1
+  }else  if(ctllist$maturity_option==3){
+    MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Eggs_exp_wt_",GenderLabel[1]);cnt<-cnt+1
+  }else  if(ctllist$maturity_option==4){
+    MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Eggs_slope_len_",GenderLabel[1]);cnt<-cnt+1
+  }else   if(ctllist$maturity_option==5){
+    MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1]);cnt<-cnt+1
+  }else{
+    cat("Maturity option : ",ctllist$maturity_option," ")
+    stop("is not supported")
+  }
+  if(Ngenders==2){
+    MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);cnt<-cnt+1
+  }
+  if(ctllist$hermaphroditism_option){
+    MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Herm_stdev",GenderLabel[1]);cnt<-cnt+1
+    MGparmLabel[cnt]<-paste0("Herm_asymptote",GenderLabel[1]);cnt<-cnt+1
+    N_MGparm>=N_MGparm+3
+  }
   N_MGparm<-N_MGparm+ctllist$N_GP+N_areas+nseas         # add for the assignment to areas
+  MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("RecrDist_GP_",1:ctllist$N_GP);cnt<-cnt+ctllist$N_GP
+  MGparmLabel[cnt+1:N_areas-1]<-paste0("RecrDist_Area_",1:N_areas);cnt<-cnt+N_areas
+  MGparmLabel[cnt+1:nseas-1]<-paste0("RecrDist_Seas_",1:nseas);cnt<-cnt+nseas
   ## number of recruiment distribution parameters
   N_RecrDist_parms<-ctllist$N_GP+ctllist$N_areas+ctllist$nseas
   if(ctllist$recr_dist_inx){
   ## Interactions
     N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
     N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
+    for(i in 1:ctllist$N_GP){
+      for(j in 1:nseas){
+        for(k in 1:N_areas){
+          MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);cnt<-cnt+1
+        }
+      }
+    }
     # add for the morph assignments within each area
   }
 #  MGparms
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
+  MGparmLabel[cnt]<-"CohortGrowDev";cnt<-cnt+1
   if(N_areas>1){
     N_MGparm<-N_MGparm+ctllist$N_moveDef*2 # add 2 * N_moveDef for movement params
 #    M_Move_parms<-ctllist$N_moveDef*2
+    for(i in 1:ctllist$N_moveDef){
+      seas<-ctllist$moveDef[i,1]
+      GP<-ctllist$moveDef[i,2]
+      from<-ctllist$moveDef[i,3]
+      to<-ctllist$moveDef[i,4]
+      MGparmLabel[cnt+0:1]<-paste0("MoveParm_",c("A","B"),"_seas_",seas,"_GP_",GP,"_from_",from,"_to_",to);cnt<-cnt+2
+    }
   }
-  ## natural mortality parameters by growth pattern and gender
-  N_M_parms<-N_natMparms*ctllist$N_GP*Ngenders #
-  if(N_M_parms>0){
-    ctllist<-add_df(ctllist,name="M_parms",nrow=N_M_parms,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-  }
-  ## Growth curve parameters and reproduction parameters
-  N_G_parms<-N_growparms*ctllist$N_GP*Ngenders # Growth curve parameters by growth pattern and gender
-  N_G_parms<-N_G_parms+2*Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs #
-  ctllist<-add_df(ctllist,name="G_parms",nrow=N_G_parms,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
 
-  ## Recruitment distribution parameters N_areas+nseas +interaction(if requested)
-
-  ctllist<-add_df(ctllist,name="RecrDist_parms",nrow=N_RecrDist_parms,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-#  cat("N_MGparm=",N_MGparm,"\n")
- ## 1 parameter for cohort-specific growth parameter
- ctllist<-add_df(ctllist,name="cohortG_parm",nrow=1,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-## 7 AgeKey parameters if requested
   if(Do_AgeKey){
-    if(verbose)cat("reading 7 ageKey parameters as requested in dat file\n")
-    ctllist<-add_df(ctllist,name="AgeKey_parms",nrow=7,ncol=14,
+    MGparmLabel[cnt+0:6]<-paste0("AgeKeyParm",1:7);cnt<-cnt+7
+  }
+
+  ctllist<-add_df(ctllist,name="MG_parms",nrow=N_MGparm,ncol=14,
                     col.names=c("LO", "HI", "INIT", "PRIOR",
                                 "PR_type", "SD", "PHASE",
                                 "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-  }
- ## Movement parameters
-  if(N_areas>1){
-    N_Move_parms<-ctllist$N_moveDef*2
-    ctllist<-add_df(ctllist,name="Move_parms",nrow=N_Move_parms,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
-  }else{
-    ctllist$Move_parms<-NULL
-  }
+                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
+                                comments=MGparmLabel)
+#  cat("L406\n");browser()
+#  ## natural mortality parameters by growth pattern and gender
+#  N_M_parms<-N_natMparms*ctllist$N_GP*Ngenders #
+#
+#  if(N_M_parms>0){
+#    ctllist<-add_df(ctllist,name="M_parms",nrow=N_M_parms,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+#  }
+#  ## Growth curve parameters and reproduction parameters
+#  N_G_parms<-N_growparms*ctllist$N_GP*Ngenders # Growth curve parameters by growth pattern and gender
+#  N_G_parms<-N_G_parms+2*Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs #
+#  ctllist<-add_df(ctllist,name="G_parms",nrow=N_G_parms,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+#
+#  ## Recruitment distribution parameters N_areas+nseas +interaction(if requested)
+#
+#  ctllist<-add_df(ctllist,name="RecrDist_parms",nrow=N_RecrDist_parms,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+# ## 1 parameter for cohort-specific growth parameter
+# ctllist<-add_df(ctllist,name="cohortG_parm",nrow=1,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+#
+# ## Movement parameters
+#  if(N_areas>1){
+#    N_Move_parms<-ctllist$N_moveDef*2
+#    ctllist<-add_df(ctllist,name="Move_parms",nrow=N_Move_parms,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+#  }else{
+#    ctllist$Move_parms<-NULL
+#  }
+#
+### 7 AgeKey parameters if requested
+#  if(Do_AgeKey){
+#    if(verbose)cat("reading 7 ageKey parameters as requested in dat file\n")
+#    ctllist<-add_df(ctllist,name="AgeKey_parms",nrow=7,ncol=14,
+#                    col.names=c("LO", "HI", "INIT", "PRIOR",
+#                                "PR_type", "SD", "PHASE",
+#                                "env_var","use_dev", "dev_minyr",
+#                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"))
+#  }
 
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
 
@@ -386,9 +477,32 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
   N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+4
-
+  SRparmsLabels<-if(ctllist$SR_function ==3){
+    # B-H SRR
+    c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==2){
+    # Ricker SRR
+    c("SR_LN(R0)","SR_Ricker","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
+  }else if(ctllist$SR_function==4){
+    # SCAA
+    c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==5){
+    # Hockey stick
+    c("SR_LN(R0)","SR_hockey_infl","SR_hockey_min_R","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function ==6){
+    # B-H-flat SRR
+    c("SR_LN(R0)","SR_BH_flat_steep","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==7){
+    # survival_3Parm
+    c("SR_LN(R0)","SR_surv_Sfrac","SR_surv_Beta","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==8){
+    # Shepard_3Parm
+    c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+  }else{
+    cat("SR_function=",ctllist$SR_function," is not supported yet.");stop()
+  }
   ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=7,
-            col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+            col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=SRparmsLabels)
   ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
   ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
   ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations
@@ -438,16 +552,19 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   }
   #
   #_initial_F_parms
+  comments_initF<-paste0("InitF_",1:(Nfleet+Nsurveys),"_",fleetnames)
   #_LO HI INIT PRIOR PR_type SD PHASE
-  ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
+  ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
+    col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
   #
+  comments_selex_types<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   #_Q_setup
   # Q_type options:  <0=mirror, 0=float_nobiasadj, 1=float_biasadj, 2=parm_nobiasadj, 3=parm_w_random_dev, 4=parm_w_randwalk, 5=mean_unbiased_float_assign_to_parm
   ## currently only float_nobiasadj (Q_type==0) is suppoerted
 #_for_env-var:_enter_index_of_the_env-var_to_be_linked
 #_Den-dep  env-var  extra_se  Q_type
   ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfleet+Nsurveys,ncol=4,
-              col.names=c("Den_dep","env_var","extra_se","Q_type"))
+              col.names=c("Den_dep","env_var","extra_se","Q_type"),comments=comments_selex_types)
 ## Then check if random Q parameters are used.
 ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
 ## one parameter for each data point
@@ -508,15 +625,17 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=7,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
   }
+
 # size_selex_types
   ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
-              col.names=c("Pattern","Discard","Male","Special"))
+              col.names=c("Pattern","Discard","Male","Special"),comments=comments_selex_types)
   size_selex_pattern_vec<-as.vector(ctllist$size_selex_types[,1])
 #
 #_age_selex_types
 #_Pattern ___ Male Special
+
   ctllist<-add_df(ctllist,name="age_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
-              col.names=c("Pattern","___","Male","Special"))
+              col.names=c("Pattern","___","Male","Special"),comments=comments_selex_types)
   age_selex_pattern_vec<-as.vector(ctllist$age_selex_types[,1])
 
 
@@ -530,20 +649,38 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                     0, 0, 0, 0)
 #########################################################
   size_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  size_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
        #    size_selex_pattern_vec
     size_selex_Nparms[j]<-selex_patterns[size_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(size_selex_pattern_vec[j]==27){
       size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]*2
+ #     size_selex_label[j]<-paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
+      size_selex_label[[j]]<-c(paste0("SizeSpline_Code_",fleetnames[j],"_",j),
+                             paste0("SizeSpline_GradLo_",fleetnames[j],"_",j),
+                             paste0("SizeSpline_GradHi_",fleetnames[j],"_",j),
+                             paste0("SizeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
+                             paste0("SizeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
+    }else{
+      size_selex_label[[j]]<-paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
     }
   }
   age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  age_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
     age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j]==27){
       age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
+    #  age_selec_label[j]<-paste0("AgeSel_",j,"P_",1:agee_selex_Nparms[j],"_",fleetnames[j])
+      age_selex_label[[j]]<-c(paste0("AgeeSpline_Code_",fleetnames[j],"_",j),
+                             paste0("AgeSpline_GradLo_",fleetnames[j],"_",j),
+                             paste0("AgeeSpline_GradHi_",fleetnames[j],"_",j),
+                             paste0("AgeeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
+                             paste0("AgeeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
+    }else{
+      age_selex_label[[j]]<-paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
     }
   }
   if(verbose){cat("size_selex_Nparms\n");print(size_selex_Nparms)}
@@ -555,14 +692,14 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist<-add_df(ctllist,name="size_selex_parms",nrow=sum(size_selex_Nparms),ncol=14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_stddev",
-                           "Block", "Block_Fxn"))
+                           "Block", "Block_Fxn"),comments=unlist(size_selex_label))
   }
 # Age selex
   if(sum(age_selex_Nparms)>0){
     ctllist<-add_df(ctllist,name="age_selex_parms",nrow=sum(age_selex_Nparms),ncol=14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
                            "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_stddev",
-                           "Block", "Block_Fxn"))
+                           "Block", "Block_Fxn"),comments=unlist(age_selex_label))
   }
 ##########################
 ## Following pars are not yet  implemented in this R code
