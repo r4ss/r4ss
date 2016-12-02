@@ -243,9 +243,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }else{
     writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters","#"))
   }
-  DoParmDev<-sum(ctllist$M_parms[,9])+
-             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
-             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
+#  DoParmDev<-sum(ctllist$M_parms[,9])+
+#             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
+#             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
+  DoParmDev<-sum(ctllist$MG_parms[,9])
   if(DoParmDev>0){
     if(is.null(ctllist$MGparm_Dev_Phase))ctllist$MGparm_Dev_Phase<- -4
     wl("MGparm_Dev_Phase")

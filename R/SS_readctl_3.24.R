@@ -91,7 +91,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist$temp<-dat[i+1:length-1]
     ctllist$'.i'<-i+length
     if(!is.na(name))names(ctllist)[names(ctllist)=="temp"]<-name
-    if(verbose)cat(name,",i=",ctllist$'.i',"\n")
+    if(verbose){cat(name,",i=",ctllist$'.i',"\n");print(ctllist[name])}
     return(ctllist)
   }
   # Function to add data as data.frame to ctllist
@@ -407,7 +407,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
                                 comments=MGparmLabel)
 
-
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
 
   N_seas_effects<-sum(ctllist$MGparm_seas_effects)
@@ -415,13 +414,14 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     ctllist<-add_df(ctllist,"MG_parms_seas",nrow=N_seas_effects,ncol=7,
                     col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
   }
-  DoParmDev<-sum(ctllist$M_parms[,9])+
-             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
-             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
-
+#  DoParmDev<-sum(ctllist$M_parms[,9])+
+#             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
+#             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
+  DoParmDev<-sum(ctllist$MG_parms[,9])
   if(DoParmDev>0){
     ctllist<-add_elem(ctllist,"MGparm_Dev_Phase") #_MGparm_Dev_Phase
   }
+
  # SRR
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
@@ -501,7 +501,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   }
   #
   #_initial_F_parms
-  comments_initF<-paste0("InitF_",1:(Nfleet+Nsurveys),"_",fleetnames)
+  comments_initF<-paste0("InitF_",1:Nfleet,"_",fleetnames[1:Nfleet])
+
   #_LO HI INIT PRIOR PR_type SD PHASE
   ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
     col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
@@ -612,7 +613,11 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                              paste0("SizeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
                              paste0("SizeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
     }else{
-      size_selex_label[[j]]<-paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
+      size_selex_label[[j]]<-if(size_selex_Nparms[j]>0){
+        paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
+      }else{
+        NULL
+      }
     }
   }
   age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
@@ -629,7 +634,11 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
                              paste0("AgeeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
                              paste0("AgeeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
     }else{
-      age_selex_label[[j]]<-paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
+      age_selex_label[[j]]<-if(age_selex_Nparms[j]>0){
+        paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
+      }else{
+        NULL
+      }
     }
   }
   if(verbose){cat("size_selex_Nparms\n");print(size_selex_Nparms)}
@@ -768,9 +777,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
       }else if(like_comp==13){
         rownames(ctllist$lambdas)[i]<-paste0("CrashPen")
       }else if(like_comp==15){
-        rownames(ctllist$lambdas)[i]<-paste0("Tag-comp")
+        rownames(ctllist$lambdas)[i]<-paste0("Tag-comp-likelihood-",fl)
       }else if(like_comp==16){
-        rownames(ctllist$lambdas)[i]<-paste0("Tag-negbin")
+        rownames(ctllist$lambdas)[i]<-paste0("Tag-negbin-likelihood-",fl)
       }
     }
   }
