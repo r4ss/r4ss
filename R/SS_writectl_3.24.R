@@ -84,7 +84,6 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     }
   }
 
-  #### this function isn't being used at the moment
    wl.vector <- function(name,comment=NULL){
      # simple function to clean up many repeated commands
      value = ctllist[names(ctllist)==name][[1]]
@@ -182,8 +181,14 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   if(ctllist$natM_type==1){
     wl("N_natM",comment="#_Number of M_segments")
     wl.vector("M_ageBreakPoints",comment="# age(real) at M breakpoints")
-  }else if(ctllist$natM_type>=3){
+  }else if(ctllist$natM_type==2){
+    wl.vector("Lorenzen_refage",comment="#_reference age for Lorenzen M; read 1P per morph")
+  }else if(ctllist$natM_type %in% c(3,4)){
     printdf("natM")
+  }else if(ctllist$natM_type==0){
+    # Just to skip
+  }else{
+    stop("natM_type :",ctllist$natM_type, "is not supported")
   }
   ## Growth ##
   wl("GrowthModel",comment="# GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented")
@@ -212,19 +217,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment(c("#","#_growth_parms"))
   #writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
   printdf("MG_parms")
-#  ## Natural mortality paramaters
-#  printdf("M_parms")
-#  ## Growth and reproduction parameters
-#  printdf("G_parms")
-#  ## Recruitment distribution parameters
-#  printdf("RecrDist_parms")
-#  ## One cohort specific growth parameter
-#  printdf("cohortG_parm")
-#  ## 7 Age Key parameters
-#  if(Do_AgeKey)printdf("AgeKey_parms")  ## 7 age keys parameters
-#  if(N_areas>1){
-#    printdf("Move_parms")
-#  }
+
   writeComment("#")
   writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
   writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
@@ -243,9 +236,6 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }else{
     writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters","#"))
   }
-#  DoParmDev<-sum(ctllist$M_parms[,9])+
-#             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
-#             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
   DoParmDev<-sum(ctllist$MG_parms[,9])
   if(DoParmDev>0){
     if(is.null(ctllist$MGparm_Dev_Phase))ctllist$MGparm_Dev_Phase<- -4
@@ -321,35 +311,36 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
 ## one parameter for each data point
   if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
-#    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
     wl("Do_Q_detail",comment=
         "If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
   }else{
     writeComment("#")
     writeComment("#_Cond 0 #_If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
   }
+  writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+  header<-TRUE
   # Density dependant Q(Q-power)
   if(sum(ctllist$Q_setup[,1])>0){
     if(any(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2)){
       cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2))
       stop()
     }
-    printdf("Q_power")
+    printdf("Q_power",header=header);header<-FALSE
   }
 # Q-env
   if(sum(ctllist$Q_setup[,2])>0){
     if(any(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2)){
-      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2))
+      cat("must create base Q parm to use Q_env for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2))
       stop()
     }
-    printdf("Q_env")
+    printdf("Q_env",header=header);header<-FALSE
   }
 # Q_extraSD
   if(sum(ctllist$Q_setup[,3])>0){
-    printdf("Q_extraSD")
+    printdf("Q_extraSD",header=header);header<-FALSE
   }
 # Q-type
-  if(!is.null(ctllist$Q_parms))printdf("Q_parms")
+  if(!is.null(ctllist$Q_parms))printdf("Q_parms",header=header);header<-FALSE
 
   writeComment("#_size_selex_types")
   writeComment("#discard_options:_0=none;_1=define_retention;_2=retention&mortality;_3=all_discarded_dead")
