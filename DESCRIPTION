@@ -1,8 +1,8 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.24.5
-Date: 2016-10-06
+Version: 1.25.0
+Date: 2016-12-13
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
@@ -21,8 +21,9 @@ Imports:
     maps,
     pso,
     stringr,
-    tcltk,
     truncnorm
+Suggests:
+    tcltk
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr. Richard
     D.  Methot at the NOAA Northwest Fisheries Science Center. The functions
