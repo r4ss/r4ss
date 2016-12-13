@@ -7,7 +7,7 @@
 #' parameterizations, and various other tasks.
 #'
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.24.5\cr Date: \tab 2016-10-06\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.25.0\cr Date: \tab 2016-12-13\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 #' Should be compatible with Stock Synthesis versions 3.21 through 3.30.
 #'
@@ -23,7 +23,6 @@
 #'  Package maintainer: Ian Taylor <Ian.Taylor@@noaa.gov>
 #' @references r4ss on GitHub: \url{https://github.com/r4ss}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
-#' @import tcltk
 #' @import coda
 #' @importFrom maps map
 #' @importFrom corpcor pseudoinverse

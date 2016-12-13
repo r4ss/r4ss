@@ -14,7 +14,7 @@
 #' @param dir Directory in which the spline_selex executable is located
 #' (default = working directory).
 #' @param silent TRUE/FALSE switch to return fit at the end.
-#' @author Ian Taylor
+#' @author Ian Taylor, Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{selfit}}
 #' @examples
@@ -28,23 +28,12 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
                            dir=getwd(),
                            silent=FALSE){
 
-  ################################################################################
-  #
-  # selfit_spline   November, 2011.
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: Provide GUI for the plot function, sel.line
-  # Written: Tommy Garrison and Ian Taylor
-  # Returns: plots spline selectivity
-  # General: parameterization matched Stock Synthesis v.3
-  # Notes:   Based on "selfit" function by Tommy Garrison
-  #          For documentation go to: http://code.google.com/p/r4ss/
-  # Required packages: none
-  #
-  ################################################################################
+  # test for availability of tcltk package
+  if (!requireNamespace("tcltk", quietly = TRUE)) { 
+    stop("tcltk is required. please install it", 
+         call. = FALSE) 
+  }
 
-  #### the following commands no longer needed since packages are required by r4ss
-  ## require(tcltk) || stop("package tcltk is required")
   if(n<3 | n>7 | as.integer(n)!=n) stop("Number of knots must be an integer from 3 to 7")
   if(.Platform$OS.type=="windows"){
     if(!("spline_selex.exe" %in% dir(dir)))

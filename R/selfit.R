@@ -8,7 +8,7 @@
 #' @param maxLength Maximum size to show
 #' @param silent T/F switch to return fit at the end
 #' @param init Optional initial values for the parameters
-#' @author Tommy Garrison
+#' @author Tommy Garrison, Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{sel.line}}
 #' @examples
@@ -21,21 +21,12 @@ selfit <-
 function (minLength=10, maxLength=65, silent=FALSE,init=NULL)
 {
 
-################################################################################
-#
-# selfit   March 31, 2009.
-# This function comes with no warranty or guarantee of accuracy
-#
-# Purpose: Provide GUI for the plot function, sel.line
-# Written: Tommy Garrison, UW
-# Returns: plots double normal or double logistic selectivity
-# General: parameterization matched Stock Synthesis v.3
-# Required packages: tcltk
-#
-################################################################################
+  # test for availability of tcltk package
+  if (!requireNamespace("tcltk", quietly = TRUE)) { 
+    stop("tcltk is required. please install it", 
+         call. = FALSE) 
+  }
 
-  #### the following commands no longer needed since packages are required by r4ss
-    ## require(tcltk) || stop("package tcltk is required")
     geterrmessage()
     done <- tclVar(0)
     selfit.env <- new.env()
