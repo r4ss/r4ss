@@ -326,8 +326,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   GenderLabel<-c("Fem","Mal")
   for(i in 1:ctllist$Ngenders){
     for(j in 1:ctllist$N_GP){
-      MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
-      cnt<-cnt+N_natMparms
+      if(N_natMparms>0){
+        MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
+        cnt<-cnt+N_natMparms
+      }
       if(ctllist$GrowthModel==1){ # VB
         tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","CV_young_","CV_old_")
         MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
@@ -572,6 +574,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
   N_Q_parms<-0
   comments_Q_type<-list()
   i<-1
+  cat("Setting up Q_parameters comments\n")
   for(fl in 1:(Nfleet+Nsurveys)){
     flname<-fleetnames[fl]
     .Q_type<-ctllist$Q_setup[fl,4]
@@ -583,18 +586,18 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     }else if(.Q_type==3){ # Random Q deviations
       N_Q_parms<-N_Q_parms+1
       cat("i=",i,"\n")
-      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
+      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="")
       if(Do_Q_detail){
         N_Q_parms<-N_Q_parms+N_CPUE_obs[fl]
-        comments_Q_type[i+1:N_CPUE_obs[fl]-1]<-paste0("Q_dev_",1:N_CPUE_obs[fl],"_",fl,"_",flname,collapse="");i<-i+N_CPUE_obs[fl]
-      }
+        comments_Q_type[[i]][1:N_CPUE_obs[fl]+1]<-paste0("Q_dev_",1:N_CPUE_obs[fl],"_",fl,"_",flname)
+      };i<-i+1
     }else if(.Q_type==4){# Random walk W
       N_Q_parms<-N_Q_parms+1
       comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
       if(Do_Q_detail){
         N_Q_parms<-N_Q_parms+N_CPUE_obs[fl]-1
-        comments_Q_type[i+1:N_CPUE_obs[fl]-1]<-paste0("Q_walk_",1:(N_CPUE_obs[fl]-1),"_",fl,"_",flname,collapse="");i<-i+N_CPUE_obs[fl]-1
-      }
+        comments_Q_type[[i]][2:N_CPUE_obs[fl]]<-paste0("Q_walk_",1:(N_CPUE_obs[fl]-1),"_",fl,"_",flname)
+      };i<-i+1
     }else if(.Q_type==5){
       N_Q_parms<-N_Q_parms+1
       comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
