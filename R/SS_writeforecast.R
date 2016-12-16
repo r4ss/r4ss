@@ -8,6 +8,9 @@
 #' @param dir Directory for new forecast file. Default=NULL (working
 #' directory).
 #' @param file Filename for new forecast file. Default="forecast.ss".
+#' @param writeAll Should the function continue even if Forecast=0
+#' (at which point SS stops reading, and remaining elements in list may not be
+#' available, depending on settings used in SS_readforecast)
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
@@ -17,7 +20,7 @@
 #' \code{\link{SS_readdat}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
 SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
-                              overwrite=FALSE, verbose=TRUE){
+                              writeAll=FALSE, overwrite=FALSE, verbose=TRUE){
   # function to write Stock Synthesis forecast files
   if(verbose) cat("running SS_writeforecast\n")
 
@@ -76,45 +79,50 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   writeLines(paste(paste(mylist$Bmark_years,collapse=" ")))
   wl("Bmark_relF_Basis")
   wl("Forecast")
-  wl("Nforecastyrs")
-  wl("F_scalar")
-  writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
-  writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
-  wl("ControlRuleMethod")
-  wl("BforconstantF")
-  wl("BfornoF")
-  wl("Flimitfraction")
-  wl("N_forecast_loops")
 
-  wl("First_forecast_loop_with_stochastic_recruitment")
-  wl("Forecast_loop_control_3")
-  wl("Forecast_loop_control_4")
-  wl("Forecast_loop_control_5")
-  wl("FirstYear_for_caps_and_allocations")
-  wl("stddev_of_log_catch_ratio")
-  wl("Do_West_Coast_gfish_rebuilder_output")
-  wl("Ydecl")
-  wl("Yinit")
-  wl("fleet_relative_F")
-  if(mylist$fleet_relative_F==2) stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
+  # only continue beyond this point if Forecast is not 0 or writeAll==TRUE
+  if(mylist$Forecast > 0 | writeAll){
+    wl("Nforecastyrs")
+    wl("F_scalar")
+    writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
+    writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
+    wl("ControlRuleMethod")
+    wl("BforconstantF")
+    wl("BfornoF")
+    wl("Flimitfraction")
+    wl("N_forecast_loops")
 
-  wl("basis_for_fcast_catch_tuning")
-  writeLines("# max totalcatch by fleet (-1 to have no max)")
-  writeLines(paste(paste(mylist$max_totalcatch_by_fleet,collapse=" ")))
-  writeLines("# max totalcatch by area (-1 to have no max)")
-  writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
-  writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
-  writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
-  if(any(mylist$fleet_assignment_to_allocation_group!=0)){
-    writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-#    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
-    printdf("allocation_among_groups")
+    wl("First_forecast_loop_with_stochastic_recruitment")
+    wl("Forecast_loop_control_3")
+    wl("Forecast_loop_control_4")
+    wl("Forecast_loop_control_5")
+    wl("FirstYear_for_caps_and_allocations")
+    wl("stddev_of_log_catch_ratio")
+    wl("Do_West_Coast_gfish_rebuilder_output")
+    wl("Ydecl")
+    wl("Yinit")
+    wl("fleet_relative_F")
+    if(mylist$fleet_relative_F==2) stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
+
+    wl("basis_for_fcast_catch_tuning")
+    writeLines("# max totalcatch by fleet (-1 to have no max)")
+    writeLines(paste(paste(mylist$max_totalcatch_by_fleet,collapse=" ")))
+    writeLines("# max totalcatch by area (-1 to have no max)")
+    writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
+    writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
+    writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
+    if(any(mylist$fleet_assignment_to_allocation_group!=0)){
+      writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
+      #    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
+      printdf("allocation_among_groups")
+    }
+    wl("Ncatch")
+    wl("InputBasis")
+    if(mylist$Ncatch>0){
+      printdf(mylist$ForeCatch)
+    }
   }
-  wl("Ncatch")
-  wl("InputBasis")
-  if(mylist$Ncatch>0){
-    printdf(mylist$ForeCatch)
-  }
+
   writeLines("#")
   writeLines("999 # verify end of input ")
 
