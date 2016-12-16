@@ -68,6 +68,7 @@ SStableComparisons <-  function(summaryoutput,
   if(modelnames[1]=="default") modelnames <- paste("model",1:ncols,sep="")
   tab <- as.data.frame(matrix(NA,nrow=0,ncol=ncols+1))
 
+  # get MLE values for table
   if(!mcmc) {
     if(!is.null(likenames)){
       likenames <- paste(likenames,"_like",sep="")
@@ -138,6 +139,7 @@ SStableComparisons <-  function(summaryoutput,
     } # end loop over names
   } # end if not mcmc
 
+  # get medians if using MCMC
   if(mcmc) {
     nnames <- length(names)
     for(iname in 1:nnames){
@@ -203,13 +205,20 @@ SStableComparisons <-  function(summaryoutput,
   } # end if mcmc
 
   names(tab) <- c("Label",modelnames)
-  rownames(tab) <- 1:nrow(tab)
+  # check for presence of any content of table and reset rownames
+  if(nrow(tab) > 0){
+    rownames(tab) <- 1:nrow(tab)
+  }else{
+    warning("'names' and 'likenames' didn't match any variables so output is empty\n")
+  }
 
+  # write CSV if requested
   if(csv){
     if(csvdir=="workingdirectory") csvdir <- getwd()
     fullpath <- paste(csvdir,csvfile,sep="/")
     cat("writing table to:\n  ",fullpath,"\n")
     write.csv(tab,fullpath,row.names=FALSE)
   }
+  # return table
   return(tab)
 }
