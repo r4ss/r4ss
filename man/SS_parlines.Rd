@@ -4,8 +4,8 @@
 \alias{SS_parlines}
 \title{Get parameter lines from Stock Synthesis control file}
 \usage{
-SS_parlines(ctlfile = "C:/myfiles/mymodels/myrun/control.ss_new",
-  dir = NULL, verbose = TRUE, active = FALSE, print14 = FALSE)
+SS_parlines(ctlfile = "control.ss_new", dir = NULL, version = "3.24",
+  verbose = TRUE, active = FALSE)
 }
 \arguments{
 \item{ctlfile}{File name of control file including path.}
@@ -13,13 +13,14 @@ SS_parlines(ctlfile = "C:/myfiles/mymodels/myrun/control.ss_new",
 \item{dir}{Alternative input of path, where file is assumed to be
 "control.ss_new". Default=NULL.}
 
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{verbose}{TRUE/FALSE switch for amount of detail produced by function.
 Default=TRUE.}
 
 \item{active}{Should only active parameters (those with positive phase) be
 output? Default=FALSE.}
-
-\item{print14}{Print 14 columns or just 7 (TRUE/FALSE)}
 }
 \description{
 A simple function which takes as input the full path and filename of a
@@ -40,8 +41,8 @@ break down under certain circumstances
 \examples{
 
 \dontrun{
-x <- SS_parlines(ctlfile='Y:/ss/SSv3.03a/Simple/Control.SS_New')
-head(x)
+parlines <- SS_parlines(ctlfile='c:/ss/Simple/Control.SS_New')
+head(parlines)
 #       LO    HI     INIT PRIOR PR_type   SD PHASE              Label Line_num
 # 42  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_1_Fem_GP_1       42
 # 43  0.05  0.15  0.10000  0.10       0  0.8    -3  NatM_p_2_Fem_GP_1       43
@@ -56,6 +57,7 @@ head(x)
 Ian Taylor
 }
 \seealso{
-\code{\link{SS_changepars}}
+\code{\link{SS_changepars}, \code{\link{SS_readctl}},
+\code{\link{SS_readctl_3.24}}}
 }
 
