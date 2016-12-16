@@ -5,7 +5,7 @@
 \title{read forecast file}
 \usage{
 SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
-  verbose = TRUE)
+  version = "3.24", readAll = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -15,6 +15,12 @@ SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
 \item{Nareas}{Number of areas.}
 
 \item{nseas}{number of seasons}
+
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
+\item{readAll}{Should the function continue even if Forecast=0
+(at which point SS stops reading)}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }
