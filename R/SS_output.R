@@ -2060,7 +2060,8 @@ if(FALSE){
   # ratio of sqrt of sum to sigmaR
   sigma_R_info$SD_of_devs_over_sigma_R <- sigma_R_info$SD_of_devs/sigma_R_in
   sigma_R_info$sqrt_sum_over_sigma_R <- sigma_R_info$sqrt_sum_of_components/sigma_R_in
-  
+  sigma_R_info$alternative_sigma_R <- sigma_R_in * sigma_R_info$sqrt_sum_over_sigma_R
+    
   stats$sigma_R_in   <- sigma_R_in
   stats$sigma_R_info <- sigma_R_info
   stats$rmse_table   <- rmse_table
