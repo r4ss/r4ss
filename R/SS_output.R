@@ -1104,7 +1104,7 @@ SS_output <-
   if(SS_versionNumeric >= 3.30 |
      # accounting for additional line introduced in 3.24U
      # should be now robust up through 3.24AZ (if that ever gets created)
-     substring(SS_version,1,9) %in% paste0("SS-V3.24", LETTERS[22:26]) | 
+     substring(SS_version,1,9) %in% paste0("SS-V3.24", LETTERS[21:26]) | 
      substring(SS_version,1,10) %in% paste0("SS-V3.24A",LETTERS)){ 
     last_row_index <- 11
   }else{
@@ -1118,8 +1118,8 @@ SS_output <-
   }
   names(rmse_table) <- srhead[last_row_index-1,1:5]
   names(rmse_table)[4] <- "RMSE_over_sigmaR"
-  stats$sigma_R_in <- as.numeric(srhead[last_row_index-6,1])
-  stats$rmse_table <- rmse_table
+  sigma_R_in <- as.numeric(srhead[last_row_index-6,1])
+  rmse_table <- rmse_table
 
   # Bias adjustment ramp
   biascol <- grep("breakpoints_for_bias", srhead)
@@ -1967,10 +1967,8 @@ if(FALSE){
     }
     returndat$stdtable <- stdtable
   }
-  returndat <- c(returndat,stats)
-  returndat$logfile <- logfile
 
-  # process annual recruit devs
+  # extract parameter lines representing annual recruit devs
   recdevEarly   <- parameters[substring(parameters$Label,1,13)=="Early_RecrDev",]
   early_initage <- parameters[substring(parameters$Label,1,13)=="Early_InitAge",]
   main_initage  <- parameters[substring(parameters$Label,1,12)=="Main_InitAge",]
@@ -1978,32 +1976,95 @@ if(FALSE){
   recdevFore    <- parameters[substring(parameters$Label,1, 8)=="ForeRecr",]
   recdevLate    <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
 
-  if(nrow(recdev)>0){
-    recdev$Yr        <- as.numeric(substring(recdev$Label,14))
+  # empty variable to fill in sections
+  recruitpars <- NULL
+
+  # assign "type" label to each one and identify year
+  if(nrow(early_initage)>0){
+    early_initage$type <- "Early_InitAge"
+    early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
+    recruitpars <- rbind(recruitpars, early_initage)
   }
   if(nrow(recdevEarly)>0){
+    recdevEarly$type   <- "Early_RecrDev"
     recdevEarly$Yr   <- as.numeric(substring(recdevEarly$Label,15))
-  }
-  if(nrow(early_initage)>0){
-    early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
-    recdevEarly <- rbind(early_initage,recdevEarly)
+    recruitpars <- rbind(recruitpars, recdevEarly)
   }
   if(nrow(main_initage)>0){
+    main_initage$type  <- "Main_InitAge"
     main_initage$Yr  <- startyr - as.numeric(substring(main_initage$Label,14))
-    recdev <- rbind(main_initage,recdev)
+    recruitpars <- rbind(recruitpars, main_initage)
   }
-  if(nrow(recdevFore)>0)
+  if(nrow(recdev)>0){
+    recdev$type        <- "Main_RecrDev"
+    recdev$Yr        <- as.numeric(substring(recdev$Label,14))
+    recruitpars <- rbind(recruitpars, recdev)
+  }
+  if(nrow(recdevFore)>0){
+    recdevFore$type    <- "ForeRecr"
     recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
-  if(nrow(recdevLate)>0)
+    recruitpars <- rbind(recruitpars, recdevFore)
+  }
+  if(nrow(recdevLate)>0){
+    recdevLate$type    <- "Late_RecrDev"
     recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
-  if(nrow(recdevFore)>0 & nrow(recdevLate)>0)
-    recdevFore <- rbind(recdevLate,recdevFore)
+    recruitpars <- rbind(recruitpars, recdevLate)
+  }
 
-  Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
-  recruitpars <- rbind(if(nrow(recdevEarly)>0){recdevEarly}else{NULL},
-                       if(nrow(recdevEarly)>0){recdev}else{NULL},
-                       if(nrow(recdevEarly)>0){recdevFore}else{NULL})
-  returndat$recruitpars <- recruitpars
+  # sort by year and remove any retain only essential columns
+  recruitpars <- recruitpars[order(recruitpars$Yr), c("Value","Parm_StDev","type","Yr")]
+
+  # calculating values related to tuning SigmaR
+  sigma_R_info <- data.frame(period = c("Main","Early+Main","Early+Main+Late"),
+                             N_devs = 0,
+                             SD_of_devs = NA,
+                             Var_of_devs = NA,
+                             mean_SE = NA,
+                             mean_SEsquared = NA)
+
+  # calculate recdev stats  for Main period
+  subset <- recruitpars$type %in% c("Main_InitAge", "Main_RecrDev")
+  within_period <- sigma_R_info$period=="Main"
+  sigma_R_info$N_devs[within_period] <- sum(subset)
+  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+  sigma_R_info$mean_SEsquared[within_period] <-
+    mean((recruitpars$Parm_StDev[subset])^2)
+
+  # calculate recdev stats  for Early+Main periods
+  subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
+                                    "Main_InitAge", "Main_RecrDev")
+  within_period <- sigma_R_info$period=="Early+Main"
+  sigma_R_info$N_devs[within_period] <- sum(subset)
+  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+  sigma_R_info$mean_SEsquared[within_period] <-
+    mean((recruitpars$Parm_StDev[subset])^2)
+
+  # calculate recdev stats for Early+Main+Late periods
+  subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
+                                    "Main_InitAge", "Main_RecrDev", "Late_RecrDev")
+  within_period <- sigma_R_info$period=="Early+Main+Late"
+  sigma_R_info$N_devs[within_period] <- sum(subset)
+  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+  sigma_R_info$mean_SEsquared[within_period] <-
+    mean((recruitpars$Parm_StDev[subset])^2)
+
+  # add variance as square of SD
+  sigma_R_info$Var_of_devs <- sigma_R_info$SD_of_devs^2
+
+  # add sqrt of sum
+  sigma_R_info$sqrt_sum_of_components <- sqrt(sigma_R_info$Var_of_devs +
+                                                sigma_R_info$mean_SEsquared)
+  # ratio of sqrt of sum to sigmaR
+  sigma_R_info$SD_of_devs_over_sigma_R <- sigma_R_info$SD_of_devs/sigma_R_in
+  sigma_R_info$sqrt_sum_over_sigma_R <- sigma_R_info$sqrt_sum_of_components/sigma_R_in
+  
+  stats$sigma_R_in   <- sigma_R_in
+  stats$sigma_R_info <- sigma_R_info
+  stats$rmse_table   <- rmse_table
+
   # process adjustments to recruit devs
   RecrDistpars <- parameters[substring(parameters$Label,1,8)=="RecrDist",]
   returndat$RecrDistpars <- RecrDistpars
@@ -2027,6 +2088,12 @@ if(FALSE){
       }
     }
   }
+
+  # add list of stats to list that gets returned
+  returndat <- c(returndat, stats)
+
+  # add log file to list that gets returned
+  returndat$logfile <- logfile
 
 
   # return the inputs to this function so they can be used by SSplots or other functions
