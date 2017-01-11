@@ -2073,6 +2073,9 @@ if(FALSE){
   # adding read of wtatage file
   returndat$wtatage <- wtatage
 
+  # add list of stats to list that gets returned
+  returndat <- c(returndat, stats)
+  
   # print list of statistics
   if(printstats){
     cat("Statistics shown below (to turn off, change input to printstats=FALSE)\n")
@@ -2089,9 +2092,6 @@ if(FALSE){
       }
     }
   }
-
-  # add list of stats to list that gets returned
-  returndat <- c(returndat, stats)
 
   # add log file to list that gets returned
   returndat$logfile <- logfile
