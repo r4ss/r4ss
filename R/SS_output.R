@@ -842,9 +842,24 @@ SS_output <-
   }
   stats$table_of_phases <- table(parameters$Phase)
   # subset columns for printed table of estimated parameters
-  stats$estimated_non_rec_devparameters <- pars[,names(pars) %in%
+  estimated_non_dev_parameters <- pars[,names(pars) %in%
       c("Label","Value","Phase","Min","Max","Init","Prior","Gradient","PR_type",
         "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
+  # exclude parameters that represent recdevs or other deviations
+  devnames <- c("RecrDev","InitAge","ForeRecr",
+                "DEVadd","DEVmult","DEVrwalk","DEV_MR_rwalk")
+  # look for rows in table of parameters that have label indicating deviation
+  devrows <- NULL
+  for(iname in 1:length(devnames)){
+    devrows <- unique(c(devrows, grep(devnames[iname],
+                                      estimated_non_dev_parameters$Label)))
+  }
+  # remove any dev rows from table
+  if(!is.null(devrows)){
+    estimated_non_dev_parameters <- estimated_non_dev_parameters[-devrows,]
+  }
+  # add table to stats that get printed in console
+  stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
 
   # read covar.sso file
   if(covar){
@@ -2014,6 +2029,9 @@ if(FALSE){
   # sort by year and remove any retain only essential columns
   recruitpars <- recruitpars[order(recruitpars$Yr), c("Value","Parm_StDev","type","Yr")]
 
+  # add recruitpars to list of stuff that gets returned
+  returndat$recruitpars <- recruitpars
+  
   # calculating values related to tuning SigmaR
   sigma_R_info <- data.frame(period = c("Main","Early+Main","Early+Main+Late"),
                              N_devs = 0,
@@ -2080,9 +2098,11 @@ if(FALSE){
   if(printstats){
     cat("Statistics shown below (to turn off, change input to printstats=FALSE)\n")
 
-    # remove scientific notation (only for display, not returned values, which were added to returndat already)
+    # remove scientific notation (only for display, not returned values,
+    # which were added to returndat already)
     stats$likelihoods_used <- format(stats$likelihoods_used,scientific=20)
-    stats$estimated_non_rec_devparameters <- format(stats$estimated_non_rec_devparameters,scientific=20)
+    stats$estimated_non_dev_parameters <- format(stats$estimated_non_dev_parameters,
+                                                 scientific=20)
     print(stats)
     if(covar){
       if(stats$N_estimated_parameters > 1){
