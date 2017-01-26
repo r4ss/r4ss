@@ -91,6 +91,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
+    # replace any slashes (as in 'Eggs/kg_inter_Fem')
+    file <- gsub(pattern='/', replacement='_per_', x=file, fixed=TRUE)
     png(filename=file.path(plotdir, file),
         width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
     plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
