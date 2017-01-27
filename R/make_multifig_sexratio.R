@@ -4,7 +4,7 @@
 #' plots of sex ratio data with crude confidence intervals (+/i 1 se) and
 #' fits from Stock Synthesis output.
 #'
-#' @param dbase eleemnt of list created by \code{\link{SS_output}} passed from
+#' @param dbase element of list created by \code{\link{SS_output}} passed from
 #' \code{\link{SSplotSexRatio}}
 #' @param sampsizeround rounding level for sample size values
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
