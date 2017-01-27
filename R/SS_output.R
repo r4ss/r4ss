@@ -10,7 +10,7 @@
 #'
 #' @param dir Locates the directory of the files to be read in, double
 #' backslashes (or forwardslashes) and quotes necessary.
-#' @param model Name of the executable (leaving off the .exe).  Deafult="ss3"
+#' @param model Name of the executable (leaving off the .exe).  Default="ss3"
 #' @param repfile Name of the big report file (could be renamed by user).
 #' Default="Report.sso".
 #' @param compfile Name of the composition report file.
@@ -1115,6 +1115,19 @@ SS_output <-
   stats$maximum_gradient_component <-
     as.numeric(matchfun2("Convergence_Level",0,"Convergence_Level",0,cols=2))
 
+  # parameters with highest gradients (3.30 only)
+  if("Gradient" %in% names(parameters)){
+    if(any(!is.na(parameters$Gradient))){
+      # number of gradients to report is 5 (an arbitrary choice),
+      # or fewer if fewer than 5 parameters estimated.
+      ngrads <- min(5, max(parameters$Active_Cnt, na.rm=TRUE))
+      # add highest gradients to table of stats that get printed to the console
+      stats$parameters_with_highest_gradients <-
+        head(parameters[order(abs(parameters$Gradient), decreasing=TRUE),
+                        c("Value","Gradient")], n=5)
+    }
+  }
+  
   # sigma_R
   if(SS_versionNumeric >= 3.30 |
      # accounting for additional line introduced in 3.24U
