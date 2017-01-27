@@ -12,8 +12,8 @@ SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
   "Length (cm, beginning of the year)", "Natural mortality",
   "Female weight (kg)", "Female length (cm)", "Fecundity",
   "Default fecundity label", "Year", "Hermaphroditism transition rate",
-  "Fraction females by age"), pwidth = 6.5, pheight = 5, punits = "in",
-  res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
+  "Fraction females by age at equilibrium"), pwidth = 6.5, pheight = 5,
+  punits = "in", res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}

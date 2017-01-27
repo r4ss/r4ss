@@ -15,7 +15,7 @@ make_multifig_sexratio(dbase, sampsizeround = 1, maxrows = 6, maxcols = 6,
   legfont = c(2, 1), ipage = 0, multifig_oma = c(5, 5, 5, 2) + 0.1, ...)
 }
 \arguments{
-\item{dbase}{eleemnt of list created by \code{\link{SS_output}} passed from
+\item{dbase}{element of list created by \code{\link{SS_output}} passed from
 \code{\link{SSplotSexRatio}}}
 
 \item{sampsizeround}{rounding level for sample size values}

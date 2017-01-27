@@ -17,7 +17,7 @@ SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
 \item{dir}{Locates the directory of the files to be read in, double
 backslashes (or forwardslashes) and quotes necessary.}
 
-\item{model}{Name of the executable (leaving off the .exe).  Deafult="ss3"}
+\item{model}{Name of the executable (leaving off the .exe).  Default="ss3"}
 
 \item{repfile}{Name of the big report file (could be renamed by user).
 Default="Report.sso".}

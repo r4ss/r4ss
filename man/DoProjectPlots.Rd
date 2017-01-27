@@ -21,7 +21,7 @@ Default=c("res.csv").}
 
 \item{Titles}{Titles for plots when using multiple filenames. Default="".}
 
-\item{ncols}{Number of columns to read in output file (fileN). Deafult=200.}
+\item{ncols}{Number of columns to read in output file (fileN). Default=200.}
 
 \item{Plots}{List to get specific plots (currently 1 through 8).
 Default=list(1:25). If there are multiple files, supply a list of vectors,
