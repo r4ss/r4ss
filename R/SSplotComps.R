@@ -307,7 +307,7 @@ SSplotComps <-
       stop("!error with size units in generalized size comp plots:\n",
            "    more than one unit value per method.\n")
     if(sizeunits %in% c("in","cm"))
-      kindlab <- paste(labels[21]," (",sizeunits,")",sep="")
+      kindlab <- paste(labels[10]," (",sizeunits,")",sep="")
     if(sizeunits %in% c("lb","kg"))
       kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
     if(datonly){
