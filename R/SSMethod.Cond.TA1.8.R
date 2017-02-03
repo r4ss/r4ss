@@ -47,6 +47,7 @@
 #' option 'comb' is used.
 #' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in Francis (2011).
+#' @param printit if TRUE, print results to R console.
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?
 #' @author Chris Francis, Andre Punt, Ian Taylor
@@ -57,8 +58,8 @@
 #' Fisheries and Aquatic Sciences 68: 1124-1138.
 #'
 SSMethod.Cond.TA1.8 <-
-  function(fit,fleet,part=0:2,seas=NULL,
-           plotit=TRUE,maxpanel=1000,FullDiagOut=FALSE)
+  function(fit, fleet, part=0:2, seas=NULL,
+           plotit=TRUE, printit=TRUE, maxpanel=1000, FullDiagOut=FALSE)
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -199,10 +200,14 @@ SSMethod.Cond.TA1.8 <-
 
   Outs <- paste("Francis CAA Weights-A:",fit$FleetNames[fleet],":",
                 round(Nmult,5),round(confint[1],5),round(confint[2],5))
-  print(Outs)
+  if(printit){
+    print(Outs)
+  }
   Outs <- paste("Francis CAA Weights-B:",fit$FleetNames[fleet],":",
                 round(Nmult2,5),round(confint2[1],5),round(confint2[2],5))
-  print(Outs)
+  if(printit){
+    print(Outs)
+  }
 
   return(Output)
 }

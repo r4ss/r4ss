@@ -5,7 +5,7 @@
 \title{Apply Francis composition weighting method TA1.8 for conditional age-at-length fits}
 \usage{
 SSMethod.Cond.TA1.8(fit, fleet, part = 0:2, seas = NULL, plotit = TRUE,
-  maxpanel = 1000, FullDiagOut = FALSE)
+  printit = TRUE, maxpanel = 1000, FullDiagOut = FALSE)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -27,6 +27,8 @@ option 'comb' is used.}
 
 \item{plotit}{if TRUE, make an illustrative plot like one or more
 panels of Fig. 4 in Francis (2011).}
+
+\item{printit}{if TRUE, print results to R console.}
 
 \item{maxpanel}{maximum number of panels within a plot}
 
