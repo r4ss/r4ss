@@ -194,7 +194,7 @@ SSplotPars <-
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     test <- readLines(fullpostfile,n=20) # test for presence of file with at least 10 rows
-    if(length(test)>10){
+    if(length(test)>20){
       posts <- read.table(fullpostfile,header=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       cat("read",nrow(posts),"lines in",postfile,"\n")
@@ -204,7 +204,7 @@ SSplotPars <-
         cat("length of posteriors after burnin-in and thinning:",nrow(posts),"\n")
       }
     }else{
-      cat("Posteriors file has fewer than 10 rows, changing input to 'showpost=FALSE'\n")
+      cat("Posteriors file has fewer than 20 rows, changing input to 'showpost=FALSE'\n")
       showpost <- FALSE
     }
   }
@@ -252,9 +252,15 @@ SSplotPars <-
     }
   }else{
     goodnames <- allnames
+    if(length(goodnames)==0){
+      cat("No active parameters.\n")
+      return()
+    }
   }
   badpars <- grep("Impl_err_",goodnames)
-  if(length(badpars)>0) goodnames <- goodnames[-badpars]
+  if(length(badpars)>0){
+    goodnames <- goodnames[-badpars]
+  }
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
 
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
@@ -265,21 +271,23 @@ SSplotPars <-
 
   # Recruitment Devs
   recdevmin <- -5
-  recdevmin <- 5
+  recdevmax <- 5
   recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_",
                     "Main_RecrDev_","ForeRecr_","Late_RecrDev_")
   if(showrecdev & goodctl){
     ctllines <- readLines(fullctlfile)
     iline <- grep("#min rec_dev",ctllines)
-    if(length(iline)==1){
-      # advanced options stuff
+    # check for advanced options for recdev bounds
+    # (but skip if it is commented out due to advanced options being turned off)
+    if(length(iline)==1 & ctllines[iline]!="#_Cond -5 #min rec_dev"){
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
       if(is.na(readrecdev) | readrecdev==1)
         cat("This function does not yet display recdev values read from ctl file.\n")
     }
-  }else{
+  }
+  if(!showrecdev){
     goodnames <- goodnames[!substr(goodnames,1,9) %in% substr(recdevlabels,1,9)]
   }
   npars <- length(goodnames)
@@ -352,6 +360,8 @@ SSplotPars <-
     ## are a special case (as opposed to rec devs)
     ## too. For now the sigma value specified in the ctl file is not
     ## recorded anywhere so we skip the prior.
+    ## In SS version 3.30, the sigma will be available as a parameter, but
+    ## matching these quantities may take some work
     isdev <- FALSE
     if(length(grep('DEVrwalk', x=parname))>0 |
        length(grep('DEVadd', x=parname))>0 |
