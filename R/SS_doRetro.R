@@ -16,6 +16,10 @@
 #' retrospective year. Should be zero or negative values.
 #' @param overwrite Overwrite any input files with matching names in the
 #' subdirectories where models will be run.
+#' @param exefile Executable file found in directory with model files.
+#' On Windows systems, this value will be automatically updated if a single
+#' executable exists in the directory of model files. Input exefile=NULL if
+#' the executable is in your path and doesn't need copying.
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amound of command-line output.
 #' @param intern Display runtime information from SS in the R console (vs.
@@ -46,8 +50,19 @@
 #' 
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        subdirstart='retro',years=0:-5,overwrite=TRUE,
-                       extras="-nox",intern=FALSE,CallType="system",
+                       exefile='ss', extras="-nox",intern=FALSE,CallType="system",
                        RemoveBlocks=FALSE){
+
+  # determine operating system in a relatively brute force way
+  OS <- "Mac" # don't know the version$os info for Mac
+  prefix <- "./" # prefix applied to start of command to run model
+  if(length(grep("linux",version$os)) > 0){
+    OS <- "Linux"
+  }
+  if(length(grep("mingw",version$os)) > 0){
+    OS <- "Windows"
+    prefix <- ""
+  }
 
   # save working directory
   oldwd <- getwd()
@@ -57,9 +72,17 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
   newdir <- file.path(masterdir,newsubdir)
   
   # make directories, modify starter file, and start retrospective analyses
-  
+
+  # for Windows users, automatically determine executable
+  if(!is.null(exefile) & OS=="Windows"){
+    exefiles <- dir(olddir)[grep(".exe",dir(olddir))]
+    # if exactly one executable found in model directory, use that instead
+    if(length(exefiles)==1){
+      exefile <- exefiles
+    }
+  }
+    
   # get model file names from olddir
-  exefile <- dir(olddir)[grep(".exe",dir(olddir))]
   startfile <- dir(olddir)[tolower(dir(olddir))=="starter.ss"]
   forefile <- dir(olddir)[tolower(dir(olddir))=="forecast.ss"]
   wtatagefile <- dir(olddir)[tolower(dir(olddir))=="wtatage.ss"]
@@ -83,7 +106,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     
   if(!file.exists(newdir)) dir.create(newdir)
   
-  subdirnames <- paste(subdirstart, years, sep='')
+  subdirnames <- paste0(subdirstart, years)
 
   for(iyr in 1:length(years)){
     # create directory
@@ -112,12 +135,18 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     # run model
     cat("Running model in ",getwd(),"\n",sep="")
     if(file.exists("covar.sso")) file.remove("covar.sso")
-    if(intern) cat("ADMB output generated during model run will be written to:\n   ",
-                   getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
-                   "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
-                   sep="")
-    if(CallType=="system") ADMBoutput <- system(paste(exefile,extras),intern=intern)
-    if(CallType=="shell") ADMBoutput <- shell(paste(exefile,extras),intern=intern)
+    if(intern){
+      cat("ADMB output generated during model run will be written to:\n   ",
+          getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
+          "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
+          sep="")
+    }
+    if(CallType=="system"){
+      ADMBoutput <- system(paste0(prefix,exefile," ",extras),intern=intern)
+    }
+    if(CallType=="shell"){
+      ADMBoutput <- shell(paste0(prefix,exefile," ",extras),intern=intern)
+    }
     if(intern) writeLines(c("###","ADMB output",as.character(Sys.time()),
                             "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
     setwd('..')

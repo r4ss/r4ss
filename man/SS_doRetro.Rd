@@ -5,7 +5,7 @@
 \title{Run retrospective analyses}
 \usage{
 SS_doRetro(masterdir, oldsubdir, newsubdir = "retrospectives",
-  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
+  subdirstart = "retro", years = 0:-5, overwrite = TRUE, exefile = "ss",
   extras = "-nox", intern = FALSE, CallType = "system",
   RemoveBlocks = FALSE)
 }
@@ -26,6 +26,11 @@ retrospective year. Should be zero or negative values.}
 
 \item{overwrite}{Overwrite any input files with matching names in the
 subdirectories where models will be run.}
+
+\item{exefile}{Executable file found in directory with model files.
+On Windows systems, this value will be automatically updated if a single
+executable exists in the directory of model files. Input exefile=NULL if
+the executable is in your path and doesn't need copying.}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
 will reduce the amound of command-line output.}
