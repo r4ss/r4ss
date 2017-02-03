@@ -19,7 +19,7 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
 
   mylist$sourcefile <- file
   mylist$type <- "Stock_Synthesis_starter_file"
-  mylist$SSversion <- "SSv3.10b_or_later"
+  mylist$SSversion <- "3.24 or earlier"
 
   # get strings for control and data file names
   starter2 <- NULL
@@ -104,10 +104,15 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
 
   # last value in vector of numerical values
   i.final <- length(allnums)
-  if(i == i.final-1){
+  if(i < i.final){
     # file is probably 3.30
+    cat("Assuming version 3.30 based on number of numeric values.\n")
+    mylist$MCMC_output_detail <- allnums[i]; i <- i+1
     mylist$ALK_tolerance <- allnums[i]; i <- i+1
-    if(verbose) cat("  ALK_tolerance =",mylist$ALK_tolerance,"\n")
+    if(verbose){
+      cat("  MCMC_output_detail =",mylist$MCMC_output_detail,"\n")
+      cat("  ALK_tolerance =",mylist$ALK_tolerance,"\n")
+    }
   }
 
   # check final value
@@ -119,7 +124,9 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   }else{
     warning("Final value is ", allnums[i]," but should be either 3.30 or 999\n")
   }
-
+  if(final==3.30){
+    mylist$SSversion <- "3.30"
+  }
   # all done
   return(mylist)
 }
