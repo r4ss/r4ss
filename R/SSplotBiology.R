@@ -58,16 +58,17 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
          verbose=TRUE)
 {
-  #### new (24-Oct-14) order of plots:
+  #### current (2017-02-03) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
   # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
   # subplot 3: growth_curve_plus_fn - growth curve with maturity and weight
-  # subplot 1: weight-length
-  # subplot 2: maturity
-  # subplot 3: gfunc3a - fecundity from model parameters
-  # subplot 4: gfunc3b - fecundity at weight from BIOLOGY section
-  # subplot 5: gfunc3c - fecundity at length from BIOLOGY section
-  # subplot 6: gfunc4  - spawning output
+  # subplot 4: distribution of length at age (still in development)
+  # subplot 5: weight-length
+  # subplot 6: maturity
+  # subplot 7: gfunc3a - fecundity from model parameters
+  # subplot 8: gfunc3b - fecundity at weight from BIOLOGY section
+  # subplot 9: gfunc3c - fecundity at length from BIOLOGY section
+  # subplot 10: gfunc4  - spawning output
   # subplot 11: mfunc   - Natural mortality (if age-dependent)
   # subplot 12: [no function] - Time-varying growth persp
   # subplot 13: [no function] - Time-varying growth contour
@@ -169,13 +170,18 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     ## Grow_std_1_Fem_A_10 Grow_std_1_Fem_A_10     0 1.039320       1      Fem   1  10
   }
 
-  if(!is.null(replist$wtatage_switch)) wtatage_switch  <- replist$wtatage_switch
-  else stop("SSplotBiology function doesn't match SS_output function. Update one or both functions.")
-
-  if(wtatage_switch) cat("Note: this model uses the empirical weight-at-age input.\n",
-                         "     Therefore many of the parametric biology quantities which are plotted\n",
-                         "     are not used in the model.\n")
-
+  # test for presence of wtatage_switch
+  # (not created in older versions of SS_output)
+  if(!is.null(replist$wtatage_switch)){
+    wtatage_switch  <- replist$wtatage_switch
+  }else{
+    stop("SSplotBiology function doesn't match SS_output function.",
+         "Update one or both functions.")
+  }
+  if(wtatage_switch){
+    cat("Note: this model uses the empirical weight-at-age input.\n",
+        "     Plots of many quantities related to growth are skipped.\n")
+  }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
   ## if(nrow(growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],])==0){
@@ -512,8 +518,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
              col=c(colvec[1],colvec[2]))
     }
   }
-  if(plot & 1 %in% subplots) growth_curve_fn()
-  if(print & 1 %in% subplots){
+  if(plot & 1 %in% subplots & !wtatage_switch) growth_curve_fn()
+  if(print & 1 %in% subplots & !wtatage_switch){
     file <- "bio1_sizeatage.png"
     caption <- paste("Length at age in the beginning of the year (or season) in the ending",
                      "year of the model. Shaded area indicates 95% distribution of",
@@ -657,10 +663,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
   }
   # make plots of growth curve with CV and SD of length
-  if(plot & 2 %in% subplots){
+  if(plot & 2 %in% subplots & !wtatage_switch){
     growth_curve_plus_fn(option=1)
   }
-  if(print & 2 %in% subplots){
+  if(print & 2 %in% subplots & !wtatage_switch){
     file <- "bio2_sizeatage_plus_CV_and_SD.png"
     caption <- paste("Length at age (top-left panel) with",
                      "CV (thick line) and SD (thin line) of",
@@ -672,10 +678,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
 
   # make plots of growth curve with weight-length curve and maturity
-  if(plot & 3 %in% subplots){
+  if(plot & 3 %in% subplots & !wtatage_switch){
     growth_curve_plus_fn(option=2)
   }
-  if(print & 3 %in% subplots){
+  if(print & 3 %in% subplots & !wtatage_switch){
     file <- "bio3_sizeatage_plus_WT_and_MAT.png"
     caption <- paste("Length at age (top-left panel) with",
                      "weight (thick line) and maturity (thin line)",
@@ -759,16 +765,18 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     # restore old parameter settings
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
   }
-  if(plot & 101 %in% subplots) growth_curve_labeled_fn(option=1)
-  if(print & 101 %in% subplots){
+
+  # plots of diagrams for illustrating parameterization
+  if(plot & 101 %in% subplots & !wtatage_switch) growth_curve_labeled_fn(option=1)
+  if(print & 101 %in% subplots & !wtatage_switch){
     file <- "bio101_growth_illustration.png"
     caption <- "Illustration of growth parameters"
     plotinfo <- pngfun(file=file, caption=caption)
     growth_curve_labeled_fn(option=1)
     dev.off()
   }
-  if(plot & 102 %in% subplots) growth_curve_labeled_fn(option=2)
-  if(print & 102 %in% subplots){
+  if(plot & 102 %in% subplots & !wtatage_switch) growth_curve_labeled_fn(option=2)
+  if(print & 102 %in% subplots & !wtatage_switch){
     file <- "bio102_growth_illustration2.png"
     caption <- "Illustration of growth parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
@@ -882,32 +890,34 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     # restore old parameter settings
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
   }
-  if(plot & 103 %in% subplots) CV_values_labeled_fn(option=1)
-  if(print & 103 %in% subplots){
+
+  # extra plots illustrating parameterization of CV in growth
+  if(plot & 103 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option=1)
+  if(print & 103 %in% subplots & !wtatage_switch){
     file <- "bio103_CV_illustration.png"
     caption <- "Illustration of growth variability parameters"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=1)
     dev.off()
   }
-  if(plot & 104 %in% subplots) CV_values_labeled_fn(option=2)
-  if(print & 104 %in% subplots){
+  if(plot & 104 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option=2)
+  if(print & 104 %in% subplots & !wtatage_switch){
     file <- "bio104_CV_illustration2.png"
     caption <- "Illustration of growth variability parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=2)
     dev.off()
   }
-  if(plot & 105 %in% subplots) CV_values_labeled_fn(option=3)
-  if(print & 105 %in% subplots){
+  if(plot & 105 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option=3)
+  if(print & 105 %in% subplots & !wtatage_switch){
     file <- "bio105_CV_illustration.png"
     caption <- "Illustration of growth variability parameters for offset type 3"
     plotinfo <- pngfun(file=file, caption=caption)
     CV_values_labeled_fn(option=3)
     dev.off()
   }
-  if(plot & 106 %in% subplots) CV_values_labeled_fn(option=4)
-  if(print & 106 %in% subplots){
+  if(plot & 106 %in% subplots & !wtatage_switch) CV_values_labeled_fn(option=4)
+  if(print & 106 %in% subplots & !wtatage_switch){
     file <- "bio106_CV_illustration2.png"
     caption <- "Illustration of growth variability parameters with male offsets"
     plotinfo <- pngfun(file=file, caption=caption)
@@ -921,61 +931,61 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   ## by whether the model is 1 or two gender. In the latter two separate
   ## plots need to be made.
   if(plot){ # plot to screen or to PDF file
-    if(4 %in% subplots) {
+    if(5 %in% subplots) {
       weight_plot(gender=1)
       if(!wtatage_switch & nsexes==2) weight_plot(gender=2)
     }
-    if(5 %in% subplots) maturity_plot()
-    if(6 %in% subplots & FecType==1) gfunc3a()
-    if(7 %in% subplots & fecundityOK) gfunc3b()
-    if(8 %in% subplots & fecundityOK) gfunc3c()
-    if(9 %in% subplots) gfunc4()
+    if(6 %in% subplots) maturity_plot()
+    if(7 %in% subplots & !wtatage_switch & FecType==1) gfunc3a()
+    if(8 %in% subplots & !wtatage_switch & fecundityOK) gfunc3b()
+    if(9 %in% subplots & !wtatage_switch & fecundityOK) gfunc3c()
+    if(10 %in% subplots & !wtatage_switch) gfunc4()
   }
   if(print){ # print to PNG files
-    if(4 %in% subplots){
-      file <- "bio4_weightatsize.png"
+    if(5 %in% subplots){
+      file <- "bio5_weightatsize.png"
       caption <- "Weight-length relationship for females"
       plotinfo <- pngfun(file=file, caption=caption)
       weight_plot(gender=1)
       dev.off()
       if(wtatage_switch & nsexes==2){
-        file <- "bio4_weightatsize2.png"
+        file <- "bio5_weightatsize2.png"
         caption <- "Weight-length relationship for males"
         plotinfo <- pngfun(file=file, caption=caption)
         weight_plot(gender=2)
         dev.off()
       }
     }
-    if(5 %in% subplots){
-      file <- "bio5_maturity.png"
+    if(6 %in% subplots){
+      file <- "bio6_maturity.png"
       caption <- paste("Maturity at",ifelse(min(biology$Mat_len)<1,"length","age"))
       plotinfo <- pngfun(file=file, caption=caption)
       maturity_plot()
       dev.off()
     }
-    if(6 %in% subplots & FecType==1){
-      file <- "bio6_fecundity.png"
+    if(7 %in% subplots & FecType==1){
+      file <- "bio7_fecundity.png"
       caption <- "Fecundity"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3a()
       dev.off()
     }
-    if(7 %in% subplots & fecundityOK){
-      file <- "bio7_fecundity_wt.png"
+    if(8 %in% subplots & fecundityOK){
+      file <- "bio8_fecundity_wt.png"
       caption <- "Fecundity as a function of weight"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3b()
       dev.off()
     }
-    if(8 %in% subplots & fecundityOK){
-      file <- "bio8_fecundity_len.png"
+    if(9 %in% subplots & fecundityOK){
+      file <- "bio9_fecundity_len.png"
       caption <- "Fecundity as a function of length"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc3c()
       dev.off()
     }
-    if(9 %in% subplots){
-      file <- "bio9_spawningoutput.png"
+    if(10 %in% subplots){
+      file <- "bio10_spawningoutput.png"
       caption <- "Spawning output at length"
       plotinfo <- pngfun(file=file, caption=caption)
       gfunc4()
