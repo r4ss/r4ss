@@ -8,8 +8,8 @@
 #' @param option Switch set to either 1 for length at true age or
 #' 2 for obs. age at true age
 #' @param scale Multiplier for bars showing distribution. Species with many ages
-#' benefit from expanded bars. Future default could be function of number of ages
-#' or variability among bins within each age. Current default is 3.
+#' benefit from expanded bars. NULL value causes function to attempt automatic
+#' scaling.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param labels Vector of labels for plots (titles and axis labels)
@@ -27,7 +27,7 @@
 #' @seealso \code{\link{SSplotNumbers}}
 
 
-SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE,
+SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALSE,
                             labels=c("Age",          #1
                                 "Length",            #2
                                 "True age",          #3
@@ -54,6 +54,17 @@ SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE
   # get stuff form replist created by SS_output
   # matrix of length at age (not really an age-length-key as the name implies, as
   # that would be a matrix used to convert length to age rather than age to length)
+
+  # maximum age
+  accuage <- replist$accuage
+  # vector of ages
+  agevec <- 0:accuage
+  # length of vector (always accuage+1, but convenient to name)
+  nages <- length(agevec)
+
+  #### rainbow colors (worked better with grey background commented-out further down)
+  ## colvec <- rev(rich.colors.short(n=nages,alpha=.8))
+  colvec <- rep(grey(0, alpha=.5), nages)
 
   if(option==1){
     # option 1 is plotting distribution of length at age
@@ -88,19 +99,32 @@ SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE
     # first part of PNG file name (only used if print=TRUE)
     filenameStart <- "numbers10_ageerror_matrix_"
   }
+  if(is.null(scale)){
+    # default to 1 if scale is not provided
+    scale <- 1
+    # rescale if max value for middle group of ages is not in the 0.5 to 2 range
+    # this approach is used because values for youngest and oldest fish are
+    # often piled into a single bin
+
+    if(accuage > 10){
+      middle.ages <- 5:8
+    }else{
+      if(accuage > 3){
+        middle.ages <- 2:3
+      }
+    }
+    if(option==1){
+      max.y <- max(array[,middle.ages+1,], na.rm=TRUE)
+    }
+    if(option==2){
+      max.y <- max(array[,,middle.ages+1], na.rm=TRUE)
+    }
+    if(max.y < 0.5 | max.y > 2.0){
+      scale <- 0.9/max.y
+    }
+    print(scale)
+  }
   nybins <- length(ybins)
-
-  # maximum age
-  accuage <- replist$accuage
-  # vector of ages
-  agevec <- 0:accuage
-  # length of vector (always accuage+1, but convenient to name)
-  nages <- length(agevec)
-
-  #### rainbow colors (worked better with grey background commented-out further down)
-  ## colvec <- rev(rich.colors.short(n=nages,alpha=.8))
-  colvec <- rep(grey(0, alpha=.5), nages)
-
   ymax <- 1.1*(ybins[nybins] + ybins[nybins] - ybins[nybins-1])
 
   AgeMatrix.fn <- function(slice=1){
@@ -110,6 +134,11 @@ SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE
       # need to figure out which slice corresponds to which
       # morph/sex/etc. for labeling purposes
       title <- titleStart
+      #browser()
+      info <- tolower(dimnames(array)[[3]][slice])
+      if(!is.null(info)){
+        title <- paste0(title, "\nfor ", info)
+      }
     }
     if(option==2){
       # choose which ageing error matrix
@@ -174,6 +203,10 @@ SSplotAgeMatrix <- function(replist, option=1, scale=0.9, plot=TRUE, print=FALSE
       # not sure how this issue was dealt with in other functions
       if(option==1){
         caption <- paste(titleStart)
+        info <- tolower(dimnames(array)[[3]][slice])
+        if(!is.null(info)){
+          caption <- paste(title, "for", info)
+        }
       }
       if(option==2){
         caption <- paste(titleStart, "\n", labels[5], islice)
