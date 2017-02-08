@@ -820,6 +820,7 @@ SS_output <-
   }
   rownames(parameters) <- parameters$Label
 
+  # names of active parameters
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
 
   if(!is.na(parfile)){
@@ -830,7 +831,8 @@ SS_output <-
   }
   stats$N_estimated_parameters <- parline[1,6]
 
-  pars <- parameters[!is.na(parameters$Phase) & parameters$Phase>0,]
+  # subset to active parameters only
+  pars <- parameters[!is.na(parameters$Active_Cnt),]
 
   if(nrow(pars)>0){
     pars$Afterbound <- ""
@@ -843,7 +845,7 @@ SS_output <-
   stats$table_of_phases <- table(parameters$Phase)
   # subset columns for printed table of estimated parameters
   estimated_non_dev_parameters <- pars[,names(pars) %in%
-      c("Label","Value","Phase","Min","Max","Init","Prior","Gradient","PR_type",
+      c("Value","Phase","Min","Max","Init","Prior","Gradient","PR_type",
         "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
   # exclude parameters that represent recdevs or other deviations
   devnames <- c("RecrDev","InitAge","ForeRecr",
@@ -852,7 +854,7 @@ SS_output <-
   devrows <- NULL
   for(iname in 1:length(devnames)){
     devrows <- unique(c(devrows, grep(devnames[iname],
-                                      estimated_non_dev_parameters$Label)))
+                                      rownames(estimated_non_dev_parameters))))
   }
   # remove any dev rows from table
   if(!is.null(devrows)){
@@ -1837,11 +1839,23 @@ if(FALSE){
     ends <- grep("mean",rawALK[,1])-1
     N_ALKs <- length(starts)
     # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
-    ALK = array(NA,c(nlbinspop,accuage+1,length(starts)))
+    ALK <- array(NA, c(nlbinspop, accuage+1, N_ALKs))
+    dimnames(ALK) <- list(Length=lbinspop, TrueAge=0:accuage, Matrix=1:N_ALKs)
     for(i in 1:N_ALKs){
+      # get matrix of values
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
-      for(icol in 1:(accuage+1)) ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+      # loop over ages to convert values to numeric
+      for(icol in 1:(accuage+1)){
+        ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
+      }
+      # fill in appropriate slice of array
       ALK[,,i] <- as.matrix(ALKtemp)
+      # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
+      Matrix.Info <- rawALK[starts[i]-2,]
+      # filter out empty elements
+      Matrix.Info <- Matrix.Info[Matrix.Info!=""]
+      # combine elements to form a label in the dimnames
+      dimnames(ALK)$Matrix[i] <- paste(Matrix.Info, collapse=" ")
     }
     returndat$ALK <- ALK
   }
