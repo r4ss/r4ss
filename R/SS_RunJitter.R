@@ -72,9 +72,10 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="covar.sso", to="covar0.sso", overwrite=TRUE)
   file.copy(from="Report.sso", to="Report0.sso", overwrite=TRUE)
   file.copy(from="ParmTrace.sso", to="ParmTrace0.sso", overwrite=TRUE)
+  file.copy(from="warning.sso", to="warning0.sso", overwrite=TRUE)
   file.copy(from=paste0(model,".par"), to=paste0(model,".par_0.sso"), overwrite=TRUE)
   file.remove( c("CompReport.sso", "covar.sso"," Report.sso",
-                 "ParmTrace.sso", paste0(model,".par")) )
+                 "ParmTrace.sso", "warning.sso", paste0(model,".par")) )
 
   if (length(Njitter) == 1) Njitter <- 1:Njitter
   likesaved <- rep(NA, length(Njitter))
@@ -106,6 +107,7 @@ SS_RunJitter <- function(mydir, model="ss3",
       file.copy(from="covar.sso", to=paste0("covar",i,".sso"), overwrite=TRUE)
       file.copy(from="Report.sso", to=paste0("Report",i,".sso"), overwrite=TRUE)
       file.copy(from="ParmTrace.sso", to=paste0("ParmTrace",i,".sso"), overwrite=TRUE)
+      file.copy(from="warning.sso", to=paste0("warning",i,".sso"), overwrite=TRUE)
       file.copy(from=paste0(model,".par"), to=paste0(model,".par_",i,".sso"), overwrite=TRUE)
     }else{
       cat("Run = ",i," didn't converge \n")
@@ -116,6 +118,7 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="covar0.sso", to="covar.sso", overwrite=TRUE)
   file.copy(from="Report0.sso", to="Report.sso", overwrite=TRUE)
   file.copy(from="ParmTrace0.sso", to="ParmTrace.sso", overwrite=TRUE)
+  file.copy(from="warning0.sso", to="warning.sso", overwrite=TRUE)
   file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""),
             overwrite=TRUE)
 
