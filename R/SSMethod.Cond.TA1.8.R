@@ -2,22 +2,23 @@
 #'
 #' Uses an extension of method TA1.8 (described in Appendix A of Francis, 2011)
 #' to do stage-2 weighting of conditional age at length composition data from a
-#' Stock Synthesis model. Outputs a mutiplier, \emph{w},
+#' Stock Synthesis model.
+#'
+#' The function outputs a mutiplier, \emph{w},
 #' (with bootstrap 95\% confidence intervals) so that
 #' \emph{N2i} = \emph{w} x \emph{N1i},
 #' where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
 #' sample sizes for the \emph{i}th composition. Optionally makes a plot
 #' of observed and expected mean ages, with two alternative
 #' sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
-#' (thick lines) - for the observed values.\cr
-#' \cr
+#' (thick lines) - for the observed values.
+#'
 #' This function formerly reported two versions of w differ according to whether
 #' the calculated mean ages are
 #' indexed by year (version A) or by year and length bin (version B).
 #' However, research by Punt (2015) found Version A to perform better and
 #' version B is no longer recommended and is only reported if requested by the user.
-#' \cr
-#' \cr
+#' 
 #' CAUTIONARY/EXPLANATORY NOTE. The large number of options available in SS makes it
 #' very difficult to be sure that what this function does is appropriate for all
 #' combinations of options. The following notes (for version A) might help anyone
