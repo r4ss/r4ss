@@ -671,6 +671,9 @@ SS_output <-
     ## temp <- rawrep[grep("NUMBERS_AT_LENGTH",rawrep[,1])+1,]
     ## lbinspop <- as.numeric(temp[temp!=""][-(1:11)])
     ## nlbinspop <- length(lbinspop)
+    ##
+    #### if natlen were already defined, it could be
+    ## lbinspop <- as.numeric(names(natlen)[-c(1:11)]) 
     lbinspop <- NA
     nlbinspop <- ncol(selex)-5 # hopefully this works alright
     agebins <- NA
@@ -1396,13 +1399,21 @@ if(FALSE){
   returndat$sizeselex <- selex
 
   # Age based selex
+  # determine which keyword follows the AGE_SELEX section
   if(!is.na(matchfun("ENVIRONMENTAL_DATA"))){
+    # environmental data follows if present
     ageselex <- matchfun2("AGE_SELEX",4,"ENVIRONMENTAL_DATA",-1,header=TRUE)
   } else if(!is.na(matchfun("TAG_Recapture"))){
+    # tag recap info follows if present and no environmental data
     ageselex <- matchfun2("AGE_SELEX",4,"TAG_Recapture",-1,header=TRUE)
-  } else if(!is.na(matchfun("NUMBERS_AT_AGE"))){
+  } else if(!is.na(matchfun("NUMBERS_AT_AGE")) &&
+            matchfun("NUMBERS_AT_AGE") < matchfun("BIOLOGY")){
+    # a numbers-at-age section occurs here if detailed age-structured reports are
+    # requested in the starter file, otherwise, a similar section occurs after the
+    # biology section
     ageselex <- matchfun2("AGE_SELEX",4,"NUMBERS_AT_AGE",-1,header=TRUE)
   } else {
+    # if all that doesn't get satisfied, biology comes next
     ageselex <- matchfun2("AGE_SELEX",4,"BIOLOGY",-1,header=TRUE)
   }
   # filter forecast years from selectivity if no forecast
