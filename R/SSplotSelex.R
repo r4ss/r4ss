@@ -395,7 +395,9 @@ SSplotSelex <-
 
   ################################################################################
   ### loop over fleets and sexes to make individual plot of length-based patterns
-  
+
+  # first check if any of these plots are requested
+  if(any(3:9 %in% subplot)){
   # selex and retention
   for(i in fleets)
   {
@@ -601,10 +603,12 @@ SSplotSelex <-
       }
     } # sexes
   } # fleets
+  } # check for any of the plots in this section requested 
 
   ################################################################################
   ### loop over fleets and sexes to make individual plot of age-based patterns
-  
+  if(any(11:14 %in% subplot)){
+
   # Age based selex
   ylab <- labels[4]
   for(facnum in 1){
@@ -676,8 +680,9 @@ SSplotSelex <-
           plotageselex <- plotageselex[,-(1:7)]
           vals <- as.numeric(paste(c(plotageselex)))
           doplot <- diff(range(vals))!=0
-          if(doplot & skipAgeSelex10) doplot <- !(vals[1]==0 & all(vals[-1]==1))
-          #
+          if(doplot & skipAgeSelex10){
+            doplot <- !(vals[1]==0 & all(vals[-1]==1))
+          }
           if(doplot){
             main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
             endselfunc2 <- function(){
@@ -703,7 +708,8 @@ SSplotSelex <-
     } # fleets
     flush.console()
   } # factor (Asel vs. Asel2)
-  
+  } # check for any of the plots in this section requested
+
   ################################################################################
   ### Selectivity contours over age and length shown with growth curve
   
