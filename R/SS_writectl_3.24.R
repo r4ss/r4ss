@@ -17,7 +17,6 @@
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @author Yukio Takeuchi
 #' @importFrom gdata write.fwf
-#' @importFrom stringr str_c
 #' @importFrom stringi stri_c
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
@@ -102,7 +101,9 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       writeLines(paste0("#_",header),con=zz)
     }
     value = ctllist[names(ctllist)==name][[1]]
-    value1<-sapply(value,function(x){stringr::str_c(paste(x),collapse=" ")},simplify=TRUE)
+    value1<-sapply(value, function(x){stringi::stri_c(paste(x),collapse=" ",
+                                                      ignore_null=TRUE)},
+                   simplify=TRUE)
     writeLines(value1,con=zz)
   }
 
