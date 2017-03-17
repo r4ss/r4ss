@@ -41,7 +41,6 @@
 #' @importFrom stats acf aggregate density dnorm loess
 #'   median na.omit nlminb optim pnorm qchisq qlnorm
 #'   qnorm qt quantile rnorm sd var window
-#' @importFrom stringr str_c
 #' @importFrom utils browseURL flush.console head read.csv
 #'   read.table tail write.csv write.table
 #'
