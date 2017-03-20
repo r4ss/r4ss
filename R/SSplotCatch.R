@@ -15,7 +15,8 @@
 #' @param fleetlty Vector of line type by fleet
 #' @param fleetpch Vector of plot character by fleet
 #' @param fleetcols Vector of colors by fleet
-#' @param fleetnames Optional replacement for fleenames used in data file
+#' @param fleetnames Optional replacement for fleenames used in data file,
+#' should only include fleets with catch that appear in catch plots.
 #' @param lwd Line width
 #' @param areacols Vector of colors by area. Default uses rich.colors by Arni
 #' Magnusson
@@ -122,6 +123,7 @@ SSplotCatch <-
   catch_units      <- replist$catch_units
   endyr            <- replist$endyr
   FleetNames       <- replist$FleetNames
+  IsFishFleet      <- replist$IsFishFleet
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
 
   if(order[1]=="default") order <- replist$nfishfleets:1
@@ -142,8 +144,12 @@ SSplotCatch <-
     cat("  Note: skipping stacked plots of catch for single-fleet model\n")
   }
 
-  if(fleetnames[1]=="default") fleetnames <- FleetNames
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(fleetnames[1]=="default"){
+    fleetnames <- FleetNames[IsFishFleet]
+  }
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   if(length(fleetlty)<nfishfleets) fleetlty <- rep(fleetlty,nfishfleets)
   if(length(fleetpch)<nfishfleets) fleetpch <- rep(fleetpch,nfishfleets)
@@ -312,7 +318,11 @@ SSplotCatch <-
       else if (ntick < 101) mult = c(10, 5) else mult = c(20, 5)
       }
     # vertical axis
-    ymax2 <- round(max(apply(ymat,1,sum)))
+    if(nfishfleets > 1){
+      ymax2 <- round(max(apply(ymat,1,sum)))
+    }else{
+      ymax2 <- round(max(ymat))
+    }
     yticks <- pretty(c(0,ymax2))
     if(addmax) yticks <- sort(c(yticks,ymax2))
     axis(2,at=yticks)
@@ -340,7 +350,7 @@ SSplotCatch <-
   makeplots <- function(subplot){
     a <- FALSE
     if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
-    if(subplot==2 & nfishfleets>1) a <- stackfunc(ymat=retmat, ylab=labels[3])
+    if(subplot==2) a <- stackfunc(ymat=retmat, ylab=labels[3])
     # if observed catch differs from estimated by more than 0.1%, then make plot to compare
     if(subplot==3 & diff(range(retmat-totobscatchmat))/max(totobscatchmat) > 0.001){
       a <- linefunc(ymat=retmat, ylab=paste(labels[9],labels[3]), addtotal=FALSE,
