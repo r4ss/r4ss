@@ -1251,8 +1251,8 @@ if(FALSE){
   if(SS_versionNumeric >= 3.3){
     returndat$definitions  <- defs
     returndat$fleet_ID     <- fleet_ID
-    returndat$fleet_type   <- fleet_area
-    returndat$fleet_timing <- fleet_area
+    returndat$fleet_type   <- fleet_type
+    returndat$fleet_timing <- fleet_timing
     returndat$fleet_area   <- fleet_area
     returndat$catch_units  <- catch_units
     returndat$catch_se     <- catch_se
