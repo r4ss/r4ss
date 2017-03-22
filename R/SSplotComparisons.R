@@ -558,9 +558,9 @@ SSplotComparisons <-
       recruitsLower[recruits$Yr > endyr, imodel] <- NA
       recruitsUpper[recruits$Yr > endyr, imodel] <- NA
       if(!is.null(recdevs)){
-        recdevs[recdevs$Yr > endyr, imodel] <- NA
-        recdevsLower[recdevs$Yr > endyr, imodel] <- NA
-        recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+        recdevs[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
+        recdevsLower[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
+        recdevsUpper[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
       }
     }
   }
@@ -1019,13 +1019,18 @@ SSplotComparisons <-
   }
 
   plotRecDevs <- function(show_uncertainty=TRUE){ # plot recruit deviations
+    # test for bad values
+    if(any(is.na(recdevs$Yr))){
+      warning("Recdevs associated with initial age structure may not be shown")
+    }
+
     # only show uncertainty if values are present for at least one model
     if(!any(uncertainty)){
       show_uncertainty <- FALSE
     }
     # empty plot
     if(xlim[1]=="default"){
-      xlim <- range(recdevs$Yr)
+      xlim <- range(recdevs$Yr, na.rm=TRUE)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(recdevs[,models],na.rm=TRUE)
