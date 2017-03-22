@@ -256,7 +256,6 @@ SSsummarize <- function(biglist,
     quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
-
   # identify spawning biomass parameters
   SpawnBio <- quants[grep("SPB_",quants$Label), ]
   SpawnBioSD <- quantsSD[grep("SPB_",quants$Label), ]
@@ -367,23 +366,40 @@ SSsummarize <- function(biglist,
   # if there are any initial age parameters, figure out what year they're from
   InitAgeRows <- grep("InitAge",pars$Label)
   if(length(InitAgeRows)>0){
-    temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_")) # separate out values from string
-    InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)]) # get odd entries in above separation
+    # separate out values from string
+    temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_"))
+    # get odd entries in above separation
+    InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)])
+    # make empty matrix to store values
     InitAgeYrs <- matrix(NA,nrow=length(InitAgeRows),ncol=n)
+    # loop over models
     for(imodel in 1:n){
+      # get parameters
       modelpars <- pars[,imodel]
+      # get vector of years associated with recdevs
       devyears <- pars$Yr[!is.na(modelpars) & pars$recdev]
-      if(any(!is.na(devyears))) minyr <- min(devyears,na.rm=TRUE) else minyr <- NA
+      # figure out first year of recdevs that already have years figured out
+      if(any(!is.na(devyears))){
+        minyr <- min(devyears,na.rm=TRUE)
+      }else{
+        minyr <- NA
+      }
+      # determine which parameter values are associated with InitAge and not NA
       good <- !is.na(modelpars[InitAgeRows])
-      if(!is.na(minyr) & minyr>0 & any(good)) InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
+      # if minyr was not NA, and is above 0 and there are good InitAge values,
+      # then compute the associated year
+      if(!is.na(minyr) & minyr>0 & any(good)){
+        InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
+      }
     }
     # check for differences in assignment of initial ages
     if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) - apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
-      cat("warning: years for InitAge parameters are differ between models, use InitAgeYrs matrix\n")
+      cat("warning: years for InitAge parameters differ between models, use InitAgeYrs matrix\n")
     }else{
       pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
     }
   }else{
+    # no parameters seem to be associated with initial age structure
     InitAgeYrs <- NA
   }
   if(any(pars$recdev)){
