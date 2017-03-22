@@ -2,12 +2,16 @@
 % Please edit documentation in R/SS_readdat.R
 \name{SS_readdat}
 \alias{SS_readdat}
-\title{read data file}
+\title{read data file from SS}
 \usage{
-SS_readdat(file, verbose = TRUE, echoall = FALSE, section = NULL)
+SS_readdat(file, version = "3.24", verbose = TRUE, echoall = FALSE,
+  section = NULL)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
+
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
@@ -21,16 +25,20 @@ created by Stock Synthesis. Allows the choice of either expected values
 will read input data, (equivalent to section=1).}
 }
 \description{
-read Stock Synthesis data file into list object in R
+Read Stock Synthesis data file into list object in R. This function is a
+wrapper which calls either SS_readdat_3.24 or SS_readdat_3.30
+(and potentially additional functions in the future). This setup allows those
+functions to be cleaner (if somewhat redundant) than a single function that
+attempts to do everything.
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Allan C. Hicks
 }
 \seealso{
+\code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
+\code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}}
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-\code{\link{SS_writectl}}
+\code{\link{SS_writestarter}},
+\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
-\keyword{data}
 

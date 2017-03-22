@@ -64,5 +64,4 @@ Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 \seealso{
 \code{\link{SS_plots}}
 }
-\keyword{hplot}
 

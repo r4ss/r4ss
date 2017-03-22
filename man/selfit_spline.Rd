@@ -39,12 +39,9 @@ selfit_spline()
 
 }
 \author{
-Ian Taylor
+Ian Taylor, Yukio Takeuchi
 }
 \seealso{
 \code{\link{selfit}}
 }
-\keyword{dplot}
-\keyword{dynamic}
-\keyword{hplot}
 

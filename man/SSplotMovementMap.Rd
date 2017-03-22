@@ -62,5 +62,4 @@ Ian Taylor
 \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 \code{\link{IOTCmove}}
 }
-\keyword{hplot}
 

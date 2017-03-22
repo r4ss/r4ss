@@ -58,9 +58,8 @@
 #' @param thin Additional thinning applied to MCMC posteriors. Default=1.
 #' @param ctlfile Specify control file to get min and max recdev values
 #' (otherwise assumed to be -5 and 5). Default="control.ss_new".
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Cole C. Monnahan
 #' @export
-#' @keywords hplot
 #' @examples
 #'
 #' \dontrun{
@@ -195,7 +194,7 @@ SSplotPars <-
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     test <- readLines(fullpostfile,n=20) # test for presence of file with at least 10 rows
-    if(length(test)>10){
+    if(length(test)>20){
       posts <- read.table(fullpostfile,header=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       cat("read",nrow(posts),"lines in",postfile,"\n")
@@ -205,7 +204,7 @@ SSplotPars <-
         cat("length of posteriors after burnin-in and thinning:",nrow(posts),"\n")
       }
     }else{
-      cat("Posteriors file has fewer than 10 rows, changing input to 'showpost=FALSE'\n")
+      cat("Posteriors file has fewer than 20 rows, changing input to 'showpost=FALSE'\n")
       showpost <- FALSE
     }
   }
@@ -253,9 +252,15 @@ SSplotPars <-
     }
   }else{
     goodnames <- allnames
+    if(length(goodnames)==0){
+      cat("No active parameters.\n")
+      return()
+    }
   }
   badpars <- grep("Impl_err_",goodnames)
-  if(length(badpars)>0) goodnames <- goodnames[-badpars]
+  if(length(badpars)>0){
+    goodnames <- goodnames[-badpars]
+  }
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
 
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
@@ -266,21 +271,23 @@ SSplotPars <-
 
   # Recruitment Devs
   recdevmin <- -5
-  recdevmin <- 5
+  recdevmax <- 5
   recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_",
                     "Main_RecrDev_","ForeRecr_","Late_RecrDev_")
   if(showrecdev & goodctl){
     ctllines <- readLines(fullctlfile)
     iline <- grep("#min rec_dev",ctllines)
-    if(length(iline)==1){
-      # advanced options stuff
+    # check for advanced options for recdev bounds
+    # (but skip if it is commented out due to advanced options being turned off)
+    if(length(iline)==1 & ctllines[iline]!="#_Cond -5 #min rec_dev"){
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
       if(is.na(readrecdev) | readrecdev==1)
         cat("This function does not yet display recdev values read from ctl file.\n")
     }
-  }else{
+  }
+  if(!showrecdev){
     goodnames <- goodnames[!substr(goodnames,1,9) %in% substr(recdevlabels,1,9)]
   }
   npars <- length(goodnames)
@@ -314,15 +321,17 @@ SSplotPars <-
 
   if(new) par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
   if(verbose) cat("Making plots of parameters:\n")
-  if(length(grep('DEVrwalk', x=goodnames))>0){
-      cat('\nNOTE: This model contains random walk deviates which are not\n',
-          'fully implemented. Prior and bounds unavailable, so these are skipped\n',
-          'and fitrange is set to TRUE for those parameters.\n\n')
+  if(length(grep('DEVrwalk', x=goodnames))>0 |
+     length(grep('DEVadd', x=goodnames))>0 |
+     length(grep('DEVmult', x=goodnames))>0){
+    cat('\nNOTE: This model contains random walk deviates which are not\n',
+        'fully implemented. Prior and bounds unavailable, so these are skipped\n',
+        'and fitrange is set to TRUE for those parameters.\n\n')
   }
 
   for(ipar in 1:npars){
     # grab name and full parameter line
-      parname <- goodnames[ipar]
+    parname <- goodnames[ipar]
 
     if(verbose) cat("    ",parname,"\n")
     parline <- partable[partable$Label==parname,]
@@ -347,15 +356,19 @@ SSplotPars <-
       Psd <- partable$Value[partable$Label=="SR_sigmaR"]
     }
 
-      ## Random devations on parameters (not rec devs) are a special case
-      ## too. For now the sigma value specified in the ctl file is not
-      ## recorded anywhere so we skip the prior.
-      isdev <- FALSE
-      if(length(grep('DEVrwalk', x=parname))==1){
-          initval <- 0
-          isdev <- TRUE
-      }
-
+    ## Devations on parameters (either random-walk, additive, or multiplicative)
+    ## are a special case (as opposed to rec devs)
+    ## too. For now the sigma value specified in the ctl file is not
+    ## recorded anywhere so we skip the prior.
+    ## In SS version 3.30, the sigma will be available as a parameter, but
+    ## matching these quantities may take some work
+    isdev <- FALSE
+    if(length(grep('DEVrwalk', x=parname))>0 |
+       length(grep('DEVadd', x=parname))>0 |
+       length(grep('DEVmult', x=parname))>0){
+      initval <- 0
+      isdev <- TRUE
+    }
     # make empty holders for future information
     ymax <- 0 # upper y-limit in plot
     xmin <- NULL # lower x-limit in plot

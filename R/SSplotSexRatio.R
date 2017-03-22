@@ -13,6 +13,7 @@
 #' @param fleetnames optional vector of fleet names to put in the labels
 #' @param yupper upper limit on ymax for polygon/histogram composition plots
 #' @param linescol Color for lines on top of polygons
+#' @param lwd line width
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
 #' @param pwidth default width of plots printed to files in units of
@@ -42,15 +43,13 @@
 #' @author Cole Monnahan
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
-#' @keywords hplot
 SSplotSexRatio <-
   function(replist, kind="AGE", plot=TRUE, print=FALSE, fleets="all",
-           fleetnames="default",  yupper=NULL, linescol=1, lwd=1,
+           fleetnames="default",  yupper=4, linescol=1, lwd=1,
            axis1=NULL, axis2=NULL,  pwidth=6.5, pheight=5.0, punits="in",
-           ptsize=10, res=300, plotdir="default", cex.main=1, linepos=1,
+           ptsize=10, res=300, plotdir="default", cex.main=1, 
            labels = c("Length (cm)", "Age (yr)"), maxrows=6, maxcols=6,
-           maxrows2=2, maxcols2=4, rows=1, cols=1, fixdims=TRUE,
-           verbose=TRUE, ...)
+           rows=1, cols=1, fixdims=TRUE, verbose=TRUE, ...)
 {
 ################################################################################
     ## SSplotSexRatio
@@ -59,10 +58,11 @@ SSplotSexRatio <-
 
   if(!exists("make_multifig_sexratio")) stop("you are missing the function 'make_muliti_sexratio'")
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -158,7 +158,7 @@ SSplotSexRatio <-
                          nlegends=3, legtext=list("yr","N","effN"), lwd=lwd,
                          main=ptitle, cex.main=cex.main, xlab=kindlab, ylab=labels[6],
                          maxrows=maxrows, maxcols=maxcols, rows=rows, cols=cols,
-                         fixdims=fixdims, ipage=ipage, scalebins=scalebins,
+                         fixdims=fixdims, ipage=ipage, scalebins=FALSE,
                          linescol=linescol, axis1=axis1, axis2=axis2,
                           yupper=yupper)
         } # end tempfun
@@ -174,8 +174,7 @@ SSplotSexRatio <-
               pagetext <- paste("_page",ipage,sep="")
               caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
             }
-            file <- paste(plotdir,"/",filenamestart,
-                          filename_fltmkt,pagetext,".png",sep="")
+            file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
             plotinfo <- pngfun(file=file, caption=caption)
             tempfun(ipage=ipage,...)
             dev.off()

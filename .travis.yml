@@ -1,0 +1,38 @@
+## copy of .travis.yml from https://github.com/ss3sim/ss3sim/blob/master/.travis.yml
+## used in an attempt to avoid errors with tcltk
+
+
+# Sample .travis.yml for R projects from https://github.com/craigcitro/r-travis
+
+language: c
+
+sudo: required
+
+before_install:
+  - curl -OL http://raw.github.com/craigcitro/r-travis/master/scripts/travis-tool.sh
+  - chmod 755 ./travis-tool.sh
+  - ./travis-tool.sh bootstrap
+
+install:
+  - ./travis-tool.sh install_deps
+
+script: ./travis-tool.sh run_tests
+
+on_failure:
+  - ./travis-tool.sh dump_logs
+
+
+## old .travis.yml that worked fine except for the tcltk errors
+
+##  # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+##  # based on example at https://github.com/hadley/tibble/blob/master/.travis.yml
+
+##  language: r
+##  cache: packages
+
+##  notifications:
+##    email:
+##      on_success: change
+##      on_failure: change
+
+

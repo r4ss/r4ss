@@ -54,5 +54,4 @@ Ian Taylor
 \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
 \code{\link{SS_output}}
 }
-\keyword{data}
 

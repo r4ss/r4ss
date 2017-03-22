@@ -27,12 +27,9 @@ selfit()
 
 }
 \author{
-Tommy Garrison
+Tommy Garrison, Yukio Takeuchi
 }
 \seealso{
 \code{\link{sel.line}}
 }
-\keyword{dplot}
-\keyword{dynamic}
-\keyword{hplot}
 

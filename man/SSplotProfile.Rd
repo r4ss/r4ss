@@ -135,6 +135,4 @@ Ian Taylor, Ian Stewart
 \code{\link{SSsummarize}}, \code{\link{SS_profile}},
 \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
-\keyword{aplot}
-\keyword{hplot}
 

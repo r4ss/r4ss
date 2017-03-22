@@ -33,6 +33,4 @@ Ian Taylor
 \url{http://www.multifan-cl.org/},
 \url{http://www.spc.int/OceanFish/en/ofpsection/sam/research/272-mfcl-viewer}
 }
-\keyword{data}
-\keyword{manip}
 

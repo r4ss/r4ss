@@ -37,5 +37,4 @@ Tommy Garrison
 \seealso{
 \code{\link{selfit}}
 }
-\keyword{dplot}
 

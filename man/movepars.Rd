@@ -25,7 +25,4 @@ by Tommy Garrison
 \author{
 Ian Taylor
 }
-\keyword{dplot}
-\keyword{dynamic}
-\keyword{hplot}
 

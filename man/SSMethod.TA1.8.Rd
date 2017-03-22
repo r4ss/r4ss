@@ -5,7 +5,8 @@
 \title{Apply Francis composition weighting method TA1.8}
 \usage{
 SSMethod.TA1.8(fit, type, fleet, part = 0:2, pick.gender = 0:3,
-  seas = NULL, method = NULL, plotit = TRUE, maxpanel = 1000)
+  seas = NULL, method = NULL, plotit = TRUE, printit = TRUE,
+  maxpanel = 1000)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -40,6 +41,8 @@ methods in this vector.  NB comps are separated by method}
 
 \item{plotit}{if TRUE, make an illustrative plot like one or more
 panels of Fig. 4 in Francis (2011).}
+
+\item{printit}{if TRUE, print results to R console.}
 
 \item{maxpanel}{maximum number of panels within a plot}
 }

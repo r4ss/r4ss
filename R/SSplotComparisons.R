@@ -128,7 +128,6 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
-#' @keywords hplot
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,
@@ -139,7 +138,9 @@ SSplotComparisons <-
            indexQlabel=TRUE,
            indexQdigits=4,
            indexSEvec="default",
-           indexPlotEach=FALSE,         #TRUE plots the observed index for each model with colors, or FALSE just plots observed once in black dots
+           #TRUE in following command plots the observed index for each model
+           # with colors, or FALSE just plots observed once in black dots
+           indexPlotEach=FALSE,
            labels=c("Year",             #1
              "Spawning biomass (t)",   #2
              "Relative spawning biomass", #3
@@ -147,7 +148,7 @@ SSplotComparisons <-
              "Recruitment deviations",  #5
              "Index",                   #6
              "Log index",               #7
-             "SPR ratio",               #8 could be dynamic to match model value (e.g. "(1-SPR)/(1-SPR_40%)")
+             "1 - SPR",                 #8 may not always be accurate
              "Density",                 #9
              "Management target",       #10
              "Minimum stock size threshold", #11
@@ -193,7 +194,7 @@ SSplotComparisons <-
     # if extra text requested, add it before extention in file name
     file <- paste0(filenameprefix, file)
     # open png file
-    png(filename=paste(plotdir,file,sep="/"),
+    png(filename=file.path(plotdir,file),
         width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
     # change graphics parameters to input value
     par(par)
@@ -211,9 +212,10 @@ SSplotComparisons <-
     if(is.null(plotdir)){
       stop("to write to a PDF, you must supply a directory as 'plotdir'")
     }
-    pdffile <- paste0(plotdir,"/", filenameprefix, "SSplotComparisons_",
-                      format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf")
-    pdf(file=pdffile,width=pwidth,height=pheight)
+    pdffile <- file.path(plotdir,
+                         paste0(filenameprefix, "SSplotComparisons_",
+                                format(Sys.time(), '%d-%b-%Y_%H.%M' ), ".pdf"))
+    pdf(file=pdffile, width=pwidth, height=pheight)
     if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
     par(par)
   }
@@ -264,6 +266,9 @@ SSplotComparisons <-
   SPRratio      <- summaryoutput$SPRratio
   SPRratioLower <- summaryoutput$SPRratioLower
   SPRratioUpper <- summaryoutput$SPRratioUpper
+  Fvalue      <- summaryoutput$Fvalue
+  FvalueLower <- summaryoutput$FvalueLower
+  FvalueUpper <- summaryoutput$FvalueUpper
   recruits      <- summaryoutput$recruits
   recruitsLower <- summaryoutput$recruitsLower
   recruitsUpper <- summaryoutput$recruitsUpper
@@ -279,6 +284,7 @@ SSplotComparisons <-
   minbthreshs    <- summaryoutput$minbthreshs
   sprtargs       <- summaryoutput$sprtargs
   SPRratioLabels <- summaryoutput$SPRratioLabels
+  FvalueLabels <- summaryoutput$FvalueLabels
 
   # checking for the same reference points across models
   if(is.null(btarg)) {
@@ -304,8 +310,17 @@ SSplotComparisons <-
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
-    cat("setting SPRratioLabel = NA because models don't have matching labels\n")
-    SPRratioLabel <- NA
+    cat("setting label for SPR plot to default input because models",
+        "don't have matching labels\n")
+    SPRratioLabel <- labels[8]
+  }
+  FvalueLabel <- unique(FvalueLabels)
+  if(length(FvalueLabel)>1){
+    cat("setting label for F plot to default input because models",
+        "don't have matching labels\n")
+    FvalueLabel <- labels[13]
+  }else{
+    FvalueLabel <- gsub("_", " ", FvalueLabel)
   }
 
   ### process input for which models have uncertainty shown
@@ -536,13 +551,16 @@ SSplotComparisons <-
       SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
       SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
+      Fvalue[Fvalue$Yr >= endyr, imodel] <- NA
+      FvalueLower[Fvalue$Yr >= endyr, imodel] <- NA
+      FvalueUpper[Fvalue$Yr >= endyr, imodel] <- NA
       recruits[recruits$Yr > endyr, imodel] <- NA
       recruitsLower[recruits$Yr > endyr, imodel] <- NA
       recruitsUpper[recruits$Yr > endyr, imodel] <- NA
       if(!is.null(recdevs)){
-        recdevs[recdevs$Yr > endyr, imodel] <- NA
-        recdevsLower[recdevs$Yr > endyr, imodel] <- NA
-        recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+        recdevs[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
+        recdevsLower[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
+        recdevsUpper[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
       }
     }
   }
@@ -797,25 +815,31 @@ SSplotComparisons <-
     }
     abline(h=0,col="grey")
     if(sprtarg>0){
-      if(sprtarg==1){
-        # draw line at ratio = 1
+      if(SPRratioLabel=="1-SPR"){
+        # if starter file chooses raw SPR as the option for reporting, don't show ratio
         abline(h=sprtarg,col="red",lty=2)
         text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
-        mtext(side=2,line=3,labels[8])
+        mtext(side=2,line=3,SPRratioLabel)
       }else{
         # draw line at sprtarg
         yticks <- pretty(ylim)
-        if(!is.na(SPRratioLabels) &&
-           SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
+        if(!is.na(SPRratioLabel) &&
+           SPRratioLabel==paste("(1-SPR)/(1-SPR_",floor(100*sprtarg),"%)",sep="")){
           abline(h=1,col="red",lty=2)
           text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
           axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
           mtext(side=4,line=3,"1 - SPR")
+          # line below has round to be more accurate than the floor which is used
+          # in the test above and in SS
+          mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",100*sprtarg,"%)",sep=""))
+        }else{
+          cat("No line added to SPR ratio plot, as the settings used in this model",
+              "have not yet been tested.\n")
           mtext(side=2,line=3,SPRratioLabel)
         }
       }
     }else{
-      mtext(side=2,line=3,SPRratioLabel)
+      mtext(side=2,line=3,FvalueLabel)
     }
     if(!add){
       if(tickEndYr){
@@ -839,72 +863,51 @@ SSplotComparisons <-
   }
 
 
-  #### plotF below should be revised to show timeseries of
   #### fishing mortality (however it is specified in the models)
-  ## plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
-  ##   # only show uncertainty if values are present for at least one model
-  ##   if(!any(uncertainty)){
-  ##     show_uncertainty <- FALSE
-  ##   }
-  ##   # get axis limits
-  ##   if(xlim[1]=="default"){
-  ##     xlim <- range(SPRratio$Yr)
-  ##     if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-  ##   }
-  ##   ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
-  ##   if(show_uncertainty){
-  ##     ylim <- ylimAdj*range(ylim, SPRratioUpper[,models[uncertainty]], na.rm=TRUE)
-  ##   }
+  plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
+    # only show uncertainty if values are present for at least one model
+    if(!any(uncertainty)){
+      show_uncertainty <- FALSE
+    }
+    # get axis limits
+    if(xlim[1]=="default"){
+      xlim <- range(Fvalue$Yr)
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+    }
+    ylim <- ylimAdj*range(0, Fvalue[,models], na.rm=TRUE)
+    if(show_uncertainty){
+      ylim <- ylimAdj*range(ylim, FvalueUpper[,models[uncertainty]], na.rm=TRUE)
+    }
 
-  ##   # make plot
-  ##   if(!add){
-  ##     newmar <- oldmar <- par()$mar
-  ##     newmar[4] <- newmar[2]
-  ##     par(mar=newmar)
-  ##     plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-  ##          ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
-  ##   }
-  ##   if(show_uncertainty){
-  ##     addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
-  ##   }
-  ##   if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
-  ##   }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-  ##     matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
-  ##     if(type!="l"){
-  ##       SPRratio2 <- SPRratio
-  ##       for(iline in 1:nlines){
-  ##         imodel <- models[iline]
-  ##         SPRratio2[SPRratio2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
-  ##       }
-  ##       matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
-  ##     }
-  ##   }
-  ##   abline(h=0,col="grey")
-  ##   if(sprtarg>0){
-  ##     if(sprtarg==1){
-  ##       # draw line at ratio = 1
-  ##       abline(h=sprtarg,col="red",lty=2)
-  ##       text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
-  ##       mtext(side=2,line=3,labels[8])
-  ##     }else{
-  ##       # draw line at sprtarg
-  ##       yticks <- pretty(ylim)
-  ##       if(!is.na(SPRratioLabels) &&
-  ##          SPRratioLabel==paste("(1-SPR)/(1-SPR_",round(100*sprtarg),"%)",sep="")){
-  ##         abline(h=1,col="red",lty=2)
-  ##         text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
-  ##         axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
-  ##         mtext(side=4,line=3,"1 - SPR")
-  ##         mtext(side=2,line=3,SPRratioLabel)
-  ##       }
-  ##     }
-  ##   }else{
-  ##     mtext(side=2,line=3,SPRratioLabel)
-  ##   }
-  ##   if(legend) legendfun(legendlabels)
-  ##   if(exists("oldmar")) par(mar=oldmar)
-  ## }
+    # make plot
+    if(!add){
+      newmar <- oldmar <- par()$mar
+      newmar[4] <- newmar[2]
+      par(mar=newmar)
+      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
+           ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+    }
+    if(show_uncertainty){
+      addpoly(Fvalue$Yr, lower=FvalueLower, upper=FvalueUpper)
+    }
+    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      if(type!="l"){
+        Fvalue2 <- Fvalue
+        for(iline in 1:nlines){
+          imodel <- models[iline]
+          Fvalue2[Fvalue2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        }
+        matplot(Fvalue2$Yr,Fvalue2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+      }
+    }
+    abline(h=0,col="grey")
+    mtext(side=2,line=3,FvalueLabel)
+    if(legend) legendfun(legendlabels)
+    if(exists("oldmar")) par(mar=oldmar)
+  }
 
   plotRecruits <- function(show_uncertainty=TRUE, recruit_lines=TRUE){ # plot recruitment
     # only show uncertainty if values are present for at least one model
@@ -1016,13 +1019,18 @@ SSplotComparisons <-
   }
 
   plotRecDevs <- function(show_uncertainty=TRUE){ # plot recruit deviations
+    # test for bad values
+    if(any(is.na(recdevs$Yr))){
+      warning("Recdevs associated with initial age structure may not be shown")
+    }
+
     # only show uncertainty if values are present for at least one model
     if(!any(uncertainty)){
       show_uncertainty <- FALSE
     }
     # empty plot
     if(xlim[1]=="default"){
-      xlim <- range(recdevs$Yr)
+      xlim <- range(recdevs$Yr, na.rm=TRUE)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
     ylim <- ylimAdj*range(recdevs[,models],na.rm=TRUE)
@@ -1102,8 +1110,10 @@ SSplotComparisons <-
     ylim <- range(0, ylimAdj*SPRratio[,models], na.rm=TRUE)
 
     # make plot
-    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[3],ylab=labels[8],
-                  xaxs=xaxs,yaxs=yaxs,las=1)
+    if(!add){
+      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[3],
+           ylab=SPRratioLabel, xaxs=xaxs, yaxs=yaxs, las=1)
+    }
 
     goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
     lastyr <- max(goodyrs)
@@ -1134,6 +1144,20 @@ SSplotComparisons <-
       legendfun(legendlabels)
     }
   }
+
+  ###
+  ## notes from Ian on revised approach to indices:
+  #
+  #    this function was originally written for the 2011 hake assessment
+  #    where models with different fleet structures were being compared
+  #    however, that represents a relatively rare case.
+  #    in general, it should be possible to loop over all fleets with indices
+  #    and compare them across all models
+  #    instead of checking for alignment of indices$FleetNum within the
+  #    plotIndices() function itself, this function can occur within a loop over
+  #    fleet numbers. An initial check for matching sets of fleets could be used
+  #    and only revert to requiring the indexfleets input if there is a mismatch
+  #
 
   plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
 
@@ -1494,7 +1518,16 @@ SSplotComparisons <-
           warning("You are shading both tails and central 95% of density plots",
                   "which is illogical")
         }
-        if(densitytails & !is.na(parSD) && parSD>0){
+
+        doShade <- FALSE
+        if(mcmcVec[iline]) {
+          doShade <- TRUE
+        } else {
+          if(!is.na(parSD) && parSD>0) {
+            doShade <- TRUE
+          }
+        }
+        if(densitytails & doShade) {
           # figure out which points are in the tails of the distibutions
           x.lower <- x[x<=x2[1]]
           y.lower <- y[x<=x2[1]]
@@ -1506,7 +1539,7 @@ SSplotComparisons <-
           polygon(c(x.upper[1],x.upper,rev(x.upper)[1]),
                   c(0,y.upper,0),col=shadecol[iline],border=NA)
         }
-        if(densitymiddle & !is.na(parSD) && parSD>0){
+        if(densitymiddle & doShade) {#} & !is.na(parSD) && parSD>0){
           x.middle <- x[x>=x2[1] & x<=rev(x2)[1]]
           y.middle <- y[x>=x2[1] & x<=rev(x2)[1]]
           polygon(c(x.middle[1],x.middle,rev(x.middle)[1]),
@@ -1613,6 +1646,19 @@ SSplotComparisons <-
     }
   }
 
+  # subplot 18: F (harvest rate or fishing mortality, however defined)
+  if(18 %in% subplots){
+    if(any(uncertainty)){
+      if(verbose) cat("subplot 18: F value with uncertainty\n")
+      if(plot) plotF(show_uncertainty=TRUE)
+      if(print){
+        pngfun("compare18_Fvalue_uncertainty.png")
+        plotF(show_uncertainty=TRUE)
+        dev.off()
+      }
+    }
+  }
+  
   # subplot 7: recruits
   if(7 %in% subplots){
     if(verbose) cat("subplot 7: recruits\n")

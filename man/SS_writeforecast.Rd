@@ -5,7 +5,7 @@
 \title{write forecast file}
 \usage{
 SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
-  overwrite = FALSE, verbose = TRUE)
+  writeAll = FALSE, overwrite = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{mylist}{List object created by \code{\link{SS_readforecast}}.}
@@ -14,6 +14,10 @@ SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
 directory).}
 
 \item{file}{Filename for new forecast file. Default="forecast.ss".}
+
+\item{writeAll}{Should the function continue even if Forecast=0
+(at which point SS stops reading, and remaining elements in list may not be
+available, depending on settings used in SS_readforecast)}
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
@@ -29,10 +33,7 @@ Ian Taylor
 }
 \seealso{
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_readdat}}, \code{\link{SS_readctl}},
-\code{\link{SS_writestarter}}, \code{\link{SS_writedat}},
-\code{\link{SS_writectl}}
+\code{\link{SS_readdat}},
+\code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
 }
-\keyword{data}
-\keyword{manip}
 

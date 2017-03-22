@@ -49,7 +49,4 @@ Ian Taylor
 \seealso{
 \code{\link{SS_output}} \code{\link{SSsummarize}}
 }
-\keyword{data}
-\keyword{list}
-\keyword{manip}
 

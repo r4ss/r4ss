@@ -14,9 +14,9 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.24.0\cr Date: \tab 2015-12-15\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.25.1\cr Date: \tab 2017-01-21\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
-Should be compatible with Stock Synthesis versions 3.20 through 3.30.
+Should be compatible with Stock Synthesis versions 3.21 through 3.30.
 }
 \examples{
 
@@ -34,12 +34,12 @@ Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
 Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
 Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
 Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
-Sean C. Anderson, and other contributors.
+Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
+Andrew B. Cooper, Andi Stephens, and Neil Klaer
  Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
 \references{
 r4ss on GitHub: \url{https://github.com/r4ss}
 \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 }
-\keyword{package}
 

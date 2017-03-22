@@ -16,7 +16,6 @@
 #' @author Allan Hicks
 #' @export
 #' @seealso \code{\link{SSsummarize}} \code{\link{SSplotComparisons}}
-#' @keywords data manip list
 #' @examples
 #' 
 #'   \dontrun{

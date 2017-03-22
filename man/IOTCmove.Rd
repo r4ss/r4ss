@@ -34,5 +34,4 @@ example of how a wrapper function might be written for any other model.
 \author{
 Ian Taylor
 }
-\keyword{hplot}
 

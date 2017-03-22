@@ -5,7 +5,8 @@
 \title{Apply Francis composition weighting method TA1.8 for conditional age-at-length fits}
 \usage{
 SSMethod.Cond.TA1.8(fit, fleet, part = 0:2, seas = NULL, plotit = TRUE,
-  maxpanel = 1000, FullDiagOut = FALSE)
+  printit = TRUE, maxpanel = 1000, FullDiagOut = FALSE,
+  ShowVersionB = FALSE)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -28,26 +29,35 @@ option 'comb' is used.}
 \item{plotit}{if TRUE, make an illustrative plot like one or more
 panels of Fig. 4 in Francis (2011).}
 
+\item{printit}{if TRUE, print results to R console.}
+
 \item{maxpanel}{maximum number of panels within a plot}
 
 \item{FullDiagOut}{Print full diagnostics?}
+
+\item{ShowVersionB}{Report the Version B value in addition to the default?}
 }
 \description{
-Uses an extension of method TA1.8 (described in Appendix A of Francis 2011)
+Uses an extension of method TA1.8 (described in Appendix A of Francis, 2011)
 to do stage-2 weighting of conditional age at length composition data from a
-Stock Synthesis model. Outputs two versions (A and B) of a mutiplier, \emph{w},
+Stock Synthesis model.
+}
+\details{
+The function outputs a mutiplier, \emph{w},
 (with bootstrap 95\% confidence intervals) so that
 \emph{N2i} = \emph{w} x \emph{N1i},
 where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
 sample sizes for the \emph{i}th composition. Optionally makes a plot
-(for version A) of observed and expected mean ages, with two alternative
+of observed and expected mean ages, with two alternative
 sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
-(thick lines) - for the observed values.\cr
-\cr
-The two versions of w differ according to whether the calculated mean ages are
-indexed by year (version A) or by year and length bin (version B).  Version A is
-recommended; version B is included for historical reasons.\cr
-\cr
+(thick lines) - for the observed values.
+
+This function formerly reported two versions of w differ according to whether
+the calculated mean ages are
+indexed by year (version A) or by year and length bin (version B).
+However, research by Punt (2015) found Version A to perform better and
+version B is no longer recommended and is only reported if requested by the user.
+
 CAUTIONARY/EXPLANATORY NOTE. The large number of options available in SS makes it
 very difficult to be sure that what this function does is appropriate for all
 combinations of options. The following notes (for version A) might help anyone
@@ -70,8 +80,10 @@ Chris Francis, Andre Punt, Ian Taylor
 }
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
-fisheries stock assessment models. Canadian Journal of
-Fisheries and Aquatic Sciences 68: 1124-1138.
+fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
+
+Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
+Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
 }
 \seealso{
 \code{\link{SSMethod.TA1.8}}

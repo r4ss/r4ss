@@ -38,7 +38,6 @@
 #' @param las Style of axis labels (see ?par for more info).
 #' @param allopen Should all bubbles be open (instead of just negative values)?
 #' @author Ian Stewart and Ian Taylor
-#' @keywords aplot hplot
 bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
                      bg.open=gray(0.95,0.3),
                      legend=TRUE,legendloc='top',

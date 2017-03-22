@@ -7,6 +7,8 @@
 #' @param subplots vector controlling which subplots to create
 #' @param latency period of tag mixing to exclude from plots (in future could
 #' be included in SS output)
+#' @param taggroups which tag groups to include in the plots. Default=NULL
+#' causes all groups to be included.
 #' @param rows number or rows of panels for regular plots
 #' @param cols number or columns of panels for regular plots
 #' @param tagrows number or rows of panels for multi-panel plots
@@ -40,9 +42,8 @@
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotTags <-
-  function(replist=replist, subplots=1:8, latency=NULL,
+  function(replist=replist, subplots=1:8, latency=NULL, taggroups=NULL,
            rows=1, cols=1,
            tagrows=3, tagcols=3,
            plot=TRUE, print=FALSE,
@@ -60,10 +61,11 @@ SSplotTags <-
            plotdir="default",
            verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -74,9 +76,13 @@ SSplotTags <-
   if(is.null(tagdbase2) || nrow(tagdbase2)==0){
     if(verbose) cat("skipping tag plots because there's no tagging data\n")
   }else{
-    ## if(verbose) cat("Running tag plot code.\n",
-    ##                 "  Tag latency (mixing period) is set to ",latency,".\n",
-    ##                 "  To change value, use the 'latency' input to the SSplotTags function.\n",sep="")
+    # filter tag groups if requested
+    if(!is.null(taggroups)){
+      tagdbase2 <- tagdbase2[tagdbase2$Rep %in% taggroups,]
+      cat("Filtered tag groups for plotting based on input vector taggroups\n",
+          "Plots will show", length(unique(tagdbase2$Rep)),
+          "out of", length(unique(replist$tagdbase2$Rep)), "total included in the model.\n")
+    }
     
     # calculations needed for printing to multiple PNG files
     grouprange     <- unique(tagdbase2$Rep)
@@ -160,7 +166,7 @@ SSplotTags <-
     tagobs <- aggregate(x$Obs,by=list(x$Yr.S,x$Rep),FUN=sum,na.rm=TRUE)
     tagexp <- aggregate(x$Exp,by=list(x$Yr.S,x$Rep),FUN=sum,na.rm=TRUE)
     Recaps <- data.frame(Yr.S=tagobs[,1],Group=tagobs[,2],Obs=tagobs[,3],Exp=tagexp[,3])
-
+print(head(Recaps))
     xlim <- range(Recaps$Yr.S)
     xx2 <- aggregate(Recaps$Obs,by=list(Recaps$Yr.S),FUN=sum,na.rm=TRUE)
     xx3 <- aggregate(Recaps$Exp,by=list(Recaps$Yr.S),FUN=sum,na.rm=TRUE)
@@ -181,6 +187,7 @@ SSplotTags <-
 
     Recaps$Pearson <- (Recaps$Obs-Recaps$Exp)/sqrt(Recaps$Exp)
     Recaps$Pearson[Recaps$Exp==0] <- NA
+print(head(Recaps))
 
     tagfun3 <- function(){
       # bubble plot of observed recapture data
@@ -283,7 +290,7 @@ SSplotTags <-
       if(1 %in% subplots){
         for(ipage in 1:npages){
           if(npages>1) pagetext <- paste("_page",ipage,sep="") else pagetext <- ""
-          file <- paste(plotdir,filenamestart,pagetext,".png",sep="")
+          file <- paste(filenamestart,pagetext,".png",sep="")
           caption <- paste(labels[4],"(lighter colored bars indicate latency period excluded from likelihood)")
           if(npages>1) caption <- paste(caption, ", (plot ",ipage,"of ",npages,")",sep="")
           plotinfo <- pngfun(file=file, caption=caption)
@@ -292,49 +299,49 @@ SSplotTags <-
         }
       }
       if(2 %in% subplots){
-        file <- paste(plotdir,"tags_aggregated.png",sep="")
+        file <- "tags_aggregated.png"
         caption <- labels[5]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun2()
         dev.off()
       }
       if(3 %in% subplots){
-        file <- paste(plotdir,"tags_data_bubbleplot.png",sep="")
+        file <- "tags_data_bubbleplot.png"
         caption <- labels[6]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun3()
         dev.off()
       }
       if(4 %in% subplots){
-        file <- paste(plotdir,"tags_residuals.png",sep="")
+        file <- "tags_residuals.png"
         caption <- labels[7]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun4()
         dev.off()
       }
       if(5 %in% subplots){
-        file <-paste(plotdir,"tags_lines.png",sep="")
+        file <- "tags_lines.png"
         caption <- labels[8]
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun5()
         dev.off()
       }
       if(6 %in% subplots){
-        file <-paste(plotdir,"tags_parameters.png",sep="")
+        file <- "tags_parameters.png"
         caption <- "Tag-related parameters"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun6()
         dev.off()
       }
       if(7 %in% subplots){
-        file <-paste(plotdir,"tags_alive.png",sep="")
+        file <- "tags_alive.png"
         caption <- "'Tags alive' by tag group"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun7()
         dev.off()
       }
       if(8 %in% subplots){
-        file <-paste(plotdir,"tags_total_recaptures.png",sep="")
+        file <- "tags_total_recaptures.png"
         caption <- "Total tag recaptures"
         plotinfo <- pngfun(file=file, caption=caption)
         tagfun8()

@@ -75,6 +75,4 @@ and negative values have open bubbles.
 \author{
 Ian Stewart and Ian Taylor
 }
-\keyword{aplot}
-\keyword{hplot}
 

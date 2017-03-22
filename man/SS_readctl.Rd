@@ -2,33 +2,60 @@
 % Please edit documentation in R/SS_readctl.R
 \name{SS_readctl}
 \alias{SS_readctl}
-\title{read control file}
+\title{read control file from SS}
 \usage{
-SS_readctl(file)
+SS_readctl(file, version = "3.24", verbose = TRUE, echoall = FALSE,
+  nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA,
+  Nfish = 2, Nsurv = 2, TG_Nrelgrp = NA)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
+
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
+\item{verbose}{Should there be verbose output while running the file?
+Default=TRUE.}
+
+\item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
+data as it is being read.}
+
+\item{nseas}{number of season in the model. This information is not
+explicitly available in control file}
+
+\item{N_areas}{number of spatial areas in the model. This information is also not
+explicitly available in control file}
+
+\item{Nages}{oldest age in the model. This information is also not
+explicitly available in control file}
+
+\item{Ngenders}{number of genders in the model. This information is also not
+explicitly available in control file}
+
+\item{Npopbins}{number of population bins in the model. This information is also not
+explicitly available in control file and this information is only required if length based
+maturity vector is directly supplied (Maturity option of 6), and not yet tested}
+
+\item{Nfish}{number of fisheries in the model. This information is also not
+explicitly available in control file}
+
+\item{Nsurv}{number of survey fleets in the model. This information is also not
+explicitly available in control file}
+
+\item{TG_Nrelgrp}{number of tag release groups in the model. This information is also not
+explicitly available in control file}
 }
 \description{
-read Stock Synthesis control file into list object in R
-}
-\details{
-This function is not fully implemented. The logic to figure out all the
-details of a Stock Synthesis control file is very complex, so this function
-may be completed in a way that is not totally consistent with the other
-similar files. Or it may never be completed at all. The functions
-\code{\link{SS_changepars}} and \code{\link{SS_parlines}} offer alternatives
-for working with SS control files.
+Read Stock Synthesis control file into list object in R. This function is a
+wrapper which calls either SS_readctl_3.24 or SS_readctl_3.30 (not yet written).
+This setup allows those functions to be cleaner (if somewhat redundant)
+than a single function that attempts to do everything.
 }
 \author{
-Ian Taylor
+Ian G. Taylor, Yukio Takeuchi
 }
 \seealso{
-\code{\link{SS_changepars}}, \code{\link{SS_parlines}},
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_readdat}}, \code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-\code{\link{SS_writectl}}
+\code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
+\code{\link{SS_readdat_3.24}}
 }
-\keyword{data}
 

@@ -8,7 +8,7 @@
 #' @param fileN Vector of filenames containing rebuilder output.
 #' Default=c("res.csv").
 #' @param Titles Titles for plots when using multiple filenames. Default="".
-#' @param ncols Number of columns to read in output file (fileN). Deafult=200.
+#' @param ncols Number of columns to read in output file (fileN). Default=200.
 #' @param Plots List to get specific plots (currently 1 through 8).
 #' Default=list(1:25). If there are multiple files, supply a list of vectors,
 #' e.g. list(c(1,5),c(2:5))
@@ -40,7 +40,6 @@
 #' @param lwd Line width for many of the plot elements. Default=2.
 #' @author Andre Punt, Ian Taylor
 #' @export
-#' @keywords dplot hplot
 #' @examples
 #' 
 #' \dontrun{

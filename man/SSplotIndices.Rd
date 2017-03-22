@@ -116,5 +116,4 @@ Ian Stewart, Ian Taylor, James Thorson
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\keyword{hplot}
 

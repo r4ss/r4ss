@@ -1,9 +1,9 @@
 #' Summarize the output from multiple Stock Synthesis models.
-#' 
+#'
 #' Summarize various quantities from the model output collected by
 #' \code{\link{SSgetoutput}} and return them in a list of tables and vectors.
-#' 
-#' 
+#'
+#'
 #' @param biglist A list of lists created by \code{\link{SSgetoutput}}.
 #' @param sizeselfactor A string or vector of strings indicating which elements
 #' of the selectivity at length output to summarize. Default=c("Lsel").
@@ -25,7 +25,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SSgetoutput}}
-#' @keywords data manip list
 SSsummarize <- function(biglist,
                         sizeselfactor="Lsel",
                         ageselfactor="Asel",
@@ -64,6 +63,7 @@ SSsummarize <- function(biglist,
   nsexes     <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
   likelihoods_by_fleet <- NULL
+  likelihoods_by_tag_group <- NULL
   indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
@@ -74,11 +74,12 @@ SSsummarize <- function(biglist,
   startyrs   <- NULL
   endyrs     <- NULL
   SPRratioLabels <- NULL
+  FvalueLabels <- NULL
   sprtargs   <- NULL
   btargs     <- NULL
   minbthreshs <- NULL
   FleetNames <- list()
-  
+
   warn <- FALSE # flag for whether filter warning has been printed or not
 
   # loop over models within biglist
@@ -96,7 +97,7 @@ SSsummarize <- function(biglist,
     # start and end years
     startyrs <- c(startyrs, stats$startyr)
     endyrs   <- c(endyrs,   stats$endyr)
-    
+
     # size selectivity
     sizeseltemp <- stats$sizeselex
     if(is.null(sizeselfactor)) sizeselfactor <- unique(sizeseltemp$Factor)
@@ -110,7 +111,7 @@ SSsummarize <- function(biglist,
                                 all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("problem summarizing size selectivity due to mismatched columns ",
+        cat("\nproblem summarizing size selectivity due to mismatched columns ",
             "(perhaps different bins)\n")
       }
     }
@@ -135,26 +136,43 @@ SSsummarize <- function(biglist,
     }
     rownames(agesel) <- 1:nrow(agesel)
 
-    
+
     ## growth (females only)
     growthtemp <- stats$growthseries
     imorphf <- ifelse(max(stats$morph_indexing$Index)==10,3,1)
     growthtemp <- growthtemp[growthtemp$Morph==imorphf,-(1:4)]
     growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp),]))
 
-    ## likelihoods
+    ## likelihoods (total by component)
     liketemp <- stats$likelihoods_used
     for(irow in 1:nrow(liketemp)){
       likelihoods[likenames==rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
+    ## likelihoods by fleet
+    # add initial column with model number to table from each model
     liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
+    # test for presence of existing table to append to with matching number of columns
     if(is.null(likelihoods_by_fleet) ||
        (ncol(likelihoods_by_fleet)==ncol(liketemp2) &&
          all(names(likelihoods_by_fleet)==names(liketemp2)))){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
       cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
+    }
+
+    ## likelihoods by tag group
+    # add initial column with model number to table from each model
+    if(!is.null(stats$likelihoods_by_tag_group)){
+      liketemp3 <- data.frame(model=imodel,stats$likelihoods_by_tag_group)
+      # test for presence of existing table to append to with matching number of columns
+      if(is.null(likelihoods_by_tag_group) ||
+         (ncol(likelihoods_by_tag_group)==ncol(liketemp3) &&
+            all(names(likelihoods_by_tag_group)==names(liketemp3)))){
+        likelihoods_by_tag_group <- rbind(likelihoods_by_tag_group,liketemp3)
+      }else{
+        cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
+      }
     }
 
     ## compile parameters
@@ -165,7 +183,7 @@ SSsummarize <- function(biglist,
       parphases[parnames==parstemp$Label[ipar], imodel] <- parstemp$Phase[ipar]
     }
     cat(",  N active pars=",sum(!is.na(parstemp$Active_Cnt)),"\n",sep="")
-    
+
     ## compile derived quantities
     quantstemp <- stats$derived_quants
     for(iquant in 1:nrow(quantstemp)){
@@ -173,16 +191,19 @@ SSsummarize <- function(biglist,
       quantsSD[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
     }
     SPRratioLabels <- c(SPRratioLabels, stats$SPRratioLabel)
+    FvalueLabels   <- c(FvalueLabels,   stats$F_report_basis)
     sprtargs       <- c(sprtargs,       stats$sprtarg)
     btargs         <- c(btargs,         stats$btarg)
     minbthreshs    <- c(minbthreshs,    stats$minbthresh)
     FleetNames[[imodel]] <- stats$FleetNames
-    
+
     ## indices
     indextemp <- stats$cpue
     if(is.na(indextemp[[1]][1])){
       cat("no index data\n")
     }else{
+      # switch column name used in 3.24 to new value used in 3.30 to allow comparisons
+      names(indextemp)[ names(indextemp)=="Yr.S"] <- "Yr.frac"
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
       if(is.null(indices) || all(names(indextemp)==names(indices))){
@@ -235,7 +256,6 @@ SSsummarize <- function(biglist,
     quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
-
   # identify spawning biomass parameters
   SpawnBio <- quants[grep("SPB_",quants$Label), ]
   SpawnBioSD <- quantsSD[grep("SPB_",quants$Label), ]
@@ -251,7 +271,7 @@ SSsummarize <- function(biglist,
     cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
     SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
     SpawnBioSD$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
-    for(imodel in 1:n){ 
+    for(imodel in 1:n){
       if(is.na(SpawnBio[3,imodel])){
         minyr <- min(SpawnBio$Yr[-(1:2)][!is.na(SpawnBio[-(1:2),imodel])]) # first year with value
         SpawnBio[SpawnBio$Yr==minyr-2, imodel] <- SpawnBio[1,imodel]
@@ -263,7 +283,7 @@ SSsummarize <- function(biglist,
       }
     }
   }
-  
+
   SpawnBioLower <- SpawnBioUpper <- SpawnBioSD
   SpawnBioLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(SpawnBio[,1:n]),
                                sd=as.matrix(SpawnBioSD[,1:n]))
@@ -280,7 +300,7 @@ SSsummarize <- function(biglist,
   BratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Bratio[,1:n]),
                              sd=as.matrix(BratioSD[,1:n]))
 
-  # identify biomass ratio parameters
+  # identify SPR ratio derived quantities
   SPRratio <- quants[grep("^SPRratio_",quants$Label),]
   SPRratioSD <- quantsSD[grep("^SPRratio_",quantsSD$Label),]
 
@@ -289,8 +309,18 @@ SSsummarize <- function(biglist,
                              sd=as.matrix(SPRratioSD[,1:n]))
   SPRratioUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(SPRratio[,1:n]),
                              sd=as.matrix(SPRratioSD[,1:n]))
+
+  # identify F derived quantities
+  Fvalue <- quants[grep("^F_",quants$Label),]
+  FvalueSD <- quantsSD[grep("^F_",quantsSD$Label),]
+
+  FvalueLower <- FvalueUpper <- FvalueSD
+  FvalueLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(Fvalue[,1:n]),
+                             sd=as.matrix(FvalueSD[,1:n]))
+  FvalueUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Fvalue[,1:n]),
+                             sd=as.matrix(FvalueSD[,1:n]))
   
-  
+
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
   recruitsSD <- quantsSD[grep("^Recr_",quantsSD$Label), ]
@@ -299,7 +329,7 @@ SSsummarize <- function(biglist,
   if(length(grep("Recr_Unfished",recruitsSD$Label))>0)
     recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label),]
   minyr <- min(recruits$Yr,na.rm=TRUE)
-  
+
   recruits$Yr[grep("Recr_Virgin",recruits$Label)] <- minyr - 2
   recruits$Yr[grep("Recr_Initial",recruits$Label)] <- minyr - 1
   recruitsSD$Yr[grep("Recr_Virgin",recruitsSD$Label)] <- minyr - 2
@@ -309,7 +339,7 @@ SSsummarize <- function(biglist,
   if(any(is.na(recruits[3,]))){
     cat("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year\n")
     recruits$Label[1:2] <- c("Recr_Virgin*","Recr_Initial*")
-    for(imodel in 1:n){ 
+    for(imodel in 1:n){
       if(is.na(recruits[3,imodel])){
         minyr <- min(recruits$Yr[-(1:2)][!is.na(recruits[-(1:2),imodel])]) # first year with value
         recruits[recruits$Yr==minyr-2, imodel] <- recruits[1,imodel]
@@ -336,23 +366,40 @@ SSsummarize <- function(biglist,
   # if there are any initial age parameters, figure out what year they're from
   InitAgeRows <- grep("InitAge",pars$Label)
   if(length(InitAgeRows)>0){
-    temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_")) # separate out values from string
-    InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)]) # get odd entries in above separation
+    # separate out values from string
+    temp <- unlist(strsplit(pars$Label[InitAgeRows],"InitAge_"))
+    # get odd entries in above separation
+    InitAgeVals <- as.numeric(temp[seq(2,length(temp),2)])
+    # make empty matrix to store values
     InitAgeYrs <- matrix(NA,nrow=length(InitAgeRows),ncol=n)
+    # loop over models
     for(imodel in 1:n){
+      # get parameters
       modelpars <- pars[,imodel]
+      # get vector of years associated with recdevs
       devyears <- pars$Yr[!is.na(modelpars) & pars$recdev]
-      if(any(!is.na(devyears))) minyr <- min(devyears,na.rm=TRUE) else minyr <- NA
+      # figure out first year of recdevs that already have years figured out
+      if(any(!is.na(devyears))){
+        minyr <- min(devyears,na.rm=TRUE)
+      }else{
+        minyr <- NA
+      }
+      # determine which parameter values are associated with InitAge and not NA
       good <- !is.na(modelpars[InitAgeRows])
-      if(!is.na(minyr) & minyr>0 & any(good)) InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
+      # if minyr was not NA, and is above 0 and there are good InitAge values,
+      # then compute the associated year
+      if(!is.na(minyr) & minyr>0 & any(good)){
+        InitAgeYrs[good,imodel] <- minyr - InitAgeVals[good]
+      }
     }
     # check for differences in assignment of initial ages
     if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) - apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
-      cat("warning: years for InitAge parameters are differ between models, use InitAgeYrs matrix\n")
+      cat("warning: years for InitAge parameters differ between models, use InitAgeYrs matrix\n")
     }else{
       pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
     }
   }else{
+    # no parameters seem to be associated with initial age structure
     InitAgeYrs <- NA
   }
   if(any(pars$recdev)){
@@ -371,7 +418,7 @@ SSsummarize <- function(biglist,
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
   }
 
-  # function to sort by year 
+  # function to sort by year
   sort.fn <- function(x){
     if(!is.null(x)){
       return( x[order(x$Yr),] )
@@ -379,7 +426,7 @@ SSsummarize <- function(biglist,
       return()
     }
   }
-  
+
   mylist <- list()
   mylist$n              <- n
   mylist$npars          <- npars
@@ -396,6 +443,7 @@ SSsummarize <- function(biglist,
   mylist$likelihoods    <- likelihoods
   mylist$likelambdas    <- likelambdas
   mylist$likelihoods_by_fleet <- likelihoods_by_fleet
+  mylist$likelihoods_by_tag_group <- likelihoods_by_tag_group
   mylist$SpawnBio       <- sort.fn(SpawnBio)
   mylist$SpawnBioSD     <- sort.fn(SpawnBioSD)
   mylist$SpawnBioLower  <- sort.fn(SpawnBioLower)
@@ -409,6 +457,11 @@ SSsummarize <- function(biglist,
   mylist$SPRratioLower  <- sort.fn(SPRratioLower)
   mylist$SPRratioUpper  <- sort.fn(SPRratioUpper)
   mylist$SPRratioLabels <- SPRratioLabels
+  mylist$Fvalue         <- sort.fn(Fvalue)
+  mylist$FvalueSD       <- sort.fn(FvalueSD)
+  mylist$FvalueLower    <- sort.fn(FvalueLower)
+  mylist$FvalueUpper    <- sort.fn(FvalueUpper)
+  mylist$FvalueLabels   <- FvalueLabels
   mylist$sprtargs       <- sprtargs
   mylist$btargs         <- btargs
   mylist$minbthreshs    <- minbthreshs
@@ -430,6 +483,6 @@ SSsummarize <- function(biglist,
   mylist$SpawnOutputUnits <- SpawnOutputUnits
   mylist$FleetNames     <- FleetNames
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
-  
+
   return(invisible(mylist))
 } # end function

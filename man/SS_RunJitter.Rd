@@ -33,7 +33,37 @@ Iteratively runs SS model with different jittered starting parameter values
 (jitter value must be mannually set in starter.ss). Output files are renamed
 in the format Report1.sso, Report2.sso, etc.
 }
+\examples{
+  \dontrun{
+    #### Change starter file appropriately (can also edit file directly)
+    starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
+    # CHANGE THIS FOR GLOBAL_PAR START
+    starter$init_values_src = 1
+    # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
+    starter$jitter_fraction = 0.1
+    # write modified starter file
+    SS_writestarter(starter, dir=mydir, overwrite=TRUE)
+
+    #### Run jitter using this function
+    mydir <- RunFile
+    extras <- "-nohess -cbs 500000000 -gbs 500000000"
+    model <- "ss3"
+    Njitter <- 25
+
+    SS_RunJitter(mydir=mydir, model=model, extras=extras,
+                 Njitter=Njitter, Intern=TRUE)
+
+    #### Read in results using other r4ss functions
+    profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
+    # summarize output
+    profilesummary <- SSsummarize(profilemodels)
+    # Likelihoods
+    profilesummary$likelihoods[1,]
+    # Parameters
+    profilesummary$pars
+  }
+}
 \author{
-James T. Thorson, Kelli F. Johnson
+James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 }
 

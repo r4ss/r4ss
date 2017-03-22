@@ -26,6 +26,4 @@ Ian Taylor
 A website related to FishGraph is
 \url{http://r-forge.r-project.org/projects/fishgraph/}
 }
-\keyword{data}
-\keyword{manip}
 

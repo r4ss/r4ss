@@ -39,6 +39,4 @@ to add access to ylim and contents.
 \author{
 Bill Venables, Ian Stewart, Ian Taylor, John Wallace
 }
-\keyword{aplot}
-\keyword{hplot}
 

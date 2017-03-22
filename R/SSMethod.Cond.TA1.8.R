@@ -1,20 +1,24 @@
 #' Apply Francis composition weighting method TA1.8 for conditional age-at-length fits
 #'
-#' Uses an extension of method TA1.8 (described in Appendix A of Francis 2011)
+#' Uses an extension of method TA1.8 (described in Appendix A of Francis, 2011)
 #' to do stage-2 weighting of conditional age at length composition data from a
-#' Stock Synthesis model. Outputs two versions (A and B) of a mutiplier, \emph{w},
+#' Stock Synthesis model.
+#'
+#' The function outputs a mutiplier, \emph{w},
 #' (with bootstrap 95\% confidence intervals) so that
 #' \emph{N2i} = \emph{w} x \emph{N1i},
 #' where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
 #' sample sizes for the \emph{i}th composition. Optionally makes a plot
-#' (for version A) of observed and expected mean ages, with two alternative
+#' of observed and expected mean ages, with two alternative
 #' sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
-#' (thick lines) - for the observed values.\cr
-#' \cr
-#' The two versions of w differ according to whether the calculated mean ages are
-#' indexed by year (version A) or by year and length bin (version B).  Version A is
-#' recommended; version B is included for historical reasons.\cr
-#' \cr
+#' (thick lines) - for the observed values.
+#'
+#' This function formerly reported two versions of w differ according to whether
+#' the calculated mean ages are
+#' indexed by year (version A) or by year and length bin (version B).
+#' However, research by Punt (2015) found Version A to perform better and
+#' version B is no longer recommended and is only reported if requested by the user.
+#' 
 #' CAUTIONARY/EXPLANATORY NOTE. The large number of options available in SS makes it
 #' very difficult to be sure that what this function does is appropriate for all
 #' combinations of options. The following notes (for version A) might help anyone
@@ -47,18 +51,23 @@
 #' option 'comb' is used.
 #' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in Francis (2011).
+#' @param printit if TRUE, print results to R console.
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?
+#' @param ShowVersionB Report the Version B value in addition to the default?
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
-#' fisheries stock assessment models. Canadian Journal of
-#' Fisheries and Aquatic Sciences 68: 1124-1138.
+#' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
+#' 
+#' Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
+#' Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
 #'
 SSMethod.Cond.TA1.8 <-
-  function(fit,fleet,part=0:2,seas=NULL,
-           plotit=TRUE,maxpanel=1000,FullDiagOut=FALSE)
+  function(fit, fleet, part=0:2, seas=NULL,
+           plotit=TRUE, printit=TRUE, maxpanel=1000, FullDiagOut=FALSE,
+           ShowVersionB=FALSE)
 {
   # Check the type is correct and the pick.gender is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -191,18 +200,24 @@ SSMethod.Cond.TA1.8 <-
                                 c(0.025,0.975)))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
 
-  # Original Francis method
-  Nmult2 <- 1/var(AllRes,na.rm=TRUE)
-  tmp <- matrix(sample(AllRes,1000*length(AllRes),replace=TRUE),length(AllRes))
-  confint2 <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
-                                 c(0.025,0.975)))
-
-  Outs <- paste("Francis CAA Weights-A:",fit$FleetNames[fleet],":",
+  Outs <- paste("Francis CAA Weights:",fit$FleetNames[fleet],":",
                 round(Nmult,5),round(confint[1],5),round(confint[2],5))
-  print(Outs)
-  Outs <- paste("Francis CAA Weights-B:",fit$FleetNames[fleet],":",
-                round(Nmult2,5),round(confint2[1],5),round(confint2[2],5))
-  print(Outs)
+  if(printit){
+    print(Outs)
+  }
+  if(ShowVersionB){
+    # Original Francis method (a.k.a. Francis-B)
+    Nmult2 <- 1/var(AllRes,na.rm=TRUE)
+    tmp <- matrix(sample(AllRes,1000*length(AllRes),replace=TRUE),length(AllRes))
+    confint2 <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
+                                   c(0.025,0.975)))
 
+    Outs <- paste("Francis CAA Weights-Version B (not recommended):",
+                  fit$FleetNames[fleet],":",
+                  round(Nmult2,5),round(confint2[1],5),round(confint2[2],5))
+    if(printit){
+      print(Outs)
+    }
+  }
   return(Output)
 }

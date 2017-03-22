@@ -4,21 +4,19 @@
 \alias{SSplotNumbers}
 \title{Plot numbers-at-age related data and fits.}
 \usage{
-SSplotNumbers(replist, subplots = 1:9, plot = TRUE, print = FALSE,
+SSplotNumbers(replist, subplots = 1:10, plot = TRUE, print = FALSE,
   numbers.unit = 1000, areas = "all", areanames = "default",
   areacols = "default", pntscalar = 2.6, bub.bg = gray(0.5, alpha = 0.5),
   bublegend = TRUE, period = c("B", "M"), add = FALSE,
   labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
   "Mean observed age (yr)", "Mean age (yr)", "mean age in the population",
   "Ageing imprecision", "Numbers at age at equilibrium",
-  "Equilibrium age distribution", "Sex ratio of numbers at age (males/females)",
-  "Length", "Mean length (cm)", "mean length (cm) in the population",
+  "Equilibrium age distribution", "Fraction female in numbers at age", "Length",
+  "Mean length (cm)", "mean length (cm) in the population",
   "expected numbers at age", "Beginning of year", "Middle of year",
-  "expected numbers at length",
-  "Sex ratio of numbers at length (males/females)",
-  "Sex ratio of numbers at length (females/males)"), pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  plotdir = "default", verbose = TRUE)
+  "expected numbers at length", "Fraction female in numbers at length"),
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
+  cex.main = 1, plotdir = "default", mainTitle = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -71,6 +69,8 @@ with SSv3.11)}
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
+\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+
 \item{verbose}{report progress to R GUI?}
 }
 \description{
@@ -84,5 +84,4 @@ Ian Stewart, Ian Taylor
 \seealso{
 \code{\link{SS_output}}, \code{\link{SS_plots}}
 }
-\keyword{hplot}
 

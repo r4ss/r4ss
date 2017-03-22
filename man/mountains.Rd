@@ -52,5 +52,4 @@ Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical
 model for stock assessment of southern bluefin tuna with temporal changes in
 selectivity. South African Journal of Marine Science 25:331-362.
 }
-\keyword{hplot}
 

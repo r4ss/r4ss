@@ -49,7 +49,6 @@
 #' @export
 #' @seealso \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
 #' \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
-#' @keywords data manip
 #' @examples
 #' 
 #'   \dontrun{
@@ -279,6 +278,7 @@ function(
         file.copy('Report.sso',paste('Report',i,".sso",sep=""),overwrite=overwrite)
         file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""),overwrite=overwrite)
         file.copy('covar.sso',paste('covar',i,".sso",sep=""),overwrite=overwrite)
+        file.copy('admodel.hes',paste('admodel',i,".hes",sep=""),overwrite=overwrite)
         file.copy(parfile,paste(model,'.par_',i,'.sso',sep=""),overwrite=overwrite)
       }
     } # end running stuff

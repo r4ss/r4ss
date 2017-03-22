@@ -61,5 +61,4 @@ Sci. 65: 2536-2551
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\keyword{hplot}
 

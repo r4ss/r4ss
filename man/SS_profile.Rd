@@ -142,6 +142,4 @@ Ian Taylor
 \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
 \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
 }
-\keyword{data}
-\keyword{manip}
 

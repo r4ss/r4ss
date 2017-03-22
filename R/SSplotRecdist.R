@@ -27,7 +27,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
-#' @keywords hplot
 SSplotRecdist <-
   function(replist,plot=TRUE,print=FALSE,
            areanames=NULL,
@@ -40,10 +39,12 @@ SSplotRecdist <-
            verbose=TRUE)
 {
   # plot of recruitment distribution between seasons and areas
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -90,7 +91,7 @@ SSplotRecdist <-
   
   if(plot) recdistfun()
   if(print){
-    file <- paste(plotdir,"recruitment_distribution.png",sep="")
+    file <- "recruitment_distribution.png"
     caption <- "Recruitment distribution by area and season"
     plotinfo <- pngfun(file=file, caption=caption)
     recdistfun()

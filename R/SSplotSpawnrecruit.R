@@ -38,7 +38,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,
            xlim=NULL,ylim=NULL,
@@ -55,10 +54,11 @@ SSplotSpawnrecruit <-
 {
   # plot of spawner recruit curve
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -168,14 +168,14 @@ SSplotSpawnrecruit <-
   }    
   if(print){
     if(1 %in% subplot){
-      file <- paste(plotdir,"/SR_curve.png",sep="")
+      file <- "SR_curve.png"
       caption <- "Spawner-recruit curve"
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn()
       dev.off()
     }
     if(2 %in% subplot){
-      file <- paste(plotdir,"/SR_curve2.png",sep="")
+      file <- "SR_curve2.png"
       caption <- paste("Spawner-recruit curve with labels on first, last, and years with (log) deviations >",textmindev)
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn(text=TRUE)

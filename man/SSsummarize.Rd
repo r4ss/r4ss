@@ -46,7 +46,4 @@ Ian Taylor
 \seealso{
 \code{\link{SSgetoutput}}
 }
-\keyword{data}
-\keyword{list}
-\keyword{manip}
 

@@ -13,7 +13,6 @@
 #' \url{http://www.pcouncil.org/wp-content/uploads/2006_hake_assessment_FINAL_ENTIRE.pdf}
 #' (A description is on page 41 and Figures 55-56 (pg 139-140) show some
 #' results.)
-#' @keywords data manip
 SSbootstrap <- function(){
   # this is not yet a generalized function, just some example code for how to do
   # a parametric bootstrap such as was done for the Pacific hake model in 2006

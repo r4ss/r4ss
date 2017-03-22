@@ -4,7 +4,8 @@
 \alias{SS_readforecast}
 \title{read forecast file}
 \usage{
-SS_readforecast(file = "forecast.ss", Nfleets, Nareas, verbose = TRUE)
+SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
+  version = "3.24", readAll = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -12,6 +13,14 @@ SS_readforecast(file = "forecast.ss", Nfleets, Nareas, verbose = TRUE)
 \item{Nfleets}{Number of fleets.}
 
 \item{Nareas}{Number of areas.}
+
+\item{nseas}{number of seasons}
+
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
+\item{readAll}{Should the function continue even if Forecast=0
+(at which point SS stops reading)}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }
@@ -23,9 +32,7 @@ Ian Taylor
 }
 \seealso{
 \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
-\code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
+\code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-\code{\link{SS_writectl}}
 }
-\keyword{data}
 

@@ -57,5 +57,4 @@ Ian Stewart
 \seealso{
 \code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
 }
-\keyword{data}
 

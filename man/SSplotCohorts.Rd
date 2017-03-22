@@ -76,6 +76,4 @@ Ian Taylor
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\keyword{aplot}
-\keyword{hplot}
 

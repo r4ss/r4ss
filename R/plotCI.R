@@ -18,7 +18,6 @@
 #' @param add Add points and intervals to existing plot? Default=FALSE.
 #' @param col Color for the points and lines.
 #' @author Bill Venables, Ian Stewart, Ian Taylor, John Wallace
-#' @keywords aplot hplot
 plotCI <-
   function (x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL,
             ..., sfrac = 0.01, ymax = NULL, add = FALSE, col = "black") {

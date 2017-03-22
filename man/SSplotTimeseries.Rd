@@ -80,5 +80,4 @@ Ian Taylor, Ian Stewart
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-\keyword{hplot}
 

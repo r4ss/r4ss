@@ -44,11 +44,11 @@
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @author Ian Taylor, Chantel Wetzel
+#' @param both Logcal to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.
+#' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
 #' \code{\link{SS_readdat}}
-#' @keywords hplot
 SSplotData <- function(replist,
                        plot=TRUE,print=FALSE,
                        plotdir="default",
@@ -60,15 +60,23 @@ SSplotData <- function(replist,
                        datasize=TRUE,
                        maxsize=0.5,
                        alphasize=1,
+                       both=T,
                        verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
+
+  ### override datasize variable in seasonal models
+  if(replist$nseasons > 1){
+    cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
+    datasize <- FALSE
+  }
 
   ### get info from replist
   # dimensions
@@ -76,8 +84,13 @@ SSplotData <- function(replist,
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
   nfishfleets   <- replist$nfishfleets
-  if(fleetnames[1]=="default") fleetnames  <- replist$FleetNames
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  
+  if(fleetnames[1]=="default"){
+    fleetnames  <- replist$FleetNames
+  }
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   # catch
   catch <- SSplotCatch(replist,plot=F,print=F,verbose=FALSE)
@@ -269,11 +282,10 @@ SSplotData <- function(replist,
     axis(1,at=xticks)
   }
   ## Always make the original one
-  if(plot) plotdata(datasize=FALSE)
+  if(plot & (!datasize | both)) plotdata(datasize=FALSE)
   if(print) {
-    file <- file.path(plotdir,"data_plot.png")
     caption <- "Data presence by year for each fleet"
-    plotinfo <- pngfun(file=file, caption=caption)
+    plotinfo <- pngfun(file="data_plot.png", caption=caption)
     plotdata(datasize=FALSE)
     dev.off()
   }
@@ -281,12 +293,13 @@ SSplotData <- function(replist,
   if(datasize){
       if(plot) plotdata(datasize=TRUE)
       if(print) {
-          file <- file.path(plotdir,"data_plot2.png")
           caption <- paste(
               "Data presence by year for each fleet, where circle area is relative <br> ",
               "within a data type, and proportional to precision for indices and compositions, <br> ",
-              "and absolute catch for catches")
-          plotinfo <- pngfun(file=file, caption=caption)
+              "and absolute catch for catches.<br> ",
+              "Note that since the circles are are scaled relative to maximum,<br> ",
+              "scaling within separate plots should not be compared.")
+          plotinfo <- pngfun(file="data_plot2.png", caption=caption)
           plotdata(datasize)
           dev.off()
       }
