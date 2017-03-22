@@ -480,14 +480,17 @@ SS_plots <-
     if(!is.null(plotinfo))
       plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
-    plotinfo <-
-      SSunavailableSpawningOutput(replist=replist, 
-                                  plot=!png, print=png,
-                                  plotdir=plotdir,
-                                  pwidth=pwidth, pheight=pheight,
-                                  punits=punits, res=res,
-                                  ptsize=ptsize, cex.main=cex.main)
-    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+    # add plots of unavailable (cryptic) spawning output
+    if(SS_versionNumeric < 3.3){ # needs revision to work in SS 3.30
+      plotinfo <-
+        SSunavailableSpawningOutput(replist=replist, 
+                                    plot=!png, print=png,
+                                    plotdir=plotdir,
+                                    pwidth=pwidth, pheight=pheight,
+                                    punits=punits, res=res,
+                                    ptsize=ptsize, cex.main=cex.main)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+    }
     
   } # end if igroup in plot or print
 
