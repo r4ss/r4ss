@@ -18,8 +18,8 @@
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 #' @export
 
-SSunavailableSpawingOutput <-
-  function(replist,
+SSunavailableSpawningOutput <-
+  function(replist, 
            plot=TRUE,print=FALSE,
            plotdir="default",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
@@ -234,7 +234,7 @@ SSunavailableSpawingOutput <-
                                       total.spawning.output)
       plot(years, portion.unavailable, xlab='Year', ylab='',
            ylim=c(0, 1.1), type='l', lwd=2, las=1)
-      mtext('Proportion of Spawing Output Unavailable', 3, line=0.25)
+      mtext('Proportion of Spawning Output Unavailable', 3, line=0.25)
       lines(years, portion.unavailable.small, col='red', lwd=2)
       lines(years, portion.unavailable.large, col='green4', lwd=2)
       legend('topright', c('Unavailable Small', 'Unavailable Large',
@@ -351,7 +351,7 @@ SSunavailableSpawingOutput <-
   }
 
   # Return the plot info
-  if(!is.null(plotinfo)) plotinfo$category <- "UnavailableSpawningOutput"
+  if(!is.null(plotinfo)) plotinfo$category <- "Sel"
   return(invisible(plotinfo))
 
 }
