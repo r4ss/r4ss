@@ -24,7 +24,6 @@ SSunavailableSpawningOutput <-
            plotdir="default",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
 {
-
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
     png(filename=file.path(plotdir, file),
@@ -71,12 +70,12 @@ SSunavailableSpawningOutput <-
     ##########################################################################
     # Step 2: Female numbers at age matrix by year
     num.at.age <- replist$natage
-    names(num.at.age)[10] <- "BegMid"
+    
     # old line which used "subset"
     ## num.at.age.female <- subset(num.at.age, Gender==1 & Era=="TIME" & BegMid=="B" & Area==area & Yr %in% years.with.catch)
     # replacement line without "subset"
     num.at.age.female <- num.at.age[num.at.age$Gender==1 & num.at.age$Era=="TIME" &
-                                      num.at.age$BegMid=="B" & num.at.age$Area==area &
+                                      num.at.age$"Beg/Mid"=="B" & num.at.age$Area==area &
                                         num.at.age$Yr %in% years.with.catch,]
     years <- num.at.age.female$Yr
     first.col <- which(names(num.at.age.female)=='0')
