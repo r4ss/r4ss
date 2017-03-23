@@ -257,6 +257,7 @@ SS_plots <-
   inputs      <- replist$inputs
   endyr       <- replist$endyr
   SS_version  <- replist$SS_version
+  SS_versionNumeric  <- replist$SS_versionNumeric
   StartTime   <- replist$StartTime
   Files_used  <- replist$Files_used
   FleetNames  <- replist$FleetNames
