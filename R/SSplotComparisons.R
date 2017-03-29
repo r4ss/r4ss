@@ -678,10 +678,15 @@ SSplotComparisons <-
     # add axes
     if(!add){
       abline(h=0,col="grey")
-      axis(1)
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
       }
+      
       # add shaded area over forecast years if at more than 1 forecast year is shown
       if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
         rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
@@ -752,9 +757,13 @@ SSplotComparisons <-
     if(!add){
       abline(h=0,col="grey")
       abline(h=1,col="grey",lty=2)
-      axis(1)
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
       }
       # add shaded area over forecast years if at more than 1 forecast year is shown
       if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
@@ -794,8 +803,9 @@ SSplotComparisons <-
       # plot that has labels on both left and right
       newmar[4] <- newmar[2]
       par(mar=newmar)
-      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-           ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1],
+           ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
+      axis(2)
     }
     if(show_uncertainty){
       addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
@@ -842,8 +852,13 @@ SSplotComparisons <-
       mtext(side=2,line=3,FvalueLabel)
     }
     if(!add){
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
       }
       # add shaded area over forecast years if at more than 1 forecast year is shown
       if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
@@ -884,8 +899,17 @@ SSplotComparisons <-
       newmar <- oldmar <- par()$mar
       newmar[4] <- newmar[2]
       par(mar=newmar)
-      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],
-           ylab="" ,xaxs=xaxs,yaxs=yaxs,las=1)
+      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1], 
+           ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
+      }
+      axis(2)
     }
     if(show_uncertainty){
       addpoly(Fvalue$Yr, lower=FvalueLower, upper=FvalueUpper)
@@ -1002,9 +1026,13 @@ SSplotComparisons <-
       legendfun(legendlabels)
     }
     if(!add){
-      axis(1)
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
       }
       # add shaded area over forecast years if at more than 1 forecast year is shown
       if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
@@ -1043,10 +1071,13 @@ SSplotComparisons <-
     }
     ylim <- range(-ylim,ylim) # make symmetric
 
-    if(!add) plot(0,xlim=xlim,ylim=ylim,
-         type="n",xlab=labels[1],ylab=labels[5],xaxs=xaxs,yaxs=yaxs,las=1)
-    abline(h=0,col="grey")
-
+    if(!add){
+      plot(0, xlim=xlim, ylim=ylim, axes=FALSE,
+           type="n", xlab=labels[1], ylab=labels[5], xaxs=xaxs, yaxs=yaxs, las=1)
+      axis(2)
+      abline(h=0, col="grey")
+    }
+    
     if(show_uncertainty){
       for(iline in 1:nlines){
         imodel <- models[iline]
@@ -1069,8 +1100,13 @@ SSplotComparisons <-
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
     if(!add){
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
+      if(tickEndYr){ # include ending year in axis labels
+        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        # make axis (excluding anything after the max ending year)
+        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
+      }else{
+        # nothing special (may include labels beyond the ending year)
+        axis(1)
       }
       # add shaded area over forecast years if at more than 1 forecast year is shown
       if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
@@ -1291,7 +1327,7 @@ SSplotComparisons <-
     }
 
     if(!add){
-      axis(1,at=yr)
+      axis(1, at=yr)
       if(tickEndYr){
         axis(1, at=max(endyrvec))
       }
@@ -1551,7 +1587,7 @@ SSplotComparisons <-
       if(!add) {
         abline(h=0,col="grey")
         xticks <- pretty(xlim)
-        axis(1,at=xticks,labels=format(xticks/xunits))
+        axis(1, at=xticks, labels=format(xticks/xunits))
         theLine <- 1
         if(cumulative) {
             axis(2,at=symbolsQuants,labels=format(symbolsQuants),las=1,cex.axis=0.9)
