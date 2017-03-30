@@ -1207,7 +1207,7 @@ SS_output <-
   }else{
     fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"Age_Comp_Fit_Summary",-1, header=TRUE)
   }
-  if(nrow(fit_age_comps)>0){
+  if(!is.null(dim(fit_age_comps)) && nrow(fit_age_comps)>0){
     # replace underscores with NA
     fit_age_comps[fit_age_comps=="_"] <- NA
     # make columns numeric (except "Used", which may contain "skip")
@@ -1215,7 +1215,7 @@ SS_output <-
       fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
     }
   }else{
-    fit_age_comps <- NA
+    fit_age_comps <- NULL
   }
 
   # Age comp effective N tuning check
@@ -1224,12 +1224,18 @@ SS_output <-
   }else{
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
   }
-  names(agentune)[10] <- "FleetName"
-  agentune <- agentune[agentune$N>0, c(10,1,4:9)]
-  # avoid NA warnings by removing #IND values
-  agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-  for(i in 2:ncol(agentune)) agentune[,i] <- as.numeric(agentune[,i])
-  agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+  if(!is.null(dim(agentune))){
+    names(agentune)[10] <- "FleetName"
+    agentune <- agentune[agentune$N>0, c(10,1,4:9)]
+    # avoid NA warnings by removing #IND values
+    agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
+    for(i in 2:ncol(agentune)){
+      agentune[,i] <- as.numeric(agentune[,i])
+    }
+    agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+  }else{
+    agentune <- NULL
+  }
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
 if(FALSE){
