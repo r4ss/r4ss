@@ -1202,7 +1202,11 @@ SS_output <-
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
   ## # FIT_AGE_COMPS
-  fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
+  if(SS_versionNumeric < 3.3){
+    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
+  }else{
+    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"Age_Comp_Fit_Summary",-1, header=TRUE)
+  }
   if(nrow(fit_age_comps)>0){
     # replace underscores with NA
     fit_age_comps[fit_age_comps=="_"] <- NA
@@ -1215,7 +1219,11 @@ SS_output <-
   }
 
   # Age comp effective N tuning check
-  agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+  if(SS_versionNumeric < 3.3){
+    agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+  }else{
+    agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+  }
   names(agentune)[10] <- "FleetName"
   agentune <- agentune[agentune$N>0, c(10,1,4:9)]
   # avoid NA warnings by removing #IND values
