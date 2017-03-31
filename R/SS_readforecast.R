@@ -4,9 +4,9 @@
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
-#' @param Nfleets Number of fleets.
-#' @param Nareas Number of areas.
-#' @param nseas number of seasons
+#' @param Nfleets Number of fleets (not required in 3.30).
+#' @param Nareas Number of areas (not required in 3.30).
+#' @param nseas number of seasons (not required in 3.30).
 #' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param readAll Should the function continue even if Forecast=0
@@ -28,8 +28,8 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
 
   if(verbose) cat("running SS_readforecast\n")
   forecast <- readLines(file,warn=F)
-  mylist <- list()
 
+  mylist <- list()
   mylist$sourcefile <- file
   mylist$type <- "Stock_Synthesis_forecast_file"
   mylist$SSversion <- version
@@ -59,7 +59,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
   if(version==3.24){
     mylist$Bmark_years <- allnums[i:(i+5)]; i <- i+6
   }else{
-    mylist$Bmark_years <- allnums[i:(i+5)]; i <- i+10
+    mylist$Bmark_years <- allnums[i:(i+9)]; i <- i+10
   }
   if(verbose){
     cat("Benchmark years: ", mylist$Bmark_years, "\n")
@@ -80,7 +80,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     if(version==3.24){
       mylist$Fcast_years <- allnums[i:(i+3)]; i <- i+4
     }else{
-      mylist$Fcast_years <- allnums[i:(i+3)]; i <- i+6
+      mylist$Fcast_years <- allnums[i:(i+5)]; i <- i+6
     }
     if(verbose){
       cat("Forecast years: ", mylist$Fcast_years, "\n")
@@ -146,7 +146,52 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
       if(verbose){
         cat('reading section on fleet- and area-specific inputs based on 3.30 format\n')
       }
-      stop("sorry, this part of the function is unfinished for 3.30 models")
+      # check for any catch caps or allocation groups
+      # (indicated by additional values rather than something like the following lines:
+      ## # enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999
+      ## -9999 -1
+      ## # enter list of area ID and max annual catch; terminate with area=-9999
+      ## -9999 -1
+      ## # enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999
+      ## -9999 -1
+      if(any(allnums[i+c(0,2,4)] != -9999)){
+        stop("sorry, SS_readforecast doesn't yet work for 3.30 models with catch caps or allocation groups")
+      }
+      i <- i+6 # increment indicator past section on caps and allocations
+
+      # NULL variables that may be needed for SS_writeforecast
+      mylist$max_totalcatch_by_fleet <- NULL
+      mylist$max_totalcatch_by_area <- NULL
+      mylist$fleet_assignment_to_allocation_group <- NULL
+      mylist$N_allocation_groups <- 0
+      mylist$allocation_among_groups <- NULL
+
+      mylist$InputBasis <- allnums[i]; i <- i+1
+      # forcast catch levels
+      if(allnums[i]==-9999){
+        ForeCatch <- NULL
+      }else{
+        # offset from current position in vector to ending point
+        all9999 <- which(allnums == -9999)
+        ForeCatch.end <- min(all9999[all9999 > i])-1
+        Nvals <- (ForeCatch.end - i + 1)
+        browser()
+        if(Nvals %% 4 != 0){
+          stop("Error in read of input forecast catch.\n",
+               "Number of values should be a multiple of 4.\n",
+               "Values:\n", paste(allnums[i:ForeCatch.end], collapse="\n"))
+        }
+        ForeCatch <- data.frame(matrix(
+            allnums[i:ForeCatch.end], nrow=Nvals/4, ncol=4, byrow=TRUE))
+        # increment index
+        # (+5 to skip over -9999 and 3 placeholders at end of input matrix)
+        i <- ForeCatch.end + 5
+        names(ForeCatch) <- c("Year","Seas","Fleet","Catch_or_F")
+        if(verbose){
+          cat("  Catch inputs (Ncatch = ",Nvals/4,")\n", sep="")
+          print(ForeCatch)
+        }
+      }
     }
     mylist$ForeCatch <- ForeCatch
     # check final value

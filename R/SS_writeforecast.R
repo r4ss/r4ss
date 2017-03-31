@@ -105,21 +105,45 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     if(mylist$fleet_relative_F==2) stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
 
     wl("basis_for_fcast_catch_tuning")
-    writeLines("# max totalcatch by fleet (-1 to have no max)")
-    writeLines(paste(paste(mylist$max_totalcatch_by_fleet,collapse=" ")))
-    writeLines("# max totalcatch by area (-1 to have no max)")
-    writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
-    writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
-    writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
-    if(any(mylist$fleet_assignment_to_allocation_group!=0)){
-      writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-      #    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
-      printdf("allocation_among_groups")
+    if(mylist$SSversion==3.24){
+      writeLines("# max totalcatch by fleet (-1 to have no max)")
+      writeLines(paste(paste(mylist$max_totalcatch_by_fleet,collapse=" ")))
+      writeLines("# max totalcatch by area (-1 to have no max)")
+      writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
+      writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
+      writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
+      if(any(mylist$fleet_assignment_to_allocation_group!=0)){
+        writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
+        #    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
+        printdf("allocation_among_groups")
+      }
+      wl("Ncatch")
+      wl("InputBasis")
+      if(mylist$Ncatch>0){
+        printdf(mylist$ForeCatch)
+      }
     }
-    wl("Ncatch")
-    wl("InputBasis")
-    if(mylist$Ncatch>0){
-      printdf(mylist$ForeCatch)
+    if(mylist$SSversion=="3.30" | mylist$SSversion==3.3){
+      writeLines("# enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999")
+      if(!is.null(mylist$max_totalcatch_by_fleet)){
+        printdf(mylist$max_totalcatch_by_fleet)
+      }
+      writeLines("-9999 -1")
+      writeLines("# enter list of area ID and max annual catch; terminate with area=-9999")
+      if(!is.null(mylist$max_totalcatch_by_fleet)){
+        printdf(mylist$max_totalcatch_by_area)
+      }
+      writeLines("-9999 -1")
+      writeLines("# enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999")
+      if(!is.null(mylist$max_totalcatch_by_fleet)){
+        printdf(mylist$fleet_assignment_to_allocation_group)
+      }
+      writeLines("-9999 -1")
+      wl("InputBasis")
+      if(nrow(mylist$ForeCatch > 0)){
+        printdf(mylist$ForeCatch)
+      }
+      writeLines("-9999 1 1 0")
     }
   }
 
