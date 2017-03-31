@@ -280,7 +280,9 @@ SS_output <-
   }
   flush.console()
 
-  # read forecast report file
+  # read forecast report file and get equilibrium yeild (for older versions)
+  yielddat <- NA
+
   if(forecast){
     forecastname <- file.path(dir,forefile)
     temp <- file.info(forecastname)$size
@@ -297,35 +299,11 @@ SS_output <-
     if(yesMSY) endyield <- matchfun("findFmsy",rawforecast1[,10])
     if(verbose) cat("Got Forecast-report file\n")
 
-    # this section on equilibrium yield moved to Report.sso on Jan 6
-    # [Ian T.: I have no idea what year or SS version this hack was associated with]
+    # for older versions of SS, equilibrium yield needs to come from
+    # the forecast file
     startline <- matchfun("profile",rawforecast1[,11])
     if(!is.na(startline)){ # before the Jan 6 fix to benchmarks
       yieldraw <- rawforecast1[(startline+1):endyield,]
-    }else{
-      if(SS_versionNumeric >= 3.3){
-        yieldraw <- matchfun2("SPR/YPR_Profile",1,"Finish",-2)
-      }else{
-        yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
-      }
-      # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
-    }
-    if(yieldraw[[1]][1]=="absent"){
-      cat("!warning: Report.sso appears to be early version from before Hessian was estimated.\n",
-          "         equilibrium yield estimates not included in output.\n")
-      yieldraw <- NA
-    }
-    if(is.na(yieldraw[[1]][1])){
-      yielddat <- NA
-    }else{
-      names <- yieldraw[1,]
-      names[names=="SSB/Bzero"] <- "Depletion"
-      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
-      names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
-      for(icol in 1:ncol(yielddat)){
-        yielddat[,icol] <- as.numeric(yielddat[,icol])
-      }
-      yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
     }
   }else{
     if(verbose)
@@ -336,6 +314,7 @@ SS_output <-
     sprtarg <- -999
     btarg <- -999
   }
+  # set default minimum biomass thresholds based on typical west coast groundfish
   minbthresh <- -999
   if(!is.na(btarg) & btarg==0.4){
     if(verbose)
@@ -350,6 +329,30 @@ SS_output <-
           "  based on US west coast assumption associated with flatfish target of 0.25.\n",
           "  (can replace or override in SS_plots by setting 'minbthresh')\n")
     minbthresh <- 0.125 # west coast assumption for flatfish
+  }
+
+  # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
+  # which have SPR/YPR profile in Report.sso
+  if(SS_versionNumeric >= 3.3){
+    yieldraw <- matchfun2("SPR/YPR_Profile",1,"Finish",-2)
+  }else{
+    yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
+  }
+  # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
+  if(yieldraw[[1]][1]=="absent"){
+    cat("!warning: Report.sso appears to be early version from before Hessian was estimated.\n",
+        "         equilibrium yield estimates not included in output.\n")
+    yieldraw <- NA
+  }
+  if(!is.na(yieldraw[[1]][1])){
+    names <- yieldraw[1,]
+    names[names=="SSB/Bzero"] <- "Depletion"
+    yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
+    names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
+    for(icol in 1:ncol(yielddat)){
+      yielddat[,icol] <- as.numeric(yielddat[,icol])
+    }
+    yielddat <- yielddat[order(yielddat$Depletion,decreasing = FALSE),]
   }
 
   flush.console()
@@ -802,6 +805,12 @@ SS_output <-
   parameters[parameters==" "] <- NA
   parameters[parameters=="1.#INF"] <- Inf # set infinite values equal to R's infinity
 
+  for(i in (1:ncol(parameters))){
+    print(names(parameters)[i]);
+    #print(all(parameters[,i]==as.numeric(parameters[,i]), na.print=FALSE))
+  }
+  return(parameters)
+  
   if(SS_versionNumeric >= 3.22){ # current approach to parameter section
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
@@ -1177,6 +1186,26 @@ SS_output <-
   vartune <- vartune[,c(1,8,11,13,16,18)]
   stats$index_variance_tuning_check <- vartune
 
+  ## FIT_LEN_COMPS
+  if(SS_versionNumeric >= 3.3){
+    # This section hasn't been read by SS_output in the past,
+    # not bother adding to models prior to 3.30
+    fit_len_comps <- matchfun2("FIT_LEN_COMPS",1,"Length_Comp_Fit_Summary",-1,
+                               header=TRUE)
+  }else{
+    fit_len_comps <- NULL
+  }
+  if(!is.null(dim(fit_len_comps)) && nrow(fit_len_comps)>0){
+    # replace underscores with NA
+    fit_len_comps[fit_len_comps=="_"] <- NA
+    # make columns numeric (except "Used", which may contain "skip")
+    for(icol in which(!names(fit_len_comps) %in% "Use")){
+      fit_len_comps[,icol] <- as.numeric(fit_len_comps[,icol])
+    }
+  }else{
+    fit_len_comps <- NULL
+  }
+  
   # Length comp effective N tuning check
   if(SS_versionNumeric < 3.3){
     # old way didn't have key word and had parantheses and other issues with column names
@@ -1201,11 +1230,13 @@ SS_output <-
   }
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
-  ## # FIT_AGE_COMPS
+  ## FIT_AGE_COMPS
   if(SS_versionNumeric < 3.3){
-    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),header=TRUE)
+    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"FIT_SIZE_COMPS",-(nfleets+2),
+                               header=TRUE)
   }else{
-    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"Age_Comp_Fit_Summary",-1, header=TRUE)
+    fit_age_comps <- matchfun2("FIT_AGE_COMPS",1,"Age_Comp_Fit_Summary",-1,
+                               header=TRUE)
   }
   if(!is.null(dim(fit_age_comps)) && nrow(fit_age_comps)>0){
     # replace underscores with NA
@@ -1220,9 +1251,11 @@ SS_output <-
 
   # Age comp effective N tuning check
   if(SS_versionNumeric < 3.3){
-    agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+    agentune <- matchfun2("FIT_SIZE_COMPS",-(nfleets+1),"FIT_SIZE_COMPS",-1,
+                          cols=1:10,header=TRUE)
   }else{
-    agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,cols=1:10,header=TRUE)
+    agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
+                          cols=1:10,header=TRUE)
   }
   if(!is.null(dim(agentune))){
     names(agentune)[10] <- "FleetName"
@@ -1238,15 +1271,34 @@ SS_output <-
   }
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
-if(FALSE){
-  # !! Ian T., fix this to read tuning for generalized size comp data
-  #            this can be done with a shift in strategy of using blank.lines.skip=TRUE
-  #            in read.table, but that will require additional revisions throughout
-  sizentune <- matchfun2("LEN_SELEX",-(nfleets+1),"LEN_SELEX",-1,cols=1:10,header=TRUE)
-  sizentune[,1] <- sizentune[,10]
-  sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
-  stats$Size_comp_Eff_N_tuning_check <- sizentune
-}
+  ## FIT_SIZE_COMPS
+  if(SS_versionNumeric >= 3.3){
+    fit_size_comps <- matchfun2("FIT_SIZE_COMPS",1,"Size_Comp_Fit_Summary",-(nfleets+2),
+                                header=TRUE)
+  }
+  if(!is.null(dim(fit_size_comps)) && nrow(fit_size_comps)>0){
+    # replace underscores with NA
+    fit_size_comps[fit_size_comps=="_"] <- NA
+    # make columns numeric (except "Used", which may contain "skip")
+    for(icol in which(!names(fit_size_comps) %in% "Use")){
+      fit_size_comps[,icol] <- as.numeric(fit_size_comps[,icol])
+    }
+  }else{
+    fit_size_comps <- NULL
+  }
+
+  # Size comp effective N tuning check (only available in version 3.30.01.12 and above)
+  if(SS_versionNumeric >= 3.3){
+    sizentune <- matchfun2("Size_Comp_Fit_Summary",1,"OVERALL_COMPS",-1,
+                           cols=1:10,header=TRUE)
+    if(!is.null(dim(sizentune))){
+      sizentune[,1] <- sizentune[,10]
+      sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
+    }else{
+      sizentune <- NULL
+    }
+    stats$Size_comp_Eff_N_tuning_check <- sizentune
+  }
 
 
   if(verbose) cat("Finished primary run statistics list\n")
@@ -1718,7 +1770,7 @@ if(FALSE){
   }
   returndat$minbthresh <- minbthresh
 
-  if(forecast){
+  if(!is.na(yielddat[[1]][1])){
    returndat$equil_yield <- yielddat
    # stats$spr_at_msy <- as.numeric(rawforecast[33,2])
    # stats$exploit_at_msy <- as.numeric(rawforecast[35,2])
@@ -2011,7 +2063,9 @@ if(FALSE){
     returndat$comp_data_exists <- FALSE
   }
   # tables on fit to comps and mean age stuff from within Report.sso
+  returndat$len_comp_fit_table <- fit_len_comps
   returndat$age_comp_fit_table <- fit_age_comps
+  returndat$size_comp_fit_table <- fit_size_comps
 
   returndat$derived_quants <- der
   returndat$parameters <- parameters
