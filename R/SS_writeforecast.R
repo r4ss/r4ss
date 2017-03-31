@@ -24,7 +24,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   # function to write Stock Synthesis forecast files
   if(verbose) cat("running SS_writeforecast\n")
 
-  if(mylist$type!="Stock_Synthesis_forecast_file"){
+  if(!is.list(mylist) || mylist$type!="Stock_Synthesis_forecast_file"){
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
   }
 
@@ -140,7 +140,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
       }
       writeLines("-9999 -1")
       wl("InputBasis")
-      if(nrow(mylist$ForeCatch > 0)){
+      if(!is.null(mylist$ForeCatch) && nrow(mylist$ForeCatch > 0)){
         printdf(mylist$ForeCatch)
       }
       writeLines("-9999 1 1 0")

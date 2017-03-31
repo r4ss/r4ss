@@ -167,15 +167,18 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
       mylist$allocation_among_groups <- NULL
 
       mylist$InputBasis <- allnums[i]; i <- i+1
+
       # forcast catch levels
       if(allnums[i]==-9999){
         ForeCatch <- NULL
+        i <- i+4
       }else{
         # offset from current position in vector to ending point
         all9999 <- which(allnums == -9999)
         ForeCatch.end <- min(all9999[all9999 > i])-1
         Nvals <- (ForeCatch.end - i + 1)
-        browser()
+        # even final line starting with -9999 needs to have 4 values
+        # so number of values should always be evenly divisible by 4
         if(Nvals %% 4 != 0){
           stop("Error in read of input forecast catch.\n",
                "Number of values should be a multiple of 4.\n",
