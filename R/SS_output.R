@@ -1266,6 +1266,7 @@ SS_output <-
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
   ## FIT_SIZE_COMPS
+  fit_size_comps <- NULL
   if(SS_versionNumeric >= 3.3){
     fit_size_comps <- matchfun2("FIT_SIZE_COMPS",1,"Size_Comp_Fit_Summary",-(nfleets+2),
                                 header=TRUE)
@@ -1277,8 +1278,6 @@ SS_output <-
     for(icol in which(!names(fit_size_comps) %in% "Use")){
       fit_size_comps[,icol] <- as.numeric(fit_size_comps[,icol])
     }
-  }else{
-    fit_size_comps <- NULL
   }
 
   # Size comp effective N tuning check (only available in version 3.30.01.12 and above)
