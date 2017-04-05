@@ -1908,4 +1908,5 @@ SSplotComparisons <-
   ## }
 
   if(pdf) dev.off()
+  return(invisible("finished comparison plots"))
 }
