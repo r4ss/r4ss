@@ -39,7 +39,8 @@ test_that("SSsummarize and SSplotComparisons both work", {
   simple3.30 <- SS_output(file.path(example_path,"simple_3.30"),
                           verbose=FALSE, printstats=FALSE)
   simple_summary <- SSsummarize(list(simple3.24, simple3.30))
-  comparison_plots <- SSplotComparisons(simple_summary)
+  comparison_plots <- SSplotComparisons(simple_summary, png=TRUE,
+                                        plotdir=example_path)
   expect_equal(comparison_plots, "finished comparison plots")
 })
 
