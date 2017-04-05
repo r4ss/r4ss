@@ -23,7 +23,8 @@ Imports:
     stringi,
     truncnorm
 Suggests:
-    tcltk
+    tcltk,
+    testthat
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr. Richard
     D.  Methot at the NOAA Northwest Fisheries Science Center. The functions
