@@ -289,7 +289,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }else if(ctllist$F_Method==2){
   #  stop("stop currently F_method:2 is not implemented")
     writeComment("overall start F value; overall phase; N detailed inputs to read")
-    wl.vec("F_setup")
+    wl.vector("F_setup")
     writeComment("fleet, yr, seas, Fvalue, se, phase")
     printdf("F_setup2")
   }else if(ctllist$F_Method==3){
