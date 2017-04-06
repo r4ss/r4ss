@@ -57,7 +57,7 @@ head(parlines)
 Ian Taylor
 }
 \seealso{
-\code{\link{SS_changepars}, \code{\link{SS_readctl}},
-\code{\link{SS_readctl_3.24}}}
+\code{\link{SS_changepars}}, \code{\link{SS_readctl}},
+\code{\link{SS_readctl_3.24}}
 }
 
