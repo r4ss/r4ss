@@ -679,7 +679,7 @@ SSplotComparisons <-
     if(!add){
       abline(h=0,col="grey")
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
@@ -758,7 +758,7 @@ SSplotComparisons <-
       abline(h=0,col="grey")
       abline(h=1,col="grey",lty=2)
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
@@ -853,7 +853,7 @@ SSplotComparisons <-
     }
     if(!add){
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
@@ -902,7 +902,7 @@ SSplotComparisons <-
       plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1], 
            ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
@@ -1027,7 +1027,7 @@ SSplotComparisons <-
     }
     if(!add){
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
@@ -1101,7 +1101,7 @@ SSplotComparisons <-
     }
     if(!add){
       if(tickEndYr){ # include ending year in axis labels
-        ticks <- axTicks(1) # default tick positions if axis(1) were run
+        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
         # make axis (excluding anything after the max ending year)
         axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
       }else{
