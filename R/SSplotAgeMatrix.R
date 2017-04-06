@@ -203,7 +203,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
       # not sure how this issue was dealt with in other functions
       if(option==1){
         caption <- paste(titleStart)
-        info <- tolower(dimnames(array)[[3]][slice])
+        info <- tolower(dimnames(array)[[3]][islice])
         if(!is.null(info)){
           caption <- paste(title, "for", info)
         }
