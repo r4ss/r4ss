@@ -4,7 +4,7 @@
 \alias{SSplotAgeMatrix}
 \title{Plot matrix of either length or observed age at true age}
 \usage{
-SSplotAgeMatrix(replist, option = 1, scale = 0.9, plot = TRUE,
+SSplotAgeMatrix(replist, option = 1, scale = NULL, plot = TRUE,
   print = FALSE, labels = c("Age", "Length", "True age", "Observed age",
   "for ageing error type", "Distribution of", "at"), pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
@@ -17,8 +17,8 @@ SSplotAgeMatrix(replist, option = 1, scale = 0.9, plot = TRUE,
 2 for obs. age at true age}
 
 \item{scale}{Multiplier for bars showing distribution. Species with many ages
-benefit from expanded bars. Future default could be function of number of ages
-or variability among bins within each age. Current default is 3.}
+benefit from expanded bars. NULL value causes function to attempt automatic
+scaling.}
 
 \item{plot}{Plot to active plot device?}
 

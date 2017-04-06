@@ -10,11 +10,11 @@ SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
 
-\item{Nfleets}{Number of fleets.}
+\item{Nfleets}{Number of fleets (not required in 3.30).}
 
-\item{Nareas}{Number of areas.}
+\item{Nareas}{Number of areas (not required in 3.30).}
 
-\item{nseas}{number of seasons}
+\item{nseas}{number of seasons (not required in 3.30).}
 
 \item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
