@@ -10,6 +10,7 @@
 #' @param init Optional initial values for the parameters
 #' @author Tommy Garrison, Yukio Takeuchi
 #' @export
+#' @import tcltk
 #' @seealso \code{\link{sel.line}}
 #' @examples
 #' 

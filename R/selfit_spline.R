@@ -16,6 +16,7 @@
 #' @param silent TRUE/FALSE switch to return fit at the end.
 #' @author Ian Taylor, Yukio Takeuchi
 #' @export
+#' @import tcltk
 #' @seealso \code{\link{selfit}}
 #' @examples
 #' 
