@@ -25,8 +25,8 @@
 #' @param active Should only active parameters (those with positive phase) be
 #' output? Default=FALSE.
 #' @author Ian Taylor
-#' @seealso \code{\link{SS_changepars}, \code{\link{SS_readctl}},
-#' \code{\link{SS_readctl_3.24}}}
+#' @seealso \code{\link{SS_changepars}}, \code{\link{SS_readctl}},
+#' \code{\link{SS_readctl_3.24}}
 #' @export
 #' @examples
 #'
