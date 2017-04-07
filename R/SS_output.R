@@ -1481,6 +1481,28 @@ SS_output <-
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
 
+  # exploitation
+  exploitation <- matchfun2("EXPLOITATION",5,"CATCH",-1,header=TRUE)
+  exploitation[exploitation=="_"] <- NA
+  exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
+  for(icol in 1:ncol(exploitation)){
+    exploitation[,icol] <- as.numeric(exploitation[,icol])
+  }
+  returndat$exploitation <- exploitation
+
+  # catch
+  catch <- matchfun2("CATCH",1,"TIME_SERIES",-1,substr1=FALSE,header=TRUE)
+  if(catch[[1]][1]!="absent"){
+    catch$Like[catch$Like=="-1.#IND"] <- NA # value associated with 0 catch 
+    catch$Yr[catch$Yr=="init"] <- startyr-1 # making numeric
+    for(icol in (1:ncol(catch))[!(names(catch)%in%c("Name"))]){
+      catch[,icol] <- as.numeric(catch[,icol])
+    }
+  }else{
+    catch <- NULL
+  }
+  returndat$catch <- catch
+  
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   timeseries[timeseries=="_"] <- NA
