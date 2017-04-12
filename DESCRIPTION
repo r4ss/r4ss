@@ -20,7 +20,6 @@ Imports:
     gtools,
     maps,
     pso,
-    stringi,
     truncnorm
 Suggests:
     tcltk,

@@ -1,4 +1,3 @@
-#library(stringr)
 context("Basic r4ss functions")
 
 example_path <- system.file("extdata", package="r4ss")
