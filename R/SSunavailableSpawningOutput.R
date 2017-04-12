@@ -82,7 +82,7 @@ SSunavailableSpawningOutput <-
     first.col <- which(names(num.at.age.female)=='0')
     num.at.age.female <- num.at.age.female[,first.col:ncol(num.at.age.female)]
     if(max(seas)>1) {
-        row.names(num.at.age.female) <- paste(yearsseas,sep="")
+        row.names(num.at.age.female) <- paste(years,seas,sep="")
     } else {
         row.names(num.at.age.female) <- years
     }
