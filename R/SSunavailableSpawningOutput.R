@@ -247,6 +247,7 @@ SSunavailableSpawningOutput <-
 
       ### Plot cryptic spawning output by age by year as a bubble plot
       multiplier <- 2/max(cryptic.spawning.output.by.age, na.rm=TRUE)
+      # allow bubbles to extend beyond boundaries of plot region
       par(xpd=NA)
       plot(1,1, type='n', ylim=c(0,accuage+4),
            xlim=c(min(years.with.catch), max(years.with.catch)),
@@ -316,6 +317,8 @@ SSunavailableSpawningOutput <-
 
       # Add a line to show where the cut off between small and large unavailable
       lines(years.with.catch, max.selectivity.cols-1.5)
+      # restore clipping to plot region
+      par(xpd=FALSE)
 
       ##### Plot mean selecitivities by length by year
       cols <- colorRampPalette(c('blue', 'orange'),
