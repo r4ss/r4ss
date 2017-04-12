@@ -78,9 +78,14 @@ SSunavailableSpawningOutput <-
                                       num.at.age$"Beg/Mid"=="B" & num.at.age$Area==area &
                                         num.at.age$Yr %in% years.with.catch,]
     years <- num.at.age.female$Yr
+    seas <- num.at.age.female$Seas
     first.col <- which(names(num.at.age.female)=='0')
     num.at.age.female <- num.at.age.female[,first.col:ncol(num.at.age.female)]
-    row.names(num.at.age.female) <- years
+    if(max(seas)>1) {
+        row.names(num.at.age.female) <- paste(yearsseas,sep="")
+    } else {
+        row.names(num.at.age.female) <- years
+    }
 
     ##########################################################################
     # step 3: create an average derived age-based selectivity across fleets
