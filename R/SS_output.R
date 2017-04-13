@@ -132,6 +132,16 @@ SS_output <-
     return(out)
   }
 
+  df.rename <- function(df, oldnames, newnames){
+    # function to replace names in dataframes
+    # added to clean up adaptation to more consistent
+    # syntax in Report.sso as of SS version 3.30.01.15.
+    for(iname in 1:length(oldnames)){
+      names(df)[names(df)==oldnames[iname]] <- newnames[iname]
+    }
+    return(df)
+  }
+  
   # get info on output files created by Stock Synthesis
   shortrepfile <- repfile
   repfile <- file.path(dir,repfile)
@@ -417,8 +427,8 @@ SS_output <-
   # selectivity read first because it was used to get fleet info
   # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
   selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
-  for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label"))]) selex[,icol] <- as.numeric(selex[,icol])
-
+  for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label","Label"))]) selex[,icol] <- as.numeric(selex[,icol])
+  
   ## DEFINITIONS section (new in SSv3.20)
   rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
   # get season stuff
@@ -519,15 +529,19 @@ SS_output <-
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
-      # split Pick_gender=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
-      compdbase$sex <- compdbase$Pick_gender
-      compdbase$sex[compdbase$Pick_gender==3] <- compdbase$Gender[compdbase$Pick_gender==3]
+      # split Pick_sex=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
+      # update to naming convention associated with 3.30.01.15
+      compdbase <- df.rename(compdbase,
+                             oldnames=c("Pick_gender", "Gender"),
+                             newnames=c("Pick_sex",    "Sex"))
+      compdbase$sex <- compdbase$Pick_sex
+      compdbase$sex[compdbase$Pick_sex==3] <- compdbase$Sex[compdbase$Pick_sex==3]
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
         if(!hidewarn)
           cat('Correcting for bug in tag data output associated with SSv3.24f\n')
-        tag1rows <- compdbase$Pick_gender=="TAG1"
+        tag1rows <- compdbase$Pick_sex=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]
           tag1new <- tag1
@@ -695,11 +709,10 @@ SS_output <-
   }
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=TRUE)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
-  if(SS_versionNumeric < 3.3){
-    ngpatterns <- max(morph_indexing$Gpattern)
-  }else{
-    ngpatterns <- max(morph_indexing$GP)
-  }
+  morph_indexing <- df.rename(morph_indexing,
+                              oldnames=c("GPattern","Bseas"),
+                              newnames=c("GP","BirthSeason"))
+  ngpatterns <- max(morph_indexing$GP)
 
   # forecast
   if(forecast){
@@ -800,18 +813,21 @@ SS_output <-
     temp <- tail(parameters,2)[,1:3]
     parameters <- parameters[1:(nrow(parameters)-2),]
   }
-
+  parameters <- df.rename(parameters,
+                          oldnames=c("PR_type","Prior_Like"),
+                          newnames=c("Pr_type","Pr_Like"))
   parameters[parameters=="_"] <- NA
   parameters[parameters==" "] <- NA
   parameters[parameters=="1.#INF"] <- Inf # set infinite values equal to R's infinity
-  
+
   if(SS_versionNumeric >= 3.22){ # current approach to parameter section
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Pr_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
+
   if(SS_versionNumeric==3.21){
     # revised section in SS-V3.21 where text description of PR_type instead of number
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","PR_type","Status"))])
+    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Pr_type","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
     temp <- names(parameters)
     cat("Note: inserting new 13th column heading in parameters section due to error in Report.sso in SSv3.21f\n")
@@ -851,8 +867,8 @@ SS_output <-
   stats$table_of_phases <- table(parameters$Phase)
   # subset columns for printed table of estimated parameters
   estimated_non_dev_parameters <- pars[,names(pars) %in%
-      c("Value","Phase","Min","Max","Init","Prior","Gradient","PR_type",
-        "Pr_SD","Prior_Like","Parm_StDev","Status","Afterbound")]
+      c("Value","Phase","Min","Max","Init","Prior","Gradient","Pr_type",
+        "Pr_SD","Pr_Like","Parm_StDev","Status","Afterbound")]
   # exclude parameters that represent recdevs or other deviations
   devnames <- c("RecrDev","InitAge","ForeRecr",
                 "DEVadd","DEVmult","DEVrwalk","DEV_MR_rwalk")
@@ -1478,7 +1494,10 @@ SS_output <-
   # filter forecast years from selectivity if no forecast
   # NOTE: maybe refine this in 3.30
   if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
-  for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("factor","label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
+  ageselex <- df.rename(ageselex,
+                        oldnames=c("factor","label"),
+                        newnames=c("Factor","Label"))
+  for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
 
   # exploitation
@@ -1502,7 +1521,7 @@ SS_output <-
     catch <- NULL
   }
   returndat$catch <- catch
-  
+
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   timeseries[timeseries=="_"] <- NA
@@ -1550,6 +1569,7 @@ SS_output <-
 
   # set mainmorphs as those morphs born in the first season with recruitment
   # and the largest fraction of the platoons (should equal middle platoon when present)
+  #browser()
   if(SS_versionNumeric >= 3.3){
     # new "platoon" label
     temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$"Frac/sex">0]) &
