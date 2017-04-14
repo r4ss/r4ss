@@ -1569,10 +1569,9 @@ SS_output <-
 
   # set mainmorphs as those morphs born in the first season with recruitment
   # and the largest fraction of the platoons (should equal middle platoon when present)
-  #browser()
   if(SS_versionNumeric >= 3.3){
     # new "platoon" label
-    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$"Frac/sex">0]) &
+    temp <- morph_indexing[morph_indexing$BirthSeason==min(rd$Seas[rd$"Frac/sex">0]) &
                              morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
     mainmorphs <- min(temp$Index[temp$Sex==1])
     if(nsexes==2){
