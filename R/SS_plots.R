@@ -482,7 +482,8 @@ SS_plots <-
       plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
     # add plots of unavailable (cryptic) spawning output
-    if(SS_versionNumeric < 3.3){ # needs revision to work in SS 3.30
+    if(FALSE){
+      # needs revision to work in SS 3.30 and models with multiple birth seasons
       plotinfo <-
         SSunavailableSpawningOutput(replist=replist, 
                                     plot=!png, print=png,
