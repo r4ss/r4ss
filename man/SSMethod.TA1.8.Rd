@@ -4,9 +4,8 @@
 \alias{SSMethod.TA1.8}
 \title{Apply Francis composition weighting method TA1.8}
 \usage{
-SSMethod.TA1.8(fit, type, fleet, part = 0:2, pick.gender = 0:3,
-  seas = NULL, method = NULL, plotit = TRUE, printit = TRUE,
-  maxpanel = 1000)
+SSMethod.TA1.8(fit, type, fleet, part = 0:2, pick.sex = 0:3, seas = NULL,
+  method = NULL, plotit = TRUE, printit = TRUE, maxpanel = 1000)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -23,9 +22,9 @@ to all fleets combined)}
 to composition data with one of these partition values.
 Default is to include all partition values (0, 1, 2).}
 
-\item{pick.gender}{vector of one or more values for Pick_gender; analysis is
+\item{pick.sex}{vector of one or more values for Pick_sex; analysis is
 restricted to composition data with one of these
-Pick_gender values.  Ignored if type=='con'}
+Pick_sex values.  Ignored if type=='con'}
 
 \item{seas}{string indicating how to treat data from multiple seasons
 'comb' - combine seasonal data for each year and plot against Yr

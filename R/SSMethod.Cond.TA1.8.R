@@ -69,7 +69,7 @@ SSMethod.Cond.TA1.8 <-
            plotit=TRUE, printit=TRUE, maxpanel=1000, FullDiagOut=FALSE,
            ShowVersionB=FALSE)
 {
-  # Check the type is correct and the pick.gender is correct
+  # Check the type is correct and the pick.sex is correct
   is.in <- function (x, y)!is.na(match(x, y))
 
   # Select the type of datbase
