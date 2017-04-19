@@ -678,6 +678,7 @@ SSplotSelex <-
           }
         }
         if(!time){
+#browser()
           plotageselex <- plotageselex[plotageselex$Yr==endyr,]
           plotageselex <- plotageselex[,-(1:7)]
           vals <- as.numeric(paste(c(plotageselex)))

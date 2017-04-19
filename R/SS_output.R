@@ -427,7 +427,13 @@ SS_output <-
   # selectivity read first because it was used to get fleet info
   # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
   selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
-  for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","label","Label"))]) selex[,icol] <- as.numeric(selex[,icol])
+  # update to naming convention associated with 3.30.01.15
+  selex <- df.rename(selex,
+                     oldnames=c("fleet", "year", "seas", "gender", "morph", "label"),
+                     newnames=c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label"))
+  for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","Label"))]){
+    selex[,icol] <- as.numeric(selex[,icol])
+  }
   
   ## DEFINITIONS section (new in SSv3.20)
   rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
@@ -529,11 +535,12 @@ SS_output <-
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
-      # split Pick_sex=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
+
       # update to naming convention associated with 3.30.01.15
       compdbase <- df.rename(compdbase,
                              oldnames=c("Pick_gender", "Gender"),
                              newnames=c("Pick_sex",    "Sex"))
+      # split Pick_sex=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
       compdbase$sex <- compdbase$Pick_sex
       compdbase$sex[compdbase$Pick_sex==3] <- compdbase$Sex[compdbase$Pick_sex==3]
 
@@ -1443,11 +1450,16 @@ SS_output <-
     returndat$growthCVtype <- "unknown"
   }
   growdat <- matchfun2("Biology_at_age",1,"MEAN_BODY_WT(begin)",-1,header=TRUE)
-  for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
+  # make older SS output names match current SS output conventions
+  growdat <- df.rename(growdat,
+                       oldnames=c("Gender"),
+                       newnames=c("Sex"))
+  for(i in 1:ncol(growdat)){
+    growdat[,i] <- as.numeric(growdat[,i])
+  }
   nmorphs <- max(growdat$Morph)
   midmorphs <- c(c(0,nmorphs/nsexes)+ceiling(nmorphs/nsexes/2))
   returndat$endgrowth <- growdat
-
 
   # test for use of empirical weight-at-age input file (wtatage.ss)
   test <- matchfun2("MEAN_BODY_WT(begin)",0,"MEAN_BODY_WT(begin)",0,header=FALSE)
@@ -1499,8 +1511,9 @@ SS_output <-
   # NOTE: maybe refine this in 3.30
   if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
   ageselex <- df.rename(ageselex,
-                        oldnames=c("factor","label"),
-                        newnames=c("Factor","Label"))
+                        oldnames=c("fleet", "year", "seas", "gender", "morph", "label", "factor"),
+                        newnames=c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label", "Factor"))
+  
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
 
@@ -1588,7 +1601,7 @@ SS_output <-
                              morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
     mainmorphs <- min(temp$Index[temp$Sex==1])
     if(nsexes==2){
-      mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
+      mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex==2]))
     }
   }
   if(length(mainmorphs)==0){
