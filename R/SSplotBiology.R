@@ -184,7 +184,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
-  ## if(nrow(growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],])==0){
+  ## if(nrow(growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],])==0){
   ##   seas <- replist$spawnseas
   ##   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
@@ -219,9 +219,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   # Beginning of season 1 (or specified season) mean length at age
   #   with 95% range of lengths (by sex if applicable)
-
   ## Ian T.: consider somehow generalizing to allow looping over growth pattern
-  growdatF <- growdat[growdat$Gender==1 & growdat$Morph==mainmorphs[1],]
+  growdatF <- growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Beg
   if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
     growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
@@ -232,7 +231,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
 
   if(nsexes > 1){ # do males if 2-sex model
-    growdatM <- growdat[growdat$Gender==2 & growdat$Morph==mainmorphs[2],]
+    growdatM <- growdat[growdat$Sex==2 & growdat$Morph==mainmorphs[2],]
     # IAN T. this should probably be generalized
     xm <- growdatM$Age_Beg
 

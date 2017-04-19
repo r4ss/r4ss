@@ -69,13 +69,13 @@ SSplotSPR <-
   if(btarg=="default") btarg <- replist$btarg
 
   # choose which points to plot
-  good <- sprseries$Year <= endyr
+  good <- sprseries$Yr <= endyr
   if(forecastplot) good <- rep(TRUE,nrow(sprseries))
   
   sprfunc <- function(){
-    if(!add) plot(0,xlab=labels[1],ylab=labels[2],xlim=range(sprseries$Year[good]),
+    if(!add) plot(0,xlab=labels[1],ylab=labels[2],xlim=range(sprseries$Yr[good]),
                   ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="n")
-    lines(sprseries$Year[good],sprseries$spr[good],type="o",col=col2)
+    lines(sprseries$Yr[good],sprseries$spr[good],type="o",col=col2)
     if(sprtarg>0) abline(h=sprtarg,col=col4,lty=2)
     abline(h=0,col="grey")
     abline(h=1,col="grey")
@@ -96,9 +96,9 @@ SSplotSPR <-
   if(nseasons>1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
   if(nseasons==1){ 
     sprfunc2 <- function(){
-      if(!add) plot(0,xlim=range(sprseries$Year[good]),
+      if(!add) plot(0,xlim=range(sprseries$Yr[good]),
                     xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="n")
-      lines(sprseries$Year[good],(1-sprseries$spr[good]),type="o",col=col2)
+      lines(sprseries$Yr[good],(1-sprseries$spr[good]),type="o",col=col2)
       if(sprtarg>0) abline(h=(1-sprtarg),col=col4,lty=2)
       abline(h=0,col="grey")
       abline(h=1,col="grey")}
@@ -173,8 +173,8 @@ SSplotSPR <-
         }
         # calculate depletion
         depletionseries <- ts$SpawnBio/ts$SpawnBio[1]
-        reldep <- depletionseries[ts$Yr %in% sprseries$Year]/btarg
-        relspr <- (1-sprseries$spr[sprseries$Year <= endyr])/(1-sprtarg)
+        reldep <- depletionseries[ts$Yr %in% sprseries$Yr]/btarg
+        relspr <- (1-sprseries$spr[sprseries$Yr <= endyr])/(1-sprtarg)
         # set axis limits
         xmax <- 1.1*max(reldep)
         ymax <- 1.1*max(1,relspr[!is.na(relspr)])
