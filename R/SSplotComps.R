@@ -576,14 +576,28 @@ SSplotComps <-
 
           tempfun2 <- function(){
             xvals <- dbase$Yr.S
-            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)))))[1]
+            # calculate smallest difference among years
+            # which is used to adjust offsets males and females
+            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)),
+                                          na.rm=TRUE)))[1]
+            # not sure what cases would have missing xdiff
+            # from above calculation, but it definitely happens
+            # with only one year of data, so setting default
+            # to work for that case
             if(is.na(xdiff)){
-              xdiff <- 1
+              xdiff <- 0.1
             }
             cols <- rep(colvec[3],nrow(dbase))
             if(nsexes > 1){
               xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
                 (dbase$sex[dbase$sex>0]-1.5)*xdiff
+              if(length(unique(dbase$Yr.S))==1){
+                # if only one year, don't bother showing points
+                # as mid-year values
+                # this may not be ideal for seasonal models
+                xvals[dbase$sex>0] <- floor(dbase$Yr.S[dbase$sex>0]) -
+                  (dbase$sex[dbase$sex>0]-1.5)*xdiff
+              }                
               cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
             }
             bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
