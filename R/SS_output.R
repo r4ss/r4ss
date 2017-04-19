@@ -1762,6 +1762,7 @@ SS_output <-
 
   # Yield and SPR time-series
   spr <- matchfun2("SPR_series",5,"SPAWN_RECRUIT",-1,header=TRUE)
+  # read Kobe plot
   if(length(grep("Kobe_Plot",rawrep[,1]))!=0){
     shift <- -3
     if(SS_versionNumeric < 3.23) shift <- -1
@@ -1770,7 +1771,7 @@ SS_output <-
     # head of Kobe_Plot section differs by SS version,
     # but I haven't kept track of which is which
     Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
-    shift <- 2
+    shift <- 1
     Kobe_warn <- NA
     Kobe_MSY_basis <- NA
     if(length(grep("_basis_is_not",Kobe_head[1,1]))>0){
@@ -1783,8 +1784,10 @@ SS_output <-
     }
     Kobe <- matchfun2("Kobe_Plot",shift,"SPAWN_RECRUIT",-1,header=TRUE)
     Kobe[Kobe=="_"] <- NA
+    Kobe[Kobe=="1.#INF"] <- NA
+    Kobe[Kobe=="-1.#IND"] <- NA
+    names(Kobe) <- gsub("/", ".", names(Kobe), fixed=TRUE)
     for(icol in 1:3){
-      names(Kobe)[icol] <- sub("/",".",names(Kobe)[icol],fixed=TRUE)
       Kobe[,icol] <- as.numeric(Kobe[,icol])
     }
   }else{
@@ -1804,7 +1807,11 @@ SS_output <-
                    newnames=c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report"))
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
-  for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
+  spr[spr=="-1.#IND"] <- NA
+  for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]){
+    spr[,i] <- as.numeric(spr[,i])
+  }
+  
   #spr <- spr[spr$Year <= endyr,]
   spr$spr <- spr$SPR
   returndat$sprseries <- spr

@@ -121,7 +121,7 @@ SSsummarize <- function(biglist,
     ageseltemp  <- stats$ageselex
     if(is.null(ageselfactor)) ageselfactor <- unique(ageseltemp$Factor)
     for(iselfactor in 1:length(ageselfactor)){
-      seltemp_i <- ageseltemp[ageseltemp$factor==ageselfactor[iselfactor],]
+      seltemp_i <- ageseltemp[ageseltemp$Factor==ageselfactor[iselfactor],]
       seltemp_i$imodel <- imodel
       seltemp_i$name <- modelnames[imodel]
       # if agesel is not NULL, then check for whether columns of new addition
