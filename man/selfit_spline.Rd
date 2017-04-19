@@ -38,10 +38,9 @@ selfit_spline()
 }
 
 }
-\author{
-Ian Taylor, Yukio Takeuchi
-}
 \seealso{
 \code{\link{selfit}}
 }
-
+\author{
+Ian Taylor, Yukio Takeuchi
+}

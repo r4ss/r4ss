@@ -2,8 +2,8 @@
 % Please edit documentation in R/r4ss-package.R
 \docType{package}
 \name{r4ss-package}
-\alias{r4ss}
 \alias{r4ss-package}
+\alias{r4ss}
 \title{R tools for Stock Synthesis}
 \description{
 A collection of R functions for use with Stock Synthesis, a fisheries stock
@@ -14,7 +14,7 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.25.1\cr Date: \tab 2017-01-21\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.26.0\cr Date: \tab 2017-04-19\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 Should be compatible with Stock Synthesis versions 3.21 through 3.30.
 }
@@ -29,6 +29,10 @@ SS_plots(replist=myreplist)
 }
 
 }
+\references{
+r4ss on GitHub: \url{https://github.com/r4ss}
+\cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
+}
 \author{
 Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
 Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
@@ -39,8 +43,3 @@ Andrew B. Cooper, Andi Stephens, and Neil Klaer
 
 Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
-\references{
-r4ss on GitHub: \url{https://github.com/r4ss}
-\cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
-}
-

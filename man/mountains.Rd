@@ -44,12 +44,11 @@ axis labels.}
 Designed to replicate like the cool-looking Figure 7 in Butterworth et al.
 (2003).
 }
-\author{
-Ian Taylor
-}
 \references{
 Butterworth D.S., Ianelli J.N., Hilborn R. (2003) A statistical
 model for stock assessment of southern bluefin tuna with temporal changes in
 selectivity. South African Journal of Marine Science 25:331-362.
 }
-
+\author{
+Ian Taylor
+}

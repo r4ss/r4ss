@@ -28,4 +28,3 @@ Inspired by Valerio Bartolino and North Sea herring
 \author{
 Ian Taylor
 }
-

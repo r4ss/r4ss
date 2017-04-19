@@ -47,4 +47,3 @@ to be 3 or greater.
 \author{
 Ian Taylor
 }
-

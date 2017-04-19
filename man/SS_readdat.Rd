@@ -31,9 +31,6 @@ wrapper which calls either SS_readdat_3.24 or SS_readdat_3.30
 functions to be cleaner (if somewhat redundant) than a single function that
 attempts to do everything.
 }
-\author{
-Ian G. Taylor, Allan C. Hicks
-}
 \seealso{
 \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
 \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}}
@@ -41,4 +38,6 @@ Ian G. Taylor, Allan C. Hicks
 \code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Ian G. Taylor, Allan C. Hicks
+}

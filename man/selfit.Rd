@@ -26,10 +26,9 @@ selfit()
 }
 
 }
-\author{
-Tommy Garrison, Yukio Takeuchi
-}
 \seealso{
 \code{\link{sel.line}}
 }
-
+\author{
+Tommy Garrison, Yukio Takeuchi
+}

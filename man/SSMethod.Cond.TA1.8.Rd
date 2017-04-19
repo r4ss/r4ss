@@ -75,9 +75,6 @@ grouped by fleet, with one panel of the plot per fleet.
 selected data.
 }
 }
-\author{
-Chris Francis, Andre Punt, Ian Taylor
-}
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
@@ -88,4 +85,6 @@ Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
 \seealso{
 \code{\link{SSMethod.TA1.8}}
 }
-
+\author{
+Chris Francis, Andre Punt, Ian Taylor
+}

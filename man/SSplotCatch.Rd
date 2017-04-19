@@ -101,10 +101,9 @@ white space at the top of the figure)}
 Plot catch related quantities from Stock Synthesis output. Plots include
 harvest rate, continuous F, landings, and discard fraction.
 }
-\author{
-Ian Taylor, Ian Stewart
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor, Ian Stewart
+}

@@ -82,10 +82,9 @@ be the directory where the model was run.}
 \description{
 Plot observed and expected tag recaptures in aggregate and by tag group.
 }
-\author{
-Andre Punt, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Andre Punt, Ian Taylor
+}

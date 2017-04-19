@@ -25,4 +25,3 @@ by Tommy Garrison
 \author{
 Ian Taylor
 }
-

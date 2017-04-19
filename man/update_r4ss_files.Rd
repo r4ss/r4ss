@@ -15,4 +15,3 @@ Left in place only as a pointer to the new installation approach.
 \author{
 Ian Taylor
 }
-

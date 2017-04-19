@@ -37,10 +37,9 @@ Default=TRUE.}
 \description{
 Function has not been fully tested yet
 }
-\author{
-Ian G. Taylor, Gwladys I. Lambert
-}
 \seealso{
 \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
 }
-
+\author{
+Ian G. Taylor, Gwladys I. Lambert
+}

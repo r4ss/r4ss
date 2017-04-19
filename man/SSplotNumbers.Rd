@@ -78,10 +78,9 @@ Plot numbers-at-age related data and fits from Stock Synthesis output.
 Plots include bubble plots, mean age, equilibrium age composition,
 sex-ratio, and ageing imprecision patterns.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_output}}, \code{\link{SS_plots}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

@@ -83,10 +83,9 @@ tinss1 <- list(npars=A$fit$npar,maxgrad=A$fit$maxgrad,nsexes=1,
   }
 
 }
-\author{
-Allan Hicks
-}
 \seealso{
 \code{\link{SSsummarize}} \code{\link{SSplotComparisons}}
 }
-
+\author{
+Allan Hicks
+}

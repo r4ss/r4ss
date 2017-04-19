@@ -74,10 +74,9 @@ output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 Plot timeseries data contained in TIME_SERIES output from Stock Synthesis
 report file. Some values have optional uncertainty intervals.
 }
-\author{
-Ian Taylor, Ian Stewart
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor, Ian Stewart
+}

@@ -51,11 +51,10 @@ wrapper which calls either SS_readctl_3.24 or SS_readctl_3.30 (not yet written).
 This setup allows those functions to be cleaner (if somewhat redundant)
 than a single function that attempts to do everything.
 }
-\author{
-Ian G. Taylor, Yukio Takeuchi
-}
 \seealso{
 \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
 \code{\link{SS_readdat_3.24}}
 }
-
+\author{
+Ian G. Taylor, Yukio Takeuchi
+}

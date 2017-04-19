@@ -62,11 +62,10 @@ pattern across years.
   }
 
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
 \code{\link{IOTCmove}}
 }
-
+\author{
+Ian Taylor
+}

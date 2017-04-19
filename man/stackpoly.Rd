@@ -48,10 +48,9 @@ generate the colors. If NA, the polygons will not be filled.}
 Plot one or more columns of numeric values as the top edges of polygons
 instead of lines.
 }
-\author{
-Jim Lemon, Ian Taylor
-}
 \references{
 \url{https://cran.r-project.org/package=plotrix}
 }
-
+\author{
+Jim Lemon, Ian Taylor
+}

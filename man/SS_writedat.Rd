@@ -19,13 +19,12 @@ SS_writedat(datlist, outfile, overwrite = FALSE, verbose = TRUE)
 write Stock Synthesis data file from list object in R which was probably
 created using \code{\link{SS_readdat}}
 }
-\author{
-Ian Taylor, Yukio Takeuchi
-}
 \seealso{
 \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
 \code{\link{SS_readforecast}},
 \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 \code{\link{SS_writedat}}
 }
-
+\author{
+Ian Taylor, Yukio Takeuchi
+}

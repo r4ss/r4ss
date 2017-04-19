@@ -112,10 +112,9 @@ appropriate for future alternative compositional likelihoods.
 This function was derived from make_multifig and hence has a lot of
 overlap in functionality and arguments.
 }
-\author{
-Cole Monnahan. Adapted from \code{\link{make_multifig}}.
-}
 \seealso{
 \code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
 }
-
+\author{
+Cole Monnahan. Adapted from \code{\link{make_multifig}}.
+}

@@ -75,4 +75,3 @@ and negative values have open bubbles.
 \author{
 Ian Stewart and Ian Taylor
 }
-

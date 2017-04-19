@@ -58,10 +58,9 @@ regardless). Default = 1.}
 \description{
 Plot fit to discard fraction from Stock Synthesis output file.
 }
-\author{
-Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
-}
 \seealso{
 \code{\link{SS_plots}}
 }
-
+\author{
+Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
+}

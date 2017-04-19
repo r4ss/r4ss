@@ -120,11 +120,10 @@ honor of Kevin Piner's contributions to interpreting likelihood
 profiles. He's surely not the first person to make such a plot
 but the name seems to have stuck.
 }
-\author{
-Ian Taylor, Kevin Piner, Jim Thorson
-}
 \references{
 Kevin Piner says that he's not the originator of this idea so
 Athol Whitten is going to add a reference here.
 }
-
+\author{
+Ian Taylor, Kevin Piner, Jim Thorson
+}

@@ -135,11 +135,10 @@ SSplotComparisons(profilesummary,legendlabels=paste("h =",h.vec))
 }
 
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
 \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
 }
-
+\author{
+Ian Taylor
+}

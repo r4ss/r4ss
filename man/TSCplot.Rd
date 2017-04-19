@@ -104,10 +104,9 @@ are to be plotted, a 'mcmc' list element should be added using the
   }
 
 }
-\author{
-Allan Hicks
-}
 \seealso{
 \code{\link{SS_output}} \code{\link{SSgetMCMC}}
 }
-
+\author{
+Allan Hicks
+}

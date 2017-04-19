@@ -14,12 +14,11 @@ SS_readstarter(file = "starter.ss", verbose = TRUE)
 \description{
 read Stock Synthesis starter file into list object in R
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_readforecast}}, \code{\link{SS_readdat}},
 \code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Ian Taylor
+}

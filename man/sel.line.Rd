@@ -31,10 +31,9 @@ sp = c(25, -0.5, 3, 3, -5, 0))
 }
 
 }
-\author{
-Tommy Garrison
-}
 \seealso{
 \code{\link{selfit}}
 }
-
+\author{
+Tommy Garrison
+}

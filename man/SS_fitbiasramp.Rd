@@ -67,9 +67,6 @@ help("png") in R for details). Default=12.}
 Uses standard error of estimated recruitment deviates to estimate the 5
 controls for the bias adjustment in Stock Synthesis
 }
-\author{
-Ian Taylor
-}
 \references{
 Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
 variability of estimated recruitments in fishery assessment models.  Can. J.
@@ -78,4 +75,6 @@ Fish. Aquat. Sci., 68:1744-1760.
 \seealso{
 \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor
+}

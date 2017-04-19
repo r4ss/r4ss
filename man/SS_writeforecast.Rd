@@ -28,12 +28,11 @@ Default=TRUE.}
 write Stock Synthesis forecast file from list object in R which was probably
 created using \code{\link{SS_readforecast}}
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 \code{\link{SS_readdat}},
 \code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Ian Taylor
+}

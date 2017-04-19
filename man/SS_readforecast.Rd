@@ -27,12 +27,11 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).}
 \description{
 read Stock Synthesis forecast file into list object in R
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
 \code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 }
-
+\author{
+Ian Taylor
+}

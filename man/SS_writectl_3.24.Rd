@@ -30,10 +30,9 @@ to disable them. This information is not explicitly available in control file, t
 write Stock Synthesis control file from list object in R which was probably
 created using \code{\link{SS_readctl}}
 }
-\author{
-Yukio Takeuchi
-}
 \seealso{
 \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
 }
-
+\author{
+Yukio Takeuchi
+}

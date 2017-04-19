@@ -24,10 +24,9 @@ rewritten to file so ADMB "sees" what it's expecting.
 Explanation of the methods (in PDF form) published here:
 \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
 }
-\author{
-Cole Monnahan
-}
 \seealso{
 \code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}
 }
-
+\author{
+Cole Monnahan
+}

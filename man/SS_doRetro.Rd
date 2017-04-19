@@ -67,10 +67,9 @@ to exclude.
   }
 
 }
-\author{
-Ian Taylor, Jim Thorson
-}
 \seealso{
 \code{\link{SSgetoutput}}
 }
-
+\author{
+Ian Taylor, Jim Thorson
+}

@@ -15,12 +15,11 @@ model in 2006.
 \note{
 Thanks to Nancie Cummings for inspiration.
 }
-\author{
-Ian Taylor
-}
 \references{
 \url{http://www.pcouncil.org/wp-content/uploads/2006_hake_assessment_FINAL_ENTIRE.pdf}
 (A description is on page 41 and Figures 55-56 (pg 139-140) show some
 results.)
 }
-
+\author{
+Ian Taylor
+}

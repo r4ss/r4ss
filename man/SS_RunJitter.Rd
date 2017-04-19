@@ -66,4 +66,3 @@ in the format Report1.sso, Report2.sso, etc.
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 }
-

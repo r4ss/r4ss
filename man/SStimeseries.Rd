@@ -27,4 +27,3 @@ the model.  Works with Stock Synthesis versions 3.24U and later.
 \author{
 Chantel Wetzel
 }
-

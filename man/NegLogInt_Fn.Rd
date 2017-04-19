@@ -5,7 +5,7 @@
 \title{Perform SS implementation of Laplace Approximation}
 \usage{
 NegLogInt_Fn(File = NA, Input_SD_Group_Vec, CTL_linenum_List, ESTPAR_num_List,
-  PAR_num_Vec, Int_Group_List = list(1), Version = 1, StartFromPar = TRUE,
+  PAR_num_Vec, Int_Group_List = list(1), StartFromPar = TRUE,
   Intern = TRUE, ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL, systemcmd = FALSE)
 }
@@ -36,9 +36,6 @@ random effect coefficient.}
 \item{Int_Group_List}{List where each element is a vector, providing a way of
 grouping different random effect groups into a single category. This is not
 used (but input is still required) when \code{Version=1}.}
-
-\item{Version}{Integer (options are 1, 5, and 6) giving the type of Laplace
-Approximation. I recommend 1.}
 
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
 round of optimization from a "ss3.par" file (I recommend TRUE)}
@@ -84,9 +81,6 @@ from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
                    Version=1, Intern=TRUE)
   }
 }
-\author{
-James Thorson
-}
 \references{
 Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random
 effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
@@ -95,4 +89,6 @@ Sci.
 \seealso{
 \code{\link{read.admbFit}}, \code{\link{getADMBHessian}}
 }
-
+\author{
+James Thorson
+}

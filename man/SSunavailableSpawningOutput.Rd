@@ -38,4 +38,3 @@ too big to be selected
 \author{
 Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor
 }
-

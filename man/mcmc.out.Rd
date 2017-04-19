@@ -78,10 +78,9 @@ and densities for chosen parameters from MCMC output.
       mtext("M (natural mortality)",side=2,outer=T,line=1.5,cex=1.1)
   }
 }
-\author{
-Ian Stewart, Allan Hicks (modifications)
-}
 \seealso{
 \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
 }
-
+\author{
+Ian Stewart, Allan Hicks (modifications)
+}

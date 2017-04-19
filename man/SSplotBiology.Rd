@@ -67,10 +67,9 @@ be the directory where the model was run.}
 Plot biology related quantities from Stock Synthesis model output, including
 mean weight, maturity, fecundity, and spawning output.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

@@ -106,10 +106,9 @@ be the directory where the model was run.}
 Plot selectivity, including retention and other quantities, with additional
 plots for time-varying selectivity.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

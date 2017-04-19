@@ -61,10 +61,9 @@ be the directory where the model was run.}
 \description{
 Plot SPR quantities, including 1-SPR and phase plot.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

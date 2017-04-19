@@ -95,10 +95,9 @@ contained within the list produced by this function.
   }
 
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

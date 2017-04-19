@@ -42,10 +42,9 @@ were created for CSV files with the name 'plotInfoTable...' written by
 directory. Please provide feedback on any bugs, annoyances, or suggestions
 for improvement.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor
+}

@@ -70,10 +70,9 @@ Cumulative catch contributions for each cohort are plotted based on
 estimated catch-at-age matrix and weight-at-age values by fleet.  Curves are
 shown in units of both numbers and biomass.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor
+}

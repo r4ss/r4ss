@@ -120,10 +120,9 @@ be written to a Stock Synthesis data file using \code{\link{SS_writedat}}.
 In hindsight, this function doesn't seem very useful and I haven't taken
 time to describe the arguments below.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_readdat}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Ian Taylor
+}

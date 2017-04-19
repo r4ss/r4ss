@@ -20,6 +20,9 @@ plotCI(x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
 
 \item{yhi}{Upper limit of y range.}
 
+\item{\dots}{Additional inputs that will be passed to the function
+\code{plot(x,y,ylim=ylim,...)}}
+
 \item{sfrac}{Fraction of width of plot to be used for bar ends.}
 
 \item{ymax}{Additional input for Upper limit of y range.}
@@ -27,9 +30,6 @@ plotCI(x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
 \item{add}{Add points and intervals to existing plot? Default=FALSE.}
 
 \item{col}{Color for the points and lines.}
-
-\item{\dots}{Additional inputs that will be passed to the function
-\code{plot(x,y,ylim=ylim,...)}}
 }
 \description{
 Given a set of x and y values and upper and lower bounds, this function
@@ -39,4 +39,3 @@ to add access to ylim and contents.
 \author{
 Bill Venables, Ian Stewart, Ian Taylor, John Wallace
 }
-

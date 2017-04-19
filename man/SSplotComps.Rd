@@ -196,10 +196,9 @@ posterior distributions in which the median and mean differ.}
 Plot composition data and fits from Stock Synthesis output.  Multi-figure
 plots depend on \code{make_multifig}.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig}}
 }
-
+\author{
+Ian Taylor
+}

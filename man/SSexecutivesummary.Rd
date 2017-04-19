@@ -31,4 +31,3 @@ Additionally, historical catch and numbers at ages tables are created.
 \author{
 Chantel Wetzel
 }
-

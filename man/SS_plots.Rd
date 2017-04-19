@@ -303,9 +303,6 @@ series, and fits to data.  Plots are sent to R GUI, single PDF file, or
 multiple PNG files. This is now just a wrapper which calls on separate
 functions to make all the plots.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \references{
 Walters, Hilborn, and Christensen, 2008, Surplus production
 dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
@@ -321,4 +318,6 @@ Sci. 65: 2536-2551.
 \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
 \code{\link{SSplotYield}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

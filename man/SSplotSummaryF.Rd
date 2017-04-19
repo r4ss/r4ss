@@ -43,10 +43,9 @@ be the directory where the model was run.}
 Plots the summary F (or harvest rate) as set up in the starter file Needs a
 lot of work to be generalized
 }
-\author{
-Allan Hicks
-}
 \seealso{
 \code{\link{SSplotTimeseries}}, ~~~
 }
-
+\author{
+Allan Hicks
+}

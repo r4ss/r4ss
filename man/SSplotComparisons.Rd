@@ -216,11 +216,10 @@ Creates a user-chosen set of plots comparing model output from a summary of
 multiple models, where the collection was created using the
 \code{SSsummarize} function.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
-
+\author{
+Ian Taylor
+}

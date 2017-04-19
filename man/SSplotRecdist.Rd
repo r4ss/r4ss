@@ -51,10 +51,9 @@ Image plot shows fraction of recruitment in each combination of area and
 season. This is based on the RECRUITMENT_DIST section of the Report.sso
 file.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
 }
-
+\author{
+Ian Taylor
+}

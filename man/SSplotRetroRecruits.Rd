@@ -78,9 +78,6 @@ examine retrospective patterns in estimation of recruitment deviations.
  }
 
 }
-\author{
-Ian Taylor
-}
 \references{
 Ianelli et al. (2011) Assessment of the walleye pollock stock in
 the Eastern Bering Sea.
@@ -90,4 +87,6 @@ which is on an absolute, rather than log scale.)
 \seealso{
 \code{\link{SSsummarize}}
 }
-
+\author{
+Ian Taylor
+}

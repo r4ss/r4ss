@@ -75,10 +75,9 @@ if this point differs from virgin values}
 \description{
 Plot spawner-recruit curve based on output from Stock Synthesis model.
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}

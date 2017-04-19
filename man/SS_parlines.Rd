@@ -53,11 +53,10 @@ head(parlines)
 }
 
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_changepars}}, \code{\link{SS_readctl}},
 \code{\link{SS_readctl_3.24}}
 }
-
+\author{
+Ian Taylor
+}

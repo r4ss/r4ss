@@ -91,9 +91,6 @@ for (Ifleet in 1:Nfleet)
 }
 
 }
-\author{
-Chris Francis, Andre Punt, Ian Taylor
-}
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Canadian Journal of
@@ -102,4 +99,6 @@ Fisheries and Aquatic Sciences 68: 1124-1138.
 \seealso{
 \code{\link{SSMethod.Cond.TA1.8}}
 }
-
+\author{
+Chris Francis, Andre Punt, Ian Taylor
+}

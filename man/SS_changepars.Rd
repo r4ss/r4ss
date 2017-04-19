@@ -83,10 +83,9 @@ SS_changepars(dir='Y:/ss/SSv3.03a/Simple/',ctlfile='Control.SS_New',
 }
 
 }
-\author{
-Ian Taylor, Christine Stawitz
-}
 \seealso{
 \code{\link{SS_parlines}}, \code{\link{SS_profile}}
 }
-
+\author{
+Ian Taylor, Christine Stawitz
+}

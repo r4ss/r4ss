@@ -19,11 +19,10 @@ Only skeleton of a function right now, needs work. Intended as a translator
 to convert the output from object created by \code{\link{SS_output}} to the
 format used by FishGraph.
 }
-\author{
-Ian Taylor
-}
 \references{
 A website related to FishGraph is
 \url{http://r-forge.r-project.org/projects/fishgraph/}
 }
-
+\author{
+Ian Taylor
+}

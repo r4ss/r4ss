@@ -79,10 +79,9 @@ number of years of data}
 Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
 plots depend on \code{make_multifig}.
 }
-\author{
-Cole Monnahan
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
 }
-
+\author{
+Cole Monnahan
+}

@@ -43,10 +43,9 @@ filenaming convention based on iteration and date stamp.}
 Apply the function \code{\link{SS_output}} multiple times and save output as
 individual objects or a list of lists.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_output}} \code{\link{SSsummarize}}
 }
-
+\author{
+Ian Taylor
+}

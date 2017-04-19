@@ -47,11 +47,10 @@ Creates a table comparing key quantities from multiple models, which is a
 reduction of the full information in various parts of the list created using
 the \code{SSsummarize} function.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
 \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor
+}

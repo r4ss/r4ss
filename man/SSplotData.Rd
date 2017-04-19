@@ -80,11 +80,10 @@ Plot shows graphical display of what data is being used in the model.  Some
 data types may not yet be included. Note, this is based on output from the
 model, not the input data file.
 }
-\author{
-Ian Taylor, Chantel Wetzel, Cole Monnahan
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}},
 \code{\link{SS_readdat}}
 }
-
+\author{
+Ian Taylor, Chantel Wetzel, Cole Monnahan
+}

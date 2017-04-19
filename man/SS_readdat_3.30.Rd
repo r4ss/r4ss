@@ -26,13 +26,12 @@ This function was formerly called SS_readdat. That name is now used
 for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 (and potentially additional functions in the future).
 }
-\author{
-Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin
-}
 \seealso{
 \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
 \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 \code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin
+}

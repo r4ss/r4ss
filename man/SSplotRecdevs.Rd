@@ -61,10 +61,9 @@ be the directory where the model was run.}
 Plot recruitment deviations and associated quantities including derived
 measures related to bias adjustment.
 }
-\author{
-Ian Taylor, Ian Stewart
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
 }
-
+\author{
+Ian Taylor, Ian Stewart
+}

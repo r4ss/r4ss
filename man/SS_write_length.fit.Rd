@@ -26,11 +26,10 @@ was run.}
 Writes files in the format used by the MFCL length-composition viewer.
 Inspired by Simon Hoyle's demonstration. Still needs work.
 }
-\author{
-Ian Taylor
-}
 \references{
 \url{http://www.multifan-cl.org/},
 \url{http://www.spc.int/OceanFish/en/ofpsection/sam/research/272-mfcl-viewer}
 }
-
+\author{
+Ian Taylor
+}

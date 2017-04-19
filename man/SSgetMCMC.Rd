@@ -46,11 +46,10 @@ starter file and in the \code{-mcsave} runtime command.}
 Reads the MCMC output (in the posteriors.sso and derived_posteriors.sso
 files) from one or more models.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
 \code{\link{SSplotPars}}
 }
-
+\author{
+Ian Taylor
+}

@@ -52,4 +52,3 @@ file, but Ian Taylor prefers this approach for no good reason.
 \author{
 Ian Taylor
 }
-

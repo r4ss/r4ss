@@ -52,10 +52,9 @@ This is a common task for US west coast groundfish but might be useful elsewhere
   }
 
 }
-\author{
-Ian G. Taylor
-}
 \seealso{
 \code{\link{SS_readforecast}}, \code{\link{SS_readforecast}}
 }
-
+\author{
+Ian G. Taylor
+}

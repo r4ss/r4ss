@@ -189,10 +189,9 @@ passed to this function via the ... argument.}
 Function created as an alternative to lattice package for multi-figure plots
 of composition data and fits from Stock Synthesis output.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SS_plots}},\code{\link{SSplotComps}}
 }
-
+\author{
+Ian Taylor
+}

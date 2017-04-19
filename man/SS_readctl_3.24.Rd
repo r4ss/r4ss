@@ -59,9 +59,6 @@ Read Stock Synthesis (version 3.24) control file into list object in R.
 This function comes with its wrapper function SS_readctl
 that calls SS_readctl_3.24 (this function) or SS_readctl_3.30 (to be available in future).
 }
-\author{
-Yukio Takeuchi
-}
 \seealso{
 \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
@@ -69,4 +66,6 @@ Yukio Takeuchi
 \code{\link{SS_writestarter}},
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
-
+\author{
+Yukio Takeuchi
+}

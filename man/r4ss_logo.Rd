@@ -13,4 +13,3 @@ that appeared by default.
 \author{
 Ian Taylor
 }
-

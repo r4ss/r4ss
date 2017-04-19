@@ -40,10 +40,9 @@ be summarized. NULL=all genders. Default=NULL.}
 Summarize various quantities from the model output collected by
 \code{\link{SSgetoutput}} and return them in a list of tables and vectors.
 }
-\author{
-Ian Taylor
-}
 \seealso{
 \code{\link{SSgetoutput}}
 }
-
+\author{
+Ian Taylor
+}

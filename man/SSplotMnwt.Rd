@@ -59,10 +59,9 @@ be the directory where the model was run.}
 Plot mean weight data and fits from Stock Synthesis output. Intervals are
 based on T-distributions as specified in model.
 }
-\author{
-Ian Taylor, Ian Stewart
-}
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Taylor, Ian Stewart
+}

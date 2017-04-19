@@ -50,9 +50,6 @@ be the directory where the model was run.}
 Plot yield and surplus production from Stock Synthesis output. Surplus
 production is based on Walters et al. (2008).
 }
-\author{
-Ian Stewart, Ian Taylor
-}
 \references{
 Walters, Hilborn, and Christensen, 2008, Surplus production
 dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
@@ -61,4 +58,6 @@ Sci. 65: 2536-2551
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
-
+\author{
+Ian Stewart, Ian Taylor
+}
