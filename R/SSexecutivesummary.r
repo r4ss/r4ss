@@ -191,8 +191,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	names    <- temp[3:(3 + nfleets - 1)]
 
 	# Find summary age
-	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1, header=TRUE)
-    smry.age  <- as.numeric(toupper(substr(ts[2],14,15)))
+	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1) 
+    smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
 	
 	#======================================================================
@@ -309,6 +309,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 		# Find the values within the forecast file 
 		rawforecast  <- readLines(paste0(dir, "/forecast.ss"))	
+		rawstarter   <- readLines(paste0(dir, "/starter.ss"))
 		spr          <- as.numeric(strsplit(rawforecast[grep("SPR target",rawforecast)]," ")[[1]][1])
 
 		ssb.virgin = Get.Values(dat = base, label = "SPB_Virgin", 	     hist, quant, single = TRUE)
@@ -485,20 +486,26 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#Numbers at age
 	#======================================================================
-		maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 13
-		
-		natage.f = natage.m = 0
-		for(a in 1:nareas){
-			temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
-			natage.f = natage.f + t(temp) 
-			temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 2", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
-			natage.m = natage.m + t(temp) 
+		# Check to see if numbers-at-age is calculated 
+		check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
+		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
+		if (check != 2){
+			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+			
+			natage.f = natage.m = 0
+			for(a in 1:nareas){
+				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
+				natage.f = natage.f + t(temp) 
+				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
+				natage.m = natage.m + t(temp) 
+			}
+			
+			colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
+			rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+	
+			write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
+			write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))			
 		}
-		
-		colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
-		rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
 
-		write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
-		write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))
 	}
 }
