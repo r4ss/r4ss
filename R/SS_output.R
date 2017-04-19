@@ -483,7 +483,7 @@ SS_output <-
 
   # more dimensions
   nfishfleets  <- sum(IsFishFleet)
-  nsexes <- length(unique(as.numeric(selex$gender)))
+  nsexes <- length(unique(as.numeric(selex$Sex)))
   nareas <- max(as.numeric(rawrep[begin:end,1]))
   startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
   temptime <- rawrep[begin:end,2:3]
@@ -1456,7 +1456,7 @@ SS_output <-
   returndat$mean_body_wt <- mean_body_wt
 
   # Time-varying growth
-  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_gender",-1,cols=1:(4+accuage+1))
+  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_sex",-1,cols=1:(4+accuage+1))
   growthvaries <- FALSE
   if(length(rawgrow)>1){
     names(rawgrow) <- rawgrow[1,]
