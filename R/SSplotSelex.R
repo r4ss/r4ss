@@ -624,7 +624,7 @@ SSplotSelex <-
         if(m==1 & nsexes==2) sextitle2 <- "Female ending"
         if(m==2) sextitle2 <- "Male ending"
         ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
-        plotageselex <- ageselex[ageselex$factor==factor & ageselex$Fleet==i & ageselex$Yr!=startyr-3 & ageselex$Sex==m,]
+        plotageselex <- ageselex[ageselex$Factor==factor & ageselex$Fleet==i & ageselex$Yr!=startyr-3 & ageselex$Sex==m,]
         # test for time-varying age selectivity
         time <- any(apply(plotageselex[-c(1,nrow(plotageselex)),ageselexcols],2,function(x){any(x!=x[1])}))      
         if(time){
@@ -756,7 +756,7 @@ SSplotSelex <-
         plotlenselex <- as.numeric(sizeselex[sizeselex$Factor=="Lsel" & sizeselex$Yr==endyr & sizeselex$Fleet==i & sizeselex$Sex==m,-(1:5)])
         # test if there is any length-based selectivity (otherwise plot is uninformative)
         if(any(plotlenselex!=1)){ 
-          plotageselex <- as.numeric(ageselex[ageselex$factor=="Asel" & ageselex$Yr==endyr & ageselex$Fleet==i & ageselex$Sex==m,-(1:7)])
+          plotageselex <- as.numeric(ageselex[ageselex$Factor=="Asel" & ageselex$Yr==endyr & ageselex$Fleet==i & ageselex$Sex==m,-(1:7)])
           # x here should probably be replaced by $Age_Mid or some more informative value
           x <- seq(0,accuage,by=1)
           y <- lbinspop
@@ -834,7 +834,7 @@ SSplotSelex <-
           #Ian T.: this is the beginning of code to add the full selectivity line, 
           #        including bins for which no uncertainty was requested
           if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$Fleet==i & sizeselex$Sex==m,]
-          if(agelen=="A") plotselex <- ageselex[ageselex$factor=="Asel" & ageselex$Fleet==i & ageselex$Sex==m,]
+          if(agelen=="A") plotselex <- ageselex[ageselex$Factor=="Asel" & ageselex$Fleet==i & ageselex$Sex==m,]
         }
         
         plot_extra_selex_SD <- function(){

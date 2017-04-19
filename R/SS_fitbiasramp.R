@@ -92,8 +92,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   
   if(is.null(startvalues)){
-      nonfixedyrs <- recruit$year[recruit$era!="Fixed"]
-      mainyrs <- recruit$year[recruit$era=="Main"]
+      nonfixedyrs <- recruit$Yr[recruit$era!="Fixed"]
+      mainyrs <- recruit$Yr[recruit$era=="Main"]
       startvalues <- c(min(nonfixedyrs),
                        min(mainyrs) + .3*diff(range(mainyrs)),
                        max(mainyrs) - .1*diff(range(mainyrs)),
@@ -285,7 +285,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     if(shownew) lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
     legendlines <- 1
     if(shownew) legendlines <- 1:2
-    lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
+    lines(recruit$Yr,recruit$biasadj,col=2,lwd=3,lty=2)
     legend('topleft',col=c(2,4)[legendlines],lwd=3,lty=(2:1)[legendlines],
            inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
            legend=c('bias adjust in model','estimated alternative')[legendlines])

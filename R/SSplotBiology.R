@@ -219,7 +219,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   # Beginning of season 1 (or specified season) mean length at age
   #   with 95% range of lengths (by sex if applicable)
-
   ## Ian T.: consider somehow generalizing to allow looping over growth pattern
   growdatF <- growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Beg

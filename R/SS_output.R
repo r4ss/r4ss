@@ -710,8 +710,8 @@ SS_output <-
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=TRUE)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   morph_indexing <- df.rename(morph_indexing,
-                              oldnames=c("GPattern","Bseas"),
-                              newnames=c("GP","BirthSeason"))
+                              oldnames=c("Gpattern", "Bseas", "Gender"),
+                              newnames=c("GP","BirthSeason", "Sex"))
   ngpatterns <- max(morph_indexing$GP)
 
   # forecast
@@ -1182,12 +1182,16 @@ SS_output <-
   rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
 
   # Spawner-recruit curve
-  rawsr <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
-  names(rawsr) <- rawsr[1,]
-  rawsr[rawsr=="_"] <- NA
-  rawsr <- rawsr[-(1:2),] # remove header rows
-  sr <- rawsr[-(1:2),] # remove rows for Virg and Init
-  for(i in 1:(ncol(sr)-1)) sr[,i] <- as.numeric(sr[,i])
+  raw_recruit <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
+  names(raw_recruit) <- raw_recruit[1,]
+  raw_recruit[raw_recruit=="_"] <- NA
+  raw_recruit <- raw_recruit[-(1:2),] # remove header rows
+  recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
+  for(i in 1:(ncol(recruit)-1)) recruit[,i] <- as.numeric(recruit[,i])
+  # make older SS output names match current SS output conventions
+  recruit <- df.rename(recruit,
+                       oldnames=c("year", "spawn_bio"),
+                       newnames=c("Yr",   "SpawnBio"))
 
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
@@ -1363,7 +1367,7 @@ SS_output <-
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
-  returndat$recruit     <- sr
+  returndat$recruit     <- recruit
   returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
 
 
@@ -1580,9 +1584,9 @@ SS_output <-
   }
   if(SS_versionNumeric < 3.3){
     # old "sub_morph" label
-    temp <- morph_indexing[morph_indexing$Bseas==min(rd$Seas[rd$Value>0]) &
+    temp <- morph_indexing[morph_indexing$BirthSeason==min(rd$Seas[rd$Value>0]) &
                              morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
-    mainmorphs <- min(temp$Index[temp$Gender==1])
+    mainmorphs <- min(temp$Index[temp$Sex==1])
     if(nsexes==2){
       mainmorphs <- c(mainmorphs, min(temp$Index[temp$Gender==2]))
     }
@@ -1778,6 +1782,13 @@ SS_output <-
   returndat$Kobe_warn <- Kobe_warn
   returndat$Kobe_MSY_basis <- Kobe_MSY_basis
   returndat$Kobe <- Kobe
+
+  # clean up SPR output
+  # make older SS output names match current SS output conventions
+  names(spr) <- gsub(pattern="SPB", replacement="SSB", names(spr))
+  spr <- df.rename(spr,
+                   oldnames=c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
+                   newnames=c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report"))
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]) spr[,i] <- as.numeric(spr[,i])
