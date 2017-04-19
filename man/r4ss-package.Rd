@@ -36,7 +36,8 @@ Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
 Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
 Andrew B. Cooper, Andi Stephens, and Neil Klaer
- Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
+
+Package maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
 }
 \references{
 r4ss on GitHub: \url{https://github.com/r4ss}
