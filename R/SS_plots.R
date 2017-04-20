@@ -392,9 +392,9 @@ SS_plots <-
 
         # if there are plots that are older than those from the current model,
         # rename the directory to something containing the older model start time
-        StartTimeName <- gsub(":", ".", StartTimes.old[1])
-        StartTimeName <- gsub(" ", "_", StartTimeName)
-        StartTimeName <- gsub("._", "_", StartTimeName)
+        StartTimeName <- gsub(":", ".", StartTimes.old[1], fixed=TRUE)
+        StartTimeName <- gsub(" ", "_", StartTimeName, fixed=TRUE)
+        StartTimeName <- gsub("._", "_", StartTimeName, fixed=TRUE)
         plotdir.old <- file.path(dir, paste0("plots_", StartTimeName))
         cat("NOTE: the directory\n   ",
             plotdir,
