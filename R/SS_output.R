@@ -1472,15 +1472,27 @@ SS_output <-
   returndat$mean_body_wt <- mean_body_wt
 
   # Time-varying growth
-  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1_for_sex",-1,cols=1:(4+accuage+1))
+  rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES",1,"mean_size_Jan_1",-1,cols=1:(4+accuage+1))
   growthvaries <- FALSE
   if(length(rawgrow)>1){
     names(rawgrow) <- rawgrow[1,]
     growdat <- rawgrow[-1,]
     for(i in 1:ncol(growdat)) growdat[,i] <- as.numeric(growdat[,i])
-    growdat <- growdat[growdat$Beg==1 & growdat$Yr >= startyr & growdat$Yr < endyr,]
-    if(nseasons > 1) growdat <- growdat[growdat$Seas==1,]
-    if(length(unique(growdat$Yr))>1) growthvaries <- TRUE
+    if(SS_versionNumeric < 3.3){
+      growdat <- growdat[growdat$Beg==1 &
+                           growdat$Yr >= startyr &
+                             growdat$Yr < endyr,]
+    }else{
+      growdat <- growdat[growdat$SubSeas==1 &
+                           growdat$Yr >= startyr &
+                             growdat$Yr < endyr,]
+    }
+    if(nseasons > 1){
+      growdat <- growdat[growdat$Seas==1,]
+    }
+    if(length(unique(growdat$Yr))>1){
+      growthvaries <- TRUE
+    }
     returndat$growthseries <- growdat
     returndat$growthvaries <- growthvaries
   }
@@ -1849,19 +1861,20 @@ SS_output <-
     # CPUE/Survey series
     cpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,header=TRUE)
     cpue[cpue=="_"] <- NA
-    cpue$FleetName <- NA
-    cpue$FleetNum <- NA
+    # make older SS output names match current SS output conventions
+    cpue <- df.rename(cpue,
+                      oldnames=c("Yr.S", "Supr_Per"),
+                      newnames=c("Yr.frac", "SuprPer"))
     if(SS_versionNumeric < 3.24){
-      for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
+      cpue$Fleet <- NA
+      cpue$Name <- NA
       for(i in 1:nrow(cpue)){
-        cpue$FleetNum[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
-        cpue$FleetName[i] <- substring(cpue$Fleet[i],nchar(cpue$FleetNum[i])+2)
+        cpue$Fleet[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
+        cpue$Name[i] <- substring(cpue$Fleet[i],nchar(cpue$Fleet[i])+2)
       }
-    }else{
-      for(i in (1:ncol(cpue))[!names(cpue) %in% c("Name","Supr_Per")]) cpue[,i] <- as.numeric(cpue[,i])
-      # redundant columns are used to easily maintain backwards compatibility of plotting code
-      cpue$FleetNum <- cpue$Fleet
-      cpue$FleetName <- cpue$Name
+    }
+    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Name","SuprPer")]){
+      cpue[,i] <- as.numeric(cpue[,i])
     }
   }else{
     cpue <- NA

@@ -107,7 +107,7 @@ function(replist,subplots=1:9,
     cpue <- cpue[!is.na(cpue$Dev),]
   }
   
-  FleetNames  <- replist$FleetNames
+  FleetNames  <- replist$Name
   nfleets     <- replist$nfleets
   nseasons    <- replist$nseasons
 
@@ -118,7 +118,7 @@ function(replist,subplots=1:9,
   nSDpars <- nrow(Q_extraSD_info)
   if(nSDpars > 0){
     # parse the parameter label to get the fleet number
-    Q_extraSD_info$FleetNum <- NA
+    Q_extraSD_info$Fleet <- NA
     for(ipar in 1:nSDpars){
       if(SS_versionNumeric >= 3.3){
         # parsing label with ending like "(2)" assuming only one set of parentheses
@@ -127,9 +127,9 @@ function(replist,subplots=1:9,
         num <- strsplit(substring(Q_extraSD_info$Label[ipar], nchar("Q_extraSD_")+1),
                         split="_", fixed=TRUE)[[1]][1]
       }
-      Q_extraSD_info$FleetNum[ipar] <- as.numeric(num)
+      Q_extraSD_info$Fleet[ipar] <- as.numeric(num)
     }
-    # NOTE: important columns in Q_extraSD_info to use below are $Value and $FleetNum
+    # NOTE: important columns in Q_extraSD_info to use below are $Value and $Fleet
   }
   if(nseasons>1){
     # if seasons, put CPUE at season midpoint
@@ -148,12 +148,12 @@ function(replist,subplots=1:9,
   }}
   
   # subset fleets as requested
-  fleetvec <- intersect(fleets, unique(as.numeric(cpue$FleetNum)))
+  fleetvec <- intersect(fleets, unique(as.numeric(cpue$Fleet)))
 
   # use fancy colors only if any index spans more than one season
   usecol <- FALSE
   for(ifleet in fleetvec){
-    if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$FleetNum==ifleet])) > 1){
+    if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$Fleet==ifleet])) > 1){
       usecol <- TRUE
     }else{
       legend=FALSE
@@ -182,7 +182,7 @@ function(replist,subplots=1:9,
   # loop over fleets
   for(ifleet in fleetvec){
     Fleet <- fleetnames[ifleet]
-    cpueuse <- cpue[cpue$Obs > 0 & cpue$FleetNum==ifleet,]
+    cpueuse <- cpue[cpue$Obs > 0 & cpue$Fleet==ifleet,]
     cpueuse <- cpueuse[order(cpueuse$YrSeas),]
     # look for time-vary
     time <- diff(range(cpueuse$Calc_Q))>0
@@ -194,9 +194,9 @@ function(replist,subplots=1:9,
       time2 <- FALSE
     }
     # look for extra SD and calculate input SD (if different from final value)
-    if(exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info$FleetNum){
+    if(exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info$Fleet){
       # input uncertainty is final value minus extra SD parameter (if present)
-      cpueuse$SE_input <- cpueuse$SE - Q_extraSD_info$Value[Q_extraSD_info$FleetNum==ifleet]
+      cpueuse$SE_input <- cpueuse$SE - Q_extraSD_info$Value[Q_extraSD_info$Fleet==ifleet]
     }else{
       cpueuse$SE_input <- NULL # could also set equal to $SE but then additional test required to not display
     }

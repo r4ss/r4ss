@@ -467,6 +467,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
     lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
     # add uncertainty intervals around growth curve
+    old_warn <- options()$warn   # previous settings for warnings
+    options(warn=-1)             # turn off "zero-length arrow" warning
     if(!is.null(Grow_std) & add_uncertainty){
       Grow_std.f <- Grow_std[Grow_std$sex==1,]
       if(!is.null(Grow_std.f)){
@@ -508,6 +510,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
         }
       }
     }
+    #returning to old warnings (after turning off in case of zero-length arrow)
+    options(warn=old_warn)  
+
     if(!add){
       grid()
       box()
