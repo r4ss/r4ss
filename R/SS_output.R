@@ -1890,30 +1890,53 @@ SS_output <-
   if(length(rawnatage)>1){
     names(rawnatage) <- rawnatage[1,]
     rawnatage <- rawnatage[-1,]
-    for(i in (1:ncol(rawnatage))[!(names(rawnatage) %in% c("Beg/Mid","Era"))]) rawnatage[,i] = as.numeric(rawnatage[,i])
+    # make older SS output names match current SS output conventions
+    rawnatage <- df.rename(rawnatage,
+                      oldnames=c("Gender", "BirthSeas", "SubMorph"),
+                      newnames=c("Sex", "BirthSeason", "Platoon"))
+    for(i in (1:ncol(rawnatage))[!(names(rawnatage) %in% c("Beg/Mid","Era"))]){
+      rawnatage[,i] = as.numeric(rawnatage[,i])
+    }
     returndat$natage <- rawnatage
   }
-
+  # Note: should add read of BIOMASS_AT_AGE section here
+  
   # Numbers at length
+  col.adjust <- 12
+  if(SS_versionNumeric < 3.30){
+    col.adjust <- 11
+  }
+  # test ending based on text because sections changed within 3.24 series
   if(length(grep("BIOMASS_AT_LENGTH",rawrep[,1]))==0){
-    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(11+nlbinspop),substr1=FALSE)
+    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"CATCH_AT_AGE",-1,
+                           cols=1:(col.adjust+nlbinspop),substr1=FALSE)
   }else{
-    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"BIOMASS_AT_LENGTH",-1,cols=1:(11+nlbinspop),substr1=FALSE)
+    rawnatlen <- matchfun2("NUMBERS_AT_LENGTH",1,"BIOMASS_AT_LENGTH",-1,
+                           cols=1:(col.adjust+nlbinspop),substr1=FALSE)
   }
   if(length(rawnatlen)>1){
     names(rawnatlen) <- rawnatlen[1,]
     rawnatlen <- rawnatlen[-1,]
-    for(i in (1:ncol(rawnatlen))[!(names(rawnatlen) %in% c("Beg/Mid","Era"))]) rawnatlen[,i] = as.numeric(rawnatlen[,i])
+    # make older SS output names match current SS output conventions
+    rawnatlen <- df.rename(rawnatlen,
+                           oldnames=c("Gender", "BirthSeas", "SubMorph"),
+                           newnames=c("Sex", "BirthSeason", "Platoon"))
+    for(i in (1:ncol(rawnatlen))[!(names(rawnatlen) %in% c("Beg/Mid","Era"))]){
+      rawnatlen[,i] = as.numeric(rawnatlen[,i])
+    }
     returndat$natlen <- rawnatlen
   }
 
   # Biomass at length (first appeared in version 3.24l, 12-5-2012)
   if(length(grep("BIOMASS_AT_LENGTH",rawrep[,1]))>0){
-    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,"CATCH_AT_AGE",-1,cols=1:(11+nlbinspop),substr1=FALSE)
+    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,"CATCH_AT_AGE",-1,
+                           cols=1:(col.adjust+nlbinspop),substr1=FALSE)
     if(length(rawbatlen)>1){
       names(rawbatlen) <- rawbatlen[1,]
       rawbatlen <- rawbatlen[-1,]
-      for(i in (1:ncol(rawbatlen))[!(names(rawbatlen) %in% c("Beg/Mid","Era"))]) rawbatlen[,i] = as.numeric(rawbatlen[,i])
+      for(i in (1:ncol(rawbatlen))[!(names(rawbatlen) %in% c("Beg/Mid","Era"))]){
+        rawbatlen[,i] = as.numeric(rawbatlen[,i])
+      }
       returndat$batlen <- rawbatlen
     }
   }

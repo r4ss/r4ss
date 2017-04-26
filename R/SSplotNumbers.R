@@ -103,7 +103,6 @@ SSplotNumbers <-
     nseasons        <- replist$nseasons
     spawnseas       <- replist$spawnseas
     ngpatterns      <- replist$ngpatterns
-    morphlist       <- replist$morphlist
     morph_indexing  <- replist$morph_indexing
     accuage         <- replist$accuage
     agebins         <- replist$agebins
@@ -117,11 +116,6 @@ SSplotNumbers <-
     recruitment_dist <- replist$recruitment_dist
     mainmorphs <- replist$mainmorphs
     SS_versionNumeric <- replist$SS_versionNumeric
-
-    if(!"BirthSeas" %in% names(natage)){
-      cat("Numbers at age plots haven't been updated to work with SS version 3.30\n")
-      return()
-    }
 
     if(areas[1]=="all"){
       areas <- 1:nareas
@@ -148,18 +142,20 @@ SSplotNumbers <-
 
     # combining across platoons/submorphs and growth patterns
     column1 <- 12
+    if(SS_versionNumeric >= 3.30){
+      column1 <- 13
+    }
     remove <- -(1:(column1-1)) # removes first group of columns
 
-    if(SS_versionNumeric >= 3.30){
+    if("Settlement" %in% names(natage)){
       settlement <- unique(natage$Settlement) 
-      if(length(bseas)>1){
+      if(length(settlement)>1){
         cat("Numbers at age plots only show first settlement event\n")
       }
-    }else{
-      bseas <- unique(natage$BirthSeas)
-      if(length(bseas)>1){
-        cat("Numbers at age plots are for only the first birth season\n")
-      }
+    }
+    bseas <- unique(natage$BirthSeason)
+    if(length(bseas)>1){
+      cat("Numbers at age plots are for only the first birth season\n")
     }
     if(ngpatterns>1){
       cat("Numbers at age plots may not deal correctly with growth patterns:",
@@ -174,17 +170,17 @@ SSplotNumbers <-
           # warning! implementation of birthseasons may not be correct in this section
           # data frame to combine values across factors
           natagetemp_all <- natage[natage$Area==iarea &
-                                   natage$Gender==m &
+                                   natage$Sex==m &
                                    natage$Seas==1 &
                                    natage$Era!="VIRG" &
                                    !is.na(natage$"0") &
                                    natage$Yr < (endyr+2) &
-                                   natage$BirthSeas==min(bseas),]
+                                   natage$BirthSeason==min(bseas),]
                                    # natage$Bio_Pattern==1,] # formerly filtered
           natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid"==period[iperiod],]
           # create data frame with 0 values to fill across platoons/submorphs
-          morphlist <- unique(natagetemp_all$SubMorph)
-          natagetemp0 <- natagetemp_all[natagetemp_all$SubMorph==morphlist[1] &
+          morphlist <- unique(natagetemp_all$Platoon)
+          natagetemp0 <- natagetemp_all[natagetemp_all$Platoon==morphlist[1] &
                                           natagetemp_all$Bio_Pattern==1,]
           for(iage in 0:accuage){
             # matrix of zeros for upcoming calculations
@@ -194,7 +190,7 @@ SSplotNumbers <-
           for(imorph in 1:length(morphlist)){
             for(igp in 1:ngpatterns){
               natagetemp_imorph_igp <-
-                natagetemp_all[natagetemp_all$SubMorph==morphlist[imorph] &
+                natagetemp_all[natagetemp_all$Platoon==morphlist[imorph] &
                                  natagetemp_all$Bio_Pattern==igp,]
               natagetemp0[,column1+0:accuage] <-
                 natagetemp0[,column1+0:accuage] +
@@ -274,7 +270,7 @@ SSplotNumbers <-
           prodsum <- as.vector(apply(prodmat,2,sum))
           natagetemp2$sumprod <- prodsum
           natagetemp2$meanage <-
-            natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
+            natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeason-1)/nseasons
           natageyrs <- sort(unique(natagetemp0$Yr))
           if(iperiod==1){
             natageyrsB <- natageyrs # unique name for beginning of year
@@ -299,7 +295,6 @@ SSplotNumbers <-
           } else {
             plottitle2 <- ""
           }
-
           ageBubble.fn <- function(){
             # bubble plot with line
             bubble3(x=resx, y=resy, z=resz,
@@ -405,27 +400,26 @@ SSplotNumbers <-
             # warning! implementation of birthseasons may not be correct in this section
             # data frame to combine values across factors
             natlentemp_all <- natlen[natlen$Area==iarea &
-                                     natlen$Gender==m &
+                                     natlen$Sex==m &
                                      natlen$Seas==1 &
                                      natlen$Era!="VIRG" &
                                      natlen$Yr < (endyr+2) &
-                                     natlen$BirthSeas==min(bseas),]
+                                     natlen$BirthSeason==min(bseas),]
                                      # natlen$Bio_Pattern==1,] # formerly filtered
             natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid"==period[iperiod],]
 
             # create data frame with 0 values to fill across platoons/submorphs
-            morphlist <- unique(natlentemp_all$SubMorph)
-            natlentemp0 <- natlentemp_all[natlentemp_all$SubMorph==morphlist[1] &
+            morphlist <- unique(natlentemp_all$Platoon)
+            natlentemp0 <- natlentemp_all[natlentemp_all$Platoon==morphlist[1] &
                                             natlentemp_all$Bio_Pattern==1,]
             for(ilen in 1:nlbinspop){
               # matrix of zeros for upcoming calculations
               natlentemp0[,column1 + ilen] <- 0
             }
-
             for(imorph in 1:length(morphlist)){
               for(igp in 1:ngpatterns){
                 natlentemp_imorph_igp <-
-                  natlentemp_all[natlentemp_all$SubMorph==morphlist[imorph] &
+                  natlentemp_all[natlentemp_all$Platoon==morphlist[imorph] &
                                    natlentemp_all$Bio_Pattern==igp,]
                 natlentemp0[,column1+1:nlbinspop] <-
                   natlentemp0[,column1+1:nlbinspop] +
@@ -492,7 +486,7 @@ SSplotNumbers <-
             prodsum <- as.vector(apply(prodmat,2,sum))
             natlentemp2$sumprod <- prodsum
             natlentemp2$meanlen <-
-              natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeas-1)/nseasons
+              natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeason-1)/nseasons
             natlenyrs <- sort(unique(natlentemp0$Yr))
             if(iperiod==1) natlenyrsB <- natlenyrs # unique name for beginning of year
 
@@ -616,10 +610,10 @@ SSplotNumbers <-
       equilage <- equilage[as.vector(apply(equilage[, remove], 1, sum))>0, ]
 
 
-      BirthSeas <- spawnseas
-      if(!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
+      BirthSeason <- spawnseas
+      if(!(spawnseas %in% bseas)) BirthSeason <- min(bseas)
       if(length(bseas)>1){
-        cat("showing equilibrium age for first birth season", BirthSeas, "\n")
+        cat("showing equilibrium age for first birth season", BirthSeason, "\n")
       }
 
       if(mainTitle) {
@@ -629,8 +623,8 @@ SSplotNumbers <-
       }
 
       plot(0, type='n', xlim=c(0, accuage),
-           ylim=c(0, 1.05*max(equilage[equilage$BirthSeas==BirthSeas
-             & equilage$Seas==BirthSeas, remove])),
+           ylim=c(0, 1.05*max(equilage[equilage$BirthSeason==BirthSeason
+             & equilage$Seas==BirthSeason, remove])),
            xaxs='i', yaxs='i', xlab='Age', ylab=labels[9], main=pt1, cex.main=cex.main)
 
       # now fill in legend
@@ -639,9 +633,9 @@ SSplotNumbers <-
       legendlegend <- NULL
       for(iarea in areas){
         for(m in 1:nsexes){
-          equilagetemp <- equilage[equilage$Area==iarea & equilage$Gender==m
-                                   & equilage$BirthSeas==BirthSeas
-                                   & equilage$Seas==BirthSeas, ]
+          equilagetemp <- equilage[equilage$Area==iarea & equilage$Sex==m
+                                   & equilage$BirthSeason==BirthSeason
+                                   & equilage$Seas==BirthSeason, ]
           if(nrow(equilagetemp)>1){
             cat("in plot of equilibrium age composition by gender and area\n",
                 "multiple morphs are not supported,",
