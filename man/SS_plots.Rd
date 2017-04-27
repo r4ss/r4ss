@@ -5,18 +5,17 @@
 \title{plot many quantities related to output from Stock Synthesis}
 \usage{
 SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
-  png = TRUE, html = png, printfolder = "plots",
-  allow.printfolder.conflicts = FALSE, dir = "default", fleets = "all",
-  areas = "all", fleetnames = "default", fleetcols = "default",
-  fleetlty = 1, fleetpch = 1, lwd = 1, areacols = "default",
-  areanames = "default", verbose = TRUE, uncertainty = TRUE,
-  forecastplot = FALSE, datplot = FALSE, Natageplot = TRUE,
-  samplesizeplots = TRUE, compresidplots = TRUE, comp.yupper = 0.4,
-  sprtarg = "default", btarg = "default", minbthresh = "default",
-  pntscalar = NULL, bub.scale.pearson = 1.5, bub.scale.dat = 3,
-  pntscalar.nums = 2.6, pntscalar.tags = 2.6, minnbubble = 8,
-  aalyear = -1, aalbin = -1, aalresids = TRUE, maxneff = 5000,
-  cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
+  png = TRUE, html = png, printfolder = "plots", dir = "default",
+  fleets = "all", areas = "all", fleetnames = "default",
+  fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
+  areacols = "default", areanames = "default", verbose = TRUE,
+  uncertainty = TRUE, forecastplot = FALSE, datplot = FALSE,
+  Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
+  comp.yupper = 0.4, sprtarg = "default", btarg = "default",
+  minbthresh = "default", pntscalar = NULL, bub.scale.pearson = 1.5,
+  bub.scale.dat = 3, pntscalar.nums = 2.6, pntscalar.tags = 2.6,
+  minnbubble = 8, aalyear = -1, aalbin = -1, aalresids = TRUE,
+  maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
   showeffN = TRUE, sampsizeline = FALSE, effNline = FALSE,
   showlegend = TRUE, pwidth = 6.5, pheight = 5, punits = "in",
   ptsize = 10, res = 300, cex.main = 1, selexlines = 1:6, rows = 1,
@@ -79,10 +78,6 @@ The directory will be created if it doesn't exist.
 If 'printfolder' is set to "", it is ignored and the PNG files will be located
 in the directory specified by 'dir'.}
 
-\item{allow.printfolder.conflicts}{Don't rename the printfolder
-(typically "plots") when replist is associated with a model run which is newer
-than the plots in the existing folder.}
-
 \item{dir}{The directory in which a PDF file (if requested) will be created
 and within which the printfolder sub-directory (see above) will be created
 if png=TRUE. By default it will be the same directory that the report file
@@ -123,8 +118,7 @@ Default="default".}
 \item{verbose}{Return updates of function progress to the R GUI?  Default=T.}
 
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
-(requires positive definite hessian in model and \code{covar}=T in
-\code{SS_output})?  Default=T.}
+(requires positive definite hessian in model?  Default=TRUE.}
 
 \item{forecastplot}{Include forecast years in the plots? Obviously requires
 forecast options to have been used in the model.  Default=T.}

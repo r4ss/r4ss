@@ -79,8 +79,7 @@
 #' Default="default".
 #' @param verbose Return updates of function progress to the R GUI?  Default=T.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
-#' (requires positive definite hessian in model and \code{covar}=T in
-#' \code{SS_output})?  Default=T.
+#' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the plots? Obviously requires
 #' forecast options to have been used in the model.  Default=T.
 #' @param datplot Plot the data by itself? This is useful in document
@@ -272,10 +271,8 @@ SS_plots <-
     stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
   }
   if(uncertainty & !inputs$covar){
-    stop("To use uncertainty=T, you need to have covar=T in the input to the SS_output function")
-  }
-  if(forecastplot & !inputs$forecast){
-    stop("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function")
+    warning("covar information unavailable, changing 'uncertainty' to FALSE")
+    uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
     cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
