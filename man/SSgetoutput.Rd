@@ -5,7 +5,7 @@
 \title{Get output from multiple Stock Synthesis models.}
 \usage{
 SSgetoutput(keyvec = NULL, dirvec = NULL, getcovar = TRUE,
-  getcomp = TRUE, forecast = FALSE, verbose = TRUE, ncols = 210,
+  getcomp = TRUE, forecast = TRUE, verbose = TRUE, ncols = 210,
   listlists = TRUE, underscore = FALSE, save.lists = FALSE)
 }
 \arguments{

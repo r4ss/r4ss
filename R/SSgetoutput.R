@@ -28,7 +28,7 @@
 #' @export
 #' @seealso \code{\link{SS_output}} \code{\link{SSsummarize}}
 SSgetoutput <-
-function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=FALSE,
+function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
          verbose=TRUE,ncols=210,listlists=TRUE,underscore=FALSE,
          save.lists=FALSE)
 {
