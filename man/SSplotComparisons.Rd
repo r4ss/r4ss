@@ -127,7 +127,9 @@ values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})}
 \item{legendlabels}{Optional vector of labels to include in legend. Default
 is 'model1','model2',etc.}
 
-\item{legendloc}{Location of legend. See ?legend for more info.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a vector
+of two numeric values representing the fraction of the maximum in the x and y
+dimensions, respectively. See ?legend for more info on the string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
 the legend display the model names in an order that is different than that
