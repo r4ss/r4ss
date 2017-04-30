@@ -124,7 +124,7 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
-#' @author Ian Taylor
+#' @author Ian G. Taylor, John R. Wallace
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
@@ -225,6 +225,12 @@ SSplotComparisons <-
     if(cumulative){
       legendloc="topleft"
     }
+    if(is.numeric(legendloc)) {
+      Usr <- par()$usr
+      legendloc <- list(x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
+                        y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3]))
+    }
+    
     # if type input is "l" then turn off points on top of lines in legend
     legend.pch <- pch
     if(type=="l"){

@@ -221,5 +221,5 @@ multiple models, where the collection was created using the
 \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
 \author{
-Ian Taylor
+Ian G. Taylor, John R. Wallace
 }
