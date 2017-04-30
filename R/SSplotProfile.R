@@ -71,7 +71,6 @@
 #' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SS_profile}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
-#' @keywords aplot hplot
 SSplotProfile <-
   function(summaryoutput,
            plot=TRUE,print=FALSE,
@@ -139,7 +138,7 @@ SSplotProfile <-
 {
   # subfunction to write png files
   pngfun <- function(file){
-    png(filename=paste(plotdir,file,sep="/"),width=pwidth,height=pheight,
+    png(filename=file.path(plotdir,file),width=pwidth,height=pheight,
         units=punits,res=res,pointsize=ptsize)
   }
   

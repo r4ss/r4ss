@@ -1,10 +1,10 @@
 #' make table comparing quantities across models
-#' 
+#'
 #' Creates a table comparing key quantities from multiple models, which is a
 #' reduction of the full information in various parts of the list created using
 #' the \code{SSsummarize} function.
-#' 
-#' 
+#'
+#'
 #' @param summaryoutput list created by \code{SSsummarize}
 #' @param models optional subset of the models described in
 #' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
@@ -27,7 +27,6 @@
 #' @export
 #' @seealso \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
 #' \code{\link{SS_output}}
-#' @keywords data
 SStableComparisons <-  function(summaryoutput,
                                 models="all",
                                 likenames=c("TOTAL",
@@ -52,7 +51,7 @@ SStableComparisons <-  function(summaryoutput,
                                 verbose=TRUE,
                                 mcmc=FALSE){
   if(verbose) cat("running SStableComparisons\n")
-  
+
   # get stuff from summary output
   n           <- summaryoutput$n
   nsexes      <- summaryoutput$nsexes
@@ -61,14 +60,15 @@ SStableComparisons <-  function(summaryoutput,
   likelihoods <- summaryoutput$likelihoods
   npars       <- summaryoutput$npars
   indices     <- summaryoutput$indices
-  
+
   if(models[1]=="all") models <- 1:n
   ncols <- length(models)
   nsexes <- nsexes[models]
 
   if(modelnames[1]=="default") modelnames <- paste("model",1:ncols,sep="")
   tab <- as.data.frame(matrix(NA,nrow=0,ncol=ncols+1))
-  
+
+  # get MLE values for table
   if(!mcmc) {
     if(!is.null(likenames)){
       likenames <- paste(likenames,"_like",sep="")
@@ -90,7 +90,7 @@ SStableComparisons <-  function(summaryoutput,
         # add to table
         tab <- rbind(tab, " ")
       }else{
-        # get values 
+        # get values
         vals <- bigtable[grep(name, bigtable$Label),]
         #      cat("labels found:\n",bigtable$Label[grep(name, bigtable$Label)],"\n")
         # fix scale on a few things
@@ -98,7 +98,7 @@ SStableComparisons <-  function(summaryoutput,
           vals[-1] <- round(exp(vals[-1])/1e6,6)
           vals[1] <- "R0_billions"
         }
-        if(substring(name,1,4)=="Recr") {
+        if(substring(name,1,4)=="Recr" & length(grep("like",name))==0) {
           vals[1,-1] <- round(vals[1,-1]/1e6,6)
           vals[1,1] <-paste(vals[1,1],"billions",sep="_")
         }
@@ -138,7 +138,8 @@ SStableComparisons <-  function(summaryoutput,
       } # end if not blank
     } # end loop over names
   } # end if not mcmc
-  
+
+  # get medians if using MCMC
   if(mcmc) {
     nnames <- length(names)
     for(iname in 1:nnames){
@@ -150,12 +151,12 @@ SStableComparisons <-  function(summaryoutput,
         # add to table
         tab <- rbind(tab, " ")
       }else{
-        
+
         vals <- as.data.frame(matrix(NA,ncol=ncols+1,nrow=1))
         vals[1] <- name
         for(imodel in models) {   ###loop over models and create a vector of medians to put into tab
           mcmcTable <- summaryoutput$mcmc[[imodel]]
-          # get values 
+          # get values
           tmp <- mcmcTable[,grep(name, names(mcmcTable))]  #for future functionality grabbing more than one column
           #        cat("labels found: ",names(mcmcTable)[grep(name, names(mcmcTable))],"\n")
           if(!is.null(dim(tmp))){
@@ -204,13 +205,20 @@ SStableComparisons <-  function(summaryoutput,
   } # end if mcmc
 
   names(tab) <- c("Label",modelnames)
-  rownames(tab) <- 1:nrow(tab)
+  # check for presence of any content of table and reset rownames
+  if(nrow(tab) > 0){
+    rownames(tab) <- 1:nrow(tab)
+  }else{
+    warning("'names' and 'likenames' didn't match any variables so output is empty\n")
+  }
 
+  # write CSV if requested
   if(csv){
     if(csvdir=="workingdirectory") csvdir <- getwd()
     fullpath <- paste(csvdir,csvfile,sep="/")
     cat("writing table to:\n  ",fullpath,"\n")
     write.csv(tab,fullpath,row.names=FALSE)
   }
+  # return table
   return(tab)
 }

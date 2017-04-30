@@ -104,11 +104,11 @@
 #' work correctly in all cases.
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
+#' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
-#' @keywords hplot
 SSplotComps <-
   function(replist, subplots=c(1:21,24), #subplots=1:13,
            kind="LEN", sizemethod=1, aalyear=-1, aalbin=-1, plot=TRUE, print=FALSE,
@@ -144,7 +144,7 @@ SSplotComps <-
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,addMeans=TRUE,...)
+           scalebins=FALSE,addMeans=TRUE,mainTitle=TRUE,...)
 {
   ################################################################################
   # SSplotComps
@@ -196,10 +196,11 @@ SSplotComps <-
 
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -306,7 +307,7 @@ SSplotComps <-
       stop("!error with size units in generalized size comp plots:\n",
            "    more than one unit value per method.\n")
     if(sizeunits %in% c("in","cm"))
-      kindlab <- paste(labels[21]," (",sizeunits,")",sep="")
+      kindlab <- paste(labels[10]," (",sizeunits,")",sep="")
     if(sizeunits %in% c("lb","kg"))
       kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
     if(datonly){
@@ -462,7 +463,11 @@ SSplotComps <-
 
         ### subplot 1: multi-panel composition plot
         if(1 %in% subplots & kind!="cond"){ # for age or length comps, but not conditional AAL
-          ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
+          if(mainTitle) {
+            ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           tempfun <- function(ipage,...){
             sexvec <- dbase$sex
@@ -524,7 +529,7 @@ SSplotComps <-
                 pagetext <- paste("_page",ipage,sep="")
                 caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
               }
-              file <- paste(plotdir,"/",filenamestart,
+              file <- paste(filenamestart,
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               tempfun(ipage=ipage,...)
@@ -561,20 +566,38 @@ SSplotComps <-
               growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
             }
           }
-          ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-          ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           tempfun2 <- function(){
             xvals <- dbase$Yr.S
-            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)))))[1]
+            # calculate smallest difference among years
+            # which is used to adjust offsets males and females
+            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)),
+                                          na.rm=TRUE)))[1]
+            # not sure what cases would have missing xdiff
+            # from above calculation, but it definitely happens
+            # with only one year of data, so setting default
+            # to work for that case
             if(is.na(xdiff)){
-              xdiff <- 1
+              xdiff <- 0.1
             }
             cols <- rep(colvec[3],nrow(dbase))
             if(nsexes > 1){
               xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
                 (dbase$sex[dbase$sex>0]-1.5)*xdiff
+              if(length(unique(dbase$Yr.S))==1){
+                # if only one year, don't bother showing points
+                # as mid-year values
+                # this may not be ideal for seasonal models
+                xvals[dbase$sex>0] <- floor(dbase$Yr.S[dbase$sex>0]) -
+                  (dbase$sex[dbase$sex>0]-1.5)*xdiff
+              }                
               cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
             }
             bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
@@ -619,7 +642,7 @@ SSplotComps <-
                                "and open bubbles are negative residuals",
                                "(observed < expected).")
             }
-            file <- paste(plotdir,"/",filenamestart,filetype,
+            file <- paste(filenamestart,filetype,
                           filename_fltsexmkt,pagetext,".png",sep="")
             plotinfo <- pngfun(file=file, caption=caption)
             tempfun2()
@@ -629,8 +652,12 @@ SSplotComps <-
         ### subplot 3: multi-panel bubble plots for conditional age-at-length
 
         if(3 %in% subplots & kind=="cond"){
-          ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-          ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           # calculate scaling of lines showing effect and input sample size
           sampsizeline.old <- sampsizeline
@@ -681,7 +708,7 @@ SSplotComps <-
                 pagetext <- paste("_page",ipage,sep="")
                 caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
               }
-              file <- paste(plotdir,"/",filenamestart,filetype,
+              file <- paste(filenamestart,filetype,
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               tempfun3(ipage=ipage,...)
@@ -701,7 +728,11 @@ SSplotComps <-
             if(length(dbase$Obs[dbase$Yr==aalyr])>0){
               if(4 %in% subplots){
                 ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-                ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
+                if(mainTitle) {
+                  ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 ydbase <- dbase[dbase$Yr==aalyr,]
                 lenbinlegend <- paste(ydbase$Lbin_lo,labels[7],sep="")
@@ -732,7 +763,7 @@ SSplotComps <-
                                        "and open bubbles are negative residuals",
                                        "(observed < expected).")
                     }
-                    file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                    file <- paste(filenamestart,filename_fltsexmkt,
                                   "_",aalyr,"_",pagetext,".png",sep="")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun4(ipage=ipage,...)
@@ -743,8 +774,12 @@ SSplotComps <-
               if(5 %in% subplots){
                 ### subplot 5: Pearson residuals for A-L key
                 z <- ydbase$Pearson
-                ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
-                ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+                if(mainTitle) {
+                  ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
+                  ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun5 <- function(){
                   bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
@@ -769,7 +804,7 @@ SSplotComps <-
                                      "and open bubbles are negative residuals",
                                      "(observed < expected).")
                   }
-                  file <- paste(plotdir,"/",filenamestart,"yearresids_",
+                  file <- paste(filenamestart,"yearresids_",
                                 filename_fltsexmkt,"_",aalyr,pagetext,".png",sep="")
                   plotinfo <- pngfun(file=file, caption=caption)
                   tempfun5()
@@ -794,7 +829,11 @@ SSplotComps <-
               ilenbin <- goodbins[ibin]
               abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
               if(nrow(abindbase)>0){ # check for data associated with this bin
-                ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                if(mainTitle) {
+                  ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                } else {
+                  ptitle <- ""
+                }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun6 <- function(ipage,...){ # temporary function to aid repeating the big function call
                   make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr.S,linesx=abindbase$Bin,linesy=abindbase$Exp,
@@ -814,7 +853,7 @@ SSplotComps <-
                       pagetext <- paste("_page",ipage,sep="")
                       caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                     }
-                    file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                    file <- paste(filenamestart,filename_fltsexmkt,
                                   "_length",ilenbin,labels[7],pagetext,".png",sep="")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun6(ipage=ipage,...)
@@ -828,7 +867,11 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-          ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+          if(mainTitle) {
+            ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           lfitfunc <- function(){
             if(kind=="cond"){
@@ -880,7 +923,7 @@ SSplotComps <-
           }
           if(plot) lfitfunc()
           if(print){ # set up plotting to png file if required
-            file <- paste(plotdir,"/",filenamestart,"sampsize_",
+            file <- paste(filenamestart,"sampsize_",
                           filename_fltsexmkt,".png",sep="")
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
@@ -899,22 +942,26 @@ SSplotComps <-
           }
           if(print){ # set up plotting to png file if required
             caption <- ptitle
-            file <- paste(plotdir,"/",filenamestart,
+            file <- paste(filenamestart,
                           "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
             # not using pngfun because caption isn't available until after
             # plot is created
             # old command: plotinfo <- pngfun(file=file, caption=caption)
-            png(filename=file,width=pwidth,height=pheight,
+            png(filename=file.path(plotdir, file),width=pwidth,height=pheight,
                 units=punits,res=res,pointsize=ptsize)
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
             # put additional info into caption for figure
-            vals <- paste("Suggested sample size adjustment ",
-                          "(with 95% interval) for ", kind2, " data from ",
-                          fleetnames[f],":<br>",
-                          round(tmp[1],4), " (",
-                          round(tmp[2],4),"-",round(tmp[3],4),")",
-                          sep="")
+            if(!is.null(tmp[1])){
+              vals <- paste("Suggested sample size adjustment ",
+                            "(with 95% interval) for ", kind2, " data from ",
+                            fleetnames[f],":<br>",
+                            round(tmp[1],4), " (",
+                            round(tmp[2],4),"-",round(tmp[3],4),")",
+                            sep="")
+            }else{
+              vals <- "Too few points to calculate adjustments"
+            }
             caption <- paste(caption,"<br>",vals)
             # add caption to the plotinfo table (normally done by pngfun)
             plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
@@ -936,7 +983,7 @@ SSplotComps <-
                              "Data weighting in statistical fisheries stock assessment",
                              "models. <i>Can. J. Fish. Aquat. Sci.</i>",
                              "68: 1124-1138.</blockquote>")
-            file <- paste(plotdir,"/",filenamestart,
+            file <- paste(filenamestart,
                           "data_weighting_TA1.8_condAge",fleetnames[f],".png",sep="")
             plotinfo <- pngfun(file=file, caption=caption)
             SSMethod.Cond.TA1.8(fit=replist, fleet=f)
@@ -945,7 +992,11 @@ SSplotComps <-
         }
         ### subplot 10: Andre's mean age and std. dev. in conditional AAL
         if(10 %in% subplots & kind=="cond"){
-          ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+          if(mainTitle) {
+            ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+          } else {
+            ptitle <- ""
+          }
           andrefun <- function(ipage=0){
             Lens <-sort(unique(dbase$Lbin_lo))
             Yrs <- sort(unique(dbase$Yr.S))
@@ -1049,7 +1100,7 @@ SSplotComps <-
                 "with 90% CIs based on the chi-square distribution.",sep="")
 
               }
-              file <- paste(plotdir,"/",filenamestart,"Andre_plots",
+              file <- paste(filenamestart,"Andre_plots",
                             filename_fltsexmkt,pagetext,".png",sep="")
               plotinfo <- pngfun(file=file, caption=caption)
               andrefun(ipage=ipage)
@@ -1118,7 +1169,11 @@ SSplotComps <-
           #filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
           filename_fltsexmkt <- paste(filesex, "mkt",j,sep="")
 
-          ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+          if(mainTitle) {
+            ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           Bins <- sort(unique(dbase$Bin))
@@ -1169,7 +1224,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,
+                file <- paste(filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 tempfun7(ipage=ipage,...)
@@ -1249,7 +1304,11 @@ SSplotComps <-
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
             filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
 
-            ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
+            if(mainTitle) {
+              ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
+            } else {
+              ptitle <- ""
+            }
             titles <- c(ptitle,titles) # compiling list of all plot titles
 
             Bins <- sort(unique(dbase$Bin))
@@ -1329,7 +1388,7 @@ SSplotComps <-
                   pagetext <- paste("_page",ipage,sep="")
                   caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                 }
-                file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
+                file <- paste(filenamestart,filename_fltsexmkt,pagetext,
                               "_aggregated_within_season.png",sep="")
 
                 plotinfo <- pngfun(file=file, caption=caption)
@@ -1409,8 +1468,12 @@ SSplotComps <-
               }
               agg$fy <- agg$f + agg$y/10000
               # total title
-              ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
-                              "\naggregated across seasons within year",sep="")
+              if(mainTitle) {
+                ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
+                                "\naggregated across seasons within year",sep="")
+              } else {
+                ptitle <- ""
+              }
 
               # group remaining calculations as a function
               tempfun9 <- function(ipage,...){
@@ -1461,7 +1524,7 @@ SSplotComps <-
                     pagetext <- paste("_page",ipage,sep="")
                     caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
                   }
-                  file <- paste(plotdir,"/",filenamestart,filename_fltsexmkt,pagetext,
+                  file <- paste(filenamestart,filename_fltsexmkt,pagetext,
                                 "_aggregated_across_seasons_within_year.png",sep="")
                   pngfun(file=file, caption=caption)
                   tempfun9(ipage=ipage,...)
@@ -1525,7 +1588,11 @@ SSplotComps <-
           titlemkt <- ifelse(printmkt,titlemkt,"")
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
 
-          ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
+          if(mainTitle) {
+            ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
+          } else {
+            ptitle <- ""
+          }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           filename_sexmkt <- paste("sex",k,"mkt",j,sep="")
 
@@ -1653,7 +1720,7 @@ SSplotComps <-
                 ## caption <- paste(caption,
                 ##                  "<br>Note: bubble sizes are scaled to maximum within each panel.",
                 ##                  "<br>Thus, comparisons across panels should focus on patterns, not bubble sizes.")
-                file <- paste(plotdir,"/",filenamestart,filename_sexmkt,pagetext,
+                file <- paste(filenamestart,filename_sexmkt,pagetext,
                               "_multi-fleet_comparison.png",sep="")
                 plotinfo <- pngfun(file=file, caption=caption)
                 multifleet.bubble.fun(ipage=ipage)

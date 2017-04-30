@@ -38,7 +38,6 @@
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-#' @keywords hplot
 SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,
            xlim=NULL,ylim=NULL,
@@ -55,10 +54,11 @@ SSplotSpawnrecruit <-
 {
   # plot of spawner recruit curve
 
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -73,14 +73,14 @@ SSplotSpawnrecruit <-
   
 
   if(plotdir=="default") plotdir <- replist$inputs$dir
-  if(minyr=="default") minyr <- min(recruit$year)
+  if(minyr=="default") minyr <- min(recruit$Yr)
 
   recruit <- recruit[recruit$era %in% c("Early","Main","Fixed","Late",
                                         ifelse(forecast,"Forecast",NA)) &
-                     recruit$year>=minyr,]
+                     recruit$Yr>=minyr,]
   
   timeseries <- replist$timeseries
-  recruit$spawn_bio <- bioscale*recruit$spawn_bio
+  recruit$spawn_bio <- bioscale*recruit$SpawnBio
   timeseries$SpawnBio <- bioscale*timeseries$SpawnBio
   
   if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr, recruit$exp_recr, recruit$adjusted))
@@ -142,7 +142,7 @@ SSplotSpawnrecruit <-
       # add text, but only label values with larger devs (in abs value)
       show <- abs(recruit$dev) > textmindev
       show[1] <- show[length(show)] <- TRUE  # also include first & last years
-      text(x[show],recruit$pred_recr[show],labels=recruit$year[show], pos=2, cex=.7)
+      text(x[show],recruit$pred_recr[show],labels=recruit$Yr[show], pos=2, cex=.7)
     }
     # add point for virgin biomass/recruitment (if requested)
     if(virg){
@@ -168,14 +168,14 @@ SSplotSpawnrecruit <-
   }    
   if(print){
     if(1 %in% subplot){
-      file <- paste(plotdir,"/SR_curve.png",sep="")
+      file <- "SR_curve.png"
       caption <- "Spawner-recruit curve"
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn()
       dev.off()
     }
     if(2 %in% subplot){
-      file <- paste(plotdir,"/SR_curve2.png",sep="")
+      file <- "SR_curve2.png"
       caption <- paste("Spawner-recruit curve with labels on first, last, and years with (log) deviations >",textmindev)
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn(text=TRUE)

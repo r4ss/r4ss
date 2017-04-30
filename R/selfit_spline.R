@@ -14,10 +14,9 @@
 #' @param dir Directory in which the spline_selex executable is located
 #' (default = working directory).
 #' @param silent TRUE/FALSE switch to return fit at the end.
-#' @author Ian Taylor
+#' @author Ian Taylor, Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{selfit}}
-#' @keywords dplot hplot dynamic
 #' @examples
 #' 
 #' \dontrun{
@@ -29,42 +28,29 @@ selfit_spline <- function (n=4, minBin=10, maxBin=65,
                            dir=getwd(),
                            silent=FALSE){
 
-  ################################################################################
-  #
-  # selfit_spline   November, 2011.
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: Provide GUI for the plot function, sel.line
-  # Written: Tommy Garrison and Ian Taylor
-  # Returns: plots spline selectivity
-  # General: parameterization matched Stock Synthesis v.3
-  # Notes:   Based on "selfit" function by Tommy Garrison
-  #          For documentation go to: http://code.google.com/p/r4ss/
-  # Required packages: none
-  #
-  ################################################################################
+  # test for availability of tcltk package
+  if (!requireNamespace("tcltk", quietly = TRUE)) { 
+    stop("tcltk is required. please install it", 
+         call. = FALSE) 
+  }
 
-  #### the following commands no longer needed since packages are required by r4ss
-  ## require(tcltk) || stop("package tcltk is required")
   if(n<3 | n>7 | as.integer(n)!=n) stop("Number of knots must be an integer from 3 to 7")
   if(.Platform$OS.type=="windows"){
     if(!("spline_selex.exe" %in% dir(dir)))
       stop("File 'spline_selex.exe' needs to be in the directory 'dir'\n",
            "  If you have a 64 bit Windows computer, you can get this file from\n",
-           "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.exe\n",
+           "  https://github.com/r4ss/testing/blob/master/spline_selex.exe\n",
            "  For other operating systems, you will need to compile the executable in ADMB\n",
-           "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+           "  from the file https://github.com/r4ss/testing/blob/master/spline_selex.tpl\n")
   }else{
     if(.Platform$GUI=="X11")
       if(!("spline_selex" %in% dir(dir)))
         stop("File 'spline_selex' needs to be in the directory 'dir'\n",
-             "  If you have a 64 bit Windows computer, you can get this file from\n",
-             "  http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex\n",
-             "  For other operating systems, you will need to compile the executable in ADMB\n",
-             "  from the file http://r4ss.googlecode.com/svn/branches/spline_selex/spline_selex.tpl\n")
+             "  For non-Windows operating systems, you will need to compile the executable in ADMB\n",
+             "  from the file https://github.com/r4ss/testing/blob/master/spline_selex.tpl\n")
     if(.Platform$GUI=="Aqua")
       stop("Sorry, this function is not yet supported for the Mac\n",
-           "      email Ian.Taylor@noaa.gov to discuss how to add support.")
+           "      see discussion at https://github.com/r4ss/r4ss/issues/48 for discussion of this issue.")
   }
 
   

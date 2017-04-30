@@ -1,9 +1,9 @@
 #' write starter file
-#' 
+#'
 #' write Stock Synthesis starter file from list object in R which was probably
 #' created using \code{\link{SS_readstarter}}
-#' 
-#' 
+#'
+#'
 #' @param mylist List object created by \code{\link{SS_readstarter}}.
 #' @param dir Directory for new starter file. Default=NULL (working directory).
 #' @param file Filename for new starter file. Default="starter.ss".
@@ -14,10 +14,8 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
-#' @keywords data manip
+#' \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
                             overwrite=FALSE, verbose=TRUE, warn=TRUE){
   if(verbose) cat("running SS_writestarter\n")
@@ -30,7 +28,11 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   on.exit({if(sink.number()>0) sink()})
 
   if(is.null(dir)) dir <- getwd() # set to working directory if no input provided
-  outfile <- paste(dir,file,sep="/")
+  if(grepl("/$", dir)) {
+    outfile <- paste0(dir, file) # bc trailing backslash
+  } else {
+    outfile <- paste(dir,file,sep="/")
+  }
   if(file.exists(outfile)){
     if(!overwrite){
       stop(paste("file exists:",outfile,"\n  set overwrite=TRUE to replace\n"))
@@ -39,7 +41,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
       file.remove(outfile)
     }
   }else{
-    cat("writing new file:",outfile,"\n")
+    if(verbose)cat("writing new file:",outfile,"\n")
   }
 
   # record current max characters per line and then expand in case of long lines
@@ -96,8 +98,13 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("F_report_units")
   if(mylist$F_report_units==4){
     cat(mylist[["F_age_range"]],"#_F_age_range\n")
-  }    
+  }
   wl("F_report_basis")
+  # only write ALK_tolerance if this is SSv3.30 (value didn't exist in 3.24)
+  if(mylist$final==3.3){
+    wl("MCMC_output_detail")
+    wl("ALK_tolerance")
+  }
   writeLines("#")
   wl("final")
 

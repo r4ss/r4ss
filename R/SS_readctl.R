@@ -1,109 +1,75 @@
-#' read control file
+#' read control file from SS
 #' 
-#' read Stock Synthesis control file into list object in R
+#' Read Stock Synthesis control file into list object in R. This function is a
+#' wrapper which calls either SS_readctl_3.24 or SS_readctl_3.30 (not yet written).
+#' This setup allows those functions to be cleaner (if somewhat redundant)
+#' than a single function that attempts to do everything.
 #' 
-#' This function is not fully implemented. The logic to figure out all the
-#' details of a Stock Synthesis control file is very complex, so this function
-#' may be completed in a way that is not totally consistent with the other
-#' similar files. Or it may never be completed at all. The functions
-#' \code{\link{SS_changepars}} and \code{\link{SS_parlines}} offer alternatives
-#' for working with SS control files.
 #' 
 #' @param file Filename either with full path or relative to working directory.
-#' @seealso \code{\link{SS_changepars}}, \code{\link{SS_parlines}},
-#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
-#' @author Ian Taylor
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @param verbose Should there be verbose output while running the file?
+#' Default=TRUE.
+#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
+#' data as it is being read.
+#' @param nseas number of season in the model. This information is not
+#'  explicitly available in control file
+#' @param N_areas number of spatial areas in the model. This information is also not
+#'  explicitly available in control file
+#' @param Nages oldest age in the model. This information is also not
+#'  explicitly available in control file
+#' @param Ngenders number of genders in the model. This information is also not
+#'  explicitly available in control file
+#' @param Npopbins number of population bins in the model. This information is also not
+#'  explicitly available in control file and this information is only required if length based
+#'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
+#' @param Nfish number of fisheries in the model. This information is also not
+#'  explicitly available in control file
+#' @param Nsurv number of survey fleets in the model. This information is also not
+#'  explicitly available in control file
+#' @param TG_Nrelgrp number of tag release groups in the model. This information is also not
+#'  explicitly available in control file
+#' @author Ian G. Taylor, Yukio Takeuchi
 #' @export
-#' @keywords data
-SS_readctl <- function(file){
-  cat("Warning!\n",
-      "  SS_readctl is not fully implemented. The logic to figure out\n",
-      "  all the details of a Stock Synthesis control file is very complex,\n",
-      "  so this function may be completed in a way that is not totally\n",
-      "  consistent with the other similar files. Or it may never be\n",
-      "  completed at all. The functions 'SS_changepars' and 'SS_parlines'\n",
-      "  offer alternatives for working with SS control files.\n")
+#' @seealso \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
+#' \code{\link{SS_readdat_3.24}}
 
-  ctl <- readLines(file,warn=FALSE)
+SS_readctl <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,
+                       ## Parameters that are not defined in control file
+                       nseas=4,
+                       N_areas=1,
+                       Nages=20,
+                       Ngenders=1,
+                       Npopbins=NA,
+                       Nfish=2,
+                       Nsurv=2,
+                       TG_Nrelgrp=NA){
 
-  if(strsplit(ctl[2]," ")[[1]][1]=="Start_time:") ctl <- ctl[-(1:2)]
-  allnums <- NULL
-  for(i in 1:length(ctl)){
-      mysplit <- strsplit(ctl[i],split="[[:blank:]]+")[[1]]
-      mysplit <- mysplit[mysplit!=""]
-      nums <- suppressWarnings(as.numeric(mysplit))
-      if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1
-      else maxcol <- length(nums)
-      if(maxcol > 0){
-          nums <- nums[1:maxcol]
-          allnums <- c(allnums, nums)
-      }
-  }
-  i <- 1
-  ctllist <- list()
+  # wrapper function to call old or new version of SS_readctl
 
-  ctllist$sourcefile <- file
-  ctllist$type <- "Stock_Synthesis_control_file"
-  ctllist$SSversion <- "SSv3.10b_or_later"
-
-  # model dimensions
-  ctllist$N_Growth_Patterns <- N_Growth_Patterns <- allnums[i]; i <- i+1
-  ctllist$N_Morphs_Within_GrowthPattern <- N_Morphs_Within_GrowthPattern <- allnums[i]; i <- i+1
-
-  if(N_Growth_Patterns!=1 | N_Morphs_Within_GrowthPattern!=1){
-    stop("Error! SS_readctl doesn't yet handle fancy models with growth patterns or morphs")
+  # automatic testing of version number could be added here in the future
+  # see SS_readdat for example attempt
+  
+  # call function for SS version 3.24
+  if(version=="3.24"){ # should work whether "version" is character or numeric
+    ctllist <- SS_readctl_3.24(file=file, verbose=verbose,
+                               echoall=echoall,
+                               nseas      = nseas,
+                               N_areas    = N_areas,
+                               Nages      = Nages,
+                               Ngenders   = Ngenders,
+                               Npopbins   = Npopbins,
+                               Nfish      = Nfish,
+                               Nsurv      = Nsurv,
+                               TG_Nrelgrp = TG_Nrelgrp)
   }
 
-  ctllist$zzz <- zzz <- allnums[i]; i <- i+1
-  ctllist$Nblock_Patterns <- Nblock_Patterns <- allnums[i]; i <- i+1
-  ctllist$fracfemale <- fracfemale <- allnums[i]; i <- i+1
-  ctllist$natM_type <- natM_type <- allnums[i]; i <- i+1
-  ctllist$GrowthModel <- GrowthModel <- allnums[i]; i <- i+1
-  ctllist$Growth_Age_for_L1 <- Growth_Age_for_L1 <- allnums[i]; i <- i+1
-  ctllist$Growth_Age_for_L2 <- Growth_Age_for_L2 <- allnums[i]; i <- i+1
-  ctllist$SD_add_to_LAA <- SD_add_to_LAA <- allnums[i]; i <- i+1
-  ctllist$CV_Growth_Pattern <- CV_Growth_Pattern <- allnums[i]; i <- i+1
-  ctllist$maturity_option <- maturity_option <- allnums[i]; i <- i+1
-  ctllist$First_Mature_Age <- First_Mature_Age <- allnums[i]; i <- i+1
-  ctllist$fecundity_option <- fecundity_option <- allnums[i]; i <- i+1
-  ctllist$hermaphroditism_option <- hermaphroditism_option <- allnums[i]; i <- i+1
-  ctllist$parameter_offset_approach <- parameter_offset_approach <- allnums[i]; i <- i+1
-  ctllist$adjust_method <- adjust_method <- allnums[i]; i <- i+1
+  # call function for SS version 3.30
+  if(version=="3.30" | version==3.3){ # turns out 3.30 != "3.30" in R
+    stop("Function SS_readctl_3.30 has not been written yet")
+  }
 
-
-  # note: needs some logic in here to determine number of rows
-  Ncols <- 14
-  Nrows <- 24 # temporary placeholder for Ian Taylor's model
-  MGparms <- data.frame(matrix(
-    allnums[i:(i+Nrows*Ncols-1)],nrow=Nrows,ncol=Ncols,byrow=TRUE))
-  i <- i+Nrows*Ncols
-  names(MGparms) <- c("LO","HI","INIT","PRIOR","PR_type","SD","PHASE","env_var","use_dev","dev_minyr","dev_maxyr","dev_stddev","Block","Block_Fxn")
-  ctllist$MGparms <- MGparms
-
-  N_effects <- 10 # need better logic to determine this
-  ctllist$seasonal_effects <- allnums[i:(i+N_effects-1)]; i <- i+N_effects
-
-  ctllist$SR_function <- SR_function <- allnums[i]; i <- i+1
-  Ncols <- 7
-  Nrows <- 6
-  SRparms <- data.frame(matrix(
-    allnums[i:(i+Nrows*Ncols-1)],nrow=Nrows,ncol=Ncols,byrow=TRUE))
-  i <- i+Nrows*Ncols
-  names(MGparms) <- c("LO","HI","INIT","PRIOR","PR_type","SD","PHASE")
-  ctllist$MGparms <- MGparms
-
-  ctllist$SR_evn_link <- SR_evn_link <- allnums[i]; i <- i+1
-  ctllist$SR_evn_target <- SR_evn_target <- allnums[i]; i <- i+1
-  ctllist$do_recdev <- do_recdev <- allnums[i]; i <- i+1
-  ctllist$fyr_main_recdevs <- fyr_main_recdevs <- allnums[i]; i <- i+1
-  ctllist$lyr_main_recdevs <- lyr_main_recdevs <- allnums[i]; i <- i+1
-  ctllist$recdev_phase <- recdev_phase <- allnums[i]; i <- i+1
-
-  # a bunch more to come...this is a work in progress
-
-  # all done
+  # return the result
   return(ctllist)
 }

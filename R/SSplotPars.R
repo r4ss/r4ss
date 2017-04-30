@@ -1,9 +1,9 @@
 #' Plot distributions of priors, posteriors, and estimates.
-#' 
+#'
 #' Make multi-figure plots of prior, posterior, and estimated asymptotic
 #' parameter distributions. MCMC not required to make function work.
-#' 
-#' 
+#'
+#'
 #' @param dir Directory where all files are located.
 #' @param repfile Name of report file. Default="Report.sso".
 #' @param xlab Label on horizontal axis.
@@ -34,8 +34,8 @@
 #' @param ncols How many columns in multi-figure plot. Default=3.
 #' @param ltyvec Vector of line types used for lines showing MLE and prior
 #' distributions and the median of the posterior distribution
-#' @param colvec Vector of colors used for lines and polygons showing MLE, 
-#' initial value, prior, posterior, and median of the posterior. 
+#' @param colvec Vector of colors used for lines and polygons showing MLE,
+#' initial value, prior, posterior, and median of the posterior.
 #' @param new Open new window for plotting? Default=TRUE.
 #' @param pdf Write to PDF file instead of R GUI? Default=FALSE.
 #' @param pwidth Default width of plots printed to files in units of
@@ -58,18 +58,17 @@
 #' @param thin Additional thinning applied to MCMC posteriors. Default=1.
 #' @param ctlfile Specify control file to get min and max recdev values
 #' (otherwise assumed to be -5 and 5). Default="control.ss_new".
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Cole C. Monnahan
 #' @export
-#' @keywords hplot
 #' @examples
-#' 
+#'
 #' \dontrun{
 #' pars <- SSplotPars(dir='c:/SS/Simple/')
-#' 
+#'
 #' # strings can be partial match
 #' pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
 #' }
-#' 
+#'
 SSplotPars <-
   function(
     dir="c:/path/", repfile="Report.sso",
@@ -109,7 +108,7 @@ SSplotPars <-
     if(is.na(Ptype2)){
       cat("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2,"\n")
     }
-    
+
     Pconst <- 0.0001
     if(Ptype2==-1){ # no prior
       Prior_Like <- rep(0.,length(Pval));
@@ -141,7 +140,7 @@ SSplotPars <-
     }
 
     #### need to work out the following code, including replacing "gammln"
-    
+
     ## if(Ptype2==5){  # gamma  (from Larry Jacobson)
     ##   warnif <- 1e-15;
     ##   if(Pmin<0.0){
@@ -172,7 +171,7 @@ SSplotPars <-
 
   if(is.na(repfileinfo)) stop("Missing rep file:",fullrepfile)
   if(repfileinfo==0) stop("Empty rep file:",fullrepfile)
-  
+
   goodctl <- TRUE
   if(is.na(ctlfileinfo)){
     cat("Missing control.ss_new file. Assuming recdev limits are -5 & 5.\n")
@@ -195,7 +194,7 @@ SSplotPars <-
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
     test <- readLines(fullpostfile,n=20) # test for presence of file with at least 10 rows
-    if(length(test)>10){
+    if(length(test)>20){
       posts <- read.table(fullpostfile,header=TRUE)
       names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       cat("read",nrow(posts),"lines in",postfile,"\n")
@@ -205,7 +204,7 @@ SSplotPars <-
         cat("length of posteriors after burnin-in and thinning:",nrow(posts),"\n")
       }
     }else{
-      cat("Posteriors file has fewer than 10 rows, changing input to 'showpost=FALSE'\n")
+      cat("Posteriors file has fewer than 20 rows, changing input to 'showpost=FALSE'\n")
       showpost <- FALSE
     }
   }
@@ -253,9 +252,15 @@ SSplotPars <-
     }
   }else{
     goodnames <- allnames
+    if(length(goodnames)==0){
+      cat("No active parameters.\n")
+      return()
+    }
   }
   badpars <- grep("Impl_err_",goodnames)
-  if(length(badpars)>0) goodnames <- goodnames[-badpars]
+  if(length(badpars)>0){
+    goodnames <- goodnames[-badpars]
+  }
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
 
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
@@ -266,21 +271,23 @@ SSplotPars <-
 
   # Recruitment Devs
   recdevmin <- -5
-  recdevmin <- 5
+  recdevmax <- 5
   recdevlabels <- c("Early_RecrDev_","Early_InitAge_","Main_InitAge_",
                     "Main_RecrDev_","ForeRecr_","Late_RecrDev_")
   if(showrecdev & goodctl){
     ctllines <- readLines(fullctlfile)
     iline <- grep("#min rec_dev",ctllines)
-    if(length(iline)==1){
-      # advanced options stuff
+    # check for advanced options for recdev bounds
+    # (but skip if it is commented out due to advanced options being turned off)
+    if(length(iline)==1 & ctllines[iline]!="#_Cond -5 #min rec_dev"){
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
       if(is.na(readrecdev) | readrecdev==1)
         cat("This function does not yet display recdev values read from ctl file.\n")
     }
-  }else{
+  }
+  if(!showrecdev){
     goodnames <- goodnames[!substr(goodnames,1,9) %in% substr(recdevlabels,1,9)]
   }
   npars <- length(goodnames)
@@ -314,9 +321,18 @@ SSplotPars <-
 
   if(new) par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
   if(verbose) cat("Making plots of parameters:\n")
+  if(length(grep('DEVrwalk', x=goodnames))>0 |
+     length(grep('DEVadd', x=goodnames))>0 |
+     length(grep('DEVmult', x=goodnames))>0){
+    cat('\nNOTE: This model contains random walk deviates which are not\n',
+        'fully implemented. Prior and bounds unavailable, so these are skipped\n',
+        'and fitrange is set to TRUE for those parameters.\n\n')
+  }
+
   for(ipar in 1:npars){
     # grab name and full parameter line
     parname <- goodnames[ipar]
+
     if(verbose) cat("    ",parname,"\n")
     parline <- partable[partable$Label==parname,]
 
@@ -340,20 +356,36 @@ SSplotPars <-
       Psd <- partable$Value[partable$Label=="SR_sigmaR"]
     }
 
-    x <- seq(Pmin,Pmax,length=5000) # x vector for subsequent calcs
-
+    ## Devations on parameters (either random-walk, additive, or multiplicative)
+    ## are a special case (as opposed to rec devs)
+    ## too. For now the sigma value specified in the ctl file is not
+    ## recorded anywhere so we skip the prior.
+    ## In SS version 3.30, the sigma will be available as a parameter, but
+    ## matching these quantities may take some work
+    isdev <- FALSE
+    if(length(grep('DEVrwalk', x=parname))>0 |
+       length(grep('DEVadd', x=parname))>0 |
+       length(grep('DEVmult', x=parname))>0){
+      initval <- 0
+      isdev <- TRUE
+    }
     # make empty holders for future information
     ymax <- 0 # upper y-limit in plot
     xmin <- NULL # lower x-limit in plot
     xmax <- NULL # upper x-limit in plot
 
-    # get prior
-    negL_prior <- GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=x)
-    prior <- exp(-1*negL_prior)
-    # prior likelihood at initial and final values
+      ## get prior if not a rwalk dev
+    if(!isdev){
+        x <- seq(Pmin,Pmax,length=5000) # x vector for subsequent calcs
+        negL_prior <- GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=x)
+        prior <- exp(-1*negL_prior)
+    } else {
+        x <- finalval+seq(-4*parsd, 4*parsd, length=5000)
+    }
+    ## prior likelihood at initial and final values
     ## priorinit <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=initval))
     ## priorfinal <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=finalval))
-    if(showprior){
+    if(!isdev & showprior){
       prior <- prior/(sum(prior)*mean(diff(x)))
       ymax <- max(ymax,max(prior),na.rm=TRUE) # update ymax
     }
@@ -393,17 +425,19 @@ SSplotPars <-
       if(fitrange & ((!is.na(parsd) && parsd!=0) | showpost)){
         # if rescaling limits,
         # make sure initial value is inside limits
-        if(showinit){
-          xmin <- min(initval,xmin)
-          xmax <- max(initval,xmax)
-        }
+          if(showinit){
+              ## xmin or xmax may be NA if its a rdevwalk parameter
+              xmin <- min(initval,xmin, na.rm=TRUE)
+              xmax <- max(initval,xmax, na.rm=TRUE)
+          }
         # keep range inside parameter limits
-        xmin <- max(Pmin,xmin)
-        xmax <- min(Pmax,xmax)
+        xmin <- max(Pmin,xmin, na.rm=TRUE)
+        xmax <- min(Pmax,xmax, na.rm=TRUE)
       }else{
-        # or use parameter limits
-        xmin <- Pmin
-        xmax <- Pmax
+          ## or use parameter limits, unless case of rdevwalk which as none
+          ## then revert back to those calculated above
+        if(!isdev) xmin <- Pmin
+        if(!isdev) xmax <- Pmax
       }
       xlim2 <- c(xmin,xmax)
     }else{
@@ -438,7 +472,7 @@ SSplotPars <-
       abline(v=postmedian,col=colvec[5],lwd=2,lty=ltyvec[3])
     }
     # prior
-    if(showprior){
+    if(!isdev & showprior){
       lines(x,prior,lwd=2,lty=ltyvec[2])
     }
     # MLE

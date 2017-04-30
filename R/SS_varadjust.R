@@ -16,7 +16,7 @@
 #' @param overwrite Overwrite file if it exists?
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
-#' @author Ian Taylor
+#' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
 #' @export
 #'
@@ -85,14 +85,32 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
   colnames(ctl) <- paste("Fleet",1:nfleets,sep="")
   # add labels to each rows (based on labels in control.ss_new)
   ctl <- data.frame(ctl, label=c("#_add_to_survey_CV",
-                             "#_add_to_discard_stddev",
-                             "#_add_to_bodywt_CV",
-                             "#_mult_by_lencomp_N",
-                             "#_mult_by_agecomp_N",
-                             "#_mult_by_size-at-age_N"))
+                                 "#_add_to_discard_stddev",
+                                 "#_add_to_bodywt_CV",
+                                 "#_mult_by_lencomp_N",
+                                 "#_mult_by_agecomp_N",
+                                 "#_mult_by_size-at-age_N"))
   cat("Existing table of variance adjustments:\n")
   print(ctl)
-  
+
+  #replace table
+  if (!is.null(newrow)){
+    if(length(newrow)!=nfleets){
+      stop("new weights do not match the number of fleets in ctl file")
+    }else {
+      ctl[rownumber,1:nfleets] <- newrow
+    }
+  }
+
+
+  if (!is.null(newtable)){
+    if(ncol(newtable)!=nfleets){
+      stop("new weights do not match the number of fleets in ctl file")
+    }else{
+      ctl[1:6,1:nfleets] <- newtable
+    }
+  }
+
   # absolute position of the rows to change
   good_rows_absolute <- keyword_line + good_rows
 
@@ -126,7 +144,7 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
 
   ### write file
   # stuff prior to variance adjustments
-  writeLines(ctl_lines[1:(min(good_rows_absolute)+1)])
+  writeLines(ctl_lines[1:(min(good_rows_absolute)-1)])
   # table of variance adjustments
   printdf(ctl)
   # stuff after variance adjustments
@@ -143,4 +161,3 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
   # return table of values
   return(invisible(ctl))
 } # end function
-

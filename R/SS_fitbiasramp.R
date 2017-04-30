@@ -43,7 +43,6 @@
 #' @references Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
 #' variability of estimated recruitments in fishery assessment models.  Can. J.
 #' Fish. Aquat. Sci., 68:1744-1760.
-#' @keywords data manip hplot
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
@@ -62,10 +61,12 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -91,8 +92,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   
   if(is.null(startvalues)){
-      nonfixedyrs <- recruit$year[recruit$era!="Fixed"]
-      mainyrs <- recruit$year[recruit$era=="Main"]
+      nonfixedyrs <- recruit$Yr[recruit$era!="Fixed"]
+      mainyrs <- recruit$Yr[recruit$era=="Main"]
       startvalues <- c(min(nonfixedyrs),
                        min(mainyrs) + .3*diff(range(mainyrs)),
                        max(mainyrs) - .1*diff(range(mainyrs)),
@@ -284,7 +285,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     if(shownew) lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
     legendlines <- 1
     if(shownew) legendlines <- 1:2
-    lines(recruit$year,recruit$biasadj,col=2,lwd=3,lty=2)
+    lines(recruit$Yr,recruit$biasadj,col=2,lwd=3,lty=2)
     legend('topleft',col=c(2,4)[legendlines],lwd=3,lty=(2:1)[legendlines],
            inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
            legend=c('bias adjust in model','estimated alternative')[legendlines])
@@ -316,7 +317,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   if(plot) plotbiasadj()
   if(print){
-    file <- paste(plotdir,"/recruit_fit_bias_adjust.png",sep="")
+    file <- "recruit_fit_bias_adjust.png"
     caption <-
       paste("Points are transformed variances. Red line shows current settings for",
             "for bias adjustment specified in control file.",
@@ -351,7 +352,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
     if(spot1!=spot2-4) stop('error related to maxbias inputs in ctl file')
     # replace values
-    ctlfile[spot1:spot2] <- newvals
+    ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
     # write new file
     writeLines(ctlfile,newctl)
     cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")

@@ -10,7 +10,6 @@
 #' passed to rgb function.
 #' @author Arni Magnusson, Ian Taylor
 #' @export
-#' @keywords color
 rich.colors.short <- function(n,alpha=1){
   x <- seq(0, 1, length = n)
   r <- 1/(1 + exp(20 - 35 * x))

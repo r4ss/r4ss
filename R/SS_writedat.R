@@ -1,23 +1,21 @@
 #' write data file
-#' 
+#'
 #' write Stock Synthesis data file from list object in R which was probably
 #' created using \code{\link{SS_readdat}}
-#' 
-#' 
+#'
+#'
 #' @param datlist List object created by \code{\link{SS_readdat}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor
+#' @author Ian Taylor, Yukio Takeuchi
 #' @export
 #' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
-#' \code{\link{SS_readforecast}}, \code{\link{SS_readctl}},
+#' \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
-#' \code{\link{SS_writedat}}, \code{\link{SS_writectl}}
-#' @keywords data manip
+#' \code{\link{SS_writedat}}
 SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   # function to write Stock Synthesis data files
-
   if(verbose) cat("running SS_writedat\n")
 
   if(datlist$type!="Stock_Synthesis_data_file"){
@@ -37,11 +35,7 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
       file.remove(outfile)
     }
   }
-  printdf <- function(dataframe){
-    # function to print data frame with hash mark before first column name
-    names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    print(dataframe, row.names=FALSE, strip.white=TRUE)
-  }
+
   oldwidth <- options()$width
   oldmax.print <- options()$max.print
   options(width=5000,max.print=9999999)
@@ -53,10 +47,29 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
     # simple function to clean up many repeated commands
     value = datlist[names(datlist)==name]
     if(is.null(comment)){
-      writeLines(paste(value," #_",name,sep=""))
+      writeLines(paste(value," #_",name,sep="",collapse="_"))
     }else{
       writeLines(paste(value,comment))
     }
+  }
+
+  #### this function isn't being used at the moment
+  ## wl.vector <- function(name,comment=NULL){
+  ##   # simple function to clean up many repeated commands
+  ##   value = datlist[names(datlist)==name]
+  ##   if(is.null(comment)){
+  ##     writeLines(paste(paste(value,collapse=" ")," #_",name,sep=""))
+  ##   }else{
+  ##     writeLines(paste(paste(value,collapse=" "),comment))
+  ##   }
+  ## }
+
+  printdf <- function(dataframe){
+    # function to print data frame with hash mark before first column name
+    names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
+    print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
+   # write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+  #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
   }
 
   # write a header
@@ -84,8 +97,13 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   writeLines(paste(paste(datlist$init_equil,collapse=" "),"#_init_equil_catch_for_each_fishery"))
   wl("N_catch",comment="#_N_lines_of_catch_to_read")
   if(!is.null(datlist$catch)) printdf(datlist$catch)
+
+  # write index info
   wl("N_cpue")
   if(datlist$N_cpue>0){
+    cat("#_Units:  0=numbers; 1=biomass; 2=F\n")
+    cat("#_Errtype:  -1=normal; 0=lognormal; >0=T\n")
+    cat("#_Fleet Units Errtype\n")
     printdf(datlist$CPUEinfo)
     printdf(datlist$CPUE)
   }
@@ -100,6 +118,7 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("DF_for_meanbodywt", comment="#_DF_for_meanbodywt_T-distribution_like")
   if(!is.null(datlist$meanbodywt)) printdf(datlist$meanbodywt)
 
+  # write length and age comps
   # length data
   wl("lbin_method",comment="# length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector")
   if(datlist$lbin_method==2){
@@ -135,7 +154,29 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("N_environ_variables")
   wl("N_environ_obs")
   if(!is.null(datlist$envdat)) printdf(datlist$envdat)
+
+  # write generalized size frequency data
+  if(is.null(datlist$N_sizefreq_methods))datlist$N_sizefreq_methods<-0
   wl("N_sizefreq_methods")
+
+  writeLines(paste(paste(datlist$nbins_per_method,collapse=" "),"#_nbins_per_method"))
+
+  writeLines(paste(paste(datlist$units_per_method,collapse=" "),"#_units_per_method"))
+
+  writeLines(paste(paste(datlist$scale_per_method,collapse=" "),"#_scale_per_method"))
+
+  writeLines(paste(paste(datlist$mincomp_per_method,collapse=" "),"#_mincomp_per_method"))
+
+  writeLines(paste(paste(datlist$Nobs_per_method,collapse=" "),"#_Nobs_per_method"))
+  writeLines("#_Sizefreq bins")
+#  wl("size_freq_bins_list")
+  writeLines("#_sizefreq_bins_list")
+  lapply(datlist$sizefreq_bins_list,FUN=function(line){writeLines(paste(line,collapse=" "))})
+
+#  writeLines("#_Year season Fleet Gender Partition SampleSize <data> ")
+
+  # write tagging data
+  lapply(datlist$sizefreq_data_list,printdf)
   wl("do_tags")
   if(datlist$do_tags != 0){
     wl("N_tag_groups")
@@ -145,6 +186,7 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
     if(!is.null(datlist$tag_releases)) printdf(datlist$tag_releases)
     if(!is.null(datlist$tag_recaps)) printdf(datlist$tag_recaps)
   }
+  if(is.null(datlist$morphcomp_data))datlist$morphcomp_data<-0
   wl("morphcomp_data")
   writeLines("#")
   writeLines("999")

@@ -38,9 +38,9 @@
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
-#' @param pick.gender vector of one or more values for Pick_gender; analysis is
+#' @param pick.sex vector of one or more values for Pick_sex; analysis is
 #' restricted to composition data with one of these
-#' Pick_gender values.  Ignored if type=='con'
+#' Pick_sex values.  Ignored if type=='con'
 #' @param seas string indicating how to treat data from multiple seasons
 #' 'comb' - combine seasonal data for each year and plot against Yr
 #' 'sep' - treat seasons separately, plotting against Yr.S
@@ -53,6 +53,7 @@
 #' methods in this vector.  NB comps are separated by method
 #' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in Francis (2011).
+#' @param printit if TRUE, print results to R console.
 #' @param maxpanel maximum number of panels within a plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
@@ -76,45 +77,68 @@
 #' }
 #' 
 SSMethod.TA1.8 <-
-  function(fit,type,fleet,part=0:2,pick.gender=0:3,seas=NULL,
-           method=NULL,plotit=TRUE,maxpanel=1000)
+  function(fit, type, fleet, part=0:2, pick.sex=0:3, seas=NULL,
+           method=NULL, plotit=TRUE, printit=TRUE, maxpanel=1000)
 {
-  # Check the type is correct and the pick.gender is correct
+  # Check the type is correct and the pick.sex is correct
   is.in <- function (x, y)!is.na(match(x, y))
   if(!is.in(type,c('age','len','size','con'))){
     stop('Illegal value for type')
   }else{
-    if(sum(!is.in(pick.gender,c(0:3)))>0){
-      stop('Unrecognised value for pick.gender')
+    if(sum(!is.in(pick.sex,c(0:3)))>0){
+      stop('Unrecognised value for pick.sex')
     }
   }
 
   # Select the type of datbase
   dbase <- fit[[paste(type,'dbase',sep='')]]
+  # sel is vector of row indices selected for the plot/calculations
+  # select row indices matching fleet and partition
   sel <- is.in(dbase$Fleet,fleet) & is.in(dbase$Part,part)
-  if(type!='con')sel <- sel & is.in(dbase$'Pick_gender',pick.gender)
-  if(type=='size' & !is.null(method))
+  # select row indices matching Pick_sex column
+  if(type!='con'){
+    sel <- sel & is.in(dbase$'Pick_sex',pick.sex)
+  }
+  # for generalized size frequency comps, select chosen size method
+  if(type=='size' & !is.null(method)){
     sel <- sel & is.in(dbase$method,method)
+  }
+  # if there are no rows selected, return empty result
   if(sum(sel)==0) return()
+  # subset comp database for selected rows
   dbase <- dbase[sel,]
   if(is.null(seas)){
     seas <- 'comb'
     if(length(unique(dbase$Seas))>1)
       cat('Warning: combining data from multiple seasons\n')
   }
+  # if generalized size comp is used, check for mix of units
+  if(type=='size'){
+    if(length(unique(dbase$units))>1){
+      cat('Warning: mix of units being compared:',unique(dbase$units),'\n')
+    }
+  }
   # create label for partitions
   partitions <- sort(unique(dbase$Part)) # values are 0, 1, or 2
   partition.labels <- c("whole","discarded","retained")[partitions+1]
-  partition.labels <- paste("(",paste(partition.labels,collapse="&")," catch)",sep="")
-  gender.flag <- type!='con' & max(tapply(dbase$'Pick_gender',
-                     dbase$Fleet,function(x)length(unique(x))))>1
+  partition.labels <- paste0("(",paste(partition.labels,collapse="&")," catch)")
+  # indx is string combining fleet, year, and potentially conditional bin
   indx <- paste(dbase$Fleet,dbase$Yr,if(type=='con')dbase$'Lbin_lo' else
                 '',if(seas=='sep')dbase$Seas else '')
-  if(gender.flag)indx <- paste(indx,dbase$'Pick_gender')
-  method.flag <- if(type=='size') length(unique(dbase$method))>1 else FALSE
-  if(method.flag)
+  # if subsetting by sex, add Pick_sex value to the indx strings
+  sex.flag <- type!='con' & max(tapply(dbase$'Pick_sex',
+                     dbase$Fleet,function(x)length(unique(x))))>1
+  if(sex.flag){
+    indx <- paste(indx,dbase$'Pick_sex')
+  }
+  # if subsetting by generalized size-method, add that value to indx strings
+  method.flag <- type=='size' && length(unique(dbase$method))>1
+  if(method.flag){
     indx <- paste(indx,dbase$method)
+  }
+  # unique strings in indx vector
   uindx <- unique(indx)
+  # test for length 1 results
   if(length(uindx)==1){
     # presumably the method is meaningless of there's only 1 point,
     # but it's good to be able to have the function play through
@@ -122,13 +146,19 @@ SSMethod.TA1.8 <-
     return()
   }
 
+  # create empty data.frame to store information on each observation
   pldat <- matrix(0,length(uindx),10,
                   dimnames=list(uindx,
                       c('Obsmn','Obslo','Obshi','semn','Expmn','Std.res',
                         'ObsloAdj','ObshiAdj','Fleet','Yr')))
+  # add columns of zeros to fill with values necessary for subsetting
   if(type=='con')pldat <- cbind(pldat,Lbin=0)
-  if(gender.flag)pldat <- cbind(pldat,pick.gender=0)
-  if(method.flag)pldat <- cbind(pldat,method=0)
+  if(sex.flag)pldat <- cbind(pldat,pick.sex=0)
+  if(type=='size'){
+    pldat <- cbind(pldat,method=0)
+    # vector to store units (which are strings and don't fit in pldat matrix)
+    plunits <- rep(NA,nrow(pldat)) 
+  }
 
   # Find the weighting factor for this combination of factors
   for(i in 1:length(uindx)){  # each row of pldat is an individual comp
@@ -144,10 +174,12 @@ SSMethod.TA1.8 <-
     pldat[i,'Fleet'] <- mean(subdbase$Fleet)
     pldat[i,'Yr'] <- mean(if(seas=='comb')subdbase$Yr else subdbase$Yr.S)
     if(type=='con')pldat[i,'Lbin'] <- mean(subdbase$'Lbin_lo')
-    if(gender.flag)
-      pldat[i,'pick.gender'] <- mean(subdbase$'Pick_gender')
-    if(method.flag)
+    if(sex.flag)
+      pldat[i,'pick.sex'] <- mean(subdbase$'Pick_sex')
+    if(type=='size'){
       pldat[i,'method'] <- mean(subdbase$method)
+      plunits[i] <- subdbase$units[1] # units of size comps
+    }
   }
   Nmult <- 1/var(pldat[,'Std.res'],na.rm=TRUE)
 
@@ -165,7 +197,7 @@ SSMethod.TA1.8 <-
     }else{
       pldat[,'Fleet']
     }
-    if(gender.flag)plindx <- paste(plindx,pldat[,'pick.gender'])
+    if(sex.flag)plindx <- paste(plindx,pldat[,'pick.sex'])
     if(method.flag)plindx <- paste(plindx,pldat[,'method'])
     uplindx <- unique(plindx)
 
@@ -204,14 +236,34 @@ SSMethod.TA1.8 <-
       fl <- fit$FleetNames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
       lab <- if(type=='con')ifelse(Nfleet>1,paste(yr,fl),yr) else fl
-      if(gender.flag)lab <-
-        paste(lab,ifelse(subpldat[1,'pick.gender']==0,'comb','sex'))
+      if(sex.flag)lab <-
+        paste(lab,ifelse(subpldat[1,'pick.sex']==0,'comb','sex'))
       if(method.flag)lab <- paste(lab,'meth',subpldat[1,'method'])
       lab <- paste(lab,partition.labels)
       mtext(lab,side=3,at=mean(x))
     }
-    mtext(paste('Mean',ifelse(is.in(type,c('len','size')),'length','age')),
-          side=2,las=0,outer=TRUE)
+    # define y-axis label
+    ylab <- 'Mean age' # default as age unless replaced below
+    if(type=="len"){
+      ylab <- 'Mean length'
+    }
+    if(type=="size"){
+      # probably more efficient ways to sort out these labels,
+      # but lots of if-statements make logic easier to follow
+      units <- unique(plunits[plindx %in% uplindx])
+      if(length(units)==1){ # not sure if this will always be true or not
+        if(units %in% c('kg','lb')){
+          ylab <- paste0('Mean weight (',units,')')
+        }
+        if(units %in% c('cm','in')){
+          ylab <- paste0('Mean length (',units,')')
+        }
+      }else{
+        # just in case it's possible to have multiple units in one panel
+        ylab <- paste0('Mean value (',paste(units, collapse=' or '),')')
+      }
+    }
+    mtext(ylab, side=2,las=0,outer=TRUE)
     mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
     # restore previous graphics parameters
     par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
@@ -224,7 +276,9 @@ SSMethod.TA1.8 <-
   Outs <- paste("Francis Weights - ", type, ": ", fit$FleetNames[fleet],": ",
                 round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
                 sep="")
-  print(Outs)
+  if(printit){
+    print(Outs)
+  }
   return(Output)
 }
 

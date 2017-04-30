@@ -24,8 +24,6 @@
 ##' @param Int_Group_List List where each element is a vector, providing a way of
 ##' grouping different random effect groups into a single category. This is not
 ##' used (but input is still required) when \code{Version=1}.
-##' @param Version Integer (options are 1, 5, and 6) giving the type of Laplace
-##' Approximation. I recommend 1.
 ##' @param StartFromPar Logical flag (TRUE or FALSE) saying whether to start each
 ##' round of optimization from a "ss3.par" file (I recommend TRUE)
 ##' @param Intern Logical flag saying whether to display all ss3 runtime output
@@ -69,7 +67,7 @@
 NegLogInt_Fn <-
   function(File=NA, Input_SD_Group_Vec,
            CTL_linenum_List, ESTPAR_num_List,
-           PAR_num_Vec, Int_Group_List=list(1), Version=1,
+           PAR_num_Vec, Int_Group_List=list(1),
            StartFromPar=TRUE, Intern=TRUE,
            ReDoBiasRamp=FALSE, BiasRamp_linenum_Vec=NULL,
            CTL_linenum_Type=NULL,systemcmd=FALSE){
@@ -451,19 +449,20 @@ NegLogInt_Fn <-
           }
           if(IntI>=2) LnDet[IntI] <- 0
         }
-        #Version 5 -- use back-transformed hessian, use subset
-        if(Version==5){
-          #Hess2 <- cov * solve(scale %o% scale)
-          #Which2 <- 38 + 1:46
-          LnDet[IntI] <- determinant(Hess[Int_num_List[[IntI]],Int_num_List[[IntI]]],
-                   logarithm=TRUE)$modulus[[1]]
-        }
-        #Version 6 -- use subset of covariance calculated from COR file
-        if(Version==6){
-          Cov <- DIAG$cov
-          LnDet[IntI] <- -1 * determinant(Cov[Int_num_List[[IntI]],Int_num_List[[IntI]]],
-                                         logarithm=TRUE)$modulus[[1]]
-        }
+        #### alternative versions taken out based on recommendation from Jim Thorson
+        ## #Version 5 -- use back-transformed hessian, use subset
+        ## if(Version==5){
+        ##   #Hess2 <- cov * solve(scale %o% scale)
+        ##   #Which2 <- 38 + 1:46
+        ##   LnDet[IntI] <- determinant(Hess[Int_num_List[[IntI]],Int_num_List[[IntI]]],
+        ##            logarithm=TRUE)$modulus[[1]]
+        ## }
+        ## #Version 6 -- use subset of covariance calculated from COR file
+        ## if(Version==6){
+        ##   Cov <- DIAG$cov
+        ##   LnDet[IntI] <- -1 * determinant(Cov[Int_num_List[[IntI]],Int_num_List[[IntI]]],
+        ##                                  logarithm=TRUE)$modulus[[1]]
+        ## }
       }
     }
 

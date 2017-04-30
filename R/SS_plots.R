@@ -11,18 +11,52 @@
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called
 #' or not.
+#' Current grouping of plots is as follows:
+#' \enumerate{
+#'   \item Biology
+#'   \item Selectivity and retention
+#'   \item Timeseries
+#'   \item Recruitment deviations
+#'   \item Recruitment bias adjustment
+#'   \item Spawner-recruit
+#'   \item Catch
+#'   \item SPR
+#'   \item Discards
+#'   \item Mean weight
+#'   \item Indices
+#'   \item Numbers at age
+#'   \item Length comp data
+#'   \item Age comp data
+#'   \item Conditional age-at-length data
+#'   \item Length comp fits
+#'   \item Age comp fits
+#'   \item Conditional age-at-length fits
+#'   \item Fancis and Punt conditional age-at-length comp fits
+#'   \item Mean length-at-age and mean weight-at-age
+#'   \item Tags
+#'   \item Yield
+#'   \item Movement
+#'   \item Data range
+#' }
+#' 
 #' @param print Deprecated input for backward compatability, now replaced by
 #' \code{png = TRUE/FALSE}.
 #' @param pdf Send plots to PDF file instead of R GUI?
 #' @param png Send plots to PNG files instead of R GUI?
 #' @param html Run \code{\link{SS_html}} on completion? By default has same
 #' value as \code{png}.
-#' @param printfolder Name of subfolder to create within the working directory
-#' into which any PNG files specified by \code{print} will be saved. By default
-#' the working directory is used with no subfolder.  Default="".
-#' @param dir The directory in which any PNG files requested by \code{print}
-#' are created. By default it will be the same directory that the report file
-#' was read from by the \code{SS_output } function. Default="default".
+#' @param printfolder The sub-directory under 'dir' (see below) in which the
+#' PNG files will be located.  The default sub-directory is "plots".
+#' The directory will be created if it doesn't exist.
+#' If 'printfolder' is set to "", it is ignored and the PNG files will be located
+#' in the directory specified by 'dir'.
+#' @param dir The directory in which a PDF file (if requested) will be created
+#' and within which the printfolder sub-directory (see above) will be created
+#' if png=TRUE. By default it will be the same directory that the report file
+#' was read from by the \code{SS_output} function. Alternatives to the default
+#' can be either relative (to the working directory) or absolute paths.
+#' The function will attempt to create the directory it doesn't exist, but it
+#' does not do so recursively.
 #' @param fleets Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing fleets or surveys for which plots should be made. By
 #' default, plots will be made for all fleets and surveys.  Default="all".
@@ -45,8 +79,7 @@
 #' Default="default".
 #' @param verbose Return updates of function progress to the R GUI?  Default=T.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
-#' (requires positive definite hessian in model and \code{covar}=T in
-#' \code{SS_output})?  Default=T.
+#' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the plots? Obviously requires
 #' forecast options to have been used in the model.  Default=T.
 #' @param datplot Plot the data by itself? This is useful in document
@@ -156,6 +189,13 @@
 #' a vector of appropriate length (currently 11) with labels for each figure
 #' @param catlabels Either NULL to have default labels for catch plots or
 #' a vector of appropriate length (currently 10) with labels for each figure
+#' @param datasize Add second data plot whose circles are proportional
+#' to either catch or relative uncertainty? Produced as
+#' data_plot2.png. Circle areas are relative within a data category (e.g.,
+#' catches, indices) and are proportional to: absolute catch for catches,
+#' 1/SE of indices, and \code{N} for compositions.
+#' @param maxsize The size of the largest bubble in the datasize
+#' plot. Default is 1/2.
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -170,28 +210,29 @@
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
-#' @keywords hplot
 SS_plots <-
   function(
-    replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,
-    printfolder="plots", dir="default", fleets="all", areas="all",
-    fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
-    lwd=1, areacols="default", areanames="default",
-    verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
-    datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
-    comp.yupper=0.4,
-    sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
-    bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
-    minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE, maxneff=5000,
-    cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
-    sampsizeline=FALSE,effNline=FALSE,
-    showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
-    cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
-    maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
-    new=TRUE,
-    SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-    legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
-    scalebubbles=FALSE,tslabels=NULL,catlabels=NULL,...)
+      replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,
+      printfolder="plots", dir="default", fleets="all", areas="all",
+      fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
+      lwd=1, areacols="default", areanames="default",
+      verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
+      datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
+      comp.yupper=0.4,
+      sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
+      bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
+      minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE, maxneff=5000,
+      cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
+      sampsizeline=FALSE,effNline=FALSE,
+      showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
+      cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
+      maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
+      new=TRUE,
+      SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
+      legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
+      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
+      maxsize=.5,
+      ...)
 {
   if(!is.null(print)){
     stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
@@ -215,7 +256,8 @@ SS_plots <-
   inputs      <- replist$inputs
   endyr       <- replist$endyr
   SS_version  <- replist$SS_version
-  Run_time    <- replist$Run_time
+  SS_versionNumeric  <- replist$SS_versionNumeric
+  StartTime   <- replist$StartTime
   Files_used  <- replist$Files_used
   FleetNames  <- replist$FleetNames
   rmse_table  <- replist$rmse_table
@@ -229,10 +271,8 @@ SS_plots <-
     stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
   }
   if(uncertainty & !inputs$covar){
-    stop("To use uncertainty=T, you need to have covar=T in the input to the SS_output function")
-  }
-  if(forecastplot & !inputs$forecast){
-    stop("To use forecastplot=T, you need to have forecast=T in the input to the SSoutput function")
+    warning("covar information unavailable, changing 'uncertainty' to FALSE")
+    uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
     cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
@@ -295,23 +335,93 @@ SS_plots <-
     if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
   }
 
-  if(dir=="default") dir <- inputs$dir
-  plotdir <- paste(dir,"/",printfolder,"/",sep="")
-  if(png){
-    dir.create(dir,showWarnings=FALSE)
-    dir.create(plotdir,showWarnings=FALSE)
-    if(verbose) cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
+  ### deal with directories in which to create PNG or PDF files
+  if(dir=="default"){
+    # directory within which printfolder will be created
+    # by default it is assumed to be the location of the model files
+    dir <- inputs$dir
+  }
+  if(png | pdf){
+    # get info on directory where subfolder will go
+    # (typically folder with model output files)
+    dir.isdir <- file.info(dir)$isdir
+    # create directory
+    if(is.na(dir.isdir) | !dir.isdir){
+      cat("Directory doesn't exist, attempting to create:\n", dir, "\n")
+      dir.create(dir)
+    }
+    # test again (even though failure to create dir should have already caused error)
+    # get info on directory where subfolder will go
+    # (typically folder with model output files)
+    dir.isdir <- file.info(dir)$isdir
+    # create 
+    if(is.na(dir.isdir) | !dir.isdir){
+      stop("Not able to create directory:\n", dir, "\n")
+    }
   }
 
-  plotInfoTable <- NULL
-  if(pdf){
-    if(dir=="default") dir <- inputs$dir
-    dir.create(dir,showWarnings=FALSE)
-    pdffile <- paste(dir,"/SS_plots_",format(Sys.time(),'%d-%m-%Y_%H.%M' ),".pdf",sep="")
-    pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) cat("PDF file with plots will be:",pdffile,'\n')
+  plotdir <- "default" # dummy value passed to functions that ignore it if png=FALSE
+  if(png){
+    # add subdirectory for PNG and HTML files if that option is chosen
+
+    # close any in-process plots still open
+    graphics.off()
+
+    # figure out path to where PNG files will go
+    plotdir <- file.path(dir,printfolder)
+    plotdir.isdir <- file.info(plotdir)$isdir
+    if(is.na(plotdir.isdir) | !plotdir.isdir){
+      dir.create(plotdir)
+    }
+    if(verbose){
+      cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
+    }
+    # get info on any older plots inside the plotdir directory
+    csv.files <- grep("plotInfoTable.+csv", dir(plotdir), value=TRUE)
+    if(length(csv.files)>0){
+      StartTimes.old <- NULL
+      for(ifile in 1:length(csv.files)){
+        plotInfo.old <- read.csv(file.path(plotdir, csv.files[ifile]),
+                                 stringsAsFactors=FALSE)
+        StartTimes.old <- c(StartTimes.old, unique(plotInfo.old$StartTime))
+      }
+      if(any(StartTimes.old!=StartTime)){
+
+        # if there are plots that are older than those from the current model,
+        # rename the directory to something containing the older model start time
+        StartTimeName <- gsub(":", ".", StartTimes.old[1], fixed=TRUE)
+        StartTimeName <- gsub(" ", "_", StartTimeName, fixed=TRUE)
+        StartTimeName <- gsub("._", "_", StartTimeName, fixed=TRUE)
+        plotdir.old <- file.path(dir, paste0("plots_", StartTimeName))
+        cat("NOTE: the directory\n   ",
+            plotdir,
+            "\n  contains plots from a previous model run, renaming to\n   ",
+            plotdir.old, "\n")
+        file.rename(plotdir, plotdir.old)
+        # create a new, empty directory for the new plots
+        dir.create(plotdir)
+      }
+    }
   }
-  if(new & !png) par(mfcol=c(rows,cols)) # make multi-panel plot if requested
+
+  # create PDF file if requested
+  if(pdf){
+    pdffile <- file.path(dir, paste0("SS_plots_",
+                                     format(Sys.time(),'%d-%m-%Y_%H.%M'),
+                                     ".pdf"))
+    pdf(file=pdffile, width=pwidth, height=pheight)
+    if(verbose){
+      cat("PDF file with plots will be:",pdffile,'\n')
+    }
+  }
+
+  # blank table to store plot info
+  plotInfoTable <- NULL
+
+    if(new & !png){
+      # make multi-panel plot if requested (not available for PNG files)
+      par(mfcol=c(rows,cols)) 
+  }
   if(pdf){
     mar0 <- par()$mar # current margins
     par(mar=rep(0,4))
@@ -322,7 +432,7 @@ SS_plots <-
     y <- y+ystep
     text(0,y,paste("Stock Synthesis version:",substr(SS_version,1,9)),pos=4)
     y <- y+ystep
-    text(0,y,Run_time,pos=4)
+    text(0,y,StartTime,pos=4)
     y <- y+ystep
     Files2 <- strsplit(Files_used," ")[[1]]
     text(0,y,paste(Files2[[1]],Files2[2]),pos=4)
@@ -401,6 +511,20 @@ SS_plots <-
     plotinfo <- selexinfo$plotinfo
     if(!is.null(plotinfo))
       plotInfoTable <- rbind(plotInfoTable,plotinfo)
+
+    # add plots of unavailable (cryptic) spawning output
+    if(FALSE){
+      # needs revision to work in SS 3.30 and models with multiple birth seasons
+      plotinfo <-
+        SSunavailableSpawningOutput(replist=replist, 
+                                    plot=!png, print=png,
+                                    plotdir=plotdir,
+                                    pwidth=pwidth, pheight=pheight,
+                                    punits=punits, res=res,
+                                    ptsize=ptsize, cex.main=cex.main)
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+    }
+    
   } # end if igroup in plot or print
 
   ##########################################
@@ -969,7 +1093,7 @@ SS_plots <-
     if(igroup %in% plot){
       if(nrow(replist$condbase)>0 & verbose){
         ## if(verbose){
-        ##   cat("Starting Andre's new conditional age-at-length plots (group ",igroup,")\n",
+        ##   cat("Starting Andre's conditional age-at-length plots (group ",igroup,")\n",
         ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
         ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
         ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
@@ -998,7 +1122,7 @@ SS_plots <-
         if(!is.null(plotInfoTable))
           plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
       }else{
-        if(verbose) cat("Skipping conditioanal A@L plots (group ",igroup,") because no such data in model\n",sep="")
+        if(verbose) cat("Skipping conditional A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
     } # end if igroup in plot or print
 
@@ -1117,13 +1241,14 @@ SS_plots <-
   igroup <- 24
   if(igroup %in% plot){
     if(verbose) cat("Starting data range plots (group ",igroup,")\n",sep="")
+    plotinfo <- NULL
     temp <-
       SSplotData(replist=replist,
                  plot=!png, print=png,
                  pwidth=pwidth, pheight=pheight, punits=punits,
                  ptsize=ptsize, res=res, cex.main=cex.main,
                  plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
-                 fleetnames=fleetnames)
+                 fleetnames=fleetnames, datasize=datasize, maxsize=maxsize)
     if(!is.null(temp) & length(temp)>0) plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
@@ -1142,14 +1267,18 @@ SS_plots <-
     png_time <- Sys.time()
     #png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')
     plotInfoTable$png_time <- png_time
-    plotInfoTable$Run_time <- Run_time
+    plotInfoTable$StartTime <- StartTime
     # create a name for the file and write it to the plot directory
-    csvname <- paste(plotdir,"/plotInfoTable_",format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv",sep="")
+    csvname <- file.path(plotdir,
+                         paste0("plotInfoTable_",
+                                format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv"))
     write.csv(plotInfoTable, csvname, row.names=FALSE)
     cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
     # write HTML files to display the images
-    if(html) SS_html(replist,filenotes=filenotes,plotdir=printfolder,...,
-      verbose = verbose)
+    if(html){
+      SS_html(replist, filenotes=filenotes, plotdir=plotdir, verbose = verbose, ...)
+    }
+    # make paths absolute 
     # return notes on the plots
     return(invisible(plotInfoTable))
   }else{

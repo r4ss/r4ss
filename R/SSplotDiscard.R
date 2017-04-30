@@ -1,8 +1,8 @@
 #' Plot fit to discard fraction.
-#' 
+#'
 #' Plot fit to discard fraction from Stock Synthesis output file.
-#' 
-#' 
+#'
+#'
 #' @param replist List created by \code{\link{SS_output}}
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
@@ -27,10 +27,9 @@
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R GUI?
-#' @author Ian Taylor, Ian Stewart
+#' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
 #' @seealso \code{\link{SS_plots}}
-#' @keywords hplot
 SSplotDiscard <-
   function(replist,subplots=1:2,
            plot=TRUE,print=FALSE,
@@ -47,10 +46,11 @@ SSplotDiscard <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            verbose=TRUE)
 {
-  pngfun <- function(file,caption=NA){
-    png(filename=file,width=pwidth,height=pheight,
-        units=punits,res=res,pointsize=ptsize)
-    plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
+  # subfunction to write png files
+  pngfun <- function(file, caption=NA){
+    png(filename=file.path(plotdir, file),
+        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
+    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
     return(plotinfo)
   }
   plotinfo <- NULL
@@ -84,7 +84,15 @@ SSplotDiscard <-
       yr <- as.numeric(usedisc$Yr)
       ob <- as.numeric(usedisc$Obs)
       std <- as.numeric(usedisc$Std_use)
-      if(DF_discard == -2){ # lognormal with std as interpreted as the standard error (in log space) of the observation
+      if(DF_discard == -3){ # truncated normal thanks to Robbie Emmet
+        ## liw <- ob - truncnorm::qtruncnorm(0.025, 0, 1, ob, std * ob)
+        ## uiw <- truncnorm::qtruncnorm(0.975, 0, 1, ob, std * ob) - ob
+        # correction from Robbie on 7/30/15
+        liw <- ob - truncnorm::qtruncnorm(0.025, 0, 1, ob, std)
+        uiw <- truncnorm::qtruncnorm(0.975, 0, 1, ob, std) - ob
+      }
+      if(DF_discard == -2){ # lognormal with std as interpreted as
+                            # the standard error (in log space) of the observation
         liw <- ob - qlnorm(0.025,log(ob),std)
         uiw <- qlnorm(0.975,log(ob),std) - ob
       }
@@ -150,9 +158,9 @@ SSplotDiscard <-
         if(plot) dfracfunc(addfit=addfit)
         if(print) {
           if(datplot){
-            file <- paste(plotdir,"discard_data",FleetName,".png",sep="")
+            file <- paste0("discard_data",FleetName,".png")
           }else{
-            file <- paste(plotdir,"discard_fit",FleetName,".png",sep="")
+            file <- paste0("discard_fit",FleetName,".png")
           }
           caption <- title
           plotinfo <- pngfun(file=file, caption=caption)

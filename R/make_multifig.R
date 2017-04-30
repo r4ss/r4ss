@@ -101,7 +101,6 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
-#' @keywords aplot hplot
 make_multifig <-
   function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
            sampsize=0, effN=0, showsampsize=TRUE, showeffN=TRUE, sampsizeround=1,

@@ -29,7 +29,6 @@
 #' the Eastern Bering Sea.
 #' \url{http://www.afsc.noaa.gov/REFM/docs/2011/EBSpollock.pdf}. (Figure 1.31,
 #' which is on an absolute, rather than log scale.)
-#' @keywords hplot
 #' @examples
 #' 
 #'  \dontrun{

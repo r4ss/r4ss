@@ -1,17 +1,15 @@
 #' read starter file
-#' 
+#'
 #' read Stock Synthesis starter file into list object in R
-#' 
-#' 
+#'
+#'
 #' @param file Filename either with full path or relative to working directory.
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_readforecast}}, \code{\link{SS_readdat}},
-#' \code{\link{SS_readctl}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
-#' \code{\link{SS_writectl}}
-#' @keywords data
+#' \code{\link{SS_writestarter}},
+#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose) cat("running SS_readstarter\n")
   size <- file.info(file)$size
@@ -21,7 +19,7 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
 
   mylist$sourcefile <- file
   mylist$type <- "Stock_Synthesis_starter_file"
-  mylist$SSversion <- "SSv3.10b_or_later"
+  mylist$SSversion <- "3.24 or earlier"
 
   # get strings for control and data file names
   starter2 <- NULL
@@ -47,7 +45,7 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   if(verbose){
     cat("  data, control files: ",mylist$datfile,", ",mylist$ctlfile,"\n",sep="")
   }
-  
+
   # get numbers (could be better integrated with function above)
   allnums <- NULL
   for(i in 1:length(starter)){
@@ -103,7 +101,20 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   }
   mylist$F_report_basis <- allnums[i]; i <- i+1
   if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
-  
+
+  # last value in vector of numerical values
+  i.final <- length(allnums)
+  if(i < i.final){
+    # file is probably 3.30
+    cat("Assuming version 3.30 based on number of numeric values.\n")
+    mylist$MCMC_output_detail <- allnums[i]; i <- i+1
+    mylist$ALK_tolerance <- allnums[i]; i <- i+1
+    if(verbose){
+      cat("  MCMC_output_detail =",mylist$MCMC_output_detail,"\n")
+      cat("  ALK_tolerance =",mylist$ALK_tolerance,"\n")
+    }
+  }
+
   # check final value
   mylist$final <- final <- allnums[i]
   if(!is.na(final) && final %in% c(3.30, 999)){
@@ -113,7 +124,9 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   }else{
     warning("Final value is ", allnums[i]," but should be either 3.30 or 999\n")
   }
-
+  if(final==3.30){
+    mylist$SSversion <- "3.30"
+  }
   # all done
   return(mylist)
 }
