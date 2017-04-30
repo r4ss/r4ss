@@ -1501,7 +1501,7 @@ SS_output <-
   }
 
   # Length selex and retention
-  if(!forecast) selex <- selex[selex$year <= endyr,]
+  if(!forecast) selex <- selex[selex$Yr <= endyr,]
   returndat$sizeselex <- selex
 
   # Age based selex
