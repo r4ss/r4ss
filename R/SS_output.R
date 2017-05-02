@@ -605,20 +605,40 @@ SS_output <-
 
       if(SS_versionNumeric >= 3.22){
         # new designation of ghost fleets from negative samp size to negative fleet
-        lendbase         <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used!="skip",]
-        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & compdbase$Used!="skip",]
-        agedbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & notconditional,]
-        condbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & conditional,]
+        lendbase    <- compdbase[compdbase$Kind=="LEN"  &
+                                   compdbase$Used!="skip",]
+        sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
+                                   compdbase$Used!="skip",]
+        agedbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used!="skip" & notconditional,]
+        condbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used!="skip" & conditional,]
       }else{
         # older designation of ghost fleets from negative samp size to negative fleet
-        lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-        agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
-        condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+        lendbase    <- compdbase[compdbase$Kind=="LEN"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+        sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+        agedbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                        notconditional,]
+        condbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                        conditional,]
       }
-      ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
-      ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
-      ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
+      ghostagedbase <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No" & notconditional,]
+      ghostcondbase <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No" & conditional,]
+      ghostlendbase <- compdbase[compdbase$Kind=="LEN"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No",]
       compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
       # extra processing for sizedbase
@@ -1869,7 +1889,6 @@ SS_output <-
                       oldnames=c("Yr.S", "Supr_Per"),
                       newnames=c("Yr.frac", "SuprPer"))
     if(SS_versionNumeric < 3.24){
-      cpue$Fleet <- NA
       cpue$Name <- NA
       for(i in 1:nrow(cpue)){
         cpue$Fleet[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
