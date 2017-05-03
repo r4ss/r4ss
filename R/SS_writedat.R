@@ -7,14 +7,18 @@
 #' @param datlist List object created by \code{\link{SS_readdat}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @param faster Speed up writing by writing length and age comps without aligning
+#' the columns (by using write.table instead of print.data.frame)
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor, Yukio Takeuchi
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
 #' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
 #' \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 #' \code{\link{SS_writedat}}
-SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
+#' 
+SS_writedat <- function(datlist, outfile, overwrite=FALSE,
+                        faster=FALSE, verbose=TRUE){
   # function to write Stock Synthesis data files
   if(verbose) cat("running SS_writedat\n")
 
@@ -138,7 +142,14 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   writeLines("#_lbin_vector")
   writeLines(paste(datlist$lbin_vector,collapse=" "))
   wl("N_lencomp",comment="#_N_Length_comp_observations")
-  if(!is.null(datlist$lencomp)) printdf(datlist$lencomp)
+  if(!is.null(datlist$lencomp)){
+    if(faster){
+      writeLines(paste0("#_", paste(names(datlist$lencomp), collapse=" ")))
+      write.table(datlist$lencomp, file=outfile, append=T, col.names=F, row.names=F)
+    }else{
+      printdf(datlist$lencomp)
+    }
+  }
   wl("N_agebins")
   writeLines("#_agebin_vector")
   writeLines(paste(datlist$agebin_vector,collapse=" "))
@@ -147,7 +158,14 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   wl("N_agecomp")
   wl("Lbin_method", comment="#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
   wl("max_combined_age", comment="#_combine males into females at or below this bin number")
-  if(!is.null(datlist$agecomp)) printdf(datlist$agecomp)
+  if(!is.null(datlist$agecomp)){
+    if(faster){
+      writeLines(paste0("#_", paste(names(datlist$agecomp), collapse=" ")))
+      write.table(datlist$agecomp, file=outfile, append=T, col.names=F, row.names=F)
+    }else{
+      printdf(datlist$agecomp)
+    }
+  }
   wl("N_MeanSize_at_Age_obs")
   #    datlist$MeanSize_at_Age_obs2 <- matrix(datlist$N_MeanSize_at_Age_obs)
   if(!is.null(datlist$MeanSize_at_Age)) printdf(datlist$MeanSize_at_Age_obs)
