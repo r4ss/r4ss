@@ -71,9 +71,15 @@ SS_writedat <- function(datlist, outfile, overwrite=FALSE,
   printdf <- function(dataframe){
     # function to print data frame with hash mark before first column name
     names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
-   # write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
-  #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
+    if(faster){
+      #     writeLines(paste0("#_", paste(names(datframe), collapse=" ")))
+      write.table(dataframe, append=TRUE, col.names=TRUE, row.names=FALSE, quote=FALSE)
+    }else{
+      print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
+    }
+    ## other options considered by Yukio in 2016 revisions
+    # write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+    # write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
   }
 
   # write a header
@@ -143,12 +149,7 @@ SS_writedat <- function(datlist, outfile, overwrite=FALSE,
   writeLines(paste(datlist$lbin_vector,collapse=" "))
   wl("N_lencomp",comment="#_N_Length_comp_observations")
   if(!is.null(datlist$lencomp)){
-    if(faster){
-      writeLines(paste0("#_", paste(names(datlist$lencomp), collapse=" ")))
-      write.table(datlist$lencomp, file=outfile, append=T, col.names=F, row.names=F)
-    }else{
-      printdf(datlist$lencomp)
-    }
+    printdf(datlist$lencomp)
   }
   wl("N_agebins")
   writeLines("#_agebin_vector")
@@ -159,12 +160,7 @@ SS_writedat <- function(datlist, outfile, overwrite=FALSE,
   wl("Lbin_method", comment="#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
   wl("max_combined_age", comment="#_combine males into females at or below this bin number")
   if(!is.null(datlist$agecomp)){
-    if(faster){
-      writeLines(paste0("#_", paste(names(datlist$agecomp), collapse=" ")))
-      write.table(datlist$agecomp, file=outfile, append=T, col.names=F, row.names=F)
-    }else{
-      printdf(datlist$agecomp)
-    }
+    printdf(datlist$agecomp)
   }
   wl("N_MeanSize_at_Age_obs")
   #    datlist$MeanSize_at_Age_obs2 <- matrix(datlist$N_MeanSize_at_Age_obs)
