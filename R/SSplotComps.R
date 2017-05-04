@@ -1225,8 +1225,8 @@ SSplotComps <-
               for(ipage in 1:npages){
                 if(max_n_mkt > 0){
                   caption <-
-                    paste0(caption,
-                           "\nLabels 'retained' and 'discard' indicate",
+                    paste0(caption, "<br>\n",
+                           "Labels 'retained' and 'discard' indicate",
                            " discarded or retained sampled for each fleet.",
                            " Panels without this designation represent",
                            " the whole catch.\n")
@@ -1234,7 +1234,7 @@ SSplotComps <-
                 pagetext <- ""
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
-                  caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+                  caption <- paste(caption, "<br>(plot ",ipage," of ",npages,")",sep="")
                 }
                 file <- paste(filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
