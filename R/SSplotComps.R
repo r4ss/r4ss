@@ -285,10 +285,10 @@ SSplotComps <-
     kindlab=labels[1]
     if(datonly){
       filenamestart <- "comp_lendat_"
-      titledata <- "length comp data, "
+      titledata <- "Length comp data, "
     }else{
       filenamestart <- "comp_lenfit_"
-      titledata <- "length comps, "
+      titledata <- "Length comps, "
     }
   }
   if(kind=="GSTLEN"){
@@ -296,10 +296,10 @@ SSplotComps <-
     kindlab=labels[1]
     if(datonly){
       filenamestart <- "comp_gstlendat_"
-      titledata <- "ghost length comp data, "
+      titledata <- "Ghost length comp data, "
     }else{
       filenamestart <- "comp_gstlenfit_"
-      titledata <- "ghost length comps, "
+      titledata <- "Ghost length comps, "
     }
   }
   if(kind=="SIZE"){
@@ -314,10 +314,10 @@ SSplotComps <-
       kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
     if(datonly){
       filenamestart <- "comp_sizedat_"
-      titledata <- "size comp data, "
+      titledata <- "Size comp data, "
     }else{
       filenamestart <- "comp_sizefit_"
-      titledata <- "size comps, "
+      titledata <- "Size comps, "
     }
   }
   if(kind=="AGE"){
@@ -325,10 +325,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_agedat_"
-      titledata <- "age comp data, "
+      titledata <- "Age comp data, "
     }else{
       filenamestart <- "comp_agefit_"
-      titledata <- "age comps, "
+      titledata <- "Age comps, "
     }
   }
   if(kind=="cond"){
@@ -336,10 +336,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_condAALdat_"
-      titledata <- "conditional age-at-length data, "
+      titledata <- "Conditional age-at-length data, "
     }else{
       filenamestart <- "comp_condAALfit_"
-      titledata <- "conditional age-at-length, "
+      titledata <- "Conditional age-at-length, "
     }
   }
   if(kind=="GSTAGE"){
@@ -347,10 +347,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_gstagedat_"
-      titledata <- "ghost age comp data, "
+      titledata <- "Ghost age comp data, "
     }else{
       filenamestart <- "comp_gstagefit_"
-      titledata <- "ghost age comps, "
+      titledata <- "Ghost age comps, "
     }
   }
   if(kind=="GSTcond"){
@@ -358,24 +358,24 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_gstCAALdat_"
-      titledata <- "ghost conditional age-at-length data, "
+      titledata <- "Ghost conditional age-at-length data, "
     }else{
       filenamestart <- "comp_gstCAALfit_"
-      titledata <- "ghost conditional age-at-length comps, "
+      titledata <- "Ghost conditional age-at-length comps, "
     }
   }
   if(kind=="L@A"){
     dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "comp_LAAfit_"
-    titledata <- "mean length at age, "
+    titledata <- "Mean length at age, "
     dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(kind=="W@A"){
     dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "comp_WAAfit_"
-    titledata <- "mean weight at age, "
+    titledata <- "Mean weight at age, "
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
     stop("Input 'kind' to SSplotComps is not right.")
@@ -1225,7 +1225,7 @@ SSplotComps <-
               for(ipage in 1:npages){
                 if(max_n_mkt > 0){
                   caption <-
-                    paste0(caption, "<br>\n",
+                    paste0(caption, ".\n <br> ",
                            "Labels 'retained' and 'discard' indicate",
                            " discarded or retained sampled for each fleet.",
                            " Panels without this designation represent",
@@ -1234,7 +1234,7 @@ SSplotComps <-
                 pagetext <- ""
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
-                  caption <- paste(caption, "<br>(plot ",ipage," of ",npages,")",sep="")
+                  caption <- paste(caption, "<br> (plot ",ipage," of ",npages,")",sep="")
                 }
                 file <- paste(filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
