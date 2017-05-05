@@ -32,6 +32,8 @@
 #' @param showyears Add labels for years to sample size plots?
 #' @param showsampsize add sample sizes to plot
 #' @param showeffN add effective sample sizes to plot
+#' @param aggregates_by_mkt separate plots of aggregates across years
+#' into different plots for each market category (retained, discarded)?
 #' @param sampsizeline show line for input sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param effNline show line for effective sample sizes on top of conditional
@@ -115,7 +117,7 @@ SSplotComps <-
            fleets="all", fleetnames="default", sexes="all",
            yupper=0.4,
            datonly=FALSE, samplesizeplots=TRUE, compresidplots=TRUE, bub=FALSE,
-           showyears=TRUE, showsampsize=TRUE, showeffN=TRUE,
+           showyears=TRUE, showsampsize=TRUE, showeffN=TRUE, aggregates_by_mkt=FALSE,
            sampsizeline=FALSE,effNline=FALSE,
            minnbubble=3, pntscalar=NULL,
            scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,
@@ -283,10 +285,10 @@ SSplotComps <-
     kindlab=labels[1]
     if(datonly){
       filenamestart <- "comp_lendat_"
-      titledata <- "length comp data, "
+      titledata <- "Length comp data, "
     }else{
       filenamestart <- "comp_lenfit_"
-      titledata <- "length comps, "
+      titledata <- "Length comps, "
     }
   }
   if(kind=="GSTLEN"){
@@ -294,10 +296,10 @@ SSplotComps <-
     kindlab=labels[1]
     if(datonly){
       filenamestart <- "comp_gstlendat_"
-      titledata <- "ghost length comp data, "
+      titledata <- "Ghost length comp data, "
     }else{
       filenamestart <- "comp_gstlenfit_"
-      titledata <- "ghost length comps, "
+      titledata <- "Ghost length comps, "
     }
   }
   if(kind=="SIZE"){
@@ -312,10 +314,10 @@ SSplotComps <-
       kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
     if(datonly){
       filenamestart <- "comp_sizedat_"
-      titledata <- "size comp data, "
+      titledata <- "Size comp data, "
     }else{
       filenamestart <- "comp_sizefit_"
-      titledata <- "size comps, "
+      titledata <- "Size comps, "
     }
   }
   if(kind=="AGE"){
@@ -323,10 +325,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_agedat_"
-      titledata <- "age comp data, "
+      titledata <- "Age comp data, "
     }else{
       filenamestart <- "comp_agefit_"
-      titledata <- "age comps, "
+      titledata <- "Age comps, "
     }
   }
   if(kind=="cond"){
@@ -334,10 +336,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_condAALdat_"
-      titledata <- "conditional age-at-length data, "
+      titledata <- "Conditional age-at-length data, "
     }else{
       filenamestart <- "comp_condAALfit_"
-      titledata <- "conditional age-at-length, "
+      titledata <- "Conditional age-at-length, "
     }
   }
   if(kind=="GSTAGE"){
@@ -345,10 +347,10 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_gstagedat_"
-      titledata <- "ghost age comp data, "
+      titledata <- "Ghost age comp data, "
     }else{
       filenamestart <- "comp_gstagefit_"
-      titledata <- "ghost age comps, "
+      titledata <- "Ghost age comps, "
     }
   }
   if(kind=="GSTcond"){
@@ -356,29 +358,40 @@ SSplotComps <-
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_gstCAALdat_"
-      titledata <- "ghost conditional age-at-length data, "
+      titledata <- "Ghost conditional age-at-length data, "
     }else{
       filenamestart <- "comp_gstCAALfit_"
-      titledata <- "ghost conditional age-at-length comps, "
+      titledata <- "Ghost conditional age-at-length comps, "
     }
   }
   if(kind=="L@A"){
     dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "comp_LAAfit_"
-    titledata <- "mean length at age, "
+    titledata <- "Mean length at age, "
     dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(kind=="W@A"){
     dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     filenamestart <- "comp_WAAfit_"
-    titledata <- "mean weight at age, "
+    titledata <- "Mean weight at age, "
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
     stop("Input 'kind' to SSplotComps is not right.")
   }
 
+  # partition group is used by some aggregate plots (subplot 21+)
+  # either equal to partition or constant across all samples
+  if(nrow(dbase_kind)>0){
+    if(aggregates_by_mkt){
+      dbase_kind$Part_group <- dbase_kind$Part
+    }else{
+      dbase_kind$Part_group <- -1 # code for all partitions combined
+    }
+  }
+  
+  
   # Add asterix to indicate super periods and then remove rows labeled "skip".
   # It would be better to somehow show the range of years, but that seems difficult.
   if(any(dbase_kind$SuprPer=="Sup" & dbase_kind$Used=="skip")){
@@ -463,8 +476,9 @@ SSplotComps <-
 
         ### subplot 1: multi-panel composition plot
         if(1 %in% subplots & kind!="cond"){ # for age or length comps, but not conditional AAL
+          caption <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
           if(mainTitle) {
-            ptitle <- paste(titledata,title_sexmkt, fleetnames[f],sep="") # total title
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -523,7 +537,6 @@ SSplotComps <-
           if(print){ # set up plotting to png file if required
             npages <- ceiling(length(unique(dbase$Yr.S))/maxrows/maxcols)
             for(ipage in 1:npages){
-              caption <- ptitle
               pagetext <- ""
               if(npages>1){
                 pagetext <- paste("_page",ipage,sep="")
@@ -566,9 +579,11 @@ SSplotComps <-
               growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
             }
           }
+          # assemble caption that may also be used for plot title
+          caption <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+          caption <- paste(caption," (max=",round(max(z),digits=2),")",sep="")
           if(mainTitle) {
-            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -629,7 +644,6 @@ SSplotComps <-
           }
           if(plot) tempfun2()
           if(print){ # set up plotting to png file if required
-            caption <- ptitle
             pagetext <- ""
             if(npages>1){
               pagetext <- paste("_page",ipage,sep="")
@@ -652,9 +666,11 @@ SSplotComps <-
         ### subplot 3: multi-panel bubble plots for conditional age-at-length
 
         if(3 %in% subplots & kind=="cond"){
+          # assemble caption that may also be used for plot title
+          caption <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
+          caption <- paste(caption," (max=",round(max(z),digits=2),")",sep="")
           if(mainTitle) {
-            ptitle <- paste(titletype, title_sexmkt, fleetnames[f],sep="")
-            ptitle <- paste(ptitle," (max=",round(max(z),digits=2),")",sep="")
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -702,7 +718,6 @@ SSplotComps <-
             npages <- ceiling(length(unique(dbase$Yr.S))*
                                 length(unique(dbase$sex))/maxrows2/maxcols2)
             for(ipage in 1:npages){
-              caption <- ptitle
               pagetext <- ""
               if(npages>1){
                 pagetext <- paste("_page",ipage,sep="")
@@ -728,8 +743,9 @@ SSplotComps <-
             if(length(dbase$Obs[dbase$Yr==aalyr])>0){
               if(4 %in% subplots){
                 ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
+                caption <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
                 if(mainTitle) {
-                  ptitle <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
+                  ptitle <- caption
                 } else {
                   ptitle <- ""
                 }
@@ -750,7 +766,6 @@ SSplotComps <-
                 if(print){
                   npages <- ceiling(length(unique(ydbase$Yr.S))/maxrows/maxcols)
                   for(ipage in 1:npages){
-                    caption <- ptitle
                     pagetext <- ""
                     if(npages>1){
                       pagetext <- paste("_page",ipage,sep="")
@@ -774,9 +789,10 @@ SSplotComps <-
               if(5 %in% subplots){
                 ### subplot 5: Pearson residuals for A-L key
                 z <- ydbase$Pearson
+                caption <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
+                caption <- paste(caption," (max=",round(abs(max(z)),digits=2),")",sep="")
                 if(mainTitle) {
-                  ptitle <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
-                  ptitle <- paste(ptitle," (max=",round(abs(max(z)),digits=2),")",sep="")
+                  ptitle <- caption
                 } else {
                   ptitle <- ""
                 }
@@ -791,7 +807,6 @@ SSplotComps <-
                 }
                 if(plot) tempfun5()
                 if(print){
-                  caption <- ptitle
                   pagetext <- ""
                   if(npages>1){
                     pagetext <- paste("_page",ipage,sep="")
@@ -829,8 +844,9 @@ SSplotComps <-
               ilenbin <- goodbins[ibin]
               abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
               if(nrow(abindbase)>0){ # check for data associated with this bin
+                caption <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
                 if(mainTitle) {
-                  ptitle <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                  ptitle <- caption
                 } else {
                   ptitle <- ""
                 }
@@ -847,7 +863,6 @@ SSplotComps <-
                 if(print){
                   npages <- ceiling(length(unique(abindbase$Yr.S))/maxrows/maxcols)
                   for(ipage in 1:npages){
-                    caption <- ptitle
                     pagetext <- ""
                     if(npages>1){
                       pagetext <- paste("_page",ipage,sep="")
@@ -867,8 +882,9 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
+          caption <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
           if(mainTitle) {
-            ptitle <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -925,7 +941,6 @@ SSplotComps <-
           if(print){ # set up plotting to png file if required
             file <- paste(filenamestart,"sampsize_",
                           filename_fltsexmkt,".png",sep="")
-            caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             lfitfunc()
             dev.off()
@@ -934,14 +949,13 @@ SSplotComps <-
 
         ### subplot 8: Chris Francis TA1.8 method for non-conditional data
         if(8 %in% subplots & kind %in% c("LEN","SIZE","AGE")){
-          ptitle <- paste("Francis data weighting method TA1.8 ", fleetnames[f],sep="")
+          caption <- paste("Francis data weighting method TA1.8 ", fleetnames[f],sep="")
           # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
           kind2 <- tolower(kind)
           if(plot){
             SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
           }
           if(print){ # set up plotting to png file if required
-            caption <- ptitle
             file <- paste(filenamestart,
                           "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
             # not using pngfun because caption isn't available until after
@@ -971,13 +985,12 @@ SSplotComps <-
         }
         ### subplot 9: Chris Francis TA1.8 method for conditional data
         if(9 %in% subplots & kind=="cond" & (f %in% condbase$Fleet)){
-          ptitle <- paste("Francis data weighting method TA1.8 for conditional age data ",
+          caption <- paste("Francis data weighting method TA1.8 for conditional age data ",
                           fleetnames[f],sep="")
           if(plot){
             SSMethod.Cond.TA1.8(fit=replist, fleet=f)
           }
           if(print){ # set up plotting to png file if required
-            caption <- ptitle
             caption <- paste(caption,"<br>For more info, see<br>",
                              "<blockquote>Francis, R.I.C.C. (2011).",
                              "Data weighting in statistical fisheries stock assessment",
@@ -992,8 +1005,9 @@ SSplotComps <-
         }
         ### subplot 10: Andre's mean age and std. dev. in conditional AAL
         if(10 %in% subplots & kind=="cond"){
+          caption <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
           if(mainTitle) {
-            ptitle <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -1087,7 +1101,6 @@ SSplotComps <-
           if(print){ # set up plotting to png file if required
             npages <- ceiling(length(unique(dbase$Yr.S))/andrerows)
             for(ipage in 1:npages){
-              caption <- paste(ptitle)
               pagetext <- ""
               if(npages>1){
                 pagetext <- paste("_page",ipage,sep="")
@@ -1121,40 +1134,21 @@ SSplotComps <-
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
-      ## testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-      ## testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
-      ## testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
-
-      # loop over genders combinations
-      ## for(k in (1:3)[testor])
-      ## {
-      ##   if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-      ##   if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
-      ##   if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
-      ##   sex <- ifelse(k==3, 2, 1)
-
       # no longer subsetting by sex, so mapping directly over
       dbase_k <- dbasef
 
       # loop over partitions (discard, retain, total)
-      for(j in unique(dbase_k$Part)){
+      for(j in unique(dbase_k$Part_group)){
         # dbase is the final data.frame used in the individual plots
         # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
-        dbase <- dbase_k[dbase_k$Part==j,]
+        dbase <- dbase_k[dbase_k$Part_group==j,]
         if(nrow(dbase)>0){
-          ## ## assemble pieces of plot title
-          ## # sex
-          ## ## if(k==1) titlesex <- "sexes combined, "
-          ## ## if(k==2) titlesex <- "female, "
-          ## ## if(k==3) titlesex <- "male, "
-          ## ## titlesex <- ifelse(printsex,titlesex,"")
-          ## titlesex <- ""
-
           # market category
-          if(j==0) titlemkt <- "whole catch, "
-          if(j==1) titlemkt <- "discard, "
-          if(j==2) titlemkt <- "retained, "
-          titlemkt <- ifelse(printmkt,titlemkt,"")
+          if(j ==-1) titlemkt <- ""
+          if(j == 0) titlemkt <- "whole catch, "
+          if(j == 1) titlemkt <- "discard, "
+          if(j == 2) titlemkt <- "retained, "
+          titlemkt <- ifelse(printmkt, titlemkt, "")
 
           # plot bars for data only or if input 'fitbar=TRUE'
           if(datonly | fitbar){
@@ -1166,11 +1160,13 @@ SSplotComps <-
           ## aggregating identifiers for plot titles and filenames
           ## note: titlesex is set at the top of this function
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
-          #filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
-          filename_fltsexmkt <- paste(filesex, "mkt",j,sep="")
-
+          filename_fltsexmkt <- paste(filesex)
+          if(j > -1){ # add market category to filename if it's not a mix
+            filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt",j)
+          }
+          caption <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
           if(mainTitle) {
-            ptitle <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -1183,7 +1179,8 @@ SSplotComps <-
                            obs=dbase$Obs*dbase$N,
                            exp=dbase$Exp*dbase$N)
           agg <- aggregate(x=df,
-                           by=list(bin=dbase$Bin,f=dbase$Fleet,sex=dbase$sex),
+                           by=list(bin=dbase$Bin, f=dbase$Fleet,
+                               sex=dbase$sex, mkt=dbase$Part),
                            FUN=sum)
           agg <- agg[agg$f %in% fleets,]
           agg$obs <- agg$obs/agg$N
@@ -1199,10 +1196,18 @@ SSplotComps <-
           }
 
           namesvec <- fleetnames[agg$f]
+
+          # check for multiple market categories a fleet to plot separately
+          max_n_mkt <- max(apply(table(agg$f, agg$mkt)>0, 1, sum))
+          if(max_n_mkt > 0){
+            mktnames <- c("","(discards)","(retained)")
+            namesvec <- paste(fleetnames[agg$f], mktnames[agg$mkt+1])
+          }
+              
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
-              make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$f,
+              make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
                             linesx=agg$bin,linesy=agg$exp,
                             sampsize=agg$N,effN=agg$effN,
                             showsampsize=showsampsize,showeffN=showeffN,
@@ -1218,11 +1223,18 @@ SSplotComps <-
             if(print){ # set up plotting to png file if required
               npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
               for(ipage in 1:npages){
-                caption <- ptitle
+                if(max_n_mkt > 0){
+                  caption <-
+                    paste0(caption, ".\n <br> ",
+                           "Labels 'retained' and 'discard' indicate",
+                           " discarded or retained sampled for each fleet.",
+                           " Panels without this designation represent",
+                           " the whole catch.\n")
+                }
                 pagetext <- ""
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
-                  caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+                  caption <- paste(caption, "<br> (plot ",ipage," of ",npages,")",sep="")
                 }
                 file <- paste(filenamestart,filename_fltsexmkt,
                               pagetext,"_aggregated_across_time.png",sep="")
@@ -1252,8 +1264,8 @@ SSplotComps <-
             ##                 fixdims=fixdims,ipage=ipage,...)
             ## }
           }
-        } # end test for presence of observations in this partition
-      } # end loop over partitions
+        } # end test for presence of observations in this partition group
+      } # end loop over partitions group
       #      } # end loop over combined/not-combined genders
     } # end if data
   } # end subplot 21
@@ -1304,8 +1316,10 @@ SSplotComps <-
             title_sexmkt <- paste(titlesex,titlemkt,sep="")
             filename_fltsexmkt <- paste("sex",k,"mkt",j,sep="")
 
+            caption <- paste0(titledata, title_sexmkt,
+                              "\naggregated within season by fleet") # total title
             if(mainTitle) {
-              ptitle <- paste(titledata,title_sexmkt, "\naggregated within season by fleet",sep="") # total title
+              ptitle <- caption
             } else {
               ptitle <- ""
             }
@@ -1382,7 +1396,6 @@ SSplotComps <-
               npages <- ceiling(length(unique(agg$fseas))/maxrows/maxcols)
               for(ipage in 1:npages)
               {
-                caption <- ptitle
                 pagetext <- ""
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
@@ -1468,9 +1481,10 @@ SSplotComps <-
               }
               agg$fy <- agg$f + agg$y/10000
               # total title
+              caption <- paste(titledata,title_sexmkt,fleetnames[f],
+                               "\naggregated across seasons within year",sep="")
               if(mainTitle) {
-                ptitle <- paste(titledata,title_sexmkt,fleetnames[f],
-                                "\naggregated across seasons within year",sep="")
+                ptitle <- caption
               } else {
                 ptitle <- ""
               }
@@ -1518,7 +1532,6 @@ SSplotComps <-
               if(print){ # set up plotting to png file if required
                 npages <- ceiling(length(unique(agg$fy))/maxrows/maxcols)
                 for(ipage in 1:npages){
-                  caption <- ptitle
                   pagetext <- ""
                   if(npages>1){
                     pagetext <- paste("_page",ipage,sep="")
@@ -1588,8 +1601,9 @@ SSplotComps <-
           titlemkt <- ifelse(printmkt,titlemkt,"")
           title_sexmkt <- paste(titlesex,titlemkt,sep="")
 
+          caption <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
           if(mainTitle) {
-            ptitle <- paste(titletype, title_sexmkt, ", comparing across fleets", sep="")
+            ptitle <- caption
           } else {
             ptitle <- ""
           }
@@ -1700,7 +1714,6 @@ SSplotComps <-
             if(print){ # set up plotting to png file if required
               npages <- ceiling(length(fleetvec)/maxrows)
               for(ipage in 1:npages){
-                caption <- ptitle
                 pagetext <- ""
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
