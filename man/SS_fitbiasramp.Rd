@@ -7,8 +7,9 @@
 SS_fitbiasramp(replist, verbose = FALSE, startvalues = NULL,
   method = "BFGS", twoplots = TRUE, transform = FALSE, plot = TRUE,
   print = FALSE, plotdir = "default", shownew = TRUE, oldctl = NULL,
-  newctl = NULL, altmethod = "nlminb", pwidth = 6.5, pheight = 5,
-  punits = "in", ptsize = 10, res = 300, cex.main = 1)
+  newctl = NULL, altmethod = "nlminb", exclude_forecast = TRUE,
+  pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10, res = 300,
+  cex.main = 1)
 }
 \arguments{
 \item{replist}{Object created using \code{\link{SS_output}}}
@@ -46,6 +47,9 @@ estimated bias adjustment values. Default=NULL.}
 
 \item{altmethod}{Optimization tool to use in place of optim, either "nlminb"
 or "psoptim". If not equal to either of these, then optim is used.}
+
+\item{exclude_forecast}{Exclude forecast values in the estimation of
+alternative bias adjustment inputs?}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. Default=7.}

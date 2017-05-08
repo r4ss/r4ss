@@ -27,6 +27,8 @@
 #' estimated bias adjustment values. Default=NULL.
 #' @param altmethod Optimization tool to use in place of optim, either "nlminb"
 #' or "psoptim". If not equal to either of these, then optim is used.
+#' @param exclude_forecast Exclude forecast values in the estimation of
+#' alternative bias adjustment inputs?
 #' @param pwidth Default width of plots printed to files in units of
 #' \code{punits}. Default=7.
 #' @param pheight Default height width of plots printed to files in units of
@@ -46,7 +48,7 @@
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
-         oldctl=NULL, newctl=NULL, altmethod="nlminb",
+         oldctl=NULL, newctl=NULL, altmethod="nlminb", exclude_forecast=TRUE,
          pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300, cex.main=1){
   ##################
   # function to estimate bias adjustment ramp
@@ -128,11 +130,15 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   if(verbose & transform) cat("transformed startvalues =",paste(startvalues,collapse=", "),"\n")
 
-  biasadjfit <- function(pars,yr,std,sigmaR,transform,eps=.1){
+  biasadjfit <- function(pars, yr, std, sigmaR, transform,
+                         is.forecast, eps=.1){
     # calculate the goodness of the fit of the estimated ramp and values to the model output
-    biasadj <- biasadjfun(yr=yr,vec=pars, transform=transform)$biasadj
+    biasadj <- biasadjfun(yr=yr, vec=pars, transform=transform)$biasadj
     compare <- 1 - (std/sigmaR)^2
-
+    if(exclude_forecast){
+      biasadj <- biasadj[!is.forecast]
+      compare <- compare[!is.forecast]
+    }
     # penalty similar to that employed by posfun in ADMB
     penfun <- function(xsmall,xbig,eps=.1){
       pen <- 0
@@ -189,13 +195,14 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(data.frame(yr=yr2,val=val,std=std))
   }
 
-  optimfun <- function(yr,std,startvalues){
+  optimfun <- function(yr, std, startvalues, is.forecast){
     # run the optimizationt to find best fit values
     if(altmethod=="nlminb"){
       biasopt <- nlminb(start=startvalues, objective=biasadjfit, gradient = NULL,
                         hessian = NULL, scale = 1, control = list(maxit=1000),
                         lower = c(-Inf,-Inf,-Inf,-Inf,0), upper = Inf,
-                        yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
+                        yr=yr,std=std,sigmaR=sigma_R_in,transform=transform,
+                        is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
       #### the following commands no longer needed since packages are required by r4ss
@@ -249,7 +256,10 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   yr <- recdevs$yr
   val <- recdevs$val
   std <- recdevs$std
-
+  # test for forecast years to exclude points from fit and color gray
+  is.forecast <- yr > replist$endyr
+  col.vec <- ifelse(is.forecast, 'gray', 'black')
+  
   # test for presence of estimated recruitment deviations
   if(max(val)==0 | length(val)==0){
     if(verbose) cat("no rec devs estimated in this model\n")
@@ -261,7 +271,8 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   ylim <- range(recdev_hi,recdev_lo)
   cat('Now estimating alternative recruitment bias adjustment fraction...\n')
-  newbias <- optimfun(yr=yr,std=std,startvalues=startvalues)
+  newbias <- optimfun(yr=yr, std=std,
+                      startvalues=startvalues, is.forecast=is.forecast)
 
   plotbiasadj <- function(){
     if(twoplots){
@@ -270,15 +281,15 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
            ylab='Recruitment deviation',ylim=ylim)
       abline(h=0,col="grey")
       arrows(yr,recdev_lo,yr,recdev_hi,length=0.03,code=3,angle=90,lwd=1.2)
-      points(yr,val,pch=16)
+      points(yr,val, pch=21, col=1, bg=col.vec)
     }
 
     yvals <- 1-(std/sigma_R_in)^2
-    plot(yr,yvals,xlab="Year",
-         ylab='',
-         ylim=range(min(yvals,0),1,1.3),type="b",yaxs='i')
-    abline(h=0,col="grey")
-    abline(h=1,col="grey")
+    plot(yr, yvals, xlab='Year', ylab='',
+         ylim=range(min(yvals, 0), 1, 1.3),
+         type='b', yaxs='i', col=col.vec)
+    abline(h=0,col='grey')
+    abline(h=1,col='grey')
     mtext(side=2,line=2.5,expression(1 - italic(SE(hat(r[y]))^2 / sigma[R])^2))
     
     # bias correction (2nd axis, scaled by ymax)
