@@ -1212,10 +1212,10 @@ SSplotComparisons <-
       imodel <- models[iline]
       subset1 <- indices$imodel==imodel & !is.na(indices$Like)
       subset2 <- indices$imodel==imodel
-      if(length(unique(indices$FleetNum[subset2])) > 1){
+      if(length(unique(indices$Fleet[subset2])) > 1){
         if(!is.null(indexfleets[imodel])){
           ifleet <- indexfleets[imodel]
-          indices2 <- rbind(indices2,indices[subset2 & indices$FleetNum==ifleet,])
+          indices2 <- rbind(indices2,indices[subset2 & indices$Fleet==ifleet,])
         }else{
           cat("some models have multiple indices, 'indexfleets' required\n",
               "to compare fits to indices.\n")
