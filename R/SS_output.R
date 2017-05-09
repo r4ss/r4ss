@@ -1079,6 +1079,9 @@ SS_output <-
   # time-varying parameters
   MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,
                          "selparm(Size)_By_Year_after_adjustments",-1,header=TRUE)
+  # make older SS output names match current SS output conventions
+  MGparmAdj <- df.rename(MGparmAdj, oldnames="Year", newnames="Yr")
+  # make values numeric
   if(nrow(MGparmAdj)>0){
     for(icol in 1:ncol(MGparmAdj)) MGparmAdj[,icol] <- as.numeric(MGparmAdj[,icol])
   }else{
