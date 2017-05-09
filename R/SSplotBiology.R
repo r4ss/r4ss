@@ -1096,7 +1096,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   if(14 %in% subplots){
     # general function to work for any parameter
     timeVaryingParmFunc <- function(parmlabel){
-      plot(MGparmAdj$Year, MGparmAdj[[parmlabel]],
+      plot(MGparmAdj$Yr, MGparmAdj[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected
@@ -1107,7 +1107,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
         parmlabel <- names(MGparmAdj)[icol]
         parmvals  <- MGparmAdj[,icol]
         # check for changes
-        if(length(unique(parmvals)) > 1){
+        if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
           # make plot
           if(plot) timeVaryingParmFunc(parmlabel)
           if(print){
