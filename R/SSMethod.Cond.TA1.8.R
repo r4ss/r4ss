@@ -200,8 +200,9 @@ SSMethod.Cond.TA1.8 <-
                                 c(0.025,0.975)))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
 
-  Outs <- paste("Francis CAA Weights:",fit$FleetNames[fleet],":",
-                round(Nmult,5),round(confint[1],5),round(confint[2],5))
+  Outs <- paste0("Francis CAA Weights: ",
+                 fit$FleetNames[fleet], ": ", round(Nmult,5),
+                 " (", round(confint[1],5), "-", round(confint[2],5), ")")
   if(printit){
     print(Outs)
   }
@@ -212,9 +213,9 @@ SSMethod.Cond.TA1.8 <-
     confint2 <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                    c(0.025,0.975)))
 
-    Outs <- paste("Francis CAA Weights-Version B (not recommended):",
-                  fit$FleetNames[fleet],":",
-                  round(Nmult2,5),round(confint2[1],5),round(confint2[2],5))
+    Outs <- paste0("Francis CAA Weights-Version B (not recommended): ",
+                   fit$FleetNames[fleet], ": ", round(Nmult2,5), 
+                   " (", round(confint2[1],5), "-", round(confint2[2],5), ")")
     if(printit){
       print(Outs)
     }

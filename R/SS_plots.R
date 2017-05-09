@@ -1087,7 +1087,7 @@ SS_plots <-
     } #end if igroup in plot or print
 
     ##########################################
-    # Fancis and Punt conditional age-at-length comp fits
+    # Francis and Punt conditional age-at-length comp fits
     #
     igroup <- 19
     if(igroup %in% plot){
