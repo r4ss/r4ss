@@ -949,15 +949,15 @@ SSplotComps <-
 
         ### subplot 8: Chris Francis TA1.8 method for non-conditional data
         if(8 %in% subplots & kind %in% c("LEN","SIZE","AGE")){
-          caption <- paste("Francis data weighting method TA1.8 ", fleetnames[f],sep="")
+          caption <- paste0("Francis data weighting method TA1.8: ", fleetnames[f])
           # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
           kind2 <- tolower(kind)
           if(plot){
             SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
           }
           if(print){ # set up plotting to png file if required
-            file <- paste(filenamestart,
-                          "data_weighting_TA1.8_",fleetnames[f],".png",sep="")
+            file <- paste0(filenamestart,
+                           "data_weighting_TA1.8_",fleetnames[f],".png")
             # not using pngfun because caption isn't available until after
             # plot is created
             # old command: plotinfo <- pngfun(file=file, caption=caption)
@@ -967,12 +967,11 @@ SSplotComps <-
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
             # put additional info into caption for figure
             if(!is.null(tmp[1])){
-              vals <- paste("Suggested sample size adjustment ",
-                            "(with 95% interval) for ", kind2, " data from ",
-                            fleetnames[f],":<br>",
-                            round(tmp[1],4), " (",
-                            round(tmp[2],4),"-",round(tmp[3],4),")",
-                            sep="")
+              vals <- paste0("Suggested sample size adjustment ",
+                             "(with 95% interval) for ", kind2, " data from ",
+                             fleetnames[f],":<br>",
+                             round(tmp[1],4), " (",
+                             round(tmp[2],4),"-",round(tmp[3],4),")")
             }else{
               vals <- "Too few points to calculate adjustments"
             }
@@ -991,7 +990,7 @@ SSplotComps <-
         }
         ### subplot 9: Chris Francis TA1.8 method for conditional data
         if(9 %in% subplots & kind=="cond" & (f %in% condbase$Fleet)){
-          caption <- paste("Francis data weighting method TA1.8 for conditional age data ",
+          caption <- paste("Francis data weighting method TA1.8 for conditional age data:",
                           fleetnames[f],sep="")
           if(plot){
             SSMethod.Cond.TA1.8(fit=replist, fleet=f)
