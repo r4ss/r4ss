@@ -1067,12 +1067,12 @@ SS_output <-
   # make older SS output names match current SS output conventions
   der <- df.rename(der, oldnames="LABEL", newnames="Label")
 
-  der <- der[der$LABEL!="Bzero_again",]
+  der <- der[der$Label!="Bzero_again",]
   der[der=="_"] <- NA
   der[der==""] <- NA
 
   # remove bad rows that may go away in future versions of SS 3.30 
-  test <- grep("Parm_dev_details", der$LABEL)
+  test <- grep("Parm_dev_details", der$Label)
   if(length(test)>0){
     der <- der[1:(min(test)-1),]
   }
@@ -1080,7 +1080,7 @@ SS_output <-
   for(i in 2:ncol(der)){
     der[,i] = as.numeric(der[,i])
   }
-  rownames(der) <- der$LABEL
+  rownames(der) <- der$Label
 
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
@@ -2210,9 +2210,9 @@ SS_output <-
 
   # get "sigma" used by Pacific Council in P-star calculations
   SPB_final_Label <- paste0("SPB_",endyr+1)
-  if(SPB_final_Label %in% der$LABEL){
-    SPB_final_EST <- der$Value[der$LABEL==SPB_final_Label]
-    SPB_final_SD <- der$StdDev[der$LABEL==SPB_final_Label]
+  if(SPB_final_Label %in% der$Label){
+    SPB_final_EST <- der$Value[der$Label==SPB_final_Label]
+    SPB_final_SD <- der$StdDev[der$Label==SPB_final_Label]
     returndat$Pstar_sigma <- sqrt(log((SPB_final_SD/SPB_final_EST)^2+1))
   }else{
     returndat$Pstar_sigma <- NULL
