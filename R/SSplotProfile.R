@@ -142,7 +142,16 @@ SSplotProfile <-
         units=punits,res=res,pointsize=ptsize)
   }
   
-  if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
+  if(print){
+    if(is.null(plotdir)){
+      stop("to print PNG files, you must supply a directory as 'plotdir'")
+    }
+    # create directory if it's missing
+    if(file.exists(plotdir)){
+      cat("creating directory:", plotdir, "\n")
+      dir.create(plotdir, recursive=TRUE)
+    }
+  }
 
   if(length(components) != length(component.labels))
     stop("Inputs 'components' and 'component.labels' should have equal length")
