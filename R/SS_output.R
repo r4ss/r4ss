@@ -870,7 +870,13 @@ SS_output <-
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
-  rownames(parameters) <- parameters$Label
+
+  # fix for duplicate parameter labels in 3.30.03.03,
+  # not robust to more than 2 growth patterns but probably will be fixed soon
+  ParmLabels <- parameters$Label
+  ParmLabels[duplicated(ParmLabels)] <- paste0(ParmLabels[duplicated(ParmLabels)], "_2")
+  # end fix
+  rownames(parameters) <- ParmLabels
 
   # names of active parameters
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
@@ -1058,6 +1064,9 @@ SS_output <-
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
                    header=TRUE)
+  # make older SS output names match current SS output conventions
+  der <- df.rename(der, oldnames="LABEL", newnames="Label")
+
   der <- der[der$LABEL!="Bzero_again",]
   der[der=="_"] <- NA
   der[der==""] <- NA

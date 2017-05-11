@@ -49,7 +49,7 @@ SSsummarize <- function(biglist,
   for(imodel in 1:n){
     stats <- biglist[[imodel]]
     parnames <- union(parnames,stats$parameters$Label)
-    dernames <- union(dernames,stats$derived_quants$LABEL)
+    dernames <- union(dernames,stats$derived_quants$Label)
     allyears <- union(allyears,stats$timeseries$Yr)
     likenames <- union(likenames,rownames(stats$likelihoods_used))
   }
@@ -187,8 +187,8 @@ SSsummarize <- function(biglist,
     ## compile derived quantities
     quantstemp <- stats$derived_quants
     for(iquant in 1:nrow(quantstemp)){
-      quants[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$Value[iquant]
-      quantsSD[dernames==quantstemp$LABEL[iquant], imodel] <- quantstemp$StdDev[iquant]
+      quants[dernames==quantstemp$Label[iquant], imodel] <- quantstemp$Value[iquant]
+      quantsSD[dernames==quantstemp$Label[iquant], imodel] <- quantstemp$StdDev[iquant]
     }
     SPRratioLabels <- c(SPRratioLabels, stats$SPRratioLabel)
     FvalueLabels   <- c(FvalueLabels,   stats$F_report_basis)

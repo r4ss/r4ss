@@ -46,16 +46,18 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 
 	# Funtion to calculate confidence intervals
 	getDerivedQuant.fn <- function(dat, label, yrs, quant, divisor=1) {
-    	allYrs <- suppressWarnings(as.numeric(substring(dat$LABEL[substring(dat$LABEL,1,3)=="SPB"],5,8)))
+          # modify old header to new value
+        names(dat)[names(dat)=="LABEL"] <- "Label"
+    	allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label,1,3)=="SPB"],5,8)))
     	allYrs <- allYrs[!is.na(allYrs)]
-    	finalYr <- as.numeric(substring(dat$LABEL[substring(dat$LABEL,1,8)=="OFLCatch"],10,13))[1]
+    	finalYr <- as.numeric(substring(dat$Label[substring(dat$Label,1,8)=="OFLCatch"],10,13))[1]
     	if(is.null(yrs)) {
     	    yrs <- allYrs
     	}
     	if(yrs[1]<0) {
     	    yrs <- (finalYr+yrs):finalYr
     	}
-    	out <- dat[dat$LABEL%in%paste(label,yrs,sep="_"),]
+    	out <- dat[dat$Label%in%paste(label,yrs,sep="_"),]
     	out.value <- out$Value <- out$Value/divisor
     	out$StdDev <- out$StdDev/divisor
     	if(label=="Recr") {   #use lognormal

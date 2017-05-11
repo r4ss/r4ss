@@ -41,7 +41,7 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
   }
 
   if(yrs[1]=="all") {yrs <- replist$startyr:replist$endyr}
-  Ftot <- replist$derived_quants[match(paste("F_",yrs,sep=""),replist$derived_quants$LABEL),]
+  Ftot <- replist$derived_quants[match(paste("F_",yrs,sep=""),replist$derived_quants$Label),]
   if(all(is.na(Ftot$Value))){
     warning("Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES\n",
             "    Values with labels like F_2012 may not be real.\n")
@@ -57,8 +57,8 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
     plot(0,type="n",,xlab="Year",ylab=ylab,xlim=range(yrs),ylim=c(0,Fmax),
          cex.lab=1.0,cex.axis=1.0,cex=0.7)
     abline(h=0,col='grey')
-    if(uncertainty) segments(as.numeric(substring(Ftot$LABEL,3,6)),uppFtot,as.numeric(substring(Ftot$LABEL,3,6)),lowFtot,col=gray(0.5))
-    points(as.numeric(substring(Ftot$LABEL,3,6)),Ftot$Value,pch=16,type="p")
+    if(uncertainty) segments(as.numeric(substring(Ftot$Label,3,6)),uppFtot,as.numeric(substring(Ftot$Label,3,6)),lowFtot,col=gray(0.5))
+    points(as.numeric(substring(Ftot$Label,3,6)),Ftot$Value,pch=16,type="p")
     abline(h=Ftgt,col="red")
   }
   if(plot) plotfun()

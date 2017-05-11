@@ -807,10 +807,10 @@ SSplotSelex <-
   
   if(22 %in% subplot){
     # get values from Extra SD reporting if created by request at bottom of control file
-    rows <- grep("Selex_std",derived_quants$LABEL)
+    rows <- grep("Selex_std",derived_quants$Label)
     if(length(rows)>0){
       sel <- derived_quants[rows,]
-      names <- sel$LABEL
+      names <- sel$Label
       splitnames <- strsplit(names,"_")
       namesDF <- as.data.frame(matrix(unlist(strsplit(names,"_")),ncol=6,byrow=T))
       sel$Fleet   <- as.numeric(as.character(namesDF$V3))

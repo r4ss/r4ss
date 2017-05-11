@@ -117,8 +117,8 @@ SSplotSPR <-
     if(!uncertainty | sprtarg<=0){
       cat("skipped SPR ratio timeseries: requires both sprtarg>0 and uncertainty=TRUE.\n")
     }else{
-      sprratiostd <- derived_quants[substring(derived_quants$LABEL,1,8)=="SPRratio",]
-      sprratiostd$Yr <- as.numeric(substring(sprratiostd$LABEL,10))
+      sprratiostd <- derived_quants[substring(derived_quants$Label,1,8)=="SPRratio",]
+      sprratiostd$Yr <- as.numeric(substring(sprratiostd$Label,10))
       sprratiostd$period <- "fore"
       sprratiostd$period[sprratiostd$Yr<=(endyr)] <- "time"
       sprratiostd$upper <- sprratiostd$Value + 1.96*sprratiostd$StdDev
