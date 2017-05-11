@@ -93,11 +93,8 @@ SSplotData <- function(replist,
   }
 
   # catch
-  catch <- SSplotCatch(replist,plot=F,print=F,verbose=FALSE)
-  catch <- catch$totobscatchmat
-  ## if(is.null(catch$totcatchmat2)) catch <- catch$totcatchmat else
-  ##                                 catch <- catch$totcatchmat
-
+  catch         <- replist$catch
+  
   # index
   cpue          <- replist$cpue
 
@@ -157,8 +154,12 @@ SSplotData <- function(replist,
               size <- NULL
               # identify years from different data types
               if(typename=="catch" & ifleet<=nfishfleets){
-                  allyrs <- dat$Yr[dat[,ifleet]>0]
-                  size <- dat[dat[,ifleet]>0, fleetnames[ifleet]]
+                  allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs>0]
+                  size <- dat$Obs[dat$Fleet==ifleet & dat$Obs>0]
+                  # use updated table in newer versions of SS (probably 3.30+)
+                  if("kill_bio" %in% names(dat)){
+                    size <- dat$kill_bio[dat$Fleet==ifleet & dat$Obs>0]
+                  }
               }
               if(typename %in% c("cpue")){
                   allyrs <- dat$Yr[dat$Use>0 & dat$FleetNum==ifleet]
