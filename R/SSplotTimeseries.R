@@ -303,22 +303,22 @@ SSplotTimeseries <-
     # area specific confidence intervals?
     if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
-      if(!"SPB_Virgin" %in% derived_quants$LABEL){
+      if(!"SPB_Virgin" %in% derived_quants$Label){
         cat("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.\n",
             "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==7){ # spawning biomass
           stdtable <- derived_quants[grep("SPB_Virgin",derived_quants[,1]):(grep("Recr_Virgin",derived_quants[,1])-1),1:3]
-          # year as part of the LABEL string starting with 5th character
-          stdtable$Yr <- substring(stdtable$LABEL,5)
+          # year as part of the Label string starting with 5th character
+          stdtable$Yr <- substring(stdtable$Label,5)
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
           stdtable$Yr[1:2] <- as.numeric(stdtable$Yr[3])-(2:1)  - yrshift
           stdtable$Yr <- as.numeric(stdtable$Yr)
         }
         if(subplot==9){ # spawning depletion
-          stdtable <- derived_quants[substring(derived_quants$LABEL,1,6)=="Bratio",]
-          stdtable$Yr <- as.numeric(substring(stdtable$LABEL,8))
+          stdtable <- derived_quants[substring(derived_quants$Label,1,6)=="Bratio",]
+          stdtable$Yr <- as.numeric(substring(stdtable$Label,8))
 
           ### these temporary fixes now replaced using "B_ratio_denominator"
           ## if(abs(stdtable$Value[1] - 4)<.1) bioscale <- 1/4 # temporary fix
@@ -326,10 +326,10 @@ SSplotTimeseries <-
           bioscale <- B_ratio_denominator
         }
         if(subplot==11){ # recruitment
-          stdtable <- derived_quants[substring(derived_quants$LABEL,1,5)=="Recr_",]
-          stdtable <- stdtable[stdtable$LABEL!="Recr_Unfished",]
-          # year as the part of the LABEL string starting with 6th character
-          stdtable$Yr <- substring(stdtable$LABEL,6)
+          stdtable <- derived_quants[substring(derived_quants$Label,1,5)=="Recr_",]
+          stdtable <- stdtable[stdtable$Label!="Recr_Unfished",]
+          # year as the part of the Label string starting with 6th character
+          stdtable$Yr <- substring(stdtable$Label,6)
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
           stdtable$Yr[1:2] <- as.numeric(stdtable$Yr[3])-(2:1)
           stdtable$Yr <- as.numeric(stdtable$Yr) + yrshift
@@ -490,14 +490,14 @@ SSplotTimeseries <-
           if(subplot %in% c(7,9,11)){
             # subset years for confidence intervals
             if(subplot==7){
-              plot1 <- stdtable$LABEL=="SPB_Virgin"
+              plot1 <- stdtable$Label=="SPB_Virgin"
               stdtable$Yr[plot1] <- stdtable$Yr[plot1]+yrshift
             }
             if(subplot==9){
-              plot1 <- stdtable$LABEL=="Bratio_Virgin" # note: this doesn't exist
+              plot1 <- stdtable$Label=="Bratio_Virgin" # note: this doesn't exist
             }
             if(subplot==11){
-              plot1 <- stdtable$LABEL=="Recr_Virgin"
+              plot1 <- stdtable$Label=="Recr_Virgin"
               stdtable$Yr[plot1] <- stdtable$Yr[plot1]+1 # shifting as in other cases to make Virgin year adjacent to first year of timeseries
             }
             plot2 <- stdtable$Yr %in% ts$Yr[plot2]

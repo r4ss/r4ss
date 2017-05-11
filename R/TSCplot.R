@@ -109,10 +109,10 @@ TSCplot <- function(SSout,
 
     if(!MCMC) {
         SBzero <- SSout$SBzero
-        SB <- SSout$derived_quants[substring(SSout$derived_quants$LABEL,1,4)=="SPB_",]
-        SB <- SB[match(as.character(yrs),substring(SB$LABEL,5)),]
-        depl <- SSout$derived_quants[substring(SSout$derived_quants$LABEL,1,7)=="Bratio_",]
-        depl <- depl[match(as.character(yrs),substring(depl$LABEL,8)),]
+        SB <- SSout$derived_quants[substring(SSout$derived_quants$Label,1,4)=="SPB_",]
+        SB <- SB[match(as.character(yrs),substring(SB$Label,5)),]
+        depl <- SSout$derived_quants[substring(SSout$derived_quants$Label,1,7)=="Bratio_",]
+        depl <- depl[match(as.character(yrs),substring(depl$Label,8)),]
         SP <- data.frame(Yr=yrs, SpawnBio=SB[,"Value"], Depl=depl[,"Value"],Dead_Catch=deadCatch[,1])
     }
     if(MCMC) {
