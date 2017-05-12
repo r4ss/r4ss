@@ -1232,8 +1232,8 @@ SS_output <-
   for(i in 1:(ncol(recruit)-1)) recruit[,i] <- as.numeric(recruit[,i])
   # make older SS output names match current SS output conventions
   recruit <- df.rename(recruit,
-                       oldnames=c("year", "spawn_bio"),
-                       newnames=c("Yr",   "SpawnBio"))
+                       oldnames=c("year", "spawn_bio", "adjusted"),
+                       newnames=c("Yr", "SpawnBio", "bias_adjusted"))
 
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
