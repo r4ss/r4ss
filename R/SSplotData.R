@@ -139,56 +139,56 @@ SSplotData <- function(replist,
 
   # loop over types to make a database of years with comp data
   ntypes <- 0
- # replace typetable object with empty table
+  # replace typetable object with empty table
   typetable <- NULL
   ## now loop over typenames looking for presence of this data type
   ### --- 11/2015 Cole added a "size" column to this data so that relative
   ### uncertainties can be used for cex values in a new plot below.
   for(itype in 1:length(typenames)){
-      dat <- get(typenames[itype])
-      typename <- typenames[itype]
-      if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
-          ntypes <- ntypes+1
-          for(ifleet in 1:nfleets){
-              allyrs <- NULL
-              size <- NULL
-              # identify years from different data types
-              if(typename=="catch" & ifleet<=nfishfleets){
-                  allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs>0]
-                  size <- dat$Obs[dat$Fleet==ifleet & dat$Obs>0]
-                  # use updated table in newer versions of SS (probably 3.30+)
-                  if("kill_bio" %in% names(dat)){
-                    size <- dat$kill_bio[dat$Fleet==ifleet & dat$Obs>0]
-                  }
-              }
-              if(typename %in% c("cpue")){
-                  allyrs <- dat$Yr[dat$Use>0 & dat$FleetNum==ifleet]
-                  size <- 1/dat$SE[dat$Use>0 & dat$FleetNum==ifleet]
-              }
-              if(typename %in% c("mnwgt","discard")){
-                  allyrs <- dat$Yr[dat$FleetNum==ifleet]
-                  size <- rep(1, len=length(allyrs))
-              }
-              if(length(grep("dbase",typename))>0){
-                  allyrs <- dat$Yr[dat$Fleet==ifleet]
-                  size <- dat$N[dat$Fleet==ifleet]
-              }
-              # expand table of years with data
-              if(!is.null(allyrs) & length(allyrs)>0){
-                  ## subset to unique values and be careful about keeping the
-                  ## order of size
-                  unique.index <- which(!duplicated(allyrs))
-                  yrs <- floor(allyrs[unique.index])
-                  size.sorted <- size[unique.index][order(yrs)]
-                  yrs.sorted <- yrs[order(yrs)]
-                  typetable <- rbind(typetable,
-                                     data.frame(yr=yrs.sorted,fleet=ifleet,
-                                                itype=ntypes,typename=typename,
-                                                size=size.sorted,
-                                                stringsAsFactors=FALSE))
-              }
+    dat <- get(typenames[itype])
+    typename <- typenames[itype]
+    if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
+      ntypes <- ntypes+1
+      for(ifleet in 1:nfleets){
+        allyrs <- NULL
+        size <- NULL
+        # identify years from different data types
+        if(typename=="catch" & ifleet<=nfishfleets){
+          allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs>0]
+          size <- dat$Obs[dat$Fleet==ifleet & dat$Obs>0]
+          # use updated table in newer versions of SS (probably 3.30+)
+          if("kill_bio" %in% names(dat)){
+            size <- dat$kill_bio[dat$Fleet==ifleet & dat$Obs>0]
           }
+        }
+        if(typename %in% c("cpue")){
+          allyrs <- dat$Yr[dat$Use>0 & dat$Fleet==ifleet]
+          size <- 1/dat$SE[dat$Use>0 & dat$Fleet==ifleet]
+        }
+        if(typename %in% c("mnwgt","discard")){
+          allyrs <- dat$Yr[dat$Fleet==ifleet]
+          size <- rep(1, len=length(allyrs))
+        }
+        if(length(grep("dbase",typename))>0){
+          allyrs <- dat$Yr[dat$Fleet==ifleet]
+          size <- dat$N[dat$Fleet==ifleet]
+        }
+        # expand table of years with data
+        if(!is.null(allyrs) & length(allyrs)>0){
+          ## subset to unique values and be careful about keeping the
+          ## order of size
+          unique.index <- which(!duplicated(allyrs))
+          yrs <- floor(allyrs[unique.index])
+          size.sorted <- size[unique.index][order(yrs)]
+          yrs.sorted <- yrs[order(yrs)]
+          typetable <- rbind(typetable,
+                             data.frame(yr=yrs.sorted,fleet=ifleet,
+                                        itype=ntypes,typename=typename,
+                                        size=size.sorted,
+                                        stringsAsFactors=FALSE))
+        }
       }
+    }
   }
   # typetable is full data frame of all fleets and data types
   # typetable2 has been subset according to requested choices
@@ -197,7 +197,7 @@ SSplotData <- function(replist,
   if(fleets[1]=="all") fleets <- 1:nfleets
   if(datatypes[1]=="all") datatypes <- typenames
   typetable2 <- typetable[typetable$fleet %in% fleets &
-                              typetable$typename %in% datatypes,]
+                            typetable$typename %in% datatypes,]
 
   # define dimensions of plot
   ntypes <- max(typetable2$itype)
@@ -222,9 +222,9 @@ SSplotData <- function(replist,
     # count number of unique combinations of fleet and data type
     ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
     main.temp <- if(datasize) {
-        "Data by type and year, circle area is relative to precision within data type"
+      "Data by type and year, circle area is relative to precision within data type"
     } else {
-        "Data by type and year"
+      "Data by type and year"
     }
     plot(0,xlim=xlim,ylim=c(0,ymax+2*ntypes+.5),axes=FALSE,xaxs='i',yaxs='i',
          type="n",xlab="Year",ylab="",main=main.temp, cex.main=cex.main)
@@ -233,9 +233,9 @@ SSplotData <- function(replist,
     axistable <- data.frame(fleet=rep(NA,ymax),yval=NA)
     itick <- 1
     for(itype in rev(unique(typetable2$itype))){
-        ## Calculate relative size for each data type separately
-        typetable2$size[typetable2$itype==itype] <-
-            typetable2$size[typetable2$itype==itype]/max(typetable2$size[typetable2$itype==itype])
+      ## Calculate relative size for each data type separately
+      typetable2$size[typetable2$itype==itype] <-
+        typetable2$size[typetable2$itype==itype]/max(typetable2$size[typetable2$itype==itype])
       typename <- unique(typetable2$typename[typetable2$itype==itype])
       #fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
       for(ifleet in rev(fleets)){
@@ -252,22 +252,22 @@ SSplotData <- function(replist,
           if(n==1) solo <- 1
           if(n==2 & yrs[2]!=yrs[1]+1) solo <- rep(TRUE,2)
           if(n>=3){
-              for(i in 2:(n-1)) if(is.na(y[i-1]) & is.na(y[i+1])) solo[i] <- TRUE
-              if(is.na(y[2])) solo[1] <- TRUE
-              if(is.na(y[n-1])) solo[n] <- TRUE
+            for(i in 2:(n-1)) if(is.na(y[i-1]) & is.na(y[i+1])) solo[i] <- TRUE
+            if(is.na(y[2])) solo[1] <- TRUE
+            if(is.na(y[n-1])) solo[n] <- TRUE
           }
           if(!datasize){
-              ## The original plot is to add points and lines
-              points(x[solo], y[solo], pch=16, cex=1, col=fleetcol[fleets==ifleet])
-              lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
+            ## The original plot is to add points and lines
+            points(x[solo], y[solo], pch=16, cex=1, col=fleetcol[fleets==ifleet])
+            lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
           } else {
-              ## make circle sizes propotional to the uncertainty,
-              ## contained in size, NA's don't work for symbols so remove them
-              x <- x[!is.na(y)]
-              y <- y[!is.na(y)]
-              symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
-                      bg=adjustcolor(fleetcol[fleets==ifleet], alpha.f=alphasize),
-                      add=TRUE, inches=FALSE)
+            ## make circle sizes propotional to the uncertainty,
+            ## contained in size, NA's don't work for symbols so remove them
+            x <- x[!is.na(y)]
+            y <- y[!is.na(y)]
+            symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
+                    bg=adjustcolor(fleetcol[fleets==ifleet], alpha.f=alphasize),
+                    add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
           itick <- itick+1
@@ -292,18 +292,18 @@ SSplotData <- function(replist,
   }
   ## Make second data plot if desired
   if(datasize){
-      if(plot) plotdata(datasize=TRUE)
-      if(print) {
-          caption <- paste(
-              "Data presence by year for each fleet, where circle area is relative <br> ",
-              "within a data type, and proportional to precision for indices and compositions, <br> ",
-              "and absolute catch for catches.<br> ",
-              "Note that since the circles are are scaled relative to maximum,<br> ",
-              "scaling within separate plots should not be compared.")
-          plotinfo <- pngfun(file="data_plot2.png", caption=caption)
-          plotdata(datasize)
-          dev.off()
-      }
+    if(plot) plotdata(datasize=TRUE)
+    if(print) {
+      caption <- paste(
+          "Data presence by year for each fleet, where circle area is relative <br> ",
+          "within a data type, and proportional to precision for indices and compositions, <br> ",
+          "and absolute catch for catches.<br> ",
+          "Note that since the circles are are scaled relative to maximum,<br> ",
+          "scaling within separate plots should not be compared.")
+      plotinfo <- pngfun(file="data_plot2.png", caption=caption)
+      plotdata(datasize)
+      dev.off()
+    }
   }
 
   returnlist <- list(typetable2=typetable2)
