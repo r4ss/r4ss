@@ -61,14 +61,17 @@ SSplotMnwt <-
   mnwgt         <- replist$mnwgt
   FleetNames    <- replist$FleetNames
   DF_mnwgt      <- replist$DF_mnwgt
+  nfleets       <- replist$nfleets
 
+
+  if(fleets[1]=="all") fleets <- 1:nfleets
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
 
   # mean body weight observations ###
   if(!is.na(mnwgt)[1]){
-    for(ifleet in intersect(fleets,unique(mnwgt$FleetNum))){
-      usemnwgt <- mnwgt[mnwgt$FleetNum==ifleet & mnwgt$Obs>0,]
+    for(ifleet in intersect(fleets,unique(mnwgt$Fleet))){
+      usemnwgt <- mnwgt[mnwgt$Fleet==ifleet & mnwgt$Obs>0,]
       usemnwgt$Mkt <- usemnwgt$Mkt
       for(j in unique(mnwgt$Mkt)){
         yr <- usemnwgt$Yr[usemnwgt$Mkt==j]

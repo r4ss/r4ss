@@ -1771,18 +1771,15 @@ SS_output <-
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))])
         discard[,icol] <- as.numeric(discard[,icol])
-      discard$FleetNum <- NA
+      discard$Fleet <- NA
       if(!"Name"%in%names(discard)) discard$Name <- discard$Fleet
       for(i in 1:nrow(discard)){
-        discard$FleetNum[i] <- strsplit(discard$Name[i],"_")[[1]][1]
-        discard$FleetName[i] <- substring(discard$Name[i],nchar(discard$FleetNum[i])+2)
+        discard$Fleet[i] <- strsplit(discard$Name[i],"_")[[1]][1]
+        discard$Name[i] <- substring(discard$Name[i],nchar(discard$Fleet[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Name","SuprPer"))])
         discard[,icol] <- as.numeric(discard[,icol])
-      # redundant columns are holdovers from earlier SS versions
-      discard$FleetNum <- discard$Fleet
-      discard$FleetName <- discard$Name
     }
   }else{
     discard <- NA
@@ -1804,17 +1801,14 @@ SS_output <-
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet"))])
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
-      mnwgt$FleetNum <- NA
+      mnwgt$Fleet <- NA
       for(i in 1:nrow(mnwgt)){
-        mnwgt$FleetNum[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
-        mnwgt$FleetName[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$FleetNum[i])+2)
+        mnwgt$Fleet[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
+        mnwgt$Name[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$Fleet[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Name"))])
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
-      # redundant columns are holdovers from earlier SS versions
-      mnwgt$FleetNum <- mnwgt$Fleet
-      mnwgt$FleetName <- mnwgt$Name
     }
   }else{
     DF_mnwgt <- NA

@@ -116,15 +116,15 @@ SStableComparisons <-  function(summaryoutput,
         }
 
         if(name %in% c("Q","Q_calc")){
-          Calc_Q <- aggregate(Calc_Q ~ name+FleetNum,data=indices,FUN=mean)
+          Calc_Q <- aggregate(Calc_Q ~ name+Fleet,data=indices,FUN=mean)
           cat("\n")
-          fleetvec <- sort(as.numeric(unique(Calc_Q$FleetNum)))
+          fleetvec <- sort(as.numeric(unique(Calc_Q$Fleet)))
           vals <- data.frame(matrix(NA,nrow=length(fleetvec),ncol=ncol(bigtable)))
           names(vals) <- names(bigtable)
           for(ifleet in 1:length(fleetvec)){
             f <- fleetvec[ifleet]
             vals[ifleet,1] <- paste("Q_calc_mean_fleet_",f,sep="")
-            vals[ifleet,-1] <- Calc_Q$Calc_Q[Calc_Q$FleetNum==f]
+            vals[ifleet,-1] <- Calc_Q$Calc_Q[Calc_Q$Fleet==f]
           }
         }
         if(verbose) cat("added ",nrow(vals)," row",ifelse(nrow(vals)!=1,"s",""),"\n",sep="")
