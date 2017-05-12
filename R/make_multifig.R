@@ -441,10 +441,10 @@ make_multifig <-
           if(legtext_i=="sampsize" & showsampsize){	      # sample sizes
             vals <- unique(sampsize[sexvec==sex & yr==yr_i])
             if(length(vals)>1){
-              cat("Warning: sampsize values are not all equal",
-                  "--choosing the first value: ",vals[1], "\n",
-                  "  yr=",yr_i,", and all sampsize values:",
-                  paste(vals,collapse=","),sep="")
+              warning("sampsize values are not all equal",
+                      "--choosing the first value: ",vals[1], "\n",
+                      "  yr=",yr_i,", and all sampsize values: ",
+                      paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
             text_i <- paste("N=",round(vals,sampsizeround),sep="")
@@ -455,10 +455,10 @@ make_multifig <-
           if(legtext_i=="effN" & showeffN){          # effective sample sizes
             vals <- unique(effN[sexvec==sex & yr==yr_i])
             if(length(vals)>1){
-              cat("Warning: effN values are not all equal",
-                  "--choosing the first value: ",vals[1], "\n",
-                  "  yr=",yr_i,", and all effN values:",
-                  paste(vals,collapse=","),sep="")
+              warning("effN values are not all equal",
+                      "--choosing the first value: ",vals[1], "\n",
+                      "  yr=",yr_i,", and all effN values: ",
+                      paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
             text_i <- paste("effN=",round(vals,sampsizeround),sep="")
