@@ -1456,6 +1456,15 @@ SS_output <-
   returndat$FecPar1 <- parameters$Value[parameters$Label==FecPar1name]
   returndat$FecPar2 <- parameters$Value[parameters$Label==FecPar2name]
 
+  # warning for 3.30 models with multiple growth patterns that have
+  # repeat fecundity values, likely to be sorted out in new SS version
+  if (length(returndat$FecPar1) > 1){
+    warning("Plots will only show fecundity and related quantities for Growth Pattern 1")
+    returndat$FecPar1 <- returndat$FecPar1[1]
+    returndat$FecPar2 <- returndat$FecPar2[2]
+  }
+
+      
   # simple test to figure out if fecundity is proportional to spawning biomass:
   returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
                                        all(biology$Wt_len_F==biology$Fecundity),
@@ -1620,9 +1629,7 @@ SS_output <-
     spawnseas <- NA
   }
   returndat$spawnseas <- spawnseas
-  # get birth seasons as vector of seasons with non-zero recruitment
-  returndat$birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
-
+  
   # distribution of recruitment
   if("recruit_dist_endyr" %in% names(recruitment_dist)){
     # from SSv3.24Q onward, recruitment_dist is a list of tables, not a single table
@@ -1656,6 +1663,15 @@ SS_output <-
   }
   returndat$mainmorphs  <- mainmorphs
 
+  # get birth seasons as vector of seasons with non-zero recruitment
+  birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
+  # temporary fix for model with missing Recruit_0 values
+  # (so far this has only been seen in one 3.30 model with 2 GPs)
+  if(length(birthseas)==0){
+    birthseas <- sort(unique(morph_indexing$BirthSeason))
+  }
+  returndat$birthseas <- birthseas
+  
   # stats and dimensions
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
