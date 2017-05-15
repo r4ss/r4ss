@@ -8,9 +8,10 @@ SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
   linenum = NULL, string = NULL, profilevec = NULL, usepar = FALSE,
   globalpar = FALSE, parfile = NULL, parlinenum = NULL,
-  parstring = NULL, dircopy = TRUE, exe.delete = FALSE, model = "ss3",
+  parstring = NULL, dircopy = TRUE, exe.delete = FALSE, model = "ss",
   extras = "-nox", systemcmd = FALSE, saveoutput = TRUE,
-  overwrite = TRUE, whichruns = NULL, verbose = TRUE)
+  overwrite = TRUE, whichruns = NULL, SSversion = "3.30",
+  verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory where input files and executable are located.}
@@ -106,7 +107,7 @@ Nprofile <- length(h.vec)
 profile <- SS_profile(dir=mydir, # directory
                       # "NatM" is a subset of one of the
                       # parameter labels in control.ss_new
-                      model="ss3_safe",
+                      model="ss",
                       masterctlfile="control.ss_new",
                       newctlfile="control_modified.ss",
                       string="steep",
