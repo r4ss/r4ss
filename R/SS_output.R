@@ -1597,6 +1597,9 @@ SS_output <-
 
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
+  # temporary fix for 3.30.03.06
+  timeseries <- timeseries[timeseries$Seas != "recruits",]
+  
   timeseries[timeseries=="_"] <- NA
   for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]) timeseries[,i] = as.numeric(timeseries[,i])
 
