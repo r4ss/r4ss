@@ -953,7 +953,8 @@ SSplotComps <-
           # convert "AGE" to "age" so that SSMethod.TA1.8 can find "agedbase", etc.
           kind2 <- tolower(kind)
           if(plot){
-            SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+            SSMethod.TA1.8(fit=replist, type=kind2,
+                           fleet=f, fleetnames=fleetnames)
           }
           if(print){ # set up plotting to png file if required
             file <- paste0(filenamestart,
@@ -964,7 +965,8 @@ SSplotComps <-
             png(filename=file.path(plotdir, file),width=pwidth,height=pheight,
                 units=punits,res=res,pointsize=ptsize)
             # run function
-            tmp <- SSMethod.TA1.8(fit=replist, type=kind2, fleet=f)
+            tmp <- SSMethod.TA1.8(fit=replist, type=kind2,
+                                  fleet=f, fleetnames=fleetnames)
             # put additional info into caption for figure
             if(!is.null(tmp[1])){
               vals <- paste0("Suggested sample size adjustment ",
@@ -993,7 +995,8 @@ SSplotComps <-
           caption <- paste("Francis data weighting method TA1.8 for conditional age data:",
                           fleetnames[f],sep="")
           if(plot){
-            SSMethod.Cond.TA1.8(fit=replist, fleet=f)
+            SSMethod.Cond.TA1.8(fit=replist,
+                                fleet=f, fleetnames=fleetnames)
           }
           if(print){ # set up plotting to png file if required
             file <- paste(filenamestart,
@@ -1004,7 +1007,8 @@ SSplotComps <-
             png(filename=file.path(plotdir, file), width=pwidth, height=pheight,
                 units=punits, res=res, pointsize=ptsize)
             # run function
-            tmp <- SSMethod.Cond.TA1.8(fit=replist, fleet=f)
+            tmp <- SSMethod.Cond.TA1.8(fit=replist,
+                                       fleet=f, fleetnames=fleetnames)
             # put additional info into caption for figure
             if(!is.null(tmp[1])){
               vals <- paste("Suggested sample size adjustment",

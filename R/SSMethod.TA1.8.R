@@ -35,6 +35,9 @@
 #' @param fleet vector of one or more fleet numbers whose data are to
 #' be analysed simultaneously (the output N multiplier applies
 #' to all fleets combined)
+#' @param fleetnames Vector of alternative fleet names to draw from for
+#' plot titles and captions. It should have length equal to the number
+#' of fleets in the model, not the number of fleets considered in this function.
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
@@ -78,7 +81,8 @@
 #' 
 SSMethod.TA1.8 <-
   function(fit, type, fleet, part=0:2, pick.sex=0:3, seas=NULL,
-           method=NULL, plotit=TRUE, printit=TRUE, maxpanel=1000)
+           method=NULL, plotit=TRUE, printit=TRUE, maxpanel=1000,
+           fleetnames=NULL)
 {
   # Check the type is correct and the pick.sex is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -90,6 +94,17 @@ SSMethod.TA1.8 <-
     }
   }
 
+  # replace default fleetnames with user input if requested
+  if(is.null(fleetnames)){
+    # use fleetnames in the model
+    fleetnames <- fit$FleetNames
+  }else{
+    # if custom names input, check length
+    if(length(fleetnames) != fit$nfleets){
+      stop('fleetnames needs to be NULL or have length = nfleets = ', fit$nfleets)
+    }
+  }
+  
   # Select the type of datbase
   dbase <- fit[[paste(type,'dbase',sep='')]]
   # sel is vector of row indices selected for the plot/calculations
@@ -233,7 +248,7 @@ SSMethod.TA1.8 <-
         lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2),col=4)
       }
       # Lines
-      fl <- fit$FleetNames[subpldat[1,'Fleet']]
+      fl <- fleetnames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
       lab <- if(type=='con')ifelse(Nfleet>1,paste(yr,fl),yr) else fl
       if(sex.flag)lab <-
@@ -273,7 +288,7 @@ SSMethod.TA1.8 <-
   confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
                                 c(0.025,0.975),na.rm=TRUE))
   Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
-  Outs <- paste("Francis Weights - ", type, ": ", fit$FleetNames[fleet],": ",
+  Outs <- paste("Francis Weights - ", type, ": ", fleetnames[fleet],": ",
                 round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
                 sep="")
   if(printit){
@@ -281,4 +296,5 @@ SSMethod.TA1.8 <-
   }
   return(Output)
 }
+
 
