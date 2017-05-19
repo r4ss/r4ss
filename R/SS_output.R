@@ -1563,12 +1563,12 @@ SS_output <-
     # if all that doesn't get satisfied, biology comes next
     ageselex <- matchfun2("AGE_SELEX",4,"BIOLOGY",-1,header=TRUE)
   }
-  # filter forecast years from selectivity if no forecast
-  # NOTE: maybe refine this in 3.30
-  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
   ageselex <- df.rename(ageselex,
                         oldnames=c("fleet", "year", "seas", "gender", "morph", "label", "factor"),
                         newnames=c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label", "Factor"))
+  # filter forecast years from selectivity if no forecast
+  # NOTE: maybe refine this in 3.30
+  if(!forecast) ageselex <- ageselex[ageselex$Yr <= endyr,]
   
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
