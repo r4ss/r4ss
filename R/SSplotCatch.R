@@ -16,7 +16,7 @@
 #' @param fleetpch Vector of plot character by fleet
 #' @param fleetcols Vector of colors by fleet
 #' @param fleetnames Optional replacement for fleenames used in data file,
-#' should only include fleets with catch that appear in catch plots.
+#' should include all fleets (not just those with catch)
 #' @param lwd Line width
 #' @param areacols Vector of colors by area. Default uses rich.colors by Arni
 #' Magnusson
@@ -121,47 +121,31 @@ SSplotCatch <-
   nfleets          <- replist$nfleets
   nfishfleets      <- replist$nfishfleets
   catch_units      <- replist$catch_units
+  fleet_types      <- replist$definitions$fleet_type
   endyr            <- replist$endyr
   FleetNames       <- replist$FleetNames
   IsFishFleet      <- replist$IsFishFleet
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
 
-  if(order[1]=="default") order <- replist$nfishfleets:1
+
   if(is.null(catchasnumbers)){
     if(min(catch_units,na.rm=TRUE)==2){
       catchasnumbers <- TRUE
       cat("  Note: catch_units ")
     }else{
       catchasnumbers <- FALSE
-      if(2 %in% catch_units){
+      if(2 %in% catch_units[fleet_types!=3]){
         cat("  Note: catch is in numbers for some, but not all fleets,\n",
             "       so be careful interpreting catch plots.\n")
       }
     }
   }
 
-  if(nfishfleets==1 & verbose){
-    cat("  Note: skipping stacked plots of catch for single-fleet model\n")
-  }
-
   if(fleetnames[1]=="default"){
-    fleetnames <- FleetNames[IsFishFleet]
+    fleetnames <- FleetNames
   }
   if(plotdir=="default"){
     plotdir <- replist$inputs$dir
-  }
-
-  if(length(fleetlty)<nfishfleets) fleetlty <- rep(fleetlty,nfishfleets)
-  if(length(fleetpch)<nfishfleets) fleetpch <- rep(fleetpch,nfishfleets)
-
-  if(fleetcols[1]=="default"){
-    fleetcols <- rich.colors.short(nfishfleets)
-    if(nfishfleets > 2) fleetcols <- rich.colors.short(nfishfleets+1)[-1]
-  }
-
-  if(areacols[1]=="default"){
-    areacols  <- rich.colors.short(nareas)
-    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
   }
 
   if(catchasnumbers){
@@ -207,13 +191,20 @@ SSplotCatch <-
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringN))==stringN])
+    if(ncol(totcatchmat)==1){
+      colnames(totcatchmat) <- grep(stringN, names(ts), fixed=TRUE, value=TRUE)
+    }
   }else{
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringB))==stringB])
+    if(ncol(totcatchmat)==1){
+      colnames(totcatchmat) <- grep(stringB, names(ts), fixed=TRUE, value=TRUE)
+    }
   }
   totobscatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("obs_cat"))=="obs_cat"])
   Hratemat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringF))==stringF])
 
+  
   # add total across areas
   if(nareas > 1){
     for(iarea in 2:nareas){
@@ -230,15 +221,50 @@ SSplotCatch <-
     }
   }
 
-  # ghost is a fleet with no catch (or a survey for these purposes)
-  ghost <- rep(TRUE,nfleets)
-  ghost[(1:nfishfleets)[colSums(totcatchmat)>0]] <- FALSE
-  if(all(ghost)) showlegend <- FALSE
+  # how many fleets have catch
+  nfleets_with_catch <- ncol(totcatchmat)
+
+  # ghost is a fleet with no catch yet still represented in timeseries
+  ghost <- rep(TRUE,nfleets_with_catch)
+  ghost[(1:nfleets_with_catch)[colSums(totcatchmat)>0]] <- FALSE
+
+  if(nfleets_with_catch==1) showlegend <- FALSE
+  # get fleet numbers from names used in timeseries
+  fleetnums <- unlist(strsplit(dimnames(totcatchmat)[[2]],
+                               split=":_", fixed=TRUE))
+  fleetnums <- as.numeric(fleetnums[seq(2, length(fleetnums), 2)])
+  fleetnames <- fleetnames[fleetnums]
+
+  # sort out order of fleets in plot
+  if(order[1]=="default"){
+    order <- nfleets_with_catch:1
+  }
+
+  # discards are difference between total catch and retained
   discmat <- totcatchmat - retmat
 
   discfracmat <- discmat/totcatchmat
   discfracmat[totcatchmat==0] <- NA
 
+  # sort out line types and colors
+  if(length(fleetlty) < nfleets_with_catch){
+    fleetlty <- rep(fleetlty, nfleets_with_catch)
+  }
+  if(length(fleetpch) < nfleets_with_catch){
+    fleetpch <- rep(fleetpch, nfleets_with_catch)
+  }
+
+  if(fleetcols[1]=="default"){
+    fleetcols <- rich.colors.short(nfleets_with_catch)
+    if(nfleets_with_catch > 2) fleetcols <- rich.colors.short(nfleets_with_catch+1)[-1]
+  }
+
+  if(areacols[1]=="default"){
+    areacols  <- rich.colors.short(nareas)
+    if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
+  }
+
+  
   # add total across seasons "mat2" indicates aggregation across seasons
   if(nseasons > 1){
     catchyrs2 <- floor(ts$Yr[goodrows & ts$Seas==1]) # T/F indicator of the lines for which we want to plot catch
@@ -259,7 +285,7 @@ SSplotCatch <-
   # generic function to plot catch, landings, discards or harvest rates
   linefunc <- function(ymat,ylab,ymax=NULL,addtotal=TRUE,x=catchyrs){
     ymat <- as.matrix(ymat)
-    if(addtotal & nfishfleets>1){
+    if(addtotal & nfleets_with_catch>1){
       ytotal <- rowSums(ymat)
       if(is.null(ymax)) ymax <- max(ytotal,na.rm=TRUE)
     }else{
@@ -269,13 +295,13 @@ SSplotCatch <-
     plot(x, ytotal, ylim=c(0,ymax), xlab=xlab, ylab=ylab, type=type, lwd=lwd, col="black")
     abline(h=0,col="grey")
     #abline(h=1,col="grey")
-    for(f in 1:nfishfleets){
+    for(f in 1:nfleets_with_catch){
       if(max(ymat[,f],na.rm=TRUE)>0){
         lines(x, ymat[,f], type=type, col=fleetcols[f],
               lty=fleetlty[f], lwd=lwd, pch=fleetpch[f])
       }
     }
-    if(showlegend & nfishfleets!=1){
+    if(showlegend & nfleets_with_catch!=1){
       if(type=="l") pchvec <- NA else pchvec <- c(1,fleetpch[!ghost])
       if(sum(!ghost)>1 & addtotal){
         legend(legendloc, lty=fleetlty[!ghost], lwd=lwd, pch=pchvec,
@@ -318,7 +344,7 @@ SSplotCatch <-
       else if (ntick < 101) mult = c(10, 5) else mult = c(20, 5)
       }
     # vertical axis
-    if(nfishfleets > 1){
+    if(nfleets_with_catch > 1){
       ymax2 <- round(max(apply(ymat,1,sum)))
     }else{
       ymax2 <- round(max(ymat))
@@ -355,7 +381,7 @@ SSplotCatch <-
     if(subplot==3 & diff(range(retmat-totobscatchmat))/max(totobscatchmat) > 0.001){
       a <- linefunc(ymat=retmat, ylab=paste(labels[9],labels[3]), addtotal=FALSE,
                     ymax=max(totobscatchmat,retmat))
-      for(f in 1:nfishfleets){
+      for(f in 1:nfleets_with_catch){
         if(max(totobscatchmat[,f])>0){
           lines(catchyrs, totobscatchmat[,f], type=type, col=fleetcols[f],
                 lty=3, lwd=lwd, pch=4)
@@ -367,20 +393,20 @@ SSplotCatch <-
     }
     if(max(discmat,na.rm=TRUE)>0){
       if(subplot==4) a <- linefunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4], addtotal=TRUE)
-      if(subplot==5 & nfishfleets>1) a <- stackfunc(ymat=totcatchmat, ylab=labels[4])
+      if(subplot==5 & nfleets_with_catch>1) a <- stackfunc(ymat=totcatchmat, ylab=labels[4])
       if(subplot==6) a <- linefunc(ymat=discmat, ymax=ymax, ylab=labels[5], addtotal=TRUE)
-      if(subplot==7 & nfishfleets>1) a <- stackfunc(ymat=discmat,ylab=labels[5])
+      if(subplot==7 & nfleets_with_catch>1) a <- stackfunc(ymat=discmat,ylab=labels[5])
       if(subplot==8) a <- linefunc(ymat=discfracmat, ymax=ymax, ylab=labels[6], addtotal=FALSE)
     }
     if(subplot==9) a <- linefunc(ymat=Hratemat, ymax=ymax, ylab=ylabF, addtotal=FALSE)
     if(nseasons>1){
       if(subplot==10) a <- linefunc(ymat=retmat2, ymax=ymax, ylab=paste(labels[3],labels[10]), addtotal=TRUE, x=catchyrs2)
-      if(subplot==11 & nfishfleets>1) a <- stackfunc(ymat=retmat2, ylab=paste(labels[3],labels[10]), x=catchyrs2)
+      if(subplot==11 & nfleets_with_catch>1) a <- stackfunc(ymat=retmat2, ylab=paste(labels[3],labels[10]), x=catchyrs2)
       if(max(discmat,na.rm=TRUE)>0){
         if(subplot==12) a <- linefunc(ymat=totcatchmat2, ymax=ymax, ylab=paste(labels[4],labels[10]), addtotal=TRUE, x=catchyrs2)
-        if(subplot==13 & nfishfleets>1) a <- stackfunc(ymat=totcatchmat2, ylab=paste(labels[4],labels[10]), x=catchyrs2)
+        if(subplot==13 & nfleets_with_catch>1) a <- stackfunc(ymat=totcatchmat2, ylab=paste(labels[4],labels[10]), x=catchyrs2)
         if(subplot==14) a <- linefunc(ymat=discmat2, ymax=ymax, ylab=paste(labels[5],labels[10]), addtotal=TRUE, x=catchyrs2)
-        if(subplot==15 & nfishfleets>1) a <- stackfunc(ymat=discmat2,ylab=paste(labels[5],labels[10]), x=catchyrs2)
+        if(subplot==15 & nfleets_with_catch>1) a <- stackfunc(ymat=discmat2,ylab=paste(labels[5],labels[10]), x=catchyrs2)
       }
     }
     if(verbose & a) cat("  finished catch subplot",subplot_names[subplot],"\n")
@@ -412,8 +438,8 @@ SSplotCatch <-
 
   totcatchmat <- as.data.frame(totcatchmat)
   totobscatchmat <- as.data.frame(totobscatchmat)
-  names(totcatchmat) <- fleetnames[1:nfishfleets]
-  names(totobscatchmat) <- fleetnames[1:nfishfleets]
+  names(totcatchmat) <- fleetnames[1:nfleets_with_catch]
+  names(totobscatchmat) <- fleetnames[1:nfleets_with_catch]
   totcatchmat$Yr <- catchyrs
   totobscatchmat$Yr <- catchyrs
   returnlist <- list()
@@ -421,7 +447,7 @@ SSplotCatch <-
   returnlist[["totobscatchmat"]] <- totobscatchmat
   if(nseasons > 1){
     totcatchmat2 <- as.data.frame(totcatchmat2)
-    names(totcatchmat2) <- fleetnames[1:nfishfleets]
+    names(totcatchmat2) <- fleetnames[1:nfleets_with_catch]
     #totcatchmat2$Yr <- totcatchmat2Yr
     returnlist[["totcatchmat2"]] <- totcatchmat2
   }

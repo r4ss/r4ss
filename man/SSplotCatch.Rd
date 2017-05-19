@@ -40,7 +40,7 @@ only.  Other options include "o" for overplotting points on lines.}
 \item{fleetcols}{Vector of colors by fleet}
 
 \item{fleetnames}{Optional replacement for fleenames used in data file,
-should only include fleets with catch that appear in catch plots.}
+should include all fleets (not just those with catch)}
 
 \item{lwd}{Line width}
 
