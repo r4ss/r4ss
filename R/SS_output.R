@@ -1315,18 +1315,28 @@ SS_output <-
   }
   if(!is.null(dim(agentune))){
     names(agentune)[10] <- "FleetName"
-    agentune <- agentune[agentune$N>0, c(10,1,4:9)]
+    agentune <- agentune[agentune$N>0, ]
+    
     # avoid NA warnings by removing #IND values
     agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-    for(i in 2:ncol(agentune)){
-      agentune[,i] <- as.numeric(agentune[,i])
+    for(icol in which(!names(agentune) %in% "FleetName")){
+      agentune[,icol] <- as.numeric(agentune[,icol])
     }
     agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+    # calculate recommended value (for length data this is done internally in SS)
+    agentune$Recommend_Var_Adj <- agentune$Var_Adj*agentune$"HarEffN/MeanInputN"
+    # remove distracting columns
+    badnames <- c("mean_effN","Mean(effN/inputN)","MeaneffN/MeaninputN")
+    agentune <- agentune[,!names(agentune) %in% badnames]
+    # put fleetnames column at the end (probably a more efficient way to do this)
+    agentune <- agentune[,c(which(names(agentune)!="FleetName"),
+                            which(names(agentune)=="FleetName"))]
   }else{
     agentune <- NULL
   }
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
+  
   ## FIT_SIZE_COMPS
   fit_size_comps <- NULL
   if(SS_versionNumeric >= 3.3){
@@ -1341,6 +1351,7 @@ SS_output <-
       fit_size_comps[,icol] <- as.numeric(fit_size_comps[,icol])
     }
   }
+  ### note: should add "Recommend_Var_Adj" value to match other tables
 
   # Size comp effective N tuning check (only available in version 3.30.01.12 and above)
   if(SS_versionNumeric >= 3.3){
