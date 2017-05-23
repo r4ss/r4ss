@@ -51,7 +51,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
   simple_table <- SStableComparisons(simple_summary)
   # confirm that output produces a data.frame
   # with 3 variables (label, model1, model2)
-  expect_output(str(SStableComparisons(s.sum)), "3 variables")
+  expect_output(str(SStableComparisons(simple_summary)), "3 variables")
   
 })
 
