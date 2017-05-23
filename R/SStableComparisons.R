@@ -94,12 +94,13 @@ SStableComparisons <-  function(summaryoutput,
         # get values
         vals <- bigtable[grep(name, bigtable$Label, fixed=TRUE),]
         #      cat("labels found:\n",bigtable$Label[grep(name, bigtable$Label)],"\n")
-        # fix scale on a few things
+        # scale recruits into billions, or millions, or thousands
         if(substring(name,1,4)=="Recr" & length(grep("like",name))==0) {
-          if(median(vals[1,-1], na.rm=TRUE) > 1e6){
+          median.value <- median(as.numeric(vals[1,-1]), na.rm=TRUE)
+          if(median.value > 1e6){
             vals[1,-1] <- round(vals[1,-1]/1e6,6)
             vals[1,1] <- paste0(vals[1,1],"_billions")
-          } else if (median(vals[1,-1], na.rm=TRUE) > 1e3){
+          } else if (median.value > 1e3){
             vals[1,-1] <- round(vals[1,-1]/1e3,6)
             vals[1,1] <- paste0(vals[1,1],"_millions")
           } else {
@@ -174,12 +175,13 @@ SStableComparisons <-  function(summaryoutput,
             vals[1,imodel+1] <- median(tmp)  #First element is label
           }
         }
-        # fix scale on a few things
+        # scale recruits into billions, or millions, or thousands
         if(substring(name,1,4)=="Recr") {
-          if(median(vals[1,-1], na.rm=TRUE) > 1e6){
+          median.value <- median(as.numeric(vals[1,-1]), na.rm=TRUE)
+          if(median.value > 1e6){
             vals[1,-1] <- round(vals[1,-1]/1e6,6)
             vals[1,1] <- paste0(vals[1,1],"_billions")
-          } else if (median(vals[1,-1], na.rm=TRUE) > 1e3){
+          } else if (median.value > 1e3){
             vals[1,-1] <- round(vals[1,-1]/1e3,6)
             vals[1,1] <- paste0(vals[1,1],"_millions")
           } else {
