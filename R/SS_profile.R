@@ -33,6 +33,9 @@
 #' re-run a subset of the cases in situations where the function was
 #' interupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
+#' @param SSversion SS version number. Currently only "3.24" or "3.30" are
+#' supported, either as character or numeric values
+#' (noting that numeric 3.30  = 3.3).
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models

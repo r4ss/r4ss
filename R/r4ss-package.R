@@ -33,7 +33,7 @@
 #' @importFrom gtools running
 #' @importFrom pso psoptim
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette
-#'   dev.new dev.off
+#'   dev.new dev.off graphics.off
 #'   gray grey pdf png rainbow rgb topo.colors
 #' @importFrom graphics abline arrows axis barplot box
 #'   contour curve grid hist image layout
