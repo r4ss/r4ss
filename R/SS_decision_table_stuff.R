@@ -1,6 +1,6 @@
 SS_decision_table_stuff <- function(replist, yrs=2017:2026){
   # function for getting values for decision tables
-  # not yet clead up for inclusion in r4ss
+  # not yet cleaned up for inclusion in r4ss
 
   # needs to be able to aggregate across areas for spatial models
   if(replist$nareas > 1){
