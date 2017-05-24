@@ -74,7 +74,7 @@ SS_RunJitter <- function(mydir, model="ss3",
   file.copy(from="ParmTrace.sso", to="ParmTrace0.sso", overwrite=TRUE)
   file.copy(from="warning.sso", to="warning0.sso", overwrite=TRUE)
   file.copy(from=paste0(model,".par"), to=paste0(model,".par_0.sso"), overwrite=TRUE)
-  file.remove( c("CompReport.sso", "covar.sso"," Report.sso",
+  file.remove( c("CompReport.sso", "covar.sso", "Report.sso",
                  "ParmTrace.sso", "warning.sso", paste0(model,".par")) )
 
   if (length(Njitter) == 1) Njitter <- 1:Njitter
