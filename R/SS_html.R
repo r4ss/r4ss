@@ -80,7 +80,7 @@ SS_html <- function(replist=NULL,
       duplicates <- names(filetable[filetable>1])
       # loop over duplicates and remove rows for older instance
       if(length(duplicates)>0){
-        if(verbose) cat("Removing duplicate rows in combined plotInfoTable based on mutliple CSV files\n")
+        if(verbose) cat("Removing duplicate rows in combined plotInfoTable based on multiple CSV files\n")
         for(idup in 1:length(duplicates)){
           duprows <- grep(duplicates[idup], plotInfoTable$file, fixed=TRUE)
           duptimes <- plotInfoTable$png_time[duprows]
