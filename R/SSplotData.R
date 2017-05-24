@@ -258,7 +258,7 @@ SSplotData <- function(replist,
           }
           if(!datasize){
             ## The original plot is to add points and lines
-            points(x[solo], y[solo], pch=16, cex=1, col=fleetcol[fleets==ifleet])
+            points(x[solo], y[solo], pch=16, cex=cex, col=fleetcol[fleets==ifleet])
             lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
           } else {
             ## make circle sizes propotional to the uncertainty,
