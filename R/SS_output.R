@@ -1283,6 +1283,22 @@ SS_output <-
     }
     ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
     #lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+    lenntune$"HarEffN(effN)/mean(inputN*Adj)" <-
+      lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+
+    # change name to make it clear what the harmonic mean is based on
+    lenntune <- df.rename(lenntune,
+                          oldnames=c("HarMean", "mean_inputN*Adj"),
+                          newnames=c("HarMean(effN)", "mean(inputN*Adj)"))
+
+    # drop distracting column
+    lenntune <- lenntune[ , names(lenntune)!="mean_effN"]
+    
+    # put recommendation and fleetnames at the end
+    #(probably a more efficient way to do this)
+    end.names <- c("Recommend_Var_Adj", "FleetName")
+    lenntune <- lenntune[,c(which(!names(lenntune) %in% end.names),
+                            which(names(lenntune) %in% end.names))]
   }
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
@@ -1322,15 +1338,27 @@ SS_output <-
     for(icol in which(!names(agentune) %in% "FleetName")){
       agentune[,icol] <- as.numeric(agentune[,icol])
     }
-    agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+    # calculate ratio to be more transparent
+    agentune$"HarMean(effN)/mean(inputN*Adj)" <-
+      agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+
     # calculate recommended value (for length data this is done internally in SS)
-    agentune$Recommend_Var_Adj <- agentune$Var_Adj*agentune$"HarEffN/MeanInputN"
+    agentune$Recommend_Var_Adj <-
+      agentune$Var_Adj * agentune$"HarMean(effN)/mean(inputN*Adj)"
+
     # remove distracting columns
     badnames <- c("mean_effN","Mean(effN/inputN)","MeaneffN/MeaninputN")
     agentune <- agentune[,!names(agentune) %in% badnames]
+
     # put fleetnames column at the end (probably a more efficient way to do this)
     agentune <- agentune[,c(which(names(agentune)!="FleetName"),
                             which(names(agentune)=="FleetName"))]
+
+    # change name to make it clear what's reported and be constent with lengths
+    agentune <- df.rename(agentune,
+                          oldnames=c("Var_Adj"),
+                          newnames=c("Curr_Var_Adj"))
+    
   }else{
     agentune <- NULL
   }
