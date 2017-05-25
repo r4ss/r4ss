@@ -1237,10 +1237,6 @@ SS_output <-
 
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
-  vartune <- vartune[vartune$N > 0,]
-  vartune[,1] <- vartune[,21]
-  vartune <- vartune[,c(1,8,11,13,16,18)]
-  stats$index_variance_tuning_check <- vartune
 
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
@@ -1420,6 +1416,7 @@ SS_output <-
   }
   returndat$survey_units <- survey_units
   returndat$survey_error <- survey_error
+  returndat$index_variance_tuning_check <- vartune
   returndat$IsFishFleet  <- IsFishFleet
   returndat$nfishfleets  <- nfishfleets
 
