@@ -289,12 +289,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table d 1-SPR (%)
 	#======================================================================
-		spr_type = strsplit(base[grep("SPR_ratio_basis",base)]," ")[[1]][3]
-		if (spr_type != "1-SPR") { 
-			print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
-			print(paste("The SPR is being reported as", spr_type, "."))
-	    	print("West coast groundfish assessments typically report 1-SPR in the executive summary") 
-	   	 	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
+		spr_type = strsplit(base[grep("SPR_report_basis",base)]," ")[[1]][3]
+		#if (spr_type != "1-SPR") { 
+		#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
+		#	print(paste("The SPR is being reported as", spr_type, "."))
+	    #	print("West coast groundfish assessments typically report 1-SPR in the executive summary") 
+	   	#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
 
 		adj.spr = Get.Values(dat = base, label = "SPRratio" , hist, quant)
 		f.value = Get.Values(dat = base, label = "F" , hist, quant)
@@ -496,9 +496,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 			
 			natage.f = natage.m = 0
 			for(a in 1:nareas){
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
+				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 				natage.f = natage.f + t(temp) 
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
+				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 				natage.m = natage.m + t(temp) 
 			}
 			
