@@ -1484,6 +1484,10 @@ SS_output <-
     FecPar1name <- "Eggs_intercept_Fem"
     FecPar2name <- "Eggs_slope_Wt_Fem"
   }
+  if(is.na(lbinspop[1])){
+    lbinspop <- biology$Low[biology$GP==1]
+  }
+      
   returndat$biology <- biology
   returndat$FecType <- FecType
   returndat$FecPar1name <- FecPar1name
