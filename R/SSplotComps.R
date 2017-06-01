@@ -423,8 +423,8 @@ SSplotComps <-
       # loop over genders combinations
       ## for(k in (1:3)[testor])
       ## {
-      ##   if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-      ##   if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+      ##   if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
+      ##   if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
       ##   if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
       ##   sex <- ifelse(k==3, 2, 1)
       ##   if(sex %in% sexes){
@@ -457,8 +457,8 @@ SSplotComps <-
           dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/1000
           dbase$YrSeasName <- paste(dbase$YrSeasName,"a",dbase$Ageerr,sep="")
         }
-        ## dbase$Yr.S[dbase_k$Pick_gender==1] <- dbase$Yr.S[dbase_k$Pick_gender==1] + 1e-6
-        ## dbase$Yr.S[dbase_k$Pick_gender==2] <- dbase$Yr.S[dbase_k$Pick_gender==2] + 2e-6
+        ## dbase$Yr.S[dbase_k$Pick_sex==1] <- dbase$Yr.S[dbase_k$Pick_sex==1] + 1e-6
+        ## dbase$Yr.S[dbase_k$Pick_sex==2] <- dbase$Yr.S[dbase_k$Pick_sex==2] + 2e-6
 
         ## assemble pieces of plot title
         # market category
@@ -1307,15 +1307,15 @@ SSplotComps <-
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
-      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex==0 ])>0
+      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3)])>0
       testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
 
       # loop over genders combinations
       for(k in (1:3)[testor])
       {
-        if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-        if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+        if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
+        if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
         if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
         sex <- ifelse(k==3, 2, 1)
 
@@ -1452,13 +1452,13 @@ SSplotComps <-
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
       # check for the presence of data
       if(nrow(dbasef)>0){
-        testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender==0 ])>0
-        testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3)])>0
+        testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex==0 ])>0
+        testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3)])>0
         testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
         # loop over genders combinations
         for(k in (1:3)[testor]){
-          if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender==0,]}
-          if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_gender %in% c(1,3),]}
+          if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
+          if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
           if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
           sex <- ifelse(k==3, 2, 1)
 
@@ -1584,19 +1584,20 @@ SSplotComps <-
   ### subplot 24: bubble plot comparison of length or age residuals
   ###             across fleets within gender/partition
   if(24 %in% subplots & kind %in% c("LEN","AGE")){
-
     # check for the presence of data
-    testor    <- length(dbase_kind$Gender[dbase_kind$Gender==1 &
-                                          dbase_kind$Pick_gender==0 ])>0
-    testor[2] <- length(dbase_kind$Gender[dbase_kind$Gender==1 &
-                                          dbase_kind$Pick_gender %in% c(1,3)])>0
-    testor[3] <- length(dbase_kind$Gender[dbase_kind$Gender==2])>0
+    testor    <- length(dbase_kind$Sex[dbase_kind$Sex==1 &
+                                          dbase_kind$Pick_sex==0 ])>0
+    testor[2] <- length(dbase_kind$Sex[dbase_kind$Sex==1 &
+                                          dbase_kind$Pick_sex %in% c(1,3)])>0
+    testor[3] <- length(dbase_kind$Sex[dbase_kind$Sex==2])>0
 
     # loop over genders combinations
     for(k in (1:3)[testor]){
-      if(k==1){dbase_k <- dbase_kind[dbase_kind$Gender==1 & dbase_kind$Pick_gender==0,]}
-      if(k==2){dbase_k <- dbase_kind[dbase_kind$Gender==1 & dbase_kind$Pick_gender %in% c(1,3),]}
-      if(k==3){dbase_k <- dbase_kind[dbase_kind$Gender==2,]}
+      if(k==1){dbase_k <- dbase_kind[dbase_kind$Sex==1 &
+                                       dbase_kind$Pick_sex==0,]}
+      if(k==2){dbase_k <- dbase_kind[dbase_kind$Sex==1 &
+                                       dbase_kind$Pick_sex %in% c(1,3),]}
+      if(k==3){dbase_k <- dbase_kind[dbase_kind$Sex==2,]}
       sex <- ifelse(k==3, 2, 1)
       if(sex %in% sexes){
         # loop over partitions (discard, retain, total)
@@ -1611,9 +1612,11 @@ SSplotComps <-
           # get growth curves if requested
           if(length(cohortlines)>0){
             growdat <- replist$endgrowth
-            growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
+            growdatF <- growdat[growdat$Sex==1 &
+                                  growdat$Morph==min(growdat$Morph[growdat$Sex==1]),]
             if(nsexes > 1){
-              growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+              growdatM <- growdat[growdat$Sex==2 &
+                                    growdat$Morph==min(growdat$Morph[growdat$Sex==2]),]
             }
           }
 
