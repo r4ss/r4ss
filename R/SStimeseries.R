@@ -198,7 +198,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 				print(depl.all*100,1),
 				comma(recruits.all,0),
 				catch.all,
-				print(100*adj.spr.all,3),
+				print(adj.spr.all,3),
 				exp.all)
 	
 	colnames(ts.table) = c("Year", "Total Biomass (mt)", "Spawning Biomass", 
