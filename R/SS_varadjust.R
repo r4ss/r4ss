@@ -11,38 +11,96 @@
 #' @param newtable Optional table of new variance adjustment values
 #' @param newrow Optional vector of new variance adjustment values for a particular row
 #' @param rownumber Which of the 6 rows to replace with 'newrow' if present?
-#' @param maxcols Maximum number of columns to search among (may need to
-#' increase from default if you have a huge number of fleets)
+#' @param maxcols Maximum number of columns to search among in 3.24 models
+#' (may need to increase from default if you have a huge number of fleets)
+#' @param maxrows Maximum number of rows to search among in 3.30 models
+#' (may need to increase from default if you have a huge number of fleets)
 #' @param overwrite Overwrite file if it exists?
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
 #' @author Ian G. Taylor, Gwladys I. Lambert
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
 #' @export
-#'
+#' @examples
+#' 
+#'    \dontrun{
+#'      # load model output into R
+#'      replist <- SS_output(dir='c:/model/')
+#'      # get table of variance adjustments
+#'      adjustments_old <- SS_varadjust(dir=replist$inputs$dir,
+#'                                      ctlfile=replist$Control_File)
+#'      # make a copy of the table to modify
+#'      adjustments_new <- adjustments_old
+#'      # loop over fleets and modify the values for length data
+#'      for(ifleet in unique(replist$lendbase$Fleet)){
+#'        # run the Francis function for length comps
+#'        # (reports a vector with proposed adjustment, low, and high values)
+#'        Francis.vals <- SSMethod.TA1.8(fit=replist, type='len',
+#'                                       fleet=ifleet, plotit=FALSE)
+#'        # get adjustment for length comps (Factor 4) and this fleet
+#'        Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==4 &
+#'                                                 adjustments_old$Fleet==ifleet]
+#'        # multiply old value by proposed multiplier
+#'        Var_adj_new <- Var_adj_old*Francis.vals[1]
+#'        # fill value into table
+#'        adjustments_new$Var_Adj[adjustments_new$Factor==4 &
+#'                                  adjustments_new$Fleet==ifleet] <- Var_adj_new
+#'      }
+#'      # loop over fleets and modify the values for age data
+#'      for(ifleet in unique(replist$condbase$Fleet)){
+#'        # run the Francis function for length comps
+#'        # (reports a vector with proposed adjustment, low, and high values)
+#'        Francis.vals <- SSMethod.Cond.TA1.8(fit=replist, 
+#'                                            fleet=ifleet, plotit=FALSE)
+#'        # get adjustment for conditional age-at-length (Factor 5) and this fleet
+#'        Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==5 &
+#'                                                 adjustments_old$Fleet==ifleet]
+#'        # multiply old value by proposed multiplier
+#'        Var_adj_new <- Var_adj_old*Francis.vals[1]
+#'        # fill value into table
+#'        adjustments_new$Var_Adj[adjustments_new$Factor==5 &
+#'                                  adjustments_new$Fleet==ifleet] <- Var_adj_new
+#'      }
+#'      # show new table
+#'      print(adjustments_new)
+#'      # write new table to file
+#'      SS_varadjust(dir=replist$inputs$dir, newctlfile="new_control.ss",
+#'                   newtable=adjustments_new, overwrite=FALSE)
+#'    }
+ 
 SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
                          ctlfile="control.ss_new",
                          newctlfile="control_modified.ss",
-                         keyword="Variance_adjustments",
+                         keyword="variance adjustments",
                          newtable=NULL, newrow=NULL, rownumber=NULL,
-                         maxcols=100, overwrite=FALSE,
-                         verbose=TRUE){
+                         maxcols=100, maxrows=100, overwrite=FALSE,
+                         version="3.30", verbose=TRUE){
   # check for consistency of inputs
   if(!is.null(newtable)){
     if(!is.null(newrow)){
       stop("You can't input both 'newtable' and 'newrow'")
     }
-    if(!is.data.frame(newtable) || nrow(newtable)!=6){
-      stop("Input 'newtable' must be a data.frame with 6 rows")
+    # call function for SS version 3.24
+    if(version=="3.24"){ # should work whether "version" is character or numeric
+      if(!is.data.frame(newtable) || nrow(newtable)!=6){
+        stop("Input 'newtable' must be a data.frame with 6 rows")
+      }
+    }else{
+      # version 3.30
+      maxcols <- 3
+      if(!is.data.frame(newtable) || ncol(newtable)!=3){
+        stop("Input 'newtable' must be a data.frame with 3 columns")
+      }
     }
   }
   if(!is.null(newrow) & is.null(rownumber)){
-    stop("Input 'newrow' requires the input 'rownumber' (an integer from 1 to 6)")
+    stop("Input 'newrow' requires the input 'rownumber' (which row within the table)")
   }
   if(!is.null(rownumber) && !rownumber %in% 1:6){
-    stop("Input 'rownumber' should be an integer specifying which of the 6 rows\n",
+    stop("Input 'rownumber' should be an integer specifying which of the rows\n",
          "of the variance adjustment table will be replaced with 'newrow'")
   }
+
   # combine directory and filenames
   if(!is.null(dir)){
     ctlfile <- file.path(dir, ctlfile)
@@ -53,62 +111,92 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
   # find line matching keyword and complain if 0 or 2+ lines found
   keyword_line <- grep(keyword, ctl_lines)
   if(length(keyword_line)!=1){
-    stop("keyword input",keyword,"found",length(keyword_line),"times.\n",
+    stop("keyword input '",keyword,"' found ",length(keyword_line)," times.\n",
          "It should be a unique string immediately before variance adjustments.")
   }
   # read control file as a table of values
   ctl <- read.table(file=ctlfile,col.names=1:maxcols,skip=keyword_line,
-                    nrows=10, fill=TRUE,
+                    nrows=maxrows, fill=TRUE,
                     quote="",colClasses="character",comment.char="",
                     blank.lines.skip=FALSE)
+
   # save warnings settings and then turn off "NAs introduced" warning
   old_warn <- options()$warn
   options(warn=-1)
-  # subset first 6 numeric rows
-  numeric_rows <- which(!is.na(as.numeric(ctl[,1])))
-  good_rows <- numeric_rows[1:6]
-  ctl <- ctl[good_rows,]
-  # loop over columns, converting to numeric, checking for non-numeric values
-  nfleets <- NULL
-  for(icol in 1:maxcols){
-    ctl[,icol] <- as.numeric(ctl[,icol])
-    # first time that an NA value appears, record that column number
-    if(is.null(nfleets) && any(is.na(ctl[,icol]))){
-      nfleets <- icol-1
+  
+  if(version=="3.24"){ # should work whether "version" is character or numeric
+    # subset first 6 numeric rows in 3.24
+    numeric_rows <- which(!is.na(as.numeric(ctl[,1])))
+    good_rows <- numeric_rows[1:6]
+    ctl <- ctl[good_rows,]
+    
+    # loop over columns, converting to numeric, checking for non-numeric values
+    nfleets <- NULL
+    for(icol in 1:maxcols){
+      ctl[,icol] <- as.numeric(ctl[,icol])
+      # first time that an NA value appears, record that column number
+      if(is.null(nfleets) && any(is.na(ctl[,icol]))){
+        nfleets <- icol-1
+      }
     }
+
+
+    # subset numeric columns only
+    ctl <- ctl[,1:nfleets]
+    # add header
+    colnames(ctl) <- paste("Fleet",1:nfleets,sep="")
+    # add labels to each rows (based on labels in control.ss_new)
+    ctl <- data.frame(ctl, label=c("#_add_to_survey_CV",
+                               "#_add_to_discard_stddev",
+                               "#_add_to_bodywt_CV",
+                               "#_mult_by_lencomp_N",
+                               "#_mult_by_agecomp_N",
+                               "#_mult_by_size-at-age_N"))
+  }else{ # version 3.30
+    # look for -9999 as terminator in 3.30
+    terminator_row <- min(grep("-9999", ctl[,1]))
+    good_rows <- which(!is.na(as.numeric(ctl[1:terminator_row, 1])))
+    ctl <- ctl[good_rows, 1:3]
+    for(icol in 1:3){
+      ctl[,icol] <- as.numeric(ctl[,icol])
+    }
+    names(ctl) <- c("Factor", "Fleet", "Var_Adj")
   }
   #returning to old warning value
   options(warn=old_warn)
-  # subset numeric columns only
-  ctl <- ctl[,1:nfleets]
-  # add header
-  colnames(ctl) <- paste("Fleet",1:nfleets,sep="")
-  # add labels to each rows (based on labels in control.ss_new)
-  ctl <- data.frame(ctl, label=c("#_add_to_survey_CV",
-                                 "#_add_to_discard_stddev",
-                                 "#_add_to_bodywt_CV",
-                                 "#_mult_by_lencomp_N",
-                                 "#_mult_by_agecomp_N",
-                                 "#_mult_by_size-at-age_N"))
-  cat("Existing table of variance adjustments:\n")
-  print(ctl)
 
+  if(verbose){
+    cat("Existing table of variance adjustments:\n")
+    print(ctl)
+  }
+  
+  if(is.null(newrow) & is.null(newtable)){
+    if(verbose){
+      cat("No new adjustments provided, so no file written.\n")
+    }
+    return(invisible(ctl))
+  }
   #replace table
   if (!is.null(newrow)){
-    if(length(newrow)!=nfleets){
-      stop("new weights do not match the number of fleets in ctl file")
+    if(length(newrow)!=ncol(ctl)){
+      stop("newrow has the wrong length")
     }else {
-      ctl[rownumber,1:nfleets] <- newrow
+      ctl[rownumber,] <- newrow
     }
   }
 
 
   if (!is.null(newtable)){
-    if(ncol(newtable)!=nfleets){
-      stop("new weights do not match the number of fleets in ctl file")
+    if(ncol(newtable)!=ncol(ctl)){
+      stop("newtable has the wrong number of columns")
     }else{
-      ctl[1:6,1:nfleets] <- newtable
+      ctl <- newtable
     }
+  }
+
+  if(verbose){
+    cat("New table of variance adjustments:\n")
+    print(ctl)
   }
 
   # absolute position of the rows to change

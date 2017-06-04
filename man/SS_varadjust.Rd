@@ -5,9 +5,9 @@
 \title{Modify variance and sample size adjustments in the control file}
 \usage{
 SS_varadjust(dir = "C:/myfiles/mymodels/myrun/", ctlfile = "control.ss_new",
-  newctlfile = "control_modified.ss", keyword = "Variance_adjustments",
+  newctlfile = "control_modified.ss", keyword = "variance adjustments",
   newtable = NULL, newrow = NULL, rownumber = NULL, maxcols = 100,
-  overwrite = FALSE, verbose = TRUE)
+  maxrows = 100, overwrite = FALSE, version = "3.30", verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory with control file to change.}
@@ -26,8 +26,11 @@ variance adjustments}
 
 \item{rownumber}{Which of the 6 rows to replace with 'newrow' if present?}
 
-\item{maxcols}{Maximum number of columns to search among (may need to
-increase from default if you have a huge number of fleets)}
+\item{maxcols}{Maximum number of columns to search among in 3.24 models
+(may need to increase from default if you have a huge number of fleets)}
+
+\item{maxrows}{Maximum number of rows to search among in 3.30 models
+(may need to increase from default if you have a huge number of fleets)}
 
 \item{overwrite}{Overwrite file if it exists?}
 
@@ -36,6 +39,53 @@ Default=TRUE.}
 }
 \description{
 Function has not been fully tested yet
+}
+\examples{
+
+   \dontrun{
+     # load model output into R
+     replist <- SS_output(dir='c:/model/')
+     # get table of variance adjustments
+     adjustments_old <- SS_varadjust(dir=replist$inputs$dir,
+                                     ctlfile=replist$Control_File)
+     # make a copy of the table to modify
+     adjustments_new <- adjustments_old
+     # loop over fleets and modify the values for length data
+     for(ifleet in unique(replist$lendbase$Fleet)){
+       # run the Francis function for length comps
+       # (reports a vector with proposed adjustment, low, and high values)
+       Francis.vals <- SSMethod.TA1.8(fit=replist, type='len',
+                                      fleet=ifleet, plotit=FALSE)
+       # get adjustment for length comps (Factor 4) and this fleet
+       Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==4 &
+                                                adjustments_old$Fleet==ifleet]
+       # multiply old value by proposed multiplier
+       Var_adj_new <- Var_adj_old*Francis.vals[1]
+       # fill value into table
+       adjustments_new$Var_Adj[adjustments_new$Factor==4 &
+                                 adjustments_new$Fleet==ifleet] <- Var_adj_new
+     }
+     # loop over fleets and modify the values for age data
+     for(ifleet in unique(replist$condbase$Fleet)){
+       # run the Francis function for length comps
+       # (reports a vector with proposed adjustment, low, and high values)
+       Francis.vals <- SSMethod.Cond.TA1.8(fit=replist, 
+                                           fleet=ifleet, plotit=FALSE)
+       # get adjustment for conditional age-at-length (Factor 5) and this fleet
+       Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==5 &
+                                                adjustments_old$Fleet==ifleet]
+       # multiply old value by proposed multiplier
+       Var_adj_new <- Var_adj_old*Francis.vals[1]
+       # fill value into table
+       adjustments_new$Var_Adj[adjustments_new$Factor==5 &
+                                 adjustments_new$Fleet==ifleet] <- Var_adj_new
+     }
+     # show new table
+     print(adjustments_new)
+     # write new table to file
+     SS_varadjust(dir=replist$inputs$dir, newctlfile="new_control.ss",
+                  newtable=adjustments_new, overwrite=FALSE)
+   }
 }
 \seealso{
 \code{\link{SS_parlines}}, \code{\link{SS_changepars}}

@@ -764,10 +764,15 @@ SS_output <-
   stats$StartTime <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
   stats$RunTime <- paste(as.character(matchfun2("StartTime",2,"StartTime",2,cols=4:9)),collapse=" ")
 
-  tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
+  # data return object to fill in various things
+  returndat <- list()
+
+  # input files
   tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
-
+  returndat$Data_File <- tempfiles[1,2]
+  returndat$Control_File <- tempfiles[2,2]
+  
   # check warnings
   stats$Nwarnings <- nwarn
   if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
@@ -1394,9 +1399,7 @@ SS_output <-
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
 
-  # data return object
-  returndat <- list()
-
+  # add stuff to list to return
   if(SS_versionNumeric <= 3.24){
     returndat$definitions  <- defs
     returndat$fleet_ID     <- fleet_ID
