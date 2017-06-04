@@ -26,7 +26,6 @@
 #' @references r4ss on GitHub: \url{https://github.com/r4ss}
 #' \cr Download Stock Synthesis: \url{http://nft.nefsc.noaa.gov/}
 #' @import coda
-#' @importFrom maps map
 #' @importFrom corpcor pseudoinverse
 #' @importFrom gdata write.fwf
 #' @importFrom gplots hist2d

@@ -18,10 +18,10 @@ Imports:
     gdata,
     gplots,
     gtools,
-    maps,
     pso,
     truncnorm
 Suggests:
+    maps,
     tcltk,
     testthat
 Description: A collection of R functions for use with Stock Synthesis, a
