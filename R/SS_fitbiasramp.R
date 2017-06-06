@@ -205,7 +205,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                         is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
-      stop("psoptim function has changed so that option is temporarily unavailable")
       biasadjfit(pars=startvalues,yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
       biasopt <- psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
                          sigmaR=sigma_R_in, transform=transform,
