@@ -7,7 +7,7 @@
 SS_fitbiasramp(replist, verbose = FALSE, startvalues = NULL,
   method = "BFGS", twoplots = TRUE, transform = FALSE, plot = TRUE,
   print = FALSE, plotdir = "default", shownew = TRUE, oldctl = NULL,
-  newctl = NULL, altmethod = "nlminb", exclude_forecast = TRUE,
+  newctl = NULL, altmethod = "nlminb", exclude_forecast = FALSE,
   pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10, res = 300,
   cex.main = 1)
 }

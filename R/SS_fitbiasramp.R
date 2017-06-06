@@ -48,7 +48,7 @@
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
-         oldctl=NULL, newctl=NULL, altmethod="nlminb", exclude_forecast=TRUE,
+         oldctl=NULL, newctl=NULL, altmethod="nlminb", exclude_forecast=FALSE,
          pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300, cex.main=1){
   ##################
   # function to estimate bias adjustment ramp
@@ -201,21 +201,21 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
       biasopt <- nlminb(start=startvalues, objective=biasadjfit, gradient = NULL,
                         hessian = NULL, scale = 1, control = list(maxit=1000),
                         lower = c(-Inf,-Inf,-Inf,-Inf,0), upper = Inf,
-                        yr=yr,std=std,sigmaR=sigma_R_in,transform=transform,
+                        yr=yr, std=std, sigmaR=sigma_R_in, transform=transform,
                         is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
-      #### the following commands no longer needed since packages are required by r4ss
-      ## require(pso)
+      stop("psoptim function has changed so that option is temporarily unavailable")
       biasadjfit(pars=startvalues,yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
-      biasopt <- psoptim(par=startvalues,fn=biasadjfit,yr=yr,std=std,
-                       sigmaR=sigma_R_in,transform=transform,
-                       control=list(maxit=1000,trace=TRUE),lower=rep(-1e6,5),upper=rep(1e6,5))
+      biasopt <- psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
+                         sigmaR=sigma_R_in, transform=transform,
+                         control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
+                         upper=rep(1e6, 5))
     }
-    if(!(altmethod %in% c("nlminb","psoptim"))){
-      biasopt <- optim(par=startvalues,fn=biasadjfit,yr=yr,std=std,
-                       sigmaR=sigma_R_in,transform=transform,
-                       method=method,control=list(maxit=1000))
+    if(!(altmethod %in% c("nlminb", "psoptim"))){
+      biasopt <- optim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
+                       sigmaR=sigma_R_in, transform=transform,
+                       method=method, control=list(maxit=1000))
     }
     return(biasopt)
   }
