@@ -205,16 +205,17 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                         is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
-      biasadjfit(pars=startvalues,yr=yr,std=std,sigmaR=sigma_R_in,transform=transform)
+      biasadjfit(pars=startvalues, yr=yr, std=std, sigmaR=sigma_R_in,
+                 is.forecast=is.forecast, transform=transform)
       biasopt <- psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
                          sigmaR=sigma_R_in, transform=transform,
                          control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
-                         upper=rep(1e6, 5))
+                         upper=rep(1e6, 5), is.forecast=is.forecast)
     }
     if(!(altmethod %in% c("nlminb", "psoptim"))){
       biasopt <- optim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
                        sigmaR=sigma_R_in, transform=transform,
-                       method=method, control=list(maxit=1000))
+                       method=method, control=list(maxit=1000), is.forecast=is.forecast)
     }
     return(biasopt)
   }
