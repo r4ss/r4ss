@@ -10,44 +10,39 @@
 #'
 #' @param dir Locates the directory of the files to be read in, double
 #' backslashes (or forwardslashes) and quotes necessary.
-#' @param model Name of the executable (leaving off the .exe).  Default="ss3"
+#' @param model Name of the executable (leaving off the .exe).
 #' @param repfile Name of the big report file (could be renamed by user).
-#' Default="Report.sso".
 #' @param compfile Name of the composition report file.
-#' Default="CompReport.sso".
-#' @param covarfile Name of the covariance output file.  Default="covar.sso".
-#' @param forefile Name of the forecast file.  Default="Forecast-report.sso".
+#' @param covarfile Name of the covariance output file.
+#' @param forefile Name of the forecast file.
 #' @param wtfile Name of the file containing weight at age data.
-#' Default="wtatage.ss_new".
+#' @param warnfile Name of the file containing warnings.
 #' @param ncols The maximum number of columns in files being read in.  If this
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
 #' small. It should be bigger than the maximum age + 10 and the number of years
-#' + 10. Default=200.
-#' @param forecast Read the forecast-report file? Default=TRUE.
-#' @param warn Read the Warning.sso file? Default=TRUE.
+#' + 10.
+#' @param forecast Read the forecast-report file?
+#' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
-#' correlations? Default=TRUE.
-#' @param readwt Read the weight-at-age file? Default=TRUE.
-#' @param checkcor Check for bad correlations? Default=TRUE.
+#' correlations?
+#' @param readwt Read the weight-at-age file?
+#' @param checkcor Check for bad correlations?
 #' @param cormax The specified threshold for defining high correlations.  A
-#' quantity with any correlation above this value is identified.  Default=0.95.
+#' quantity with any correlation above this value is identified.
 #' @param cormin The specified threshold for defining low correlations.  Only
 #' quantities with all correlations below this value are identified (to find
-#' variables that appear too independent from the model results). Default=0.01.
+#' variables that appear too independent from the model results).
 #' @param printhighcor The maximum number of high correlations to print to the
-#' R GUI. Default=10.
+#' R GUI.
 #' @param printlowcor The maximum number of low correlations to print to the R
-#' GUI. Default=10.
+#' GUI.
 #' @param verbose Return updates of function progress to the R GUI?
-#' Default=TRUE.
 #' @param printstats Print summary statistics about the output to the R GUI?
-#' Default=TRUE.
-#' @param hidewarn Hides some warnings output from the R GUI.  Default=FALSE.
+#' @param hidewarn Hides some warnings output from the R GUI.
 #' @param NoCompOK Allow the function to work without a CompReport file.
-#' Default=FALSE.
 #' @param aalmaxbinrange The largest length bin range allowed for composition
-#' data to be considered as conditional age-at-length data.  Default=4.
+#' data to be considered as conditional age-at-length data.
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
@@ -63,6 +58,7 @@ SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
+           warnfile="warning.sso",
            ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
@@ -398,9 +394,9 @@ SS_output <-
 
   # read warnings file
   if(warn){
-    warnname <- file.path(dir,"warning.sso")
+    warnname <- file.path(dir, warnfile)
     if(!file.exists(warnname)){
-      cat("warning.sso file not found\n")
+      cat(warnfile, "file not found\n")
       nwarn <- NA
       warn <- NA
     }else{
@@ -408,11 +404,12 @@ SS_output <-
       warnstring <- warn[grep("N warnings: ",warn)]
       if(length(warnstring)>0){
         nwarn <- as.numeric(strsplit(warnstring,"N warnings: ")[[1]][2])
-        textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
+        textblock <- c(paste("were", nwarn, "warnings"),
+                       paste("was", nwarn, "warning"))[1+(nwarn==1)]
         if(verbose) cat("Got warning file.\n",
                         " There", textblock, "in", warnname,"\n")
       }else{
-        cat("warning.sso file is missing the string 'N warnings'!\n")
+        cat(warnfile, "file is missing the string 'N warnings'!\n")
         nwarn <- NA
       }
     }
@@ -775,7 +772,12 @@ SS_output <-
   
   # check warnings
   stats$Nwarnings <- nwarn
-  if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
+  if(length(warn)>20){
+    warn <- c(warn[1:20],paste("Note:",length(warn)-20,
+                               "additional lines truncated. Look in",
+                               warnfile,
+                               "file to see full list."))
+  }
   stats$warnings <- warn
 
   # likelihoods
