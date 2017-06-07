@@ -299,9 +299,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		adj.spr = Get.Values(dat = base, label = "SPRratio" , hist, quant)
 		f.value = Get.Values(dat = base, label = "F" , hist, quant)
 		es.d = data.frame(hist,
-						  print(adj.spr$dq,2), paste0(print(adj.spr$low,2), "\u2013", print(adj.spr$high,2)),
+						  print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
 						  print(f.value$dq,3),     paste0(print(f.value$low,3),     "\u2013", print(f.value$high,3)))
-		colnames(es.d) = c("Years", paste0("Estimated ", spr_type), "95% Asymptotic Interval", "Harvest Rate (proportion)", "95% Asymptotic Interval")
+		colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", "Harvest Rate (proportion)", "95% Asymptotic Interval")
 
 		write.csv(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.csv"), row.names = F)
 	
@@ -493,7 +493,6 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
 		if (check != 2){
 			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
-
 			singlesex = ifelse(length(base[grep(paste("1 1 2 1 1 1 2", startyr,sep=" "),base)]) == 0, TRUE, FALSE)
 			
 			if (singlesex) {
