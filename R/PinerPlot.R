@@ -90,6 +90,7 @@ PinerPlot <-
            legend=TRUE, legendloc="topright",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
+           add_cutoff=FALSE,
            verbose=TRUE,
            fleetgroups=NULL,
            likelihood_type="raw_times_lambda",
@@ -245,6 +246,10 @@ PinerPlot <-
     plot(0,type='n',xlim=xlim,ylim=ylim,xlab=profile.label, ylab=ylab,
          yaxs=yaxs,xaxs=xaxs,main=main)
     abline(h=0,col='grey')
+    # optionally add horizontal line at ~1.92
+    if(add_cutoff){
+      abline(h=0.5*qchisq(p=0.95, df=1), lty=2)
+    }
     matplot(parvec, prof.table[,-(1:2)], type=type,
             pch=pch, col=col,
             cex=cex, lty=lty, lwd=lwd, add=TRUE)

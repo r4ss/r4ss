@@ -59,6 +59,8 @@
 #' @param cex.main Character expansion for plot titles
 #' @param plotdir Directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
+#' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
+#' based on common cutoff using Chi-squared of .95 with 1 degree of freedom.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
 #' @param \dots Additional arguments passed to the \code{plot} command.
@@ -134,6 +136,7 @@ SSplotProfile <-
            legend=TRUE, legendloc="topright",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
+           add_cutoff=FALSE,
            verbose=TRUE,...)
 {
   # subfunction to write png files
@@ -242,6 +245,10 @@ SSplotProfile <-
     plot(0,type='n',xlim=xlim,ylim=ylim,xlab=profile.label, ylab=ylab,
          yaxs=yaxs,xaxs=xaxs,...)
     abline(h=0,col='grey')
+    # optionally add horizontal line at ~1.92
+    if(add_cutoff){
+      abline(h=0.5*qchisq(p=0.95, df=1), lty=2)
+    }
     matplot(parvec, prof.table, type=type,
             pch=pch, col=col,
             cex=cex, lty=lty, lwd=lwd, add=T)
