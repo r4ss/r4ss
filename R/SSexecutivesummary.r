@@ -493,20 +493,38 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
 		if (check != 2){
 			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+
+			singlesex = ifelse(length(base[grep(paste("1 1 2 1 1 1 2", startyr,sep=" "),base)]) == 0, TRUE, FALSE)
 			
-			natage.f = natage.m = 0
-			for(a in 1:nareas){
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-				natage.f = natage.f + t(temp) 
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-				natage.m = natage.m + t(temp) 
+			if (singlesex) {
+				natage.f = natage.m = 0
+				for(a in 1:nareas){
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.f = natage.f + t(temp) 
+				}
+				
+				colnames(natage.f) = 0:maxAge
+				rownames(natage.f) <- startyr:endyr 
+		
+				write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
 			}
-			
-			colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
-			rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
-	
-			write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
-			write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))			
+
+			if (!singlesex) {
+				natage.f = natage.m = 0
+				for(a in 1:nareas){
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.f = natage.f + t(temp) 
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.m = natage.m + t(temp) 
+				}
+				
+				colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
+				rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+		
+				write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
+				write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
+			}
+					
 		}
 
 	}
