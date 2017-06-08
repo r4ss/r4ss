@@ -1275,7 +1275,7 @@ SS_output <-
     # avoid NA warnings by removing #IND values
     lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
     for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
-    lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
+    lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   }else{
     # new in 3.30 is keyword at top
     lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
@@ -1285,8 +1285,8 @@ SS_output <-
       lenntune[,icol] <- as.numeric(lenntune[,icol])
     }
     ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
-    #lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
-    lenntune$"HarEffN(effN)/mean(inputN*Adj)" <-
+    #lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+    lenntune$"HarMean(effN)/mean(inputN*Adj)" <-
       lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
 
     # change name to make it clear what the harmonic mean is based on
