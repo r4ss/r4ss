@@ -107,7 +107,7 @@ function(replist,subplots=1:9,
     cpue <- cpue[!is.na(cpue$Dev),]
   }
   
-  FleetNames  <- replist$Name
+  FleetNames  <- replist$FleetNames
   nfleets     <- replist$nfleets
   nseasons    <- replist$nseasons
 
