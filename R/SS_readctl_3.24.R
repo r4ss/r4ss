@@ -663,8 +663,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
       age_selex_label[[j]]<-c(paste0("AgeeSpline_Code_",fleetnames[j],"_",j),
                              paste0("AgeSpline_GradLo_",fleetnames[j],"_",j),
                              paste0("AgeeSpline_GradHi_",fleetnames[j],"_",j),
-                             paste0("AgeeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
-                             paste0("AgeeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
+                             paste0("AgeeSpline_Knot_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j),
+                             paste0("AgeeSpline_Val_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j))
     }else{
       age_selex_label[[j]]<-if(age_selex_Nparms[j]>0){
         paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
@@ -700,7 +700,19 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     DoAdjust<-TRUE
     ctllist<-add_elem(ctllist,"DoCustom_sel_blk_setup") #_custom_sel-blk_setup (0/1)
     if(ctllist$DoCustom_sel_blk_setup){
-      k0<-sum(ctllist$age_selex_parms[,13]>0)+sum(ctllist$size_selex_parms[,13]>0)
+
+        # FIND relevant blocks
+        blks <- ctllist$blocks_per_pattern
+
+        # SUBSET params for Block > 0
+        pbks <- subset(ctllist$age_selex_parms, Block > 0)
+
+        # MULTIPLY number of blocks by number of params per block
+        rbks <- blks[blks > 1] * pbks[!duplicated(pbks$Block), "Block_Fxn"]
+
+        # No. of rows
+        k0 <- sum(rbks)
+
       ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
         col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
     }
