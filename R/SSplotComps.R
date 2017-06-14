@@ -1807,11 +1807,12 @@ SSplotComps <-
               npages <- ceiling(nrow(panel_table)/maxrows)
               for(ipage in 1:npages){
                 pagetext <- ""
+                caption <- caption_base
                 if(npages>1){
                   pagetext <- paste("_page",ipage,sep="")
-                  caption <- paste0(caption_base, " (plot ",ipage," of ",npages,")")
+                  caption <- paste0(caption, " (plot ",ipage," of ",npages,")")
                 }
-                if(length(grep("Pearson",caption))>0){
+                if(ipage==1 & length(grep("Pearson",caption))>0){
                   caption <- paste(caption,
                                    "<br> \nClosed bubbles are positive residuals",
                                    "(observed > expected)",
