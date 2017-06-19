@@ -1330,10 +1330,11 @@ SS_output <-
                           cols=1:10,header=TRUE)
   }else{
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
-                          cols=1:10,header=TRUE)
+                          header=TRUE)
   }
+  #browser()
   if(!is.null(dim(agentune))){
-    names(agentune)[10] <- "FleetName"
+    names(agentune)[ncol(agentune)] <- "FleetName"
     agentune <- agentune[agentune$N>0, ]
     
     # avoid NA warnings by removing #IND values
