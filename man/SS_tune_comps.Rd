@@ -26,8 +26,8 @@ and called "suggested_tunings.ss")
 }
 \description{
 Creates a table of values that can be copied into the SS control file
-to adjust the input sample sizes for length and age compositions
-based on either the Francis or McAllister-Ianelli tuning.
+for SS 3.30 models to adjust the input sample sizes for length and age
+compositions based on either the Francis or McAllister-Ianelli tuning.
 }
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical

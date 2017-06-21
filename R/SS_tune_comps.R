@@ -1,9 +1,8 @@
 #' Calculate new tunings for length and age compositions
 #'
 #' Creates a table of values that can be copied into the SS control file
-#' to adjust the input sample sizes for length and age compositions
-#' based on either the Francis or McAllister-Ianelli tuning.
-#' 
+#' for SS 3.30 models to adjust the input sample sizes for length and age
+#' compositions based on either the Francis or McAllister-Ianelli tuning.
 #'
 #' @param replist List output from SS_output
 #' @param fleets Either the string 'all', or a vector of fleet numbers
