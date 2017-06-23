@@ -206,7 +206,6 @@ SSplotSelex <-
     ### make lowercase to remove inconsistensies between data frames
     ### NOTE: no longer required as of changes for SS 3.30.01.15
     # names(allselex) <- tolower(names(allselex))
-
     time <- rep(FALSE,nfleets)
     for(ifleet in fleets)
       time[ifleet] <- any(apply(allselex[allselex$Fleet==ifleet &
@@ -255,10 +254,14 @@ SSplotSelex <-
         year_ranges <- c(year_ranges,"Benchmarks")
       }
     }else{
-      years <- endyr
+      year_ranges <- ""
     }
     allselex <- allselex2 <- allselex[allselex$Yr %in% years,]
-
+    if(nrow(allselex)==0){
+      cat("No values found for this combination of years and factor\n")
+      return()
+    }
+    
     # do some processing
     Sex <- allselex$Sex
     if(!agebased){
@@ -283,7 +286,9 @@ SSplotSelex <-
       infotable2$ifleet <- NA
       infotable2$FleetName <- fleetnames[infotable2$Fleet]
       infotable2$longname <- infotable2$FleetName
-      for(i in 1:nrow(infotable2)) infotable2$Yr_range[i] <- year_ranges[years==infotable2$Yr[i]]
+      for(i in 1:nrow(infotable2)){
+        infotable2$Yr_range[i] <- year_ranges[years==infotable2$Yr[i]]
+      }
 
       if(length(unique(infotable2$Yr)) > 1){
         infotable2$longname <- paste(infotable2$FleetName,infotable2$Yr_range)
