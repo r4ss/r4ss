@@ -197,7 +197,6 @@ SSplotComps <-
 
 
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
-
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
     png(filename=file.path(plotdir, file),
@@ -390,8 +389,8 @@ SSplotComps <-
       dbase_kind$Part_group <- -1 # code for all partitions combined
     }
   }
-  
-  
+
+
   # Add asterix to indicate super periods and then remove rows labeled "skip".
   # It would be better to somehow show the range of years, but that seems difficult.
   if(any(dbase_kind$SuprPer=="Sup" & dbase_kind$Used=="skip")){
@@ -404,7 +403,7 @@ SSplotComps <-
 
   # subset data based on requested range of fleets and sexes
   dbase_kind <- dbase_kind[dbase_kind$Fleet %in% fleets & dbase_kind$sex %in% sexes,]
-  
+
   # loop over fleets
   for(f in fleets){
     # check for the presence of data
@@ -432,7 +431,6 @@ SSplotComps <-
       ##     cat('sex',sex,'\n')
 
       dbase_k <- dbasef
-
       # loop over partitions (discard, retain, total)
       for(j in unique(dbase_k$Part)){
         dbase <- dbase_k[dbase_k$Part==j,]
@@ -613,7 +611,7 @@ SSplotComps <-
                 # this may not be ideal for seasonal models
                 xvals[dbase$sex>0] <- floor(dbase$Yr.S[dbase$sex>0]) -
                   (dbase$sex[dbase$sex>0]-1.5)*xdiff
-              }                
+              }
               cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
             }
             bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
@@ -742,6 +740,8 @@ SSplotComps <-
           for(y in 1:length(aalyear)){
             aalyr <- aalyear[y]
             if(length(dbase$Obs[dbase$Yr==aalyr])>0){
+              ydbase <- dbase[dbase$Yr==aalyr,]
+              sexvec <- ydbase$sex
               if(4 %in% subplots){
                 ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
                 caption <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
@@ -751,7 +751,6 @@ SSplotComps <-
                   ptitle <- ""
                 }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
-                ydbase <- dbase[dbase$Yr==aalyr,]
                 lenbinlegend <- paste(ydbase$Lbin_lo,labels[7],sep="")
                 lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo,"-",ydbase$Lbin_hi,labels[7],sep="")
                 tempfun4 <- function(ipage,...){ # temporary function to aid repeating the big function call
@@ -761,7 +760,8 @@ SSplotComps <-
                                 nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                 bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                 xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,
+                                sexvec=sexvec, yupper=yupper, ...)
                 }
                 if(plot) tempfun4(ipage=0,...)
                 if(print){
@@ -779,8 +779,8 @@ SSplotComps <-
                                        "and open bubbles are negative residuals",
                                        "(observed < expected).")
                     }
-                    file <- paste(filenamestart,filename_fltsexmkt,
-                                  "_",aalyr,"_",pagetext,".png",sep="")
+                    file <- paste0(filenamestart,filename_fltsexmkt,
+                                   "_", aalyr, pagetext, ".png")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun4(ipage=ipage,...)
                     dev.off() # close device if print
@@ -790,6 +790,10 @@ SSplotComps <-
               if(5 %in% subplots){
                 ### subplot 5: Pearson residuals for A-L key
                 z <- ydbase$Pearson
+                col.index <- sexvec
+                col.index[col.index==0] <- 3
+                cols <- colvec[col.index]
+                x.vec <- ydbase$Bin + ydbase$sex*1e-6
                 caption <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
                 caption <- paste(caption," (max=",round(abs(max(z)),digits=2),")",sep="")
                 if(mainTitle) {
@@ -799,8 +803,8 @@ SSplotComps <-
                 }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun5 <- function(){
-                  bubble3(x=ydbase$Bin,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
-                          ylab=labels[1],col=colvec[3],las=1,main=ptitle,
+                  bubble3(x=x.vec,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
+                          ylab=labels[1],col=cols,las=1,main=ptitle,
                           cex.main=cex.main,maxsize=pntscalar,
                           cexZ1=cexZ1,
                           legend=bublegend,
@@ -820,8 +824,8 @@ SSplotComps <-
                                      "and open bubbles are negative residuals",
                                      "(observed < expected).")
                   }
-                  file <- paste(filenamestart,"yearresids_",
-                                filename_fltsexmkt,"_",aalyr,pagetext,".png",sep="")
+                  file <- paste0(filenamestart,"yearresids_",
+                                 filename_fltsexmkt,"_",aalyr,pagetext,".png")
                   plotinfo <- pngfun(file=file, caption=caption)
                   tempfun5()
                   dev.off() # close device if print
@@ -845,7 +849,8 @@ SSplotComps <-
               ilenbin <- goodbins[ibin]
               abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
               if(nrow(abindbase)>0){ # check for data associated with this bin
-                caption <- paste("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f],sep="")
+                sexvec <- abindbase$sex
+                caption <- paste0("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f])
                 if(mainTitle) {
                   ptitle <- caption
                 } else {
@@ -857,8 +862,10 @@ SSplotComps <-
                                 sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                 nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
                                 bars=bars,linepos=(1-datonly)*linepos,
-                                main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
-                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,...)
+                                main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
+                                maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
+                                fixdims=fixdims,ipage=ipage,scalebins=scalebins,
+                                sexvec=sexvec, ...)
                 }
                 if(plot) tempfun6(ipage=0,...)
                 if(print){
@@ -866,11 +873,11 @@ SSplotComps <-
                   for(ipage in 1:npages){
                     pagetext <- ""
                     if(npages>1){
-                      pagetext <- paste("_page",ipage,sep="")
-                      caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+                      pagetext <- paste0("_page",ipage)
+                      caption <- paste0(caption, " (plot ",ipage," of ",npages,")")
                     }
-                    file <- paste(filenamestart,filename_fltsexmkt,
-                                  "_length",ilenbin,labels[7],pagetext,".png",sep="")
+                    file <- paste0(filenamestart,filename_fltsexmkt,
+                                  "_length",ilenbin,labels[7],pagetext,".png")
                     plotinfo <- pngfun(file=file, caption=caption)
                     tempfun6(ipage=ipage,...)
                     dev.off() # close device if print
@@ -883,7 +890,7 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly & !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-          caption <- paste("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f], sep="")
+          caption <- paste0("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f])
           if(mainTitle) {
             ptitle <- caption
           } else {
@@ -992,7 +999,7 @@ SSplotComps <-
                                "models. <i>Can. J. Fish. Aquat. Sci.</i>",
                                "68: 1124-1138.</blockquote>")
             } # end test for datonly
-            
+
             # add caption to the plotinfo table (normally done by pngfun)
             plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
 
@@ -1252,7 +1259,7 @@ SSplotComps <-
             mktnames <- c("","(discards)","(retained)")
             namesvec <- paste(fleetnames[agg$f], mktnames[agg$mkt+1])
           }
-              
+
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
@@ -1609,7 +1616,7 @@ SSplotComps <-
       # subset data.frame for this partition group and subset of fleets of interest
       dbase_parts <- dbase_kind[dbase_kind$Part_group==j,]
       # new column combining fleet and partition
-      # where 3.1 is fleet=3, partition=1 
+      # where 3.1 is fleet=3, partition=1
       dbase_parts$FleetPart <- dbase_parts$Fleet + 0.1*dbase_parts$Part
       # table of info on each panel
       panel_table <- data.frame(FleetPart=sort(unique(dbase_parts$FleetPart)))
@@ -1620,7 +1627,7 @@ SSplotComps <-
       panel_table$Part <- round(10*(panel_table$FleetPart - panel_table$Fleet))
       # fleet name to use for each panel
       panel_table$Name <- fleetnames[panel_table$Fleet]
-      
+
       # check for multiple market categories in a fleet to plot separately
       max_n_mkt <- max(apply(table(panel_table$Fleet,
                                    panel_table$Part)>0, 1, sum))
@@ -1735,7 +1742,7 @@ SSplotComps <-
             }
             cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
           }
-          
+
           # determine bubble size and colors
           if(datonly){
             z <- dbase$Obs
