@@ -33,6 +33,9 @@
 #' re-run a subset of the cases in situations where the function was
 #' interupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
+#' @param SSversion SS version number. Currently only "3.24" or "3.30" are
+#' supported, either as character or numeric values
+#' (noting that numeric 3.30  = 3.3).
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models
@@ -75,7 +78,7 @@
 #' profile <- SS_profile(dir=mydir, # directory
 #'                       # "NatM" is a subset of one of the
 #'                       # parameter labels in control.ss_new
-#'                       model="ss3_safe",
+#'                       model="ss",
 #'                       masterctlfile="control.ss_new",
 #'                       newctlfile="control_modified.ss",
 #'                       string="steep",
@@ -112,8 +115,8 @@ function(
          usepar=FALSE, globalpar=FALSE, parfile=NULL,
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
-         model='ss3',extras="-nox",systemcmd=FALSE,saveoutput=TRUE,
-         overwrite=TRUE,whichruns=NULL,
+         model='ss', extras="-nox", systemcmd=FALSE, saveoutput=TRUE,
+         overwrite=TRUE, whichruns=NULL, SSversion="3.30",
          verbose=TRUE)
 {
   ################################################################################
@@ -137,9 +140,11 @@ function(
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
 
   # figure out name of executable based on 'model' input which may contain .exe
-  if(length(grep(".exe",tolower(model)))){
+  if(length(grep(".exe",tolower(model))) == 1){
+    # if input 'model' includes .exe then assume it's Windows and just use the name
     exe <- model
   }else{
+    # if 'model' doesn't include .exe then append it (for Windows computers only)
     exe <- paste(model,ifelse(OS=="Windows",".exe",""),sep="")
   }
   # check whether exe is in directory
@@ -150,13 +155,14 @@ function(
   }
 
   # figure out which line to change in control file
+  # if not using parfile, info still needed to set phase negative in control file
   if(is.null(linenum) & is.null(string))
     stop("You should input either 'linenum' or 'string' (but not both)")
   if(!is.null(linenum) & !is.null(string))
     stop("You should input either 'linenum' or 'string', but not both")
-  if(usepar){
+  if(usepar) { # if using parfile
     if(is.null(parlinenum) & is.null(parstring))
-      stop("Using par file. You should input either 'parlinenum' or 'parstring', but not both")
+      stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
     if(!is.null(parlinenum) & !is.null(parstring))
       stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
   }
@@ -202,8 +208,17 @@ function(
          " for initial value source from 0 (ctl file) to 1 (par file).\n")
   }
 
-  if(is.null(parfile)) parfile <- paste(model,'.par',sep='')
-  if(usepar) file.copy(parfile, "parfile_original_backup.sso")
+  if(is.null(parfile)){
+    # in 3.24, the par file name matched the executable
+    parfile <- paste0(model,'.par')
+    if(SSversion=="3.30" | SSversion==3.3){ # turns out 3.30 != "3.30" in R
+      # in 3.30, it should always be ss.par
+      parfile <- "ss.par"
+    }
+  }
+  if(usepar){
+    file.copy(parfile, "parfile_original_backup.sso")
+  }
 
   # run loop over profile values
   for(i in whichruns){
@@ -231,13 +246,18 @@ function(
           par <- readLines(parfile)
         }
         # find value
-        if(!is.null(parstring)) parlinenum <- grep(parstring,par,fixed=TRUE)+1
-        if(length(parlinenum)==0) stop("Problem with input parstring = '",parstring,"'",sep="")
+        if(!is.null(parstring)){
+          parlinenum <- grep(parstring,par,fixed=TRUE)+1
+        }
+        if(length(parlinenum)==0){
+          stop("Problem with input parstring = '",parstring,"'",sep="")
+        }
         parline <- par[parlinenum]
         parval <- as.numeric(parline)
-        if(is.na(parval))
+        if(is.na(parval)){
           stop("Problem with parlinenum or parstring for par file.\n",
                "line as read: ", parline)
+        }
         # replace value
         par[parlinenum] <- profilevec[i]
         # add new header
@@ -246,8 +266,8 @@ function(
         par <- c(par,"#",note)
         print(note)
         # write new file
-        writeLines(par, paste("ss3.par_input_",i,".ss",sep=""))
-        writeLines(par, "ss3.par")
+        writeLines(par, paste0(parfile, "_input_",i,".ss"))
+        writeLines(par, parfile)
       }
       if(file.exists(stdfile)) file.remove(stdfile)
       if(file.exists('Report.sso')) file.remove('Report.sso')
@@ -278,6 +298,7 @@ function(
         file.copy('Report.sso',paste('Report',i,".sso",sep=""),overwrite=overwrite)
         file.copy('CompReport.sso',paste('CompReport',i,".sso",sep=""),overwrite=overwrite)
         file.copy('covar.sso',paste('covar',i,".sso",sep=""),overwrite=overwrite)
+        file.copy('warning.sso',paste('warning',i,".sso",sep=""),overwrite=overwrite)
         file.copy('admodel.hes',paste('admodel',i,".hes",sep=""),overwrite=overwrite)
         file.copy(parfile,paste(model,'.par_',i,'.sso',sep=""),overwrite=overwrite)
       }

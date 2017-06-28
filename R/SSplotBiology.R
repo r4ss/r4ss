@@ -146,7 +146,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   Growth_Parameters <- replist$Growth_Parameters
 
   # get any derived quantities related to growth curve uncertainty
-  Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$LABEL),]
+  Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$Label),]
   if(nrow(Grow_std)==0){
     Grow_std <- NULL
   }else{
@@ -157,7 +157,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     Grow_std$sex <- NA
     Grow_std$age <- NA
     for(irow in 1:nrow(Grow_std)){
-      tmp <- strsplit(Grow_std$LABEL[irow], split="_")[[1]]
+      tmp <- strsplit(Grow_std$Label[irow], split="_")[[1]]
       Grow_std$pattern[irow] <- as.numeric(tmp[3])
       Grow_std$sex_char[irow] <- tmp[4]
       Grow_std$age[irow] <- as.numeric(tmp[6])
@@ -165,7 +165,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
     Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
     #### now it should look something like this:
-    ##                                   LABEL Value   StdDev pattern sex_char sex age
+    ##                                   Label Value   StdDev pattern sex_char sex age
     ## Grow_std_1_Fem_A_5   Grow_std_1_Fem_A_5     0 1.772300       1      Fem   1   5
     ## Grow_std_1_Fem_A_10 Grow_std_1_Fem_A_10     0 1.039320       1      Fem   1  10
   }
@@ -1096,7 +1096,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   if(14 %in% subplots){
     # general function to work for any parameter
     timeVaryingParmFunc <- function(parmlabel){
-      plot(MGparmAdj$Year, MGparmAdj[[parmlabel]],
+      plot(MGparmAdj$Yr, MGparmAdj[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected
@@ -1107,7 +1107,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
         parmlabel <- names(MGparmAdj)[icol]
         parmvals  <- MGparmAdj[,icol]
         # check for changes
-        if(length(unique(parmvals)) > 1){
+        if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
           # make plot
           if(plot) timeVaryingParmFunc(parmlabel)
           if(print){

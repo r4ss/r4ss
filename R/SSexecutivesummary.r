@@ -46,16 +46,18 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 
 	# Funtion to calculate confidence intervals
 	getDerivedQuant.fn <- function(dat, label, yrs, quant, divisor=1) {
-    	allYrs <- suppressWarnings(as.numeric(substring(dat$LABEL[substring(dat$LABEL,1,3)=="SPB"],5,8)))
+          # modify old header to new value
+        names(dat)[names(dat)=="LABEL"] <- "Label"
+    	allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label,1,3)=="SPB"],5,8)))
     	allYrs <- allYrs[!is.na(allYrs)]
-    	finalYr <- as.numeric(substring(dat$LABEL[substring(dat$LABEL,1,8)=="OFLCatch"],10,13))[1]
+    	finalYr <- as.numeric(substring(dat$Label[substring(dat$Label,1,8)=="OFLCatch"],10,13))[1]
     	if(is.null(yrs)) {
     	    yrs <- allYrs
     	}
     	if(yrs[1]<0) {
     	    yrs <- (finalYr+yrs):finalYr
     	}
-    	out <- dat[dat$LABEL%in%paste(label,yrs,sep="_"),]
+    	out <- dat[dat$Label%in%paste(label,yrs,sep="_"),]
     	out.value <- out$Value <- out$Value/divisor
     	out$StdDev <- out$StdDev/divisor
     	if(label=="Recr") {   #use lognormal
@@ -287,12 +289,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table d 1-SPR (%)
 	#======================================================================
-		spr_type = strsplit(base[grep("SPR_ratio_basis",base)]," ")[[1]][3]
-		if (spr_type != "1-SPR") { 
-			print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
-			print(paste("The SPR is being reported as", spr_type, "."))
-	    	print("West coast groundfish assessments typically report 1-SPR in the executive summary") 
-	   	 	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
+		spr_type = strsplit(base[grep("SPR_report_basis",base)]," ")[[1]][3]
+		#if (spr_type != "1-SPR") { 
+		#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
+		#	print(paste("The SPR is being reported as", spr_type, "."))
+	    #	print("West coast groundfish assessments typically report 1-SPR in the executive summary") 
+	   	#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
 
 		adj.spr = Get.Values(dat = base, label = "SPRratio" , hist, quant)
 		f.value = Get.Values(dat = base, label = "F" , hist, quant)
@@ -491,20 +493,37 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
 		if (check != 2){
 			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+			singlesex = ifelse(length(base[grep(paste("1 1 2 1 1 1 2", startyr,sep=" "),base)]) == 0, TRUE, FALSE)
 			
-			natage.f = natage.m = 0
-			for(a in 1:nareas){
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
-				natage.f = natage.f + t(temp) 
-				temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][13:(13+maxAge)]), x = startyr:endyr)
-				natage.m = natage.m + t(temp) 
+			if (singlesex) {
+				natage.f = natage.m = 0
+				for(a in 1:nareas){
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.f = natage.f + t(temp) 
+				}
+				
+				colnames(natage.f) = 0:maxAge
+				rownames(natage.f) <- startyr:endyr 
+		
+				write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
 			}
-			
-			colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
-			rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
-	
-			write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
-			write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))			
+
+			if (!singlesex) {
+				natage.f = natage.m = 0
+				for(a in 1:nareas){
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.f = natage.f + t(temp) 
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					natage.m = natage.m + t(temp) 
+				}
+				
+				colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
+				rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+		
+				write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
+				write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
+			}
+					
 		}
 
 	}

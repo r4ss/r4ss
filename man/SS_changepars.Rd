@@ -74,14 +74,25 @@ Used by \code{\link{SS_profile}} and the \pkg{ss3sim} package.
 \examples{
 
 \dontrun{
-SS_changepars(dir='Y:/ss/SSv3.03a/Simple/',ctlfile='Control.SS_New',
-              strings=c('SR_steep','SR_sigmaR'),newvals=c(.35,.6))
-# [1] wrote new file to Control_Modified.SS
-#    oldvals newvals oldphase newphase     comment
-# 1 0.609048    0.35        4       -4  # SR_steep
-# 2 0.600000    0.60       -4       -4 # SR_sigmaR
+SS_changepars(dir='C:/ss/SSv3.30.03.05_May11/Simple - Copy',
+              strings=c("steep","sigmaR"), newvals=c(.4,.6))
+## parameter names in control file matching input vector 'strings' (n=2):
+## [1] "SR_BH_steep" "SR_sigmaR"  
+## These are the ctl file lines as they currently exist:
+##     LO HI     INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr
+## 95 0.2  1 0.613717   0.7    0.05  1     4       0       0         0         0
+## 96 0.0  2 0.600000   0.8    0.80  0    -4       0       0         0         0
+##    dev_stddev Block Block_Fxn       Label Linenum
+## 95          0     0         0 SR_BH_steep      95
+## 96          0     0         0   SR_sigmaR      96
+## line numbers in control file (n=2):
+## [1] 95 96
+## 
+## wrote new file to control_modified.ss with the following changes:
+##    oldvals newvals oldphase newphase oldlos newlos oldhis newhis       comment
+## 1 0.613717     0.4        4       -4    0.2    0.2      1      1 # SR_BH_steep
+## 2 0.600000     0.6       -4       -4    0.0    0.0      2      2   # SR_sigmaR
 }
-
 }
 \seealso{
 \code{\link{SS_parlines}}, \code{\link{SS_profile}}

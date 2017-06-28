@@ -68,7 +68,7 @@ SSplotDiscard <-
   # if discards exist
   if(!is.na(discard) && nrow(discard)>0){
     if(fleets[1]=="all") fleets <- 1:nfishfleets
-    for(ifleet in intersect(fleets,unique(discard$FleetNum))){
+    for(ifleet in intersect(fleets,unique(discard$Fleet))){
       # table available beginning with SSv3.20 has fleet-specific discard specs
       if(!is.null(discard_spec)){
         # check to make sure fleet is represented in the table
@@ -78,7 +78,7 @@ SSplotDiscard <-
         # get degrees of freedom
         DF_discard <- discard_spec$errtype[discard_spec$Fleet==ifleet]
       }
-      usedisc <- discard[discard$FleetNum==ifleet,]
+      usedisc <- discard[discard$Fleet==ifleet,]
       FleetName <- fleetnames[ifleet]
 
       yr <- as.numeric(usedisc$Yr)

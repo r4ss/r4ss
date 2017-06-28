@@ -69,33 +69,35 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
 
     if(verbose & !is.null(key)) cat("getting files with key =",key,"\n")
 
-    repfilename <- paste("Report",key2,".sso",sep="")
+    repFileName <- paste("Report",key2,".sso",sep="")
     covarname <- paste("covar",key2,".sso",sep="")
+    warnFileName <- paste("warning",key2,".sso",sep="")
     if(getcomp){
-      compfilename <- paste("CompReport",key2,".sso",sep="")
+      compFileName <- paste("CompReport",key2,".sso",sep="")
       NoCompOK <- FALSE
     }else{
-      compfilename <- "nothing"
+      compFileName <- "nothing"
       NoCompOK <- TRUE
     }
 
     # mycovar = TRUE/FALSE based on presence of file and user input
     mycovar <- file.exists(file.path(mydir,covarname)) & getcovar
     
-    fullfile <- paste(mydir,repfilename,sep="")
+    fullfile <- paste(mydir,repFileName,sep="")
     if(verbose) cat("reading output from",fullfile,"\n")
     repfilesize <- file.info(fullfile)$size
 
     output <- NA
     if(!is.na(repfilesize) && repfilesize>0){ # if there's a non-empty file
-      output <- SS_output(dir=mydir, repfile=repfilename, covarfile=covarname,
-                            compfile=compfilename, NoCompOK=NoCompOK, printstats=FALSE,
-                            covar=mycovar, forecast=forecast, verbose=FALSE, ncols=ncols)
+      output <- SS_output(dir=mydir, repfile=repFileName, covarfile=covarname,
+                          compfile=compFileName, NoCompOK=NoCompOK,
+                          warnfile=warnFileName, printstats=FALSE,
+                          covar=mycovar, forecast=forecast, verbose=FALSE, ncols=ncols)
       if(is.null(output)){
         # for some reason covarfile exists, but is old so SS_output rejects
         cat("output==NULL so trying again with covar=FALSE\n")
-        output <- SS_output(dir=mydir, repfile=repfilename, covarfile=covarname,
-                              compfile=compfilename, NoCompOK=NoCompOK, printstats=FALSE,
+        output <- SS_output(dir=mydir, repfile=repFileName, covarfile=covarname,
+                              compfile=compFileName, NoCompOK=NoCompOK, printstats=FALSE,
                               covar=FALSE, forecast=forecast, verbose=FALSE, ncols=ncols)
       }
       output$key <- as.character(key)

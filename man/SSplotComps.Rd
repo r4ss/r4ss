@@ -9,22 +9,23 @@ SSplotComps(replist, subplots = c(1:21, 24), kind = "LEN", sizemethod = 1,
   fleets = "all", fleetnames = "default", sexes = "all", yupper = 0.4,
   datonly = FALSE, samplesizeplots = TRUE, compresidplots = TRUE,
   bub = FALSE, showyears = TRUE, showsampsize = TRUE, showeffN = TRUE,
-  sampsizeline = FALSE, effNline = FALSE, minnbubble = 3,
-  pntscalar = NULL, scalebubbles = FALSE, cexZ1 = 1.5, bublegend = TRUE,
-  colvec = c(rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7), rgb(0.1, 0.1, 0.1, 0.7)),
-  linescol = c(rgb(0, 0.5, 0, 0.7), rgb(0.8, 0, 0, 0.7), rgb(0, 0, 0.8, 0.7)),
-  axis1 = NULL, axis2 = NULL, blue = rgb(0, 0, 1, 0.7), red = rgb(1, 0,
-  0, 0.7), pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10,
-  res = 300, plotdir = "default", cex.main = 1, linepos = 1,
-  fitbar = FALSE, do.sqrt = TRUE, smooth = TRUE, cohortlines = c(),
-  labels = c("Length (cm)", "Age (yr)", "Year", "Observed sample size",
-  "Effective sample size", "Proportion", "cm", "Frequency", "Weight", "Length",
-  "(mt)", "(numbers x1000)", "Stdev (Age) (yr)", "Conditional AAL plot, "),
-  printmkt = TRUE, printsex = TRUE, maxrows = 6, maxcols = 6,
-  maxrows2 = 2, maxcols2 = 4, rows = 1, cols = 1, andre_oma = c(3, 0,
-  3, 0), andrerows = 3, fixdims = TRUE, fixdims2 = FALSE,
-  maxneff = 5000, verbose = TRUE, scalebins = FALSE, addMeans = TRUE,
-  mainTitle = TRUE, ...)
+  aggregates_by_mkt = FALSE, sampsizeline = FALSE, effNline = FALSE,
+  minnbubble = 3, pntscalar = NULL, scalebubbles = FALSE, cexZ1 = 1.5,
+  bublegend = TRUE, colvec = c(rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7),
+  rgb(0.1, 0.1, 0.1, 0.7)), linescol = c(rgb(0, 0.5, 0, 0.7), rgb(0.8, 0, 0,
+  0.7), rgb(0, 0, 0.8, 0.7)), axis1 = NULL, axis2 = NULL, blue = rgb(0, 0,
+  1, 0.7), red = rgb(1, 0, 0, 0.7), pwidth = 6.5, pheight = 5,
+  punits = "in", ptsize = 10, res = 300, plotdir = "default",
+  cex.main = 1, linepos = 1, fitbar = FALSE, do.sqrt = TRUE,
+  smooth = TRUE, cohortlines = c(), labels = c("Length (cm)", "Age (yr)",
+  "Year", "Observed sample size", "Effective sample size", "Proportion", "cm",
+  "Frequency", "Weight", "Length", "(mt)", "(numbers x1000)",
+  "Stdev (Age) (yr)", "Conditional AAL plot, "), printmkt = TRUE,
+  printsex = TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2,
+  maxcols2 = 4, rows = 1, cols = 1, andre_oma = c(3, 0, 3, 0),
+  andrerows = 3, fixdims = TRUE, fixdims2 = FALSE, maxneff = 5000,
+  verbose = TRUE, scalebins = FALSE, addMeans = TRUE, mainTitle = TRUE,
+  ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -73,6 +74,9 @@ plots.}
 \item{showsampsize}{add sample sizes to plot}
 
 \item{showeffN}{add effective sample sizes to plot}
+
+\item{aggregates_by_mkt}{separate plots of aggregates across years
+into different plots for each market category (retained, discarded)?}
 
 \item{sampsizeline}{show line for input sample sizes on top of conditional
 age-at-length plots (TRUE/FALSE, still in development)}

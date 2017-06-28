@@ -4,9 +4,8 @@
 \alias{SS_RunJitter}
 \title{Iteratively apply the jitter option in SS}
 \usage{
-SS_RunJitter(mydir, model = "ss3",
-  extras = "-nohess -cbs 500000000 -gbs 500000000", Njitter, Intern = TRUE,
-  systemcmd = FALSE, printlikes = TRUE)
+SS_RunJitter(mydir, model = "ss", extras = "-nohess", Njitter,
+  Intern = TRUE, systemcmd = FALSE, printlikes = TRUE)
 }
 \arguments{
 \item{mydir}{Directory where model files are located}
@@ -46,7 +45,7 @@ in the format Report1.sso, Report2.sso, etc.
 
     #### Run jitter using this function
     mydir <- RunFile
-    extras <- "-nohess -cbs 500000000 -gbs 500000000"
+    extras <- "-nohess"
     model <- "ss3"
     Njitter <- 25
 
@@ -54,6 +53,7 @@ in the format Report1.sso, Report2.sso, etc.
                  Njitter=Njitter, Intern=TRUE)
 
     #### Read in results using other r4ss functions
+    # (note that un-jittered model can be read using keyvec=0:Njitter)
     profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
     # summarize output
     profilesummary <- SSsummarize(profilemodels)

@@ -219,7 +219,7 @@ SSplotPars <-
     partable <- partable[,1:15]
     temp <- as.character(partable[1,])
     # this command was necessary for some intermediate version of SS (but I forget which)
-    #temp <- c(temp[1:12],"PR_type_code",temp[13:14])
+    #temp <- c(temp[1:12],"Pr_type_code",temp[13:14])
     names(partable) <- temp
     partable <- partable[-1,]
     rownames(partable) <- 1:nrow(partable)
@@ -230,7 +230,7 @@ SSplotPars <-
     partable[partable=="_"] <- NA
     partable$Active_Cnt <- as.numeric(as.character(partable$Active_Cnt))
     partable$Label <- as.character(partable$Label)
-    for(i in (1:ncol(partable))[!names(partable) %in% c("Label","Status","PR_type")] ){
+    for(i in (1:ncol(partable))[!names(partable) %in% c("Label","Status","Pr_type")] ){
       partable[,i] <- as.numeric(as.character(partable[,i]))
     }
   }
@@ -343,7 +343,7 @@ SSplotPars <-
 
     Pmin <- parline$Min
     Pmax <- parline$Max
-    Ptype <- parline$PR_type
+    Ptype <- parline$Pr_type
     Psd <- parline$Pr_SD
     Pr <- parline$Prior
 

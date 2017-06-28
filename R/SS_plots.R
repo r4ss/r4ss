@@ -909,10 +909,10 @@ SS_plots <-
                       ptsize=ptsize, res=res,
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        if(!is.null(plotInfoTable))
-          plotInfoTable$category[plotInfoTable$category=="Comp"] <- "CompDat"
-        flush.console()
       } # end conditional data plots
+      if(!is.null(plotInfoTable))
+        plotInfoTable$category[plotInfoTable$category=="Comp"] <- "CompDat"
+      flush.console()
     } # end if data plot
 
     ##########################################
@@ -1087,7 +1087,7 @@ SS_plots <-
     } #end if igroup in plot or print
 
     ##########################################
-    # Fancis and Punt conditional age-at-length comp fits
+    # Francis and Punt conditional age-at-length comp fits
     #
     igroup <- 19
     if(igroup %in% plot){

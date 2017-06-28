@@ -6,7 +6,7 @@
 \usage{
 SSMethod.Cond.TA1.8(fit, fleet, part = 0:2, seas = NULL, plotit = TRUE,
   printit = TRUE, maxpanel = 1000, FullDiagOut = FALSE,
-  ShowVersionB = FALSE)
+  ShowVersionB = FALSE, fleetnames = NULL)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -36,6 +36,10 @@ panels of Fig. 4 in Francis (2011).}
 \item{FullDiagOut}{Print full diagnostics?}
 
 \item{ShowVersionB}{Report the Version B value in addition to the default?}
+
+\item{fleetnames}{Vector of alternative fleet names to draw from for
+plot titles and captions. It should have length equal to the number
+of fleets in the model, not the number of fleets considered in this function.}
 }
 \description{
 Uses an extension of method TA1.8 (described in Appendix A of Francis, 2011)

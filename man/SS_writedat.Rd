@@ -4,7 +4,8 @@
 \alias{SS_writedat}
 \title{write data file}
 \usage{
-SS_writedat(datlist, outfile, overwrite = FALSE, verbose = TRUE)
+SS_writedat(datlist, outfile, overwrite = FALSE, faster = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{datlist}{List object created by \code{\link{SS_readdat}}.}
@@ -12,6 +13,9 @@ SS_writedat(datlist, outfile, overwrite = FALSE, verbose = TRUE)
 \item{outfile}{Filename for where to write new data file.}
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
+
+\item{faster}{Speed up writing by writing length and age comps without aligning
+the columns (by using write.table instead of print.data.frame)}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }
@@ -26,5 +30,5 @@ created using \code{\link{SS_readdat}}
 \code{\link{SS_writedat}}
 }
 \author{
-Ian Taylor, Yukio Takeuchi
+Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 }

@@ -14,8 +14,9 @@ PinerPlot(summaryoutput, plot = TRUE, print = FALSE,
   cex.total = 1.5, xlim = "default", ymax = "default", xaxs = "r",
   yaxs = "r", type = "o", legend = TRUE, legendloc = "topright",
   pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, plotdir = NULL, verbose = TRUE, fleetgroups = NULL,
-  likelihood_type = "raw_times_lambda", minfraction = 0.01)
+  cex.main = 1, plotdir = NULL, add_cutoff = FALSE, verbose = TRUE,
+  fleetgroups = NULL, likelihood_type = "raw_times_lambda",
+  minfraction = 0.01)
 }
 \arguments{
 \item{summaryoutput}{List created by the function

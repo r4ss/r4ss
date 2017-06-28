@@ -7,14 +7,18 @@
 #' @param datlist List object created by \code{\link{SS_readdat}}.
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
+#' @param faster Speed up writing by writing length and age comps without aligning
+#' the columns (by using write.table instead of print.data.frame)
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor, Yukio Takeuchi
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
 #' @seealso \code{\link{SS_makedatlist}}, \code{\link{SS_readstarter}},
 #' \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 #' \code{\link{SS_writedat}}
-SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
+#'
+SS_writedat <- function(datlist, outfile, overwrite=FALSE,
+                        faster=FALSE, verbose=TRUE){
   # function to write Stock Synthesis data files
   if(verbose) cat("running SS_writedat\n")
 
@@ -25,7 +29,7 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
   ## on.exit({if(sink.number()>0) sink(); close(zz)})
-  on.exit({if(sink.number()>0) sink()})
+  #on.exit({if(sink.number()>0) sink()})
 
   if(file.exists(outfile)){
     if(!overwrite){
@@ -42,75 +46,155 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
 
   if(verbose) cat("opening connection to",outfile,"\n")
   zz <- file(outfile, open="at")
-  sink(zz)
+  # sink(zz)
+  on.exit({close(zz);options(width=oldwidth,max.print=oldmax.print)})
+
+#  wl <- function(name,comment=NULL){
+#    # simple function to clean up many repeated commands
+#    value = datlist[names(datlist)==name]
+#    if(is.null(comment)){
+#      writeLines(paste(value," #_",name,sep="",collapse="_"))
+#    }else{
+#      writeLines(paste(value,comment))
+#    }
+#  }
+
   wl <- function(name,comment=NULL){
     # simple function to clean up many repeated commands
     value = datlist[names(datlist)==name]
     if(is.null(comment)){
-      writeLines(paste(value," #_",name,sep="",collapse="_"))
+      writeLines(paste(value," #_",name,sep="",collapse="_"),con=zz)
     }else{
-      writeLines(paste(value,comment))
+      if(length(grep(comment,pattern="^#"))!=0){
+        writeLines(paste(value,comment),con=zz)
+      }else{
+        writeLines(paste(value," #_",comment,sep="",collapse="_"),con=zz)
+      }
     }
   }
 
-  #### this function isn't being used at the moment
-  ## wl.vector <- function(name,comment=NULL){
-  ##   # simple function to clean up many repeated commands
-  ##   value = datlist[names(datlist)==name]
-  ##   if(is.null(comment)){
-  ##     writeLines(paste(paste(value,collapse=" ")," #_",name,sep=""))
-  ##   }else{
-  ##     writeLines(paste(paste(value,collapse=" "),comment))
-  ##   }
-  ## }
+   wl.vector <- function(name,comment=NULL,collapse=NULL){
+     # simple function to clean up many repeated commands
+     value = datlist[names(datlist)==name][[1]]
+     if(is.null(collapse))collapse<-" "
+     if(is.null(comment)){
+       writeLines(paste(paste(value,collapse=collapse)," #_",name,sep=""),con=zz)
+ #      write.table(file=zz,x=t(value),append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+     }else{
+       writeLines(paste(paste(value,collapse=collapse),comment),con=zz)
+ #      write.table(file=zz,x=t(value),append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+     }
+   }
 
-  printdf <- function(dataframe){
-    # function to print data frame with hash mark before first column name
-    names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-    print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
-   # write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
-  #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
+  wl.list<-function(name,comment=NULL,header=NULL){
+    if(!is.null(header)){
+      writeLines(paste0("#_",header),con=zz)
+    }
+    value = datlist[names(datlist)==name][[1]]
+    value1<-sapply(value, function(x){paste(paste(x),collapse=" ")},
+                   simplify=TRUE)
+    writeLines(value1,con=zz)
   }
 
+
+#  printdf <- function(dataframe){
+#    # function to print data frame with hash mark before first column name
+#    names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
+#    if(faster){
+#      #     writeLines(paste0("#_", paste(names(datframe), collapse=" ")))
+#      write.table(dataframe,file=zz, append=TRUE, col.names=TRUE, row.names=FALSE, quote=FALSE)
+#    }else{
+#      print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
+#    }
+#    ## other options considered by Yukio in 2016 revisions
+#    # write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+#    # write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
+#  }
+
+  printdf <- function(dataframe,header=TRUE,headerLine=NA){
+    # function to print data frame with hash mark before first column name
+    if(is.character(dataframe)){
+      tmp<-datlist[names(datlist)==dataframe]
+      if(length(tmp)>0){
+        dataframe<-tmp[[1]]
+      }else{
+        dataframe<-NULL
+      }
+    }
+    if(!is.null(dataframe)){
+      if(header){
+        names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
+        writeLines(paste(names(dataframe),collapse="\t"),con=zz)
+      }
+      if(!is.na(headerLine))xxx<-2
+      if(!is.null(rownames(dataframe))){
+        rownames(dataframe)<-sapply(rownames(dataframe),function(z){ifelse(length(grep(x=z,pattern="^#"))==1,z,paste0("#_",z))})
+        dataframe$comments<-rownames(dataframe)
+      }
+      #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
+      #                 row.names=FALSE,col.names=FALSE)
+      if(faster){
+      #     writeLines(paste0("#_", paste(names(datframe), collapse=" ")))
+        write.table(dataframe,file=zz, append=TRUE, col.names=TRUE, row.names=FALSE, quote=FALSE)
+      }else{
+        gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
+                       rownames=FALSE,colnames=FALSE,digits=6)
+      #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
+      }
+    }
+  }
+  ## Function copied from SS_writectl3.24
+  writeComment<-function(text,...){
+    if(length(grep(x=text,pattern="^#"))!=length(text))text<-paste("#_",text,sep="")
+    writeLines(text=text,con=zz,...)
+  }
+
+
   # write a header
-  writeLines("#C data file created using the SS_writedat function in the R package r4ss")
-  writeLines(paste("#C should work with SS version:",datlist$SSversion))
-  writeLines(paste("#C file write time:",Sys.time()))
-  writeLines("#")
+  writeComment("#C data file created using the SS_writedat function in the R package r4ss")
+  writeComment(paste("#C should work with SS version:",datlist$SSversion))
+  writeComment(paste("#C file write time:",Sys.time()))
+  writeComment("#")
 
   # write the contents
   wl("styr")
   wl("endyr")
   wl("nseas")
-  writeLines(paste(paste(datlist$months_per_seas,collapse=" "),"#_months_per_seas"))
+  wl.vector("months_per_seas",comment="#_months_per_seas")
   wl("spawn_seas")
   wl("Nfleet")
   wl("Nsurveys")
   wl("N_areas")
-  writeLines(paste(paste(datlist$fleetnames,collapse="%"),"#_fleetnames"))
-  writeLines(paste(paste(datlist$surveytiming,collapse=" "),"#_surveytiming_in_season"))
-  writeLines(paste(paste(datlist$areas,collapse=" "),"#_area_assignments_for_each_fishery_and_survey"))
-  writeLines(paste(paste(datlist$units_of_catch,collapse=" "),"#_units of catch:  1=bio; 2=num"))
-  writeLines(paste(paste(datlist$se_log_catch,collapse=" "),"#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3"))
+  #writeLines(paste(paste(datlist$fleetnames,collapse="%"),"#_fleetnames"))
+  wl.vector("fleetnames",collapse="%",comment="#_fleetnames")
+  #writeLines(paste(paste(datlist$surveytiming,collapse=" "),"#_surveytiming_in_season"))
+  wl.vector("surveytiming",comment="#_surveytiming_in_season")
+ # writelines(paste(paste(datlist$areas,collapse=" "),"#_area_assignments_for_each_fishery_and_survey"))
+  wl.vector("areas",comment="#_area_assignments_for_each_fishery_and_survey")
+ # writeLines(paste(paste(datlist$units_of_catch,collapse=" "),"#_units of catch:  1=bio; 2=num"))
+  wl.vector("units_of_catch",comment="#_units of catch:  1=bio; 2=num")
+ # writeLines(paste(paste(datlist$se_log_catch,collapse=" "),"#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3"))
+  wl.vector("se_log_catch",comment="#_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3")
   wl("Ngenders")
   wl("Nages")
-  writeLines(paste(paste(datlist$init_equil,collapse=" "),"#_init_equil_catch_for_each_fishery"))
+ # writeLines(paste(paste(datlist$init_equil,collapse=" "),"#_init_equil_catch_for_each_fishery"))
+  wl.vector("init_equil",comment="#_init_equil_catch_for_each_fishery")
   wl("N_catch",comment="#_N_lines_of_catch_to_read")
   if(!is.null(datlist$catch)) printdf(datlist$catch)
 
   # write index info
   wl("N_cpue")
   if(datlist$N_cpue>0){
-    cat("#_Units:  0=numbers; 1=biomass; 2=F\n")
-    cat("#_Errtype:  -1=normal; 0=lognormal; >0=T\n")
-    cat("#_Fleet Units Errtype\n")
+    writeComment("#_Units:  0=numbers; 1=biomass; 2=F\n")
+    writeComment("#_Errtype:  -1=normal; 0=lognormal; >0=T\n")
+    writeComment("#_Fleet Units Errtype\n")
     printdf(datlist$CPUEinfo)
     printdf(datlist$CPUE)
   }
   # wl("discard_units")
   wl("N_discard_fleets")
-  writeLines("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
-  writeLines("#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal")
+  writeComment("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
+  writeComment("#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal")
   if(!is.null(datlist$discard_fleet_info)) printdf(datlist$discard_fleet_info)
   wl("N_discard")
   if(!is.null(datlist$discard_data)) printdf(datlist$discard_data)
@@ -128,26 +212,36 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   }
   if(datlist$lbin_method==3){
     wl("N_lbinspop")
-    writeLines("#_lbin_vector_pop")
-    writeLines(paste(datlist$lbin_vector_pop,collapse=" "))
+    writeComment("#_lbin_vector_pop")
+ #   writeLines(paste(datlist$lbin_vector_pop,collapse=" "))
+    wl.vector("lbin_vector_pop")
   }
   wl("comp_tail_compression")
   wl("add_to_comp")
   wl("max_combined_lbin",comment="#_combine males into females at or below this bin number")
   wl("N_lbins")
-  writeLines("#_lbin_vector")
-  writeLines(paste(datlist$lbin_vector,collapse=" "))
+  writeComment("#_lbin_vector")
+  #writeLines(paste(datlist$lbin_vector,collapse=" "))
+  wl.vector("lbin_vector")
   wl("N_lencomp",comment="#_N_Length_comp_observations")
-  if(!is.null(datlist$lencomp)) printdf(datlist$lencomp)
+  if(!is.null(datlist$lencomp)){
+    printdf(datlist$lencomp)
+  }
   wl("N_agebins")
-  writeLines("#_agebin_vector")
-  writeLines(paste(datlist$agebin_vector,collapse=" "))
+  if(datlist$N_agebins>0){
+  writeComment("#_agebin_vector")
+ # writeLines(paste(datlist$agebin_vector,collapse=" "))
+ #  cat("L232 in SS_writedat\n");browser()
+    wl.vector("agebin_vector")
+  }
   wl("N_ageerror_definitions")
   if(!is.null(datlist$ageerror)) printdf(datlist$ageerror)
   wl("N_agecomp")
   wl("Lbin_method", comment="#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
   wl("max_combined_age", comment="#_combine males into females at or below this bin number")
-  if(!is.null(datlist$agecomp)) printdf(datlist$agecomp)
+  if(!is.null(datlist$agecomp)){
+    printdf(datlist$agecomp)
+  }
   wl("N_MeanSize_at_Age_obs")
   #    datlist$MeanSize_at_Age_obs2 <- matrix(datlist$N_MeanSize_at_Age_obs)
   if(!is.null(datlist$MeanSize_at_Age)) printdf(datlist$MeanSize_at_Age_obs)
@@ -158,25 +252,26 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   # write generalized size frequency data
   if(is.null(datlist$N_sizefreq_methods))datlist$N_sizefreq_methods<-0
   wl("N_sizefreq_methods")
-
-  writeLines(paste(paste(datlist$nbins_per_method,collapse=" "),"#_nbins_per_method"))
-
-  writeLines(paste(paste(datlist$units_per_method,collapse=" "),"#_units_per_method"))
-
-  writeLines(paste(paste(datlist$scale_per_method,collapse=" "),"#_scale_per_method"))
-
-  writeLines(paste(paste(datlist$mincomp_per_method,collapse=" "),"#_mincomp_per_method"))
-
-  writeLines(paste(paste(datlist$Nobs_per_method,collapse=" "),"#_Nobs_per_method"))
-  writeLines("#_Sizefreq bins")
+  if(datlist$N_sizefreq_methods>0){
+#  writeLines(paste(paste(datlist$nbins_per_method,collapse=" "),"#_nbins_per_method"))
+    wl.vector("nbins_per_method",comment="#_nbins_per_method")
+#  writeLines(paste(paste(datlist$units_per_method,collapse=" "),"#_units_per_method"))
+    wl.vector("units_per_method",comment="#_units_per_method"  )
+#  writeLines(paste(paste(datlist$scale_per_method,collapse=" "),"#_scale_per_method"))
+    wl.vector("scale_per_method",comment="#_scale_per_method")
+#  writeLines(paste(paste(datlist$mincomp_per_method,collapse=" "),"#_mincomp_per_method"))
+    wl.vector("mincomp_per_method",comment="#_mincomp_per_method")
+#  writeLines(paste(paste(datlist$Nobs_per_method,collapse=" "),"#_Nobs_per_method"))
+    wl.vector("Nobs_per_method",comment="#_Nobs_per_method")
+    writeComment("#_Sizefreq bins")
 #  wl("size_freq_bins_list")
-  writeLines("#_sizefreq_bins_list")
-  lapply(datlist$sizefreq_bins_list,FUN=function(line){writeLines(paste(line,collapse=" "))})
-
+    writeComment("#_sizefreq_bins_list")
+#  lapply(datlist$sizefreq_bins_list,FUN=function(line){writeLines(paste(line,collapse=" "))})
+    wl.list("sizefreq_bins_list")
 #  writeLines("#_Year season Fleet Gender Partition SampleSize <data> ")
-
+    lapply(datlist$sizefreq_data_list,printdf)
+  }
   # write tagging data
-  lapply(datlist$sizefreq_data_list,printdf)
   wl("do_tags")
   if(datlist$do_tags != 0){
     wl("N_tag_groups")
@@ -188,10 +283,10 @@ SS_writedat <- function(datlist,outfile,overwrite=FALSE,verbose=TRUE){
   }
   if(is.null(datlist$morphcomp_data))datlist$morphcomp_data<-0
   wl("morphcomp_data")
-  writeLines("#")
-  writeLines("999")
-  options(width=oldwidth,max.print=oldmax.print)
-  sink()
-  close(zz)
+  writeComment("#")
+  writeLines("999",con=zz)
+#  options(width=oldwidth,max.print=oldmax.print)
+#  sink()
+#  close(zz)
   if(verbose) cat("file written to",outfile,"\n")
 }

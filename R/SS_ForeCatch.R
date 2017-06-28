@@ -22,7 +22,7 @@
 ##' @examples
 ##'
 ##'   \dontrun{
-##'     # create table for next two hears based on 
+##'     # create table for next two years based on 
 ##'     SS_ForeCatch(base,               # object created by SS_output
 ##'                  yrs=2015:2016,      # years with fixed catch
 ##'                  average=TRUE,       # catch by fleet from average catch

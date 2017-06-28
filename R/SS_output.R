@@ -10,44 +10,39 @@
 #'
 #' @param dir Locates the directory of the files to be read in, double
 #' backslashes (or forwardslashes) and quotes necessary.
-#' @param model Name of the executable (leaving off the .exe).  Default="ss3"
+#' @param model Name of the executable (leaving off the .exe).
 #' @param repfile Name of the big report file (could be renamed by user).
-#' Default="Report.sso".
 #' @param compfile Name of the composition report file.
-#' Default="CompReport.sso".
-#' @param covarfile Name of the covariance output file.  Default="covar.sso".
-#' @param forefile Name of the forecast file.  Default="Forecast-report.sso".
+#' @param covarfile Name of the covariance output file.
+#' @param forefile Name of the forecast file.
 #' @param wtfile Name of the file containing weight at age data.
-#' Default="wtatage.ss_new".
+#' @param warnfile Name of the file containing warnings.
 #' @param ncols The maximum number of columns in files being read in.  If this
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
 #' small. It should be bigger than the maximum age + 10 and the number of years
-#' + 10. Default=200.
-#' @param forecast Read the forecast-report file? Default=TRUE.
-#' @param warn Read the Warning.sso file? Default=TRUE.
+#' + 10.
+#' @param forecast Read the forecast-report file?
+#' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
-#' correlations? Default=TRUE.
-#' @param readwt Read the weight-at-age file? Default=TRUE.
-#' @param checkcor Check for bad correlations? Default=TRUE.
+#' correlations?
+#' @param readwt Read the weight-at-age file?
+#' @param checkcor Check for bad correlations?
 #' @param cormax The specified threshold for defining high correlations.  A
-#' quantity with any correlation above this value is identified.  Default=0.95.
+#' quantity with any correlation above this value is identified.
 #' @param cormin The specified threshold for defining low correlations.  Only
 #' quantities with all correlations below this value are identified (to find
-#' variables that appear too independent from the model results). Default=0.01.
+#' variables that appear too independent from the model results).
 #' @param printhighcor The maximum number of high correlations to print to the
-#' R GUI. Default=10.
+#' R GUI.
 #' @param printlowcor The maximum number of low correlations to print to the R
-#' GUI. Default=10.
+#' GUI.
 #' @param verbose Return updates of function progress to the R GUI?
-#' Default=TRUE.
 #' @param printstats Print summary statistics about the output to the R GUI?
-#' Default=TRUE.
-#' @param hidewarn Hides some warnings output from the R GUI.  Default=FALSE.
+#' @param hidewarn Hides some warnings output from the R GUI.
 #' @param NoCompOK Allow the function to work without a CompReport file.
-#' Default=FALSE.
 #' @param aalmaxbinrange The largest length bin range allowed for composition
-#' data to be considered as conditional age-at-length data.  Default=4.
+#' data to be considered as conditional age-at-length data.
 #' @return Many values are returned. Complete list would be quite long, but
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
@@ -63,6 +58,7 @@ SS_output <-
   function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
+           warnfile="warning.sso",
            ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
@@ -398,9 +394,9 @@ SS_output <-
 
   # read warnings file
   if(warn){
-    warnname <- file.path(dir,"warning.sso")
+    warnname <- file.path(dir, warnfile)
     if(!file.exists(warnname)){
-      cat("warning.sso file not found\n")
+      cat(warnfile, "file not found\n")
       nwarn <- NA
       warn <- NA
     }else{
@@ -408,11 +404,12 @@ SS_output <-
       warnstring <- warn[grep("N warnings: ",warn)]
       if(length(warnstring)>0){
         nwarn <- as.numeric(strsplit(warnstring,"N warnings: ")[[1]][2])
-        textblock <- c(paste("were", nwarn, "warnings"),paste("was", nwarn, "warning"))[1+(nwarn==1)]
+        textblock <- c(paste("were", nwarn, "warnings"),
+                       paste("was", nwarn, "warning"))[1+(nwarn==1)]
         if(verbose) cat("Got warning file.\n",
                         " There", textblock, "in", warnname,"\n")
       }else{
-        cat("warning.sso file is missing the string 'N warnings'!\n")
+        cat(warnfile, "file is missing the string 'N warnings'!\n")
         nwarn <- NA
       }
     }
@@ -605,20 +602,40 @@ SS_output <-
 
       if(SS_versionNumeric >= 3.22){
         # new designation of ghost fleets from negative samp size to negative fleet
-        lendbase         <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used!="skip",]
-        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & compdbase$Used!="skip",]
-        agedbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & notconditional,]
-        condbase         <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used!="skip" & conditional,]
+        lendbase    <- compdbase[compdbase$Kind=="LEN"  &
+                                   compdbase$Used!="skip",]
+        sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
+                                   compdbase$Used!="skip",]
+        agedbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used!="skip" & notconditional,]
+        condbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used!="skip" & conditional,]
       }else{
         # older designation of ghost fleets from negative samp size to negative fleet
-        lendbase         <- compdbase[compdbase$Kind=="LEN"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-        sizedbase        <- compdbase[compdbase$Kind=="SIZE" & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)),]
-        agedbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & notconditional,]
-        condbase         <- compdbase[compdbase$Kind=="AGE"  & (compdbase$SuprPer=="Sup" | (!is.na(compdbase$N) & compdbase$N > 0)) & conditional,]
+        lendbase    <- compdbase[compdbase$Kind=="LEN"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+        sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+        agedbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                        notconditional,]
+        condbase    <- compdbase[compdbase$Kind=="AGE"  &
+                                   (compdbase$SuprPer=="Sup" |
+                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                        conditional,]
       }
-      ghostagedbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & notconditional,]
-      ghostcondbase    <- compdbase[compdbase$Kind=="AGE"  & compdbase$Used=="skip" & compdbase$SuprPer=="No" & conditional,]
-      ghostlendbase    <- compdbase[compdbase$Kind=="LEN"  & compdbase$Used=="skip" & compdbase$SuprPer=="No",]
+      ghostagedbase <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No" & notconditional,]
+      ghostcondbase <- compdbase[compdbase$Kind=="AGE"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No" & conditional,]
+      ghostlendbase <- compdbase[compdbase$Kind=="LEN"  &
+                                   compdbase$Used=="skip" &
+                                     compdbase$SuprPer=="No",]
       compdbase$Kind[compdbase$Kind=="L@A" & compdbase$Ageerr < 0] <- "W@A"
 
       # extra processing for sizedbase
@@ -744,13 +761,23 @@ SS_output <-
   stats$StartTime <- paste(as.character(matchfun2("StartTime",0,"StartTime",0,cols=1:6)),collapse=" ")
   stats$RunTime <- paste(as.character(matchfun2("StartTime",2,"StartTime",2,cols=4:9)),collapse=" ")
 
-  tempfiles  <- as.data.frame(rawrep[4:5,1:2],row.names = NULL)
+  # data return object to fill in various things
+  returndat <- list()
+
+  # input files
   tempfiles <- matchfun2("Data_File",0,"Control_File",0,cols=1:2)
   stats$Files_used <- paste(c(tempfiles[1,],tempfiles[2,]),collapse=" ")
-
+  returndat$Data_File <- tempfiles[1,2]
+  returndat$Control_File <- tempfiles[2,2]
+  
   # check warnings
   stats$Nwarnings <- nwarn
-  if(length(warn)>20) warn <- c(warn[1:20],paste("Note:",length(warn)-20,"additional lines truncated. Look in warning.sso file to see full list."))
+  if(length(warn)>20){
+    warn <- c(warn[1:20],paste("Note:",length(warn)-20,
+                               "additional lines truncated. Look in",
+                               warnfile,
+                               "file to see full list."))
+  }
   stats$warnings <- warn
 
   # likelihoods
@@ -850,7 +877,13 @@ SS_output <-
     for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
       parameters[,i] <- as.numeric(parameters[,i])
   }
-  rownames(parameters) <- parameters$Label
+
+  # fix for duplicate parameter labels in 3.30.03.03,
+  # not robust to more than 2 growth patterns but probably will be fixed soon
+  ParmLabels <- parameters$Label
+  ParmLabels[duplicated(ParmLabels)] <- paste0(ParmLabels[duplicated(ParmLabels)], "_2")
+  # end fix
+  rownames(parameters) <- ParmLabels
 
   # names of active parameters
   activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
@@ -1038,12 +1071,15 @@ SS_output <-
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
                    header=TRUE)
-  der <- der[der$LABEL!="Bzero_again",]
+  # make older SS output names match current SS output conventions
+  der <- df.rename(der, oldnames="LABEL", newnames="Label")
+
+  der <- der[der$Label!="Bzero_again",]
   der[der=="_"] <- NA
   der[der==""] <- NA
 
   # remove bad rows that may go away in future versions of SS 3.30 
-  test <- grep("Parm_dev_details", der$LABEL)
+  test <- grep("Parm_dev_details", der$Label)
   if(length(test)>0){
     der <- der[1:(min(test)-1),]
   }
@@ -1051,7 +1087,7 @@ SS_output <-
   for(i in 2:ncol(der)){
     der[,i] = as.numeric(der[,i])
   }
-  rownames(der) <- der$LABEL
+  rownames(der) <- der$Label
 
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
@@ -1059,6 +1095,9 @@ SS_output <-
   # time-varying parameters
   MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,
                          "selparm(Size)_By_Year_after_adjustments",-1,header=TRUE)
+  # make older SS output names match current SS output conventions
+  MGparmAdj <- df.rename(MGparmAdj, oldnames="Year", newnames="Yr")
+  # make values numeric
   if(nrow(MGparmAdj)>0){
     for(icol in 1:ncol(MGparmAdj)) MGparmAdj[,icol] <- as.numeric(MGparmAdj[,icol])
   }else{
@@ -1200,15 +1239,11 @@ SS_output <-
   for(i in 1:(ncol(recruit)-1)) recruit[,i] <- as.numeric(recruit[,i])
   # make older SS output names match current SS output conventions
   recruit <- df.rename(recruit,
-                       oldnames=c("year", "spawn_bio"),
-                       newnames=c("Yr",   "SpawnBio"))
+                       oldnames=c("year", "spawn_bio", "adjusted"),
+                       newnames=c("Yr", "SpawnBio", "bias_adjusted"))
 
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
-  vartune <- vartune[vartune$N > 0,]
-  vartune[,1] <- vartune[,21]
-  vartune <- vartune[,c(1,8,11,13,16,18)]
-  stats$index_variance_tuning_check <- vartune
 
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
@@ -1240,7 +1275,7 @@ SS_output <-
     # avoid NA warnings by removing #IND values
     lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
     for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
-    lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
+    lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   }else{
     # new in 3.30 is keyword at top
     lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
@@ -1250,7 +1285,23 @@ SS_output <-
       lenntune[,icol] <- as.numeric(lenntune[,icol])
     }
     ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
-    #lenntune$"HarEffN/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+    #lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+    lenntune$"HarMean(effN)/mean(inputN*Adj)" <-
+      lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+
+    # change name to make it clear what the harmonic mean is based on
+    lenntune <- df.rename(lenntune,
+                          oldnames=c("HarMean", "mean_inputN*Adj"),
+                          newnames=c("HarMean(effN)", "mean(inputN*Adj)"))
+
+    # drop distracting column
+    lenntune <- lenntune[ , names(lenntune)!="mean_effN"]
+    
+    # put recommendation and fleetnames at the end
+    #(probably a more efficient way to do this)
+    end.names <- c("Recommend_Var_Adj", "FleetName")
+    lenntune <- lenntune[,c(which(!names(lenntune) %in% end.names),
+                            which(names(lenntune) %in% end.names))]
   }
   stats$Length_comp_Eff_N_tuning_check <- lenntune
 
@@ -1279,22 +1330,45 @@ SS_output <-
                           cols=1:10,header=TRUE)
   }else{
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
-                          cols=1:10,header=TRUE)
+                          header=TRUE)
   }
+  #browser()
   if(!is.null(dim(agentune))){
-    names(agentune)[10] <- "FleetName"
-    agentune <- agentune[agentune$N>0, c(10,1,4:9)]
+    names(agentune)[ncol(agentune)] <- "FleetName"
+    agentune <- agentune[agentune$N>0, ]
+    
     # avoid NA warnings by removing #IND values
     agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-    for(i in 2:ncol(agentune)){
-      agentune[,i] <- as.numeric(agentune[,i])
+    for(icol in which(!names(agentune) %in% "FleetName")){
+      agentune[,icol] <- as.numeric(agentune[,icol])
     }
-    agentune$"HarEffN/MeanInputN" <- agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+    # calculate ratio to be more transparent
+    agentune$"HarMean(effN)/mean(inputN*Adj)" <-
+      agentune$"HarMean(effN)"/agentune$"mean(inputN*Adj)"
+
+    # calculate recommended value (for length data this is done internally in SS)
+    agentune$Recommend_Var_Adj <-
+      agentune$Var_Adj * agentune$"HarMean(effN)/mean(inputN*Adj)"
+
+    # remove distracting columns
+    badnames <- c("mean_effN","Mean(effN/inputN)","MeaneffN/MeaninputN")
+    agentune <- agentune[,!names(agentune) %in% badnames]
+
+    # put fleetnames column at the end (probably a more efficient way to do this)
+    agentune <- agentune[,c(which(names(agentune)!="FleetName"),
+                            which(names(agentune)=="FleetName"))]
+
+    # change name to make it clear what's reported and be constent with lengths
+    agentune <- df.rename(agentune,
+                          oldnames=c("Var_Adj"),
+                          newnames=c("Curr_Var_Adj"))
+    
   }else{
     agentune <- NULL
   }
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
+  
   ## FIT_SIZE_COMPS
   fit_size_comps <- NULL
   if(SS_versionNumeric >= 3.3){
@@ -1309,6 +1383,7 @@ SS_output <-
       fit_size_comps[,icol] <- as.numeric(fit_size_comps[,icol])
     }
   }
+  ### note: should add "Recommend_Var_Adj" value to match other tables
 
   # Size comp effective N tuning check (only available in version 3.30.01.12 and above)
   if(SS_versionNumeric >= 3.3){
@@ -1327,9 +1402,7 @@ SS_output <-
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
 
-  # data return object
-  returndat <- list()
-
+  # add stuff to list to return
   if(SS_versionNumeric <= 3.24){
     returndat$definitions  <- defs
     returndat$fleet_ID     <- fleet_ID
@@ -1349,6 +1422,7 @@ SS_output <-
   }
   returndat$survey_units <- survey_units
   returndat$survey_error <- survey_error
+  returndat$index_variance_tuning_check <- vartune
   returndat$IsFishFleet  <- IsFishFleet
   returndat$nfishfleets  <- nfishfleets
 
@@ -1416,6 +1490,10 @@ SS_output <-
     FecPar1name <- "Eggs_intercept_Fem"
     FecPar2name <- "Eggs_slope_Wt_Fem"
   }
+  if(is.na(lbinspop[1])){
+    lbinspop <- biology$Low[biology$GP==1]
+  }
+      
   returndat$biology <- biology
   returndat$FecType <- FecType
   returndat$FecPar1name <- FecPar1name
@@ -1424,6 +1502,15 @@ SS_output <-
   returndat$FecPar1 <- parameters$Value[parameters$Label==FecPar1name]
   returndat$FecPar2 <- parameters$Value[parameters$Label==FecPar2name]
 
+  # warning for 3.30 models with multiple growth patterns that have
+  # repeat fecundity values, likely to be sorted out in new SS version
+  if (length(returndat$FecPar1) > 1){
+    warning("Plots will only show fecundity and related quantities for Growth Pattern 1")
+    returndat$FecPar1 <- returndat$FecPar1[1]
+    returndat$FecPar2 <- returndat$FecPar2[2]
+  }
+
+      
   # simple test to figure out if fecundity is proportional to spawning biomass:
   returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
                                        all(biology$Wt_len_F==biology$Fecundity),
@@ -1522,12 +1609,12 @@ SS_output <-
     # if all that doesn't get satisfied, biology comes next
     ageselex <- matchfun2("AGE_SELEX",4,"BIOLOGY",-1,header=TRUE)
   }
-  # filter forecast years from selectivity if no forecast
-  # NOTE: maybe refine this in 3.30
-  if(!forecast) ageselex <- ageselex[ageselex$year <= endyr,]
   ageselex <- df.rename(ageselex,
                         oldnames=c("fleet", "year", "seas", "gender", "morph", "label", "factor"),
                         newnames=c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label", "Factor"))
+  # filter forecast years from selectivity if no forecast
+  # NOTE: maybe refine this in 3.30
+  if(!forecast) ageselex <- ageselex[ageselex$Yr <= endyr,]
   
   for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
   returndat$ageselex <- ageselex
@@ -1556,6 +1643,9 @@ SS_output <-
 
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
+  # temporary fix for 3.30.03.06
+  timeseries <- timeseries[timeseries$Seas != "recruits",]
+  
   timeseries[timeseries=="_"] <- NA
   for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]) timeseries[,i] = as.numeric(timeseries[,i])
 
@@ -1588,9 +1678,7 @@ SS_output <-
     spawnseas <- NA
   }
   returndat$spawnseas <- spawnseas
-  # get birth seasons as vector of seasons with non-zero recruitment
-  returndat$birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
-
+  
   # distribution of recruitment
   if("recruit_dist_endyr" %in% names(recruitment_dist)){
     # from SSv3.24Q onward, recruitment_dist is a list of tables, not a single table
@@ -1624,6 +1712,15 @@ SS_output <-
   }
   returndat$mainmorphs  <- mainmorphs
 
+  # get birth seasons as vector of seasons with non-zero recruitment
+  birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
+  # temporary fix for model with missing Recruit_0 values
+  # (so far this has only been seen in one 3.30 model with 2 GPs)
+  if(length(birthseas)==0){
+    birthseas <- sort(unique(morph_indexing$BirthSeason))
+  }
+  returndat$birthseas <- birthseas
+  
   # stats and dimensions
   timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
   ts <- timeseries[timeseries$Yr <= endyr+1,]
@@ -1723,18 +1820,15 @@ SS_output <-
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))])
         discard[,icol] <- as.numeric(discard[,icol])
-      discard$FleetNum <- NA
+      discard$Fleet <- NA
       if(!"Name"%in%names(discard)) discard$Name <- discard$Fleet
       for(i in 1:nrow(discard)){
-        discard$FleetNum[i] <- strsplit(discard$Name[i],"_")[[1]][1]
-        discard$FleetName[i] <- substring(discard$Name[i],nchar(discard$FleetNum[i])+2)
+        discard$Fleet[i] <- strsplit(discard$Name[i],"_")[[1]][1]
+        discard$Name[i] <- substring(discard$Name[i],nchar(discard$Fleet[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Name","SuprPer"))])
         discard[,icol] <- as.numeric(discard[,icol])
-      # redundant columns are holdovers from earlier SS versions
-      discard$FleetNum <- discard$Fleet
-      discard$FleetName <- discard$Name
     }
   }else{
     discard <- NA
@@ -1756,17 +1850,14 @@ SS_output <-
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet"))])
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
-      mnwgt$FleetNum <- NA
+      mnwgt$Fleet <- NA
       for(i in 1:nrow(mnwgt)){
-        mnwgt$FleetNum[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
-        mnwgt$FleetName[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$FleetNum[i])+2)
+        mnwgt$Fleet[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
+        mnwgt$Name[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$Fleet[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Name"))])
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
-      # redundant columns are holdovers from earlier SS versions
-      mnwgt$FleetNum <- mnwgt$Fleet
-      mnwgt$FleetName <- mnwgt$Name
     }
   }else{
     DF_mnwgt <- NA
@@ -1869,7 +1960,6 @@ SS_output <-
                       oldnames=c("Yr.S", "Supr_Per"),
                       newnames=c("Yr.frac", "SuprPer"))
     if(SS_versionNumeric < 3.24){
-      cpue$Fleet <- NA
       cpue$Name <- NA
       for(i in 1:nrow(cpue)){
         cpue$Fleet[i] <- strsplit(cpue$Fleet[i],"_")[[1]][1]
@@ -2179,9 +2269,9 @@ SS_output <-
 
   # get "sigma" used by Pacific Council in P-star calculations
   SPB_final_Label <- paste0("SPB_",endyr+1)
-  if(SPB_final_Label %in% der$LABEL){
-    SPB_final_EST <- der$Value[der$LABEL==SPB_final_Label]
-    SPB_final_SD <- der$StdDev[der$LABEL==SPB_final_Label]
+  if(SPB_final_Label %in% der$Label){
+    SPB_final_EST <- der$Value[der$Label==SPB_final_Label]
+    SPB_final_SD <- der$StdDev[der$Label==SPB_final_Label]
     returndat$Pstar_sigma <- sqrt(log((SPB_final_SD/SPB_final_EST)^2+1))
   }else{
     returndat$Pstar_sigma <- NULL

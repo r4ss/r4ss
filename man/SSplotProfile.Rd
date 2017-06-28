@@ -21,7 +21,7 @@ SSplotProfile(summaryoutput, plot = TRUE, print = FALSE, models = "all",
   xlim = "default", ymax = "default", xaxs = "r", yaxs = "r",
   type = "o", legend = TRUE, legendloc = "topright", pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  plotdir = NULL, verbose = TRUE, ...)
+  plotdir = NULL, add_cutoff = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{summaryoutput}{List created by the function \code{\link{SSsummarize}}.}
@@ -110,6 +110,9 @@ plotted.}
 
 \item{plotdir}{Directory where PNG files will be written. by default it will
 be the directory where the model was run.}
+
+\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
+based on common cutoff using Chi-squared of .95 with 1 degree of freedom.}
 
 \item{verbose}{Return updates of function progress to the R GUI? (Doesn't do
 anything yet.)}

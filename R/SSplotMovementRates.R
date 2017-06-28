@@ -202,8 +202,8 @@ SSplotMovementRates <-
             seas <- moveinfo$Seas[imove]
             basevalueA <- movepars$Value[movepars$Label==LabelA]
             basevalueB <- movepars$Value[movepars$Label==LabelB]
-            valueA <- MGparmAdj[[LabelA]][MGparmAdj$Year==y]
-            valueB <- MGparmAdj[[LabelB]][MGparmAdj$Year==y]
+            valueA <- MGparmAdj[[LabelA]][MGparmAdj$Yr==y]
+            valueB <- MGparmAdj[[LabelB]][MGparmAdj$Yr==y]
             ## print(c(imove,valueA,valueB))
             ## print(seasdur[seas])          
             ## test <- movecalc(min.move.age = min.move.age,

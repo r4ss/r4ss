@@ -6,9 +6,9 @@
 \usage{
 SStableComparisons(summaryoutput, models = "all", likenames = c("TOTAL",
   "Survey", "Length_comp", "Age_comp", "priors", "Size_at_age"),
-  names = c("R0", "steep", "NatM", "L_at_Amax", "VonBert_K", "SPB_Virg",
-  "Bratio_2015", "SPRratio_2014"), digits = NULL, modelnames = "default",
-  csv = FALSE, csvdir = "workingdirectory",
+  names = c("Recr_Virgin", "R0", "steep", "NatM", "L_at_Amax", "VonBert_K",
+  "SPB_Virg", "Bratio_2017", "SPRratio_2016"), digits = NULL,
+  modelnames = "default", csv = FALSE, csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv", verbose = TRUE,
   mcmc = FALSE)
 }

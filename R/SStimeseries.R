@@ -154,12 +154,12 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	}
 	
 
-	spr_type = strsplit(base[grep("SPR_ratio_basis",base)]," ")[[1]][3]
-	if (spr_type != "1-SPR") { 
-		print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
-		print(paste("The SPR is being reported as", spr_type, "."))
-	    print("West coast groundfish assessments typically report 1-SPR in the time-series table") 
-	    print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
+	spr_type = strsplit(base[grep("SPR_report_basis",base)]," ")[[1]][3]
+	#if (spr_type != "1-SPR") { 
+	#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
+	#	print(paste("The SPR is being reported as", spr_type, "."))
+	#    print("West coast groundfish assessments typically report 1-SPR in the time-series table") 
+	#    print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
 
 
 	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
@@ -198,7 +198,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 				print(depl.all*100,1),
 				comma(recruits.all,0),
 				catch.all,
-				print(100*adj.spr.all,3),
+				print(adj.spr.all,3),
 				exp.all)
 	
 	colnames(ts.table) = c("Year", "Total Biomass (mt)", "Spawning Biomass", 

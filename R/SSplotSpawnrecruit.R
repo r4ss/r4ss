@@ -83,7 +83,8 @@ SSplotSpawnrecruit <-
   recruit$spawn_bio <- bioscale*recruit$SpawnBio
   timeseries$SpawnBio <- bioscale*timeseries$SpawnBio
   
-  if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr, recruit$exp_recr, recruit$adjusted))
+  if(is.null(ylim)) ylim=c(0, max(recruit$pred_recr,
+                        recruit$exp_recr, recruit$bias_adjusted))
   x <- recruit$spawn_bio
   if(is.null(xlim)) xlim=c(0, max(x))
 
@@ -135,7 +136,7 @@ SSplotSpawnrecruit <-
     # add line for expected recruitment
     lines(x[order(x)],  recruit$exp_recr[order(x)],lwd=2, col=colvec[3])
     # add line for adjusted recruitment
-    lines(x,            recruit$adjusted,          lwd=1, col=colvec[2])
+    lines(x,            recruit$bias_adjusted,          lwd=1, col=colvec[2])
     # add points for individual estimates
     points(x,recruit$pred_recr,col=colvec[4])
     if(text){
