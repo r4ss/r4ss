@@ -1,5 +1,5 @@
 #' Plot multiple indices in one graph
-#' 
+#'
 #' Plot multiple indices in one graph for comparison of longer-term trends,
 #' consistency among indices, or to save space in a report.
 #'
@@ -8,16 +8,18 @@
 #' @param xlim optional x limits, NULL causes range to encompass all years
 #' @param ylim optional y limits, NULL causes range to encompass all 95% intervals
 #' @param cols optional vector of colors for each index
-#' @param alpha transparency value (0 is invisible, 1 is opaque) 
+#' @param alpha transparency value (0 is invisible, 1 is opaque)
 #' @param div divider for observations (to rescale units)
+#' @param xlab x-axis label
+#' @param ylab y-axis label
 #' @param legX value passed to "x" input in legend()
 #' @param legY value passed to "y" input in legend()
 #' @param legCex value passed to "cex" input in legend()
 #' @param plotExpect included expected values in the plot
-#' @param shift vector of horizontal adjustments by fleet (so points don't overlap) 
+#' @param shift vector of horizontal adjustments by fleet (so points don't overlap)
 #' @param scale
 #' @param dots
-#' 
+#'
 #' @author Allan C. Hicks, Ian G. Taylor
 #' @export
 #' @seealso \code{\link{SSplotIndices}}, \code{\link{SS_output}}
@@ -27,11 +29,11 @@
 #'        #Example from Widow assessment
 #'        indCols <- c(rich.colors.short(max(base$cpue$Fleet)))
 #'        indColsAlpha <- adjustcolor(indCols,alpha.f=0.7)
-#'        
+#'
 #'        doPNG <- T
 #'        ht<-4;wd=6.5
 #'        legCex <- 1
-#'        
+#'
 #'        #Bottom Trawl
 #'        ind <- c(1)
 #'        if(doPNG) {png(file.path(figDir,"Results/BottomTrawlFits.png"),height=ht,width=wd,pointsize=10,units="in",res=300)}
@@ -42,7 +44,7 @@
 #'        plotIndices(base, ind, cols=indCols[ind],div=1, alpha=0.6,
 #'                     xlab="Year",ylab="CPUE index",log="y", legX="bottomleft", legCex=legCex)
 #'        if(doPNG) {dev.off()}
-#'        
+#'
 #'        #Hake and Foreign
 #'        ind <- c(3,9)
 #'        if(doPNG) {png(file.path(figDir,"Results/HakeCpueFits.png"),height=ht,width=wd,pointsize=10,units="in",res=300)}
@@ -58,47 +60,80 @@
 
 
 plotIndices <- function(x, fleets=NULL, xlim=NULL, ylim=NULL,
-                        cols="default", alpha=1, div=1, legX=NULL, legY=NULL, legCex=1,
-                        plotExpect=TRUE, shift=rep(0,length(fleets)),
-                        scale=c("none","mean","max"), ...) {
+                        xlab="Year", ylab="Scaled index",
+                        cols=NULL, alpha=1, div=1, legX=NULL, legY=NULL, legCex=1,
+                        plotExpect=TRUE, shift=NULL,
+                        scale=c("mean","median","max","none"), ...) {
 
-    #I may want to figure out how to plot one series that has a break in q as two series
-    #how to plot the input CI and the output CI with additional variance
+  #I may want to figure out how to plot one series that has a break in q as two series
+  #how to plot the input CI and the output CI with additional variance
 
-#Some thoughts:
-### would be nice if it could use the readDat to only plot the data.
-### should a change in q have a broken line?
-### plot input and output confidence intervals to show effect of additional variation
+  #Some thoughts:
+  ### would be nice if it could use the readDat to only plot the data.
+  ### should a change in q have a broken line?
+  ### plot input and output confidence intervals to show effect of additional variation
 
-  if(is.character(cols[1])) {
-        if(cols[1]=="default") {
-            cols <- rich.colors.short(length(fleets))
-        }
+  # if no fleets vector provided, set to include all fleets that have indices 
+  if(is.null(fleets)){
+    fleets <- unique(x$cpue$Fleet)
+  }
+  # subset indices to only have the fleets that were input
+  cpue <- x$cpue[x$cpue$Fleet %in% fleets,]
+  # subset fleets vector to only show fleets with indices
+  fleets <- unique(cpue$Fleet)
+  nfleets <- length(fleets)
+
+  if(length(scale)==1){
+    scale <- rep(scale, nfleets)
+  }
+  # calculate colors vector
+  if(is.null(cols)){
+    cols <- rich.colors.short(nfleets)
+  }
+  # shift to avoid overlapping points
+  shift <- (1:nfleets)/(nfleets+2)
+  shift <- shift - mean(shift)
+  
+  colsAlpha <- adjustcolor(cols, alpha.f=alpha)
+  if(is.null(xlim)){
+    xlim <- range(cpue$Yr)
+  }
+  if(is.null(ylim)){
+    ylim <- range(c(qlnorm(.025,meanlog=log(cpue$Obs/div),sdlog=cpue$SE),
+                    qlnorm(.975,meanlog=log(cpue$Obs/div),sdlog=cpue$SE)))
+    # make ylim start at 0 unless plot is on a log scale
+    if(!par()$ylog){
+      ylim[1] <- 0
     }
-    colsAlpha <- adjustcolor(cols, alpha.f=alpha)
-    cpue <- x$cpue[x$cpue$Fleet %in% fleets,]
-    if(is.null(xlim)) xlim <- range(cpue$Yr)
-    if(is.null(ylim)) ylim <- range(c(qlnorm(.025,meanlog=log(cpue$Obs/div),sdlog=cpue$SE),
-                                      qlnorm(.975,meanlog=log(cpue$Obs/div),sdlog=cpue$SE)))
+  }
+  plot(0.001, type='n', xlim=xlim, xaxs='r', ylim=ylim, yaxs='i',
+       xlab=xlab, ylab=ylab, ...)
+  for(i in 1:nfleets) {
+    fleet <- fleets[i]
+    tmp <- cpue[cpue$Fleet == fleet, ]
+    show <- tmp$Use==1
+    if(is.character(scale)) {  #if they enter a number, you can scale specifically by that
+      scale.i  <- switch(scale[1],
+                         none=1,
+                         mean=mean(tmp$Obs[show]),
+                         median=median(tmp$Obs[show]),
+                         max=max(tmp$Obs[show]))
+    } else {
+      scale.i <- scale[i]
+    }
+    xx <- tmp$Yr + shift[i]
+    y0 <- qlnorm(.025,meanlog=log(tmp$Obs/(div*scale.i)),sdlog=tmp$SE)
+    y1 <- qlnorm(.975,meanlog=log(tmp$Obs/(div*scale.i)),sdlog=tmp$SE)
 
-    plot(0.001, type='n', xlim=xlim, xaxs='i', ylim=ylim, yaxs='i', ...)
-
-    for(i in 1:length(fleets)) {
-      tmp <- cpue[cpue$Fleet == fleets[i],]
-      if(is.character(scale)) {  #if they enter a number, you can scale specifically by that
-        tmp$Obs <- switch(scale[1],
-                            none=tmp$Obs,
-                            mean=tmp$Obs/mean(tmp$Obs),
-                            max=tmp$Obs/max(tmp$Obs))
-      }
-      xx <- tmp$Yr + shift[i]
-      segments(x0 = xx,
-             y0=qlnorm(.025,meanlog=log(tmp$Obs/div),sdlog=tmp$SE),
-             y1=qlnorm(.975,meanlog=log(tmp$Obs/div),sdlog=tmp$SE),
+    segments(x0=xx[show], y0=y0[show], y1=y1[show],
              lwd=2, lend=1, col=colsAlpha[i])
-      points(xx,tmp$Obs/div,col=cols[i],cex=1.3,pch=20)
-      if(plotExpect) lines(xx,tmp$Exp/div,col=cols[i],lwd=3)
+    points(xx[show], tmp$Obs[show]/(div*scale.i),col=cols[i],cex=1.3,pch=20)
+    if(plotExpect){
+      lines(xx,tmp$Exp/(div*scale.i),col=cols[i],lwd=3)
     }
-    if(!is.null(legX)) {legend(x=legX, y=legY, legend=unique(cpue$FleetName),
-                               lty=1, pch=20, col=cols, cex=legCex)}
+  }
+  if(!is.null(legX)) {
+    legend(x=legX, y=legY, legend=x$FleetNames[fleets],
+           lty=1, pch=20, col=cols, cex=legCex)
+  }
 }
