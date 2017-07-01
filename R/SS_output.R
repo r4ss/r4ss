@@ -1061,7 +1061,7 @@ SS_output <-
       wtatage_names <- c("yr", "seas", "gender", "growpattern", "birthseas", "fleet",
                          0:accuage)
       # new comment line in 3.30
-      if(SS_versionNumeric >= 3.3){
+      if(SS_versionNumeric >= 3.3 & ncol(wtatage)==length(wtatage_names)+1){
         wtatage_names <- c(wtatage_names, "comment")
       }
       names(wtatage) <- wtatage_names
@@ -2104,7 +2104,7 @@ SS_output <-
 
   # age-length matrix
   rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
-  if(length(rawALK)>1){
+  if(length(rawALK)>1 & length(grep("AGE_AGE_KEY", rawALK[,1]))==0){
     morph_col <- 5
     if(SS_versionNumeric < 3.3 &
        length(grep("Sub_Seas", rawALK[,3]))==0){
