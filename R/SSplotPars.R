@@ -229,6 +229,10 @@ SSplotPars <-
     # clean up contents of the table and make certain columns numeric or character
     partable[partable=="_"] <- NA
     partable$Active_Cnt <- as.numeric(as.character(partable$Active_Cnt))
+    # change any 3.24 colnames to 3.30 names to avoid having switches based on version
+    # number in the code
+    colnames(partable)[colnames(partable)=="PR_type"] <- "Pr_type"
+
     partable$Label <- as.character(partable$Label)
     for(i in (1:ncol(partable))[!names(partable) %in% c("Label","Status","Pr_type")] ){
       partable[,i] <- as.numeric(as.character(partable[,i]))
