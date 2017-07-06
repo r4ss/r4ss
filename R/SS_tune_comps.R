@@ -43,6 +43,8 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
                              New_Francis  = double(),
                              New_MI       = double(),
                              Francis_mult = double(),
+                             Francis_lo   = double(),
+                             Francis_hi   = double(),
                              MI_mult      = double(),
                              Type         = character(),
                              Name         = character(),
@@ -75,17 +77,24 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
         # data is present, calculate stuff
         # Francis_multiplier
         Francis_mult <- NULL
-        Francis_mult <- SSMethod.TA1.8(fit=replist, type=type,
-                                       fleet=fleet, plotit=FALSE)[1]
+        Francis_lo <- NULL
+        Francis_hi <- NULL
+        Francis_output <- SSMethod.TA1.8(fit=replist, type=type,
+                                         fleet=fleet, plotit=FALSE)
         if(has_conditional){
           # run separate function for conditional data
           # (replaces marginal multiplier if present)
-          Francis_mult <- SSMethod.Cond.TA1.8(fit=replist,
-                                              fleet=fleet, plotit=FALSE)[1]
+          Francis_output <- SSMethod.Cond.TA1.8(fit=replist,
+                                                fleet=fleet, plotit=FALSE)          
         }
+        Francis_mult <- Francis_output[1]
+        Francis_lo <- Francis_output[2]
+        Francis_hi <- Francis_output[3]
         Note <- ""
-        if(is.null(Francis_mult)){
+        if(is.null(Francis_output)){
           Francis_mult <- NA
+          Francis_lo <- NA
+          Francis_hi <- NA
           Note <- "No Francis weight"
         }
         # current value
@@ -103,6 +112,8 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
                      New_Francis  = round(Curr_Var_Adj*Francis_mult, digits),
                      New_MI       = round(Curr_Var_Adj*MI_mult, digits),
                      Francis_mult = round(Francis_mult, digits),
+                     Francis_lo   = round(Francis_lo, digits),
+                     Francis_hi   = round(Francis_hi, digits),
                      MI_mult      = round(MI_mult, digits),
                      Type         = type,
                      Name         = replist$FleetNames[fleet],
