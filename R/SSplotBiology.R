@@ -311,26 +311,28 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       #print(seas)
       # if empirical weight-at-age IS used
       fecmat <- wtatage[wtatage$fleet==-2 & wtatage$gender==1,]
-      # figure out which seasons have fecundity values (maybe always only one?)
-      fecseasons <- sort(unique(fecmat$seas))
-      seas_label <- NULL
-      for(iseas in fecseasons){
-        fecmat_seas <- fecmat[fecmat$seas==iseas, -(2:6)]
-        # label the season only if a multi-season model
-        # also testing for length of fecseasons, but that's probably redundant
-        if(nseasons>1 | length(fecseasons) > 1){
-          seas_label <- paste("in season",iseas)
+      if(nrow(fecmat) > 1){
+        # figure out which seasons have fecundity values (maybe always only one?)
+        fecseasons <- sort(unique(fecmat$seas))
+        seas_label <- NULL
+        for(iseas in fecseasons){
+          fecmat_seas <- fecmat[fecmat$seas==iseas, -(2:6)]
+          # label the season only if a multi-season model
+          # also testing for length of fecseasons, but that's probably redundant
+          if(nseasons>1 | length(fecseasons) > 1){
+            seas_label <- paste("in season",iseas)
+          }
+          main <- paste("Maturity x fecundity",seas_label)
+          #print(head(fecmat))
+          fecmat_seas <- clean_wtatage(fecmat_seas)
+          persp(x=abs(fecmat_seas[,1]),
+                y=0:accuage,
+                z=as.matrix(fecmat_seas[,-1]),
+                theta=70,phi=30,xlab="Year",ylab="Age",zlab="",
+                main=main)
         }
-        main <- paste("Maturity x fecundity",seas_label)
-        #print(head(fecmat))
-        fecmat_seas <- clean_wtatage(fecmat_seas)
-        persp(x=abs(fecmat_seas[,1]),
-              y=0:accuage,
-              z=as.matrix(fecmat_seas[,-1]),
-              theta=70,phi=30,xlab="Year",ylab="Age",zlab="",
-              main=main)
+        makeimage(fecmat_seas, main=main)
       }
-      makeimage(fecmat_seas, main=main)
     }
   }
 

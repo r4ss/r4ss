@@ -5,8 +5,8 @@
 \title{Apply Francis composition weighting method TA1.8 for conditional age-at-length fits}
 \usage{
 SSMethod.Cond.TA1.8(fit, fleet, part = 0:2, seas = NULL, plotit = TRUE,
-  printit = TRUE, maxpanel = 1000, FullDiagOut = FALSE,
-  ShowVersionB = FALSE, fleetnames = NULL)
+  printit = TRUE, datonly = FALSE, plotadj = !datonly, maxpanel = 1000,
+  FullDiagOut = FALSE, ShowVersionB = FALSE, fleetnames = NULL)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -30,6 +30,11 @@ option 'comb' is used.}
 panels of Fig. 4 in Francis (2011).}
 
 \item{printit}{if TRUE, print results to R console.}
+
+\item{datonly}{if TRUE, don't show the model expectations}
+
+\item{plotadj}{if TRUE, plot the confidencent intervals associated with
+the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 
 \item{maxpanel}{maximum number of panels within a plot}
 

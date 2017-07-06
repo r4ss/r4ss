@@ -19,53 +19,21 @@
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
 #' @author Ian G. Taylor, Gwladys I. Lambert
-#' @seealso \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
+#' @seealso \code{\link{SS_tune_comps}}, \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
 #' @export
 #' @examples
 #' 
 #'    \dontrun{
 #'      # load model output into R
 #'      replist <- SS_output(dir='c:/model/')
-#'      # get table of variance adjustments
-#'      adjustments_old <- SS_varadjust(dir=replist$inputs$dir,
-#'                                      ctlfile=replist$Control_File)
-#'      # make a copy of the table to modify
-#'      adjustments_new <- adjustments_old
-#'      # loop over fleets and modify the values for length data
-#'      for(ifleet in unique(replist$lendbase$Fleet)){
-#'        # run the Francis function for length comps
-#'        # (reports a vector with proposed adjustment, low, and high values)
-#'        Francis.vals <- SSMethod.TA1.8(fit=replist, type='len',
-#'                                       fleet=ifleet, plotit=FALSE)
-#'        # get adjustment for length comps (Factor 4) and this fleet
-#'        Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==4 &
-#'                                                 adjustments_old$Fleet==ifleet]
-#'        # multiply old value by proposed multiplier
-#'        Var_adj_new <- Var_adj_old*Francis.vals[1]
-#'        # fill value into table
-#'        adjustments_new$Var_Adj[adjustments_new$Factor==4 &
-#'                                  adjustments_new$Fleet==ifleet] <- Var_adj_new
-#'      }
-#'      # loop over fleets and modify the values for age data
-#'      for(ifleet in unique(replist$condbase$Fleet)){
-#'        # run the Francis function for length comps
-#'        # (reports a vector with proposed adjustment, low, and high values)
-#'        Francis.vals <- SSMethod.Cond.TA1.8(fit=replist, 
-#'                                            fleet=ifleet, plotit=FALSE)
-#'        # get adjustment for conditional age-at-length (Factor 5) and this fleet
-#'        Var_adj_old <- adjustments_old$Var_Adj[adjustments_old$Factor==5 &
-#'                                                 adjustments_old$Fleet==ifleet]
-#'        # multiply old value by proposed multiplier
-#'        Var_adj_new <- Var_adj_old*Francis.vals[1]
-#'        # fill value into table
-#'        adjustments_new$Var_Adj[adjustments_new$Factor==5 &
-#'                                  adjustments_new$Fleet==ifleet] <- Var_adj_new
-#'      }
-#'      # show new table
-#'      print(adjustments_new)
+#' 
+#'      # get new variance adjustments (
+#'      varadjust <- SS_tune_comps(replist, option="Francis")
+#'      print(varadjust)
+#' 
 #'      # write new table to file
 #'      SS_varadjust(dir=replist$inputs$dir, newctlfile="new_control.ss",
-#'                   newtable=adjustments_new, overwrite=FALSE)
+#'                   newtable=varadjust, overwrite=FALSE)
 #'    }
  
 SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
@@ -87,9 +55,8 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
       }
     }else{
       # version 3.30
-      maxcols <- 3
-      if(!is.data.frame(newtable) || ncol(newtable)!=3){
-        stop("Input 'newtable' must be a data.frame with 3 columns")
+      if(!is.data.frame(newtable)){
+        stop("Input 'newtable' must be a data.frame")
       }
     }
   }
@@ -156,11 +123,12 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
     # look for -9999 as terminator in 3.30
     terminator_row <- min(grep("-9999", ctl[,1]))
     good_rows <- which(!is.na(as.numeric(ctl[1:terminator_row, 1])))
+    # subset to rows up to terminator and just first 3 columns
     ctl <- ctl[good_rows, 1:3]
     for(icol in 1:3){
       ctl[,icol] <- as.numeric(ctl[,icol])
     }
-    names(ctl) <- c("Factor", "Fleet", "Var_Adj")
+    names(ctl)[1:3] <- c("Factor", "Fleet", "Var_Adj")
   }
   #returning to old warning value
   options(warn=old_warn)
@@ -187,7 +155,7 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
 
 
   if (!is.null(newtable)){
-    if(ncol(newtable)!=ncol(ctl)){
+    if(version=="3.24" & ncol(newtable)!=ncol(ctl)){
       stop("newtable has the wrong number of columns")
     }else{
       ctl <- newtable
@@ -233,8 +201,13 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
   ### write file
   # stuff prior to variance adjustments
   writeLines(ctl_lines[1:(min(good_rows_absolute)-1)])
+  writeLines("# Variance adjustments written by r4ss function SS_varadjust:")
   # table of variance adjustments
   printdf(ctl)
+  # for 3.30 models, add row of -9999 values if not already present
+  if(version=="3.30" && tail(newtable)[1]!=-9999){
+    writeLines("-9999 0 0 #_terminator_row")
+  }
   # stuff after variance adjustments
   writeLines(ctl_lines[(max(good_rows_absolute)+1):length(ctl_lines)])
 
