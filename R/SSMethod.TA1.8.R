@@ -57,6 +57,9 @@
 #' @param plotit if TRUE, make an illustrative plot like one or more
 #' panels of Fig. 4 in Francis (2011).
 #' @param printit if TRUE, print results to R console.
+#' @param datonly if TRUE, don't show the model expectations
+#' @param plotadj if TRUE, plot the confidencent intervals associated with
+#' the adjusted sample sizes (TRUE by default unless datonly = TRUE)
 #' @param maxpanel maximum number of panels within a plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
@@ -81,7 +84,8 @@
 #' 
 SSMethod.TA1.8 <-
   function(fit, type, fleet, part=0:2, pick.sex=0:3, seas=NULL,
-           method=NULL, plotit=TRUE, printit=TRUE, maxpanel=1000,
+           method=NULL, plotit=TRUE, printit=TRUE,
+           datonly=FALSE, plotadj=!datonly, maxpanel=1000,
            fleetnames=NULL)
 {
   # Check the type is correct and the pick.sex is correct
@@ -230,6 +234,7 @@ SSMethod.TA1.8 <-
         las=1)
     par(cex=1)
     for(i in 1:Npanel){
+      # loop over panels
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       plot(x,subpldat[,'Obsmn'],pch='-',
@@ -237,15 +242,19 @@ SSMethod.TA1.8 <-
            ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
                na.rm=TRUE),
            xlab='',ylab='')
-      segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3)
-      arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
-             length=0.04, angle=90, code=3)
+      segments(x, subpldat[,'Obslo'], x, subpldat[,'Obshi'], lwd=3, lend=3)
+      if(plotadj){
+        arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
+               length=0.04, angle=90, code=3)
+      }
       points(x,subpldat[,'Obsmn'],pch=21,bg='grey80')
       ord <- order(x)
-      if(length(x)>1){
-        lines(x[ord],subpldat[ord,'Expmn'],col=4)
-      }else{
-        lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2),col=4)
+      if(!datonly){
+        if(length(x)>1){
+          lines(x[ord],subpldat[ord,'Expmn'],col=4)
+        }else{
+          lines(c(x-0.5,x+0.5),rep(subpldat[,'Expmn'],2),col=4)
+        }
       }
       # Lines
       fl <- fleetnames[subpldat[1,'Fleet']]
@@ -284,17 +293,19 @@ SSMethod.TA1.8 <-
     par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
         oma=par_current$oma, las=par_current$las)
   }
-  tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
-  confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
-                                c(0.025,0.975),na.rm=TRUE))
-  Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
-  Outs <- paste("Francis Weights - ", type, ": ", fleetnames[fleet],": ",
-                round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
-                sep="")
-  if(printit){
-    print(Outs)
+  if(!datonly) {
+    tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
+    confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
+                                  c(0.025,0.975),na.rm=TRUE))
+    Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
+    Outs <- paste("Francis Weights - ", type, ": ", fleetnames[fleet],": ",
+                  round(Nmult,4), " (",round(confint[1],4),"-",round(confint[2],4),")",
+                  sep="")
+    if(printit){
+      print(Outs)
+    }
+    return(Output)
   }
-  return(Output)
 }
 
 
