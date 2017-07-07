@@ -41,9 +41,11 @@
 #' @param part vector of one or more partition values; analysis is restricted
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
+#' @param label.part Include labels indicating which partitions are included?
 #' @param pick.sex vector of one or more values for Pick_sex; analysis is
 #' restricted to composition data with one of these
-#' Pick_sex values.  Ignored if type=='con'
+#' Pick_sex values.  Ignored if type=='con'.
+#' @param label.sex Include labels indicating which sexes are included?
 #' @param seas string indicating how to treat data from multiple seasons
 #' 'comb' - combine seasonal data for each year and plot against Yr
 #' 'sep' - treat seasons separately, plotting against Yr.S
@@ -61,6 +63,9 @@
 #' @param plotadj if TRUE, plot the confidencent intervals associated with
 #' the adjusted sample sizes (TRUE by default unless datonly = TRUE)
 #' @param maxpanel maximum number of panels within a plot
+#' @param set.pars Set the graphical parameters such as mar and mfrow.
+#' Can be set to FALSE in order to add plots form multiple calls to
+#' this function as separate panels in one larger figure.
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
@@ -86,7 +91,8 @@ SSMethod.TA1.8 <-
   function(fit, type, fleet, part=0:2, pick.sex=0:3, seas=NULL,
            method=NULL, plotit=TRUE, printit=TRUE,
            datonly=FALSE, plotadj=!datonly, maxpanel=1000,
-           fleetnames=NULL)
+           fleetnames=NULL, label.part=TRUE, label.sex=TRUE,
+           set.pars=TRUE)
 {
   # Check the type is correct and the pick.sex is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -227,12 +233,14 @@ SSMethod.TA1.8 <-
     NpanelSet <- min(length(uplindx),maxpanel)
     Nr <- ceiling(sqrt(NpanelSet))
     Nc <- ceiling(NpanelSet/Nr)
-    # save current graphical parameters
-    par_current <- par()
-    # set new parameters
-    par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),
-        las=1)
-    par(cex=1)
+    if(set.pars){
+      # save current graphical parameters
+      par_current <- par()
+      # set new parameters
+      par(mfrow=c(Nr,Nc),mar=c(2,2,1,1)+0.1,mgp=c(0,0.5,0),oma=c(1.2,1.2,0,0),
+          las=1)
+      par(cex=1)
+    }
     for(i in 1:Npanel){
       # loop over panels
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
@@ -260,10 +268,15 @@ SSMethod.TA1.8 <-
       fl <- fleetnames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
       lab <- if(type=='con')ifelse(Nfleet>1,paste(yr,fl),yr) else fl
-      if(sex.flag)lab <-
-        paste(lab,ifelse(subpldat[1,'pick.sex']==0,'comb','sex'))
-      if(method.flag)lab <- paste(lab,'meth',subpldat[1,'method'])
-      lab <- paste(lab,partition.labels)
+      if(sex.flag & label.sex){
+        lab <- paste(lab,ifelse(subpldat[1,'pick.sex']==0,'comb','sex'))
+      }
+      if(method.flag){
+        lab <- paste(lab,'meth',subpldat[1,'method'])
+      }
+      if(label.part){
+        lab <- paste(lab,partition.labels)
+      }
       mtext(lab,side=3,at=mean(x))
     }
     # define y-axis label
@@ -289,9 +302,11 @@ SSMethod.TA1.8 <-
     }
     mtext(ylab, side=2,las=0,outer=TRUE)
     mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
-    # restore previous graphics parameters
-    par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
-        oma=par_current$oma, las=par_current$las)
+    # restore previous graphics parameters (if changed to begin with
+    if(set.pars){
+      par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,
+          oma=par_current$oma, las=par_current$las)
+    }
   }
   if(!datonly) {
     tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
