@@ -336,7 +336,7 @@ SSplotCatch <-
     }
     if(length(order)==ncol(ymat)) ymat <- ymat[,order]
     mp <- barplot(t(ymat), xlab=xlab, ylab=ylab,axisnames=FALSE,ylim=ylim,
-                  col=fleetcols[order],space=0,yaxs='i', axes=FALSE)
+                  col=fleetcols[order],space=0,yaxs='i', axes=FALSE, add=add)
     # Get major and minor multiples for choosing labels:
     ntick <- length(mp)
       { if (ntick < 16) mult = c(2, 2)
@@ -376,7 +376,7 @@ SSplotCatch <-
   makeplots <- function(subplot){
     a <- FALSE
     if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
-    if(subplot==2) a <- stackfunc(ymat=retmat, ylab=labels[3])
+    if(subplot==2) a <- stackfunc(ymat=retmat, ymax=ymax, ylab=labels[3])
     # if observed catch differs from estimated by more than 0.1%, then make plot to compare
     if(subplot==3 & diff(range(retmat-totobscatchmat))/max(totobscatchmat) > 0.001){
       a <- linefunc(ymat=retmat, ylab=paste(labels[9],labels[3]), addtotal=FALSE,
@@ -392,21 +392,51 @@ SSplotCatch <-
              legend=c(fleetnames[!ghost],paste(fleetnames[!ghost],"obs.")), bty="n")
     }
     if(max(discmat,na.rm=TRUE)>0){
-      if(subplot==4) a <- linefunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4], addtotal=TRUE)
-      if(subplot==5 & nfleets_with_catch>1) a <- stackfunc(ymat=totcatchmat, ylab=labels[4])
-      if(subplot==6) a <- linefunc(ymat=discmat, ymax=ymax, ylab=labels[5], addtotal=TRUE)
-      if(subplot==7 & nfleets_with_catch>1) a <- stackfunc(ymat=discmat,ylab=labels[5])
-      if(subplot==8) a <- linefunc(ymat=discfracmat, ymax=ymax, ylab=labels[6], addtotal=FALSE)
+      if(subplot==4){
+        a <- linefunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4], addtotal=TRUE)
+      }
+      if(subplot==5 & nfleets_with_catch>1){
+        a <- stackfunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4])
+      }
+      if(subplot==6){
+        a <- linefunc(ymat=discmat, ymax=ymax, ylab=labels[5], addtotal=TRUE)
+      }
+      if(subplot==7 & nfleets_with_catch>1){
+        a <- stackfunc(ymat=discmat, ymax=ymax, ylab=labels[5])
+      }
+      if(subplot==8){
+        a <- linefunc(ymat=discfracmat, ymax=ymax, ylab=labels[6], addtotal=FALSE)
+      }
     }
-    if(subplot==9) a <- linefunc(ymat=Hratemat, ymax=ymax, ylab=ylabF, addtotal=FALSE)
+    if(subplot==9){
+      a <- linefunc(ymat=Hratemat, ymax=ymax, ylab=ylabF, addtotal=FALSE)
+    }
     if(nseasons>1){
-      if(subplot==10) a <- linefunc(ymat=retmat2, ymax=ymax, ylab=paste(labels[3],labels[10]), addtotal=TRUE, x=catchyrs2)
-      if(subplot==11 & nfleets_with_catch>1) a <- stackfunc(ymat=retmat2, ylab=paste(labels[3],labels[10]), x=catchyrs2)
+      if(subplot==10){
+        a <- linefunc(ymat=retmat2, ymax=ymax,
+                      ylab=paste(labels[3],labels[10]), addtotal=TRUE, x=catchyrs2)
+      }
+      if(subplot==11 & nfleets_with_catch>1){
+        a <- stackfunc(ymat=retmat2, ymax=ymax,
+                       ylab=paste(labels[3],labels[10]), x=catchyrs2)
+      }
       if(max(discmat,na.rm=TRUE)>0){
-        if(subplot==12) a <- linefunc(ymat=totcatchmat2, ymax=ymax, ylab=paste(labels[4],labels[10]), addtotal=TRUE, x=catchyrs2)
-        if(subplot==13 & nfleets_with_catch>1) a <- stackfunc(ymat=totcatchmat2, ylab=paste(labels[4],labels[10]), x=catchyrs2)
-        if(subplot==14) a <- linefunc(ymat=discmat2, ymax=ymax, ylab=paste(labels[5],labels[10]), addtotal=TRUE, x=catchyrs2)
-        if(subplot==15 & nfleets_with_catch>1) a <- stackfunc(ymat=discmat2,ylab=paste(labels[5],labels[10]), x=catchyrs2)
+        if(subplot==12){
+          a <- linefunc(ymat=totcatchmat2, ymax=ymax,
+                        ylab=paste(labels[4],labels[10]), addtotal=TRUE, x=catchyrs2)
+        }
+        if(subplot==13 & nfleets_with_catch>1){
+          a <- stackfunc(ymat=totcatchmat2, ymax=ymax,
+                         ylab=paste(labels[4],labels[10]), x=catchyrs2)
+        }
+        if(subplot==14){
+          a <- linefunc(ymat=discmat2, ymax=ymax,
+                        ylab=paste(labels[5],labels[10]), addtotal=TRUE, x=catchyrs2)
+        }
+        if(subplot==15 & nfleets_with_catch>1){
+          a <- stackfunc(ymat=discmat2, ymax=ymax,
+                         ylab=paste(labels[5],labels[10]), x=catchyrs2)
+        }
       }
     }
     if(verbose & a) cat("  finished catch subplot",subplot_names[subplot],"\n")
