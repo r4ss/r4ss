@@ -2331,59 +2331,65 @@ SS_output <-
   }
 
   # sort by year and remove any retain only essential columns
-  recruitpars <- recruitpars[order(recruitpars$Yr), c("Value","Parm_StDev","type","Yr")]
-
+  if(!is.null(recruitpars)){
+    recruitpars <- recruitpars[order(recruitpars$Yr),
+                               c("Value","Parm_StDev","type","Yr")]
+  }
+  
   # add recruitpars to list of stuff that gets returned
   returndat$recruitpars <- recruitpars
   
-  # calculating values related to tuning SigmaR
-  sigma_R_info <- data.frame(period = c("Main","Early+Main","Early+Main+Late"),
-                             N_devs = 0,
-                             SD_of_devs = NA,
-                             Var_of_devs = NA,
-                             mean_SE = NA,
-                             mean_SEsquared = NA)
+  if(is.null(recruitpars)){
+    sigma_R_info <- NULL
+  }else{
+    # calculating values related to tuning SigmaR
+    sigma_R_info <- data.frame(period = c("Main","Early+Main","Early+Main+Late"),
+                               N_devs = 0,
+                               SD_of_devs = NA,
+                               Var_of_devs = NA,
+                               mean_SE = NA,
+                               mean_SEsquared = NA)
 
-  # calculate recdev stats  for Main period
-  subset <- recruitpars$type %in% c("Main_InitAge", "Main_RecrDev")
-  within_period <- sigma_R_info$period=="Main"
-  sigma_R_info$N_devs[within_period] <- sum(subset)
-  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-  sigma_R_info$mean_SEsquared[within_period] <-
-    mean((recruitpars$Parm_StDev[subset])^2)
+    # calculate recdev stats  for Main period
+    subset <- recruitpars$type %in% c("Main_InitAge", "Main_RecrDev")
+    within_period <- sigma_R_info$period=="Main"
+    sigma_R_info$N_devs[within_period] <- sum(subset)
+    sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+    sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+    sigma_R_info$mean_SEsquared[within_period] <-
+      mean((recruitpars$Parm_StDev[subset])^2)
 
-  # calculate recdev stats  for Early+Main periods
-  subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
-                                    "Main_InitAge", "Main_RecrDev")
-  within_period <- sigma_R_info$period=="Early+Main"
-  sigma_R_info$N_devs[within_period] <- sum(subset)
-  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-  sigma_R_info$mean_SEsquared[within_period] <-
-    mean((recruitpars$Parm_StDev[subset])^2)
+    # calculate recdev stats  for Early+Main periods
+    subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
+                                      "Main_InitAge", "Main_RecrDev")
+    within_period <- sigma_R_info$period=="Early+Main"
+    sigma_R_info$N_devs[within_period] <- sum(subset)
+    sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+    sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+    sigma_R_info$mean_SEsquared[within_period] <-
+      mean((recruitpars$Parm_StDev[subset])^2)
 
-  # calculate recdev stats for Early+Main+Late periods
-  subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
-                                    "Main_InitAge", "Main_RecrDev", "Late_RecrDev")
-  within_period <- sigma_R_info$period=="Early+Main+Late"
-  sigma_R_info$N_devs[within_period] <- sum(subset)
-  sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-  sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-  sigma_R_info$mean_SEsquared[within_period] <-
-    mean((recruitpars$Parm_StDev[subset])^2)
+    # calculate recdev stats for Early+Main+Late periods
+    subset <- recruitpars$type %in% c("Early_RecrDev", "Early_InitAge",
+                                      "Main_InitAge", "Main_RecrDev", "Late_RecrDev")
+    within_period <- sigma_R_info$period=="Early+Main+Late"
+    sigma_R_info$N_devs[within_period] <- sum(subset)
+    sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
+    sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
+    sigma_R_info$mean_SEsquared[within_period] <-
+      mean((recruitpars$Parm_StDev[subset])^2)
 
-  # add variance as square of SD
-  sigma_R_info$Var_of_devs <- sigma_R_info$SD_of_devs^2
+    # add variance as square of SD
+    sigma_R_info$Var_of_devs <- sigma_R_info$SD_of_devs^2
 
-  # add sqrt of sum
-  sigma_R_info$sqrt_sum_of_components <- sqrt(sigma_R_info$Var_of_devs +
-                                                sigma_R_info$mean_SEsquared)
-  # ratio of sqrt of sum to sigmaR
-  sigma_R_info$SD_of_devs_over_sigma_R <- sigma_R_info$SD_of_devs/sigma_R_in
-  sigma_R_info$sqrt_sum_over_sigma_R <- sigma_R_info$sqrt_sum_of_components/sigma_R_in
-  sigma_R_info$alternative_sigma_R <- sigma_R_in * sigma_R_info$sqrt_sum_over_sigma_R
-    
+    # add sqrt of sum
+    sigma_R_info$sqrt_sum_of_components <- sqrt(sigma_R_info$Var_of_devs +
+                                                  sigma_R_info$mean_SEsquared)
+    # ratio of sqrt of sum to sigmaR
+    sigma_R_info$SD_of_devs_over_sigma_R <- sigma_R_info$SD_of_devs/sigma_R_in
+    sigma_R_info$sqrt_sum_over_sigma_R <- sigma_R_info$sqrt_sum_of_components/sigma_R_in
+    sigma_R_info$alternative_sigma_R <- sigma_R_in * sigma_R_info$sqrt_sum_over_sigma_R
+  }
   stats$sigma_R_in   <- sigma_R_in
   stats$sigma_R_info <- sigma_R_info
   stats$rmse_table   <- rmse_table
