@@ -60,7 +60,9 @@
 #' @param plotdir Directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
-#' based on common cutoff using Chi-squared of .95 with 1 degree of freedom.
+#' based on common cutoff using Chi-squared of .95 with 1 degree of freedom. The
+#' value can be adjusted using the \code{cutoff_prob} below.
+#' @param cutoff_prob Probability associated with \code{add_cutoff} above.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
 #' @param \dots Additional arguments passed to the \code{plot} command.
@@ -137,6 +139,7 @@ SSplotProfile <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            add_cutoff=FALSE,
+           cutoff_prob=0.95,
            verbose=TRUE,...)
 {
   # subfunction to write png files
@@ -247,7 +250,7 @@ SSplotProfile <-
     abline(h=0,col='grey')
     # optionally add horizontal line at ~1.92
     if(add_cutoff){
-      abline(h=0.5*qchisq(p=0.95, df=1), lty=2)
+      abline(h=0.5*qchisq(p=cutoff_prob, df=1), lty=2)
     }
     matplot(parvec, prof.table, type=type,
             pch=pch, col=col,

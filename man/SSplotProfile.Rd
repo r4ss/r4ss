@@ -21,7 +21,8 @@ SSplotProfile(summaryoutput, plot = TRUE, print = FALSE, models = "all",
   xlim = "default", ymax = "default", xaxs = "r", yaxs = "r",
   type = "o", legend = TRUE, legendloc = "topright", pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  plotdir = NULL, add_cutoff = FALSE, verbose = TRUE, ...)
+  plotdir = NULL, add_cutoff = FALSE, cutoff_prob = 0.95,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{summaryoutput}{List created by the function \code{\link{SSsummarize}}.}
@@ -112,7 +113,10 @@ plotted.}
 be the directory where the model was run.}
 
 \item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
-based on common cutoff using Chi-squared of .95 with 1 degree of freedom.}
+based on common cutoff using Chi-squared of .95 with 1 degree of freedom. The
+value can be adjusted using the \code{cutoff_prob} below.}
+
+\item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
 
 \item{verbose}{Return updates of function progress to the R GUI? (Doesn't do
 anything yet.)}
@@ -131,10 +135,11 @@ well together. Thus, even if \code{\link{SS_profile}} is used, the output
 should be read using \code{\link{SSgetoutput}} or by multiple calls to
 \code{\link{SS_output}}.
 }
+\author{
+Ian Taylor, Ian Stewart
+}
 \seealso{
 \code{\link{SSsummarize}}, \code{\link{SS_profile}},
 \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 }
-\author{
-Ian Taylor, Ian Stewart
-}
+
