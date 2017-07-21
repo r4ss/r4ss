@@ -700,18 +700,18 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
     DoAdjust<-TRUE
     ctllist<-add_elem(ctllist,"DoCustom_sel_blk_setup") #_custom_sel-blk_setup (0/1)
     if(ctllist$DoCustom_sel_blk_setup){
-
-        # FIND relevant blocks
+      
+      # FIND relevant blocks
         blks <- ctllist$blocks_per_pattern
 
         # SUBSET params for Block > 0
         pbks <- subset(ctllist$age_selex_parms, Block > 0)
 
-        # MULTIPLY number of blocks by number of params per block
-        rbks <- blks[blks > 1] * pbks[!duplicated(pbks$Block), "Block_Fxn"]
+        # FIND no. params per block
+        counts <- rle(sort(pbks[ , "Block"]))
 
-        # No. of rows
-        k0 <- sum(rbks)
+        # MULTIPLY number of blocks by number of params per block
+        k0 <- sum(blks[counts$values] * counts$lengths)
 
       ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
         col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
