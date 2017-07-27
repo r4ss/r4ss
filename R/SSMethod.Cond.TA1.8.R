@@ -195,9 +195,17 @@ SSMethod.Cond.TA1.8 <-
     for(i in 1:Npanel){
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,'Yr']
+      ylim <- range(subpldat[,c('ObsloAdj','ObshiAdj','Expmn')], na.rm=TRUE)
+      if(any(is.infinite(ylim))){
+        # 0 sample sizes caused problems with ylim, override with wide range
+        # plot may not make sense but will help users note that a problem exists
+        # (as opposed to skipping the plot)
+        cat("NaN values in Francis calculations, plot may not make sense\n")
+        ylim <- c(0, fit$accuage)
+      }
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=range(subpldat[,c('ObsloAdj','ObshiAdj','Expmn')], na.rm=TRUE),
+           ylim=ylim,
            xlab='',ylab='')
       # add intervals for status-quo sample sizes adjustment
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3, lend=3)
@@ -229,7 +237,7 @@ SSMethod.Cond.TA1.8 <-
     # calculate intervals and return adjustments only if datonly=FALSE
     tmp <- matrix(sample(pldat[,'Std.res'],1000*nrow(pldat),replace=TRUE),nrow(pldat))
     confint <- as.vector(quantile(apply(tmp,2,function(x)1/var(x,na.rm=TRUE)),
-                                  c(0.025,0.975)))
+                                  c(0.025,0.975), na.rm=TRUE))
     Output <- c(w=Nmult,lo=confint[1],hi=confint[2])
 
     Outs <- paste0("Francis CAA Weights: ",
