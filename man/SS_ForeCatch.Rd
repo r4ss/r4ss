@@ -4,8 +4,8 @@
 \alias{SS_ForeCatch}
 \title{Create table of fixed forecast catches}
 \usage{
-SS_ForeCatch(replist, yrs = 2017:2026, average = FALSE,
-  avg.yrs = 2010:2014, total = NULL, digits = 2, dead = TRUE)
+SS_ForeCatch(replist, yrs = 2017:2028, average = FALSE,
+  avg.yrs = 2012:2016, total = NULL, digits = 2, dead = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{\link{SS_output}}}
