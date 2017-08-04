@@ -1107,20 +1107,23 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       # loop over columns looking for time-varying parameters
       for(icol in 2:ncol(MGparmAdj)){
         parmlabel <- names(MGparmAdj)[icol]
-        parmvals  <- MGparmAdj[,icol]
-        # check for changes
-        if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
-          # make plot
-          if(plot) timeVaryingParmFunc(parmlabel)
-          if(print){
-            file <- paste("bio14_time-varying_", parmlabel, ".png", sep="")
-            # replace % sign which cause problems for filename
-            file <- gsub(pattern="%", replacement="percent", x=file,
-                         fixed=TRUE)
-            caption <- "Time-varying mortality and growth parameters"
-            plotinfo <- pngfun(file=file, caption=caption)
-            timeVaryingParmFunc(parmlabel)
-            dev.off()
+        # exclude column indicating change added with version 3.30.06.02
+        if(parmlabel!="Change?"){ 
+          parmvals  <- MGparmAdj[,icol]
+          # check for changes
+          if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
+            # make plot
+            if(plot) timeVaryingParmFunc(parmlabel)
+            if(print){
+              file <- paste("bio14_time-varying_", parmlabel, ".png", sep="")
+              # replace % sign which cause problems for filename
+              file <- gsub(pattern="%", replacement="percent", x=file,
+                           fixed=TRUE)
+              caption <- "Time-varying mortality and growth parameters"
+              plotinfo <- pngfun(file=file, caption=caption)
+              timeVaryingParmFunc(parmlabel)
+              dev.off()
+            }
           }
         }
       }
