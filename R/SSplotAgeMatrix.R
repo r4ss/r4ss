@@ -122,7 +122,6 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
     if(max.y < 0.5 | max.y > 2.0){
       scale <- 0.9/max.y
     }
-    print(scale)
   }
   nybins <- length(ybins)
   ymax <- 1.1*(ybins[nybins] + ybins[nybins] - ybins[nybins-1])
