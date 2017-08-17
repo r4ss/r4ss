@@ -73,7 +73,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   plotinfo <- NULL
 
-  if(!is.list(replist) | !(as.numeric(substr(replist$SS_version,5,8)) > 3.11)){
+  if(!is.list(replist) | replist$SS_versionNumeric > 3.11){
     stop("this function needs an input object created by SS_output from SS version 3.11 or greater")
   }
   if(replist$inputs$covar==FALSE){

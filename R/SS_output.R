@@ -174,15 +174,24 @@ SS_output <-
   SS_versionCode <- rephead[grep("#V",rephead)]
   SS_version <- rephead[grep("Stock_Synthesis",rephead)]
   SS_version <- SS_version[substring(SS_version,1,2)!="#C"] # remove any version numbering in the comments
-  SS_versionshort <- toupper(substr(SS_version,1,8))
-  SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
-  # rough limits on compatibility of this code
+  if(substring(SS_version,1,2)=="#V"){
+    SS_version <- substring(SS_version,3)
+  }
+  if(substring(SS_version,1,4)=="3.30"){
+    SS_versionshort <- "3.30"
+    SS_versionNumeric <- as.numeric(SS_versionshort)
+  }else{
+    # typically something like "SS-V3.24"
+    SS_versionshort <- toupper(substr(SS_version,1,8))
+    SS_versionNumeric <- as.numeric(substring(SS_versionshort,5))
+  }
+
   SS_versionMax <- 3.30
-  SS_versionMin <- 3.21 # a stab in the dark at which versions still work
+  SS_versionMin <- 3.24
 
   # test for version compatibility with this code
   if(SS_versionNumeric < SS_versionMin  | SS_versionNumeric > SS_versionMax){
-    cat("\n! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
+    cat("\n! Warning, this function tested on SS-V3.24 through SS-V3.30.07.\n",
         "  you are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
   }else{
     if(verbose)
