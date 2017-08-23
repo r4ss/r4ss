@@ -11,8 +11,9 @@
 #' @param print print to PNG files?
 #' @param xlim optional control of x range
 #' @param ylim optional control of y range
-#' @param xlab x-axis label
-#' @param ylab y-axis label
+#' @param labels vector containing x-axis label for models with spawning biomass
+#' in metric tons, y-axis label, and alternative x-axis for models with a fecundity
+#' relationship making spawning output not equal to spawning biomass.
 #' @param bioscale multiplier on spawning biomass, set to 0.5 for single-sex
 #' models
 #' @param plotdir directory where PNG files will be written. by default it will
@@ -41,8 +42,9 @@
 SSplotSpawnrecruit <-
   function(replist,subplot=1:2,add=FALSE,plot=TRUE,print=FALSE,
            xlim=NULL,ylim=NULL,
-           xlab="Spawning biomass (mt)",
-           ylab="Recruitment (1,000s)",
+           labels=c("Spawning biomass (mt)",
+               "Recruitment (1,000s)",
+               "Spawning output"),
            bioscale="default",
            plotdir="default",
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
@@ -65,7 +67,15 @@ SSplotSpawnrecruit <-
 
   recruit <- replist$recruit
   nsexes <- replist$nsexes
-  
+
+  # set axis labels
+  xlab <- labels[1]
+  ylab <- labels[2]
+  # check if spawning output rather than spawning biomass is plotted
+  if(replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
+    xlab <- labels[3]
+  }
+      
   #scaling factor for single sex models
   if(bioscale=="default"){
     if(nsexes==1) bioscale <- 0.5 else bioscale <- 1

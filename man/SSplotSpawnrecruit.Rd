@@ -6,12 +6,12 @@
 \usage{
 SSplotSpawnrecruit(replist, subplot = 1:2, add = FALSE, plot = TRUE,
   print = FALSE, xlim = NULL, ylim = NULL,
-  xlab = "Spawning biomass (mt)", ylab = "Recruitment (1,000s)",
-  bioscale = "default", plotdir = "default", pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1, verbose = TRUE,
-  colvec = c("blue", "green3", "black", "red"), legend = TRUE,
-  legendloc = "topleft", minyr = "default", textmindev = 0.5,
-  virg = TRUE, init = TRUE, forecast = FALSE)
+  labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
+  "Spawning output"), bioscale = "default", plotdir = "default",
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
+  cex.main = 1, verbose = TRUE, colvec = c("blue", "green3", "black",
+  "red"), legend = TRUE, legendloc = "topleft", minyr = "default",
+  textmindev = 0.5, virg = TRUE, init = TRUE, forecast = FALSE)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -29,9 +29,9 @@ SSplotSpawnrecruit(replist, subplot = 1:2, add = FALSE, plot = TRUE,
 
 \item{ylim}{optional control of y range}
 
-\item{xlab}{x-axis label}
-
-\item{ylab}{y-axis label}
+\item{labels}{vector containing x-axis label for models with spawning biomass
+in metric tons, y-axis label, and alternative x-axis for models with a fecundity
+relationship making spawning output not equal to spawning biomass.}
 
 \item{bioscale}{multiplier on spawning biomass, set to 0.5 for single-sex
 models}
