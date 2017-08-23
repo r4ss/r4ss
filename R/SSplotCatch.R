@@ -287,11 +287,12 @@ SSplotCatch <-
     ymat <- as.matrix(ymat)
     if(addtotal & nfleets_with_catch>1){
       ytotal <- rowSums(ymat)
-      if(is.null(ymax)) ymax <- max(ytotal,na.rm=TRUE)
+      if(is.null(ymax) || is.na(ymax)) ymax <- max(ytotal,na.rm=TRUE)
     }else{
       ytotal <- rep(NA,nrow(ymat))
-      if(is.null(ymax)) ymax <- max(ymat,na.rm=TRUE)
+      if(is.null(ymax) || is.na(ymax)) ymax <- max(ymat,na.rm=TRUE)
     }
+#browser()    
     plot(x, ytotal, ylim=c(0,ymax), xlab=xlab, ylab=ylab, type=type, lwd=lwd, col="black")
     abline(h=0,col="grey")
     #abline(h=1,col="grey")
@@ -378,11 +379,13 @@ SSplotCatch <-
     if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
     if(subplot==2) a <- stackfunc(ymat=retmat, ymax=ymax, ylab=labels[3])
     # if observed catch differs from estimated by more than 0.1%, then make plot to compare
-    if(subplot==3 & diff(range(retmat-totobscatchmat))/max(totobscatchmat) > 0.001){
+    if(subplot==3 &
+       diff(range(retmat-totobscatchmat, na.rm=TRUE))/
+         max(totobscatchmat, na.rm=TRUE) > 0.001){
       a <- linefunc(ymat=retmat, ylab=paste(labels[9],labels[3]), addtotal=FALSE,
                     ymax=max(totobscatchmat,retmat))
       for(f in 1:nfleets_with_catch){
-        if(max(totobscatchmat[,f])>0){
+        if(max(totobscatchmat[,f], na.rm=TRUE)>0){
           lines(catchyrs, totobscatchmat[,f], type=type, col=fleetcols[f],
                 lty=3, lwd=lwd, pch=4)
         }
