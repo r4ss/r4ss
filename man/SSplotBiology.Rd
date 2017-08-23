@@ -26,8 +26,8 @@ SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
 
 \item{subplots}{vector controlling which subplots to create}
 
-\item{seas}{which season to plot (obviously only works in seasonal models,
-but maybe not fully implemented even then)}
+\item{seas}{which season to plot (values other than 1 only work in
+seasonal models but but maybe not fully implemented)}
 
 \item{colvec}{vector of length 3 with colors for various points/lines}
 
