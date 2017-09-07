@@ -52,6 +52,11 @@
 ##' @param cex.main Character expansion for plot titles
 ##' @param plotdir Directory where PNG files will be written. by default it will
 ##' be the directory where the model was run.
+##' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
+##' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
+##' freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
+##' can be adjusted using the \code{cutoff_prob} below.
+##' @param cutoff_prob Probability associated with \code{add_cutoff} above.
 ##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 ##' anything yet.)
 ##' @param fleetgroups Optional character vector, with length equal to
@@ -91,6 +96,7 @@ PinerPlot <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            add_cutoff=FALSE,
+           cutoff_prob = 0.95,
            verbose=TRUE,
            fleetgroups=NULL,
            likelihood_type="raw_times_lambda",
@@ -246,9 +252,10 @@ PinerPlot <-
     plot(0,type='n',xlim=xlim,ylim=ylim,xlab=profile.label, ylab=ylab,
          yaxs=yaxs,xaxs=xaxs,main=main)
     abline(h=0,col='grey')
-    # optionally add horizontal line at ~1.92
+    # optionally add horizontal line at ~1.92 (or other value depending
+    # on chosen probability)
     if(add_cutoff){
-      abline(h=0.5*qchisq(p=0.95, df=1), lty=2)
+      abline(h=0.5*qchisq(p=cutoff_prob, df=1), lty=2)
     }
     matplot(parvec, prof.table[,-(1:2)], type=type,
             pch=pch, col=col,
