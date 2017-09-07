@@ -24,9 +24,15 @@
 SS_readdat_3.30 <-
   function(file, verbose = TRUE, echoall = FALSE, section = NULL){
   if (verbose){
-    message("running SS_readdat_3.30")
+    message("Running SS_readdat_3.30")
   }
-
+  if (echoall){
+    message("Echoing blocks of data as it's being read")
+    if (!verbose){
+      message("Changing input 'verbose' to TRUE")
+      verbose <- TRUE
+    }
+  }
   dat <- readLines(file, warn = FALSE)
 
   ###############################################################################
@@ -98,12 +104,10 @@ SS_readdat_3.30 <-
   get.df <- function(dat, ind, nrow = NULL){
     ## Returns the next data frame in the dat vector.
     ## If nrow is NULL, the function will:
-    ##  1. check to make sure the current line starts
-    ##     with -999.
-    ##  2. search for the next line starting with -9999.
-    ##  3. ind will be incremented in the parent frame
+    ##  1. search for the next line starting with -9999.
+    ##  2. ind will be incremented in the parent frame
     ##     to 1 past the end of the data frame.
-    ##  4. if the ind line starts with -9999,
+    ##  3. if the ind line starts with -9999,
     ##     the function will return NULL
     ## If nrow is not NULL, the function will:
     ##  1. will return a data frame with rows from
@@ -153,7 +157,7 @@ SS_readdat_3.30 <-
   d$styr <- get.val(dat, ind)
   d$endyr <- get.val(dat, ind)
   d$nseas <- get.val(dat, ind)
-  d$months_per_seas <- get.val(dat, ind)
+  d$months_per_seas <- get.vec(dat, ind)
   d$Nsubseasons <- get.val(dat, ind)
   d$spawn_seas <- get.val(dat, ind)
   d$Ngenders <- get.val(dat, ind)
@@ -170,7 +174,7 @@ SS_readdat_3.30 <-
                              "units",
                              "need_catch_mult",
                              "fleetname")
-  if(verbose){
+  if(echoall){
     message("Fleet information:")
     print(d$fleetinfo)
   }
@@ -194,7 +198,7 @@ SS_readdat_3.30 <-
   ## Make a list of data frames, one for each fleet
   c.list <- split(c.df, c.df[,3])
 
-  ## Extract the SE in log(catch) and initial recruitment values for each fleet
+  ## Extract the SE in log(catch) and initial equilibrium values for each fleet
   se.and.initeq <-
     lapply(c.list,
            function(x){se.fleet <- as.numeric(x[1, 5])
@@ -210,7 +214,7 @@ SS_readdat_3.30 <-
   d$init_equil <- as.numeric(se.and.initeq[3,])
 
   ## Remove all instances of -999 from all catch data frames
-  c.list <- lapply(c.list, function(x){x[-(x[,1] == -999),]})
+  c.list <- lapply(c.list, function(x){x[x[,1] != -999,]})
 
   ## Make the catch data frame
   ## Extract the years from the first dataframe in the list
@@ -225,7 +229,11 @@ SS_readdat_3.30 <-
   ## Reform the dataframe
   c.list <- do.call("cbind", c.list)
   d$catch <- cbind(yrs, c.list)
-
+  if(echoall){
+    message("Final years of input catch:")
+    print(tail(d$catch))
+  }
+  
   ## For backwards compatability add the fleetinfo2 data frame
   ## This comes after the catch matrix because the SE is read from there.
   d$fleetinfo2 <- do.call("rbind",
@@ -238,9 +246,9 @@ SS_readdat_3.30 <-
   ###############################################################################
   ## CPUE data
   d$CPUEinfo <- get.df(dat, ind, d$Nfleets)
-  colnames(d$CPUEinfo) <- c("Fleet", "Units", "Errtype")
+  colnames(d$CPUEinfo) <- c("Fleet", "Units", "Errtype", "SD_Report")
   rownames(d$CPUEinfo) <- d$fleetnames
-  if(verbose){
+  if(echoall){
     message("CPUE information:")
     print(d$CPUEinfo)
   }
@@ -249,8 +257,6 @@ SS_readdat_3.30 <-
   d$CPUE <- get.df(dat, ind)
   colnames(d$CPUE) <- c("year", "seas", "index", "obs", "se_log")
   if (echoall) {
-    message("CPUE information:")
-    print(d$CPUEinfo)
     message("CPUE data:")
     print(d$CPUE)
   }
@@ -272,11 +278,21 @@ SS_readdat_3.30 <-
     d$discard_fleet_info <- NULL
     d$discard_data <- NULL
   }
-
+  if (echoall & !is.null(d$discard_fleet_info)) {
+    message("Discard fleet information:")
+    print(d$discard_fleet_info)
+  }
+  if (echoall & !is.null(d$discard_data)) {
+    message("Discard data:")
+    print(d$discard_data)
+    
+  }
+  
+  
   ###############################################################################
   ## Mean body weight data
-  d$N_meanbodywt <- get.val(dat, ind)
-  if(d$N_meanbodywt){
+  d$use_meanbodywt <- get.val(dat, ind)
+  if(d$use_meanbodywt){
     d$DF_for_meanbodywt <- get.val(dat, ind)
     d$meanbodywt <- get.df(dat, ind)
     colnames(d$meanbodywt) <- c("Year", "Seas", "Type",
@@ -285,6 +301,14 @@ SS_readdat_3.30 <-
     d$DF_for_meanbodywt <- NULL
     d$meanbodywt <- NULL
   }
+  if (verbose) {
+    message("use_meanbodywt (0/1): ", d$use_meanbodywt)
+  }
+  if (echoall & !is.null(d$meanbodywt)) {
+    message("meanbodywt:")
+    print(d$meanbodywt)
+  }
+  
 
   ###############################################################################
   ## Population size structure - Length
@@ -303,16 +327,33 @@ SS_readdat_3.30 <-
     d$N_lbinspop <- NULL
     d$lbin_vector_pop <- NULL
   }
+  if (verbose) {
+    message("N_lbinspop: ", d$N_lbinspop)
+  }
 
   ## Length Comp information matrix (new for 3.30)
-  d$N_lencomp <- get.val(dat, ind)
+  d$use_lencomp <- get.val(dat, ind)
+  if (verbose) {
+    message("use_lencomp (0/1): ", d$use_lencomp)
+  }
+  
   d$len_info <- get.df(dat, ind, d$Nfleets)
   colnames(d$len_info) <- c("mintailcomp", "addtocomp", "combine_M_F",
-                            "compressbins", "comperror", "parmselect")
+                            "CompressBins", "CompError", "ParmSelect",
+                            "minsamplesize")
+
   rownames(d$len_info) <- d$fleetnames
+
+  if (echoall) {
+    message("\nlen_info:")
+    print(d$len_info)
+  }
 
   ## Length comp data
   d$N_lbins <- get.val(dat, ind)
+  if (verbose) {
+    message("N_lbins: ", d$N_lbins)
+  }
   d$lbin_vector <- get.vec(dat, ind)
   d$lencomp <- get.df(dat, ind)
   if(!is.null(d$lencomp)){
@@ -322,101 +363,159 @@ SS_readdat_3.30 <-
         if(d$Ngenders > 1){c(paste0("f", d$lbin_vector),
                              paste0("m", d$lbin_vector))}else{NULL})
   }
+  
+  # echo values
+  if (echoall) {
+    message("\nFirst 2 rows of lencomp:")
+    print(head(d$lencomp, 2))
+    message("\nLast 2 rows of lencomp:")
+    print(tail(d$lencomp, 2))
+    cat("\n")
+  }
 
+  
   ###############################################################################
   ## Population size structure - Age
   d$N_agebins <- get.val(dat, ind)
-  if(d$N_agebins){
+  if (verbose) {
+    message("N_agebins: ", d$N_agebins)
+  }
+  if (d$N_agebins){
     d$agebin_vector <- get.vec(dat, ind)
+    if (echoall) {
+      message("agebin_vector:")
+      print(d$agebin_vector)
+    }
   }else{
     d$agebin_vector <- NULL
   }
 
   ## Age error data
-  d$N_ageerror_definitions <- get.val(dat, ind)
-  if(d$N_ageerror_definitions){
-    d$ageerror <- get.df(dat, ind, d$N_ageerror_definitions * 2)
-    colnames(d$ageerror) <- paste0("age", 0:d$Nages)
-  }else{
-    d$ageerror <- NULL
+  if (d$N_agebins) {
+    d$N_ageerror_definitions <- get.val(dat, ind)
+    if(d$N_ageerror_definitions){
+      d$ageerror <- get.df(dat, ind, d$N_ageerror_definitions * 2)
+      colnames(d$ageerror) <- paste0("age", 0:d$Nages)
+    }else{
+      d$ageerror <- NULL
+    }
+    # echo values
+    if (echoall) {
+      message("\nN_ageerror_definitions:")
+      print(d$N_ageerror_definitions)
+      message("\nageerror:")
+      print(d$ageerror)
+    }
   }
+    
 
   ###############################################################################
   ## Age Comp information matrix
-  ## If section 1 in a multi-section file, the age comp matrix does not exist
-  ##  at all. If in section greater than 1, the age comp matrix will exist,
-  ##  even if it is only -9999 to signal no entries. The call to get.df()
-  ##  will return NULL in that case.
-  if(section > 1 | Nsections == 1){
+  if(d$N_agebins){
     d$age_info <- get.df(dat, ind, d$Nfleets)
     colnames(d$age_info) <- c("mintailcomp",
                               "addtocomp",
                               "combine_M_F",
-                              "compressbins",
-                              "comperror",
-                              "parmselect")
+                              "CompressBins",
+                              "CompError",
+                              "ParmSelect",
+                              "minsamplesize")
+    
     rownames(d$age_info) <- d$fleetnames
     ## Length bin method
     d$Lbin_method <- get.val(dat, ind)
+    if (echoall) {
+      message("\nage_info:")
+      print(d$age_info)
+    }
   }
 
   ###############################################################################
   ## Age comp matrix
-  ## If section 1 in a multi-section file, the age comp info matrix does not
-  ## exist at all. If in section greater than 1, the age comp matrix will exist,
-  ## If the number of agebins is zero, we must decrement ind because the code
-  ##  incremented it in the previous section.
-  if(section > 1 | Nsections == 1){
+  if(d$N_agebins){
     d$agecomp <- get.df(dat, ind)
     if(!is.null(d$agecomp)){
       colnames(d$agecomp) <-
         c("Yr", "Seas", "FltSvy", "Gender",
           "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
           if(d$Ngenders == 1){paste0("a", d$agebin_vector)}else{NULL},
-          if(d$Ngenders > 1){c(paste0("f", agebin_vector),
-                               paste0("m", agebin_vector))}else{NULL})
+          if(d$Ngenders > 1){c(paste0("f", d$agebin_vector),
+                               paste0("m", d$agebin_vector))}else{NULL})
+    }
+
+    # echo values
+    if (echoall) {
+      message("\nFirst 2 rows of agecomp:")
+      print(head(d$agecomp, 2))
+      message("\nLast 2 rows of agecomp:")
+      print(tail(d$agecomp, 2))
+      cat("\n")
     }
   }else{
-    if(!d$N_agebins){
-      ind <- ind - 1
+    if(verbose){
+      message("N_agebins = 0, skipping read remaining age-related stuff")
     }
   }
-
+  
   ###############################################################################
   ## Mean size-at-age data
-  d$N_MeanSize_at_Age_obs <- get.val(dat, ind)
-  if(d$N_MeanSize_at_Age_obs){
+  d$use_MeanSize_at_Age_obs <- get.val(dat, ind)
+  if (verbose) {
+    message("use_MeanSize_at_Age_obs (0/1): ", d$use_MeanSize_at_Age_obs)
+  }
+  
+  if(d$use_MeanSize_at_Age_obs){
     d$MeanSize_at_Age_obs <- get.df(dat, ind)
     colnames(d$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-        if(d$Ngenders == 1){paste0("a", agebin_vector)}else{NULL},
-        if(d$Ngenders > 1){c(paste0("f", agebin_vector),
-                             paste0("m", agebin_vector))}else{NULL},
-        if(d$Ngenders == 1){paste0("N_a", agebin_vector)}else{NULL},
-        if(d$Ngenders > 1){c(paste0("N_f", agebin_vector),
-                             paste0("N_m", agebin_vector))}else{NULL})
+        if(d$Ngenders == 1){paste0("a", d$agebin_vector)}else{NULL},
+        if(d$Ngenders > 1){c(paste0("f", d$agebin_vector),
+                             paste0("m", d$agebin_vector))}else{NULL},
+        if(d$Ngenders == 1){paste0("N_a", d$agebin_vector)}else{NULL},
+        if(d$Ngenders > 1){c(paste0("N_f", d$agebin_vector),
+                             paste0("N_m", d$agebin_vector))}else{NULL})
+    # echo values
+    if (echoall) {
+      message("\nFirst 2 rows of MeanSize_at_Age_obs:")
+      print(head(d$MeanSize_at_Age_obs, 2))
+      message("\nLast 2 rows of MeanSize_at_Age_obs:")
+      print(tail(d$MeanSize_at_Age_obs, 2))
+      cat("\n")
+    }
   }else{
     d$MeanSize_at_Age_obs <- NULL
   }
 
+
+  
   ###############################################################################
   ## Environment variables
   d$N_environ_variables <- get.val(dat, ind)
+
+  if (verbose) {
+    message("N_environ_variables: ", d$N_environ_variables)
+  }
+  
   if(d$N_environ_variables){
     d$envdat <- get.df(dat, ind)
-    colnames(envdat) <- c("Yr", "Variable", "Value")
+    colnames(d$envdat) <- c("Yr", "Variable", "Value")
+
+    # echo values
+    if (echoall) {
+      message("\nFirst 2 rows of envdat:")
+      print(head(d$envdat, 2))
+      message("\nLast 2 rows of envdat:")
+      print(tail(d$envdat, 2))
+      cat("\n")
+    }
   }else{
     d$envdat <- NULL
   }
 
+  
   ###############################################################################
   ## Size frequency methods
-  d$N_sizefreq_methods <- 0
-  if(section != 2){
-    ## This appears to be a special case. The sizefreq method doesn't exist in
-    ##  section 2.
-    d$N_sizefreq_methods <- get.val(dat, ind)
-  }
+  d$N_sizefreq_methods <- get.val(dat, ind)
   if(d$N_sizefreq_methods){
     ## Get details of generalized size frequency methods
     d$nbins_per_method <- get.vec(dat, ind)
@@ -424,7 +523,7 @@ SS_readdat_3.30 <-
     d$scale_per_method <- get.vec(dat, ind)
     d$mincomp_per_method <- get.vec(dat, ind)
     d$Nobs_per_method <- get.vec(dat, ind)
-    if(verbose){
+    if(echoall){
       message("Details of generalized size frequency methods:")
       print(data.frame(method  = 1:d$N_sizefreq_methods,
                        nbins   = d$nbins_per_method,
@@ -447,14 +546,19 @@ SS_readdat_3.30 <-
       colnames(d$sizefreq_data_list) <-
         c("Method", "Yr", "Seas", "FltSvy",
           "Gender", "Part", "Nsamp",
-          if(d$Ngenders == 1){paste0("a",
-                                     d$sizefreq_bins_list[[imethod]])}else{NULL},
-          if(d$Ngenders > 1){c(paste0("f",
-                                      d$sizefreq_bins_list[[imethod]]),
-                               paste0("m",
-                                      sizefreq_bins_list[[imethod]]))}else{NULL})
-      if(verbose){
-        message("Method =", imethod, "  (first two rows, ten columns):")
+          if(d$Ngenders == 1){
+            paste0("a", d$sizefreq_bins_list[[imethod]])
+          }else{
+            NULL
+          },
+          if(d$Ngenders > 1){
+            c(paste0("f", d$sizefreq_bins_list[[imethod]]),
+              paste0("m", d$sizefreq_bins_list[[imethod]]))
+          }else{
+            NULL
+          })
+      if(echoall){
+        message("Method ", imethod, " (first two rows, ten columns):")
         print(d$sizefreq_data_list[1:min(Nrows,2), 1:min(Ncols, 10)])
       }
       if(any(d$sizefreq_data_list$Method!=imethod)){
@@ -488,7 +592,7 @@ SS_readdat_3.30 <-
       d$tag_releases <- get.df(dat, ind, d$N_tag_groups)
       colnames(d$tag_releases) <- c("TG", "Area", "Yr", "Season",
                                     "tfill", "Gender", "Age", "Nrelease")
-      if(verbose){
+      if(echoall){
         message("Head of tag release data:")
         print(head(d$tag_releases))
       }
@@ -499,8 +603,8 @@ SS_readdat_3.30 <-
     if(d$N_recap_events > 0){
       Ncols <- 5
       d$tag_recaps <- get.df(dat, ind, d$N_recap_events)
-      colnames(tag_recaps) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
-      if(verbose){
+      colnames(d$tag_recaps) <- c("TG", "Yr", "Season", "Fleet", "Nrecap")
+      if(echoall){
         message("Head of tag recapture data:")
         print(head(d$tag_recaps))
       }
@@ -512,18 +616,25 @@ SS_readdat_3.30 <-
   ###############################################################################
   ## Morphometrics composition data
   d$morphcomp_data <- get.val(dat, ind)
-
+  if(d$morphcomp_data){
+    warning("Morph comp data not yet supported by SS_readdat_3.30\n",
+            "  Please post issue to https://github.com/r4ss/r4ss/issues\n",
+            "  or email ian.taylor@noaa.gov",
+            "if you want this functionality added.")
+  }
   ###############################################################################
   ## Selectivity priors
   d$use_selectivity_priors <- get.val(dat, ind)
 
   ###############################################################################
   eof <- get.val(dat, ind)
-  if(Nsections == 1){
-    message("Read of data file complete. Final value = ", eof)
-  }else{
-    message("Read of section ", section,
-            " of data file complete. Final value = ", eof)
+  if(verbose){
+    if(Nsections == 1){
+      message("Read of data file complete. Final value = ", eof)
+    }else{
+      message("Read of section ", section,
+              " of data file complete. Final value = ", eof)
+    }
   }
-  d
+  return(d)
 }
