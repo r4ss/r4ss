@@ -10,7 +10,7 @@ IOTCmove(replist = NULL, moveage = 5, moveseas = 1, legend = FALSE,
 \arguments{
 \item{replist}{optional list created by \code{SS_output}}
 
-\item{moveage}{age for which movemement rates will be represented}
+\item{moveage}{age for which movement rates will be represented}
 
 \item{moveseas}{season for which movement rates will be represented}
 

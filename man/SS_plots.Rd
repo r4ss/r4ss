@@ -54,7 +54,7 @@ Current grouping of plots is as follows:
   \item Length comp fits
   \item Age comp fits
   \item Conditional age-at-length fits
-  \item Fancis and Punt conditional age-at-length comp fits
+  \item Francis and Punt conditional age-at-length comp fits
   \item Mean length-at-age and mean weight-at-age
   \item Tags
   \item Yield
@@ -62,7 +62,7 @@ Current grouping of plots is as follows:
   \item Data range
 }}
 
-\item{print}{Deprecated input for backward compatability, now replaced by
+\item{print}{Deprecated input for backward compatibility, now replaced by
 \code{png = TRUE/FALSE}.}
 
 \item{pdf}{Send plots to PDF file instead of R GUI?}
@@ -74,7 +74,7 @@ value as \code{png}.}
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
 PNG files will be located.  The default sub-directory is "plots".
-The directory will be created if it doesn't exist.
+The directory will be created if it doesn\'t exist.
 If 'printfolder' is set to "", it is ignored and the PNG files will be located
 in the directory specified by 'dir'.}
 
@@ -220,7 +220,7 @@ help("png") in R for details). Default recently changed from 12 to 10.}
 \item{cex.main}{Character expansion parameter for plot titles (not yet
 implemented for all plots). Default=1.}
 
-\item{selexlines}{Vector controling which lines should be shown on
+\item{selexlines}{Vector controlling which lines should be shown on
 selectivity plots if the model includes retention. Default=1:5.}
 
 \item{rows}{Number of rows to use for single panel plots. Default=1.}

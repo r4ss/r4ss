@@ -60,8 +60,9 @@
 #' @param plotdir Directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
-#' based on common cutoff using Chi-squared of .95 with 1 degree of freedom. The
-#' value can be adjusted using the \code{cutoff_prob} below.
+#' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
+#' freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
+#' can be adjusted using the \code{cutoff_prob} below.
 #' @param cutoff_prob Probability associated with \code{add_cutoff} above.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
@@ -248,7 +249,8 @@ SSplotProfile <-
     plot(0,type='n',xlim=xlim,ylim=ylim,xlab=profile.label, ylab=ylab,
          yaxs=yaxs,xaxs=xaxs,...)
     abline(h=0,col='grey')
-    # optionally add horizontal line at ~1.92
+    # optionally add horizontal line at ~1.92 (or other value depending
+    # on chosen probability)
     if(add_cutoff){
       abline(h=0.5*qchisq(p=cutoff_prob, df=1), lty=2)
     }

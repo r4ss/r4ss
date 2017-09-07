@@ -12,7 +12,7 @@
 #' @param col Color for bubbles. Should be either a single value or vector
 #' of length equal to x, y, and z vectors.
 #' @param cexZ1 Character expansion (cex) value for a proportion of 1.0.
-#' @param maxsize Size of largest bubble. Prefered option is now an expansion
+#' @param maxsize Size of largest bubble. Preferred option is now an expansion
 #' factor for a bubble with z=1 (see \code{cexZ1} above).
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
@@ -25,7 +25,7 @@
 #' @param legend.yadj If a legend is added, how much should the y-axis be
 #' expanded to make space for it.
 #' @param main Title of plot. Default="".
-#' @param cex.main Charecter expansion for title. Default=1.
+#' @param cex.main Character expansion for title. Default=1.
 #' @param xlab X-axis label.
 #' @param ylab Y-axis label.
 #' @param minnbubble Minimum number of unique x values below which extra space

@@ -4,7 +4,7 @@
 ##' Iteratively apply the jitter option in SS
 ##'
 ##' Iteratively runs SS model with different jittered starting parameter values
-##' (jitter value must be mannually set in starter.ss). Output files are renamed
+##' (jitter value must be manually set in starter.ss). Output files are renamed
 ##' in the format Report1.sso, Report2.sso, etc.
 ##'
 ##' @param mydir Directory where model files are located

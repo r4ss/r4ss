@@ -1,6 +1,6 @@
-#' a function for drawing selecitivity curves
+#' a function for drawing selectivity curves
 #' 
-#' This function is primarily inteded for use by the selfit function.
+#' This function is primarily intended for use by the selfit function.
 #' 
 #' 
 #' @param x vector of x values (age or length)

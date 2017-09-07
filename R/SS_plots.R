@@ -31,7 +31,7 @@
 #'   \item Length comp fits
 #'   \item Age comp fits
 #'   \item Conditional age-at-length fits
-#'   \item Fancis and Punt conditional age-at-length comp fits
+#'   \item Francis and Punt conditional age-at-length comp fits
 #'   \item Mean length-at-age and mean weight-at-age
 #'   \item Tags
 #'   \item Yield
@@ -39,7 +39,7 @@
 #'   \item Data range
 #' }
 #' 
-#' @param print Deprecated input for backward compatability, now replaced by
+#' @param print Deprecated input for backward compatibility, now replaced by
 #' \code{png = TRUE/FALSE}.
 #' @param pdf Send plots to PDF file instead of R GUI?
 #' @param png Send plots to PNG files instead of R GUI?
@@ -47,7 +47,7 @@
 #' value as \code{png}.
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
-#' The directory will be created if it doesn't exist.
+#' The directory will be created if it doesn\'t exist.
 #' If 'printfolder' is set to "", it is ignored and the PNG files will be located
 #' in the directory specified by 'dir'.
 #' @param dir The directory in which a PDF file (if requested) will be created
@@ -148,7 +148,7 @@
 #' @param res Resolution of plots printed to files. Default=300.
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.
-#' @param selexlines Vector controling which lines should be shown on
+#' @param selexlines Vector controlling which lines should be shown on
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
 #' @param cols Number of columns to use for single panel plots. Default=1.

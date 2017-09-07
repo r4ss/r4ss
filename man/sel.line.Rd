@@ -2,7 +2,7 @@
 % Please edit documentation in R/sel.line.R
 \name{sel.line}
 \alias{sel.line}
-\title{a function for drawing selecitivity curves}
+\title{a function for drawing selectivity curves}
 \usage{
 sel.line(x, model, sp, min.dist, max.dist)
 }
@@ -18,7 +18,7 @@ sel.line(x, model, sp, min.dist, max.dist)
 \item{max.dist}{maximum value for selectivity}
 }
 \description{
-This function is primarily inteded for use by the selfit function.
+This function is primarily intended for use by the selfit function.
 }
 \examples{
 

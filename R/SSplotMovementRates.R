@@ -17,7 +17,7 @@
 #' @param legend add a legend designating which color goes with which pair of
 #' areas?
 #' @param legendloc location passed to legend function (if used)
-#' @param moveseas choice of season for which movemement rates are shown
+#' @param moveseas choice of season for which movement rates are shown
 #' @param min.move.age Minimum age of movement (in future will come from Report file)
 #' @param pwidth width of plot
 #' @param pheight height of plot

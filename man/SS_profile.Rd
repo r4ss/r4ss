@@ -48,9 +48,9 @@ interacts with the globalpar input")}
 \item{model}{Name of executable. Default = "ss3".}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amound of command-line output.}
+will reduce the amount of command-line output.}
 
-\item{systemcmd}{Should R call SS using "system" function intead of "shell".
+\item{systemcmd}{Should R call SS using "system" function instead of "shell".
 This may be required when running R in Emacs. Default = FALSE.}
 
 \item{saveoutput}{Copy output .SSO files to unique names.  Default = TRUE.}
@@ -60,7 +60,7 @@ then some runs may be skipped.}
 
 \item{whichruns}{Optional vector of run indices to do. This can be used to
 re-run a subset of the cases in situations where the function was
-interupted or some runs fail to converge. Must be a subset of 1:n, where n
+interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 is the length of profilevec.}
 
 \item{SSversion}{SS version number. Currently only "3.24" or "3.30" are

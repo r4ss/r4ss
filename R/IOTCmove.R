@@ -9,7 +9,7 @@
 #'
 #' 
 #' @param replist optional list created by \code{SS_output}
-#' @param moveage age for which movemement rates will be represented
+#' @param moveage age for which movement rates will be represented
 #' @param moveseas season for which movement rates will be represented
 #' @param legend add a legend to show the movement rate associated with the
 #' widest arrows

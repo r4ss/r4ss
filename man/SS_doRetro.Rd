@@ -33,7 +33,7 @@ executable exists in the directory of model files. Input exefile=NULL if
 the executable is in your path and doesn't need copying.}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amound of command-line output.}
+will reduce the amount of command-line output.}
 
 \item{intern}{Display runtime information from SS in the R console (vs.
 saving to a file).}

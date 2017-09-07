@@ -23,15 +23,15 @@
 #' @param profilevec Vector of values to profile over.  Default = NULL.
 #' @param model Name of executable. Default = "ss3".
 #' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amound of command-line output.
-#' @param systemcmd Should R call SS using "system" function intead of "shell".
+#' will reduce the amount of command-line output.
+#' @param systemcmd Should R call SS using "system" function instead of "shell".
 #' This may be required when running R in Emacs. Default = FALSE.
 #' @param saveoutput Copy output .SSO files to unique names.  Default = TRUE.
 #' @param overwrite Overwrite any existing .SSO files. Default = TRUE. If FALSE,
 #' then some runs may be skipped.
 #' @param whichruns Optional vector of run indices to do. This can be used to
 #' re-run a subset of the cases in situations where the function was
-#' interupted or some runs fail to converge. Must be a subset of 1:n, where n
+#' interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
 #' @param SSversion SS version number. Currently only "3.24" or "3.30" are
 #' supported, either as character or numeric values

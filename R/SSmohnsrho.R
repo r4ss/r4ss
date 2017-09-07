@@ -1,11 +1,11 @@
 ##' Calculate Mohn's Rho values for select quantities
 ##' Function calculates a rho value for the ending year for each retrospective
 ##' relative to the reference model and a "Wood's Hole Mohn's Rho" which is based
-##' on all years between the reference and the retrospecitive run.
+##' on all years between the reference and the retrospective run.
 ##'
 ## Grab all the results 
 ##' @param summaryoutput List created by \code{SSsummarize}. The expected order for the 
-##' models are the full refernce model, the retro -1, retro -2, and so forth.
+##' models are the full reference model, the retro -1, retro -2, and so forth.
 ##' @param endyrvec Single year or vector of years representing the
 ##' final year of values to show for each model. 
 ##' @param startyr Single year used to calculate the start of the Wood's Hole

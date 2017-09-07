@@ -113,8 +113,9 @@ plotted.}
 be the directory where the model was run.}
 
 \item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
-based on common cutoff using Chi-squared of .95 with 1 degree of freedom. The
-value can be adjusted using the \code{cutoff_prob} below.}
+based on common cutoff of half of chi-squared of p=.95 with 1 degree of
+freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
+can be adjusted using the \code{cutoff_prob} below.}
 
 \item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
 

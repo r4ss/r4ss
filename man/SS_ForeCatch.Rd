@@ -26,7 +26,7 @@ For west coast groundfish, total might be ACL for next 2 forecast years}
 \item{dead}{TRUE/FALSE switch to choose dead catch instead of retained catch.}
 }
 \description{
-Processing values of dead or retained bimoass from timeseries output
+Processing values of dead or retained biomass from timeseries output
 to fit the format required at the bottom of the forecast file.
 This can be used to map the catches resulting from forecasting with a particular
 harvest control rule into a model representing a different state of nature.

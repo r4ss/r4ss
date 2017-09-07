@@ -21,7 +21,7 @@
 #' executable exists in the directory of model files. Input exefile=NULL if
 #' the executable is in your path and doesn't need copying.
 #' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amound of command-line output.
+#' will reduce the amount of command-line output.
 #' @param intern Display runtime information from SS in the R console (vs.
 #' saving to a file).
 #' @param CallType Either "system" or "shell" (choice depends on how you're running

@@ -17,7 +17,7 @@
 #' connected by the arrows representing movement rates. The order should match
 #' the order of areas in \code{polygonlist} and in the SS model. Not necessary
 #' if no arrows are shown on the map.
-#' @param moveage age for which movemement rates will be represented
+#' @param moveage age for which movement rates will be represented
 #' @param moveseas season for which movement rates will be represented
 #' @param lwdscale scaling factor for arrows in the plot. The largest rate of
 #' movement shown will be scaled to have a line width equal to this value.

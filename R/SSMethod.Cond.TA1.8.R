@@ -4,7 +4,7 @@
 #' to do stage-2 weighting of conditional age at length composition data from a
 #' Stock Synthesis model.
 #'
-#' The function outputs a mutiplier, \emph{w},
+#' The function outputs a multiplier, \emph{w},
 #' (with bootstrap 95\% confidence intervals) so that
 #' \emph{N2i} = \emph{w} x \emph{N1i},
 #' where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
@@ -56,7 +56,7 @@
 #' panels of Fig. 4 in Francis (2011).
 #' @param printit if TRUE, print results to R console.
 #' @param datonly if TRUE, don't show the model expectations
-#' @param plotadj if TRUE, plot the confidencent intervals associated with
+#' @param plotadj if TRUE, plot the confidence intervals associated with
 #' the adjusted sample sizes (TRUE by default unless datonly = TRUE)
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?

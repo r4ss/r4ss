@@ -1,7 +1,7 @@
 #' A function to create a executive summary tables from an SS Report.sso file
 #'
 #' Reads the Report.sso within the directory and creates executive summary
-#' tables as required by the current Terms of Refernce for West Coast 
+#' tables as required by the current Terms of Reference for West Coast 
 #' groundfish.  Works with Stock Synthesis versions 3.24U and later.
 #' Additionally, historical catch and numbers at ages tables are created.
 #'

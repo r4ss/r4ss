@@ -47,7 +47,7 @@ panels of Fig. 4 in Francis (2011).}
 
 \item{datonly}{if TRUE, don't show the model expectations}
 
-\item{plotadj}{if TRUE, plot the confidencent intervals associated with
+\item{plotadj}{if TRUE, plot the confidence intervals associated with
 the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 
 \item{maxpanel}{maximum number of panels within a plot}
@@ -67,7 +67,7 @@ this function as separate panels in one larger figure.}
 \description{
 Uses method TA1.8 (described in Appendix A of Francis 2011) to do
 stage-2 weighting of composition data from a Stock Synthesis model.
-Outputs a mutiplier, \emph{w} (with bootstrap 95\% confidence interval),
+Outputs a multiplier, \emph{w} (with bootstrap 95\% confidence interval),
 so that \emph{N2y} = \emph{w} x \emph{N1y}, where \emph{N1y} and
 \emph{N2y} are the stage-1 and stage-2
 multinomial sample sizes for the data set in year y.  Optionally
