@@ -70,7 +70,10 @@ SSplotCohorts <-
   plotinfo <- NULL
 
   catage           <- replist$catage
-  wtatage          <- replist$wtatage
+  wtatage_switch   <- replist$wtatage_switch
+  if(wtatage_switch){
+    wtatage          <- replist$wtatage
+  }
   nseasons         <- replist$nseasons
   nsexes           <- replist$nsexes
   nfleets          <- replist$nfleets
@@ -84,7 +87,7 @@ SSplotCohorts <-
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
   
 #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
-  if(is.null(wtatage)){
+  if(!wtatage_switch){
     cat("Warning: no weight-at-age data in replist$wtatage\n",
         "        plots of cohort contributions will be in numbers only\n")
     subplots <- setdiff(subplots,2) # removing subplot 2 from the list
@@ -105,7 +108,9 @@ SSplotCohorts <-
   #catcohort <- matrix(NA,nrow=nyrs,ncol=ncohorts)
   catcohort_fltsex <- array(data = NA,
                             dim = c(ncohorts,nages,nfishfleets,nsexes),
-                            dimnames = c("cohort","age","fleet","gender"))
+                            #dimnames = c("cohort","age","fleet","gender"))
+                            dimnames = NULL)
+
   # same dimension array to store biomass values
   wtatage_fltsex <- catcohort_fltsex
 
@@ -128,7 +133,7 @@ SSplotCohorts <-
               sum(catage[catage$Fleet==f & catage$Yr==y & catage$Gender==isex,
                          names(catage)==y-cohort])
             # get assocated weight value
-            if(is.null(wtatage)){
+            if(!wtatage_switch){
               w <- 0 # dummy value to keep code from breaking when wtatage not available
             }else{
               w <- wtatage[[paste("X",a,sep="")]][abs(wtatage$yr)==y &

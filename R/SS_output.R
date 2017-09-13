@@ -2001,7 +2001,22 @@ SS_output <-
     }
     returndat$natage <- rawnatage
   }
-  # Note: should add read of BIOMASS_AT_AGE section here
+
+  # Biomass at age
+  if(SS_versionNumeric >= 3.3){
+    batage <- matchfun2("BIOMASS_AT_AGE", 1, "NUMBERS_AT_LENGTH", -1,
+                           cols=1:(13+accuage), substr1=FALSE)
+  }else{
+    batage <- NULL
+  }
+  if(length(batage)>1){
+    names(batage) <- batage[1,]
+    batage <- batage[-1,]
+    for(i in (1:ncol(batage))[!(names(batage) %in% c("Beg/Mid", "Era"))]){
+      batage[,i] = as.numeric(batage[,i])
+    }
+    returndat$batage <- batage
+  }
   
   # Numbers at length
   col.adjust <- 12
