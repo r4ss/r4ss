@@ -80,14 +80,6 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     if(length(exefiles)==1){
       exefile <- exefiles
     }
-    # for cases where there is more than one exe and the file name is
-    # "ss" by default, add the exe automatically
-    if(exefile=="ss"){
-      exefile <- "ss.exe"
-    }
-    if(!exefile %in% exefiles){
-      stop("Missing executable file ", exefile, " in ", olddir)
-    }
   }
     
   # get model file names from olddir
@@ -102,14 +94,14 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
 ## print(startfile)
   startfile <- file.path(olddir,startfile)
   
-  message("Getting input file names from starter file:\n",startfile)
+  cat("Get input file names from starter file:",startfile,"\n")
   starter <- SS_readstarter(startfile,verbose=FALSE)
   ctlfile <- starter$ctlfile
   datfile <- starter$datfile
 
   filenames <- c(exefile,forefile,ctlfile,datfile,wtatagefile,testfile)
-  message('copying model files from\n',olddir,'\n to\n',newdir)
-  message('model files to copy:\n ', paste(filenames, collapse='\n '))
+  cat('copying model files from\n',olddir,'\nto\n',newdir,'\n')
+  cat('model files to copy:',filenames,sep='\n ')
       
     
   if(!file.exists(newdir)) dir.create(newdir)
@@ -121,13 +113,9 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     if(!file.exists(file.path(newdir,subdirnames[iyr])))
       dir.create(file.path(newdir,subdirnames[iyr]))
     # copy files
-    copy.test <- file.copy(file.path(olddir,filenames),
-                           file.path(newdir,subdirnames[iyr],filenames),
-                           overwrite=TRUE)
-    # make sure there weren't any errors copying the files
-    if(!all(copy.test)){
-      stop("error copying file(s): ",filenames[!copy.test])
-    }
+    file.copy(file.path(olddir,filenames),
+              file.path(newdir,subdirnames[iyr],filenames),
+              overwrite=TRUE)
     # change starter file to do retrospectives
     starter$retro_yr <- years[iyr]
     starter$init_values_src = 0
@@ -143,33 +131,21 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     }
     file.remove(ctlfile)
     writeLines(ctl, ctlfile)
-
-    # if spaces in exe file, then put the filename in quotes
-    if(length(grep(" ", exefile)) > 0){
-      exefile_to_run <- paste0('"', exefile, '"')
-    }else{
-      # but avoid otherwise in case they mess something up
-      exefile_to_run <- exefile
-    }
-    command <- paste0(prefix, exefile_to_run, " ", extras)
-
-    # run model
-    message("Running model in ", getwd(), "\n",
-            "using the command:\n   ", command, sep="")
     
+    # run model
+    cat("Running model in ",getwd(),"\n",sep="")
     if(file.exists("covar.sso")) file.remove("covar.sso")
     if(intern){
-      message("ADMB output generated during model run will be written to:\n   ",
+      cat("ADMB output generated during model run will be written to:\n   ",
           getwd(),"/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
           "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
           sep="")
     }
-
     if(CallType=="system"){
-      ADMBoutput <- system(command, intern=intern)
+      ADMBoutput <- system(paste0(prefix,exefile," ",extras),intern=intern)
     }
     if(CallType=="shell"){
-      ADMBoutput <- shell(command, intern=intern)
+      ADMBoutput <- shell(paste0(prefix,exefile," ",extras),intern=intern)
     }
     if(intern) writeLines(c("###","ADMB output",as.character(Sys.time()),
                             "###"," ",ADMBoutput), con = 'ADMBoutput.txt')
