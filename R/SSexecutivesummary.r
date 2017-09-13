@@ -10,13 +10,14 @@
 #' @param plotdir Directory where the table will be saved.  The default 
 #' saves the table to the dir location where the Report.sso file is located.
 #' @param quant to calculate confidence intervals, default is set at 0.95
+#' @file.type default set to csv but could be set to output txt files by setting to 'txt'
 #' @param es.only =  only the executive summary tables will be produced, default is false which
 #' will return all executive summary tables, historical catches, and numbers-at-ages
 #' @return A csv files containing executive summary tables.
 #' @author Chantel Wetzel
 #' @export
 #'
-SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only = FALSE)
+SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, file.type = 'csv', es.only = FALSE)
 {
 	
 	#Read in the base model using r4ss
@@ -34,6 +35,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
   	SS_version 			<- SS_version[substring(SS_version,1,2)!="#C"] # remove any version numbering in the comments
   	SS_versionshort 	<- toupper(substr(SS_version,1,8))
   	SS_versionNumeric 	<<- as.numeric(substring(SS_versionshort,5))
+  	# Get the full version number for SS 3.30 models - not currently being used
+  	SS_versionlong      <- ifelse(SS_versionNumeric < 3.3, SS_versionNumeric, toupper(substr(SS_version,5,14)))
+
 
 	#=================================================================================================
 	# Function Sections
@@ -69,7 +73,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
     	    out.upper <- out.value+qnorm(1-(1-quant)/2)*out$StdDev
     	}
     	return(data.frame(Year=yrs,Value=out.value,LowerCI=out.lower,UpperCI=out.upper))
-	}
+	} # close getDerivedQuant function
 
 	# Function to pull values from the read in report file and calculate the confidence intervals
 	Get.Values <- function(dat, label, yrs, quant, single = FALSE){
@@ -104,7 +108,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	
 	    if (!single) { return(data.frame(yrs, dq, low, high)) }
 	    if (single)  { return(data.frame(dq, low, high)) }
-	}
+	} # close the Get.Values function
 
 
 	matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
@@ -112,7 +116,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
   		# return a line number from the report file (or other file)
   		# sstr controls whether to compare subsets or the whole line
   		match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
-	}
+	} # close matchfun
 
 	matchfun2 <- function(string1,adjust1,string2,adjust2,cols="nonblank",matchcol1=1,matchcol2=1,
     objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE,header=FALSE)
@@ -147,7 +151,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
   	  	  out <- out[-1,]
   	  	}
   	  	return(out)
-  	}
+  	} # close matchfun2 function
 
   	#=================================================================================================
 	# Determine the model version and dimensions of the model
@@ -196,7 +200,11 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1) 
     smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
-	
+	sep.type = ifelse(file.type == 'csv', ",", "\t")
+	quote.type = ifelse(file.type == 'csv', FALSE, TRUE)
+	if (file.type == 'txt') { print('Not all tables work well when printed as txt files.  The recommended use is with csv files.  However,
+		all files except the numbers-at-age can be printed in txt file format.')}
+
 	#======================================================================
 	#ES Table a  Catches from the fisheries
 	#======================================================================
@@ -213,7 +221,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
 		colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
 
-		write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = F)
+		write.table(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.", file.type), row.names = F, quote = FALSE, sep=sep.type, qmethod = 'double')
+
 	
 	#======================================================================
 	#ES Table b Spawning Biomass and Depletion
@@ -226,8 +235,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 				  		  print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
 		colnames(es.b) = c("Years", "Spawning Output", "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
 
-		write.csv(es.b, paste0(csv.dir, "/b_SSB_ExecutiveSummary.csv"), row.names = F)
-	
+		if (file.type == 'txt') { write.table(es.b, paste0(csv.dir, "/b_SSB_ExecutiveSummary.",file.type), row.names = F, quote = quote.type, sep=sep.type) }
+		if (file.type == 'csv') { write.csv(es.b, paste0(csv.dir, "/b_SSB_ExecutiveSummary.csv"), row.names = F) }
+
 	#======================================================================
 	#ES Table c Recruitment
 	#======================================================================
@@ -284,8 +294,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 
 		colnames(es.c) = c("Years", "Recruitment", "95% Asymptotic Interval", "Recruitment Deviations", "95% Asymptotic Interval")
 
-		write.csv(es.c, paste0(csv.dir, "/c_Recr_ExecutiveSummary.csv"), row.names = F)	
-	
+		if (file.type == 'csv') { write.csv(es.c, paste0(csv.dir, "/c_Recr_ExecutiveSummary.csv"), row.names = F) }	
+		if (file.type == 'txt') { write.table(es.c, paste0(csv.dir, "/c_Recr_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type) }
+
 	#======================================================================
 	#ES Table d 1-SPR (%)
 	#======================================================================
@@ -303,7 +314,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 						  print(f.value$dq,3),     paste0(print(f.value$low,3),     "\u2013", print(f.value$high,3)))
 		colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", "Harvest Rate (proportion)", "95% Asymptotic Interval")
 
-		write.csv(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.csv"), row.names = F)
+		if (file.type == 'csv') { write.csv(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.csv"), row.names = F) }
+		if (file.type == 'txt') { write.table(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type) }
 	
 	
 	#======================================================================
@@ -377,7 +389,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 						   "Exploitation rate corresponding to SPRMSY",
 						   "MSY (mt)")
 
-		write.csv(es.e, paste0(csv.dir, "/e_ReferencePoints_ExecutiveSummary.csv"))
+		if (file.type == 'csv') { write.csv(es.e, paste0(csv.dir, "/e_ReferencePoints_ExecutiveSummary.csv")) }
+		if (file.type == 'txt') { write.table(es.e, paste0(csv.dir, "/e_ReferencePoints_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type) }
+	
 	
 	#======================================================================
 	# ES Table f is the historical harvest 
@@ -391,7 +405,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		es.f = data.frame(ind, ofl, abc, acl, catch, dead) 
 		colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
 
-		write.csv(es.f, paste0(csv.dir, "/f_Manage_ExecutiveSummary.csv"), row.names = F)
+		if (file.type == 'csv') { write.csv(es.f, paste0(csv.dir, "/f_Manage_ExecutiveSummary.csv"), row.names = F) }
+		if (file.type == 'txt') { write.table(es.f, paste0(csv.dir, "/f_Manage_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type) }
 	
 	#======================================================================
 	#ES Table g  Predicted Quantities
@@ -416,8 +431,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 						  print(depl.fore$dq*100,2))
 		colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), "Spawning Biomass (mt)", "Depletion (%)")
 
-		write.csv(es.g, paste0(csv.dir, "/g_Projections_ExecutiveSummary.csv"), row.names = F)
-
+		if (file.type == 'csv') { write.csv(es.g, paste0(csv.dir, "/g_Projections_ExecutiveSummary.csv"), row.names = F) }
+		if (file.type == 'txt') { write.table(es.g, paste0(csv.dir, "/g_Projections_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type)}
+	
 	#======================================================================
 	#ES Table h decision table
 	#======================================================================
@@ -461,7 +477,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 						   "Depletion (%)",
 						   "95% Confidence Interval")
 
-		write.csv(es.i, paste0(csv.dir, "/i_Summary_ExecutiveSummary.csv"))
+		if (file.type == 'csv') { write.csv(es.i, paste0(csv.dir, "/i_Summary_ExecutiveSummary.csv")) }
+		if (file.type == 'txt') { write.table(es.i, paste0(csv.dir, "/i_Summary_ExecutiveSummary.txt"), row.names = F, quote = FALSE, sep=sep.type)}
 	
 
 	if (es.only == FALSE){
@@ -483,7 +500,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
 		colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
 
-		write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs.csv"), row.names = F)
+		if (file.type == 'csv') { write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs.csv"), row.names = F) }
+		if (file.type == 'txt') { write.table(mortality, paste0(csv.dir, "/_CatchesAllYrs.txt"), row.names = F, quote = FALSE, sep=sep.type)}
 	
 	#======================================================================
 	#Numbers at age
