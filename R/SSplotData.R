@@ -173,6 +173,13 @@ SSplotData <- function(replist,
           allyrs <- dat$Yr[dat$Fleet==ifleet]
           size <- dat$N[dat$Fleet==ifleet]
         }
+        # length- and weight-at-age have different sample sizes for each age
+        # within a year, so override calculation above using sum of sample sizes
+        # (results will be same as if average was used due to rescaling) 
+        if(typename %in% c("ladbase","wadbase")){
+          allyrs <- dat$Yr[dat$Fleet==ifleet]
+          size <- sum(dat$N[dat$Fleet==ifleet])
+        }
         # expand table of years with data
         if(!is.null(allyrs) & length(allyrs)>0){
           ## subset to unique values and be careful about keeping the
@@ -235,7 +242,8 @@ SSplotData <- function(replist,
     for(itype in rev(unique(typetable2$itype))){
       ## Calculate relative size for each data type separately
       typetable2$size[typetable2$itype==itype] <-
-        typetable2$size[typetable2$itype==itype]/max(typetable2$size[typetable2$itype==itype])
+        typetable2$size[typetable2$itype==itype] /
+          max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
       typename <- unique(typetable2$typename[typetable2$itype==itype])
       #fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
       for(ifleet in rev(fleets)){
