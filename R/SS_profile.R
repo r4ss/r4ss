@@ -36,6 +36,8 @@
 #' @param SSversion SS version number. Currently only "3.24" or "3.30" are
 #' supported, either as character or numeric values
 #' (noting that numeric 3.30  = 3.3).
+#' @param prior_check Check to make sure the starter file is set to include
+#' the prior likelihood contribution in the total likelihood.  Default = TRUE.
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models
@@ -116,7 +118,7 @@ function(
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
          model='ss', extras="-nox", systemcmd=FALSE, saveoutput=TRUE,
-         overwrite=TRUE, whichruns=NULL, SSversion="3.30",
+         overwrite=TRUE, whichruns=NULL, SSversion="3.30", prior_check=TRUE,
          verbose=TRUE)
 {
   ################################################################################
@@ -197,7 +199,7 @@ function(
          "'",starter$ctlfile,"' to '",newctlfile,"'")
   }
   # check for prior in likelihood
-  if(starter$prior_like==0){
+  if(prior_check & starter$prior_like==0){
     stop("for likelihood profile, you should change the starter file value of\n",
          " 'Include prior likelihood for non-estimated parameters'\n",
          " from 0 to 1 and re-run the estimation.\n")
