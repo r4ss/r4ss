@@ -69,7 +69,7 @@ SSplotCatch <-
              "Continuous F",              #2
              "Landings",                  #3
              "Total catch",               #4
-             "Predicted Discards",        #5  # should add units
+             "Predicted discards",        #5
              "Discard fraction",          #6  # need to add by weight or by length
              "(mt)",                      #7
              "(numbers x1000)",           #8
@@ -151,9 +151,11 @@ SSplotCatch <-
   if(catchasnumbers){
     labels[3] <- paste(labels[3],labels[8])
     labels[4] <- paste(labels[4],labels[8])
+    labels[5] <- paste(labels[5],labels[8])
   }else{
     labels[3] <- paste(labels[3],labels[7])
     labels[4] <- paste(labels[4],labels[7])
+    labels[5] <- paste(labels[5],labels[7])
   }
 
 
