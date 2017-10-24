@@ -196,6 +196,11 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1) 
     smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
+    #======================================================================
+    # Two-sex or Singl-sex model
+    #======================================================================
+    selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
+    nsexes <- length(unique(as.numeric(selex$Sex)))
 	
 	#======================================================================
 	#ES Table a  Catches from the fisheries
@@ -219,6 +224,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#ES Table b Spawning Biomass and Depletion
 	#======================================================================
 		ssb =  Get.Values(dat = base, label = "SPB"    , hist, quant )
+		if (nsexes == 1) { ssb$dq = ssb$dq / 2 ; ssb$low = ssb$low / 2 ; ssb$high = ssb$high / 2 }
 		depl = Get.Values(dat = base, label = "Bratio" , hist, quant )
 		for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
 		es.b =  data.frame(hist, 
@@ -329,6 +335,15 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		spr.msy    = Get.Values(dat = base, label = "SPR_MSY", 		     hist, quant, single = TRUE)
 		f.msy 	   = Get.Values(dat = base, label = "Fstd_MSY", 	     hist, quant, single = TRUE)
 		msy 	   = Get.Values(dat = base, label = "TotYield_MSY",      hist, quant, single = TRUE)
+
+		# Convert spawning quantities for single-sex models
+		if (nsexes == 1){
+			ssb.virgin = ssb.virgin / 2 
+			b.target = b.target / 2
+			b.spr = b.spr / 2
+			b.msy = b.msy / 2
+		}
+
 	
 		es.e =  matrix(c(
 				comma(ssb.virgin$dq,       dig),  paste0(comma(ssb.virgin$low,      dig), 	"\u2013", comma(ssb.virgin$high,      dig)),
@@ -400,6 +415,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		abc.fore =  Get.Values(dat = base, label = "ForeCatch" , yrs = fore, quant)
 		ssb.fore  = Get.Values(dat = base, label = "SPB" ,       yrs = fore, quant)
 		depl.fore = Get.Values(dat = base, label = "Bratio",     yrs = fore, quant)
+
+		if (nsexes == 1) { 
+			ssb.fore$dq = ssb.fore$dq / 2; ssb.fore$low = ssb.fore$low / 2; ssb.fore$high = ssb.fore$high / 2}
 		
 		smry.fore = 0
 		for(a in 1:nareas){
@@ -493,9 +511,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
 		if (check != 2){
 			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
-			singlesex = ifelse(length(base[grep(paste("1 1 2 1 1 1 2", startyr,sep=" "),base)]) == 0, TRUE, FALSE)
 			
-			if (singlesex) {
+			if (nsexes == 1) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
 					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
@@ -508,7 +525,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 				write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
 			}
 
-			if (!singlesex) {
+			if (nsexes == 2) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
 					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)

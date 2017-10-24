@@ -132,10 +132,19 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	fore     <- (endyr+1):foreyr
 	all      <- startyr:foreyr
 
+	#======================================================================
+    # Two-sex or Singl-sex model
+    #======================================================================
+    selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
+    nsexes <- length(unique(as.numeric(selex$Sex)))
+
+	#======================================================================
 	# Determine if the model has multiple areas
 	# The quantities by areas are summed into total values (e.g. spawning biomass summed across all areas)
+	#======================================================================
   	nareas <- max(as.numeric(rawrep[begin:end,1]))
   	if ( nareas > 1) { print(paste0("Patience: There are ", nareas, " areas that are being pulled and combined.")) }
+  	#======================================================================
 
 	smry.all = tot.bio.all = recruits.all = 0
 	for (a in 1:nareas){
@@ -165,6 +174,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
 	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
 	ssb.virgin   = as.numeric(strsplit(base[grep("SPB_Virgin",base)]," ") [[1]][3])
+	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
 	
 	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)
 	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
