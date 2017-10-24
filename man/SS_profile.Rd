@@ -11,7 +11,7 @@ SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   parstring = NULL, dircopy = TRUE, exe.delete = FALSE, model = "ss",
   extras = "-nox", systemcmd = FALSE, saveoutput = TRUE,
   overwrite = TRUE, whichruns = NULL, SSversion = "3.30",
-  verbose = TRUE)
+  prior_check = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory where input files and executable are located.}
@@ -66,6 +66,9 @@ is the length of profilevec.}
 \item{SSversion}{SS version number. Currently only "3.24" or "3.30" are
 supported, either as character or numeric values
 (noting that numeric 3.30  = 3.3).}
+
+\item{prior_check}{Check to make sure the starter file is set to include
+the prior likelihood contribution in the total likelihood.  Default = TRUE.}
 
 \item{verbose}{Controls amount of info output to command line.  Default =
 TRUE.}

@@ -69,7 +69,7 @@ SSplotCatch <-
              "Continuous F",              #2
              "Landings",                  #3
              "Total catch",               #4
-             "Predicted Discards",        #5  # should add units
+             "Predicted discards",        #5
              "Discard fraction",          #6  # need to add by weight or by length
              "(mt)",                      #7
              "(numbers x1000)",           #8
@@ -126,6 +126,7 @@ SSplotCatch <-
   FleetNames       <- replist$FleetNames
   IsFishFleet      <- replist$IsFishFleet
   SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
+  SS_versionNumeric <- replist$SS_versionNumeric
 
 
   if(is.null(catchasnumbers)){
@@ -151,9 +152,11 @@ SSplotCatch <-
   if(catchasnumbers){
     labels[3] <- paste(labels[3],labels[8])
     labels[4] <- paste(labels[4],labels[8])
+    labels[5] <- paste(labels[5],labels[8])
   }else{
     labels[3] <- paste(labels[3],labels[7])
     labels[4] <- paste(labels[4],labels[7])
+    labels[5] <- paste(labels[5],labels[7])
   }
 
 
@@ -164,7 +167,23 @@ SSplotCatch <-
   if(forecastplot){
     ts <- timeseries
   }
+
+  # spread equilibrium catch over all seasons for 3.24 and earlier models
+  # starting with 3.30, equilibrium catch can be season-specific
+  if(nseasons > 1 & SS_versionNumeric <= 3.24){
+    catch.cols <- NULL
+    for(string in c("sel","dead","retain","obs","Hrate:_","F:_")){
+      catch.cols <- c(catch.cols, grep(string, names(ts)))
+    }
+    # which columns contain some form of catch
+    catch.cols <- sort(unique(catch.cols))
+    equil.catch.vec <- ts[which(ts$Era=="INIT")[1], catch.cols]
+    for(irow in which(ts$Era=="INIT")){
+      ts[irow, catch.cols] <- equil.catch.vec/nseasons
+    }
+  }
       
+
   # harvest rates
   if(F_method==1){
     stringF <- "Hrate:_"
@@ -175,13 +194,13 @@ SSplotCatch <-
   }
 
   ### total landings (retained) & catch (encountered)
-  goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME")
+  goodrows <- ts$Area==1 & ts$Era %in% c("INIT", "TIME")
   if(forecastplot){
-    goodrows <- ts$Area==1 & ts$Era %in% c("INIT","TIME","FORE")
+    goodrows <- ts$Area==1 & ts$Era %in% c("INIT", "TIME", "FORE")
   }
   catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
 
-  if(SS_versionshort=="SS-V3.11"){
+  if(SS_versionNumeric==3.11){
     stringN <- "enc(N)"
     stringB <- "enc(B)"
   }else{
@@ -264,7 +283,6 @@ SSplotCatch <-
     if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
   }
 
-  
   # add total across seasons "mat2" indicates aggregation across seasons
   if(nseasons > 1){
     catchyrs2 <- floor(ts$Yr[goodrows & ts$Seas==1]) # T/F indicator of the lines for which we want to plot catch
@@ -292,7 +310,6 @@ SSplotCatch <-
       ytotal <- rep(NA,nrow(ymat))
       if(is.null(ymax) || is.na(ymax)) ymax <- max(ymat,na.rm=TRUE)
     }
-#browser()    
     plot(x, ytotal, ylim=c(0,ymax), xlab=xlab, ylab=ylab, type=type, lwd=lwd, col="black")
     abline(h=0,col="grey")
     #abline(h=1,col="grey")
@@ -340,6 +357,10 @@ SSplotCatch <-
                   col=fleetcols[order],space=0,yaxs='i', axes=FALSE, add=add)
     # Get major and minor multiples for choosing labels:
     ntick <- length(mp)
+    if(nseasons > 1){
+      ntick <- floor(ntick/nseasons)
+    }
+    # formula for major/minor ticks
       { if (ntick < 16) mult = c(2, 2)
       else if(ntick < 41) mult = c(5, 5)
       else if (ntick < 101) mult = c(10, 5) else mult = c(20, 5)
@@ -353,16 +374,21 @@ SSplotCatch <-
     yticks <- pretty(c(0,ymax2))
     if(addmax) yticks <- sort(c(yticks,ymax2))
     axis(2,at=yticks)
-    label.index <- which(x %% mult[1] == 0)
-    minor.index <- which(x %% mult[2] == 0)
-    for(i in 1:length(yticks)) lines(x=c(-100,ntick),y=rep(yticks[i],2),
-                                     lty=3,col=rgb(0,0,0,.3),lwd=1)
-    # Draw all ticks:
-    axis(side = 1, at = mp, labels = FALSE, tcl = -0.2)
+    # in seasonal models, x values don't contain integers:
+    # 1987.125 1987.375 1987.625 1987.875
+    # so reducing by smallest decimal value to have some integers
+    x.shift <- x - min(x - floor(x), na.rm=TRUE)
+    integer.index <- which(x.shift %% 1 == 0)
+    label.index <- which(x.shift %% mult[1] == 0)
+    minor.index <- which(x.shift %% mult[2] == 0)
+    # Draw horizontal dotted lines
+    abline(h = yticks, lty=3, col=rgb(0,0,0,.3), lwd=1)
+    # Draw ticks at all integer years:
+    axis(side = 1, at = mp[integer.index], labels = FALSE, tcl = -0.2)
     # Draw minor ticks:
     axis(side = 1, at = mp[minor.index], labels = FALSE, tcl = -0.5)
     # Draw major ticks & labels:
-    axis(side = 1, at = mp[label.index], labels = x[label.index], tcl = -0.7)
+    axis(side = 1, at = mp[label.index], labels = x.shift[label.index], tcl = -0.7)
 
     # add legend
     if(showlegend) legend(legendloc, fill=fleetcols[!ghost], legend=fleetnames[!ghost], bty="n")
@@ -457,7 +483,15 @@ SSplotCatch <-
         myname <- gsub(pattern=badstrings[i],replacement=" ",x=myname,fixed=T)
       }
       filename <- paste0("catch", myname, ".png")
-      plotinfo2 <- pngfun(filename, caption=substring(myname,3))
+      caption <- substring(myname, 3)
+      if(exists("equil.catch.vec") &&
+         max(equil.catch.vec, na.rm=TRUE) > 0 &&
+         isubplot %in% 1:9){
+        caption <- paste(caption, "<br>Note: the first ", nseasons,
+                         " values represent the unfinished equilibrium catch",
+                         " divided equally among all seasons.")
+      }
+      plotinfo2 <- pngfun(filename, caption=caption)
       # "a" is TRUE/FALSE indicator that plot got produced
       a <- makeplots(isubplot)
       dev.off()
