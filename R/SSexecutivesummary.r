@@ -538,7 +538,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 						n = b
 						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 						natage.f = natage.f + t(temp) 
-						n = b + nsexes 
+						n = ifelse(nmorphs ==1, nsexes, b + nsexes) 
 						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 						natage.m = natage.m + t(temp) 
 					}
