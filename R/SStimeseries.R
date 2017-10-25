@@ -136,7 +136,9 @@ SStimeseries <- function(dir,  plotdir = 'default'){
     # Two-sex or Singl-sex model
     #======================================================================
     selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
-    nsexes <- length(unique(as.numeric(selex$Sex)))
+    nsexes <- ifelse(SS_versionNumeric < 3.3, 
+    					length(unique(as.numeric(selex$gender))),
+    					length(unique(as.numeric(selex$Sex))))
 
 	#======================================================================
 	# Determine if the model has multiple areas
