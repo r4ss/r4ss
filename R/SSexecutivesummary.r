@@ -201,6 +201,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
     #======================================================================
     selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
     nsexes <- length(unique(as.numeric(selex$Sex)))
+
+    #======================================================================
+    # Determine the number of growth patterns
+    #======================================================================
+    find.morph <- matchfun2("MORPH_INDEXING", 1, "MOVEMENT", -2, header=TRUE)
+    nmorphs <- dim(find.morph)[1] / nsexes
 	
 	#======================================================================
 	#ES Table a  Catches from the fisheries
@@ -528,10 +534,14 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 			if (nsexes == 2) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-					natage.f = natage.f + t(temp) 
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-					natage.m = natage.m + t(temp) 
+					for (b in 1:nmorphs){
+						n = b
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.f = natage.f + t(temp) 
+						n = b + nsexes 
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.m = natage.m + t(temp) 
+					}
 				}
 				
 				colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
