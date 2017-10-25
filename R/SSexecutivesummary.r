@@ -200,7 +200,10 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
     # Two-sex or Singl-sex model
     #======================================================================
     selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
-    nsexes <- length(unique(as.numeric(selex$Sex)))
+    nsexes <- ifelse(SS_versionNumeric < 3.3, 
+    					length(unique(as.numeric(selex$gender))),
+    					length(unique(as.numeric(selex$Sex))))
+
 
     #======================================================================
     # Determine the number of growth patterns
@@ -301,7 +304,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table d 1-SPR (%)
 	#======================================================================
-		spr_type = strsplit(base[grep("SPR_report_basis",base)]," ")[[1]][3]
+		spr.name = ifelse(SS_versionNumeric >= 3.30, "SPR_report_basis", "SPR_ratio_basis")
+		spr_type = strsplit(base[grep(spr.name,base)]," ")[[1]][3]
 		#if (spr_type != "1-SPR") { 
 		#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
 		#	print(paste("The SPR is being reported as", spr_type, "."))
@@ -512,46 +516,87 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#Numbers at age
 	#======================================================================
-		# Check to see if numbers-at-age is calculated 
-		check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
-		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
-		if (check != 2){
-			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+	if ( nareas > 1) { print(paste0("Patience: There are ", nareas, " areas that are being pulled and combined to create the numbers-at-age tables.")) }
+
+		if(SS_versionNumeric < 3.30) { 
+			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
 			
 			if (nsexes == 1) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 					natage.f = natage.f + t(temp) 
 				}
 				
 				colnames(natage.f) = 0:maxAge
 				rownames(natage.f) <- startyr:endyr 
-		
+			
 				write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
 			}
-
+	
 			if (nsexes == 2) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
 					for (b in 1:nmorphs){
 						n = b
-						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 						natage.f = natage.f + t(temp) 
 						n = ifelse(nmorphs ==1, nsexes, b + nsexes) 
-						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 						natage.m = natage.m + t(temp) 
 					}
 				}
 				
 				colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
 				rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
-		
+			
 				write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
 				write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
 			}
+		} # SS v3.24 verions loop
+
+		# Check to see if numbers-at-age is calculated 
+		if(SS_versionNumeric >= 3.30) {
+			check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
+			if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
+
+			if (check != 2){
+				maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+				
+				if (nsexes == 1) {
+					natage.f = natage.m = 0
+					for(a in 1:nareas){
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.f = natage.f + t(temp) 
+					}
 					
-		}
+					colnames(natage.f) = 0:maxAge
+					rownames(natage.f) <- startyr:endyr 
+			
+					write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
+				}
+	
+				if (nsexes == 2) {
+					natage.f = natage.m = 0
+					for(a in 1:nareas){
+						for (b in 1:nmorphs){
+							n = b
+							temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+							natage.f = natage.f + t(temp) 
+							n = ifelse(nmorphs ==1, nsexes, b + nsexes) 
+							temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+							natage.m = natage.m + t(temp) 
+						}
+					}
+					
+					colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
+					rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+			
+					write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
+					write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
+				}					
+			} #check loop
+		} #  SS version 3.30
 
 	}
 }
