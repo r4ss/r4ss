@@ -188,11 +188,23 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	fore     <- (endyr+1):foreyr
 	all      <- startyr:foreyr
 
+	#======================================================================
+	# Determine number of areas in the model
+	#======================================================================
   	nareas   <- max(as.numeric(rawrep[begin:end,1]))
-  	temp     <- strsplit(base[grep("fleet_names",base)]," ")[[1]]
-	names    <- temp[3:(3 + nfleets - 1)]
 
+  	#======================================================================
+	# Determine the fleet name and number for fisherie with catch
+	#======================================================================
+  	begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
+    end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
+    temp  <- rawrep[begin:end, 1:18]
+    names <- unique(temp[,2]) # This is a list of fishery names with catch associated with them
+    fleet.num <- unique(temp[,1])
+
+ 	#======================================================================
 	# Find summary age
+	#======================================================================
 	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1) 
     smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
@@ -218,8 +230,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		catch = NULL; total.catch = total.dead = 0
 		ind = hist[1:(length(hist)-1)]
 		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
 			total.dead  = total.dead + killed
 			total.catch = total.catch + input.catch
 			catch = cbind(catch, input.catch)
@@ -501,8 +513,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		catch = NULL
 		ind = startyr:endyr
 		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
 			total.dead = total.dead + killed
 			total.catch = total.catch + input.catch
 			catch = cbind(catch, input.catch)
