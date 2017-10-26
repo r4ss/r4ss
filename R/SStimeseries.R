@@ -146,6 +146,16 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	#======================================================================
   	nareas <- max(as.numeric(rawrep[begin:end,1]))
   	if ( nareas > 1) { print(paste0("Patience: There are ", nareas, " areas that are being pulled and combined.")) }
+
+
+	#======================================================================
+	# Determine the fleet name and number for fisherie with catch
+	#======================================================================
+  	begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
+    end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
+    temp  <- rawrep[begin:end, 1:18]
+    names <- unique(temp[,2]) # This is a list of fishery names with catch associated with them
+    fleet.num <- unique(temp[,1])
   	#======================================================================
 
 	smry.all = tot.bio.all = recruits.all = 0
@@ -181,8 +191,6 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)
 	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
 	
-	temp    = strsplit(base[grep("fleet_names",base)]," ")[[1]]
-	names   = temp[3:(3 + nfleets - 1)]
 
 	# Determine the number of fishery fleets with catch and sum all mortality across fleets.
 	if (nfleets != length(names)) { 
@@ -193,7 +201,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	if (SS_versionNumeric >= 3.3) { xx = 14}
 
 	for (a in 1:nfleets){
-		temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(a, names[a], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
+		temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(fleet.num[a], names[a], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
 		catch = catch + temp
 	}
 	fore.catch = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("ForeCatch_",x,sep=""),base)]," ")[[1]][3]), x = fore)
