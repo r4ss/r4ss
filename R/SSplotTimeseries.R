@@ -395,9 +395,9 @@ SSplotTimeseries <-
       if(is.null(maxyr)) maxyr <- max(yrvals)
       xlim <- c(minyr,maxyr)
       plot(yrvals,yvals[plot1 | plot2 | plot3],
-           type='n', xlab=xlab, ylim=c(0,ymax), ylab=ylab,
+           type='n', xlab=xlab, ylim=c(0,1.05*ymax), yaxs='i', ylab=ylab,
            main=main, cex.main=cex.main,xlim=xlim)
-      abline(h=0,col="grey")
+      #abline(h=0,col="grey") # no longer required due to use of yaxs='i'
     }
 
     # add references points to plot of depletion
