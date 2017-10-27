@@ -7,11 +7,15 @@
 SSplotSpawnrecruit(replist, subplot = 1:2, add = FALSE, plot = TRUE,
   print = FALSE, xlim = NULL, ylim = NULL,
   labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
-  "Spawning output"), bioscale = "default", plotdir = "default",
+  "Spawning output", expression(paste("Spawning output (relative to ",
+  italic(B)[0], ")")), expression(paste("Recruitment (relative to  ",
+  italic(R)[0], ")"))), bioscale = "default", plotdir = "default",
   pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
   cex.main = 1, verbose = TRUE, colvec = c("blue", "green3", "black",
   "red"), legend = TRUE, legendloc = "topleft", minyr = "default",
-  textmindev = 0.5, virg = TRUE, init = TRUE, forecast = FALSE)
+  textmindev = 0.5, relative = FALSE, expected = TRUE, estimated = TRUE,
+  bias_adjusted = TRUE, show_env = TRUE, virg = TRUE, init = TRUE,
+  forecast = FALSE)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -64,6 +68,16 @@ be the directory where the model was run.}
 \item{textmindev}{minimum recruitment deviation for label to be added so
 only extreme devs are labeled (labels are added to first and last years as
 well).  Default=0.7.}
+
+\item{relative}{scale both axes so that B0 and R0 are at 1
+to show spawning output and recruitment relative to the equilibrium}
+
+\item{expected}{show line for expected recruitment (stock-recruit curve)}
+
+\item{estimated}{show points for estimated recruitment values
+(including deviations)}
+
+\item{bias_adjusted}{show lines for bias adjusted expected recruitment}
 
 \item{virg}{add point for equilibrium conditions (x=B0,y=R0)}
 
