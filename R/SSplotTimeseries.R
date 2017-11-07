@@ -1,9 +1,9 @@
 #' Plot timeseries data
-#' 
+#'
 #' Plot timeseries data contained in TIME_SERIES output from Stock Synthesis
 #' report file. Some values have optional uncertainty intervals.
-#' 
-#' 
+#'
+#'
 #' @param replist list created by \code{SS_output}
 #' @param subplot number controlling which subplot to create
 #' @param add add to existing plot? (not yet implemented)
@@ -127,7 +127,7 @@ SSplotTimeseries <-
     seascols <- rich.colors.short(nbirthseas)
     if(nbirthseas > 2) seascols <- rich.colors.short(nbirthseas+1)[-1]
   }
-  
+
   # temporary fix for SS_output versions prior to 9/20/2010
   if(is.null(B_ratio_denominator)) B_ratio_denominator <- 1
 
@@ -173,7 +173,7 @@ SSplotTimeseries <-
   # warn about spawning season--seems to no longer be necessary now that title
   # is update for to reflect spawning season
   ## if(spawnseas>1 & subplot %in% c(3,6,7,8,9,10) ){
-  ##   cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="") 
+  ##   cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="")
   ## }
 
   # define which years are forecast or not
@@ -220,24 +220,37 @@ SSplotTimeseries <-
       ylab <- labels[6]
     }
 
-    # subplot11&12 = recruitment
+    # subplot11-15 = recruitment
     if(subplot %in% 11:15){
       yvals <- ts$Recruit_0
       ylab <- labels[8]
+      # override missing value in case (model from Geoff Tuck run with 3.30.08.02)
+      # where spawn_month = 7 with settlement at age 1 (the following year)
+      if(yvals[ts$Era=="VIRG"]==0){
+        yvals[ts$Era=="VIRG"] <- derived_quants["Recr_Virgin", "Value"]
+      }
+      if(yvals[ts$Era=="INIT"]==0){
+        yvals[ts$Era=="INIT"] <- derived_quants["Recr_Unfished", "Value"]
+      }
     }
 
     # change ylab to represent fractions for those plots
     if(subplot %in% c(13,15)) ylab <- labels[9]
-       
+
     # title initially set equal to y-label
     main=ylab
 
-    # birth season-related calculations
+    # calculations related to birth season (3.24) or settlement (3.30)
     yrshift <- 0 # years of shift for fish spawning to next birth season
     if(!is.null(birthseas) && max(birthseas) < spawnseas){
       # case where fish are born in the year after spawning
       yrshift <- 1
     }
+    if(!is.null(replist$recruitment_dist$recruit_dist)){
+      # case where fish are born in the year after spawning
+      yrshift <- min(as.numeric(replist$recruitment_dist$recruit_dist$Age, na.rm=TRUE))
+    }
+
     if(!is.null(birthseas) && nbirthseas > 1){
       if(subplot==11){
         # sum total recruitment across birth seasons
@@ -254,7 +267,7 @@ SSplotTimeseries <-
       }
       if(subplot %in% c(14,15)) main=paste(main,"by birth season")
     }
-    
+
     # sum up total across areas if needed
     if(nareas>1){
       if(subplot %in% c(2,3,5,6,8,10,12,13)){
@@ -297,7 +310,7 @@ SSplotTimeseries <-
     if(subplot==10){
       yvals[1] <- NA
     }
-    
+
     if(forecastplot) main <- paste(main,"with forecast")
     # calculating intervals around spawning biomass, depletion, or recruitment
     # area specific confidence intervals?
@@ -340,7 +353,7 @@ SSplotTimeseries <-
         v <- stdtable$Value * bioscale
         std <- stdtable$StdDev * bioscale
         if(subplot==11){
-          # assume recruitments have log-normal distribution 
+          # assume recruitments have log-normal distribution
           # from first principals (multiplicative survival probabilities)
           stdtable$logint <- sqrt(log(1+(std/v)^2))
           stdtable$lower <- exp(log(v) - 1.96*stdtable$logint)
@@ -363,7 +376,7 @@ SSplotTimeseries <-
       ymax <- max(yvals[plot1 | plot2 | plot3], na.rm=TRUE)
     }
     if(subplot%in%c(13,15)) ymax <- 1 # these plots show fractions
-    
+
     if(uncertainty & subplot %in% c(7,9,11)) ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
 
     if(print){ # if printing to a file
@@ -382,11 +395,11 @@ SSplotTimeseries <-
     }
 
     # move VIRG value from startyr-2 to startyr-1 to show closer to plot
-    # this one didn't work:   if(exists("stdtable")) stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]] <- stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]]+1
-    ts$Yr[ts$Era=="VIRG"] <- ts$Yr[ts$Era=="VIRG"]+1
-    ts$YrSeas[ts$Era=="VIRG"] <- ts$YrSeas[ts$Era=="VIRG"]+1
-    
-             
+    # this one didn't work:
+    # if(exists("stdtable")) stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]] <- stdtable$Yr[stdtable$Yr %in% ts$Yr[plot1]]+1
+    ts$Yr[ts$Era=="VIRG"] <- ts$Yr[ts$Era=="VIRG"]+1+yrshift
+    ts$YrSeas[ts$Era=="VIRG"] <- ts$YrSeas[ts$Era=="VIRG"]+1+yrshift
+
     # create an empty plot (if not adding to existing plot)
     if(!add){
       yrvals  <- ts$YrSeas[ plot1 | plot2 | plot3]
@@ -450,7 +463,7 @@ SSplotTimeseries <-
     }else{
       # always loop over areas, but for plots with only one line,
       # change vector of areas to equal 1.
-      if(subplot %in% c(1,4,7,9,11,14,15)) myareas <- 1 else myareas <- areas     
+      if(subplot %in% c(1,4,7,9,11,14,15)) myareas <- 1 else myareas <- areas
       for(iarea in myareas){ # loop over chosen areas
         ###
         # subset for time period to allow different colors in plot
