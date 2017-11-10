@@ -1474,30 +1474,37 @@ SS_output <-
 
   # determine fecundity type
   FecType <- 0
-  if("Eggs/kg_slope_wt_Fem" %in% parameters$Label){
+  pl <- parameters$Label
+  FecGrep1 <- grep("Eggs/kg_slope_wt_Fem", pl)
+  FecGrep2 <- grep("Eggs_exp_len_Fem", pl)
+  FecGrep3 <- grep("Eggs_exp_wt_Fem", pl)
+  FecGrep4 <- grep("Eggs_slope_len_Fem", pl)
+  FecGrep5 <- grep("Eggs_slope_Wt_Fem", pl)
+
+  if(length(FecGrep1) > 0){
     FecType <- 1
-    FecPar1name <- "Eggs/kg_inter_Fem"
-    FecPar2name <- "Eggs/kg_slope_wt_Fem"
+    FecPar1name <- grep("Eggs/kg_inter_Fem", pl, value=TRUE)[1] 
+    FecPar2name <- pl[FecGrep1[1]]
   }
-  if("Eggs_exp_len_Fem" %in% parameters$Label){
+  if(length(FecGrep2) > 0){
     FecType <- 2
-    FecPar1name <- "Eggs_scalar_Fem"
-    FecPar2name <- "Eggs_exp_len_Fem"
+    FecPar1name <- grep("Eggs_scalar_Fem", pl, value=TRUE)[1]
+    FecPar2name <- pl[FecGrep2[1]]
   }
-  if("Eggs_exp_wt_Fem" %in% parameters$Label){
+  if(length(FecGrep3) > 0){
     FecType <- 3
-    FecPar1name <- "Eggs_scalar_Fem"
-    FecPar2name <- "Eggs_exp_wt_Fem"
+    FecPar1name <- grep("Eggs_scalar_Fem", pl, value=TRUE)[1]
+    FecPar2name <- pl[FecGrep3[1]]
   }
-  if("Eggs_slope_len_Fem" %in% parameters$Label){
+  if(length(FecGrep4) > 0){
     FecType <- 4
-    FecPar1name <- "Eggs_intercept_Fem"
-    FecPar2name <- "Eggs_slope_len_Fem"
+    FecPar1name <- grep("Eggs_intercept_Fem", pl, value=TRUE)[1]
+    FecPar2name <- pl[FecGrep4[1]]
   }
-  if("Eggs_slope_Wt_Fem" %in% parameters$Label){
+  if(length(FecGrep5) > 0){
     FecType <- 5
-    FecPar1name <- "Eggs_intercept_Fem"
-    FecPar2name <- "Eggs_slope_Wt_Fem"
+    FecPar1name <- grep("Eggs_intercept_Fem", pl, value=TRUE)[1]
+    FecPar2name <- pl[FecGrep5[1]]
   }
   if(is.na(lbinspop[1])){
     lbinspop <- biology$Low[biology$GP==1]
