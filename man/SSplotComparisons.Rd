@@ -223,7 +223,7 @@ multiple models, where the collection was created using the
   \dontrun{
 # directories where models were run need to be defined
 dir1 <- 'c:/SS/mod1'
-dir2 <- 'c:/SS/mod1'
+dir2 <- 'c:/SS/mod2'
 dir1mcmc <- 'c:/SS/mod1mcmc'
 
 # read two models
