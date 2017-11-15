@@ -130,6 +130,30 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @examples
+#' 
+#'   \dontrun{
+#' # directories where models were run need to be defined
+#' dir1 <- 'c:/SS/mod1'
+#' dir2 <- 'c:/SS/mod1'
+#' dir1mcmc <- 'c:/SS/mod1mcmc'
+#' 
+#' # read two models
+#' mod1 <- SS_output(dir=dir1)
+#' mod2 <- SS_output(dir=dir2)
+#' 
+#' # create list summarizing model results
+#' mod.sum <- SSsummarize(list(mod1, mod2))
+#' 
+#' # plot comparisons
+#' SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
+#' 
+#' # Example showing comparison if MCMC results are available
+#' mod.sum$mcmc <- SSgetMCMC(dir=dir1mcmc)
+#' SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
+#'
+#' }
+
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,
@@ -186,7 +210,7 @@ SSplotComparisons <-
            add=FALSE,
            par=list(mar=c(5,4,1,1)+.1),
            verbose=TRUE,
-           mcmcVec="default",
+           mcmcVec=FALSE,
            show_equilibrium=TRUE)
 {
   meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
@@ -388,9 +412,16 @@ SSplotComparisons <-
   # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
-  if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
-  if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
 
+  # check length of mcmcVec
+  if(nlines > 1 & length(mcmcVec)==1){
+    mcmcVec <- rep(mcmcVec, nlines)
+  }
+  if(nlines != length(mcmcVec)){
+    stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
+  }
+
+  # check length of indexfleets
   if(!is.null(indexfleets) && length(indexfleets) < n){
     if(length(indexfleets)==1){
       indexfleets <- rep(indexfleets, n)
