@@ -226,10 +226,10 @@ SSplotTimeseries <-
       ylab <- labels[8]
       # override missing value in case (model from Geoff Tuck run with 3.30.08.02)
       # where spawn_month = 7 with settlement at age 1 (the following year)
-      if(yvals[ts$Era=="VIRG"]==0){
+      if(all(yvals[ts$Era=="VIRG"]==0)){
         yvals[ts$Era=="VIRG"] <- derived_quants["Recr_Virgin", "Value"]
       }
-      if(yvals[ts$Era=="INIT"]==0){
+      if(all(yvals[ts$Era=="INIT"]==0)){
         yvals[ts$Era=="INIT"] <- derived_quants["Recr_Unfished", "Value"]
       }
     }
