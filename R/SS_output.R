@@ -919,11 +919,11 @@ SS_output <-
   stats$table_of_phases <- table(parameters$Phase)
   # subset columns for printed table of estimated parameters
   estimated_non_dev_parameters <- pars[,names(pars) %in%
-      c("Value","Phase","Min","Max","Init","Prior","Gradient","Pr_type",
-        "Pr_SD","Pr_Like","Parm_StDev","Status","Afterbound")]
+      c("Value", "Phase", "Min", "Max", "Init", "Prior", "Gradient", "Pr_type",
+        "Pr_SD", "Pr_Like", "Parm_StDev", "Status", "Afterbound")]
   # exclude parameters that represent recdevs or other deviations
-  devnames <- c("RecrDev","InitAge","ForeRecr",
-                "DEVadd","DEVmult","DEVrwalk","DEV_MR_rwalk")
+  devnames <- c("RecrDev", "InitAge", "ForeRecr",
+                "DEVadd", "DEVmult", "DEVrwalk", "DEV_MR_rwalk", "ARDEV")
   # look for rows in table of parameters that have label indicating deviation
   devrows <- NULL
   for(iname in 1:length(devnames)){
