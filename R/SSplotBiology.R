@@ -11,7 +11,11 @@
 #' @param subplots vector controlling which subplots to create
 #' @param seas which season to plot (values other than 1 only work in
 #' seasonal models but but maybe not fully implemented)
+#' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
+#' will be replist$mainmorphs
 #' @param colvec vector of length 3 with colors for various points/lines
+#' @param ltyvec vector of length 2 with lty for females/males in growth plots
+#' values can be applied to other plots in the future
 #' @param shadealpha Transparency parameter used to make default shadecol
 #' values (see ?rgb for more info)
 #' @param legendloc Location of legend (see ?legend for more info)
@@ -36,7 +40,10 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
-         colvec=c("red","blue","grey20"),shadealpha=0.1,
+         morphs=NULL,
+         colvec=c("red","blue","grey20"),
+         ltyvec=c(1,2),
+         shadealpha=0.1,
          imageplot_text=FALSE,
          imageplot_text_round=0,
          legendloc="topleft",
@@ -130,7 +137,6 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   FecPar2      <- replist$FecPar2
   parameters   <- replist$parameters
   nsexes       <- replist$nsexes
-  mainmorphs   <- replist$mainmorphs
   accuage      <- replist$accuage
   startyr      <- replist$startyr
   endyr        <- replist$endyr
@@ -146,6 +152,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   M_at_age     <- replist$M_at_age
   Growth_Parameters <- replist$Growth_Parameters
 
+  if(is.null(morphs)){
+    morphs   <- replist$mainmorphs
+  }
+  
   # get any derived quantities related to growth curve uncertainty
   Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$Label),]
   if(nrow(Grow_std)==0){
@@ -185,7 +195,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
-  ## if(nrow(growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],])==0){
+  ## if(nrow(growdat[growdat$Sex==1 & growdat$Morph==morphs[1],])==0){
   ##   seas <- replist$spawnseas
   ##   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
   ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
@@ -199,7 +209,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     plotdir <- replist$inputs$dir
   }
   # check dimensions
-  if(length(mainmorphs)>nsexes){
+  if(length(morphs)>nsexes){
     cat("!Error with morph indexing in SSplotBiology function.\n",
         " Code is not set up to handle multiple growth patterns or birth seasons.\n")
   }
@@ -221,7 +231,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   # Beginning of season 1 (or specified season) mean length at age
   #   with 95% range of lengths (by sex if applicable)
   ## Ian T.: consider somehow generalizing to allow looping over growth pattern
-  growdatF <- growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],]
+  growdatF <- growdat[growdat$Sex==1 & growdat$Morph==morphs[1],]
   growdatF$Sd_Size <- growdatF$SD_Beg
   if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
     growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
@@ -232,7 +242,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
 
   if(nsexes > 1){ # do males if 2-sex model
-    growdatM <- growdat[growdat$Sex==2 & growdat$Morph==mainmorphs[2],]
+    growdatM <- growdat[growdat$Sex==2 & growdat$Morph==morphs[2],]
     # IAN T. this should probably be generalized
     xm <- growdatM$Age_Beg
 
@@ -479,7 +489,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     lty <- 1
     polygon(c(x, rev(x)), c(growdatF$low, rev(growdatF$high)),
             border=NA, col=shadecolvec[col_index1])
-    lines(x,growdatF$Len_Beg,col=colvec[col_index1],lwd=2,lty=1)
+    lines(x,growdatF$Len_Beg,col=colvec[col_index1],lwd=2,lty=ltyvec[1])
     lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
     lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
     # add uncertainty intervals around growth curve
@@ -505,7 +515,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     if(nsexes > 1){
       polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
               border=NA, col=shadecolvec[2])
-      lines(xm,growdatM$Len_Beg,col=colvec[2],lwd=2,lty=2)
+      lines(xm,growdatM$Len_Beg,col=colvec[2],lwd=2,lty=ltyvec[2])
       lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
       lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
       # add uncertainty intervals around growth curve for males
@@ -534,7 +544,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       box()
     }
     if(nsexes > 1){
-      legend(legendloc,bty="n", c("Females","Males"), lty=c(1,2), lwd=2,
+      legend(legendloc,bty="n", c("Females","Males"), lty=ltyvec, lwd=2,
              col=c(colvec[1],colvec[2]))
     }
   }
@@ -1046,7 +1056,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
         }
         lines(growdatF$Age_Beg, MatAge, col=colvec[1],lwd=2,type="o")
         if(nsexes > 1){
-          growdatM <- growdat[growdat$Morph==mainmorphs[2],]
+          growdatM <- growdat[growdat$Morph==morphs[2],]
           lines(growdatM$Age_Beg,growdatM$M,col=colvec[2],lwd=2,type="o")
         }
       }
@@ -1078,7 +1088,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
             for(i in 1:nsexes)
                 {
                   growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-                                               growthseries$Morph==mainmorphs[i],]
+                                               growthseries$Morph==morphs[i],]
                   x <- 0:accuage
                   y <- growdatuse$Yr
                   z <- as.matrix(growdatuse[,-(1:4)])
@@ -1214,7 +1224,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   ##     for(i in 1:nsexes)
   ##     {
   ##       growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-  ##                                  growthseries$Morph==mainmorphs[i],]
+  ##                                  growthseries$Morph==morphs[i],]
   ##       x <- 0:accuage
   ##       y <- growdatuse$Yr
   ##       z <- as.matrix(growdatuse[,-(1:4)])
