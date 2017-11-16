@@ -314,9 +314,20 @@ SS_readdat_3.30 <-
   ## Population size structure - Length
   d$lbin_method <- get.val(dat, ind)
   if(d$lbin_method == 2){
-    d$binwidth <- get.val(dat, ind)
-    d$minimum_size <- get.val(dat, ind)
-    d$maximum_size <- get.val(dat, ind)
+    bin_info_tmp <- get.val(dat, ind)
+    # if as.numeric doesn't match, probably has 3 values on one line
+    if(is.na(bin_info_tmp)){
+      ind <- ind - 1 # reset index to allow read of that value again
+      bin_info_tmp <- get.vec(dat, ind)
+      d$binwidth <- bin_info_tmp[1]
+      d$minimum_size <- bin_info_tmp[2]
+      d$maximum_size <- bin_info_tmp[3]
+    }else{
+      # otherwise, more likely separate lines
+      d$binwidth <- bin_info_tmp
+      d$minimum_size <- get.val(dat, ind)
+      d$maximum_size <- get.val(dat, ind)
+    }
   }else if(d$lbin_method == 3){
     d$N_lbinspop <- get.val(dat, ind)
     d$lbin_vector_pop <- get.vec(dat, ind)
