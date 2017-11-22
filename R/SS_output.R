@@ -2147,7 +2147,7 @@ SS_output <-
     N_ALKs <- length(starts)
     # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
     ALK <- array(NA, c(nlbinspop, accuage+1, N_ALKs))
-    dimnames(ALK) <- list(Length=lbinspop, TrueAge=0:accuage, Matrix=1:N_ALKs)
+    dimnames(ALK) <- list(Length=rev(lbinspop), TrueAge=0:accuage, Matrix=1:N_ALKs)
     for(i in 1:N_ALKs){
       # get matrix of values
       ALKtemp <- rawALK[starts[i]:ends[i],-1]
