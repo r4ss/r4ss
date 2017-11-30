@@ -89,7 +89,7 @@ SS_output <-
   matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
   {
     # return a line number from the report file (or other file)
-    # sstr controls whether to compare subsets or the whole line
+    # substr1 controls whether to compare subsets or the whole line
     match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
   }
 
@@ -366,7 +366,8 @@ SS_output <-
     names <- yieldraw[1,]
     names[names=="SSB/Bzero"] <- "Depletion"
     yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[,1])-1))),]
-    names(yielddat) <- names #colnames(yielddat) <- c("Catch","Depletion","YPR")
+    yielddat[yielddat=="-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
+    names(yielddat) <- names 
     for(icol in 1:ncol(yielddat)){
       yielddat[,icol] <- as.numeric(yielddat[,icol])
     }
@@ -1101,9 +1102,20 @@ SS_output <-
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
+  # new note about how forecast selectivity is modeled added in 3.30
+  # (has impact on read of time-varying parameters below)
+  forecast_selectivity <- grep("forecast_selectivity", rawrep[,1], value=TRUE)
+  if(length(forecast_selectivity)==0){
+    forecast_selectivity <- NA
+    offset <- -1
+  }else{
+    offset <- -2
+  }
+  
   # time-varying parameters
   MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments",1,
-                         "selparm(Size)_By_Year_after_adjustments",-1,header=TRUE)
+                         "selparm(Size)_By_Year_after_adjustments",
+                         offset, header=TRUE)
   # make older SS output names match current SS output conventions
   MGparmAdj <- df.rename(MGparmAdj, oldnames="Year", newnames="Yr")
   # make values numeric
@@ -1341,7 +1353,7 @@ SS_output <-
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
                           header=TRUE)
   }
-  #browser()
+
   if(!is.null(dim(agentune))){
     names(agentune)[ncol(agentune)] <- "FleetName"
     agentune <- agentune[agentune$N>0, ]
@@ -1457,6 +1469,7 @@ SS_output <-
   returndat$morph_indexing <- morph_indexing
 #  returndat$MGParm_dev_details <- MGParm_dev_details
   returndat$MGparmAdj   <- MGparmAdj
+  returndat$forecast_selectivity <- forecast_selectivity
   returndat$SelSizeAdj  <- SelSizeAdj
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
