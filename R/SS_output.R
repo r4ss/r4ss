@@ -1097,6 +1097,10 @@ SS_output <-
   for(i in 2:ncol(der)){
     der[,i] = as.numeric(der[,i])
   }
+
+  # replace SPB with SSB as changed in SS version 3.30.10.00 (29 Nov. 2017)
+  der$Label <- gsub("SPB_", "SSB_", der$Label, fixed=TRUE)
+  # set rownames equal to Label column
   rownames(der) <- der$Label
 
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
@@ -2263,11 +2267,11 @@ SS_output <-
     Dynamic_Bzero <- NA
   }else{
     Dynamic_Bzero <- cbind(Dynamic_Bzero1,Dynamic_Bzero2[,3])
-    names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+    names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     if(nareas==1 & ngpatterns==1){ # for simpler models, do some cleanup
       Dynamic_Bzero <- Dynamic_Bzero[-(1:2),]
       for(icol in c(1,3,4)) Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
-      names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+      names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     }
     if(nareas>1 & ngpatterns==1){ # for spatial models, do some cleanup
       Dynamic_Bzero <- cbind(Dynamic_Bzero1,Dynamic_Bzero2[,-(1:2)])
@@ -2275,10 +2279,10 @@ SS_output <-
       for(icol in (1:ncol(Dynamic_Bzero))[-2]){
         Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
       }
-      names(Dynamic_Bzero) <- c("Yr","Era",paste0("SPB_area",1:nareas),
-                                paste0("SPB_nofishing_area",1:nareas))
-      Dynamic_Bzero$SPB <- apply(Dynamic_Bzero[,2 + 1:nareas], 1, sum)
-      Dynamic_Bzero$SPB_nofishing <-
+      names(Dynamic_Bzero) <- c("Yr","Era",paste0("SSB_area",1:nareas),
+                                paste0("SSB_nofishing_area",1:nareas))
+      Dynamic_Bzero$SSB <- apply(Dynamic_Bzero[,2 + 1:nareas], 1, sum)
+      Dynamic_Bzero$SSB_nofishing <-
         apply(Dynamic_Bzero[,2 + nareas + 1:nareas], 1, sum)
     }
   }
@@ -2313,11 +2317,11 @@ SS_output <-
   returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
 
   # get "sigma" used by Pacific Council in P-star calculations
-  SPB_final_Label <- paste0("SPB_",endyr+1)
-  if(SPB_final_Label %in% der$Label){
-    SPB_final_EST <- der$Value[der$Label==SPB_final_Label]
-    SPB_final_SD <- der$StdDev[der$Label==SPB_final_Label]
-    returndat$Pstar_sigma <- sqrt(log((SPB_final_SD/SPB_final_EST)^2+1))
+  SSB_final_Label <- paste0("SSB_",endyr+1)
+  if(SSB_final_Label %in% der$Label){
+    SSB_final_EST <- der$Value[der$Label==SSB_final_Label]
+    SSB_final_SD <- der$StdDev[der$Label==SSB_final_Label]
+    returndat$Pstar_sigma <- sqrt(log((SSB_final_SD/SSB_final_EST)^2+1))
   }else{
     returndat$Pstar_sigma <- NULL
   }

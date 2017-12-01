@@ -196,7 +196,7 @@ SSplotComparisons <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            filenameprefix="",
-           densitynames=c("SPB_Virgin","R0"),
+           densitynames=c("SSB_Virgin","R0"),
            densityxlabs="default",
            densityscalex=1,
            densityscaley=1,
@@ -483,7 +483,7 @@ SSplotComparisons <-
     recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
 
     ### get MCMC for SpawnBio
-    tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
+    tmp <- grep("SSB",names(mcmc[[imodel]]))   #try it to see what you get
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
@@ -1418,7 +1418,7 @@ SSplotComparisons <-
         # add density
         if(good[iline]){
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for female only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
             mcmcVals <- mcmcVals/2
           }
           xmin <- min(xmin, quantile(mcmcVals,0.005))
@@ -1436,7 +1436,7 @@ SSplotComparisons <-
         parSD <- valSDs[1,imodel]
         if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for female only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
             parval <- parval/2
             parSD <- parSD/2
           }
@@ -1509,7 +1509,7 @@ SSplotComparisons <-
           # make density for MCMC posterior
           mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
           }
           x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
@@ -1551,7 +1551,7 @@ SSplotComparisons <-
           parval <- vals[1,imodel]
           parSD <- valSDs[1,imodel]
           if(!is.na(parSD) && parSD>0){
-            if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
+            if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
               parval <- parval/2
               parSD <- parSD/2
             }

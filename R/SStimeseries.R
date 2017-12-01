@@ -184,8 +184,8 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 
 
 	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
-	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
-	ssb.virgin   = as.numeric(strsplit(base[grep("SPB_Virgin",base)]," ") [[1]][3])
+	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SSB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
+	ssb.virgin   = as.numeric(strsplit(base[grep("SSB_Virgin",base)]," ") [[1]][3])
 	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
 	
 	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)

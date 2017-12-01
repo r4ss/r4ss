@@ -41,7 +41,7 @@ function(dir=NULL,verbose=TRUE, writecsv=FALSE,
            "Q_extraSD"),
          nuisancestrings=c(  # values that get written to csv2
            "Objective_function",
-           "SPB_",
+           "SSB_",
            "InitAge",
            "RecrDev"),
          modelnames="default",
