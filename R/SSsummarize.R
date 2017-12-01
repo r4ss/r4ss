@@ -4,7 +4,10 @@
 #' \code{\link{SSgetoutput}} and return them in a list of tables and vectors.
 #'
 #'
-#' @param biglist A list of lists created by \code{\link{SSgetoutput}}.
+#' @param biglist A list of lists, one for each model. The individual lists can
+#' be created by \code{\link{SS_output}} or the list of lists can be
+#' created by \code{\link{SSgetoutput}} (which iteratively calls
+#' \code{\link{SS_output}}).
 #' @param sizeselfactor A string or vector of strings indicating which elements
 #' of the selectivity at length output to summarize. Default=c("Lsel").
 #' @param ageselfactor A string or vector of strings indicating which elements
@@ -257,20 +260,20 @@ SSsummarize <- function(biglist,
   }
 
   # identify spawning biomass parameters
-  SpawnBio <- quants[grep("SPB_",quants$Label), ]
-  SpawnBioSD <- quantsSD[grep("SPB_",quants$Label), ]
+  SpawnBio <- quants[grep("SSB_",quants$Label), ]
+  SpawnBioSD <- quantsSD[grep("SSB_",quants$Label), ]
   # add year values for Virgin and Initial years
   minyr <- min(SpawnBio$Yr,na.rm=TRUE)
-  SpawnBio$Yr[grep("SPB_Virgin",SpawnBio$Label)] <- minyr - 2
-  SpawnBio$Yr[grep("SPB_Initial",SpawnBio$Label)] <- minyr - 1
+  SpawnBio$Yr[grep("SSB_Virgin",SpawnBio$Label)] <- minyr - 2
+  SpawnBio$Yr[grep("SSB_Initial",SpawnBio$Label)] <- minyr - 1
   SpawnBioSD$Yr <- SpawnBio$Yr
 
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
   SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr),]
   if(any(is.na(SpawnBio[3,]))){
     cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
-    SpawnBio$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
-    SpawnBioSD$Label[1:2] <- c("SPB_Virgin*","SPB_Initial*")
+    SpawnBio$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
+    SpawnBioSD$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
     for(imodel in 1:n){
       if(is.na(SpawnBio[3,imodel])){
         minyr <- min(SpawnBio$Yr[-(1:2)][!is.na(SpawnBio[-(1:2),imodel])]) # first year with value

@@ -316,13 +316,13 @@ SSplotTimeseries <-
     # area specific confidence intervals?
     if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
-      if(!"SPB_Virgin" %in% derived_quants$Label){
-        cat("Skipping spawning biomass with uncertainty plot because 'SPB_Virgin' not in derived quantites.\n",
+      if(!"SSB_Virgin" %in% derived_quants$Label){
+        cat("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
             "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==7){ # spawning biomass
-          stdtable <- derived_quants[grep("SPB_Virgin",derived_quants[,1]):(grep("Recr_Virgin",derived_quants[,1])-1),1:3]
+          stdtable <- derived_quants[grep("SSB_Virgin",derived_quants[,1]):(grep("Recr_Virgin",derived_quants[,1])-1),1:3]
           # year as part of the Label string starting with 5th character
           stdtable$Yr <- substring(stdtable$Label,5)
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
@@ -340,7 +340,7 @@ SSplotTimeseries <-
         }
         if(subplot==11){ # recruitment
           stdtable <- derived_quants[substring(derived_quants$Label,1,5)=="Recr_",]
-          stdtable <- stdtable[stdtable$Label!="Recr_Unfished",]
+          stdtable <- stdtable[tolower(stdtable$Label)!="recr_unfished",]
           # year as the part of the Label string starting with 6th character
           stdtable$Yr <- substring(stdtable$Label,6)
           # filling in Virgin and Initial years as 2 and 1 years prior to following years
@@ -503,7 +503,7 @@ SSplotTimeseries <-
           if(subplot %in% c(7,9,11)){
             # subset years for confidence intervals
             if(subplot==7){
-              plot1 <- stdtable$Label=="SPB_Virgin"
+              plot1 <- stdtable$Label=="SSB_Virgin"
               stdtable$Yr[plot1] <- stdtable$Yr[plot1]+yrshift
             }
             if(subplot==9){
