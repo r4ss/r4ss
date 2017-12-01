@@ -484,6 +484,12 @@ SSplotComparisons <-
 
     ### get MCMC for SpawnBio
     tmp <- grep("SSB",names(mcmc[[imodel]]))   #try it to see what you get
+    # exclude rows that aren't part of the timseries
+    tmp2 <- c(grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_SPRtgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_MSY", names(mcmc[[imodel]]), ignore.case = TRUE))
+    tmp <- setdiff(tmp,tmp2)
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
@@ -527,8 +533,9 @@ SSplotComparisons <-
     }
 
     ### get MCMC for recruits
-    tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
-    tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
+    tmp <- grep("^Recr_", names(mcmc[[imodel]]))   #try it to see what you get
+    # exclude rows that aren't part of the timseries
+    tmp2 <- grep("Recr_unfished", names(mcmc[[imodel]]), ignore.case = TRUE)
     tmp <- setdiff(tmp,tmp2)
     if(length(tmp) > 0) { #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model

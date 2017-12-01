@@ -259,9 +259,15 @@ SSsummarize <- function(biglist,
     quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
+  SSBrows <- grep("SSB_",quants$Label)
+  SSBexclude <- c(grep("SSB_unfished",quants$Label, ignore.case=TRUE),
+                  grep("SSB_Btgt",quants$Label, ignore.case=TRUE),
+                  grep("SSB_SPRtgt",quants$Label, ignore.case=TRUE),
+                  grep("SSB_MSY", quants$Label, ignore.case=TRUE))
+  SSBrows <- setdiff(SSBrows, SSBexclude)
   # identify spawning biomass parameters
-  SpawnBio <- quants[grep("SSB_",quants$Label), ]
-  SpawnBioSD <- quantsSD[grep("SSB_",quants$Label), ]
+  SpawnBio <- quants[SSBrows, ]
+  SpawnBioSD <- quantsSD[SSBrows, ]
   # add year values for Virgin and Initial years
   minyr <- min(SpawnBio$Yr,na.rm=TRUE)
   SpawnBio$Yr[grep("SSB_Virgin",SpawnBio$Label)] <- minyr - 2
