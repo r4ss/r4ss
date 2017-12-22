@@ -1,4 +1,4 @@
-#' read data file from SS version 3.30 (function still in development)
+#' read data file from SS version 3.30
 #'
 #' Read Stock Synthesis (version 3.30) data file into list object in R.
 #' This function was formerly called SS_readdat. That name is now used
@@ -474,7 +474,6 @@ SS_readdat_3.30 <-
   if (verbose) {
     message("use_MeanSize_at_Age_obs (0/1): ", d$use_MeanSize_at_Age_obs)
   }
-  
   if(d$use_MeanSize_at_Age_obs){
     d$MeanSize_at_Age_obs <- get.df(dat, ind)
     colnames(d$MeanSize_at_Age_obs) <-
@@ -492,6 +491,14 @@ SS_readdat_3.30 <-
       message("\nLast 2 rows of MeanSize_at_Age_obs:")
       print(tail(d$MeanSize_at_Age_obs, 2))
       cat("\n")
+    }
+    # The formatting of the mean size at age in data.ss_new has sample sizes
+    # on a separate line below the mean size values, and this applies to the
+    # -9999 line as well. The lines below is an attempt to work around this
+    test <- get.vec(dat, ind)
+    # if only 1 value, then this isn't an issue and need to adjust ind
+    if(length(test) == 1){ 
+      ind <- ind - 1
     }
   }else{
     d$MeanSize_at_Age_obs <- NULL
