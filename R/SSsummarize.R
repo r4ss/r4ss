@@ -262,7 +262,7 @@ SSsummarize <- function(biglist,
   SSBrows <- grep("SSB_",quants$Label)
   SSBexclude <- c(grep("SSB_unfished",quants$Label, ignore.case=TRUE),
                   grep("SSB_Btgt",quants$Label, ignore.case=TRUE),
-                  grep("SSB_SPRtgt",quants$Label, ignore.case=TRUE),
+                  grep("SSB_SPR",quants$Label, ignore.case=TRUE),
                   grep("SSB_MSY", quants$Label, ignore.case=TRUE))
   SSBrows <- setdiff(SSBrows, SSBexclude)
   # identify spawning biomass parameters
@@ -333,10 +333,10 @@ SSsummarize <- function(biglist,
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
   recruitsSD <- quantsSD[grep("^Recr_",quantsSD$Label), ]
-  if(length(grep("Recr_Unfished",recruits$Label))>0)
-    recruits <- recruits[-grep("Recr_Unfished",recruits$Label),]
-  if(length(grep("Recr_Unfished",recruitsSD$Label))>0)
-    recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label),]
+  if(length(grep("Recr_Unfished", recruits$Label, ignore.case=TRUE))>0){
+    recruits <- recruits[-grep("Recr_Unfished",recruits$Label, ignore.case=TRUE),]
+    recruitsSD <- recruitsSD[-grep("Recr_Unfished",recruitsSD$Label, ignore.case=TRUE),]
+  }
   minyr <- min(recruits$Yr,na.rm=TRUE)
 
   recruits$Yr[grep("Recr_Virgin",recruits$Label)] <- minyr - 2
