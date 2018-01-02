@@ -42,10 +42,12 @@ SS_readdat_3.30 <-
     stop("Error - There was no EOF marker (999) in the data file.")
   }
   if(is.null(section)){
-    warning("The supplied data file has ", Nsections,
-            ifelse(Nsections == 1, " section. ", " sections. "),
-            " Using section = 1.")
-      section <- 1
+    if(Nsections > 1){
+      message("The supplied data file has ", Nsections,
+              ifelse(Nsections == 1, " section. ", " sections. "),
+              " Using section = 1.")
+    }
+    section <- 1
   }
   if(!section %in% 1:Nsections){
     if(Nsections == 1){
@@ -488,12 +490,34 @@ SS_readdat_3.30 <-
   if (verbose) {
     message("use_MeanSize_at_Age_obs (0/1): ", d$use_MeanSize_at_Age_obs)
   }
-  # note: code below may fail for early versions of 3.30 if the formatting
-  #       mean size at age has sample sizes on separate lines than the
-  #       observed valuess and meta-data. Code is only robust to this pattern
-  #       occurring in the -9999 line at the end
   if(d$use_MeanSize_at_Age_obs){
+    ind.tmp <- ind # save current position in case necessary to re-read
     d$MeanSize_at_Age_obs <- get.df(dat, ind)
+
+    # extra code in case sample sizes are on a separate line from other inputs
+    # first check if gender input is outside of normal range
+    if(!all(as.numeric(d$MeanSize_at_Age_obs$V4) %in% 0:3)){
+      if(verbose){
+        message("Format of MeanSize_at_Age_obs appears to have sample sizes",
+                "on separate lines than other inputs.")
+      }
+      ind <- ind.tmp # reset index to value prior to first attempt to read table
+      N_MeanSize_at_Age_obs <- nrow(d$MeanSize_at_Age_obs)/2
+      MeanSize_at_Age_obs <- NULL
+      for(iobs in 1:N_MeanSize_at_Age_obs){
+        # each observation is a combination of pairs of adjacent rows
+        MeanSize_at_Age_obs <- rbind(MeanSize_at_Age_obs,
+                                     c(get.vec(dat,ind), get.vec(dat,ind)))
+      }
+      # check terminator row
+      test <- get.vec(dat,ind)
+      if(test[1] != -9999){
+        warning("Problem with read of MeanSize_at_Age, terminator value != -9999")
+      }
+      d$MeanSize_at_Age_obs <- as.data.frame(MeanSize_at_Age_obs)
+    }
+
+    
     colnames(d$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
         if(d$Nsexes == 1){paste0("a", d$agebin_vector)}else{NULL},

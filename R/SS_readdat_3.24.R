@@ -80,7 +80,7 @@ SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   datlist$type <- "Stock_Synthesis_data_file"
   datlist$SSversion <- "3.24"
   if (verbose){
-    message("SS_readdat_3.30 - SS version = ", d$SSversion)
+    message("SS_readdat_3.24 - SS version = ", datlist$SSversion)
   }
 
   # model dimensions

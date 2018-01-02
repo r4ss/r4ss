@@ -161,6 +161,11 @@ SSplotSpawnrecruit <-
   # color for points
   if(ptcol[1]=="default"){
     ptcol <- rev(rich.colors.short(nrow(recruit) + 10, alpha = 0.8))[-(1:10)]
+    color.caption <- paste(" Point colors indicate year, with warmer",
+                           "colors indicating earlier years and cooler colors",
+                           "in showing later years.")
+  }else{
+    color.caption <- ""
   }
   # prepare for legend
   if(legend){
@@ -278,21 +283,26 @@ SSplotSpawnrecruit <-
   if(print){
     if(1 %in% subplot){
       file <- "SR_curve.png"
-      caption <- "Stock-recruit curve"
+      caption <- paste("Stock-recruit curve.", color.caption)
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn()
       dev.off()
     }
     if(2 %in% subplot){
       file <- "SR_curve2.png"
-      caption <- paste("Stock-recruit curve with labels on first, last, and years with (log) deviations >",textmindev)
+      caption <- paste0("Stock-recruit curve with labels on first, last, and ",
+                        "years with (log) deviations > ", textmindev, ".",
+                        color.caption)
       plotinfo <- pngfun(file=file, caption=caption)
       StockRecruitCurve.fn(text=TRUE)
       dev.off()
     }
     if(3 %in% subplot){
       file <- "SR_resids.png"
-      caption <- paste("Deviations around the stock-recruit curve. Labels are on first, last, and years with (log) deviations >",textmindev)
+      caption <- paste0("Deviations around the stock-recruit curve.",
+                        "Labels are on first, last, and ",
+                        "years with (log) deviations > ",textmindev, ".",
+                        color.caption)
       plotinfo <- pngfun(file=file, caption=caption)
       stock_vs_devs.fn(text=FALSE)
       dev.off()
