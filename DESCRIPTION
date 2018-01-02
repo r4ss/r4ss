@@ -9,7 +9,7 @@ Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
     Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
     Andrew B. Cooper, Andi Stephens, and Neil Klaer
-Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
+Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 2.10.0)
 Imports:
