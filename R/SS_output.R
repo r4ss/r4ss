@@ -771,8 +771,8 @@ SS_output <-
   morph_indexing <- matchfun2("MORPH_INDEXING",1,endcode,shift,cols=1:9,header=TRUE)
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   morph_indexing <- df.rename(morph_indexing,
-                              oldnames=c("Gpattern", "Gender"),
-                              newnames=c("GP", "Sex"))
+                              oldnames=c("Gpattern", "Bseas", "Gender"),
+                              newnames=c("GP", "BirthSeas", "Sex"))
   ngpatterns <- max(morph_indexing$GP)
 
   # forecast
