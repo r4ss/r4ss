@@ -661,7 +661,7 @@ SS_plots <-
                          virg=TRUE,  # add point on curve at equilibrium values (B0,R0)
                          init=FALSE, # add point on curve at initial values (B1,R1)
                          pwidth=pwidth, pheight=pheight, punits=punits,
-                         ptsize=ptsize, res=res,cex.main=cex.main,
+                         ptsize=ptsize, res=res,
                          plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
