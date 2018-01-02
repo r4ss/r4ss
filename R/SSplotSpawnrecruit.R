@@ -38,6 +38,8 @@
 #' @param estimated show points for estimated recruitment values
 #' (including deviations)
 #' @param bias_adjusted show lines for bias adjusted expected recruitment
+#' @param show_env add line for expected recruitment with environmental
+#' variability
 #' @param virg add point for equilibrium conditions (x=B0,y=R0)
 #' @param init add point for initial conditions (x=B1,y=R1), only appears
 #' if this point differs from virgin values

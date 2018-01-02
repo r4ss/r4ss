@@ -79,6 +79,9 @@ to show spawning output and recruitment relative to the equilibrium}
 
 \item{bias_adjusted}{show lines for bias adjusted expected recruitment}
 
+\item{show_env}{add line for expected recruitment with environmental
+variability}
+
 \item{virg}{add point for equilibrium conditions (x=B0,y=R0)}
 
 \item{init}{add point for initial conditions (x=B1,y=R1), only appears
