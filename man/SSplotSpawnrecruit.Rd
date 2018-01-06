@@ -60,6 +60,9 @@ be the directory where the model was run.}
 (where the 4th value for the points is the color of the circle around the
 background color provided by \code{ptcol}}
 
+\item{ltyvec}{vector of length 4 with line types for the 3 lines and 1 set
+of points, where the points are disconnected (lty=NA) by default}
+
 \item{ptcol}{vector or single value for the color of the points, "default"
 will by replaced by a vector of colors of length equal to
 nrow(replist$recruit)}
