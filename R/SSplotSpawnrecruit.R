@@ -299,12 +299,12 @@ SSplotSpawnrecruit <-
     }
     if(3 %in% subplot){
       file <- "SR_resids.png"
-      caption <- paste0("Deviations around the stock-recruit curve.",
+      caption <- paste0("Deviations around the stock-recruit curve. ",
                         "Labels are on first, last, and ",
                         "years with (log) deviations > ",textmindev, ".",
                         color.caption)
       plotinfo <- pngfun(file=file, caption=caption)
-      stock_vs_devs.fn(text=FALSE)
+      stock_vs_devs.fn(text=TRUE)
       dev.off()
     }
   }
