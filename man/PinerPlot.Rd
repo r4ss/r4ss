@@ -52,11 +52,11 @@ the profile was conducted.}
 
 \item{pch}{Optional vector of plot characters for the points.}
 
-\item{lty}{Line total for the liklihood components.}
+\item{lty}{Line total for the likelihood components.}
 
 \item{lty.total}{Line type for the total likelihood.}
 
-\item{lwd}{Line width for the liklihood components.}
+\item{lwd}{Line width for the likelihood components.}
 
 \item{lwd.total}{Line width for the total likelihood.}
 
