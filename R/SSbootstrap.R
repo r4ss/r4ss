@@ -76,7 +76,7 @@ SSbootstrap <- function(){
   # a bunch of plots that won't work well if there are lots of models
   SSplotComparisons(bootsummary,png=TRUE)
   # histogram of a single quantity
-  hist(as.numeric(bootsummary$quants[bootsummary$quants$Label=="SPB_Virgin",1:N]))
+  hist(as.numeric(bootsummary$quants[bootsummary$quants$Label=="SSB_Virgin",1:N]))
   hist(as.numeric(bootsummary$pars[grep("R0",bootsummary$pars$Label),1:N]))
 
 

@@ -242,8 +242,21 @@ SS_html <- function(replist=NULL,
         cat('<p>Model info not available (need to supply "replist" input to SS_HTML function)</p>\n',
             sep="", file=htmlfile, append=TRUE)
       }else{
+        r4ss_info <- packageDescription('r4ss')
+        if(!is.list(r4ss_info)){
+          r4ss_info_text <- NULL
+        }else{
+          goodnames <- c("Version", "Date", "Built",
+                         grep("Remote", names(r4ss_info), value=TRUE))
+          r4ss_info_text <- '<p><b>r4ss info:<br></b>\n'
+          for(name in goodnames){
+            r4ss_info_text <- c(r4ss_info_text,
+                                paste0(name, ": ", r4ss_info[name], "<br>"))
+          }
+        }
         cat('<p><b>SS version:</b>\n',
             replist$SS_version,'</p>\n\n',
+            r4ss_info_text,
             '<p><b>Starting time of model:</b>\n',
             substring(replist$StartTime,12),'</p>\n\n',
             sep="", file=htmlfile, append=TRUE)

@@ -69,7 +69,7 @@ and densities for chosen parameters from MCMC output.
   \dontrun{
       mcmc.df <- SSgetMCMC(dir="mcmcRun", writecsv=T,
                   keystrings = c("NatM", "R0", "steep", "Q_extraSD"),
-                  nuisancestrings = c("Objective_function", "SPB_", "InitAge", "RecrDev"))
+                  nuisancestrings = c("Objective_function", "SSB_", "InitAge", "RecrDev"))
       mcmc.out("mcmcRun",run="",numparams=4,closeall=F)
 
   #Or for more control

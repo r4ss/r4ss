@@ -1,15 +1,15 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.28.0
-Date: 2017-10-27
+Version: 1.29.1
+Date: 2018-01-11
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
     Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
     Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
     Andrew B. Cooper, Andi Stephens, and Neil Klaer
-Maintainer: Ian Taylor <Ian.Taylor@noaa.gov>
+Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 2.10.0)
 Imports:
@@ -20,10 +20,11 @@ Imports:
     gtools,
     pso,
     truncnorm
-Suggests:
+Suggests: 
     maps,
-    tcltk,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr. Richard
     D.  Methot at the NOAA Northwest Fisheries Science Center. The functions
@@ -34,3 +35,4 @@ License: GPL-3
 LazyLoad: yes
 URL: https://github.com/r4ss
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr

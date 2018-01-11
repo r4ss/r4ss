@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readdat.R
 \name{SS_readdat}
 \alias{SS_readdat}
-\title{read data file from SS}
+\title{read Stock Synthesis data file}
 \usage{
 SS_readdat(file, version = "3.24", verbose = TRUE, echoall = FALSE,
   section = NULL)

@@ -4,15 +4,16 @@
 \alias{SSplotSpawnrecruit}
 \title{Plot spawner-recruit curve.}
 \usage{
-SSplotSpawnrecruit(replist, subplot = 1:2, add = FALSE, plot = TRUE,
+SSplotSpawnrecruit(replist, subplot = 1:3, add = FALSE, plot = TRUE,
   print = FALSE, xlim = NULL, ylim = NULL,
   labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
   "Spawning output", expression(paste("Spawning output (relative to ",
   italic(B)[0], ")")), expression(paste("Recruitment (relative to  ",
-  italic(R)[0], ")"))), bioscale = "default", plotdir = "default",
-  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, verbose = TRUE, colvec = c("blue", "green3", "black",
-  "red"), legend = TRUE, legendloc = "topleft", minyr = "default",
+  italic(R)[0], ")")), "Log recruitment deviation"), bioscale = "default",
+  plotdir = "default", pwidth = 6.5, pheight = 5, punits = "in",
+  res = 300, ptsize = 10, verbose = TRUE, colvec = c("blue", "black",
+  "black", gray(0, 0.7)), ltyvec = c(1, 2, 1, NA), ptcol = "default",
+  legend = TRUE, legendloc = "topleft", minyr = "default",
   textmindev = 0.5, relative = FALSE, expected = TRUE, estimated = TRUE,
   bias_adjusted = TRUE, show_env = TRUE, virg = TRUE, init = TRUE,
   forecast = FALSE)
@@ -53,11 +54,18 @@ be the directory where the model was run.}
 
 \item{ptsize}{point size for PNG file}
 
-\item{cex.main}{character expansion for plot titles}
-
 \item{verbose}{report progress to R GUI?}
 
-\item{colvec}{vector of length 4 with colors for 3 lines and 1 set of points}
+\item{colvec}{vector of length 4 with colors for 3 lines and 1 set of points
+(where the 4th value for the points is the color of the circle around the
+background color provided by \code{ptcol}}
+
+\item{ltyvec}{vector of length 4 with line types for the 3 lines and 1 set
+of points, where the points are disconnected (lty=NA) by default}
+
+\item{ptcol}{vector or single value for the color of the points, "default"
+will by replaced by a vector of colors of length equal to
+nrow(replist$recruit)}
 
 \item{legend}{add a legend to the figure?}
 

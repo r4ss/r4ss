@@ -9,7 +9,10 @@ SSsummarize(biglist, sizeselfactor = "Lsel", ageselfactor = "Asel",
   SpawnOutputUnits = NULL, lowerCI = 0.025, upperCI = 0.975)
 }
 \arguments{
-\item{biglist}{A list of lists created by \code{\link{SSgetoutput}}.}
+\item{biglist}{A list of lists, one for each model. The individual lists can
+be created by \code{\link{SS_output}} or the list of lists can be
+created by \code{\link{SSgetoutput}} (which iteratively calls
+\code{\link{SS_output}}).}
 
 \item{sizeselfactor}{A string or vector of strings indicating which elements
 of the selectivity at length output to summarize. Default=c("Lsel").}

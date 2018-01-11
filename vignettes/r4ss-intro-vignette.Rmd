@@ -1,0 +1,74 @@
+---
+title: "Introduction to r4ss"
+author: "Ian Taylor"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to r4ss}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(r4ss)
+```
+
+r4ss is a package of tools related to the Stock Synthesis fisheries stock
+assessment modeling framework. This first Vignette covers installing the
+package and some basic uses.
+
+## Installing the r4ss R package
+
+The package can be run on OS X, Windows, or Linux.
+The CRAN version of r4ss is not regularly updated and therefore likely out of
+date. Instead it is recommended to install the from GitHub with the following
+code:
+
+```{r, install-and-load, eval=FALSE}
+# install.packages("devtools") # if needed
+devtools::install_github("r4ss/r4ss")
+
+# If you would like the vignettes:
+devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
+```
+
+You can then load the package with:
+
+```{r, load-package, eval=FALSE}
+library("r4ss")
+```
+
+You can read the help files and access this vignette (and any others created
+in the future) with:
+
+```{r, help, eval=FALSE}
+?r4ss
+help(package = "r4ss")
+browseVignettes("r4ss")
+```
+
+## Common uses of r4ss
+
+
+The most important two functions are `SS_output` and `SS_plots`, the first
+for reading the output from a Stock Synthesis model and the second for making
+a large set of plots illustrating that output.
+
+```{r, eval=FALSE, echo=TRUE, message=FALSE}
+# it's useful to create a variable for the directory with the model output
+mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30")
+
+# read the model output and print some diagnostic messages 
+replist <- SS_output(dir = mydir, verbose=TRUE, printstats=TRUE)
+
+# plots the results
+SS_plots(replist)
+```
+
+By default `SS_plots` creates a large collection of PNG files in a new `plots` sub-directory in the same location as your model files, along with a set of HTML files (example excerpt below) to facilitate exploration of the figures in your browser. The home tab should open in your browser automatically after `SS_plots` completes making all the files.
+
+![Illustration of the HTML view of the plots created by the `SS_plots` function.](r4ss_html_capture.png){ width=75% }
+
+

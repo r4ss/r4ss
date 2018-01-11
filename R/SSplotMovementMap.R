@@ -31,8 +31,7 @@
 #' Langley
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
-#' \code{\link{IOTCmove}}
+#' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}}
 SSplotMovementMap <-
   function(replist=NULL, xlim, ylim,
            polygonlist, colvec, land="grey", xytable=NULL,

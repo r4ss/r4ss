@@ -109,7 +109,7 @@ TSCplot <- function(SSout,
 
     if(!MCMC) {
         SBzero <- SSout$SBzero
-        SB <- SSout$derived_quants[substring(SSout$derived_quants$Label,1,4)=="SPB_",]
+        SB <- SSout$derived_quants[substring(SSout$derived_quants$Label,1,4)=="SSB_",]
         SB <- SB[match(as.character(yrs),substring(SB$Label,5)),]
         depl <- SSout$derived_quants[substring(SSout$derived_quants$Label,1,7)=="Bratio_",]
         depl <- depl[match(as.character(yrs),substring(depl$Label,8)),]
@@ -117,8 +117,8 @@ TSCplot <- function(SSout,
     }
     if(MCMC) {
         if(is.null(SSout$mcmc)) stop("There is no mcmc element on the model list.\nSet MCMC=F or add in the mcmc element to the list.\n")
-        SBzero <- median(SSout$mcmc$SPB_Virgin)
-        SB <- SSout$mcmc[,substring(names(SSout$mcmc),1,4)=="SPB_"]
+        SBzero <- median(SSout$mcmc$SSB_Virgin)
+        SB <- SSout$mcmc[,substring(names(SSout$mcmc),1,4)=="SSB_"]
         SB <- apply(SB[,match(as.character(yrs),substring(names(SB),5))],2,median)
         depl <- SSout$mcmc[,substring(names(SSout$mcmc),1,7)=="Bratio_"]
         tmp1 <- match(as.character(yrs),substring(names(depl),8))  #can have an NA in it and will cause an error

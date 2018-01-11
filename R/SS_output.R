@@ -93,8 +93,10 @@ SS_output <-
     match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
   }
 
-  matchfun2 <- function(string1,adjust1,string2,adjust2,cols="nonblank",matchcol1=1,matchcol2=1,
-    objmatch=rawrep,objsubset=rawrep,substr1=TRUE,substr2=TRUE,header=FALSE)
+  matchfun2 <- function(string1,adjust1,string2,adjust2,cols="nonblank",
+                        matchcol1=1,matchcol2=1,
+                        objmatch=rawrep,objsubset=rawrep,
+                        substr1=TRUE,substr2=TRUE,header=FALSE)
   {
     # return a subset of values from the report file (or other file)
     # subset is defined by character strings at the start and end, with integer
@@ -310,8 +312,26 @@ SS_output <-
     }
     # read the file
     rawforecast1 <- read.table(file=forecastname,col.names=1:ncols,fill=TRUE,quote="",colClasses="character",nrows=-1)
+
+    # get SPR target
     sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target",rawforecast1[,1]),2])
-    btarg   <- as.numeric(rawforecast1[matchfun("Btarget",rawforecast1[,1]),2])
+    
+    # starting in SSv3.30.10.00, the Forecast-report file has been restructured
+    target_definitions <- grep("_as_target", rawforecast1[,1], value=TRUE)
+    if(length(target_definitions) == 0){
+      # old setup (prior to 3.30.10.00)
+      btarg   <- as.numeric(rawforecast1[matchfun("Btarget",rawforecast1[,1]),2])
+    }else{
+      # new setup with biomass target
+      if("Ratio_SSB/B0_as_target" %in% target_definitions){
+        btarg   <- as.numeric(rawforecast1[matchfun("Ratio_target",rawforecast1[,1]),2])
+      }
+      # new setup with F0.1_as target
+      if("F0.1_as_target" %in% target_definitions){
+        btarg   <- -999
+      }
+    }
+
     endyield <- matchfun("MSY_not_calculated",rawforecast1[,1])
     if(is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
     if(yesMSY) endyield <- matchfun("findFmsy",rawforecast1[,10])
@@ -430,10 +450,6 @@ SS_output <-
   if(verbose) cat("Finished reading files\n")
   flush.console()
 
-  # positions of timeseries section
-  begin <- matchfun("TIME_SERIES")+2
-  end  <- matchfun("SPR_series")-1
-
   # selectivity read first because it was used to get fleet info
   # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
   selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
@@ -496,22 +512,30 @@ SS_output <-
     IsFishFleet  <- !is.na(catch_units)
     nfleets      <- length(FleetNames)
   }
+  # positions of timeseries section (used in various places below)
+  begin <- matchfun("TIME_SERIES")+2
+  end  <- matchfun("SPR_series")-1
 
   # more dimensions
   nfishfleets  <- sum(IsFishFleet)
   nsexes <- length(unique(as.numeric(selex$Sex)))
   nareas <- max(as.numeric(rawrep[begin:end,1]))
-  startyr <- min(as.numeric(rawrep[begin:end,2]))+2  # this is the 'initial' year not including
+  # startyr is the 'initial' year not including VIRG or INIT years
+  startyr <- min(as.numeric(rawrep[begin:end,2]))+2  
   temptime <- rawrep[begin:end,2:3]
-  endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) # this is the beginning of the last year of the normal timeseries
+  # endyr is the beginning of the last year of the normal timeseries
+  endyr <- max(as.numeric(temptime[temptime[,2]=="TIME",1])) 
   tempaccu <- as.character(rawrep[matchfun("Natural_Mortality")+1,-(1:5)])
   accuage <- max(as.numeric(tempaccu[tempaccu!=""]))
+
   # which column of INDEX_1 has number of CPUE values (used in reading INDEX_2)
   if(SS_versionNumeric >= 3.3){
     ncpue_column <- 11
     INDEX_1 <- matchfun2("INDEX_1",1,"INDEX_3",-4, header=TRUE)
+    # remove any comments at the bottom of table
+    INDEX_1 <- INDEX_1[substr(INDEX_1$Fleet, 1, 1) != "#",]
+    # count of observations per index
     ncpue <- sum(as.numeric(INDEX_1$N), na.rm=TRUE)
-    # IAN T.: this may need updating in revised version
   }else{
     ncpue_column <- 11
     ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1")+1+1:nfleets,ncpue_column]))
@@ -748,7 +772,7 @@ SS_output <-
   for(i in 1:ncol(morph_indexing)) morph_indexing[,i] <- as.numeric(morph_indexing[,i])
   morph_indexing <- df.rename(morph_indexing,
                               oldnames=c("Gpattern", "Bseas", "Gender"),
-                              newnames=c("GP","BirthSeason", "Sex"))
+                              newnames=c("GP", "BirthSeas", "Sex"))
   ngpatterns <- max(morph_indexing$GP)
 
   # forecast
@@ -1065,10 +1089,10 @@ SS_output <-
       wtatagelines <- readLines(wtfile,n=20)
       # read full file
       wtatage <- read.table(wtfile,header=FALSE,comment.char="",
-                            skip=grep("yr seas gender",wtatagelines),
+                            skip=grep("Yr Seas ", wtatagelines, ignore.case=TRUE),
                             stringsAsFactors=FALSE)
       # problems with header so simply manually replacing column names
-      wtatage_names <- c("yr", "seas", "gender", "growpattern", "birthseas", "fleet",
+      wtatage_names <- c("Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
                          0:accuage)
       # new comment line in 3.30
       if(SS_versionNumeric >= 3.3 & ncol(wtatage)==length(wtatage_names)+1){
@@ -1097,6 +1121,10 @@ SS_output <-
   for(i in 2:ncol(der)){
     der[,i] = as.numeric(der[,i])
   }
+
+  # replace SPB with SSB as changed in SS version 3.30.10.00 (29 Nov. 2017)
+  der$Label <- gsub("SPB_", "SSB_", der$Label, fixed=TRUE)
+  # set rownames equal to Label column
   rownames(der) <- der$Label
 
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
@@ -1720,7 +1748,7 @@ SS_output <-
   # and the largest fraction of the platoons (should equal middle platoon when present)
   if(SS_versionNumeric >= 3.3){
     # new "platoon" label
-    temp <- morph_indexing[morph_indexing$BirthSeason==min(rd$Seas[rd$"Frac/sex">0]) &
+    temp <- morph_indexing[morph_indexing$BirthSeas==min(rd$Seas[rd$"Frac/sex">0]) &
                              morph_indexing$Platoon_Dist==max(morph_indexing$Platoon_Dist),]
     mainmorphs <- min(temp$Index[temp$Sex==1])
     if(nsexes==2){
@@ -1729,7 +1757,7 @@ SS_output <-
   }
   if(SS_versionNumeric < 3.3){
     # old "sub_morph" label
-    temp <- morph_indexing[morph_indexing$BirthSeason==min(rd$Seas[rd$Value>0]) &
+    temp <- morph_indexing[morph_indexing$BirthSeas==min(rd$Seas[rd$Value>0]) &
                              morph_indexing$Sub_Morph_Dist==max(morph_indexing$Sub_Morph_Dist),]
     mainmorphs <- min(temp$Index[temp$Sex==1])
     if(nsexes==2){
@@ -1746,7 +1774,7 @@ SS_output <-
   # temporary fix for model with missing Recruit_0 values
   # (so far this has only been seen in one 3.30 model with 2 GPs)
   if(length(birthseas)==0){
-    birthseas <- sort(unique(morph_indexing$BirthSeason))
+    birthseas <- sort(unique(morph_indexing$BirthSeas))
   }
   returndat$birthseas <- birthseas
   
@@ -2014,8 +2042,8 @@ SS_output <-
     rawnatage <- rawnatage[-1,]
     # make older SS output names match current SS output conventions
     rawnatage <- df.rename(rawnatage,
-                      oldnames=c("Gender", "BirthSeas", "SubMorph"),
-                      newnames=c("Sex", "BirthSeason", "Platoon"))
+                      oldnames=c("Gender", "SubMorph"),
+                      newnames=c("Sex", "Platoon"))
     for(i in (1:ncol(rawnatage))[!(names(rawnatage) %in% c("Beg/Mid","Era"))]){
       rawnatage[,i] = as.numeric(rawnatage[,i])
     }
@@ -2056,8 +2084,8 @@ SS_output <-
     rawnatlen <- rawnatlen[-1,]
     # make older SS output names match current SS output conventions
     rawnatlen <- df.rename(rawnatlen,
-                           oldnames=c("Gender", "BirthSeas", "SubMorph"),
-                           newnames=c("Sex", "BirthSeason", "Platoon"))
+                           oldnames=c("Gender", "SubMorph"),
+                           newnames=c("Sex", "Platoon"))
     for(i in (1:ncol(rawnatlen))[!(names(rawnatlen) %in% c("Beg/Mid","Era"))]){
       rawnatlen[,i] = as.numeric(rawnatlen[,i])
     }
@@ -2263,11 +2291,11 @@ SS_output <-
     Dynamic_Bzero <- NA
   }else{
     Dynamic_Bzero <- cbind(Dynamic_Bzero1,Dynamic_Bzero2[,3])
-    names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+    names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     if(nareas==1 & ngpatterns==1){ # for simpler models, do some cleanup
       Dynamic_Bzero <- Dynamic_Bzero[-(1:2),]
       for(icol in c(1,3,4)) Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
-      names(Dynamic_Bzero) <- c("Yr","Era","SPB","SPB_nofishing")
+      names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     }
     if(nareas>1 & ngpatterns==1){ # for spatial models, do some cleanup
       Dynamic_Bzero <- cbind(Dynamic_Bzero1,Dynamic_Bzero2[,-(1:2)])
@@ -2275,10 +2303,10 @@ SS_output <-
       for(icol in (1:ncol(Dynamic_Bzero))[-2]){
         Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
       }
-      names(Dynamic_Bzero) <- c("Yr","Era",paste0("SPB_area",1:nareas),
-                                paste0("SPB_nofishing_area",1:nareas))
-      Dynamic_Bzero$SPB <- apply(Dynamic_Bzero[,2 + 1:nareas], 1, sum)
-      Dynamic_Bzero$SPB_nofishing <-
+      names(Dynamic_Bzero) <- c("Yr","Era",paste0("SSB_area",1:nareas),
+                                paste0("SSB_nofishing_area",1:nareas))
+      Dynamic_Bzero$SSB <- apply(Dynamic_Bzero[,2 + 1:nareas], 1, sum)
+      Dynamic_Bzero$SSB_nofishing <-
         apply(Dynamic_Bzero[,2 + nareas + 1:nareas], 1, sum)
     }
   }
@@ -2313,11 +2341,11 @@ SS_output <-
   returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"),3]) # type of stock recruit relationship
 
   # get "sigma" used by Pacific Council in P-star calculations
-  SPB_final_Label <- paste0("SPB_",endyr+1)
-  if(SPB_final_Label %in% der$Label){
-    SPB_final_EST <- der$Value[der$Label==SPB_final_Label]
-    SPB_final_SD <- der$StdDev[der$Label==SPB_final_Label]
-    returndat$Pstar_sigma <- sqrt(log((SPB_final_SD/SPB_final_EST)^2+1))
+  SSB_final_Label <- paste0("SSB_",endyr+1)
+  if(SSB_final_Label %in% der$Label){
+    SSB_final_EST <- der$Value[der$Label==SSB_final_Label]
+    SSB_final_SD <- der$StdDev[der$Label==SSB_final_Label]
+    returndat$Pstar_sigma <- sqrt(log((SSB_final_SD/SSB_final_EST)^2+1))
   }else{
     returndat$Pstar_sigma <- NULL
   }

@@ -56,8 +56,7 @@ Inspired by plots of MULTIFAN-CL movement patterns presented by Adam
 Langley
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
-\code{\link{IOTCmove}}
+\code{\link{SS_output}}, \code{\link{SSplotMovementRates}}
 }
 \author{
 Ian Taylor
