@@ -246,7 +246,7 @@ SS_html <- function(replist=NULL,
         if(!is.list(r4ss_info)){
           r4ss_info_text <- NULL
         }else{
-          goodnames <- c("Version", "Built",
+          goodnames <- c("Version", "Date", "Built",
                          grep("Remote", names(r4ss_info), value=TRUE))
           r4ss_info_text <- '<p><b>r4ss info:<br></b>\n'
           for(name in goodnames){
