@@ -1130,7 +1130,7 @@ SS_output <-
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
 
-  # new note about how forecast selectivity is modeled added in 3.30
+  # new message about how forecast selectivity is modeled added in 3.30.06
   # (has impact on read of time-varying parameters below)
   forecast_selectivity <- grep("forecast_selectivity", rawrep[,1], value=TRUE)
   if(length(forecast_selectivity)==0){
@@ -1148,18 +1148,31 @@ SS_output <-
   MGparmAdj <- df.rename(MGparmAdj, oldnames="Year", newnames="Yr")
   # make values numeric
   if(nrow(MGparmAdj)>0){
-    for(icol in 1:ncol(MGparmAdj)) MGparmAdj[,icol] <- as.numeric(MGparmAdj[,icol])
+    for(icol in 1:ncol(MGparmAdj)){
+      MGparmAdj[,icol] <- as.numeric(MGparmAdj[,icol])
+    }
   }else{
     MGparmAdj <- NA
   }
 
   # time-varying size-selectivity parameters
-  SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,"selparm(Age)_By_Year_after_adjustments",-1)
+  SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments",2,
+                          "selparm(Age)_By_Year_after_adjustments",-1)
   if(nrow(SelSizeAdj)>2){
     SelSizeAdj <- SelSizeAdj[,apply(SelSizeAdj,2,emptytest)<1]
     SelSizeAdj[SelSizeAdj==""] <- NA
-    for(icol in 1:ncol(SelSizeAdj)) SelSizeAdj[,icol] <- as.numeric(SelSizeAdj[,icol])
-    names(SelSizeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelSizeAdj)-2),sep=""))
+    # make values numeric
+    for(icol in 1:ncol(SelSizeAdj)){
+      SelSizeAdj[,icol] <- as.numeric(SelSizeAdj[,icol])
+    }
+    # provide rownames (after testing for extra column added in 3.30.06.02)
+    if(rawrep[matchfun("selparm(Size)_By_Year_after_adjustments")+1, 3] == "Change?"){
+      names(SelSizeAdj) <- c("Fleet","Yr","Change?",
+                             paste("Par",1:(ncol(SelSizeAdj)-3),sep=""))
+    }else{
+      names(SelSizeAdj) <- c("Fleet","Yr",
+                             paste("Par",1:(ncol(SelSizeAdj)-2),sep=""))
+    }
   }else{
     SelSizeAdj <- NA
   }
@@ -1169,11 +1182,21 @@ SS_output <-
   if(nrow(SelAgeAdj)>2){
     SelAgeAdj <- SelAgeAdj[,apply(SelAgeAdj,2,emptytest)<1]
     SelAgeAdj[SelAgeAdj==""] <- NA
+    # test for empty table
     if(SelAgeAdj[1,1]=="RECRUITMENT_DIST"){
       SelAgeAdj <- NA
     }else{
+      # make values numeric
       for(icol in 1:ncol(SelAgeAdj)) SelAgeAdj[,icol] <- as.numeric(SelAgeAdj[,icol])
-      names(SelAgeAdj) <- c("FleetSvy","Yr",paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+      names(SelAgeAdj) <- c("Flt","Yr",paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+      # provide rownames (after testing for extra column added in 3.30.06.02)
+      if(rawrep[matchfun("selparm(Age)_By_Year_after_adjustments")+1, 3] == "Change?"){
+        names(SelAgeAdj) <- c("Fleet","Yr","Change?",
+                               paste("Par",1:(ncol(SelAgeAdj)-3),sep=""))
+      }else{
+        names(SelAgeAdj) <- c("Fleet","Yr",
+                               paste("Par",1:(ncol(SelAgeAdj)-2),sep=""))
+      }
     }
   }else{
     SelAgeAdj <- NA
