@@ -962,6 +962,15 @@ SS_output <-
   # add table to stats that get printed in console
   stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
 
+  # Dirichlet-Multinomial parameters
+  DMpars <- parameters[grep("ln(EffN_mult)", parameters$Label, fixed=TRUE),
+                       names(parameters)%in% c("Value","Phase","Min","Max")]
+  DMpars$Theta <- exp(DMpars$Value)
+  DMpars$"Theta/(1+Theta)" <- DMpars$Theta / (1 + DMpars$Theta)
+  if(nrow(DMpars) > 0){
+    stats$Dirichlet_Multinomial_pars <- DMpars
+  }
+  
   # read covar.sso file
   if(covar){
     CoVar <- read.table(covarfile,header=TRUE,colClasses=c(rep("numeric",4),rep("character",4),"numeric"),skip=covarskip)
