@@ -130,6 +130,30 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @examples
+#' 
+#'   \dontrun{
+#' # directories where models were run need to be defined
+#' dir1 <- 'c:/SS/mod1'
+#' dir2 <- 'c:/SS/mod2'
+#' dir1mcmc <- 'c:/SS/mod1mcmc'
+#' 
+#' # read two models
+#' mod1 <- SS_output(dir=dir1)
+#' mod2 <- SS_output(dir=dir2)
+#' 
+#' # create list summarizing model results
+#' mod.sum <- SSsummarize(list(mod1, mod2))
+#' 
+#' # plot comparisons
+#' SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
+#' 
+#' # Example showing comparison if MCMC results are available
+#' mod.sum$mcmc <- SSgetMCMC(dir=dir1mcmc)
+#' SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
+#'
+#' }
+
 SSplotComparisons <-
   function(summaryoutput,subplots=1:20,
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,
@@ -172,7 +196,7 @@ SSplotComparisons <-
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
            plotdir=NULL,
            filenameprefix="",
-           densitynames=c("SPB_Virgin","R0"),
+           densitynames=c("SSB_Virgin","R0"),
            densityxlabs="default",
            densityscalex=1,
            densityscaley=1,
@@ -186,7 +210,7 @@ SSplotComparisons <-
            add=FALSE,
            par=list(mar=c(5,4,1,1)+.1),
            verbose=TRUE,
-           mcmcVec="default",
+           mcmcVec=FALSE,
            show_equilibrium=TRUE)
 {
   meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
@@ -388,9 +412,16 @@ SSplotComparisons <-
   # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
-  if(mcmcVec[1]=="default") mcmcVec <- rep(FALSE,nlines)
-  if(length(models)!=length(mcmcVec)) cat("WARNING: the number of models is not equal to the number of mcmcVec elements\n")
 
+  # check length of mcmcVec
+  if(nlines > 1 & length(mcmcVec)==1){
+    mcmcVec <- rep(mcmcVec, nlines)
+  }
+  if(nlines != length(mcmcVec)){
+    stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
+  }
+
+  # check length of indexfleets
   if(!is.null(indexfleets) && length(indexfleets) < n){
     if(length(indexfleets)==1){
       indexfleets <- rep(indexfleets, n)
@@ -452,7 +483,13 @@ SSplotComparisons <-
     recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
 
     ### get MCMC for SpawnBio
-    tmp <- grep("SPB",names(mcmc[[imodel]]))   #try it to see what you get
+    tmp <- grep("SSB",names(mcmc[[imodel]]))   #try it to see what you get
+    # exclude rows that aren't part of the timseries
+    tmp2 <- c(grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_SPRtgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+              grep("SSB_MSY", names(mcmc[[imodel]]), ignore.case = TRUE))
+    tmp <- setdiff(tmp,tmp2)
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
@@ -496,8 +533,9 @@ SSplotComparisons <-
     }
 
     ### get MCMC for recruits
-    tmp <- grep("^Recr_",names(mcmc[[imodel]]))   #try it to see what you get
-    tmp2 <- grep("Recr_Unfished",names(mcmc[[imodel]]))
+    tmp <- grep("^Recr_", names(mcmc[[imodel]]))   #try it to see what you get
+    # exclude rows that aren't part of the timseries
+    tmp2 <- grep("Recr_unfished", names(mcmc[[imodel]]), ignore.case = TRUE)
     tmp <- setdiff(tmp,tmp2)
     if(length(tmp) > 0) { #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
@@ -1387,7 +1425,7 @@ SSplotComparisons <-
         # add density
         if(good[iline]){
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for female only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
             mcmcVals <- mcmcVals/2
           }
           xmin <- min(xmin, quantile(mcmcVals,0.005))
@@ -1405,7 +1443,7 @@ SSplotComparisons <-
         parSD <- valSDs[1,imodel]
         if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for female only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
             parval <- parval/2
             parSD <- parSD/2
           }
@@ -1478,7 +1516,7 @@ SSplotComparisons <-
           # make density for MCMC posterior
           mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
           }
           x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
@@ -1520,7 +1558,7 @@ SSplotComparisons <-
           parval <- vals[1,imodel]
           parSD <- valSDs[1,imodel]
           if(!is.na(parSD) && parSD>0){
-            if(nsexes[imodel]==1 &&  grepl("SPB",parname)) {   #divide by 2 for feamle only spawning biomass
+            if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
               parval <- parval/2
               parSD <- parSD/2
             }

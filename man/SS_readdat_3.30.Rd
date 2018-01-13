@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readdat_3.30.R
 \name{SS_readdat_3.30}
 \alias{SS_readdat_3.30}
-\title{read data file from SS version 3.30 (function still in development)}
+\title{read data file from SS version 3.30}
 \usage{
 SS_readdat_3.30(file, verbose = TRUE, echoall = FALSE, section = NULL)
 }

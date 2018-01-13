@@ -132,10 +132,31 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	fore     <- (endyr+1):foreyr
 	all      <- startyr:foreyr
 
+	#======================================================================
+    # Two-sex or Singl-sex model
+    #======================================================================
+    selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
+    nsexes <- ifelse(SS_versionNumeric < 3.3, 
+    					length(unique(as.numeric(selex$gender))),
+    					length(unique(as.numeric(selex$Sex))))
+
+	#======================================================================
 	# Determine if the model has multiple areas
 	# The quantities by areas are summed into total values (e.g. spawning biomass summed across all areas)
+	#======================================================================
   	nareas <- max(as.numeric(rawrep[begin:end,1]))
   	if ( nareas > 1) { print(paste0("Patience: There are ", nareas, " areas that are being pulled and combined.")) }
+
+
+	#======================================================================
+	# Determine the fleet name and number for fisherie with catch
+	#======================================================================
+  	begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
+    end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
+    temp  <- rawrep[begin:end, 1:18]
+    names <- unique(temp[,2]) # This is a list of fishery names with catch associated with them
+    fleet.num <- unique(temp[,1])
+  	#======================================================================
 
 	smry.all = tot.bio.all = recruits.all = 0
 	for (a in 1:nareas){
@@ -163,14 +184,13 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 
 
 	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
-	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
-	ssb.virgin   = as.numeric(strsplit(base[grep("SPB_Virgin",base)]," ") [[1]][3])
+	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SSB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
+	ssb.virgin   = as.numeric(strsplit(base[grep("SSB_Virgin",base)]," ") [[1]][3])
+	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
 	
 	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)
 	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
 	
-	temp    = strsplit(base[grep("fleet_names",base)]," ")[[1]]
-	names   = temp[3:(3 + nfleets - 1)]
 
 	# Determine the number of fishery fleets with catch and sum all mortality across fleets.
 	if (nfleets != length(names)) { 
@@ -181,7 +201,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	if (SS_versionNumeric >= 3.3) { xx = 14}
 
 	for (a in 1:nfleets){
-		temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(a, names[a], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
+		temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(fleet.num[a], names[a], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
 		catch = catch + temp
 	}
 	fore.catch = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("ForeCatch_",x,sep=""),base)]," ")[[1]][3]), x = fore)

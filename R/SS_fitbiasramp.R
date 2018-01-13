@@ -50,16 +50,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
          oldctl=NULL, newctl=NULL, altmethod="nlminb", exclude_forecast=FALSE,
          pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300, cex.main=1){
-  ##################
-  # function to estimate bias adjustment ramp
-  # for Stock Synthesis v3.11 - v3.21
-  # by Ian Taylor
-  # April 14, 2011
-  #
-  # Usage: run function with input that is an object from SS_output
-  #        from http://code.google.com/p/r4ss/
-  #
-  ##################
 
   # note, method is choices that go into optim:
   #  method = c("Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN")
@@ -73,7 +63,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   plotinfo <- NULL
 
-  if(!is.list(replist) | !(as.numeric(substr(replist$SS_version,5,8)) > 3.11)){
+  if(!is.list(replist) | replist$SS_versionNumeric < 3.11){
     stop("this function needs an input object created by SS_output from SS version 3.11 or greater")
   }
   if(replist$inputs$covar==FALSE){

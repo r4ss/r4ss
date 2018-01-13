@@ -14,9 +14,9 @@ PinerPlot(summaryoutput, plot = TRUE, print = FALSE,
   cex.total = 1.5, xlim = "default", ymax = "default", xaxs = "r",
   yaxs = "r", type = "o", legend = TRUE, legendloc = "topright",
   pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, plotdir = NULL, add_cutoff = FALSE, verbose = TRUE,
-  fleetgroups = NULL, likelihood_type = "raw_times_lambda",
-  minfraction = 0.01)
+  cex.main = 1, plotdir = NULL, add_cutoff = FALSE, cutoff_prob = 0.95,
+  verbose = TRUE, fleetgroups = NULL,
+  likelihood_type = "raw_times_lambda", minfraction = 0.01)
 }
 \arguments{
 \item{summaryoutput}{List created by the function
@@ -52,11 +52,11 @@ the profile was conducted.}
 
 \item{pch}{Optional vector of plot characters for the points.}
 
-\item{lty}{Line total for the liklihood components.}
+\item{lty}{Line total for the likelihood components.}
 
 \item{lty.total}{Line type for the total likelihood.}
 
-\item{lwd}{Line width for the liklihood components.}
+\item{lwd}{Line width for the likelihood components.}
 
 \item{lwd.total}{Line width for the total likelihood.}
 
@@ -98,6 +98,13 @@ plotted.}
 
 \item{plotdir}{Directory where PNG files will be written. by default it will
 be the directory where the model was run.}
+
+\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
+based on common cutoff of half of chi-squared of p=.95 with 1 degree of
+freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
+can be adjusted using the \code{cutoff_prob} below.}
+
+\item{cutoff_prob}{Probability associated with \code{add_cutoff} above.}
 
 \item{verbose}{Return updates of function progress to the R GUI? (Doesn't do
 anything yet.)}

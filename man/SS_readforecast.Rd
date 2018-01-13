@@ -5,7 +5,7 @@
 \title{read forecast file}
 \usage{
 SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
-  version = "3.24", readAll = FALSE, verbose = TRUE)
+  version = "3.30", readAll = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}

@@ -31,20 +31,12 @@ Once you have installed the r4ss package, it can be loaded in the regular manner
 library(r4ss)
 ````
 
+There is now a basic Vignette, which can be viewed at <https://github.com/r4ss/r4ss/blob/master/vignettes/r4ss-intro-vignette.Rmd> or built locally on your computer using this command to install the package:
+```S
+devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
+```
+
+
 ## Changes
 
-See NEWS.md for log of changes, starting with v1.24.0.
-
-On January 15th, 2015 and included in CRAN submission of v1.24.0, a variety of changes that were in a branch on this GitHub site have now been merged into the main code. If anything doesn't work for you, you can install an earlier version from GitHub using the devtools command:
-
-```S
-devtools::install_github("r4ss/r4ss", ref="v1.22.1")
-````
-
-Changes include
-* new growth plots that facilitate comparison of mean growth to variability in growth and mean growth with maturity
-* new composition plots that show females, males, and unsexed fish in the same plot
-* automatic generation of data-weighting plots contributed by Chris Francis
-* a variety of other minor refinements
-
-Some of these things surely won't work right for any particular model configuration. If so, please email Ian Taylor or post an "issue" on this GitHub site at https://github.com/r4ss/r4ss/issues
+See NEWS.md for (not very complete) log of changes, starting with v1.24.0.

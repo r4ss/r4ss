@@ -1,4 +1,4 @@
-#' read data file from SS
+#' read Stock Synthesis data file
 #' 
 #' Read Stock Synthesis data file into list object in R. This function is a
 #' wrapper which calls either SS_readdat_3.24 or SS_readdat_3.30

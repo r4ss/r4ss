@@ -16,6 +16,8 @@
 #' @param maxrows Maximum number of rows to search among in 3.30 models
 #' (may need to increase from default if you have a huge number of fleets)
 #' @param overwrite Overwrite file if it exists?
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
 #' @author Ian G. Taylor, Gwladys I. Lambert

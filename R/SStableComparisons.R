@@ -41,7 +41,7 @@ SStableComparisons <-  function(summaryoutput,
                                     "NatM",
                                     "L_at_Amax",
                                     "VonBert_K",
-                                    "SPB_Virg",
+                                    "SSB_Virg",
                                     "Bratio_2017",
                                     "SPRratio_2016"),
                                 digits=NULL,
@@ -111,7 +111,7 @@ SStableComparisons <-  function(summaryoutput,
           vals[1,-1] <- round(vals[1,-1]/1e3,3)
           vals[1,1] <-paste0(vals[1,1],"_thousand_mt")
         }
-        ## if(name=="SPB_Virg"){
+        ## if(name=="SSB_Virg"){
         ##   vals[1,-1] <- as.numeric(vals[1,-1])/1e3
         ##   vals[1,1] <- "SB0_thousand_mt"
         ## }

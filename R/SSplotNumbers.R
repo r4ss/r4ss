@@ -153,7 +153,7 @@ SSplotNumbers <-
         cat("Numbers at age plots only show first settlement event\n")
       }
     }
-    bseas <- unique(natage$BirthSeason)
+    bseas <- unique(natage$BirthSeas)
     if(length(bseas)>1){
       cat("Numbers at age plots are for only the first birth season\n")
     }
@@ -175,7 +175,7 @@ SSplotNumbers <-
                                    natage$Era!="VIRG" &
                                    !is.na(natage$"0") &
                                    natage$Yr < (endyr+2) &
-                                   natage$BirthSeason==min(bseas),]
+                                   natage$BirthSeas==min(bseas),]
                                    # natage$Bio_Pattern==1,] # formerly filtered
           natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid"==period[iperiod],]
           # create data frame with 0 values to fill across platoons/submorphs
@@ -270,7 +270,7 @@ SSplotNumbers <-
           prodsum <- as.vector(apply(prodmat,2,sum))
           natagetemp2$sumprod <- prodsum
           natagetemp2$meanage <-
-            natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeason-1)/nseasons
+            natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
           natageyrs <- sort(unique(natagetemp0$Yr))
           if(iperiod==1){
             natageyrsB <- natageyrs # unique name for beginning of year
@@ -404,7 +404,7 @@ SSplotNumbers <-
                                      natlen$Seas==1 &
                                      natlen$Era!="VIRG" &
                                      natlen$Yr < (endyr+2) &
-                                     natlen$BirthSeason==min(bseas),]
+                                     natlen$BirthSeas==min(bseas),]
                                      # natlen$Bio_Pattern==1,] # formerly filtered
             natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid"==period[iperiod],]
 
@@ -486,7 +486,7 @@ SSplotNumbers <-
             prodsum <- as.vector(apply(prodmat,2,sum))
             natlentemp2$sumprod <- prodsum
             natlentemp2$meanlen <-
-              natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeason-1)/nseasons
+              natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeas-1)/nseasons
             natlenyrs <- sort(unique(natlentemp0$Yr))
             if(iperiod==1) natlenyrsB <- natlenyrs # unique name for beginning of year
 
@@ -610,10 +610,10 @@ SSplotNumbers <-
       equilage <- equilage[as.vector(apply(equilage[, remove], 1, sum))>0, ]
 
 
-      BirthSeason <- spawnseas
-      if(!(spawnseas %in% bseas)) BirthSeason <- min(bseas)
+      BirthSeas <- spawnseas
+      if(!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
       if(length(bseas)>1){
-        cat("showing equilibrium age for first birth season", BirthSeason, "\n")
+        cat("showing equilibrium age for first birth season", BirthSeas, "\n")
       }
 
       if(mainTitle) {
@@ -623,8 +623,8 @@ SSplotNumbers <-
       }
 
       plot(0, type='n', xlim=c(0, accuage),
-           ylim=c(0, 1.05*max(equilage[equilage$BirthSeason==BirthSeason
-             & equilage$Seas==BirthSeason, remove])),
+           ylim=c(0, 1.05*max(equilage[equilage$BirthSeas==BirthSeas
+             & equilage$Seas==BirthSeas, remove])),
            xaxs='i', yaxs='i', xlab='Age', ylab=labels[9], main=pt1, cex.main=cex.main)
 
       # now fill in legend
@@ -634,8 +634,8 @@ SSplotNumbers <-
       for(iarea in areas){
         for(m in 1:nsexes){
           equilagetemp <- equilage[equilage$Area==iarea & equilage$Sex==m
-                                   & equilage$BirthSeason==BirthSeason
-                                   & equilage$Seas==BirthSeason, ]
+                                   & equilage$BirthSeas==BirthSeas
+                                   & equilage$Seas==BirthSeas, ]
           if(nrow(equilagetemp)>1){
             cat("in plot of equilibrium age composition by gender and area\n",
                 "multiple morphs are not supported,",

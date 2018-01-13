@@ -1,0 +1,93 @@
+---
+title: "Introduction to r4ss"
+author: "Ian Taylor"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to r4ss}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(collapse = T, comment = "#>")
+options(tibble.print_min = 4L, tibble.print_max = 4L)
+library(r4ss)
+```
+
+**r4ss** is a package of tools related to the Stock Synthesis fisheries stock
+assessment modeling framework. This first Vignette covers installing the
+package and some basic uses.
+
+## Installing the r4ss R package
+
+### Basic installation
+The package can be run on OS X, Windows, or Linux.
+The CRAN version of r4ss is not regularly updated and therefore likely out of
+date. Instead it is recommended to install the from GitHub with the following
+code which depends on the `devtools` package 
+(which in turn depends on a variety of additional packages):
+
+```{r, install-and-load, eval=FALSE}
+# install.packages("devtools") # if needed
+devtools::install_github("r4ss/r4ss")
+
+# If you would like the vignettes (so far there's just this one):
+devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
+```
+
+### Loading the package and reading help pages
+You can then load the package with:
+
+```{r, load-package, eval=FALSE}
+library("r4ss")
+```
+
+You can read the help files and access this vignette (and any others created
+in the future) with:
+
+```{r, help, eval=FALSE}
+?r4ss
+help(package = "r4ss")
+browseVignettes("r4ss")
+```
+
+
+Although we've made an effort to maintain backward compatibility to at least 3.24S (from July, 2013), there 
+may be cases where it's necessary to install either an older version of r4ss, such as when a recent change 
+to the package causes something to fail, or a development version of the package that isn't in the `master`
+repository yet, such as to test upcoming features.
+
+### Alternative versions
+
+To install alternative versions of r4ss, provide a reference to the `install_github`, such as 
+```{r, install-older-version, eval=FALSE}
+devtools::install_github("r4ss/r4ss", ref="1.26.0") # install r4ss version 1.26.0
+
+```
+where the `ref` input can be a release number, the name of a branch on GitHub, or a git SHA-1 code, which are listed with all code changes that are committed to the git repository: https://github.com/r4ss/r4ss/commits/ and can also be found (starting with r4ss version 1.29.0, on the "Home" tab of the HTML view of the plots created by `SS_plots` as described below).
+
+
+## Reading model output and making default plots
+
+
+The most important two functions are `SS_output` and `SS_plots`, the first
+for reading the output from a Stock Synthesis model and the second for making
+a large set of plots illustrating that output.
+
+```{r, eval=FALSE, echo=TRUE, message=FALSE}
+# it's useful to create a variable for the directory with the model output
+mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30")
+
+# read the model output and print some diagnostic messages 
+replist <- SS_output(dir = mydir, verbose=TRUE, printstats=TRUE)
+
+# plots the results
+SS_plots(replist)
+```
+
+By default `SS_plots` creates a large collection of PNG files in a new `plots` sub-directory in the same location as your model files, along with a set of HTML files (example excerpt below) to facilitate exploration of the figures in your browser. The home tab should open in your browser automatically after `SS_plots` completes making all the files.
+
+![Illustration of the HTML view of the plots created by the `SS_plots` function.](r4ss_html_capture.png){ width=75% }
+
+

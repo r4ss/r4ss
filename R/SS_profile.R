@@ -23,19 +23,21 @@
 #' @param profilevec Vector of values to profile over.  Default = NULL.
 #' @param model Name of executable. Default = "ss3".
 #' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amound of command-line output.
-#' @param systemcmd Should R call SS using "system" function intead of "shell".
+#' will reduce the amount of command-line output.
+#' @param systemcmd Should R call SS using "system" function instead of "shell".
 #' This may be required when running R in Emacs. Default = FALSE.
 #' @param saveoutput Copy output .SSO files to unique names.  Default = TRUE.
 #' @param overwrite Overwrite any existing .SSO files. Default = TRUE. If FALSE,
 #' then some runs may be skipped.
 #' @param whichruns Optional vector of run indices to do. This can be used to
 #' re-run a subset of the cases in situations where the function was
-#' interupted or some runs fail to converge. Must be a subset of 1:n, where n
+#' interrupted or some runs fail to converge. Must be a subset of 1:n, where n
 #' is the length of profilevec.
 #' @param SSversion SS version number. Currently only "3.24" or "3.30" are
 #' supported, either as character or numeric values
 #' (noting that numeric 3.30  = 3.3).
+#' @param prior_check Check to make sure the starter file is set to include
+#' the prior likelihood contribution in the total likelihood.  Default = TRUE.
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models
@@ -116,7 +118,7 @@ function(
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
          model='ss', extras="-nox", systemcmd=FALSE, saveoutput=TRUE,
-         overwrite=TRUE, whichruns=NULL, SSversion="3.30",
+         overwrite=TRUE, whichruns=NULL, SSversion="3.30", prior_check=TRUE,
          verbose=TRUE)
 {
   ################################################################################
@@ -197,7 +199,7 @@ function(
          "'",starter$ctlfile,"' to '",newctlfile,"'")
   }
   # check for prior in likelihood
-  if(starter$prior_like==0){
+  if(prior_check & starter$prior_like==0){
     stop("for likelihood profile, you should change the starter file value of\n",
          " 'Include prior likelihood for non-estimated parameters'\n",
          " from 0 to 1 and re-run the estimation.\n")

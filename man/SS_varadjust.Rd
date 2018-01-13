@@ -34,6 +34,9 @@ variance adjustments}
 
 \item{overwrite}{Overwrite file if it exists?}
 
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{verbose}{TRUE/FALSE switch for amount of detail produced by function.
 Default=TRUE.}
 }

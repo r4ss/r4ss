@@ -1,7 +1,7 @@
 #' A function to create a executive summary tables from an SS Report.sso file
 #'
 #' Reads the Report.sso within the directory and creates executive summary
-#' tables as required by the current Terms of Refernce for West Coast 
+#' tables as required by the current Terms of Reference for West Coast 
 #' groundfish.  Works with Stock Synthesis versions 3.24U and later.
 #' Additionally, historical catch and numbers at ages tables are created.
 #'
@@ -48,7 +48,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	getDerivedQuant.fn <- function(dat, label, yrs, quant, divisor=1) {
           # modify old header to new value
         names(dat)[names(dat)=="LABEL"] <- "Label"
-    	allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label,1,3)=="SPB"],5,8)))
+    	allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label,1,3)=="SSB"],5,8)))
     	allYrs <- allYrs[!is.na(allYrs)]
     	finalYr <- as.numeric(substring(dat$Label[substring(dat$Label,1,8)=="OFLCatch"],10,13))[1]
     	if(is.null(yrs)) {
@@ -188,14 +188,40 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	fore     <- (endyr+1):foreyr
 	all      <- startyr:foreyr
 
+	#======================================================================
+	# Determine number of areas in the model
+	#======================================================================
   	nareas   <- max(as.numeric(rawrep[begin:end,1]))
-  	temp     <- strsplit(base[grep("fleet_names",base)]," ")[[1]]
-	names    <- temp[3:(3 + nfleets - 1)]
 
+  	#======================================================================
+	# Determine the fleet name and number for fisherie with catch
+	#======================================================================
+  	begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
+    end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
+    temp  <- rawrep[begin:end, 1:18]
+    names <- unique(temp[,2]) # This is a list of fishery names with catch associated with them
+    fleet.num <- unique(temp[,1])
+
+ 	#======================================================================
 	# Find summary age
+	#======================================================================
 	ts        <- matchfun2("TIME_SERIES", -1,"Area", -1) 
     smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
+    #======================================================================
+    # Two-sex or Singl-sex model
+    #======================================================================
+    selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
+    nsexes <- ifelse(SS_versionNumeric < 3.3, 
+    					length(unique(as.numeric(selex$gender))),
+    					length(unique(as.numeric(selex$Sex))))
+
+
+    #======================================================================
+    # Determine the number of growth patterns
+    #======================================================================
+    find.morph <- matchfun2("MORPH_INDEXING", 1, "MOVEMENT", -2, header=TRUE)
+    nmorphs <- dim(find.morph)[1] / nsexes
 	
 	#======================================================================
 	#ES Table a  Catches from the fisheries
@@ -204,8 +230,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		catch = NULL; total.catch = total.dead = 0
 		ind = hist[1:(length(hist)-1)]
 		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
 			total.dead  = total.dead + killed
 			total.catch = total.catch + input.catch
 			catch = cbind(catch, input.catch)
@@ -218,7 +244,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table b Spawning Biomass and Depletion
 	#======================================================================
-		ssb =  Get.Values(dat = base, label = "SPB"    , hist, quant )
+		ssb =  Get.Values(dat = base, label = "SSB"    , hist, quant )
+		if (nsexes == 1) { ssb$dq = ssb$dq / 2 ; ssb$low = ssb$low / 2 ; ssb$high = ssb$high / 2 }
 		depl = Get.Values(dat = base, label = "Bratio" , hist, quant )
 		for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
 		es.b =  data.frame(hist, 
@@ -289,7 +316,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table d 1-SPR (%)
 	#======================================================================
-		spr_type = strsplit(base[grep("SPR_report_basis",base)]," ")[[1]][3]
+		spr.name = ifelse(SS_versionNumeric >= 3.30, "SPR_report_basis", "SPR_ratio_basis")
+		spr_type = strsplit(base[grep(spr.name,base)]," ")[[1]][3]
 		#if (spr_type != "1-SPR") { 
 		#	print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")
 		#	print(paste("The SPR is being reported as", spr_type, "."))
@@ -314,7 +342,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		rawstarter   <- readLines(paste0(dir, "/starter.ss"))
 		spr          <- as.numeric(strsplit(rawforecast[grep("SPR target",rawforecast)]," ")[[1]][1])
 
-		ssb.virgin = Get.Values(dat = base, label = "SPB_Virgin", 	     hist, quant, single = TRUE)
+		ssb.virgin = Get.Values(dat = base, label = "SSB_Virgin", 	     hist, quant, single = TRUE)
 		smry.virgin= Get.Values(dat = base, label = "SmryBio_Unfished",  hist, quant, single = TRUE)
 		rec.virgin = Get.Values(dat = base, label = "Recr_Virgin", 	     hist, quant, single = TRUE)
 		final.depl = 100*depl[dim(depl)[1],2:4]     
@@ -329,6 +357,15 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		spr.msy    = Get.Values(dat = base, label = "SPR_MSY", 		     hist, quant, single = TRUE)
 		f.msy 	   = Get.Values(dat = base, label = "Fstd_MSY", 	     hist, quant, single = TRUE)
 		msy 	   = Get.Values(dat = base, label = "TotYield_MSY",      hist, quant, single = TRUE)
+
+		# Convert spawning quantities for single-sex models
+		if (nsexes == 1){
+			ssb.virgin = ssb.virgin / 2 
+			b.target = b.target / 2
+			b.spr = b.spr / 2
+			b.msy = b.msy / 2
+		}
+
 	
 		es.e =  matrix(c(
 				comma(ssb.virgin$dq,       dig),  paste0(comma(ssb.virgin$low,      dig), 	"\u2013", comma(ssb.virgin$high,      dig)),
@@ -398,8 +435,11 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 		ofl.fore =  Get.Values(dat = base, label = "OFLCatch" ,  yrs = fore, quant)
 		abc.fore =  Get.Values(dat = base, label = "ForeCatch" , yrs = fore, quant)
-		ssb.fore  = Get.Values(dat = base, label = "SPB" ,       yrs = fore, quant)
+		ssb.fore  = Get.Values(dat = base, label = "SSB" ,       yrs = fore, quant)
 		depl.fore = Get.Values(dat = base, label = "Bratio",     yrs = fore, quant)
+
+		if (nsexes == 1) { 
+			ssb.fore$dq = ssb.fore$dq / 2; ssb.fore$low = ssb.fore$low / 2; ssb.fore$high = ssb.fore$high / 2}
 		
 		smry.fore = 0
 		for(a in 1:nareas){
@@ -473,8 +513,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		catch = NULL
 		ind = startyr:endyr
 		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(i, names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
 			total.dead = total.dead + killed
 			total.catch = total.catch + input.catch
 			catch = cbind(catch, input.catch)
@@ -488,43 +528,87 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#Numbers at age
 	#======================================================================
-		# Check to see if numbers-at-age is calculated 
-		check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
-		if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
-		if (check != 2){
-			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
-			singlesex = ifelse(length(base[grep(paste("1 1 2 1 1 1 2", startyr,sep=" "),base)]) == 0, TRUE, FALSE)
+	if ( nareas > 1) { print(paste0("Patience: There are ", nareas, " areas that are being pulled and combined to create the numbers-at-age tables.")) }
+
+		if(SS_versionNumeric < 3.30) { 
+			maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
 			
-			if (singlesex) {
+			if (nsexes == 1) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
 					natage.f = natage.f + t(temp) 
 				}
 				
 				colnames(natage.f) = 0:maxAge
 				rownames(natage.f) <- startyr:endyr 
-		
+			
 				write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
 			}
-
-			if (!singlesex) {
+	
+			if (nsexes == 2) {
 				natage.f = natage.m = 0
 				for(a in 1:nareas){
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-					natage.f = natage.f + t(temp) 
-					temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 2 1 1 1 2", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-					natage.m = natage.m + t(temp) 
+					for (b in 1:nmorphs){
+						n = b
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.f = natage.f + t(temp) 
+						n = ifelse(nmorphs ==1, nsexes, b + nsexes) 
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.m = natage.m + t(temp) 
+					}
 				}
 				
 				colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
 				rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
-		
+			
 				write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
 				write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
 			}
+		} # SS v3.24 verions loop
+
+		# Check to see if numbers-at-age is calculated 
+		if(SS_versionNumeric >= 3.30) {
+			check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
+			if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
+
+			if (check != 2){
+				maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+				
+				if (nsexes == 1) {
+					natage.f = natage.m = 0
+					for(a in 1:nareas){
+						temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+						natage.f = natage.f + t(temp) 
+					}
 					
-		}
+					colnames(natage.f) = 0:maxAge
+					rownames(natage.f) <- startyr:endyr 
+			
+					write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
+				}
+	
+				if (nsexes == 2) {
+					natage.f = natage.m = 0
+					for(a in 1:nareas){
+						for (b in 1:nmorphs){
+							n = b
+							temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+							natage.f = natage.f + t(temp) 
+							n = ifelse(nmorphs ==1, nsexes, b + nsexes) 
+							temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+							natage.m = natage.m + t(temp) 
+						}
+					}
+					
+					colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge		
+					rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+			
+					write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
+					write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))	
+				}					
+			} #check loop
+		} #  SS version 3.30
 
 	}
 }

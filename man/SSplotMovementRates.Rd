@@ -32,7 +32,7 @@ areas?}
 
 \item{legendloc}{location passed to legend function (if used)}
 
-\item{moveseas}{choice of season for which movemement rates are shown}
+\item{moveseas}{choice of season for which movement rates are shown}
 
 \item{min.move.age}{Minimum age of movement (in future will come from Report file)}
 
@@ -64,7 +64,6 @@ pattern across years.
 }
 \seealso{
 \code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
-\code{\link{IOTCmove}}
 }
 \author{
 Ian Taylor

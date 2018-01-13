@@ -10,7 +10,8 @@
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param col line color (only applied to equilbrium yield plot at this time)
+#' @param col line color for equilibrium plot
+#' @param col2 line color for dynamic surplus production plot
 #' @param lty line type (only applied to equilbrium yield plot at this time)
 #' @param lwd line width (only applied to equilbrium yield plot at this time)
 #' @param cex.main character expansion for plot titles
@@ -36,7 +37,7 @@ SSplotYield <-
              "Equilibrium yield (mt)",    #2
              "Total biomass (mt)",        #3
              "Surplus production (mt)"),  #4
-           col="blue", lty=1, lwd=2, cex.main=1,
+           col="blue", col2="black", lty=1, lwd=2, cex.main=1,
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            plotdir="default",
            verbose=TRUE)
@@ -122,22 +123,25 @@ SSplotYield <-
     sprod_good <- sprod[sprodgood]
     xlim <- c(0, max(Bio_agg_good, na.rm=TRUE))
     ylim <- c(min(0, sprod_good, na.rm=TRUE), max(sprod_good, na.rm=TRUE))
-    plot(Bio_agg_good, sprod_good, ylim=ylim, xlim=xlim,
-         xlab=labels[3], ylab=labels[4], type="l", col="black")
-
+    # make empty plot
+    if(!add){
+      plot(0, ylim=ylim, xlim=xlim, xlab=labels[3], ylab=labels[4], type="n")
+    }
+    # add lines
+    lines(Bio_agg_good, sprod_good, col=col2)
     # make arrows
     old_warn <- options()$warn      # previous setting
     options(warn=-1)                # turn off "zero-length arrow" warning
     s <- seq(length(sprod_good)-1)
     arrows(Bio_agg_good[s], sprod_good[s], Bio_agg_good[s+1], sprod_good[s+1],
-           length=0.06, angle=20, col="black", lwd=1.2)
+           length=0.06, angle=20, col=col2, lwd=1.2)
     options(warn=old_warn)  #returning to old value
 
     # add lines at 0 and 0
     abline(h=0,col="grey")
     abline(v=0,col="grey")
     # add blue point at start
-    points(Bio_agg_good[1],sprod_good[1],col="blue",pch=19)
+    points(Bio_agg_good[1], sprod_good[1], col=col2, bg="white", pch=21)
   } # end sprodfunc
 
   if(2 %in% subplots){

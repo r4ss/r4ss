@@ -22,3 +22,17 @@ on changes and new features
 # r4ss 1.24.3
 
 * Implemented automated R package check on Travis-CI: https://travis-ci.org/r4ss/r4ss
+
+# r4ss 1.25.0 - 1.28.0
+
+* Slacked off on updating this NEWS file
+
+# r4ss 1.29.1 (January 11, 2018)
+
+* Support for SS version 3.30.10.00 available on VLab today
+
+* Some changes in column names and other variables to match cleanup of terminology
+in latest Stock Synthesis
+
+* New Vignette (very limited but provides a start to be improved on)
+

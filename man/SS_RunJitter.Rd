@@ -29,7 +29,7 @@ A vector of likelihoods for each jitter iteration.
 }
 \description{
 Iteratively runs SS model with different jittered starting parameter values
-(jitter value must be mannually set in starter.ss). Output files are renamed
+(jitter value must be manually set in starter.ss). Output files are renamed
 in the format Report1.sso, Report2.sso, etc.
 }
 \examples{

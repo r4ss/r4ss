@@ -9,9 +9,10 @@
 #' @param y Vector of y-values.
 #' @param z Vector of bubble sizes, where positive sizes will be plotted as
 #' closed bubbles and negative as open unless \code{allopen==TRUE}.
-#' @param col Color for bubbles.
+#' @param col Color for bubbles. Should be either a single value or vector
+#' of length equal to x, y, and z vectors.
 #' @param cexZ1 Character expansion (cex) value for a proportion of 1.0.
-#' @param maxsize Size of largest bubble. Prefered option is now an expansion
+#' @param maxsize Size of largest bubble. Preferred option is now an expansion
 #' factor for a bubble with z=1 (see \code{cexZ1} above).
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
@@ -24,7 +25,7 @@
 #' @param legend.yadj If a legend is added, how much should the y-axis be
 #' expanded to make space for it.
 #' @param main Title of plot. Default="".
-#' @param cex.main Charecter expansion for title. Default=1.
+#' @param cex.main Character expansion for title. Default=1.
 #' @param xlab X-axis label.
 #' @param ylab Y-axis label.
 #' @param minnbubble Minimum number of unique x values below which extra space
@@ -50,6 +51,10 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
     # Not sure anymore what happened to bubble2.
     if(diff(range(length(x),length(y),length(z)))>0)
       stop("x, y, and z should all be equal in length")
+    if(length(col) == 1){
+      col <- rep(col, length(x))
+    }
+    
     # filter NA values
     x <- x[!is.na(z)]
     y <- y[!is.na(z)]

@@ -19,7 +19,7 @@
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 
 SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
-                             version="3.24", readAll=FALSE, verbose=TRUE){
+                             version="3.30", readAll=FALSE, verbose=TRUE){
   # function to read Stock Synthesis forecast files
   if(!(version=="3.24" | version=="3.30" | version==3.3)){
     # turns out 3.30 != "3.30" in R
@@ -84,6 +84,11 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     }
     if(verbose){
       cat("Forecast years: ", mylist$Fcast_years, "\n")
+    }
+    mylist$Fcast_selex <- NA
+    if(version=="3.30" | version==3.3){
+      mylist$Fcast_selex <- allnums[i]; i <- i+1 # not present in early 3.30 versions
+      cat("Forecast selectivity option: ", mylist$Fcast_selex, "\n")
     }
     mylist$ControlRuleMethod <- allnums[i]; i <- i+1
     mylist$BforconstantF <- allnums[i]; i <- i+1

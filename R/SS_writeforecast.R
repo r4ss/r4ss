@@ -86,6 +86,9 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     wl("F_scalar")
     writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
     writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
+    if(mylist$SSversion=="3.30" | mylist$SSversion==3.3){
+      wl("Fcast_selex")
+    }
     wl("ControlRuleMethod")
     wl("BforconstantF")
     wl("BfornoF")

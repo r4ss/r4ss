@@ -6,7 +6,8 @@
 \usage{
 SSMethod.TA1.8(fit, type, fleet, part = 0:2, pick.sex = 0:3, seas = NULL,
   method = NULL, plotit = TRUE, printit = TRUE, datonly = FALSE,
-  plotadj = !datonly, maxpanel = 1000, fleetnames = NULL)
+  plotadj = !datonly, maxpanel = 1000, fleetnames = NULL,
+  label.part = TRUE, label.sex = TRUE, set.pars = TRUE)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}
@@ -25,7 +26,7 @@ Default is to include all partition values (0, 1, 2).}
 
 \item{pick.sex}{vector of one or more values for Pick_sex; analysis is
 restricted to composition data with one of these
-Pick_sex values.  Ignored if type=='con'}
+Pick_sex values.  Ignored if type=='con'.}
 
 \item{seas}{string indicating how to treat data from multiple seasons
 'comb' - combine seasonal data for each year and plot against Yr
@@ -46,7 +47,7 @@ panels of Fig. 4 in Francis (2011).}
 
 \item{datonly}{if TRUE, don't show the model expectations}
 
-\item{plotadj}{if TRUE, plot the confidencent intervals associated with
+\item{plotadj}{if TRUE, plot the confidence intervals associated with
 the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 
 \item{maxpanel}{maximum number of panels within a plot}
@@ -54,11 +55,19 @@ the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 \item{fleetnames}{Vector of alternative fleet names to draw from for
 plot titles and captions. It should have length equal to the number
 of fleets in the model, not the number of fleets considered in this function.}
+
+\item{label.part}{Include labels indicating which partitions are included?}
+
+\item{label.sex}{Include labels indicating which sexes are included?}
+
+\item{set.pars}{Set the graphical parameters such as mar and mfrow.
+Can be set to FALSE in order to add plots form multiple calls to
+this function as separate panels in one larger figure.}
 }
 \description{
 Uses method TA1.8 (described in Appendix A of Francis 2011) to do
 stage-2 weighting of composition data from a Stock Synthesis model.
-Outputs a mutiplier, \emph{w} (with bootstrap 95% confidence interval),
+Outputs a multiplier, \emph{w} (with bootstrap 95\% confidence interval),
 so that \emph{N2y} = \emph{w} x \emph{N1y}, where \emph{N1y} and
 \emph{N2y} are the stage-1 and stage-2
 multinomial sample sizes for the data set in year y.  Optionally

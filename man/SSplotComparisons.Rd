@@ -20,12 +20,12 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
   legendloc = "topright", legendorder = "default", legendncol = 1,
   sprtarg = NULL, btarg = NULL, minbthresh = NULL, pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  plotdir = NULL, filenameprefix = "", densitynames = c("SPB_Virgin",
+  plotdir = NULL, filenameprefix = "", densitynames = c("SSB_Virgin",
   "R0"), densityxlabs = "default", densityscalex = 1, densityscaley = 1,
   densityadjust = 1, densitysymbols = TRUE, densitytails = TRUE,
   densitymiddle = FALSE, densitylwd = 1, fix0 = TRUE, new = TRUE,
   add = FALSE, par = list(mar = c(5, 4, 1, 1) + 0.1), verbose = TRUE,
-  mcmcVec = "default", show_equilibrium = TRUE)
+  mcmcVec = FALSE, show_equilibrium = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}}
@@ -217,6 +217,30 @@ useful to turn off. Defaults to TRUE.}
 Creates a user-chosen set of plots comparing model output from a summary of
 multiple models, where the collection was created using the
 \code{SSsummarize} function.
+}
+\examples{
+
+  \dontrun{
+# directories where models were run need to be defined
+dir1 <- 'c:/SS/mod1'
+dir2 <- 'c:/SS/mod2'
+dir1mcmc <- 'c:/SS/mod1mcmc'
+
+# read two models
+mod1 <- SS_output(dir=dir1)
+mod2 <- SS_output(dir=dir2)
+
+# create list summarizing model results
+mod.sum <- SSsummarize(list(mod1, mod2))
+
+# plot comparisons
+SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
+
+# Example showing comparison if MCMC results are available
+mod.sum$mcmc <- SSgetMCMC(dir=dir1mcmc)
+SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
+
+}
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SSsummarize}},

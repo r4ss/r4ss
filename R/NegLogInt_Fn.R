@@ -38,7 +38,7 @@
 ##' Default is NULL, and if not explicitly specified the program will attempt to
 ##' detect these automatically based on the length of relevant lines from the CTL
 ##' file.
-##' @param systemcmd Should R call SS using "system" function intead of "shell".
+##' @param systemcmd Should R call SS using "system" function instead of "shell".
 ##' This may be required when running R in Emacs on Windows. Default = FALSE.
 ##' @seealso \code{\link{read.admbFit}}, \code{\link{getADMBHessian}}
 ##' @author James Thorson

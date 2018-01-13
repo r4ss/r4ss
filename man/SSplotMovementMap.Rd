@@ -30,7 +30,7 @@ connected by the arrows representing movement rates. The order should match
 the order of areas in \code{polygonlist} and in the SS model. Not necessary
 if no arrows are shown on the map.}
 
-\item{moveage}{age for which movemement rates will be represented}
+\item{moveage}{age for which movement rates will be represented}
 
 \item{moveseas}{season for which movement rates will be represented}
 
@@ -56,8 +56,7 @@ Inspired by plots of MULTIFAN-CL movement patterns presented by Adam
 Langley
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
-\code{\link{IOTCmove}}
+\code{\link{SS_output}}, \code{\link{SSplotMovementRates}}
 }
 \author{
 Ian Taylor

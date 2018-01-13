@@ -6,9 +6,10 @@
 \usage{
 SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE,
   print = FALSE, labels = c("Relative depletion", "Equilibrium yield (mt)",
-  "Total biomass (mt)", "Surplus production (mt)"), col = "blue", lty = 1,
-  lwd = 2, cex.main = 1, pwidth = 6.5, pheight = 5, punits = "in",
-  res = 300, ptsize = 10, plotdir = "default", verbose = TRUE)
+  "Total biomass (mt)", "Surplus production (mt)"), col = "blue",
+  col2 = "black", lty = 1, lwd = 2, cex.main = 1, pwidth = 6.5,
+  pheight = 5, punits = "in", res = 300, ptsize = 10,
+  plotdir = "default", verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -23,7 +24,9 @@ SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE,
 
 \item{labels}{vector of labels for plots (titles and axis labels)}
 
-\item{col}{line color (only applied to equilbrium yield plot at this time)}
+\item{col}{line color for equilibrium plot}
+
+\item{col2}{line color for dynamic surplus production plot}
 
 \item{lty}{line type (only applied to equilbrium yield plot at this time)}
 

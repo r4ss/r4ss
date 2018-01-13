@@ -24,11 +24,11 @@
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfish number of fisheries in the model. This information is also not
+#' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
-#' @param Nsurv number of survey fleets in the model. This information is also not
+#' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param TG_Nrelgrp number of tag release groups in the model. This information is also not
+#' @param N_tag_groups number of tag release groups in the model. This information is also not
 #'  explicitly available in control file
 #' @author Ian G. Taylor, Yukio Takeuchi
 #' @export
@@ -42,9 +42,9 @@ SS_readctl <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,
                        Nages=20,
                        Ngenders=1,
                        Npopbins=NA,
-                       Nfish=2,
-                       Nsurv=2,
-                       TG_Nrelgrp=NA){
+                       Nfleet=2,
+                       Nsurveys=2,
+                       N_tag_groups=NA){
 
   # wrapper function to call old or new version of SS_readctl
 
@@ -53,16 +53,17 @@ SS_readctl <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,
   
   # call function for SS version 3.24
   if(version=="3.24"){ # should work whether "version" is character or numeric
-    ctllist <- SS_readctl_3.24(file=file, verbose=verbose,
-                               echoall=echoall,
-                               nseas      = nseas,
-                               N_areas    = N_areas,
-                               Nages      = Nages,
-                               Ngenders   = Ngenders,
-                               Npopbins   = Npopbins,
-                               Nfish      = Nfish,
-                               Nsurv      = Nsurv,
-                               TG_Nrelgrp = TG_Nrelgrp)
+    ctllist <- SS_readctl_3.24(file         = file,
+                               verbose      = verbose,
+                               echoall      = echoall,
+                               nseas        = nseas,
+                               N_areas      = N_areas,
+                               Nages        = Nages,
+                               Ngenders     = Ngenders,
+                               Npopbins     = Npopbins,
+                               Nfleet       = Nfleet,
+                               Nsurveys     = Nsurveys,
+                               N_tag_groups = N_tag_groups)
   }
 
   # call function for SS version 3.30

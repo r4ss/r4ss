@@ -71,7 +71,7 @@ plot. Default is 1/2.}
 plot. Defaults to 1 (no transparency). Useful for models with lots of
 overlapping points.}
 
-\item{both}{Logcal to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.}
+\item{both}{Logical to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.}
 
 \item{verbose}{report progress to R GUI?}
 }

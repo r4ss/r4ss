@@ -42,7 +42,10 @@ be added). Default="".}
 \description{
 A function to split apart bootstrap data files created in data.ss_new.  To
 get bootstraps, the input "N bootstrap file to produce" in starter.ss needs
-to be 3 or greater.
+to be 3 or greater. The function can either create a file for just the
+input data (if \code{inputs=TRUE}), a file for just the MLE values
+(if \code{MLE = TRUE}), or separate files for each of the bootstraps
+(if \code{inputs=FALSE} and \code{MLE=FALSE}).
 }
 \author{
 Ian Taylor

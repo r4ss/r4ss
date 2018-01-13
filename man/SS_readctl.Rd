@@ -6,7 +6,7 @@
 \usage{
 SS_readctl(file, version = "3.24", verbose = TRUE, echoall = FALSE,
   nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA,
-  Nfish = 2, Nsurv = 2, TG_Nrelgrp = NA)
+  Nfleet = 2, Nsurveys = 2, N_tag_groups = NA)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -36,13 +36,13 @@ explicitly available in control file}
 explicitly available in control file and this information is only required if length based
 maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfish}{number of fisheries in the model. This information is also not
+\item{Nfleet}{number of fisheries in the model. This information is also not
 explicitly available in control file}
 
-\item{Nsurv}{number of survey fleets in the model. This information is also not
+\item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{TG_Nrelgrp}{number of tag release groups in the model. This information is also not
+\item{N_tag_groups}{number of tag release groups in the model. This information is also not
 explicitly available in control file}
 }
 \description{

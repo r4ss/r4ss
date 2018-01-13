@@ -1,6 +1,6 @@
 ##' Create table of fixed forecast catches
 ##'
-##' Processing values of dead or retained bimoass from timeseries output
+##' Processing values of dead or retained biomass from timeseries output
 ##' to fit the format required at the bottom of the forecast file.
 ##' This can be used to map the catches resulting from forecasting with a particular
 ##' harvest control rule into a model representing a different state of nature.
@@ -40,8 +40,8 @@
 ##'
 ##' @export
 
-SS_ForeCatch <- function(replist, yrs=2017:2026, 
-                         average=FALSE, avg.yrs=2010:2014,
+SS_ForeCatch <- function(replist, yrs=2017:2028, 
+                         average=FALSE, avg.yrs=2012:2016,
                          total=NULL, digits=2, dead=TRUE){
   # function for creating table of fixed forecast catches
   # based on values in the timeseries output
@@ -64,9 +64,15 @@ SS_ForeCatch <- function(replist, yrs=2017:2026,
     forecast_catches_y <- NULL
     for(iseas in 1:replist$nseasons){
       for(iarea in 1:replist$nareas){
-        for(ifleet in 1:replist$nfishfleets){
+        for(ifleet in which(replist$fleet_type==1)){
+
           # figure out column name
-          string <- ifelse(dead, "dead(B)", "retain(B):_")
+          if(replist$catch_units[ifleet]==1){
+            string <- ifelse(dead, "dead(B)", "retain(B):_")
+          }
+          if(replist$catch_units[ifleet]==2){
+            string <- ifelse(dead, "dead(N)", "retain(N):_")
+          }
           colname <- paste0(string, ":_", ifleet)
           # extract catch
           if(average){

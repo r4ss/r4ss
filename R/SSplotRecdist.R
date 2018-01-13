@@ -10,9 +10,9 @@
 #' @param print print to PNG files?
 #' @param areanames optional vector to replace c("Area1","Area2",...)
 #' @param seasnames optional vector to replace c("Season1","Season2",...)
-#' @param xlab optional x-axis label (if the area names aren't informative
+#' @param xlab optional x-axis label (if the area names aren\'t informative
 #' enough)
-#' @param ylab optional y-axis label (if the season names aren't informative
+#' @param ylab optional y-axis label (if the season names aren\'t informative
 #' enough)
 #' @param main title for plot
 #' @param plotdir directory where PNG files will be written. by default it will
