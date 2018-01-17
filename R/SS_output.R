@@ -963,13 +963,81 @@ SS_output <-
   stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
 
   # Dirichlet-Multinomial parameters
-  DMpars <- parameters[grep("ln(EffN_mult)", parameters$Label, fixed=TRUE),
+  # (new option for comp likelihood that uses these parameters for automated
+  #  data weighting)
+  DM_pars <- parameters[grep("ln(EffN_mult)", parameters$Label, fixed=TRUE),
                        names(parameters)%in% c("Value","Phase","Min","Max")]
-  DMpars$Theta <- exp(DMpars$Value)
-  DMpars$"Theta/(1+Theta)" <- DMpars$Theta / (1 + DMpars$Theta)
-  if(nrow(DMpars) > 0){
-    stats$Dirichlet_Multinomial_pars <- DMpars
-  }
+  DM_pars$Theta <- exp(DM_pars$Value)
+  DM_pars$"Theta/(1+Theta)" <- DM_pars$Theta / (1 + DM_pars$Theta)
+  # if D-M parameters are present, then do some extra processing steps
+  age_data_info <- NULL
+  if(nrow(DM_pars) > 0){
+    # save to "stats" list that gets printed to R console
+    # (and also added to "returndat" which is returned by this function)
+    stats$Dirichlet_Multinomial_pars <- DM_pars
+    
+    # figure out which fleet uses which parameter,
+    # currently (as of SS version 3.30.10.00), requires reading data file
+    message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
+    datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'))
+    age_data_info <- datfile$age_info
+    age_data_info$CompError <- as.numeric(age_data_info$CompError)
+    age_data_info$ParmSelect <- as.numeric(age_data_info$ParmSelect)
+    
+    if(!any(age_data_info$CompError==1)){
+      stop("Problem Dirichlet-Multinomial parameters: ",
+           "Report file indicates parameters exist, but no CompError values ",
+           "in data.ss_new are equal to 1.")
+    }
+    len_info <- datfile$len_info
+    if(any(len_info$CompError)==1){
+      warning("r4ss doesn't yet account for Dirichlet-Multinomial likelihood ",
+              "for length comps.")
+    }
+    
+    ## get Dirichlet-Multinomial parameter values and adjust input N
+    if(nrow(agedbase) > 0){
+      agedbase$DM_effN <- NA
+    }
+    if(nrow(agedbase) > 0){
+      agedbase$DM_effN <- NA
+    }
+    if(nrow(condbase) > 0){
+      condbase$DM_effN <- NA
+    }
+    # loop over fleets within agedbase
+    for(f in unique(agedbase$Fleet)){
+      if(age_data_info$CompError[f] == 1){
+        ipar <- age_data_info$ParmSelect[f]
+        if(ipar %in% 1:nrow(DM_pars)){ 
+          Theta <- DM_pars$Theta[ipar]
+        }else{
+          stop("Issue with Dirichlet-Multinomial parameter:",
+               "Fleet = ", f, "and ParmSelect = ", ipar)
+        }
+        sub <- agedbase$Fleet == f
+        agedbase$DM_effN[sub] <-
+          1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
+      } # end test for D-M likelihood for this fleet
+    } # end loop over fleets within agedbase
+    # loop over fleets within condbase
+    for(f in unique(condbase$Fleet)){
+      if(age_data_info$CompError[f] == 1){
+        ipar <- age_data_info$ParmSelect[f]
+        if(ipar %in% 1:nrow(DM_pars)){ 
+          Theta <- DM_pars$Theta[ipar]
+        }else{
+          stop("Issue with Dirichlet-Multinomial parameter:",
+               "Fleet = ", f, "and ParmSelect = ", ipar)
+        }
+        sub <- condbase$Fleet == f
+        condbase$DM_effN[sub] <-
+          1 / (1+Theta) + condbase$N[sub] * Theta / (1+Theta)
+      } # end test for D-M likelihood for this fleet
+    } # end loop over fleets within condbase
+
+  } # end section related to Dirichlet-Multinomial likelihood
+  
   
   # read covar.sso file
   if(covar){
@@ -1516,6 +1584,7 @@ SS_output <-
   returndat$lbinspop    <- lbinspop
   returndat$nlbinspop   <- nlbinspop
   returndat$sizebinlist <- sizebinlist
+  returndat$age_data_info <- age_data_info
   returndat$agebins     <- agebins
   returndat$nagebins    <- nagebins
   returndat$accuage     <- accuage

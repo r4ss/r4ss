@@ -15,6 +15,8 @@
 #' @param effN optional effective sample size vector of same length as ptsx
 #' @param showsampsize show sample size values on plot?
 #' @param showeffN show effective sample size values on plot?
+#' @param sampsize_label label on sampsize
+#' @param effN_label label on effN
 #' @param sampsizeround rounding level for sample size values
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
@@ -103,7 +105,11 @@
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
 make_multifig <-
   function(ptsx, ptsy, yr, linesx=0, linesy=0, ptsSD=0,
-           sampsize=0, effN=0, showsampsize=TRUE, showeffN=TRUE, sampsizeround=1,
+           sampsize=0, effN=0,
+           showsampsize=TRUE, showeffN=TRUE,
+           sampsize_label="N=",
+           effN_label="effN=",
+           sampsizeround=1,
            maxrows=6, maxcols=6, rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="",ylab="",size=1,cexZ1=1.5,bublegend=TRUE,
            maxsize=NULL,do.sqrt=TRUE,minnbubble=8,allopen=TRUE,
@@ -447,9 +453,9 @@ make_multifig <-
                       paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
-            text_i <- paste("N=",round(vals,sampsizeround),sep="")
+            text_i <- paste(sampsize_label,round(vals,sampsizeround),sep="")
             if(twosex & sex==2){
-              text_i2 <- paste("N=",round(vals,sampsizeround),sep="")
+              text_i2 <- paste(sampsize_label,round(vals,sampsizeround),sep="")
             }
           }
           if(legtext_i=="effN" & showeffN){          # effective sample sizes
@@ -461,9 +467,9 @@ make_multifig <-
                       paste(vals,collapse=","),sep="")
               vals <- vals[1]
             }
-            text_i <- paste("effN=",round(vals,sampsizeround),sep="")
+            text_i <- paste(effN_label,round(vals,sampsizeround),sep="")
             if(twosex & sex==2){
-              text_i2 <- paste("effN=",round(vals,sampsizeround),sep="")
+              text_i2 <- paste(effN_label,round(vals,sampsizeround),sep="")
             }
           }
         }
