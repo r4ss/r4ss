@@ -581,7 +581,7 @@ SSplotComps <-
                            "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
                              "formula <i>N adj. = 1 / (1+&#920) + N * &#920 / (1+&#920)</i>. ",
                                "<br><br>For this fleet, &#920 = ", round(Theta, 3),
-                                 " and the sample size adjustment is approximately ",
+                                 " and the sample size multiplier is approximately ",
                            "&#920 / (1+&#920) = ", round(Theta / (1+Theta), 3),
                            "<br><br>For more info, see<br>",
                            "<blockquote>",
