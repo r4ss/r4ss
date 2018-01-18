@@ -579,10 +579,10 @@ SSplotComps <-
                     paste0(".<br><br>'N input' is the input sample size. ",
                            "'N adj.' is the sample size after adjustment by the ",
                            "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
-                             "formula <i>N adj. = 1 / (1+&#920) + N * &#920 / (1+&#920)</i>. ",
-                               "<br><br>For this fleet, &#920 = ", round(Theta, 3),
-                                 " and the sample size multiplier is approximately ",
-                           "&#920 / (1+&#920) = ", round(Theta / (1+Theta), 3),
+                           "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
+                           "<br><br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
+                           " and the sample size multiplier is approximately ",
+                           "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1+Theta), 3),
                            "<br><br>For more info, see<br>",
                            "<blockquote>",
                            "Thorson, J.T., Johnson, K.F., ",
@@ -1052,7 +1052,7 @@ SSplotComps <-
                 paste("WARNING: this figure is based on multinomial likelihood",
                       "and has not been updated to account for Dirichlet-Multinomial",
                       "likelihood and the sample size adjustment associated with",
-                      "the estimated <i>log(&#920)</i> parameters.<br><br>", caption)
+                      "the estimated log(<i>&#920</i>) parameters.<br><br>", caption)
             }
             if(!datonly) {
               caption <- paste0(caption,
