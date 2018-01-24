@@ -705,7 +705,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,
         blks <- ctllist$blocks_per_pattern
 
         # SUBSET params for Block > 0
-        pbks <- subset(ctllist$age_selex_parms, Block > 0)
+        pbksa <- ctllist$age_selex_parms[ctllist$age_selex_parms$Block > 0,]
+        pbkss <- ctllist$size_selex_parms[ctllist$size_selex_parms$Block > 0,]
+        pbks <- rbind(pbksa, pbkss)
 
         # FIND no. params per block
         counts <- rle(sort(pbks[ , "Block"]))
