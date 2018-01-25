@@ -981,18 +981,21 @@ SS_output <-
     message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
     datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'))
     age_data_info <- datfile$age_info
-    age_data_info$CompError <- as.numeric(age_data_info$CompError)
-    age_data_info$ParmSelect <- as.numeric(age_data_info$ParmSelect)
-    
-    if(!any(age_data_info$CompError==1)){
-      stop("Problem Dirichlet-Multinomial parameters: ",
-           "Report file indicates parameters exist, but no CompError values ",
-           "in data.ss_new are equal to 1.")
+    if(!is.null(age_data_info)){
+      age_data_info$CompError <- as.numeric(age_data_info$CompError)
+      age_data_info$ParmSelect <- as.numeric(age_data_info$ParmSelect)
+      if(!any(age_data_info$CompError==1)){
+        stop("Problem Dirichlet-Multinomial parameters: ",
+             "Report file indicates parameters exist, but no CompError values ",
+             "in data.ss_new are equal to 1.")
+      }
     }
-    len_info <- datfile$len_info
-    if(any(len_info$CompError)==1){
-      warning("r4ss doesn't yet account for Dirichlet-Multinomial likelihood ",
-              "for length comps.")
+    if(datfile$use_lencomp){
+      len_info <- datfile$len_info
+      if(any(len_info$CompError==1)){
+        warning("r4ss doesn't yet account for Dirichlet-Multinomial likelihood ",
+                "for length comps.")
+      }
     }
     
     ## get Dirichlet-Multinomial parameter values and adjust input N
