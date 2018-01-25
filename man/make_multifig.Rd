@@ -6,10 +6,11 @@
 \usage{
 make_multifig(ptsx, ptsy, yr, linesx = 0, linesy = 0, ptsSD = 0,
   sampsize = 0, effN = 0, showsampsize = TRUE, showeffN = TRUE,
-  sampsizeround = 1, maxrows = 6, maxcols = 6, rows = 1, cols = 1,
-  fixdims = TRUE, main = "", cex.main = 1, xlab = "", ylab = "",
-  size = 1, cexZ1 = 1.5, bublegend = TRUE, maxsize = NULL,
-  do.sqrt = TRUE, minnbubble = 8, allopen = TRUE, horiz_lab = "default",
+  sampsize_label = "N=", effN_label = "effN=", sampsizeround = 1,
+  maxrows = 6, maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
+  main = "", cex.main = 1, xlab = "", ylab = "", size = 1,
+  cexZ1 = 1.5, bublegend = TRUE, maxsize = NULL, do.sqrt = TRUE,
+  minnbubble = 8, allopen = TRUE, horiz_lab = "default",
   xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15), yupper = NULL,
   ymin0 = TRUE, axis1 = NULL, axis2 = NULL, linepos = 1, type = "o",
   polygons = TRUE, bars = FALSE, barwidth = "default", ptscex = 1,
@@ -45,6 +46,10 @@ on top of each point under the assumption of normally distributed error}
 \item{showsampsize}{show sample size values on plot?}
 
 \item{showeffN}{show effective sample size values on plot?}
+
+\item{sampsize_label}{label on sampsize}
+
+\item{effN_label}{label on effN}
 
 \item{sampsizeround}{rounding level for sample size values}
 

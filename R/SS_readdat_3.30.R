@@ -362,43 +362,45 @@ SS_readdat_3.30 <-
     message("use_lencomp (0/1): ", d$use_lencomp)
   }
 
-  # note: minsamplesize column not present in early 3.30 versions of SS
-  d$len_info <- get.df(dat, ind, d$Nfleets)
-  colnames(d$len_info) <- c("mintailcomp", "addtocomp", "combine_M_F",
-                            "CompressBins", "CompError", "ParmSelect",
-                            "minsamplesize")[1:ncol(d$len_info)]
+  # only read all the stuff related to length comps if switch above = 1
+  if(d$use_lencomp){
+    # note: minsamplesize column not present in early 3.30 versions of SS
+    d$len_info <- get.df(dat, ind, d$Nfleets)
+    colnames(d$len_info) <- c("mintailcomp", "addtocomp", "combine_M_F",
+                              "CompressBins", "CompError", "ParmSelect",
+                              "minsamplesize")[1:ncol(d$len_info)]
 
-  rownames(d$len_info) <- d$fleetnames
+    rownames(d$len_info) <- d$fleetnames
 
-  if (echoall) {
-    message("\nlen_info:")
-    print(d$len_info)
-  }
+    if (echoall) {
+      message("\nlen_info:")
+      print(d$len_info)
+    }
 
-  ## Length comp data
-  d$N_lbins <- get.val(dat, ind)
-  if (verbose) {
-    message("N_lbins: ", d$N_lbins)
-  }
-  d$lbin_vector <- get.vec(dat, ind)
-  d$lencomp <- get.df(dat, ind)
-  if(!is.null(d$lencomp)){
-    colnames(d$lencomp) <-
-      c("Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-        if(d$Nsexes == 1){paste0("l", d$lbin_vector)}else{NULL},
-        if(d$Nsexes > 1){c(paste0("f", d$lbin_vector),
+    ## Length comp data
+    d$N_lbins <- get.val(dat, ind)
+    if (verbose) {
+      message("N_lbins: ", d$N_lbins)
+    }
+    d$lbin_vector <- get.vec(dat, ind)
+    d$lencomp <- get.df(dat, ind)
+    if(!is.null(d$lencomp)){
+      colnames(d$lencomp) <-
+        c("Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
+          if(d$Nsexes == 1){paste0("l", d$lbin_vector)}else{NULL},
+          if(d$Nsexes > 1){c(paste0("f", d$lbin_vector),
                              paste0("m", d$lbin_vector))}else{NULL})
+    }
+    
+    # echo values
+    if (echoall) {
+      message("\nFirst 2 rows of lencomp:")
+      print(head(d$lencomp, 2))
+      message("\nLast 2 rows of lencomp:")
+      print(tail(d$lencomp, 2))
+      cat("\n")
+    }
   }
-  
-  # echo values
-  if (echoall) {
-    message("\nFirst 2 rows of lencomp:")
-    print(head(d$lencomp, 2))
-    message("\nLast 2 rows of lencomp:")
-    print(tail(d$lencomp, 2))
-    cat("\n")
-  }
-
   
   ###############################################################################
   ## Population size structure - Age
