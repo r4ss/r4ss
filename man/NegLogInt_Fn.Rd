@@ -7,7 +7,7 @@
 NegLogInt_Fn(File = NA, Input_SD_Group_Vec, CTL_linenum_List, ESTPAR_num_List,
   PAR_num_Vec, Int_Group_List = list(1), StartFromPar = TRUE,
   Intern = TRUE, ReDoBiasRamp = FALSE, BiasRamp_linenum_Vec = NULL,
-  CTL_linenum_Type = NULL, systemcmd = FALSE)
+  CTL_linenum_Type = NULL, systemcmd = FALSE, exe = "ss")
 }
 \arguments{
 \item{File}{Directory containing Stock Synthesis files
@@ -28,17 +28,18 @@ where each
 element is a vector giving the parameter number for the random effect
 coefficients in that group of random effects. These "parameter numbers"
 correspond to the number of these parameters in the list of parameters in the
-"ss3.cor" output file.}
+".cor" output file.}
 
-\item{PAR_num_Vec}{Vector giving the number in the "ss3.par" vector for each
+\item{PAR_num_Vec}{Vector giving the number in the ".par" vector for each
 random effect coefficient.}
 
 \item{Int_Group_List}{List where each element is a vector, providing a way of
-grouping different random effect groups into a single category. This is not
-used (but input is still required) when \code{Version=1}.}
+grouping different random effect groups into a single category. Although
+this input is still required, it is no has the former input Version has been
+hardwired to Version = 1.}
 
 \item{StartFromPar}{Logical flag (TRUE or FALSE) saying whether to start each
-round of optimization from a "ss3.par" file (I recommend TRUE)}
+round of optimization from a ".par" file (I recommend TRUE)}
 
 \item{Intern}{Logical flag saying whether to display all ss3 runtime output
 in the R terminal}
@@ -58,6 +59,11 @@ file.}
 
 \item{systemcmd}{Should R call SS using "system" function instead of "shell".
 This may be required when running R in Emacs on Windows. Default = FALSE.}
+
+\item{exe}{SS executable name (excluding extension), either "ss" or "ss3".
+This string is used for both calling the executable and also finding the
+output files like ss.par. For 3.30, it should always be "ss" since the
+output file names are hardwired in the TPL code.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation
@@ -74,11 +80,12 @@ from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
                    interval=c(0.001, 0.12),
                    maximum=FALSE,
                    File=direc,
+                   Input_SD_Group_Vec=1,
                    CTL_linenum_List=list(127:131),
                    ESTPAR_num_List=list(86:205),
                    Int_Group_List=1,
                    PAR_num_Vec=NA,
-                   Version=1, Intern=TRUE)
+                   Intern=TRUE)
   }
 }
 \references{
