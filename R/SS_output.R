@@ -978,8 +978,11 @@ SS_output <-
     
     # figure out which fleet uses which parameter,
     # currently (as of SS version 3.30.10.00), requires reading data file
-    message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
-    datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'))
+    if(verbose){
+      message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
+    }
+    datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'),
+                               verbose=verbose)
     age_data_info <- datfile$age_info
     if(!is.null(age_data_info)){
       age_data_info$CompError <- as.numeric(age_data_info$CompError)
