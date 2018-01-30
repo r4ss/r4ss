@@ -999,46 +999,47 @@ SS_output <-
     }
     
     ## get Dirichlet-Multinomial parameter values and adjust input N
-    if(nrow(agedbase) > 0){
-      agedbase$DM_effN <- NA
-    }
-    if(nrow(agedbase) > 0){
-      agedbase$DM_effN <- NA
-    }
-    if(nrow(condbase) > 0){
-      condbase$DM_effN <- NA
-    }
-    # loop over fleets within agedbase
-    for(f in unique(agedbase$Fleet)){
-      if(age_data_info$CompError[f] == 1){
-        ipar <- age_data_info$ParmSelect[f]
-        if(ipar %in% 1:nrow(DM_pars)){ 
-          Theta <- DM_pars$Theta[ipar]
-        }else{
-          stop("Issue with Dirichlet-Multinomial parameter:",
-               "Fleet = ", f, "and ParmSelect = ", ipar)
-        }
-        sub <- agedbase$Fleet == f
-        agedbase$DM_effN[sub] <-
-          1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
-      } # end test for D-M likelihood for this fleet
-    } # end loop over fleets within agedbase
-    # loop over fleets within condbase
-    for(f in unique(condbase$Fleet)){
-      if(age_data_info$CompError[f] == 1){
-        ipar <- age_data_info$ParmSelect[f]
-        if(ipar %in% 1:nrow(DM_pars)){ 
-          Theta <- DM_pars$Theta[ipar]
-        }else{
-          stop("Issue with Dirichlet-Multinomial parameter:",
-               "Fleet = ", f, "and ParmSelect = ", ipar)
-        }
-        sub <- condbase$Fleet == f
-        condbase$DM_effN[sub] <-
-          1 / (1+Theta) + condbase$N[sub] * Theta / (1+Theta)
-      } # end test for D-M likelihood for this fleet
-    } # end loop over fleets within condbase
-
+    if(comp){ # only possible if CompReport.sso was read
+      if(nrow(agedbase) > 0){
+        agedbase$DM_effN <- NA
+      }
+      if(nrow(agedbase) > 0){
+        agedbase$DM_effN <- NA
+      }
+      if(nrow(condbase) > 0){
+        condbase$DM_effN <- NA
+      }
+      # loop over fleets within agedbase
+      for(f in unique(agedbase$Fleet)){
+        if(age_data_info$CompError[f] == 1){
+          ipar <- age_data_info$ParmSelect[f]
+          if(ipar %in% 1:nrow(DM_pars)){ 
+            Theta <- DM_pars$Theta[ipar]
+          }else{
+            stop("Issue with Dirichlet-Multinomial parameter:",
+                 "Fleet = ", f, "and ParmSelect = ", ipar)
+          }
+          sub <- agedbase$Fleet == f
+          agedbase$DM_effN[sub] <-
+            1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
+        } # end test for D-M likelihood for this fleet
+      } # end loop over fleets within agedbase
+      # loop over fleets within condbase
+      for(f in unique(condbase$Fleet)){
+        if(age_data_info$CompError[f] == 1){
+          ipar <- age_data_info$ParmSelect[f]
+          if(ipar %in% 1:nrow(DM_pars)){ 
+            Theta <- DM_pars$Theta[ipar]
+          }else{
+            stop("Issue with Dirichlet-Multinomial parameter:",
+                 "Fleet = ", f, "and ParmSelect = ", ipar)
+          }
+          sub <- condbase$Fleet == f
+          condbase$DM_effN[sub] <-
+            1 / (1+Theta) + condbase$N[sub] * Theta / (1+Theta)
+        } # end test for D-M likelihood for this fleet
+      } # end loop over fleets within condbase
+    } # end test for whether CompReport.sso info is available
   } # end section related to Dirichlet-Multinomial likelihood
   
   
