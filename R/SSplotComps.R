@@ -78,7 +78,7 @@
 #' add growth curves to numbers at length bubble plots
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param printmkt show market categories in plot titles?
-#' @param printsex show gender in plot titles?
+#' @param printsex show sex in plot titles?
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
 #' @param maxrows2 maximum number of rows for conditional age at length plots
@@ -169,7 +169,7 @@ SSplotComps <-
   ### subplot 10: by fleet aggregating across years within each season
   ### subplot 11: by fleet aggregating across seasons within a year
   ### subplot 12: bubble plot comparison of length or age residuals
-  ###             across fleets within gender/partition
+  ###             across fleets within sex/partition
 
 
   ###### new definitions of subplots
@@ -420,12 +420,12 @@ SSplotComps <-
         HarmEffNage <- NULL
         MeanNage <- NULL
       }
-      # loop over genders combinations
+      # loop over sex combinations
       ## for(k in (1:3)[testor])
       ## {
-      ##   if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
-      ##   if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
-      ##   if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+      ##   if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
+      ##   if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
+      ##   if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
       ##   sex <- ifelse(k==3, 2, 1)
       ##   if(sex %in% sexes){
       ##     cat('sex',sex,'\n')
@@ -435,7 +435,7 @@ SSplotComps <-
       for(j in unique(dbase_k$Part)){
         dbase <- dbase_k[dbase_k$Part==j,]
         # dbase is the final data.frame used in the individual plots
-        # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+        # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
 
         ## # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
         ## if(!"Yr.S" %in% names(dbase)){
@@ -637,9 +637,9 @@ SSplotComps <-
           # get growth curves if requested
           if(length(cohortlines)>0){
             growdat <- replist$endgrowth
-            growdatF <- growdat[growdat$Gender==1 & growdat$Morph==min(growdat$Morph[growdat$Gender==1]),]
+            growdatF <- growdat[growdat$Sex==1 & growdat$Morph==min(growdat$Morph[growdat$Sex==1]),]
             if(nsexes > 1){
-              growdatM <- growdat[growdat$Gender==2 & growdat$Morph==min(growdat$Morph[growdat$Gender==2]),]
+              growdatM <- growdat[growdat$Sex==2 & growdat$Morph==min(growdat$Morph[growdat$Sex==2]),]
             }
           }
           # assemble caption that may also be used for plot title
@@ -689,12 +689,12 @@ SSplotComps <-
                 cat("  Adding line for",cohortlines[icohort],"cohort\n")
                 if(kind=="LEN"){
                   if(nsexes>1){
-                    lines(growdatF$Age+cohortlines[icohort],
+                    lines(growdatF$Age_Mid+cohortlines[icohort],
                           growdatF$Len_Mid, col=colvec[1]) #females
-                    lines(growdatM$Age+cohortlines[icohort],
+                    lines(growdatM$Age_Mid+cohortlines[icohort],
                           growdatM$Len_Mid, col=colvec[2]) #males
                   }else{
-                    lines(growdatF$Age+cohortlines[icohort],
+                    lines(growdatF$Age_Mid+cohortlines[icohort],
                           growdatF$Len_Mid, col=colvec[3]) #single-sex growth
                   }
                 }
@@ -1206,7 +1206,6 @@ SSplotComps <-
                 points(Size,Obs,pch=16)
                 lines(Size,Low,lty=3)
                 lines(Size,Upp,lty=3)
-                #title(paste("Year = ",Yr,"; Gender = ",Gender))
                 if(par("mfg")[1]==1){
                   title(main=ptitle,xlab=labels[1],outer=TRUE,line=1)
                 }
@@ -1257,8 +1256,8 @@ SSplotComps <-
           } # end test for print to PNG option
         } # end subplot 10
       } # end loop over partitions (index j)
-      #        } # end test for whether gender in vector of requested sexes
-      #      } # end loop over combined/not-combined genders
+      #        } # end test for whether sex in vector of requested sexes
+      #      } # end loop over combined/not-combined sex
     } # end if data
   } # end loop over fleets
 
@@ -1274,7 +1273,7 @@ SSplotComps <-
       # loop over partitions (discard, retain, total)
       for(j in unique(dbase_k$Part_group)){
         # dbase is the final data.frame used in the individual plots
-        # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+        # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
         dbase <- dbase_k[dbase_k$Part_group==j,]
         if(nrow(dbase)>0){
           # market category
@@ -1428,7 +1427,7 @@ SSplotComps <-
           }
         } # end test for presence of observations in this partition group
       } # end loop over partitions group
-      #      } # end loop over combined/not-combined genders
+      #      } # end loop over combined/not-combined sex
     } # end if data
   } # end subplot 21
 
@@ -1439,23 +1438,23 @@ SSplotComps <-
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
-      testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex==0 ])>0
-      testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3)])>0
-      testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
+      testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0
+      testor[2] <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3)])>0
+      testor[3] <- length(dbasef$sex[dbasef$sex==2])>0
 
-      # loop over genders combinations
+      # loop over sex combinations
       for(k in (1:3)[testor])
       {
-        if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
-        if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
-        if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+        if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
+        if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
+        if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
         sex <- ifelse(k==3, 2, 1)
 
         # loop over partitions (discard, retain, total)
         for(j in unique(dbase_k$Part))
         {
           # dbase is the final data.frame used in the individual plots
-          # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+          # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
           dbase <- dbase_k[dbase_k$Part==j,]
           if(nrow(dbase)>0){
             ## assemble pieces of plot title
@@ -1573,7 +1572,7 @@ SSplotComps <-
             } # end print function
           } # end test for presence of observations in this partition
         } # end loop over partitions
-      } # end loop over combined/not-combined genders
+      } # end loop over combined/not-combined sex
     } # end if data
   } # end subplot 22
 
@@ -1584,20 +1583,20 @@ SSplotComps <-
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
       # check for the presence of data
       if(nrow(dbasef)>0){
-        testor    <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex==0 ])>0
-        testor[2] <- length(dbasef$Gender[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3)])>0
-        testor[3] <- length(dbasef$Gender[dbasef$Gender==2])>0
-        # loop over genders combinations
+        testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0
+        testor[2] <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3)])>0
+        testor[3] <- length(dbasef$sex[dbasef$sex==2])>0
+        # loop over sex combinations
         for(k in (1:3)[testor]){
-          if(k==1){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex==0,]}
-          if(k==2){dbase_k <- dbasef[dbasef$Gender==1 & dbasef$Pick_sex %in% c(1,3),]}
-          if(k==3){dbase_k <- dbasef[dbasef$Gender==2,]}
+          if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
+          if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
+          if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
           sex <- ifelse(k==3, 2, 1)
 
           # loop over partitions (discard, retain, total)
           for(j in unique(dbase_k$Part)){
             # dbase is the final data.frame used in the individual plots
-            # it is subset based on the kind (age, len, age-at-len), fleet, gender, and partition
+            # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
             dbase <- dbase_k[dbase_k$Part==j,]
             if(nrow(dbase)>0){
               ## assemble pieces of plot title
@@ -1708,13 +1707,13 @@ SSplotComps <-
               } # end print function
             } # end test for presence of observations in this partition
           } # end loop over partitions
-        } # end loop over combined/not-combined genders
+        } # end loop over combined/not-combined sex
       } # end if data
     } # end loop over fleets
   } # end subplot 23
 
   ### subplot 24: bubble plot comparison of length or age residuals
-  ###             across fleets within gender/partition
+  ###             across fleets within sex/partition
   if(24 %in% subplots & kind %in% c("LEN","AGE")){
 
     # loop over partitions groups (everything, or separate discard, retain, total)
@@ -1802,7 +1801,7 @@ SSplotComps <-
           dbase <- dbase_parts[dbase_parts$Fleet==flt &
                                  dbase_parts$Part==mkt,]
           # dbase is the final data.frame used in the individual plots
-          # it is subset based on the kind (age, len, age-at-len), gender, and partition,
+          # it is subset based on the kind (age, len, age-at-len), sex, and partition,
           ### not sure if multiple ageing error methods is supported at the moment,
           ### haven't tested -Ian 6/7/17
           # check for multiple ageing error types within a year to plot separately
@@ -1947,7 +1946,7 @@ SSplotComps <-
           } # end test for non-zero number of fleets
         } # end loop over partitions
       ## } # end loop over sexes
-    ## } # end loop over gender combinations
+    ## } # end loop over sex combinations
     # restore default single panel settings
     par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
   } # end subplot 24
