@@ -88,7 +88,9 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     mylist$Fcast_selex <- NA
     if(version=="3.30" | version==3.3){
       mylist$Fcast_selex <- allnums[i]; i <- i+1 # not present in early 3.30 versions
-      cat("Forecast selectivity option: ", mylist$Fcast_selex, "\n")
+      if(verbose){
+        cat("Forecast selectivity option: ", mylist$Fcast_selex, "\n")
+      }
     }
     mylist$ControlRuleMethod <- allnums[i]; i <- i+1
     mylist$BforconstantF <- allnums[i]; i <- i+1

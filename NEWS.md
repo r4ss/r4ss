@@ -45,3 +45,7 @@ cleanup of terminology in latest Stock Synthesis
 * Limited support for models that use Dirichlet-Multinomial likelihood
 (currently only works for age compositions, not length comps)
 
+# r4ss 1.30.1 (February 2, 2018)
+
+* Fix bugs in new stock-recruit plot, and cohort lines added to bubbles
+
