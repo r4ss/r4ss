@@ -17,7 +17,7 @@ getADMBHessian <- function(File, FileName){
     ## admodel.hes file. Some of this is needed for relaxing the
     ## covariance matrix, and others just need to be recorded and
     ## rewritten to file so ADMB "sees" what it's expecting.
-    filename <- file(paste(File,FileName,sep=""), "rb")
+    filename <- file(file.path(File, FileName), "rb")
     on.exit(close(filename))
     num.pars <- readBin(filename, "integer", 1)
     hes.vec <- readBin(filename, "numeric", num.pars^2)

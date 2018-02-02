@@ -243,7 +243,8 @@ SSplotSpawnrecruit <-
       # maximum spawning output relative to unfished equilibrium (usually 1)
       xmax <- 1.05*max(x/B0)
       # make empty plot (if not adding to existing plot)
-      plot(0, type='n', xlim=c(0, xmax), ylim=c(-1.1,1.1)*max(abs(recruit$dev)),
+      plot(0, type='n', xlim=c(0, xmax),
+           ylim=c(-1.1,1.1)*max(abs(recruit$dev), na.rm=TRUE),
            las=1, xaxs='i', yaxs='i', xlab=labels[4], ylab=labels[6])
     }
     abline(h=0, col='grey')

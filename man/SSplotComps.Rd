@@ -149,7 +149,7 @@ add growth curves to numbers at length bubble plots}
 
 \item{printmkt}{show market categories in plot titles?}
 
-\item{printsex}{show gender in plot titles?}
+\item{printsex}{show sex in plot titles?}
 
 \item{maxrows}{maximum (or fixed) number or rows of panels in the plot}
 
