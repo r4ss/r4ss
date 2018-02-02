@@ -146,7 +146,7 @@ SSplotComps <-
            maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
            andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
-           scalebins=FALSE,addMeans=TRUE,mainTitle=TRUE,...)
+           scalebins=FALSE,addMeans=TRUE,mainTitle=FALSE,...)
 {
   ################################################################################
   # SSplotComps
@@ -1785,7 +1785,7 @@ SSplotComps <-
         # multi-figure plot with as many rows as fleets, or the maxrows value
         par(mfrow=c(min(npanels,maxrows),1),
             mar=c(0.5,0,0,0),
-            oma=c(4,6,3,1))
+            oma=c(4, 6, ifelse(mainTitle,3,1), 1))
 
         # set up some stuff for cases where there are more fleets than panels in one plot
         panelrange <- 1:npanels
