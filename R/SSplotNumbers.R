@@ -567,15 +567,14 @@ SSplotNumbers <-
                                      (natlenm[, remove]+natlenf[, remove]))
           if(diff(range(natlenratio, finite=TRUE))!=0){
             numbersRatioLen.fn <- function(...){
+              main <- ""
               if(mainTitle) {
                 main <- labels[19]
-                z <- natlenratio
                 if(nareas > 1){
                   main <- paste0(main, " for ", areanames[iarea])
                 }
-              } else {
-                main <- ""
               }
+              z <- natlenratio
               contour(natlenyrsB, lbinspop, z,
                       xaxs="i", yaxs="i", xlab=labels[1], ylab=labels[12],
                       main=main, cex.main=cex.main, ...)
