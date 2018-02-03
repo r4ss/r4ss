@@ -164,7 +164,6 @@ SSplotNumbers <-
     if(nseasons>1){
       cat("Numbers at age plots are for season 1 only\n")
     }
-    browser()
     for(iarea in areas){
       for(iperiod in 1:length(period)){
         for(m in 1:nsexes){
