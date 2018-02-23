@@ -577,6 +577,14 @@ SSplotComparisons <-
   if(length(endyrvec)==1){
     endyrvec <- rep(endyrvec,nlines)
   }
+  # not sure why there should be NA values for Yr column in recdevs,
+  # but old code to eliminate the devs past endyr wasn't working as configured before
+  recdevs <- recdevs[!is.na(recdevs$Yr),]
+  recdevsLower <- recdevsLower[!is.na(recdevsLower$Yr),]
+  recdevsUpper <- recdevsUpper[!is.na(recdevsUpper$Yr),]
+  
+  
+  # change to NA any values beyond endyr
   if(!is.null(endyrvec)){
     for(iline in 1:nlines){
       endyr <- endyrvec[iline]
@@ -604,9 +612,9 @@ SSplotComparisons <-
       recruitsLower[recruits$Yr > endyr, imodel] <- NA
       recruitsUpper[recruits$Yr > endyr, imodel] <- NA
       if(!is.null(recdevs)){
-        recdevs[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
-        recdevsLower[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
-        recdevsUpper[!is.na(recdevs$Yr) && recdevs$Yr > endyr, imodel] <- NA
+        recdevs[recdevs$Yr > endyr, imodel] <- NA
+        recdevsLower[recdevs$Yr > endyr, imodel] <- NA
+        recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
       }
     }
   }
@@ -917,6 +925,7 @@ SSplotComparisons <-
       # add legend if requested
       legendfun(legendlabels)
     }
+    box()
     if(exists("oldmar")){
       # restore old margin parameters
       par(mar=oldmar)
@@ -975,6 +984,7 @@ SSplotComparisons <-
     }
     abline(h=0,col="grey")
     mtext(side=2,line=3,FvalueLabel)
+    box()
     if(legend) legendfun(legendlabels)
     if(exists("oldmar")) par(mar=oldmar)
   }
@@ -1097,7 +1107,6 @@ SSplotComparisons <-
     if(any(is.na(recdevs$Yr))){
       warning("Recdevs associated with initial age structure may not be shown")
     }
-
     # only show uncertainty if values are present for at least one model
     if(!any(uncertainty)){
       show_uncertainty <- FALSE
@@ -1140,9 +1149,8 @@ SSplotComparisons <-
     # loop over vector of models to add lines
     for(iline in 1:nlines){
       imodel <- models[iline]
-      yvec <- recdevs[,imodel]
-      xvec <- recdevs$Yr[!is.na(yvec)]
-      yvec <- yvec[!is.na(yvec)]
+      yvec <- recdevs[, imodel]
+      xvec <- recdevs$Yr
       points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
     }
     if(!add){
@@ -1160,6 +1168,7 @@ SSplotComparisons <-
              xright=par()$usr[2], ytop=par()$usr[4],
              col=gray(0, alpha=0.1), border=NA)
       }
+      box()
     }
     if(legend){
       # add legend if requested
