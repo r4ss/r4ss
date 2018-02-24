@@ -699,7 +699,7 @@ SSplotComps <-
                   }
                 }
                 if(kind %in% c("AGE","GSTAGE")){
-                  lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),
+                  lines(0.5 + c(cohortlines[icohort],cohortlines[icohort]+accuage),
                         c(0,accuage),col=colvec[3],lty=3) # one-one line for age
                 }
               }
@@ -1891,7 +1891,7 @@ SSplotComps <-
                 }
               }
               if(kind=="AGE"){
-                lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),
+                lines(0.5 + c(cohortlines[icohort],cohortlines[icohort]+accuage),
                       c(0,accuage),col="red")
               }
             }
