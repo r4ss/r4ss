@@ -465,11 +465,14 @@ SSsummarize <- function(biglist,
             }
             # add new row to new data.frame
             x2 <- rbind(x2, newrow)
-          } # end test for duplicates
+          } # end test for duplicates for particular year
         } # end loop over years
-      } # end test for 
-    }else{
-      x2 <- x
+      }else{ # end test for duplicates in general
+        # if no duplicates, just return data.frame
+        x2 <- x
+      }
+    }else{ # test for is.null(x)
+      return(x)
     }
     return(x2)
   }
