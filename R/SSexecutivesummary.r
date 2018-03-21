@@ -33,7 +33,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
   	SS_version 			<- base[grep("Stock_Synthesis",base)]
   	SS_version 			<- SS_version[substring(SS_version,1,2)!="#C"] # remove any version numbering in the comments
   	SS_versionshort 	<- toupper(substr(SS_version,1,8))
-  	SS_versionNumeric 	<<- as.numeric(substring(SS_versionshort,5))
+  	SS_versionNumeric 	<- as.numeric(substring(SS_versionshort,5))
 
 	#=================================================================================================
 	# Function Sections
