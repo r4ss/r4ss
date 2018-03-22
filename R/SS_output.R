@@ -2042,15 +2042,13 @@ SS_output <-
     # head of Kobe_Plot section differs by SS version,
     # but I haven't kept track of which is which
     Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
-    shift <- 1
+    shift <- grep("Year", Kobe_head[,1])
     Kobe_warn <- NA
     Kobe_MSY_basis <- NA
     if(length(grep("_basis_is_not",Kobe_head[1,1]))>0){
-      shift <- shift+1
       Kobe_warn <- Kobe_head[1,1]
     }
     if(length(grep("MSY_basis",Kobe_head[2,1]))>0){
-      shift <- shift+1
       Kobe_MSY_basis <- Kobe_head[2,1]
     }
     Kobe <- matchfun2("Kobe_Plot",shift,"SPAWN_RECRUIT",-1,header=TRUE)
@@ -2058,9 +2056,7 @@ SS_output <-
     Kobe[Kobe=="1.#INF"] <- NA
     Kobe[Kobe=="-1.#IND"] <- NA
     names(Kobe) <- gsub("/", ".", names(Kobe), fixed=TRUE)
-    for(icol in 1:3){
-      Kobe[,icol] <- as.numeric(Kobe[,icol])
-    }
+    Kobe[, 1:3] <- lapply(Kobe[, 1:3], as.numeric)
   }else{
     Kobe <- NA
     Kobe_warn <- NA
