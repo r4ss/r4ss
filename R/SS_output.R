@@ -1399,7 +1399,7 @@ SS_output <-
                        newnames=c("Yr", "SpawnBio", "bias_adjusted"))
 
   # variance and sample size tuning information
-  vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
+  vartune <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets+1), header=TRUE)
 
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
@@ -2041,8 +2041,8 @@ SS_output <-
 
     # head of Kobe_Plot section differs by SS version,
     # but I haven't kept track of which is which
-    Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
-    shift <- grep("Year", Kobe_head[,1])
+    Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",5,header=TRUE)
+    shift <- grep("^Y", Kobe_head[,1]) # may be "Year" or "Yr"
     Kobe_warn <- NA
     Kobe_MSY_basis <- NA
     if(length(grep("_basis_is_not",Kobe_head[1,1]))>0){
