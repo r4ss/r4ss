@@ -1400,7 +1400,11 @@ SS_output <-
 
   # variance and sample size tuning information
   vartune <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets+1), header=TRUE)
-
+  # fill in column name that was missing in SS 3.24 (and perhaps other versions)
+  if(names(vartune)[ncol(vartune)]=="NoName"){
+    names(vartune)[ncol(vartune)] <- "Name"
+  }
+  
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
     # This section hasn't been read by SS_output in the past,
