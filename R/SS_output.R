@@ -956,7 +956,7 @@ SS_output <-
                                       rownames(estimated_non_dev_parameters))))
   }
   # remove any dev rows from table
-  if(!is.null(devrows)){
+  if(!is.null(devrows) & length(devrows) > 0){
     estimated_non_dev_parameters <- estimated_non_dev_parameters[-devrows,]
   }
   # add table to stats that get printed in console
