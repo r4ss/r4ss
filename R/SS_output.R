@@ -1386,8 +1386,23 @@ SS_output <-
     "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj")
   rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
 
-  # Spawner-recruit curve
+  ## Spawner-recruit curve
+  # read SPAWN_RECRUIT table
   raw_recruit <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
+  # starting in 3.30.11.00, a new section with the full spawn recr curve was added
+  spawn_recruit_end <- grep("Full_Spawn_Recr_Curve", raw_recruit[,1])
+  if(length(spawn_recruit_end) > 0){
+    # split the two pieces into separate tables
+    Full_Spawn_Recr_Curve <- raw_recruit[(spawn_recruit_end+1):nrow(raw_recruit), 1:2]
+    raw_recruit <- raw_recruit[1:(spawn_recruit_end-2),]
+    # make numeric
+    names(Full_Spawn_Recr_Curve) <- Full_Spawn_Recr_Curve[1, ]
+    Full_Spawn_Recr_Curve <- Full_Spawn_Recr_Curve[-1, ]
+    Full_Spawn_Recr_Curve[, 1:2] <- lapply(Full_Spawn_Recr_Curve[, 1:2], as.numeric)
+  }else{
+    Full_Spawn_Recr_Curve <- NULL
+  }
+  # process SPAWN_RECRUIT table
   names(raw_recruit) <- raw_recruit[1,]
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
@@ -1615,6 +1630,7 @@ SS_output <-
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
   returndat$recruit     <- recruit
+  returndat$Full_Spawn_Recr_Curve <- Full_Spawn_Recr_Curve
   returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
 
 
