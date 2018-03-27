@@ -4,9 +4,9 @@
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
-#' @return Output will be a list with three elements, \code{likelihoods},
-#' \code{parameters}, and \code{derived_quants}. Each is a data frame with
-#' rownames indicating the quantity shown in each row.
+#' @return Output will be a list with four elements, \code{header},
+#' \code{likelihoods}, \code{parameters}, and \code{derived_quants}.
+#' Each is a data frame with rownames indicating the quantity shown in each row.
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SS_readforecast}},

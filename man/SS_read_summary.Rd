@@ -10,9 +10,9 @@ SS_read_summary(file = "ss_summary.sso")
 \item{file}{Filename either with full path or relative to working directory.}
 }
 \value{
-Output will be a list with three elements, \code{likelihoods},
-\code{parameters}, and \code{derived_quants}. Each is a data frame with
-rownames indicating the quantity shown in each row.
+Output will be a list with four elements, \code{header},
+\code{likelihoods}, \code{parameters}, and \code{derived_quants}.
+Each is a data frame with rownames indicating the quantity shown in each row.
 }
 \description{
 read Stock Synthesis ss_summary.sso file into list object in R
