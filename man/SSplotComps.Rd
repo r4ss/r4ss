@@ -24,7 +24,7 @@ SSplotComps(replist, subplots = c(1:21, 24), kind = "LEN", sizemethod = 1,
   printsex = TRUE, maxrows = 6, maxcols = 6, maxrows2 = 2,
   maxcols2 = 4, rows = 1, cols = 1, andre_oma = c(3, 0, 3, 0),
   andrerows = 3, fixdims = TRUE, fixdims2 = FALSE, maxneff = 5000,
-  verbose = TRUE, scalebins = FALSE, addMeans = TRUE, mainTitle = TRUE,
+  verbose = TRUE, scalebins = FALSE, addMeans = TRUE, mainTitle = FALSE,
   ...)
 }
 \arguments{

@@ -92,6 +92,10 @@ SSMethod.Cond.TA1.8 <-
   
   # Select the type of datbase
   dbase <- fit[["condbase"]]
+  if(length(unique(dbase$Bin) == 1)){
+    warning("Francis weighting method doesn't work with only 1 age bin")
+    return()
+  }
   sel <- is.in(dbase$Fleet,fleet) & is.in(dbase$Part,part)
   if(sum(sel)==0) return()
 

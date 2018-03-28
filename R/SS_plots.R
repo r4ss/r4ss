@@ -1091,36 +1091,44 @@ SS_plots <-
     #
     igroup <- 19
     if(igroup %in% plot){
-      if(nrow(replist$condbase)>0 & verbose){
-        ## if(verbose){
-        ##   cat("Starting Andre's conditional age-at-length plots (group ",igroup,")\n",
-        ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
-        ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
-        ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
-        ##       "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
-        ##       "    with 90% CIs based on the chi-square distribution.\n")
-        ## }
-        plotinfo <-
-          SSplotComps(replist=replist,subplots=9:10,datonly=FALSE,kind="cond",
-                      bub=TRUE,verbose=verbose,fleets=fleets,
-                      fleetnames=fleetnames,
-                      aalbin=aalbin,aalyear=aalyear,
-                      samplesizeplots=samplesizeplots,
-                      showsampsize=showsampsize,showeffN=showeffN,
-                      minnbubble=minnbubble, pntscalar=pntscalar,
-                      maxrows=maxrows,maxcols=maxcols,
-                      maxrows2=maxrows2,maxcols2=maxcols2,
-                      fixdims=fixdims,rows=rows,cols=cols,
-                      andrerows=andrerows,
-                      plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                      maxneff=maxneff,cex.main=cex.main,
-                      sexes=sexes, scalebins=FALSE,
-                      pwidth=pwidth, pheight=pheight, punits=punits,
-                      ptsize=ptsize, res=res,
-                      ...)
-        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        if(!is.null(plotInfoTable))
-          plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
+      if(nrow(replist$condbase)>0){
+        if(replist$nagebins == 1){
+          if(verbose){
+            cat("Skipping conditional age-at-length diagnostic plots (group ",igroup,
+                ") due to only 1 age bin\n", sep="")
+          }
+        }else{
+          if(verbose) cat("Starting conditional age-at-length diagnostic plots (group ",igroup,")\n",sep="")
+          ## if(verbose){
+          ##   cat("Starting Andre's conditional age-at-length plots (group ",igroup,")\n",
+          ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
+          ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
+          ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
+          ##       "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
+          ##       "    with 90% CIs based on the chi-square distribution.\n")
+          ## }
+          plotinfo <-
+            SSplotComps(replist=replist,subplots=9:10,datonly=FALSE,kind="cond",
+                        bub=TRUE,verbose=verbose,fleets=fleets,
+                        fleetnames=fleetnames,
+                        aalbin=aalbin,aalyear=aalyear,
+                        samplesizeplots=samplesizeplots,
+                        showsampsize=showsampsize,showeffN=showeffN,
+                        minnbubble=minnbubble, pntscalar=pntscalar,
+                        maxrows=maxrows,maxcols=maxcols,
+                        maxrows2=maxrows2,maxcols2=maxcols2,
+                        fixdims=fixdims,rows=rows,cols=cols,
+                        andrerows=andrerows,
+                        plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                        maxneff=maxneff,cex.main=cex.main,
+                        sexes=sexes, scalebins=FALSE,
+                        pwidth=pwidth, pheight=pheight, punits=punits,
+                        ptsize=ptsize, res=res,
+                        ...)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+          if(!is.null(plotInfoTable))
+            plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
+        }
       }else{
         if(verbose) cat("Skipping conditional A@L plots (group ",igroup,") because no such data in model\n",sep="")
       }
