@@ -727,6 +727,11 @@ SSplotNumbers <-
         # but only the rows for females because males should always be identical
         agebins.tmp <- sort(unique(as.numeric(dimnames(AAK)$ObsAgeBin)))
         z <- t(AAK[i_ageerror_def, rev(1:length(agebins.tmp)), ])
+        # deal with circumstance where there is a single age bin
+        if(nrow(z) == 1 & is.null(rownames(z)) & length(agebins.tmp)==1){
+          z <- t(z) # extra transpose somehow needed 
+          colnames(z) <- agebins.tmp # columnnames also need to be added
+        }
         # make image
         image(x=as.numeric(rownames(z)),
               y=as.numeric(colnames(z)),

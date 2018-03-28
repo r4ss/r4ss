@@ -736,7 +736,11 @@ SS_output <-
         }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
       }else{
-        agebins <- NA
+        if(nrow(condbase)>0){
+          agebins <- sort(unique(condbase$Bin[!is.na(condbase$Bin)]))
+        }else{
+          agebins <- NA
+        }
       }
       nagebins <- length(agebins)
     }
