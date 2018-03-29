@@ -240,23 +240,25 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   wl("use_lencomp")
-  # fleet-specific info on length comps
-  writeComment("#\n#_len_info")
-  print.df(d$len_info, terminate=FALSE)
+  # only write further info on length data if used (even if zero rows)
+  if(d$use_lencomp){
+    # fleet-specific info on length comps
+    writeComment("#\n#_len_info")
+    print.df(d$len_info, terminate=FALSE)
 
-  # data bins
-  wl("N_lbins")
-  writeComment("#_lbin_vector")
-  wl.vector("lbin_vector")
+    # data bins
+    wl("N_lbins")
+    writeComment("#_lbin_vector")
+    wl.vector("lbin_vector")
 
-  # length comps
-  writeComment("#\n#_lencomp")
-  if(is.null(d$lencomp) & d$use_lencomp==1){
-    # empty data.frame with correct number of columns needed for terminator row
-    d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Nsexes))
+    # length comps
+    writeComment("#\n#_lencomp")
+    if(is.null(d$lencomp) & d$use_lencomp==1){
+      # empty data.frame with correct number of columns needed for terminator row
+      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Nsexes))
+    }
+    print.df(d$lencomp)
   }
-  print.df(d$lencomp)
-
   # age bins
   wl("N_agebins")
   if (d$N_agebins > 0) {
