@@ -103,7 +103,7 @@ SS_read_summary <- function(file="ss_summary.sso"){
                                  nonnumeric = c(3,5),
                                  names=c("Value", "SE", "XX", "Exp", "XX", "Q"))
   # remove extra column from survey data frame
-  survey <- survey[!names(survey) != "X"]
+  survey <- survey[names(survey) != "XX"]
   
   # read biomass section
   biomass <- read_summary_section(start = biomass_start+2,
