@@ -30,13 +30,13 @@ test_that("SS_output list: Kobe looks right", {
 
 # testing SS_plots with models loaded above
 test_that("SS_plots runs on simple_3.24 model", {
-  plots3.24 <- SS_plots(simple3.24)
+  plots3.24 <- SS_plots(simple3.24, datplot=TRUE)
   expect_equal(tail(plots3.24$file,1), "data_plot2.png")
 })
 
 # testing SS_plots with models loaded above
 test_that("SS_plots runs on simple_3.30 model", {
-  plots3.30 <- SS_plots(simple3.30)
+  plots3.30 <- SS_plots(simple3.30, datplot=TRUE)
   expect_equal(tail(plots3.30$file,1), "data_plot2.png")
 })
 
@@ -67,11 +67,13 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
   # write data file
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/testdat_3.24.ss"),
+              version = "3.24",
               faster = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/fastdat_3.24.ss"),
+              version = "3.24",
               faster = TRUE)
 })
 
