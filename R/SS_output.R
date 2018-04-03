@@ -736,7 +736,11 @@ SS_output <-
         }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
       }else{
-        agebins <- NA
+        if(nrow(condbase)>0){
+          agebins <- sort(unique(condbase$Bin[!is.na(condbase$Bin)]))
+        }else{
+          agebins <- NA
+        }
       }
       nagebins <- length(agebins)
     }
@@ -956,7 +960,7 @@ SS_output <-
                                       rownames(estimated_non_dev_parameters))))
   }
   # remove any dev rows from table
-  if(!is.null(devrows)){
+  if(!is.null(devrows) & length(devrows) > 0){
     estimated_non_dev_parameters <- estimated_non_dev_parameters[-devrows,]
   }
   # add table to stats that get printed in console
@@ -1386,8 +1390,23 @@ SS_output <-
     "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj")
   rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
 
-  # Spawner-recruit curve
+  ## Spawner-recruit curve
+  # read SPAWN_RECRUIT table
   raw_recruit <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
+  # starting in 3.30.11.00, a new section with the full spawn recr curve was added
+  spawn_recruit_end <- grep("Full_Spawn_Recr_Curve", raw_recruit[,1])
+  if(length(spawn_recruit_end) > 0){
+    # split the two pieces into separate tables
+    Full_Spawn_Recr_Curve <- raw_recruit[(spawn_recruit_end+1):nrow(raw_recruit), 1:2]
+    raw_recruit <- raw_recruit[1:(spawn_recruit_end-2),]
+    # make numeric
+    names(Full_Spawn_Recr_Curve) <- Full_Spawn_Recr_Curve[1, ]
+    Full_Spawn_Recr_Curve <- Full_Spawn_Recr_Curve[-1, ]
+    Full_Spawn_Recr_Curve[, 1:2] <- lapply(Full_Spawn_Recr_Curve[, 1:2], as.numeric)
+  }else{
+    Full_Spawn_Recr_Curve <- NULL
+  }
+  # process SPAWN_RECRUIT table
   names(raw_recruit) <- raw_recruit[1,]
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
@@ -1399,8 +1418,13 @@ SS_output <-
                        newnames=c("Yr", "SpawnBio", "bias_adjusted"))
 
   # variance and sample size tuning information
-  vartune <- matchfun2("INDEX_1",1,"INDEX_1",(nfleets+1),cols=1:21,header=TRUE)
-
+  vartune <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets+1), header=TRUE)
+  # fill in column name that was missing in SS 3.24 (and perhaps other versions)
+  # and replace inconsistent name in some 3.30 versions with standard name
+  vartune <- df.rename(vartune,
+                       oldnames=c("NoName", "fleetname"),
+                       newnames=c("Name", "Name"))
+  
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
     # This section hasn't been read by SS_output in the past,
@@ -1610,6 +1634,7 @@ SS_output <-
   returndat$SelAgeAdj   <- SelAgeAdj
   returndat$recruitment_dist <- recruitment_dist
   returndat$recruit     <- recruit
+  returndat$Full_Spawn_Recr_Curve <- Full_Spawn_Recr_Curve
   returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
 
 
@@ -2041,8 +2066,8 @@ SS_output <-
 
     # head of Kobe_Plot section differs by SS version,
     # but I haven't kept track of which is which
-    Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",3,header=TRUE)
-    shift <- grep("Year", Kobe_head[,1])
+    Kobe_head <- matchfun2("Kobe_Plot",0,"Kobe_Plot",5,header=TRUE)
+    shift <- grep("^Y", Kobe_head[,1]) # may be "Year" or "Yr"
     Kobe_warn <- NA
     Kobe_MSY_basis <- NA
     if(length(grep("_basis_is_not",Kobe_head[1,1]))>0){

@@ -1135,7 +1135,7 @@ SSplotComps <-
           } # end test for print to PNG option
         }
         ### subplot 10: Andre's mean age and std. dev. in conditional AAL
-        if(10 %in% subplots & kind=="cond"){
+        if(10 %in% subplots & kind=="cond" & length(unique(dbase$Bin)) > 1){
           caption1 <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
           if(mainTitle) {
             ptitle <- caption1

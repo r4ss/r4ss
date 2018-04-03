@@ -28,11 +28,9 @@ SS_writedat_3.30 <- function(datlist,
     message("running SS_writedat_3.30")
   }
 
-#  stop("function not yet complete")
-
   # rename datlist to shorten the code
   d <- datlist
-  
+
   # check datlist/d
   if (d$type != "Stock_Synthesis_data_file") {
     stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
@@ -140,7 +138,7 @@ SS_writedat_3.30 <- function(datlist,
             )) == 1, z, paste0("#_", z))
           })
         dataframe$comments <- rownames(dataframe)
-        
+
       }
       if (faster) {
         write.table(
@@ -240,21 +238,27 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#_lbin_vector_pop")
     wl.vector("lbin_vector_pop")
   }
-  
+
   wl("use_lencomp")
-  # fleet-specific info on length comps
-  writeComment("#\n#_len_info")
-  print.df(d$len_info, terminate=FALSE)
+  # only write further info on length data if used (even if zero rows)
+  if(d$use_lencomp){
+    # fleet-specific info on length comps
+    writeComment("#\n#_len_info")
+    print.df(d$len_info, terminate=FALSE)
 
-  # data bins
-  wl("N_lbins")
-  writeComment("#_lbin_vector")
-  wl.vector("lbin_vector")
+    # data bins
+    wl("N_lbins")
+    writeComment("#_lbin_vector")
+    wl.vector("lbin_vector")
 
-  # length comps
-  writeComment("#\n#_lencomp")
-  print.df(d$lencomp)
-
+    # length comps
+    writeComment("#\n#_lencomp")
+    if(is.null(d$lencomp) & d$use_lencomp==1){
+      # empty data.frame with correct number of columns needed for terminator row
+      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Nsexes))
+    }
+    print.df(d$lencomp)
+  }
   # age bins
   wl("N_agebins")
   if (d$N_agebins > 0) {
@@ -262,15 +266,23 @@ SS_writedat_3.30 <- function(datlist,
     wl.vector("agebin_vector")
   }
 
+  # ageing error
   writeComment("#\n#_ageing_error")
   wl("N_ageerror_definitions")
   print.df(d$ageerror, terminate=FALSE)
 
+  # specification of age comps
   writeComment("#\n#_age_info")
   print.df("age_info", terminate=FALSE)
-  
+
   wl("Lbin_method", comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
   wl("max_combined_age", comment = "#_combine males into females at or below this bin number")
+
+  # age comps
+  if(is.null(d$agecomp)){
+    # empty data.frame with correct number of columns needed for terminator row
+    d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Nsexes))
+  }
   print.df(d$agecomp)
 
   writeComment("#\n#_MeanSize_at_Age_obs")

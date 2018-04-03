@@ -500,7 +500,7 @@ SS_readdat_3.30 <-
     # first check if gender input is outside of normal range
     if(!all(as.numeric(d$MeanSize_at_Age_obs$V4) %in% 0:3)){
       if(verbose){
-        message("Format of MeanSize_at_Age_obs appears to have sample sizes",
+        warning("Format of MeanSize_at_Age_obs appears to have sample sizes",
                 "on separate lines than other inputs.")
       }
       ind <- ind.tmp # reset index to value prior to first attempt to read table

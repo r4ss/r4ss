@@ -124,8 +124,13 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
     }
   }
   nybins <- length(ybins)
-  ymax <- 1.1*(ybins[nybins] + ybins[nybins] - ybins[nybins-1])
-
+  if(nybins > 1){
+    ymax <- 1.1*(ybins[nybins] + ybins[nybins] - ybins[nybins-1])
+  }else{
+    # not sure best choice if only one bin
+    ymax <- 2*ybins
+  }
+  
   AgeMatrix.fn <- function(slice=1){
     if(option==1){
       # choose which morph/sex/etc of the array
@@ -167,14 +172,20 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
         # lower limit of bin is value in vector of bins
         ybin_lo <- ybins[iybin]
         # upper limit is following bin value...
-        if(iybin < length(ybins)){
-          ybin_hi <- ybins[iybin+1]
+        if(nybins == 1){
+          # if only 1 bin, assume width=1
+          ybin_hi <- ybin_lo + 1
         }else{
-          # unless it's the final bin in which case
-          # it's depicted as equal in width to the previous bin even
-          # though it's actually a plus group
-          ybin_hi <- ybins[iybin] +
-            (ybins[iybin] - ybins[iybin-1])
+          # if multiple bins, set upper bound equal to next bin's lower bound
+          if(iybin < nybins){
+            ybin_hi <- ybins[iybin+1]
+          }else{
+            # unless it's the final bin in which case
+            # it's depicted as equal in width to the previous bin even
+            # though it's actually a plus group
+            ybin_hi <- ybins[iybin] +
+              (ybins[iybin] - ybins[iybin-1])
+          }
         }
         # add a filled rectangle for this combination of age and ybin
         rect(xleft = a,
