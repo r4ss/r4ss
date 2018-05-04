@@ -1,2 +1,5 @@
 inst/doc
+inst/extdata/*.png
+inst/extdata/*/fastdat*
+inst/extdata/*/testdat*
 plots
