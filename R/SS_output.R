@@ -1811,10 +1811,14 @@ SS_output <-
 
   # exploitation
   exploitation <- matchfun2("EXPLOITATION",5,"CATCH",-1,header=TRUE)
-  exploitation[exploitation=="_"] <- NA
-  exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-  for(icol in 1:ncol(exploitation)){
-    exploitation[,icol] <- as.numeric(exploitation[,icol])
+  if(exploitation[[1]][1]!="absent"){
+    exploitation[exploitation=="_"] <- NA
+    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
+    for(icol in 1:ncol(exploitation)){
+      exploitation[,icol] <- as.numeric(exploitation[,icol])
+    }
+  }else{
+    exploitation <- NULL
   }
   returndat$exploitation <- exploitation
 
@@ -2008,10 +2012,13 @@ SS_output <-
   if(!is.na(discard) && nrow(discard)>1){
     discard[discard=="_"] <- NA
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
-      for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))])
+      for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))]){
         discard[,icol] <- as.numeric(discard[,icol])
+      }
+      if(!"Name"%in%names(discard)){
+        discard$Name <- discard$Fleet
+      }
       discard$Fleet <- NA
-      if(!"Name"%in%names(discard)) discard$Name <- discard$Fleet
       for(i in 1:nrow(discard)){
         discard$Fleet[i] <- strsplit(discard$Name[i],"_")[[1]][1]
         discard$Name[i] <- substring(discard$Name[i],nchar(discard$Fleet[i])+2)
@@ -2038,12 +2045,16 @@ SS_output <-
 
     mnwgt[mnwgt=="_"] <- NA
     if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
-      for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet"))])
+      for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet"))]){
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
+      }
+      if(!"Name"%in%names(mnwgt)){
+        mnwgt$Name <- mnwgt$Fleet
+      }
       mnwgt$Fleet <- NA
       for(i in 1:nrow(mnwgt)){
-        mnwgt$Fleet[i] <- strsplit(mnwgt$Fleet[i],"_")[[1]][1]
-        mnwgt$Name[i] <- substring(mnwgt$Fleet[i],nchar(mnwgt$Fleet[i])+2)
+        mnwgt$Fleet[i] <- strsplit(mnwgt$Name[i],"_")[[1]][1]
+        mnwgt$Name[i] <- substring(mnwgt$Name[i],nchar(mnwgt$Name[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Name"))])
