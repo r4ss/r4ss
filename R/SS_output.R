@@ -998,20 +998,25 @@ SS_output <-
       }
     }
     if(datfile$use_lencomp){
-      len_info <- datfile$len_info
-      if(any(len_info$CompError==1)){
-        warning("r4ss doesn't yet account for Dirichlet-Multinomial likelihood ",
-                "for length comps.")
+      len_data_info <- datfile$len_info
+      if(!is.null(len_data_info)){
+        len_data_info$CompError <- as.numeric(len_data_info$CompError)
+        len_data_info$ParmSelect <- as.numeric(len_data_info$ParmSelect)
+        if(!any(len_data_info$CompError==1)){
+          stop("Problem Dirichlet-Multinomial parameters: ",
+               "Report file indicates parameters exist, but no CompError values ",
+               "in data.ss_new are equal to 1.")
+        }
       }
     }
-    
+
     ## get Dirichlet-Multinomial parameter values and adjust input N
     if(comp){ # only possible if CompReport.sso was read
       if(nrow(agedbase) > 0){
         agedbase$DM_effN <- NA
       }
-      if(nrow(agedbase) > 0){
-        agedbase$DM_effN <- NA
+      if(nrow(lendbase) > 0){
+        lendbase$DM_effN <- NA
       }
       if(nrow(condbase) > 0){
         condbase$DM_effN <- NA
@@ -1031,6 +1036,23 @@ SS_output <-
             1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within agedbase
+
+      # loop over fleets within lendbase
+      for(f in unique(lendbase$Fleet)){
+        if(len_data_info$CompError[f] == 1){
+          ipar <- len_data_info$ParmSelect[f]
+          if(ipar %in% 1:nrow(DM_pars)){ 
+            Theta <- DM_pars$Theta[ipar]
+          }else{
+            stop("Issue with Dirichlet-Multinomial parameter:",
+                 "Fleet = ", f, "and ParmSelect = ", ipar)
+          }
+          sub <- lendbase$Fleet == f
+          lendbase$DM_effN[sub] <-
+            1 / (1+Theta) + lendbase$N[sub] * Theta / (1+Theta)
+        } # end test for D-M likelihood for this fleet
+      } # end loop over fleets within lendbase
+
       # loop over fleets within condbase
       for(f in unique(condbase$Fleet)){
         if(age_data_info$CompError[f] == 1){
