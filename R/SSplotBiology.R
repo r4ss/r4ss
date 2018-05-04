@@ -34,6 +34,7 @@
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -63,7 +64,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
              "Hermaphroditism transition rate", #13
              "Fraction females by age at equilibrium"), #14
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-         verbose=TRUE)
+         mainTitle=TRUE, verbose=TRUE)
 {
   #### current (Aug 18, 2017) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
@@ -722,6 +723,20 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     #plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
+
+  # plot distribution of length at age (by season, sub-season, and morph)
+  if(4 %in% subplots & !wtatage_switch){
+    plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
+                                    plot = plot, print = print,
+                                    plotdir = plotdir, pwidth = pwidth,
+                                    pheight = pheight, punits = punits,
+                                    res = res, ptsize = ptsize,
+                                    cex.main = cex.main, mainTitle = mainTitle)
+    # SSplotAgeMatrix adds a "category" column which isn't present
+    # in plotinfo until the end of this SSplotBiology function.
+    plotinfo.tmp <- plotinfo.tmp[,c("file","caption")]
+    plotinfo <- rbind(plotinfo, plotinfo.tmp)
+  }
 
   # function for illustrating parameterization of growth curves
   growth_curve_labeled_fn <- function(option=1){ # growth
