@@ -4,17 +4,24 @@
 \alias{SSplotAgeMatrix}
 \title{Plot matrix of either length or observed age at true age}
 \usage{
-SSplotAgeMatrix(replist, option = 1, scale = NULL, plot = TRUE,
-  print = FALSE, labels = c("Age", "Length", "True age", "Observed age",
-  "for ageing error type", "Distribution of", "at"), pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  addmain = TRUE, plotdir = "default")
+SSplotAgeMatrix(replist, option = 1, slices = NULL, scale = NULL,
+  plot = TRUE, print = FALSE, labels = c("Age", "Length", "True age",
+  "Observed age", "for ageing error type", "Distribution of", "at"),
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
+  cex.main = 1, mainTitle = TRUE, plotdir = "default")
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
 
 \item{option}{Switch set to either 1 for length at true age or
 2 for obs. age at true age}
+
+\item{slices}{Optional input to choose which matrix (slice of the 3D-array)
+within $AAK or $ALK to plot. By default all slices will be shown.
+For ageing imprecision this should correspond to the ageing error matrix
+number. Distribution of length at age ($ALK) is ordered by season,
+sub-season, and then morph. A future version could allow subsetting plots
+by these dimensions.}
 
 \item{scale}{Multiplier for bars showing distribution. Species with many ages
 benefit from expanded bars. NULL value causes function to attempt automatic
@@ -38,7 +45,7 @@ scaling.}
 
 \item{cex.main}{Character expansion for plot titles}
 
-\item{addmain}{switch which allows the plot title to be left off}
+\item{mainTitle}{Logical indicating if a title should be included at the top}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}

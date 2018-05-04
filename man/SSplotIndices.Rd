@@ -13,8 +13,8 @@ SSplotIndices(replist, subplots = 1:9, plot = TRUE, print = FALSE,
   col1 = "default", col2 = "default", col3 = "blue", col4 = "red",
   pch1 = 21, pch2 = 16, cex = 1, bg = "white", legend = TRUE,
   legendloc = "topright", seasnames = NULL, pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1, addmain = TRUE,
-  plotdir = "default", minyr = NULL, maxyr = NULL,
+  punits = "in", res = 300, ptsize = 10, cex.main = 1,
+  mainTitle = TRUE, plotdir = "default", minyr = NULL, maxyr = NULL,
   maximum_ymax_ratio = Inf, show_input_uncertainty = TRUE, verbose = TRUE,
   ...)
 }
@@ -83,7 +83,7 @@ defaults if a legend is used}
 
 \item{cex.main}{character expansion for plot titles}
 
-\item{addmain}{switch which allows the plot title to be left off}
+\item{mainTitle}{switch which allows the plot title to be left off}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}

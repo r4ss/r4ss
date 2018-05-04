@@ -34,7 +34,7 @@
 #' @param cex.main character expansion for plot titles
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param mainTitle Logical indicating if a title for the plot should be produced
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -805,7 +805,8 @@ SSplotNumbers <-
                                           plotdir = plotdir, pwidth = pwidth,
                                           pheight = pheight, punits = punits,
                                           res = res, ptsize = ptsize,
-                                          cex.main = cex.main, addmain = TRUE)
+                                          cex.main = cex.main,
+                                          mainTitle = mainTitle)
           plotinfo <- rbind(plotinfo, plotinfo.tmp)
         }
       } # end print to PNG

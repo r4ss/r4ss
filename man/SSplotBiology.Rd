@@ -14,7 +14,8 @@ SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
   "Female weight (kg)", "Female length (cm)", "Fecundity",
   "Default fecundity label", "Year", "Hermaphroditism transition rate",
   "Fraction females by age at equilibrium"), pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
+  punits = "in", res = 300, ptsize = 10, cex.main = 1,
+  mainTitle = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -67,6 +68,8 @@ be the directory where the model was run.}
 \item{ptsize}{Point size for PNG file}
 
 \item{cex.main}{Character expansion for plot titles}
+
+\item{mainTitle}{Logical indicating if a title should be included at the top}
 
 \item{verbose}{Return updates of function progress to the R GUI?}
 }

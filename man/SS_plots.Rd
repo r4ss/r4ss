@@ -18,14 +18,14 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
   showeffN = TRUE, sampsizeline = FALSE, effNline = FALSE,
   showlegend = TRUE, pwidth = 6.5, pheight = 5, punits = "in",
-  ptsize = 10, res = 300, cex.main = 1, selexlines = 1:6, rows = 1,
-  cols = 1, maxrows = 4, maxcols = 4, maxrows2 = 2, maxcols2 = 4,
-  andrerows = 3, tagrows = 3, tagcols = 3, fixdims = TRUE, new = TRUE,
-  SSplotDatMargin = 8, filenotes = NULL, catchasnumbers = NULL,
-  catchbars = TRUE, legendloc = "topleft", minyr = NULL, maxyr = NULL,
-  sexes = "all", scalebins = FALSE, scalebubbles = FALSE,
-  tslabels = NULL, catlabels = NULL, datasize = TRUE, maxsize = 0.5,
-  ...)
+  ptsize = 10, res = 300, mainTitle = FALSE, cex.main = 1,
+  selexlines = 1:6, rows = 1, cols = 1, maxrows = 4, maxcols = 4,
+  maxrows2 = 2, maxcols2 = 4, andrerows = 3, tagrows = 3, tagcols = 3,
+  fixdims = TRUE, new = TRUE, SSplotDatMargin = 8, filenotes = NULL,
+  catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
+  minyr = NULL, maxyr = NULL, sexes = "all", scalebins = FALSE,
+  scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
+  datasize = TRUE, maxsize = 0.5, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -216,6 +216,8 @@ age-at-length plots (TRUE/FALSE, still in development)}
 help("png") in R for details). Default recently changed from 12 to 10.}
 
 \item{res}{Resolution of plots printed to files. Default=300.}
+
+\item{mainTitle}{Logical indicating if a title should be included at the top}
 
 \item{cex.main}{Character expansion parameter for plot titles (not yet
 implemented for all plots). Default=1.}

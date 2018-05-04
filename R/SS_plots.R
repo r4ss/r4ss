@@ -146,6 +146,7 @@
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default recently changed from 12 to 10.
 #' @param res Resolution of plots printed to files. Default=300.
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.
 #' @param selexlines Vector controlling which lines should be shown on
@@ -220,14 +221,14 @@ SS_plots <-
       datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
-      bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
-      minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE, maxneff=5000,
-      cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
-      sampsizeline=FALSE,effNline=FALSE,
+      bub.scale.pearson=1.5, bub.scale.dat=3, pntscalar.nums=2.6,
+      pntscalar.tags=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE,
+      maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE,
+      showeffN=TRUE, sampsizeline=FALSE, effNline=FALSE,
       showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
-      cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
-      maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
-      new=TRUE,
+      mainTitle=FALSE, cex.main=1,selexlines=1:6, rows=1, cols=1,
+      maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
+      tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
@@ -489,8 +490,8 @@ SS_plots <-
     plotinfo <- SSplotBiology(replist=replist,
                               plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
-                              ptsize=ptsize, res=res, cex.main=cex.main,
-                              plotdir=plotdir)
+                              ptsize=ptsize, res=res, mainTitle=mainTitle,
+                              cex.main=cex.main, plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     #if(verbose) cat("Finished biology plots\n")
   }
@@ -682,7 +683,8 @@ SS_plots <-
                   fleetcols=fleetcols,
                   minyr=minyr,maxyr=maxyr,
                   pwidth=pwidth, pheight=pheight, punits=punits,
-                  ptsize=ptsize, res=res,cex.main=cex.main,
+                  ptsize=ptsize, res=res,
+                  mainTitle=mainTitle, cex.main=cex.main,
                   catchasnumbers=catchasnumbers,
 		  order="default",
                   catchbars=catchbars,

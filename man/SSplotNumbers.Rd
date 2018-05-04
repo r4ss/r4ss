@@ -69,7 +69,7 @@ with SSv3.11)}
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+\item{mainTitle}{Logical indicating if a title should be included at the top}
 
 \item{verbose}{report progress to R GUI?}
 }
