@@ -486,7 +486,8 @@ SSplotComps <-
             sexvec <- dbase$sex
             # a function to combine a bunch of repeated commands
             if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-              if("DM_effN" %in% names(dbase)){
+              # test for Dirichlet-Multinomial likelihood
+              if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
                               linesx=dbase$Bin,linesy=dbase$Exp,
@@ -570,7 +571,7 @@ SSplotComps <-
               }
               caption_extra <- ""
               if(ipage==1){
-                if("DM_effN" %in% names(dbase)){
+                if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
                   # get Theta value for this fleet
                   ipar <- replist$age_data_info$ParmSelect[f]
                   Theta <- as.numeric(replist$Dirichlet_Multinomial_pars$Theta[ipar])
@@ -595,11 +596,10 @@ SSplotComps <-
                            "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
                            "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
                            "</blockquote>")
-                }
-                if(!"DM_effN" %in% names(dbase)){
+                }else{
                   caption_extra <-
                     paste0(".<br><br>'N adj.' is the input sample size ",
-                           "after data-weighting adjustment.",
+                           "after data-weighting adjustment. ",
                            "N eff. is the calculated effective sample size used ",
                            "in the McAllister-Iannelli tuning method.")
                 }
@@ -954,7 +954,7 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly &
-           !("DM_effN" %in% names(dbase)) &
+           !("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))) &
            !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
           caption <- paste0("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f])
           if(mainTitle) {
@@ -1347,7 +1347,8 @@ SSplotComps <-
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
-              if("DM_effN" %in% names(dbase)){
+              # test for Dirichlet-Multinomial likelihood
+              if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
                               linesx=agg$bin,linesy=agg$exp,
@@ -1435,6 +1436,9 @@ SSplotComps <-
   if(22 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
+    if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+      warning("Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood")
+    }
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
@@ -1581,6 +1585,10 @@ SSplotComps <-
     # loop over fleets
     for(f in fleets){
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+      if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+        warning("Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood")
+      }
+      
       # check for the presence of data
       if(nrow(dbasef)>0){
         testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0

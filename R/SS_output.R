@@ -975,6 +975,8 @@ SS_output <-
   DM_pars$"Theta/(1+Theta)" <- DM_pars$Theta / (1 + DM_pars$Theta)
   # if D-M parameters are present, then do some extra processing steps
   age_data_info <- NULL
+  len_data_info <- NULL
+
   if(nrow(DM_pars) > 0){
     # save to "stats" list that gets printed to R console
     # (and also added to "returndat" which is returned by this function)
@@ -988,25 +990,16 @@ SS_output <-
     datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'),
                                verbose=verbose)
     age_data_info <- datfile$age_info
-    if(!is.null(age_data_info)){
+    len_data_info <- datfile$len_info
+    if(!is.null(age_data_info) & !is.null(len_data_info)){
       age_data_info$CompError <- as.numeric(age_data_info$CompError)
       age_data_info$ParmSelect <- as.numeric(age_data_info$ParmSelect)
-      if(!any(age_data_info$CompError==1)){
+      len_data_info$CompError <- as.numeric(len_data_info$CompError)
+      len_data_info$ParmSelect <- as.numeric(len_data_info$ParmSelect)
+      if(!any(age_data_info$CompError==1) & !any(len_data_info$CompError==1)){
         stop("Problem Dirichlet-Multinomial parameters: ",
              "Report file indicates parameters exist, but no CompError values ",
              "in data.ss_new are equal to 1.")
-      }
-    }
-    if(datfile$use_lencomp){
-      len_data_info <- datfile$len_info
-      if(!is.null(len_data_info)){
-        len_data_info$CompError <- as.numeric(len_data_info$CompError)
-        len_data_info$ParmSelect <- as.numeric(len_data_info$ParmSelect)
-        if(!any(len_data_info$CompError==1)){
-          stop("Problem Dirichlet-Multinomial parameters: ",
-               "Report file indicates parameters exist, but no CompError values ",
-               "in data.ss_new are equal to 1.")
-        }
       }
     }
 
