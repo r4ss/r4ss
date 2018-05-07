@@ -1631,6 +1631,7 @@ SS_output <-
   returndat$nlbinspop   <- nlbinspop
   returndat$sizebinlist <- sizebinlist
   returndat$age_data_info <- age_data_info
+  returndat$len_data_info <- len_data_info
   returndat$agebins     <- agebins
   returndat$nagebins    <- nagebins
   returndat$accuage     <- accuage
