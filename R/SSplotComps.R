@@ -487,7 +487,7 @@ SSplotComps <-
             # a function to combine a bunch of repeated commands
             if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
               # test for Dirichlet-Multinomial likelihood
-              if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
+              if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
                               linesx=dbase$Bin,linesy=dbase$Exp,
@@ -571,7 +571,7 @@ SSplotComps <-
               }
               caption_extra <- ""
               if(ipage==1){
-                if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
+                if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
                   # get Theta value for this fleet
                   ipar <- replist$age_data_info$ParmSelect[f]
                   Theta <- as.numeric(replist$Dirichlet_Multinomial_pars$Theta[ipar])
@@ -954,7 +954,7 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly &
-           !("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))) &
+           !("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))) &
            !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
           caption <- paste0("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f])
           if(mainTitle) {
@@ -1269,7 +1269,6 @@ SSplotComps <-
     {
       # no longer subsetting by sex, so mapping directly over
       dbase_k <- dbase_kind
-
       # loop over partitions (discard, retain, total)
       for(j in unique(dbase_k$Part_group)){
         # dbase is the final data.frame used in the individual plots
@@ -1298,6 +1297,7 @@ SSplotComps <-
             filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt",j)
           }
           caption <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+
           if(mainTitle) {
             ptitle <- caption
           } else {
@@ -1311,7 +1311,7 @@ SSplotComps <-
                            effN=dbase$effN,
                            obs=dbase$Obs*dbase$N,
                            exp=dbase$Exp*dbase$N)
-          if("DM_effN" %in% names(dbase)){
+          if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
             df$DM_effN <- dbase$DM_effN
           }
           agg <- aggregate(x=df,
@@ -1328,10 +1328,10 @@ SSplotComps <-
           for(f in unique(agg$f)){
             infleet <- agg$f==f
             agg$N[infleet] <- max(agg$N[infleet])
-            if("DM_effN" %in% names(dbase)){
-              agg$DM_effN[infleet] <- max(agg$DM_effN[infleet])
+            if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
+              agg$DM_effN[infleet] <- max(agg$DM_effN[infleet], na.rm=TRUE)
             }else{
-              agg$effN[infleet] <- max(agg$effN[infleet])
+              agg$effN[infleet] <- max(agg$effN[infleet], na.rm=TRUE)
             }
           }
 
@@ -1343,12 +1343,11 @@ SSplotComps <-
             mktnames <- c("","(discards)","(retained)")
             namesvec <- paste(fleetnames[agg$f], mktnames[agg$mkt+1])
           }
-
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
               # test for Dirichlet-Multinomial likelihood
-              if("DM_effN" %in% names(dbase) && any(!is.na(dbasef$DM_effN))){
+              if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
                               linesx=agg$bin,linesy=agg$exp,
