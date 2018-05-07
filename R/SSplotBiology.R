@@ -192,7 +192,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
   if(wtatage_switch){
     cat("Note: this model uses the empirical weight-at-age input.\n",
-        "     Plots of many quantities related to growth are skipped.\n")
+        "      Plots of many quantities related to growth are skipped.\n")
   }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
@@ -726,16 +726,21 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   # plot distribution of length at age (by season, sub-season, and morph)
   if(4 %in% subplots & !wtatage_switch){
-    plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
-                                    plot = plot, print = print,
-                                    plotdir = plotdir, pwidth = pwidth,
-                                    pheight = pheight, punits = punits,
-                                    res = res, ptsize = ptsize,
-                                    cex.main = cex.main, mainTitle = mainTitle)
-    # SSplotAgeMatrix adds a "category" column which isn't present
-    # in plotinfo until the end of this SSplotBiology function.
-    plotinfo.tmp <- plotinfo.tmp[,c("file","caption")]
-    plotinfo <- rbind(plotinfo, plotinfo.tmp)
+    if(!is.null(replist$ALK)){
+      plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
+                                      plot = plot, print = print,
+                                      plotdir = plotdir, pwidth = pwidth,
+                                      pheight = pheight, punits = punits,
+                                      res = res, ptsize = ptsize,
+                                      cex.main = cex.main, mainTitle = mainTitle)
+      # SSplotAgeMatrix adds a "category" column which isn't present
+      # in plotinfo until the end of this SSplotBiology function.
+      plotinfo.tmp <- plotinfo.tmp[,c("file","caption")]
+      plotinfo <- rbind(plotinfo, plotinfo.tmp)
+    }else{
+      cat("Skipped some plots because AGE_LENGTH_KEY unavailable in report file\n",
+          "      change starter file setting for 'detailed age-structured reports'\n")
+    }
   }
 
   # function for illustrating parameterization of growth curves
@@ -1092,7 +1097,10 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   # Time-varying growth (formerly plot #2)
   if(is.null(growthvaries)){
-    if(verbose) cat("No check for time-varying growth for this type of model (not sure why)\n")
+    if(verbose){
+      cat("No check for time-varying growth because 'detailed age-structured reports'\n",
+          "      turned off in the starter file\n")
+    }
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
         {
