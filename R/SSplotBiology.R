@@ -739,7 +739,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       plotinfo <- rbind(plotinfo, plotinfo.tmp)
     }else{
       cat("Skipped some plots because AGE_LENGTH_KEY unavailable in report file\n",
-          "      change starter file setting for 'detailed age-structured reports'\n")
+          "          because starter file set to produce limited report detail.\n")
     }
   }
 
@@ -1098,14 +1098,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   # Time-varying growth (formerly plot #2)
   if(is.null(growthvaries)){
     if(verbose){
-      cat("No check for time-varying growth because 'detailed age-structured reports'\n",
-          "      turned off in the starter file\n")
+      cat("No check for time-varying growth because '\n",
+          "          starter file set to produce limited report detail.\n")
     }
   }else{ # temporarily disable multi-season plotting of time-varying growth
     if(is.null(growthseries))
         {
           cat("! Warning: no time-varying growth info because\n",
-              "          'detailed age-structured reports' turned off in starter file.\n")
+              "          starter file set to produce limited report detail.\n")
         }else{
           if(growthvaries) # if growth is time varying
             for(i in 1:nsexes)

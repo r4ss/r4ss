@@ -76,6 +76,12 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
   if(option==1){
     # option 1 is plotting distribution of length at age
     array <- replist$ALK
+    if(is.null(array)){
+      warning('No distribution of length at age plots produced because ',
+              'replist$ALK is NULL, likely because "detailed age-structured reports"',
+              'are not requested in the starter file.')
+      return()
+    }
     # vertical dimension is plotting length bins
     ybins <- replist$lbinspop
     # number of slices should be the number of sex/growth-pattern/morph combos
@@ -94,6 +100,11 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
   if(option==2){
     # option 2 is plotting distribution of observed age at true age
     array <- replist$AAK
+    if(is.null(array)){
+      warning('No distribution of observed age at true age plots produced because ',
+              'replist$AAK is NULL.')
+      return()
+    }
     # age bins
     ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)$ObsAgeBin)))
     if(is.na(ybins[1])){

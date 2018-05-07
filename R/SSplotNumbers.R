@@ -95,7 +95,7 @@ SSplotNumbers <-
   }
   if(is.null(natage)){
     cat("Skipped some plots because NUMBERS_AT_AGE unavailable in report file\n",
-        "     change starter file setting for 'detailed age-structured reports'\n")
+        "     because starter file set to produce limited report detail.\n")
   }else{
     # get more stuff from replist
     nsexes          <- replist$nsexes
