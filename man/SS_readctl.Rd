@@ -4,15 +4,13 @@
 \alias{SS_readctl}
 \title{read control file from SS}
 \usage{
-SS_readctl(file, version = "3.24", verbose = TRUE, echoall = FALSE,
+SS_readctl(file, ctlversion = "3.24", verbose = TRUE, echoall = FALSE,
   nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA,
-  Nfleet = 2, Nsurveys = 2, N_tag_groups = NA)
+  Nfleet = 2, Nsurveys = 2, DatFile = NA, N_tag_groups = NA,
+  N_CPUE_obs = NA)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
-
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
@@ -32,9 +30,10 @@ explicitly available in control file}
 \item{Ngenders}{number of genders in the model. This information is also not
 explicitly available in control file}
 
-\item{Npopbins}{number of population bins in the model. This information is also not
-explicitly available in control file and this information is only required if length based
-maturity vector is directly supplied (Maturity option of 6), and not yet tested}
+\item{Npopbins}{number of population bins in the model. This information is
+also not explicitly available in control file and this information is only
+required if length based
+ maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
 \item{Nfleet}{number of fisheries in the model. This information is also not
 explicitly available in control file}
@@ -42,8 +41,14 @@ explicitly available in control file}
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{N_tag_groups}{number of tag release groups in the model. This information is also not
-explicitly available in control file}
+\item{DatFile}{read datfile list for additional information for version 3.30
+and above}
+
+\item{N_tag_groups}{number of tag release groups in the model.
+This information is also not explicitly available in control file}
+
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
 }
 \description{
 Read Stock Synthesis control file into list object in R. This function is a
@@ -56,5 +61,5 @@ than a single function that attempts to do everything.
 \code{\link{SS_readdat_3.24}}
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi
+Ian G. Taylor, Yukio Takeuchi, Neil L Klaer
 }

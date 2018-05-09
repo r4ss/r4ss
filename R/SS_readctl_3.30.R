@@ -1,52 +1,50 @@
-#' read control file from SS version 3.24
+#' read control file from SS version 3.30
 #'
-#' Read Stock Synthesis (version 3.24) control file into list object in R.
+#' Read Stock Synthesis (version 3.30) control file into list object in R.
 #' This function comes with its wrapper function SS_readctl
-#' that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
-#' (to be available in future).
+#' that calls SS_readctl_3.24  or SS_readctl_3.30 (this function).
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
 #' @param verbose Should there be verbose output while running the file?
-#'  Default=TRUE.
+#' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#'  data as it is being read.
+#' data as it is being read.
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. Default = 1.
-#' This information is also not explicitly available in control file
+#' @param N_areas number of spatial areas in the model. Default = 1. This information is also not
+#'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
 #' @param Ngenders number of genders in the model. This information is also not
 #'  explicitly available in control file
-#' @param Npopbins number of population bins in the model. This information
-#'  is also not explicitly available in control file and this information is
-#'  only required if length based maturity vector is directly supplied
-#'  (Maturity option of 6), and not yet tested
+#' @param Npopbins number of population bins in the model. This information is also not
+#'  explicitly available in control file and this information is only required if length based
+#'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
 #' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters
-#'  to be read set 1 (but in fact any non zero numeric in R) or TRUE to enable
-#'  to read them 0 or FALSE (default) to disable them.
-#'  This information is not explicitly available in control file, too.
-#' @param N_tag_groups number of tag release group. Default =NA.
-#'  This information is not explicitly available control file.
-#'  This information is only required if custom tag parameters is enabled (TG_custom=1)
+#' @param DatFile read datfile list for additonal information
+#' @param AgeError ageing error matrix
+#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
+#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
+#'  to disable them. This information is not explicitly available in control file, too.
+#' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
+#'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
 #' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
-#'  determined from control file
-#' @param datlist list or character. if list : produced from SS_writedat
-#'  or character : file name of dat file.
-#' @author Yukio Takeuchi, Neil Klaer
+#'        determined from control file
+#' @param datlist list or character. if list : produced from SS_writedat or character : file name of dat file.
+#' @author Neil Klaer, Yukio Takeuchi 
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 #' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
+#' \code{\link{SS_readctl_3.24}},
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
-SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
+SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
 ## Parameters that are not defined in control file
     nseas=4,
     N_areas=1,
@@ -55,6 +53,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     Npopbins=NA,
     Nfleet=2,
     Nsurveys=2,
+    DatFile=NA,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
@@ -64,7 +63,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ){
   # function to read Stock Synthesis data files
 
-  if(verbose) cat("running SS_readctl_3.24\n")
+  if(verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file,warn=FALSE)
 
   nver=as.numeric(substring(ctlversion,1,4))
@@ -105,11 +104,42 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     if(verbose){cat(name,",i=",ctllist$'.i',"\n");print(ctllist[name])}
     return(ctllist)
   }
+
+  find.index <- function(dat, ind, str){
+    ## Find the first line at position ind or later that
+    ## contains the string str and return the index of that
+    ## line. If the end of the data is reached, an error
+    ## will be shown.
+    while(ind < length(dat) & !length(grep(str, dat[ind]))){
+      ind <- ind + 1
+    }
+    if(ind == length(dat)){
+      stop("SS_readctl_3.30-find.index: Error - ",
+           "the value of ", str, " was not found. ",
+           "Check the control file and make sure all ",
+           "data frames are correctly formed.\n")
+    }
+    ind
+  }
+
   # Function to add data as data.frame to ctllist
-  add_df<-function(ctllist,nrow,ncol,col.names,name,verbose=TRUE,comments=NULL){
-    k<-nrow*ncol
+  add_df<-function(ctllist,nrows=NULL,ncol,col.names,name,verbose=TRUE,comments=NULL){
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
+    if(is.null(nrows))
+    {
+      end.ind <- find.index(dat, i, "-9999")
+      nrow<-as.integer((end.ind-i)/ncol)
+      if(nrow==0) # there isn't any data so just return
+      {
+        ctllist$'.i'<-ctllist$'.i'+ncol
+        return(ctllist)
+      }
+    }
+    else nrow<-nrows
+    
+    k<-nrow*ncol
+    
     df0<-as.data.frame(matrix(dat[i+1:k-1],nrow=nrow,ncol=ncol,byrow=TRUE))
     colnames(df0)<-col.names
     if(is.null(comments)){
@@ -118,6 +148,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       rownames(df0)<-comments
     }
     i <- i+k
+    
+    if(is.null(nrows))i <- i+ncol
+    
     ctllist$temp<-df0
     ctllist$'.i'<-i
     if(!is.na(name))names(ctllist)[names(ctllist)=="temp"]<-name
@@ -127,6 +160,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     }
     return(ctllist)
   }
+  
+
   ## function to add an element to ctllist
   add_elem<-function(ctllist=NA,name,verbose=TRUE){
     i<-ctllist$'.i'
@@ -196,15 +231,18 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   # specifications
   ctllist$sourcefile <- file
   ctllist$type <- "Stock_Synthesis_control_file"
-  ctllist$ReadVersion <- "3.24"
-
+  ctllist$ReadVersion <- "3.30"
+  
   ctllist$eof <- FALSE
-
-  if(verbose) cat("SS_readctl_3.24 - read version = ",ctllist$ReadVersion,"\n")
+  
+  if(verbose) cat("SS_readctl_3.30 - read version = ",ctllist$ReadVersion,"\n")
+  
+  # weight at age option
+  ctllist<-add_elem(ctllist,"EmpiricalWAA")
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
-
+  
   # Currently I do not how MGparms are sorted when N_GP>1
   if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
@@ -226,19 +264,16 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     }
   }
   ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
-  if(ctllist$N_GP*ctllist$nseas*ctllist$N_areas>1) {
-    ctllist<-add_elem(ctllist,"recr_dist_read")
-    recr_dist_read<-ctllist$recr_dist_read
-    #  number of recruitment assignments (overrides GP*area*seas parameter values)
-    ctllist<-add_elem(ctllist,"recr_dist_inx")
-    # recruitment interaction requested
-    ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=3,
-      col.names=c("GP","seas","area"))
-  }else{
-    ctllist$recr_dist_inx<-FALSE
-  }
-
-  ctllist$recr_dist_method<-1 # compatibility with v 3.30
+  
+  # recruitment timing and distribution
+  ctllist<-add_elem(ctllist,"recr_dist_method")
+  ctllist<-add_elem(ctllist,"recr_global_area")
+  
+  ctllist<-add_elem(ctllist,"recr_dist_read")
+  recr_dist_read<-ctllist$recr_dist_read
+  ctllist<-add_elem(ctllist,"recr_dist_inx") # recruitment interaction requested
+  ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
+      col.names=c("GP","seas","area","age"))
 
   if(ctllist$N_areas>1){
     #stop("Multi areas are not yet implemented")
@@ -258,12 +293,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist<-add_list(ctllist,name="Block_Design",length=ctllist$N_Block_Designs,
       length_each=ctllist$blocks_per_pattern*2)
   }
+  
+  ctllist<-add_elem(ctllist,"time_vary_adjust_method") 
+  ctllist<-add_vec(ctllist,name="time_vary_auto_generation",length=5) 
 
-  ctllist$time_vary_adjust_method<-3  # compatibility with v 3.30
-  ctllist$time_vary_auto_generation<-c(1,1,1,1,1) # compatibility with v 3.30
-
-
-  ctllist<-add_elem(ctllist,"fracfemale") #_fracfemale
   ctllist<-add_elem(ctllist,"natM_type") #_natM_type
   if(ctllist$natM_type==0){
     N_natMparms<-1
@@ -292,7 +325,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L2") #_Growth_Age_for_L2 (999 to use as Linf)
-  ctllist$Exp_Decay<-0.2 #Exponential decay for growth above maximum age - default 0.2
+  ctllist<-add_elem(ctllist,name="Exp_Decay") #Exponential decay for growth above maximum age
   if(ctllist$GrowthModel==3){
     ctllist<-add_elem(ctllist,name="N_ageK")
   }
@@ -329,21 +362,20 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   }
   MGparm_per_def<-N_natMparms+N_growparms
   ctllist$N_natMparms<-N_natMparms
-
+  
+  ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
+  
     #_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)
   ctllist<-add_elem(ctllist,name="maturity_option")
     #_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity by GP; 4=read age-fecundity by GP; 5=read fec and wt from wtatage.ss; 6=read length-maturity by GP
-  if(ctllist$maturity_option==6)ctllist$EmpiricalWAA<-1
-  else ctllist$EmpiricalWAA<-0
-
   if(ctllist$maturity_option %in% c(3,4)){
     ctllist<-add_df(ctllist,name="Age_Maturity",nrow=ctllist$N_GP,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
   }else if(ctllist$maturity_option==6){
     ctllist<-add_df(ctllist,name="Length_Maturity",nrow=ctllist$N_GP,ncol=Npopbins,col.names=paste0("Len_",1:Npopbins))
   }
-
+  
   ctllist<-add_elem(ctllist,"First_Mature_Age") #_First_Mature_Age
   ctllist<-add_elem(ctllist,"fecundity_option")  #_fecundity_option
   ctllist<-add_elem(ctllist,"hermaphroditism_option")   #_hermaphroditism_option
@@ -353,17 +385,33 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist<-add_elem(ctllist,"Herm_MalesInSSB")  #_Hermaphroditism_males_in_SSB
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
-  ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method
+  # ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method XX what to do with this?
+  
+  ## catch multipler parameters
+  if(any(DatFile$fleetinfo$need_catch_mult==1))
+  {
+    # need to read a parameter line per value = 1
+    stop("Catch multipliers not yet implemented in this script")
+  }
+  
+  ## age error parameters
+  if(any(DatFile$ageerror[,1]<0))
+  {
+    # need to read 7 full (14) parameter lines
+    stop("Age error parameters not yet implemented in this script")
+  }
+
+  ## here go ageing error parameters - not yet implemented
 
   N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
-  PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5,
-                 # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10,
-                 # GrowthDevs = 11, Movement = 12
-
+  PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
+                 # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10, 
+                 # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14
+  
   GenderLabel<-c("Fem","Mal")
-  for(i in 1:ctllist$Ngenders){
+  for(i in 1:1){
     for(j in 1:ctllist$N_GP){
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
@@ -388,8 +436,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       }
     }
   }
-
   N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
+  
   MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[1]);PType[cnt]<-3;cnt<-cnt+1
   MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[1]);PType[cnt]<-3;cnt<-cnt+1
   MGparmLabel[cnt]<-paste0("Mat50%_",GenderLabel[1]);PType[cnt]<-4;cnt<-cnt+1
@@ -416,6 +464,36 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     cat("Maturity option : ",ctllist$maturity_option," ")
     stop("is not supported")
   }
+  
+  if(ctllist$Ngenders>1)
+  {
+    for(i in 2:ctllist$Ngenders){
+      for(j in 1:ctllist$N_GP){
+        if(N_natMparms>0){
+          MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
+          PType[cnt:(N_natMparms+cnt-1)]<-1
+          cnt<-cnt+N_natMparms
+        }
+        if(ctllist$GrowthModel==1){ # VB
+          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","CV_young_","CV_old_")
+          MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+          PType[cnt:(5+cnt-1)]<-2
+          cnt<-cnt+5
+        }else if(ctllist$GrowthModel==2){ # Richards
+          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","Richards_","CV_young_","CV_old_")
+          MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+          PType[cnt:(6+cnt-1)]<-2
+          cnt<-cnt+6
+        }else if(ctllist$GrowthModel==3){
+          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:Age_K_count),"CV_young_","CV_old_")
+          MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+          PType[cnt:((5+Age_K_count)+cnt-1)]<-2
+          cnt<-cnt+5+Age_K_count
+        }
+      }
+    }
+  }
+
   if(ctllist$Ngenders==2){
     MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
@@ -430,7 +508,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("RecrDist_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-7;cnt<-cnt+ctllist$N_GP
   MGparmLabel[cnt+1:N_areas-1]<-paste0("RecrDist_Area_",1:N_areas);PType[cnt:(cnt+N_areas)]<-8;cnt<-cnt+N_areas
   MGparmLabel[cnt+1:nseas-1]<-paste0("RecrDist_Seas_",1:nseas);PType[cnt:(cnt+nseas-1)]<-9;cnt<-cnt+nseas
-
+  
   ## number of recruiment distribution parameters
   N_RecrDist_parms<-ctllist$N_GP+ctllist$N_areas+ctllist$nseas
   if(ctllist$recr_dist_inx){
@@ -466,14 +544,17 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     MGparmLabel[cnt+0:6]<-paste0("AgeKeyParm",1:7);PType[cnt:(cnt+6)]<-13;cnt<-cnt+7
     N_MGparm<-N_MGparm+7
   }
-
+  
+  MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("FracFemale_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-14;cnt<-cnt+ctllist$N_GP
+  N_MGparm<-N_MGparm+ctllist$N_GP
+  
   ctllist<-add_df(ctllist,name="MG_parms",nrow=N_MGparm,ncol=14,
                     col.names=c("LO", "HI", "INIT", "PRIOR",
                                 "PR_type", "SD", "PHASE",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
                                 comments=MGparmLabel)
-
+  
   ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
   # time block parameters
@@ -503,7 +584,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   }
 
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
-
+ 
   PType<-array()
   N_seas_effects<-sum(ctllist$MGparm_seas_effects)
   if(N_seas_effects>0){
@@ -511,7 +592,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
                     col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
     PType[1:N_seas_effects]<-16
     ctllist$MG_parms_seas<-cbind(ctllist$MG_parms_seas,PType)
-
+    
   }
 
   #  DoParmDev<-sum(ctllist$M_parms[,9])+
@@ -521,50 +602,57 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   if(DoParmDev>0){
     ctllist<-add_elem(ctllist,"MGparm_Dev_Phase") #_MGparm_Dev_Phase
   }
-
+  
  # SRR
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
-  N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+4
-
+  N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+3
+  
   if(is.na(ctllist$SR_function))
   {
     cat("SR_function is NA");return(ctllist)
   }
-
+  
+  ctllist<-add_elem(ctllist,"Use_steep_init_equi")   # 0/1 to use steepness in initial equ recruitment calculation
+  ctllist<-add_elem(ctllist,"Sigma_R_FofCurvature")   #  future feature:  0/1 to make realized sigmaR a function of SR curvature
+  
+  
   SRparmsLabels<-if(ctllist$SR_function ==3){
     # B-H SRR
-    c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function==2){
     # Ricker SRR
-    c("SR_LN(R0)","SR_Ricker","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
+    c("SR_LN(R0)","SR_Ricker","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
   }else if(ctllist$SR_function==4){
     # SCAA
-    c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function==5){
     # Hockey stick
-    c("SR_LN(R0)","SR_hockey_infl","SR_hockey_min_R","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_hockey_infl","SR_hockey_min_R","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function ==6){
     # B-H-flat SRR
-    c("SR_LN(R0)","SR_BH_flat_steep","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_BH_flat_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function==7){
     # survival_3Parm
-    c("SR_LN(R0)","SR_surv_Sfrac","SR_surv_Beta","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_surv_Sfrac","SR_surv_Beta","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function==8){
     # Shepard_3Parm
-    c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else{
     cat("SR_function=",ctllist$SR_function," is not supported yet.");return(ctllist)
   }
-
+  
   PType<-array()
-  ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=7,
-            col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=SRparmsLabels)
+  ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=14,
+            col.names=c("LO", "HI", "INIT", "PRIOR",
+                        "PR_type", "SD", "PHASE",
+                        "env_var","use_dev", "dev_minyr",
+                        "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
   ctllist$SRparm<-cbind(ctllist$SRparm,PType)
-
-  ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
-  ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
+  
+  #ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
+  #ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness XX what to do?
   ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations
   ctllist<-add_elem(ctllist,"MainRdevYrFirst") # first year of main recr_devs; early devs can preceed this era
   ctllist<-add_elem(ctllist,"MainRdevYrLast") # last year of main recr_devs; forecast devs start in following year
@@ -595,8 +683,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       ctllist<-add_df(ctllist,"recdev_input",ncol=2,nrow=ctllist$N_Read_recdevs,col.names=c("Year","recdev"))
     }
   }
-
-
+  
+  
   # F Part
   ctllist<-add_elem(ctllist,"F_ballpark") # F ballpark for annual F (=Z-M) for specified year
   ctllist<-add_elem(ctllist,"F_ballpark_year") # F ballpark year (neg value to disable)
@@ -612,118 +700,94 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   }else if(ctllist$F_Method==3){
     ctllist<-add_elem(ctllist,"F_iter") # N iterations for tuning F in hybrid method (recommend 3 to 7)
   }
-  #
-  #_initial_F_parms
-  comments_initF<-paste0("InitF_",1:Nfleet,"_",fleetnames[1:Nfleet])
-
-  PType<-array()
-  #_LO HI INIT PRIOR PR_type SD PHASE
-  ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
-    col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
-  PType[1:Nfleet]<-18
-  ctllist$init_F<-cbind(ctllist$init_F,PType)
-
+   
+  #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch 
+  if(any(DatFile$init_equil>0))
+  {  
+    comments_initF<-list()
+    k<-0
+    for(j in 1:Nfleet)
+    {
+      if(DatFile$init_equil[j]>0)
+      {
+        comments_initF<-c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
+        k<-k+1
+      }
+    }
+    
+    if(k>0)
+    {
+      PType<-array()
+      ctllist<-add_df(ctllist,name="init_F",nrow=k,ncol=7,
+        col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
+      PType[1:k]<-18
+      ctllist$init_F<-cbind(ctllist$init_F,PType)
+    }
+    
+  }
+  
   #_Q_setup
+  ctllist<-add_df(ctllist,name="Q_options",ncol=6,
+              col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
+  # create 3.24 compatible Q_setup
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
-  ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfleet+Nsurveys,ncol=4,
-                  col.names=c("Den_dep","env_var","extra_se","Q_type"),comments=comments_fl)
-
-  Do_Q_detail<-FALSE
-  if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
-    ctllist<-add_elem(ctllist,name="Do_Q_detail")  ##
-    Do_Q_detail<-ctllist$Do_Q_detail
-  }
-
-  nqp<-0
+  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
+  colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+  N_Q_parms<-0
   comments_Q_type<-list()
-
-  # Density dependant Q(Q-power)
-  for(i in 1:(Nfleet+Nsurveys))
+  i<-1
+  for(j in 1:nrow(ctllist$Q_options))
   {
-    if(ctllist$Q_setup[i,]$Den_dep>0)
+    if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
     {
-      comments_Q_type[(nqp+1)]<-paste0("Q_power_",i,"_",fleetnames[i],collapse="")
-      nqp<-nqp+1
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<-2
+      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+      comments_Q_type[[i]]<-paste0("LnQ_base_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      N_Q_parms<-N_Q_parms+1
     }
-  }
-
-  # Q-env
-  for(i in 1:(Nfleet+Nsurveys))
-  {
-    if(ctllist$Q_setup[i,]$env_var>0)
+    if(ctllist$Q_options[j,]$link==2)  # mirrored
     {
-      comments_Q_type[(nqp+1)]<-paste0("Q_env_",i,"_",fleetnames[i],collapse="")
-      nqp<-nqp+1
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
     }
-  }
-
-  # Q_extraSD
-  for(i in 1:(Nfleet+Nsurveys))
-  {
-    if(ctllist$Q_setup[i,]$extra_se>0)
+    if(ctllist$Q_options[j,]$link==3)  # do power
     {
-      comments_Q_type[(nqp+1)]<-paste0("Q_extraSD_",i,"_",fleetnames[i],collapse="")
-      nqp<-nqp+1
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
+      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+      comments_Q_type[[i]]<-paste0("Q_power_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      N_Q_parms<-N_Q_parms+1
     }
-  }
-
-
-  # Q_type options:  <0=mirror, 0=float_nobiasadj, 1=float_biasadj, 2=parm_nobiasadj, 3=parm_w_random_dev, 4=parm_w_randwalk, 5=mean_unbiased_float_assign_to_parm
-  ## currently only float_nobiasadj (Q_type==0) is suppoerted
-  #_for_env-var:_enter_index_of_the_env-var_to_be_linked
-  #_Den-dep  env-var  extra_se  Q_type
-  ## Then check if random Q parameters are used.
-  ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
-  ## one parameter for each data point
-  # Q-type
-  N_Q_parms<-nqp
-  i<-nqp+1
-  cat("Setting up Q_parameters comments\n")
-  for(fl in 1:(Nfleet+Nsurveys)){
-    flname<-fleetnames[fl]
-    .Q_type<-ctllist$Q_setup[fl,4]
-    cat(flname,";",fl,"\n")
-    if(.Q_type==2){ # One Q parameter
+    if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
+    {
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
+      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+      comments_Q_type[[i]]<-paste0("Q_extraSD_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
       N_Q_parms<-N_Q_parms+1
-      cat("i=",i,"\n")
-      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
-    }else if(.Q_type==3){ # Random Q deviations
-      N_Q_parms<-N_Q_parms+1
-      cat("i=",i,"\n")
-      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
-      if(Do_Q_detail){
-        for(j in 1:(N_CPUE_obs[fl]))
-        {
-          comments_Q_type[[i+j-1]]<-paste0("Q_dev_",j,"_",fl,"_",flname)
-        }
-        N_Q_parms<-N_Q_parms+N_CPUE_obs[fl]
-        i<-i+j
-      }
-    }else if(.Q_type==4){# Random walk W
-      N_Q_parms<-N_Q_parms+1
-      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
-      if(Do_Q_detail){
-        for(j in 1:(N_CPUE_obs[fl]-1))
-        {
-          comments_Q_type[[i+j-1]]<-paste0("Q_walk_",j,"_",fl,"_",flname)
-        }
-        N_Q_parms<-N_Q_parms+N_CPUE_obs[fl]-1
-        i<-i+j
-        # comments_Q_type[[i]][2:N_CPUE_obs[fl]]<-paste0("Q_walk_",1:(N_CPUE_obs[fl]-1),"_",fl,"_",flname)
-      }
-    }else if(.Q_type==5){
-      N_Q_parms<-N_Q_parms+1
-      comments_Q_type[[i]]<-paste0("LnQ_base_",fl,"_",flname,collapse="");i<-i+1
     }
   }
 
   if(N_Q_parms>0){
-    ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=7,
-                col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),
+    ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=14,
+                    col.names=c("LO", "HI", "INIT", "PRIOR",
+                                "PR_type", "SD", "PHASE",
+                                "env_var","use_dev", "dev_minyr",
+                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
                 comments=unlist(comments_Q_type))
+    
+    # put env_var into Q_setup
+    for(j in 1:nrow(ctllist$Q_parms))
+    {
+      if(ctllist$Q_parms[j,]$env_var>0)
+      {
+        vv<-as.numeric(strsplit(rowname(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
+        ctllist$Q_setup[vv[1],]$env_var<-1
+      }
+    }
+    
   }
 
+  
 # size_selex_types
+  # comments_selex_types<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   comments_selex_types<-fleetnames
   ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
               col.names=c("Pattern","Discard","Male","Special"),comments=comments_selex_types)
@@ -767,7 +831,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
         NULL
       }
     }
-
+    
     # do extra retention parameters
     if(ctllist$size_selex_types[j,2]>0) # has discard type 1 or 2
     {
@@ -823,7 +887,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
         NULL
       }
     }
-
+    
     # do extra retention parameters
     if(ctllist$age_selex_types[j,2]>0) # has discard type 1 or 2
     {
@@ -858,7 +922,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       else age_selex_label[[j]]<-paste0("AgeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j])
       age_selex_Nparms[j]<-age_selex_Nparms[j]+nparms
     }
-
+    
   }
   if(verbose){cat("size_selex_Nparms\n");print(size_selex_Nparms)}
   if(verbose){cat("age_selex_Nparms\n");print(age_selex_Nparms)}
@@ -885,9 +949,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   DoAdjust<-FALSE
   if(sum(ctllist$age_selex_parms[,13])+sum(ctllist$size_selex_parms[,13])>0){
     DoAdjust<-TRUE
-    ctllist<-add_elem(ctllist,"DoCustom_sel_blk_setup") #_custom_sel-blk_setup (0/1)
+    ctllist$DoCustom_sel_blk_setup<-1
     if(ctllist$DoCustom_sel_blk_setup){
-
+      
       # FIND relevant blocks
         blks <- ctllist$blocks_per_pattern
 
@@ -904,7 +968,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
 
       ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
         col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
-
+      
     }
   }else{
     #_Cond 0 #_custom_sel-blk_setup (0/1)
@@ -920,13 +984,13 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   }
   ctllist$DoAdjust<-DoAdjust
   if(DoAdjust){
-    ctllist<-add_elem(ctllist,name="selex_adjust_method")
+    # ctllist<-add_elem(ctllist,name="selex_adjust_method")
     #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
   }
 #_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
 #
-
-
+  ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
+  
 # Tag loss and Tag reporting parameters go next
   ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist
   if(ctllist$TG_custom){
@@ -970,24 +1034,40 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     #_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters
     #
   }
-  ctllist<-add_elem(ctllist,"DoVar_adjust")  #_Variance_adjustments_to_input_values
-  if(ctllist$DoVar_adjust>0){
-    ctllist<-add_df(ctllist,name="Variance_adjustments",nrow=6,ncol=Nfleet+Nsurveys,
-                      col.names=paste0("Fleet",1:(Nfleet+Nsurveys)))
-    rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",
-                                                          "add_to_discard_stddev",
-                                                          "add_to_bodywt_CV",
-                                                          "mult_by_lencomp_N",
-                                                          "mult_by_agecomp_N",
-                                                          "mult_by_size-at-age_N")))
+
+  
+  # ctllist<-add_elem(ctllist,"DoVar_adjust")  #_Variance_adjustments_to_input_values
+  ctllist$DoVar_adjust<-0
+  ctllist<-add_df(ctllist,name="Variance_adjustment_list",nrow=NULL,ncol=3,
+                    col.names=c("Factor","Fleet","Value"))
+
+  # create version 3.24 variance adjustments
+  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleet+Nsurveys)))
+  ctllist$Variance_adjustments[4:6,]<-1
+  colnames(ctllist$Variance_adjustments)<-fleetnames
+  rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",
+                                                        "add_to_discard_stddev",
+                                                        "add_to_bodywt_CV",
+                                                        "mult_by_lencomp_N",
+                                                        "mult_by_agecomp_N",
+                                                        "mult_by_size-at-age_N")))
+  if(nrow(ctllist$Variance_adjustment_list)>0)
+  {
+    for(j in 1:nrow(ctllist$Variance_adjustment_list))ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,
+                                                                                   ctllist$Variance_adjustment_list[j,]$Fleet]<-ctllist$Variance_adjustment_list[j,]$Value
+    ctllist$DoVar_adjust<-1
   }
+  
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
   ctllist<-add_elem(ctllist,"sd_offset")  #_sd_offset
 
-  ctllist<-add_elem(ctllist,"N_lambdas")   # number of changes to make to default Lambdas (default value is 1.0)
+  ctllist<-add_df(ctllist,name="lambdas",nrow=NULL,ncol=5,
+                  col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
+  
+  if(!is.null(ctllist$lambdas))ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
+  else ctllist$N_lambdas<-0
+  
   if(ctllist$N_lambdas>0){
-    ctllist<-add_df(ctllist,name="lambdas",nrow=ctllist$N_lambdas,ncol=5,
-                      col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
     # find and delete duplicates
     chk<-paste0(ctllist$lambdas$like_comp,ctllist$lambdas$`fleet/survey`
                 ,ctllist$lambdas$phase,ctllist$lambdas$sizefreq_method,sep=" ")
@@ -1035,7 +1115,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       }
     }
   }
-
+  
   # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
@@ -1058,6 +1138,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
         add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
     }
   }
+  
   if(ctllist$'.dat'[ctllist$'.i']==999){
     if(verbose) cat("read of control file complete (final value = 999)\n")
     ctllist$eof <- TRUE
