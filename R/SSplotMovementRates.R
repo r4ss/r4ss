@@ -121,15 +121,15 @@ SSplotMovementRates <-
     # subset some report values
     movepars <- parameters[grep("Move",replist$parameters$Label),]
     MGparmAdj <- MGparmAdj[,c(1,grep("MoveParm",names(MGparmAdj)))]
+    # exclude forecast years (values were reported as zeros)
+    MGparmAdj <- MGparmAdj[MGparmAdj$Yr <= replist$endyr,]
     time <- any(apply(MGparmAdj[,-1], 2, function(x){any(x!=x[1])}))
-
     if(!time){
       if(verbose) cat("  no time-varying movement--skipped SSplotMovementRates subplot 2\n")
     }else{
       if(verbose) cat("  running subplot 2: time-varying movement rates\n")
-
       moveinfo <- move[,1:6]
-      moveinfo$LabelBase2 <- paste("seas_",moveinfo$Seas,"_GP_",moveinfo$Gpattern,
+      moveinfo$LabelBase2 <- paste("seas_",moveinfo$Seas,"_GP_",moveinfo$GP,
                                    "from_",moveinfo$Source,"to_",moveinfo$Dest,sep="")
       moveinfo <- moveinfo[moveinfo$LabelBase2 %in% substring(movepars$Label,12),]
       ## print(moveinfo)
@@ -239,7 +239,8 @@ SSplotMovementRates <-
           Dest_area <- moveinfo$Dest_area[imove]
           movetable <- moveByYr[dimnames(moveByYr)$area==Dest_area, ,imove,]
           movetable <- moveByYr[1, ,imove,]
-          main <- paste("Time-varying movement from area",Source_area,"to area",Dest_area)
+          main <- paste("Time-varying movement from area", Source_area,
+                        "to area", Dest_area)
           move.mountains.fn <- function(){
             mountains(zmat=t(movetable),xvec=0:accuage,yvec=yrvec,xlab='Age',ylab='Year')
             title(main=main,cex.main=cex.main)
@@ -247,7 +248,8 @@ SSplotMovementRates <-
           
           if(plot) move.mountains.fn()
           if(print){
-            file <- "move2_time-varying_movement_rates.png"
+            file <- paste0("move2_time-varying_movement_rates_",
+                           Source_area, "to", Dest_area, ".png")
             caption <- main
             plotinfo <- pngfun(file=file, caption=caption)
             move.mountains.fn()
