@@ -238,7 +238,8 @@ SSplotMovementRates <-
           Source_area <- moveinfo$Source_area[imove]
           Dest_area <- moveinfo$Dest_area[imove]
           movetable <- moveByYr[dimnames(moveByYr)$area==Dest_area, ,imove,]
-          movetable <- moveByYr[1, ,imove,]
+          ### not sure why following line was present, removing on 10 May 2018
+          #movetable <- moveByYr[1, ,imove,] 
           main <- paste("Time-varying movement from area", Source_area,
                         "to area", Dest_area)
           move.mountains.fn <- function(){
