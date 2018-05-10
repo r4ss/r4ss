@@ -460,55 +460,65 @@ SS_output <-
   for(icol in (1:ncol(selex))[!(names(selex) %in% c("Factor","Label"))]){
     selex[,icol] <- as.numeric(selex[,icol])
   }
-  
+
   ## DEFINITIONS section (new in SSv3.20)
   rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
   # get season stuff
-  nseasons <- as.numeric(rawdefs[1,2])
-  seasdurations <- as.numeric(rawdefs[3,1+1:nseasons])
+  nseasons <- as.numeric(rawdefs[grep("N_seasons", rawdefs[,1]), 2])
+  seasdurations <- as.numeric(rawdefs[grep("Season_Durations", rawdefs[,1]), 1 + 1:nseasons])
   seasfracs <- round(12*cumsum(seasdurations))/12
   seasfracs <- seasfracs - seasdurations/2 # should be mid-point of each season as a fraction of the year
   if(SS_versionNumeric >= 3.3){
+    # add read of additions to DEFINITIONS section added with 3.30.12
     # version 3.3 (fleet info switched from columns to rows starting with 3.3)
+    FleetNames <- as.character(rawdefs[grep("fleet_names",rawdefs$X1),-1])
+    FleetNames <- FleetNames[!is.na(FleetNames) & FleetNames!=""]
     # get fleet info
-    defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-    defs[defs==""] <- NA
-    FleetNames <- as.character(defs[grep("fleet_names",defs$X1),-1])
-    FleetNames <- FleetNames[!is.na(FleetNames)]
     nfleets <- length(FleetNames)
     fleet_ID    <- 1:nfleets
-    defs <- defs[-(1:3),1:7] # hardwiring dimensions, this may change in future versions
-    names(defs) <- c("fleet_type", "timing", "area", "units",
-                     "catch_mult", "survey_units", "survey_error")
-    for(icol in 1:ncol(defs)){
-      defs[,icol] <- as.numeric(defs[,icol])
+    fleetdefs <- tail(rawdefs, nfleets+1)
+    fleetdefs <- fleetdefs[ , apply(rawdefs[-(1:3), ], 2, emptytest) < 1]
+    fleetdefs[fleetdefs==""] <- NA
+    if(fleetdefs[1,1]=="#_rows"){ # up to version 3.30.11
+      fleetdefs <- fleetdefs[-1,1:7] # hardwiring dimensions and names
+      names(fleetdefs) <- c("fleet_type", "timing", "area", "catch_units",
+                            "catch_mult", "survey_units", "survey_error")
+    }else{
+      # additional columns starting with 3.30.12
+      # column names are now dynamic
+      names(fleetdefs) <- fleetdefs[1,]
+      names(fleetdefs)[1] <- "fleet"
+      fleetdefs <- fleetdefs[-1,]
+    }
+    for(icol in which(names(fleetdefs)!="fleet_name")){
+      fleetdefs[,icol] <- as.numeric(fleetdefs[,icol])
     }
     # fleet_type definitions from TPL:
     # 1=fleet with catch; 2=discard only fleet with F;
     # 3=survey(ignore catch); 4=ignore completely
-    fleet_type   <- defs$fleet_type
-    fleet_timing <- defs$timing
-    fleet_area   <- defs$area
-    catch_units  <- defs$units
-    equ_catch_se <- defs$equ_catch_se
-    catch_se     <- defs$catch_se
-    survey_units <- defs$survey_units
-    survey_error <- defs$survey_error
+    fleet_type   <- fleetdefs$fleet_type
+    fleet_timing <- fleetdefs$timing
+    fleet_area   <- fleetdefs$area
+    catch_units  <- fleetdefs$catch_units
+    equ_catch_se <- fleetdefs$equ_catch_se
+    catch_se     <- fleetdefs$catch_se
+    survey_units <- fleetdefs$survey_units
+    survey_error <- fleetdefs$survey_error
     IsFishFleet  <- fleet_type <= 2 # based on definitions above
   }else{
     # version 3.20-3.24
     # get fleet info
-    defs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-    defs[defs==""] <- NA
-    lab <- defs$X1
-    fleet_ID     <- as.numeric(defs[grep("fleet_ID",lab),-1])
-    names(defs)  <- c("Label",paste("Fleet",fleet_ID,sep=""))
-    FleetNames   <- as.character(defs[grep("fleet_names",lab),-1])
-    fleet_area   <- as.numeric(defs[grep("fleet_area",lab),-1])
-    catch_units  <- as.numeric(defs[grep("Catch_units",lab),-1])
-    catch_error  <- as.numeric(defs[grep("Catch_error",lab),-1])
-    survey_units <- as.numeric(defs[grep("Survey_units",lab),-1])
-    survey_error <- as.numeric(defs[grep("Survey_error",lab),-1])
+    fleetdefs <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+    fleetdefs[fleetdefs==""] <- NA
+    lab <- fleetdefs$X1
+    fleet_ID     <- as.numeric(fleetdefs[grep("fleet_ID",lab),-1])
+    names(fleetdefs)  <- c("Label",paste("Fleet",fleet_ID,sep=""))
+    FleetNames   <- as.character(fleetdefs[grep("fleet_names",lab),-1])
+    fleet_area   <- as.numeric(fleetdefs[grep("fleet_area",lab),-1])
+    catch_units  <- as.numeric(fleetdefs[grep("Catch_units",lab),-1])
+    catch_error  <- as.numeric(fleetdefs[grep("Catch_error",lab),-1])
+    survey_units <- as.numeric(fleetdefs[grep("Survey_units",lab),-1])
+    survey_error <- as.numeric(fleetdefs[grep("Survey_error",lab),-1])
     IsFishFleet  <- !is.na(catch_units)
     nfleets      <- length(FleetNames)
   }
@@ -1439,7 +1449,7 @@ SS_output <-
   vartune <- df.rename(vartune,
                        oldnames=c("NoName", "fleetname"),
                        newnames=c("Name", "Name"))
-  
+
   ## FIT_LEN_COMPS
   if(SS_versionNumeric >= 3.3){
     # This section hasn't been read by SS_output in the past,
@@ -1453,13 +1463,13 @@ SS_output <-
     # replace underscores with NA
     fit_len_comps[fit_len_comps=="_"] <- NA
     # make columns numeric (except "Used", which may contain "skip")
-    for(icol in which(!names(fit_len_comps) %in% "Use")){
+    for(icol in which(!names(fit_len_comps) %in% c("Fleet_Name", "Use"))){
       fit_len_comps[,icol] <- as.numeric(fit_len_comps[,icol])
     }
   }else{
     fit_len_comps <- NULL
   }
-  
+
   # Length comp effective N tuning check
   if(SS_versionNumeric < 3.3){
     # old way didn't have key word and had parantheses and other issues with column names
@@ -1512,7 +1522,7 @@ SS_output <-
     # replace underscores with NA
     fit_age_comps[fit_age_comps=="_"] <- NA
     # make columns numeric (except "Used", which may contain "skip")
-    for(icol in which(!names(fit_age_comps) %in% "Use")){
+    for(icol in which(!names(fit_age_comps) %in% c("Fleet_Name", "Use"))){
       fit_age_comps[,icol] <- as.numeric(fit_age_comps[,icol])
     }
   }else{
@@ -1599,14 +1609,14 @@ SS_output <-
 
   # add stuff to list to return
   if(SS_versionNumeric <= 3.24){
-    returndat$definitions  <- defs
+    returndat$definitions  <- fleetdefs
     returndat$fleet_ID     <- fleet_ID
     returndat$fleet_area   <- fleet_area
     returndat$catch_units  <- catch_units
     returndat$catch_error  <- catch_error
   }
   if(SS_versionNumeric >= 3.3){
-    returndat$definitions  <- defs
+    returndat$definitions  <- fleetdefs
     returndat$fleet_ID     <- fleet_ID
     returndat$fleet_type   <- fleet_type
     returndat$fleet_timing <- fleet_timing
@@ -2266,8 +2276,14 @@ SS_output <-
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
   names(movement) <- c(movement[1,1:6],paste("age",movement[1,-(1:6)],sep=""))
+  movement <- df.rename(movement,
+                        oldnames=c("Gpattern"),
+                        newnames=c("GP"))
+
   movement <- movement[-1,]
-  for(i in 1:ncol(movement)) movement[,i] <- as.numeric(movement[,i])
+  for(i in 1:ncol(movement)){
+    movement[,i] <- as.numeric(movement[,i])
+  }
   returndat$movement <- movement
 
   # reporting rates
