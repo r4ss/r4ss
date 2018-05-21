@@ -60,12 +60,10 @@ mountains <- function(zmat, xvec=NULL, yvec=NULL, zscale=3, rev=TRUE,
 
   ny <- length(yvec)
   if(ny!=nrowz){
-    print("length(yvec) must equal nrow(zmat)",quote=FALSE)
-    return()
+    stop("length(yvec)=",length(yvec), " and nrow(zmat)=", nrow(zmat), " should be equal")
   }
   if(length(xvec)!=ncolz){
-    print("length(xvec) must equal ncol(zmat)",quote=FALSE)
-    return()
+    stop("length(xvec) must equal ncol(zmat)")
   }
 
   zseq <- seq(0, zmax, length=nshades)

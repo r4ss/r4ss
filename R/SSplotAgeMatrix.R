@@ -7,6 +7,12 @@
 #' @param replist List created by \code{SS_output}
 #' @param option Switch set to either 1 for length at true age or
 #' 2 for obs. age at true age
+#' @param slices Optional input to choose which matrix (slice of the 3D-array)
+#' within $AAK or $ALK to plot. By default all slices will be shown.
+#' For ageing imprecision this should correspond to the ageing error matrix
+#' number. Distribution of length at age ($ALK) is ordered by season,
+#' sub-season, and then morph. A future version could allow subsetting plots
+#' by these dimensions.
 #' @param scale Multiplier for bars showing distribution. Species with many ages
 #' benefit from expanded bars. NULL value causes function to attempt automatic
 #' scaling.
@@ -19,7 +25,7 @@
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
-#' @param addmain switch which allows the plot title to be left off
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @author Ian G. Taylor
@@ -27,7 +33,8 @@
 #' @seealso \code{\link{SSplotNumbers}}
 
 
-SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALSE,
+SSplotAgeMatrix <- function(replist, option=1, slices=NULL, 
+                            scale=NULL, plot=TRUE, print=FALSE,
                             labels=c("Age",          #1
                                 "Length",            #2
                                 "True age",          #3
@@ -36,7 +43,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
                                 "Distribution of",   #6
                                 "at"),               #7
                             pwidth=6.5, pheight=5.0, punits="in", res=300, ptsize=10,
-                            cex.main=1, addmain=TRUE, plotdir="default"){
+                            cex.main=1, mainTitle=TRUE, plotdir="default"){
   # in-development function to plot matrix of length at age
 
   # subfunction to write png files
@@ -69,10 +76,19 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
   if(option==1){
     # option 1 is plotting distribution of length at age
     array <- replist$ALK
+    if(is.null(array)){
+      warning('No distribution of length at age plots produced because ',
+              'replist$ALK is NULL, likely because "detailed age-structured reports"',
+              'are not requested in the starter file.')
+      return()
+    }
     # vertical dimension is plotting length bins
     ybins <- replist$lbinspop
     # number of slices should be the number of sex/growth-pattern/morph combos
     nslices <- dim(array)[3]
+    if(is.null(slices)){
+      slices <- 1:nslices
+    }
     # axis labels
     xlab <- labels[1]
     ylab <- labels[2]
@@ -84,6 +100,11 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
   if(option==2){
     # option 2 is plotting distribution of observed age at true age
     array <- replist$AAK
+    if(is.null(array)){
+      warning('No distribution of observed age at true age plots produced because ',
+              'replist$AAK is NULL.')
+      return()
+    }
     # age bins
     ybins <- agebins.tmp <- sort(unique(as.numeric(dimnames(array)$ObsAgeBin)))
     if(is.na(ybins[1])){
@@ -91,6 +112,9 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
     }
     # number of slices is the number of ageing error matrices
     nslices <- dim(array)[1]
+    if(is.null(slices)){
+      slices <- 1:nslices
+    }
     # axis labels
     xlab <- labels[3]
     ylab <- labels[4]
@@ -138,7 +162,6 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
       # need to figure out which slice corresponds to which
       # morph/sex/etc. for labeling purposes
       title <- titleStart
-      #browser()
       info <- tolower(dimnames(array)[[3]][slice])
       if(!is.null(info)){
         title <- paste0(title, "\nfor ", info)
@@ -151,7 +174,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
       title <- paste(titleStart, "\n", labels[5], slice)
     }
     # option to not have plot title (to avoid redundancy with caption)
-    if(!addmain){
+    if(!mainTitle){
       title <- ""
     }
 
@@ -200,7 +223,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
   } # end of internal AgeMatrix.fn
 
   # loop over slices (ageing matrices or growth patterns/sexes)
-  for(islice in 1:nslices){
+  for(islice in slices){
     if(plot){
       # plot to GUI or PDF
       AgeMatrix.fn(slice=islice)
@@ -215,7 +238,7 @@ SSplotAgeMatrix <- function(replist, option=1, scale=NULL, plot=TRUE, print=FALS
         caption <- paste(titleStart)
         info <- tolower(dimnames(array)[[3]][islice])
         if(!is.null(info)){
-          caption <- paste(title, "for", info)
+          caption <- paste(titleStart, "for", info)
         }
       }
       if(option==2){

@@ -26,6 +26,7 @@ SS_readdat_3.30 <-
   if (verbose){
     message("Running SS_readdat_3.30")
   }
+
   if (echoall){
     message("Echoing blocks of data as it's being read")
     if (!verbose){
@@ -148,9 +149,9 @@ SS_readdat_3.30 <-
   d <- list()
   d$sourcefile <- file
   d$type <- "Stock_Synthesis_data_file"
-  d$SSversion <- "3.30"
+  d$ReadVersion <- "3.30"
   if (verbose){
-    message("SS_readdat_3.30 - SS version = ", d$SSversion)
+    message("SS_readdat_3.30 - read version = ", d$ReadVersion)
   }
 
   ##############################################################################
@@ -196,7 +197,7 @@ SS_readdat_3.30 <-
   ###############################################################################
   ## Catch data
   d$catch <- get.df(dat, ind)
-  
+
   #### NOTE:
   #### code below was used to reformat the table of
   #### catch from the 3.30 format to 3.24 format
@@ -299,10 +300,10 @@ SS_readdat_3.30 <-
   if (echoall & !is.null(d$discard_data)) {
     message("Discard data:")
     print(d$discard_data)
-    
+
   }
-  
-  
+
+
   ###############################################################################
   ## Mean body weight data
   d$use_meanbodywt <- get.val(dat, ind)
@@ -322,7 +323,7 @@ SS_readdat_3.30 <-
     message("meanbodywt:")
     print(d$meanbodywt)
   }
-  
+
 
   ###############################################################################
   ## Population size structure - Length
@@ -391,7 +392,7 @@ SS_readdat_3.30 <-
           if(d$Nsexes > 1){c(paste0("f", d$lbin_vector),
                              paste0("m", d$lbin_vector))}else{NULL})
     }
-    
+
     # echo values
     if (echoall) {
       message("\nFirst 2 rows of lencomp:")
@@ -401,7 +402,7 @@ SS_readdat_3.30 <-
       cat("\n")
     }
   }
-  
+
   ###############################################################################
   ## Population size structure - Age
   d$N_agebins <- get.val(dat, ind)
@@ -435,7 +436,7 @@ SS_readdat_3.30 <-
       print(d$ageerror)
     }
   }
-    
+
 
   ###############################################################################
   ## Age Comp information matrix
@@ -449,7 +450,7 @@ SS_readdat_3.30 <-
                               "CompError",
                               "ParmSelect",
                               "minsamplesize")[1:ncol(d$age_info)]
-    
+
     rownames(d$age_info) <- d$fleetnames
     ## Length bin method
     d$Lbin_method <- get.val(dat, ind)
@@ -485,7 +486,7 @@ SS_readdat_3.30 <-
       message("N_agebins = 0, skipping read remaining age-related stuff")
     }
   }
-  
+
   ###############################################################################
   ## Mean size-at-age data
   d$use_MeanSize_at_Age_obs <- get.val(dat, ind)
@@ -500,7 +501,7 @@ SS_readdat_3.30 <-
     # first check if gender input is outside of normal range
     if(!all(as.numeric(d$MeanSize_at_Age_obs$V4) %in% 0:3)){
       if(verbose){
-        warning("Format of MeanSize_at_Age_obs appears to have sample sizes",
+        message("Format of MeanSize_at_Age_obs appears to have sample sizes",
                 "on separate lines than other inputs.")
       }
       ind <- ind.tmp # reset index to value prior to first attempt to read table
@@ -519,7 +520,7 @@ SS_readdat_3.30 <-
       d$MeanSize_at_Age_obs <- as.data.frame(MeanSize_at_Age_obs)
     }
 
-    
+
     colnames(d$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
         if(d$Nsexes == 1){paste0("a", d$agebin_vector)}else{NULL},
@@ -541,7 +542,7 @@ SS_readdat_3.30 <-
     # -9999 line as well. The lines below is an attempt to work around this
     test <- get.vec(dat, ind)
     # if only 1 value, then this isn't an issue and need to adjust ind
-    if(length(test) == 1){ 
+    if(length(test) == 1){
       ind <- ind - 1
     }
   }else{
@@ -549,7 +550,7 @@ SS_readdat_3.30 <-
   }
 
 
-  
+
   ###############################################################################
   ## Environment variables
   d$N_environ_variables <- get.val(dat, ind)
@@ -557,7 +558,7 @@ SS_readdat_3.30 <-
   if (verbose) {
     message("N_environ_variables: ", d$N_environ_variables)
   }
-  
+
   if(d$N_environ_variables){
     d$envdat <- get.df(dat, ind)
     colnames(d$envdat) <- c("Yr", "Variable", "Value")
@@ -574,7 +575,7 @@ SS_readdat_3.30 <-
     d$envdat <- NULL
   }
 
-  
+
   ###############################################################################
   ## Size frequency methods
   d$N_sizefreq_methods <- get.val(dat, ind)
@@ -698,5 +699,9 @@ SS_readdat_3.30 <-
               " of data file complete. Final value = ", eof)
     }
   }
+
+  d$eof <- FALSE
+  if(eof==999)d$eof <- TRUE
+
   return(d)
 }

@@ -44,7 +44,9 @@
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @param both Logical to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.
+#' @param both Logical to create both plots (datasize=F and datasize=T).
+#' This is ignored for the case when datasize=FALSE.
+#' @param mainTitle TRUE/FALSE switch to turn on/off the title on the plot.
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
@@ -60,7 +62,8 @@ SSplotData <- function(replist,
                        datasize=TRUE,
                        maxsize=0.5,
                        alphasize=1,
-                       both=T,
+                       both=TRUE,
+                       mainTitle=FALSE,
                        verbose=TRUE)
 {
   # subfunction to write png files
@@ -228,10 +231,13 @@ SSplotData <- function(replist,
     yval <- 0
     # count number of unique combinations of fleet and data type
     ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
-    main.temp <- if(datasize) {
-      "Data by type and year, circle area is relative to precision within data type"
-    } else {
-      "Data by type and year"
+    main.temp <- ""
+    if(mainTitle){
+      main.temp <- if(datasize) {
+        "Data by type and year, circle area is relative to precision within data type"
+      } else {
+        "Data by type and year"
+      }
     }
     plot(0,xlim=xlim,ylim=c(0,ymax+2*ntypes+.5),axes=FALSE,xaxs='i',yaxs='i',
          type="n",xlab="Year",ylab="",main=main.temp, cex.main=cex.main)

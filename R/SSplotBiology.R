@@ -34,6 +34,7 @@
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -63,7 +64,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
              "Hermaphroditism transition rate", #13
              "Fraction females by age at equilibrium"), #14
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-         verbose=TRUE)
+         mainTitle=TRUE, verbose=TRUE)
 {
   #### current (Aug 18, 2017) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
@@ -191,7 +192,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
   if(wtatage_switch){
     cat("Note: this model uses the empirical weight-at-age input.\n",
-        "     Plots of many quantities related to growth are skipped.\n")
+        "      Plots of many quantities related to growth are skipped.\n")
   }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
@@ -723,6 +724,25 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
 
 
+  # plot distribution of length at age (by season, sub-season, and morph)
+  if(4 %in% subplots & !wtatage_switch){
+    if(!is.null(replist$ALK)){
+      plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
+                                      plot = plot, print = print,
+                                      plotdir = plotdir, pwidth = pwidth,
+                                      pheight = pheight, punits = punits,
+                                      res = res, ptsize = ptsize,
+                                      cex.main = cex.main, mainTitle = mainTitle)
+      # SSplotAgeMatrix adds a "category" column which isn't present
+      # in plotinfo until the end of this SSplotBiology function.
+      plotinfo.tmp <- plotinfo.tmp[,c("file","caption")]
+      plotinfo <- rbind(plotinfo, plotinfo.tmp)
+    }else{
+      cat("Skipped some plots because AGE_LENGTH_KEY unavailable in report file\n",
+          "          because starter file set to produce limited report detail.\n")
+    }
+  }
+
   # function for illustrating parameterization of growth curves
   growth_curve_labeled_fn <- function(option=1){ # growth
     if(is.null(Growth_Parameters)){
@@ -1077,60 +1097,61 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   # Time-varying growth (formerly plot #2)
   if(is.null(growthvaries)){
-    if(verbose) cat("No check for time-varying growth for this type of model (not sure why)\n")
+    if(verbose){
+      cat("No check for time-varying growth because\n",
+          "     starter file set to produce limited report detail.\n")
+    }
   }else{ # temporarily disable multi-season plotting of time-varying growth
-    if(is.null(growthseries))
-        {
-          cat("! Warning: no time-varying growth info because\n",
-              "          'detailed age-structured reports' turned off in starter file.\n")
-        }else{
-          if(growthvaries) # if growth is time varying
-            for(i in 1:nsexes)
-                {
-                  growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-                                               growthseries$Morph==morphs[i],]
-                  x <- 0:accuage
-                  y <- growdatuse$Yr
-                  z <- as.matrix(growdatuse[,-(1:4)])
-                  time <- FALSE
-                  for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
-                  if(time)
-                      {
-                        z <- t(z)
-                        if(i==1){main <- "Female time-varying growth"}
-                        if(nsexes==1){main <- "Time-varying growth"}
-                        if(i==2){main <- "Male time-varying growth"}
-                        if(nseasons > 1){main <- paste(main," season 1",sep="")}
-                        if(plot){
-                          if(22 %in% subplots)
-                            persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
-                                  box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
-                                  phi=35,theta=-10)
-                          if(23 %in% subplots)
-                            contour(x,y,z,nlevels=12,xlab=labels[2],
-                                    main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
-                        if(print){
-                          if(22 %in% subplots){
-                            file <- paste("bio22_timevarygrowthsurf_sex",i,".png",sep="")
-                            caption <- "Perspective plot of time-varying growth"
-                            plotinfo <- pngfun(file=file, caption=caption)
-                            persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
-                                  box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
-                                  phi=35,theta=-10)
-                            dev.off()
-                          }
-                          if(23 %in% subplots){
-                            file <- paste("bio23_timevarygrowthcontour_sex",i,".png",sep="")
-                            caption <- "Contour plot of time-varying growth"
-                            plotinfo <- pngfun(file=file, caption=caption)
-                            contour(x,y,z,nlevels=12,xlab=labels[2],
-                                    main=main,cex.main=cex.main,col=ians_contour,lwd=2)
-                            dev.off()
-                          }
-                        } # end print
-                      } # end if time-varying
-                } # end loop over sexes
-        } # end of if data available for time varying growth
+    if(is.null(growthseries)){
+      cat("! Warning: no time-varying growth info because\n",
+          "     starter file set to produce limited report detail.\n")
+    }else{
+      if(growthvaries){ # if growth is time varying
+        for(i in 1:nsexes){
+          growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
+                                       growthseries$Morph==morphs[i],]
+          x <- 0:accuage
+          y <- growdatuse$Yr
+          z <- as.matrix(growdatuse[,-(1:4)])
+          time <- FALSE
+          for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
+          if(time){
+            z <- t(z)
+            if(i==1){main <- "Female time-varying growth"}
+            if(nsexes==1){main <- "Time-varying growth"}
+            if(i==2){main <- "Male time-varying growth"}
+            if(nseasons > 1){main <- paste(main," season 1",sep="")}
+            if(plot){
+              if(22 %in% subplots)
+                persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                      box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                      phi=35,theta=-10)
+              if(23 %in% subplots)
+                contour(x,y,z,nlevels=12,xlab=labels[2],
+                        main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+            if(print){
+              if(22 %in% subplots){
+                file <- paste("bio22_timevarygrowthsurf_sex",i,".png",sep="")
+                caption <- "Perspective plot of time-varying growth"
+                plotinfo <- pngfun(file=file, caption=caption)
+                persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                      box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                      phi=35,theta=-10)
+                dev.off()
+              }
+              if(23 %in% subplots){
+                file <- paste("bio23_timevarygrowthcontour_sex",i,".png",sep="")
+                caption <- "Contour plot of time-varying growth"
+                plotinfo <- pngfun(file=file, caption=caption)
+                contour(x,y,z,nlevels=12,xlab=labels[2],
+                        main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+                dev.off()
+              }
+            } # end print
+          } # end if time-varying
+        } # end loop over sexes
+      } # end if growth is time varying
+    } # end of if data available for time varying growth
   }# end disable of time-varying growth for multi-season models
 
   # plot time-series of any time-varying quantities

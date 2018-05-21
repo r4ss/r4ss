@@ -14,10 +14,10 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.30.2\cr Date: \tab 2018-03-08\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.31.0\cr Date: \tab 2018-05-09\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 Should be compatible with Stock Synthesis versions 3.24 through 3.30
-(specifically version 3.30.10.00, from January 9, 2018).
+(specifically version 3.30.11.00, from April 29, 2018).
 }
 \examples{
 
@@ -40,7 +40,7 @@ Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
 Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
 Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
-Andrew B. Cooper, Andi Stephens, Neil Klaer, and Carey R. McGilliard
+Andrew B. Cooper, Andi Stephens, Neil L. Klaer, and Carey R. McGilliard
 
 Package maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 }

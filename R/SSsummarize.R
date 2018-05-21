@@ -427,6 +427,56 @@ SSsummarize <- function(biglist,
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
   }
 
+
+  # function to merge duplicate rows caused by different parameter labels
+  # that are associated with the same year, such as the recdev for 2016
+  # being called "ForeRecr_2016", "Late_RecrDev_2016", or "Main_RecrDev_2016",
+  # in 3 different models depending on the ending year of each model and the 
+  # choice of recdev vector breaks
+  merge.duplicates <- function(x){
+    if(!is.null(x)){
+      if(length(unique(x$Yr)) < length(x$Yr)){
+        # n should be number of models
+        n <- sum(!names(x) %in% c("Label", "Yr"))
+        x2 <- NULL # alternative data.frame
+        for(Yr in unique(x$Yr)){
+          x.Yr <- x[which(x$Yr==Yr),]
+          if(nrow(x.Yr)==1){
+            # if only 1 row associated with this year add to new data.frame
+            x2 <- rbind(x2, x.Yr)
+          }else{
+            # more than 1 row associated with this year
+            # create empty row with matching names
+            newrow <- data.frame(t(rep(NA,n)),
+                                 Label=paste0("Multiple_labels_", Yr), Yr=Yr) 
+            names(newrow) <- names(x)
+            # loop over models to pick the (hopefully) unique value among rows
+            for(icol in 1:n){
+              good <- !is.na(x.Yr[ ,icol])
+              if(sum(good) > 1){
+                # warn if more than 1 value
+                warning("multiple recdevs values associated with year =", Yr)
+              }
+              if(sum(good)==1){
+                # put good value into new row
+                newrow[,icol] <- x.Yr[good, icol]
+              }
+              # if there are no good values, this model likely ends prior to Yr
+            }
+            # add new row to new data.frame
+            x2 <- rbind(x2, newrow)
+          } # end test for duplicates for particular year
+        } # end loop over years
+      }else{ # end test for duplicates in general
+        # if no duplicates, just return data.frame
+        x2 <- x
+      }
+    }else{ # test for is.null(x)
+      return(x)
+    }
+    return(x2)
+  }
+
   # function to sort by year
   sort.fn <- function(x){
     if(!is.null(x)){
@@ -478,10 +528,10 @@ SSsummarize <- function(biglist,
   mylist$recruitsSD     <- sort.fn(recruitsSD)
   mylist$recruitsLower  <- sort.fn(recruitsLower)
   mylist$recruitsUpper  <- sort.fn(recruitsUpper)
-  mylist$recdevs        <- sort.fn(recdevs)
-  mylist$recdevsSD      <- sort.fn(recdevsSD)
-  mylist$recdevsLower   <- sort.fn(recdevsLower)
-  mylist$recdevsUpper   <- sort.fn(recdevsUpper)
+  mylist$recdevs        <- merge.duplicates(sort.fn(recdevs))
+  mylist$recdevsSD      <- merge.duplicates(sort.fn(recdevsSD))
+  mylist$recdevsLower   <- merge.duplicates(sort.fn(recdevsLower))
+  mylist$recdevsUpper   <- merge.duplicates(sort.fn(recdevsUpper))
   mylist$growth         <- growth
   mylist$sizesel        <- sizesel
   mylist$agesel         <- agesel

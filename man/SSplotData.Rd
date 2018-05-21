@@ -9,7 +9,8 @@ SSplotData(replist, plot = TRUE, print = FALSE, plotdir = "default",
   fleetnames = "default", ghost = FALSE, pwidth = 6.5, pheight = 5,
   punits = "in", res = 300, ptsize = 10, cex.main = 1,
   margins = c(5.1, 2.1, 2.1, 8.1), cex = 2, lwd = 12, datasize = TRUE,
-  maxsize = 0.5, alphasize = 1, both = T, verbose = TRUE)
+  maxsize = 0.5, alphasize = 1, both = TRUE, mainTitle = FALSE,
+  verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{\link{SS_output}}}
@@ -71,7 +72,10 @@ plot. Default is 1/2.}
 plot. Defaults to 1 (no transparency). Useful for models with lots of
 overlapping points.}
 
-\item{both}{Logical to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.}
+\item{both}{Logical to create both plots (datasize=F and datasize=T).
+This is ignored for the case when datasize=FALSE.}
+
+\item{mainTitle}{TRUE/FALSE switch to turn on/off the title on the plot.}
 
 \item{verbose}{report progress to R GUI?}
 }

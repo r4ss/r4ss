@@ -161,9 +161,9 @@ SSplotPars <-
     return(Prior_Like)
   } # end GetPrior
 
-  fullpostfile <- paste(dir,postfile,sep="/")
-  fullrepfile  <- paste(dir,repfile,sep="/")
-  fullctlfile  <- paste(dir,ctlfile,sep="/")
+  fullpostfile <- file.path(dir, postfile)
+  fullrepfile  <- file.path(dir, repfile)
+  fullctlfile  <- file.path(dir, ctlfile)
 
   postfileinfo <- file.info(fullpostfile)$size
   repfileinfo  <- file.info(fullrepfile)$size
@@ -193,10 +193,9 @@ SSplotPars <-
 
   ## get posteriors
   if(showpost & !is.na(postfileinfo) & postfileinfo>0){
-    test <- readLines(fullpostfile,n=20) # test for presence of file with at least 10 rows
+    test <- readLines(fullpostfile,n=30) # test for presence of file with at least 20 rows
     if(length(test)>20){
       posts <- read.table(fullpostfile,header=TRUE)
-      names(posts)[names(posts)=="SR_LN.R0."] <- "SR_LN(R0)"
       cat("read",nrow(posts),"lines in",postfile,"\n")
       # remove burn-in and thin the posteriors if requested
       posts <- posts[seq(burn+1,nrow(posts),thin), ]
@@ -318,7 +317,8 @@ SSplotPars <-
     dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
   }
   if(pdf){
-    pdffile <- paste(dir,"/SSplotPars_",format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf",sep="")
+    pdffile <- file.path(dir, paste0("SSplotPars_",
+                                     format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf"))
     pdf(file=pdffile,width=pwidth,height=pheight)
     if(verbose) cat("PDF file with plots will be: ",pdffile,"\n")
   }
@@ -413,14 +413,18 @@ SSplotPars <-
     # get posterior
     goodpost <- FALSE
     if(showpost){
-      jpar <- (1:ncol(posts))[names(posts)==parname]
+      # modify parname to remove parentheses as done by read.table
+      postparname <- parname
+      postparname <- gsub("(", ".", postparname, fixed=TRUE)
+      postparname <- gsub(")", ".", postparname, fixed=TRUE)
+      jpar <- (1:ncol(posts))[names(posts)==postparname]
       if(length(jpar)==1){
         post <- posts[,jpar]
         xmin <- min(xmin, quantile(post,0.001)) # update x range
         xmax <- max(xmax, quantile(post,0.999)) # update x range
         goodpost <- TRUE
       }else{
-        cat("Error! parameter '",parname,"', not found in '",postfile,"'.\n",sep="")
+        cat("Error! parameter '",postparname,"', not found in '",postfile,"'.\n",sep="")
       }
     }
 
@@ -450,7 +454,7 @@ SSplotPars <-
 
     # get histogram for posterior based on x-range
     if(showpost & goodpost){
-      jpar <- (1:ncol(posts))[names(posts)==parname]
+      jpar <- (1:ncol(posts))[names(posts)==postparname]
       post <- posts[,jpar]
       breakvec <- seq(xmin,xmax,length=50)
       if(min(breakvec) > min(post)) breakvec <- c(min(post),breakvec)
