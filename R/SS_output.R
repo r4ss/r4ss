@@ -555,11 +555,11 @@ SS_output <-
   if(comp){   # skip this stuff if no CompReport.sso file
     allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE, colClasses="character", skip=3, nrows=15)
     #lbins is data length bins
-    lbins <- as.numeric(allbins[7,-1])
+    lbins <- as.numeric(allbins[grep("Size_Bins_dat", allbins[,1])+2, -1])
     lbins <- lbins[!is.na(lbins)]
     nlbins <- length(lbins)
     #lbinspop is Pop_len_mid used for selex and bio quantities
-    lbinspop <- as.numeric(allbins[3,-1])
+    lbinspop <- as.numeric(allbins[grep("Size_Bins_pop", allbins[,1])+2, -1])
     lbinspop <- lbinspop[!is.na(lbinspop)]
     nlbinspop <- length(lbinspop)
     Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",allbins[,1]),2])
