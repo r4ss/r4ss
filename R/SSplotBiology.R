@@ -40,7 +40,7 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotBiology <-
-function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
+function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
          morphs=NULL,
          colvec=c("red","blue","grey20"),
          ltyvec=c(1,2),
