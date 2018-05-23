@@ -66,6 +66,7 @@ SSplotTimeseries <-
   # subplot13 = fraction of recruitment by area
   # subplot14 = recruitment by birth season
   # subplot15 = fraction of recruitment by birth season
+  # subplot16 = dynamic B0
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
   # subfunction to write png files

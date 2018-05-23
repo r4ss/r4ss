@@ -120,8 +120,8 @@ Default="default".}
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}
 
-\item{forecastplot}{Include forecast years in the plots? Obviously requires
-forecast options to have been used in the model.  Default=T.}
+\item{forecastplot}{Include forecast years in the timeseries plots and
+plots of time-varying quantities? Default=TRUE.}
 
 \item{datplot}{Plot the data by itself? This is useful in document
 preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
