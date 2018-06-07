@@ -98,9 +98,28 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
           Note <- "No Francis weight"
         }
         # current value
-        Curr_Var_Adj <- tunetable$Curr_Var_Adj[tunetable$Fleet==fleet]
+        Curr_Var_Adj <- NA
+        if("Curr_Var_Adj" %in% names(tunetable)){
+          Curr_Var_Adj <- tunetable$Curr_Var_Adj[tunetable$Fleet==fleet]
+        }
+        if("Var_Adj" %in% names(tunetable)){
+          Curr_Var_Adj <- tunetable$Var_Adj[tunetable$Fleet==fleet]
+        }
+        if(is.na(Curr_Var_Adj)){
+          stop("Model output missing required values, perhaps due to an older version of SS")
+        }
+
         # McAllister-Ianelli multiplier
-        MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable$Fleet==fleet]
+        MI_mult <- NA
+        if("HarMean(effN)/mean(inputN*Adj)" %in% names(tunetable)){
+          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable$Fleet==fleet]
+        }
+        if("MeaneffN/MeaninputN" %in% names(tunetable)){
+          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable$Fleet==fleet]
+        }
+        if(is.na(MI_mult)){
+          stop("Model output missing required values, perhaps due to an older version of SS")
+        }
 
         # make new row for table
         newrow <-
