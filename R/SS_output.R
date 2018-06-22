@@ -626,7 +626,9 @@ SS_output <-
 
   # compositions
   if(comp){   # skip this stuff if no CompReport.sso file
-    allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE, colClasses="character", skip=3, nrows=15)
+    # read header section of file to get bin information
+    allbins <- read.table(file=compfile, col.names=1:ncols, fill=TRUE,
+                          colClasses="character", skip=3, nrows=25)
     #lbins is data length bins
     lbins <- as.numeric(allbins[grep("Size_Bins_dat", allbins[,1])+2, -1])
     lbins <- lbins[!is.na(lbins)]
@@ -644,10 +646,11 @@ SS_output <-
       nagebins <- length(agebins)
     }else{
       # read composition database
-      if(SS_versionshort=="SS-V3.11") col.names=1:21 else col.names=1:22
-      #if(SS_versionshort=="SS-V3.24") col.names=1:23
-      if(SS_versionNumeric >= 3.24) col.names=1:23
-      rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE, colClasses="character", skip=compskip, nrows=-1)
+      # figure out number of columns based on header row
+      col.names <- as.character(read.table(file=compfile, skip=compskip,
+                                           nrows=1, colClasses="character"))
+      rawcompdbase <- read.table(file=compfile, col.names=col.names, fill=TRUE,
+                                 colClasses="character", skip=compskip, nrows=-1)
       names(rawcompdbase) <- rawcompdbase[1,]
       names(rawcompdbase)[names(rawcompdbase)=="Used?"] <- "Used"
       endfile <- grep("End_comp_data",rawcompdbase[,1])
@@ -656,16 +659,21 @@ SS_output <-
       # update to naming convention associated with 3.30.01.15
       compdbase <- df.rename(compdbase,
                              oldnames=c("Pick_gender", "Gender"),
-                             newnames=c("Pick_sex",    "Sex"))
-      # split Pick_sex=3 into males and females to get a value for sex = 0 (unknown), 1 (female), or 2 (male)
-      compdbase$sex <- compdbase$Pick_sex
-      compdbase$sex[compdbase$Pick_sex==3] <- compdbase$Sex[compdbase$Pick_sex==3]
+                             newnames=c("Pick_sex",    "Sexes"))
+      # "Sexes" (formerly "Pick_sex"): 0 (unknown), 1 (female), 2 (male),
+      #                                or 3 (females and then males)
+      # "Sex": 1 (unknown or female), or 2 (male)
+      #
+      # add new column in code below:
+      # "sex": 0 (unknown), 1 (female), or 2 (male)
+      compdbase$sex <- compdbase$Sexes
+      compdbase$sex[compdbase$Sexes==3] <- compdbase$Sex[compdbase$Sexes==3]
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
         if(!hidewarn)
           cat('Correcting for bug in tag data output associated with SSv3.24f\n')
-        tag1rows <- compdbase$Pick_sex=="TAG1"
+        tag1rows <- compdbase$Sexes=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]
           tag1new <- tag1
@@ -676,20 +684,33 @@ SS_output <-
         }
       }
 
+      # remove rows within missing observations (beginning of each section)
       compdbase <- compdbase[compdbase$Obs!="",]
+      # replace underscores with NA
       compdbase[compdbase=="_"] <- NA
+      # replace any NA values in the Used? column with "yes".
       compdbase$Used[is.na(compdbase$Used)] <- "yes"
-      if(!("SuprPer" %in% names(compdbase))) compdbase$SuprPer <- "No"
+      # add SuprPer column for versions where it didn't exist
+      if(!("SuprPer" %in% names(compdbase))){
+        compdbase$SuprPer <- "No"
+      }
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
 
       n <- sum(is.na(compdbase$N) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
-        cat("Warning:",n,"rows from composition database have NA sample size\n  but are not part of a super-period. (Maybe input as N=0?)\n")
+        cat("Warning:",n,"rows from composition database have NA sample size\n",
+            "but are not part of a super-period. (Maybe input as N=0?)\n")
       }
-      for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]) compdbase[,i] <- as.numeric(compdbase[,i])
+      for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]){
+        compdbase[,i] <- as.numeric(compdbase[,i])
+      }
 
       # configure seasons
-      if(nseasons>1) compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="") else compdbase$YrSeasName <- compdbase$Yr
+      if(nseasons>1){
+        compdbase$YrSeasName <- paste(floor(compdbase$Yr),"s",compdbase$Seas,sep="")
+      }else{
+        compdbase$YrSeasName <- compdbase$Yr
+      }
 
       # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
       if(!"Yr.S" %in% names(compdbase)){
