@@ -64,27 +64,16 @@ SS_output <-
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
            aalmaxbinrange=4)
 {
-  ################################################################################
-  #
-  # SS_output
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: To import content from Stock Synthesis model run.
-  # Written: Ian Stewart, NWFSC. Ian.Stewart-at-noaa.gov
-  #          Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-  #          and other contributors to http://code.google.com/p/r4ss/
-  # Returns: a list containing elements of Report.sso and/or covar.sso,
-  #          formatted as R objects, and optional summary statistics to R console
-  #
-  ################################################################################
-
   flush.console()
 
   #################################################################################
   ## embedded functions: emptytest, matchfun and matchfun2
   #################################################################################
 
-  emptytest <- function(x){ sum(!is.na(x) & x=="")/length(x) }
+  emptytest <- function(x){
+    # function to help test for empty columns
+    sum(!is.na(x) & x=="")/length(x)
+  }
 
   matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
   {
@@ -475,7 +464,8 @@ SS_output <-
     # apply function above to get a bunch of things
     nseasons        <- get.def("N_seasons")
     nsubseas        <- get.def("N_sub_seasons")
-    seasdurations   <- get.def("Season_Durations")
+    seasdurations   <- as.numeric(rawdefs[grep("Season_Durations", rawdefs$X1),
+                                          1+1:nseasons])
     spawnmonth      <- get.def("Spawn_month")
     spawnseas       <- get.def("Spawn_seas")
     spawn_timing    <- get.def("Spawn_timing_in_season")
@@ -1573,14 +1563,19 @@ SS_output <-
     lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
     # avoid NA warnings by removing #IND values
     lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-    for(icol in 2:ncol(lenntune)) lenntune[,icol] <- as.numeric(lenntune[,icol])
+    for(icol in 2:ncol(lenntune)){
+      lenntune[,icol] <- as.numeric(lenntune[,icol])
+    }
     lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean(effN)"/lenntune$"mean(inputN*Adj)"
   }else{
     # new in 3.30 has keyword at top
     lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
 
     if("Factor" %in% names(lenntune)){
-      warning("Not processing 'Length_Comp_Fit_Summary'. r4ss not yet adapted to new format")
+      # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
+      for(icol in which(!names(lenntune) %in% c("#","FleetName"))){
+        lenntune[,icol] <- as.numeric(lenntune[,icol])
+      }
     }else{
       # reorder columns (leaving out sample sizes perhaps to save space)
       lenntune <- lenntune[lenntune$N>0, ]
@@ -1637,7 +1632,10 @@ SS_output <-
                           header=TRUE)
   }
   if("Factor" %in% names(agentune)){
-    warning("Not processing 'Age_Comp_Fit_Summary'. r4ss not yet adapted to new format")
+    # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
+    for(icol in which(!names(agentune) %in% c("#","FleetName"))){
+      agentune[,icol] <- as.numeric(agentune[,icol])
+    }
   }else{
     if(!is.null(dim(agentune))){
       names(agentune)[ncol(agentune)] <- "FleetName"
@@ -1674,36 +1672,93 @@ SS_output <-
   }
   stats$Age_comp_Eff_N_tuning_check <- agentune
 
-  
   ## FIT_SIZE_COMPS
   fit_size_comps <- NULL
   if(SS_versionNumeric >= 3.3){
-    fit_size_comps <- matchfun2("FIT_SIZE_COMPS",1,"Size_Comp_Fit_Summary",-(nfleets+2),
-                                header=TRUE)
+    # test for SS version 3.30.12 and beyond which doesn't include
+    # the label "Size_Comp_Fit_Summary"
+    if(!is.na(matchfun("FIT_SIZE_COMPS")) &
+       is.na(matchfun("Size_Comp_Fit_Summary"))){
+      fit_size_comps <- matchfun2("FIT_SIZE_COMPS",1,"OVERALL_COMPS",-1,
+                                  header=FALSE)
+      if(!is.null(dim(fit_size_comps)) && nrow(fit_size_comps)>0){
+        # column names
+        names(fit_size_comps) <- fit_size_comps[2,]
+        # add new columns for method-specific info
+        fit_size_comps$Method <- NA
+        fit_size_comps$Units <- NA
+        fit_size_comps$Scale <- NA
+        fit_size_comps$Add_to_comp <- NA
+        # find the lines with the method-specific info
+        method_lines <- grep("#Method:", fit_size_comps[,1])
+        method_info <- fit_size_comps[method_lines,]
+        tune_lines <- grep("Factor", fit_size_comps[,1])
+        sizentune <- NULL 
+        # loop over methods to fill in new columns
+        for(imethod in 1:length(method_lines)){
+          start <- method_lines[imethod]
+          if(imethod != length(method_lines)){
+            end <- method_lines[imethod+1] - 1
+          }else{
+            end <- nrow(fit_size_comps)
+          }
+          fit_size_comps$Method[start:end]      <- method_info[imethod,2]
+          fit_size_comps$Units[start:end]       <- method_info[imethod,4]
+          fit_size_comps$Scale[start:end]       <- method_info[imethod,6]
+          fit_size_comps$Add_to_comp[start:end] <- method_info[imethod,8]
+          # split out rows with info on tuning
+          sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
+        }
+
+        # format sizentune (info on tuning) has been split into
+        # a separate data.frame, needs formatting: remove extra columns, change names
+        goodcols <- c(1:grep("FleetName",sizentune[1,]),
+                      grep("Method",names(sizentune)))
+        sizentune[1,max(goodcols)] <- "Method"
+        sizentune <- sizentune[,goodcols]
+        names(sizentune) <- sizentune[1,]
+        sizentune <- sizentune[sizentune$Factor==7,]
+        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
+          sizentune[,icol] <- as.numeric(sizentune[,icol])
+        }
+        stats$Size_comp_Eff_N_tuning_check <- sizentune
+        # format fit_size_comps: remove extra rows, make numeric
+        fit_size_comps <- fit_size_comps[fit_size_comps$Fleet_Name %in% FleetNames,]
+      } # end check for non-empty fit_size_comps
+    }else{
+      # formatting used for earlier 3.30 versions (prior to 3.30.12)
+      fit_size_comps <- matchfun2("FIT_SIZE_COMPS",1,
+                                  "Size_Comp_Fit_Summary",-(nfleets+2),
+                                  header=TRUE)
+    }
   }
+  # extra formatting for all versions
   if(!is.null(dim(fit_size_comps)) && nrow(fit_size_comps)>0){
     # replace underscores with NA
     fit_size_comps[fit_size_comps=="_"] <- NA
     # make columns numeric (except "Used", which may contain "skip")
-    for(icol in which(!names(fit_size_comps) %in% "Use")){
+    for(icol in which(!names(fit_size_comps) %in%
+                      c("Fleet_Name","Use","Units","Scale"))){
       fit_size_comps[,icol] <- as.numeric(fit_size_comps[,icol])
     }
   }
-  ### note: should add "Recommend_Var_Adj" value to match other tables
 
-  # Size comp effective N tuning check (only available in version 3.30.01.12 and above)
+  # Size comp effective N tuning check
+  # (only available in version 3.30.01.12 and above)
   if(SS_versionNumeric >= 3.3){
-    sizentune <- matchfun2("Size_Comp_Fit_Summary",1,"OVERALL_COMPS",-1,
-                           cols=1:10,header=TRUE)
-    if(!is.null(dim(sizentune))){
-      sizentune[,1] <- sizentune[,10]
-      sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
-    }else{
-      sizentune <- NULL
+    if(!exists("sizentune")){
+      # if this table hasn't already been parsed from fit_size_comps above
+      sizentune <- matchfun2("Size_Comp_Fit_Summary",1,"OVERALL_COMPS",-1,
+                             cols=1:10,header=TRUE)
+      if(!is.null(dim(sizentune))){
+        sizentune[,1] <- sizentune[,10]
+        sizentune <- sizentune[sizentune$Npos>0, c(1,3,4,5,6,8,9)]
+      }else{
+        sizentune <- NULL
+      }
     }
     stats$Size_comp_Eff_N_tuning_check <- sizentune
   }
-
 
   if(verbose) cat("Finished primary run statistics list\n")
   flush.console()
@@ -1768,7 +1823,6 @@ SS_output <-
   returndat$recruit     <- recruit
   returndat$Full_Spawn_Recr_Curve <- Full_Spawn_Recr_Curve
   returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
-
 
   # Static growth
   begin <- matchfun("N_Used_morphs",rawrep[,6])+1 # keyword "BIOLOGY" not unique enough

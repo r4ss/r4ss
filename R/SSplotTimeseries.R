@@ -163,8 +163,10 @@ SSplotTimeseries <-
   ts <- timeseries
   if(nseasons>1){
     if(SS_versionshort=="SS-V3.11"){
+      # seasfracs previously unavailable so assume all seasons equal
       ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
     }else{
+      # more recent models have seasfracs
       ts$YrSeas <- ts$Yr + seasfracs
     }
   }else{
@@ -497,10 +499,10 @@ SSplotTimeseries <-
           points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
         }else{
           # add lines for confidence intervals areas if requested
-          # lines and points on integer years
-          points(ts$Yr[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
-          lines( ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
-          points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
+          # lines and points (previously on integer years, but not sure why)
+          points(ts$YrSeas[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
+          lines( ts$YrSeas[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
+          points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
           if(subplot %in% c(7,9,11)){
             # subset years for confidence intervals
             if(subplot==7){
