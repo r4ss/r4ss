@@ -4,7 +4,7 @@
 \alias{SSMethod.TA1.8}
 \title{Apply Francis composition weighting method TA1.8}
 \usage{
-SSMethod.TA1.8(fit, type, fleet, part = 0:2, pick.sex = 0:3, seas = NULL,
+SSMethod.TA1.8(fit, type, fleet, part = 0:2, sexes = 0:3, seas = NULL,
   method = NULL, plotit = TRUE, printit = TRUE, datonly = FALSE,
   plotadj = !datonly, maxpanel = 1000, fleetnames = NULL,
   label.part = TRUE, label.sex = TRUE, set.pars = TRUE)
@@ -24,9 +24,9 @@ to all fleets combined)}
 to composition data with one of these partition values.
 Default is to include all partition values (0, 1, 2).}
 
-\item{pick.sex}{vector of one or more values for Pick_sex; analysis is
+\item{sexes}{vector of one or more values for Sexes; analysis is
 restricted to composition data with one of these
-Pick_sex values.  Ignored if type=='con'.}
+Sexes values.  Ignored if type=='con'.}
 
 \item{seas}{string indicating how to treat data from multiple seasons
 'comb' - combine seasonal data for each year and plot against Yr
