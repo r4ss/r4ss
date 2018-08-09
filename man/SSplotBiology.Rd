@@ -5,10 +5,10 @@
 \title{Plot biology related quantities.}
 \usage{
 SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
-  subplots = 1:17, seas = 1, morphs = NULL, colvec = c("red", "blue",
-  "grey20"), ltyvec = c(1, 2), shadealpha = 0.1, imageplot_text = FALSE,
-  imageplot_text_round = 0, legendloc = "topleft", plotdir = "default",
-  labels = c("Length (cm)", "Age (yr)", "Maturity",
+  subplots = 1:32, seas = 1, morphs = NULL, forecast = FALSE,
+  colvec = c("red", "blue", "grey20"), ltyvec = c(1, 2), shadealpha = 0.1,
+  imageplot_text = FALSE, imageplot_text_round = 0, legendloc = "topleft",
+  plotdir = "default", labels = c("Length (cm)", "Age (yr)", "Maturity",
   "Mean weight (kg) in last year", "Spawning output",
   "Length (cm, beginning of the year)", "Natural mortality",
   "Female weight (kg)", "Female length (cm)", "Fecundity",
@@ -33,6 +33,8 @@ seasonal models but but maybe not fully implemented)}
 
 \item{morphs}{Which morphs to plot (if more than 1 per sex)? By default this
 will be replist$mainmorphs}
+
+\item{forecast}{Include forecast years in plots of time-varying biology?}
 
 \item{colvec}{vector of length 3 with colors for various points/lines}
 

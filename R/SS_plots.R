@@ -80,8 +80,8 @@
 #' @param verbose Return updates of function progress to the R GUI?  Default=T.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
-#' @param forecastplot Include forecast years in the plots? Obviously requires
-#' forecast options to have been used in the model.  Default=T.
+#' @param forecastplot Include forecast years in the timeseries plots and
+#' plots of time-varying quantities? Default=TRUE.
 #' @param datplot Plot the data by itself? This is useful in document
 #' preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
 #' Default=F.
@@ -488,6 +488,7 @@ SS_plots <-
   {
     if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
     plotinfo <- SSplotBiology(replist=replist,
+                              forecast=forecastplot,
                               plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
                               ptsize=ptsize, res=res, mainTitle=mainTitle,

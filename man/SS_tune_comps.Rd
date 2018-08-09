@@ -29,6 +29,15 @@ Creates a table of values that can be copied into the SS control file
 for SS 3.30 models to adjust the input sample sizes for length and age
 compositions based on either the Francis or McAllister-Ianelli tuning.
 }
+\details{
+Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
+table in Report.sso is already in the format required to paste into
+the control file to apply the McAllister-Ianelli tuning. However, this
+function provides the additional option of the Francis tuning and the
+ability to compare the two approaches.  Also note, that the
+Dirichlet-Multinomial likelihood is an alternative approach that allow
+the tuning factor to be estimated rather than iteratively tuned.
+}
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
 fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.

@@ -12,10 +12,12 @@
 #' @param string String partially matching name of parameter to be changed. Can
 #' be used instead of \code{linenum} or left as NULL.
 #' @param usepar Use PAR file from previous profile step for starting values?
-#' @param globalpar Use global par file for all runs instead of the par file
-#' from each successive run
-#' @param parfile Name of par file to use (Ian says "I don't remember how this
-#' interacts with the globalpar input")
+#' @param globalpar Use global par file ("parfile_original_backup.sso", which is
+#' automatically copied from original \code{parfile}) for all runs instead
+#' of the par file from each successive run
+#' @param parfile Name of par file to use (for 3.30 models, this needs to
+#' remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
+#' is used for all runs.
 #' @param parlinenum Line number in par file to change.
 #' @param parstring String in par file preceding line number to change.
 #' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
@@ -114,29 +116,13 @@ function(
          masterctlfile="control.ss_new",
          newctlfile="control_modified.ss", # must match entry in starter file
          linenum=NULL, string=NULL, profilevec=NULL,
-         usepar=FALSE, globalpar=FALSE, parfile=NULL,
+         usepar=FALSE, globalpar=FALSE, parfile="ss.par",
          parlinenum=NULL, parstring=NULL,
          dircopy=TRUE, exe.delete=FALSE,
          model='ss', extras="-nox", systemcmd=FALSE, saveoutput=TRUE,
          overwrite=TRUE, whichruns=NULL, SSversion="3.30", prior_check=TRUE,
          verbose=TRUE)
 {
-  ################################################################################
-  #
-  # SS_profile
-  #
-  # This function comes with no warranty or guarantee of accuracy
-  #
-  # Purpose: run a likelihood profile by iteratively modifying
-  #          a Stock Synthesis control file
-  # Written: Ian Taylor, NWFSC/UW. Ian.Taylor-at-noaa.gov
-  # Returns: Plots of prior distributions used in Stock Synthesis model
-  # Notes:   requires SS_parlines and SS_changepars
-  #          hosted at http://code.google.com/p/r4ss/
-  # Required packages: none
-  #
-  ################################################################################
-
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -163,10 +149,15 @@ function(
   if(!is.null(linenum) & !is.null(string))
     stop("You should input either 'linenum' or 'string', but not both")
   if(usepar) { # if using parfile
-    if(is.null(parlinenum) & is.null(parstring))
+    if(parfile!="ss.par" & (SSversion=="3.30" | SSversion==3.3)){
+      stop("'parfile' input needs to be 'ss.par' for SS version 3.30 models")
+    }
+    if(is.null(parlinenum) & is.null(parstring)){
       stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
-    if(!is.null(parlinenum) & !is.null(parstring))
+    }
+    if(!is.null(parlinenum) & !is.null(parstring)){
       stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+    }
   }
   
   # figure out length of profile vec and sort out which runs to do

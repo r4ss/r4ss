@@ -7,7 +7,7 @@
 SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
   linenum = NULL, string = NULL, profilevec = NULL, usepar = FALSE,
-  globalpar = FALSE, parfile = NULL, parlinenum = NULL,
+  globalpar = FALSE, parfile = "ss.par", parlinenum = NULL,
   parstring = NULL, dircopy = TRUE, exe.delete = FALSE, model = "ss",
   extras = "-nox", systemcmd = FALSE, saveoutput = TRUE,
   overwrite = TRUE, whichruns = NULL, SSversion = "3.30",
@@ -31,11 +31,13 @@ be used instead of \code{linenum} or left as NULL.}
 
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
-\item{globalpar}{Use global par file for all runs instead of the par file
-from each successive run}
+\item{globalpar}{Use global par file ("parfile_original_backup.sso", which is
+automatically copied from original \code{parfile}) for all runs instead
+of the par file from each successive run}
 
-\item{parfile}{Name of par file to use (Ian says "I don't remember how this
-interacts with the globalpar input")}
+\item{parfile}{Name of par file to use (for 3.30 models, this needs to
+remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
+is used for all runs.}
 
 \item{parlinenum}{Line number in par file to change.}
 
