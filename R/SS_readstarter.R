@@ -11,7 +11,9 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
-  if(verbose) cat("running SS_readstarter\n")
+  if(verbose){
+    message("running SS_readstarter")
+  }
   size <- file.info(file)$size
   if(is.na(size) || size==0) stop("file empty or missing:",file)
   starter <- readLines(file,warn=F)
@@ -43,7 +45,8 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$datfile <- strings[1]
   mylist$ctlfile <- strings[2]
   if(verbose){
-    cat("  data, control files: ",mylist$datfile,", ",mylist$ctlfile,"\n",sep="")
+    message("  data, control files: ",mylist$datfile,
+            ", ",mylist$ctlfile, sep="")
   }
 
   # get numbers (could be better integrated with function above)
@@ -84,13 +87,17 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
       mylist$STD_yr_vec <- allnums[i:(i+N_STD_yrs-1)]; i <- i+N_STD_yrs
   }
   mylist$converge_criterion <- allnums[i]; i <- i+1
-  if(verbose) cat("  converge_criterion =",mylist$converge_criterion,"\n")
+  if(verbose){
+    message("  converge_criterion = ", mylist$converge_criterion)
+  }
   mylist$retro_yr <- allnums[i]; i <- i+1
   mylist$min_age_summary_bio <- allnums[i]; i <- i+1
   mylist$depl_basis <- allnums[i]; i <- i+1
   mylist$depl_denom_frac <- allnums[i]; i <- i+1
   mylist$SPR_basis <- allnums[i]; i <- i+1
-  if(verbose) cat("  SPR_basis =",mylist$SPR_basis,"\n")
+  if(verbose){
+    message("  SPR_basis = ", mylist$SPR_basis)
+  }
   mylist$F_report_units <- allnums[i]; i <- i+1
   if(!is.na(mylist$F_report_units) && mylist$F_report_units==4){
     mylist$F_age_range <- allnums[i]; i <- i+1
@@ -100,18 +107,22 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
     mylist$F_age_range[2] <- NA
   }
   mylist$F_report_basis <- allnums[i]; i <- i+1
-  if(verbose) cat("  F_report_basis =",mylist$F_report_basis,"\n")
+  if(verbose){
+    message("  F_report_basis = ", mylist$F_report_basis)
+  }
 
   # last value in vector of numerical values
   i.final <- length(allnums)
   if(i < i.final){
     # file is probably 3.30
-    cat("Assuming version 3.30 based on number of numeric values.\n")
+    if(verbose){
+      message("Assuming version 3.30 based on number of numeric values.")
+    }
     mylist$MCMC_output_detail <- allnums[i]; i <- i+1
     mylist$ALK_tolerance <- allnums[i]; i <- i+1
     if(verbose){
-      cat("  MCMC_output_detail =",mylist$MCMC_output_detail,"\n")
-      cat("  ALK_tolerance =",mylist$ALK_tolerance,"\n")
+      message("  MCMC_output_detail = ",mylist$MCMC_output_detail)
+      message("  ALK_tolerance = ",mylist$ALK_tolerance)
     }
   }
 
@@ -119,10 +130,10 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$final <- final <- allnums[i]
   if(!is.na(final) && final %in% c(3.30, 999)){
     if(verbose){
-      cat("Read of starter file complete. Final value: ",final,"\n")
+      message("Read of starter file complete. Final value: ",final)
     }
   }else{
-    warning("Final value is ", allnums[i]," but should be either 3.30 or 999\n")
+    warning("Final value is ", allnums[i]," but should be either 3.30 or 999")
   }
   if(final==3.30){
     mylist$SSversion <- "3.30"
