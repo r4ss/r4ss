@@ -128,7 +128,12 @@ SS_output <-
     }
     return(df)
   }
-  
+
+  # check to make sure the first input is in the corect format
+  if(!is.character(dir) | length(dir)!=1){
+    stop("Input 'dir' should be a character string for a directory")
+  }
+
   # get info on output files created by Stock Synthesis
   shortrepfile <- repfile
   repfile <- file.path(dir,repfile)
