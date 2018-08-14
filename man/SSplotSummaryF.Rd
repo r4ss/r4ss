@@ -6,8 +6,9 @@
 \usage{
 SSplotSummaryF(replist, yrs = "all", Ftgt = NA,
   ylab = "Summary Fishing Mortality", plot = TRUE, print = FALSE,
-  plotdir = "default", verbose = TRUE, uncertainty = TRUE, pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10)
+  plotdir = "default", verbose = TRUE, uncertainty = TRUE,
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
+  ptsize = 10)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}

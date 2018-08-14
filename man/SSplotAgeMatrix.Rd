@@ -7,8 +7,8 @@
 SSplotAgeMatrix(replist, option = 1, slices = NULL, scale = NULL,
   plot = TRUE, print = FALSE, labels = c("Age", "Length", "True age",
   "Observed age", "for ageing error type", "Distribution of", "at"),
-  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, mainTitle = TRUE, plotdir = "default")
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
+  ptsize = 10, cex.main = 1, mainTitle = TRUE, plotdir = "default")
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}

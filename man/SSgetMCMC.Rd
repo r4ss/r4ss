@@ -7,8 +7,8 @@
 SSgetMCMC(dir = NULL, verbose = TRUE, writecsv = FALSE,
   csv1 = "keyposteriors.csv", csv2 = "nuisanceposteriors.csv",
   keystrings = c("NatM", "R0", "steep", "RecrDev_2008", "Q_extraSD"),
-  nuisancestrings = c("Objective_function", "SSB_", "InitAge", "RecrDev"),
-  modelnames = "default", burnin = 0, thin = 1)
+  nuisancestrings = c("Objective_function", "SSB_", "InitAge",
+  "RecrDev"), modelnames = "default", burnin = 0, thin = 1)
 }
 \arguments{
 \item{dir}{A string (or vector of strings) of the directory (or directories)

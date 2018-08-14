@@ -4,7 +4,8 @@
 \alias{SS_readdat_3.30}
 \title{read data file from SS version 3.30}
 \usage{
-SS_readdat_3.30(file, verbose = TRUE, echoall = FALSE, section = NULL)
+SS_readdat_3.30(file, verbose = TRUE, echoall = FALSE,
+  section = NULL)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}

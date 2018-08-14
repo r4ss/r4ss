@@ -4,8 +4,8 @@
 \alias{SS_tune_comps}
 \title{Calculate new tunings for length and age compositions}
 \usage{
-SS_tune_comps(replist, fleets = "all", option = "Francis", digits = 6,
-  write = TRUE)
+SS_tune_comps(replist, fleets = "all", option = "Francis",
+  digits = 6, write = TRUE)
 }
 \arguments{
 \item{replist}{List output from SS_output}

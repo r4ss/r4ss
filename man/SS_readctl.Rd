@@ -4,10 +4,10 @@
 \alias{SS_readctl}
 \title{read control file from SS}
 \usage{
-SS_readctl(file, ctlversion = "3.24", verbose = TRUE, echoall = FALSE,
-  nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA,
-  Nfleet = 2, Nsurveys = 2, DatFile = NA, N_tag_groups = NA,
-  N_CPUE_obs = NA)
+SS_readctl(file, ctlversion = "3.24", verbose = TRUE,
+  echoall = FALSE, nseas = 4, N_areas = 1, Nages = 20,
+  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
+  DatFile = NA, N_tag_groups = NA, N_CPUE_obs = NA)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
