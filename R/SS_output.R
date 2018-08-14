@@ -2346,9 +2346,12 @@ SS_output <-
     cpue <- matchfun2("INDEX_2",1,"INDEX_2",ncpue+1,header=TRUE)
     cpue[cpue=="_"] <- NA
     # make older SS output names match current SS output conventions
+    # note: "Fleet_name" (formerly "Name") introduced in 3.30.12
+    #       and might change as result of discussion on inconsistent use of
+    #       similar column names.
     cpue <- df.rename(cpue,
-                      oldnames=c("Yr.S", "Supr_Per"),
-                      newnames=c("Yr.frac", "SuprPer"))
+                      oldnames=c("Yr.S",    "Supr_Per", "Name"),
+                      newnames=c("Yr.frac", "SuprPer",  "Fleet_name"))
     if(SS_versionNumeric < 3.24){
       cpue$Name <- NA
       for(i in 1:nrow(cpue)){
@@ -2356,7 +2359,7 @@ SS_output <-
         cpue$Name[i] <- substring(cpue$Fleet[i],nchar(cpue$Fleet[i])+2)
       }
     }
-    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Name","SuprPer")]){
+    for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet_name","SuprPer")]){
       cpue[,i] <- as.numeric(cpue[,i])
     }
   }else{
