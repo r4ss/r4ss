@@ -207,7 +207,7 @@ function(replist,subplots=1:9,
     include <- !is.na(cpueuse$Like)
     if(any(include)){
       if(usecol){
-        s <- cpueuse$Seas
+        s <- cpueuse$Seas[which(include)]
       }else{
         s <- 1 # only use colorvector if more than 1 season
       }
