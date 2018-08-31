@@ -2030,10 +2030,11 @@ SS_output <-
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   # temporary fix for 3.30.03.06
   timeseries <- timeseries[timeseries$Seas != "recruits",]
-  
-  timeseries[timeseries=="_"] <- NA
-  for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]) timeseries[,i] = as.numeric(timeseries[,i])
 
+  timeseries[timeseries=="_"] <- NA
+  for(i in (1:ncol(timeseries))[names(timeseries)!="Era"]){
+    timeseries[,i] <- as.numeric(timeseries[,i])
+  }
   ## # sum catches and other quantities across fleets
   ## # commented out pending additional test for more than one fleet with catch,
   ## # without which the apply function has errors
@@ -2581,21 +2582,47 @@ SS_output <-
     }
   }
 
-  # catch at age
-  catage <- matchfun2("CATCH_AT_AGE",1,"BIOLOGY",-1)
+  # test for discard at age section (added with 3.30.12, 29-Aug-2018)
+  if(!is.na(matchfun("DISCARD_AT_AGE"))){
+    # read discard at age
+    discard_at_age <- matchfun2("DISCARD_AT_AGE", 1, "BIOLOGY", -1)
+    # read catch at age
+    catage <- matchfun2("CATCH_AT_AGE", 1, "DISCARD_AT_AGE", -1)
+    # process discard at age
+    if(discard_at_age[[1]][1]=="absent"){
+      discard_at_age <- NA
+      warning("No discard-at-age numbers because 'detailed age-structured reports'\n",
+              "is turned off in starter file.")
+    }else{
+      discard_at_age <- discard_at_age[,apply(discard_at_age,2,emptytest)<1]
+      names(discard_at_age) <- discard_at_age[1,]
+      discard_at_age <- discard_at_age[-1,]
+      for(icol in (1:ncol(discard_at_age))[substr(names(discard_at_age),1,2)!="XX" &
+                                             !names(discard_at_age) %in% c("Type","Era")]){
+        discard_at_age[,icol] <- as.numeric(discard_at_age[,icol])
+      }
+    }
+  }else{
+    # read catch at age using old end point (before discard-at-age was added)
+    catage <- matchfun2("CATCH_AT_AGE",1,"BIOLOGY",-1)
+    discard_at_age <- NA
+  }
+  # process catch at age
   if(catage[[1]][1]=="absent"){
     catage <- NA
-    cat("! Warning: no catch-at-age numbers because 'detailed age-structured reports'\n",
-        "          is turned off in starter file.\n")
+    warning("No catch-at-age numbers because 'detailed age-structured reports'\n",
+            "is turned off in starter file.\n")
   }else{
     catage <- catage[,apply(catage,2,emptytest)<1]
     names(catage) <- catage[1,]
     catage <- catage[-1,]
-    for(icol in (1:ncol(catage))[substr(names(catage),1,2)!="XX" & names(catage)!="Era"]){
+    for(icol in (1:ncol(catage))[substr(names(catage),1,2)!="XX" &
+                                           !names(catage) %in% c("Type","Era")]){
       catage[,icol] <- as.numeric(catage[,icol])
     }
   }
   returndat$catage <- catage
+  returndat$discard_at_age <- discard_at_age
 
   if(!is.na(matchfun("Z_AT_AGE"))){
     # Z at age
