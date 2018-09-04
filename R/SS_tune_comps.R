@@ -4,6 +4,14 @@
 #' for SS 3.30 models to adjust the input sample sizes for length and age
 #' compositions based on either the Francis or McAllister-Ianelli tuning.
 #'
+#' Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
+#' table in Report.sso is already in the format required to paste into
+#' the control file to apply the McAllister-Ianelli tuning. However, this
+#' function provides the additional option of the Francis tuning and the
+#' ability to compare the two approaches.  Also note, that the
+#' Dirichlet-Multinomial likelihood is an alternative approach that allow
+#' the tuning factor to be estimated rather than iteratively tuned.
+#'
 #' @param replist List output from SS_output
 #' @param fleets Either the string 'all', or a vector of fleet numbers
 #' @param option Which type of tuning: 'none', 'Francis', or 'MI'
@@ -116,6 +124,11 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
         }
         if("MeaneffN/MeaninputN" %in% names(tunetable)){
           MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable$Fleet==fleet]
+        }
+        if("Factor" %in% names(tunetable)){
+          # starting with version 3.30.12
+          MI_mult <- tunetable$Recommend_var_adj[tunetable$Fleet==fleet] /
+            tunetable$Curr_Var_Adj[tunetable$Fleet==fleet]
         }
         if(is.na(MI_mult)){
           stop("Model output missing required values, perhaps due to an older version of SS")

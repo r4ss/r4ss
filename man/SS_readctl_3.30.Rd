@@ -6,9 +6,9 @@
 \usage{
 SS_readctl_3.30(file, verbose = TRUE, echoall = FALSE,
   ctlversion = "3.30", nseas = 4, N_areas = 1, Nages = 20,
-  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2, DatFile = NA,
-  Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0, 0, 9, 12),
-  use_datlist = FALSE, datlist = NULL)
+  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
+  DatFile = NA, Do_AgeKey = FALSE, N_tag_groups = NA,
+  N_CPUE_obs = c(0, 0, 9, 12), use_datlist = FALSE, datlist = NULL)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}

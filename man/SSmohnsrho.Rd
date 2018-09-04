@@ -4,7 +4,8 @@
 \alias{SSmohnsrho}
 \title{Calculate Mohn's Rho values for select quantities}
 \usage{
-SSmohnsrho(summaryoutput, endyrvec = NULL, startyr = NULL, verbose = TRUE)
+SSmohnsrho(summaryoutput, endyrvec = NULL, startyr = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}. The expected order for the
@@ -24,9 +25,12 @@ Function calculates:
 (2) a "Wood's Hole Mohn's Rho", and
 (3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho"
 (2) and (3) are based on all years between the reference and the retrospective run.
-Reference: Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias and
-retrospective patterns in integrated, age-structured stock assessment models. ICES J. Mar. Sci
-'Volume 72, Issue 1, 1 January 2015, Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
+}
+\references{
+Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias
+and retrospective patterns in integrated, age-structured stock assessment
+models. ICES J. Mar. Sci Volume 72, Issue 1, 1 January 2015,
+Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
 }
 \author{
 Chantel R. Wetzel and Carey McGilliard

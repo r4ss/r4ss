@@ -6,11 +6,11 @@
 \usage{
 SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
   areacols = "default", areanames = "default", forecastplot = TRUE,
-  uncertainty = TRUE, bioscale = "default", minyr = NULL, maxyr = NULL,
-  plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
-  btarg = "default", minbthresh = "default", xlab = "Year",
-  labels = NULL, pwidth = 6.5, pheight = 5, punits = "in", res = 300,
-  ptsize = 10, cex.main = 1)
+  uncertainty = TRUE, bioscale = "default", minyr = NULL,
+  maxyr = NULL, plot = TRUE, print = FALSE, plotdir = "default",
+  verbose = TRUE, btarg = "default", minbthresh = "default",
+  xlab = "Year", labels = NULL, pwidth = 6.5, pheight = 5,
+  punits = "in", res = 300, ptsize = 10, cex.main = 1)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}

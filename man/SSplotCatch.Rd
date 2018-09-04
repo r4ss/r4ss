@@ -5,17 +5,18 @@
 \title{Plot catch related quantities.}
 \usage{
 SSplotCatch(replist, subplots = 1:15, add = FALSE, areas = 1,
-  plot = TRUE, print = FALSE, type = "l", fleetlty = 1, fleetpch = 1,
-  fleetcols = "default", fleetnames = "default", lwd = 3,
-  areacols = "default", areanames = "default", minyr = NULL,
-  maxyr = NULL, annualcatch = TRUE, forecastplot = FALSE,
-  plotdir = "default", showlegend = TRUE, legendloc = "topleft",
-  order = "default", xlab = "Year", labels = c("Harvest rate/Year",
-  "Continuous F", "Landings", "Total catch", "Predicted discards",
-  "Discard fraction", "(mt)", "(numbers x1000)", "Observed and expected",
-  "aggregated across seasons"), catchasnumbers = NULL, catchbars = TRUE,
-  addmax = TRUE, ymax = NULL, pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
+  plot = TRUE, print = FALSE, type = "l", fleetlty = 1,
+  fleetpch = 1, fleetcols = "default", fleetnames = "default",
+  lwd = 3, areacols = "default", areanames = "default",
+  minyr = NULL, maxyr = NULL, annualcatch = TRUE,
+  forecastplot = FALSE, plotdir = "default", showlegend = TRUE,
+  legendloc = "topleft", order = "default", xlab = "Year",
+  labels = c("Harvest rate/Year", "Continuous F", "Landings",
+  "Total catch", "Predicted discards", "Discard fraction", "(mt)",
+  "(numbers x1000)", "Observed and expected", "aggregated across seasons"),
+  catchasnumbers = NULL, catchbars = TRUE, addmax = TRUE,
+  ymax = NULL, pwidth = 6.5, pheight = 5, punits = "in",
+  res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}

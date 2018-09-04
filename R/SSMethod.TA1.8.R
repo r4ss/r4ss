@@ -42,9 +42,9 @@
 #' to composition data with one of these partition values.
 #' Default is to include all partition values (0, 1, 2).
 #' @param label.part Include labels indicating which partitions are included?
-#' @param pick.sex vector of one or more values for Pick_sex; analysis is
+#' @param sexes vector of one or more values for Sexes; analysis is
 #' restricted to composition data with one of these
-#' Pick_sex values.  Ignored if type=='con'.
+#' Sexes values.  Ignored if type=='con'.
 #' @param label.sex Include labels indicating which sexes are included?
 #' @param seas string indicating how to treat data from multiple seasons
 #' 'comb' - combine seasonal data for each year and plot against Yr
@@ -88,19 +88,19 @@
 #' }
 #' 
 SSMethod.TA1.8 <-
-  function(fit, type, fleet, part=0:2, pick.sex=0:3, seas=NULL,
+  function(fit, type, fleet, part=0:2, sexes=0:3, seas=NULL,
            method=NULL, plotit=TRUE, printit=TRUE,
            datonly=FALSE, plotadj=!datonly, maxpanel=1000,
            fleetnames=NULL, label.part=TRUE, label.sex=TRUE,
            set.pars=TRUE)
 {
-  # Check the type is correct and the pick.sex is correct
+  # Check the type is correct and the sexes is correct
   is.in <- function (x, y)!is.na(match(x, y))
   if(!is.in(type,c('age','len','size','con'))){
     stop('Illegal value for type')
   }else{
-    if(sum(!is.in(pick.sex,c(0:3)))>0){
-      stop('Unrecognised value for pick.sex')
+    if(sum(!is.in(sexes,c(0:3)))>0){
+      stop('Unrecognised value for sexes')
     }
   }
 
@@ -114,15 +114,17 @@ SSMethod.TA1.8 <-
       stop('fleetnames needs to be NULL or have length = nfleets = ', fit$nfleets)
     }
   }
-  
   # Select the type of datbase
   dbase <- fit[[paste(type,'dbase',sep='')]]
   # sel is vector of row indices selected for the plot/calculations
   # select row indices matching fleet and partition
   sel <- is.in(dbase$Fleet,fleet) & is.in(dbase$Part,part)
-  # select row indices matching Pick_sex column
+  # select row indices matching Sexes column
   if(type!='con'){
-    sel <- sel & is.in(dbase$'Pick_sex',pick.sex)
+    # change column nanme on earlier SS versions to match change from
+    # Pick_sex to Sexes in 3.30.12 (July 2018)
+    names(dbase)[names(dbase)=='Pick_sex'] <- 'Sexes'
+    sel <- sel & is.in(dbase$'Sexes',sexes)
   }
   # for generalized size frequency comps, select chosen size method
   if(type=='size' & !is.null(method)){
@@ -150,11 +152,11 @@ SSMethod.TA1.8 <-
   # indx is string combining fleet, year, and potentially conditional bin
   indx <- paste(dbase$Fleet,dbase$Yr,if(type=='con')dbase$'Lbin_lo' else
                 '',if(seas=='sep')dbase$Seas else '')
-  # if subsetting by sex, add Pick_sex value to the indx strings
-  sex.flag <- type!='con' & max(tapply(dbase$'Pick_sex',
+  # if subsetting by sex, add Sexes value to the indx strings
+  sex.flag <- type!='con' & max(tapply(dbase$'Sexes',
                      dbase$Fleet,function(x)length(unique(x))))>1
   if(sex.flag){
-    indx <- paste(indx,dbase$'Pick_sex')
+    indx <- paste(indx,dbase$'Sexes')
   }
   # if subsetting by generalized size-method, add that value to indx strings
   method.flag <- type=='size' && length(unique(dbase$method))>1
@@ -178,7 +180,7 @@ SSMethod.TA1.8 <-
                         'ObsloAdj','ObshiAdj','Fleet','Yr')))
   # add columns of zeros to fill with values necessary for subsetting
   if(type=='con')pldat <- cbind(pldat,Lbin=0)
-  if(sex.flag)pldat <- cbind(pldat,pick.sex=0)
+  if(sex.flag)pldat <- cbind(pldat,sexes=0)
   if(type=='size'){
     pldat <- cbind(pldat,method=0)
     # vector to store units (which are strings and don't fit in pldat matrix)
@@ -200,7 +202,7 @@ SSMethod.TA1.8 <-
     pldat[i,'Yr'] <- mean(if(seas=='comb')subdbase$Yr else subdbase$Yr.S)
     if(type=='con')pldat[i,'Lbin'] <- mean(subdbase$'Lbin_lo')
     if(sex.flag)
-      pldat[i,'pick.sex'] <- mean(subdbase$'Pick_sex')
+      pldat[i,'sexes'] <- mean(subdbase$'Sexes')
     if(type=='size'){
       pldat[i,'method'] <- mean(subdbase$method)
       plunits[i] <- subdbase$units[1] # units of size comps
@@ -222,7 +224,7 @@ SSMethod.TA1.8 <-
     }else{
       pldat[,'Fleet']
     }
-    if(sex.flag)plindx <- paste(plindx,pldat[,'pick.sex'])
+    if(sex.flag)plindx <- paste(plindx,pldat[,'sexes'])
     if(method.flag)plindx <- paste(plindx,pldat[,'method'])
     uplindx <- unique(plindx)
 
@@ -269,7 +271,7 @@ SSMethod.TA1.8 <-
       yr <- paste(subpldat[1,'Yr'])
       lab <- if(type=='con')ifelse(Nfleet>1,paste(yr,fl),yr) else fl
       if(sex.flag & label.sex){
-        lab <- paste(lab,ifelse(subpldat[1,'pick.sex']==0,'comb','sex'))
+        lab <- paste(lab,ifelse(subpldat[1,'sexes']==0,'comb','sex'))
       }
       if(method.flag){
         lab <- paste(lab,'meth',subpldat[1,'method'])

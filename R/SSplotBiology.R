@@ -13,6 +13,7 @@
 #' seasonal models but but maybe not fully implemented)
 #' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
 #' will be replist$mainmorphs
+#' @param forecast Include forecast years in plots of time-varying biology?
 #' @param colvec vector of length 3 with colors for various points/lines
 #' @param ltyvec vector of length 2 with lty for females/males in growth plots
 #' values can be applied to other plots in the future
@@ -42,6 +43,7 @@
 SSplotBiology <-
 function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
          morphs=NULL,
+         forecast=FALSE,
          colvec=c("red","blue","grey20"),
          ltyvec=c(1,2),
          shadealpha=0.1,
@@ -1146,6 +1148,9 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
         for(i in 1:nsexes){
           growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
                                        growthseries$Morph==morphs[i],]
+          if(!forecast){
+            growdatuse <- growdatuse[growdatuse$Yr <= endyr,]
+          }
           x <- 0:accuage
           y <- growdatuse$Yr
           z <- as.matrix(growdatuse[,-(1:4)])
@@ -1193,7 +1198,12 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
   # plot time-series of any time-varying quantities
   if(24 %in% subplots){
     # general function to work for any parameter
-    timeVaryingParmFunc <- function(parmlabel){
+    timeVaryingParmFunc <- function(parmlabel, forecast=FALSE){
+      if(forecast){
+        MGparmAdj.tmp <- MGparmAdj
+      }else{
+        MGparmAdj.tmp <- MGparmAdj[MGparmAdj$Yr <= endyr, ]
+      }
       plot(MGparmAdj$Yr, MGparmAdj[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }

@@ -10,8 +10,8 @@ SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
   wtfile = "wtatage.ss_new", warnfile = "warning.sso", ncols = 200,
   forecast = TRUE, warn = TRUE, covar = TRUE, readwt = TRUE,
   checkcor = TRUE, cormax = 0.95, cormin = 0.01, printhighcor = 10,
-  printlowcor = 10, verbose = TRUE, printstats = TRUE, hidewarn = FALSE,
-  NoCompOK = FALSE, aalmaxbinrange = 4)
+  printlowcor = 10, verbose = TRUE, printstats = TRUE,
+  hidewarn = FALSE, NoCompOK = FALSE, aalmaxbinrange = 4)
 }
 \arguments{
 \item{dir}{Locates the directory of the files to be read in, double

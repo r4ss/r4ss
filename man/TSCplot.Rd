@@ -7,8 +7,8 @@
 TSCplot(SSout, yrs = "default", ylimBar = "default", ylimDepl = c(0,
   1.025), colBar = "yellow", cexBarLabels = 1.1, cex.axis = 1.1,
   space = 0, pchDepl = 19, colDepl = "red", lwdDepl = 3,
-  shiftDepl = 0.25, pchSpace = 5, ht = 4, wd = 7, labelLines = 2.8,
-  makePDF = NULL, makePNG = NULL, MCMC = F)
+  shiftDepl = 0.25, pchSpace = 5, ht = 4, wd = 7,
+  labelLines = 2.8, makePDF = NULL, makePNG = NULL, MCMC = F)
 }
 \arguments{
 \item{SSout}{The output from \code{\link{SS_output}}}

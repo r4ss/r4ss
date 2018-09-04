@@ -5,16 +5,17 @@
 \title{Plot selectivity}
 \usage{
 SSplotSelex(replist, infotable = NULL, fleets = "all",
-  fleetnames = "default", sizefactors = c("Lsel"), agefactors = c("Asel",
-  "Asel2"), years = "endyr", season = 1, sexes = "all",
-  selexlines = 1:6, subplot = 1:25, skipAgeSelex10 = TRUE, plot = TRUE,
-  print = FALSE, add = FALSE, labels = c("Length (cm)", "Age (yr)",
-  "Year", "Selectivity", "Retention", "Discard mortality"), col1 = "red",
-  col2 = "blue", lwd = 2, fleetcols = "default", fleetpch = "default",
+  fleetnames = "default", sizefactors = c("Lsel"),
+  agefactors = c("Asel", "Asel2"), years = "endyr", season = 1,
+  sexes = "all", selexlines = 1:6, subplot = 1:25,
+  skipAgeSelex10 = TRUE, plot = TRUE, print = FALSE, add = FALSE,
+  labels = c("Length (cm)", "Age (yr)", "Year", "Selectivity",
+  "Retention", "Discard mortality"), col1 = "red", col2 = "blue",
+  lwd = 2, fleetcols = "default", fleetpch = "default",
   fleetlty = "default", spacepoints = 5, staggerpoints = 1,
-  legendloc = "bottomright", pwidth = 7, pheight = 7, punits = "in",
-  res = 300, ptsize = 12, cex.main = 1, showmain = TRUE,
-  plotdir = "default", verbose = TRUE)
+  legendloc = "bottomright", pwidth = 7, pheight = 7,
+  punits = "in", res = 300, ptsize = 12, cex.main = 1,
+  showmain = TRUE, plotdir = "default", verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
