@@ -19,6 +19,9 @@ Default=TRUE.}
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
 data as it is being read.}
 
+\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 

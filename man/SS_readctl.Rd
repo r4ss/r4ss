@@ -12,6 +12,9 @@ SS_readctl(file, ctlversion = "3.24", verbose = TRUE,
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
 
+\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
 
@@ -45,10 +48,9 @@ explicitly available in control file}
 and above}
 
 \item{N_tag_groups}{number of tag release groups in the model.
-This information is also not explicitly available in control file}
+This information is also not explicitly available in control file.}
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
+\item{N_CPUE_obs}{numbere of CPUE observations.}
 }
 \description{
 Read Stock Synthesis control file into list object in R. This function is a
