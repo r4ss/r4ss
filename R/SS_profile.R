@@ -280,7 +280,7 @@ function(
       onegood <- FALSE
       if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
         onegood <- TRUE
-        Rep <- readLines('Report.sso',n=120)
+        Rep <- readLines('Report.sso',n=200)
         like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=11,header=TRUE,fill=TRUE)
         liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
       }else{
