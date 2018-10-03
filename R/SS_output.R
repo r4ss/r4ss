@@ -2387,6 +2387,22 @@ SS_output <-
     returndat$natage <- rawnatage
   }
 
+  # NUMBERS_AT_AGE_Annual with and without fishery
+  natage_annual_1_no_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_1", 1,
+                                          "Z_AT_AGE_Annual_1", -1, header=TRUE)
+  natage_annual_2_with_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_2", 1,
+                                            "Z_AT_AGE_Annual_2", -1, header=TRUE)
+  if(natage_annual_1_no_fishery[[1]][1] != "absent"){
+    for(icol in 1:ncol(natage_annual_1_no_fishery)){
+      natage_annual_1_no_fishery[,icol] <-
+        as.numeric(natage_annual_1_no_fishery[,icol])
+      natage_annual_2_with_fishery[,icol] <-
+        as.numeric(natage_annual_2_with_fishery[,icol])
+    }
+  }
+  returndat$natage_annual_1_no_fishery <- natage_annual_1_no_fishery
+  returndat$natage_annual_2_with_fishery <- natage_annual_2_with_fishery
+
   # Biomass at age
   if(SS_versionNumeric >= 3.3){
     batage <- matchfun2("BIOMASS_AT_AGE", 1, "NUMBERS_AT_LENGTH", -1,
@@ -2663,7 +2679,9 @@ SS_output <-
     names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     if(nareas==1 & ngpatterns==1){ # for simpler models, do some cleanup
       Dynamic_Bzero <- Dynamic_Bzero[-(1:2),]
-      for(icol in c(1,3,4)) Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
+      for(icol in c(1,3,4)){
+        Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
+      }
       names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     }
     if(nareas>1 & ngpatterns==1){ # for spatial models, do some cleanup
@@ -2680,7 +2698,7 @@ SS_output <-
     }
   }
   returndat$Dynamic_Bzero <- Dynamic_Bzero
-
+  
   # adding stuff to list which gets returned by function
   if(comp){
     returndat$comp_data_exists <- TRUE
