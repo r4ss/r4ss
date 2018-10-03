@@ -153,37 +153,41 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(fit)
   }
 
-  getrecdevs <- function(replist){
-    # get info on recruitment devs from the model output
-    par_mat   <- replist$parameters
-    par_start <- grep("SR_autocorr",par_mat$Label)+1
-    par_end   <- grep("InitF",par_mat$Label)[1]-1
-    if(is.na(par_end)){
-      # InitF parameters have gone away in SSv3.3 (at least for one model)
-      par_end <- grep("Impl_err",par_mat$Label)[1]-1
-    }
-    rowrange <- par_start:par_end
-    Impl_err_rows <- grep("Impl_err",par_mat$Label)
-    if(length(Impl_err_rows)>0)
-      rowrange <- (grep("SR_autocorr",par_mat$Label)+1):(Impl_err_rows[1]-1)
-    yr <- par_mat$Label[rowrange]
-    yr <- strsplit(yr,"_")
-    yr2 <- rep(NA,length(yr))
-    for(i in 1:length(yr)){
-      if(yr[[i]][2]!="InitAge") yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
-    }
-    # if label is something like "Main_InitAge_19" then the year
-    # is the minimum of the years from the normal RecrDev labels
-    minyr2 <- min(yr2) 
-    for(i in (1:length(yr))[is.na(yr2)]){
-      if(yr[[i]][2]=="InitAge") yr2[i] <- minyr2 - as.numeric(yr[[i]][length(yr[[i]])])
-    }
+  #### before revision on 2-Oct-2018 this function was used,
+  #### now it's been replaced by processing done in SS_output
+  #### leaving this in place just in case it doesn't work
+  
+  ## getrecdevs <- function(replist){
+  ##   # get info on recruitment devs from the model output
+  ##   par_mat   <- replist$parameters
+  ##   par_start <- grep("SR_autocorr",par_mat$Label)+1
+  ##   par_end   <- grep("InitF",par_mat$Label)[1]-1
+  ##   if(is.na(par_end)){
+  ##     # InitF parameters have gone away in SSv3.3 (at least for one model)
+  ##     par_end <- grep("Impl_err",par_mat$Label)[1]-1
+  ##   }
+  ##   rowrange <- par_start:par_end
+  ##   Impl_err_rows <- grep("Impl_err",par_mat$Label)
+  ##   if(length(Impl_err_rows)>0)
+  ##     rowrange <- (grep("SR_autocorr",par_mat$Label)+1):(Impl_err_rows[1]-1)
+  ##   yr <- par_mat$Label[rowrange]
+  ##   yr <- strsplit(yr,"_")
+  ##   yr2 <- rep(NA,length(yr))
+  ##   for(i in 1:length(yr)){
+  ##     if(yr[[i]][2]!="InitAge") yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
+  ##   }
+  ##   # if label is something like "Main_InitAge_19" then the year
+  ##   # is the minimum of the years from the normal RecrDev labels
+  ##   minyr2 <- min(yr2) 
+  ##   for(i in (1:length(yr))[is.na(yr2)]){
+  ##     if(yr[[i]][2]=="InitAge") yr2[i] <- minyr2 - as.numeric(yr[[i]][length(yr[[i]])])
+  ##   }
     
-    yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
-    val <- par_mat$Value[rowrange]
-    std <- par_mat$Parm_StDev[rowrange]
-    return(data.frame(yr=yr2,val=val,std=std))
-  }
+  ##   yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
+  ##   val <- par_mat$Value[rowrange]
+  ##   std <- par_mat$Parm_StDev[rowrange]
+  ##   return(data.frame(yr=yr2,val=val,std=std))
+  ## }
 
   optimfun <- function(yr, std, startvalues, is.forecast){
     # run the optimizationt to find best fit values
@@ -240,12 +244,19 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(data.frame(yr=yr,biasadj=biasadj))
   }
 
-  recdevs <- getrecdevs(replist)
-  recdevs <- recdevs[!is.na(recdevs$std),]
+  #### old approach prior to 02-Oct_2018 revision
+  ## recdevs <- getrecdevs(replist) 
+  ## recdevs <- recdevs[!is.na(recdevs$std),]
+  ## val <- recdevs$val
+  ## std <- recdevs$std
+  ## yr <- recdevs$yr
 
-  yr <- recdevs$yr
-  val <- recdevs$val
-  std <- recdevs$std
+  #### new approach makes better use of processing that occurred in SS_output
+  recdevs <- replist$recruitpars[!is.na(replist$recruitpars$Parm_StDev),]
+  val <- recdevs$Value
+  std <- recdevs$Parm_StDev
+  yr <- recdevs$Yr
+
   # test for forecast years to exclude points from fit and color gray
   is.forecast <- yr > replist$endyr
   col.vec <- ifelse(is.forecast, 'gray', 'black')
