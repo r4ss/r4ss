@@ -218,31 +218,32 @@ SS_output <-
     if(!file.exists(covarfile)){
       warning("covar file not found, input 'covar' changed to FALSE")
       covar <- FALSE
-    }
+    } else {
 
-    # time check for CoVar file
-    covarhead <- readLines(con=covarfile,n=10)
-    covarskip <- grep("active-i",covarhead)-1
-    covartime <- findtime(covarhead)
-    # the conversion to R time class below may no longer be necessary as strings should match
-    if(is.null(covartime) || is.null(repfiletime)){
-      cat("problem comparing the file creation times:\n")
-      cat("  Report.sso:",repfiletime,"\n")
-      cat("  covar.sso:",covartime,"\n")
-    }else{
-      if( covartime != repfiletime){
-        cat("covar time:",covartime,"\n")
-        stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
+      # time check for CoVar file
+      covarhead <- readLines(con=covarfile,n=10)
+      covarskip <- grep("active-i",covarhead)-1
+      covartime <- findtime(covarhead)
+      # the conversion to R time class below may no longer be necessary as strings should match
+      if(is.null(covartime) || is.null(repfiletime)){
+        cat("problem comparing the file creation times:\n")
+        cat("  Report.sso:",repfiletime,"\n")
+        cat("  covar.sso:",covartime,"\n")
+      }else{
+        if( covartime != repfiletime){
+          cat("covar time:",covartime,"\n")
+          stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
+        }
       }
-    }
 
-    # covar file exists, but has problems
-    nowrite <- grep("do not write",covarhead)
-    if(length(nowrite)>0){
-      warning("covar file contains the warning\n",
-              "     '",covarhead[nowrite],"'\n",
-              "  input 'covar' changed to FALSE.\n")
-      covar <- FALSE
+      # covar file exists, but has problems
+      nowrite <- grep("do not write",covarhead)
+      if(length(nowrite)>0){
+        warning("covar file contains the warning\n",
+                "     '",covarhead[nowrite],"'\n",
+                "  input 'covar' changed to FALSE.\n")
+        covar <- FALSE
+      }
     }
   }
 
