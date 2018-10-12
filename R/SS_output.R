@@ -652,10 +652,10 @@ SS_output <-
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
 
-      # update to naming convention associated with 3.30.01.15
+      # update to naming convention associated with 3.30.12
       compdbase <- df.rename(compdbase,
-                             oldnames=c("Pick_gender", "Gender"),
-                             newnames=c("Pick_sex",    "Sexes"))
+                             oldnames=c("Pick_sex", "Pick_gender", "Gender"),
+                             newnames=c("Sexes",    "Sexes",       "Sex"))
       # "Sexes" (formerly "Pick_sex"): 0 (unknown), 1 (female), 2 (male),
       #                                or 3 (females and then males)
       # "Sex": 1 (unknown or female), or 2 (male)
