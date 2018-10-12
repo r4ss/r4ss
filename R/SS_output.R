@@ -656,12 +656,16 @@ SS_output <-
       compdbase <- df.rename(compdbase,
                              oldnames=c("Pick_sex", "Pick_gender", "Gender"),
                              newnames=c("Sexes",    "Sexes",       "Sex"))
-      # "Sexes" (formerly "Pick_sex"): 0 (unknown), 1 (female), 2 (male),
-      #                                or 3 (females and then males)
-      # "Sex": 1 (unknown or female), or 2 (male)
+      # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
+      #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
+      # this is the user input in the data file
+      #
+      # "Sex" (formerly "Gender"): 1 (unknown or female), or 2 (male)
+      # this is a code used internally by SS
       #
       # add new column in code below:
       # "sex": 0 (unknown), 1 (female), or 2 (male)
+      # this is the code used by r4ss
       compdbase$sex <- compdbase$Sexes
       compdbase$sex[compdbase$Sexes==3] <- compdbase$Sex[compdbase$Sexes==3]
 
