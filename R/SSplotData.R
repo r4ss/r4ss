@@ -134,8 +134,9 @@ SSplotData <- function(replist,
       "wadbase",       "Mean weight-at-age",                            #11
       "mnwgt",         "Mean body weight",                              #12
       "discard",       "Discards",                                      #13
-      "tagdbase1",     "Tagging data",                                  #14
-      "tagdbase2",     "Tagging data"),ncol=2,byrow=TRUE)               #15
+      "tagdbase1",     "Tagging data"),ncol=2,byrow=TRUE)               #14
+  # note: tagdbase2 excluded since it is not fleet specific and the years
+  #       should always match those in tagdbase1
   if(!ghost) typetable <- typetable[-grep("ghost",typetable[,1]),]
   typenames <- typetable[,1]
   typelabels <- typetable[,2]
@@ -172,9 +173,13 @@ SSplotData <- function(replist,
           allyrs <- dat$Yr[dat$Fleet==ifleet]
           size <- rep(1, len=length(allyrs))
         }
-        if(length(grep("dbase",typename))>0){
+        if(length(grep("dbase",typename))>0 & typename!="tagdbase1"){
           allyrs <- dat$Yr[dat$Fleet==ifleet]
           size <- dat$N[dat$Fleet==ifleet]
+        }
+        if(typename=="tagdbase1"){
+          allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs > 0]
+          size <- dat$Obs[dat$Fleet==ifleet & dat$Obs > 0]
         }
         # length- and weight-at-age have different sample sizes for each age
         # within a year, so override calculation above using sum of sample sizes
@@ -223,7 +228,6 @@ SSplotData <- function(replist,
   }else{
     if(length(fleetcol) < nfleets2) fleetcol=rep(fleetcol,nfleets2)
   }
-
   # function containing plotting commands
   plotdata <- function(datasize){
     par(mar=margins) # multi-panel plot
