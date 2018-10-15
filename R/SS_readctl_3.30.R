@@ -779,7 +779,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     {
       if(ctllist$Q_parms[j,]$env_var>0)
       {
-        vv<-as.numeric(strsplit(rowname(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
+        vv<-as.numeric(strsplit(rownames(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
         ctllist$Q_setup[vv[1],]$env_var<-1
       }
     }
