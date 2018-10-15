@@ -273,7 +273,9 @@ SSplotSpawnrecruit <-
           }
         } # end loop over legendloc values
         if(!legend_added){
-          warning("Legend in spawner-recruit plot overlaps at least 1 point in the plot")
+          warning("Legend in spawner-recruit plot overlaps at least 1 point\n",
+                  "in the plot. Try running SSplotSpawnrecruit() with\n",
+                  "adjustments to 'ylim' and/or 'legendloc' inputs.")
           legendloc <- "topleft"
         }
       }
