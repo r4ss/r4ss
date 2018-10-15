@@ -498,12 +498,15 @@ SS_output <-
     names(fleetdefs) <- fleetdefs[1,] # set names equal to first row
     fleetdefs <- fleetdefs[-1,] # remove first row
     # remove any blank columns beyond Fleet_name
-    fleetdefs <- fleetdefs[,1:grep("fleet_name", names(fleetdefs))]
+    fleetdefs <- fleetdefs[,1:grep("fleet_name", tolower(names(fleetdefs)))]
     # make values numeric (other than Fleet_name)
     for(icol in 1:(ncol(fleetdefs) - 1)){
       fleetdefs[,icol] <- as.numeric(fleetdefs[,icol])
     }
 
+    fleetdefs <- df.rename(fleetdefs,
+                           oldnames=c("fleet_name"),
+                           newnames=c("Fleet_name"))
     # fleet_type definitions from TPL:
     # 1=fleet with catch; 2=discard only fleet with F;
     # 3=survey(ignore catch); 4=ignore completely
@@ -518,7 +521,7 @@ SS_output <-
     fleet_ID     <- fleetdefs$Fleet
     IsFishFleet  <- fleet_type <= 2 # based on definitions above
     nfishfleets  <- sum(IsFishFleet)
-    FleetNames   <- fleetdefs$fleet_name
+    FleetNames   <- fleetdefs$Fleet_name
     nfleets <- max(fleet_ID)
 
     # process some season info
@@ -1580,10 +1583,13 @@ SS_output <-
   }else{
     # new in 3.30 has keyword at top
     lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
+    lenntune <- df.rename(lenntune,
+                          oldnames=c("FleetName"),
+                          newnames=c("Fleet_name"))
 
     if("Factor" %in% names(lenntune)){
       # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
-      for(icol in which(!names(lenntune) %in% c("#","FleetName"))){
+      for(icol in which(!names(lenntune) %in% c("#","Fleet_name"))){
         lenntune[,icol] <- as.numeric(lenntune[,icol])
       }
     }else{
@@ -1607,7 +1613,7 @@ SS_output <-
       
       # put recommendation and fleetnames at the end
       #(probably a more efficient way to do this)
-      end.names <- c("Recommend_Var_Adj", "FleetName")
+      end.names <- c("Recommend_Var_Adj", "Fleet_name")
       lenntune <- lenntune[,c(which(!names(lenntune) %in% end.names),
                               which(names(lenntune) %in% end.names))]
     }
@@ -1641,19 +1647,23 @@ SS_output <-
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
                           header=TRUE)
   }
+  agentune <- df.rename(agentune,
+                        oldnames=c("FleetName"),
+                        newnames=c("Fleet_name"))
+  
   if("Factor" %in% names(agentune)){
     # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
-    for(icol in which(!names(agentune) %in% c("#","FleetName"))){
+    for(icol in which(!names(agentune) %in% c("#","Fleet_name"))){
       agentune[,icol] <- as.numeric(agentune[,icol])
     }
   }else{
     if(!is.null(dim(agentune))){
-      names(agentune)[ncol(agentune)] <- "FleetName"
+      names(agentune)[ncol(agentune)] <- "Fleet_name"
       agentune <- agentune[agentune$N>0, ]
       
       # avoid NA warnings by removing #IND values
       agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-      for(icol in which(!names(agentune) %in% "FleetName")){
+      for(icol in which(!names(agentune) %in% "Fleet_name")){
         agentune[,icol] <- as.numeric(agentune[,icol])
       }
       # calculate ratio to be more transparent
@@ -1669,8 +1679,8 @@ SS_output <-
       agentune <- agentune[,!names(agentune) %in% badnames]
 
       # put fleetnames column at the end (probably a more efficient way to do this)
-      agentune <- agentune[,c(which(names(agentune)!="FleetName"),
-                              which(names(agentune)=="FleetName"))]
+      agentune <- agentune[,c(which(names(agentune)!="Fleet_name"),
+                              which(names(agentune)=="Fleet_name"))]
 
       # change name to make it clear what's reported and be constent with lengths
       agentune <- df.rename(agentune,
@@ -1722,13 +1732,16 @@ SS_output <-
 
         # format sizentune (info on tuning) has been split into
         # a separate data.frame, needs formatting: remove extra columns, change names
-        goodcols <- c(1:grep("FleetName",sizentune[1,]),
+        goodcols <- c(1:grep("Fleet_name",sizentune[1,]),
                       grep("Method",names(sizentune)))
         sizentune[1,max(goodcols)] <- "Method"
         sizentune <- sizentune[,goodcols]
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
-        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
+        sizentune <- df.rename(sizentune,
+                               oldnames=c("FleetName"),
+                               newnames=c("Fleet_name"))
+        for(icol in which(!names(sizentune) %in% c("#","Fleet_name"))){
           sizentune[,icol] <- as.numeric(sizentune[,icol])
         }
         stats$Size_comp_Eff_N_tuning_check <- sizentune
