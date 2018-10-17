@@ -161,6 +161,7 @@ SSplotTimeseries <-
   }
   # modifying data to subset for a single season
   ts <- timeseries
+  
   if(nseasons>1){
     if(SS_versionshort=="SS-V3.11"){
       # seasfracs previously unavailable so assume all seasons equal
@@ -171,6 +172,17 @@ SSplotTimeseries <-
     }
   }else{
     ts$YrSeas <- ts$Yr
+  }
+
+  # crop any years beyond maxyr
+  if(!is.null(maxyr)){
+    if(maxyr >= min(ts$YrSeas)){
+      ts <- ts[ts$YrSeas <= maxyr,]
+    }else{
+      warning("'maxyr' input lower than minimum (",
+              min(ts$YrSeas), "), changing to NULL")
+      maxyr <- NULL
+    }
   }
 
   # warn about spawning season--seems to no longer be necessary now that title
