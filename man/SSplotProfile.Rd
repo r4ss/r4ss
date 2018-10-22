@@ -6,7 +6,7 @@
 \usage{
 SSplotProfile(summaryoutput, plot = TRUE, print = FALSE,
   models = "all", profile.string = "steep",
-  profile.label = "Spawner-recruit steepness (h)",
+  profile.label = "Spawner-recruit steepness (h)", exact = FALSE,
   ylab = "Change in -log-likelihood", components = c("TOTAL", "Catch",
   "Equil_catch", "Survey", "Discard", "Mean_body_wt", "Length_comp",
   "Age_comp", "Size_at_age", "SizeFreq", "Morphcomp", "Tag_comp",
@@ -38,12 +38,17 @@ SSplotProfile(summaryoutput, plot = TRUE, print = FALSE,
 columns in summary tables.}
 
 \item{profile.string}{Character string used to find parameter over which the
-profile was conducted. Needs to match substring of one of the SS parameter
-labels found in the Report.sso file. For instance, the default input 'steep'
-matches the parameter 'SR_BH_steep'.}
+profile was conducted. If \code{exact=FALSE}, this can be a substring of
+one of the SS parameter labels found in the Report.sso file.
+For instance, the default input 'steep'
+matches the parameter 'SR_BH_steep'. If \code{exact=TRUE}, then
+profile.string needs to be an exact match to the parameter label.}
 
 \item{profile.label}{Label for x-axis describing the parameter over which
 the profile was conducted.}
+
+\item{exact}{Should the \code{profile.string} have to match the parameter
+label exactly, or is a substring OK.}
 
 \item{ylab}{Label for y-axis. Default is "Change in -log-likelihood".}
 
