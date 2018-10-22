@@ -582,7 +582,15 @@ SS_plots <-
       }
     } # end loop over timeseries subplots
 
+    ### add plot of Summary F
+    # first get vector of years
+    yrs <- replist$startyr:replist$endyr
+    if(!is.null(maxyr)){
+      yrs <- yrs[yrs <= maxyr]
+    }
+    # now run plot function
     plotinfo <- SSplotSummaryF(replist=replist,
+                               yrs=yrs,
                                uncertainty=uncertainty,
                                plot=!png, print=png,
                                verbose=verbose,
