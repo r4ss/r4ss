@@ -92,7 +92,7 @@ SSplotTags <-
     nseasons       <- replist$nseasons
     width          <- 0.5/nseasons
     tagreportrates <- replist$tagreportrates
-    tagrecap       <- replist$tagrecap
+    tagrelease     <- replist$tagrelease
     tagsalive      <- replist$tagsalive
     tagtotrecap    <- replist$tagtotrecap
     if(is.null(latency)){
@@ -258,15 +258,15 @@ SSplotTags <-
               main="Reporting rate decay")
 
       # third plot shows initial tag loss
-      barplot(height=tagrecap$Init_Loss,
-              names.arg=tagrecap$Fleet, ylim=c(0, 1), yaxs='i',
+      barplot(height=tagrelease$Init_Loss,
+              names.arg=tagrelease$Fleet, ylim=c(0, 1), yaxs='i',
               ylab="Initial tag loss", xlab="Tag group",
               main="Initial tag loss\n(fraction of tags lost at time of tagging)")
       box()
 
       # fourth plot shows chronic tag loss
-      barplot(height=tagrecap$Chron_Loss,
-              names.arg=tagrecap$Fleet, ylim=c(0, 1), yaxs='i',
+      barplot(height=tagrelease$Chron_Loss,
+              names.arg=tagrelease$Fleet, ylim=c(0, 1), yaxs='i',
               ylab="Chronic tag loss", xlab="Tag group",
               main="Chronic tag loss\n(fraction of tags lost per year)")
       box()
