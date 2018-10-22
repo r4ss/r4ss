@@ -1809,6 +1809,17 @@ SS_output <-
       returndat$equ_catch_se <- NA
     }
   }
+
+  # simple function to return additional things from the DEFINITIONS
+  # section that were added with SS version 3.30.12
+  return.def <- function(x){
+    if(exists(x)){
+      returndat[[x]] <- get(x)
+    }else{
+      returndat[[x]] <- NULL
+    }
+  }
+
   returndat$survey_units <- survey_units
   returndat$survey_error <- survey_error
   returndat$index_variance_tuning_check <- vartune
@@ -1835,6 +1846,23 @@ SS_output <-
   returndat$nseasons    <- nseasons
   returndat$seasfracs   <- seasfracs
   returndat$seasdurations  <- seasdurations
+  return.def("N_sub_seasons")
+  return.def("Spawn_month")
+  return.def("Spawn_seas")
+  return.def("Spawn_timing_in_season")
+  return.def("Retro_year")
+  return.def("N_forecast_yrs")
+  return.def("Empirical_wt_at_age(0,1)")
+  return.def("N_bio_patterns")
+  return.def("N_platoons")
+  return.def("Start_from_par(0,1)")
+  return.def("Do_all_priors(0,1)")
+  return.def("Use_softbound(0,1)")
+  return.def("N_nudata")
+  return.def("Max_phase")
+  return.def("Current_phase")
+  return.def("Jitter")
+  return.def("ALK_tolerance")
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
 #  returndat$MGParm_dev_details <- MGParm_dev_details
@@ -2504,21 +2532,21 @@ SS_output <-
     returndat$tagreportrates <- NA
   }
 
-  # tag recapture table
-  tagrecap <- matchfun2("TAG_Recapture",1,
+  # tag release table
+  tagrelease <- matchfun2("TAG_Recapture",1,
                         "Tags_Alive",-1,
                         cols=1:10)
-  if(tagrecap[[1]][1]!="absent"){
-    tagfirstperiod <- as.numeric(tagrecap[1,1])
-    tagaccumperiod <- as.numeric(tagrecap[2,1])
-    names(tagrecap) <- tagrecap[4,]
-    tagrecap <- tagrecap[-(1:4),]
-    for(i in 1:ncol(tagrecap)) tagrecap[,i] <- as.numeric(tagrecap[,i])
-    returndat$tagrecap <- tagrecap
+  if(tagrelease[[1]][1]!="absent"){
+    tagfirstperiod <- as.numeric(tagrelease[1,1])
+    tagaccumperiod <- as.numeric(tagrelease[2,1])
+    names(tagrelease) <- tagrelease[4,]
+    tagrelease <- tagrelease[-(1:4),]
+    for(i in 1:ncol(tagrelease)) tagrelease[,i] <- as.numeric(tagrelease[,i])
+    returndat$tagrelease <- tagrelease
     returndat$tagfirstperiod <- tagfirstperiod
     returndat$tagaccumperiod <- tagaccumperiod
   }else{
-    returndat$tagrecap <- NA
+    returndat$tagrelease <- NA
     returndat$tagfirstperiod <- NA
     returndat$tagaccumperiod <- NA
   }
