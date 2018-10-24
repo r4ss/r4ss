@@ -9,7 +9,7 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   fleets = "all", areas = "all", fleetnames = "default",
   fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
   areacols = "default", areanames = "default", verbose = TRUE,
-  uncertainty = TRUE, forecastplot = FALSE, datplot = FALSE,
+  uncertainty = TRUE, forecastplot = FALSE, datplot = TRUE,
   Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
   comp.yupper = 0.4, sprtarg = "default", btarg = "default",
   minbthresh = "default", pntscalar = NULL, bub.scale.pearson = 1.5,
@@ -125,8 +125,10 @@ Default="default".}
 plots of time-varying quantities? Default=TRUE.}
 
 \item{datplot}{Plot the data by itself? This is useful in document
-preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
-Default=F.}
+preparation, but doesn't change across alternative model runs with the same
+data, so can be committed to save time once the plots have been created once.
+Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
+Default=TRUE.}
 
 \item{Natageplot}{Plot the expected numbers at age bubble plots and mean-age
 time series?  Default=T.}
