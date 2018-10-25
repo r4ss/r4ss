@@ -248,11 +248,10 @@ SSMethod.TA1.8 <-
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
       # calculate ylim, including removing Inf values
-      ylim.vals <- subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')]
-      ylim <- range(ylim.vals[is.finite(ylim.vals)], na.rm=TRUE)
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=ylim,
+           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
+               finite=TRUE, na.rm=TRUE),
            xlab='',ylab='')
       segments(x, subpldat[,'Obslo'], x, subpldat[,'Obshi'], lwd=3, lend=3)
       if(plotadj){
