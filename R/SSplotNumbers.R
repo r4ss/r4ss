@@ -585,7 +585,6 @@ SSplotNumbers <-
                 main <- caption
               }
               z <- natlenratio
-              browser()
               # check for mismatch that caused crash in one particular model
               # note from Ian (11/1/2018): taking too long to sort this out so
               #                            just skipping the plot for the rare case
