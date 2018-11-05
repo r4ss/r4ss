@@ -16,6 +16,14 @@ devtools::install_github("r4ss/r4ss")
 
 Note: devtools may give this message: "*WARNING: Rtools is required to build R packages, but is not currently installed.*" However, Rtools is NOT required for installing r4ss via devtools, so ignore the warning.
 
+Ongoing development of r4ss has been mostly taking place in the "Development" branch on GitHub. That branch may be less stable, but can provide fixes, especially to issues related to beta releases of new SS versions. The development branch can be installed using the command:
+
+```S
+devtools::install_github("r4ss/r4ss", ref="development")
+```
+
+
+
 Once you have installed the r4ss package, it can be loaded using:
 
 ```S
@@ -32,4 +40,9 @@ devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
 
 ## Changes
 
-See NEWS.md for (not very complete) log of changes, starting with v1.24.0.
+See NEWS.md for (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
+
+
+## Reporting problems
+
+Please report any issues with this package by posting a new github issue at <https://github.com/r4ss/r4ss/issues>. You can also write to Ian.Taylor@noaa.gov.
