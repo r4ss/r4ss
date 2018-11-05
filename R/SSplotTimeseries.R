@@ -334,6 +334,7 @@ SSplotTimeseries <-
       if(!"SSB_Virgin" %in% derived_quants$Label){
         cat("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
             "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
+        stdtable <- NULL
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==7){ # spawning biomass
@@ -392,7 +393,9 @@ SSplotTimeseries <-
     }
     if(subplot%in%c(13,15)) ymax <- 1 # these plots show fractions
 
-    if(uncertainty & subplot %in% c(7,9,11)) ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
+    if(uncertainty & subplot %in% c(7,9,11)){
+      ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
+    }
 
     if(print){ # if printing to a file
       # adjust file names
