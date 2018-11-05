@@ -332,8 +332,8 @@ SSplotTimeseries <-
     if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
       if(!"SSB_Virgin" %in% derived_quants$Label){
-        cat("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
-            "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
+        warning("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
+                "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
         stdtable <- NULL
       }else{
         # get subset of DERIVED_QUANTITIES
