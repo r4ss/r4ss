@@ -60,7 +60,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
 ##################################
     use_datlist=FALSE,
-    datlist=NULL
+    datlist=NULL,
+    ptype=TRUE
     ){
   # function to read Stock Synthesis data files
 
@@ -473,8 +474,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
                                 comments=MGparmLabel)
-
-  ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
+  if(ptype)
+    ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
   # time block parameters
   nbp<-0
@@ -510,6 +511,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist<-add_df(ctllist,"MG_parms_seas",nrow=N_seas_effects,ncol=7,
                     col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
     PType[1:N_seas_effects]<-16
+  if(ptype)
     ctllist$MG_parms_seas<-cbind(ctllist$MG_parms_seas,PType)
 
   }
@@ -561,7 +563,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=7,
             col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
-  ctllist$SRparm<-cbind(ctllist$SRparm,PType)
+  if(ptype)
+    ctllist$SRparm<-cbind(ctllist$SRparm,PType)
 
   ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
   ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
@@ -621,7 +624,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
     col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
   PType[1:Nfleet]<-18
-  ctllist$init_F<-cbind(ctllist$init_F,PType)
+  if(ptype)
+    ctllist$init_F<-cbind(ctllist$init_F,PType)
 
   #_Q_setup
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
