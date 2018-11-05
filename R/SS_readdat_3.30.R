@@ -270,7 +270,7 @@ SS_readdat_3.30 <-
   ## CPUE data matrix
   CPUE <- get.df(dat, ind)
   if(!is.null(CPUE)){
-    d$CPUE <- get.df(dat, ind)
+    d$CPUE <- CPUE
     colnames(d$CPUE) <- c("year", "seas", "index", "obs", "se_log")
   }else{
     d$CPUE <- NA
