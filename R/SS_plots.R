@@ -83,8 +83,10 @@
 #' @param forecastplot Include forecast years in the timeseries plots and
 #' plots of time-varying quantities? Default=TRUE.
 #' @param datplot Plot the data by itself? This is useful in document
-#' preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
-#' Default=F.
+#' preparation, but doesn't change across alternative model runs with the same
+#' data, so can be committed to save time once the plots have been created once.
+#' Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
+#' Default=TRUE.
 #' @param Natageplot Plot the expected numbers at age bubble plots and mean-age
 #' time series?  Default=T.
 #' @param samplesizeplots Show sample size plots?  Default=T.
@@ -218,7 +220,7 @@ SS_plots <-
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
       verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
-      datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
+      datplot=TRUE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
       bub.scale.pearson=1.5, bub.scale.dat=3, pntscalar.nums=2.6,
@@ -582,7 +584,15 @@ SS_plots <-
       }
     } # end loop over timeseries subplots
 
+    ### add plot of Summary F
+    # first get vector of years
+    yrs <- replist$startyr:replist$endyr
+    if(!is.null(maxyr)){
+      yrs <- yrs[yrs <= maxyr]
+    }
+    # now run plot function
     plotinfo <- SSplotSummaryF(replist=replist,
+                               yrs=yrs,
                                uncertainty=uncertainty,
                                plot=!png, print=png,
                                verbose=verbose,

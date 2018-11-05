@@ -19,6 +19,9 @@ Default=TRUE.}
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
 data as it is being read.}
 
+\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 
@@ -56,8 +59,6 @@ control file. This information is only required if custom tag parameters is enab
 determined from control file}
 
 \item{datlist}{list or character. if list : produced from SS_writedat or character : file name of dat file.}
-
-\item{AgeError}{ageing error matrix}
 }
 \description{
 Read Stock Synthesis (version 3.30) control file into list object in R.

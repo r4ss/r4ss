@@ -11,7 +11,8 @@ SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   parstring = NULL, dircopy = TRUE, exe.delete = FALSE,
   model = "ss", extras = "-nox", systemcmd = FALSE,
   saveoutput = TRUE, overwrite = TRUE, whichruns = NULL,
-  SSversion = "3.30", prior_check = TRUE, verbose = TRUE)
+  SSversion = "3.30", prior_check = TRUE, read_like = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory where input files and executable are located.}
@@ -71,6 +72,10 @@ supported, either as character or numeric values
 
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
+
+\item{read_like}{Read the table of likelihoods from each model as it finishes.
+Default = TRUE. Changing to FALSE should allow the function to play through
+even if something is wrong with reading the table.}
 
 \item{verbose}{Controls amount of info output to command line.  Default =
 TRUE.}

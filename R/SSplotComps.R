@@ -152,9 +152,10 @@ SSplotComps <-
   # SSplotComps
   ################################################################################
 
-  ###### current definitions of subplots
+  ###### list of subplots
   ###
   ### { # loop over fleets
+  ###
   ### subplot 1: multi-panel composition plot
   ### subplot 2: single panel bubble plot for numbers at length or age
   ### subplot 3: multi-panel bubble plots for conditional age-at-length
@@ -163,38 +164,17 @@ SSplotComps <-
   ### subplot 6: multi-panel plot of point and line fit to conditional
   ###            age-at-length for specific length bins
   ### subplot 7: sample size plot
-  ### subplot 8: Andre's mean age and std. dev. in conditional AAL
-  ### subplot 9: by fleet aggregating across years
-  ### } # end loop over fleets
-  ### subplot 10: by fleet aggregating across years within each season
-  ### subplot 11: by fleet aggregating across seasons within a year
-  ### subplot 12: bubble plot comparison of length or age residuals
-  ###             across fleets within sex/partition
-
-
-  ###### new definitions of subplots
-  ###
-  ### { # loop over fleets
-  ### subplot 1: multi-panel composition plot
-  ### subplot 2: single panel bubble plot for numbers at length or age
-  ### subplot 3: multi-panel bubble plots for conditional age-at-length
-  ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-  ### subplot 5: Pearson residuals for A-L key
-  ### subplot 6: multi-panel plot of point and line fit to conditional
-  ###            age-at-length for specific length bins
-  ### subplot 7: sample size plot
-  ### NEW subplot 8: TA1.8 Francis weighting plot
-  ### NEW subplot 9: TA1.8 Francis weighting plot for conditional data
+  ### subplot 8: TA1.8 Francis weighting plot
+  ### subplot 9: TA1.8 Francis weighting plot for conditional data
   ### subplot 10: Andre's mean age and std. dev. in conditional AAL
+  ###
   ### } # end loop over fleets
+  ###
   ### subplot 21: by fleet aggregating across years
   ### subplot 22: by fleet aggregating across years within each season
   ### subplot 23: by fleet aggregating across seasons within a year
   ### subplot 24: bubble plot comparison of length or age residuals
   ###             across fleets within partition
-
-
-
 
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
   # subfunction to write png files
@@ -377,7 +357,8 @@ SSplotComps <-
     titledata <- "Mean weight at age, "
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
-    stop("Input 'kind' to SSplotComps is not right.")
+    stop("Input 'kind' to SSplotComps needs to be one of the following:\n  ",
+         "'LEN','SIZE','AGE','cond','GSTAGE','GSTLEN','L@A','W@A'.")
   }
 
   # partition group is used by some aggregate plots (subplot 21+)
@@ -1176,13 +1157,13 @@ SSplotComps <-
                   # Overdispersion on N
                   # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
                   NN <- z$N[1]
-                  if (max(z$Obs) > 1.0e-4 & NN>0){
+                  if (max(z$Obs, na.rm=TRUE) > 1.0e-4 & NN>0){
                     Size <- c(Size,Ilen)
                     Obs <- c(Obs,ObsV)
                     Pred <- c(Pred,PredV)
                     varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
                     Pred2 <- c(Pred2,varn)
-                    varn <-sqrt(max(0,ObsV2-ObsV*ObsV))/sqrt(NN)
+                    varn <-sqrt(max(0,ObsV2-ObsV*ObsV, na.rm=TRUE))/sqrt(NN)
                     Obs2 <- c(Obs2,varn)
                     Low <- c(Low,ObsV-1.64*varn)
                     Upp <- c(Upp,ObsV+1.64*varn)
@@ -1211,7 +1192,7 @@ SSplotComps <-
                 }
                 box()
 
-                ymax2 <- max(Obs2,Pred2)*1.1
+                ymax2 <- max(Obs2,Pred2,na.rm=TRUE)*1.1
                 plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(xmin,xmax),ylim=c(0,ymax2),yaxs="i")
                 if(length(Low2)>1) polygon(c(Size2,rev(Size2)),c(Low2,rev(Upp2)),col='grey95',border=NA)
                 if(!datonly) lines(Size,Pred2,col=4,lwd=3)

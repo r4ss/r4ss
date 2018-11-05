@@ -592,16 +592,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
       lab1long <- "SD of lengths"
       lab2 <- "CV_Beg"
       lab2long <- "CV of lengths"
-      lab1max <- 1.1*max(growdat[[lab1]])
-      lab2max <- 1.05*max(growdat[[lab2]])
-      # temporary stuff for growth workshop
-      if(exists("lab1max",where=1)){
-        lab1max <- get("lab1max",pos=1)
-      }
-      if(exists("lab2max",where=1)){
-        lab2max <- get("lab2max",pos=1)
-      }
-      # end temporary stuff
+      lab1max <- 1.1*max(growdat[[lab1]], na.rm=TRUE)
+      lab2max <- 1.05*max(growdat[[lab2]], na.rm=TRUE)
       lab1_axis_vec <- NULL
     }
     if(option==2){
@@ -610,7 +602,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
       lab2 <- "Wt_Beg"
       lab2long <- "Mean weight"
       lab1max <- 1
-      lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M))
+      lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M), na.rm=TRUE)
       lab1_axis_vec <- c(0, 0.5, 1)
     }
     # calculate scaling factor between CVs and SDs to share each panel

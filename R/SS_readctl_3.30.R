@@ -10,6 +10,8 @@
 #' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
 #' data as it is being read.
+#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
+#' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
 #' @param N_areas number of spatial areas in the model. Default = 1. This information is also not
@@ -26,7 +28,6 @@
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param DatFile read datfile list for additonal information
-#' @param AgeError ageing error matrix
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
@@ -778,7 +779,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     {
       if(ctllist$Q_parms[j,]$env_var>0)
       {
-        vv<-as.numeric(strsplit(rowname(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
+        vv<-as.numeric(strsplit(rownames(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
         ctllist$Q_setup[vv[1],]$env_var<-1
       }
     }

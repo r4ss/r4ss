@@ -23,12 +23,13 @@ SSplotData(replist, plot = TRUE, print = FALSE, plotdir = "default",
 be the directory where the model was run.}
 
 \item{fleetcol}{Either the string "default", or a vector of colors to use
-for each fleet.}
+for each fleet. If tagging data is included, an additional color needs to be
+added for the tag releases which are not assigned to a fleet.}
 
 \item{datatypes}{Either the string "all", or a vector including some subset
 of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-"wadbase", "mnwgt", "discard", "tagdbase1", "tagdbase2".}
+"wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}

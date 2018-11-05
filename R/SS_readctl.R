@@ -7,7 +7,7 @@
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
@@ -32,7 +32,8 @@
 #' @param DatFile read datfile list for additional information for version 3.30
 #' and above
 #' @param N_tag_groups number of tag release groups in the model.
-#' This information is also not explicitly available in control file
+#' This information is also not explicitly available in control file.
+#' @param N_CPUE_obs numbere of CPUE observations.
 #' @author Ian G. Taylor, Yukio Takeuchi, Neil L Klaer
 #' @export
 #' @seealso \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},

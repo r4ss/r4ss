@@ -396,7 +396,7 @@ SSplotNumbers <-
 
     ##########
     # repeat code above for numbers at length
-    if(length(intersect(6:7, subplots))>0) # do these numbers at length plots
+    if(length(intersect(6:8, subplots))>0) # do these numbers at length plots
     {
       column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
 
@@ -409,6 +409,7 @@ SSplotNumbers <-
                                      natlen$Sex==m &
                                      natlen$Seas==1 &
                                      natlen$Era!="VIRG" &
+                                     #natlen$Era!="FORE" &    
                                      natlen$Yr < (endyr+2) &
                                      natlen$BirthSeas==min(bseas),]
                                      # natlen$Bio_Pattern==1,] # formerly filtered
@@ -478,7 +479,6 @@ SSplotNumbers <-
             }
 
             ### calculations related to mean len
-
             # removing the first columns to get just numbers
             natlentemp1 <- as.matrix(natlentemp0[,remove])
             natlentemp2 <- as.data.frame(natlentemp1)
@@ -495,7 +495,9 @@ SSplotNumbers <-
             natlentemp2$meanlen <-
               natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeas-1)/nseasons
             natlenyrs <- sort(unique(natlentemp0$Yr))
-            if(iperiod==1) natlenyrsB <- natlenyrs # unique name for beginning of year
+            if(iperiod==1){
+              natlenyrsB <- natlenyrs # unique name for years associated with period=="B"
+            }
 
             meanlen <- 0*natlenyrs
             for(i in 1:length(natlenyrs)){
@@ -583,9 +585,19 @@ SSplotNumbers <-
                 main <- caption
               }
               z <- natlenratio
-              contour(natlenyrsB, lbinspop, z,
-                      xaxs="i", yaxs="i", xlab=labels[1], ylab=labels[12],
-                      main=main, cex.main=cex.main, ...)
+              # check for mismatch that caused crash in one particular model
+              # note from Ian (11/1/2018): taking too long to sort this out so
+              #                            just skipping the plot for the rare case
+              #                            that has the error
+              if(length(natlenyrsB) == nrow(z)){
+                contour(natlenyrsB, lbinspop, z,
+                        xaxs="i", yaxs="i", xlab=labels[1], ylab=labels[12],
+                        main=main, cex.main=cex.main, ...)
+              }else{
+                warning("Skipping plot of sex ratio by length and year\n  ",
+                        "due to mismatch in length of table and vector of years.\n  ",
+                        "This may be due to 0 values in the table.")
+              }
             }
             if(plot & 8 %in% subplots){
               numbersRatioLen.fn(labcex=1)

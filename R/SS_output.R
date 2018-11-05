@@ -187,12 +187,13 @@ SS_output <-
 
   # test for version compatibility with this code
   if(SS_versionNumeric < SS_versionMin  | SS_versionNumeric > SS_versionMax){
-    cat("\n! Warning, this function tested on SS-V3.24 through SS-V3.30.07.\n",
-        "  you are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
+    warning("This function tested on SS versions 3.24 and 3.30.\n",
+        "  You are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
   }else{
-    if(verbose)
-    cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
-        "  you are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
+    if(verbose){
+      message("Note: this function tested on SS versions 3.24 and 3.30.\n",
+              "  You are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
+    }
   }
 
   findtime <- function(lines){
@@ -218,31 +219,32 @@ SS_output <-
     if(!file.exists(covarfile)){
       warning("covar file not found, input 'covar' changed to FALSE")
       covar <- FALSE
-    }
+    } else {
 
-    # time check for CoVar file
-    covarhead <- readLines(con=covarfile,n=10)
-    covarskip <- grep("active-i",covarhead)-1
-    covartime <- findtime(covarhead)
-    # the conversion to R time class below may no longer be necessary as strings should match
-    if(is.null(covartime) || is.null(repfiletime)){
-      cat("problem comparing the file creation times:\n")
-      cat("  Report.sso:",repfiletime,"\n")
-      cat("  covar.sso:",covartime,"\n")
-    }else{
-      if( covartime != repfiletime){
-        cat("covar time:",covartime,"\n")
-        stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
+      # time check for CoVar file
+      covarhead <- readLines(con=covarfile,n=10)
+      covarskip <- grep("active-i",covarhead)-1
+      covartime <- findtime(covarhead)
+      # the conversion to R time class below may no longer be necessary as strings should match
+      if(is.null(covartime) || is.null(repfiletime)){
+        cat("problem comparing the file creation times:\n")
+        cat("  Report.sso:",repfiletime,"\n")
+        cat("  covar.sso:",covartime,"\n")
+      }else{
+        if( covartime != repfiletime){
+          cat("covar time:",covartime,"\n")
+          stop(shortrepfile," and ",covarfile," were from different model runs. Change input to covar=FALSE")
+        }
       }
-    }
 
-    # covar file exists, but has problems
-    nowrite <- grep("do not write",covarhead)
-    if(length(nowrite)>0){
-      warning("covar file contains the warning\n",
-              "     '",covarhead[nowrite],"'\n",
-              "  input 'covar' changed to FALSE.\n")
-      covar <- FALSE
+      # covar file exists, but has problems
+      nowrite <- grep("do not write",covarhead)
+      if(length(nowrite)>0){
+        warning("covar file contains the warning\n",
+                "     '",covarhead[nowrite],"'\n",
+                "  input 'covar' changed to FALSE.\n")
+        covar <- FALSE
+      }
     }
   }
 
@@ -497,12 +499,15 @@ SS_output <-
     names(fleetdefs) <- fleetdefs[1,] # set names equal to first row
     fleetdefs <- fleetdefs[-1,] # remove first row
     # remove any blank columns beyond Fleet_name
-    fleetdefs <- fleetdefs[,1:grep("fleet_name", names(fleetdefs))]
+    fleetdefs <- fleetdefs[,1:grep("fleet_name", tolower(names(fleetdefs)))]
     # make values numeric (other than Fleet_name)
     for(icol in 1:(ncol(fleetdefs) - 1)){
       fleetdefs[,icol] <- as.numeric(fleetdefs[,icol])
     }
 
+    fleetdefs <- df.rename(fleetdefs,
+                           oldnames=c("fleet_name"),
+                           newnames=c("Fleet_name"))
     # fleet_type definitions from TPL:
     # 1=fleet with catch; 2=discard only fleet with F;
     # 3=survey(ignore catch); 4=ignore completely
@@ -517,7 +522,7 @@ SS_output <-
     fleet_ID     <- fleetdefs$Fleet
     IsFishFleet  <- fleet_type <= 2 # based on definitions above
     nfishfleets  <- sum(IsFishFleet)
-    FleetNames   <- fleetdefs$fleet_name
+    FleetNames   <- fleetdefs$Fleet_name
     nfleets <- max(fleet_ID)
 
     # process some season info
@@ -651,16 +656,20 @@ SS_output <-
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
 
-      # update to naming convention associated with 3.30.01.15
+      # update to naming convention associated with 3.30.12
       compdbase <- df.rename(compdbase,
-                             oldnames=c("Pick_gender", "Gender"),
-                             newnames=c("Pick_sex",    "Sexes"))
-      # "Sexes" (formerly "Pick_sex"): 0 (unknown), 1 (female), 2 (male),
-      #                                or 3 (females and then males)
-      # "Sex": 1 (unknown or female), or 2 (male)
+                             oldnames=c("Pick_sex", "Pick_gender", "Gender"),
+                             newnames=c("Sexes",    "Sexes",       "Sex"))
+      # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
+      #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
+      # this is the user input in the data file
+      #
+      # "Sex" (formerly "Gender"): 1 (unknown or female), or 2 (male)
+      # this is a code used internally by SS
       #
       # add new column in code below:
       # "sex": 0 (unknown), 1 (female), or 2 (male)
+      # this is the code used by r4ss
       compdbase$sex <- compdbase$Sexes
       compdbase$sex[compdbase$Sexes==3] <- compdbase$Sex[compdbase$Sexes==3]
 
@@ -1575,10 +1584,13 @@ SS_output <-
   }else{
     # new in 3.30 has keyword at top
     lenntune <- matchfun2("Length_Comp_Fit_Summary",1,"FIT_AGE_COMPS",-1,header=TRUE)
+    lenntune <- df.rename(lenntune,
+                          oldnames=c("FleetName"),
+                          newnames=c("Fleet_name"))
 
     if("Factor" %in% names(lenntune)){
       # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
-      for(icol in which(!names(lenntune) %in% c("#","FleetName"))){
+      for(icol in which(!names(lenntune) %in% c("#","Fleet_name"))){
         lenntune[,icol] <- as.numeric(lenntune[,icol])
       }
     }else{
@@ -1602,7 +1614,7 @@ SS_output <-
       
       # put recommendation and fleetnames at the end
       #(probably a more efficient way to do this)
-      end.names <- c("Recommend_Var_Adj", "FleetName")
+      end.names <- c("Recommend_Var_Adj", "Fleet_name")
       lenntune <- lenntune[,c(which(!names(lenntune) %in% end.names),
                               which(names(lenntune) %in% end.names))]
     }
@@ -1636,19 +1648,23 @@ SS_output <-
     agentune <- matchfun2("Age_Comp_Fit_Summary",1,"FIT_SIZE_COMPS",-1,
                           header=TRUE)
   }
+  agentune <- df.rename(agentune,
+                        oldnames=c("FleetName"),
+                        newnames=c("Fleet_name"))
+  
   if("Factor" %in% names(agentune)){
     # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
-    for(icol in which(!names(agentune) %in% c("#","FleetName"))){
+    for(icol in which(!names(agentune) %in% c("#","Fleet_name"))){
       agentune[,icol] <- as.numeric(agentune[,icol])
     }
   }else{
     if(!is.null(dim(agentune))){
-      names(agentune)[ncol(agentune)] <- "FleetName"
+      names(agentune)[ncol(agentune)] <- "Fleet_name"
       agentune <- agentune[agentune$N>0, ]
       
       # avoid NA warnings by removing #IND values
       agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
-      for(icol in which(!names(agentune) %in% "FleetName")){
+      for(icol in which(!names(agentune) %in% "Fleet_name")){
         agentune[,icol] <- as.numeric(agentune[,icol])
       }
       # calculate ratio to be more transparent
@@ -1664,8 +1680,8 @@ SS_output <-
       agentune <- agentune[,!names(agentune) %in% badnames]
 
       # put fleetnames column at the end (probably a more efficient way to do this)
-      agentune <- agentune[,c(which(names(agentune)!="FleetName"),
-                              which(names(agentune)=="FleetName"))]
+      agentune <- agentune[,c(which(names(agentune)!="Fleet_name"),
+                              which(names(agentune)=="Fleet_name"))]
 
       # change name to make it clear what's reported and be constent with lengths
       agentune <- df.rename(agentune,
@@ -1717,13 +1733,16 @@ SS_output <-
 
         # format sizentune (info on tuning) has been split into
         # a separate data.frame, needs formatting: remove extra columns, change names
-        goodcols <- c(1:grep("FleetName",sizentune[1,]),
+        goodcols <- c(1:grep("Fleet_name",sizentune[1,]),
                       grep("Method",names(sizentune)))
         sizentune[1,max(goodcols)] <- "Method"
         sizentune <- sizentune[,goodcols]
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
-        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
+        sizentune <- df.rename(sizentune,
+                               oldnames=c("FleetName"),
+                               newnames=c("Fleet_name"))
+        for(icol in which(!names(sizentune) %in% c("#","Fleet_name"))){
           sizentune[,icol] <- as.numeric(sizentune[,icol])
         }
         stats$Size_comp_Eff_N_tuning_check <- sizentune
@@ -1791,6 +1810,17 @@ SS_output <-
       returndat$equ_catch_se <- NA
     }
   }
+
+  # simple function to return additional things from the DEFINITIONS
+  # section that were added with SS version 3.30.12
+  return.def <- function(x){
+    if(exists(x)){
+      returndat[[x]] <- get(x)
+    }else{
+      returndat[[x]] <- NULL
+    }
+  }
+
   returndat$survey_units <- survey_units
   returndat$survey_error <- survey_error
   returndat$index_variance_tuning_check <- vartune
@@ -1817,6 +1847,23 @@ SS_output <-
   returndat$nseasons    <- nseasons
   returndat$seasfracs   <- seasfracs
   returndat$seasdurations  <- seasdurations
+  return.def("N_sub_seasons")
+  return.def("Spawn_month")
+  return.def("Spawn_seas")
+  return.def("Spawn_timing_in_season")
+  return.def("Retro_year")
+  return.def("N_forecast_yrs")
+  return.def("Empirical_wt_at_age(0,1)")
+  return.def("N_bio_patterns")
+  return.def("N_platoons")
+  return.def("Start_from_par(0,1)")
+  return.def("Do_all_priors(0,1)")
+  return.def("Use_softbound(0,1)")
+  return.def("N_nudata")
+  return.def("Max_phase")
+  return.def("Current_phase")
+  return.def("Jitter")
+  return.def("ALK_tolerance")
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
 #  returndat$MGParm_dev_details <- MGParm_dev_details
@@ -2387,6 +2434,22 @@ SS_output <-
     returndat$natage <- rawnatage
   }
 
+  # NUMBERS_AT_AGE_Annual with and without fishery
+  natage_annual_1_no_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_1", 1,
+                                          "Z_AT_AGE_Annual_1", -1, header=TRUE)
+  natage_annual_2_with_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_2", 1,
+                                            "Z_AT_AGE_Annual_2", -1, header=TRUE)
+  if(natage_annual_1_no_fishery[[1]][1] != "absent"){
+    for(icol in 1:ncol(natage_annual_1_no_fishery)){
+      natage_annual_1_no_fishery[,icol] <-
+        as.numeric(natage_annual_1_no_fishery[,icol])
+      natage_annual_2_with_fishery[,icol] <-
+        as.numeric(natage_annual_2_with_fishery[,icol])
+    }
+  }
+  returndat$natage_annual_1_no_fishery <- natage_annual_1_no_fishery
+  returndat$natage_annual_2_with_fishery <- natage_annual_2_with_fishery
+
   # Biomass at age
   if(SS_versionNumeric >= 3.3){
     batage <- matchfun2("BIOMASS_AT_AGE", 1, "NUMBERS_AT_LENGTH", -1,
@@ -2470,21 +2533,21 @@ SS_output <-
     returndat$tagreportrates <- NA
   }
 
-  # tag recapture table
-  tagrecap <- matchfun2("TAG_Recapture",1,
+  # tag release table
+  tagrelease <- matchfun2("TAG_Recapture",1,
                         "Tags_Alive",-1,
                         cols=1:10)
-  if(tagrecap[[1]][1]!="absent"){
-    tagfirstperiod <- as.numeric(tagrecap[1,1])
-    tagaccumperiod <- as.numeric(tagrecap[2,1])
-    names(tagrecap) <- tagrecap[4,]
-    tagrecap <- tagrecap[-(1:4),]
-    for(i in 1:ncol(tagrecap)) tagrecap[,i] <- as.numeric(tagrecap[,i])
-    returndat$tagrecap <- tagrecap
+  if(tagrelease[[1]][1]!="absent"){
+    tagfirstperiod <- as.numeric(tagrelease[1,1])
+    tagaccumperiod <- as.numeric(tagrelease[2,1])
+    names(tagrelease) <- tagrelease[4,]
+    tagrelease <- tagrelease[-(1:4),]
+    for(i in 1:ncol(tagrelease)) tagrelease[,i] <- as.numeric(tagrelease[,i])
+    returndat$tagrelease <- tagrelease
     returndat$tagfirstperiod <- tagfirstperiod
     returndat$tagaccumperiod <- tagaccumperiod
   }else{
-    returndat$tagrecap <- NA
+    returndat$tagrelease <- NA
     returndat$tagfirstperiod <- NA
     returndat$tagaccumperiod <- NA
   }
@@ -2663,7 +2726,9 @@ SS_output <-
     names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     if(nareas==1 & ngpatterns==1){ # for simpler models, do some cleanup
       Dynamic_Bzero <- Dynamic_Bzero[-(1:2),]
-      for(icol in c(1,3,4)) Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
+      for(icol in c(1,3,4)){
+        Dynamic_Bzero[,icol] <- as.numeric(as.character(Dynamic_Bzero[,icol]))
+      }
       names(Dynamic_Bzero) <- c("Yr","Era","SSB","SSB_nofishing")
     }
     if(nareas>1 & ngpatterns==1){ # for spatial models, do some cleanup
@@ -2680,7 +2745,7 @@ SS_output <-
     }
   }
   returndat$Dynamic_Bzero <- Dynamic_Bzero
-
+  
   # adding stuff to list which gets returned by function
   if(comp){
     returndat$comp_data_exists <- TRUE

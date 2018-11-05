@@ -14,7 +14,7 @@ SSplotSpawnrecruit(replist, subplot = 1:3, add = FALSE, plot = TRUE,
   pheight = 5, punits = "in", res = 300, ptsize = 10,
   verbose = TRUE, colvec = c("blue", "black", "black", gray(0, 0.7)),
   ltyvec = c(1, 2, 1, NA), ptcol = "default", legend = TRUE,
-  legendloc = "topleft", minyr = "default", textmindev = 0.5,
+  legendloc = NULL, minyr = "default", textmindev = 0.5,
   relative = FALSE, expected = TRUE, estimated = TRUE,
   bias_adjusted = TRUE, show_env = TRUE, virg = TRUE, init = TRUE,
   forecast = FALSE)
@@ -70,7 +70,10 @@ nrow(replist$recruit)}
 
 \item{legend}{add a legend to the figure?}
 
-\item{legendloc}{location of legend. See ?legend for more info}
+\item{legendloc}{location of legend. By default it is chosen as the first
+value in the set of "topleft", "topright", "bottomright" that results in no
+overlap with the points in the plot, but the user can override this with their
+choice of location. See ?legend for more info on the options.}
 
 \item{minyr}{minimum year of recruitment deviation to show in plot}
 

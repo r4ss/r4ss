@@ -9,7 +9,7 @@ PinerPlot(summaryoutput, plot = TRUE, print = FALSE,
   main = "Changes in length-composition likelihoods by fleet",
   models = "all", fleets = "all", fleetnames = "default",
   profile.string = "R0", profile.label = expression(log(italic(R)[0])),
-  ylab = "Change in -log-likelihood", col = "default",
+  exact = FALSE, ylab = "Change in -log-likelihood", col = "default",
   pch = "default", lty = 1, lty.total = 1, lwd = 2,
   lwd.total = 3, cex = 1, cex.total = 1.5, xlim = "default",
   ymax = "default", xaxs = "r", yaxs = "r", type = "o",
@@ -40,12 +40,17 @@ columns in summary tables.}
 \item{fleetnames}{Optional character vector of names for each fleet.}
 
 \item{profile.string}{Character string used to find parameter over which the
-profile was conducted. Needs to match substring of one of the SS parameter
-labels found in the Report.sso file. For instance, the default input 'steep'
-matches the parameter 'SR_BH_steep'.}
+profile was conducted. If \code{exact=FALSE}, this can be a substring of
+one of the SS parameter labels found in the Report.sso file.
+For instance, the default input 'R0'
+matches the parameter 'SR_LN(R0)'. If \code{exact=TRUE}, then
+profile.string needs to be an exact match to the parameter label.}
 
 \item{profile.label}{Label for x-axis describing the parameter over which
 the profile was conducted.}
+
+\item{exact}{Should the \code{profile.string} have to match the parameter
+label exactly, or is a substring OK.}
 
 \item{ylab}{Label for y-axis. Default is "Change in -log-likelihood".}
 

@@ -40,6 +40,9 @@
 #' (noting that numeric 3.30  = 3.3).
 #' @param prior_check Check to make sure the starter file is set to include
 #' the prior likelihood contribution in the total likelihood.  Default = TRUE.
+#' @param read_like Read the table of likelihoods from each model as it finishes.
+#' Default = TRUE. Changing to FALSE should allow the function to play through
+#' even if something is wrong with reading the table.
 #' @param verbose Controls amount of info output to command line.  Default =
 #' TRUE.
 #' @note The starting values used in this profile are not ideal and some models
@@ -121,6 +124,7 @@ function(
          dircopy=TRUE, exe.delete=FALSE,
          model='ss', extras="-nox", systemcmd=FALSE, saveoutput=TRUE,
          overwrite=TRUE, whichruns=NULL, SSversion="3.30", prior_check=TRUE,
+         read_like=TRUE,
          verbose=TRUE)
 {
   OS <- "Mac" # don't know the version$os info for Mac
@@ -278,7 +282,7 @@ function(
 
       converged[i] <- file.exists(stdfile)
       onegood <- FALSE
-      if(file.exists('Report.sso') & file.info('Report.sso')$size>0){
+      if(read_like && file.exists('Report.sso') & file.info('Report.sso')$size>0){
         onegood <- TRUE
         Rep <- readLines('Report.sso',n=200)
         like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=11,header=TRUE,fill=TRUE)

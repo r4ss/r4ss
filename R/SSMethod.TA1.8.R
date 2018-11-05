@@ -97,7 +97,7 @@ SSMethod.TA1.8 <-
   # Check the type is correct and the sexes is correct
   is.in <- function (x, y)!is.na(match(x, y))
   if(!is.in(type,c('age','len','size','con'))){
-    stop('Illegal value for type')
+    stop('Illegal value for type (should be "age", "len", "size", or "con")')
   }else{
     if(sum(!is.in(sexes,c(0:3)))>0){
       stop('Unrecognised value for sexes')
@@ -247,10 +247,11 @@ SSMethod.TA1.8 <-
       # loop over panels
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
+      # calculate ylim, including removing Inf values
       plot(x,subpldat[,'Obsmn'],pch='-',
            xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
            ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
-               na.rm=TRUE),
+               finite=TRUE, na.rm=TRUE),
            xlab='',ylab='')
       segments(x, subpldat[,'Obslo'], x, subpldat[,'Obshi'], lwd=3, lend=3)
       if(plotadj){

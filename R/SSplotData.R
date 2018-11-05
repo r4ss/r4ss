@@ -11,11 +11,12 @@
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param fleetcol Either the string "default", or a vector of colors to use
-#' for each fleet.
+#' for each fleet. If tagging data is included, an additional color needs to be
+#' added for the tag releases which are not assigned to a fleet.
 #' @param datatypes Either the string "all", or a vector including some subset
 #' of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 #' "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-#' "wadbase", "mnwgt", "discard", "tagdbase1", "tagdbase2".
+#' "wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".
 #' @param fleets Either the string "all", or a vector of numerical values, like
 #' c(1,3), listing fleets or surveys to be included in the plot.
 #' @param fleetnames A vector of alternative names to use in the plot. By
@@ -112,7 +113,6 @@ SSplotData <- function(replist,
   ladbase       <- replist$ladbase
   wadbase       <- replist$wadbase
   tagdbase1     <- replist$tagdbase1
-  tagdbase2     <- replist$tagdbase2
 
   # mean body weight
   mnwgt         <- replist$mnwgt
@@ -120,6 +120,10 @@ SSplotData <- function(replist,
   # discards
   discard       <- replist$discard
 
+  # tag data
+  tagrelease      <- replist$tagrelease
+
+  # make table of data types
   typetable <- matrix(c(
       "catch",         "Catch",                                         #1
       "cpue",          "Abundance indices",                             #2
@@ -134,8 +138,11 @@ SSplotData <- function(replist,
       "wadbase",       "Mean weight-at-age",                            #11
       "mnwgt",         "Mean body weight",                              #12
       "discard",       "Discards",                                      #13
-      "tagdbase1",     "Tagging data",                                  #14
-      "tagdbase2",     "Tagging data"),ncol=2,byrow=TRUE)               #15
+      "tagrelease",    "Tag releases",                                  #14 
+      "tagdbase1",     "Tag recaptures"),ncol=2,byrow=TRUE)             #15
+  # note: tagdbase2 excluded since it is not fleet specific and the years
+  #       should always match those in tagdbase1
+  
   if(!ghost) typetable <- typetable[-grep("ghost",typetable[,1]),]
   typenames <- typetable[,1]
   typelabels <- typetable[,2]
@@ -172,9 +179,17 @@ SSplotData <- function(replist,
           allyrs <- dat$Yr[dat$Fleet==ifleet]
           size <- rep(1, len=length(allyrs))
         }
-        if(length(grep("dbase",typename))>0){
+        if(length(grep("dbase",typename))>0 & typename!="tagdbase1"){
           allyrs <- dat$Yr[dat$Fleet==ifleet]
           size <- dat$N[dat$Fleet==ifleet]
+        }
+        if(typename=="tagrelease" & ifleet==1){
+          allyrs <- dat$Yr
+          size <- dat$Nrelease
+        }
+        if(typename=="tagdbase1"){
+          allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs > 0]
+          size <- dat$Obs[dat$Fleet==ifleet & dat$Obs > 0]
         }
         # length- and weight-at-age have different sample sizes for each age
         # within a year, so override calculation above using sum of sample sizes
@@ -191,29 +206,41 @@ SSplotData <- function(replist,
           yrs <- floor(allyrs[unique.index])
           size.sorted <- size[unique.index][order(yrs)]
           yrs.sorted <- yrs[order(yrs)]
+          # add to big typetable
           typetable <- rbind(typetable,
-                             data.frame(yr=yrs.sorted,fleet=ifleet,
+                             data.frame(yr=yrs.sorted,
+                                        fleet=ifelse(typename=="tagrelease",
+                                            nfleets+1, ifleet),
                                         itype=ntypes,typename=typename,
                                         size=size.sorted,
                                         stringsAsFactors=FALSE))
-        }
-      }
-    }
-  }
-  # typetable is full data frame of all fleets and data types
-  # typetable2 has been subset according to requested choices
-
+        } # end example table
+      } # end loop over fleets
+    } # end check for presence of data of this type
+  } # end loop over typenames
+  
   # subset by fleets and data types if requested
-  if(fleets[1]=="all") fleets <- 1:nfleets
-  if(datatypes[1]=="all") datatypes <- typenames
+  if(fleets[1]=="all"){
+    fleets <- 1:(nfleets+1)
+  }
+  if(datatypes[1]=="all"){
+    datatypes <- typenames
+  }
+  # typetable2 has been subset according to requested choices of type
   typetable2 <- typetable[typetable$fleet %in% fleets &
                             typetable$typename %in% datatypes,]
 
   # define dimensions of plot
   ntypes <- max(typetable2$itype)
-  fleets <- sort(unique(typetable2$fleet))
-  nfleets2 <- length(fleets)
-
+  # fleets2 is a subset of fleets that have data of the requested types
+  fleets2 <- sort(unique(typetable2$fleet))
+  fleets2 <- fleets2[fleets2 %in% c(0,fleets)]
+  nfleets2 <- length(fleets2)
+  # add name for tag releases which are not assigned to a fleet
+  if(nfleets + 1 %in% fleets2){
+    fleetnames <- c(fleetnames, "unassigned")
+  }
+  
   # define colors
   if(fleetcol[1]=="default"){
     if(nfleets2>3) fleetcol <- rich.colors.short(nfleets2+1)[-1]
@@ -223,7 +250,6 @@ SSplotData <- function(replist,
   }else{
     if(length(fleetcol) < nfleets2) fleetcol=rep(fleetcol,nfleets2)
   }
-
   # function containing plotting commands
   plotdata <- function(datasize){
     par(mar=margins) # multi-panel plot
@@ -245,14 +271,17 @@ SSplotData <- function(replist,
     abline(v=xticks,col='grey',lty=3)
     axistable <- data.frame(fleet=rep(NA,ymax),yval=NA)
     itick <- 1
+    # loop over data types
     for(itype in rev(unique(typetable2$itype))){
       ## Calculate relative size for each data type separately
       typetable2$size[typetable2$itype==itype] <-
         typetable2$size[typetable2$itype==itype] /
           max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      # name for this data type
       typename <- unique(typetable2$typename[typetable2$itype==itype])
-      #fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
-      for(ifleet in rev(fleets)){
+      # subset of fleets for this data type
+      type.fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
+      for(ifleet in rev(type.fleets)){
         yrs <- typetable2$yr[typetable2$fleet==ifleet & typetable2$itype==itype]
         if(length(yrs)>0){
           size.cex <- typetable2$size[typetable2$fleet==ifleet & typetable2$itype==itype]
