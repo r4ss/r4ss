@@ -187,12 +187,13 @@ SS_output <-
 
   # test for version compatibility with this code
   if(SS_versionNumeric < SS_versionMin  | SS_versionNumeric > SS_versionMax){
-    cat("\n! Warning, this function tested on SS-V3.24 through SS-V3.30.07.\n",
-        "  you are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
+    warning("This function tested on SS versions 3.24 and 3.30.\n",
+        "  You are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
   }else{
-    if(verbose)
-    cat("! Warning, this function tested on SS-V",SS_versionMin," through SS-V",SS_versionMax,".\n",
-        "  you are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
+    if(verbose){
+      message("Note: this function tested on SS versions 3.24 and 3.30.\n",
+              "  You are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
+    }
   }
 
   findtime <- function(lines){
