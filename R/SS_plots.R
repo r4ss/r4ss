@@ -491,7 +491,7 @@ SS_plots <-
   {
     if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
     plotinfo <- SSplotBiology(replist=replist,
-                              forecast=forecastplot,
+                              forecast=forecastplot, minyr=minyr, maxyr=maxyr,
                               plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
                               ptsize=ptsize, res=res, mainTitle=mainTitle,
@@ -509,6 +509,7 @@ SS_plots <-
     selexinfo <-
       SSplotSelex(replist=replist, selexlines=selexlines,
                   fleets=fleets, fleetnames=fleetnames,
+                  minyr=minyr, maxyr=maxyr,
                   plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
