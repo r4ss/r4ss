@@ -9,11 +9,42 @@
 #' @param print Print to PNG files?
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1 growth curve only
+#'   \item 2	growth curve with CV and SD
+#'   \item 3	growth curve with maturity and weight
+#'   \item 4	distribution of length at age (still in development)
+#'   \item 5	length or wtatage matrix
+#'   \item 6	maturity
+#'   \item 7	fecundity from model parameters
+#'   \item 8	fecundity at weight from BIOLOGY section
+#'   \item 9	fecundity at length from BIOLOGY section
+#'   \item 10	spawning output at length
+#'   \item 11	spawning output at age
+#'   \item 21	Natural mortality (if age-dependent)
+#'   \item 22	Time-varying growth persp
+#'   \item 23	Time-varying growth contour
+#'   \item 24	plot time-series of any time-varying quantities
+#'   \item 31	hermaphroditism transition probability
+#'   \item 32	hermaphroditism cumulative probability
+#' }
+#' Additional plots not created by default
+#' \itemize{
+#'   \item 101	diagram with labels showing female growth curve
+#'   \item 102	diagram with labels showing female growth curve & male offsets
+#'   \item 103	diagram with labels showing female CV = f(A) (offset type 2)
+#'   \item 104	diagram with labels showing female CV = f(A) & male offset (type 2)
+#'   \item 105	diagram with labels showing female CV = f(A) (offset type 3)
+#'   \item 106	diagram with labels showing female CV = f(A) & male offset (type 3)
+#' }
 #' @param seas which season to plot (values other than 1 only work in
 #' seasonal models but but maybe not fully implemented)
 #' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
 #' will be replist$mainmorphs
 #' @param forecast Include forecast years in plots of time-varying biology?
+#' @param minyr optional input for minimum year to show in plots
+#' @param maxyr optional input for maximum year to show in plots
 #' @param colvec vector of length 3 with colors for various points/lines
 #' @param ltyvec vector of length 2 with lty for females/males in growth plots
 #' values can be applied to other plots in the future
@@ -41,38 +72,41 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotBiology <-
-function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
-         morphs=NULL,
-         forecast=FALSE,
-         colvec=c("red","blue","grey20"),
-         ltyvec=c(1,2),
-         shadealpha=0.1,
-         imageplot_text=FALSE,
-         imageplot_text_round=0,
-         legendloc="topleft",
-         plotdir="default",
-         labels=c("Length (cm)",                #1
-             "Age (yr)",                        #2
-             "Maturity",                        #3
-             "Mean weight (kg) in last year",   #4
-             "Spawning output",                 #5
-             "Length (cm, beginning of the year)", #6
-             "Natural mortality",               #7
-             "Female weight (kg)",              #8
-             "Female length (cm)",              #9
-             "Fecundity",                       #10
-             "Default fecundity label",         #11
-             "Year",                            #12
-             "Hermaphroditism transition rate", #13
+function(replist, plot = TRUE, print = FALSE, add = FALSE,
+         subplots = 1:32, seas = 1,
+         morphs = NULL,
+         forecast = FALSE,
+         minyr = -Inf,
+         maxyr = Inf,
+         colvec = c("red","blue","grey20"),
+         ltyvec = c(1,2),
+         shadealpha = 0.1,
+         imageplot_text = FALSE,
+         imageplot_text_round = 0,
+         legendloc = "topleft",
+         plotdir = "default",
+         labels = c("Length (cm)",                      #1
+             "Age (yr)",                                #2
+             "Maturity",                                #3
+             "Mean weight (kg) in last year",           #4
+             "Spawning output",                         #5
+             "Length (cm, beginning of the year)",      #6 
+             "Natural mortality",                       #7
+             "Female weight (kg)",                      #8
+             "Female length (cm)",                      #9
+             "Fecundity",                               #10
+             "Default fecundity label",                 #11
+             "Year",                                    #12
+             "Hermaphroditism transition rate",         #13
              "Fraction females by age at equilibrium"), #14
-         pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-         mainTitle=TRUE, verbose=TRUE)
+         pwidth = 6.5,pheight = 5.0,punits = "in",res = 300,ptsize = 10,cex.main = 1,
+         mainTitle = TRUE, verbose = TRUE)
 {
   #### current (Aug 18, 2017) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
   # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
   # subplot 3: growth_curve_plus_fn - growth curve with maturity and weight
-  # subplot 4: distribution of length at age (still in development)
+  # subplot 4: SSplotAgeMatrix (separate function) - distribution of length at age
   # subplot 5: weight-length or wtatage matrix
   # subplot 6: maturity
   # subplot 7: fec_pars_fn - fecundity from model parameters
@@ -81,17 +115,17 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
   # subplot 10: spawn_output_len_fn  - spawning output at length
   # subplot 11: spawn_output_age_fn  - spawning output at age
   
-  # subplot 21 #formerly 11: mfunc   - Natural mortality (if age-dependent)
-  # subplot 22 #formerly 12: [no function] - Time-varying growth persp
-  # subplot 23 #formerly 13: [no function] - Time-varying growth contour
-  # subplot 24 #formerly 14: timeVaryingParmFunc - plot time-series of any time-varying quantities
+  # subplot 21 mfunc   - Natural mortality (if age-dependent)
+  # subplot 22 [no function] - Time-varying growth persp
+  # subplot 23 [no function] - Time-varying growth contour
+  # subplot 24 timeVaryingParmFunc - plot time-series of any time-varying quantities
   
   #### unfinished addition on 3-Mar-16 
-  # subplot 25 #formerly 15: [no function] - matrix of M by age and time 
+  # subplot 25 [no function] - matrix of M by age and time 
 
   #### vectors related to hermaphroditism
-  # subplot 31 #formerly 16: Herma_Trans
-  # subplot 32 #formerly 17: Herma_Cum
+  # subplot 31 Herma_Trans
+  # subplot 32 Herma_Cum
 
   # EXTRA PLOTS NOT PRODUCED BY DEFAULT
   # subplot 101: diagram with labels showing female growth curve
@@ -358,8 +392,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
     ## }
     ## yrvec2 <- c(-2:-1+min(yrvec), yrvec)
     ## mat2 <- cbind(meanvec,NA,mat)
-    yrvec2 <- yrvec
-    mat2 <- mat[,-1]
+
+    # subset based on minyr and maxyr
+    subset <- yrvec >= minyr & yrvec <= maxyr
+    yrvec2 <- yrvec[subset]
+    mat2 <- mat[subset,-1]
     lastbin <- max(mat2)
     z <- t(mat2)
     breaks <- seq(0,lastbin,length=51)
@@ -1125,7 +1162,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
     }
   }
 
-  # Time-varying growth (formerly plot #2)
+  # Time-varying growth
   if(is.null(growthvaries)){
     if(verbose){
       cat("No check for time-varying growth because\n",
@@ -1140,9 +1177,14 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
         for(i in 1:nsexes){
           growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
                                        growthseries$Morph==morphs[i],]
+          # trim based on forecast=TRUE/FALSE
           if(!forecast){
             growdatuse <- growdatuse[growdatuse$Yr <= endyr,]
           }
+          # trim based on minyr and maxyr
+          growdatuse <- growdatuse[growdatuse$Yr >= minyr &
+                                     growdatuse$Yr <= maxyr,]
+          # assemble vectors and matrix
           x <- 0:accuage
           y <- growdatuse$Yr
           z <- as.matrix(growdatuse[,-(1:4)])
@@ -1196,7 +1238,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:32,seas=1,
       }else{
         MGparmAdj.tmp <- MGparmAdj[MGparmAdj$Yr <= endyr, ]
       }
-      plot(MGparmAdj$Yr, MGparmAdj[[parmlabel]],
+      # trim based on minyr and maxyr
+      MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp$Yr >= minyr &
+                                       MGparmAdj.tmp$Yr <= maxyr,]
+      # make plot
+      plot(MGparmAdj.tmp$Yr, MGparmAdj.tmp[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected

@@ -178,10 +178,9 @@
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
 #' @param legendloc Location for all legends. Default="topleft".
-#' @param minyr First year to show in time-series plots (changes xlim
-#' parameters).
-#' @param maxyr Last year to show in time-series plots (changes xlim
-#' parameters).
+#' @param minyr First year to show in time-series and time-varying plots
+#' @param maxyr Last year to show in time-series and time-varying plots. This
+#' can either be an alternative to, or redundant with, the forecastplot input.
 #' @param sexes Which sexes to show in composition plots. Default="all".
 #' @param scalebins Rescale expected and observed proportions in composition
 #' plots by dividing by bin width for models where bins have different widths?
@@ -232,7 +231,7 @@ SS_plots <-
       maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
       tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-      legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
+      legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
       maxsize=.5,
       ...)
@@ -247,7 +246,9 @@ SS_plots <-
   # in the future, this could be read from a file, or we could have multiple columns
   # in the table to choose from
 
-  if(is.null(replist)) stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  if(is.null(replist)){
+    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  }
 
   # get quantities from the big list
   nfleets     <- replist$nfleets
@@ -587,9 +588,7 @@ SS_plots <-
     ### add plot of Summary F
     # first get vector of years
     yrs <- replist$startyr:replist$endyr
-    if(!is.null(maxyr)){
-      yrs <- yrs[yrs <= maxyr]
-    }
+    yrs <- yrs[yrs >= minyr & yrs <= maxyr]
     # now run plot function
     plotinfo <- SSplotSummaryF(replist=replist,
                                yrs=yrs,
