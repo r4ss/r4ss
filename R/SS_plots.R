@@ -197,7 +197,7 @@
 #' catches, indices) and are proportional to: absolute catch for catches,
 #' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
-#' plot. Default is 1/2.
+#' plot. Default is 1.0.
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -233,7 +233,7 @@ SS_plots <-
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
-      maxsize=.5,
+      maxsize=1.0,
       ...)
 {
   if(!is.null(print)){
