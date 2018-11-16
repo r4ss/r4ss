@@ -125,7 +125,7 @@ SSplotData <- function(replist,
 
   # make table of data types
   typetable <- matrix(c(
-      "catch",         "Catch",                                         #1
+      "catch",         "Catches",                                       #1
       "cpue",          "Abundance indices",                             #2
       "lendbase",      "Length compositions",                           #3
       "sizedbase",     "Size compositions",                             #4
