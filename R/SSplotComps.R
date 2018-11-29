@@ -1312,7 +1312,11 @@ SSplotComps <-
             if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
               agg$DM_effN[infleet] <- max(agg$DM_effN[infleet], na.rm=TRUE)
             }else{
-              agg$effN[infleet] <- max(agg$effN[infleet], na.rm=TRUE)
+              if(any(!is.na(agg$effN[infleet]))){
+                agg$effN[infleet] <- max(agg$effN[infleet], na.rm=TRUE)
+              }else{
+                agg$effN[infleet] <- NA
+              }
             }
           }
 

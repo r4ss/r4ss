@@ -6,16 +6,17 @@
 \usage{
 SSplotSelex(replist, infotable = NULL, fleets = "all",
   fleetnames = "default", sizefactors = c("Lsel"),
-  agefactors = c("Asel", "Asel2"), years = "endyr", season = 1,
-  sexes = "all", selexlines = 1:6, subplot = 1:25,
-  skipAgeSelex10 = TRUE, plot = TRUE, print = FALSE, add = FALSE,
-  labels = c("Length (cm)", "Age (yr)", "Year", "Selectivity",
-  "Retention", "Discard mortality"), col1 = "red", col2 = "blue",
-  lwd = 2, fleetcols = "default", fleetpch = "default",
-  fleetlty = "default", spacepoints = 5, staggerpoints = 1,
-  legendloc = "bottomright", pwidth = 7, pheight = 7,
-  punits = "in", res = 300, ptsize = 12, cex.main = 1,
-  showmain = TRUE, plotdir = "default", verbose = TRUE)
+  agefactors = c("Asel", "Asel2"), years = "endyr", minyr = -Inf,
+  maxyr = Inf, season = 1, sexes = "all", selexlines = 1:6,
+  subplot = 1:25, skipAgeSelex10 = TRUE, plot = TRUE,
+  print = FALSE, add = FALSE, labels = c("Length (cm)", "Age (yr)",
+  "Year", "Selectivity", "Retention", "Discard mortality"), col1 = "red",
+  col2 = "blue", lwd = 2, fleetcols = "default",
+  fleetpch = "default", fleetlty = "default", spacepoints = 5,
+  staggerpoints = 1, legendloc = "bottomright", pwidth = 7,
+  pheight = 7, punits = "in", res = 300, ptsize = 12,
+  cex.main = 1, showmain = TRUE, plotdir = "default",
+  verbose = TRUE)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -36,6 +37,10 @@ be included in plot of selectivity across multiple fleets?}
 
 \item{years}{Which years for selectivity are shown in multi-line plot
 (default = last year of model).}
+
+\item{minyr}{optional input for minimum year to show in plots}
+
+\item{maxyr}{optional input for maximum year to show in plots}
 
 \item{season}{Which season (if seasonal model) for selectivity shown in
 multi-line plot (default = 1).}

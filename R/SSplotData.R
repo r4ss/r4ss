@@ -61,7 +61,7 @@ SSplotData <- function(replist,
                        margins=c(5.1,2.1,2.1,8.1),
                        cex=2,lwd=12,
                        datasize=TRUE,
-                       maxsize=0.5,
+                       maxsize=1.0,
                        alphasize=1,
                        both=TRUE,
                        mainTitle=FALSE,
@@ -125,7 +125,7 @@ SSplotData <- function(replist,
 
   # make table of data types
   typetable <- matrix(c(
-      "catch",         "Catch",                                         #1
+      "catch",         "Catches",                                       #1
       "cpue",          "Abundance indices",                             #2
       "lendbase",      "Length compositions",                           #3
       "sizedbase",     "Size compositions",                             #4
@@ -142,8 +142,11 @@ SSplotData <- function(replist,
       "tagdbase1",     "Tag recaptures"),ncol=2,byrow=TRUE)             #15
   # note: tagdbase2 excluded since it is not fleet specific and the years
   #       should always match those in tagdbase1
-  
-  if(!ghost) typetable <- typetable[-grep("ghost",typetable[,1]),]
+
+  # exclude ghost fleet observations if requested
+  if(!ghost){
+    typetable <- typetable[-grep("ghost",typetable[,1]),]
+  }
   typenames <- typetable[,1]
   typelabels <- typetable[,2]
 
@@ -162,63 +165,101 @@ SSplotData <- function(replist,
       for(ifleet in 1:nfleets){
         allyrs <- NULL
         size <- NULL
-        # identify years from different data types
-        if(typename=="catch" & ifleet<=nfishfleets){
-          allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs>0]
-          size <- dat$Obs[dat$Fleet==ifleet & dat$Obs>0]
-          # use updated table in newer versions of SS (probably 3.30+)
-          if("kill_bio" %in% names(dat)){
-            size <- dat$kill_bio[dat$Fleet==ifleet & dat$Obs>0]
+        # subset for this fleet
+        dat.f <- dat[dat$Fleet == ifleet,]
+        # check for observations from this fleet
+        if(nrow(dat.f) > 0){
+
+          # identify years from different data types
+          if(typename == "catch"){
+            allyrs <- dat.f$Yr[dat.f$Obs>0]
+            size <- dat.f$Obs[dat.f$Obs>0]
+            # use updated table in newer versions of SS (probably 3.30+)
+            # presumably this will include discards whereas the previous approach
+            # may have only been landed catch
+            if("kill_bio" %in% names(dat.f)){
+              size <- dat.f$kill_bio[dat.f$Obs>0]
+            }
           }
-        }
-        if(typename %in% c("cpue")){
-          allyrs <- dat$Yr[dat$Use>0 & dat$Fleet==ifleet]
-          size <- 1/dat$SE[dat$Use>0 & dat$Fleet==ifleet]
-        }
-        if(typename %in% c("mnwgt","discard")){
-          allyrs <- dat$Yr[dat$Fleet==ifleet]
-          size <- rep(1, len=length(allyrs))
-        }
-        if(length(grep("dbase",typename))>0 & typename!="tagdbase1"){
-          allyrs <- dat$Yr[dat$Fleet==ifleet]
-          size <- dat$N[dat$Fleet==ifleet]
-        }
-        if(typename=="tagrelease" & ifleet==1){
-          allyrs <- dat$Yr
-          size <- dat$Nrelease
-        }
-        if(typename=="tagdbase1"){
-          allyrs <- dat$Yr[dat$Fleet==ifleet & dat$Obs > 0]
-          size <- dat$Obs[dat$Fleet==ifleet & dat$Obs > 0]
-        }
-        # length- and weight-at-age have different sample sizes for each age
-        # within a year, so override calculation above using sum of sample sizes
-        # (results will be same as if average was used due to rescaling) 
-        if(typename %in% c("ladbase","wadbase")){
-          allyrs <- dat$Yr[dat$Fleet==ifleet]
-          size <- sum(dat$N[dat$Fleet==ifleet])
-        }
-        # expand table of years with data
-        if(!is.null(allyrs) & length(allyrs)>0){
-          ## subset to unique values and be careful about keeping the
-          ## order of size
-          unique.index <- which(!duplicated(allyrs))
-          yrs <- floor(allyrs[unique.index])
-          size.sorted <- size[unique.index][order(yrs)]
-          yrs.sorted <- yrs[order(yrs)]
-          # add to big typetable
-          typetable <- rbind(typetable,
-                             data.frame(yr=yrs.sorted,
-                                        fleet=ifelse(typename=="tagrelease",
-                                            nfleets+1, ifleet),
-                                        itype=ntypes,typename=typename,
-                                        size=size.sorted,
-                                        stringsAsFactors=FALSE))
-        } # end example table
+          if(typename == "cpue"){
+            allyrs <- dat.f$Yr[dat.f$Use>0]
+            size <- 1/dat.f$SE[dat.f$Use>0]
+          }
+          if(typename == "mnwgt"){
+            # get minimum CV across partitions
+            dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=min)
+            allyrs <- dat.agg$Group.1
+            size <- 1/dat.agg$x # inverse of minimum CV
+          }
+          if(typename == "discard"){
+            allyrs <- dat.f$Yr
+            size <- 1/dat.f$Std_in
+          }
+          if(typename %in% c("lendbase", "sizedbase", "agedbase")){
+            allyrs <- dat.f$Yr
+            size <- dat.f$N
+          }
+          if(typename %in% c("ghostagedbase", "ghostcondbase", "ghostlendbase")){
+            allyrs <- dat.f$Yr
+            # sample sizes not currently (as of 3.30.13) reported
+            # for ghost observations
+            size <- rep(1, length(allyrs))
+          }
+          if(typename %in% c("condbase", "ghostcondbase")){
+            # subset by smallest bin (sample size is repeated
+            # for all bins within each vector of observations)
+            dat.sub <- dat.f[dat.f$Bin == min(dat.f$Bin),]
+            # check for observations within this fleet
+            if(nrow(dat.sub) > 0){
+              # aggregate sample sizes by year
+              dat.agg <- aggregate(dat.sub$N, by=list(dat.sub$Yr), FUN=sum)
+              allyrs <- dat.agg$Group.1
+              size <- dat.agg$x
+            }
+          }
+          if(typename=="tagrelease" & ifleet==1){
+            allyrs <- dat.f$Yr
+            size <- dat.f$Nrelease
+          }
+          if(typename=="tagdbase1"){
+            allyrs <- dat.f$Yr[dat.f$Obs > 0]
+            size <- dat.f$Obs[dat.f$Obs > 0]
+          }
+          # length- and weight-at-age have different sample sizes for each age
+          # within a year, use sum of sample sizes
+          # (results will be same as if average was used due to rescaling) 
+          if(typename %in% c("ladbase","wadbase")){
+            # aggregate sample sizes by year
+            dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+            allyrs <- dat.agg$Group.1
+            size <- dat.agg$x
+          }
+          
+          # expand table of years with data
+          if(!is.null(allyrs) & length(allyrs)>0){
+            ## subset to unique values and be careful about keeping the
+            ## order of size
+            ## this will cause repeat observations for different partitions
+            ## to be averaged
+            unique.index <- which(!duplicated(allyrs))
+            yrs <- floor(allyrs[unique.index])
+            size.sorted <- size[unique.index][order(yrs)]
+            yrs.sorted <- yrs[order(yrs)]
+
+            # add to big typetable
+            typetable <- rbind(typetable,
+                               data.frame(yr=yrs.sorted,
+                                          fleet=ifelse(typename=="tagrelease",
+                                              nfleets+1, ifleet),
+                                          itype=ntypes,typename=typename,
+                                          size=size.sorted,
+                                          stringsAsFactors=FALSE))
+          } # end example table
+        } # check for values within this fleet
       } # end loop over fleets
     } # end check for presence of data of this type
   } # end loop over typenames
-  
+
   # subset by fleets and data types if requested
   if(fleets[1]=="all"){
     fleets <- 1:(nfleets+1)
@@ -226,6 +267,7 @@ SSplotData <- function(replist,
   if(datatypes[1]=="all"){
     datatypes <- typenames
   }
+
   # typetable2 has been subset according to requested choices of type
   typetable2 <- typetable[typetable$fleet %in% fleets &
                             typetable$typename %in% datatypes,]
@@ -325,8 +367,10 @@ SSplotData <- function(replist,
     box()
     axis(1,at=xticks)
   }
-  ## Always make the original one
-  if(plot & (!datasize | both)) plotdata(datasize=FALSE)
+  ## Make the plot with no scaling on circles (unless datsize=TRUE & both=FALSE)
+  if(plot & (!datasize | both)){
+    plotdata(datasize=FALSE)
+  }
   if(print) {
     caption <- "Data presence by year for each fleet"
     plotinfo <- pngfun(file="data_plot.png", caption=caption)
@@ -335,14 +379,21 @@ SSplotData <- function(replist,
   }
   ## Make second data plot if desired
   if(datasize){
-    if(plot) plotdata(datasize=TRUE)
+    if(plot){
+      plotdata(datasize=TRUE)
+    }
     if(print) {
       caption <- paste(
-          "Data presence by year for each fleet, where circle area is relative <br> ",
-          "within a data type, and proportional to precision for indices and compositions, <br> ",
-          "and absolute catch for catches.<br> ",
-          "Note that since the circles are are scaled relative to maximum,<br> ",
-          "scaling within separate plots should not be compared.")
+          "Data presence by year for each fleet, where circle area is <br> ",
+          "relative within a data type. Circles are proportional to <br> ",
+          "total catch for catches; to precision for indices, discards, and <br> ",
+          "mean body weight observations; and to total sample size for <br>",
+          "compositions and mean weight- or length-at-age observations. <br>",
+          "'Ghost' observations (not included in the likelihood) have <br>",
+          "equal size for all years. <br>",
+          "Note that since the circles are are scaled relative <br> ",
+          "to maximum within each type, the scaling within separate plots <br> ",
+          "should not be compared.")
       plotinfo <- pngfun(file="data_plot2.png", caption=caption)
       plotdata(datasize)
       dev.off()

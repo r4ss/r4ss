@@ -178,10 +178,9 @@
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
 #' @param legendloc Location for all legends. Default="topleft".
-#' @param minyr First year to show in time-series plots (changes xlim
-#' parameters).
-#' @param maxyr Last year to show in time-series plots (changes xlim
-#' parameters).
+#' @param minyr First year to show in time-series and time-varying plots
+#' @param maxyr Last year to show in time-series and time-varying plots. This
+#' can either be an alternative to, or redundant with, the forecastplot input.
 #' @param sexes Which sexes to show in composition plots. Default="all".
 #' @param scalebins Rescale expected and observed proportions in composition
 #' plots by dividing by bin width for models where bins have different widths?
@@ -198,7 +197,7 @@
 #' catches, indices) and are proportional to: absolute catch for catches,
 #' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
-#' plot. Default is 1/2.
+#' plot. Default is 1.0.
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -232,9 +231,9 @@ SS_plots <-
       maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
       tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-      legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
+      legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
-      maxsize=.5,
+      maxsize=1.0,
       ...)
 {
   if(!is.null(print)){
@@ -247,7 +246,9 @@ SS_plots <-
   # in the future, this could be read from a file, or we could have multiple columns
   # in the table to choose from
 
-  if(is.null(replist)) stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  if(is.null(replist)){
+    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  }
 
   # get quantities from the big list
   nfleets     <- replist$nfleets
@@ -490,7 +491,7 @@ SS_plots <-
   {
     if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
     plotinfo <- SSplotBiology(replist=replist,
-                              forecast=forecastplot,
+                              forecast=forecastplot, minyr=minyr, maxyr=maxyr,
                               plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
                               ptsize=ptsize, res=res, mainTitle=mainTitle,
@@ -508,6 +509,7 @@ SS_plots <-
     selexinfo <-
       SSplotSelex(replist=replist, selexlines=selexlines,
                   fleets=fleets, fleetnames=fleetnames,
+                  minyr=minyr, maxyr=maxyr,
                   plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
@@ -587,9 +589,7 @@ SS_plots <-
     ### add plot of Summary F
     # first get vector of years
     yrs <- replist$startyr:replist$endyr
-    if(!is.null(maxyr)){
-      yrs <- yrs[yrs <= maxyr]
-    }
+    yrs <- yrs[yrs >= minyr & yrs <= maxyr]
     # now run plot function
     plotinfo <- SSplotSummaryF(replist=replist,
                                yrs=yrs,

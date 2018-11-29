@@ -6,11 +6,11 @@
 \usage{
 SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
   subplots = 1:32, seas = 1, morphs = NULL, forecast = FALSE,
-  colvec = c("red", "blue", "grey20"), ltyvec = c(1, 2),
-  shadealpha = 0.1, imageplot_text = FALSE, imageplot_text_round = 0,
-  legendloc = "topleft", plotdir = "default",
-  labels = c("Length (cm)", "Age (yr)", "Maturity",
-  "Mean weight (kg) in last year", "Spawning output",
+  minyr = -Inf, maxyr = Inf, colvec = c("red", "blue", "grey20"),
+  ltyvec = c(1, 2), shadealpha = 0.1, imageplot_text = FALSE,
+  imageplot_text_round = 0, legendloc = "topleft",
+  plotdir = "default", labels = c("Length (cm)", "Age (yr)",
+  "Maturity", "Mean weight (kg) in last year", "Spawning output",
   "Length (cm, beginning of the year)", "Natural mortality",
   "Female weight (kg)", "Female length (cm)", "Fecundity",
   "Default fecundity label", "Year", "Hermaphroditism transition rate",
@@ -27,7 +27,36 @@ SSplotBiology(replist, plot = TRUE, print = FALSE, add = FALSE,
 
 \item{add}{add to existing plot}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\itemize{
+  \item 1 growth curve only
+  \item 2    growth curve with CV and SD
+  \item 3    growth curve with maturity and weight
+  \item 4    distribution of length at age (still in development)
+  \item 5    length or wtatage matrix
+  \item 6    maturity
+  \item 7    fecundity from model parameters
+  \item 8    fecundity at weight from BIOLOGY section
+  \item 9    fecundity at length from BIOLOGY section
+  \item 10    spawning output at length
+  \item 11    spawning output at age
+  \item 21    Natural mortality (if age-dependent)
+  \item 22    Time-varying growth persp
+  \item 23    Time-varying growth contour
+  \item 24    plot time-series of any time-varying quantities
+  \item 31    hermaphroditism transition probability
+  \item 32    hermaphroditism cumulative probability
+}
+Additional plots not created by default
+\itemize{
+  \item 101    diagram with labels showing female growth curve
+  \item 102    diagram with labels showing female growth curve & male offsets
+  \item 103    diagram with labels showing female CV = f(A) (offset type 2)
+  \item 104    diagram with labels showing female CV = f(A) & male offset (type 2)
+  \item 105    diagram with labels showing female CV = f(A) (offset type 3)
+  \item 106    diagram with labels showing female CV = f(A) & male offset (type 3)
+}}
 
 \item{seas}{which season to plot (values other than 1 only work in
 seasonal models but but maybe not fully implemented)}
@@ -36,6 +65,10 @@ seasonal models but but maybe not fully implemented)}
 will be replist$mainmorphs}
 
 \item{forecast}{Include forecast years in plots of time-varying biology?}
+
+\item{minyr}{optional input for minimum year to show in plots}
+
+\item{maxyr}{optional input for maximum year to show in plots}
 
 \item{colvec}{vector of length 3 with colors for various points/lines}
 

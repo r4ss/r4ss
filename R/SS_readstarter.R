@@ -99,7 +99,7 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
     message("  SPR_basis = ", mylist$SPR_basis)
   }
   mylist$F_report_units <- allnums[i]; i <- i+1
-  if(!is.na(mylist$F_report_units) && mylist$F_report_units==4){
+  if(!is.na(mylist$F_report_units) && mylist$F_report_units %in% 4:5){
     mylist$F_age_range <- allnums[i]; i <- i+1
     mylist$F_age_range[2] <- allnums[i]; i <- i+1
   }else{

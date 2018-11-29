@@ -24,9 +24,9 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   andrerows = 3, tagrows = 3, tagcols = 3, fixdims = TRUE,
   new = TRUE, SSplotDatMargin = 8, filenotes = NULL,
   catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
-  minyr = NULL, maxyr = NULL, sexes = "all", scalebins = FALSE,
+  minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
   scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
-  datasize = TRUE, maxsize = 0.5, ...)
+  datasize = TRUE, maxsize = 1, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -269,11 +269,10 @@ Default=F.}
 
 \item{legendloc}{Location for all legends. Default="topleft".}
 
-\item{minyr}{First year to show in time-series plots (changes xlim
-parameters).}
+\item{minyr}{First year to show in time-series and time-varying plots}
 
-\item{maxyr}{Last year to show in time-series plots (changes xlim
-parameters).}
+\item{maxyr}{Last year to show in time-series and time-varying plots. This
+can either be an alternative to, or redundant with, the forecastplot input.}
 
 \item{sexes}{Which sexes to show in composition plots. Default="all".}
 
@@ -297,7 +296,7 @@ catches, indices) and are proportional to: absolute catch for catches,
 1/SE of indices, and \code{N} for compositions.}
 
 \item{maxsize}{The size of the largest bubble in the datasize
-plot. Default is 1/2.}
+plot. Default is 1.0.}
 
 \item{\dots}{Additional arguments that will be passed to some subfunctions.}
 }

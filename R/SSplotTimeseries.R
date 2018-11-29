@@ -43,13 +43,12 @@ SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
-           minyr=NULL,maxyr=NULL,
+           minyr=-Inf,maxyr=Inf,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg="default",minbthresh="default",xlab="Year",
            labels=NULL,
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
 {
-
   # individual function for plotting time series of total or summary biomass
   # subplot1 = total biomass total all areas
   # subplot2 = total biomass by area
@@ -174,16 +173,8 @@ SSplotTimeseries <-
     ts$YrSeas <- ts$Yr
   }
 
-  # crop any years beyond maxyr
-  if(!is.null(maxyr)){
-    if(maxyr >= min(ts$YrSeas)){
-      ts <- ts[ts$YrSeas <= maxyr,]
-    }else{
-      warning("'maxyr' input lower than minimum (",
-              min(ts$YrSeas), "), changing to NULL")
-      maxyr <- NULL
-    }
-  }
+  # crop any years outside the range of maxyr to maxyr
+  ts <- ts[ts$YrSeas >= minyr & ts$YrSeas <= maxyr,]
 
   # warn about spawning season--seems to no longer be necessary now that title
   # is update for to reflect spawning season
@@ -422,9 +413,7 @@ SSplotTimeseries <-
     if(!add){
       yrvals  <- ts$YrSeas[ plot1 | plot2 | plot3]
       # axis limits
-      if(is.null(minyr)) minyr <- min(yrvals)
-      if(is.null(maxyr)) maxyr <- max(yrvals)
-      xlim <- c(minyr,maxyr)
+      xlim <- range(yrvals)
       plot(yrvals,yvals[plot1 | plot2 | plot3],
            type='n', xlab=xlab, ylim=c(0,1.05*ymax), yaxs='i', ylab=ylab,
            main=main, cex.main=cex.main,xlim=xlim)
