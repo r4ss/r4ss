@@ -135,6 +135,8 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
     }else{
       if(accuage > 3){
         middle.ages <- 2:3
+      }else{
+        middle.ages <- 1
       }
     }
     if(option==1){
