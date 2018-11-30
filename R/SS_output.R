@@ -1730,19 +1730,20 @@ SS_output <-
           # split out rows with info on tuning
           sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
         }
+        # change column name for models prior to 3.30.12
+        sizentune <- df.rename(sizentune,
+                               oldnames=c("Fleet_name"),
+                               newnames=c("Fleet_Name"))
 
         # format sizentune (info on tuning) has been split into
         # a separate data.frame, needs formatting: remove extra columns, change names
-        goodcols <- c(1:grep("Fleet_name",sizentune[1,]),
+        goodcols <- c(1:grep("FleetName",sizentune[1,]),
                       grep("Method",names(sizentune)))
         sizentune[1,max(goodcols)] <- "Method"
         sizentune <- sizentune[,goodcols]
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
-        sizentune <- df.rename(sizentune,
-                               oldnames=c("FleetName"),
-                               newnames=c("Fleet_name"))
-        for(icol in which(!names(sizentune) %in% c("#","Fleet_name"))){
+        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
           sizentune[,icol] <- as.numeric(sizentune[,icol])
         }
         stats$Size_comp_Eff_N_tuning_check <- sizentune
@@ -2581,7 +2582,9 @@ SS_output <-
   }
 
   # age-length matrix
-  rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:(accuage+2))
+  # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
+  # needs to be at least 6 even if there are fewer ages
+  rawALK <- matchfun2("AGE_LENGTH_KEY",4,"AGE_AGE_KEY",-1,cols=1:max(6, accuage+2))
   if(length(rawALK)>1 & rawALK[[1]][1]!="absent" &&
      length(grep("AGE_AGE_KEY", rawALK[,1]))==0){
     morph_col <- 5
@@ -2595,9 +2598,10 @@ SS_output <-
     # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
     ALK <- array(NA, c(nlbinspop, accuage+1, N_ALKs))
     dimnames(ALK) <- list(Length=rev(lbinspop), TrueAge=0:accuage, Matrix=1:N_ALKs)
+
     for(i in 1:N_ALKs){
       # get matrix of values
-      ALKtemp <- rawALK[starts[i]:ends[i],-1]
+      ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
       # loop over ages to convert values to numeric
       for(icol in 1:(accuage+1)){
         ALKtemp[,icol] <- as.numeric(ALKtemp[,icol])
