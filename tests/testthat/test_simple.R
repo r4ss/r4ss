@@ -14,9 +14,9 @@ test_that("SS_output runs on simple_3.24 model", {
 })
 
 test_that("SS_output runs on simple_3.30.01 model", {
-  simple3.30..01 <- SS_output(file.path(example_path,"simple_3.30..01"))
+  simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"))
   #expect_equal(is.list(simple3.30), "TRUE")
-  expect_equal(tail(names(simple3.30..01),1), "inputs")
+  expect_equal(tail(names(simple3.30.01),1), "inputs")
 })
 
 test_that("SS_output runs on simple_3.30.12 model", {
@@ -82,7 +82,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
   simple_table <- SStableComparisons(simple_summary)
   # confirm that output produces a data.frame
   # with 3 variables (label, model1, model2)
-  expect_output(str(SStableComparisons(simple_summary)), "3 variables")
+  expect_output(str(simple_table), "variables")
   
 })
 
