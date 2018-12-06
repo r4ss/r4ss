@@ -99,7 +99,7 @@ SS_RunJitter <- function(mydir, model="ss",
     # Only save stuff if it converged
     if( "Report.sso" %in% list.files() ){
       if(printlikes){
-        Rep.head <- readLines("Report.sso",n=100)
+        Rep.head <- readLines("Report.sso",n=300)
         likeline <- Rep.head[which(Rep.head=="Component logL*Lambda Lambda")-1]
         like <- as.numeric(substring(likeline,11))
         likesaved[i] <- like
