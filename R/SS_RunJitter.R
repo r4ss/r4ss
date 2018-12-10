@@ -118,9 +118,15 @@ SS_RunJitter <- function(mydir,
     if( "Report.sso" %in% list.files() ){
       if(printlikes){
         Rep.head <- readLines("Report.sso",n=300)
-        likeline <- Rep.head[which(Rep.head=="Component logL*Lambda Lambda")-1]
-        like <- as.numeric(substring(likeline,11))
-        likesaved[i] <- like
+        likelinenum <- grep("^LIKELIHOOD", Rep.head)
+        if(length(likelinenum)==0){
+          warning("can't find LIKELIHOOD section in Report.sso")
+          like <- NA
+        }else{
+          likeline <- Rep.head[likelinenum]
+          like <- as.numeric(substring(likeline, nchar("LIKELIHOOD") + 2))
+          likesaved[i] <- like
+        }
         message("Likelihood = ", like)
       }
       # rename output files
