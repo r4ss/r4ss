@@ -36,7 +36,7 @@ in the format Report1.sso, Report2.sso, etc.
   \dontrun{
     #### Change starter file appropriately (can also edit file directly)
     starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
-    # CHANGE THIS FOR GLOBAL_PAR START
+    # Change to use .par file
     starter$init_values_src = 1
     # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
     starter$jitter_fraction = 0.1
@@ -44,13 +44,7 @@ in the format Report1.sso, Report2.sso, etc.
     SS_writestarter(starter, dir=mydir, overwrite=TRUE)
 
     #### Run jitter using this function
-    mydir <- RunFile
-    extras <- "-nohess"
-    model <- "ss3"
-    Njitter <- 25
-
-    SS_RunJitter(mydir=mydir, model=model, extras=extras,
-                 Njitter=Njitter, Intern=TRUE)
+    jit.likes <- SS_RunJitter(mydir=mydir, Njitter=25)
 
     #### Read in results using other r4ss functions
     # (note that un-jittered model can be read using keyvec=0:Njitter)
