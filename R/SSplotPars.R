@@ -106,7 +106,7 @@ SSplotPars <-
       Ptype2 <- as.numeric(Ptype)
     }
     if(is.na(Ptype2)){
-      cat("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2,"\n")
+      warning("problem with prior type interpretation. Ptype:",Ptype," Ptype2:",Ptype2)
     }
 
     Pconst <- 0.0001
@@ -124,7 +124,9 @@ SSplotPars <-
       mu <- (Pr-Pmin) / (Pmax-Pmin);  # CASAL's v
       tau <- (Pr-Pmin)*(Pmax-Pr)/(Psd^2)-1.0;
       Bprior <- tau*mu;  Aprior <- tau*(1-mu);  # CASAL's m and n
-      if(Bprior<=1.0 | Aprior <=1.0) {cat(" bad Beta prior\n");}
+      if(Bprior<=1.0 | Aprior <=1.0) {
+        warning("bad Beta prior");
+      }
       Prior_Like <- (1.0-Bprior)*log(Pconst+Pval-Pmin) + (1.0-Aprior)*log(Pconst+Pmax-Pval)
       -(1.0-Bprior)*log(Pconst+Pr-Pmin) - (1.0-Aprior)*log(Pconst+Pmax-Pr);
     }
@@ -135,7 +137,7 @@ SSplotPars <-
       if(Pmin>0.0){
         Prior_Like <- 0.5*((log(Pval)-Pr+0.5*Psd^2)/Psd)^2;
       }else{
-        cat("cannot do prior in log space for parm with min <=0.0\n")
+        warning("cannot do prior in log space for parm with min <=0.0")
       }
     }
 
@@ -174,20 +176,20 @@ SSplotPars <-
 
   goodctl <- TRUE
   if(is.na(ctlfileinfo)){
-    cat("Missing control.ss_new file. Assuming recdev limits are -5 & 5.\n")
+    warning("Missing control.ss_new file. Assuming recdev limits are -5 & 5.")
     goodctl <- FALSE
   }else{
     if(ctlfileinfo==0){
-      cat("Empty control.ss_new file. Assuming recdev limits are -5 & 5.\n")
+      warning("Empty control.ss_new file. Assuming recdev limits are -5 & 5.")
       goodctl <- FALSE
     }
   }
   if(showpost & is.na(postfileinfo)){
-    cat("Missing posteriors file: ",postfile,", changing input to 'showpost=FALSE'\n",sep="")
+    warning("Missing posteriors file: ",postfile,", changing input to 'showpost=FALSE'",sep="")
     showpost <- FALSE
   }
   if(showpost & !is.na(postfile) & postfileinfo==0){
-    cat("Empty posteriors file: ",postfile,", changing input to 'showpost=FALSE'\n",sep="")
+    warning("Empty posteriors file: ",postfile,", changing input to 'showpost=FALSE'",sep="")
     showpost <- FALSE
   }
 
@@ -196,14 +198,14 @@ SSplotPars <-
     test <- readLines(fullpostfile,n=30) # test for presence of file with at least 20 rows
     if(length(test)>20){
       posts <- read.table(fullpostfile,header=TRUE)
-      cat("read",nrow(posts),"lines in",postfile,"\n")
+      message("read ",nrow(posts)," lines in ",postfile)
       # remove burn-in and thin the posteriors if requested
       posts <- posts[seq(burn+1,nrow(posts),thin), ]
       if(burn > 0 | thin > 1){
-        cat("length of posteriors after burnin-in and thinning:",nrow(posts),"\n")
+        message("length of posteriors after burnin-in and thinning: ",nrow(posts))
       }
     }else{
-      cat("Posteriors file has fewer than 20 rows, changing input to 'showpost=FALSE'\n")
+      message("Posteriors file has fewer than 20 rows, changing input to 'showpost=FALSE'")
       showpost <- FALSE
     }
   }
@@ -247,16 +249,16 @@ SSplotPars <-
     else for(i in 1:length(strings))
        goodnames <- c(goodnames,grep(strings[i],allnames,value=TRUE))
     goodnames <- unique(goodnames)
-    cat("parameters matching input vector 'strings':\n")
+    message("parameters matching input vector 'strings':")
     print(goodnames)
     if(length(goodnames)==0){
-      cat("No active parameters match input vector 'strings'.\n")
+      warning("No active parameters match input vector 'strings'.")
       return()
     }
   }else{
     goodnames <- allnames
     if(length(goodnames)==0){
-      cat("No active parameters.\n")
+      warning("No active parameters.")
       return()
     }
   }
@@ -267,9 +269,9 @@ SSplotPars <-
   stds <- partable$Parm_StDev[partable$Label %in% goodnames]
 
   if(showmle & (min(is.na(stds))==1 || min(stds, na.rm=TRUE) <= 0)){
-    cat("Some parameters have std. dev. values in Report.sso equal to 0.\n",
-        "  Asymptotic uncertainty estimates will not be shown.\n",
-        "  Try re-running the model with the Hessian but no MCMC.\n")
+    message("Some parameters have std. dev. values in Report.sso equal to 0.\n",
+            "  Asymptotic uncertainty estimates will not be shown.\n",
+            "  Try re-running the model with the Hessian but no MCMC.")
   }
 
   # Recruitment Devs
@@ -286,8 +288,9 @@ SSplotPars <-
       recdevmin  <- as.numeric(strsplit(ctllines[iline],  " #")[[1]][1])
       recdevmax  <- as.numeric(strsplit(ctllines[iline+1]," #")[[1]][1])
       readrecdev <- as.numeric(strsplit(ctllines[iline+2]," #")[[1]][1])
-      if(is.na(readrecdev) | readrecdev==1)
-        cat("This function does not yet display recdev values read from ctl file.\n")
+      if(is.na(readrecdev) | readrecdev==1){
+        message("This function does not yet display recdev values read from ctl file.")
+      }
     }
   }
   if(!showrecdev){
@@ -301,11 +304,11 @@ SSplotPars <-
   # make plot
   if(verbose & is.null(xlim)){
     if(fitrange){
-      cat("Plotting range is scaled to fit parameter estimates.\n",
-          "  Change input to 'fitrange=FALSE' to get full parameter range.\n")
+      message("Plotting range is scaled to fit parameter estimates.\n",
+              "  Change input to 'fitrange=FALSE' to get full parameter range.")
     }else{
-      cat("Plotting range is equal to input limits on parameters.\n",
-          "  Range can be scaled to fit estimates by setting input 'fitrange=TRUE'.\n")
+      message("Plotting range is equal to input limits on parameters.\n",
+              "  Range can be scaled to fit estimates by setting input 'fitrange=TRUE'.")
     }
   }
 
@@ -320,17 +323,24 @@ SSplotPars <-
     pdffile <- file.path(dir, paste0("SSplotPars_",
                                      format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf"))
     pdf(file=pdffile,width=pwidth,height=pheight)
-    if(verbose) cat("PDF file with plots will be: ",pdffile,"\n")
+    if(verbose){
+      message("PDF file with plots will be: ",pdffile)
+    }
   }
 
-  if(new) par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
-  if(verbose) cat("Making plots of parameters:\n")
+  if(new){
+    par(mfcol=c(nrows,ncols),mar=c(2,1,2,1),oma=c(2,2,0,0))
+  }
+  if(verbose){
+    message("Making plots of parameters:")
+  }
   if(length(grep('DEVrwalk', x=goodnames))>0 |
      length(grep('DEVadd', x=goodnames))>0 |
-     length(grep('DEVmult', x=goodnames))>0){
-    cat('\nNOTE: This model contains random walk deviates which are not\n',
-        'fully implemented. Prior and bounds unavailable, so these are skipped\n',
-        'and fitrange is set to TRUE for those parameters.\n\n')
+     length(grep('DEVmult', x=goodnames))>0 |
+     length(grep('ARDEV', x=goodnames))>0){
+    warning('This model contains parameter deviates which are not\n',
+            'fully implemented in this function. Prior and bounds unavailable,\n',
+            'so these are skipped and fitrange is set to TRUE for those parameters.')
   }
 
   for(ipar in 1:npars){
@@ -351,6 +361,7 @@ SSplotPars <-
     Psd <- parline$Pr_SD
     Pr <- parline$Prior
 
+    # add bounds and sigma for recdevs
     if(substr(parname,1,9) %in% substr(recdevlabels,1,9)){
       initval <- 0
       Pmin <- recdevmin
@@ -360,19 +371,21 @@ SSplotPars <-
       Psd <- partable$Value[partable$Label=="SR_sigmaR"]
     }
 
-    ## Devations on parameters (either random-walk, additive, or multiplicative)
+    ## Devations on parameters (either random-walk, additive, or multiplicative,
+    ## or the new semi-parametric selectivity devs)
     ## are a special case (as opposed to rec devs)
-    ## too. For now the sigma value specified in the ctl file is not
-    ## recorded anywhere so we skip the prior.
-    ## In SS version 3.30, the sigma will be available as a parameter, but
-    ## matching these quantities may take some work
+    ## For now the prior gets skipped because the sigma wasn't reported by SS 3.24
+    ## In SS version 3.30, the sigma is available as a parameter,
+    ## so just needs to be matched up with the deviations
     isdev <- FALSE
     if(length(grep('DEVrwalk', x=parname))>0 |
        length(grep('DEVadd', x=parname))>0 |
-       length(grep('DEVmult', x=parname))>0){
+       length(grep('DEVmult', x=parname))>0 |
+       length(grep('ARDEV', x=parname))>0){
       initval <- 0
       isdev <- TRUE
     }
+
     # make empty holders for future information
     ymax <- 0 # upper y-limit in plot
     xmin <- NULL # lower x-limit in plot
@@ -415,6 +428,9 @@ SSplotPars <-
     if(showpost){
       # modify parname to remove parentheses as done by read.table
       postparname <- parname
+      if(substring(parname, 1, 1) == "_"){
+        postparname <- paste0("X", postparname)
+      }
       postparname <- gsub("(", ".", postparname, fixed=TRUE)
       postparname <- gsub(")", ".", postparname, fixed=TRUE)
       jpar <- (1:ncol(posts))[names(posts)==postparname]
@@ -424,7 +440,7 @@ SSplotPars <-
         xmax <- max(xmax, quantile(post,0.999)) # update x range
         goodpost <- TRUE
       }else{
-        cat("Error! parameter '",postparname,"', not found in '",postfile,"'.\n",sep="")
+        warning("parameter '",postparname,"', not found in '",postfile,"'.\n",sep="")
       }
     }
 
