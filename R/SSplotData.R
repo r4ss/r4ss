@@ -423,7 +423,7 @@ SSplotData <- function(replist,
             "things like index uncertainty.")
       }
       plotinfo <- pngfun(file="data_plot2.png", caption=caption)
-      plotdata(datasize)
+      plotdata(datasize=TRUE)
       dev.off()
     }
   }
