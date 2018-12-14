@@ -4,7 +4,7 @@
 \alias{SS_output}
 \title{A function to create a list object for the output from Stock Synthesis}
 \usage{
-SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
+SS_output(dir = "C:/myfiles/mymodels/myrun/", dir.mcmc = NULL,
   repfile = "Report.sso", compfile = "CompReport.sso",
   covarfile = "covar.sso", forefile = "Forecast-report.sso",
   wtfile = "wtatage.ss_new", warnfile = "warning.sso", ncols = 200,
@@ -14,10 +14,14 @@ SS_output(dir = "C:/myfiles/mymodels/myrun/", model = "ss3",
   hidewarn = FALSE, NoCompOK = FALSE, aalmaxbinrange = 4)
 }
 \arguments{
-\item{dir}{Locates the directory of the files to be read in, double
-backslashes (or forwardslashes) and quotes necessary.}
+\item{dir}{Directory containing the Stock Synthesis model output.
+Forwardslashes or double backslashes and quotes are necessary.
+This can also either be an absolute path or relative to the working
+directory.}
 
-\item{model}{Name of the executable (leaving off the .exe).}
+\item{dir.mcmc}{Optional directory containing MCMC output. This needs to
+be relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
+will end up in the right place.}
 
 \item{repfile}{Name of the big report file (could be renamed by user).}
 
@@ -87,7 +91,14 @@ contained within the list produced by this function.
 \examples{
 
   \dontrun{
-    myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
+    # read model output
+    myreplist <- SS_output(dir='c:/SS/Simple/')
+    # make a bunch of plots
+    SS_plots(myreplist)
+
+    # read model output and also read MCMC results (if run), which in
+    # this case would be stored in c:/SS/Simple/mcmc/
+    myreplist <- SS_output(dir='c:/SS/Simple/', dir.mcmc="mcmc")
   }
 
 }
