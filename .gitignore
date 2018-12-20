@@ -44,5 +44,6 @@ inst/extdata/*/fastdat*
 inst/extdata/*/testdat*
 inst/extdata/*/retrospectives/
 inst/extdata/*/jitter/
+inst/extdata/*/profile/
 inst/extdata/*/*posterior*
 plots

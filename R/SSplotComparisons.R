@@ -136,7 +136,6 @@
 #' # directories where models were run need to be defined
 #' dir1 <- 'c:/SS/mod1'
 #' dir2 <- 'c:/SS/mod2'
-#' dir1mcmc <- 'c:/SS/mod1mcmc'
 #' 
 #' # read two models
 #' mod1 <- SS_output(dir=dir1)
@@ -148,8 +147,12 @@
 #' # plot comparisons
 #' SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
 #' 
-#' # Example showing comparison if MCMC results are available
-#' mod.sum$mcmc <- SSgetMCMC(dir=dir1mcmc)
+#' # Example showing comparison of MLE to MCMC results where the mcmc would have
+#' # been run in the subdirectory 'c:/SS/mod1/mcmc'
+#' mod1 <- SS_output(dir='c:/SS/mod1', mcmc.dir='mcmc')
+#' # pass the same model twice to SSsummarize in order to plot it twice 
+#' mod.sum <- SSsummarize(list(mod1, mod1))
+#' # compare MLE to MCMC
 #' SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
 #'
 #' }
@@ -493,9 +496,10 @@ SSplotComparisons <-
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
       if(nsexes[iline] == 1) {
         lower <- lower/2
         upper <- upper/2
@@ -511,9 +515,9 @@ SSplotComparisons <-
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
       Bratio[,imodel] <- med[match(Bratio$Label,mcmclabs)]
       BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
       BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
@@ -524,9 +528,9 @@ SSplotComparisons <-
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
       SPRratio[,imodel] <- med[match(SPRratio$Label,mcmclabs)]
       SPRratioLower[,imodel] <- lower[match(SPRratioLower$Label,mcmclabs)]
       SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
@@ -540,10 +544,10 @@ SSplotComparisons <-
     if(length(tmp) > 0) { #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      mean  <- apply(mcmc.tmp,2,mean)   #mean recruitment should be more comparable
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
+      mean  <- apply(mcmc.tmp,2,mean, na.rm=TRUE)   #mean recruitment should be more comparable
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
       if(!meanRecWarning){
         cat("note: using mean recruitment from MCMC instead of median,\n",
             "because it is more comparable to MLE\n")
@@ -562,9 +566,9 @@ SSplotComparisons <-
     if(length(tmp) > 0) { #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
+      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
+      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
+      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
       recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
       recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
       recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
@@ -1437,10 +1441,10 @@ SSplotComparisons <-
           if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
             mcmcVals <- mcmcVals/2
           }
-          xmin <- min(xmin, quantile(mcmcVals,0.005))
+          xmin <- min(xmin, quantile(mcmcVals,0.005, na.rm=TRUE))
           if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
           if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-          xmax <- max(xmax, quantile(mcmcVals,0.995))
+          xmax <- max(xmax, quantile(mcmcVals,0.995, na.rm=TRUE))
           z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
           z$x <- z$x[c(1,1:length(z$x),length(z$x))]
           z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
@@ -1528,7 +1532,7 @@ SSplotComparisons <-
           if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
             mcmcVals <- mcmcVals/2
           }
-          x2 <- quantile(mcmcVals,symbolsQuants)   # for symbols on plot
+          x2 <- quantile(mcmcVals, symbolsQuants, na.rm=TRUE)   # for symbols on plot
           #find the positions in the density that are closest to these quantiles
           x <- mcmcDens[[iline]]$x
           if(!cumulative) {
