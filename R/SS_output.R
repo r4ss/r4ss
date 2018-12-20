@@ -1785,7 +1785,20 @@ SS_output <-
     stats$Size_comp_Eff_N_tuning_check <- sizentune
   }
 
-  if(verbose) cat("Finished primary run statistics list\n")
+  # get information that will help diagnose jitter coverage and bad bounds
+  jitter_info <- parameters[!is.na(parameters$Active_Cnt) &
+                              !is.na(parameters$Min),
+                            c("Value","Min","Max","Init")]
+  jitter_info$sigma <- (jitter_info$Max - jitter_info$Min)/(2*qnorm(.999))
+  jitter_info$CV <- jitter_info$sigma/jitter_info$Init
+  jitter_info$InitLocation <- pnorm(q = jitter_info$Init,
+                                    mean = (jitter_info$Max + jitter_info$Min)/2,
+                                    sd = jitter_info$sigma)
+  
+
+  if(verbose){
+    message("Finished primary run statistics list")
+  }
   flush.console()
 
   # add stuff to list to return
@@ -2912,6 +2925,9 @@ SS_output <-
   # adding read of wtatage file
   returndat$wtatage <- wtatage
 
+  # adding new jitter info table
+  returndat$jitter_info <- jitter_info
+  
   # add list of stats to list that gets returned
   returndat <- c(returndat, stats)
   
