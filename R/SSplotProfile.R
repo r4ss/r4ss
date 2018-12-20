@@ -165,9 +165,10 @@ SSplotProfile <-
     }
   }
 
-  if(length(components) != length(component.labels))
+  if(length(components) != length(component.labels)){
     stop("Inputs 'components' and 'component.labels' should have equal length")
-
+  }
+  
   # get stuff from summary output
   n             <- summaryoutput$n
   likelihoods   <- summaryoutput$likelihoods
@@ -231,27 +232,37 @@ SSplotProfile <-
   column.max <- apply(prof.table[subset,],2,max)
   change.fraction <- column.max / column.max[1]
   include <- change.fraction >= minfraction
-  
-  cat("\nLikelihood components showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'.\n\n",sep="")
-  print(data.frame(frac_change=round(change.fraction,4),include=include,label=component.labels.good))
-  component.labels.used <- component.labels.good[include]
 
+  nlines <- sum(include)
+  message("\nLikelihood components showing max change as fraction of total change.\n",
+          "To change which components are included, change input 'minfraction'.\n")
+  print(data.frame(frac_change=round(change.fraction,4),include=include,label=component.labels.good))
+  # stop function if nothing left
+  if(nlines == 0){
+    stop("No components included, 'minfraction' should be smaller.")
+  }
+  component.labels.used <- component.labels.good[include]
+  
   # reorder values
   prof.table <- prof.table[order(parvec),include]
   parvec <- parvec[order(parvec)]
 
-  # reorder columns by largest change (if requested)
+  # reorder columns by largest change (if requested, and more than 1 line)
   change.fraction <- change.fraction[include]
-  if(sort.by.max.change){
-    neworder <- c(1,1+order(change.fraction[-1],decreasing=TRUE))
-    prof.table <- prof.table[,neworder]
-    component.labels.used <- component.labels.used[neworder]
+  if(nlines > 1){
+    if(sort.by.max.change){
+      neworder <- c(1,1+order(change.fraction[-1],decreasing=TRUE))
+      prof.table <- prof.table[,neworder]
+      component.labels.used <- component.labels.used[neworder]
+    }
   }
-    
-  nlines <- ncol(prof.table)
-  if(col[1]=="default") col <- rich.colors.short(nlines)
-  if(pch[1]=="default") pch <- 1:nlines
+
+  if(col[1]=="default"){
+    col <- rich.colors.short(nlines)
+  }
+  if(pch[1]=="default"){
+    pch <- 1:nlines
+  }
   lwd <- c(lwd.total,rep(lwd,nlines-1))
   cex <- c(cex.total,rep(cex,nlines-1))
   lty <- c(lty.total,rep(lty,nlines-1))
