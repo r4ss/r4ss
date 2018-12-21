@@ -16,7 +16,8 @@
 #' A value of NULL will skip copying the executable.
 #' @param exe.only Only copy exe files, don't copy input files
 #' @param verbose Return updates of function progress to the R console?
-#' @return Doesn't return anything
+#' @return Returns table of results indicating which directories were
+#' successfully populated with the model input files and/or executables
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{copy_SS_inputs}}

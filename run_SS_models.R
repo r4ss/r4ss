@@ -12,10 +12,12 @@
 #' This can be helpful if the function is interrupted.
 #' @param intern Show output in the R console or save to a file?
 #' @param verbose Return updates of function progress to the R console?
-#' @return Doesn't yet return anything
+#' @return Returns table showing which directories had model run and which
+#' had errors like missing executable or Report.sso already present
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{copy_SS_inputs}}
+#' @seealso \code{\link{copy_SS_inputs}},
+#' \code{\link{populate_multiple_folders}}
 #' @examples
 #'
 #'   \dontrun{
@@ -37,6 +39,9 @@ run_SS_models <- function(dirvec = NULL,
     stop("Input 'dirvec' should be a character vector")
   }
 
+  # vector of NA values to store results
+  results <- rep(NA, length(dirvec))
+  
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -51,24 +56,24 @@ run_SS_models <- function(dirvec = NULL,
   }
 
   # loop over directories
-  for(dir in dirvec){
+  for(idir in 1:length(dirvec)){
+    # directory where stuff will happen
+    dir <- dirvec[idir]
+    
     # confirm that dir exists
     if(!dir.exists(dir)){
       warning("not a directory:", dir)
+      results[idir] <- "not a directory"
     }else{
       # check whether exe is in directory
-      if(OS=="Windows"){
-        if(!tolower(exe) %in% tolower(dir(dir))){
-          warning("Executable ",exe," not found in ",dir)
-        }
-      }else{
-        if(!exe %in% dir(dir)){
-          warning("Executable ",exe," not found in ",dir)
-        }
+      if(all(file.info(dir(dir, full.names=TRUE))$exe=="no")){
+        warning("Executable ",exe," not found in ",dir)
+        results[idir] <- "no executable"
       }
       if(skipfinished & "Report.sso" %in% dir(dir)){
         # skip directories that have results in them
         message("Skipping ", dir, " since it contains a Report.sso file and skipfinished=TRUE")
+        results[idir] <- "contained Report.sso"
       }else{
         # run model
         message("changing working directory to ",dir)
@@ -94,8 +99,12 @@ run_SS_models <- function(dirvec = NULL,
                        ADMBoutput),
                      con = 'console.output.txt')
           message("console output written to console.output.txt")
-        } 
+        }
+        results[idir] <- "ran model"
       } # end model run
     } # end code for exe present
   } # end loop over directories
+
+  # return table of results
+  return(data.frame(dir=dir, results=results))
 }
