@@ -809,10 +809,14 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       size_selex_Nparms[j]<-size_selex_Nparms[j]+nparms
     }
   }
-  age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  age_selex_Nparms <- selex_patterns[age_selex_pattern_vec + 1]
+  age_selex_Nparms <- ifelse(
+    ctllist$age_selex_types[,1] == 17 & ctllist$age_selex_types[,4] > 0,
+    ctllist$age_selex_types[,4] + 1,
+    age_selex_Nparms
+  )
   age_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
-    age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j]==27){
       age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
