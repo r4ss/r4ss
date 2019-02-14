@@ -1554,7 +1554,8 @@ SS_output <-
 
   ## Spawner-recruit curve
   # read SPAWN_RECRUIT table
-  raw_recruit <- matchfun2("SPAWN_RECRUIT",last_row_index+1,"INDEX_2",-1,cols=1:9)
+  raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index+1, "INDEX_2", -1)
+
   # starting in 3.30.11.00, a new section with the full spawn recr curve was added
   spawn_recruit_end <- grep("Full_Spawn_Recr_Curve", raw_recruit[,1])
   if(length(spawn_recruit_end) > 0){
@@ -1568,18 +1569,23 @@ SS_output <-
   }else{
     Full_Spawn_Recr_Curve <- NULL
   }
+
   # process SPAWN_RECRUIT table
   names(raw_recruit) <- raw_recruit[1,]
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
   recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
-  for(i in 1:(ncol(recruit)-1)) recruit[,i] <- as.numeric(recruit[,i])
+  # make values numeric
+  for(icol in (1:ncol(recruit))[names(recruit) != "era"]){
+    recruit[,icol] <- as.numeric(recruit[,icol])
+  }
+
   # make older SS output names match current SS output conventions
   recruit <- df.rename(recruit,
                        oldnames=c("year", "spawn_bio", "adjusted"),
                        newnames=c("Yr", "SpawnBio", "bias_adjusted"))
 
-  # variance and sample size tuning information
+  ## variance and sample size tuning information
   vartune <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets+1), header=TRUE)
   # fill in column name that was missing in SS 3.24 (and perhaps other versions)
   # and replace inconsistent name in some 3.30 versions with standard name
@@ -2070,7 +2076,9 @@ SS_output <-
   }
 
   # Length selex and retention
-  if(!forecast) selex <- selex[selex$Yr <= endyr,]
+  if(!forecast){
+    selex <- selex[selex$Yr <= endyr,]
+  }
   returndat$sizeselex <- selex
 
   # Age based selex
@@ -2092,13 +2100,17 @@ SS_output <-
     ageselex <- matchfun2("AGE_SELEX",4,"BIOLOGY",-1,header=TRUE)
   }
   ageselex <- df.rename(ageselex,
-                        oldnames=c("fleet", "year", "seas", "gender", "morph", "label", "factor"),
-                        newnames=c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label", "Factor"))
+                        oldnames=c("fleet", "year", "seas", "gender",
+                            "morph", "label", "factor"),
+                        newnames=c("Fleet", "Yr",   "Seas", "Sex",
+                            "Morph", "Label", "Factor"))
   # filter forecast years from selectivity if no forecast
   # NOTE: maybe refine this in 3.30
   if(!forecast) ageselex <- ageselex[ageselex$Yr <= endyr,]
   
-  for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]) ageselex[,icol] <- as.numeric(ageselex[,icol])
+  for(icol in (1:ncol(ageselex))[!(names(ageselex) %in% c("Factor","Label"))]){
+    ageselex[,icol] <- as.numeric(ageselex[,icol])
+  }
   returndat$ageselex <- ageselex
 
   # exploitation
@@ -2116,10 +2128,15 @@ SS_output <-
 
   # catch
   catch <- matchfun2("CATCH",1,"TIME_SERIES",-1,substr1=FALSE,header=TRUE)
+  # update to new column name changed in 3.30.13
+  catch <- df.rename(catch,
+                     oldnames=c("Name"),
+                     newnames=c("Fleet_Name"))
+
   if(catch[[1]][1]!="absent"){
     catch$Like[catch$Like=="-1.#IND"] <- NA # value associated with 0 catch 
     catch$Yr[catch$Yr=="init"] <- startyr-1 # making numeric
-    for(icol in (1:ncol(catch))[!(names(catch)%in%c("Name"))]){
+    for(icol in (1:ncol(catch))[!(names(catch)%in%c("Fleet_Name"))]){
       catch[,icol] <- as.numeric(catch[,icol])
     }
   }else{
@@ -2267,7 +2284,8 @@ SS_output <-
 
   ## discard fractions ###
 
-  # degrees of freedom for T-distribution (or indicator 0, -1, -2 for other distributions)
+  # degrees of freedom for T-distribution
+  # (or indicator 0, -1, -2 for other distributions)
   if(SS_versionNumeric < 3.20){
     # old header from 3.11
     DF_discard <- rawrep[matchfun("DISCARD_OUTPUT"),3]
@@ -2419,7 +2437,8 @@ SS_output <-
 
   returndat$managementratiolabels <- managementratiolabels
   returndat$F_report_basis <- managementratiolabels$Label[2]
-  returndat$B_ratio_denominator <- as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
+  returndat$B_ratio_denominator <-
+    as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
 
@@ -2471,9 +2490,11 @@ SS_output <-
 
   # Numbers at age
   if(SS_versionNumeric >= 3.3){
-    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"BIOMASS_AT_AGE",-1,cols=1:(13+accuage),substr1=FALSE)
+    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"BIOMASS_AT_AGE",-1,
+                           cols=1:(13+accuage),substr1=FALSE)
   }else{
-    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,cols=1:(12+accuage),substr1=FALSE)
+    rawnatage <- matchfun2("NUMBERS_AT_AGE",1,"NUMBERS_AT_LENGTH",-1,
+                           cols=1:(12+accuage),substr1=FALSE)
   }
   if(length(rawnatage)>1){
     names(rawnatage) <- rawnatage[1,]
