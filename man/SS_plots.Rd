@@ -26,7 +26,7 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
   minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
   scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
-  datasize = TRUE, maxsize = 1, ...)
+  maxsize = 1, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -288,12 +288,6 @@ a vector of appropriate length (currently 11) with labels for each figure}
 
 \item{catlabels}{Either NULL to have default labels for catch plots or
 a vector of appropriate length (currently 10) with labels for each figure}
-
-\item{datasize}{Add second data plot whose circles are proportional
-to either catch or relative uncertainty? Produced as
-data_plot2.png. Circle areas are relative within a data category (e.g.,
-catches, indices) and are proportional to: absolute catch for catches,
-1/SE of indices, and \code{N} for compositions.}
 
 \item{maxsize}{The size of the largest bubble in the datasize
 plot. Default is 1.0.}

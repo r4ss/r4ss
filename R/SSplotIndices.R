@@ -155,24 +155,44 @@ function(replist,subplots=1:9,
   for(ifleet in fleetvec){
     if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$Fleet==ifleet])) > 1){
       usecol <- TRUE
-    }else{
-      legend=FALSE
     }
+  }
+  # turn off use of legend if there's never more than 1 season per index
+  if(!usecol){
+    legend <- FALSE
   }
 
   if(col1[1]=="default"){
     colvec1 <- "black"
-    if(usecol & nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
-    if(usecol & !nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
+    if(usecol & nseasons==4){
+      colvec1 <- c("blue4","green3","orange2","red3")
+    }
+    if(usecol & !nseasons %in% c(1,4)){
+      colvec1 <- rich.colors.short(nseasons)
+    }
   }else{
     colvec1 <- col1
+    # if user provides single value (or vector of length less than nseasons)
+    # make sure it's adequate to cover all seasons
+    if(length(colvec1) < nseasons){
+      colvec1 <- rep(col1, nseasons)
+    }
   }
   if(col2[1]=="default"){
     colvec2 <- "blue"
-    if(usecol & nseasons==4) colvec2 <- c("blue4","green3","orange2","red3")
-    if(usecol & !nseasons %in% c(1,4)) colvec2 <- rich.colors.short(nseasons)
+    if(usecol & nseasons==4){
+      colvec2 <- c("blue4","green3","orange2","red3")
+    }
+    if(usecol & !nseasons %in% c(1,4)){
+      colvec2 <- rich.colors.short(nseasons)
+    }
   }else{
     colvec2 <- col2
+    # if user provides single value (or vector of length less than nseasons)
+    # make sure it's adequate to cover all seasons
+    if(length(colvec1) < nseasons){
+      colvec1 <- rep(col1, nseasons)
+    }
   }
   if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
@@ -271,8 +291,9 @@ function(replist,subplots=1:9,
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
                 lwd=1.2,col=col4,lty="dashed")
         }
-        if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames,
-                                              pch=pch2, col=colvec2, cex=cex)
+        if(legend & length(colvec2)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+        }
       }
 
       if(plot){
@@ -333,8 +354,9 @@ function(replist,subplots=1:9,
                liw=liw[include],
                col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
         if(addexpected) lines(x,log(z),lwd=2,col=col3)
-        if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,
-                                     pch=pch1, col=colvec1, cex=cex)
+        if(legend & length(colvec1)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
+        }
       }
       cpuefun4 <- function(){
         # plot of log(observed) vs. log(expected) with smoother
@@ -346,8 +368,9 @@ function(replist,subplots=1:9,
           psmooth <- loess(log(z[include])~log(y[include]),degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
                 lwd=1.2,col=col4,lty="dashed")}
-        if(length(colvec2)>1) legend(x=legendloc, legend=seasnames,
-                                     pch=pch2, col=colvec2, cex=cex)
+        if(length(colvec2)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+        }
       }
       cpuefun5 <- function(){
         # plot of time-varying catchability (if present)

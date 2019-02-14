@@ -5,10 +5,11 @@
 \title{Plot recruitment deviations}
 \usage{
 SSplotRecdevs(replist, subplots = 1:3, plot = TRUE, print = FALSE,
-  add = FALSE, uncertainty = TRUE, forecastplot = FALSE,
-  col1 = "black", col2 = "blue", col3 = "green3", col4 = "red",
-  legendloc = "topleft", labels = c("Year",
-  "Asymptotic standard error estimate", "Log recruitment deviation",
+  add = FALSE, uncertainty = TRUE, minyr = -Inf, maxyr = Inf,
+  forecastplot = FALSE, col1 = "black", col2 = "blue",
+  col3 = "green3", col4 = "red", legendloc = "topleft",
+  labels = c("Year", "Asymptotic standard error estimate",
+  "Log recruitment deviation",
   "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10,
   cex.main = 1, plotdir = "default", verbose = TRUE)
@@ -25,6 +26,10 @@ SSplotRecdevs(replist, subplots = 1:3, plot = TRUE, print = FALSE,
 \item{add}{add to existing plot (not yet implemented)}
 
 \item{uncertainty}{include plots showing uncertainty?}
+
+\item{minyr}{optional input for minimum year to show in plots}
+
+\item{maxyr}{optional input for maximum year to show in plots}
 
 \item{forecastplot}{include points from forecast years?}
 

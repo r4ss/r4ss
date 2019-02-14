@@ -10,6 +10,8 @@
 #' @param print print to PNG files?
 #' @param add add to existing plot (not yet implemented)
 #' @param uncertainty include plots showing uncertainty?
+#' @param minyr optional input for minimum year to show in plots
+#' @param maxyr optional input for maximum year to show in plots
 #' @param forecastplot include points from forecast years?
 #' @param col1 first color used
 #' @param col2 second color used
@@ -30,17 +32,17 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
 SSplotRecdevs <-
-  function(replist, subplots=1:3, plot=TRUE, print=FALSE, add=FALSE,
-           uncertainty=TRUE,forecastplot=FALSE,
-           col1="black",col2="blue",col3="green3",col4="red",
-           legendloc="topleft",
-           labels=c("Year",                        #1
-             "Asymptotic standard error estimate", #2
-             "Log recruitment deviation",          #3
-             "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), #4
-           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
-           cex.main=1, plotdir="default",
-           verbose=TRUE)
+  function(replist, subplots = 1:3, plot = TRUE, print = FALSE, add = FALSE,
+           uncertainty = TRUE, minyr = -Inf, maxyr = Inf, forecastplot = FALSE,
+           col1 = "black",col2 = "blue",col3 = "green3",col4 = "red",
+           legendloc = "topleft",
+           labels = c("Year",                        #1
+               "Asymptotic standard error estimate", #2
+               "Log recruitment deviation",          #3
+               "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), #4
+           pwidth = 6.5,pheight = 5.0,punits = "in",res = 300,ptsize = 10,
+           cex.main = 1, plotdir = "default",
+           verbose = TRUE)
 {
   # Plot of recrecruitment deviations,  asymptotic error check, and bias adjustment
 
@@ -101,9 +103,10 @@ SSplotRecdevs <-
 
       Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
       if(forecastplot){
-        goodyrs <- rep(TRUE,length(Yr))
+        goodyrs <- rep(TRUE,length(Yr))[Yr >= minyr & Yr <= maxyr]
       }else{
-        goodyrs <- Yr<=endyr+1 # TRUE/FALSE of in range or not
+        # TRUE/FALSE of in range or not
+        goodyrs <- Yr <= endyr+1 & Yr >= minyr & Yr <= maxyr 
       }
       xlim <- range(Yr[goodyrs],na.rm=TRUE)
       ylim <- range(c(recdevEarly$Value,recdev$Value,recdevFore$Value)[goodyrs],
@@ -123,9 +126,9 @@ SSplotRecdevs <-
           std <- alldevs$Parm_StDev[goodyrs]
           recdev_hi <- val + 1.96*std
           recdev_lo <- val - 1.96*std
-          ylim <- range(recdev_hi,recdev_lo,na.rm=TRUE)
+          ylim <- range(recdev_hi, recdev_lo, na.rm=TRUE)
         }else{
-          ylim <- range(val)
+          ylim <- range(val, na.rm=TRUE)
         }
         plot(Yr,Yr,type="n",xlab=labels[1],
              ylab=labels[3],ylim=ylim)

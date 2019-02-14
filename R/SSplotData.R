@@ -10,6 +10,12 @@
 #' @param print print to PNG files?
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
+#' @param subplot vector controlling which subplots to create
+#' Currently there are only 2 subplots:
+#' \itemize{
+#'   \item 1 equal size points showing presence/absence of data type by year/fleet
+#'   \item 2 points scaled to indicate quantity or precision of data
+#' }
 #' @param fleetcol Either the string "default", or a vector of colors to use
 #' for each fleet. If tagging data is included, an additional color needs to be
 #' added for the tag releases which are not assigned to a fleet.
@@ -35,18 +41,11 @@
 #' @param cex Character expansion for points showing isolated years of data
 #' @param lwd Line width for lines showing ranges of years of data
 #' @param verbose report progress to R GUI?
-#' @param datasize Add second data plot whose circles are proportional
-#' to either catch or relative uncertainty? Produced as
-#' data_plot2.png. Circle areas are relative within a data category (e.g.,
-#' catches, indices) and are proportional to: absolute catch for catches,
-#' 1/SE of indices, and \code{N} for compositions.
-#' @param maxsize The size of the largest bubble in the datasize
-#' plot. Default is 1/2.
+#' @param maxsize The size (cex) of the largest bubble in the datasize
+#' plot. Default is 1.
 #' @param alphasize The transparency of the bubbles in the datasize
 #' plot. Defaults to 1 (no transparency). Useful for models with lots of
 #' overlapping points.
-#' @param both Logical to create both plots (datasize=F and datasize=T).
-#' This is ignored for the case when datasize=FALSE.
 #' @param mainTitle TRUE/FALSE switch to turn on/off the title on the plot.
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
@@ -55,15 +54,14 @@
 SSplotData <- function(replist,
                        plot=TRUE,print=FALSE,
                        plotdir="default",
+                       subplot=1:2,
                        fleetcol="default",
                        datatypes="all",fleets="all",fleetnames="default",ghost=FALSE,
                        pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
                        margins=c(5.1,2.1,2.1,8.1),
                        cex=2,lwd=12,
-                       datasize=TRUE,
                        maxsize=1.0,
                        alphasize=1,
-                       both=TRUE,
                        mainTitle=FALSE,
                        verbose=TRUE)
 {
@@ -76,11 +74,11 @@ SSplotData <- function(replist,
   }
   plotinfo <- NULL
 
-  ### override datasize variable in seasonal models
-  if(replist$nseasons > 1){
-    cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
-    datasize <- FALSE
-  }
+  ## ### override datasize variable in seasonal models
+  ## if(replist$nseasons > 1){
+  ##   cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
+  ##   datasize <- FALSE
+  ## }
 
   ### get info from replist
   # dimensions
@@ -172,35 +170,48 @@ SSplotData <- function(replist,
 
           # identify years from different data types
           if(typename == "catch"){
-            allyrs <- dat.f$Yr[dat.f$Obs>0]
-            size <- dat.f$Obs[dat.f$Obs>0]
-            # use updated table in newer versions of SS (probably 3.30+)
-            # presumably this will include discards whereas the previous approach
-            # may have only been landed catch
-            if("kill_bio" %in% names(dat.f)){
-              size <- dat.f$kill_bio[dat.f$Obs>0]
-            }
+            # aggregate catch by year
+            dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
+            allyrs <- dat.agg$Group.1[dat.agg$x > 0]
+            size <- dat.agg$x[dat.agg$x > 0]
+
+            #### turning off this feature because a data plot should probably
+            #### only show data, rather than estimated discard mortality
+            ## # use updated table in newer versions of SS (probably 3.30+)
+            ## # presumably this will include discards whereas the previous approach
+            ## # may have only been landed catch
+            ## if("kill_bio" %in% names(dat.f)){
+            ##   size <- dat.f$kill_bio[dat.f$Obs>0]
+            ## }
           }
           if(typename == "cpue"){
-            allyrs <- dat.f$Yr[dat.f$Use>0]
-            size <- 1/dat.f$SE[dat.f$Use>0]
+            # filter out rows that aren't used
+            dat.f <- dat.f[dat.f$Use > 0,]
+            # aggregate by year, taking average SE (on a log scale)
+            dat.agg <- aggregate(dat.f$SE, by=list(dat.f$Yr), FUN=mean)
+            allyrs <- dat.agg$Group.1
+            size <- 1/dat.agg$x # inverse of mean SE
           }
           if(typename == "mnwgt"){
-            # get minimum CV across partitions
-            dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=min)
+            # get mean CV across partitions
+            dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
             allyrs <- dat.agg$Group.1
-            size <- 1/dat.agg$x # inverse of minimum CV
+            size <- 1/dat.agg$x # inverse of mean CV
           }
           if(typename == "discard"){
-            allyrs <- dat.f$Yr
-            size <- 1/dat.f$Std_in
+            # get mean standard deviation across partitions
+            dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)
+            allyrs <- dat.agg$Group.1
+            size <- 1/dat.agg$x # inverse of mean CV
           }
           if(typename %in% c("lendbase", "sizedbase", "agedbase")){
-            allyrs <- dat.f$Yr
-            size <- dat.f$N
+            # aggregate sample sizes by year
+            dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+            allyrs <- dat.agg$Group.1
+            size <- dat.agg$x
           }
           if(typename %in% c("ghostagedbase", "ghostcondbase", "ghostlendbase")){
-            allyrs <- dat.f$Yr
+            allyrs <- unique(dat.f$Yr)
             # sample sizes not currently (as of 3.30.13) reported
             # for ghost observations
             size <- rep(1, length(allyrs))
@@ -218,12 +229,16 @@ SSplotData <- function(replist,
             }
           }
           if(typename=="tagrelease" & ifleet==1){
-            allyrs <- dat.f$Yr
-            size <- dat.f$Nrelease
+            # aggregate sample sizes by year
+            dat.agg <- aggregate(dat.f$Nrelease, by=list(dat.f$Yr), FUN=sum)
+            allyrs <- dat.agg$Group.1
+            size <- dat.agg$x
           }
           if(typename=="tagdbase1"){
-            allyrs <- dat.f$Yr[dat.f$Obs > 0]
-            size <- dat.f$Obs[dat.f$Obs > 0]
+            # aggregate sample sizes by year
+            dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
+            allyrs <- dat.agg$Group.1[dat.agg$x > 0]
+            size <- dat.agg$x[dat.agg$x > 0]
           }
           # length- and weight-at-age have different sample sizes for each age
           # within a year, use sum of sample sizes
@@ -292,6 +307,7 @@ SSplotData <- function(replist,
   }else{
     if(length(fleetcol) < nfleets2) fleetcol=rep(fleetcol,nfleets2)
   }
+
   # function containing plotting commands
   plotdata <- function(datasize){
     par(mar=margins) # multi-panel plot
@@ -367,18 +383,22 @@ SSplotData <- function(replist,
     box()
     axis(1,at=xticks)
   }
-  ## Make the plot with no scaling on circles (unless datsize=TRUE & both=FALSE)
-  if(plot & (!datasize | both)){
-    plotdata(datasize=FALSE)
+
+  ## Make the plot with no scaling on circles
+  if(1 %in% subplot){
+    if(plot){
+      plotdata(datasize=FALSE)
+    }
+    if(print) {
+      caption <- "Data presence by year for each fleet and data type"
+      plotinfo <- pngfun(file="data_plot.png", caption=caption)
+      plotdata(datasize=FALSE)
+      dev.off()
+    }
   }
-  if(print) {
-    caption <- "Data presence by year for each fleet"
-    plotinfo <- pngfun(file="data_plot.png", caption=caption)
-    plotdata(datasize=FALSE)
-    dev.off()
-  }
-  ## Make second data plot if desired
-  if(datasize){
+
+  ## Make second data plot
+  if(2 %in% subplot){
     if(plot){
       plotdata(datasize=TRUE)
     }
@@ -394,8 +414,16 @@ SSplotData <- function(replist,
           "Note that since the circles are are scaled relative <br> ",
           "to maximum within each type, the scaling within separate plots <br> ",
           "should not be compared.")
+      if(replist$nseasons > 1){
+        caption <- paste(
+            caption,
+            "<br>This is a seasonal model, so scaling is based on either <br> ",
+            "the sum of samples within each year (for things like comps) <br> ",
+            "or the average among observations within a year (for  <br> ",
+            "things like index uncertainty).")
+      }
       plotinfo <- pngfun(file="data_plot2.png", caption=caption)
-      plotdata(datasize)
+      plotdata(datasize=TRUE)
       dev.off()
     }
   }
