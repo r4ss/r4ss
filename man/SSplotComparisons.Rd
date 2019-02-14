@@ -239,7 +239,7 @@ SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
 
 # Example showing comparison of MLE to MCMC results where the mcmc would have
 # been run in the subdirectory 'c:/SS/mod1/mcmc'
-mod1 <- SS_output(dir='c:/SS/mod1', mcmc.dir='mcmc')
+mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
 # pass the same model twice to SSsummarize in order to plot it twice 
 mod.sum <- SSsummarize(list(mod1, mod1))
 # compare MLE to MCMC

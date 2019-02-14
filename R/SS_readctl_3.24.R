@@ -41,6 +41,8 @@
 #'  determined from control file
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
+#' @param ptype include a column in the output indicating parameter type?
+#' (Can be useful, but causes problems for SS_writectl.)
 #' @author Yukio Takeuchi, Neil Klaer
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}

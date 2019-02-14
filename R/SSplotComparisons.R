@@ -149,7 +149,7 @@
 #' 
 #' # Example showing comparison of MLE to MCMC results where the mcmc would have
 #' # been run in the subdirectory 'c:/SS/mod1/mcmc'
-#' mod1 <- SS_output(dir='c:/SS/mod1', mcmc.dir='mcmc')
+#' mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
 #' # pass the same model twice to SSsummarize in order to plot it twice 
 #' mod.sum <- SSsummarize(list(mod1, mod1))
 #' # compare MLE to MCMC
@@ -1397,19 +1397,25 @@ SSplotComparisons <-
 
   plotDensities <- function(parname,xlab,denslwd,limit0=TRUE,cumulative=FALSE){
     if(any(!mcmcVec)) {
-      vals <- rbind(pars[grep(parname,pars$Label,fixed=TRUE),],
-                    quants[grep(parname,quants$Label,fixed=TRUE),])
+      vals <- rbind(pars[pars$Label==parname, names(pars)!="recdev"],
+                    quants[quants$Label==parname,])
       if(nrow(vals)!=1){
-        cat("problem getting values for parameter:",parname,"\n")
-        if(nrow(vals)==0) cat("no Labels matching in either parameters or derived quantities\n")
-        if(nrow(vals)>0){
-          cat("Too many matching Labels:")
-          print(vals[,models])
+        warn <- paste("problem getting values for parameter:",parname,"\n")
+        if(nrow(vals)==0){
+          warn <- paste(warn,
+                        "no Labels match in either parameters or derived quantities\n")
         }
+        if(nrow(vals)>0){
+          warn <- paste(warn,
+                        "Too many matching Labels:",
+                        pars$Label[pars$Label==parname],
+                        quants$Label[quants$Label==parname])
+        }
+        warning(warn)
         return(NULL)  #previous versions had an else statement, but this will end the function here instead and saves indenting
       }
-      valSDs <- rbind(parsSD[grep(parname,pars$Label,fixed=TRUE),],
-                      quantsSD[grep(parname,quants$Label,fixed=TRUE),])
+      valSDs <- rbind(parsSD[pars$Label==parname,],
+                      quantsSD[quants$Label==parname,])
     }
 
     xmax <- xmin <- ymax <- NULL # placeholder for limits
