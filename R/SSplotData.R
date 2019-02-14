@@ -420,7 +420,7 @@ SSplotData <- function(replist,
             "<br>This is a seasonal model, so scaling is based on either <br> ",
             "the sum of samples within each year (for things like comps) <br> ",
             "or the average among observations within a year (for  <br> ",
-            "things like index uncertainty.")
+            "things like index uncertainty).")
       }
       plotinfo <- pngfun(file="data_plot2.png", caption=caption)
       plotdata(datasize=TRUE)

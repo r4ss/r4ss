@@ -82,8 +82,8 @@ SSsummarize <- function(biglist,
   btargs     <- NULL
   minbthreshs <- NULL
   FleetNames <- list()
-
-  warn <- FALSE # flag for whether filter warning has been printed or not
+  mcmc       <- list()
+  warn       <- FALSE # flag for whether filter warning has been printed or not
 
   # loop over models within biglist
   for(imodel in 1:n){
@@ -234,8 +234,14 @@ SSsummarize <- function(biglist,
     if(is.na(SpawnOutputUnits[imodel])){
       SpawnOutputUnits[imodel] <- stats$SpawnOutputUnits
     }
+    # get mcmc values if present
+    if(!is.null(stats$mcmc)){
+      mcmc[[imodel]] <- stats$mcmc
+    }
   } # end loop over models
 
+
+  ### format and process info from the models
   names(pars) <- names(parsSD) <- modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
@@ -402,8 +408,10 @@ SSsummarize <- function(biglist,
       }
     }
     # check for differences in assignment of initial ages
-    if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) - apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
-      cat("warning: years for InitAge parameters differ between models, use InitAgeYrs matrix\n")
+    if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) -
+             apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
+      warning("years for InitAge parameters differ between models,",
+              "use InitAgeYrs matrix")
     }else{
       pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
     }
@@ -541,6 +549,7 @@ SSsummarize <- function(biglist,
   mylist$upperCI        <- upperCI
   mylist$SpawnOutputUnits <- SpawnOutputUnits
   mylist$FleetNames     <- FleetNames
+  mylist$mcmc           <- mcmc
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
 
   return(invisible(mylist))
