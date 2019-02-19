@@ -213,7 +213,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     "env/block/dev_adjust_method (1=standard; 2=logistic transform keeps in base parm bounds; 3=standard w/ no bound check)")
   writeComment(c("#","#_growth_parms"))
   #writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
+  PType <- ctllist$MG_parms$PType
+  ctllist$MG_parms$PType <- NULL
   printdf("MG_parms")
+  ctllist$MG_parms$PType <- PType
 
   writeComment("#")
   writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
