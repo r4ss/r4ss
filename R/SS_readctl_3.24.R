@@ -191,10 +191,9 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
       ctllist$Do_AgeKey<-Do_AgeKey<-ifelse(any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2,1]<0),1,0)
     }
     ctllist$N_tag_groups<-N_tag_groups<-datlist$N_tag_groups
-    N_CPUE_obs<-vector(mode="numeric",length=Nfleet+Nfleet)
-    N_CPUE_obs<-sapply(1:(Nfleet+Nfleet),function(i){sum(datlist$CPUE[,"index"]==i)})
+    N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
     ctllist$N_CPUE_obs<-N_CPUE_obs
-    fleetnames<-datlist$fleetnames
+    ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications
   ctllist$sourcefile <- file
