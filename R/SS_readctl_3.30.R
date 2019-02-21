@@ -1073,14 +1073,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   
   if(ctllist$N_lambdas>0){
     # find and delete duplicates
-    chk<-paste0(ctllist$lambdas$like_comp,ctllist$lambdas$`fleet/survey`
-                ,ctllist$lambdas$phase,ctllist$lambdas$sizefreq_method,sep=" ")
-    chk1<-duplicated(chk)
+    chk1<-duplicated(ctllist$lambdas)
     if(any(chk1)) # there are duplicates
     {
       ctllist$lambdas<-ctllist$lambdas[!chk1,]
       ctllist$N_lambdas<-nrow(ctllist$lambdas)
-      ctllist$warnings<-paste0(ctllist$warnings,"Duplicate_lambdas",sep=",")
+      ctllist$warnings<-paste(ctllist$warnings,"Duplicate_lambdas",sep=",")
     }
 
     for(i in 1:ctllist$N_lambdas){

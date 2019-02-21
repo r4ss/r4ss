@@ -998,14 +998,12 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist<-add_df(ctllist,name="lambdas",nrow=ctllist$N_lambdas,ncol=5,
                       col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
     # find and delete duplicates
-    chk<-paste0(ctllist$lambdas$like_comp,ctllist$lambdas$`fleet/survey`
-                ,ctllist$lambdas$phase,ctllist$lambdas$sizefreq_method,sep=" ")
-    chk1<-duplicated(chk)
+    chk1<-duplicated(ctllist$lambdas)
     if(any(chk1)) # there are duplicates
     {
       ctllist$lambdas<-ctllist$lambdas[!chk1,]
       ctllist$N_lambdas<-nrow(ctllist$lambdas)
-      ctllist$warnings<-paste0(ctllist$warnings,"Duplicate_lambdas",sep=",")
+      ctllist$warnings<-paste(ctllist$warnings,"Duplicate_lambdas",sep=",")
     }
 
     for(i in 1:ctllist$N_lambdas){
