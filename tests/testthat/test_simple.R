@@ -1,4 +1,7 @@
+###############################################################################
 ### automated tests of r4ss package
+###############################################################################
+
 context("Basic r4ss functions")
 
 example_path <- system.file("extdata", package="r4ss")
@@ -9,19 +12,16 @@ example_path <- system.file("extdata", package="r4ss")
 
 test_that("SS_output runs on simple_3.24 model", {
   simple3.24 <- SS_output(file.path(example_path,"simple_3.24"))
-  #expect_equal(is.list(simple3.24), "TRUE")
   expect_equal(tail(names(simple3.24),1), "inputs")
 })
 
 test_that("SS_output runs on simple_3.30.01 model", {
   simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"))
-  #expect_equal(is.list(simple3.30), "TRUE")
   expect_equal(tail(names(simple3.30.01),1), "inputs")
 })
 
 test_that("SS_output runs on simple_3.30.12 model", {
   simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"))
-  #expect_equal(is.list(simple3.30), "TRUE")
   expect_equal(tail(names(simple3.30.12),1), "inputs")
 })
 

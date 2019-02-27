@@ -224,10 +224,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
       ctllist$Do_AgeKey<-Do_AgeKey<-ifelse(any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2,1]<0),1,0)
     }
     ctllist$N_tag_groups<-N_tag_groups<-datlist$N_tag_groups
-    N_CPUE_obs<-vector(mode="numeric",length=Nfleet+Nfleet)
-    N_CPUE_obs<-sapply(1:(Nfleet+Nfleet),function(i){sum(datlist$CPUE[,"index"]==i)})
+    N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
     ctllist$N_CPUE_obs<-N_CPUE_obs
-    fleetnames<-datlist$fleetnames
+    ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications
   ctllist$sourcefile <- file
@@ -868,10 +867,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
       size_selex_Nparms[j]<-size_selex_Nparms[j]+nparms
     }
   }
-  age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
+  age_selex_Nparms <- selex_patterns[age_selex_pattern_vec + 1]
+  age_selex_Nparms <- ifelse(
+    ctllist$age_selex_types[,1] == 17 & ctllist$age_selex_types[,4] > 0,
+    ctllist$age_selex_types[,4] + 1,
+    age_selex_Nparms
+  )
   age_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
-    age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j]==27){
       age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
@@ -1070,14 +1073,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   
   if(ctllist$N_lambdas>0){
     # find and delete duplicates
-    chk<-paste0(ctllist$lambdas$like_comp,ctllist$lambdas$`fleet/survey`
-                ,ctllist$lambdas$phase,ctllist$lambdas$sizefreq_method,sep=" ")
-    chk1<-duplicated(chk)
+    chk1<-duplicated(ctllist$lambdas)
     if(any(chk1)) # there are duplicates
     {
       ctllist$lambdas<-ctllist$lambdas[!chk1,]
       ctllist$N_lambdas<-nrow(ctllist$lambdas)
-      ctllist$warnings<-paste0(ctllist$warnings,"Duplicate_lambdas",sep=",")
+      ctllist$warnings<-paste(ctllist$warnings,"Duplicate_lambdas",sep=",")
     }
 
     for(i in 1:ctllist$N_lambdas){

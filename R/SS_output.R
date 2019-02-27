@@ -8,9 +8,13 @@
 #' contained within the list produced by this function.
 #'
 #'
-#' @param dir Locates the directory of the files to be read in, double
-#' backslashes (or forwardslashes) and quotes necessary.
-#' @param model Name of the executable (leaving off the .exe).
+#' @param dir Directory containing the Stock Synthesis model output.
+#' Forwardslashes or double backslashes and quotes are necessary.
+#' This can also either be an absolute path or relative to the working
+#' directory.
+#' @param dir.mcmc Optional directory containing MCMC output. This needs to
+#' be relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
+#' will end up in the right place.
 #' @param repfile Name of the big report file (could be renamed by user).
 #' @param compfile Name of the composition report file.
 #' @param covarfile Name of the covariance output file.
@@ -51,11 +55,18 @@
 #' @examples
 #'
 #'   \dontrun{
-#'     myreplist <- SS_output(dir='c:/SS/SSv3.10b/Simple/')
+#'     # read model output
+#'     myreplist <- SS_output(dir='c:/SS/Simple/')
+#'     # make a bunch of plots
+#'     SS_plots(myreplist)
+#'
+#'     # read model output and also read MCMC results (if run), which in
+#'     # this case would be stored in c:/SS/Simple/mcmc/
+#'     myreplist <- SS_output(dir='c:/SS/Simple/', dir.mcmc="mcmc")
 #'   }
 #'
 SS_output <-
-  function(dir="C:/myfiles/mymodels/myrun/", model="ss3",
+  function(dir="C:/myfiles/mymodels/myrun/", dir.mcmc=NULL, 
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
            warnfile="warning.sso",
@@ -1003,25 +1014,35 @@ SS_output <-
   parameters[parameters==" "] <- NA
   parameters[parameters=="1.#INF"] <- Inf # set infinite values equal to R's infinity
 
-  if(SS_versionNumeric >= 3.22){ # current approach to parameter section
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Pr_type","Status"))])
-      parameters[,i] <- as.numeric(parameters[,i])
+  # make values numeric
+  for(icol in (1:ncol(parameters))[!(names(parameters) %in%
+                                  c("Label","Pr_type","Status"))]){
+    parameters[,icol] <- as.numeric(parameters[,icol])
   }
 
+  # fix for issue with SSv3.21f
   if(SS_versionNumeric==3.21){
-    # revised section in SS-V3.21 where text description of PR_type instead of number
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Pr_type","Status"))])
-      parameters[,i] <- as.numeric(parameters[,i])
     temp <- names(parameters)
-    cat("Note: inserting new 13th column heading in parameters section due to error in Report.sso in SSv3.21f\n")
+    message("Inserting new 13th column heading in parameters section",
+            "due to error in Report.sso in SSv3.21f")
     temp <- c(temp[1:12],"PR_type_code",temp[-(1:12)])
     temp <- temp[-length(temp)]
     names(parameters) <- temp
   }
-  if(SS_versionNumeric <= 3.20){
-    # really old parameters section
-    for(i in (1:ncol(parameters))[!(names(parameters)%in%c("Label","Status"))])
-      parameters[,i] <- as.numeric(parameters[,i])
+
+  # convert really old numeric codes to names
+  # note that codes used in control file for SS version 3.30 don't match
+  # these from earlier models
+  # it's possible that SS_output doesn't work for models prior to 3.21, in
+  # which case this section could be removed
+  if(SS_versionNumeric < 3.21){
+    parameters$Pr_type_numeric <- parameters$Pr_type
+    parameters$Pr_type[parameters$Pr_type_numeric == -1] <- "No_prior"
+    parameters$Pr_type[parameters$Pr_type_numeric == 0] <- "Normal"
+    parameters$Pr_type[parameters$Pr_type_numeric == 1] <- "Sym_Beta"
+    parameters$Pr_type[parameters$Pr_type_numeric == 2] <- "Full_Beta"
+    parameters$Pr_type[parameters$Pr_type_numeric == 3] <- "Log_Norm"
+    parameters$Pr_type[parameters$Pr_type_numeric == 4] <- "Log_Norm_adjusted"
   }
 
   # fix for duplicate parameter labels in 3.30.03.03,
@@ -1313,6 +1334,24 @@ SS_output <-
     }
   }
 
+  # read MCMC output
+  if(!is.null(dir.mcmc)){
+    # check for presence of posteriors file
+    if("posteriors.sso" %in% dir(file.path(dir, dir.mcmc))){
+      # run function to read posteriors.sso and derived_posteriors.sso
+      if(verbose){
+        message("Running 'SSgetMCMC' to get MCMC output")
+      }
+      mcmc <- SSgetMCMC(dir = file.path(dir, dir.mcmc))
+    }else{
+      warning("skipping reading MCMC output because posterior.sso file",
+              "not found in file.path(dir, dir.mcmc)")
+      mcmc <- NULL
+    }
+  }else{
+    mcmc <- NULL
+  }
+  
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
                    header=TRUE)
@@ -1835,6 +1874,7 @@ SS_output <-
     }
   }
 
+  returndat$mcmc         <- mcmc
   returndat$survey_units <- survey_units
   returndat$survey_error <- survey_error
   returndat$index_variance_tuning_check <- vartune
@@ -2954,10 +2994,10 @@ SS_output <-
   returndat$logfile <- logfile
 
 
-  # return the inputs to this function so they can be used by SSplots or other functions
+  # return the inputs to this function so they can be used by SS_plots
+  # or other functions
   inputs <- list()
   inputs$dir      <- dir
-  inputs$model    <- model
   inputs$repfile  <- repfile
   inputs$forecast <- forecast
   inputs$warn     <- warn

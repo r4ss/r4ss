@@ -127,7 +127,7 @@ SS_RunJitter <- function(mydir,
           like <- as.numeric(substring(likeline, nchar("LIKELIHOOD") + 2))
           likesaved[i] <- like
         }
-        message("Likelihood = ", like)
+        message("Likelihood for jitter ", i, " = ", like)
       }
       # rename output files
       file.rename(from="CompReport.sso", to=paste0("CompReport",i,".sso"))
