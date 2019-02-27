@@ -85,7 +85,6 @@ SSplotData <- function(replist,
   startyr       <- replist$startyr
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
-  nfishfleets   <- replist$nfishfleets
   
   if(fleetnames[1]=="default"){
     fleetnames  <- replist$FleetNames
