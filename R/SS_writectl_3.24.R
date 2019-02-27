@@ -115,6 +115,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     }
     if(!is.null(dataframe)){
       if(header){
+        dataframe$PType <- NULL
         names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
         writeLines(paste(names(dataframe),collapse="\t"),con=zz)
       }

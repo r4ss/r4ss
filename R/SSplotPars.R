@@ -63,8 +63,9 @@ SSplotPars <-
       replist,
       xlab="Parameter value",ylab="Density",
       showmle=TRUE, showpost=TRUE, showprior=TRUE, showinit=TRUE,
-      showdev=FALSE, priorinit=TRUE,
-      priorfinal=TRUE, showlegend=TRUE, fitrange=FALSE, xaxs="i",
+      showdev=FALSE,
+      # priorinit=TRUE, priorfinal=TRUE,
+      showlegend=TRUE, fitrange=FALSE, xaxs="i",
       xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
       ltyvec=c(1, 1, 3, 4),
       colvec=c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
@@ -343,7 +344,11 @@ SSplotPars <-
     } else {
       x <- finalval+seq(-4*parsd, 4*parsd, length=5000)
     }
-    ## prior likelihood at initial and final values
+    #### note from Ian (12/21/2018): I have no memory of why the prior likelihood
+    #### text was added and then commented out. I'm not sure it would add value
+    #### to the plot, so will leave it commented out
+    ####
+    ### prior likelihood at initial and final values
     ## priorinit <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=initval))
     ## priorfinal <- exp(-1*GetPrior(Ptype=Ptype,Pmin=Pmin,Pmax=Pmax,Pr=Pr,Psd=Psd,Pval=finalval))
     if(!isdev & showprior){

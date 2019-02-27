@@ -61,6 +61,9 @@ determined from control file}
 
 \item{datlist}{list or character. if list : produced from SS_writedat
 or character : file name of dat file.}
+
+\item{ptype}{include a column in the output indicating parameter type?
+(Can be useful, but causes problems for SS_writectl.)}
 }
 \description{
 Read Stock Synthesis (version 3.24) control file into list object in R.
