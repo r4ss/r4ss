@@ -2,6 +2,8 @@
 context("r4ss functions that require executables to run")
 
 example_path <- system.file("extdata", package="r4ss")
+# SSutils package available via devtools::install_github("r4ss/SSutils")
+require(SSutils) 
 
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
@@ -54,16 +56,14 @@ test_that("SS_RunJitter runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(example_path, "simple_3.30.12")
   skip_if(all(file.info(dir(path_3.30.12, full.names=TRUE))$exe=="no"),
           message = "skipping test that requires SS executable")
-  # note need to move copy_SS_inputs into a package
-  source("c:/github/SStesting/R/copy_SS_inputs.R")
   dir.jit <- file.path(example_path,"simple_3.30.12/jitter")
-  copy_SS_inputs(dir.old=file.path(example_path,"simple_3.30.12"),
-                 dir.new=dir.jit,
-                 create.dir=TRUE,
-                 overwrite=TRUE,
-                 copy_exe=TRUE,
-                 copy_par=TRUE,
-                 verbose=TRUE)
+  SSutils::copy_SS_inputs(dir.old=file.path(example_path,"simple_3.30.12"),
+                          dir.new=dir.jit,
+                          create.dir=TRUE,
+                          overwrite=TRUE,
+                          copy_exe=TRUE,
+                          copy_par=TRUE,
+                          verbose=TRUE)
   # read starter file
   starter <- SS_readstarter(file.path(dir.jit, 'starter.ss'))
   # Make use the par file as a starting point
@@ -84,16 +84,14 @@ test_that("SS_profile runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(example_path, "simple_3.30.12")
   skip_if(all(file.info(dir(path_3.30.12, full.names=TRUE))$exe=="no"),
           message = "skipping test that requires SS executable")
-  # note need to move copy_SS_inputs into a package
-  source("c:/github/SStesting/R/copy_SS_inputs.R")
   dir.prof <- file.path(example_path,"simple_3.30.12/profile")
-  copy_SS_inputs(dir.old=file.path(example_path,"simple_3.30.12"),
-                 dir.new=dir.prof,
-                 create.dir=TRUE,
-                 overwrite=TRUE,
-                 copy_exe=TRUE,
-                 copy_par=TRUE,
-                 verbose=TRUE)
+  SSutils::copy_SS_inputs(dir.old=file.path(example_path,"simple_3.30.12"),
+                          dir.new=dir.prof,
+                          create.dir=TRUE,
+                          overwrite=TRUE,
+                          copy_exe=TRUE,
+                          copy_par=TRUE,
+                          verbose=TRUE)
   starter <- SS_readstarter(file.path(dir.prof, 'starter.ss'))
   # Make use the par file as a starting point
   starter$ctlfile <- "control_modified.ss"
