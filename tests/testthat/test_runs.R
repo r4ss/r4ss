@@ -3,7 +3,7 @@ context("r4ss functions that require executables to run")
 
 example_path <- system.file("extdata", package="r4ss")
 # SSutils package available via devtools::install_github("r4ss/SSutils")
-require(SSutils) 
+# require(SSutils) 
 
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
