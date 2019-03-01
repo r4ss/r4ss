@@ -158,7 +158,8 @@ SSplotData <- function(replist,
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
     typename <- typenames[itype]
-    if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
+    # confirm that there is non-NA data of this type
+    if(!is.null(dat) && !all(is.na(dat)) && nrow(dat)>0){
       ntypes <- ntypes+1
       for(ifleet in 1:nfleets){
         allyrs <- NULL
