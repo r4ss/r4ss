@@ -85,7 +85,6 @@ SSplotData <- function(replist,
   startyr       <- replist$startyr
   endyr         <- replist$endyr
   nfleets       <- replist$nfleets
-  nfishfleets   <- replist$nfishfleets
   
   if(fleetnames[1]=="default"){
     fleetnames  <- replist$FleetNames
@@ -158,7 +157,8 @@ SSplotData <- function(replist,
   for(itype in 1:length(typenames)){
     dat <- get(typenames[itype])
     typename <- typenames[itype]
-    if(!is.null(dat) && !is.na(dat) && nrow(dat)>0){
+    # confirm that there is non-NA data of this type
+    if(!is.null(dat) && !all(is.na(dat)) && nrow(dat)>0){
       ntypes <- ntypes+1
       for(ifleet in 1:nfleets){
         allyrs <- NULL
@@ -193,12 +193,16 @@ SSplotData <- function(replist,
             size <- 1/dat.agg$x # inverse of mean SE
           }
           if(typename == "mnwgt"){
+            # filter out rows that aren't used
+            dat.f <- dat.f[dat.f$Use > 0,]
             # get mean CV across partitions
             dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
             allyrs <- dat.agg$Group.1
             size <- 1/dat.agg$x # inverse of mean CV
           }
           if(typename == "discard"){
+            # filter out rows that aren't used
+            dat.f <- dat.f[dat.f$Use > 0,]
             # get mean standard deviation across partitions
             dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)
             allyrs <- dat.agg$Group.1
@@ -235,6 +239,8 @@ SSplotData <- function(replist,
             size <- dat.agg$x
           }
           if(typename=="tagdbase1"){
+            # filter out rows that aren't used
+            dat.f <- dat.f[dat.f$Used == "yes",]
             # aggregate sample sizes by year
             dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
             allyrs <- dat.agg$Group.1[dat.agg$x > 0]
@@ -244,6 +250,8 @@ SSplotData <- function(replist,
           # within a year, use sum of sample sizes
           # (results will be same as if average was used due to rescaling) 
           if(typename %in% c("ladbase","wadbase")){
+            # filter out rows that aren't used
+            dat.f <- dat.f[dat.f$Used == "yes",]
             # aggregate sample sizes by year
             dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
             allyrs <- dat.agg$Group.1

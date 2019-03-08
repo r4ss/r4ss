@@ -47,3 +47,4 @@ inst/extdata/*/jitter/
 inst/extdata/*/profile/
 inst/extdata/*/*posterior*
 plots
+ignored
