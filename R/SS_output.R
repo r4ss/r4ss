@@ -2613,9 +2613,16 @@ SS_output <-
     returndat$natlen <- rawnatlen
   }
 
+  # test ending based on text because sections changed within 3.30 series
+  if(!is.na(matchfun("F_AT_AGE"))){
+    end.keyword <- "F_AT_AGE"
+  }else{
+    end.keyword <- "CATCH_AT_AGE"
+  }
+
   # Biomass at length (first appeared in version 3.24l, 12-5-2012)
   if(length(grep("BIOMASS_AT_LENGTH",rawrep[,1]))>0){
-    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,"CATCH_AT_AGE",-1,
+    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,end.keyword,-1,
                            cols=1:(col.adjust+nlbinspop),substr1=FALSE)
     if(length(rawbatlen)>1){
       names(rawbatlen) <- rawbatlen[1,]
@@ -2625,8 +2632,7 @@ SS_output <-
       }
       returndat$batlen <- rawbatlen
     }
-  }
-
+  } 
 
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
@@ -2769,6 +2775,16 @@ SS_output <-
     }
   }
 
+  # F at age (first appeared in version 3.30.13, 8-Mar-2019)
+  if(!is.na(matchfun("F_AT_AGE"))){
+    fatage <- matchfun2("F_AT_AGE", 1, "CATCH_AT_AGE", -1, header=TRUE)
+    for(icol in (1:ncol(fatage))[!(names(fatage) %in% c("Era"))]){
+      fatage[,icol] = as.numeric(fatage[,icol])
+    }
+  }else{
+    fatage <- NA
+  }
+
   # test for discard at age section (added with 3.30.12, 29-Aug-2018)
   if(!is.na(matchfun("DISCARD_AT_AGE"))){
     # read discard at age
@@ -2808,6 +2824,7 @@ SS_output <-
       catage[,icol] <- as.numeric(catage[,icol])
     }
   }
+  returndat$fatage <- fatage
   returndat$catage <- catage
   returndat$discard_at_age <- discard_at_age
 
