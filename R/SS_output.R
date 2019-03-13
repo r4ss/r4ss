@@ -1575,6 +1575,7 @@ SS_output <-
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
   recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
+  
   # make values numeric
   for(icol in (1:ncol(recruit))[names(recruit) != "era"]){
     recruit[,icol] <- as.numeric(recruit[,icol])
@@ -1997,7 +1998,6 @@ SS_output <-
     returndat$FecPar1 <- returndat$FecPar1[1]
     returndat$FecPar2 <- returndat$FecPar2[2]
   }
-
       
   # simple test to figure out if fecundity is proportional to spawning biomass:
   returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
@@ -2114,28 +2114,58 @@ SS_output <-
   returndat$ageselex <- ageselex
 
   # exploitation
-  exploitation <- matchfun2("EXPLOITATION",5,"CATCH",-1,header=TRUE)
-  if(exploitation[[1]][1]!="absent"){
-    exploitation[exploitation=="_"] <- NA
-    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-    for(icol in 1:ncol(exploitation)){
-      exploitation[,icol] <- as.numeric(exploitation[,icol])
-    }
+  exploitation_head <- matchfun2("EXPLOITATION", 1, "EXPLOITATION", 20,
+                                 header=FALSE)
+  # check for new header info added in 3.30.13_beta (14 Feb. 2019)
+  if(exploitation_head[1,1] == "Info:"){
+    # NOTE: add read of additional header info here
+    exploitation <- matchfun2("EXPLOITATION",
+                              which(exploitation_head[,1] == "Yr"),
+                              "CATCH",-1,header=TRUE)
+    # remove meta-data about fleets (filtered by color in 1st column):
+    # "Catchunits:","FleetType:","FleetArea:","FleetID:"
+    exploitation <- exploitation[-grep(":", exploitation[,1]),]
+    # find line with F_method like this "Info: F_Method:=3;.Continuous_F;..."
+    # F_method info contains additional information that might be useful elsewhere
+    F_method_info <- exploitation_head[grep("F_Method:",
+                                            exploitation_head[,2]), 2]
+    F_method_info <- gsub(pattern=".", replacement=" ", x=F_method_info, fixed=TRUE)
+    F_method_info <- strsplit(F_method_info, split=";", fixed=TRUE)[[1]]
+    # get numeric value for F_method
+    F_method <- as.numeric(strsplit(F_method_info[[1]], split="=",
+                                    fixed=TRUE)[[1]][2])
   }else{
-    exploitation <- NULL
+    # old format prior to 3.30.13
+    exploitation <- matchfun2("EXPLOITATION", 5,
+                              "CATCH",-1,header=TRUE)
+    # get numeric value for F_method
+    F_method <- as.numeric(rawrep[matchfun("F_Method"),2])
+  }
+  returndat$F_method <- F_method
+
+  # more processing of exploitation
+  exploitation[exploitation=="_"] <- NA
+  # "init_yr" not used as of 3.30.13, but must have been in the past
+  exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
+  # make columns numeric
+  for(icol in 1:ncol(exploitation)){
+    exploitation[,icol] <- as.numeric(exploitation[,icol])
   }
   returndat$exploitation <- exploitation
 
   # catch
   catch <- matchfun2("CATCH",1,"TIME_SERIES",-1,substr1=FALSE,header=TRUE)
-  # update to new column name changed in 3.30.13
-  catch <- df.rename(catch,
-                     oldnames=c("Name"),
-                     newnames=c("Fleet_Name"))
-
+  # if table is present, then do processing of it
   if(catch[[1]][1]!="absent"){
-    catch$Like[catch$Like=="-1.#IND"] <- NA # value associated with 0 catch 
-    catch$Yr[catch$Yr=="init"] <- startyr-1 # making numeric
+    # update to new column names used starting with 3.30.13
+    catch <- df.rename(catch,
+                       oldnames=c("Name",       "Yr.frac"),
+                       newnames=c("Fleet_Name", "Time"))
+    # fix likelihood associated with 0 catch 
+    catch$Like[catch$Like=="-1.#IND"] <- NA
+    # change "INIT" or "init" to year value following convention used elsewhere
+    catch$Yr[tolower(catch$Yr)=="init"] <- startyr-1
+    # make columns numeric
     for(icol in (1:ncol(catch))[!(names(catch)%in%c("Fleet_Name"))]){
       catch[,icol] <- as.numeric(catch[,icol])
     }
@@ -2260,8 +2290,6 @@ SS_output <-
   ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
 
   # harvest rates
-  F_method <- as.numeric(rawrep[matchfun("F_Method"),2])
-  returndat$F_method <- F_method
   if(F_method==1){
     stringmatch <- "Hrate:_"
   }else{stringmatch <- "F:_"}
@@ -2311,33 +2339,43 @@ SS_output <-
     }
     names(discard_spec)[1] <- "Fleet"
   }
+  # read DISCARD_OUTPUT table
   discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=TRUE)
   if(names(discard)[1]=="MEAN_BODY_WT_OUTPUT"){
     discard <- NA
   }
+  # rerun read of discard if in SSv3.20b which had missing line break
   if(!is.na(discard) && names(discard)[1]!="Fleet"){
-    # rerun read of discard if in SSv3.20b which had missing line break
     discard <- matchfun2("DISCARD_OUTPUT",shift,"MEAN_BODY_WT_OUTPUT",-1,header=FALSE)
+    # note that these column names are from 3.20b and have changed since that time
     names(discard) <- c("Fleet","Yr","Seas","Obs","Exp","Std_in","Std_use","Dev")
   }
 
+  # rename columns to standard used with 3.30.13 (starting Feb 14, 2019)
+  discard <- df.rename(discard,
+                       oldnames=c("Name",       "Yr.frac"),
+                       newnames=c("Fleet_Name", "Time"))
+
+  # process discard info if table was present
   discard_type <- NA
   if(!is.na(discard) && nrow(discard)>1){
     discard[discard=="_"] <- NA
-    if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
+    # v3.23 and before had things combined under "Name"
+    # which has been renamed above to "Fleet_Name"
+    if(SS_versionNumeric <= 3.23){
       for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet"))]){
         discard[,icol] <- as.numeric(discard[,icol])
       }
-      if(!"Name"%in%names(discard)){
-        discard$Name <- discard$Fleet
+      if(!"Fleet_Name"%in%names(discard)){
+        discard$Fleet_Name <- discard$Fleet
       }
       discard$Fleet <- NA
       for(i in 1:nrow(discard)){
-        discard$Fleet[i] <- strsplit(discard$Name[i],"_")[[1]][1]
-        discard$Name[i] <- substring(discard$Name[i],nchar(discard$Fleet[i])+2)
+        discard$Fleet[i] <- strsplit(discard$Fleet_Name[i],"_")[[1]][1]
+        discard$Fleet_Name[i] <- substring(discard$Fleet_Name[i],nchar(discard$Fleet[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
-      for(icol in (1:ncol(discard))[!(names(discard) %in% c("Name","SuprPer"))])
+      for(icol in (1:ncol(discard))[!(names(discard) %in% c("Fleet_Name","SuprPer"))])
         discard[,icol] <- as.numeric(discard[,icol])
     }
   }else{
@@ -2350,27 +2388,31 @@ SS_output <-
 
   ## Average body weight observations
   # degrees of freedom for T-distribution
-  # old way: DF_mnwgt <- rawrep[matchfun("MEAN_BODY_WT_OUTPUT")+1,1]
   DF_mnwgt <- rawrep[matchfun("log(L)_based_on_T_distribution"),1]
   if(!is.na(DF_mnwgt)){
     DF_mnwgt <- as.numeric(strsplit(DF_mnwgt,"=_")[[1]][2])
     mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT",2,"FIT_LEN_COMPS",-1,header=TRUE)
-
+    mnwgt <- df.rename(mnwgt,
+                       oldnames=c("Name"),
+                       newnames=c("Fleet_Name"))
     mnwgt[mnwgt=="_"] <- NA
-    if(SS_versionNumeric <= 3.23){ # v3.23 and before had things combined under "name"
+    # v3.23 and before had things combined under "Name"
+    # which has been renamed above to "Fleet_Name"
+    if(SS_versionNumeric <= 3.23){ 
       for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet"))]){
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
       }
-      if(!"Name"%in%names(mnwgt)){
-        mnwgt$Name <- mnwgt$Fleet
+      if(!"Fleet_Name"%in%names(mnwgt)){
+        mnwgt$Fleet_Name <- mnwgt$Fleet
       }
       mnwgt$Fleet <- NA
       for(i in 1:nrow(mnwgt)){
-        mnwgt$Fleet[i] <- strsplit(mnwgt$Name[i],"_")[[1]][1]
-        mnwgt$Name[i] <- substring(mnwgt$Name[i],nchar(mnwgt$Name[i])+2)
+        mnwgt$Fleet[i] <- strsplit(mnwgt$Fleet_Name[i],"_")[[1]][1]
+        mnwgt$Fleet_Name[i] <- substring(mnwgt$Fleet_Name[i],
+                                         nchar(mnwgt$Fleet_Name[i])+2)
       }
     }else{ # v3.24 and beyond has separate columns for fleet number and fleet name
-      for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Name"))])
+      for(icol in (1:ncol(mnwgt))[!(names(mnwgt) %in% c("Fleet_Name"))])
         mnwgt[,icol] <- as.numeric(mnwgt[,icol])
     }
   }else{
@@ -2424,7 +2466,8 @@ SS_output <-
   spr[spr=="_"] <- NA
   spr[spr=="&"] <- NA
   spr[spr=="-1.#IND"] <- NA
-  for(i in (1:ncol(spr))[!(names(spr)%in%c("Actual:","More_F(by_morph):"))]){
+  for(i in (1:ncol(spr))[!(names(spr) %in%
+                           c("Era", "Actual:", "More_F(by_morph):"))]){
     spr[,i] <- as.numeric(spr[,i])
   }
   
@@ -2471,8 +2514,9 @@ SS_output <-
     #       and might change as result of discussion on inconsistent use of
     #       similar column names.
     cpue <- df.rename(cpue,
-                      oldnames=c("Yr.S",    "Supr_Per", "Name"),
-                      newnames=c("Yr.frac", "SuprPer",  "Fleet_name"))
+                      oldnames=c("Yr.S", "Yr.frac", "Supr_Per", "Name"),
+                      newnames=c("Time", "Time",    "SuprPer",  "Fleet_name"))
+    # process old fleet number/name combo (e.g. "2_SURVEY")
     if(SS_versionNumeric < 3.24){
       cpue$Name <- NA
       for(i in 1:nrow(cpue)){
@@ -2480,10 +2524,12 @@ SS_output <-
         cpue$Name[i] <- substring(cpue$Fleet[i],nchar(cpue$Fleet[i])+2)
       }
     }
+    # make columns numeric
     for(i in (1:ncol(cpue))[!names(cpue) %in% c("Fleet_name","SuprPer")]){
       cpue[,i] <- as.numeric(cpue[,i])
     }
   }else{
+    # if INDEX_2 not present (not sure the circumstances that would cause this)
     cpue <- NA
   }
   returndat$cpue <- cpue
@@ -2567,9 +2613,16 @@ SS_output <-
     returndat$natlen <- rawnatlen
   }
 
+  # test ending based on text because sections changed within 3.30 series
+  if(!is.na(matchfun("F_AT_AGE"))){
+    end.keyword <- "F_AT_AGE"
+  }else{
+    end.keyword <- "CATCH_AT_AGE"
+  }
+
   # Biomass at length (first appeared in version 3.24l, 12-5-2012)
   if(length(grep("BIOMASS_AT_LENGTH",rawrep[,1]))>0){
-    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,"CATCH_AT_AGE",-1,
+    rawbatlen <- matchfun2("BIOMASS_AT_LENGTH",1,end.keyword,-1,
                            cols=1:(col.adjust+nlbinspop),substr1=FALSE)
     if(length(rawbatlen)>1){
       names(rawbatlen) <- rawbatlen[1,]
@@ -2579,8 +2632,7 @@ SS_output <-
       }
       returndat$batlen <- rawbatlen
     }
-  }
-
+  } 
 
   # Movement
   movement <- matchfun2("MOVEMENT",1,"EXPLOITATION",-1,cols=1:(7+accuage),substr1=FALSE)
@@ -2723,6 +2775,16 @@ SS_output <-
     }
   }
 
+  # F at age (first appeared in version 3.30.13, 8-Mar-2019)
+  if(!is.na(matchfun("F_AT_AGE"))){
+    fatage <- matchfun2("F_AT_AGE", 1, "CATCH_AT_AGE", -1, header=TRUE)
+    for(icol in (1:ncol(fatage))[!(names(fatage) %in% c("Era"))]){
+      fatage[,icol] = as.numeric(fatage[,icol])
+    }
+  }else{
+    fatage <- NA
+  }
+
   # test for discard at age section (added with 3.30.12, 29-Aug-2018)
   if(!is.na(matchfun("DISCARD_AT_AGE"))){
     # read discard at age
@@ -2762,6 +2824,7 @@ SS_output <-
       catage[,icol] <- as.numeric(catage[,icol])
     }
   }
+  returndat$fatage <- fatage
   returndat$catage <- catage
   returndat$discard_at_age <- discard_at_age
 
