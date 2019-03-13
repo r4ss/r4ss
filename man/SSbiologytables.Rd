@@ -3,7 +3,7 @@
 \name{SSbiologytables}
 \alias{SSbiologytables}
 \title{A function to create a table of biology for assessment reporting:
-length, weight, % mature, fecundity, and selectivity}
+length, weight, \% mature, fecundity, and selectivity}
 \usage{
 SSbiologytables(replist = NULL, printfolder = "tables",
   dir = "default", fleetnames = "default", selexyr = "default")
