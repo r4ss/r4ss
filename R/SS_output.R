@@ -1576,6 +1576,9 @@ SS_output <-
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
   recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
   
+  # temporary change for model that has bad values in dev column
+  recruit$dev[recruit$dev=="-nan(ind)"] <- NA
+  
   # make values numeric
   for(icol in (1:ncol(recruit))[names(recruit) != "era"]){
     recruit[,icol] <- as.numeric(recruit[,icol])
