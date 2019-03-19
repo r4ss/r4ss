@@ -214,10 +214,12 @@ SSsummarize <- function(biglist,
         indices <- rbind(indices, indextemp)
       }else{
         # after indices contains output from at least one model
-        if(!all(names(indextemp)==names(indices))){
-          warning("problem summarizing indices due to mismatched columns")
-        }else{
+        # check that there are equal number of columns with matching names 
+        if(ncol(indextemp) == ncol(indices) &&
+           all(names(indextemp) == names(indices))){
           indices <- rbind(indices, indextemp)
+        }else{
+          warning("problem summarizing indices due to mismatched columns")
         }
       }
     }
