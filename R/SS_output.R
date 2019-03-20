@@ -1345,7 +1345,7 @@ SS_output <-
       mcmc <- SSgetMCMC(dir = file.path(dir, dir.mcmc))
     }else{
       warning("skipping reading MCMC output because posterior.sso file",
-              "not found in file.path(dir, dir.mcmc)")
+              " not found in file.path(dir, dir.mcmc)")
       mcmc <- NULL
     }
   }else{

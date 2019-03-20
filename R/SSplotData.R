@@ -360,6 +360,7 @@ SSplotData <- function(replist,
       for(ifleet in rev(type.fleets)){
         yrs <- typetable2$yr[typetable2$fleet==ifleet & typetable2$itype==itype]
         if(length(yrs)>0){
+          col <- fleetcol[which(fleets2 == ifleet)]
           size.cex <- typetable2$size[typetable2$fleet==ifleet & typetable2$itype==itype]
           yval <- yval+1
           x <- min(yrs):max(yrs)
@@ -377,15 +378,15 @@ SSplotData <- function(replist,
           }
           if(!datasize){
             ## The original plot is to add points and lines
-            points(x[solo], y[solo], pch=16, cex=cex, col=fleetcol[fleets==ifleet])
-            lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
+            points(x[solo], y[solo], pch=16, cex=cex, col=col)
+            lines(x, y, lwd=lwd, col=col)
           } else {
             ## make circle sizes propotional to the uncertainty,
             ## contained in size, NA's don't work for symbols so remove them
             x <- x[!is.na(y)]
             y <- y[!is.na(y)]
             symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
-                    bg=adjustcolor(fleetcol[fleets==ifleet], alpha.f=alphasize),
+                    bg=adjustcolor(col, alpha.f=alphasize),
                     add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
