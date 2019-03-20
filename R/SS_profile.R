@@ -230,7 +230,9 @@ function(
       
       # change initial values in the control file
       # this also sets phase negative which is needed even when par file is used
-      SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
+      # dir set as NULL because the wd was already changed to dir earlier in the
+      # script.
+      SS_changepars(dir=NULL,ctlfile=masterctlfile,newctlfile=newctlfile,
                     linenums=linenum,strings=string,
                     newvals=profilevec[i], estimate=FALSE,
                     verbose=TRUE, repeat.vals=TRUE)
