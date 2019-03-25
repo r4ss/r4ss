@@ -1351,7 +1351,6 @@ SS_output <-
   }else{
     mcmc <- NULL
   }
-  
   # derived quantities
   der <- matchfun2("DERIVED_QUANTITIES",4,"MGparm_By_Year_after_adjustments",-1,
                    header=TRUE)
@@ -3090,6 +3089,8 @@ SS_output <-
   inputs$warn     <- warn
   inputs$covar    <- covar
   inputs$verbose  <- verbose
+  inputs$cormax   <- cormax
+  inputs$cormin   <- cormin
 
   returndat$inputs <- inputs
 

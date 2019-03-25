@@ -4,7 +4,7 @@
 \alias{SS_writedat}
 \title{write Stock Synthesis data file}
 \usage{
-SS_writedat(datlist, outfile, version = "3.30", overwrite = FALSE,
+SS_writedat(datlist, outfile, version = "3.24", overwrite = FALSE,
   faster = FALSE, verbose = TRUE)
 }
 \arguments{
