@@ -34,5 +34,5 @@ Description: A collection of R functions for use with Stock Synthesis, a
 License: GPL-3
 LazyLoad: yes
 URL: https://github.com/r4ss
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
