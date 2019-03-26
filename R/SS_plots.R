@@ -1274,6 +1274,14 @@ SS_plots <-
 
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
+  
+  if(verbose) cat("Starting diagnostic tables")
+  
+  plotinfo <- NULL
+  plotinfo <- SS_makeHTMLdiagnostictable(replist = replist,
+                                         gradmax = 1E-3)
+  
+  if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
 
   ##########################################
   # Write and return table of plot info for any PNG files that got created

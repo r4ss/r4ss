@@ -296,7 +296,18 @@ SS_html <- function(replist=NULL,
           }
         }
       }
-    }else{
+    }else if(category=="DiagnosticTables"){
+      plotinfo <- plotInfoTable[plotInfoTable$category==category,]
+      cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
+      for(i in 1:nrow(plotinfo)){
+        table_text <- readLines(plotinfo$basename[i])
+        cat("<p align=left>",
+            table_text ,
+            "<br>",plotinfo$caption[i],"<br><i><small>file: <a href='",plotinfo$basename[i],"'>",plotinfo$basename[i],"</a></small></i>\n",
+            sep="", file=htmlfile, append=TRUE)
+      }
+      
+    }else {
       plotinfo <- plotInfoTable[plotInfoTable$category==category,]
       
       cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
