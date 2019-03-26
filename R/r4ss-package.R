@@ -45,7 +45,7 @@
 #' @importFrom utils browseURL flush.console head
 #'   packageDescription read.csv
 #'   read.table tail write.csv write.table
-#' @importFrom kableExtra kable cell_spec kable_styling scroll_box
+#'
 #' @examples
 #'
 #' \dontrun{

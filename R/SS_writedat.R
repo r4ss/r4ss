@@ -27,7 +27,7 @@
 #'
 SS_writedat <- function(datlist,
                         outfile,
-                        version = "3.24",
+                        version = "3.30",
                         overwrite = FALSE,
                         faster = FALSE,
                         verbose = TRUE) {
