@@ -300,10 +300,11 @@ SS_html <- function(replist=NULL,
       plotinfo <- plotInfoTable[plotInfoTable$category==category,]
       cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
       for(i in 1:nrow(plotinfo)){
-        table_text <- readLines(plotinfo$basename[i])
+        txtfilename <- file.path(plotdir, plotinfo$basename[i])
+        table_text <- readLines(txtfilename)
         cat("<p align=left>",
             table_text ,
-            "<br>",plotinfo$caption[i],"<br><i><small>file: <a href='",plotinfo$basename[i],"'>",plotinfo$basename[i],"</a></small></i>\n",
+            "<br>",plotinfo$caption[i],"<br><i><small>file: <a href='",txtfilename,"'>",plotinfo$basename[i],"</a></small></i>\n",
             sep="", file=htmlfile, append=TRUE)
       }
       

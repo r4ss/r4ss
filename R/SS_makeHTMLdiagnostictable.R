@@ -51,6 +51,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
     kableExtra::scroll_box(the_table, width = "100%", height = "200px")
   filename <- caption <- NULL
   filename = c(filename,"parameterchecks.txt")
+
   write(the_table,
         file = file.path(plotdir,filename[1]))
   caption = c(caption,paste(
