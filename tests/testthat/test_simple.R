@@ -51,17 +51,17 @@ test_that("SS_output list: Kobe looks right", {
 
 test_that("SS_plots runs on simple_3.24 model", {
   plots3.24 <- SS_plots(simple3.24, datplot=TRUE)
-  expect_equal(tail(plots3.24$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.24$file,1), "parameterchecks.txt")
 })
 
 test_that("SS_plots runs on simple_3.30.01 model", {
   plots3.30.01 <- SS_plots(simple3.30.01, datplot=TRUE)
-  expect_equal(tail(plots3.30.01$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.30.01$file,1), "parameterchecks.txt")
 })
 
 test_that("SS_plots runs on simple_3.30.12 model", {
   plots3.30.12 <- SS_plots(simple3.30.12, datplot=TRUE)
-  expect_equal(tail(plots3.30.12$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.30.12$file,1), "parameterchecks.txt")
 })
 
 ###############################################################################
