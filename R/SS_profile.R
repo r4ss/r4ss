@@ -23,7 +23,7 @@
 #' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
 #' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
 #' @param profilevec Vector of values to profile over.  Default = NULL.
-#' @param model Name of executable. Default = "ss3".
+#' @param model Name of executable. Default = "ss".
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
 #' @param systemcmd Should R call SS using "system" function instead of "shell".
