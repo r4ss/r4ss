@@ -127,6 +127,10 @@ function(
          read_like=TRUE,
          verbose=TRUE)
 {
+  # Ensure wd is not changed by the function
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -180,7 +184,8 @@ function(
   totallike <- rep(NA,n)
   liketable <- NULL
 
-  cat("changing working directory to",dir,"\n")
+  cat("changing working directory to ",dir,",\n",
+      " but will be changed back on exit from function.\n", sep = "")
   setwd(dir) # change working directory
   stdfile <- paste(model,'.std',sep='')
 
