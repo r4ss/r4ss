@@ -27,28 +27,28 @@ SS_makeHTMLdiagnostictable <- function(replist,
   if(!is.null(parchecks$Gradient)){
     parchecks <- parchecks[!is.na(parchecks$Gradient), ]
   parchecks <- parchecks[order(-parchecks$Gradient), ]
-  parchecks$Gradient <- kableExtra::cell_spec(parchecks$Gradient,
+  parchecks$Gradient <- cell_spec(parchecks$Gradient,
                                               "html",
                                               color = ifelse(abs(parchecks$Gradient) >
                                                                gradmax, "red", "black"))
   }
   #Format table with parameter checks so high gradients or parameters on bounds are shown in red
   parchecks$Afterbound <-
-    kableExtra::cell_spec(parchecks$Afterbound,
+    cell_spec(parchecks$Afterbound,
                           "html",
                           color = ifelse(parchecks$Afterbound == "OK", "black", "red"))
   parchecks$Status <-
-    kableExtra::cell_spec(parchecks$Status,
+    cell_spec(parchecks$Status,
                           "html",
                           color = ifelse(parchecks$Status == "OK", "black", "red"))
   
   #Write out table
-  the_table <- kableExtra::kable(parchecks,
+  the_table <- kable(parchecks,
                                  format = "html",
                                  escape = F)
-  the_table <- kableExtra::kable_styling(the_table)
+  the_table <- kable_styling(the_table)
   the_table <-
-    kableExtra::scroll_box(the_table, width = "100%", height = "200px")
+    scroll_box(the_table, width = "100%", height = "200px")
   filename <- caption <- NULL
   filename = c(filename,"parameterchecks.txt")
 
@@ -57,7 +57,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
   caption = c(caption,paste(
     "Table of estimated parameters sorted by parameters with the largest gradients; any parameter with a gradient value with an absolute value above",
     gradmax,
-    "(for SS 3.3 models) or a parameter on bounds is colored in red."
+    "(for SS 3.30 models) or a parameter on bounds is colored in red."
   ))
   
   #Format high correlations table
@@ -65,14 +65,14 @@ SS_makeHTMLdiagnostictable <- function(replist,
   high_cor_table <- cors$cormessage5
   
   high_cor_table <- high_cor_table[order(high_cor_table$corr), ]
-  high_cor_table$corr <- kableExtra::cell_spec(high_cor_table$corr,
+  high_cor_table$corr <- cell_spec(high_cor_table$corr,
                                                "html",
                                                color = ifelse(abs(high_cor_table$corr) >
                                                                 cormax, "red", "black"))
-  the_table2 <- kableExtra::kable(high_cor_table,
+  the_table2 <- kable(high_cor_table,
                                   format = "html",
                                   escape = F)
-  the_table2 <- kableExtra::kable_styling(the_table2)
+  the_table2 <- kable_styling(the_table2)
   filename = c(filename,"correlationcheck.txt")
   write(the_table2,
         file = file.path(plotdir,"correlationcheck.txt"))
@@ -87,14 +87,14 @@ SS_makeHTMLdiagnostictable <- function(replist,
   low_cor_table <- cors$cormessage10
   
   low_cor_table <- low_cor_table[order(low_cor_table$max), ]
-  low_cor_table$max <- kableExtra::cell_spec(low_cor_table$max,
+  low_cor_table$max <- cell_spec(low_cor_table$max,
                                              "html",
                                              color = ifelse(abs(low_cor_table$max) <
                                                               cormin, "purple", "black"))
-  the_table3 <- kableExtra::kable(low_cor_table,
+  the_table3 <- kable(low_cor_table,
                                   format = "html",
                                   escape = F)
-  the_table3 <- kableExtra::kable_styling(the_table3)
+  the_table3 <- kable_styling(the_table3)
   filename = c(filename,"lowcorrelationcheck.txt")
   write(the_table3,
         file = file.path(plotdir,"lowcorrelationcheck.txt"))
