@@ -160,11 +160,11 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
   		# version 3.30
   		defs 		 <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
     	defs[defs==""] <- NA
-    	FleetNames   <- as.character(defs[grep("fleet_names",defs$X1),-1])
+    	FleetNames   <- as.character(defs[grep("Fleet_name",defs$X1),-1])
     	FleetNames   <- FleetNames[!is.na(FleetNames)]
     	fleet_ID     <- 1: length(FleetNames)
-    	fleet_type   <- as.numeric(defs[4:(3+length(fleet_ID)),1])
-    	nfleets      <- sum(fleet_type <= 2 )
+    	fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1])# as.numeric(defs[4:(3+length(fleet_ID)),1])
+    	nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
   	}
 
   	if (SS_versionNumeric < 3.3){
@@ -226,20 +226,22 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	#ES Table a  Catches from the fisheries
 	#======================================================================
-		xx = ifelse(SS_versionNumeric < 3.3, 12, 14)
+		xx = ifelse(SS_versionNumeric < 3.3, 12, 15)
 		catch = NULL; total.catch = total.dead = 0
 		ind = hist[1:(length(hist)-1)]
-		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-			total.dead  = total.dead + killed
-			total.catch = total.catch + input.catch
-			catch = cbind(catch, input.catch)
+		for(a in 1:nareas){
+			for (i in 1:nfleets){
+				killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+				input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+				total.dead  = total.dead + killed
+				total.catch = total.catch + input.catch
+				catch = cbind(catch, input.catch)
+			}
+			es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+			colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
+			write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = F)
 		}
-		es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-		colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-
-		write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = F)
+		
 	
 	#======================================================================
 	#ES Table b Spawning Biomass and Depletion
@@ -342,21 +344,21 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		rawstarter   <- readLines(paste0(dir, "/starter.ss"))
 		spr          <- as.numeric(strsplit(rawforecast[grep("SPR target",rawforecast)]," ")[[1]][1])
 
-		ssb.virgin = Get.Values(dat = base, label = "SSB_Virgin", 	     hist, quant, single = TRUE)
-		smry.virgin= Get.Values(dat = base, label = "SmryBio_Unfished",  hist, quant, single = TRUE)
-		rec.virgin = Get.Values(dat = base, label = "Recr_Virgin", 	     hist, quant, single = TRUE)
+		ssb.virgin = Get.Values(dat = base, label = "SSB_unfished",      hist, quant, single = TRUE)
+		smry.virgin= Get.Values(dat = base, label = "SmryBio_unfished",  hist, quant, single = TRUE)
+		rec.virgin = Get.Values(dat = base, label = "Recr_unfished",     hist, quant, single = TRUE)
 		final.depl = 100*depl[dim(depl)[1],2:4]     
 		b.target   = Get.Values(dat = base, label = "SSB_Btgt",    	     hist, quant, single = TRUE)
 		spr.btarg  = Get.Values(dat = base, label = "SPR_Btgt",    	     hist, quant, single = TRUE)
 		f.btarg    = Get.Values(dat = base, label = "Fstd_Btgt", 	     hist, quant, single = TRUE)
-		yield.btarg= Get.Values(dat = base, label = "TotYield_Btgt",     hist, quant, single = TRUE)
-		b.spr 	   = Get.Values(dat = base, label = "SSB_SPRtgt", 	     hist, quant, single = TRUE)
-		f.spr      = Get.Values(dat = base, label = "Fstd_SPRtgt", 		 hist, quant, single = TRUE)
-		yield.spr  = Get.Values(dat = base, label = "TotYield_SPRtgt",   hist, quant, single = TRUE)
+		yield.btarg= Get.Values(dat = base, label = "Dead_Catch_Btgt",   hist, quant, single = TRUE)
+		b.spr 	   = Get.Values(dat = base, label = "SSB_SPR",  	     hist, quant, single = TRUE)
+		f.spr      = Get.Values(dat = base, label = "Fstd_SPR", 		 hist, quant, single = TRUE)
+		yield.spr  = Get.Values(dat = base, label = "Dead_Catch_SPR",    hist, quant, single = TRUE)
 		b.msy 	   = Get.Values(dat = base, label = "SSB_MSY", 		     hist, quant, single = TRUE)
 		spr.msy    = Get.Values(dat = base, label = "SPR_MSY", 		     hist, quant, single = TRUE)
 		f.msy 	   = Get.Values(dat = base, label = "Fstd_MSY", 	     hist, quant, single = TRUE)
-		msy 	   = Get.Values(dat = base, label = "TotYield_MSY",      hist, quant, single = TRUE)
+		msy 	   = Get.Values(dat = base, label = "Dead_Catch_MSY",    hist, quant, single = TRUE)
 
 		# Convert spawning quantities for single-sex models
 		if (nsexes == 1){
@@ -508,22 +510,23 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#======================================================================
 	# Total Catch when discards are estimated
 	#======================================================================
-		xx = ifelse(SS_versionNumeric < 3.3, 12, 14)
+		xx = ifelse(SS_versionNumeric < 3.3, 12, 15)
 		total.dead = total.catch = 0 
 		catch = NULL
 		ind = startyr:endyr
-		for (i in 1:nfleets){
-			killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-			input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-			total.dead = total.dead + killed
-			total.catch = total.catch + input.catch
-			catch = cbind(catch, input.catch)
+		for(a in 1:nareas){
+		  	for (i in 1:nfleets){
+		  		killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+		  		input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+		  		total.dead = total.dead + killed
+		  		total.catch = total.catch + input.catch
+		  		catch = cbind(catch, input.catch)
+		  	}
+			mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
+			colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
+	
+			write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], ".csv"), row.names = F)
 		}
-		
-		mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
-		colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
-
-		write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs.csv"), row.names = F)
 	
 	#======================================================================
 	#Numbers at age
@@ -569,7 +572,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 
 		# Check to see if numbers-at-age is calculated 
 		if(SS_versionNumeric >= 3.30) {
-			check = as.numeric(strsplit(rawstarter[grep("detailed age-structure", rawstarter)]," ")[[1]][1])
+			check = as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
 			if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
 
 			if (check != 2){
@@ -610,5 +613,5 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 			} #check loop
 		} #  SS version 3.30
 
-	}
+	} #nareas
 }
