@@ -164,7 +164,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
     	FleetNames   <- FleetNames[!is.na(FleetNames)]
     	fleet_ID     <- 1: length(FleetNames)
     	fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1])# as.numeric(defs[4:(3+length(fleet_ID)),1])
-    	nfleets      <- sum(fleet_type[!is.na(fleet_type)] == 1 )
+    	nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
   	}
 
   	if (SS_versionNumeric < 3.3){
