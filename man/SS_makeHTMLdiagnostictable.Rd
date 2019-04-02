@@ -2,12 +2,15 @@
 % Please edit documentation in R/SS_makeHTMLdiagnostictable.R
 \name{SS_makeHTMLdiagnostictable}
 \alias{SS_makeHTMLdiagnostictable}
-\title{Creates html tables that show diagnostic outputs, including status checks, gradients, and correlations.}
+\title{Make html diagnostic tables}
 \usage{
-SS_makeHTMLdiagnostictable(replist, gradmax = 0.001)
+SS_makeHTMLdiagnostictable(replist, plotdir = NULL, gradmax = 0.001)
 }
 \arguments{
 \item{replist}{List item representing stock assessment model output list (\code{SS_output})}
+
+\item{plotdir}{Directory where the text files containing the tables will be written.
+By default it will be the directory where the model was run.}
 
 \item{gradmax}{the largest gradient value for estimated parameter; the default is 1E-3}
 }
