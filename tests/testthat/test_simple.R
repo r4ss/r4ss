@@ -166,7 +166,7 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
 
 test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   # read data file
-  simple3.30.13_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.13/simple.dat"),
+  simple3.30.13_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.13/simple_data.ss"),
                                version="3.30")
   # write data file
   SS_writedat(datlist = simple3.30.13_dat,
