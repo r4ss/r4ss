@@ -59,7 +59,7 @@ SS_makeHTMLdiagnostictable <- function(replist,
   the_table <-
     scroll_box(the_table, width = "100%", height = "200px")
   filename <- caption <- NULL
-  filename = c(filename,"parameterchecks.txt")
+  filename = c(filename,"parameterchecks.html")
 
   write(the_table,
         file = file.path(plotdir,filename[1]))
@@ -82,9 +82,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
                         format = "html",
                         escape = F)
     the_table2 <- kable_styling(the_table2)
-    filename = c(filename,"correlationcheck.txt")
+    filename = c(filename,"correlationcheck.html")
     write(the_table2,
-          file = file.path(plotdir,"correlationcheck.txt"))
+          file = file.path(plotdir,"correlationcheck.html"))
     caption = c(caption, paste(
         "Table of estimated parameters with the ten highest correlation rates, sorted by highest correlations; any parameter with an absolute value of correlation above",
         cormax,
@@ -104,9 +104,9 @@ SS_makeHTMLdiagnostictable <- function(replist,
                         format = "html",
                         escape = F)
     the_table3 <- kable_styling(the_table3)
-    filename = c(filename,"lowcorrelationcheck.txt")
+    filename = c(filename,"lowcorrelationcheck.html")
     write(the_table3,
-          file = file.path(plotdir,"lowcorrelationcheck.txt"))
+          file = file.path(plotdir,"lowcorrelationcheck.html"))
     caption = c(caption,paste(
         "Table of estimated parameters with the ten lowest correlation rates, sorted by lowest correlations; any parameter with an absolute value of correlation below",
         cormin,
