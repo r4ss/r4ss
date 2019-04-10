@@ -180,7 +180,6 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
     rownames(catch)<-as.character(1:ny)
     catch[,"year"]<-datlist$styr:datlist$endyr
-    #catch<-as.data.frame(catch)
 
     datlist$init_equil<-array(0,dim=totfleets)
     datlist$se_log_catch<-array(0,dim=totfleets)
