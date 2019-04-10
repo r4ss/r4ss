@@ -195,9 +195,9 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
 
         if((datlist$catch$V1[i]>=datlist$styr)&&(datlist$catch$V1[i]<=datlist$endyr))  # this is a simple catch record
         {
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V2[i])]<-datlist$catch$V4[i]
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V3[i]
-          datlist$se_log_catch[as.numeric(datlist$catch$V2[i])]<-as.numeric(datlist$catch$V5[i])
+          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
+          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
+          datlist$se_log_catch[as.numeric(datlist$catch$V3[i])]<-as.numeric(datlist$catch$V5[i])
         }
       }
     }
