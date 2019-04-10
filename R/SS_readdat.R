@@ -184,6 +184,10 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     datlist$init_equil<-array(0,dim=totfleets)
     datlist$se_log_catch<-array(0,dim=totfleets)
 
+    ses <- tapply(datlist$catch$V5, list("fleet" = datlist$catch$V3), 
+      FUN = function(x) length(unique(x)))
+    if (any(ses > 1)) stop("This code was not written to work with ",
+      "log standard errors of catches vary with time.")
     for(i in 1:nrow(datlist$catch))
     {
       if(datlist$catch$V4[i]>=0)
