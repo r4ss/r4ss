@@ -30,12 +30,14 @@ shinyUI(pageWithSidebar(
 
     conditionalPanel(
       condition = "input.type == 'Double Normal (24)'",
-      sliderInput("par1", "PEAK:",0, 100, 25, 0.1),
-      sliderInput("par2", "TOP:", -5, 5, 0, 0.1),
-      sliderInput("par3", "ASC-WIDTH:", -5, 10, 3, 0.1),
-      sliderInput("par4", "DESC-WIDTH:", -5, 10, 3, 0.1),
-      sliderInput("par5", "INIT:", 0, 1, 0.1, 0.05),
-      sliderInput("par6", "FINAL:", 0, 1, 0.9, 0.05)
+      sliderInput("par.a", "PEAK:",0, 100, 25, 0.1),
+      sliderInput("par.b", "TOP:", -5, 5, 0, 0.1),
+      sliderInput("par.c", "ASC-WIDTH:", -5, 10, 3, 0.1),
+      sliderInput("par.c", "DESC-WIDTH:", -5, 10, 3, 0.1),
+      sliderInput("par.d", "INIT:", 0, 1, 0.1, 0.05),
+      sliderInput("par.e", "FINAL:", 0, 1, 0.9, 0.05)
+      numericInput("par.eN", "LOGIT INIT", log(.1/.9)),
+      numericInput("par.fN", "LOGIT FINAL", log(.9/.1))
     )
 
   ),
