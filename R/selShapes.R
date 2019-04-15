@@ -13,6 +13,14 @@
 #' @author inspired by tcl/tk code written by Tommy Garrison
 
 selShapes <- function() {
+	if(!require("shiny")) {
+		cat("Please install and load the 'shiny' package using the following commands:\n")
+		cat("install.packages('shiny')\n")
+		cat("library(shiny)\n")
+	}
+	cat("Press ESC in the R console to exit\n")
+	flush.console()
+
 	d <- system.file("Shiny", package = "r4ss")
 	runApp(file.path(d,"Selectivities"))
 }
