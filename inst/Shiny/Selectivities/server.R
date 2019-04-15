@@ -92,38 +92,54 @@ doubleNorm24.fn <- function(x,a,b,c,d,e,f) {
 server <- function(input, output, session) {
 
   observe({
-    xS <- input$par2
-    updateNumericInput(session, "par2N", value=xS)
+    updateNumericInput(session, "par2N", value=input$par2)
   })
   observe({
-    # We'll use the input$controller variable multiple times, so save it as x
-    # for convenience.
-    xN <- input$par2N
-    # Similar to number and text. only label and value can be set for slider
-    updateSliderInput(session, "par2", value = xN)
+    updateSliderInput(session, "par2", value = input$par2N)
+  })
+  observe({
+    updateNumericInput(session, "par1N", value=input$par1)
+  })
+  observe({
+    updateSliderInput(session, "par1", value = input$par1N)
   })
 
- #Input for e and f: numeric input on logit scale, slider input on real scale
+ #Input for double normal parameters: all parameters on the scale the user enters in SS
   observe({
-    #x.eS is the actual value from the slider input and will be dispalyed in the number input
-    x.eS <- input$par.e   
-    updateNumericInput(session, "par.eN", value=x.eS)
+    updateNumericInput(session, "par.aN", value=input$par.a)
   })
   observe({
-    #x.eN is the actual value from the number input and will replace the slider input
-    x.eN <- input$par.eN
-    updateSliderInput(session, "par.e", value = x.eN)
-  })
-  
-  observe({
-    #x.fS is the actual value from the slider input and will be dispalyed in the number input
-    x.fS <- input$par.f   
-    updateNumericInput(session, "par.fN", value=x.fS)
+    updateSliderInput(session, "par.a", value = input$par.aN)
   })
   observe({
-    #x.fN is the actual value from the number input and will replace the slider input
-    x.fN <- input$par.fN
-    updateSliderInput(session, "par.f", value = x.fN)
+    updateNumericInput(session, "par.bN", value=input$par.b)
+  })
+  observe({
+    updateSliderInput(session, "par.b", value = input$par.bN)
+  })
+  observe({
+    updateNumericInput(session, "par.cN", value=input$par.c)
+  })
+  observe({
+    updateSliderInput(session, "par.c", value = input$par.cN)
+  })
+  observe({
+    updateNumericInput(session, "par.dN", value=input$par.d)
+  })
+  observe({
+    updateSliderInput(session, "par.d", value = input$par.dN)
+  })
+  observe({
+    updateNumericInput(session, "par.eN", value=input$par.e)
+  })
+  observe({
+    updateSliderInput(session, "par.e", value = input$par.eN)
+  })
+  observe({
+    updateNumericInput(session, "par.fN", value=input$par.f)
+  })
+  observe({
+    updateSliderInput(session, "par.f", value = input$par.fN)
   })
   
   len <- reactive({
