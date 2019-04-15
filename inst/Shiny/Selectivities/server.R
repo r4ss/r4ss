@@ -8,11 +8,27 @@ logistic1.fn <- function(len,a,b) {
 }
 
 doubleNorm24.fn <- function(x,a,b,c,d,e,f) {
-#UPDATED: - input e and f now on logit scale - read from numeric input
+#UPDATED: - input e and f on 0 to 1 scal and transfrom to logit scale
 #         - changed bin width in peak2 calculation
 #         - updated index of sel when j2 < length(x)
 #	  - renamed input parameters, cannot have same names as the logitstic function
 #         - function not handling f < -1000 correctly
+  if(e == 0) {#Avoid errors on the bounds
+    e <- 1-0.999955 #an input that results in approx -10
+  } 
+  if(e == 1) {
+      e <- 0.999955  #an input that results in approx 10
+  }
+  e <- log(e/(1-e)) #transform input to logit
+  
+  if(f == 0) {#Avoid errors on the bounds
+    f <- 1-0.999955 #an input that results in approx -10
+  } 
+  if(f == 1) {
+      f <- 0.999955  #an input that results in approx 10
+  }
+  f <- log(f/(1-f)) #transform input to logit
+
   sel <- rep(NA, length(x))
   startbin <- 1
   peak <- a
@@ -73,57 +89,59 @@ doubleNorm24.fn <- function(x,a,b,c,d,e,f) {
 
 
 # Define server logic required to plot selectivity
-shinyServer(function(input, output, session) {
+server <- function(input, output, session) {
 
   observe({
-    xS <- input$par2
-    updateNumericInput(session, "par2N", value=xS)
+    updateNumericInput(session, "par2N", value=input$par2)
   })
   observe({
-    # We'll use the input$controller variable multiple times, so save it as x
-    # for convenience.
-    xN <- input$par2N
-    # Similar to number and text. only label and value can be set for slider
-    updateSliderInput(session, "par2", value = xN)
+    updateSliderInput(session, "par2", value = input$par2N)
+  })
+  observe({
+    updateNumericInput(session, "par1N", value=input$par1)
+  })
+  observe({
+    updateSliderInput(session, "par1", value = input$par1N)
   })
 
- #Input for e and f: numeric input on logit scale, slider input on real scale
-  observe({ #Avoid errors on the bounds
-    if(input$par.e == 0){
-      x.eS <- -10
-    } else {
-      if(input$par.e == 1){
-        x.eS <- 10
-      }
-      else {
-        x.eS <- log(input$par.e/(1-input$par.e)) #transform slider to logit
-      } 
-    }
-   
-    updateNumericInput(session, "par.eN", value=x.eS)
+ #Input for double normal parameters: all parameters on the scale the user enters in SS
+  observe({
+    updateNumericInput(session, "par.aN", value=input$par.a)
   })
   observe({
-    x.eN <- 1 / (1 + exp(-input$par.eN))
-    updateSliderInput(session, "par.e", value = x.eN)
+    updateSliderInput(session, "par.a", value = input$par.aN)
+  })
+  observe({
+    updateNumericInput(session, "par.bN", value=input$par.b)
+  })
+  observe({
+    updateSliderInput(session, "par.b", value = input$par.bN)
+  })
+  observe({
+    updateNumericInput(session, "par.cN", value=input$par.c)
+  })
+  observe({
+    updateSliderInput(session, "par.c", value = input$par.cN)
+  })
+  observe({
+    updateNumericInput(session, "par.dN", value=input$par.d)
+  })
+  observe({
+    updateSliderInput(session, "par.d", value = input$par.dN)
+  })
+  observe({
+    updateNumericInput(session, "par.eN", value=input$par.e)
+  })
+  observe({
+    updateSliderInput(session, "par.e", value = input$par.eN)
+  })
+  observe({
+    updateNumericInput(session, "par.fN", value=input$par.f)
+  })
+  observe({
+    updateSliderInput(session, "par.f", value = input$par.fN)
   })
   
-  observe({if(input$par.f == 0){#Avoid errors on the bounds
-    x.fS <- -10
-  } else {
-    if(input$par.f == 1){
-      x.fS <- 10
-    }
-    else {
-      x.fS <- log(input$par.f/(1-input$par.f)) #transform slider to logit
-    } 
-  }
-    updateNumericInput(session, "par.fN", value=x.fS)
-  })
-  observe({
-    x.fN <- 1 / (1 + exp(-input$par.fN))
-    updateSliderInput(session, "par.f", value = x.fN)
-  })
-
   len <- reactive({
     seq(as.numeric(input$range[1]),as.numeric(input$range[2]),0.1)
   })
@@ -134,7 +152,7 @@ shinyServer(function(input, output, session) {
 				   "Logistic (1)" = logistic1.fn(len(),input$par1,input$par2),
 		       "Double Normal (24)" = doubleNorm24.fn(len(),input$par.a,input$par.b,
                                                         input$par.c,input$par.d,
-                                                        input$par.eN,input$par.fN)) #Input for e and f on logit scale
+                                                        input$par.e,input$par.f))
 	})
 
 	output$caption <- renderText({
@@ -145,4 +163,4 @@ shinyServer(function(input, output, session) {
   output$selPlot <- renderPlot({
     plot(len(),selex(),type="l",lwd=3,xlab="Length",ylab="Selectivity",ylim=c(0,1))
   })
-})
+}
