@@ -21,7 +21,7 @@
 #' Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 #' Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
 #' Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-#' and Andrea M. Havron
+#' Watal M. Iwasaki, and Andrea M. Havron
 #'
 #' Package maintainer: Ian G. Taylor <Ian.Taylor@@noaa.gov>
 #' @references r4ss on GitHub: \url{https://github.com/r4ss}
