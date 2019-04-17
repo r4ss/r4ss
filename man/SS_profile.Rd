@@ -48,7 +48,7 @@ is used for all runs.}
 
 \item{exe.delete}{Delete exe files in each directory?  NOT IMPLEMENTED YET.}
 
-\item{model}{Name of executable. Default = "ss3".}
+\item{model}{Name of executable. Default = "ss".}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
 will reduce the amount of command-line output.}
