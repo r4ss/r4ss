@@ -23,7 +23,7 @@
 #' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
 #' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
 #' @param profilevec Vector of values to profile over.  Default = NULL.
-#' @param model Name of executable. Default = "ss3".
+#' @param model Name of executable. Default = "ss".
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
 #' @param systemcmd Should R call SS using "system" function instead of "shell".
@@ -127,6 +127,10 @@ function(
          read_like=TRUE,
          verbose=TRUE)
 {
+  # Ensure wd is not changed by the function
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  
   OS <- "Mac" # don't know the version$os info for Mac
   if(length(grep("linux",version$os)) > 0) OS <- "Linux"
   if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
@@ -180,7 +184,8 @@ function(
   totallike <- rep(NA,n)
   liketable <- NULL
 
-  cat("changing working directory to",dir,"\n")
+  cat("changing working directory to ",dir,",\n",
+      " but will be changed back on exit from function.\n", sep = "")
   setwd(dir) # change working directory
   stdfile <- paste(model,'.std',sep='')
 
@@ -230,7 +235,9 @@ function(
       
       # change initial values in the control file
       # this also sets phase negative which is needed even when par file is used
-      SS_changepars(dir=dir,ctlfile=masterctlfile,newctlfile=newctlfile,
+      # dir set as NULL because the wd was already changed to dir earlier in the
+      # script.
+      SS_changepars(dir=NULL,ctlfile=masterctlfile,newctlfile=newctlfile,
                     linenums=linenum,strings=string,
                     newvals=profilevec[i], estimate=FALSE,
                     verbose=TRUE, repeat.vals=TRUE)

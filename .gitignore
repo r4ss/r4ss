@@ -39,6 +39,7 @@ ss.cor
 ss.rep
 ss.par
 *.exe
+*.bat
 inst/extdata/*.png
 inst/extdata/*/fastdat*
 inst/extdata/*/testdat*

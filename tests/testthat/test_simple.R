@@ -25,6 +25,11 @@ test_that("SS_output runs on simple_3.30.12 model", {
   expect_equal(tail(names(simple3.30.12),1), "inputs")
 })
 
+test_that("SS_output runs on simple_3.30.13 model", {
+  simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"))
+  expect_equal(tail(names(simple3.30.13),1), "inputs")
+})
+
 ###############################################################################
 # read models again so they are available in the workspace for later use
 ###############################################################################
@@ -35,6 +40,8 @@ simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"),
                         verbose=FALSE, printstats=FALSE)
 simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"),
                         verbose=FALSE, printstats=FALSE)
+simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
+                        verbose=FALSE, printstats=FALSE)
 
 ###############################################################################
 # specific tests for elements in the list created by SS_output
@@ -43,6 +50,7 @@ test_that("SS_output list: Kobe looks right", {
   expect_true(all(simple3.24$Kobe$Year %in% 1950:2050 ))
   expect_true(all(simple3.30.01$Kobe$Year %in% 1950:2050 ))
   expect_true(all(simple3.30.12$Kobe$Year %in% 1950:2050 ))
+  expect_true(all(simple3.30.13$Kobe$Year %in% 1950:2050 ))
 })
 
 ###############################################################################
@@ -51,17 +59,22 @@ test_that("SS_output list: Kobe looks right", {
 
 test_that("SS_plots runs on simple_3.24 model", {
   plots3.24 <- SS_plots(simple3.24, datplot=TRUE)
-  expect_equal(tail(plots3.24$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.24$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.01 model", {
   plots3.30.01 <- SS_plots(simple3.30.01, datplot=TRUE)
-  expect_equal(tail(plots3.30.01$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.30.01$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.12 model", {
   plots3.30.12 <- SS_plots(simple3.30.12, datplot=TRUE)
-  expect_equal(tail(plots3.30.12$file,1), "data_plot2.png")
+  expect_equal(tail(plots3.30.12$file,1), "parameterchecks.html")
+})
+
+test_that("SS_plots runs on simple_3.30.13 model", {
+  plots3.30.13 <- SS_plots(simple3.30.13, datplot=TRUE)
+  expect_equal(tail(plots3.30.13$file,1), "parameterchecks.html")
 })
 
 ###############################################################################
@@ -70,7 +83,8 @@ test_that("SS_plots runs on simple_3.30.12 model", {
 
 test_that("SSsummarize and SSplotComparisons both work", {
   # run summarize function
-  simple_summary <- SSsummarize(list(simple3.24, simple3.30.01, simple3.30.12))
+  simple_summary <- SSsummarize(list(simple3.24, simple3.30.01,
+                                     simple3.30.12, simple3.30.13))
 
   # plot comparisons of results
   comparison_plots <- SSplotComparisons(simple_summary, png=TRUE,
@@ -132,7 +146,7 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
 
 test_that("SS_readdat and SS_writedat both work for 3.30.12", {
   # read data file
-  simple3.30.12_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.12/simple.dat"),
+  simple3.30.12_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.12/simple_data.ss"),
                                version="3.30")
   # write data file
   SS_writedat(datlist = simple3.30.12_dat,
@@ -142,5 +156,25 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
   # write data file with faster option
   SS_writedat(datlist = simple3.30.12_dat,
               outfile = file.path(example_path, "simple_3.30.12/fastdat_3.30.12.ss"),
+              faster = TRUE)
+})
+
+
+###############################################################################
+# testing read/write dat functions for 3.30.13
+###############################################################################
+
+test_that("SS_readdat and SS_writedat both work for 3.30.13", {
+  # read data file
+  simple3.30.13_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.13/simple_data.ss"),
+                               version="3.30")
+  # write data file
+  SS_writedat(datlist = simple3.30.13_dat,
+              outfile = file.path(example_path, "simple_3.30.13/testdat_3.30.13.ss"),
+              faster = FALSE)
+
+  # write data file with faster option
+  SS_writedat(datlist = simple3.30.13_dat,
+              outfile = file.path(example_path, "simple_3.30.13/fastdat_3.30.13.ss"),
               faster = TRUE)
 })

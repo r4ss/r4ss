@@ -237,7 +237,8 @@ SS_html <- function(replist=NULL,
     
     # add text on "Home" page
     if(category=="Home"){
-      cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
+      cat('\n\n<h2><a name="', category, '">', category, '</h2>\n', sep="",
+          file=htmlfile, append=TRUE)
       if(is.null(replist)){
         cat('<p>Model info not available (need to supply "replist" input to SS_HTML function)</p>\n',
             sep="", file=htmlfile, append=TRUE)
@@ -296,14 +297,33 @@ SS_html <- function(replist=NULL,
           }
         }
       }
-    }else{
+    }else if(category=="DiagnosticTables"){
+      plotinfo <- plotInfoTable[plotInfoTable$category==category, ]
+      cat('\n\n<h2><a name="', category, '">', category, '</h2>\n', sep="",
+          file=htmlfile,  append=TRUE)
+      for(i in 1:nrow(plotinfo)){
+        txtfilename <- file.path(plotdir, plotinfo$basename[i])
+        table_text <- readLines(txtfilename)
+        cat("<p align=left>",
+            table_text ,
+            "<br>", plotinfo$caption[i], "<br><i><small>file: <a href='",
+            txtfilename, "'>", plotinfo$basename[i], "</a></small></i>\n",
+            sep="", file=htmlfile, append=TRUE)
+      }
+      
+    }else {
       plotinfo <- plotInfoTable[plotInfoTable$category==category,]
       
-      cat('\n\n<h2><a name="',category,'">',category,'</h2>\n',sep="", file=htmlfile, append=TRUE)
+      cat('\n\n<h2><a name="', category, '">', category, '</h2>\n', sep="",
+          file=htmlfile, append=TRUE)
       for(i in 1:nrow(plotinfo)){
-        cat("<p align=left><a href='",plotinfo$basename[i],"'><img src='",plotinfo$basename[i],
-            "' border=0 width=",width,"></a><br>",plotinfo$caption[i],"<br><i><small>file: <a href='",plotinfo$basename[i],"'>",plotinfo$basename[i],"</a></small></i>\n",
-            sep="", file=htmlfile, append=TRUE)
+        cat("<p align=left><a href='", plotinfo$basename[i],
+            "'><img src='", plotinfo$basename[i],
+            "' border=0 width=", width, "></a><br>",
+            plotinfo$caption[i],
+            "<br><i><small>file: <a href='", plotinfo$basename[i],
+            "'>", plotinfo$basename[i], "</a></small></i>\n",
+            sep="",  file=htmlfile,  append=TRUE)
       }
     }
   }
