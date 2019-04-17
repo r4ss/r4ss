@@ -1345,7 +1345,7 @@ SS_output <-
       mcmc <- SSgetMCMC(dir = file.path(dir, dir.mcmc))
     }else{
       warning("skipping reading MCMC output because posterior.sso file",
-              "not found in file.path(dir, dir.mcmc)")
+              " not found in file.path(dir, dir.mcmc)")
       mcmc <- NULL
     }
   }else{
@@ -1575,6 +1575,9 @@ SS_output <-
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
   recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
+  
+  # temporary change for model that has bad values in dev column
+  recruit$dev[recruit$dev=="-nan(ind)"] <- NA
   
   # make values numeric
   for(icol in (1:ncol(recruit))[names(recruit) != "era"]){

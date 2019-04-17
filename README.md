@@ -1,5 +1,6 @@
 # r4ss: R code for Stock Synthesis
-[![Build Status](https://travis-ci.org/r4ss/r4ss.png?branch=master)](https://travis-ci.org/r4ss/r4ss)
+[![Build Status](https://travis-ci.org/r4ss/r4ss.png?branch=master)](https://travis-ci.org/r4ss/r4ss) (master)
+[![Build Status](https://travis-ci.org/r4ss/r4ss.svg?branch=development)](https://travis-ci.org/r4ss/r4ss) (development)
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by Dr. Rick Methot at the [NOAA Northwest Fisheries Science Center](http://www.nwfsc.noaa.gov/). The R code in the r4ss package is based on the original work of Dr. Ian Stewart begun around 2005 and released as an open source R package on CRAN in 2009. The package has benefited from contributions, suggestions, and bug reports from many collaborators and users.
 

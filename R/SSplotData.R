@@ -187,26 +187,32 @@ SSplotData <- function(replist,
           if(typename == "cpue"){
             # filter out rows that aren't used
             dat.f <- dat.f[dat.f$Use > 0,]
-            # aggregate by year, taking average SE (on a log scale)
-            dat.agg <- aggregate(dat.f$SE, by=list(dat.f$Yr), FUN=mean)
-            allyrs <- dat.agg$Group.1
-            size <- 1/dat.agg$x # inverse of mean SE
+            if(nrow(dat.f) > 0){ # skip of all values are excluded
+              # aggregate by year, taking average SE (on a log scale)
+              dat.agg <- aggregate(dat.f$SE, by=list(dat.f$Yr), FUN=mean)
+              allyrs <- dat.agg$Group.1
+              size <- 1/dat.agg$x # inverse of mean SE
+            }
           }
           if(typename == "mnwgt"){
             # filter out rows that aren't used
             dat.f <- dat.f[dat.f$Use > 0,]
-            # get mean CV across partitions
-            dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
-            allyrs <- dat.agg$Group.1
-            size <- 1/dat.agg$x # inverse of mean CV
+            if(nrow(dat.f) > 0){ # skip of all values are excluded
+              # get mean CV across partitions
+              dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
+              allyrs <- dat.agg$Group.1
+              size <- 1/dat.agg$x # inverse of mean CV
+            }
           }
           if(typename == "discard"){
             # filter out rows that aren't used
             dat.f <- dat.f[dat.f$Use > 0,]
-            # get mean standard deviation across partitions
-            dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)
-            allyrs <- dat.agg$Group.1
-            size <- 1/dat.agg$x # inverse of mean CV
+            if(nrow(dat.f) > 0){ # skip of all values are excluded
+              # get mean standard deviation across partitions
+              dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)
+              allyrs <- dat.agg$Group.1
+              size <- 1/dat.agg$x # inverse of mean CV
+            }
           }
           if(typename %in% c("lendbase", "sizedbase", "agedbase")){
             # aggregate sample sizes by year
@@ -241,10 +247,12 @@ SSplotData <- function(replist,
           if(typename=="tagdbase1"){
             # filter out rows that aren't used
             dat.f <- dat.f[dat.f$Used == "yes",]
-            # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
-            allyrs <- dat.agg$Group.1[dat.agg$x > 0]
-            size <- dat.agg$x[dat.agg$x > 0]
+            if(nrow(dat.f) > 0){ # skip of all values are excluded
+              # aggregate sample sizes by year
+              dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
+              allyrs <- dat.agg$Group.1[dat.agg$x > 0]
+              size <- dat.agg$x[dat.agg$x > 0]
+            }
           }
           # length- and weight-at-age have different sample sizes for each age
           # within a year, use sum of sample sizes
@@ -252,12 +260,14 @@ SSplotData <- function(replist,
           if(typename %in% c("ladbase","wadbase")){
             # filter out rows that aren't used
             dat.f <- dat.f[dat.f$Used == "yes",]
-            # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
-            allyrs <- dat.agg$Group.1
-            size <- dat.agg$x
+            if(nrow(dat.f) > 0){ # skip of all values are excluded
+              # aggregate sample sizes by year
+              dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+              allyrs <- dat.agg$Group.1
+              size <- dat.agg$x
+            }
           }
-          
+
           # expand table of years with data
           if(!is.null(allyrs) & length(allyrs)>0){
             ## subset to unique values and be careful about keeping the
@@ -350,6 +360,7 @@ SSplotData <- function(replist,
       for(ifleet in rev(type.fleets)){
         yrs <- typetable2$yr[typetable2$fleet==ifleet & typetable2$itype==itype]
         if(length(yrs)>0){
+          col <- fleetcol[which(fleets2 == ifleet)]
           size.cex <- typetable2$size[typetable2$fleet==ifleet & typetable2$itype==itype]
           yval <- yval+1
           x <- min(yrs):max(yrs)
@@ -367,15 +378,15 @@ SSplotData <- function(replist,
           }
           if(!datasize){
             ## The original plot is to add points and lines
-            points(x[solo], y[solo], pch=16, cex=cex, col=fleetcol[fleets==ifleet])
-            lines(x, y, lwd=lwd, col=fleetcol[fleets==ifleet])
+            points(x[solo], y[solo], pch=16, cex=cex, col=col)
+            lines(x, y, lwd=lwd, col=col)
           } else {
             ## make circle sizes propotional to the uncertainty,
             ## contained in size, NA's don't work for symbols so remove them
             x <- x[!is.na(y)]
             y <- y[!is.na(y)]
             symbols(x=x, y=y, circles=sqrt(size.cex)*maxsize,
-                    bg=adjustcolor(fleetcol[fleets==ifleet], alpha.f=alphasize),
+                    bg=adjustcolor(col, alpha.f=alphasize),
                     add=TRUE, inches=FALSE)
           }
           axistable[itick,] <- c(ifleet,yval)
