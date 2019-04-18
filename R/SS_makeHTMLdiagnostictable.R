@@ -70,8 +70,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
   ))
 
   #Format high correlations table
-  if(!is.null(cors$cormessage5)){
-    high_cor_table <- cors$cormessage5
+  if(!is.null(cors$cormessage3)){
+    high_cor_table <- cors$cormessage3
 
     high_cor_table <- high_cor_table[order(high_cor_table$corr), ]
     high_cor_table$corr <- cell_spec(high_cor_table$corr,
