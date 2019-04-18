@@ -35,6 +35,12 @@ SS_readdat_3.30 <-
     }
   }
   dat <- readLines(file, warn = FALSE)
+  if(length(dat) < 20){
+    warning("Data file appears to be empty or incomplete.\n",
+            "  If this is data.ss_new, change starter file to have\n",
+            "  nonzero value for 'Number of datafiles to produce'")
+    return()
+  }
 
   ###############################################################################
   sec.end.inds <- grep("^999$", dat)
