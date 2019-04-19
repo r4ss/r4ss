@@ -8,7 +8,8 @@
 #'   \item double normal (type 24)
 #' }
 #' This could possibly be hosted on a Shiny server instead of within r4ss
-#' 
+#'
+#' @export
 #' @author Allan Hicks, Andrea Havron, Ian Taylor,
 #' @author inspired by tcl/tk code written by Tommy Garrison
 
