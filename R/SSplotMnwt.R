@@ -74,6 +74,8 @@ SSplotMnwt <-
       # usemnwgt is subset of mnwgt for the particular fleet
       usemnwgt <- mnwgt[mnwgt$Fleet==ifleet & mnwgt$Obs>0,]
       usemnwgt$Mkt <- usemnwgt$Mkt
+      FleetName <- fleetnames[ifleet]
+
       for(j in unique(usemnwgt$Mkt)){
         yr <- usemnwgt$Yr[usemnwgt$Mkt==j]
         ob <- usemnwgt$Obs[usemnwgt$Mkt==j]
@@ -91,7 +93,7 @@ SSplotMnwt <-
         titlepart <- labels[2]
         if(j==2) titlepart <- labels[3]
         if(j==0) titlepart <- labels[4]
-        ptitle <- paste(labels[6],titlepart,labels[7],fleetnames[ifleet],sep=" ")
+        ptitle <- paste(labels[6],titlepart,labels[7],FleetName,sep=" ")
         ylab <- labels[5]
 
         # wrap up plot command in function
@@ -104,12 +106,24 @@ SSplotMnwt <-
         }
 
         # make plots
-        if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+        if(!datplot){
+          subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+        }
         for(isubplot in subplots){ # loop over subplots (data only or with fit)
-          if(isubplot==1) addfit <- FALSE else addfit <- TRUE
-          if(plot) bdywtfunc(addfit=addfit)
+          if(isubplot==1){
+            addfit <- FALSE
+          }else{
+            addfit <- TRUE
+          }
+          if(plot){
+            bdywtfunc(addfit=addfit)
+          }
           if(print){
-            file <- paste0("bodywtfit_flt",fleetnames[ifleet],".png")
+            if(datplot){
+              file <- paste0("bodywt_data_flt",FleetName,".png")
+            }else{
+              file <- paste0("bodywt_fit_flt",FleetName,".png")
+            }
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             bdywtfunc(addfit=addfit)
