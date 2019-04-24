@@ -1,9 +1,9 @@
 #' Plot mean weight data and fits.
-#' 
+#'
 #' Plot mean weight data and fits from Stock Synthesis output. Intervals are
 #' based on T-distributions as specified in model.
-#' 
-#' 
+#'
+#'
 #' @param replist list created by \code{SS_output}
 #' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
@@ -64,7 +64,7 @@ SSplotMnwt <-
   nfleets       <- replist$nfleets
   SS_versionshort <- replist$SS_versionshort
 
-  
+
   if(fleets[1]=="all") fleets <- 1:nfleets
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
