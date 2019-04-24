@@ -62,6 +62,7 @@ SSplotMnwt <-
   FleetNames    <- replist$FleetNames
   DF_mnwgt      <- replist$DF_mnwgt
   nfleets       <- replist$nfleets
+  SS_versionshort <- replist$SS_versionshort
 
   
   if(fleets[1]=="all") fleets <- 1:nfleets
@@ -73,14 +74,17 @@ SSplotMnwt <-
     for(ifleet in intersect(fleets,unique(mnwgt$Fleet))){
       # usemnwgt is subset of mnwgt for the particular fleet
       usemnwgt <- mnwgt[mnwgt$Fleet==ifleet & mnwgt$Obs>0,]
-      usemnwgt$Mkt <- usemnwgt$Mkt
+      if(SS_versionshort == "3.30"){
+        usemnwgt$Part <- usemnwgt$Part
+      } else {
+        usemnwgt$Part <- usemnwgt$Mkt
+      }
       FleetName <- fleetnames[ifleet]
-
-      for(j in unique(usemnwgt$Mkt)){
-        yr <- usemnwgt$Yr[usemnwgt$Mkt==j]
-        ob <- usemnwgt$Obs[usemnwgt$Mkt==j]
-        cv <- usemnwgt$CV[usemnwgt$Mkt==j]
-        ex <- usemnwgt$Exp[usemnwgt$Mkt==j]
+      for(j in unique(usemnwgt$Part)){
+        yr <- usemnwgt$Yr[usemnwgt$Part==j]
+        ob <- usemnwgt$Obs[usemnwgt$Part==j]
+        cv <- usemnwgt$CV[usemnwgt$Part==j]
+        ex <- usemnwgt$Exp[usemnwgt$Part==j]
         xmin <- min(yr)-3
         xmax <- max(yr)+3
         liw <- -ob*cv*qt(0.025,DF_mnwgt) # quantile of t-distribution
