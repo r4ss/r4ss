@@ -123,7 +123,7 @@ SSplotMnwt <-
             bdywtfunc(addfit=addfit)
           }
           if(print){
-            if(datplot){
+            if(!addfit){
               file <- paste0("bodywt_data_flt",FleetName,".png")
             }else{
               file <- paste0("bodywt_fit_flt",FleetName,".png")
