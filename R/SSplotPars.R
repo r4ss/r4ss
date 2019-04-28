@@ -167,7 +167,8 @@ SSplotPars <-
       goodnames <- allnames[allnames %in% strings]
     }else{
       for(i in 1:length(strings)){
-        goodnames <- c(goodnames,grep(strings[i],allnames,value=TRUE))
+        goodnames <- c(goodnames,
+                       grep(strings[i], allnames, fixed=TRUE, value=TRUE))
       }
     }
     goodnames <- unique(goodnames)
