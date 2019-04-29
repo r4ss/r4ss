@@ -402,15 +402,22 @@ SSplotComparisons <-
       uncertainty[i] <- FALSE
     }
   }
-  # fix biomass for single-sex models
-  if(any(nsexes==1)){
-    if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
-    for(i in (1:n)[nsexes==1]){
-      SpawnBio[,i]    <- SpawnBio[,i]/2
-      SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
-      SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
-    }
+
+  #### no longer dividing by 2 for single-sex models
+  if(length(unique(nsexes) > 1)){
+    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models",
+            "to get female-only spawning biomass output by SS for a single-sex model,",
+            "use the new Nsexes = -1 option in the data file.")
   }
+  ## # fix biomass for single-sex models
+  ## if(any(nsexes==1)){
+  ##   if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
+  ##   for(i in (1:n)[nsexes==1]){
+  ##     SpawnBio[,i]    <- SpawnBio[,i]/2
+  ##     SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
+  ##     SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
+  ##   }
+  ## }
 
   # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
