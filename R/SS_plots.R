@@ -95,10 +95,10 @@
 #' plots. This avoids scaling all plots to have max=1 if there is a vector
 #' with only a single observed fish in it. Default=0.4.
 #' @param sprtarg Specify the F/SPR proxy target. Default=0.4.
-#' @param btarg Target depletion to be used in plots showing depletion. May be
-#' omitted by setting to NA.  Default=0.4.
+#' @param btarg Target %unfished to be used in plots showing %unfished. May be
+#' omitted by setting to NA.
 #' @param minbthresh Threshold depletion to be used in plots showing depletion.
-#' May be omitted by setting to NA. Default=0.25.
+#' May be omitted by setting to NA.
 #' @param pntscalar This scalar defines the maximum bubble size for bubble
 #' plots. This option is still available but a better choice is to use
 #' bub.scale.pearson and bub.scale.dat, which are allow the same scaling
@@ -455,7 +455,7 @@ SS_plots <-
                   "Summary biomass (mt)",         #3
                   "Summary biomass (mt) at beginning of season", #4
                   "Spawning biomass (mt)",        #5
-                  "Spawning depletion",           #6
+                  "%unfished",                    #6
                   "Spawning output",              #7
                   "Age-0 recruits (1,000s)",      #8
                   "Fraction of total Age-0 recruits",  #9
