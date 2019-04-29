@@ -18,7 +18,16 @@
 #'
 SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only = FALSE)
 {
-	
+  # Check to make sure dir is a dir
+  if(!is.character(dir) || !file.info(dir)$isdir){
+    stop("Input 'dir' should be a directory")
+  }
+  # Make sure dir contains the report file
+  repfile <- file.path(dir, "Report.sso")
+  if(is.na(file.info(repfile)$size)){
+    stop("Report.sso not found in 'dir': ", dir)
+  }
+  
 	#Read in the base model using r4ss
 	wd        <- paste(dir, "/Report.sso", sep="")
 	base      <- readLines(wd)	
