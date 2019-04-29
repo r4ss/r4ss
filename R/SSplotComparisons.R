@@ -171,8 +171,8 @@ SSplotComparisons <-
            # with colors, or FALSE just plots observed once in black dots
            indexPlotEach=FALSE,
            labels=c("Year",             #1
-             "Spawning biomass (t)",   #2
-             "Relative spawning biomass", #3
+             "Spawning biomass (t)",    #2
+             "%unfished",               #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
@@ -1708,7 +1708,7 @@ SSplotComparisons <-
 
   # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
   if(3 %in% subplots){
-    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to relative spawning biomass)\n")
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to %unfished)\n")
     if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")
