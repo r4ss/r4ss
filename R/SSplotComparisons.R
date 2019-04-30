@@ -404,9 +404,9 @@ SSplotComparisons <-
   }
 
   #### no longer dividing by 2 for single-sex models
-  if(length(unique(nsexes) > 1)){
-    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models",
-            "to get female-only spawning biomass output by SS for a single-sex model,",
+  if(length(unique(nsexes)) > 1){
+    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
+            "to get female-only spawning biomass output by SS for a single-sex model,\n",
             "use the new Nsexes = -1 option in the data file.")
   }
   ## # fix biomass for single-sex models
