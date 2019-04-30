@@ -314,7 +314,8 @@ SSplotCatch <-
     abline(h=0,col="grey")
     #abline(h=1,col="grey")
     for(f in 1:nfleets_with_catch){
-      if(max(ymat[,f],na.rm=TRUE)>0){
+      # if there are any non-NA values and the max is > 0
+      if(any(!is.na(ymat[,f])) && max(ymat[,f],na.rm=TRUE)>0){
         lines(x, ymat[,f], type=type, col=fleetcols[f],
               lty=fleetlty[f], lwd=lwd, pch=fleetpch[f])
       }
