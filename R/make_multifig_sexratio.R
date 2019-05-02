@@ -150,14 +150,12 @@ make_multifig_sexratio <-
           }else{
             se.ratio <- NA
           }
-          #if(is.nan(se.ratio)) browser()
         }
         # remove points that have 0 observations of either sex
         se.ratio[pf == 0 & pm == 0] <- NA
       } else {
         o <- e <- se.ratio <- NA
       }
-      ##  print(c(yr.temp, bin, e, o, se.ratio, effN, N))
       df.list[[k]] <- data.frame(Yr=yr.temp, Bin=bin, Exp=e, Obs=o,
                                  se.ratio=se.ratio, effN=effN, N=N)
       k <- k+1
@@ -201,6 +199,7 @@ make_multifig_sexratio <-
   if(sexratio.option == 2){ # females:total
     df$pch2 <- 16
   }
+
   ## get axis labels
   yaxs_lab <- pretty(yrange)
   maxchar <- max(nchar(yaxs_lab))
