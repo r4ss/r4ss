@@ -173,6 +173,7 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     if(!is.null(datlist$discard_fleet_info))colnames(datlist$discard_fleet_info)<-c("Fleet","units","errtype")
 
     # compatibility: create the old format catch matrix
+    datlist$catch <- datlist$catch[datlist$catch[, 1] > 0, ]
     datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
     ny<-datlist$endyr-datlist$styr+1
 
