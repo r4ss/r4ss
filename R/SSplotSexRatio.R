@@ -7,6 +7,8 @@
 #' @param replist list created by \code{SSoutput}
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "L[at]A", or "W[at]A".
+#' @param sexratio.option code to choose among (1) female:male ratio or
+#' (2) fraction females out of the total
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
@@ -44,11 +46,16 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
 SSplotSexRatio <-
-  function(replist, kind="AGE", plot=TRUE, print=FALSE, fleets="all",
+  function(replist, kind="AGE", sexratio.option=1,
+           plot=TRUE, print=FALSE, fleets="all",
            fleetnames="default",  yupper=4, linescol=1, lwd=1,
            axis1=NULL, axis2=NULL,  pwidth=6.5, pheight=5.0, punits="in",
            ptsize=10, res=300, plotdir="default", cex.main=1, 
-           labels = c("Length (cm)", "Age (yr)"), maxrows=6, maxcols=6,
+           labels = c("Length (cm)",
+               "Age (yr)",
+               "Sex ratio (females:males)",               
+               "Fraction female"),
+           maxrows=6, maxcols=6,
            rows=1, cols=1, fixdims=TRUE, verbose=TRUE, ...)
 {
 ################################################################################
@@ -154,13 +161,15 @@ SSplotSexRatio <-
         titles <- c(ptitle,titles) ## compiling list of all plot titles
         tempfun <- function(ipage,...){
           ## a function to combine a bunch of repeated commands
-          make_multifig_sexratio(dbase=dbase,
-                         nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
-                         main=ptitle, cex.main=cex.main, xlab=kindlab, ylab=labels[6],
-                         maxrows=maxrows, maxcols=maxcols, rows=rows, cols=cols,
-                         fixdims=fixdims, ipage=ipage, scalebins=FALSE,
-                         linescol=linescol, axis1=axis1, axis2=axis2,
-                          yupper=yupper)
+          make_multifig_sexratio(dbase=dbase, sexratio.option=sexratio.option,
+                                 nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
+                                 main=ptitle, cex.main=cex.main, xlab=kindlab,
+                                 ylab=labels[3:4][sexratio.option],
+                                 maxrows=maxrows, maxcols=maxcols,
+                                 rows=rows, cols=cols,
+                                 fixdims=fixdims, ipage=ipage, scalebins=FALSE,
+                                 linescol=linescol, axis1=axis1, axis2=axis2,
+                                 yupper=yupper)
         } # end tempfun
 
         ## Do the plotting and saving

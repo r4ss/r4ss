@@ -6,6 +6,8 @@
 #'
 #' @param dbase element of list created by \code{\link{SS_output}} passed from
 #' \code{\link{SSplotSexRatio}}
+#' @param sexratio.option code to choose among (1) female:male ratio or
+#' (2) fraction females out of the total
 #' @param sampsizeround rounding level for sample size values
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
@@ -65,11 +67,11 @@
 #' overlap in functionality and arguments.
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
 make_multifig_sexratio <-
-  function(dbase,
-           sampsizeround=1, maxrows=6, maxcols=6,
+  function(dbase, sexratio.option=1,
+           sampsizeround=1, maxrows=6, maxcols=6, 
            rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="", ylab="Female:Male Ratio", horiz_lab="default", xbuffer=c(.1,.1),
-           ybuffer=c(0,0.15), yupper=NULL, axis1=NULL,
+           ybuffer=c(.15,0.15), yupper=NULL, axis1=NULL,
            axis2=NULL, ptscex=1,
            ptscol=gray(.5), linescol=1, lty=1, lwd=2, nlegends=3,
            legtext=list("yr","sampsize","effN"),
@@ -93,6 +95,10 @@ make_multifig_sexratio <-
   ## plotting below. Many bins are empty in the data file and thus in the
   ## report file they are ommitted so the division isn't defined.
   df.list <- list();k <- 1
+  # minimum observation is likely to be the additive constant required
+  # by the multinomial and can be subtracted from all obs and exp values
+  minobs <- min(dbase$Obs, na.rm=TRUE)
+  
   for(yr.temp in yrvec){
     for(bin in unique(dbase$Bin)){
       female <- dbase[dbase$Sex==1 & dbase$Bin==bin & dbase$Yr==yr.temp,]
@@ -109,16 +115,45 @@ make_multifig_sexratio <-
       } else if(nrow(female)==1 & nrow(male)==1){
         ## Calculate the ratio if data exists for both. Use delta method for
         ## multinomial estimators to get approximate SE for the ratio of the
-        ## two (assuming expcted value of estimator is the MLE). See Casella
+        ## two (assuming expected value of estimator is the MLE). See Casella
         ## and Berger p245.  SS should divide the observations by n but redo
         ## just to be sure.
-        effN <- female$effN; N <- female$N;
-        e <- female$Exp/male$Exp
-        o <- female$Obs/male$Obs
-        pf <- female$Obs
-        pm <- male$Obs
-        se.ratio <-
-          sqrt((pf/pm)^2*( (1-pf)/(pf*N) + (1-pm)/(pm*N) +2/N ))
+
+        # sample size is shared across both vectors (at least if Sexes==3)
+        # IGT 2019-05-02: should check for case where sexes are input separately
+        effN <- female$effN;
+        N <- female$N; 
+        if(sexratio.option == 1){ # females:males
+          e <- (female$Exp - minobs)/(male$Exp - minobs)
+          o <- (female$Obs - minobs)/(male$Obs - minobs)
+        }
+        if(sexratio.option == 2){ # female:total
+          e <- (female$Exp - minobs)/(female$Exp + male$Exp - 2*minobs)
+          o <- (female$Obs - minobs)/(female$Obs + male$Obs - 2*minobs)
+        }
+        # need rounding to avoid differences like -2.122513e-17
+        pf <- round(female$Obs - minobs, 10)
+        pm <- round(male$Obs - minobs, 10)
+        e <- round(e, 10)
+        o <- round(o, 10)
+        # calculate SE of the ratio
+        if(sexratio.option == 1){ # females:males
+          se.ratio <-
+            sqrt((pf/pm)^2*( (1-pf)/(pf*N) + (1-pm)/(pm*N) +2/N ))
+        }
+        if(sexratio.option == 2){ # female:total
+          # not sure if this is right or not
+          pt <- female$Obs + male$Obs - 2*minobs
+          if(pt > 0){
+            se.ratio <-
+              sqrt(o*(1-o)/((pf+pm)*N) )
+          }else{
+            se.ratio <- NA
+          }
+          #if(is.nan(se.ratio)) browser()
+        }
+        # remove points that have 0 observations of either sex
+        se.ratio[pf == 0 & pm == 0] <- NA
       } else {
         o <- e <- se.ratio <- NA
       }
@@ -129,6 +164,7 @@ make_multifig_sexratio <-
       k <- k+1
     }
   }
+
   df <- do.call(rbind, df.list)
   # "df$" shouldn't be required in within function but added to make package check
   # warning go away. Feel free to change if there's a better solution.
@@ -138,24 +174,34 @@ make_multifig_sexratio <-
                upr <- df$Obs + 1*df$se.ratio}) 
   ## Calculate ranges of plots
   xrange <- range(df$Bin, na.rm=TRUE)
-  if(nrow(df[!is.na(df$se.ratio),])==0){
-    warning(paste("No SE of ratio found, defaulting to ymax of 4"))
-    yrange <- c(0,4)
-  } else {
-    yrange <- c(0, max(c(df$Exp, df$Obs+0*df$se.ratio), na.rm=TRUE))
+  if(sexratio.option == 1){ # females:males
+    if(nrow(df[!is.na(df$se.ratio),])==0){
+      warning(paste("No SE of ratio found, defaulting to ymax of 4"))
+      yrange <- c(0,4)
+    } else {
+      yrange <- c(0, max(c(df$Exp, df$Obs+0*df$se.ratio), na.rm=TRUE))
+    }
+    if(!is.null(yupper)) yrange <- c(0,yupper)
   }
-  if(!is.null(yupper)) yrange <- c(0,yupper)
+  if(sexratio.option == 2){ # females:total
+    yrange <- c(0, 1)
+  }
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
   ## I replaced <number>/0 above with Inf so replace those and any points
   ## outside the region to be "x" on the top of the plot
-  which.toobig <- which(df$Obs > yrange_big[2])
-  which.toosmall <- which(df$Obs==0)
-  df$Obs[which.toobig] <- yrange_big[2]
-  ## Use different pch for those that are truncated to the plot
-  df$pch2 <- rep(16, nrow(df))
-  df$pch2[which.toobig] <- 4
-  df$pch2[which.toosmall] <- 4
+  if(sexratio.option == 1){ # females:males
+    which.toobig <- which(df$Obs > yrange_big[2])
+    which.toosmall <- which(df$Obs==0)
+    df$Obs[which.toobig] <- yrange_big[2]
+    ## Use different pch for those that are truncated to the plot
+    df$pch2 <- 16
+    df$pch2[which.toobig] <- 4
+    df$pch2[which.toosmall] <- 4
+  }
+  if(sexratio.option == 2){ # females:total
+    df$pch2 <- 16
+  }
   ## browser()
   ## get axis labels
   yaxs_lab <- pretty(yrange)
@@ -180,7 +226,13 @@ make_multifig_sexratio <-
     yr_i <- yrvec[ipanel]
     plot(0,type="n", axes=FALSE, xlab="",ylab="", xlim=xrange_big,
          ylim=yrange_big, xaxs="i", yaxs='i')
-    abline(h=1,col="grey") # grey line at 0
+    if(sexratio.option == 1){ # females:males
+      abline(h=1,col="grey") # grey line at 0
+    }
+    if(sexratio.option == 2){ # females:total
+      abline(h=0.5,col="grey") # grey line at 0.5
+      abline(h=c(0,1),col="grey", lty=3) # grey line at 0.5
+    }
     df2 <- na.omit(df[df$Yr == yr_i,])
     df2 <- df2[order(df2$Bin),]
     points(x=df2$Bin, y=df2$Obs ,ylim=yrange_big, xlim=xrange_big, pch=df2$pch2,
@@ -191,7 +243,7 @@ make_multifig_sexratio <-
     usr <- par("usr") # get dimensions of panel
     for(i in 1:nlegends){
       legtext_i <- legtext[[i]] # grab element of list
-      if(legtext_i=="yr"){
+      if(legtext_i=="Yr"){
         text_i <- yr_i
       } else if(legtext_i=="effN" & nrow(df2)>0){
         ## all rows should be same so grab first
