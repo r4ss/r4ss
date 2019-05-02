@@ -13,6 +13,7 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
+#' @importFrom stats reshape
 #' @seealso \code{\link{SS_writedat}}, \code{\link{SS_writedat_3.24}},
 #' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
 #' \code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
@@ -195,7 +196,7 @@ SS_writedat_3.30 <- function(datlist,
 
   # write table of catch
   #year season  fleet catch catch_se
-  catch.out <- merge(reshape(d$catch, direction = "long",
+  catch.out <- merge(stats::reshape(d$catch, direction = "long",
     idvar = c("year", "seas"),
     varying = colnames(d$catch)[(!colnames(d$catch) %in% c("year", "seas"))],
     timevar = "fleet",
