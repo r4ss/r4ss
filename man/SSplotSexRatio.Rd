@@ -4,11 +4,13 @@
 \alias{SSplotSexRatio}
 \title{Plot sex-ratio data and fits for two sex models}
 \usage{
-SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
-  fleets = "all", fleetnames = "default", yupper = 4, linescol = 1,
-  lwd = 1, axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
+SSplotSexRatio(replist, kind = "AGE", sexratio.option = 1,
+  plot = TRUE, print = FALSE, fleets = "all",
+  fleetnames = "default", yupper = 4, linescol = 1, lwd = 1,
+  axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", ptsize = 10, res = 300, plotdir = "default",
-  cex.main = 1, labels = c("Length (cm)", "Age (yr)"), maxrows = 6,
+  cex.main = 1, labels = c("Length (cm)", "Age (yr)",
+  "Sex ratio (females:males)", "Fraction female"), maxrows = 6,
   maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
   verbose = TRUE, ...)
 }
@@ -17,6 +19,9 @@ SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 "GSTAGE", "L[at]A", or "W[at]A".}
+
+\item{sexratio.option}{code to choose among (1) female:male ratio or
+(2) fraction females out of the total}
 
 \item{plot}{plot to active plot device?}
 
