@@ -193,6 +193,8 @@
 #' a vector of appropriate length (currently 10) with labels for each figure
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
+#' @param sexratio.option code to choose among (1) female:male ratio or
+#' (2) fraction females out of the total
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -228,6 +230,7 @@ SS_plots <-
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0,
+      sexratio.option=1,
       ...)
 {
   if(!is.null(print)){
@@ -986,6 +989,30 @@ SS_plots <-
           if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }
       }
+
+      # length comp sex ratios (for 2-sex models only)
+      if(replist$nsexes == 2){
+        plotinfo <-
+          SSplotSexRatio(replist=replist,
+                         sexratio.option = sexratio.option,
+                         datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
+                         fleetnames=fleetnames,
+                         samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                         minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                         bublegend=showlegend,
+                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                         maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                         cohortlines=cohortlines,
+                         #sexes=sexes,
+                         #yupper=comp.yupper,
+                         scalebins=scalebins,
+                         pwidth=pwidth, pheight=pheight, punits=punits,
+                         ptsize=ptsize, res=res,
+                         ...)
+      }
+      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      
       if(!is.null(plotInfoTable))
         plotInfoTable$category[plotInfoTable$category=="Comp"] <- "LenComp"
     }
@@ -996,6 +1023,7 @@ SS_plots <-
     igroup <- 17
     if(igroup %in% plot){
       if(verbose) cat("Starting fit to age comp plots (group ",igroup,")\n",sep="")
+      # normal marginal ages
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -1011,6 +1039,7 @@ SS_plots <-
                     ptsize=ptsize, res=res,
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      # ghost ages
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                     fleetnames=fleetnames,
@@ -1026,6 +1055,26 @@ SS_plots <-
                     ptsize=ptsize, res=res,
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      # sex ratios
+      if(replist$nsexes == 2){
+        plotinfo <-
+          SSplotSexRatio(replist=replist,
+                         sexratio.option = sexratio.option,
+                         datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
+                         fleetnames=fleetnames,
+                         samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                         minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                         bublegend=showlegend,
+                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                         maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                         #sexes=sexes, yupper=comp.yupper,
+                         scalebins=scalebins,
+                         pwidth=pwidth, pheight=pheight, punits=punits,
+                         ptsize=ptsize, res=res,
+                         ...)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      }
       if(!is.null(plotInfoTable))
         plotInfoTable$category[plotInfoTable$category=="Comp"] <- "AgeComp"
     } # end if igroup in plot or print
