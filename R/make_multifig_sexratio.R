@@ -26,7 +26,8 @@
 #' @param xbuffer extra space around points on the left and right as fraction
 #' of total width of plot
 #' @param ybuffer extra space around points on the bottom and top as fraction
-#' of total height of plot
+#' of total height of plot. "default" will cause c(0,.15) for sexratio.option=1
+#' and c(.15, .3) for sexratio.option=2.
 #' @param yupper upper limit on ymax (applied before addition of ybuffer)
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
@@ -71,7 +72,7 @@ make_multifig_sexratio <-
            sampsizeround=1, maxrows=6, maxcols=6, 
            rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="", ylab="Female:Male Ratio", horiz_lab="default", xbuffer=c(.1,.1),
-           ybuffer=c(.15,0.15), yupper=NULL, axis1=NULL,
+           ybuffer="default", yupper=NULL, axis1=NULL,
            axis2=NULL, ptscex=1,
            ptscol=gray(.5), linescol=1, lty=1, lwd=2, nlegends=3,
            legtext=list("yr","sampsize","effN"),
@@ -132,8 +133,8 @@ make_multifig_sexratio <-
           o <- (female$Obs - minobs)/(female$Obs + male$Obs - 2*minobs)
         }
         # need rounding to avoid differences like -2.122513e-17
-        pf <- round(female$Obs - minobs, 10)
-        pm <- round(male$Obs - minobs, 10)
+        pf <- female$Obs
+        pm <- male$Obs
         e <- round(e, 10)
         o <- round(o, 10)
         # calculate SE of the ratio
@@ -146,11 +147,12 @@ make_multifig_sexratio <-
           pt <- female$Obs + male$Obs - 2*minobs
           if(pt > 0){
             se.ratio <-
-              sqrt(o*(1-o)/((pf+pm)*N) )
+              sqrt(o*(1-o)/((pf+pm - 2*minobs)*N) )
           }else{
             se.ratio <- NA
           }
         }
+  if(is.nan(se.ratio)) browser()
         # remove points that have 0 observations of either sex
         se.ratio[pf == 0 & pm == 0] <- NA
       } else {
@@ -182,6 +184,14 @@ make_multifig_sexratio <-
   }
   if(sexratio.option == 2){ # females:total
     yrange <- c(0, 1)
+  }
+  if(ybuffer[1] == "default"){
+    if(sexratio.option == 1){
+      ybuffer <- c(0, 0.15)
+    }
+    if(sexratio.option == 2){
+      ybuffer <- c(0.15, 0.4)
+    }
   }
   xrange_big <- xrange+c(-1,1)*xbuffer*diff(xrange)
   yrange_big <- yrange+c(-1,1)*ybuffer*diff(yrange)
