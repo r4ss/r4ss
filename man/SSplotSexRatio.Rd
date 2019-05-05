@@ -4,15 +4,15 @@
 \alias{SSplotSexRatio}
 \title{Plot sex-ratio data and fits for two sex models}
 \usage{
-SSplotSexRatio(replist, kind = "AGE", sexratio.option = 1,
+SSplotSexRatio(replist, kind = "AGE", sexratio.option = 2, CI = 0.75,
   plot = TRUE, print = FALSE, fleets = "all",
-  fleetnames = "default", yupper = 4, linescol = 1, lwd = 1,
-  axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
+  fleetnames = "default", yupper = 4, linescol = rgb(0, 0, 1, 0.7),
+  lwd = 2, axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", ptsize = 10, res = 300, plotdir = "default",
   cex.main = 1, labels = c("Length (cm)", "Age (yr)",
   "Sex ratio (females:males)", "Fraction female"), maxrows = 6,
   maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
-  verbose = TRUE, ...)
+  verbose = TRUE, mainTitle = FALSE, ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -22,6 +22,8 @@ SSplotSexRatio(replist, kind = "AGE", sexratio.option = 1,
 
 \item{sexratio.option}{code to choose among (1) female:male ratio or
 (2) fraction females out of the total}
+
+\item{CI}{confidence interval for uncertainty}
 
 \item{plot}{plot to active plot device?}
 
@@ -78,15 +80,19 @@ number of years of data}
 
 \item{verbose}{return updates of function progress to the R GUI?}
 
+\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+
 \item{\dots}{additional arguments that will be passed to the plotting.}
 }
 \description{
 Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
-plots depend on \code{make_multifig}.
+plots depend on \code{make_multifig}. The confidence intervals around the
+obserserved points are based on a Jeffreys interval calculated from
+the adjusted input sample size (with a floor of 1).
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
 }
 \author{
-Cole Monnahan
+Cole Monnahan, Ian Taylor
 }

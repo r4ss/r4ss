@@ -4,7 +4,7 @@
 \alias{SS_plots}
 \title{plot many quantities related to output from Stock Synthesis}
 \usage{
-SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
+SS_plots(replist = NULL, plot = 1:25, print = NULL, pdf = FALSE,
   png = TRUE, html = png, printfolder = "plots", dir = "default",
   fleets = "all", areas = "all", fleetnames = "default",
   fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
@@ -26,7 +26,7 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
   minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
   scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
-  maxsize = 1, sexratio.option = 1, ...)
+  maxsize = 1, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -291,9 +291,6 @@ a vector of appropriate length (currently 10) with labels for each figure}
 
 \item{maxsize}{The size of the largest bubble in the datasize
 plot. Default is 1.0.}
-
-\item{sexratio.option}{code to choose among (1) female:male ratio or
-(2) fraction females out of the total}
 
 \item{\dots}{Additional arguments that will be passed to some subfunctions.}
 }
