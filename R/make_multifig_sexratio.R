@@ -7,7 +7,8 @@
 #' @param dbase element of list created by \code{\link{SS_output}} passed from
 #' \code{\link{SSplotSexRatio}}
 #' @param sexratio.option code to choose among (1) female:male ratio or
-#' (2) fraction females out of the total
+#' (2) fraction females out of the total (the default)
+#' @param CI confidence interval for uncertainty
 #' @param sampsizeround rounding level for sample size values
 #' @param maxrows maximum (or fixed) number or rows of panels in the plot
 #' @param maxcols maximum (or fixed) number or columns of panels in the plot
@@ -68,18 +69,22 @@
 #' overlap in functionality and arguments.
 #' @seealso \code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
 make_multifig_sexratio <-
-  function(dbase, sexratio.option=1,
+  function(dbase, sexratio.option=2, CI=0.75,
            sampsizeround=1, maxrows=6, maxcols=6, 
            rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
-           xlab="", ylab="Female:Male Ratio", horiz_lab="default", xbuffer=c(.1,.1),
+           xlab="", ylab="Fraction female", horiz_lab="default", xbuffer=c(.1,.1),
            ybuffer="default", yupper=NULL, axis1=NULL,
            axis2=NULL, ptscex=1,
-           ptscol=gray(.5), linescol=1, lty=1, lwd=2, nlegends=3,
+           ptscol=gray(.5), linescol=4, lty=1, lwd=2, nlegends=3,
            legtext=list("yr","sampsize","effN"),
            legx="default",legy="default",
            legadjx="default", legadjy="default", legsize=c(1.2,1.0),
            legfont=c(2,1), ipage=0, multifig_oma=c(5,5,5,2)+.1, ...)
 {
+  if(sexratio.option == 1 & ylab == "Fraction female"){
+    # change the default ylab if the user hasn't replaced it
+    ylab <- "Female:Male Ratio"
+  }
   ## define dimensions
   yrvec <- sort(unique(dbase$Yr))
   npanels <- length(yrvec)
@@ -141,36 +146,51 @@ make_multifig_sexratio <-
         if(sexratio.option == 1){ # females:males
           se.ratio <-
             sqrt((pf/pm)^2*( (1-pf)/(pf*N) + (1-pm)/(pm*N) +2/N ))
+          lwr <- qnorm((1 - CI)/2, o, se.ratio)
+          upr <- qnorm(1 - (1 - CI)/2, o, se.ratio)
         }
         if(sexratio.option == 2){ # female:total
-          # not sure if this is right or not
           pt <- female$Obs + male$Obs - 2*minobs
+          # assuming sample size for this bin is at least 1
+          Nbin <- max(pt*N, 1)
           if(pt > 0){
-            se.ratio <-
-              sqrt(o*(1-o)/((pf+pm - 2*minobs)*N) )
+            # Jeffreys interval
+            # https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Jeffreys_interval
+            # beta approximation to binomial quantiles used to get
+            # confidence interval for non-integer values
+            lwr <- qbeta(p = (1 - CI)/2,
+                         shape1 = o*Nbin + 0.5,
+                         shape2 = Nbin - o*Nbin + 0.5)
+            upr <- qbeta(p = 1 - (1 - CI)/2,
+                         shape1 = o*Nbin + 0.5,
+                         shape2 = Nbin - o*Nbin + 0.5)
+            # replacing bounds for 0% or 100% values as described in the Wikipedia
+            # article above
+            if(o == 1){
+              upr <- 1
+            }
+            if(o == 0){
+              lwr <- 0
+            }
           }else{
-            se.ratio <- NA
+            lwr <- NA
+            upr <- NA
           }
         }
-  if(is.nan(se.ratio)) browser()
         # remove points that have 0 observations of either sex
-        se.ratio[pf == 0 & pm == 0] <- NA
+        lwr[pf == 0 & pm == 0] <- NA
+        upr[pf == 0 & pm == 0] <- NA
       } else {
-        o <- e <- se.ratio <- NA
+        o <- e <- se.ratio <- lwr <- upr <- NA
       }
       df.list[[k]] <- data.frame(Yr=yr.temp, Bin=bin, Exp=e, Obs=o,
-                                 se.ratio=se.ratio, effN=effN, N=N)
+                                 lwr=lwr, upr=upr, effN=effN, N=N)
       k <- k+1
     }
   }
 
   df <- do.call(rbind, df.list)
-  # "df$" shouldn't be required in within function but added to make package check
-  # warning go away. Feel free to change if there's a better solution.
-  # Warning was "make_multifig_sexratio: no visible binding for global variable 'Obs'"
-  df <- within(df, {
-               lwr <- df$Obs - 1*df$se.ratio
-               upr <- df$Obs + 1*df$se.ratio}) 
+
   ## Calculate ranges of plots
   xrange <- range(df$Bin, na.rm=TRUE)
   if(sexratio.option == 1){ # females:males

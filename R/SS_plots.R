@@ -193,8 +193,6 @@
 #' a vector of appropriate length (currently 10) with labels for each figure
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
-#' @param sexratio.option code to choose among (1) female:male ratio or
-#' (2) fraction females out of the total
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -229,9 +227,7 @@ SS_plots <-
       tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
-      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0,
-      sexratio.option=1,
-      ...)
+      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0, ...)
 {
   if(!is.null(print)){
     stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
@@ -994,7 +990,6 @@ SS_plots <-
       if(replist$nsexes == 2){
         plotinfo <-
           SSplotSexRatio(replist=replist,
-                         sexratio.option = sexratio.option,
                          datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                          fleetnames=fleetnames,
                          samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
@@ -1059,7 +1054,6 @@ SS_plots <-
       if(replist$nsexes == 2){
         plotinfo <-
           SSplotSexRatio(replist=replist,
-                         sexratio.option = sexratio.option,
                          datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                          fleetnames=fleetnames,
                          samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
