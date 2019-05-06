@@ -321,8 +321,8 @@ SS_readdat_3.30 <-
   if(d$use_meanbodywt){
     d$DF_for_meanbodywt <- get.val(dat, ind)
     d$meanbodywt <- get.df(dat, ind)
-    colnames(d$meanbodywt) <- c("Year", "Seas", "Type",
-                                "Partition", "Value", "CV")
+    colnames(d$meanbodywt) <- c("Year", "Seas", "Fleet", "Partition", "Type",
+                                "Value", "Std_in")
   }else{
     d$DF_for_meanbodywt <- NULL
     d$meanbodywt <- NULL
