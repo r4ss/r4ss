@@ -143,11 +143,11 @@ with only a single observed fish in it. Default=0.4.}
 
 \item{sprtarg}{Specify the F/SPR proxy target. Default=0.4.}
 
-\item{btarg}{Target depletion to be used in plots showing depletion. May be
-omitted by setting to NA.  Default=0.4.}
+\item{btarg}{Target %unfished to be used in plots showing %unfished. May be
+omitted by setting to NA.}
 
 \item{minbthresh}{Threshold depletion to be used in plots showing depletion.
-May be omitted by setting to NA. Default=0.25.}
+May be omitted by setting to NA.}
 
 \item{pntscalar}{This scalar defines the maximum bubble size for bubble
 plots. This option is still available but a better choice is to use

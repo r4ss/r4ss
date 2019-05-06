@@ -173,6 +173,7 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     if(!is.null(datlist$discard_fleet_info))colnames(datlist$discard_fleet_info)<-c("Fleet","units","errtype")
 
     # compatibility: create the old format catch matrix
+    datlist$catch <- datlist$catch[datlist$catch[, 1] > 0, ]
     datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
     ny<-datlist$endyr-datlist$styr+1
 
@@ -180,11 +181,14 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
     rownames(catch)<-as.character(1:ny)
     catch[,"year"]<-datlist$styr:datlist$endyr
-    #catch<-as.data.frame(catch)
 
     datlist$init_equil<-array(0,dim=totfleets)
     datlist$se_log_catch<-array(0,dim=totfleets)
 
+    ses <- tapply(datlist$catch$V5, list("fleet" = datlist$catch$V3), 
+      FUN = function(x) length(unique(x)))
+    if (any(ses > 1)) stop("This code was not written to work with ",
+      "log standard errors of catches vary with time.")
     for(i in 1:nrow(datlist$catch))
     {
       if(datlist$catch$V4[i]>=0)
@@ -196,9 +200,9 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
 
         if((datlist$catch$V1[i]>=datlist$styr)&&(datlist$catch$V1[i]<=datlist$endyr))  # this is a simple catch record
         {
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V2[i])]<-datlist$catch$V4[i]
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V3[i]
-          datlist$se_log_catch[as.numeric(datlist$catch$V2[i])]<-as.numeric(datlist$catch$V5[i])
+          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
+          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
+          datlist$se_log_catch[as.numeric(datlist$catch$V3[i])]<-as.numeric(datlist$catch$V5[i])
         }
       }
     }

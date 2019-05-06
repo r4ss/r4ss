@@ -123,7 +123,6 @@ make_multifig_sexratio <-
         o <- e <- se.ratio <- NA
       }
       ##  print(c(yr.temp, bin, e, o, se.ratio, effN, N))
-      ## if(yr.temp==1997 & bin==5) browser()
       df.list[[k]] <- data.frame(Yr=yr.temp, Bin=bin, Exp=e, Obs=o,
                                  se.ratio=se.ratio, effN=effN, N=N)
       k <- k+1
@@ -156,7 +155,6 @@ make_multifig_sexratio <-
   df$pch2 <- rep(16, nrow(df))
   df$pch2[which.toobig] <- 4
   df$pch2[which.toosmall] <- 4
-  ## browser()
   ## get axis labels
   yaxs_lab <- pretty(yrange)
   maxchar <- max(nchar(yaxs_lab))

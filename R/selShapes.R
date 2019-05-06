@@ -23,6 +23,6 @@ selShapes <- function() {
 	flush.console()
 
 	d <- system.file("Shiny", package = "r4ss")
-	runApp(file.path(d,"Selectivities"))
+	shiny::runApp(file.path(d,"Selectivities"))
 }
 

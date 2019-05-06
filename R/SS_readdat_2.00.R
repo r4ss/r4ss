@@ -103,8 +103,6 @@ SS_readdat_2.00 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
 
           # message(fleetnames," stage 1")
           
-          # browser()
-
           fleetnames <- strsplit(as.character(fleetnames),"%")     
           # strip any white space off the end of the fleetnames
           fleetnames[[1]][Ntypes] <- strsplit(as.character(fleetnames[[1]][Ntypes]),"[[:blank:]]+")[[1]][1]
@@ -113,7 +111,6 @@ SS_readdat_2.00 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
           # message(fleetnames," stage 2")
 
           if(length(fleetnames)==Ntypes) fleetnames.good <- fleetnames
-          #browser()
         
       }
     }
@@ -140,7 +137,6 @@ SS_readdat_2.00 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
                      type   = c(rep("FISHERY",Nfleet), rep("SURVEY",Nsurveys))))
   }
 
-  # browser()
   # fleet info
   fleetinfo1 <- data.frame(rbind(surveytiming,areas))
   names(fleetinfo1) <- fleetnames
