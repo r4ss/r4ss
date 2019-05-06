@@ -114,6 +114,8 @@ make_multifig_sexratio <-
       ## was observed, do some special things. If none, we'll skip it
       ## below. Otherwise do the calculations.
       se.ratio <- NA
+      lwr <- NA
+      upr <- NA
       if(nm == 1 & nf == 0){
         effN <- male$effN; N <- male$N; e <- NA; o <- 0
       } else if(nm == 0 & nf == 1) {
@@ -142,6 +144,7 @@ make_multifig_sexratio <-
         pm <- male$Obs
         e <- round(e, 10)
         o <- round(o, 10)
+
         # calculate SE of the ratio
         if(sexratio.option == 1){ # females:males
           se.ratio <-
