@@ -17,11 +17,15 @@
 ##' @param fleets Optional vector of fleet numbers to include.
 ##' @param fleetnames Optional character vector of names for each fleet.
 ##' @param profile.string Character string used to find parameter over which the
-##' profile was conducted. Needs to match substring of one of the SS parameter
-##' labels found in the Report.sso file. For instance, the default input 'steep'
-##' matches the parameter 'SR_BH_steep'.
+##' profile was conducted. If \code{exact=FALSE}, this can be a substring of
+##' one of the SS parameter labels found in the Report.sso file.
+##' For instance, the default input 'R0'
+##' matches the parameter 'SR_LN(R0)'. If \code{exact=TRUE}, then
+##' profile.string needs to be an exact match to the parameter label.
 ##' @param profile.label Label for x-axis describing the parameter over which
 ##' the profile was conducted.
+##' @param exact Should the \code{profile.string} have to match the parameter
+##' label exactly, or is a substring OK.
 ##' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
 ##' @param col Optional vector of colors for each line.
 ##' @param pch Optional vector of plot characters for the points.
@@ -82,6 +86,7 @@ PinerPlot <-
            fleetnames="default",
            profile.string="R0",
            profile.label=expression(log(italic(R)[0])),
+           exact=FALSE,
            ylab="Change in -log-likelihood",
            col="default",
            pch="default",
@@ -159,11 +164,19 @@ PinerPlot <-
   }
 
   # find the parameter that the profile was over
-  parnumber <- grep(profile.string,pars$Label)
-  if(length(parnumber)<=0) stop("No parameters matching profile.string='",profile.string,"'",sep="")
+  if(exact){
+    parnumber <- match(profile.string,pars$Label)
+  }else{
+    parnumber <- grep(profile.string,pars$Label)
+  }
+  if(length(parnumber)<=0){
+    stop("No parameters matching profile.string='",profile.string,"'",sep="")
+  }
   parlabel <- pars$Label[parnumber]
   if(length(parlabel) > 1){
-    stop("Multiple parameters matching profile.string='",profile.string,"': ",paste(parlabel,collapse=", "),sep="")
+    stop("Multiple parameters matching profile.string='",profile.string,"':\n",
+         paste(parlabel,collapse=", "),
+         "\nYou may need to use 'exact=TRUE'.", sep="")
   }
   parvec <- as.numeric(pars[pars$Label==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")

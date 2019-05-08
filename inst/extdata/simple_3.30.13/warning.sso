@@ -1,0 +1,8 @@
+#V3.30.13-safe;_2019_03_09;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_12.0
+#Stock Synthesis (SS) is a work of the U.S. Government and is not subject to copyright protection in the United States.
+#Foreign copyrights may apply. See copyright.txt for more information.
+Wed Apr  3 14:51:52 2019
+
+You have just one settlement event; recommend changing to recr_dist_method 4 which takes no recr_dist parameters
+ N warnings: 1
+Number_of_active_parameters_on_or_near_bounds: 0

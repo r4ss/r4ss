@@ -80,11 +80,13 @@
 #' @param verbose Return updates of function progress to the R GUI?  Default=T.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
-#' @param forecastplot Include forecast years in the plots? Obviously requires
-#' forecast options to have been used in the model.  Default=T.
+#' @param forecastplot Include forecast years in the timeseries plots and
+#' plots of time-varying quantities? Default=TRUE.
 #' @param datplot Plot the data by itself? This is useful in document
-#' preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
-#' Default=F.
+#' preparation, but doesn't change across alternative model runs with the same
+#' data, so can be committed to save time once the plots have been created once.
+#' Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
+#' Default=TRUE.
 #' @param Natageplot Plot the expected numbers at age bubble plots and mean-age
 #' time series?  Default=T.
 #' @param samplesizeplots Show sample size plots?  Default=T.
@@ -146,6 +148,7 @@
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default recently changed from 12 to 10.
 #' @param res Resolution of plots printed to files. Default=300.
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.
 #' @param selexlines Vector controlling which lines should be shown on
@@ -175,10 +178,9 @@
 #' @param catchbars show catch by fleet as barplot instead of stacked polygons
 #' (default=TRUE)
 #' @param legendloc Location for all legends. Default="topleft".
-#' @param minyr First year to show in time-series plots (changes xlim
-#' parameters).
-#' @param maxyr Last year to show in time-series plots (changes xlim
-#' parameters).
+#' @param minyr First year to show in time-series and time-varying plots
+#' @param maxyr Last year to show in time-series and time-varying plots. This
+#' can either be an alternative to, or redundant with, the forecastplot input.
 #' @param sexes Which sexes to show in composition plots. Default="all".
 #' @param scalebins Rescale expected and observed proportions in composition
 #' plots by dividing by bin width for models where bins have different widths?
@@ -189,13 +191,8 @@
 #' a vector of appropriate length (currently 11) with labels for each figure
 #' @param catlabels Either NULL to have default labels for catch plots or
 #' a vector of appropriate length (currently 10) with labels for each figure
-#' @param datasize Add second data plot whose circles are proportional
-#' to either catch or relative uncertainty? Produced as
-#' data_plot2.png. Circle areas are relative within a data category (e.g.,
-#' catches, indices) and are proportional to: absolute catch for catches,
-#' 1/SE of indices, and \code{N} for compositions.
 #' @param maxsize The size of the largest bubble in the datasize
-#' plot. Default is 1/2.
+#' plot. Default is 1.0.
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -217,21 +214,20 @@ SS_plots <-
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
       verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
-      datplot=FALSE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
+      datplot=TRUE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
-      bub.scale.pearson=1.5,bub.scale.dat=3,pntscalar.nums=2.6,pntscalar.tags=2.6,
-      minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE, maxneff=5000,
-      cohortlines=c(), smooth=TRUE, showsampsize=TRUE, showeffN=TRUE,
-      sampsizeline=FALSE,effNline=FALSE,
+      bub.scale.pearson=1.5, bub.scale.dat=3, pntscalar.nums=2.6,
+      pntscalar.tags=2.6, minnbubble=8, aalyear=-1, aalbin=-1, aalresids=TRUE,
+      maxneff=5000, cohortlines=c(), smooth=TRUE, showsampsize=TRUE,
+      showeffN=TRUE, sampsizeline=FALSE, effNline=FALSE,
       showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
-      cex.main=1,selexlines=1:6, rows=1, cols=1, maxrows=4, maxcols=4,
-      maxrows2=2, maxcols2=4, andrerows=3, tagrows=3, tagcols=3, fixdims=TRUE,
-      new=TRUE,
+      mainTitle=FALSE, cex.main=1,selexlines=1:6, rows=1, cols=1,
+      maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
+      tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
-      legendloc="topleft", minyr=NULL, maxyr=NULL, sexes="all", scalebins=FALSE,
-      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, datasize=TRUE,
-      maxsize=.5,
+      legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
+      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0,
       ...)
 {
   if(!is.null(print)){
@@ -244,7 +240,9 @@ SS_plots <-
   # in the future, this could be read from a file, or we could have multiple columns
   # in the table to choose from
 
-  if(is.null(replist)) stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  if(is.null(replist)){
+    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  }
 
   # get quantities from the big list
   nfleets     <- replist$nfleets
@@ -487,10 +485,11 @@ SS_plots <-
   {
     if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
     plotinfo <- SSplotBiology(replist=replist,
+                              forecast=forecastplot, minyr=minyr, maxyr=maxyr,
                               plot=!png, print=png,
                               pwidth=pwidth, pheight=pheight, punits=punits,
-                              ptsize=ptsize, res=res, cex.main=cex.main,
-                              plotdir=plotdir)
+                              ptsize=ptsize, res=res, mainTitle=mainTitle,
+                              cex.main=cex.main, plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     #if(verbose) cat("Finished biology plots\n")
   }
@@ -504,6 +503,7 @@ SS_plots <-
     selexinfo <-
       SSplotSelex(replist=replist, selexlines=selexlines,
                   fleets=fleets, fleetnames=fleetnames,
+                  minyr=minyr, maxyr=maxyr,
                   plot=!png, print=png,
                   pwidth=pwidth, pheight=pheight, punits=punits,
                   ptsize=ptsize, res=res, cex.main=cex.main,
@@ -580,7 +580,13 @@ SS_plots <-
       }
     } # end loop over timeseries subplots
 
+    ### add plot of Summary F
+    # first get vector of years
+    yrs <- replist$startyr:replist$endyr
+    yrs <- yrs[yrs >= minyr & yrs <= maxyr]
+    # now run plot function
     plotinfo <- SSplotSummaryF(replist=replist,
+                               yrs=yrs,
                                uncertainty=uncertainty,
                                plot=!png, print=png,
                                verbose=verbose,
@@ -682,7 +688,8 @@ SS_plots <-
                   fleetcols=fleetcols,
                   minyr=minyr,maxyr=maxyr,
                   pwidth=pwidth, pheight=pheight, punits=punits,
-                  ptsize=ptsize, res=res,cex.main=cex.main,
+                  ptsize=ptsize, res=res,
+                  cex.main=cex.main,
                   catchasnumbers=catchasnumbers,
 		  order="default",
                   catchbars=catchbars,
@@ -768,7 +775,8 @@ SS_plots <-
                                 plot=!png, print=png,
                                 datplot=datplot,
                                 pwidth=pwidth, pheight=pheight, punits=punits,
-                                ptsize=ptsize, res=res,cex.main=cex.main,
+                                ptsize=ptsize, res=res,
+                                mainTitle=mainTitle, cex.main=cex.main,
                                 plotdir=plotdir,
                                 minyr=minyr,
                                 maxyr=maxyr)
@@ -793,7 +801,8 @@ SS_plots <-
                     bublegend=showlegend,
                     plot=!png, print=png,
                     pwidth=pwidth, pheight=pheight, punits=punits,
-                    ptsize=ptsize, res=res,cex.main=cex.main,
+                    ptsize=ptsize, res=res,
+                    mainTitle=mainTitle, cex.main=cex.main,
                     plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
@@ -826,7 +835,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
+                      plotdir=plotdir, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -843,7 +852,7 @@ SS_plots <-
                         bublegend=showlegend,
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,
-                        plotdir=plotdir,cex.main=cex.main,
+                        plotdir=plotdir, mainTitle=mainTitle, cex.main=cex.main,
                         sexes=sexes, yupper=comp.yupper,
                         scalebins=scalebins, scalebubbles=scalebubbles,
                         pwidth=pwidth, pheight=pheight, punits=punits,
@@ -863,7 +872,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
+                      plotdir=plotdir, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -879,7 +888,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
+                      plotdir=plotdir, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -902,7 +911,7 @@ SS_plots <-
                       fixdims=fixdims,rows=rows,cols=cols,
                       andrerows=andrerows,
                       plot=!png, print=png,
-                      plotdir=plotdir,cex.main=cex.main,
+                      plotdir=plotdir, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins, scalebubbles=scalebubbles,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -930,7 +939,8 @@ SS_plots <-
                     bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
+                    maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                    cohortlines=cohortlines,
                     sexes=sexes, yupper=comp.yupper,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -966,7 +976,8 @@ SS_plots <-
                         bublegend=showlegend,
                         maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                        maxneff=maxneff,cex.main=cex.main,cohortlines=cohortlines,
+                        maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                        cohortlines=cohortlines,
                         sexes=sexes, yupper=comp.yupper,
                         scalebins=scalebins,
                         pwidth=pwidth, pheight=pheight, punits=punits,
@@ -993,7 +1004,7 @@ SS_plots <-
                     bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,
+                    maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                     sexes=sexes, yupper=comp.yupper,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1008,7 +1019,7 @@ SS_plots <-
                     bublegend=showlegend,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,
+                    maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                     sexes=sexes, yupper=comp.yupper,
                     scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1035,7 +1046,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                      maxneff=maxneff,cex.main=cex.main,
+                      maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1055,7 +1066,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                      maxneff=maxneff,cex.main=cex.main,
+                      maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1074,7 +1085,7 @@ SS_plots <-
                       bublegend=showlegend,
                       maxrows=maxrows,maxcols=maxcols,maxrows2=maxrows2,maxcols2=maxcols2,fixdims=fixdims,rows=rows,cols=cols,
                       plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                      maxneff=maxneff,cex.main=cex.main,
+                      maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                       sexes=sexes, yupper=comp.yupper,
                       scalebins=scalebins,
                       pwidth=pwidth, pheight=pheight, punits=punits,
@@ -1120,7 +1131,7 @@ SS_plots <-
                         fixdims=fixdims,rows=rows,cols=cols,
                         andrerows=andrerows,
                         plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                        maxneff=maxneff,cex.main=cex.main,
+                        maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                         sexes=sexes, scalebins=FALSE,
                         pwidth=pwidth, pheight=pheight, punits=punits,
                         ptsize=ptsize, res=res,
@@ -1147,7 +1158,7 @@ SS_plots <-
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,
+                    maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                     sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
@@ -1160,7 +1171,7 @@ SS_plots <-
                     minnbubble=minnbubble, pntscalar=pntscalar,
                     maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
                     plot=!png, print=png,smooth=smooth,plotdir=plotdir,
-                    maxneff=maxneff,cex.main=cex.main,
+                    maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
                     sexes=sexes, scalebins=scalebins,
                     pwidth=pwidth, pheight=pheight, punits=punits,
                     ptsize=ptsize, res=res,
@@ -1254,16 +1265,33 @@ SS_plots <-
       SSplotData(replist=replist,
                  plot=!png, print=png,
                  pwidth=pwidth, pheight=pheight, punits=punits,
-                 ptsize=ptsize, res=res, cex.main=cex.main,
+                 ptsize=ptsize, res=res, mainTitle=mainTitle, cex.main=cex.main,
                  plotdir=plotdir, margins=c(5.1,2.1,4.1,SSplotDatMargin),
-                 fleetnames=fleetnames, datasize=datasize, maxsize=maxsize)
+                 fleetnames=fleetnames, maxsize=maxsize)
     if(!is.null(temp) & length(temp)>0) plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
-
+  
+  ##########################################
+  # Data range plots
+  #
+  igroup <- 25
+  if(verbose){
+    cat("Starting diagnostic tables (group ",igroup,")\n",sep="")
+  }
+  
+  plotinfo <- NULL
+  plotinfo <- SS_makeHTMLdiagnostictable(replist = replist,
+                                         plotdir = plotdir,
+                                         gradmax = 1E-3)
+  
+  if(!is.null(plotinfo)){
+    plotInfoTable <- rbind(plotInfoTable,plotinfo)
+  }
+  
   ##########################################
   # Write and return table of plot info for any PNG files that got created
   #

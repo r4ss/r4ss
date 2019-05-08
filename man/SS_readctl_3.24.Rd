@@ -4,10 +4,11 @@
 \alias{SS_readctl_3.24}
 \title{read control file from SS version 3.24}
 \usage{
-SS_readctl_3.24(file, verbose = TRUE, echoall = FALSE, nseas = 4,
-  N_areas = 1, Nages = 20, Ngenders = 1, Npopbins = NA, Nfleet = 2,
-  Nsurveys = 2, Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0,
-  0, 9, 12), use_datlist = FALSE, datlist = NULL)
+SS_readctl_3.24(file, verbose = TRUE, echoall = FALSE,
+  ctlversion = "3.24", nseas = 4, N_areas = 1, Nages = 20,
+  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
+  Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0, 0, 9, 12),
+  use_datlist = FALSE, datlist = NULL, ptype = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -18,11 +19,14 @@ Default=TRUE.}
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
 data as it is being read.}
 
+\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3).}
+
 \item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. Default = 1. This information is also not
-explicitly available in control file}
+\item{N_areas}{number of spatial areas in the model. Default = 1.
+This information is also not explicitly available in control file}
 
 \item{Nages}{oldest age in the model. This information is also not
 explicitly available in control file}
@@ -30,9 +34,10 @@ explicitly available in control file}
 \item{Ngenders}{number of genders in the model. This information is also not
 explicitly available in control file}
 
-\item{Npopbins}{number of population bins in the model. This information is also not
-explicitly available in control file and this information is only required if length based
-maturity vector is directly supplied (Maturity option of 6), and not yet tested}
+\item{Npopbins}{number of population bins in the model. This information
+is also not explicitly available in control file and this information is
+only required if length based maturity vector is directly supplied
+(Maturity option of 6), and not yet tested}
 
 \item{Nfleet}{number of fisheries in the model. This information is also not
 explicitly available in control file}
@@ -40,24 +45,31 @@ explicitly available in control file}
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
-set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
-to disable them. This information is not explicitly available in control file, too.}
+\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters
+to be read set 1 (but in fact any non zero numeric in R) or TRUE to enable
+to read them 0 or FALSE (default) to disable them.
+This information is not explicitly available in control file, too.}
 
-\item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
-control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
+\item{N_tag_groups}{number of tag release group. Default =NA.
+This information is not explicitly available control file.
+This information is only required if custom tag parameters is enabled (TG_custom=1)}
 
 \item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}
 
-\item{datlist}{list or character. if list : produced from SS_writedat or character : file name of dat file.}
+\item{datlist}{list or character. if list : produced from SS_writedat
+or character : file name of dat file.}
+
+\item{ptype}{include a column in the output indicating parameter type?
+(Can be useful, but causes problems for SS_writectl.)}
 }
 \description{
 Read Stock Synthesis (version 3.24) control file into list object in R.
 This function comes with its wrapper function SS_readctl
-that calls SS_readctl_3.24 (this function) or SS_readctl_3.30 (to be available in future).
+that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
+(to be available in future).
 }
 \seealso{
 \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
@@ -67,5 +79,5 @@ that calls SS_readctl_3.24 (this function) or SS_readctl_3.30 (to be available i
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
 \author{
-Yukio Takeuchi
+Yukio Takeuchi, Neil Klaer
 }

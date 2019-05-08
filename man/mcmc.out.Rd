@@ -6,10 +6,11 @@
 \usage{
 mcmc.out(directory = "c:/mydirectory/", run = "mymodel/",
   file = "keyposteriors.csv", namefile = "postplotnames.sso",
-  names = FALSE, headernames = TRUE, numparams = 1, closeall = TRUE,
-  burn = 0, thin = 1, scatter = FALSE, surface = FALSE, surf1 = 1,
-  surf2 = 2, stats = FALSE, plots = TRUE, header = TRUE, sep = ",",
-  print = FALSE, new = T, colNames = NULL)
+  names = FALSE, headernames = TRUE, numparams = 1,
+  closeall = TRUE, burn = 0, thin = 1, scatter = FALSE,
+  surface = FALSE, surf1 = 1, surf2 = 2, stats = FALSE,
+  plots = TRUE, header = TRUE, sep = ",", print = FALSE, new = T,
+  colNames = NULL)
 }
 \arguments{
 \item{directory}{Directory where all results are located, one level above

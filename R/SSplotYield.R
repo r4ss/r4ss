@@ -66,7 +66,9 @@ SSplotYield <-
   if(1 %in% subplots){
     if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
       # further test
-      if(any(!is.na(equil_yield$Depletion)) & any(!is.na(equil_yield$Catch))){
+      if(any(!is.na(equil_yield$Depletion)) &
+         any(!is.na(equil_yield$Catch)) &
+         any(!is.infinite(equil_yield$Depletion))){
         # function for yield curve
         yieldfunc <- function(){
           if(!add){

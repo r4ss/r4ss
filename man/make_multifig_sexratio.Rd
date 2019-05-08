@@ -4,15 +4,16 @@
 \alias{make_multifig_sexratio}
 \title{Create multi-figure sex ratio plots.}
 \usage{
-make_multifig_sexratio(dbase, sampsizeround = 1, maxrows = 6, maxcols = 6,
-  rows = 1, cols = 1, fixdims = TRUE, main = "", cex.main = 1,
-  xlab = "", ylab = "Female:Male Ratio", horiz_lab = "default",
-  xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15), yupper = NULL,
-  axis1 = NULL, axis2 = NULL, ptscex = 1, ptscol = gray(0.5),
-  linescol = 1, lty = 1, lwd = 2, nlegends = 3, legtext = list("yr",
-  "sampsize", "effN"), legx = "default", legy = "default",
-  legadjx = "default", legadjy = "default", legsize = c(1.2, 1),
-  legfont = c(2, 1), ipage = 0, multifig_oma = c(5, 5, 5, 2) + 0.1, ...)
+make_multifig_sexratio(dbase, sampsizeround = 1, maxrows = 6,
+  maxcols = 6, rows = 1, cols = 1, fixdims = TRUE, main = "",
+  cex.main = 1, xlab = "", ylab = "Female:Male Ratio",
+  horiz_lab = "default", xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15),
+  yupper = NULL, axis1 = NULL, axis2 = NULL, ptscex = 1,
+  ptscol = gray(0.5), linescol = 1, lty = 1, lwd = 2,
+  nlegends = 3, legtext = list("yr", "sampsize", "effN"),
+  legx = "default", legy = "default", legadjx = "default",
+  legadjy = "default", legsize = c(1.2, 1), legfont = c(2, 1),
+  ipage = 0, multifig_oma = c(5, 5, 5, 2) + 0.1, ...)
 }
 \arguments{
 \item{dbase}{element of list created by \code{\link{SS_output}} passed from

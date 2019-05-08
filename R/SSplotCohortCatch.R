@@ -39,7 +39,7 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
-SSplotCohorts <-
+SSplotCohortCatch <-
   function(replist,subplots=1:2,add=FALSE,
            plot=TRUE,print=FALSE,
            cohortcols="default",
@@ -58,7 +58,6 @@ SSplotCohorts <-
            verbose=TRUE)
 {
   # plot catch-at-age contributions by cohort in units of numbers and biomass
-
   subplot_names <- c("1: catch by cohort")  
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
@@ -105,7 +104,7 @@ SSplotCohorts <-
   #catcohort <- matrix(NA,nrow=nyrs,ncol=ncohorts)
   catcohort_fltsex <- array(data = NA,
                             dim = c(ncohorts,nages,nfishfleets,nsexes),
-                            dimnames = c("cohort","age","fleet","gender"))
+                            dimnames = list(cohort=NULL, age=NULL, fleet=NULL, sex=NULL))
   # same dimension array to store biomass values
   wtatage_fltsex <- catcohort_fltsex
 
@@ -118,25 +117,25 @@ SSplotCohorts <-
       if(y %in% yrs){                  # check if y is in range of years
         for(ifleet in 1:nfishfleets){  # loop over fleets
           f <- ifleet # index = fleet number in current SS but making general
-          for(isex in 1:nsexes){       # loop over genders
+          for(isex in 1:nsexes){       # loop over sexes
             ### testing:
             ##   cat('y=',y,' a=',a,' f=',f,' isex=',isex,' cohort=',cohort,'\n',sep='')
 
             # copy values from catage to catcohort_fltsex
             # summation could include multiple seasons or morphs within a year
             catcohort_fltsex[icohort,iage,ifleet,isex] <-
-              sum(catage[catage$Fleet==f & catage$Yr==y & catage$Gender==isex,
+              sum(catage[catage$Fleet==f & catage$Yr==y & catage$Sex==isex,
                          names(catage)==y-cohort])
             # get assocated weight value
             if(is.null(wtatage)){
               w <- 0 # dummy value to keep code from breaking when wtatage not available
             }else{
-              w <- wtatage[[paste("X",a,sep="")]][abs(wtatage$yr)==y &
-                                                  wtatage$fleet==f &
-                                                  wtatage$gender==isex]
+              w <- wtatage[[paste(a)]][abs(wtatage$Yr)==y &
+                                         wtatage$Fleet==f &
+                                           wtatage$Sex==isex]
             }
             wtatage_fltsex[icohort,iage,ifleet,isex] <- w
-          } # end loop over genders
+          } # end loop over sexes
         } # end loop over fleets
       } # end check for y in yrs
     } # end loop over ages

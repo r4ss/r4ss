@@ -5,9 +5,9 @@
 \title{Run retrospective analyses}
 \usage{
 SS_doRetro(masterdir, oldsubdir, newsubdir = "retrospectives",
-  subdirstart = "retro", years = 0:-5, overwrite = TRUE, exefile = "ss",
-  extras = "-nox", intern = FALSE, CallType = "system",
-  RemoveBlocks = FALSE)
+  subdirstart = "retro", years = 0:-5, overwrite = TRUE,
+  exefile = "ss", extras = "-nox", intern = FALSE,
+  CallType = "system", RemoveBlocks = FALSE)
 }
 \arguments{
 \item{masterdir}{Directory where everything takes place.}

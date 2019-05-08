@@ -5,11 +5,12 @@
 \title{Timeline of presence/absence of data by type, year, and fleet.}
 \usage{
 SSplotData(replist, plot = TRUE, print = FALSE, plotdir = "default",
-  fleetcol = "default", datatypes = "all", fleets = "all",
-  fleetnames = "default", ghost = FALSE, pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  margins = c(5.1, 2.1, 2.1, 8.1), cex = 2, lwd = 12, datasize = TRUE,
-  maxsize = 0.5, alphasize = 1, both = T, verbose = TRUE)
+  subplot = 1:2, fleetcol = "default", datatypes = "all",
+  fleets = "all", fleetnames = "default", ghost = FALSE,
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
+  ptsize = 10, cex.main = 1, margins = c(5.1, 2.1, 2.1, 8.1),
+  cex = 2, lwd = 12, maxsize = 1, alphasize = 1,
+  mainTitle = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{\link{SS_output}}}
@@ -21,13 +22,21 @@ SSplotData(replist, plot = TRUE, print = FALSE, plotdir = "default",
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
+\item{subplot}{vector controlling which subplots to create
+Currently there are only 2 subplots:
+\itemize{
+  \item 1 equal size points showing presence/absence of data type by year/fleet
+  \item 2 points scaled to indicate quantity or precision of data
+}}
+
 \item{fleetcol}{Either the string "default", or a vector of colors to use
-for each fleet.}
+for each fleet. If tagging data is included, an additional color needs to be
+added for the tag releases which are not assigned to a fleet.}
 
 \item{datatypes}{Either the string "all", or a vector including some subset
 of the following: "catch", "cpue", "lendbase", "sizedbase", "agedbase",
 "condbase", "ghostagedbase", "ghostcondbase", "ghostlendbase", "ladbase",
-"wadbase", "mnwgt", "discard", "tagdbase1", "tagdbase2".}
+"wadbase", "mnwgt", "discard", "tagrelease", and "tagdbase1".}
 
 \item{fleets}{Either the string "all", or a vector of numerical values, like
 c(1,3), listing fleets or surveys to be included in the plot.}
@@ -58,20 +67,14 @@ be increased if fleet names run off right-hand margin}
 
 \item{lwd}{Line width for lines showing ranges of years of data}
 
-\item{datasize}{Add second data plot whose circles are proportional
-to either catch or relative uncertainty? Produced as
-data_plot2.png. Circle areas are relative within a data category (e.g.,
-catches, indices) and are proportional to: absolute catch for catches,
-1/SE of indices, and \code{N} for compositions.}
-
-\item{maxsize}{The size of the largest bubble in the datasize
-plot. Default is 1/2.}
+\item{maxsize}{The size (cex) of the largest bubble in the datasize
+plot. Default is 1.}
 
 \item{alphasize}{The transparency of the bubbles in the datasize
 plot. Defaults to 1 (no transparency). Useful for models with lots of
 overlapping points.}
 
-\item{both}{Logical to create both plots (datasize=F and datasize=T). This is ignored for the case when datasize=F.}
+\item{mainTitle}{TRUE/FALSE switch to turn on/off the title on the plot.}
 
 \item{verbose}{report progress to R GUI?}
 }

@@ -4,75 +4,63 @@
 \alias{SSplotPars}
 \title{Plot distributions of priors, posteriors, and estimates.}
 \usage{
-SSplotPars(dir = "c:/path/", repfile = "Report.sso",
-  xlab = "Parameter value", ylab = "Density", postfile = "posteriors.sso",
-  showpost = TRUE, showprior = TRUE, showmle = TRUE, showinit = TRUE,
-  showrecdev = TRUE, priorinit = TRUE, priorfinal = TRUE,
-  showlegend = TRUE, fitrange = FALSE, xaxs = "i", xlim = NULL,
-  ylim = NULL, verbose = TRUE, nrows = 3, ncols = 3, ltyvec = c(1, 1,
-  3, 4), colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, 0.5)),
-  new = TRUE, pdf = FALSE, pwidth = 6.5, pheight = 5, punits = "in",
-  ptsize = 10, returntable = FALSE, strings = c(), exact = FALSE,
-  newheaders = NULL, burn = 0, thin = 1, ctlfile = "control.ss_new")
+SSplotPars(replist, xlab = "Parameter value", ylab = "Density",
+  showmle = TRUE, showpost = TRUE, showprior = TRUE,
+  showinit = TRUE, showdev = FALSE, showlegend = TRUE,
+  fitrange = FALSE, xaxs = "i", xlim = NULL, ylim = NULL,
+  verbose = TRUE, nrows = 3, ncols = 3, ltyvec = c(1, 1, 3, 4),
+  colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, 0.5)),
+  new = TRUE, pdf = FALSE, pwidth = 6.5, pheight = 5,
+  punits = "in", ptsize = 10, returntable = FALSE, strings = c(),
+  exact = FALSE, newheaders = NULL)
 }
 \arguments{
-\item{dir}{Directory where all files are located.}
-
-\item{repfile}{Name of report file. Default="Report.sso".}
+\item{replist}{List produced by \code{\link{SS_output}}.}
 
 \item{xlab}{Label on horizontal axis.}
 
 \item{ylab}{Label on vertical axis.}
 
-\item{postfile}{Name of MCMC posteriors file (not required).
-Default="posteriors.sso".}
-
-\item{showpost}{Show posterior distribution as bar graph? Default=TRUE.}
-
-\item{showprior}{Show prior distribution as black line? Default=TRUE.}
-
 \item{showmle}{Show MLE estimate and asymptotic variance estimate with blue
-lines? Default=TRUE.}
+lines?}
 
-\item{showinit}{Show initial value as red triangle? Default=TRUE.}
+\item{showpost}{Show posterior distribution as bar graph if MCMC results
+are available in \code{replist}?}
 
-\item{showrecdev}{Include recdevs in the plot? Default=TRUE.}
+\item{showprior}{Show prior distribution as black line?}
 
-\item{priorinit}{TRUE/FALSE for prior probability at initial value (not
-implemented).}
+\item{showinit}{Show initial value as red triangle?}
 
-\item{priorfinal}{TRUE/FALSE for prior probability at final value (not
-implemented).}
+\item{showdev}{Include devs in the plot?}
 
-\item{showlegend}{Show the legend? Default=TRUE.}
+\item{showlegend}{Show the legend?}
 
 \item{fitrange}{Fit range tightly around MLE & posterior distributions,
-instead of full parameter range? Default=FALSE.}
+instead of full parameter range?}
 
-\item{xaxs}{Parameter input for x-axis. See \code{?par} for more info.
-Default="i".}
+\item{xaxs}{Parameter input for x-axis. See \code{?par} for more info.}
 
-\item{xlim}{Optional x-axis limits to be applied to all plots.  Otherwise,
-limits are based on the model results. Default=NULL.}
+\item{xlim}{Optional x-axis limits to be applied to all plots.
+Otherwise, limits are based on the model results.}
 
-\item{ylim}{Optional y-axis limits to be applied to all plots.  Otherwise,
-limits are based on the model results. Default=NULL.}
+\item{ylim}{Optional y-axis limits to be applied to all plots.
+Otherwise, limits are based on the model results.}
 
-\item{verbose}{Controls amount of text output (maybe). Default=TRUE.}
+\item{verbose}{Controls amount of text output (maybe).}
 
-\item{nrows}{How many rows in multi-figure plot. Default=3.}
+\item{nrows}{How many rows in multi-figure plot.}
 
-\item{ncols}{How many columns in multi-figure plot. Default=3.}
+\item{ncols}{How many columns in multi-figure plot.}
 
 \item{ltyvec}{Vector of line types used for lines showing MLE and prior
-distributions and the median of the posterior distribution}
+distributions and the median of the posterior distribution.}
 
 \item{colvec}{Vector of colors used for lines and polygons showing MLE,
 initial value, prior, posterior, and median of the posterior.}
 
-\item{new}{Open new window for plotting? Default=TRUE.}
+\item{new}{Open new window for plotting?}
 
-\item{pdf}{Write to PDF file instead of R GUI? Default=FALSE.}
+\item{pdf}{Write to PDF file instead of R GUI?}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. Default=7.}
@@ -89,21 +77,14 @@ help("png") in R for details). Default=12.}
 \item{returntable}{Return table of parameter info? Default=FALSE.}
 
 \item{strings}{Subset parameters included in the plot using substring from
-parameter names (i.e. "SR" will get "SR_R0" and "SR_steep" if they are both
-estimated quantities in this model). Default=c().}
+parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
+estimated quantities in this model).}
 
 \item{exact}{Should strings input match parameter names exactly?  Otherwise
-substrings are allowed. Default=FALSE.}
+substrings are allowed.}
 
 \item{newheaders}{Optional vector of headers for each panel to replace the
-parameter names. Default=NULL.}
-
-\item{burn}{Additional burn-in applied to MCMC posteriors. Default=0.}
-
-\item{thin}{Additional thinning applied to MCMC posteriors. Default=1.}
-
-\item{ctlfile}{Specify control file to get min and max recdev values
-(otherwise assumed to be -5 and 5). Default="control.ss_new".}
+parameter names.}
 }
 \description{
 Make multi-figure plots of prior, posterior, and estimated asymptotic

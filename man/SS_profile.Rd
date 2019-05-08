@@ -7,11 +7,12 @@
 SS_profile(dir = "C:/myfiles/mymodels/myrun/",
   masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
   linenum = NULL, string = NULL, profilevec = NULL, usepar = FALSE,
-  globalpar = FALSE, parfile = NULL, parlinenum = NULL,
-  parstring = NULL, dircopy = TRUE, exe.delete = FALSE, model = "ss",
-  extras = "-nox", systemcmd = FALSE, saveoutput = TRUE,
-  overwrite = TRUE, whichruns = NULL, SSversion = "3.30",
-  prior_check = TRUE, verbose = TRUE)
+  globalpar = FALSE, parfile = "ss.par", parlinenum = NULL,
+  parstring = NULL, dircopy = TRUE, exe.delete = FALSE,
+  model = "ss", extras = "-nox", systemcmd = FALSE,
+  saveoutput = TRUE, overwrite = TRUE, whichruns = NULL,
+  SSversion = "3.30", prior_check = TRUE, read_like = TRUE,
+  verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory where input files and executable are located.}
@@ -31,11 +32,13 @@ be used instead of \code{linenum} or left as NULL.}
 
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
-\item{globalpar}{Use global par file for all runs instead of the par file
-from each successive run}
+\item{globalpar}{Use global par file ("parfile_original_backup.sso", which is
+automatically copied from original \code{parfile}) for all runs instead
+of the par file from each successive run}
 
-\item{parfile}{Name of par file to use (Ian says "I don't remember how this
-interacts with the globalpar input")}
+\item{parfile}{Name of par file to use (for 3.30 models, this needs to
+remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
+is used for all runs.}
 
 \item{parlinenum}{Line number in par file to change.}
 
@@ -45,7 +48,7 @@ interacts with the globalpar input")}
 
 \item{exe.delete}{Delete exe files in each directory?  NOT IMPLEMENTED YET.}
 
-\item{model}{Name of executable. Default = "ss3".}
+\item{model}{Name of executable. Default = "ss".}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
 will reduce the amount of command-line output.}
@@ -69,6 +72,10 @@ supported, either as character or numeric values
 
 \item{prior_check}{Check to make sure the starter file is set to include
 the prior likelihood contribution in the total likelihood.  Default = TRUE.}
+
+\item{read_like}{Read the table of likelihoods from each model as it finishes.
+Default = TRUE. Changing to FALSE should allow the function to play through
+even if something is wrong with reading the table.}
 
 \item{verbose}{Controls amount of info output to command line.  Default =
 TRUE.}

@@ -33,7 +33,10 @@
 #' will by replaced by a vector of colors of length equal to
 #' nrow(replist$recruit)
 #' @param legend add a legend to the figure?
-#' @param legendloc location of legend. See ?legend for more info
+#' @param legendloc location of legend. By default it is chosen as the first
+#' value in the set of "topleft", "topright", "bottomright" that results in no
+#' overlap with the points in the plot, but the user can override this with their
+#' choice of location. See ?legend for more info on the options.
 #' @param minyr minimum year of recruitment deviation to show in plot
 #' @param textmindev minimum recruitment deviation for label to be added so
 #' only extreme devs are labeled (labels are added to first and last years as
@@ -69,7 +72,7 @@ SSplotSpawnrecruit <-
            colvec=c("blue","black","black",gray(0,0.7)),
            ltyvec=c(1,2,1,NA),
            ptcol="default",
-           legend=TRUE, legendloc="topleft",
+           legend=TRUE, legendloc=NULL,
            #line1="blue",line2="green3",line3="black",ptcol="red",
            minyr="default", textmindev=0.5, relative=FALSE,
            expected=TRUE, estimated=TRUE, bias_adjusted=TRUE,
@@ -232,10 +235,59 @@ SSplotSpawnrecruit <-
     }
     # add legend
     if(legend){
-      legend(legendloc, legend=legend_lab, col=legend_col, pt.bg=legend_bg,
-             lwd=legend_lwd, lty=legend_lty, pch=legend_pch, bg=rgb(1,1,1,.9))
-    }
-  }
+      # add sub-function:
+      legend.overlap <- function(x, y, ...){
+        # function to figure out if a legend with inputs given by ...
+        # overlaps any of the points with coordinates x and y
+
+        # run legend without plotting
+        legend.out <- legend(..., plot=FALSE)
+        # get coordinates of legend boundaries
+        leg.left <- legend.out$rect$left
+        leg.right <- legend.out$rect$left + legend.out$rect$w
+        leg.top <- legend.out$rect$top
+        leg.bottom <- legend.out$rect$top - legend.out$rect$h
+        # test for overlap
+        if(any(x >= leg.left & x <= leg.right & 
+                 y >= leg.bottom & y <= leg.top)){
+          return(TRUE)
+        }else{
+          return(FALSE)
+        }
+      }
+      # indicator if legend has been added successfully
+      legend_added <- FALSE
+      # if not ready to plot, look for best location
+      if(is.null(legendloc)){
+        for(legendloc in c("topleft", "topright", "bottomright")){
+          has_overlap <- legend.overlap(x = x*x.mult,
+                                        y = recruit$pred_recr*y.mult,
+                                        legendloc, legend=legend_lab,
+                                        col=legend_col, pt.bg=legend_bg, lwd=legend_lwd,
+                                        lty=legend_lty, pch=legend_pch, bg=rgb(1,1,1,.6))
+          if(!has_overlap & !legend_added){
+            legend(legendloc, legend=legend_lab,
+                   col=legend_col, pt.bg=legend_bg, lwd=legend_lwd,
+                   lty=legend_lty, pch=legend_pch, bg=rgb(1,1,1,.6))
+            legend_added <- TRUE
+          }
+        } # end loop over legendloc values
+        if(!legend_added){
+          warning("Legend in spawner-recruit plot overlaps at least 1 point\n",
+                  "in the plot. Try running SSplotSpawnrecruit() with\n",
+                  "adjustments to 'ylim' and/or 'legendloc' inputs.")
+          legendloc <- "topleft"
+        }
+      }
+      # add legend at user-requested location or topleft with warning
+      if(!legend_added){
+        legend(legendloc, legend=legend_lab,
+               col=legend_col, pt.bg=legend_bg, lwd=legend_lwd,
+               lty=legend_lty, pch=legend_pch, bg=rgb(1,1,1,.5))
+      }
+    } # end commands to add legend
+  } # end StockRecruitCurve.fn
+  
   stock_vs_devs.fn <- function(text=FALSE){
     ### a function to make the plots
     if(!add){

@@ -12,11 +12,15 @@
 #' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param profile.string Character string used to find parameter over which the
-#' profile was conducted. Needs to match substring of one of the SS parameter
-#' labels found in the Report.sso file. For instance, the default input 'steep'
-#' matches the parameter 'SR_BH_steep'.
+#' profile was conducted. If \code{exact=FALSE}, this can be a substring of
+#' one of the SS parameter labels found in the Report.sso file.
+#' For instance, the default input 'steep'
+#' matches the parameter 'SR_BH_steep'. If \code{exact=TRUE}, then
+#' profile.string needs to be an exact match to the parameter label.
 #' @param profile.label Label for x-axis describing the parameter over which
 #' the profile was conducted.
+#' @param exact Should the \code{profile.string} have to match the parameter
+#' label exactly, or is a substring OK.
 #' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
 #' @param components Vector of likelihood components that may be included in
 #' plot. List is further refined by any components that are not present in
@@ -82,6 +86,7 @@ SSplotProfile <-
            models="all",
            profile.string="steep",
            profile.label="Spawner-recruit steepness (h)",
+           exact=FALSE,
            ylab="Change in -log-likelihood",
            components=
            c("TOTAL",
@@ -160,9 +165,10 @@ SSplotProfile <-
     }
   }
 
-  if(length(components) != length(component.labels))
+  if(length(components) != length(component.labels)){
     stop("Inputs 'components' and 'component.labels' should have equal length")
-
+  }
+  
   # get stuff from summary output
   n             <- summaryoutput$n
   likelihoods   <- summaryoutput$likelihoods
@@ -181,12 +187,20 @@ SSplotProfile <-
   }
   
   # find the parameter that the profile was over
-  parnumber <- grep(profile.string,pars$Label)
-  if(length(parnumber)<=0) stop("No parameters matching profile.string='",profile.string,"'",sep="")
+  if(exact){
+    parnumber <- match(profile.string,pars$Label)
+  }else{
+    parnumber <- grep(profile.string,pars$Label)
+  }
+  if(length(parnumber)<=0){
+    stop("No parameters matching profile.string='",profile.string,"'",sep="")
+  }
   parlabel <- pars$Label[parnumber]
-  if(length(parlabel) > 1)
-    stop("Multiple parameters matching profile.string='",profile.string,"': ",paste(parlabel,collapse=", "),sep="")
-
+  if(length(parlabel) > 1){
+    stop("Multiple parameters matching profile.string='",profile.string,"':\n",
+         paste(parlabel,collapse=", "),
+         "\nYou may need to use 'exact=TRUE'.", sep="")
+  }
   parvec <- as.numeric(pars[pars$Label==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")
   cat("Parameter values (after subsetting based on input 'models'):\n")
@@ -218,27 +232,37 @@ SSplotProfile <-
   column.max <- apply(prof.table[subset,],2,max)
   change.fraction <- column.max / column.max[1]
   include <- change.fraction >= minfraction
-  
-  cat("\nLikelihood components showing max change as fraction of total change.\n",
-      "To change which components are included, change input 'minfraction'.\n\n",sep="")
-  print(data.frame(frac_change=round(change.fraction,4),include=include,label=component.labels.good))
-  component.labels.used <- component.labels.good[include]
 
+  nlines <- sum(include)
+  message("\nLikelihood components showing max change as fraction of total change.\n",
+          "To change which components are included, change input 'minfraction'.\n")
+  print(data.frame(frac_change=round(change.fraction,4),include=include,label=component.labels.good))
+  # stop function if nothing left
+  if(nlines == 0){
+    stop("No components included, 'minfraction' should be smaller.")
+  }
+  component.labels.used <- component.labels.good[include]
+  
   # reorder values
   prof.table <- prof.table[order(parvec),include]
   parvec <- parvec[order(parvec)]
 
-  # reorder columns by largest change (if requested)
+  # reorder columns by largest change (if requested, and more than 1 line)
   change.fraction <- change.fraction[include]
-  if(sort.by.max.change){
-    neworder <- c(1,1+order(change.fraction[-1],decreasing=TRUE))
-    prof.table <- prof.table[,neworder]
-    component.labels.used <- component.labels.used[neworder]
+  if(nlines > 1){
+    if(sort.by.max.change){
+      neworder <- c(1,1+order(change.fraction[-1],decreasing=TRUE))
+      prof.table <- prof.table[,neworder]
+      component.labels.used <- component.labels.used[neworder]
+    }
   }
-    
-  nlines <- ncol(prof.table)
-  if(col[1]=="default") col <- rich.colors.short(nlines)
-  if(pch[1]=="default") pch <- 1:nlines
+
+  if(col[1]=="default"){
+    col <- rich.colors.short(nlines)
+  }
+  if(pch[1]=="default"){
+    pch <- 1:nlines
+  }
   lwd <- c(lwd.total,rep(lwd,nlines-1))
   cex <- c(cex.total,rep(cex,nlines-1))
   lty <- c(lty.total,rep(lty,nlines-1))

@@ -9,10 +9,42 @@
 #' @param print Print to PNG files?
 #' @param add add to existing plot
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1 growth curve only
+#'   \item 2	growth curve with CV and SD
+#'   \item 3	growth curve with maturity and weight
+#'   \item 4	distribution of length at age (still in development)
+#'   \item 5	length or wtatage matrix
+#'   \item 6	maturity
+#'   \item 7	fecundity from model parameters
+#'   \item 8	fecundity at weight from BIOLOGY section
+#'   \item 9	fecundity at length from BIOLOGY section
+#'   \item 10	spawning output at length
+#'   \item 11	spawning output at age
+#'   \item 21	Natural mortality (if age-dependent)
+#'   \item 22	Time-varying growth persp
+#'   \item 23	Time-varying growth contour
+#'   \item 24	plot time-series of any time-varying quantities
+#'   \item 31	hermaphroditism transition probability
+#'   \item 32	hermaphroditism cumulative probability
+#' }
+#' Additional plots not created by default
+#' \itemize{
+#'   \item 101	diagram with labels showing female growth curve
+#'   \item 102	diagram with labels showing female growth curve & male offsets
+#'   \item 103	diagram with labels showing female CV = f(A) (offset type 2)
+#'   \item 104	diagram with labels showing female CV = f(A) & male offset (type 2)
+#'   \item 105	diagram with labels showing female CV = f(A) (offset type 3)
+#'   \item 106	diagram with labels showing female CV = f(A) & male offset (type 3)
+#' }
 #' @param seas which season to plot (values other than 1 only work in
 #' seasonal models but but maybe not fully implemented)
 #' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
 #' will be replist$mainmorphs
+#' @param forecast Include forecast years in plots of time-varying biology?
+#' @param minyr optional input for minimum year to show in plots
+#' @param maxyr optional input for maximum year to show in plots
 #' @param colvec vector of length 3 with colors for various points/lines
 #' @param ltyvec vector of length 2 with lty for females/males in growth plots
 #' values can be applied to other plots in the future
@@ -34,43 +66,48 @@
 #' the image plot text is rounded. Defaults to 0, meaning whole numbers. If
 #' all your values are small and there's no contrast in the text, you might
 #' want to make this 1 or 2.
+#' @param mainTitle Logical indicating if a title should be included at the top
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotBiology <-
-function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
-         morphs=NULL,
-         colvec=c("red","blue","grey20"),
-         ltyvec=c(1,2),
-         shadealpha=0.1,
-         imageplot_text=FALSE,
-         imageplot_text_round=0,
-         legendloc="topleft",
-         plotdir="default",
-         labels=c("Length (cm)",                #1
-             "Age (yr)",                        #2
-             "Maturity",                        #3
-             "Mean weight (kg) in last year",   #4
-             "Spawning output",                 #5
-             "Length (cm, beginning of the year)", #6
-             "Natural mortality",               #7
-             "Female weight (kg)",              #8
-             "Female length (cm)",              #9
-             "Fecundity",                       #10
-             "Default fecundity label",         #11
-             "Year",                            #12
-             "Hermaphroditism transition rate", #13
+function(replist, plot = TRUE, print = FALSE, add = FALSE,
+         subplots = 1:32, seas = 1,
+         morphs = NULL,
+         forecast = FALSE,
+         minyr = -Inf,
+         maxyr = Inf,
+         colvec = c("red","blue","grey20"),
+         ltyvec = c(1,2),
+         shadealpha = 0.1,
+         imageplot_text = FALSE,
+         imageplot_text_round = 0,
+         legendloc = "topleft",
+         plotdir = "default",
+         labels = c("Length (cm)",                      #1
+             "Age (yr)",                                #2
+             "Maturity",                                #3
+             "Mean weight (kg) in last year",           #4
+             "Spawning output",                         #5
+             "Length (cm, beginning of the year)",      #6 
+             "Natural mortality",                       #7
+             "Female weight (kg)",                      #8
+             "Female length (cm)",                      #9
+             "Fecundity",                               #10
+             "Default fecundity label",                 #11
+             "Year",                                    #12
+             "Hermaphroditism transition rate",         #13
              "Fraction females by age at equilibrium"), #14
-         pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-         verbose=TRUE)
+         pwidth = 6.5,pheight = 5.0,punits = "in",res = 300,ptsize = 10,cex.main = 1,
+         mainTitle = TRUE, verbose = TRUE)
 {
   #### current (Aug 18, 2017) order of plots:
   # subplot 1: growth_curve_fn - growth curve only
   # subplot 2: growth_curve_plus_fn - growth curve with CV and SD
   # subplot 3: growth_curve_plus_fn - growth curve with maturity and weight
-  # subplot 4: distribution of length at age (still in development)
-  # subplot 5: weight-length
+  # subplot 4: SSplotAgeMatrix (separate function) - distribution of length at age
+  # subplot 5: weight-length or wtatage matrix
   # subplot 6: maturity
   # subplot 7: fec_pars_fn - fecundity from model parameters
   # subplot 8: fec_weight_fn - fecundity at weight from BIOLOGY section
@@ -78,17 +115,17 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   # subplot 10: spawn_output_len_fn  - spawning output at length
   # subplot 11: spawn_output_age_fn  - spawning output at age
   
-  # subplot 21 #formerly 11: mfunc   - Natural mortality (if age-dependent)
-  # subplot 22 #formerly 12: [no function] - Time-varying growth persp
-  # subplot 23 #formerly 13: [no function] - Time-varying growth contour
-  # subplot 24 #formerly 14: timeVaryingParmFunc - plot time-series of any time-varying quantities
+  # subplot 21 mfunc   - Natural mortality (if age-dependent)
+  # subplot 22 [no function] - Time-varying growth persp
+  # subplot 23 [no function] - Time-varying growth contour
+  # subplot 24 timeVaryingParmFunc - plot time-series of any time-varying quantities
   
   #### unfinished addition on 3-Mar-16 
-  # subplot 25 #formerly 15: [no function] - matrix of M by age and time 
+  # subplot 25 [no function] - matrix of M by age and time 
 
   #### vectors related to hermaphroditism
-  # subplot 31 #formerly 16: Herma_Trans
-  # subplot 32 #formerly 17: Herma_Cum
+  # subplot 31 Herma_Trans
+  # subplot 32 Herma_Cum
 
   # EXTRA PLOTS NOT PRODUCED BY DEFAULT
   # subplot 101: diagram with labels showing female growth curve
@@ -191,7 +228,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   }
   if(wtatage_switch){
     cat("Note: this model uses the empirical weight-at-age input.\n",
-        "     Plots of many quantities related to growth are skipped.\n")
+        "      Plots of many quantities related to growth are skipped.\n")
   }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
@@ -269,8 +306,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     return(x)
   }
 
-  weight_plot <- function(gender){ # weight
-    ## This needs to be a function of gender since it can be called
+  weight_plot <- function(sex){ # weight
+    ## This needs to be a function of sex since it can be called
     ## either once for a single sex model or twice to produce plots for
     ## each one.
     x <- biology$Mean_Size
@@ -278,25 +315,22 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       if(!add){
         ymax <- max(biology$Wt_len_F)
         if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
-        plot(x,x,ylim=c(0,1.1*ymax), xlab=labels[1], ylab=labels[4], type="n")
-        abline(h=0,col="grey")
+        plot(x, x, ylim=c(0,1.1*ymax), xlab=labels[1], ylab=labels[4], type="n",
+             las=1, yaxs='i')
       }
-      lines(x,biology$Wt_len_F,type="o",col=colvec[1])
+      lines(x,biology$Wt_len_F,type='o',col=colvec[1])
       if(nsexes > 1){
-        lines(x,biology$Wt_len_M,type="o",col=colvec[2])
+        lines(x,biology$Wt_len_M,type='o',col=colvec[2])
         if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(colvec[1],colvec[2]))
       }
     } else { ## if empirical weight-at-age IS used
-      main <- ifelse(gender==1,
-                     "Female empirical weight at age, in middle of the year",
-                     "Male empirical weight at age in, middle of the year")
-      wtmat <- wtatage[wtatage$fleet==-1 & wtatage$gender==gender & wtatage$seas==seas,-(2:6)]
+      wtmat <- wtatage[wtatage$Fleet==-1 & wtatage$Sex==sex & wtatage$Seas==seas,-(2:6)]
       wtmat <- clean_wtatage(wtmat)
       if(!is.null(wtmat)){
-        persp(x=abs(wtmat$yr), y=0:accuage,
-              z=as.matrix(wtmat[,-1]),
-              theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main=main)
-        makeimage(wtmat, main=main)
+        ## persp(x=abs(wtmat$Yr), y=0:accuage,
+        ##       z=as.matrix(wtmat[,-1]),
+        ##       theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main="")
+        makeimage(wtmat, main="")
       }
     }
   }
@@ -306,49 +340,51 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     if(!wtatage_switch){ # if empirical weight-at-age is not used
       x <- biology$Mean_Size
       if(min(biology$Mat_len)<1){ # if length based
-        if(!add) plot(x,biology$Mat_len,xlab=labels[1],ylab=labels[3],type="o",col=colvec[1])
-        if(add) lines(x,biology$Mat_len,type="o",col=colvec[1])
+        if(!add) plot(x, biology$Mat_len, xlab=labels[1], ylab=labels[3],
+                      las=1, yaxs='i', ylim=c(0, max(biology$Mat_len)),
+                      type='o', col=colvec[1])
+        if(add) lines(x, biology$Mat_len, type='o', col=colvec[1])
       }else{ # else is age based
         if(!add){
           plot(growdatF$Age_Beg, growdatF$Age_Mat, xlab=labels[2],
-               ylab=labels[3], type="o", col=colvec[1])
+               las=1, yaxs='i', ylim=c(0, 1.1*max(growdatF$Age_Mat)),
+               ylab=labels[3], type='o', col=colvec[1])
         }else{
           lines(growdatF$Age_Beg, growdatF$Age_Mat,
-                type="o",col=colvec[1])
+                type='o',col=colvec[1])
         }
       }
-      if(!add) abline(h=0,col="grey")
     }else{
       #print(seas)
       # if empirical weight-at-age IS used
-      fecmat <- wtatage[wtatage$fleet==-2 & wtatage$gender==1,]
+      fecmat <- wtatage[wtatage$Fleet==-2 & wtatage$Sex==1,]
       if(nrow(fecmat) > 1){
         # figure out which seasons have fecundity values (maybe always only one?)
-        fecseasons <- sort(unique(fecmat$seas))
+        fecseasons <- sort(unique(fecmat$Seas))
         seas_label <- NULL
         for(iseas in fecseasons){
-          fecmat_seas <- fecmat[fecmat$seas==iseas, -(2:6)]
+          fecmat_seas <- fecmat[fecmat$Seas==iseas, -(2:6)]
           # label the season only if a multi-season model
           # also testing for length of fecseasons, but that's probably redundant
           if(nseasons>1 | length(fecseasons) > 1){
             seas_label <- paste("in season",iseas)
           }
-          main <- paste("Maturity x fecundity",seas_label)
+          main <- paste("",seas_label)
           #print(head(fecmat))
           fecmat_seas <- clean_wtatage(fecmat_seas)
-          persp(x=abs(fecmat_seas[,1]),
-                y=0:accuage,
-                z=as.matrix(fecmat_seas[,-1]),
-                theta=70,phi=30,xlab="Year",ylab="Age",zlab="",
-                main=main)
+          ## persp(x=abs(fecmat_seas[,1]),
+          ##       y=0:accuage,
+          ##       z=as.matrix(fecmat_seas[,-1]),
+          ##       theta=70,phi=30,xlab="Year",ylab="Age",zlab="",
+          ##       main=main)
         }
-        makeimage(fecmat_seas, main=main)
+        makeimage(fecmat_seas, main="")
       }
     }
   }
 
   makeimage <- function(mat,main=""){
-    yrvec <- abs(mat$yr)
+    yrvec <- abs(mat$Yr)
     ##### this stuff was used to add a row of mean values
     ## if(is.null(meanvec)){
     ##   meanvec <- mat[,1]
@@ -356,8 +392,11 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     ## }
     ## yrvec2 <- c(-2:-1+min(yrvec), yrvec)
     ## mat2 <- cbind(meanvec,NA,mat)
-    yrvec2 <- yrvec
-    mat2 <- mat[,-1]
+
+    # subset based on minyr and maxyr
+    subset <- yrvec >= minyr & yrvec <= maxyr
+    yrvec2 <- yrvec[subset]
+    mat2 <- mat[subset,-1]
     lastbin <- max(mat2)
     z <- t(mat2)
     breaks <- seq(0,lastbin,length=51)
@@ -368,7 +407,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     # save current parameter settings
     par_old <- par()
     # change parameters
-    par(mar=c(4.2,4.2,4,.5)+.1)
+    par(mar=c(4.2,4.2,1,.5)+.1)
     image(x=0:accuage,y=yrvec2,z=z, axes=F,xlab='Age',ylab='Year',
           col=col, breaks=breaks,main=main)
     axis(1, cex.axis=.7)
@@ -384,7 +423,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       ## and may need to be adjusted.
       ztext <- format(round(zdataframe$z, imageplot_text_round))
       ztext[ztext=="   NA" | ztext=="  NA"] <- ""
-      text(x=zdataframe$age,y=zdataframe$yr,label=ztext,font=zdataframe$font,cex=.7)
+      text(x=zdataframe$age,y=zdataframe$Yr,label=ztext,font=zdataframe$font,cex=.7)
     }
 
     ## add a legend to the image plot
@@ -397,8 +436,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     poly <- vector(mode="list", length(col))
     for(i in seq(poly)) poly[[i]] <- c(breaks[i], breaks[i+1], breaks[i+1], breaks[i])
     ylim <- range(breaks); xlim <- c(0,1)
-    par(mar=c(4.3,.5, 4.3,3))
-    plot(1, 1, type="n", ylim=ylim, xlim=xlim, axes=FALSE, ann=FALSE, xaxs="i", yaxs="i")
+    par(mar=c(4.3, .5, 1, 3))
+    plot(1, 1, type="n", ylim=ylim, xlim=xlim, axes=FALSE, ann=FALSE, xaxs="i", yaxs='i')
     for(i in seq(poly))
       polygon(c(0,0,1,1), poly[[i]], col=col[i], border=NA)
     axis(4, cex.axis=.7, las=2)
@@ -412,7 +451,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
   fec_pars_fn <- function(){ # fecundity from model parameters
     ymax <- 1.1*max(FecY)
     if(!add){
-      plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax), col=colvec[2], pch=19)
+      plot(FecX, FecY, xlab=fec_xlab, ylab=fec_ylab, ylim=c(0,ymax),
+           las=1, yaxs='i', col=colvec[2], pch=19)
       lines(FecX, rep(FecPar1, length(FecX)), col=colvec[1])
       text(mean(range(FecX)), FecPar1-0.05*ymax,"Egg output proportional to spawning biomass")
     }else{
@@ -424,8 +464,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
       plot(biology$Wt_len_F, biology$Fecundity, xlab=labels[8], ylab=labels[10],
-           ylim=c(0,ymax), col=colvec[1], type='o')
-      abline(h=0,col="grey")
+           las=1, yaxs='i', ylim=c(0,ymax), col=colvec[1], type='o')
     }else{
       points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
     }
@@ -434,8 +473,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
       plot(biology$Mean_Size, biology$Fecundity, xlab=labels[9], ylab=labels[10],
-           ylim=c(0,ymax), col=colvec[1], type='o')
-      abline(h=0,col="grey")
+           las=1, yaxs='i', ylim=c(0,1.1*ymax), col=colvec[1], type='o', yaxs='i')
     }else{
       points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
     }
@@ -445,21 +483,21 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     y <- biology$Spawn
     ymax <- 1.1*max(y)
     if(!add){
-      plot(x, y, xlab=labels[1], ylab=labels[5], type="o", col=colvec[1],
-           ylim=c(0, ymax))
-      abline(h=0,col="grey")
+      plot(x, y, xlab=labels[1], ylab=labels[5], type='o', col=colvec[1],
+           las=1, yaxs='i', ylim=c(0, ymax))
     }else{
-      lines(x, y, type="o", col=colvec[1])
+      lines(x, y, type='o', col=colvec[1])
     }
   }
   spawn_output_age_fn <- function(){ # spawning output at age
     x <- growdat$Age_Beg[growdat$Sex==1]
     y <- growdat$"Mat*Fecund"[growdat$Sex==1]
+    ymax <- 1.1*max(y)
     if(!add){
-      plot(x, y, xlab=labels[2], ylab=labels[5], type="o", col=colvec[1])
-      abline(h=0, col="grey")
+      plot(x, y, xlab=labels[2], ylab=labels[5], type='o', col=colvec[1],
+           las=1, yaxs='i', ylim=c(0, ymax))
     }else{
-      lines(x, y, type="o", col=colvec[1])
+      lines(x, y, type='o', col=colvec[1])
     }
   }
 
@@ -591,16 +629,8 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       lab1long <- "SD of lengths"
       lab2 <- "CV_Beg"
       lab2long <- "CV of lengths"
-      lab1max <- 1.1*max(growdat[[lab1]])
-      lab2max <- 1.05*max(growdat[[lab2]])
-      # temporary stuff for growth workshop
-      if(exists("lab1max",where=1)){
-        lab1max <- get("lab1max",pos=1)
-      }
-      if(exists("lab2max",where=1)){
-        lab2max <- get("lab2max",pos=1)
-      }
-      # end temporary stuff
+      lab1max <- 1.1*max(growdat[[lab1]], na.rm=TRUE)
+      lab2max <- 1.05*max(growdat[[lab2]], na.rm=TRUE)
       lab1_axis_vec <- NULL
     }
     if(option==2){
@@ -609,7 +639,7 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
       lab2 <- "Wt_Beg"
       lab2long <- "Mean weight"
       lab1max <- 1
-      lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M))
+      lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M), na.rm=TRUE)
       lab1_axis_vec <- c(0, 0.5, 1)
     }
     # calculate scaling factor between CVs and SDs to share each panel
@@ -722,6 +752,25 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     #plotinfo <- rbind(plotinfo,data.frame(file=file,caption=caption))
   }
 
+
+  # plot distribution of length at age (by season, sub-season, and morph)
+  if(4 %in% subplots & !wtatage_switch){
+    if(!is.null(replist$ALK)){
+      plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
+                                      plot = plot, print = print,
+                                      plotdir = plotdir, pwidth = pwidth,
+                                      pheight = pheight, punits = punits,
+                                      res = res, ptsize = ptsize,
+                                      cex.main = cex.main, mainTitle = mainTitle)
+      # SSplotAgeMatrix adds a "category" column which isn't present
+      # in plotinfo until the end of this SSplotBiology function.
+      plotinfo.tmp <- plotinfo.tmp[,c("file","caption")]
+      plotinfo <- rbind(plotinfo, plotinfo.tmp)
+    }else{
+      cat("Skipped some plots because AGE_LENGTH_KEY unavailable in report file\n",
+          "          because starter file set to produce limited report detail.\n")
+    }
+  }
 
   # function for illustrating parameterization of growth curves
   growth_curve_labeled_fn <- function(option=1){ # growth
@@ -958,106 +1007,144 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
 
   x <- biology$Mean_Size
   ## NOTE: weight plots are now a special case since they are broken down
-  ## by whether the model is 1 or two gender. In the latter two separate
+  ## by whether the model is 1-sex or 2-sex. In the latter two separate
   ## plots need to be made.
   if(plot){ # plot to screen or to PDF file
     if(5 %in% subplots) {
-      weight_plot(gender=1)
-      if(!wtatage_switch & nsexes==2) weight_plot(gender=2)
+      weight_plot(sex=1)
+      if(!wtatage_switch & nsexes==2){
+        weight_plot(sex=2)
+      }
     }
-    if(6 %in% subplots) maturity_plot()
-    if(7 %in% subplots & !wtatage_switch & FecType==1) fec_pars_fn()
-    if(8 %in% subplots & !wtatage_switch & fecundityOK) fec_weight_fn()
-    if(9 %in% subplots & !wtatage_switch & fecundityOK) fec_len_fn()
-    if(10 %in% subplots & !wtatage_switch) spawn_output_len_fn()
-    if(11 %in% subplots & !wtatage_switch) spawn_output_age_fn()
+    if(6 %in% subplots){
+      maturity_plot()
+    }
+    if(!wtatage_switch){
+      if(7 %in% subplots & FecType==1){
+        fec_pars_fn()
+      }
+      if(8 %in% subplots & fecundityOK){
+        fec_weight_fn()
+      }
+      if(9 %in% subplots & fecundityOK){
+        fec_len_fn()
+      }
+      if(10 %in% subplots){
+        spawn_output_len_fn()
+      }
+      if(11 %in% subplots){
+        spawn_output_age_fn()
+      }
+    }
   }
   if(print){ # print to PNG files
     if(5 %in% subplots){
       file <- "bio5_weightatsize.png"
-      caption <- "Weight-length relationship for females"
+      caption <- "Weight-length relationship"
+      if(wtatage_switch){
+        caption <- "Weight-at-age"
+        if(nsexes==1){
+          caption <- paste(caption, "for females")
+        }
+      }
       plotinfo <- pngfun(file=file, caption=caption)
-      weight_plot(gender=1)
+      weight_plot(sex=1)
       dev.off()
+      # add separate plot for males (only for empirical weight-at-age models)
       if(wtatage_switch & nsexes==2){
         file <- "bio5_weightatsize2.png"
-        caption <- "Weight-length relationship for males"
+        caption <- "Weight-at-age for males"
         plotinfo <- pngfun(file=file, caption=caption)
-        weight_plot(gender=2)
+        weight_plot(sex=2)
         dev.off()
       }
     }
     if(6 %in% subplots){
       file <- "bio6_maturity.png"
       caption <- paste("Maturity at",ifelse(min(biology$Mat_len)<1,"length","age"))
+      if(wtatage_switch){
+        caption <- "Spawning output at age (maturity x fecundity)"
+      }
       plotinfo <- pngfun(file=file, caption=caption)
       maturity_plot()
       dev.off()
     }
-    if(7 %in% subplots & FecType==1){
-      file <- "bio7_fecundity.png"
-      caption <- "Fecundity"
-      plotinfo <- pngfun(file=file, caption=caption)
-      fec_pars_fn()
-      dev.off()
-    }
-    if(8 %in% subplots & fecundityOK){
-      file <- "bio8_fecundity_wt.png"
-      caption <- "Fecundity as a function of weight"
-      plotinfo <- pngfun(file=file, caption=caption)
-      fec_weight_fn()
-      dev.off()
-    }
-    if(9 %in% subplots & fecundityOK){
-      file <- "bio9_fecundity_len.png"
-      caption <- "Fecundity as a function of length"
-      plotinfo <- pngfun(file=file, caption=caption)
-      fec_len_fn()
-      dev.off()
-    }
-    if(10 %in% subplots){
-      file <- "bio10_spawningoutput_len.png"
-      caption <- paste("Spawning output at length.",
-                       "This is the product of maturity and fecundity",
-                       "unless maturity is age-based, in which case only",
-                       "fecundity is represented.")
-      plotinfo <- pngfun(file=file, caption=caption)
-      spawn_output_len_fn()
-      dev.off()
-    }
-    if(11 %in% subplots){
-      file <- "bio11_spawningoutput_age.png"
-      caption <- paste("Spawning output at age.",
-                       "This is the product of maturity and fecundity.",
-                       "When these processes are length-based they are",
-                       "converted into the age dimension using the matrix",
-                       "of length at age.")
-      plotinfo <- pngfun(file=file, caption=caption)
-      spawn_output_age_fn()
-      dev.off()
-    }
-  }
+    if(!wtatage_switch){
+      if(7 %in% subplots & FecType==1){
+        file <- "bio7_fecundity.png"
+        caption <- "Fecundity"
+        plotinfo <- pngfun(file=file, caption=caption)
+        fec_pars_fn()
+        dev.off()
+      }
+      if(8 %in% subplots & fecundityOK){
+        file <- "bio8_fecundity_wt.png"
+        caption <- "Fecundity as a function of weight"
+        plotinfo <- pngfun(file=file, caption=caption)
+        fec_weight_fn()
+        dev.off()
+      }
+      if(9 %in% subplots & fecundityOK){
+        file <- "bio9_fecundity_len.png"
+        caption <- "Fecundity as a function of length"
+        plotinfo <- pngfun(file=file, caption=caption)
+        fec_len_fn()
+        dev.off()
+      }
+      if(10 %in% subplots){
+        file <- "bio10_spawningoutput_len.png"
+        caption <- paste("Spawning output at length.",
+                         "This is the product of maturity and fecundity",
+                         "unless maturity is age-based, in which case only",
+                         "fecundity is represented.")
+        plotinfo <- pngfun(file=file, caption=caption)
+        spawn_output_len_fn()
+        dev.off()
+      }
+      if(11 %in% subplots){
+        file <- "bio11_spawningoutput_age.png"
+        caption <- paste("Spawning output at age.",
+                         "This is the product of maturity and fecundity.",
+                         "When these processes are length-based they are",
+                         "converted into the age dimension using the matrix",
+                         "of length at age.")
+        plotinfo <- pngfun(file=file, caption=caption)
+        spawn_output_age_fn()
+        dev.off()
+      }
+    } # end check for wtatage model
+  } # end check for print=TRUE (printing to PNG files)
 
   # Natural mortality (if age-dependent -- need to add time-varying M plot)
   MatAge <- growdatF$M # female mortality in the ending year
+  if(nsexes > 1){
+    growdatM <- growdat[growdat$Morph==morphs[2],]
+    MatAge_M <- growdatM$M
+  }
   # not sure what role M2 is playing here
   M2 <- MGparmAdj[,c(1,grep("NatM",names(MGparmAdj)))]
   # not sure when you could have ncol(M2) = NULL
   if(!is.null(ncol(M2))){
     M2f <- M2[,c(1,grep("Fem",names(M2)))]
     if(min(MatAge)!=max(MatAge) & 21 %in% subplots){
-      ymax <- max(MatAge)
+      ymax <- 1.1*max(MatAge)
+      if(nsexes > 1){
+        ymax <- 1.1*max(MatAge, MatAge_M)
+      }
       # function to plut natural mortality
       mfunc <- function(){
         if(!add){
-          plot(growdatF$Age_Beg,MatAge,col=colvec[1],lwd=2,ylim=c(0,ymax),type="n",
-               ylab=labels[7],xlab=labels[2])
-          abline(h=0,col="grey")
+          plot(growdatF$Age_Beg, MatAge, col=colvec[1], lwd=2,
+               ylim=c(0, ymax), yaxs='i', type="n", 
+               ylab=labels[7], xlab=labels[2], las=1)
         }
-        lines(growdatF$Age_Beg, MatAge, col=colvec[1],lwd=2,type="o")
+        lines(growdatF$Age_Beg, MatAge, col=colvec[1],lwd=2,type='o')
         if(nsexes > 1){
           growdatM <- growdat[growdat$Morph==morphs[2],]
-          lines(growdatM$Age_Beg,growdatM$M,col=colvec[2],lwd=2,type="o")
+          lines(growdatM$Age_Beg, growdatM$M, lty=ltyvec[2], col=colvec[2],
+                lwd=2, type='o')
+          legend('bottomleft', bty="n", c("Females","Males"), lty=ltyvec, lwd=2,
+                 col=c(colvec[1],colvec[2]))
         }
       }
       # run function if requested to make plot
@@ -1075,69 +1162,87 @@ function(replist, plot=TRUE,print=FALSE,add=FALSE,subplots=1:17,seas=1,
     }
   }
 
-  # Time-varying growth (formerly plot #2)
+  # Time-varying growth
   if(is.null(growthvaries)){
-    if(verbose) cat("No check for time-varying growth for this type of model (not sure why)\n")
+    if(verbose){
+      cat("No check for time-varying growth because\n",
+          "     starter file set to produce limited report detail.\n")
+    }
   }else{ # temporarily disable multi-season plotting of time-varying growth
-    if(is.null(growthseries))
-        {
-          cat("! Warning: no time-varying growth info because\n",
-              "          'detailed age-structured reports' turned off in starter file.\n")
-        }else{
-          if(growthvaries) # if growth is time varying
-            for(i in 1:nsexes)
-                {
-                  growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-                                               growthseries$Morph==morphs[i],]
-                  x <- 0:accuage
-                  y <- growdatuse$Yr
-                  z <- as.matrix(growdatuse[,-(1:4)])
-                  time <- FALSE
-                  for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
-                  if(time)
-                      {
-                        z <- t(z)
-                        if(i==1){main <- "Female time-varying growth"}
-                        if(nsexes==1){main <- "Time-varying growth"}
-                        if(i==2){main <- "Male time-varying growth"}
-                        if(nseasons > 1){main <- paste(main," season 1",sep="")}
-                        if(plot){
-                          if(22 %in% subplots)
-                            persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
-                                  box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
-                                  phi=35,theta=-10)
-                          if(23 %in% subplots)
-                            contour(x,y,z,nlevels=12,xlab=labels[2],
-                                    main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
-                        if(print){
-                          if(22 %in% subplots){
-                            file <- paste("bio22_timevarygrowthsurf_sex",i,".png",sep="")
-                            caption <- "Perspective plot of time-varying growth"
-                            plotinfo <- pngfun(file=file, caption=caption)
-                            persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
-                                  box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
-                                  phi=35,theta=-10)
-                            dev.off()
-                          }
-                          if(23 %in% subplots){
-                            file <- paste("bio23_timevarygrowthcontour_sex",i,".png",sep="")
-                            caption <- "Contour plot of time-varying growth"
-                            plotinfo <- pngfun(file=file, caption=caption)
-                            contour(x,y,z,nlevels=12,xlab=labels[2],
-                                    main=main,cex.main=cex.main,col=ians_contour,lwd=2)
-                            dev.off()
-                          }
-                        } # end print
-                      } # end if time-varying
-                } # end loop over sexes
-        } # end of if data available for time varying growth
+    if(is.null(growthseries)){
+      cat("! Warning: no time-varying growth info because\n",
+          "     starter file set to produce limited report detail.\n")
+    }else{
+      if(growthvaries){ # if growth is time varying
+        for(i in 1:nsexes){
+          growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
+                                       growthseries$Morph==morphs[i],]
+          # trim based on forecast=TRUE/FALSE
+          if(!forecast){
+            growdatuse <- growdatuse[growdatuse$Yr <= endyr,]
+          }
+          # trim based on minyr and maxyr
+          growdatuse <- growdatuse[growdatuse$Yr >= minyr &
+                                     growdatuse$Yr <= maxyr,]
+          # assemble vectors and matrix
+          x <- 0:accuage
+          y <- growdatuse$Yr
+          z <- as.matrix(growdatuse[,-(1:4)])
+          time <- FALSE
+          for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
+          if(time){
+            z <- t(z)
+            if(i==1){main <- "Female time-varying growth"}
+            if(nsexes==1){main <- "Time-varying growth"}
+            if(i==2){main <- "Male time-varying growth"}
+            if(nseasons > 1){main <- paste(main," season 1",sep="")}
+            if(plot){
+              if(22 %in% subplots)
+                persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                      box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                      phi=35,theta=-10)
+              if(23 %in% subplots)
+                contour(x,y,z,nlevels=12,xlab=labels[2],
+                        main=main,cex.main=cex.main,col=ians_contour,lwd=2)}
+            if(print){
+              if(22 %in% subplots){
+                file <- paste("bio22_timevarygrowthsurf_sex",i,".png",sep="")
+                caption <- "Perspective plot of time-varying growth"
+                plotinfo <- pngfun(file=file, caption=caption)
+                persp(x,y,z,col="white",xlab=labels[2],ylab="",zlab=labels[1],expand=0.5,
+                      box=TRUE,main=main,cex.main=cex.main,ticktype="detailed",
+                      phi=35,theta=-10)
+                dev.off()
+              }
+              if(23 %in% subplots){
+                file <- paste("bio23_timevarygrowthcontour_sex",i,".png",sep="")
+                caption <- "Contour plot of time-varying growth"
+                plotinfo <- pngfun(file=file, caption=caption)
+                contour(x,y,z,nlevels=12,xlab=labels[2],
+                        main=main,cex.main=cex.main,col=ians_contour,lwd=2)
+                dev.off()
+              }
+            } # end print
+          } # end if time-varying
+        } # end loop over sexes
+      } # end if growth is time varying
+    } # end of if data available for time varying growth
   }# end disable of time-varying growth for multi-season models
 
   # plot time-series of any time-varying quantities
   if(24 %in% subplots){
     # general function to work for any parameter
-    timeVaryingParmFunc <- function(parmlabel){
-      plot(MGparmAdj$Yr, MGparmAdj[[parmlabel]],
+    timeVaryingParmFunc <- function(parmlabel, forecast=FALSE){
+      if(forecast){
+        MGparmAdj.tmp <- MGparmAdj
+      }else{
+        MGparmAdj.tmp <- MGparmAdj[MGparmAdj$Yr <= endyr, ]
+      }
+      # trim based on minyr and maxyr
+      MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp$Yr >= minyr &
+                                       MGparmAdj.tmp$Yr <= maxyr,]
+      # make plot
+      plot(MGparmAdj.tmp$Yr, MGparmAdj.tmp[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected

@@ -49,3 +49,8 @@ cleanup of terminology in latest Stock Synthesis
 
 * Fix bugs in new stock-recruit plot, and cohort lines added to bubbles
 
+# r4ss 1.33.1 (5 November 2018)
+
+* Numerous minor bug fixes and minor improvements
+
+* Compatibility with SS versions 3.24 through 3.30.13-beta

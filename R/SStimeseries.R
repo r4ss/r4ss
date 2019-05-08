@@ -101,11 +101,11 @@ SStimeseries <- function(dir,  plotdir = 'default'){
   		# version 3.30
   		defs 		 <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
     	defs[defs==""] <- NA
-    	FleetNames   <- as.character(defs[grep("fleet_names",defs$X1),-1])
+    	FleetNames   <- as.character(defs[grep("Fleet_name",defs$X1),-1])
     	FleetNames   <- FleetNames[!is.na(FleetNames)]
     	fleet_ID     <- 1: length(FleetNames)
-    	fleet_type   <- as.numeric(defs[4:(3+length(fleet_ID)),1])
-    	nfleets      <- sum(fleet_type <= 2 )
+    	fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1]) #as.numeric(defs[4:(3+length(fleet_ID)),1])
+    	nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
   	}
   	if (SS_versionNumeric < 3.3){
   		# version 3.20 - 3.24
@@ -183,33 +183,45 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	#    print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
 
 
-	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
-	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SSB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
-	ssb.virgin   = as.numeric(strsplit(base[grep("SSB_Virgin",base)]," ") [[1]][3])
-	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
-	
-	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)
-	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
-	
-
 	# Determine the number of fishery fleets with catch and sum all mortality across fleets.
 	if (nfleets != length(names)) { 
 		print("WARNING: The number of fishing fleets does not match the number of fishing fleets with names.")}
 
 	catch   = numeric(length(hist))
 	if (SS_versionNumeric < 3.3 ) { xx = 12}
-	if (SS_versionNumeric >= 3.3) { xx = 14}
+	if (SS_versionNumeric >= 3.3) { xx = 15}
 
-	for (a in 1:nfleets){
-		temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(fleet.num[a], names[a], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
-		catch = catch + temp
+	catch.all.areas = 0
+	for (b in 1:nareas)
+	{
+		for (a in 1:nfleets){
+			temp = mapply(function(x) out = as.numeric(strsplit(base[grep(paste(fleet.num[a], names[a], nareas[b], x,sep=" "),base)]," ")[[1]][xx]), x = hist)
+			catch = catch + temp
+		}
+		catch.all.areas = catch.all.areas + catch
 	}
 	fore.catch = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("ForeCatch_",x,sep=""),base)]," ")[[1]][3]), x = fore)
-	catch.all    = c(catch, fore.catch)
+	catch.all    = c(catch.all.areas, fore.catch)
 
 	print("Catch includes estimated discards for total dead.")
 	print("Exploitation = Total catch (including discards) divided by the summary biomass.")
 	exp.all = catch.all / smry.all 
+
+
+	# Check to see if there is exploitation in the first model year
+	ind = 0
+	for(z in 1:10) { ind = ind + ifelse(catch.all[z] == 0, 1, break()) }
+	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + ind):foreyr)
+	if(ind != 0) { adj.spr.all = c(rep(0, ind), adj.spr.all)}
+
+	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SSB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
+	ssb.virgin   = as.numeric(strsplit(base[grep("SSB_Virgin",base)]," ") [[1]][3])
+	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
+	
+	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1 + ind):foreyr)
+	if(ind != 0) { depl.all = c(rep(1, ind), depl.all)}
+	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
+	
 	
 	ts.table = data.frame(all,
 				comma(tot.bio.all,0),

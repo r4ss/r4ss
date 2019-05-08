@@ -12,20 +12,22 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
   "Relative spawning biomass", "Age-0 recruits (1,000s)",
   "Recruitment deviations", "Index", "Log index", "1 - SPR", "Density",
   "Management target", "Minimum stock size threshold", "Spawning output",
-  "Harvest rate"), col = NULL, shadecol = NULL, pch = NULL, lty = 1,
-  lwd = 2, spacepoints = 10, staggerpoints = 1, initpoint = 0,
-  tickEndYr = TRUE, shadeForecast = TRUE, xlim = "default", ylimAdj = 1,
-  xaxs = "r", yaxs = "r", type = "o", uncertainty = TRUE,
-  shadealpha = 0.1, legend = TRUE, legendlabels = "default",
-  legendloc = "topright", legendorder = "default", legendncol = 1,
-  sprtarg = NULL, btarg = NULL, minbthresh = NULL, pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10, cex.main = 1,
+  "Harvest rate"), col = NULL, shadecol = NULL, pch = NULL,
+  lty = 1, lwd = 2, spacepoints = 10, staggerpoints = 1,
+  initpoint = 0, tickEndYr = TRUE, shadeForecast = TRUE,
+  xlim = "default", ylimAdj = 1, xaxs = "r", yaxs = "r",
+  type = "o", uncertainty = TRUE, shadealpha = 0.1, legend = TRUE,
+  legendlabels = "default", legendloc = "topright",
+  legendorder = "default", legendncol = 1, sprtarg = NULL,
+  btarg = NULL, minbthresh = NULL, pwidth = 6.5, pheight = 5,
+  punits = "in", res = 300, ptsize = 10, cex.main = 1,
   plotdir = NULL, filenameprefix = "", densitynames = c("SSB_Virgin",
-  "R0"), densityxlabs = "default", densityscalex = 1, densityscaley = 1,
-  densityadjust = 1, densitysymbols = TRUE, densitytails = TRUE,
-  densitymiddle = FALSE, densitylwd = 1, fix0 = TRUE, new = TRUE,
-  add = FALSE, par = list(mar = c(5, 4, 1, 1) + 0.1), verbose = TRUE,
-  mcmcVec = FALSE, show_equilibrium = TRUE)
+  "R0"), densityxlabs = "default", densityscalex = 1,
+  densityscaley = 1, densityadjust = 1, densitysymbols = TRUE,
+  densitytails = TRUE, densitymiddle = FALSE, densitylwd = 1,
+  fix0 = TRUE, new = TRUE, add = FALSE, par = list(mar = c(5, 4, 1,
+  1) + 0.1), verbose = TRUE, mcmcVec = FALSE,
+  show_equilibrium = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}}
@@ -224,7 +226,6 @@ multiple models, where the collection was created using the
 # directories where models were run need to be defined
 dir1 <- 'c:/SS/mod1'
 dir2 <- 'c:/SS/mod2'
-dir1mcmc <- 'c:/SS/mod1mcmc'
 
 # read two models
 mod1 <- SS_output(dir=dir1)
@@ -236,8 +237,12 @@ mod.sum <- SSsummarize(list(mod1, mod2))
 # plot comparisons
 SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
 
-# Example showing comparison if MCMC results are available
-mod.sum$mcmc <- SSgetMCMC(dir=dir1mcmc)
+# Example showing comparison of MLE to MCMC results where the mcmc would have
+# been run in the subdirectory 'c:/SS/mod1/mcmc'
+mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
+# pass the same model twice to SSsummarize in order to plot it twice 
+mod.sum <- SSsummarize(list(mod1, mod1))
+# compare MLE to MCMC
 SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
 
 }

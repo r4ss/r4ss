@@ -9,8 +9,8 @@ SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
   lwd = 1, axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", ptsize = 10, res = 300, plotdir = "default",
   cex.main = 1, labels = c("Length (cm)", "Age (yr)"), maxrows = 6,
-  maxcols = 6, rows = 1, cols = 1, fixdims = TRUE, verbose = TRUE,
-  ...)
+  maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
+  verbose = TRUE, ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}

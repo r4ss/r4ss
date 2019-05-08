@@ -5,11 +5,8 @@
 ##' (2) a "Wood's Hole Mohn's Rho", and
 ##' (3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho"
 ##' (2) and (3) are based on all years between the reference and the retrospective run.
-##' Reference: Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias and
-##' retrospective patterns in integrated, age-structured stock assessment models. ICES J. Mar. Sci
-##' 'Volume 72, Issue 1, 1 January 2015, Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
+##' 
 ##'
-## Grab all the results
 ##' @param summaryoutput List created by \code{SSsummarize}. The expected order for the
 ##' models are the full reference model, the retro -1, retro -2, and so forth.
 ##' @param endyrvec Single year or vector of years representing the
@@ -19,6 +16,10 @@
 ##' @param verbose Print messages when running the function?
 ##'
 ##' @author Chantel R. Wetzel and Carey McGilliard
+##' @references Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias
+##' and retrospective patterns in integrated, age-structured stock assessment
+##' models. ICES J. Mar. Sci Volume 72, Issue 1, 1 January 2015,
+##' Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
 ##'
 ##' @export
 

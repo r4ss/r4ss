@@ -40,7 +40,7 @@
 #' @param res resolution for PNG file
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
-#' @param addmain switch which allows the plot title to be left off
+#' @param mainTitle switch which allows the plot title to be left off
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param minyr First year to show in plot (for zooming in on a subset of
@@ -80,7 +80,7 @@ function(replist,subplots=1:9,
          pch1=21, pch2=16, cex=1, bg="white",
          legend=TRUE, legendloc="topright", seasnames=NULL,
          pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-         addmain=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
+         mainTitle=TRUE,plotdir="default", minyr=NULL, maxyr=NULL,
          maximum_ymax_ratio=Inf, show_input_uncertainty=TRUE, verbose=TRUE, ...)
 {
   # get some quantities from replist
@@ -155,24 +155,44 @@ function(replist,subplots=1:9,
   for(ifleet in fleetvec){
     if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$Fleet==ifleet])) > 1){
       usecol <- TRUE
-    }else{
-      legend=FALSE
     }
+  }
+  # turn off use of legend if there's never more than 1 season per index
+  if(!usecol){
+    legend <- FALSE
   }
 
   if(col1[1]=="default"){
     colvec1 <- "black"
-    if(usecol & nseasons==4) colvec1 <- c("blue4","green3","orange2","red3")
-    if(usecol & !nseasons %in% c(1,4)) colvec1 <- rich.colors.short(nseasons)
+    if(usecol & nseasons==4){
+      colvec1 <- c("blue4","green3","orange2","red3")
+    }
+    if(usecol & !nseasons %in% c(1,4)){
+      colvec1 <- rich.colors.short(nseasons)
+    }
   }else{
     colvec1 <- col1
+    # if user provides single value (or vector of length less than nseasons)
+    # make sure it's adequate to cover all seasons
+    if(length(colvec1) < nseasons){
+      colvec1 <- rep(col1, nseasons)
+    }
   }
   if(col2[1]=="default"){
     colvec2 <- "blue"
-    if(usecol & nseasons==4) colvec2 <- c("blue4","green3","orange2","red3")
-    if(usecol & !nseasons %in% c(1,4)) colvec2 <- rich.colors.short(nseasons)
+    if(usecol & nseasons==4){
+      colvec2 <- c("blue4","green3","orange2","red3")
+    }
+    if(usecol & !nseasons %in% c(1,4)){
+      colvec2 <- rich.colors.short(nseasons)
+    }
   }else{
     colvec2 <- col2
+    # if user provides single value (or vector of length less than nseasons)
+    # make sure it's adequate to cover all seasons
+    if(length(colvec1) < nseasons){
+      colvec1 <- rep(col1, nseasons)
+    }
   }
   if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
@@ -207,7 +227,7 @@ function(replist,subplots=1:9,
     include <- !is.na(cpueuse$Like)
     if(any(include)){
       if(usecol){
-        s <- cpueuse$Seas
+        s <- cpueuse$Seas[which(include)]
       }else{
         s <- 1 # only use colorvector if more than 1 season
       }
@@ -227,7 +247,7 @@ function(replist,subplots=1:9,
       liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
       npoints <- length(z)
       main=paste(labels[2], Fleet,sep=" ")
-      if(!addmain) main <- ""
+      if(!mainTitle) main <- ""
 
       addlegend <- function(pch, colvec){
         names <- paste(seasnames,"observations")
@@ -271,8 +291,9 @@ function(replist,subplots=1:9,
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
                 lwd=1.2,col=col4,lty="dashed")
         }
-        if(legend & length(colvec2)>1) legend(x=legendloc, legend=seasnames,
-                                              pch=pch2, col=colvec2, cex=cex)
+        if(legend & length(colvec2)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+        }
       }
 
       if(plot){
@@ -312,7 +333,7 @@ function(replist,subplots=1:9,
 
       # same plots again in log space (someday should create generalized set of commands)
       main <- paste(labels[5], Fleet, sep=" ")
-      if(!addmain) main <- ""
+      if(!mainTitle) main <- ""
       uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
       liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
       cpuefun3 <- function(addexpected=TRUE){
@@ -333,8 +354,9 @@ function(replist,subplots=1:9,
                liw=liw[include],
                col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
         if(addexpected) lines(x,log(z),lwd=2,col=col3)
-        if(length(colvec1)>1) legend(x=legendloc, legend=seasnames,
-                                     pch=pch1, col=colvec1, cex=cex)
+        if(legend & length(colvec1)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
+        }
       }
       cpuefun4 <- function(){
         # plot of log(observed) vs. log(expected) with smoother
@@ -346,13 +368,14 @@ function(replist,subplots=1:9,
           psmooth <- loess(log(z[include])~log(y[include]),degree=1)
           lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
                 lwd=1.2,col=col4,lty="dashed")}
-        if(length(colvec2)>1) legend(x=legendloc, legend=seasnames,
-                                     pch=pch2, col=colvec2, cex=cex)
+        if(length(colvec2)>1){
+          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+        }
       }
       cpuefun5 <- function(){
         # plot of time-varying catchability (if present)
         main <- paste(labels[10], Fleet, sep=" ")
-        if(!addmain) main <- ""
+        if(!mainTitle) main <- ""
         q <- cpueuse$Calc_Q
         if(!add) plot(x,q,type='o',xlab=labels[1],main=main,
                       cex.main=cex.main,ylab=labels[9],
@@ -361,7 +384,7 @@ function(replist,subplots=1:9,
       cpuefun6 <- function(){
         # plot of time-varying catchability (if present)
         main <- paste(labels[12], Fleet, sep=" ")
-        if(!addmain) main <- ""
+        if(!mainTitle) main <- ""
         v <- cpueuse$Vuln_bio
         q1 <- cpueuse$Calc_Q
         q2 <- cpueuse$Eff_Q
@@ -432,7 +455,7 @@ function(replist,subplots=1:9,
   if(datplot==TRUE & nrow(allcpue)>0){
     all_cpue_fun <- function(){
       main="All cpue plot"
-      if(!addmain) main <- ""
+      if(!mainTitle) main <- ""
       xlim <- c(min(allcpue$year,na.rm=TRUE)-1,max(allcpue$year,na.rm=TRUE)+1)
 
       # change range if requested

@@ -95,8 +95,8 @@ make_multifig_sexratio <-
   df.list <- list();k <- 1
   for(yr.temp in yrvec){
     for(bin in unique(dbase$Bin)){
-      female <- dbase[dbase$Gender==1 & dbase$Bin==bin & dbase$Yr==yr.temp,]
-      male <- dbase[dbase$Gender==2 & dbase$Bin==bin &dbase$Yr==yr.temp,]
+      female <- dbase[dbase$Sex==1 & dbase$Bin==bin & dbase$Yr==yr.temp,]
+      male <- dbase[dbase$Sex==2 & dbase$Bin==bin &dbase$Yr==yr.temp,]
       nm <- nrow(male); nf <- nrow(female)
       ## Four cases depending on which data were observed. If only one sex
       ## was observed, do some special things. If none, we'll skip it

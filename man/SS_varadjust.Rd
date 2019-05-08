@@ -4,10 +4,11 @@
 \alias{SS_varadjust}
 \title{Modify variance and sample size adjustments in the control file}
 \usage{
-SS_varadjust(dir = "C:/myfiles/mymodels/myrun/", ctlfile = "control.ss_new",
-  newctlfile = "control_modified.ss", keyword = "variance adjustments",
-  newtable = NULL, newrow = NULL, rownumber = NULL, maxcols = 100,
-  maxrows = 100, overwrite = FALSE, version = "3.30", verbose = TRUE)
+SS_varadjust(dir = "C:/myfiles/mymodels/myrun/",
+  ctlfile = "control.ss_new", newctlfile = "control_modified.ss",
+  keyword = "variance adjustments", newtable = NULL, newrow = NULL,
+  rownumber = NULL, maxcols = 100, maxrows = 100,
+  overwrite = FALSE, version = "3.30", verbose = TRUE)
 }
 \arguments{
 \item{dir}{Directory with control file to change.}

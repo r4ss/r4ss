@@ -137,7 +137,7 @@ SSplotSexRatio <-
   for(f in fleets){
     dbasef <- dbase_kind[dbase_kind$Fleet==f,]
     ## For a 2-sex model some fleets may have only females so skip those
-    if(length(unique(dbasef$Gender)) > 1 & nrow(dbasef) > 0 ){
+    if(length(unique(dbasef$Sex)) > 1 & nrow(dbasef) > 0 ){
       ## loop over partitions (discard, retain, total)
       for(j in unique(dbasef$Part)){
         dbase <- dbasef[dbasef$Part==j,]
@@ -155,7 +155,7 @@ SSplotSexRatio <-
         tempfun <- function(ipage,...){
           ## a function to combine a bunch of repeated commands
           make_multifig_sexratio(dbase=dbase,
-                         nlegends=3, legtext=list("yr","N","effN"), lwd=lwd,
+                         nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
                          main=ptitle, cex.main=cex.main, xlab=kindlab, ylab=labels[6],
                          maxrows=maxrows, maxcols=maxcols, rows=rows, cols=cols,
                          fixdims=fixdims, ipage=ipage, scalebins=FALSE,

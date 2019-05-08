@@ -43,13 +43,12 @@ SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",
            forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
-           minyr=NULL,maxyr=NULL,
+           minyr=-Inf,maxyr=Inf,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg="default",minbthresh="default",xlab="Year",
            labels=NULL,
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1)
 {
-
   # individual function for plotting time series of total or summary biomass
   # subplot1 = total biomass total all areas
   # subplot2 = total biomass by area
@@ -66,6 +65,7 @@ SSplotTimeseries <-
   # subplot13 = fraction of recruitment by area
   # subplot14 = recruitment by birth season
   # subplot15 = fraction of recruitment by birth season
+  # subplot16 = dynamic B0
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
   # subfunction to write png files
@@ -160,15 +160,21 @@ SSplotTimeseries <-
   }
   # modifying data to subset for a single season
   ts <- timeseries
+  
   if(nseasons>1){
     if(SS_versionshort=="SS-V3.11"){
+      # seasfracs previously unavailable so assume all seasons equal
       ts$YrSeas <- ts$Yr + (ts$Seas-1)/nseasons
     }else{
+      # more recent models have seasfracs
       ts$YrSeas <- ts$Yr + seasfracs
     }
   }else{
     ts$YrSeas <- ts$Yr
   }
+
+  # crop any years outside the range of maxyr to maxyr
+  ts <- ts[ts$YrSeas >= minyr & ts$YrSeas <= maxyr,]
 
   # warn about spawning season--seems to no longer be necessary now that title
   # is update for to reflect spawning season
@@ -317,8 +323,9 @@ SSplotTimeseries <-
     if(uncertainty & subplot %in% c(7,9,11)){
       main <- paste(main,"with ~95% asymptotic intervals")
       if(!"SSB_Virgin" %in% derived_quants$Label){
-        cat("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
-            "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
+        warning("Skipping spawning biomass with uncertainty plot because 'SSB_Virgin' not in derived quantites.\n",
+                "  Try changing 'min yr for Spbio_sdreport' in starter file to -1.\n")
+        stdtable <- NULL
       }else{
         # get subset of DERIVED_QUANTITIES
         if(subplot==7){ # spawning biomass
@@ -377,7 +384,9 @@ SSplotTimeseries <-
     }
     if(subplot%in%c(13,15)) ymax <- 1 # these plots show fractions
 
-    if(uncertainty & subplot %in% c(7,9,11)) ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
+    if(uncertainty & subplot %in% c(7,9,11)){
+      ymax <- max(ymax,stdtable$upper, na.rm=TRUE)
+    }
 
     if(print){ # if printing to a file
       # adjust file names
@@ -404,9 +413,7 @@ SSplotTimeseries <-
     if(!add){
       yrvals  <- ts$YrSeas[ plot1 | plot2 | plot3]
       # axis limits
-      if(is.null(minyr)) minyr <- min(yrvals)
-      if(is.null(maxyr)) maxyr <- max(yrvals)
-      xlim <- c(minyr,maxyr)
+      xlim <- range(yrvals)
       plot(yrvals,yvals[plot1 | plot2 | plot3],
            type='n', xlab=xlab, ylim=c(0,1.05*ymax), yaxs='i', ylab=ylab,
            main=main, cex.main=cex.main,xlim=xlim)
@@ -496,10 +503,10 @@ SSplotTimeseries <-
           points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
         }else{
           # add lines for confidence intervals areas if requested
-          # lines and points on integer years
-          points(ts$Yr[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
-          lines( ts$Yr[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
-          points(ts$Yr[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
+          # lines and points (previously on integer years, but not sure why)
+          points(ts$YrSeas[plot1],yvals[plot1],pch=19,  col=mycol) # filled points for virgin conditions
+          lines( ts$YrSeas[plot2],yvals[plot2],type=mytype,col=mycol) # open points and lines in middle
+          points(ts$YrSeas[plot3],yvals[plot3],pch=19,  col=mycol) # filled points for forecast
           if(subplot %in% c(7,9,11)){
             # subset years for confidence intervals
             if(subplot==7){

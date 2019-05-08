@@ -6,17 +6,18 @@
 \usage{
 SSplotNumbers(replist, subplots = 1:10, plot = TRUE, print = FALSE,
   numbers.unit = 1000, areas = "all", areanames = "default",
-  areacols = "default", pntscalar = 2.6, bub.bg = gray(0.5, alpha = 0.5),
-  bublegend = TRUE, period = c("B", "M"), add = FALSE,
+  areacols = "default", pntscalar = 2.6, bub.bg = gray(0.5, alpha =
+  0.5), bublegend = TRUE, period = c("B", "M"), add = FALSE,
   labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
   "Mean observed age (yr)", "Mean age (yr)", "mean age in the population",
   "Ageing imprecision", "Numbers at age at equilibrium",
-  "Equilibrium age distribution", "Fraction female in numbers at age", "Length",
-  "Mean length (cm)", "mean length (cm) in the population",
+  "Equilibrium age distribution", "Fraction female in numbers at age",
+  "Length", "Mean length (cm)", "mean length (cm) in the population",
   "expected numbers at age", "Beginning of year", "Middle of year",
   "expected numbers at length", "Fraction female in numbers at length"),
-  pwidth = 6.5, pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, plotdir = "default", mainTitle = TRUE, verbose = TRUE)
+  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
+  ptsize = 10, cex.main = 1, plotdir = "default",
+  mainTitle = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -69,7 +70,7 @@ with SSv3.11)}
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+\item{mainTitle}{Logical indicating if a title should be included at the top}
 
 \item{verbose}{report progress to R GUI?}
 }

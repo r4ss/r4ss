@@ -9,23 +9,24 @@ SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
   fleets = "all", areas = "all", fleetnames = "default",
   fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
   areacols = "default", areanames = "default", verbose = TRUE,
-  uncertainty = TRUE, forecastplot = FALSE, datplot = FALSE,
+  uncertainty = TRUE, forecastplot = FALSE, datplot = TRUE,
   Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
   comp.yupper = 0.4, sprtarg = "default", btarg = "default",
   minbthresh = "default", pntscalar = NULL, bub.scale.pearson = 1.5,
   bub.scale.dat = 3, pntscalar.nums = 2.6, pntscalar.tags = 2.6,
   minnbubble = 8, aalyear = -1, aalbin = -1, aalresids = TRUE,
-  maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
-  showeffN = TRUE, sampsizeline = FALSE, effNline = FALSE,
-  showlegend = TRUE, pwidth = 6.5, pheight = 5, punits = "in",
-  ptsize = 10, res = 300, cex.main = 1, selexlines = 1:6, rows = 1,
-  cols = 1, maxrows = 4, maxcols = 4, maxrows2 = 2, maxcols2 = 4,
-  andrerows = 3, tagrows = 3, tagcols = 3, fixdims = TRUE, new = TRUE,
-  SSplotDatMargin = 8, filenotes = NULL, catchasnumbers = NULL,
-  catchbars = TRUE, legendloc = "topleft", minyr = NULL, maxyr = NULL,
-  sexes = "all", scalebins = FALSE, scalebubbles = FALSE,
-  tslabels = NULL, catlabels = NULL, datasize = TRUE, maxsize = 0.5,
-  ...)
+  maxneff = 5000, cohortlines = c(), smooth = TRUE,
+  showsampsize = TRUE, showeffN = TRUE, sampsizeline = FALSE,
+  effNline = FALSE, showlegend = TRUE, pwidth = 6.5, pheight = 5,
+  punits = "in", ptsize = 10, res = 300, mainTitle = FALSE,
+  cex.main = 1, selexlines = 1:6, rows = 1, cols = 1,
+  maxrows = 4, maxcols = 4, maxrows2 = 2, maxcols2 = 4,
+  andrerows = 3, tagrows = 3, tagcols = 3, fixdims = TRUE,
+  new = TRUE, SSplotDatMargin = 8, filenotes = NULL,
+  catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
+  minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
+  scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
+  maxsize = 1, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -120,12 +121,14 @@ Default="default".}
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}
 
-\item{forecastplot}{Include forecast years in the plots? Obviously requires
-forecast options to have been used in the model.  Default=T.}
+\item{forecastplot}{Include forecast years in the timeseries plots and
+plots of time-varying quantities? Default=TRUE.}
 
 \item{datplot}{Plot the data by itself? This is useful in document
-preparation. Setting datplot=F is equivalent to leaving off plots 15 and 16.
-Default=F.}
+preparation, but doesn't change across alternative model runs with the same
+data, so can be committed to save time once the plots have been created once.
+Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
+Default=TRUE.}
 
 \item{Natageplot}{Plot the expected numbers at age bubble plots and mean-age
 time series?  Default=T.}
@@ -217,6 +220,8 @@ help("png") in R for details). Default recently changed from 12 to 10.}
 
 \item{res}{Resolution of plots printed to files. Default=300.}
 
+\item{mainTitle}{Logical indicating if a title should be included at the top}
+
 \item{cex.main}{Character expansion parameter for plot titles (not yet
 implemented for all plots). Default=1.}
 
@@ -264,11 +269,10 @@ Default=F.}
 
 \item{legendloc}{Location for all legends. Default="topleft".}
 
-\item{minyr}{First year to show in time-series plots (changes xlim
-parameters).}
+\item{minyr}{First year to show in time-series and time-varying plots}
 
-\item{maxyr}{Last year to show in time-series plots (changes xlim
-parameters).}
+\item{maxyr}{Last year to show in time-series and time-varying plots. This
+can either be an alternative to, or redundant with, the forecastplot input.}
 
 \item{sexes}{Which sexes to show in composition plots. Default="all".}
 
@@ -285,14 +289,8 @@ a vector of appropriate length (currently 11) with labels for each figure}
 \item{catlabels}{Either NULL to have default labels for catch plots or
 a vector of appropriate length (currently 10) with labels for each figure}
 
-\item{datasize}{Add second data plot whose circles are proportional
-to either catch or relative uncertainty? Produced as
-data_plot2.png. Circle areas are relative within a data category (e.g.,
-catches, indices) and are proportional to: absolute catch for catches,
-1/SE of indices, and \code{N} for compositions.}
-
 \item{maxsize}{The size of the largest bubble in the datasize
-plot. Default is 1/2.}
+plot. Default is 1.0.}
 
 \item{\dots}{Additional arguments that will be passed to some subfunctions.}
 }

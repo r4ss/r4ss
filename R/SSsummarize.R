@@ -82,14 +82,14 @@ SSsummarize <- function(biglist,
   btargs     <- NULL
   minbthreshs <- NULL
   FleetNames <- list()
-
-  warn <- FALSE # flag for whether filter warning has been printed or not
+  mcmc       <- list()
+  warn       <- FALSE # flag for whether filter warning has been printed or not
 
   # loop over models within biglist
   for(imodel in 1:n){
     stats <- biglist[[imodel]]
     listname <- names(biglist)[imodel]
-    cat("imodel=", imodel, "/", n, sep="")
+    message("imodel=", imodel, "/", n)
 
     # gradient
     maxgrad <- c(maxgrad, stats$maximum_gradient_component)
@@ -114,7 +114,7 @@ SSsummarize <- function(biglist,
                                 all(names(seltemp_i)==names(sizesel)))){
         sizesel <- rbind(sizesel,seltemp_i)
       }else{
-        cat("\nproblem summarizing size selectivity due to mismatched columns ",
+        warning("problem summarizing size selectivity due to mismatched columns ",
             "(perhaps different bins)\n")
       }
     }
@@ -133,8 +133,8 @@ SSsummarize <- function(biglist,
                                all(names(seltemp_i)==names(agesel)))){
         agesel <- rbind(agesel,seltemp_i)
       }else{
-        cat("problem summarizing age selectivity due to mismatched columns ",
-            "(perhaps different bins)\n")
+        warning("problem summarizing age selectivity due to mismatched columns ",
+                "(perhaps different bins)\n")
       }
     }
     rownames(agesel) <- 1:nrow(agesel)
@@ -161,7 +161,7 @@ SSsummarize <- function(biglist,
          all(names(likelihoods_by_fleet)==names(liketemp2)))){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
-      cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
+      warning("problem summarizing likelihoods by fleet due to mismatched columns")
     }
 
     ## likelihoods by tag group
@@ -174,7 +174,7 @@ SSsummarize <- function(biglist,
             all(names(likelihoods_by_tag_group)==names(liketemp3)))){
         likelihoods_by_tag_group <- rbind(likelihoods_by_tag_group,liketemp3)
       }else{
-        cat("\nproblem summarizing likelihoods by fleet due to mismatched columns\n")
+        warning("problem summarizing likelihoods by fleet due to mismatched columns")
       }
     }
 
@@ -185,7 +185,7 @@ SSsummarize <- function(biglist,
       parsSD[parnames==parstemp$Label[ipar], imodel] <- parstemp$Parm_StDev[ipar]
       parphases[parnames==parstemp$Label[ipar], imodel] <- parstemp$Phase[ipar]
     }
-    cat(",  N active pars=",sum(!is.na(parstemp$Active_Cnt)),"\n",sep="")
+    message("  N active pars=",sum(!is.na(parstemp$Active_Cnt)))
 
     ## compile derived quantities
     quantstemp <- stats$derived_quants
@@ -202,17 +202,25 @@ SSsummarize <- function(biglist,
 
     ## indices
     indextemp <- stats$cpue
+    # temporarily remove columns added in SS version 3.30.13 (March 2019)
+    indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
     if(is.na(indextemp[[1]][1])){
-      cat("no index data\n")
+      message("no index data")
     }else{
-      # switch column name used in 3.24 to new value used in 3.30 to allow comparisons
-      names(indextemp)[ names(indextemp)=="Yr.S"] <- "Yr.frac"
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
-      if(is.null(indices) || all(names(indextemp)==names(indices))){
+      if(is.null(indices)){
+        # first pass through with nothing in combined data frame
         indices <- rbind(indices, indextemp)
       }else{
-        cat("problem summarizing indices due to mismatched columns\n")
+        # after indices contains output from at least one model
+        # check that there are equal number of columns with matching names 
+        if(ncol(indextemp) == ncol(indices) &&
+           all(names(indextemp) == names(indices))){
+          indices <- rbind(indices, indextemp)
+        }else{
+          warning("problem summarizing indices due to mismatched columns")
+        }
       }
     }
 
@@ -234,8 +242,14 @@ SSsummarize <- function(biglist,
     if(is.na(SpawnOutputUnits[imodel])){
       SpawnOutputUnits[imodel] <- stats$SpawnOutputUnits
     }
+    # get mcmc values if present
+    if(!is.null(stats$mcmc)){
+      mcmc[[imodel]] <- stats$mcmc
+    }
   } # end loop over models
 
+
+  ### format and process info from the models
   names(pars) <- names(parsSD) <- modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
@@ -277,7 +291,7 @@ SSsummarize <- function(biglist,
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
   SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr),]
   if(any(is.na(SpawnBio[3,]))){
-    cat("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year\n")
+    warning("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year")
     SpawnBio$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
     SpawnBioSD$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
     for(imodel in 1:n){
@@ -328,7 +342,7 @@ SSsummarize <- function(biglist,
                              sd=as.matrix(FvalueSD[,1:n]))
   FvalueUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(Fvalue[,1:n]),
                              sd=as.matrix(FvalueSD[,1:n]))
-  
+
 
   # identify recruitment parameters and their uncertainty
   recruits <- quants[grep("^Recr_",quants$Label), ]
@@ -346,7 +360,7 @@ SSsummarize <- function(biglist,
   recruits <- recruits[order(recruits$Yr),]
   recruitsSD <- recruitsSD[order(recruitsSD$Yr),]
   if(any(is.na(recruits[3,]))){
-    cat("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year\n")
+    warning("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year")
     recruits$Label[1:2] <- c("Recr_Virgin*","Recr_Initial*")
     for(imodel in 1:n){
       if(is.na(recruits[3,imodel])){
@@ -402,8 +416,10 @@ SSsummarize <- function(biglist,
       }
     }
     # check for differences in assignment of initial ages
-    if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) - apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
-      cat("warning: years for InitAge parameters differ between models, use InitAgeYrs matrix\n")
+    if(any(apply(InitAgeYrs,1,max,na.rm=TRUE) -
+             apply(InitAgeYrs,1,min,na.rm=TRUE) != 0)){
+      warning("years for InitAge parameters differ between models,",
+              "use InitAgeYrs matrix")
     }else{
       pars$Yr[InitAgeRows] <- apply(InitAgeYrs,1,max,na.rm=TRUE)
     }
@@ -425,6 +441,56 @@ SSsummarize <- function(biglist,
                                 sd=as.matrix(recdevsSD[,1:n]))
   }else{
     recdevs <- recdevsSD <- recdevsLower <- recdevsUpper <- NULL
+  }
+
+
+  # function to merge duplicate rows caused by different parameter labels
+  # that are associated with the same year, such as the recdev for 2016
+  # being called "ForeRecr_2016", "Late_RecrDev_2016", or "Main_RecrDev_2016",
+  # in 3 different models depending on the ending year of each model and the
+  # choice of recdev vector breaks
+  merge.duplicates <- function(x){
+    if(!is.null(x)){
+      if(length(unique(x$Yr)) < length(x$Yr)){
+        # n should be number of models
+        n <- sum(!names(x) %in% c("Label", "Yr"))
+        x2 <- NULL # alternative data.frame
+        for(Yr in unique(x$Yr)){
+          x.Yr <- x[which(x$Yr==Yr),]
+          if(nrow(x.Yr)==1){
+            # if only 1 row associated with this year add to new data.frame
+            x2 <- rbind(x2, x.Yr)
+          }else{
+            # more than 1 row associated with this year
+            # create empty row with matching names
+            newrow <- data.frame(t(rep(NA,n)),
+                                 Label=paste0("Multiple_labels_", Yr), Yr=Yr)
+            names(newrow) <- names(x)
+            # loop over models to pick the (hopefully) unique value among rows
+            for(icol in 1:n){
+              good <- !is.na(x.Yr[ ,icol])
+              if(sum(good) > 1){
+                # warn if more than 1 value
+                warning("multiple recdevs values associated with year =", Yr)
+              }
+              if(sum(good)==1){
+                # put good value into new row
+                newrow[,icol] <- x.Yr[good, icol]
+              }
+              # if there are no good values, this model likely ends prior to Yr
+            }
+            # add new row to new data.frame
+            x2 <- rbind(x2, newrow)
+          } # end test for duplicates for particular year
+        } # end loop over years
+      }else{ # end test for duplicates in general
+        # if no duplicates, just return data.frame
+        x2 <- x
+      }
+    }else{ # test for is.null(x)
+      return(x)
+    }
+    return(x2)
   }
 
   # function to sort by year
@@ -478,10 +544,10 @@ SSsummarize <- function(biglist,
   mylist$recruitsSD     <- sort.fn(recruitsSD)
   mylist$recruitsLower  <- sort.fn(recruitsLower)
   mylist$recruitsUpper  <- sort.fn(recruitsUpper)
-  mylist$recdevs        <- sort.fn(recdevs)
-  mylist$recdevsSD      <- sort.fn(recdevsSD)
-  mylist$recdevsLower   <- sort.fn(recdevsLower)
-  mylist$recdevsUpper   <- sort.fn(recdevsUpper)
+  mylist$recdevs        <- merge.duplicates(sort.fn(recdevs))
+  mylist$recdevsSD      <- merge.duplicates(sort.fn(recdevsSD))
+  mylist$recdevsLower   <- merge.duplicates(sort.fn(recdevsLower))
+  mylist$recdevsUpper   <- merge.duplicates(sort.fn(recdevsUpper))
   mylist$growth         <- growth
   mylist$sizesel        <- sizesel
   mylist$agesel         <- agesel
@@ -491,6 +557,7 @@ SSsummarize <- function(biglist,
   mylist$upperCI        <- upperCI
   mylist$SpawnOutputUnits <- SpawnOutputUnits
   mylist$FleetNames     <- FleetNames
+  mylist$mcmc           <- mcmc
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
 
   return(invisible(mylist))

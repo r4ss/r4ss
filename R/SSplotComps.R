@@ -152,9 +152,10 @@ SSplotComps <-
   # SSplotComps
   ################################################################################
 
-  ###### current definitions of subplots
+  ###### list of subplots
   ###
   ### { # loop over fleets
+  ###
   ### subplot 1: multi-panel composition plot
   ### subplot 2: single panel bubble plot for numbers at length or age
   ### subplot 3: multi-panel bubble plots for conditional age-at-length
@@ -163,38 +164,17 @@ SSplotComps <-
   ### subplot 6: multi-panel plot of point and line fit to conditional
   ###            age-at-length for specific length bins
   ### subplot 7: sample size plot
-  ### subplot 8: Andre's mean age and std. dev. in conditional AAL
-  ### subplot 9: by fleet aggregating across years
-  ### } # end loop over fleets
-  ### subplot 10: by fleet aggregating across years within each season
-  ### subplot 11: by fleet aggregating across seasons within a year
-  ### subplot 12: bubble plot comparison of length or age residuals
-  ###             across fleets within sex/partition
-
-
-  ###### new definitions of subplots
-  ###
-  ### { # loop over fleets
-  ### subplot 1: multi-panel composition plot
-  ### subplot 2: single panel bubble plot for numbers at length or age
-  ### subplot 3: multi-panel bubble plots for conditional age-at-length
-  ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-  ### subplot 5: Pearson residuals for A-L key
-  ### subplot 6: multi-panel plot of point and line fit to conditional
-  ###            age-at-length for specific length bins
-  ### subplot 7: sample size plot
-  ### NEW subplot 8: TA1.8 Francis weighting plot
-  ### NEW subplot 9: TA1.8 Francis weighting plot for conditional data
+  ### subplot 8: TA1.8 Francis weighting plot
+  ### subplot 9: TA1.8 Francis weighting plot for conditional data
   ### subplot 10: Andre's mean age and std. dev. in conditional AAL
+  ###
   ### } # end loop over fleets
+  ###
   ### subplot 21: by fleet aggregating across years
   ### subplot 22: by fleet aggregating across years within each season
   ### subplot 23: by fleet aggregating across seasons within a year
   ### subplot 24: bubble plot comparison of length or age residuals
   ###             across fleets within partition
-
-
-
 
   if(!exists("make_multifig")) stop("you are missing the function 'make_mulitifig'")
   # subfunction to write png files
@@ -377,7 +357,8 @@ SSplotComps <-
     titledata <- "Mean weight at age, "
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
-    stop("Input 'kind' to SSplotComps is not right.")
+    stop("Input 'kind' to SSplotComps needs to be one of the following:\n  ",
+         "'LEN','SIZE','AGE','cond','GSTAGE','GSTLEN','L@A','W@A'.")
   }
 
   # partition group is used by some aggregate plots (subplot 21+)
@@ -486,7 +467,8 @@ SSplotComps <-
             sexvec <- dbase$sex
             # a function to combine a bunch of repeated commands
             if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-              if("DM_effN" %in% names(dbase)){
+              # test for Dirichlet-Multinomial likelihood
+              if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
                               linesx=dbase$Bin,linesy=dbase$Exp,
@@ -570,7 +552,7 @@ SSplotComps <-
               }
               caption_extra <- ""
               if(ipage==1){
-                if("DM_effN" %in% names(dbase)){
+                if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
                   # get Theta value for this fleet
                   ipar <- replist$age_data_info$ParmSelect[f]
                   Theta <- as.numeric(replist$Dirichlet_Multinomial_pars$Theta[ipar])
@@ -595,11 +577,10 @@ SSplotComps <-
                            "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
                            "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
                            "</blockquote>")
-                }
-                if(!"DM_effN" %in% names(dbase)){
+                }else{
                   caption_extra <-
                     paste0(".<br><br>'N adj.' is the input sample size ",
-                           "after data-weighting adjustment.",
+                           "after data-weighting adjustment. ",
                            "N eff. is the calculated effective sample size used ",
                            "in the McAllister-Iannelli tuning method.")
                 }
@@ -699,7 +680,7 @@ SSplotComps <-
                   }
                 }
                 if(kind %in% c("AGE","GSTAGE")){
-                  lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),
+                  lines(0.5 + c(cohortlines[icohort],cohortlines[icohort]+accuage),
                         c(0,accuage),col=colvec[3],lty=3) # one-one line for age
                 }
               }
@@ -954,7 +935,7 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly &
-           !("DM_effN" %in% names(dbase)) &
+           !("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))) &
            !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
           caption <- paste0("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f])
           if(mainTitle) {
@@ -1176,13 +1157,13 @@ SSplotComps <-
                   # Overdispersion on N
                   # NN <- z$N[1]*0.01 # Andre did this for reasons unknown
                   NN <- z$N[1]
-                  if (max(z$Obs) > 1.0e-4 & NN>0){
+                  if (max(z$Obs, na.rm=TRUE) > 1.0e-4 & NN>0){
                     Size <- c(Size,Ilen)
                     Obs <- c(Obs,ObsV)
                     Pred <- c(Pred,PredV)
                     varn <-sqrt(PredV2-PredV*PredV)/sqrt(NN)
                     Pred2 <- c(Pred2,varn)
-                    varn <-sqrt(max(0,ObsV2-ObsV*ObsV))/sqrt(NN)
+                    varn <-sqrt(max(0,ObsV2-ObsV*ObsV, na.rm=TRUE))/sqrt(NN)
                     Obs2 <- c(Obs2,varn)
                     Low <- c(Low,ObsV-1.64*varn)
                     Upp <- c(Upp,ObsV+1.64*varn)
@@ -1211,7 +1192,7 @@ SSplotComps <-
                 }
                 box()
 
-                ymax2 <- max(Obs2,Pred2)*1.1
+                ymax2 <- max(Obs2,Pred2,na.rm=TRUE)*1.1
                 plot(Size,Obs2,type='n',xlab=labels[1],ylab=labels[13],xlim=c(xmin,xmax),ylim=c(0,ymax2),yaxs="i")
                 if(length(Low2)>1) polygon(c(Size2,rev(Size2)),c(Low2,rev(Upp2)),col='grey95',border=NA)
                 if(!datonly) lines(Size,Pred2,col=4,lwd=3)
@@ -1269,7 +1250,6 @@ SSplotComps <-
     {
       # no longer subsetting by sex, so mapping directly over
       dbase_k <- dbase_kind
-
       # loop over partitions (discard, retain, total)
       for(j in unique(dbase_k$Part_group)){
         # dbase is the final data.frame used in the individual plots
@@ -1298,6 +1278,7 @@ SSplotComps <-
             filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt",j)
           }
           caption <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
+
           if(mainTitle) {
             ptitle <- caption
           } else {
@@ -1311,7 +1292,7 @@ SSplotComps <-
                            effN=dbase$effN,
                            obs=dbase$Obs*dbase$N,
                            exp=dbase$Exp*dbase$N)
-          if("DM_effN" %in% names(dbase)){
+          if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
             df$DM_effN <- dbase$DM_effN
           }
           agg <- aggregate(x=df,
@@ -1328,10 +1309,14 @@ SSplotComps <-
           for(f in unique(agg$f)){
             infleet <- agg$f==f
             agg$N[infleet] <- max(agg$N[infleet])
-            if("DM_effN" %in% names(dbase)){
-              agg$DM_effN[infleet] <- max(agg$DM_effN[infleet])
+            if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
+              agg$DM_effN[infleet] <- max(agg$DM_effN[infleet], na.rm=TRUE)
             }else{
-              agg$effN[infleet] <- max(agg$effN[infleet])
+              if(any(!is.na(agg$effN[infleet]))){
+                agg$effN[infleet] <- max(agg$effN[infleet], na.rm=TRUE)
+              }else{
+                agg$effN[infleet] <- NA
+              }
             }
           }
 
@@ -1343,11 +1328,11 @@ SSplotComps <-
             mktnames <- c("","(discards)","(retained)")
             namesvec <- paste(fleetnames[agg$f], mktnames[agg$mkt+1])
           }
-
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
-              if("DM_effN" %in% names(dbase)){
+              # test for Dirichlet-Multinomial likelihood
+              if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
                               linesx=agg$bin,linesy=agg$exp,
@@ -1435,6 +1420,9 @@ SSplotComps <-
   if(22 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
     dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
+    if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+      warning("Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood")
+    }
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
@@ -1581,6 +1569,10 @@ SSplotComps <-
     # loop over fleets
     for(f in fleets){
       dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+      if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+        warning("Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood")
+      }
+      
       # check for the presence of data
       if(nrow(dbasef)>0){
         testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0
@@ -1891,7 +1883,7 @@ SSplotComps <-
                 }
               }
               if(kind=="AGE"){
-                lines(c(cohortlines[icohort],cohortlines[icohort]+accuage),
+                lines(0.5 + c(cohortlines[icohort],cohortlines[icohort]+accuage),
                       c(0,accuage),col="red")
               }
             }

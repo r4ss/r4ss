@@ -4,11 +4,12 @@
 \alias{SStableComparisons}
 \title{make table comparing quantities across models}
 \usage{
-SStableComparisons(summaryoutput, models = "all", likenames = c("TOTAL",
-  "Survey", "Length_comp", "Age_comp", "priors", "Size_at_age"),
-  names = c("Recr_Virgin", "R0", "steep", "NatM", "L_at_Amax", "VonBert_K",
-  "SSB_Virg", "Bratio_2017", "SPRratio_2016"), digits = NULL,
-  modelnames = "default", csv = FALSE, csvdir = "workingdirectory",
+SStableComparisons(summaryoutput, models = "all",
+  likenames = c("TOTAL", "Survey", "Length_comp", "Age_comp", "priors",
+  "Size_at_age"), names = c("Recr_Virgin", "R0", "steep", "NatM",
+  "L_at_Amax", "VonBert_K", "SSB_Virg", "Bratio_2017", "SPRratio_2016"),
+  digits = NULL, modelnames = "default", csv = FALSE,
+  csvdir = "workingdirectory",
   csvfile = "parameter_comparison_table.csv", verbose = TRUE,
   mcmc = FALSE)
 }
