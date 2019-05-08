@@ -360,7 +360,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     # modify a control file to include estimates if file names are provided
     ctlfile <- readLines(oldctl)
     # look for certain comments in file
-    spot1 <- grep('last_early_yr',ctlfile)
+    spot1 <- grep('last_early_yr|last_yr_nobias',ctlfile)
     spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
     if(spot1!=spot2-4) stop('error related to maxbias inputs in ctl file')
     # replace values
