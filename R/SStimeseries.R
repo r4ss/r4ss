@@ -9,13 +9,15 @@
 #' backslashes (or forwardslashes) and quotes necessary.
 #' @param plotdir Directory where the table will be saved.  The default 
 #' saves the table to the dir location where the Report.sso file is located.
+#' @param nsex This will allow the user to calculate single sex values based on the new sex 
+#' specification (-1) in SS for single sex models. Default value is FALSE.
 #' @return A csv file containing a time-series of total biomass, summary 
 #' biomass, spawning biomass or output, relative depletion, total dead catch
 #' the SPR, and the exploitation.
 #' @author Chantel Wetzel
 #' @export
 #'
-SStimeseries <- function(dir,  plotdir = 'default'){
+SStimeseries <- function(dir,  plotdir = 'default', nsex = FALSE){
 	# Create a time-series table 
 	# Based on PFMC groundfish assessment required table
 	# All the quantities are found using a readLines command, not the SS_output function.
@@ -140,6 +142,9 @@ SStimeseries <- function(dir,  plotdir = 'default'){
     					length(unique(as.numeric(selex$gender))),
     					length(unique(as.numeric(selex$Sex))))
 
+    sexfactor = 2
+    if (nsex) {sexfactor = 1}
+
 	#======================================================================
 	# Determine if the model has multiple areas
 	# The quantities by areas are summed into total values (e.g. spawning biomass summed across all areas)
@@ -186,7 +191,7 @@ SStimeseries <- function(dir,  plotdir = 'default'){
 	adj.spr.all  = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SPRratio_",x,sep=""),base)]," ")[[1]][3]), x = all)
 	ssb.all      = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("SSB_",x,sep=""),base)]," ")     [[1]][3]), x = all)
 	ssb.virgin   = as.numeric(strsplit(base[grep("SSB_Virgin",base)]," ") [[1]][3])
-	if (nsexes == 1) { ssb.all = ssb.all / 2; ssb.virgin = ssb.virgin / 2}
+	if (nsexes == 1) { ssb.all = ssb.all / sexfactor; ssb.virgin = ssb.virgin / sexfactor}
 	
 	depl.all     = mapply(function(x) out = as.numeric(strsplit(base[grep(paste("Bratio_",x,sep=""),base)]," ")[[1]][3]), x = (startyr + 1):foreyr)
 	depl.all     = c(ssb.all[1] / ssb.virgin, depl.all)
