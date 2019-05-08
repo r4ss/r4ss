@@ -12,13 +12,11 @@
 #' @param quant to calculate confidence intervals, default is set at 0.95
 #' @param es.only =  only the executive summary tables will be produced, default is false which
 #' will return all executive summary tables, historical catches, and numbers-at-ages
-#' @param nsex This will allow the user to calculate single sex values based on the new sex 
-#' specification (-1) in SS for single sex models. Default value is FALSE.
 #' @return A csv files containing executive summary tables.
 #' @author Chantel Wetzel
 #' @export
 #'
-SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only = FALSE, nsex = FALSE)
+SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only = FALSE)
 {
 	
 	#Read in the base model using r4ss
@@ -218,9 +216,6 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
     					length(unique(as.numeric(selex$gender))),
     					length(unique(as.numeric(selex$Sex))))
 
-    sexfactor = 2
-    if (nsex) {sexfactor = 1}
-
 
     #======================================================================
     # Determine the number of growth patterns
@@ -250,7 +245,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 	#ES Table b Spawning Biomass and Depletion
 	#======================================================================
 		ssb =  Get.Values(dat = base, label = "SSB"    , hist, quant )
-		if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
+		if (nsexes == 1) { ssb$dq = ssb$dq / 2 ; ssb$low = ssb$low / 2 ; ssb$high = ssb$high / 2 }
 		depl = Get.Values(dat = base, label = "Bratio" , hist, quant )
 		for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
 		es.b =  data.frame(hist, 
@@ -365,10 +360,10 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 
 		# Convert spawning quantities for single-sex models
 		if (nsexes == 1){
-			ssb.virgin = ssb.virgin / sexfactor 
-			b.target = b.target / sexfactor
-			b.spr = b.spr / sexfactor
-			b.msy = b.msy / sexfactor
+			ssb.virgin = ssb.virgin / 2 
+			b.target = b.target / 2
+			b.spr = b.spr / 2
+			b.msy = b.msy / 2
 		}
 
 	
@@ -444,7 +439,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95, es.only 
 		depl.fore = Get.Values(dat = base, label = "Bratio",     yrs = fore, quant)
 
 		if (nsexes == 1) { 
-			ssb.fore$dq = ssb.fore$dq / sexfactor; ssb.fore$low = ssb.fore$low / sexfactor; ssb.fore$high = ssb.fore$high / sexfactor }
+			ssb.fore$dq = ssb.fore$dq / 2; ssb.fore$low = ssb.fore$low / 2; ssb.fore$high = ssb.fore$high / 2}
 		
 		smry.fore = 0
 		for(a in 1:nareas){
