@@ -5,7 +5,7 @@
 \title{A function to create a executive summary tables from an SS Report.sso file}
 \usage{
 SSexecutivesummary(dir, plotdir = "default", quant = 0.95,
-  es.only = FALSE)
+  es.only = FALSE, nsex = FALSE)
 }
 \arguments{
 \item{dir}{Locates the directory of the files to be read in, double
@@ -18,6 +18,9 @@ saves the table to the dir location where the Report.sso file is located.}
 
 \item{es.only}{=  only the executive summary tables will be produced, default is false which
 will return all executive summary tables, historical catches, and numbers-at-ages}
+
+\item{nsex}{This will allow the user to calculate single sex values based on the new sex 
+specification (-1) in SS for single sex models. Default value is FALSE. TRUE will not divide by 2.}
 }
 \value{
 A csv files containing executive summary tables.

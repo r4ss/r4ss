@@ -4,7 +4,7 @@
 \alias{SStimeseries}
 \title{A function to create a time-series table from an SS Report.sso file}
 \usage{
-SStimeseries(dir, plotdir = "default")
+SStimeseries(dir, plotdir = "default", nsex = FALSE)
 }
 \arguments{
 \item{dir}{Locates the directory of the files to be read in, double
@@ -12,6 +12,9 @@ backslashes (or forwardslashes) and quotes necessary.}
 
 \item{plotdir}{Directory where the table will be saved.  The default 
 saves the table to the dir location where the Report.sso file is located.}
+
+\item{nsex}{This will allow the user to calculate single sex values based on the new sex 
+specification (-1) in SS for single sex models. Default value is FALSE. TRUE will not divide by 2.}
 }
 \value{
 A csv file containing a time-series of total biomass, summary 
