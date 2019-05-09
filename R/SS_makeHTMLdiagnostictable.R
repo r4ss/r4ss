@@ -32,10 +32,11 @@ SS_makeHTMLdiagnostictable <- function(replist,
   }
   cors <- replist$corstats
 
-  #Sort by highest gradient
+  #Highlight high gradients
+  #(sorting turned off keep parameters in familiar order)
   if(!is.null(parchecks$Gradient)){
     parchecks <- parchecks[!is.na(parchecks$Gradient), ]
-    parchecks <- parchecks[order(-parchecks$Gradient), ]
+    #parchecks <- parchecks[order(-parchecks$Gradient), ]
     parchecks$Gradient <- cell_spec(parchecks$Gradient,
                                     "html",
                                     color = ifelse(abs(parchecks$Gradient) >
@@ -54,10 +55,13 @@ SS_makeHTMLdiagnostictable <- function(replist,
   #Write out table
   the_table <- kable(parchecks,
                      format = "html",
-                     escape = F)
+                     escape = FALSE)
+  table_height <- ifelse(nrow(parchecks) > 40,
+                         "800px",
+                         paste0(200 + nrow(parchecks) * 20, "px"))
   the_table <- kable_styling(the_table)
   the_table <-
-    scroll_box(the_table, width = "100%", height = "200px")
+    scroll_box(the_table, width = "100%", height = table_height)
   filename <- caption <- NULL
   filename = c(filename,"parameterchecks.html")
 
