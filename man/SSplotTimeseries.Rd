@@ -6,11 +6,11 @@
 \usage{
 SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
   areacols = "default", areanames = "default", forecastplot = TRUE,
-  uncertainty = TRUE, bioscale = "default", minyr = -Inf,
-  maxyr = Inf, plot = TRUE, print = FALSE, plotdir = "default",
-  verbose = TRUE, btarg = "default", minbthresh = "default",
-  xlab = "Year", labels = NULL, pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1)
+  uncertainty = TRUE, bioscale = 1, minyr = -Inf, maxyr = Inf,
+  plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
+  btarg = "default", minbthresh = "default", xlab = "Year",
+  labels = NULL, pwidth = 6.5, pheight = 5, punits = "in",
+  res = 300, ptsize = 10, cex.main = 1)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -31,8 +31,11 @@ Magnusson}
 \item{uncertainty}{add intervals around quantities for which uncertainty is
 available}
 
-\item{bioscale}{scaling for spawning biomass by default it will be set to
-0.5 for single-sex models, and 1.0 for all others}
+\item{bioscale}{scaling for spawning biomass. Default = 1.
+Previously this was set to 
+0.5 for single-sex models, and 1.0 for all others, but now single-sex
+models are assumed to use the -1 option for Nsexes in the data file so the
+scaling is done automatically by SS.}
 
 \item{minyr}{optional input for minimum year to show in plots}
 

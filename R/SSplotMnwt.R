@@ -1,9 +1,9 @@
 #' Plot mean weight data and fits.
-#' 
+#'
 #' Plot mean weight data and fits from Stock Synthesis output. Intervals are
 #' based on T-distributions as specified in model.
-#' 
-#' 
+#'
+#'
 #' @param replist list created by \code{SS_output}
 #' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
@@ -62,8 +62,9 @@ SSplotMnwt <-
   FleetNames    <- replist$FleetNames
   DF_mnwgt      <- replist$DF_mnwgt
   nfleets       <- replist$nfleets
+  SS_versionshort <- replist$SS_versionshort
 
-  
+
   if(fleets[1]=="all") fleets <- 1:nfleets
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(plotdir=="default") plotdir <- replist$inputs$dir
@@ -73,12 +74,17 @@ SSplotMnwt <-
     for(ifleet in intersect(fleets,unique(mnwgt$Fleet))){
       # usemnwgt is subset of mnwgt for the particular fleet
       usemnwgt <- mnwgt[mnwgt$Fleet==ifleet & mnwgt$Obs>0,]
-      usemnwgt$Mkt <- usemnwgt$Mkt
-      for(j in unique(usemnwgt$Mkt)){
-        yr <- usemnwgt$Yr[usemnwgt$Mkt==j]
-        ob <- usemnwgt$Obs[usemnwgt$Mkt==j]
-        cv <- usemnwgt$CV[usemnwgt$Mkt==j]
-        ex <- usemnwgt$Exp[usemnwgt$Mkt==j]
+      if(SS_versionshort == "3.30"){
+        usemnwgt$Part <- usemnwgt$Part
+      } else {
+        usemnwgt$Part <- usemnwgt$Mkt
+      }
+      FleetName <- fleetnames[ifleet]
+      for(j in unique(usemnwgt$Part)){
+        yr <- usemnwgt$Yr[usemnwgt$Part==j]
+        ob <- usemnwgt$Obs[usemnwgt$Part==j]
+        cv <- usemnwgt$CV[usemnwgt$Part==j]
+        ex <- usemnwgt$Exp[usemnwgt$Part==j]
         xmin <- min(yr)-3
         xmax <- max(yr)+3
         liw <- -ob*cv*qt(0.025,DF_mnwgt) # quantile of t-distribution
@@ -91,7 +97,7 @@ SSplotMnwt <-
         titlepart <- labels[2]
         if(j==2) titlepart <- labels[3]
         if(j==0) titlepart <- labels[4]
-        ptitle <- paste(labels[6],titlepart,labels[7],fleetnames[ifleet],sep=" ")
+        ptitle <- paste(labels[6],titlepart,labels[7],FleetName,sep=" ")
         ylab <- labels[5]
 
         # wrap up plot command in function
@@ -104,12 +110,24 @@ SSplotMnwt <-
         }
 
         # make plots
-        if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+        if(!datplot){
+          subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+        }
         for(isubplot in subplots){ # loop over subplots (data only or with fit)
-          if(isubplot==1) addfit <- FALSE else addfit <- TRUE
-          if(plot) bdywtfunc(addfit=addfit)
+          if(isubplot==1){
+            addfit <- FALSE
+          }else{
+            addfit <- TRUE
+          }
+          if(plot){
+            bdywtfunc(addfit=addfit)
+          }
           if(print){
-            file <- paste0("bodywtfit_flt",fleetnames[ifleet],".png")
+            if(!addfit){
+              file <- paste0("bodywt_data_flt",FleetName,".png")
+            }else{
+              file <- paste0("bodywt_fit_flt",FleetName,".png")
+            }
             caption <- ptitle
             plotinfo <- pngfun(file=file, caption=caption)
             bdywtfunc(addfit=addfit)

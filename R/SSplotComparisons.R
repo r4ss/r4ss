@@ -171,8 +171,8 @@ SSplotComparisons <-
            # with colors, or FALSE just plots observed once in black dots
            indexPlotEach=FALSE,
            labels=c("Year",             #1
-             "Spawning biomass (t)",   #2
-             "Relative spawning biomass", #3
+             "Spawning biomass (t)",    #2
+             "%unfished",               #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
@@ -402,15 +402,22 @@ SSplotComparisons <-
       uncertainty[i] <- FALSE
     }
   }
-  # fix biomass for single-sex models
-  if(any(nsexes==1)){
-    if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
-    for(i in (1:n)[nsexes==1]){
-      SpawnBio[,i]    <- SpawnBio[,i]/2
-      SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
-      SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
-    }
+
+  #### no longer dividing by 2 for single-sex models
+  if(length(unique(nsexes)) > 1){
+    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
+            "to get female-only spawning biomass output by SS for a single-sex model,\n",
+            "use the new Nsexes = -1 option in the data file.")
   }
+  ## # fix biomass for single-sex models
+  ## if(any(nsexes==1)){
+  ##   if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
+  ##   for(i in (1:n)[nsexes==1]){
+  ##     SpawnBio[,i]    <- SpawnBio[,i]/2
+  ##     SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
+  ##     SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
+  ##   }
+  ## }
 
   # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
@@ -1701,7 +1708,7 @@ SSplotComparisons <-
 
   # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
   if(3 %in% subplots){
-    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to relative spawning biomass)\n")
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to %unfished)\n")
     if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")

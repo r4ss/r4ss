@@ -64,7 +64,12 @@ SS_ForeCatch <- function(replist, yrs=2017:2028,
     forecast_catches_y <- NULL
     for(iseas in 1:replist$nseasons){
       for(iarea in 1:replist$nareas){
-        for(ifleet in which(replist$fleet_type==1)){
+        if(replist$SS_versionNumeric < 3.30){
+          fleets_with_catch <- 1:replist$nfishfleets
+        }else{
+          fleets_with_catch <- which(replist$fleet_type==1)
+        }
+        for(ifleet in fleets_with_catch){
 
           # figure out column name
           if(replist$catch_units[ifleet]==1){

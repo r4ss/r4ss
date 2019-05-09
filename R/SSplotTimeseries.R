@@ -14,8 +14,11 @@
 #' @param forecastplot add points from forecast years
 #' @param uncertainty add intervals around quantities for which uncertainty is
 #' available
-#' @param bioscale scaling for spawning biomass by default it will be set to
-#' 0.5 for single-sex models, and 1.0 for all others
+#' @param bioscale scaling for spawning biomass. Default = 1.
+#' Previously this was set to 
+#' 0.5 for single-sex models, and 1.0 for all others, but now single-sex
+#' models are assumed to use the -1 option for Nsexes in the data file so the
+#' scaling is done automatically by SS.
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
 #' @param plot plot to active plot device?
@@ -42,7 +45,7 @@
 SSplotTimeseries <-
   function(replist,subplot,add=FALSE,areas="all",
            areacols="default",areanames="default",
-           forecastplot=TRUE,uncertainty=TRUE,bioscale="default",
+           forecastplot=TRUE,uncertainty=TRUE,bioscale=1,
            minyr=-Inf,maxyr=Inf,
            plot=TRUE,print=FALSE,plotdir="default",verbose=TRUE,
            btarg="default",minbthresh="default",xlab="Year",
@@ -85,7 +88,7 @@ SSplotTimeseries <-
                 "Summary biomass (mt)",         #3
                 "Summary biomass (mt) at beginning of season", #4
                 "Spawning biomass (mt)",        #5
-                "Relative spawning biomass",    #6
+                "%unfished",                    #6
                 "Spawning output",              #7
                 "Age-0 recruits (1,000s)",      #8
                 "Fraction of total Age-0 recruits",  #9
@@ -154,10 +157,6 @@ SSplotTimeseries <-
     areanames <- paste("area",1:nareas)
   }
 
-  #scaling factor for single sex models
-  if(bioscale=="default"){
-    if(nsexes==1) bioscale <- 0.5 else bioscale <- 1
-  }
   # modifying data to subset for a single season
   ts <- timeseries
   
@@ -339,10 +338,6 @@ SSplotTimeseries <-
         if(subplot==9){ # spawning depletion
           stdtable <- derived_quants[substring(derived_quants$Label,1,6)=="Bratio",]
           stdtable$Yr <- as.numeric(substring(stdtable$Label,8))
-
-          ### these temporary fixes now replaced using "B_ratio_denominator"
-          ## if(abs(stdtable$Value[1] - 4)<.1) bioscale <- 1/4 # temporary fix
-          ## if(abs(stdtable$Value[1] - 2.5)<.1) bioscale <- 1/2.5 # temporary fix
           bioscale <- B_ratio_denominator
         }
         if(subplot==11){ # recruitment

@@ -41,11 +41,11 @@ SSplotMovementMap <-
   # plot movement rates on map to help visualize patterns
  
   par(mar=c(3,3,3,3))
-  map(xlim=xlim,ylim=ylim,xaxs='i',yaxs='i')
+  maps::map(xlim=xlim,ylim=ylim,xaxs='i',yaxs='i')
   for(i in 1:length(polygonlist)){
     polygon(polygonlist[[i]],col=colvec[i],lwd=2)
   }
-  map(xlim=xlim,ylim=ylim,xaxs='i',yaxs='i',
+  maps::map(xlim=xlim,ylim=ylim,xaxs='i',yaxs='i',
       add=T,fill=T,col="grey")
 #  map.axes()
 

@@ -75,6 +75,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   sigma_R_in <- replist$sigma_R_in
   rmse_table <- replist$rmse_table
   if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(print && !dir.exists(plotdir)) dir.create(plotdir, recursive = TRUE)
 
   if(!is.numeric(rmse_table$RMSE)){
     stop("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
@@ -317,6 +318,9 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   newvals <- round(newvals,4)
   df <- data.frame(value=newvals,label=names)
 
+
+  if(print) {
+  }
   if(newbias$convergence!=0){
       cat("Problem with convergence, here is output from 'optim':\n")
       cat("##############################\n")
@@ -352,6 +356,12 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     
     plotinfo <- pngfun(file=file, caption=caption)
     plotbiasadj()
+    utils::capture.output(newbias,
+      file = file.path(plotdir, "recruit_fit_bias_adjust_convergence.txt"))
+    utils::capture.output(print(format(df,justify="left"),row.names=FALSE),
+      file = file.path(plotdir, "recruit_fit_bias_adjust.txt"))
+    utils::capture.output(cat(caption),
+      file = file.path(plotdir, "recruit_fit_bias_adjust_caption.txt"))
     dev.off()
   }
 
@@ -360,7 +370,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     # modify a control file to include estimates if file names are provided
     ctlfile <- readLines(oldctl)
     # look for certain comments in file
-    spot1 <- grep('last_early_yr',ctlfile)
+    spot1 <- grep('last_early_yr|last_yr_nobias',ctlfile)
     spot2 <- grep('max_bias_adj_in_MPD',ctlfile)
     if(spot1!=spot2-4) stop('error related to maxbias inputs in ctl file')
     # replace values

@@ -9,7 +9,7 @@
 #' @return a three-element vector; the first element is the name of the html table file, the second is the table caption, and the third is the category of output type
 #' @author Christine Stawitz
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}, \code{\link{SS_html}}}
+#' @seealso [SS_plots()], [SS_output()], [SS_html()]
 SS_makeHTMLdiagnostictable <- function(replist,
                                        plotdir = NULL,
                                        gradmax = 1E-3) {

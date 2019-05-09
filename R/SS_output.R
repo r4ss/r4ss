@@ -1118,6 +1118,13 @@ SS_output <-
     }
     datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'),
                                verbose=verbose)
+    # deal with case where data file is empty
+    if(is.null(datfile)){
+      starter <- SS_readstarter(file = file.path(dir, 'starter.ss'),
+                                verbose = verbose)
+      datfile <- SS_readdat_3.30(file = file.path(dir, starter$datfile),
+                                 verbose=verbose)
+    }
     age_data_info <- datfile$age_info
     len_data_info <- datfile$len_info
     if(!is.null(age_data_info) & !is.null(len_data_info)){
@@ -1126,9 +1133,9 @@ SS_output <-
       len_data_info$CompError <- as.numeric(len_data_info$CompError)
       len_data_info$ParmSelect <- as.numeric(len_data_info$ParmSelect)
       if(!any(age_data_info$CompError==1) & !any(len_data_info$CompError==1)){
-        stop("Problem Dirichlet-Multinomial parameters: ",
-             "Report file indicates parameters exist, but no CompError values ",
-             "in data.ss_new are equal to 1.")
+        stop("Problem Dirichlet-Multinomial parameters: \n",
+             "  Report file indicates parameters exist, but no CompError values\n",
+             "  in data.ss_new are equal to 1.")
       }
     }
 

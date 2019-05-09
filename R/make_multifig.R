@@ -143,7 +143,6 @@ make_multifig <-
     male_mult <- -1
   }
 
-#print(paste("twosex: ",twosex)  )
   # define dimensions
   yrvec <- sort(unique(yr))
   npanels <- length(yrvec)
@@ -157,6 +156,25 @@ make_multifig <-
     ncols <- maxcols
   }
 
+  # deal with bin scaling
+  # all unique bins included in the data
+  # (tail compression might cause this to differ by year and be unreliable)
+  allbins.obs <- sort(unique(ptsx))
+  if(scalebins){ # if bin scaling turned on
+    if(diff(range(allbins.obs)) > 0 &&     # & if the range of bins is non-zero
+       length(allbins.obs) > 2 &&          # & if there are more than 2 bins
+       length(unique(diff(allbins.obs)))){ # & if there are different bin widths
+      diffs <- diff(allbins.obs)
+      # repeat final width to treating plus group as same width as previous bin
+      diffs <- c(diffs, diffs[length(diffs)]) 
+      bin.width.table <- data.frame(bin=allbins.obs,
+                                    width=diffs)
+    }else{
+      scalebins <- FALSE
+      warning("Setting scalebins=FALSE. Bins are equal length or too few.")
+    }
+  }
+  
   npages <- ceiling(npanels/nrows/ncols) # how many pages of plots
   # doSD is TRUE/FALSE switch for whether to add error bars on points
   doSD <- length(ptsSD)==length(ptsx) & max(ptsSD) > 0
@@ -279,29 +297,38 @@ make_multifig <-
     z_i2 <- size[yr==yr_i & sexvec==2]
 
     # optional rescaling of bins for line plots
-    #!! (not yet applied to males in 2-sex plots)
     scaled <- FALSE
     if(scalebins){
-      bins <- sort(unique(ptsx_i1))
-      binwidths <- diff(bins)
-      if(diff(range(binwidths))>0){
-        warning("NOTE: scaling comps based on variable bin widths\n",
-                "hasn't yet been adapted to 2-sex plots")
-        if(FALSE){
-          binwidths <- c(binwidths,tail(binwidths,1))
-          allbinwidths <- apply(as.matrix(ptsx_i1),1,
-                                function(x){(binwidths)[bins==x]})
-          ptsy_i1   <- ptsy_i1/allbinwidths
-          linesy_i1 <- linesy_i1/allbinwidths
-          scaled <- TRUE
+      # function to lookup width associated with each bin in the table crated above
+      # IGT 2019-05-02: surely there is a more efficient way to do this
+      getwidths <- function(ptsx){
+        if(length(ptsx) > 0){
+          widths <- rep(NA, length(ptsx))
+          for(ibin in 1:length(ptsx)){
+            widths[ibin] <- bin.width.table$width[bin.width.table$bin == ptsx[ibin]]
+          }
+        }else{
+          widths <- NULL
         }
+        return(widths)
       }
-      if(scaled){
-        # change y-axis label if comps are scaled
-        anyscaled <- TRUE
-        if(ylab=="Proportion"){
-          ylab <- "Proportion / bin width"
-        }
+      widths_i0 <- getwidths(ptsx_i0)
+      widths_i1 <- getwidths(ptsx_i1)
+      widths_i2 <- getwidths(ptsx_i2)
+      if(length(linesy_i1) != length(widths_i1)) browser()
+      ptsy_i0   <- ptsy_i0/widths_i0
+      ptsy_i1   <- ptsy_i1/widths_i1
+      ptsy_i2   <- ptsy_i2/widths_i2
+      linesy_i0 <- linesy_i0/widths_i0
+      linesy_i1 <- linesy_i1/widths_i1
+      linesy_i2 <- linesy_i2/widths_i2
+      scaled <- TRUE
+    }
+    if(scaled){
+      # change y-axis label if comps are scaled
+      anyscaled <- TRUE
+      if(ylab=="Proportion"){
+        ylab <- "Proportion / bin width"
       }
     }
 

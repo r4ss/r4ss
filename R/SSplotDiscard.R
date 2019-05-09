@@ -152,12 +152,20 @@ SSplotDiscard <-
       }
 
       # make plots
-      if(!datplot) subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+      if(!datplot){
+        subplots <- setdiff(subplots,1) # don't do subplot 1 if datplot=FALSE
+      }
       for(isubplot in subplots){ # loop over subplots (data only or with fit)
-        if(isubplot==1) addfit <- FALSE else addfit <- TRUE
-        if(plot) dfracfunc(addfit=addfit)
+        if(isubplot==1){
+          addfit <- FALSE
+        }else{
+          addfit <- TRUE
+        }
+        if(plot){
+          dfracfunc(addfit=addfit)
+        }
         if(print) {
-          if(datplot){
+          if(!addfit){
             file <- paste0("discard_data",FleetName,".png")
           }else{
             file <- paste0("discard_fit",FleetName,".png")
