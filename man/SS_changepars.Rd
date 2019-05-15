@@ -7,7 +7,8 @@
 SS_changepars(dir = NULL, ctlfile = "control.ss_new",
   newctlfile = "control_modified.ss", linenums = NULL,
   strings = NULL, newvals = NULL, repeat.vals = FALSE,
-  newlos = NULL, newhis = NULL, estimate = FALSE, verbose = TRUE,
+  newlos = NULL, newhis = NULL, newprior = NULL, newprsd = NULL,
+  newprtype = NULL, estimate = FALSE, verbose = TRUE,
   newphs = NULL)
 }
 \arguments{
@@ -43,6 +44,27 @@ the vector of values needs to be in the same order as either
 \code{linenums} or \code{strings}.}
 
 \item{newhis}{Vector of new hi bounds. Must be the same length as newhis
+Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
+
+\item{newprior}{Vector of new prior values. 
+Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
+
+\item{newprsd}{Vector of new prior sd values. 
+Default=NULL.
+The vector can contain \code{NA} values, which will assign the original
+value to the given parameter but change the remainder parameters, where
+the vector of values needs to be in the same order as either
+\code{linenums} or \code{strings}.}
+
+\item{newprtype}{Vector of new prior type. 
 Default=NULL.
 The vector can contain \code{NA} values, which will assign the original
 value to the given parameter but change the remainder parameters, where
