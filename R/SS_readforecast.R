@@ -96,6 +96,15 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     mylist$BforconstantF <- allnums[i]; i <- i+1
     mylist$BfornoF <- allnums[i]; i <- i+1
     mylist$Flimitfraction <- allnums[i]; i <- i+1
+    if (mylist$Flimitfraction < 0) {
+      ii <- i
+      while (allnums[ii] != -999) ii <- ii + 1
+      mylist$Flimitfraction_m <- data.frame(matrix(allnums[i:(ii + 1)], 
+        ncol = 2, byrow = TRUE))
+      colnames(mylist$Flimitfraction_m) <- c("Year", "Fraction")
+      i <- ii + 2
+      remove(ii)
+    }
     mylist$N_forecast_loops <- allnums[i]; i <- i+1
     mylist$First_forecast_loop_with_stochastic_recruitment <- allnums[i]; i <- i+1
     mylist$Forecast_loop_control_3 <- allnums[i]; i <- i+1

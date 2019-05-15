@@ -93,6 +93,9 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     wl("BforconstantF")
     wl("BfornoF")
     wl("Flimitfraction")
+    if (mylist$Flimitfraction < 0) {
+      printdf("Flimitfraction_m")
+    }
     wl("N_forecast_loops")
 
     wl("First_forecast_loop_with_stochastic_recruitment")
