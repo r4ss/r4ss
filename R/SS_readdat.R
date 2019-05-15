@@ -28,7 +28,7 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 
-SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=NULL){
+SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NULL){
   # wrapper function to call old or new version of SS_readdat
 
   # automatic testing of version number (not yet used by default)
@@ -173,15 +173,18 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     if(!is.null(datlist$discard_fleet_info))colnames(datlist$discard_fleet_info)<-c("Fleet","units","errtype")
 
     # compatibility: create the old format catch matrix
-    datlist$catch <- datlist$catch[datlist$catch[, 1] > 0, ]
+    datlist$catch <- datlist$catch[datlist$catch[, 1] >= -999, ]
     datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
-    ny<-datlist$endyr-datlist$styr+1
+    ny<-datlist$endyr-datlist$styr+1+sum(datlist$catch[,1] == -999)
 
     catch<-matrix(0,nrow=ny,ncol=length(datlist$fleetinfo$fleetname)+2)
     colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
     rownames(catch)<-as.character(1:ny)
-    catch[,"year"]<-datlist$styr:datlist$endyr
-
+    if(sum(datlist$catch[,1]== -999) == 0){
+      catch[,"year"]<-datlist$styr:datlist$endyr
+    }else{
+      catch[,"year"]<-c(-999, datlist$styr:datlist$endyr)
+    }
     datlist$init_equil<-array(0,dim=totfleets)
     datlist$se_log_catch<-array(0,dim=totfleets)
 
