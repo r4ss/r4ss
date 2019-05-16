@@ -175,11 +175,12 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     # compatibility: create the old format catch matrix
     datlist$catch <- datlist$catch[datlist$catch[, 1] >= -999, ]
     datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
-    ny<-datlist$endyr-datlist$styr+1+sum(datlist$catch[,1] == -999)
+    ny<-datlist$endyr-datlist$styr+1+ ifelse(sum(datlist$catch[,1] == -999) > 0, 1, 0)
 
     catch<-matrix(0,nrow=ny,ncol=length(datlist$fleetinfo$fleetname)+2)
     colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
     rownames(catch)<-as.character(1:ny)
+
     if(sum(datlist$catch[,1]== -999) == 0){
       catch[,"year"]<-datlist$styr:datlist$endyr
     }else{
@@ -188,10 +189,11 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     datlist$init_equil<-array(0,dim=totfleets)
     datlist$se_log_catch<-array(0,dim=totfleets)
 
-    ses <- tapply(datlist$catch$V5, list("fleet" = datlist$catch$V3), 
+    ses <- tapply(datlist$catch$V5[datlist$catch$V1 != -999],
+      list("fleet" = datlist$catch$V3[datlist$catch$V1 != -999]),
       FUN = function(x) length(unique(x)))
     if (any(ses > 1)) stop("This code was not written to work with ",
-      "log standard errors of catches vary with time.")
+      "log standard errors of catches that vary with time.")
     for(i in 1:nrow(datlist$catch))
     {
       if(datlist$catch$V4[i]>=0)
