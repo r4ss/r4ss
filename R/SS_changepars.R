@@ -38,6 +38,24 @@
 #'   value to the given parameter but change the remainder parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   \code{linenums} or \code{strings}.
+#' @param newprior Vector of new prior values. 
+#'   Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
+#' @param newprsd Vector of new prior sd values. 
+#'   Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
+#' @param newprtype Vector of new prior type. 
+#'   Default=NULL.
+#'   The vector can contain \code{NA} values, which will assign the original
+#'   value to the given parameter but change the remainder parameters, where
+#'   the vector of values needs to be in the same order as either
+#'   \code{linenums} or \code{strings}.
 #' @param newphs Vector of new phases. Can be a single value, which will be
 #'   repeated for each parameter, the same length as newvals, where each
 #'   value corresponds to a single parameter, or \code{NULL}, where the
@@ -80,7 +98,8 @@ function(
          ctlfile="control.ss_new",
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL, repeat.vals=FALSE,
-         newlos=NULL, newhis=NULL, estimate=FALSE, verbose=TRUE,
+         newlos=NULL, newhis=NULL, newprior=NULL, newprsd=NULL, newprtype=NULL,
+         estimate=FALSE, verbose=TRUE,
          newphs = NULL
          )
 {
@@ -141,7 +160,7 @@ function(
   newctlsubset <- NULL
   cmntvec <- NULL
   nvals <- length(linenums)
-  oldvals <- oldlos <- oldhis <- oldphase <- newphase <- rep(NA, nvals)
+  oldvals <- oldlos <- oldhis <- oldphase <- oldprior <- oldprsd <- oldprtype <- newphase <- rep(NA, nvals)
 
   # check all inputs
   # check values and make repeat if requested
@@ -169,6 +188,15 @@ function(
   if (is.data.frame(newhis)){
     newhis <- as.numeric(newhis)
   }
+  if (is.data.frame(newprior)){
+    newprior <- as.numeric(newprior)
+  }
+  if (is.data.frame(newprsd)){
+    newprsd <- as.numeric(newprsd)
+  }
+  if (is.data.frame(newprtype)){
+    newprtype <- as.numeric(newprtype)
+  }
   if (!is.null(estimate)){
     if (!(length(estimate) %in% c(1,nvals))){
       stop("'estimate' should have 1 element or same number as 'newvals'")
@@ -188,16 +216,6 @@ function(
   if (is.data.frame(newvals)){
     newvals <- as.numeric(newvals)
   }
-  #### if inputs are NULL, allow newlows and newhis to be replaced by old values
-  ## if (is.null(newlos)){
-  ##   stop("Nothing input for 'newlos'")
-  ## }
-  ## if (is.null(newhis)){
-  ##   stop("Nothing input for 'newhis'")
-  ## }
-  ## if(is.null(newvals)){
-  ##   stop("Nothing input for 'newvals'")
-  ## }
 
   navar <- c(NA, "NA", "NAN", "Nan")
 
@@ -237,6 +255,27 @@ function(
         newhis[i] <- vec[2]
       }
       vec[2] <- newhis[i]
+    }
+    oldprior <- vec[4]
+    oldprsd  <- vec[5]
+    oldprtype<- vec[6]
+    if (!is.null(newprior)){
+      if (newprior[i] %in% navar) {
+        newprior[i] <- vec[4]
+      }
+      vec[4] <- newprior[i]
+    }
+    if (!is.null(newprsd)){
+      if (newprsd[i] %in% navar) {
+        newprsd[i] <- vec[5]
+      }
+      vec[5] <- newprsd[i]
+    }
+    if (!is.null(newprtype)){
+      if (newprtype[i] %in% navar) {
+        newprtype[i] <- vec[6]
+      }
+      vec[6] <- newprtype[i]
     }
 
     # change phase (unless NULL)
@@ -283,8 +322,19 @@ function(
   if (is.null(newhis)){
     newhis <- oldhis
   }
+  if (is.null(newprior)){
+    newprior <- oldprior
+  }
+  if (is.null(newprsd)){
+    newprsd <- oldprsd
+  }
+  if (is.null(newprtype)){
+    newprtype <- oldprtype
+  }
   results <- data.frame(oldvals, newvals, oldphase, newphase,
-                        oldlos, newlos, oldhis, newhis, comment=cmntvec)
+                        oldlos, newlos, oldhis, newhis, 
+                        oldprior, newprior, oldprsd, newprsd, 
+                        oldprtype, newprtype, comment=cmntvec)
   # output table of changes
   if (is.null(newvals)) {
     newvals <- NA
