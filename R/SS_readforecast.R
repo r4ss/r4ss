@@ -34,7 +34,6 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
   mylist$type <- "Stock_Synthesis_forecast_file"
   mylist$SSversion <- version
 
-
   # get numbers (could be better integrated with function above)
   allnums <- NULL
   for(i in 1:length(forecast)){
@@ -92,13 +91,14 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
         cat("Forecast selectivity option: ", mylist$Fcast_selex, "\n")
       }
     }
+    
     mylist$ControlRuleMethod <- allnums[i]; i <- i+1
     mylist$BforconstantF <- allnums[i]; i <- i+1
     mylist$BfornoF <- allnums[i]; i <- i+1
     mylist$Flimitfraction <- allnums[i]; i <- i+1
     if (mylist$Flimitfraction < 0) {
       ii <- i
-      while (allnums[ii] != -999) ii <- ii + 1
+      while (allnums[ii] > 0) ii <- ii + 1
       mylist$Flimitfraction_m <- data.frame(matrix(allnums[i:(ii + 1)], 
         ncol = 2, byrow = TRUE))
       colnames(mylist$Flimitfraction_m) <- c("Year", "Fraction")
