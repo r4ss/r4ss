@@ -196,16 +196,17 @@ SS_writedat_3.30 <- function(datlist,
 
   # write table of catch
   #year season  fleet catch catch_se
-  catch.out <- merge(stats::reshape(d$catch, direction = "long",
-    idvar = c("year", "seas"),
-    varying = colnames(d$catch)[(!colnames(d$catch) %in% c("year", "seas"))],
-    timevar = "fleet",
-    v.names = "catch",
-    sep = ""),
-    data.frame(
-      "fleet" = 1:length(d$se_log_catch), 
-      "catch_se" = d$se_log_catch),
-    all.x = TRUE)
+  catch.out <- d$catch
+  #catch.out <- merge(stats::reshape(d$catch, direction = "long",
+  #  idvar = c("year", "seas"),
+  #  varying = colnames(d$catch)[(!colnames(d$catch) %in% c("year", "seas"))],
+  #  timevar = "fleet",
+  #  v.names = "catch",
+  #  sep = ""),
+  #  data.frame(
+  #    "fleet" = 1:length(d$se_log_catch), 
+  #    "catch_se" = d$se_log_catch),
+  #  all.x = TRUE)
   catch.out <- catch.out[, c("year", "seas", "fleet", "catch", "catch_se")]
   colnames(catch.out) <- gsub("seas$", "season", colnames(catch.out))
   print.df(catch.out)
