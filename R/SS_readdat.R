@@ -201,6 +201,8 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
         if(datlist$catch$V1[i]==-999)  # this is an equilibrium catch
         {
            datlist$init_equil[as.numeric(datlist$catch$V2[i])]<-as.numeric(datlist$catch$V4[i])
+           catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
+           catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
         }
 
         if((datlist$catch$V1[i]>=datlist$styr)&&(datlist$catch$V1[i]<=datlist$endyr))  # this is a simple catch record
