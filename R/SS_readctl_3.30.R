@@ -265,11 +265,19 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   
   # recruitment timing and distribution
   ctllist<-add_elem(ctllist,"recr_dist_method")
+  if(ctllist$recr_dist_method == "1") {
+    # may want to remove this check and implement the approach
+    stop("recr_dist_method 1 should not be used in 3.30. Please use 2, 3, or 4")
+  }
   ctllist<-add_elem(ctllist,"recr_global_area")
   
   ctllist<-add_elem(ctllist,"recr_dist_read")
   recr_dist_read<-ctllist$recr_dist_read
   ctllist<-add_elem(ctllist,"recr_dist_inx") # recruitment interaction requested
+  if(ctllist$recr_dist_inx>0){
+    # may want to remove this check and implement the approach
+    stop("Recr_dist_inx should not be used in 3.30, so please set = 0 to read")
+  }
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
       col.names=c("GP","seas","area","age"))
 
@@ -499,26 +507,53 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     MGparmLabel[cnt]<-paste0("Herm_asymptote",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     N_MGparm<-N_MGparm+3
   }
-  N_MGparm<-N_MGparm+ctllist$N_GP+N_areas+nseas         # add for the assignment to areas
-  MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("RecrDist_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-7;cnt<-cnt+ctllist$N_GP
-  MGparmLabel[cnt+1:N_areas-1]<-paste0("RecrDist_Area_",1:N_areas);PType[cnt:(cnt+N_areas)]<-8;cnt<-cnt+N_areas
-  MGparmLabel[cnt+1:nseas-1]<-paste0("RecrDist_Seas_",1:nseas);PType[cnt:(cnt+nseas-1)]<-9;cnt<-cnt+nseas
-  
-  ## number of recruiment distribution parameters
-  N_RecrDist_parms<-ctllist$N_GP+ctllist$N_areas+ctllist$nseas
-  if(ctllist$recr_dist_inx){
-  ## Interactions
-    N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
-    N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
-    for(i in 1:ctllist$N_GP){
-      for(j in 1:nseas){
-        for(k in 1:N_areas){
-          MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);PType[cnt]<-10;cnt<-cnt+1
-        }
-      }
-    }
-    # add for the morph assignments within each area
+  #Recruitment Distribution
+  # get just the labels for RecrDist, number and names depend on method
+  RecrDistLabel <- switch(ctllist$recr_dist_method,
+                          "1"= stop("Recruitment distribution method 1 should not be used with 3.30"),
+                          "2"=  c(paste0("RecrDist_GP_",1:ctllist$N_GP), paste0("RecrDist_Area_",1:N_areas), paste0("RecrDist_month_",1:nseas)), 
+                          "3"= { lab <- NULL
+                                 for(i in 1:nrow(ctllist$recr_dist_pattern)){
+                                   tmp_lab <- paste0("RecrDist_GP_", 
+                                                ctllist$recr_dist_pattern[i,1], 
+                                                "_area_", 
+                                                ctllist$recr_dist_pattern[i,3], 
+                                                "_month_", 
+                                                ctllist$recr_dist_pattern[i,2])
+                                   lab <- c(lab, tmp_lab)
+                                 }
+                               lab
+                               },
+                          "4"= NULL
+                          )
+  N_RecrDist_parms <- length(RecrDistLabel)
+  #Add the labels, their parameter type and then adjust the count. 
+  if(N_RecrDist_parms>0){
+    MGparmLabel[cnt:(cnt+N_RecrDist_parms-1)] <- RecrDistLabel
+    PType[cnt:(cnt+N_RecrDist_parms-1)]<-7
+    cnt<-cnt+N_RecrDist_parms
+    N_MGparm <- N_MGparm + N_RecrDist_parms # add on to number of MGparms 
   }
+  
+  # Commented out below lines, because interactions only possible for 
+  # recr_dist_method 1, which should not be used in SS3.30. Will need reworking 
+  # if want to add back.
+
+  # if(ctllist$recr_dist_inx){
+  # ## Interactions
+  #   N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
+  #   N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
+  #   for(i in 1:ctllist$N_GP){
+  #     for(j in 1:nseas){
+  #       for(k in 1:N_areas){
+  #         MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);PType[cnt]<-10;cnt<-cnt+1
+  #       }
+  #     }
+  #   }
+  # 
+  #   # add for the morph assignments within each area
+  # }
+
 #  MGparms
 
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
@@ -1063,7 +1098,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   ctllist<-add_df(ctllist,name="lambdas",nrow=NULL,ncol=5,
                   col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
   
-  if(!is.null(ctllist$lambdas))ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
+  if(!is.null(ctllist$lambdas)) ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
   else ctllist$N_lambdas<-0
   
   if(ctllist$N_lambdas>0){
@@ -1147,3 +1182,4 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   # return the result
   return(ctllist)
 }
+
