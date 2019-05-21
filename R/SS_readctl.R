@@ -29,11 +29,16 @@
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param DatFile read datfile list for additional information for version 3.30
-#' and above
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
 #' @param N_CPUE_obs numbere of CPUE observations.
+#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
+#'  determined from control file
+#' @param datlist list or character. if list : produced from SS_writedat
+#'  or character : file name of dat file.
+#' @param ptype include a column in the output indicating parameter type?
+#'  (Can be useful, but causes problems for SS_writectl.) Only possible to use
+#'  for 3.24 control files.
 #' @author Ian G. Taylor, Yukio Takeuchi, Neil L Klaer
 #' @export
 #' @seealso \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
@@ -48,9 +53,11 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
                        Npopbins=NA,
                        Nfleet=2,
                        Nsurveys=2,
-                       DatFile=NA,
                        N_tag_groups=NA,
-                       N_CPUE_obs=NA){
+                       N_CPUE_obs=NA,
+                       use_datlist=FALSE,
+                       datlist=NULL,
+                       ptype=TRUE){
 
   # wrapper function to call old or new version of SS_readctl
 
@@ -91,8 +98,10 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
                                Nfleet       = Nfleet,
                                Nsurveys     = Nsurveys,
                                N_tag_groups = N_tag_groups,
-                               N_CPUE_obs   = N_CPUE_obs)
-
+                               N_CPUE_obs   = N_CPUE_obs,
+                               use_datlist  = use_datlist,
+                               datlist      = datlist,
+                               ptype        = ptype)
   }
 
   # call function for SS version 3.30
@@ -109,10 +118,10 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
                                Npopbins     = Npopbins,
                                Nfleet       = Nfleet,
                                Nsurveys     = Nsurveys,
-                               DatFile      = DatFile,
                                N_tag_groups = N_tag_groups,
-                               N_CPUE_obs   = N_CPUE_obs)
-
+                               N_CPUE_obs   = N_CPUE_obs,
+                               use_datlist  = use_datlist,
+                               datlist      = datlist)
   }
 
   # return the result

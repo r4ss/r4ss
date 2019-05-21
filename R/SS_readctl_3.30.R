@@ -27,7 +27,6 @@
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param DatFile read datfile list for additonal information
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
@@ -54,7 +53,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     Npopbins=NA,
     Nfleet=2,
     Nsurveys=2,
-    DatFile=NA,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
@@ -385,14 +383,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
   
   ## catch multipler parameters
-  if(any(DatFile$fleetinfo$need_catch_mult==1))
+  if(any(datlist$fleetinfo$need_catch_mult==1))
   {
     # need to read a parameter line per value = 1
     stop("Catch multipliers not yet implemented in this script")
   }
   
   ## age error parameters
-  if(any(DatFile$ageerror[,1]<0))
+  if(any(datlist$ageerror[,1]<0))
   {
     # need to read 7 full (14) parameter lines
     stop("Age error parameters not yet implemented in this script")
@@ -699,13 +697,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   }
    
   #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch 
-  if(any(DatFile$init_equil>0))
+  if(any(datlist$init_equil>0))
   {  
     comments_initF<-list()
     k<-0
     for(j in 1:Nfleet)
     {
-      if(DatFile$init_equil[j]>0)
+      if(datlist$init_equil[j]>0)
       {
         comments_initF<-c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
         k<-k+1
