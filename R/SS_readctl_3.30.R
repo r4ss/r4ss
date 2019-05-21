@@ -212,7 +212,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist$fleetnames<-fleetnames
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
-    if(is.null(datlist))stop("datlist from SS_readdat is needed is use_datlist is TRUE")
+    if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
@@ -247,7 +247,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
-    stop("currently sub morphs are not supported yet")
+    stop("sub morphs are not supported yet")
 #    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"submorphdist")
   }else{
@@ -276,7 +276,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
       col.names=c("GP","seas","area","age"))
 
   if(ctllist$N_areas>1){
-    #stop("Multi areas are not yet implemented")
     ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
     if(ctllist$N_moveDef>0)
     {
@@ -305,8 +304,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
-#    stop("natM_type =2 is not yet implemented in this script")
-    N_natMparms<-1 ## 2016-12-8
+    N_natMparms<-1
     comments<-if(ctllist$N_GP==1){
       "#_reference age for Lorenzen M; read 1P per morph"
     }else{
@@ -385,7 +383,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist<-add_elem(ctllist,"Herm_MalesInSSB")  #_Hermaphroditism_males_in_SSB
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
-  # ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method XX what to do with this?
   
   ## catch multipler parameters
   if(any(DatFile$fleetinfo$need_catch_mult==1))
@@ -1122,7 +1119,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
-  #  stop("Currently additional reporting of derived quantities is not implemented in this R code")
     ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4]>0){
