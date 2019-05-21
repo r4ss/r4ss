@@ -1085,11 +1085,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
                                                         "mult_by_lencomp_N",
                                                         "mult_by_agecomp_N",
                                                         "mult_by_size-at-age_N")))
-  if(nrow(ctllist$Variance_adjustment_list)>0)
-  {
-    for(j in 1:nrow(ctllist$Variance_adjustment_list))ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,
-                                                                                   ctllist$Variance_adjustment_list[j,]$Fleet]<-ctllist$Variance_adjustment_list[j,]$Value
+  if(!is.null(ctllist$Variance_adjustment_list)) { #check if is null first
+    if(nrow(ctllist$Variance_adjustment_list) > 0) {
+    for(j in 1:nrow(ctllist$Variance_adjustment_list)){
+      ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
+        ctllist$Variance_adjustment_list[j,]$Value
+    }
     ctllist$DoVar_adjust<-1
+    }
   }
   
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
