@@ -11,7 +11,7 @@
 #'  Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
 #'  data as it is being read.
-#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
@@ -50,7 +50,7 @@
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
-SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
+SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 ## Parameters that are not defined in control file
     nseas=4,
     N_areas=1,
@@ -72,7 +72,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   if(verbose) cat("running SS_readctl_3.24\n")
   dat <- readLines(file,warn=FALSE)
 
-  nver=as.numeric(substring(ctlversion,1,4))
+  nver=as.numeric(substring(version,1,4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]

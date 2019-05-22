@@ -7,7 +7,7 @@
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
-#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
@@ -44,7 +44,7 @@
 #' @seealso \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
 #' \code{\link{SS_readdat_3.24}}
 
-SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
+SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        ## Parameters that are not defined in control file
                        nseas=4,
                        N_areas=1,
@@ -61,12 +61,29 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
 
   # wrapper function to call old or new version of SS_readctl
 
-  # automatic testing of version number could be added here in the future
-  # see SS_readdat for example attempt
+  # automatic testing of version number
+  if(is.null(version)) {
+    # look for 3.24 or 3.30 at the top of the chosen file
+    version <- scan(file, what=character(), nlines=1)
+    version <- substring(version,3,6)
+    # if that fails, look for data.ss_new file in the same directory
+    if(version %in% c("3.24", "3.30")){
+      cat("assuming version", version, "based on first line of control file\n")
+    }else{
+      newfile <- file.path(dirname(file), "control.ss_new")
+      if(file.exists(newfile)){
+        version <- scan(newfile, what=character(), nlines=1)
+        version <- substring(version,3,6)
+        cat("assuming version", version, "based on first line of control.ss_new\n")
+      }else{
+        stop("input 'version' required due to missing value at top of", file)
+      }
+    }
+  }
 
-  nver=as.numeric(substring(ctlversion,1,4))
+  nver=as.numeric(substring(version,1,4))
 
-  if(verbose) cat("Char version is ", ctlversion, "\n")
+  if(verbose) cat("Char version is ", version, "\n")
   if(verbose) cat("Numeric version is ", nver, "\n")
 
   # call function for SS version 2.00
@@ -87,7 +104,7 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
   if((nver>=3.2)&&(nver<3.3)){
 
     ctllist <- SS_readctl_3.24(file         = file,
-                               ctlversion   = ctlversion,
+                               version   = version,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
@@ -108,7 +125,7 @@ SS_readctl <- function(file, ctlversion="3.24", verbose=TRUE,echoall=FALSE,
   if(nver>=3.3){
 
     ctllist <- SS_readctl_3.30(file         = file,
-                               ctlversion   = ctlversion,
+                               version   = version,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
