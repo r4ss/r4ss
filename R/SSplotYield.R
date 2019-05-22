@@ -33,7 +33,7 @@ SSplotYield <-
   function(replist,
            subplots=1:2,
            add=FALSE,plot=TRUE,print=FALSE,
-           labels=c("Relative depletion", #1
+           labels=c("%unfished", #1
              "Equilibrium yield (mt)",    #2
              "Total biomass (mt)",        #3
              "Surplus production (mt)"),  #4
