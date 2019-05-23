@@ -4,7 +4,7 @@
 \alias{SS_readdat}
 \title{read Stock Synthesis data file}
 \usage{
-SS_readdat(file, version = "3.24", verbose = TRUE, echoall = FALSE,
+SS_readdat(file, version = NULL, verbose = TRUE, echoall = FALSE,
   section = NULL)
 }
 \arguments{

@@ -174,12 +174,37 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
   }
   names(tuning_table)[1] <- "#Factor" # add hash to facilitate pasting into Control
   rownames(tuning_table) <- 1:nrow(tuning_table)
+
+  # stuff related to generalized size frequency data
+  tunetable_size <- replist$Size_comp_Eff_N_tuning_check
+  if(!is.null(tunetable_size)){
+    warning("\n  Generalized size composition data doesn't have\n",
+            "  Francis weighting available and the table of tunings\n",
+            "  is formatted differently in both 'suggested_tuning.ss'\n",
+            "  and the data.frame returned by this function\n",
+            "  (which are also formatted different from each other).")
+  }
+  
   # return the results
   if(write){
     file <- file.path(replist$inputs$dir, "suggested_tuning.ss")
     cat("writing to file", file, "\n")
     write.table(tuning_table,
                 file=file, quote=FALSE, row.names=FALSE)
+    # append generalized size comp table with different columns
+    if(!is.null(tunetable_size)){
+      names(tunetable_size)[1] <- "#Factor" # add hash to facilitate pasting into Control
+      write.table(tunetable_size,
+                  file=file, quote=FALSE, row.names=FALSE, append=TRUE)
+    }
   }
+  # remove mismatched columns from generalized size comp data to combine
+  # with other data types
+  if(!is.null(tunetable_size)){
+    tunetable_size[,-(1:4)] <- NA
+    names(tunetable_size) <- names(tuning_table)
+    tuning_table <- rbind(tuning_table, tunetable_size)
+  }
+  # return the table
   return(tuning_table)
 }
