@@ -1786,20 +1786,15 @@ SS_output <-
           # split out rows with info on tuning
           sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
         }
-        # change column name for models prior to 3.30.12
-        sizentune <- df.rename(sizentune,
-                               oldnames=c("Fleet_name"),
-                               newnames=c("Fleet_Name"))
-
         # format sizentune (info on tuning) has been split into
         # a separate data.frame, needs formatting: remove extra columns, change names
-        goodcols <- c(1:grep("FleetName",sizentune[1,]),
-                      grep("Method",names(sizentune)))
+        goodcols <- c(1:grep("name",tolower(sizentune[1,])),
+                        grep("Method",names(sizentune)))
         sizentune[1,max(goodcols)] <- "Method"
         sizentune <- sizentune[,goodcols]
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
-        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
+        for(icol in which(!names(sizentune) %in% c("#", "FleetName", "Fleet_name"))){
           sizentune[,icol] <- as.numeric(sizentune[,icol])
         }
         stats$Size_comp_Eff_N_tuning_check <- sizentune
