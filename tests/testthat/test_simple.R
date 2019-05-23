@@ -178,3 +178,19 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
               outfile = file.path(example_path, "simple_3.30.13/fastdat_3.30.13.ss"),
               faster = TRUE)
 })
+
+
+###############################################################################
+# testing read/write forecast functions for 3.30.13
+###############################################################################
+
+test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
+  # read forecast file
+  simple3.30.13_forecast <-
+    SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
+                    version="3.30")
+  # write forecast file
+  SS_writeforecast(mylist = simple3.30.13_forecast,
+                   dir = file.path(example_path, "simple_3.30.13"),
+                   file = "testforecast_3.30.13.ss")
+})

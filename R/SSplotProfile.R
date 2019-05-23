@@ -159,8 +159,8 @@ SSplotProfile <-
       stop("to print PNG files, you must supply a directory as 'plotdir'")
     }
     # create directory if it's missing
-    if(file.exists(plotdir)){
-      cat("creating directory:", plotdir, "\n")
+    if(!file.exists(plotdir)){
+      if(verbose) cat("creating directory:", plotdir, "\n")
       dir.create(plotdir, recursive=TRUE)
     }
   }
