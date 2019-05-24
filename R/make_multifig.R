@@ -447,8 +447,8 @@ make_multifig <-
         }
         # make arrows showing uncertainty for males
         if(length(ptsx_i2)>0){
-          arrows(x0=ptsx_i2,y0=-qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
-                 x1=ptsx_i2,y1=-qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
+          arrows(x0=ptsx_i2,y0=qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
+                 x1=ptsx_i2,y1=qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
                  length=0.01, angle=90, code=3, col=ptscol)
         }
         options(warn=old_warn)  #returning to old value
