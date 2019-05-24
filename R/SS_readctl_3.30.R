@@ -266,8 +266,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # recruitment timing and distribution
   ctllist<-add_elem(ctllist,"recr_dist_method")
   if(ctllist$recr_dist_method == "1") {
-    # may want to remove this check and implement the approach
-    stop("recr_dist_method 1 should not be used in 3.30. Please use 2, 3, or 4")
+    warning("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
   }
   ctllist<-add_elem(ctllist,"recr_global_area")
   
@@ -275,8 +274,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   recr_dist_read<-ctllist$recr_dist_read
   ctllist<-add_elem(ctllist,"recr_dist_inx") # recruitment interaction requested
   if(ctllist$recr_dist_inx>0){
-    # may want to remove this check and implement the approach
-    stop("Recr_dist_inx should not be used in 3.30, so please set = 0 to read")
+    #give warning but don't stop for now
+    warning("Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n")
   }
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
       col.names=c("GP","seas","area","age"))
