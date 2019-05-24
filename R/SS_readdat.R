@@ -19,7 +19,8 @@
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
-#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer
+#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
+#' Chantel R. Wetzel
 #' @export
 #' @seealso \code{\link{SS_readdat_2.00}}, \code{\link{SS_readdat_3.00}},
 #' \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},

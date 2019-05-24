@@ -31,5 +31,6 @@ created using \code{\link{SS_readdat}} (which would have called on
 \code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
+Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
+Chantel R. Wetzel
 }

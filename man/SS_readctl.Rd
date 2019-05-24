@@ -4,16 +4,16 @@
 \alias{SS_readctl}
 \title{read control file from SS}
 \usage{
-SS_readctl(file, ctlversion = "3.24", verbose = TRUE,
-  echoall = FALSE, nseas = 4, N_areas = 1, Nages = 20,
-  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
-  N_tag_groups = NA, N_CPUE_obs = NA, use_datlist = FALSE,
-  datlist = NULL, ptype = TRUE)
+SS_readctl(file, version = NULL, verbose = TRUE, echoall = FALSE,
+  nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1,
+  Npopbins = NA, Nfleet = 2, Nsurveys = 2, N_tag_groups = NA,
+  N_CPUE_obs = NA, use_datlist = FALSE, datlist = NULL,
+  ptype = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
 
-\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
 \item{verbose}{Should there be verbose output while running the file?

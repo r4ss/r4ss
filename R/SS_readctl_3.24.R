@@ -43,7 +43,8 @@
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
 #' (Can be useful, but causes problems for SS_writectl.)
-#' @author Yukio Takeuchi, Neil Klaer
+#' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
+
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 #' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}

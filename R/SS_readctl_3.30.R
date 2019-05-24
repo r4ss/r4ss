@@ -36,7 +36,7 @@
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. if list : produced from SS_writedat or character : file name of dat file.
-#' @author Neil Klaer, Yukio Takeuchi 
+#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 #' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}

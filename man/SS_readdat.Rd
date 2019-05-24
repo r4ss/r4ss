@@ -41,5 +41,6 @@ attempts to do everything. Returned datlist is mostly consistent across versions
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
 \author{
-Ian G. Taylor, Allan C. Hicks, Neil L. Klaer
+Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
+Chantel R. Wetzel
 }

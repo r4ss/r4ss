@@ -11,7 +11,8 @@
 #' @param faster Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
+#' Chantel R. Wetzel
 #' @export
 #' @seealso \code{\link{SS_writedat}}, \code{\link{SS_writedat_3.30}},
 #' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
