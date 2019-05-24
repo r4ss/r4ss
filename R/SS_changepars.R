@@ -256,9 +256,9 @@ function(
       }
       vec[2] <- newhis[i]
     }
-    oldprior <- vec[4]
-    oldprsd  <- vec[5]
-    oldprtype<- vec[6]
+    oldprior[i] <- vec[4]
+    oldprsd[i]  <- vec[5]
+    oldprtype[i]<- vec[6]
     if (!is.null(newprior)){
       if (newprior[i] %in% navar) {
         newprior[i] <- vec[4]
