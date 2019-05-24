@@ -508,54 +508,102 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_MGparm<-N_MGparm+3
   }
   #Recruitment Distribution
-  # get just the labels for RecrDist, number and names depend on method
+  # get the labels for RecrDist, number and names depend on method
   RecrDistLabel <- switch(ctllist$recr_dist_method,
-                          "1"= stop("Recruitment distribution method 1 should not be used with 3.30"),
-                          "2"=  c(paste0("RecrDist_GP_",1:ctllist$N_GP), paste0("RecrDist_Area_",1:N_areas), paste0("RecrDist_month_",1:nseas)), 
-                          "3"= { lab <- NULL
-                                 for(i in 1:nrow(ctllist$recr_dist_pattern)){
-                                   tmp_lab <- paste0("RecrDist_GP_", 
-                                                ctllist$recr_dist_pattern[i,1], 
-                                                "_area_", 
-                                                ctllist$recr_dist_pattern[i,3], 
-                                                "_month_", 
-                                                ctllist$recr_dist_pattern[i,2])
-                                   lab <- c(lab, tmp_lab)
+                          "1"= { # included for back compatibility only.
+                                lab <- c(paste0("RecrDist_GP_", 1:ctllist$N_GP),
+                                         paste0("RecrDist_Area_", 1:ctllist$N_areas),
+                                         paste0("RecrDist_Bseas_", 1:ctllist$nseas))
+                                if(ctllist$recr_dist_inx){ # interactions
+                                  #Note:labels and order consistent with SS source 
+                                  #(3.30 and 3.24 control file read in 3.30.10)
+                                  for(i in 1:ctllist$N_GP) {
+                                    for(j in 1:ctllist$N_areas) {
+                                      for(k in 1:ctllist$nseas) { # goes with settle
+                                        tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
+                                                             "_area_",j,
+                                                             "_settle_",k)
+                                        lab <- c(lab, tmp_lab_inx)
+                                      }
+                                    }
+                                  }
+                                }
+                                lab
+                          },
+                          "2"=  {
+                            #get the number of times settlement occurs
+                            N_settle_timings <- length(unique(ctllist$recr_dist_pattern[ ,2]))
+                                  lab <- c(paste0("RecrDist_GP_",1:ctllist$N_GP), 
+                                           paste0("RecrDist_Area_",1:ctllist$N_areas), 
+                                           paste0("RecrDist_settle_",1:N_settle_timings))
+                                  if(ctllist$recr_dist_inx){ # interactions
+                                    #Note:labels and order consistent with SS source 
+                                    #(3.30 and 3.24 control file read in 3.30.10)
+                                    for(i in 1:ctllist$N_GP) {
+                                      for(j in 1:ctllist$N_areas) {
+                                        for(k in 1:N_settle_timings) {
+                                          tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
+                                                               "_area_",j,
+                                                               "_settle_",k)
+                                          lab <- c(lab, tmp_lab_inx)
+                                        }
+                                      }
+                                    }
+                                  }
+                                  lab
+                          },
+                          "3"= { 
+                                lab <- NULL
+                                for(i in 1:nrow(ctllist$recr_dist_pattern)){
+                                  tmp_lab <- paste0("RecrDist_GP_", 
+                                               ctllist$recr_dist_pattern[i,1], 
+                                               "_area_", 
+                                               ctllist$recr_dist_pattern[i,3], 
+                                               "_month_", 
+                                               ctllist$recr_dist_pattern[i,2])
+                                  lab <- c(lab, tmp_lab)
                                  }
-                               lab
-                               },
+                                 lab
+                          },
                           "4"= NULL
                           )
-  N_RecrDist_parms <- length(RecrDistLabel)
+# Get the parameter type for recruitment dist params, type depends on method.
+  RecrDist_PType <- switch(ctllist$recr_dist_method,
+                           "1" = {
+                                  tmp_PType <- rep(c(7,8,9),
+                                                   times = c(ctllist$N_GP,
+                                                             ctllist$N_areas,
+                                                             ctllist$nseas
+                                                             )
+                                                   )
+                                  if(ctllist$recr_dist_inx){ #interactions
+                                    tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*ctllist$nseas))
+                                  }
+                                  tmp_PType
+                           },
+                           "2" = {
+                                  tmp_PType <- rep(c(7,8,9), times = c(ctllist$N_GP,
+                                                                       ctllist$N_areas,
+                                                                       N_settle_timings))
+                                    if(ctllist$recr_dist_inx){ #interactions
+                                      tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*N_settle_timings))
+                                    }
+                                  tmp_PType
+                            },
+                           # may want a different PType for 3 in the future?
+                           "3"=rep(10, times = nrow(ctllist$recr_dist_pattern)),
+                           "4"= NULL # because no params
+                           )
+
   #Add the labels, their parameter type and then adjust the count. 
-  if(N_RecrDist_parms>0){
+  N_RecrDist_parms <- length(RecrDistLabel)
+  if(N_RecrDist_parms>0) {
     MGparmLabel[cnt:(cnt+N_RecrDist_parms-1)] <- RecrDistLabel
-    PType[cnt:(cnt+N_RecrDist_parms-1)]<-7
-    cnt<-cnt+N_RecrDist_parms
+    PType[cnt:(cnt+N_RecrDist_parms-1)] <- RecrDist_PType
+    cnt <- cnt + N_RecrDist_parms # add on to the count
     N_MGparm <- N_MGparm + N_RecrDist_parms # add on to number of MGparms 
   }
   
-  # Commented out below lines, because interactions only possible for 
-  # recr_dist_method 1, which should not be used in SS3.30. Will need reworking 
-  # if want to add back.
-
-  # if(ctllist$recr_dist_inx){
-  # ## Interactions
-  #   N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
-  #   N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
-  #   for(i in 1:ctllist$N_GP){
-  #     for(j in 1:nseas){
-  #       for(k in 1:N_areas){
-  #         MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);PType[cnt]<-10;cnt<-cnt+1
-  #       }
-  #     }
-  #   }
-  # 
-  #   # add for the morph assignments within each area
-  # }
-
-#  MGparms
-
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
   MGparmLabel[cnt]<-"CohortGrowDev";PType[cnt]<-11;cnt<-cnt+1
   if((N_areas>1)&&(ctllist$N_moveDef>0)){
