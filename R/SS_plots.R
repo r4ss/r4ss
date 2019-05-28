@@ -37,6 +37,7 @@
 #'   \item Yield
 #'   \item Movement
 #'   \item Data range
+#'   \item Diagnostic tables
 #' }
 #' 
 #' @param print Deprecated input for backward compatibility, now replaced by
@@ -209,7 +210,7 @@
 #' Sci. 65: 2536-2551.
 SS_plots <-
   function(
-      replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,
+      replist=NULL, plot=1:25, print=NULL, pdf=FALSE, png=TRUE, html=png,
       printfolder="plots", dir="default", fleets="all", areas="all",
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",

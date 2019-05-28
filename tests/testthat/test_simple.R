@@ -58,22 +58,22 @@ test_that("SS_output list: Kobe looks right", {
 ###############################################################################
 
 test_that("SS_plots runs on simple_3.24 model", {
-  plots3.24 <- SS_plots(simple3.24, datplot=TRUE)
+  plots3.24 <- SS_plots(simple3.24)
   expect_equal(tail(plots3.24$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.01 model", {
-  plots3.30.01 <- SS_plots(simple3.30.01, datplot=TRUE)
+  plots3.30.01 <- SS_plots(simple3.30.01)
   expect_equal(tail(plots3.30.01$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.12 model", {
-  plots3.30.12 <- SS_plots(simple3.30.12, datplot=TRUE)
+  plots3.30.12 <- SS_plots(simple3.30.12)
   expect_equal(tail(plots3.30.12$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.13 model", {
-  plots3.30.13 <- SS_plots(simple3.30.13, datplot=TRUE)
+  plots3.30.13 <- SS_plots(simple3.30.13)
   expect_equal(tail(plots3.30.13$file,1), "parameterchecks.html")
 })
 
