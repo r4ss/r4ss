@@ -37,6 +37,7 @@
 #'   \item Yield
 #'   \item Movement
 #'   \item Data range
+#'   \item Diagnostic tables
 #' }
 #' 
 #' @param print Deprecated input for backward compatibility, now replaced by

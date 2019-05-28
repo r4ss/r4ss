@@ -11,7 +11,8 @@
 #' @param faster Speed up writing by writing length and age comps without aligning
 #' the columns (by using write.table instead of print.data.frame)
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
+#' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kelli F. Johnson,
+#' Chantel R. Wetzel
 #' @export
 #' @importFrom stats reshape
 #' @seealso \code{\link{SS_writedat}}, \code{\link{SS_writedat_3.24}},
@@ -173,6 +174,7 @@ SS_writedat_3.30 <- function(datlist,
   }
 
   # write a header
+  writeComment(paste0("#V", d$ReadVersion))
   writeComment("#C data file created using the SS_writedat function in the R package r4ss")
   writeComment(paste("#C should work with SS version:", d$SSversion))
   writeComment(paste("#C file write time:", Sys.time()))
@@ -196,16 +198,17 @@ SS_writedat_3.30 <- function(datlist,
 
   # write table of catch
   #year season  fleet catch catch_se
-  catch.out <- merge(stats::reshape(d$catch, direction = "long",
-    idvar = c("year", "seas"),
-    varying = colnames(d$catch)[(!colnames(d$catch) %in% c("year", "seas"))],
-    timevar = "fleet",
-    v.names = "catch",
-    sep = ""),
-    data.frame(
-      "fleet" = 1:length(d$se_log_catch), 
-      "catch_se" = d$se_log_catch),
-    all.x = TRUE)
+  catch.out <- d$catch
+  #catch.out <- merge(stats::reshape(d$catch, direction = "long",
+  #  idvar = c("year", "seas"),
+  #  varying = colnames(d$catch)[(!colnames(d$catch) %in% c("year", "seas"))],
+  #  timevar = "fleet",
+  #  v.names = "catch",
+  #  sep = ""),
+  #  data.frame(
+  #    "fleet" = 1:length(d$se_log_catch), 
+  #    "catch_se" = d$se_log_catch),
+  #  all.x = TRUE)
   catch.out <- catch.out[, c("year", "seas", "fleet", "catch", "catch_se")]
   colnames(catch.out) <- gsub("seas$", "season", colnames(catch.out))
   print.df(catch.out)

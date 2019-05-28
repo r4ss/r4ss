@@ -61,6 +61,7 @@ Current grouping of plots is as follows:
   \item Yield
   \item Movement
   \item Data range
+  \item Diagnostic tables
 }}
 
 \item{print}{Deprecated input for backward compatibility, now replaced by

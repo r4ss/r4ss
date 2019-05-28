@@ -34,5 +34,6 @@ for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
+Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Kelli F. Johnson,
+Chantel R. Wetzel
 }

@@ -111,14 +111,6 @@ SStableComparisons <-  function(summaryoutput,
           vals[1,-1] <- round(vals[1,-1]/1e3,3)
           vals[1,1] <-paste0(vals[1,1],"_thousand_mt")
         }
-        ## if(name=="SSB_Virg"){
-        ##   vals[1,-1] <- as.numeric(vals[1,-1])/1e3
-        ##   vals[1,1] <- "SB0_thousand_mt"
-        ## }
-        if(((length(grep("SPB",name))>0  | length(grep("SSB",name))>0) & any(nsexes==1))){
-          cat("dividing name by 2 for single-sex models:",(1:ncols)[nsexes==1],"\n")
-          for(i in (1:ncols)[nsexes==1]) vals[1+i] <- vals[1+i]/2
-        }
 
         if(name %in% c("Q","Q_calc")){
           Calc_Q <- aggregate(Calc_Q ~ name+Fleet,data=indices,FUN=mean)
@@ -191,15 +183,6 @@ SStableComparisons <-  function(summaryoutput,
         if(substring(name,1,3)%in%c("SPB","SSB") | substring(name,1,8)=="TotYield") {
           vals[1,-1] <- round(vals[1,-1]/1e3,3)
           vals[1,1] <-paste(vals[1,1],"thousand_mt",sep="_")
-        }
-        ## if(name=="SPB_Virg"){
-        ##   vals[1,-1] <- as.numeric(vals[1,-1])/1e3
-        ##   vals[1,1] <- "SB0_thousand_mt"
-        ## }
-        if(((length(grep("SPB",name))>0  | length(grep("SSB",name))>0) & any(nsexes==1))){
-          cat("dividing name by 2 for single-sex models:",(1:ncols)[nsexes==1],"\n")
-          for(i in (1:ncols)[nsexes==1]) vals[1,1+i] <- vals[1,1+i]/2
-          print(vals)
         }
         if(!is.null(digits)){
           if(verbose) cat("rounded to",digit,"digits\n")
