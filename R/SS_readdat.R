@@ -38,7 +38,7 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     version <- substring(version,3,6)
     version <- version[version %in% c("3.24", "3.30")]
     # if that fails, look for data.ss_new file in the same directory
-    if(version %in% c("3.24", "3.30")){
+    if(length(version) > 0){
       cat("assuming version", version, "based on first five lines of data file\n")
     }else{
       newfile <- file.path(dirname(file), "data.ss_new")
