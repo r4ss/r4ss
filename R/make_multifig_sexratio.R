@@ -184,7 +184,7 @@ make_multifig_sexratio <-
         lwr[pf == 0 & pm == 0] <- NA
         upr[pf == 0 & pm == 0] <- NA
       } else {
-        o <- e <- se.ratio <- lwr <- upr <- NA
+        o <- e <- se.ratio <- lwr <- upr <- effN <- N <- NA
       }
       df.list[[k]] <- data.frame(Yr=yr.temp, Bin=bin, Exp=e, Obs=o,
                                  lwr=lwr, upr=upr, effN=effN, N=N)
