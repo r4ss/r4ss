@@ -141,7 +141,7 @@ SS_readdat_3.30 <-
     df <- as.list(df)                  ## Must be a list for the next operation
     df <- do.call("rbind", df)         ## Make it into a dataframe
     df <- as.data.frame(df, stringsAsFactors = FALSE)
-    df <- utils::type.convert(df)
+    df <- utils::type.convert(df, as.is = TRUE)
     return(df)
   }
 
