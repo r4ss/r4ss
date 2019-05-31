@@ -18,6 +18,7 @@
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Chris J. Grandin,
 #' Kelli F. Johnson, Chantel R. Wetzel
 #' @export
+#' @importFrom utils type.convert
 #' @seealso \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}},
@@ -139,7 +140,9 @@ SS_readdat_3.30 <-
     df <- strsplit(df, "[[:blank:]]+") ## Split by whitespace and collapse (+)
     df <- as.list(df)                  ## Must be a list for the next operation
     df <- do.call("rbind", df)         ## Make it into a dataframe
-    as.data.frame(df, stringsAsFactors = FALSE)
+    df <- as.data.frame(df, stringsAsFactors = FALSE)
+    df <- utils::type.convert(df)
+    return(df)
   }
 
   ###############################################################################
