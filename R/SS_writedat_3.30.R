@@ -195,9 +195,15 @@ SS_writedat_3.30 <- function(datlist,
   # write table of info on each fleet
   writeComment("#_fleetinfo")
   print.df(d$fleetinfo, terminate=FALSE)
-
+  
+  # write table of info on bycatch only fleets, if exists.
+  if(!is.null(d$bycatch_fleet_info)){
+    writeComment("#Bycatch_fleet_input")
+    print.df(subset(d$bycatch_fleet_info, select = -fleetname), terminate = FALSE)
+  }
   # write table of catch
   #year season  fleet catch catch_se
+  writeComment("#_Catch data")
   catch.out <- d$catch
   #catch.out <- merge(stats::reshape(d$catch, direction = "long",
   #  idvar = c("year", "seas"),
