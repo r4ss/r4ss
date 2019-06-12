@@ -196,14 +196,30 @@ SS_readdat_3.30 <-
   d$surveytiming <- as.numeric(d$fleetinfo$surveytiming)
   d$units_of_catch <- as.numeric(d$fleetinfo$units)
   d$areas <- as.numeric(d$fleetinfo$area)
-
   ## ## For backwards compatability add the fleetinfo1 data frame
   ## d$fleetinfo1 <- as.data.frame(do.call("rbind", list(d$fleetinfo$surveytiming,
   ##                                                     d$fleetinfo$areas)))
   ## d$fleetinfo1 <- cbind(d$fleetinfo1, c("#_surveytiming", "#_areas"))
   ## rownames(d$fleetinfo1) <- c("surveytiming", "areas")
   ## colnames(d$fleetinfo1) <- c(d$fleetinfo$fleetname, "input")
-
+  
+  ##############################################################################
+  ### Bycatch Data (only added for fleets with type = 2)
+  if(any(d$fleetinfo$type == 2)) {
+    nbycatch <- length(d$fleetinfo$type[d$fleetinfo$type == 2])
+    d$bycatch_fleet_info <- get.df(dat, ind, nbycatch)
+  
+    colnames(d$bycatch_fleet_info) <- c("fleetindex",
+                                        "includeinMSY",
+                                        "Fmult",
+                                        "F_or_first_year",
+                                        "F_or_last_year",
+                                        "unused"
+                                        )
+  # add a fleetname column, as in fleet info.
+    d$bycatch_fleet_info <-cbind(d$bycatch_fleet_info, 
+                                 d$fleetinfo[d$fleetinfo$type == 2, "fleetname", drop = FALSE])
+  }
   ###############################################################################
   ## Catch data
   d$catch <- get.df(dat, ind)
