@@ -315,7 +315,6 @@ make_multifig <-
       widths_i0 <- getwidths(ptsx_i0)
       widths_i1 <- getwidths(ptsx_i1)
       widths_i2 <- getwidths(ptsx_i2)
-      if(length(linesy_i1) != length(widths_i1)) browser()
       ptsy_i0   <- ptsy_i0/widths_i0
       ptsy_i1   <- ptsy_i1/widths_i1
       ptsy_i2   <- ptsy_i2/widths_i2

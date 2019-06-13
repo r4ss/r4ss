@@ -355,6 +355,7 @@ SSplotComps <-
     kindlab=labels[2]
     filenamestart <- "comp_WAAfit_"
     titledata <- "Mean weight at age, "
+    dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
     stop("Input 'kind' to SSplotComps needs to be one of the following:\n  ",
