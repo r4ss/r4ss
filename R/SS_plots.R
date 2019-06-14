@@ -213,7 +213,7 @@ SS_plots <-
       printfolder="plots", dir="default", fleets="all", areas="all",
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
-      verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
+      verbose=TRUE, uncertainty=TRUE, forecastplot=TRUE,
       datplot=TRUE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
