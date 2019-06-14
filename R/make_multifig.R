@@ -315,7 +315,6 @@ make_multifig <-
       widths_i0 <- getwidths(ptsx_i0)
       widths_i1 <- getwidths(ptsx_i1)
       widths_i2 <- getwidths(ptsx_i2)
-      if(length(linesy_i1) != length(widths_i1)) browser()
       ptsy_i0   <- ptsy_i0/widths_i0
       ptsy_i1   <- ptsy_i1/widths_i1
       ptsy_i2   <- ptsy_i2/widths_i2
@@ -447,8 +446,8 @@ make_multifig <-
         }
         # make arrows showing uncertainty for males
         if(length(ptsx_i2)>0){
-          arrows(x0=ptsx_i2,y0=-qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
-                 x1=ptsx_i2,y1=-qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
+          arrows(x0=ptsx_i2,y0=qnorm(p=0.05,mean=ptsy_i2,sd=ptsSD_i2),
+                 x1=ptsx_i2,y1=qnorm(p=0.95,mean=ptsy_i2,sd=ptsSD_i2),
                  length=0.01, angle=90, code=3, col=ptscol)
         }
         options(warn=old_warn)  #returning to old value

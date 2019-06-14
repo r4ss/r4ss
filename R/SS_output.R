@@ -939,6 +939,12 @@ SS_output <-
 
   # likelihoods
   rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2)
+  # check for new section added in SS version 3.30.13.04 (2019-05-31)
+  laplace_line <- which(rawlike[,1] == "#_info_for_Laplace_calculations")
+  if(length(laplace_line) > 0){
+    rawlike <- rawlike[-laplace_line,]
+  }
+  # make numeric, clean up blank values
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
   names(like) <- "values"
   rownames(like) <- rawlike[,1]
@@ -946,7 +952,15 @@ SS_output <-
   lambdas[lambdas==""] <- NA
   lambdas <- as.numeric(lambdas)
   like$lambdas <- lambdas
-  stats$likelihoods_used <- like
+  # separate new section added in SS version 3.30.13.04 (2019-05-31)
+  if(length(laplace_line) > 0){
+    like <- like[1:(laplace_line - 1),]
+    stats$likelihoods_used <- like
+    stats$likelihoods_laplace <- like[laplace_line:nrow(like),]
+  }else{
+    stats$likelihoods_used <- like
+    stats$likelihoods_laplace <- NULL
+  }
 
   # read fleet-specific likelihoods
   likelihoods_by_fleet <-
@@ -1786,20 +1800,15 @@ SS_output <-
           # split out rows with info on tuning
           sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
         }
-        # change column name for models prior to 3.30.12
-        sizentune <- df.rename(sizentune,
-                               oldnames=c("Fleet_name"),
-                               newnames=c("Fleet_Name"))
-
         # format sizentune (info on tuning) has been split into
         # a separate data.frame, needs formatting: remove extra columns, change names
-        goodcols <- c(1:grep("FleetName",sizentune[1,]),
-                      grep("Method",names(sizentune)))
+        goodcols <- c(1:grep("name",tolower(sizentune[1,])),
+                        grep("Method",names(sizentune)))
         sizentune[1,max(goodcols)] <- "Method"
         sizentune <- sizentune[,goodcols]
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
-        for(icol in which(!names(sizentune) %in% c("#","FleetName"))){
+        for(icol in which(!names(sizentune) %in% c("#", "FleetName", "Fleet_name"))){
           sizentune[,icol] <- as.numeric(sizentune[,icol])
         }
         stats$Size_comp_Eff_N_tuning_check <- sizentune

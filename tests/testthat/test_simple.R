@@ -58,22 +58,22 @@ test_that("SS_output list: Kobe looks right", {
 ###############################################################################
 
 test_that("SS_plots runs on simple_3.24 model", {
-  plots3.24 <- SS_plots(simple3.24, datplot=TRUE)
+  plots3.24 <- SS_plots(simple3.24)
   expect_equal(tail(plots3.24$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.01 model", {
-  plots3.30.01 <- SS_plots(simple3.30.01, datplot=TRUE)
+  plots3.30.01 <- SS_plots(simple3.30.01)
   expect_equal(tail(plots3.30.01$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.12 model", {
-  plots3.30.12 <- SS_plots(simple3.30.12, datplot=TRUE)
+  plots3.30.12 <- SS_plots(simple3.30.12)
   expect_equal(tail(plots3.30.12$file,1), "parameterchecks.html")
 })
 
 test_that("SS_plots runs on simple_3.30.13 model", {
-  plots3.30.13 <- SS_plots(simple3.30.13, datplot=TRUE)
+  plots3.30.13 <- SS_plots(simple3.30.13)
   expect_equal(tail(plots3.30.13$file,1), "parameterchecks.html")
 })
 
@@ -177,4 +177,20 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   SS_writedat(datlist = simple3.30.13_dat,
               outfile = file.path(example_path, "simple_3.30.13/fastdat_3.30.13.ss"),
               faster = TRUE)
+})
+
+
+###############################################################################
+# testing read/write forecast functions for 3.30.13
+###############################################################################
+
+test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
+  # read forecast file
+  simple3.30.13_forecast <-
+    SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
+                    version="3.30")
+  # write forecast file
+  SS_writeforecast(mylist = simple3.30.13_forecast,
+                   dir = file.path(example_path, "simple_3.30.13"),
+                   file = "testforecast_3.30.13.ss")
 })

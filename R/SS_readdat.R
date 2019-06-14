@@ -19,7 +19,8 @@
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
-#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer
+#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
+#' Chantel R. Wetzel
 #' @export
 #' @seealso \code{\link{SS_readdat_2.00}}, \code{\link{SS_readdat_3.00}},
 #' \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
@@ -28,17 +29,18 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 
-SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=NULL){
+SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NULL){
   # wrapper function to call old or new version of SS_readdat
 
   # automatic testing of version number (not yet used by default)
   if(is.null(version)) {
     # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what=character(), nlines=1)
+    version <- scan(file, what=character(), nlines=5)
     version <- substring(version,3,6)
+    version <- version[version %in% c("3.24", "3.30")]
     # if that fails, look for data.ss_new file in the same directory
-    if(version %in% c("3.24", "3.30")){
-      cat("assuming version", version, "based on first line of data file\n")
+    if(length(version) > 0){
+      cat("assuming version", version, "based on first five lines of data file\n")
     }else{
       newfile <- file.path(dirname(file), "data.ss_new")
       if(file.exists(newfile)){
@@ -172,63 +174,60 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     datlist$fleetinfo2<-data.frame(datlist$fleetinfo2)  # convert all to numeric
     if(!is.null(datlist$discard_fleet_info))colnames(datlist$discard_fleet_info)<-c("Fleet","units","errtype")
 
+
     # compatibility: create the old format catch matrix
-    datlist$catch <- datlist$catch[datlist$catch[, 1] > 0, ]
-    datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
-    ny<-datlist$endyr-datlist$styr+1
+    datlist$catch <- datlist$catch[datlist$catch[, 1] >= -999, ]
+    colnames(datlist$catch) = c("year", "seas", "fleet", "catch", "catch_se")
+    #datlist$newcatch<-datlist$catch<-data.frame(datlist$catch)
+    #ny<-datlist$endyr-datlist$styr+1+sum(datlist$catch[,1] == -999)
+    #ny<-datlist$endyr-datlist$styr+1+ ifelse(sum(datlist$catch[,1] == -999) > 0, 1, 0)
 
-    catch<-matrix(0,nrow=ny,ncol=length(datlist$fleetinfo$fleetname)+2)
-    colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
-    rownames(catch)<-as.character(1:ny)
-    catch[,"year"]<-datlist$styr:datlist$endyr
+    #catch<-matrix(0,nrow=ny,ncol=length(datlist$fleetinfo$fleetname)+2)
+    #colnames(catch)<-c(datlist$fleetinfo$fleetname,"year","seas")
+    #rownames(catch)<-as.character(1:ny)
 
-    datlist$init_equil<-array(0,dim=totfleets)
-    datlist$se_log_catch<-array(0,dim=totfleets)
+    #if(sum(datlist$catch[,1]== -999) == 0){
+    #  catch[,"year"]<-datlist$styr:datlist$endyr
+    #}else{
+    #  catch[,"year"]<-c(-999, datlist$styr:datlist$endyr)
+    #}
+    #datlist$init_equil<-array(0,dim=totfleets)
+    #datlist$se_log_catch<-array(0,dim=totfleets)
 
-    ses <- tapply(datlist$catch$V5, list("fleet" = datlist$catch$V3), 
-      FUN = function(x) length(unique(x)))
-    if (any(ses > 1)) stop("This code was not written to work with ",
-      "log standard errors of catches vary with time.")
-    for(i in 1:nrow(datlist$catch))
-    {
-      if(datlist$catch$V4[i]>=0)
-      {
-        if(datlist$catch$V1[i]==-999)  # this is an equilibrium catch
-        {
-           datlist$init_equil[as.numeric(datlist$catch$V2[i])]<-as.numeric(datlist$catch$V4[i])
-        }
+    #ses <- tapply(datlist$catch$V5[datlist$catch$V1 != -999],
+    #  list("fleet" = datlist$catch$V3[datlist$catch$V1 != -999]),
+    #  FUN = function(x) length(unique(x)))
+    #if (any(ses > 1)) stop("This code was not written to work with ",
+    #  "log standard errors of catches that vary with time.")
+    #for(i in 1:nrow(datlist$catch))
+    #{
+    #  if(datlist$catch$V4[i]>=0)
+    #  {
+    #    if(datlist$catch$V1[i]==-999)  # this is an equilibrium catch
+    #    {
+    #       datlist$init_equil[as.numeric(datlist$catch$V2[i])]<-as.numeric(datlist$catch$V4[i])
+    #       catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
+    #       catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
+    #    }
 
-        if((datlist$catch$V1[i]>=datlist$styr)&&(datlist$catch$V1[i]<=datlist$endyr))  # this is a simple catch record
-        {
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
-          catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
-          datlist$se_log_catch[as.numeric(datlist$catch$V3[i])]<-as.numeric(datlist$catch$V5[i])
-        }
-      }
-    }
+    #    if((datlist$catch$V1[i]>=datlist$styr)&&(datlist$catch$V1[i]<=datlist$endyr))  # this is a simple catch record
+    #    {
+    #      catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),as.numeric(datlist$catch$V3[i])]<-datlist$catch$V4[i]
+    #      catch[as.numeric(which(catch[,"year"]==datlist$catch$V1[i])),"seas"]<-datlist$catch$V2[i]
+    #      datlist$se_log_catch[as.numeric(datlist$catch$V3[i])]<-as.numeric(datlist$catch$V5[i])
+    #    }
+    #  }
+    #}
 
-    catch<-as.data.frame(catch)
-    for(i in 1:totfleets)
-    {
-      catch[,i]<-as.double(as.character(catch[,i]))
-    }
-    catch$year<-as.numeric(as.character(catch$year))
-    catch$seas<-as.numeric(as.character(catch$seas))
+    #catch<-as.data.frame(catch)
+    #for(i in 1:totfleets)
+    #{
+    #  catch[,i]<-as.double(as.character(catch[,i]))
+    #}
+    #catch$year<-as.numeric(as.character(catch$year))
+    #catch$seas<-as.numeric(as.character(catch$seas))
 
-    datlist$catch<-catch
-
-    datlist$CPUEinfo<-as.data.frame(datlist$CPUEinfo)
-    for(i in 1:ncol(datlist$CPUEinfo))
-    {
-      datlist$CPUEinfo[,i]<-as.numeric(as.character(datlist$CPUEinfo[,i]))
-    }
-
-    datlist$CPUE<-as.data.frame(datlist$CPUE)
-    datlist$CPUE$year<-as.numeric(as.character(datlist$CPUE$year))
-    datlist$CPUE$seas<-as.numeric(as.character(datlist$CPUE$seas))
-    datlist$CPUE$index<-as.numeric(as.character(datlist$CPUE$index))
-    datlist$CPUE$obs<-as.double(as.character(datlist$CPUE$obs))
-    datlist$CPUE$se_log<-as.double(as.character(datlist$CPUE$se_log))
+    #datlist$catch<-catch
 
     # mean body weight
     if(datlist$use_meanbodywt==0)
@@ -242,36 +241,6 @@ SS_readdat <- function(file, version="3.24", verbose=TRUE,echoall=FALSE,section=
     datlist$max_combined_lbin<-datlist$len_info$combine_M_F
 
     if(is.null(datlist$lencomp))datlist$N_lencomp<-0
-
-    # compatibility: values in data frames need to be numeric
-    if(datlist$N_discard_fleets>0)
-    {
-      datlist$discard_data$Yr<-as.numeric(datlist$discard_data$Yr)
-      datlist$discard_data$Seas<-as.numeric(datlist$discard_data$Seas)
-      datlist$discard_data$Flt<-as.numeric(datlist$discard_data$Flt)
-      datlist$discard_data$Discard<-as.double(datlist$discard_data$Discard)
-      datlist$discard_data$Std_in<-as.double(datlist$discard_data$Std_in)
-    }
-
-    if(!is.null(datlist$lencomp))
-    {
-      datlist$lencomp$Yr<-as.numeric(datlist$lencomp$Yr)
-      datlist$lencomp$Seas<-as.numeric(datlist$lencomp$Seas)
-      datlist$lencomp$FltSvy<-as.numeric(datlist$lencomp$FltSvy)
-      datlist$lencomp$Gender<-as.numeric(datlist$lencomp$Gender)
-      datlist$lencomp$Part<-as.numeric(datlist$lencomp$Part)
-      datlist$lencomp$Nsamp<-as.double(datlist$lencomp$Nsamp)
-    }
-
-    if(!is.null(datlist$agecomp))
-    {
-      datlist$agecomp$Yr<-as.numeric(datlist$agecomp$Yr)
-      datlist$agecomp$Seas<-as.numeric(datlist$agecomp$Seas)
-      datlist$agecomp$FltSvy<-as.numeric(datlist$agecomp$FltSvy)
-      datlist$agecomp$Gender<-as.numeric(datlist$agecomp$Gender)
-      datlist$agecomp$Part<-as.numeric(datlist$agecomp$Part)
-      datlist$agecomp$Nsamp<-as.double(datlist$agecomp$Nsamp)
-    }
 
     if(datlist$use_MeanSize_at_Age_obs==0)
     {

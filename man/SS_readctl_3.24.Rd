@@ -5,7 +5,7 @@
 \title{read control file from SS version 3.24}
 \usage{
 SS_readctl_3.24(file, verbose = TRUE, echoall = FALSE,
-  ctlversion = "3.24", nseas = 4, N_areas = 1, Nages = 20,
+  version = "3.24", nseas = 4, N_areas = 1, Nages = 20,
   Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
   Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0, 0, 9, 12),
   use_datlist = FALSE, datlist = NULL, ptype = TRUE)
@@ -19,7 +19,7 @@ Default=TRUE.}
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
 data as it is being read.}
 
-\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
 \item{nseas}{number of seasons in the model. This information is not
@@ -79,5 +79,5 @@ that calls SS_readctl_3.24 (this function) or SS_readctl_3.30
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 }
 \author{
-Yukio Takeuchi, Neil Klaer
+Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
 }
