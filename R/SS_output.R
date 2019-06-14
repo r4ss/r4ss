@@ -2162,16 +2162,20 @@ SS_output <-
   }
   returndat$F_method <- F_method
 
-  # more processing of exploitation
-  exploitation[exploitation=="_"] <- NA
-  # "init_yr" not used as of 3.30.13, but must have been in the past
-  exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-  # make columns numeric
-  for(icol in 1:ncol(exploitation)){
-    exploitation[,icol] <- as.numeric(exploitation[,icol])
+  if(exploitation[[1]][1]!="absent"){
+    # more processing of exploitation
+    exploitation[exploitation=="_"] <- NA
+    # "init_yr" not used as of 3.30.13, but must have been in the past
+    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
+    # make columns numeric
+    for(icol in 1:ncol(exploitation)){
+      exploitation[,icol] <- as.numeric(exploitation[,icol])
+    }
+    returndat$exploitation <- exploitation
+  }else{
+    returndat$exploitation <- NULL
   }
-  returndat$exploitation <- exploitation
-
+  
   # catch
   catch <- matchfun2("CATCH",1,"TIME_SERIES",-1,substr1=FALSE,header=TRUE)
   # if table is present, then do processing of it
