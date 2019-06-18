@@ -19,9 +19,9 @@ Forwardslashes or double backslashes and quotes are necessary.
 This can also either be an absolute path or relative to the working
 directory.}
 
-\item{dir.mcmc}{Optional directory containing MCMC output. This needs to
-be relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
-will end up in the right place.}
+\item{dir.mcmc}{Optional directory containing MCMC output. This can either be
+relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
+will end up in the right place, or an absolute path.}
 
 \item{repfile}{Name of the big report file (could be renamed by user).}
 
