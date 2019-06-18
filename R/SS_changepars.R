@@ -25,14 +25,15 @@
 #'   \code{linenums} or \code{strings}.
 #' @param repeat.vals If multiple parameter lines match criteria, repeat the
 #'   \code{newvals} input for each line.
-#' @param estimate Vector of TRUE/FALSE for which changed parameters are to be
-#'   estimated. Default=FALSE. Can also be \code{NULL}.
-#' @param newlos Vector of new lo bounds. Default=NULL.
+#' @param estimate Optional vector or single value of TRUE/FALSE for which
+#'   parameters are to be estimated. Changes sign of phase to be positive or
+#'   negative. Default \code{NULL} causes no change to phase.
+#' @param newlos Vector of new lower bounds. Default=NULL.
 #'   The vector can contain \code{NA} values, which will assign the original
 #'   value to the given parameter but change the remainder parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   \code{linenums} or \code{strings}.
-#' @param newhis Vector of new hi bounds. Must be the same length as newhis
+#' @param newhis Vector of new high bounds. Must be the same length as newhis
 #'   Default=NULL.
 #'   The vector can contain \code{NA} values, which will assign the original
 #'   value to the given parameter but change the remainder parameters, where
@@ -63,11 +64,11 @@
 #'   on or off and not change the phase in which they are estimated use
 #'   \code{estimate = TRUE} or \code{estimate = FALSE}, respectively.
 #'   The vector can contain \code{NA} values, which will assign the original
-#'   value to the given parameter but change the remainder parameters, where
+#'   value to the given parameter but change the remaining parameters, where
 #'   the vector of values needs to be in the same order as either
 #'   \code{linenums} or \code{strings}.
 #' @param verbose More detailed output to command line. Default=TRUE.
-#' @author Ian Taylor, Christine Stawitz
+#' @author Ian Taylor, Christine Stawitz, Chantel Wetzel
 #' @seealso \code{\link{SS_parlines}}, \code{\link{SS_profile}}
 #' @export
 #' @examples
@@ -99,7 +100,7 @@ function(
          newctlfile="control_modified.ss",
          linenums=NULL, strings=NULL, newvals=NULL, repeat.vals=FALSE,
          newlos=NULL, newhis=NULL, newprior=NULL, newprsd=NULL, newprtype=NULL,
-         estimate=FALSE, verbose=TRUE,
+         estimate=NULL, verbose=TRUE,
          newphs = NULL
          )
 {
@@ -116,6 +117,7 @@ function(
   {
     # get table of parameter lines
     ctltable <- SS_parlines(ctlfile=fullctlfile)
+    
     # list of all parameter labels
     allnames <- ctltable$Label
     # empty list of "good" labels to be added to
@@ -160,8 +162,9 @@ function(
   newctlsubset <- NULL
   cmntvec <- NULL
   nvals <- length(linenums)
-  oldvals <- oldlos <- oldhis <- oldphase <- oldprior <- oldprsd <- oldprtype <- newphase <- rep(NA, nvals)
-
+  # make vectors of NA values for old and new quantities
+  oldvals <- oldlos <- oldhis <- oldphase <- rep(NA, nvals)
+  oldprior <- oldprsd <- oldprtype <- newphase <- rep(NA, nvals)
   # check all inputs
   # check values and make repeat if requested
   if (!is.null(newvals) & length(newvals)!=nvals){
@@ -256,9 +259,9 @@ function(
       }
       vec[2] <- newhis[i]
     }
-    oldprior <- vec[4]
-    oldprsd  <- vec[5]
-    oldprtype<- vec[6]
+    oldprior[i] <- vec[4]
+    oldprsd[i]  <- vec[5]
+    oldprtype[i]<- vec[6]
     if (!is.null(newprior)){
       if (newprior[i] %in% navar) {
         newprior[i] <- vec[4]
@@ -312,6 +315,7 @@ function(
   if(verbose){
     cat('\nwrote new file to',newctlfile,'with the following changes:\n')
   }
+
   # if no changed made, repeat old values in output
   if (is.null(newvals)){
     newvals <- oldvals

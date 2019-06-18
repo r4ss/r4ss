@@ -12,9 +12,9 @@
 #' Forwardslashes or double backslashes and quotes are necessary.
 #' This can also either be an absolute path or relative to the working
 #' directory.
-#' @param dir.mcmc Optional directory containing MCMC output. This needs to
-#' be relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
-#' will end up in the right place.
+#' @param dir.mcmc Optional directory containing MCMC output. This can either be
+#' relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
+#' will end up in the right place, or an absolute path.
 #' @param repfile Name of the big report file (could be renamed by user).
 #' @param compfile Name of the composition report file.
 #' @param covarfile Name of the covariance output file.
@@ -939,6 +939,12 @@ SS_output <-
 
   # likelihoods
   rawlike <- matchfun2("LIKELIHOOD",2,"Fleet:",-2)
+  # check for new section added in SS version 3.30.13.04 (2019-05-31)
+  laplace_line <- which(rawlike[,1] == "#_info_for_Laplace_calculations")
+  if(length(laplace_line) > 0){
+    rawlike <- rawlike[-laplace_line,]
+  }
+  # make numeric, clean up blank values
   like <- data.frame(signif(as.numeric(rawlike[,2]),digits=7))
   names(like) <- "values"
   rownames(like) <- rawlike[,1]
@@ -946,7 +952,15 @@ SS_output <-
   lambdas[lambdas==""] <- NA
   lambdas <- as.numeric(lambdas)
   like$lambdas <- lambdas
-  stats$likelihoods_used <- like
+  # separate new section added in SS version 3.30.13.04 (2019-05-31)
+  if(length(laplace_line) > 0){
+    like <- like[1:(laplace_line - 1),]
+    stats$likelihoods_used <- like
+    stats$likelihoods_laplace <- like[laplace_line:nrow(like),]
+  }else{
+    stats$likelihoods_used <- like
+    stats$likelihoods_laplace <- NULL
+  }
 
   # read fleet-specific likelihoods
   likelihoods_by_fleet <-
@@ -1342,21 +1356,38 @@ SS_output <-
   }
 
   # read MCMC output
-  if(!is.null(dir.mcmc)){
-    # check for presence of posteriors file
-    if("posteriors.sso" %in% dir(file.path(dir, dir.mcmc))){
-      # run function to read posteriors.sso and derived_posteriors.sso
-      if(verbose){
-        message("Running 'SSgetMCMC' to get MCMC output")
-      }
-      mcmc <- SSgetMCMC(dir = file.path(dir, dir.mcmc))
-    }else{
-      warning("skipping reading MCMC output because posterior.sso file",
-              " not found in file.path(dir, dir.mcmc)")
-      mcmc <- NULL
-    }
-  }else{
+  if(is.null(dir.mcmc)){
+    # if no directory provided, set results to NULL
     mcmc <- NULL
+  }else{
+    # directory provided, check to make sure it exsists
+    dir.mcmc.full <- NULL
+    if(dir.exists(dir.mcmc)){
+      dir.mcmc.full <- dir.mcmc
+    }
+    if(dir.exists(file.path(dir, dir.mcmc))){
+      dir.mcmc.full <- file.path(dir, dir.mcmc)
+    }
+    # warn if directory doesn't exist
+    if(is.null(dir.mcmc.full)){
+      warning("'dir.mcmc' directory not found either as an absolute path ",
+              "or relative to the 'dir' input")
+      mcmc <- NULL
+    }else{
+      # check for presence of posteriors file
+      if("posteriors.sso" %in% dir(dir.mcmc.full)){
+        # run function to read posteriors.sso and derived_posteriors.sso
+        if(verbose){
+          message("Running 'SSgetMCMC' to get MCMC output")
+        }
+        mcmc <- SSgetMCMC(dir = dir.mcmc.full)
+      }else{
+        warning("skipping reading MCMC output because posterior.sso file",
+                " not found in \n",
+                dir.mcmc.full)
+        mcmc <- NULL
+      }
+    }
   }
   
   # derived quantities
@@ -2148,16 +2179,20 @@ SS_output <-
   }
   returndat$F_method <- F_method
 
-  # more processing of exploitation
-  exploitation[exploitation=="_"] <- NA
-  # "init_yr" not used as of 3.30.13, but must have been in the past
-  exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-  # make columns numeric
-  for(icol in 1:ncol(exploitation)){
-    exploitation[,icol] <- as.numeric(exploitation[,icol])
+  if(exploitation[[1]][1]!="absent"){
+    # more processing of exploitation
+    exploitation[exploitation=="_"] <- NA
+    # "init_yr" not used as of 3.30.13, but must have been in the past
+    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
+    # make columns numeric
+    for(icol in 1:ncol(exploitation)){
+      exploitation[,icol] <- as.numeric(exploitation[,icol])
+    }
+    returndat$exploitation <- exploitation
+  }else{
+    returndat$exploitation <- NULL
   }
-  returndat$exploitation <- exploitation
-
+  
   # catch
   catch <- matchfun2("CATCH",1,"TIME_SERIES",-1,substr1=FALSE,header=TRUE)
   # if table is present, then do processing of it

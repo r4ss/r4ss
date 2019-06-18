@@ -214,7 +214,7 @@ SS_plots <-
       printfolder="plots", dir="default", fleets="all", areas="all",
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
-      verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
+      verbose=TRUE, uncertainty=TRUE, forecastplot=TRUE,
       datplot=TRUE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
@@ -273,7 +273,7 @@ SS_plots <-
     uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
-    cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
+    cat("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
     forecastplot <- FALSE
   }
 
