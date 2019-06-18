@@ -274,7 +274,7 @@ SS_plots <-
     uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
-    cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
+    cat("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
     forecastplot <- FALSE
   }
 
