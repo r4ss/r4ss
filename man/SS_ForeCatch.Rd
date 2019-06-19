@@ -5,7 +5,8 @@
 \title{Create table of fixed forecast catches}
 \usage{
 SS_ForeCatch(replist, yrs = 2017:2028, average = FALSE,
-  avg.yrs = 2012:2016, total = NULL, digits = 2, dead = TRUE)
+  avg.yrs = 2012:2016, total = NULL, digits = 2, dead = TRUE,
+  zeros = FALSE)
 }
 \arguments{
 \item{replist}{List created by \code{\link{SS_output}}}
@@ -24,6 +25,8 @@ For west coast groundfish, total might be ACL for next 2 forecast years}
 \item{digits}{Number of digits to round to in table}
 
 \item{dead}{TRUE/FALSE switch to choose dead catch instead of retained catch.}
+
+\item{zeros}{Include entries with zero catch (TRUE/FALSE)}
 }
 \description{
 Processing values of dead or retained biomass from timeseries output
@@ -35,7 +38,7 @@ This is a common task for US west coast groundfish but might be useful elsewhere
 \examples{
 
   \dontrun{
-    # create table for next two years based on 
+    # create table for next two years based on
     SS_ForeCatch(base,               # object created by SS_output
                  yrs=2015:2016,      # years with fixed catch
                  average=TRUE,       # catch by fleet from average catch
@@ -45,7 +48,7 @@ This is a common task for US west coast groundfish but might be useful elsewhere
 
     # create table based on harvest control rule projection in SS
     # that can be mapped into an alternative state of nature
-    SS_ForeCatch(low_state,          # object created by SS_output for low state 
+    SS_ForeCatch(low_state,          # object created by SS_output for low state
                  yrs=2017:2026,      # forecast period after fixed ACL years
                  average=FALSE)      # use values forecast in SS, not historic catch
 
