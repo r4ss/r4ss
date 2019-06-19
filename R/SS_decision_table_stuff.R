@@ -1,4 +1,4 @@
-SS_decision_table_stuff <- function(replist, yrs=2017:2028){
+SS_decision_table_stuff <- function(replist, yrs=2019:2030){
   # function for getting values for decision tables
   # not yet cleaned up for inclusion in r4ss
 
