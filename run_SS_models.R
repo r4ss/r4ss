@@ -96,7 +96,7 @@ run_SS_models <- function(dirvec = NULL,
                        as.character(Sys.time()),
                        "###",
                        " ",
-                       ADMBoutput),
+                       console.output),
                      con = 'console.output.txt')
           message("console output written to console.output.txt")
         }
@@ -106,5 +106,5 @@ run_SS_models <- function(dirvec = NULL,
   } # end loop over directories
 
   # return table of results
-  return(data.frame(dir=dir, results=results))
+  return(data.frame(dir=dirvec, results=results))
 }
