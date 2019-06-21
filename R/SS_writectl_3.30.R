@@ -24,7 +24,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   on.exit(close(zz)) # Needed in case the function exits early.
   
   # Internally used function definitions -----
-  # TODO: many of these are identical with functions used by other  
+  # many of these are identical with functions used by other  
   # SS_write* functions. Perhaps define them in a separate file so they can 
   # be used by any of these functions.But would require passing the file path
   # each time.
@@ -152,8 +152,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("N_platoon", comment = "N_platoons_Within_GrowthPattern")
   if(ctllist$N_platoon > 1) { # Conditional inputs needed if more than 1 platoon.
     stop("Multiple platoons are not supported yet by SS_writectl_3.30")
-    #TODO: get the below code working along with other necessary ctl file write
-    # changes and remove stop()
+    #TODO: add multiple platoon functionality to SS_writectl_3.30 and
+    # SS_readctl_3.30. Then, the stop() above can be removed.
     wl("sd_ratio", comment = "Morph_between/within_stdev_ratio")
     wl("submorphdist", comment = "vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
   }
@@ -311,12 +311,12 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # MG parms ----
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
-  # Time varying MG short parmlines, if any.
-  #Not sure time varying is 
+  # Time varying MG short parmlines would go next.
   # TODO: Looks like all TV options may not be implemented in the readctl_3.30 
-  # function? Need to add this.
-  if(verbose) {
-  warning("Time varying MG params is not yet implemented in SS_writectl_3.30")
+  # function? Need to add this. Implement, then can remove the following stop()
+  if(any(ctllist$MG_parms[, c("env_var", "use_dev", "Block")] != 0)) {
+    stop("Time varying MG short parameter lines (for environmental links, ",
+         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
   }
   # Seasonal effects ----
   writeComment("#")
@@ -343,9 +343,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "function of SR curvature"))
   # SR parms ----
   printdf("SRparm")
-  #TODO: add time varying SR short lines here, 
-  if(verbose) {
-  warning("Time varying SR params is not yet implemented in SS_writectl_3.30")
+  #TODO: add time varying SR short lines here, and add code to read them.
+  if(any(ctllist$SRparm[,c("env_var", "use_dev", "Block")] != 0)){
+    stop("Time varying SR short parameter lines (for environmental links, ",
+         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
   }
   # recdevs ----
   wl("do_recdev",
@@ -436,8 +437,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
   printdf("Q_parms")
   writeComment("#_no timevary Q parameters")
-  if(verbose) warning("Q tv parameters not yet implemented in SS_writectl_3.30")
-  
+  if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0)) {
+    stop("Time varying Q short parameter lines (for environmental links, ",
+         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  }
   # Size selectivity setup ----
   writeComment("#_size_selex_patterns")
   printdf("size_selex_types")
@@ -460,8 +463,16 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     writeComment("#_No age_selex_parm")
   }
   # TV selectivity parameters
-  if(verbose) warning("Time varying selectivity parameters not yet implemented")
-  #TODO: see if implemented in read, if not, allow to read.
+  #TODO: see if TV selectivity implemented in readctl; if so, allow to read.
+  # if not, implement in the future.
+  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0)) {
+    stop("Time varying Size selex short parameter lines (for environmental links, ",
+         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  }
+  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0)) {
+    stop("Time varying Age selex short parameter lines (for environmental links, ",
+         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  }
   # 2DAR sel ----
   wl("Use_2D_AR1_selectivity", 
      comment = "#  use 2D_AR1 selectivity(0/1):  experimental feature")
@@ -474,11 +485,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     stop("ctllist$Use_2D_AR1_selectivity has value ", 
          ctllist$Use_2D_AR1_selectivity, ", but can only have value 0 or 1.")
   }
-  
-  
-  
-  
-  
   # Tag model parameters ----
   writeComment("# Tag loss and Tag reporting parameters go next")
   wl("TG_custom", comment = "TG_custom:  0=no read; 1=read if tags exist")
@@ -498,11 +504,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(verbose) {
     warning("Please note that time varying parameters for tagging not yet ",
             "implemented as of SS version 3.30.13")
-  }  
-
+  }
   # Var Adj ----
   # TODO: will need to add to the sS_readctl_3.30 fun so it can read 3.30 var
-  # adjustment section correctly
+  # adjustment section correctly if using 
   writeComment("# Input variance adjustments factors: ")
   if(ctllist$DoVar_adjust == 0) {
     ctllist$tmp_var <- c(-9999, 1, 0)
