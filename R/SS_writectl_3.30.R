@@ -18,59 +18,67 @@
 #' 
 SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(verbose) message("Running SS_writectl_3.30\n")
-  # Needed so when printing to the console the objects can be seen.
-  oldwidth <- options()$width
-  oldmax.print <- options()$max.print
-  options(width=5000,max.print=9999999)
   
   if(verbose) message("Opening connection to ",outfile,"\n")
   zz <- file(outfile, open="at") #open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
   
   # Internally used function definitions -----
-  # TODO: many of these are identical with functions used by other SS_read* or 
+  # TODO: many of these are identical with functions used by other  
   # SS_write* functions. Perhaps define them in a separate file so they can 
-  # be used by any of these functions.
-  writeComment<-function(text,...){
-    if(length(grep(x=text,pattern="^#"))!=length(text))text<-paste("#_",text,sep="")
-    writeLines(text=text,con=zz,...)
+  # be used by any of these functions.But would require passing the file path
+  # each time.
+  writeComment<-function(text,...) {
+    if(length(grep(x = text, pattern = "^#")) != length(text)) {
+      text<-paste("#_", text, sep="")
+    }
+    writeLines(text = text, con = zz, ...)
   }
-  #wl = write line.
-  wl <- function(name,comment=NULL,con=stdout) {
+  # wl = write a line with a single value to an SS control file.
+  # @param name The name of the list component in ctllist to find
+  # @param comment A comment to put after the value on the line. If no "#" is 
+  # included at the beginning, then "#_" is added to the beginning of the comment
+  # before writing to file.
+  wl <- function(name, comment = NULL, con = stdout) {
     # simple function to clean up many repeated commands
-    value = ctllist[names(ctllist)==name]
-    if(is.null(comment)){
-      writeLines(paste(value," #_",name,sep="",collapse="_"),con=zz)
-    }else{
-      if(length(grep(comment,pattern="^#"))!=0){
-        writeLines(paste(value,comment),con=zz)
-      }else{
-        writeLines(paste(value," #_",comment,sep="",collapse="_"),con=zz)
+    value = ctllist[names(ctllist) == name]
+    if(is.null(comment)) {
+      writeLines(paste(value, " #_", name, sep="", collapse = "_"), con = zz)
+    } else {
+      if(length(grep(comment, pattern = "^#")) != 0) {
+        writeLines(paste(value, comment), con = zz)
+      } else {
+        writeLines(paste(value, " #_", comment, sep = "", collapse = "_"), 
+                   con = zz)
       }
     }
   }
   
-  # Write a line if the values are in a vector.
-  wl.vector <- function(name,comment=NULL) {
+  # wl = write a line with a vector of values to an SS control file.
+  # @param name The name of the list component in ctllist to find
+  # @param comment A comment to put after the value on the line. If no "#" is 
+  # included at the beginning, then "#_" is added to the beginning of the comment
+  # before writing to file.
+  wl.vector <- function(name, comment = NULL) {
     # simple function to clean up many repeated commands
-    value = ctllist[names(ctllist) == name][[1]]
+    value <- ctllist[names(ctllist) == name][[1]]
     if(is.null(comment)) {
-      writeLines(paste(paste(value,collapse=" ")," #_",name,sep=""),con=zz)
-      #      write.table(file=zz,x=t(value),append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
-    }else {
-      writeLines(paste(paste(value,collapse=" "),comment),con=zz)
-      #      write.table(file=zz,x=t(value),append=TRUE,sep=" ",quote=FALSE,row.names=FALSE)
+      writeLines(paste(paste(value, collapse = " "), " #_", name, sep = ""), 
+                 con = zz)
+    } else {
+      writeLines(paste(paste(value, collapse = " "), comment), con = zz)
     }
   }
-  # write a line if the values are in a list. (Note that function name was a
-
+  # write a line if the values are in a list.
   wl.list <- function(name, comment = NULL, header = NULL) {
     if(!is.null(header)) {
-      writeLines(paste0("#_",header),con=zz)
+      writeLines(paste0("#_", header), con = zz)
     }
-    value = ctllist[names(ctllist)==name][[1]]
-    value1<-sapply(value, function(x){paste(paste(x),collapse=" ")},
-                   simplify=TRUE)
+    value <-  ctllist[names(ctllist) == name][[1]]
+    value1 <- sapply(value, 
+                     function(x) {paste(paste(x), collapse = " ")},
+                     simplify = TRUE
+                     )
     writeLines(value1, con = zz)
   }
   
@@ -93,35 +101,33 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     }
     if(!is.null(dataframe)) {
       # remove columns if desired.
-      if(!is.null(cols_to_rm)){
-        dataframe <- dataframe[,-cols_to_rm]
+      if(!is.null(cols_to_rm)) {
+        dataframe <- dataframe[, -cols_to_rm]
       }
       if (terminate) {
         # add terminator line to end data frame
-        newline <- c(-9999, rep(0, ncol(dataframe)-1))
+        newline <- c(-9999, rep(0, ncol(dataframe) - 1))
         dataframe <- rbind(dataframe, newline)
         rownames(dataframe)[nrow(dataframe)] <- "terminator"
       }
       if(header) {
         dataframe$PType <- NULL
-        names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
-        writeLines(paste(names(dataframe),collapse="\t"),con = zz)
+        names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep="")
+        writeLines(paste(names(dataframe), collapse="\t"), con = zz)
       }
       if(!is.na(headerLine)) xxx <- 2
-      #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
       if(!is.null(rownames(dataframe))) {
         rownames(dataframe) <- sapply(rownames(dataframe),
-                                    function(z) {
-                                      ifelse(length(grep(x=z,pattern="^#"))==1,
-                                             z,
-                                             paste0("#_",z))
-                                      }
-                                    )
-        
+          function(z) {
+            ifelse(length(grep(x = z, pattern = "^#")) == 1,
+            z,
+            paste0("#_", z))
+          }
+        )
         dataframe$comments <- rownames(dataframe)
       }
-      write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
-                       rownames=FALSE,colnames=FALSE,digits=6)
+      write.fwf(file = zz, x = dataframe, append = TRUE, sep = "\t", quote = FALSE,
+                       rownames = FALSE, colnames = FALSE, digits = 6)
     }
   }
   
@@ -169,8 +175,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
        comment = paste0("#_first age that moves (real age at begin of season, ",
                         "not integer) also cond on do_migration>0"))
     writeComment("move definition for seas, morph, source, dest, age1, age2")
-    printdf("moveDef",header=FALSE)
-  }else{
+    printdf("moveDef", header = FALSE)
+  } else {
     writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1")
     writeComment(paste0("#_Cond 1.0 # first age that moves (real age at begin ",
                         "of season, not integer) also cond on do_migration>0"))
@@ -179,11 +185,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     writeComment("#")
   }
   # Block setup ----
-  wl("N_Block_Designs",comment="#_Nblock_Patterns")
-  if(ctllist$N_Block_Designs>0){
-    wl.vector("blocks_per_pattern",comment="#_blocks_per_pattern")
-    wl.list("Block_Design",header="#_begin and end years of blocks")
-  }else{
+  wl("N_Block_Designs", comment = "#_Nblock_Patterns")
+  if(ctllist$N_Block_Designs > 0) {
+    wl.vector("blocks_per_pattern", comment = "#_blocks_per_pattern")
+    wl.list("Block_Design", header = "#_begin and end years of blocks")
+  } else {
     writeComment("#_Cond 0 #_blocks_per_pattern")
     writeComment("# begin and end years of blocks")
     writeComment("#")
@@ -200,7 +206,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment(paste0("# where: 0 = autogen all time-varying parms; 1 = read",
                       "each time-varying parm line; 2 = read then autogen if ",
                       "parm min==-12345"))
-
   # There are a lot of autogenerated SS lines here that could be added, but 
   # perhaps it is not necessary? The other r4ss write functions typically do not 
   # write out all the autogenerated SS comments.
@@ -217,9 +222,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(ctllist$natM_type == 0) {
     writeComment("#_no additional input for selected M option; read 1P per morph")
   } else if(ctllist$natM_type == 1) {
-    wl("N_natM",comment = "#_N_breakpoints")
-    wl.vector("M_ageBreakPoints",comment = "# age(real) at M breakpoints")
-  } else if(ctllist$natM_type == 2 ) {
+    wl("N_natM", comment = "#_N_breakpoints")
+    wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")
+  } else if(ctllist$natM_type == 2) {
     wl.vector("Lorenzen_refage", 
               comment = "#_reference age for Lorenzen M; read 1P per morph")
   } else if(ctllist$natM_type %in% c(3,4)) {
@@ -253,7 +258,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
          "they are not yet implemented in SS_readctl_3.30")
   }
   # Below check added so users can investigate why the ctllist can't be written.
-  if (any(!ctllist$GrowthModel %in% c(1:5,8)) ){
+  if (!ctllist$GrowthModel %in% c(1:5,8)) {
     stop("The GrowthModel", ctllist$GrowthModel, "in ctllist ", ctllist, 
          " is not an option in SS 3.30. Valid growth options are 1-5 and 8.")
   }
@@ -271,7 +276,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "4=read age-fecundity; 5=disabled; 6=read length-maturity"
                       ))
   # Below check added to help users with troubleshooting
-  if(!ctllist$maturity_option %in% c(1:4,6)){
+  if(!ctllist$maturity_option %in% c(1:4,6)) {
     stop("Invalid maturity option used. ctllist$maturity_option is", 
          ctllist$maturity_option, ", but must be 1, 2, 3, 4, or 6.")
   }
@@ -298,7 +303,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # Below if statement conditional on the hermaphroditism option chosen
   if (ctllist$hermaphroditism_option %in% c(1,-1)) {
     wl("Herm_season", comment = "# Hermaphro_season ")
-    wl("Herm_MalesInSSB", comment = "# Hermaphro_maleSSB" )
+    wl("Herm_MalesInSSB", comment = "# Hermaphro_maleSSB")
   }
   wl("parameter_offset_approach",
      comment = paste0("parameter_offset_approach (1=none, 2= M, G, CV_G as ",
@@ -319,7 +324,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl.vector("MGparm_seas_effects",
             comment = paste0("#_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,",
                              "Malewtlen1,malewtlen2,L1,K"))
-  if(sum(ctllist$MGparm_seas_effects) > 0 ) {
+  if(sum(ctllist$MGparm_seas_effects) > 0) {
     printdf("MG_parms_seas")
     writeComment("#")
   } else {
@@ -328,8 +333,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   }
   # SR -----
   wl("SR_function",
-     comment = paste0("Spawner-Recruitment; 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; ",
-                      "6=B-H_flattop; 7=survival_3Parm; 8=Shepard_3Parm"))
+     comment = paste0("Spawner-Recruitment; 2=Ricker; 3=std_B-H; 4=SCAA;",
+                      "5=Hockey; 6=B-H_flattop; 7=survival_3Parm;",
+                      "8=Shepard_3Parm"))
   wl("Use_steep_init_equi",
      comment = "# 0/1 to use steepness in initial equ recruitment calculation")
   wl("Sigma_R_FofCurvature", 
@@ -413,19 +419,19 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     wl.vector("F_setup", 
               comment = "Intial F value, overall phase, N detailed inputs")
     writeComment("fleet, yr, seas, Fvalue, se, phase")
-    if(ctllist$F_setup[length(ctllist$F_setup)]>0) {
+    if(ctllist$F_setup[length(ctllist$F_setup)] > 0) {
       printdf("F_setup2")
     }
   } else if(ctllist$F_Method == 3) {
-    wl("F_iter",comment="N iterations for tuning F in hybrid method (recommend 3 to 7)")
+    wl("F_iter", 
+       comment = "N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
   
-  writeComment(c("#","#_initial_F_parms"))
-  # writeComment("#_LO HI INIT PRIOR PR_type SD PHASE")
+  writeComment(c("#", "#_initial_F_parms"))
   printdf("init_F")
   # Q setup ---- 
   writeComment("#_Q_setup for fleets with cpue or survey data")
-  #There are extra commments with info here, but exclude for now
+  # There are extra commments with info here in control.ss_new, but exclude for now
   printdf("Q_options", terminate = TRUE)
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
   printdf("Q_parms")
@@ -442,15 +448,15 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#")
   #selectivity parameters ------
   writeComment("SizeSelex")
-  if(!is.null(ctllist$size_selex_parms)){
+  if(!is.null(ctllist$size_selex_parms)) {
     printdf("size_selex_parms")
-  }else{
+  } else {
     writeComment("#_No size_selex_parm")
   }
   writeComment("AgeSelex")
-  if(!is.null(ctllist$age_selex_parms)){
+  if(!is.null(ctllist$age_selex_parms)) {
     printdf("age_selex_parms")
-  }else{
+  } else {
     writeComment("#_No age_selex_parm")
   }
   # TV selectivity parameters
@@ -475,10 +481,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   
   # Tag model parameters ----
   writeComment("# Tag loss and Tag reporting parameters go next")
-  wl("TG_custom", comment="TG_custom:  0=no read; 1=read if tags exist")
+  wl("TG_custom", comment = "TG_custom:  0=no read; 1=read if tags exist")
   if(ctllist$TG_custom == 0) {
     writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters","#"))
-  }else if(ctllist$TG_custom == 1) {
+  } else if(ctllist$TG_custom == 1) {
     printdf("TG_Loss_init")
     printdf("TG_Loss_chronic")
     printdf("TG_overdispersion")
@@ -502,7 +508,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     ctllist$tmp_var <- c(-9999, 1, 0)
     writeComment("#_Factor Fleet Value")
     wl.vector("tmp_var",comment = "# terminator")
-  } else if (ctllist$DoVar_adjust == 1) {
+  } else if(ctllist$DoVar_adjust == 1) {
     stop("Variance adjustments for 3.30 are not read correctly by", 
          "SS_writectl_3.30")
   }
@@ -522,33 +528,39 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
      comment = " 0/1 read specs for more stddev reporting")
   
   if(ctllist$more_stddev_reporting == 1){
-    wl.vector("stddev_reporting_specs",comment="# selex type, len/age, year, N selex bins, Growth pattern, N growth ages, NatAge_area(-1 for all), NatAge_yr, N Natages")
-    ## Selex bin
-    if(ctllist$stddev_reporting_specs[4]>0){
-      wl.vector("stddev_reporting_selex",comment="# selex bins to be reported (-1 in first bin to self-generate)")
+    wl.vector("stddev_reporting_specs",
+              comment = paste0("# selex type, len/age, year, N selex bins, ",
+                               "Growth pattern, N growth ages, ",
+                               "NatAge_area(-1 for all), NatAge_yr, N Natages"))
+    # Selex bin
+    if(ctllist$stddev_reporting_specs[4] > 0) {
+      wl.vector("stddev_reporting_selex",
+                comment = paste0("# selex bins to be reported (-1 in first bin", 
+                " to self-generate)"))
     }
-    ## Growth bin
-    if(ctllist$stddev_reporting_specs[6]>0){
-      wl.vector("stddev_reporting_growth",comment="# growth bins to be reported (-1 in first bin to self-generate)")
+    # Growth bin
+    if(ctllist$stddev_reporting_specs[6] > 0) {
+      wl.vector("stddev_reporting_growth",
+                comment = paste0("# growth bins to be reported (-1 in first ",
+                                 "bin to self-generate)"))
     }
-    ## N at age
-    if(ctllist$stddev_reporting_specs[9]>0){
-      wl.vector("stddev_reporting_N_at_A",comment="# N@A to be reported (-1 in first bin to self-generate)")
+    # N at age
+    if(ctllist$stddev_reporting_specs[9] > 0) {
+      wl.vector("stddev_reporting_N_at_A",
+                comment = "# N@A to be reported (-1 in first bin to self-generate)")
     }
-  }else if(ctllist$more_stddev_reporting !=0) {
+  }else if(ctllist$more_stddev_reporting != 0) {
     stop("ctllist$more_stdev_reporting has value ", 
          ctllist$more_stddev_reporting, " but can only have value 0 or 1.")
   }
   
   # terminate file ----
   writeComment("#")
-  writeLines("999",con=zz)
+  writeLines("999", con = zz)
   
   # cleanup -----
-  options(width=oldwidth,max.print=oldmax.print)
-  #sink()
-  #close(zz)
-  if(verbose) message("File written to ",outfile,"\n")
+  #options(width=oldwidth,max.print=oldmax.print)
+  if(verbose) message("File written to ", outfile, "\n")
   }
   
   
