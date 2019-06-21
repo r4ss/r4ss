@@ -55,9 +55,7 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   # function call depends on user version
   if(version == "3.24") {
     # Specify nseas, N_areas, and Do_AgeKey as input.
-    SS_writectl_3.24(ctllist, outfile, overwrite = overwrite, verbose = verbose,
-                     nseas = ctllist$nseas, N_areas = ctllist$N_areas, 
-                     Do_AgeKey = ctllist$Do_AgeKey)
+    SS_writectl_3.24(ctllist, outfile, overwrite = overwrite, verbose = verbose)
   }
   if(version == "3.30" | version == 3.3) {
     # This function will get nseas, N_areas, and Do_AgeKey from ctllist.
