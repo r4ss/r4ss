@@ -24,16 +24,12 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
                         verbose = TRUE) {
   # function to write Stock Synthesis data files
   if (verbose) {
-    message("running SS_writectl")
+    message("Running SS_writectl")
   }
   # Check user inputs are valid to avoid issues with functions.
   # check ctllist
   if (ctllist$type != "Stock_Synthesis_control_file") {
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
-  }
-  # check datlist
-  if (datlist$type != "Stock_Synthesis_data_file") {
-    stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
   # check version input
   if(is.null(version)) {
@@ -45,7 +41,7 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   # Check user inputs and/or prepare the file to be overwitten.
   if(file.exists(outfile)) {
     if(!overwrite) {
-      stop("outfile called", outfile,"exists and input 'overwrite'= FALSE.",
+      stop("Outfile called ", outfile," exists and input 'overwrite'= FALSE.",
            "Please set overwrite = TRUE if you wish to overwrite the file.")
     } else if(overwrite) {
       file.remove(outfile)

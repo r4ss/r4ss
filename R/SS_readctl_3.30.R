@@ -1073,6 +1073,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 #_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
 #
   ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
+  #TODO: add code to read files when 2D_AR1 is used.
+  if (ctllist$Use_2D_AR1_selectivity == 1) {
+    stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
+  }
   
 # Tag loss and Tag reporting parameters go next
   ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist

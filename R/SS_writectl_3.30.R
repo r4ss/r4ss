@@ -401,7 +401,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     } else {
       writeComment("# read specified recr devs")
       writeComment("#_Yr Input_value")
-
     }
   }
   
@@ -463,8 +462,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     writeComment("#_No age_selex_parm")
   }
   # TV selectivity parameters
-  #TODO: see if TV selectivity implemented in readctl; if so, allow to read.
-  # if not, implement in the future.
+  #TODO: TV selectivity (devs,env link, and blocks) need to be  implemented in 
+  # readctl_3.30; then, read parameters here.
   if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0)) {
     stop("Time varying Size selex short parameter lines (for environmental links, ",
          "devs, and blocks) cannot be written yet using SS_writectl_3.30")
@@ -479,8 +478,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if (ctllist$Use_2D_AR1_selectivity == 0) {
     writeComment("#_no 2D_AR1 selex offset used")
   } else if (ctllist$Use_2D_AR1_selectivity == 1) {
-    stop("code to read 2DAR1 selectivity options not yet implemented")
-    #TODO: add code here
+    stop("SS_writectl_3.30 cannot yet write 2DAR1 selectivity options")
+    #TODO: add code here to write 2D_AR1 selectivity options.
   } else {
     stop("ctllist$Use_2D_AR1_selectivity has value ", 
          ctllist$Use_2D_AR1_selectivity, ", but can only have value 0 or 1.")
