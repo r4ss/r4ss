@@ -56,7 +56,9 @@ control file. This information is only required if custom tag parameters is enab
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}
 
-\item{datlist}{list or character. if list : produced from SS_writedat or character : file name of dat file.}
+\item{datlist}{list or character. If list, should be a list produced from 
+\code{\link{SS_writedat}}. If character, should be the file name of an
+SS data file.}
 }
 \description{
 Read Stock Synthesis (version 3.30) control file into list object in R.
