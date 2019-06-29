@@ -179,57 +179,22 @@ function(
   oldprior <- oldprsd <- oldprtype <- newphase <- rep(NA, nvals)
   # check all inputs
   # check values and make repeat if requested
-  if (!is.null(newvals) & length(newvals)!=nvals){
-    if (repeat.vals){
-      newvals <- rep(newvals, nvals)
-    }else{
-      stop("'newvals' and either 'linenums' or 'strings' should have",
-           "the same number of elements")
+  for (ii in names(inargs)) {
+    tmp <- get(ii)
+    if (is.null(tmp)) next
+    if (is.data.frame(tmp) & ii!="estimate") tmp <- as.numeric(tmp)
+    if (length(tmp)!=nvals & repeat.vals) {
+      if (length(tmp) > 1) stop("SS_changepars doesn't yet accommodate ",
+        "repeat.vals=TRUE and of length(.) > 1")
+      assign(ii, rep(tmp, nvals))
     }
-  }
-  # check bounds
-  # lower and upper bounds don't yet have option for repeat.vals=TRUE
-  if (!is.null(newlos) & length(newlos) != nvals) {
-    stop("'newlos' and either 'linenums' or 'strings' should have",
-         "the same number of elements")
-  }
-  if (!is.null(newhis) & length(newhis) != nvals) {
-    stop("'newhis' and either 'linenums' or 'strings' should have",
-         "the same number of elements")
-  }
-  if (is.data.frame(newlos)){
-    newlos <- as.numeric(newlos)
-  }
-  if (is.data.frame(newhis)){
-    newhis <- as.numeric(newhis)
-  }
-  if (is.data.frame(newprior)){
-    newprior <- as.numeric(newprior)
-  }
-  if (is.data.frame(newprsd)){
-    newprsd <- as.numeric(newprsd)
-  }
-  if (is.data.frame(newprtype)){
-    newprtype <- as.numeric(newprtype)
-  }
-  if (!is.null(estimate)){
-    if (!(length(estimate) %in% c(1,nvals))){
-      stop("'estimate' should have 1 element or same number as 'newvals'")
+    if (length(get(ii))!=nvals) {
+      stop(paste0("'", ii, "'"), " and either 'linenums' or 'strings'",
+        " should have the same number of elements,\n",
+        "instead of ", length(get(ii)), " and ", length(linenums), ".\n",
+        "Note: a string can map to multiple parameters, here are your pars,\n",
+        paste(goodnames, collapse = "\n"))
     }
-    if (length(estimate)==1){
-      estimate <- rep(estimate, nvals)
-    }
-  }
-  if (!is.null(newphs)){
-    if (!(length(newphs) %in% c(1, nvals))){
-      stop("'newphs' should have 1 element or same number as 'newvals'")
-    }
-    if (length(newphs)==1){
-      newphs <- rep(newphs, nvals)
-    }
-  }
-  if (is.data.frame(newvals)){
-    newvals <- as.numeric(newvals)
   }
 
   navar <- c(NA, "NA", "NAN", "Nan")
