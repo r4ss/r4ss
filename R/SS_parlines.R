@@ -53,13 +53,16 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
 
   # read control file
   if(!is.null(dir)) ctlfile <- file.path(dir,'control.ss_new')
-  ncols = 150 # !!this should by more dynamic--if it's too small, the function dies
-  ctl <- read.table(file=ctlfile,col.names=1:ncols,fill=TRUE,
-                    quote="",colClasses="character",comment.char="", blank.lines.skip=FALSE)
-
+    raw <- readLines(ctlfile)
+    ctl <- matrix(NA, nrow = 50000, ncol = 100)
+  while (nrow(ctl) > length(raw)) {
+    ctl <- read.table(file=ctlfile,col.names=1:(ncol(ctl) + 50),fill=TRUE,
+                      quote="",colClasses="character",comment.char="", blank.lines.skip=FALSE)
+  }
+  rm(raw)
   nrows <- nrow(ctl)
   #print(nrows)
-  ctl_num <- matrix(NA,nrows,ncols) # copy of ctl converted to numerical values or NA
+  ctl_num <- matrix(NA,nrows,ncol(ctl)) # copy of ctl converted to numerical values or NA
   num_cnt <- rep(NA,nrows)          # count of number of numerical values in each row
   num_cnt7 <- rep(NA,nrows)         # count of number of numerical values in first 7 values of each row
   num_cnt14 <- rep(NA,nrows)        # count of number of numerical values in first 14 values of each row
