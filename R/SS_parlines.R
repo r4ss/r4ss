@@ -60,6 +60,7 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
                       quote="",colClasses="character",comment.char="", blank.lines.skip=FALSE)
   }
   rm(raw)
+  ctl <- ctl[!grepl("blocks_per_pattern", ctl[, 8]), ]
   nrows <- nrow(ctl)
   #print(nrows)
   ctl_num <- matrix(NA,nrows,ncol(ctl)) # copy of ctl converted to numerical values or NA
