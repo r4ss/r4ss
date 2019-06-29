@@ -156,7 +156,7 @@ function(
   ctlsubset <- ctl[linenums]
   if(verbose){
     cat("line numbers in control file (n=",length(linenums),"):\n",sep="")
-    print(linenums)
+    cat(paste(linenums, collapse = ", "))
   }
   # define objects to store changes
   newctlsubset <- NULL
@@ -234,7 +234,7 @@ function(
     vecstrings <- strsplit(splitline[1],split="[[:blank:]]+")[[1]]
     vec <- as.numeric(vecstrings[vecstrings!=""])
     if(max(is.na(vec))==1){
-      stop("There's a problem with a non-numeric value in line",linenums[i])
+      stop("There's a problem with a non-numeric value in line ",linenums[i])
     }
     # store information on old value and replace with new value (unless NULL)
     oldvals[i] <- vec[3]
