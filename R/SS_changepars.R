@@ -112,7 +112,10 @@ function(
   fullctlfile <- file.path(dir, ctlfile)
   ctl <- readLines(fullctlfile)
 
-  # check for valid input
+# check for valid input
+  inargs <- list("newvals" = newvals, "newlos" = newlos, "newhis" = newhis, 
+    "newprior" = newprior, "newprsd" = newprsd, "newprtype" = newprtype, 
+    "estimate" = estimate, "newphs" = newphs)
   if(is.null(linenums) & !is.null(strings) & class(strings)=="character")
   {
     # get table of parameter lines
@@ -121,16 +124,25 @@ function(
     # list of all parameter labels
     allnames <- ctltable$Label
     # empty list of "good" labels to be added to
-    goodnames <- NULL
+    goodnames <- list()
     # if strings are provided, look for matching subset of labels
     if(!is.null(strings)){
       # loop over vector of strings to add to goodnames vector
       for(i in 1:length(strings)){
         # fixed matching on string
-        goodnames <- c(goodnames, allnames[grep(strings[i], allnames, fixed=TRUE)])
+        goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed=TRUE)]
       }
       # remove duplicates and print some feedback
-      goodnames <- unique(goodnames)
+      if (any(duplicated(unlist(goodnames))) & 
+        (repeat.vals & any(sapply(inargs, length) > 1))) {
+        stop("Entries in 'strings' did not map to unique parameters and\n",
+          "it is unclear how to order the par names to match the order\n",
+          "of other arguments provided to SS_changepars.\n",
+          "E.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1'\n",
+          "and should be changed to strings = c('young_Fem', 'old_Fem', 'Mal')\n",
+          "to get all CV and all Male parameters.")
+      }
+      goodnames <- unique(unlist(goodnames))
       if(verbose){
         cat("parameter names in control file matching input vector 'strings' (n=",
             length(goodnames),"):\n",sep="")
