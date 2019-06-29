@@ -87,7 +87,7 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
                     "Label", "Label2")
     names(parlines7 ) <- namesvec7
   }
-  if(version=="3.30"){
+  if(version=="3.30"|version>=3.3){
     namesvec7 <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
                    "Label", "Label2")
     namesvec14 <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
