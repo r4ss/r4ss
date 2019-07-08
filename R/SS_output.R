@@ -1130,14 +1130,14 @@ SS_output <-
     if(verbose){
       message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
     }
-    datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'),
-                               verbose=verbose)
+    datfile <- SS_readdat(file = file.path(dir, 'data.ss_new'),
+                          verbose=verbose, version = "3.30")
     # deal with case where data file is empty
     if(is.null(datfile)){
       starter <- SS_readstarter(file = file.path(dir, 'starter.ss'),
                                 verbose = verbose)
-      datfile <- SS_readdat_3.30(file = file.path(dir, starter$datfile),
-                                 verbose=verbose)
+      datfile <- SS_readdat(file = file.path(dir, starter$datfile),
+                            verbose=verbose, version = "3.30")
     }
     age_data_info <- datfile$age_info
     len_data_info <- datfile$len_info
