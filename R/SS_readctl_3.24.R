@@ -11,7 +11,7 @@
 #'  Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
 #'  data as it is being read.
-#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
@@ -43,14 +43,15 @@
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
 #' (Can be useful, but causes problems for SS_writectl.)
-#' @author Yukio Takeuchi, Neil Klaer
+#' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
+
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 #' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
-SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
+SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 ## Parameters that are not defined in control file
     nseas=4,
     N_areas=1,
@@ -72,7 +73,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   if(verbose) cat("running SS_readctl_3.24\n")
   dat <- readLines(file,warn=FALSE)
 
-  nver=as.numeric(substring(ctlversion,1,4))
+  nver=as.numeric(substring(version,1,4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
@@ -181,7 +182,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist$fleetnames<-fleetnames
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
-    if(is.null(datlist))stop("datlist from SS_readdat is needed is use_datlist is TRUE")
+    if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
@@ -213,7 +214,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
-    stop("currently sub morphs are not supported yet")
+    stop("sub morphs are not supported yet")
 #    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"submorphdist")
   }else{
@@ -245,7 +246,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
   ctllist$recr_dist_method<-1 # compatibility with v 3.30
 
   if(ctllist$N_areas>1){
-    #stop("Multi areas are not yet implemented")
     ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
     if(ctllist$N_moveDef>0)
     {
@@ -276,8 +276,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
-#    stop("natM_type =2 is not yet implemented in this script")
-    N_natMparms<-1 ## 2016-12-8
+    N_natMparms<-1
     comments<-if(ctllist$N_GP==1){
       "#_reference age for Lorenzen M; read 1P per morph"
     }else{
@@ -1049,7 +1048,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.24",
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
-  #  stop("Currently additional reporting of derived quantities is not implemented in this R code")
     ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4]>0){

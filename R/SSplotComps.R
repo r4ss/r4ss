@@ -355,6 +355,7 @@ SSplotComps <-
     kindlab=labels[2]
     filenamestart <- "comp_WAAfit_"
     titledata <- "Mean weight at age, "
+    dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
     stop("Input 'kind' to SSplotComps needs to be one of the following:\n  ",
@@ -1306,16 +1307,21 @@ SSplotComps <-
           # note: sample sizes will be different for each bin if tail compression is used
           #       printed sample sizes in plot will be maximum, which may or may not
           #       represent sum of sample sizes over all years/ages
+
+          # loop over fleets
           for(f in unique(agg$f)){
-            infleet <- agg$f==f
-            agg$N[infleet] <- max(agg$N[infleet])
-            if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
-              agg$DM_effN[infleet] <- max(agg$DM_effN[infleet], na.rm=TRUE)
-            }else{
-              if(any(!is.na(agg$effN[infleet]))){
-                agg$effN[infleet] <- max(agg$effN[infleet], na.rm=TRUE)
+            # loop over fleets within market
+            for(mkt in unique(agg$mkt[agg$f == f])){
+              sub <- agg$f == f & agg$mkt == mkt
+              agg$N[sub] <- max(agg$N[sub])
+              if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
+                agg$DM_effN[sub] <- max(agg$DM_effN[sub], na.rm=TRUE)
               }else{
-                agg$effN[infleet] <- NA
+                if(any(!is.na(agg$effN[sub]))){
+                  agg$effN[sub] <- max(agg$effN[sub], na.rm=TRUE)
+                }else{
+                  agg$effN[sub] <- NA
+                }
               }
             }
           }

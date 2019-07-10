@@ -4,15 +4,16 @@
 \alias{SS_readctl}
 \title{read control file from SS}
 \usage{
-SS_readctl(file, ctlversion = "3.24", verbose = TRUE,
-  echoall = FALSE, nseas = 4, N_areas = 1, Nages = 20,
-  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
-  DatFile = NA, N_tag_groups = NA, N_CPUE_obs = NA)
+SS_readctl(file, version = NULL, verbose = TRUE, echoall = FALSE,
+  nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1,
+  Npopbins = NA, Nfleet = 2, Nsurveys = 2, N_tag_groups = NA,
+  N_CPUE_obs = NA, use_datlist = FALSE, datlist = NULL,
+  ptype = TRUE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
 
-\item{ctlversion}{SS version number. Currently only "3.24" or "3.30" are supported,
+\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
 \item{verbose}{Should there be verbose output while running the file?
@@ -44,13 +45,20 @@ explicitly available in control file}
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{DatFile}{read datfile list for additional information for version 3.30
-and above}
-
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
 \item{N_CPUE_obs}{numbere of CPUE observations.}
+
+\item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
+determined from control file}
+
+\item{datlist}{list or character. if list : produced from SS_writedat
+or character : file name of dat file.}
+
+\item{ptype}{include a column in the output indicating parameter type?
+(Can be useful, but causes problems for SS_writectl.) Only possible to use
+for 3.24 control files.}
 }
 \description{
 Read Stock Synthesis control file into list object in R. This function is a

@@ -52,7 +52,7 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotCatch <-
-  function(replist,subplots=1:15,add=FALSE,areas=1,
+  function(replist,subplots=1:16,add=FALSE,areas=1,
            plot=TRUE,print=FALSE,
            type="l",
            fleetlty=1, fleetpch=1,
@@ -103,7 +103,9 @@ SSplotCatch <-
                      "12: total catch (if discards present) aggregated across seasons",
                      "13: total catch (if discards present) aggregated across seasons stacked",
                      "14: discards aggregated across seasons",
-                     "15: discards aggregated across seasons stacked")
+                     "15: discards aggregated across seasons stacked",
+                     # note: subplot 16 
+                     "16: landings + dead discards")
 
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
@@ -215,6 +217,7 @@ SSplotCatch <-
     }
   }else{
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
+    deadmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("dead(B)"))=="dead(B)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringB))==stringB])
     if(ncol(totcatchmat)==1){
       colnames(totcatchmat) <- grep(stringB, names(ts), fixed=TRUE, value=TRUE)
@@ -233,6 +236,7 @@ SSplotCatch <-
         totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringN))==stringN])
       }else{
         retmat <- retmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("retain(B)"))=="retain(B)"])
+        deadmat <- deadmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("dead(B)"))=="dead(B)"])
         totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringB))==stringB])
       }
       totobscatchmat <- totobscatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("obs_cat"))=="obs_cat"])
@@ -345,7 +349,7 @@ SSplotCatch <-
     return(TRUE)
   } # end stackfunc
 
-  barfunc <- function(ymat,ylab,ymax=NULL,x=catchyrs){
+  barfunc <- function(ymat,ylab,ymax=NULL,x=catchyrs, add=FALSE){
     # adding labels to barplot as suggested by Mike Prager on R email list:
     #    http://tolstoy.newcastle.edu.au/R/e2/help/07/03/13013.html
     if(is.null(ymax)){
@@ -404,7 +408,9 @@ SSplotCatch <-
   makeplots <- function(subplot){
     a <- FALSE
     if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
-    if(subplot==2) a <- stackfunc(ymat=retmat, ymax=ymax, ylab=labels[3])
+    if(subplot==2){
+      a <- stackfunc(ymat=retmat, ymax=ymax, ylab=labels[3], add=add)
+    }
     # if observed catch differs from estimated by more than 0.1%, then make plot to compare
     if(subplot==3 &
        diff(range(retmat-totobscatchmat, na.rm=TRUE))/
@@ -426,7 +432,7 @@ SSplotCatch <-
         a <- linefunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4], addtotal=TRUE)
       }
       if(subplot==5 & nfleets_with_catch>1){
-        a <- stackfunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4])
+        a <- stackfunc(ymat=totcatchmat, ymax=ymax, ylab=labels[4], add=add)
       }
       if(subplot==6){
         a <- linefunc(ymat=discmat, ymax=ymax, ylab=labels[5], addtotal=TRUE)
@@ -468,6 +474,9 @@ SSplotCatch <-
                          ylab=paste(labels[5],labels[10]), x=catchyrs2)
         }
       }
+    }
+    if(max(discmat,na.rm=TRUE) > 0 & subplot == 16){
+      a <- stackfunc(ymat=deadmat, ymax=ymax, ylab="", add=add)
     }
     if(verbose & a) cat("  finished catch subplot",subplot_names[subplot],"\n")
     return(a)

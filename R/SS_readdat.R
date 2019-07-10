@@ -19,7 +19,8 @@
 #' created by Stock Synthesis. Allows the choice of either expected values
 #' (section=2) or bootstrap data (section=3+). Leaving default of section=NULL
 #' will read input data, (equivalent to section=1).
-#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer
+#' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
+#' Chantel R. Wetzel
 #' @export
 #' @seealso \code{\link{SS_readdat_2.00}}, \code{\link{SS_readdat_3.00}},
 #' \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
@@ -228,19 +229,6 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
 
     #datlist$catch<-catch
 
-    datlist$CPUEinfo<-as.data.frame(datlist$CPUEinfo)
-    for(i in 1:ncol(datlist$CPUEinfo))
-    {
-      datlist$CPUEinfo[,i]<-as.numeric(as.character(datlist$CPUEinfo[,i]))
-    }
-
-    datlist$CPUE<-as.data.frame(datlist$CPUE)
-    datlist$CPUE$year<-as.numeric(as.character(datlist$CPUE$year))
-    datlist$CPUE$seas<-as.numeric(as.character(datlist$CPUE$seas))
-    datlist$CPUE$index<-as.numeric(as.character(datlist$CPUE$index))
-    datlist$CPUE$obs<-as.double(as.character(datlist$CPUE$obs))
-    datlist$CPUE$se_log<-as.double(as.character(datlist$CPUE$se_log))
-
     # mean body weight
     if(datlist$use_meanbodywt==0)
     {
@@ -253,36 +241,6 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     datlist$max_combined_lbin<-datlist$len_info$combine_M_F
 
     if(is.null(datlist$lencomp))datlist$N_lencomp<-0
-
-    # compatibility: values in data frames need to be numeric
-    if(datlist$N_discard_fleets>0)
-    {
-      datlist$discard_data$Yr<-as.numeric(datlist$discard_data$Yr)
-      datlist$discard_data$Seas<-as.numeric(datlist$discard_data$Seas)
-      datlist$discard_data$Flt<-as.numeric(datlist$discard_data$Flt)
-      datlist$discard_data$Discard<-as.double(datlist$discard_data$Discard)
-      datlist$discard_data$Std_in<-as.double(datlist$discard_data$Std_in)
-    }
-
-    if(!is.null(datlist$lencomp))
-    {
-      datlist$lencomp$Yr<-as.numeric(datlist$lencomp$Yr)
-      datlist$lencomp$Seas<-as.numeric(datlist$lencomp$Seas)
-      datlist$lencomp$FltSvy<-as.numeric(datlist$lencomp$FltSvy)
-      datlist$lencomp$Gender<-as.numeric(datlist$lencomp$Gender)
-      datlist$lencomp$Part<-as.numeric(datlist$lencomp$Part)
-      datlist$lencomp$Nsamp<-as.double(datlist$lencomp$Nsamp)
-    }
-
-    if(!is.null(datlist$agecomp))
-    {
-      datlist$agecomp$Yr<-as.numeric(datlist$agecomp$Yr)
-      datlist$agecomp$Seas<-as.numeric(datlist$agecomp$Seas)
-      datlist$agecomp$FltSvy<-as.numeric(datlist$agecomp$FltSvy)
-      datlist$agecomp$Gender<-as.numeric(datlist$agecomp$Gender)
-      datlist$agecomp$Part<-as.numeric(datlist$agecomp$Part)
-      datlist$agecomp$Nsamp<-as.double(datlist$agecomp$Nsamp)
-    }
 
     if(datlist$use_MeanSize_at_Age_obs==0)
     {

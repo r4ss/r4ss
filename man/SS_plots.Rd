@@ -4,12 +4,12 @@
 \alias{SS_plots}
 \title{plot many quantities related to output from Stock Synthesis}
 \usage{
-SS_plots(replist = NULL, plot = 1:24, print = NULL, pdf = FALSE,
+SS_plots(replist = NULL, plot = 1:25, print = NULL, pdf = FALSE,
   png = TRUE, html = png, printfolder = "plots", dir = "default",
   fleets = "all", areas = "all", fleetnames = "default",
   fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
   areacols = "default", areanames = "default", verbose = TRUE,
-  uncertainty = TRUE, forecastplot = FALSE, datplot = TRUE,
+  uncertainty = TRUE, forecastplot = TRUE, datplot = TRUE,
   Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
   comp.yupper = 0.4, sprtarg = "default", btarg = "default",
   minbthresh = "default", pntscalar = NULL, bub.scale.pearson = 1.5,
@@ -61,6 +61,7 @@ Current grouping of plots is as follows:
   \item Yield
   \item Movement
   \item Data range
+  \item Diagnostic tables
 }}
 
 \item{print}{Deprecated input for backward compatibility, now replaced by

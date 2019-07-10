@@ -1,15 +1,15 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.35.1
-Date: 2019-05-09
+Version: 1.35.3
+Date: 2019-07-01
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
     Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
     Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
     Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-    Watal M. Iwasaki, Kathryn Doering, and Andrea M. Havron
+    Iago Mosqueira, Watal M. Iwasaki, Kathryn Doering, and Andrea M. Havron
 Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 2.10.0)

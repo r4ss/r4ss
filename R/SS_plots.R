@@ -37,6 +37,7 @@
 #'   \item Yield
 #'   \item Movement
 #'   \item Data range
+#'   \item Diagnostic tables
 #' }
 #' 
 #' @param print Deprecated input for backward compatibility, now replaced by
@@ -209,11 +210,11 @@
 #' Sci. 65: 2536-2551.
 SS_plots <-
   function(
-      replist=NULL, plot=1:24, print=NULL, pdf=FALSE, png=TRUE, html=png,
+      replist=NULL, plot=1:25, print=NULL, pdf=FALSE, png=TRUE, html=png,
       printfolder="plots", dir="default", fleets="all", areas="all",
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
-      verbose=TRUE, uncertainty=TRUE, forecastplot=FALSE,
+      verbose=TRUE, uncertainty=TRUE, forecastplot=TRUE,
       datplot=TRUE, Natageplot=TRUE, samplesizeplots=TRUE, compresidplots=TRUE,
       comp.yupper=0.4,
       sprtarg="default", btarg="default", minbthresh="default", pntscalar=NULL,
@@ -273,7 +274,7 @@ SS_plots <-
     uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
-    cat("Changeing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
+    cat("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
     forecastplot <- FALSE
   }
 
@@ -455,7 +456,7 @@ SS_plots <-
                   "Summary biomass (mt)",         #3
                   "Summary biomass (mt) at beginning of season", #4
                   "Spawning biomass (mt)",        #5
-                  "%unfished",                    #6
+                  "Fraction of unfished",         #6
                   "Spawning output",              #7
                   "Age-0 recruits (1,000s)",      #8
                   "Fraction of total Age-0 recruits",  #9
@@ -1279,18 +1280,28 @@ SS_plots <-
   # Data range plots
   #
   igroup <- 25
-  if(verbose){
-    cat("Starting diagnostic tables (group ",igroup,")\n",sep="")
+  if(igroup %in% plot){
+    if(!png){
+      if(verbose){
+        cat("Skipping diagnostic tables (group ",igroup,
+            ") because png=FALSE\n",sep="")
+      }
+    }else{
+      if(verbose){
+        cat("Starting diagnostic tables (group ",igroup,")\n",sep="")
+      }
+      
+      plotinfo <- NULL
+      plotinfo <- SS_makeHTMLdiagnostictable(replist = replist,
+                                             plotdir = plotdir,
+                                             gradmax = 1E-3)
+      
+      if(!is.null(plotinfo)){
+        plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      }
+    }
   }
   
-  plotinfo <- NULL
-  plotinfo <- SS_makeHTMLdiagnostictable(replist = replist,
-                                         plotdir = plotdir,
-                                         gradmax = 1E-3)
-  
-  if(!is.null(plotinfo)){
-    plotInfoTable <- rbind(plotInfoTable,plotinfo)
-  }
   
   ##########################################
   # Write and return table of plot info for any PNG files that got created

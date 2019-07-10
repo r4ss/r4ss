@@ -5,7 +5,7 @@
 ##' This can be used to map the catches resulting from forecasting with a particular
 ##' harvest control rule into a model representing a different state of nature.
 ##' This is a common task for US west coast groundfish but might be useful elsewhere.
-##' 
+##'
 ##' @param replist List created by \code{\link{SS_output}}
 ##' @param yrs Range of years in which to fill in forecast catches from timeseries
 ##' @param average Use average catch over a range of years for forecast
@@ -16,37 +16,46 @@
 ##' For west coast groundfish, total might be ACL for next 2 forecast years
 ##' @param digits Number of digits to round to in table
 ##' @param dead TRUE/FALSE switch to choose dead catch instead of retained catch.
-##' 
+##' @param zeros Include entries with zero catch (TRUE/FALSE)
+##'
 ##' @seealso \code{\link{SS_readforecast}}, \code{\link{SS_readforecast}}
 ##' @author Ian G. Taylor
 ##' @examples
 ##'
 ##'   \dontrun{
-##'     # create table for next two years based on 
-##'     SS_ForeCatch(base,               # object created by SS_output
-##'                  yrs=2015:2016,      # years with fixed catch
-##'                  average=TRUE,       # catch by fleet from average catch
-##'                                      # (not harvest control rule)
-##'                  avg.yrs=2010:2014,  # use average of catches over past 5 years
-##'                  total=c(6.6,6.8))   # scale totals equal to ACLs (from John DeVore)
+##'     # create table based on average over past 5 years
+##'     SS_ForeCatch(base,                # object created by SS_output
+##'                  yrs = 2019:2020,     # years with fixed catch
+##'                  average = TRUE,      # catch by fleet from average catch
+##'                  avg.yrs = 2014:2018) # use average of catches over past 5 years
 ##'
+##'     # create table with pre-defined totals where the first 2 years
+##'     # are based on current harvest specifications and the next 10 are set to some
+##'     # new value (with ratio among fleets based on average over past 5 years)
+##'     SS_ForeCatch(base,                # object created by SS_output
+##'                  yrs = 2019:2020,     # years with fixed catch
+##'                  average = TRUE,      # catch by fleet from average catch
+##'                  avg.yrs = 2014:2018, # use average of catches over past 5 years
+##'                  total = c(rep(241.3, 2), rep(300, 10))) # total 
+##' 
 ##'     # create table based on harvest control rule projection in SS
 ##'     # that can be mapped into an alternative state of nature
-##'     SS_ForeCatch(low_state,          # object created by SS_output for low state 
-##'                  yrs=2017:2026,      # forecast period after fixed ACL years
+##'     SS_ForeCatch(low_state,          # object created by SS_output for low state
+##'                  yrs=2019:2030,      # forecast period after fixed ACL years
 ##'                  average=FALSE)      # use values forecast in SS, not historic catch
-##' 
+##'
 ##'   }
 ##'
 ##' @export
 
-SS_ForeCatch <- function(replist, yrs=2017:2028, 
-                         average=FALSE, avg.yrs=2012:2016,
-                         total=NULL, digits=2, dead=TRUE){
+SS_ForeCatch <- function(replist, yrs = 2019:2030,
+                         average = FALSE, avg.yrs = 2014:2018,
+                         total = NULL, digits = 2,
+                         dead = TRUE, zeros = FALSE){
   # function for creating table of fixed forecast catches
   # based on values in the timeseries output
   timeseries <- replist$timeseries
-  
+
   # create new empty object to store stuff
   forecast_catches <- NULL
 
@@ -109,7 +118,7 @@ SS_ForeCatch <- function(replist, yrs=2017:2028,
 
     # round values
     forecast_catches_y$Catch <- round(forecast_catches_y$Catch, digits)
-    
+
     # add comment on right-hand-side
     forecast_catches_y$comment <- ""
     forecast_catches_y$comment[1] <- paste0("#sum_for_",y,": ",
@@ -121,7 +130,11 @@ SS_ForeCatch <- function(replist, yrs=2017:2028,
   # fix up column names
   names(forecast_catches)[1] <- "#Year"
   names(forecast_catches)[4] <- string
-  
+
+  # remove rows with zero catch
+  if(!zeros & any(forecast_catches[[string]] == 0)){
+    forecast_catches <- forecast_catches[!forecast_catches[[string]] == 0,]
+  }
+
   return(forecast_catches)
 }
-

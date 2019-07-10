@@ -10,7 +10,7 @@
 #' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
 #' data as it is being read.
-#' @param ctlversion SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
@@ -27,7 +27,6 @@
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param DatFile read datfile list for additonal information
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
@@ -36,8 +35,10 @@
 #' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
-#' @param datlist list or character. if list : produced from SS_writedat or character : file name of dat file.
-#' @author Neil Klaer, Yukio Takeuchi 
+#' @param datlist list or character. If list, should be a list produced from 
+#'   \code{\link{SS_writedat}}. If character, should be the file name of an
+#'   SS data file.
+#' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
 #' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
@@ -45,7 +46,7 @@
 #' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
-SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
+SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 ## Parameters that are not defined in control file
     nseas=4,
     N_areas=1,
@@ -54,7 +55,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     Npopbins=NA,
     Nfleet=2,
     Nsurveys=2,
-    DatFile=NA,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
@@ -67,7 +67,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   if(verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file,warn=FALSE)
 
-  nver=as.numeric(substring(ctlversion,1,4))
+  nver=as.numeric(substring(version,1,4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
@@ -212,7 +212,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist$fleetnames<-fleetnames
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
-    if(is.null(datlist))stop("datlist from SS_readdat is needed is use_datlist is TRUE")
+    if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
@@ -247,7 +247,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
-    stop("currently sub morphs are not supported yet")
+    stop("sub morphs are not supported yet")
 #    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"submorphdist")
   }else{
@@ -267,16 +267,22 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   
   # recruitment timing and distribution
   ctllist<-add_elem(ctllist,"recr_dist_method")
+  if(ctllist$recr_dist_method == "1") {
+    warning("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
+  }
   ctllist<-add_elem(ctllist,"recr_global_area")
   
   ctllist<-add_elem(ctllist,"recr_dist_read")
   recr_dist_read<-ctllist$recr_dist_read
   ctllist<-add_elem(ctllist,"recr_dist_inx") # recruitment interaction requested
+  if(ctllist$recr_dist_inx>0){
+    #give warning but don't stop for now
+    warning("Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n")
+  }
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
       col.names=c("GP","seas","area","age"))
 
   if(ctllist$N_areas>1){
-    #stop("Multi areas are not yet implemented")
     ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
     if(ctllist$N_moveDef>0)
     {
@@ -305,8 +311,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
-#    stop("natM_type =2 is not yet implemented in this script")
-    N_natMparms<-1 ## 2016-12-8
+    N_natMparms<-1
     comments<-if(ctllist$N_GP==1){
       "#_reference age for Lorenzen M; read 1P per morph"
     }else{
@@ -326,6 +331,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L2") #_Growth_Age_for_L2 (999 to use as Linf)
   ctllist<-add_elem(ctllist,name="Exp_Decay") #Exponential decay for growth above maximum age
+  ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   if(ctllist$GrowthModel==3){
     ctllist<-add_elem(ctllist,name="N_ageK")
   }
@@ -363,7 +369,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   MGparm_per_def<-N_natMparms+N_growparms
   ctllist$N_natMparms<-N_natMparms
   
-  ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
   
@@ -385,17 +390,16 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     ctllist<-add_elem(ctllist,"Herm_MalesInSSB")  #_Hermaphroditism_males_in_SSB
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
-  # ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method XX what to do with this?
   
   ## catch multipler parameters
-  if(any(DatFile$fleetinfo$need_catch_mult==1))
+  if(any(datlist$fleetinfo$need_catch_mult==1))
   {
     # need to read a parameter line per value = 1
     stop("Catch multipliers not yet implemented in this script")
   }
   
   ## age error parameters
-  if(any(DatFile$ageerror[,1]<0))
+  if(any(datlist$ageerror[,1]<0))
   {
     # need to read 7 full (14) parameter lines
     stop("Age error parameters not yet implemented in this script")
@@ -504,28 +508,103 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
     MGparmLabel[cnt]<-paste0("Herm_asymptote",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     N_MGparm<-N_MGparm+3
   }
-  N_MGparm<-N_MGparm+ctllist$N_GP+N_areas+nseas         # add for the assignment to areas
-  MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("RecrDist_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-7;cnt<-cnt+ctllist$N_GP
-  MGparmLabel[cnt+1:N_areas-1]<-paste0("RecrDist_Area_",1:N_areas);PType[cnt:(cnt+N_areas)]<-8;cnt<-cnt+N_areas
-  MGparmLabel[cnt+1:nseas-1]<-paste0("RecrDist_Seas_",1:nseas);PType[cnt:(cnt+nseas-1)]<-9;cnt<-cnt+nseas
-  
-  ## number of recruiment distribution parameters
-  N_RecrDist_parms<-ctllist$N_GP+ctllist$N_areas+ctllist$nseas
-  if(ctllist$recr_dist_inx){
-  ## Interactions
-    N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
-    N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
-    for(i in 1:ctllist$N_GP){
-      for(j in 1:nseas){
-        for(k in 1:N_areas){
-          MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);PType[cnt]<-10;cnt<-cnt+1
-        }
-      }
-    }
-    # add for the morph assignments within each area
-  }
-#  MGparms
+  #Recruitment Distribution
+  # get the labels for RecrDist, number and names depend on method
+  RecrDistLabel <- switch(ctllist$recr_dist_method,
+                          "1"= { # included for back compatibility only.
+                                lab <- c(paste0("RecrDist_GP_", 1:ctllist$N_GP),
+                                         paste0("RecrDist_Area_", 1:ctllist$N_areas),
+                                         paste0("RecrDist_Bseas_", 1:ctllist$nseas))
+                                if(ctllist$recr_dist_inx){ # interactions
+                                  #Note:labels and order consistent with SS source 
+                                  #(3.30 and 3.24 control file read in 3.30.10)
+                                  for(i in 1:ctllist$N_GP) {
+                                    for(j in 1:ctllist$N_areas) {
+                                      for(k in 1:ctllist$nseas) { # goes with settle
+                                        tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
+                                                             "_area_",j,
+                                                             "_settle_",k)
+                                        lab <- c(lab, tmp_lab_inx)
+                                      }
+                                    }
+                                  }
+                                }
+                                lab
+                          },
+                          "2"=  {
+                            #get the number of times settlement occurs
+                            N_settle_timings <- length(unique(ctllist$recr_dist_pattern[ ,2]))
+                                  lab <- c(paste0("RecrDist_GP_",1:ctllist$N_GP), 
+                                           paste0("RecrDist_Area_",1:ctllist$N_areas), 
+                                           paste0("RecrDist_settle_",1:N_settle_timings))
+                                  if(ctllist$recr_dist_inx){ # interactions
+                                    #Note:labels and order consistent with SS source 
+                                    #(3.30 and 3.24 control file read in 3.30.10)
+                                    for(i in 1:ctllist$N_GP) {
+                                      for(j in 1:ctllist$N_areas) {
+                                        for(k in 1:N_settle_timings) {
+                                          tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
+                                                               "_area_",j,
+                                                               "_settle_",k)
+                                          lab <- c(lab, tmp_lab_inx)
+                                        }
+                                      }
+                                    }
+                                  }
+                                  lab
+                          },
+                          "3"= { 
+                                lab <- NULL
+                                for(i in 1:nrow(ctllist$recr_dist_pattern)){
+                                  tmp_lab <- paste0("RecrDist_GP_", 
+                                               ctllist$recr_dist_pattern[i,1], 
+                                               "_area_", 
+                                               ctllist$recr_dist_pattern[i,3], 
+                                               "_month_", 
+                                               ctllist$recr_dist_pattern[i,2])
+                                  lab <- c(lab, tmp_lab)
+                                 }
+                                 lab
+                          },
+                          "4"= NULL
+                          )
+# Get the parameter type for recruitment dist params, type depends on method.
+  RecrDist_PType <- switch(ctllist$recr_dist_method,
+                           "1" = {
+                                  tmp_PType <- rep(c(7,8,9),
+                                                   times = c(ctllist$N_GP,
+                                                             ctllist$N_areas,
+                                                             ctllist$nseas
+                                                             )
+                                                   )
+                                  if(ctllist$recr_dist_inx){ #interactions
+                                    tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*ctllist$nseas))
+                                  }
+                                  tmp_PType
+                           },
+                           "2" = {
+                                  tmp_PType <- rep(c(7,8,9), times = c(ctllist$N_GP,
+                                                                       ctllist$N_areas,
+                                                                       N_settle_timings))
+                                    if(ctllist$recr_dist_inx){ #interactions
+                                      tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*N_settle_timings))
+                                    }
+                                  tmp_PType
+                            },
+                           # may want a different PType for 3 in the future?
+                           "3"=rep(10, times = nrow(ctllist$recr_dist_pattern)),
+                           "4"= NULL # because no params
+                           )
 
+  #Add the labels, their parameter type and then adjust the count. 
+  N_RecrDist_parms <- length(RecrDistLabel)
+  if(N_RecrDist_parms>0) {
+    MGparmLabel[cnt:(cnt+N_RecrDist_parms-1)] <- RecrDistLabel
+    PType[cnt:(cnt+N_RecrDist_parms-1)] <- RecrDist_PType
+    cnt <- cnt + N_RecrDist_parms # add on to the count
+    N_MGparm <- N_MGparm + N_RecrDist_parms # add on to number of MGparms 
+  }
+  
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
   MGparmLabel[cnt]<-"CohortGrowDev";PType[cnt]<-11;cnt<-cnt+1
   if((N_areas>1)&&(ctllist$N_moveDef>0)){
@@ -702,13 +781,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   }
    
   #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch 
-  if(any(DatFile$init_equil>0))
+  if(any(datlist$init_equil>0))
   {  
     comments_initF<-list()
     k<-0
     for(j in 1:Nfleet)
     {
-      if(DatFile$init_equil[j]>0)
+      if(datlist$init_equil[j]>0)
       {
         comments_initF<-c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
         k<-k+1
@@ -994,6 +1073,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
 #_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
 #
   ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
+  #TODO: add code to read files when 2D_AR1 is used.
+  if (ctllist$Use_2D_AR1_selectivity == 1) {
+    stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
+  }
   
 # Tag loss and Tag reporting parameters go next
   ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist
@@ -1055,11 +1138,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
                                                         "mult_by_lencomp_N",
                                                         "mult_by_agecomp_N",
                                                         "mult_by_size-at-age_N")))
-  if(sum(ctllist$Variance_adjustment_list)!=0)
-  {
-    for(j in 1:nrow(ctllist$Variance_adjustment_list))ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,
-                                                                                   ctllist$Variance_adjustment_list[j,]$Fleet]<-ctllist$Variance_adjustment_list[j,]$Value
+  if(!is.null(ctllist$Variance_adjustment_list)) { #check if is null first
+    if(nrow(ctllist$Variance_adjustment_list) > 0) {
+    for(j in 1:nrow(ctllist$Variance_adjustment_list)){
+      ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
+        ctllist$Variance_adjustment_list[j,]$Value
+    }
     ctllist$DoVar_adjust<-1
+    }
   }
   
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
@@ -1068,7 +1154,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   ctllist<-add_df(ctllist,name="lambdas",nrow=NULL,ncol=5,
                   col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
   
-  if(!is.null(ctllist$lambdas))ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
+  if(!is.null(ctllist$lambdas)) ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
   else ctllist$N_lambdas<-0
   
   if(ctllist$N_lambdas>0){
@@ -1122,7 +1208,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
-  #  stop("Currently additional reporting of derived quantities is not implemented in this R code")
     ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4]>0){
@@ -1153,3 +1238,4 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,ctlversion="3.30",
   # return the result
   return(ctllist)
 }
+

@@ -241,6 +241,16 @@ function(
                     linenums=linenum,strings=string,
                     newvals=profilevec[i], estimate=FALSE,
                     verbose=TRUE, repeat.vals=TRUE)
+
+      # read parameter lines of control file
+      ctltable_new <- SS_parlines(ctlfile=newctlfile)
+      # which parameters are estimated in phase 1
+      if(!any(ctltable_new$PHASE == 1)){
+        warning("At least one parameter needs to be estimated in phase 1.\n",
+                "Edit control file to add a parameter\n",
+                "which isn't being profiled over to phase 1.")
+      }
+      
       if(usepar){
         # alternatively change initial values in the par file
         # read file

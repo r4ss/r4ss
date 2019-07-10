@@ -172,7 +172,7 @@ SSplotComparisons <-
            indexPlotEach=FALSE,
            labels=c("Year",             #1
              "Spawning biomass (t)",    #2
-             "%unfished",               #3
+             "Fraction of unfished",    #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
@@ -409,16 +409,6 @@ SSplotComparisons <-
             "to get female-only spawning biomass output by SS for a single-sex model,\n",
             "use the new Nsexes = -1 option in the data file.")
   }
-  ## # fix biomass for single-sex models
-  ## if(any(nsexes==1)){
-  ##   if(verbose) cat("dividing SpawnBio by 2 for single-sex models:",(1:n)[nsexes==1],"\n")
-  ##   for(i in (1:n)[nsexes==1]){
-  ##     SpawnBio[,i]    <- SpawnBio[,i]/2
-  ##     SpawnBioLower[,i]  <- SpawnBioLower[,i]/2
-  ##     SpawnBioUpper[,i]  <- SpawnBioUpper[,i]/2
-  ##   }
-  ## }
-
   # check number of models to be plotted
   if(models[1]=="all") models <- 1:n
   nlines <- length(models)
@@ -447,12 +437,6 @@ SSplotComparisons <-
   if(is.null(col) & nlines<3)  col <- rc(nlines)
   if(is.null(col) & nlines==3) col <- c("blue","red","green3")
   if(is.null(shadecol)){
-    # if no input for shadecol, then add alpha to vector col
-    ## for(icol in 1:length(col)){
-    ## # convert to rgb
-    ## tmp <- col2rgb(col[icol])/255
-    ## shadecol[icol] <- rgb(red=tmp[1], green=tmp[2], blue=tmp[3], alpha=shadealpha)
-    ## }
     # new approach thanks to Trevor Branch
     shadecol <- adjustcolor(col, alpha.f=shadealpha)
   }
@@ -473,9 +457,6 @@ SSplotComparisons <-
 
   # open new window if requested
   if(plot & new & !pdf){
-    ### Note: the following line has been commented out because it was identified
-    ###       by Brian Ripley as "against CRAN policies".
-    #if(exists(".SavedPlots",where=1)) rm(.SavedPlots,pos=1)
     dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
     par(par)
   }
@@ -507,11 +488,6 @@ SSplotComparisons <-
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
       upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      if(nsexes[iline] == 1) {
-        lower <- lower/2
-        upper <- upper/2
-        med <- med/2
-      }
       SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
       SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
       SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
@@ -583,7 +559,7 @@ SSplotComparisons <-
   }
 
   if(endyrvec[1]=="default"){
-    endyrvec <- endyrs
+    endyrvec <- endyrs + 1 
   }
   if(length(endyrvec)==1){
     endyrvec <- rep(endyrvec,nlines)
@@ -1451,9 +1427,6 @@ SSplotComparisons <-
         # add density
         if(good[iline]){
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
-            mcmcVals <- mcmcVals/2
-          }
           xmin <- min(xmin, quantile(mcmcVals,0.005, na.rm=TRUE))
           if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
           if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
@@ -1469,10 +1442,6 @@ SSplotComparisons <-
         parSD <- valSDs[1,imodel]
         if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass
-            parval <- parval/2
-            parSD <- parSD/2
-          }
           # update x range
           xmin <- min(xmin, qnorm(0.005,parval,parSD))
           if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
@@ -1542,9 +1511,6 @@ SSplotComparisons <-
           # make density for MCMC posterior
           mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
-            mcmcVals <- mcmcVals/2
-          }
           x2 <- quantile(mcmcVals, symbolsQuants, na.rm=TRUE)   # for symbols on plot
           #find the positions in the density that are closest to these quantiles
           x <- mcmcDens[[iline]]$x
@@ -1584,10 +1550,6 @@ SSplotComparisons <-
           parval <- vals[1,imodel]
           parSD <- valSDs[1,imodel]
           if(!is.na(parSD) && parSD>0){
-            if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass
-              parval <- parval/2
-              parSD <- parSD/2
-            }
             xmin <- min(xmin, qnorm(0.005,parval,parSD))
             if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
             if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
@@ -1708,7 +1670,7 @@ SSplotComparisons <-
 
   # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
   if(3 %in% subplots){
-    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to %unfished)\n")
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to fraction of unfished)\n")
     if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")
