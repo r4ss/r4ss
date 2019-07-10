@@ -116,8 +116,9 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     mylist$Ydecl <- allnums[i]; i <- i+1
     mylist$Yinit <- allnums[i]; i <- i+1
     mylist$fleet_relative_F <- allnums[i]; i <- i+1
-    if(mylist$fleet_relative_F==2){
-      stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
+    if(mylist$fleet_relative_F==2){ ## START 35
+      mylist$vals_fleet_relative_f <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
+      # stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
     }
     mylist$basis_for_fcast_catch_tuning <- allnums[i]; i <- i+1
     if(version==3.24){
