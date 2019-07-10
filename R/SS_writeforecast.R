@@ -65,9 +65,11 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
   }
 
+  SSversion <- mylist$SSversion
+  
   writeLines("#C forecast file written by R function SS_writeforecast")
   writeLines("#C rerun model to get more complete formatting in forecast.ss_new")
-  writeLines(paste("#C should work with SS version:",mylist$SSversion))
+  writeLines(paste("#C should work with SS version:",SSversion))
   writeLines(paste("#C file write time:",Sys.time()))
   writeLines("#")
 
@@ -86,7 +88,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     wl("F_scalar")
     writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
     writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
-    if(mylist$SSversion=="3.30" | mylist$SSversion==3.3){
+    if(SSversion=="3.30" | SSversion==3.3){
       wl("Fcast_selex")
     }
     wl("ControlRuleMethod")
@@ -108,19 +110,25 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     wl("Ydecl")
     wl("Yinit")
     wl("fleet_relative_F")
-   # if(mylist$fleet_relative_F==2) stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
-
     wl("basis_for_fcast_catch_tuning")
-    if(mylist$SSversion==3.24){
+
+    # fleet and area-specific inputs for version 3.24
+    if(SSversion==3.24){
+
+      # write relative F values by fleet
+      if(mylist$fleet_relative_F==2){
+        writeLines("#_vals_fleet_relative_f")
+        writeLines(paste(mylist$vals_fleet_relative_f,collapse=" "))
+      }
+
       writeLines("# max totalcatch by fleet (-1 to have no max)")
-      writeLines(paste(paste(mylist$max_totalcatch_by_fleet,collapse=" ")))
+      writeLines(paste(mylist$max_totalcatch_by_fleet,collapse=" "))
       writeLines("# max totalcatch by area (-1 to have no max)")
-      writeLines(paste(paste(mylist$max_totalcatch_by_area,collapse=" ")))
+      writeLines(paste(mylist$max_totalcatch_by_area,collapse=" "))
       writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
-      writeLines(paste(paste(mylist$fleet_assignment_to_allocation_group,collapse=" ")))
+      writeLines(paste(mylist$fleet_assignment_to_allocation_group,collapse=" "))
       if(any(mylist$fleet_assignment_to_allocation_group!=0)){
         writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-        #    writeLines(paste(paste(mylist$allocation_among_groups,collapse=" ")))
         printdf("allocation_among_groups")
       }
       wl("Ncatch")
@@ -129,7 +137,16 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
         printdf(mylist$ForeCatch)
       }
     }
-    if(mylist$SSversion=="3.30" | mylist$SSversion==3.3){
+    # fleet and area-specific inputs for version 3.30
+    if(SSversion=="3.30" | SSversion==3.3){
+
+      # write relative F values by fleet
+      if(mylist$fleet_relative_F==2){
+        writeLines("#_vals_fleet_relative_f")
+        printdf(mylist$vals_fleet_relative_f)
+        writeLines("-9999 0 0")
+      }
+
       writeLines("# enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999")
       if(!is.null(mylist$max_totalcatch_by_fleet)){
         printdf(mylist$max_totalcatch_by_fleet)

@@ -116,16 +116,26 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     mylist$Ydecl <- allnums[i]; i <- i+1
     mylist$Yinit <- allnums[i]; i <- i+1
     mylist$fleet_relative_F <- allnums[i]; i <- i+1
-    if(mylist$fleet_relative_F==2){ ## START 35
-      mylist$vals_fleet_relative_f <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
-      # stop("SS_readforecast doesn't yet support option 2 for 'fleet relative F'")
-    }
     mylist$basis_for_fcast_catch_tuning <- allnums[i]; i <- i+1
+
     if(version==3.24){
       if(verbose){
         cat('reading section on fleet- and area-specific inputs based on 3.24 format\n')
       }
       # the following section is somewhat different between 3.24 and 3.30
+
+      # read relative F by fleet
+      if(mylist$fleet_relative_F==2){
+        mylist$vals_fleet_relative_f <- allnums[i:(i + Nfleets*nseas - 1)]
+        i <- i + Nfleets*nseas
+        if(verbose){
+          message("basis_for_fcast_catch_tuning: ",
+                  mylist$basis_for_fcast_catch_tuning)
+          message("vals_fleet_relative_f: ",
+                  paste(mylist$vals_fleet_relative_f, collapse = " "))
+        }
+      }
+      
       mylist$max_totalcatch_by_fleet <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
       if(verbose) cat("  max_totalcatch_by_fleet =",mylist$max_totalcatch_by_fleet,"\n")
       mylist$max_totalcatch_by_area <- allnums[i:(i+Nareas-1)]; i <- i+Nareas
@@ -145,6 +155,10 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
       }
       mylist$Ncatch <- Ncatch <- allnums[i]; i <- i+1
       mylist$InputBasis <- allnums[i]; i <- i+1
+      if(mylist$InputBasis == -1){
+        stop("SS_readforecast not yet set up to read model with fixed catch input basis = -1\n",
+             "  (basis specific to each entry)")
+      }
       # forcast catch levels
       if(Ncatch==0){
         ForeCatch <- NULL
@@ -163,6 +177,33 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
       if(verbose){
         cat('reading section on fleet- and area-specific inputs based on 3.30 format\n')
       }
+
+      # read relative F by fleet
+      if(mylist$fleet_relative_F==2){
+        # offset from current position in vector to ending point
+        all9999 <- which(allnums == -9999)
+        relF.end <- min(all9999[all9999 > i])-1
+        Nvals <- (relF.end - i + 1)
+        # even final line starting with -9999 needs to have 3 values
+        # so number of values should always be evenly divisible by 3
+        if(Nvals %% 3 != 0){
+          stop("Error in read of input relative F catch.\n",
+               "Number of values should be a multiple of 3.\n",
+               "Values:\n", paste(allnums[i:relF.end], collapse="\n"))
+        }
+        relF <- data.frame(matrix(
+            allnums[i:relF.end], nrow=Nvals/3, ncol=3, byrow=TRUE))
+        # increment index
+        # (+4 to skip over -9999 and 3 placeholders at end of input matrix)
+        i <- relF.end + 4
+        names(relF) <- c("Seas","Fleet","relF")
+        if(verbose){
+          cat("  Relative F inputs:\n")
+          print(relF)
+        }
+        mylist$vals_fleet_relative_f <- relF
+      }
+
       # check for any catch caps or allocation groups
       # (indicated by additional values rather than something like the following lines:
       ## # enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999
