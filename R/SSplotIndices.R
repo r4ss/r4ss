@@ -119,7 +119,7 @@ function(replist,subplots=1:9,
   plotinfo <- NULL
 
   
-  cpue.fn <- function(addexpected=TRUE, ...){
+  index.fn <- function(addexpected=TRUE, ...){
     # plot of time-series of observed and expected (if requested)
     xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
     if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
@@ -163,8 +163,9 @@ function(replist,subplots=1:9,
     }
   }
 
-  logcpue.fn <- function(addexpected=TRUE){
+  logindex.fn <- function(addexpected=TRUE){
     # plot of time-series of log(observed) and log(expected) (if requested)
+    # this is only used for indices with lognormal error
     xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
     if(!add) plot(x=x[include], y=log(y[include]), type='n',
                   xlab=labels[1], ylab=labels[5],
@@ -383,8 +384,8 @@ function(replist,subplots=1:9,
       # print(cbind(x, y, liw, uiw)) # debugging line
 
       if(plot){
-        if(1 %in% subplots & datplot) cpue.fn(addexpected=FALSE)
-        if(2 %in% subplots) cpue.fn()
+        if(1 %in% subplots & datplot) index.fn(addexpected=FALSE)
+        if(2 %in% subplots) index.fn()
         if(3 %in% subplots) obs_vs_exp.fn()
       }
       if(print){
@@ -395,7 +396,7 @@ function(replist,subplots=1:9,
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
-          cpue.fn(addexpected=FALSE)
+          index.fn(addexpected=FALSE)
           dev.off()
         }
         if(2 %in% subplots){
@@ -405,7 +406,7 @@ function(replist,subplots=1:9,
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
-          cpue.fn()
+          index.fn()
           dev.off()
         }
         if(3 %in% subplots){
@@ -427,10 +428,10 @@ function(replist,subplots=1:9,
         # check for lognormal error
         if(survey_error[ifleet] == 0){
           if(4 %in% subplots & datplot){
-            logcpue.fn(addexpected=FALSE)
+            logindex.fn(addexpected=FALSE)
           }
           if(5 %in% subplots){
-            logcpue.fn()
+            logindex.fn()
           }
           if(6 %in% subplots){
             log_obs_vs_exp.fn()
@@ -455,7 +456,7 @@ function(replist,subplots=1:9,
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)
-            logcpue.fn(addexpected=FALSE)
+            logindex.fn(addexpected=FALSE)
             dev.off()
           }
           if(5 %in% subplots){
@@ -465,7 +466,7 @@ function(replist,subplots=1:9,
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)
-            logcpue.fn()
+            logindex.fn()
             dev.off()
           }
         } # end check for lognormal error
@@ -499,7 +500,7 @@ function(replist,subplots=1:9,
 
   ### standardized plot of all CPUE indices
   if(datplot==TRUE & nrow(allcpue)>0){
-    all_cpue.fn <- function(){
+    all_index.fn <- function(){
       main <- "All index plot"
       if(!mainTitle){
         main <- ""
@@ -529,15 +530,15 @@ function(replist,subplots=1:9,
                pch=pch2, col=usecols[ifleet], cex=cex,
                lwd=1, lty="dashed", type="o")
       }
-    } # end all_cpue.fn
+    } # end all_index.fn
     if(plot & (9 %in% subplots)){
-      all_cpue.fn()
+      all_index.fn()
     }
     if(print & (9 %in% subplots)){
       file <- paste0("index9_standcpueall",".png")
       caption <- "Standardized indices overlaid"
       plotinfo <- pngfun(file=file, caption=caption)
-      all_cpue.fn()
+      all_index.fn()
       dev.off()}
   } # end datplot
 
