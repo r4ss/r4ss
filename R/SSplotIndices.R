@@ -103,7 +103,7 @@ function(replist,subplots=1:9,
 
   # confirm that some CPUE values are present
   if(is.null(dim(cpue))){
-    cat("skipping index plots: no CPUE data in this model\n")
+    cat("skipping index plots: no index data in this model\n")
     return()
   }
 
@@ -121,10 +121,11 @@ function(replist,subplots=1:9,
     cpue <- cpue[!is.na(cpue$Dev),]
   }
   
-  FleetNames  <- replist$FleetNames
-  nfleets     <- replist$nfleets
-  nseasons    <- replist$nseasons
-
+  FleetNames   <- replist$FleetNames
+  nfleets      <- replist$nfleets
+  nseasons     <- replist$nseasons
+  survey_error <- replist$survey_error
+  
   # find any extra SD parameters
   parameters  <- replist$parameters
   Q_extraSD_info <- parameters[grep("Q_extraSD", parameters$Label),]
@@ -267,7 +268,7 @@ function(replist,subplots=1:9,
         names <- paste(seasnames,"observations")
       }
       # print(cbind(x, y, liw, uiw)) # debugging line
-      cpuefun1 <- function(addexpected=TRUE, ...){
+      cpue.fn <- function(addexpected=TRUE, ...){
         # plot of time-series of observed and expected (if requested)
         xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
         if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
@@ -293,7 +294,7 @@ function(replist,subplots=1:9,
           legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
         }
       }
-      cpuefun2 <- function(...){
+      obs_vs_exp.fn <- function(...){
         # plot of observed vs. expected with smoother
         if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
                       ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
@@ -311,9 +312,9 @@ function(replist,subplots=1:9,
       }
 
       if(plot){
-        if(1 %in% subplots & datplot) cpuefun1(addexpected=FALSE)
-        if(2 %in% subplots) cpuefun1()
-        if(3 %in% subplots) cpuefun2()
+        if(1 %in% subplots & datplot) cpue.fn(addexpected=FALSE)
+        if(2 %in% subplots) cpue.fn()
+        if(3 %in% subplots) obs_vs_exp.fn()
       }
       if(print){
         if(1 %in% subplots & datplot){
@@ -323,7 +324,7 @@ function(replist,subplots=1:9,
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun1(addexpected=FALSE)
+          cpue.fn(addexpected=FALSE)
           dev.off()
         }
         if(2 %in% subplots){
@@ -333,14 +334,14 @@ function(replist,subplots=1:9,
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun1()
+          cpue.fn()
           dev.off()
         }
         if(3 %in% subplots){
-          file <- paste0("index3_cpuecheck_",Fleet,".png")
+          file <- paste0("index3_obs_vs_exp_",Fleet,".png")
           caption <- paste("Observed vs. expected index values with smoother for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun2()
+          obs_vs_exp.fn()
           dev.off()
         }
       }
@@ -350,7 +351,7 @@ function(replist,subplots=1:9,
       if(!mainTitle) main <- ""
       uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
       liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
-      cpuefun3 <- function(addexpected=TRUE){
+      logcpue.fn <- function(addexpected=TRUE){
         # plot of time-series of log(observed) and log(expected) (if requested)
         xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
         if(!add) plot(x=x[include], y=log(y[include]), type='n',
@@ -372,7 +373,7 @@ function(replist,subplots=1:9,
           legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
         }
       }
-      cpuefun4 <- function(){
+      log_obs_vs_exp.fn <- function(){
         # plot of log(observed) vs. log(expected) with smoother
         if(!add) plot(log(y[include]),log(z[include]),type='n',xlab=labels[6],main=main,
                       cex.main=cex.main,ylab=labels[7])
@@ -386,7 +387,7 @@ function(replist,subplots=1:9,
           legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
         }
       }
-      cpuefun5 <- function(){
+      timevarying_q.fn <- function(){
         # plot of time-varying catchability (if present)
         main <- paste(labels[10], Fleet, sep=" ")
         if(!mainTitle) main <- ""
@@ -395,7 +396,7 @@ function(replist,subplots=1:9,
                       cex.main=cex.main,ylab=labels[9],
                       col=colvec2[1],pch=pch2)
       }
-      cpuefun6 <- function(){
+      q_vs_vuln_bio.fn <- function(){
         # plot of time-varying catchability (if present)
         main <- paste(labels[12], Fleet, sep=" ")
         if(!mainTitle) main <- ""
@@ -407,94 +408,122 @@ function(replist,subplots=1:9,
                       cex.main=cex.main,ylab=ylab,
                       col=colvec2[1],pch=pch2)
       }
+      # plot subplots 4-8 to current device
       if(plot){
-        if(4 %in% subplots & datplot) cpuefun3(addexpected=FALSE)
-        if(5 %in% subplots) cpuefun3()
-        if(6 %in% subplots) cpuefun4()
-        if(7 %in% subplots & time) cpuefun5()
-        if(8 %in% subplots & time2) cpuefun6()
+        # check for lognormal error
+        if(survey_error[ifleet] == 0){
+          if(4 %in% subplots & datplot){
+            logcpue.fn(addexpected=FALSE)
+          }
+          if(5 %in% subplots){
+            logcpue.fn()
+          }
+          if(6 %in% subplots){
+            log_obs_vs_exp.fn()
+          }
+        }
+        if(7 %in% subplots & time){
+          timevarying_q.fn()
+        }
+        if(8 %in% subplots & time2){
+          q_vs_vuln_bio.fn()
+        }
       }
-      
+
+      # print subplots 4-8 to PNG files
       if(print){
-        if(4 %in% subplots & datplot){
-          file <- paste0("index4_logcpuedata_",Fleet,".png")
-          caption <- paste0("Log index data for ", Fleet, ". ",
-                            "Lines indicate 95% uncertainty interval around index values. ",
-                            "Thicker lines (if present) indicate input uncertainty before addition of ",
-                            "estimated additional uncertainty parameter.")
-          plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun3(addexpected=FALSE)
-          dev.off()
-        }
-        if(5 %in% subplots){
-          file <- paste0("index5_logcpuefit_",Fleet,".png")
-          caption <- paste0("Fit to log index data on log scale for ", Fleet, ". ",
-                            "Lines indicate 95% uncertainty interval around index values. ",
-                            "Thicker lines (if present) indicate input uncertainty before addition of ",
-                            "estimated additional uncertainty parameter.")
-          plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun3()
-          dev.off()
-        }
+        # check for lognormal error
+        if(survey_error[ifleet] == 0){ 
+          if(4 %in% subplots & datplot){
+            file <- paste0("index4_logcpuedata_",Fleet,".png")
+            caption <- paste0("Log index data for ", Fleet, ". ",
+                              "Lines indicate 95% uncertainty interval around index values. ",
+                              "Thicker lines (if present) indicate input uncertainty before addition of ",
+                              "estimated additional uncertainty parameter.")
+            plotinfo <- pngfun(file=file, caption=caption)
+            logcpue.fn(addexpected=FALSE)
+            dev.off()
+          }
+          if(5 %in% subplots){
+            file <- paste0("index5_logcpuefit_",Fleet,".png")
+            caption <- paste0("Fit to log index data on log scale for ", Fleet, ". ",
+                              "Lines indicate 95% uncertainty interval around index values. ",
+                              "Thicker lines (if present) indicate input uncertainty before addition of ",
+                              "estimated additional uncertainty parameter.")
+            plotinfo <- pngfun(file=file, caption=caption)
+            logcpue.fn()
+            dev.off()
+          }
+        } # end check for lognormal error
         if(6 %in% subplots){
-          file <- paste0("index6_logcpuecheck_",Fleet,".png")
+          file <- paste0("index6_log_obs_vs_exp_",Fleet,".png")
           caption <- paste("log(observed) vs. log(expected) index values with smoother for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun4()
+          log_obs_vs_exp.fn()
           dev.off()
         }
         if(7 %in% subplots & time){
-          file <- paste0("index7_timevaryingQ_",Fleet,".png")
+          file <- paste0("index7_timevarying_q_",Fleet,".png")
           caption <- paste("Timeseries of catchability for",Fleet)
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun5()
+          timevarying_q.fn()
           dev.off()
         }
         if(8 %in% subplots & time2){
-          file <- paste0("index8_Q_vs_Vuln_bio_",Fleet,".png")
+          file <- paste0("index8_q_vs_vuln_bio_",Fleet,".png")
           caption <-
-            paste("Catchability vs. vulnerable biomass for fleet ",Fleet,"<br> \n",
+            paste0("Catchability vs. vulnerable biomass for fleet ", Fleet, "<br> \n",
                   "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
-                  "Or reveal patterns associated with random-walk catchability<br> \n",
-                  "It was inspired by Jim Thorson, so blame him if you don't like it.",sep="")
+                  "or reveal patterns associated with random-walk catchability.")
           plotinfo <- pngfun(file=file, caption=caption)
-          cpuefun6()
+          q_vs_vuln_bio.fn()
           dev.off()
         }
       }
     } # end check for any values to include
-  } # nfleets
+  } # end loop over fleets
 
-  ### New the standardized plot of all CPUE indices
+  ### standardized plot of all CPUE indices
   if(datplot==TRUE & nrow(allcpue)>0){
-    all_cpue_fun <- function(){
-      main="All cpue plot"
-      if(!mainTitle) main <- ""
-      xlim <- c(min(allcpue$year,na.rm=TRUE)-1,max(allcpue$year,na.rm=TRUE)+1)
+    all_cpue.fn <- function(){
+      main <- "All index plot"
+      if(!mainTitle){
+        main <- ""
+      }
+      xlim <- c(min(allcpue$year,na.rm=TRUE) - 1,
+                max(allcpue$year,na.rm=TRUE) + 1)
 
-      # change range if requested
+      # change year range if requested
       xlim[1] <- max(xlim[1],minyr)
       xlim[2] <- min(xlim[2],maxyr)
-      
+
+      # set y limits
       ylim <- c(range(allcpue$stdvalue,na.rm=TRUE))
-      usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE))
+      # set colors
+      usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE), alpha = 0.7)
       if(max(allcpue$Index,na.rm=TRUE) >= 2){
-        usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE)+1)[-1]
+        usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE)+1,
+                                     alpha = 0.7)[-1]
       }
+      # make empty plot
       if(!add) plot(0, type="n", xlab=labels[1], main=main, cex.main=cex.main,
                     col=usecols[1], ylab=labels[8], xlim=xlim,ylim=ylim)
+      # add points and lines for each fleet
       for(ifleet in fleetvec){
         points(x=allcpue$year[allcpue$Index==ifleet],
                y=allcpue$stdvalue[allcpue$Index==ifleet],
-               pch=pch2, col=usecols[ifleet], cex=cex, lwd=0.4, lty="dashed", type="o")
+               pch=pch2, col=usecols[ifleet], cex=cex,
+               lwd=1, lty="dashed", type="o")
       }
-    } # end all_cpue_fun
-    if(plot & (9 %in% subplots)){all_cpue_fun()}
+    } # end all_cpue.fn
+    if(plot & (9 %in% subplots)){
+      all_cpue.fn()
+    }
     if(print & (9 %in% subplots)){
       file <- paste0("index9_standcpueall",".png")
       caption <- "Standardized indices overlaid"
       plotinfo <- pngfun(file=file, caption=caption)
-      all_cpue_fun()
+      all_cpue.fn()
       dev.off()}
   } # end datplot
 
