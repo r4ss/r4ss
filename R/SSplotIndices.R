@@ -1,10 +1,24 @@
 #' Plot indices of abundance and associated quantities.
 #' 
-#' Plot indices of abundance and associated quantities.
+#' Plot indices of abundance with or without model fit as well as other diagnostic
+#' plots such as observed vs. expected index and plots related to time-varying
+#' catchability (if present).
 #' 
 #' 
 #' @param replist list created by \code{SS_output}
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1  index data by fleet
+#'   \item 2  index data with fit by fleet
+#'   \item 3  observed vs expected index values with smoother
+#'   \item 4  index data by fleet on a log scale (lognormal error only)
+#'   \item 5  index data with fit by fleet on a log scale (lognormal error only)
+#'   \item 6  log(observed) vs log(expected) with smoother (lognormal error only)
+#'   \item 7  time series of time-varying catchability (only if actually time-varying)
+#'   \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
+#'   \item 9  comparison of all indices
+#' }
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
