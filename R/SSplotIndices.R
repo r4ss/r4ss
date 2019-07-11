@@ -107,6 +107,8 @@ function(replist,subplots=1:9,
     return()
   }
 
+  # define a bunch of internal functions
+  
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
     png(filename=file.path(plotdir, file),
@@ -116,6 +118,113 @@ function(replist,subplots=1:9,
   }
   plotinfo <- NULL
 
+  
+  cpue.fn <- function(addexpected=TRUE, ...){
+    # plot of time-series of observed and expected (if requested)
+    xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
+    if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
+                  ylab=labels[2], main=main, cex.main=cex.main, xlim=xlim,
+                  ylim=c(0,min(max(y+uiw,na.rm=TRUE), max(maximum_ymax_ratio*y))),
+                  ...)
+    # show thicker lines behind final lines for input uncertainty (if different)
+    if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
+      segments(x[include], qlnorm(.025,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
+               x[include], qlnorm(.975,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
+               col = colvec1[s], lwd = 3, lend = 1)
+    }
+    # add intervals
+    plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
+           ylo=0,col=colvec1[s],
+           main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
+           bg=bg,cex=cex)
+    abline(h=0,col="grey")
+    if(addexpected){
+      lines(x,z,lwd=2,col=col3)
+    }
+    if(legend & length(colvec1)>1){
+      legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
+    }
+  }
+
+  obs_vs_exp.fn <- function(...){
+    # plot of observed vs. expected with smoother
+    if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
+                  ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
+    points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
+    abline(h=0,col="grey")
+    lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
+    if(smooth && npoints > 6 && diff(range(y))>0){
+      psmooth <- loess(z[include]~y[include],degree=1)
+      lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
+            lwd=1.2,col=col4,lty="dashed")
+    }
+    if(legend & length(colvec2)>1){
+      legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+    }
+  }
+
+  logcpue.fn <- function(addexpected=TRUE){
+    # plot of time-series of log(observed) and log(expected) (if requested)
+    xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
+    if(!add) plot(x=x[include], y=log(y[include]), type='n',
+                  xlab=labels[1], ylab=labels[5],
+                  main=main, cex.main=cex.main,
+                  xlim=xlim, ylim=range(log(y[include])-liw[include],
+                                 log(y[include])+uiw[include],na.rm=TRUE))
+    # show thicker lines behind final lines for input uncertainty (if different)
+    if(show_input_uncertainty & any(!is.null(cpueuse$SE_input[include]))){
+      segments(x[include], qnorm(.025,mean=log(y[include]),sd=cpueuse$SE_input[include]),
+               x[include], qnorm(.975,mean=log(y[include]),sd=cpueuse$SE_input[include]),
+               col = colvec1[s], lwd = 3, lend = 1)
+    }
+    plotCI(x=x[include],y=log(y[include]),sfrac=0.005,uiw=uiw[include],
+           liw=liw[include],
+           col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
+    if(addexpected) lines(x,log(z),lwd=2,col=col3)
+    if(legend & length(colvec1)>1){
+      legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
+    }
+  }
+
+  log_obs_vs_exp.fn <- function(){
+    # plot of log(observed) vs. log(expected) with smoother
+    if(!add) plot(log(y[include]),log(z[include]),type='n',xlab=labels[6],main=main,
+                  cex.main=cex.main,ylab=labels[7])
+    points(log(y[include]),log(z[include]),col=colvec2[s],pch=pch2)
+    lines(x=range(log(z[include])),y=range(log(z[include])))
+    if(smooth && npoints > 6 && diff(range(y))>0){
+      psmooth <- loess(log(z[include])~log(y[include]),degree=1)
+      lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
+            lwd=1.2,col=col4,lty="dashed")}
+    if(length(colvec2)>1){
+      legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
+    }
+  }
+
+  timevarying_q.fn <- function(){
+    # plot of time-varying catchability (if present)
+    main <- paste(labels[10], Fleet, sep=" ")
+    if(!mainTitle) main <- ""
+    q <- cpueuse$Calc_Q
+    if(!add) plot(x,q,type='o',xlab=labels[1],main=main,
+                  cex.main=cex.main,ylab=labels[9],
+                  col=colvec2[1],pch=pch2)
+  }
+  
+  q_vs_vuln_bio.fn <- function(){
+    # plot of time-varying catchability (if present)
+    main <- paste(labels[12], Fleet, sep=" ")
+    if(!mainTitle) main <- ""
+    v <- cpueuse$Vuln_bio
+    q1 <- cpueuse$Calc_Q
+    q2 <- cpueuse$Eff_Q
+    if(all(q1==q2)) ylab <- labels[9] else ylab <- "Effective catchability"
+    if(!add) plot(v,q2,type='o',xlab=labels[11],main=main,
+                  cex.main=cex.main,ylab=ylab,
+                  col=colvec2[1],pch=pch2)
+  }
+
+  # check for super periods
   if(length(grep("supr_per",cpue$Supr_Per))){
     warning("Some indices have superperiods. Values will be plotted\n",
             "in year/season associated with data in report file.")
@@ -215,6 +324,9 @@ function(replist,subplots=1:9,
 
   allcpue <- data.frame()
 
+
+
+  
   # loop over fleets
   for(ifleet in fleetvec){
     Fleet <- fleetnames[ifleet]
@@ -269,48 +381,6 @@ function(replist,subplots=1:9,
         names <- paste(seasnames,"observations")
       }
       # print(cbind(x, y, liw, uiw)) # debugging line
-      cpue.fn <- function(addexpected=TRUE, ...){
-        # plot of time-series of observed and expected (if requested)
-        xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-        if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
-                      ylab=labels[2], main=main, cex.main=cex.main, xlim=xlim,
-                      ylim=c(0,min(max(y+uiw,na.rm=TRUE), max(maximum_ymax_ratio*y))),
-                      ...)
-        # show thicker lines behind final lines for input uncertainty (if different)
-        if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
-          segments(x[include], qlnorm(.025,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
-                   x[include], qlnorm(.975,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
-                   col = colvec1[s], lwd = 3, lend = 1)
-        }
-        # add intervals
-        plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
-               ylo=0,col=colvec1[s],
-               main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
-               bg=bg,cex=cex)
-        abline(h=0,col="grey")
-        if(addexpected){
-          lines(x,z,lwd=2,col=col3)
-        }
-        if(legend & length(colvec1)>1){
-          legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
-        }
-      }
-      obs_vs_exp.fn <- function(...){
-        # plot of observed vs. expected with smoother
-        if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
-                      ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
-        points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
-        abline(h=0,col="grey")
-        lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
-        if(smooth && npoints > 6 && diff(range(y))>0){
-          psmooth <- loess(z[include]~y[include],degree=1)
-          lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
-                lwd=1.2,col=col4,lty="dashed")
-        }
-        if(legend & length(colvec2)>1){
-          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
-        }
-      }
 
       if(plot){
         if(1 %in% subplots & datplot) cpue.fn(addexpected=FALSE)
@@ -352,63 +422,6 @@ function(replist,subplots=1:9,
       if(!mainTitle) main <- ""
       uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
       liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
-      logcpue.fn <- function(addexpected=TRUE){
-        # plot of time-series of log(observed) and log(expected) (if requested)
-        xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-        if(!add) plot(x=x[include], y=log(y[include]), type='n',
-                      xlab=labels[1], ylab=labels[5],
-                      main=main, cex.main=cex.main,
-                      xlim=xlim, ylim=range(log(y[include])-liw[include],
-                                     log(y[include])+uiw[include],na.rm=TRUE))
-        # show thicker lines behind final lines for input uncertainty (if different)
-        if(show_input_uncertainty & any(!is.null(cpueuse$SE_input[include]))){
-          segments(x[include], qnorm(.025,mean=log(y[include]),sd=cpueuse$SE_input[include]),
-                   x[include], qnorm(.975,mean=log(y[include]),sd=cpueuse$SE_input[include]),
-                   col = colvec1[s], lwd = 3, lend = 1)
-        }
-        plotCI(x=x[include],y=log(y[include]),sfrac=0.005,uiw=uiw[include],
-               liw=liw[include],
-               col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
-        if(addexpected) lines(x,log(z),lwd=2,col=col3)
-        if(legend & length(colvec1)>1){
-          legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
-        }
-      }
-      log_obs_vs_exp.fn <- function(){
-        # plot of log(observed) vs. log(expected) with smoother
-        if(!add) plot(log(y[include]),log(z[include]),type='n',xlab=labels[6],main=main,
-                      cex.main=cex.main,ylab=labels[7])
-        points(log(y[include]),log(z[include]),col=colvec2[s],pch=pch2)
-        lines(x=range(log(z[include])),y=range(log(z[include])))
-        if(smooth && npoints > 6 && diff(range(y))>0){
-          psmooth <- loess(log(z[include])~log(y[include]),degree=1)
-          lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
-                lwd=1.2,col=col4,lty="dashed")}
-        if(length(colvec2)>1){
-          legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
-        }
-      }
-      timevarying_q.fn <- function(){
-        # plot of time-varying catchability (if present)
-        main <- paste(labels[10], Fleet, sep=" ")
-        if(!mainTitle) main <- ""
-        q <- cpueuse$Calc_Q
-        if(!add) plot(x,q,type='o',xlab=labels[1],main=main,
-                      cex.main=cex.main,ylab=labels[9],
-                      col=colvec2[1],pch=pch2)
-      }
-      q_vs_vuln_bio.fn <- function(){
-        # plot of time-varying catchability (if present)
-        main <- paste(labels[12], Fleet, sep=" ")
-        if(!mainTitle) main <- ""
-        v <- cpueuse$Vuln_bio
-        q1 <- cpueuse$Calc_Q
-        q2 <- cpueuse$Eff_Q
-        if(all(q1==q2)) ylab <- labels[9] else ylab <- "Effective catchability"
-        if(!add) plot(v,q2,type='o',xlab=labels[11],main=main,
-                      cex.main=cex.main,ylab=ylab,
-                      col=colvec2[1],pch=pch2)
-      }
       # plot subplots 4-8 to current device
       if(plot){
         # check for lognormal error
