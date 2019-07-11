@@ -103,7 +103,7 @@ function(replist,subplots=1:9,
 
   # confirm that some CPUE values are present
   if(is.null(dim(cpue))){
-    cat("skipping index plots: no index data in this model\n")
+    message("skipping index plots: no index data in this model")
     return()
   }
 
@@ -117,7 +117,8 @@ function(replist,subplots=1:9,
   plotinfo <- NULL
 
   if(length(grep("supr_per",cpue$Supr_Per))){
-    cat("Note: some indices have superperiods. Values will be plotted in year/season associated with data in report file.\n")
+    warning("Some indices have superperiods. Values will be plotted\n",
+            "in year/season associated with data in report file.")
     cpue <- cpue[!is.na(cpue$Dev),]
   }
   
@@ -255,8 +256,8 @@ function(replist,subplots=1:9,
       }
       uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
       if(max(uiw)==Inf){
-        cat("!warning: removing upper interval on indices with infinite upper quantile values\n",
-            "         check the uncertainty inputs to for the indices\n")
+        warning("Removing upper interval on indices with infinite upper quantile values.\n",
+                "Check the uncertainty inputs for the indices.")
         uiw[uiw==Inf] <- 1000*max(cpueuse$Obs[uiw==Inf])
       }
       liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
