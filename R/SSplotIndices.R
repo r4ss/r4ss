@@ -196,17 +196,16 @@ function(replist,subplots=1:9,
                x[include], upper_input,
                col = colvec1[s], lwd = 3, lend = 1)
     }
-    # add intervals for total
-    uiw <- upper_total - y
-    liw <- y - lower_total
-    # note that plotCI could probably be replaced with
+    # add intervals
     arrows(x0 = x[include], y0 = lower_total[include],
            x1 = x[include], y1 = upper_total[include],
            length = 0.03, angle = 90, code = 3, col = colvec1[s])
+    # add points
     points(x = x[include], y = y[include],
            pch = pch1, cex = cex, bg = bg, col = colvec1[s])
+    # add expected values
     if(addexpected){
-      lines(x,z,lwd=2,col=col3)
+      lines(x, z, lwd=2, col=col3)
     }
     if(legend & length(colvec1)>1){
       legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
