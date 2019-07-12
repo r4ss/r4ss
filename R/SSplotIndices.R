@@ -120,24 +120,91 @@ function(replist,subplots=1:9,
 
   
   index.fn <- function(addexpected=TRUE, ...){
-    # plot of time-series of observed and expected (if requested)
-    xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-    if(!add) plot(x=x[include], y=y[include], type='n', xlab=labels[1],
-                  ylab=labels[2], main=main, cex.main=cex.main, xlim=xlim,
-                  ylim=c(0,min(max(y+uiw,na.rm=TRUE), max(maximum_ymax_ratio*y))),
-                  ...)
+    # plot of time series of observed values with fit (if requested)
+
+    # interval around points with total SE (input + any estimated extra)
+    if(error == 0){ 
+      lower_total <- qlnorm(.025, meanlog = log(y[include]),
+                            sdlog = cpueuse$SE[include])
+      upper_total <- qlnorm(.975, meanlog = log(y[include]),
+                            sdlog = cpueuse$SE[include])
+    }
+    # normal error interval
+    if(error == -1){ 
+      lower_total <- qnorm(.025, mean = y[include], sd = cpueuse$SE[include])
+      upper_total <- qnorm(.975, mean = y[include], sd = cpueuse$SE[include])
+    }
+    # T-distribution interval
+    if(error > 0){ 
+      lower_total <- -cpueuse$SE[include]*qt(.025, df = y[include])
+      upper_total <-  cpueuse$SE[include]*qt(.975, df = y[include])
+    }
+
+    if(max(upper_total)==Inf){
+      warning("Removing upper interval on indices with infinite upper quantile values.\n",
+              "Check the uncertainty inputs for the indices.")
+      upper_total[upper_total == Inf] <- 100*max(cpueuse$Obs[upper_total == Inf])
+    }
+
+    # plot title
+    main <- paste(labels[2], Fleet,sep=" ")
+    # no title
+    if(!mainTitle){
+      main <- ""
+    }
+
+    xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
+    if(!add){
+      # y-limits with lognormal or T-distributed error
+      if(error != -1){
+        ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
+                              max(maximum_ymax_ratio * y)))
+      }
+      # ylimits with normal error
+      if(error == -1){
+        ylim <- 1.05 * c(min(lower_total, na.rm = TRUE),
+                         max(upper_total, na.rm = TRUE))
+      }
+      
+      plot(x = x[include], y = y[include], type = 'n', xlab = labels[1],
+           ylab = labels[2], main = main, cex.main = cex.main, xlim = xlim,
+           ylim = ylim,
+           yaxs = 'i',
+           ...)
+    }
     # show thicker lines behind final lines for input uncertainty (if different)
     if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
-      segments(x[include], qlnorm(.025,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
-               x[include], qlnorm(.975,meanlog=log(y[include]),sdlog=cpueuse$SE_input[include]),
+      # lognormal error interval
+      if(error == 0){ 
+        lower_input <- qlnorm(.025, meanlog = log(y[include]),
+                        sdlog = cpueuse$SE_input[include])
+        upper_input <- qlnorm(.975, meanlog = log(y[include]),
+                        sdlog = cpueuse$SE_input[include])
+      }
+      # normal error interval
+      if(error == -1){ 
+        lower_input <- qnorm(.025, mean = y[include], sd = cpueuse$SE_input[include])
+        upper_input <- qnorm(.975, mean = y[include], sd = cpueuse$SE_input[include])
+      }
+      # T-distribution interval
+      if(error > 0){ 
+        lower_input <- -cpueuse$SE_input[include]*qt(.025, df = y[include])
+        upper_input <-  cpueuse$SE_input[include]*qt(.975, df = y[include])
+      }
+      # add segments
+      segments(x[include], lower_input,
+               x[include], upper_input,
                col = colvec1[s], lwd = 3, lend = 1)
     }
-    # add intervals
-    plotCI(x=x[include],y=y[include],sfrac=0.005,uiw=uiw[include],liw=liw[include],
-           ylo=0,col=colvec1[s],
-           main=main,cex.main=cex.main,lty=1,add=TRUE,pch=pch1,
-           bg=bg,cex=cex)
-    abline(h=0,col="grey")
+    # add intervals for total
+    uiw <- upper_total - y
+    liw <- y - lower_total
+    # note that plotCI could probably be replaced with
+    arrows(x0 = x[include], y0 = lower_total[include],
+           x1 = x[include], y1 = upper_total[include],
+           length = 0.03, angle = 90, code = 3, col = colvec1[s])
+    points(x = x[include], y = y[include],
+           pch = pch1, cex = cex, bg = bg, col = colvec1[s])
     if(addexpected){
       lines(x,z,lwd=2,col=col3)
     }
@@ -148,8 +215,18 @@ function(replist,subplots=1:9,
 
   obs_vs_exp.fn <- function(...){
     # plot of observed vs. expected with smoother
-    if(!add) plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
-                  ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
+
+    # plot title
+    main <- paste(labels[2], Fleet,sep=" ")
+    # no title
+    if(!mainTitle){
+      main <- ""
+    }
+
+    if(!add){
+      plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
+           ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
+    }
     points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
     abline(h=0,col="grey")
     lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
@@ -235,7 +312,6 @@ function(replist,subplots=1:9,
   FleetNames   <- replist$FleetNames
   nfleets      <- replist$nfleets
   nseasons     <- replist$nseasons
-  survey_error <- replist$survey_error
   
   # find any extra SD parameters
   parameters  <- replist$parameters
@@ -279,7 +355,7 @@ function(replist,subplots=1:9,
   # use fancy colors only if any index spans more than one season
   usecol <- FALSE
   for(ifleet in fleetvec){
-    if(length(unique(cpue$Seas[cpue$Obs > 0 & cpue$Fleet==ifleet])) > 1){
+    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
       usecol <- TRUE
     }
   }
@@ -330,9 +406,13 @@ function(replist,subplots=1:9,
   
   # loop over fleets
   for(ifleet in fleetvec){
+    
     Fleet <- fleetnames[ifleet]
-    cpueuse <- cpue[cpue$Obs > 0 & cpue$Fleet==ifleet,]
+    error <- replist$survey_error[ifleet]
+
+    cpueuse <- cpue[cpue$Fleet==ifleet,]
     cpueuse <- cpueuse[order(cpueuse$YrSeas),]
+    
     # look for time-vary
     time <- diff(range(cpueuse$Calc_Q))>0
     # look for time-varying effective Q
@@ -353,6 +433,7 @@ function(replist,subplots=1:9,
     x <- cpueuse$YrSeas
     y <- cpueuse$Obs
     z <- cpueuse$Exp
+    npoints <- length(z)
     include <- !is.na(cpueuse$Like)
     if(any(include)){
       if(usecol){
@@ -367,21 +448,10 @@ function(replist,subplots=1:9,
         colnames(tempcpue) <- c("Index","year","value","stdvalue")
         allcpue <- rbind(allcpue,tempcpue)
       }
-      uiw <- qlnorm(.975,meanlog=log(y),sdlog=cpueuse$SE) - y
-      if(max(uiw)==Inf){
-        warning("Removing upper interval on indices with infinite upper quantile values.\n",
-                "Check the uncertainty inputs for the indices.")
-        uiw[uiw==Inf] <- 1000*max(cpueuse$Obs[uiw==Inf])
-      }
-      liw <- y - qlnorm(.025,meanlog=log(y),sdlog=cpueuse$SE)
-      npoints <- length(z)
-      main=paste(labels[2], Fleet,sep=" ")
-      if(!mainTitle) main <- ""
 
       addlegend <- function(pch, colvec){
         names <- paste(seasnames,"observations")
       }
-      # print(cbind(x, y, liw, uiw)) # debugging line
 
       if(plot){
         if(1 %in% subplots & datplot) index.fn(addexpected=FALSE)
@@ -419,14 +489,16 @@ function(replist,subplots=1:9,
       }
 
       # same plots again in log space (someday should create generalized set of commands)
-      main <- paste(labels[5], Fleet, sep=" ")
-      if(!mainTitle) main <- ""
-      uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
-      liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
-      # plot subplots 4-8 to current device
-      if(plot){
-        # check for lognormal error
-        if(survey_error[ifleet] == 0){
+      # check for lognormal error
+      if(error == 0){
+
+        # plot subplots 4-6 to current device
+        if(plot){
+          main <- paste(labels[5], Fleet, sep=" ")
+          if(!mainTitle) main <- ""
+          uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
+          liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
+
           if(4 %in% subplots & datplot){
             logindex.fn(addexpected=FALSE)
           }
@@ -437,18 +509,10 @@ function(replist,subplots=1:9,
             log_obs_vs_exp.fn()
           }
         }
-        if(7 %in% subplots & time){
-          timevarying_q.fn()
-        }
-        if(8 %in% subplots & time2){
-          q_vs_vuln_bio.fn()
-        }
-      }
 
-      # print subplots 4-8 to PNG files
-      if(print){
-        # check for lognormal error
-        if(survey_error[ifleet] == 0){ 
+        # print subplots 4-6 to PNG files
+        if(print){
+
           if(4 %in% subplots & datplot){
             file <- paste0("index4_logcpuedata_",Fleet,".png")
             caption <- paste0("Log index data for ", Fleet, ". ",
@@ -469,14 +533,27 @@ function(replist,subplots=1:9,
             logindex.fn()
             dev.off()
           }
-        } # end check for lognormal error
-        if(6 %in% subplots){
-          file <- paste0("index6_log_obs_vs_exp_",Fleet,".png")
-          caption <- paste("log(observed) vs. log(expected) index values with smoother for",Fleet)
-          plotinfo <- pngfun(file=file, caption=caption)
-          log_obs_vs_exp.fn()
-          dev.off()
+          if(6 %in% subplots){
+            file <- paste0("index6_log_obs_vs_exp_",Fleet,".png")
+            caption <- paste("log(observed) vs. log(expected) index values with smoother for",Fleet)
+            plotinfo <- pngfun(file=file, caption=caption)
+            log_obs_vs_exp.fn()
+            dev.off()
+          }
         }
+      } # end plots that require lognormal error
+
+      # plots 7 and 8 related to time-varying catchability
+      if(plot){
+        if(7 %in% subplots & time){
+          timevarying_q.fn()
+        }
+        if(8 %in% subplots & time2){
+          q_vs_vuln_bio.fn()
+        }
+      } # end plot to graphics device
+
+      if(print){
         if(7 %in% subplots & time){
           file <- paste0("index7_timevarying_q_",Fleet,".png")
           caption <- paste("Timeseries of catchability for",Fleet)
@@ -488,13 +565,13 @@ function(replist,subplots=1:9,
           file <- paste0("index8_q_vs_vuln_bio_",Fleet,".png")
           caption <-
             paste0("Catchability vs. vulnerable biomass for fleet ", Fleet, "<br> \n",
-                  "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
-                  "or reveal patterns associated with random-walk catchability.")
+                   "This plot should illustrate curvature of nonlinear catchability relationship<br> \n",
+                   "or reveal patterns associated with random-walk catchability.")
           plotinfo <- pngfun(file=file, caption=caption)
           q_vs_vuln_bio.fn()
           dev.off()
         }
-      }
+      } # end print to PNG
     } # end check for any values to include
   } # end loop over fleets
 
