@@ -155,13 +155,13 @@ function(replist,subplots=1:9,
 
     xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
     if(!add){
-      # y-limits with lognormal or T-distributed error
-      if(error != -1){
+      # y-limits with lognormal error
+      if(error == -1){
         ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
                               max(maximum_ymax_ratio * y)))
       }
-      # ylimits with normal error
-      if(error == -1){
+      # ylimits with normal or T-distributed error
+      if(error != 0){
         ylim <- 1.05 * c(min(lower_total, na.rm = TRUE),
                          max(upper_total, na.rm = TRUE))
       }
