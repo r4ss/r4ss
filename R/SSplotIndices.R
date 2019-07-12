@@ -74,7 +74,7 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotIndices <-
-function(replist,subplots=1:9,
+function(replist,subplots=c(1:3, 7:9),
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
          smooth=TRUE,add=FALSE,datplot=FALSE,
@@ -156,7 +156,7 @@ function(replist,subplots=1:9,
     xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
     if(!add){
       # y-limits with lognormal error
-      if(error == -1){
+      if(error == 0){
         ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
                               max(maximum_ymax_ratio * y)))
       }
@@ -243,11 +243,13 @@ function(replist,subplots=1:9,
     # plot of time-series of log(observed) and log(expected) (if requested)
     # this is only used for indices with lognormal error
     xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-    if(!add) plot(x=x[include], y=log(y[include]), type='n',
+    if(!add){
+      plot(x=x[include], y=log(y[include]), type='n',
                   xlab=labels[1], ylab=labels[5],
                   main=main, cex.main=cex.main,
                   xlim=xlim, ylim=range(log(y[include])-liw[include],
                                  log(y[include])+uiw[include],na.rm=TRUE))
+    }
     # show thicker lines behind final lines for input uncertainty (if different)
     if(show_input_uncertainty & any(!is.null(cpueuse$SE_input[include]))){
       segments(x[include], qnorm(.025,mean=log(y[include]),sd=cpueuse$SE_input[include]),
