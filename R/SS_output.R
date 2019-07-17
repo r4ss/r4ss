@@ -433,7 +433,9 @@ SS_output <-
   if(warn){
     warnname <- file.path(dir, warnfile)
     if(!file.exists(warnname)){
-      cat(warnfile, "file not found\n")
+      if(verbose){
+        cat(warnfile, "file not found\n")
+      }
       nwarn <- NA
       warn <- NA
     }else{
