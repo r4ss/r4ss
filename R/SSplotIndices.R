@@ -74,7 +74,7 @@
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotIndices <-
-function(replist,subplots=c(1:3, 7:9),
+function(replist,subplots=c(1:9),
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
          smooth=TRUE,add=FALSE,datplot=FALSE,
@@ -119,15 +119,26 @@ function(replist,subplots=c(1:3, 7:9),
   plotinfo <- NULL
 
   
-  index.fn <- function(addexpected=TRUE, ...){
+  index.fn <- function(addexpected = TRUE, log = FALSE, ...){
     # plot of time series of observed values with fit (if requested)
 
+    # don't do anything if error structure is not lognormal
+    if(error != 0 & log == TRUE){
+      return()
+    }
     # interval around points with total SE (input + any estimated extra)
-    if(error == 0){ 
-      lower_total <- qlnorm(.025, meanlog = log(y[include]),
-                            sdlog = cpueuse$SE[include])
-      upper_total <- qlnorm(.975, meanlog = log(y[include]),
-                            sdlog = cpueuse$SE[include])
+    if(error == 0){
+      if(!log){
+        lower_total <- qlnorm(.025, meanlog = log(y[include]),
+                              sdlog = cpueuse$SE[include])
+        upper_total <- qlnorm(.975, meanlog = log(y[include]),
+                              sdlog = cpueuse$SE[include])
+      }else{
+        lower_total <- qnorm(.025, mean = log(y[include]),
+                              sd = cpueuse$SE[include])
+        upper_total <- qnorm(.975, mean = log(y[include]),
+                              sd = cpueuse$SE[include])
+      }
     }
     # normal error interval
     if(error == -1){ 
@@ -147,7 +158,11 @@ function(replist,subplots=c(1:3, 7:9),
     }
 
     # plot title
-    main <- paste(labels[2], Fleet,sep=" ")
+    main <- paste0(labels[2], Fleet)
+    if(log){
+      main <- paste0(labels[5], Fleet)
+    }
+    
     # no title
     if(!mainTitle){
       main <- ""
@@ -157,8 +172,15 @@ function(replist,subplots=c(1:3, 7:9),
     if(!add){
       # y-limits with lognormal error
       if(error == 0){
-        ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
-                              max(maximum_ymax_ratio * y)))
+        if(!log){
+          # ylim for standard scale
+          ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
+                                max(maximum_ymax_ratio * y)))
+        }
+        if(log){
+          # ylim for log scale plot
+          ylim <- range(c(lower_total, upper_total), na.rm = TRUE)
+        }
       }
       # ylimits with normal or T-distributed error
       if(error != 0){
@@ -167,19 +189,27 @@ function(replist,subplots=c(1:3, 7:9),
       }
       
       plot(x = x[include], y = y[include], type = 'n', xlab = labels[1],
-           ylab = labels[2], main = main, cex.main = cex.main, xlim = xlim,
+           ylab = ifelse(!log, labels[2], labels[5]),
+           main = main, cex.main = cex.main, xlim = xlim,
            ylim = ylim,
-           yaxs = 'i',
+           yaxs = ifelse(log, 'r', 'i'),
            ...)
     }
     # show thicker lines behind final lines for input uncertainty (if different)
     if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
       # lognormal error interval
-      if(error == 0){ 
-        lower_input <- qlnorm(.025, meanlog = log(y[include]),
-                        sdlog = cpueuse$SE_input[include])
-        upper_input <- qlnorm(.975, meanlog = log(y[include]),
-                        sdlog = cpueuse$SE_input[include])
+      if(error == 0){
+        if(!log){
+          lower_input <- qlnorm(.025, meanlog = log(y[include]),
+                                sdlog = cpueuse$SE_input[include])
+          upper_input <- qlnorm(.975, meanlog = log(y[include]),
+                                sdlog = cpueuse$SE_input[include])
+        }else{
+          lower_input <- qnorm(.025, mean = log(y[include]),
+                                sd = cpueuse$SE_input[include])
+          upper_input <- qnorm(.975, mean = log(y[include]),
+                                sd = cpueuse$SE_input[include])
+        }
       }
       # normal error interval
       if(error == -1){ 
@@ -196,23 +226,32 @@ function(replist,subplots=c(1:3, 7:9),
                x[include], upper_input,
                col = colvec1[s], lwd = 3, lend = 1)
     }
+
     # add intervals
     arrows(x0 = x[include], y0 = lower_total[include],
            x1 = x[include], y1 = upper_total[include],
            length = 0.03, angle = 90, code = 3, col = colvec1[s])
-    # add points
-    points(x = x[include], y = y[include],
-           pch = pch1, cex = cex, bg = bg, col = colvec1[s])
-    # add expected values
-    if(addexpected){
-      lines(x, z, lwd=2, col=col3)
+    # add points and expected values on standard scale
+    if(!log){
+      points(x = x[include], y = y[include],
+             pch = pch1, cex = cex, bg = bg, col = colvec1[s])
+      if(addexpected){
+        lines(x, z, lwd = 2, col = col3)
+      }
+    }else{
+      # add points and expected values on log scale
+      points(x = x[include], y = log(y[include]),
+             pch = pch1, cex = cex, bg = bg, col = colvec1[s])
+      if(addexpected){
+        lines(x, log(z), lwd = 2, col = col3)
+      }
     }
     if(legend & length(colvec1)>1){
       legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
     }
   }
 
-  obs_vs_exp.fn <- function(...){
+  obs_vs_exp.fn <- function(log = FALSE, ...){
     # plot of observed vs. expected with smoother
 
     # plot title
@@ -223,59 +262,39 @@ function(replist,subplots=c(1:3, 7:9),
     }
 
     if(!add){
-      plot(y[include],z[include],xlab=labels[3],main=main,cex.main=cex.main,
-           ylim=c(0,max(z)),xlim=c(0,max(y)),ylab=labels[4], ...)
+      if(!log){
+        # standard plot
+        plot(y[include], z[include], type = 'n',
+             xlab = labels[3], ylab = labels[4], 
+             main = main, cex.main = cex.main,
+             ylim = c(0, 1.05*max(z)), xlim = c(0, 1.05*max(y)),
+             xaxs = 'i', yaxs = 'i', ...)
+      }else{
+        # log-scale plot doesn't specificy y limits
+        plot(log(y[include]), log(z[include]), type='n',
+             xlab=labels[6], ylab=labels[7],
+             main=main, cex.main=cex.main)
+      }        
     }
-    points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
-    abline(h=0,col="grey")
-    lines(x=c(0,max(z[include])),y=c(0,max(z[include])))
+    if(!log){
+      points(y[include],z[include],col=colvec2[s],pch=pch2,cex=cex)
+    }else{
+      points(log(y[include]), log(z[include]),
+             col=colvec2[s], pch=pch2, cex=cex)
+    }
+    abline(a = 0, b = 1, lty = 3)
     if(smooth && npoints > 6 && diff(range(y))>0){
-      psmooth <- loess(z[include]~y[include],degree=1)
-      lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
-            lwd=1.2,col=col4,lty="dashed")
+      if(!log){
+        psmooth <- loess(z[include] ~ y[include], degree=1)
+        lines(psmooth$x[order(psmooth$x)], psmooth$fit[order(psmooth$x)],
+              lwd=1.2, col=col4, lty="dashed")
+      }else{
+        psmooth <- loess(log(z[include]) ~ log(y[include]), degree=1)
+        lines(psmooth$x[order(psmooth$x)], psmooth$fit[order(psmooth$x)],
+              lwd=1.2, col=col4, lty="dashed")
+      }
     }
     if(legend & length(colvec2)>1){
-      legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
-    }
-  }
-
-  logindex.fn <- function(addexpected=TRUE){
-    # plot of time-series of log(observed) and log(expected) (if requested)
-    # this is only used for indices with lognormal error
-    xlim <- c(max(minyr,min(x)),min(maxyr,max(x)))
-    if(!add){
-      plot(x=x[include], y=log(y[include]), type='n',
-                  xlab=labels[1], ylab=labels[5],
-                  main=main, cex.main=cex.main,
-                  xlim=xlim, ylim=range(log(y[include])-liw[include],
-                                 log(y[include])+uiw[include],na.rm=TRUE))
-    }
-    # show thicker lines behind final lines for input uncertainty (if different)
-    if(show_input_uncertainty & any(!is.null(cpueuse$SE_input[include]))){
-      segments(x[include], qnorm(.025,mean=log(y[include]),sd=cpueuse$SE_input[include]),
-               x[include], qnorm(.975,mean=log(y[include]),sd=cpueuse$SE_input[include]),
-               col = colvec1[s], lwd = 3, lend = 1)
-    }
-    plotCI(x=x[include],y=log(y[include]),sfrac=0.005,uiw=uiw[include],
-           liw=liw[include],
-           col=colvec1[s],lty=1,add=TRUE,pch=pch1,bg=bg,cex=cex)
-    if(addexpected) lines(x,log(z),lwd=2,col=col3)
-    if(legend & length(colvec1)>1){
-      legend(x=legendloc, legend=seasnames, pch=pch1, col=colvec1, cex=cex)
-    }
-  }
-
-  log_obs_vs_exp.fn <- function(){
-    # plot of log(observed) vs. log(expected) with smoother
-    if(!add) plot(log(y[include]),log(z[include]),type='n',xlab=labels[6],main=main,
-                  cex.main=cex.main,ylab=labels[7])
-    points(log(y[include]),log(z[include]),col=colvec2[s],pch=pch2)
-    lines(x=range(log(z[include])),y=range(log(z[include])))
-    if(smooth && npoints > 6 && diff(range(y))>0){
-      psmooth <- loess(log(z[include])~log(y[include]),degree=1)
-      lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],
-            lwd=1.2,col=col4,lty="dashed")}
-    if(length(colvec2)>1){
       legend(x=legendloc, legend=seasnames, pch=pch2, col=colvec2, cex=cex)
     }
   }
@@ -399,8 +418,10 @@ function(replist,subplots=c(1:3, 7:9),
   }
   if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
-
+  # empty data.frame to store data for comparison among indices
   allcpue <- data.frame()
+  # keep track of whether any indices with negative observations is excluded
+  any_negative <- FALSE 
 
 
 
@@ -443,11 +464,20 @@ function(replist,subplots=c(1:3, 7:9),
         s <- 1 # only use colorvector if more than 1 season
       }
       if(datplot){
-        cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
-        cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
-        tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
-        colnames(tempcpue) <- c("Index","year","value","stdvalue")
-        allcpue <- rbind(allcpue,tempcpue)
+        # add index data to data frame which is used to compare all indices
+        if(min(cpueuse$Obs >= 0)){
+          cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
+          cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
+          tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
+          colnames(tempcpue) <- c("Index","year","value","stdvalue")
+          allcpue <- rbind(allcpue,tempcpue)
+        }else{
+          if(verbose){
+            message("Excluding fleet ", ifleet,
+                    " from index comparison figure because it has negative values")
+          }
+          any_negative <- TRUE
+        }
       }
 
       addlegend <- function(pch, colvec){
@@ -489,25 +519,20 @@ function(replist,subplots=c(1:3, 7:9),
         }
       }
 
-      # same plots again in log space (someday should create generalized set of commands)
+      # same plots again in log space
       # check for lognormal error
       if(error == 0){
 
         # plot subplots 4-6 to current device
         if(plot){
-          main <- paste(labels[5], Fleet, sep=" ")
-          if(!mainTitle) main <- ""
-          uiw <- qnorm(.975,mean=log(y),sd=cpueuse$SE) - log(y)
-          liw <- log(y) - qnorm(.025,mean=log(y),sd=cpueuse$SE)
-
           if(4 %in% subplots & datplot){
-            logindex.fn(addexpected=FALSE)
+            index.fn(log = TRUE, addexpected = FALSE)
           }
           if(5 %in% subplots){
-            logindex.fn()
+            index.fn(log = TRUE)
           }
           if(6 %in% subplots){
-            log_obs_vs_exp.fn()
+            obs_vs_exp.fn(log = TRUE)
           }
         }
 
@@ -521,7 +546,7 @@ function(replist,subplots=c(1:3, 7:9),
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)
-            logindex.fn(addexpected=FALSE)
+            index.fn(log = TRUE, addexpected = FALSE)
             dev.off()
           }
           if(5 %in% subplots){
@@ -531,14 +556,14 @@ function(replist,subplots=c(1:3, 7:9),
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)
-            logindex.fn()
+            index.fn(log = TRUE)
             dev.off()
           }
           if(6 %in% subplots){
             file <- paste0("index6_log_obs_vs_exp_",Fleet,".png")
             caption <- paste("log(observed) vs. log(expected) index values with smoother for",Fleet)
             plotinfo <- pngfun(file=file, caption=caption)
-            log_obs_vs_exp.fn()
+            obs_vs_exp.fn(log = TRUE)
             dev.off()
           }
         }
@@ -615,6 +640,10 @@ function(replist,subplots=c(1:3, 7:9),
     if(print & (9 %in% subplots)){
       file <- paste0("index9_standcpueall",".png")
       caption <- "Standardized indices overlaid"
+      if(any_negative){
+        caption <- paste0(caption,
+                          ". Indices with negative observations have been excluded.")
+      }
       plotinfo <- pngfun(file=file, caption=caption)
       all_index.fn()
       dev.off()}
