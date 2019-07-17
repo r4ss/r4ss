@@ -954,8 +954,7 @@ SS_output <-
   like$lambdas <- lambdas
   # separate new section added in SS version 3.30.13.04 (2019-05-31)
   if(length(laplace_line) > 0){
-    like <- like[1:(laplace_line - 1),]
-    stats$likelihoods_used <- like
+    stats$likelihoods_used <- like[1:(laplace_line - 1),]
     stats$likelihoods_laplace <- like[laplace_line:nrow(like),]
   }else{
     stats$likelihoods_used <- like
