@@ -16,8 +16,8 @@
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
-#' @param yupper upper limit on ymax for polygon/histogram composition plots
-#' @param linescol Color for lines on top of polygons
+#' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
+#' @param linescol Color for line showing expected value (default is purple)
 #' @param lwd line width
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
@@ -49,14 +49,15 @@
 #' @author Cole Monnahan, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
-#' @reference Brown, Lawrence D.; Cai, T. Tony; DasGupta, Anirban (2001).
-#' "Interval Estimation for a Binomial Proportion". Statistical Science.
-#' 16 (2): 101-133. CiteSeerX 10.1.1.50.3025.
-#' doi:10.1214/ss/1009213286. MR 1861069. Zbl 1059.62533.
+#' @references Brown, L.; Cai, T. Tony; DasGupta, A. (2001).
+#' Interval Estimation for a Binomial Proportion. Statistical Science.
+#' 16(2): 101-133. http://www.jstor.org/stable/2676784.
 SSplotSexRatio <-
   function(replist, kind="AGE", sexratio.option=2, CI=0.75,
            plot=TRUE, print=FALSE, fleets="all",
-           fleetnames="default",  yupper=4, linescol=rgb(0,0,1,.7), lwd=2,
+           fleetnames="default",  yupper=4,
+           linescol=rgb(0.6,0,0.9,.7), # a purple color
+           lwd=2,
            axis1=NULL, axis2=NULL,  pwidth=6.5, pheight=5.0, punits="in",
            ptsize=10, res=300, plotdir="default", cex.main=1, 
            labels = c("Length (cm)",
@@ -203,8 +204,9 @@ SSplotSexRatio <-
               caption_extra <-
                 paste0(".<br>Observed sex ratios (points) with ", 100*CI,
                        "% intervals (vertical lines) calculated as a ",
-                       "Jeffreys interval based on the adjusted input sample size. ",
-                       "The model expectation is shown in the blue line.")
+                       "<a href='https://www.jstor.org/stable/2676784'>",
+                       "Jeffreys interval</a> based on the adjusted input sample size. ",
+                       "The model expectation is shown in the purple line.")
             }
             file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
             plotinfo <- pngfun(file=file,
