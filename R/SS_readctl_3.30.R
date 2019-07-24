@@ -35,7 +35,9 @@
 #' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
-#' @param datlist list or character. if list : produced from SS_writedat or character : file name of dat file.
+#' @param datlist list or character. If list, should be a list produced from 
+#'   \code{\link{SS_writedat}}. If character, should be the file name of an
+#'   SS data file.
 #' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
@@ -329,6 +331,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L2") #_Growth_Age_for_L2 (999 to use as Linf)
   ctllist<-add_elem(ctllist,name="Exp_Decay") #Exponential decay for growth above maximum age
+  ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   if(ctllist$GrowthModel==3){
     ctllist<-add_elem(ctllist,name="N_ageK")
   }
@@ -366,7 +369,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   MGparm_per_def<-N_natMparms+N_growparms
   ctllist$N_natMparms<-N_natMparms
   
-  ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
   
@@ -1071,6 +1073,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 #_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
 #
   ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
+  #TODO: add code to read files when 2D_AR1 is used.
+  if (ctllist$Use_2D_AR1_selectivity == 1) {
+    stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
+  }
   
 # Tag loss and Tag reporting parameters go next
   ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist

@@ -954,8 +954,7 @@ SS_output <-
   like$lambdas <- lambdas
   # separate new section added in SS version 3.30.13.04 (2019-05-31)
   if(length(laplace_line) > 0){
-    like <- like[1:(laplace_line - 1),]
-    stats$likelihoods_used <- like
+    stats$likelihoods_used <- like[1:(laplace_line - 1),]
     stats$likelihoods_laplace <- like[laplace_line:nrow(like),]
   }else{
     stats$likelihoods_used <- like
@@ -1130,14 +1129,14 @@ SS_output <-
     if(verbose){
       message("Reading data.ss_new for info on Dirichlet-Multinomial parameters")
     }
-    datfile <- SS_readdat_3.30(file = file.path(dir, 'data.ss_new'),
-                               verbose=verbose)
+    datfile <- SS_readdat(file = file.path(dir, 'data.ss_new'),
+                          verbose=verbose, version = "3.30")
     # deal with case where data file is empty
     if(is.null(datfile)){
       starter <- SS_readstarter(file = file.path(dir, 'starter.ss'),
                                 verbose = verbose)
-      datfile <- SS_readdat_3.30(file = file.path(dir, starter$datfile),
-                                 verbose=verbose)
+      datfile <- SS_readdat(file = file.path(dir, starter$datfile),
+                            verbose=verbose, version = "3.30")
     }
     age_data_info <- datfile$age_info
     len_data_info <- datfile$len_info

@@ -172,7 +172,7 @@ SSplotComparisons <-
            indexPlotEach=FALSE,
            labels=c("Year",             #1
              "Spawning biomass (t)",    #2
-             "%unfished",               #3
+             "Fraction of unfished",    #3
              "Age-0 recruits (1,000s)", #4
              "Recruitment deviations",  #5
              "Index",                   #6
@@ -559,7 +559,7 @@ SSplotComparisons <-
   }
 
   if(endyrvec[1]=="default"){
-    endyrvec <- endyrs
+    endyrvec <- endyrs + 1 
   }
   if(length(endyrvec)==1){
     endyrvec <- rep(endyrvec,nlines)
@@ -1670,7 +1670,7 @@ SSplotComparisons <-
 
   # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
   if(3 %in% subplots){
-    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to %unfished)\n")
+    if(verbose) cat("subplot 3: biomass ratio (hopefully equal to fraction of unfished)\n")
     if(plot) plotBratio(show_uncertainty=FALSE)
     if(print){
       pngfun("compare3_Bratio.png")

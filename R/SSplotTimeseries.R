@@ -88,7 +88,7 @@ SSplotTimeseries <-
                 "Summary biomass (mt)",         #3
                 "Summary biomass (mt) at beginning of season", #4
                 "Spawning biomass (mt)",        #5
-                "%unfished",                    #6
+                "Fraction of unfished",         #6
                 "Spawning output",              #7
                 "Age-0 recruits (1,000s)",      #8
                 "Fraction of total Age-0 recruits",  #9

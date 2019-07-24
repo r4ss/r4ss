@@ -4,7 +4,7 @@
 \alias{SSplotCatch}
 \title{Plot catch related quantities.}
 \usage{
-SSplotCatch(replist, subplots = 1:15, add = FALSE, areas = 1,
+SSplotCatch(replist, subplots = 1:16, add = FALSE, areas = 1,
   plot = TRUE, print = FALSE, type = "l", fleetlty = 1,
   fleetpch = 1, fleetcols = "default", fleetnames = "default",
   lwd = 3, areacols = "default", areanames = "default",

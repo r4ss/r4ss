@@ -112,7 +112,10 @@ function(
   fullctlfile <- file.path(dir, ctlfile)
   ctl <- readLines(fullctlfile)
 
-  # check for valid input
+# check for valid input
+  inargs <- list("newvals" = newvals, "newlos" = newlos, "newhis" = newhis, 
+    "newprior" = newprior, "newprsd" = newprsd, "newprtype" = newprtype, 
+    "estimate" = estimate, "newphs" = newphs)
   if(is.null(linenums) & !is.null(strings) & class(strings)=="character")
   {
     # get table of parameter lines
@@ -121,16 +124,25 @@ function(
     # list of all parameter labels
     allnames <- ctltable$Label
     # empty list of "good" labels to be added to
-    goodnames <- NULL
+    goodnames <- list()
     # if strings are provided, look for matching subset of labels
     if(!is.null(strings)){
       # loop over vector of strings to add to goodnames vector
       for(i in 1:length(strings)){
         # fixed matching on string
-        goodnames <- c(goodnames, allnames[grep(strings[i], allnames, fixed=TRUE)])
+        goodnames[[i]] <- allnames[grep(strings[i], allnames, fixed=TRUE)]
       }
       # remove duplicates and print some feedback
-      goodnames <- unique(goodnames)
+      if (any(duplicated(unlist(goodnames))) & 
+        (repeat.vals & any(sapply(inargs, length) > 1))) {
+        stop("Entries in 'strings' did not map to unique parameters and\n",
+          "it is unclear how to order the par names to match the order\n",
+          "of other arguments provided to SS_changepars.\n",
+          "E.g., strings = c('CV', 'Mal') each return 'CV_young_Mal_GP_1'\n",
+          "and should be changed to strings = c('young_Fem', 'old_Fem', 'Mal')\n",
+          "to get all CV and all Male parameters.")
+      }
+      goodnames <- unique(unlist(goodnames))
       if(verbose){
         cat("parameter names in control file matching input vector 'strings' (n=",
             length(goodnames),"):\n",sep="")
@@ -156,7 +168,7 @@ function(
   ctlsubset <- ctl[linenums]
   if(verbose){
     cat("line numbers in control file (n=",length(linenums),"):\n",sep="")
-    print(linenums)
+    cat(paste(linenums, collapse = ", "))
   }
   # define objects to store changes
   newctlsubset <- NULL
@@ -167,57 +179,22 @@ function(
   oldprior <- oldprsd <- oldprtype <- newphase <- rep(NA, nvals)
   # check all inputs
   # check values and make repeat if requested
-  if (!is.null(newvals) & length(newvals)!=nvals){
-    if (repeat.vals){
-      newvals <- rep(newvals, nvals)
-    }else{
-      stop("'newvals' and either 'linenums' or 'strings' should have",
-           "the same number of elements")
+  for (ii in names(inargs)) {
+    tmp <- get(ii)
+    if (is.null(tmp)) next
+    if (is.data.frame(tmp) & ii!="estimate") tmp <- as.numeric(tmp)
+    if (length(tmp)!=nvals & repeat.vals) {
+      if (length(tmp) > 1) stop("SS_changepars doesn't yet accommodate ",
+        "repeat.vals=TRUE and of length(.) > 1")
+      assign(ii, rep(tmp, nvals))
     }
-  }
-  # check bounds
-  # lower and upper bounds don't yet have option for repeat.vals=TRUE
-  if (!is.null(newlos) & length(newlos) != nvals) {
-    stop("'newlos' and either 'linenums' or 'strings' should have",
-         "the same number of elements")
-  }
-  if (!is.null(newhis) & length(newhis) != nvals) {
-    stop("'newhis' and either 'linenums' or 'strings' should have",
-         "the same number of elements")
-  }
-  if (is.data.frame(newlos)){
-    newlos <- as.numeric(newlos)
-  }
-  if (is.data.frame(newhis)){
-    newhis <- as.numeric(newhis)
-  }
-  if (is.data.frame(newprior)){
-    newprior <- as.numeric(newprior)
-  }
-  if (is.data.frame(newprsd)){
-    newprsd <- as.numeric(newprsd)
-  }
-  if (is.data.frame(newprtype)){
-    newprtype <- as.numeric(newprtype)
-  }
-  if (!is.null(estimate)){
-    if (!(length(estimate) %in% c(1,nvals))){
-      stop("'estimate' should have 1 element or same number as 'newvals'")
+    if (length(get(ii))!=nvals) {
+      stop(paste0("'", ii, "'"), " and either 'linenums' or 'strings'",
+        " should have the same number of elements,\n",
+        "instead of ", length(get(ii)), " and ", length(linenums), ".\n",
+        "Note: a string can map to multiple parameters, here are your pars,\n",
+        paste(goodnames, collapse = "\n"))
     }
-    if (length(estimate)==1){
-      estimate <- rep(estimate, nvals)
-    }
-  }
-  if (!is.null(newphs)){
-    if (!(length(newphs) %in% c(1, nvals))){
-      stop("'newphs' should have 1 element or same number as 'newvals'")
-    }
-    if (length(newphs)==1){
-      newphs <- rep(newphs, nvals)
-    }
-  }
-  if (is.data.frame(newvals)){
-    newvals <- as.numeric(newvals)
   }
 
   navar <- c(NA, "NA", "NAN", "Nan")
@@ -234,7 +211,7 @@ function(
     vecstrings <- strsplit(splitline[1],split="[[:blank:]]+")[[1]]
     vec <- as.numeric(vecstrings[vecstrings!=""])
     if(max(is.na(vec))==1){
-      stop("There's a problem with a non-numeric value in line",linenums[i])
+      stop("There's a problem with a non-numeric value in line ",linenums[i])
     }
     # store information on old value and replace with new value (unless NULL)
     oldvals[i] <- vec[3]
