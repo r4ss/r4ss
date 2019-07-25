@@ -19,8 +19,8 @@
 SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(verbose) message("Running SS_writectl_3.30\n")
   
-  if(verbose) message("Opening connection to ",outfile,"\n")
-  zz <- file(outfile, open="at") #open = "at" means open for appending in text mode.
+  if(verbose) message("Opening connection to ", outfile, "\n")
+  zz <- file(outfile, open = "at") #open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
   
   # Internally used function definitions -----
@@ -416,8 +416,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     #  Fmethod 1 does not need any additional information
   } else if(ctllist$F_Method == 2) {
     writeComment("overall start F value; overall phase; N detailed inputs to read")
-    wl.vector("F_setup", 
-              comment = "Intial F value, overall phase, N detailed inputs")
+    wl.vector("F_setup")
     writeComment("fleet, yr, seas, Fvalue, se, phase")
     if(ctllist$F_setup[length(ctllist$F_setup)] > 0) {
       printdf("F_setup2")
