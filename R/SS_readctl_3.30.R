@@ -91,7 +91,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   # Function to add vector to ctllist
 
-  add_vec<-function(ctllist,length,name,verbose=TRUE,comments=NULL){
+  add_vec<-function(ctllist,length,name,comments=NULL){
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
     ctllist$temp<-dat[i+1:length-1]
@@ -124,7 +124,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
 
   # Function to add data as data.frame to ctllist
-  add_df<-function(ctllist,nrows=NULL,ncol,col.names,name,verbose=TRUE,comments=NULL){
+  add_df<-function(ctllist,nrows=NULL,ncol,col.names,name,comments=NULL){
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
     if(is.null(nrows))
@@ -164,7 +164,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
 
   ## function to add an element to ctllist
-  add_elem<-function(ctllist=NA,name,verbose=TRUE){
+  add_elem<-function(ctllist=NA,name){
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
     ctllist$temp<-dat[i]
@@ -175,7 +175,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
 
   ## function to add list  to ctllist
-  add_list<-function(ctllist=NA,name,length,length_each,verbose=TRUE){
+  add_list<-function(ctllist=NA,name,length,length_each){
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
      ctllist$temp<-list()
@@ -325,7 +325,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }else{
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
-  cat("N_natMparms=",N_natMparms,"\n")
+  if(verbose) message("N_natMparms =",N_natMparms,"\n")
   ctllist<-add_elem(ctllist,name="GrowthModel")
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
