@@ -515,7 +515,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     stop("Variance adjustments for 3.30 are not read correctly by", 
          "SS_writectl_3.30")
   }
-  
+  writeComment("#")
   # Lambdas ----
   wl("maxlambdaphase", comment = "#_maxlambdaphase")
   wl("sd_offset", 
@@ -524,8 +524,24 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment(paste0("# read ", ctllist$N_lambdas, " changes to default",
                       "Lambdas (default value is 1.0)"))
   # There are some more .ss_new comments here, but not included for now.
-  printdf("lambdas", terminate = T)
-
+  if((ctllist$N_lambdas > 0) & (!is.null(ctllist$lambdas))) {
+    if(nrow(ctllist$lambdas) != ctllist$N_lambdas){
+      stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
+           "make them consistent (i.e., if ctllist$N_lambdas is greater than ",
+           "0, ctllist$N_lambdas should equal nrow(ctllist$lambdas))")
+    }
+    printdf("lambdas", terminate = T)
+  } else if ((ctllist$N_lambdas == 0) & (is.null(ctllist$lambdas))) {
+    #writes terminator line only.
+    ctllist$tmp_var <- c(-9999, rep(0, times = 4))
+    wl.vector("tmp_var", comment = "# terminator")
+  } else {
+    stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
+        "make them consistent (i.e., if ctllist$N_lambdas is 0 ,then ",
+        "ctllist$lambdas should be NULL; if ctllist$N_lambdas is greater than ",
+        "0, ctllist$N_lambdas should equal nrow(ctllist$lambdas))")
+  }
+  writeComment("#")
   # more sd reporting ----
   wl("more_stddev_reporting", 
      comment = " 0/1 read specs for more stddev reporting")
