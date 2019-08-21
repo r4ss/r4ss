@@ -21,6 +21,8 @@
 #' based on the new sex
 #' specification (-1) in SS for single sex models. Default value is FALSE.
 #' TRUE will not divide by 2.
+#' @param endyr Optional input to choose a different ending year for tables
+#' (could be useful for catch-only updates)
 #' @param verbose Return updates of function progress to the R console?
 #' @return A csv files containing executive summary tables.
 #' @author Chantel Wetzel
@@ -31,6 +33,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
                                 tables = c('a','b','c','d','e',
                                     'f','g','h','i','catch','numbers'),
                                 nsex = FALSE,
+                                endyr = NULL,
                                 verbose = TRUE
                                 ) {
   # Check to make sure dir is a dir
@@ -249,7 +252,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   end   <- matchfun(string = "SPR_series",  obj = rawrep[,1])-1
 
   temptime <- rawrep[begin:end,2:3]
-  endyr    <- max(as.numeric(temptime[temptime[,2]=="TIME",1]))
+  if(is.null(endyr)){
+    endyr    <- max(as.numeric(temptime[temptime[,2]=="TIME",1]))
+  }
   startyr  <- min(as.numeric(rawrep[begin:end,2]))+2
   foreyr   <- max(as.numeric(temptime[temptime[,2]=="FORE",1]))
   hist     <- (endyr - 11):(endyr + 1)
@@ -262,7 +267,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   nareas   <- max(as.numeric(rawrep[begin:end,1]))
 
   #======================================================================
-  # Determine the fleet name and number for fisherie with catch
+  # Determine the fleet name and number for fisheries with catch
   #======================================================================
   begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
   end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
@@ -302,8 +307,24 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     if(verbose){
       message("Creating Table a")
     }
-    
+    # which column within CATCH table is "kill_bio"
     xx = ifelse(SS_versionNumeric < 3.3, 12, 15)
+    # prior to 3.24U there was no kill_bio column
+    use.ts <- FALSE
+    if(length(grep("kill_bio", base)) == 0){
+      use.ts <- TRUE
+      # presumably prior to 3.24U where there was no "kill_bio" column in CATCH
+      # subset rows associated with TIME_SERIES table
+      ts <- base[(grep('^TIME_SERIES', base) + 1):(grep('^SPR_series', base) - 2)]
+      ts.names <- strsplit( ts[1], split = "[[:blank:]]+" )[[1]]
+      # convert to data frame
+      ts <- data.frame( do.call( rbind, strsplit( ts[-1], split = "[[:blank:]]+" ) ),
+                       stringsAsFactors = FALSE)
+      # use first row as headers
+      names(ts) <- ts.names
+      ts <- type.convert(ts, as.is = TRUE)
+    }
+    
     catch = NULL; total.catch = total.dead = 0
     ind = hist[1:(length(hist)-1)]
 
@@ -324,8 +345,16 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
 
     if(SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24) {
       for (i in 1:nfleets){
-        killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-        input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+        if(!use.ts){
+          # calculations should work for 3.24U
+          killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+          input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+        }else{
+          # calculations required for 3.24S and earlier
+          # (values are not in CATCH, get them from TIME_SERIES as processed above)
+          killed <- ts[ts$Yr %in% ind, names(ts) == paste0("dead(B):_", i)]
+          input.catch <- ts[ts$Yr %in% ind, names(ts) == paste0("retain(B):_", i)]
+        }
         total.dead  = total.dead + killed
         total.catch = total.catch + input.catch
         catch = cbind(catch, input.catch)
@@ -463,7 +492,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     f.value = Get.Values(dat = base, label = "F" , hist, quant)
     es.d = data.frame(hist,
         print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
-        print(f.value$dq,3),     paste0(print(f.value$low,3),     "\u2013", print(f.value$high,3)))
+        print(f.value$dq,4),     paste0(print(f.value$low,4),     "\u2013", print(f.value$high,4)))
     colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", "Harvest Rate (proportion)", "95% Asymptotic Interval")
 
     write.csv(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.csv"), row.names = F)
@@ -655,7 +684,11 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     ind = length(hist)-1
     smry = 0
     for(a in 1:nareas){
-      temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, x,"TIME",sep=" "),base)]," ")[[1]][6]), x = hist[1:ind])
+      if(!exists("use.ts") || !use.ts){
+        temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, x,"TIME",sep=" "),base)]," ")[[1]][6]), x = hist[1:ind])
+      }else{
+        temp <- ts[ts$Yr %in% hist[1:ind], tolower(names(ts)) %in% "bio_smry"]
+      }
       smry = smry + temp
     }
 
@@ -699,9 +732,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       message("Skipping catch and numbers tables because es.only = TRUE")
     }
   }
-  if (es.only == FALSE & 'i' %in% tables){
+  if (es.only == FALSE & 'catch' %in% tables){
     if(verbose){
-      message("Creating numbers-at-age table")
+      message("Creating catch table")
     }
     
     #======================================================================
@@ -770,7 +803,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   #======================================================================
   if (es.only == FALSE & 'numbers' %in% tables){
     if(verbose){
-      message("Creating catch table")
+      message("Creating numbers-at-age table")
     }
     
     if ( nareas > 1) {
