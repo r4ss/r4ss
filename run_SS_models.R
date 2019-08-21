@@ -12,6 +12,8 @@
 #' This can be helpful if the function is interrupted.
 #' @param intern Show output in the R console or save to a file?
 #' @param verbose Return updates of function progress to the R console?
+#' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
+#' will look for exe in the model folders. Default = FALSE.
 #' @return Returns table showing which directories had model run and which
 #' had errors like missing executable or Report.sso already present
 #' @author Ian Taylor
@@ -33,12 +35,15 @@ run_SS_models <- function(dirvec = NULL,
                           systemcmd = FALSE,
                           skipfinished = TRUE,
                           intern = FALSE,
-                          verbose = TRUE){
+                          verbose = TRUE, 
+                          exe_in_path = FALSE){
   # check to make sure the first input is in the correct format
   if(!is.character(dirvec)){
     stop("Input 'dirvec' should be a character vector")
   }
-
+  wd_orig <- getwd()
+  on.exit(setwd(wd_orig), add = TRUE)
+  
   # vector of NA values to store results
   results <- rep(NA, length(dirvec))
   
@@ -54,6 +59,15 @@ run_SS_models <- function(dirvec = NULL,
     # if 'model' doesn't include .exe then append it (for Windows computers only)
     exe <- paste(model, ifelse(OS=="Windows",".exe",""),sep="")
   }
+  
+  if(exe_in_path == TRUE) {
+    tmp_exe <- Sys.which(exe)[[1]] # get 1st ss exe with name exe that is in your path
+    if(tmp_exe == ""){
+      stop("Exe named ", exe, " was not found in your PATH.")
+    } else {
+      exe <- tmp_exe
+    }
+  }
 
   # loop over directories
   for(idir in 1:length(dirvec)){
@@ -65,10 +79,12 @@ run_SS_models <- function(dirvec = NULL,
       warning("not a directory:", dir)
       results[idir] <- "not a directory"
     }else{
-      # check whether exe is in directory
+      # check whether exe is in directory (if not using exe in path)
       if(all(file.info(dir(dir, full.names=TRUE))$exe=="no")){
-        warning("Executable ",exe," not found in ",dir)
-        results[idir] <- "no executable"
+        if(exe_in_path == FALSE){
+          warning("Executable ",exe," not found in ",dir)
+          results[idir] <- "no executable"
+        }
       }
       if(skipfinished & "Report.sso" %in% dir(dir)){
         # skip directories that have results in them
@@ -101,6 +117,7 @@ run_SS_models <- function(dirvec = NULL,
           message("console output written to console.output.txt")
         }
         results[idir] <- "ran model"
+        setwd(wd_orig) # needed when using relative paths
       } # end model run
     } # end code for exe present
   } # end loop over directories
