@@ -41,6 +41,7 @@ SSsummarize <- function(biglist,
   parnames <- NULL
   dernames <- NULL
   likenames <- NULL
+  likenames_laplace <- NULL
   allyears <- NULL
 
   # figure out how many models and give them names if they don't have them already
@@ -51,10 +52,12 @@ SSsummarize <- function(biglist,
   }
   for(imodel in 1:n){
     stats <- biglist[[imodel]]
-    parnames <- union(parnames,stats$parameters$Label)
-    dernames <- union(dernames,stats$derived_quants$Label)
-    allyears <- union(allyears,stats$timeseries$Yr)
-    likenames <- union(likenames,rownames(stats$likelihoods_used))
+    parnames <- union(parnames, stats$parameters$Label)
+    dernames <- union(dernames, stats$derived_quants$Label)
+    allyears <- union(allyears, stats$timeseries$Yr)
+    likenames <- union(likenames, rownames(stats$likelihoods_used))
+    likenames_laplace <- union(likenames_laplace,
+                               rownames(stats$likelihoods_laplace))
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
@@ -64,9 +67,12 @@ SSsummarize <- function(biglist,
   growth     <- NULL
   maxgrad    <- NULL
   nsexes     <- NULL
-  likelihoods <- likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
+  likelihoods <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
+  likelambdas <- as.data.frame(matrix(NA,nrow=length(likenames),ncol=n))
   likelihoods_by_fleet <- NULL
   likelihoods_by_tag_group <- NULL
+  likelihoods_laplace <- as.data.frame(matrix(NA, nrow = length(likenames_laplace),
+                                              ncol = n))
   indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
@@ -152,6 +158,7 @@ SSsummarize <- function(biglist,
       likelihoods[likenames==rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
       likelambdas[likenames==rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
     }
+    
     ## likelihoods by fleet
     # add initial column with model number to table from each model
     liketemp2 <- data.frame(model=imodel,stats$likelihoods_by_fleet)
@@ -175,6 +182,17 @@ SSsummarize <- function(biglist,
         likelihoods_by_tag_group <- rbind(likelihoods_by_tag_group,liketemp3)
       }else{
         warning("problem summarizing likelihoods by fleet due to mismatched columns")
+      }
+    }
+
+    ## likelihoods for Laplace approximation calculations
+    ## added in SS version 3.30.13.04 (2019-05-31)
+    # add initial column with model number to table from each model
+    if(!is.null(stats$likelihoods_laplace)){
+      liketemp4 <- stats$likelihoods_laplace
+      for(irow in 1:nrow(liketemp4)){
+        likelihoods_laplace[likenames_laplace == rownames(liketemp4)[irow], imodel] <-
+          liketemp4$values[irow]
       }
     }
 
@@ -253,10 +271,12 @@ SSsummarize <- function(biglist,
   names(pars) <- names(parsSD) <- modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
+  names(likelihoods_laplace) <- modelnames
 
   pars$Label <- parsSD$Label <- parphases$Label <- parnames
   quants$Label <- quantsSD$Label <- dernames
   likelihoods$Label <- likelambdas$Label <- likenames
+  likelihoods_laplace$Label <- likenames_laplace
   # extract year values from labels for some parameters associated with years
   pars$Yr <- NA
   for(ipar in 1:nrow(pars)){
@@ -519,6 +539,7 @@ SSsummarize <- function(biglist,
   mylist$likelambdas    <- likelambdas
   mylist$likelihoods_by_fleet <- likelihoods_by_fleet
   mylist$likelihoods_by_tag_group <- likelihoods_by_tag_group
+  mylist$likelihoods_laplace <- likelihoods_laplace
   mylist$SpawnBio       <- sort.fn(SpawnBio)
   mylist$SpawnBioSD     <- sort.fn(SpawnBioSD)
   mylist$SpawnBioLower  <- sort.fn(SpawnBioLower)
