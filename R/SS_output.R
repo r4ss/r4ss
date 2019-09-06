@@ -21,6 +21,8 @@
 #' @param forefile Name of the forecast file.
 #' @param wtfile Name of the file containing weight at age data.
 #' @param warnfile Name of the file containing warnings.
+#' @param parfile Optional name of the .par file. By default the most recent
+#' file with filename ending in .par will be used.
 #' @param ncols The maximum number of columns in files being read in.  If this
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
@@ -66,14 +68,30 @@
 #'   }
 #'
 SS_output <-
-  function(dir="C:/myfiles/mymodels/myrun/", dir.mcmc=NULL, 
-           repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
-           forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
-           warnfile="warning.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
-           checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
-           verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
-           aalmaxbinrange=4)
+  function(dir = "C:/myfiles/mymodels/myrun/",
+           dir.mcmc = NULL,
+           repfile = "Report.sso",
+           compfile = "CompReport.sso",
+           covarfile = "covar.sso",
+           forefile = "Forecast-report.sso",
+           wtfile = "wtatage.ss_new",
+           warnfile = "warning.sso",
+           parfile = NULL,
+           ncols = 200,
+           forecast = TRUE,
+           warn = TRUE,
+           covar = TRUE,
+           readwt = TRUE,
+           checkcor = TRUE,
+           cormax = 0.95,
+           cormin = 0.01,
+           printhighcor = 10,
+           printlowcor = 10,
+           verbose = TRUE,
+           printstats = TRUE,
+           hidewarn = FALSE,
+           NoCompOK = FALSE,
+           aalmaxbinrange = 4)
 {
   flush.console()
 
@@ -149,18 +167,25 @@ SS_output <-
   shortrepfile <- repfile
   repfile <- file.path(dir,repfile)
 
-  parfile <- dir(dir,pattern=".par$")
-  if(length(parfile)>1){
-    filetimes <- file.info(file.path(dir,parfile))$mtime
-    parfile <- parfile[filetimes==max(filetimes)][1]
-    if(verbose) cat("Multiple files in directory match pattern *.par\n",
-                    "choosing most recently modified:",parfile,"\n")
+  if(is.null(parfile)){
+    parfile <- dir(dir, pattern=".par$")
+    if(length(parfile) > 1){
+      filetimes <- file.info(file.path(dir, parfile))$mtime
+      parfile <- parfile[filetimes==max(filetimes)][1]
+      if(verbose){
+        message("Multiple files in directory match pattern *.par\n",
+                "choosing most recently modified:", parfile)
+      }
+    }
   }
   if(length(parfile)==0){
-    if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
+    if(!hidewarn){
+      message("Some stats skipped because the .par file not found:\n",
+              parfile)
+    }
     parfile <- NA
   }else{
-    parfile <- file.path(dir,parfile)
+    parfile <- file.path(dir, parfile)
   }
 
   # read three rows to get start time and version number from rep file
@@ -686,8 +711,9 @@ SS_output <-
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
-        if(!hidewarn)
-          cat('Correcting for bug in tag data output associated with SSv3.24f\n')
+        if(!hidewarn){
+          message('Correcting for bug in tag data output associated with SSv3.24f')
+        }
         tag1rows <- compdbase$Sexes=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]

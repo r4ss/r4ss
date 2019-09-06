@@ -69,15 +69,23 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
 
     if(verbose & !is.null(key)) cat("getting files with key =",key,"\n")
 
-    repFileName <- paste("Report",key2,".sso",sep="")
-    covarname <- paste("covar",key2,".sso",sep="")
-    warnFileName <- paste("warning",key2,".sso",sep="")
+    repFileName <- paste0("Report",key2,".sso")
+    covarname <- paste0("covar",key2,".sso")
+    warnFileName <- paste0("warning",key2,".sso")
     if(getcomp){
-      compFileName <- paste("CompReport",key2,".sso",sep="")
+      compFileName <- paste0("CompReport",key2,".sso")
       NoCompOK <- FALSE
     }else{
       compFileName <- "nothing"
       NoCompOK <- TRUE
+    }
+
+    # if key is a numeric value, assume .par and .cor files
+    # have names created by SS_profile (as of update on 6 September 2019)
+    # will not work for SS versions prior to 3.30
+    if(key %in% 1:n){
+      parfilename <- paste0("ss.par_", key, ".sso")
+      corfilename <- paste0("ss.cor_", key, ".sso")
     }
 
     # mycovar = TRUE/FALSE based on presence of file and user input
@@ -91,7 +99,8 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
     if(!is.na(repfilesize) && repfilesize>0){ # if there's a non-empty file
       output <- SS_output(dir=mydir, repfile=repFileName, covarfile=covarname,
                           compfile=compFileName, NoCompOK=NoCompOK,
-                          warnfile=warnFileName, printstats=FALSE,
+                          warnfile=warnFileName, parfile = parfilename,
+                          printstats=FALSE,
                           covar=mycovar, forecast=forecast, verbose=FALSE, ncols=ncols)
       if(is.null(output)){
         # for some reason covarfile exists, but is old so SS_output rejects
