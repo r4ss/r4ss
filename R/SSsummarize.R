@@ -73,6 +73,7 @@ SSsummarize <- function(biglist,
   likelihoods_by_tag_group <- NULL
   likelihoods_laplace <- as.data.frame(matrix(NA, nrow = length(likenames_laplace),
                                               ncol = n))
+  log_det_hessian <- NULL
   indices    <- NULL
   sizesel    <- NULL
   agesel     <- NULL
@@ -195,6 +196,8 @@ SSsummarize <- function(biglist,
           liketemp4$values[irow]
       }
     }
+    # log of the determinant of the Hessian
+    log_det_hessian <- c(log_det_hessian, stats$log_det_hessian)
 
     ## compile parameters
     parstemp <- stats$parameters
@@ -540,6 +543,7 @@ SSsummarize <- function(biglist,
   mylist$likelihoods_by_fleet <- likelihoods_by_fleet
   mylist$likelihoods_by_tag_group <- likelihoods_by_tag_group
   mylist$likelihoods_laplace <- likelihoods_laplace
+  mylist$log_det_hessian <- log_det_hessian
   mylist$SpawnBio       <- sort.fn(SpawnBio)
   mylist$SpawnBioSD     <- sort.fn(SpawnBioSD)
   mylist$SpawnBioLower  <- sort.fn(SpawnBioLower)
