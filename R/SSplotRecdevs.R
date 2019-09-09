@@ -120,10 +120,10 @@ SSplotRecdevs <-
                     rep(col1,nrow(recdev)),
                     rep(col2,nrow(recdevFore)))[goodyrs]
         ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
-        val <- alldevs$Value[goodyrs]
-        Yr <- alldevs$Yr[goodyrs]
+        val <- alldevs$Value
+        Yr <- alldevs$Yr
         if(uncertainty){
-          std <- alldevs$Parm_StDev[goodyrs]
+          std <- alldevs$Parm_StDev
           recdev_hi <- val + 1.96*std
           recdev_lo <- val - 1.96*std
           ylim <- range(recdev_hi, recdev_lo, na.rm=TRUE)
