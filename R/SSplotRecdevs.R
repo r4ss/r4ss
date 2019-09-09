@@ -103,7 +103,7 @@ SSplotRecdevs <-
 
       Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
       if(forecastplot){
-        goodyrs <- rep(TRUE,length(Yr))[Yr >= minyr & Yr <= maxyr]
+        goodyrs <- ifelse(Yr >= minyr & Yr <= maxyr, TRUE,FALSE)
       }else{
         # TRUE/FALSE of in range or not
         goodyrs <- Yr <= endyr+1 & Yr >= minyr & Yr <= maxyr 
