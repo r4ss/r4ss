@@ -161,7 +161,7 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     totfleets<-datlist$Nfleet+datlist$Nsurveys
     datlist$N_areas <- datlist$Nareas
     datlist$Ngenders <- datlist$Nsexes
-    datlist$N_cpue <- length(datlist$CPUE)
+    datlist$N_cpue <- NROW(datlist$CPUE)
 
     # fleet details
     datlist$fleetinfo1<-t(datlist$fleetinfo)
@@ -248,7 +248,7 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     }
 
     ##!!! need to add fixes to pop len bins? (see 3.24)
-
+    # note: lines 252-257 are redundant with datlist$N_cpue, leaving for now
     datlist$NCPUEObs<-array(data=0,dim=datlist$Nfleets)
 
     for(j in 1:nrow(datlist$CPUE))
