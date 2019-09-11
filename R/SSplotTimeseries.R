@@ -369,6 +369,7 @@ SSplotTimeseries <-
               "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$YrSeas),"is last year of time series.\n",
               "    Consider changing starter file input for 'max yr for sdreport outputs' to -2\n")
         }
+    stdtable <- stdtable[stdtable$Yr >= minyr & stdtable$Yr <= maxyr,]
       }
     }
 
