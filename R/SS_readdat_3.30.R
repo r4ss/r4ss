@@ -483,7 +483,10 @@ SS_readdat_3.30 <-
                               "minsamplesize")[1:ncol(d$age_info)]
 
     rownames(d$age_info) <- d$fleetnames
-    ## Length bin method
+    ## Length bin method for age data
+    # note that Lbin_method below is related to the interpretation of
+    # conditional age-at-length data and differs from lbin_method for the length
+    # data read above
     d$Lbin_method <- get.val(dat, ind)
     if (echoall) {
       message("\nage_info:")

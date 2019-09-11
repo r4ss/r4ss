@@ -309,6 +309,9 @@ SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   datlist$N_agecomp <- N_agecomp <- allnums[i]; i <- i+1
   if(verbose) cat("N_agecomp =",N_agecomp,"\n")
 
+  # note that Lbin_method below is related to the interpretation of
+  # conditional age-at-length data and differs from lbin_method for the length
+  # data read above
   datlist$Lbin_method <- allnums[i]; i <- i+1
   datlist$max_combined_lbin <- allnums[i]; i <- i+1
 
