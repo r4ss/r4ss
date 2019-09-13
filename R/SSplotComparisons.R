@@ -99,6 +99,8 @@
 #' @param densityxlabs Optional vector of x-axis labels to use in the density
 #' plots (must be equal in length to the printed vector of quantities that
 #' match the \code{densitynames} input)
+#' @param rescale TRUE/FALSE control of automatic rescaling of units into
+#' thousands, millions, or billions
 #' @param densityscalex Scalar for upper x-limit in density plots (values below
 #' 1 will cut off the right tail to provide better contrast among narrower
 #' distributions
@@ -191,7 +193,7 @@ SSplotComparisons <-
            tickEndYr=TRUE,
            shadeForecast=TRUE,
            xlim="default", ylimAdj=1,
-           xaxs="r", yaxs="r",
+           xaxs="i", yaxs="i",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
            legendorder="default",legendncol=1,
@@ -201,6 +203,7 @@ SSplotComparisons <-
            filenameprefix="",
            densitynames=c("SSB_Virgin","R0"),
            densityxlabs="default",
+           rescale=TRUE,
            densityscalex=1,
            densityscaley=1,
            densityadjust=1,
@@ -641,7 +644,7 @@ SSplotComparisons <-
     }
     ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- range(ylim, SpawnBioUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- range(ylim, ylimAdj*SpawnBioUpper[,models[uncertainty]], na.rm=TRUE)
     }
 
     # set units on spawning biomass plot
@@ -655,22 +658,24 @@ SSplotComparisons <-
 
     # do some scaling of y-axis
     yunits <- 1
-    if(ylim[2] > 1e3 & ylim[2] < 1e6){
+    if(rescale & ylim[2] > 1e3 & ylim[2] < 1e6){
       yunits <- 1e3
       ylab <- gsub("(t)","(x1000 t)", ylab, fixed=TRUE)
       ylab <- gsub("eggs","x1000 eggs", ylab, fixed=TRUE)
     }
-    if(ylim[2] > 1e6){
+    if(rescale & ylim[2] > 1e6){
       yunits <- 1e6
       ylab <- gsub("(t)","(million t)", ylab, fixed=TRUE)
       ylab <- gsub("eggs","millions of eggs", ylab, fixed=TRUE)
     }
-    if(ylim[2] > 1e9){
+    if(rescale & ylim[2] > 1e9){
       yunits <- 1e9
       ylab <- gsub("million","billion", ylab, fixed=TRUE)
     }
-    if(!add) plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,
-                  xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    if(!add){
+      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,
+           xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+    }
     if(show_uncertainty){
       # add shading for undertainty
       addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),],
@@ -1317,9 +1322,14 @@ SSplotComparisons <-
 
     meanQ <- rep(NA,nlines)
 
-    if(!add) plot(0,type="n",xlim=range(yr),ylim=ylim,xlab="Year",ylab=ylab,axes=FALSE)
-    if(!log) abline(h=0,col="grey")
-    Qtext <- rep("(Q =",nlines)
+    if(!add){
+      plot(0, type = "n", xlim = range(yr), yaxs = yaxs, 
+           ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE)
+    }
+    if(!log & yaxs != "i"){
+      abline(h = 0, col = "grey")
+    }
+    Qtext <- rep("(Q =", nlines)
     for(iline in (1:nlines)[!mcmcVec]){
       imodel <- models[iline]
       subset <- indices2$imodel==imodel
@@ -1470,12 +1480,12 @@ SSplotComparisons <-
 
     # calculate some scaling stuff
     xunits <- 1
-    if(xmax > 1e3 & xmax < 3e6){
+    if(rescale & xmax > 1e3 & xmax < 3e6){
       xunits <- 1e3
       #xlab <- gsub("mt","x1000 mt",xlab)
       xlab2 <- "'1000 t"
     }
-    if(xmax > 3e6){
+    if(rescale & xmax > 3e6){
       xunits <- 1e6
       #xlab <- gsub("mt","million mt",xlab)
       xlab2 <- "million t"
@@ -1486,9 +1496,11 @@ SSplotComparisons <-
     }else{
       if(!add) {
         if(cumulative) {
-            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1),xlab=xlab,ylab="")
+          plot(0, type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs,
+               ylim = c(0, 1), xlab = xlab, ylab = "")
         } else {
-            plot(0,type="n",xlim=xlim,axes=FALSE,xaxs="i",ylim=c(0,1.1*ymax*densityscaley),xlab=xlab,ylab="")
+          plot(0, type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs, 
+               ylim = c(0, 1.1*ymax*densityscaley), xlab = xlab, ylab = "")
         }
       }
       # add vertical lines for target and threshold relative spawning biomass values
@@ -1503,7 +1515,7 @@ SSplotComparisons <-
         }
       }
 
-      symbolsQuants <- c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)
+      symbolsQuants <- c(0.025,0.125,0.25,0.5,0.75,0.875,0.975)
       # loop again to make plots
       for(iline in (1:nlines)[good]){
         imodel <- models[iline]
