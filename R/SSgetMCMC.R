@@ -57,10 +57,14 @@ SSgetMCMC <-
   if(verbose){
     message("reading MCMC output in\n", dir)
   }
-  post <- read.table(file.path(dir, postname), header=TRUE)
-  names(post)[names(post)=="SR_LN.R0."] <- "SR_LN(R0)"
+  # note: check.names = FALSE added to command below avoids
+  # automatic conversion of some parameter labels such as
+  # "SR_LN(R0)" to "SR_LN.R0."
+  post <- read.table(file.path(dir, postname),
+                     header = TRUE, check.names = FALSE)
   
-  derpost <- read.table(file.path(dir, derpostname), header=TRUE)
+  derpost <- read.table(file.path(dir, derpostname),
+                        header = TRUE, check.names = FALSE)
   # remove redundant values
   derpost <- derpost[, !(names(derpost) %in% c("Iter", "Objective_function"))]
 
