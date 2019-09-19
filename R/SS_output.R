@@ -433,9 +433,7 @@ SS_output <-
   if(warn){
     warnname <- file.path(dir, warnfile)
     if(!file.exists(warnname)){
-      if(verbose){
-        cat(warnfile, "file not found\n")
-      }
+      cat(warnfile, "file not found\n")
       nwarn <- NA
       warn <- NA
     }else{
@@ -1336,24 +1334,7 @@ SS_output <-
   wtatage <- NULL
   if(readwt){
     wtfile <- file.path(dir,wtfile)
-    if(!file.exists(wtfile) | file.info(wtfile)$size==0){
-      if(verbose) cat("Skipping weight-at-age file. File missing or empty:",wtfile,"\n")
-    }else{
-      # read top few lines to figure out how many to skip
-      wtatagelines <- readLines(wtfile,n=20)
-      # read full file
-      wtatage <- read.table(wtfile,header=FALSE,comment.char="",
-                            skip=grep("Yr Seas ", wtatagelines, ignore.case=TRUE),
-                            stringsAsFactors=FALSE)
-      # problems with header so simply manually replacing column names
-      wtatage_names <- c("Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
-                         0:accuage)
-      # new comment line in 3.30
-      if(SS_versionNumeric >= 3.3 & ncol(wtatage)==length(wtatage_names)+1){
-        wtatage_names <- c(wtatage_names, "comment")
-      }
-      names(wtatage) <- wtatage_names
-    }
+    wtatage <- SS_readwtatage(file = wtfile, verbose = verbose)
   }
 
   # read MCMC output
