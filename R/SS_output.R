@@ -2946,6 +2946,16 @@ SS_output <-
   }else{
     returndat$Pstar_sigma <- NULL
   }
+  # get alternative "sigma" based on OFL catch used by Pacific Council
+  # (added 23 Sept 2019 based on decision by PFMC SSC)
+  OFL_final_Label <- paste0("OFLCatch_",endyr+1)
+  if(OFL_final_Label %in% der$Label){
+    OFL_final_EST <- der$Value[der$Label==OFL_final_Label]
+    OFL_final_SD <- der$StdDev[der$Label==OFL_final_Label]
+    returndat$OFL_sigma <- sqrt(log((OFL_final_SD/OFL_final_EST)^2+1))
+  }else{
+    returndat$OFL_sigma <- NULL
+  }
 
   if(covar){
     returndat$CoVar    <- CoVar
