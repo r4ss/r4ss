@@ -332,43 +332,28 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L2") #_Growth_Age_for_L2 (999 to use as Linf)
   ctllist<-add_elem(ctllist,name="Exp_Decay") #Exponential decay for growth above maximum age
   ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
-  if(ctllist$GrowthModel==3){
+  if(ctllist$GrowthModel %in% c(3,4,5)) {
     ctllist<-add_elem(ctllist,name="N_ageK")
   }
+  
   if(ctllist$GrowthModel==1)  # 1=vonBert with L1&L2
   {
     N_growparms<-5
-  #  AFIX=tempvec5(1);
-  #  AFIX2=tempvec5(2);
   }
-  else if(ctllist$GrowthModel==2) # 2=Richards with L1&L2
+  else if(ctllist$GrowthModel %in% c(2,8)) # 2=Richards with L1&L2, growth cess.
   {
     N_growparms<-6
-  #  AFIX=tempvec5(1);
-  #  AFIX2=tempvec5(2);
-  }else if(ctllist$GrowthModel==3){ # 3=age_specific_K
-  #  AFIX=tempvec5(1);
-  #  AFIX2=tempvec5(2);
+  } else if(ctllist$GrowthModel %in% c(3,4,5)) { # 3,4=age_specific_K
     Age_K_count<-ctllist$N_ageK
-    N_growparms=5+Age_K_count
+    N_growparms <- 5 + Age_K_count
     ctllist<-add_vec(ctllist,name="Age_K_points",length=Age_K_count)
     #  points at which age-specific multipliers to K will be applied
-
-  }else if(ctllist$GrowthModel==4){
-  ##  I found some portion of source code for GrowthModel=4
-  ##  But for now I disabled it
-    stop("GrowthModel==4 is not implemented")
-    N_growparms<-2  # for the two CV parameters
-    k1<-ctllist$N_GP*ctllist$Ngenders  # for reading age_natmort
-    ctllist<-add_df(ctllist,name="Len_At_Age_rd",nrow=k1,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
-  #!!if(k1>0) echoinput<<"  Len_At_Age_rd"<<Len_At_Age_rd<<endl; Need check
-  }else{
-    cat("GrowthModel;",ctllist$GrowthModel," ")
-    stop("is not supported yet")
+  } else {
+    stop("Growth Model ", ctllist$GrowthModel, " is not supported yet")
   }
   MGparm_per_def<-N_natMparms+N_growparms
   ctllist$N_natMparms<-N_natMparms
-  
+  #Add growth inputs that all growth types have:
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
   
@@ -423,20 +408,26 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         cnt<-cnt+N_natMparms
       }
       if(ctllist$GrowthModel==1){ # VB
-        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","CV_young_","CV_old_")
+        tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
         MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
         PType[cnt:(5+cnt-1)]<-2
         cnt<-cnt+5
       }else if(ctllist$GrowthModel==2){ # Richards
-        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","Richards_","CV_young_","CV_old_")
+        tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
         PType[cnt:(6+cnt-1)]<-2
         cnt<-cnt+6
-      }else if(ctllist$GrowthModel==3){
-        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:Age_K_count),"CV_young_","CV_old_")
+      }else if(ctllist$GrowthModel %in% 3:5) {
+        tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
+                 paste0("Age_K_",ctllist$Age_K_points),"CV_young","CV_old")
         MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
         PType[cnt:((5+Age_K_count)+cnt-1)]<-2
         cnt<-cnt+5+Age_K_count
+      } else if(ctllist$GrowthModel == 8) { 
+        tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
+        MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+        PType[cnt:(6+cnt-1)]<-2
+        cnt<-cnt+6
       }
     }
   }
@@ -479,20 +470,26 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
           cnt<-cnt+N_natMparms
         }
         if(ctllist$GrowthModel==1){ # VB
-          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","CV_young_","CV_old_")
+          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
           MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
           PType[cnt:(5+cnt-1)]<-2
           cnt<-cnt+5
         }else if(ctllist$GrowthModel==2){ # Richards
-          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_","Richards_","CV_young_","CV_old_")
+          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
           MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
           PType[cnt:(6+cnt-1)]<-2
           cnt<-cnt+6
-        }else if(ctllist$GrowthModel==3){
-          tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:Age_K_count),"CV_young_","CV_old_")
+        }else if(ctllist$GrowthModel %in% 3:5) {
+          tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
+                 paste0("Age_K",ctllist$Age_K_points),"CV_young","CV_old")
           MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
           PType[cnt:((5+Age_K_count)+cnt-1)]<-2
           cnt<-cnt+5+Age_K_count
+        } else if (ctllist$GrowthModel == 8) {
+          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
+          MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+          PType[cnt:(6+cnt-1)]<-2
+          cnt<-cnt+6
         }
       }
     }

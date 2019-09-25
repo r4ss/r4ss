@@ -248,14 +248,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("Growth_Placeholder", comment= "#_placeholder for future growth feature")
   # Need the following if statements because there are conditional lines that are
   # necessary for only some growth methods
-  if (ctllist$GrowthModel == 3) {
+  if (ctllist$GrowthModel %in% 3:5) {
     wl("N_ageK", comment = "# number of K multipliers to read")
     wl.vector("Age_K_points", comment = "# ages for K multiplier")
-  }
-  #TODO: implement reading and writing of these growth options.
-  if (ctllist$GrowthModel %in% c(4,5,8)) {
-    stop("Cannot write a control file for Growth options 4, 5, or 8 because ",
-         "they are not yet implemented in SS_readctl_3.30")
   }
   # Below check added so users can investigate why the ctllist can't be written.
   if (!ctllist$GrowthModel %in% c(1:5,8)) {
@@ -268,7 +263,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("CV_Growth_Pattern",
      comment = paste0("#_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); ",
                       "2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)"))
-  
   # maturity and MG options setup ----
   wl("maturity_option", 
      comment = paste0("#_maturity_option:  1=length logistic; 2=age logistic; ",
