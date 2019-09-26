@@ -32,7 +32,11 @@
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
 #'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
+#' @param N_CPUE_obs integer vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
+#' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
+#'   option. Defaults to NULL and should be left as such if 1) the catch 
+#'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+#'   datlist is specified.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. If list, should be a list produced from 
@@ -58,7 +62,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
-##################################
+    catch_mult_fleets = NULL,
+    ##################################
     use_datlist=FALSE,
     datlist=NULL
     ){
@@ -376,12 +381,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
   
-  ## catch multipler parameters
-  if(any(datlist$fleetinfo$need_catch_mult==1))
-  {
-    # need to read a parameter line per value = 1
-    stop("Catch multipliers not yet implemented in this script")
-  }
+
   
   ## age error parameters
   if(any(datlist$ageerror[,1]<0))
@@ -397,7 +397,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   cnt<-1
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
                  # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10, 
-                 # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14
+                 # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14,
+                 # catch mult = 15
   
   GenderLabel<-c("Fem","Mal")
   for(i in 1:1){
@@ -620,7 +621,30 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     MGparmLabel[cnt+0:6]<-paste0("AgeKeyParm",1:7);PType[cnt:(cnt+6)]<-13;cnt<-cnt+7
     N_MGparm<-N_MGparm+7
   }
-  
+  # Parameter lines for catch multiplier: 
+  # figure out if need to use the catch multiplier
+  if(use_datlist == TRUE){
+    if(any(datlist$fleetinfo$need_catch_mult == 1)) {
+      use_catch_mult <- TRUE
+    }
+  } else if(!is.null(catch_mult_fleets)) {
+    use_catch_mult <- TRUE
+  } else {
+    use_catch_mult <- FALSE
+  }
+  if(use_catch_mult == TRUE) {
+    if(use_datlist == TRUE) {
+      catch_mult_fleets <- which(datlist$fleetinfo$need_catch_mult == 1)
+    }
+  }
+  # specify the parameter lines for catch multiplier: 
+  if(!is.null(catch_mult_fleets)) {
+    MGparmLabel[cnt+0:(length(catch_mult_fleets)-1)] <- 
+      paste0("Catch_Mult:_", catch_mult_fleets)
+    PType[cnt:(cnt+(length(catch_mult_fleets)-1))] <- 15
+    cnt <- cnt + length(catch_mult_fleets)
+    N_MGparm<-N_MGparm + length(catch_mult_fleets)
+  }
   MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("FracFemale_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-14;cnt<-cnt+ctllist$N_GP
   N_MGparm<-N_MGparm+ctllist$N_GP
   

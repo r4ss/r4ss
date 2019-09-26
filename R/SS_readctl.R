@@ -34,6 +34,10 @@
 #' @param N_CPUE_obs numbere of CPUE observations.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'  determined from control file
+#' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
+#'   option. Defaults to NULL and should be left as such if 1) the catch 
+#'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+#'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
@@ -55,6 +59,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        Nsurveys=2,
                        N_tag_groups=NA,
                        N_CPUE_obs=NA,
+                       catch_mult_fleets = NULL,
                        use_datlist=FALSE,
                        datlist=NULL,
                        ptype=TRUE){
@@ -137,6 +142,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Nsurveys     = Nsurveys,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
+                               catch_mult_fleets = catch_mult_fleets,
                                use_datlist  = use_datlist,
                                datlist      = datlist)
   }
