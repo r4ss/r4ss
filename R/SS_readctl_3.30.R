@@ -623,9 +623,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   # Parameter lines for catch multiplier: 
   # figure out if need to use the catch multiplier
-  if(use_datlist == TRUE){
+  if(use_datlist == TRUE) {
     if(any(datlist$fleetinfo$need_catch_mult == 1)) {
       use_catch_mult <- TRUE
+    } else {
+      use_catch_mult <- FALSE
     }
   } else if(!is.null(catch_mult_fleets)) {
     use_catch_mult <- TRUE
