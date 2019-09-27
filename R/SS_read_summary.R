@@ -71,7 +71,7 @@ SS_read_summary <- function(file="ss_summary.sso"){
   like_start           <- grep("#_LIKELIHOOD", all_lines)
   param_start          <- grep("#_PARAMETERS", all_lines)
   derived_quants_start <- grep("#_Derived_Quantities", all_lines)
-  survey_start         <- grep("#_survey_stdev", all_lines) # section optional
+  survey_stdev_start         <- grep("#_survey_stdev", all_lines) # section optional
   biomass_start        <- grep("#_Biomass", all_lines)
 
   # read header
@@ -92,18 +92,18 @@ SS_read_summary <- function(file="ss_summary.sso"){
 
   # read derived quantities section
   derived_quants <- read_summary_section(start = derived_quants_start+2,
-                                         end = survey_start - 1,
+                                         end = survey_stdev_start - 1,
                                          ncol = 2,
                                          names=c("Value", "SE"))
 
-  # read survey section (if present)
-  survey <- read_summary_section(start = survey_start+1,
+  # read survey_stdev section (if present)
+  survey_stdev <- read_summary_section(start = survey_stdev_start+1,
                                  end = biomass_start-1,
                                  ncol = 6,
                                  nonnumeric = c(3,5),
                                  names=c("Value", "SE", "XX", "Exp", "XX", "Q"))
-  # remove extra column from survey data frame
-  survey <- survey[names(survey) != "XX"]
+  # remove extra column from survey_stdev data frame
+  survey_stdev <- survey_stdev[names(survey_stdev) != "XX"]
   
   # read biomass section
   biomass <- read_summary_section(start = biomass_start+2,
@@ -116,6 +116,6 @@ SS_read_summary <- function(file="ss_summary.sso"){
               likelihoods    = likelihoods,
               parameters     = parameters,
               derived_quants = derived_quants,
-              survey         = survey,
+              survey_stdev   = survey_stdev,
               biomass        = biomass))
 }
