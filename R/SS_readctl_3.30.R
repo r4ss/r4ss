@@ -192,6 +192,46 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     if(verbose)cat(name,",i=",ctllist$'.i',"\n")
     return(ctllist)
   }
+  
+  # function to add get the names of short time varying parameter lines
+  # full_parms: a dataframe containing teh full parameter lines
+  # block_design: an object containing the block design for the control file. 
+  get_tv_parlabs <- function(full_parms = ctllist$MG_parms, 
+                             block_design = ctllist$Block_Design) {
+    # Figure out parameters are time varying
+    tmp_tv <- list(env   = full_parms[,"env_var"], 
+                   dev   = full_parms[,"use_dev"],
+                   block = full_parms[,"Block"])
+    par_num <- lapply(tmp_tv, function(x) which(x != 0))
+    loop_pars <- unlist(par_num)
+    loop_pars <- loop_pars[order(loop_pars)]
+    parlab <- vector() # a maybe faster approach is if we could initialize with the correct size.
+    for(i in loop_pars) {
+      tmp_parname <- rownames(full_parms)[i]
+      # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
+      if(i %in% par_num[["env"]]) {
+        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+      }
+      if(i %in% par_num[["block"]]) {
+        n_blk <- full_parms$Block[i]
+        tmp_blk_design <- block_design[[n_blk]]
+        # Get the start year for each block
+        blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
+        parlab <- c(parlab,
+                        paste0("# ", 
+                               rep(tmp_parname,times = length(blk_start_yrs)),
+                               "_BLK", n_blk, "add", blk_start_yrs))
+      }
+      if(i %in% par_num[["dev"]]) {
+        # parameter name if there is devs
+        parlab <- c(parlab, 
+                        paste0("# ", 
+                               rep(tmp_parname, times = 2), 
+                               c("_dev_se", "_dev_autocorr")))
+      }
+    }
+    invisible(parlab)
+  }
 
   # set initial position in the vector of numeric values
   i <- 1
@@ -247,7 +287,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
-  
   # Currently I do not how MGparms are sorted when N_GP>1
   if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
@@ -391,14 +430,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
 
   ## here go ageing error parameters - not yet implemented
-
+  # MG parlines -----
   N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
                  # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10, 
                  # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14,
-                 # catch mult = 15
+                 # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
   for(i in 1:1){
@@ -643,7 +682,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.null(catch_mult_fleets)) {
     MGparmLabel[cnt+0:(length(catch_mult_fleets)-1)] <- 
       paste0("Catch_Mult:_", catch_mult_fleets)
-    PType[cnt:(cnt+(length(catch_mult_fleets)-1))] <- 15
+    PType[cnt:(cnt+(length(catch_mult_fleets)-1))] <- NA
     cnt <- cnt + length(catch_mult_fleets)
     N_MGparm<-N_MGparm + length(catch_mult_fleets)
   }
@@ -659,34 +698,26 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
   ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
-  # time block parameters
-  nbp<-0
-  cnt<-1
-  PType<-array()
-  MGblockLabel<-list()
-  for(i in 1:N_MGparm)
-  {
-    if(ctllist$MG_parms[i,]$Block>0)
-    {
-      nv<-as.numeric(ctllist$blocks_per_pattern[ctllist$MG_parms[i,]$Block])
-      MGblockLabel[(nbp+1):(nbp+nv)]<-paste0(rownames(ctllist$MG_parms[i,]),"#",(nbp+1):(nbp+nv))
-      nbp<-nbp+nv
-      PType[cnt:(nv+cnt-1)]<-15
-      cnt<-cnt+nv
-    }
+  # MG timevarying parlines ------
+  if(any(ctllist$MG_parms[,c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[1] == 0) {
+    warning("There are time varying MG parameters, and AUTOGEN for MG is 0, so",
+            " not expecting any short parameter lines.")
+  }
+  if(any(ctllist$MG_parms[,c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[1] != 0) {
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$MG_parms)
+    ctllist <- add_df(ctllist, 
+                      name = "MG_parms_tv", 
+                      nrow = length(tmp_parlab), 
+                      ncol = 7, 
+                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
+                                    "PHASE"),
+                      comments = tmp_parlab)
   }
 
-  if(nbp>0)
-  {
-    ctllist<-add_elem(ctllist,"custom_MG_block")
-    ctllist<-add_df(ctllist,name="MG_parms_blocks",nrow=nbp,ncol=7,
-                           col.names=c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", "PHASE"),
-                           comments=MGblockLabel)
-    ctllist$MG_parms_blocks<-cbind(ctllist$MG_parms_blocks,PType)
-  }
-
+  # Read seasonal effects ----
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
- 
   PType<-array()
   N_seas_effects<-sum(ctllist$MGparm_seas_effects)
   if(N_seas_effects>0){
@@ -696,16 +727,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$MG_parms_seas<-cbind(ctllist$MG_parms_seas,PType)
     
   }
-
-  #  DoParmDev<-sum(ctllist$M_parms[,9])+
-  #             sum(ctllist$G_parms[,9])+sum(ctllist$cohortG_parm[,9])+
-  #             sum(ctllist$RecrDist_parms[,9])+sum(ctllist$Move_parms[,9])
-  DoParmDev<-sum(ctllist$MG_parms[,9])
-  if(DoParmDev>0){
-    ctllist<-add_elem(ctllist,"MGparm_Dev_Phase") #_MGparm_Dev_Phase
-  }
   
- # SRR
+ # SR -----
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
   N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+3
@@ -753,8 +776,26 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   PType[1:N_SRparm2]<-17
   ctllist$SRparm<-cbind(ctllist$SRparm,PType)
   
-  #ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
-  #ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness XX what to do?
+  #SR timevarying parlines ----
+  # time block, environmental link, and parm devs parameters
+  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[2] == 0) {
+    warning("There are time varying SR parameters, and AUTOGEN for SR is 0, so",
+            " not expecting any short parameter lines.")
+  }
+  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[2] != 0) {
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$SRparm)
+    ctllist <- add_df(ctllist, 
+                      name = "SR_parms_tv", 
+                      nrow = length(tmp_parlab), 
+                      ncol = 7, 
+                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
+                                    "PHASE"),
+                      comments = tmp_parlab)
+    ctllist$SR_parms_tv$PType <- 17
+  }
+  # recdevs ----
   ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations
   ctllist<-add_elem(ctllist,"MainRdevYrFirst") # first year of main recr_devs; early devs can preceed this era
   ctllist<-add_elem(ctllist,"MainRdevYrLast") # last year of main recr_devs; forecast devs start in following year
@@ -828,13 +869,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     
   }
   
-  #_Q_setup
+  #_Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
-  # create 3.24 compatible Q_setup
+  # create 3.24 compatible Q_setup ----
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
   colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+  # q parlines ----
   N_Q_parms<-0
   comments_Q_type<-list()
   i<-1
@@ -874,20 +916,29 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                 "env_var","use_dev", "dev_minyr",
                                 "dev_maxyr", "dev_PH", "Block", "Block_Fxn"),
                 comments=unlist(comments_Q_type))
-    
-    # put env_var into Q_setup
-    for(j in 1:nrow(ctllist$Q_parms))
-    {
-      if(ctllist$Q_parms[j,]$env_var>0)
-      {
-        vv<-as.numeric(strsplit(rownames(ctllist$Q_parms[j,]), "\\D+")[[1]][-1])
-        ctllist$Q_setup[vv[1],]$env_var<-1
-      }
+    # q timevarying parlines----
+    # time block, environmental link, and parm devs parameters
+    # provide a warning if AUTOGEN is being used for MG.
+    if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+       ctllist$time_vary_auto_generation[3] == 0) {
+      warning("There are time varying q parameters, and AUTOGEN for ",
+              "q is 0, so not expecting any short parameter lines.")
     }
-    
+    if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+       ctllist$time_vary_auto_generation[3] != 0) {
+      tmp_parlab <- get_tv_parlabs(full_parms = ctllist$Q_parms)
+      ctllist <- add_df(ctllist, 
+                        name = "Q_parms_tv", 
+                        nrow = length(tmp_parlab), 
+                        ncol = 7, 
+                        col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
+                                      "PHASE"),
+                        comments = tmp_parlab)
+      #Need Ptype?
+    }
   }
 
-  
+# selecitivty -----  
 # size_selex_types
   # comments_selex_types<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   comments_selex_types<-fleetnames
@@ -911,7 +962,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                    NA, 4, 6, 6, 3, 3, 3,NA,NA, 0,
   #                31 32 33 34
                     0, 0, 0, 0)
-#########################################################
+# selectivity parlines -----
   size_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
   size_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
@@ -1048,53 +1099,42 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                            "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_PH",
                            "Block", "Block_Fxn"),comments=unlist(age_selex_label))
   }
-##########################
-## Following pars are not yet  implemented in this R code
-#_Cond 0 #_custom_sel-env_setup (0/1)
-#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no enviro fxns
-  DoAdjust<-FALSE
-  if(sum(ctllist$age_selex_parms[,13])+sum(ctllist$size_selex_parms[,13])>0){
-    DoAdjust<-TRUE
-    ctllist$DoCustom_sel_blk_setup<-1
-    if(ctllist$DoCustom_sel_blk_setup){
-      
-      # FIND relevant blocks
-        blks <- ctllist$blocks_per_pattern
-
-        # SUBSET params for Block > 0
-        pbksa <- ctllist$age_selex_parms[ctllist$age_selex_parms$Block > 0,]
-        pbkss <- ctllist$size_selex_parms[ctllist$size_selex_parms$Block > 0,]
-        pbks <- rbind(pbksa, pbkss)
-
-        # FIND no. params per block
-        counts <- rle(sort(pbks[ , "Block"]))
-
-        # MULTIPLY number of blocks by number of params per block
-        k0 <- sum(blks[counts$values] * counts$lengths)
-
-      ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
-        col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE"))
-      
-    }
-  }else{
-    #_Cond 0 #_custom_sel-blk_setup (0/1)
-    #_Cond -2 2 0 0 -1 99 -2 #_placeholder when no block usage
+  
+  # sel timevarying parlines----
+  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[5] == 0) {
+    warning("There are time varying size selectivity  parameters, and AUTOGEN ",
+            "for selectivity is 0, so not expecting any short parameter lines.")
+  }  
+  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+        ctllist$time_vary_auto_generation[5] == 0) {
+    warning("There are time varying size selectivity  parameters, and AUTOGEN ",
+            "for selectivity is 0, so not expecting any short parameter lines.")
+  }
+  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[5] != 0) {
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$size_selex_parms)
+    ctllist <- add_df(ctllist, 
+                      name = "size_selex_parms_tv", 
+                      nrow = length(tmp_parlab), 
+                      ncol = 7, 
+                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
+                                    "PHASE"),
+                      comments = tmp_parlab)
+  }
+  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[5] != 0) {
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$age_selex_parms)
+    ctllist <- add_df(ctllist, 
+                      name = "age_selex_parms_tv", 
+                      nrow = length(tmp_parlab), 
+                      ncol = 7, 
+                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
+                                    "PHASE"),
+                      comments = tmp_parlab)
   }
 
-#_Cond No selex parm trends
-  if(sum(ctllist$age_selex_parms[,9])+sum(ctllist$size_selex_parms[,9])>0){
-    DoAdjust<-TRUE
-    ctllist<-add_elem(ctllist,name="selparm_Dev_Phase") #  selparm_Dev_Phase
-  }else{
-#_Cond -4 # placeholder for selparm_Dev_Phase
-  }
-  ctllist$DoAdjust<-DoAdjust
-  if(DoAdjust){
-    # ctllist<-add_elem(ctllist,name="selex_adjust_method")
-    #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
-  }
-#_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
-#
+  #2DAR ----
   ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
   #TODO: add code to read files when 2D_AR1 is used.
   if (ctllist$Use_2D_AR1_selectivity == 1) {

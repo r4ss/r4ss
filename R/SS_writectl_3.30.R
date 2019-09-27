@@ -305,13 +305,19 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # MG parms ----
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
-  # Time varying MG short parmlines would go next.
-  # TODO: Looks like all TV options may not be implemented in the readctl_3.30 
-  # function? Need to add this. Implement, then can remove the following stop()
-  if(any(ctllist$MG_parms[, c("env_var", "use_dev", "Block")] != 0)) {
-    stop("Time varying MG short parameter lines (for environmental links, ",
-         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  # MG timevarying parms ----
+  if(any(ctllist$MG_parms[, c("env_var", "use_dev", "Block")] != 0) &
+    ctllist$time_vary_auto_generation[1] != 0) {
+    writeComment("timevary MG parameters")
+    printdf("MG_parms_tv")
+    writeComment(paste0("# info on dev vectors created for MGparms are ",
+                        "reported with other devs after tag parameter section"))
+  } else {
+    writeComment("no timevary MG parameters")  
   }
+  
+  
+  
   # Seasonal effects ----
   writeComment("#")
   writeComment("#_seasonal_effects_on_biology_parms")
@@ -337,10 +343,15 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "function of SR curvature"))
   # SR parms ----
   printdf("SRparm")
-  #TODO: add time varying SR short lines here, and add code to read them.
-  if(any(ctllist$SRparm[,c("env_var", "use_dev", "Block")] != 0)){
-    stop("Time varying SR short parameter lines (for environmental links, ",
-         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  # SR tv parms ----
+  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[2] != 0) {
+    writeComment("# timevary SR parameters")
+    printdf("SR_parms_tv")
+    writeComment("# ")
+  } else {
+    writeComment("no timevary SR parameters")
+    writeComment("# ")
   }
   # recdevs ----
   wl("do_recdev",
@@ -428,10 +439,17 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   printdf("Q_options", terminate = TRUE)
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
   printdf("Q_parms")
-  writeComment("#_no timevary Q parameters")
-  if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0)) {
-    stop("Time varying Q short parameter lines (for environmental links, ",
-         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  # time varying q parm lines -----
+  if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+    ctllist$time_vary_auto_generation[3] != 0) {
+    writeComment("# timevary Q parameters")
+    printdf("Q_parms_tv")
+    writeComment(paste0("# info on dev vectors created for Q parms are ",
+                        "reported with other devs after tag parameter section"))
+    writeComment("#")
+  } else {
+    writeComment(c("#_no timevary Q parameters"))
+    writeComment("#")
   }
   # Size selectivity setup ----
   writeComment("#_size_selex_patterns")
@@ -454,16 +472,31 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   } else {
     writeComment("#_No age_selex_parm")
   }
-  # TV selectivity parameters
+  # TV selectivity pars ----
   #TODO: TV selectivity (devs,env link, and blocks) need to be  implemented in 
   # readctl_3.30; then, read parameters here.
-  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0)) {
-    stop("Time varying Size selex short parameter lines (for environmental links, ",
-         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  tv_sel_cmt <- FALSE # use to track if any tv selectivity pars have been written
+  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[5] != 0) {
+    writeComment("# timevary selex parameters ")
+    tv_sel_cmt <- TRUE
+    printdf("size_selex_parms_tv")
   }
-  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0)) {
-    stop("Time varying Age selex short parameter lines (for environmental links, ",
-         "devs, and blocks) cannot be written yet using SS_writectl_3.30")
+  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+     ctllist$time_vary_auto_generation[5] != 0) {
+    if (tv_sel_cmt == FALSE) {
+      writeComment("# timevary selex parameters ")
+    }
+    tv_sel_cmt <- TRUE
+    printdf("age_selex_parms_tv")
+  }
+  if(tv_sel_cmt == FALSE) { #in this case, this means no tv lines written
+    writeComment(c("no timevary selex parameters"))
+    writeComment("#")
+  } else {
+    writeComment(paste0("# info on dev vectors created for selex parms are ",
+                        "reported with other devs after tag parameter section"))
+    writeComment("#")
   }
   # 2DAR sel ----
   wl("Use_2D_AR1_selectivity", 
