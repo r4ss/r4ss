@@ -64,17 +64,17 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
   # automatic testing of version number
   if(is.null(version)) {
     # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what=character(), nlines=1)
+    version <- scan(file, what=character(), nlines=1, quiet=!verbose)
     version <- substring(version,3,6)
     # if that fails, look for data.ss_new file in the same directory
     if(version %in% c("3.24", "3.30")){
-      cat("assuming version", version, "based on first line of control file\n")
+      if(verbose)cat("assuming version", version, "based on first line of control file\n")
     }else{
       newfile <- file.path(dirname(file), "control.ss_new")
       if(file.exists(newfile)){
-        version <- scan(newfile, what=character(), nlines=1)
+        version <- scan(newfile, what=character(), nlines=1, quiet=!verbose)
         version <- substring(version,3,6)
-        cat("assuming version", version, "based on first line of control.ss_new\n")
+        if(verbose)cat("assuming version", version, "based on first line of control.ss_new\n")
       }else{
         stop("input 'version' required due to missing value at top of", file)
       }
