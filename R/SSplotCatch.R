@@ -210,6 +210,7 @@ SSplotCatch <-
   }
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
+    deadmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("dead(N)"))=="dead(N)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringN))==stringN])
     if(ncol(totcatchmat)==1){
       colnames(totcatchmat) <- grep(stringN, names(ts), fixed=TRUE, value=TRUE)
