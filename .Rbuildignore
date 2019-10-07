@@ -6,3 +6,4 @@ tests
 inst/extdata
 ignored
 revdep
+^CRAN-RELEASE$
