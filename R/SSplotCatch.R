@@ -58,7 +58,7 @@ SSplotCatch <-
            fleetlty=1, fleetpch=1,
            fleetcols="default", fleetnames="default",
            lwd=3, areacols="default", areanames="default",
-           minyr=NULL,maxyr=NULL,
+           minyr=-Inf, maxyr=Inf,
            annualcatch=TRUE,
            forecastplot=FALSE,
            plotdir="default",showlegend=TRUE,
@@ -83,9 +83,6 @@ SSplotCatch <-
            cex.main=1, # note: no plot titles yet implemented
            verbose=TRUE)
 {
-  # plot catch-related time-series for Stock Synthesis
-  # note from Ian Taylor to himself: "make minyr and maxyr connect to something!"
-
   # note: stacked plots depend on multiple fleets
   subplot_names <- c("1: landings",
                      "2: landings stacked",
@@ -162,12 +159,14 @@ SSplotCatch <-
   }
 
 
-  # time series (but no forecast) quantities used for multiple plots
-  if(nseasons>1) timeseries$Yr <- timeseries$Yr + replist$seasfracs
-  ts <- timeseries[timeseries$Yr <= endyr+1,]
-  #ts.fore <- timeseries[timeseries$Yr >= endyr+1,]
-  if(forecastplot){
-    ts <- timeseries
+  # time series quantities used for multiple plots
+  if(nseasons>1){
+    timeseries$Yr <- timeseries$Yr + replist$seasfracs
+  }
+  ts <- timeseries[timeseries$Yr >= minyr & timeseries$Yr <= maxyr, ]
+  # filter out forecast years if requested
+  if(!forecastplot){
+    ts <- ts[ts$Yr <= endyr+1,]
   }
 
   # spread equilibrium catch over all seasons for 3.24 and earlier models
@@ -211,6 +210,7 @@ SSplotCatch <-
   }
   if(catchasnumbers){
     retmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
+    deadmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar("dead(N)"))=="dead(N)"])
     totcatchmat <- as.matrix(ts[goodrows, substr(names(ts),1,nchar(stringN))==stringN])
     if(ncol(totcatchmat)==1){
       colnames(totcatchmat) <- grep(stringN, names(ts), fixed=TRUE, value=TRUE)
@@ -230,7 +230,10 @@ SSplotCatch <-
   # add total across areas
   if(nareas > 1){
     for(iarea in 2:nareas){
-      arearows <- ts$Area==iarea & ts$Era %in% c("INIT","TIME")
+      arearows <- ts$Area==iarea & ts$Era %in% c("INIT", "TIME")
+      if(forecastplot){
+        arearows <- ts$Area==iarea & ts$Era %in% c("INIT", "TIME", "FORE")
+      }
       if(catchasnumbers){
         retmat <- retmat + as.matrix(ts[arearows, substr(names(ts),1,nchar("retain(N)"))=="retain(N)"])
         totcatchmat <- totcatchmat + as.matrix(ts[arearows, substr(names(ts),1,nchar(stringN))==stringN])
@@ -407,7 +410,9 @@ SSplotCatch <-
   
   makeplots <- function(subplot){
     a <- FALSE
-    if(subplot==1) a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
+    if(subplot==1){
+      a <- linefunc(ymat=retmat, ymax=ymax, ylab=labels[3], addtotal=TRUE)
+    }
     if(subplot==2){
       a <- stackfunc(ymat=retmat, ymax=ymax, ylab=labels[3], add=add)
     }

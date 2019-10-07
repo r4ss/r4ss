@@ -954,8 +954,7 @@ SS_output <-
   like$lambdas <- lambdas
   # separate new section added in SS version 3.30.13.04 (2019-05-31)
   if(length(laplace_line) > 0){
-    like <- like[1:(laplace_line - 1),]
-    stats$likelihoods_used <- like
+    stats$likelihoods_used <- like[1:(laplace_line - 1),]
     stats$likelihoods_laplace <- like[laplace_line:nrow(like),]
   }else{
     stats$likelihoods_used <- like
@@ -1335,24 +1334,7 @@ SS_output <-
   wtatage <- NULL
   if(readwt){
     wtfile <- file.path(dir,wtfile)
-    if(!file.exists(wtfile) | file.info(wtfile)$size==0){
-      if(verbose) cat("Skipping weight-at-age file. File missing or empty:",wtfile,"\n")
-    }else{
-      # read top few lines to figure out how many to skip
-      wtatagelines <- readLines(wtfile,n=20)
-      # read full file
-      wtatage <- read.table(wtfile,header=FALSE,comment.char="",
-                            skip=grep("Yr Seas ", wtatagelines, ignore.case=TRUE),
-                            stringsAsFactors=FALSE)
-      # problems with header so simply manually replacing column names
-      wtatage_names <- c("Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
-                         0:accuage)
-      # new comment line in 3.30
-      if(SS_versionNumeric >= 3.3 & ncol(wtatage)==length(wtatage_names)+1){
-        wtatage_names <- c(wtatage_names, "comment")
-      }
-      names(wtatage) <- wtatage_names
-    }
+    wtatage <- SS_readwtatage(file = wtfile, verbose = verbose)
   }
 
   # read MCMC output
@@ -2963,6 +2945,16 @@ SS_output <-
     returndat$Pstar_sigma <- sqrt(log((SSB_final_SD/SSB_final_EST)^2+1))
   }else{
     returndat$Pstar_sigma <- NULL
+  }
+  # get alternative "sigma" based on OFL catch used by Pacific Council
+  # (added 23 Sept 2019 based on decision by PFMC SSC)
+  OFL_final_Label <- paste0("OFLCatch_",endyr+1)
+  if(OFL_final_Label %in% der$Label){
+    OFL_final_EST <- der$Value[der$Label==OFL_final_Label]
+    OFL_final_SD <- der$StdDev[der$Label==OFL_final_Label]
+    returndat$OFL_sigma <- sqrt(log((OFL_final_SD/OFL_final_EST)^2+1))
+  }else{
+    returndat$OFL_sigma <- NULL
   }
 
   if(covar){

@@ -19,8 +19,8 @@
 SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(verbose) message("Running SS_writectl_3.30\n")
   
-  if(verbose) message("Opening connection to ",outfile,"\n")
-  zz <- file(outfile, open="at") #open = "at" means open for appending in text mode.
+  if(verbose) message("Opening connection to ", outfile, "\n")
+  zz <- file(outfile, open = "at") #open = "at" means open for appending in text mode.
   on.exit(close(zz)) # Needed in case the function exits early.
   
   # Internally used function definitions -----
@@ -416,8 +416,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     #  Fmethod 1 does not need any additional information
   } else if(ctllist$F_Method == 2) {
     writeComment("overall start F value; overall phase; N detailed inputs to read")
-    wl.vector("F_setup", 
-              comment = "Intial F value, overall phase, N detailed inputs")
+    wl.vector("F_setup")
     writeComment("fleet, yr, seas, Fvalue, se, phase")
     if(ctllist$F_setup[length(ctllist$F_setup)] > 0) {
       printdf("F_setup2")
@@ -478,8 +477,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if (ctllist$Use_2D_AR1_selectivity == 0) {
     writeComment("#_no 2D_AR1 selex offset used")
   } else if (ctllist$Use_2D_AR1_selectivity == 1) {
-    stop("SS_writectl_3.30 cannot yet write 2DAR1 selectivity options")
-    #TODO: add code here to write 2D_AR1 selectivity options.
+    writeComment("#_specifications for 2D_AR1 and associated parameters")
+    printdf("specs_2D_AR")
+    printdf("pars_2D_AR")
+    writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
     stop("ctllist$Use_2D_AR1_selectivity has value ", 
          ctllist$Use_2D_AR1_selectivity, ", but can only have value 0 or 1.")
@@ -516,7 +517,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     stop("Variance adjustments for 3.30 are not read correctly by", 
          "SS_writectl_3.30")
   }
-  
+  writeComment("#")
   # Lambdas ----
   wl("maxlambdaphase", comment = "#_maxlambdaphase")
   wl("sd_offset", 
@@ -525,8 +526,24 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment(paste0("# read ", ctllist$N_lambdas, " changes to default",
                       "Lambdas (default value is 1.0)"))
   # There are some more .ss_new comments here, but not included for now.
-  printdf("lambdas", terminate = T)
-
+  if((ctllist$N_lambdas > 0) & (!is.null(ctllist$lambdas))) {
+    if(nrow(ctllist$lambdas) != ctllist$N_lambdas){
+      stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
+           "make them consistent (i.e., if ctllist$N_lambdas is greater than ",
+           "0, ctllist$N_lambdas should equal nrow(ctllist$lambdas))")
+    }
+    printdf("lambdas", terminate = T)
+  } else if ((ctllist$N_lambdas == 0) & (is.null(ctllist$lambdas))) {
+    #writes terminator line only.
+    ctllist$tmp_var <- c(-9999, rep(0, times = 4))
+    wl.vector("tmp_var", comment = "# terminator")
+  } else {
+    stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
+        "make them consistent (i.e., if ctllist$N_lambdas is 0 ,then ",
+        "ctllist$lambdas should be NULL; if ctllist$N_lambdas is greater than ",
+        "0, ctllist$N_lambdas should equal nrow(ctllist$lambdas))")
+  }
+  writeComment("#")
   # more sd reporting ----
   wl("more_stddev_reporting", 
      comment = " 0/1 read specs for more stddev reporting")

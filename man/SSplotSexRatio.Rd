@@ -4,19 +4,26 @@
 \alias{SSplotSexRatio}
 \title{Plot sex-ratio data and fits for two sex models}
 \usage{
-SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
-  fleets = "all", fleetnames = "default", yupper = 4, linescol = 1,
-  lwd = 1, axis1 = NULL, axis2 = NULL, pwidth = 6.5, pheight = 5,
-  punits = "in", ptsize = 10, res = 300, plotdir = "default",
-  cex.main = 1, labels = c("Length (cm)", "Age (yr)"), maxrows = 6,
-  maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
-  verbose = TRUE, ...)
+SSplotSexRatio(replist, kind = "AGE", sexratio.option = 2, CI = 0.75,
+  plot = TRUE, print = FALSE, fleets = "all",
+  fleetnames = "default", yupper = 4, linescol = rgb(0.6, 0, 0.9,
+  0.7), lwd = 2, axis1 = NULL, axis2 = NULL, pwidth = 6.5,
+  pheight = 5, punits = "in", ptsize = 10, res = 300,
+  plotdir = "default", cex.main = 1, labels = c("Length (cm)",
+  "Age (yr)", "Sex ratio (females:males)", "Fraction female"),
+  maxrows = 6, maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
+  verbose = TRUE, mainTitle = FALSE, ...)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 "GSTAGE", "L[at]A", or "W[at]A".}
+
+\item{sexratio.option}{code to choose among (1) female:male ratio or
+(2) fraction females out of the total}
+
+\item{CI}{confidence interval for uncertainty}
 
 \item{plot}{plot to active plot device?}
 
@@ -26,9 +33,9 @@ SSplotSexRatio(replist, kind = "AGE", plot = TRUE, print = FALSE,
 
 \item{fleetnames}{optional vector of fleet names to put in the labels}
 
-\item{yupper}{upper limit on ymax for polygon/histogram composition plots}
+\item{yupper}{upper limit on ymax (only applies for sexratio.option == 1)}
 
-\item{linescol}{Color for lines on top of polygons}
+\item{linescol}{Color for line showing expected value (default is purple)}
 
 \item{lwd}{line width}
 
@@ -73,15 +80,24 @@ number of years of data}
 
 \item{verbose}{return updates of function progress to the R GUI?}
 
+\item{mainTitle}{Logical indicating if a title for the plot should be produced}
+
 \item{\dots}{additional arguments that will be passed to the plotting.}
 }
 \description{
 Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
-plots depend on \code{make_multifig}.
+plots depend on \code{make_multifig}. The confidence intervals around the
+obserserved points are based on a Jeffreys interval calculated from
+the adjusted input sample size (with a floor of 1).
+}
+\references{
+Brown, L.; Cai, T. Tony; DasGupta, A. (2001).
+Interval Estimation for a Binomial Proportion. Statistical Science.
+16(2): 101-133. http://www.jstor.org/stable/2676784.
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
 }
 \author{
-Cole Monnahan
+Cole Monnahan, Ian Taylor
 }

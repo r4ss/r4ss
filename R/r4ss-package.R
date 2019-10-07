@@ -42,7 +42,7 @@
 #'   persp plot points polygon rect segments
 #'   symbols text title
 #' @importFrom stats acf aggregate density dnorm loess
-#'   median na.omit nlminb optim pnorm qchisq qlnorm
+#'   median na.omit nlminb optim pnorm qbeta qchisq qlnorm
 #'   qnorm qt quantile rnorm sd var window
 #' @importFrom utils browseURL flush.console head
 #'   packageDescription read.csv

@@ -5,29 +5,44 @@
 \title{A function to create a executive summary tables from an SS Report.sso file}
 \usage{
 SSexecutivesummary(dir, plotdir = "default", quant = 0.95,
-  es.only = FALSE, nsex = FALSE)
+  es.only = FALSE, tables = c("a", "b", "c", "d", "e", "f", "g", "h",
+  "i", "catch", "numbers"), nsex = FALSE, endyr = NULL,
+  verbose = TRUE)
 }
 \arguments{
 \item{dir}{Locates the directory of the files to be read in, double
 backslashes (or forwardslashes) and quotes necessary.}
 
-\item{plotdir}{Directory where the table will be saved.  The default 
-saves the table to the dir location where the Report.sso file is located.}
+\item{plotdir}{Directory where the 'tables' directory will be created.
+The default is the dir location where the Report.sso file is located.}
 
-\item{quant}{to calculate confidence intervals, default is set at 0.95}
+\item{quant}{To calculate confidence intervals, default is set at 0.95}
 
-\item{es.only}{=  only the executive summary tables will be produced, default is false which
-will return all executive summary tables, historical catches, and numbers-at-ages}
+\item{es.only}{TRUE/FALSE switch to produce only the executive summary tables
+will be produced, default is FALSE which will return all executive summary
+tables, historical catches, and numbers-at-ages}
 
-\item{nsex}{This will allow the user to calculate single sex values based on the new sex 
-specification (-1) in SS for single sex models. Default value is FALSE. TRUE will not divide by 2.}
+\item{tables}{Which tables to produce (default is everything). Note: some
+tables depend on calculations related to previous tables, so will fail
+if requested on their own (e.g. Table 'f' can't be created
+without also creating Table 'a')}
+
+\item{nsex}{This will allow the user to calculate single sex values
+based on the new sex
+specification (-1) in SS for single sex models. Default value is FALSE.
+TRUE will not divide by 2.}
+
+\item{endyr}{Optional input to choose a different ending year for tables
+(could be useful for catch-only updates)}
+
+\item{verbose}{Return updates of function progress to the R console?}
 }
 \value{
 A csv files containing executive summary tables.
 }
 \description{
 Reads the Report.sso within the directory and creates executive summary
-tables as required by the current Terms of Reference for West Coast 
+tables as required by the current Terms of Reference for West Coast
 groundfish.  Works with Stock Synthesis versions 3.24U and later.
 Additionally, historical catch and numbers at ages tables are created.
 }

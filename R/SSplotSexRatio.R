@@ -1,18 +1,23 @@
 #' Plot sex-ratio data and fits for two sex models
 #'
 #' Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
-#' plots depend on \code{make_multifig}.
+#' plots depend on \code{make_multifig}. The confidence intervals around the
+#' obserserved points are based on a Jeffreys interval calculated from
+#' the adjusted input sample size (with a floor of 1).
 #'
 #'
 #' @param replist list created by \code{SSoutput}
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "L[at]A", or "W[at]A".
+#' @param sexratio.option code to choose among (1) female:male ratio or
+#' (2) fraction females out of the total
+#' @param CI confidence interval for uncertainty
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
-#' @param yupper upper limit on ymax for polygon/histogram composition plots
-#' @param linescol Color for lines on top of polygons
+#' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
+#' @param linescol Color for line showing expected value (default is purple)
 #' @param lwd line width
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
@@ -39,17 +44,29 @@
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
 #' number of years of data
 #' @param verbose return updates of function progress to the R GUI?
+#' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to the plotting.
-#' @author Cole Monnahan
+#' @author Cole Monnahan, Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
+#' @references Brown, L.; Cai, T. Tony; DasGupta, A. (2001).
+#' Interval Estimation for a Binomial Proportion. Statistical Science.
+#' 16(2): 101-133. http://www.jstor.org/stable/2676784.
 SSplotSexRatio <-
-  function(replist, kind="AGE", plot=TRUE, print=FALSE, fleets="all",
-           fleetnames="default",  yupper=4, linescol=1, lwd=1,
+  function(replist, kind="AGE", sexratio.option=2, CI=0.75,
+           plot=TRUE, print=FALSE, fleets="all",
+           fleetnames="default",  yupper=4,
+           linescol=rgb(0.6,0,0.9,.7), # a purple color
+           lwd=2,
            axis1=NULL, axis2=NULL,  pwidth=6.5, pheight=5.0, punits="in",
            ptsize=10, res=300, plotdir="default", cex.main=1, 
-           labels = c("Length (cm)", "Age (yr)"), maxrows=6, maxcols=6,
-           rows=1, cols=1, fixdims=TRUE, verbose=TRUE, ...)
+           labels = c("Length (cm)",
+               "Age (yr)",
+               "Sex ratio (females:males)",               
+               "Fraction female"),
+           maxrows=6, maxcols=6,
+           rows=1, cols=1, fixdims=TRUE, verbose=TRUE,
+           mainTitle=FALSE, ...)
 {
 ################################################################################
     ## SSplotSexRatio
@@ -100,12 +117,12 @@ SSplotSexRatio <-
     dbase_kind <- lendbase
     kindlab=labels[1]
     filenamestart <- "sexratio_len_"
-    titledata <- "sex ratios for length comps, "
+    titledata <- "Sex ratios for length comps, "
   } else if(kind=="AGE"){
     dbase_kind <- agedbase
     kindlab=labels[2]
     filenamestart <- "sexratio_age_"
-    titledata <- "sex ratios for age comps, "
+    titledata <- "Sex ratios for age comps, "
   } else {
     stop("Only kind of LEN and AGE are currently supported")
   }
@@ -150,32 +167,50 @@ SSplotSexRatio <-
         ## aggregating identifiers for plot titles and filenames
         title_mkt <- paste(titlemkt, sep="")
         filename_fltmkt <- paste("flt",f, "mkt",j,sep="")
-        ptitle <- paste(titledata,title_mkt, fleetnames[f],sep="") ## total title
-        titles <- c(ptitle,titles) ## compiling list of all plot titles
+        caption <- paste(titledata,title_mkt, fleetnames[f],sep="") ## total title
+        if(mainTitle) {
+          ptitle <- caption
+        } else {
+          ptitle <- ""
+        }
+        #titles <- c(ptitle,titles) ## compiling list of all plot titles
         tempfun <- function(ipage,...){
           ## a function to combine a bunch of repeated commands
-          make_multifig_sexratio(dbase=dbase,
-                         nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
-                         main=ptitle, cex.main=cex.main, xlab=kindlab, ylab=labels[6],
-                         maxrows=maxrows, maxcols=maxcols, rows=rows, cols=cols,
-                         fixdims=fixdims, ipage=ipage, scalebins=FALSE,
-                         linescol=linescol, axis1=axis1, axis2=axis2,
-                          yupper=yupper)
+          make_multifig_sexratio(dbase=dbase, sexratio.option=sexratio.option,
+                                 CI=CI,
+                                 nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
+                                 main=ptitle, cex.main=cex.main, xlab=kindlab,
+                                 ylab=labels[3:4][sexratio.option],
+                                 maxrows=maxrows, maxcols=maxcols,
+                                 rows=rows, cols=cols,
+                                 fixdims=fixdims, ipage=ipage, scalebins=FALSE,
+                                 linescol=linescol, axis1=axis1, axis2=axis2,
+                                 yupper=yupper)
         } # end tempfun
 
         ## Do the plotting and saving
         if(plot) tempfun(ipage=0,...)
         if(print){ # set up plotting to png file if required
-          npages <- ceiling(length(unique(dbase$Yr.S))/maxrows/maxcols)
+          npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
           for(ipage in 1:npages){
-            caption <- ptitle
             pagetext <- ""
+            caption_count <- ""
+            caption_extra <- ""
             if(npages>1){
-              pagetext <- paste("_page",ipage,sep="")
-              caption <- paste(caption, " (plot ",ipage," of ",npages,")",sep="")
+              pagetext <- paste0("_page", ipage)
+              caption_count <- paste0(" (plot ", ipage, " of ", npages, ")")
+            }
+            if(ipage==1){
+              caption_extra <-
+                paste0(".<br>Observed sex ratios (points) with ", 100*CI,
+                       "% intervals (vertical lines) calculated as a ",
+                       "<a href='https://www.jstor.org/stable/2676784'>",
+                       "Jeffreys interval</a> based on the adjusted input sample size. ",
+                       "The model expectation is shown in the purple line.")
             }
             file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
-            plotinfo <- pngfun(file=file, caption=caption)
+            plotinfo <- pngfun(file=file,
+                               caption=paste0(caption, caption_count, caption_extra))
             tempfun(ipage=ipage,...)
             dev.off()
           }

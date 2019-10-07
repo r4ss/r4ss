@@ -4,7 +4,7 @@
 \alias{SSplotIndices}
 \title{Plot indices of abundance and associated quantities.}
 \usage{
-SSplotIndices(replist, subplots = 1:9, plot = TRUE, print = FALSE,
+SSplotIndices(replist, subplots = c(1:9), plot = TRUE, print = FALSE,
   fleets = "all", fleetnames = "default", smooth = TRUE,
   add = FALSE, datplot = FALSE, labels = c("Year", "Index",
   "Observed index", "Expected index", "Log index", "Log observed index",
@@ -22,7 +22,19 @@ SSplotIndices(replist, subplots = 1:9, plot = TRUE, print = FALSE,
 \arguments{
 \item{replist}{list created by \code{SS_output}}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\itemize{
+  \item 1  index data by fleet
+  \item 2  index data with fit by fleet
+  \item 3  observed vs expected index values with smoother
+  \item 4  index data by fleet on a log scale (lognormal error only)
+  \item 5  index data with fit by fleet on a log scale (lognormal error only)
+  \item 6  log(observed) vs log(expected) with smoother (lognormal error only)
+  \item 7  time series of time-varying catchability (only if actually time-varying)
+  \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
+  \item 9  comparison of all indices
+}}
 
 \item{plot}{plot to active plot device?}
 
@@ -109,7 +121,9 @@ extra standard deviations}
 \item{\dots}{Extra arguments to pass to calls to \code{plot}}
 }
 \description{
-Plot indices of abundance and associated quantities.
+Plot indices of abundance with or without model fit as well as other diagnostic
+plots such as observed vs. expected index and plots related to time-varying
+catchability (if present).
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SS_output}}

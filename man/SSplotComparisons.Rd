@@ -15,14 +15,14 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
   "Harvest rate"), col = NULL, shadecol = NULL, pch = NULL,
   lty = 1, lwd = 2, spacepoints = 10, staggerpoints = 1,
   initpoint = 0, tickEndYr = TRUE, shadeForecast = TRUE,
-  xlim = "default", ylimAdj = 1, xaxs = "r", yaxs = "r",
+  xlim = "default", ylimAdj = 1, xaxs = "i", yaxs = "i",
   type = "o", uncertainty = TRUE, shadealpha = 0.1, legend = TRUE,
   legendlabels = "default", legendloc = "topright",
   legendorder = "default", legendncol = 1, sprtarg = NULL,
   btarg = NULL, minbthresh = NULL, pwidth = 6.5, pheight = 5,
   punits = "in", res = 300, ptsize = 10, cex.main = 1,
   plotdir = NULL, filenameprefix = "", densitynames = c("SSB_Virgin",
-  "R0"), densityxlabs = "default", densityscalex = 1,
+  "R0"), densityxlabs = "default", rescale = TRUE, densityscalex = 1,
   densityscaley = 1, densityadjust = 1, densitysymbols = TRUE,
   densitytails = TRUE, densitymiddle = FALSE, densitylwd = 1,
   fix0 = TRUE, new = TRUE, add = FALSE, par = list(mar = c(5, 4, 1,
@@ -173,6 +173,9 @@ summaryoutput$quants$Label for which to make density plots}
 \item{densityxlabs}{Optional vector of x-axis labels to use in the density
 plots (must be equal in length to the printed vector of quantities that
 match the \code{densitynames} input)}
+
+\item{rescale}{TRUE/FALSE control of automatic rescaling of units into
+thousands, millions, or billions}
 
 \item{densityscalex}{Scalar for upper x-limit in density plots (values below
 1 will cut off the right tail to provide better contrast among narrower

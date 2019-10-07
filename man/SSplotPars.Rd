@@ -10,9 +10,9 @@ SSplotPars(replist, xlab = "Parameter value", ylab = "Density",
   fitrange = FALSE, xaxs = "i", xlim = NULL, ylim = NULL,
   verbose = TRUE, nrows = 3, ncols = 3, ltyvec = c(1, 1, 3, 4),
   colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, 0.5)),
-  new = TRUE, pdf = FALSE, pwidth = 6.5, pheight = 5,
-  punits = "in", ptsize = 10, returntable = FALSE, strings = c(),
-  exact = FALSE, newheaders = NULL)
+  new = TRUE, add = FALSE, pdf = FALSE, pwidth = 6.5,
+  pheight = 5, punits = "in", ptsize = 10, returntable = FALSE,
+  strings = c(), exact = FALSE, newheaders = NULL)
 }
 \arguments{
 \item{replist}{List produced by \code{\link{SS_output}}.}
@@ -59,6 +59,8 @@ distributions and the median of the posterior distribution.}
 initial value, prior, posterior, and median of the posterior.}
 
 \item{new}{Open new window for plotting?}
+
+\item{add}{Add to existing plot?}
 
 \item{pdf}{Write to PDF file instead of R GUI?}
 

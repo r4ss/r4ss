@@ -4,8 +4,9 @@
 \alias{SSplotYield}
 \title{Plot yield and surplus production.}
 \usage{
-SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE,
-  print = FALSE, labels = c("\%unfished", "Equilibrium yield (mt)",
+SSplotYield(replist, subplots = 1:3, refpoints = c("MSY", "Btgt",
+  "SPR", "Current"), add = FALSE, plot = TRUE, print = FALSE,
+  labels = c("Fraction unfished", "Equilibrium yield (mt)",
   "Total biomass (mt)", "Surplus production (mt)"), col = "blue",
   col2 = "black", lty = 1, lwd = 2, cex.main = 1, pwidth = 6.5,
   pheight = 5, punits = "in", res = 300, ptsize = 10,
@@ -14,7 +15,16 @@ SSplotYield(replist, subplots = 1:2, add = FALSE, plot = TRUE,
 \arguments{
 \item{replist}{list created by \code{SS_output}}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\itemize{
+  \item 1 yield curve
+  \item 2 yield curve with reference points
+  \item 3 surplus production vs. biomass plots (Walters et al. 2008) 
+}}
+
+\item{refpoints}{character vector of which reference points to display in
+subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.}
 
 \item{add}{add to existing plot? (not yet implemented)}
 

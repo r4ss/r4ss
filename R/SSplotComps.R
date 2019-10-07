@@ -346,15 +346,25 @@ SSplotComps <-
   if(kind=="L@A"){
     dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
-    filenamestart <- "comp_LAAfit_"
-    titledata <- "Mean length at age, "
+    if(datonly){
+      filenamestart <- "comp_LAAdat_"
+      titledata <- "Mean length at age data, "
+    }else{
+      filenamestart <- "comp_LAAfit_"
+      titledata <- "Mean length at age fit, "
+    }      
     dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(kind=="W@A"){
     dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
     kindlab=labels[2]
-    filenamestart <- "comp_WAAfit_"
-    titledata <- "Mean weight at age, "
+    if(datonly){
+      filenamestart <- "comp_WAAdat_"
+      titledata <- "Mean weight at age data, "
+    }else{
+      filenamestart <- "comp_WAAfit_"
+      titledata <- "Mean weight at age fit, "
+    }
     dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){

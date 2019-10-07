@@ -6,6 +6,14 @@
 #' 
 #' @param replist list created by \code{SS_output}
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1 yield curve
+#'   \item 2 yield curve with reference points
+#'   \item 3 surplus production vs. biomass plots (Walters et al. 2008) 
+#' }
+#' @param refpoints character vector of which reference points to display in
+#' subplot 2, from the options 'MSY', 'Btgt', and 'SPR'.
 #' @param add add to existing plot? (not yet implemented)
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
@@ -31,9 +39,10 @@
 #' Sci. 65: 2536-2551
 SSplotYield <-
   function(replist,
-           subplots=1:2,
+           subplots=1:3,
+           refpoints = c('MSY', 'Btgt', 'SPR', 'Current'),
            add=FALSE,plot=TRUE,print=FALSE,
-           labels=c("%unfished", #1
+           labels=c("Fraction unfished", #1
              "Equilibrium yield (mt)",    #2
              "Total biomass (mt)",        #3
              "Surplus production (mt)"),  #4
@@ -59,46 +68,98 @@ SSplotYield <-
   nareas      <- replist$nareas
   nseasons    <- replist$nseasons
   timeseries  <- replist$timeseries
-  SS_versionshort <- replist$SS_versionshort
-  if(is.null(SS_versionshort)) SS_versionshort <- "older than SS-V3.20"
-
-  # test if data is available
-  if(1 %in% subplots){
-    if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
-      # further test
-      if(any(!is.na(equil_yield$Depletion)) &
-         any(!is.na(equil_yield$Catch)) &
-         any(!is.infinite(equil_yield$Depletion))){
-        # function for yield curve
-        yieldfunc <- function(){
-          if(!add){
-            # empty plot
-            plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
-                 ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
-                 xlab=labels[1],ylab=labels[2])
-            abline(h=0,col="grey")
-            abline(v=0,col="grey")
-          }
-          # add lines
-          lines(equil_yield$Depletion,equil_yield$Catch,
-                lwd=lwd,col=col,lty=lty)
-        }
-        # make plot
-        if(plot){yieldfunc()}
-        if(print){
-          file <- "yield1_yield_curve.png"
-          caption <- "Yield curve"
-          plotinfo <- pngfun(file=file, caption=caption)
-          yieldfunc()
-          dev.off()}
-      }else{
-        cat("Skipped equilibrium yield plot: equil_yield has all NA values\n")
-      }
-    }else{
-      cat("Skipped equilibrium yield plot: no equil_yield results in this model\n")
+  #SSB0          <- replist$SBzero
+  SSB0        <- replist$derived_quants["SSB_Virgin", "Value"]
+  # function for yield curve
+  yieldfunc <- function(refpoints = NULL){
+    if(!add){
+      # empty plot
+      plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
+           ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
+           xlab=labels[1],ylab=labels[2])
+      abline(h=0,col="grey")
+      abline(v=0,col="grey")
+    }
+    # add lines for reference points (if requested)
+    lines(equil_yield$Depletion, equil_yield$Catch,
+          lwd = lwd, col = col, lty = lty)
+    colvec <- c(4,2,3,1)
+    if('MSY' %in% refpoints){
+      lines(x = rep(replist$derived_quants["SSB_MSY", "Value"]/SSB0, 2),
+            y = c(0, replist$derived_quants["Dead_Catch_MSY", "Value"]),
+            col = colvec[1], lwd = 2, lty = 2)
+    }
+    if('Btgt' %in% refpoints){
+      lines(x = rep(replist$derived_quants["SSB_Btgt", "Value"]/SSB0, 2),
+            y = c(0, replist$derived_quants["Dead_Catch_Btgt", "Value"]),
+            col = colvec[2], lwd = 2, lty = 2)
+    }
+    if('SPR' %in% refpoints){
+      lines(x = rep(replist$derived_quants["SSB_SPR", "Value"]/SSB0, 2),
+            y = c(0, replist$derived_quants["Dead_Catch_SPR", "Value"]),
+            col = colvec[3], lwd = 2, lty = 2)
+    }
+    if('Current' %in% refpoints){
+      which_val <- abs(equil_yield$Depletion - replist$current_depletion) ==
+        min(abs(equil_yield$Depletion - replist$current_depletion))
+      lines(x = rep(replist$current_depletion, 2),
+            y = c(0, equil_yield$Catch[which_val]),
+            col = colvec[4], lwd = 2, lty = 2)
+    }
+    # legend
+    which_lines <- c('MSY' %in% refpoints,
+                     'Btgt' %in% refpoints,
+                     'SPR' %in% refpoints,
+                     'Current' %in% refpoints)
+    if(any(which_lines)){
+      legend('topright', bty = 'n', lwd = 2, lty = 2,
+             col = colvec[which_lines],
+             legend = c('MSY', 'B target', 'SPR target', 'Current'))
     }
   }
 
+  if(1 %in% subplots | 2 %in% subplots){
+    # test if data is available
+    if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
+      # further test for bad values
+      # (not sure the circumstances where this is needed)
+      if(any(!is.na(equil_yield$Depletion)) &
+         any(!is.na(equil_yield$Catch)) &
+         any(!is.infinite(equil_yield$Depletion))){
+        if(1 %in% subplots){
+          # make plot
+          if(plot){
+            yieldfunc()
+          }
+          if(print){
+            file <- "yield1_yield_curve.png"
+            caption <- "Yield curve"
+            plotinfo <- pngfun(file=file, caption=caption)
+            yieldfunc()
+            dev.off()
+          }
+        }
+        if(2 %in% subplots & !is.null(refpoints)){
+          # make plot
+          if(plot){
+            yieldfunc(refpoints = refpoints)
+          }
+          if(print){
+            file <- "yield2_yield_curve_with_refpoints.png"
+            caption <- "Yield curve with reference points"
+            plotinfo <- pngfun(file=file, caption=caption)
+            yieldfunc(refpoints = refpoints)
+            dev.off()
+          }
+        }          
+      }else{
+        cat("Skipped equilibrium yield plots: equil_yield has all NA values\n")
+      }
+    }else{
+      cat("Skipped equilibrium yield plots: no equil_yield results in this model\n")
+    }
+  }
+  
   # timeseries excluding equilibrium conditions or forecasts
   ts <- timeseries[!timeseries$Era %in% c("VIRG","FORE"),]
 
@@ -146,12 +207,12 @@ SSplotYield <-
     points(Bio_agg_good[1], sprod_good[1], col=col2, bg="white", pch=21)
   } # end sprodfunc
 
-  if(2 %in% subplots){
+  if(3 %in% subplots){
     if(plot){sprodfunc()}
     if(print){
-      file <- "yield2_Hilborn_surplus_production.png"
+      file <- "yield3_surplus_production.png"
       caption <-
-        paste("Surplus production plot. For interpretation, see<br>",
+        paste("Surplus production vs. biomass plot. For interpretation, see<br>",
               "<blockquote>Walters, Hilborn, and  Christensen, 2008,",
               "Surplus production dynamics in declining and",
               "recovering fish populations. <i>Can. J. Fish. Aquat. Sci.</i>",

@@ -199,7 +199,8 @@ SS_writedat_3.30 <- function(datlist,
   # write table of info on bycatch only fleets, if exists.
   if(!is.null(d$bycatch_fleet_info)){
     writeComment("#Bycatch_fleet_input")
-    print.df(subset(d$bycatch_fleet_info, select = -fleetname), terminate = FALSE)
+    print.df(d$bycatch_fleet_info[,names(d$bycatch_fleet_info) != "fleetname"],
+             terminate = FALSE)
   }
   # write table of catch
   #year season  fleet catch catch_se
@@ -284,30 +285,32 @@ SS_writedat_3.30 <- function(datlist,
   }
   # age bins
   wl("N_agebins")
+
+  # additional age comp info only needed if N_agebins > 0
   if (d$N_agebins > 0) {
     writeComment("#\n#_agebin_vector")
     wl.vector("agebin_vector")
+
+    # ageing error
+    writeComment("#\n#_ageing_error")
+    wl("N_ageerror_definitions")
+    print.df(d$ageerror, terminate=FALSE)
+
+    # specification of age comps
+    writeComment("#\n#_age_info")
+    print.df("age_info", terminate=FALSE)
+
+    wl("Lbin_method", comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
+    wl("max_combined_age", comment = "#_combine males into females at or below this bin number")
+
+    # age comps
+    if (is.null(d$agecomp)) {
+      # empty data.frame with correct number of columns needed for terminator row
+      d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Nsexes))
+    }
+    print.df(d$agecomp)
   }
-
-  # ageing error
-  writeComment("#\n#_ageing_error")
-  wl("N_ageerror_definitions")
-  print.df(d$ageerror, terminate=FALSE)
-
-  # specification of age comps
-  writeComment("#\n#_age_info")
-  print.df("age_info", terminate=FALSE)
-
-  wl("Lbin_method", comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
-  wl("max_combined_age", comment = "#_combine males into females at or below this bin number")
-
-  # age comps
-  if(is.null(d$agecomp)){
-    # empty data.frame with correct number of columns needed for terminator row
-    d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Nsexes))
-  }
-  print.df(d$agecomp)
-
+  
   writeComment("#\n#_MeanSize_at_Age_obs")
   wl("use_MeanSize_at_Age_obs")
   print.df(d$MeanSize_at_Age_obs)

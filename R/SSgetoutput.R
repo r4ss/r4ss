@@ -35,8 +35,8 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
   # a function to run the function SS_output to create a list in the R workspace
   # for a Stock Synthesis model with output filenames ending with the same "key"
 
-  if(!is.null(keyvec)) cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
-  if(!is.null(dirvec)) cat('length(dirvec) as input to SSgetoutput:',length(dirvec),'\n')
+  if(!is.null(keyvec) & verbose) cat('length(keyvec) as input to SSgetoutput:',length(keyvec),'\n')
+  if(!is.null(dirvec) & verbose) cat('length(dirvec) as input to SSgetoutput:',length(dirvec),'\n')
  
   # change inputs so that keyvec and dirvec have matching lengths or keyvec=NULL
   if(listlists) biglist <- list()
@@ -104,7 +104,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
     }else{
       cat("!repfile doesn't exists or is empty\n")
     }
-    cat("added element '", newobject, "' to list\n",sep="")
+    if(verbose) cat("added element '", newobject, "' to list\n",sep="")
     if(listlists) biglist[[newobject]] <- output
     ## if(global)
     ## {

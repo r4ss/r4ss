@@ -14,6 +14,7 @@
 #' are available in \code{replist}?
 #' @param showinit Show initial value as red triangle?
 #' @param showdev Include devs in the plot?
+#' @param add Add to existing plot?
 #' @param showlegend Show the legend?
 #' @param fitrange Fit range tightly around MLE & posterior distributions,
 #' instead of full parameter range?
@@ -63,13 +64,13 @@ SSplotPars <-
       replist,
       xlab="Parameter value",ylab="Density",
       showmle=TRUE, showpost=TRUE, showprior=TRUE, showinit=TRUE,
-      showdev=FALSE,
+      showdev=FALSE, 
       # priorinit=TRUE, priorfinal=TRUE,
       showlegend=TRUE, fitrange=FALSE, xaxs="i",
       xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
       ltyvec=c(1, 1, 3, 4),
       colvec=c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
-      new=TRUE, pdf=FALSE, pwidth=6.5, pheight=5.0, punits="in",
+      new=TRUE, add = FALSE, pdf=FALSE, pwidth=6.5, pheight=5.0, punits="in",
       ptsize=10, returntable=FALSE, strings=c(), exact=FALSE,
       newheaders=NULL)
 {
@@ -448,9 +449,11 @@ SSplotPars <-
     # make plot
     if(is.null(newheaders)) header <- parname else header <- newheaders[ipar]
     if(is.null(ylim)) ylim2 <- c(0,1.1*ymax) else ylim2 <- ylim
-    plot(0,type="n",xlim=xlim2,ylim=ylim2,xaxs=xaxs,yaxs="i",
-         xlab="",ylab="",main=header,cex.main=1,axes=FALSE)
-    axis(1)
+    if(!add){
+      plot(0,type="n",xlim=xlim2,ylim=ylim2,xaxs=xaxs,yaxs="i",
+           xlab="",ylab="",main=header,cex.main=1,axes=FALSE)
+      axis(1)
+    }
     # axis(2) # don't generally show y-axis values because it's just distracting
 
     # add stuff to plot
