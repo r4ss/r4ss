@@ -22,7 +22,7 @@ rewritten to file so ADMB "sees" what it's expecting.
 }
 \note{
 Explanation of the methods (in PDF form) published here:
-\url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
+\url{https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf}
 }
 \seealso{
 \code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}

@@ -2,3 +2,7 @@
 cran-comments.md
 ^\.travis\.yml$
 man-roxygen
+tests
+inst/extdata
+ignored
+

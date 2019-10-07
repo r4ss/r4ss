@@ -1,8 +1,7 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.35.3
-Date: 2019-07-01
+Version: 1.36.0
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
@@ -37,6 +36,7 @@ Description: A collection of R functions for use with Stock Synthesis, a
 License: GPL-3
 Encoding: UTF-8
 LazyLoad: yes
-URL: https://github.com/r4ss
+URL: https://github.com/r4ss/r4ss
+BugReports: https://github.com/r4ss/r4ss/issues
 RoxygenNote: 6.1.1
 VignetteBuilder: knitr
