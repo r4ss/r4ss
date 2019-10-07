@@ -265,8 +265,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$Npopbins<-Npopbins<-datlist$Npopbins
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
-    if(datlist$N_ageerror_definition>0){
-      ctllist$Do_AgeKey<-Do_AgeKey<-ifelse(any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2,1]<0),1,0)
+    if(datlist$N_ageerror_definition > 0) {
+      ctllist$Do_AgeKey <- ifelse(
+        any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2, 1] < 0), 1, 0)
     }
     ctllist$N_tag_groups<-N_tag_groups<-datlist$N_tag_groups
     N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
@@ -419,17 +420,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_elem(ctllist,"Herm_MalesInSSB")  #_Hermaphroditism_males_in_SSB
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
-  
 
-  
-  ## age error parameters
-  if(any(datlist$ageerror[,1]<0))
-  {
-    # need to read 7 full (14) parameter lines
-    stop("Age error parameters not yet implemented in this script")
-  }
-
-  ## here go ageing error parameters - not yet implemented
   # MG parlines -----
   N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
@@ -655,8 +646,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       MGparmLabel[cnt+0:1]<-paste0("MoveParm_",c("A","B"),"_seas_",seas,"_GP_",GP,"_from_",from,"_to_",to);PType[cnt:(cnt+1)]<-12;cnt<-cnt+2
     }
   }
-
-  if(Do_AgeKey){
+  # age error parameters
+  if(ctllist$Do_AgeKey) {
     MGparmLabel[cnt+0:6]<-paste0("AgeKeyParm",1:7);PType[cnt:(cnt+6)]<-13;cnt<-cnt+7
     N_MGparm<-N_MGparm+7
   }
