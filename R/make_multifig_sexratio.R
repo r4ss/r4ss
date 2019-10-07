@@ -129,8 +129,8 @@ make_multifig_sexratio <-
 
         # sample size is shared across both vectors (at least if Sexes==3)
         # IGT 2019-05-02: should check for case where sexes are input separately
-        effN <- female$effN;
-        N <- female$N; 
+        effN <- female$effN
+        N <- female$N
         if(sexratio.option == 1){ # females:males
           e <- (female$Exp - minobs)/(male$Exp - minobs)
           o <- (female$Obs - minobs)/(male$Obs - minobs)

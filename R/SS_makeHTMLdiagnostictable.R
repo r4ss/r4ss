@@ -64,11 +64,11 @@ SS_makeHTMLdiagnostictable <- function(replist,
   the_table <-
     kableExtra::scroll_box(the_table, width = "100%", height = table_height)
   filename <- caption <- NULL
-  filename = c(filename,"parameterchecks.html")
+  filename <- c(filename,"parameterchecks.html")
 
   write(the_table,
         file = file.path(plotdir,filename[1]))
-  caption = c(caption,paste(
+  caption <- c(caption,paste(
       "Table of estimated parameters sorted by parameters with the largest gradients;",
       "any parameter with a gradient value with an absolute value above",
       gradmax,
@@ -87,12 +87,12 @@ SS_makeHTMLdiagnostictable <- function(replist,
                                              cormax, "red", "black"))
     the_table2 <- kableExtra::kable(high_cor_table,
                                     format = "html",
-                                    escape = F)
+                                    escape = FALSE)
     the_table2 <- kableExtra::kable_styling(the_table2)
-    filename = c(filename,"correlationcheck.html")
+    filename <- c(filename,"correlationcheck.html")
     write(the_table2,
           file = file.path(plotdir,"correlationcheck.html"))
-    caption = c(caption, paste(
+    caption <- c(caption, paste(
         "Table of estimated parameters with the ten highest correlation rates,",
         "sorted by highest correlations; any parameter with an absolute value",
         "of correlation above",
@@ -112,12 +112,12 @@ SS_makeHTMLdiagnostictable <- function(replist,
                                              cormin, "purple", "black"))
     the_table3 <- kableExtra::kable(low_cor_table,
                                     format = "html",
-                                    escape = F)
+                                    escape = FALSE)
     the_table3 <- kableExtra::kable_styling(the_table3)
-    filename = c(filename,"lowcorrelationcheck.html")
+    filename <- c(filename,"lowcorrelationcheck.html")
     write(the_table3,
           file = file.path(plotdir,"lowcorrelationcheck.html"))
-    caption = c(caption,paste(
+    caption <- c(caption,paste(
         "Table of estimated parameters with the ten lowest correlation rates,",
         "sorted by lowest correlations; any parameter with an absolute value",
         "of correlation below",

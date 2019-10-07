@@ -58,7 +58,7 @@
 #'     if("Optimization_record.txt" %in% list.files(direc)) {
 #'          file.remove(file.path(direc,"Optimization_record.txt"))
 #'     }
-#'     Opt = optimize(f=NegLogInt_Fn,
+#'     Opt <- optimize(f=NegLogInt_Fn,
 #'                    interval=c(0.001, 0.12),
 #'                    maximum=FALSE,
 #'                    File=direc,
@@ -94,18 +94,18 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
 
   # Directory
   if(is.na(File)){
-      File = getwd()
+    File <- getwd()
   }
 
   if( "Iteration.txt" %in% list.files(File)){
-      Iteration <- read.table(file=file.path(File,"Iteration.txt"))[[1]]
+    Iteration <- read.table(file=file.path(File,"Iteration.txt"))[[1]]
   }else{
-      Iteration <- 0
+    Iteration <- 0
   }
 
   # Error messages
   if(ReDoBiasRamp==TRUE & is.null(BiasRamp_linenum_Vec)){
-      stop("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")
+    stop("If ReDoBiasRamp==TRUE, then BiasRamp_linenum_Vec must be specified")
   }
 
   # Make sure print is high enough for when passing values to ADMB
@@ -122,11 +122,11 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   #    Iteration <- max(Iterations)
 
   # Transform parameter vector
-  SD_Group_Vec = Input_SD_Group_Vec
+  SD_Group_Vec <- Input_SD_Group_Vec
 
   # Modify inputs when necessary
   if(is.null(CTL_linenum_Type)){
-    CTL_linenum_Type = rep(NA, length(SD_Group_Vec))
+    CTL_linenum_Type <- rep(NA, length(SD_Group_Vec))
   }
 
   # define some filenames with full path
@@ -135,8 +135,8 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   
   # Write record to file (part 1)
   if(!("Optimization_record.txt" %in% list.files(File))){
-      write("Start optimization",file=OptRecord,
-            append=FALSE)
+    write("Start optimization",file=OptRecord,
+          append=FALSE)
   }
   write("",file=OptRecord,append=TRUE)
   write(date(),file=OptRecord,append=TRUE)
@@ -153,7 +153,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     PAR_0 <- scan(file.path(File, paste0(exe, "_",Iteration-1,".par")),
                   comment.char="#", quiet=TRUE)
   }else{
-    STARTER$init_values_src = 0
+    STARTER$init_values_src <- 0
   }
   SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE, verbose=FALSE)
 
@@ -168,17 +168,17 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
       Temp <- as.vector(unlist(sapply(Temp, FUN=function(Char){strsplit(Char,"\t")[[1]]})))
       Temp <- Temp[which(Temp!="")]
       if(length(grep("#",Temp))>=1){
-        Temp = Temp[-(grep("#",Temp):length(Temp))]
+        Temp <- Temp[-(grep("#",Temp):length(Temp))]
       }
       Temp <- as.numeric(Temp)
       #print(Temp)
       #print(CTL_linenum_Type[ParI])
       if(is.na(CTL_linenum_Type[ParI])){
         if(length(Temp)==7){
-          CTL_linenum_Type[ParI] = "Short_Param"
+          CTL_linenum_Type[ParI] <- "Short_Param"
         }
         if(length(Temp)==14){
-          CTL_linenum_Type[ParI] = "Long_Penalty"
+          CTL_linenum_Type[ParI] <- "Long_Penalty"
         }
       }
       if(CTL_linenum_Type[ParI] %in% c("Short_Param","Long_Param")){
@@ -186,7 +186,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
         Temp[7] <- -1 * abs(Temp[7])
         # Modify values of PAR file for short-line values
         if( "PAR_0" %in% ls() ){
-          PAR_0[PAR_num_Vec[ParI]] = SD_Group_Vec[ParI]
+          PAR_0[PAR_num_Vec[ParI]] <- SD_Group_Vec[ParI]
         }
         #if(ParI==2){
         #  assign("Temp", value=Temp, envir=.GlobalEnv)
@@ -198,8 +198,8 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
       }
       CTL[CTL_linenum_List[[ParI]][CtlLineI]] <- paste(Temp, collapse=" ")
       #if(ParI==2){
-        #assign("Temp", value=Temp, envir=.GlobalEnv)
-        #stop()
+      #assign("Temp", value=Temp, envir=.GlobalEnv)
+      #stop()
       #}
     }
   }
@@ -208,7 +208,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   # Write CTL
   writeLines(CTL, file.path(File,STARTER$ctlfile))
   if( "PAR_0" %in% ls() ){
-      write(PAR_0, file=ParFile, ncolumns=10)
+    write(PAR_0, file=ParFile, ncolumns=10)
   }
 
   # Run SS
@@ -324,12 +324,12 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     }
     command <- paste0(exe, " -maxfn 0 -cbs 500000000 -gbs 500000000")
     if(OS!="Windows"){
-        command <- paste0("./", command)
+      command <- paste0("./", command)
     }
     if(OS=="Windows" & !systemcmd){
-        shell(cmd=command,intern=Intern)
+      shell(cmd=command,intern=Intern)
     }else{
-        system(command,intern=Intern)
+      system(command,intern=Intern)
     }
     Sys.sleep(1)
 
@@ -364,7 +364,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   # Check for STD
   Converged <- FALSE
   if( stdfile%in%list.files(File) & file.info(file.path(File, stdfile))$size>0 ){
-    Converged=TRUE
+    Converged <- TRUE
   }
 
   # If STD exists, then approximate marginal likelihood
@@ -389,9 +389,9 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     STD <- scan(file.path(File, paste0(exe, "_",Iteration,".std")),
                 what="character", quiet=TRUE)
     STD <- data.frame(matrix(STD[-c(1:(which(STD=="1")[1]-1))], ncol=4, byrow=TRUE),
-        stringsAsFactors=FALSE)
+                      stringsAsFactors=FALSE)
     PAR <- scan(file.path(File, paste0(exe, "_",Iteration,".par")),
-                          comment.char="#", quiet=TRUE)
+                comment.char="#", quiet=TRUE)
     DIAG <- read.admbFit(file.path(File, paste0(exe, "_",Iteration)))
     HESS <- getADMBHessian(File=File, FileName=paste0("admodel_",Iteration,".hes"))
     # Calculate Hessian
@@ -434,7 +434,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     }
     BiasAdjStart <- pmatch("SPAWN_RECRUIT",BiasAdj) + shift
     BiasAdjTable <- read.table(file.path(File, paste0("Report_",Iteration,".sso")),
-        header=TRUE, nrows=2, skip=BiasAdjStart, comment.char="#")
+                               header=TRUE, nrows=2, skip=BiasAdjStart, comment.char="#")
     SigmaR <- as.numeric(strsplit(BiasAdj[BiasAdjStart-4]," ")[[1]][1])
     # Deal with eras
     RecDevPen <- matrix(NA,nrow=3,ncol=2,dimnames=list(c("Early","Main","Forecast"),

@@ -229,19 +229,23 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
       y <- yr[i]
 
       if(y<=last_no){
-        biasadj[i]=0.;
+        biasadj[i] <- 0
       }else{
         if(y<=first_full){
-          biasadj[i] <- max_biasadj*(y-last_no)/(first_full-last_no);
+          biasadj[i] <- max_biasadj*(y-last_no)/(first_full-last_no)
         }else{
           if(y<=last_full){
-            biasadj[i]=max_biasadj;
+            biasadj[i] <- max_biasadj
           }else{
             if(y<=first_no){
-              biasadj[i]=max_biasadj*(1 - (y-last_full)/(first_no-last_full));
+              biasadj[i] <- max_biasadj*(1 - (y-last_full)/(first_no-last_full))
             }else{
-              biasadj[i]=0.;
-            }}}}}
+              biasadj[i] <- 0
+            }
+          }
+        }
+      }
+    }
     return(data.frame(yr=yr,biasadj=biasadj))
   }
 

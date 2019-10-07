@@ -3,7 +3,7 @@ library(shiny)
 logistic1.fn <- function(len,a,b) {
   neglog19 <- -1*log(19)
   denom <- 1.+exp(neglog19*(len-a)/b)
-  sel = 1/denom
+  sel <- 1/denom
   return(sel)
 }
 

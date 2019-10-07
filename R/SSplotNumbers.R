@@ -69,7 +69,7 @@ SSplotNumbers <-
                "Beginning of year",             #16
                "Middle of year",                #17
                "expected numbers at length",   #18
-               # 19 and 20 below are out of order, runumbering others would be tedious
+               # 19 below is out of order, runumbering others would be tedious
                "Fraction female in numbers at length"), #19
            pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
            cex.main=1,
