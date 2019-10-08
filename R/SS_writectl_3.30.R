@@ -531,16 +531,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
             "implemented as of SS version 3.30.13")
   }
   # Var Adj ----
-  # TODO: will need to add to the sS_readctl_3.30 fun so it can read 3.30 var
-  # adjustment section correctly if using 
   writeComment("# Input variance adjustments factors: ")
   if(ctllist$DoVar_adjust == 0) {
     ctllist$tmp_var <- c(-9999, 1, 0)
     writeComment("#_Factor Fleet Value")
     wl.vector("tmp_var",comment = "# terminator")
   } else if(ctllist$DoVar_adjust == 1) {
-    stop("Variance adjustments for 3.30 are not read correctly by", 
-         "SS_writectl_3.30")
+    printdf("Variance_adjustment_list", terminate = TRUE)
   }
   writeComment("#")
   # Lambdas ----

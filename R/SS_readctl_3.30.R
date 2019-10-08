@@ -1171,17 +1171,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_df(ctllist,name="TG_Report_fleet_decay",nrow=Nfleet,14,
               col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
-  }else{
-    #_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters
-    #
   }
-
   
-  # ctllist<-add_elem(ctllist,"DoVar_adjust")  #_Variance_adjustments_to_input_values
-  ctllist$DoVar_adjust<-0
-  ctllist<-add_df(ctllist,name="Variance_adjustment_list",nrow=NULL,ncol=3,
+  # Var adj ----
+  ctllist$DoVar_adjust <- 0
+  # Create 3.30 variance adjustments and reset DoVar_adjust if true.
+  ctllist <- add_df(ctllist,name="Variance_adjustment_list",nrow=NULL,ncol=3,
                     col.names=c("Factor","Fleet","Value"))
-
+  if(!is.null(ctllist$Variance_adjustment_list)) ctllist$DoVar_adjust <- 1
   # create version 3.24 variance adjustments
   ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleet+Nsurveys)))
   ctllist$Variance_adjustments[4:6,]<-1
@@ -1192,13 +1189,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                                         "mult_by_lencomp_N",
                                                         "mult_by_agecomp_N",
                                                         "mult_by_size-at-age_N")))
-  if(!is.null(ctllist$Variance_adjustment_list)) { #check if is null first
+  if(!is.null(ctllist$Variance_adjustment_list)) {
     if(nrow(ctllist$Variance_adjustment_list) > 0) {
-    for(j in 1:nrow(ctllist$Variance_adjustment_list)){
-      ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
-        ctllist$Variance_adjustment_list[j,]$Value
-    }
-    ctllist$DoVar_adjust<-1
+      for(j in 1:nrow(ctllist$Variance_adjustment_list)){
+        ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
+          ctllist$Variance_adjustment_list[j,]$Value
+      }
     }
   }
   
