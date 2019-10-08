@@ -67,6 +67,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     use_datlist=FALSE,
     datlist=NULL
     ){
+  
+
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readctl_3.30\n")
@@ -94,6 +96,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       allnums <- c(allnums, nums)
     }
   }
+  
+  # internally used fun definitions ----
   # Function to add vector to ctllist
 
   add_vec<-function(ctllist,length,name,comments=NULL){
@@ -233,6 +237,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     invisible(parlab)
   }
 
+  # setup ----
   # set initial position in the vector of numeric values
   i <- 1
   # create empty list to store quantities
@@ -274,7 +279,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$N_CPUE_obs<-N_CPUE_obs
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
-  # specifications
+  # specifications ----
   ctllist$sourcefile <- file
   ctllist$type <- "Stock_Synthesis_control_file"
   ctllist$ReadVersion <- "3.30"
@@ -283,6 +288,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
   if(verbose) cat("SS_readctl_3.30 - read version = ",ctllist$ReadVersion,"\n")
   
+  # beginning of ctl ----
   # weight at age option
   ctllist<-add_elem(ctllist,"EmpiricalWAA")
 
@@ -310,7 +316,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
   
-  # recruitment timing and distribution
+  # recruitment timing and distribution ----
   ctllist<-add_elem(ctllist,"recr_dist_method")
   if(ctllist$recr_dist_method == "1") {
     warning("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
@@ -326,7 +332,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
       col.names=c("GP","seas","area","age"))
-
+  # movement ----
   if(ctllist$N_areas>1){
     ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
     if(ctllist$N_moveDef>0)
@@ -335,7 +341,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist<-add_df(ctllist,"moveDef",nrow=ctllist$N_moveDef,ncol=6,col.names=c("seas", "morph", "source", "dest", "age", "age2"))
     }
   }
-
+  # block setup ----
   ctllist<-add_elem(ctllist,"N_Block_Designs") #_Nblock_Patterns
   if(ctllist$N_Block_Designs>0){
     ctllist<-add_vec(ctllist,name="blocks_per_pattern",length=ctllist$N_Block_Designs)
@@ -344,10 +350,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_list(ctllist,name="Block_Design",length=ctllist$N_Block_Designs,
       length_each=ctllist$blocks_per_pattern*2)
   }
-  
+  # timevary ctls ----
   ctllist<-add_elem(ctllist,"time_vary_adjust_method") 
   ctllist<-add_vec(ctllist,name="time_vary_auto_generation",length=5) 
-
+  # MG setup ----
+  # M setup ----
   ctllist<-add_elem(ctllist,"natM_type") #_natM_type
   if(ctllist$natM_type==0){
     N_natMparms<-1
@@ -371,6 +378,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
   if(verbose) message("N_natMparms =",N_natMparms,"\n")
+  # growth setup ----
   ctllist<-add_elem(ctllist,name="GrowthModel")
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
@@ -402,7 +410,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
   
-    #_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)
+  # maturity and MG options setup ----
   ctllist<-add_elem(ctllist,name="maturity_option")
     #_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity by GP; 4=read age-fecundity by GP; 5=read fec and wt from wtatage.ss; 6=read length-maturity by GP
   if(ctllist$maturity_option %in% c(3,4)){
@@ -724,15 +732,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
   N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+3
   
-  if(is.na(ctllist$SR_function))
-  {
-    cat("SR_function is NA");return(ctllist)
+  if(is.na(ctllist$SR_function)) {
+    stop("SR_function is NA, which is not valid.")
   }
   
   ctllist<-add_elem(ctllist,"Use_steep_init_equi")   # 0/1 to use steepness in initial equ recruitment calculation
   ctllist<-add_elem(ctllist,"Sigma_R_FofCurvature")   #  future feature:  0/1 to make realized sigmaR a function of SR curvature
   
-  
+  # SR parms ----
   SRparmsLabels<-if(ctllist$SR_function ==3){
     # B-H SRR
     c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
@@ -809,17 +816,15 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_elem(ctllist,"N_Read_recdevs") #_read_recdevs
     #_end of advanced SR options
 #
-    if(ctllist$period_of_cycles_in_recr>0){
+    if(ctllist$period_of_cycles_in_recr > 0) {
       stop("Reading full parameters for recr cycles is not yet coded")
     }
     if(ctllist$N_Read_recdevs>0){
-  #    stop("Reading specific recdev is not coded in this R code")
       ctllist<-add_df(ctllist,"recdev_input",ncol=2,nrow=ctllist$N_Read_recdevs,col.names=c("Year","recdev"))
     }
   }
   
-  
-  # F Part
+  # F setup ----
   ctllist<-add_elem(ctllist,"F_ballpark") # F ballpark for annual F (=Z-M) for specified year
   ctllist<-add_elem(ctllist,"F_ballpark_year") # F ballpark year (neg value to disable)
   ctllist<-add_elem(ctllist,"F_Method") # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
@@ -860,7 +865,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     
   }
   
-  #_Q_setup ----
+  # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
   # create 3.24 compatible Q_setup ----
@@ -1198,6 +1203,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
   }
   
+  # Lambdas ----
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
   ctllist<-add_elem(ctllist,"sd_offset")  #_sd_offset
 
@@ -1254,6 +1260,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
   }
   
+  # more sd reporting ----
   # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
@@ -1277,10 +1284,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   
   if(ctllist$'.dat'[ctllist$'.i']==999){
-    if(verbose) cat("read of control file complete (final value = 999)\n")
+    if(verbose) message("read of control file complete (final value = 999)\n")
     ctllist$eof <- TRUE
   }else{
-    cat("Error: final value is", ctllist$'.dat'[ctllist$'.i']," but should be 999\n")
+    warning("Error: final value is", ctllist$'.dat'[ctllist$'.i'], " but ",
+            "should be 999\n")
     ctllist$eof <- FALSE
   }
   ctllist$'.dat'<-NULL
