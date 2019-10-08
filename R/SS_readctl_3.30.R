@@ -815,9 +815,17 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_elem(ctllist,"max_rec_dev") #max rec_dev
     ctllist<-add_elem(ctllist,"N_Read_recdevs") #_read_recdevs
     #_end of advanced SR options
-#
     if(ctllist$period_of_cycles_in_recr > 0) {
-      stop("Reading full parameters for recr cycles is not yet coded")
+      ctllist <- add_df(ctllist, 
+                        name = "recr_cycle_pars", 
+                        nrow = ctllist$period_of_cycles_in_recr,
+                        ncol = 14,
+                        col.names = c("LO", "HI", "INIT", "PRIOR","SD", 
+                                      "PR_type", "PHASE", "env_var","use_dev", 
+                                      "dev_minyr", "dev_maxyr", "dev_PH", 
+                                      "Block", "Block_Fxn"),
+                        comments = paste0("Recr_period_", 
+                                          1:ctllist$period_of_cycles_in_recr))
     }
     if(ctllist$N_Read_recdevs>0){
       ctllist<-add_df(ctllist,"recdev_input",ncol=2,nrow=ctllist$N_Read_recdevs,col.names=c("Year","recdev"))

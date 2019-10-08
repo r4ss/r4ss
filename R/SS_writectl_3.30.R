@@ -395,9 +395,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     wl("N_Read_recdevs", comment = "#_read_recdevs")
     writeComment("#_end of advanced SR options")
     
-    #TODO: implement recruitment cycles
     if(ctllist$period_of_cycles_in_recr > 0) {
-      stop("Reading full parameters for recr cycles is not yet coded")
+      printdf("recr_cycle_pars")
     } else {
       writeComment("#_placeholder for full parameter lines for recruitment cycles")
     }
