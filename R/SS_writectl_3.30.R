@@ -516,10 +516,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters","#"))
   } else if(ctllist$TG_custom == 1) {
     printdf("TG_Loss_init")
-    printdf("TG_Loss_chronic")
-    printdf("TG_overdispersion")
-    printdf("TG_Report_fleet")
-    printdf("TG_Report_fleet_decay")
+    printdf("TG_Loss_chronic", header = FALSE)
+    printdf("TG_overdispersion", header = FALSE)
+    printdf("TG_Report_fleet", header = FALSE)
+    printdf("TG_Report_fleet_decay", header = FALSE)
   } else {
     stop("ctllist$TG_custom has value ", ctllist$TG_custom, " but can only",
          "have value 0 or 1.")

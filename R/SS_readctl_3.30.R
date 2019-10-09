@@ -236,6 +236,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     invisible(parlab)
   }
+  # internally used commmon values ----
+  lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
+                        "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_PH", 
+                        "Block", "Block_Fxn")
+  srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", "PHASE")
 
   # setup ----
   # set initial position in the vector of numeric values
@@ -274,7 +279,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$Do_AgeKey <- ifelse(
         any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2, 1] < 0), 1, 0)
     }
-    ctllist$N_tag_groups<-N_tag_groups<-datlist$N_tag_groups
+    ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
     N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
     ctllist$N_CPUE_obs<-N_CPUE_obs
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
@@ -1144,46 +1149,56 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if (ctllist$Use_2D_AR1_selectivity == 1) {
     stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
   }
-  
-# Tag loss and Tag reporting parameters go next
-  ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist
-  if(ctllist$TG_custom){
-    ##  Following parameters are to be read
-    ##  Fro each SS's tag release group
-    ##  . one initial Tag loss parameter
-    ##  . one continuos Tag loss parameter
-    ##  . NB over-dispersion paramater
-    ##  For each fleet
-    ##  . one tag reporting rate paramater
-    ##  . one tag reporting rate decay paramater
-    ##
-    ##  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
-    ##
-    # Initial tag loss
-    ctllist<-add_df(ctllist,name="TG_Loss_init",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
-    # continuous tag loss
-    ctllist<-add_df(ctllist,name="TG_Loss_chronic",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
-                           comments=paste0("#_TG_Loss_chronic_",1:N_tag_groups))
 
-    # NB over-dispersion
-    ctllist<-add_df(ctllist,name="TG_overdispersion",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
-              comments=paste0("#_TG_overdispersion_",1:N_tag_groups))
-
-    # TG_Report_fleet
-    ctllist<-add_df(ctllist,name="TG_Report_fleet",nrow=Nfleet,14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
-
-    # TG_Report_fleet_decay
-    ctllist<-add_df(ctllist,name="TG_Report_fleet_decay",nrow=Nfleet,14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
+# tagging ----  
+  # TG_custom:  0=no read; 1=read if tags exist
+  ctllist <- add_elem(ctllist, name = "TG_custom")
+  if(ctllist$TG_custom) {
+    #  The Following parameters are to be read
+    #  For each SS tag release group
+    # . one initial Tag loss parameter
+    # . one continuos Tag loss parameter
+    # . NB over-dispersion paramater
+    # For each fleet
+    # . one tag reporting rate paramater
+    # . one tag reporting rate decay paramater
+    #
+    #  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
+    ctllist <- add_df(ctllist,
+                      name = "TG_Loss_init",
+                      nrow = ctllist$N_tag_groups,
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = 
+                        paste0("_TG_Loss_init_", 1:ctllist$N_tag_groups))
+    ctllist <- add_df(ctllist, 
+                      name = "TG_Loss_chronic",
+                      nrow = ctllist$N_tag_groups,
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = 
+                        paste0("#_TG_Loss_chronic_", 1:ctllist$N_tag_groups))
+    ctllist <- add_df(ctllist,
+                      name = "TG_overdispersion", 
+                      nrow = ctllist$N_tag_groups,
+                      ncol = 14, 
+                      col.names = lng_par_colnames,
+                      comments = 
+                        paste0("#_TG_overdispersion_", 1:ctllist$N_tag_groups))
+    ctllist <- add_df(ctllist, 
+                      name = "TG_Report_fleet", 
+                      nrow = ctllist$Nfleet, 
+                      ncol = 14, 
+                      col.names = lng_par_colnames,
+                      comments = 
+                        paste0("#_TG_report_fleet_par_",1:ctllist$Nfleet))
+    ctllist <- add_df(ctllist,
+                      name = "TG_Report_fleet_decay",
+                      nrow = ctllist$Nfleet,
+                      ncol = 14,
+                      col.names=lng_par_colnames,
+                      comments = 
+                       paste0("#_TG_report_decay_par_", 1:ctllist$Nfleet))
   }
   
   # Var adj ----
