@@ -694,10 +694,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   N_MGparm<-N_MGparm+ctllist$N_GP
   
   ctllist<-add_df(ctllist,name="MG_parms",nrow=N_MGparm,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "SD", "PR_type", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_PH", "Block", "Block_Fxn"),
+                    col.names=lng_par_colnames,
                                 comments=MGparmLabel)
   
   ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
@@ -715,8 +712,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       name = "MG_parms_tv", 
                       nrow = length(tmp_parlab), 
                       ncol = 7, 
-                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
-                                    "PHASE"),
+                      col.names = srt_par_colnames,
                       comments = tmp_parlab)
   }
 
@@ -726,7 +722,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   N_seas_effects<-sum(ctllist$MGparm_seas_effects)
   if(N_seas_effects>0){
     ctllist<-add_df(ctllist,"MG_parms_seas",nrow=N_seas_effects,ncol=7,
-                    col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type",  "PHASE"))
+                    col.names=srt_par_colnames)
     PType[1:N_seas_effects]<-16
     ctllist$MG_parms_seas<-cbind(ctllist$MG_parms_seas,PType)
     
@@ -772,10 +768,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
   PType<-array()
   ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=14,
-            col.names=c("LO", "HI", "INIT", "PRIOR",
-                        "SD", "PR_type", "PHASE",
-                        "env_var","use_dev", "dev_minyr",
-                        "dev_maxyr", "dev_PH", "Block", "Block_Fxn"),comments=SRparmsLabels)
+            col.names=lng_par_colnames,comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
   ctllist$SRparm<-cbind(ctllist$SRparm,PType)
   
@@ -793,8 +786,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       name = "SR_parms_tv", 
                       nrow = length(tmp_parlab), 
                       ncol = 7, 
-                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
-                                    "PHASE"),
+                      col.names = srt_par_colnames,
                       comments = tmp_parlab)
     ctllist$SR_parms_tv$PType <- 17
   }
@@ -825,10 +817,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         name = "recr_cycle_pars", 
                         nrow = ctllist$period_of_cycles_in_recr,
                         ncol = 14,
-                        col.names = c("LO", "HI", "INIT", "PRIOR","SD", 
-                                      "PR_type", "PHASE", "env_var","use_dev", 
-                                      "dev_minyr", "dev_maxyr", "dev_PH", 
-                                      "Block", "Block_Fxn"),
+                        col.names = lng_par_colnames,
                         comments = paste0("Recr_period_", 
                                           1:ctllist$period_of_cycles_in_recr))
     }
@@ -871,7 +860,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     {
       PType<-array()
       ctllist<-add_df(ctllist,name="init_F",nrow=k,ncol=7,
-        col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE"),comments=comments_initF)
+        col.names=srt_par_colnames,comments=comments_initF)
       PType[1:k]<-18
       ctllist$init_F<-cbind(ctllist$init_F,PType)
     }
@@ -920,10 +909,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 
   if(N_Q_parms>0){
     ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "SD", "PR_type", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_PH", "Block", "Block_Fxn"),
+                    col.names=lng_par_colnames,
                 comments=unlist(comments_Q_type))
     # q timevarying parlines----
     # time block, environmental link, and parm devs parameters
@@ -940,8 +926,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         name = "Q_parms_tv", 
                         nrow = length(tmp_parlab), 
                         ncol = 7, 
-                        col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
-                                      "PHASE"),
+                        col.names = srt_par_colnames,
                         comments = tmp_parlab)
       #Need Ptype?
     }
@@ -1097,16 +1082,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 # Size selex
   if(sum(size_selex_Nparms)>0){
     ctllist<-add_df(ctllist,name="size_selex_parms",nrow=sum(size_selex_Nparms),ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_PH",
-                           "Block", "Block_Fxn"),comments=unlist(size_selex_label))
+              col.names=lng_par_colnames,comments=unlist(size_selex_label))
   }
 # Age selex
   if(sum(age_selex_Nparms)>0){
     ctllist<-add_df(ctllist,name="age_selex_parms",nrow=sum(age_selex_Nparms),ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                           "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_PH",
-                           "Block", "Block_Fxn"),comments=unlist(age_selex_label))
+              col.names=lng_par_colnames,comments=unlist(age_selex_label))
   }
   
   # sel timevarying parlines----
@@ -1127,8 +1108,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       name = "size_selex_parms_tv", 
                       nrow = length(tmp_parlab), 
                       ncol = 7, 
-                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
-                                    "PHASE"),
+                      col.names = srt_par_colnames,
                       comments = tmp_parlab)
   }
   if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
@@ -1138,8 +1118,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       name = "age_selex_parms_tv", 
                       nrow = length(tmp_parlab), 
                       ncol = 7, 
-                      col.names = c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", 
-                                    "PHASE"),
+                      col.names = srt_par_colnames,
                       comments = tmp_parlab)
   }
 
