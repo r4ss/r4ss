@@ -455,7 +455,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   printdf("size_selex_types")
   writeComment("#")
   # Age selectivity setup ----
-  writeComment("#_age_selex_types")
+  writeComment("#_age_selex_patterns")
   printdf("age_selex_types")
   writeComment("#")
   #selectivity parameters ------
@@ -467,7 +467,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   }
   writeComment("AgeSelex")
   if(!is.null(ctllist$age_selex_parms)) {
-    printdf("age_selex_parms")
+    printdf("age_selex_parms", header = FALSE)
   } else {
     writeComment("#_No age_selex_parm")
   }

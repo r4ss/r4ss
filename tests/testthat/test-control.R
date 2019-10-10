@@ -217,3 +217,26 @@ test_that("SS_readctl works for 3.30 files with timevarying size sel parameters"
 
 #TODO: develop a test for time varying age selectivity parameters.
 
+# test for selectivity read/write
+test_that("SS_readctl works for 3.30 files with diff sel patterns", {
+  con_folder <- file.path(example_path, "simple_variations", "selectivity")
+  con_files <- list.files(con_folder)
+  dat <- SS_readdat(file.path(sim_3.30.13, "simple_data.ss"), 
+                            verbose = FALSE)
+  exists <- suppressWarnings(
+              lapply(con_files, 
+              function(x) {
+                ctl <- SS_readctl(file.path(con_folder, x), 
+                                  verbose = FALSE, 
+                                  use_datlist = TRUE,
+                                  datlist = dat)
+          SS_writectl(ctl, file.path(tmp_path, x))
+          exists <- file.exists(file.path(tmp_path, x))
+        }
+  ))
+  
+  lapply(exists, function(x) expect_true(x))
+  lapply(con_files, function(x) unlink(file.path(tmp_path, x)))
+})
+
+

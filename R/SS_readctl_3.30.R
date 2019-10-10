@@ -933,161 +933,209 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
 
 # selecitivty -----  
-# size_selex_types
-  # comments_selex_types<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
-  comments_selex_types<-fleetnames
-  ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
-              col.names=c("Pattern","Discard","Male","Special"),comments=comments_selex_types)
-  size_selex_pattern_vec<-as.vector(ctllist$size_selex_types[,1])
-#
-#_age_selex_types
-#_Pattern ___ Male Special
-
-  ctllist<-add_df(ctllist,name="age_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
-              col.names=c("Pattern","Discard","Male","Special"),comments=comments_selex_types)
-  age_selex_pattern_vec<-as.vector(ctllist$age_selex_types[,1])
-
-
-  #                 0 1 2 3 4 5 6 7 8 9 10
-  selex_patterns<-c(0,2,8,6,0,2,2,8,8,6, 0,
-  #                11 12 13 14      15 16 17      18 19 20
-                    2, 2, 8,Nages+1, 0, 2,Nages+1, 8, 6, 6,
-  #                21 22 23 24 25 26 27 28 29 30
-                   NA, 4, 6, 6, 3, 3, 3,NA,NA, 0,
-  #                31 32 33 34
-                    0, 0, 0, 0)
-# selectivity parlines -----
-  size_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
-  size_selex_label<-list()
-  for(j in 1:(Nfleet+Nsurveys)){
-       #    size_selex_pattern_vec
-    size_selex_Nparms[j]<-selex_patterns[size_selex_pattern_vec[j]+1]
+  # size setup
+  #TODO: make sure that this will work when special fleet types are used 
+  #(e.g., units 30 fleet)
+  ctllist <- add_df(ctllist, 
+                    name = "size_selex_types",
+                    nrow = Nfleet+Nsurveys,
+                    ncol = 4,
+                    col.names=c("Pattern", "Discard", "Male", "Special"),
+                    comments = fleetnames)
+  # age setup
+  ctllist<-add_df(ctllist,
+                  name = "age_selex_types", 
+                  nrow = Nfleet + Nsurveys,
+                  ncol = 4, 
+                  col.names = c("Pattern", "Discard", "Male", "Special"),
+                  comments = fleetnames)
+  age_selex_pattern_vec <- ctllist$age_selex_types[, "Pattern"]
+  # selectivity parlines -----
+  # This contains the number of params for each pattern (the name)
+  selex_patterns <- c("0" = 0,"1" = 2,"2" = 8,"3" = 6,"4" = 0, "5" = 2,
+                        "6" = 2, "7" = 8, "8" = 8, "9"= 6, "10" = 0, "11" = 2,
+                        "12" = 2, "13" = 8, " 14" = Nages + 1, "15" = 0, 
+                        "16" = 2, "17" = Nages + 1, "18" = 8, "19" = 6,
+                        "20" = 6, "21" = 2, "22" = 4, "23" = 6, "24" =  6,
+                        "25" = 3, "26" = 3, "27" = 3, "28" = NA, "29" = NA, 
+                        "30" = 0, "31" = 0, "32" = 0, "33" = 0, "34" = 0,
+                        "35" = 0, "36" = NA, "37" = NA, "38" = NA, "39" = NA,
+                        "40" = NA, "41" = 2 + Nages + 1, "42" = 5, "43" = 4,
+                        "44" = 4 + Nages, "45" = 4 + Nages)
+  # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
+  # 5+2*N_nodes, so the npars listed is not exactly correct. This will be
+  # addressed in special cases below.NAs are unused codes.
+  size_selex_Nparms <- vector(mode = "numeric", length = Nfleet+Nsurveys)
+  size_selex_label<- vector("list", length(size_selex_Nparms)) # do this to initialize size
+  # loop through fishing fleets and surveys to assign names
+  for(j in 1:(Nfleet+Nsurveys)) {
+    size_selex_Nparms[j] <- 
+      selex_patterns[as.character(ctllist$size_selex_types[j, "Pattern"])]
+    if(is.na(size_selex_Nparms[j])) {
+      stop("Pattern ", as.character(ctllist$size_selex_types[j, "Pattern"]),
+           "was used for the size selectivity pattern fleet or survey, but it ",
+           " is not valid.")
+    }
     ## spline needs special treatment
-    if(size_selex_pattern_vec[j]==27){
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]*2
- #     size_selex_label[j]<-paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
-      size_selex_label[[j]]<-c(paste0("SizeSpline_Code_",fleetnames[j],"_",j),
-                             paste0("SizeSpline_GradLo_",fleetnames[j],"_",j),
-                             paste0("SizeSpline_GradHi_",fleetnames[j],"_",j),
-                             paste0("SizeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
-                             paste0("SizeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
-    }else{
-      size_selex_label[[j]]<-if(size_selex_Nparms[j]>0){
-        paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
-      }else{
-        NULL
+    if(ctllist$size_selex_types[j, "Pattern"] == 27) {
+      # correct the number of parameters.
+      size_selex_Nparms[j] <- 
+        size_selex_Nparms[j] + ctllist$size_selex_types[j, "Special"] * 2
+      # produce the labels
+      size_selex_label[[j]] <-
+        c(paste0("SizeSpline_Code_", fleetnames[j], "_", j),
+          paste0("SizeSpline_GradLo_", fleetnames[j], "_", j),
+          paste0("SizeSpline_GradHi_", fleetnames[j], "_", j),
+          paste0("SizeSpline_Knot_", 1:ctllist$size_selex_types[j, "Special"],
+                 "_", fleetnames[j], "_", j),
+          paste0("SizeSpline_Val_", 1:ctllist$size_selex_types[j, "Special"],
+                 "_", fleetnames[j], "_", j))
+    } else if(ctllist$size_selex_types[j, "Pattern"] == 42) {
+      size_selex_Nparms[j] <- 
+        size_selex_Nparms[j] + ctllist$size_selex_types[j, "Special"] * 2
+      # produce the labels
+      size_selex_label[[j]] <-
+        c(paste0("SizeSpline_ScaleAgeLo_", fleetnames[j], "_", j),
+          paste0("SizeSpline_ScaleAgeHi_", fleetnames[j], "_", j),
+          paste0("SizeSpline_Code_", fleetnames[j], "_", j),
+          paste0("SizeSpline_GradLo_", fleetnames[j], "_", j),
+          paste0("SizeSpline_GradHi_", fleetnames[j], "_", j),
+          paste0("SizeSpline_Knot_", 1:ctllist$size_selex_types[j, "Special"],
+                 "_", fleetnames[j], "_", j),
+          paste0("SizeSpline_Val_", 1:ctllist$size_selex_types[j, "Special"],
+                 "_", fleetnames[j], "_", j))
+    } else {
+      if(size_selex_Nparms[j] > 0) { 
+         size_selex_label[[j]] <- c(size_selex_label[[j]], 
+                                   paste0("SizeSel_",j,"P_",
+                                          1:size_selex_Nparms[j],"_",
+                                          fleetnames[j]))
       }
     }
-    
-    # do extra retention parameters
-    if(ctllist$size_selex_types[j,2]>0) # has discard type 1 or 2
-    {
-      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PRet_",1:4,"_",fleetnames[j]))
-      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PRet_",1:4,"_",fleetnames[j])
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+4
+    # do extra retention parameters (4 extra parameters)
+    # (Note: from here on, size_selex_Nparms does NOT get updated, so it will not
+    # accurately represent the total number of pars.)
+    if(ctllist$size_selex_types[j, "Discard"] %in% 1:2) {
+      size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                 paste0("SizeSel_",j,"PRet_",1:4,"_",
+                                          fleetnames[j]))
     }
-    if(ctllist$size_selex_types[j,2]==2) # has discard type 2
-    {
-      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PDis_",1:4,"_",fleetnames[j]))
-      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PDis_",1:4,"_",fleetnames[j])
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+4
+    if(ctllist$size_selex_types[j, "Discard"] == 2) { #add 4 discard mortality parameters
+      size_selex_label[[j]] <- c(size_selex_label[[j]], 
+                                 paste0("SizeSel_", j, "PDis_", 1:4, "_",
+                                  fleetnames[j]))
+    }
+    # note that for Discard = 3, no extra parameters are needed.
+    if(ctllist$size_selex_types[j, "Discard"] == 4) {
+      size_selex_label[[j]] <- c(size_selex_label[[j]], 
+                                 paste0("SizeSel_", j, "PDis_", 1:7, "_",
+                                        fleetnames[j]))
     }
     # do extra offset parameters
-    if(ctllist$size_selex_types[j,3]==1) # has value 1
-    {
-      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PMale_",1:4,"_",fleetnames[j]))
-      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PMale_",1:4,"_",fleetnames[j])
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+4
+    if(ctllist$size_selex_types[j, "Male"] == 1) {
+      size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                 paste0("SizeSel_",j,"PMale_",1:4,"_",
+                                        fleetnames[j]))
     }
-    if(ctllist$size_selex_types[j,3]==2) # has value 2
-    {
-      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PFemOff_",1:4,"_",fleetnames[j]))
-      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PFemOff_",1:4,"_",fleetnames[j])
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+4
+    if(ctllist$size_selex_types[j, "Male"] == 2) {
+      size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                 paste0("SizeSel_",j,"PFemOff_",1:4,"_",
+                                        fleetnames[j]))
     }
-    if(ctllist$size_selex_types[j,3]==3) # has value 3 - differs by version
-    {
-      if(nver<3.24)nparms<-3
-      else nparms<-5
-      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j]))
-      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j])
-      size_selex_Nparms[j]<-size_selex_Nparms[j]+nparms
+    if(ctllist$size_selex_types[j, "Male"] == 3) { # has value 3 - differs by version
+      nparms <- ifelse(nver < 3.24, 3, 5)
+      size_selex_label[[j]] <- c(size_selex_label[[j]], 
+                                 paste0("SizeSel_",j,"PMalOff_",1:nparms,"_",
+                                        fleetnames[j]))
     }
   }
-  age_selex_Nparms <- selex_patterns[age_selex_pattern_vec + 1]
-  age_selex_Nparms <- ifelse(
-    ctllist$age_selex_types[,1] == 17 & ctllist$age_selex_types[,4] > 0,
-    ctllist$age_selex_types[,4] + 1,
-    age_selex_Nparms
-  )
-  age_selex_label<-list()
-  for(j in 1:(Nfleet+Nsurveys)){
+  # age selectivity parlines
+  age_selex_Nparms <- selex_patterns[as.character(ctllist$age_selex_types[,"Pattern"])]
+  # pattern 17 is a special case of number of params, so account for here.
+  age_selex_Nparms <-ifelse(ctllist$age_selex_types[,"Pattern"] == 17 & 
+                            ctllist$age_selex_types[,"Special"] > 0, 
+                            ctllist$age_selex_types[,"Special"] + 1, 
+                            age_selex_Nparms)
+  age_selex_label <- vector("list", length = Nfleet + Nsurveys)
+  for(j in 1:(Nfleet+Nsurveys)) {
     ## spline needs special treatment
-    if(age_selex_pattern_vec[j]==27){
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
-    #  age_selec_label[j]<-paste0("AgeSel_",j,"P_",1:agee_selex_Nparms[j],"_",fleetnames[j])
-      age_selex_label[[j]]<-c(paste0("AgeeSpline_Code_",fleetnames[j],"_",j),
-                             paste0("AgeSpline_GradLo_",fleetnames[j],"_",j),
-                             paste0("AgeeSpline_GradHi_",fleetnames[j],"_",j),
-                             paste0("AgeeSpline_Knot_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j),
-                             paste0("AgeeSpline_Val_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j))
-    }else{
-      age_selex_label[[j]]<-if(age_selex_Nparms[j]>0){
-        paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
-      }else{
-        NULL
+    if(age_selex_pattern_vec[j] == 27) {
+      age_selex_Nparms[j]<- age_selex_Nparms[j]+ctllist$age_selex_types[j,"Special"]*2
+      age_selex_label[[j]]<- c(paste0("AgeSpline_Code_",fleetnames[j],"_",j),
+                               paste0("AgeSpline_GradLo_",fleetnames[j],"_",j),
+                               paste0("AgeSpline_GradHi_",fleetnames[j],"_",j),
+                               paste0("AgeSpline_Knot_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j),
+                               paste0("AgeSpline_Val_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j))
+    } else if(age_selex_pattern_vec[j] == 42) {
+      age_selex_Nparms[j] <- 
+        age_selex_Nparms[j] + ctllist$age_selex_types[j, "Special"] * 2
+      age_selex_label[[j]] <- 
+        c(paste0("AgeSpline_ScaleAgeLo_", fleetnames[j], "_", j),
+          paste0("AgeSpline_ScaleAgeHi_", fleetnames[j], "_", j),
+          paste0("AgeSpline_Code_", fleetnames[j], "_", j),
+          paste0("AgeSpline_GradLo_", fleetnames[j], "_", j),
+          paste0("AgeSpline_GradHi_", fleetnames[j], "_", j),
+          paste0("AgeSpline_Knot_", 1:ctllist$age_selex_types[j, "Special"],
+                 "_", fleetnames[j], "_", j),
+          paste0("AgeSpline_Val_", 1:ctllist$age_selex_types[j, "Special"], 
+                 "_", fleetnames[j], "_", j))
+    } else {
+      if(age_selex_Nparms[j] > 0) {
+        age_selex_label[[j]] <-
+          c(age_selex_label[[j]], 
+            paste0("AgeSel_", j, "P_", 1:age_selex_Nparms[j], "_", 
+                   fleetnames[j]))
       }
     }
-    
     # do extra retention parameters
-    if(ctllist$age_selex_types[j,2]>0) # has discard type 1 or 2
-    {
-      if(age_selex_Nparms[j]>0)age_selex_label[[j]]<-c(age_selex_label[[j]],paste0("AgeSel_",j,"PRet_",1:4,"_",fleetnames[j]))
-      else age_selex_label[[j]]<-paste0("AgeSel_",j,"PRet_",1:4,"_",fleetnames[j])
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+4
+    # (Note: from here on, age_selex_Nparms does NOT get updated, so it will not
+    # accurately represent the total number of pars.)
+    if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
+      age_selex_label[[j]] <- c(age_selex_label[[j]],
+        paste0("AgeSel_",j,"PRet_",1:4,"_", fleetnames[j]))
     }
-    if(ctllist$age_selex_types[j,2]==2) # has discard type 2
-    {
-      if(age_selex_Nparms[j]>0)age_selex_label[[j]]<-c(age_selex_label[[j]],paste0("AgeSel_",j,"PDis_",1:4,"_",fleetnames[j]))
-      else age_selex_label[[j]]<-paste0("AgeSel_",j,"PDis_",1:4,"_",fleetnames[j])
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+4
+    if(ctllist$age_selex_types[j,"Discard"] == 2) {# has discard type 2
+      age_selex_label[[j]] <- c(age_selex_label[[j]], 
+        paste0("AgeSel_",j,"PDis_",1:4,"_", fleetnames[j]))
     }
     # do extra offset parameters
-    if(ctllist$age_selex_types[j,3]==1) # has value 1
-    {
-      if(age_selex_Nparms[j]>0)age_selex_label[[j]]<-c(age_selex_label[[j]],paste0("AgeSel_",j,"PMale_",1:4,"_",fleetnames[j]))
-      else age_selex_label[[j]]<-paste0("AgeSel_",j,"PMale_",1:4,"_",fleetnames[j])
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+4
+    if(ctllist$age_selex_types[j,"Male"] == 1) {
+      age_selex_label[[j]] <- c(age_selex_label[[j]], 
+        paste0("AgeSel_",j,"PMale_",1:4,"_",fleetnames[j]))
     }
-    if(ctllist$age_selex_types[j,3]==2) # has value 2
-    {
-      if(age_selex_Nparms[j]>0)age_selex_label[[j]]<-c(age_selex_label[[j]],paste0("AgeSel_",j,"PFemOff_",1:4,"_",fleetnames[j]))
-      else age_selex_label[[j]]<-paste0("AgeSel_",j,"PFemOff_",1:4,"_",fleetnames[j])
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+4
+    if(ctllist$age_selex_types[j,"Male"] == 2) {
+      age_selex_label[[j]] <- c(age_selex_label[[j]],
+        paste0("AgeSel_",j,"PFemOff_",1:4,"_",fleetnames[j]))
     }
-    if(ctllist$age_selex_types[j,3]==3) # has value 3 - differs by version
-    {
-      if(nver<3.24)nparms<-3
-      else nparms<-5
-      if(age_selex_Nparms[j]>0)age_selex_label[[j]]<-c(age_selex_label[[j]],paste0("AgeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j]))
-      else age_selex_label[[j]]<-paste0("AgeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j])
-      age_selex_Nparms[j]<-age_selex_Nparms[j]+nparms
+    if(ctllist$age_selex_types[j,"Male"] == 3) {
+      nparms <- ifelse(nver<3.24, 3, 5)
+      age_selex_label[[j]] <- c(age_selex_label[[j]],
+        paste0("AgeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j]))
     }
-    
   }
-  if(verbose){cat("size_selex_Nparms\n");print(size_selex_Nparms)}
-  if(verbose){cat("age_selex_Nparms\n");print(age_selex_Nparms)}
+  if(verbose) {
+    cat("size_selex_Nparms\n")
+    print(unlist(lapply(size_selex_label, function(x) length(x))))
+    cat("age_selex_Nparms\n")
+    print(unlist(lapply(age_selex_label, function(x) length(x))))
+  }
 # Selex parameters
-#_LO HI INIT PRIOR SD PR_type PHASE env-var use_dev dev_minyr dev_maxyr dev_PH Block Block_Fxn
-# Size selex
-  if(sum(size_selex_Nparms)>0){
-    ctllist<-add_df(ctllist,name="size_selex_parms",nrow=sum(size_selex_Nparms),ncol=14,
-              col.names=lng_par_colnames,comments=unlist(size_selex_label))
+  if(sum(length(unlist(size_selex_label))) > 0) {
+    ctllist <- add_df(ctllist,
+                      name = "size_selex_parms",
+                      nrow = length(unlist(size_selex_label)),
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = unlist(size_selex_label))
   }
 # Age selex
-  if(sum(age_selex_Nparms)>0){
-    ctllist<-add_df(ctllist,name="age_selex_parms",nrow=sum(age_selex_Nparms),ncol=14,
-              col.names=lng_par_colnames,comments=unlist(age_selex_label))
+  if(sum(length(unlist(age_selex_label))) > 0) {
+    ctllist <- add_df(ctllist,
+                      name = "age_selex_parms",
+                      nrow = length(unlist(age_selex_label)),
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = unlist(age_selex_label))
   }
   
   # sel timevarying parlines----
