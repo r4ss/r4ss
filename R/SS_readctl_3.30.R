@@ -500,8 +500,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
   }else{
-    cat("Maturity option : ",ctllist$maturity_option," ")
-    stop("is not supported")
+    stop("Maturity option : ",ctllist$maturity_option," is not supported")
   }
   
   if(ctllist$Ngenders>1)
@@ -832,6 +831,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"F_Method") # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
   ctllist<-add_elem(ctllist,"maxF") # max F or harvest rate, depends on F_Method
   if(ctllist$F_Method==1){
+    #TODO: check if F setup works correctly
  #   stop("stop currently F_method:1 is not implemented")
   }else if(ctllist$F_Method==2){
  #   stop("stop currently F_method:2 is not implemented")
