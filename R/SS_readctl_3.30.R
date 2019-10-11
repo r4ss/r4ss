@@ -826,32 +826,34 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   
   # F setup ----
-  ctllist<-add_elem(ctllist,"F_ballpark") # F ballpark for annual F (=Z-M) for specified year
-  ctllist<-add_elem(ctllist,"F_ballpark_year") # F ballpark year (neg value to disable)
-  ctllist<-add_elem(ctllist,"F_Method") # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
-  ctllist<-add_elem(ctllist,"maxF") # max F or harvest rate, depends on F_Method
-  if(ctllist$F_Method==1){
-    #TODO: check if F setup works correctly
- #   stop("stop currently F_method:1 is not implemented")
-  }else if(ctllist$F_Method==2){
- #   stop("stop currently F_method:2 is not implemented")
-    ctllist<-add_vec(ctllist,"F_setup",length=3) # overall start F value; overall phase; N detailed inputs to read
-    ctllist<-add_df(ctllist,name="F_setup2",nrow=ctllist$F_setup[3],ncol=6,
-                    col.names=c("fleet", "yr", "seas", "Fvalue", "se", "phase"))
-  }else if(ctllist$F_Method==3){
-    ctllist<-add_elem(ctllist,"F_iter") # N iterations for tuning F in hybrid method (recommend 3 to 7)
+  ctllist<-add_elem(ctllist,"F_ballpark")
+  ctllist<-add_elem(ctllist,"F_ballpark_year")
+  ctllist<-add_elem(ctllist,"F_Method") 
+  ctllist<-add_elem(ctllist,"maxF")
+  # Additional inputs for F method 2 or 3 must be read. None for method 1.
+  if(ctllist$F_Method == 2) {
+    # overall start F value; overall phase; N detailed inputs to read
+    ctllist <- add_vec(ctllist, "F_setup", length = 3)
+    if(ctllist$F_setup[3] > 0) {
+      ctllist<-add_df(ctllist, name = "F_setup2", nrow = ctllist$F_setup[3],
+                      ncol = 6, 
+                      col.names = c("fleet", "yr", "seas", "Fvalue", "se",
+                                    "phase"))
+    }
+  }
+  if(ctllist$F_Method == 3) {
+    ctllist <- add_elem(ctllist,"F_iter")
   }
    
   #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch 
-  if(any(datlist$init_equil>0))
-  {  
-    comments_initF<-list()
+  if(any(datlist$init_equil > 0)) {  
+    comments_initF <- list()
     k<-0
     for(j in 1:Nfleet)
     {
       if(datlist$init_equil[j]>0)
       {
-        comments_initF<-c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
+        comments_initF <- c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
         k<-k+1
       }
     }

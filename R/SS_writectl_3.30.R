@@ -416,16 +416,14 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("F_Method", 
      comment = "F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)")
   wl("maxF", comment = "max F or harvest rate, depends on F_Method")
-  if(ctllist$F_Method == 1) {
-    #  Fmethod 1 does not need any additional information
-  } else if(ctllist$F_Method == 2) {
+ if(ctllist$F_Method == 2) {
     writeComment("overall start F value; overall phase; N detailed inputs to read")
     wl.vector("F_setup")
-    writeComment("fleet, yr, seas, Fvalue, se, phase")
     if(ctllist$F_setup[length(ctllist$F_setup)] > 0) {
       printdf("F_setup2")
     }
-  } else if(ctllist$F_Method == 3) {
+  }
+  if(ctllist$F_Method == 3) {
     wl("F_iter", 
        comment = "N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
