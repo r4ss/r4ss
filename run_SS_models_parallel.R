@@ -120,6 +120,7 @@ run_SS_models_parallel <- function(dirvec = NULL,
 #' @param model Executable name
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
+#' @param OS The operating system used. "Windows", "Mac", or "Linux".
 #' @param systemcmd Should R call SS using "system" function instead of "shell".
 #' This may be required when running R in Emacs. Default = FALSE.
 #' @param intern Show output in the R console or save to a file?
