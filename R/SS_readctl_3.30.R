@@ -37,6 +37,8 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified.
+#' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
+#' read for equilibrium catch. Defaults to 0.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. If list, should be a list produced from 
@@ -63,6 +65,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
     catch_mult_fleets = NULL,
+    N_rows_equil_catch = 0, 
     ##################################
     use_datlist=FALSE,
     datlist=NULL
@@ -844,29 +847,27 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$F_Method == 3) {
     ctllist <- add_elem(ctllist,"F_iter")
   }
-   
-  #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch 
-  if(any(datlist$init_equil > 0)) {  
-    comments_initF <- list()
-    k<-0
-    for(j in 1:Nfleet)
-    {
-      if(datlist$init_equil[j]>0)
-      {
-        comments_initF <- c(comments_initF,paste0("InitF_",j,"_",fleetnames[j]))
-        k<-k+1
-      }
+  #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch
+  if(use_datlist == FALSE & N_rows_equil_catch  > 0  ) {
+    #TODO: modeify code so there is an appraoch that does not require the datlist.{
+    stop("Cannot yet read in init_F (which should be done if ", 
+         "N_rows_equil_catch > 0) if use_datalist == F")
+  }
+  
+  if(any(datlist$catch[, "year"] == -999)) {
+    tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
+    if(any(tmp_equil[, "catch"] > 0)) {
+      tmp_equil <- tmp_equil[tmp_equil$catch > 0, ]
+      # reorder as ss expects.
+      tmp_equil_sort <- tmp_equil[order(tmp_equil$fleet, tmp_equil$seas), ]
+      comments_initF <- paste0("InitF_seas_", tmp_equil_sort$seas, 
+                                "_flt_", tmp_equil_sort$fleet, 
+                                fleetnames[tmp_equil_sort$fleet])
+      ctllist<-add_df(ctllist, name = "init_F", nrow = length(comments_initF), 
+                      ncol = 7, col.names=srt_par_colnames,
+                      comments = comments_initF)
+      ctllist$init_F$PType <- 18
     }
-    
-    if(k>0)
-    {
-      PType<-array()
-      ctllist<-add_df(ctllist,name="init_F",nrow=k,ncol=7,
-        col.names=srt_par_colnames,comments=comments_initF)
-      PType[1:k]<-18
-      ctllist$init_F<-cbind(ctllist$init_F,PType)
-    }
-    
   }
   
   # Q_setup ----

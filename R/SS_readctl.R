@@ -38,6 +38,8 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
+#' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
+#' read for equilibrium catch. Defaults to 0. Used only for version 3.30.
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
@@ -60,6 +62,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        N_tag_groups=NA,
                        N_CPUE_obs=NA,
                        catch_mult_fleets = NULL,
+                       N_rows_equil_catch = 0,
                        use_datlist=FALSE,
                        datlist=NULL,
                        ptype=TRUE){
@@ -143,6 +146,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
+                               N_rows_equil_catch = N_rows_equil_catch,
                                use_datlist  = use_datlist,
                                datlist      = datlist)
   }

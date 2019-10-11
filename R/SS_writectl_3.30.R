@@ -427,9 +427,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     wl("F_iter", 
        comment = "N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
-  
   writeComment(c("#", "#_initial_F_parms"))
-  printdf("init_F")
+  if(!is.null(ctllist$init_F)) {
+    printdf("init_F", cols_to_rm = 8)
+  }
   # Q setup ---- 
   writeComment("#_Q_setup for fleets with cpue or survey data")
   # There are extra commments with info here in control.ss_new, but exclude for now
