@@ -83,20 +83,20 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
   for(i in 1:length(dat)){
-    # split along blank spaces
-    mysplit <- strsplit(dat[i],split="[[:blank:]]+")[[1]]
-    mysplit <- mysplit[mysplit!=""]
-    # if final value is a number is followed immediately by a pound ("1#"),
-    # this needs to be split
-    nvals <- length(mysplit)
-    if(nvals>0) mysplit[nvals] <- strsplit(mysplit[nvals],"#")[[1]][1]
-    # convert to numeric
-    nums <- suppressWarnings(as.numeric(mysplit))
-    if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1
-    else maxcol <- length(nums)
-    if(maxcol > 0){
-      nums <- nums[1:maxcol]
-      allnums <- c(allnums, nums)
+    # First split between input and comments
+    mysplit <- strsplit(dat[i],split="#")[[1]]
+    if(!is.na(mysplit[1]))
+    {
+      # split along blank spaces
+      mysplit <- strsplit(mysplit[1],split="[[:blank:]]+")[[1]]
+      mysplit <- mysplit[mysplit!=""]
+      # convert to numeric
+      nums <- suppressWarnings(as.numeric(mysplit))
+      nums <- nums[!is.na(nums)]
+      # append new values to allnums vector
+      if(length(nums) > 0){
+        allnums <- c(allnums, nums)
+      }
     }
   }
   
