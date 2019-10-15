@@ -201,7 +201,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   
   # function to add get the names of short time varying parameter lines
-  # full_parms: a dataframe containing teh full parameter lines
+  # full_parms: a dataframe containing the full parameter lines
   # block_design: an object containing the block design for the control file. 
   get_tv_parlabs <- function(full_parms = ctllist$MG_parms, 
                              block_design = ctllist$Block_Design) {
@@ -308,21 +308,24 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$N_platoon>1){
     stop("More than 1 platoon is not supported yet")
 #    ctllist<-add_elem(ctllist,"N_platoon")
+    ctllist<-add_elem(ctllist,"sd_ratio")
     ctllist<-add_elem(ctllist,"submorphdist")
-  }else{
-    ctllist$sd_ratio<- 1.
-    ctllist$submorphdist<-1.
+    ctllist<-add_vec(ctllist,name="submorphdist",length=ctllist$N_platoon)
   }
-  if(ctllist$submorphdist[1]<0.){
-    if(ctllist$N_platoon==1){
-      ctllist$submorphdist<- 1.;
-    }else if (ctllist$N_platoon==3){
-      ctllist$submorphdist<-c(0.15,0.70,0.15)
-    }else if (ctllist$N_platoon==5){
-      ctllist$submorphdist<-c(0.031, 0.237, 0.464, 0.237, 0.031)
-    }
-  }
-  ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
+  # else{
+  #   ctllist$sd_ratio<- 1.
+  #   ctllist$submorphdist<-1.
+  # }
+  # if(ctllist$submorphdist[1]<0.){
+  #   if(ctllist$N_platoon==1){
+  #     ctllist$submorphdist<- 1.;
+  #   }else if (ctllist$N_platoon==3){
+  #     ctllist$submorphdist<-c(0.15,0.70,0.15)
+  #   }else if (ctllist$N_platoon==5){
+  #     ctllist$submorphdist<-c(0.031, 0.237, 0.464, 0.237, 0.031)
+  #   }
+  # }
+  # ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
   
   # recruitment timing and distribution ----
   ctllist<-add_elem(ctllist,"recr_dist_method")
