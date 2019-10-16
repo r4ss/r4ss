@@ -332,6 +332,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$recr_dist_method == "1") {
     warning("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
   }
+  if(ctllist$recr_dist_method == "4" && (ctllist$N_GP != 1 || ctllist$N_areas != 1)) {
+    stop("recr_dist_method 4 should only be used when GPxSettlementxArea=1. \n")
+  }
+  
   ctllist<-add_elem(ctllist,"recr_global_area")
   
   ctllist<-add_elem(ctllist,"recr_dist_read")
