@@ -6,7 +6,41 @@
 #'
 #'
 #' @param summaryoutput List created by \code{SSsummarize}
-#' @param subplots Vector of subplots to be created.
+#' @param subplots Vector of subplots to be created
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1  spawning biomass
+#'   \item 2  spawning biomass with uncertainty intervals
+#'   \item 3  biomass ratio (hopefully equal to fraction of unfished)
+#'   \item 4  biomass ratio with uncertainty
+#'   \item 5  SPR ratio
+#'   \item 6  SPR ratio with uncertainty
+#'   \item 7  F value
+#'   \item 8  F value with uncertainty
+#'   \item 9  recruits
+#'   \item 10  recruits with uncertainty
+#'   \item 11  recruit devs
+#'   \item 12  recruit devs with uncertainty
+#'   \item 13  index fits
+#'   \item 14  index fits on a log scale
+#'   \item 15  phase plot
+#'   \item 16  densities
+#'   \item 17  cumulative densities
+#' }
+#' Note that this represents a revision in the numbering for 7 and higher
+#' from the numbering used up to r4ss version 1.36.0 which was as follows:
+#' \itemize{
+#'   \item 18  F value with uncertainty
+#'   \item 7  recruits
+#'   \item 8  recruits with uncertainty
+#'   \item 9  recruit devs
+#'   \item 10  recruit devs with uncertainty
+#'   \item 11  index fits
+#'   \item 12  index fits on a log scale
+#'   \item 13  phase plot
+#'   \item 14  densities
+#'   \item 15  cumulative densities
+#' }
 #' @param plot Plot to active plot device?
 #' @param print Send plots to PNG files in directory specified by
 #' \code{plotdir}?
@@ -57,7 +91,7 @@
 #' the maximum ending year of the models
 #' @param xlim Optional x limits
 #' @param ylimAdj Multiplier for ylim parameter. Allows additional white space
-#' to fit legend if necessary. Default=1.
+#' to fit legend if necessary. Default=1.05.
 #' @param xaxs Choice of xaxs parameter (see ?par for more info)
 #' @param yaxs Choice of yaxs parameter (see ?par for more info)
 #' @param type Type parameter passed to points (default 'o' overplots points on
@@ -192,7 +226,7 @@ SSplotComparisons <-
            initpoint=0,
            tickEndYr=TRUE,
            shadeForecast=TRUE,
-           xlim="default", ylimAdj=1,
+           xlim="default", ylimAdj=1.05,
            xaxs="i", yaxs="i",
            type="o", uncertainty=TRUE, shadealpha=0.1,
            legend=TRUE, legendlabels="default", legendloc="topright",
@@ -1651,7 +1685,7 @@ SSplotComparisons <-
     }
   } # end plotDensities function
 
-  uncertaintyplots <- intersect(c(2,4,6,8,10,13),subplots)
+  uncertaintyplots <- intersect(c(2,4,6,8,10,12), subplots)
   if(!any(uncertainty) & length(uncertaintyplots)>0){
     # warn if uncertainty is off but uncertainty plots are requested
     cat("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","),"\n")
@@ -1728,65 +1762,76 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 18: F (harvest rate or fishing mortality, however defined)
-  if(18 %in% subplots){
+  # subplot 7: F (harvest rate or fishing mortality, however defined)
+  if(7 %in% subplots){
+    if(verbose) cat("subplot 7: F value\n")
+    if(plot) plotF(show_uncertainty=TRUE)
+    if(print){
+      pngfun("compare7_Fvalue.png")
+      plotF(show_uncertainty=TRUE)
+      dev.off()
+    }
+  }
+  
+  # subplot 8: F (harvest rate or fishing mortality, however defined)
+  if(8 %in% subplots){
     if(any(uncertainty)){
-      if(verbose) cat("subplot 18: F value with uncertainty\n")
+      if(verbose) cat("subplot 8: F value with uncertainty\n")
       if(plot) plotF(show_uncertainty=TRUE)
       if(print){
-        pngfun("compare18_Fvalue_uncertainty.png")
+        pngfun("compare8_Fvalue_uncertainty.png")
         plotF(show_uncertainty=TRUE)
         dev.off()
       }
     }
   }
   
-  # subplot 7: recruits
-  if(7 %in% subplots){
-    if(verbose) cat("subplot 7: recruits\n")
+  # subplot 9: recruits
+  if(9 %in% subplots){
+    if(verbose) cat("subplot 9: recruits\n")
     if(plot) plotRecruits(show_uncertainty=FALSE)
     if(print){
-      pngfun("compare7_recruits.png")
+      pngfun("compare9_recruits.png")
       plotRecruits(show_uncertainty=FALSE)
       dev.off()
     }
   }
 
-  # subplot 8: recruits with uncertainty
-  if(8 %in% subplots){
+  # subplot 10: recruits with uncertainty
+  if(10 %in% subplots){
     if(any(uncertainty)){
-      if(verbose) cat("subplot 8: recruits with uncertainty\n")
+      if(verbose) cat("subplot 10: recruits with uncertainty\n")
       if(plot) plotRecruits()
       if(print){
-        pngfun("compare8_recruits_uncertainty.png")
+        pngfun("compare10_recruits_uncertainty.png")
         plotRecruits()
         dev.off()
       }
     }
   }
 
-  # subplot 9: recruit devs
-  if(9 %in% subplots){
-    if(verbose) cat("subplot 9: recruit devs\n")
+  # subplot 11: recruit devs
+  if(11 %in% subplots){
+    if(verbose) cat("subplot 11: recruit devs\n")
     if(is.null(recdevs)){
       cat("No recdevs present in the model summary, skipping plot.\n")
     }else{
       if(plot) plotRecDevs(show_uncertainty=FALSE)
       if(print){
-        pngfun("compare9_recdevs.png")
+        pngfun("compare11_recdevs.png")
         plotRecDevs(show_uncertainty=FALSE)
         dev.off()
       }
     }
   }
 
-  # subplot 10: recruit devs with uncertainty
-  if(10 %in% subplots){
+  # subplot 12: recruit devs with uncertainty
+  if(12 %in% subplots){
     if(any(uncertainty)){
-      if(verbose) cat("subplot 10: recruit devs with uncertainty\n")
+      if(verbose) cat("subplot 12: recruit devs with uncertainty\n")
       if(plot) plotRecDevs()
       if(print){
-        pngfun("compare10_recdevs_uncertainty.png")
+        pngfun("compare12_recdevs_uncertainty.png")
         plotRecDevs()
         dev.off()
       }
@@ -1797,44 +1842,44 @@ SSplotComparisons <-
   val <- paste("_flt",unique(indexfleets),sep="")
   if(length(val)!=1) val <- NULL
 
-  # subplot 11: index fits
-  if(11 %in% subplots){
-    if(verbose) cat("subplot 11: index fits\n")
+  # subplot 13: index fits
+  if(13 %in% subplots){
+    if(verbose) cat("subplot 13: index fits\n")
     if(plot) plotIndices()
     if(print){
-      pngfun(paste("compare11_indices",val,".png",sep=""))
+      pngfun(paste("compare13_indices",val,".png",sep=""))
       plotIndices()
       dev.off()
     }
   }
 
-  # subplot 12: index fits on a log scale
-  if(12 %in% subplots){
-    if(verbose) cat("subplot 12: index fits on a log scale\n")
+  # subplot 14: index fits on a log scale
+  if(14 %in% subplots){
+    if(verbose) cat("subplot 14: index fits on a log scale\n")
     if(plot) plotIndices(log=TRUE)
     if(print){
-      pngfun(paste("compare12_indices_log",val,".png",sep=""))
+      pngfun(paste("compare14_indices_log",val,".png",sep=""))
       plotIndices(log=TRUE)
       dev.off()
     }
   }
 
   #### unfinished addition of phase plot comparisons
-  ## # subplot 13: phase plot
-  if(13 %in% subplots){
-    if(verbose) cat("subplot 13: phase plot\n")
+  ## # subplot 15: phase plot
+  if(15 %in% subplots){
+    if(verbose) cat("subplot 15: phase plot\n")
     if(plot) plotPhase()
     if(print){
-      pngfun("compare13_phase_plot.png")
+      pngfun("compare15_phase_plot.png")
       plotPhase()
       dev.off()
     }
   }
 
-  # subplot 14: densities
-  if(14 %in% subplots){
+  # subplot 16: densities
+  if(16 %in% subplots){
     if(any(uncertainty)){
-      if(verbose) cat("subplot 14: densities\n")
+      if(verbose) cat("subplot 16: densities\n")
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
       for(i in 1:length(densitynames)){
@@ -1868,7 +1913,7 @@ SSplotComparisons <-
             plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
           }
           if(print){
-            pngfun(paste("compare14_densities_",name,".png",sep=""))
+            pngfun(paste("compare16_densities_",name,".png",sep=""))
             plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
             dev.off()
           }
@@ -1877,12 +1922,12 @@ SSplotComparisons <-
     }
   }
 
-  # subplot 15: cumulative probability plots
+  # subplot 17: cumulative probability plots
   #  draws cumulative plots of the same parameters drawn in density plots
   #  uses some same objects and names as densityplots
-  if(15 %in% subplots){
+  if(17 %in% subplots){
     if(any(uncertainty)){
-      if(verbose) cat("subplot 15: cumulative probability\n")
+      if(verbose) cat("subplot 17: cumulative probability\n")
       # look for all parameters or derived quantities matching the input list of names
       expandednames <- NULL
       for(i in 1:length(densitynames)){
@@ -1920,7 +1965,7 @@ SSplotComparisons <-
             plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=TRUE)
           }
           if(print){
-            pngfun(paste("compare15_densities_",name,".png",sep=""))
+            pngfun(paste("compare17_densities_",name,".png",sep=""))
             plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=TRUE)
             dev.off()
           }
@@ -1931,23 +1976,23 @@ SSplotComparisons <-
 
 
   #### unfinished addition of growth comparisons
-  ## # subplot 16: growth, females
-  ## if(16 %in% subplots){
-  ##   if(verbose) cat("subplot 14: growth, females\n")
+  ## # subplot 19: growth, females
+  ## if(19 %in% subplots){
+  ##   if(verbose) cat("subplot 19: growth, females\n")
   ##   if(plot) plotgrowth(sex='f')
   ##   if(print){
-  ##     pngfun("compare16_growth_females.png")
+  ##     pngfun("compare19_growth_females.png")
   ##     plotgrowth(sex='f')
   ##     dev.off()
   ##   }
   ## }
 
-  ## # subplot 17: growth, males
-  ## if(17 %in% subplots){
-  ##   if(verbose) cat("subplot 17: growth, males\n")
+  ## # subplot 20: growth, males
+  ## if(20 %in% subplots){
+  ##   if(verbose) cat("subplot 20: growth, males\n")
   ##   if(plot) plotgrowth(sex='m')
   ##   if(print){
-  ##     pngfun("compare17_growth_males.png")
+  ##     pngfun("compare20_growth_males.png")
   ##     plotgrowth(sex='m')
   ##     dev.off()
   ##   }

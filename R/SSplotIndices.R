@@ -228,8 +228,8 @@ function(replist,subplots=c(1:9),
     }
 
     # add intervals
-    arrows(x0 = x[include], y0 = lower_total[include],
-           x1 = x[include], y1 = upper_total[include],
+    arrows(x0 = x[include], y0 = lower_total,
+           x1 = x[include], y1 = upper_total,
            length = 0.03, angle = 90, code = 3, col = colvec1[s])
     # add points and expected values on standard scale
     if(!log){
