@@ -41,7 +41,7 @@ devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
 
 ## Changes
 
-See NEWS.md for (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
+See NEWS.md for a (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
 
 
 ## Reporting problems

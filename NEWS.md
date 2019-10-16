@@ -1,4 +1,4 @@
-# r4ss 1.36.0 (7 October 2019)
+# r4ss 1.36.1 (16 October 2019)
 * Numerous minor bug fixes and minor improvements
 * Compatibility with SS versions 3.24 through 3.30.14
 * Submitted to CRAN
