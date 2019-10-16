@@ -48,7 +48,7 @@ explicitly available in control file}
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
-\item{N_CPUE_obs}{numbere of CPUE observations.}
+\item{N_CPUE_obs}{number of CPUE observations.}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}

@@ -23,7 +23,7 @@ the SPR, and the exploitation.
 }
 \description{
 Reads the Report.sso within the directory and creates a time-series
-table as required by the current Terms of Refernce for West Coast 
+table as required by the current Terms of Reference for West Coast 
 groundfish.  Table includes the historical and the forecast years for 
 the model.  Works with Stock Synthesis versions 3.24U and later.
 }

@@ -52,7 +52,7 @@ areas?}
 \item{verbose}{Print information on function progress.}
 }
 \description{
-Plots estimated movement rates in final year for each area/seaon with movement as
+Plots estimated movement rates in final year for each area/season with movement as
 reported in Report.sso. If movement is time-varying, an additional figure shows
 pattern across years.
 }

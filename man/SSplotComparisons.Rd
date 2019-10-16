@@ -179,7 +179,7 @@ plots and phase plot.}
 \item{btarg}{Target biomass value at which to show a line (set to 0 to
 remove)}
 
-\item{minbthresh}{Minimum biomass threshhold at which to show a line (set to
+\item{minbthresh}{Minimum biomass threshold at which to show a line (set to
 0 to remove)}
 
 \item{pwidth}{Width of plot}

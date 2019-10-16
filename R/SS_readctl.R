@@ -31,7 +31,7 @@
 #'  explicitly available in control file
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
-#' @param N_CPUE_obs numbere of CPUE observations.
+#' @param N_CPUE_obs number of CPUE observations.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'  determined from control file
 #' @param datlist list or character. if list : produced from SS_writedat

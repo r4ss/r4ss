@@ -23,7 +23,7 @@ version from \code{ctllist}.}
 Defaults to TRUE.}
 }
 \description{
-Write Stock Synthesis contrl file from list object in R which was probably
+Write Stock Synthesis control file from list object in R which was probably
 created using \code{\link{SS_readctl}}. This function is a
 wrapper which calls either SS_writectl_3.24 or SS_writectl_3.30
 (and potentially additional functions in the future).

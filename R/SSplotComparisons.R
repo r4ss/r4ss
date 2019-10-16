@@ -113,7 +113,7 @@
 #' @param legendncol Number of columns for the legend.
 #' @param btarg Target biomass value at which to show a line (set to 0 to
 #' remove)
-#' @param minbthresh Minimum biomass threshhold at which to show a line (set to
+#' @param minbthresh Minimum biomass threshold at which to show a line (set to
 #' 0 to remove)
 #' @param sprtarg Target value for SPR-ratio where line is drawn in the SPR
 #' plots and phase plot.
