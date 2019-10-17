@@ -454,7 +454,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                  # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
-  for(i in 1:1){
+  for(i in 1:ctllist$Ngenders){
     for(j in 1:ctllist$N_GP){
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
@@ -483,76 +483,79 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         PType[cnt:(6+cnt-1)]<-2
         cnt<-cnt+6
       }
+      MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[i],"_GP_",j);PType[cnt]<-3;cnt<-cnt+1
+      MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[i],"_GP_",j);PType[cnt]<-3;cnt<-cnt+1
+      if(i==1){
+      MGparmLabel[cnt]<-paste0("Mat50%_",GenderLabel[1],"_GP_",j);PType[cnt]<-4;cnt<-cnt+1
+      MGparmLabel[cnt]<-paste0("Mat_slope_",GenderLabel[1],"_GP_",j);PType[cnt]<-4;cnt<-cnt+1
+      if(ctllist$maturity_option==1){
+        MGparmLabel[cnt]<-paste0("Eggs/kg_inter_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs/kg_slope_wt_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else if(ctllist$maturity_option==2){
+        MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs_exp_len_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else  if(ctllist$maturity_option==3){
+        MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs_exp_wt_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else  if(ctllist$maturity_option==4){
+        MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs_slope_len_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else   if(ctllist$maturity_option==5){
+        MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else   if(ctllist$maturity_option==6){  # check what to do with option 6
+        MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+        MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1],"_GP_",j);PType[cnt]<-5;cnt<-cnt+1
+      }else{
+        stop("Maturity option : ",ctllist$maturity_option," is not supported")
+      }
+      }
     }
   }
   N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
   
-  MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[1]);PType[cnt]<-3;cnt<-cnt+1
-  MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[1]);PType[cnt]<-3;cnt<-cnt+1
-  MGparmLabel[cnt]<-paste0("Mat50%_",GenderLabel[1]);PType[cnt]<-4;cnt<-cnt+1
-  MGparmLabel[cnt]<-paste0("Mat_slope_",GenderLabel[1]);PType[cnt]<-4;cnt<-cnt+1
-  if(ctllist$maturity_option==1){
-    MGparmLabel[cnt]<-paste0("Eggs/kg_inter_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs/kg_slope_wt_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else if(ctllist$maturity_option==2){
-    MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs_exp_len_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else  if(ctllist$maturity_option==3){
-    MGparmLabel[cnt]<-paste0("Eggs_scalar_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs_exp_wt_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else  if(ctllist$maturity_option==4){
-    MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs_slope_len_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else   if(ctllist$maturity_option==5){
-    MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else   if(ctllist$maturity_option==6){  # check what to do with option 6
-    MGparmLabel[cnt]<-paste0("Eggs_intercept_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Eggs_slope_wt_",GenderLabel[1]);PType[cnt]<-5;cnt<-cnt+1
-  }else{
-    stop("Maturity option : ",ctllist$maturity_option," is not supported")
-  }
-  
-  if(ctllist$Ngenders>1)
-  {
-    for(i in 2:ctllist$Ngenders){
-      for(j in 1:ctllist$N_GP){
-        if(N_natMparms>0){
-          MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
-          PType[cnt:(N_natMparms+cnt-1)]<-1
-          cnt<-cnt+N_natMparms
-        }
-        if(ctllist$GrowthModel==1){ # VB
-          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
-          MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-          PType[cnt:(5+cnt-1)]<-2
-          cnt<-cnt+5
-        }else if(ctllist$GrowthModel==2){ # Richards
-          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
-          MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-          PType[cnt:(6+cnt-1)]<-2
-          cnt<-cnt+6
-        }else if(ctllist$GrowthModel %in% 3:5) {
-          tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
-                 paste0("Age_K",ctllist$Age_K_points),"CV_young","CV_old")
-          MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-          PType[cnt:((5+Age_K_count)+cnt-1)]<-2
-          cnt<-cnt+5+Age_K_count
-        } else if (ctllist$GrowthModel == 8) {
-          tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
-          MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-          PType[cnt:(6+cnt-1)]<-2
-          cnt<-cnt+6
-        }
-      }
-    }
-  }
-
-  if(ctllist$Ngenders==2){
-    MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-    MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-  }
-  if(ctllist$hermaphroditism_option){
+  # 
+  # 
+  # if(ctllist$Ngenders>1)
+  # {
+  #   for(i in 2:ctllist$Ngenders){
+  #     for(j in 1:ctllist$N_GP){
+  #       if(N_natMparms>0){
+  #         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
+  #         PType[cnt:(N_natMparms+cnt-1)]<-1
+  #         cnt<-cnt+N_natMparms
+  #       }
+  #       if(ctllist$GrowthModel==1){ # VB
+  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
+  #         MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+  #         PType[cnt:(5+cnt-1)]<-2
+  #         cnt<-cnt+5
+  #       }else if(ctllist$GrowthModel==2){ # Richards
+  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
+  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+  #         PType[cnt:(6+cnt-1)]<-2
+  #         cnt<-cnt+6
+  #       }else if(ctllist$GrowthModel %in% 3:5) {
+  #         tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
+  #                paste0("Age_K",ctllist$Age_K_points),"CV_young","CV_old")
+  #         MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+  #         PType[cnt:((5+Age_K_count)+cnt-1)]<-2
+  #         cnt<-cnt+5+Age_K_count
+  #       } else if (ctllist$GrowthModel == 8) {
+  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
+  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+  #         PType[cnt:(6+cnt-1)]<-2
+  #         cnt<-cnt+6
+  #       }
+  #     }
+  #   }
+  # }
+  # 
+  # if(ctllist$Ngenders==2){
+  #   MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
+  #   MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
+  # }
+  if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Herm_stdev",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Herm_asymptote",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
