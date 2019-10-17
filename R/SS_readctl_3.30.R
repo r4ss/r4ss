@@ -309,7 +309,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     stop("More than 1 platoon is not supported yet")
 #    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"sd_ratio")
-    ctllist<-add_elem(ctllist,"submorphdist")
+    #ctllist<-add_elem(ctllist,"submorphdist")
     ctllist<-add_vec(ctllist,name="submorphdist",length=ctllist$N_platoon)
   }
   # else{
@@ -392,6 +392,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
   if(verbose) message("N_natMparms =",N_natMparms,"\n")
+  
   # growth setup ----
   ctllist<-add_elem(ctllist,name="GrowthModel")
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
@@ -401,13 +402,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,name="Growth_Placeholder") #_for_future_use
   if(ctllist$GrowthModel %in% c(3,4,5)) {
     ctllist<-add_elem(ctllist,name="N_ageK")
+    
   }
   
   if(ctllist$GrowthModel==1)  # 1=vonBert with L1&L2
   {
     N_growparms<-5
-  }
-  else if(ctllist$GrowthModel %in% c(2,8)) # 2=Richards with L1&L2, growth cess.
+  } else if(ctllist$GrowthModel %in% c(2,8)) # 2=Richards with L1&L2, growth cess.
   {
     N_growparms<-6
   } else if(ctllist$GrowthModel %in% c(3,4,5)) { # 3,4=age_specific_K
@@ -436,7 +437,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"First_Mature_Age") #_First_Mature_Age
   ctllist<-add_elem(ctllist,"fecundity_option")  #_fecundity_option
   ctllist<-add_elem(ctllist,"hermaphroditism_option")   #_hermaphroditism_option
-  if(ctllist$hermaphroditism_option>0)
+  if(ctllist$hermaphroditism_option!=0)
   {
     ctllist<-add_elem(ctllist,"Herm_season") #_Hermaphroditism_season
     ctllist<-add_elem(ctllist,"Herm_MalesInSSB")  #_Hermaphroditism_males_in_SSB
