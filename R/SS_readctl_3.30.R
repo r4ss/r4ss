@@ -742,7 +742,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
  # SR -----
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
-  N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
+  N_SRparm<-c(0,2,2,2,3,2,3,3,3,3)
   N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+3
   
   if(is.na(ctllist$SR_function)) {
@@ -758,7 +758,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
   }else if(ctllist$SR_function==2){
     # Ricker SRR
-    c("SR_LN(R0)","SR_Ricker","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
+    c("SR_LN(R0)","SR_Ricker_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
   }else if(ctllist$SR_function==4){
     # SCAA
     c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_R1_offset","SR_autocorr")
@@ -774,6 +774,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }else if(ctllist$SR_function==8){
     # Shepard_3Parm
     c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==9){
+    # Shepard_reparam_beta
+    c("SR_LN(R0)","SR_re_steepness","SR_Shepard_c","SR_sigmaR","SR_R1_offset","SR_autocorr")
+  }else if(ctllist$SR_function==10){
+    # Ricker SRR reparam beta
+    c("SR_LN(R0)","SR_Ricker_re_steep","SR_Ricker_re_power","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
   }else{
     cat("SR_function=",ctllist$SR_function," is not supported yet.");return(ctllist)
   }
