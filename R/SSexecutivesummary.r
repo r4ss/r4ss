@@ -6,21 +6,22 @@
 #' Additionally, historical catch and numbers at ages tables are created.
 #'
 #' @param dir Locates the directory of the files to be read in, double
-#' backslashes (or forwardslashes) and quotes necessary.
-#' @param plotdir Directory where the 'tables' directory will be created.
+#' backslashes (or forwardslashes) and quotes necessary. If not input to the function
+#' the code will look in the folder identified by the repfile.
+#' @param replist Name of the big report file (could be renamed by user).
+#' @param plotfolder Directory where the 'tables' directory will be created.
 #' The default is the dir location where the Report.sso file is located.
-#' @param quant To calculate confidence intervals, default is set at 0.95
-#' @param es.only TRUE/FALSE switch to produce only the executive summary tables
+#' @param ci_value To calculate confidence intervals, default is set at 0.95
+#' @param es_only TRUE/FALSE switch to produce only the executive summary tables
 #' will be produced, default is FALSE which will return all executive summary
 #' tables, historical catches, and numbers-at-ages
 #' @param tables Which tables to produce (default is everything). Note: some
 #' tables depend on calculations related to previous tables, so will fail
 #' if requested on their own (e.g. Table 'f' can't be created
 #' without also creating Table 'a')
-#' @param nsex This will allow the user to calculate single sex values
-#' based on the new sex
-#' specification (-1) in SS for single sex models. Default value is FALSE.
-#' TRUE will not divide by 2.
+#' @param divide_by_2 This will allow the user to calculate single sex values
+#' based on the new sex specification (-1) in SS for single sex models. Default value is FALSE.
+#' TRUE will divide by 2.
 #' @param endyr Optional input to choose a different ending year for tables
 #' (could be useful for catch-only updates)
 #' @param verbose Return updates of function progress to the R console?
@@ -28,48 +29,51 @@
 #' @author Chantel Wetzel
 #' @export
 #'
-SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
-                                es.only = FALSE, 
-                                tables = c('a','b','c','d','e',
-                                    'f','g','h','i','catch','numbers'),
-                                nsex = FALSE,
+SSexecutivesummary <- function (dir, replist, 
+                                plotfolder = 'default', 
+                                ci_value = 0.95,
+                                es_only = FALSE, 
+                                tables = c('a','b','c','d','e','f','g','h','i','catch','numbers'),
+                                divide_by_2 = FALSE,
                                 endyr = NULL,
-                                verbose = TRUE
-                                ) {
-  # Check to make sure dir is a dir
-  if(!is.character(dir) || !file.info(dir)$isdir){
-    stop("Input 'dir' should be a directory")
-  }
+                                verbose = TRUE) 
+{
+
   # Make sure dir contains the report file
-  repfile <- file.path(dir, "Report.sso")
-  if(is.na(file.info(repfile)$size)){
-    stop("Report.sso not found in 'dir': ", dir)
+  if(is.null(replist)){
+    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  }
+
+  # Check to make sure dir is a dir
+  if(is.character(dir)){
+    paste0("Files will be written to the", dir, "folder location.")
   }
 
   #Read in the base model using r4ss
-  wd        <- paste(dir, "/Report.sso", sep="")
-  base      <- readLines(wd)
-  rawrep    <- read.table(file= wd , col.names = 1:400, fill = TRUE,
-                          quote = "", colClasses = "character", nrows = -1,
-                          comment.char = "")
+  #wd        <- paste(dir, "/Report.sso", sep="")
+  #base      <- readLines(wd)
+  #rawrep    <- read.table(file= wd , col.names = 1:400, fill = TRUE,
+  #                        quote = "", colClasses = "character", nrows = -1,
+  #                        comment.char = "")
 
-  if (plotdir == 'default') { csv.dir = paste0(dir,"/tables/") }
-  if (plotdir != 'default') { csv.dir = paste0(plotdir,"/tables/")}
+  if (plotfolder == 'default') { csv.dir = paste0(inputs$dir,"/tables/") }
+  if (plotfolder != 'default') { csv.dir = paste0(plotfolder,"/tables/")}
+
   dir.create(csv.dir, showWarnings = FALSE)
   if(verbose){
     message("CSV files will be written in\n", csv.dir)
   }
   
-  SS_versionCode         <- base[grep("#V",base)]
-  SS_version             <- base[grep("Stock_Synthesis",base)]
-  # remove any version numbering in the comments
-  SS_version             <- SS_version[substring(SS_version,1,2)!="#C"] 
-  SS_versionshort     <- toupper(substr(SS_version,1,8))
-  SS_versionNumeric     <- as.numeric(substring(SS_versionshort,5))
-  if(SS_versionNumeric == 3.3){
-    add <- as.numeric(toupper(substr(SS_version, 9, 11)))
-    SS_versionNumeric = SS_versionNumeric + 0.1*add
-  }
+  #SS_versionCode         <- base[grep("#V",base)]
+  #SS_version             <- base[grep("Stock_Synthesis",base)]
+  ## remove any version numbering in the comments
+  #SS_version             <- SS_version[substring(SS_version,1,2)!="#C"] 
+  #SS_versionshort     <- toupper(substr(SS_version,1,8))
+  #SS_versionNumeric     <- as.numeric(substring(SS_versionshort,5))
+  #if(SS_versionNumeric == 3.3){
+  #  add <- as.numeric(toupper(substr(SS_version, 9, 11)))
+  #  SS_versionNumeric = SS_versionNumeric + 0.1*add
+  #}
 
   #=============================================================================
   # Function Sections
@@ -87,7 +91,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   }
 
   # Funtion to calculate confidence intervals
-  getDerivedQuant.fn <- function(dat, label, yrs, quant, divisor=1) {
+  getDerivedQuant.fn <- function(dat, label, yrs, ci_value, divisor=1) {
     # modify old header to new value
     names(dat)[names(dat)=="LABEL"] <- "Label"
     allYrs <- suppressWarnings(as.numeric(substring(
@@ -105,21 +109,21 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     out.value <- out$Value <- out$Value/divisor
     out$StdDev <- out$StdDev/divisor
     if(label=="Recr") {   #use lognormal
-      out.lower <- exp(log(out.value)-qnorm(1-(1-quant)/2) *
+      out.lower <- exp(log(out.value)-qnorm(1-(1-ci_value)/2) *
                          sqrt(log((out$StdDev/out.value)^2+1)))
-      out.upper <- exp(log(out.value)+qnorm(1-(1-quant)/2) *
+      out.upper <- exp(log(out.value)+qnorm(1-(1-ci_value)/2) *
                          sqrt(log((out$StdDev/out.value)^2+1)))
     }
     else {
-      out.lower <- out.value-qnorm(1-(1-quant)/2)*out$StdDev
-      out.upper <- out.value+qnorm(1-(1-quant)/2)*out$StdDev
+      out.lower <- out.value-qnorm(1-(1-ci_value)/2)*out$StdDev
+      out.upper <- out.value+qnorm(1-(1-ci_value)/2)*out$StdDev
     }
-    return(data.frame(Year=yrs,Value=out.value,
-                      LowerCI=out.lower,UpperCI=out.upper))
+    return(data.frame(Year = yrs, Value = out.value,
+                      LowerCI = out.lower, UpperCI = out.upper))
   }
 
   # Function to pull values from the read in report file and calculate the confidence intervals
-  Get.Values <- function(dat, label, yrs, quant, single = FALSE){
+  Get.Values <- function(dat, label, yrs, ci_value, single = FALSE){
 
     if (label == "Recr") { label = " Recr"}
 
@@ -151,12 +155,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     }
 
     if(label == " Recr" || label == "Recr_virgin"){
-      low = exp(log(dq) - qnorm(1-(1-quant)/2) * sqrt(log(1 + (sd/dq) * (sd/dq))))
-      high= exp(log(dq) + qnorm(1-(1-quant)/2) * sqrt(log(1 + (sd/dq) * (sd/dq))))
+      low = exp(log(dq) - qnorm(1-(1-ci_value)/2) * sqrt(log(1 + (sd/dq) * (sd/dq))))
+      high= exp(log(dq) + qnorm(1-(1-ci_value)/2) * sqrt(log(1 + (sd/dq) * (sd/dq))))
     }
     if(label != " Recr" && label != "Recr_virgin"){
-      low = dq - qnorm(1-(1-quant)/2)*sd
-      high= dq + qnorm(1-(1-quant)/2)*sd
+      low = dq - qnorm(1-(1-ci_value)/2)*sd
+      high= dq + qnorm(1-(1-ci_value)/2)*sd
     }
 
     if (!single) { return(data.frame(yrs, dq, low, high)) }
@@ -164,141 +168,126 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   }
 
 
-  matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
-      {
-        # return a line number from the report file (or other file)
-        # sstr controls whether to compare subsets or the whole line
-        match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
-      }
+  #matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
+  #    {
+  #      # return a line number from the report file (or other file)
+  #      # sstr controls whether to compare subsets or the whole line
+  #      match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
+  #    }
 
-  matchfun2 <- function(string1,adjust1,string2,adjust2,
-                        cols="nonblank",matchcol1=1,matchcol2=1,
-                        objmatch=rawrep,objsubset=rawrep,
-                        substr1=TRUE,substr2=TRUE,header=FALSE)
-      {
-        # return a subset of values from the report file (or other file)
-        # subset is defined by character strings at the start and end, with integer
-        # adjustments of the number of lines to above/below the two strings
-        line1 <- match(string1,
-                       if(substr1){
-                         substring(objmatch[,matchcol1],1,nchar(string1))
-                       }else{
-                         objmatch[,matchcol1]
-                       })
-        line2 <- match(string2,
-                       if(substr2){
-                         substring(objmatch[,matchcol2],1,nchar(string2))
-                       }else{
-                         objmatch[,matchcol2]
-                       })
-        if(is.na(line1) | is.na(line2)) return("absent")
-
-        if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
-        if(cols[1]=="all")      out <- objsubset[(line1+adjust1):(line2+adjust2),]
-        if(cols[1]=="nonblank"){
-          # returns only columns that contain at least one non-empty value
-          out <- objsubset[(line1+adjust1):(line2+adjust2),]
-          out <- out[,apply(out,2,emptytest) < 1]
-        }
-        if(header && nrow(out)>0){
-          out[1,out[1,]==""] <- "NoName"
-          names(out) <- out[1,]
-          out <- out[-1,]
-        }
-        return(out)
-      }
+  #matchfun2 <- function(string1,adjust1,string2,adjust2,
+  #                      cols="nonblank",matchcol1=1,matchcol2=1,
+  #                      objmatch=rawrep,objsubset=rawrep,
+  #                      substr1=TRUE,substr2=TRUE,header=FALSE)
+  #    {
+  #      # return a subset of values from the report file (or other file)
+  #      # subset is defined by character strings at the start and end, with integer
+  #      # adjustments of the number of lines to above/below the two strings
+  #      line1 <- match(string1,
+  #                     if(substr1){
+  #                       substring(objmatch[,matchcol1],1,nchar(string1))
+  #                     }else{
+  #                       objmatch[,matchcol1]
+  #                     })
+  #      line2 <- match(string2,
+  #                     if(substr2){
+  #                       substring(objmatch[,matchcol2],1,nchar(string2))
+  #                     }else{
+  #                       objmatch[,matchcol2]
+  #                     })
+  #      if(is.na(line1) | is.na(line2)) return("absent")
+#
+  #      if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
+  #      if(cols[1]=="all")      out <- objsubset[(line1+adjust1):(line2+adjust2),]
+  #      if(cols[1]=="nonblank"){
+  #        # returns only columns that contain at least one non-empty value
+  #        out <- objsubset[(line1+adjust1):(line2+adjust2),]
+  #        out <- out[,apply(out,2,emptytest) < 1]
+  #      }
+  #      if(header && nrow(out)>0){
+  #        out[1,out[1,]==""] <- "NoName"
+  #        names(out) <- out[1,]
+  #        out <- out[-1,]
+  #      }
+  #      return(out)
+  #    }
 
   #============================================================================
   # Determine the model version and dimensions of the model
   #============================================================================
 
-  rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
+  #rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
 
   # Determine the number of fishing fleets
-  if (SS_versionNumeric >= 3.313){
-    # version 3.30
-    defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-    defs[defs==""] <- NA
-    FleetNames   <- as.character(defs[grep("Fleet_name",defs$X1),-1])
-    FleetNames   <- FleetNames[!is.na(FleetNames)]
-    fleet_ID     <- 1: length(FleetNames)
-    fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1])
-    nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
-  }
+  #if (SS_versionNumeric >= 3.313){
+  #  # version 3.30
+  #  defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+  #  defs[defs==""] <- NA
+  #  FleetNames   <- as.character(defs[grep("Fleet_name",defs$X1),-1])
+  #  FleetNames   <- FleetNames[!is.na(FleetNames)]
+  #  fleet_ID     <- 1: length(FleetNames)
+  #  fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1])
+  #  nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
+  #}
 
-  if (SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.3){
-    # version 3.30
-    defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-    defs[defs==""] <- NA
-    FleetNames   <- as.character(defs[grep("fleet_names",defs$X1),-1])
-    FleetNames   <- FleetNames[!is.na(FleetNames)]
-    fleet_ID     <- 1: length(FleetNames)
-    fleet_type   <- as.numeric(defs$X1[4:dim(defs)[1]])
-    nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
-  }
+  #if (SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.3){
+  #  # version 3.30
+  #  defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+  #  defs[defs==""] <- NA
+  #  FleetNames   <- as.character(defs[grep("fleet_names",defs$X1),-1])
+  #  FleetNames   <- FleetNames[!is.na(FleetNames)]
+  #  fleet_ID     <- 1: length(FleetNames)
+  #  fleet_type   <- as.numeric(defs$X1[4:dim(defs)[1]])
+  #  nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
+  #}
 
-  if (SS_versionNumeric < 3.3){
-    # version 3.20 - 3.24
-    defs              <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-    defs[defs==""]     <- NA
-    lab              <- defs$X1
-    catch_units      <- as.numeric(defs[grep("Catch_units",lab),-1])
-    IsFishFleet      <- !is.na(catch_units)
-    nfleets          <- sum(IsFishFleet)
-  }
-  sb.name = ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
+  #if (SS_versionNumeric < 3.3){
+  #  # version 3.20 - 3.24
+  #  defs              <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
+  #  defs[defs==""]     <- NA
+  #  lab              <- defs$X1
+  #  catch_units      <- as.numeric(defs[grep("Catch_units",lab),-1])
+  #  IsFishFleet      <- !is.na(catch_units)
+  #  nfleets          <- sum(IsFishFleet)
+  #}
+  #sb.name = ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
 
-  begin <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])+2
-  end   <- matchfun(string = "SPR_series",  obj = rawrep[,1])-1
-
-  temptime <- rawrep[begin:end,2:3]
-  if(is.null(endyr)){
-    endyr    <- max(as.numeric(temptime[temptime[,2]=="TIME",1]))
-  }
-  startyr  <- min(as.numeric(rawrep[begin:end,2]))+2
-  foreyr   <- max(as.numeric(temptime[temptime[,2]=="FORE",1]))
-  hist     <- (endyr - 11):(endyr + 1)
-  fore     <- (endyr+1):foreyr
-  all      <- startyr:foreyr
-
-  #======================================================================
-  # Determine number of areas in the model
-  #======================================================================
-  nareas   <- max(as.numeric(rawrep[begin:end,1]))
+  nfleets <- replist$nfleets
+  startyr <- replist$startyr 
+  endyr   <- replist$endyr 
+  foreyr  <- replist$$nforecastyears 
+  hist    <- (endyr - 11):(endyr + 1)
+  fore    <- (endyr+1):foreyr
+  all     <- startyr:foreyr
+  nareas  <- replist$nareas
 
   #======================================================================
   # Determine the fleet name and number for fisheries with catch
   #======================================================================
-  begin <- matchfun(string = "CATCH", obj = rawrep[,1])+2
-  end   <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])-1
-  temp  <- rawrep[begin:end, 1:18]
-  # This is a list of fishery names with catch associated with them
-  names <- unique(temp[,2]) 
-  fleet.num <- unique(temp[,1])
+  names <- replist$FleetNames 
+  fleet.num <- unique(names)
 
   #======================================================================
   # Find summary age
   #======================================================================
+  # need to figure out this from the replist
   ts        <- matchfun2("TIME_SERIES", -1,"Area", -1)
   smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
 
   #======================================================================
-  # Two-sex or Singl-sex model
+  # Two-sex or single-sex model
   #======================================================================
-  selex <- matchfun2("LEN_SELEX",6,"AGE_SELEX",-1,header=TRUE)
-  nsexes <- ifelse(SS_versionNumeric < 3.3,
-                   length(unique(as.numeric(selex$gender))),
-                   length(unique(as.numeric(selex$Sex))))
-
-  sexfactor = 2
-  if (nsex) {sexfactor = 1}
-
+  if (replist$nsexes == 1 & !(divide_by_2)) {
+    print("Single sex model - spawning biomass NOT beind divided by a factor of 2.")
+  }
+  nsexes <- replist$nsexes
+  sexfactor <- 1
+  if (divide_by_2) { sexfactor <- 2}
 
   #======================================================================
   # Determine the number of growth patterns
   #======================================================================
-  find.morph <- matchfun2("MORPH_INDEXING", 1, "MOVEMENT", -2, header=TRUE)
-  nmorphs <- dim(find.morph)[1] / nsexes
+  nmorphs <- replist$ngpatterns / nsexes
 
   #======================================================================
   #ES Table a  Catches from the fisheries
@@ -307,8 +296,6 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     if(verbose){
       message("Creating Table a")
     }
-    # which column within CATCH table is "kill_bio"
-    xx = ifelse(SS_versionNumeric < 3.3, 12, 15)
     # prior to 3.24U there was no kill_bio column
     use.ts <- FALSE
     if(length(grep("kill_bio", base)) == 0){
@@ -394,9 +381,9 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       message("Creating Table b")
     }
     
-    ssb =  Get.Values(dat = base, label = sb.name, hist, quant )
+    ssb =  Get.Values(dat = base, label = sb.name, hist, ci_value )
     if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
-    depl = Get.Values(dat = base, label = "Bratio" , hist, quant )
+    depl = Get.Values(dat = base, label = "Bratio" , hist, ci_value )
     for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
     es.b =  data.frame(hist,
         comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
@@ -430,18 +417,18 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
 
     end          <- ifelse(length(late.yrs) == 0, fore.yrs - 1, late.yrs - 1)
 
-    recruits     = Get.Values(dat = base, label = "Recr" , hist, quant )
+    recruits     = Get.Values(dat = base, label = "Recr" , hist, ci_value )
     if (dim(recdevMain)[1] != 0){
-      recdevs      = Get.Values(dat = base, label = "Main_RecrDev", yrs = hist[1]:end, quant )
+      recdevs      = Get.Values(dat = base, label = "Main_RecrDev", yrs = hist[1]:end, ci_value )
       devs = cbind(recdevs$dq, recdevs$low, recdevs$high)
 
       if (length(late.yrs) > 0 ){
-        late.recdevs = Get.Values(dat = base, label = "Late_RecrDev", yrs = late.yrs, quant )
+        late.recdevs = Get.Values(dat = base, label = "Late_RecrDev", yrs = late.yrs, ci_value )
         devs = cbind(c(recdevs$dq, late.recdevs$dq), c(recdevs$low, late.recdevs$low), c(recdevs$high, late.recdevs$high))
       }
 
       if(length(fore.yrs) > 0){
-        fore.recdevs = Get.Values(dat = base, label = "ForeRecr", yrs = fore.yrs, quant )
+        fore.recdevs = Get.Values(dat = base, label = "ForeRecr", yrs = fore.yrs, ci_value )
         if (length(late.yrs) > 0){
           devs = cbind(c(recdevs$dq, late.recdevs$dq, fore.recdevs$dq),
               c(recdevs$low, late.recdevs$low, fore.recdevs$low),
@@ -488,8 +475,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     #    print("West coast groundfish assessments typically report 1-SPR in the executive summary")
     #    print(":::::::::::::::::::::::::::::::::::WARNING:::::::::::::::::::::::::::::::::::::::")  }
 
-    adj.spr = Get.Values(dat = base, label = "SPRratio" , hist, quant)
-    f.value = Get.Values(dat = base, label = "F" , hist, quant)
+    adj.spr = Get.Values(dat = base, label = "SPRratio" , hist, ci_value)
+    f.value = Get.Values(dat = base, label = "F" , hist, ci_value)
     es.d = data.frame(hist,
         print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
         print(f.value$dq,4),     paste0(print(f.value$low,4),     "\u2013", print(f.value$high,4)))
@@ -529,23 +516,23 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       yield.msy  = "Dead_Catch_MSY"
     }
 
-    ssb.virgin = Get.Values(dat = base, label = sb.unfished,      hist, quant, single = TRUE)
-    smry.virgin= Get.Values(dat = base, label = smry.unfished,  hist, quant, single = TRUE)
-    rec.virgin = Get.Values(dat = base, label = recr.unfished,     hist, quant, single = TRUE)
+    ssb.virgin = Get.Values(dat = base, label = sb.unfished,      hist, ci_value, single = TRUE)
+    smry.virgin= Get.Values(dat = base, label = smry.unfished,  hist, ci_value, single = TRUE)
+    rec.virgin = Get.Values(dat = base, label = recr.unfished,     hist, ci_value, single = TRUE)
     final.depl = 100*depl[dim(depl)[1],2:4]
-    b.target   = Get.Values(dat = base, label = "SSB_Btgt",             hist, quant, single = TRUE)
-    spr.btarg  = Get.Values(dat = base, label = "SPR_Btgt",             hist, quant, single = TRUE)
-    f.btarg    = Get.Values(dat = base, label = "Fstd_Btgt",          hist, quant, single = TRUE)
-    yield.btarg= Get.Values(dat = base, label = yield.btgt,   hist, quant, single = TRUE)
-    b.spr        = Get.Values(dat = base, label = "SSB_SPR",           hist, quant, single = TRUE)
-    f.spr      = Get.Values(dat = base, label = "Fstd_SPR",          hist, quant, single = TRUE)
-    yield.spr  = Get.Values(dat = base, label = yield.spr,    hist, quant, single = TRUE)
-    b.msy        = Get.Values(dat = base, label = "SSB_MSY",              hist, quant, single = TRUE)
-    spr.msy    = Get.Values(dat = base, label = "SPR_MSY",              hist, quant, single = TRUE)
-    f.msy        = Get.Values(dat = base, label = "Fstd_MSY",          hist, quant, single = TRUE)
-    msy        = Get.Values(dat = base, label = yield.msy,    hist, quant, single = TRUE)
+    b.target   = Get.Values(dat = base, label = "SSB_Btgt",             hist, ci_value, single = TRUE)
+    spr.btarg  = Get.Values(dat = base, label = "SPR_Btgt",             hist, ci_value, single = TRUE)
+    f.btarg    = Get.Values(dat = base, label = "Fstd_Btgt",          hist, ci_value, single = TRUE)
+    yield.btarg= Get.Values(dat = base, label = yield.btgt,   hist, ci_value, single = TRUE)
+    b.spr        = Get.Values(dat = base, label = "SSB_SPR",           hist, ci_value, single = TRUE)
+    f.spr      = Get.Values(dat = base, label = "Fstd_SPR",          hist, ci_value, single = TRUE)
+    yield.spr  = Get.Values(dat = base, label = yield.spr,    hist, ci_value, single = TRUE)
+    b.msy        = Get.Values(dat = base, label = "SSB_MSY",              hist, ci_value, single = TRUE)
+    spr.msy    = Get.Values(dat = base, label = "SPR_MSY",              hist, ci_value, single = TRUE)
+    f.msy        = Get.Values(dat = base, label = "Fstd_MSY",          hist, ci_value, single = TRUE)
+    msy        = Get.Values(dat = base, label = yield.msy,    hist, ci_value, single = TRUE)
 
-    # Convert spawning quantities for single-sex models
+    # Convert spawning ci_valueities for single-sex models
     if (nsexes == 1){
       ssb.virgin = ssb.virgin / sexfactor
       b.target = b.target / sexfactor
@@ -628,17 +615,17 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   } # end check for 'f' %in% tables
 
   #======================================================================
-  #ES Table g  Predicted Quantities
+  #ES Table g  Predicted ci_valueities
   #======================================================================
   if('g' %in% tables){
     if(verbose){
       message("Creating Table g")
     }
     
-    ofl.fore =  Get.Values(dat = base, label = "OFLCatch" ,  yrs = fore, quant)
-    abc.fore =  Get.Values(dat = base, label = "ForeCatch" , yrs = fore, quant)
-    ssb.fore  = Get.Values(dat = base, label =  sb.name,       yrs = fore, quant)
-    depl.fore = Get.Values(dat = base, label = "Bratio",     yrs = fore, quant)
+    ofl.fore =  Get.Values(dat = base, label = "OFLCatch" ,  yrs = fore, ci_value)
+    abc.fore =  Get.Values(dat = base, label = "ForeCatch" , yrs = fore, ci_value)
+    ssb.fore  = Get.Values(dat = base, label =  sb.name,       yrs = fore, ci_value)
+    depl.fore = Get.Values(dat = base, label = "Bratio",     yrs = fore, ci_value)
 
     if (nsexes == 1) {
       ssb.fore$dq = ssb.fore$dq / sexfactor; ssb.fore$low = ssb.fore$low / sexfactor; ssb.fore$high = ssb.fore$high / sexfactor}
@@ -727,12 +714,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
   #End executive summary tables
   #======================================================================
   
-  if (es.only == TRUE){
+  if (es_only == TRUE){
     if(verbose){
-      message("Skipping catch and numbers tables because es.only = TRUE")
+      message("Skipping catch and numbers tables because es_only = TRUE")
     }
   }
-  if (es.only == FALSE & 'catch' %in% tables){
+  if (es_only == FALSE & 'catch' %in% tables){
     if(verbose){
       message("Creating catch table")
     }
@@ -796,12 +783,12 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
-  } # end check for es.only = TRUE & 'catch' %in% tables
+  } # end check for es_only = TRUE & 'catch' %in% tables
 
   #======================================================================
   #Numbers at age
   #======================================================================
-  if (es.only == FALSE & 'numbers' %in% tables){
+  if (es_only == FALSE & 'numbers' %in% tables){
     if(verbose){
       message("Creating numbers-at-age table")
     }
@@ -902,5 +889,5 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       } # end check for detailed output
     } # SS version 3.30
 
-  } # end check for es.only = TRUE & 'numbers' %in% tables
+  } # end check for es_only = TRUE & 'numbers' %in% tables
 }
