@@ -2016,12 +2016,30 @@ SS_output <-
     returndat$FecPar1 <- returndat$FecPar1[1]
     returndat$FecPar2 <- returndat$FecPar2[2]
   }
-      
+
   # simple test to figure out if fecundity is proportional to spawning biomass:
   returndat$SpawnOutputUnits <- ifelse(!is.na(biology$Fecundity[1]) &&
                                        all(biology$Wt_len_F==biology$Fecundity),
                                        "biomass", "numbers")
 
+  # get natural mortality type and vectors of M by age
+  M_type <- as.numeric(gsub(".*([0-9]+)", "\\1",
+    rawrep[matchfun("Natural_Mortality"),2]))
+  # in SS 3.30 the number of rows of Natural_Mortality is the product of
+  # the number of sexes, growth patterns, settlement events but settlement
+  # events didn't exist in 3.24, so it's easier to just use the following
+  # keyword (also version dependent)
+  endcode <- "Natural_Mortality_Bmark" # next keyword in 3.30 models
+  if(is.na(matchfun(endcode))){
+    endcode <- "Growth_Parameters" # next keyword in 3.24
+  }
+  M_Parameters <- matchfun2("Natural_Mortality",1,
+                            endcode,-1,
+                            header=TRUE)
+  returndat$M_type <- M_type
+  returndat$M_Parameters <- type.convert(M_Parameters, as.is = TRUE)
+
+  # get growth parameters
   Growth_Parameters <- matchfun2("Growth_Parameters",1,
                                  "Growth_Parameters",1+nrow(morph_indexing),
                                  header=TRUE)
