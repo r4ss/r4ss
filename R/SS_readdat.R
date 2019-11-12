@@ -251,9 +251,13 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     # note: lines 252-257 are redundant with datlist$N_cpue, leaving for now
     datlist$NCPUEObs<-array(data=0,dim=datlist$Nfleets)
 
+    #if(nrow(
     for(j in 1:nrow(datlist$CPUE))
     {
-      if(datlist$CPUE[j,]$index>0)datlist$NCPUEObs[datlist$CPUE[j,]$index]<-datlist$NCPUEObs[datlist$CPUE[j,]$index]+1
+      if(datlist$CPUE[j,]$index>0){
+        datlist$NCPUEObs[datlist$CPUE[j,]$index] <-
+          datlist$NCPUEObs[datlist$CPUE[j,]$index] + 1
+      }
     }
 
     # fix some things

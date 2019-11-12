@@ -5,10 +5,12 @@
 \title{Plot matrix of either length or observed age at true age}
 \usage{
 SSplotAgeMatrix(replist, option = 1, slices = NULL, scale = NULL,
-  plot = TRUE, print = FALSE, labels = c("Age", "Length", "True age",
-  "Observed age", "for ageing error type", "Distribution of", "at"),
-  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
-  ptsize = 10, cex.main = 1, mainTitle = TRUE, plotdir = "default")
+  add = FALSE, col.grid = "grey90", col.bars = grey(0, alpha = 0.5),
+  shift_hi = 0, shift_lo = 0, plot = TRUE, print = FALSE,
+  labels = c("Age", "Length", "True age", "Observed age",
+  "for ageing error type", "Distribution of", "at"), pwidth = 6.5,
+  pheight = 5, punits = "in", res = 300, ptsize = 10,
+  cex.main = 1, mainTitle = TRUE, plotdir = "default")
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -26,6 +28,8 @@ by these dimensions.}
 \item{scale}{Multiplier for bars showing distribution. Species with many ages
 benefit from expanded bars. NULL value causes function to attempt automatic
 scaling.}
+
+\item{add}{Add to existing plot}
 
 \item{plot}{Plot to active plot device?}
 
