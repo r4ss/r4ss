@@ -15,7 +15,19 @@ SSplotTimeseries(replist, subplot, add = FALSE, areas = "all",
 \arguments{
 \item{replist}{list created by \code{SS_output}}
 
-\item{subplot}{number controlling which subplot to create}
+\item{subplot}{number controlling which subplot to create
+Numbering of subplots is as follows:
+\itemize{
+  \item 1 Total biomass (mt) with forecast
+  \item 3: Total biomass (mt) at beginning of season 1 with forecast
+  \item 4: Summary biomass (mt) with forecast
+  \item 6: Summary biomass (mt) at beginning of season 1 with forecast
+  \item 7: Spawning output with forecast with ~95% asymptotic intervals
+  \item 9: Fraction of unfished with forecast with ~95% asymptotic intervals
+  \item 11: Age-0 recruits (1,000s) with forecast with ~95% asymptotic intervals
+  \item 14: Age-0 recruits (1,000s) by birth season with forecast
+  \item 15: Fraction of total Age-0 recruits by birth season with forecast
+}}
 
 \item{add}{add to existing plot? (not yet implemented)}
 

@@ -6,6 +6,18 @@
 #'
 #' @param replist list created by \code{SS_output}
 #' @param subplot number controlling which subplot to create
+#' Numbering of subplots is as follows:
+#' \itemize{
+#'   \item 1 Total biomass (mt) with forecast
+#'   \item 3: Total biomass (mt) at beginning of season 1 with forecast
+#'   \item 4: Summary biomass (mt) with forecast
+#'   \item 6: Summary biomass (mt) at beginning of season 1 with forecast
+#'   \item 7: Spawning output with forecast with ~95% asymptotic intervals
+#'   \item 9: Fraction of unfished with forecast with ~95% asymptotic intervals
+#'   \item 11: Age-0 recruits (1,000s) with forecast with ~95% asymptotic intervals
+#'   \item 14: Age-0 recruits (1,000s) by birth season with forecast
+#'   \item 15: Fraction of total Age-0 recruits by birth season with forecast
+#' }
 #' @param add add to existing plot? (not yet implemented)
 #' @param areas optional subset of areas to plot for spatial models
 #' @param areacols vector of colors by area. Default uses rich.colors by Arni
@@ -231,10 +243,11 @@ SSplotTimeseries <-
       ylab <- labels[8]
       # override missing value in case (model from Geoff Tuck run with 3.30.08.02)
       # where spawn_month = 7 with settlement at age 1 (the following year)
-      if(all(yvals[ts$Era=="VIRG"]==0)){
+      # 30 Oct 2019: limiting this override to models with only 1 season
+      if(all(yvals[ts$Era=="VIRG"]==0 & max(ts$Seas == 1))){
         yvals[ts$Era=="VIRG"] <- derived_quants["Recr_Virgin", "Value"]
       }
-      if(all(yvals[ts$Era=="INIT"]==0)){
+      if(all(yvals[ts$Era=="INIT"]==0 & max(ts$Seas == 1))){
         yvals[ts$Era=="INIT"] <- derived_quants["Recr_Unfished", "Value"]
       }
     }
