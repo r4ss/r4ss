@@ -53,15 +53,16 @@
 #' @examples
 #'
 #' \dontrun{
-#' pars <- SSplotPars(dir='c:/SS/Simple/')
+#' model <- SS_output(dir='c:/SS/Simple/'
+#' SSplotPars(replist = model)
 #'
 #' # strings can be partial match
-#' pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
+#' SSplotPars(dir = model, strings = c("steep", "R0"))
 #' }
 #'
 SSplotPars <-
   function(
-      replist,
+      replist, plotdir = NULL,
       xlab="Parameter value",ylab="Density",
       showmle=TRUE, showpost=TRUE, showprior=TRUE, showinit=TRUE,
       showdev=FALSE, 
@@ -154,6 +155,9 @@ SSplotPars <-
   # check input
   if(!"parameters" %in% names(replist)){
     stop("'replist' input needs to be a list created by the SS_output function")
+  }
+  if(is.null(plotdir)){
+    plotdir <- replist$inputs$dir
   }
 
   parameters <- replist$parameters
@@ -265,11 +269,12 @@ SSplotPars <-
     dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
   }
   if(pdf){
-    pdffile <- file.path(dir, paste0("SSplotPars_",
-                                     format(Sys.time(),'%d-%b-%Y_%H.%M' ),".pdf"))
-    pdf(file=pdffile,width=pwidth,height=pheight)
+    pdffile <- file.path(plotdir,
+                         paste0("SSplotPars_",
+                                format(Sys.time(), '%d-%b-%Y_%H.%M' ), ".pdf"))
+    pdf(file = pdffile, width = pwidth, height = pheight)
     if(verbose){
-      message("PDF file with plots will be: ",pdffile)
+      message("PDF file with plots will be: ", pdffile)
     }
   }
 
@@ -377,7 +382,7 @@ SSplotPars <-
     # get mcmc results from replist created by SS_output
     mcmc <- replist$mcmc
     if(showpost && is.null(mcmc)){
-      warning("$mcmc not found in input 'replist', changing input to 'showpost=FALSE'")
+      message("$mcmc not found in input 'replist', changing input to 'showpost=FALSE'")
       showpost <- FALSE
     }
     if(showpost && length(mcmc) < 20){
