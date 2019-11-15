@@ -24,6 +24,8 @@
 #' @param ylim Optional y-axis limits to be applied to all plots.
 #' Otherwise, limits are based on the model results.
 #' @param verbose Controls amount of text output (maybe).
+#' @param debug Provide additional messages to help with debugging when the
+#' function fails.
 #' @param nrows How many rows in multi-figure plot.
 #' @param ncols How many columns in multi-figure plot.
 #' @param ltyvec Vector of line types used for lines showing MLE and prior
@@ -64,18 +66,19 @@
 SSplotPars <-
   function(
       replist, plotdir = NULL,
-      xlab="Parameter value",ylab="Density",
-      showmle=TRUE, showpost=TRUE, showprior=TRUE, showinit=TRUE,
-      showdev=FALSE, 
-      # priorinit=TRUE, priorfinal=TRUE,
-      showlegend=TRUE, fitrange=FALSE, xaxs="i",
-      xlim=NULL, ylim=NULL, verbose=TRUE, nrows=3, ncols=3,
-      ltyvec=c(1, 1, 3, 4),
-      colvec=c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
-      add = FALSE, plot = TRUE, print = FALSE, 
-      pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res = 300,
-      strings=NULL, exact=FALSE,
-      newheaders=NULL)
+      xlab = "Parameter value", ylab = "Density",
+      showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE,
+      showdev = FALSE,
+      # priorinit = TRUE, priorfinal = TRUE,
+      showlegend = TRUE, fitrange = FALSE, xaxs = "i",
+      xlim = NULL, ylim = NULL, verbose = TRUE, debug = FALSE,
+      nrows = 3, ncols = 3,
+      ltyvec = c(1, 1, 3, 4),
+      colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
+      add = FALSE, plot = TRUE, print = FALSE,
+      pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300,
+      strings = NULL, exact = FALSE,
+      newheaders = NULL)
 {
     # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
@@ -87,7 +90,7 @@ SSplotPars <-
 
     Pconst <- 0.0001
     # no prior
-    if(Ptype == "No_prior"){
+    if(Ptype %in% c("No_prior", "")){
       Prior_Like <- rep(0.,length(Pval));
     }
     
@@ -173,6 +176,10 @@ SSplotPars <-
   if(print & add){
     stop("Inputs 'print' and 'add' can't both be TRUE")
   }
+  if(print & plot){
+    warning("Inputs 'print' and 'plot' can't both be TRUE\n",
+            "changing to 'plot = FALSE'")
+  }
 
   parameters <- replist$parameters
 
@@ -212,6 +219,11 @@ SSplotPars <-
   if(length(skip)>0){
     goodnames <- goodnames[-skip]
     message("Skipping 'Impl_err_' parameters which don't have bounds reported")
+  }
+  skip <- grep("F_fleet_",goodnames)
+  if(length(skip)>0){
+    goodnames <- goodnames[-skip]
+    message("Skipping 'F_fleet_' parameters which aren't yet supported by this function")
   }
 
   # Recruitment devs
@@ -332,10 +344,14 @@ SSplotPars <-
     } # end first panel stuff
   } # end function wrapping up plotting
 
-  ## if(verbose){
-  ##   message("Making plots of parameters:")
-  ## }
-  
+  if(debug){
+    message("Making plots of parameters:")
+  }
+
+  if(plot & !add){
+    par(mfcol = c(nrows, ncols), mar = c(2, 1, 2, 1), oma = c(2, 2, 0, 0))
+  }
+
   # loop over parameters to make individual pots
   for(ipar in 1:npars){
     # which page of plots
@@ -343,9 +359,9 @@ SSplotPars <-
     # grab name and full parameter line
     parname <- goodnames[ipar]
 
-    ## if(verbose){
-    ##   message("    ",parname)
-    ## }
+    if(debug){
+      message("    ",parname)
+    }
     parline <- parameters[parameters$Label==parname,]
 
     # grab values associated with this parameter
@@ -520,6 +536,10 @@ SSplotPars <-
           caption <- paste(caption,
                            "<br>Deviation parameters are not included.")
         }
+        if(length(grep("F_fleet_", allnames)) > 0){
+          caption <- paste(caption,
+                           "<br>F parameters are not included.")
+        }
         if(fitrange){
           caption <- paste(caption,
                            "<br>Plotting range is scaled to fit parameter estimates.",
@@ -538,7 +558,7 @@ SSplotPars <-
       # change margins and number of panels
       par(mfcol = c(nrows, ncols), mar = c(2, 1, 2, 1), oma = c(2, 2, 0, 0))
     } # end creation of new page of plots
-
+    
     # make plot for this parameter
     if(print | plot){
       plotPars.fn()
