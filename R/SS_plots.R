@@ -167,6 +167,8 @@
 #' within each page. Default=3.
 #' @param tagrows Number of rows for tagging-related plots. Default=3.
 #' @param tagcols Number of columns for tagging-related plots.  Default=3.
+#' @param parrows Number of rows for parameter distribution plots.
+#' @param parcols Number of columns for parameter distribution plots.
 #' @param fixdims Control whether multi-panel plots all have dimensions equal
 #' to maxrows by maxcols, or resized within those limits to fit number of
 #' plots. Default=T.
@@ -237,7 +239,7 @@ SS_plots <-
       showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
       mainTitle=FALSE, cex.main=1,selexlines=1:6, rows=1, cols=1,
       maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
-      tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
+      tagrows=3, tagcols=3, parrows = 2, parcols = 2, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
       scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0,
@@ -1372,6 +1374,8 @@ SS_plots <-
                            plot = !png, print = png,
                            pwidth = pwidth, pheight = pheight, punits = punits,
                            ptsize = ptsize, res = res,
+                           nrows = parrows,
+                           ncols = parcols,
                            #mainTitle = mainTitle,
                            #cex.main = cex.main,
                            showmle = showmle,
