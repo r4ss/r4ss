@@ -21,13 +21,14 @@ SS_plots(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE,
   punits = "in", ptsize = 10, res = 300, mainTitle = FALSE,
   cex.main = 1, selexlines = 1:6, rows = 1, cols = 1,
   maxrows = 4, maxcols = 4, maxrows2 = 2, maxcols2 = 4,
-  andrerows = 3, tagrows = 3, tagcols = 3, fixdims = TRUE,
-  new = TRUE, SSplotDatMargin = 8, filenotes = NULL,
-  catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
-  minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
-  scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
-  maxsize = 1, showmle = TRUE, showpost = TRUE, showprior = TRUE,
-  showinit = TRUE, showdev = FALSE, fitrange = FALSE, ...)
+  andrerows = 3, tagrows = 3, tagcols = 3, parrows = 2,
+  parcols = 2, fixdims = TRUE, new = TRUE, SSplotDatMargin = 8,
+  filenotes = NULL, catchasnumbers = NULL, catchbars = TRUE,
+  legendloc = "topleft", minyr = -Inf, maxyr = Inf, sexes = "all",
+  scalebins = FALSE, scalebubbles = FALSE, tslabels = NULL,
+  catlabels = NULL, maxsize = 1, showmle = TRUE, showpost = TRUE,
+  showprior = TRUE, showinit = TRUE, showdev = FALSE,
+  fitrange = FALSE, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -251,6 +252,10 @@ within each page. Default=3.}
 \item{tagrows}{Number of rows for tagging-related plots. Default=3.}
 
 \item{tagcols}{Number of columns for tagging-related plots.  Default=3.}
+
+\item{parrows}{Number of rows for parameter distribution plots.}
+
+\item{parcols}{Number of columns for parameter distribution plots.}
 
 \item{fixdims}{Control whether multi-panel plots all have dimensions equal
 to maxrows by maxcols, or resized within those limits to fit number of

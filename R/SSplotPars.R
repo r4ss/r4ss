@@ -530,7 +530,7 @@ SSplotPars <-
         }else{
           caption <- paste(caption,
                            "<br>Plotting range is equal to input limits on parameters.",
-                           "Use fitrange = TRUE scale to estimates.")
+                           "Use fitrange = TRUE to scale the range to the estimates.")
         }
       }
       # define filename
