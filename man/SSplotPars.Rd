@@ -10,10 +10,9 @@ SSplotPars(replist, plotdir = NULL, xlab = "Parameter value",
   showlegend = TRUE, fitrange = FALSE, xaxs = "i", xlim = NULL,
   ylim = NULL, verbose = TRUE, nrows = 3, ncols = 3,
   ltyvec = c(1, 1, 3, 4), colvec = c("blue", "red", "black", "gray60",
-  rgb(0, 0, 0, 0.5)), new = TRUE, add = FALSE, pdf = FALSE,
+  rgb(0, 0, 0, 0.5)), add = FALSE, plot = TRUE, print = FALSE,
   pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10,
-  returntable = FALSE, strings = c(), exact = FALSE,
-  newheaders = NULL)
+  res = 300, strings = NULL, exact = FALSE, newheaders = NULL)
 }
 \arguments{
 \item{replist}{List produced by \code{\link{SS_output}}.}
@@ -63,11 +62,11 @@ distributions and the median of the posterior distribution.}
 \item{colvec}{Vector of colors used for lines and polygons showing MLE,
 initial value, prior, posterior, and median of the posterior.}
 
-\item{new}{Open new window for plotting?}
-
 \item{add}{Add to existing plot?}
 
-\item{pdf}{Write to PDF file instead of R GUI?}
+\item{plot}{Plot to active plot device?}
+
+\item{print}{Print to PNG files?}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. Default=7.}
@@ -81,7 +80,7 @@ initial value, prior, posterior, and median of the posterior.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{returntable}{Return table of parameter info? Default=FALSE.}
+\item{res}{Resolution for PNG file}
 
 \item{strings}{Subset parameters included in the plot using substring from
 parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
@@ -92,6 +91,8 @@ substrings are allowed.}
 
 \item{newheaders}{Optional vector of headers for each panel to replace the
 parameter names.}
+
+\item{returntable}{Return table of parameter info? Default=FALSE.}
 }
 \description{
 Make multi-figure plots of prior, posterior, and estimated asymptotic

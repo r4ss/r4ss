@@ -4,7 +4,7 @@
 \alias{SS_plots}
 \title{plot many quantities related to output from Stock Synthesis}
 \usage{
-SS_plots(replist = NULL, plot = 1:25, print = NULL, pdf = FALSE,
+SS_plots(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE,
   png = TRUE, html = png, printfolder = "plots", dir = "default",
   fleets = "all", areas = "all", fleetnames = "default",
   fleetcols = "default", fleetlty = 1, fleetpch = 1, lwd = 1,
@@ -26,7 +26,8 @@ SS_plots(replist = NULL, plot = 1:25, print = NULL, pdf = FALSE,
   catchasnumbers = NULL, catchbars = TRUE, legendloc = "topleft",
   minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
   scalebubbles = FALSE, tslabels = NULL, catlabels = NULL,
-  maxsize = 1, ...)
+  maxsize = 1, showmle = TRUE, showpost = TRUE, showprior = TRUE,
+  showinit = TRUE, showdev = FALSE, fitrange = FALSE, ...)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
@@ -61,6 +62,7 @@ Current grouping of plots is as follows:
   \item Yield
   \item Movement
   \item Data range
+  \item Parameter distributions
   \item Diagnostic tables
 }}
 
@@ -292,6 +294,23 @@ a vector of appropriate length (currently 10) with labels for each figure}
 
 \item{maxsize}{The size of the largest bubble in the datasize
 plot. Default is 1.0.}
+
+\item{showmle}{Show MLE estimate and asymptotic variance estimate with blue
+lines in the parameter distribution plots?}
+
+\item{showpost}{Show posterior distribution as bar graph in parameter
+distribution plots (requires MCMC results to be available in \code{replist})?}
+
+\item{showprior}{Show prior distribution as black line in the parameter
+distribution plots?}
+
+\item{showinit}{Show initial value as red triangle in the parameter
+distribution plots?}
+
+\item{showdev}{Include devs in the parameter distribution plots?}
+
+\item{fitrange}{Fit range in parameter distribution plots tightly around MLE
+and posterior distributions instead of full parameter range?}
 
 \item{\dots}{Additional arguments that will be passed to some subfunctions.}
 }
