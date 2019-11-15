@@ -1370,6 +1370,9 @@ SS_plots <-
   igroup <- 25
   if(igroup %in% plot){
     if(verbose) cat("Starting parameter distribution plots (group ",igroup,")\n",sep="")
+    if(showpost && is.null(replist$mcmc)){
+      showpost <- FALSE
+    }
     plotinfo <- SSplotPars(replist = replist,
                            plot = !png, print = png,
                            pwidth = pwidth, pheight = pheight, punits = punits,

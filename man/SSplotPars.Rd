@@ -8,11 +8,12 @@ SSplotPars(replist, plotdir = NULL, xlab = "Parameter value",
   ylab = "Density", showmle = TRUE, showpost = TRUE,
   showprior = TRUE, showinit = TRUE, showdev = FALSE,
   showlegend = TRUE, fitrange = FALSE, xaxs = "i", xlim = NULL,
-  ylim = NULL, verbose = TRUE, nrows = 3, ncols = 3,
-  ltyvec = c(1, 1, 3, 4), colvec = c("blue", "red", "black", "gray60",
-  rgb(0, 0, 0, 0.5)), add = FALSE, plot = TRUE, print = FALSE,
-  pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10,
-  res = 300, strings = NULL, exact = FALSE, newheaders = NULL)
+  ylim = NULL, verbose = TRUE, debug = FALSE, nrows = 3,
+  ncols = 3, ltyvec = c(1, 1, 3, 4), colvec = c("blue", "red",
+  "black", "gray60", rgb(0, 0, 0, 0.5)), add = FALSE, plot = TRUE,
+  print = FALSE, pwidth = 6.5, pheight = 5, punits = "in",
+  ptsize = 10, res = 300, strings = NULL, exact = FALSE,
+  newheaders = NULL)
 }
 \arguments{
 \item{replist}{List produced by \code{\link{SS_output}}.}
@@ -51,6 +52,9 @@ Otherwise, limits are based on the model results.}
 Otherwise, limits are based on the model results.}
 
 \item{verbose}{Controls amount of text output (maybe).}
+
+\item{debug}{Provide additional messages to help with debugging when the
+function fails.}
 
 \item{nrows}{How many rows in multi-figure plot.}
 
