@@ -46,35 +46,17 @@ SSexecutivesummary <- function (dir, replist,
 
   # Check to make sure dir is a dir
   if(is.character(dir)){
-    paste0("Files will be written to the", dir, "folder location.")
+    paste0("Files will be written to the ", dir, " folder location.")
   }
 
-  #Read in the base model using r4ss
-  #wd        <- paste(dir, "/Report.sso", sep="")
-  #base      <- readLines(wd)
-  #rawrep    <- read.table(file= wd , col.names = 1:400, fill = TRUE,
-  #                        quote = "", colClasses = "character", nrows = -1,
-  #                        comment.char = "")
-
-  if (plotfolder == 'default') { csv.dir = paste0(inputs$dir,"/tables/") }
+  if (plotfolder == 'default') { csv.dir = paste0(replist$inputs$dir,"/tables/") }
   if (plotfolder != 'default') { csv.dir = paste0(plotfolder,"/tables/")}
 
   dir.create(csv.dir, showWarnings = FALSE)
   if(verbose){
-    message("CSV files will be written in\n", csv.dir)
+    message("CSV files will be written in:\n", csv.dir)
   }
   
-  #SS_versionCode         <- base[grep("#V",base)]
-  #SS_version             <- base[grep("Stock_Synthesis",base)]
-  ## remove any version numbering in the comments
-  #SS_version             <- SS_version[substring(SS_version,1,2)!="#C"] 
-  #SS_versionshort     <- toupper(substr(SS_version,1,8))
-  #SS_versionNumeric     <- as.numeric(substring(SS_versionshort,5))
-  #if(SS_versionNumeric == 3.3){
-  #  add <- as.numeric(toupper(substr(SS_version, 9, 11)))
-  #  SS_versionNumeric = SS_versionNumeric + 0.1*add
-  #}
-
   #=============================================================================
   # Function Sections
   #=============================================================================
@@ -91,32 +73,30 @@ SSexecutivesummary <- function (dir, replist,
   }
 
   # Funtion to calculate confidence intervals
-  getDerivedQuant.fn <- function(dat, label, yrs, ci_value, divisor=1) {
+  getDerivedQuant.fn <- function(dat, label, yrs, ci_value, divisor = 1) {
     # modify old header to new value
-    names(dat)[names(dat)=="LABEL"] <- "Label"
-    allYrs <- suppressWarnings(as.numeric(substring(
-        dat$Label[substring(dat$Label,1,3)=="SSB"],5,8)))
+    names(dat)[names(dat) == "LABEL"] <- "Label"
+    allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label, 1, 3) == "SSB"], 5, 8)))
     allYrs <- allYrs[!is.na(allYrs)]
-    finalYr <- as.numeric(substring(dat$Label[substring(
-        dat$Label,1,8)=="OFLCatch"],10,13))[1]
+    finalYr <- as.numeric(substring(dat$Label[substring(dat$Label, 1, 8) == "OFLCatch"], 10, 13))[1]
     if(is.null(yrs)) {
       yrs <- allYrs
     }
     if(yrs[1]<0) {
-      yrs <- (finalYr+yrs):finalYr
+      yrs <- (finalYr + yrs):finalYr
     }
-    out <- dat[dat$Label%in%paste(label,yrs,sep="_"),]
-    out.value <- out$Value <- out$Value/divisor
-    out$StdDev <- out$StdDev/divisor
-    if(label=="Recr") {   #use lognormal
-      out.lower <- exp(log(out.value)-qnorm(1-(1-ci_value)/2) *
-                         sqrt(log((out$StdDev/out.value)^2+1)))
-      out.upper <- exp(log(out.value)+qnorm(1-(1-ci_value)/2) *
-                         sqrt(log((out$StdDev/out.value)^2+1)))
+    out <- dat[dat$Label %in% paste(label, yrs, sep = "_"), ]
+    out.value <- out$Value <- out$Value / divisor
+    out$StdDev <- out$StdDev / divisor
+    if(label == "Recr") {   #use lognormal
+      out.lower <- exp(log(out.value) - qnorm(1 - (1 - ci_value) / 2) *
+                         sqrt(log((out$StdDev / out.value)^2 + 1)))
+      out.upper <- exp(log(out.value) + qnorm(1 - (1 - ci_value) / 2) *
+                         sqrt(log((out$StdDev / out.value)^2 + 1)))
     }
     else {
-      out.lower <- out.value-qnorm(1-(1-ci_value)/2)*out$StdDev
-      out.upper <- out.value+qnorm(1-(1-ci_value)/2)*out$StdDev
+      out.lower <- out.value-qnorm(1 - (1 - ci_value) / 2) * out$StdDev
+      out.upper <- out.value+qnorm(1 - (1 - ci_value) / 2) * out$StdDev
     }
     return(data.frame(Year = yrs, Value = out.value,
                       LowerCI = out.lower, UpperCI = out.upper))
