@@ -103,35 +103,27 @@ SSexecutivesummary <- function (dir, replist,
   }
 
   # Function to pull values from the read in report file and calculate the confidence intervals
-  Get.Values <- function(dat, label, yrs, ci_value, single = FALSE){
+  Get.Values <- function(replist, label, yrs, ci_value, single = FALSE){
 
-    if (label == "Recr") { label = " Recr"}
+    dat = replist$derived_quants
+    if (label == "Main_RecrDev" || label == "Late_RecrDev" || label == "ForeRecr") {
+      dat = replist$parameters
+    }
 
     if(!single){
-      dq = mapply(function(x) out = as.numeric(strsplit(
-                                  dat[grep(paste(label,"_",x,sep=""),dat)],
-                                  " ")[[1]][3]), x = yrs)
-      sd = mapply(function(x) out = as.numeric(strsplit(
-                                  dat[grep(paste(label,"_",x,sep=""),dat)],
-                                  " ")[[1]][4]), x = yrs)
-      if (label == "Main_RecrDev" ||
-          label == "Late_RecrDev" ||
-          label == "ForeRecr") {
-        zz = ifelse(SS_versionNumeric < 3.3, 10, 11)
-        ## sd = mapply(function(x) out = as.numeric(strsplit(
-        ##                             dat[grep(paste(label,"_",x,sep=""),dat)],
-        ##                             " ")[[1]][zz]), x = yrs)
-        sd = mapply(function(x) out = strsplit(
-                                    dat[grep(paste(label,"_",x,sep=""),dat)],
-                                    " ")[[1]][zz], x = yrs)
-        if (sd[1] == "NA") { sd = rep(0, length(dq)) }
-        sd = as.numeric(sd)
-      }
+      value = dat[grep(paste0(label, '_'),dat$Label),]
+      value = value[value$Label >= paste0(label, '_', yrs[1]) &
+                    value$Label <= paste0(label, '_', max(yrs)),]
+      dq = value$Value
+      ind = names(value) %in% c("StdDev", "Parm_StDev")
+      sd = value[,ind]
     }
 
     if(single){
-      dq = as.numeric(strsplit(dat[grep(label,dat)]," ")[[1]][3])
-      sd = as.numeric(strsplit(dat[grep(label,dat)]," ")[[1]][4])
+      value = dat[grep(label, dat$Label),]
+      value = value[c(-1,-2),]
+      dq = value$Value
+      sd = value$StdDev
     }
 
     if(label == " Recr" || label == "Recr_virgin"){
@@ -144,7 +136,7 @@ SSexecutivesummary <- function (dir, replist,
     }
 
     if (!single) { return(data.frame(yrs, dq, low, high)) }
-    if (single)  { return(data.frame(dq, low, high)) }
+    if ( single) { return(data.frame(dq, low, high)) }
   }
 
 
@@ -230,29 +222,31 @@ SSexecutivesummary <- function (dir, replist,
   #  IsFishFleet      <- !is.na(catch_units)
   #  nfleets          <- sum(IsFishFleet)
   #}
-  #sb.name = ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
+
+  # Need to check how r4ss determines the colname based on SS verion
+  sb.name = "SSB" #ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
 
   nfleets <- replist$nfleets
   startyr <- replist$startyr 
   endyr   <- replist$endyr 
-  foreyr  <- replist$$nforecastyears 
+  foreyr  <- replist$nforecastyears 
   hist    <- (endyr - 11):(endyr + 1)
-  fore    <- (endyr+1):foreyr
-  all     <- startyr:foreyr
+  fore    <- (endyr + 1):(endyr + 1 +foreyr)
+  all     <- startyr:max(fore)
   nareas  <- replist$nareas
 
   #======================================================================
   # Determine the fleet name and number for fisheries with catch
   #======================================================================
   names <- replist$FleetNames 
-  fleet.num <- unique(names)
+  fleet.num <- replist$fleet_ID #unique(names)
 
   #======================================================================
   # Find summary age
   #======================================================================
   # need to figure out this from the replist
-  ts        <- matchfun2("TIME_SERIES", -1,"Area", -1)
-  smry.age  <- as.numeric(toupper(substr(ts[2,2],14,15)))
+  #ts        <- matchfun2("TIME_SERIES", -1,"Area", -1)
+  smry.age  <-  "FILL IN" #as.numeric(toupper(substr(ts[2,2],14,15)))
 
   #======================================================================
   # Two-sex or single-sex model
@@ -267,7 +261,7 @@ SSexecutivesummary <- function (dir, replist,
   #======================================================================
   # Determine the number of growth patterns
   #======================================================================
-  nmorphs <- replist$ngpatterns / nsexes
+  nmorphs <- replist$ngpatterns #/ nsexes
 
   #======================================================================
   #ES Table a  Catches from the fisheries
@@ -276,80 +270,61 @@ SSexecutivesummary <- function (dir, replist,
     if(verbose){
       message("Creating Table a")
     }
-    # prior to 3.24U there was no kill_bio column
-    use.ts <- FALSE
-    if(length(grep("kill_bio", base)) == 0){
-      use.ts <- TRUE
-      # presumably prior to 3.24U where there was no "kill_bio" column in CATCH
-      # subset rows associated with TIME_SERIES table
-      ts <- base[(grep('^TIME_SERIES', base) + 1):(grep('^SPR_series', base) - 2)]
-      ts.names <- strsplit( ts[1], split = "[[:blank:]]+" )[[1]]
-      # convert to data frame
-      ts <- data.frame( do.call( rbind, strsplit( ts[-1], split = "[[:blank:]]+" ) ),
-                       stringsAsFactors = FALSE)
-      # use first row as headers
-      names(ts) <- ts.names
-      ts <- type.convert(ts, as.is = TRUE)
-    }
-    
-    catch = NULL; total.catch = total.dead = 0
+    # Note: prior to 3.24U there was no kill_bio column, and this may not work on those models
+
+    catch = NULL
+    total.catch = total.dead = 0
     ind = hist[1:(length(hist)-1)]
 
-    if(SS_versionNumeric >= 3.313) {
-      for(a in 1:nareas){
-        for (i in 1:nfleets){
-          killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-          input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-          total.dead  = total.dead + killed
-          total.catch = total.catch + input.catch
-          catch = cbind(catch, input.catch)
-        }
-        es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-        colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-        write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
-      }
-    }
+    for(a in 1:nareas){
 
-    if(SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24) {
       for (i in 1:nfleets){
-        if(!use.ts){
-          # calculations should work for 3.24U
-          killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-          input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+        if (sum(names(replist$catch) %in% "Area") == 1){
+          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr >= ind, "Obs"]
         }else{
-          # calculations required for 3.24S and earlier
-          # (values are not in CATCH, get them from TIME_SERIES as processed above)
-          killed <- ts[ts$Yr %in% ind, names(ts) == paste0("dead(B):_", i)]
-          input.catch <- ts[ts$Yr %in% ind, names(ts) == paste0("retain(B):_", i)]
+          message("SS version does not report catch by area.")
+          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr >= ind, "Obs"]
         }
-        total.dead  = total.dead + killed
-        total.catch = total.catch + input.catch
         catch = cbind(catch, input.catch)
       }
+
+      if (sum(names(replist$catch) %in% "Area") == 1){
+        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr >= ind,])$ret_bio
+        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr >= ind,])$kill_bio
+      }else{
+        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= ind,])$ret_bio
+        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= ind,])$kill_bio
+      }
+
+      temp.name = unique(replist$catch$Fleet_Name)
       es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
+      colnames(es.a) = c("Years", temp.name, "Total Catch", "Total Dead")
+      write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
-    if(SS_versionNumeric < 3.24) {
-      begin <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])+2
-      end   <- matchfun(string = "SPR_series",  obj = rawrep[,1])-1
-      temp = rawrep[begin:end, ]
-      find = as.numeric(temp[, 2])
-      grab = which(find %in% ind)
-      xx = 15
-      for (i in 1:nfleets){
-        killed = as.numeric(temp[grab, xx])
-        input.catch = as.numeric(temp[grab, xx + 1])
-        total.dead  = total.dead + killed
-        total.catch = total.catch + input.catch
-        catch = cbind(catch, input.catch)
-        xx = xx + 8
-      }
-      es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      colnames(es.a) = c("Years", 1:nfleets, "Total Catch", "Total Dead")
-      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
-    }
+    # Decide if we want full backward compatiblity to all SS 3.30 models (or 3.24 models)
+    # This would require you to get catches from the replist$timeseries for multi-area models (or all 3.24 models) 
+
+    #if(SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24) {
+    #  for (i in 1:nfleets){
+    #    if(!use.ts){
+    #      # calculations should work for 3.24U
+    #      killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
+    #      input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
+    #    }else{
+    #      # calculations required for 3.24S and earlier
+    #      # (values are not in CATCH, get them from TIME_SERIES as processed above)
+    #      killed <- ts[ts$Yr %in% ind, names(ts) == paste0("dead(B):_", i)]
+    #      input.catch <- ts[ts$Yr %in% ind, names(ts) == paste0("retain(B):_", i)]
+    #    }
+    #    total.dead  = total.dead + killed
+    #    total.catch = total.catch + input.catch
+    #    catch = cbind(catch, input.catch)
+    #  }
+    #  es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+    #  colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
+    #  write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
+    #}
 
   } # end check for 'a' %in% tables
 
@@ -361,13 +336,13 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating Table b")
     }
     
-    ssb =  Get.Values(dat = base, label = sb.name, hist, ci_value )
+    ssb =  Get.Values(replist = replist, label = sb.name, hist, ci_value )
     if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
-    depl = Get.Values(dat = base, label = "Bratio" , hist, ci_value )
+    depl = Get.Values(replist = replist, label = "Bratio" , hist, ci_value )
     for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
     es.b =  data.frame(hist,
-        comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
-        print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
+                       comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
+                       print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
     colnames(es.b) = c("Years", "Spawning Output", "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
 
     write.csv(es.b, file.path(csv.dir, "b_SSB_ExecutiveSummary.csv"), row.names = FALSE)
@@ -382,14 +357,12 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating Table c")
     }
 
-    parameters   <- matchfun2("PARAMETERS",1,"DERIVED_QUANTITIES", -1, header=TRUE)
-    recdevMain   <- parameters[substring(parameters$Label,1,12)=="Main_RecrDev",]
-
-    recdevLate   <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
+    recdevMain   <- replist$parameters[substring(replist$parameters$Label,1,12)=="Main_RecrDev", 1:3]
+    recdevLate   <- replist$parameters[substring(replist$parameters$Label,1,12)=="Late_RecrDev", 1:3]
     temp         <- toupper(substr(recdevLate$Label,14,17))
     late.yrs     <- as.numeric(temp)
 
-    recdevFore   <- parameters[substring(parameters$Label,1, 8)=="ForeRecr",]
+    recdevFore   <- replist$parameters[substring(replist$parameters$Label,1, 8)=="ForeRecr", 1:3]
     temp         <- toupper(substr(recdevFore$Label,10,13))
     fore.yrs     <- as.numeric(temp)
     ind          <- fore.yrs <= max(hist)
@@ -397,18 +370,19 @@ SSexecutivesummary <- function (dir, replist,
 
     end          <- ifelse(length(late.yrs) == 0, fore.yrs - 1, late.yrs - 1)
 
-    recruits     = Get.Values(dat = base, label = "Recr" , hist, ci_value )
+    recruits     <- Get.Values(replist = replist, label = "Recr" , hist, ci_value )
+
     if (dim(recdevMain)[1] != 0){
-      recdevs      = Get.Values(dat = base, label = "Main_RecrDev", yrs = hist[1]:end, ci_value )
+      recdevs      = Get.Values(replist = replist, label = "Main_RecrDev", yrs = hist[1]:end, ci_value )
       devs = cbind(recdevs$dq, recdevs$low, recdevs$high)
 
       if (length(late.yrs) > 0 ){
-        late.recdevs = Get.Values(dat = base, label = "Late_RecrDev", yrs = late.yrs, ci_value )
+        late.recdevs = Get.Values(replist = replist, label = "Late_RecrDev", yrs = late.yrs, ci_value )
         devs = cbind(c(recdevs$dq, late.recdevs$dq), c(recdevs$low, late.recdevs$low), c(recdevs$high, late.recdevs$high))
       }
 
       if(length(fore.yrs) > 0){
-        fore.recdevs = Get.Values(dat = base, label = "ForeRecr", yrs = fore.yrs, ci_value )
+        fore.recdevs = Get.Values(replist = replist, label = "ForeRecr", yrs = fore.yrs, ci_value )
         if (length(late.yrs) > 0){
           devs = cbind(c(recdevs$dq, late.recdevs$dq, fore.recdevs$dq),
               c(recdevs$low, late.recdevs$low, fore.recdevs$low),
@@ -430,8 +404,8 @@ SSexecutivesummary <- function (dir, replist,
     for (i in 1:length(hist)){ dig = ifelse(recruits[i,2] < 100, 1, 0)}
 
     es.c = data.frame(hist,
-        comma(recruits$dq, dig), paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig)),
-        devs.out )
+                      comma(recruits$dq, dig), paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig)),
+                      devs.out )
 
     colnames(es.c) = c("Years", "Recruitment", "95% Asymptotic Interval", "Recruitment Deviations", "95% Asymptotic Interval")
 
