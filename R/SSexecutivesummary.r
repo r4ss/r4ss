@@ -68,39 +68,6 @@ SSexecutivesummary <- function (dir, replist,
   comma          <- function(x, digits=0) {
     formatC(x, big.mark=",", digits, format = "f")
   }
-  emptytest      <- function(x){
-    sum(!is.na(x) & x=="")/length(x)
-  }
-
-  # Funtion to calculate confidence intervals
-  getDerivedQuant.fn <- function(dat, label, yrs, ci_value, divisor = 1) {
-    # modify old header to new value
-    names(dat)[names(dat) == "LABEL"] <- "Label"
-    allYrs <- suppressWarnings(as.numeric(substring(dat$Label[substring(dat$Label, 1, 3) == "SSB"], 5, 8)))
-    allYrs <- allYrs[!is.na(allYrs)]
-    finalYr <- as.numeric(substring(dat$Label[substring(dat$Label, 1, 8) == "OFLCatch"], 10, 13))[1]
-    if(is.null(yrs)) {
-      yrs <- allYrs
-    }
-    if(yrs[1]<0) {
-      yrs <- (finalYr + yrs):finalYr
-    }
-    out <- dat[dat$Label %in% paste(label, yrs, sep = "_"), ]
-    out.value <- out$Value <- out$Value / divisor
-    out$StdDev <- out$StdDev / divisor
-    if(label == "Recr") {   #use lognormal
-      out.lower <- exp(log(out.value) - qnorm(1 - (1 - ci_value) / 2) *
-                         sqrt(log((out$StdDev / out.value)^2 + 1)))
-      out.upper <- exp(log(out.value) + qnorm(1 - (1 - ci_value) / 2) *
-                         sqrt(log((out$StdDev / out.value)^2 + 1)))
-    }
-    else {
-      out.lower <- out.value-qnorm(1 - (1 - ci_value) / 2) * out$StdDev
-      out.upper <- out.value+qnorm(1 - (1 - ci_value) / 2) * out$StdDev
-    }
-    return(data.frame(Year = yrs, Value = out.value,
-                      LowerCI = out.lower, UpperCI = out.upper))
-  }
 
   # Function to pull values from the read in report file and calculate the confidence intervals
   Get.Values <- function(replist, label, yrs, ci_value, single = FALSE){
@@ -139,88 +106,9 @@ SSexecutivesummary <- function (dir, replist,
   }
 
 
-  #matchfun <- function(string, obj=rawrep[,1], substr1=TRUE)
-  #    {
-  #      # return a line number from the report file (or other file)
-  #      # sstr controls whether to compare subsets or the whole line
-  #      match(string, if(substr1){substring(obj,1,nchar(string))}else{obj} )
-  #    }
-
-  #matchfun2 <- function(string1,adjust1,string2,adjust2,
-  #                      cols="nonblank",matchcol1=1,matchcol2=1,
-  #                      objmatch=rawrep,objsubset=rawrep,
-  #                      substr1=TRUE,substr2=TRUE,header=FALSE)
-  #    {
-  #      # return a subset of values from the report file (or other file)
-  #      # subset is defined by character strings at the start and end, with integer
-  #      # adjustments of the number of lines to above/below the two strings
-  #      line1 <- match(string1,
-  #                     if(substr1){
-  #                       substring(objmatch[,matchcol1],1,nchar(string1))
-  #                     }else{
-  #                       objmatch[,matchcol1]
-  #                     })
-  #      line2 <- match(string2,
-  #                     if(substr2){
-  #                       substring(objmatch[,matchcol2],1,nchar(string2))
-  #                     }else{
-  #                       objmatch[,matchcol2]
-  #                     })
-  #      if(is.na(line1) | is.na(line2)) return("absent")
-#
-  #      if(is.numeric(cols))    out <- objsubset[(line1+adjust1):(line2+adjust2),cols]
-  #      if(cols[1]=="all")      out <- objsubset[(line1+adjust1):(line2+adjust2),]
-  #      if(cols[1]=="nonblank"){
-  #        # returns only columns that contain at least one non-empty value
-  #        out <- objsubset[(line1+adjust1):(line2+adjust2),]
-  #        out <- out[,apply(out,2,emptytest) < 1]
-  #      }
-  #      if(header && nrow(out)>0){
-  #        out[1,out[1,]==""] <- "NoName"
-  #        names(out) <- out[1,]
-  #        out <- out[-1,]
-  #      }
-  #      return(out)
-  #    }
-
   #============================================================================
   # Determine the model version and dimensions of the model
   #============================================================================
-
-  #rawdefs <- matchfun2("DEFINITIONS",1,"LIKELIHOOD",-1)
-
-  # Determine the number of fishing fleets
-  #if (SS_versionNumeric >= 3.313){
-  #  # version 3.30
-  #  defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-  #  defs[defs==""] <- NA
-  #  FleetNames   <- as.character(defs[grep("Fleet_name",defs$X1),-1])
-  #  FleetNames   <- FleetNames[!is.na(FleetNames)]
-  #  fleet_ID     <- 1: length(FleetNames)
-  #  fleet_type   <- as.numeric(defs[grep("Fleet_type",defs$X1),-1])
-  #  nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
-  #}
-
-  #if (SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.3){
-  #  # version 3.30
-  #  defs          <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-  #  defs[defs==""] <- NA
-  #  FleetNames   <- as.character(defs[grep("fleet_names",defs$X1),-1])
-  #  FleetNames   <- FleetNames[!is.na(FleetNames)]
-  #  fleet_ID     <- 1: length(FleetNames)
-  #  fleet_type   <- as.numeric(defs$X1[4:dim(defs)[1]])
-  #  nfleets      <- sum(fleet_type[!is.na(fleet_type)] <= 2 )
-  #}
-
-  #if (SS_versionNumeric < 3.3){
-  #  # version 3.20 - 3.24
-  #  defs              <- rawdefs[-(1:3),apply(rawdefs[-(1:3),],2,emptytest)<1]
-  #  defs[defs==""]     <- NA
-  #  lab              <- defs$X1
-  #  catch_units      <- as.numeric(defs[grep("Catch_units",lab),-1])
-  #  IsFishFleet      <- !is.na(catch_units)
-  #  nfleets          <- sum(IsFishFleet)
-  #}
 
   # Need to check how r4ss determines the colname based on SS verion
   sb.name = "SSB" #ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
@@ -244,8 +132,7 @@ SSexecutivesummary <- function (dir, replist,
   # Find summary age
   #======================================================================
   # need to figure out this from the replist
-  #ts        <- matchfun2("TIME_SERIES", -1,"Area", -1)
-  smry.age  <-  "FILL IN" #as.numeric(toupper(substr(ts[2,2],14,15)))
+  smry.age  <-  "FILL IN" 
 
   #======================================================================
   # Two-sex or single-sex model
@@ -301,8 +188,12 @@ SSexecutivesummary <- function (dir, replist,
       write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # TO DO NOTE
     # Decide if we want full backward compatiblity to all SS 3.30 models (or 3.24 models)
     # This would require you to get catches from the replist$timeseries for multi-area models (or all 3.24 models) 
+    # The code commented out below could provide a template.
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     #if(SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24) {
     #  for (i in 1:nfleets){
@@ -445,9 +336,14 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating Table e")
     }
 
-    #rawstarter   <- readLines(file.path(dir, "starter.ss"))
     spr   <- 100*replist$sprtarg
     btarg <- 100*replist$btarg 
+
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # TO DO NOTE
+    # May need to make a switch based on >3.30.13 versions
+    # for the names below 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     #if (SS_versionNumeric < 3.313){
     #  sb.unfished = "SSB_Unfished"
@@ -456,14 +352,15 @@ SSexecutivesummary <- function (dir, replist,
     #  yield.btgt = "TotYield_Btgt"
     #  yield.spr  = "TotYield_SPRtgt"
     #  yield.msy = "TotYield_MSY"
-    #} else {
+    #} 
+
     sb.unfished   = "SSB_unfished"
     smry.unfished = "SmryBio_unfished"
     recr.unfished = "Recr_unfished"
     totyield.btgt = "Dead_Catch_Btgt"
     totyield.spr  = "Dead_Catch_SPR"
     totyield.msy  = "Dead_Catch_MSY"
-    #}
+
 
     final.depl = 100*depl[dim(depl)[1],2:4]
     ssb.virgin = Get.Values(replist = replist, label = sb.unfished,   hist, ci_value, single = TRUE)
