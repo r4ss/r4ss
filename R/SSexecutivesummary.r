@@ -33,7 +33,7 @@ SSexecutivesummary <- function (dir, replist,
                                 plotfolder = 'default', 
                                 ci_value = 0.95,
                                 es_only = FALSE, 
-                                tables = c('a','b','c','d','e','f','g','h','i','catch','numbers'),
+                                tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers'),
                                 divide_by_2 = FALSE,
                                 endyr = NULL,
                                 verbose = TRUE) 
@@ -562,7 +562,7 @@ SSexecutivesummary <- function (dir, replist,
   
   if (es_only == TRUE){
     if(verbose){
-      message("Skipping catch and numbers tables because es_only = TRUE")
+      message("Skipping catch, timeseries, and numbers-at-age tables because es_only = TRUE")
     }
   }
   if (es_only == FALSE & 'catch' %in% tables){
@@ -573,63 +573,52 @@ SSexecutivesummary <- function (dir, replist,
     #======================================================================
     # Total Catch when discards are estimated
     #======================================================================
-    xx = ifelse(SS_versionNumeric < 3.3, 12, 15)
-    total.dead = total.catch = 0
     catch = NULL
+    total.catch = total.dead = 0
     ind = startyr:endyr
-    if (SS_versionNumeric >= 3.313){
-      for(a in 1:nareas){
-        for (i in 1:nfleets){
-          killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-          input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], nareas[a], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-          total.dead = total.dead + killed
-          total.catch = total.catch + input.catch
-          catch = cbind(catch, input.catch)
+
+    for(a in 1:nareas){
+      for (i in 1:nfleets){
+        if (sum(names(replist$catch) %in% "Area") == 1){
+          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind, "Obs"]
+        }else{
+          message("SS version does not report catch by area.")
+          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr %in% ind, "Obs"]
         }
-        mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
-        colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
-
-        write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], ".csv"), row.names = FALSE)
-      }
-    }
-
-    if (SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24){
-      #for(a in 1:nareas){
-      for (i in 1:nfleets){
-        killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i],x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-        input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-        total.dead = total.dead + killed
-        total.catch = total.catch + input.catch
         catch = cbind(catch, input.catch)
       }
-      mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
-      colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
 
-      write.csv(mortality, file.path(csv.dir, "_CatchesAllYrs_Area.csv"), row.names = FALSE)
-      #}
-    }
-
-    if(SS_versionNumeric < 3.24) {
-      begin <- matchfun(string = "TIME_SERIES", obj = rawrep[,1])+2
-      end   <- matchfun(string = "SPR_series",  obj = rawrep[,1])-1
-      temp = rawrep[begin:end, ]
-      find = as.numeric(temp[, 2])
-      grab = which(find %in% ind)
-      xx = 15
-      for (i in 1:nfleets){
-        killed = as.numeric(temp[grab, xx])
-        input.catch = as.numeric(temp[grab, xx + 1])
-        total.dead  = total.dead + killed
-        total.catch = total.catch + input.catch
-        catch = cbind(catch, input.catch)
-        xx = xx + 8
+      if (sum(names(replist$catch) %in% "Area") == 1){
+        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind,])$ret_bio
+        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind,])$kill_bio
+      }else{
+        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% ind,])$ret_bio
+        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% ind,])$kill_bio
       }
-      es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      colnames(es.a) = c("Years", 1:nfleets, "Total Catch", "Total Dead")
-      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
+
+      temp.name = unique(replist$catch$Fleet_Name)
+      mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      colnames(mortality) = c("Years", temp.name, "Total Catch", "Total Dead")
+      write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # NEED TO ASSESS BACKWARD COMPATABILITY - SAME AS WITH ES.A
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   } # end check for es_only = TRUE & 'catch' %in% tables
+
+  #======================================================================
+  #Time-series Tables
+  #======================================================================
+  if (es_only == FALSE & 'timeseries' %in% tables){
+    if(verbose){
+      message("Creating time-series table")
+    }
+
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # ADD CODE FROM TIMESERIES FUNCTION HERE
+    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  }  
 
   #======================================================================
   #Numbers at age
@@ -646,68 +635,72 @@ SSexecutivesummary <- function (dir, replist,
       }
     }
 
-    if(SS_versionNumeric < 3.30) {
-      maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+    #if(SS_versionNumeric < 3.30) {
+    #  maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
 
-      if (nsexes == 1) {
-        natage.f = natage.m = 0
-        for(a in 1:nareas){
-          temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-          natage.f = natage.f + t(temp)
-        }
+    #  if (nsexes == 1) {
+    #    natage.f = natage.m = 0
+    #    for(a in 1:nareas){
+    #      temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+    #      natage.f = natage.f + t(temp)
+    #    }
 
-        colnames(natage.f) = paste0("Age", 0:maxAge)
-        natage.f <- data.frame(Year = startyr:endyr, natage.f)
+    #    colnames(natage.f) = paste0("Age", 0:maxAge)
+    #    natage.f <- data.frame(Year = startyr:endyr, natage.f)
 
-        write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
-      }
+    #    write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
+    #  }
 
-      if (nsexes == 2) {
-        natage.f = natage.m = 0
-        for(a in 1:nareas){
-          for (b in 1:nmorphs){
-            n = b
-            temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-            natage.f = natage.f + t(temp)
-            n = ifelse(nmorphs ==1, nsexes, b + nsexes)
-            temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-            natage.m = natage.m + t(temp)
-          }
-        }
+    #  if (nsexes == 2) {
+    #    natage.f = natage.m = 0
+    #    for(a in 1:nareas){
+    #      for (b in 1:nmorphs){
+    #        n = b
+    #        temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+    #        natage.f = natage.f + t(temp)
+    #        n = ifelse(nmorphs ==1, nsexes, b + nsexes)
+    #        temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
+    #        natage.m = natage.m + t(temp)
+    #      }
+    #    }
 
-        colnames(natage.f) <- paste0("Age", 0:maxAge)
-        colnames(natage.m) <- paste0("Age", 0:maxAge)
-        natage.f <- data.frame(Year = startyr:endyr, natage.f)
-        natage.m <- data.frame(Year = startyr:endyr, natage.m)
+    #    colnames(natage.f) <- paste0("Age", 0:maxAge)
+    #    colnames(natage.m) <- paste0("Age", 0:maxAge)
+    #    natage.f <- data.frame(Year = startyr:endyr, natage.f)
+    #    natage.m <- data.frame(Year = startyr:endyr, natage.m)
 
-        write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
-        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
-      }
-    } # SS v3.24 verions loop
+    #    write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
+    #    write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
+    #  }
+    #} # SS v3.24 verions loop
 
     # Check to see if numbers-at-age is calculated
-    if(SS_versionNumeric >= 3.30) {
-      if(!exists("rawstarter")){
+    #if(SS_versionNumeric >= 3.30) {
+    #  if(!exists("rawstarter")){
         # rawstarter was read in creation of table 'e'
-        rawstarter <- readLines(file.path(dir, "starter.ss"))
+    #    rawstarter <- readLines(file.path(dir, "starter.ss"))
+    #  }
+      check = dim(replist$natage)[2] #as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
+      if (is.null(check)) {
+        "Detailed age-structure is not in the report file, double check settings in the starter file."
       }
-      check = as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
-      if (check == 2) {
-        "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."
-      }
-      if (check != 2){
-        maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+      if (!is.null(check)){
+        age0 = which(names(replist$natage) == "0")
+        get.ages = age0:check
 
         if (nsexes == 1) {
-          natage.f = natage.m = 0
+          natage = 0
           for(a in 1:nareas){
-            temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-            natage.f = natage.f + t(temp)
+            for(b in 1:nmorphs){
+              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a  & replist$natage[,"Bio_Pattern"] == b & 
+                    & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B" 
+              temp = replist$natage[ind, get.ages]
+              natage.f = natage + temp
+            }
           }
 
-          colnames(natage.f) <- paste0("Age", 0:maxAge)
-          natage.f <- data.frame(Year = startyr:endyr, natage.f)
-
+          colnames(natage) <- paste0("Age ", 0:(length(get.ages)-1))
+          natage <- data.frame(Year = startyr:max(fore), natage)
           write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
         }
 
@@ -715,22 +708,26 @@ SSexecutivesummary <- function (dir, replist,
           natage.f = natage.m = 0
           for(a in 1:nareas){
             for (b in 1:nmorphs){
-              n = b
-              temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-              natage.f = natage.f + t(temp)
-              n = ifelse(nmorphs ==1, nsexes, b + nsexes)
-              temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-              natage.m = natage.m + t(temp)
+              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b &
+                    replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B"
+              temp = replist$natage[ind, get.ages]
+              natage.f = natage.f + temp
+
+              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b &
+              replist$natage[,"Sex"] == 2 & replist$natage[,"Beg/Mid"] == "B"
+              temp = replist$natage[ind, get.ages]
+              natage.m = natage.m + temp
+
             }
           }
 
-        colnames(natage.f) <- paste0("Age", 0:maxAge)
-        colnames(natage.m) <- paste0("Age", 0:maxAge)
-        natage.f <- data.frame(Year = startyr:endyr, natage.f)
-        natage.m <- data.frame(Year = startyr:endyr, natage.m)
-
-        write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
-        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
+          colnames(natage.m) <- paste0("Age", 0:(length(get.ages)-1))
+          natage.m <- data.frame(Year = startyr:max(fore), natage.m)
+          write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
+  
+          colnames(natage.f) <- paste0("Age ", 0:(length(get.ages)-1))
+          natage.f <- data.frame(Year = startyr:max(fore), natage.f)
+          write.csv(natage.f, file.path(csv.dir, "_natage.f.csv"), row.names = FALSE)
         }
       } # end check for detailed output
     } # SS version 3.30
