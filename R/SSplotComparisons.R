@@ -1344,14 +1344,17 @@ SSplotComparisons <-
     ### make plot of index fits
     # calculate ylim (excluding dummy observations from observed but not expected)
     sub <- !is.na(indices2$Like)
-    ylim <- ylimAdj*range(exp, obs[sub], lower[sub], upper[sub], na.rm=TRUE)
+    ylim <- range(exp, obs[sub], lower[sub], upper[sub], na.rm=TRUE)
     # if no values included in subset, then set ylim based on all values
     if(!any(sub)){
-      ylim <- ylimAdj*range(exp, obs, lower, upper, na.rm=TRUE)
+      ylim <- range(exp, obs, lower, upper, na.rm=TRUE)
     }
     if(!log){
       # 0 included if not in log space
-      ylim <- range(0,ylim)
+      ylim <- c(0, ylimAdj * ylim[2])
+    }else{
+      # add padding on top and bottom
+      ylim <- ylim + c(-1, 1) * (ylimAdj - 1) * diff(ylim)
     }
 
     meanQ <- rep(NA,nlines)
