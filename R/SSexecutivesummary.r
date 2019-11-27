@@ -60,8 +60,6 @@ SSexecutivesummary <- function (dir, replist,
   #=============================================================================
   # Function Sections
   #=============================================================================
-
-  # Function to force R to print correct decimal place
   print.numeric  <- function(x, digits) {
     formatC(x, digits = digits, format = "f")
   }
@@ -111,7 +109,7 @@ SSexecutivesummary <- function (dir, replist,
   #============================================================================
 
   # Need to check how r4ss determines the colname based on SS verion
-  sb.name = "SSB" #ifelse(SS_versionNumeric < 3.313, "SPB", "SSB")
+  sb.name = "SSB" #ifelse(toupper(substr(replist$SS_version, 10, 11)) < 13, "SPB", "SSB")
 
   nfleets <- replist$nfleets
   startyr <- replist$startyr 
@@ -150,6 +148,15 @@ SSexecutivesummary <- function (dir, replist,
   nmorphs <- replist$ngpatterns #/ nsexes
 
   #======================================================================
+  # Spawning Biomass or Spawning Output?
+  #======================================================================  
+  sb.label = if(replist$SpawnOutputUnits == 'numbers'){
+    "Spawning Output"
+  } else{
+    "Spawning Biomass (mt)"
+  }
+
+  #======================================================================
   #ES Table a  Catches from the fisheries
   #======================================================================
   if('a' %in% tables){
@@ -160,15 +167,15 @@ SSexecutivesummary <- function (dir, replist,
 
     catch = NULL
     total.catch = total.dead = 0
-    ind = hist[1:(length(hist)-1)]
+    ind = min(hist) #hist[1:(length(hist)-1)]
 
     for(a in 1:nareas){
 
       for (i in 1:nfleets){
         if (sum(names(replist$catch) %in% "Area") == 1){
-          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr >= ind, "Obs"]
+          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr >= ind, "Obs"]        
         }else{
-          message("SS version does not report catch by area.")
+          #message("SS version does not report catch by area.")
           input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr >= ind, "Obs"]
         }
         catch = cbind(catch, input.catch)
@@ -183,7 +190,7 @@ SSexecutivesummary <- function (dir, replist,
       }
 
       temp.name = unique(replist$catch$Fleet_Name)
-      es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
       colnames(es.a) = c("Years", temp.name, "Total Catch", "Total Dead")
       write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
     }
@@ -233,7 +240,7 @@ SSexecutivesummary <- function (dir, replist,
     es.b =  data.frame(hist,
                        comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
                        print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
-    colnames(es.b) = c("Years", "Spawning Output", "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
+    colnames(es.b) = c("Years", sb.label, "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
 
     write.csv(es.b, file.path(csv.dir, "b_SSB_ExecutiveSummary.csv"), row.names = FALSE)
 
@@ -316,9 +323,9 @@ SSexecutivesummary <- function (dir, replist,
                       "Fill in F method")
 
 
-    adj.spr = Get.Values(replist = replist, label = "SPRratio" , hist, ci_value)
-    f.value = Get.Values(replist = replist, label = "F" , hist, ci_value)
-    es.d = data.frame(hist,
+    adj.spr = Get.Values(replist = replist, label = "SPRratio" , hist[1:(length(hist)-1)], ci_value)
+    f.value = Get.Values(replist = replist, label = "F" , hist[1:(length(hist)-1)], ci_value)
+    es.d = data.frame(hist[1:(length(hist)-1)],
            print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
            print(f.value$dq,4),     paste0(print(f.value$low,4),     "\u2013", print(f.value$high,4)))
     colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", 
@@ -339,21 +346,6 @@ SSexecutivesummary <- function (dir, replist,
     spr   <- 100*replist$sprtarg
     btarg <- 100*replist$btarg 
 
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # TO DO NOTE
-    # May need to make a switch based on >3.30.13 versions
-    # for the names below 
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    #if (SS_versionNumeric < 3.313){
-    #  sb.unfished = "SSB_Unfished"
-    #  smry.unfished = "SmryBio_Unfished"
-    #  recr.unfished = "Recr_Unfished"
-    #  yield.btgt = "TotYield_Btgt"
-    #  yield.spr  = "TotYield_SPRtgt"
-    #  yield.msy = "TotYield_MSY"
-    #} 
-
     sb.unfished   = "SSB_unfished"
     smry.unfished = "SmryBio_unfished"
     recr.unfished = "Recr_unfished"
@@ -361,6 +353,14 @@ SSexecutivesummary <- function (dir, replist,
     totyield.spr  = "Dead_Catch_SPR"
     totyield.msy  = "Dead_Catch_MSY"
 
+    if (toupper(substr(replist$SS_version, 10, 11)) < 13){
+      sb.unfished   = "SSB_Unfished"
+      smry.unfished = "SmryBio_Unfished"
+      recr.unfished = "Recr_Unfished"
+      totyield.btgt    = "TotYield_Btgt"
+      totyield.spr     = "TotYield_SPRtgt"
+      totyield.msy     = "TotYield_MSY"
+    } 
 
     final.depl = 100*depl[dim(depl)[1],2:4]
     ssb.virgin = Get.Values(replist = replist, label = sb.unfished,   hist, ci_value, single = TRUE)
@@ -389,8 +389,8 @@ SSexecutivesummary <- function (dir, replist,
     es.e =  matrix(c(
         comma(ssb.virgin$dq,       dig),  paste0(comma(ssb.virgin$low,      dig), "\u2013", comma(ssb.virgin$high,      dig)),
         comma(smry.virgin$dq,      dig),  paste0(comma(smry.virgin$low,     dig), "\u2013", comma(smry.virgin$high,     dig)),
-        comma(ssb$dq[dim(ssb)[1]], dig),  paste0(comma(ssb$low[dim(ssb)[1]],dig), "\u2013", comma(ssb$high[dim(ssb)[1]],dig)),
         comma(rec.virgin$dq,       dig),  paste0(comma(rec.virgin$low,      dig), "\u2013", comma(rec.virgin$high,      dig)),
+        comma(ssb$dq[dim(ssb)[1]], dig),  paste0(comma(ssb$low[dim(ssb)[1]],dig), "\u2013", comma(ssb$high[dim(ssb)[1]],dig)),
         print(final.depl$dq,         2),  paste0(print(final.depl$low,      2),   "\u2013", print(final.depl$high,      2)),
         "",    "",
         comma(b.target$dq,     dig),      paste0(comma(b.target$low,    dig),     "\u2013", comma(b.target$high,      dig)),
@@ -412,23 +412,23 @@ SSexecutivesummary <- function (dir, replist,
     es.e = noquote(es.e)
 
     colnames(es.e) = c("Estimate", "95% Asymptotic Interval")
-    rownames(es.e) = c("Unfished Spawning Biomass (mt)",
-                paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),
-                paste0("Spawning Biomass", " (", hist[length(hist)], ")"),
+    rownames(es.e) = c(paste("Unfished", sb.label),
+                paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),               
                 "Unfished Recruitment (R0)",
+                paste0(sb.label, " (", hist[length(hist)], ")"),
                 paste0("Depletion ", "(", hist[length(hist)], ")"),
                 paste0("Reference Points Based SB", btarg, "%"),
-                paste0("Proxy Spawning Biomass (SB",btarg, "%)"),
+                paste0("Proxy ", sb.label, "(SB",btarg, "%)"),
                 paste0("SPR resulting in SB", btarg, "%"),
                 paste0("Exploitation Rate Resulting in SB", btarg, "%"),
                 paste0("Yield with SPR Based On SB", btarg, "% (mt)"),
                 "Reference Points based on SPR proxy for MSY",
-                paste0("Proxy spawning biomass (SPR", spr, ")"),
+                paste0("Proxy ", sb.label, " (SPR", spr, ")"),
                 paste0("SPR", spr),
                 paste0("Exploitation rate corresponding to SPR", spr),
                 paste0("Yield with SPR", spr, " at SB SPR (mt)"),
                 "Reference points based on estimated MSY values",
-                "Spawning biomass at MSY (SB MSY)",
+                paste0(sb.label, " at MSY (SB MSY)"),
                 "SPR MSY",
                 "Exploitation rate corresponding to SPR MSY",
                 "MSY (mt)")
@@ -492,7 +492,7 @@ SSexecutivesummary <- function (dir, replist,
            comma(ssb.fore$dq, 2),
            print(depl.fore$dq*100,2))
 
-    colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), "Spawning Biomass (mt)", "Depletion (%)")
+    colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Depletion (%)")
 
     write.csv(es.g, file.path(csv.dir, "g_Projections_ExecutiveSummary.csv"), row.names = FALSE)
 
@@ -545,7 +545,7 @@ SSexecutivesummary <- function (dir, replist,
                 spr_type,
                 f_type,
                 paste0("Age ", smry.age, "+ Biomass (mt)"),
-                "Spawning Biomass (mt)",
+                sb.label,
                 "95% Confidence Interval",
                 "Recruitment",
                 "95% Confidence Interval",
@@ -565,6 +565,7 @@ SSexecutivesummary <- function (dir, replist,
       message("Skipping catch, timeseries, and numbers-at-age tables because es_only = TRUE")
     }
   }
+
   if (es_only == FALSE & 'catch' %in% tables){
     if(verbose){
       message("Creating catch table")
@@ -582,7 +583,6 @@ SSexecutivesummary <- function (dir, replist,
         if (sum(names(replist$catch) %in% "Area") == 1){
           input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind, "Obs"]
         }else{
-          message("SS version does not report catch by area.")
           input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr %in% ind, "Obs"]
         }
         catch = cbind(catch, input.catch)
@@ -602,9 +602,6 @@ SSexecutivesummary <- function (dir, replist,
       write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # NEED TO ASSESS BACKWARD COMPATABILITY - SAME AS WITH ES.A
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   } # end check for es_only = TRUE & 'catch' %in% tables
 
   #======================================================================
@@ -615,9 +612,60 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating time-series table")
     }
 
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # ADD CODE FROM TIMESERIES FUNCTION HERE
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ssb.virgin = sum(replist$timeseries[replist$timeseries$Era == "VIRG", "SpawnBio"])
+    
+    smry.all = tot.bio.all = recruits.all = ssb.all = total.dead.all = 0
+    for (a in 1:nareas){
+      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% startyr:max(fore)
+
+      smry     = replist$timeseries$Bio_smry[find]
+      tot.bio  = replist$timeseries$Bio_all[find]    
+      recruits = replist$timeseries$Recruit_0[find]
+      ssb      = replist$timeseries$SpawnBio[find]
+      if(!is.null(replist$catch$Area)) {
+        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% startyr:endyr,])$kill_bio
+        total.dead.all = total.dead.all + total.dead
+      } else {
+        total.dead.all = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% startyr:endyr,])$kill_bio
+      }
+      smry.all = smry.all + smry      
+      tot.bio.all = tot.bio.all + tot.bio
+      recruits.all = recruits.all + recruits
+      ssb.all = ssb.all + ssb      
+    }
+  
+    if (nsexes == 1) { ssb.all = ssb.all / sexfactor; ssb.virgin = ssb.virgin / sexfactor}
+    depl.all = ssb.all / ssb.virgin
+
+    fore.catch = replist$derived_quants[grep("ForeCatch_",replist$derived_quants$Label),"Value"]
+    total.dead.all = c(total.dead.all, fore.catch) 
+    
+    expl.all = total.dead.all / smry.all
+    spr_type = replist$SPRratioLabel
+
+    print("Catch includes estimated discards for total dead.")
+    print("Exploitation = Total dead (including discards) divided by the summary biomass.")
+
+    # Check to see if there is exploitation in the first model year
+    ind = 0
+    for(z in 1:10) { ind = ind + ifelse(total.dead.all[z] == 0, 1, break()) } 
+    adj.spr.all = replist$derived_quants[grep("SPRratio_",replist$derived_quants$Label),"Value"] 
+    if(ind != 0) { adj.spr.all = c(rep(0, ind), adj.spr.all)}
+  
+    ts.table = data.frame(all,
+          comma(tot.bio.all,0),
+          comma(ssb.all,0),
+          comma(smry.all,0),
+          print(depl.all*100,1),
+          comma(recruits.all,0),
+          total.dead.all,
+          print(adj.spr.all,3),
+          expl.all)
+    
+    colnames(ts.table) = c("Year", "Total Biomass (mt)", sb.label, 
+      paste0("Total Biomass ", smry.age ," (mt)"), "Depletion (%)", 
+      "Age-0 Recruits", "Total Catch (mt)", spr_type, "Exploitation Rate")
+    write.csv(ts.table, file = paste0(csv.dir,"TimeSeries.csv"), row.names = FALSE) 
   }  
 
   #======================================================================
@@ -686,16 +734,15 @@ SSexecutivesummary <- function (dir, replist,
       }
       if (!is.null(check)){
         age0 = which(names(replist$natage) == "0")
-        get.ages = age0:check
+        get.ages = age0:check 
 
         if (nsexes == 1) {
           natage = 0
           for(a in 1:nareas){
             for(b in 1:nmorphs){
-              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a  & replist$natage[,"Bio_Pattern"] == b & 
-                    & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B" 
+              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a  & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B" 
               temp = replist$natage[ind, get.ages]
-              natage.f = natage + temp
+              natage = natage + temp
             }
           }
 
@@ -708,8 +755,7 @@ SSexecutivesummary <- function (dir, replist,
           natage.f = natage.m = 0
           for(a in 1:nareas){
             for (b in 1:nmorphs){
-              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b &
-                    replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B"
+              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B"
               temp = replist$natage[ind, get.ages]
               natage.f = natage.f + temp
 
@@ -730,7 +776,7 @@ SSexecutivesummary <- function (dir, replist,
           write.csv(natage.f, file.path(csv.dir, "_natage.f.csv"), row.names = FALSE)
         }
       } # end check for detailed output
-    } # SS version 3.30
-
+    #} # SS version 3.30
   } # end check for es_only = TRUE & 'numbers' %in% tables
+
 }
