@@ -165,63 +165,32 @@ SSexecutivesummary <- function (dir, replist,
     }
     # Note: prior to 3.24U there was no kill_bio column, and this may not work on those models
 
-    catch = NULL
+    catch = fleet.names = NULL
     total.catch = total.dead = 0
-    ind = min(hist) #hist[1:(length(hist)-1)]
 
-    for(a in 1:nareas){
+    for (i in 1:nfleets){
+      name = paste0("retain(B):_",i)
+      input.catch = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      catch = cbind(catch, input.catch)
 
-      for (i in 1:nfleets){
-        if (sum(names(replist$catch) %in% "Area") == 1){
-          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr >= ind, "Obs"]        
-        }else{
-          #message("SS version does not report catch by area.")
-          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr >= ind, "Obs"]
-        }
-        catch = cbind(catch, input.catch)
-      }
+      name = paste0("dead(B):_",i)
+      dead = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      if (!is.null(dead)){ 
+        total.dead = total.dead + dead
+        fleet.names = c(fleet.names, replist$FleetNames[i]) }
+    } 
+    total.catch = apply(catch, 1, sum)     
 
-      if (sum(names(replist$catch) %in% "Area") == 1){
-        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr >= ind,])$ret_bio
-        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr >= ind,])$kill_bio
-      }else{
-        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= ind,])$ret_bio
-        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= ind,])$kill_bio
-      }
 
-      temp.name = unique(replist$catch$Fleet_Name)
+    if(sum(total.catch) != sum(total.dead)){
       es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      colnames(es.a) = c("Years", temp.name, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
+      colnames(es.a) = c("Years", fleet.names, "Total Catch", "Total Dead")
+      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
+    } else {
+      es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2))
+      colnames(es.a) = c("Years", fleet.names, "Total Catch")
+      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = FALSE)      
     }
-
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # TO DO NOTE
-    # Decide if we want full backward compatiblity to all SS 3.30 models (or 3.24 models)
-    # This would require you to get catches from the replist$timeseries for multi-area models (or all 3.24 models) 
-    # The code commented out below could provide a template.
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    #if(SS_versionNumeric < 3.313 & SS_versionNumeric >= 3.24) {
-    #  for (i in 1:nfleets){
-    #    if(!use.ts){
-    #      # calculations should work for 3.24U
-    #      killed = mapply(function(x) killed = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx]), x = ind)
-    #      input.catch = mapply(function(x) input.catch = as.numeric(strsplit(base[grep(paste(fleet.num[i], names[i], x, sep=" "),base)]," ")[[1]][xx+1]), x = ind)
-    #    }else{
-    #      # calculations required for 3.24S and earlier
-    #      # (values are not in CATCH, get them from TIME_SERIES as processed above)
-    #      killed <- ts[ts$Yr %in% ind, names(ts) == paste0("dead(B):_", i)]
-    #      input.catch <- ts[ts$Yr %in% ind, names(ts) == paste0("retain(B):_", i)]
-    #    }
-    #    total.dead  = total.dead + killed
-    #    total.catch = total.catch + input.catch
-    #    catch = cbind(catch, input.catch)
-    #  }
-    #  es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-    #  colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-    #  write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
-    #}
 
   } # end check for 'a' %in% tables
 
@@ -446,15 +415,31 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating Table f")
     }
     
-    ind = hist
-    ofl = rep("fill_in", length(ind))
-    abc = rep("fill_in", length(ind))
-    acl = rep("fill_in", length(ind))
+    ofl = rep("fill_in", length(hist))
+    abc = rep("fill_in", length(hist))
+    acl = rep("fill_in", length(hist))
+
+    catch = dead = total.dead = 0
+    for (i in 1:nfleets){
+      name = paste0("retain(B):_",i)
+      input.catch = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      catch = cbind(catch, input.catch)
+
+      name = paste0("dead(B):_",i)
+      dead = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      if (!is.null(dead)){ total.dead = total.dead + dead }
+    } 
+    total.catch = apply(catch, 1, sum) 
     catch = c(comma(total.catch, digits = 2), "NA")
     dead  = c(comma(total.dead,  digits = 2), "NA")
-    es.f = data.frame(ind, ofl, abc, acl, catch, dead)
-    colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
 
+    if(sum(total.catch) != sum(total.dead)){
+      es.f = data.frame(hist, ofl, abc, acl, catch, dead)
+      colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
+    } else {
+      es.f = data.frame(hist, ofl, abc, acl, catch)
+      colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings")
+    }
     write.csv(es.f, file.path(csv.dir, "f_Manage_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'f' %in% tables
@@ -518,41 +503,68 @@ SSexecutivesummary <- function (dir, replist,
     }
 
     ind = length(hist)-1
-    smry = 0
-    for(a in 1:nareas){
-      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% hist[1:ind] 
-      temp = replist$timeseries$Bio_smry[find]
-      smry = smry + temp
+
+    catch = dead = total.dead = 0
+    for (i in 1:nfleets){
+      name = paste0("retain(B):_",i)
+      input.catch = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      catch = cbind(catch, input.catch)
+
+      name = paste0("dead(B):_",i)
+      dead = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
+      if (!is.null(dead)){ total.dead = total.dead + dead }
+    } 
+    total.catch = apply(catch, 1, sum) 
+    #total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= hist[1],])$ret_bio
+    #total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= hist[1],])$kill_bio
+    total.bind = c(c("Total Catch", total.catch, "NA"), c("Total Dead", total.dead, "NA"))
+    if(sum(total.catch) == sum(total.dead)) { 
+      total.bind = c("Total Catch", total.catch, "NA")
     }
 
+    spr_type = replist$SPRratioLabel #strsplit(base[grep(spr.name,base)]," ")[[1]][3]
+    f_type   = ifelse(replist$F_report_basis == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
+                      "Fill in F method")
+    adj.spr = Get.Values(replist = replist, label = "SPRratio" , hist[1:(length(hist)-1)], ci_value)
+    f.value = Get.Values(replist = replist, label = "F" , hist[1:(length(hist)-1)], ci_value)
+
+    smry = smry.fore = 0
+    for(a in 1:nareas){
+      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% hist[1:(length(hist)-1)] 
+      temp = replist$timeseries$Bio_smry[find]
+      smry = smry + temp
+
+      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% fore[1] 
+      temp = replist$timeseries$Bio_smry[ind]
+      smry.fore = smry.fore + temp
+    }  
     smry = c(smry, smry.fore[1])
 
-    es.i = matrix(c(hist,
-           c(print(adj.spr$dq[1:(length(hist)-1)],2), "NA"),
-           c(print(f.value$dq[1:(length(hist)-1)],2), "NA"),
-           comma(smry,   dig),
-           comma(ssb$dq, dig),
-           paste0(comma(ssb$low, dig), "\u2013", comma(ssb$high, dig)),
-           comma(recruits$dq, dig),
-           paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig)),
-           print(depl$dq*100, 1),
-           paste0(print(depl$low*100,1), "\u2013", print(depl$high*100,1))),
-           ncol = length(hist), byrow = T)
+    ssb =  Get.Values(replist = replist, label = sb.name, hist, ci_value )
+    if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
+    depl = Get.Values(replist = replist, label = "Bratio" , hist, ci_value )
+    for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
+    recruits = Get.Values(replist = replist, label = "Recr" , hist, ci_value )
+
+    es.i = matrix(c(
+           c("OFL", rep("fill_in", length(hist))),
+           c("ACL", rep("fill_in", length(hist))),
+           total.bind,
+           c(spr_type, c(print(adj.spr$dq[1:(length(hist)-1)],2), "NA")),
+           c(f_type, c(print(f.value$dq[1:(length(hist)-1)],2), "NA")),
+           c(paste0("Age ", smry.age, "+ Biomass (mt)"), comma(smry,   dig)),
+           c(sb.label, comma(ssb$dq, dig)),
+           c("95% CI", paste0(comma(ssb$low, dig), "\u2013", comma(ssb$high, dig))),
+           c("Recruits", comma(recruits$dq, dig)),
+           c("95% CI", paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig))),
+           c("Depletion (%)", print(depl$dq*100, 1)),
+           c("95% CI", paste0(print(depl$low*100,1), "\u2013", print(depl$high*100,1)))),
+           ncol = (length(hist)+1), byrow = T)
 
     es.i = noquote(es.i)
+    colnames(es.i) = c("Quantity", hist)
 
-    rownames(es.i) = c(" Years",
-                spr_type,
-                f_type,
-                paste0("Age ", smry.age, "+ Biomass (mt)"),
-                sb.label,
-                "95% Confidence Interval",
-                "Recruitment",
-                "95% Confidence Interval",
-                "Depletion (%)",
-                "95% Confidence Interval")
-
-    write.csv(es.i, file.path(csv.dir, "i_Summary_ExecutiveSummary.csv"))
+    write.csv(es.i, file.path(csv.dir, "i_Summary_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'i' %in% tables
 
@@ -574,32 +586,31 @@ SSexecutivesummary <- function (dir, replist,
     #======================================================================
     # Total Catch when discards are estimated
     #======================================================================
-    catch = NULL
-    total.catch = total.dead = 0
+    catch = fleet.names =  NULL
+    dead = total.catch = total.dead = 0
     ind = startyr:endyr
 
-    for(a in 1:nareas){
-      for (i in 1:nfleets){
-        if (sum(names(replist$catch) %in% "Area") == 1){
-          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind, "Obs"]
-        }else{
-          input.catch = replist$catch[replist$catch$Fleet == fleet.num[i] & replist$catch$Yr %in% ind, "Obs"]
-        }
-        catch = cbind(catch, input.catch)
-      }
+    for (i in 1:nfleets){
+      name = paste0("retain(B):_",i)
+      input.catch = replist$timeseries[replist$timeseries$Yr %in% ind, name]
+      catch = cbind(catch, input.catch)
 
-      if (sum(names(replist$catch) %in% "Area") == 1){
-        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind,])$ret_bio
-        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% ind,])$kill_bio
-      }else{
-        total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% ind,])$ret_bio
-        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% ind,])$kill_bio
-      }
+      name = paste0("dead(B):_",i)
+      dead = replist$timeseries[replist$timeseries$Yr %in% ind, name]
+      if (!is.null(dead)){ 
+        total.dead = total.dead + dead
+        fleet.names = c(fleet.names, replist$FleetNames[i]) }
+    } 
+    total.catch = apply(catch, 1, sum) 
 
-      temp.name = unique(replist$catch$Fleet_Name)
+    if(sum(total.catch) != sum(total.dead)){
       mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
-      colnames(mortality) = c("Years", temp.name, "Total Catch", "Total Dead")
-      write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
+      colnames(mortality) = c("Years", fleet.names, "Total Catch", "Total Dead")
+      write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)      
+    } else {
+      mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
+      colnames(mortality) = c("Years", fleet.names, "Total Catch")
+      write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)
     }
 
   } # end check for es_only = TRUE & 'catch' %in% tables
@@ -616,18 +627,18 @@ SSexecutivesummary <- function (dir, replist,
     
     smry.all = tot.bio.all = recruits.all = ssb.all = total.dead.all = 0
     for (a in 1:nareas){
-      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% startyr:max(fore)
+      find = replist$timeseries$Area == a & replist$timeseries$Yr %in% all
 
       smry     = replist$timeseries$Bio_smry[find]
       tot.bio  = replist$timeseries$Bio_all[find]    
       recruits = replist$timeseries$Recruit_0[find]
       ssb      = replist$timeseries$SpawnBio[find]
-      if(!is.null(replist$catch$Area)) {
-        total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% startyr:endyr,])$kill_bio
-        total.dead.all = total.dead.all + total.dead
-      } else {
-        total.dead.all = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% startyr:endyr,])$kill_bio
-      }
+      #if(!is.null(replist$catch$Area)) {
+      #  total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% startyr:endyr,])$kill_bio
+      #  total.dead.all = total.dead.all + total.dead
+      #} else {
+      #  total.dead.all = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% startyr:endyr,])$kill_bio
+      #}
       smry.all = smry.all + smry      
       tot.bio.all = tot.bio.all + tot.bio
       recruits.all = recruits.all + recruits
@@ -637,8 +648,16 @@ SSexecutivesummary <- function (dir, replist,
     if (nsexes == 1) { ssb.all = ssb.all / sexfactor; ssb.virgin = ssb.virgin / sexfactor}
     depl.all = ssb.all / ssb.virgin
 
-    fore.catch = replist$derived_quants[grep("ForeCatch_",replist$derived_quants$Label),"Value"]
-    total.dead.all = c(total.dead.all, fore.catch) 
+    total.dead.all = 0
+    for (i in 1:nfleets){
+      name = paste0("dead(B):_",i)
+      dead = replist$timeseries[replist$timeseries$Yr %in% all, name]
+      if (!is.null(dead)){ 
+        total.dead.all = total.dead.all + dead }
+    } 
+
+    #fore.catch = replist$derived_quants[grep("ForeCatch_",replist$derived_quants$Label),"Value"]
+    #total.dead.all = c(total.dead.all, fore.catch) 
     
     expl.all = total.dead.all / smry.all
     spr_type = replist$SPRratioLabel
@@ -648,7 +667,7 @@ SSexecutivesummary <- function (dir, replist,
 
     # Check to see if there is exploitation in the first model year
     ind = 0
-    for(z in 1:10) { ind = ind + ifelse(total.dead.all[z] == 0, 1, break()) } 
+    for(z in 1:10) { ind = ind + ifelse(total.dead[z] == 0, 1, break()) } 
     adj.spr.all = replist$derived_quants[grep("SPRratio_",replist$derived_quants$Label),"Value"] 
     if(ind != 0) { adj.spr.all = c(rep(0, ind), adj.spr.all)}
   
@@ -676,107 +695,55 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating numbers-at-age table")
     }
     
-    if ( nareas > 1) {
-      if(verbose){
-        message(paste0("Patience: There are ", nareas,
-                       " areas that are being pulled and combined to create the numbers-at-age tables."))
-      }
+    check = dim(replist$natage)[2] #as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
+    if (is.null(check)) {
+      "Detailed age-structure is not in the report file, double check settings in the starter file."
     }
 
-    #if(SS_versionNumeric < 3.30) {
-    #  maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
+    if (!is.null(check)){
+      age0 = which(names(replist$natage) == "0")
+      get.ages = age0:check 
 
-    #  if (nsexes == 1) {
-    #    natage.f = natage.m = 0
-    #    for(a in 1:nareas){
-    #      temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a,"1 1 1 1", x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-    #      natage.f = natage.f + t(temp)
-    #    }
+      if (nsexes == 1) {
+        natage = 0
+        for(a in 1:nareas){
+          for(b in 1:nmorphs){
+            ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a  & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B" 
+            temp = replist$natage[ind, get.ages]
+            natage = natage + temp
+          }
+        }
 
-    #    colnames(natage.f) = paste0("Age", 0:maxAge)
-    #    natage.f <- data.frame(Year = startyr:endyr, natage.f)
-
-    #    write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
-    #  }
-
-    #  if (nsexes == 2) {
-    #    natage.f = natage.m = 0
-    #    for(a in 1:nareas){
-    #      for (b in 1:nmorphs){
-    #        n = b
-    #        temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "1 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-    #        natage.f = natage.f + t(temp)
-    #        n = ifelse(nmorphs ==1, nsexes, b + nsexes)
-    #        temp = mapply(function(x) temp = as.numeric(strsplit(base[grep(paste(a, b, "2 1 1", n, x,sep=" "),base)]," ")[[1]][14:(14+maxAge)]), x = startyr:endyr)
-    #        natage.m = natage.m + t(temp)
-    #      }
-    #    }
-
-    #    colnames(natage.f) <- paste0("Age", 0:maxAge)
-    #    colnames(natage.m) <- paste0("Age", 0:maxAge)
-    #    natage.f <- data.frame(Year = startyr:endyr, natage.f)
-    #    natage.m <- data.frame(Year = startyr:endyr, natage.m)
-
-    #    write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
-    #    write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
-    #  }
-    #} # SS v3.24 verions loop
-
-    # Check to see if numbers-at-age is calculated
-    #if(SS_versionNumeric >= 3.30) {
-    #  if(!exists("rawstarter")){
-        # rawstarter was read in creation of table 'e'
-    #    rawstarter <- readLines(file.path(dir, "starter.ss"))
-    #  }
-      check = dim(replist$natage)[2] #as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
-      if (is.null(check)) {
-        "Detailed age-structure is not in the report file, double check settings in the starter file."
+        colnames(natage) <- paste0("Age ", 0:(length(get.ages)-1))
+        natage <- data.frame(Year = startyr:max(fore), natage)
+        write.csv(natage, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
       }
-      if (!is.null(check)){
-        age0 = which(names(replist$natage) == "0")
-        get.ages = age0:check 
 
-        if (nsexes == 1) {
-          natage = 0
-          for(a in 1:nareas){
-            for(b in 1:nmorphs){
-              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a  & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B" 
-              temp = replist$natage[ind, get.ages]
-              natage = natage + temp
-            }
+      if (nsexes == 2) {
+        natage.f = natage.m = 0
+        for(a in 1:nareas){
+          for (b in 1:nmorphs){
+            ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B"
+            temp = replist$natage[ind, get.ages]
+            natage.f = natage.f + temp
+
+            ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b &
+            replist$natage[,"Sex"] == 2 & replist$natage[,"Beg/Mid"] == "B"
+            temp = replist$natage[ind, get.ages]
+            natage.m = natage.m + temp
+
           }
-
-          colnames(natage) <- paste0("Age ", 0:(length(get.ages)-1))
-          natage <- data.frame(Year = startyr:max(fore), natage)
-          write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
         }
 
-        if (nsexes == 2) {
-          natage.f = natage.m = 0
-          for(a in 1:nareas){
-            for (b in 1:nmorphs){
-              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b & replist$natage[,"Sex"] == 1 & replist$natage[,"Beg/Mid"] == "B"
-              temp = replist$natage[ind, get.ages]
-              natage.f = natage.f + temp
-
-              ind = replist$natage[,"Yr"] >= startyr & replist$natage[,"Area"] == a & replist$natage[,"Bio_Pattern"] == b &
-              replist$natage[,"Sex"] == 2 & replist$natage[,"Beg/Mid"] == "B"
-              temp = replist$natage[ind, get.ages]
-              natage.m = natage.m + temp
-
-            }
-          }
-
-          colnames(natage.m) <- paste0("Age", 0:(length(get.ages)-1))
-          natage.m <- data.frame(Year = startyr:max(fore), natage.m)
-          write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
+        colnames(natage.m) <- paste0("Age", 0:(length(get.ages)-1))
+        natage.m <- data.frame(Year = startyr:max(fore), natage.m)
+        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
   
-          colnames(natage.f) <- paste0("Age ", 0:(length(get.ages)-1))
-          natage.f <- data.frame(Year = startyr:max(fore), natage.f)
-          write.csv(natage.f, file.path(csv.dir, "_natage.f.csv"), row.names = FALSE)
-        }
-      } # end check for detailed output
-    #} # SS version 3.30
+        colnames(natage.f) <- paste0("Age ", 0:(length(get.ages)-1))
+        natage.f <- data.frame(Year = startyr:max(fore), natage.f)
+        write.csv(natage.f, file.path(csv.dir, "_natage.f.csv"), row.names = FALSE)
+      }
+    } # end check for detailed output
   } # end check for es_only = TRUE & 'numbers' %in% tables
 
 }
