@@ -52,20 +52,23 @@ or "psoptim". If not equal to either of these, then optim is used.}
 alternative bias adjustment inputs?}
 
 \item{pwidth}{Default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{Default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Default heigth of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=5.0}.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\code{help("png")} in R for details). The default is \code{ptsize=10}.}
 
-\item{res}{Resolution of plots printed to files. Default=300.}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res=300}.}
 
-\item{cex.main}{Character expansion for plot titles.}
+\item{cex.main}{Character expansion for plot titles.
+The default is \code{cex.main=1}.}
 }
 \description{
 Uses standard error of estimated recruitment deviates to estimate the 5
