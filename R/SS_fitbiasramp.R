@@ -1,8 +1,29 @@
 #' Estimate bias adjustment for recruitment deviates
 #' 
 #' Uses standard error of estimated recruitment deviates to estimate the 5
-#' controls for the bias adjustment in Stock Synthesis
+#' controls (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011})
+#' for bias adjustment in Stock Synthesis.
 #' 
+#' @details
+#' Implementation of the bias adjustment ramp within Stock Synthesis increases
+#' the likelihood that the estimated recruitmente events, which are 
+#' log-normally distributed, are mean unbiased and comparable to results from
+#' Markov chain Mone Carlo estimation routines
+#' (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}). 
+#' Options to account for the fact that data typically do not equally represent
+#' all modelled time periods are as follows:
+#' \enumerate{
+#'   \item{fix the bias adjustment parameters at best-guess values informed by a previous
+#' assessment or model run;}
+#'   \item{fix values based on data availability, such that the start of the ramp aligns
+#' with the availability of composition data, the ramp down begins the last year
+#' those data are informative about recruitment, and the adjustment level is
+#' informed by life history;}
+#'   \item{set the adjustment level to 1.0 for all years to mimic how it was handled
+#' it Stock Synthesis prior to 2009; or}
+#'    \item{set the adjustment level to 0.0 for all years, but this last option is
+#' not recommended because it will lead to biased results.}
+#' }
 #' 
 #' @param replist Object created using \code{\link{SS_output}}
 #' @param verbose Controls the amount of output to the screen.  Default=FALSE.
@@ -42,9 +63,8 @@
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}}
-#' @references Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
-#' variability of estimated recruitments in fishery assessment models.  Can. J.
-#' Fish. Aquat. Sci., 68:1744-1760.
+#' @template methot2011cjfas
+#' 
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
