@@ -276,7 +276,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   recdev_lo <- val - 1.96*std
 
   ylim <- range(recdev_hi,recdev_lo)
-  cat('Now estimating alternative recruitment bias adjustment fraction...\n')
+  if(verbose) cat('Now estimating alternative recruitment bias adjustment fraction...\n')
   newbias <- optimfun(yr=yr, std=std,
                       startvalues=startvalues, is.forecast=is.forecast)
 
@@ -322,9 +322,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   newvals <- round(newvals,4)
   df <- data.frame(value=newvals,label=names)
 
-
-  if(print) {
-  }
+  if(verbose) {
   if(newbias$convergence!=0){
       cat("Problem with convergence, here is output from 'optim':\n")
       cat("##############################\n")
@@ -334,6 +332,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   cat('Estimated values:\n')
   print(format(df,justify="left"),row.names=FALSE)
+  }
 
   if(plot) plotbiasadj()
   if(print){
@@ -381,7 +380,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
     # write new file
     writeLines(ctlfile,newctl)
-    cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
+    if(verbose) cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
   }
   if(!is.null(plotinfo)) plotinfo$category <- "RecDev"
   return(invisible(list(newbias=newbias, df=df, plotinfo=plotinfo)))
