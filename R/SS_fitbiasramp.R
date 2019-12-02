@@ -50,16 +50,12 @@
 #' or "psoptim". If not equal to either of these, then optim is used.
 #' @param exclude_forecast Exclude forecast values in the estimation of
 #' alternative bias adjustment inputs?
-#' @param pwidth Default width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param pheight Default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
-#' @param res Resolution of plots printed to files. Default=300.
-#' @param cex.main Character expansion for plot titles.
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
+#' @template res
+#' @template cex.main
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}}
