@@ -17,6 +17,12 @@
 #' benefit from expanded bars. NULL value causes function to attempt automatic
 #' scaling.
 #' @param add Add to existing plot
+#' @param col.grid A character value specifying the color of the grid lines
+#' @param col.bars The color of the filled polygons.
+#' @param shift_hi A numeric value specifying the amount to shift the top of 
+#' the polygon up.
+#' @param shift_lo A numeric value specifying the amount to shift the bottom
+#' of the polygon up.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param labels Vector of labels for plots (titles and axis labels)
