@@ -31,6 +31,16 @@ scaling.}
 
 \item{add}{Add to existing plot}
 
+\item{col.grid}{A character value specifying the color of the grid lines}
+
+\item{col.bars}{The color of the filled polygons.}
+
+\item{shift_hi}{A numeric value specifying the amount to shift the top of 
+the polygon up.}
+
+\item{shift_lo}{A numeric value specifying the amount to shift the bottom
+of the polygon up.}
+
 \item{plot}{Plot to active plot device?}
 
 \item{print}{Print to PNG files?}

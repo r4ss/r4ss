@@ -5,6 +5,9 @@
 #'
 #'
 #' @param replist List produced by \code{\link{SS_output}}.
+#' @param plotdir A path to the folder where the plots will be saved. The default
+#' is \code{NULL}, which leads to the plots being created in the folder that
+#' contains the results.
 #' @param xlab Label on horizontal axis.
 #' @param ylab Label on vertical axis.
 #' @param showmle Show MLE estimate and asymptotic variance estimate with blue

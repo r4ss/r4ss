@@ -18,6 +18,10 @@ SSplotPars(replist, plotdir = NULL, xlab = "Parameter value",
 \arguments{
 \item{replist}{List produced by \code{\link{SS_output}}.}
 
+\item{plotdir}{A path to the folder where the plots will be saved. The default
+is \code{NULL}, which leads to the plots being created in the folder that
+contains the results.}
+
 \item{xlab}{Label on horizontal axis.}
 
 \item{ylab}{Label on vertical axis.}
