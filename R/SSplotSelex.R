@@ -120,9 +120,10 @@ SSplotSelex <-
   ## selectivity at age in end year
   # 13. selectivity at age in ending year if time-varying
   # 14. selectivity at age in ending year if NOT time-varying
+  # 15. matrix of selectivity deviations for semi-parametric selectivity 
 
   #### both/either age or length
-  # 21. selecitivity at age and length contour with overlaid growth curve
+  # 21. selectivity at age and length contour with overlaid growth curve
   # 22. selectivity with uncertainty if requested at end of control file
 
   # empty table into which information on line types etc. might be copied
@@ -730,6 +731,24 @@ SSplotSelex <-
   } # check for any of the plots in this section requested
 
   ################################################################################
+  ### Matrix of selectivity deviations for semi-parametric (2D-AR1) selectivity
+  
+  if(15 %in% subplot & !is.null(replist$seldev_matrix)){
+    seldev_matrix <- replist$seldev_matrix
+    devcol.fn <- colorRampPalette(colors = c('red','white','blue'))
+    ages <- as.numeric(colnames(seldev_matrix))
+    years <- as.numeric(rownames(seldev_matrix))
+    image(x = ages, y = -years, z = t(seldev_matrix), col = devcol.fn(10),
+          xlab = names(dimnames(seldev_matrix))[2],
+          ylab = names(dimnames(seldev_matrix))[1],
+          axes = FALSE)
+    axis(1, at = ages)
+    axis(2, at = years, las = 1)
+    box()
+  }
+  
+
+  ################################################################################
   ### Selectivity contours over age and length shown with growth curve
 
   if(21 %in% subplot & ngpatterns==1){ # need to connect growth patterns to fleets in future
@@ -881,6 +900,8 @@ SSplotSelex <-
       }
     } # end test for presence of selectivity uncertainty output
   } # check check for subplot in list
+
+  # return info on any PNG files created
   if(!is.null(plotinfo)) plotinfo$category <- "Sel"
   return(invisible(list(infotable=infotable2,plotinfo=plotinfo)))
 }
