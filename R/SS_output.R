@@ -1098,6 +1098,41 @@ SS_output <-
   # add table to stats that get printed in console
   stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
 
+  # Semi-parametric (2D-AR1) selectivity parameters
+  seldev_pars <- parameters[grep("ARDEV", parameters$Label, fixed=TRUE),
+                           names(parameters) %in% c("Label", "Value")]
+  if(nrow(seldev_pars) == 0){
+    # if semi-parametric selectivity IS NOT used
+    seldev_pars <- NULL
+    seldev_matrix <- NULL
+  }else{
+    # if semi-parametric selectivity IS used
+
+    # parse parameter labels to get info
+    seldev_label_info <- strsplit(seldev_pars$Label, split="_")
+    seldev_label_info <- data.frame(do.call(rbind, lapply(seldev_label_info, rbind)))
+    # add columns to pars data.frame with info from labels
+    seldev_pars$Fleet <- seldev_label_info$X1
+    seldev_pars$Year <- as.numeric(substring(seldev_label_info$X3, 2))
+    seldev_pars$Age <- as.numeric(substring(seldev_label_info$X4, 2))
+    # make matrix
+    if(length(unique(seldev_pars$Fleet)) > 1){
+      message("seldev_matrix only supported for 1st fleet with semi-parametric selectivity")
+    }
+    seldev_yrs <- sort(unique(seldev_pars$Year))
+    seldev_ages <- sort(unique(seldev_pars$Age))
+    seldev_matrix <- matrix(nrow = length(seldev_yrs), ncol = length(seldev_ages),
+                            dimnames = list(Year = seldev_yrs, Age = seldev_ages))
+    for(y in seldev_yrs){
+      for(a in seldev_ages){
+        seldev_matrix[paste(y), paste(a)] <-
+          seldev_pars$Value[seldev_pars$Year == y & seldev_pars$Age == a]
+      }
+    }
+    # remove label column which is redundant with rownames
+    seldev_pars <- seldev_pars[,-1]
+  }
+
   # Dirichlet-Multinomial parameters
   # (new option for comp likelihood that uses these parameters for automated
   #  data weighting)
@@ -3013,6 +3048,10 @@ SS_output <-
   # add list of stats to list that gets returned
   returndat <- c(returndat, stats)
 
+  # add info on semi-parametric selectivity deviations
+  returndat$seldev_pars <- seldev_pars
+  returndat$seldev_matrix <- seldev_matrix
+  
   # print list of statistics
   if(printstats){
     cat("Statistics shown below (to turn off, change input to printstats=FALSE)\n")
