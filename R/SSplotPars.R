@@ -86,7 +86,8 @@ SSplotPars <-
     # define subfunction
   GetPrior <- function(Ptype,Pmin,Pmax,Pr,Psd,Pval){
     # function to calculate prior values is direct translation of code in SS
-
+    Prior_Like <- NULL
+    
     if(is.na(Ptype)){
       warning("problem with prior type interpretation. Ptype:", Ptype)
     }
@@ -139,24 +140,21 @@ SSplotPars <-
 
     # gamma  (from Larry Jacobson)
     if(Ptype == "Gamma"){
-      warning("Gamma prior not implemented yet")
-      #### need to work out the following code, including replacing "gammln"
-      ##   warnif <- 1e-15;
-      ##   if(Pmin<0.0){
-      ##     cat("Lower bound for gamma prior must be >=0.  Suggestion ",warnif*10.0,"\n")
-      ##   }else{
-      ##     # Gamma is defined over [0,+inf) but x=zero causes trouble for some mean/variance combos.
-      ##     if(Pval < warnif){
-      ##       cat("Pval too close to zero in gamma prior - can not guarantee reliable calculations.\n",
-      ##           "Suggest rescaling data (e.g. * 1000)?\n")
-      ##     }else{
-      ##       scale <- (Psd^2)/Pr;  #  gamma parameters by method of moments
-      ##       shape <- Pr/scale;
-      ##       Prior_Like <- -shape*log(scale)-gammln(shape)+(shape-1.0)*log(Pval)-Pval/scale;
-      ##     }
-      ##   }
+      scale <- (Psd^2)/Pr;  #  gamma parameters by method of moments
+      shape <- Pr/scale;
+      Prior_Like <- -1*(-shape*log(scale) - lgamma(shape) +
+        (shape-1.0) * log(Pval) - Pval/scale);
     }
 
+    # F parameters get listed as different type but have no prior
+    if(Ptype == "F"){
+      Prior_Like <- rep(0.,length(Pval))
+    }
+
+    if(is.null(Prior_Like)){
+      warning("Problem calculating prior. The prior type doesn't match",
+              "any of the options in the SSplotPars function.")
+    }
     return(Prior_Like)
   } # end GetPrior function
 
