@@ -109,7 +109,7 @@ SSexecutivesummary <- function (dir, replist,
   #============================================================================
 
   # Need to check how r4ss determines the colname based on SS verion
-  sb.name = "SSB" #ifelse(toupper(substr(replist$SS_version, 10, 11)) < 13, "SPB", "SSB")
+  sb.name = "SSB"
 
   nfleets <- replist$nfleets
   startyr <- replist$startyr 
@@ -124,7 +124,7 @@ SSexecutivesummary <- function (dir, replist,
   # Determine the fleet name and number for fisheries with catch
   #======================================================================
   names <- replist$FleetNames 
-  fleet.num <- replist$fleet_ID #unique(names)
+  fleet.num <- replist$fleet_ID 
 
   #======================================================================
   # Find summary age
@@ -145,7 +145,7 @@ SSexecutivesummary <- function (dir, replist,
   #======================================================================
   # Determine the number of growth patterns
   #======================================================================
-  nmorphs <- replist$ngpatterns #/ nsexes
+  nmorphs <- replist$ngpatterns 
 
   #======================================================================
   # Spawning Biomass or Spawning Output?
@@ -163,7 +163,6 @@ SSexecutivesummary <- function (dir, replist,
     if(verbose){
       message("Creating Table a")
     }
-    # Note: prior to 3.24U there was no kill_bio column, and this may not work on those models
 
     catch = fleet.names = NULL
     total.catch = total.dead = 0
@@ -287,7 +286,7 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating Table d")
     }
 
-    spr_type = replist$SPRratioLabel #strsplit(base[grep(spr.name,base)]," ")[[1]][3]
+    spr_type = replist$SPRratioLabel 
     f_type   = ifelse(replist$F_report_basis == "_abs_F;_with_F=Exploit(bio)", "Exploitation Rate",
                       "Fill in F method")
 
@@ -515,8 +514,6 @@ SSexecutivesummary <- function (dir, replist,
       if (!is.null(dead)){ total.dead = total.dead + dead }
     } 
     total.catch = apply(catch, 1, sum) 
-    #total.catch = aggregate( ret_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= hist[1],])$ret_bio
-    #total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr >= hist[1],])$kill_bio
     total.bind = c(c("Total Catch", total.catch, "NA"), c("Total Dead", total.dead, "NA"))
     if(sum(total.catch) == sum(total.dead)) { 
       total.bind = c("Total Catch", total.catch, "NA")
@@ -633,12 +630,7 @@ SSexecutivesummary <- function (dir, replist,
       tot.bio  = replist$timeseries$Bio_all[find]    
       recruits = replist$timeseries$Recruit_0[find]
       ssb      = replist$timeseries$SpawnBio[find]
-      #if(!is.null(replist$catch$Area)) {
-      #  total.dead  = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Area == nareas[a] & replist$catch$Yr %in% startyr:endyr,])$kill_bio
-      #  total.dead.all = total.dead.all + total.dead
-      #} else {
-      #  total.dead.all = aggregate(kill_bio ~ Yr, FUN = sum, replist$catch[replist$catch$Yr %in% startyr:endyr,])$kill_bio
-      #}
+
       smry.all = smry.all + smry      
       tot.bio.all = tot.bio.all + tot.bio
       recruits.all = recruits.all + recruits
@@ -655,9 +647,6 @@ SSexecutivesummary <- function (dir, replist,
       if (!is.null(dead)){ 
         total.dead.all = total.dead.all + dead }
     } 
-
-    #fore.catch = replist$derived_quants[grep("ForeCatch_",replist$derived_quants$Label),"Value"]
-    #total.dead.all = c(total.dead.all, fore.catch) 
     
     expl.all = total.dead.all / smry.all
     spr_type = replist$SPRratioLabel
@@ -695,7 +684,7 @@ SSexecutivesummary <- function (dir, replist,
       message("Creating numbers-at-age table")
     }
     
-    check = dim(replist$natage)[2] #as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
+    check = dim(replist$natage)[2] 
     if (is.null(check)) {
       "Detailed age-structure is not in the report file, double check settings in the starter file."
     }
