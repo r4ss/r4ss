@@ -1,20 +1,38 @@
-# Write a CSV file containing info for the Species Information System (SIS)
+#' Gather information for the NOAA Species Information System (SIS)
+#'
+#' Processes model results contained in the list created by
+#' \code{\link{SS_output}} in a format that is more convenient for submission
+#' to SIS. Currently the results are returned invisibly as a list of two tables
+#' and written to a CSV file from which results could be copied into SIS.
+#' In the future some more direct link could be explored to avoid the manual
+#' copy step.
 
-# model = output from SS_output
-# dir = directory where the file will be written
-# file = filename for CSV file
+#' @param model output from SS_output
+#' @param dir directory where the file will be written
+#' @param species prepend id info to filename for CSV file
+#' @param endyr year for reference points and timeseries
+#' @author Ian G. Taylor, Andi Stephens
+#' @export
+#' @seealso \code{\link{SS_output}}
 
-get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
+get_SIS_info <- function(model, dir = NULL, species = "NoName", endyr = NULL){
+
   # directory to write file
   if(is.null(dir)){
     dir <- model$inputs$dir
   }
+  
+  # construct filename
+  if (is.null(endyr)) {
+    endyr <- model$endyr
+  }
+  filename <- paste(species, endyr, "SIS_info.csv", sep="_")
+  
   message("writing SIS info to CSV file:\n",
-          file.path(dir, file))
+          file.path(dir, filename ))
   
   # years to report for catch-related quantities
   startyr <- model$startyr
-  endyr <- model$endyr
   years <- startyr:(endyr + 1)
   
   # get values from TIME_SERIES table
@@ -28,7 +46,7 @@ get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
   if(tab$Total_Bio[tab$Year == endyr + 1] == 0){
     tab$Total_Bio[tab$Year == endyr + 1] <- NA
   }
-
+  
   # calculate total catch (aggregated across fleets)
   catch_tab <- aggregate(model$catch$kill_bio, by = list(model$catch$Yr),
                          FUN = function(x){round(sum(x))})
@@ -36,11 +54,21 @@ get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
   # filter years and set forecast values to NA
   catch_tab <- catch_tab[catch_tab$Year %in% years,]
   catch_tab[catch_tab$Year == endyr+1, -1] <- NA
-  # add NA value for endyr + 1 if not present (this was the case in SS version 3.30.12)
-  if(endyr+1 %in% catch_tab$Year){
-    catch_tab <- rbind(catch_tab, data.frame(Year = endyr + 1, Catch = NA))
-  }
-
+  
+  if (endyr <= model$endyr) {
+    # add NA value for endyr + 1 if not present (this was the case in SS version 3.30.12)
+    if(endyr+1 %in% catch_tab$Year){
+      catch_tab <- rbind(catch_tab, data.frame(Year = endyr + 1, Catch = NA))
+    }
+  } else {
+    forecatch = data.frame(model$derived_quants[grepl("ForeCatch",model$derived_quants$Label),1:2])
+    names(forecatch) = c("Year","Catch")
+    forecatch$Year = gsub("ForeCatch_", "", forecatch$Year)
+    forecatch = forecatch[forecatch$Year < (endyr+2),]
+    forecatch$Catch[nrow(forecatch)] = NA
+    catch_tab = rbind(catch_tab, forecatch)
+  } # end if-else
+  
   # calculate proxy-F values (e.g. exploitation rate)
   F_tab <- data.frame(Year = years,
                       Exploit_rate = round(model$derived_quants[paste0("F_", years), "Value"], 2))
@@ -62,7 +90,7 @@ get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
   spr_tab <- spr_tab[spr_tab$Year %in% years,]
   spr_tab[spr_tab$Year == endyr+1, -1] <- NA
   spr_tab[,-1] <- round(spr_tab[,-1], 3)
-
+  
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
   if(nrow(tab) != length(years) || any(tab$Year != years)){
     stop("problem with mismatch of years:\n",
@@ -83,8 +111,28 @@ get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
   Btarg_text <- paste0("B", 100*model$btarg, "%") # e.g. B40%
   MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
   Bcurrent <- tab$Spawning_Bio[tab$Year == endyr + 1]
-  
-  info_tab <- c("Fishing Mortality Estimates",
+
+  info_tab <- c(paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),  
+                "",
+                paste0("Stock / Entity Name,", species),
+                paste0("Assessment Type,", "X"),
+                paste0("Ensemble/Multimodel Approach,", "NA"),
+                paste0("Asmt Year and Month,", "XXXX.XX"),
+                paste0("Last Data Year,", endyr),
+                paste0("Asmt Model Category,", "6 - Statistical Catch-at-Age (SS, ASAP, AMAK, BAM, MultifancL< CASAL)"),
+                paste0("Asmt Model Category,", "SS"), 
+                paste0("Model Version,", model$SS_versionshort),
+                paste0("Lead Lab,", "NWFSC"), 
+                paste0("Point of Contact (assessment lead),", "XXXX"), 
+                paste0("Review Result,", "Accepted"), 
+                paste0("Catch Input Data,", "XXXX"), 
+                paste0("Abundance Input Data,", "XXXX"),
+                paste0("Biological Input Data,", "XXXX"),
+                paste0("Size/Age Composition Input Data,", "XXXX"), 
+                paste0("Ecosystem Linkage,", "XXXX"),
+                "",
+                
+                "Fishing Mortality Estimates",
                 paste0("F Year, ",          endyr),
                 paste0("Min F Estimate, ",  "not required and typically not entered"),
                 paste0("Max F Estimate, ",  "not required and typically not entered"),
@@ -138,12 +186,12 @@ get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
                 "",
                 "")
 
-  write.table(info_tab, file = file.path(dir, file),
+  write.table(info_tab, file = file.path(dir, filename),
               quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
 
-  write.table(tab, file = file.path(dir, file),
+  write.table(tab, file = file.path(dir, filename),
               quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE,
               append = TRUE)
 
-  return(list(info_tab, tab))
+  invisible(list(info_tab, tab))
 }
