@@ -1,14 +1,10 @@
 #' A function to create a executive summary tables from an SS Report.sso file
 #'
-#' Reads the Report.sso within the directory and creates executive summary
-#' tables as required by the current Terms of Reference for West Coast
-#' groundfish.  Works with Stock Synthesis versions 3.24U and later.
-#' Additionally, historical catch and numbers at ages tables are created.
+#' Takes the output from SS_output and creates executive summary tables
+#' as required by the current Terms of Reference for US West Coast
+#' groundfish stock. Additionally, historical catches, time-series and numbers-at-ages tables are created.
 #'
-#' @param dir Locates the directory of the files to be read in, double
-#' backslashes (or forwardslashes) and quotes necessary. If not input to the function
-#' the code will look in the folder identified by the repfile.
-#' @param replist Name of the big report file (could be renamed by user).
+#' @param replist Object name that holds output from the SS_output function.
 #' @param plotfolder Directory where the 'tables' directory will be created.
 #' The default is the dir location where the Report.sso file is located.
 #' @param ci_value To calculate confidence intervals, default is set at 0.95
@@ -25,11 +21,11 @@
 #' @param endyr Optional input to choose a different ending year for tables
 #' (could be useful for catch-only updates)
 #' @param verbose Return updates of function progress to the R console?
-#' @return A csv files containing executive summary tables.
+#' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
 #' @author Chantel Wetzel
 #' @export
 #'
-SSexecutivesummary <- function (dir, replist, 
+SSexecutivesummary <- function (replist, 
                                 plotfolder = 'default', 
                                 ci_value = 0.95,
                                 es_only = FALSE, 
@@ -39,14 +35,9 @@ SSexecutivesummary <- function (dir, replist,
                                 verbose = TRUE) 
 {
 
-  # Make sure dir contains the report file
+  # Make sure table.dir contains the report file
   if(is.null(replist)){
     stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
-  }
-
-  # Check to make sure dir is a dir
-  if(is.character(dir)){
-    paste0("Files will be written to the ", dir, " folder location.")
   }
 
   if (plotfolder == 'default') { csv.dir = paste0(replist$inputs$dir,"/tables/") }
@@ -63,6 +54,7 @@ SSexecutivesummary <- function (dir, replist,
   print.numeric  <- function(x, digits) {
     formatC(x, digits = digits, format = "f")
   }
+  
   comma          <- function(x, digits=0) {
     formatC(x, big.mark=",", digits, format = "f")
   }
