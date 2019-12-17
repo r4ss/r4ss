@@ -1,5 +1,17 @@
-get_SIS_info <- function(model){
+# Write a CSV file containing info for the Species Information System (SIS)
 
+# model = output from SS_output
+# dir = directory where the file will be written
+# file = filename for CSV file
+
+get_SIS_info <- function(model, dir = NULL, file = "SIS_info.csv"){
+  # directory to write file
+  if(is.null(dir)){
+    dir <- model$inputs$dir
+  }
+  message("writing SIS info to CSV file:\n",
+          file.path(dir, file))
+  
   # years to report for catch-related quantities
   startyr <- model$startyr
   endyr <- model$endyr
@@ -126,10 +138,10 @@ get_SIS_info <- function(model){
                 "",
                 "")
 
-  write.table(info_tab, file='c:/github/r4ss/ignored/test.csv',
+  write.table(info_tab, file = file.path(dir, file),
               quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
 
-  write.table(tab, file='c:/github/r4ss/ignored/test.csv',
+  write.table(tab, file = file.path(dir, file),
               quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE,
               append = TRUE)
 
