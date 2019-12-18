@@ -4,16 +4,26 @@
 \alias{get_SIS_info}
 \title{Gather information for the NOAA Species Information System (SIS)}
 \usage{
-get_SIS_info(model, dir = NULL, species = "NoName", endyr = NULL)
+get_SIS_info(
+  model,
+  dir = NULL,
+  writecsv = TRUE,
+  species = "NoName",
+  endyr = NULL
+)
 }
 \arguments{
-\item{model}{output from SS_output}
+\item{model}{Output from SS_output}
 
-\item{dir}{directory where the file will be written}
+\item{dir}{Directory where the file will be written}
 
-\item{species}{prepend id info to filename for CSV file}
+\item{writecsv}{Write results to a CSV file (where the name will have the
+format "[species]_2019_SIS_info.csv" where \code{species}
+is an additional input}
 
-\item{endyr}{year for reference points and timeseries}
+\item{species}{String to prepend id info to filename for CSV file}
+
+\item{endyr}{Year for reference points and timeseries}
 }
 \description{
 Processes model results contained in the list created by

@@ -7,15 +7,19 @@
 #' In the future some more direct link could be explored to avoid the manual
 #' copy step.
 
-#' @param model output from SS_output
-#' @param dir directory where the file will be written
-#' @param species prepend id info to filename for CSV file
-#' @param endyr year for reference points and timeseries
+#' @param model Output from SS_output
+#' @param dir Directory where the file will be written
+#' @param writecsv Write results to a CSV file (where the name will have the
+#' format "[species]_2019_SIS_info.csv" where \code{species}
+#' is an additional input
+#' @param species String to prepend id info to filename for CSV file
+#' @param endyr Year for reference points and timeseries
 #' @author Ian G. Taylor, Andi Stephens
 #' @export
 #' @seealso \code{\link{SS_output}}
 
-get_SIS_info <- function(model, dir = NULL, species = "NoName", endyr = NULL){
+get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
+                         species = "NoName", endyr = NULL){
 
   # directory to write file
   if(is.null(dir)){
@@ -112,6 +116,15 @@ get_SIS_info <- function(model, dir = NULL, species = "NoName", endyr = NULL){
   MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
   Bcurrent <- tab$Spawning_Bio[tab$Year == endyr + 1]
 
+  # MSY-proxy labels were changed at some point
+  if("Dead_Catch_SPR" %in% rownames(model$derived_quants)){
+    Yield_at_SPR_target <- round(model$derived_quants["Dead_Catch_SPR", "Value"])
+    Yield_at_B_target <- round(model$derived_quants["Dead_Catch_Btgt", "Value"])
+  }else{
+    Yield_at_SPR_target <- round(model$derived_quants["TotYield_SPRtgt", "Value"])
+    Yield_at_B_target <- round(model$derived_quants["TotYield_Btgt", "Value"])
+  }    
+
   info_tab <- c(paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),  
                 "",
                 paste0("Stock / Entity Name,", species),
@@ -148,8 +161,7 @@ get_SIS_info <- function(model, dir = NULL, species = "NoName", endyr = NULL){
                 paste0("FMSY Basis, ",      "1-SPR_",SPRtarg_text),
                 paste0("F target,",         "not required and typically not entered"),
                 paste0("F target Basis,",   "not required and typically not entered"),
-                paste0("MSY, ",             round(model$derived_quants["Dead_Catch_SPR",
-                                                                       "Value"])),
+                paste0("MSY, ",             Yield_at_SPR_target),
                 paste0("MSY Unit,",         "mt"),
                 paste0("[MSY Basis], ",     "Yield with ", SPRtarg_text,
                        " at SB_", SPRtarg_text),
@@ -163,8 +175,7 @@ get_SIS_info <- function(model, dir = NULL, species = "NoName", endyr = NULL){
                 paste0("Best B Estimate, ", Bcurrent),
                 paste0("B Basis, ",         "Spawning Biomass / Female mature biomass"),
                 paste0("B unit, ",          "mt"),
-                paste0("MSY, ",             round(model$derived_quants["Dead_Catch_Btgt",
-                                                                       "Value"])),
+                paste0("MSY, ",             Yield_at_B_target),
                 paste0("MSY Unit, ",        "mt"),
                 paste0("[MSY Basis], ",     "Yield with SPR_",
                        Btarg_text," at ",   Btarg_text, "(mt)"),
