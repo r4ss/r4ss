@@ -142,7 +142,6 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   # Find summary age
   #======================================================================
-  # need to figure out this from the replist
   smry.age  <-  replist$summary_age
 
   #======================================================================
