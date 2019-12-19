@@ -2216,6 +2216,11 @@ SS_output <-
   }
   returndat$catch <- catch
 
+  # age associated with summary biomass
+  summary_age <- rawrep[matchfun("TIME_SERIES"),2]
+  summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
+  returndat$summary_age <- summary_age
+
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
   # temporary fix for 3.30.03.06
