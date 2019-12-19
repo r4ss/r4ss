@@ -20,6 +20,18 @@
 #' TRUE will divide by 2.
 #' @param endyr Optional input to choose a different ending year for tables
 #' (could be useful for catch-only updates)
+#' @param adopted_ofl Vector of adopted ofl values to be printed in the mangagement performance
+#' table. This should be a vector of 10 values. 
+#' @param adopted_abc Vector of adopted abc values to be printed in the mangagement performance
+#' table. This should be a vector of 10 values. 
+#' @param adopted_acl Vector of adopted acl values to be printed in the mangagement performance
+#' table. This should be a vector of 10 values. 
+#' @param forecast_ofl Optional input vector for management adopted OFL values for table g. These values
+#' will be overwrite the OFL values in the projection table, rather than the model estimated
+#' OFL values. Example input: c(1500, 1300)
+#' @param forecast_abc Optional input vector for management adopted ABC values for table g. These values
+#' will be overwrite the ABC values in the projection table, rather than the model estimated
+#' ABC values. Example input: c(1500, 1300)
 #' @param verbose Return updates of function progress to the R console?
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
 #' @author Chantel Wetzel
@@ -32,6 +44,11 @@ SSexecutivesummary <- function (replist,
                                 tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers'),
                                 divide_by_2 = FALSE,
                                 endyr = NULL,
+                                adopted_ofl = NULL,
+                                adopted_abc = NULL,
+                                adopted_acl = NULL,
+                                forecast_ofl = NULL,
+                                forecast_abc = NULL,
                                 verbose = TRUE) 
 {
 
@@ -54,7 +71,7 @@ SSexecutivesummary <- function (replist,
   print.numeric  <- function(x, digits) {
     formatC(x, digits = digits, format = "f")
   }
-  
+
   comma          <- function(x, digits=0) {
     formatC(x, big.mark=",", digits, format = "f")
   }
@@ -105,8 +122,12 @@ SSexecutivesummary <- function (replist,
 
   nfleets <- replist$nfleets
   startyr <- replist$startyr 
-  endyr   <- replist$endyr 
   foreyr  <- replist$nforecastyears 
+  if(is.null(endyr)) { 
+    endyr   <- replist$endyr 
+  } else {
+    foreyr <- foreyr - (endyr - replist$endyr)
+  }
   hist    <- (endyr - 11):(endyr + 1)
   fore    <- (endyr + 1):(endyr + foreyr)
   all     <- startyr:max(fore)
@@ -128,7 +149,8 @@ SSexecutivesummary <- function (replist,
   # Two-sex or single-sex model
   #======================================================================
   if (replist$nsexes == 1 & !(divide_by_2)) {
-    print("Single sex model - spawning biomass NOT beind divided by a factor of 2.")
+    if(verbose){
+      message("Single sex model - spawning biomass NOT beind divided by a factor of 2.") }
   }
   nsexes <- replist$nsexes
   sexfactor <- 1
@@ -153,7 +175,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('a' %in% tables){
     if(verbose){
-      message("Creating Table a")
+      message("Creating Table a: Recent catches by fleet")
     }
 
     catch = fleet.names = NULL
@@ -176,11 +198,11 @@ SSexecutivesummary <- function (replist,
     if(sum(total.catch) != sum(total.dead)){
       es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
       colnames(es.a) = c("Years", fleet.names, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
+      write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)
     } else {
       es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2))
       colnames(es.a) = c("Years", fleet.names, "Total Catch")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = FALSE)      
+      write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)      
     }
 
   } # end check for 'a' %in% tables
@@ -190,7 +212,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('b' %in% tables){
     if(verbose){
-      message("Creating Table b")
+      message("Creating Table b: Recent spawning biomass/output and depletion")
     }
     
     ssb =  Get.Values(replist = replist, label = sb.name, hist, ci_value )
@@ -202,7 +224,7 @@ SSexecutivesummary <- function (replist,
                        print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
     colnames(es.b) = c("Years", sb.label, "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
 
-    write.csv(es.b, file.path(csv.dir, "b_SSB_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.b, file.path(csv.dir, "b_SSB_ES.csv"), row.names = FALSE)
 
   } # end check for 'b' %in% tables
 
@@ -211,7 +233,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('c' %in% tables){
     if(verbose){
-      message("Creating Table c")
+      message("Creating Table c: Recent recruitment and deviations")
     }
 
     recdevMain   <- replist$parameters[substring(replist$parameters$Label,1,12)=="Main_RecrDev", 1:3]
@@ -266,7 +288,7 @@ SSexecutivesummary <- function (replist,
 
     colnames(es.c) = c("Years", "Recruitment", "95% Asymptotic Interval", "Recruitment Deviations", "95% Asymptotic Interval")
 
-    write.csv(es.c, file.path(csv.dir, "c_Recr_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.c, file.path(csv.dir, "c_Recr_ES.csv"), row.names = FALSE)
 
   } # end check for 'c' %in% tables
 
@@ -275,7 +297,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('d' %in% tables){
     if(verbose){
-      message("Creating Table d")
+      message("Creating Table d: Recent exploitation ")
     }
 
     spr_type = replist$SPRratioLabel 
@@ -287,11 +309,11 @@ SSexecutivesummary <- function (replist,
     f.value = Get.Values(replist = replist, label = "F" , hist[1:(length(hist)-1)], ci_value)
     es.d = data.frame(hist[1:(length(hist)-1)],
            print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
-           print(f.value$dq,4),     paste0(print(f.value$low,4),     "\u2013", print(f.value$high,4)))
+           print(f.value$dq,4),     paste0(print(f.value$low, 4),     "\u2013", print(f.value$high, 4)))
     colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", 
                         f_type, "95% Asymptotic Interval")
 
-    write.csv(es.d, file.path(csv.dir, "d_SPR_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.d, file.path(csv.dir, "d_SPR_ES.csv"), row.names = FALSE)
 
   } # end check for 'd' %in% tables
   
@@ -300,7 +322,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('e' %in% tables){
     if(verbose){
-      message("Creating Table e")
+      message("Creating Table e: Reference points ")
     }
 
     spr   <- 100*replist$sprtarg
@@ -393,7 +415,7 @@ SSexecutivesummary <- function (replist,
                 "Exploitation rate corresponding to SPR MSY",
                 "MSY (mt)")
 
-    write.csv(es.e, file.path(csv.dir, "e_ReferencePoints_ExecutiveSummary.csv"))
+    write.csv(es.e, file.path(csv.dir, "e_ReferencePoints_ES.csv"))
 
   } # end check for 'e' %in% tables
 
@@ -403,12 +425,29 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('f' %in% tables){
     if(verbose){
-      message("Creating Table f")
+      message("Creating Table f: Recent management performance")
     }
     
-    ofl = rep("fill_in", length(hist))
-    abc = rep("fill_in", length(hist))
-    acl = rep("fill_in", length(hist))
+    if(is.null(adopted_ofl)){
+      ofl = rep("fill_in", length(hist)-1)
+    } else {
+      if(length(adopted_ofl) != 12) { stop("The adopted_ofl vector needs to have 10 values.") }
+      ofl = adopted_ofl
+    }
+
+    if(is.null(adopted_abc)){
+      abc = rep("fill_in", length(hist)-1)
+    } else {
+      if(length(adopted_abc) != 12) { stop("The adopted_abc vector needs to have 10 values.") }
+      abc = adopted_abc
+    }
+
+    if(is.null(adopted_acl)){
+      acl = rep("fill_in", length(hist)-1)
+    } else {
+      if(length(adopted_acl) != 12) { stop("The adopted_acl vector needs to have 10 values.") }
+      acl = adopted_acl
+    }
 
     catch = dead = total.dead = 0
     for (i in 1:nfleets){
@@ -421,32 +460,40 @@ SSexecutivesummary <- function (replist,
       if (!is.null(dead)){ total.dead = total.dead + dead }
     } 
     total.catch = apply(catch, 1, sum) 
-    catch = c(comma(total.catch, digits = 2), "NA")
-    dead  = c(comma(total.dead,  digits = 2), "NA")
+    catch = comma(total.catch, digits = 2)
+    dead  = comma(total.dead,  digits = 2)
 
     if(sum(total.catch) != sum(total.dead)){
-      es.f = data.frame(hist, ofl, abc, acl, catch, dead)
+      es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch, dead)
       colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
     } else {
-      es.f = data.frame(hist, ofl, abc, acl, catch)
+      es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch)
       colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings")
     }
-    write.csv(es.f, file.path(csv.dir, "f_Manage_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.f, file.path(csv.dir, "f_Manage_ES.csv"), row.names = FALSE)
 
   } # end check for 'f' %in% tables
 
   #======================================================================
-  #ES Table g  Predicted ci_valueities
+  #ES Table g  Predicted forecast values
   #======================================================================
   if('g' %in% tables){
     if(verbose){
-      message("Creating Table g")
+      message("Creating Table g: Forecast OFLs, ABCs, Spawning Biomass/Output, and Depletion")
     }
     
-    ofl.fore =  Get.Values(replist = replist, label = "OFLCatch" ,  yrs = fore, ci_value)
-    abc.fore =  Get.Values(replist = replist, label = "ForeCatch" , yrs = fore, ci_value)
-    ssb.fore  = Get.Values(replist = replist, label =  sb.name,     yrs = fore, ci_value)
-    depl.fore = Get.Values(replist = replist, label = "Bratio",     yrs = fore, ci_value)
+    ofl.fore =  Get.Values(replist = replist, label = "OFLCatch" ,  yrs = fore, ci_value)$dq
+    abc.fore =  Get.Values(replist = replist, label = "ForeCatch" , yrs = fore, ci_value)$dq
+    ssb.fore  = Get.Values(replist = replist, label =  sb.name,     yrs = fore, ci_value)$dq
+    depl.fore = Get.Values(replist = replist, label = "Bratio",     yrs = fore, ci_value)$dq
+
+    if(!is.null(forecast_ofl)){
+      n = length(forecast_ofl)
+      ofl.fore[1:n] = forecast_ofl }
+
+    if(!is.null(forecast_abc)){
+      n = length(forecast_abc)
+      abc.fore[1:n] = forecast_abc }
 
     if (nsexes == 1) {
       ssb.fore$dq = ssb.fore$dq / sexfactor
@@ -462,15 +509,15 @@ SSexecutivesummary <- function (replist,
     }
 
     es.g = data.frame(fore,
-           comma(ofl.fore$dq, 2),
-           comma(abc.fore$dq, 2),
+           comma(ofl.fore, 2),
+           comma(abc.fore, 2),
            comma(smry.fore,   2),
-           comma(ssb.fore$dq, 2),
-           print(depl.fore$dq*100,2))
+           comma(ssb.fore, 2),
+           print(depl.fore*100,2))
 
     colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Depletion (%)")
 
-    write.csv(es.g, file.path(csv.dir, "g_Projections_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.g, file.path(csv.dir, "g_Projections_ES.csv"), row.names = FALSE)
 
   } # end check for 'g' %in% tables
 
@@ -490,7 +537,7 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   if('i' %in% tables){
     if(verbose){
-      message("Creating Table i")
+      message("Creating Table i: Summary")
     }
 
     ind = length(hist)-1
@@ -535,9 +582,31 @@ SSexecutivesummary <- function (replist,
     for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
     recruits = Get.Values(replist = replist, label = "Recr" , hist, ci_value )
 
+    if(is.null(adopted_ofl)){
+      ofl = rep("fill_in", length(hist))
+    } else {
+      if(length(adopted_ofl) != 12) { message("The adopted_ofl vector needs to have 12 values."); break() }
+      if(is.null(forecast_ofl)) { 
+        ofl = c(adopted_ofl, "-") 
+      } else {
+        ofl = c(adopted_ofl, forecast_ofl[1]) 
+      }
+    }
+
+    if(is.null(adopted_acl)){
+      acl = rep("fill_in", length(hist))
+    } else {
+      if(length(adopted_acl) != 12) { message("The adopted_acl vector needs to have 12 values."); break() }
+      if(is.null(forecast_abc)) { 
+        acl = c(adopted_acl, "-") 
+      } else {
+        acl = c(adopted_acl, forecast_abc[1]) 
+      }
+    }
+
     es.i = matrix(c(
-           c("OFL", rep("fill_in", length(hist))),
-           c("ACL", rep("fill_in", length(hist))),
+           c("OFL", ofl),
+           c("ACL", acl),
            total.bind,
            c(spr_type, c(print(adj.spr$dq[1:(length(hist)-1)],2), "NA")),
            c(f_type, c(print(f.value$dq[1:(length(hist)-1)],2), "NA")),
@@ -553,7 +622,7 @@ SSexecutivesummary <- function (replist,
     es.i = noquote(es.i)
     colnames(es.i) = c("Quantity", hist)
 
-    write.csv(es.i, file.path(csv.dir, "i_Summary_ExecutiveSummary.csv"), row.names = FALSE)
+    write.csv(es.i, file.path(csv.dir, "i_Summary_ES.csv"), row.names = FALSE)
 
   } # end check for 'i' %in% tables
 
@@ -643,8 +712,10 @@ SSexecutivesummary <- function (replist,
     expl.all = total.dead.all / smry.all
     spr_type = replist$SPRratioLabel
 
-    print("Catch includes estimated discards for total dead.")
-    print("Exploitation = Total dead (including discards) divided by the summary biomass.")
+    if (verbose){
+      message("Catch includes estimated discards for total dead.")
+      message("Exploitation = Total dead (including discards) divided by the summary biomass.")
+    }
 
     # Check to see if there is exploitation in the first model year
     ind = 0
