@@ -809,7 +809,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$SR_parms_tv$PType <- 17
   }
   # recdevs ----
-  ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations
+  ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations; 3=deviation vector; 4=3 with summed deviation penalty
   ctllist<-add_elem(ctllist,"MainRdevYrFirst") # first year of main recr_devs; early devs can preceed this era
   ctllist<-add_elem(ctllist,"MainRdevYrLast") # last year of main recr_devs; forecast devs start in following year
   ctllist<-add_elem(ctllist,"recdev_phase") #_recdev phase
@@ -866,6 +866,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch
   if(use_datlist == FALSE & N_rows_equil_catch  > 0  ) {
     #TODO: modeify code so there is an appraoch that does not require the datlist.{
+    #To achieve this I think we will need to write a script to check row length and 
+    #identify all short parameter lines until catchability section is reached
+    #I don't think there is any way to identify which Fleets/Seasons the F's match up with.
     stop("Cannot yet read in init_F (which should be done if ", 
          "N_rows_equil_catch > 0) if use_datalist == F")
   }
@@ -915,6 +918,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
       flname<-fleetnames[ctllist$Q_options[j,]$fleet]
       comments_Q_type[[i]]<-paste0("Q_power_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      N_Q_parms<-N_Q_parms+1
+    }
+    if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
+    {
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
+      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+      comments_Q_type[[i]]<-paste0("Q_Mirror_offset_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
       N_Q_parms<-N_Q_parms+1
     }
     if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
@@ -1034,33 +1044,47 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     # do extra retention parameters (4 extra parameters)
     # (Note: from here on, size_selex_Nparms does NOT get updated, so it will not
     # accurately represent the total number of pars.)
-    if(ctllist$size_selex_types[j, "Discard"] %in% 1:2) {
+    # (New Note: I have added tracking for size_selex_Nparms so it should accurately 
+    # represent total number of params now.)
+    if(ctllist$size_selex_types[j, "Discard"] %in% 1:2) { #add 4 retention parameters
       size_selex_label[[j]] <- c(size_selex_label[[j]],
                                  paste0("SizeSel_",j,"PRet_",1:4,"_",
                                           fleetnames[j]))
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
-    if(ctllist$size_selex_types[j, "Discard"] == 2) { #add 4 discard mortality parameters
+    # note that for Discard = 3, no extra parameters are needed.
+    if(ctllist$size_selex_types[j, "Discard"] == 4) { #add 7 dome shaped retention parameters
+      size_selex_label[[j]] <- c(size_selex_label[[j]], 
+                                 paste0("SizeSel_", j, "PRet_", 1:7, "_",
+                                        fleetnames[j]))
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 7
+    }
+    
+    if(ctllist$size_selex_types[j, "Discard"] %in% c(2,4)) { #add 4 discard mortality parameters
       size_selex_label[[j]] <- c(size_selex_label[[j]], 
                                  paste0("SizeSel_", j, "PDis_", 1:4, "_",
                                   fleetnames[j]))
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
-    # note that for Discard = 3, no extra parameters are needed.
-    if(ctllist$size_selex_types[j, "Discard"] == 4) {
-      size_selex_label[[j]] <- c(size_selex_label[[j]], 
-                                 paste0("SizeSel_", j, "PDis_", 1:7, "_",
-                                        fleetnames[j]))
-    }
+    
     # do extra offset parameters
     if(ctllist$size_selex_types[j, "Male"] == 1) {
       size_selex_label[[j]] <- c(size_selex_label[[j]],
                                  paste0("SizeSel_",j,"PMale_",1:4,"_",
                                         fleetnames[j]))
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
     if(ctllist$size_selex_types[j, "Male"] == 2) {
       size_selex_label[[j]] <- c(size_selex_label[[j]],
                                  paste0("SizeSel_",j,"PFemOff_",1:4,"_",
                                         fleetnames[j]))
+      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
+    #TODO: It doesn't look like this is implemented correctly here
+    #There are differing explainations here vs manual vs excel helper.
+    #According to excel helper it is 4 parms for logistic and 6 params for double normal
+    #manual includes selectivity pattern 20 but doesn't have a selectivity pattern 20
+    #Manual says these are just parameter offsets but logistic pattern 1 has 2 params not 4
     if(ctllist$size_selex_types[j, "Male"] == 3) { # has value 3 - differs by version
       nparms <- ifelse(nver < 3.24, 3, 5)
       size_selex_label[[j]] <- c(size_selex_label[[j]], 
