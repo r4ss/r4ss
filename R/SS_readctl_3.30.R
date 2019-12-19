@@ -1080,16 +1080,31 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                         fleetnames[j]))
       size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
-    #TODO: It doesn't look like this is implemented correctly here
-    #There are differing explainations here vs manual vs excel helper.
-    #According to excel helper it is 4 parms for logistic and 6 params for double normal
-    #manual includes selectivity pattern 20 but doesn't have a selectivity pattern 20
-    #Manual says these are just parameter offsets but logistic pattern 1 has 2 params not 4
-    if(ctllist$size_selex_types[j, "Male"] == 3) { # has value 3 - differs by version
-      nparms <- ifelse(nver < 3.24, 3, 5)
-      size_selex_label[[j]] <- c(size_selex_label[[j]], 
-                                 paste0("SizeSel_",j,"PMalOff_",1:nparms,"_",
-                                        fleetnames[j]))
+    
+    if(ctllist$size_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
+      if(ctllist$size_selex_types[j, "Pattern"] == 1) {
+        size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                   paste0("SizeSel_",j,"PMalOff_",1:3,"_",
+                                          fleetnames[j]))
+        size_selex_Nparms[j] <- size_selex_Nparms[j] + 3
+      }else if(ctllist$size_selex_types[j, "Pattern"] %in% 23:24) {
+        size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                   paste0("SizeSel_",j,"PMalOff_",1:5,"_",
+                                          fleetnames[j]))
+        size_selex_Nparms[j] <- size_selex_Nparms[j] + 5
+      }
+    }else if(ctllist$size_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
+      if(ctllist$size_selex_types[j, "Pattern"] == 1) {
+        size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                   paste0("SizeSel_",j,"PFemOff_",1:3,"_",
+                                          fleetnames[j]))
+        size_selex_Nparms[j] <- size_selex_Nparms[j] + 3
+      }else if(ctllist$size_selex_types[j, "Pattern"] %in% 23:24) {
+        size_selex_label[[j]] <- c(size_selex_label[[j]],
+                                   paste0("SizeSel_",j,"PFemOff_",1:5,"_",
+                                          fleetnames[j]))
+        size_selex_Nparms[j] <- size_selex_Nparms[j] + 5
+      }
     }
   }
   # age selectivity parlines
@@ -1133,27 +1148,40 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     # do extra retention parameters
     # (Note: from here on, age_selex_Nparms does NOT get updated, so it will not
     # accurately represent the total number of pars.)
-    if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
-      age_selex_label[[j]] <- c(age_selex_label[[j]],
-        paste0("AgeSel_",j,"PRet_",1:4,"_", fleetnames[j]))
-    }
-    if(ctllist$age_selex_types[j,"Discard"] == 2) {# has discard type 2
-      age_selex_label[[j]] <- c(age_selex_label[[j]], 
-        paste0("AgeSel_",j,"PDis_",1:4,"_", fleetnames[j]))
-    }
+    # if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
+    #   age_selex_label[[j]] <- c(age_selex_label[[j]],
+    #     paste0("AgeSel_",j,"PRet_",1:4,"_", fleetnames[j]))
+    # }
+    # if(ctllist$age_selex_types[j,"Discard"] == 2) {# has discard type 2
+    #   age_selex_label[[j]] <- c(age_selex_label[[j]], 
+    #     paste0("AgeSel_",j,"PDis_",1:4,"_", fleetnames[j]))
+    # }
     # do extra offset parameters
     if(ctllist$age_selex_types[j,"Male"] == 1) {
       age_selex_label[[j]] <- c(age_selex_label[[j]], 
         paste0("AgeSel_",j,"PMale_",1:4,"_",fleetnames[j]))
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
     }
     if(ctllist$age_selex_types[j,"Male"] == 2) {
       age_selex_label[[j]] <- c(age_selex_label[[j]],
         paste0("AgeSel_",j,"PFemOff_",1:4,"_",fleetnames[j]))
+      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
     }
-    if(ctllist$age_selex_types[j,"Male"] == 3) {
-      nparms <- ifelse(nver<3.24, 3, 5)
-      age_selex_label[[j]] <- c(age_selex_label[[j]],
-        paste0("AgeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j]))
+    
+    if(ctllist$age_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
+      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+        age_selex_label[[j]] <- c(age_selex_label[[j]],
+                                   paste0("AgeSel_",j,"PMalOff_",1:5,"_",
+                                          fleetnames[j]))
+        age_selex_Nparms[j] <- age_selex_Nparms[j] + 5
+      }
+    }else if(ctllist$age_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
+      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+        age_selex_label[[j]] <- c(age_selex_label[[j]],
+                                   paste0("AgeeSel_",j,"PFemOff_",1:5,"_",
+                                          fleetnames[j]))
+        age_selex_Nparms[j] <- age_selex_Nparms[j] + 5
+      }
     }
   }
   if(verbose) {
