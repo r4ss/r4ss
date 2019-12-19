@@ -143,7 +143,7 @@ SSexecutivesummary <- function (replist,
   # Find summary age
   #======================================================================
   # need to figure out this from the replist
-  smry.age  <-  "FILL IN" 
+  smry.age  <-  replist$summary_age
 
   #======================================================================
   # Two-sex or single-sex model
