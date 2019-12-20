@@ -302,11 +302,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
-  # Currently I do not how MGparms are sorted when N_GP>1
-  if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
+  # I think that multiple growth patterns are now working have to test that MGparms are sorted correctly
+  
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
-    stop("More than 1 platoon is not supported yet")
+    
 #    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"sd_ratio")
     #ctllist<-add_elem(ctllist,"submorphdist")
