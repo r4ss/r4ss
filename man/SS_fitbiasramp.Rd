@@ -4,12 +4,28 @@
 \alias{SS_fitbiasramp}
 \title{Estimate bias adjustment for recruitment deviates}
 \usage{
-SS_fitbiasramp(replist, verbose = FALSE, startvalues = NULL,
-  method = "BFGS", twoplots = TRUE, transform = FALSE, plot = TRUE,
-  print = FALSE, plotdir = "default", shownew = TRUE,
-  oldctl = NULL, newctl = NULL, altmethod = "nlminb",
-  exclude_forecast = FALSE, pwidth = 6.5, pheight = 5,
-  punits = "in", ptsize = 10, res = 300, cex.main = 1)
+SS_fitbiasramp(
+  replist,
+  verbose = FALSE,
+  startvalues = NULL,
+  method = "BFGS",
+  twoplots = TRUE,
+  transform = FALSE,
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  shownew = TRUE,
+  oldctl = NULL,
+  newctl = NULL,
+  altmethod = "nlminb",
+  exclude_forecast = FALSE,
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  ptsize = 10,
+  res = 300,
+  cex.main = 1
+)
 }
 \arguments{
 \item{replist}{Object created using \code{\link{SS_output}}}

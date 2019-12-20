@@ -4,11 +4,21 @@
 \alias{NegLogInt_Fn}
 \title{Perform SS implementation of Laplace Approximation}
 \usage{
-NegLogInt_Fn(File = NA, Input_SD_Group_Vec, CTL_linenum_List,
-  ESTPAR_num_List, PAR_num_Vec, Int_Group_List = list(1),
-  StartFromPar = TRUE, Intern = TRUE, ReDoBiasRamp = FALSE,
-  BiasRamp_linenum_Vec = NULL, CTL_linenum_Type = NULL,
-  systemcmd = FALSE, exe = "ss")
+NegLogInt_Fn(
+  File = NA,
+  Input_SD_Group_Vec,
+  CTL_linenum_List,
+  ESTPAR_num_List,
+  PAR_num_Vec,
+  Int_Group_List = list(1),
+  StartFromPar = TRUE,
+  Intern = TRUE,
+  ReDoBiasRamp = FALSE,
+  BiasRamp_linenum_Vec = NULL,
+  CTL_linenum_Type = NULL,
+  systemcmd = FALSE,
+  exe = "ss"
+)
 }
 \arguments{
 \item{File}{Directory containing Stock Synthesis files

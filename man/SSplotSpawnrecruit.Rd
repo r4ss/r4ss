@@ -4,20 +4,42 @@
 \alias{SSplotSpawnrecruit}
 \title{Plot spawner-recruit curve.}
 \usage{
-SSplotSpawnrecruit(replist, subplot = 1:3, add = FALSE, plot = TRUE,
-  print = FALSE, xlim = NULL, ylim = NULL,
-  labels = c("Spawning biomass (mt)", "Recruitment (1,000s)",
-  "Spawning output", expression(paste("Spawning output (relative to ",
-  italic(B)[0], ")")), expression(paste("Recruitment (relative to  ",
-  italic(R)[0], ")")), "Log recruitment deviation"),
-  bioscale = "default", plotdir = "default", pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10,
-  verbose = TRUE, colvec = c("blue", "black", "black", gray(0, 0.7)),
-  ltyvec = c(1, 2, 1, NA), ptcol = "default", legend = TRUE,
-  legendloc = NULL, minyr = "default", textmindev = 0.5,
-  relative = FALSE, expected = TRUE, estimated = TRUE,
-  bias_adjusted = TRUE, show_env = TRUE, virg = TRUE, init = TRUE,
-  forecast = FALSE)
+SSplotSpawnrecruit(
+  replist,
+  subplot = 1:3,
+  add = FALSE,
+  plot = TRUE,
+  print = FALSE,
+  xlim = NULL,
+  ylim = NULL,
+  labels = c("Spawning biomass (mt)", "Recruitment (1,000s)", "Spawning output",
+    expression(paste("Spawning output (relative to ", italic(B)[0], ")")),
+    expression(paste("Recruitment (relative to  ", italic(R)[0], ")")),
+    "Log recruitment deviation"),
+  bioscale = "default",
+  plotdir = "default",
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  verbose = TRUE,
+  colvec = c("blue", "black", "black", gray(0, 0.7)),
+  ltyvec = c(1, 2, 1, NA),
+  ptcol = "default",
+  legend = TRUE,
+  legendloc = NULL,
+  minyr = "default",
+  textmindev = 0.5,
+  relative = FALSE,
+  expected = TRUE,
+  estimated = TRUE,
+  bias_adjusted = TRUE,
+  show_env = TRUE,
+  virg = TRUE,
+  init = TRUE,
+  forecast = FALSE
+)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}

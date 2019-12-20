@@ -4,8 +4,7 @@
 \alias{SSmohnsrho}
 \title{Calculate Mohn's Rho values for select quantities}
 \usage{
-SSmohnsrho(summaryoutput, endyrvec = NULL, startyr = NULL,
-  verbose = TRUE)
+SSmohnsrho(summaryoutput, endyrvec = NULL, startyr = NULL, verbose = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}. The expected order for the

@@ -4,15 +4,37 @@
 \alias{SSplotSexRatio}
 \title{Plot sex-ratio data and fits for two sex models}
 \usage{
-SSplotSexRatio(replist, kind = "AGE", sexratio.option = 2, CI = 0.75,
-  plot = TRUE, print = FALSE, fleets = "all",
-  fleetnames = "default", yupper = 4, linescol = rgb(0.6, 0, 0.9,
-  0.7), lwd = 2, axis1 = NULL, axis2 = NULL, pwidth = 6.5,
-  pheight = 5, punits = "in", ptsize = 10, res = 300,
-  plotdir = "default", cex.main = 1, labels = c("Length (cm)",
-  "Age (yr)", "Sex ratio (females:males)", "Fraction female"),
-  maxrows = 6, maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
-  verbose = TRUE, mainTitle = FALSE, ...)
+SSplotSexRatio(
+  replist,
+  kind = "AGE",
+  sexratio.option = 2,
+  CI = 0.75,
+  plot = TRUE,
+  print = FALSE,
+  fleets = "all",
+  fleetnames = "default",
+  yupper = 4,
+  linescol = rgb(0.6, 0, 0.9, 0.7),
+  lwd = 2,
+  axis1 = NULL,
+  axis2 = NULL,
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  ptsize = 10,
+  res = 300,
+  plotdir = "default",
+  cex.main = 1,
+  labels = c("Length (cm)", "Age (yr)", "Sex ratio (females:males)", "Fraction female"),
+  maxrows = 6,
+  maxcols = 6,
+  rows = 1,
+  cols = 1,
+  fixdims = TRUE,
+  verbose = TRUE,
+  mainTitle = FALSE,
+  ...
+)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}

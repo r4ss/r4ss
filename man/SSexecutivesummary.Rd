@@ -4,10 +4,16 @@
 \alias{SSexecutivesummary}
 \title{A function to create a executive summary tables from an SS Report.sso file}
 \usage{
-SSexecutivesummary(dir, plotdir = "default", quant = 0.95,
-  es.only = FALSE, tables = c("a", "b", "c", "d", "e", "f", "g", "h",
-  "i", "catch", "numbers"), nsex = FALSE, endyr = NULL,
-  verbose = TRUE)
+SSexecutivesummary(
+  dir,
+  plotdir = "default",
+  quant = 0.95,
+  es.only = FALSE,
+  tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "numbers"),
+  nsex = FALSE,
+  endyr = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dir}{Locates the directory of the files to be read in, double

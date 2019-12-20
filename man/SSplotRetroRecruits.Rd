@@ -4,12 +4,22 @@
 \alias{SSplotRetroRecruits}
 \title{Make squid plot of retrospectives of recruitment deviations.}
 \usage{
-SSplotRetroRecruits(retroSummary, endyrvec, cohorts, ylim = NULL,
-  uncertainty = FALSE, labels = c("Recruitment deviation",
-  "Recruitment (billions)", "relative to recent estimate", "Age"),
+SSplotRetroRecruits(
+  retroSummary,
+  endyrvec,
+  cohorts,
+  ylim = NULL,
+  uncertainty = FALSE,
+  labels = c("Recruitment deviation", "Recruitment (billions)",
+    "relative to recent estimate", "Age"),
   main = "Retrospective analysis of recruitment deviations",
-  mcmcVec = FALSE, devs = TRUE, relative = FALSE,
-  labelyears = TRUE, legend = FALSE, leg.ncols = 4)
+  mcmcVec = FALSE,
+  devs = TRUE,
+  relative = FALSE,
+  labelyears = TRUE,
+  legend = FALSE,
+  leg.ncols = 4
+)
 }
 \arguments{
 \item{retroSummary}{List object created by \code{\link{SSsummarize}} that

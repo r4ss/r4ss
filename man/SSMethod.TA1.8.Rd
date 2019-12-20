@@ -4,11 +4,24 @@
 \alias{SSMethod.TA1.8}
 \title{Apply Francis composition weighting method TA1.8}
 \usage{
-SSMethod.TA1.8(fit, type, fleet, part = 0:2, sexes = 0:3,
-  seas = NULL, method = NULL, plotit = TRUE, printit = TRUE,
-  datonly = FALSE, plotadj = !datonly, maxpanel = 1000,
-  fleetnames = NULL, label.part = TRUE, label.sex = TRUE,
-  set.pars = TRUE)
+SSMethod.TA1.8(
+  fit,
+  type,
+  fleet,
+  part = 0:2,
+  sexes = 0:3,
+  seas = NULL,
+  method = NULL,
+  plotit = TRUE,
+  printit = TRUE,
+  datonly = FALSE,
+  plotadj = !datonly,
+  maxpanel = 1000,
+  fleetnames = NULL,
+  label.part = TRUE,
+  label.sex = TRUE,
+  set.pars = TRUE
+)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}

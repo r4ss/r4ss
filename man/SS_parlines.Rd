@@ -4,8 +4,13 @@
 \alias{SS_parlines}
 \title{Get parameter lines from Stock Synthesis control file}
 \usage{
-SS_parlines(ctlfile = "control.ss_new", dir = NULL, version = "3.30",
-  verbose = TRUE, active = FALSE)
+SS_parlines(
+  ctlfile = "control.ss_new",
+  dir = NULL,
+  version = "3.30",
+  verbose = TRUE,
+  active = FALSE
+)
 }
 \arguments{
 \item{ctlfile}{File name of control file including path.}

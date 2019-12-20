@@ -4,14 +4,31 @@
 \alias{SS_output}
 \title{A function to create a list object for the output from Stock Synthesis}
 \usage{
-SS_output(dir = "C:/myfiles/mymodels/myrun/", dir.mcmc = NULL,
-  repfile = "Report.sso", compfile = "CompReport.sso",
-  covarfile = "covar.sso", forefile = "Forecast-report.sso",
-  wtfile = "wtatage.ss_new", warnfile = "warning.sso", ncols = NULL,
-  forecast = TRUE, warn = TRUE, covar = TRUE, readwt = TRUE,
-  checkcor = TRUE, cormax = 0.95, cormin = 0.01, printhighcor = 10,
-  printlowcor = 10, verbose = TRUE, printstats = TRUE,
-  hidewarn = FALSE, NoCompOK = FALSE, aalmaxbinrange = 4)
+SS_output(
+  dir = "C:/myfiles/mymodels/myrun/",
+  dir.mcmc = NULL,
+  repfile = "Report.sso",
+  compfile = "CompReport.sso",
+  covarfile = "covar.sso",
+  forefile = "Forecast-report.sso",
+  wtfile = "wtatage.ss_new",
+  warnfile = "warning.sso",
+  ncols = NULL,
+  forecast = TRUE,
+  warn = TRUE,
+  covar = TRUE,
+  readwt = TRUE,
+  checkcor = TRUE,
+  cormax = 0.95,
+  cormin = 0.01,
+  printhighcor = 10,
+  printlowcor = 10,
+  verbose = TRUE,
+  printstats = TRUE,
+  hidewarn = FALSE,
+  NoCompOK = FALSE,
+  aalmaxbinrange = 4
+)
 }
 \arguments{
 \item{dir}{Directory containing the Stock Synthesis model output.
