@@ -1209,6 +1209,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       comments = unlist(age_selex_label))
   }
   
+  #TODO: We don't currently account for Dirichlet Multinomial Error for Data Weighting
+  #this is turned on in the data file. 
+  
   # sel timevarying parlines----
   if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] == 0) {
@@ -1352,13 +1355,18 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       sizefreq_method<-ctllist$lambdas[i,5]
       if(like_comp==1){
         rownames(ctllist$lambdas)[i]<-paste0("Surv_",fleetnames[fl],"_Phz",phz)
+      }else if(like_comp==2){
+        rownames(ctllist$lambdas)[i]<-paste0("discard_",fleetnames[fl],"_Phz",phz)
+      }else if(like_comp==3){
+        rownames(ctllist$lambdas)[i]<-paste0("mean-weight_",fleetnames[fl],"_Phz",phz)
       }else if(like_comp==4){
         rownames(ctllist$lambdas)[i]<-paste0("length_",fleetnames[fl],"_sizefreq_method_",sizefreq_method,"_Phz",phz)
       }else if(like_comp==5){
         rownames(ctllist$lambdas)[i]<-paste0("age_",fleetnames[fl],"_Phz",phz)
-      }else if(like_comp==5){
-        sizefreq_method<-ctllist$lambdas[i,5]
+      }else if(like_comp==6){
         rownames(ctllist$lambdas)[i]<-paste0("SizeFreq_",fleetnames[fl],"_sizefreq_method_",sizefreq_method,"_Phz",phz)
+      }else if(like_comp==7){
+        rownames(ctllist$lambdas)[i]<-paste0("SizeAge_",fleetnames[fl],"_sizefreq_method_",sizefreq_method,"_Phz",phz)
       }else if(like_comp==8){
         rownames(ctllist$lambdas)[i]<-paste0("catch_",fleetnames[fl],"_Phz",phz)
       }else if(like_comp==9){
@@ -1371,12 +1379,16 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         rownames(ctllist$lambdas)[i]<-paste0("parm_dev_Phz",phz)
       }else if(like_comp==13){
         rownames(ctllist$lambdas)[i]<-paste0("CrashPen_Phz",phz)
+      }else if(like_comp==14){
+        rownames(ctllist$lambdas)[i]<-paste0("Morph-Comp_Phz",phz)
       }else if(like_comp==15){
         rownames(ctllist$lambdas)[i]<-paste0("Tag-comp-likelihood-",fl,"_Phz",phz)
       }else if(like_comp==16){
         rownames(ctllist$lambdas)[i]<-paste0("Tag-negbin-likelihood-",fl,"_Phz",phz)
       }else if(like_comp==17){
         rownames(ctllist$lambdas)[i]<-paste0("F-ballpark-",fl,"_Phz",phz)
+      }else if(like_comp==18){
+        rownames(ctllist$lambdas)[i]<-paste0("Regime-shift-",fl,"_Phz",phz)
       }
     }
   }
