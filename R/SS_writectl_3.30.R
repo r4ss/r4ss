@@ -151,11 +151,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("N_GP", comment = "N_Growth_Patterns") # N_Growth_Patterns
   wl("N_platoon", comment = "N_platoons_Within_GrowthPattern")
   if(ctllist$N_platoon > 1) { # Conditional inputs needed if more than 1 platoon.
-    stop("Multiple platoons are not supported yet by SS_writectl_3.30")
+    #("Multiple platoons are not supported yet by SS_writectl_3.30")
     #TODO: add multiple platoon functionality to SS_writectl_3.30 and
     # SS_readctl_3.30. Then, the stop() above can be removed.
     wl("sd_ratio", comment = "Morph_between/within_stdev_ratio")
-    wl("submorphdist", comment = "vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
+    wl.vector("submorphdist", comment = "vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
   }
   # Recruitment distribution ----
   wl("recr_dist_method", comment = "# recr_dist_method for parameters")
@@ -171,11 +171,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if(ctllist$N_areas > 1) {
     wl("N_moveDef", 
        comment = "#_N_movement_definitions goes here if N_areas > 1")
+    if(ctllist$N_moveDef>0) {
     wl("firstAgeMove", 
        comment = paste0("#_first age that moves (real age at begin of season, ",
                         "not integer) also cond on do_migration>0"))
     writeComment("move definition for seas, morph, source, dest, age1, age2")
     printdf("moveDef", header = FALSE)
+    }
   } else {
     writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1")
     writeComment(paste0("#_Cond 1.0 # first age that moves (real age at begin ",
@@ -225,8 +227,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     wl("N_natM", comment = "#_N_breakpoints")
     wl.vector("M_ageBreakPoints", comment = "# age(real) at M breakpoints")
   } else if(ctllist$natM_type == 2) {
-    wl.vector("Lorenzen_refage", 
-              comment = "#_reference age for Lorenzen M; read 1P per morph")
+    wl("Lorenzen_refage", 
+              comment = "#_reference age for Lorenzen M; later read 1P per Sex x G Morph")
   } else if(ctllist$natM_type %in% c(3,4)) {
     writeComment(" #_Age_natmort_by sex x growthpattern")
     printdf("natM")
