@@ -283,7 +283,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   }
   if(ctllist$maturity_option == 6) {
     writeComment("# Length Maturity: ")
-    printdf("Len_Maturity")
+    printdf("Length_Maturity")
   }
   wl("First_Mature_Age", comment = "#_First_Mature_Age")
   wl("fecundity_option", 
