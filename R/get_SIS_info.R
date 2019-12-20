@@ -53,6 +53,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   tab <- data.frame(Year = ts$Yr,
                     Total_Bio = round(ts$Bio_all),
                     Spawning_Bio = round(ts$SpawnBio),
+                    Summary_Bio_Age_Xplus = round(ts$Bio_smry),
                     Rel_Spawning_Bio = round(ts$SpawnBio / ts$SpawnBio[ts$Era == "VIRG"], 3),
                     Recruitment = round(ts$Recruit_0))
   ts_tab <- tab[tab$Year %in% years,]
