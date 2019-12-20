@@ -4,18 +4,23 @@
 \alias{SSplotPars}
 \title{Plot distributions of priors, posteriors, and estimates.}
 \usage{
-SSplotPars(replist, xlab = "Parameter value", ylab = "Density",
-  showmle = TRUE, showpost = TRUE, showprior = TRUE,
-  showinit = TRUE, showdev = FALSE, showlegend = TRUE,
-  fitrange = FALSE, xaxs = "i", xlim = NULL, ylim = NULL,
-  verbose = TRUE, nrows = 3, ncols = 3, ltyvec = c(1, 1, 3, 4),
-  colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, 0.5)),
-  new = TRUE, add = FALSE, pdf = FALSE, pwidth = 6.5,
-  pheight = 5, punits = "in", ptsize = 10, returntable = FALSE,
-  strings = c(), exact = FALSE, newheaders = NULL)
+SSplotPars(replist, plotdir = NULL, xlab = "Parameter value",
+  ylab = "Density", showmle = TRUE, showpost = TRUE,
+  showprior = TRUE, showinit = TRUE, showdev = FALSE,
+  showlegend = TRUE, fitrange = FALSE, xaxs = "i", xlim = NULL,
+  ylim = NULL, verbose = TRUE, nrows = 3, ncols = 3,
+  ltyvec = c(1, 1, 3, 4), colvec = c("blue", "red", "black", "gray60",
+  rgb(0, 0, 0, 0.5)), new = TRUE, add = FALSE, pdf = FALSE,
+  pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10,
+  returntable = FALSE, strings = c(), exact = FALSE,
+  newheaders = NULL)
 }
 \arguments{
 \item{replist}{List produced by \code{\link{SS_output}}.}
+
+\item{plotdir}{A path to the folder where the plots will be saved. The default
+is \code{NULL}, which leads to the plots being created in the folder that
+contains the results.}
 
 \item{xlab}{Label on horizontal axis.}
 
@@ -95,10 +100,11 @@ parameter distributions. MCMC not required to make function work.
 \examples{
 
 \dontrun{
-pars <- SSplotPars(dir='c:/SS/Simple/')
+model <- SS_output(dir='c:/SS/Simple/'
+SSplotPars(replist = model)
 
 # strings can be partial match
-pars <- SSplotPars(dir='c:/SS/Simple/',strings=c("steep"))
+SSplotPars(dir = model, strings = c("steep", "R0"))
 }
 
 }

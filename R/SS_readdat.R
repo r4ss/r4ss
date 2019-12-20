@@ -35,18 +35,18 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
   # automatic testing of version number (not yet used by default)
   if(is.null(version)) {
     # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what=character(), nlines=5)
+    version <- scan(file, what=character(), nlines=5, quiet=!verbose)
     version <- substring(version,3,6)
     version <- version[version %in% c("3.24", "3.30")]
     # if that fails, look for data.ss_new file in the same directory
     if(length(version) > 0){
-      cat("assuming version", version, "based on first five lines of data file\n")
+      if(verbose)cat("assuming version", version, "based on first five lines of data file\n")
     }else{
       newfile <- file.path(dirname(file), "data.ss_new")
       if(file.exists(newfile)){
-        version <- scan(newfile, what=character(), nlines=1)
+        version <- scan(newfile, what=character(), nlines=1, quiet=!verbose)
         version <- substring(version,3,6)
-        cat("assuming version", version, "based on first line of data.ss_new\n")
+        if(verbose)cat("assuming version", version, "based on first line of data.ss_new\n")
       }else{
         stop("input 'version' required due to missing value at top of", file)
       }
@@ -251,9 +251,13 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     # note: lines 252-257 are redundant with datlist$N_cpue, leaving for now
     datlist$NCPUEObs<-array(data=0,dim=datlist$Nfleets)
 
+    #if(nrow(
     for(j in 1:nrow(datlist$CPUE))
     {
-      if(datlist$CPUE[j,]$index>0)datlist$NCPUEObs[datlist$CPUE[j,]$index]<-datlist$NCPUEObs[datlist$CPUE[j,]$index]+1
+      if(datlist$CPUE[j,]$index>0){
+        datlist$NCPUEObs[datlist$CPUE[j,]$index] <-
+          datlist$NCPUEObs[datlist$CPUE[j,]$index] + 1
+      }
     }
 
     # fix some things

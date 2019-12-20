@@ -45,7 +45,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  sec.end.inds <- grep("^999$", dat)
+  sec.end.inds <- grep("^999\\b", dat)
   Nsections <- length(sec.end.inds)
   if(!Nsections){
     stop("Error - There was no EOF marker (999) in the data file.")

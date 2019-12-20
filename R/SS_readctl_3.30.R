@@ -1248,6 +1248,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
   #TODO: add code to read files when 2D_AR1 is used.
   if (ctllist$Use_2D_AR1_selectivity == 1) {
+    ctllist <- add_vec(ctllist, "specs_2D_AR")
+    ctllist <- add_df(ctllist, "pars_2D_AR", nrow=3,ncol=14,
+      col.names = c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
+                    "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
     stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
   }
 

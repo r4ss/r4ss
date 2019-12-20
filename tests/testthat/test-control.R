@@ -271,4 +271,5 @@ test_that("SS_readctl works with init_F", {
   unlink(file.path(tmp_path, "init_F.ctl"))
 })
 
-
+#clean up
+unlink(tmp_path, recursive = TRUE)

@@ -339,7 +339,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
         }
         es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
         colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-        write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = F)
+        write.csv(es.a, paste0(csv.dir, "/a_Catches_Area", nareas[a], "_ExecutiveSummary.csv"), row.names = FALSE)
       }
     }
 
@@ -361,7 +361,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       }
       es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
       colnames(es.a) = c("Years", names, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = F)
+      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
     if(SS_versionNumeric < 3.24) {
@@ -381,7 +381,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       }
       es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
       colnames(es.a) = c("Years", 1:nfleets, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = F)
+      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
   } # end check for 'a' %in% tables
@@ -403,7 +403,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
         print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
     colnames(es.b) = c("Years", "Spawning Output", "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
 
-    write.csv(es.b, paste0(csv.dir, "/b_SSB_ExecutiveSummary.csv"), row.names = F)
+    write.csv(es.b, file.path(csv.dir, "b_SSB_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'b' %in% tables
 
@@ -468,7 +468,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
 
     colnames(es.c) = c("Years", "Recruitment", "95% Asymptotic Interval", "Recruitment Deviations", "95% Asymptotic Interval")
 
-    write.csv(es.c, paste0(csv.dir, "/c_Recr_ExecutiveSummary.csv"), row.names = F)
+    write.csv(es.c, file.path(csv.dir, "c_Recr_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'c' %in% tables
 
@@ -495,7 +495,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
         print(f.value$dq,4),     paste0(print(f.value$low,4),     "\u2013", print(f.value$high,4)))
     colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", "Harvest Rate (proportion)", "95% Asymptotic Interval")
 
-    write.csv(es.d, paste0(csv.dir, "/d_SPR_ExecutiveSummary.csv"), row.names = F)
+    write.csv(es.d, file.path(csv.dir, "d_SPR_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'd' %in% tables
   
@@ -508,8 +508,8 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     }
 
     # Find the values within the forecast file
-    rawforecast  <- readLines(paste0(dir, "/forecast.ss"))
-    rawstarter   <- readLines(paste0(dir, "/starter.ss"))
+    rawforecast  <- readLines(file.path(dir, "forecast.ss"))
+    rawstarter   <- readLines(file.path(dir, "starter.ss"))
     spr          <- as.numeric(strsplit(rawforecast[grep("SPR target",rawforecast)]," ")[[1]][1])
 
     if (SS_versionNumeric < 3.313){
@@ -601,7 +601,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
                 "Exploitation rate corresponding to SPRMSY",
                 "MSY (mt)")
 
-    write.csv(es.e, paste0(csv.dir, "/e_ReferencePoints_ExecutiveSummary.csv"))
+    write.csv(es.e, file.path(csv.dir, "e_ReferencePoints_ExecutiveSummary.csv"))
 
   } # end check for 'e' %in% tables
 
@@ -623,7 +623,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
     es.f = data.frame(ind, ofl, abc, acl, catch, dead)
     colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
 
-    write.csv(es.f, paste0(csv.dir, "/f_Manage_ExecutiveSummary.csv"), row.names = F)
+    write.csv(es.f, file.path(csv.dir, "f_Manage_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'f' %in% tables
 
@@ -658,7 +658,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
         print(depl.fore$dq*100,2))
     colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), "Spawning Biomass (mt)", "Depletion (%)")
 
-    write.csv(es.g, paste0(csv.dir, "/g_Projections_ExecutiveSummary.csv"), row.names = F)
+    write.csv(es.g, file.path(csv.dir, "g_Projections_ExecutiveSummary.csv"), row.names = FALSE)
 
   } # end check for 'g' %in% tables
 
@@ -719,7 +719,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
                 "Depletion (%)",
                 "95% Confidence Interval")
 
-    write.csv(es.i, paste0(csv.dir, "/i_Summary_ExecutiveSummary.csv"))
+    write.csv(es.i, file.path(csv.dir, "i_Summary_ExecutiveSummary.csv"))
 
   } # end check for 'i' %in% tables
 
@@ -756,7 +756,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
         mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
         colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
 
-        write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], ".csv"), row.names = F)
+        write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area", nareas[a], ".csv"), row.names = FALSE)
       }
     }
 
@@ -772,7 +772,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       mortality = data.frame(ind, comma(catch, 2), comma(total.catch,2), comma(total.dead,2))
       colnames(mortality) = c("Year",names, "Total Catch", "Total Dead")
 
-      write.csv(mortality, paste0(csv.dir, "/_CatchesAllYrs_Area.csv"), row.names = F)
+      write.csv(mortality, file.path(csv.dir, "_CatchesAllYrs_Area.csv"), row.names = FALSE)
       #}
     }
 
@@ -793,7 +793,7 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
       }
       es.a = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
       colnames(es.a) = c("Years", 1:nfleets, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ExecutiveSummary.csv"), row.names = F)
+      write.csv(es.a, file.path(csv.dir, "a_Catches_ExecutiveSummary.csv"), row.names = FALSE)
     }
 
   } # end check for es.only = TRUE & 'catch' %in% tables
@@ -823,10 +823,10 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
           natage.f = natage.f + t(temp)
         }
 
-        colnames(natage.f) = 0:maxAge
-        rownames(natage.f) <- startyr:endyr
+        colnames(natage.f) = paste0("Age", 0:maxAge)
+        natage.f <- data.frame(Year = startyr:endyr, natage.f)
 
-        write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
+        write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
       }
 
       if (nsexes == 2) {
@@ -842,19 +842,26 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
           }
         }
 
-        colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge
-        rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+        colnames(natage.f) <- paste0("Age", 0:maxAge)
+        colnames(natage.m) <- paste0("Age", 0:maxAge)
+        natage.f <- data.frame(Year = startyr:endyr, natage.f)
+        natage.m <- data.frame(Year = startyr:endyr, natage.m)
 
-        write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
-        write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))
+        write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
+        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
       }
     } # SS v3.24 verions loop
 
     # Check to see if numbers-at-age is calculated
     if(SS_versionNumeric >= 3.30) {
+      if(!exists("rawstarter")){
+        # rawstarter was read in creation of table 'e'
+        rawstarter <- readLines(file.path(dir, "starter.ss"))
+      }
       check = as.numeric(strsplit(rawstarter[grep("detailed output", rawstarter)]," ")[[1]][1])
-      if (check == 2) { "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."}
-
+      if (check == 2) {
+        "Detailed age-structure set in starter file set = 2 which does not create numbers-at-age table."
+      }
       if (check != 2){
         maxAge = length(strsplit(base[grep(paste("1 1 1 1 1 1 1", startyr,sep=" "),base)]," ")[[1]]) - 14
 
@@ -865,10 +872,10 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
             natage.f = natage.f + t(temp)
           }
 
-          colnames(natage.f) = 0:maxAge
-          rownames(natage.f) <- startyr:endyr
+          colnames(natage.f) <- paste0("Age", 0:maxAge)
+          natage.f <- data.frame(Year = startyr:endyr, natage.f)
 
-          write.csv(natage.f, paste0(csv.dir, "/_natage.csv"))
+          write.csv(natage.f, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
         }
 
         if (nsexes == 2) {
@@ -884,11 +891,13 @@ SSexecutivesummary <- function (dir, plotdir = 'default', quant = 0.95,
             }
           }
 
-          colnames(natage.f) = 0:maxAge; colnames(natage.m) = 0:maxAge
-          rownames(natage.f) <- startyr:endyr ; rownames(natage.m) <- startyr:endyr
+        colnames(natage.f) <- paste0("Age", 0:maxAge)
+        colnames(natage.m) <- paste0("Age", 0:maxAge)
+        natage.f <- data.frame(Year = startyr:endyr, natage.f)
+        natage.m <- data.frame(Year = startyr:endyr, natage.m)
 
-          write.csv(natage.f, paste0(csv.dir, "/_natage_f.csv"))
-          write.csv(natage.m, paste0(csv.dir, "/_natage_m.csv"))
+        write.csv(natage.f, file.path(csv.dir, "_natage_f.csv"), row.names = FALSE)
+        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
         }
       } # end check for detailed output
     } # SS version 3.30

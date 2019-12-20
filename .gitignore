@@ -49,3 +49,4 @@ inst/extdata/*/profile/
 inst/extdata/*/*posterior*
 plots
 ignored
+revdep

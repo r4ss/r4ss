@@ -15,7 +15,7 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
   "Harvest rate"), col = NULL, shadecol = NULL, pch = NULL,
   lty = 1, lwd = 2, spacepoints = 10, staggerpoints = 1,
   initpoint = 0, tickEndYr = TRUE, shadeForecast = TRUE,
-  xlim = "default", ylimAdj = 1, xaxs = "i", yaxs = "i",
+  xlim = "default", ylimAdj = 1.05, xaxs = "i", yaxs = "i",
   type = "o", uncertainty = TRUE, shadealpha = 0.1, legend = TRUE,
   legendlabels = "default", legendloc = "topright",
   legendorder = "default", legendncol = 1, sprtarg = NULL,
@@ -32,7 +32,41 @@ SSplotComparisons(summaryoutput, subplots = 1:20, plot = TRUE,
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}}
 
-\item{subplots}{Vector of subplots to be created.}
+\item{subplots}{Vector of subplots to be created
+Numbering of subplots is as follows:
+\itemize{
+  \item 1  spawning biomass
+  \item 2  spawning biomass with uncertainty intervals
+  \item 3  biomass ratio (hopefully equal to fraction of unfished)
+  \item 4  biomass ratio with uncertainty
+  \item 5  SPR ratio
+  \item 6  SPR ratio with uncertainty
+  \item 7  F value
+  \item 8  F value with uncertainty
+  \item 9  recruits
+  \item 10  recruits with uncertainty
+  \item 11  recruit devs
+  \item 12  recruit devs with uncertainty
+  \item 13  index fits
+  \item 14  index fits on a log scale
+  \item 15  phase plot
+  \item 16  densities
+  \item 17  cumulative densities
+}
+Note that this represents a revision in the numbering for 7 and higher
+from the numbering used up to r4ss version 1.36.0 which was as follows:
+\itemize{
+  \item 18  F value with uncertainty
+  \item 7  recruits
+  \item 8  recruits with uncertainty
+  \item 9  recruit devs
+  \item 10  recruit devs with uncertainty
+  \item 11  index fits
+  \item 12  index fits on a log scale
+  \item 13  phase plot
+  \item 14  densities
+  \item 15  cumulative densities
+}}
 
 \item{plot}{Plot to active plot device?}
 
@@ -108,7 +142,7 @@ the maximum ending year of the models}
 \item{xlim}{Optional x limits}
 
 \item{ylimAdj}{Multiplier for ylim parameter. Allows additional white space
-to fit legend if necessary. Default=1.}
+to fit legend if necessary. Default=1.05.}
 
 \item{xaxs}{Choice of xaxs parameter (see ?par for more info)}
 
@@ -145,7 +179,7 @@ plots and phase plot.}
 \item{btarg}{Target biomass value at which to show a line (set to 0 to
 remove)}
 
-\item{minbthresh}{Minimum biomass threshhold at which to show a line (set to
+\item{minbthresh}{Minimum biomass threshold at which to show a line (set to
 0 to remove)}
 
 \item{pwidth}{Width of plot}

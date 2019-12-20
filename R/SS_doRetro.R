@@ -130,7 +130,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
     }
     # change starter file to do retrospectives
     starter$retro_yr <- years[iyr]
-    starter$init_values_src = 0
+    starter$init_values_src <- 0
     setwd(file.path(newdir,subdirnames[iyr]))
     SS_writestarter(starter, dir=getwd(), verbose=FALSE, overwrite=TRUE)
 

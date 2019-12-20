@@ -504,8 +504,10 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   if (ctllist$Use_2D_AR1_selectivity == 0) {
     writeComment("#_no 2D_AR1 selex offset used")
   } else if (ctllist$Use_2D_AR1_selectivity == 1) {
-    stop("SS_writectl_3.30 cannot yet write 2DAR1 selectivity options")
-    #TODO: add code here to write 2D_AR1 selectivity options.
+    writeComment("#_specifications for 2D_AR1 and associated parameters")
+    printdf("specs_2D_AR")
+    printdf("pars_2D_AR")
+    writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
     stop("ctllist$Use_2D_AR1_selectivity has value ", 
          ctllist$Use_2D_AR1_selectivity, ", but can only have value 0 or 1.")

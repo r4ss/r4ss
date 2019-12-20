@@ -11,7 +11,7 @@
 ##' @export
 ##' @seealso \code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}
 ##' @note Explanation of the methods (in PDF form) published here:
-##' \url{http://www.admb-project.org/examples/admb-tricks/covariance-calculations}
+##' \url{https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf}
 getADMBHessian <- function(File, FileName){
     ## This function reads in all of the information contained in the
     ## admodel.hes file. Some of this is needed for relaxing the

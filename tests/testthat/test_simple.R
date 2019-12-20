@@ -30,6 +30,12 @@ test_that("SS_output runs on simple_3.30.13 model", {
   expect_equal(tail(names(simple3.30.13),1), "inputs")
 })
 
+test_that("SS_output generates warning when MCMC folder is missing", {
+  expect_warning(SS_output(dir=tail(dir(example_path, full.names = TRUE),1),
+   dir.mcmc="mcmc", warn=FALSE, printstats=FALSE, hidewarn=TRUE, verbose=FALSE)
+  )
+})
+
 ###############################################################################
 # read models again so they are available in the workspace for later use
 ###############################################################################
@@ -42,6 +48,18 @@ simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"),
                         verbose=FALSE, printstats=FALSE)
 simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
                         verbose=FALSE, printstats=FALSE)
+
+###############################################################################
+# Test an internal function used by SS_output
+###############################################################################
+test_that("get_ncol finds the correct number of columns for SS_output", {
+  reportfiles <- dir(system.file(file.path("extdata"), package = "r4ss"), 
+    pattern = "^Report", recursive = TRUE, full.names = TRUE)
+  results <- mapply(r4ss:::get_ncol, reportfiles)
+  expect_vector(results)
+  expect(all(results %in% 55:56), 
+    "Optimum width of Report.sso wasn't 55 or 56.")
+})
 
 ###############################################################################
 # specific tests for elements in the list created by SS_output

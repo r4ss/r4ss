@@ -1277,12 +1277,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # plot of vectors found in models with hermaphroditism
   if("Herma_Trans" %in% names(growdatF)){
     herma_func1 <- function(){
-      plot(growdatF$Age, growdatF$Herma_Trans, xaxs='i', ylim=c(0,1), las=1,
+      plot(growdatF$Age_Beg, growdatF$Herma_Trans, xaxs='i', ylim=c(0,1), las=1,
            xlab=labels[12], ylab=labels[13], type="l", lwd=3, col=colvec[2])
       abline(h=c(0,1), col='grey')
     }
     herma_func2 <- function(){
-      plot(growdatF$Age, growdatF$Herma_Cum, xaxs='i', ylim=c(0,1), las=1,
+      plot(growdatF$Age_Beg, growdatF$Herma_Cum, xaxs='i', ylim=c(0,1), las=1,
            xlab=labels[2], ylab=labels[14], type="l", lwd=3, col=colvec[2])
       abline(h=c(0,1), col='grey')
     }

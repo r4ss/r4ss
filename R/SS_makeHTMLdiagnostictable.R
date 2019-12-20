@@ -37,38 +37,40 @@ SS_makeHTMLdiagnostictable <- function(replist,
   if(!is.null(parchecks$Gradient)){
     parchecks <- parchecks[!is.na(parchecks$Gradient), ]
     #parchecks <- parchecks[order(-parchecks$Gradient), ]
-    parchecks$Gradient <- cell_spec(parchecks$Gradient,
-                                    "html",
-                                    color = ifelse(abs(parchecks$Gradient) >
-                                                     gradmax, "red", "black"))
+    parchecks$Gradient <-
+      kableExtra::cell_spec(parchecks$Gradient,
+                            "html",
+                            color = ifelse(abs(parchecks$Gradient) >
+                                             gradmax, "red", "black"))
   }
   #Format table with parameter checks so high gradients or parameters on bounds are shown in red
   parchecks$Afterbound <-
-    cell_spec(parchecks$Afterbound,
-              "html",
-              color = ifelse(parchecks$Afterbound == "OK", "black", "red"))
+    kableExtra::cell_spec(parchecks$Afterbound,
+                          "html",
+                          color = ifelse(parchecks$Afterbound == "OK", "black", "red"))
   parchecks$Status <-
-    cell_spec(parchecks$Status,
-              "html",
-              color = ifelse(parchecks$Status == "OK", "black", "red"))
+    kableExtra::cell_spec(parchecks$Status,
+                          "html",
+                          color = ifelse(parchecks$Status == "OK", "black", "red"))
 
   #Write out table
-  the_table <- kable(parchecks,
-                     format = "html",
-                     escape = FALSE)
+  the_table <- kableExtra::kable(parchecks,
+                                 format = "html",
+                                 escape = FALSE)
   table_height <- ifelse(nrow(parchecks) > 40,
                          "800px",
                          paste0(200 + nrow(parchecks) * 20, "px"))
-  the_table <- kable_styling(the_table)
+  the_table <- kableExtra::kable_styling(the_table)
   the_table <-
-    scroll_box(the_table, width = "100%", height = table_height)
+    kableExtra::scroll_box(the_table, width = "100%", height = table_height)
   filename <- caption <- NULL
-  filename = c(filename,"parameterchecks.html")
+  filename <- c(filename,"parameterchecks.html")
 
   write(the_table,
         file = file.path(plotdir,filename[1]))
-  caption = c(caption,paste(
-      "Table of estimated parameters sorted by parameters with the largest gradients; any parameter with a gradient value with an absolute value above",
+  caption <- c(caption,paste(
+      "Table of estimated parameters sorted by parameters with the largest gradients;",
+      "any parameter with a gradient value with an absolute value above",
       gradmax,
       "(for SS 3.30 models) or a parameter on bounds is colored in red."
   ))
@@ -78,19 +80,22 @@ SS_makeHTMLdiagnostictable <- function(replist,
     high_cor_table <- cors$cormessage3
 
     high_cor_table <- high_cor_table[order(high_cor_table$corr), ]
-    high_cor_table$corr <- cell_spec(high_cor_table$corr,
-                                     "html",
-                                     color = ifelse(abs(high_cor_table$corr) >
-                                                      cormax, "red", "black"))
-    the_table2 <- kable(high_cor_table,
-                        format = "html",
-                        escape = F)
-    the_table2 <- kable_styling(the_table2)
-    filename = c(filename,"correlationcheck.html")
+    high_cor_table$corr <-
+      kableExtra::cell_spec(high_cor_table$corr,
+                            "html",
+                            color = ifelse(abs(high_cor_table$corr) >
+                                             cormax, "red", "black"))
+    the_table2 <- kableExtra::kable(high_cor_table,
+                                    format = "html",
+                                    escape = FALSE)
+    the_table2 <- kableExtra::kable_styling(the_table2)
+    filename <- c(filename,"correlationcheck.html")
     write(the_table2,
           file = file.path(plotdir,"correlationcheck.html"))
-    caption = c(caption, paste(
-        "Table of estimated parameters with the ten highest correlation rates, sorted by highest correlations; any parameter with an absolute value of correlation above",
+    caption <- c(caption, paste(
+        "Table of estimated parameters with the ten highest correlation rates,",
+        "sorted by highest correlations; any parameter with an absolute value",
+        "of correlation above",
         cormax,
         "is colored in red."
     ))
@@ -100,19 +105,22 @@ SS_makeHTMLdiagnostictable <- function(replist,
     low_cor_table <- cors$cormessage10
 
     low_cor_table <- low_cor_table[order(low_cor_table$max), ]
-    low_cor_table$max <- cell_spec(low_cor_table$max,
-                                   "html",
-                                   color = ifelse(abs(low_cor_table$max) <
-                                                    cormin, "purple", "black"))
-    the_table3 <- kable(low_cor_table,
-                        format = "html",
-                        escape = F)
-    the_table3 <- kable_styling(the_table3)
-    filename = c(filename,"lowcorrelationcheck.html")
+    low_cor_table$max <-
+      kableExtra::cell_spec(low_cor_table$max,
+                            "html",
+                            color = ifelse(abs(low_cor_table$max) <
+                                             cormin, "purple", "black"))
+    the_table3 <- kableExtra::kable(low_cor_table,
+                                    format = "html",
+                                    escape = FALSE)
+    the_table3 <- kableExtra::kable_styling(the_table3)
+    filename <- c(filename,"lowcorrelationcheck.html")
     write(the_table3,
           file = file.path(plotdir,"lowcorrelationcheck.html"))
-    caption = c(caption,paste(
-        "Table of estimated parameters with the ten lowest correlation rates, sorted by lowest correlations; any parameter with an absolute value of correlation below",
+    caption <- c(caption,paste(
+        "Table of estimated parameters with the ten lowest correlation rates,",
+        "sorted by lowest correlations; any parameter with an absolute value",
+        "of correlation below",
         cormin,
         "is colored in purple"
     ))

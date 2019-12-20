@@ -80,6 +80,7 @@ SSplotYield <-
       abline(h=0,col="grey")
       abline(v=0,col="grey")
     }
+    
     # add lines for reference points (if requested)
     lines(equil_yield$Depletion, equil_yield$Catch,
           lwd = lwd, col = col, lty = lty)
@@ -100,8 +101,8 @@ SSplotYield <-
             col = colvec[3], lwd = 2, lty = 2)
     }
     if('Current' %in% refpoints){
-      which_val <- abs(equil_yield$Depletion - replist$current_depletion) ==
-        min(abs(equil_yield$Depletion - replist$current_depletion))
+      which_val <- which(abs(equil_yield$Depletion - replist$current_depletion) ==
+        min(abs(equil_yield$Depletion - replist$current_depletion)))[1]
       lines(x = rep(replist$current_depletion, 2),
             y = c(0, equil_yield$Catch[which_val]),
             col = colvec[4], lwd = 2, lty = 2)

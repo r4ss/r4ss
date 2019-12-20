@@ -298,6 +298,11 @@ SSplotComps <-
       filenamestart <- "comp_sizefit_"
       titledata <- "Size comps, "
     }
+    # add text noting which size method is represented
+    if(length(unique(sizedbase$method)) > 1){
+      filenamestart <- paste0(filenamestart, "method", sizemethod, "_")
+      titledata <- paste0(titledata, " size method ", sizemethod, ", ")
+    }
   }
   if(kind=="AGE"){
     dbase_kind <- agedbase
@@ -1288,6 +1293,7 @@ SSplotComps <-
           if(j > -1){ # add market category to filename if it's not a mix
             filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt",j)
           }
+          
           caption <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
 
           if(mainTitle) {

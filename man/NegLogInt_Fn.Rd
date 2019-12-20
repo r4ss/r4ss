@@ -77,7 +77,7 @@ from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
     if("Optimization_record.txt" \%in\% list.files(direc)) {
          file.remove(file.path(direc,"Optimization_record.txt"))
     }
-    Opt = optimize(f=NegLogInt_Fn,
+    Opt <- optimize(f=NegLogInt_Fn,
                    interval=c(0.001, 0.12),
                    maximum=FALSE,
                    File=direc,
