@@ -206,8 +206,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   get_tv_parlabs <- function(full_parms = ctllist$MG_parms, 
                              block_design = ctllist$Block_Design) {
     # Figure out parameters are time varying
-    tmp_tv <- list(env   = full_parms[,"env_var"], 
-                   dev   = full_parms[,"use_dev"],
+    tmp_tv <- list(env   = full_parms[,"env_var&link"], 
+                   dev   = full_parms[,"dev_link"],
                    block = full_parms[,"Block"])
     par_num <- lapply(tmp_tv, function(x) which(x != 0))
     loop_pars <- unlist(par_num)
@@ -240,10 +240,10 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     invisible(parlab)
   }
   # internally used commmon values ----
-  lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
-                        "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_PH", 
+  lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
+                        "env_var&link","dev_link", "dev_minyr", "dev_maxyr", "dev_PH", 
                         "Block", "Block_Fxn")
-  srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR","SD", "PR_type", "PHASE")
+  srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR","PR_SD", "PR_type", "PHASE")
 
   # setup ----
   # set initial position in the vector of numeric values
@@ -712,12 +712,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
   # MG timevarying parlines ------
-  if(any(ctllist$MG_parms[,c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$MG_parms[,c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[1] == 0) {
     warning("There are time varying MG parameters, and AUTOGEN for MG is 0, so",
             " not expecting any short parameter lines.")
   }
-  if(any(ctllist$MG_parms[,c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$MG_parms[,c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[1] != 0) {
     tmp_parlab <- get_tv_parlabs(full_parms = ctllist$MG_parms)
     ctllist <- add_df(ctllist, 
@@ -792,12 +792,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
   #SR timevarying parlines ----
   # time block, environmental link, and parm devs parameters
-  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] == 0) {
     warning("There are time varying SR parameters, and AUTOGEN for SR is 0, so",
             " not expecting any short parameter lines.")
   }
-  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
     tmp_parlab <- get_tv_parlabs(full_parms = ctllist$SRparm)
     ctllist <- add_df(ctllist, 
@@ -943,12 +943,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     # q timevarying parlines----
     # time block, environmental link, and parm devs parameters
     # provide a warning if AUTOGEN is being used for MG.
-    if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+    if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
        ctllist$time_vary_auto_generation[3] == 0) {
       warning("There are time varying q parameters, and AUTOGEN for ",
               "q is 0, so not expecting any short parameter lines.")
     }
-    if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+    if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
        ctllist$time_vary_auto_generation[3] != 0) {
       tmp_parlab <- get_tv_parlabs(full_parms = ctllist$Q_parms)
       ctllist <- add_df(ctllist, 
@@ -1213,17 +1213,17 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   #this is turned on in the data file. 
   
   # sel timevarying parlines----
-  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] == 0) {
     warning("There are time varying size selectivity  parameters, and AUTOGEN ",
             "for selectivity is 0, so not expecting any short parameter lines.")
   }  
-  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
         ctllist$time_vary_auto_generation[5] == 0) {
     warning("There are time varying size selectivity  parameters, and AUTOGEN ",
             "for selectivity is 0, so not expecting any short parameter lines.")
   }
-  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
     tmp_parlab <- get_tv_parlabs(full_parms = ctllist$size_selex_parms)
     ctllist <- add_df(ctllist, 
@@ -1233,7 +1233,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       col.names = srt_par_colnames,
                       comments = tmp_parlab)
   }
-  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
     tmp_parlab <- get_tv_parlabs(full_parms = ctllist$age_selex_parms)
     ctllist <- add_df(ctllist, 
@@ -1250,7 +1250,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if (ctllist$Use_2D_AR1_selectivity == 1) {
     ctllist <- add_vec(ctllist, "specs_2D_AR")
     ctllist <- add_df(ctllist, "pars_2D_AR", nrow=3,ncol=14,
-      col.names = c("LO", "HI", "INIT", "PRIOR", "SD", "PR_type", "PHASE",
+      col.names = c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
                     "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
     stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
   }

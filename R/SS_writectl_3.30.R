@@ -308,7 +308,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
   # MG timevarying parms ----
-  if(any(ctllist$MG_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$MG_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[1] != 0) {
     writeComment("timevary MG parameters")
     printdf("MG_parms_tv")
@@ -346,7 +346,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # SR parms ----
   printdf("SRparm")
   # SR tv parms ----
-  if(any(ctllist$SRparm[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
     writeComment("# timevary SR parameters")
     printdf("SR_parms_tv")
@@ -440,7 +440,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
   printdf("Q_parms")
   # time varying q parm lines -----
-  if(any(ctllist$Q_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[3] != 0) {
     writeComment("# timevary Q parameters")
     printdf("Q_parms_tv")
@@ -476,13 +476,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   #TODO: TV selectivity (devs,env link, and blocks) need to be  implemented in 
   # readctl_3.30; then, read parameters here.
   tv_sel_cmt <- FALSE # use to track if any tv selectivity pars have been written
-  if(any(ctllist$size_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
     writeComment("# timevary selex parameters ")
     tv_sel_cmt <- TRUE
     printdf("size_selex_parms_tv")
   }
-  if(any(ctllist$age_selex_parms[, c("env_var", "use_dev", "Block")] != 0) &
+  if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
     if (tv_sel_cmt == FALSE) {
       writeComment("# timevary selex parameters ")
