@@ -346,7 +346,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     warning("Recr_dist_inx should not be used in SS version 3.30. Please set to 0. \n")
   }
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
-      col.names=c("GP","seas","area","age"))
+      col.names=c("GPattern","month","area","age"))
   # movement ----
   if(ctllist$N_areas>1){
     ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
@@ -589,7 +589,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             N_settle_timings <- length(unique(ctllist$recr_dist_pattern[ ,2]))
                                   lab <- c(paste0("RecrDist_GP_",1:ctllist$N_GP), 
                                            paste0("RecrDist_Area_",1:ctllist$N_areas), 
-                                           paste0("RecrDist_settle_",1:N_settle_timings))
+                                           paste0("RecrDist_month_",1:N_settle_timings))
                                   if(ctllist$recr_dist_inx){ # interactions
                                     #Note:labels and order consistent with SS source 
                                     #(3.30 and 3.24 control file read in 3.30.10)
@@ -598,7 +598,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                         for(k in 1:N_settle_timings) {
                                           tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                                "_area_",j,
-                                                               "_settle_",k)
+                                                               "_month_",k)
                                           lab <- c(lab, tmp_lab_inx)
                                         }
                                       }
@@ -755,31 +755,31 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # SR parms ----
   SRparmsLabels<-if(ctllist$SR_function ==3){
     # B-H SRR
-    c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==2){
     # Ricker SRR
-    c("SR_LN(R0)","SR_Ricker_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
+    c("SR_LN(R0)","SR_Ricker_steep","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==4){
     # SCAA
-    c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_SCAA_null","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==5){
     # Hockey stick
-    c("SR_LN(R0)","SR_hockey_infl","SR_hockey_min_R","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_hockey_infl","SR_hockey_min_R","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function ==6){
     # B-H-flat SRR
-    c("SR_LN(R0)","SR_BH_flat_steep","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_BH_flat_steep","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==7){
     # survival_3Parm
-    c("SR_LN(R0)","SR_surv_Sfrac","SR_surv_Beta","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_surv_Sfrac","SR_surv_Beta","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==8){
     # Shepard_3Parm
-    c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_steepness","SR_Shepard_c","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==9){
     # Shepard_reparam_beta
-    c("SR_LN(R0)","SR_re_steepness","SR_Shepard_c","SR_sigmaR","SR_R1_offset","SR_autocorr")
+    c("SR_LN(R0)","SR_re_steepness","SR_Shepard_c","SR_sigmaR","SR_regime","SR_autocorr")
   }else if(ctllist$SR_function==10){
     # Ricker SRR reparam beta
-    c("SR_LN(R0)","SR_Ricker_re_steep","SR_Ricker_re_power","SR_sigmaR","SR_R1_offset","SR_autocorr")  ## Need to rivise with example inputs
+    c("SR_LN(R0)","SR_Ricker_re_steep","SR_Ricker_re_power","SR_sigmaR","SR_regime","SR_autocorr")
   }else{
     cat("SR_function=",ctllist$SR_function," is not supported yet.");return(ctllist)
   }
@@ -892,6 +892,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
+  rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
   # create 3.24 compatible Q_setup ----
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
@@ -904,9 +905,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   {
     if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
     {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<-2
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("LnQ_base_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
+      flname <- fleetnames[ctllist$Q_options[j,]$fleet]
+      comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
+                                   ctllist$Q_options[j,]$fleet,")",collapse="")
+      i <- i + 1
       N_Q_parms<-N_Q_parms+1
     }
     if(ctllist$Q_options[j,]$link==2)  # mirrored
@@ -917,21 +920,30 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     {
       ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
       flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_power_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
+                                   ctllist$Q_options[j,]$fleet ,")", 
+                                   collapse="")
+      i <- i + 1
       N_Q_parms<-N_Q_parms+1
     }
     if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
     {
       ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
       flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_Mirror_offset_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
+                                   ctllist$Q_options[j,]$fleet, ")",
+                                   collapse="")
+      i <- i + 1
       N_Q_parms<-N_Q_parms+1
     }
     if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
     {
       ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
       flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_extraSD_",ctllist$Q_options[j,]$fleet,"_",flname,collapse="");i<-i+1
+      comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
+                                   ctllist$Q_options[j,]$fleet, ")",
+                                   collapse="")
+      i <- i + 1
       N_Q_parms<-N_Q_parms+1
     }
   }
