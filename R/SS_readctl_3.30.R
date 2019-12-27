@@ -1006,8 +1006,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
   # 5+2*N_nodes, so the npars listed is not exactly correct. This will be
   # addressed in special cases below.NAs are unused codes.
-  size_selex_Nparms <- vector(mode = "numeric", length = Nfleet+Nsurveys)
-  size_selex_label<- vector("list", length(size_selex_Nparms)) # do this to initialize size
+  size_selex_label<- vector("list", Nfleet+Nsurveys) # do this to initialize size
   # loop through fishing fleets and surveys to assign names
   
   # make a labeling function, that way this 1 function can be changed in the
@@ -1040,18 +1039,17 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   for(j in 1:(Nfleet+Nsurveys)) {
     jn <- fleetnames[j] # to use a shorter name throughout loop. jn for "j name)
-    size_selex_Nparms[j] <- 
+    # get the number of parameters to use in making the generic labels. 
+    #Not used for anything else.
+    tmp_size_selex_Nparms <- 
       selex_patterns[as.character(ctllist$size_selex_types[j, "Pattern"])]
-    if(is.na(size_selex_Nparms[j])) {
+    if(is.na(tmp_size_selex_Nparms)) {
       stop("Pattern ", as.character(ctllist$size_selex_types[j, "Pattern"]),
            "was used for the size selectivity pattern fleet or survey, but it ",
            " is not valid.")
     }
     ## spline needs special treatment
     if(ctllist$size_selex_types[j, "Pattern"] == 27) {
-      # correct the number of parameters.
-      size_selex_Nparms[j] <- 
-        size_selex_Nparms[j] + ctllist$size_selex_types[j, "Special"] * 2
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
       size_selex_label[[j]] <-
         c(make_sel_lab("s", tmp_names, NULL, jn, j), 
@@ -1060,8 +1058,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
           make_sel_lab("s", "Spine_Val", 
                        1:ctllist$size_selex_types[j, "Special"], jn, j))
     } else if(ctllist$size_selex_types[j, "Pattern"] == 42) {
-      size_selex_Nparms[j] <- 
-        size_selex_Nparms[j] + ctllist$size_selex_types[j, "Special"] * 2
       # produce the labels
       tmp_names <- paste0("Spline_", c("ScaleBinLo", "ScaleBinHi", "Code", "GradLo",
                                   "GradHi"))
@@ -1072,66 +1068,53 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
           make_sel_lab("s", "Spline_Val", 
                        1:ctllist$size_selex_types[j, "Special"], jn,j))
     } else {
-      if(size_selex_Nparms[j] > 0) { 
+      if(tmp_size_selex_Nparms > 0) { 
          size_selex_label[[j]] <-
            c(size_selex_label[[j]], 
-             make_sel_lab("s", "P", 1:size_selex_Nparms[j], jn, j))
+             make_sel_lab("s", "P", 1:tmp_size_selex_Nparms, jn, j))
       }
     }
     # do extra retention parameters (4 extra parameters)
-    # (Note: from here on, size_selex_Nparms does NOT get updated, so it will not
-    # accurately represent the total number of pars.)
-    # (New Note: I have added tracking for size_selex_Nparms so it should accurately 
-    # represent total number of params now.)
     if(ctllist$size_selex_types[j, "Discard"] %in% 1:2) { #add 4 retention parameters
       size_selex_label[[j]] <- c(size_selex_label[[j]], 
           make_sel_lab("s", "PRet", 1:4, jn, j))
-      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
     # note that for Discard = 3, no extra parameters are needed.
     if(ctllist$size_selex_types[j, "Discard"] == 4) { #add 7 dome shaped retention parameters
       size_selex_label[[j]] <- c(size_selex_label[[j]], 
         make_sel_lab("s", "PRet", 1:7, jn, j))
-      size_selex_Nparms[j] <- size_selex_Nparms[j] + 7
     }
     
     if(ctllist$size_selex_types[j, "Discard"] %in% c(2,4)) { #add 4 discard mortality parameters
       size_selex_label[[j]] <- c(size_selex_label[[j]], 
         make_sel_lab("s", "PDis", 1:4, jn, j))
-      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
     
     # do extra offset parameters
     if(ctllist$size_selex_types[j, "Male"] == 1) {
       size_selex_label[[j]] <- c(size_selex_label[[j]],
         make_sel_lab("s", "PMale", 1:4, jn, j))
-      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
     if(ctllist$size_selex_types[j, "Male"] == 2) {
       size_selex_label[[j]] <- c(size_selex_label[[j]],
         make_sel_lab("s", "PFemOff", 1:4, jn, j))
-      size_selex_Nparms[j] <- size_selex_Nparms[j] + 4
     }
     
     if(ctllist$size_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
       if(ctllist$size_selex_types[j, "Pattern"] == 1) {
         size_selex_label[[j]] <- c(size_selex_label[[j]],
           make_sel_lab("s", "PMalOff", 1:3, jn, j))
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 3
       }else if(ctllist$size_selex_types[j, "Pattern"] %in% 23:24) {
         size_selex_label[[j]] <- c(size_selex_label[[j]],
           make_sel_lab("s", "PMalOff", 1:5, jn, j))
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 5
       }
     }else if(ctllist$size_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
       if(ctllist$size_selex_types[j, "Pattern"] == 1) {
         size_selex_label[[j]] <- c(size_selex_label[[j]],
             make_sel_lab("s", "PFemOff", 1:3, jn, j))
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 3
       }else if(ctllist$size_selex_types[j, "Pattern"] %in% 23:24) {
         size_selex_label[[j]] <- c(size_selex_label[[j]],
           make_sel_lab("s", "PFemOff", 1:5, jn, j))
-        size_selex_Nparms[j] <- size_selex_Nparms[j] + 5
       }
     }
   }
@@ -1147,7 +1130,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   for(j in 1:(Nfleet+Nsurveys)) {
     ## spline needs special treatment
     if(age_selex_pattern_vec[j] == 27) {
-      age_selex_Nparms[j]<- age_selex_Nparms[j]+ctllist$age_selex_types[j,"Special"]*2
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
       age_selex_label[[j]]<- c(make_sel_lab("a", tmp_names, NULL, jn, j ), 
                                make_sel_lab("a", c("Spline_Knot"), 
@@ -1157,8 +1139,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                             1:ctllist$age_selex_types[j,"Special"], 
                                             jn, j))
     } else if(age_selex_pattern_vec[j] == 42) {
-      age_selex_Nparms[j] <- 
-        age_selex_Nparms[j] + ctllist$age_selex_types[j, "Special"] * 2
       tmp_names <- paste0("Spline_", 
                    c("ScaleAgeLo", "ScaleAgeHi", "Code", "GradLo", "GradHi"))
       
@@ -1173,10 +1153,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         age_selex_label[[j]] <- make_sel_lab("a", "P", 1:age_selex_Nparms[j],
                                              jn, j)
       }
+      #Note that age_selex_Nparams[j] not used beyond this point.
     }
     # do extra retention parameters
-    # (Note: from here on, age_selex_Nparms does NOT get updated, so it will not
-    # accurately represent the total number of pars.)
     # if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
     #   age_selex_label[[j]] <- c(age_selex_label[[j]],
     #     paste0("AgeSel_",j,"PRet_",1:4,"_", jn))
@@ -1189,25 +1168,21 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     if(ctllist$age_selex_types[j,"Male"] == 1) {
       age_selex_label[[j]] <- c(age_selex_label[[j]], 
         make_sel_lab("a", "PMale", 1:4, jn, j))
-      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
     }
     if(ctllist$age_selex_types[j,"Male"] == 2) {
       age_selex_label[[j]] <- c(age_selex_label[[j]],
         make_sel_lab("a", "PFemOff_", 1:4, jn, j))
-      age_selex_Nparms[j] <- age_selex_Nparms[j] + 4
     }
     
     if(ctllist$age_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
       if(ctllist$age_selex_types[j, "Pattern"] == 20) {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PMalOff", 1:5, jn, j))
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 5
       }
     }else if(ctllist$age_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
       if(ctllist$age_selex_types[j, "Pattern"] == 20) {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PFemOff", 1:5, jn, j))
-        age_selex_Nparms[j] <- age_selex_Nparms[j] + 5
       }
     }
   }
