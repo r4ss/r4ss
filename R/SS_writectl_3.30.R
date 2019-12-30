@@ -174,7 +174,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # Movement ----
   if(ctllist$N_areas > 1) {
     wl("N_moveDef", 
-       comment = "#_N_movement_definitions goes here if N_areas > 1")
+       comment = "#_N_movement_definitions goes here if Nareas > 1")
     if(ctllist$N_moveDef>0) {
     wl("firstAgeMove", 
        comment = paste0("#_first age that moves (real age at begin of season, ",
@@ -208,9 +208,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#")
   writeComment("# AUTOGEN")
   wl.vector("time_vary_auto_generation", 
-            comment = paste0("# autogen: 1st element for biology, 2nd for SR,",
+            comment = paste0("# autogen: 1st element for biology, 2nd for SR, ",
             "3rd for Q, 4th reserved, 5th for selex"))
-  writeComment(paste0("# where: 0 = autogen all time-varying parms; 1 = read",
+  writeComment(paste0("# where: 0 = autogen all time-varying parms; 1 = read ",
                       "each time-varying parm line; 2 = read then autogen if ",
                       "parm min==-12345"))
   # MG setup ----
@@ -590,7 +590,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("sd_offset", 
      comment = paste0("#_sd_offset; must be 1 if any growthCV, sigmaR, or ",
                      "survey extraSD is an estimated parameter"))
-  writeComment(paste0("# read ", ctllist$N_lambdas, " changes to default",
+  writeComment(paste0("# read ", ctllist$N_lambdas, " changes to default ",
                       "Lambdas (default value is 1.0)"))
   # There are some more .ss_new comments here, but not included for now.
   if((ctllist$N_lambdas > 0) & (!is.null(ctllist$lambdas))) {
