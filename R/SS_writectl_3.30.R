@@ -131,6 +131,12 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     }
   }
   
+  # internally used commmon values ----
+  lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
+                        "env_var&link","dev_link", "dev_minyr", "dev_maxyr",
+                        "dev_PH","Block", "Block_Fxn")
+  srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR","PR_SD", "PR_type", "PHASE")
+  
   # Write a header ----
   # Line below included to be consistent with .ss_new files
   writeComment(paste0("#V", ctllist$ReadVersion)) 
@@ -162,7 +168,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("recr_dist_read",
      comment = paste0("# number of recruitment settlement assignments "))
   wl("recr_dist_inx", comment = "# unused option")
-  writeComment("# Each settlement assignment:")
+  writeComment("# for each settlement assignment:")
   printdf("recr_dist_pattern")
   writeComment("#")
   # Movement ----
@@ -199,6 +205,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("time_vary_adjust_method", 
      comment = paste0("#_env/block/dev_adjust_method for all time-vary parms ",
                      "(1=warn relative to base parm bounds; 3=no bound check)"))
+  writeComment("#")
   writeComment("# AUTOGEN")
   wl.vector("time_vary_auto_generation", 
             comment = paste0("# autogen: 1st element for biology, 2nd for SR,",
@@ -339,16 +346,23 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
      comment = paste0("# future feature: 0/1 to make realized sigmaR a ",
                       "function of SR curvature"))
   # SR parms ----
+  # change column names to match control.ss_new
+  colnames(ctllist$SRparm) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
+                                "PHASE", "env-var", "use_dev", "dev_mnyr", 
+                                "dev_mxyr", "dev_PH", "Block", 
+                                "Blk_Fxn # parm_name", "PType") 
+  # "Blk_Fxn # parm_name" is just to get the parm_name header printed, too.
   printdf("SRparm")
+  # reset column names back.
+  colnames(ctllist$SRparm) <- c(lng_par_colnames, "PType")
+  
   # SR tv parms ----
   if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
     writeComment("# timevary SR parameters")
     printdf("SR_parms_tv")
-    writeComment("# ")
   } else {
     writeComment("no timevary SR parameters")
-    writeComment("# ")
   }
   # recdevs ----
   wl("do_recdev",
@@ -356,11 +370,11 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "2=deviations (R=F(SSB)+dev); 3=deviations (R=R0*dev; ",
                       "dev2=R-f(SSB)); 4=like 3 with sum(dev2) adding penalty"))
   wl("MainRdevYrFirst",
-     comment = "first year of main recr_devs; early devs can preceed this era")
+     comment = "# first year of main recr_devs; early devs can preceed this era")
   wl("MainRdevYrLast",
-     comment = "last year of main recr_devs; forecast devs start in following year")
+     comment = "# last year of main recr_devs; forecast devs start in following year")
   wl("recdev_phase", comment = "recdev phase")
-  wl("recdev_adv", comment = "(0/1) to read 13 advanced options")
+  wl("recdev_adv", comment = "# (0/1) to read 13 advanced options")
   
   if(ctllist$recdev_adv == 1) {
     if(verbose) message("Writing 13 advanced SRR options\n")
@@ -390,7 +404,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     wl("min_rec_dev", comment = "#min rec_dev")
     wl("max_rec_dev", comment = "#max rec_dev")
     wl("N_Read_recdevs", comment = "#_read_recdevs")
-    writeComment("#_end of advanced SR options")
+    writeComment("end of advanced SR options")
+    writeComment("#")
     
     if(ctllist$period_of_cycles_in_recr > 0) {
       printdf("recr_cycle_pars")
@@ -404,6 +419,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
       writeComment("#_Yr Input_value")
     }
   }
+  writeComment("#")
   
   ##
   # F setup ----
@@ -435,9 +451,22 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # Q setup ---- 
   writeComment("#_Q_setup for fleets with cpue or survey data")
   # There are extra commments with info here in control.ss_new, but exclude for now
+  tmp_collength <- length(colnames(ctllist$Q_options))
+  # change column names to match control.ss_new
+  colnames(ctllist$Q_options)[tmp_collength] <- "float  #  fleetname"
   printdf("Q_options", terminate = TRUE)
+  # change back
+  colnames(ctllist$Q_options)[tmp_collength] <- "float"
+  
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+  # change column names to match control.ss_new
+  colnames(ctllist$Q_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", 
+                                 "PR_type", "PHASE", "env-var", "use_dev", 
+                                 "dev_mnyr", "dev_mxyr", "dev_PH", "Block",
+                                 "Blk_Fxn  #  parm_name")
   printdf("Q_parms")
+  # change back
+  colnames(ctllist$Q_parms) <- lng_par_colnames
   # time varying q parm lines -----
   if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[3] != 0) {
@@ -465,9 +494,18 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   printdf("age_selex_types")
   writeComment("#")
   #selectivity parameters ------
+
   writeComment("SizeSelex")
   if(!is.null(ctllist$size_selex_parms)) {
+    # change header to match with control.ss_new
+    colnames(ctllist$size_selex_parms) <- c("LO", "HI", "INIT", "PRIOR", 
+                                            "PR_SD", "PR_type", "PHASE", 
+                                            "env-var", "use_dev", "dev_mnyr",
+                                            "dev_mxyr", "dev_PH", "Block",
+                                            "Blk_Fxn  #  parm_name")
     printdf("size_selex_parms")
+    # change back
+    colnames(ctllist$size_selex_parms) <- lng_par_colnames
   } else {
     writeComment("#_No size_selex_parm")
   }
@@ -519,7 +557,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   }
   # Tag model parameters ----
   writeComment("# Tag loss and Tag reporting parameters go next")
-  wl("TG_custom", comment = "TG_custom:  0=no read; 1=read if tags exist")
+  wl("TG_custom", comment = "# TG_custom:  0=no read; 1=read if tags exist")
   if(ctllist$TG_custom == 0) {
     writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters","#"))
   } else if(ctllist$TG_custom == 1) {
@@ -575,29 +613,31 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#")
   # more sd reporting ----
   wl("more_stddev_reporting", 
-     comment = " 0/1 read specs for more stddev reporting")
+     comment = "# 0/1 read specs for more stddev reporting")
   
-  if(ctllist$more_stddev_reporting == 1){
+  if(ctllist$more_stddev_reporting == 1) {
     wl.vector("stddev_reporting_specs",
-              comment = paste0("# selex type, len/age, year, N selex bins, ",
-                               "Growth pattern, N growth ages, ",
-                               "NatAge_area(-1 for all), NatAge_yr, N Natages"))
+              comment = paste0("# selex_fleet, 1=len/2=age/3=both, year, N ",
+                               "selex bins, 0 or Growth pattern, N growth ",
+                               "ages, 0 or NatAge_area(-1 for sum), NatAge_yr,",
+                               " N Natages"))
     # Selex bin
     if(ctllist$stddev_reporting_specs[4] > 0) {
       wl.vector("stddev_reporting_selex",
-                comment = paste0("# selex bins to be reported (-1 in first bin", 
-                " to self-generate)"))
+                comment = paste0("# vector with selex std bins (-1 in first ",
+                                 "bin to self-generate)"))
     }
     # Growth bin
     if(ctllist$stddev_reporting_specs[6] > 0) {
       wl.vector("stddev_reporting_growth",
-                comment = paste0("# growth bins to be reported (-1 in first ",
-                                 "bin to self-generate)"))
+                comment = paste0("# vector with growth std ages picks (-1 in ",
+                                 "first bin to self-generate)"))
     }
     # N at age
     if(ctllist$stddev_reporting_specs[9] > 0) {
       wl.vector("stddev_reporting_N_at_A",
-                comment = "# N@A to be reported (-1 in first bin to self-generate)")
+                comment = paste0("# vector with NatAge std ages (-1 in first ",
+                "bin to self-generate)"))
     }
   }else if(ctllist$more_stddev_reporting != 0) {
     stop("ctllist$more_stdev_reporting has value ", 

@@ -1337,7 +1337,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"sd_offset")  #_sd_offset
 
   ctllist<-add_df(ctllist,name="lambdas",nrow=NULL,ncol=5,
-                  col.names=c("like_comp","fleet/survey","phase","value","sizefreq_method"))
+                  col.names=c("like_comp","fleet","phase","value","sizefreq_method"))
   
   if(!is.null(ctllist$lambdas)) ctllist$N_lambdas<-nrow(ctllist$lambdas)   # number of changes to make to default Lambdas
   else ctllist$N_lambdas<-0
