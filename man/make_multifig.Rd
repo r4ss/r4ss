@@ -34,13 +34,15 @@ make_multifig(
   do.sqrt = TRUE,
   minnbubble = 8,
   allopen = TRUE,
-  horiz_lab = "default",
   xbuffer = c(0.1, 0.1),
   ybuffer = c(0, 0.15),
   yupper = NULL,
   ymin0 = TRUE,
+  xlas = 0,
+  ylas = NULL,
   axis1 = NULL,
   axis2 = NULL,
+  axis1labs = NULL,
   linepos = 1,
   type = "o",
   polygons = TRUE,
@@ -71,7 +73,7 @@ make_multifig(
   scalebins = FALSE,
   sexvec = NULL,
   multifig_colpolygon = c("grey60", "grey80", "grey70"),
-  multifig_oma = c(5, 5, 5, 2) + 0.1,
+  multifig_oma = NULL,
   ...
 )
 }
@@ -140,9 +142,6 @@ more info.}
 
 \item{allopen}{should all bubbles be open? see ?bubble3 for more info.}
 
-\item{horiz_lab}{axis labels set horizontal all the time (TRUE), never
-(FALSE) or only when relatively short ("default")}
-
 \item{xbuffer}{extra space around points on the left and right as fraction
 of total width of plot}
 
@@ -153,9 +152,19 @@ of total height of plot}
 
 \item{ymin0}{fix minimum y-value at 0?}
 
-\item{axis1}{position of bottom axis values}
+\item{xlas}{label style (las) input for x-axis. Default 0 has horizontal
+labels, input 2 would provide vertical lables.}
 
-\item{axis2}{position of left size axis values}
+\item{ylas}{label style (las) input for y-axis. Default NULL has horizontal
+labels when all labels have fewer than 6 characters and vertical otherwise.
+Input 0 would force vertical labels, and 1 would force horizontal.}
+
+\item{axis1}{optional position of bottom axis values}
+
+\item{axis2}{optional position of left size axis values}
+
+\item{axis1labs}{optional vector of labels for axis1 (either NULL or needs to
+match length of axis1)}
 
 \item{linepos}{should lines be added on top of points (linepos=1) or behind
 (linepos=2)?}
@@ -238,7 +247,7 @@ passed to this function via the ... argument.}
 \item{multifig_oma}{vector of outer margins. Can be input to SS_plots and will be
 passed to this function via the ... argument.}
 
-\item{\dots}{additional arguments (NOT YET IMPLEMENTED).}
+\item{\dots}{additional arguments passed to \code{par}.}
 }
 \description{
 Function created as an alternative to lattice package for multi-figure plots
