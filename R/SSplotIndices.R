@@ -77,7 +77,7 @@ SSplotIndices <-
 function(replist,subplots=c(1:9),
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
-         smooth=TRUE,add=FALSE,datplot=FALSE,
+         smooth=TRUE,add=FALSE,datplot=TRUE,
          labels=c("Year",        #1
            "Index",              #2
            "Observed index",     #3
@@ -170,16 +170,23 @@ function(replist,subplots=c(1:9),
 
     xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
     if(!add){
+      # get range for expected values
+      zmax <- NULL 
+      if(addexpected){
+        zmin <- min(z, na.rm = TRUE)
+      }
+      logzrange <- range(log(z))
+      
       # y-limits with lognormal error
       if(error == 0){
         if(!log){
           # ylim for standard scale
-          ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
+          ylim <- c(0, 1.05*min(max(upper_total, zmax, na.rm = TRUE),
                                 max(maximum_ymax_ratio * y)))
         }
         if(log){
           # ylim for log scale plot
-          ylim <- range(c(lower_total, upper_total), na.rm = TRUE)
+          ylim <- range(lower_total, upper_total, logzrange, na.rm = TRUE)
         }
       }
       # ylimits with normal or T-distributed error
