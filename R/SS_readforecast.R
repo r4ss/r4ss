@@ -161,9 +161,12 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
   forelist$'.i' <- i
   forelist$'.dat' <- allnums
   forelist$warnings <- ""
-  forelist$nseas <- as.numeric(nseas)
-  forelist$Nfleets <- as.numeric(Nfleets)
-  forelist$Nareas <- as.numeric(Nareas)
+  if(exists(nseas)){
+    forelist$nseas <- as.numeric(nseas)}
+  if(exists(Nfleets)){
+    forelist$Nfleets <- as.numeric(Nfleets)}
+  if(exists(Nareas)){
+    forelist$Nareas <- as.numeric(Nareas)}
   forelist$SSversion <- as.numeric(version)
   forelist$sourcefile <- file
   forelist$type <- "Stock_Synthesis_forecast_file"
