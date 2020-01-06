@@ -18,7 +18,7 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 
-SS_readforecast_test <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
+SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
                                   version="3.30", readAll=FALSE, verbose=TRUE){
   
   # function to read Stock Synthesis forecast files
