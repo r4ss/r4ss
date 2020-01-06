@@ -28,7 +28,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   }
   
   if(version=="3.24"){
-    if(is.null("Nfleets") | is.null("Nareas") | is.null("nseas")){
+    if(is.null(Nfleets) | is.null(Nareas) | is.null(nseas)){
       stop('version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing')
     }
   }
@@ -167,11 +167,11 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   forelist$'.i' <- i
   forelist$'.dat' <- allnums
   forelist$warnings <- ""
-  if(!is.null("nseas")){
+  if(!is.null(nseas)){
     forelist$nseas <- as.numeric(nseas)}
-  if(!is.null("Nfleets")){
+  if(!is.null(Nfleets)){
     forelist$Nfleets <- as.numeric(Nfleets)}
-  if(!is.null("Nareas")){
+  if(!is.null(Nareas)){
     forelist$Nareas <- as.numeric(Nareas)}
   forelist$SSversion <- as.numeric(version)
   forelist$sourcefile <- file
