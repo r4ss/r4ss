@@ -18,13 +18,19 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 
-SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
+SS_readforecast_test <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
                                   version="3.30", readAll=FALSE, verbose=TRUE){
   
   # function to read Stock Synthesis forecast files
   if(!(version=="3.24" | version=="3.30" | version==3.3)){
     # turns out 3.30 != "3.30" in R
     stop('version must be either 3.24 or 3.30')
+  }
+  
+  if(version=="3.24"){
+    if(!exists(Nfleets) | !exists(Nareas) | !exists(nseas)){
+      stop('version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing')
+    }
   }
   
   if(verbose) cat("running SS_readforecast\n")
@@ -234,10 +240,6 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
     forelist<-add_elem(forelist,"Yinit")
     forelist<-add_elem(forelist,"fleet_relative_F")
     forelist<-add_elem(forelist,"basis_for_fcast_catch_tuning")
-    
-    
-    forelist$nseas <- as.numeric(nseas)
-    forelist$Nfleets <- as.numeric(Nfleets)
     
     if(version==3.24){
       if(forelist$fleet_relative_F==2){
