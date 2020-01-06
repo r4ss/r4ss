@@ -53,7 +53,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   tab <- data.frame(Year = ts$Yr,
                     Total_Bio = round(ts$Bio_all),
                     Spawning_Bio = round(ts$SpawnBio),
-                    Summary_Bio_Age_Xplus = round(ts$Bio_smry),
+                    Summary_Bio = round(ts$Bio_smry),
                     Rel_Spawning_Bio = round(ts$SpawnBio / ts$SpawnBio[ts$Era == "VIRG"], 3),
                     Recruitment = round(ts$Recruit_0))
   ts_tab <- tab[tab$Year %in% years,]
@@ -104,6 +104,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   spr_tab[spr_tab$Year == endyr+1, -1] <- NA
   spr_tab[,-1] <- round(spr_tab[,-1], 3)
 
+  # merge columns from time series, catch, F, and SPR together
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
   if(nrow(tab) != length(years) || any(tab$Year != years)){
     stop("problem with mismatch of years:\n",
@@ -116,10 +117,59 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # again for 8th column (SPR-ratio)
   tab[!is.na(tab$Catch) & tab$Catch == 0, 8] <- 0
 
+  # age for summary biomass
+  summary_age <- model$summary_age
+  if(is.null(summary_age)){
+    summary_age <- "X"
+  }
+
+    browser()
+
+  # create new table of column info initially transposed to make use of data.frame
+  tab_info <- data.frame(matrix("", ncol = ncol(tab), nrow = 4),
+                         stringsAsFactors = FALSE)
+  colnames(tab_info) <- names(tab)
+  rownames(tab_info) <- c("Category", "Primary", "Description", "Units")
+
+  # info on total biomass
+  tab_info["Category",   "Total_Bio"] <- "Abundance"
+  tab_info["Primary",    "Total_Bio"] <- "N"
+  tab_info["Description","Total_Bio"] <- "Total Biomass (Mean)"
+  tab_info["Unit",       "Total_Bio"] <- "Metric Tons"
+
+  # info on spawning biomass
+  tab_info["Category",   "Spawning_Bio"] <- "Abundance"
+  tab_info["Primary",    "Spawning_Bio"] <- "Y"
+  if(model$SpawnOutputUnits == "numbers"){
+    tab_info["Description","Spawning_Bio"] <- "Spawning Output, Eggs (Mean)"
+    tab_info["Unit",       "Spawning_Bio"] <- "XXXX"
+  }else{
+    tab_info["Description","Spawning_Bio"] <- "Spawning Output,  (Mean)"
+    tab_info["Unit",       "Spawning_Bio"] <- "Metric Tons"
+  }
+
+  # info on summary biomass
+  tab_info["Category",   "Summary_Bio"] <- "Abundance"
+  tab_info["Primary",    "Summary_Bio"] <- "N"
+  tab_info["Description","Summary_Bio"] <-
+    paste0("Summary Biomass, Age ", summary_age, "+ (Mean)")
+  tab_info["Unit",       "Summary_Bio"] <- "Metric Tons"
+
+  # info on recruitment
+  tab_info["Category",   "Summary_Bio"] <- "Recruitment"
+  tab_info["Primary",    "Summary_Bio"] <- "Y"
+  tab_info["Description","Summary_Bio"] <- "Abundance, Age 0 (Mean)"
+  tab_info["Unit",       "Summary_Bio"] <- "Number x 1,000"
+
+  
   # add extra column to help with format of CSV file
   tab <- cbind("", tab)
 
-  # quantities of interest
+  
+  # end of time series calculations
+  ######################################################################
+  # start gathering quantities of interest
+  
   if(model$sprtarg == -999){
     SPRtarg_text <- "SPR_XX%"
     model$sprtarg <- NA
@@ -153,12 +203,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   }else{
     Yield_at_SPR_target <- round(model$derived_quants["TotYield_SPRtgt", "Value"])
     Yield_at_B_target <- round(model$derived_quants["TotYield_Btgt", "Value"])
-  }
-
-  # age for summary biomass
-  summary_age <- model$summary_age
-  if(is.null(summary_age)){
-    summary_age <- "X"
   }
 
   # SS version
@@ -239,16 +283,18 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "",
                 "")
 
-  # write 2-column table at the top of the file
-  write.table(info_tab, file = file.path(dir, filename),
-              quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
-  # add time series table with more columns (suppressing warning about
-  # 'appending column names to file')
-  suppressWarnings(
-      write.table(tab, file = file.path(dir, filename),
-                  quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE,
-                  append = TRUE)
-  )
-
-  invisible(list(info_tab, tab))
+  if(writecsv){
+    # write 2-column table with quantities of interest at the top of the file
+    write.table(info_tab, file = file.path(dir, filename),
+                quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
+    # add time series table with more columns (suppressing warning about
+    # 'appending column names to file')
+    suppressWarnings(
+        write.table(tab, file = file.path(dir, filename),
+                    quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE,
+                    append = TRUE)
+    )
+  }
+  
+  invisible(list(info = info_tab, timeseries = tab))
 }
