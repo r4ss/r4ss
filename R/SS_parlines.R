@@ -96,8 +96,8 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
     namesvec7 <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
                    "Label", "Label2")
     namesvec14 <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
-                    "env-var", "use_dev", "dev_mnyr", "dev_mxyr", "dev_PH", "Block", "Blk_Fxn",
-                    "Label", "Label2")
+                    "env_var&link", "dev_link", "dev_minyr", "dev_maxyr", 
+                    "dev_PH", "Block", "Block_Fxn", "Label", "Label2")
   }
   names(parlines14) <- namesvec14
 
