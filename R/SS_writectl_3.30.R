@@ -515,6 +515,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   } else {
     writeComment("#_No age_selex_parm")
   }
+  
+  # Dirichlet MN pars ----
+  if(!is.null(ctllist$dirichlet_parms)) {
+    writeComment("#_Dirichlet parameters")
+    printdf("dirichlet_parms", header = FALSE)
+  }
+  
   # TV selectivity pars ----
   #TODO: TV selectivity (devs,env link, and blocks) need to be  implemented in 
   # readctl_3.30; then, read parameters here.

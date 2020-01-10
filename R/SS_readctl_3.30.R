@@ -39,6 +39,8 @@
 #'   datlist is specified.
 #' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
 #' read for equilibrium catch. Defaults to 0.
+#' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
+#' parameters. Defaults to 0.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. If list, should be a list produced from 
@@ -66,6 +68,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
     catch_mult_fleets = NULL,
     N_rows_equil_catch = 0, 
+    N_dirichlet_parms = 0,
     ##################################
     use_datlist=FALSE,
     datlist=NULL
@@ -1229,9 +1232,22 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       col.names = lng_par_colnames,
                       comments = unlist(age_selex_label))
   }
-  
-  #TODO: We don't currently account for Dirichlet Multinomial Error for Data Weighting
-  #this is turned on in the data file. 
+  # Dirichlet MN pars -----
+  # this is turned on in the data file.
+  if(use_datlist == TRUE) {
+    if(any(datlist$len_info$CompError == 1 ) | 
+       any(datlist$age_info$CompError == 1)) {
+      N_dirichlet_parms <-  max(c(datlist$len_info$ParmSelect, datlist$age_info$ParmSelect))
+    }
+  }
+  if(N_dirichlet_parms > 0) {
+    ctllist <- add_df(ctllist, 
+                      name = "dirichlet_parms",
+                      nrow = N_dirichlet_parms,
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = paste0("ln(EffN_mult)_", 1:N_dirichlet_parms))
+  }
   
   # sel timevarying parlines----
   if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -1439,7 +1455,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
     }
   }
-  
   if(ctllist$'.dat'[ctllist$'.i']==999){
     if(verbose) message("read of control file complete (final value = 999)\n")
     ctllist$eof <- TRUE
