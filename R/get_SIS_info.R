@@ -43,6 +43,11 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # get values from TIME_SERIES table
   ts <- model$timeseries
 
+  # if check for unsupported model configurations
+  if(model$nseasons > 1){
+    stop("multi-season models are not yet supported")
+  }
+  
   # aggregate across areas if needed
   if(model$nareas > 1){
     ts.tmp <- ts # copy of table
