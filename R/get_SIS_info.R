@@ -19,7 +19,7 @@
 #' @seealso \code{\link{SS_output}}
 
 get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
-                         species = "NoName", endyr = NULL){
+                         stock = "StockName", endyr = 2019){
 
   # directory to write file
   if(is.null(dir)){
@@ -30,7 +30,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if (is.null(endyr)) {
     endyr <- model$endyr
   }
-  filename <- paste(species, endyr, "SIS_info.csv", sep="_")
+  filename <- paste(gsub(" ", "_", stock), endyr, "SIS_info.csv", sep="_")
 
   message("writing SIS info to CSV file:\n",
           file.path(dir, filename ))
@@ -50,38 +50,58 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
       ts[,-(1:4)] <- ts[,-(1:4)] + ts.tmp[ts.tmp$Area == iarea,-(1:4)]
     }
   }
-  tab <- data.frame(Year = ts$Yr,
-                    Total_Bio = round(ts$Bio_all),
-                    Spawning_Bio = round(ts$SpawnBio),
-                    Summary_Bio = round(ts$Bio_smry),
-                    Rel_Spawning_Bio = round(ts$SpawnBio / ts$SpawnBio[ts$Era == "VIRG"], 3),
-                    Recruitment = round(ts$Recruit_0))
-  ts_tab <- tab[tab$Year %in% years,]
-  if(tab$Total_Bio[tab$Year == endyr + 1] == 0){
-    tab$Total_Bio[tab$Year == endyr + 1] <- NA
+
+  # calculate fraction unfished
+  ts$FractionUnfished <-
+    ts$SpawnBio / ts$SpawnBio[ts$Era == "VIRG"]
+
+  # extract columns of interest
+  ts_tab <- data.frame(Year = ts$Yr,
+                       Total_Bio = round(ts$Bio_all),
+                       SpawnBio = round(ts$SpawnBio),
+                       FractionUnfished = round(ts$FractionUnfished, 3),
+                       Summary_Bio = round(ts$Bio_smry),
+                       Recruitment = round(ts$Recruit_0))
+
+  # subset for years of interst and replace potential bad 0 value with NA
+  ts_tab <- ts_tab[ts_tab$Year %in% years,]
+  if(ts_tab$Total_Bio[ts_tab$Year == endyr + 1] == 0){
+    ts_tab$Total_Bio[ts_tab$Year == endyr + 1] <- NA
   }
 
   # calculate total catch (aggregated across fleets)
-  catch_tab <- aggregate(model$catch$kill_bio, by = list(model$catch$Yr),
-                         FUN = function(x){round(sum(x))})
-  names(catch_tab) <- c("Year","Catch")
+  ##### old way didn't work as well for forecast years
+  ##   catch_tab <- aggregate(model$catch$kill_bio, by = list(model$catch$Yr),
+  ##                          FUN = function(x){round(sum(x))})
+  ##   names(catch_tab) <- c("Year","Catch")
+  catch_tab <- data.frame(Year = model$timeseries$Yr,
+                          Catch = apply(model$timeseries[,grep("dead(B)",
+                              names(model$timeseries), fixed = TRUE)],
+                              MARGIN = 1, FUN = sum))
+  # not sure why this is needed, but it is
+  catch_tab$Year <- as.numeric(catch_tab$Year) 
+  rownames(catch_tab) <- 1:nrow(catch_tab)
+  ## }
+
   # filter years and set forecast values to NA
   catch_tab <- catch_tab[catch_tab$Year %in% years,]
   catch_tab[catch_tab$Year == endyr+1, -1] <- NA
 
-  if (endyr <= model$endyr) {
-    # add NA value for endyr + 1 if not present (this was the case in SS version 3.30.12)
-    if(endyr+1 %in% catch_tab$Year){
-      catch_tab <- rbind(catch_tab, data.frame(Year = endyr + 1, Catch = NA))
-    }
-  } else {
-    forecatch = data.frame(model$derived_quants[grepl("ForeCatch",model$derived_quants$Label),1:2])
-    names(forecatch) = c("Year","Catch")
-    forecatch$Year = gsub("ForeCatch_", "", forecatch$Year)
-    forecatch = forecatch[forecatch$Year < (endyr+2),]
-    forecatch$Catch[nrow(forecatch)] = NA
-    catch_tab = rbind(catch_tab, forecatch)
-  } # end if-else
+
+  ##### code below related to old way of calculating catch, no longer needed
+  ## if (endyr <= model$endyr) {
+  ##   # add NA value for endyr + 1 if not present (this was the case in SS version 3.30.12)
+  ##   if(endyr+1 %in% catch_tab$Year){
+  ##     catch_tab <- rbind(catch_tab, data.frame(Year = endyr + 1, Catch = NA))
+  ##   }
+  ## } else {
+  ##   forecatch <- data.frame(model$derived_quants[grepl("ForeCatch",model$derived_quants$Label),1:2])
+  ##   names(forecatch) <- c("Year","Catch")
+  ##   forecatch$Year <- gsub("ForeCatch_", "", forecatch$Year)
+  ##   forecatch <- forecatch[forecatch$Year < (endyr+2),]
+  ##   forecatch$Catch[nrow(forecatch)] <- NA
+  ##   catch_tab <- rbind(catch_tab, forecatch)
+  ## } # end if-else
 
   # calculate proxy-F values (e.g. exploitation rate)
   F_tab <- data.frame(Year = years,
@@ -94,11 +114,11 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   F_tab[F_tab$Year == endyr+1, -1] <- NA
 
   # SPR-related quantities
-  spr_tab <- model$sprseries[, c("Yr", "SPR")]
+  spr_tab <- model$sprseries[, c("Yr", "SPR_report", "SPR")]
   # add 1-SPR (may have already existed as SPR_report
   spr_tab$"1-SPR" <- 1 - spr_tab$SPR
   names(spr_tab)[1] <- "Year"
-  spr_tab <- spr_tab[,c("Year","1-SPR","SPR")]
+  spr_tab <- spr_tab[,c("Year","SPR_report", "1-SPR")]
   # filter years and set forecast values to NA
   spr_tab <- spr_tab[spr_tab$Year %in% years,]
   spr_tab[spr_tab$Year == endyr+1, -1] <- NA
@@ -122,49 +142,78 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(is.null(summary_age)){
     summary_age <- "X"
   }
+  summary_bio_label <- paste0("Age ", summary_age, "+ biomass")
 
-    browser()
-
-  # create new table of column info initially transposed to make use of data.frame
-  tab_info <- data.frame(matrix("", ncol = ncol(tab), nrow = 4),
+  #######################################
+  
+  # create new table of metadata to write as multiple header rows
+  header_info <- data.frame(matrix("", ncol = ncol(tab), nrow = 4),
                          stringsAsFactors = FALSE)
-  colnames(tab_info) <- names(tab)
-  rownames(tab_info) <- c("Category", "Primary", "Description", "Units")
+  colnames(header_info) <- names(tab)
+  rownames(header_info) <- c("Category", "Primary", "Description", "Unit")
 
   # info on total biomass
-  tab_info["Category",   "Total_Bio"] <- "Abundance"
-  tab_info["Primary",    "Total_Bio"] <- "N"
-  tab_info["Description","Total_Bio"] <- "Total Biomass (Mean)"
-  tab_info["Unit",       "Total_Bio"] <- "Metric Tons"
-
-  # info on spawning biomass
-  tab_info["Category",   "Spawning_Bio"] <- "Abundance"
-  tab_info["Primary",    "Spawning_Bio"] <- "Y"
-  if(model$SpawnOutputUnits == "numbers"){
-    tab_info["Description","Spawning_Bio"] <- "Spawning Output, Eggs (Mean)"
-    tab_info["Unit",       "Spawning_Bio"] <- "XXXX"
-  }else{
-    tab_info["Description","Spawning_Bio"] <- "Spawning Output,  (Mean)"
-    tab_info["Unit",       "Spawning_Bio"] <- "Metric Tons"
-  }
+  header_info["Category",   "Total_Bio"] <- "Abundance"
+  header_info["Primary",    "Total_Bio"] <- "N"
+  header_info["Description","Total_Bio"] <- "Total Biomass"
+  header_info["Unit",       "Total_Bio"] <- "Metric Tons"
 
   # info on summary biomass
-  tab_info["Category",   "Summary_Bio"] <- "Abundance"
-  tab_info["Primary",    "Summary_Bio"] <- "N"
-  tab_info["Description","Summary_Bio"] <-
-    paste0("Summary Biomass, Age ", summary_age, "+ (Mean)")
-  tab_info["Unit",       "Summary_Bio"] <- "Metric Tons"
+  header_info["Category",   "Summary_Bio"] <- "Abundance"
+  header_info["Primary",    "Summary_Bio"] <- "N"
+  header_info["Description","Summary_Bio"] <- summary_bio_label
+  header_info["Unit",       "Summary_Bio"] <- "Metric Tons"
+
+  # info on spawning biomass
+  header_info["Category",   "SpawnBio"] <- "Spawners"
+  header_info["Primary",    "SpawnBio"] <- "Y"
+  if(model$SpawnOutputUnits == "numbers"){
+    header_info["Description","SpawnBio"] <- "Spawning Output, Eggs"
+    header_info["Unit",       "SpawnBio"] <- "XXXX"
+  }else{
+    header_info["Description","SpawnBio"] <- "Spawning Biomass"
+    header_info["Unit",       "SpawnBio"] <- "Metric Tons"
+  }
+  
+  # info on fraction unfished
+  header_info["Category",   "FractionUnfished"] <- "Spawners"
+  header_info["Primary",    "FractionUnfished"] <- "N"
+  header_info["Description","FractionUnfished"] <- "Female Mature Relative Spawning Biomass SSB/SSB0"
+  header_info["Unit",       "FractionUnfished"] <- "Rate"
 
   # info on recruitment
-  tab_info["Category",   "Summary_Bio"] <- "Recruitment"
-  tab_info["Primary",    "Summary_Bio"] <- "Y"
-  tab_info["Description","Summary_Bio"] <- "Abundance, Age 0 (Mean)"
-  tab_info["Unit",       "Summary_Bio"] <- "Number x 1,000"
+  header_info["Category",   "Recruitment"] <- "Recruitment"
+  header_info["Primary",    "Recruitment"] <- "Y"
+  header_info["Description","Recruitment"] <- "Abundance at Age 0"
+  header_info["Unit",       "Recruitment"] <- "Number x 1000"
 
+  # info on Catch
+  header_info["Category",   "Catch"] <- "Catch"
+  header_info["Primary",    "Catch"] <- "Y"
+  header_info["Description","Catch"] <- "Modeled Total Catch"
+  header_info["Unit",       "Catch"] <- "Metric Tons"
+
+  # info on Exploitation rate
+  header_info["Category",   "Exploit_rate"] <- "Fmort"
+  header_info["Primary",    "Exploit_rate"] <- "N"
+  header_info["Description","Exploit_rate"] <-
+    paste0("Relative Exploitation Rate (Catch/", summary_bio_label, ")")
+  header_info["Unit",       "Exploit_rate"] <- "Rate"
+
+  # info on SPR_report
+  header_info["Category",   "SPR_report"] <- "Fmort"
+  header_info["Primary",    "SPR_report"] <- "Y"
+  header_info["Description","SPR_report"] <- model$SPRratioLabel
+  header_info["Unit",       "SPR_report"] <- "Rate"
   
+  # info on 1 - SPR
+  header_info["Category",   "1-SPR"] <- "Fmort"
+  header_info["Primary",    "1-SPR"] <- "N"
+  header_info["Description","1-SPR"] <- "1 - SPR"
+  header_info["Unit",       "1-SPR"] <- "Rate"
+
   # add extra column to help with format of CSV file
   tab <- cbind("", tab)
-
   
   # end of time series calculations
   ######################################################################
@@ -194,7 +243,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
   }
   
-  Bcurrent <- tab$Spawning_Bio[tab$Year == endyr + 1]
+  Bcurrent <- tab$SpawnBio[tab$Year == endyr + 1]
 
   # MSY-proxy labels were changed at some point
   if("Dead_Catch_SPR" %in% rownames(model$derived_quants)){
@@ -213,7 +262,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # make big 2-column table of info about each model
   info_tab <- c(paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),
                 "",
-                paste0("Stock / Entity Name,", species),
+                paste0("Stock / Entity Name,", stock),
                 paste0("Assessment Type,", "X"),
                 paste0("Ensemble/Multimodel Approach,", "NA"),
                 paste0("Asmt Year and Month,", "XXXX.XX"),
@@ -287,14 +336,21 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     # write 2-column table with quantities of interest at the top of the file
     write.table(info_tab, file = file.path(dir, filename),
                 quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
-    # add time series table with more columns (suppressing warning about
+    # add multiple header rows for time series table (suppressing warning about
     # 'appending column names to file')
     suppressWarnings(
+        write.table(header_info, file = file.path(dir, filename),
+                    quote = FALSE, sep = ",", row.names = TRUE, col.names = FALSE,
+                    append = TRUE)
+    )
+    # add time series values
+    suppressWarnings(
         write.table(tab, file = file.path(dir, filename),
-                    quote = FALSE, sep = ",", row.names = FALSE, col.names = TRUE,
+                    quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE,
                     append = TRUE)
     )
   }
-  
+
+  # return the list 
   invisible(list(info = info_tab, timeseries = tab))
 }
