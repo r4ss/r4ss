@@ -275,7 +275,20 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
     ctllist$Ngenders<-Ngenders<-datlist$Ngenders
-    ctllist$Npopbins<-Npopbins<-datlist$Npopbins
+    if(datlist$lbin_method == 1) {
+      ctllist$Npopbins <- Npopbins <- datlist$N_lbins # b/c method 1 uses data length bins
+    } else if (datlist$lbin_method == 2) {
+      #calculate number of bins (max Lread - min Lread)/(bin width) + 1. 
+      # formula according to SS manual.
+      ctllist$Npopbins <- Npopbins <- 
+        (datlist$maximum_size - datlist$minimum_size)/(datlist$binwidth) + 1
+    } else if (datlist$lbin_method == 3) {
+      ctllist$Npopbins <- Npopbins <- datlist$N_lbinspop # read actual input
+    } else {
+      stop("datlist$lbin_method is ", datlist$lbin_method, "but only can be 1", 
+           ", 2, or 3.")
+    }
+    ctllist$Npopbins<-Npopbins<-datlist$N_lbinspop
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
     if(datlist$N_ageerror_definition > 0) {
