@@ -1146,6 +1146,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             age_selex_Nparms)
   age_selex_label <- vector("list", length = Nfleet + Nsurveys)
   for(j in 1:(Nfleet+Nsurveys)) {
+    jn <- fleetnames[j]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j] == 27) {
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
