@@ -158,7 +158,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("N_platoon", comment = "N_platoons_Within_GrowthPattern")
   if(ctllist$N_platoon > 1) { # Conditional inputs needed if more than 1 platoon.
     wl("sd_ratio", comment = "Morph_between/within_stdev_ratio")
-    wl.vector("submorphdist", comment = "vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
+    wl.vector("submorphdist", comment = "# vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
   }
   # Recruitment distribution ----
   wl("recr_dist_method", comment = "# recr_dist_method for parameters")
