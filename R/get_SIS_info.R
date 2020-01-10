@@ -13,13 +13,14 @@
 #' format "[species]_2019_SIS_info.csv" where \code{species}
 #' is an additional input
 #' @param species String to prepend id info to filename for CSV file
-#' @param endyr Year for reference points and timeseries
+#' @param final_year Year for reference points and final year of timeseries
+#' (typically will be model$endyr + 1)
 #' @author Ian G. Taylor, Andi Stephens
 #' @export
 #' @seealso \code{\link{SS_output}}
 
 get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
-                         stock = "StockName", endyr = 2019){
+                         stock = "StockName", final_year = 2019){
 
   # directory to write file
   if(is.null(dir)){
@@ -27,17 +28,17 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   }
 
   # construct filename
-  if (is.null(endyr)) {
-    endyr <- model$endyr
+  if (is.null(final_year)) {
+    final_year <- model$endyr + 1
   }
-  filename <- paste(gsub(" ", "_", stock), endyr, "SIS_info.csv", sep="_")
+  filename <- paste(gsub(" ", "_", stock), final_year, "SIS_info.csv", sep="_")
 
   message("writing SIS info to CSV file:\n",
           file.path(dir, filename ))
 
   # years to report for catch-related quantities
   startyr <- model$startyr
-  years <- startyr:(endyr + 1)
+  years <- startyr:final_year
 
   # get values from TIME_SERIES table
   ts <- model$timeseries
@@ -65,8 +66,8 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
 
   # subset for years of interst and replace potential bad 0 value with NA
   ts_tab <- ts_tab[ts_tab$Year %in% years,]
-  if(ts_tab$Total_Bio[ts_tab$Year == endyr + 1] == 0){
-    ts_tab$Total_Bio[ts_tab$Year == endyr + 1] <- NA
+  if(ts_tab$Total_Bio[ts_tab$Year == final_year] == 0){
+    ts_tab$Total_Bio[ts_tab$Year == final_year] <- NA
   }
 
   # calculate total catch (aggregated across fleets)
@@ -79,20 +80,21 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                               names(model$timeseries), fixed = TRUE)],
                               MARGIN = 1, FUN = sum))
   # not sure why this is needed, but it is
-  catch_tab$Year <- as.numeric(catch_tab$Year) 
+  catch_tab$Year <- as.numeric(catch_tab$Year)
+  catch_tab$Catch <- round(catch_tab$Catch, 0)
   rownames(catch_tab) <- 1:nrow(catch_tab)
   ## }
 
   # filter years and set forecast values to NA
   catch_tab <- catch_tab[catch_tab$Year %in% years,]
-  catch_tab[catch_tab$Year == endyr+1, -1] <- NA
+  catch_tab[catch_tab$Year == final_year, -1] <- NA
 
 
   ##### code below related to old way of calculating catch, no longer needed
   ## if (endyr <= model$endyr) {
-  ##   # add NA value for endyr + 1 if not present (this was the case in SS version 3.30.12)
+  ##   # add NA value for final_year if not present (this was the case in SS version 3.30.12)
   ##   if(endyr+1 %in% catch_tab$Year){
-  ##     catch_tab <- rbind(catch_tab, data.frame(Year = endyr + 1, Catch = NA))
+  ##     catch_tab <- rbind(catch_tab, data.frame(Year = final_year, Catch = NA))
   ##   }
   ## } else {
   ##   forecatch <- data.frame(model$derived_quants[grepl("ForeCatch",model$derived_quants$Label),1:2])
@@ -111,7 +113,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   }
   # filter years and set forecast values to NA
   F_tab <- F_tab[F_tab$Year %in% years,]
-  F_tab[F_tab$Year == endyr+1, -1] <- NA
+  F_tab[F_tab$Year == final_year, -1] <- NA
 
   # SPR-related quantities
   spr_tab <- model$sprseries[, c("Yr", "SPR_report", "SPR")]
@@ -121,7 +123,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   spr_tab <- spr_tab[,c("Year","SPR_report", "1-SPR")]
   # filter years and set forecast values to NA
   spr_tab <- spr_tab[spr_tab$Year %in% years,]
-  spr_tab[spr_tab$Year == endyr+1, -1] <- NA
+  spr_tab[spr_tab$Year == final_year, -1] <- NA
   spr_tab[,-1] <- round(spr_tab[,-1], 3)
 
   # merge columns from time series, catch, F, and SPR together
@@ -243,7 +245,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
   }
   
-  Bcurrent <- tab$SpawnBio[tab$Year == endyr + 1]
+  Bcurrent <- tab$SpawnBio[tab$Year == final_year]
 
   # MSY-proxy labels were changed at some point
   if("Dead_Catch_SPR" %in% rownames(model$derived_quants)){
@@ -266,7 +268,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("Assessment Type,", "X"),
                 paste0("Ensemble/Multimodel Approach,", "NA"),
                 paste0("Asmt Year and Month,", "XXXX.XX"),
-                paste0("Last Data Year,", endyr),
+                paste0("Last Data Year,", final_year - 1),
                 paste0("Asmt Model Category,", "6 - Statistical Catch-at-Age (SS, ASAP, AMAK, BAM, MultifancL< CASAL)"),
                 paste0("Asmt Model Category,", "SS"),
                 paste0("Model Version,", SS_version),
@@ -281,10 +283,10 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "",
 
                 "Fishing Mortality Estimates",
-                paste0("F Year, ",          endyr),
+                paste0("F Year, ",          final_year - 1),
                 paste0("Min F Estimate, ",  "not required and typically not entered"),
                 paste0("Max F Estimate, ",  "not required and typically not entered"),
-                paste0("Best F Estimate, ", tab$"1-SPR"[tab$Year == endyr]),
+                paste0("Best F Estimate, ", tab$"1-SPR"[tab$Year == final_year - 1]),
                 paste0("F Basis, ",         "Equilibrium SPR"),
                 paste0("F Unit, ",          "1-SPR"),
                 "",
@@ -304,7 +306,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
 
                 "Biomass Estimates",
                 paste0("[Unfished Spawning Biomass], ", model$SBzero),
-                paste0("B Year, ",          endyr + 1),
+                paste0("B Year, ",          final_year),
                 paste0("Min B. Estimate, ", NA),
                 paste0("Max. B Estimate, ", NA),
                 paste0("Best B Estimate, ", Bcurrent),
@@ -315,7 +317,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("[MSY Basis], ",     "Yield with SPR_",
                        Btarg_text," at ",   Btarg_text, "(mt)"),
                 paste0("[Depletion], ",
-                       round(model$derived_quants[paste0("Bratio_", endyr+1),
+                       round(model$derived_quants[paste0("Bratio_", final_year),
                                                   "Value"], 3)),
                 "",
 
@@ -328,7 +330,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("B/Bmsy, ",          Bcurrent/(model$SBzero*model$btarg)),
                 paste0("Stock Level (relative) to BMSY, ", "Above"),
                 paste0("age ", summary_age, "+ summary biomass, ",
-                       model$timeseries$Bio_smry[model$timeseries$Yr == endyr]),
+                       model$timeseries$Bio_smry[model$timeseries$Yr == final_year - 1]),
                 "",
                 "")
 
