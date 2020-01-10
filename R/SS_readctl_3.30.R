@@ -1004,8 +1004,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         "40" = NA, "41" = 2 + Nages + 1, "42" = 5, "43" = 4,
                         "44" = 4 + Nages, "45" = 4 + Nages)
   # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
-  # 5+2*N_nodes, so the npars listed is not exactly correct. This will be
-  # addressed in special cases below.NAs are unused codes.
+  # 5+2*N_nodes, and 6 which is 2+special, so the npars listed is not exactly 
+  # correct. This will be addressed in special cases below.NAs are unused codes.
   size_selex_label<- vector("list", Nfleet+Nsurveys) # do this to initialize size
   # loop through fishing fleets and surveys to assign names
   
@@ -1047,6 +1047,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       stop("Pattern ", as.character(ctllist$size_selex_types[j, "Pattern"]),
            "was used for the size selectivity pattern fleet or survey, but it ",
            " is not valid.")
+    }
+    # pattern 6 is a special case of number of params, so account for here.
+    if(ctllist$size_selex_types[j, "Pattern"] == 6) {
+      tmp_size_selex_Nparms <- tmp_size_selex_Nparms + 
+                               ctllist$size_selex_types[j, "Special"]
     }
     ## spline needs special treatment
     if(ctllist$size_selex_types[j, "Pattern"] == 27) {
