@@ -322,30 +322,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
-  # I think that multiple growth patterns are now working have to test that MGparms are sorted correctly
   
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
     
-#    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"sd_ratio")
-    #ctllist<-add_elem(ctllist,"submorphdist")
     ctllist<-add_vec(ctllist,name="submorphdist",length=ctllist$N_platoon)
   }
-  # else{
-  #   ctllist$sd_ratio<- 1.
-  #   ctllist$submorphdist<-1.
-  # }
-  # if(ctllist$submorphdist[1]<0.){
-  #   if(ctllist$N_platoon==1){
-  #     ctllist$submorphdist<- 1.;
-  #   }else if (ctllist$N_platoon==3){
-  #     ctllist$submorphdist<-c(0.15,0.70,0.15)
-  #   }else if (ctllist$N_platoon==5){
-  #     ctllist$submorphdist<-c(0.031, 0.237, 0.464, 0.237, 0.031)
-  #   }
-  # }
-  # ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
   
   # recruitment timing and distribution ----
   ctllist<-add_elem(ctllist,"recr_dist_method")
@@ -399,11 +382,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
     N_natMparms<-ctllist$N_GP*ctllist$Ngenders
-    # comments<-if(ctllist$N_GP==1){
-    #   "#_reference age for Lorenzen M; read 1P per morph"
-    # }else{
-    #   paste0("#_reference age for Lorenzen M_GP",1:ctllist$N_GP)
-    # }
     ctllist<-add_elem(ctllist,name="Lorenzen_refage") ## Reference age for Lorenzen M
   }else if(ctllist$natM_type %in% c(3,4)){
     N_natMparms<-0
@@ -534,47 +512,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
   
-  # 
-  # 
-  # if(ctllist$Ngenders>1)
-  # {
-  #   for(i in 2:ctllist$Ngenders){
-  #     for(j in 1:ctllist$N_GP){
-  #       if(N_natMparms>0){
-  #         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(N_natMparms+cnt-1)]<-1
-  #         cnt<-cnt+N_natMparms
-  #       }
-  #       if(ctllist$GrowthModel==1){ # VB
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
-  #         MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(5+cnt-1)]<-2
-  #         cnt<-cnt+5
-  #       }else if(ctllist$GrowthModel==2){ # Richards
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
-  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(6+cnt-1)]<-2
-  #         cnt<-cnt+6
-  #       }else if(ctllist$GrowthModel %in% 3:5) {
-  #         tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
-  #                paste0("Age_K",ctllist$Age_K_points),"CV_young","CV_old")
-  #         MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:((5+Age_K_count)+cnt-1)]<-2
-  #         cnt<-cnt+5+Age_K_count
-  #       } else if (ctllist$GrowthModel == 8) {
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
-  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(6+cnt-1)]<-2
-  #         cnt<-cnt+6
-  #       }
-  #     }
-  #   }
-  # }
-  # 
-  # if(ctllist$Ngenders==2){
-  #   MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-  #   MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-  # }
   if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Herm_stdev",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
@@ -1181,15 +1118,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
       #Note that age_selex_Nparams[j] not used beyond this point.
     }
-    # do extra retention parameters
-    # if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
-    #   age_selex_label[[j]] <- c(age_selex_label[[j]],
-    #     paste0("AgeSel_",j,"PRet_",1:4,"_", jn))
-    # }
-    # if(ctllist$age_selex_types[j,"Discard"] == 2) {# has discard type 2
-    #   age_selex_label[[j]] <- c(age_selex_label[[j]], 
-    #     paste0("AgeSel_",j,"PDis_",1:4,"_", jn))
-    # }
     # do extra offset parameters
     if(ctllist$age_selex_types[j,"Male"] == 1) {
       age_selex_label[[j]] <- c(age_selex_label[[j]], 
