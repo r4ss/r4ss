@@ -631,16 +631,16 @@ SS_readdat_3.30 <-
     }
     ## get list of bin vectors
     d$sizefreq_bins_list <- list()
-    for(imethod in 1:d$N_sizefreq_methods){
+    for(imethod in seq_len(d$N_sizefreq_methods)) {
       d$sizefreq_bins_list[[imethod]] <- get.vec(dat, ind)
     }
     ## Read generalized size frequency data
     d$sizefreq_data_list <- list()
-    for(imethod in 1:d$N_sizefreq_methods){
+    for(imethod in seq_len(d$N_sizefreq_methods)) {
       Ncols <- 7 + d$Nsexes * d$nbins_per_method[imethod]
       Nrows <- d$Nobs_per_method[imethod]
-      d$sizefreq_data_list <- get.df(dat, ind, Nrows)
-      colnames(d$sizefreq_data_list) <-
+      d$sizefreq_data_list[[imethod]] <- get.df(dat, ind, Nrows)
+      colnames(d$sizefreq_data_list[[imethod]]) <-
         c("Method", "Yr", "Seas", "FltSvy",
           "Gender", "Part", "Nsamp",
           if(d$Nsexes == 1){
@@ -656,9 +656,9 @@ SS_readdat_3.30 <-
           })
       if(echoall){
         message("Method ", imethod, " (first two rows, ten columns):")
-        print(d$sizefreq_data_list[1:min(Nrows,2), 1:min(Ncols, 10)])
+        print(d$sizefreq_data_list[[imethod]][1:min(Nrows,2), 1:min(Ncols, 10)])
       }
-      if(any(d$sizefreq_data_list$Method!=imethod)){
+      if(any(d$sizefreq_data_list[[imethod]][, "Method"] != imethod)) {
         stop("Problem with method in size frequency data:\n",
              "Expecting method: ", imethod, "\n",
              "Read method(s): ",
