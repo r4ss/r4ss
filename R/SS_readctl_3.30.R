@@ -302,8 +302,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$Do_AgeKey <- 0
     }
     ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
-    N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
-    ctllist$N_CPUE_obs<-N_CPUE_obs
+    ctllist$N_CPUE_obs <- N_CPUE_obs <- datlist$N_cpue
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications ----
@@ -848,59 +847,64 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
+  if(!is.null(ctllist$Q_options)) {
   rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
   # create 3.24 compatible Q_setup ----
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
   colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+  }
   # q parlines ----
-  N_Q_parms<-0
-  comments_Q_type<-list()
+  N_Q_parms <- 0
   i<-1
-  for(j in 1:nrow(ctllist$Q_options))
-  {
-    if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
+  if(!is.null(ctllist$Q_options)) {
+    comments_Q_type<-list()
+  
+    for(j in 1:nrow(ctllist$Q_options))
     {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
-      flname <- fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
-                                   ctllist$Q_options[j,]$fleet,")",collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$link==2)  # mirrored
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
-    }
-    if(ctllist$Q_options[j,]$link==3)  # do power
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
-                                   ctllist$Q_options[j,]$fleet ,")", 
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
-                                   ctllist$Q_options[j,]$fleet, ")",
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
-                                   ctllist$Q_options[j,]$fleet, ")",
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
+      if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
+        flname <- fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
+                                     ctllist$Q_options[j,]$fleet,")",collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$link==2)  # mirrored
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
+      }
+      if(ctllist$Q_options[j,]$link==3)  # do power
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
+                                     ctllist$Q_options[j,]$fleet ,")", 
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
+                                     ctllist$Q_options[j,]$fleet, ")",
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
+                                     ctllist$Q_options[j,]$fleet, ")",
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
     }
   }
 

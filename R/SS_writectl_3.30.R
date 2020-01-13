@@ -450,25 +450,31 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#")
   # Q setup ---- 
   writeComment("#_Q_setup for fleets with cpue or survey data")
-  # There are extra commments with info here in control.ss_new, but exclude for now
-  tmp_collength <- length(colnames(ctllist$Q_options))
-  # change column names to match control.ss_new
-  colnames(ctllist$Q_options)[tmp_collength] <- "float  #  fleetname"
-  printdf("Q_options", terminate = TRUE)
-  # change back
-  colnames(ctllist$Q_options)[tmp_collength] <- "float"
-  
-  writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
-  # change column names to match control.ss_new
-  colnames(ctllist$Q_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", 
-                                 "PR_type", "PHASE", "env-var", "use_dev", 
-                                 "dev_mnyr", "dev_mxyr", "dev_PH", "Block",
-                                 "Blk_Fxn  #  parm_name")
-  printdf("Q_parms")
-  # change back
-  colnames(ctllist$Q_parms) <- lng_par_colnames
+  if(!is.null(ctllist$Q_options)) {
+    # There are extra commments with info here in control.ss_new, but exclude for now
+    tmp_collength <- length(colnames(ctllist$Q_options))
+    # change column names to match control.ss_new
+    colnames(ctllist$Q_options)[tmp_collength] <- "float  #  fleetname"
+    printdf("Q_options", terminate = TRUE)
+    # change back
+    colnames(ctllist$Q_options)[tmp_collength] <- "float"
+    
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+    # change column names to match control.ss_new
+    colnames(ctllist$Q_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", 
+                                   "PR_type", "PHASE", "env-var", "use_dev", 
+                                   "dev_mnyr", "dev_mxyr", "dev_PH", "Block",
+                                   "Blk_Fxn  #  parm_name")
+    printdf("Q_parms")
+    # change back
+    colnames(ctllist$Q_parms) <- lng_par_colnames
+  } else {
+    writeLines(text = "-9999 0 0 0 0 0 # terminator", con = zz)
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+  }
   # time varying q parm lines -----
-  if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
+  if(!is.null(ctllist$Q_options) &&
+    any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[3] != 0) {
     writeComment("# timevary Q parameters")
     printdf("Q_parms_tv")

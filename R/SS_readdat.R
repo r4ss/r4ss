@@ -152,7 +152,7 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
   if(nver>=3.3){
     datlist <- SS_readdat_3.30(file=file, verbose=verbose,
                                echoall=echoall, section=section)
-
+    
     datlist$spawn_seas <- datlist$spawn_month
 
     # compatibility: get the old number values
@@ -161,8 +161,12 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     totfleets<-datlist$Nfleet+datlist$Nsurveys
     datlist$N_areas <- datlist$Nareas
     datlist$Ngenders <- datlist$Nsexes
-    datlist$N_cpue <- NROW(datlist$CPUE)
-
+    # Note that using NROW on datlist$CPUE that is NA will return 1, when in 
+    # reality the number of years should be 0.
+    datlist$N_cpue <- ifelse(is.null(datlist$CPUE) || 
+                             (is.null(dim(datlist$CPUE)) && is.na(datlist$CPUE)), 
+                             0,
+                             NROW(datlist$CPUE))
     # fleet details
     datlist$fleetinfo1<-t(datlist$fleetinfo)
     colnames(datlist$fleetinfo1)<-datlist$fleetinfo$fleetname
@@ -248,17 +252,6 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     }
 
     ##!!! need to add fixes to pop len bins? (see 3.24)
-    # note: lines 252-257 are redundant with datlist$N_cpue, leaving for now
-    datlist$NCPUEObs<-array(data=0,dim=datlist$Nfleets)
-
-    #if(nrow(
-    for(j in 1:nrow(datlist$CPUE))
-    {
-      if(datlist$CPUE[j,]$index>0){
-        datlist$NCPUEObs[datlist$CPUE[j,]$index] <-
-          datlist$NCPUEObs[datlist$CPUE[j,]$index] + 1
-      }
-    }
 
     # fix some things
     if(!is.null(datlist$lbin_method))
