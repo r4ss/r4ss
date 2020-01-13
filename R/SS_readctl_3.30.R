@@ -291,7 +291,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       stop("datlist$lbin_method is ", datlist$lbin_method, "but only can be 1", 
            ", 2, or 3.")
     }
-    ctllist$Npopbins<-Npopbins<-datlist$N_lbinspop
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
     # short circuit logic to avoid error if it is null.
