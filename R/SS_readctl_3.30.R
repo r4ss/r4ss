@@ -294,9 +294,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$Npopbins<-Npopbins<-datlist$N_lbinspop
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
-    if(datlist$N_ageerror_definition > 0) {
+    # short circuit logic to avoid error if it is null.
+    if(!is.null(datlist$N_ageerror_definition) && 
+       datlist$N_ageerror_definition > 0) {
       ctllist$Do_AgeKey <- ifelse(
         any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2, 1] < 0), 1, 0)
+    } else {
+      ctllist$Do_AgeKey <- 0
     }
     ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
     N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
