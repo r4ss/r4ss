@@ -4,8 +4,14 @@
 \alias{SS_writewtatage}
 \title{Write weight-at-age file}
 \usage{
-SS_writewtatage(mylist, dir = NULL, file = "wtatage.ss",
-  overwrite = FALSE, verbose = TRUE, warn = TRUE)
+SS_writewtatage(
+  mylist,
+  dir = NULL,
+  file = "wtatage.ss",
+  overwrite = FALSE,
+  verbose = TRUE,
+  warn = TRUE
+)
 }
 \arguments{
 \item{mylist}{Object created by \code{\link{SS_readwtatage}}.}

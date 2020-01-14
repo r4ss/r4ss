@@ -4,10 +4,20 @@
 \alias{SSMethod.Cond.TA1.8}
 \title{Apply Francis composition weighting method TA1.8 for conditional age-at-length fits}
 \usage{
-SSMethod.Cond.TA1.8(fit, fleet, part = 0:2, seas = NULL,
-  plotit = TRUE, printit = TRUE, datonly = FALSE,
-  plotadj = !datonly, maxpanel = 1000, FullDiagOut = FALSE,
-  ShowVersionB = FALSE, fleetnames = NULL)
+SSMethod.Cond.TA1.8(
+  fit,
+  fleet,
+  part = 0:2,
+  seas = NULL,
+  plotit = TRUE,
+  printit = TRUE,
+  datonly = FALSE,
+  plotadj = !datonly,
+  maxpanel = 1000,
+  FullDiagOut = FALSE,
+  ShowVersionB = FALSE,
+  fleetnames = NULL
+)
 }
 \arguments{
 \item{fit}{Stock Synthesis output as read by r4SS function SS_output}

@@ -4,8 +4,15 @@
 \alias{SS_RunJitter}
 \title{Iteratively apply the jitter option in SS}
 \usage{
-SS_RunJitter(mydir, model = "ss", extras = "-nohess", Njitter,
-  Intern = TRUE, systemcmd = FALSE, printlikes = TRUE)
+SS_RunJitter(
+  mydir,
+  model = "ss",
+  extras = "-nohess",
+  Njitter,
+  Intern = TRUE,
+  systemcmd = FALSE,
+  printlikes = TRUE
+)
 }
 \arguments{
 \item{mydir}{Directory where model files are located}

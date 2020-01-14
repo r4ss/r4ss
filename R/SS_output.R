@@ -1,7 +1,7 @@
 #' A function to create a list object for the output from Stock Synthesis
 #'
 #' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
-#' other files files produced by Stock Synthesis and formats the important
+#' other files produced by Stock Synthesis and formats the important
 #' content of these files into a list in the R workspace. A few statistics
 #' unavailable elsewhere are taken from the .par and .cor files. Summary
 #' information and statistics can be returned to the R console or just
@@ -9,7 +9,7 @@
 #'
 #'
 #' @param dir Directory containing the Stock Synthesis model output.
-#' Forwardslashes or double backslashes and quotes are necessary.
+#' Forward slashes or double backslashes and quotes are necessary.
 #' This can also either be an absolute path or relative to the working
 #' directory.
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
@@ -25,7 +25,7 @@
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
 #' small. It should be bigger than the maximum age + 10 and the number of years
-#' + 10.
+#' + 10. The default value is \code{NULL}, which finds the optimum width.
 #' @param forecast Read the forecast-report file?
 #' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
@@ -41,7 +41,7 @@
 #' R GUI.
 #' @param printlowcor The maximum number of low correlations to print to the R
 #' GUI.
-#' @param verbose Return updates of function progress to the R GUI?
+#' @template verbose
 #' @param printstats Print summary statistics about the output to the R GUI?
 #' @param hidewarn Hides some warnings output from the R GUI.
 #' @param NoCompOK Allow the function to work without a CompReport file.
@@ -70,7 +70,7 @@ SS_output <-
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
            warnfile="warning.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
+           ncols=NULL, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
            aalmaxbinrange=4)
@@ -288,6 +288,8 @@ SS_output <-
   # read report file
   if(verbose) cat("Reading full report file\n")
   flush.console()
+
+  if(is.null(ncols)) ncols <- get_ncol(repfile)
   rawrep <- read.table(file=repfile,col.names=1:ncols,fill=TRUE,quote="",
                        colClasses="character",nrows=-1,comment.char="")
 
@@ -301,7 +303,7 @@ SS_output <-
          "  increase 'ncols' input above current value (ncols=",ncols,")")
   }
   if(verbose){
-    if((maxnonblank+1)==ncols) cat("Got all columns.\n")
+    if((maxnonblank+1)==ncols) cat("Got all columns using ncols =",ncols,"\n")
     if((maxnonblank+1)<ncols) cat("Got all columns. To speed code, use ncols=",maxnonblank+1," in the future.\n",sep="")
     cat("Got Report file\n")
   }
@@ -2213,6 +2215,11 @@ SS_output <-
     catch <- NULL
   }
   returndat$catch <- catch
+
+  # age associated with summary biomass
+  summary_age <- rawrep[matchfun("TIME_SERIES"),2]
+  summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
+  returndat$summary_age <- summary_age
 
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)

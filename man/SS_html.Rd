@@ -4,9 +4,17 @@
 \alias{SS_html}
 \title{Create HTML files to view figures in browser.}
 \usage{
-SS_html(replist = NULL, plotdir = NULL, plotInfoTable = NULL,
-  title = "SS Output", width = 500, openfile = TRUE,
-  multimodel = FALSE, filenotes = NULL, verbose = TRUE)
+SS_html(
+  replist = NULL,
+  plotdir = NULL,
+  plotInfoTable = NULL,
+  title = "SS Output",
+  width = 500,
+  openfile = TRUE,
+  multimodel = FALSE,
+  filenotes = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{Object created by \code{\link{SS_output}}}

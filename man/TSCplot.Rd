@@ -4,11 +4,27 @@
 \alias{TSCplot}
 \title{Create a plot for the TSC report}
 \usage{
-TSCplot(SSout, yrs = "default", ylimBar = "default", ylimDepl = c(0,
-  1.025), colBar = "yellow", cexBarLabels = 1.1, cex.axis = 1.1,
-  space = 0, pchDepl = 19, colDepl = "red", lwdDepl = 3,
-  shiftDepl = 0.25, pchSpace = 5, ht = 4, wd = 7,
-  labelLines = 2.8, makePDF = NULL, makePNG = NULL, MCMC = F)
+TSCplot(
+  SSout,
+  yrs = "default",
+  ylimBar = "default",
+  ylimDepl = c(0, 1.025),
+  colBar = "yellow",
+  cexBarLabels = 1.1,
+  cex.axis = 1.1,
+  space = 0,
+  pchDepl = 19,
+  colDepl = "red",
+  lwdDepl = 3,
+  shiftDepl = 0.25,
+  pchSpace = 5,
+  ht = 4,
+  wd = 7,
+  labelLines = 2.8,
+  makePDF = NULL,
+  makePNG = NULL,
+  MCMC = F
+)
 }
 \arguments{
 \item{SSout}{The output from \code{\link{SS_output}}}
@@ -80,7 +96,7 @@ are to be plotted, a 'mcmc' list element should be added using the
     update_r4ss_files()
 
     # ** CHANGE TO THE BASE DIRECTORY
-    directory <- "C:\\NOAA2011\\Dover\\Models\\base_20110701"
+    directory <- "C:\NOAA2011\Dover\Models\base_20110701"
 
     base <- SS_output(dir=directory,covar=F,verbose=F)
 
@@ -88,9 +104,9 @@ are to be plotted, a 'mcmc' list element should be added using the
     TSCplot(base)
     TSCplot(base,yrs=2000:2011,pchSpace = 1)
     #Create the plot as a PNG file
-    TSCplot(base,makePNG="C:\\NOAA2012\\Assessments\\TSCdover.png")
+    TSCplot(base,makePNG="C:\NOAA2012\Assessments\TSCdover.png")
     #Create the plot as a PDF file
-    TSCplot(base,makePDF="C:\\NOAA2012\\Assessment\\TSCdover.pdf")
+    TSCplot(base,makePDF="C:\NOAA2012\Assessment\TSCdover.pdf")
 
     # ** Hake model with MCMC results
     SSdir <- "C:/NOAA2012/Hake/Models"

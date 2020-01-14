@@ -30,6 +30,12 @@ test_that("SS_output runs on simple_3.30.13 model", {
   expect_equal(tail(names(simple3.30.13),1), "inputs")
 })
 
+test_that("SS_output generates warning when MCMC folder is missing", {
+  expect_warning(SS_output(dir=tail(dir(example_path, full.names = TRUE),1),
+   dir.mcmc="mcmc", warn=FALSE, printstats=FALSE, hidewarn=TRUE, verbose=FALSE)
+  )
+})
+
 ###############################################################################
 # read models again so they are available in the workspace for later use
 ###############################################################################
@@ -42,6 +48,18 @@ simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"),
                         verbose=FALSE, printstats=FALSE)
 simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
                         verbose=FALSE, printstats=FALSE)
+
+###############################################################################
+# Test an internal function used by SS_output
+###############################################################################
+test_that("get_ncol finds the correct number of columns for SS_output", {
+  reportfiles <- dir(system.file(file.path("extdata"), package = "r4ss"), 
+    pattern = "^Report", recursive = TRUE, full.names = TRUE)
+  results <- mapply(r4ss:::get_ncol, reportfiles)
+  expect_vector(results)
+  expect(all(results %in% 55:56), 
+    "Optimum width of Report.sso wasn't 55 or 56.")
+})
 
 ###############################################################################
 # specific tests for elements in the list created by SS_output
@@ -107,18 +125,18 @@ test_that("SSsummarize and SSplotComparisons both work", {
 test_that("SS_readdat and SS_writedat both work for 3.24", {
   # read data file
   simple3.24_dat <- SS_readdat(file = file.path(example_path,"simple_3.24/simple.dat"),
-                               version="3.24")
+                               version="3.24", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/testdat_3.24.ss"),
               version = "3.24",
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/fastdat_3.24.ss"),
               version = "3.24",
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 ###############################################################################
@@ -128,16 +146,16 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
 test_that("SS_readdat and SS_writedat both work for 3.30.01", {
   # read data file
   simple3.30.01_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.01/simple.dat"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.01_dat,
               outfile = file.path(example_path, "simple_3.30.01/testdat_3.30.01.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.01_dat,
               outfile = file.path(example_path, "simple_3.30.01/fastdat_3.30.01.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 ###############################################################################
@@ -147,16 +165,16 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
 test_that("SS_readdat and SS_writedat both work for 3.30.12", {
   # read data file
   simple3.30.12_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.12/simple_data.ss"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.12_dat,
               outfile = file.path(example_path, "simple_3.30.12/testdat_3.30.12.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.12_dat,
               outfile = file.path(example_path, "simple_3.30.12/fastdat_3.30.12.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 
@@ -167,16 +185,16 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
 test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   # read data file
   simple3.30.13_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.13/simple_data.ss"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.13_dat,
               outfile = file.path(example_path, "simple_3.30.13/testdat_3.30.13.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.13_dat,
               outfile = file.path(example_path, "simple_3.30.13/fastdat_3.30.13.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 
@@ -188,9 +206,10 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
   # read forecast file
   simple3.30.13_forecast <-
     SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
-                    version="3.30")
+                    version="3.30", verbose = FALSE)
   # write forecast file
   SS_writeforecast(mylist = simple3.30.13_forecast,
                    dir = file.path(example_path, "simple_3.30.13"),
-                   file = "testforecast_3.30.13.ss")
+                   file = "testforecast_3.30.13.ss",
+                   overwrite = TRUE)
 })

@@ -5,8 +5,13 @@
 \title{Convert a matrix of natural mortality values into
 inputs for Stock Synthesis}
 \usage{
-SSmakeMmatrix(mat, startyr, outfile = NULL, overwrite = FALSE,
-  yrs.in.columns = TRUE)
+SSmakeMmatrix(
+  mat,
+  startyr,
+  outfile = NULL,
+  overwrite = FALSE,
+  yrs.in.columns = TRUE
+)
 }
 \arguments{
 \item{mat}{a matrix of natural mortality by year and age, starting with age 0}

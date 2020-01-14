@@ -4,9 +4,24 @@
 \alias{stackpoly}
 \title{modified from "stackpoly" by Jim Lemon from "plotrix" package}
 \usage{
-stackpoly(x, y, main = "", xlab = "", ylab = "", xat = NA,
-  xaxlab = NA, xlim = NA, ylim = NA, lty = 1, border = NA,
-  col = NA, axis4 = F, x.hash = NULL, density = 20, ...)
+stackpoly(
+  x,
+  y,
+  main = "",
+  xlab = "",
+  ylab = "",
+  xat = NA,
+  xaxlab = NA,
+  xlim = NA,
+  ylim = NA,
+  lty = 1,
+  border = NA,
+  col = NA,
+  axis4 = F,
+  x.hash = NULL,
+  density = 20,
+  ...
+)
 }
 \arguments{
 \item{x}{A numeric data frame or matrix with the 'x' values. If 'y' is NULL,

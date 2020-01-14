@@ -4,8 +4,13 @@
 \alias{SS_writectl}
 \title{Srite Stock Synthesis control file}
 \usage{
-SS_writectl(ctllist, outfile, version = NULL, overwrite = FALSE,
-  verbose = TRUE)
+SS_writectl(
+  ctllist,
+  outfile,
+  version = NULL,
+  overwrite = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{ctllist}{List object created by \code{\link{SS_readdat}}.}

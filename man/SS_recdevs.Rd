@@ -4,11 +4,21 @@
 \alias{SS_recdevs}
 \title{Insert a vector of recruitment deviations into the control file.}
 \usage{
-SS_recdevs(fyr, lyr, ctl = NULL, recdevs = NULL, rescale = TRUE,
-  scaleyrs = NULL, dir = "working_directory",
-  ctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-  verbose = TRUE, writectl = TRUE, returnctl = FALSE,
-  newmaxbias = NULL)
+SS_recdevs(
+  fyr,
+  lyr,
+  ctl = NULL,
+  recdevs = NULL,
+  rescale = TRUE,
+  scaleyrs = NULL,
+  dir = "working_directory",
+  ctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  verbose = TRUE,
+  writectl = TRUE,
+  returnctl = FALSE,
+  newmaxbias = NULL
+)
 }
 \arguments{
 \item{fyr}{First year of the recdev vector.}

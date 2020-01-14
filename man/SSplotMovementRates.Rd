@@ -4,12 +4,26 @@
 \alias{SSplotMovementRates}
 \title{Plot movement rates from model output}
 \usage{
-SSplotMovementRates(replist, plot = TRUE, print = FALSE,
-  subplots = 1:2, plotdir = "default", colvec = "default",
-  ylim = "default", legend = TRUE, legendloc = "topleft",
-  moveseas = "all", min.move.age = 0.5, pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  verbose = TRUE)
+SSplotMovementRates(
+  replist,
+  plot = TRUE,
+  print = FALSE,
+  subplots = 1:2,
+  plotdir = "default",
+  colvec = "default",
+  ylim = "default",
+  legend = TRUE,
+  legendloc = "topleft",
+  moveseas = "all",
+  min.move.age = 0.5,
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{list created by \code{\link{SS_output}}}

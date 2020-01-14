@@ -4,8 +4,19 @@
 \alias{plotCI}
 \title{Plot points with confidence intervals.}
 \usage{
-plotCI(x, y = NULL, uiw, liw = uiw, ylo = NULL, yhi = NULL, ...,
-  sfrac = 0.01, ymax = NULL, add = FALSE, col = "black")
+plotCI(
+  x,
+  y = NULL,
+  uiw,
+  liw = uiw,
+  ylo = NULL,
+  yhi = NULL,
+  ...,
+  sfrac = 0.01,
+  ymax = NULL,
+  add = FALSE,
+  col = "black"
+)
 }
 \arguments{
 \item{x}{The x coordinates of points in the plot}

@@ -4,8 +4,15 @@
 \alias{SS_writectl_3.24}
 \title{write control file}
 \usage{
-SS_writectl_3.24(ctllist, outfile, overwrite = FALSE, verbose = TRUE,
-  nseas = 1, N_areas = 1, Do_AgeKey = FALSE)
+SS_writectl_3.24(
+  ctllist,
+  outfile,
+  overwrite = FALSE,
+  verbose = TRUE,
+  nseas = 1,
+  N_areas = 1,
+  Do_AgeKey = FALSE
+)
 }
 \arguments{
 \item{ctllist}{List object created by \code{\link{SS_readctl}}.}

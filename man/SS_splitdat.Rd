@@ -4,10 +4,18 @@
 \alias{SS_splitdat}
 \title{Split apart bootstrap data to make input file.}
 \usage{
-SS_splitdat(inpath = "working_directory",
-  outpath = "working_directory", inname = "data.ss_new",
-  outpattern = "BootData", number = FALSE, verbose = TRUE,
-  fillblank = TRUE, MLE = TRUE, inputs = FALSE, notes = "")
+SS_splitdat(
+  inpath = "working_directory",
+  outpath = "working_directory",
+  inname = "data.ss_new",
+  outpattern = "BootData",
+  number = FALSE,
+  verbose = TRUE,
+  fillblank = TRUE,
+  MLE = TRUE,
+  inputs = FALSE,
+  notes = ""
+)
 }
 \arguments{
 \item{inpath}{Directory containing the input file. By default the working
