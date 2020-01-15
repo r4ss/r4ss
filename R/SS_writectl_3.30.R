@@ -274,9 +274,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "4=read age-fecundity; 5=disabled; 6=read length-maturity"
                       ))
   # Below check added to help users with troubleshooting
-  if(!ctllist$maturity_option %in% c(1:4,6)) {
+  if(!ctllist$maturity_option %in% c(1:6)) {
     stop("Invalid maturity option used. ctllist$maturity_option is", 
-         ctllist$maturity_option, ", but must be 1, 2, 3, 4, or 6.")
+         ctllist$maturity_option, ", but must be 1, 2, 3, 4, 5, or 6.")
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if(ctllist$maturity_option %in% c(3,4)) {
@@ -309,6 +309,17 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # MG parms ----
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
+  # add warning if users are using Maturity option 5. All maturity paramters 
+  # should have negative phase
+  mat_pars <- grep("^Mat", row.names(ctllist$MG_parms))
+  if(any(ctllist$MG_parms[mat_pars, "PHASE"] > 0)) {
+    warning("Maturity option 5 is used, but some growth parameters have ", 
+            "positive phases, which is inconsistent. Please turn off the ", 
+            "parameters ", 
+            paste0(row.names(ctllist$MG_parms)[mat_pars], collapse = ", "),
+            "by setting the phase(s) to negative values.")
+  }
+  
   # MG timevarying parms ----
   if(any(ctllist$MG_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[1] != 0) {
