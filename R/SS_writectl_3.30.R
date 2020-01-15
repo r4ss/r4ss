@@ -641,7 +641,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                                  "bin to self-generate)"))
     }
     # Growth bin
-    if(ctllist$stddev_reporting_specs[6] > 0) {
+    # not written if empirical weight at age is used.
+    if(ctllist$stddev_reporting_specs[6] > 0 & ctllist$EmpiricalWAA == 0) {
       wl.vector("stddev_reporting_growth",
                 comment = paste0("# vector with growth std ages picks (-1 in ",
                                  "first bin to self-generate)"))

@@ -1380,7 +1380,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         add_vec(ctllist,name="stddev_reporting_selex",length=ctllist$stddev_reporting_specs[4])
     }
     ## Growth bin
-    if(ctllist$stddev_reporting_specs[6]>0){
+    # if using wt at age, this is not read.
+    if(ctllist$stddev_reporting_specs[6]>0  & ctllist$EmpiricalWAA == 0){
       ctllist<-
         add_vec(ctllist,name="stddev_reporting_growth",length=ctllist$stddev_reporting_specs[6])
     }
