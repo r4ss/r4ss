@@ -39,6 +39,8 @@
 #'   datlist is specified.
 #' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
 #' read for equilibrium catch. Defaults to 0.
+#' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
+#' parameters. Defaults to 0.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. If list, should be a list produced from 
@@ -66,6 +68,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
     catch_mult_fleets = NULL,
     N_rows_equil_catch = 0, 
+    N_dirichlet_parms = 0,
     ##################################
     use_datlist=FALSE,
     datlist=NULL
@@ -275,16 +278,31 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
     ctllist$Ngenders<-Ngenders<-datlist$Ngenders
-    ctllist$Npopbins<-Npopbins<-datlist$Npopbins
+    if(datlist$lbin_method == 1) {
+      ctllist$Npopbins <- Npopbins <- datlist$N_lbins # b/c method 1 uses data length bins
+    } else if (datlist$lbin_method == 2) {
+      #calculate number of bins (max Lread - min Lread)/(bin width) + 1. 
+      # formula according to SS manual.
+      ctllist$Npopbins <- Npopbins <- 
+        (datlist$maximum_size - datlist$minimum_size)/(datlist$binwidth) + 1
+    } else if (datlist$lbin_method == 3) {
+      ctllist$Npopbins <- Npopbins <- datlist$N_lbinspop # read actual input
+    } else {
+      stop("datlist$lbin_method is ", datlist$lbin_method, "but only can be 1", 
+           ", 2, or 3.")
+    }
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
-    if(datlist$N_ageerror_definition > 0) {
+    # short circuit logic to avoid error if it is null.
+    if(!is.null(datlist$N_ageerror_definition) && 
+       datlist$N_ageerror_definition > 0) {
       ctllist$Do_AgeKey <- ifelse(
         any(datlist$ageerror[1:(nrow(datlist$ageerror)/2)*2, 1] < 0), 1, 0)
+    } else {
+      ctllist$Do_AgeKey <- 0
     }
     ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
-    N_CPUE_obs<-sapply(1:(Nfleet+Nsurveys),function(i){sum(datlist$CPUE[,"index"]==i)})
-    ctllist$N_CPUE_obs<-N_CPUE_obs
+    ctllist$N_CPUE_obs <- N_CPUE_obs <- datlist$N_cpue
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications ----
@@ -302,30 +320,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
-  # I think that multiple growth patterns are now working have to test that MGparms are sorted correctly
   
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
     
-#    ctllist<-add_elem(ctllist,"N_platoon")
     ctllist<-add_elem(ctllist,"sd_ratio")
-    #ctllist<-add_elem(ctllist,"submorphdist")
     ctllist<-add_vec(ctllist,name="submorphdist",length=ctllist$N_platoon)
   }
-  # else{
-  #   ctllist$sd_ratio<- 1.
-  #   ctllist$submorphdist<-1.
-  # }
-  # if(ctllist$submorphdist[1]<0.){
-  #   if(ctllist$N_platoon==1){
-  #     ctllist$submorphdist<- 1.;
-  #   }else if (ctllist$N_platoon==3){
-  #     ctllist$submorphdist<-c(0.15,0.70,0.15)
-  #   }else if (ctllist$N_platoon==5){
-  #     ctllist$submorphdist<-c(0.031, 0.237, 0.464, 0.237, 0.031)
-  #   }
-  # }
-  # ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
   
   # recruitment timing and distribution ----
   ctllist<-add_elem(ctllist,"recr_dist_method")
@@ -379,11 +380,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
     N_natMparms<-ctllist$N_GP*ctllist$Ngenders
-    # comments<-if(ctllist$N_GP==1){
-    #   "#_reference age for Lorenzen M; read 1P per morph"
-    # }else{
-    #   paste0("#_reference age for Lorenzen M_GP",1:ctllist$N_GP)
-    # }
     ctllist<-add_elem(ctllist,name="Lorenzen_refage") ## Reference age for Lorenzen M
   }else if(ctllist$natM_type %in% c(3,4)){
     N_natMparms<-0
@@ -514,47 +510,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
   
-  # 
-  # 
-  # if(ctllist$Ngenders>1)
-  # {
-  #   for(i in 2:ctllist$Ngenders){
-  #     for(j in 1:ctllist$N_GP){
-  #       if(N_natMparms>0){
-  #         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(N_natMparms+cnt-1)]<-1
-  #         cnt<-cnt+N_natMparms
-  #       }
-  #       if(ctllist$GrowthModel==1){ # VB
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","CV_young","CV_old")
-  #         MGparmLabel[1:5+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(5+cnt-1)]<-2
-  #         cnt<-cnt+5
-  #       }else if(ctllist$GrowthModel==2){ # Richards
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Richards","CV_young","CV_old")
-  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(6+cnt-1)]<-2
-  #         cnt<-cnt+6
-  #       }else if(ctllist$GrowthModel %in% 3:5) {
-  #         tmp <- c("L_at_Amin","L_at_Amax","VonBert_K",
-  #                paste0("Age_K",ctllist$Age_K_points),"CV_young","CV_old")
-  #         MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:((5+Age_K_count)+cnt-1)]<-2
-  #         cnt<-cnt+5+Age_K_count
-  #       } else if (ctllist$GrowthModel == 8) {
-  #         tmp<-c("L_at_Amin","L_at_Amax","VonBert_K","Cessation","CV_young","CV_old")
-  #         MGparmLabel[1:6+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-  #         PType[cnt:(6+cnt-1)]<-2
-  #         cnt<-cnt+6
-  #       }
-  #     }
-  #   }
-  # }
-  # 
-  # if(ctllist$Ngenders==2){
-  #   MGparmLabel[cnt]<-paste0("Wtlen_1_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-  #   MGparmLabel[cnt]<-paste0("Wtlen_2_",GenderLabel[2]);PType[cnt]<-3;cnt<-cnt+1
-  # }
   if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     MGparmLabel[cnt]<-paste0("Herm_stdev",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
@@ -892,59 +847,64 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
+  if(!is.null(ctllist$Q_options)) {
   rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
   # create 3.24 compatible Q_setup ----
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
   colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+  }
   # q parlines ----
-  N_Q_parms<-0
-  comments_Q_type<-list()
+  N_Q_parms <- 0
   i<-1
-  for(j in 1:nrow(ctllist$Q_options))
-  {
-    if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
+  if(!is.null(ctllist$Q_options)) {
+    comments_Q_type<-list()
+  
+    for(j in 1:nrow(ctllist$Q_options))
     {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
-      flname <- fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
-                                   ctllist$Q_options[j,]$fleet,")",collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$link==2)  # mirrored
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
-    }
-    if(ctllist$Q_options[j,]$link==3)  # do power
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
-                                   ctllist$Q_options[j,]$fleet ,")", 
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
-                                   ctllist$Q_options[j,]$fleet, ")",
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
-    }
-    if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
-    {
-      ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
-      flname<-fleetnames[ctllist$Q_options[j,]$fleet]
-      comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
-                                   ctllist$Q_options[j,]$fleet, ")",
-                                   collapse="")
-      i <- i + 1
-      N_Q_parms<-N_Q_parms+1
+      if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
+        flname <- fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
+                                     ctllist$Q_options[j,]$fleet,")",collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$link==2)  # mirrored
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
+      }
+      if(ctllist$Q_options[j,]$link==3)  # do power
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
+                                     ctllist$Q_options[j,]$fleet ,")", 
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
+                                     ctllist$Q_options[j,]$fleet, ")",
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
+      {
+        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
+        flname<-fleetnames[ctllist$Q_options[j,]$fleet]
+        comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
+                                     ctllist$Q_options[j,]$fleet, ")",
+                                     collapse="")
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
     }
   }
 
@@ -1004,8 +964,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         "40" = NA, "41" = 2 + Nages + 1, "42" = 5, "43" = 4,
                         "44" = 4 + Nages, "45" = 4 + Nages)
   # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
-  # 5+2*N_nodes, so the npars listed is not exactly correct. This will be
-  # addressed in special cases below.NAs are unused codes.
+  # 5+2*N_nodes, and 6 which is 2+special, so the npars listed is not exactly 
+  # correct. This will be addressed in special cases below.NAs are unused codes.
   size_selex_label<- vector("list", Nfleet+Nsurveys) # do this to initialize size
   # loop through fishing fleets and surveys to assign names
   
@@ -1047,6 +1007,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       stop("Pattern ", as.character(ctllist$size_selex_types[j, "Pattern"]),
            "was used for the size selectivity pattern fleet or survey, but it ",
            " is not valid.")
+    }
+    # pattern 6 is a special case of number of params, so account for here.
+    if(ctllist$size_selex_types[j, "Pattern"] == 6) {
+      tmp_size_selex_Nparms <- tmp_size_selex_Nparms + 
+                               ctllist$size_selex_types[j, "Special"]
     }
     ## spline needs special treatment
     if(ctllist$size_selex_types[j, "Pattern"] == 27) {
@@ -1128,6 +1093,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             age_selex_Nparms)
   age_selex_label <- vector("list", length = Nfleet + Nsurveys)
   for(j in 1:(Nfleet+Nsurveys)) {
+    jn <- fleetnames[j]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j] == 27) {
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
@@ -1155,15 +1121,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
       #Note that age_selex_Nparams[j] not used beyond this point.
     }
-    # do extra retention parameters
-    # if(ctllist$age_selex_types[j,"Discard"] %in% 1:2) { # has discard type 1 or 2
-    #   age_selex_label[[j]] <- c(age_selex_label[[j]],
-    #     paste0("AgeSel_",j,"PRet_",1:4,"_", jn))
-    # }
-    # if(ctllist$age_selex_types[j,"Discard"] == 2) {# has discard type 2
-    #   age_selex_label[[j]] <- c(age_selex_label[[j]], 
-    #     paste0("AgeSel_",j,"PDis_",1:4,"_", jn))
-    # }
     # do extra offset parameters
     if(ctllist$age_selex_types[j,"Male"] == 1) {
       age_selex_label[[j]] <- c(age_selex_label[[j]], 
@@ -1210,9 +1167,22 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       col.names = lng_par_colnames,
                       comments = unlist(age_selex_label))
   }
-  
-  #TODO: We don't currently account for Dirichlet Multinomial Error for Data Weighting
-  #this is turned on in the data file. 
+  # Dirichlet MN pars -----
+  # this is turned on in the data file.
+  if(use_datlist == TRUE) {
+    if(any(datlist$len_info$CompError == 1 ) | 
+       any(datlist$age_info$CompError == 1)) {
+      N_dirichlet_parms <-  max(c(datlist$len_info$ParmSelect, datlist$age_info$ParmSelect))
+    }
+  }
+  if(N_dirichlet_parms > 0) {
+    ctllist <- add_df(ctllist, 
+                      name = "dirichlet_parms",
+                      nrow = N_dirichlet_parms,
+                      ncol = 14,
+                      col.names = lng_par_colnames,
+                      comments = paste0("ln(EffN_mult)_", 1:N_dirichlet_parms))
+  }
   
   # sel timevarying parlines----
   if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
@@ -1410,7 +1380,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         add_vec(ctllist,name="stddev_reporting_selex",length=ctllist$stddev_reporting_specs[4])
     }
     ## Growth bin
-    if(ctllist$stddev_reporting_specs[6]>0){
+    # if using wt at age, this is not read.
+    if(ctllist$stddev_reporting_specs[6]>0  & ctllist$EmpiricalWAA == 0){
       ctllist<-
         add_vec(ctllist,name="stddev_reporting_growth",length=ctllist$stddev_reporting_specs[6])
     }
@@ -1420,7 +1391,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
         add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
     }
   }
-  
   if(ctllist$'.dat'[ctllist$'.i']==999){
     if(verbose) message("read of control file complete (final value = 999)\n")
     ctllist$eof <- TRUE

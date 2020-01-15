@@ -158,7 +158,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("N_platoon", comment = "N_platoons_Within_GrowthPattern")
   if(ctllist$N_platoon > 1) { # Conditional inputs needed if more than 1 platoon.
     wl("sd_ratio", comment = "Morph_between/within_stdev_ratio")
-    wl.vector("submorphdist", comment = "vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
+    wl.vector("submorphdist", comment = "# vector_Morphdist_(-1_in_first_val_gives_normal_approx)")
   }
   # Recruitment distribution ----
   wl("recr_dist_method", comment = "# recr_dist_method for parameters")
@@ -274,9 +274,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "4=read age-fecundity; 5=disabled; 6=read length-maturity"
                       ))
   # Below check added to help users with troubleshooting
-  if(!ctllist$maturity_option %in% c(1:4,6)) {
+  if(!ctllist$maturity_option %in% c(1:6)) {
     stop("Invalid maturity option used. ctllist$maturity_option is", 
-         ctllist$maturity_option, ", but must be 1, 2, 3, 4, or 6.")
+         ctllist$maturity_option, ", but must be 1, 2, 3, 4, 5, or 6.")
   }
   # Below if statements are lines are conditional on the maturity option chosen
   if(ctllist$maturity_option %in% c(3,4)) {
@@ -309,6 +309,17 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # MG parms ----
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
+  # add warning if users are using Maturity option 5. All maturity paramters 
+  # should have negative phase
+  mat_pars <- grep("^Mat", row.names(ctllist$MG_parms))
+  if(any(ctllist$MG_parms[mat_pars, "PHASE"] > 0)) {
+    warning("Maturity option 5 is used, but some growth parameters have ", 
+            "positive phases, which is inconsistent. Please turn off the ", 
+            "parameters ", 
+            paste0(row.names(ctllist$MG_parms)[mat_pars], collapse = ", "),
+            "by setting the phase(s) to negative values.")
+  }
+  
   # MG timevarying parms ----
   if(any(ctllist$MG_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[1] != 0) {
@@ -450,25 +461,31 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   writeComment("#")
   # Q setup ---- 
   writeComment("#_Q_setup for fleets with cpue or survey data")
-  # There are extra commments with info here in control.ss_new, but exclude for now
-  tmp_collength <- length(colnames(ctllist$Q_options))
-  # change column names to match control.ss_new
-  colnames(ctllist$Q_options)[tmp_collength] <- "float  #  fleetname"
-  printdf("Q_options", terminate = TRUE)
-  # change back
-  colnames(ctllist$Q_options)[tmp_collength] <- "float"
-  
-  writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
-  # change column names to match control.ss_new
-  colnames(ctllist$Q_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", 
-                                 "PR_type", "PHASE", "env-var", "use_dev", 
-                                 "dev_mnyr", "dev_mxyr", "dev_PH", "Block",
-                                 "Blk_Fxn  #  parm_name")
-  printdf("Q_parms")
-  # change back
-  colnames(ctllist$Q_parms) <- lng_par_colnames
+  if(!is.null(ctllist$Q_options)) {
+    # There are extra commments with info here in control.ss_new, but exclude for now
+    tmp_collength <- length(colnames(ctllist$Q_options))
+    # change column names to match control.ss_new
+    colnames(ctllist$Q_options)[tmp_collength] <- "float  #  fleetname"
+    printdf("Q_options", terminate = TRUE)
+    # change back
+    colnames(ctllist$Q_options)[tmp_collength] <- "float"
+    
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+    # change column names to match control.ss_new
+    colnames(ctllist$Q_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", 
+                                   "PR_type", "PHASE", "env-var", "use_dev", 
+                                   "dev_mnyr", "dev_mxyr", "dev_PH", "Block",
+                                   "Blk_Fxn  #  parm_name")
+    printdf("Q_parms")
+    # change back
+    colnames(ctllist$Q_parms) <- lng_par_colnames
+  } else {
+    writeLines(text = "-9999 0 0 0 0 0 # terminator", con = zz)
+    writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
+  }
   # time varying q parm lines -----
-  if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
+  if(!is.null(ctllist$Q_options) &&
+    any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
     ctllist$time_vary_auto_generation[3] != 0) {
     writeComment("# timevary Q parameters")
     printdf("Q_parms_tv")
@@ -515,6 +532,13 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   } else {
     writeComment("#_No age_selex_parm")
   }
+  
+  # Dirichlet MN pars ----
+  if(!is.null(ctllist$dirichlet_parms)) {
+    writeComment("#_Dirichlet parameters")
+    printdf("dirichlet_parms", header = FALSE)
+  }
+  
   # TV selectivity pars ----
   #TODO: TV selectivity (devs,env link, and blocks) need to be  implemented in 
   # readctl_3.30; then, read parameters here.
@@ -628,7 +652,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                                  "bin to self-generate)"))
     }
     # Growth bin
-    if(ctllist$stddev_reporting_specs[6] > 0) {
+    # not written if empirical weight at age is used.
+    if(ctllist$stddev_reporting_specs[6] > 0 & ctllist$EmpiricalWAA == 0) {
       wl.vector("stddev_reporting_growth",
                 comment = paste0("# vector with growth std ages picks (-1 in ",
                                  "first bin to self-generate)"))
