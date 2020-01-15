@@ -232,11 +232,11 @@ SS_readdat_3.30 <-
     d$CPUE <- CPUE
     colnames(d$CPUE) <- c("year", "seas", "index", "obs", "se_log")
   }else{
-    d$CPUE <- NA
+    d$CPUE <- NULL
   }
   if (echoall) {
     message("CPUE data:")
-    print(d$CPUE)
+    print(d[["CPUE"]])
   }
 
   ###############################################################################

@@ -144,10 +144,10 @@ SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NU
     datlist$Ngenders <- datlist$Nsexes
     # Note that using NROW on datlist$CPUE that is NA will return 1, when in 
     # reality the number of years should be 0.
-    datlist$N_cpue <- ifelse(is.null(datlist$CPUE) || 
-                             (is.null(dim(datlist$CPUE)) && is.na(datlist$CPUE)), 
+    datlist$N_cpue <- ifelse(is.null(datlist[["CPUE"]]) || 
+                             (is.null(dim(datlist[["CPUE"]])) && is.na(datlist[["CPUE"]])), 
                              0,
-                             NROW(datlist$CPUE))
+                             NROW(datlist[["CPUE"]]))
     # fleet details
     datlist$fleetinfo1<-t(datlist$fleetinfo)
     colnames(datlist$fleetinfo1)<-datlist$fleetinfo$fleetname
