@@ -202,11 +202,11 @@ SSsummarize <- function(biglist,
 
     ## indices
     indextemp <- stats$cpue
-    # temporarily remove columns added in SS version 3.30.13 (March 2019)
-    indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
     if(is.na(indextemp[[1]][1])){
       message("no index data")
     }else{
+      # temporarily remove columns added in SS version 3.30.13 (March 2019)
+      indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
       if(is.null(indices)){
