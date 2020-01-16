@@ -18,6 +18,17 @@
 #' @author Ian G. Taylor, Andi Stephens
 #' @export
 #' @seealso \code{\link{SS_output}}
+#' @examples
+#'
+#'   \dontrun{
+#' # directory with the model output
+#' mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
+#' # read the model output
+#' model <- SS_output(dir = mydir)
+#' # run get_SIS_info:
+#' info <- get_SIS_info(model, stock = "SimpleExample")
+#'   }
+
 
 get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                          stock = "StockName", final_year = 2019){
@@ -31,10 +42,14 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if (is.null(final_year)) {
     final_year <- model$endyr + 1
   }
-  filename <- paste(gsub(" ", "_", stock), final_year, "SIS_info.csv", sep="_")
+  filename_values <- paste(gsub(" ", "_", stock), final_year,
+                           "SIS_info_values.csv", sep="_")
+  filename_timeseries <- paste(gsub(" ", "_", stock), final_year,
+                               "SIS_info_timeseries.csv", sep="_")
 
-  message("writing SIS info to CSV file:\n",
-          file.path(dir, filename ))
+  message("writing SIS info to CSV files:\n",
+          file.path(dir, filename_values ), "\n",
+          file.path(dir, filename_timeseries ))
 
   # years to report for catch-related quantities
   startyr <- model$startyr
@@ -47,7 +62,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(model$nseasons > 1){
     stop("multi-season models are not yet supported")
   }
-  
+
   # aggregate across areas if needed
   if(model$nareas > 1){
     ts.tmp <- ts # copy of table
@@ -152,12 +167,15 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   summary_bio_label <- paste0("Age ", summary_age, "+ biomass")
 
   #######################################
-  
+
   # create new table of metadata to write as multiple header rows
   header_info <- data.frame(matrix("", ncol = ncol(tab), nrow = 4),
                          stringsAsFactors = FALSE)
   colnames(header_info) <- names(tab)
   rownames(header_info) <- c("Category", "Primary", "Description", "Unit")
+
+  # putting "year" in the right place
+  header_info["Category",   "Year"] <- "Year"
 
   # info on total biomass
   header_info["Category",   "Total_Bio"] <- "Abundance"
@@ -181,7 +199,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     header_info["Description","SpawnBio"] <- "Spawning Biomass"
     header_info["Unit",       "SpawnBio"] <- "Metric Tons"
   }
-  
+
   # info on fraction unfished
   header_info["Category",   "FractionUnfished"] <- "Spawners"
   header_info["Primary",    "FractionUnfished"] <- "N"
@@ -212,7 +230,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   header_info["Primary",    "SPR_report"] <- "Y"
   header_info["Description","SPR_report"] <- model$SPRratioLabel
   header_info["Unit",       "SPR_report"] <- "Rate"
-  
+
   # info on 1 - SPR
   header_info["Category",   "1-SPR"] <- "Fmort"
   header_info["Primary",    "1-SPR"] <- "N"
@@ -221,11 +239,11 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
 
   # add extra column to help with format of CSV file
   tab <- cbind("", tab)
-  
+
   # end of time series calculations
   ######################################################################
   # start gathering quantities of interest
-  
+
   if(model$sprtarg == -999){
     SPRtarg_text <- "SPR_XX%"
     model$sprtarg <- NA
@@ -249,7 +267,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   }else{
     MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
   }
-  
+
   Bcurrent <- tab$SpawnBio[tab$Year == final_year]
 
   # MSY-proxy labels were changed at some point
@@ -265,7 +283,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   SS_version <- strsplit(model$SS_version, split = ";")[[1]][1]
   gsub("-safe", "", SS_version)
   gsub("-opt", "", SS_version)
-  
+
   # make big 2-column table of info about each model
   info_tab <- c(paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),
                 "",
@@ -316,7 +334,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("Max. B Estimate, ", NA),
                 paste0("Best B Estimate, ", Bcurrent),
                 paste0("B Basis, ",         "Spawning Biomass / Female mature biomass"),
-                paste0("B unit, ",          "mt"),
+                paste0("B Unit, ",          "mt"),
                 paste0("MSY, ",             Yield_at_B_target),
                 paste0("MSY Unit, ",        "mt"),
                 paste0("[MSY Basis], ",     "Yield with SPR_",
@@ -340,24 +358,22 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "")
 
   if(writecsv){
-    # write 2-column table with quantities of interest at the top of the file
-    write.table(info_tab, file = file.path(dir, filename),
+    # write 2-column table with quantities of interest
+    write.table(info_tab, file = file.path(dir, filename_values),
                 quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE)
-    # add multiple header rows for time series table (suppressing warning about
-    # 'appending column names to file')
+
+    # write header rows for time series table
+    write.table(header_info, file = file.path(dir, filename_timeseries),
+                quote = FALSE, sep = ",", row.names = TRUE, col.names = FALSE,
+                append = FALSE)
+    # add time series values (suppressing warning about 'appending column names to file')
     suppressWarnings(
-        write.table(header_info, file = file.path(dir, filename),
-                    quote = FALSE, sep = ",", row.names = TRUE, col.names = FALSE,
-                    append = TRUE)
-    )
-    # add time series values
-    suppressWarnings(
-        write.table(tab, file = file.path(dir, filename),
+        write.table(tab, file = file.path(dir, filename_timeseries),
                     quote = FALSE, sep = ",", row.names = FALSE, col.names = FALSE,
                     append = TRUE)
     )
   }
 
-  # return the list 
+  # return the list
   invisible(list(info = info_tab, timeseries = tab))
 }
