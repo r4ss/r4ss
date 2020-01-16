@@ -117,7 +117,7 @@
 #' posterior distributions in which the median and mean differ.
 #' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to
-#' the \code{par} command in the \code{\link{make_multifig} function.
+#' the \code{par} command in the \code{\link{make_multifig}} function.
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
@@ -155,7 +155,7 @@ SSplotComps <-
                       "Conditional AAL plot, ",#14
                       "Size bin"),             #15
            printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
+           maxrows=4,maxcols=4,maxrows2=2,maxcols2=4,rows=1,cols=1,
            andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
            scalebins=FALSE,addMeans=TRUE,mainTitle=FALSE,...)

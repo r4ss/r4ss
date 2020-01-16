@@ -59,8 +59,8 @@ SSplotComps(
     "(numbers x1000)", "Stdev (Age) (yr)", "Conditional AAL plot, ", "Size bin"),
   printmkt = TRUE,
   printsex = TRUE,
-  maxrows = 6,
-  maxcols = 6,
+  maxrows = 4,
+  maxcols = 4,
   maxrows2 = 2,
   maxcols2 = 4,
   rows = 1,
@@ -256,6 +256,9 @@ work correctly in all cases.}
 posterior distributions in which the median and mean differ.}
 
 \item{mainTitle}{Logical indicating if a title for the plot should be produced}
+
+\item{\dots}{additional arguments that will be passed to
+the \code{par} command in the \code{\link{make_multifig}} function.}
 }
 \description{
 Plot composition data and fits from Stock Synthesis output.  Multi-figure
