@@ -4,26 +4,78 @@
 \alias{make_multifig}
 \title{Create multi-figure plots.}
 \usage{
-make_multifig(ptsx, ptsy, yr, linesx = 0, linesy = 0, ptsSD = 0,
-  sampsize = 0, effN = 0, showsampsize = TRUE, showeffN = TRUE,
-  sampsize_label = "N=", effN_label = "effN=", sampsizeround = 1,
-  maxrows = 6, maxcols = 6, rows = 1, cols = 1, fixdims = TRUE,
-  main = "", cex.main = 1, xlab = "", ylab = "", size = 1,
-  cexZ1 = 1.5, bublegend = TRUE, maxsize = NULL, do.sqrt = TRUE,
-  minnbubble = 8, allopen = TRUE, horiz_lab = "default",
-  xbuffer = c(0.1, 0.1), ybuffer = c(0, 0.15), yupper = NULL,
-  ymin0 = TRUE, axis1 = NULL, axis2 = NULL, linepos = 1,
-  type = "o", polygons = TRUE, bars = FALSE, barwidth = "default",
-  ptscex = 1, ptscol = 1, ptscol2 = 1, colvec = c(rgb(1, 0, 0,
-  0.7), rgb(0, 0, 1, 0.7), rgb(0.1, 0.1, 0.1, 0.7)), linescol = c(rgb(0,
-  0.8, 0, 0.7), rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7)), lty = 1,
-  lwd = 2, pch = 1, nlegends = 3, legtext = list("yr", "sampsize",
-  "effN"), legx = "default", legy = "default", legadjx = "default",
-  legadjy = "default", legsize = c(1.2, 1), legfont = c(2, 1),
-  venusmars = TRUE, sampsizeline = FALSE, effNline = FALSE,
-  sampsizemean = NULL, effNmean = NULL, ipage = 0,
-  scalebins = FALSE, sexvec = NULL, multifig_colpolygon = c("grey60",
-  "grey80", "grey70"), multifig_oma = c(5, 5, 5, 2) + 0.1, ...)
+make_multifig(
+  ptsx,
+  ptsy,
+  yr,
+  linesx = 0,
+  linesy = 0,
+  ptsSD = 0,
+  sampsize = 0,
+  effN = 0,
+  showsampsize = TRUE,
+  showeffN = TRUE,
+  sampsize_label = "N=",
+  effN_label = "effN=",
+  sampsizeround = 1,
+  maxrows = 6,
+  maxcols = 6,
+  rows = 1,
+  cols = 1,
+  fixdims = TRUE,
+  main = "",
+  cex.main = 1,
+  xlab = "",
+  ylab = "",
+  size = 1,
+  cexZ1 = 1.5,
+  bublegend = TRUE,
+  maxsize = NULL,
+  do.sqrt = TRUE,
+  minnbubble = 8,
+  allopen = TRUE,
+  xbuffer = c(0.1, 0.1),
+  ybuffer = c(0, 0.15),
+  yupper = NULL,
+  ymin0 = TRUE,
+  xlas = 0,
+  ylas = NULL,
+  axis1 = NULL,
+  axis2 = NULL,
+  axis1labs = NULL,
+  linepos = 1,
+  type = "o",
+  polygons = TRUE,
+  bars = FALSE,
+  barwidth = "default",
+  ptscex = 1,
+  ptscol = 1,
+  ptscol2 = 1,
+  colvec = c(rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7), rgb(0.1, 0.1, 0.1, 0.7)),
+  linescol = c(rgb(0, 0.8, 0, 0.7), rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7)),
+  lty = 1,
+  lwd = 2,
+  pch = 1,
+  nlegends = 3,
+  legtext = list("yr", "sampsize", "effN"),
+  legx = "default",
+  legy = "default",
+  legadjx = "default",
+  legadjy = "default",
+  legsize = c(1.2, 1),
+  legfont = c(2, 1),
+  venusmars = TRUE,
+  sampsizeline = FALSE,
+  effNline = FALSE,
+  sampsizemean = NULL,
+  effNmean = NULL,
+  ipage = 0,
+  scalebins = FALSE,
+  sexvec = NULL,
+  multifig_colpolygon = c("grey60", "grey80", "grey70"),
+  multifig_oma = NULL,
+  ...
+)
 }
 \arguments{
 \item{ptsx}{vector of x values for points or bars}
@@ -90,9 +142,6 @@ more info.}
 
 \item{allopen}{should all bubbles be open? see ?bubble3 for more info.}
 
-\item{horiz_lab}{axis labels set horizontal all the time (TRUE), never
-(FALSE) or only when relatively short ("default")}
-
 \item{xbuffer}{extra space around points on the left and right as fraction
 of total width of plot}
 
@@ -103,9 +152,19 @@ of total height of plot}
 
 \item{ymin0}{fix minimum y-value at 0?}
 
-\item{axis1}{position of bottom axis values}
+\item{xlas}{label style (las) input for x-axis. Default 0 has horizontal
+labels, input 2 would provide vertical lables.}
 
-\item{axis2}{position of left size axis values}
+\item{ylas}{label style (las) input for y-axis. Default NULL has horizontal
+labels when all labels have fewer than 6 characters and vertical otherwise.
+Input 0 would force vertical labels, and 1 would force horizontal.}
+
+\item{axis1}{optional position of bottom axis values}
+
+\item{axis2}{optional position of left size axis values}
+
+\item{axis1labs}{optional vector of labels for axis1 (either NULL or needs to
+match length of axis1)}
 
 \item{linepos}{should lines be added on top of points (linepos=1) or behind
 (linepos=2)?}
@@ -188,7 +247,7 @@ passed to this function via the ... argument.}
 \item{multifig_oma}{vector of outer margins. Can be input to SS_plots and will be
 passed to this function via the ... argument.}
 
-\item{\dots}{additional arguments (NOT YET IMPLEMENTED).}
+\item{\dots}{additional arguments passed to \code{par}.}
 }
 \description{
 Function created as an alternative to lattice package for multi-figure plots

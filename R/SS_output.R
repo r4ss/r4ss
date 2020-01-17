@@ -2577,7 +2577,7 @@ SS_output <-
     }
   }else{
     # if INDEX_2 not present (not sure the circumstances that would cause this)
-    cpue <- NA
+    cpue <- NULL
   }
   returndat$cpue <- cpue
 

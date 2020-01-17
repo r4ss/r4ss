@@ -4,12 +4,19 @@
 \alias{SSgetMCMC}
 \title{Read MCMC output.}
 \usage{
-SSgetMCMC(dir = NULL, verbose = TRUE, writecsv = FALSE,
-  postname = "posteriors.sso", derpostname = "derived_posteriors.sso",
-  csv1 = "keyposteriors.csv", csv2 = "nuisanceposteriors.csv",
+SSgetMCMC(
+  dir = NULL,
+  verbose = TRUE,
+  writecsv = FALSE,
+  postname = "posteriors.sso",
+  derpostname = "derived_posteriors.sso",
+  csv1 = "keyposteriors.csv",
+  csv2 = "nuisanceposteriors.csv",
   keystrings = c("NatM", "R0", "steep", "RecrDev_2008", "Q_extraSD"),
-  nuisancestrings = c("Objective_function", "SSB_", "InitAge",
-  "RecrDev"), burnin = 0, thin = 1)
+  nuisancestrings = c("Objective_function", "SSB_", "InitAge", "RecrDev"),
+  burnin = 0,
+  thin = 1
+)
 }
 \arguments{
 \item{dir}{Directory containing MCMC output.}

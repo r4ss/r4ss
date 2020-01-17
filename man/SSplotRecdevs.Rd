@@ -4,15 +4,32 @@
 \alias{SSplotRecdevs}
 \title{Plot recruitment deviations}
 \usage{
-SSplotRecdevs(replist, subplots = 1:3, plot = TRUE, print = FALSE,
-  add = FALSE, uncertainty = TRUE, minyr = -Inf, maxyr = Inf,
-  forecastplot = FALSE, col1 = "black", col2 = "blue",
-  col3 = "green3", col4 = "red", legendloc = "topleft",
-  labels = c("Year", "Asymptotic standard error estimate",
-  "Log recruitment deviation",
-  "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"), pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, plotdir = "default", verbose = TRUE)
+SSplotRecdevs(
+  replist,
+  subplots = 1:3,
+  plot = TRUE,
+  print = FALSE,
+  add = FALSE,
+  uncertainty = TRUE,
+  minyr = -Inf,
+  maxyr = Inf,
+  forecastplot = FALSE,
+  col1 = "black",
+  col2 = "blue",
+  col3 = "green3",
+  col4 = "red",
+  legendloc = "topleft",
+  labels = c("Year", "Asymptotic standard error estimate", "Log recruitment deviation",
+    "Bias adjustment fraction, 1 - stddev^2 / sigmaR^2"),
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  plotdir = "default",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}

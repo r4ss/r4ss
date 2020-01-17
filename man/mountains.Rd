@@ -4,9 +4,22 @@
 \alias{mountains}
 \title{Make shaded polygons with a mountain-like appearance}
 \usage{
-mountains(zmat, xvec = NULL, yvec = NULL, zscale = 3, rev = TRUE,
-  nshades = 100, axes = TRUE, xaxs = "i", yaxs = "i", xlab = "",
-  ylab = "", las = 1, addbox = FALSE, ...)
+mountains(
+  zmat,
+  xvec = NULL,
+  yvec = NULL,
+  zscale = 3,
+  rev = TRUE,
+  nshades = 100,
+  axes = TRUE,
+  xaxs = "i",
+  yaxs = "i",
+  xlab = "",
+  ylab = "",
+  las = 1,
+  addbox = FALSE,
+  ...
+)
 }
 \arguments{
 \item{zmat}{A matrix where the rows represent the heights of each mountain

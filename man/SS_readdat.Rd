@@ -4,8 +4,13 @@
 \alias{SS_readdat}
 \title{read Stock Synthesis data file}
 \usage{
-SS_readdat(file, version = NULL, verbose = TRUE, echoall = FALSE,
-  section = NULL)
+SS_readdat(
+  file,
+  version = NULL,
+  verbose = TRUE,
+  echoall = FALSE,
+  section = NULL
+)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}

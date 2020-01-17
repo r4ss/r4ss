@@ -4,9 +4,17 @@
 \alias{SSsummarize}
 \title{Summarize the output from multiple Stock Synthesis models.}
 \usage{
-SSsummarize(biglist, sizeselfactor = "Lsel", ageselfactor = "Asel",
-  selfleet = NULL, selyr = "startyr", selgender = 1,
-  SpawnOutputUnits = NULL, lowerCI = 0.025, upperCI = 0.975)
+SSsummarize(
+  biglist,
+  sizeselfactor = "Lsel",
+  ageselfactor = "Asel",
+  selfleet = NULL,
+  selyr = "startyr",
+  selgender = 1,
+  SpawnOutputUnits = NULL,
+  lowerCI = 0.025,
+  upperCI = 0.975
+)
 }
 \arguments{
 \item{biglist}{A list of lists, one for each model. The individual lists can

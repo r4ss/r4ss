@@ -4,11 +4,22 @@
 \alias{SSplotSummaryF}
 \title{Plot the summary F (or harvest rate).}
 \usage{
-SSplotSummaryF(replist, yrs = "all", Ftgt = NA,
-  ylab = "Summary Fishing Mortality", plot = TRUE, print = FALSE,
-  plotdir = "default", verbose = TRUE, uncertainty = TRUE,
-  pwidth = 6.5, pheight = 5, punits = "in", res = 300,
-  ptsize = 10)
+SSplotSummaryF(
+  replist,
+  yrs = "all",
+  Ftgt = NA,
+  ylab = "Summary Fishing Mortality",
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  verbose = TRUE,
+  uncertainty = TRUE,
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10
+)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}
