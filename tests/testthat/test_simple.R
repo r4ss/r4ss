@@ -125,18 +125,18 @@ test_that("SSsummarize and SSplotComparisons both work", {
 test_that("SS_readdat and SS_writedat both work for 3.24", {
   # read data file
   simple3.24_dat <- SS_readdat(file = file.path(example_path,"simple_3.24/simple.dat"),
-                               version="3.24")
+                               version="3.24", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/testdat_3.24.ss"),
               version = "3.24",
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.24_dat,
               outfile = file.path(example_path, "simple_3.24/fastdat_3.24.ss"),
               version = "3.24",
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 ###############################################################################
@@ -146,16 +146,16 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
 test_that("SS_readdat and SS_writedat both work for 3.30.01", {
   # read data file
   simple3.30.01_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.01/simple.dat"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.01_dat,
               outfile = file.path(example_path, "simple_3.30.01/testdat_3.30.01.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.01_dat,
               outfile = file.path(example_path, "simple_3.30.01/fastdat_3.30.01.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 ###############################################################################
@@ -165,16 +165,16 @@ test_that("SS_readdat and SS_writedat both work for 3.30.01", {
 test_that("SS_readdat and SS_writedat both work for 3.30.12", {
   # read data file
   simple3.30.12_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.12/simple_data.ss"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.12_dat,
               outfile = file.path(example_path, "simple_3.30.12/testdat_3.30.12.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.12_dat,
               outfile = file.path(example_path, "simple_3.30.12/fastdat_3.30.12.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 
@@ -185,16 +185,16 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
 test_that("SS_readdat and SS_writedat both work for 3.30.13", {
   # read data file
   simple3.30.13_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.13/simple_data.ss"),
-                               version="3.30")
+                               version="3.30", verbose = FALSE)
   # write data file
   SS_writedat(datlist = simple3.30.13_dat,
               outfile = file.path(example_path, "simple_3.30.13/testdat_3.30.13.ss"),
-              faster = FALSE)
+              faster = FALSE, verbose = FALSE)
 
   # write data file with faster option
   SS_writedat(datlist = simple3.30.13_dat,
               outfile = file.path(example_path, "simple_3.30.13/fastdat_3.30.13.ss"),
-              faster = TRUE)
+              faster = TRUE, verbose = FALSE)
 })
 
 
@@ -206,9 +206,10 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
   # read forecast file
   simple3.30.13_forecast <-
     SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
-                    version="3.30")
+                    version="3.30", verbose = FALSE)
   # write forecast file
   SS_writeforecast(mylist = simple3.30.13_forecast,
                    dir = file.path(example_path, "simple_3.30.13"),
-                   file = "testforecast_3.30.13.ss")
+                   file = "testforecast_3.30.13.ss",
+                   overwrite = TRUE)
 })

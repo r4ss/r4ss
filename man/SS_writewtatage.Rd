@@ -24,7 +24,7 @@ the current working directory, and thus, full file paths should
 not be specified for other arguments as they will be appended
 to \code{dir}.}
 
-\item{file}{Filename for new weight-at-age file, which 
+\item{file}{Filename for new weight-at-age file, which
 will be appended to \code{dir} to create a full file path.
 Default="wtatage.ss".}
 

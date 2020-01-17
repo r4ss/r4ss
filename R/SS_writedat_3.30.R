@@ -228,7 +228,11 @@ SS_writedat_3.30 <- function(datlist,
   print.df(d$CPUEinfo, terminate=FALSE)
 
   writeComment("#\n#_CPUE_data")
+  if(d$N_cpue > 0) {
   print.df(d$CPUE)
+  } else {
+    writeLines(text = "-9999 1 1 1 1 # terminator", con = zz)
+  }
 
   # write discard info
   wl("N_discard_fleets")
