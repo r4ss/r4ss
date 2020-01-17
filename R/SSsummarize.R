@@ -161,7 +161,7 @@ SSsummarize <- function(biglist,
          all(names(likelihoods_by_fleet)==names(liketemp2)))){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
-      warning("problem summarizing likelihoods by fleet due to mismatched columns")
+      likelihoods_by_fleet <- merge(likelihoods_by_fleet, liketemp2, all = TRUE)
     }
 
     ## likelihoods by tag group
