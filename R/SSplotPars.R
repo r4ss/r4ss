@@ -59,11 +59,26 @@
 #' @examples
 #'
 #' \dontrun{
-#' model <- SS_output(dir='c:/SS/Simple/'
+#' # read model results
+#' model <- SS_output(dir='c:/SS/Simple/')
+#' # make default plots where parameter distribution plots will appear
+#' # in the "pars" tab
+#' SS_plots(model)
+#'
+#' # create just the "pars" tab with control of the inputs that are
+#' # passed to SSplotPars
+#' SS_plots(model, plot = 25, showmle=TRUE, showpost=TRUE,
+#' showprior=TRUE, showinit=TRUE, showdev=FALSE, fitrange = FALSE)
+#' 
+#' # call SSplotPars directly
 #' SSplotPars(replist = model)
 #'
-#' # strings can be partial match
-#' SSplotPars(dir = model, strings = c("steep", "R0"))
+#' # Create plot in custom location. Note that strings can be partial match.
+#' # File name will be "parameter_distributions.png"
+#' # or "parameter_distributions_pageX.png" when they don't all fit on one page
+#' SSplotPars(replist = model, strings = c("steep", "R0"),
+#'            nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
+#'            plotdir = file.path(model$inputs$dir, "distribution_plots"))
 #' }
 #'
 SSplotPars <-
