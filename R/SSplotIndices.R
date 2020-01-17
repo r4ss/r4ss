@@ -77,7 +77,7 @@ SSplotIndices <-
 function(replist,subplots=c(1:9),
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
-         smooth=TRUE,add=FALSE,datplot=FALSE,
+         smooth=TRUE,add=FALSE,datplot=TRUE,
          labels=c("Year",        #1
            "Index",              #2
            "Observed index",     #3
@@ -175,10 +175,17 @@ function(replist,subplots=c(1:9),
 
     xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
     if(!add){
+      # get range for expected values
+      zmax <- NULL 
+      if(addexpected){
+        zmin <- min(z, na.rm = TRUE)
+      }
+      logzrange <- range(log(z))
+      
       # y-limits with lognormal error
       if(!log){
         # ylim for standard scale
-        ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
+        ylim <- c(0, 1.05*min(max(upper_total, zmax, na.rm = TRUE),
                               max(maximum_ymax_ratio * y)))
       }
       if(log){
@@ -375,51 +382,6 @@ function(replist,subplots=c(1:9),
   # subset fleets as requested
   fleetvec <- intersect(fleets, unique(as.numeric(cpue$Fleet)))
 
-  # use fancy colors only if any index spans more than one season
-  usecol <- FALSE
-  for(ifleet in fleetvec){
-    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
-      usecol <- TRUE
-    }
-  }
-  # turn off use of legend if there's never more than 1 season per index
-  if(!usecol){
-    legend <- FALSE
-  }
-
-  if(col1[1]=="default"){
-    colvec1 <- "black"
-    if(usecol & nseasons==4){
-      colvec1 <- c("blue4","green3","orange2","red3")
-    }
-    if(usecol & !nseasons %in% c(1,4)){
-      colvec1 <- rich.colors.short(nseasons)
-    }
-  }else{
-    colvec1 <- col1
-    # if user provides single value (or vector of length less than nseasons)
-    # make sure it's adequate to cover all seasons
-    if(length(colvec1) < nseasons){
-      colvec1 <- rep(col1, nseasons)
-    }
-  }
-  if(col2[1]=="default"){
-    colvec2 <- "blue"
-    if(usecol & nseasons==4){
-      colvec2 <- c("blue4","green3","orange2","red3")
-    }
-    if(usecol & !nseasons %in% c(1,4)){
-      colvec2 <- rich.colors.short(nseasons)
-    }
-  }else{
-    colvec2 <- col2
-    # if user provides single value (or vector of length less than nseasons)
-    # make sure it's adequate to cover all seasons
-    if(length(colvec1) < nseasons){
-      colvec1 <- rep(col1, nseasons)
-    }
-  }
-  if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
   # empty data.frame to store data for comparison among indices
   allcpue <- data.frame()
@@ -431,6 +393,51 @@ function(replist,subplots=c(1:9),
   
   # loop over fleets
   for(ifleet in fleetvec){
+
+    # use fancy colors only if the individual index spans more than one season
+    usecol <- FALSE
+    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
+      usecol <- TRUE
+    }
+
+    # turn off use of legend if there's never more than 1 season per index
+    if(!usecol){
+      legend <- FALSE
+    }
+
+    if(col1[1]=="default"){
+      colvec1 <- "black"
+      if(usecol & nseasons==4){
+        colvec1 <- c("blue4","green3","orange2","red3")
+      }
+      if(usecol & !nseasons %in% c(1,4)){
+        colvec1 <- rich.colors.short(nseasons)
+      }
+    }else{
+      colvec1 <- col1
+      # if user provides single value (or vector of length less than nseasons)
+      # make sure it's adequate to cover all seasons
+      if(length(colvec1) < nseasons){
+        colvec1 <- rep(col1, nseasons)
+      }
+    }
+    if(col2[1]=="default"){
+      colvec2 <- "blue"
+      if(usecol & nseasons==4){
+        colvec2 <- c("blue4","green3","orange2","red3")
+      }
+      if(usecol & !nseasons %in% c(1,4)){
+        colvec2 <- rich.colors.short(nseasons)
+      }
+    }else{
+      colvec2 <- col2
+      # if user provides single value (or vector of length less than nseasons)
+      # make sure it's adequate to cover all seasons
+      if(length(colvec1) < nseasons){
+        colvec1 <- rep(col1, nseasons)
+      }
+    }
+    if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
     
     Fleet <- fleetnames[ifleet]
     error <- replist$survey_error[ifleet]
