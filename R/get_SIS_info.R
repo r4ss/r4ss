@@ -90,40 +90,35 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     ts_tab$Total_Bio[ts_tab$Year == final_year] <- NA
   }
 
-  # calculate total catch (aggregated across fleets)
-  ##### old way didn't work as well for forecast years
-  ##   catch_tab <- aggregate(model$catch$kill_bio, by = list(model$catch$Yr),
-  ##                          FUN = function(x){round(sum(x))})
-  ##   names(catch_tab) <- c("Year","Catch")
-  catch_tab <- data.frame(Year = model$timeseries$Yr,
-                          Catch = apply(model$timeseries[,grep("dead(B)",
-                              names(model$timeseries), fixed = TRUE)],
-                              MARGIN = 1, FUN = sum))
+  # calculate total dead catch (aggregated across fleets)
+  dead_bio_columns <- grep("dead(B)", names(model$timeseries), fixed = TRUE)
+  if(length(dead_bio_columns) > 1){
+    catch_tab <- data.frame(Year = model$timeseries$Yr,
+                            Catch = apply(model$timeseries[,dead_bio_columns],
+                                MARGIN = 1, FUN = sum))
+  }
+  if(length(dead_bio_columns) == 1){
+    catch_tab <- data.frame(Year = model$timeseries$Yr,
+                            Catch = model$timeseries[,dead_bio_columns])
+  }
+  if(length(dead_bio_columns) == 0){
+    stop("No columns matching 'dead(B)' in model$timeseries")
+  }
+
   # not sure why this is needed, but it is
   catch_tab$Year <- as.numeric(catch_tab$Year)
+  if(model$nareas > 1){
+    catch_tab <- aggregate(catch_tab$Catch,
+                           by = list(catch_tab$Year),
+                           FUN = sum)
+    names(catch_tab) <- c("Year", "Catch")
+  }
   catch_tab$Catch <- round(catch_tab$Catch, 0)
   rownames(catch_tab) <- 1:nrow(catch_tab)
-  ## }
 
   # filter years and set forecast values to NA
   catch_tab <- catch_tab[catch_tab$Year %in% years,]
   catch_tab[catch_tab$Year == final_year, -1] <- NA
-
-
-  ##### code below related to old way of calculating catch, no longer needed
-  ## if (endyr <= model$endyr) {
-  ##   # add NA value for final_year if not present (this was the case in SS version 3.30.12)
-  ##   if(endyr+1 %in% catch_tab$Year){
-  ##     catch_tab <- rbind(catch_tab, data.frame(Year = final_year, Catch = NA))
-  ##   }
-  ## } else {
-  ##   forecatch <- data.frame(model$derived_quants[grepl("ForeCatch",model$derived_quants$Label),1:2])
-  ##   names(forecatch) <- c("Year","Catch")
-  ##   forecatch$Year <- gsub("ForeCatch_", "", forecatch$Year)
-  ##   forecatch <- forecatch[forecatch$Year < (endyr+2),]
-  ##   forecatch$Catch[nrow(forecatch)] <- NA
-  ##   catch_tab <- rbind(catch_tab, forecatch)
-  ## } # end if-else
 
   # calculate proxy-F values (e.g. exploitation rate)
   F_tab <- data.frame(Year = years,
