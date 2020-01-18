@@ -47,7 +47,7 @@ SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
   if(verbose) message("opening connection to",outfile,"\n")
   zz <- file(outfile, open="at")
   on.exit(close(zz))
-  sink(zz)
+  sink(zz, split=verbose)
 
   writeLines(paste(NCOL(mylist)-7, "# maxage"))
   writeLines("# if Yr is negative, then fill remaining years for that Seas, growpattern, Bio_Pattern, Fleet")
