@@ -2182,15 +2182,10 @@ SS_output <-
   returndat$F_method <- F_method
 
   if(exploitation[[1]][1]!="absent"){
-    # more processing of exploitation
-    exploitation[exploitation=="_"] <- NA
     # "init_yr" not used as of 3.30.13, but must have been in the past
-    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-    # make columns numeric
-    for(icol in 1:ncol(exploitation)){
-      exploitation[,icol] <- as.numeric(exploitation[,icol])
-    }
-    returndat$exploitation <- exploitation
+    exploitation$Yr[exploitation$Yr %in% c("init_yr","INIT")] <- startyr-1 # making numeric
+    returndat$exploitation <- type.convert(exploitation,
+      na.strings = c("NA","_","nan"))
   }else{
     returndat$exploitation <- NULL
   }
