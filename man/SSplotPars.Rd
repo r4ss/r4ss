@@ -118,8 +118,6 @@ substrings are allowed.}
 
 \item{newheaders}{Optional vector of headers for each panel to replace the
 parameter names.}
-
-\item{returntable}{Return table of parameter info? Default=FALSE.}
 }
 \description{
 Make multi-figure plots of prior, posterior, and estimated asymptotic

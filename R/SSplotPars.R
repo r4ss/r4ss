@@ -46,7 +46,6 @@
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
 #' @param res Resolution for PNG file
-#' @param returntable Return table of parameter info? Default=FALSE.
 #' @param strings Subset parameters included in the plot using substring from
 #' parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
 #' estimated quantities in this model).
