@@ -1216,14 +1216,31 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       comments = tmp_parlab)
   }
   #2DAR ----
-  ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity") # Experimental facility
-  #TODO: add code to read files when 2D_AR1 is used.
+  ctllist<-add_elem(ctllist,name="Use_2D_AR1_selectivity")
   if (ctllist$Use_2D_AR1_selectivity == 1) {
-    ctllist <- add_vec(ctllist, "specs_2D_AR")
-    ctllist <- add_df(ctllist, "pars_2D_AR", nrow=3,ncol=14,
-      col.names = c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
-                    "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
-    stop("SS_readctl_3.30 cannot yet read 2DAR1 selectivity options")
+    add_2dar <- function(x) {
+      end <- x$.i
+      while(length(grep("^-9999", x$.dat[end])) == 0) {
+        end <- end + 1
+      }
+      n2dfleets <- length(x$.dat[x$.i:(end-1)]) / (11 + 3 * 7)
+      par2D <- matrix(x$.dat[(end - 3*7*n2dfleets):(end-1)],
+        nrow = 3*n2dfleets, byrow = TRUE)
+      colnames(par2D) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE")
+      names2D <- c("sigma_sel", "rho_year", "rho_age")
+      rownames(par2D) <- sprintf(paste0(names2D, ":%d"), 
+        rep(1:n2dfleets, each=3))
+      specs2D <- matrix(x$.dat[x$.i:(x$.i+10*n2dfleets)],
+        nrow = n2dfleets, byrow = TRUE)
+      colnames(specs2D) <- c("fleet", "ymin", "ymax", "amin", "amax", 
+        "sig_amax", "use_rho", "l1/a2", "devphase", "before_range", "after_range")
+      rownames(specs2D) <- paste0("2d_AR specs:", 1:n2dfleets)
+      x[["specs_2D_AR"]] <- specs2D
+      x[["pars_2D_AR"]] <- par2D
+      x[[".i"]] <- end + 11
+      return(x)
+    }
+    ctllist <- add_2dar(x = ctllist)
   }
 
 # tagging ----  
