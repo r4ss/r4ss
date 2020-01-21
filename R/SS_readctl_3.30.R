@@ -1235,8 +1235,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       colnames(specs2D) <- c("fleet", "ymin", "ymax", "amin", "amax", 
         "sig_amax", "use_rho", "l1/a2", "devphase", "before_range", "after_range")
       rownames(specs2D) <- paste0("2d_AR specs:", 1:n2dfleets)
-      x[["specs_2D_AR"]] <- specs2D
-      x[["pars_2D_AR"]] <- par2D
+      x[["specs_2D_AR"]] <- as.data.frame(specs2D, stringsAsFactors = FALSE)
+      x[["pars_2D_AR"]] <- as.data.frame(par2D, stringsAsFactors = FALSE)
       x[[".i"]] <- end + 11
       return(x)
     }
