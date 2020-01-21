@@ -309,16 +309,6 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # MG parms ----
   writeComment(c("#","#_growth_parms"))
   printdf("MG_parms", cols_to_rm = 15) # need to get rid of the last col PType.
-  # add warning if users are using Maturity option 5. All maturity paramters 
-  # should have negative phase
-  mat_pars <- grep("^Mat", row.names(ctllist$MG_parms))
-  if(any(ctllist$MG_parms[mat_pars, "PHASE"] > 0)) {
-    warning("Maturity option 5 is used, but some growth parameters have ", 
-            "positive phases, which is inconsistent. Please turn off the ", 
-            "parameters ", 
-            paste0(row.names(ctllist$MG_parms)[mat_pars], collapse = ", "),
-            "by setting the phase(s) to negative values.")
-  }
   
   # MG timevarying parms ----
   if(any(ctllist$MG_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
