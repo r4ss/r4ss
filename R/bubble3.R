@@ -58,6 +58,7 @@ bubble3 <- function (x,y,z,col=1,cexZ1=5,maxsize=NULL,do.sqrt=TRUE,
     # filter NA values
     x <- x[!is.na(z)]
     y <- y[!is.na(z)]
+    col <- col[!is.na(z)]
     z <- z[!is.na(z)]
 
     n <- length(x)
