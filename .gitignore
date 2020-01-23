@@ -50,3 +50,6 @@ inst/extdata/*/*posterior*
 plots
 ignored
 revdep
+\.Rhistory
+*\.Rproj
+\.Rproj\.user/
