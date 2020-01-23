@@ -1070,7 +1070,8 @@ SSplotComps <-
           kind2 <- tolower(kind)
           if(plot){
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2,
-                                  fleet=f, fleetnames=fleetnames, datonly=datonly)
+                                  fleet=f, fleetnames=fleetnames, datonly=datonly,
+                                  printit = verbose)
           }
           if(print){ # set up plotting to png file if required
             file <- paste0(filenamestart,
@@ -1082,7 +1083,8 @@ SSplotComps <-
                 units=punits,res=res,pointsize=ptsize)
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2,
-                                  fleet=f, fleetnames=fleetnames, datonly=datonly)
+                                  fleet=f, fleetnames=fleetnames, datonly=datonly,
+                                  printit = verbose)
             # create caption
             caption <- paste0("Mean ", gsub("len","length",tolower(kind)),
                               " for ", fleetnames[f],
