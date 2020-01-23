@@ -40,13 +40,8 @@ ss.rep
 ss.par
 *.exe
 *.bat
-inst/extdata/*.png
-inst/extdata/*/fastdat*
-inst/extdata/*/testdat*
-inst/extdata/*/retrospectives/
-inst/extdata/*/jitter/
-inst/extdata/*/profile/
-inst/extdata/*/*posterior*
-plots
 ignored
 revdep
+\.Rhistory
+*\.Rproj
+.Rproj.user

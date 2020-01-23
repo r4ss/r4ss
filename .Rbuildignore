@@ -5,3 +5,5 @@ man-roxygen
 ignored
 revdep
 ^CRAN-RELEASE$
+^.*\.Rproj$
+^\.Rproj\.user$
