@@ -9,24 +9,23 @@ example_path <- system.file("extdata", package="r4ss")
 ###############################################################################
 # testing SS_output 
 ###############################################################################
-
+simple3.24 <- SS_output(file.path(example_path,"simple_3.24"))
 test_that("SS_output runs on simple_3.24 model", {
-  simple3.24 <- SS_output(file.path(example_path,"simple_3.24"))
   expect_equal(tail(names(simple3.24),1), "inputs")
 })
 
+simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"))
 test_that("SS_output runs on simple_3.30.01 model", {
-  simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"))
   expect_equal(tail(names(simple3.30.01),1), "inputs")
 })
 
+simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"))
 test_that("SS_output runs on simple_3.30.12 model", {
-  simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"))
   expect_equal(tail(names(simple3.30.12),1), "inputs")
 })
 
+simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"))
 test_that("SS_output runs on simple_3.30.13 model", {
-  simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"))
   expect_equal(tail(names(simple3.30.13),1), "inputs")
 })
 
@@ -35,19 +34,6 @@ test_that("SS_output generates warning when MCMC folder is missing", {
    dir.mcmc="mcmc", warn=FALSE, printstats=FALSE, hidewarn=TRUE, verbose=FALSE)
   )
 })
-
-###############################################################################
-# read models again so they are available in the workspace for later use
-###############################################################################
-
-simple3.24 <- SS_output(file.path(example_path,"simple_3.24"),
-                        verbose=FALSE, printstats=FALSE)
-simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"),
-                        verbose=FALSE, printstats=FALSE)
-simple3.30.12 <- SS_output(file.path(example_path,"simple_3.30.12"),
-                        verbose=FALSE, printstats=FALSE)
-simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
-                        verbose=FALSE, printstats=FALSE)
 
 ###############################################################################
 # Test an internal function used by SS_output
