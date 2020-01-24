@@ -138,10 +138,10 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
   expect_true(file.exists(file.path(temp_path, "testdat_3.24.ss")))
 
   # write data file with faster option
-  SS_writedat(datlist = simple3.24_dat,
-              outfile = file.path(temp_path, "fastdat_3.24.ss"),
-              version = "3.24",
-              faster = TRUE, verbose = FALSE)
+  suppressWarnings(SS_writedat(datlist = simple3.24_dat,
+                   outfile = file.path(temp_path, "fastdat_3.24.ss"),
+                   version = "3.24",
+                   faster = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "fastdat_3.24.ss")))
 })
 
@@ -150,19 +150,24 @@ test_that("SS_readdat and SS_writedat both work for 3.24", {
 ###############################################################################
 
 test_that("SS_readdat and SS_writedat both work for 3.30.01", {
-  # read data file
-  simple3.30.01_dat <- SS_readdat(file = file.path(example_path,"simple_3.30.01/simple.dat"),
-                               version="3.30", verbose = FALSE)
+  # read data file - supress warnings b/c warning number of columns of results
+  # is not a multiple of vector length (arg 2) can be safely ignored
+  suppressWarnings(
+    simple3.30.01_dat <- SS_readdat(
+      file = file.path(example_path,"simple_3.30.01/simple.dat"),
+      version="3.30", verbose = FALSE)
+  )
   # write data file
   SS_writedat(datlist = simple3.30.01_dat,
               outfile = file.path(temp_path, "testdat_3.30.01.ss"),
               faster = FALSE, verbose = FALSE)
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.01.ss")))
 
-  # write data file with faster option
-  SS_writedat(datlist = simple3.30.01_dat,
-              outfile = file.path(temp_path, "fastdat_3.30.01.ss"),
-              faster = TRUE, verbose = FALSE)
+  # write data file with faster option - suppress warnings b/c they can be 
+  # safely ignored.
+  suppressWarnings(SS_writedat(datlist = simple3.30.01_dat,
+                    outfile = file.path(temp_path, "fastdat_3.30.01.ss"),
+                    faster = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "fastdat_3.30.01.ss")))
 })
 
@@ -180,9 +185,9 @@ test_that("SS_readdat and SS_writedat both work for 3.30.12", {
               faster = FALSE, verbose = FALSE)
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.12.ss")))
   # write data file with faster option
-  SS_writedat(datlist = simple3.30.12_dat,
-              outfile = file.path(temp_path, "fastdat_3.30.12.ss"),
-              faster = TRUE, verbose = FALSE)
+  suppressWarnings(SS_writedat(datlist = simple3.30.12_dat,
+                    outfile = file.path(temp_path, "fastdat_3.30.12.ss"),
+                    faster = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "fastdat_3.30.12.ss")))
 })
 
@@ -200,9 +205,9 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
               faster = FALSE, verbose = FALSE)
   expect_true(file.exists(file.path(temp_path, "testdat_3.30.13.ss")))
   # write data file with faster option
-  SS_writedat(datlist = simple3.30.13_dat,
-              outfile = file.path(temp_path, "fastdat_3.30.13.ss"),
-              faster = TRUE, verbose = FALSE)
+  suppressWarnings(SS_writedat(datlist = simple3.30.13_dat,
+                    outfile = file.path(temp_path, "fastdat_3.30.13.ss"),
+                    faster = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "fastdat_3.30.13.ss")))
 })
 
@@ -217,9 +222,9 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
     SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
                     version="3.30", verbose = FALSE)
   # write forecast file
-  SS_writeforecast(mylist = simple3.30.13_forecast,
-                   dir = temp_path,
-                   file = "testforecast_3.30.13.ss",
-                   overwrite = TRUE, verbose = FALSE)
+  suppressWarnings(SS_writeforecast(mylist = simple3.30.13_forecast,
+                     dir = temp_path,
+                     file = "testforecast_3.30.13.ss",
+                     overwrite = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "testforecast_3.30.13.ss")))
 })
