@@ -711,7 +711,8 @@ SS_plots <-
                   catchbars=catchbars,
                   labels=catlabels,
                   legendloc=legendloc,
-                  plotdir=plotdir)
+                  plotdir=plotdir, 
+		              verbose = verbose)
     plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
@@ -1442,7 +1443,7 @@ SS_plots <-
                          paste0("plotInfoTable_",
                                 format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv"))
     write.csv(plotInfoTable, csvname, row.names=FALSE)
-    cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
+    if(verbose) message("Wrote table of info on PNG files to:\n   ", csvname)
     # write HTML files to display the images
     if(html){
       SS_html(replist, filenotes=filenotes, plotdir=plotdir, verbose = verbose, ...)
