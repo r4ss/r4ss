@@ -215,11 +215,12 @@ SSsummarize <- function(biglist,
       }else{
         # after indices contains output from at least one model
         # check that there are equal number of columns with matching names 
+        # Working here
         if(ncol(indextemp) == ncol(indices) &&
            all(names(indextemp) == names(indices))){
           indices <- rbind(indices, indextemp)
         }else{
-          warning("problem summarizing indices due to mismatched columns")
+          indices <- merge(indices, indextemp, all = TRUE)
         }
       }
     }
