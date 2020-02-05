@@ -852,7 +852,7 @@ SS_output <-
         names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
         if(length(unique(agedbase$Lbin_range)) > 1){
           warning("different ranges of Lbin_lo to Lbin_hi found in age comps.\n",
-                  paste(capture.output(print(Lbin_ranges)), collapse = "\n"),
+                  paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"),
                   "\n consider increasing 'aalmaxbinrange' to designate\n", 
                   "some of these data as conditional age-at-length.")
         }
