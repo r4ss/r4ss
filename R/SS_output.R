@@ -221,7 +221,7 @@ SS_output <-
     if(!is.na(parfile)){
       corfile <- sub(".par",".cor",parfile,fixed=TRUE)
       if(!file.exists(corfile)){
-        cat("Some stats skipped because the .cor file not found:",corfile,"\n")
+        warning("Some stats skipped because the .cor file not found:",corfile,"\n")
         corfile <- NA
       }
     }

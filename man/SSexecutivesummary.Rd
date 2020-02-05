@@ -4,12 +4,22 @@
 \alias{SSexecutivesummary}
 \title{A function to create a executive summary tables from an SS Report.sso file}
 \usage{
-SSexecutivesummary(replist, plotfolder = "default", ci_value = 0.95,
-  es_only = FALSE, tables = c("a", "b", "c", "d", "e", "f", "g", "h",
-  "i", "catch", "timeseries", "numbers"), divide_by_2 = FALSE,
-  endyr = NULL, adopted_ofl = NULL, adopted_abc = NULL,
-  adopted_acl = NULL, forecast_ofl = NULL, forecast_abc = NULL,
-  verbose = TRUE)
+SSexecutivesummary(
+  replist,
+  plotfolder = "default",
+  ci_value = 0.95,
+  es_only = FALSE,
+  tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
+    "numbers"),
+  divide_by_2 = FALSE,
+  endyr = NULL,
+  adopted_ofl = NULL,
+  adopted_abc = NULL,
+  adopted_acl = NULL,
+  forecast_ofl = NULL,
+  forecast_abc = NULL,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{Object name that holds output from the SS_output function.}
