@@ -21,10 +21,10 @@ get_SIS_info(
 format "[species]_2019_SIS_info.csv" where \code{species}
 is an additional input}
 
+\item{stock}{String to prepend id info to filename for CSV file}
+
 \item{final_year}{Year for reference points and final year of timeseries
 (typically will be model$endyr + 1)}
-
-\item{species}{String to prepend id info to filename for CSV file}
 }
 \description{
 Processes model results contained in the list created by

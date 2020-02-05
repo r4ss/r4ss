@@ -12,7 +12,7 @@
 #' @param writecsv Write results to a CSV file (where the name will have the
 #' format "[species]_2019_SIS_info.csv" where \code{species}
 #' is an additional input
-#' @param species String to prepend id info to filename for CSV file
+#' @param stock String to prepend id info to filename for CSV file
 #' @param final_year Year for reference points and final year of timeseries
 #' (typically will be model$endyr + 1)
 #' @author Ian G. Taylor, Andi Stephens
