@@ -223,7 +223,11 @@ SS_readdat_3.30 <-
   ###############################################################################
   ## Catch data
   d$catch <- get.df(dat, ind)
-
+  colnames(d$catch) <- c("year", 
+                         "seas", 
+                         "fleet", 
+                         "catch", 
+                         "catch_se")
   #### NOTE:
   #### code below was used to reformat the table of
   #### catch from the 3.30 format to 3.24 format
