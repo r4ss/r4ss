@@ -20,6 +20,7 @@ SS_readctl(
   N_CPUE_obs = NA,
   catch_mult_fleets = NULL,
   N_rows_equil_catch = 0,
+  N_dirichlet_parms = 0,
   use_datlist = FALSE,
   datlist = NULL,
   ptype = TRUE
@@ -72,6 +73,9 @@ datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.}
 
 \item{N_rows_equil_catch}{Integer value of the number of parmeter lines to 
 read for equilibrium catch. Defaults to 0. Used only for version 3.30.}
+
+\item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
+parameters. Defaults to 0. Used only for version 3.30}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}

@@ -5,7 +5,7 @@
 #'
 #' @param mylist Object created by \code{\link{SS_readwtatage}}.
 #' @template dir
-#' @param file Filename for new weight-at-age file, which 
+#' @param file Filename for new weight-at-age file, which
 #' will be appended to \code{dir} to create a full file path.
 #' Default="wtatage.ss".
 #' @template overwrite
@@ -14,7 +14,7 @@
 #' @author Kelli Faye Johnson
 #' @export
 #' @seealso \code{\link{SS_readwtatage}}
-#' 
+#'
 SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
                             overwrite=FALSE, verbose=TRUE, warn=TRUE){
   if(verbose) message("running SS_writewtatage\n")
@@ -47,7 +47,7 @@ SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
   if(verbose) message("opening connection to",outfile,"\n")
   zz <- file(outfile, open="at")
   on.exit(close(zz))
-  sink(zz)
+  sink(zz, split=verbose)
 
   writeLines(paste(NCOL(mylist)-7, "# maxage"))
   writeLines("# if Yr is negative, then fill remaining years for that Seas, growpattern, Bio_Pattern, Fleet")
@@ -56,7 +56,7 @@ SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
   writeLines("# fleet 0 contains begin season pop WT")
   writeLines("# fleet -1 contains mid season pop WT")
   writeLines("# fleet -2 contains maturity*fecundity")
-  
+
   # Check for terminal line in data frame
   mylist <- mylist[order(mylist$Yr, mylist$Fleet, mylist$Seas), ]
   if(any(mylist$Yr < -998)){
@@ -68,7 +68,7 @@ SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
     mylist[NROW(mylist), "Yr"] <- -9999
   }
   colnames(mylist)[1] <- paste0("#", colnames(mylist)[1])
-  print.data.frame(mylist, row.names=FALSE, strip.white=TRUE)
+  print.data.frame(mylist, row.names=FALSE, strip.white=TRUE, max = dim(mylist)[1]*dim(mylist)[2])
 
   # restore printing width to whatever the user had before
   options(width=oldwidth)

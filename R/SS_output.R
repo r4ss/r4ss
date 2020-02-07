@@ -157,7 +157,7 @@ SS_output <-
                     "choosing most recently modified:",parfile,"\n")
   }
   if(length(parfile)==0){
-    if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
+    if(!hidewarn) message("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
     parfile <- NA
   }else{
     parfile <- file.path(dir,parfile)
@@ -221,7 +221,7 @@ SS_output <-
     if(!is.na(parfile)){
       corfile <- sub(".par",".cor",parfile,fixed=TRUE)
       if(!file.exists(corfile)){
-        cat("Some stats skipped because the .cor file not found:",corfile,"\n")
+        warning("Some stats skipped because the .cor file not found:",corfile,"\n")
         corfile <- NA
       }
     }
@@ -688,8 +688,9 @@ SS_output <-
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
-        if(!hidewarn)
-          cat('Correcting for bug in tag data output associated with SSv3.24f\n')
+        if(!hidewarn) {
+          message('Correcting for bug in tag data output associated with SSv3.24f\n')
+        }
         tag1rows <- compdbase$Sexes=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]
@@ -715,7 +716,7 @@ SS_output <-
 
       n <- sum(is.na(compdbase$N) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
-        cat("Warning:",n,"rows from composition database have NA sample size\n",
+        warning(n,"rows from composition database have NA sample size\n",
             "but are not part of a super-period. (Maybe input as N=0?)\n")
       }
       for(i in (1:ncol(compdbase))[!(names(compdbase) %in% c("Kind","SuprPer","Used"))]){
@@ -850,10 +851,10 @@ SS_output <-
         Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
         names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
         if(length(unique(agedbase$Lbin_range)) > 1){
-          cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
-          print(Lbin_ranges)
-          cat("  consider increasing 'aalmaxbinrange' to designate\n")
-          cat("  some of these data as conditional age-at-length\n")
+          warning("different ranges of Lbin_lo to Lbin_hi found in age comps.\n",
+                  paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"),
+                  "\n consider increasing 'aalmaxbinrange' to designate\n", 
+                  "some of these data as conditional age-at-length.")
         }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
       }else{
@@ -2182,15 +2183,10 @@ SS_output <-
   returndat$F_method <- F_method
 
   if(exploitation[[1]][1]!="absent"){
-    # more processing of exploitation
-    exploitation[exploitation=="_"] <- NA
     # "init_yr" not used as of 3.30.13, but must have been in the past
-    exploitation$Yr[exploitation$Yr=="init_yr"] <- startyr-1 # making numeric
-    # make columns numeric
-    for(icol in 1:ncol(exploitation)){
-      exploitation[,icol] <- as.numeric(exploitation[,icol])
-    }
-    returndat$exploitation <- exploitation
+    exploitation$Yr[exploitation$Yr %in% c("init_yr","INIT")] <- startyr-1 # making numeric
+    returndat$exploitation <- type.convert(exploitation,
+      na.strings = c("NA","_","nan"))
   }else{
     returndat$exploitation <- NULL
   }
@@ -2577,7 +2573,7 @@ SS_output <-
     }
   }else{
     # if INDEX_2 not present (not sure the circumstances that would cause this)
-    cpue <- NA
+    cpue <- NULL
   }
   returndat$cpue <- cpue
 

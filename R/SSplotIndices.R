@@ -77,7 +77,7 @@ SSplotIndices <-
 function(replist,subplots=c(1:9),
          plot=TRUE,print=FALSE,
          fleets="all",fleetnames="default",
-         smooth=TRUE,add=FALSE,datplot=FALSE,
+         smooth=TRUE,add=FALSE,datplot=TRUE,
          labels=c("Year",        #1
            "Index",              #2
            "Observed index",     #3
@@ -122,8 +122,8 @@ function(replist,subplots=c(1:9),
   index.fn <- function(addexpected = TRUE, log = FALSE, ...){
     # plot of time series of observed values with fit (if requested)
 
-    # don't do anything if error structure is not lognormal
-    if(error != 0 & log == TRUE){
+    # don't do anything for log-scale plot if normal error structure is used
+    if(error == -1 & log == TRUE){
       return()
     }
     # interval around points with total SE (input + any estimated extra)
@@ -145,10 +145,15 @@ function(replist,subplots=c(1:9),
       lower_total <- qnorm(.025, mean = y[include], sd = cpueuse$SE[include])
       upper_total <- qnorm(.975, mean = y[include], sd = cpueuse$SE[include])
     }
+
     # T-distribution interval
     if(error > 0){ 
-      lower_total <- -cpueuse$SE[include]*qt(.025, df = y[include])
-      upper_total <-  cpueuse$SE[include]*qt(.975, df = y[include])
+      lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse$SE[include]
+      upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse$SE[include]
+      if(!log){
+        lower_total <- exp(lower_total)
+        upper_total <- exp(upper_total)
+      }
     }
 
     if(max(upper_total)==Inf){
@@ -170,24 +175,24 @@ function(replist,subplots=c(1:9),
 
     xlim <- c(max(minyr,min(x)), min(maxyr,max(x)))
     if(!add){
-      # y-limits with lognormal error
-      if(error == 0){
-        if(!log){
-          # ylim for standard scale
-          ylim <- c(0, 1.05*min(max(upper_total, na.rm = TRUE),
-                                max(maximum_ymax_ratio * y)))
-        }
-        if(log){
-          # ylim for log scale plot
-          ylim <- range(c(lower_total, upper_total), na.rm = TRUE)
-        }
+      # get range for expected values
+      zmax <- NULL 
+      if(addexpected){
+        zmin <- min(z, na.rm = TRUE)
       }
-      # ylimits with normal or T-distributed error
-      if(error != 0){
-        ylim <- 1.05 * c(min(lower_total, na.rm = TRUE),
-                         max(upper_total, na.rm = TRUE))
-      }
+      logzrange <- range(log(z))
       
+      # y-limits with lognormal error
+      if(!log){
+        # ylim for standard scale
+        ylim <- c(0, 1.05*min(max(upper_total, zmax, na.rm = TRUE),
+                              max(maximum_ymax_ratio * y)))
+      }
+      if(log){
+        # ylim for log scale plot
+        ylim <- range(c(lower_total, upper_total), na.rm = TRUE)
+      }
+
       plot(x = x[include], y = y[include], type = 'n', xlab = labels[1],
            ylab = ifelse(!log, labels[2], labels[5]),
            main = main, cex.main = cex.main, xlim = xlim,
@@ -195,6 +200,7 @@ function(replist,subplots=c(1:9),
            yaxs = ifelse(log, 'r', 'i'),
            ...)
     }
+
     # show thicker lines behind final lines for input uncertainty (if different)
     if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
       # lognormal error interval
@@ -218,8 +224,12 @@ function(replist,subplots=c(1:9),
       }
       # T-distribution interval
       if(error > 0){ 
-        lower_input <- -cpueuse$SE_input[include]*qt(.025, df = y[include])
-        upper_input <-  cpueuse$SE_input[include]*qt(.975, df = y[include])
+        lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse$SE_input[include]
+        upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse$SE_input[include]
+        if(!log){
+          lower_total <- exp(lower_total)
+          upper_total <- exp(upper_total)
+        }
       }
       # add segments
       segments(x[include], lower_input,
@@ -372,51 +382,6 @@ function(replist,subplots=c(1:9),
   # subset fleets as requested
   fleetvec <- intersect(fleets, unique(as.numeric(cpue$Fleet)))
 
-  # use fancy colors only if any index spans more than one season
-  usecol <- FALSE
-  for(ifleet in fleetvec){
-    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
-      usecol <- TRUE
-    }
-  }
-  # turn off use of legend if there's never more than 1 season per index
-  if(!usecol){
-    legend <- FALSE
-  }
-
-  if(col1[1]=="default"){
-    colvec1 <- "black"
-    if(usecol & nseasons==4){
-      colvec1 <- c("blue4","green3","orange2","red3")
-    }
-    if(usecol & !nseasons %in% c(1,4)){
-      colvec1 <- rich.colors.short(nseasons)
-    }
-  }else{
-    colvec1 <- col1
-    # if user provides single value (or vector of length less than nseasons)
-    # make sure it's adequate to cover all seasons
-    if(length(colvec1) < nseasons){
-      colvec1 <- rep(col1, nseasons)
-    }
-  }
-  if(col2[1]=="default"){
-    colvec2 <- "blue"
-    if(usecol & nseasons==4){
-      colvec2 <- c("blue4","green3","orange2","red3")
-    }
-    if(usecol & !nseasons %in% c(1,4)){
-      colvec2 <- rich.colors.short(nseasons)
-    }
-  }else{
-    colvec2 <- col2
-    # if user provides single value (or vector of length less than nseasons)
-    # make sure it's adequate to cover all seasons
-    if(length(colvec1) < nseasons){
-      colvec1 <- rep(col1, nseasons)
-    }
-  }
-  if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
   # empty data.frame to store data for comparison among indices
   allcpue <- data.frame()
@@ -428,9 +393,68 @@ function(replist,subplots=c(1:9),
   
   # loop over fleets
   for(ifleet in fleetvec){
+
+    # use fancy colors only if the individual index spans more than one season
+    usecol <- FALSE
+    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
+      usecol <- TRUE
+    }
+
+    # turn off use of legend if there's never more than 1 season per index
+    if(!usecol){
+      legend <- FALSE
+    }
+
+    if(col1[1]=="default"){
+      colvec1 <- "black"
+      if(usecol & nseasons==4){
+        colvec1 <- c("blue4","green3","orange2","red3")
+      }
+      if(usecol & !nseasons %in% c(1,4)){
+        colvec1 <- rich.colors.short(nseasons)
+      }
+    }else{
+      colvec1 <- col1
+      # if user provides single value (or vector of length less than nseasons)
+      # make sure it's adequate to cover all seasons
+      if(length(colvec1) < nseasons){
+        colvec1 <- rep(col1, nseasons)
+      }
+    }
+    if(col2[1]=="default"){
+      colvec2 <- "blue"
+      if(usecol & nseasons==4){
+        colvec2 <- c("blue4","green3","orange2","red3")
+      }
+      if(usecol & !nseasons %in% c(1,4)){
+        colvec2 <- rich.colors.short(nseasons)
+      }
+    }else{
+      colvec2 <- col2
+      # if user provides single value (or vector of length less than nseasons)
+      # make sure it's adequate to cover all seasons
+      if(length(colvec1) < nseasons){
+        colvec1 <- rep(col1, nseasons)
+      }
+    }
+    if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
     
     Fleet <- fleetnames[ifleet]
     error <- replist$survey_error[ifleet]
+    if(error == 0){
+      error_caption <- "lognormal error"
+    }
+    if(error == -1){
+      error_caption <- "normal error"
+    }
+    if(error == 1){
+      error_caption <- paste0("T-distributed error with ", error,
+                              " degree of freedom")
+    }
+    if(error > 1){
+      error_caption <- paste0("T-distributed error with ", error,
+                              " degrees of freedom")
+    }
 
     cpueuse <- cpue[cpue$Fleet==ifleet,]
     cpueuse <- cpueuse[order(cpueuse$YrSeas),]
@@ -493,7 +517,8 @@ function(replist,subplots=c(1:9),
         if(1 %in% subplots & datplot){
           file <- paste0("index1_cpuedata_",Fleet,".png")
           caption <- paste0("Index data for ", Fleet, ". ",
-                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Lines indicate 95% uncertainty interval around index values ",
+                            "based on the model assumption of ", error_caption, ". ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
@@ -503,7 +528,8 @@ function(replist,subplots=c(1:9),
         if(2 %in% subplots){
           file <- paste0("index2_cpuefit_",Fleet,".png")
           caption <- paste0("Fit to index data for ", Fleet,". ",
-                            "Lines indicate 95% uncertainty interval around index values. ",
+                            "Lines indicate 95% uncertainty interval around index values ",
+                            "based on the model assumption of ", error_caption, ". ",
                             "Thicker lines (if present) indicate input uncertainty before addition of ",
                             "estimated additional uncertainty parameter.")
           plotinfo <- pngfun(file=file, caption=caption)
@@ -521,7 +547,7 @@ function(replist,subplots=c(1:9),
 
       # same plots again in log space
       # check for lognormal error
-      if(error == 0){
+      if(error != -1){
 
         # plot subplots 4-6 to current device
         if(plot){
@@ -542,7 +568,8 @@ function(replist,subplots=c(1:9),
           if(4 %in% subplots & datplot){
             file <- paste0("index4_logcpuedata_",Fleet,".png")
             caption <- paste0("Log index data for ", Fleet, ". ",
-                              "Lines indicate 95% uncertainty interval around index values. ",
+                              "Lines indicate 95% uncertainty interval around index values ",
+                              "based on the model assumption of ", error_caption, ". ",
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)
@@ -552,7 +579,8 @@ function(replist,subplots=c(1:9),
           if(5 %in% subplots){
             file <- paste0("index5_logcpuefit_",Fleet,".png")
             caption <- paste0("Fit to log index data on log scale for ", Fleet, ". ",
-                              "Lines indicate 95% uncertainty interval around index values. ",
+                              "Lines indicate 95% uncertainty interval around index values ",
+                              "based on the model assumption of ", error_caption, ". ",
                               "Thicker lines (if present) indicate input uncertainty before addition of ",
                               "estimated additional uncertainty parameter.")
             plotinfo <- pngfun(file=file, caption=caption)

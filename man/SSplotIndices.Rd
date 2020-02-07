@@ -13,7 +13,7 @@ SSplotIndices(
   fleetnames = "default",
   smooth = TRUE,
   add = FALSE,
-  datplot = FALSE,
+  datplot = TRUE,
   labels = c("Year", "Index", "Observed index", "Expected index", "Log index",
     "Log observed index", "Log expected index", "Standardized index", "Catchability (Q)",
     "Time-varying catchability", "Vulnerable biomass",

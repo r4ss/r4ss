@@ -9,7 +9,8 @@ SS_tune_comps(
   fleets = "all",
   option = "Francis",
   digits = 6,
-  write = TRUE
+  write = TRUE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ SS_tune_comps(
 \item{digits}{Number of digits to round numbers to}
 
 \item{write}{Write suggested tunings to a file 'suggested_tunings.ss'}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
 }
 \value{
 Returns a table that can be copied into the control file.

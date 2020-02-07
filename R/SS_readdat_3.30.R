@@ -28,7 +28,6 @@ SS_readdat_3.30 <-
   if (verbose){
     message("Running SS_readdat_3.30")
   }
-
   if (echoall){
     message("Echoing blocks of data as it's being read")
     if (!verbose){
@@ -45,6 +44,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
+  ## Divide data file into sections ----
   sec.end.inds <- grep("^999\\b", dat)
   Nsections <- length(sec.end.inds)
   if(!Nsections){
@@ -74,11 +74,8 @@ SS_readdat_3.30 <-
     }
     dat <- dat[start:end]
   }
-
-  ## Retrieve start time
-  ## tmp <- strsplit(dat[grep("Start_time", dat)], " ")[[1]]
-  ## start.time <- tmp[grep("^[0-9]{2}:[0-9]{2}:[0-9]+{2}$", tmp)]
-
+  ###############################################################################
+  ## Internally defined functions ----
   find.index <- function(dat, ind, str){
     ## Find the first line at position ind or later that
     ## contains the string str and return the index of that
@@ -146,7 +143,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Set up the data lines for parsing
+  ## Set up the data lines for parsing ----
   ## Remove any preceeding whitespace on all lines.
   dat <- gsub("^[[:blank:]]+", "", dat)
   ## Remove all comments.
@@ -155,7 +152,6 @@ SS_readdat_3.30 <-
   dat <- gsub("[[:blank:]]+$", "", dat)
   ## Remove blank lines.
   dat <- dat[dat != ""]
-
   d <- list()
   d$sourcefile <- file
   d$type <- "Stock_Synthesis_data_file"
@@ -165,7 +161,7 @@ SS_readdat_3.30 <-
   }
 
   ##############################################################################
-  ## Get general model information
+  ## Get general model information ----
   ind <- 1
   d$styr <- get.val(dat, ind)
   d$endyr <- get.val(dat, ind)
@@ -179,7 +175,7 @@ SS_readdat_3.30 <-
   d$Nfleets <- get.val(dat, ind)
 
   ###############################################################################
-  ## Fleet data
+  ## Fleet data ----
   d$fleetinfo <- get.df(dat, ind, d$Nfleets)
   colnames(d$fleetinfo) <- c("type",
                              "surveytiming",
@@ -196,15 +192,9 @@ SS_readdat_3.30 <-
   d$surveytiming <- as.numeric(d$fleetinfo$surveytiming)
   d$units_of_catch <- as.numeric(d$fleetinfo$units)
   d$areas <- as.numeric(d$fleetinfo$area)
-  ## ## For backwards compatability add the fleetinfo1 data frame
-  ## d$fleetinfo1 <- as.data.frame(do.call("rbind", list(d$fleetinfo$surveytiming,
-  ##                                                     d$fleetinfo$areas)))
-  ## d$fleetinfo1 <- cbind(d$fleetinfo1, c("#_surveytiming", "#_areas"))
-  ## rownames(d$fleetinfo1) <- c("surveytiming", "areas")
-  ## colnames(d$fleetinfo1) <- c(d$fleetinfo$fleetname, "input")
   
   ##############################################################################
-  ### Bycatch Data (only added for fleets with type = 2)
+  ### Bycatch Data (only added for fleets with type = 2) ----
   if(any(d$fleetinfo$type == 2)) {
     nbycatch <- length(d$fleetinfo$type[d$fleetinfo$type == 2])
     d$bycatch_fleet_info <- get.df(dat, ind, nbycatch)
@@ -221,72 +211,16 @@ SS_readdat_3.30 <-
                                  d$fleetinfo[d$fleetinfo$type == 2, "fleetname", drop = FALSE])
   }
   ###############################################################################
-  ## Catch data
+  ## Catch data ----
   d$catch <- get.df(dat, ind)
   colnames(d$catch) <- c("year", 
                          "seas", 
                          "fleet", 
                          "catch", 
                          "catch_se")
-  #### NOTE:
-  #### code below was used to reformat the table of
-  #### catch from the 3.30 format to 3.24 format
-  #### for simplicity, keeping it in the 3.30 format
-  #### will be easier going forward
-
-  ## c.df <- get.df(dat, ind)
-  ##
-  ## ## Reform catch matrix so each fleet has its own column
-  ## ## Make a list of data frames, one for each fleet
-  ## c.list <- split(c.df, c.df[,3])
-  ##
-  ## ## Extract the SE in log(catch) and initial equilibrium values for each fleet
-  ## se.and.initeq <-
-  ##   lapply(c.list,
-  ##          function(x){se.fleet <- as.numeric(x[1, 5])
-  ##                      init.eq <- ifelse(as.numeric(x[1, 1]) == -999, 1, 0)
-  ##                      fleet.num <- x[1,3]
-  ##                      se <- data.frame(c(fleet.num, se.fleet, init.eq),
-  ##                                       stringsAsFactors = FALSE)
-  ##                      colnames(se) <- d$fleetnames[as.numeric(x[1,3])]
-  ##                      se})
-  ## se.and.initeq <- do.call("cbind", se.and.initeq)
-  ## fleet.nums.with.catch <- as.numeric(se.and.initeq[1,])
-  ## d$se_log_catch <- as.numeric(se.and.initeq[2,])
-  ## d$init_equil <- as.numeric(se.and.initeq[3,])
-  ##
-  ## ## Remove all instances of -999 from all catch data frames
-  ## c.list <- lapply(c.list, function(x){x[x[,1] != -999,]})
-  ##
-  ## ## Make the catch data frame
-  ## ## Extract the years from the first dataframe in the list
-  ## yrs <- as.numeric(c.list[[1]][,1])
-  ## ## Apply fleet name to the catch column for each dataframe
-  ## c.list <- lapply(c.list,
-  ##                  function(x){colnames(x)[4] <- d$fleetnames[as.numeric(x[1,3])]
-  ##                              x})
-  ## ## Get rid of unwanted columns.
-  ## c.list <- lapply(c.list,
-  ##                  function(x){x[, -c(1,2,3,5), drop = FALSE]})
-  ## ## Reform the dataframe
-  ## c.list <- do.call("cbind", c.list)
-  ## d$catch <- cbind(yrs, c.list)
-  ## if(echoall){
-  ##   message("Final years of input catch:")
-  ##   print(tail(d$catch))
-  ## }
-  ##
-  ## ## For backwards compatability add the fleetinfo2 data frame
-  ## ## This comes after the catch matrix because the SE is read from there.
-  ## d$fleetinfo2 <- do.call("rbind",
-  ##                         list(d$units_of_catch[fleet.nums.with.catch],
-  ##                              as.numeric(d$se_log_catch)))
-  ## d$fleetinfo2 <- data.frame(d$fleetinfo2, c("#_units_of_catch", "#_se_log_catch"))
-  ## rownames(d$fleetinfo2) <- c("units_of_catch", "se_log_catch")
-  ## colnames(d$fleetinfo2) <- c(colnames(se.and.initeq), "input")
 
   ###############################################################################
-  ## CPUE data
+  ## CPUE data  ----
   d$CPUEinfo <- get.df(dat, ind, d$Nfleets)
   # note SD_Report column wasn't present in early 3.30 versions of SS
   CPUEinfo_names <- c("Fleet", "Units", "Errtype", "SD_Report")
@@ -303,15 +237,15 @@ SS_readdat_3.30 <-
     d$CPUE <- CPUE
     colnames(d$CPUE) <- c("year", "seas", "index", "obs", "se_log")
   }else{
-    d$CPUE <- NA
+    d$CPUE <- NULL
   }
   if (echoall) {
     message("CPUE data:")
-    print(d$CPUE)
+    print(d[["CPUE"]])
   }
 
   ###############################################################################
-  ## Discard data
+  ## Discard data ----
   ## fleet.nums.with.catch is defined in the catch section above.
   d$N_discard_fleets <- get.val(dat, ind)
   if(d$N_discard_fleets){
@@ -338,9 +272,8 @@ SS_readdat_3.30 <-
 
   }
 
-
   ###############################################################################
-  ## Mean body weight data
+  ## Mean body weight data ----
   d$use_meanbodywt <- get.val(dat, ind)
   if(d$use_meanbodywt){
     d$DF_for_meanbodywt <- get.val(dat, ind)
@@ -359,9 +292,8 @@ SS_readdat_3.30 <-
     print(d$meanbodywt)
   }
 
-
   ###############################################################################
-  ## Population size structure - Length
+  ## Population size structure - Length ----
   d$lbin_method <- get.val(dat, ind)
   if(d$lbin_method == 2){
     bin_info_tmp <- get.val(dat, ind)
@@ -391,13 +323,11 @@ SS_readdat_3.30 <-
   if (verbose) {
     message("N_lbinspop: ", d$N_lbinspop)
   }
-
   ## Length Comp information matrix (new for 3.30)
   d$use_lencomp <- get.val(dat, ind)
   if (verbose) {
     message("use_lencomp (0/1): ", d$use_lencomp)
   }
-
   # only read all the stuff related to length comps if switch above = 1
   if(d$use_lencomp){
     # note: minsamplesize column not present in early 3.30 versions of SS
@@ -405,14 +335,11 @@ SS_readdat_3.30 <-
     colnames(d$len_info) <- c("mintailcomp", "addtocomp", "combine_M_F",
                               "CompressBins", "CompError", "ParmSelect",
                               "minsamplesize")[1:ncol(d$len_info)]
-
     rownames(d$len_info) <- d$fleetnames
-
     if (echoall) {
       message("\nlen_info:")
       print(d$len_info)
     }
-
     ## Length comp data
     d$N_lbins <- get.val(dat, ind)
     if (verbose) {
@@ -427,7 +354,6 @@ SS_readdat_3.30 <-
           if(d$Nsexes > 1){c(paste0("f", d$lbin_vector),
                              paste0("m", d$lbin_vector))}else{NULL})
     }
-
     # echo values
     if (echoall) {
       message("\nFirst 2 rows of lencomp:")
@@ -439,7 +365,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Population size structure - Age
+  ## Population size structure - Age ----
   d$N_agebins <- get.val(dat, ind)
   if (verbose) {
     message("N_agebins: ", d$N_agebins)
@@ -474,7 +400,7 @@ SS_readdat_3.30 <-
 
 
   ###############################################################################
-  ## Age Comp information matrix
+  ## Age Comp information matrix ----
   if(d$N_agebins){
     d$age_info <- get.df(dat, ind, d$Nfleets)
     # note: minsamplesize column not present in early 3.30 versions of SS
@@ -485,7 +411,6 @@ SS_readdat_3.30 <-
                               "CompError",
                               "ParmSelect",
                               "minsamplesize")[1:ncol(d$age_info)]
-
     rownames(d$age_info) <- d$fleetnames
     ## Length bin method for age data
     # note that Lbin_method below is related to the interpretation of
@@ -499,7 +424,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Age comp matrix
+  ## Age comp matrix ----
   if(d$N_agebins){
     d$agecomp <- get.df(dat, ind)
     if(!is.null(d$agecomp)){
@@ -510,7 +435,6 @@ SS_readdat_3.30 <-
           if(d$Nsexes > 1){c(paste0("f", d$agebin_vector),
                                paste0("m", d$agebin_vector))}else{NULL})
     }
-
     # echo values
     if (echoall) {
       message("\nFirst 2 rows of agecomp:")
@@ -526,7 +450,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Mean size-at-age data
+  ## Mean size-at-age data ----
   d$use_MeanSize_at_Age_obs <- get.val(dat, ind)
   if (verbose) {
     message("use_MeanSize_at_Age_obs (0/1): ", d$use_MeanSize_at_Age_obs)
@@ -558,7 +482,6 @@ SS_readdat_3.30 <-
       d$MeanSize_at_Age_obs <- as.data.frame(MeanSize_at_Age_obs)
     }
 
-
     colnames(d$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
         if(d$Nsexes == 1){paste0("a", d$agebin_vector)}else{NULL},
@@ -587,10 +510,8 @@ SS_readdat_3.30 <-
     d$MeanSize_at_Age_obs <- NULL
   }
 
-
-
   ###############################################################################
-  ## Environment variables
+  ## Environment variables ----
   d$N_environ_variables <- get.val(dat, ind)
 
   if (verbose) {
@@ -613,9 +534,8 @@ SS_readdat_3.30 <-
     d$envdat <- NULL
   }
 
-
   ###############################################################################
-  ## Size frequency methods
+  ## Size frequency methods ----
   d$N_sizefreq_methods <- get.val(dat, ind)
   if(d$N_sizefreq_methods){
     ## Get details of generalized size frequency methods
@@ -635,16 +555,16 @@ SS_readdat_3.30 <-
     }
     ## get list of bin vectors
     d$sizefreq_bins_list <- list()
-    for(imethod in 1:d$N_sizefreq_methods){
+    for(imethod in seq_len(d$N_sizefreq_methods)) {
       d$sizefreq_bins_list[[imethod]] <- get.vec(dat, ind)
     }
     ## Read generalized size frequency data
     d$sizefreq_data_list <- list()
-    for(imethod in 1:d$N_sizefreq_methods){
+    for(imethod in seq_len(d$N_sizefreq_methods)) {
       Ncols <- 7 + d$Nsexes * d$nbins_per_method[imethod]
       Nrows <- d$Nobs_per_method[imethod]
-      d$sizefreq_data_list <- get.df(dat, ind, Nrows)
-      colnames(d$sizefreq_data_list) <-
+      d$sizefreq_data_list[[imethod]] <- get.df(dat, ind, Nrows)
+      colnames(d$sizefreq_data_list[[imethod]]) <-
         c("Method", "Yr", "Seas", "FltSvy",
           "Gender", "Part", "Nsamp",
           if(d$Nsexes == 1){
@@ -660,9 +580,9 @@ SS_readdat_3.30 <-
           })
       if(echoall){
         message("Method ", imethod, " (first two rows, ten columns):")
-        print(d$sizefreq_data_list[1:min(Nrows,2), 1:min(Ncols, 10)])
+        print(d$sizefreq_data_list[[imethod]][1:min(Nrows,2), 1:min(Ncols, 10)])
       }
-      if(any(d$sizefreq_data_list$Method!=imethod)){
+      if(any(d$sizefreq_data_list[[imethod]][, "Method"] != imethod)) {
         stop("Problem with method in size frequency data:\n",
              "Expecting method: ", imethod, "\n",
              "Read method(s): ",
@@ -680,7 +600,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Tag data
+  ## Tag data ----
   d$do_tags <- get.val(dat, ind)
   if(d$do_tags){
     d$N_tag_groups <- get.val(dat, ind)
@@ -715,7 +635,7 @@ SS_readdat_3.30 <-
   }
 
   ###############################################################################
-  ## Morphometrics composition data
+  ## Morphometrics composition data ----
   d$morphcomp_data <- get.val(dat, ind)
   if(d$morphcomp_data){
     warning("Morph comp data not yet supported by SS_readdat_3.30\n",
@@ -723,11 +643,13 @@ SS_readdat_3.30 <-
             "  or email ian.taylor@noaa.gov",
             "if you want this functionality added.")
   }
+  
   ###############################################################################
-  ## Selectivity priors
+  ## Selectivity priors ----
   d$use_selectivity_priors <- get.val(dat, ind)
 
   ###############################################################################
+  ## End of file ----
   eof <- get.val(dat, ind)
   if(verbose){
     if(Nsections == 1){
@@ -737,9 +659,7 @@ SS_readdat_3.30 <-
               " of data file complete. Final value = ", eof)
     }
   }
-
   d$eof <- FALSE
   if(eof==999)d$eof <- TRUE
-
   return(d)
 }

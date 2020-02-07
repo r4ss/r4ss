@@ -6,7 +6,7 @@
 \usage{
 SS_plots(
   replist = NULL,
-  plot = 1:25,
+  plot = 1:26,
   print = NULL,
   pdf = FALSE,
   png = TRUE,
@@ -67,6 +67,8 @@ SS_plots(
   andrerows = 3,
   tagrows = 3,
   tagcols = 3,
+  parrows = 2,
+  parcols = 2,
   fixdims = TRUE,
   new = TRUE,
   SSplotDatMargin = 8,
@@ -82,6 +84,12 @@ SS_plots(
   tslabels = NULL,
   catlabels = NULL,
   maxsize = 1,
+  showmle = TRUE,
+  showpost = TRUE,
+  showprior = TRUE,
+  showinit = TRUE,
+  showdev = FALSE,
+  fitrange = FALSE,
   ...
 )
 }
@@ -118,6 +126,7 @@ Current grouping of plots is as follows:
   \item Yield
   \item Movement
   \item Data range
+  \item Parameter distributions
   \item Diagnostic tables
 }}
 
@@ -307,6 +316,10 @@ within each page. Default=3.}
 
 \item{tagcols}{Number of columns for tagging-related plots.  Default=3.}
 
+\item{parrows}{Number of rows for parameter distribution plots.}
+
+\item{parcols}{Number of columns for parameter distribution plots.}
+
 \item{fixdims}{Control whether multi-panel plots all have dimensions equal
 to maxrows by maxcols, or resized within those limits to fit number of
 plots. Default=T.}
@@ -349,6 +362,23 @@ a vector of appropriate length (currently 10) with labels for each figure}
 
 \item{maxsize}{The size of the largest bubble in the datasize
 plot. Default is 1.0.}
+
+\item{showmle}{Show MLE estimate and asymptotic variance estimate with blue
+lines in the parameter distribution plots?}
+
+\item{showpost}{Show posterior distribution as bar graph in parameter
+distribution plots (requires MCMC results to be available in \code{replist})?}
+
+\item{showprior}{Show prior distribution as black line in the parameter
+distribution plots?}
+
+\item{showinit}{Show initial value as red triangle in the parameter
+distribution plots?}
+
+\item{showdev}{Include devs in the parameter distribution plots?}
+
+\item{fitrange}{Fit range in parameter distribution plots tightly around MLE
+and posterior distributions instead of full parameter range?}
 
 \item{\dots}{Additional arguments that will be passed to some subfunctions.}
 }

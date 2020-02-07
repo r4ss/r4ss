@@ -35,10 +35,12 @@ SS_html <- function(replist=NULL,
                     multimodel=FALSE,
                     filenotes=NULL,
                     verbose=TRUE){
-  cat("Running 'SS_html':\n",
+  if(verbose) {
+    cat("Running 'SS_html':\n",
       "  By default, this function will look in the directory where PNG files were created\n",
       "  for CSV files with the name 'plotInfoTable...' written by 'SS_plots.'\n",
       "  HTML files are written to link to these plots and put in the same directory.\n\n")
+  }
   if(is.null(plotdir)){
     stop("input 'plotdir' required")
   }
@@ -336,7 +338,7 @@ SS_html <- function(replist=NULL,
   # open HTML file automatically:
   # thanks John Wallace for finding the browseURL command
   if(openfile){
-    cat("Opening HTML file in your default web-browser.\n")
+    if(verbose) cat("Opening HTML file in your default web-browser.\n")
     # check for presence of file
     # alternative location for file in the path is relative to the working directory
     htmlhome2 <- file.path(getwd(), htmlhome)

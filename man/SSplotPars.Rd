@@ -20,19 +20,20 @@ SSplotPars(
   xlim = NULL,
   ylim = NULL,
   verbose = TRUE,
+  debug = FALSE,
   nrows = 3,
   ncols = 3,
   ltyvec = c(1, 1, 3, 4),
   colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, 0.5)),
-  new = TRUE,
   add = FALSE,
-  pdf = FALSE,
+  plot = TRUE,
+  print = FALSE,
   pwidth = 6.5,
   pheight = 5,
   punits = "in",
   ptsize = 10,
-  returntable = FALSE,
-  strings = c(),
+  res = 300,
+  strings = NULL,
   exact = FALSE,
   newheaders = NULL
 )
@@ -75,6 +76,9 @@ Otherwise, limits are based on the model results.}
 
 \item{verbose}{Controls amount of text output (maybe).}
 
+\item{debug}{Provide additional messages to help with debugging when the
+function fails.}
+
 \item{nrows}{How many rows in multi-figure plot.}
 
 \item{ncols}{How many columns in multi-figure plot.}
@@ -85,11 +89,11 @@ distributions and the median of the posterior distribution.}
 \item{colvec}{Vector of colors used for lines and polygons showing MLE,
 initial value, prior, posterior, and median of the posterior.}
 
-\item{new}{Open new window for plotting?}
-
 \item{add}{Add to existing plot?}
 
-\item{pdf}{Write to PDF file instead of R GUI?}
+\item{plot}{Plot to active plot device?}
+
+\item{print}{Print to PNG files?}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. Default=7.}
@@ -103,7 +107,7 @@ initial value, prior, posterior, and median of the posterior.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{returntable}{Return table of parameter info? Default=FALSE.}
+\item{res}{Resolution for PNG file}
 
 \item{strings}{Subset parameters included in the plot using substring from
 parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
@@ -122,11 +126,26 @@ parameter distributions. MCMC not required to make function work.
 \examples{
 
 \dontrun{
-model <- SS_output(dir='c:/SS/Simple/'
+# read model results
+model <- SS_output(dir='c:/SS/Simple/')
+# make default plots where parameter distribution plots will appear
+# in the "pars" tab
+SS_plots(model)
+
+# create just the "pars" tab with control of the inputs that are
+# passed to SSplotPars
+SS_plots(model, plot = 25, showmle=TRUE, showpost=TRUE,
+showprior=TRUE, showinit=TRUE, showdev=FALSE, fitrange = FALSE)
+
+# call SSplotPars directly
 SSplotPars(replist = model)
 
-# strings can be partial match
-SSplotPars(dir = model, strings = c("steep", "R0"))
+# Create plot in custom location. Note that strings can be partial match.
+# File name will be "parameter_distributions.png"
+# or "parameter_distributions_pageX.png" when they don't all fit on one page
+SSplotPars(replist = model, strings = c("steep", "R0"),
+           nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
+           plotdir = file.path(model$inputs$dir, "distribution_plots"))
 }
 
 }
