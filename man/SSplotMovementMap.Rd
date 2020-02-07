@@ -4,10 +4,22 @@
 \alias{SSplotMovementMap}
 \title{Show movement rates on a map.}
 \usage{
-SSplotMovementMap(replist = NULL, xlim, ylim, polygonlist, colvec,
-  land = "grey", xytable = NULL, moveage = 5, moveseas = 1,
-  lwdscale = 5, legend = TRUE, title = NULL, areanames = NULL,
-  cex = 1)
+SSplotMovementMap(
+  replist = NULL,
+  xlim,
+  ylim,
+  polygonlist,
+  colvec,
+  land = "grey",
+  xytable = NULL,
+  moveage = 5,
+  moveseas = 1,
+  lwdscale = 5,
+  legend = TRUE,
+  title = NULL,
+  areanames = NULL,
+  cex = 1
+)
 }
 \arguments{
 \item{replist}{optional list created by \code{\link{SS_output}}}

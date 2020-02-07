@@ -5,8 +5,13 @@
 \title{A function to create a table of biology for assessment reporting:
 length, weight, \% mature, fecundity, and selectivity}
 \usage{
-SSbiologytables(replist = NULL, printfolder = "tables",
-  dir = "default", fleetnames = "default", selexyr = "default")
+SSbiologytables(
+  replist = NULL,
+  printfolder = "tables",
+  dir = "default",
+  fleetnames = "default",
+  selexyr = "default"
+)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}

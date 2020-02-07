@@ -4,11 +4,23 @@
 \alias{SS_changepars}
 \title{Change parameters, bounds, or phases in the control file.}
 \usage{
-SS_changepars(dir = NULL, ctlfile = "control.ss_new",
-  newctlfile = "control_modified.ss", linenums = NULL,
-  strings = NULL, newvals = NULL, repeat.vals = FALSE,
-  newlos = NULL, newhis = NULL, newprior = NULL, newprsd = NULL,
-  newprtype = NULL, estimate = NULL, verbose = TRUE, newphs = NULL)
+SS_changepars(
+  dir = NULL,
+  ctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  linenums = NULL,
+  strings = NULL,
+  newvals = NULL,
+  repeat.vals = FALSE,
+  newlos = NULL,
+  newhis = NULL,
+  newprior = NULL,
+  newprsd = NULL,
+  newprtype = NULL,
+  estimate = NULL,
+  verbose = TRUE,
+  newphs = NULL
+)
 }
 \arguments{
 \item{dir}{Directory with control file to change.}
@@ -102,10 +114,10 @@ SS_changepars(dir='C:/ss/SSv3.30.03.05_May11/Simple - Copy',
 ## parameter names in control file matching input vector 'strings' (n=2):
 ## [1] "SR_BH_steep" "SR_sigmaR"  
 ## These are the ctl file lines as they currently exist:
-##     LO HI     INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr
+##     LO HI     INIT PRIOR PR_type SD PHASE env_var&link dev_link dev_minyr dev_maxyr
 ## 95 0.2  1 0.613717   0.7    0.05  1     4       0       0         0         0
 ## 96 0.0  2 0.600000   0.8    0.80  0    -4       0       0         0         0
-##    dev_stddev Block Block_Fxn       Label Linenum
+##        dev_PH Block Block_Fxn       Label Linenum
 ## 95          0     0         0 SR_BH_steep      95
 ## 96          0     0         0   SR_sigmaR      96
 ## line numbers in control file (n=2):

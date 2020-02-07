@@ -4,14 +4,30 @@
 \alias{SSplotCohortCatch}
 \title{Plot cumulative catch by cohort.}
 \usage{
-SSplotCohortCatch(replist, subplots = 1:2, add = FALSE, plot = TRUE,
-  print = FALSE, cohortcols = "default", cohortfrac = 1,
-  cohortvec = NULL, cohortlabfrac = 0.1, cohortlabvec = NULL,
-  lwd = 3, plotdir = "default", xlab = "Year", labels = c("Age",
-  "Cumulative catch by cohort (in numbers x1000)",
-  "Cumulative catch by cohort (x1000 mt)"), pwidth = 6.5, pheight = 5,
-  punits = "in", res = 300, ptsize = 10, cex.main = 1,
-  verbose = TRUE)
+SSplotCohortCatch(
+  replist,
+  subplots = 1:2,
+  add = FALSE,
+  plot = TRUE,
+  print = FALSE,
+  cohortcols = "default",
+  cohortfrac = 1,
+  cohortvec = NULL,
+  cohortlabfrac = 0.1,
+  cohortlabvec = NULL,
+  lwd = 3,
+  plotdir = "default",
+  xlab = "Year",
+  labels = c("Age", "Cumulative catch by cohort (in numbers x1000)",
+    "Cumulative catch by cohort (x1000 mt)"),
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{List created by \code{SS_output}}

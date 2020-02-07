@@ -4,8 +4,13 @@
 \alias{SS_writedat_3.30}
 \title{write data file for SS version 3.30}
 \usage{
-SS_writedat_3.30(datlist, outfile, overwrite = FALSE, faster = FALSE,
-  verbose = TRUE)
+SS_writedat_3.30(
+  datlist,
+  outfile,
+  overwrite = FALSE,
+  faster = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{datlist}{List object created by \code{\link{SS_readdat}}.}

@@ -16,6 +16,13 @@
 #' @param scale Multiplier for bars showing distribution. Species with many ages
 #' benefit from expanded bars. NULL value causes function to attempt automatic
 #' scaling.
+#' @param add Add to existing plot
+#' @param col.grid A character value specifying the color of the grid lines
+#' @param col.bars The color of the filled polygons.
+#' @param shift_hi A numeric value specifying the amount to shift the top of 
+#' the polygon up.
+#' @param shift_lo A numeric value specifying the amount to shift the bottom
+#' of the polygon up.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param labels Vector of labels for plots (titles and axis labels)
@@ -33,17 +40,22 @@
 #' @seealso \code{\link{SSplotNumbers}}
 
 
-SSplotAgeMatrix <- function(replist, option=1, slices=NULL, 
-                            scale=NULL, plot=TRUE, print=FALSE,
-                            labels=c("Age",          #1
+SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
+                            scale = NULL, add = FALSE,
+                            col.grid = 'grey90',
+                            col.bars = grey(0, alpha=.5),
+                            shift_hi = 0, shift_lo = 0,
+                            plot = TRUE, print = FALSE,
+                            labels = c("Age",          #1
                                 "Length",            #2
                                 "True age",          #3
                                 "Observed age",      #4
                                 "for ageing error type", #5
                                 "Distribution of",   #6
                                 "at"),               #7
-                            pwidth=6.5, pheight=5.0, punits="in", res=300, ptsize=10,
-                            cex.main=1, mainTitle=TRUE, plotdir="default"){
+                            pwidth = 6.5, pheight = 5.0, punits = "in",
+                            res = 300, ptsize = 10,
+                            cex.main = 1, mainTitle = TRUE, plotdir = "default"){
   # in-development function to plot matrix of length at age
 
   # subfunction to write png files
@@ -68,10 +80,6 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
   agevec <- 0:accuage
   # length of vector (always accuage+1, but convenient to name)
   nages <- length(agevec)
-
-  #### rainbow colors (worked better with grey background commented-out further down)
-  ## colvec <- rev(rich.colors.short(n=nages,alpha=.8))
-  colvec <- rep(grey(0, alpha=.5), nages)
 
   if(option==1){
     # option 1 is plotting distribution of length at age
@@ -180,14 +188,14 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
       title <- ""
     }
 
-    plot(0, type='n', las=1, 
-         xlim=c(0,1.1*accuage), xaxs='i',
-         ylim=c(0, ymax), yaxs='i',
-         xlab=xlab, ylab=ylab, main=title)
-    #### grey background
-    ## rect(par("usr")[1], par("usr")[3],
-    ##      par("usr")[2], par("usr")[4], col = grey(.8))
-    abline(h=ybins, v=0:accuage, col='grey90', lwd=0.5)
+    if(!add){
+      plot(0, type='n', las=1, 
+           xlim=c(0,1.1*accuage), xaxs='i',
+           ylim=c(0, ymax), yaxs='i',
+           xlab=xlab, ylab=ylab, main=title)
+    }
+    # grid lines
+    abline(h=ybins, v=0:accuage, col=col.grid, lwd=0.5)
     for(iage in nages:1){
       #print(iage)
       #print(dim(mat))
@@ -214,10 +222,10 @@ SSplotAgeMatrix <- function(replist, option=1, slices=NULL,
         }
         # add a filled rectangle for this combination of age and ybin
         rect(xleft = a,
-             ybottom = ybin_lo,
+             ybottom = ybin_lo + shift_lo,
              xright = a + scale*yvec[iybin],
-             ytop = ybin_hi,
-             col=colvec[iage], border=NA)
+             ytop = ybin_hi + shift_hi,
+             col=col.bars, border=NA)
       } # end loop over bins (length or observed age)
       #lines(a+yvec*scale, ybins)
     } # end loop over true ages

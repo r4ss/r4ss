@@ -49,8 +49,17 @@
 #' @param bublegend Add legend with example bubble sizes to bubble plots.
 #' @param colvec Vector of length 3 with colors for females, males, unsexed fish
 #' @param linescol Color for lines on top of polygons
-#' @param axis1 position of bottom axis values
-#' @param axis2 position of left size axis values
+#' @param xlas label style (las) input for x-axis. Default 0 has horizontal
+#' labels, input 2 would provide vertical lables.
+#' @param ylas label style (las) input for y-axis. Default NULL has horizontal
+#' labels when all labels have fewer than 6 characters and vertical otherwise.
+#' Input 0 would force vertical labels, and 1 would force horizontal.
+#' @param axis1 optional position of bottom axis values
+#' @param axis2 optional position of left size axis values
+#' @param axis1labs optional vector of labels for axis1 (either NULL or needs to
+#' match length of axis1)
+#' @param sizebinlabs Vector of size bin labels corresponding to the generalized
+#' size frequency method
 #' @param red What color to use for females in bubble plots (default is slightly
 #' transparent red)
 #' @param blue What color to use for males in bubble plots (default is slightly
@@ -107,7 +116,8 @@
 #' @param addMeans Add parameter means in addition to medians for MCMC
 #' posterior distributions in which the median and mean differ.
 #' @param mainTitle Logical indicating if a title for the plot should be produced
-#' @param \dots additional arguments that will be passed to the plotting.
+#' @param \dots additional arguments that will be passed to
+#' the \code{par} command in the \code{\link{make_multifig}} function.
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
@@ -123,7 +133,8 @@ SSplotComps <-
            scalebubbles=FALSE,cexZ1=1.5,bublegend=TRUE,
            colvec=c(rgb(1,0,0,.7),rgb(0,0,1,.7),rgb(.1,.1,.1,.7)),
            linescol=c(rgb(0,.5,0,.7),rgb(.8,0,0,.7),rgb(0,0,.8,.7)),
-           axis1=NULL,axis2=NULL,
+           xlas = 0, ylas = NULL,
+           axis1 = NULL, axis2 = NULL, axis1labs = NULL, sizebinlabs = NULL,
            blue=rgb(0,0,1,0.7),red=rgb(1,0,0,0.7),
            pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
            plotdir="default", cex.main=1, linepos=1, fitbar=FALSE,
@@ -141,9 +152,10 @@ SSplotComps <-
                       "(mt)",                  #11
                       "(numbers x1000)",       #12
                       "Stdev (Age) (yr)",      #13
-                      "Conditional AAL plot, "), #14
+                      "Conditional AAL plot, ",#14
+                      "Size bin"),             #15
            printmkt=TRUE,printsex=TRUE,
-           maxrows=6,maxcols=6,maxrows2=2,maxcols2=4,rows=1,cols=1,
+           maxrows=4,maxcols=4,maxrows2=2,maxcols2=4,rows=1,cols=1,
            andre_oma=c(3,0,3,0), andrerows=3,
            fixdims=TRUE,fixdims2=FALSE,maxneff=5000,verbose=TRUE,
            scalebins=FALSE,addMeans=TRUE,mainTitle=FALSE,...)
@@ -283,20 +295,45 @@ SSplotComps <-
   }
   if(kind=="SIZE"){
     dbase_kind <- sizedbase[sizedbase$method==sizemethod,]
-    sizeunits <- unique(dbase_kind$units)
-    if(length(sizeunits)>1)
-      stop("!error with size units in generalized size comp plots:\n",
-           "    more than one unit value per method.\n")
-    if(sizeunits %in% c("in","cm"))
-      kindlab <- paste(labels[10]," (",sizeunits,")",sep="")
-    if(sizeunits %in% c("lb","kg"))
-      kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
+    # if user provided sizebinlabs, then add tick and label
+    # associated with each bin
+    if(!is.null(sizebinlabs)){
+      kindlab <- labels[15]
+      axis1 <- sort(unique(dbase_kind$Bin))
+      # confirm that vector of labels is the correct length
+      if(length(sizebinlabs) == length(axis1)){
+        axis1labs <- sizebinlabs
+      }else{
+        axis1labs <- axis1
+        warning("Input 'sizebinlabs' differs in length from the unique Bin\n",
+                "  values associated with sizemethod = ", sizemethod,
+                ". Using bin values instead.")
+      }
+    }else{
+      # evenly spaced units in length or weight rather than sizebins
+      sizeunits <- unique(dbase_kind$units)
+      if(length(sizeunits)>1){
+        stop("!error with size units in generalized size comp plots:\n",
+             "    more than one unit value per method.\n")
+      }
+      if(sizeunits %in% c("in","cm")){
+        kindlab <- paste(labels[10]," (",sizeunits,")",sep="")
+      }
+      if(sizeunits %in% c("lb","kg")){
+        kindlab <- paste(labels[9]," (",sizeunits,")",sep="")
+      }
+    }
     if(datonly){
       filenamestart <- "comp_sizedat_"
       titledata <- "Size comp data, "
     }else{
       filenamestart <- "comp_sizefit_"
       titledata <- "Size comps, "
+    }
+    # add text noting which size method is represented
+    if(length(unique(sizedbase$method)) > 1){
+      filenamestart <- paste0(filenamestart, "method", sizemethod, "_")
+      titledata <- paste0(titledata, " size method ", sizemethod, ", ")
     }
   }
   if(kind=="AGE"){
@@ -494,7 +531,9 @@ SSplotComps <-
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims,ipage=ipage,scalebins=scalebins,
-                              colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                              colvec=colvec, linescol=linescol,
+                              xlas = xlas, ylas = ylas,
+                              axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                               sexvec=sexvec, yupper=yupper, ...)
               }else{
                 # standard multinomial likelihood
@@ -510,7 +549,9 @@ SSplotComps <-
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims,ipage=ipage,scalebins=scalebins,
-                              colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                              colvec=colvec, linescol=linescol, 
+                              xlas = xlas, ylas = ylas,
+                              axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                               sexvec=sexvec, yupper=yupper, ...)
               }                
             }
@@ -523,7 +564,9 @@ SSplotComps <-
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
-                            colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                            colvec=colvec, linescol=linescol, 
+                            xlas = xlas, ylas = ylas,
+                            axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                             sexvec=sexvec, yupper=yupper, ...)
             }
             if(kind=="GSTLEN"){
@@ -534,7 +577,9 @@ SSplotComps <-
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
-                            colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                            colvec=colvec, linescol=linescol, 
+                            xlas = xlas, ylas = ylas,
+                            axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                             sexvec=sexvec,...)
             }
             if(kind %in% c("L@A","W@A")){
@@ -546,7 +591,9 @@ SSplotComps <-
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
-                            colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                            colvec=colvec, linescol=linescol, 
+                            xlas = xlas, ylas = ylas,
+                            axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                             sexvec=sexvec,...)
             }
           } # end tempfun
@@ -765,7 +812,9 @@ SSplotComps <-
                           ipage=ipage,scalebins=scalebins,
                           sampsizeline=sampsizeline,effNline=effNline,
                           sampsizemean=MeanNage,effNmean=HarmEffNage,
-                          colvec=colvec, linescol=linescol, axis1=axis1, axis2=axis2,
+                          colvec=colvec, linescol=linescol, 
+                          xlas = xlas, ylas = ylas,
+                          axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                           sexvec=sexvec,...)
           }
           if(plot) tempfun3(ipage=0,...)
@@ -817,6 +866,8 @@ SSplotComps <-
                                 bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                 xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                                 fixdims=fixdims,ipage=ipage,scalebins=scalebins,
+                                xlas = xlas, ylas = ylas,
+                                axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                                 sexvec=sexvec, yupper=yupper, ...)
                 }
                 if(plot) tempfun4(ipage=0,...)
@@ -1019,7 +1070,8 @@ SSplotComps <-
           kind2 <- tolower(kind)
           if(plot){
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2,
-                                  fleet=f, fleetnames=fleetnames, datonly=datonly)
+                                  fleet=f, fleetnames=fleetnames, datonly=datonly,
+                                  printit = verbose)
           }
           if(print){ # set up plotting to png file if required
             file <- paste0(filenamestart,
@@ -1031,7 +1083,8 @@ SSplotComps <-
                 units=punits,res=res,pointsize=ptsize)
             # run function
             tmp <- SSMethod.TA1.8(fit=replist, type=kind2,
-                                  fleet=f, fleetnames=fleetnames, datonly=datonly)
+                                  fleet=f, fleetnames=fleetnames, datonly=datonly,
+                                  printit = verbose)
             # create caption
             caption <- paste0("Mean ", gsub("len","length",tolower(kind)),
                               " for ", fleetnames[f],
@@ -1288,6 +1341,7 @@ SSplotComps <-
           if(j > -1){ # add market category to filename if it's not a mix
             filename_fltsexmkt <- paste0(filename_fltsexmkt, "mkt",j)
           }
+          
           caption <- paste(titledata,title_sexmkt, "aggregated across time by fleet",sep="") # total title
 
           if(mainTitle) {
@@ -1363,6 +1417,9 @@ SSplotComps <-
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
+                              colvec=colvec, linescol=linescol, 
+                              xlas = xlas, ylas = ylas,
+                              axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                               sexvec=agg$sex, yupper=yupper, ...)
               }else{
                 # standard multinomial likelihood
@@ -1378,6 +1435,9 @@ SSplotComps <-
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
+                              colvec=colvec, linescol=linescol, 
+                              xlas = xlas, ylas = ylas,
+                              axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
                               sexvec=agg$sex, yupper=yupper, ...)
               }
             }
@@ -1532,7 +1592,10 @@ SSplotComps <-
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
-                              yupper=yupper,...)
+                              colvec=colvec, linescol=linescol, 
+                              xlas = xlas, ylas = ylas,
+                              axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
+                              sexvec=agg$sex, yupper=yupper, ...)
               }
 
          # haven't configured this aggregated plot for other types
@@ -1672,7 +1735,10 @@ SSplotComps <-
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                                 fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
-                                yupper=yupper, ...)
+                                colvec=colvec, linescol=linescol, 
+                                xlas = xlas, ylas = ylas,
+                                axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
+                                sexvec=agg$sex, yupper=yupper, ...)
                 }
 
                 # haven't configured this aggregated plot for other types

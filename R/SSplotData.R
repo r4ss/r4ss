@@ -227,9 +227,14 @@ SSplotData <- function(replist,
             size <- rep(1, length(allyrs))
           }
           if(typename %in% c("condbase", "ghostcondbase")){
-            # subset by smallest bin (sample size is repeated
+            # subset to a row for each observation (entry in data file)
+            # to get representative sample size (sample size is repeated
             # for all bins within each vector of observations)
-            dat.sub <- dat.f[dat.f$Bin == min(dat.f$Bin),]
+            representative.rows <- !duplicated(paste(dat.f$Yr.S,
+                                                     dat.f$Sexes,
+                                                     dat.f$Lbin_lo,
+                                                     dat.f$Lbin_hi))
+            dat.sub <- dat.f[representative.rows,]
             # check for observations within this fleet
             if(nrow(dat.sub) > 0){
               # aggregate sample sizes by year

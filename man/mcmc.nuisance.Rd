@@ -4,11 +4,21 @@
 \alias{mcmc.nuisance}
 \title{Summarize nuisance MCMC output}
 \usage{
-mcmc.nuisance(directory = "c:/mydirectory/", run = "mymodel/",
-  file = "posteriors.sso", file2 = "derived_posteriors.sso",
-  bothfiles = FALSE, printstats = FALSE, burn = 0, header = TRUE,
-  thin = 1, trace = 0, labelstrings = "all", columnnumbers = "all",
-  sep = "")
+mcmc.nuisance(
+  directory = "c:/mydirectory/",
+  run = "mymodel/",
+  file = "posteriors.sso",
+  file2 = "derived_posteriors.sso",
+  bothfiles = FALSE,
+  printstats = FALSE,
+  burn = 0,
+  header = TRUE,
+  thin = 1,
+  trace = 0,
+  labelstrings = "all",
+  columnnumbers = "all",
+  sep = ""
+)
 }
 \arguments{
 \item{directory}{Directory where all results are located, one level above

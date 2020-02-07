@@ -4,8 +4,14 @@
 \alias{SS_writestarter}
 \title{write starter file}
 \usage{
-SS_writestarter(mylist, dir = NULL, file = "starter.ss",
-  overwrite = FALSE, verbose = TRUE, warn = TRUE)
+SS_writestarter(
+  mylist,
+  dir = NULL,
+  file = "starter.ss",
+  overwrite = FALSE,
+  verbose = TRUE,
+  warn = TRUE
+)
 }
 \arguments{
 \item{mylist}{List object created by \code{\link{SS_readstarter}}.}

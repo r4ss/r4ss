@@ -1,7 +1,7 @@
 #' A function to create a list object for the output from Stock Synthesis
 #'
 #' Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
-#' other files files produced by Stock Synthesis and formats the important
+#' other files produced by Stock Synthesis and formats the important
 #' content of these files into a list in the R workspace. A few statistics
 #' unavailable elsewhere are taken from the .par and .cor files. Summary
 #' information and statistics can be returned to the R console or just
@@ -9,7 +9,7 @@
 #'
 #'
 #' @param dir Directory containing the Stock Synthesis model output.
-#' Forwardslashes or double backslashes and quotes are necessary.
+#' Forward slashes or double backslashes and quotes are necessary.
 #' This can also either be an absolute path or relative to the working
 #' directory.
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
@@ -25,7 +25,7 @@
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
 #' small. It should be bigger than the maximum age + 10 and the number of years
-#' + 10.
+#' + 10. The default value is \code{NULL}, which finds the optimum width.
 #' @param forecast Read the forecast-report file?
 #' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
@@ -41,7 +41,7 @@
 #' R GUI.
 #' @param printlowcor The maximum number of low correlations to print to the R
 #' GUI.
-#' @param verbose Return updates of function progress to the R GUI?
+#' @template verbose
 #' @param printstats Print summary statistics about the output to the R GUI?
 #' @param hidewarn Hides some warnings output from the R GUI.
 #' @param NoCompOK Allow the function to work without a CompReport file.
@@ -70,7 +70,7 @@ SS_output <-
            repfile="Report.sso", compfile="CompReport.sso",covarfile="covar.sso",
            forefile="Forecast-report.sso", wtfile="wtatage.ss_new",
            warnfile="warning.sso",
-           ncols=200, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
+           ncols=NULL, forecast=TRUE, warn=TRUE, covar=TRUE, readwt=TRUE,
            checkcor=TRUE, cormax=0.95, cormin=0.01, printhighcor=10, printlowcor=10,
            verbose=TRUE, printstats=TRUE,hidewarn=FALSE, NoCompOK=FALSE,
            aalmaxbinrange=4)
@@ -157,7 +157,7 @@ SS_output <-
                     "choosing most recently modified:",parfile,"\n")
   }
   if(length(parfile)==0){
-    if(!hidewarn) cat("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
+    if(!hidewarn) message("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
     parfile <- NA
   }else{
     parfile <- file.path(dir,parfile)
@@ -221,7 +221,7 @@ SS_output <-
     if(!is.na(parfile)){
       corfile <- sub(".par",".cor",parfile,fixed=TRUE)
       if(!file.exists(corfile)){
-        cat("Some stats skipped because the .cor file not found:",corfile,"\n")
+        warning("Some stats skipped because the .cor file not found:",corfile,"\n")
         corfile <- NA
       }
     }
@@ -288,6 +288,8 @@ SS_output <-
   # read report file
   if(verbose) cat("Reading full report file\n")
   flush.console()
+
+  if(is.null(ncols)) ncols <- get_ncol(repfile)
   rawrep <- read.table(file=repfile,col.names=1:ncols,fill=TRUE,quote="",
                        colClasses="character",nrows=-1,comment.char="")
 
@@ -301,7 +303,7 @@ SS_output <-
          "  increase 'ncols' input above current value (ncols=",ncols,")")
   }
   if(verbose){
-    if((maxnonblank+1)==ncols) cat("Got all columns.\n")
+    if((maxnonblank+1)==ncols) cat("Got all columns using ncols =",ncols,"\n")
     if((maxnonblank+1)<ncols) cat("Got all columns. To speed code, use ncols=",maxnonblank+1," in the future.\n",sep="")
     cat("Got Report file\n")
   }
@@ -679,8 +681,9 @@ SS_output <-
 
       # make correction to tag output associated with 3.24f (fixed in later versions)
       if(substr(SS_version,1,9)=="SS-V3.24f"){
-        if(!hidewarn)
-          cat('Correcting for bug in tag data output associated with SSv3.24f\n')
+        if(!hidewarn) {
+          message('Correcting for bug in tag data output associated with SSv3.24f\n')
+        }
         tag1rows <- compdbase$Sexes=="TAG1"
         if(any(tag1rows)){
           tag1 <- compdbase[tag1rows,]
@@ -706,7 +709,7 @@ SS_output <-
 
       n <- sum(is.na(compdbase$N) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
-        cat("Warning:",n,"rows from composition database have NA sample size\n",
+        warning(n,"rows from composition database have NA sample size\n",
             "but are not part of a super-period. (Maybe input as N=0?)\n")
       }
       compdbase <- type.convert(compdbase, as.is = TRUE)
@@ -839,10 +842,10 @@ SS_output <-
         Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
         names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
         if(length(unique(agedbase$Lbin_range)) > 1){
-          cat("Warning!: different ranges of Lbin_lo to Lbin_hi found in age comps.\n")
-          print(Lbin_ranges)
-          cat("  consider increasing 'aalmaxbinrange' to designate\n")
-          cat("  some of these data as conditional age-at-length\n")
+          warning("different ranges of Lbin_lo to Lbin_hi found in age comps.\n",
+                  paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"),
+                  "\n consider increasing 'aalmaxbinrange' to designate\n", 
+                  "some of these data as conditional age-at-length.")
         }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
       }else{
@@ -1977,6 +1980,24 @@ SS_output <-
                                        all(biology$Wt_len_F==biology$Fecundity),
                                        "biomass", "numbers")
 
+  # get natural mortality type and vectors of M by age
+  M_type <- as.numeric(gsub(".*([0-9]+)", "\\1",
+    rawrep[matchfun("Natural_Mortality"),2]))
+  # in SS 3.30 the number of rows of Natural_Mortality is the product of
+  # the number of sexes, growth patterns, settlement events but settlement
+  # events didn't exist in 3.24, so it's easier to just use the following
+  # keyword (also version dependent)
+  endcode <- "Natural_Mortality_Bmark" # next keyword in 3.30 models
+  if(is.na(matchfun(endcode))){
+    endcode <- "Growth_Parameters" # next keyword in 3.24
+  }
+  M_Parameters <- matchfun2("Natural_Mortality",1,
+                            endcode,-1,
+                            header=TRUE)
+  returndat$M_type <- M_type
+  returndat$M_Parameters <- type.convert(M_Parameters, as.is = TRUE)
+
+  # get growth parameters
   Growth_Parameters <- matchfun2("Growth_Parameters", 1,
                                  "Growth_Parameters", 1 + max(morph_indexing$GP),
                                  header=TRUE)
@@ -2141,6 +2162,11 @@ SS_output <-
     catch <- NULL
   }
   returndat$catch <- catch
+
+  # age associated with summary biomass
+  summary_age <- rawrep[matchfun("TIME_SERIES"),2]
+  summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
+  returndat$summary_age <- summary_age
 
   # time series
   timeseries <- matchfun2("TIME_SERIES",1,"SPR_series",-1,header=TRUE)
@@ -2482,7 +2508,7 @@ SS_output <-
     cpue <- type.convert(cpue, as.is = TRUE)
   }else{
     # if INDEX_2 not present (not sure the circumstances that would cause this)
-    cpue <- NA
+    cpue <- NULL
   }
   returndat$cpue <- cpue
 

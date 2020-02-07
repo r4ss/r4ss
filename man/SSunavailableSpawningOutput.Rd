@@ -4,9 +4,18 @@
 \alias{SSunavailableSpawningOutput}
 \title{Plot unavailable spawning output}
 \usage{
-SSunavailableSpawningOutput(replist, plot = TRUE, print = FALSE,
-  plotdir = "default", pwidth = 6.5, pheight = 5, punits = "in",
-  res = 300, ptsize = 10, cex.main = 1)
+SSunavailableSpawningOutput(
+  replist,
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1
+)
 }
 \arguments{
 \item{replist}{List created by \code{\link{SS_output}}}

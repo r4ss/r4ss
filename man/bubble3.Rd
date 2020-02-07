@@ -4,12 +4,32 @@
 \alias{bubble3}
 \title{Create a bubble plot.}
 \usage{
-bubble3(x, y, z, col = 1, cexZ1 = 5, maxsize = NULL,
-  do.sqrt = TRUE, bg.open = gray(0.95, 0.3), legend = TRUE,
-  legendloc = "top", legend.z = "default", legend.yadj = 1.1,
-  main = "", cex.main = 1, xlab = "", ylab = "", minnbubble = 3,
-  xlim = NULL, ylim = NULL, axis1 = TRUE, xlimextra = 1,
-  add = FALSE, las = 1, allopen = TRUE)
+bubble3(
+  x,
+  y,
+  z,
+  col = 1,
+  cexZ1 = 5,
+  maxsize = NULL,
+  do.sqrt = TRUE,
+  bg.open = gray(0.95, 0.3),
+  legend = TRUE,
+  legendloc = "top",
+  legend.z = "default",
+  legend.yadj = 1.1,
+  main = "",
+  cex.main = 1,
+  xlab = "",
+  ylab = "",
+  minnbubble = 3,
+  xlim = NULL,
+  ylim = NULL,
+  axis1 = TRUE,
+  xlimextra = 1,
+  add = FALSE,
+  las = 1,
+  allopen = TRUE
+)
 }
 \arguments{
 \item{x}{Vector of x-values.}
