@@ -31,7 +31,6 @@
 #' @import kableExtra
 #' @importFrom corpcor pseudoinverse
 #' @importFrom gdata write.fwf
-#' @importFrom gplots hist2d
 #' @importFrom gtools running
 #' @importFrom pso psoptim
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette

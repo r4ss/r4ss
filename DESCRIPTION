@@ -17,12 +17,12 @@ Imports:
     coda,
     corpcor,
     gdata,
-    gplots,
     gtools,
     pso,
     truncnorm,
     kableExtra
 Suggests: 
+    gplots,
     maps,
     testthat,
     knitr,
