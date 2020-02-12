@@ -106,6 +106,9 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
     wl("ALK_tolerance")
   }
   writeLines("#")
+  if(!is.null(mylist[["seed"]])) { # seed option added in 3.30.15 
+    wl("seed")
+  }
   wl("final")
 
   # restore printing width to whatever the user had before
