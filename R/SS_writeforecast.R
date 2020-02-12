@@ -172,7 +172,8 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
       writeLines("-9999 -1")
       if(mylist$N_allocation_groups>0){
         printdf(mylist$allocation_among_groups)
-        writeLines(paste0("-9999",rep(-1,mylist$N_allocation_groups),sep=" "))
+        writeLines(paste0(c("-9999",rep(-1,mylist$N_allocation_groups)),
+                          collapse=" "))
       }
       wl("InputBasis")
       if(!is.null(mylist$ForeCatch) && nrow(mylist$ForeCatch > 0)){

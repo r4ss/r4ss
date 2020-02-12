@@ -1283,7 +1283,7 @@ SSplotComparisons <-
     for(iline in 1:nlines){
       imodel <- models[iline]
       subset1 <- indices$imodel==imodel & !is.na(indices$Like)
-      subset2 <- indices$imodel==imodel
+      subset2 <- indices$imodel==imodel & indices$Yr <= endyrvec[iline]
       if(length(unique(indices$Fleet[subset2])) > 1){
         if(!is.null(indexfleets[imodel])){
           ifleet <- indexfleets[imodel]
@@ -1359,7 +1359,12 @@ SSplotComparisons <-
     meanQ <- rep(NA,nlines)
 
     if(!add){
-      plot(0, type = "n", xlim = range(yr), yaxs = yaxs, 
+      if(!is.null(endyrvec)) {
+        xlim <- c(min(yr), max(endyrvec))
+      }else {
+        xlim <- range(yr)
+      }
+      plot(0, type = "n", xlim = xlim, yaxs = yaxs,
            ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE)
     }
     if(!log & yaxs != "i"){
@@ -1415,7 +1420,8 @@ SSplotComparisons <-
     }
 
     if(!add){
-      axis(1, at=yr)
+      xticks <- pretty(xlim)
+      axis(1, at=xticks, labels=format(xticks))
       if(tickEndYr){
         axis(1, at=max(endyrvec))
       }
