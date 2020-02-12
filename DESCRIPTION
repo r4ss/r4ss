@@ -17,15 +17,15 @@ Imports:
     coda,
     corpcor,
     gdata,
-    gtools,
-    pso,
-    truncnorm,
     kableExtra
 Suggests: 
+    gtools,
     gplots,
-    maps,
-    testthat,
     knitr,
+    maps,
+    pso,
+    testthat,
+    truncnorm,
     rmarkdown,
     shiny
 Description: A collection of R functions for use with Stock Synthesis, a
