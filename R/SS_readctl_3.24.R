@@ -15,7 +15,7 @@
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. Default = 1.
+#' @param Nareas number of spatial areas in the model. Default = 1.
 #' This information is also not explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
@@ -54,7 +54,7 @@
 SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 ## Parameters that are not defined in control file
     nseas=4,
-    N_areas=1,
+    Nareas=1,
     Nages=20,
     Ngenders=1,
     Npopbins=NA,
@@ -167,7 +167,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist$warnings<-""
   if(!use_datlist){
     ctllist$nseas<-nseas
-    ctllist$N_areas<-N_areas
+    ctllist$Nareas<-Nareas
     ctllist$Nages<-Nages
     ctllist$Ngenders<-Ngenders
     ctllist$Npopbins<-Npopbins
@@ -184,7 +184,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
     if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
-    ctllist$N_areas<-N_areas<-datlist$N_areas
+    ctllist$Nareas<-Nareas<-datlist$Nareas
     ctllist$Nages<-Nages<-datlist$Nages
     ctllist$Ngenders<-Ngenders<-datlist$Ngenders
     ctllist$Npopbins<-Npopbins<-datlist$Npopbins
@@ -231,7 +231,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     }
   }
   ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
-  if(ctllist$N_GP*ctllist$nseas*ctllist$N_areas>1) {
+  if(ctllist$N_GP*ctllist$nseas*ctllist$Nareas>1) {
     ctllist<-add_elem(ctllist,"recr_dist_read")
     recr_dist_read<-ctllist$recr_dist_read
     #  number of recruitment assignments (overrides GP*area*seas parameter values)
@@ -245,8 +245,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 
   ctllist$recr_dist_method<-1 # compatibility with v 3.30
 
-  if(ctllist$N_areas>1){
-    ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
+  if(ctllist$Nareas>1){
+    ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if Nareas > 1
     if(ctllist$N_moveDef>0)
     {
       ctllist<-add_elem(ctllist,"firstAgeMove") #_first age that moves (real age at begin of season, not integer) also cond on do_migration>0
@@ -429,20 +429,20 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     MGparmLabel[cnt]<-paste0("Herm_asymptote",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
     N_MGparm<-N_MGparm+3
   }
-  N_MGparm<-N_MGparm+ctllist$N_GP+N_areas+nseas         # add for the assignment to areas
+  N_MGparm<-N_MGparm+ctllist$N_GP+Nareas+nseas         # add for the assignment to areas
   MGparmLabel[cnt+1:ctllist$N_GP-1]<-paste0("RecrDist_GP_",1:ctllist$N_GP);PType[cnt:(cnt+ctllist$N_GP-1)]<-7;cnt<-cnt+ctllist$N_GP
-  MGparmLabel[cnt+1:N_areas-1]<-paste0("RecrDist_Area_",1:N_areas);PType[cnt:(cnt+N_areas)]<-8;cnt<-cnt+N_areas
+  MGparmLabel[cnt+1:Nareas-1]<-paste0("RecrDist_Area_",1:Nareas);PType[cnt:(cnt+Nareas)]<-8;cnt<-cnt+Nareas
   MGparmLabel[cnt+1:nseas-1]<-paste0("RecrDist_Seas_",1:nseas);PType[cnt:(cnt+nseas-1)]<-9;cnt<-cnt+nseas
 
   ## number of recruiment distribution parameters
-  N_RecrDist_parms<-ctllist$N_GP+ctllist$N_areas+ctllist$nseas
+  N_RecrDist_parms<-ctllist$N_GP+ctllist$Nareas+ctllist$nseas
   if(ctllist$recr_dist_inx){
   ## Interactions
-    N_MGparm<-N_MGparm+ctllist$N_GP*N_areas*nseas
-    N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*N_areas*nseas
+    N_MGparm<-N_MGparm+ctllist$N_GP*Nareas*nseas
+    N_RecrDist_parms<-N_RecrDist_parms+ctllist$N_GP*Nareas*nseas
     for(i in 1:ctllist$N_GP){
       for(j in 1:nseas){
-        for(k in 1:N_areas){
+        for(k in 1:Nareas){
           MGparmLabel[cnt]<-paste0("RecrDist_interaction_GP_",i,"_seas_",j,"_area_",k);PType[cnt]<-10;cnt<-cnt+1
         }
       }
@@ -453,7 +453,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
   MGparmLabel[cnt]<-"CohortGrowDev";PType[cnt]<-11;cnt<-cnt+1
-  if((N_areas>1)&&(ctllist$N_moveDef>0)){
+  if((Nareas>1)&&(ctllist$N_moveDef>0)){
     N_MGparm<-N_MGparm+ctllist$N_moveDef*2 # add 2 * N_moveDef for movement params
 #    M_Move_parms<-ctllist$N_moveDef*2
     for(i in 1:ctllist$N_moveDef){
