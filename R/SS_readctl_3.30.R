@@ -1389,29 +1389,46 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
-  if(ctllist$more_stddev_reporting!=0){
-    ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
-    if(ctllist$EmpiricalWAA != 0) {
-      warning("Additional stddev reporting being used with a model using ", 
-              "empirical weight at age. Note that even if number of growth", 
-              " ages > 0, SS will ignore these and not expect any input for ", 
-              "the line stddev_reporting_growth.")
-    }
+  if(ctllist$more_stddev_reporting != 0 ) {
+    ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
     ## Selex bin
-    if(ctllist$stddev_reporting_specs[4]>0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_selex",length=ctllist$stddev_reporting_specs[4])
+    if(ctllist$stddev_reporting_specs[4] > 0) {
+      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
+        ctllist <- add_elem(ctllist, name = "stddev_reporting_selex")
+      } else {
+        ctllist<-
+          add_vec(ctllist, name = "stddev_reporting_selex",
+                  length=ctllist$stddev_reporting_specs[4])
+      }
     }
     ## Growth bin
     # if using wt at age, this is not read.
-    if(ctllist$stddev_reporting_specs[6]>0  & ctllist$EmpiricalWAA == 0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_growth",length=ctllist$stddev_reporting_specs[6])
+    if(ctllist$EmpiricalWAA != 0 & ctllist$stddev_reporting_specs[6] > 0) {
+      warning("Additional stddev reporting being used with a model using ", 
+              "empirical weight at age. Note that even if number of growth", 
+              " ages > 0, SS will ignore these and not expect any input for ", 
+              "the line stddev_reporting_growth. Changing ",
+              "ctllist$stdev_reporting_specs[6] to 0 to make this clear.")
+      ctllist$stddev_reporting_specs[6] <- 0
+    }
+    if(ctllist$stddev_reporting_specs[6] > 0  & ctllist$EmpiricalWAA == 0) {
+      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
+        ctllist <- add_elem(ctllist, name = "stddev_reporting_growth")
+      } else {
+        ctllist <- add_vec(ctllist,
+                           name = "stddev_reporting_growth",
+                           length = ctllist$stddev_reporting_specs[6])
+      }
     }
     ## N at age
-    if(ctllist$stddev_reporting_specs[9]>0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
+    if(ctllist$stddev_reporting_specs[9] > 0) {
+      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
+        ctllist <- add_elem(ctllist, name = "stddev_reporting_N_at_A")
+      } else {
+      ctllist<- add_vec(ctllist,
+                        name = "stddev_reporting_N_at_A",
+                        length = ctllist$stddev_reporting_specs[9])
+      }
     }
   }
   if(ctllist$'.dat'[ctllist$'.i']==999){
