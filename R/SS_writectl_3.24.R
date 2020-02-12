@@ -10,7 +10,7 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @param nseas number of season in the model. This information is not
 #'  explicitly available in control file
-#' @param Nareas number of spatial areas in the model. This information is also not
+#' @param N_areas number of spatial areas in the model. This information is also not
 #'  explicitly available in control file
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
@@ -25,9 +25,9 @@
 SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## Parameters that are not defined in control file
 ## if ctllist is an output of SS_readctl these three inputs will be overriden by
-## nseas,Nareas and Do_AgeKey in ctllist
+## nseas,N_areas and Do_AgeKey in ctllist
     nseas=1,
-    Nareas=1,
+    N_areas=1,
     Do_AgeKey=FALSE
 ){
   # function to write Stock Synthesis ctl files
@@ -41,7 +41,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   # output written to the file after the function crashes before closing connection
   ## on.exit({if(sink.number()>0) sink(); close(zz)})
   nseas<-ifelse(is.null(ctllist$nseas),nseas,ctllist$nseas)
-  Nareas<-ifelse(is.null(ctllist$Nareas),Nareas,ctllist$Nareas)
+  N_areas<-ifelse(is.null(ctllist$N_areas),N_areas,ctllist$N_areas)
   Do_AgeKey<-ifelse(is.null(ctllist$Do_AgeKey),Do_AgeKey,ctllist$Do_AgeKey)
 
   if(file.exists(outfile)){
@@ -147,20 +147,20 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     wl("sd_ratio")
     wl("submorphdist")
   }
-  if(ctllist$N_GP*nseas*Nareas>1) {
+  if(ctllist$N_GP*nseas*N_areas>1) {
     wl("recr_dist_read",comment="#_number of recruitment assignments (overrides GP*area*seas parameter values)")
     wl("recr_dist_inx",comment="#_recruitment interaction requested")
     printdf("recr_dist_pattern")
   }
-  if(Nareas>1){
+  if(N_areas>1){
   #  stop("Multi areas are not yet implemented")
-    wl("N_moveDef",comment="#_N_movement_definitions goes here if Nareas > 1")
+    wl("N_moveDef",comment="#_N_movement_definitions goes here if N_areas > 1")
     wl("firstAgeMove",comment="#_first age that moves (real age at begin of season, not integer) also cond on do_migration>0")
     writeComment("move definition for seas, morph, source, dest, age1, age2")
     printdf("moveDef",header=FALSE)
 
   }else{
-    writeComment("#_Cond 0 # N_movement_definitions goes here if Nareas > 1")
+    writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1")
     writeComment("#_Cond 1.0 # first age that moves (real age at begin of season, not integer) also cond on do_migration>0")
     writeComment("#_Cond 1 1 1 2 4 10 # example move definition for seas=1, morph=1, source=1 dest=2, age1=4, age2=10")
   }

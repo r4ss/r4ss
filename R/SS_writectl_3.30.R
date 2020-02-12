@@ -172,7 +172,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   printdf("recr_dist_pattern")
   writeComment("#")
   # Movement ----
-  if(ctllist$Nareas > 1) {
+  if(ctllist$N_areas > 1) {
     wl("N_moveDef", 
        comment = "#_N_movement_definitions goes here if Nareas > 1")
     if(ctllist$N_moveDef>0) {
@@ -183,7 +183,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     printdf("moveDef", header = FALSE)
     }
   } else {
-    writeComment("#_Cond 0 # N_movement_definitions goes here if Nareas > 1")
+    writeComment("#_Cond 0 # N_movement_definitions goes here if N_areas > 1")
     writeComment(paste0("#_Cond 1.0 # first age that moves (real age at begin ",
                         "of season, not integer) also cond on do_migration>0"))
     writeComment(paste0("#_Cond 1 1 1 2 4 10 # example move definition for ",
