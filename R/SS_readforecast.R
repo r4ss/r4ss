@@ -9,8 +9,8 @@
 #' @param nseas number of seasons (not required in 3.30).
 #' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param readAll Should the function continue even if Forecast=0
-#' (at which point SS stops reading)
+#' @param readAll Should the function continue even if Forecast = 0 or -1
+#' (at which point SS stops reading)?
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor + Nathan Vaughan
 #' @export
@@ -191,15 +191,24 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   }
   forelist<-add_elem(forelist,"Bmark_relF_Basis")
   forelist<-add_elem(forelist,"Forecast")
-  if(forelist$Forecast==0 & !readAll){
-    if(verbose){
-      cat("Forecast=0 and input readAll=FALSE so skipping remainder of file\n")
+  if(forelist$Forecast %in% c(0, -1) & !readAll) {
+    if(verbose) {
+      message("Forecast is ", forelist$Forecast, 
+              " and input readAll=FALSE so skipping remainder of file")
     }
   }else{
     if(verbose){
-      cat("Forecast =", forelist$Forecast, "\n")
+      message("Forecast =", forelist$Forecast, "\n")
     }
     forelist<-add_elem(forelist,"Nforecastyrs")
+    # check for compatible input with forecast option 1.
+    if(forelist[["Forecast"]] == 0 & forelist[["Nforecastyrs"]] != 1) {
+      warning("Forecast = 0 should always be used with 1 forecast year. ", 
+              "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
+              "of forecast, please use Forecast = -1; if you would like to ",
+              " forecast for > 1 year, please select a value of Forecast > 0.")
+      forelist[["Nforecastyrs"]] <- 1
+    }
     forelist<-add_elem(forelist,"F_scalar")
     if(forelist$SSversion==3.24){
       forelist<-add_vec(forelist,length=4,name="Fcast_years")
@@ -287,18 +296,17 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
         forelist<-add_df(forelist,ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
       }
     }
+    if(forelist$'.dat'[forelist$'.i']==999){
+      if(verbose) message("read of forecast file complete (final value = 999)\n")
+      forelist$eof <- TRUE
+    }else{
+      warning("Error: final value is ", forelist$'.dat'[forelist$'.i'], " but ",
+              "should be 999\n")
+      forelist$eof <- FALSE
+    }
   }
   
-  if(forelist$'.dat'[forelist$'.i']==999){
-    if(verbose) message("read of forecast file complete (final value = 999)\n")
-    forelist$eof <- TRUE
-  }else{
-    warning("Error: final value is", forelist$'.dat'[forelist$'.i'], " but ",
-            "should be 999\n")
-    forelist$eof <- FALSE
-  }
   forelist$'.dat'<-NULL
   forelist$'.i'<-NULL
-  
   return(forelist) 
 }
