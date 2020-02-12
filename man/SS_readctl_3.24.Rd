@@ -10,7 +10,7 @@ SS_readctl_3.24(
   echoall = FALSE,
   version = "3.24",
   nseas = 4,
-  N_areas = 1,
+  Nareas = 1,
   Nages = 20,
   Ngenders = 1,
   Npopbins = NA,
@@ -39,7 +39,7 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).}
 \item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. Default = 1.
+\item{Nareas}{number of spatial areas in the model. Default = 1.
 This information is also not explicitly available in control file}
 
 \item{Nages}{oldest age in the model. This information is also not

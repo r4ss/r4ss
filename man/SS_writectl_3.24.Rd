@@ -10,7 +10,7 @@ SS_writectl_3.24(
   overwrite = FALSE,
   verbose = TRUE,
   nseas = 1,
-  N_areas = 1,
+  Nareas = 1,
   Do_AgeKey = FALSE
 )
 }
@@ -26,7 +26,7 @@ SS_writectl_3.24(
 \item{nseas}{number of season in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. This information is also not
+\item{Nareas}{number of spatial areas in the model. This information is also not
 explicitly available in control file}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read

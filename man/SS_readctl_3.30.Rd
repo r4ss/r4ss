@@ -10,12 +10,11 @@ SS_readctl_3.30(
   echoall = FALSE,
   version = "3.30",
   nseas = 4,
-  N_areas = 1,
+  Nareas = 1,
   Nages = 20,
-  Ngenders = 1,
+  Nsexes = 1,
   Npopbins = NA,
   Nfleet = 2,
-  Nsurveys = 2,
   Do_AgeKey = FALSE,
   N_tag_groups = NA,
   N_CPUE_obs = c(0, 0, 9, 12),
@@ -41,23 +40,20 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).}
 \item{nseas}{number of seasons in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. Default = 1. This information is also not
+\item{Nareas}{number of spatial areas in the model. Default = 1. This information is also not
 explicitly available in control file}
 
 \item{Nages}{oldest age in the model. This information is also not
 explicitly available in control file}
 
-\item{Ngenders}{number of genders in the model. This information is also not
+\item{Nsexes}{number of genders in the model. This information is also not
 explicitly available in control file}
 
 \item{Npopbins}{number of population bins in the model. This information is also not
 explicitly available in control file and this information is only required if length based
 maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
-explicitly available in control file}
-
-\item{Nsurveys}{number of survey fleets in the model. This information is also not
+\item{Nfleet}{number of fishery and survey fleets in the model. This information is also not
 explicitly available in control file}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
@@ -67,7 +63,7 @@ to disable them. This information is not explicitly available in control file, t
 \item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
 control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
 
-\item{N_CPUE_obs}{integer vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series}
+\item{N_CPUE_obs}{integer vector of length=Nfleet containing number of data points of each CPUE time series}
 
 \item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
 option. Defaults to NULL and should be left as such if 1) the catch 

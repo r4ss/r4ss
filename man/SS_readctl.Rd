@@ -10,12 +10,13 @@ SS_readctl(
   verbose = TRUE,
   echoall = FALSE,
   nseas = 4,
-  N_areas = 1,
+  Nareas = 1,
   Nages = 20,
+  Nsexes = 1,
   Ngenders = 1,
   Npopbins = NA,
   Nfleet = 2,
-  Nsurveys = 2,
+  Nsurveys = 1,
   N_tag_groups = NA,
   N_CPUE_obs = NA,
   catch_mult_fleets = NULL,
@@ -41,24 +42,27 @@ data as it is being read.}
 \item{nseas}{number of season in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. This information is also not
+\item{Nareas}{number of spatial areas in the model. This information is also not
 explicitly available in control file}
 
 \item{Nages}{oldest age in the model. This information is also not
 explicitly available in control file}
 
+\item{Nsexes}{number of genders in the model. This information is also not
+explicitly available in control file.3.30 syntax}
+
 \item{Ngenders}{number of genders in the model. This information is also not
-explicitly available in control file}
+explicitly available in control file.3.24 syntax}
 
 \item{Npopbins}{number of population bins in the model. This information is
 also not explicitly available in control file and this information is only
 required if length based
  maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
+\item{Nfleet}{number of fishery (and survey in 3.30) fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{Nsurveys}{number of survey fleets in the model. This information is also not
+\item{Nsurveys}{number of survey fleets (3.24) in the model. This information is also not
 explicitly available in control file}
 
 \item{N_tag_groups}{number of tag release groups in the model.
