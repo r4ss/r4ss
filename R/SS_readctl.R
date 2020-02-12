@@ -20,12 +20,16 @@
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nsexes number of genders in the model. This information is also not
-#'  explicitly available in control file
+#'  explicitly available in control file.3.30 syntax
+#' @param Ngenders number of genders in the model. This information is also not
+#'  explicitly available in control file.3.24 syntax
 #' @param Npopbins number of population bins in the model. This information is
 #' also not explicitly available in control file and this information is only
 #' required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fishery and survey fleets in the model. This information is also not
+#' @param Nfleet number of fishery (and survey in 3.30) fleets in the model. This information is also not
+#'  explicitly available in control file
+#' @param Nsurveys number of survey fleets (3.24) in the model. This information is also not
 #'  explicitly available in control file
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.

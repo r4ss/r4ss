@@ -823,7 +823,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     stop("Cannot yet read in init_F (which should be done if ", 
          "N_rows_equil_catch > 0) if use_datalist == F")
   }
-  browser()
+  
   if(any(datlist$catch[, "year"] == -999)) {
     tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
     if(any(tmp_equil[, "catch"] > 0)) {
