@@ -15,19 +15,17 @@
 #' data as it is being read.
 #' @param nseas number of season in the model. This information is not
 #'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. This information is also not
+#' @param Nareas number of spatial areas in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
-#' @param Ngenders number of genders in the model. This information is also not
+#' @param Nsexes number of genders in the model. This information is also not
 #'  explicitly available in control file
 #' @param Npopbins number of population bins in the model. This information is
 #' also not explicitly available in control file and this information is only
 #' required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fisheries in the model. This information is also not
-#'  explicitly available in control file
-#' @param Nsurveys number of survey fleets in the model. This information is also not
+#' @param Nfleet number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
@@ -55,12 +53,11 @@
 SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        ## Parameters that are not defined in control file
                        nseas=4,
-                       N_areas=1,
+                       Nareas=1,
                        Nages=20,
-                       Ngenders=1,
+                       Nsexes=1,
                        Npopbins=NA,
                        Nfleet=2,
-                       Nsurveys=2,
                        N_tag_groups=NA,
                        N_CPUE_obs=NA,
                        catch_mult_fleets = NULL,
@@ -119,12 +116,11 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
-                               N_areas      = N_areas,
+                               Nareas       = Nareas,
                                Nages        = Nages,
-                               Ngenders     = Ngenders,
+                               Nsexes       = Nsexes,
                                Npopbins     = Npopbins,
                                Nfleet       = Nfleet,
-                               Nsurveys     = Nsurveys,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
                                use_datlist  = use_datlist,
@@ -140,12 +136,11 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
-                               N_areas      = N_areas,
+                               Nareas       = Nareas,
                                Nages        = Nages,
-                               Ngenders     = Ngenders,
+                               Nsexes       = Nsexes,
                                Npopbins     = Npopbins,
                                Nfleet       = Nfleet,
-                               Nsurveys     = Nsurveys,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
