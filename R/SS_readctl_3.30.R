@@ -1391,6 +1391,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
     ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
+    if(ctllist$EmpiricalWAA != 0) {
+      warning("Additional stddev reporting being used with a model using ", 
+              "empirical weight at age. Note that even if number of growth", 
+              " ages > 0, SS will ignore these and not expect any input for ", 
+              "the line stddev_reporting_growth.")
+    }
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4]>0){
       ctllist<-
