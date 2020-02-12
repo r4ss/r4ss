@@ -629,12 +629,18 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   wl("more_stddev_reporting", 
      comment = "# 0/1 read specs for more stddev reporting")
   
-  if(ctllist$more_stddev_reporting == 1) {
-    wl.vector("stddev_reporting_specs",
+  if(ctllist$more_stddev_reporting == 1) { 
+    # break over multiple lines to improve readability.
+    ctllist$tmp_selex_stddev_reporting_specs <- ctllist$stddev_reporting_specs[1:4]
+    ctllist$tmp_growth_stddev_reporting_specs <- ctllist$stddev_reporting_specs[5:6]
+    ctllist$tmp_natage_stddev_reporting_specs <- ctllist$stddev_reporting_specs[7:9]
+    wl.vector("tmp_selex_stddev_reporting_specs",
               comment = paste0("# selex_fleet, 1=len/2=age/3=both, year, N ",
-                               "selex bins, 0 or Growth pattern, N growth ",
-                               "ages, 0 or NatAge_area(-1 for sum), NatAge_yr,",
-                               " N Natages"))
+                               "selex bins"))
+    wl.vector("tmp_growth_stddev_reporting_specs",
+              comment = "      # 0 or Growth pattern, N growth ages")
+    wl.vector("tmp_natage_stddev_reporting_specs",
+              comment = "   # 0 or NatAge_area(-1 for sum), NatAge_yr, N Natages")
     # Selex bin
     if(ctllist$stddev_reporting_specs[4] > 0) {
       wl.vector("stddev_reporting_selex",
