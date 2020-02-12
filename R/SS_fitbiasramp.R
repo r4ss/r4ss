@@ -180,12 +180,18 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                         is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
+      # pso package no longer included by default since this option is rarely used
+      if (!requireNamespace("pso", quietly = TRUE)) {
+        stop("Package \"pso\" needed for this function to work. Please install it.",
+             call. = FALSE)
+      }
+      
       biasadjfit(pars=startvalues, yr=yr, std=std, sigmaR=sigma_R_in,
                  is.forecast=is.forecast, transform=transform)
-      biasopt <- psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
-                         sigmaR=sigma_R_in, transform=transform,
-                         control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
-                         upper=rep(1e6, 5), is.forecast=is.forecast)
+      biasopt <- pso::psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
+                              sigmaR=sigma_R_in, transform=transform,
+                              control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
+                              upper=rep(1e6, 5), is.forecast=is.forecast)
     }
     if(!(altmethod %in% c("nlminb", "psoptim"))){
       biasopt <- optim(par=startvalues, fn=biasadjfit, yr=yr, std=std,

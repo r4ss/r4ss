@@ -198,23 +198,24 @@ mcmc.out <- function (
            yaxt="n",                                    # turn off this axis
            type="n")                                    # plot nothing
 
-      if(!exists("running")){ # temporary turning off if function "running" is not present
-        cat("skipping running average section because function 'running' is needed\n")
+      if (!requireNamespace("gtools", quietly = TRUE)) {
+        warning("Package \"gtools\" needed for the running average plot. Please install it.",
+                call. = FALSE)
       }else{
-        lines(running(mcmcobject[,i],
+        lines(gtools::running(mcmcobject[,i],
                       fun=median,                               # plot the mean
                       allow.fewer=TRUE,                         # begin calculating from the first point
                       width=draws))                     # Averages the last - observations (all in this case)
 
         fun <- function(x,prob) quantile(x,probs=prob,names=FALSE)      # the quantile to use in next 2 lines
 
-        lines(running(mcmcobject[,i],
+        lines(gtools::running(mcmcobject[,i],
                       fun=fun,                          # function to use
                       prob=0.05,
                       allow.fewer=TRUE,                         # begin calculating from the first point
                       width=draws),
               col="GREY")
-        lines(running(mcmcobject[,i],
+        lines(gtools::running(mcmcobject[,i],
                       fun=fun,                          # function to use
                       prob=0.95,
                       allow.fewer=TRUE,                         # begin calculating from the first point

@@ -31,8 +31,6 @@
 #' @import kableExtra
 #' @importFrom corpcor pseudoinverse
 #' @importFrom gdata write.fwf
-#' @importFrom gtools running
-#' @importFrom pso psoptim
 #' @importFrom grDevices adjustcolor col2rgb colorRampPalette
 #'   dev.new dev.off graphics.off
 #'   gray grey pdf png rainbow rgb topo.colors
