@@ -950,7 +950,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                   ncol = 4, 
                   col.names = c("Pattern", "Discard", "Male", "Special"),
                   comments = fleetnames)
-  age_selex_pattern_vec <- ctllist$age_selex_types[, "Pattern"]
   # selectivity parlines -----
   # This contains the number of params for each pattern (the name)
   selex_patterns <- c("0" = 0,"1" = 2,"2" = 8,"3" = 6,"4" = 0, "5" = 2,
@@ -1083,11 +1082,19 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
     }
   }
+  # age selex parlines----
+  age_patterns <- as.character(ctllist$age_selex_types[,"Pattern"])
+  if(any(ctllist$age_selex_types[,"Pattern"] > 100)) {
+    # this code deals with the option to give fish below a certain age 0 
+    # selectivity; implemented in SS 3.30.15.
+    age_patterns[age_patterns > 100] <-
+      as.character(as.integer(substr(age_patterns[age_patterns > 100], 2, 3)))
+  }
   # age selectivity parlines - count the number, not accounting for the 
   # extra special parameters for 17, 27, and 42.
-  age_selex_Nparms <- selex_patterns[as.character(ctllist$age_selex_types[,"Pattern"])]
+  age_selex_Nparms <- selex_patterns[age_patterns]
   # pattern 17 is a special case of number of params, so account for here.
-  age_selex_Nparms <-ifelse(ctllist$age_selex_types[,"Pattern"] == 17 & 
+  age_selex_Nparms <-ifelse(age_patterns == "17" & 
                             ctllist$age_selex_types[,"Special"] > 0, 
                             ctllist$age_selex_types[,"Special"] + 1, 
                             age_selex_Nparms)
@@ -1095,7 +1102,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   for(j in 1:(Nfleet+Nsurveys)) {
     jn <- fleetnames[j]
     ## spline needs special treatment
-    if(age_selex_pattern_vec[j] == 27) {
+    if(age_patterns[j] == "27") {
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
       age_selex_label[[j]]<- c(make_sel_lab("a", tmp_names, NULL, jn, j ), 
                                make_sel_lab("a", c("Spline_Knot"), 
@@ -1104,7 +1111,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                make_sel_lab("a", "Spline_Val",
                                             1:ctllist$age_selex_types[j,"Special"], 
                                             jn, j))
-    } else if(age_selex_pattern_vec[j] == 42) {
+    } else if(age_patterns[j] == "42") {
       tmp_names <- paste0("Spline_", 
                    c("ScaleAgeLo", "ScaleAgeHi", "Code", "GradLo", "GradHi"))
       
@@ -1132,12 +1139,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     
     if(ctllist$age_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
-      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+      if(age_patterns[j] == "20") {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PMalOff", 1:5, jn, j))
       }
     }else if(ctllist$age_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
-      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+      if(age_patterns[j] == "20") {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PFemOff", 1:5, jn, j))
       }
