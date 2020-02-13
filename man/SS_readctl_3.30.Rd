@@ -14,7 +14,7 @@ SS_readctl_3.30(
   Nages = 20,
   Nsexes = 1,
   Npopbins = NA,
-  Nfleet = 2,
+  Nfleets = 2,
   Do_AgeKey = FALSE,
   N_tag_groups = NA,
   N_CPUE_obs = c(0, 0, 9, 12),
@@ -53,7 +53,7 @@ explicitly available in control file}
 explicitly available in control file and this information is only required if length based
 maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fishery and survey fleets in the model. This information is also not
+\item{Nfleets}{number of fishery and survey fleets in the model. This information is also not
 explicitly available in control file}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
