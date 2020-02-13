@@ -1397,7 +1397,15 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting != 0 ) {
-    ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
+    if(ctllist$more_stddev_reporting == 1) {
+      ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
+    } else if(ctllist$more_stddev_reporting == 2) { # adds option for M
+      ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 11)
+    } else {
+      stop("more_stddev_reporting read as ", ctllist$more_stddev_reporting, 
+           ", but this is either not a valid SS option or not yet implemented ", 
+           "in the SS_readctl function.")
+    }
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4] > 0) {
       if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
@@ -1435,6 +1443,18 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist<- add_vec(ctllist,
                         name = "stddev_reporting_N_at_A",
                         length = ctllist$stddev_reporting_specs[9])
+      }
+    }
+    # M at age - only available with more_stddev_reporting option 2 in 
+    # SS>= 3.30.15
+    if(ctllist$more_stddev_reporting == 2 && 
+      ctllist$stddev_reporting_specs[11] > 0) {
+      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
+        ctllist <- add_elem(ctllist, name = "stddev_reporting_M_at_A")
+      } else {
+        ctllist<- add_vec(ctllist,
+                          name = "stddev_reporting_M_at_A",
+                          length = ctllist$stddev_reporting_specs[11])
       }
     }
   }
