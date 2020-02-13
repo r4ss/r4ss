@@ -291,8 +291,11 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #  stop("stop currently F_method:2 is not implemented")
     writeComment("overall start F value; overall phase; N detailed inputs to read")
     wl.vector("F_setup")
-    writeComment("fleet, yr, seas, Fvalue, se, phase")
-    printdf("F_setup2")
+    if(!is.null(ctllist[["F_setup2"]])){
+      printdf("F_setup2")
+    } else {
+      writeComment("fleet yr seas Fvalue se phase")
+    }
   }else if(ctllist$F_Method==3){
     wl("F_iter",comment="N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
