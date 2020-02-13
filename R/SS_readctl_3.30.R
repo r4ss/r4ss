@@ -23,7 +23,7 @@
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fishery and survey fleets in the model. This information is also not
+#' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
@@ -59,7 +59,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Nages=20,
     Nsexes=1,
     Npopbins=NA,
-    Nfleet=2,
+    Nfleets=2,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
@@ -71,7 +71,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     datlist=NULL
     ){
   
-
+  
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readctl_3.30\n")
@@ -255,25 +255,25 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist$warnings<-""
   if(!use_datlist){
     ctllist$nseas<-nseas
-    ctllist$Nareas<-Nareas
+    ctllist$Nareas<-ctllist$N_areas<-Nareas
     ctllist$Nages<-Nages
-    ctllist$Nsexes<-Nsexes
+    ctllist$Nsexes<-ctllist$Ngenders<-Nsexes
     ctllist$Npopbins<-Npopbins
-    ctllist$Nfleet<-Nfleet
+    ctllist$Nfleets<-Nfleets
     ctllist$Do_AgeKey<-Do_AgeKey
     ctllist$N_tag_groups<-N_tag_groups
     ctllist$N_CPUE_obs<-N_CPUE_obs
-#    ctllist$fleetnames<-fleetnames<-c(paste0("FL",1:Nfleet),paste0("S",1:Nsurveys))
-    fleetnames<-paste0("FL",1:Nfleet)
+#    ctllist$fleetnames<-fleetnames<-c(paste0("FL",1:Nfleets),paste0("S",1:Nsurveys))
+    fleetnames<-paste0("FL",1:Nfleets)
     #if(Nsurveys>0)fleetnames<-c(fleetnames,paste0("S",1:Nsurveys))
     ctllist$fleetnames<-fleetnames
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
     if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
-    ctllist$Nareas<-Nareas<-datlist$Nareas
+    ctllist$Nareas<-ctllist$N_areas<-Nareas<-datlist$Nareas
     ctllist$Nages<-Nages<-datlist$Nages
-    ctllist$Nsexes<-Nsexes<-datlist$Nsexes
+    ctllist$Nsexes<-ctllist$Ngenders<-Nsexes<-datlist$Nsexes
     if(datlist$lbin_method == 1) {
       ctllist$Npopbins <- Npopbins <- datlist$N_lbins # b/c method 1 uses data length bins
     } else if (datlist$lbin_method == 2) {
@@ -287,7 +287,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       stop("datlist$lbin_method is ", datlist$lbin_method, "but only can be 1", 
            ", 2, or 3.")
     }
-    ctllist$Nfleet<-Nfleet<-datlist$Nfleet
+    ctllist$Nfleets<-Nfleets<-datlist$Nfleets
     #ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
     # short circuit logic to avoid error if it is null.
     if(!is.null(datlist$N_ageerror_definition) && 
@@ -846,8 +846,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.null(ctllist$Q_options)) {
   rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
   # create 3.24 compatible Q_setup ----
-  comments_fl<-paste0(1:(Nfleet)," ",fleetnames)
-  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet),ncol=4),row.names=comments_fl)
+  comments_fl<-paste0(1:(Nfleets)," ",fleetnames)
+  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleets),ncol=4),row.names=comments_fl)
   colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
   }
   # q parlines ----
@@ -935,14 +935,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   #(e.g., units 30 fleet)
   ctllist <- add_df(ctllist, 
                     name = "size_selex_types",
-                    nrow = Nfleet,
+                    nrow = Nfleets,
                     ncol = 4,
                     col.names=c("Pattern", "Discard", "Male", "Special"),
                     comments = fleetnames)
   # age setup
   ctllist<-add_df(ctllist,
                   name = "age_selex_types", 
-                  nrow = Nfleet,
+                  nrow = Nfleets,
                   ncol = 4, 
                   col.names = c("Pattern", "Discard", "Male", "Special"),
                   comments = fleetnames)
@@ -962,7 +962,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
   # 5+2*N_nodes, and 6 which is 2+special, so the npars listed is not exactly 
   # correct. This will be addressed in special cases below.NAs are unused codes.
-  size_selex_label<- vector("list", Nfleet) # do this to initialize size
+  size_selex_label<- vector("list", Nfleets) # do this to initialize size
   # loop through fishing fleets and surveys to assign names
   
   # make a labeling function, that way this 1 function can be changed in the
@@ -993,7 +993,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     labs
   }
-  for(j in 1:(Nfleet)) {
+  for(j in 1:(Nfleets)) {
     jn <- fleetnames[j] # to use a shorter name throughout loop. jn for "j name)
     # get the number of parameters to use in making the generic labels. 
     #Not used for anything else.
@@ -1087,8 +1087,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             ctllist$age_selex_types[,"Special"] > 0, 
                             ctllist$age_selex_types[,"Special"] + 1, 
                             age_selex_Nparms)
-  age_selex_label <- vector("list", length = Nfleet)
-  for(j in 1:(Nfleet)) {
+  age_selex_label <- vector("list", length = Nfleets)
+  for(j in 1:(Nfleets)) {
     jn <- fleetnames[j]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j] == 27) {
@@ -1252,7 +1252,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     # . one tag reporting rate paramater
     # . one tag reporting rate decay paramater
     #
-    #  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
+    #  In total N_tag_groups*3+ Nfleets*2 parameters are needed to read
     ctllist <- add_df(ctllist,
                       name = "TG_Loss_init",
                       nrow = ctllist$N_tag_groups,
@@ -1276,18 +1276,18 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         paste0("#_TG_overdispersion_", 1:ctllist$N_tag_groups))
     ctllist <- add_df(ctllist, 
                       name = "TG_Report_fleet", 
-                      nrow = ctllist$Nfleet, 
+                      nrow = ctllist$Nfleets, 
                       ncol = 14, 
                       col.names = lng_par_colnames,
                       comments = 
-                        paste0("#_TG_report_fleet_par_",1:ctllist$Nfleet))
+                        paste0("#_TG_report_fleet_par_",1:ctllist$Nfleets))
     ctllist <- add_df(ctllist,
                       name = "TG_Report_fleet_decay",
-                      nrow = ctllist$Nfleet,
+                      nrow = ctllist$Nfleets,
                       ncol = 14,
                       col.names=lng_par_colnames,
                       comments = 
-                       paste0("#_TG_report_decay_par_", 1:ctllist$Nfleet))
+                       paste0("#_TG_report_decay_par_", 1:ctllist$Nfleets))
   }
   
   # Var adj ----
@@ -1297,7 +1297,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                     col.names=c("Factor","Fleet","Value"))
   if(!is.null(ctllist$Variance_adjustment_list)) ctllist$DoVar_adjust <- 1
   # create version 3.24 variance adjustments
-  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleet)))
+  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
   ctllist$Variance_adjustments[4:6,]<-1
   colnames(ctllist$Variance_adjustments)<-fleetnames
   rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",

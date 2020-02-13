@@ -168,6 +168,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   if(!use_datlist){
     ctllist$nseas<-nseas
     ctllist$Nareas<-Nareas
+    ctllist$N_areas<-Nareas
     ctllist$Nages<-Nages
     ctllist$Ngenders<-Ngenders
     ctllist$Npopbins<-Npopbins
@@ -184,7 +185,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
     if(is.null(datlist))stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist$nseas<-nseas<-datlist$nseas
-    ctllist$Nareas<-Nareas<-datlist$Nareas
+    ctllist$Nareas<-ctllist$N_areas<-Nareas<-datlist$Nareas
     ctllist$Nages<-Nages<-datlist$Nages
     ctllist$Ngenders<-Ngenders<-datlist$Ngenders
     ctllist$Npopbins<-Npopbins<-datlist$Npopbins
@@ -230,6 +231,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
       ctllist$submorphdist<-c(0.031, 0.237, 0.464, 0.237, 0.031)
     }
   }
+  
   ctllist$submorphdist<-ctllist$submorphdist/sum(ctllist$submorphdist)
   if(ctllist$N_GP*ctllist$nseas*ctllist$Nareas>1) {
     ctllist<-add_elem(ctllist,"recr_dist_read")

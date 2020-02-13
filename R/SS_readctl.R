@@ -25,9 +25,11 @@
 #'  explicitly available in control file.3.24 syntax
 #' @param Npopbins number of population bins in the model. This information is
 #' also not explicitly available in control file and this information is only
-#' required if length based
-#'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fishery (and survey in 3.30) fleets in the model. This information is also not
+#' required if length basedmaturity vector is directly supplied 
+#' (Maturity option of 6), and not yet tested
+#' @param Nfleets number of fishery + Survey fleets in the model (3.30). This 
+#'  information is also not explicitly available in control file
+#' @param Nfleet number of fishery fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets (3.24) in the model. This information is also not
 #'  explicitly available in control file
@@ -62,6 +64,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        Nsexes=1,
                        Ngenders=1,
                        Npopbins=NA,
+                       Nfleets=3,
                        Nfleet=2,
                        Nsurveys=1,
                        N_tag_groups=NA,
@@ -147,7 +150,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Nages        = Nages,
                                Nsexes       = Nsexes,
                                Npopbins     = Npopbins,
-                               Nfleet       = Nfleet,
+                               Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
