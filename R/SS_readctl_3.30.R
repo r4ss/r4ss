@@ -14,23 +14,25 @@
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
 #' @param nseas number of seasons in the model. This information is not
 #'  explicitly available in control file
-#' @param Nareas number of spatial areas in the model. Default = 1. This information is also not
+#' @param N_areas number of spatial areas in the model. Default = 1. This information is also not
 #'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
-#' @param Nsexes number of genders in the model. This information is also not
+#' @param Ngenders number of genders in the model. This information is also not
 #'  explicitly available in control file
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
+#' @param Nsurveys number of survey fleets in the model. This information is also not
+#'  explicitly available in control file
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
 #'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs integer vector of length=Nfleet containing number of data points of each CPUE time series
+#' @param N_CPUE_obs integer vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
@@ -55,9 +57,9 @@
 SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
 ## Parameters that are not defined in control file
     nseas=4,
-    Nareas=1,
+    N_areas=1,
     Nages=20,
-    Nsexes=1,
+    Ngenders=1,
     Npopbins=NA,
     Nfleets=2,
     Do_AgeKey=FALSE,
@@ -329,7 +331,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$recr_dist_method == "1") {
     warning("recr_dist_method 1 should not be used in SS version 3.30. Please use 2, 3, or 4. \n")
   }
-  if(ctllist$recr_dist_method == "4" && (ctllist$N_GP != 1 || ctllist$Nareas != 1)) {
+  if(ctllist$recr_dist_method == "4" && (ctllist$N_GP != 1 || ctllist$N_areas != 1)) {
     stop("recr_dist_method 4 should only be used when GPxSettlementxArea=1. \n")
   }
   
@@ -345,8 +347,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_df(ctllist,"recr_dist_pattern",nrow=recr_dist_read,ncol=4,
       col.names=c("GPattern","month","area","age"))
   # movement ----
-  if(ctllist$Nareas>1){
-    ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if Nareas > 1
+  if(ctllist$N_areas>1){
+    ctllist<-add_elem(ctllist,"N_moveDef") #_N_movement_definitions goes here if N_areas > 1
     if(ctllist$N_moveDef>0)
     {
       ctllist<-add_elem(ctllist,"firstAgeMove") #_first age that moves (real age at begin of season, not integer) also cond on do_migration>0
@@ -375,11 +377,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
-    N_natMparms<-ctllist$N_GP*ctllist$Nsexes
+    N_natMparms<-ctllist$N_GP*ctllist$Ngenders
     ctllist<-add_elem(ctllist,name="Lorenzen_refage") ## Reference age for Lorenzen M
   }else if(ctllist$natM_type %in% c(3,4)){
     N_natMparms<-0
-    ctllist<-add_df(ctllist,name="natM",nrow=ctllist$N_GP*ctllist$Nsexes,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
+    ctllist<-add_df(ctllist,name="natM",nrow=ctllist$N_GP*ctllist$Ngenders,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
   }else{
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
@@ -437,7 +439,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
 
   # MG parlines -----
-  N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Nsexes  ## Parmeters for M and Growth multiplied by N_GP and Nsexes
+  N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
@@ -446,7 +448,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                  # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
-  for(i in 1:ctllist$Nsexes){
+  for(i in 1:ctllist$Ngenders){
     for(j in 1:ctllist$N_GP){
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
@@ -504,7 +506,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
     }
   }
-  N_MGparm<-N_MGparm+2*ctllist$Nsexes+2+2 #add for wt-len(by gender), mat-len parms; eggs
+  N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
   
   if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
@@ -517,13 +519,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   RecrDistLabel <- switch(ctllist$recr_dist_method,
                           "1"= { # included for back compatibility only.
                                 lab <- c(paste0("RecrDist_GP_", 1:ctllist$N_GP),
-                                         paste0("RecrDist_Area_", 1:ctllist$Nareas),
+                                         paste0("RecrDist_Area_", 1:ctllist$N_areas),
                                          paste0("RecrDist_Bseas_", 1:ctllist$nseas))
                                 if(ctllist$recr_dist_inx){ # interactions
                                   #Note:labels and order consistent with SS source 
                                   #(3.30 and 3.24 control file read in 3.30.10)
                                   for(i in 1:ctllist$N_GP) {
-                                    for(j in 1:ctllist$Nareas) {
+                                    for(j in 1:ctllist$N_areas) {
                                       for(k in 1:ctllist$nseas) { # goes with settle
                                         tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                              "_area_",j,
@@ -539,13 +541,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             #get the number of times settlement occurs
                             N_settle_timings <- length(unique(ctllist$recr_dist_pattern[ ,2]))
                                   lab <- c(paste0("RecrDist_GP_",1:ctllist$N_GP), 
-                                           paste0("RecrDist_Area_",1:ctllist$Nareas), 
+                                           paste0("RecrDist_Area_",1:ctllist$N_areas), 
                                            paste0("RecrDist_month_",1:N_settle_timings))
                                   if(ctllist$recr_dist_inx){ # interactions
                                     #Note:labels and order consistent with SS source 
                                     #(3.30 and 3.24 control file read in 3.30.10)
                                     for(i in 1:ctllist$N_GP) {
-                                      for(j in 1:ctllist$Nareas) {
+                                      for(j in 1:ctllist$N_areas) {
                                         for(k in 1:N_settle_timings) {
                                           tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                                "_area_",j,
@@ -577,21 +579,21 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                            "1" = {
                                   tmp_PType <- rep(c(7,8,9),
                                                    times = c(ctllist$N_GP,
-                                                             ctllist$Nareas,
+                                                             ctllist$N_areas,
                                                              ctllist$nseas
                                                              )
                                                    )
                                   if(ctllist$recr_dist_inx){ #interactions
-                                    tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$Nareas*ctllist$nseas))
+                                    tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*ctllist$nseas))
                                   }
                                   tmp_PType
                            },
                            "2" = {
                                   tmp_PType <- rep(c(7,8,9), times = c(ctllist$N_GP,
-                                                                       ctllist$Nareas,
+                                                                       ctllist$N_areas,
                                                                        N_settle_timings))
                                     if(ctllist$recr_dist_inx){ #interactions
-                                      tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$Nareas*N_settle_timings))
+                                      tmp_PType <- c(tmp_PType, rep(10, times = ctllist$N_GP*ctllist$N_areas*N_settle_timings))
                                     }
                                   tmp_PType
                             },
@@ -611,7 +613,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   
   N_MGparm<-N_MGparm+1 # add 1 parameter for cohort-specific growth parameter
   MGparmLabel[cnt]<-"CohortGrowDev";PType[cnt]<-11;cnt<-cnt+1
-  if((Nareas>1)&&(ctllist$N_moveDef>0)){
+  if((N_areas>1)&&(ctllist$N_moveDef>0)){
     N_MGparm<-N_MGparm+ctllist$N_moveDef*2 # add 2 * N_moveDef for movement params
 #    M_Move_parms<-ctllist$N_moveDef*2
     for(i in 1:ctllist$N_moveDef){

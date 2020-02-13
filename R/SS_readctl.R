@@ -15,7 +15,7 @@
 #' data as it is being read.
 #' @param nseas number of season in the model. This information is not
 #'  explicitly available in control file
-#' @param Nareas number of spatial areas in the model. This information is also not
+#' @param N_areas number of spatial areas in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nages oldest age in the model. This information is also not
 #'  explicitly available in control file
@@ -59,7 +59,7 @@
 SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        ## Parameters that are not defined in control file
                        nseas=4,
-                       Nareas=1,
+                       N_areas=1,
                        Nages=20,
                        Nsexes=1,
                        Ngenders=1,
@@ -125,7 +125,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
-                               Nareas       = Nareas,
+                               N_areas      = N_areas,
                                Nages        = Nages,
                                Ngenders     = Ngenders,
                                Npopbins     = Npopbins,
@@ -146,9 +146,9 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                verbose      = verbose,
                                echoall      = echoall,
                                nseas        = nseas,
-                               Nareas       = Nareas,
+                               N_areas      = N_areas,
                                Nages        = Nages,
-                               Nsexes       = Nsexes,
+                               Ngenders     = Ngenders,
                                Npopbins     = Npopbins,
                                Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
