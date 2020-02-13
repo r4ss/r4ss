@@ -85,7 +85,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
-  for(i in 1:length(dat)){
+  for(i in seq_len(length(dat))) {
     # First split between input and comments
     mysplit <- strsplit(dat[i],split="#")[[1]]
     if(!is.na(mysplit[1]))
@@ -194,7 +194,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
      ctllist$temp<-list()
-    for(j in 1:length){
+    for(j in seq_len(length)){
       ctllist$temp[[j]]<-dat[i+1:length_each[j]-1]; i <- i+length_each[j]
     }
     ctllist$'.i'<-i
@@ -450,8 +450,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                  # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
-  for(i in 1:ctllist$Ngenders){
-    for(j in 1:ctllist$N_GP){
+  for(i in seq_len(ctllist$Ngenders)) {
+    for(j in seq_len(ctllist$N_GP)) {
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
         PType[cnt:(N_natMparms+cnt-1)]<-1
@@ -526,9 +526,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                 if(ctllist$recr_dist_inx){ # interactions
                                   #Note:labels and order consistent with SS source 
                                   #(3.30 and 3.24 control file read in 3.30.10)
-                                  for(i in 1:ctllist$N_GP) {
-                                    for(j in 1:ctllist$N_areas) {
-                                      for(k in 1:ctllist$nseas) { # goes with settle
+                                  for(i in seq_len(ctllist$N_GP)) {
+                                    for(j in seq_len(ctllist$N_areas)) {
+                                      for(k in seq_len(ctllist$nseas)) { # goes with settle
                                         tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                              "_area_",j,
                                                              "_settle_",k)
@@ -548,9 +548,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                   if(ctllist$recr_dist_inx){ # interactions
                                     #Note:labels and order consistent with SS source 
                                     #(3.30 and 3.24 control file read in 3.30.10)
-                                    for(i in 1:ctllist$N_GP) {
-                                      for(j in 1:ctllist$N_areas) {
-                                        for(k in 1:N_settle_timings) {
+                                    for(i in seq_len(ctllist$N_GP)) {
+                                      for(j in seq_len(ctllist$N_areas)) {
+                                        for(k in seq_len(N_settle_timings)) {
                                           tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                                "_area_",j,
                                                                "_month_",k)
@@ -563,7 +563,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                           },
                           "3"= { 
                                 lab <- NULL
-                                for(i in 1:nrow(ctllist$recr_dist_pattern)){
+                                for(i in seq_len(nrow(ctllist$recr_dist_pattern))) {
                                   tmp_lab <- paste0("RecrDist_GP_", 
                                                ctllist$recr_dist_pattern[i,1], 
                                                "_area_", 
@@ -618,7 +618,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if((N_areas>1)&&(ctllist$N_moveDef>0)){
     N_MGparm<-N_MGparm+ctllist$N_moveDef*2 # add 2 * N_moveDef for movement params
 #    M_Move_parms<-ctllist$N_moveDef*2
-    for(i in 1:ctllist$N_moveDef){
+    for(i in seq_len(ctllist$N_moveDef)) {
       seas<-ctllist$moveDef[i,1]
       GP<-ctllist$moveDef[i,2]
       from<-ctllist$moveDef[i,3]
@@ -860,7 +860,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.null(ctllist$Q_options)) {
     comments_Q_type<-list()
   
-    for(j in 1:nrow(ctllist$Q_options))
+    for(j in seq_len(nrow(ctllist$Q_options)))
     {
       if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
       {
@@ -996,7 +996,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     labs
   }
-  for(j in 1:(Nfleet+Nsurveys)) {
+  for(j in seq_len(Nfleet+Nsurveys)) {
     jn <- fleetnames[j] # to use a shorter name throughout loop. jn for "j name)
     # get the number of parameters to use in making the generic labels. 
     #Not used for anything else.
@@ -1099,7 +1099,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             ctllist$age_selex_types[,"Special"] + 1, 
                             age_selex_Nparms)
   age_selex_label <- vector("list", length = Nfleet + Nsurveys)
-  for(j in 1:(Nfleet+Nsurveys)) {
+  for(j in seq_len(Nfleet+Nsurveys)) {
     jn <- fleetnames[j]
     ## spline needs special treatment
     if(age_patterns[j] == "27") {
@@ -1319,7 +1319,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                                         "mult_by_size-at-age_N")))
   if(!is.null(ctllist$Variance_adjustment_list)) {
     if(nrow(ctllist$Variance_adjustment_list) > 0) {
-      for(j in 1:nrow(ctllist$Variance_adjustment_list)){
+      for(j in seq_len(nrow(ctllist$Variance_adjustment_list))){
         ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
           ctllist$Variance_adjustment_list[j,]$Value
       }
@@ -1346,7 +1346,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$warnings<-paste(ctllist$warnings,"Duplicate_lambdas",sep=",")
     }
 
-    for(i in 1:ctllist$N_lambdas){
+    for(i in seq_len(ctllist$N_lambdas)){
       like_comp<-ctllist$lambdas[i,1]
       fl<-ctllist$lambdas[i,2]
       phz<-ctllist$lambdas[i,3]
