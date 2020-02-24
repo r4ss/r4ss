@@ -1408,13 +1408,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     ## Selex bin
     if(ctllist$stddev_reporting_specs[4] > 0) {
-      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
-        ctllist <- add_elem(ctllist, name = "stddev_reporting_selex")
-      } else {
         ctllist<-
           add_vec(ctllist, name = "stddev_reporting_selex",
                   length=ctllist$stddev_reporting_specs[4])
-      }
     }
     ## Growth bin
     # if using wt at age, this is not read.
@@ -1427,35 +1423,23 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$stddev_reporting_specs[6] <- 0
     }
     if(ctllist$stddev_reporting_specs[6] > 0  & ctllist$EmpiricalWAA == 0) {
-      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
-        ctllist <- add_elem(ctllist, name = "stddev_reporting_growth")
-      } else {
         ctllist <- add_vec(ctllist,
                            name = "stddev_reporting_growth",
                            length = ctllist$stddev_reporting_specs[6])
-      }
     }
     ## N at age
     if(ctllist$stddev_reporting_specs[9] > 0) {
-      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
-        ctllist <- add_elem(ctllist, name = "stddev_reporting_N_at_A")
-      } else {
       ctllist<- add_vec(ctllist,
                         name = "stddev_reporting_N_at_A",
                         length = ctllist$stddev_reporting_specs[9])
-      }
     }
     # M at age - only available with more_stddev_reporting option 2 in 
     # SS>= 3.30.15
     if(ctllist$more_stddev_reporting == 2 && 
       ctllist$stddev_reporting_specs[11] > 0) {
-      if((ctllist$'.dat'[ctllist$'.i']) == -1) { # -1 means only need to add 1 val
-        ctllist <- add_elem(ctllist, name = "stddev_reporting_M_at_A")
-      } else {
         ctllist<- add_vec(ctllist,
                           name = "stddev_reporting_M_at_A",
                           length = ctllist$stddev_reporting_specs[11])
-      }
     }
   }
   if(ctllist$'.dat'[ctllist$'.i']==999){

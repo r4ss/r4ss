@@ -671,7 +671,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
     }
     # M at age
     if(ctllist$more_stddev_reporting == 2 && 
-       ctllist$stddev_reporting_specs[1] > 0) {
+       ctllist$stddev_reporting_specs[11] > 0) {
       wl.vector("stddev_reporting_M_at_A",
                 comment = paste0("# vector with MatAge std ages picks (-1 in ", 
                                  "first bin to self-generate)"))
