@@ -162,6 +162,8 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
+#' @param bioscale scaling for spawning biomass by default it will be set to 
+#' 0.5 for single-sex models and 1.0 for all others.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
@@ -251,7 +253,8 @@ SSplotComparisons <-
            par=list(mar=c(5,4,1,1)+.1),
            verbose=TRUE,
            mcmcVec=FALSE,
-           show_equilibrium=TRUE)
+           show_equilibrium=TRUE,
+           bioscale = 0.5)
 {
   meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
 
@@ -440,6 +443,15 @@ SSplotComparisons <-
     }
   }
 
+  if(any(nsexes==1)){   #### no longer dividing by 2 for single-sex models
+    for(i in (1:n)[nsexes==1]){
+      SpawnBio[,i]    <- SpawnBio[,i]*bioscale
+      SpawnBioLower[,i]  <- SpawnBioLower[,i]*bioscale
+      SpawnBioUpper[,i]  <- SpawnBioUpper[,i]*bioscale
+    }
+  }
+
+
   #### no longer dividing by 2 for single-sex models
   if(length(unique(nsexes)) > 1){
     warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
@@ -521,10 +533,14 @@ SSplotComparisons <-
     if(length(tmp) > 0) {   #there are some mcmc values to use
       mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
       mcmclabs <- names(mcmc.tmp)
-
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
       upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
+      if(nsexes[iline] == 1) {  
+        lower <- lower*bioscale
+        upper <- upper*bioscale
+        med <- med*bioscale
+      }
       SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
       SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
       SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
@@ -1479,6 +1495,9 @@ SSplotComparisons <-
         # add density
         if(good[iline]){
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass  
+            mcmcVals <- mcmcVals*bioscale
+          }
           xmin <- min(xmin, quantile(mcmcVals,0.005, na.rm=TRUE))
           if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
           if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
@@ -1494,6 +1513,10 @@ SSplotComparisons <-
         parSD <- valSDs[1,imodel]
         if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
         if(!is.na(parSD) && parSD>0){ # if non-zero SD available
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass  
+            parval <- parval*bioscale
+            parSD <- parSD*bioscale
+          }
           # update x range
           xmin <- min(xmin, qnorm(0.005,parval,parSD))
           if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
@@ -1565,6 +1588,9 @@ SSplotComparisons <-
           # make density for MCMC posterior
           mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
           mcmcVals <- mcmc[[imodel]][,mcmcColumn]
+          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass  
+            mcmcVals <- mcmcVals*bioscale
+          }
           x2 <- quantile(mcmcVals, symbolsQuants, na.rm=TRUE)   # for symbols on plot
           #find the positions in the density that are closest to these quantiles
           x <- mcmcDens[[iline]]$x
@@ -1604,6 +1630,10 @@ SSplotComparisons <-
           parval <- vals[1,imodel]
           parSD <- valSDs[1,imodel]
           if(!is.na(parSD) && parSD>0){
+            if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass  
+              parval <- parval*bioscale
+              parSD <- parSD*bioscale
+            }
             xmin <- min(xmin, qnorm(0.005,parval,parSD))
             if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
             if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
