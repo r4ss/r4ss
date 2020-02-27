@@ -174,7 +174,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
   # Movement ----
   if(ctllist$N_areas > 1) {
     wl("N_moveDef", 
-       comment = "#_N_movement_definitions goes here if Nareas > 1")
+       comment = "#_N_movement_definitions goes here if N_areas > 1")
     if(ctllist$N_moveDef>0) {
     wl("firstAgeMove", 
        comment = paste0("#_first age that moves (real age at begin of season, ",
@@ -348,17 +348,17 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
                       "function of SR curvature"))
   # SR parms ----
   # change column names to match control.ss_new
-  colnames(ctllist$SRparm) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
+  colnames(ctllist$SR_parms) <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type",
                                 "PHASE", "env-var", "use_dev", "dev_mnyr", 
                                 "dev_mxyr", "dev_PH", "Block", 
                                 "Blk_Fxn # parm_name", "PType") 
   # "Blk_Fxn # parm_name" is just to get the parm_name header printed, too.
-  printdf("SRparm")
+  printdf("SR_parms")
   # reset column names back.
-  colnames(ctllist$SRparm) <- c(lng_par_colnames, "PType")
+  colnames(ctllist$SR_parms) <- c(lng_par_colnames, "PType")
   
   # SR tv parms ----
-  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
+  if(any(ctllist$SR_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
     writeComment("# timevary SR parameters")
     printdf("SR_parms_tv")

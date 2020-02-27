@@ -367,6 +367,17 @@ SS_readdat_2.00 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
     datlist$eof <- FALSE
   }
 
+  # fixes pulled from the read data wrapper function
+  # get fleet info
+  finfo<-rbind(datlist$fleetinfo,c(rep(1,datlist$Nfleet),rep(3,datlist$Nsurveys)))
+  finfo<-rbind(finfo,c(datlist$units_of_catch,rep(0,datlist$Nsurveys)))
+  rownames(finfo)[3]<-"type"
+  rownames(finfo)[4]<-"units"
+  finfo<-finfo[,1:(length(finfo)-1)]
+  finfo<-as.data.frame(t(finfo))
+  datlist$fleetinfo<-finfo
+  ##!!! need to add fixes to pop len bins? (see 3.24)
+  
   # return the result
   return(datlist)
 }
