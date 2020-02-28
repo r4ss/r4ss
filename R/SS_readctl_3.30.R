@@ -23,16 +23,14 @@
 #' @param Npopbins number of population bins in the model. This information is also not
 #'  explicitly available in control file and this information is only required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fisheries in the model. This information is also not
-#'  explicitly available in control file
-#' @param Nsurveys number of survey fleets in the model. This information is also not
+#' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
 #' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
 #'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs integer vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
+#' @param N_CPUE_obs integer vector of length=Nfleets containing number of data points of each CPUE time series
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
@@ -61,8 +59,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Nages=20,
     Ngenders=1,
     Npopbins=NA,
-    Nfleet=2,
-    Nsurveys=2,
+    Nfleets=2,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
@@ -74,7 +71,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     datlist=NULL
     ){
   
-
+  
   # function to read Stock Synthesis data files
 
   if(verbose) cat("running SS_readctl_3.30\n")
@@ -262,14 +259,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$Nages<-Nages
     ctllist$Ngenders<-Ngenders
     ctllist$Npopbins<-Npopbins
-    ctllist$Nfleet<-Nfleet
-    ctllist$Nsurveys<-Nsurveys
+    ctllist$Nfleets<-Nfleets
     ctllist$Do_AgeKey<-Do_AgeKey
     ctllist$N_tag_groups<-N_tag_groups
     ctllist$N_CPUE_obs<-N_CPUE_obs
-#    ctllist$fleetnames<-fleetnames<-c(paste0("FL",1:Nfleet),paste0("S",1:Nsurveys))
-    fleetnames<-paste0("FL",1:Nfleet)
-    if(Nsurveys>0)fleetnames<-c(fleetnames,paste0("S",1:Nsurveys))
+    fleetnames<-paste0("FL",1:Nfleets)
+
     ctllist$fleetnames<-fleetnames
   }else{
     if(is.character(datlist))datlist<-SS_readdat(file=datlist)
@@ -291,8 +286,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       stop("datlist$lbin_method is ", datlist$lbin_method, "but only can be 1", 
            ", 2, or 3.")
     }
-    ctllist$Nfleet<-Nfleet<-datlist$Nfleet
-    ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
+    ctllist$Nfleets<-Nfleets<-datlist$Nfleets
+    #ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
     # short circuit logic to avoid error if it is null.
     if(!is.null(datlist$N_ageerror_definition) && 
        datlist$N_ageerror_definition > 0) {
@@ -740,21 +735,21 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   
   PType<-array()
-  ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=14,
+  ctllist<-add_df(ctllist,name="SR_parms",nrow=N_SRparm2,ncol=14,
             col.names=lng_par_colnames,comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
-  ctllist$SRparm<-cbind(ctllist$SRparm,PType)
+  ctllist$SR_parms<-cbind(ctllist$SR_parms,PType)
   
   #SR timevarying parlines ----
   # time block, environmental link, and parm devs parameters
-  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
+  if(any(ctllist$SR_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] == 0) {
     warning("There are time varying SR parameters, and AUTOGEN for SR is 0, so",
             " not expecting any short parameter lines.")
   }
-  if(any(ctllist$SRparm[, c("env_var&link", "dev_link", "Block")] != 0) &
+  if(any(ctllist$SR_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$SRparm)
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$SR_parms)
     ctllist <- add_df(ctllist, 
                       name = "SR_parms_tv", 
                       nrow = length(tmp_parlab), 
@@ -850,8 +845,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.null(ctllist$Q_options)) {
   rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
   # create 3.24 compatible Q_setup ----
-  comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
-  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleet+Nsurveys),ncol=4),row.names=comments_fl)
+  comments_fl<-paste0(1:(Nfleets)," ",fleetnames)
+  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleets),ncol=4),row.names=comments_fl)
   colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
   }
   # q parlines ----
@@ -939,14 +934,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   #(e.g., units 30 fleet)
   ctllist <- add_df(ctllist, 
                     name = "size_selex_types",
-                    nrow = Nfleet+Nsurveys,
+                    nrow = Nfleets,
                     ncol = 4,
                     col.names=c("Pattern", "Discard", "Male", "Special"),
                     comments = fleetnames)
   # age setup
   ctllist<-add_df(ctllist,
                   name = "age_selex_types", 
-                  nrow = Nfleet + Nsurveys,
+                  nrow = Nfleets,
                   ncol = 4, 
                   col.names = c("Pattern", "Discard", "Male", "Special"),
                   comments = fleetnames)
@@ -966,7 +961,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # note thatspecial cases are 27, which is 3 + 2*N_nodes and 42, which is 
   # 5+2*N_nodes, and 6 which is 2+special, so the npars listed is not exactly 
   # correct. This will be addressed in special cases below.NAs are unused codes.
-  size_selex_label<- vector("list", Nfleet+Nsurveys) # do this to initialize size
+  size_selex_label<- vector("list", Nfleets) # do this to initialize size
   # loop through fishing fleets and surveys to assign names
   
   # make a labeling function, that way this 1 function can be changed in the
@@ -997,7 +992,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     labs
   }
-  for(j in 1:(Nfleet+Nsurveys)) {
+  for(j in 1:(Nfleets)) {
     jn <- fleetnames[j] # to use a shorter name throughout loop. jn for "j name)
     # get the number of parameters to use in making the generic labels. 
     #Not used for anything else.
@@ -1091,8 +1086,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                             ctllist$age_selex_types[,"Special"] > 0, 
                             ctllist$age_selex_types[,"Special"] + 1, 
                             age_selex_Nparms)
-  age_selex_label <- vector("list", length = Nfleet + Nsurveys)
-  for(j in 1:(Nfleet+Nsurveys)) {
+  age_selex_label <- vector("list", length = Nfleets)
+  for(j in 1:(Nfleets)) {
     jn <- fleetnames[j]
     ## spline needs special treatment
     if(age_selex_pattern_vec[j] == 27) {
@@ -1256,7 +1251,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     # . one tag reporting rate paramater
     # . one tag reporting rate decay paramater
     #
-    #  In total N_tag_groups*3+ Nfleet*2 parameters are needed to read
+    #  In total N_tag_groups*3+ Nfleets*2 parameters are needed to read
     ctllist <- add_df(ctllist,
                       name = "TG_Loss_init",
                       nrow = ctllist$N_tag_groups,
@@ -1280,18 +1275,18 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                         paste0("#_TG_overdispersion_", 1:ctllist$N_tag_groups))
     ctllist <- add_df(ctllist, 
                       name = "TG_Report_fleet", 
-                      nrow = ctllist$Nfleet, 
+                      nrow = ctllist$Nfleets, 
                       ncol = 14, 
                       col.names = lng_par_colnames,
                       comments = 
-                        paste0("#_TG_report_fleet_par_",1:ctllist$Nfleet))
+                        paste0("#_TG_report_fleet_par_",1:ctllist$Nfleets))
     ctllist <- add_df(ctllist,
                       name = "TG_Report_fleet_decay",
-                      nrow = ctllist$Nfleet,
+                      nrow = ctllist$Nfleets,
                       ncol = 14,
                       col.names=lng_par_colnames,
                       comments = 
-                       paste0("#_TG_report_decay_par_", 1:ctllist$Nfleet))
+                       paste0("#_TG_report_decay_par_", 1:ctllist$Nfleets))
   }
   
   # Var adj ----
@@ -1301,7 +1296,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                     col.names=c("Factor","Fleet","Value"))
   if(!is.null(ctllist$Variance_adjustment_list)) ctllist$DoVar_adjust <- 1
   # create version 3.24 variance adjustments
-  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleet+Nsurveys)))
+  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
   ctllist$Variance_adjustments[4:6,]<-1
   colnames(ctllist$Variance_adjustments)<-fleetnames
   rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",

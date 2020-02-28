@@ -25,10 +25,12 @@
 #' also not explicitly available in control file and this information is only
 #' required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fisheries in the model. This information is also not
-#'  explicitly available in control file
+#' @param Nfleets number of fishery + Survey fleets in the model. This 
+#'  information is also not explicitly available in control file 3.30 syntax
+#' @param Nfleet number of fishery fleets in the model. This information is also not
+#'  explicitly available in control file 3.24 syntax
 #' @param Nsurveys number of survey fleets in the model. This information is also not
-#'  explicitly available in control file
+#'  explicitly available in control file 3.24 syntax
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
 #' @param N_CPUE_obs number of CPUE observations.
@@ -59,6 +61,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        Nages=20,
                        Ngenders=1,
                        Npopbins=NA,
+                       Nfleets=4,
                        Nfleet=2,
                        Nsurveys=2,
                        N_tag_groups=NA,
@@ -114,6 +117,16 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
   # call function for SS version 3.24
   if((nver>=3.2)&&(nver<3.3)){
 
+    if(Nfleets!=4){
+      if(Nfleets!=(Nfleet+Nsurveys)){
+        if(Nfleet==2 & Nsurveys==2){
+          stop("SS v3.24 uses Nfleet and Nsurveys but you have input a value for Nfleets instead")
+        }else{
+          stop("SS v3.30 uses Nfleet and Nsurveys but you have input a value for Nfleets as well that doesn't match with your Nfleet and Nsurveys inputs")
+        }
+      }
+    }
+    
     ctllist <- SS_readctl_3.24(file         = file,
                                version   = version,
                                verbose      = verbose,
@@ -135,6 +148,16 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
   # call function for SS version 3.30
   if(nver>=3.3){
 
+    if(Nfleet!=2 | Nsurveys!=2){
+      if(Nfleets!=(Nfleet+Nsurveys)){
+        if(Nfleets==4){
+          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys")
+        }else{
+          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys as well that don't match with your Nfleets input")
+        }
+      }
+    }
+    
     ctllist <- SS_readctl_3.30(file         = file,
                                version   = version,
                                verbose      = verbose,
@@ -144,8 +167,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Nages        = Nages,
                                Ngenders     = Ngenders,
                                Npopbins     = Npopbins,
-                               Nfleet       = Nfleet,
-                               Nsurveys     = Nsurveys,
+                               Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
