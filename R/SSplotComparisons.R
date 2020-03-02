@@ -1154,7 +1154,7 @@ SSplotComparisons <-
     if(!add){
       plot(0, xlim=xlim, ylim=ylim, axes=FALSE,
            type="n", xlab=labels[1], ylab=labels[5], xaxs=xaxs, yaxs=yaxs, las=1)
-      axis(2)
+      axis(2, las=1)
       abline(h=0, col="grey")
     }
     
