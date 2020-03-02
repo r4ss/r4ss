@@ -734,19 +734,52 @@ SSplotSelex <-
   ### Matrix of selectivity deviations for semi-parametric (2D-AR1) selectivity
   
   if(15 %in% subplot & !is.null(replist$seldev_matrix)){
+    seldev_pars <- replist$seldev_pars
     seldev_matrix <- replist$seldev_matrix
+    # define color palette
     devcol.fn <- colorRampPalette(colors = c('red','white','blue'))
-    ages <- as.numeric(colnames(seldev_matrix))
-    years <- as.numeric(rownames(seldev_matrix))
-    image(x = ages, y = -years, z = t(seldev_matrix), col = devcol.fn(10),
-          xlab = names(dimnames(seldev_matrix))[2],
-          ylab = names(dimnames(seldev_matrix))[1],
-          axes = FALSE)
-    axis(1, at = ages)
-    axis(2, at = years, las = 1)
-    box()
-  }
-  
+
+    # define function to make an image plot
+    seldev_func <- function(m, mar = c(4.1,4.1,1,1)){
+      bins <- as.numeric(colnames(m))
+      years <- as.numeric(rownames(m))
+      par(mar = mar)
+      image(x = bins, y = years, z = t(m), col = devcol.fn(10),
+            xlab = names(dimnames(m))[2],
+            ylab = names(dimnames(m))[1],
+            axes = FALSE,
+            ylim = rev(range(years) + c(-0.5, 0.5)))
+      axis(1, at = bins)
+      axis(2, at = years, las = 1)
+      box()
+    }
+
+    for(imatrix in 1:length(seldev_matrix)){
+      label <- names(seldev_matrix)[imatrix]
+      main <- gsub(pattern = "_", replacement = " ", x = label)
+      main <- gsub(pattern = "seldevs", replacement = "selectivity deviations", x = main)
+      
+      if(plot){
+        seldev_func(m = seldev_matrix[[imatrix]], mar = c(5,4,4,1) + 0.1)
+        title(main = main)
+      }
+      if(print){
+        file=paste("sel15_", label, ".png",sep="")
+        caption <- gsub(pattern = "selectivity ", replacement = "", x = main)
+        caption <- paste0(caption,
+                          "for semi-parametric (2D-AR1) selectivity. ",
+                          "Blue value are positive deviations and red values negative. ",
+                          "The matrix of values is available in the list created by ",
+                          "<code>SS_output()</code> as <code>$seldev_matrix</code> which ",
+                          "is a list with an element for each combination of fleet and length or ",
+                          "age which uses the semi-parametric selectivity.")
+        plotinfo <- pngfun(file=file, caption=caption)
+        seldev_func(m = seldev_matrix[[imatrix]])
+        dev.off()
+      }
+    } # end loop over matrices
+  } # end subplot
+
 
   ################################################################################
   ### Selectivity contours over age and length shown with growth curve
