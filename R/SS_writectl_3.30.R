@@ -16,8 +16,17 @@
 #' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 #' \code{\link{SS_writedat}}
 #' 
-SS_writectl_3.30 <- function(ctllist, outfile, overwrite, verbose) {
+SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
   if(verbose) message("Running SS_writectl_3.30\n")
+  
+  if(file.exists(outfile)){
+    if(!overwrite){
+      cat("File exists and input 'overwrite'=FALSE:",outfile,"\n")
+      return()
+    }else{
+      file.remove(outfile)
+    }
+  }
   
   if(verbose) message("Opening connection to ", outfile, "\n")
   zz <- file(outfile, open = "at") #open = "at" means open for appending in text mode.

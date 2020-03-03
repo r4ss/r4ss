@@ -21,29 +21,27 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
-  par.file<-parfile
-  dat.source<-datlist
-  ctl.source<-ctllist
-  if(is.character(dat.source)){
-    datlist<-SS_readdat(file=dat.source,version="3.30",verbose=FALSE)
-  }else if(is.list(dat.source)){
-    datlist<-dat.source
+  
+  if(is.character(datsource)){
+    datlist<-SS_readdat(file=datsource,version="3.30",verbose=FALSE)
+  }else if(is.list(datsource)){
+    datlist<-datsource
   }else{
     stop("Reading parameter file contents requires a data file location or list object be specified")
   }
   
-  if(is.character(ctl.source)){
-    ctllist<-SS_readctl(file=ctl.source,use_datlist=TRUE,
+  if(is.character(ctlsource)){
+    ctllist<-SS_readctl(file=ctlsource,use_datlist=TRUE,
                         datlist=datlist)
-  }else if(is.list(ctl.source)){
-    ctllist<-ctl.source
+  }else if(is.list(ctlsource)){
+    ctllist<-ctlsource
   }else{
     stop("Reading parameter file contents requires a control file location or list object be specified")
   }
   
   # function to read Stock Synthesis parameter files
   if(verbose) cat("running SS_readpar_3.30\n")
-  parvals <- readLines(par.file,warn=FALSE)
+  parvals <- readLines(parfile,warn=FALSE)
   
   parlist <- list()
   parlist$headerlines <- parvals[1:3]
