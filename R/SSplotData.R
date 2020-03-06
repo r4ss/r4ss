@@ -355,9 +355,16 @@ SSplotData <- function(replist,
     # loop over data types
     for(itype in rev(unique(typetable2$itype))){
       ## Calculate relative size for each data type separately
-      typetable2$size[typetable2$itype==itype] <-
-        typetable2$size[typetable2$itype==itype] /
-          max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      size.max <- max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      if(size.max > 0){
+        # rescale if max > 0
+        typetable2$size[typetable2$itype==itype] <-
+          typetable2$size[typetable2$itype==itype] / size.max
+      }else{
+        # if max = 0, then set all points to 0 (presumably they already were)
+        typetable2$size[typetable2$itype==itype] <- 0
+      }
+            
       # name for this data type
       typename <- unique(typetable2$typename[typetable2$itype==itype])
       # subset of fleets for this data type
