@@ -1186,7 +1186,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       nrow = N_dirichlet_parms,
                       ncol = 14,
                       col.names = lng_par_colnames,
-                      comments = paste0("ln(EffN_mult)_", 1:N_dirichlet_parms))
+                      comments = paste0("ln(DM_theta)_", 1:N_dirichlet_parms))
   }
   
   # sel timevarying parlines----
