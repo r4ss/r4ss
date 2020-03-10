@@ -137,7 +137,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
       writeLines(paste(mylist$fleet_assignment_to_allocation_group,collapse=" "))
       if(any(mylist$fleet_assignment_to_allocation_group!=0)){
         writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-        printdf("allocation_among_groups")
+        writeLines(paste(mylist$allocation_among_groups,collapse=" "))
       }
       wl("Ncatch")
       wl("InputBasis")
