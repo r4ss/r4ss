@@ -477,6 +477,48 @@ SS_readdat_3.24 <- function(file,verbose=TRUE,echoall=FALSE,section=NULL){
   }else{
     cat("Error: final value is", allnums[i]," but should be 999\n")
   }
+  
+  # get fleet info
+  finfo<-rbind(datlist$fleetinfo1,c(rep(1,datlist$Nfleet),rep(3,datlist$Nsurveys)))
+  finfo<-rbind(finfo,c(datlist$units_of_catch,rep(0,datlist$Nsurveys)))
+  rownames(finfo)[3]<-"type"
+  rownames(finfo)[4]<-"units"
+  finfo<-finfo[,1:(length(finfo)-1)]
+  finfo<-as.data.frame(t(finfo))
+  datlist$fleetinfo<-finfo
+  datlist$NCPUEObs<-array(data=0,dim=datlist$Nfleet+datlist$Nsurveys)
+  for(j in 1:nrow(datlist$CPUE))
+  {
+    if(datlist$CPUE[j,]$index>0)datlist$NCPUEObs[datlist$CPUE[j,]$index]<-datlist$NCPUEObs[datlist$CPUE[j,]$index]+1
+  }
+  # fix some things
+  if(!is.null(datlist$lbin_method))
+  {
+    if(datlist$lbin_method==1) # same as data bins
+    {
+      datlist$N_lbinspop<-datlist$N_lbins
+      datlist$lbin_vector_pop<-datlist$lbin_vector
+    }
+    if(datlist$lbin_method==2) # defined wid, min, max
+    {
+      if(!is.null(datlist$binwidth)&&!is.null(datlist$minimum_size)&&!is.null(datlist$maximum_size))
+      {
+        datlist$N_lbinspop<-(datlist$maximum_size-datlist$minimum_size)/datlist$binwidth+1
+        datlist$lbin_vector_pop<-vector()
+        for(j in 0:datlist$N_lbinspop)
+        {
+          datlist$lbin_vector_pop<-c(datlist$lbin_vector_pop,datlist$minimum_size+(j*datlist$binwidth))
+        }
+      }
+    }
+    if(datlist$lbin_method==3) # vector
+    {
+      if(!is.null(datlist$lbin_vector_pop))
+      {
+        datlist$N_lbinspop<-length(datlist$lbin_vector_pop)
+      }
+    }
+  }
 
   # return the result
   return(datlist)

@@ -14,6 +14,7 @@ SS_readctl(
   Nages = 20,
   Ngenders = 1,
   Npopbins = NA,
+  Nfleets = 4,
   Nfleet = 2,
   Nsurveys = 2,
   N_tag_groups = NA,
@@ -55,11 +56,14 @@ also not explicitly available in control file and this information is only
 required if length based
  maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
-explicitly available in control file}
+\item{Nfleets}{number of fishery + Survey fleets in the model. This 
+information is also not explicitly available in control file 3.30 syntax}
+
+\item{Nfleet}{number of fishery fleets in the model. This information is also not
+explicitly available in control file 3.24 syntax}
 
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
-explicitly available in control file}
+explicitly available in control file 3.24 syntax}
 
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
