@@ -196,7 +196,19 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
       message("Forecast is ", forelist$Forecast, 
               " and input readAll=FALSE so skipping remainder of file")
     }
+  } else if(forelist$Forecast %in% c(0, -1) & readAll & 
+           ((is.na(forelist$.dat[forelist$.i]) |
+             forelist$.dat[forelist$.i] == 999 ))) {
+    # stop reading if forecast 0 or -1 used, and no other lines present 
+    # (aside from 999), but readAll = TRUE.
+    if(verbose){
+      message("Forecast =", forelist$Forecast, "\n")
+    }
+    warning("readAll selected as TRUE, but lines beyond Forecast are not ", 
+            "present in the forecasting file, so skipping remainder of ", 
+            "file")
   }else{
+    # continue reading forecast
     if(verbose){
       message("Forecast =", forelist$Forecast, "\n")
     }
