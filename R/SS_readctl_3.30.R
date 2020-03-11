@@ -82,7 +82,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   temp <- strsplit(dat[2]," ")[[1]][1]
   if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
   allnums <- NULL
-  for(i in 1:length(dat)){
+  for(i in seq_len(length(dat))) {
     # First split between input and comments
     mysplit <- strsplit(dat[i],split="#")[[1]]
     if(!is.na(mysplit[1]))
@@ -191,7 +191,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     i<-ctllist$'.i'
     dat<-ctllist$'.dat'
      ctllist$temp<-list()
-    for(j in 1:length){
+    for(j in seq_len(length)){
       ctllist$temp[[j]]<-dat[i+1:length_each[j]-1]; i <- i+length_each[j]
     }
     ctllist$'.i'<-i
@@ -445,8 +445,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                  # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
-  for(i in 1:ctllist$Ngenders){
-    for(j in 1:ctllist$N_GP){
+  for(i in seq_len(ctllist$Ngenders)) {
+    for(j in seq_len(ctllist$N_GP)) {
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
         PType[cnt:(N_natMparms+cnt-1)]<-1
@@ -521,9 +521,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                 if(ctllist$recr_dist_inx){ # interactions
                                   #Note:labels and order consistent with SS source 
                                   #(3.30 and 3.24 control file read in 3.30.10)
-                                  for(i in 1:ctllist$N_GP) {
-                                    for(j in 1:ctllist$N_areas) {
-                                      for(k in 1:ctllist$nseas) { # goes with settle
+                                  for(i in seq_len(ctllist$N_GP)) {
+                                    for(j in seq_len(ctllist$N_areas)) {
+                                      for(k in seq_len(ctllist$nseas)) { # goes with settle
                                         tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                              "_area_",j,
                                                              "_settle_",k)
@@ -543,9 +543,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                   if(ctllist$recr_dist_inx){ # interactions
                                     #Note:labels and order consistent with SS source 
                                     #(3.30 and 3.24 control file read in 3.30.10)
-                                    for(i in 1:ctllist$N_GP) {
-                                      for(j in 1:ctllist$N_areas) {
-                                        for(k in 1:N_settle_timings) {
+                                    for(i in seq_len(ctllist$N_GP)) {
+                                      for(j in seq_len(ctllist$N_areas)) {
+                                        for(k in seq_len(N_settle_timings)) {
                                           tmp_lab_inx <-paste0("RecrDist_interaction_GP_",i,
                                                                "_area_",j,
                                                                "_month_",k)
@@ -558,7 +558,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                           },
                           "3"= { 
                                 lab <- NULL
-                                for(i in 1:nrow(ctllist$recr_dist_pattern)){
+                                for(i in seq_len(nrow(ctllist$recr_dist_pattern))) {
                                   tmp_lab <- paste0("RecrDist_GP_", 
                                                ctllist$recr_dist_pattern[i,1], 
                                                "_area_", 
@@ -613,7 +613,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if((N_areas>1)&&(ctllist$N_moveDef>0)){
     N_MGparm<-N_MGparm+ctllist$N_moveDef*2 # add 2 * N_moveDef for movement params
 #    M_Move_parms<-ctllist$N_moveDef*2
-    for(i in 1:ctllist$N_moveDef){
+    for(i in seq_len(ctllist$N_moveDef)) {
       seas<-ctllist$moveDef[i,1]
       GP<-ctllist$moveDef[i,2]
       from<-ctllist$moveDef[i,3]
@@ -855,7 +855,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(!is.null(ctllist$Q_options)) {
     comments_Q_type<-list()
   
-    for(j in 1:nrow(ctllist$Q_options))
+    for(j in seq_len(nrow(ctllist$Q_options)))
     {
       if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
       {
@@ -945,7 +945,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                   ncol = 4, 
                   col.names = c("Pattern", "Discard", "Male", "Special"),
                   comments = fleetnames)
-  age_selex_pattern_vec <- ctllist$age_selex_types[, "Pattern"]
   # selectivity parlines -----
   # This contains the number of params for each pattern (the name)
   selex_patterns <- c("0" = 0,"1" = 2,"2" = 8,"3" = 6,"4" = 0, "5" = 2,
@@ -992,7 +991,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     labs
   }
-  for(j in 1:(Nfleets)) {
+  
+  for(j in seq_len(Nfleets)) {
+
     jn <- fleetnames[j] # to use a shorter name throughout loop. jn for "j name)
     # get the number of parameters to use in making the generic labels. 
     #Not used for anything else.
@@ -1078,19 +1079,28 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
     }
   }
+  # age selex parlines----
+  age_patterns <- as.character(ctllist$age_selex_types[,"Pattern"])
+  if(any(ctllist$age_selex_types[,"Pattern"] > 100)) {
+    # this code deals with the option to give fish below a certain age 0 
+    # selectivity; implemented in SS 3.30.15.
+    age_patterns[age_patterns > 100] <-
+      as.character(as.integer(substr(age_patterns[age_patterns > 100], 2, 3)))
+  }
   # age selectivity parlines - count the number, not accounting for the 
   # extra special parameters for 17, 27, and 42.
-  age_selex_Nparms <- selex_patterns[as.character(ctllist$age_selex_types[,"Pattern"])]
+  age_selex_Nparms <- selex_patterns[age_patterns]
   # pattern 17 is a special case of number of params, so account for here.
-  age_selex_Nparms <-ifelse(ctllist$age_selex_types[,"Pattern"] == 17 & 
+  age_selex_Nparms <-ifelse(age_patterns == "17" & 
                             ctllist$age_selex_types[,"Special"] > 0, 
                             ctllist$age_selex_types[,"Special"] + 1, 
                             age_selex_Nparms)
+
   age_selex_label <- vector("list", length = Nfleets)
-  for(j in 1:(Nfleets)) {
+  for(j in seq_len(Nfleets)) {
     jn <- fleetnames[j]
     ## spline needs special treatment
-    if(age_selex_pattern_vec[j] == 27) {
+    if(age_patterns[j] == "27") {
       tmp_names <- paste0("Spline_", c("Code", "GradLo", "GradHi"))
       age_selex_label[[j]]<- c(make_sel_lab("a", tmp_names, NULL, jn, j ), 
                                make_sel_lab("a", c("Spline_Knot"), 
@@ -1099,7 +1109,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                make_sel_lab("a", "Spline_Val",
                                             1:ctllist$age_selex_types[j,"Special"], 
                                             jn, j))
-    } else if(age_selex_pattern_vec[j] == 42) {
+    } else if(age_patterns[j] == "42") {
       tmp_names <- paste0("Spline_", 
                    c("ScaleAgeLo", "ScaleAgeHi", "Code", "GradLo", "GradHi"))
       
@@ -1127,12 +1137,12 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     
     if(ctllist$age_selex_types[j, "Male"] %in% 3) { # has value 3 or 5 - differs by select pattern
-      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+      if(age_patterns[j] == "20") {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PMalOff", 1:5, jn, j))
       }
     }else if(ctllist$age_selex_types[j, "Male"] %in% 4) { # has value 3 or 5 - differs by select pattern
-      if(ctllist$age_selex_types[j, "Pattern"] == 20) {
+      if(age_patterns[j] == "20") {
         age_selex_label[[j]] <- c(age_selex_label[[j]],
           make_sel_lab("a", "PFemOff", 1:5, jn, j))
       }
@@ -1176,7 +1186,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                       nrow = N_dirichlet_parms,
                       ncol = 14,
                       col.names = lng_par_colnames,
-                      comments = paste0("ln(EffN_mult)_", 1:N_dirichlet_parms))
+                      comments = paste0("ln(DM_theta)_", 1:N_dirichlet_parms))
   }
   
   # sel timevarying parlines----
@@ -1307,7 +1317,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                                                         "mult_by_size-at-age_N")))
   if(!is.null(ctllist$Variance_adjustment_list)) {
     if(nrow(ctllist$Variance_adjustment_list) > 0) {
-      for(j in 1:nrow(ctllist$Variance_adjustment_list)){
+      for(j in seq_len(nrow(ctllist$Variance_adjustment_list))){
         ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
           ctllist$Variance_adjustment_list[j,]$Value
       }
@@ -1334,7 +1344,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$warnings<-paste(ctllist$warnings,"Duplicate_lambdas",sep=",")
     }
 
-    for(i in 1:ctllist$N_lambdas){
+    for(i in seq_len(ctllist$N_lambdas)){
       like_comp<-ctllist$lambdas[i,1]
       fl<-ctllist$lambdas[i,2]
       phz<-ctllist$lambdas[i,3]
@@ -1384,23 +1394,50 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
-  if(ctllist$more_stddev_reporting!=0){
-    ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
+  if(ctllist$more_stddev_reporting != 0 ) {
+    if(ctllist$more_stddev_reporting == 1) {
+      ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
+    } else if(ctllist$more_stddev_reporting == 2) { # adds option for M
+      ctllist<-add_vec(ctllist, name = "stddev_reporting_specs", length = 11)
+    } else {
+      stop("more_stddev_reporting read as ", ctllist$more_stddev_reporting, 
+           ", but this is either not a valid SS option or not yet implemented ", 
+           "in the SS_readctl function.")
+    }
     ## Selex bin
-    if(ctllist$stddev_reporting_specs[4]>0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_selex",length=ctllist$stddev_reporting_specs[4])
+    if(ctllist$stddev_reporting_specs[4] > 0) {
+        ctllist<-
+          add_vec(ctllist, name = "stddev_reporting_selex",
+                  length=ctllist$stddev_reporting_specs[4])
     }
     ## Growth bin
     # if using wt at age, this is not read.
-    if(ctllist$stddev_reporting_specs[6]>0  & ctllist$EmpiricalWAA == 0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_growth",length=ctllist$stddev_reporting_specs[6])
+    if(ctllist$EmpiricalWAA != 0 & ctllist$stddev_reporting_specs[6] > 0) {
+      warning("Additional stddev reporting being used with a model using ", 
+              "empirical weight at age. Note that even if number of growth", 
+              " ages > 0, SS will ignore these and not expect any input for ", 
+              "the line stddev_reporting_growth. Changing ",
+              "ctllist$stdev_reporting_specs[6] to 0 to make this clear.")
+      ctllist$stddev_reporting_specs[6] <- 0
+    }
+    if(ctllist$stddev_reporting_specs[6] > 0  & ctllist$EmpiricalWAA == 0) {
+        ctllist <- add_vec(ctllist,
+                           name = "stddev_reporting_growth",
+                           length = ctllist$stddev_reporting_specs[6])
     }
     ## N at age
-    if(ctllist$stddev_reporting_specs[9]>0){
-      ctllist<-
-        add_vec(ctllist,name="stddev_reporting_N_at_A",length=ctllist$stddev_reporting_specs[9])
+    if(ctllist$stddev_reporting_specs[9] > 0) {
+      ctllist<- add_vec(ctllist,
+                        name = "stddev_reporting_N_at_A",
+                        length = ctllist$stddev_reporting_specs[9])
+    }
+    # M at age - only available with more_stddev_reporting option 2 in 
+    # SS>= 3.30.15
+    if(ctllist$more_stddev_reporting == 2 && 
+      ctllist$stddev_reporting_specs[11] > 0) {
+        ctllist<- add_vec(ctllist,
+                          name = "stddev_reporting_M_at_A",
+                          length = ctllist$stddev_reporting_specs[11])
     }
   }
   if(ctllist$'.dat'[ctllist$'.i']==999){

@@ -221,10 +221,54 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
   simple3.30.13_forecast <-
     SS_readforecast(file = file.path(example_path,"simple_3.30.13/forecast.ss"),
                     version="3.30", verbose = FALSE)
+
   # write forecast file
   suppressWarnings(SS_writeforecast(mylist = simple3.30.13_forecast,
                      dir = temp_path,
                      file = "testforecast_3.30.13.ss",
                      overwrite = TRUE, verbose = FALSE))
   expect_true(file.exists(file.path(temp_path, "testforecast_3.30.13.ss")))
+  # mock a file with forecast option 0
+  fore_0 <- simple3.30.13_forecast
+  fore_0[["Forecast"]] <- 0
+  
+  # write short and long versions (and check that write okay)
+  SS_writeforecast(mylist = fore_0, dir = temp_path, file = "fore_0_long.ss", 
+                   verbose = FALSE, writeAll = TRUE)
+  SS_writeforecast(mylist = fore_0, dir = temp_path, file = "fore_0_short.ss", 
+                   verbose = FALSE, writeAll = FALSE)
+  expect_true(file.exists(file.path(temp_path, "fore_0_long.ss")))
+  expect_true(file.exists(file.path(temp_path, "fore_0_short.ss")))
+  # make sure SS_readforecast can read short and long versions
+  fore_0_read_short <-
+    SS_readforecast(file = file.path(temp_path, "fore_0_short.ss"),
+                    version = "3.30", verbose = FALSE, readAll = FALSE)
+  expect_length(fore_0_read_short, 11)
+  
+  expect_warning(fore_0_read_all_long <-
+    SS_readforecast(file = file.path(temp_path,"fore_0_long.ss"),
+                    version="3.30", verbose = FALSE, readAll = TRUE), 
+    "Forecast = 0 should always be used with 1 forecast year")
+  expect_length(fore_0_read_all_long, 34)
+  
+  fore_0_read_some_long <-
+    SS_readforecast(file = file.path(temp_path,"fore_0_long.ss"),
+                    version="3.30", verbose = FALSE, readAll = FALSE)
+  expect_length(fore_0_read_some_long, 11)
+  
+  # make sure warning provided if try to read all with a short file
+  expect_warning(fore_0_read_all_short <-
+    SS_readforecast(file = file.path(temp_path,"fore_0_short.ss"),
+                    version="3.30", verbose = FALSE, readAll = TRUE), 
+    "readAll selected as TRUE, but lines beyond Forecast are not present")
+  expect_length(fore_0_read_all_short, 11)
+  # check that warning provided if writeAll = TRUE, but only a short version
+  # available
+  expect_warning(SS_writeforecast(mylist = fore_0_read_short,
+                                  dir = temp_path, 
+                                  file = "fore_0_read_short.ss", 
+                                  verbose = FALSE, 
+                                  writeAll = TRUE),
+    "Even though writeAll == TRUE, cannot write past list element Forecast")
+  expect_true(file.exists(file.path(temp_path, "fore_0_read_short.ss")))
 })

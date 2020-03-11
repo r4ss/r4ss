@@ -126,16 +126,21 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
     }
   }
 
-  # check final value
-  mylist$final <- final <- allnums[i]
-  if(!is.na(final) && final %in% c(3.30, 999)){
-    if(verbose){
-      message("Read of starter file complete. Final value: ",final)
+  # check final value and define random seed.
+  mylist$final <- final <- allnums[i]; i <- i+1
+  if(!is.na(final) && final %in% c(3.30, 999)) {
+    if(verbose) message("Read of starter file complete. Final value: ",final)
+  } else { # read seed and check final value
+    mylist$seed <- mylist$final
+    if(verbose) message("Reading a random seed value:", mylist$seed)
+    mylist$final <- final <- allnums[i]
+    if(!is.na(final) && final %in% c(3.30, 999)) {
+      if(verbose) message("Read of starter file complete. Final value: ",final)
+    } else {
+      warning("Final value is ", allnums[i]," but should be either 3.30 or 999")
     }
-  }else{
-    warning("Final value is ", allnums[i]," but should be either 3.30 or 999")
   }
-  if(final==3.30){
+  if(final==3.30) {
     mylist$SSversion <- "3.30"
   }
   # all done
