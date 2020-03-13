@@ -206,9 +206,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     Grow_std$age <- NA
     for(irow in 1:nrow(Grow_std)){
       tmp <- strsplit(Grow_std$Label[irow], split="_")[[1]]
-      Grow_std$pattern[irow] <- as.numeric(tmp[4])
-      Grow_std$sex_char[irow] <- tmp[5]
-      Grow_std$age[irow] <- as.numeric(tmp[7])
+      Grow_std$pattern[irow] <- as.numeric(tmp[3])
+      Grow_std$sex_char[irow] <- tmp[4]
+      Grow_std$age[irow] <- as.numeric(tmp[6])
     }
     Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
     Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
@@ -221,7 +221,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     ## Grow_std_GP:_1_Fem_A_5      NA       1      Fem   1   5
   }
 
-  # get any derived quantities related to growth curve uncertainty
+  # get any derived quantities related to M uncertainty
   NatM_std <- replist$derived_quants[grep("NatM_std_", replist$derived_quants$Label),]
   if(nrow(NatM_std)==0){
     NatM_std <- NULL
@@ -741,8 +741,16 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
          yaxs='i', ylim=c(0,1.0*lab1max),
          axes=FALSE)
     # add line for lab1 vs. Age
-    lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
-          lwd=1, lty='12')
+    if(option == 1){
+      lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
+            lwd=1, lty='12')
+    }
+    if(option == 2){
+      # maturity curve is product of age-based and length-based factors
+      lines(growdatF$Age_Beg, growdatF[["Len_Mat"]] * growdatF[["Age_Mat"]],
+            col=colvec[col_index1], lwd=1, lty='12')
+    }
+    
     # add line for lab2 vs. Age
     lines(growdatF$Age_Beg, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
           lwd=3)
@@ -767,7 +775,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
     # restore default single panel settings
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
-  }
+  } # end growth_curve_plus_fn()
+
+  
   # make plots of growth curve with CV and SD of length
   if(plot & 2 %in% subplots & !wtatage_switch){
     growth_curve_plus_fn(option=1)
