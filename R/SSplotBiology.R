@@ -199,16 +199,20 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     Grow_std <- NULL
   }else{
     # convert things like "Grow_std_1_Fem_A_25" into
+    #  in more recent 3.30.14 versions, the label appears as
+    #                     "Grow_std_GP:_1_Fem_A_25"
+    # so the "shift" below = 0 or 1 to adjust the position accordingly
     # "pattern 1, female, age 25"
     Grow_std$pattern <- NA
     Grow_std$sex_char <- NA
     Grow_std$sex <- NA
     Grow_std$age <- NA
+    shift <- length(grep("GP:", Grow_std$Label[1]))
     for(irow in 1:nrow(Grow_std)){
       tmp <- strsplit(Grow_std$Label[irow], split="_")[[1]]
-      Grow_std$pattern[irow] <- as.numeric(tmp[3])
-      Grow_std$sex_char[irow] <- tmp[4]
-      Grow_std$age[irow] <- as.numeric(tmp[6])
+      Grow_std$pattern[irow] <- as.numeric(tmp[3 + shift])
+      Grow_std$sex_char[irow] <- tmp[4 + shift]
+      Grow_std$age[irow] <- as.numeric(tmp[6 + shift])
     }
     Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
     Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
