@@ -719,7 +719,7 @@ SS_output <-
       }
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
 
-      n <- sum(is.na(compdbase$N) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
+      n <- sum(is.na(compdbase$Nsamp_adj) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
         warning(n,"rows from composition database have NA sample size\n",
             "but are not part of a super-period. (Maybe input as N=0?)\n")
@@ -773,17 +773,17 @@ SS_output <-
         # older designation of ghost fleets from negative samp size to negative fleet
         lendbase    <- compdbase[compdbase$Kind=="LEN"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)),]
         sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)),]
         agedbase    <- compdbase[compdbase$Kind=="AGE"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
                                         notconditional,]
         condbase    <- compdbase[compdbase$Kind=="AGE"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
                                         conditional,]
       }
       ghostagedbase <- compdbase[compdbase$Kind=="AGE"  &
@@ -825,10 +825,10 @@ SS_output <-
         sizebinlist <- NA
       }
 
-      if(is.null(compdbase$N)){
+      if(is.null(compdbase$Nsamp_adj)){
         good <- TRUE
       }else{
-        good <- !is.na(compdbase$N)
+        good <- !is.na(compdbase$Nsamp_adj)
       }
       ladbase          <- compdbase[compdbase$Kind=="L@A" & good,]
       wadbase          <- compdbase[compdbase$Kind=="W@A" & good,]
@@ -1177,7 +1177,7 @@ SS_output <-
           }
           sub <- agedbase$Fleet == f
           agedbase$DM_effN[sub] <-
-            1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + agedbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within agedbase
 
@@ -1193,7 +1193,7 @@ SS_output <-
           }
           sub <- lendbase$Fleet == f
           lendbase$DM_effN[sub] <-
-            1 / (1+Theta) + lendbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + lendbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within lendbase
 
@@ -1209,7 +1209,7 @@ SS_output <-
           }
           sub <- condbase$Fleet == f
           condbase$DM_effN[sub] <-
-            1 / (1+Theta) + condbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + condbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within condbase
     } # end test for whether CompReport.sso info is available
@@ -1631,7 +1631,7 @@ SS_output <-
     lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
     names(lenntune)[10] <- "FleetName"
     # reorder columns (leaving out sample sizes perhaps to save space)
-    lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
+    lenntune <- lenntune[lenntune$Nsamp_adj>0, c(10,1,4:9)]
     # avoid NA warnings by removing #IND values
     lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
     lenntune <- type.convert(lenntune, as.is = TRUE)
@@ -1648,7 +1648,7 @@ SS_output <-
       lenntune <- type.convert(lenntune, as.is = TRUE)
     }else{
       # reorder columns (leaving out sample sizes perhaps to save space)
-      lenntune <- lenntune[lenntune$N>0, ]
+      lenntune <- lenntune[lenntune$Nsamp_adj>0, ]
       lenntune <- type.convert(lenntune, as.is = TRUE)
       ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
       #lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
@@ -1707,7 +1707,7 @@ SS_output <-
   }else{
     if(!is.null(dim(agentune))){
       names(agentune)[ncol(agentune)] <- "Fleet_name"
-      agentune <- agentune[agentune$N>0, ]
+      agentune <- agentune[agentune$Nsamp_adj>0, ]
 
       # avoid NA warnings by removing #IND values
       agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
