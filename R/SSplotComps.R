@@ -381,7 +381,7 @@ SSplotComps <-
     }
   }
   if(kind=="L@A"){
-    dbase_kind <- ladbase[ladbase$N!=0,] # remove values with 0 sample size
+    dbase_kind <- ladbase[ladbase$Nsamp_adj!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_LAAdat_"
@@ -393,7 +393,7 @@ SSplotComps <-
     dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$N
   }
   if(kind=="W@A"){
-    dbase_kind <- wadbase[wadbase$N!=0,] # remove values with 0 sample size
+    dbase_kind <- wadbase[wadbase$Nsamp_adj!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_WAAdat_"
@@ -520,7 +520,7 @@ SSplotComps <-
                 # Dirichlet-Multinomial likelihood
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
                               linesx=dbase$Bin,linesy=dbase$Exp,
-                              sampsize=dbase$N,
+                              sampsize=dbase$Nsamp_adj,
                               effN=dbase$DM_effN,
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="N input=",
@@ -539,7 +539,7 @@ SSplotComps <-
                 # standard multinomial likelihood
                 make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
                               linesx=dbase$Bin,linesy=dbase$Exp,
-                              sampsize=dbase$N,effN=dbase$effN,
+                              sampsize=dbase$Nsamp_adj,effN=dbase$effN,
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="N adj.=",
                               effN_label="N eff.=",
@@ -557,7 +557,7 @@ SSplotComps <-
             }
             if(kind=="GSTAGE"){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                            sampsize=dbase$N,effN=dbase$effN,
+                            sampsize=dbase$Nsamp_adj,effN=dbase$effN,
                             showsampsize=FALSE,showeffN=FALSE,
                             bars=bars,linepos=(1-datonly)*linepos,
                             nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
@@ -571,7 +571,7 @@ SSplotComps <-
             }
             if(kind=="GSTLEN"){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                            sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                            sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
                             bars=bars,linepos=(1-datonly)*linepos,
                             nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -585,7 +585,7 @@ SSplotComps <-
             if(kind %in% c("L@A","W@A")){
               make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
                             ptsSD=dbase$SD,
-                            sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+                            sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
                             nlegends=1,legtext=list(dbase$YrSeasName),
                             bars=bars,linepos=(1-datonly)*linepos,
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -657,7 +657,7 @@ SSplotComps <-
         if(datonly){
           z <- dbase$Obs
           if(scalebubbles){
-            z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
+            z <- dbase$Nsamp_adj*dbase$Obs # if requested, scale by sample sizes
           }
           col <- rep("black",2)
           titletype <- titledata
@@ -782,10 +782,10 @@ SSplotComps <-
           effNline.old <- effNline
           if(is.logical(sampsizeline) && sampsizeline){
             # scaling when displaying only adjusted input sample size
-            sampsizeline <- max(dbase$Bin)/max(dbase$N,na.rm=TRUE)
+            sampsizeline <- max(dbase$Bin)/max(dbase$Nsamp_adj,na.rm=TRUE)
             if(!datonly && is.logical(effNline) && effNline){
               # scaling when displaying both input and effective
-              sampsizeline <- effNline  <- max(dbase$Bin)/max(dbase$N,dbase$effN,na.rm=TRUE)
+              sampsizeline <- effNline  <- max(dbase$Bin)/max(dbase$Nsamp_adj,dbase$effN,na.rm=TRUE)
               cat("  Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
             }else{
               cat("  Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")
@@ -799,7 +799,7 @@ SSplotComps <-
             cols <- colvec[col.index]
             yrvec <- dbase$Yr.S + dbase$sex*1e-6
             make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=yrvec,size=z,
-                          sampsize=dbase$N,showsampsize=showsampsize,effN=dbase$effN,
+                          sampsize=dbase$Nsamp_adj,showsampsize=showsampsize,effN=dbase$effN,
                           showeffN=FALSE,
                           cexZ1=cexZ1,
                           bublegend=bublegend,
@@ -861,7 +861,7 @@ SSplotComps <-
                 tempfun4 <- function(ipage,...){ # temporary function to aid repeating the big function call
                   make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
                                 linesx=ydbase$Bin,linesy=ydbase$Exp,
-                                sampsize=ydbase$N,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+                                sampsize=ydbase$Nsamp_adj,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                 nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                 bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                 xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -966,7 +966,7 @@ SSplotComps <-
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun6 <- function(ipage,...){ # temporary function to aid repeating the big function call
                   make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr.S,linesx=abindbase$Bin,linesy=abindbase$Exp,
-                                sampsize=abindbase$N,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+                                sampsize=abindbase$Nsamp_adj,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
                                 nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -1353,10 +1353,10 @@ SSplotComps <-
 
           Bins <- sort(unique(dbase$Bin))
           nbins <- length(Bins)
-          df <- data.frame(N=dbase$N,
+          df <- data.frame(N=dbase$Nsamp_adj,
                            effN=dbase$effN,
-                           obs=dbase$Obs*dbase$N,
-                           exp=dbase$Exp*dbase$N)
+                           obs=dbase$Obs*dbase$Nsamp_adj,
+                           exp=dbase$Exp*dbase$Nsamp_adj)
           if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
             df$DM_effN <- dbase$DM_effN
           }
@@ -1469,7 +1469,7 @@ SSplotComps <-
             # haven't configured this aggregated plot for other types
             ## if(kind=="GSTAGE"){
             ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-            ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+            ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
             ##                 bars=bars,linepos=(1-datonly)*linepos,
             ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
             ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -1478,7 +1478,7 @@ SSplotComps <-
             ## }
             ## if(kind %in% c("L@A","W@A")){
             ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-            ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+            ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
             ##                 nlegends=1,legtext=list(dbase$YrSeasName),
             ##                 bars=bars,linepos=(1-datonly)*linepos,
             ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -1552,10 +1552,10 @@ SSplotComps <-
 
             Bins <- sort(unique(dbase$Bin))
             nbins <- length(Bins)
-            df <- data.frame(N=dbase$N,
+            df <- data.frame(N=dbase$Nsamp_adj,
                              effN=dbase$effN,
-                             obs=dbase$Obs*dbase$N,
-                             exp=dbase$Exp*dbase$N)
+                             obs=dbase$Obs*dbase$Nsamp_adj,
+                             exp=dbase$Exp*dbase$Nsamp_adj)
             agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,s=dbase$Seas), FUN=sum)
             agg <- agg[agg$f %in% fleets,]
             if(any(agg$s<=0)){
@@ -1601,7 +1601,7 @@ SSplotComps <-
          # haven't configured this aggregated plot for other types
               ## if(kind=="GSTAGE"){
               ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+              ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
               ##                 bars=bars,linepos=(1-datonly)*linepos,
               ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
               ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -1610,7 +1610,7 @@ SSplotComps <-
               ## }
               ## if(kind %in% c("L@A","W@A")){
               ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+              ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
               ##                 nlegends=1,legtext=list(dbase$YrSeasName),
               ##                 bars=bars,linepos=(1-datonly)*linepos,
               ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -1692,10 +1692,10 @@ SSplotComps <-
 
               Bins <- sort(unique(dbase$Bin))
               nbins <- length(Bins)
-              df <- data.frame(N=dbase$N,
+              df <- data.frame(N=dbase$Nsamp_adj,
                                effN=dbase$effN,
-                               obs=dbase$Obs*dbase$N,
-                               exp=dbase$Exp*dbase$N)
+                               obs=dbase$Obs*dbase$Nsamp_adj,
+                               exp=dbase$Exp*dbase$Nsamp_adj)
               agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,y=floor(dbase$Yr.S)), FUN=sum)
               agg <- agg[agg$f %in% fleets,]
               agg$obs <- agg$obs/agg$N
@@ -1744,7 +1744,7 @@ SSplotComps <-
                 # haven't configured this aggregated plot for other types
                 ## if(kind=="GSTAGE"){
                 ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                ##                 sampsize=dbase$N,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
                 ##                 bars=bars,linepos=(1-datonly)*linepos,
                 ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
                 ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
@@ -1753,7 +1753,7 @@ SSplotComps <-
                 ## }
                 ## if(kind %in% c("L@A","W@A")){
                 ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                ##                 sampsize=dbase$N,effN=0,showsampsize=FALSE,showeffN=FALSE,
+                ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
                 ##                 nlegends=1,legtext=list(dbase$YrSeasName),
                 ##                 bars=bars,linepos=(1-datonly)*linepos,
                 ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -1925,7 +1925,7 @@ SSplotComps <-
           # determine bubble size and colors
           if(datonly){
             z <- dbase$Obs
-            if(scalebubbles) z <- dbase$N*dbase$Obs # if requested, scale by sample sizes
+            if(scalebubbles) z <- dbase$Nsamp_adj*dbase$Obs # if requested, scale by sample sizes
             titletype <- titledata
             filetype <- "bub"
             allopen <- TRUE

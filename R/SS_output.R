@@ -269,12 +269,12 @@ SS_output <-
     if(length(compend)==0) compend <- 999
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
-      cat("problem comparing the file creation times:\n")
-      cat("  Report.sso:",repfiletime,"\n")
-      cat("  CompReport.sso:",comptime,"\n")
+      messages("problem comparing the file creation times:\n",
+               "  Report.sso:", repfiletime, "\n",
+               "  CompReport.sso:", comptime, "\n")
     }else{
       if(comptime != repfiletime){
-        cat("CompReport time:",comptime,"\n")
+        message("CompReport time:",comptime,"\n")
         stop(shortrepfile," and ",compfile," were from different model runs.")
       }
     }
@@ -286,7 +286,7 @@ SS_output <-
   }
 
   # read report file
-  if(verbose) cat("Reading full report file\n")
+  if(verbose) message("Reading full report file\n")
   flush.console()
 
   if(is.null(ncols)) ncols <- get_ncol(repfile)
@@ -674,10 +674,10 @@ SS_output <-
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
 
-      # update to naming convention associated with 3.30.12
+      # update to naming convention associated with 3.30.12 (Nsamp_adj added in 3.30.15)
       compdbase <- df.rename(compdbase,
-                             oldnames=c("Pick_sex", "Pick_gender", "Gender"),
-                             newnames=c("Sexes",    "Sexes",       "Sex"))
+                             oldnames=c("Pick_sex", "Pick_gender", "Gender", "N"),
+                             newnames=c("Sexes",    "Sexes",       "Sex",    "Nsamp_adj"))
       # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
       #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
       # this is the user input in the data file
