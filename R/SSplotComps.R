@@ -1018,7 +1018,7 @@ SSplotComps <-
             if(nrow(dbasegood)>0){
               # thinning out columns and removing rows with redundant information
               # (for the purposes of this function)
-              dbasegood2 <- dbasegood[,c("YrSeasName","N","effN")]
+              dbasegood2 <- dbasegood[,c("YrSeasName","Nsamp_adj","effN")]
               dbasegood2 <- unique(dbasegood2)
               plot(dbasegood2$N,dbasegood2$effN,xlab=labels[4],main=ptitle,
                    cex.main=cex.main,
