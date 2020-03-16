@@ -66,14 +66,14 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
       if(verbose) message("calculating ",type," tunings for fleet ",fleet,"\n")
       if(type=="len"){
         # table of info from SS
-        tunetable <- replist$Length_comp_Eff_N_tuning_check
+        tunetable <- replist$Length_Comp_Fit_Summary
         Factor <- 4 # code for Control file
         has_marginal <- fleet %in% replist$lendbase$Fleet
         has_conditional <- FALSE
       }
       if(type=="age"){
         # table of info from SS
-        tunetable <- replist$Age_comp_Eff_N_tuning_check
+        tunetable <- replist$Age_Comp_Fit_Summary
         Factor <- 5 # code for Control file
         has_marginal <- fleet %in% replist$agedbase$Fleet
         has_conditional <- fleet %in% replist$condbase$Fleet
@@ -179,7 +179,7 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data
-  tunetable_size <- replist$Size_comp_Eff_N_tuning_check
+  tunetable_size <- replist$Size_Comp_Fit_Summary
   if(!is.null(tunetable_size)){
     warning("\n  Generalized size composition data doesn't have\n",
             "  Francis weighting available and the table of tunings\n",

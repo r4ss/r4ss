@@ -117,9 +117,9 @@ make_multifig_sexratio <-
       lwr <- NA
       upr <- NA
       if(nm == 1 & nf == 0){
-        effN <- male$effN; N <- male$N; e <- NA; o <- 0
+        effN <- male$effN; Nsamp_adj <- male$Nsamp_adj; e <- NA; o <- 0
       } else if(nm == 0 & nf == 1) {
-        effN <- female$effN; N <- female$N; e <- NA; o <- Inf
+        effN <- female$effN; Nsamp_adj <- female$Nsamp_adj; e <- NA; o <- Inf
       } else if(nrow(female)==1 & nrow(male)==1){
         ## Calculate the ratio if data exists for both. Use delta method for
         ## multinomial estimators to get approximate SE for the ratio of the
@@ -130,7 +130,7 @@ make_multifig_sexratio <-
         # sample size is shared across both vectors (at least if Sexes==3)
         # IGT 2019-05-02: should check for case where sexes are input separately
         effN <- female$effN
-        N <- female$N
+        Nsamp_adj <- female$Nsamp_adj
         if(sexratio.option == 1){ # females:males
           e <- (female$Exp - minobs)/(male$Exp - minobs)
           o <- (female$Obs - minobs)/(male$Obs - minobs)
@@ -148,14 +148,14 @@ make_multifig_sexratio <-
         # calculate SE of the ratio
         if(sexratio.option == 1){ # females:males
           se.ratio <-
-            sqrt((pf/pm)^2*( (1-pf)/(pf*N) + (1-pm)/(pm*N) +2/N ))
+            sqrt((pf/pm)^2*( (1-pf)/(pf*Nsamp_adj) + (1-pm)/(pm*Nsamp_adj) +2/Nsamp_adj ))
           lwr <- qnorm((1 - CI)/2, o, se.ratio)
           upr <- qnorm(1 - (1 - CI)/2, o, se.ratio)
         }
         if(sexratio.option == 2){ # female:total
           pt <- female$Obs + male$Obs - 2*minobs
           # assuming sample size for this bin is at least 1
-          Nbin <- max(pt*N, 1)
+          Nbin <- max(pt*Nsamp_adj, 1)
           if(pt > 0){
             # Jeffreys interval
             # https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Jeffreys_interval
@@ -184,10 +184,10 @@ make_multifig_sexratio <-
         lwr[pf == 0 & pm == 0] <- NA
         upr[pf == 0 & pm == 0] <- NA
       } else {
-        o <- e <- se.ratio <- lwr <- upr <- effN <- N <- NA
+        o <- e <- se.ratio <- lwr <- upr <- effN <- Nsamp_adj <- NA
       }
       df.list[[k]] <- data.frame(Yr=yr.temp, Bin=bin, Exp=e, Obs=o,
-                                 lwr=lwr, upr=upr, effN=effN, N=N)
+                                 lwr=lwr, upr=upr, effN=effN, Nsamp_adj=Nsamp_adj)
       k <- k+1
     }
   }
@@ -279,7 +279,8 @@ make_multifig_sexratio <-
         ## all rows should be same so grab first
         text_i <- paste0('effN=', round(df2$effN[1], sampsizeround))
       } else if(legtext_i == "N" & nrow(df2)>0){
-        text_i <- paste0('N=', round(df2$N[1], sampsizeround)) # all rows should be same so grab first
+        # all rows should be same so grab first
+        text_i <- paste0('N=', round(df2$Nsamp_adj[1], sampsizeround)) 
       } else {
         text_i <- ''
       }

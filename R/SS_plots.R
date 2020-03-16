@@ -1211,7 +1211,9 @@ SS_plots <-
     #
     igroup <- 20
     if(igroup %in% plot){
-      if(verbose) cat("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")\n",sep="")
+      if(verbose){
+        message("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")")
+      }
       if(datplot){
         # data-only plot of mean length at age
         plotinfo <-

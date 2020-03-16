@@ -216,7 +216,7 @@ SSplotData <- function(replist,
           }
           if(typename %in% c("lendbase", "sizedbase", "agedbase")){
             # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+            dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
             allyrs <- dat.agg$Group.1
             size <- dat.agg$x
           }
@@ -238,7 +238,7 @@ SSplotData <- function(replist,
             # check for observations within this fleet
             if(nrow(dat.sub) > 0){
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.sub$N, by=list(dat.sub$Yr), FUN=sum)
+              dat.agg <- aggregate(dat.sub$Nsamp_adj, by=list(dat.sub$Yr), FUN=sum)
               allyrs <- dat.agg$Group.1
               size <- dat.agg$x
             }
@@ -267,7 +267,7 @@ SSplotData <- function(replist,
             dat.f <- dat.f[dat.f$Used == "yes",]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+              dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
               allyrs <- dat.agg$Group.1
               size <- dat.agg$x
             }

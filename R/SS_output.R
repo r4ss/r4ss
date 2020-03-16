@@ -269,12 +269,12 @@ SS_output <-
     if(length(compend)==0) compend <- 999
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
-      cat("problem comparing the file creation times:\n")
-      cat("  Report.sso:",repfiletime,"\n")
-      cat("  CompReport.sso:",comptime,"\n")
+      messages("problem comparing the file creation times:\n",
+               "  Report.sso:", repfiletime, "\n",
+               "  CompReport.sso:", comptime, "\n")
     }else{
       if(comptime != repfiletime){
-        cat("CompReport time:",comptime,"\n")
+        message("CompReport time:",comptime,"\n")
         stop(shortrepfile," and ",compfile," were from different model runs.")
       }
     }
@@ -286,7 +286,7 @@ SS_output <-
   }
 
   # read report file
-  if(verbose) cat("Reading full report file\n")
+  if(verbose) message("Reading full report file\n")
   flush.console()
 
   if(is.null(ncols)) ncols <- get_ncol(repfile)
@@ -475,34 +475,46 @@ SS_output <-
     get.def <- function(string){
       # function to grab numeric value from 2nd column matching string in 1st column
       row <- grep(string, rawdefs$X1)[1]
-      return(as.numeric(rawdefs[row, 2]))
+      if(length(row) > 0){
+        return(as.numeric(rawdefs[row, 2]))
+      }else{
+        return(NULL)
+      }
     }
     # apply function above to get a bunch of things
-    nseasons        <- get.def("N_seasons")
-    nsubseas        <- get.def("N_sub_seasons")
-    seasdurations   <- as.numeric(rawdefs[grep("Season_Durations", rawdefs$X1),
-                                          1+1:nseasons])
-    spawnmonth      <- get.def("Spawn_month")
-    spawnseas       <- get.def("Spawn_seas")
-    spawn_timing    <- get.def("Spawn_timing_in_season")
-    nareas          <- get.def("N_areas")
-    startyr         <- get.def("Start_year")
-    endyr           <- get.def("End_year")
-    Retro_year      <- get.def("Retro_year")
-    N_forecast_yrs  <- get.def("N_forecast_yrs")
-    nsexes          <- get.def("N_sexes")
-    accuage <- Max_age <- get.def("Max_age")
-    use_wtatage     <- get.def("Empirical_wt_at_age(0,1)")
-    N_bio_patterns  <- get.def("N_bio_patterns")
-    N_platoons      <- get.def("N_platoons")
-    Start_from_par  <- get.def("Start_from_par(0,1)")
-    Do_all_priors   <- get.def("Do_all_priors(0,1)")
-    Use_softbound   <- get.def("Use_softbound(0,1)")
-    N_nudata        <- get.def("N_nudata")
-    Max_phase       <- get.def("Max_phase")
-    Current_phase   <- get.def("Current_phase")
-    Jitter          <- get.def("Jitter")
-    ALK_tolerance   <- get.def("ALK_tolerance")
+    # in some cases, duplicate names are used for backward compatibility
+    N_seasons         <- nseasons       <- get.def("N_seasons")
+    N_sub_seasons                       <- get.def("N_sub_seasons")
+    Season_Durations  <- seasdurations  <- as.numeric(rawdefs[grep("Season_Durations",
+                                                                   rawdefs$X1),
+                                                              1+1:nseasons])
+    Spawn_month       <- spawnmonth     <- get.def("Spawn_month")
+    Spawn_seas        <- spawnseas      <- get.def("Spawn_seas")
+    Spawn_timing_in_season              <- get.def("Spawn_timing_in_season")
+    N_areas           <- nareas         <- get.def("N_areas")
+    Start_year        <- startyr        <- get.def("Start_year")
+    End_year          <- endyr          <- get.def("End_year")
+    Retro_year                          <- get.def("Retro_year")
+    N_forecast_yrs                      <- get.def("N_forecast_yrs")
+    N_sexes           <- nsexes         <- get.def("N_sexes")
+    Max_age           <- accuage        <- get.def("Max_age")
+    Empirical_wt_at_age                 <- get.def("Empirical_wt_at_age")
+    N_bio_patterns                      <- get.def("N_bio_patterns")
+    N_platoons                          <- get.def("N_platoons")
+    # following quants added in 3.30.13
+    NatMort_option                      <- get.def("NatMort")
+    GrowthModel_option                  <- get.def("GrowthModel")
+    Maturity_option                     <- get.def("Maturity")
+    Fecundity_option                    <- get.def("Fecundity")
+    # end quants added in 3.30.13
+    Start_from_par                      <- get.def("Start_from_par")
+    Do_all_priors                       <- get.def("Do_all_priors")
+    Use_softbound                       <- get.def("Use_softbound")
+    N_nudata                            <- get.def("N_nudata")
+    Max_phase                           <- get.def("Max_phase")
+    Current_phase                       <- get.def("Current_phase")
+    Jitter                              <- get.def("Jitter")
+    ALK_tolerance                       <- get.def("ALK_tolerance")
     # table starting with final occurrence of "Fleet" in column 1
     fleetdefs <- rawdefs[tail(grep("Fleet", rawdefs$X1),1):nrow(rawdefs),]
     names(fleetdefs) <- fleetdefs[1,] # set names equal to first row
@@ -662,10 +674,10 @@ SS_output <-
       endfile <- grep("End_comp_data",rawcompdbase[,1])
       compdbase <- rawcompdbase[2:(endfile-2),] # subtract header line and last 2 lines
 
-      # update to naming convention associated with 3.30.12
+      # update to naming convention associated with 3.30.12 (Nsamp_adj added in 3.30.15)
       compdbase <- df.rename(compdbase,
-                             oldnames=c("Pick_sex", "Pick_gender", "Gender"),
-                             newnames=c("Sexes",    "Sexes",       "Sex"))
+                             oldnames=c("Pick_sex", "Pick_gender", "Gender", "N"),
+                             newnames=c("Sexes",    "Sexes",       "Sex",    "Nsamp_adj"))
       # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
       #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
       # this is the user input in the data file
@@ -707,7 +719,7 @@ SS_output <-
       }
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
 
-      n <- sum(is.na(compdbase$N) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
+      n <- sum(is.na(compdbase$Nsamp_adj) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
         warning(n,"rows from composition database have NA sample size\n",
             "but are not part of a super-period. (Maybe input as N=0?)\n")
@@ -761,17 +773,17 @@ SS_output <-
         # older designation of ghost fleets from negative samp size to negative fleet
         lendbase    <- compdbase[compdbase$Kind=="LEN"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)),]
         sizedbase   <- compdbase[compdbase$Kind=="SIZE" &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)),]
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)),]
         agedbase    <- compdbase[compdbase$Kind=="AGE"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
                                         notconditional,]
         condbase    <- compdbase[compdbase$Kind=="AGE"  &
                                    (compdbase$SuprPer=="Sup" |
-                                      (!is.na(compdbase$N) & compdbase$N > 0)) &
+                                      (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
                                         conditional,]
       }
       ghostagedbase <- compdbase[compdbase$Kind=="AGE"  &
@@ -813,10 +825,10 @@ SS_output <-
         sizebinlist <- NA
       }
 
-      if(is.null(compdbase$N)){
+      if(is.null(compdbase$Nsamp_adj)){
         good <- TRUE
       }else{
-        good <- !is.na(compdbase$N)
+        good <- !is.na(compdbase$Nsamp_adj)
       }
       ladbase          <- compdbase[compdbase$Kind=="L@A" & good,]
       wadbase          <- compdbase[compdbase$Kind=="W@A" & good,]
@@ -1165,7 +1177,7 @@ SS_output <-
           }
           sub <- agedbase$Fleet == f
           agedbase$DM_effN[sub] <-
-            1 / (1+Theta) + agedbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + agedbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within agedbase
 
@@ -1181,7 +1193,7 @@ SS_output <-
           }
           sub <- lendbase$Fleet == f
           lendbase$DM_effN[sub] <-
-            1 / (1+Theta) + lendbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + lendbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within lendbase
 
@@ -1197,7 +1209,7 @@ SS_output <-
           }
           sub <- condbase$Fleet == f
           condbase$DM_effN[sub] <-
-            1 / (1+Theta) + condbase$N[sub] * Theta / (1+Theta)
+            1 / (1+Theta) + condbase$Nsamp_adj[sub] * Theta / (1+Theta)
         } # end test for D-M likelihood for this fleet
       } # end loop over fleets within condbase
     } # end test for whether CompReport.sso info is available
@@ -1619,7 +1631,7 @@ SS_output <-
     lenntune <- matchfun2("FIT_AGE_COMPS",-(nfleets+1),"FIT_AGE_COMPS",-1,cols=1:10,header=TRUE)
     names(lenntune)[10] <- "FleetName"
     # reorder columns (leaving out sample sizes perhaps to save space)
-    lenntune <- lenntune[lenntune$N>0, c(10,1,4:9)]
+    lenntune <- lenntune[lenntune$Nsamp_adj>0, c(10,1,4:9)]
     # avoid NA warnings by removing #IND values
     lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
     lenntune <- type.convert(lenntune, as.is = TRUE)
@@ -1636,7 +1648,7 @@ SS_output <-
       lenntune <- type.convert(lenntune, as.is = TRUE)
     }else{
       # reorder columns (leaving out sample sizes perhaps to save space)
-      lenntune <- lenntune[lenntune$N>0, ]
+      lenntune <- lenntune[lenntune$Nsamp_adj>0, ]
       lenntune <- type.convert(lenntune, as.is = TRUE)
       ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
       #lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
@@ -1658,7 +1670,7 @@ SS_output <-
                               which(names(lenntune) %in% end.names))]
     }
   }
-  stats$Length_comp_Eff_N_tuning_check <- lenntune
+  stats$Length_Comp_Fit_Summary <- lenntune
 
   ## FIT_AGE_COMPS
   if(SS_versionNumeric < 3.3){
@@ -1695,7 +1707,7 @@ SS_output <-
   }else{
     if(!is.null(dim(agentune))){
       names(agentune)[ncol(agentune)] <- "Fleet_name"
-      agentune <- agentune[agentune$N>0, ]
+      agentune <- agentune[agentune$Nsamp_adj>0, ]
 
       # avoid NA warnings by removing #IND values
       agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN"=="-1.#IND"] <- NA
@@ -1708,7 +1720,7 @@ SS_output <-
       agentune$Recommend_Var_Adj <-
         agentune$Var_Adj * agentune$"HarMean(effN)/mean(inputN*Adj)"
 
-      # remove distracting columns
+      # remove distracting columns (no longer present in recent versions of SS)
       badnames <- c("mean_effN","Mean(effN/inputN)","MeaneffN/MeaninputN")
       agentune <- agentune[,!names(agentune) %in% badnames]
 
@@ -1724,7 +1736,7 @@ SS_output <-
       agentune <- NULL
     }
   }
-  stats$Age_comp_Eff_N_tuning_check <- agentune
+  stats$Age_Comp_Fit_Summary <- agentune
 
   ## FIT_SIZE_COMPS
   fit_size_comps <- NULL
@@ -1772,7 +1784,7 @@ SS_output <-
         names(sizentune) <- sizentune[1,]
         sizentune <- sizentune[sizentune$Factor==7,]
         sizentune <- type.convert(sizentune, as.is = TRUE)
-        stats$Size_comp_Eff_N_tuning_check <- sizentune
+        stats$Size_Comp_Fit_Summary <- sizentune
         # format fit_size_comps: remove extra rows, make numeric
         fit_size_comps <- fit_size_comps[fit_size_comps$Fleet_Name %in% FleetNames,]
       } # end check for non-empty fit_size_comps
@@ -1852,9 +1864,9 @@ SS_output <-
   # section that were added with SS version 3.30.12
   return.def <- function(x){
     if(exists(x)){
-      returndat[[x]] <- get(x)
+      get(x)
     }else{
-      returndat[[x]] <- NULL
+      NULL
     }
   }
 
@@ -1884,24 +1896,28 @@ SS_output <-
   returndat$endyr       <- endyr
   returndat$nseasons    <- nseasons
   returndat$seasfracs   <- seasfracs
-  returndat$seasdurations  <- seasdurations
-  return.def("N_sub_seasons")
-  return.def("Spawn_month")
-  return.def("Spawn_seas")
-  return.def("Spawn_timing_in_season")
-  return.def("Retro_year")
-  return.def("N_forecast_yrs")
-  return.def("Empirical_wt_at_age(0,1)")
-  return.def("N_bio_patterns")
-  return.def("N_platoons")
-  return.def("Start_from_par(0,1)")
-  return.def("Do_all_priors(0,1)")
-  return.def("Use_softbound(0,1)")
-  return.def("N_nudata")
-  return.def("Max_phase")
-  return.def("Current_phase")
-  return.def("Jitter")
-  return.def("ALK_tolerance")
+  returndat$seasdurations <- seasdurations
+  returndat$N_sub_seasons <- return.def("N_sub_seasons")
+  returndat$Spawn_month   <- return.def("Spawn_month")
+  returndat$Spawn_seas    <- return.def("Spawn_seas")
+  returndat$Spawn_timing_in_season <- return.def("Spawn_timing_in_season")
+  returndat$Retro_year     <- return.def("Retro_year")
+  returndat$N_forecast_yrs <- return.def("N_forecast_yrs")
+  returndat$Empirical_wt_at_age <- return.def("Empirical_wt_at_age")
+  returndat$N_bio_patterns <- return.def("N_bio_patterns")
+  returndat$N_platoons     <- return.def("N_platoons")
+  returndat$NatMort_option <- return.def("NatMort_option")
+  returndat$GrowthModel_option <- return.def("GrowthModel_option")
+  returndat$Maturity_option  <- return.def("Maturity_option")
+  returndat$Fecundity_option <- return.def("Fecundity_option")
+  returndat$Start_from_par <- return.def("Start_from_par")
+  returndat$Do_all_priors  <- return.def("Do_all_priors")
+  returndat$Use_softbound  <- return.def("Use_softbound")
+  returndat$N_nudata       <- return.def("N_nudata")
+  returndat$Max_phase      <- return.def("Max_phase")
+  returndat$Current_phase  <- return.def("Current_phase")
+  returndat$Jitter         <- return.def("Jitter")
+  returndat$ALK_tolerance  <- return.def("ALK_tolerance")
   returndat$nforecastyears <- nforecastyears
   returndat$morph_indexing <- morph_indexing
 #  returndat$MGParm_dev_details <- MGParm_dev_details
