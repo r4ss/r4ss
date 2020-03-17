@@ -1110,6 +1110,64 @@ SS_output <-
   # add table to stats that get printed in console
   stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
 
+  # Semi-parametric (2D-AR1) selectivity parameters
+  seldev_pars <- parameters[grep("ARDEV", parameters$Label, fixed=TRUE),
+                           names(parameters) %in% c("Label", "Value")]
+  if(nrow(seldev_pars) == 0){
+    # if semi-parametric selectivity IS NOT used
+    seldev_pars <- NULL
+    seldev_matrix <- NULL
+  }else{
+    # if semi-parametric selectivity IS used
+
+    # parse parameter labels to get info
+    seldev_label_info <- strsplit(seldev_pars$Label, split="_")
+    seldev_label_info <- data.frame(do.call(rbind, lapply(seldev_label_info, rbind)))
+
+    # add columns to pars data.frame with info from labels
+    seldev_pars$Fleet <- seldev_label_info$X1
+    seldev_pars$Year <- as.numeric(substring(seldev_label_info$X3, 2))
+    seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) == "a", "age", "length")
+    # how many non-numeric digits to skip over in parsing bin value
+    first_bin_digit <- ifelse(seldev_pars$Type == "age", 2, 5)
+    # parse bin (age or length bin)
+    seldev_pars$Bin <- as.numeric(substring(seldev_label_info$X4, first_bin_digit))
+    # remove label column which is redundant with rownames
+    seldev_pars <- seldev_pars[,-1]
+
+    # make matrix
+    seldev_matrix <- list()
+    for(fleet in sort(unique(seldev_pars$Fleet))){
+      # subset for specific fleet
+      seldev_pars_f <- seldev_pars[seldev_pars$Fleet == fleet,]
+      for(type in unique(seldev_pars_f$Type)){
+        # subset for type (unlikely to have more than 1 per fleet, but safer this way)
+        seldev_pars_sub <- seldev_pars_f[seldev_pars_f$Type == type,]
+        seldev_label <- paste0(fleet, "_", type, "_seldevs")
+        seldev_yrs <- sort(unique(seldev_pars_sub$Year))
+        seldev_bins <- sort(unique(seldev_pars_sub$Bin))
+        # create empty matrix with labels on each dimension
+        if(type == "length"){
+          seldev_matrix[[seldev_label]] <-
+            matrix(nrow = length(seldev_yrs), ncol = length(seldev_bins),
+                   dimnames = list(Year = seldev_yrs, Lbin = seldev_bins))
+        }
+        if(type == "age"){
+          seldev_matrix[[seldev_label]] <-
+            matrix(nrow = length(seldev_yrs), ncol = length(seldev_bins),
+                   dimnames = list(Year = seldev_yrs, Age = seldev_bins))
+        }
+        # loop over years and bins to fill in matrix
+        for(y in seldev_yrs){
+          for(bin in seldev_bins){
+            seldev_matrix[[seldev_label]][paste(y), paste(bin)] <-
+              seldev_pars_sub$Value[seldev_pars_sub$Year == y & seldev_pars_sub$Bin == bin]
+          }
+        } # end loop over years
+      } # end loop over types
+    } # end loop over fleets
+  } # end check for semi-parametric selectivity
+    
   # Dirichlet-Multinomial parameters
   # (new option for comp likelihood that uses these parameters for automated
   #  data weighting)
@@ -3029,9 +3087,13 @@ SS_output <-
   # add list of stats to list that gets returned
   returndat <- c(returndat, stats)
 
+  # add info on semi-parametric selectivity deviations
+  returndat$seldev_pars <- seldev_pars
+  returndat$seldev_matrix <- seldev_matrix
+  
   # print list of statistics
   if(printstats){
-    cat("Statistics shown below (to turn off, change input to printstats=FALSE)\n")
+    message("Statistics shown below (to turn off, change input to printstats=FALSE)")
 
     # remove scientific notation (only for display, not returned values,
     # which were added to returndat already)

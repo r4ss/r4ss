@@ -120,9 +120,10 @@ SSplotSelex <-
   ## selectivity at age in end year
   # 13. selectivity at age in ending year if time-varying
   # 14. selectivity at age in ending year if NOT time-varying
+  # 15. matrix of selectivity deviations for semi-parametric selectivity 
 
   #### both/either age or length
-  # 21. selecitivity at age and length contour with overlaid growth curve
+  # 21. selectivity at age and length contour with overlaid growth curve
   # 22. selectivity with uncertainty if requested at end of control file
 
   # empty table into which information on line types etc. might be copied
@@ -730,6 +731,57 @@ SSplotSelex <-
   } # check for any of the plots in this section requested
 
   ################################################################################
+  ### Matrix of selectivity deviations for semi-parametric (2D-AR1) selectivity
+  
+  if(15 %in% subplot & !is.null(replist$seldev_matrix)){
+    seldev_pars <- replist$seldev_pars
+    seldev_matrix <- replist$seldev_matrix
+    # define color palette
+    devcol.fn <- colorRampPalette(colors = c('red','white','blue'))
+
+    # define function to make an image plot
+    seldev_func <- function(m, mar = c(4.1,4.1,1,1)){
+      bins <- as.numeric(colnames(m))
+      years <- as.numeric(rownames(m))
+      par(mar = mar)
+      image(x = bins, y = years, z = t(m), col = devcol.fn(10),
+            xlab = names(dimnames(m))[2],
+            ylab = names(dimnames(m))[1],
+            axes = FALSE,
+            ylim = rev(range(years) + c(-0.5, 0.5)))
+      axis(1, at = bins)
+      axis(2, at = years, las = 1)
+      box()
+    }
+
+    for(imatrix in 1:length(seldev_matrix)){
+      label <- names(seldev_matrix)[imatrix]
+      main <- gsub(pattern = "_", replacement = " ", x = label)
+      main <- gsub(pattern = "seldevs", replacement = "selectivity deviations", x = main)
+      
+      if(plot){
+        seldev_func(m = seldev_matrix[[imatrix]], mar = c(5,4,4,1) + 0.1)
+        title(main = main)
+      }
+      if(print){
+        file=paste("sel15_", label, ".png",sep="")
+        caption <- gsub(pattern = "selectivity ", replacement = "", x = main)
+        caption <- paste0(caption,
+                          " for semi-parametric (2D-AR1) selectivity. ",
+                          "Blue value are positive deviations and red values negative. ",
+                          "The matrix of values is available in the list created by ",
+                          "<code>SS_output()</code> as <code>$seldev_matrix</code> which ",
+                          "is a list with an element for each combination of fleet and length or ",
+                          "age which uses the semi-parametric selectivity.")
+        plotinfo <- pngfun(file=file, caption=caption)
+        seldev_func(m = seldev_matrix[[imatrix]])
+        dev.off()
+      }
+    } # end loop over matrices
+  } # end subplot
+
+
+  ################################################################################
   ### Selectivity contours over age and length shown with growth curve
 
   if(21 %in% subplot & ngpatterns==1){ # need to connect growth patterns to fleets in future
@@ -881,6 +933,8 @@ SSplotSelex <-
       }
     } # end test for presence of selectivity uncertainty output
   } # check check for subplot in list
+
+  # return info on any PNG files created
   if(!is.null(plotinfo)) plotinfo$category <- "Sel"
   return(invisible(list(infotable=infotable2,plotinfo=plotinfo)))
 }
