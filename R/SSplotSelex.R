@@ -767,7 +767,7 @@ SSplotSelex <-
         file=paste("sel15_", label, ".png",sep="")
         caption <- gsub(pattern = "selectivity ", replacement = "", x = main)
         caption <- paste0(caption,
-                          "for semi-parametric (2D-AR1) selectivity. ",
+                          " for semi-parametric (2D-AR1) selectivity. ",
                           "Blue value are positive deviations and red values negative. ",
                           "The matrix of values is available in the list created by ",
                           "<code>SS_output()</code> as <code>$seldev_matrix</code> which ",
