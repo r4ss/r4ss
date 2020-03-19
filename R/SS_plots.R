@@ -1306,7 +1306,8 @@ SS_plots <-
                      plot=!png, print=png,
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res, cex.main=cex.main,
-                     plotdir=plotdir)
+                     plotdir=plotdir,
+                     verbose = verbose)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       } # end if data present
     } # end if igroup in plot or print

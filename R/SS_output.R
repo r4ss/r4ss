@@ -718,10 +718,9 @@ SS_output <-
         compdbase$SuprPer <- "No"
       }
       compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-
       n <- sum(is.na(compdbase$Nsamp_adj) & compdbase$Used!="skip" & compdbase$Kind!="TAG2")
       if(n>0){
-        warning(n,"rows from composition database have NA sample size\n",
+        warning(n," rows from composition database have NA sample size\n",
             "but are not part of a super-period. (Maybe input as N=0?)\n")
       }
       compdbase <- type.convert(compdbase, as.is = TRUE)
