@@ -815,7 +815,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
   # plot distribution of length at age (by season, sub-season, and morph)
   if(4 %in% subplots & !wtatage_switch){
-    if(!is.null(replist$ALK)){
+    if(!is.null(replist[["ALK"]])){
       plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
                                       plot = plot, print = print,
                                       plotdir = plotdir, pwidth = pwidth,
