@@ -584,7 +584,7 @@ SSexecutivesummary <- function (replist,
     if(is.null(adopted_ofl)){
       ofl = rep("fill_in", length(hist))
     } else {
-      if(length(adopted_ofl) != 12) { message("The adopted_ofl vector needs to have 12 values."); break() }
+      if(length(adopted_ofl) != 12) { stop("The adopted_ofl vector needs to have 12 values.") }
       if(is.null(forecast_ofl)) { 
         ofl = c(adopted_ofl, "-") 
       } else {
@@ -595,7 +595,7 @@ SSexecutivesummary <- function (replist,
     if(is.null(adopted_acl)){
       acl = rep("fill_in", length(hist))
     } else {
-      if(length(adopted_acl) != 12) { message("The adopted_acl vector needs to have 12 values."); break() }
+      if(length(adopted_acl) != 12) { stop("The adopted_acl vector needs to have 12 values.") }
       if(is.null(forecast_abc)) { 
         acl = c(adopted_acl, "-") 
       } else {
