@@ -90,7 +90,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
              "Maturity",                                #3
              "Mean weight (kg) in last year",           #4
              "Spawning output",                         #5
-             "Length (cm, beginning of the year)",      #6 
+             "Length (cm, beginning of the year)",      #6
              "Natural mortality",                       #7
              "Female weight (kg)",                      #8
              "Female length (cm)",                      #9
@@ -114,14 +114,14 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # subplot 9: fec_len_fn - fecundity at length from BIOLOGY section
   # subplot 10: spawn_output_len_fn  - spawning output at length
   # subplot 11: spawn_output_age_fn  - spawning output at age
-  
+
   # subplot 21 mfunc   - Natural mortality (if age-dependent)
   # subplot 22 [no function] - Time-varying growth persp
   # subplot 23 [no function] - Time-varying growth contour
   # subplot 24 timeVaryingParmFunc - plot time-series of any time-varying quantities
-  
-  #### unfinished addition on 3-Mar-16 
-  # subplot 25 [no function] - matrix of M by age and time 
+
+  #### unfinished addition on 3-Mar-16
+  # subplot 25 [no function] - matrix of M by age and time
 
   #### vectors related to hermaphroditism
   # subplot 31 Herma_Trans
@@ -134,7 +134,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # subplot 104: diagram with labels showing female CV = f(A) & male offset (type 2)
   # subplot 105: diagram with labels showing female CV = f(A) (offset type 3)
   # subplot 106: diagram with labels showing female CV = f(A) & male offset (type 3)
-  
+
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
     # replace any slashes (as in 'Eggs/kg_inter_Fem')
@@ -192,31 +192,67 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   if(is.null(morphs)){
     morphs   <- replist$mainmorphs
   }
-  
+
   # get any derived quantities related to growth curve uncertainty
   Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$Label),]
   if(nrow(Grow_std)==0){
     Grow_std <- NULL
   }else{
     # convert things like "Grow_std_1_Fem_A_25" into
+    #  in more recent 3.30.14 versions, the label appears as
+    #                     "Grow_std_GP:_1_Fem_A_25"
+    # so the "shift" below = 0 or 1 to adjust the position accordingly
     # "pattern 1, female, age 25"
     Grow_std$pattern <- NA
     Grow_std$sex_char <- NA
     Grow_std$sex <- NA
     Grow_std$age <- NA
+    shift <- length(grep("GP:", Grow_std$Label[1]))
     for(irow in 1:nrow(Grow_std)){
       tmp <- strsplit(Grow_std$Label[irow], split="_")[[1]]
-      Grow_std$pattern[irow] <- as.numeric(tmp[3])
-      Grow_std$sex_char[irow] <- tmp[4]
-      Grow_std$age[irow] <- as.numeric(tmp[6])
+      Grow_std$pattern[irow] <- as.numeric(tmp[3 + shift])
+      Grow_std$sex_char[irow] <- tmp[4 + shift]
+      Grow_std$age[irow] <- as.numeric(tmp[6 + shift])
     }
     Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
     Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
     #### now it should look something like this:
-    ##                                   Label Value   StdDev pattern sex_char sex age
-    ## Grow_std_1_Fem_A_5   Grow_std_1_Fem_A_5     0 1.772300       1      Fem   1   5
-    ## Grow_std_1_Fem_A_10 Grow_std_1_Fem_A_10     0 1.039320       1      Fem   1  10
+    ##                                         Label   Value   StdDev (Val-1.0)/Stddev
+    ## Grow_std_GP:_1_Fem_A_0 Grow_std_GP:_1_Fem_A_0 27.3188 0.393286               NA
+    ## Grow_std_GP:_1_Fem_A_5 Grow_std_GP:_1_Fem_A_5 50.6099 0.178201               NA
+    ##                        CumNorm pattern sex_char sex age
+    ## Grow_std_GP:_1_Fem_A_0      NA       1      Fem   1   0
+    ## Grow_std_GP:_1_Fem_A_5      NA       1      Fem   1   5
   }
+
+  # get any derived quantities related to M uncertainty
+  NatM_std <- replist$derived_quants[grep("NatM_std_", replist$derived_quants$Label),]
+  if(nrow(NatM_std)==0){
+    NatM_std <- NULL
+  }else{
+    # convert things like "NatM_std_GP:_1_Fem_A_1" into
+    # "pattern 1, female, age 25"
+    NatM_std$pattern <- NA
+    NatM_std$sex_char <- NA
+    NatM_std$sex <- NA
+    NatM_std$age <- NA
+    for(irow in 1:nrow(NatM_std)){
+      tmp <- strsplit(NatM_std$Label[irow], split="_")[[1]]
+      NatM_std$pattern[irow] <- as.numeric(tmp[4])
+      NatM_std$sex_char[irow] <- tmp[5]
+      NatM_std$age[irow] <- as.numeric(tmp[7])
+    }
+    NatM_std$sex[NatM_std$sex_char=="Fem"] <- 1
+    NatM_std$sex[NatM_std$sex_char=="Mal"] <- 2
+    #### now it should look something like this:
+    ##                                         Label    Value StdDev (Val-1.0)/Stddev
+    ## NatM_std_GP:_1_Fem_A_1 NatM_std_GP:_1_Fem_A_1 0.564563      0               NA
+    ## NatM_std_GP:_1_Fem_A_2 NatM_std_GP:_1_Fem_A_2 0.510574      0               NA
+    ##                        CumNorm pattern sex_char sex age
+    ## NatM_std_GP:_1_Fem_A_1      NA       1      Fem   1   1
+    ## NatM_std_GP:_1_Fem_A_2      NA       1      Fem   1   2
+  }
+
 
   # test for presence of wtatage_switch
   # (not created in older versions of SS_output)
@@ -511,6 +547,43 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     col_index1 <- 1 # change line for females to red
   }
 
+  add_uncertainty_fn <- function(std_table, sex, age_offset = 0.5){
+    # function to add uncertainty estimates to mean length at age or M at age
+
+    # previous settings for warnings
+    old_warn <- options()$warn
+    # turn off "zero-length arrow" warning
+    options(warn=-1)
+    # confirm presence of table of values and request to add to plot
+    if(!is.null(std_table)){
+      std_table.sex <- std_table[std_table$sex == sex,]
+      # confirm presence for requested sex
+      if(!is.null(std_table.sex)){
+        for(irow in 1:nrow(std_table.sex)){
+          std.age <- std_table.sex$age[irow]
+          # this might not work for log-normal length at age
+          mean <- std_table.sex$Value[irow]
+          ages <- std_table.sex$age[irow] + age_offset
+          high <- qnorm(0.975, mean=mean, sd=std_table.sex$StdDev[irow])
+          low  <- qnorm(0.025, mean=mean, sd=std_table.sex$StdDev[irow])
+          # set sex-dependent color
+          if(sex == 1){
+            col <- colvec[col_index1]
+          }
+          if(sex == 2){
+            col <- colvec[2]
+          }
+          arrows(x0=ages, x1=ages,
+                 y0=low,  y1=high,
+                 length=0.04, angle=90, code=3, col=col)
+        }
+      } # end check for missing sex
+    } # end check for empty table
+
+    #returning to old warnings (after turning off in case of zero-length arrow)
+    options(warn=old_warn)
+  }
+
   growth_curve_fn <- function(add_labels=TRUE, add_uncertainty=TRUE){ # growth
     x <- growdatF$Age_Beg
     # make empty plot unless this is being added to existing figure
@@ -525,57 +598,34 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       }
     }
     lty <- 1
+    # make shaded polygon
     polygon(c(x, rev(x)), c(growdatF$low, rev(growdatF$high)),
             border=NA, col=shadecolvec[col_index1])
+    # add lines for mean, low and high
     lines(x,growdatF$Len_Beg,col=colvec[col_index1],lwd=2,lty=ltyvec[1])
     lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
     lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
-    # add uncertainty intervals around growth curve
-    old_warn <- options()$warn   # previous settings for warnings
-    options(warn=-1)             # turn off "zero-length arrow" warning
-    if(!is.null(Grow_std) & add_uncertainty){
-      Grow_std.f <- Grow_std[Grow_std$sex==1,]
-      if(!is.null(Grow_std.f)){
-        for(irow in 1:nrow(Grow_std.f)){
-          std.age <- Grow_std.f$age[irow]
-          # this might not work for log-normal length at age
-          mean <- growdatF$Len_Beg[growdatF$Age_Beg==std.age]
-          age.mid <- growdatF$Age_Beg[growdatF$Age_Beg==std.age]
-          high <- qnorm(0.975, mean=mean, sd=Grow_std.f$StdDev[irow])
-          low  <- qnorm(0.025, mean=mean, sd=Grow_std.f$StdDev[irow])
-          arrows(x0=age.mid, x1=age.mid,
-                 y0=low,     y1=high,
-                 length=0.04, angle=90, code=3, col=colvec[col_index1])
-        }
-      }
+
+    # add 95% intervals for uncertainty in growth from $derived_quants
+    if(add_uncertainty){
+      add_uncertainty_fn(std_table = Grow_std, sex = 1, age_offset = 0.5)
     }
+
     # add males if they are present in the model
     if(nsexes > 1){
+      # make shaded polygon
       polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
               border=NA, col=shadecolvec[2])
+      # add lines for mean, low and high
       lines(xm,growdatM$Len_Beg,col=colvec[2],lwd=2,lty=ltyvec[2])
       lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
       lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
-      # add uncertainty intervals around growth curve for males
-      if(!is.null(Grow_std) & add_uncertainty){
-        Grow_std.m <- Grow_std[Grow_std$sex==2,]
-        if(!is.null(Grow_std.m)){
-          for(irow in 1:nrow(Grow_std.m)){
-            std.age <- Grow_std.m$age[irow]
-            # this might not work for long-normal length at age
-            mean <- growdatM$Len_Beg[growdatM$Age_Beg==std.age]
-            age.mid <- 0.2 + growdatM$Age_Beg[growdatM$Age_Beg==std.age]
-            high <- qnorm(0.975, mean=mean, sd=Grow_std.m$StdDev[irow])
-            low  <- qnorm(0.025, mean=mean, sd=Grow_std.m$StdDev[irow])
-            arrows(x0=age.mid, x1=age.mid,
-                   y0=low,     y1=high,
-                   length=0.04, angle=90, code=3, col=colvec[2])
-          }
-        }
+
+      # add 95% intervals for uncertainty in growth from $derived_quants
+      if(add_uncertainty){
+        add_uncertainty_fn(std_table = Grow_std, sex = 2, age_offset = 0.5)
       }
     }
-    #returning to old warnings (after turning off in case of zero-length arrow)
-    options(warn=old_warn)  
 
     if(!add){
       grid()
@@ -695,8 +745,16 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
          yaxs='i', ylim=c(0,1.0*lab1max),
          axes=FALSE)
     # add line for lab1 vs. Age
-    lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
-          lwd=1, lty='12')
+    if(option == 1){
+      lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
+            lwd=1, lty='12')
+    }
+    if(option == 2){
+      # maturity curve is product of age-based and length-based factors
+      lines(growdatF$Age_Beg, growdatF[["Len_Mat"]] * growdatF[["Age_Mat"]],
+            col=colvec[col_index1], lwd=1, lty='12')
+    }
+    
     # add line for lab2 vs. Age
     lines(growdatF$Age_Beg, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
           lwd=3)
@@ -721,7 +779,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
     # restore default single panel settings
     par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
-  }
+  } # end growth_curve_plus_fn()
+
+  
   # make plots of growth curve with CV and SD of length
   if(plot & 2 %in% subplots & !wtatage_switch){
     growth_curve_plus_fn(option=1)
@@ -755,7 +815,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
   # plot distribution of length at age (by season, sub-season, and morph)
   if(4 %in% subplots & !wtatage_switch){
-    if(!is.null(replist$ALK)){
+    if(!is.null(replist[["ALK"]])){
       plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 1,
                                       plot = plot, print = print,
                                       plotdir = plotdir, pwidth = pwidth,
@@ -1131,22 +1191,35 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       if(nsexes > 1){
         ymax <- 1.1*max(MatAge, MatAge_M)
       }
+      
       # function to plut natural mortality
-      mfunc <- function(){
+      mfunc <- function(add_uncertainty = TRUE){
         if(!add){
-          plot(growdatF$Age_Beg, MatAge, col=colvec[1], lwd=2,
-               ylim=c(0, ymax), yaxs='i', type="n", 
+          plot(growdatF$Age_Beg, MatAge, col=colvec[col_index1], lwd=2,
+               ylim=c(0, ymax), yaxs='i', type="n",
                ylab=labels[7], xlab=labels[2], las=1)
         }
-        lines(growdatF$Age_Beg, MatAge, col=colvec[1],lwd=2,type='o')
+        lines(growdatF$Age_Beg, MatAge, col=colvec[col_index1],lwd=2,type='o')
+
+        # add uncertainty in M-at-age (if available from derived_quants)
+        if(add_uncertainty){
+          add_uncertainty_fn(std_table = NatM_std, sex = 1, age_offset = 0.0)
+        }
+        
         if(nsexes > 1){
           growdatM <- growdat[growdat$Morph==morphs[2],]
           lines(growdatM$Age_Beg, growdatM$M, lty=ltyvec[2], col=colvec[2],
                 lwd=2, type='o')
           legend('bottomleft', bty="n", c("Females","Males"), lty=ltyvec, lwd=2,
-                 col=c(colvec[1],colvec[2]))
+                 col=c(colvec[col_index1],colvec[2]))
+
+          # add uncertainty in M-at-age (if available from derived_quants)
+          if(add_uncertainty){
+            add_uncertainty_fn(std_table = NatM_std, sex = 2, age_offset = 0.0)
+          }
         }
       }
+      
       # run function if requested to make plot
       if(plot & 21 %in% subplots){
         mfunc()
@@ -1252,7 +1325,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       for(icol in 2:ncol(MGparmAdj)){
         parmlabel <- names(MGparmAdj)[icol]
         # exclude column indicating change added with version 3.30.06.02
-        if(parmlabel!="Change?"){ 
+        if(parmlabel!="Change?"){
           parmvals  <- MGparmAdj[,icol]
           # check for changes
           if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
@@ -1315,9 +1388,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ##   # strip off forecast years in M-at-age matrix
   ##   M_at_age <- M_at_age[M_at_age$Year <= endyr,]
 
-  
+
   ##   if(any(M_at_age$Bio_Pattern!=1)){}
-  
+
   ##   for(i in unique(M_at_age$Bio_Pattern)){
   ##     for(isex in unique(
   ##   M_at_age_tmpYear <- M_at_age$Year
@@ -1373,7 +1446,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ##     } # end loop over sexes
   ##   } # end of if data available for time varying growth
   ## }# end disable of time-varying growth for multi-season models
-  
+
   # add category and return plotinfo
   if(!is.null(plotinfo)) plotinfo$category <- "Bio"
   return(invisible(plotinfo))

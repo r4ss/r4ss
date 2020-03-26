@@ -723,12 +723,12 @@ SSplotComparisons <-
     # draw points and lines
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
-              col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+              col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
     }else{
       # spread out points with interval equal to spacepoints and
       # staggering equal to staggerpoints
       matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
-              col=col,lty=lty,lwd=lwd,type="l",add=TRUE)
+              col=col,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
       SpawnBio2 <- SpawnBio
       for(iline in 1:nlines){
         imodel <- models[iline]
@@ -736,7 +736,7 @@ SSplotComparisons <-
                   imodel] <- NA
       }
       matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
-              col=col,pch=pch,lwd=lwd,type="p",add=TRUE)
+              col=col,pch=pch,lwd=lwd,type="p", ylim = ylim, add = TRUE)
     }
 
     if(show_equilibrium){
@@ -809,16 +809,16 @@ SSplotComparisons <-
     }
 
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
       if(type!="l"){
         Bratio2 <- Bratio
         for(iline in 1:nlines){
           imodel <- models[iline]
           Bratio2[(Bratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
-        matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+        matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
       }
     }
 
@@ -891,16 +891,16 @@ SSplotComparisons <-
       addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
     }
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
       if(type!="l"){
         SPRratio2 <- SPRratio
         for(iline in 1:nlines){
           imodel <- models[iline]
           SPRratio2[(SPRratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
-        matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+        matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
       }
     }
     abline(h=0,col="grey")
@@ -996,16 +996,16 @@ SSplotComparisons <-
       addpoly(Fvalue$Yr, lower=FvalueLower, upper=FvalueUpper)
     }
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,add=TRUE)
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
     }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",add=TRUE)
+      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
       if(type!="l"){
         Fvalue2 <- Fvalue
         for(iline in 1:nlines){
           imodel <- models[iline]
           Fvalue2[Fvalue2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
-        matplot(Fvalue2$Yr,Fvalue2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",add=TRUE)
+        matplot(Fvalue2$Yr,Fvalue2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
       }
     }
     abline(h=0,col="grey")
@@ -1062,8 +1062,7 @@ SSplotComparisons <-
           recruits2[(recruits2$Yr%%spacepoints-initpoint) != (staggerpoints*iline)%%spacepoints, imodel] <- NA
         }
         matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
-                xlim=xlim,ylim=ylim,
-                xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=TRUE)
+                xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE, ylim = ylim, add = TRUE)
       }
     }
 
@@ -1155,7 +1154,7 @@ SSplotComparisons <-
     if(!add){
       plot(0, xlim=xlim, ylim=ylim, axes=FALSE,
            type="n", xlab=labels[1], ylab=labels[5], xaxs=xaxs, yaxs=yaxs, las=1)
-      axis(2)
+      axis(2, las=1)
       abline(h=0, col="grey")
     }
     
@@ -1284,7 +1283,7 @@ SSplotComparisons <-
     for(iline in 1:nlines){
       imodel <- models[iline]
       subset1 <- indices$imodel==imodel & !is.na(indices$Like)
-      subset2 <- indices$imodel==imodel
+      subset2 <- indices$imodel==imodel & indices$Yr <= endyrvec[iline]
       if(length(unique(indices$Fleet[subset2])) > 1){
         if(!is.null(indexfleets[imodel])){
           ifleet <- indexfleets[imodel]
@@ -1344,20 +1343,28 @@ SSplotComparisons <-
     ### make plot of index fits
     # calculate ylim (excluding dummy observations from observed but not expected)
     sub <- !is.na(indices2$Like)
-    ylim <- ylimAdj*range(exp, obs[sub], lower[sub], upper[sub], na.rm=TRUE)
+    ylim <- range(exp, obs[sub], lower[sub], upper[sub], na.rm=TRUE)
     # if no values included in subset, then set ylim based on all values
     if(!any(sub)){
-      ylim <- ylimAdj*range(exp, obs, lower, upper, na.rm=TRUE)
+      ylim <- range(exp, obs, lower, upper, na.rm=TRUE)
     }
     if(!log){
       # 0 included if not in log space
-      ylim <- range(0,ylim)
+      ylim <- c(0, ylimAdj * ylim[2])
+    }else{
+      # add padding on top and bottom
+      ylim <- ylim + c(-1, 1) * (ylimAdj - 1) * diff(ylim)
     }
 
     meanQ <- rep(NA,nlines)
 
     if(!add){
-      plot(0, type = "n", xlim = range(yr), yaxs = yaxs, 
+      if(!is.null(endyrvec)) {
+        xlim <- c(min(yr), max(endyrvec))
+      }else {
+        xlim <- range(yr)
+      }
+      plot(0, type = "n", xlim = xlim, yaxs = yaxs,
            ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE)
     }
     if(!log & yaxs != "i"){
@@ -1413,7 +1420,8 @@ SSplotComparisons <-
     }
 
     if(!add){
-      axis(1, at=yr)
+      xticks <- pretty(xlim)
+      axis(1, at=xticks, labels=format(xticks))
       if(tickEndYr){
         axis(1, at=max(endyrvec))
       }

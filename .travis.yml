@@ -9,6 +9,7 @@ services:
 
 r_packages:
   - devtools
+  - covr
 
 notifications:
   email:
@@ -16,3 +17,7 @@ notifications:
     on_failure: change
 
 warnings_are_errors: false
+
+after_success:
+  - Rscript -e 'library(covr); codecov()'
+  

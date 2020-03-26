@@ -4,7 +4,7 @@
 \alias{SS_writectl_3.30}
 \title{write control file for SS version 3.30}
 \usage{
-SS_writectl_3.30(ctllist, outfile, overwrite, verbose)
+SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose)
 }
 \arguments{
 \item{ctllist}{List object created by \code{\link{SS_readctl}}.}

@@ -25,15 +25,25 @@
 #' also not explicitly available in control file and this information is only
 #' required if length based
 #'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleet number of fisheries in the model. This information is also not
-#'  explicitly available in control file
+#' @param Nfleets number of fishery + Survey fleets in the model. This 
+#'  information is also not explicitly available in control file 3.30 syntax
+#' @param Nfleet number of fishery fleets in the model. This information is also not
+#'  explicitly available in control file 3.24 syntax
 #' @param Nsurveys number of survey fleets in the model. This information is also not
-#'  explicitly available in control file
+#'  explicitly available in control file 3.24 syntax
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
 #' @param N_CPUE_obs number of CPUE observations.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'  determined from control file
+#' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
+#'   option. Defaults to NULL and should be left as such if 1) the catch 
+#'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+#'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
+#' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
+#' read for equilibrium catch. Defaults to 0. Used only for version 3.30.
+#' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
+#' parameters. Defaults to 0. Used only for version 3.30
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
@@ -51,10 +61,14 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        Nages=20,
                        Ngenders=1,
                        Npopbins=NA,
+                       Nfleets=4,
                        Nfleet=2,
                        Nsurveys=2,
                        N_tag_groups=NA,
                        N_CPUE_obs=NA,
+                       catch_mult_fleets = NULL,
+                       N_rows_equil_catch = 0,
+                       N_dirichlet_parms = 0,
                        use_datlist=FALSE,
                        datlist=NULL,
                        ptype=TRUE){
@@ -103,6 +117,16 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
   # call function for SS version 3.24
   if((nver>=3.2)&&(nver<3.3)){
 
+    if(Nfleets!=4){
+      if(Nfleets!=(Nfleet+Nsurveys)){
+        if(Nfleet==2 & Nsurveys==2){
+          stop("SS v3.24 uses Nfleet and Nsurveys but you have input a value for Nfleets instead")
+        }else{
+          stop("SS v3.30 uses Nfleet and Nsurveys but you have input a value for Nfleets as well that doesn't match with your Nfleet and Nsurveys inputs")
+        }
+      }
+    }
+    
     ctllist <- SS_readctl_3.24(file         = file,
                                version   = version,
                                verbose      = verbose,
@@ -124,6 +148,16 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
   # call function for SS version 3.30
   if(nver>=3.3){
 
+    if(Nfleet!=2 | Nsurveys!=2){
+      if(Nfleets!=(Nfleet+Nsurveys)){
+        if(Nfleets==4){
+          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys")
+        }else{
+          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys as well that don't match with your Nfleets input")
+        }
+      }
+    }
+    
     ctllist <- SS_readctl_3.30(file         = file,
                                version   = version,
                                verbose      = verbose,
@@ -133,10 +167,12 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Nages        = Nages,
                                Ngenders     = Ngenders,
                                Npopbins     = Npopbins,
-                               Nfleet       = Nfleet,
-                               Nsurveys     = Nsurveys,
+                               Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
                                N_CPUE_obs   = N_CPUE_obs,
+                               catch_mult_fleets = catch_mult_fleets,
+                               N_rows_equil_catch = N_rows_equil_catch,
+                               N_dirichlet_parms = N_dirichlet_parms,
                                use_datlist  = use_datlist,
                                datlist      = datlist)
   }

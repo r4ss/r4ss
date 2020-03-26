@@ -612,8 +612,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }else if(ctllist$F_Method==2){
  #   stop("stop currently F_method:2 is not implemented")
     ctllist<-add_vec(ctllist,"F_setup",length=3) # overall start F value; overall phase; N detailed inputs to read
-    ctllist<-add_df(ctllist,name="F_setup2",nrow=ctllist$F_setup[3],ncol=6,
-                    col.names=c("fleet", "yr", "seas", "Fvalue", "se", "phase"))
+    if(ctllist$F_setup[3] > 0) {
+      ctllist<-add_df(ctllist,name="F_setup2",nrow=ctllist$F_setup[3],ncol=6,
+                      col.names=c("fleet", "yr", "seas", "Fvalue", "se", "phase"))
+    }
   }else if(ctllist$F_Method==3){
     ctllist<-add_elem(ctllist,"F_iter") # N iterations for tuning F in hybrid method (recommend 3 to 7)
   }

@@ -4,12 +4,30 @@
 \alias{SSplotSPR}
 \title{Plot SPR quantities.}
 \usage{
-SSplotSPR(replist, add = FALSE, plot = TRUE, print = FALSE,
-  uncertainty = TRUE, subplots = 1:4, forecastplot = FALSE,
-  col1 = "black", col2 = "blue", col3 = "green3", col4 = "red",
-  sprtarg = "default", btarg = "default", labels = c("Year", "SPR",
-  "1-SPR"), pwidth = 6.5, pheight = 5, punits = "in", res = 300,
-  ptsize = 10, cex.main = 1, plotdir = "default", verbose = TRUE)
+SSplotSPR(
+  replist,
+  add = FALSE,
+  plot = TRUE,
+  print = FALSE,
+  uncertainty = TRUE,
+  subplots = 1:4,
+  forecastplot = FALSE,
+  col1 = "black",
+  col2 = "blue",
+  col3 = "green3",
+  col4 = "red",
+  sprtarg = "default",
+  btarg = "default",
+  labels = c("Year", "SPR", "1-SPR"),
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  plotdir = "default",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}

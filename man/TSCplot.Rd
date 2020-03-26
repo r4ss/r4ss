@@ -4,11 +4,27 @@
 \alias{TSCplot}
 \title{Create a plot for the TSC report}
 \usage{
-TSCplot(SSout, yrs = "default", ylimBar = "default", ylimDepl = c(0,
-  1.025), colBar = "yellow", cexBarLabels = 1.1, cex.axis = 1.1,
-  space = 0, pchDepl = 19, colDepl = "red", lwdDepl = 3,
-  shiftDepl = 0.25, pchSpace = 5, ht = 4, wd = 7,
-  labelLines = 2.8, makePDF = NULL, makePNG = NULL, MCMC = F)
+TSCplot(
+  SSout,
+  yrs = "default",
+  ylimBar = "default",
+  ylimDepl = c(0, 1.025),
+  colBar = "yellow",
+  cexBarLabels = 1.1,
+  cex.axis = 1.1,
+  space = 0,
+  pchDepl = 19,
+  colDepl = "red",
+  lwdDepl = 3,
+  shiftDepl = 0.25,
+  pchSpace = 5,
+  ht = 4,
+  wd = 7,
+  labelLines = 2.8,
+  makePDF = NULL,
+  makePNG = NULL,
+  MCMC = FALSE
+)
 }
 \arguments{
 \item{SSout}{The output from \code{\link{SS_output}}}
@@ -74,33 +90,26 @@ are to be plotted, a 'mcmc' list element should be added using the
 \examples{
 
   \dontrun{
-  ######################################
-  #DO NOT RUN
-    library(r4ss)
-    update_r4ss_files()
 
-    # ** CHANGE TO THE BASE DIRECTORY
-    directory <- "C:\\NOAA2011\\Dover\\Models\\base_20110701"
-
-    base <- SS_output(dir=directory,covar=F,verbose=F)
+    # define directory
+    directory <- "C:\NOAA2011\Dover\Models\base_20110701"
+    # read model output
+    base <- SS_output(dir=directory,covar = FALSE,verbose = FALSE)
 
     #show the plot in R
     TSCplot(base)
     TSCplot(base,yrs=2000:2011,pchSpace = 1)
+
     #Create the plot as a PNG file
-    TSCplot(base,makePNG="C:\\NOAA2012\\Assessments\\TSCdover.png")
+    TSCplot(base,makePNG="C:\NOAA2012\Assessments\TSCdover.png")
     #Create the plot as a PDF file
-    TSCplot(base,makePDF="C:\\NOAA2012\\Assessment\\TSCdover.pdf")
+    TSCplot(base,makePDF="C:\NOAA2012\Assessment\TSCdover.pdf")
 
-    # ** Hake model with MCMC results
-    SSdir <- "C:/NOAA2012/Hake/Models"
-    base <- SS_output(dir=paste(SSdir,"81_base_MCMC",sep="/"),covar=F)
-    tmp <- SSgetMCMC(dir=paste(SSdir,"81_base_MCMC",sep="/"),writecsv=F)
-    base$mcmc <- data.frame(tmp$model1)
-    TSCplot(base,ylimDepl = c(0,1.25),pchSpace=1,MCMC=T)
+    # Model with MCMC results
+    directory <- "C:/Models"
+    base <- SS_output(dir = directory, dir.mcmc = 'mcmc')
+    TSCplot(base, ylimDepl = c(0, 1.25), pchSpace = 1, MCMC = TRUE)
 
-
-  ###############################################
   }
 
 }

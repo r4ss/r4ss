@@ -19,16 +19,12 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose=TRUE) {
     if(verbose) message("Skipping weight-at-age file. File missing or empty:",file,"\n")
     return(NULL)
   }
-  # read top few lines to figure out how many to skip
-  wtatagelines <- readLines(file,n=20)
-  accuage <- strsplit(wtatagelines, "\\s")
-  accuage <- accuage[!lapply(accuage, "[[", 1) %in% c("#", " ")][[1]]
-  accuage <- accuage[!grepl("\\s", accuage)][1]
 
   # read full file
-  wtatage <- read.table(file,header=FALSE,comment.char="",
-                        skip=grep("Yr Seas ", wtatagelines, ignore.case=TRUE),
-                        stringsAsFactors=FALSE)
+  wtatagelines <- read.table(file,header=FALSE,comment.char="#", blank.lines.skip=TRUE,
+                        stringsAsFactors=FALSE, strip.white=TRUE, fill=TRUE)
+  accuage <- wtatagelines[1,1]
+  wtatage <- wtatagelines[-1,]
   # problems with header so simply manually replacing column names
   wtatage_names <- c("Yr", "Seas", "Sex", "Bio_Pattern", "BirthSeas", "Fleet",
                      0:accuage)
@@ -38,6 +34,6 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose=TRUE) {
   }
   names(wtatage) <- wtatage_names
   # Remove terminator line
-  wtatage <- wtatage[wtatage$Yr > 0, ]
+  wtatage <- wtatage[wtatage$Yr > -9998, ]
   return(wtatage)
 }

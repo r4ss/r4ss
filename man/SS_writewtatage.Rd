@@ -4,8 +4,14 @@
 \alias{SS_writewtatage}
 \title{Write weight-at-age file}
 \usage{
-SS_writewtatage(mylist, dir = NULL, file = "wtatage.ss",
-  overwrite = FALSE, verbose = TRUE, warn = TRUE)
+SS_writewtatage(
+  mylist,
+  dir = NULL,
+  file = "wtatage.ss",
+  overwrite = FALSE,
+  verbose = TRUE,
+  warn = TRUE
+)
 }
 \arguments{
 \item{mylist}{Object created by \code{\link{SS_readwtatage}}.}
@@ -18,7 +24,7 @@ the current working directory, and thus, full file paths should
 not be specified for other arguments as they will be appended
 to \code{dir}.}
 
-\item{file}{Filename for new weight-at-age file, which 
+\item{file}{Filename for new weight-at-age file, which
 will be appended to \code{dir} to create a full file path.
 Default="wtatage.ss".}
 

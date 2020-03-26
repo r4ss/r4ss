@@ -4,11 +4,26 @@
 \alias{SS_readctl_3.30}
 \title{read control file from SS version 3.30}
 \usage{
-SS_readctl_3.30(file, verbose = TRUE, echoall = FALSE,
-  version = "3.30", nseas = 4, N_areas = 1, Nages = 20,
-  Ngenders = 1, Npopbins = NA, Nfleet = 2, Nsurveys = 2,
-  Do_AgeKey = FALSE, N_tag_groups = NA, N_CPUE_obs = c(0, 0, 9, 12),
-  use_datlist = FALSE, datlist = NULL)
+SS_readctl_3.30(
+  file,
+  verbose = TRUE,
+  echoall = FALSE,
+  version = "3.30",
+  nseas = 4,
+  N_areas = 1,
+  Nages = 20,
+  Ngenders = 1,
+  Npopbins = NA,
+  Nfleets = 2,
+  Do_AgeKey = FALSE,
+  N_tag_groups = NA,
+  N_CPUE_obs = c(0, 0, 9, 12),
+  catch_mult_fleets = NULL,
+  N_rows_equil_catch = 0,
+  N_dirichlet_parms = 0,
+  use_datlist = FALSE,
+  datlist = NULL
+)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -38,10 +53,7 @@ explicitly available in control file}
 explicitly available in control file and this information is only required if length based
 maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
-explicitly available in control file}
-
-\item{Nsurveys}{number of survey fleets in the model. This information is also not
+\item{Nfleets}{number of fishery and survey fleets in the model. This information is also not
 explicitly available in control file}
 
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
@@ -51,7 +63,18 @@ to disable them. This information is not explicitly available in control file, t
 \item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
 control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
 
-\item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series}
+\item{N_CPUE_obs}{integer vector of length=Nfleets containing number of data points of each CPUE time series}
+
+\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
+option. Defaults to NULL and should be left as such if 1) the catch 
+multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+datlist is specified.}
+
+\item{N_rows_equil_catch}{Integer value of the number of parmeter lines to 
+read for equilibrium catch. Defaults to 0.}
+
+\item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
+parameters. Defaults to 0.}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}

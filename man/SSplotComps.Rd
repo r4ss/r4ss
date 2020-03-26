@@ -4,29 +4,78 @@
 \alias{SSplotComps}
 \title{Plot composition data and fits.}
 \usage{
-SSplotComps(replist, subplots = c(1:21, 24), kind = "LEN",
-  sizemethod = 1, aalyear = -1, aalbin = -1, plot = TRUE,
-  print = FALSE, fleets = "all", fleetnames = "default",
-  sexes = "all", yupper = 0.4, datonly = FALSE,
-  samplesizeplots = TRUE, compresidplots = TRUE, bub = FALSE,
-  showyears = TRUE, showsampsize = TRUE, showeffN = TRUE,
-  aggregates_by_mkt = FALSE, sampsizeline = FALSE, effNline = FALSE,
-  minnbubble = 3, pntscalar = NULL, scalebubbles = FALSE,
-  cexZ1 = 1.5, bublegend = TRUE, colvec = c(rgb(1, 0, 0, 0.7), rgb(0,
-  0, 1, 0.7), rgb(0.1, 0.1, 0.1, 0.7)), linescol = c(rgb(0, 0.5, 0, 0.7),
-  rgb(0.8, 0, 0, 0.7), rgb(0, 0, 0.8, 0.7)), axis1 = NULL,
-  axis2 = NULL, blue = rgb(0, 0, 1, 0.7), red = rgb(1, 0, 0, 0.7),
-  pwidth = 6.5, pheight = 5, punits = "in", ptsize = 10,
-  res = 300, plotdir = "default", cex.main = 1, linepos = 1,
-  fitbar = FALSE, do.sqrt = TRUE, smooth = TRUE, cohortlines = c(),
+SSplotComps(
+  replist,
+  subplots = c(1:21, 24),
+  kind = "LEN",
+  sizemethod = 1,
+  aalyear = -1,
+  aalbin = -1,
+  plot = TRUE,
+  print = FALSE,
+  fleets = "all",
+  fleetnames = "default",
+  sexes = "all",
+  yupper = 0.4,
+  datonly = FALSE,
+  samplesizeplots = TRUE,
+  compresidplots = TRUE,
+  bub = FALSE,
+  showyears = TRUE,
+  showsampsize = TRUE,
+  showeffN = TRUE,
+  aggregates_by_mkt = FALSE,
+  sampsizeline = FALSE,
+  effNline = FALSE,
+  minnbubble = 3,
+  pntscalar = NULL,
+  scalebubbles = FALSE,
+  cexZ1 = 1.5,
+  bublegend = TRUE,
+  colvec = c(rgb(1, 0, 0, 0.7), rgb(0, 0, 1, 0.7), rgb(0.1, 0.1, 0.1, 0.7)),
+  linescol = c(rgb(0, 0.5, 0, 0.7), rgb(0.8, 0, 0, 0.7), rgb(0, 0, 0.8, 0.7)),
+  xlas = 0,
+  ylas = NULL,
+  axis1 = NULL,
+  axis2 = NULL,
+  axis1labs = NULL,
+  sizebinlabs = NULL,
+  blue = rgb(0, 0, 1, 0.7),
+  red = rgb(1, 0, 0, 0.7),
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  ptsize = 10,
+  res = 300,
+  plotdir = "default",
+  cex.main = 1,
+  linepos = 1,
+  fitbar = FALSE,
+  do.sqrt = TRUE,
+  smooth = TRUE,
+  cohortlines = c(),
   labels = c("Length (cm)", "Age (yr)", "Year", "Observed sample size",
-  "Effective sample size", "Proportion", "cm", "Frequency", "Weight",
-  "Length", "(mt)", "(numbers x1000)", "Stdev (Age) (yr)",
-  "Conditional AAL plot, "), printmkt = TRUE, printsex = TRUE,
-  maxrows = 6, maxcols = 6, maxrows2 = 2, maxcols2 = 4, rows = 1,
-  cols = 1, andre_oma = c(3, 0, 3, 0), andrerows = 3,
-  fixdims = TRUE, fixdims2 = FALSE, maxneff = 5000, verbose = TRUE,
-  scalebins = FALSE, addMeans = TRUE, mainTitle = FALSE, ...)
+    "Effective sample size", "Proportion", "cm", "Frequency", "Weight", "Length", "(mt)",
+    "(numbers x1000)", "Stdev (Age) (yr)", "Conditional AAL plot, ", "Size bin"),
+  printmkt = TRUE,
+  printsex = TRUE,
+  maxrows = 4,
+  maxcols = 4,
+  maxrows2 = 2,
+  maxcols2 = 4,
+  rows = 1,
+  cols = 1,
+  andre_oma = c(3, 0, 3, 0),
+  andrerows = 3,
+  fixdims = TRUE,
+  fixdims2 = FALSE,
+  maxneff = 5000,
+  verbose = TRUE,
+  scalebins = FALSE,
+  addMeans = TRUE,
+  mainTitle = FALSE,
+  ...
+)
 }
 \arguments{
 \item{replist}{list created by \code{SSoutput}}
@@ -103,9 +152,22 @@ proportion within sample? Default=FALSE.}
 
 \item{linescol}{Color for lines on top of polygons}
 
-\item{axis1}{position of bottom axis values}
+\item{xlas}{label style (las) input for x-axis. Default 0 has horizontal
+labels, input 2 would provide vertical lables.}
 
-\item{axis2}{position of left size axis values}
+\item{ylas}{label style (las) input for y-axis. Default NULL has horizontal
+labels when all labels have fewer than 6 characters and vertical otherwise.
+Input 0 would force vertical labels, and 1 would force horizontal.}
+
+\item{axis1}{optional position of bottom axis values}
+
+\item{axis2}{optional position of left size axis values}
+
+\item{axis1labs}{optional vector of labels for axis1 (either NULL or needs to
+match length of axis1)}
+
+\item{sizebinlabs}{Vector of size bin labels corresponding to the generalized
+size frequency method}
 
 \item{blue}{What color to use for males in bubble plots (default is slightly
 transparent blue)}
@@ -195,7 +257,8 @@ posterior distributions in which the median and mean differ.}
 
 \item{mainTitle}{Logical indicating if a title for the plot should be produced}
 
-\item{\dots}{additional arguments that will be passed to the plotting.}
+\item{\dots}{additional arguments that will be passed to
+the \code{par} command in the \code{\link{make_multifig}} function.}
 }
 \description{
 Plot composition data and fits from Stock Synthesis output.  Multi-figure

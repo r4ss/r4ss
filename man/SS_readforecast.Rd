@@ -4,8 +4,15 @@
 \alias{SS_readforecast}
 \title{read forecast file}
 \usage{
-SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
-  version = "3.30", readAll = FALSE, verbose = TRUE)
+SS_readforecast(
+  file = "forecast.ss",
+  Nfleets = NULL,
+  Nareas = NULL,
+  nseas = NULL,
+  version = "3.30",
+  readAll = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -19,8 +26,8 @@ SS_readforecast(file = "forecast.ss", Nfleets, Nareas, nseas,
 \item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
-\item{readAll}{Should the function continue even if Forecast=0
-(at which point SS stops reading)}
+\item{readAll}{Should the function continue even if Forecast = 0 or -1
+(at which point SS stops reading)?}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }
@@ -33,5 +40,5 @@ read Stock Synthesis forecast file into list object in R
 \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 }
 \author{
-Ian Taylor
+Ian Taylor + Nathan Vaughan
 }

@@ -4,8 +4,14 @@
 \alias{SS_writeforecast}
 \title{write forecast file}
 \usage{
-SS_writeforecast(mylist, dir = NULL, file = "forecast.ss",
-  writeAll = FALSE, overwrite = FALSE, verbose = TRUE)
+SS_writeforecast(
+  mylist,
+  dir = NULL,
+  file = "forecast.ss",
+  writeAll = FALSE,
+  overwrite = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{mylist}{List object created by \code{\link{SS_readforecast}}.}

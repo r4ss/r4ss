@@ -4,15 +4,31 @@
 \alias{SS_profile}
 \title{Run a likelihood profile in Stock Synthesis.}
 \usage{
-SS_profile(dir = "C:/myfiles/mymodels/myrun/",
-  masterctlfile = "control.ss_new", newctlfile = "control_modified.ss",
-  linenum = NULL, string = NULL, profilevec = NULL, usepar = FALSE,
-  globalpar = FALSE, parfile = "ss.par", parlinenum = NULL,
-  parstring = NULL, dircopy = TRUE, exe.delete = FALSE,
-  model = "ss", extras = "-nox", systemcmd = FALSE,
-  saveoutput = TRUE, overwrite = TRUE, whichruns = NULL,
-  SSversion = "3.30", prior_check = TRUE, read_like = TRUE,
-  verbose = TRUE)
+SS_profile(
+  dir = "C:/myfiles/mymodels/myrun/",
+  masterctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  linenum = NULL,
+  string = NULL,
+  profilevec = NULL,
+  usepar = FALSE,
+  globalpar = FALSE,
+  parfile = "ss.par",
+  parlinenum = NULL,
+  parstring = NULL,
+  dircopy = TRUE,
+  exe.delete = FALSE,
+  model = "ss",
+  extras = "-nox",
+  systemcmd = FALSE,
+  saveoutput = TRUE,
+  overwrite = TRUE,
+  whichruns = NULL,
+  SSversion = "3.30",
+  prior_check = TRUE,
+  read_like = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{dir}{Directory where input files and executable are located.}

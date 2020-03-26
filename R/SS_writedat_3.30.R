@@ -187,9 +187,9 @@ SS_writedat_3.30 <- function(datlist,
   wl.vector("months_per_seas", comment = "#_months_per_seas")
   wl("Nsubseasons")
   wl("spawn_month")
-  wl("Nsexes")
+  wl("Ngenders")
   wl("Nages")
-  wl("Nareas")
+  wl("N_areas")
   wl("Nfleets")
 
   # write table of info on each fleet
@@ -228,7 +228,11 @@ SS_writedat_3.30 <- function(datlist,
   print.df(d$CPUEinfo, terminate=FALSE)
 
   writeComment("#\n#_CPUE_data")
+  if(d$N_cpue > 0) {
   print.df(d$CPUE)
+  } else {
+    writeLines(text = "-9999 1 1 1 1 # terminator", con = zz)
+  }
 
   # write discard info
   wl("N_discard_fleets")
@@ -279,7 +283,7 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_lencomp")
     if(is.null(d$lencomp) & d$use_lencomp==1){
       # empty data.frame with correct number of columns needed for terminator row
-      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Nsexes))
+      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Ngenders))
     }
     print.df(d$lencomp)
   }
@@ -306,7 +310,7 @@ SS_writedat_3.30 <- function(datlist,
     # age comps
     if (is.null(d$agecomp)) {
       # empty data.frame with correct number of columns needed for terminator row
-      d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Nsexes))
+      d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Ngenders))
     }
     print.df(d$agecomp)
   }

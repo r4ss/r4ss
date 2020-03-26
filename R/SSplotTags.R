@@ -74,15 +74,17 @@ SSplotTags <-
 
   tagdbase2 <- replist$tagdbase2
   if(is.null(tagdbase2) || nrow(tagdbase2)==0){
-    if(verbose) cat("skipping tag plots because there's no tagging data\n")
+    if(verbose){
+      message("skipping tag plots because there's no tagging data")
+    }
   }else{
     # filter tag groups if requested
     if(!is.null(taggroups)){
       tagdbase2 <- tagdbase2[tagdbase2$Rep %in% taggroups,]
-      cat("Filtered tag groups for plotting based on input vector taggroups\n",
-          "Plots will show", length(unique(tagdbase2$Rep)),
-          "out of", length(unique(replist$tagdbase2$Rep)),
-          "total included in the model.\n")
+      message("Filtered tag groups for plotting based on input vector taggroups\n",
+              "Plots will show", length(unique(tagdbase2$Rep)),
+              "out of", length(unique(replist$tagdbase2$Rep)),
+              "total included in the model.")
     }
 
     # calculations needed for printing to multiple PNG files
@@ -100,7 +102,6 @@ SSplotTags <-
     }
 
     tagfun1 <- function(ipage=0){
-      if(verbose) cat("Note: lighter colored bars in tag plot indicate latency period excluded from likelihood\n")
       # obs & exp recaps by tag group
       par(mfcol=c(tagrows, tagcols), mar=c(2.5, 2.5, 2, 1),
           cex.main=cex.main, oma=c(2, 2, 2, 0))
@@ -144,22 +145,6 @@ SSplotTags <-
       # restore default single panel settings
       par(mfcol=c(rows,cols),mar=c(5,5,4,2)+.1,oma=rep(0,4))
     }
-
-    cat("Calculated tagging related quantities...\n")
-    # reconfiguring tagdbase2
-    ## # old system from Andre which exclude exactly 1 year
-    ## # for each group as the latency period
-    ## XRep <- -1
-    ## x <- NULL
-    ## for (irow in 1:length(tagdbase2[,1])){
-    ##   if (tagdbase2$Rep[irow] != XRep){
-    ##     XRep <- tagdbase2$Rep[irow]
-    ##   }else{
-    ##     x <- rbind(x,tagdbase2[irow,])
-    ##   }
-    ## }
-    ## # alternatively, don't reconfigure by using:
-    ## #x <- tagdbase
 
     # new system which takes latency value as input
     tgroups <- sort(unique(tagdbase2$Rep))
@@ -318,7 +303,8 @@ SSplotTags <-
             pagetext <- ""
           }
           file <- paste(filenamestart, pagetext, ".png", sep="")
-          caption <- paste(labels[4], "(lighter colored bars indicate latency period excluded from likelihood)")
+          caption <- paste(labels[4], "(lighter colored bars indicate latency",
+                           "period excluded from likelihood)")
           if(npages>1){
             caption <- paste(caption,  ",  (plot ", ipage,
                              "of ", npages, ")", sep="")

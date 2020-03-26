@@ -9,259 +9,316 @@
 #' @param nseas number of seasons (not required in 3.30).
 #' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param readAll Should the function continue even if Forecast=0
-#' (at which point SS stops reading)
+#' @param readAll Should the function continue even if Forecast = 0 or -1
+#' (at which point SS stops reading)?
 #' @param verbose Should there be verbose output while running the file?
-#' @author Ian Taylor
+#' @author Ian Taylor + Nathan Vaughan
 #' @export
 #' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
 
-SS_readforecast <-  function(file='forecast.ss', Nfleets, Nareas, nseas,
-                             version="3.30", readAll=FALSE, verbose=TRUE){
+SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nseas=NULL,
+                                  version="3.30", readAll=FALSE, verbose=TRUE){
+  
   # function to read Stock Synthesis forecast files
   if(!(version=="3.24" | version=="3.30" | version==3.3)){
     # turns out 3.30 != "3.30" in R
     stop('version must be either 3.24 or 3.30')
   }
-
-  if(verbose) cat("running SS_readforecast\n")
-  forecast <- readLines(file,warn=F)
-
-  mylist <- list()
-  mylist$sourcefile <- file
-  mylist$type <- "Stock_Synthesis_forecast_file"
-  mylist$SSversion <- version
-
-  # get numbers (could be better integrated with function above)
-  allnums <- NULL
-  for(i in 1:length(forecast)){
-    # split apart numbers from text in file
-    mysplit <- strsplit(forecast[i],split="[[:blank:]]+")[[1]]
-    mysplit <- mysplit[mysplit!=""]
-    nums <- suppressWarnings(as.numeric(mysplit))
-    if(sum(is.na(nums)) > 0) maxcol <- min((1:length(nums))[is.na(nums)])-1
-    else maxcol <- length(nums)
-    if(maxcol > 0){
-      nums <- nums[1:maxcol]
-      allnums <- c(allnums, nums)
+  
+  if(version=="3.24"){
+    if(is.null(Nfleets) | is.null(Nareas) | is.null(nseas)){
+      stop('version 3.24 must include values for Nfleets, Nareas, and nseas. At least one of these is missing')
     }
   }
-
-  # go through numerical values and save as elements of a big list
+  
+  if(verbose) cat("running SS_readforecast\n")
+  dat <- readLines(file,warn=FALSE)
+  
+  nver=as.numeric(substring(version,1,4))
+  # parse all the numeric values into a long vector (allnums)
+  temp <- strsplit(dat[2]," ")[[1]][1]
+  if(!is.na(temp) && temp=="Start_time:") dat <- dat[-(1:2)]
+  allnums <- NULL
+  for(i in 1:length(dat)){
+    # First split between input and comments
+    mysplit <- strsplit(dat[i],split="#")[[1]]
+    if(!is.na(mysplit[1]))
+    {
+      # split along blank spaces
+      mysplit <- strsplit(mysplit[1],split="[[:blank:]]+")[[1]]
+      mysplit <- mysplit[mysplit!=""]
+      # convert to numeric
+      nums <- suppressWarnings(as.numeric(mysplit))
+      nums <- nums[!is.na(nums)]
+      # append new values to allnums vector
+      if(length(nums) > 0){
+        allnums <- c(allnums, nums)
+      }
+    }
+  }
+  
+  # internally used fun definitions ----
+  # Function to add vector to forelist
+  
+  add_vec<-function(forelist,length,name,comments=NULL){
+    i<-forelist$'.i'
+    dat<-forelist$'.dat'
+    forelist$temp<-dat[i+1:length-1]
+    forelist$'.i'<-i+length
+    if(is.null(comments)){
+      names(forelist$temp)<-paste0(paste0("#_",name,"_",collapse=""),1:length)
+    }else{
+      names(forelist$temp)<-comments
+    }
+    if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
+    if(verbose){cat(name,",i=",forelist$'.i',"\n");print(forelist[name])}
+    return(forelist)
+  }
+  
+  find.index <- function(dat, ind, str){
+    ## Find the first line at position ind or later that
+    ## contains the string str and return the index of that
+    ## line. If the end of the data is reached, an error
+    ## will be shown.
+    while(ind < length(dat) & !length(grep(str, dat[ind]))){
+      ind <- ind + 1
+    }
+    if(ind == length(dat)){
+      stop("SS_readctl_3.30-find.index: Error - ",
+           "the value of ", str, " was not found. ",
+           "Check the control file and make sure all ",
+           "data frames are correctly formed.\n")
+    }
+    ind
+  }
+  
+  # Function to add data as data.frame to forelist
+  add_df<-function(forelist,nrows=NULL,ncol,col.names,name,comments=NULL){
+    i<-forelist$'.i'
+    dat<-forelist$'.dat'
+    if(is.null(nrows))
+    {
+      end.ind <- find.index(dat, i, "-9999")
+      nrow<-as.integer((end.ind-i)/ncol)
+      if(nrow==0) # there isn't any data so just return
+      {
+        forelist$'.i'<-forelist$'.i'+ncol
+        return(forelist)
+      }
+    }
+    else nrow<-nrows
+    
+    k<-nrow*ncol
+    
+    df0<-as.data.frame(matrix(dat[i+1:k-1],nrow=nrow,ncol=ncol,byrow=TRUE))
+    colnames(df0)<-col.names
+    if(is.null(comments)){
+      rownames(df0)<-paste0(paste0("#_",name,collapse=""),1:nrow)
+    }else{
+      rownames(df0)<-comments
+    }
+    i <- i+k
+    
+    if(is.null(nrows))i <- i+ncol
+    
+    forelist$temp<-df0
+    forelist$'.i'<-i
+    if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
+    if(verbose){
+      cat(name,",i=",forelist$'.i',"\n")
+      print(forelist[[which(names(forelist)==name)]])
+    }
+    return(forelist)
+  }
+  
+  
+  ## function to add an element to forelist
+  add_elem<-function(forelist=NA,name){
+    i<-forelist$'.i'
+    dat<-forelist$'.dat'
+    forelist$temp<-dat[i]
+    forelist$'.i'<-i+1
+    if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
+    if(verbose)cat(name,",i=",forelist$'.i'," ;",forelist[[which(names(forelist)==name)]],"\n")
+    return(forelist)
+  }
+  
+  ## function to add list  to forelist
+  add_list<-function(forelist=NA,name,length,length_each){
+    i<-forelist$'.i'
+    dat<-forelist$'.dat'
+    forelist$temp<-list()
+    for(j in 1:length){
+      forelist$temp[[j]]<-dat[i+1:length_each[j]-1]; i <- i+length_each[j]
+    }
+    forelist$'.i'<-i
+    if(!is.null(name))names(forelist)[names(forelist)=="temp"]<-name
+    if(verbose)cat(name,",i=",forelist$'.i',"\n")
+    return(forelist)
+  }
+  
+  # setup ----
+  # set initial position in the vector of numeric values
   i <- 1
-  mylist$benchmarks <- allnums[i]; i <- i+1
-  mylist$MSY <- allnums[i]; i <- i+1
-  mylist$SPRtarget <- allnums[i]; i <- i+1
-  mylist$Btarget <- allnums[i]; i <- i+1
-  if(version==3.24){
-    mylist$Bmark_years <- allnums[i:(i+5)]; i <- i+6
+  # create empty list to store quantities
+  forelist <- list()
+  forelist$'.i' <- i
+  forelist$'.dat' <- allnums
+  forelist$warnings <- ""
+  if(!is.null(nseas)){
+    forelist$nseas <- as.numeric(nseas)}
+  if(!is.null(Nfleets)){
+    forelist$Nfleets <- as.numeric(Nfleets)}
+  if(!is.null(Nareas)){
+    forelist$Nareas <- as.numeric(Nareas)}
+  forelist$SSversion <- as.numeric(version)
+  forelist$sourcefile <- file
+  forelist$type <- "Stock_Synthesis_forecast_file"
+  
+  forelist<-add_elem(forelist,"benchmarks")
+  forelist<-add_elem(forelist,"MSY")
+  forelist<-add_elem(forelist,"SPRtarget")
+  forelist<-add_elem(forelist,"Btarget")
+  if(forelist$SSversion==3.24){
+    forelist<-add_vec(forelist,length=6,name="Bmark_years")
   }else{
-    mylist$Bmark_years <- allnums[i:(i+9)]; i <- i+10
+    forelist<-add_vec(forelist,length=10,name="Bmark_years")
   }
   if(verbose){
-    cat("Benchmark years: ", mylist$Bmark_years, "\n")
+    cat("Benchmark years: ", forelist$Bmark_years, "\n")
   }
-  mylist$Bmark_relF_Basis <- allnums[i]; i <- i+1
-  mylist$Forecast <- Forecast <- allnums[i]; i <- i+1
-  # test for 0 value of Forecast and only continue if non-zero or readAll
-  if(Forecast==0 & !readAll){
-    if(verbose){
-      cat("Forecast=0 and input readAll=FALSE so skipping remainder of file\n")
+  forelist<-add_elem(forelist,"Bmark_relF_Basis")
+  forelist<-add_elem(forelist,"Forecast")
+  if(forelist$Forecast %in% c(0, -1) & !readAll) {
+    if(verbose) {
+      message("Forecast is ", forelist$Forecast, 
+              " and input readAll=FALSE so skipping remainder of file")
     }
+  } else if(forelist$Forecast %in% c(0, -1) & readAll & 
+           ((is.na(forelist$.dat[forelist$.i]) |
+             forelist$.dat[forelist$.i] == 999 ))) {
+    # stop reading if forecast 0 or -1 used, and no other lines present 
+    # (aside from 999), but readAll = TRUE.
+    if(verbose){
+      message("Forecast =", forelist$Forecast, "\n")
+    }
+    warning("readAll selected as TRUE, but lines beyond Forecast are not ", 
+            "present in the forecasting file, so skipping remainder of ", 
+            "file")
   }else{
+    # continue reading forecast
     if(verbose){
-      cat("Forecast =", Forecast, "\n")
+      message("Forecast =", forelist$Forecast, "\n")
     }
-    mylist$Nforecastyrs <- allnums[i]; i <- i+1
-    mylist$F_scalar <- allnums[i]; i <- i+1
-    if(version==3.24){
-      mylist$Fcast_years <- allnums[i:(i+3)]; i <- i+4
+    forelist<-add_elem(forelist,"Nforecastyrs")
+    # check for compatible input with forecast option 1.
+    if(forelist[["Forecast"]] == 0 & forelist[["Nforecastyrs"]] != 1) {
+      warning("Forecast = 0 should always be used with 1 forecast year. ", 
+              "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
+              "of forecast, please use Forecast = -1; if you would like to ",
+              " forecast for > 1 year, please select a value of Forecast > 0.")
+      forelist[["Nforecastyrs"]] <- 1
+    }
+    forelist<-add_elem(forelist,"F_scalar")
+    if(forelist$SSversion==3.24){
+      forelist<-add_vec(forelist,length=4,name="Fcast_years")
     }else{
-      mylist$Fcast_years <- allnums[i:(i+5)]; i <- i+6
+      forelist<-add_vec(forelist,length=6,name="Fcast_years")
     }
     if(verbose){
-      cat("Forecast years: ", mylist$Fcast_years, "\n")
-    }
-    mylist$Fcast_selex <- NA
-    if(version=="3.30" | version==3.3){
-      mylist$Fcast_selex <- allnums[i]; i <- i+1 # not present in early 3.30 versions
-      if(verbose){
-        cat("Forecast selectivity option: ", mylist$Fcast_selex, "\n")
-      }
+      cat("Forecast years: ", forelist$Fcast_years, "\n")
     }
     
-    mylist$ControlRuleMethod <- allnums[i]; i <- i+1
-    mylist$BforconstantF <- allnums[i]; i <- i+1
-    mylist$BfornoF <- allnums[i]; i <- i+1
-    mylist$Flimitfraction <- allnums[i]; i <- i+1
-    if (mylist$Flimitfraction < 0) {
-      ii <- i
-      while (allnums[ii] > 0) ii <- ii + 1
-      mylist$Flimitfraction_m <- data.frame(matrix(allnums[i:(ii + 1)], 
-        ncol = 2, byrow = TRUE))
-      colnames(mylist$Flimitfraction_m) <- c("Year", "Fraction")
-      i <- ii + 2
-      remove(ii)
-    }
-    mylist$N_forecast_loops <- allnums[i]; i <- i+1
-    mylist$First_forecast_loop_with_stochastic_recruitment <- allnums[i]; i <- i+1
-    mylist$Forecast_loop_control_3 <- allnums[i]; i <- i+1
-    mylist$Forecast_loop_control_4 <- allnums[i]; i <- i+1
-    mylist$Forecast_loop_control_5 <- allnums[i]; i <- i+1
-    mylist$FirstYear_for_caps_and_allocations <- allnums[i]; i <- i+1
-    mylist$stddev_of_log_catch_ratio <- allnums[i]; i <- i+1
-    mylist$Do_West_Coast_gfish_rebuilder_output <- allnums[i]; i <- i+1
-    mylist$Ydecl <- allnums[i]; i <- i+1
-    mylist$Yinit <- allnums[i]; i <- i+1
-    mylist$fleet_relative_F <- allnums[i]; i <- i+1
-    mylist$basis_for_fcast_catch_tuning <- allnums[i]; i <- i+1
-
-    if(version==3.24){
+    if(version=="3.30" | version==3.3){
+      forelist<-add_elem(forelist,"Fcast_selex")
       if(verbose){
-        cat('reading section on fleet- and area-specific inputs based on 3.24 format\n')
+        cat("Forecast selectivity option: ", forelist$Fcast_selex, "\n")
       }
-      # the following section is somewhat different between 3.24 and 3.30
-
-      # read relative F by fleet
-      if(mylist$fleet_relative_F==2){
-        mylist$vals_fleet_relative_f <- allnums[i:(i + Nfleets*nseas - 1)]
-        i <- i + Nfleets*nseas
-        if(verbose){
-          message("basis_for_fcast_catch_tuning: ",
-                  mylist$basis_for_fcast_catch_tuning)
-          message("vals_fleet_relative_f: ",
-                  paste(mylist$vals_fleet_relative_f, collapse = " "))
-        }
+    }else{
+      forelist$Fcast_selex <- NA
+    }
+    
+    forelist<-add_elem(forelist,"ControlRuleMethod")
+    forelist<-add_elem(forelist,"BforconstantF")
+    forelist<-add_elem(forelist,"BfornoF")
+    forelist<-add_elem(forelist,"Flimitfraction")
+    
+    if(forelist$Flimitfraction<0){
+      forelist<-add_df(forelist,ncol=2,col.names=c("Year","Fraction"),name="Flimitfraction")
+    }
+    
+    forelist<-add_elem(forelist,"N_forecast_loops")
+    forelist<-add_elem(forelist,"First_forecast_loop_with_stochastic_recruitment")
+    forelist<-add_elem(forelist,"Forecast_loop_control_3")
+    forelist<-add_elem(forelist,"Forecast_loop_control_4")
+    forelist<-add_elem(forelist,"Forecast_loop_control_5")
+    forelist<-add_elem(forelist,"FirstYear_for_caps_and_allocations")
+    forelist<-add_elem(forelist,"stddev_of_log_catch_ratio")
+    forelist<-add_elem(forelist,"Do_West_Coast_gfish_rebuilder_output")
+    forelist<-add_elem(forelist,"Ydecl")
+    forelist<-add_elem(forelist,"Yinit")
+    forelist<-add_elem(forelist,"fleet_relative_F")
+    forelist<-add_elem(forelist,"basis_for_fcast_catch_tuning")
+    
+    if(version==3.24){
+      if(forelist$fleet_relative_F==2){
+        forelist<-add_df(forelist,nrows=forelist$nseas,ncol=forelist$Nfleets,col.names=paste0("Fleet ",1:forelist$Nfleets),name="vals_fleet_relative_f")
+      }
+      forelist<-add_vec(forelist,length=forelist$Nfleets,name="max_totalcatch_by_fleet")
+      forelist<-add_vec(forelist,length=forelist$Nareas,name="max_totalcatch_by_area")
+      forelist<-add_vec(forelist,length=forelist$Nfleets,name="fleet_assignment_to_allocation_group")
+      forelist$N_allocation_groups<-max(forelist$fleet_assignment_to_allocation_group)
+      if(forelist$N_allocation_groups>0){
+        forelist<-add_vec(forelist,length=forelist$N_allocation_groups,name="allocation_among_groups")
+      }else{
+        forelist$allocation_among_groups<-NULL
       }
       
-      mylist$max_totalcatch_by_fleet <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
-      if(verbose) cat("  max_totalcatch_by_fleet =",mylist$max_totalcatch_by_fleet,"\n")
-      mylist$max_totalcatch_by_area <- allnums[i:(i+Nareas-1)]; i <- i+Nareas
-      if(verbose) cat("  max_totalcatch_by_area =",mylist$max_totalcatch_by_area,"\n")
-      mylist$fleet_assignment_to_allocation_group <- allnums[i:(i+Nfleets-1)]; i <- i+Nfleets
-      # allocation groups
-      if(verbose) cat("  fleet_assignment_to_allocation_group =",mylist$fleet_assignment_to_allocation_group,"\n")
-      if(any(mylist$fleet_assignment_to_allocation_group!=0)){
-        mylist$N_allocation_groups <- max(mylist$fleet_assignment_to_allocation_group)
-        allocation_among_groups <- allnums[i:(i+mylist$N_allocation_groups*nseas-1)]; i <- i+mylist$N_allocation_groups*nseas
-        mylist$allocation_among_groups<-
-          as.data.frame(t(array(data=allocation_among_groups,dim=c(mylist$N_allocation_groups,nseas))))
-        colnames(mylist$allocation_among_groups)<-paste0("Grp",1:mylist$N_allocation_groups) 
+      forelist<-add_elem(forelist,"Ncatch")
+      forelist<-add_elem(forelist,"InputBasis")
+      if(forelist$Ncatch==0){
+        forelist$ForeCatch<-NULL
       }else{
-        mylist$N_allocation_groups <- 0
-        mylist$allocation_among_groups <- NULL
-      }
-      mylist$Ncatch <- Ncatch <- allnums[i]; i <- i+1
-      mylist$InputBasis <- allnums[i]; i <- i+1
-      if(mylist$InputBasis == -1){
-        stop("SS_readforecast not yet set up to read model with fixed catch input basis = -1\n",
-             "  (basis specific to each entry)")
-      }
-      # forcast catch levels
-      if(Ncatch==0){
-        ForeCatch <- NULL
-      }else{
-        ForeCatch <- data.frame(matrix(
-            allnums[i:(i+Ncatch*4-1)],nrow=Ncatch,ncol=4,byrow=TRUE))
-        i <- i+Ncatch*4
-        names(ForeCatch) <- c("Year","Seas","Fleet","Catch_or_F")
-        if(verbose){
-          cat("  Catch inputs (Ncatch = ",Ncatch,")\n", sep="")
-          print(ForeCatch)
+        if(forelist$InputBasis==-1){
+          forelist<-add_df(forelist,nrows=forelist$Ncatch,ncol=5,col.names=c("Year","Seas","Fleet","Catch or F","Basis"),name="ForeCatch")
+        }else{
+          forelist<-add_df(forelist,nrows=forelist$Ncatch,ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
         }
       }
-    }
-    if(version=="3.30" | version==3.3){
-      if(verbose){
-        cat('reading section on fleet- and area-specific inputs based on 3.30 format\n')
-      }
-
-      # read relative F by fleet
-      if(mylist$fleet_relative_F==2){
-        # offset from current position in vector to ending point
-        all9999 <- which(allnums == -9999)
-        relF.end <- min(all9999[all9999 > i])-1
-        Nvals <- (relF.end - i + 1)
-        # even final line starting with -9999 needs to have 3 values
-        # so number of values should always be evenly divisible by 3
-        if(Nvals %% 3 != 0){
-          stop("Error in read of input relative F catch.\n",
-               "Number of values should be a multiple of 3.\n",
-               "Values:\n", paste(allnums[i:relF.end], collapse="\n"))
-        }
-        relF <- data.frame(matrix(
-            allnums[i:relF.end], nrow=Nvals/3, ncol=3, byrow=TRUE))
-        # increment index
-        # (+4 to skip over -9999 and 3 placeholders at end of input matrix)
-        i <- relF.end + 4
-        names(relF) <- c("Seas","Fleet","relF")
-        if(verbose){
-          cat("  Relative F inputs:\n")
-          print(relF)
-        }
-        mylist$vals_fleet_relative_f <- relF
-      }
-
-      # check for any catch caps or allocation groups
-      # (indicated by additional values rather than something like the following lines:
-      ## # enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999
-      ## -9999 -1
-      ## # enter list of area ID and max annual catch; terminate with area=-9999
-      ## -9999 -1
-      ## # enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999
-      ## -9999 -1
-      if(any(allnums[i+c(0,2,4)] != -9999)){
-        stop("sorry, SS_readforecast doesn't yet work for 3.30 models with catch caps or allocation groups")
-      }
-      i <- i+6 # increment indicator past section on caps and allocations
-
-      # NULL variables that may be needed for SS_writeforecast
-      mylist$max_totalcatch_by_fleet <- NULL
-      mylist$max_totalcatch_by_area <- NULL
-      mylist$fleet_assignment_to_allocation_group <- NULL
-      mylist$N_allocation_groups <- 0
-      mylist$allocation_among_groups <- NULL
-
-      mylist$InputBasis <- allnums[i]; i <- i+1
-
-      # forcast catch levels
-      if(allnums[i]==-9999){
-        ForeCatch <- NULL
-        i <- i+4
-      }else{
-        # offset from current position in vector to ending point
-        all9999 <- which(allnums == -9999)
-        ForeCatch.end <- min(all9999[all9999 > i])-1
-        Nvals <- (ForeCatch.end - i + 1)
-        # even final line starting with -9999 needs to have 4 values
-        # so number of values should always be evenly divisible by 4
-        if(Nvals %% 4 != 0){
-          stop("Error in read of input forecast catch.\n",
-               "Number of values should be a multiple of 4.\n",
-               "Values:\n", paste(allnums[i:ForeCatch.end], collapse="\n"))
-        }
-        ForeCatch <- data.frame(matrix(
-            allnums[i:ForeCatch.end], nrow=Nvals/4, ncol=4, byrow=TRUE))
-        # increment index
-        # (+5 to skip over -9999 and 3 placeholders at end of input matrix)
-        i <- ForeCatch.end + 5
-        names(ForeCatch) <- c("Year","Seas","Fleet","Catch_or_F")
-        if(verbose){
-          cat("  Catch inputs (Ncatch = ",Nvals/4,")\n", sep="")
-          print(ForeCatch)
-        }
-      }
-    }
-    mylist$ForeCatch <- ForeCatch
-    # check final value
-    if(allnums[i]==999){
-      if(verbose) cat("read of forecast file complete (final value = 999)\n")
     }else{
-      cat("Error: final value is", allnums[i]," but should be 999\n")
+      if(forelist$fleet_relative_F==2){
+        forelist<-add_df(forelist,ncol=3,col.names=c("Season","Fleet","Relative F"),name="vals_fleet_relative_f")
+      }
+      forelist<-add_df(forelist,ncol=2,col.names=c("Fleet","Max Catch"),name="max_totalcatch_by_fleet")
+      forelist<-add_df(forelist,ncol=2,col.names=c("Area","Max Catch"),name="max_totalcatch_by_area")
+      forelist<-add_df(forelist,ncol=2,col.names=c("Fleet","Group"),name="fleet_assignment_to_allocation_group")
+      if(!is.null(forelist$fleet_assignment_to_allocation_group)){
+        forelist$N_allocation_groups<-max(forelist$fleet_assignment_to_allocation_group[,2])
+        forelist<-add_df(forelist,ncol=(forelist$N_allocation_groups+1),col.names=c("Year",paste0("Group ",1:forelist$N_allocation_groups)),name="allocation_among_groups")
+      }else{
+        forelist$N_allocation_groups<-0
+        forelist$allocation_among_groups<-NULL
+      }
+      forelist<-add_elem(forelist,"InputBasis")
+      if(forelist$InputBasis==-1){
+        forelist<-add_df(forelist,ncol=5,col.names=c("Year","Seas","Fleet","Catch or F","Basis"),name="ForeCatch")
+      }else{
+        forelist<-add_df(forelist,ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
+      }
     }
-  } # end read of additional values beyond "Forecast" input
-  # all done
-  return(mylist)
+    if(forelist$'.dat'[forelist$'.i']==999){
+      if(verbose) message("read of forecast file complete (final value = 999)\n")
+      forelist$eof <- TRUE
+    }else{
+      warning("Error: final value is ", forelist$'.dat'[forelist$'.i'], " but ",
+              "should be 999\n")
+      forelist$eof <- FALSE
+    }
+  }
+  
+  forelist$'.dat'<-NULL
+  forelist$'.i'<-NULL
+  return(forelist) 
 }

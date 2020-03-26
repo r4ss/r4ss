@@ -4,18 +4,35 @@
 \alias{SS_output}
 \title{A function to create a list object for the output from Stock Synthesis}
 \usage{
-SS_output(dir = "C:/myfiles/mymodels/myrun/", dir.mcmc = NULL,
-  repfile = "Report.sso", compfile = "CompReport.sso",
-  covarfile = "covar.sso", forefile = "Forecast-report.sso",
-  wtfile = "wtatage.ss_new", warnfile = "warning.sso", ncols = 200,
-  forecast = TRUE, warn = TRUE, covar = TRUE, readwt = TRUE,
-  checkcor = TRUE, cormax = 0.95, cormin = 0.01, printhighcor = 10,
-  printlowcor = 10, verbose = TRUE, printstats = TRUE,
-  hidewarn = FALSE, NoCompOK = FALSE, aalmaxbinrange = 4)
+SS_output(
+  dir = "C:/myfiles/mymodels/myrun/",
+  dir.mcmc = NULL,
+  repfile = "Report.sso",
+  compfile = "CompReport.sso",
+  covarfile = "covar.sso",
+  forefile = "Forecast-report.sso",
+  wtfile = "wtatage.ss_new",
+  warnfile = "warning.sso",
+  ncols = NULL,
+  forecast = TRUE,
+  warn = TRUE,
+  covar = TRUE,
+  readwt = TRUE,
+  checkcor = TRUE,
+  cormax = 0.95,
+  cormin = 0.01,
+  printhighcor = 10,
+  printlowcor = 10,
+  verbose = TRUE,
+  printstats = TRUE,
+  hidewarn = FALSE,
+  NoCompOK = FALSE,
+  aalmaxbinrange = 4
+)
 }
 \arguments{
 \item{dir}{Directory containing the Stock Synthesis model output.
-Forwardslashes or double backslashes and quotes are necessary.
+Forward slashes or double backslashes and quotes are necessary.
 This can also either be an absolute path or relative to the working
 directory.}
 
@@ -39,7 +56,7 @@ will end up in the right place, or an absolute path.}
 value is too big the function runs more slowly, too small and errors will
 occur.  A warning will be output to the R command line if the value is too
 small. It should be bigger than the maximum age + 10 and the number of years
-+ 10.}
++ 10. The default value is \code{NULL}, which finds the optimum width.}
 
 \item{forecast}{Read the forecast-report file?}
 
@@ -65,7 +82,8 @@ R GUI.}
 \item{printlowcor}{The maximum number of low correlations to print to the R
 GUI.}
 
-\item{verbose}{Return updates of function progress to the R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
 
 \item{printstats}{Print summary statistics about the output to the R GUI?}
 
@@ -82,7 +100,7 @@ should probably be created at some point in the future.
 }
 \description{
 Reads the Report.sso and (optionally) the covar.sso, CompReport.sso and
-other files files produced by Stock Synthesis and formats the important
+other files produced by Stock Synthesis and formats the important
 content of these files into a list in the R workspace. A few statistics
 unavailable elsewhere are taken from the .par and .cor files. Summary
 information and statistics can be returned to the R console or just

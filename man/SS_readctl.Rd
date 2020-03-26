@@ -4,11 +4,28 @@
 \alias{SS_readctl}
 \title{read control file from SS}
 \usage{
-SS_readctl(file, version = NULL, verbose = TRUE, echoall = FALSE,
-  nseas = 4, N_areas = 1, Nages = 20, Ngenders = 1,
-  Npopbins = NA, Nfleet = 2, Nsurveys = 2, N_tag_groups = NA,
-  N_CPUE_obs = NA, use_datlist = FALSE, datlist = NULL,
-  ptype = TRUE)
+SS_readctl(
+  file,
+  version = NULL,
+  verbose = TRUE,
+  echoall = FALSE,
+  nseas = 4,
+  N_areas = 1,
+  Nages = 20,
+  Ngenders = 1,
+  Npopbins = NA,
+  Nfleets = 4,
+  Nfleet = 2,
+  Nsurveys = 2,
+  N_tag_groups = NA,
+  N_CPUE_obs = NA,
+  catch_mult_fleets = NULL,
+  N_rows_equil_catch = 0,
+  N_dirichlet_parms = 0,
+  use_datlist = FALSE,
+  datlist = NULL,
+  ptype = TRUE
+)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
@@ -39,16 +56,30 @@ also not explicitly available in control file and this information is only
 required if length based
  maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
-explicitly available in control file}
+\item{Nfleets}{number of fishery + Survey fleets in the model. This 
+information is also not explicitly available in control file 3.30 syntax}
+
+\item{Nfleet}{number of fishery fleets in the model. This information is also not
+explicitly available in control file 3.24 syntax}
 
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
-explicitly available in control file}
+explicitly available in control file 3.24 syntax}
 
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
 \item{N_CPUE_obs}{number of CPUE observations.}
+
+\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
+option. Defaults to NULL and should be left as such if 1) the catch 
+multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.}
+
+\item{N_rows_equil_catch}{Integer value of the number of parmeter lines to 
+read for equilibrium catch. Defaults to 0. Used only for version 3.30.}
+
+\item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
+parameters. Defaults to 0. Used only for version 3.30}
 
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}

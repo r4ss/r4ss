@@ -4,20 +4,46 @@
 \alias{SSplotIndices}
 \title{Plot indices of abundance and associated quantities.}
 \usage{
-SSplotIndices(replist, subplots = c(1:9), plot = TRUE, print = FALSE,
-  fleets = "all", fleetnames = "default", smooth = TRUE,
-  add = FALSE, datplot = FALSE, labels = c("Year", "Index",
-  "Observed index", "Expected index", "Log index", "Log observed index",
-  "Log expected index", "Standardized index", "Catchability (Q)",
-  "Time-varying catchability", "Vulnerable biomass",
-  "Catchability vs. vulnerable biomass"), col1 = "default",
-  col2 = "default", col3 = "blue", col4 = "red", pch1 = 21,
-  pch2 = 16, cex = 1, bg = "white", legend = TRUE,
-  legendloc = "topright", seasnames = NULL, pwidth = 6.5,
-  pheight = 5, punits = "in", res = 300, ptsize = 10,
-  cex.main = 1, mainTitle = TRUE, plotdir = "default",
-  minyr = NULL, maxyr = NULL, maximum_ymax_ratio = Inf,
-  show_input_uncertainty = TRUE, verbose = TRUE, ...)
+SSplotIndices(
+  replist,
+  subplots = c(1:10, 12),
+  plot = TRUE,
+  print = FALSE,
+  fleets = "all",
+  fleetnames = "default",
+  smooth = TRUE,
+  add = FALSE,
+  datplot = TRUE,
+  labels = c("Year", "Index", "Observed index", "Expected index", "Log index",
+    "Log observed index", "Log expected index", "Standardized index", "Catchability (Q)",
+    "Time-varying catchability", "Vulnerable biomass",
+    "Catchability vs. vulnerable biomass", "Residual", "Deviation"),
+  col1 = "default",
+  col2 = "default",
+  col3 = "blue",
+  col4 = "red",
+  pch1 = 21,
+  pch2 = 16,
+  cex = 1,
+  bg = "white",
+  legend = TRUE,
+  legendloc = "topright",
+  seasnames = NULL,
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  mainTitle = FALSE,
+  plotdir = "default",
+  minyr = NULL,
+  maxyr = NULL,
+  maximum_ymax_ratio = Inf,
+  show_input_uncertainty = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{replist}{list created by \code{SS_output}}
@@ -34,6 +60,9 @@ Numbering of subplots is as follows:
   \item 7  time series of time-varying catchability (only if actually time-varying)
   \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
   \item 9  comparison of all indices
+  \item 10  index residuals based on total uncertainty
+  \item 11  index residuals based on input uncertainty
+  \item 12  index deviations (independent of index uncertainty)
 }}
 
 \item{plot}{plot to active plot device?}
@@ -107,8 +136,8 @@ values)}
 \item{maxyr}{Last year to show in plot (for zooming in on a subset of
 values)}
 
-\item{maximum_ymax_ratio}{Maximum allowed value for ymax (specified 
-as ratio of y), which overrides any 
+\item{maximum_ymax_ratio}{Maximum allowed value for ymax (specified
+as ratio of y), which overrides any
 value of ymax that is greater (default = Inf)}
 
 \item{show_input_uncertainty}{switch controlling whether to add thicker

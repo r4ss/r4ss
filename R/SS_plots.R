@@ -37,6 +37,7 @@
 #'   \item Yield
 #'   \item Movement
 #'   \item Data range
+#'   \item Parameter distributions
 #'   \item Diagnostic tables
 #' }
 #' 
@@ -166,6 +167,8 @@
 #' within each page. Default=3.
 #' @param tagrows Number of rows for tagging-related plots. Default=3.
 #' @param tagcols Number of columns for tagging-related plots.  Default=3.
+#' @param parrows Number of rows for parameter distribution plots.
+#' @param parcols Number of columns for parameter distribution plots.
 #' @param fixdims Control whether multi-panel plots all have dimensions equal
 #' to maxrows by maxcols, or resized within those limits to fit number of
 #' plots. Default=T.
@@ -194,6 +197,17 @@
 #' a vector of appropriate length (currently 10) with labels for each figure
 #' @param maxsize The size of the largest bubble in the datasize
 #' plot. Default is 1.0.
+#' @param showmle Show MLE estimate and asymptotic variance estimate with blue
+#' lines in the parameter distribution plots?
+#' @param showprior Show prior distribution as black line in the parameter
+#' distribution plots?
+#' @param showpost Show posterior distribution as bar graph in parameter
+#' distribution plots (requires MCMC results to be available in \code{replist})?
+#' @param showinit Show initial value as red triangle in the parameter
+#' distribution plots?
+#' @param showdev Include devs in the parameter distribution plots?
+#' @param fitrange Fit range in parameter distribution plots tightly around MLE
+#' and posterior distributions instead of full parameter range?
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
@@ -210,7 +224,7 @@
 #' Sci. 65: 2536-2551.
 SS_plots <-
   function(
-      replist=NULL, plot=1:25, print=NULL, pdf=FALSE, png=TRUE, html=png,
+      replist=NULL, plot=1:26, print=NULL, pdf=FALSE, png=TRUE, html=png,
       printfolder="plots", dir="default", fleets="all", areas="all",
       fleetnames="default", fleetcols="default", fleetlty=1, fleetpch=1,
       lwd=1, areacols="default", areanames="default",
@@ -225,10 +239,12 @@ SS_plots <-
       showlegend=TRUE, pwidth=6.5, pheight=5.0, punits="in", ptsize=10, res=300,
       mainTitle=FALSE, cex.main=1,selexlines=1:6, rows=1, cols=1,
       maxrows=4, maxcols=4, maxrows2=2, maxcols2=4, andrerows=3,
-      tagrows=3, tagcols=3, fixdims=TRUE, new=TRUE,
+      tagrows=3, tagcols=3, parrows = 2, parcols = 2, fixdims=TRUE, new=TRUE,
       SSplotDatMargin=8, filenotes=NULL, catchasnumbers=NULL, catchbars=TRUE,
       legendloc="topleft", minyr=-Inf, maxyr=Inf, sexes="all", scalebins=FALSE,
-      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0, ...)
+      scalebubbles=FALSE,tslabels=NULL,catlabels=NULL, maxsize=1.0,
+      showmle=TRUE, showpost=TRUE, showprior=TRUE, showinit=TRUE, showdev=FALSE,
+      fitrange = FALSE, ...)
 {
   if(!is.null(print)){
     stop("The 'print' input has been replaced by 'png = TRUE/FALSE'\n",
@@ -695,7 +711,8 @@ SS_plots <-
                   catchbars=catchbars,
                   labels=catlabels,
                   legendloc=legendloc,
-                  plotdir=plotdir)
+                  plotdir=plotdir, 
+		              verbose = verbose)
     plotinfo <- temp$plotinfo
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
@@ -1194,7 +1211,9 @@ SS_plots <-
     #
     igroup <- 20
     if(igroup %in% plot){
-      if(verbose) cat("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")\n",sep="")
+      if(verbose){
+        message("Starting mean length-at-age and mean weight-at-age plots (group ",igroup,")")
+      }
       if(datplot){
         # data-only plot of mean length at age
         plotinfo <-
@@ -1287,7 +1306,8 @@ SS_plots <-
                      plot=!png, print=png,
                      pwidth=pwidth, pheight=pheight, punits=punits,
                      ptsize=ptsize, res=res, cex.main=cex.main,
-                     plotdir=plotdir)
+                     plotdir=plotdir,
+                     verbose = verbose)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       } # end if data present
     } # end if igroup in plot or print
@@ -1348,13 +1368,41 @@ SS_plots <-
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
   } # end if igroup in plot or print
 
+  ##########################################
+  # Parameter distribution plots
+  #
+  igroup <- 25
+  if(igroup %in% plot){
+    if(verbose) cat("Starting parameter distribution plots (group ",igroup,")\n",sep="")
+    if(showpost && is.null(replist$mcmc)){
+      showpost <- FALSE
+    }
+    plotinfo <- SSplotPars(replist = replist,
+                           plot = !png, print = png,
+                           pwidth = pwidth, pheight = pheight, punits = punits,
+                           ptsize = ptsize, res = res,
+                           nrows = parrows,
+                           ncols = parcols,
+                           #mainTitle = mainTitle,
+                           #cex.main = cex.main,
+                           showmle = showmle,
+                           showpost = showpost,
+                           showprior = showprior,
+                           showinit = showinit,
+                           showdev = showdev,
+                           fitrange = fitrange, plotdir=plotdir)
+    if(!is.null(plotinfo)){
+      plotInfoTable <- rbind(plotInfoTable, plotinfo)
+    }
+  } # end if igroup in plot or print
+
   if(pdf) dev.off() # close PDF file if it was open
   if(verbose) cat("Finished all requested plots in SS_plots function\n")
   
   ##########################################
-  # Data range plots
+  # diagnostic tables
   #
-  igroup <- 25
+  igroup <- 26
   if(igroup %in% plot){
     if(nrow(replist$estimated_non_dev_parameters) == 0){
       if(verbose){
@@ -1398,7 +1446,7 @@ SS_plots <-
                          paste0("plotInfoTable_",
                                 format(png_time,'%d-%m-%Y_%H.%M.%S'),".csv"))
     write.csv(plotInfoTable, csvname, row.names=FALSE)
-    cat("Wrote table of info on PNG files to:\n   ",csvname,"\n")
+    if(verbose) message("Wrote table of info on PNG files to:\n   ", csvname)
     # write HTML files to display the images
     if(html){
       SS_html(replist, filenotes=filenotes, plotdir=plotdir, verbose = verbose, ...)

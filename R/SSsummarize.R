@@ -161,7 +161,7 @@ SSsummarize <- function(biglist,
          all(names(likelihoods_by_fleet)==names(liketemp2)))){
       likelihoods_by_fleet <- rbind(likelihoods_by_fleet,liketemp2)
     }else{
-      warning("problem summarizing likelihoods by fleet due to mismatched columns")
+      likelihoods_by_fleet <- merge(likelihoods_by_fleet, liketemp2, all = TRUE)
     }
 
     ## likelihoods by tag group
@@ -202,11 +202,11 @@ SSsummarize <- function(biglist,
 
     ## indices
     indextemp <- stats$cpue
-    # temporarily remove columns added in SS version 3.30.13 (March 2019)
-    indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
     if(is.na(indextemp[[1]][1])){
       message("no index data")
     }else{
+      # temporarily remove columns added in SS version 3.30.13 (March 2019)
+      indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
       indextemp$name <- modelnames[imodel]
       indextemp$imodel <- imodel
       if(is.null(indices)){
@@ -215,11 +215,12 @@ SSsummarize <- function(biglist,
       }else{
         # after indices contains output from at least one model
         # check that there are equal number of columns with matching names 
+        # Working here
         if(ncol(indextemp) == ncol(indices) &&
            all(names(indextemp) == names(indices))){
           indices <- rbind(indices, indextemp)
         }else{
-          warning("problem summarizing indices due to mismatched columns")
+          indices <- merge(indices, indextemp, all = TRUE)
         }
       }
     }
@@ -290,22 +291,6 @@ SSsummarize <- function(biglist,
 
   SpawnBio <- SpawnBio[order(SpawnBio$Yr),]
   SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr),]
-  if(any(is.na(SpawnBio[3,]))){
-    warning("Models have different start years, so SpawnBio values in VIRG & INIT yrs are shifted to correct year")
-    SpawnBio$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
-    SpawnBioSD$Label[1:2] <- c("SSB_Virgin*","SSB_Initial*")
-    for(imodel in 1:n){
-      if(is.na(SpawnBio[3,imodel])){
-        minyr <- min(SpawnBio$Yr[-(1:2)][!is.na(SpawnBio[-(1:2),imodel])]) # first year with value
-        SpawnBio[SpawnBio$Yr==minyr-2, imodel] <- SpawnBio[1,imodel]
-        SpawnBio[SpawnBio$Yr==minyr-1, imodel] <- SpawnBio[2,imodel]
-        SpawnBio[1:2,imodel] <- NA
-        SpawnBioSD[SpawnBio$Yr==minyr-2, imodel] <- SpawnBioSD[1,imodel]
-        SpawnBioSD[SpawnBio$Yr==minyr-1, imodel] <- SpawnBioSD[2,imodel]
-        SpawnBioSD[1:2,imodel] <- NA
-      }
-    }
-  }
 
   SpawnBioLower <- SpawnBioUpper <- SpawnBioSD
   SpawnBioLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(SpawnBio[,1:n]),
@@ -359,21 +344,7 @@ SSsummarize <- function(biglist,
   recruitsSD$Yr[grep("Recr_Initial",recruitsSD$Label)] <- minyr - 1
   recruits <- recruits[order(recruits$Yr),]
   recruitsSD <- recruitsSD[order(recruitsSD$Yr),]
-  if(any(is.na(recruits[3,]))){
-    warning("Models have different start years, so recruits values in VIRG & INIT yrs are shifted to correct year")
-    recruits$Label[1:2] <- c("Recr_Virgin*","Recr_Initial*")
-    for(imodel in 1:n){
-      if(is.na(recruits[3,imodel])){
-        minyr <- min(recruits$Yr[-(1:2)][!is.na(recruits[-(1:2),imodel])]) # first year with value
-        recruits[recruits$Yr==minyr-2, imodel] <- recruits[1,imodel]
-        recruits[recruits$Yr==minyr-1, imodel] <- recruits[2,imodel]
-        recruits[1:2,imodel] <- NA
-        recruitsSD[recruitsSD$Yr==minyr-2, imodel] <- recruitsSD[1,imodel]
-        recruitsSD[recruitsSD$Yr==minyr-1, imodel] <- recruitsSD[2,imodel]
-        recruitsSD[1:2,imodel] <- NA
-      }
-    }
-  }
+
   recruitsLower <- recruitsUpper <- recruitsSD
   recruitsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recruits[,1:n]),
                                sd=as.matrix(recruitsSD[,1:n]))

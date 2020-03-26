@@ -17,6 +17,7 @@
 #' @param option Which type of tuning: 'none', 'Francis', or 'MI'
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
+#' @template verbose
 #'
 #' @return Returns a table that can be copied into the control file.
 #' If \code{write=TRUE} then will write the values to a file
@@ -29,7 +30,7 @@
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 SS_tune_comps <- function(replist, fleets='all', option="Francis",
-                          digits=6, write=TRUE){
+                          digits=6, write=TRUE, verbose = TRUE){
   # check inputs
   if(!option %in% c("none", "Francis", "MI")){
     stop("Input 'option' should be 'none', 'Francis', or 'MI'")
@@ -62,17 +63,17 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
   # loop over fleets and modify the values for length data
   for(type in c("len","age")){
     for(fleet in fleets){
-      cat("calculating",type,"tunings for fleet",fleet,"\n")
+      if(verbose) message("calculating ",type," tunings for fleet ",fleet,"\n")
       if(type=="len"){
         # table of info from SS
-        tunetable <- replist$Length_comp_Eff_N_tuning_check
+        tunetable <- replist$Length_Comp_Fit_Summary
         Factor <- 4 # code for Control file
         has_marginal <- fleet %in% replist$lendbase$Fleet
         has_conditional <- FALSE
       }
       if(type=="age"){
         # table of info from SS
-        tunetable <- replist$Age_comp_Eff_N_tuning_check
+        tunetable <- replist$Age_Comp_Fit_Summary
         Factor <- 5 # code for Control file
         has_marginal <- fleet %in% replist$agedbase$Fleet
         has_conditional <- fleet %in% replist$condbase$Fleet
@@ -88,12 +89,14 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
         Francis_lo <- NULL
         Francis_hi <- NULL
         Francis_output <- SSMethod.TA1.8(fit=replist, type=type,
-                                         fleet=fleet, plotit=FALSE)
+                                         fleet=fleet, plotit=FALSE, 
+                                         printit = verbose)
         if(has_conditional){
           # run separate function for conditional data
           # (replaces marginal multiplier if present)
           Francis_output <- SSMethod.Cond.TA1.8(fit=replist,
-                                                fleet=fleet, plotit=FALSE)          
+                                                fleet=fleet, plotit=FALSE, 
+                                                printit = verbose)          
         }
         Francis_mult <- Francis_output[1]
         Francis_lo <- Francis_output[2]
@@ -176,7 +179,7 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data
-  tunetable_size <- replist$Size_comp_Eff_N_tuning_check
+  tunetable_size <- replist$Size_Comp_Fit_Summary
   if(!is.null(tunetable_size)){
     warning("\n  Generalized size composition data doesn't have\n",
             "  Francis weighting available and the table of tunings\n",
@@ -188,7 +191,7 @@ SS_tune_comps <- function(replist, fleets='all', option="Francis",
   # return the results
   if(write){
     file <- file.path(replist$inputs$dir, "suggested_tuning.ss")
-    cat("writing to file", file, "\n")
+    if(verbose) message("writing to file", file, "\n")
     write.table(tuning_table,
                 file=file, quote=FALSE, row.names=FALSE)
     # append generalized size comp table with different columns

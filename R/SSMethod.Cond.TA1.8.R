@@ -140,8 +140,8 @@ SSMethod.Cond.TA1.8 <-
         Intermediate[j,'Obsmn'] <- AbarNObs
         Intermediate[j,'Expmn'] <- AbarNPre
         Intermediate[j,'Varn'] <- AbarVarn
-        Intermediate[j,'N'] <- mean(subsubdbase$N)
-        Intermediate[j,'Resid'] <- (AbarNObs-AbarNPre)/sqrt(AbarVarn/mean(subsubdbase$N))
+        Intermediate[j,'N'] <- mean(subsubdbase$Nsamp_adj)
+        Intermediate[j,'Resid'] <- (AbarNObs-AbarNPre)/sqrt(AbarVarn/mean(subsubdbase$Nsamp_adj))
       }
     }
     Total <- sum(Intermediate[,'N'])

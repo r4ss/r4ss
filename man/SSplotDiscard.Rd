@@ -4,12 +4,28 @@
 \alias{SSplotDiscard}
 \title{Plot fit to discard fraction.}
 \usage{
-SSplotDiscard(replist, subplots = 1:2, plot = TRUE, print = FALSE,
-  plotdir = "default", fleets = "all", fleetnames = "default",
-  datplot = FALSE, labels = c("Year", "Discard fraction",
-  "Total discards", "for"), yhi = 1, ymax = NULL, col1 = "blue",
-  col2 = "black", pwidth = 6.5, pheight = 5, punits = "in",
-  res = 300, ptsize = 10, cex.main = 1, verbose = TRUE)
+SSplotDiscard(
+  replist,
+  subplots = 1:2,
+  plot = TRUE,
+  print = FALSE,
+  plotdir = "default",
+  fleets = "all",
+  fleetnames = "default",
+  datplot = FALSE,
+  labels = c("Year", "Discard fraction", "Total discards", "for"),
+  yhi = 1,
+  ymax = NULL,
+  col1 = "blue",
+  col2 = "black",
+  pwidth = 6.5,
+  pheight = 5,
+  punits = "in",
+  res = 300,
+  ptsize = 10,
+  cex.main = 1,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{replist}{List created by \code{\link{SS_output}}}

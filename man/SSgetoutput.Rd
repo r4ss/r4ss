@@ -4,9 +4,18 @@
 \alias{SSgetoutput}
 \title{Get output from multiple Stock Synthesis models.}
 \usage{
-SSgetoutput(keyvec = NULL, dirvec = NULL, getcovar = TRUE,
-  getcomp = TRUE, forecast = TRUE, verbose = TRUE, ncols = 210,
-  listlists = TRUE, underscore = FALSE, save.lists = FALSE)
+SSgetoutput(
+  keyvec = NULL,
+  dirvec = NULL,
+  getcovar = TRUE,
+  getcomp = TRUE,
+  forecast = TRUE,
+  verbose = TRUE,
+  ncols = 210,
+  listlists = TRUE,
+  underscore = FALSE,
+  save.lists = FALSE
+)
 }
 \arguments{
 \item{keyvec}{A vector of strings that are appended to the output files from

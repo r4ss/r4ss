@@ -1,3 +1,9 @@
+# r4ss 1.38.0 (25 March 2020)
+* Numerous bug fixes and minor improvements
+* Compatibility with SS version 3.30.15
+* Expansion of capabilities for functions to read and write SS input files
+* Dependent on fewer packages but now depends on R version 3.5.0 or newer
+
 # r4ss 1.36.1 (16 October 2019)
 * Numerous minor bug fixes and minor improvements
 * Compatibility with SS versions 3.24 through 3.30.14

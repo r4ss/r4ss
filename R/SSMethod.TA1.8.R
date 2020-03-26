@@ -194,7 +194,7 @@ SSMethod.TA1.8 <-
     pldat[i,'Obsmn'] <- sum(subdbase$Obs*xvar)/sum(subdbase$Obs)
     pldat[i,'Expmn'] <- sum(subdbase$Exp*xvar)/sum(subdbase$Exp)
     pldat[i,'semn'] <- sqrt((sum(subdbase$Exp*xvar^2)/sum(subdbase$Exp)-
-                             pldat[i,'Expmn']^2)/mean(subdbase$N))
+                             pldat[i,'Expmn']^2)/mean(subdbase$Nsamp_adj))
     pldat[i,'Obslo'] <- pldat[i,'Obsmn']-2*pldat[i,'semn']
     pldat[i,'Obshi'] <- pldat[i,'Obsmn']+2*pldat[i,'semn']
     pldat[i,'Std.res'] <- (pldat[i,'Obsmn']-pldat[i,'Expmn'])/pldat[i,'semn']

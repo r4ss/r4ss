@@ -4,14 +4,30 @@
 \alias{DoProjectPlots}
 \title{Make plots from Rebuilder program}
 \usage{
-DoProjectPlots(dirn = "C:/myfiles/", fileN = c("res.csv"),
-  Titles = "", ncols = 200, Plots = list(1:25),
-  Options = list(c(1:9)), LegLoc = "bottomright", yearmax = -1,
-  Outlines = c(2, 2), OutlineMulti = c(2, 2), AllTraj = c(1, 2, 3,
-  4), AllInd = c(1, 2, 3, 4, 5, 6, 7), BioType = "Spawning biomass",
-  CatchUnit = "(mt)", BioUnit = "(mt)", BioScalar = 1,
-  ColorsUsed = "default", Labels = "default", pdf = FALSE,
-  pwidth = 6.5, pheight = 5, lwd = 2)
+DoProjectPlots(
+  dirn = "C:/myfiles/",
+  fileN = c("res.csv"),
+  Titles = "",
+  ncols = 200,
+  Plots = list(1:25),
+  Options = list(c(1:9)),
+  LegLoc = "bottomright",
+  yearmax = -1,
+  Outlines = c(2, 2),
+  OutlineMulti = c(2, 2),
+  AllTraj = c(1, 2, 3, 4),
+  AllInd = c(1, 2, 3, 4, 5, 6, 7),
+  BioType = "Spawning biomass",
+  CatchUnit = "(mt)",
+  BioUnit = "(mt)",
+  BioScalar = 1,
+  ColorsUsed = "default",
+  Labels = "default",
+  pdf = FALSE,
+  pwidth = 6.5,
+  pheight = 5,
+  lwd = 2
+)
 }
 \arguments{
 \item{dirn}{Directory (or vector of directories) where rebuilder output

@@ -1,8 +1,29 @@
 #' Estimate bias adjustment for recruitment deviates
 #' 
 #' Uses standard error of estimated recruitment deviates to estimate the 5
-#' controls for the bias adjustment in Stock Synthesis
+#' controls (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011})
+#' for bias adjustment in Stock Synthesis.
 #' 
+#' @details
+#' Implementation of the bias adjustment ramp within Stock Synthesis increases
+#' the likelihood that the estimated recruitmente events, which are 
+#' log-normally distributed, are mean unbiased and comparable to results from
+#' Markov chain Mone Carlo estimation routines
+#' (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}). 
+#' Options to account for the fact that data typically do not equally represent
+#' all modelled time periods are as follows:
+#' \enumerate{
+#'   \item{fix the bias adjustment parameters at best-guess values informed by a previous
+#' assessment or model run;}
+#'   \item{fix values based on data availability, such that the start of the ramp aligns
+#' with the availability of composition data, the ramp down begins the last year
+#' those data are informative about recruitment, and the adjustment level is
+#' informed by life history;}
+#'   \item{set the adjustment level to 1.0 for all years to mimic how it was handled
+#' it Stock Synthesis prior to 2009; or}
+#'    \item{set the adjustment level to 0.0 for all years, but this last option is
+#' not recommended because it will lead to biased results.}
+#' }
 #' 
 #' @param replist Object created using \code{\link{SS_output}}
 #' @param verbose Controls the amount of output to the screen.  Default=FALSE.
@@ -29,22 +50,17 @@
 #' or "psoptim". If not equal to either of these, then optim is used.
 #' @param exclude_forecast Exclude forecast values in the estimation of
 #' alternative bias adjustment inputs?
-#' @param pwidth Default width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param pheight Default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default=12.
-#' @param res Resolution of plots printed to files. Default=300.
-#' @param cex.main Character expansion for plot titles.
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
+#' @template res
+#' @template cex.main
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SS_output}}
-#' @references Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to
-#' variability of estimated recruitments in fishery assessment models.  Can. J.
-#' Fish. Aquat. Sci., 68:1744-1760.
+#' @template methot2011cjfas
+#' 
 SS_fitbiasramp <-
 function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
          transform=FALSE, plot=TRUE, print=FALSE, plotdir="default",shownew=TRUE,
@@ -154,42 +170,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(fit)
   }
 
-  #### before revision on 2-Oct-2018 this function was used,
-  #### now it's been replaced by processing done in SS_output
-  #### leaving this in place just in case it doesn't work
-  
-  ## getrecdevs <- function(replist){
-  ##   # get info on recruitment devs from the model output
-  ##   par_mat   <- replist$parameters
-  ##   par_start <- grep("SR_autocorr",par_mat$Label)+1
-  ##   par_end   <- grep("InitF",par_mat$Label)[1]-1
-  ##   if(is.na(par_end)){
-  ##     # InitF parameters have gone away in SSv3.3 (at least for one model)
-  ##     par_end <- grep("Impl_err",par_mat$Label)[1]-1
-  ##   }
-  ##   rowrange <- par_start:par_end
-  ##   Impl_err_rows <- grep("Impl_err",par_mat$Label)
-  ##   if(length(Impl_err_rows)>0)
-  ##     rowrange <- (grep("SR_autocorr",par_mat$Label)+1):(Impl_err_rows[1]-1)
-  ##   yr <- par_mat$Label[rowrange]
-  ##   yr <- strsplit(yr,"_")
-  ##   yr2 <- rep(NA,length(yr))
-  ##   for(i in 1:length(yr)){
-  ##     if(yr[[i]][2]!="InitAge") yr2[i] <- as.numeric(yr[[i]][length(yr[[i]])])
-  ##   }
-  ##   # if label is something like "Main_InitAge_19" then the year
-  ##   # is the minimum of the years from the normal RecrDev labels
-  ##   minyr2 <- min(yr2) 
-  ##   for(i in (1:length(yr))[is.na(yr2)]){
-  ##     if(yr[[i]][2]=="InitAge") yr2[i] <- minyr2 - as.numeric(yr[[i]][length(yr[[i]])])
-  ##   }
-    
-  ##   yr2[is.na(yr2)] <- min(yr2,na.rm=T) - sum(is.na(yr2)):1
-  ##   val <- par_mat$Value[rowrange]
-  ##   std <- par_mat$Parm_StDev[rowrange]
-  ##   return(data.frame(yr=yr2,val=val,std=std))
-  ## }
-
   optimfun <- function(yr, std, startvalues, is.forecast){
     # run the optimizationt to find best fit values
     if(altmethod=="nlminb"){
@@ -200,12 +180,18 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
                         is.forecast=is.forecast)
     }
     if(altmethod=="psoptim"){
+      # pso package no longer included by default since this option is rarely used
+      if (!requireNamespace("pso", quietly = TRUE)) {
+        stop("Package \"pso\" needed for this function to work. Please install it.",
+             call. = FALSE)
+      }
+      
       biasadjfit(pars=startvalues, yr=yr, std=std, sigmaR=sigma_R_in,
                  is.forecast=is.forecast, transform=transform)
-      biasopt <- psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
-                         sigmaR=sigma_R_in, transform=transform,
-                         control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
-                         upper=rep(1e6, 5), is.forecast=is.forecast)
+      biasopt <- pso::psoptim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
+                              sigmaR=sigma_R_in, transform=transform,
+                              control=list(maxit=1000, trace=TRUE), lower=rep(-1e6, 5),
+                              upper=rep(1e6, 5), is.forecast=is.forecast)
     }
     if(!(altmethod %in% c("nlminb", "psoptim"))){
       biasopt <- optim(par=startvalues, fn=biasadjfit, yr=yr, std=std,
@@ -249,14 +235,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(data.frame(yr=yr,biasadj=biasadj))
   }
 
-  #### old approach prior to 02-Oct_2018 revision
-  ## recdevs <- getrecdevs(replist) 
-  ## recdevs <- recdevs[!is.na(recdevs$std),]
-  ## val <- recdevs$val
-  ## std <- recdevs$std
-  ## yr <- recdevs$yr
-
-  #### new approach makes better use of processing that occurred in SS_output
   recdevs <- replist$recruitpars[!is.na(replist$recruitpars$Parm_StDev),]
   val <- recdevs$Value
   std <- recdevs$Parm_StDev
@@ -276,7 +254,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   recdev_lo <- val - 1.96*std
 
   ylim <- range(recdev_hi,recdev_lo)
-  cat('Now estimating alternative recruitment bias adjustment fraction...\n')
+  if(verbose) cat('Now estimating alternative recruitment bias adjustment fraction...\n')
   newbias <- optimfun(yr=yr, std=std,
                       startvalues=startvalues, is.forecast=is.forecast)
 
@@ -309,7 +287,6 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     mtext(side=1,line=3,'Year')
   }
 
-  #names
   names <- c(
   "#_last_early_yr_nobias_adj_in_MPD",
   "#_first_yr_fullbias_adj_in_MPD",
@@ -322,9 +299,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   newvals <- round(newvals,4)
   df <- data.frame(value=newvals,label=names)
 
-
-  if(print) {
-  }
+  if(verbose) {
   if(newbias$convergence!=0){
       cat("Problem with convergence, here is output from 'optim':\n")
       cat("##############################\n")
@@ -334,6 +309,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
 
   cat('Estimated values:\n')
   print(format(df,justify="left"),row.names=FALSE)
+  }
 
   if(plot) plotbiasadj()
   if(print){
@@ -381,7 +357,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     ctlfile[spot1:spot2] <- apply(df, 1, paste, collapse = " ")
     # write new file
     writeLines(ctlfile,newctl)
-    cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
+    if(verbose) cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
   }
   if(!is.null(plotinfo)) plotinfo$category <- "RecDev"
   return(invisible(list(newbias=newbias, df=df, plotinfo=plotinfo)))

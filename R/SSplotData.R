@@ -216,7 +216,7 @@ SSplotData <- function(replist,
           }
           if(typename %in% c("lendbase", "sizedbase", "agedbase")){
             # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+            dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
             allyrs <- dat.agg$Group.1
             size <- dat.agg$x
           }
@@ -227,13 +227,18 @@ SSplotData <- function(replist,
             size <- rep(1, length(allyrs))
           }
           if(typename %in% c("condbase", "ghostcondbase")){
-            # subset by smallest bin (sample size is repeated
+            # subset to a row for each observation (entry in data file)
+            # to get representative sample size (sample size is repeated
             # for all bins within each vector of observations)
-            dat.sub <- dat.f[dat.f$Bin == min(dat.f$Bin),]
+            representative.rows <- !duplicated(paste(dat.f$Yr.S,
+                                                     dat.f$Sexes,
+                                                     dat.f$Lbin_lo,
+                                                     dat.f$Lbin_hi))
+            dat.sub <- dat.f[representative.rows,]
             # check for observations within this fleet
             if(nrow(dat.sub) > 0){
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.sub$N, by=list(dat.sub$Yr), FUN=sum)
+              dat.agg <- aggregate(dat.sub$Nsamp_adj, by=list(dat.sub$Yr), FUN=sum)
               allyrs <- dat.agg$Group.1
               size <- dat.agg$x
             }
@@ -262,7 +267,7 @@ SSplotData <- function(replist,
             dat.f <- dat.f[dat.f$Used == "yes",]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.f$N, by=list(dat.f$Yr), FUN=sum)
+              dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
               allyrs <- dat.agg$Group.1
               size <- dat.agg$x
             }
@@ -306,7 +311,7 @@ SSplotData <- function(replist,
                             typetable$typename %in% datatypes,]
 
   # define dimensions of plot
-  ntypes <- max(typetable2$itype)
+  ntypes <- length(unique(typetable2$itype))
   # fleets2 is a subset of fleets that have data of the requested types
   fleets2 <- sort(unique(typetable2$fleet))
   fleets2 <- fleets2[fleets2 %in% c(0,fleets)]
@@ -350,9 +355,16 @@ SSplotData <- function(replist,
     # loop over data types
     for(itype in rev(unique(typetable2$itype))){
       ## Calculate relative size for each data type separately
-      typetable2$size[typetable2$itype==itype] <-
-        typetable2$size[typetable2$itype==itype] /
-          max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      size.max <- max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      if(size.max > 0){
+        # rescale if max > 0
+        typetable2$size[typetable2$itype==itype] <-
+          typetable2$size[typetable2$itype==itype] / size.max
+      }else{
+        # if max = 0, then set all points to 0 (presumably they already were)
+        typetable2$size[typetable2$itype==itype] <- 0
+      }
+            
       # name for this data type
       typename <- unique(typetable2$typename[typetable2$itype==itype])
       # subset of fleets for this data type
@@ -409,7 +421,7 @@ SSplotData <- function(replist,
       plotdata(datasize=FALSE)
     }
     if(print) {
-      caption <- "Data presence by year for each fleet and data type"
+      caption <- "Data presence by year for each fleet and data type."
       plotinfo <- pngfun(file="data_plot.png", caption=caption)
       plotdata(datasize=FALSE)
       dev.off()
