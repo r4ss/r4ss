@@ -3,7 +3,7 @@
 #' Write Stock Synthesis (version 3.30) parameter file from list object in R to file.
 #'
 #'
-#' @param ctllist  List object created by \code{\link{SS_readpar_3.30}}.
+#' @param parlist  List object created by \code{\link{SS_readpar_3.30}}.
 #' @param outfile Filename for where to write new parameter file.
 #' @param overwrite Should existing files be overwritten? Default=TRUE.
 #' @param verbose Should there be verbose output while running the file?

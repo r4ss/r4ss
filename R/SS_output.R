@@ -269,9 +269,9 @@ SS_output <-
     if(length(compend)==0) compend <- 999
     comptime <- findtime(comphead)
     if(is.null(comptime) || is.null(repfiletime)){
-      messages("problem comparing the file creation times:\n",
-               "  Report.sso:", repfiletime, "\n",
-               "  CompReport.sso:", comptime, "\n")
+      message("problem comparing the file creation times:\n",
+              "  Report.sso:", repfiletime, "\n",
+              "  CompReport.sso:", comptime, "\n")
     }else{
       if(comptime != repfiletime){
         message("CompReport time:",comptime,"\n")

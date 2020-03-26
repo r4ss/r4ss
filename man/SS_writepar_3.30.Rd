@@ -7,13 +7,13 @@
 SS_writepar_3.30(parlist, outfile, overwrite = TRUE, verbose = FALSE)
 }
 \arguments{
+\item{parlist}{List object created by \code{\link{SS_readpar_3.30}}.}
+
 \item{outfile}{Filename for where to write new parameter file.}
 
 \item{overwrite}{Should existing files be overwritten? Default=TRUE.}
 
 \item{verbose}{Should there be verbose output while running the file?}
-
-\item{ctllist}{List object created by \code{\link{SS_readpar_3.30}}.}
 }
 \description{
 Write Stock Synthesis (version 3.30) parameter file from list object in R to file.
