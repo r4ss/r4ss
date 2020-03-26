@@ -457,30 +457,23 @@ SS_readdat_3.30 <-
   }
   if(datlist$use_MeanSize_at_Age_obs){
     ind.tmp <- ind # save current position in case necessary to re-read
-    datlist$MeanSize_at_Age_obs <- get.df(dat, ind)
-
-    # extra code in case sample sizes are on a separate line from other inputs
-    # first check if gender input is outside of normal range
-    if(!all(as.numeric(datlist$MeanSize_at_Age_obs$V4) %in% 0:3)){
+    endmwa <- ind - 2 + grep("-9999", dat[ind:length(dat)])[1]
+    xx <- dat[ind:endmwa]
+    if (length(unique(sapply(strsplit(xx, "\\s+"), length))) > 1) {
       if(verbose){
-        message("Format of MeanSize_at_Age_obs appears to have sample sizes",
+        message("Format of MeanSize_at_Age_obs appears to have sample sizes\n",
                 "on separate lines than other inputs.")
       }
-      ind <- ind.tmp # reset index to value prior to first attempt to read table
-      N_MeanSize_at_Age_obs <- nrow(datlist$MeanSize_at_Age_obs)/2
-      MeanSize_at_Age_obs <- NULL
-      for(iobs in 1:N_MeanSize_at_Age_obs){
-        # each observation is a combination of pairs of adjacent rows
-        MeanSize_at_Age_obs <- rbind(MeanSize_at_Age_obs,
-                                     c(get.vec(dat,ind), get.vec(dat,ind)))
-      }
+     xx <- paste(xx[1:length(xx) %% 2 == 1], xx[1:length(xx) %% 2 == 0])
+    }
+    datlist$MeanSize_at_Age_obs <- data.frame(do.call("rbind", strsplit(xx, "\\s+")),
+      stringsAsFactors = FALSE)
+    ind <- endmwa + 1
       # check terminator row
       test <- get.vec(dat,ind)
       if(test[1] != -9999){
         warning("Problem with read of MeanSize_at_Age, terminator value != -9999")
       }
-      datlist$MeanSize_at_Age_obs <- as.data.frame(MeanSize_at_Age_obs)
-    }
 
     colnames(datlist$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
