@@ -311,7 +311,7 @@ SSplotData <- function(replist,
                             typetable$typename %in% datatypes,]
 
   # define dimensions of plot
-  ntypes <- max(typetable2$itype)
+  ntypes <- length(unique(typetable2$itype))
   # fleets2 is a subset of fleets that have data of the requested types
   fleets2 <- sort(unique(typetable2$fleet))
   fleets2 <- fleets2[fleets2 %in% c(0,fleets)]
@@ -421,7 +421,7 @@ SSplotData <- function(replist,
       plotdata(datasize=FALSE)
     }
     if(print) {
-      caption <- "Data presence by year for each fleet and data type"
+      caption <- "Data presence by year for each fleet and data type."
       plotinfo <- pngfun(file="data_plot.png", caption=caption)
       plotdata(datasize=FALSE)
       dev.off()
