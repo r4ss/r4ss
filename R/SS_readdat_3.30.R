@@ -657,6 +657,11 @@ SS_readdat_3.30 <-
   
   ###############################################################################
   ## Fixes pulled in from SS_readdat wrapper
+  ##
+  ## Note from IGT 27-March-2020:
+  ## Many of the list elements created below are related to the format of SSv3.24
+  ## data files and should likely be deprecated at some point in the future
+
   
   datlist$spawn_seas <- datlist$spawn_month
   # compatibility: get the old number values
@@ -670,31 +675,41 @@ SS_readdat_3.30 <-
                            0,
                            NROW(datlist[["CPUE"]]))
   # fleet details
-  datlist$fleetinfo1<-t(datlist$fleetinfo)
-  colnames(datlist$fleetinfo1)<-datlist$fleetinfo$fleetname
-  datlist$fleetinfo1<-datlist$fleetinfo1[1:5,]
-  datlist$fleetinfo2<-datlist$fleetinfo1[4:5,]
-  datlist$fleetinfo1<-datlist$fleetinfo1[c(2:3,1),]
-  rownames(datlist$fleetinfo1)<-c("surveytiming","areas","type")
-  datlist$fleetinfo1<-data.frame(datlist$fleetinfo1)  # convert all to numeric
-  datlist$fleetinfo2<-data.frame(datlist$fleetinfo2)  # convert all to numeric
-  if(!is.null(datlist$discard_fleet_info))colnames(datlist$discard_fleet_info)<-c("Fleet","units","errtype")
+  if(nrow(datlist$fleetinfo) > 1){
+    # if more than 1 fleet in the model, create legacy format tables associated with 3.24
+    datlist$fleetinfo1 <- t(datlist$fleetinfo)
+    colnames(datlist$fleetinfo1) <- datlist$fleetinfo$fleetname
+    datlist$fleetinfo1 <- datlist$fleetinfo1[1:5,]
+    datlist$fleetinfo2 <- datlist$fleetinfo1[4:5,]
+    datlist$fleetinfo1 <- datlist$fleetinfo1[c(2:3,1),]
+    rownames(datlist$fleetinfo1) <- c("surveytiming","areas","type")
+    datlist$fleetinfo1 <- data.frame(datlist$fleetinfo1)  # convert all to numeric
+    datlist$fleetinfo2 <- data.frame(datlist$fleetinfo2)  # convert all to numeric
+  }else{
+    # if only 1 fleet, skip those things rather than revise code to work with vectors
+    # instead of transposed matrices of values
+    datlist$fleetinfo1 <- NULL
+    datlist$fleetinfo2 <- NULL
+  }
+  if(!is.null(datlist$discard_fleet_info)){
+    colnames(datlist$discard_fleet_info) <- c("Fleet","units","errtype")
+  }
   # compatibility: create the old format catch matrix
   datlist$catch <- datlist$catch[datlist$catch[, 1] >= -999, ]
   colnames(datlist$catch) = c("year", "seas", "fleet", "catch", "catch_se")
   # mean body weight
   if(datlist$use_meanbodywt==0)
   {
-    datlist$N_meanbodywt<-0
+    datlist$N_meanbodywt <- 0
   }
   # length info
-  datlist$comp_tail_compression<-datlist$len_info$mintailcomp
-  datlist$add_to_comp<-datlist$len_info$addtocomp
-  datlist$max_combined_lbin<-datlist$len_info$combine_M_F
-  if(is.null(datlist$lencomp))datlist$N_lencomp<-0
+  datlist$comp_tail_compression <- datlist$len_info$mintailcomp
+  datlist$add_to_comp <- datlist$len_info$addtocomp
+  datlist$max_combined_lbin <- datlist$len_info$combine_M_F
+  if(is.null(datlist$lencomp))datlist$N_lencomp <- 0
   if(datlist$use_MeanSize_at_Age_obs==0)
   {
-    datlist$N_MeanSize_at_Age_obs<-0
+    datlist$N_MeanSize_at_Age_obs <- 0
   }
   ##!!! need to add fixes to pop len bins? (see 3.24)
   # fix some things
@@ -702,19 +717,22 @@ SS_readdat_3.30 <-
   {
     if(datlist$lbin_method==1) # same as data bins
     {
-      datlist$N_lbinspop<-datlist$N_lbins
-      datlist$lbin_vector_pop<-datlist$lbin_vector
+      datlist$N_lbinspop <- datlist$N_lbins
+      datlist$lbin_vector_pop <- datlist$lbin_vector
     }
     
     if(datlist$lbin_method==2) # defined wid, min, max
     {
-      if(!is.null(datlist$binwidth)&&!is.null(datlist$minimum_size)&&!is.null(datlist$maximum_size))
+      if(!is.null(datlist$binwidth) &&
+         !is.null(datlist$minimum_size) &&
+         !is.null(datlist$maximum_size))
       {
-        datlist$N_lbinspop<-(datlist$maximum_size-datlist$minimum_size)/datlist$binwidth+1
-        datlist$lbin_vector_pop<-vector()
+        datlist$N_lbinspop <- (datlist$maximum_size-datlist$minimum_size)/datlist$binwidth+1
+        datlist$lbin_vector_pop <- vector()
         for(j in 0:datlist$N_lbinspop)
         {
-          datlist$lbin_vector_pop<-c(datlist$lbin_vector_pop,datlist$minimum_size+(j*datlist$binwidth))
+          datlist$lbin_vector_pop <- c(datlist$lbin_vector_pop,
+                                       datlist$minimum_size + (j*datlist$binwidth))
         }
       }
     }
@@ -722,7 +740,7 @@ SS_readdat_3.30 <-
     {
       if(!is.null(datlist$lbin_vector_pop))
       {
-        datlist$N_lbinspop<-length(datlist$lbin_vector_pop)
+        datlist$N_lbinspop <- length(datlist$lbin_vector_pop)
       }
     }
   }
