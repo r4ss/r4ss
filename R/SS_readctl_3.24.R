@@ -475,7 +475,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_df(ctllist,name="MG_parms",nrow=N_MGparm,ncol=14,
                     col.names = lng_par_colnames,
                                 comments=MGparmLabel)
-  if(ptype)
     ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
   # time block parameters
@@ -563,8 +562,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_df(ctllist,name="SR_parms",nrow=N_SRparm2,ncol=7,
             col.names = srt_par_colnames, comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
-  if(ptype)
-    ctllist$SR_parms<-cbind(ctllist$SR_parms,PType)
+  ctllist$SR_parms<-cbind(ctllist$SR_parms,PType)
 
   ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
   ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
@@ -626,8 +624,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
     col.names = srt_par_colnames,comments=comments_initF)
   PType[1:Nfleet]<-18
-  if(ptype)
-    ctllist$init_F<-cbind(ctllist$init_F,PType)
+  ctllist$init_F<-cbind(ctllist$init_F,PType)
 
   #_Q_setup
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
