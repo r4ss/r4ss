@@ -753,16 +753,18 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   for(j in 1:(Nfleet+Nsurveys)){
        #    size_selex_pattern_vec
     size_selex_Nparms[j]<-selex_patterns[size_selex_pattern_vec[j]+1]
-    ## spline needs special treatment
-    if(size_selex_pattern_vec[j]==27){
+    ## some patterns need special treatment
+    special_selex <- FALSE	# change flag to TRUE if need special treatment
+    if(size_selex_pattern_vec[j]==27){ # spline
+	  special_selex <- TRUE				 
       size_selex_Nparms[j]<-size_selex_Nparms[j]+ctllist$size_selex_types[j,4]*2
- #     size_selex_label[j]<-paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
       size_selex_label[[j]]<-c(paste0("SizeSpline_Code_",fleetnames[j],"_",j),
                              paste0("SizeSpline_GradLo_",fleetnames[j],"_",j),
                              paste0("SizeSpline_GradHi_",fleetnames[j],"_",j),
                              paste0("SizeSpline_Knot_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j),
                              paste0("SizeSpline_Val_",1:ctllist$size_selex_types[j,4],"_",fleetnames[j],"_",j))
-    }else{
+    }
+    if(!special_selex){
       size_selex_label[[j]]<-if(size_selex_Nparms[j]>0){
         paste0("SizeSel_",j,"P_",1:size_selex_Nparms[j],"_",fleetnames[j])
       }else{
@@ -771,7 +773,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     }
 
     # do extra retention parameters
-    if(ctllist$size_selex_types[j,2]>0) # has discard type 1 or 2
+    if((ctllist$size_selex_types[j,2]>0)&&(ctllist$size_selex_types[j,2]<=2))# has discard type 1 or 2
     {
       if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PRet_",1:4,"_",fleetnames[j]))
       else size_selex_label[[j]]<-paste0("SizeSel_",j,"PRet_",1:4,"_",fleetnames[j])
@@ -783,6 +785,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
       else size_selex_label[[j]]<-paste0("SizeSel_",j,"PDis_",1:4,"_",fleetnames[j])
       size_selex_Nparms[j]<-size_selex_Nparms[j]+4
     }
+	# no extra retention parameters for discard type 3
     # do extra offset parameters
     if(ctllist$size_selex_types[j,3]==1) # has value 1
     {
@@ -804,17 +807,30 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
       else size_selex_label[[j]]<-paste0("SizeSel_",j,"PMalOff_",1:nparms,"_",fleetnames[j])
       size_selex_Nparms[j]<-size_selex_Nparms[j]+nparms
     }
-  }
-  age_selex_Nparms <- selex_patterns[age_selex_pattern_vec + 1]
-  age_selex_Nparms <- ifelse(
-    ctllist$age_selex_types[,1] == 17 & ctllist$age_selex_types[,4] > 0,
-    ctllist$age_selex_types[,4] + 1,
-    age_selex_Nparms
-  )
+	    if(ctllist$size_selex_types[j,3]==4) # has value 4 - differs by version
+    {
+      if(nver<3.24)nparms<-3
+      else nparms<-5
+      if(size_selex_Nparms[j]>0)size_selex_label[[j]]<-c(size_selex_label[[j]],paste0("SizeSel_",j,"PFemOff_",1:nparms,"_",fleetnames[j]))
+      else size_selex_label[[j]]<-paste0("SizeSel_",j,"PFemOff_",1:nparms,"_",fleetnames[j])
+      size_selex_Nparms[j]<-size_selex_Nparms[j]+nparms
+    }
+  }																	   										
+  age_selex_Nparms<-vector(mode="numeric",length=Nfleet+Nsurveys)
   age_selex_label<-list()
   for(j in 1:(Nfleet+Nsurveys)){
-    ## spline needs special treatment
+    age_selex_Nparms[j]<-selex_patterns[age_selex_pattern_vec[j]+1]													   
+    ## some need special treatment
+    special_selex<-FALSE
+    if(age_selex_pattern_vec[j]==17){ # random walk - check for maximum age in special
+      if(ctllist$age_selex_types$Special[j]>0){
+        special_selex<-TRUE
+        age_selex_Nparms[j]<-ctllist$age_selex_types$Special[j]+1
+        age_selex_label[[j]]<-paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
+      }
+    }
     if(age_selex_pattern_vec[j]==27){
+	  special_selex<-TRUE			 
       age_selex_Nparms[j]<-age_selex_Nparms[j]+ctllist$age_selex_types[j,4]*2
     #  age_selec_label[j]<-paste0("AgeSel_",j,"P_",1:agee_selex_Nparms[j],"_",fleetnames[j])
       age_selex_label[[j]]<-c(paste0("AgeeSpline_Code_",fleetnames[j],"_",j),
@@ -822,7 +838,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                              paste0("AgeeSpline_GradHi_",fleetnames[j],"_",j),
                              paste0("AgeeSpline_Knot_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j),
                              paste0("AgeeSpline_Val_",1:ctllist$age_selex_types[j,4],"_",fleetnames[j],"_",j))
-    }else{
+    }
+	if(!special_selex){
       age_selex_label[[j]]<-if(age_selex_Nparms[j]>0){
         paste0("AgeSel_",j,"P_",1:age_selex_Nparms[j],"_",fleetnames[j])
       }else{
