@@ -503,7 +503,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
     }
   }
-  N_MGparm<-N_MGparm+2*abs(ctllist$Ngenders)+2+2 #add for wt-len(by gender), mat-len parms; eggs
+  N_MGparm <- cnt - 1
   
   if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1
