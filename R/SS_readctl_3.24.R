@@ -507,12 +507,12 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
 
   PType<-array()
-  N_seas_effects<-sum(ctllist$MGparm_seas_effects)
+  N_seas_effects<-length(ctllist$MGparm_seas_effects[ctllist$MGparm_seas_effects>0])
   if(N_seas_effects>0){
-    ctllist<-add_df(ctllist,"MG_parms_seas",nrow=N_seas_effects,ncol=7,
-                    col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
-    PType[1:N_seas_effects]<-16
-  if(ptype)
+    ctllist<-add_df(ctllist,"MG_parms_seas",nrow=N_seas_effects*ctllist$nseas, 
+                    ncol=7,
+                    col.names = srt_par_colnames)
+    PType[1:(N_seas_effects*ctllist$nseas)]<-16
     ctllist$MG_parms_seas<-cbind(ctllist$MG_parms_seas,PType)
 
   }
