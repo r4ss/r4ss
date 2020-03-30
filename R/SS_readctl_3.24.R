@@ -108,7 +108,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
       names(ctllist$temp)<-comments
     }
     if(!is.na(name))names(ctllist)[names(ctllist)=="temp"]<-name
-    if(verbose {
+    if(verbose) {
 	  message(name,",i=",ctllist$'.i',"\n")
 	  print(ctllist[name])
 	}
