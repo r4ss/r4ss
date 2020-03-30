@@ -287,13 +287,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
     N_natMparms<-1
-    comments<-if(ctllist$N_GP==1){
-      "#_reference age for Lorenzen M; read 1P per morph"
-    }else{
-      paste0("#_reference age for Lorenzen M_GP",1:ctllist$N_GP)
-    }
-    ctllist<-add_vec(ctllist,name="Lorenzen_refage",length=ctllist$N_GP,
-      comments=comments) ## Reference age for Lorenzen M
+    ctllist <- add_elem(ctllist, "Lorenzen_refage") #_natM_type
   }else if(ctllist$natM_type %in% c(3,4)){
     N_natMparms<-0
     ctllist<-add_df(ctllist,name="natM",nrow=ctllist$N_GP*ctllist$Ngenders,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
