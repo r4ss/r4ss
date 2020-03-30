@@ -210,7 +210,11 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist$ReadVersion <- "3.24"
 
   ctllist$eof <- FALSE
-
+  # internally used commmon values ----
+  lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+                        "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_stddev",
+                        "Block", "Block_Fxn")
+  srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
   if(verbose) message("SS_readctl_3.24 - read version = ", ctllist$ReadVersion)
 
   # model dimensions
@@ -475,10 +479,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }
 
   ctllist<-add_df(ctllist,name="MG_parms",nrow=N_MGparm,ncol=14,
-                    col.names=c("LO", "HI", "INIT", "PRIOR",
-                                "PR_type", "SD", "PHASE",
-                                "env_var","use_dev", "dev_minyr",
-                                "dev_maxyr", "dev_stddev", "Block", "Block_Fxn"),
+                    col.names = lng_par_colnames,
                                 comments=MGparmLabel)
   if(ptype)
     ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
@@ -504,7 +505,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   {
     ctllist<-add_elem(ctllist,"custom_MG_block")
     ctllist<-add_df(ctllist,name="MG_parms_blocks",nrow=nbp,ncol=7,
-                           col.names=c("LO", "HI", "INIT", "PRIOR","PR_type", "SD", "PHASE"),
+                           col.names= srt_par_colnames,
                            comments=MGblockLabel)
     ctllist$MG_parms_blocks<-cbind(ctllist$MG_parms_blocks,PType)
   }
@@ -565,8 +566,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }
 
   PType<-array()
-  ctllist<-add_df(ctllist,name="SRparm",nrow=N_SRparm2,ncol=7,
-            col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=SRparmsLabels)
+  ctllist<-add_df(ctllist,name="SR_parms",nrow=N_SRparm2,ncol=7,
+            col.names = srt_par_colnames, comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
   if(ptype)
     ctllist$SRparm<-cbind(ctllist$SRparm,PType)
@@ -629,7 +630,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   PType<-array()
   #_LO HI INIT PRIOR PR_type SD PHASE
   ctllist<-add_df(ctllist,name="init_F",nrow=Nfleet,ncol=7,
-    col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),comments=comments_initF)
+    col.names = srt_par_colnames,comments=comments_initF)
   PType[1:Nfleet]<-18
   if(ptype)
     ctllist$init_F<-cbind(ctllist$init_F,PType)
@@ -726,7 +727,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 
   if(N_Q_parms>0){
     ctllist<-add_df(ctllist,name="Q_parms",nrow=N_Q_parms,ncol=7,
-                col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"),
+                col.names = srt_par_colnames,
                 comments=unlist(comments_Q_type))
   }
 
@@ -883,17 +884,15 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 #_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
 # Size selex
   if(sum(size_selex_Nparms)>0){
-    ctllist<-add_df(ctllist,name="size_selex_parms",nrow=sum(size_selex_Nparms),ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-                           "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_stddev",
-                           "Block", "Block_Fxn"),comments=unlist(size_selex_label))
+    ctllist<-add_df(ctllist,name="size_selex_parms",nrow=sum(size_selex_Nparms),
+	                ncol=14, col.names = lng_par_colnames,
+					comments=unlist(size_selex_label))
   }
 # Age selex
   if(sum(age_selex_Nparms)>0){
-    ctllist<-add_df(ctllist,name="age_selex_parms",nrow=sum(age_selex_Nparms),ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
-                           "env_var","use_dev", "dev_minyr", "dev_maxyr", "dev_stddev",
-                           "Block", "Block_Fxn"),comments=unlist(age_selex_label))
+    ctllist<-add_df(ctllist,name="age_selex_parms",nrow=sum(age_selex_Nparms),
+	                ncol=14, col.names = lng_par_colnames,
+					comments=unlist(age_selex_label))
   }
 ##########################
 ## Following pars are not yet  implemented in this R code
@@ -918,14 +917,11 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 
         # MULTIPLY number of blocks by number of params per block
         k0 <- sum(blks[counts$values] * counts$lengths)
-
-      ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
-        col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE"))
-
+     if(k0 > 0) {
+	   ctllist<-add_df(ctllist,name="custom_sel_blk_setup",nrow=k0,ncol=7,
+                       col.names = srt_par_colnames)
+     }
     }
-  }else{
-    #_Cond 0 #_custom_sel-blk_setup (0/1)
-    #_Cond -2 2 0 0 -1 99 -2 #_placeholder when no block usage
   }
 
 #_Cond No selex parm trends
@@ -960,28 +956,28 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     ##
     # Initial tag loss
     ctllist<-add_df(ctllist,name="TG_Loss_init",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+              col.names=c(srt_par_colnames,
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
     # continuous tag loss
     ctllist<-add_df(ctllist,name="TG_Loss_chronic",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+              col.names=c(srt_par_colnames,
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
                            comments=paste0("#_TG_Loss_chronic_",1:N_tag_groups))
 
     # NB over-dispersion
     ctllist<-add_df(ctllist,name="TG_overdispersion",nrow=N_tag_groups,ncol=14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+              col.names=c(srt_par_colnames,
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"),
               comments=paste0("#_TG_overdispersion_",1:N_tag_groups))
 
     # TG_Report_fleet
     ctllist<-add_df(ctllist,name="TG_Report_fleet",nrow=Nfleet,14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+              col.names=c(srt_par_colnames,
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
 
     # TG_Report_fleet_decay
     ctllist<-add_df(ctllist,name="TG_Report_fleet_decay",nrow=Nfleet,14,
-              col.names=c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE",
+              col.names=c(srt_par_colnames,
                            "Dum","Dum", "Dum", "Dum", "Dum", "Dum", "Dum"))
   }else{
     #_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters
