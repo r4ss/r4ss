@@ -193,7 +193,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     ctllist$N_areas<-N_areas<-datlist$N_areas
     ctllist$Nages<-Nages<-datlist$Nages
     ctllist$Ngenders<-Ngenders<-datlist$Ngenders
-    ctllist$Npopbins<-Npopbins<-datlist$Npopbins
+    ctllist$Npopbins<-Npopbins<-datlist$N_lbinspop
     ctllist$Nfleet<-Nfleet<-datlist$Nfleet
     ctllist$Nsurveys<-Nsurveys<-datlist$Nsurveys
     if(datlist$N_ageerror_definition>0){
