@@ -244,7 +244,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_Spawner-Recruitment")
   wl("SR_function",comment="#_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop; 7=survival_3Parm; 8=Shepard_3Parm")
   # writeComment("#_LO HI INIT PRIOR PR_type SD PHASE")
-  printdf("SRparm")
+  printdf("SR_parms")
   wl("SR_env_link")
   wl("SR_env_target")
   wl("do_recdev")
