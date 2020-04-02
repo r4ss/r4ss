@@ -294,7 +294,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }else{
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
-  message("N_natMparms=",N_natMparms)
+  if(verbose) message("N_natMparms=",N_natMparms)
   ctllist<-add_elem(ctllist,name="GrowthModel")
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
