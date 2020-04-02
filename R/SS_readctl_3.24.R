@@ -221,7 +221,6 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_elem(ctllist,"N_GP")
 
   # Currently I do not how MGparms are sorted when N_GP>1
-  if(ctllist$N_GP>1)stop("this function not yet written for models with multiple growth patterns")
   ctllist<-add_elem(ctllist,"N_platoon")
   if(ctllist$N_platoon>1){
     stop("sub morphs are not supported yet")
