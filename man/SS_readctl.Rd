@@ -31,7 +31,9 @@ SS_readctl(
 \item{file}{Filename either with full path or relative to working directory.}
 
 \item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
+either as character or numeric values (noting that numeric 3.30  = 3.3). If
+version is NULL, the version (3.24 or 3.30) will be looked for on the first
+line of the file.}
 
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
