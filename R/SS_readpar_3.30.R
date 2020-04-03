@@ -158,6 +158,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     parlist$Fcast_impl_error<-matrix(NA,nrow=length(imp_temp),ncol=2)
     parlist$Fcast_impl_error[,1]<-(ctllist$MainRdevYrLast+1):(ctllist$MainRdevYrLast+length(imp_temp))
     parlist$Fcast_impl_error[,2]<-imp_temp
+    colnames(parlist$Fcast_impl_error)<-c("year","impl_error")
   }
   
   #Read in initial Fishing mortality rates if they exist
@@ -167,10 +168,21 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
   
   #Build and read in annual fleet specific fishing mortality rates if they exist
   if(length(grep("F_rate",parvals))>0){
-    parlist$F_rate<-datlist$catch
-    parlist$F_rate<-parlist$F_rate[parlist$F_rate$year>0,1:4]
-    parlist$F_rate[,4]<-as.numeric(parvals[(grep("F_rate",parvals)+1)])
-    colnames(parlist$F_rate)<-c("year","seas","fleet","F")
+    temp_Frate_1<-datlist$catch
+    temp_Frate_1<-temp_Frate_1[temp_Frate_1$year>0,1:4,drop=FALSE]
+    temp_Frate_2<-temp_Frate_1[temp_Frate_1$catch>0,]
+    if(length(temp_Frate_1[,1])==length(grep("F_rate",parvals))){
+      temp_Frate_1[,4]<-as.numeric(parvals[(grep("F_rate",parvals)+1)])
+      colnames(temp_Frate_1)<-c("year","seas","fleet","F")
+      parlist$F_rate<-temp_Frate_1
+    }else if(length(temp_Frate_2[,1])==length(grep("F_rate",parvals))){
+      temp_Frate_2[,4]<-as.numeric(parvals[(grep("F_rate",parvals)+1)])
+      colnames(temp_Frate_2)<-c("year","seas","fleet","F")
+      parlist$F_rate<-temp_Frate_2
+    }else{
+      stop("The length of the catch matrix (",length(temp_Frate_1[,1]),", or ",length(temp_Frate_2[,1])," 
+           with zero catches removed) does not match with the length of the F_rate parameter vector (",length(grep("F_rate",parvals)),")")
+    }
   }
   
   #Build catchability Q parameter list
