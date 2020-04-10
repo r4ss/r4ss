@@ -112,7 +112,7 @@ test_that("SSsummarize and SSplotComparisons both work", {
   comparison_plots <- SSplotComparisons(simple_summary, png=TRUE,
                                         plotdir=temp_path, verbose = FALSE)
   # confirm that function finished
-  expect_equal(comparison_plots, "finished comparison plots")
+  expect_equal(length(comparison_plots), 17)
 
   # make table of comparisons
   simple_table <- SStableComparisons(simple_summary, verbose = FALSE)
