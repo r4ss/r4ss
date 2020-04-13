@@ -350,7 +350,7 @@ SS_readdat_3.30 <-
     if(!is.null(datlist$lencomp)){
       colnames(datlist$lencomp) <-
         c("Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-          if(datlist$Ngenders == 1){paste0("l", datlist$lbin_vector)}else{NULL},
+          if(abs(datlist$Ngenders) == 1){paste0("l", datlist$lbin_vector)}else{NULL},
           if(datlist$Ngenders > 1){c(paste0("f", datlist$lbin_vector),
                              paste0("m", datlist$lbin_vector))}else{NULL})
     }
@@ -431,7 +431,7 @@ SS_readdat_3.30 <-
       colnames(datlist$agecomp) <-
         c("Yr", "Seas", "FltSvy", "Gender",
           "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-          if(datlist$Ngenders == 1){paste0("a", datlist$agebin_vector)}else{NULL},
+          if(abs(datlist$Ngenders) == 1){paste0("a", datlist$agebin_vector)}else{NULL},
           if(datlist$Ngenders > 1){c(paste0("f", datlist$agebin_vector),
                                paste0("m", datlist$agebin_vector))}else{NULL})
     }
@@ -477,10 +477,10 @@ SS_readdat_3.30 <-
 
     colnames(datlist$MeanSize_at_Age_obs) <-
       c("Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-        if(datlist$Ngenders == 1){paste0("a", datlist$agebin_vector)}else{NULL},
+        if(abs(datlist$Ngenders) == 1){paste0("a", datlist$agebin_vector)}else{NULL},
         if(datlist$Ngenders > 1){c(paste0("f", datlist$agebin_vector),
                              paste0("m", datlist$agebin_vector))}else{NULL},
-        if(datlist$Ngenders == 1){paste0("N_a", datlist$agebin_vector)}else{NULL},
+        if(abs(datlist$Ngenders) == 1){paste0("N_a", datlist$agebin_vector)}else{NULL},
         if(datlist$Ngenders > 1){c(paste0("N_f", datlist$agebin_vector),
                              paste0("N_m", datlist$agebin_vector))}else{NULL})
     # echo values
@@ -554,13 +554,13 @@ SS_readdat_3.30 <-
     ## Read generalized size frequency data
     datlist$sizefreq_data_list <- list()
     for(imethod in seq_len(datlist$N_sizefreq_methods)) {
-      Ncols <- 7 + datlist$Ngenders * datlist$nbins_per_method[imethod]
+      Ncols <- 7 + abs(datlist$Ngenders) * datlist$nbins_per_method[imethod]
       Nrows <- datlist$Nobs_per_method[imethod]
       datlist$sizefreq_data_list[[imethod]] <- get.df(dat, ind, Nrows)
       colnames(datlist$sizefreq_data_list[[imethod]]) <-
         c("Method", "Yr", "Seas", "FltSvy",
           "Gender", "Part", "Nsamp",
-          if(datlist$Ngenders == 1){
+          if(abs(datlist$Ngenders) == 1){
             paste0("a", datlist$sizefreq_bins_list[[imethod]])
           }else{
             NULL
