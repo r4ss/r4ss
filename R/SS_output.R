@@ -1452,7 +1452,8 @@ SS_output <-
   # replace SPB with SSB as changed in SS version 3.30.10.00 (29 Nov. 2017)
   der$Label <- gsub("SPB_", "SSB_", der$Label, fixed=TRUE)
   # set rownames equal to Label column
-  rownames(der) <- der$Label
+  # (skipping any duplicates, such as ln(SPB)_YYYY for models with limited year range)
+  rownames(der)[!duplicated(der$Label)] <- der$Label[!duplicated(der$Label)]
 
   managementratiolabels <- matchfun2("DERIVED_QUANTITIES",1,"DERIVED_QUANTITIES",3,cols=1:2)
   names(managementratiolabels) <- c("Ratio","Label")
