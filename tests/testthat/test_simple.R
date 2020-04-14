@@ -22,7 +22,7 @@ on.exit(unlink(temp_path, recursive = TRUE), add = TRUE)
 simple3.24 <- SS_output(file.path(example_path,"simple_3.24"), verbose = FALSE, 
                         printstats = FALSE)
 test_that("SS_output runs on simple_3.24 model", {
-  expect_equal(tail(names(simple3.24),1), "inputs")
+  expect_equal(tail(names(simple3.24),1), "blah blah blah")
 })
 
 simple3.30.01 <- SS_output(file.path(example_path,"simple_3.30.01"), 
