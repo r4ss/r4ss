@@ -2533,8 +2533,12 @@ SS_output <-
 
   returndat$managementratiolabels <- managementratiolabels
   returndat$F_report_basis <- managementratiolabels$Label[2]
-  returndat$B_ratio_denominator <-
-    as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
+  if(length(grep("%", managementratiolabels$Label[3])) > 0 ) {
+    returndat$B_ratio_denominator <-
+      as.numeric(strsplit(managementratiolabels$Label[3],"%")[[1]][1])/100
+  } else {
+    returndat$B_ratio_denominator <- NA
+  }
   returndat$sprtarg <- sprtarg
   returndat$btarg <- btarg
 
