@@ -476,6 +476,20 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                                 comments=MGparmLabel)
     ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
+    
+  # environmental linkage lines
+  if(any(ctllist$MG_parms$env_var > 0)) {
+    ctllist <- add_elem(ctllist, "read_MG_custom_env_var")
+    if(ctllist$read_MG_custom_env_var == 1) {
+      tmp_nrow <- length(ctllist$MG_parms$env_var[ctllist$MG_parms$env_var > 0])
+      tmp_lab <- paste0("MG_env_var_", seq_len(tmp_nrow))
+      ctllist <- add_df(ctllist, name = "MG_custom_env_var", nrow = tmp_nrow,
+                      ncol = length(srt_par_colnames),
+                      col.names = srt_par_colnames, 
+                      comments = tmp_lab)
+    }
+  }
+
   # time block parameters
   nbp<-0
   cnt<-1

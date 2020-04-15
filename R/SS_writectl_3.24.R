@@ -216,12 +216,34 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
   printdf("MG_parms")
 
+  # MG environmental linkage lines
   writeComment("#")
-  writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
-  writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+  if(any(ctllist$MG_parms$env_var > 0)) {
+    wl("read_MG_custom_env_var")
+    if(ctllist$read_MG_custom_env_var == 1) {
+      printdf("MG_custom_env_var")
+    } else {
+      writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+    }
+  } else {
+    writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
+    writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+  }
   writeComment("#")
-  writeComment("#_Cond 0  #custom_MG-block_setup (0/1)")
-  writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+  
+  # MG block lines
+  if(!is.null(ctllist[["custom_MG_block"]])) {
+    wl("custom_MG_block")
+    if(ctllist[["custom_MG_block"]] == 1) {
+      printdf("MG_parms_blocks")
+    } else {
+      writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+    } 
+  } else {
+    writeComment("#_Cond 0  #custom_MG-block_setup (0/1)")
+    writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+  }
+
   writeComment("#_Cond No MG parm trends")
   writeComment("#")
   writeComment("#_seasonal_effects_on_biology_parms")
