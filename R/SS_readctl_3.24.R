@@ -316,9 +316,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }else if(ctllist$GrowthModel==3){ # 3=age_specific_K
   #  AFIX=tempvec5(1);
   #  AFIX2=tempvec5(2);
-    Age_K_count<-ctllist$N_ageK
-    N_growparms=5+Age_K_count
-    ctllist<-add_vec(ctllist,name="Age_K_points",length=Age_K_count)
+    N_growparms <- 5 + ctllist$N_ageK
+    ctllist<-add_vec(ctllist,name="Age_K_points",length=ctllist$N_ageK)
     #  points at which age-specific multipliers to K will be applied
 
   }else if(ctllist$GrowthModel==4){
@@ -386,10 +385,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
         PType[cnt:(6+cnt-1)]<-2
         cnt<-cnt+6
       }else if(ctllist$GrowthModel==3){
-        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:Age_K_count),"CV_young_","CV_old_")
-        MGparmLabel[1:(5+Age_K_count)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
-        PType[cnt:((5+Age_K_count)+cnt-1)]<-2
-        cnt<-cnt+5+Age_K_count
+        tmp<-c("L_at_Amin_","L_at_Amax_","VonBert_K_",paste0("Age_K_",1:ctllist$N_ageK),"CV_young_","CV_old_")
+        MGparmLabel[1:(5+ctllist$N_ageK)+cnt-1]<-paste0(tmp,"_",GenderLabel[i],"_GP_",j)
+        PType[cnt:((5+ctllist$N_ageK)+cnt-1)]<-2
+        cnt<-cnt+5+ctllist$N_ageK
       }
     }
   }
