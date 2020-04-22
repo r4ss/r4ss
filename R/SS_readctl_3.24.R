@@ -68,6 +68,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     datlist=NULL,
     ptype=TRUE
     ){
+  # internally used fun definitions ----
   # function to read Stock Synthesis data files
 
   if(verbose) message("running SS_readctl_3.24\n")
@@ -163,7 +164,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     if(verbose) message(name,",i=",ctllist$'.i')
     return(ctllist)
   }
-
+  # setup ----
   # set initial position in the vector of numeric values
   i <- 1
   # create empty list to store quantities
@@ -204,7 +205,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     ctllist$N_CPUE_obs<-N_CPUE_obs
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
-  # specifications
+  # specifications ----
   ctllist$sourcefile <- file
   ctllist$type <- "Stock_Synthesis_control_file"
   ctllist$ReadVersion <- "3.24"
@@ -216,7 +217,8 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                         "Block", "Block_Fxn")
   srt_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_type", "SD", "PHASE")
   if(verbose) message("SS_readctl_3.24 - read version = ", ctllist$ReadVersion)
-
+ 
+  # beginning of ctl ----
   # model dimensions
   ctllist<-add_elem(ctllist,"N_GP")
 
@@ -262,7 +264,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
       ctllist<-add_df(ctllist,"moveDef",nrow=ctllist$N_moveDef,ncol=6,col.names=c("seas", "morph", "source", "dest", "age", "age2"))
     }
   }
-
+  # block setup ----
   ctllist<-add_elem(ctllist,"N_Block_Designs") #_Nblock_Patterns
   if(ctllist$N_Block_Designs>0){
     ctllist<-add_vec(ctllist,name="blocks_per_pattern",length=ctllist$N_Block_Designs)
@@ -271,11 +273,12 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     ctllist<-add_list(ctllist,name="Block_Design",length=ctllist$N_Block_Designs,
       length_each=ctllist$blocks_per_pattern*2)
   }
-
+  
   ctllist$time_vary_adjust_method<-3  # compatibility with v 3.30
   ctllist$time_vary_auto_generation<-c(1,1,1,1,1) # compatibility with v 3.30
 
-
+  # MG setup ----
+  # M setup ----
   ctllist<-add_elem(ctllist,"fracfemale") #_fracfemale
   ctllist<-add_elem(ctllist,"natM_type") #_natM_type
   if(ctllist$natM_type==0){
@@ -294,6 +297,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
   if(verbose) message("N_natMparms=",N_natMparms)
+  # growth setup ----
   ctllist<-add_elem(ctllist,name="GrowthModel")
     # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_specific_K; 4=not implemented
   ctllist<-add_elem(ctllist,name="Growth_Age_for_L1") #_Growth_Age_for_L1
@@ -337,6 +341,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   ctllist<-add_elem(ctllist,name="SD_add_to_LAA") #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
   ctllist<-add_elem(ctllist,name="CV_Growth_Pattern")
     #_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)
+  # maturity and MG options setup ----
   ctllist<-add_elem(ctllist,name="maturity_option")
     #_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity by GP; 4=read age-fecundity by GP; 5=read fec and wt from wtatage.ss; 6=read length-maturity by GP
   if(ctllist$maturity_option==6)ctllist$EmpiricalWAA<-1
@@ -358,7 +363,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
   ctllist<-add_elem(ctllist,"env_block_dev_adjust_method")   #_env/block/dev_adjust_method
-
+  # MG parlines -----
   N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
@@ -475,7 +480,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                                 comments=MGparmLabel)
     ctllist$MG_parms<-cbind(ctllist$MG_parms,PType)
 
-    
+  # MG timevarying parlines ------
   # environmental linkage lines
   if(any(ctllist$MG_parms$env_var != 0)) {
     ctllist <- add_elem(ctllist, "read_MG_custom_env_var")
@@ -513,7 +518,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                            comments=MGblockLabel)
     ctllist$MG_parms_blocks<-cbind(ctllist$MG_parms_blocks,PType)
   }
-
+  # Read seasonal effects ----
   ctllist<-add_vec(ctllist,name="MGparm_seas_effects",length=10)
 
   PType<-array()
@@ -535,7 +540,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     ctllist<-add_elem(ctllist,"MGparm_Dev_Phase") #_MGparm_Dev_Phase
   }
 
- # SRR
+ # SR ----
   ctllist<-add_elem(ctllist,"SR_function")   #_SR_function
   N_SRparm<-c(0,2,2,2,3,2,3,3,0,0)
   N_SRparm2<-N_SRparm[as.numeric(ctllist$SR_function)]+4
@@ -543,7 +548,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   if(is.na(ctllist$SR_function)) {
     stop("SR_function is NA")
   }
-
+  # SR parms ----
   SRparmsLabels<-if(ctllist$SR_function ==3){
     # B-H SRR
     c("SR_LN(R0)","SR_BH_steep","SR_sigmaR","SR_envlink","SR_R1_offset","SR_autocorr")
@@ -574,9 +579,10 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
             col.names = srt_par_colnames, comments=SRparmsLabels)
   PType[1:N_SRparm2]<-17
   ctllist$SR_parms<-cbind(ctllist$SR_parms,PType)
-
+  #SR timevarying parlines ----
   ctllist<-add_elem(ctllist,"SR_env_link") #_SR_env_link
   ctllist<-add_elem(ctllist,"SR_env_target") #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
+  # recdevs ----
   ctllist<-add_elem(ctllist,"do_recdev") #do_recdev:  0=none; 1=devvector; 2=simple deviations
   ctllist<-add_elem(ctllist,"MainRdevYrFirst") # first year of main recr_devs; early devs can preceed this era
   ctllist<-add_elem(ctllist,"MainRdevYrLast") # last year of main recr_devs; forecast devs start in following year
@@ -609,7 +615,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   }
 
 
-  # F Part
+  # F setup ----
   ctllist<-add_elem(ctllist,"F_ballpark") # F ballpark for annual F (=Z-M) for specified year
   ctllist<-add_elem(ctllist,"F_ballpark_year") # F ballpark year (neg value to disable)
   ctllist<-add_elem(ctllist,"F_Method") # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
@@ -637,7 +643,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
   PType[1:Nfleet]<-18
   ctllist$init_F<-cbind(ctllist$init_F,PType)
 
-  #_Q_setup
+  # Q_setup ----
   comments_fl<-paste0(1:(Nfleet+Nsurveys)," ",fleetnames)
   ctllist<-add_df(ctllist,name="Q_setup",nrow=Nfleet+Nsurveys,ncol=4,
                   col.names=c("Den_dep","env_var","extra_se","Q_type"),comments=comments_fl)
@@ -681,7 +687,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     }
   }
 
-
+  # q parlines ----
   # Q_type options:  <0=mirror, 0=float_nobiasadj, 1=float_biasadj, 2=parm_nobiasadj, 3=parm_w_random_dev, 4=parm_w_randwalk, 5=mean_unbiased_float_assign_to_parm
   ## currently only float_nobiasadj (Q_type==0) is suppoerted
   #_for_env-var:_enter_index_of_the_env-var_to_be_linked
@@ -732,7 +738,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                 col.names = srt_par_colnames,
                 comments=unlist(comments_Q_type))
   }
-
+  # selecitivty -----
 # size_selex_types
   comments_selex_types<-fleetnames
   ctllist<-add_df(ctllist,name="size_selex_types",nrow=Nfleet+Nsurveys,ncol=4,
@@ -899,7 +905,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     message("age_selex_Nparms\n")
 	print(age_selex_Nparms)
   }
-# Selex parameters
+# Selex parlines ----
 #_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
 # Size selex
   if(sum(size_selex_Nparms)>0){
@@ -914,6 +920,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 					comments=unlist(age_selex_label))
   }
 ##########################
+# selex timevarying ----
 ## Following pars are not yet  implemented in this R code
 #_Cond 0 #_custom_sel-env_setup (0/1)
 #_Cond -2 2 0 0 -1 99 -2 #_placeholder when no enviro fxns
@@ -958,7 +965,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 #_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)
 #
 
-
+# tagging ----
 # Tag loss and Tag reporting parameters go next
   ctllist<-add_elem(ctllist,name="TG_custom") # TG_custom:  0=no read; 1=read if tags exist
   if(ctllist$TG_custom){
@@ -1002,6 +1009,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
     #_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters
     #
   }
+  # Var adj ----
   ctllist<-add_elem(ctllist,"DoVar_adjust")  #_Variance_adjustments_to_input_values
   if(ctllist$DoVar_adjust>0){
     ctllist<-add_df(ctllist,name="Variance_adjustments",nrow=6,ncol=Nfleet+Nsurveys,
@@ -1013,6 +1021,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
                                                           "mult_by_agecomp_N",
                                                           "mult_by_size-at-age_N")))
   }
+  # Lambdas ----
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
   ctllist<-add_elem(ctllist,"sd_offset")  #_sd_offset
 
@@ -1068,6 +1077,7 @@ SS_readctl_3.24 <- function(file,verbose=TRUE,echoall=FALSE,version="3.24",
 
   # Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch;
 # 9=init_equ_catch; 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin
+  # more sd reporting ----
   ctllist<-add_elem(ctllist,"more_stddev_reporting")  # (0/1) read specs for more stddev reporting
   if(ctllist$more_stddev_reporting!=0){
     ctllist<-add_vec(ctllist,name="stddev_reporting_specs",length=9)
