@@ -213,7 +213,7 @@ SSplotComparisons <-
              "Recruitment deviations",  #5
              "Index",                   #6
              "Log index",               #7
-             "1 - SPR",                 #8 may not always be accurate
+             "SPR-related quantity",    #8 automatically updated when consistent
              "Density",                 #9
              "Management target",       #10
              "Minimum stock size threshold", #11
@@ -385,14 +385,14 @@ SSplotComparisons <-
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
-    warning("setting label for SPR plot to default input because models",
-            "don't have matching labels")
+    warning("setting label for SPR plot to 8th element of input 'labels' ",
+            "because the models don't have matching labels")
     SPRratioLabel <- labels[8]
   }
   FvalueLabel <- unique(FvalueLabels)
   if(length(FvalueLabel)>1){
-    warning("setting label for F plot to default input because models",
-            "don't have matching labels")
+    warning("setting label for F plot to 13th element of input 'labels' ",
+            "because the models don't have matching labels")
     FvalueLabel <- labels[13]
   }else{
     FvalueLabel <- gsub("_", " ", FvalueLabel)
@@ -905,12 +905,17 @@ SSplotComparisons <-
 
     # make plot
     if(!add){
-      # store current margin parameters
-      newmar <- oldmar <- par()$mar
-      # make right-hand y-axis match the left hand side for this one
-      # plot that has labels on both left and right
-      newmar[4] <- newmar[2]
-      par(mar=newmar)
+      if(!is.na(SPRratioLabel) &&
+         SPRratioLabel == paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
+        # add to right-hand outer margin to make space for second vertical axis
+        # store current margin parameters
+        # save old margins
+        newmar <- oldmar <- par()$mar
+        # match right-hand margin value to left-hand value
+        newmar[4] <- newmar[2]
+        # update graphics parameters
+        par(mar=newmar)
+      }
       plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1],
            ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
       axis(2)
@@ -942,7 +947,8 @@ SSplotComparisons <-
         # draw line at sprtarg
         yticks <- pretty(ylim)
         if(!is.na(SPRratioLabel) &&
-           SPRratioLabel==paste("(1-SPR)/(1-SPR_",floor(100*sprtarg),"%)",sep="")){
+           SPRratioLabel==paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
+          # add right-hand vertical axis showing 1-SPR
           abline(h=1,col="red",lty=2)
           text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
           axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
@@ -1012,9 +1018,6 @@ SSplotComparisons <-
 
     # make plot
     if(!add){
-      newmar <- oldmar <- par()$mar
-      newmar[4] <- newmar[2]
-      par(mar=newmar)
       plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1], 
            ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
       if(tickEndYr){ # include ending year in axis labels
@@ -1047,7 +1050,6 @@ SSplotComparisons <-
     mtext(side=2,line=3,FvalueLabel)
     box()
     if(legend) legendfun(legendlabels)
-    if(exists("oldmar")) par(mar=oldmar)
 
     # return upper y-limit
     return(ylim[2])
