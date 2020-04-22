@@ -134,8 +134,8 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }
 
   # write a header
+  writeComment("#V3.24")
   writeComment("#C control file created using the SS_writectl function in the R package r4ss")
-  writeComment(paste("#C should work with SS version:",ctllist$SSversion))
   writeComment(paste("#C file write time:",Sys.time()))
   writeComment("#")
 
