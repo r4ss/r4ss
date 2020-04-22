@@ -218,7 +218,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 
   # MG environmental linkage lines
   writeComment("#")
-  if(any(ctllist$MG_parms$env_var > 0)) {
+  if(any(ctllist$MG_parms$env_var != 0)) {
     wl("read_MG_custom_env_var")
     if(ctllist$read_MG_custom_env_var == 1) {
       printdf("MG_custom_env_var")
@@ -230,7 +230,6 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
   }
   writeComment("#")
-  
   # MG block lines
   if(!is.null(ctllist[["custom_MG_block"]])) {
     wl("custom_MG_block")
