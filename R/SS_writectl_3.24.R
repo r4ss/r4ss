@@ -192,7 +192,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("GrowthModel",comment="# GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented")
   wl("Growth_Age_for_L1")
   wl("Growth_Age_for_L2",comment="#_Growth_Age_for_L2 (999 to use as Linf)")
-
+  if(ctllist$GrowthModel == 3) {
+    wl("N_ageK", comment = "# number of K multipliers to read")
+    wl.vector("Age_K_points", comment = "# ages for K multiplier")
+  }
   wl("SD_add_to_LAA",comment="#_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)")
   wl("CV_Growth_Pattern",comment="#_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)")
   wl("maturity_option",comment=
