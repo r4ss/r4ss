@@ -213,7 +213,7 @@ SSplotComparisons <-
              "Recruitment deviations",  #5
              "Index",                   #6
              "Log index",               #7
-             "1 - SPR",                 #8 may not always be accurate
+             "SPR-related quantity",    #8 automatically updated when consistent
              "Density",                 #9
              "Management target",       #10
              "Minimum stock size threshold", #11
@@ -385,14 +385,14 @@ SSplotComparisons <-
   }
   SPRratioLabel <- unique(SPRratioLabels)
   if(length(SPRratioLabel)>1){
-    warning("setting label for SPR plot to default input because models",
-            "don't have matching labels")
+    warning("setting label for SPR plot to 8th element of input 'labels' ",
+            "because the models don't have matching labels")
     SPRratioLabel <- labels[8]
   }
   FvalueLabel <- unique(FvalueLabels)
   if(length(FvalueLabel)>1){
-    warning("setting label for F plot to default input because models",
-            "don't have matching labels")
+    warning("setting label for F plot to 13th element of input 'labels' ",
+            "because the models don't have matching labels")
     FvalueLabel <- labels[13]
   }else{
     FvalueLabel <- gsub("_", " ", FvalueLabel)
@@ -683,11 +683,17 @@ SSplotComparisons <-
       } else {
         xlim <- range(SpawnBio$Yr[-c(1,2)])
       }
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))){
+        xlim[2] <- max(endyrvec)
+      }
     }
-    ylim <- ylimAdj*range(0, SpawnBio[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, SpawnBio[SpawnBio$Yr >= xlim[1] &
+                                      SpawnBio$Yr <= xlim[2],
+                                      models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- range(ylim, ylimAdj*SpawnBioUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- range(ylim, ylimAdj*SpawnBioUpper[SpawnBio$Yr >= xlim[1] &
+                                                SpawnBio$Yr <= xlim[2],
+                                                models[uncertainty]], na.rm=TRUE)
     }
 
     # set units on spawning biomass plot
@@ -805,9 +811,13 @@ SSplotComparisons <-
       xlim <- range(Bratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- ylimAdj*range(0, Bratio[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, Bratio[Bratio$Yr >= xlim[1] &
+                                    Bratio$Yr <= xlim[2],
+                                    models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim, BratioUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- ylimAdj*range(ylim/ylimAdj, BratioUpper[Bratio$Yr >= xlim[1] &
+                                                      Bratio$Yr <= xlim[2],
+                                                      models[uncertainty]], na.rm=TRUE)
     }
 
     # make plot
@@ -883,19 +893,29 @@ SSplotComparisons <-
       xlim <- range(SPRratio$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- ylimAdj*range(0, SPRratio[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, SPRratio[SPRratio$Yr >= xlim[1] &
+                                      SPRratio$Yr <= xlim[2],
+                                      models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim, SPRratioUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- ylimAdj*range(ylim/ylimAdj,
+                            SPRratioUpper[SPRratio$Yr >= xlim[1] &
+                                          SPRratio$Yr <= xlim[2],
+                                          models[uncertainty]], na.rm=TRUE)
     }
 
     # make plot
     if(!add){
-      # store current margin parameters
-      newmar <- oldmar <- par()$mar
-      # make right-hand y-axis match the left hand side for this one
-      # plot that has labels on both left and right
-      newmar[4] <- newmar[2]
-      par(mar=newmar)
+      if(!is.na(SPRratioLabel) &&
+         SPRratioLabel == paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
+        # add to right-hand outer margin to make space for second vertical axis
+        # store current margin parameters
+        # save old margins
+        newmar <- oldmar <- par()$mar
+        # match right-hand margin value to left-hand value
+        newmar[4] <- newmar[2]
+        # update graphics parameters
+        par(mar=newmar)
+      }
       plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1],
            ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
       axis(2)
@@ -927,7 +947,8 @@ SSplotComparisons <-
         # draw line at sprtarg
         yticks <- pretty(ylim)
         if(!is.na(SPRratioLabel) &&
-           SPRratioLabel==paste("(1-SPR)/(1-SPR_",floor(100*sprtarg),"%)",sep="")){
+           SPRratioLabel==paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
+          # add right-hand vertical axis showing 1-SPR
           abline(h=1,col="red",lty=2)
           text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
           axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
@@ -985,16 +1006,18 @@ SSplotComparisons <-
       xlim <- range(Fvalue$Yr)
       if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
     }
-    ylim <- ylimAdj*range(0, Fvalue[,models], na.rm=TRUE)
+    ylim <- ylimAdj*range(0, Fvalue[Fvalue$Yr >= xlim[1] &
+                                    Fvalue$Yr <= xlim[2],
+                                    models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim, FvalueUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- ylimAdj*range(ylim/ylimAdj,
+                            FvalueUpper[Fvalue$Yr >= xlim[1] &
+                                        Fvalue$Yr <= xlim[2],
+                                        models[uncertainty]], na.rm=TRUE)
     }
 
     # make plot
     if(!add){
-      newmar <- oldmar <- par()$mar
-      newmar[4] <- newmar[2]
-      par(mar=newmar)
       plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1], 
            ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
       if(tickEndYr){ # include ending year in axis labels
@@ -1027,7 +1050,6 @@ SSplotComparisons <-
     mtext(side=2,line=3,FvalueLabel)
     box()
     if(legend) legendfun(legendlabels)
-    if(exists("oldmar")) par(mar=oldmar)
 
     # return upper y-limit
     return(ylim[2])
@@ -1038,11 +1060,25 @@ SSplotComparisons <-
     if(!any(uncertainty)){
       show_uncertainty <- FALSE
     }
+    # determine x-limits
+    if(is.null(xlim)){
+      if(show_equilibrium){
+        xlim <- range(recruits$Yr)
+      } else {
+        xlim <- range(recruits$Yr[-c(1,2)])
+      }
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+    }
+    
     # determine y-limits
-    ylim <- ylimAdj*range(0,recruits[,models],na.rm=TRUE)
+    ylim <- ylimAdj*range(0, recruits[recruits$Yr >= xlim[1] &
+                                      recruits$Yr <= xlim[2],
+                                      models], na.rm=TRUE)
     if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim, recruits[,models[uncertainty]],
-                            recruitsUpper[,models[uncertainty]], na.rm=TRUE)
+      ylim <- ylimAdj*range(ylim/ylimAdj,
+                            recruitsUpper[recruits$Yr >= xlim[1] &
+                                          recruits$Yr <= xlim[2],
+                                          models[uncertainty]], na.rm=TRUE)
     }
 
     # do some automatic scaling of the units
@@ -1056,14 +1092,7 @@ SSplotComparisons <-
       yunits <- 1e6
       ylab <- gsub("1,000s","billions",ylab)
     }
-    if(is.null(xlim)){
-        if(show_equilibrium){
-            xlim <- range(recruits$Yr)
-        } else {
-            xlim <- range(recruits$Yr[-c(1,2)])
-        }
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
+
     # plot lines showing recruitment
     if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
       matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
@@ -1098,7 +1127,7 @@ SSplotComparisons <-
       for(iline in 1:nlines){
         imodel <- models[iline]
         if(uncertainty[imodel]){
-            ## plot all but equilbrium values
+          ## plot all but equilbrium values
           xvec <- recruits$Yr
           if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
           old_warn <- options()$warn      # previous setting
@@ -1108,16 +1137,16 @@ SSplotComparisons <-
                  x1=xvec[-c(1,2)], y1=as.numeric(recruitsUpper[-c(1,2),imodel]),
                  length=0.01, angle=90, code=3, col=col[imodel])
           options(warn=old_warn)  #returning to old value
-        if(show_equilibrium){
+          if(show_equilibrium){
             arrows(x0=xEqu[imodel],
                    y0=pmax(as.numeric(recruitsLower[1,imodel]),0),
                    x1=xEqu[imodel],
                    y1=as.numeric(recruitsUpper[1,imodel]),
                    length=0.01, angle=90, code=3, col=col[imodel])
+          }
         }
       }
     }
-  }
 
     abline(h=0,col="grey")
     if(legend){
@@ -1156,18 +1185,30 @@ SSplotComparisons <-
     if(!any(uncertainty)){
       show_uncertainty <- FALSE
     }
+
+
+
     # empty plot
     if(is.null(xlim)){
       xlim <- range(recdevs$Yr, na.rm=TRUE)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
+      if(!is.null(endyrvec) & all(endyrvec < max(xlim))){
+        xlim[2] <- max(endyrvec)
+      }
     }
-    ylim <- ylimAdj*range(recdevs[,models],na.rm=TRUE)
+    ylim <- ylimAdj*range(recdevs[recdevs$Yr >= xlim[1] &
+                                  recdevs$Yr <= xlim[2],
+                                  models], na.rm=TRUE)
     if(show_uncertainty){
       if(all(is.na(recdevsLower[,models]))){
         # can't do uncertainty if no range present
         return(invisible(NA))
       }
-      ylim <- ylimAdj*range(recdevsLower[,models],recdevsUpper[,models],na.rm=TRUE)
+      ylim <- ylimAdj*range(recdevsLower[recdevs$Yr >= xlim[1] &
+                                         recdevs$Yr <= xlim[2],
+                                         models],
+                            recdevsUpper[recdevs$Yr >= xlim[1] &
+                                         recdevs$Yr <= xlim[2],
+                                         models], na.rm=TRUE)
     }
     ylim <- range(-ylim,ylim) # make symmetric
 
