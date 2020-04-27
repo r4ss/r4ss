@@ -1186,6 +1186,8 @@ SSplotComparisons <-
       show_uncertainty <- FALSE
     }
 
+
+
     # empty plot
     if(is.null(xlim)){
       xlim <- range(recdevs$Yr, na.rm=TRUE)
