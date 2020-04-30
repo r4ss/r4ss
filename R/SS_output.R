@@ -1608,11 +1608,13 @@ SS_output <-
 
   srhead <- matchfun2("SPAWN_RECRUIT",0,"SPAWN_RECRUIT",last_row_index,cols=1:6)
   rmse_table <- as.data.frame(srhead[-(1:(last_row_index-1)),1:5])
+  rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
   rmse_table <- type.convert(rmse_table, as.is = TRUE)
   names(rmse_table) <- srhead[last_row_index-1,1:5]
   names(rmse_table)[4] <- "RMSE_over_sigmaR"
   sigma_R_in <- as.numeric(srhead[last_row_index-6,1])
   rmse_table <- rmse_table
+  row.names(rmse_table) <- NULL
 
   # Bias adjustment ramp
   biascol <- grep("breakpoints_for_bias", srhead)
@@ -1625,6 +1627,9 @@ SS_output <-
   ## Spawner-recruit curve
   # read SPAWN_RECRUIT table
   raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index+1, "INDEX_2", -1)
+  if(raw_recruit[1,1]=="S/Rcurve") {
+    raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index, "INDEX_2", -1)
+  }
 
   # starting in 3.30.11.00, a new section with the full spawn recr curve was added
   spawn_recruit_end <- grep("Full_Spawn_Recr_Curve", raw_recruit[,1])
@@ -1645,7 +1650,6 @@ SS_output <-
   raw_recruit[raw_recruit=="_"] <- NA
   raw_recruit <- raw_recruit[-(1:2),] # remove header rows
   recruit <- raw_recruit[-(1:2),] # remove rows for Virg and Init
-
   # temporary change for model that has bad values in dev column
   recruit$dev[recruit$dev=="-nan(ind)"] <- NA
 
