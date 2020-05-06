@@ -386,7 +386,7 @@ SS_output <-
     yieldraw <- matchfun2("SPR/YPR_Profile",1,"Dynamic_Bzero",-2)
   }
   # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
-  if(yieldraw[[1]][1]=="absent"){
+  if(yieldraw[[1]][1]=="absent" & verbose){
     cat("!warning: Report.sso appears to be early version from before Hessian was estimated.\n",
         "         equilibrium yield estimates not included in output.\n")
     yieldraw <- NA
