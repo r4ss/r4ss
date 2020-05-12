@@ -274,11 +274,15 @@ SSsummarize <- function(biglist,
     quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
+  # rows numbers of derived quantities that start with "SSB_"
   SSBrows <- grep("SSB_",quants$Label)
+  # row numbers that start with "SSB_" but are not part of time series
   SSBexclude <- c(grep("SSB_unfished",quants$Label, ignore.case=TRUE),
                   grep("SSB_Btgt",quants$Label, ignore.case=TRUE),
                   grep("SSB_SPR",quants$Label, ignore.case=TRUE),
-                  grep("SSB_MSY", quants$Label, ignore.case=TRUE))
+                  grep("SSB_MSY", quants$Label, ignore.case=TRUE),
+                  grep("SSB_F01",quants$Label, ignore.case = TRUE))
+  # filter rows to only include time series
   SSBrows <- setdiff(SSBrows, SSBexclude)
   # identify spawning biomass parameters
   SpawnBio <- quants[SSBrows, ]
