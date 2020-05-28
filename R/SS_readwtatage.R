@@ -16,7 +16,9 @@
 #' 
 SS_readwtatage <- function(file = "wtatage.ss", verbose=TRUE) {
   if(!file.exists(file) | file.info(file)$size==0) {
-    if(verbose) message("Skipping weight-at-age file. File missing or empty:",file,"\n")
+    if(verbose){
+      message("Skipping weight-at-age file. File missing or empty: ", file)
+    }
     return(NULL)
   }
 

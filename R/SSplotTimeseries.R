@@ -187,12 +187,6 @@ SSplotTimeseries <-
   # crop any years outside the range of maxyr to maxyr
   ts <- ts[ts$YrSeas >= minyr & ts$YrSeas <= maxyr,]
 
-  # warn about spawning season--seems to no longer be necessary now that title
-  # is update for to reflect spawning season
-  ## if(spawnseas>1 & subplot %in% c(3,6,7,8,9,10) ){
-  ##   cat("Note: spawning seems to be in season ",spawnseas,". Some plots will show only this season.\n",sep="")
-  ## }
-
   # define which years are forecast or not
   ts$period <- "time"
   ts$period[ts$Yr < startyr] <- "equilibria"
@@ -378,9 +372,11 @@ SSplotTimeseries <-
           stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0
         }
         if(max(stdtable$Yr) < max(floor(ts$YrSeas))){
-          cat("  !warning:\n",
-              "   ",max(stdtable$Yr),"is last year with uncertainty in Report file, but",max(ts$YrSeas),"is last year of time series.\n",
-              "    Consider changing starter file input for 'max yr for sdreport outputs' to -2\n")
+          warning(max(stdtable$Yr),
+                  " is the last year with uncertainty in Report file, but ",
+                  max(ts$YrSeas)," is last year of time series. ",
+                  "Consider changing starter file input for ",
+                  "'max yr for sdreport outputs' to -2")
         }
     stdtable <- stdtable[stdtable$Yr >= minyr & stdtable$Yr <= maxyr,]
       }
@@ -560,7 +556,9 @@ SSplotTimeseries <-
       } # end loop over areas
       if(nareas>1 & subplot%in%c(2,3,5,6,8,10,12)) legend("topright",legend=areanames[areas],lty=1,pch=1,col=areacols[areas],bty="n")
     } # end test for birthseason plots or not
-    if(verbose) cat("  finished time series subplot ",subplot,": ",main,"\n",sep="")
+    if(verbose){
+      message("  finished time series subplot ", subplot, ": ", main)
+    }
     if(print) dev.off()
     return(plotinfo)
   } # end biofunc

@@ -157,10 +157,12 @@ SS_output <-
                     "choosing most recently modified:",parfile,"\n")
   }
   if(length(parfile)==0){
-    if(!hidewarn) message("Some stats skipped because the .par file not found:\n  ",parfile,"\n")
+    if(!hidewarn){
+      message("Some stats skipped because the .par file not found.")
+    }
     parfile <- NA
   }else{
-    parfile <- file.path(dir,parfile)
+    parfile <- file.path(dir, parfile)
   }
 
   # read three rows to get start time and version number from rep file
@@ -199,11 +201,13 @@ SS_output <-
   # test for version compatibility with this code
   if(SS_versionNumeric < SS_versionMin  | SS_versionNumeric > SS_versionMax){
     warning("This function tested on SS versions 3.24 and 3.30.\n",
-        "  You are using ",substr(SS_version,1,9)," which MIGHT NOT WORK with this R code.\n\n",sep="")
+            "  You are using ", substr(SS_version,1,9),
+            " which MIGHT NOT WORK with this package.")
   }else{
     if(verbose){
-      message("Note: this function tested on SS versions 3.24 and 3.30.\n",
-              "  You are using ",substr(SS_version,1,9)," which SHOULD work with this R code.\n",sep="")
+      message("This function tested on SS versions 3.24 and 3.30.\n",
+              "  You are using ", substr(SS_version,1,9),
+              " which SHOULD work with this package.")
     }
   }
 
@@ -286,7 +290,9 @@ SS_output <-
   }
 
   # read report file
-  if(verbose) message("Reading full report file\n")
+  if(verbose){
+    message("Reading full report file")
+  }
   flush.console()
 
   if(is.null(ncols)) ncols <- get_ncol(repfile)
@@ -303,9 +309,14 @@ SS_output <-
          "  increase 'ncols' input above current value (ncols=",ncols,")")
   }
   if(verbose){
-    if((maxnonblank+1)==ncols) cat("Got all columns using ncols =",ncols,"\n")
-    if((maxnonblank+1)<ncols) cat("Got all columns. To speed code, use ncols=",maxnonblank+1," in the future.\n",sep="")
-    cat("Got Report file\n")
+    if((maxnonblank+1)==ncols){
+      message("Got all columns using ncols =", ncols)
+    }
+    if((maxnonblank+1) < ncols){
+      message("Got all columns. To speed code, use ncols=", maxnonblank + 1,
+              " in the future.")
+    }
+    message("Got Report file")
   }
   flush.console()
 
@@ -435,7 +446,7 @@ SS_output <-
   if(warn){
     warnname <- file.path(dir, warnfile)
     if(!file.exists(warnname)){
-      cat(warnfile, "file not found\n")
+      message(warnfile, "file not found")
       nwarn <- NA
       warn <- NA
     }else{
@@ -443,12 +454,15 @@ SS_output <-
       warnstring <- warn[grep("N warnings: ",warn)]
       if(length(warnstring)>0){
         nwarn <- as.numeric(strsplit(warnstring,"N warnings: ")[[1]][2])
-        textblock <- c(paste("were", nwarn, "warnings"),
-                       paste("was", nwarn, "warning"))[1+(nwarn==1)]
-        if(verbose) cat("Got warning file.\n",
-                        " There", textblock, "in", warnname,"\n")
+        textblock <- ifelse(nwarn > 1,
+                            paste("were", nwarn, "warnings"),
+                            paste("was", nwarn, "warning"))
+        if(verbose){
+          message("Got warning file.\n",
+                  " There", textblock, "in", warnname,"\n")
+        }
       }else{
-        cat(warnfile, "file is missing the string 'N warnings'!\n")
+        message(warnfile, "file is missing the string 'N warnings'!\n")
         nwarn <- NA
       }
     }
@@ -1044,6 +1058,13 @@ SS_output <-
     temp <- c(temp[1:12],"PR_type_code",temp[-(1:12)])
     temp <- temp[-length(temp)]
     names(parameters) <- temp
+  }
+  # fix issue with missing column in dev output
+  # associated with SS version 3.30.01.12
+  if("Gradient" %in% names(parameters) &&
+     "dev" %in% parameters$Gradient){
+    parameters$Gradient[parameters$Gradient == "dev"] <- NA
+    parameters$Gradient <- as.numeric(parameters$Gradient)
   }
 
   # convert really old numeric codes to names
