@@ -95,38 +95,78 @@ SS_output <-
       })
     }
 
-    matchfun2 <- function(string1, adjust1, string2, adjust2, cols = "nonblank",
-                          matchcol1 = 1, matchcol2 = 1,
-                          objmatch = rawrep, objsubset = rawrep,
-                          substr1 = TRUE, substr2 = TRUE, header = FALSE) {
+    matchfun2 <- function(string1,
+                          adjust1,
+                          string2 = NULL,
+                          adjust2 = -1,
+                          which_blank = 1,
+                          cols = "nonblank",
+                          matchcol1 = 1,
+                          matchcol2 = 1,
+                          obj = rawrep,
+                          blank_lines = rep_blank_lines,
+                          substr1 = TRUE,
+                          substr2 = TRUE,
+                          header = FALSE) {
       # return a subset of values from the report file (or other file)
       # subset is defined by character strings at the start and end, with integer
       # adjustments of the number of lines to above/below the two strings
+      #
+      #' @param string1 keyword near top of table
+      #' @param adjust1 integer for number of rows after string1 to start table
+      #' @param string2 keyword near bottom of table
+      #' (or NULL to use blank line to end table)
+      #' @param adjust2 integer for number of rows after string2 to end table
+      #' (often a negative value)
+      #' @param which_blank which blank line (after string1) to use as the end
+      #' of the table (if using string2 = NULL)
+      #' @param cols which columns to return, can be an integer, a vector, "all",
+      #' or 'nonblank' (where this last returns all columns with at least one
+      #' non-blank values in it)
+      #' @param matchcol1 which column to search for string1
+      #' @param matchcol2 which column to search for string2
+      #' @param obj matrix object in which to search (always rawrep so far)
+      #' @param blank_lines vector of line numbers of obj which are blank
+      #' (to save the time of replicating this in each function call)
+      #' substr1 allow string1 to be a substring of the text in matchcol1?
+      #' (It must be start at the beginning regardless)
+      #' substr2 allow string2 to be a substring of the text in matchcol2?
+      #' (It must be start at the beginning regardless)
+      #' @param header Is the first row of the table a header?
       line1 <- match(
         string1,
         if (substr1) {
-          substring(objmatch[, matchcol1], 1, nchar(string1))
+          substring(obj[, matchcol1], 1, nchar(string1))
         } else {
-          objmatch[, matchcol1]
+          obj[, matchcol1]
         }
       )
-      line2 <- match(
-        string2,
-        if (substr2) {
-          substring(objmatch[, matchcol2], 1, nchar(string2))
-        } else {
-          objmatch[, matchcol2]
-        }
-      )
+      if (is.null(string2)) {
+        # get first blank or "#" line after the start
+        line2 <- blank_lines[blank_lines > line1][which_blank]
+      } else {
+        line2 <- match(
+          string2,
+          if (substr2) {
+            substring(obj[, matchcol2], 1, nchar(string2))
+          } else {
+            obj[, matchcol2]
+          }
+        )
+      }
       if (is.na(line1) | is.na(line2)) {
         return("absent")
       }
 
-      if (is.numeric(cols)) out <- objsubset[(line1 + adjust1):(line2 + adjust2), cols]
-      if (cols[1] == "all") out <- objsubset[(line1 + adjust1):(line2 + adjust2), ]
+      if (is.numeric(cols)) {
+        out <- obj[(line1 + adjust1):(line2 + adjust2), cols]
+      }
+      if (cols[1] == "all") {
+        out <- obj[(line1 + adjust1):(line2 + adjust2), ]
+      }
       if (cols[1] == "nonblank") {
         # returns only columns that contain at least one non-empty value
-        out <- objsubset[(line1 + adjust1):(line2 + adjust2), ]
+        out <- obj[(line1 + adjust1):(line2 + adjust2), ]
         out <- out[, apply(out, 2, emptytest) < 1]
       }
       if (header && nrow(out) > 0) {
@@ -135,7 +175,7 @@ SS_output <-
         out <- out[-1, ]
       }
       return(out)
-    }
+    } # end matchfun2
 
     df.rename <- function(df, oldnames, newnames) {
       # function to replace names in dataframes
@@ -323,15 +363,24 @@ SS_output <-
     }
     flush.console()
 
-    if (is.null(ncols)) ncols <- get_ncol(repfile)
+    if (is.null(ncols)) {
+      ncols <- get_ncol(repfile)
+    }
     rawrep <- read.table(
       file = repfile, col.names = 1:ncols, fill = TRUE, quote = "",
-      colClasses = "character", nrows = -1, comment.char = ""
+      colClasses = "character", nrows = -1, comment.char = "",
+      blank.lines.skip = FALSE
     )
-
-    # Ian T.: if the read.table command above had "blank.lines.skip=TRUE" then blank lines could play a role in parsing the report file
+    # which lines in report file are all blank (either spaces or empty)
+    rep_blank_lines <- which(apply(rawrep, 1, emptytest) == 1)
+    # which lines in report file have hash in first column and blank after
+    rep_hash_lines <- which(rawrep[,1] == "#" & apply(rawrep[,-1], 1, emptytest) == 1)
+    # combine both types (could be modified in the future to focus on just one type
+    rep_blank_lines <- sort(unique(c(rep_blank_lines, rep_hash_lines)))
 
     # check empty columns
+    # these checks should not be triggered thanks to use of get_ncol() above,
+    # added in December 2019
     nonblanks <- apply(rawrep, 2, emptytest) < 1
     maxnonblank <- max(0, (1:ncols)[nonblanks == TRUE])
     if (maxnonblank == ncols) {
@@ -342,11 +391,11 @@ SS_output <-
     }
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
-        message("Got all columns using ncols =", ncols)
+        message("Got all columns using ncols = ", ncols)
       }
       if ((maxnonblank + 1) < ncols) {
         message(
-          "Got all columns. To speed code, use ncols=", maxnonblank + 1,
+          "Got all columns. To speed code, use ncols = ", maxnonblank + 1,
           " in the future."
         )
       }
@@ -367,20 +416,26 @@ SS_output <-
         )
       }
       # read the file
-      rawforecast1 <- read.table(file = forecastname, col.names = 1:ncols, fill = TRUE, quote = "", colClasses = "character", nrows = -1)
+      rawforecast1 <- read.table(
+        file = forecastname, col.names = 1:ncols, fill = TRUE, quote = "",
+        colClasses = "character", nrows = -1
+      )
 
       # get SPR target
-      sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target", rawforecast1[, 1]), 2])
+      sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target",
+                                                  rawforecast1[, 1]), 2])
 
       # starting in SSv3.30.10.00, the Forecast-report file has been restructured
       target_definitions <- grep("_as_target", rawforecast1[, 1], value = TRUE)
       if (length(target_definitions) == 0) {
         # old setup (prior to 3.30.10.00)
-        btarg <- as.numeric(rawforecast1[matchfun("Btarget", rawforecast1[, 1]), 2])
+        btarg <- as.numeric(rawforecast1[matchfun("Btarget",
+                                                  rawforecast1[, 1]), 2])
       } else {
         # new setup with biomass target
         if ("Ratio_SSB/B0_as_target" %in% target_definitions) {
-          btarg <- as.numeric(rawforecast1[matchfun("Ratio_target", rawforecast1[, 1]), 2])
+          btarg <- as.numeric(rawforecast1[matchfun("Ratio_target",
+                                                    rawforecast1[, 1]), 2])
         }
         # new setup with F0.1_as target
         if ("F0.1_as_target" %in% target_definitions) {
@@ -401,11 +456,11 @@ SS_output <-
       }
     } else {
       if (verbose) {
-        cat(
-          "You skipped the forecast file\n",
-          "  setting SPR target and Biomass target to -999\n",
-          "  lines won't be drawn for these targets\n",
-          "  (can replace or override in SS_plots by setting 'sprtarg' and 'btarg')\n"
+        message(
+          "You skipped the forecast file so",
+          "  setting SPR target and Biomass target to -999.",
+          "  Lines won't be drawn for these targets by SS_plots unless",
+          "  'sprtarg' and 'btarg' are provided as inputs."
         )
       }
       sprtarg <- -999
@@ -415,20 +470,20 @@ SS_output <-
     minbthresh <- -999
     if (!is.na(btarg) & btarg == 0.4) {
       if (verbose) {
-        cat(
-          "Setting minimum biomass threshhold to 0.25\n",
-          "  based on US west coast assumption associated with biomass target of 0.4.\n",
-          "  (can replace or override in SS_plots by setting 'minbthresh')\n"
+        message(
+          "Setting minimum biomass threshhold to 0.25",
+          "  based on US west coast assumption associated with biomass target of 0.4.",
+          "  (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.25 # west coast assumption for non flatfish
     }
     if (!is.na(btarg) & btarg == 0.25) {
       if (verbose) {
-        cat(
-          "Setting minimum biomass threshhold to 0.25\n",
-          "  based on US west coast assumption associated with flatfish target of 0.25.\n",
-          "  (can replace or override in SS_plots by setting 'minbthresh')\n"
+        message(
+          "Setting minimum biomass threshhold to 0.25",
+          "  based on US west coast assumption associated with flatfish target of 0.25.",
+          "  (can replace or override in SS_plots by setting 'minbthresh')"
         )
       }
       minbthresh <- 0.125 # west coast assumption for flatfish
@@ -436,17 +491,20 @@ SS_output <-
 
     # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
     # which have SPR/YPR profile in Report.sso
+    # (this was previously in Forecast-report.sso)
     if (SS_versionNumeric >= 3.3) {
+      # 3.30 models have "Finish SPR/YPR profile" followed by some additional comments
       yieldraw <- matchfun2("SPR/YPR_Profile", 1, "Finish", -2)
     } else {
-      yieldraw <- matchfun2("SPR/YPR_Profile", 1, "Dynamic_Bzero", -2)
+      # 3.24 models and earlier use blank line to end table
+      yieldraw <- matchfun2("SPR/YPR_Profile", 1)
     }
     # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
     if (yieldraw[[1]][1] == "absent") {
       if (verbose) {
-        cat(
-          "!warning: Report.sso appears to be early version from before Hessian was estimated.\n",
-          "         equilibrium yield estimates not included in output.\n"
+        warning(
+          "Report.sso appears to be early version from before Hessian was estimated.",
+          "Equilibrium yield estimates not included in output."
         )
       }
       yieldraw <- NA
@@ -481,16 +539,20 @@ SS_output <-
       names(logfile) <- c("TempFile", "Size")
       maxtemp <- max(logfile$Size)
       if (maxtemp == 0) {
-        if (verbose) cat("Got log file. There were NO temporary files were written in this run.\n")
+        if (verbose) {
+          message("Got log file. There were NO temporary files were written in this run.")
+        }
       } else {
         if (verbose) {
-          cat("!warning: temporary files were written in this run:\n")
+          message("!warning: temporary files were written in this run:")
           print(logfile)
         }
       }
     } else {
       logfile <- NA
-      if (verbose) cat("No non-empty log file in directory or too many files matching pattern *.log\n")
+      if (verbose) {
+        message("No non-empty log file in directory or too many files matching pattern *.log")
+      }
     }
 
     # read warnings file
@@ -511,8 +573,8 @@ SS_output <-
           )
           if (verbose) {
             message(
-              "Got warning file.\n",
-              " There", textblock, "in", warnname, "\n"
+              "Got warning file.",
+              " There", textblock, " in ", warnname
             )
           }
         } else {
@@ -527,22 +589,23 @@ SS_output <-
     if (verbose) cat("Finished reading files\n")
     flush.console()
 
-    # selectivity read first because it was used to get fleet info
-    # this can be moved to join rest of selex stuff after SSv3.11 not supported any more
-    selex <- matchfun2("LEN_SELEX", 6, "AGE_SELEX", -1, header = TRUE)
-    # update to naming convention associated with 3.30.01.15
-    selex <- df.rename(selex,
+    # length selectivity is read earlier than other tables because it was used
+    # to get fleet info this can be moved to join rest of selex stuff after
+    # SSv3.11 is not supported any more
+    sizeselex <- matchfun2("LEN_SELEX", 6, header = TRUE)
+    # update to size selectivity to naming convention associated with 3.30.01.15
+    sizeselex <- df.rename(sizeselex,
       oldnames = c("fleet", "year", "seas", "gender", "morph", "label"),
       newnames = c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label")
     )
-    selex <- type.convert(selex, as.is = TRUE)
+    sizeselex <- type.convert(sizeselex, as.is = TRUE)
 
     ## DEFINITIONS section (new in SSv3.20)
-    rawdefs <- matchfun2("DEFINITIONS", 1, "LIKELIHOOD", -1)
+    rawdefs <- matchfun2("DEFINITIONS", 1)
     if ("Jitter:" %in% rawdefs$X1) {
       # new format for definitions (starting with 3.30.12)
       # ("Jitter" is an indicator of the new format)
-
+browser()
       get.def <- function(string) {
         # function to grab numeric value from 2nd column matching string in 1st column
         row <- grep(string, rawdefs$X1)[1]
@@ -695,7 +758,7 @@ SS_output <-
 
       # more dimensions
       nfishfleets <- sum(IsFishFleet)
-      nsexes <- length(unique(as.numeric(selex$Sex)))
+      nsexes <- length(unique(as.numeric(sizeselex$Sex)))
       nareas <- max(as.numeric(rawrep[begin:end, 1]))
       # startyr is the 'initial' year not including VIRG or INIT years
       startyr <- min(as.numeric(rawrep[begin:end, 2])) + 2
@@ -705,19 +768,6 @@ SS_output <-
       tempaccu <- as.character(rawrep[matchfun("Natural_Mortality") + 1, -(1:5)])
       accuage <- max(as.numeric(tempaccu[tempaccu != ""]))
     } # end read of DEFINITIONS
-
-    # which column of INDEX_1 has number of CPUE values (used in reading INDEX_2)
-    if (SS_versionNumeric >= 3.3) {
-      ncpue_column <- 11
-      INDEX_1 <- matchfun2("INDEX_1", 1, "INDEX_3", -4, header = TRUE)
-      # remove any comments at the bottom of table
-      INDEX_1 <- INDEX_1[substr(INDEX_1$Fleet, 1, 1) != "#", ]
-      # count of observations per index
-      ncpue <- sum(as.numeric(INDEX_1$N), na.rm = TRUE)
-    } else {
-      ncpue_column <- 11
-      ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1") + 1 + 1:nfleets, ncpue_column]))
-    }
 
     # compositions
     if (comp) { # skip this stuff if no CompReport.sso file
@@ -974,7 +1024,7 @@ SS_output <-
       #### if natlen were already defined, it could be
       ## lbinspop <- as.numeric(names(natlen)[-c(1:11)])
       lbinspop <- NA
-      nlbinspop <- ncol(selex) - 5 # hopefully this works alright
+      nlbinspop <- ncol(sizeselex) - 5 # hopefully this works alright
       agebins <- NA
       nagebins <- NA
       Lbin_method <- 2
@@ -982,6 +1032,8 @@ SS_output <-
     }
 
     # info on growth morphs (see also section setting mainmorphs below)
+    morph_indexing <- matchfun2("MORPH_INDEXING", 1)
+browser()
     endcode <- "SIZEFREQ_TRANSLATION" # (this section heading not present in all models)
     # if(SS_versionshort=="SS-V3.11") shift <- -1 else shift <- -2
     shift <- -1
@@ -1826,15 +1878,6 @@ SS_output <-
       newnames = c("Yr", "SpawnBio", "bias_adjusted")
     )
 
-    ## variance and sample size tuning information
-    vartune <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets + 1), header = TRUE)
-    # fill in column name that was missing in SS 3.24 (and perhaps other versions)
-    # and replace inconsistent name in some 3.30 versions with standard name
-    vartune <- df.rename(vartune,
-      oldnames = c("NoName", "fleetname"),
-      newnames = c("Name", "Name")
-    )
-
     ## FIT_LEN_COMPS
     if (SS_versionNumeric >= 3.3) {
       # This section hasn't been read by SS_output in the past,
@@ -2123,7 +2166,7 @@ SS_output <-
     returndat$mcmc <- mcmc
     returndat$survey_units <- survey_units
     returndat$survey_error <- survey_error
-    returndat$index_variance_tuning_check <- vartune
+    returndat$index_variance_tuning_check <- INDEX_1
     returndat$IsFishFleet <- IsFishFleet
     returndat$nfishfleets <- nfishfleets
 
@@ -2338,28 +2381,29 @@ SS_output <-
 
     # Length selex and retention
     if (!forecast) {
-      selex <- selex[selex$Yr <= endyr, ]
+      sizeselex <- sizeselex[sizeselex$Yr <= endyr, ]
     }
-    returndat$sizeselex <- selex
+    returndat$sizeselex <- sizeselex
 
     # Age based selex
-    # determine which keyword follows the AGE_SELEX section
-    if (!is.na(matchfun("ENVIRONMENTAL_DATA"))) {
-      # environmental data follows if present
-      ageselex <- matchfun2("AGE_SELEX", 4, "ENVIRONMENTAL_DATA", -1, header = TRUE)
-    } else if (!is.na(matchfun("TAG_Recapture"))) {
-      # tag recap info follows if present and no environmental data
-      ageselex <- matchfun2("AGE_SELEX", 4, "TAG_Recapture", -1, header = TRUE)
-    } else if (!is.na(matchfun("NUMBERS_AT_AGE")) &&
-      matchfun("NUMBERS_AT_AGE") < matchfun("BIOLOGY")) {
-      # a numbers-at-age section occurs here if detailed age-structured reports are
-      # requested in the starter file, otherwise, a similar section occurs after the
-      # biology section
-      ageselex <- matchfun2("AGE_SELEX", 4, "NUMBERS_AT_AGE", -1, header = TRUE)
-    } else {
-      # if all that doesn't get satisfied, biology comes next
-      ageselex <- matchfun2("AGE_SELEX", 4, "BIOLOGY", -1, header = TRUE)
-    }
+    ## # determine which keyword follows the AGE_SELEX section
+    ## if (!is.na(matchfun("ENVIRONMENTAL_DATA"))) {
+    ##   # environmental data follows if present
+    ##   ageselex <- matchfun2("AGE_SELEX", 4, "ENVIRONMENTAL_DATA", -1, header = TRUE)
+    ## } else if (!is.na(matchfun("TAG_Recapture"))) {
+    ##   # tag recap info follows if present and no environmental data
+    ##   ageselex <- matchfun2("AGE_SELEX", 4, "TAG_Recapture", -1, header = TRUE)
+    ## } else if (!is.na(matchfun("NUMBERS_AT_AGE")) &&
+    ##   matchfun("NUMBERS_AT_AGE") < matchfun("BIOLOGY")) {
+    ##   # a numbers-at-age section occurs here if detailed age-structured reports are
+    ##   # requested in the starter file, otherwise, a similar section occurs after the
+    ##   # biology section
+    ##   ageselex <- matchfun2("AGE_SELEX", 4, "NUMBERS_AT_AGE", -1, header = TRUE)
+    ## } else {
+    ##   # if all that doesn't get satisfied, biology comes next
+    ##   ageselex <- matchfun2("AGE_SELEX", 4, "BIOLOGY", -1, header = TRUE)
+    ## }
+    ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
     ageselex <- df.rename(ageselex,
       oldnames = c(
         "fleet", "year", "seas", "gender",
@@ -2789,6 +2833,29 @@ SS_output <-
       if (verbose) cat("You skipped the equilibrium yield data\n")
     }
     flush.console()
+
+
+    ## variance and sample size tuning information
+    INDEX_1 <- matchfun2("INDEX_1", 1, "INDEX_1", (nfleets + 1), header = TRUE)
+    # fill in column name that was missing in SS 3.24 (and perhaps other versions)
+    # and replace inconsistent name in some 3.30 versions with standard name
+    INDEX_1 <- df.rename(INDEX_1,
+      oldnames = c("NoName", "fleetname"),
+      newnames = c("Name", "Name")
+    )
+    
+    # which column of INDEX_1 has number of CPUE values (used in reading INDEX_2)
+    if (SS_versionNumeric >= 3.3) {
+      ncpue_column <- 11
+      INDEX_1 <- matchfun2("INDEX_1", 1, "INDEX_3", -4, header = TRUE)
+      # remove any comments at the bottom of table
+      INDEX_1 <- INDEX_1[substr(INDEX_1$Fleet, 1, 1) != "#", ]
+      # count of observations per index
+      ncpue <- sum(as.numeric(INDEX_1$N), na.rm = TRUE)
+    } else {
+      ncpue_column <- 11
+      ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1") + 1 + 1:nfleets, ncpue_column]))
+    }
 
     if (ncpue > 0) {
       # CPUE/Survey series
