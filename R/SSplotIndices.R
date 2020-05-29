@@ -814,10 +814,11 @@ function(replist,subplots=c(1:10,12),
     }
     if(print & (9 %in% subplots)){
       file <- paste0("index9_standcpueall",".png")
-      caption <- "Standardized indices overlaid"
+      caption <- paste("Standardized indices overlaid.",
+                       "Each index is rescaled to have mean observation = 1.0.")
       if(any_negative){
-        caption <- paste0(caption,
-                          ". Indices with negative observations have been excluded.")
+        caption <- paste(caption,
+                         "Indices with negative observations have been excluded.")
       }
       plotinfo <- pngfun(file=file, caption=caption)
       all_index.fn()
