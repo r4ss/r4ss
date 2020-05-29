@@ -1876,16 +1876,17 @@ SSplotComparisons <-
       message("subplot 7: F value")
     }
     if(plot){
-      ymax_vec[7] <- plotF(show_uncertainty=TRUE)
+      ymax_vec[7] <- plotF(show_uncertainty=FALSE)
     }
     if(print){
       pngfun("compare7_Fvalue.png")
-      ymax_vec[7] <- plotF(show_uncertainty=TRUE)
+      ymax_vec[7] <- plotF(show_uncertainty=FALSE)
       dev.off()
     }
   }
   
   # subplot 8: F (harvest rate or fishing mortality, however defined)
+  #            with uncertainty
   if(8 %in% subplots){
     if(any(uncertainty)){
       if(verbose){
