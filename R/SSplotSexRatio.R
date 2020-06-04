@@ -17,8 +17,11 @@
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional vector of fleet names to put in the labels
 #' @param yupper upper limit on ymax (only applies for sexratio.option == 1)
-#' @param linescol Color for line showing expected value (default is purple)
+#' @param datonly make plots of data without fits?
+#' @param linescol Color for line showing expected value (default is purple).
 #' @param lwd line width
+#' @param showsampsize add sample sizes to plot
+#' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
 #' @param pwidth default width of plots printed to files in units of
@@ -56,8 +59,10 @@ SSplotSexRatio <-
   function(replist, kind="AGE", sexratio.option=2, CI=0.75,
            plot=TRUE, print=FALSE, fleets="all",
            fleetnames="default",  yupper=4,
+           datonly = FALSE,
            linescol=rgb(0.6,0,0.9,.7), # a purple color
            lwd=2,
+           showsampsize=TRUE, showeffN=TRUE, 
            axis1=NULL, axis2=NULL,  pwidth=6.5, pheight=5.0, punits="in",
            ptsize=10, res=300, plotdir="default", cex.main=1, 
            labels = c("Length (cm)",
@@ -126,6 +131,14 @@ SSplotSexRatio <-
   } else {
     stop("Only kind of LEN and AGE are currently supported")
   }
+
+  # modify filename for data-only plots
+  if(datonly){
+    filenamestart <- gsub(pattern = "sexratio",
+                          replacement = "sexratio_data",
+                          x = filenamestart)
+  }
+  
   ## else if(kind=="GSTLEN"){
   ##     dbase_kind <- ghostlendbase
   ##     kindlab=labels[1]
@@ -179,13 +192,14 @@ SSplotSexRatio <-
           make_multifig_sexratio(dbase=dbase, sexratio.option=sexratio.option,
                                  CI=CI,
                                  nlegends=3, legtext=list("Yr","N","effN"), lwd=lwd,
+                                 showsampsize=showsampsize, showeffN=showeffN,
                                  main=ptitle, cex.main=cex.main, xlab=kindlab,
                                  ylab=labels[3:4][sexratio.option],
                                  maxrows=maxrows, maxcols=maxcols,
                                  rows=rows, cols=cols,
                                  fixdims=fixdims, ipage=ipage, scalebins=FALSE,
                                  linescol=linescol, axis1=axis1, axis2=axis2,
-                                 yupper=yupper)
+                                 yupper=yupper, datonly = datonly)
         } # end tempfun
 
         ## Do the plotting and saving
@@ -205,8 +219,13 @@ SSplotSexRatio <-
                 paste0(".<br>Observed sex ratios (points) with ", 100*CI,
                        "% intervals (vertical lines) calculated as a ",
                        "<a href='https://www.jstor.org/stable/2676784'>",
-                       "Jeffreys interval</a> based on the adjusted input sample size. ",
-                       "The model expectation is shown in the purple line.")
+                       "Jeffreys interval</a>",
+                       " based on the adjusted input sample size.")
+              if(!datonly){
+                caption_extra <- paste(caption_extra, 
+                                       "The model expectation is shown",
+                                       " in the purple line.")
+              }
             }
             file <- paste0(filenamestart, filename_fltmkt, pagetext, ".png")
             plotinfo <- pngfun(file=file,

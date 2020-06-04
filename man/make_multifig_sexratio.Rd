@@ -22,6 +22,9 @@ make_multifig_sexratio(
   xbuffer = c(0.1, 0.1),
   ybuffer = "default",
   yupper = NULL,
+  datonly = FALSE,
+  showsampsize = TRUE,
+  showeffN = TRUE,
   axis1 = NULL,
   axis2 = NULL,
   ptscex = 1,
@@ -85,6 +88,12 @@ of total height of plot. "default" will cause c(0,.15) for sexratio.option=1
 and c(.15, .3) for sexratio.option=2.}
 
 \item{yupper}{upper limit on ymax (applied before addition of ybuffer)}
+
+\item{datonly}{make plots of data without fits?}
+
+\item{showsampsize}{add sample sizes to plot}
+
+\item{showeffN}{add effective sample sizes to plot}
 
 \item{axis1}{position of bottom axis values}
 

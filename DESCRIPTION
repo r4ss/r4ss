@@ -39,5 +39,5 @@ Encoding: UTF-8
 LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 VignetteBuilder: knitr

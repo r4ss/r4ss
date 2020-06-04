@@ -30,6 +30,9 @@
 #' of total height of plot. "default" will cause c(0,.15) for sexratio.option=1
 #' and c(.15, .3) for sexratio.option=2.
 #' @param yupper upper limit on ymax (applied before addition of ybuffer)
+#' @param datonly make plots of data without fits?
+#' @param showsampsize add sample sizes to plot
+#' @param showeffN add effective sample sizes to plot
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
 #' @param ptscex character expansion factor for points (default=1)
@@ -73,7 +76,10 @@ make_multifig_sexratio <-
            sampsizeround=1, maxrows=6, maxcols=6, 
            rows=1, cols=1, fixdims=TRUE, main="",cex.main=1,
            xlab="", ylab="Fraction female", horiz_lab="default", xbuffer=c(.1,.1),
-           ybuffer="default", yupper=NULL, axis1=NULL,
+           ybuffer="default", yupper=NULL,
+           datonly = FALSE,
+           showsampsize = TRUE, showeffN = TRUE,
+           axis1=NULL,
            axis2=NULL, ptscex=1,
            ptscol=gray(.5), linescol=4, lty=1, lwd=2, nlegends=3,
            legtext=list("yr","sampsize","effN"),
@@ -268,17 +274,22 @@ make_multifig_sexratio <-
     points(x=df2$Bin, y=df2$Obs ,ylim=yrange_big, xlim=xrange_big, pch=df2$pch2,
            col=ptscol, cex=ptscex)
     segments(x0=df2$Bin, y0=df2$lwr, y1=df2$upr, col=ptscol)
-    lines(df2$Bin, y=df2$Exp, lwd=lwd, lty=lty, col=linescol)
+
+    # add model expectation (unless data-only plot is requested)
+    if(!datonly){
+      lines(df2$Bin, y=df2$Exp, lwd=lwd, lty=lty, col=linescol)
+    }
+    
     ## add legends
     usr <- par("usr") # get dimensions of panel
     for(i in 1:nlegends){
       legtext_i <- legtext[[i]] # grab element of list
       if(legtext_i=="Yr"){
         text_i <- yr_i
-      } else if(legtext_i=="effN" & nrow(df2)>0){
+      } else if(legtext_i=="effN" & nrow(df2)>0 & showeffN){
         ## all rows should be same so grab first
         text_i <- paste0('effN=', round(df2$effN[1], sampsizeround))
-      } else if(legtext_i == "N" & nrow(df2)>0){
+      } else if(legtext_i == "N" & nrow(df2)>0 & showsampsize){
         # all rows should be same so grab first
         text_i <- paste0('N=', round(df2$Nsamp_adj[1], sampsizeround)) 
       } else {
