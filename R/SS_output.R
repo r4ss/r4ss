@@ -201,9 +201,9 @@ SS_output <-
       filetimes <- file.info(file.path(dir, parfile))$mtime
       parfile <- parfile[filetimes == max(filetimes)][1]
       if (verbose) {
-        cat(
+        message(
           "Multiple files in directory match pattern *.par\n",
-          "choosing most recently modified:", parfile, "\n"
+          "choosing most recently modified:", parfile
         )
       }
     }
@@ -219,7 +219,9 @@ SS_output <-
     # read three rows to get start time and version number from rep file
     if (file.exists(repfile)) {
       if (file.info(repfile)$size > 0) {
-        if (verbose) cat("Getting header info from:\n  ", repfile, "\n")
+        if (verbose) {
+          message("Getting header info from:\n  ", repfile)
+        }
       } else {
         stop("report file is empty: ", repfile)
       }
@@ -276,7 +278,9 @@ SS_output <-
       }
     }
     repfiletime <- findtime(rephead)
-    if (verbose) cat("Report file time:", repfiletime, "\n")
+    if (verbose) {
+      message("Report file time:", repfiletime)
+    }
 
     corfile <- NA
     if (covar) {
@@ -301,13 +305,16 @@ SS_output <-
         covartime <- findtime(covarhead)
         # the conversion to R time class below may no longer be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
-          cat("problem comparing the file creation times:\n")
-          cat("  Report.sso:", repfiletime, "\n")
-          cat("  covar.sso:", covartime, "\n")
+          message(
+            "problem comparing the file creation times:\n",
+            "  Report.sso:", repfiletime, "\n",
+            "  covar.sso:", covartime
+          )
         } else {
           if (covartime != repfiletime) {
-            cat("covar time:", covartime, "\n")
-            stop(shortrepfile, " and ", covarfile, " were from different model runs. Change input to covar=FALSE")
+            message("covar time:", covartime)
+            stop(shortrepfile, " and ", covarfile,
+                 " were from different model runs. Change input to covar=FALSE")
           }
         }
 
@@ -446,7 +453,9 @@ SS_output <-
       endyield <- matchfun("MSY_not_calculated", rawforecast1[, 1])
       if (is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
       if (yesMSY) endyield <- matchfun("findFmsy", rawforecast1[, 10])
-      if (verbose) cat("Got Forecast-report file\n")
+      if (verbose){
+        message("Got Forecast-report file")
+      }
 
       # for older versions of SS, equilibrium yield needs to come from
       # the forecast file
@@ -528,7 +537,7 @@ SS_output <-
       filetimes <- file.info(file.path(dir, logfile))$mtime
       logfile <- logfile[filetimes == max(filetimes)]
       if (verbose) {
-        cat(
+        message(
           "Multiple files in directory match pattern *.log\n",
           "choosing most recently modified file:", logfile, "\n"
         )
@@ -578,15 +587,19 @@ SS_output <-
             )
           }
         } else {
-          message(warnfile, "file is missing the string 'N warnings'!\n")
+          message(warnfile, "file is missing the string 'N warnings'!")
           nwarn <- NA
         }
       }
     } else {
-      if (verbose) cat("You skipped the warnings file\n")
+      if (verbose) {
+        message("You skipped the warnings file")
+      }
       nwarn <- NA
     }
-    if (verbose) cat("Finished reading files\n")
+    if (verbose) {
+      message("Finished reading files")
+    }
     flush.console()
 
     # length selectivity is read earlier than other tables because it was used
@@ -601,11 +614,12 @@ SS_output <-
     sizeselex <- type.convert(sizeselex, as.is = TRUE)
 
     ## DEFINITIONS section (new in SSv3.20)
-    rawdefs <- matchfun2("DEFINITIONS", 1)
+    ## (which_blank = 2 skips the "#" near the end to include the final table)
+    rawdefs <- matchfun2("DEFINITIONS", 1, which_blank = 2)
+
+    # check for new format for definitions (starting with 3.30.12)
+    # ("Jitter" is an indicator of the new format)
     if ("Jitter:" %in% rawdefs$X1) {
-      # new format for definitions (starting with 3.30.12)
-      # ("Jitter" is an indicator of the new format)
-browser()
       get.def <- function(string) {
         # function to grab numeric value from 2nd column matching string in 1st column
         row <- grep(string, rawdefs$X1)[1]
@@ -653,6 +667,7 @@ browser()
       Current_phase <- get.def("Current_phase")
       Jitter <- get.def("Jitter")
       ALK_tolerance <- get.def("ALK_tolerance")
+
       # table starting with final occurrence of "Fleet" in column 1
       fleetdefs <- rawdefs[tail(grep("Fleet", rawdefs$X1), 1):nrow(rawdefs), ]
       names(fleetdefs) <- fleetdefs[1, ] # set names equal to first row
@@ -786,7 +801,7 @@ browser()
       nlbinspop <- length(lbinspop)
       Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition", allbins[, 1]), 2])
       if (compend == compskip + 2) {
-        cat("It appears that there is no composition data in CompReport.sso\n")
+        message("It appears that there is no composition data in CompReport.sso")
         comp <- FALSE # turning off switch to function doesn't look for comp data later on
         agebins <- NA
         sizebinlist <- NA
@@ -940,9 +955,9 @@ browser()
 
           if (any(sizedbase$units %in% c("lb", "in"))) {
             if (verbose) {
-              cat(
-                "Note: converting bins in generalized size comp data in sizedbase\n",
-                " back to the original units of lbs or inches.\n"
+              message(
+                "Note: converting bins in generalized size comp data ",
+                " in sizedbase back to the original units of lbs or inches."
               )
             }
           }
@@ -974,7 +989,7 @@ browser()
         tagdbase2 <- compdbase[compdbase$Kind == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
-          cat(
+          message(
             "CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n",
             "  ", nrow(lendbase), "rows of length comp data,\n",
             "  ", nrow(sizedbase), "rows of generalized size comp data,\n",
@@ -986,7 +1001,7 @@ browser()
             "  ", nrow(ladbase), "rows of mean length at age data,\n",
             "  ", nrow(wadbase), "rows of mean weight at age data,\n",
             "  ", nrow(tagdbase1), "rows of 'TAG1' comp data, and\n",
-            "  ", nrow(tagdbase2), "rows of 'TAG2' comp data.\n"
+            "  ", nrow(tagdbase2), "rows of 'TAG2' comp data."
           )
         }
         # convert bin indices to true lengths
@@ -1032,21 +1047,12 @@ browser()
     }
 
     # info on growth morphs (see also section setting mainmorphs below)
-    morph_indexing <- matchfun2("MORPH_INDEXING", 1)
-browser()
-    endcode <- "SIZEFREQ_TRANSLATION" # (this section heading not present in all models)
-    # if(SS_versionshort=="SS-V3.11") shift <- -1 else shift <- -2
-    shift <- -1
-    if (is.na(matchfun(endcode))) {
-      endcode <- "MOVEMENT"
-      shift <- -2
-    }
-    morph_indexing <- matchfun2("MORPH_INDEXING", 1, endcode, shift, cols = 1:9, header = TRUE)
-    morph_indexing <- type.convert(morph_indexing, as.is = TRUE)
+    morph_indexing <- matchfun2("MORPH_INDEXING", 1, header = TRUE)
     morph_indexing <- df.rename(morph_indexing,
       oldnames = c("Gpattern", "Bseas", "Gender"),
       newnames = c("GP", "BirthSeas", "Sex")
     )
+    # calculate number of growth patterns
     ngpatterns <- max(morph_indexing$GP)
 
     # forecast
@@ -1057,7 +1063,9 @@ browser()
     } else {
       nforecastyears <- NA
     }
-    if (verbose) cat("Finished dimensioning\n")
+    if (verbose) {
+      message("Finished dimensioning")
+    }
     flush.console()
 
     # stats list: items that are output to the GUI (if printstats==T) for a quick summary of results
@@ -1466,7 +1474,9 @@ browser()
     # read covar.sso file
     if (covar) {
       CoVar <- read.table(covarfile, header = TRUE, colClasses = c(rep("numeric", 4), rep("character", 4), "numeric"), skip = covarskip)
-      if (verbose) cat("Got covar file.\n")
+      if (verbose) {
+        message("Got covar file.")
+      }
       stdtable <- CoVar[CoVar$Par..j == "Std", c(7, 9, 5)]
       names(stdtable) <- c("name", "std", "type")
       N_estimated_parameters2 <- sum(stdtable$type == "Par")
@@ -1477,10 +1487,11 @@ browser()
         stats$N_estimated_parameters <- N_estimated_parameters2
       } else {
         if (stats$N_estimated_parameters != N_estimated_parameters2) {
-          cat("!warning:\n")
-          cat(" ", stats$N_estimated_parameters, "estimated parameters indicated by", parfile, "\n")
-          cat(" ", N_estimated_parameters2, "estimated parameters shown in", covarfile, "\n")
-          cat("  returning the first value,", stats$N_estimated_parameters, "\n")
+          warning(stats$N_estimated_parameters,
+                  "estimated parameters indicated by", parfile, "\n",
+                  N_estimated_parameters2,
+                  "estimated parameters shown in", covarfile, "\n",
+                  "returning the first value:", stats$N_estimated_parameters)
           stats$N_estimated_parameters <- stats$N_estimated_parameters
         }
       }
@@ -1570,15 +1581,15 @@ browser()
         } else {
           corstats$cormessage11 <- "Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
         }
-      } else {
+      } else { # if checkcor = FALSE or only 1 estimated parameter
         corstats <- NA
         if (verbose) {
-          cat("You skipped the correlation check (or have only 1 parameter)\n")
+          message("You skipped the correlation check (or have only 1 parameter)")
         }
       }
     } else {
       if (verbose) {
-        cat("You skipped the covar file\n")
+        message("You skipped the covar file")
       }
     }
     flush.console()
@@ -2567,7 +2578,7 @@ browser()
       }
     }
     if (length(mainmorphs) == 0) {
-      cat("!Error with morph indexing in SS_output function.\n")
+      warning("Error with morph indexing")
     }
     returndat$mainmorphs <- mainmorphs
 
@@ -2814,9 +2825,11 @@ browser()
     if (!is.na(btarg) & btarg == 0.4 & startyr == 1966 & sprtarg == 0.4 &
       accuage == 20 & wtatage_switch) {
       if (verbose) {
-        cat(
-          "Setting minimum biomass threshhold to 0.10 because this looks like hake\n",
-          "  (can replace or override in SS_plots by setting 'minbthresh')\n"
+        message(
+          "Setting minimum biomass threshhold to 0.10"
+          " because this looks like the Pacific Hake model.",
+          " You can replace or override in SS_plots via the",
+          " 'minbthresh' input."
         )
       }
       minbthresh <- 0.1 # treaty value for hake
@@ -2830,7 +2843,9 @@ browser()
       # stats$bmsy_over_VLHbzero <- as.numeric(rawforecast[38,3])
       # stats$retained_msy <- as.numeric(rawforecast[43,5])
     } else {
-      if (verbose) cat("You skipped the equilibrium yield data\n")
+      if (verbose) {
+        message("You skipped the equilibrium yield data")
+      }
     }
     flush.console()
 
@@ -3443,7 +3458,7 @@ browser()
         if (stats$N_estimated_parameters > 1) {
           print(corstats, quote = FALSE)
         } else {
-          cat("Too few estimated parameters to report correlations.\n")
+          message("Too few estimated parameters to report correlations.")
         }
       }
     }
@@ -3464,6 +3479,8 @@ browser()
 
     returndat$inputs <- inputs
 
-    if (verbose) cat("completed SS_output\n")
+    if (verbose) {
+      message("completed SS_output")
+    } 
     invisible(returndat)
   } # end function
