@@ -352,8 +352,8 @@ SS_writedat_3.30 <- function(datlist,
     wl("N_recap_events")
     wl("mixing_latency_period")
     wl("max_periods")
-    print.df(d$tag_releases)
-    print.df(d$tag_recaps)
+    print.df(d$tag_releases, terminate = FALSE)
+    print.df(d$tag_recaps, terminate = FALSE)
   }
 
   # write morph composition data
