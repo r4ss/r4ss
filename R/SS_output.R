@@ -616,6 +616,10 @@ SS_output <-
     ## DEFINITIONS section (new in SSv3.20)
     ## (which_blank = 2 skips the "#" near the end to include the final table)
     rawdefs <- matchfun2("DEFINITIONS", 1, which_blank = 2)
+    # re-read that section for older models which didn't have a hash
+    if("LIKELIHOOD" %in% rawdefs[,1]){
+      rawdefs <- matchfun2("DEFINITIONS", 1, which_blank = 1)
+    }
 
     # check for new format for definitions (starting with 3.30.12)
     # ("Jitter" is an indicator of the new format)
@@ -1123,30 +1127,32 @@ SS_output <-
     }
 
     # read fleet-specific likelihoods
-    likelihoods_by_fleet <-
-      matchfun2("Fleet:", 0, "Input_Variance_Adjustment", -1, header = TRUE)
-    Parm_devs_detail <- NA
-    # read detail on parameters devs (if present, 3.30 only)
-    if (length(grep("Parm_devs_detail", likelihoods_by_fleet[, 1])) > 0) {
-      likelihoods_by_fleet <-
-        matchfun2("Fleet:", 0, "Parm_devs_detail", -1, header = TRUE)
-      Parm_devs_detail <-
-        matchfun2("Parm_devs_detail", 1, "Input_Variance_Adjustment", -1, header = TRUE)
-    }
+    likelihoods_by_fleet <- matchfun2("Fleet:", 0, header = TRUE)
 
+    # clean up fleet-specific likelihoods
+    likelihoods_by_fleet[likelihoods_by_fleet == "_"] <- NA
+    likelihoods_by_fleet <- type.convert(likelihoods_by_fleet, as.is = TRUE)
+
+    # replace numeric column names with fleet names
+    names(likelihoods_by_fleet) <- c("Label", "ALL", FleetNames)
+    labs <- likelihoods_by_fleet$Label
+
+    # removing ":" at the end of likelihood components
+    for (irow in 1:length(labs)){
+      labs[irow] <- substr(labs[irow], 1, nchar(labs[irow]) - 1)
+    }
+    likelihoods_by_fleet$Label <- labs
+
+    stats$likelihoods_by_fleet <- likelihoods_by_fleet
+
+    likelihoods_by_tag_group <- matchfun2("Tag_Group:", 0, header = TRUE)
     # check for presence of tag data likelihood which has different column structure
-    if (length(grep("Tag_Group", likelihoods_by_fleet[, 1])) > 0) {
-      # read fleet-specific likelihoods again
-      likelihoods_by_fleet <-
-        matchfun2("Fleet:", 0, "Tag_Group:", -2, header = TRUE)
-      # read tag-group-specific likelihoods
-      likelihoods_by_tag_group <-
-        matchfun2("Tag_Group:", 0, "Input_Variance_Adjustment", -1, header = TRUE)
+    if (likelihoods_by_tag_group[[1]][1] != "absent") {
       # clean up tag group likelihoods
       likelihoods_by_tag_group[likelihoods_by_tag_group == "_"] <- NA
       likelihoods_by_tag_group <- type.convert(likelihoods_by_tag_group,
-        as.is = TRUE
-      )
+                                               as.is = TRUE
+                                               )
       # rename columns from numbers to "TagGroup_1", etc.
       names(likelihoods_by_tag_group) <- c(
         "Label", "ALL",
@@ -1160,27 +1166,15 @@ SS_output <-
       stats$likelihoods_by_tag_group <- likelihoods_by_tag_group
     }
 
-    # clean up fleet-specific likelihoods
-    likelihoods_by_fleet[likelihoods_by_fleet == "_"] <- NA
-    likelihoods_by_fleet <- type.convert(likelihoods_by_fleet, as.is = TRUE)
-
-    # replace numeric column names with fleet names
-    names(likelihoods_by_fleet) <- c("Label", "ALL", FleetNames)
-    labs <- likelihoods_by_fleet$Label
-
-    # removing ":" at the end of likelihood components
-    for (irow in 1:length(labs)) labs[irow] <- substr(labs[irow], 1, nchar(labs[irow]) - 1)
-    likelihoods_by_fleet$Label <- labs
-
-    stats$likelihoods_by_fleet <- likelihoods_by_fleet
+    # read detail on parameters devs (if present, 3.30 only)
+    Parm_devs_detail <- matchfun2("Parm_devs_detail", 1, header = TRUE)
+    if (Parm_devs_detail[[1]][1] == "absent") {
+      Parm_devs_detail <- NULL
+    }
     stats$Parm_devs_detail <- Parm_devs_detail
-
+    
     # parameters
-    if (SS_versionNumeric >= 3.23) shift <- -1
-    if (SS_versionNumeric == 3.22) shift <- -2
-    if (SS_versionNumeric < 3.22) shift <- -1
-    parameters <- matchfun2("PARAMETERS", 1, "DERIVED_QUANTITIES", shift, header = TRUE)
-
+    parameters <- matchfun2("PARAMETERS", 1, header = TRUE)
     if (SS_versionNumeric >= 3.23) {
       temp <- tail(parameters, 2)[, 1:3]
       parameters <- parameters[1:(nrow(parameters) - 2), ]
@@ -2826,7 +2820,7 @@ SS_output <-
       accuage == 20 & wtatage_switch) {
       if (verbose) {
         message(
-          "Setting minimum biomass threshhold to 0.10"
+          "Setting minimum biomass threshhold to 0.10",
           " because this looks like the Pacific Hake model.",
           " You can replace or override in SS_plots via the",
           " 'minbthresh' input."
