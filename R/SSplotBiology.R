@@ -1261,9 +1261,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
           x <- 0:accuage
           y <- growdatuse$Yr
           z <- as.matrix(growdatuse[,-(1:4)])
-          time <- FALSE
-          for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
-          if(time){
+          # check for time-varying growth
+          if(replist$growthvaries){
             z <- t(z)
             if(i==1){main <- "Female time-varying growth"}
             if(nsexes==1){main <- "Time-varying growth"}

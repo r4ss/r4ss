@@ -107,7 +107,8 @@ SS_output <-
                           blank_lines = rep_blank_lines,
                           substr1 = TRUE,
                           substr2 = TRUE,
-                          header = FALSE) {
+                          header = FALSE,
+                          type.convert = FALSE) {
       # return a subset of values from the report file (or other file)
       # subset is defined by character strings at the start and end, with integer
       # adjustments of the number of lines to above/below the two strings
@@ -133,6 +134,7 @@ SS_output <-
       #' substr2 allow string2 to be a substring of the text in matchcol2?
       #' (It must be start at the beginning regardless)
       #' @param header Is the first row of the table a header?
+      #' @param apply type.convert() function to the resulting table?
       line1 <- match(
         string1,
         if (substr1) {
@@ -155,7 +157,7 @@ SS_output <-
         )
       }
       if (is.na(line1) | is.na(line2)) {
-        return("absent")
+        return(NULL)
       }
 
       if (is.numeric(cols)) {
@@ -174,6 +176,9 @@ SS_output <-
         names(out) <- out[1, ]
         out <- out[-1, ]
       }
+      if (type.convert) {
+        out <- type.convert(out, as.is = TRUE)
+      }
       return(out)
     } # end matchfun2
 
@@ -181,8 +186,10 @@ SS_output <-
       # function to replace names in dataframes
       # added to clean up adaptation to more consistent
       # syntax in Report.sso as of SS version 3.30.01.15.
-      for (iname in 1:length(oldnames)) {
-        names(df)[names(df) == oldnames[iname]] <- newnames[iname]
+      if(!is.null(df)){
+        for (iname in 1:length(oldnames)) {
+          names(df)[names(df) == oldnames[iname]] <- newnames[iname]
+        }
       }
       return(df)
     }
@@ -228,7 +235,7 @@ SS_output <-
     } else {
       stop("can't find report file: ", repfile)
     }
-    rephead <- readLines(con = repfile, n = 15)
+    rephead <- readLines(con = repfile, n = 50)
 
     # warn if SS version used to create rep file is too old or too new for this code
     # note: SS_versionCode is new with V3.20
@@ -281,6 +288,8 @@ SS_output <-
     if (verbose) {
       message("Report file time:", repfiletime)
     }
+    # TRUE/VALSE indicator of custom reporting options (started in 3.30.15.06)
+    custom <- length(grep("report:", rephead)) > 0
 
     corfile <- NA
     if (covar) {
@@ -410,9 +419,9 @@ SS_output <-
     }
     flush.console()
 
-    # read forecast report file and get equilibrium yeild (for older versions)
-    yielddat <- NA
-
+    # read forecast report file
+    # (reading yield curve from forecast file where it occurred in older SS
+    # versions is no longer supported)
     if (forecast) {
       forecastname <- file.path(dir, forefile)
       temp <- file.info(forecastname)$size
@@ -449,20 +458,6 @@ SS_output <-
           btarg <- -999
         }
       }
-
-      endyield <- matchfun("MSY_not_calculated", rawforecast1[, 1])
-      if (is.na(endyield)) yesMSY <- TRUE else yesMSY <- FALSE
-      if (yesMSY) endyield <- matchfun("findFmsy", rawforecast1[, 10])
-      if (verbose){
-        message("Got Forecast-report file")
-      }
-
-      # for older versions of SS, equilibrium yield needs to come from
-      # the forecast file
-      startline <- matchfun("profile", rawforecast1[, 11])
-      if (!is.na(startline)) { # before the Jan 6 fix to benchmarks
-        yieldraw <- rawforecast1[(startline + 1):endyield, ]
-      }
     } else {
       if (verbose) {
         message(
@@ -497,37 +492,6 @@ SS_output <-
       }
       minbthresh <- 0.125 # west coast assumption for flatfish
     }
-
-    # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
-    # which have SPR/YPR profile in Report.sso
-    # (this was previously in Forecast-report.sso)
-    if (SS_versionNumeric >= 3.30) {
-      # 3.30 models have "Finish SPR/YPR profile" followed by some additional comments
-      yieldraw <- matchfun2("SPR/YPR_Profile", 1, "Finish", -2)
-    } else {
-      # 3.24 models and earlier use blank line to end table
-      yieldraw <- matchfun2("SPR/YPR_Profile", 1)
-    }
-    # note: section with "Dynamic_Bzero" is missing before Hessian is run or skipped
-    if (yieldraw[[1]][1] == "absent") {
-      if (verbose) {
-        warning(
-          "Report.sso appears to be early version from before Hessian was estimated.",
-          "Equilibrium yield estimates not included in output."
-        )
-      }
-      yieldraw <- NA
-    }
-    if (!is.na(yieldraw[[1]][1])) {
-      names <- yieldraw[1, ]
-      names[names == "SSB/Bzero"] <- "Depletion"
-      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[, 1]) - 1))), ]
-      yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
-      names(yielddat) <- names
-      yielddat <- type.convert(yielddat, as.is = TRUE)
-      yielddat <- yielddat[order(yielddat$Depletion, decreasing = FALSE), ]
-    }
-
     flush.console()
 
     # check for use of temporary files
@@ -549,7 +513,8 @@ SS_output <-
       maxtemp <- max(logfile$Size)
       if (maxtemp == 0) {
         if (verbose) {
-          message("Got log file. There were NO temporary files were written in this run.")
+          message("Got log file. There were NO temporary files were written",
+                  " in this run.")
         }
       } else {
         if (verbose) {
@@ -560,7 +525,8 @@ SS_output <-
     } else {
       logfile <- NA
       if (verbose) {
-        message("No non-empty log file in directory or too many files matching pattern *.log")
+        message("No non-empty log file in directory or too many files ",
+                " matching pattern *.log")
       }
     }
 
@@ -605,13 +571,12 @@ SS_output <-
     # length selectivity is read earlier than other tables because it was used
     # to get fleet info this can be moved to join rest of selex stuff after
     # SSv3.11 is not supported any more
-    sizeselex <- matchfun2("LEN_SELEX", 6, header = TRUE)
+    sizeselex <- matchfun2("LEN_SELEX", 6, header = TRUE, type.convert = TRUE)
     # update to size selectivity to naming convention associated with 3.30.01.15
     sizeselex <- df.rename(sizeselex,
       oldnames = c("fleet", "year", "seas", "gender", "morph", "label"),
       newnames = c("Fleet", "Yr", "Seas", "Sex", "Morph", "Label")
     )
-    sizeselex <- type.convert(sizeselex, as.is = TRUE)
 
     ## DEFINITIONS section (new in SSv3.20)
     ## (which_blank = 2 skips the "#" near the end to include the final table)
@@ -773,7 +738,7 @@ SS_output <-
       }
       # positions of timeseries section (used in various places below)
       begin <- matchfun("TIME_SERIES") + 2
-      end <- matchfun("SPR_series") - 1
+      end <- matchfun("SPR_series") - 2
 
       # more dimensions
       nfishfleets <- sum(IsFishFleet)
@@ -1051,13 +1016,12 @@ SS_output <-
     }
 
     # info on growth morphs (see also section setting mainmorphs below)
-    morph_indexing <- matchfun2("MORPH_INDEXING", 1, header = TRUE)
+    morph_indexing <- matchfun2("MORPH_INDEXING", 1,
+                                header = TRUE, type.convert = TRUE)
     morph_indexing <- df.rename(morph_indexing,
-      oldnames = c("Gpattern", "Bseas", "Gender"),
-      newnames = c("GP", "BirthSeas", "Sex")
-      )
-    #convert to numeric
-    morph_indexing <- type.convert(morph_indexing, as.is = TRUE)
+                                oldnames = c("Gpattern", "Bseas", "Gender"),
+                                newnames = c("GP", "BirthSeas", "Sex")
+                                )
     # calculate number of growth patterns
     ngpatterns <- max(morph_indexing$GP)
 
@@ -1149,7 +1113,7 @@ SS_output <-
 
     likelihoods_by_tag_group <- matchfun2("Tag_Group:", 0, header = TRUE)
     # check for presence of tag data likelihood which has different column structure
-    if (likelihoods_by_tag_group[[1]][1] != "absent") {
+    if (!is.null(likelihoods_by_tag_group)) {
       # clean up tag group likelihoods
       likelihoods_by_tag_group[likelihoods_by_tag_group == "_"] <- NA
       likelihoods_by_tag_group <- type.convert(likelihoods_by_tag_group,
@@ -1170,9 +1134,6 @@ SS_output <-
 
     # read detail on parameters devs (if present, 3.30 only)
     Parm_devs_detail <- matchfun2("Parm_devs_detail", 1, header = TRUE)
-    if (Parm_devs_detail[[1]][1] == "absent") {
-      Parm_devs_detail <- NULL
-    }
     stats$Parm_devs_detail <- Parm_devs_detail
     
     # parameters
@@ -1675,15 +1636,10 @@ SS_output <-
     }
 
     # time-varying parameters
-    MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments", 1, header = TRUE)
+    MGparmAdj <- matchfun2("MGparm_By_Year_after_adjustments", 1,
+                           header = TRUE, type.convert = TRUE)
     # make older SS output names match current SS output conventions
     MGparmAdj <- df.rename(MGparmAdj, oldnames = "Year", newnames = "Yr")
-    # make values numeric
-    if (nrow(MGparmAdj) > 0) {
-      MGparmAdj <- type.convert(MGparmAdj, as.is = TRUE)
-    } else {
-      MGparmAdj <- NA
-    }
 
     # time-varying size-selectivity parameters
     SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments", 2)
@@ -1706,7 +1662,7 @@ SS_output <-
         )
       }
     } else {
-      SelSizeAdj <- NA
+      SelSizeAdj <- NULL
     }
 
     # time-varying age-selectivity parameters
@@ -1740,22 +1696,29 @@ SS_output <-
     }
 
     # recruitment distribution
-    recruitment_dist <- matchfun2("RECRUITMENT_DIST", 1, header = TRUE)
-    recruitment_dist <- type.convert(recruitment_dist, as.is = TRUE)
-
+    recruitment_dist <- matchfun2("RECRUITMENT_DIST", 1,
+                                  header = TRUE, type.convert = TRUE)
+    # calculate first season with recruitment
+    if("Frac/sex" %in% names(recruitment_dist)){
+      first_seas_with_recruits <-
+        min(recruitment_dist$Seas[recruitment_dist$"Frac/sex" > 0])
+    }else{
+      first_seas_with_recruits <-
+        min(recruitment_dist$Seas[recruitment_dist$Value > 0])
+    }
     # starting in SSv3.24Q there are additional tables
     # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
     # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
-    recruit_dist_Bmark <- matchfun2("RECRUITMENT_DIST_B", 1, header = TRUE)
-    if(recruit_dist_Bmark[[1]][1] != "absent"){
+    recruit_dist_Bmark <- matchfun2("RECRUITMENT_DIST_B", 1,
+                                    header = TRUE, type.convert = TRUE)
+    if(!is.null(recruit_dist_Bmark)){
       if (SS_versionNumeric < 3.30) {
-        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_FORECAST", 1, header = TRUE)
+        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_FORECAST", 1,
+                                        header = TRUE, type.convert = TRUE)
       }else{
-        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_endyr", 1, header = TRUE)
+        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_endyr", 1,
+                                        header = TRUE, type.convert = TRUE)
       }
-      # convert values to numeric
-      recruit_dist_Bmark <- type.convert(recruit_dist_Bmark, as.is = TRUE)
-      recruit_dist_endyr <- type.convert(recruit_dist_endyr, as.is = TRUE)
       # bundle original and extra tables into a list
       recruitment_dist <- list(recruit_dist = recruitment_dist,
                                recruit_dist_Bmark = recruit_dist_Bmark,
@@ -1842,17 +1805,15 @@ SS_output <-
     )
 
     # starting in 3.30.11.00, a table with the full spawn recr curve was added
+    SPAWN_RECR_CURVE <- NULL
     if(!is.na(matchfun("Full_Spawn_Recr_Curve"))){
-      SPAWN_RECR_CURVE <- matchfun2("Full_Spawn_Recr_Curve", 1, header = TRUE)
+      SPAWN_RECR_CURVE <- matchfun2("Full_Spawn_Recr_Curve", 1,
+                                    header = TRUE, type.convert = TRUE)
     }
     # section was renamed in 3.30.15.06
     if(!is.na(matchfun("SPAWN_RECR_CURVE"))){
-      SPAWN_RECR_CURVE <- matchfun2("SPAWN_RECR_CURVE", 1, header = TRUE)
-    }
-    if(exists("SPAWN_RECR_CURVE") && SPAWN_RECR_CURVE[[1]][1] != "absent"){
-      SPAWN_RECR_CURVE <- type.convert(SPAWN_RECR_CURVE, as.is = TRUE)
-    }else{
-      SPAWN_RECR_CURVE <- NULL
+      SPAWN_RECR_CURVE <- matchfun2("SPAWN_RECR_CURVE", 1,
+                                    header = TRUE, type.convert = TRUE)
     }
     
     ## FIT_LEN_COMPS
@@ -1875,7 +1836,8 @@ SS_output <-
     # Length_Comp_Fit_Summary
     if (SS_versionNumeric < 3.30) {
       # old way didn't have key word and had parantheses and other issues with column names
-      lenntune <- matchfun2("FIT_AGE_COMPS", -(nfleets + 1), "FIT_AGE_COMPS", -1, cols = 1:10, header = TRUE)
+      lenntune <- matchfun2("FIT_AGE_COMPS", -(nfleets + 1),
+                            "FIT_AGE_COMPS", -1, cols = 1:10, header = TRUE)
       names(lenntune)[10] <- "FleetName"
       # reorder columns (leaving out sample sizes perhaps to save space)
       lenntune <- lenntune[lenntune$Nsamp_adj > 0, c(10, 1, 4:9)]
@@ -1936,7 +1898,8 @@ SS_output <-
     }
 
     # Age_Comp_Fit_Summary
-    agentune <- matchfun2("Age_Comp_Fit_Summary", 1)
+    # formatting change in 3.30.15.06 puts table one line lower
+    agentune <- matchfun2("Age_Comp_Fit_Summary", ifelse(custom, 2, 1))
     agentune <- df.rename(agentune,
       oldnames = c("FleetName"),
       newnames = c("Fleet_name")
@@ -2182,13 +2145,9 @@ SS_output <-
     # Static growth
     # note: keyword "BIOLOGY" was not unique enough at some point
     #       but revision on 11 June 2020 seems to be working so far
-    adjust1 <- 1
-    test <- rawrep[matchfun("BIOLOGY", rawrep[,1]), 2]
-    if (!is.null(test) && test == "report:42") {
-      adjust1 <- 2
-    }
-    rawbio <- matchfun2("BIOLOGY", adjust1 = adjust1, header = TRUE)
-    biology <- type.convert(rawbio, as.is = TRUE)
+    # formatting change in 3.30.15.06 puts table one line lower
+    biology <- matchfun2("BIOLOGY", adjust1 = ifelse(custom, 2, 1),
+                         header = TRUE, type.convert = TRUE)
 
     # determine fecundity type
     FecType <- 0
@@ -2255,135 +2214,113 @@ SS_output <-
              )
 
     # get natural mortality type and vectors of M by age
-    # get 2nd column on row with keyword
-    # result should be either "Method:_0" prior to 3.30.15.06
-    # or "report:43" in 3.30.15.06 and beyond
-    test <- rawrep[matchfun("Natural_Mortality"), 2]
-    adjust1 <- 1
-    if (length(grep("report", test)) > 0) {
-      test <- rawrep[matchfun("Natural_Mortality") + 1, 1]
-      adjust1 <- 2
-    }
+    adjust1 <- ifelse(custom, 2, 1)
+    M_type <- rawrep[matchfun("Natural_Mortality") + adjust1 - 1, 2]
     M_type <- as.numeric(gsub(
       pattern = ".*([0-9]+)",
       replacement = "\\1",
-      x = test
+      x = M_type
     ))
     # in SS 3.30 the number of rows of Natural_Mortality is the product of
     # the number of sexes, growth patterns, settlement events but settlement
     # events didn't exist in 3.24
-    M_Parameters <- type.convert(matchfun2("Natural_Mortality",
-                                           adjust1 = adjust1,
-                                           header = TRUE),
-                                 as.is = TRUE)
-    Natural_Mortality_Bmark <-
-      type.convert(matchfun2("Natural_Mortality_Bmark",
-                             adjust1 = 1,
-                             header = TRUE),
-                   as.is = TRUE)
-    Natural_Mortality_endyr <-
-      type.convert(matchfun2("Natural_Mortality_endyr",
-                             adjust1 = 1,
-                             header = TRUE),
-                   as.is = TRUE)
+    M_Parameters <- matchfun2("Natural_Mortality",
+                              adjust1 = adjust1,
+                              header = TRUE,
+                              type.convert = TRUE)
+    Natural_Mortality_Bmark <- matchfun2("Natural_Mortality_Bmark",
+                                         adjust1 = 1,
+                                         header = TRUE,
+                                         type.convert = TRUE)
+    Natural_Mortality_endyr <- matchfun2("Natural_Mortality_endyr",
+                                         adjust1 = 1,
+                                         header = TRUE,
+                                         type.convert = TRUE)
     returndat$M_type <- M_type
-    returndat$M_Parameters <- type.convert(M_Parameters, as.is = TRUE)
     returndat$Natural_Mortality_Bmark = Natural_Mortality_Bmark
     returndat$Natural_Mortality_endyr = Natural_Mortality_endyr
 
     # get growth parameters
     Growth_Parameters <- matchfun2("Growth_Parameters", 1,
-      "Growth_Parameters", 1 + ngpatterns,
-      header = TRUE
-    )
-    Growth_Parameters <- type.convert(Growth_Parameters, as.is = TRUE)
+                                   "Growth_Parameters", 1 + ngpatterns,
+                                   header = TRUE, type.convert = TRUE)
     returndat$Growth_Parameters <- Growth_Parameters
 
-    Seas_Effects <- matchfun2("Seas_Effects", 1, header = TRUE)
-    if (Seas_Effects[[1]][1] != "absent") {
-      Seas_Effects <- type.convert(Seas_Effects, as.is = TRUE)
-    } else {
-      Seas_Effects <- NA
-    }
+    Seas_Effects <- matchfun2("Seas_Effects", 1,
+                              header = TRUE, type.convert = TRUE)
     returndat$Seas_Effects <- Seas_Effects
 
     # ending year growth, including pattern for the CV (added in SSv3.22b_Aug3)
-    growthCVtype <- matchfun2("Biology_at_age", 0, "Biology_at_age", 0, header = FALSE)
-    if (nchar(growthCVtype) > 31) {
-      returndat$growthCVtype <- substring(growthCVtype, 30)
+    # CVtype will occur on same line or following
+    growthCVtype <- matchfun2("Biology_at_age", 0,
+                              "Biology_at_age", 1,
+                              header = FALSE)
+    growthCVtype <- grep("endyr_with_", unlist(growthCVtype), value = TRUE)
+    if (length(growthCVtype) > 0) {
+      returndat$growthCVtype <- strsplit(growthCVtype,
+                                         split = "endyr_with_")[[1]][2]
     } else {
       returndat$growthCVtype <- "unknown"
     }
-    growdat <- matchfun2("Biology_at_age", 1, header = TRUE)
+    # formatting change in 3.30.15.06 puts table one line lower
+    growdat <- matchfun2("Biology_at_age", adjust1 = ifelse(custom, 2, 1),
+                         header = TRUE, type.convert = TRUE)
     # make older SS output names match current SS output conventions
     growdat <- df.rename(growdat,
       oldnames = c("Gender"),
       newnames = c("Sex")
-    )
-    growdat <- type.convert(growdat, as.is = TRUE)
+      )
+    # extract a few quantities related to growth morphs/platoons
     nmorphs <- max(growdat$Morph)
     midmorphs <- c(c(0, nmorphs / nsexes) + ceiling(nmorphs / nsexes / 2))
     returndat$endgrowth <- growdat
 
     # test for use of empirical weight-at-age input file (wtatage.ss)
-    test <- matchfun2("MEAN_BODY_WT(begin)", 0, "MEAN_BODY_WT(begin)", 0, header = FALSE)
+    test <- matchfun2("MEAN_BODY_WT(begin)", 0,
+                      "MEAN_BODY_WT(begin)", 0,
+                      header = FALSE)
     wtatage_switch <- length(grep("wtatage.ss", test)) > 0
     returndat$wtatage_switch <- wtatage_switch
 
     # mean body weight
-    mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)", 1, header = TRUE)
-    mean_body_wt <- type.convert(mean_body_wt, as.is = TRUE)
+    mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)", 1,
+                              header = TRUE, type.convert = TRUE)
     returndat$mean_body_wt <- mean_body_wt
 
     # Time-varying growth
-    rawgrow <- matchfun2("MEAN_SIZE_TIMESERIES", 1, "mean_size_Jan_1", -1, cols = 1:(4 + accuage + 1))
+    mean_size <- matchfun2("MEAN_SIZE_TIMESERIES", 1,
+                           "mean_size_Jan_1", -2,
+                           cols = 1:(4 + accuage + 1),
+                           header = TRUE,
+                           type.convert = TRUE)
     growthvaries <- FALSE
-    if (length(rawgrow) > 1) {
-      names(rawgrow) <- rawgrow[1, ]
-      growdat <- type.convert(rawgrow[-1, ], as.is = TRUE)
+    if (!is.null(mean_size)) {
       if (SS_versionNumeric < 3.30) {
-        growdat <- growdat[growdat$Beg == 1 &
-          growdat$Yr >= startyr &
-          growdat$Yr < endyr, ]
+        mean_size <- mean_size[mean_size$Beg == 1 &
+                               mean_size$Yr >= startyr &
+                               mean_size$Yr < endyr, ]
       } else {
-        growdat <- growdat[growdat$SubSeas == 1 &
-          growdat$Yr >= startyr &
-          growdat$Yr < endyr, ]
+        mean_size <- mean_size[mean_size$SubSeas == 1 &
+                               mean_size$Yr >= startyr &
+                               mean_size$Yr < endyr, ]
       }
       if (nseasons > 1) {
-        growdat <- growdat[growdat$Seas == 1, ]
+        mean_size <- mean_size[mean_size$Seas == 1, ]
       }
-      if (length(unique(growdat$Yr)) > 1) {
+      if (length(unique(mean_size$Yr)) > 1) {
         growthvaries <- TRUE
       }
-      returndat$growthseries <- growdat
+      returndat$growthseries <- mean_size
       returndat$growthvaries <- growthvaries
     }
 
-    # Length selex and retention
+    # Length-based selectivity and retention
     if (!forecast) {
       sizeselex <- sizeselex[sizeselex$Yr <= endyr, ]
     }
     returndat$sizeselex <- sizeselex
 
-    # Age based selex
-    ## # determine which keyword follows the AGE_SELEX section
-    ## if (!is.na(matchfun("ENVIRONMENTAL_DATA"))) {
-    ##   # environmental data follows if present
-    ##   ageselex <- matchfun2("AGE_SELEX", 4, "ENVIRONMENTAL_DATA", -1, header = TRUE)
-    ## } else if (!is.na(matchfun("TAG_Recapture"))) {
-    ##   # tag recap info follows if present and no environmental data
-    ##   ageselex <- matchfun2("AGE_SELEX", 4, "TAG_Recapture", -1, header = TRUE)
-    ## } else if (!is.na(matchfun("NUMBERS_AT_AGE")) &&
-    ##   matchfun("NUMBERS_AT_AGE") < matchfun("BIOLOGY")) {
-    ##   # a numbers-at-age section occurs here if detailed age-structured reports are
-    ##   # requested in the starter file, otherwise, a similar section occurs after the
-    ##   # biology section
-    ##   ageselex <- matchfun2("AGE_SELEX", 4, "NUMBERS_AT_AGE", -1, header = TRUE)
-    ## } else {
-    ##   # if all that doesn't get satisfied, biology comes next
-    ##   ageselex <- matchfun2("AGE_SELEX", 4, "BIOLOGY", -1, header = TRUE)
-    ## }
+    # Age-based selectivity
     ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
     ageselex <- df.rename(ageselex,
       oldnames = c(
@@ -2397,22 +2334,25 @@ SS_output <-
     )
     # filter forecast years from selectivity if no forecast
     # NOTE: maybe refine this in 3.30
-    if (!forecast) ageselex <- ageselex[ageselex$Yr <= endyr, ]
-
+    if (!forecast) {
+      ageselex <- ageselex[ageselex$Yr <= endyr, ]
+    }
+    # make values numeric
     ageselex <- type.convert(ageselex, as.is = TRUE)
     returndat$ageselex <- ageselex
 
-    # exploitation
-    exploitation_head <- matchfun2("EXPLOITATION", 1, "EXPLOITATION", 20,
-      header = FALSE
+    # EXPLOITATION
+    # read first 20 rows to figure out where meta-data ends
+    exploitation_head <- matchfun2("EXPLOITATION", 1,
+                                   "EXPLOITATION", 20,
+                                   header = FALSE
     )
     # check for new header info added in 3.30.13_beta (14 Feb. 2019)
     if (exploitation_head[1, 1] == "Info:") {
       # NOTE: add read of additional header info here
       exploitation <- matchfun2("EXPLOITATION",
-        which(exploitation_head[, 1] == "Yr"),
-        "CATCH", -1,
-        header = TRUE
+                                which(exploitation_head[, 1] == "Yr"),
+                                header = TRUE
       )
       # remove meta-data about fleets (filtered by color in 1st column):
       # "Catchunits:","FleetType:","FleetArea:","FleetID:"
@@ -2423,8 +2363,13 @@ SS_output <-
         "F_Method:",
         exploitation_head[, 2]
       ), 2]
-      F_method_info <- gsub(pattern = ".", replacement = " ", x = F_method_info, fixed = TRUE)
-      F_method_info <- strsplit(F_method_info, split = ";", fixed = TRUE)[[1]]
+      F_method_info <- gsub(pattern = ".",
+                            replacement = " ",
+                            x = F_method_info,
+                            fixed = TRUE)
+      F_method_info <- strsplit(F_method_info,
+                                split = ";",
+                                fixed = TRUE)[[1]]
       # get numeric value for F_method
       F_method <- as.numeric(strsplit(F_method_info[[1]],
         split = "=",
@@ -2432,17 +2377,14 @@ SS_output <-
       )[[1]][2])
     } else {
       # old format prior to 3.30.13
-      exploitation <- matchfun2("EXPLOITATION", 5,
-        "CATCH", -1,
-        header = TRUE
-      )
+      exploitation <- matchfun2("EXPLOITATION", 5, header = TRUE)
       # get numeric value for F_method
       F_method <- as.numeric(rawrep[matchfun("F_Method"), 2])
     }
     returndat$F_method <- F_method
 
-    if (exploitation[[1]][1] != "absent") {
-      # more processing of exploitation
+    if (!is.null(exploitation)) {
+      # more processing of exploitation (if present)
       exploitation[exploitation == "_"] <- NA
       # make text numeric
       # "init_yr" not used as of 3.30.13, but must have been in the past
@@ -2450,15 +2392,13 @@ SS_output <-
       exploitation$Yr[exploitation$Yr %in% c("INIT", "init_yr")] <- startyr - 1
       # make columns numeric
       exploitation <- type.convert(exploitation, as.is = TRUE)
-      returndat$exploitation <- exploitation
-    } else {
-      returndat$exploitation <- NULL
     }
+    returndat$exploitation <- exploitation
 
     # catch
-    catch <- matchfun2("CATCH", 1, "TIME_SERIES", -1, substr1 = FALSE, header = TRUE)
+    catch <- matchfun2("CATCH", 1, substr1 = FALSE, header = TRUE)
     # if table is present, then do processing of it
-    if (catch[[1]][1] != "absent") {
+    if (!is.null(catch)) {
       # update to new column names used starting with 3.30.13
       catch <- df.rename(catch,
         oldnames = c("Name", "Yr.frac"),
@@ -2470,8 +2410,6 @@ SS_output <-
       catch$Yr[tolower(catch$Yr) == "init"] <- startyr - 1
       # make columns numeric
       catch <- type.convert(catch, as.is = TRUE)
-    } else {
-      catch <- NULL
     }
     returndat$catch <- catch
 
@@ -2481,7 +2419,7 @@ SS_output <-
     returndat$summary_age <- summary_age
 
     # time series
-    timeseries <- matchfun2("TIME_SERIES", 1, "SPR_series", -1, header = TRUE)
+    timeseries <- matchfun2("TIME_SERIES", 1, header = TRUE)
     # temporary fix for 3.30.03.06
     timeseries <- timeseries[timeseries$Seas != "recruits", ]
 
@@ -2508,7 +2446,8 @@ SS_output <-
     returndat$timeseries <- timeseries
 
     # get spawning season
-    # currently (v3.20b), Spawning Biomass is only calculated in a unique spawning season within the year
+    # currently (v3.20b), Spawning Biomass is only calculated
+    # in a unique spawning season within the year
     if (!exists("spawnseas")) {
       spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
 
@@ -2519,20 +2458,14 @@ SS_output <-
     }
     returndat$spawnseas <- spawnseas
 
-    # distribution of recruitment
-    if ("recruit_dist_endyr" %in% names(recruitment_dist)) {
-      # from SSv3.24Q onward, recruitment_dist is a list of tables, not a single table
-      rd <- recruitment_dist$recruit_dist_endyr
-    } else {
-      rd <- recruitment_dist
-    }
-
     # set mainmorphs as those morphs born in the first season with recruitment
     # and the largest fraction of the platoons (should equal middle platoon when present)
     if (SS_versionNumeric >= 3.30) {
       # new "platoon" label
-      temp <- morph_indexing[morph_indexing$BirthSeas == min(rd$Seas[rd$"Frac/sex" > 0]) &
-        morph_indexing$Platoon_Dist == max(morph_indexing$Platoon_Dist), ]
+      temp <- morph_indexing[morph_indexing$BirthSeas ==
+                             first_seas_with_recruits &
+                             morph_indexing$Platoon_Dist ==
+                             max(morph_indexing$Platoon_Dist), ]
       mainmorphs <- min(temp$Index[temp$Sex == 1])
       if (nsexes == 2) {
         mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
@@ -2540,8 +2473,10 @@ SS_output <-
     }
     if (SS_versionNumeric < 3.30) {
       # old "sub_morph" label
-      temp <- morph_indexing[morph_indexing$BirthSeas == min(rd$Seas[rd$Value > 0]) &
-        morph_indexing$Sub_Morph_Dist == max(morph_indexing$Sub_Morph_Dist), ]
+      temp <- morph_indexing[morph_indexing$BirthSeas ==
+                             first_seas_with_recruits &
+                             morph_indexing$Sub_Morph_Dist ==
+                             max(morph_indexing$Sub_Morph_Dist), ]
       mainmorphs <- min(temp$Index[temp$Sex == 1])
       if (nsexes == 2) {
         mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
@@ -2571,7 +2506,8 @@ SS_output <-
     if (nareas > 1) # loop over areas if necessary to sum spawning biomass
       {
         for (a in 2:nareas) {
-          tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas == spawnseas & ts$Area == a]
+          tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas == spawnseas &
+                                                 ts$Area == a]
         }
       }
     if (nsexes == 1) {
@@ -2581,15 +2517,16 @@ SS_output <-
     stats$SBzero <- tsspaw_bio[1]
     stats$current_depletion <- depletionseries[length(depletionseries)]
 
-    # total landings (in the future, this section should be cleaned up to take advantage of
-    # new columns that are in process of being added above, such as $dead_B_sum
+    # total landings
     ls <- nrow(ts) - 1
-    totretainedmat <- as.matrix(ts[, substr(names(ts), 1, nchar("retain(B)")) == "retain(B)"])
+    totretainedmat <- as.matrix(ts[, substr(names(ts), 1,
+                                            nchar("retain(B)")) == "retain(B)"])
     ts$totretained <- 0
     ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
 
     # total catch
-    totcatchmat <- as.matrix(ts[, substr(names(ts), 1, nchar("enc(B)")) == "enc(B)"])
+    totcatchmat <- as.matrix(ts[, substr(names(ts), 1,
+                                         nchar("enc(B)")) == "enc(B)"])
     ts$totcatch <- 0
     ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
 
@@ -2599,11 +2536,9 @@ SS_output <-
     } else {
       stringmatch <- "F:_"
     }
-    Hrates <- as.matrix(ts[, substr(names(ts), 1, nchar(stringmatch)) == stringmatch])
+    Hrates <- as.matrix(ts[, substr(names(ts), 1,
+                                    nchar(stringmatch)) == stringmatch])
     fmax <- max(Hrates)
-    # stats$fmax <- fmax
-    # stats$endyrcatch <- ts$totcatch[ls]
-    # stats$endyrlandings <- ts$totretained[ls]
 
     # depletion
     depletion_method <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
@@ -2611,7 +2546,8 @@ SS_output <-
     if (depletion_basis == "no_depletion_basis") {
       depletion_basis <- "none"
     } else {
-      depletion_basis <- as.numeric(strsplit(depletion_basis, "%*", fixed = TRUE)[[1]][1]) / 100
+      depletion_basis <- as.numeric(strsplit(depletion_basis, "%*",
+                                             fixed = TRUE)[[1]][1]) / 100
     }
     returndat$depletion_method <- depletion_method
     returndat$depletion_basis <- depletion_basis
@@ -2626,36 +2562,44 @@ SS_output <-
       if (length(grep("T_distribution", DF_discard)) > 0) {
         DF_discard <- as.numeric(strsplit(DF_discard, "=_")[[1]][2])
       }
-      if (length(grep("_normal_with_Std_in_as_CV", DF_discard)) > 0) DF_discard <- 0
-      if (length(grep("_normal_with_Std_in_as_stddev", DF_discard)) > 0) DF_discard <- -1
-      if (length(grep("_lognormal", DF_discard)) > 0) DF_discard <- -2
+      if (length(grep("_normal_with_Std_in_as_CV", DF_discard)) > 0) {
+        DF_discard <- 0
+      }
+      if (length(grep("_normal_with_Std_in_as_stddev", DF_discard)) > 0) {
+        DF_discard <- -1
+      }
+      if (length(grep("_lognormal", DF_discard)) > 0) {
+        DF_discard <- -2
+      }
       shift <- 2
       discard_spec <- NULL
     } else { # newer header in 3.20 and beyond
       DF_discard <- NA
       shift <- 1
-      discard_spec <- matchfun2("DISCARD_SPECIFICATION", 9, "DISCARD_OUTPUT", -2,
-        cols = 1:3, header = TRUE
-      )
-      # test for Robbie Emmet's experimental new discard option
-      if (length(grep("trunc_normal", names(discard_spec))) > 0) {
-        discard_spec <- matchfun2("DISCARD_SPECIFICATION", 10, "DISCARD_OUTPUT", -2,
-          cols = 1:3, header = TRUE
-        )
+      # read first 20 lines
+      discard_header <- matchfun2("DISCARD_SPECIFICATION", 1,
+                                  "DISCARD_SPECIFICATION", 20)
+      if(!is.null(discard_header)){
+        # read table of discard info by fleet at bottom of header
+        discard_spec <- matchfun2("DISCARD_SPECIFICATION",
+                                  which(discard_header[,3] == "errtype"),
+                                  header = TRUE, type.convert = TRUE)
+        discard_spec <- type.convert(discard_spec, as.is = TRUE)
+        # not sure under what circumstances this first name wasn't "Fleet" already
+        names(discard_spec)[1] <- "Fleet"
+      }else{
+        discard_spec <- NULL
       }
-      discard_spec <- type.convert(discard_spec, as.is = TRUE)
-      names(discard_spec)[1] <- "Fleet"
     }
     # read DISCARD_OUTPUT table
-    discard <- matchfun2("DISCARD_OUTPUT", shift, "MEAN_BODY_WT_OUTPUT", -1, header = TRUE)
-    if (names(discard)[1] == "MEAN_BODY_WT_OUTPUT") {
-      discard <- NA
-    }
-    # rerun read of discard if in SSv3.20b which had missing line break
-    if (!is.na(discard) && names(discard)[1] != "Fleet") {
-      discard <- matchfun2("DISCARD_OUTPUT", shift, "MEAN_BODY_WT_OUTPUT", -1, header = FALSE)
+    discard <- matchfun2("DISCARD_OUTPUT", shift, header = TRUE)
+    # rerun read of discard with header = FALSE
+    # if in SSv3.20b which had missing line break
+    if (!is.null(discard) && names(discard)[1] != "Fleet") {
+      discard <- matchfun2("DISCARD_OUTPUT", shift, header = FALSE)
       # note that these column names are from 3.20b and have changed since that time
-      names(discard) <- c("Fleet", "Yr", "Seas", "Obs", "Exp", "Std_in", "Std_use", "Dev")
+      names(discard) <- c("Fleet", "Yr", "Seas", "Obs", "Exp",
+                          "Std_in", "Std_use", "Dev")
     }
 
     # rename columns to standard used with 3.30.13 (starting Feb 14, 2019)
@@ -2666,7 +2610,7 @@ SS_output <-
 
     # process discard info if table was present
     discard_type <- NA
-    if (!is.na(discard) && nrow(discard) > 1) {
+    if (!is.null(discard) && nrow(discard) > 1) {
       discard[discard == "_"] <- NA
       # v3.23 and before had things combined under "Name"
       # which has been renamed above to "Fleet_Name"
@@ -2678,9 +2622,12 @@ SS_output <-
         discard$Fleet <- NA
         for (i in 1:nrow(discard)) {
           discard$Fleet[i] <- strsplit(discard$Fleet_Name[i], "_")[[1]][1]
-          discard$Fleet_Name[i] <- substring(discard$Fleet_Name[i], nchar(discard$Fleet[i]) + 2)
+          discard$Fleet_Name[i] <- substring(discard$Fleet_Name[i],
+                                             nchar(discard$Fleet[i]) + 2)
         }
-      } else { # v3.24 and beyond has separate columns for fleet number and fleet name
+      } else {
+        # v3.24 and beyond has separate columns
+        #for fleet number and fleet name
         discard <- type.convert(discard, as.is = TRUE)
       }
     } else {
@@ -2696,7 +2643,7 @@ SS_output <-
     DF_mnwgt <- rawrep[matchfun("log(L)_based_on_T_distribution"), 1]
     if (!is.na(DF_mnwgt)) {
       DF_mnwgt <- as.numeric(strsplit(DF_mnwgt, "=_")[[1]][2])
-      mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT", 2, "FIT_LEN_COMPS", -1, header = TRUE)
+      mnwgt <- matchfun2("MEAN_BODY_WT_OUTPUT", 2, header = TRUE)
       mnwgt <- df.rename(mnwgt,
         oldnames = c("Name"),
         newnames = c("Fleet_Name")
@@ -2728,39 +2675,11 @@ SS_output <-
     returndat$DF_mnwgt <- DF_mnwgt
 
     # Yield and SPR time-series
-    spr <- matchfun2("SPR_series", 5, "SPAWN_RECRUIT", -1, header = TRUE)
-    # read Kobe plot
-    if (length(grep("Kobe_Plot", rawrep[, 1])) != 0) {
-      shift <- -3
-      if (SS_versionNumeric < 3.23) shift <- -1
-      spr <- matchfun2("SPR_series", 5, "Kobe_Plot", shift, header = TRUE)
-
-      # head of Kobe_Plot section differs by SS version,
-      # but I haven't kept track of which is which
-      Kobe_head <- matchfun2("Kobe_Plot", 0, "Kobe_Plot", 5, header = TRUE)
-      shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
-      Kobe_warn <- NA
-      Kobe_MSY_basis <- NA
-      if (length(grep("_basis_is_not", Kobe_head[1, 1])) > 0) {
-        Kobe_warn <- Kobe_head[1, 1]
-      }
-      if (length(grep("MSY_basis", Kobe_head[2, 1])) > 0) {
-        Kobe_MSY_basis <- Kobe_head[2, 1]
-      }
-      Kobe <- matchfun2("Kobe_Plot", shift, "SPAWN_RECRUIT", -1, header = TRUE)
-      Kobe[Kobe == "_"] <- NA
-      Kobe[Kobe == "1.#INF"] <- NA
-      Kobe[Kobe == "-1.#IND"] <- NA
-      names(Kobe) <- gsub("/", ".", names(Kobe), fixed = TRUE)
-      Kobe[, 1:3] <- lapply(Kobe[, 1:3], as.numeric)
-    } else {
-      Kobe <- NA
-      Kobe_warn <- NA
-      Kobe_MSY_basis <- NA
+    spr <- matchfun2("SPR_SERIES", 5, header = TRUE)
+    # read again if missing using capitalization prior to 3.30.15.06
+    if(is.null(spr)){
+      spr <- matchfun2("SPR_series", 5, header = TRUE)
     }
-    returndat$Kobe_warn <- Kobe_warn
-    returndat$Kobe_MSY_basis <- Kobe_MSY_basis
-    returndat$Kobe <- Kobe
 
     # clean up SPR output
     # make older SS output names match current SS output conventions
@@ -2806,17 +2725,36 @@ SS_output <-
     }
     returndat$minbthresh <- minbthresh
 
-    if (!is.na(yielddat[[1]][1])) {
-      returndat$equil_yield <- yielddat
-      # stats$spr_at_msy <- as.numeric(rawforecast[33,2])
-      # stats$exploit_at_msy <- as.numeric(rawforecast[35,2])
-      # stats$bmsy_over_VLHbzero <- as.numeric(rawforecast[38,3])
-      # stats$retained_msy <- as.numeric(rawforecast[43,5])
-    } else {
-      if (verbose) {
-        message("You skipped the equilibrium yield data")
+    # read Kobe plot
+    if (length(grep("Kobe_Plot", rawrep[, 1])) != 0) {
+      # head of Kobe_Plot section differs by SS version,
+      # but I haven't kept track of which is which
+      # read first 5 lines
+      Kobe_head <- matchfun2("Kobe_Plot", 0, "Kobe_Plot", 5, header = TRUE)
+      shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
+      Kobe_warn <- NA
+      Kobe_MSY_basis <- NA
+      if (length(grep("_basis_is_not", Kobe_head[1, 1])) > 0) {
+        Kobe_warn <- Kobe_head[1, 1]
       }
+      if (length(grep("MSY_basis", Kobe_head[2, 1])) > 0) {
+        Kobe_MSY_basis <- Kobe_head[2, 1]
+      }
+      Kobe <- matchfun2("Kobe_Plot", shift, header = TRUE)
+      Kobe[Kobe == "_"] <- NA
+      Kobe[Kobe == "1.#INF"] <- NA
+      Kobe[Kobe == "-1.#IND"] <- NA
+      names(Kobe) <- gsub("/", ".", names(Kobe), fixed = TRUE)
+      Kobe[, 1:3] <- lapply(Kobe[, 1:3], as.numeric)
+    } else {
+      Kobe <- NA
+      Kobe_warn <- NA
+      Kobe_MSY_basis <- NA
     }
+    returndat$Kobe_warn <- Kobe_warn
+    returndat$Kobe_MSY_basis <- Kobe_MSY_basis
+    returndat$Kobe <- Kobe
+    
     flush.console()
 
 
@@ -2839,7 +2777,8 @@ SS_output <-
       ncpue <- sum(as.numeric(INDEX_1$N), na.rm = TRUE)
     } else {
       ncpue_column <- 11
-      ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1") + 1 + 1:nfleets, ncpue_column]))
+      ncpue <- sum(as.numeric(rawrep[matchfun("INDEX_1") + 1 + 1:nfleets,
+                                     ncpue_column]))
     }
     # add to list of stuff that gets returned
     returndat$index_variance_tuning_check <- INDEX_1
@@ -2873,60 +2812,27 @@ SS_output <-
     returndat$cpue <- cpue
 
     # Numbers at age
-    if (SS_versionNumeric >= 3.30) {
-      rawnatage <- matchfun2("NUMBERS_AT_AGE", 1, "BIOMASS_AT_AGE", -1,
-        cols = 1:(13 + accuage), substr1 = FALSE
-      )
-    } else {
-      rawnatage <- matchfun2("NUMBERS_AT_AGE", 1, "NUMBERS_AT_LENGTH", -1,
-        cols = 1:(12 + accuage), substr1 = FALSE
-      )
-    }
-    if (length(rawnatage) > 1) {
-      names(rawnatage) <- rawnatage[1, ]
-      rawnatage <- rawnatage[-1, ]
-      # make older SS output names match current SS output conventions
-      rawnatage <- df.rename(rawnatage,
-        oldnames = c("Gender", "SubMorph"),
-        newnames = c("Sex", "Platoon")
-      )
-      rawnatage <- type.convert(rawnatage, as.is = TRUE)
-      returndat$natage <- rawnatage
-    }
+    natage <- matchfun2("NUMBERS_AT_AGE", 1, substr1 = FALSE,
+                        header = TRUE, type.convert = TRUE)
+    # make older SS output names match current SS output conventions
+    natage <- df.rename(natage,
+                        oldnames = c("Gender", "SubMorph"),
+                        newnames = c("Sex", "Platoon")
+                        )
+    returndat$natage <- natage
 
     # NUMBERS_AT_AGE_Annual with and without fishery
     natage_annual_1_no_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_1", 1,
-      "Z_AT_AGE_Annual_1", -1,
-      header = TRUE
-    )
-    natage_annual_2_with_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_2", 1,
-      "Z_AT_AGE_Annual_2", -1,
-      header = TRUE
-    )
-    if (natage_annual_1_no_fishery[[1]][1] != "absent") {
-      natage_annual_1_no_fishery <- type.convert(natage_annual_1_no_fishery,
-        as.is = TRUE
-      )
-      natage_annual_2_with_fishery <- type.convert(natage_annual_2_with_fishery,
-        as.is = TRUE
-      )
-    }
+                                            header = TRUE, type.convert = TRUE)
+    natage_annual_2_with_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_2", 1, 
+                                              header = TRUE, type.convert = TRUE)
     returndat$natage_annual_1_no_fishery <- natage_annual_1_no_fishery
     returndat$natage_annual_2_with_fishery <- natage_annual_2_with_fishery
 
-    # Biomass at age
-    if (SS_versionNumeric >= 3.30) {
-      batage <- matchfun2("BIOMASS_AT_AGE", 1, "NUMBERS_AT_LENGTH", -1,
-        cols = 1:(13 + accuage), substr1 = FALSE
-      )
-    } else {
-      batage <- NULL
-    }
-    if (length(batage) > 1) {
-      names(batage) <- batage[1, ]
-      batage <- type.convert(batage[-1, ], as.is = TRUE)
-      returndat$batage <- batage
-    }
+    # Biomass at age (introduced in 3.30)
+    batage <- matchfun2("BIOMASS_AT_AGE", 1, substr1 = FALSE,
+                        header = TRUE, type.convert = TRUE)
+    returndat$batage <- batage
 
     # Numbers at length
     col.adjust <- 12
@@ -2934,134 +2840,113 @@ SS_output <-
       col.adjust <- 11
     }
     # test ending based on text because sections changed within 3.24 series
-    if (length(grep("BIOMASS_AT_LENGTH", rawrep[, 1])) == 0) {
-      rawnatlen <- matchfun2("NUMBERS_AT_LENGTH", 1, "CATCH_AT_AGE", -1,
-        cols = 1:(col.adjust + nlbinspop), substr1 = FALSE
-      )
-    } else {
-      rawnatlen <- matchfun2("NUMBERS_AT_LENGTH", 1, "BIOMASS_AT_LENGTH", -1,
-        cols = 1:(col.adjust + nlbinspop), substr1 = FALSE
-      )
-    }
-    if (length(rawnatlen) > 1) {
-      names(rawnatlen) <- rawnatlen[1, ]
-      rawnatlen <- rawnatlen[-1, ]
-      # make older SS output names match current SS output conventions
-      rawnatlen <- df.rename(rawnatlen,
-        oldnames = c("Gender", "SubMorph"),
-        newnames = c("Sex", "Platoon")
-      )
-      rawnatlen <- type.convert(rawnatlen, as.is = TRUE)
-      returndat$natlen <- rawnatlen
-    }
-
-    # test ending based on text because sections changed within 3.30 series
-    if (!is.na(matchfun("F_AT_AGE"))) {
-      end.keyword <- "F_AT_AGE"
-    } else {
-      end.keyword <- "CATCH_AT_AGE"
-    }
+    natlen <- matchfun2("NUMBERS_AT_LENGTH", 1, substr1 = FALSE,
+                        header = TRUE, type.convert = TRUE)
+    # make older SS output names match current SS output conventions
+    natlen <- df.rename(natlen,
+                        oldnames = c("Gender", "SubMorph"),
+                        newnames = c("Sex", "Platoon")
+                        )
+    returndat$natlen <- natlen
 
     # Biomass at length (first appeared in version 3.24l, 12-5-2012)
-    if (length(grep("BIOMASS_AT_LENGTH", rawrep[, 1])) > 0) {
-      rawbatlen <- matchfun2("BIOMASS_AT_LENGTH", 1, end.keyword, -1,
-        cols = 1:(col.adjust + nlbinspop), substr1 = FALSE
-      )
-      if (length(rawbatlen) > 1) {
-        names(rawbatlen) <- rawbatlen[1, ]
-        rawbatlen <- type.convert(rawbatlen[-1, ], as.is = TRUE)
-        returndat$batlen <- rawbatlen
-      }
-    }
+    batlen <- matchfun2("BIOMASS_AT_LENGTH", 1, substr1 = FALSE,
+                        header = TRUE, type.convert = TRUE)
+    returndat$batlen <- batlen
 
+    # F at age (first appeared in version 3.30.13, 8-Mar-2019)
+    fatage <- matchfun2("F_AT_AGE", 1, header = TRUE, type.convert = TRUE)
+    returndat$fatage <- fatage
+
+    # read discard at age (added with 3.30.12, 29-Aug-2018)
+    discard_at_age <- matchfun2("DISCARD_AT_AGE", 1,
+                                header = TRUE, type.convert = TRUE)
+    returndat$discard_at_age <- discard_at_age
+
+    # catch at age
+    catage <- matchfun2("CATCH_AT_AGE", 1,
+                        header = TRUE, type.convert = TRUE)
+    returndat$catage <- catage
+    
     # Movement
-    movement <- matchfun2("MOVEMENT", 1, "EXPLOITATION", -1, cols = 1:(7 + accuage), substr1 = FALSE)
-    names(movement) <- c(movement[1, 1:6], paste("age", movement[1, -(1:6)], sep = ""))
-    movement <- df.rename(movement,
-      oldnames = c("Gpattern"),
-      newnames = c("GP")
-    )
+    movement <- matchfun2("MOVEMENT", 1, substr1 = FALSE, header = TRUE)
+    if(!is.null(movement)){
+      names(movement) <- c(movement[1, 1:6],
+                           paste("age", movement[1, -(1:6)], sep = ""))
+      movement <- df.rename(movement,
+                            oldnames = c("Gpattern"),
+                            newnames = c("GP")
+                            )
 
-    movement <- movement[-1, ]
-    for (i in 1:ncol(movement)) {
-      movement[, i] <- as.numeric(movement[, i])
+      movement <- movement[-1, ]
+      for (i in 1:ncol(movement)) {
+        movement[, i] <- as.numeric(movement[, i])
+      }
     }
     returndat$movement <- movement
 
-    # reporting rates
+    # tag reporting rates
     tagreportrates <- matchfun2("Reporting_Rates_by_Fishery", 1,
-      "See_composition_data_output_for_tag_recapture_details", -1,
-      cols = 1:3
-    )
-    if (tagreportrates[[1]][1] != "absent") {
-      names(tagreportrates) <- tagreportrates[1, ]
-      tagreportrates <- tagreportrates[-1, ]
-      for (i in 1:ncol(tagreportrates)) tagreportrates[, i] <- as.numeric(tagreportrates[, i])
-      returndat$tagreportrates <- tagreportrates
-    } else {
-      returndat$tagreportrates <- NA
-    }
+                                "See_composition_data_output", -1,
+                                substr2 = TRUE,
+                                header = TRUE,
+                                type.convert = TRUE)
+    returndat$tagreportrates <- tagreportrates
 
     # tag release table
+    # (no space after this table before Tags_Alive table)
     tagrelease <- matchfun2("TAG_Recapture", 1,
-      "Tags_Alive", -1,
-      cols = 1:10
-    )
-    if (tagrelease[[1]][1] != "absent") {
+                            "Tags_Alive", -1,
+                            cols = 1:10)
+    if (!is.null(tagrelease)) {
+      # strip off info from header
       tagfirstperiod <- as.numeric(tagrelease[1, 1])
       tagaccumperiod <- as.numeric(tagrelease[2, 1])
+      # remove header and convert to numeric
       names(tagrelease) <- tagrelease[4, ]
       tagrelease <- tagrelease[-(1:4), ]
-      for (i in 1:ncol(tagrelease)) tagrelease[, i] <- as.numeric(tagrelease[, i])
-      returndat$tagrelease <- tagrelease
-      returndat$tagfirstperiod <- tagfirstperiod
-      returndat$tagaccumperiod <- tagaccumperiod
+      tagrelease <- type.convert(tagrelease, as.is = TRUE)
     } else {
-      returndat$tagrelease <- NA
-      returndat$tagfirstperiod <- NA
-      returndat$tagaccumperiod <- NA
+      tagrelease <- NULL
+      tagfirstperiod <- NULL
+      tagaccumperiod <- NULL
     }
+    returndat$tagrelease <- tagrelease
+    returndat$tagfirstperiod <- tagfirstperiod
+    returndat$tagaccumperiod <- tagaccumperiod
 
     # tags alive
+    # (no space after this table before Total_recaptures table)
     tagsalive <- matchfun2("Tags_Alive", 1,
-      "Total_recaptures", -1,
-      cols = 1:ncols
-    )
-    if (tagsalive[[1]][1] != "absent") {
-      tagcols <- max((1:ncols)[apply(tagsalive, 2, function(x) {
-        any(x != "")
-      })])
-      tagsalive <- tagsalive[, 1:tagcols]
-      names(tagsalive) <- c("TG", paste("period", 0:(tagcols - 2), sep = ""))
-      for (i in 1:ncol(tagsalive)) tagsalive[, i] <- as.numeric(tagsalive[, i])
-      returndat$tagsalive <- tagsalive
-    } else {
-      returndat$tagsalive <- NA
+                           "Total_recaptures", -1)
+    if (!is.null(tagsalive)) {
+      tagcols <- ncol(tagsalive)
+      names(tagsalive) <- c("TG", paste0("period", 0:(tagcols - 2)))
+      tagsalive[tagsalive == ""] <- NA
+      tagsalive <- type.convert(tagsalive, as.is = TRUE)
     }
+    returndat$tagsalive <- tagsalive
 
     # total recaptures
-    tagtotrecap <- matchfun2("Total_recaptures", 1,
-      "Reporting_Rates_by_Fishery", -1,
-      cols = 1:ncols
-    )
-    if (tagtotrecap[[1]][1] != "absent") {
-      tagcols <- max((1:ncols)[apply(tagtotrecap, 2, function(x) {
-        any(x != "")
-      })])
-      tagtotrecap <- tagtotrecap[, 1:tagcols]
-      names(tagtotrecap) <- c("TG", paste("period", 0:(tagcols - 2), sep = ""))
-      for (i in 1:ncol(tagtotrecap)) tagtotrecap[, i] <- as.numeric(tagtotrecap[, i])
-      returndat$tagtotrecap <- tagtotrecap
-    } else {
-      returndat$tagtotrecap <- NA
+    tagtotrecap <- matchfun2("Total_recaptures", 1)
+    if (!is.null(tagtotrecap)) {
+      tagcols <- ncol(tagtotrecap)
+      names(tagtotrecap) <- c("TG", paste0("period", 0:(tagcols - 2)))
+      tagtotrecap[tagtotrecap == ""] <- NA
+      tagtotrecap <- type.convert(tagtotrecap, as.is = TRUE)
     }
+    returndat$tagtotrecap <- tagtotrecap
 
     # age-length matrix
     # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
     # needs to be at least 6 even if there are fewer ages
-    rawALK <- matchfun2("AGE_LENGTH_KEY", 4, "AGE_AGE_KEY", -1, cols = 1:max(6, accuage + 2))
-    if (length(rawALK) > 1 & rawALK[[1]][1] != "absent" &&
-      length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
+    # because of spaces in this table prior to 3.30.15.06 string2 is used
+    # but this will break if AGE_LENGTH_KEY is included without AGE_AGE_KEY
+    rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
+                        "AGE_AGE_KEY", -1,
+                        cols = 1:max(6, accuage + 2))
+    if (length(rawALK) > 1 & !is.null(rawALK) &&
+        length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
       morph_col <- 5
       if (SS_versionNumeric < 3.30 &
         length(grep("Sub_Seas", rawALK[, 3])) == 0) {
@@ -3072,7 +2957,9 @@ SS_output <-
       N_ALKs <- length(starts)
       # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
       ALK <- array(NA, c(nlbinspop, accuage + 1, N_ALKs))
-      dimnames(ALK) <- list(Length = rev(lbinspop), TrueAge = 0:accuage, Matrix = 1:N_ALKs)
+      dimnames(ALK) <- list(Length = rev(lbinspop),
+                            TrueAge = 0:accuage,
+                            Matrix = 1:N_ALKs)
 
       for (i in 1:N_ALKs) {
         # get matrix of values
@@ -3092,7 +2979,7 @@ SS_output <-
     }
 
     # ageing error matrices
-    rawAAK <- matchfun2("AGE_AGE_KEY", 1, "SELEX_database", -1, cols = 1:(accuage + 2))
+    rawAAK <- matchfun2("AGE_AGE_KEY", 1)
     if (length(rawAAK) > 1) {
       starts <- grep("KEY:", rawAAK[, 1])
       returndat$N_ageerror_defs <- N_ageerror_defs <- length(starts)
@@ -3106,8 +2993,10 @@ SS_output <-
           rownames.tmp <- rawAAK[starts[i] + 2 + 1:nrowsAAK, 1]
           AAKtemp <- type.convert(AAKtemp, as.is = TRUE)
           AAK[i, , ] <- as.matrix(AAKtemp)
-          age_error_mean[[paste("type", i, sep = "")]] <- as.numeric((rawAAK[starts[i] + 1, -1]))
-          age_error_sd[[paste("type", i, sep = "")]] <- as.numeric((rawAAK[starts[i] + 2, -1]))
+          age_error_mean[[paste("type", i, sep = "")]] <-
+            as.numeric((rawAAK[starts[i] + 1, -1]))
+          age_error_sd[[paste("type", i, sep = "")]] <-
+            as.numeric((rawAAK[starts[i] + 2, -1]))
         }
         # add names to 3 dimensions of age-age-key
         if (!is.null(AAK)) {
@@ -3123,88 +3012,63 @@ SS_output <-
       }
     }
 
-    # F at age (first appeared in version 3.30.13, 8-Mar-2019)
-    if (!is.na(matchfun("F_AT_AGE"))) {
-      fatage <- matchfun2("F_AT_AGE", 1, "CATCH_AT_AGE", -1, header = TRUE)
-      fatage <- type.convert(fatage, as.is = TRUE)
+    # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
+    # which have SPR/YPR profile in Report.sso
+    # (this was previously in Forecast-report.sso, but reading this info
+    # is no longer supported for those older versions)
+    if (SS_versionNumeric >= 3.30) {
+      # 3.30 models have "Finish SPR/YPR profile" followed by some additional comments
+      yieldraw <- matchfun2("SPR/YPR_Profile", 1, "Finish", -2)
     } else {
-      fatage <- NA
+      # 3.24 models and earlier use blank line to end table
+      yieldraw <- matchfun2("SPR/YPR_Profile", 1)
     }
-
-    # test for discard at age section (added with 3.30.12, 29-Aug-2018)
-    if (!is.na(matchfun("DISCARD_AT_AGE"))) {
-      # read discard at age
-      discard_at_age <- matchfun2("DISCARD_AT_AGE", 1, "BIOLOGY", -1)
-      # read catch at age
-      catage <- matchfun2("CATCH_AT_AGE", 1, "DISCARD_AT_AGE", -1)
-      # process discard at age
-      if (discard_at_age[[1]][1] == "absent") {
-        discard_at_age <- NA
-        warning(
-          "No discard-at-age numbers because 'detailed age-structured reports'\n",
-          "is turned off in starter file."
-        )
-      } else {
-        discard_at_age <- discard_at_age[, apply(discard_at_age, 2, emptytest) < 1]
-        names(discard_at_age) <- discard_at_age[1, ]
-        discard_at_age <- type.convert(discard_at_age[-1, ], as.is = TRUE)
-      }
-    } else {
-      # read catch at age using old end point (before discard-at-age was added)
-      catage <- matchfun2("CATCH_AT_AGE", 1, "BIOLOGY", -1)
-      discard_at_age <- NA
+    if (!is.null(yieldraw)) {
+      names <- yieldraw[1, ]
+      names[names == "SSB/Bzero"] <- "Depletion"
+      yielddat <- yieldraw[c(2:(as.numeric(length(yieldraw[, 1]) - 1))), ]
+      yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
+      names(yielddat) <- names
+      yielddat <- type.convert(yielddat, as.is = TRUE)
+      yielddat <- yielddat[order(yielddat$Depletion, decreasing = FALSE), ]
+    } else{
+      yielddat <- NA
     }
-    # process catch at age
-    if (catage[[1]][1] == "absent") {
-      catage <- NA
-      warning(
-        "No catch-at-age numbers because 'detailed age-structured reports'\n",
-        "is turned off in starter file.\n"
-      )
-    } else {
-      catage <- catage[, apply(catage, 2, emptytest) < 1]
-      names(catage) <- catage[1, ]
-      catage <- type.convert(catage[-1, ], as.is = TRUE)
-    }
-    returndat$fatage <- fatage
-    returndat$catage <- catage
-    returndat$discard_at_age <- discard_at_age
-
-    if (!is.na(matchfun("Z_AT_AGE"))) {
-      # Z at age
-      # With_fishery
-      # No_fishery_for_Z=M_and_dynamic_Bzero
-      Z_at_age <- matchfun2("Z_AT_AGE_Annual_2", 1, "Spawning_Biomass_Report_1", -2, header = TRUE)
-      M_at_age <- matchfun2("Z_AT_AGE_Annual_1", 1, "-ln(Nt+1", -1, matchcol2 = 5, header = TRUE)
-      if (nrow(Z_at_age) > 0) {
-        Z_at_age[Z_at_age == "_"] <- NA
-        M_at_age[M_at_age == "_"] <- NA
-        # if birth season is not season 1, you can get infinite values
-        Z_at_age[Z_at_age == "-1.#INF"] <- NA
-        M_at_age[M_at_age == "-1.#INF"] <- NA
-        if (Z_at_age[[1]][1] != "absent" && nrow(Z_at_age > 0)) {
-          Z_at_age <- type.convert(Z_at_age, as.is = TRUE)
-          M_at_age <- type.convert(M_at_age, as.is = TRUE)
-        } else {
-          Z_at_age <- NA
-          M_at_age <- NA
-        }
-      }
-    } else {
-      # this could be cleaned up
-      Z_at_age <- NA
-      M_at_age <- NA
+    returndat$equil_yield <- yielddat
+    
+    # Z at age
+    # With_fishery
+    # No_fishery_for_Z=M_and_dynamic_Bzero
+    Z_at_age <- matchfun2("Z_AT_AGE_Annual_2", 1, header = TRUE)
+    if (!is.null(Z_at_age)) {
+      Z_at_age[Z_at_age == "_"] <- NA
+      # if birth season is not season 1, you can get infinite values
+      Z_at_age[Z_at_age == "-1.#INF"] <- NA
+      Z_at_age <- type.convert(Z_at_age, as.is = TRUE)
     }
     returndat$Z_at_age <- Z_at_age
+
+    # M at age table ends with comments
+    #   Note:  Z calculated as -ln(Nt+1 / Nt)
+    #   Note:  Z calculation for maxage not possible, for maxage-1 includes numbers at maxage, so is approximate
+    M_at_age <- matchfun2("Z_AT_AGE_Annual_1", 1,
+                          "-ln(Nt+1", -1, matchcol2 = 5,
+                          header = TRUE)
+    if (!is.null(Z_at_age)) {
+      Z_at_age[Z_at_age == "_"] <- NA
+      # if birth season is not season 1, you can get infinite values
+      Z_at_age[Z_at_age == "-1.#INF"] <- NA
+      Z_at_age <- type.convert(Z_at_age, as.is = TRUE)
+    }
     returndat$M_at_age <- M_at_age
 
     # Dynamic_Bzero output "with fishery"
-    Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2", 1, "NUMBERS_AT_AGE_Annual_2", -1)
+    Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2", 1,
+                                "NUMBERS_AT_AGE_Annual_2", -1)
     # Dynamic_Bzero output "no fishery"
-    Dynamic_Bzero2 <- matchfun2("Spawning_Biomass_Report_1", 1, "NUMBERS_AT_AGE_Annual_1", -1)
-    if (Dynamic_Bzero1[[1]][1] == "absent") {
-      Dynamic_Bzero <- NA
-    } else {
+    Dynamic_Bzero2 <- matchfun2("Spawning_Biomass_Report_1", 1,
+                                "NUMBERS_AT_AGE_Annual_1", -1)
+    if (!is.null(Dynamic_Bzero1)) {
       Dynamic_Bzero <- cbind(Dynamic_Bzero1, Dynamic_Bzero2[, 3])
       names(Dynamic_Bzero) <- c("Yr", "Era", "SSB", "SSB_nofishing")
       if (nareas == 1 & ngpatterns == 1) { # for simpler models, do some cleanup
@@ -3251,7 +3115,13 @@ SS_output <-
     returndat$parameters <- parameters
     returndat$FleetNames <- FleetNames
     returndat$repfiletime <- repfiletime
-    returndat$SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"), 3]) # type of stock recruit relationship
+
+    # type of stock recruit relationship
+    SRRtype <- rawrep[matchfun("SPAWN_RECRUIT"), 3]
+    if(SRRtype == "Function:"){
+      SRRtype <- rawrep[matchfun("SPAWN_RECRUIT"), 4]
+    }
+    returndat$SRRtype <- as.numeric(SRRtype)
 
     # get "sigma" used by Pacific Council in P-star calculations
     SSB_final_Label <- paste0("SSB_", endyr + 1)
