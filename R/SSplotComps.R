@@ -25,7 +25,7 @@
 #' males, females, and unsexed. This option is not fully implemented for all
 #' plots.
 #' @param yupper upper limit on ymax for polygon/histogram composition plots
-#' @param datonly make plots of data without fits as well as data with fits?
+#' @param datonly make plots of data without fits?
 #' @param samplesizeplots make sample size plots?
 #' @param compresidplots make plots of residuals for fit to composition data?
 #' @param bub make bubble plot for numbers at age or size?

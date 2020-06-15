@@ -283,7 +283,7 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_lencomp")
     if(is.null(d$lencomp) & d$use_lencomp==1){
       # empty data.frame with correct number of columns needed for terminator row
-      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * d$Ngenders))
+      d$lencomp <- data.frame(matrix(vector(), 0, 6 + d$N_lbins * abs(d$Ngenders)))
     }
     print.df(d$lencomp)
   }
@@ -310,7 +310,7 @@ SS_writedat_3.30 <- function(datlist,
     # age comps
     if (is.null(d$agecomp)) {
       # empty data.frame with correct number of columns needed for terminator row
-      d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * d$Ngenders))
+      d$agecomp <- data.frame(matrix(vector(), 0, 9 + d$N_agebins * abs(d$Ngenders)))
     }
     print.df(d$agecomp)
   }
@@ -352,8 +352,8 @@ SS_writedat_3.30 <- function(datlist,
     wl("N_recap_events")
     wl("mixing_latency_period")
     wl("max_periods")
-    print.df(d$tag_releases)
-    print.df(d$tag_recaps)
+    print.df(d$tag_releases, terminate = FALSE)
+    print.df(d$tag_recaps, terminate = FALSE)
   }
 
   # write morph composition data

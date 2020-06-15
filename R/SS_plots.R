@@ -859,7 +859,32 @@ SS_plots <-
                       ptsize=ptsize, res=res,
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # size comp polygon and bubble plots
+
+        # length comp sex ratios (data only, for 2-sex models only)
+        if(replist$nsexes == 2){
+          plotinfo <-
+            SSplotSexRatio(replist=replist,
+                           datonly = TRUE,
+                           kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
+                           fleetnames=fleetnames,
+                           linescol = 0, # turn off line showing expected value
+                           samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                           minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                           bublegend=showlegend,
+                           maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                           plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                           maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                           cohortlines=cohortlines,
+                           #sexes=sexes,
+                           #yupper=comp.yupper,
+                           scalebins=scalebins,
+                           pwidth=pwidth, pheight=pheight, punits=punits,
+                           ptsize=ptsize, res=res,
+                           ...)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        }
+        
+        # size comp polygon and bubble plots (data only)
         for(sizemethod in sort(unique(replist$sizedbase$method))){
           plotinfo <-
             SSplotComps(replist=replist,datonly=TRUE,kind="SIZE",sizemethod=sizemethod,
@@ -880,7 +905,7 @@ SS_plots <-
       }
       if(ageCompDatGroup %in% plot){
         if(verbose) cat("Starting age comp data plots (group ",ageCompDatGroup,")\n",sep="")
-        # age comp polygon and bubble plots
+        # age comp polygon and bubble plots (data only)
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
@@ -896,7 +921,7 @@ SS_plots <-
                       ptsize=ptsize, res=res,
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-        # ghost age comp polygon and bubble plots
+        # ghost age comp polygon and bubble plots (data only)
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="GSTAGE",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
@@ -913,10 +938,31 @@ SS_plots <-
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         flush.console()
+
+        # age comp sex ratios (data only)
+        if(replist$nsexes == 2){
+          plotinfo <-
+            SSplotSexRatio(replist=replist,
+                           datonly = TRUE,
+                           kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
+                           fleetnames=fleetnames,
+                           samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
+                           minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
+                           bublegend=showlegend,
+                           maxrows=maxrows,maxcols=maxcols,fixdims=fixdims,rows=rows,cols=cols,
+                           plot=!png, print=png,smooth=smooth,plotdir=plotdir,
+                           maxneff=maxneff, mainTitle=mainTitle, cex.main=cex.main,
+                           #sexes=sexes, yupper=comp.yupper,
+                           scalebins=scalebins,
+                           pwidth=pwidth, pheight=pheight, punits=punits,
+                           ptsize=ptsize, res=res,
+                           ...)
+          if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+        }
       }
       if(condCompDatGroup %in% plot){
         if(verbose) cat("Starting conditional comp data plots (group ",condCompDatGroup,")\n",sep="")
-        # conditional age plot
+        # conditional age plot (data only)
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
                       fleetnames=fleetnames,
@@ -936,8 +982,11 @@ SS_plots <-
                       ...)
         if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       } # end conditional data plots
-      if(!is.null(plotInfoTable))
+
+      if(!is.null(plotInfoTable)){
         plotInfoTable$category[plotInfoTable$category=="Comp"] <- "CompDat"
+      }
+      
       flush.console()
     } # end if data plot
 
@@ -1008,7 +1057,7 @@ SS_plots <-
       if(replist$nsexes == 2){
         plotinfo <-
           SSplotSexRatio(replist=replist,
-                         datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
+                         kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
                          fleetnames=fleetnames,
                          samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                          minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,
@@ -1023,8 +1072,8 @@ SS_plots <-
                          pwidth=pwidth, pheight=pheight, punits=punits,
                          ptsize=ptsize, res=res,
                          ...)
+        if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       }
-      if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
       
       if(!is.null(plotInfoTable))
         plotInfoTable$category[plotInfoTable$category=="Comp"] <- "LenComp"
@@ -1068,11 +1117,11 @@ SS_plots <-
                     ptsize=ptsize, res=res,
                     ...)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-      # sex ratios
+      # age comp sex ratios
       if(replist$nsexes == 2){
         plotinfo <-
           SSplotSexRatio(replist=replist,
-                         datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
+                         kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
                          fleetnames=fleetnames,
                          samplesizeplots=samplesizeplots,showsampsize=showsampsize,showeffN=showeffN,
                          minnbubble=minnbubble, pntscalar=pntscalar, cexZ1=bub.scale.pearson,

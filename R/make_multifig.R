@@ -55,7 +55,7 @@
 #' @param axis1labs optional vector of labels for axis1 (either NULL or needs to
 #' match length of axis1)
 #' @param linepos should lines be added on top of points (linepos=1) or behind
-#' (linepos=2)?
+#' (linepos=2)? A value of linepos = 0 will result in no line.
 #' @param type type of line/points used for observed values (see 'type' in
 #' ?plot for details) on top of a grey polygon. Default is "o" for overplotting
 #' points on lines.

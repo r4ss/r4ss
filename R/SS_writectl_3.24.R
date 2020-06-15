@@ -134,8 +134,8 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }
 
   # write a header
+  writeComment("#V3.24")
   writeComment("#C control file created using the SS_writectl function in the R package r4ss")
-  writeComment(paste("#C should work with SS version:",ctllist$SSversion))
   writeComment(paste("#C file write time:",Sys.time()))
   writeComment("#")
 
@@ -192,7 +192,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("GrowthModel",comment="# GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented")
   wl("Growth_Age_for_L1")
   wl("Growth_Age_for_L2",comment="#_Growth_Age_for_L2 (999 to use as Linf)")
-
+  if(ctllist$GrowthModel == 3) {
+    wl("N_ageK", comment = "# number of K multipliers to read")
+    wl.vector("Age_K_points", comment = "# ages for K multiplier")
+  }
   wl("SD_add_to_LAA",comment="#_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)")
   wl("CV_Growth_Pattern",comment="#_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)")
   wl("maturity_option",comment=
@@ -216,12 +219,33 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
   printdf("MG_parms")
 
+  # MG environmental linkage lines
   writeComment("#")
-  writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
-  writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+  if(any(ctllist$MG_parms$env_var != 0)) {
+    wl("read_MG_custom_env_var")
+    if(ctllist$read_MG_custom_env_var == 1) {
+      printdf("MG_custom_env_var")
+    } else {
+      writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+    }
+  } else {
+    writeComment("#_Cond 0  #custom_MG-env_setup (0/1)")
+    writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
+  }
   writeComment("#")
-  writeComment("#_Cond 0  #custom_MG-block_setup (0/1)")
-  writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+  # MG block lines
+  if(!is.null(ctllist[["custom_MG_block"]])) {
+    wl("custom_MG_block")
+    if(ctllist[["custom_MG_block"]] == 1) {
+      printdf("MG_parms_blocks")
+    } else {
+      writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+    } 
+  } else {
+    writeComment("#_Cond 0  #custom_MG-block_setup (0/1)")
+    writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-block parameters")
+  }
+
   writeComment("#_Cond No MG parm trends")
   writeComment("#")
   writeComment("#_seasonal_effects_on_biology_parms")
@@ -244,7 +268,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_Spawner-Recruitment")
   wl("SR_function",comment="#_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop; 7=survival_3Parm; 8=Shepard_3Parm")
   # writeComment("#_LO HI INIT PRIOR PR_type SD PHASE")
-  printdf("SRparm")
+  printdf("SR_parms")
   wl("SR_env_link")
   wl("SR_env_target")
   wl("do_recdev")

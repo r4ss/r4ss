@@ -69,7 +69,8 @@ SS_makeHTMLdiagnostictable <- function(replist,
   write(the_table,
         file = file.path(plotdir,filename[1]))
   caption <- c(caption,paste(
-      "Table of estimated parameters sorted by parameters with the largest gradients;",
+      "Table of estimated parameters (excluding deviation parameters)",
+      "sorted by parameters with the largest gradients;",
       "any parameter with a gradient value with an absolute value above",
       gradmax,
       "(for SS 3.30 models) or a parameter on bounds is colored in red."

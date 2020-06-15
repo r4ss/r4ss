@@ -7,10 +7,10 @@
 #' parameterizations, and various other tasks.
 #'
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-#' 1.38.0\cr Date: \tab 2020-03-25\cr License: \tab GPL-3\cr LazyLoad: \tab
+#' 1.38.1\cr Date: \tab 2020-06-15\cr License: \tab GPL-3\cr LazyLoad: \tab
 #' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 #' Should be compatible with Stock Synthesis versions 3.24 through 3.30
-#' (specifically version 3.30.14.08, from December, 2019).
+#' (specifically version 3.30.15.00, from March 2020).
 #'
 #' @name r4ss-package
 #' @aliases r4ss-package r4ss

@@ -14,8 +14,11 @@ SSplotSexRatio(
   fleets = "all",
   fleetnames = "default",
   yupper = 4,
+  datonly = FALSE,
   linescol = rgb(0.6, 0, 0.9, 0.7),
   lwd = 2,
+  showsampsize = TRUE,
+  showeffN = TRUE,
   axis1 = NULL,
   axis2 = NULL,
   pwidth = 6.5,
@@ -57,9 +60,15 @@ SSplotSexRatio(
 
 \item{yupper}{upper limit on ymax (only applies for sexratio.option == 1)}
 
-\item{linescol}{Color for line showing expected value (default is purple)}
+\item{datonly}{make plots of data without fits?}
+
+\item{linescol}{Color for line showing expected value (default is purple).}
 
 \item{lwd}{line width}
+
+\item{showsampsize}{add sample sizes to plot}
+
+\item{showeffN}{add effective sample sizes to plot}
 
 \item{axis1}{position of bottom axis values}
 

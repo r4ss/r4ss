@@ -374,11 +374,11 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist<-add_vec(ctllist,name="M_ageBreakPoints",length=ctllist$N_natM) # age(real) at M breakpoints
     N_natMparms<-ctllist$N_natM
   }else if(ctllist$natM_type==2){
-    N_natMparms<-ctllist$N_GP*ctllist$Ngenders
+    N_natMparms<-ctllist$N_GP*abs(ctllist$Ngenders)
     ctllist<-add_elem(ctllist,name="Lorenzen_refage") ## Reference age for Lorenzen M
   }else if(ctllist$natM_type %in% c(3,4)){
     N_natMparms<-0
-    ctllist<-add_df(ctllist,name="natM",nrow=ctllist$N_GP*ctllist$Ngenders,ncol=Nages+1,col.names=paste0("Age_",0:Nages))
+    ctllist<-add_df(ctllist,name="natM",nrow=ctllist$N_GP*abs(ctllist$Ngenders),ncol=Nages+1,col.names=paste0("Age_",0:Nages))
   }else{
     stop("natM_type =", ctllist$natM_type," is not yet implemented in this script")
   }
@@ -436,7 +436,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
 
   # MG parlines -----
-  N_MGparm<-MGparm_per_def*ctllist$N_GP*ctllist$Ngenders  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
+  N_MGparm<-MGparm_per_def*ctllist$N_GP*abs(ctllist$Ngenders)  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
@@ -445,7 +445,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
                  # catch mult = NA (but could assign in the future)
   
   GenderLabel<-c("Fem","Mal")
-  for(i in seq_len(ctllist$Ngenders)) {
+  for(i in seq_len(abs(ctllist$Ngenders))) {
     for(j in seq_len(ctllist$N_GP)) {
       if(N_natMparms>0){
         MGparmLabel[1:N_natMparms+cnt-1]<-paste0("NatM_p_",1:N_natMparms,"_",GenderLabel[i],"_GP_",j)
@@ -503,7 +503,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
     }
   }
-  N_MGparm<-N_MGparm+2*ctllist$Ngenders+2+2 #add for wt-len(by gender), mat-len parms; eggs
+  N_MGparm <- cnt - 1
   
   if(ctllist$hermaphroditism_option!=0){
     MGparmLabel[cnt]<-paste0("Herm_Infl_age",GenderLabel[1]);PType[cnt]<-6;cnt<-cnt+1

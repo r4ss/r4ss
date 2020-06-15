@@ -111,7 +111,7 @@ plots.}
 
 \item{yupper}{upper limit on ymax for polygon/histogram composition plots}
 
-\item{datonly}{make plots of data without fits as well as data with fits?}
+\item{datonly}{make plots of data without fits?}
 
 \item{samplesizeplots}{make sample size plots?}
 
