@@ -1246,7 +1246,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       cat("! Warning: no time-varying growth info because\n",
           "     starter file set to produce limited report detail.\n")
     }else{
-      if(growthvaries){ # if growth is time varying
+      # if growth is time varying and weight-at-age not used
+      if(growthvaries & !wtatage_switch){ 
         for(i in 1:nsexes){
           growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
                                        growthseries$Morph==morphs[i],]
