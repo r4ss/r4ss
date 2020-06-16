@@ -80,7 +80,7 @@ SSplotTimeseries <-
   # subplot13 = fraction of recruitment by area
   # subplot14 = recruitment by birth season
   # subplot15 = fraction of recruitment by birth season
-  # subplot16 = dynamic B0
+  # subplot16 = dynamic B0 (not yet implemented)
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
   # subfunction to write png files
@@ -249,6 +249,10 @@ SSplotTimeseries <-
     # change ylab to represent fractions for those plots
     if(subplot %in% c(13,15)) ylab <- labels[9]
 
+    if(subplot > 15){
+      stop("subplot should be a value from 1 to 15")
+    }
+
     # title initially set equal to y-label
     main=ylab
 
@@ -258,7 +262,8 @@ SSplotTimeseries <-
       # case where fish are born in the year after spawning
       yrshift <- 1
     }
-    if(!is.null(replist$recruitment_dist$recruit_dist)){
+    if(!is.null(replist$recruitment_dist$recruit_dist) &&
+       "Age" %in% names(replist$recruitment_dist$recruit_dist) ){
       # case where fish are born in the year after spawning
       yrshift <- min(as.numeric(replist$recruitment_dist$recruit_dist$Age, na.rm=TRUE))
     }

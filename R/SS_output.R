@@ -420,55 +420,63 @@ SS_output <-
     flush.console()
 
     # read forecast report file
-    # (reading yield curve from forecast file where it occurred in older SS
-    # versions is no longer supported)
+    # (this function no longer supports reading yield curve from forecast file
+    # where it occurred in older SS versions)
     if (forecast) {
       forecastname <- file.path(dir, forefile)
       temp <- file.info(forecastname)$size
       if (is.na(temp) | temp == 0) {
-        stop(
-          "Forecast-report.sso file is empty.\n",
-          "Change input to 'forecast=FALSE' or rerun model with forecast turned on."
-        )
-      }
-      # read the file
-      rawforecast1 <- read.table(
-        file = forecastname, col.names = 1:ncols, fill = TRUE, quote = "",
-        colClasses = "character", nrows = -1
-      )
-
-      # get SPR target
-      sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target",
-                                                  rawforecast1[, 1]), 2])
-
-      # starting in SSv3.30.10.00, the Forecast-report file has been restructured
-      target_definitions <- grep("_as_target", rawforecast1[, 1], value = TRUE)
-      if (length(target_definitions) == 0) {
-        # old setup (prior to 3.30.10.00)
-        btarg <- as.numeric(rawforecast1[matchfun("Btarget",
-                                                  rawforecast1[, 1]), 2])
-      } else {
-        # new setup with biomass target
-        if ("Ratio_SSB/B0_as_target" %in% target_definitions) {
-          btarg <- as.numeric(rawforecast1[matchfun("Ratio_target",
-                                                    rawforecast1[, 1]), 2])
+        if (verbose) {
+          message("Forecast-report.sso file is missing or empty.")
         }
-        # new setup with F0.1_as target
-        if ("F0.1_as_target" %in% target_definitions) {
-          btarg <- -999
+      } else {
+        # read the file
+        rawforecast1 <- read.table(
+          file = forecastname, col.names = 1:ncols, fill = TRUE, quote = "",
+          colClasses = "character", nrows = -1
+        )
+
+        # forecast
+        grab <- rawforecast1[, 1]
+        nforecastyears <- as.numeric(rawforecast1[grab %in% c("N_forecast_yrs:"), 2])
+        nforecastyears <- nforecastyears[1]
+
+        # get SPR target
+        sprtarg <- as.numeric(rawforecast1[matchfun("SPR_target",
+                                                    rawforecast1[, 1]), 2])
+
+        # starting in SSv3.30.10.00, the Forecast-report file has been restructured
+        target_definitions <- grep("_as_target", rawforecast1[, 1], value = TRUE)
+        if (length(target_definitions) == 0) {
+          # old setup (prior to 3.30.10.00)
+          btarg <- as.numeric(rawforecast1[matchfun("Btarget",
+                                                    rawforecast1[, 1]), 2])
+        } else {
+          # new setup with biomass target
+          if ("Ratio_SSB/B0_as_target" %in% target_definitions) {
+            btarg <- as.numeric(rawforecast1[matchfun("Ratio_target",
+                                                      rawforecast1[, 1]), 2])
+          }
+          # new setup with F0.1_as target
+          if ("F0.1_as_target" %in% target_definitions) {
+            btarg <- -999
+          }
         }
       }
     } else {
+      message("You skipped the forecast file.")
+    }
+    if (!exists("btarg")){
+      nforecastyears <- NA
+      sprtarg <- -999
+      btarg <- -999
       if (verbose) {
         message(
-          "You skipped the forecast file so",
           "  setting SPR target and Biomass target to -999.",
           "  Lines won't be drawn for these targets by SS_plots unless",
           "  'sprtarg' and 'btarg' are provided as inputs."
         )
       }
-      sprtarg <- -999
-      btarg <- -999
     }
     # set default minimum biomass thresholds based on typical west coast groundfish
     minbthresh <- -999
@@ -534,7 +542,7 @@ SS_output <-
     if (warn) {
       warnname <- file.path(dir, warnfile)
       if (!file.exists(warnname)) {
-        message(warnfile, "file not found")
+        message(warnfile, " file not found")
         nwarn <- NA
         warn <- NA
       } else {
@@ -553,7 +561,7 @@ SS_output <-
             )
           }
         } else {
-          message(warnfile, "file is missing the string 'N warnings'!")
+          message(warnfile, " file is missing the string 'N warnings'")
           nwarn <- NA
         }
       }
@@ -736,6 +744,7 @@ SS_output <-
         IsFishFleet <- !is.na(catch_units)
         nfleets <- length(FleetNames)
       }
+      
       # positions of timeseries section (used in various places below)
       begin <- matchfun("TIME_SERIES") + 2
       end <- matchfun("SPR_series") - 2
@@ -836,7 +845,9 @@ SS_output <-
           compdbase$SuprPer <- "No"
         }
         compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-        n <- sum(is.na(compdbase$Nsamp_adj) & compdbase$Used != "skip" & compdbase$Kind != "TAG2")
+        n <- sum(is.na(compdbase$Nsamp_adj) &
+                 compdbase$Used != "skip" &
+                 compdbase$Kind != "TAG2")
         if (n > 0) {
           warning(
             n, " rows from composition database have NA sample size\n",
@@ -1025,14 +1036,6 @@ SS_output <-
     # calculate number of growth patterns
     ngpatterns <- max(morph_indexing$GP)
 
-    # forecast
-    if (forecast) {
-      grab <- rawforecast1[, 1]
-      nforecastyears <- as.numeric(rawforecast1[grab %in% c("N_forecast_yrs:"), 2])
-      nforecastyears <- nforecastyears[1]
-    } else {
-      nforecastyears <- NA
-    }
     if (verbose) {
       message("Finished dimensioning")
     }
@@ -1836,11 +1839,11 @@ SS_output <-
     # Length_Comp_Fit_Summary
     if (SS_versionNumeric < 3.30) {
       # old way didn't have key word and had parantheses and other issues with column names
-      lenntune <- matchfun2("FIT_AGE_COMPS", -(nfleets + 1),
+      lenntune <- matchfun2("FIT_AGE_COMPS", -(nfleets + 2),
                             "FIT_AGE_COMPS", -1, cols = 1:10, header = TRUE)
       names(lenntune)[10] <- "FleetName"
       # reorder columns (leaving out sample sizes perhaps to save space)
-      lenntune <- lenntune[lenntune$Nsamp_adj > 0, c(10, 1, 4:9)]
+      lenntune <- lenntune[lenntune$N > 0, c(10, 1, 4:9)]
       # avoid NA warnings by removing #IND values
       lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN" == "-1.#IND"] <- NA
       lenntune <- type.convert(lenntune, as.is = TRUE)
@@ -2417,7 +2420,6 @@ SS_output <-
     summary_age <- rawrep[matchfun("TIME_SERIES"), 2]
     summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
     returndat$summary_age <- summary_age
-
     # time series
     timeseries <- matchfun2("TIME_SERIES", 1, header = TRUE)
     # temporary fix for 3.30.03.06
@@ -2803,6 +2805,12 @@ SS_output <-
           cpue$Name[i] <- substring(cpue$Fleet[i], nchar(cpue$Fleet[i]) + 2)
         }
       }
+      # replace any bad values (were present in at least one 3.24s model)
+      if(any(cpue$Exp == "1.#QNAN")){
+        cpue$Exp[cpue$Exp == "1.#QNAN"] <- NA
+        cpue$Calc_Q[cpue$Calc_Q == "1.#QNAN"] <- NA
+        cpue$Eff_Q[cpue$Eff_Q == "1.#QNAN"] <- NA
+      }
       # make columns numeric
       cpue <- type.convert(cpue, as.is = TRUE)
     } else {
@@ -2980,37 +2988,42 @@ SS_output <-
 
     # ageing error matrices
     rawAAK <- matchfun2("AGE_AGE_KEY", 1)
-    if (length(rawAAK) > 1) {
-      starts <- grep("KEY:", rawAAK[, 1])
-      returndat$N_ageerror_defs <- N_ageerror_defs <- length(starts)
-      if (N_ageerror_defs > 0) {
-        # loop over ageing error types to get definitions
-        nrowsAAK <- nrow(rawAAK) / N_ageerror_defs - 3
-        AAK <- array(NA, c(N_ageerror_defs, nrowsAAK, accuage + 1))
-        age_error_mean <- age_error_sd <- data.frame(age = 0:accuage)
-        for (i in 1:N_ageerror_defs) {
-          AAKtemp <- rawAAK[starts[i] + 2 + 1:nrowsAAK, -1]
-          rownames.tmp <- rawAAK[starts[i] + 2 + 1:nrowsAAK, 1]
-          AAKtemp <- type.convert(AAKtemp, as.is = TRUE)
-          AAK[i, , ] <- as.matrix(AAKtemp)
-          age_error_mean[[paste("type", i, sep = "")]] <-
-            as.numeric((rawAAK[starts[i] + 1, -1]))
-          age_error_sd[[paste("type", i, sep = "")]] <-
-            as.numeric((rawAAK[starts[i] + 2, -1]))
+    if (!is.null(rawAAK)) {
+      if (rawAAK[[1]][1] == "no_age_error_key_used") {
+        N_ageerror_defs <- 0
+      } else {
+        starts <- grep("KEY:", rawAAK[, 1])
+        N_ageerror_defs <- length(starts)
+        if (N_ageerror_defs > 0) {
+          # loop over ageing error types to get definitions
+          nrowsAAK <- nrow(rawAAK) / N_ageerror_defs - 3
+          AAK <- array(NA, c(N_ageerror_defs, nrowsAAK, accuage + 1))
+          age_error_mean <- age_error_sd <- data.frame(age = 0:accuage)
+          for (i in 1:N_ageerror_defs) {
+            AAKtemp <- rawAAK[starts[i] + 2 + 1:nrowsAAK, -1]
+            rownames.tmp <- rawAAK[starts[i] + 2 + 1:nrowsAAK, 1]
+            AAKtemp <- type.convert(AAKtemp, as.is = TRUE)
+            AAK[i, , ] <- as.matrix(AAKtemp)
+            age_error_mean[[paste("type", i, sep = "")]] <-
+              as.numeric((rawAAK[starts[i] + 1, -1]))
+            age_error_sd[[paste("type", i, sep = "")]] <-
+              as.numeric((rawAAK[starts[i] + 2, -1]))
+          }
+          # add names to 3 dimensions of age-age-key
+          if (!is.null(AAK)) {
+            dimnames(AAK) <- list(
+              AgeingErrorType = 1:N_ageerror_defs,
+              ObsAgeBin = rownames.tmp,
+              TrueAge = 0:accuage
+            )
+          }
+          returndat$AAK <- AAK
+          returndat$age_error_mean <- age_error_mean
+          returndat$age_error_sd <- age_error_sd
         }
-        # add names to 3 dimensions of age-age-key
-        if (!is.null(AAK)) {
-          dimnames(AAK) <- list(
-            AgeingErrorType = 1:N_ageerror_defs,
-            ObsAgeBin = rownames.tmp,
-            TrueAge = 0:accuage
-          )
-        }
-        returndat$AAK <- AAK
-        returndat$age_error_mean <- age_error_mean
-        returndat$age_error_sd <- age_error_sd
-      }
-    }
+      } # end check for ageing error matrices
+      returndat$N_ageerror_defs <- N_ageerror_defs
+    } # end check for NULL output of ageing error info
 
     # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
     # which have SPR/YPR profile in Report.sso
@@ -3063,21 +3076,16 @@ SS_output <-
     returndat$M_at_age <- M_at_age
 
     # Dynamic_Bzero output "with fishery"
-    Dynamic_Bzero1 <- matchfun2("Spawning_Biomass_Report_2", 1,
-                                "NUMBERS_AT_AGE_Annual_2", -1)
+    Dynamic_Bzero <- matchfun2("Spawning_Biomass_Report_2", 1)
     # Dynamic_Bzero output "no fishery"
-    Dynamic_Bzero2 <- matchfun2("Spawning_Biomass_Report_1", 1,
-                                "NUMBERS_AT_AGE_Annual_1", -1)
-    if (!is.null(Dynamic_Bzero1)) {
-      Dynamic_Bzero <- cbind(Dynamic_Bzero1, Dynamic_Bzero2[, 3])
-      names(Dynamic_Bzero) <- c("Yr", "Era", "SSB", "SSB_nofishing")
+    Dynamic_Bzero2 <- matchfun2("Spawning_Biomass_Report_1", 1)
+    if (!is.null(Dynamic_Bzero)) {
+      Dynamic_Bzero <- cbind(Dynamic_Bzero, Dynamic_Bzero2[, -(1:2)])
+      Dynamic_Bzero <- type.convert(Dynamic_Bzero[-(1:2), ], as.is = TRUE)
       if (nareas == 1 & ngpatterns == 1) { # for simpler models, do some cleanup
-        Dynamic_Bzero <- type.convert(Dynamic_Bzero[-(1:2), ], as.is = TRUE)
         names(Dynamic_Bzero) <- c("Yr", "Era", "SSB", "SSB_nofishing")
       }
       if (nareas > 1 & ngpatterns == 1) { # for spatial models, do some cleanup
-        Dynamic_Bzero <- cbind(Dynamic_Bzero1, Dynamic_Bzero2[, -(1:2)])
-        Dynamic_Bzero <- type.convert(Dynamic_Bzero[-(1:2), ], as.is = TRUE)
         names(Dynamic_Bzero) <- c(
           "Yr", "Era", paste0("SSB_area", 1:nareas),
           paste0("SSB_nofishing_area", 1:nareas)
