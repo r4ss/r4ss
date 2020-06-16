@@ -94,8 +94,9 @@ SSplotNumbers <-
     plotdir <- replist$inputs$dir
   }
   if(is.null(natage)){
-    cat("Skipped some plots because NUMBERS_AT_AGE unavailable in report file\n",
-        "     because starter file set to produce limited report detail.\n")
+    message("Skipped some plots because NUMBERS_AT_AGE unavailable\n",
+            " in the report file. The starter file may be set to produce\n",
+            " limited report detail.")
   }else{
     # get more stuff from replist
     nsexes          <- replist$nsexes
@@ -184,7 +185,7 @@ SSplotNumbers <-
           # create data frame with 0 values to fill across platoons/submorphs
           morphlist <- unique(natagetemp_all$Platoon)
           natagetemp0 <- natagetemp_all[natagetemp_all$Platoon==morphlist[1] &
-                                          natagetemp_all$Bio_Pattern==1,]
+                                        natagetemp_all$Bio_Pattern==1,]
           for(iage in 0:accuage){
             # matrix of zeros for upcoming calculations
             natagetemp0[,column1 + iage] <- 0

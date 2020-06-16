@@ -888,7 +888,14 @@ SS_output <-
           notconditional <- !is.na(Lbin_range) & Lbin_range > aalmaxbinrange
           conditional <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
         }
-
+        if ("skip" %in% compdbase$SuprPer) {
+          # formatting error in some SS 3.30 versions caused skip to appear in
+          # the wrong column, so copy to the right one
+          compdbase$Used[compdbase$SuprPer == "skip"] <- "skip"
+          # probability of being a super-period is low, so assigning "No"
+          # to assist with identification of ghost comps below
+          compdbase$SuprPer[compdbase$SuprPer == "No"]
+        }
         if (SS_versionNumeric >= 3.22) {
           # new designation of ghost fleets from negative samp size to negative fleet
           lendbase <- compdbase[compdbase$Kind == "LEN" &
@@ -970,18 +977,21 @@ SS_output <-
         # consider range of bins for conditional age at length data
         if (verbose) {
           message(
-            "CompReport file separated by this code as follows (rows = Ncomps*Nbins):\n",
-            "  ", nrow(lendbase), "rows of length comp data,\n",
-            "  ", nrow(sizedbase), "rows of generalized size comp data,\n",
-            "  ", nrow(agedbase), "rows of age comp data,\n",
-            "  ", nrow(condbase), "rows of conditional age-at-length data,\n",
-            "  ", nrow(ghostagedbase), "rows of ghost fleet age comp data,\n",
-            "  ", nrow(ghostcondbase), "rows of ghost fleet conditional age-at-length data,\n",
-            "  ", nrow(ghostlendbase), "rows of ghost fleet length comp data,\n",
-            "  ", nrow(ladbase), "rows of mean length at age data,\n",
-            "  ", nrow(wadbase), "rows of mean weight at age data,\n",
-            "  ", nrow(tagdbase1), "rows of 'TAG1' comp data, and\n",
-            "  ", nrow(tagdbase2), "rows of 'TAG2' comp data."
+            "CompReport file separated by this code as follows",
+            " (rows = Ncomps*Nbins):\n",
+            "  ", nrow(lendbase), " rows of length comp data,\n",
+            "  ", nrow(sizedbase), " rows of generalized size comp data,\n",
+            "  ", nrow(agedbase), " rows of age comp data,\n",
+            "  ", nrow(condbase), " rows of conditional age-at-length data,\n",
+            "  ", nrow(ghostagedbase), " rows of ghost fleet age comp data,\n",
+            "  ", nrow(ghostcondbase),
+            " rows of ghost fleet conditional age-at-length data,\n",
+            "  ", nrow(ghostlendbase),
+            " rows of ghost fleet length comp data,\n",
+            "  ", nrow(ladbase), " rows of mean length at age data,\n",
+            "  ", nrow(wadbase), " rows of mean weight at age data,\n",
+            "  ", nrow(tagdbase1), " rows of 'TAG1' comp data, and\n",
+            "  ", nrow(tagdbase2), " rows of 'TAG2' comp data."
           )
         }
         # convert bin indices to true lengths
@@ -1033,9 +1043,13 @@ SS_output <-
                                 oldnames = c("Gpattern", "Bseas", "Gender"),
                                 newnames = c("GP", "BirthSeas", "Sex")
                                 )
-    # calculate number of growth patterns
-    ngpatterns <- max(morph_indexing$GP)
-
+    if (!is.null(morph_indexing)) {
+      # calculate number of growth patterns
+      ngpatterns <- max(morph_indexing$GP)
+    } else {
+      ngpatterns <- NULL
+    }
+    
     if (verbose) {
       message("Finished dimensioning")
     }
@@ -1646,7 +1660,9 @@ SS_output <-
 
     # time-varying size-selectivity parameters
     SelSizeAdj <- matchfun2("selparm(Size)_By_Year_after_adjustments", 2)
-    if (nrow(SelSizeAdj) > 2) {
+    if (is.null(SelSizeAdj) || nrow(SelSizeAdj) <= 2) {
+      SelSizeAdj <- NULL
+    } else {
       SelSizeAdj <- SelSizeAdj[, apply(SelSizeAdj, 2, emptytest) < 1]
       SelSizeAdj[SelSizeAdj == ""] <- NA
       # make values numeric
@@ -1664,8 +1680,6 @@ SS_output <-
           paste0("Par", 1:(ncol(SelSizeAdj) - 2))
         )
       }
-    } else {
-      SelSizeAdj <- NULL
     }
 
     # time-varying age-selectivity parameters
@@ -1851,41 +1865,43 @@ SS_output <-
     } else {
       # new in 3.30 has keyword at top
       lenntune <- matchfun2("Length_Comp_Fit_Summary", 1, header = TRUE)
-      lenntune <- df.rename(lenntune,
-        oldnames = c("FleetName"),
-        newnames = c("Fleet_name")
-      )
-      if ("Factor" %in% names(lenntune)) {
-        # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
-        lenntune <- type.convert(lenntune, as.is = TRUE)
-      } else {
-        # process 3.30 versions prior to 3.30.12
-        # reorder columns (leaving out sample sizes perhaps to save space)
-        lenntune <- lenntune[lenntune$Nsamp_adj > 0, ]
-        lenntune <- type.convert(lenntune, as.is = TRUE)
-        ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
-        # lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
-        lenntune$"HarMean(effN)/mean(inputN*Adj)" <-
-          lenntune$"HarMean" / lenntune$"mean_inputN*Adj"
-
-        # change name to make it clear what the harmonic mean is based on
+      if (!is.null(lenntune)) {
         lenntune <- df.rename(lenntune,
-          oldnames = c("HarMean", "mean_inputN*Adj"),
-          newnames = c("HarMean(effN)", "mean(inputN*Adj)")
-        )
+                              oldnames = c("FleetName"),
+                              newnames = c("Fleet_name")
+                              )
+        if ("Factor" %in% names(lenntune)) {
+          # format starting with 3.30.12 doesn't need adjustment, just convert to numeric
+          lenntune <- type.convert(lenntune, as.is = TRUE)
+        } else {
+          # process 3.30 versions prior to 3.30.12
+          # reorder columns (leaving out sample sizes perhaps to save space)
+          lenntune <- lenntune[lenntune$Nsamp_adj > 0, ]
+          lenntune <- type.convert(lenntune, as.is = TRUE)
+          ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
+          # lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
+          lenntune$"HarMean(effN)/mean(inputN*Adj)" <-
+            lenntune$"HarMean" / lenntune$"mean_inputN*Adj"
 
-        # drop distracting column
-        lenntune <- lenntune[, names(lenntune) != "mean_effN"]
+          # change name to make it clear what the harmonic mean is based on
+          lenntune <- df.rename(lenntune,
+                                oldnames = c("HarMean", "mean_inputN*Adj"),
+                                newnames = c("HarMean(effN)", "mean(inputN*Adj)")
+                                )
 
-        # put recommendation and fleetnames at the end
-        # (probably a more efficient way to do this)
-        end.names <- c("Recommend_Var_Adj", "Fleet_name")
-        lenntune <- lenntune[, c(
-          which(!names(lenntune) %in% end.names),
-          which(names(lenntune) %in% end.names)
-        )]
-      } # end pre-3.30.12 version of processing Length_Comp_Fit_Summary
-    } # end 3.30 version of processing Length_Comp_Fit_Summary
+          # drop distracting column
+          lenntune <- lenntune[, names(lenntune) != "mean_effN"]
+
+          # put recommendation and fleetnames at the end
+          # (probably a more efficient way to do this)
+          end.names <- c("Recommend_Var_Adj", "Fleet_name")
+          lenntune <- lenntune[, c(
+            which(!names(lenntune) %in% end.names),
+            which(names(lenntune) %in% end.names)
+          )]
+        } # end pre-3.30.12 version of processing Length_Comp_Fit_Summary
+      } # end 3.30 version of processing Length_Comp_Fit_Summary
+    }
     stats$Length_Comp_Fit_Summary <- lenntune
 
     ## FIT_AGE_COMPS
@@ -2268,14 +2284,17 @@ SS_output <-
     # formatting change in 3.30.15.06 puts table one line lower
     growdat <- matchfun2("Biology_at_age", adjust1 = ifelse(custom, 2, 1),
                          header = TRUE, type.convert = TRUE)
-    # make older SS output names match current SS output conventions
-    growdat <- df.rename(growdat,
-      oldnames = c("Gender"),
-      newnames = c("Sex")
-      )
-    # extract a few quantities related to growth morphs/platoons
-    nmorphs <- max(growdat$Morph)
-    midmorphs <- c(c(0, nmorphs / nsexes) + ceiling(nmorphs / nsexes / 2))
+    if (!is.null(growdat)) {
+      # make older SS output names match current SS output conventions
+      growdat <- df.rename(growdat,
+                           oldnames = c("Gender"),
+                           newnames = c("Sex")
+                           )
+      # extract a few quantities related to growth morphs/platoons
+      # note 16-June-2020: these values don't seem to be used anywhere
+      nmorphs <- max(growdat$Morph)
+      midmorphs <- c(c(0, nmorphs / nsexes) + ceiling(nmorphs / nsexes / 2))
+    }
     returndat$endgrowth <- growdat
 
     # test for use of empirical weight-at-age input file (wtatage.ss)
@@ -2462,30 +2481,34 @@ SS_output <-
 
     # set mainmorphs as those morphs born in the first season with recruitment
     # and the largest fraction of the platoons (should equal middle platoon when present)
-    if (SS_versionNumeric >= 3.30) {
-      # new "platoon" label
-      temp <- morph_indexing[morph_indexing$BirthSeas ==
-                             first_seas_with_recruits &
-                             morph_indexing$Platoon_Dist ==
-                             max(morph_indexing$Platoon_Dist), ]
-      mainmorphs <- min(temp$Index[temp$Sex == 1])
-      if (nsexes == 2) {
-        mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+    if (is.null(morph_indexing)) {
+      mainmorphs <- NULL
+    } else {
+      if (SS_versionNumeric >= 3.30) {
+        # new "platoon" label
+        temp <- morph_indexing[morph_indexing$BirthSeas ==
+                               first_seas_with_recruits &
+                               morph_indexing$Platoon_Dist ==
+                               max(morph_indexing$Platoon_Dist), ]
+        mainmorphs <- min(temp$Index[temp$Sex == 1])
+        if (nsexes == 2) {
+          mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+        }
       }
-    }
-    if (SS_versionNumeric < 3.30) {
-      # old "sub_morph" label
-      temp <- morph_indexing[morph_indexing$BirthSeas ==
-                             first_seas_with_recruits &
-                             morph_indexing$Sub_Morph_Dist ==
-                             max(morph_indexing$Sub_Morph_Dist), ]
-      mainmorphs <- min(temp$Index[temp$Sex == 1])
-      if (nsexes == 2) {
-        mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+      if (SS_versionNumeric < 3.30) {
+        # old "sub_morph" label
+        temp <- morph_indexing[morph_indexing$BirthSeas ==
+                               first_seas_with_recruits &
+                               morph_indexing$Sub_Morph_Dist ==
+                               max(morph_indexing$Sub_Morph_Dist), ]
+        mainmorphs <- min(temp$Index[temp$Sex == 1])
+        if (nsexes == 2) {
+          mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+        }
       }
-    }
-    if (length(mainmorphs) == 0) {
-      warning("Error with morph indexing")
+      if (length(mainmorphs) == 0) {
+        warning("Error with morph indexing")
+      }
     }
     returndat$mainmorphs <- mainmorphs
 
@@ -2683,23 +2706,25 @@ SS_output <-
       spr <- matchfun2("SPR_series", 5, header = TRUE)
     }
 
-    # clean up SPR output
-    # make older SS output names match current SS output conventions
-    names(spr) <- gsub(pattern = "SPB", replacement = "SSB", names(spr))
-    spr <- df.rename(spr,
-      oldnames = c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
-      newnames = c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report")
-    )
-    spr[spr == "_"] <- NA
-    spr[spr == "&"] <- NA
-    spr[spr == "-1.#IND"] <- NA
-    spr <- type.convert(spr, as.is = TRUE)
-    # spr <- spr[spr$Year <= endyr,]
-    spr$spr <- spr$SPR
+    if (!is.null(spr)) {
+      # clean up SPR output
+      # make older SS output names match current SS output conventions
+      names(spr) <- gsub(pattern = "SPB", replacement = "SSB", names(spr))
+      spr <- df.rename(spr,
+                       oldnames = c("Year", "spawn_bio", "SPR_std", "Y/R", "F_std"),
+                       newnames = c("Yr", "SpawnBio", "SPR_report", "YPR", "F_report")
+                       )
+      spr[spr == "_"] <- NA
+      spr[spr == "&"] <- NA
+      spr[spr == "-1.#IND"] <- NA
+      spr <- type.convert(spr, as.is = TRUE)
+      # spr <- spr[spr$Year <= endyr,]
+      spr$spr <- spr$SPR
+      stats$last_years_SPR <- spr$spr[nrow(spr)]
+      stats$SPRratioLabel <- managementratiolabels[1, 2]
+      stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]
+    }
     returndat$sprseries <- spr
-    stats$last_years_SPR <- spr$spr[nrow(spr)]
-    stats$SPRratioLabel <- managementratiolabels[1, 2]
-    stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]
 
     returndat$managementratiolabels <- managementratiolabels
     returndat$F_report_basis <- managementratiolabels$Label[2]
@@ -2822,11 +2847,15 @@ SS_output <-
     # Numbers at age
     natage <- matchfun2("NUMBERS_AT_AGE", 1, substr1 = FALSE,
                         header = TRUE, type.convert = TRUE)
-    # make older SS output names match current SS output conventions
-    natage <- df.rename(natage,
-                        oldnames = c("Gender", "SubMorph"),
-                        newnames = c("Sex", "Platoon")
-                        )
+    if(is.null(natage) || nrow(natage) == 0){
+      natage <- NULL
+    } else {
+      # make older SS output names match current SS output conventions
+      natage <- df.rename(natage,
+                          oldnames = c("Gender", "SubMorph"),
+                          newnames = c("Sex", "Platoon")
+                          )
+    }
     returndat$natage <- natage
 
     # NUMBERS_AT_AGE_Annual with and without fishery
@@ -2989,7 +3018,10 @@ SS_output <-
     # ageing error matrices
     rawAAK <- matchfun2("AGE_AGE_KEY", 1)
     if (!is.null(rawAAK)) {
-      if (rawAAK[[1]][1] == "no_age_error_key_used") {
+      # some SS versions output message,
+      # others just had no values resulting in a string with NULL dimension
+      if (rawAAK[[1]][1] == "no_age_error_key_used" |
+          is.null(dim(rawAAK))) {
         N_ageerror_defs <- 0
       } else {
         starts <- grep("KEY:", rawAAK[, 1])
@@ -3082,10 +3114,11 @@ SS_output <-
     if (!is.null(Dynamic_Bzero)) {
       Dynamic_Bzero <- cbind(Dynamic_Bzero, Dynamic_Bzero2[, -(1:2)])
       Dynamic_Bzero <- type.convert(Dynamic_Bzero[-(1:2), ], as.is = TRUE)
-      if (nareas == 1 & ngpatterns == 1) { # for simpler models, do some cleanup
+      #if (nareas == 1 & ngpatterns == 1) { # for simpler models, do some cleanup
+      if (ncol(Dynamic_Bzero) == 4) {
         names(Dynamic_Bzero) <- c("Yr", "Era", "SSB", "SSB_nofishing")
       }
-      if (nareas > 1 & ngpatterns == 1) { # for spatial models, do some cleanup
+      if (nareas > 1 & !is.null(ngpatterns) && ngpatterns == 1) { # for spatial models, do some cleanup
         names(Dynamic_Bzero) <- c(
           "Yr", "Era", paste0("SSB_area", 1:nareas),
           paste0("SSB_nofishing_area", 1:nareas)
