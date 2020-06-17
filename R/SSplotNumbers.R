@@ -692,7 +692,7 @@ SSplotNumbers <-
     } # end print to PNG
 
     # plot the ageing imprecision for all age methods
-    if(N_ageerror_defs > 0){
+    if(!is.null(N_ageerror_defs) && N_ageerror_defs > 0){
       xvals <- age_error_sd$age + 0.5
       yvals <- age_error_sd[, -1]
       ylim <- c(0, max(yvals))
@@ -775,7 +775,6 @@ SSplotNumbers <-
       }
 
       # run functions to make requested plots
-
       if(plot & 5 %in% subplots){
         # make plots of age error standard deviations
         ageingfun()
@@ -806,10 +805,10 @@ SSplotNumbers <-
         # make files with plots of age error matrices
         for(i_ageerror_def in 1:N_ageerror_defs){
           file <- paste0("numbers5_ageerror_matrix_",
-                        i_ageerror_def, ".png")
+                         i_ageerror_def, ".png")
           caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
           caption <- paste0(caption,
-                           " <br>(White = 1.0, Orange = 0.5, Red = 0.0)")
+                            " <br>(White = 1.0, Orange = 0.5, Red = 0.0)")
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun()
           ageing_matrix_fun(i_ageerror_def)

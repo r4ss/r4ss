@@ -2977,11 +2977,12 @@ SS_output <-
     # age-length matrix
     # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
     # needs to be at least 6 even if there are fewer ages
-    # because of spaces in this table prior to 3.30.15.06 string2 is used
-    # but this will break if AGE_LENGTH_KEY is included without AGE_AGE_KEY
+    sdsize_lines <- grep("^sdsize", rawrep[,1])
     rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
-                        "AGE_AGE_KEY", -1,
-                        cols = 1:max(6, accuage + 2))
+                        cols = 1:max(6, accuage + 2),
+                        header = FALSE,
+                        which_blank = length(sdsize_lines) + 2
+                        )
     if (length(rawALK) > 1 & !is.null(rawALK) &&
         length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
       morph_col <- 5
