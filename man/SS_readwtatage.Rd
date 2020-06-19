@@ -25,3 +25,6 @@ will be a column of comments.
 \description{
 Read in a weight-at-age data file into a data frame in R.
 }
+\author{
+Kelli F. Johnson, Ian G. Taylor
+}

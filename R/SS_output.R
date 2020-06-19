@@ -109,32 +109,35 @@ SS_output <-
                           substr2 = TRUE,
                           header = FALSE,
                           type.convert = FALSE) {
+      # extract a table from Report.sso by matching a keyword
+      # 
       # return a subset of values from the report file (or other file)
       # subset is defined by character strings at the start and end, with integer
       # adjustments of the number of lines to above/below the two strings
       #
-      #' @param string1 keyword near top of table
-      #' @param adjust1 integer for number of rows after string1 to start table
-      #' @param string2 keyword near bottom of table
-      #' (or NULL to use blank line to end table)
-      #' @param adjust2 integer for number of rows after string2 to end table
-      #' (often a negative value)
-      #' @param which_blank which blank line (after string1) to use as the end
-      #' of the table (if using string2 = NULL)
-      #' @param cols which columns to return, can be an integer, a vector, "all",
-      #' or 'nonblank' (where this last returns all columns with at least one
-      #' non-blank values in it)
-      #' @param matchcol1 which column to search for string1
-      #' @param matchcol2 which column to search for string2
-      #' @param obj matrix object in which to search (always rawrep so far)
-      #' @param blank_lines vector of line numbers of obj which are blank
-      #' (to save the time of replicating this in each function call)
-      #' @param substr1 allow string1 to be a substring of the text in matchcol1?
-      #' (It must be start at the beginning regardless)
-      #' @param substr2 allow string2 to be a substring of the text in matchcol2?
-      #' (It must be start at the beginning regardless)
-      #' @param header Is the first row of the table a header?
-      #' @param apply type.convert() function to the resulting table?
+      #
+      # @param string1 keyword near top of table
+      # @param adjust1 integer for number of rows after string1 to start table
+      # @param string2 keyword near bottom of table
+      # (or NULL to use blank line to end table)
+      # @param adjust2 integer for number of rows after string2 to end table
+      # (often a negative value)
+      # @param which_blank which blank line (after string1) to use as the end
+      # of the table (if using string2 = NULL)
+      # @param cols which columns to return, can be an integer, a vector, "all",
+      # or 'nonblank' (where this last returns all columns with at least one
+      # non-blank values in it)
+      # @param matchcol1 which column to search for string1
+      # @param matchcol2 which column to search for string2
+      # @param obj matrix object in which to search (always rawrep so far)
+      # @param blank_lines vector of line numbers of obj which are blank
+      # (to save the time of replicating this in each function call)
+      # @param substr1 allow string1 to be a substring of the text in matchcol1?
+      # (It must be start at the beginning regardless)
+      # @param substr2 allow string2 to be a substring of the text in matchcol2?
+      # (It must be start at the beginning regardless)
+      # @param header Is the first row of the table a header?
+      # @param apply type.convert() function to the resulting table?
       line1 <- match(
         string1,
         if (substr1) {
