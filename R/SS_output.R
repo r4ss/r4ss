@@ -1152,13 +1152,9 @@ SS_output <-
     # read detail on parameters devs (if present, 3.30 only)
     Parm_devs_detail <- matchfun2("Parm_devs_detail", 1, header = TRUE)
     stats$Parm_devs_detail <- Parm_devs_detail
-    
+
     # parameters
     parameters <- matchfun2("PARAMETERS", 1, header = TRUE)
-    if (SS_versionNumeric >= 3.23) {
-      temp <- tail(parameters, 2)[, 1:3]
-      parameters <- parameters[1:(nrow(parameters) - 2), ]
-    }
     parameters <- df.rename(parameters,
       oldnames = c("PR_type", "Prior_Like"),
       newnames = c("Pr_type", "Pr_Like")
@@ -1766,24 +1762,29 @@ SS_output <-
     }
 
     # sigma_R
+    # accounting for additional Bmsy/Bzero line introduced in 3.24U
+    # should be now robust up through 3.24AZ (if that ever gets created)
     if (SS_versionNumeric >= 3.30 |
-      # accounting for additional Bmsy/Bzero line introduced in 3.24U
-      # should be now robust up through 3.24AZ (if that ever gets created)
       substring(SS_version, 1, 9) %in% paste0("SS-V3.24", LETTERS[21:26]) |
       substring(SS_version, 1, 10) %in% paste0("SS-V3.24A", LETTERS)) {
       last_row_index <- 11
     } else {
       last_row_index <- 10
     }
-
     srhead <- matchfun2("SPAWN_RECRUIT", 0,
                         "SPAWN_RECRUIT", last_row_index, cols = 1:6)
+    # account for extra blank line in early 3.30 versions (at least 3.30.01)
+    if(all(srhead[7,] == "")){
+      last_row_index <- 12
+      srhead <- matchfun2("SPAWN_RECRUIT", 0,
+                          "SPAWN_RECRUIT", last_row_index, cols = 1:6)
+    }
     rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
     rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
     rmse_table <- type.convert(rmse_table, as.is = TRUE)
     names(rmse_table) <- srhead[last_row_index - 1, 1:5]
     names(rmse_table)[4] <- "RMSE_over_sigmaR"
-    sigma_R_in <- as.numeric(srhead[last_row_index - 6, 1])
+    sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[,2]), 1])
     rmse_table <- rmse_table
     row.names(rmse_table) <- NULL
 
@@ -1804,6 +1805,17 @@ SS_output <-
     if (raw_recruit[1, 1] == "S/Rcurve") {
       raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index)
     }
+    # account for extra blank line in 3.30.01 (and maybe similar versions)
+    if (!is.null(raw_recruit) &&
+        nrow(raw_recruit) < length(startyr:endyr)) {
+      raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index + 1,
+                               which_blank = 2)
+      if (raw_recruit[1, 1] == "S/Rcurve") {
+        raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index,
+                                 which_blank = 2)
+      }
+    }
+    
     # process SPAWN_RECRUIT table
     names(raw_recruit) <- raw_recruit[1, ]
     raw_recruit[raw_recruit == "_"] <- NA
@@ -1976,7 +1988,9 @@ SS_output <-
         fit_size_comps <- matchfun2("FIT_SIZE_COMPS", 1,
                                     header = FALSE,
                                     blank_lines = rep_blank_lines)
-        if (!is.null(dim(fit_size_comps)) && nrow(fit_size_comps) > 0) {
+        if (!is.null(dim(fit_size_comps)) &&
+            nrow(fit_size_comps) > 0 &&
+            fit_size_comps[1,1] != "#_none") {
           # column names
           names(fit_size_comps) <- fit_size_comps[2, ]
           # add new columns for method-specific info
