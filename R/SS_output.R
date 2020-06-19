@@ -104,7 +104,7 @@ SS_output <-
                           matchcol1 = 1,
                           matchcol2 = 1,
                           obj = rawrep,
-                          blank_lines = rep_blank_lines,
+                          blank_lines = rep_blank_or_hash_lines,
                           substr1 = TRUE,
                           substr2 = TRUE,
                           header = FALSE,
@@ -129,9 +129,9 @@ SS_output <-
       #' @param obj matrix object in which to search (always rawrep so far)
       #' @param blank_lines vector of line numbers of obj which are blank
       #' (to save the time of replicating this in each function call)
-      #' substr1 allow string1 to be a substring of the text in matchcol1?
+      #' @param substr1 allow string1 to be a substring of the text in matchcol1?
       #' (It must be start at the beginning regardless)
-      #' substr2 allow string2 to be a substring of the text in matchcol2?
+      #' @param substr2 allow string2 to be a substring of the text in matchcol2?
       #' (It must be start at the beginning regardless)
       #' @param header Is the first row of the table a header?
       #' @param apply type.convert() function to the resulting table?
@@ -392,7 +392,7 @@ SS_output <-
     # which lines in report file have hash in first column and blank after
     rep_hash_lines <- which(rawrep[,1] == "#" & apply(rawrep[,-1], 1, emptytest) == 1)
     # combine both types (could be modified in the future to focus on just one type
-    rep_blank_lines <- sort(unique(c(rep_blank_lines, rep_hash_lines)))
+    rep_blank_or_hash_lines <- sort(unique(c(rep_blank_lines, rep_hash_lines)))
 
     # check empty columns
     # these checks should not be triggered thanks to use of get_ncol() above,
@@ -1970,7 +1970,12 @@ SS_output <-
       # test for SS version 3.30.12 and beyond which doesn't include
       # the label "Size_Comp_Fit_Summary"
       if (!is.na(matchfun("FIT_SIZE_COMPS"))) {
-        fit_size_comps <- matchfun2("FIT_SIZE_COMPS", 1, header = FALSE)
+        # note that there are hashes in between sub-sections,
+        # so using rep_blank_lines instead of default
+        # rep_blank_and_hash_lines to find ending
+        fit_size_comps <- matchfun2("FIT_SIZE_COMPS", 1,
+                                    header = FALSE,
+                                    blank_lines = rep_blank_lines)
         if (!is.null(dim(fit_size_comps)) && nrow(fit_size_comps) > 0) {
           # column names
           names(fit_size_comps) <- fit_size_comps[2, ]

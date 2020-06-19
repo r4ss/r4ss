@@ -147,6 +147,13 @@ SSplotSelex <-
   ngpatterns     <- replist$ngpatterns
   derived_quants <- replist$derived_quants
 
+  # message about skipping plots
+  if (is.null(ageselex)){
+    message("Skipping age-based selectivity plots: no output available")
+  }
+  if (is.null(sizeselex)){
+    message("Skipping length-based selectivity plots: no output available")
+  }
 
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
@@ -375,7 +382,7 @@ SSplotSelex <-
     return(infotable2)
   }
 
-  if(1 %in% subplot){
+  if(1 %in% subplot & !is.null(sizeselex)){
     for(ifactor in 1:length(sizefactors)){
       if(plot) infotable2 <- plotAllSel(factor=sizefactors[ifactor])
       if(print){
@@ -387,7 +394,7 @@ SSplotSelex <-
       }
     }
   }
-  if(2 %in% subplot){
+  if(2 %in% subplot & !is.null(ageselex)){
     for(ifactor in 1:length(agefactors)){
       factor <- agefactors[ifactor]
       if(plot) infotable2 <- plotAllSel(factor=factor)
@@ -407,7 +414,7 @@ SSplotSelex <-
   ### loop over fleets and sexes to make individual plot of length-based patterns
 
   # first check if any of these plots are requested
-  if(any(3:9 %in% subplot)){
+  if(any(3:9 %in% subplot) & !is.null(sizeselex)){
   # selex and retention
   for(i in fleets)
   {
@@ -620,7 +627,7 @@ SSplotSelex <-
 
   ################################################################################
   ### loop over fleets and sexes to make individual plot of age-based patterns
-  if(any(11:14 %in% subplot)){
+  if(any(11:14 %in% subplot) & !is.null(ageselex)){
 
   # Age based selex
   ylab <- labels[4]
@@ -783,8 +790,13 @@ SSplotSelex <-
 
   ################################################################################
   ### Selectivity contours over age and length shown with growth curve
-
-  if(21 %in% subplot & ngpatterns==1){ # need to connect growth patterns to fleets in future
+  if(21 %in% subplot &
+     !is.null(ngpatterns) &&
+     ngpatterns==1 &
+     !is.null(growdat) &
+     !is.null(sizeselex) &
+     !is.null(ageselex)
+     ){ # need to connect growth patterns to fleets in future
     # subsetting for one season only. This could be replaced
     #   by info on the growth within the season when each fleet operates.
     growdat <- growdat[growdat$Seas==season,]
