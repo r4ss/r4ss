@@ -256,9 +256,11 @@ SS_plots <-
   # in the future, this could be read from a file, or we could have multiple columns
   # in the table to choose from
 
-  if(is.null(replist)){
-    stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
+  if(is.null(replist) || !is.list(replist) || !"nfleets" %in% names(replist)){
+    stop("The input 'replist' should refer to an R object created by",
+         " the function 'SS_output'.")
   }
+
 
   # get quantities from the big list
   nfleets     <- replist$nfleets
@@ -1383,7 +1385,7 @@ SS_plots <-
   #
   igroup <- 23
   if(igroup %in% plot){
-    if(nrow(replist$movement)>0){
+    if(!is.null(replist$movement) && nrow(replist$movement)>0){
       if(verbose) cat("Starting movement rate plots (group ",igroup,")\n",sep="")
       plotinfo <- NULL
       temp <-
@@ -1395,7 +1397,10 @@ SS_plots <-
       plotinfo <- temp$plotinfo
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
-      if(verbose) cat("Skipping movement plots (group ",igroup,") because no movement in model\n",sep="")
+      if(verbose){
+        message("Skipping movement plots (group ", igroup,
+                ") because no movement in model\n")
+      }
     } # end if movement included in model
   } # end if igroup in plot or print
 

@@ -54,7 +54,9 @@ SSplotSPR <-
   }
   plotinfo <- NULL
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default"){
+    plotdir <- replist$inputs$dir
+  }
 
   sprseries             <- replist$sprseries
   timeseries            <- replist$timeseries
@@ -65,6 +67,12 @@ SSplotSPR <-
   endyr                 <- replist$endyr
   managementratiolabels	<- replist$managementratiolabels
 
+  # message about skipping plots
+  if (is.null(sprseries)){
+    message("Skipping SPR plots: no output available")
+    return()
+  }
+  
   if(sprtarg=="default") sprtarg <- replist$sprtarg
   if(btarg=="default") btarg <- replist$btarg
 
