@@ -1966,11 +1966,19 @@ SS_output <-
     }
 
     # Age_Comp_Fit_Summary
-    # formatting change in 3.30.15.06 puts table one line lower
-    agentune <- matchfun2("Age_Comp_Fit_Summary", ifelse(custom, 2, 1))
+    if(SS_versionNumeric < 3.3){
+      # 3.24 and before had no keyword for tuning info below FIT_AGE_COMPS
+      # so working backwards from the following section to get it
+      agentune <- matchfun2("FIT_SIZE_COMPS", -(nfleets+2),
+                            "FIT_SIZE_COMPS", -2,
+                            cols = 1:10, header = TRUE)
+    }else{
+      # 3.30 version has keyword and requires little processing
+      agentune <- matchfun2("Age_Comp_Fit_Summary", 1, header = TRUE)
+    }
     agentune <- df.rename(agentune,
-      oldnames = c("FleetName"),
-      newnames = c("Fleet_name")
+      oldnames = c("FleetName",  "N"),
+      newnames = c("Fleet_name", "Nsamp_adj")
     )
 
     if ("Factor" %in% names(agentune)) {
@@ -1979,8 +1987,11 @@ SS_output <-
     } else {
       if (!is.null(dim(agentune))) {
         names(agentune)[ncol(agentune)] <- "Fleet_name"
-        agentune <- agentune[agentune$Nsamp_adj > 0, ]
-
+        # convert underscores
+        agentune[agentune == "_"] <- NA
+        # remove empty rows with NA or zero sample size
+        agentune <- agentune[!is.na(agentune$Nsamp_adj) &
+                             agentune$Nsamp_adj > 0, ]
         # avoid NA warnings by removing #IND values
         agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN" == "-1.#IND"] <- NA
         agentune <- type.convert(agentune, as.is = TRUE)
