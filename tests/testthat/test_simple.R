@@ -272,3 +272,31 @@ test_that("SS_readforecast and SS_writeforecast both work for 3.30.13", {
     "Even though writeAll == TRUE, cannot write past list element Forecast")
   expect_true(file.exists(file.path(temp_path, "fore_0_read_short.ss")))
 })
+
+###############################################################################
+# testing read/write starter functions ----
+###############################################################################
+
+test_that("SS_readstater and SS_writestarter both work for 3.30.13", {
+  # read data file
+  start <- SS_readstarter(file = file.path(example_path,"simple_3.30.13/starter.ss"),
+                                           verbose = FALSE)
+  # write data file
+  SS_writestarter(start,
+              dir = temp_path, 
+              file = "teststarter_3.30.13.ss",
+              verbose = FALSE)
+  expect_true(file.exists(file.path(temp_path, "teststarter_3.30.13.ss")))
+})
+
+test_that("SS_readstater and SS_writestarter both work for 3.24", {
+  # read data file
+  start <- SS_readstarter(file = file.path(example_path,"simple_3.24/starter.ss"),
+                          verbose = FALSE)
+  # write data file
+  SS_writestarter(start,
+                  dir = temp_path, 
+                  file = "teststarter_3.24.ss",
+                  verbose = FALSE)
+  expect_true(file.exists(file.path(temp_path, "teststarter_3.24.ss")))
+})
