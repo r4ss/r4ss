@@ -1974,7 +1974,16 @@ SS_output <-
                             cols = 1:10, header = TRUE)
     }else{
       # 3.30 version has keyword and requires little processing
-      agentune <- matchfun2("Age_Comp_Fit_Summary", 1, header = TRUE)
+      if(rawrep[matchfun("Age_Comp_Fit_Summary") + 1, 1] == ""){
+        adjust1 <- 2
+        which_blank <- 2
+      } else {
+        adjust1 <- 1
+        which_blank <- 1
+      }
+      agentune <- matchfun2("Age_Comp_Fit_Summary", adjust1 = adjust1,
+                            header = TRUE, which_blank = which_blank)
+      
     }
     agentune <- df.rename(agentune,
       oldnames = c("FleetName",  "N"),
