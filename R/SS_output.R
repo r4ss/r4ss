@@ -72,7 +72,7 @@ SS_output <-
            warnfile = "warning.sso",
            ncols = NULL, forecast = TRUE, warn = TRUE, covar = TRUE, readwt = TRUE,
            checkcor = TRUE, cormax = 0.95, cormin = 0.01, printhighcor = 10, printlowcor = 10,
-           verbose = TRUE, printstats = TRUE, hidewarn = FALSE, NoCompOK = FALSE,
+           verbose = TRUE, printstats = TRUE, hidewarn = FALSE, NoCompOK = TRUE,
            aalmaxbinrange = 4) {
     flush.console()
 
@@ -149,6 +149,10 @@ SS_output <-
       if (is.null(string2)) {
         # get first blank or "#" line after the start
         line2 <- blank_lines[blank_lines > line1][which_blank]
+        # if no remaining blank lines, use the end of the file
+        if (is.na(line2)) {
+          line2 <- nrow(obj)
+        }
       } else {
         line2 <- match(
           string2,
@@ -265,14 +269,14 @@ SS_output <-
     if (SS_versionNumeric < SS_versionMin | SS_versionNumeric > SS_versionMax) {
       warning(
         "This function tested on SS versions 3.24 and 3.30.\n",
-        "  You are using ", substr(SS_version, 1, 9),
+        "  You are using ", strsplit(SS_version, split = ";")[[1]][1],
         " which MIGHT NOT WORK with this package."
       )
     } else {
       if (verbose) {
         message(
           "This function tested on SS versions 3.24 and 3.30.\n",
-          "  You are using ", substr(SS_version, 1, 9),
+          "  You are using ", strsplit(SS_version, split = ";")[[1]][1],
           " which SHOULD work with this package."
         )
       }
@@ -350,30 +354,39 @@ SS_output <-
     if (file.exists(compfile)) {
       comphead <- readLines(con = compfile, n = 30)
       compskip <- grep("Composition_Database", comphead)
-      # compend value helps diagnose when no comp data exists in CompReport.sso file.
-      compend <- grep(" end ", comphead)
-      if (length(compend) == 0) compend <- 999
-      comptime <- findtime(comphead)
-      if (is.null(comptime) || is.null(repfiletime)) {
-        message(
-          "problem comparing the file creation times:\n",
-          "  Report.sso:", repfiletime, "\n",
-          "  CompReport.sso:", comptime, "\n"
-        )
+      if (length(compskip) == 0) {
+        message("No composition data, possibly because detailed output",
+                " is turned off in the starter file.")
+        comp <- FALSE
       } else {
-        if (comptime != repfiletime) {
-          message("CompReport time:", comptime, "\n")
-          stop(shortrepfile, " and ", compfile, " were from different model runs.")
+        # compend value helps diagnose when no comp data exists in CompReport.sso file.
+        compend <- grep(" end ", comphead)
+        if (length(compend) == 0) {
+          compend <- 999
         }
+        comptime <- findtime(comphead)
+        if (is.null(comptime) || is.null(repfiletime)) {
+          message(
+            "problem comparing the file creation times:\n",
+            "  Report.sso:", repfiletime, "\n",
+            "  CompReport.sso:", comptime, "\n"
+          )
+        } else {
+          if (comptime != repfiletime) {
+            message("CompReport time:", comptime, "\n")
+            stop(shortrepfile, " and ", compfile, " were from different model runs.")
+          }
+        }
+        comp <- TRUE
       }
-      comp <- TRUE
     } else {
       if (!NoCompOK) {
         stop("Missing ", compfile,
-          ". Change the compfile input or rerun model to get the file.\n",
-          sep = ""
+             ". Change the 'compfile' input, rerun model to get the file,",
+             " or change input to 'NoCompOK = TRUE'"
         )
       } else {
+        message("Composition file not found: ", compfile)
         comp <- FALSE
       }
     }
@@ -1699,7 +1712,7 @@ SS_output <-
 
     # time-varying age-selectivity parameters
     SelAgeAdj <- matchfun2("selparm(Age)_By_Year_after_adjustments", 2)
-    if (nrow(SelAgeAdj) > 2) {
+    if (!is.null(SelAgeAdj) && nrow(SelAgeAdj) > 2) {
       SelAgeAdj <- SelAgeAdj[, apply(SelAgeAdj, 2, emptytest) < 1]
       SelAgeAdj[SelAgeAdj == ""] <- NA
       # test for empty table
@@ -1724,43 +1737,45 @@ SS_output <-
         }
       }
     } else {
-      SelAgeAdj <- NA
+      SelAgeAdj <- NULL
     }
 
     # recruitment distribution
     recruitment_dist <- matchfun2("RECRUITMENT_DIST", 1,
       header = TRUE, type.convert = TRUE
     )
-    # calculate first season with recruitment
-    if ("Frac/sex" %in% names(recruitment_dist)) {
-      first_seas_with_recruits <-
-        min(recruitment_dist$Seas[recruitment_dist$"Frac/sex" > 0])
-    } else {
-      first_seas_with_recruits <-
-        min(recruitment_dist$Seas[recruitment_dist$Value > 0])
-    }
-    # starting in SSv3.24Q there are additional tables
-    # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
-    # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
-    recruit_dist_Bmark <- matchfun2("RECRUITMENT_DIST_B", 1,
-      header = TRUE, type.convert = TRUE
-    )
-    if (!is.null(recruit_dist_Bmark)) {
-      if (SS_versionNumeric < 3.30) {
-        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_FORECAST", 1,
-          header = TRUE, type.convert = TRUE
-        )
+    if (!is.null(recruitment_dist)) {
+      # calculate first season with recruitment
+      if ("Frac/sex" %in% names(recruitment_dist)) {
+        first_seas_with_recruits <-
+          min(recruitment_dist$Seas[recruitment_dist$"Frac/sex" > 0])
       } else {
-        recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_endyr", 1,
-          header = TRUE, type.convert = TRUE
+        first_seas_with_recruits <-
+          min(recruitment_dist$Seas[recruitment_dist$Value > 0])
+      }
+      # starting in SSv3.24Q there are additional tables
+      # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
+      # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
+      recruit_dist_Bmark <- matchfun2("RECRUITMENT_DIST_B", 1,
+                                      header = TRUE, type.convert = TRUE
+                                      )
+      if (!is.null(recruit_dist_Bmark)) {
+        if (SS_versionNumeric < 3.30) {
+          recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_FORECAST", 1,
+                                          header = TRUE, type.convert = TRUE
+                                          )
+        } else {
+          recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_endyr", 1,
+                                          header = TRUE, type.convert = TRUE
+                                          )
+        }
+        # bundle original and extra tables into a list
+        recruitment_dist <- list(
+          recruit_dist = recruitment_dist,
+          recruit_dist_Bmark = recruit_dist_Bmark,
+          recruit_dist_endyr = recruit_dist_endyr
         )
       }
-      # bundle original and extra tables into a list
-      recruitment_dist <- list(
-        recruit_dist = recruitment_dist,
-        recruit_dist_Bmark = recruit_dist_Bmark,
-        recruit_dist_endyr = recruit_dist_endyr
-      )
     }
 
     # gradient
@@ -1808,32 +1823,41 @@ SS_output <-
       srhead <- matchfun2("SPAWN_RECRUIT", 0,
         "SPAWN_RECRUIT", last_row_index,
         cols = 1:6
-      )
+        )
     }
-    rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
-    rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
-    rmse_table <- type.convert(rmse_table, as.is = TRUE)
-    names(rmse_table) <- srhead[last_row_index - 1, 1:5]
-    names(rmse_table)[4] <- "RMSE_over_sigmaR"
-    sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
-    rmse_table <- rmse_table
-    row.names(rmse_table) <- NULL
+    if (is.null(srhead)) {
+      # if there's no SPAWN_RECRUIT section (presumably because minimal
+      # output was chosen in the starter file)
+      rmse_table <- NULL
+      breakpoints_for_bias_adjustment_ramp <- NULL
+      sigma_R_in <- parameters["SR_sigmaR", "Value"]
+    } else {
+      # if SPAWN_RECRUIT is present
+      rmse_table <- as.data.frame(srhead[-(1:(last_row_index - 1)), 1:5])
+      rmse_table <- rmse_table[!grepl("SpawnBio", rmse_table[, 2]), ]
+      rmse_table <- type.convert(rmse_table, as.is = TRUE)
+      names(rmse_table) <- srhead[last_row_index - 1, 1:5]
+      names(rmse_table)[4] <- "RMSE_over_sigmaR"
+      sigma_R_in <- as.numeric(srhead[grep("sigmaR", srhead[, 2]), 1])
+      rmse_table <- rmse_table
+      row.names(rmse_table) <- NULL
 
-    # Bias adjustment ramp
-    biascol <- grep("breakpoints_for_bias", srhead)
-    breakpoints_for_bias_adjustment_ramp <- srhead[
-      grep("breakpoints_for_bias", srhead[, biascol]), 1:5
-    ]
-    colnames(breakpoints_for_bias_adjustment_ramp) <- c(
-      "last_yr_early",
-      "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj"
-    )
-    rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
-
+      # Bias adjustment ramp
+      biascol <- grep("breakpoints_for_bias", srhead)
+      breakpoints_for_bias_adjustment_ramp <- srhead[
+        grep("breakpoints_for_bias", srhead[, biascol]), 1:5
+      ]
+      colnames(breakpoints_for_bias_adjustment_ramp) <- c(
+        "last_yr_early",
+        "first_yr_full", "last_yr_full", "first_yr_recent", "max_bias_adj"
+      )
+      rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
+    }
+    
     ## Spawner-recruit curve
     # read SPAWN_RECRUIT table
     raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index + 1)
-    if (raw_recruit[1, 1] == "S/Rcurve") {
+    if (!is.null(raw_recruit) && raw_recruit[1, 1] == "S/Rcurve") {
       raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index)
     }
     # account for extra blank line in 3.30.01 (and maybe similar versions)
@@ -1849,23 +1873,27 @@ SS_output <-
       }
     }
 
-    # process SPAWN_RECRUIT table
-    names(raw_recruit) <- raw_recruit[1, ]
-    raw_recruit[raw_recruit == "_"] <- NA
-    raw_recruit <- raw_recruit[-(1:2), ] # remove header rows
-    recruit <- raw_recruit[-(1:2), ] # remove rows for Virg and Init
-    # temporary change for model that has bad values in dev column
-    recruit$dev[recruit$dev == "-nan(ind)"] <- NA
+    if (is.null(raw_recruit)) {
+      recruit <- NULL
+    } else {
+      # process SPAWN_RECRUIT table
+      names(raw_recruit) <- raw_recruit[1, ]
+      raw_recruit[raw_recruit == "_"] <- NA
+      raw_recruit <- raw_recruit[-(1:2), ] # remove header rows
+      recruit <- raw_recruit[-(1:2), ] # remove rows for Virg and Init
+      # temporary change for model that has bad values in dev column
+      recruit$dev[recruit$dev == "-nan(ind)"] <- NA
 
-    # make values numeric
-    recruit <- type.convert(recruit, as.is = TRUE)
+      # make values numeric
+      recruit <- type.convert(recruit, as.is = TRUE)
 
-    # make older SS output names match current SS output conventions
-    recruit <- df.rename(recruit,
-      oldnames = c("year", "spawn_bio", "adjusted"),
-      newnames = c("Yr", "SpawnBio", "bias_adjusted")
-    )
-
+      # make older SS output names match current SS output conventions
+      recruit <- df.rename(recruit,
+                           oldnames = c("year", "spawn_bio", "adjusted"),
+                           newnames = c("Yr", "SpawnBio", "bias_adjusted")
+                           )
+    } 
+    
     # starting in 3.30.11.00, a table with the full spawn recr curve was added
     SPAWN_RECR_CURVE <- NULL
     if (!is.na(matchfun("Full_Spawn_Recr_Curve"))) {
@@ -1966,25 +1994,30 @@ SS_output <-
     }
 
     # Age_Comp_Fit_Summary
-    if(SS_versionNumeric < 3.3){
+    if(SS_versionNumeric < 3.30){
       # 3.24 and before had no keyword for tuning info below FIT_AGE_COMPS
       # so working backwards from the following section to get it
       agentune <- matchfun2("FIT_SIZE_COMPS", -(nfleets+2),
                             "FIT_SIZE_COMPS", -2,
                             cols = 1:10, header = TRUE)
     }else{
-      # 3.30 version has keyword and requires little processing
-      if(rawrep[matchfun("Age_Comp_Fit_Summary") + 1, 1] == ""){
-        adjust1 <- 2
-        which_blank <- 2
+      # 3.30 version has keyword (if included in output)
+      # and requires little processing
+      start <- matchfun("Age_Comp_Fit_Summary")
+      if (is.na(start)) {
+        agentune <- NULL
       } else {
-        adjust1 <- 1
-        which_blank <- 1
+        if(rawrep[start + 1, 1] == ""){
+          adjust1 <- 2
+          which_blank <- 2
+        } else {
+          adjust1 <- 1
+          which_blank <- 1
+        }
+        agentune <- matchfun2("Age_Comp_Fit_Summary", adjust1 = adjust1,
+                              header = TRUE, which_blank = which_blank)
       }
-      agentune <- matchfun2("Age_Comp_Fit_Summary", adjust1 = adjust1,
-                            header = TRUE, which_blank = which_blank)
-      
-    }
+    } # end 3.30 version
     agentune <- df.rename(agentune,
       oldnames = c("FleetName",  "N"),
       newnames = c("Fleet_name", "Nsamp_adj")
@@ -2437,23 +2470,25 @@ SS_output <-
 
     # Age-based selectivity
     ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
-    ageselex <- df.rename(ageselex,
-      oldnames = c(
-        "fleet", "year", "seas", "gender",
-        "morph", "label", "factor"
-      ),
-      newnames = c(
-        "Fleet", "Yr", "Seas", "Sex",
-        "Morph", "Label", "Factor"
-      )
-    )
-    # filter forecast years from selectivity if no forecast
-    # NOTE: maybe refine this in 3.30
-    if (!forecast) {
-      ageselex <- ageselex[ageselex$Yr <= endyr, ]
+    if (!is.null(ageselex)) {
+      ageselex <- df.rename(ageselex,
+                            oldnames = c(
+                              "fleet", "year", "seas", "gender",
+                              "morph", "label", "factor"
+                            ),
+                            newnames = c(
+                              "Fleet", "Yr", "Seas", "Sex",
+                              "Morph", "Label", "Factor"
+                            )
+                            )
+      # filter forecast years from selectivity if no forecast
+      # NOTE: maybe refine this in 3.30
+      if (!forecast) {
+        ageselex <- ageselex[ageselex$Yr <= endyr, ]
+      }
+      # make values numeric
+      ageselex <- type.convert(ageselex, as.is = TRUE)
     }
-    # make values numeric
-    ageselex <- type.convert(ageselex, as.is = TRUE)
     returndat$ageselex <- ageselex
 
     # EXPLOITATION
@@ -2532,7 +2567,7 @@ SS_output <-
     returndat$catch <- catch
 
     # age associated with summary biomass
-    summary_age <- rawrep[matchfun("TIME_SERIES"), 2]
+    summary_age <- rawrep[matchfun("TIME_SERIES"), ifelse(custom, 3, 2)]
     summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
     returndat$summary_age <- summary_age
     # time series
@@ -3294,10 +3329,10 @@ SS_output <-
 
     # type of stock recruit relationship
     SRRtype <- rawrep[matchfun("SPAWN_RECRUIT"), 3]
-    if (SRRtype == "Function:") {
-      SRRtype <- rawrep[matchfun("SPAWN_RECRUIT"), 4]
+    if (!is.na(SRRtype) && SRRtype == "Function:") {
+      SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"), 4])
     }
-    returndat$SRRtype <- as.numeric(SRRtype)
+    returndat$SRRtype <- SRRtype
 
     # get "sigma" used by Pacific Council in P-star calculations
     SSB_final_Label <- paste0("SSB_", endyr + 1)
@@ -3382,7 +3417,7 @@ SS_output <-
 
     # add recruitpars to list of stuff that gets returned
     returndat$recruitpars <- recruitpars
-
+    
     if (is.null(recruitpars)) {
       sigma_R_info <- NULL
     } else {
@@ -3463,7 +3498,7 @@ SS_output <-
 
     # print list of statistics
     if (printstats) {
-      message("Statistics shown below (to turn off, change input to printstats=FALSE)")
+      message("\nStatistics shown below (to turn off, change input to printstats=FALSE)")
 
       # remove scientific notation (only for display, not returned values,
       # which were added to returndat already)

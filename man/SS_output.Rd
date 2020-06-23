@@ -26,7 +26,7 @@ SS_output(
   verbose = TRUE,
   printstats = TRUE,
   hidewarn = FALSE,
-  NoCompOK = FALSE,
+  NoCompOK = TRUE,
   aalmaxbinrange = 4
 )
 }

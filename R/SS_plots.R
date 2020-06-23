@@ -517,7 +517,9 @@ SS_plots <-
   #
   igroup <- 2
   if(igroup %in% plot){
-    if(verbose) cat("Starting selectivity and retention plots (group ",igroup,")\n",sep="")
+    if(verbose) {
+      message("Starting selectivity and retention plots (group ",igroup,")")
+    }
     selexinfo <-
       SSplotSelex(replist=replist, selexlines=selexlines,
                   fleets=fleets, fleetnames=fleetnames,

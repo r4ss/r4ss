@@ -89,7 +89,11 @@ SSplotSpawnrecruit <-
   }
   plotinfo <- NULL
 
-  recruit <- replist$recruit
+  recruit <- replist[["recruit"]]
+  if (is.null(recruit)) {
+    message("Skipping stock-recruit plots: no recruitment information available")
+    return()
+  }
   nsexes <- replist$nsexes
 
   # set axis labels
