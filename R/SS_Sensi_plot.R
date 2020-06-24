@@ -1,35 +1,43 @@
-#devtools::install_github("r4ss/r4ss")
-library(r4ss)
-library(ggplot2)
-library(plyr)
-library(reshape2)
-library(flextable)
-library(officer)
-library(gridExtra)
+#' Create Cope-Gertseva sensitivity plots
+#'
+#' Uses output from \code{\link{SSsummarize}} to make a figure showing
+#' sensitivity of various quantities as described by Cope and Gertseva (2020).
+#'
+#' @param model.summaries Output from \code{\link{SSsummarize}}
+#' summarizing results of models to be included
+#' @param Dir Directory where plots will be created
+#' @param current.year Year to report output
+#' @param mod.names List the names of the sensitivity runs
+#' @param likelihood.out Note which likelihoods are in the model
+#' (surveys, lengths, ages)
+#' @param Sensi.RE.out  Saved file of relative changes
+#' @param CI Confidence interval box based on the reference model
+#' @param TRP.inTarget relative abundance value
+#' @param LRP.in Limit relative abundance value
+#' @param sensi_xlab X-axis label
+#' @param ylims.in Y-axis label
+#' @param plot.figs Which plots to make/save?
+#' @param sensi.type.breaks vertical breaks that can separate out types
+#' of sensitivities
+#' @param anno.x Vertical positioning of the sensitivity types labels
+#' @param anno.y Horizontal positioning of the sensitivity types labels
+#' @param anno.lab Sensitivity types labels
+#' @author Jason Cope
+#' @export
+#' @seealso \code{\link{SSsummarize}}
+#' @references Cope, J. M., V. V. Gertseva. In press. A new way to
+#' visualize and report structural and data uncertainty in stock assessments.
+#' Canadian Journal of Fisheries and Aquatic Sciences.
 
-gg_color_hue <- function(n) 
-	{
-  		hues = seq(15, 375, length = n + 1)
-  		hcl(h = hues, l = 65, c = 100)[1:n]
-	}
-
-#current.year: Year to report output
-#mod.names: List the names of the sensitivity runs
-#likelihood.out=c(1,1,1): Note which likelihoods are in the model (surveys, lengths, ages)
-#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative changes
-#CI=0.95:Confidence interval box based on the reference model
-#TRP.in=0.4:Target relative abundance value
-#LRP.in=0.25: Limit relative abundance value
-#sensi_xlab="Sensitivity scenarios" : X-axis label
-#ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2): Y-axis label
-#plot.figs=c(1,1,1,1,1,1): Which plots to make/save?
-#sensi.type.breaks=NA: vertical breaks that can separate out types of sensitivities
-#anno.x=NA: Vertical positioning of the sensitivity types labels
-#anno.y=NA: Horizontal positioning of the sensitivity types labels
-#anno.lab=NA: Sensitivity types labels
-
+## library(ggplot2)
+## library(plyr)
+## library(reshape2)
+## library(flextable)
+## library(officer)
+## library(gridExtra)
 
 SS_Sensi_plot<-function(model.summaries,
+                        Dir,
 						current.year, 
 						mod.names, 
 						likelihood.out=c(1,1,1), 
@@ -45,7 +53,15 @@ SS_Sensi_plot<-function(model.summaries,
 						anno.y=NA,
 						anno.lab=NA)
 {
- 	#num.likes<-sum(likelihood.out)*2+2
+  # internal function
+  gg_color_hue <- function(n) 
+	{
+    hues = seq(15, 375, length = n + 1)
+    hcl(h = hues, l = 65, c = 100)[1:n]
+	}
+
+
+  #num.likes<-sum(likelihood.out)*2+2
  	num.likes<-dim(subset(model.summaries$likelihoods_by_fleet,model==1))[1] #determine how many likelihoods components
 
  	if(missing(mod.names)){mod.names<-paste("model ",1:model.summaries$n)}
@@ -129,7 +145,7 @@ SS_Sensi_plot<-function(model.summaries,
 	AIC.out<-data.frame(cbind(c("AIC","deltaAIC"),rbind.data.frame(AICs,deltaAICs),c("AIC")))
 	colnames(AIC.out)<-colnames(survey.lambda)<-colnames(survey.like)<-colnames(Lt.lambda)<-colnames(Lt.like)<-colnames(Age.lambda)<-colnames(Age.like)<-colnames(parms)<-colnames(dev.quants.labs)<-c("Type",mod.names,"Label")
 	Like.parm.quants<-rbind(AIC.out,survey.like,survey.lambda,Lt.like,Lt.lambda,Age.like,Age.lambda,parms,dev.quants.labs)	
-	Like.parm.quants.table.data<-as_grouped_data(Like.parm.quants,groups=c("Label"))
+	Like.parm.quants.table.data<-flextable::as_grouped_data(Like.parm.quants,groups=c("Label"))
 	#as_flextable(Like.parm.quants.table.data)
 	write.csv(Like.parm.quants.table.data,paste0(Dir,"Likes_parms_devquants_table.csv"))
 
@@ -137,13 +153,13 @@ SS_Sensi_plot<-function(model.summaries,
 dev.quants.mat<-as.matrix(dev.quants)
 colnames(dev.quants.mat)<-1:dim(dev.quants.mat)[2]
 rownames(dev.quants.mat)<-c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR")
-#RE<-melt((as.matrix(dev.quants)-as.matrix(dev.quants)[,1])/as.matrix(dev.quants)[,1])
-RE<-melt((dev.quants.mat-dev.quants.mat[,1])/dev.quants.mat[,1])[-1:-5,]
-logRE<-melt(log(dev.quants.mat/dev.quants.mat[,1]))[-1:-5,]
+#RE<-reshape2::melt((as.matrix(dev.quants)-as.matrix(dev.quants)[,1])/as.matrix(dev.quants)[,1])
+RE<-reshape2::melt((dev.quants.mat-dev.quants.mat[,1])/dev.quants.mat[,1])[-1:-5,]
+logRE<-reshape2::melt(log(dev.quants.mat/dev.quants.mat[,1]))[-1:-5,]
 #Get values for plots
 Dev.quants.temp<-as.data.frame(cbind(rownames(dev.quants.mat),dev.quants.mat[,-1]))
 colnames(Dev.quants.temp)<-c("Metric",mod.names[-1])
-Dev.quants.ggplot<-data.frame(melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3],logRE[,2:3])
+Dev.quants.ggplot<-data.frame(reshape2::melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3],logRE[,2:3])
 colnames(Dev.quants.ggplot)<-c("Metric","Model_name","Value","Model_num_plot","RE","Model_num_plot_log","logRE")
 Dev.quants.ggplot$Metric<-factor(Dev.quants.ggplot$Metric,levels=unique(Dev.quants.ggplot$Metric))
 save(Dev.quants.ggplot,file=Sensi.RE.out)
@@ -325,7 +341,7 @@ if(plot.figs[1]==1)
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
   #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
-  p4<-ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
+  p4<-ggpubr::ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
   ggsave("Sensi_REplot_SB_Dep_F_MSY.png",p4)
   
   #Log plots
@@ -397,7 +413,7 @@ if(plot.figs[1]==1)
     geom_hline(yintercept =0,lwd=0.5,color="gray")+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
-  p4<-ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
+  p4<-ggpubr::ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
   #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
   ggsave("Sensi_logREplot_SB_Dep_F_MSY.png",p4)
   
