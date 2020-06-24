@@ -1192,9 +1192,6 @@ SS_output <-
     parameters[parameters == " "] <- NA
     parameters[parameters == "1.#INF"] <- Inf # set infinite values equal to R's infinity
 
-    # make values numeric
-    parameters <- type.convert(parameters, as.is = TRUE)
-
     # fix for issue with SSv3.21f
     if (SS_versionNumeric == 3.21) {
       temp <- names(parameters)
@@ -1207,12 +1204,15 @@ SS_output <-
       names(parameters) <- temp
     }
     # fix issue with missing column in dev output
-    # associated with SS version 3.30.01.12
+    # associated with at least SS versions 3.30.01 and 3.30.13
     if ("Gradient" %in% names(parameters) &&
-      "dev" %in% parameters$Gradient) {
-      parameters$Gradient[parameters$Gradient == "dev"] <- NA
-      parameters$Gradient <- as.numeric(parameters$Gradient)
+        any(parameters$Gradient %in% c("dev","F"))) {
+      bad <- parameters$Gradient %in% c("dev","F")
+      parameters$Pr_type[bad] <- parameters$Gradient[bad]
+      parameters$Gradient[bad] <- NA
     }
+    # make values numeric
+    parameters <- type.convert(parameters, as.is = TRUE)
 
     # convert really old numeric codes to names
     # note that codes used in control file for SS version 3.30 don't match
