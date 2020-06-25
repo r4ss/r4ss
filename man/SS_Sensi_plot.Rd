@@ -2,11 +2,11 @@
 % Please edit documentation in R/SS_Sensi_plot.R
 \name{SS_Sensi_plot}
 \alias{SS_Sensi_plot}
-\title{Create Cope-Gertseva sensitivity plots}
+\title{Create relative sensitivity plots as described by Cope and Gertseva (in press)}
 \usage{
 SS_Sensi_plot(
   model.summaries,
-  Dir,
+  Dir = "",
   current.year,
   mod.names,
   likelihood.out = c(1, 1, 1),
@@ -61,7 +61,7 @@ of sensitivities}
 }
 \description{
 Uses output from \code{\link{SSsummarize}} to make a figure showing
-sensitivity of various quantities as described by Cope and Gertseva (2020).
+sensitivity of various quantities of interest.
 }
 \references{
 Cope, J. M., V. V. Gertseva. In press. A new way to

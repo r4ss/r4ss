@@ -1,7 +1,7 @@
-#' Create Cope-Gertseva sensitivity plots
+#' Create relative sensitivity plots as described by Cope and Gertseva (in press)
 #'
 #' Uses output from \code{\link{SSsummarize}} to make a figure showing
-#' sensitivity of various quantities as described by Cope and Gertseva (2020).
+#' sensitivity of various quantities of interest.
 #'
 #' @param model.summaries Output from \code{\link{SSsummarize}}
 #' summarizing results of models to be included
@@ -37,7 +37,7 @@
 ## library(gridExtra)
 
 SS_Sensi_plot<-function(model.summaries,
-                        Dir,
+                        Dir="",
 						current.year, 
 						mod.names, 
 						likelihood.out=c(1,1,1), 
