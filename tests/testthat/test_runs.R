@@ -1,7 +1,14 @@
 ### automated tests of r4ss package
 context("r4ss functions that require executables to run")
 
+# do runs in a temporary dir so that the state is not disrupted if tests 
+# exit early.
+tmp_path <- file.path(tempdir(check = TRUE), "test-control")
+dir.create(tmp_path, showWarnings = FALSE)
 example_path <- system.file("extdata", package = "r4ss")
+file.copy(example_path, tmp_path, recursive = TRUE)
+#clean up
+on.exit(unlink(tmp_path, recursive = TRUE))
 
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
@@ -134,3 +141,6 @@ test_that("SS_profile runs on simple_3.30.12 model", {
   # (also serves to indicate that there are no NA values in this column)
   expect_equal(min(plotprofile.out$TOTAL), 0)
 })
+
+#clean up
+unlink(tmp_path, recursive = TRUE)
