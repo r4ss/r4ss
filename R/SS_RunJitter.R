@@ -135,7 +135,7 @@ SS_RunJitter <- function(mydir,
           like <- NA
         }else{
           likeline <- Rep.head[likelinenum]
-          like <- as.numeric(substring(likeline, nchar("LIKELIHOOD") + 2))
+          like <- type.convert(gsub("LIKELIHOOD\\s+", "", likeline))
           likesaved[i] <- like
         }
       if (printlikes){
