@@ -86,14 +86,7 @@ SS_RunJitter <- function(mydir,
     starter$init_values_src <- init_values_src
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE, warn = FALSE)
-
-  message("Renaming output files to have names like Report0.sso") 
-  file.rename(from="CompReport.sso", to="CompReport0.sso")
-  file.rename(from="covar.sso", to="covar0.sso")
-  file.rename(from="Report.sso", to="Report0.sso")
-  file.rename(from="ParmTrace.sso", to="ParmTrace0.sso")
-  file.rename(from="warning.sso", to="warning0.sso")
-  file.rename(from=paste0(model,".par"), to=paste0(model,".par_0.sso"))
+  file_increment(0, verbose = verbose)
 
   # create empty ss.dat file to avoid the ADMB message
   # "Error trying to open data input file ss.dat"
@@ -142,24 +135,15 @@ SS_RunJitter <- function(mydir,
         message("Likelihood for jitter ", i, " = ", like)
       }
       # rename output files
-      file.rename(from="CompReport.sso", to=paste0("CompReport",i,".sso"))
-      file.rename(from="covar.sso", to=paste0("covar",i,".sso"))
-      file.rename(from="Report.sso", to=paste0("Report",i,".sso"))
-      file.rename(from="ParmTrace.sso", to=paste0("ParmTrace",i,".sso"))
-      file.rename(from="warning.sso", to=paste0("warning",i,".sso"))
-      file.rename(from=paste0(model,".par"), to=paste0(model,".par_",i,".sso"))
+      file_increment(i = i)
     } else{
       warning("No Report.sso file found from run ", i)
     }
   }
   # Move original files back
-  file.copy(from="CompReport0.sso", to="CompReport.sso", overwrite=TRUE)
-  file.copy(from="covar0.sso", to="covar.sso", overwrite=TRUE)
-  file.copy(from="Report0.sso", to="Report.sso", overwrite=TRUE)
-  file.copy(from="ParmTrace0.sso", to="ParmTrace.sso", overwrite=TRUE)
-  file.copy(from="warning0.sso", to="warning.sso", overwrite=TRUE)
-  file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""),
-            overwrite=TRUE)
+  file.copy(from = dir(pattern = "0\\.sso"),
+    to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", dir(pattern = "0\\.sso")),
+    overwrite = TRUE)
 
   if (printlikes){
     message("Table of likelihood values:")
