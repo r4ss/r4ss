@@ -54,14 +54,6 @@ SS_RunJitter <- function(mydir,
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-
-  # determine operating system in a relatively brute force way
-  OS <- "Mac" # don't know the version$os info for Mac
-  if(length(grep("linux",version$os)) > 0){
-    OS <- "Linux"
-  }
-  if(length(grep("mingw",version$os)) > 0){
-    OS <- "Windows"
   }
 
   # change working directory
@@ -101,7 +93,7 @@ SS_RunJitter <- function(mydir,
     }
     # run model
     command <- paste(model, extras)
-    if(OS!="Windows"){
+    if (.Platform$OS.type!="windows") {
       command <- paste0("./", command)
     }
 
@@ -109,10 +101,10 @@ SS_RunJitter <- function(mydir,
       message("Running model in directory: ",getwd())
       message("Using the command: '",command)
     }
-    if(OS=="Windows" & !systemcmd){
-      shell(cmd=command, intern=Intern)
+    if (.Platform$OS.type == "windows" & !systemcmd) {
+      shell(cmd = command, intern = Intern)
     }else{
-      system(command, intern=Intern)
+      system(command, intern = Intern, show.output.on.console = !Intern)
     }
     # Only save stuff if it converged
     if( "Report.sso" %in% list.files() ){
