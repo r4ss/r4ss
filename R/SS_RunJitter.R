@@ -1,48 +1,53 @@
-##################
-# SS_RunJitter
-##################
-##' Iteratively apply the jitter option in SS
-##'
-##' Iteratively runs SS model with different jittered starting parameter values
-##' (jitter value must be manually set in starter.ss). Output files are renamed
-##' in the format Report1.sso, Report2.sso, etc.
-##'
-##' @param mydir Directory where model files are located
-##' @param model Executable name
-##' @param extras Additional command line arguments passed to executable
-##' @param Njitter Number of jitters, or a vector of jitter iterations.
-##'   If \code{length(Njitter) > 1} only the iterations specified will be ran,
-##'   else \code{1:Njitter} will be executed.
-##' @param Intern Show command line info in R console or keep hidden (Internal=TRUE)
-##' @param systemcmd Option to switch between 'shell' and 'system'
-##' @param printlikes Print likelihood values to console
-##' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
-##' @return A vector of likelihoods for each jitter iteration.
-##' @export
-##' @examples
-##'   \dontrun{
-##'     #### Change starter file appropriately (can also edit file directly)
-##'     starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
-##'     # Change to use .par file
-##'     starter$init_values_src = 1
-##'     # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
-##'     starter$jitter_fraction = 0.1
-##'     # write modified starter file
-##'     SS_writestarter(starter, dir=mydir, overwrite=TRUE)
-##'
-##'     #### Run jitter using this function
-##'     jit.likes <- SS_RunJitter(mydir=mydir, Njitter=25)
-##'
-##'     #### Read in results using other r4ss functions
-##'     # (note that un-jittered model can be read using keyvec=0:Njitter)
-##'     profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
-##'     # summarize output
-##'     profilesummary <- SSsummarize(profilemodels)
-##'     # Likelihoods
-##'     profilesummary$likelihoods[1,]
-##'     # Parameters
-##'     profilesummary$pars
-##'   }
+#' Iteratively apply the jitter option in SS
+#'
+#' Iteratively run a Stock Synthesis model with different jittered starting
+#' parameter values based on the jitter fraction. Output files are renamed
+#' in the format Report1.sso, Report2.sso, etc.
+#'
+#' @param mydir Directory where model files are located.
+#' @param model Executable name of the \code{.exe} file in \code{mydir}
+#'  without the extension, e.g., \code{"ss"}.
+#' @param extras Additional command line arguments passed to the executable.
+#'   The default, \code{"-nohess"}, runs each jittered model without the hessian.
+#' @param Njitter Number of jitters, or a vector of jitter iterations.
+#'   If \code{length(Njitter) > 1} only the iterations specified will be ran,
+#'   else \code{1:Njitter} will be executed.
+#' @param Intern Show command line info in R console or keep hidden. The default,
+#'   \code{TRUE}, keeps the executable hidden.
+#' @param systemcmd Option to switch between 'shell' and 'system'. The default,
+#'   \code{FALSE}, facilitates using the shell command on Windows.
+#' @param printlikes A logical value specifying if the likelihood values should
+#'   be printed to the console.
+#' @template verbose
+#' @param jitter_fraction The value, typically 0.1, used to define a uniform
+#'   distribution in cumulative normal space to generate new initial parameter values.
+#'   The default of \code{NULL} forces the user to specify the jitter_fraction
+#'   in the starter file, and this value must be greater than zero and
+#'   will not be overwritten.
+#' @param init_values_src Either zero or one, specifying if the initial values to
+#'   jitter should be read from the control file or from the par file, respectively.
+#'   The default is \code{NULL}, which will leave the starter file unchanged.
+#' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
+#' @return A vector of likelihoods for each jitter iteration.
+#' @export
+#' @examples
+#' \dontrun{
+#'   #### Run jitter from par file with arbitrary, but common, choice of 0.1
+#'   modeldir <- tail(dir(system.file("extdata", package="r4ss"), full.names=TRUE),1)
+#'   numjitter <- 25
+#'   jit.likes <- SS_RunJitter(mydir=modeldir, Njitter=numjitter,
+#'    jitter_fraction=0.1, init_value_src=1)
+#'
+#'   #### Read in results using other r4ss functions
+#'   # (note that un-jittered model can be read using keyvec=0:numjitter)
+#'   profilemodels <- SSgetoutput(dirvec=modeldir, keyvec=1:numjitter, getcovar=FALSE)
+#'   # summarize output
+#'   profilesummary <- SSsummarize(profilemodels)
+#'   # Likelihoods
+#'   profilesummary$likelihoods[1,]
+#'   # Parameters
+#'   profilesummary$pars
+#' }
 
 SS_RunJitter <- function(mydir,
                          model = "ss",
@@ -50,22 +55,37 @@ SS_RunJitter <- function(mydir,
                          Njitter,
                          Intern = TRUE,
                          systemcmd = FALSE,
-                         printlikes = TRUE) {
+                         printlikes = TRUE,
+                         verbose = FALSE,
+                         jitter_fraction = NULL,
+                         init_values_src = NULL) {
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
+  setwd(mydir)
   }
 
-  # change working directory
-  message("Temporarily changing working directory to:", mydir)
-  setwd(mydir)
-  # read starter file to test for non-zero jitter value
-  message("Checking starter file")
-  starter <- SS_readstarter("starter.ss", verbose=FALSE)
-  
-  if(starter$jitter_fraction == 0){
-    stop("Change starter file to have jitter value > 0")
+  if (verbose) {
+    message("Temporarily changing working directory to:\n", mydir)
+    if (!file.exists("Report.sso")) {
+      message("Copy output files from a converged run into\n",
+        mydir, "\nprior to running SS_RunJitter to enable easier comparisons.")
+    }
+    message("Checking starter file")
   }
+  # read starter file to test for non-zero jitter value
+  starter <- SS_readstarter(verbose=verbose)
+  if (starter$jitter_fraction == 0 & is.null(jitter_fraction)) {
+    stop("Change the jitter value in the starter file to be > 0\n",
+      "or change the jitter_fraction argument to be > 0.", call. = FALSE)
+  }
+  if (!is.null(jitter_fraction)) {
+    starter$jitter_fraction <- jitter_fraction
+  }
+  if (!is.null(init_values_src)) {
+    starter$init_values_src <- init_values_src
+  }
+  r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE, warn = FALSE)
 
   message("Renaming output files to have names like Report0.sso") 
   file.rename(from="CompReport.sso", to="CompReport0.sso")
@@ -85,10 +105,10 @@ SS_RunJitter <- function(mydir,
   }
   likesaved <- rep(NA, length(Njitter))
   for(i in Njitter){
-    message("Jitter=",i,", ", date())
+    if (verbose) message("Jitter=", i, ", ", date())
     # check for use of .par file and replace original if needed
     if(starter$init_values_src == 1){
-      message("Replacing .par file with original")
+      if (verbose) message("Replacing .par file with original")
       file.copy(from=paste0(model,".par_0.sso"), to=paste0(model,".par"), overwrite=TRUE)
     }
     # run model
@@ -97,9 +117,9 @@ SS_RunJitter <- function(mydir,
       command <- paste0("./", command)
     }
 
-    if(i==1){
-      message("Running model in directory: ",getwd())
-      message("Using the command: '",command)
+    if (i == 1 & verbose){
+      message("Running SS jitter in directory: ", getwd(),
+        "\nUsing the command: ", command)
     }
     if (.Platform$OS.type == "windows" & !systemcmd) {
       shell(cmd = command, intern = Intern)
@@ -107,9 +127,8 @@ SS_RunJitter <- function(mydir,
       system(command, intern = Intern, show.output.on.console = !Intern)
     }
     # Only save stuff if it converged
-    if( "Report.sso" %in% list.files() ){
-      if(printlikes){
-        Rep.head <- readLines("Report.sso",n=300)
+    if ("Report.sso" %in% list.files()) {
+        Rep.head <- readLines("Report.sso", n = 300)
         likelinenum <- grep("^LIKELIHOOD", Rep.head)
         if(length(likelinenum)==0){
           warning("can't find LIKELIHOOD section in Report.sso")
@@ -119,6 +138,7 @@ SS_RunJitter <- function(mydir,
           like <- as.numeric(substring(likeline, nchar("LIKELIHOOD") + 2))
           likesaved[i] <- like
         }
+      if (printlikes){
         message("Likelihood for jitter ", i, " = ", like)
       }
       # rename output files
@@ -128,8 +148,8 @@ SS_RunJitter <- function(mydir,
       file.rename(from="ParmTrace.sso", to=paste0("ParmTrace",i,".sso"))
       file.rename(from="warning.sso", to=paste0("warning",i,".sso"))
       file.rename(from=paste0(model,".par"), to=paste0(model,".par_",i,".sso"))
-    }else{
-      warning("No Report.sso file found from run", i)
+    } else{
+      warning("No Report.sso file found from run ", i)
     }
   }
   # Move original files back
@@ -141,10 +161,9 @@ SS_RunJitter <- function(mydir,
   file.copy(from=paste(model,".par_0.sso",sep=""), to=paste(model,".par",sep=""),
             overwrite=TRUE)
 
-  if(printlikes){
+  if (printlikes){
     message("Table of likelihood values:")
     print(table(likesaved))
   }
-  # Return (invisibly), the vector of likelihoods
   return(invisible(likesaved))
 }
