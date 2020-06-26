@@ -2958,11 +2958,11 @@ SS_output <-
     }
     # add to list of stuff that gets returned
     returndat$index_variance_tuning_check <- INDEX_1
-
-    if (ncpue > 0) {
-      # CPUE/Survey series
-      cpue <- matchfun2("INDEX_2", 1, "INDEX_2", ncpue + 1, header = TRUE)
-      cpue[cpue == "_"] <- NA
+    
+    # CPUE/Survey series - will not match if not found
+    cpue <- matchfun2("INDEX_2", 1, "INDEX_2", ncpue + 1, header = TRUE)
+    cpue[cpue == "_"] <- NA
+    if (length(cpue) > 0) {
       # make older SS output names match current SS output conventions
       # note: "Fleet_name" (formerly "Name") introduced in 3.30.12
       #       and might change as result of discussion on inconsistent use of
@@ -2988,7 +2988,7 @@ SS_output <-
       # make columns numeric
       cpue <- type.convert(cpue, as.is = TRUE)
     } else {
-      # if INDEX_2 not present (not sure the circumstances that would cause this)
+      # if INDEX_2 not present
       cpue <- NULL
     }
     returndat$cpue <- cpue
