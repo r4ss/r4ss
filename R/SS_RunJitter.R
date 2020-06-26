@@ -63,6 +63,8 @@ SS_RunJitter <- function(mydir,
   startdir <- getwd()
   on.exit(setwd(startdir))
   setwd(mydir)
+  if (length(dir(pattern = paste0("^",model,"$","|",model,"\\.exe"))) != 1) {
+    stop(model, " was not found in ", mydir, call. = FALSE)
   }
 
   if (verbose) {
