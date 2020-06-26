@@ -76,35 +76,33 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
   )
 })
 
-test_that("SS_RunJitter runs on simple_3.30.12 model", {
-  path_3.30.12 <- file.path(example_path, "simple_3.30.12")
-  skip_if(all(file.info(dir(path_3.30.12, full.names = TRUE))$exe == "no"),
-    message = "skipping test that requires SS executable"
-  )
-  dir.jit <- file.path(example_path, "simple_3.30.12/jitter")
-  copy_SS_inputs(
-    dir.old = file.path(example_path, "simple_3.30.12"),
-    dir.new = dir.jit,
-    create.dir = TRUE,
-    overwrite = TRUE,
-    copy_exe = TRUE,
-    copy_par = TRUE,
-    verbose = TRUE
-  )
-  # read starter file
-  starter <- SS_readstarter(file.path(dir.jit, "starter.ss"))
-  # Make use the par file as a starting point
-  starter$init_values_src <- 1
-  # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
-  starter$jitter_fraction <- 0.1
-  # write modified starter file
-  SS_writestarter(starter, dir = dir.jit, overwrite = TRUE)
+test_that("SS_RunJitter runs on newest simple model", {
+  path_simple <- tail(dir(example_path, full.names = TRUE), 1)
+  skipexe <- all(file.info(dir(path_simple, full.names=TRUE))$exe=="no")
+  dir.jit <- file.path(path_simple, "jitter")
+  expect_true(copy_SS_inputs(dir.old=path_simple,
+    dir.new=dir.jit,
+    create.dir=TRUE,
+    overwrite=TRUE,
+    copy_exe=!skipexe,
+    copy_par=FALSE,
+    verbose=FALSE))
   # run jitters
-  likesaved <- SS_RunJitter(
-    mydir = file.path(example_path, "simple_3.30.12/jitter"),
-    Njitter = 2
-  )
-  expect_equal(is.vector(likesaved) & length(likesaved) == 2, TRUE)
+  if (skipexe) {
+    expect_error(SS_RunJitter(mydir=dir.jit, Njitter=2, jitter_fraction=0.1,
+      printlikes=FALSE))
+    starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose=FALSE)
+    expect_equal(starter$jitter_fraction, 0)
+  } else {
+    likesaved <- SS_RunJitter(mydir=dir.jit, Njitter=2, jitter_fraction=0.1,
+      printlikes=FALSE)
+    expect_true(is.vector(likesaved) & length(likesaved)==2)
+    expect_equal(likesaved[1], likesaved[2])
+    starter <- SS_readstarter(file.path(dir.jit, "starter.ss"), verbose=FALSE)
+    expect_equal(starter$jitter_fraction, 0.1)
+  }
+  expect_equal(starter$init_values_src, 0)
+  unlink(dir.jit, recursive = TRUE)
 })
 
 ###############################################################################
