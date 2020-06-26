@@ -1927,12 +1927,14 @@ SS_output <-
 
     # Length_Comp_Fit_Summary
     if (SS_versionNumeric < 3.30) {
-      # old way didn't have key word and had parantheses and other issues with column names
+      # old way didn't have key word and had parentheses and other issues with column names
       lenntune <- matchfun2("FIT_AGE_COMPS", -(nfleets + 2),
         "FIT_AGE_COMPS", -1,
         cols = 1:10, header = TRUE
       )
       names(lenntune)[10] <- "FleetName"
+      # convert underscores
+      lenntune[lenntune == "_"] <- NA
       # reorder columns (leaving out sample sizes perhaps to save space)
       lenntune <- lenntune[lenntune$N > 0, c(10, 1, 4:9)]
       # avoid NA warnings by removing #IND values
