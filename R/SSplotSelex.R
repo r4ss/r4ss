@@ -795,7 +795,8 @@ SSplotSelex <-
      ngpatterns==1 &
      !is.null(growdat) &
      !is.null(sizeselex) &
-     !is.null(ageselex)
+     !is.null(ageselex) &
+     all(!is.na(lbinspop))
      ){ # need to connect growth patterns to fleets in future
     # subsetting for one season only. This could be replaced
     #   by info on the growth within the season when each fleet operates.

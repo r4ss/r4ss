@@ -398,7 +398,7 @@ SSplotNumbers <-
 
     ##########
     # repeat code above for numbers at length (subplots 6, 7 and 8)
-    if(length(intersect(6:8, subplots))>0 & !is.null(natlen)) 
+    if(length(intersect(6:8, subplots))>0 & !is.null(natlen) & all(!is.na(lbinspop))) 
     {
       column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
 
