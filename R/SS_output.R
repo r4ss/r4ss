@@ -1140,6 +1140,13 @@ SS_output <-
 
     # read fleet-specific likelihoods
     likelihoods_by_fleet <- matchfun2("Fleet:", 0, header = TRUE)
+    # there was no space before "Parm_devs_detail" prior to 3.30.15.06
+    if(!is.null(likelihoods_by_fleet) &&
+       "Parm_devs_detail" %in% likelihoods_by_fleet[,1]){
+      likelihoods_by_fleet <- matchfun2("Fleet:", 0,
+                                        "Parm_devs_detail", -1,
+                                        header = TRUE)
+    }
 
     # clean up fleet-specific likelihoods
     likelihoods_by_fleet[likelihoods_by_fleet == "_"] <- NA
@@ -1179,7 +1186,8 @@ SS_output <-
     }
 
     # read detail on parameters devs (if present, 3.30 only)
-    Parm_devs_detail <- matchfun2("Parm_devs_detail", 1, header = TRUE)
+    Parm_devs_detail <- matchfun2("Parm_devs_detail", 1,
+                                  header = TRUE, type.convert = TRUE)
     stats$Parm_devs_detail <- Parm_devs_detail
 
     # parameters
@@ -1651,7 +1659,8 @@ SS_output <-
     der[der == "_"] <- NA
     der[der == ""] <- NA
 
-    # remove bad rows that may go away in future versions of SS 3.30
+    # remove bad rows that were present in 3.30-beta in September 2016
+    # (note that spelling differs from "Parm_devs_detail" after likelihood)
     test <- grep("Parm_dev_details", der$Label)
     if (length(test) > 0) {
       der <- der[1:(min(test) - 1), ]
@@ -2263,7 +2272,6 @@ SS_output <-
     returndat$ALK_tolerance <- return.def("ALK_tolerance")
     returndat$nforecastyears <- nforecastyears
     returndat$morph_indexing <- morph_indexing
-    #  returndat$MGParm_dev_details <- MGParm_dev_details
     returndat$MGparmAdj <- MGparmAdj
     returndat$forecast_selectivity <- forecast_selectivity
     returndat$SelSizeAdj <- SelSizeAdj
@@ -2271,7 +2279,8 @@ SS_output <-
     returndat$recruitment_dist <- recruitment_dist
     returndat$recruit <- recruit
     returndat$SPAWN_RECR_CURVE <- SPAWN_RECR_CURVE
-    returndat$breakpoints_for_bias_adjustment_ramp <- breakpoints_for_bias_adjustment_ramp
+    returndat$breakpoints_for_bias_adjustment_ramp <-
+      breakpoints_for_bias_adjustment_ramp
 
     # Static growth
     # note: keyword "BIOLOGY" was not unique enough at some point
