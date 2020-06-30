@@ -370,5 +370,5 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   }
 
   # return the list
-  invisible(list(info = info_tab, timeseries = tab))
+  invisible(list(info = info_tab, timeseries = tab, header_info = header_info))
 }
