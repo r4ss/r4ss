@@ -77,6 +77,7 @@ SS_RunJitter <- function(mydir,
   }
   # read starter file to test for non-zero jitter value
   starter <- SS_readstarter(verbose=verbose)
+  starter$parmtrace <- ifelse(starter$parmtrace == 0, 1, starter$parmtrace)
   if (starter$jitter_fraction == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
       "or change the jitter_fraction argument to be > 0.", call. = FALSE)
