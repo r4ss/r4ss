@@ -66,13 +66,28 @@
 #' }
 #'
 SS_output <-
-  function(dir = "C:/myfiles/mymodels/myrun/", dir.mcmc = NULL,
-           repfile = "Report.sso", compfile = "CompReport.sso", covarfile = "covar.sso",
-           forefile = "Forecast-report.sso", wtfile = "wtatage.ss_new",
+  function(dir = "C:/myfiles/mymodels/myrun/",
+           dir.mcmc = NULL,
+           repfile = "Report.sso",
+           compfile = "CompReport.sso",
+           covarfile = "covar.sso",
+           forefile = "Forecast-report.sso",
+           wtfile = "wtatage.ss_new",
            warnfile = "warning.sso",
-           ncols = NULL, forecast = TRUE, warn = TRUE, covar = TRUE, readwt = TRUE,
-           checkcor = TRUE, cormax = 0.95, cormin = 0.01, printhighcor = 10, printlowcor = 10,
-           verbose = TRUE, printstats = TRUE, hidewarn = FALSE, NoCompOK = TRUE,
+           ncols = NULL,
+           forecast = TRUE,
+           warn = TRUE,
+           covar = TRUE,
+           readwt = TRUE,
+           checkcor = TRUE,
+           cormax = 0.95,
+           cormin = 0.01,
+           printhighcor = 10,
+           printlowcor = 10,
+           verbose = TRUE,
+           printstats = TRUE,
+           hidewarn = FALSE,
+           NoCompOK = TRUE,
            aalmaxbinrange = 4) {
     flush.console()
 
@@ -110,7 +125,7 @@ SS_output <-
                           header = FALSE,
                           type.convert = FALSE) {
       # extract a table from Report.sso by matching a keyword
-      # 
+      #
       # return a subset of values from the report file (or other file)
       # subset is defined by character strings at the start and end, with integer
       # adjustments of the number of lines to above/below the two strings
@@ -350,46 +365,60 @@ SS_output <-
     }
 
     # time check for CompReport file
-    compfile <- file.path(dir, compfile)
-    if (file.exists(compfile)) {
-      comphead <- readLines(con = compfile, n = 30)
-      compskip <- grep("Composition_Database", comphead)
-      if (length(compskip) == 0) {
-        message("No composition data, possibly because detailed output",
-                " is turned off in the starter file.")
-        comp <- FALSE
-      } else {
-        # compend value helps diagnose when no comp data exists in CompReport.sso file.
-        compend <- grep(" end ", comphead)
-        if (length(compend) == 0) {
-          compend <- 999
-        }
-        comptime <- findtime(comphead)
-        if (is.null(comptime) || is.null(repfiletime)) {
-          message(
-            "problem comparing the file creation times:\n",
-            "  Report.sso:", repfiletime, "\n",
-            "  CompReport.sso:", comptime, "\n"
-          )
-        } else {
-          if (comptime != repfiletime) {
-            message("CompReport time:", comptime, "\n")
-            stop(shortrepfile, " and ", compfile, " were from different model runs.")
-          }
-        }
-        comp <- TRUE
+    comp <- FALSE
+    if (is.null(compfile)) {
+      if (verbose) {
+        message("Skipping CompReport because 'compfile = NULL'")
       }
     } else {
-      if (!NoCompOK) {
-        stop("Missing ", compfile,
-             ". Change the 'compfile' input, rerun model to get the file,",
-             " or change input to 'NoCompOK = TRUE'"
-        )
+      if (file.exists(compfile)) {
+        # non-NULL compfile input provided and file exists
+        compfile <- file.path(dir, compfile)
+        comphead <- readLines(con = compfile, n = 30)
+        compskip <- grep("Composition_Database", comphead)
+        if (length(compskip) == 0) {
+          if (verbose) {
+            message(
+              "No composition data, possibly because detailed output",
+              " is turned off in the starter file."
+            )
+          }
+        } else {
+          # compend value helps diagnose when no comp data exists in CompReport.sso file.
+          compend <- grep(" end ", comphead)
+          if (length(compend) == 0) {
+            compend <- 999
+          }
+          comptime <- findtime(comphead)
+          if (is.null(comptime) || is.null(repfiletime)) {
+            message(
+              "problem comparing the file creation times:\n",
+              "  Report.sso:", repfiletime, "\n",
+              "  CompReport.sso:", comptime, "\n"
+            )
+          } else {
+            if (comptime != repfiletime) {
+              message("CompReport time:", comptime, "\n")
+              stop(shortrepfile, " and ", compfile, " were from different model runs.")
+            }
+          }
+          comp <- TRUE
+        }
       } else {
-        if (verbose) message("Composition file not found: ", compfile)
-        comp <- FALSE
+        # non-NULL compfile input provided and file DOESN'T exist
+        if (!is.null(compfile)) {
+          if (!NoCompOK) {
+            stop(
+              "Missing ", compfile,
+              ". Change the 'compfile' input, rerun model to get the file,",
+              " or change input to 'NoCompOK = TRUE'"
+            )
+          } else {
+            message("Composition file not found: ", compfile)
+          }
+        }
       }
-    }
+    } # end check for NULL compfile input
 
     # read report file
     if (verbose) {
@@ -488,7 +517,9 @@ SS_output <-
         }
       }
     } else {
-      if (verbose) message("You skipped the forecast file.")
+      if (verbose) {
+        message("You skipped the forecast file.")
+      }
     }
     if (!exists("btarg")) {
       nforecastyears <- NA
@@ -1141,11 +1172,12 @@ SS_output <-
     # read fleet-specific likelihoods
     likelihoods_by_fleet <- matchfun2("Fleet:", 0, header = TRUE)
     # there was no space before "Parm_devs_detail" prior to 3.30.15.06
-    if(!is.null(likelihoods_by_fleet) &&
-       "Parm_devs_detail" %in% likelihoods_by_fleet[,1]){
+    if (!is.null(likelihoods_by_fleet) &&
+      "Parm_devs_detail" %in% likelihoods_by_fleet[, 1]) {
       likelihoods_by_fleet <- matchfun2("Fleet:", 0,
-                                        "Parm_devs_detail", -1,
-                                        header = TRUE)
+        "Parm_devs_detail", -1,
+        header = TRUE
+      )
     }
 
     # clean up fleet-specific likelihoods
@@ -1187,7 +1219,8 @@ SS_output <-
 
     # read detail on parameters devs (if present, 3.30 only)
     Parm_devs_detail <- matchfun2("Parm_devs_detail", 1,
-                                  header = TRUE, type.convert = TRUE)
+      header = TRUE, type.convert = TRUE
+    )
     stats$Parm_devs_detail <- Parm_devs_detail
 
     # parameters
@@ -1214,8 +1247,8 @@ SS_output <-
     # fix issue with missing column in dev output
     # associated with at least SS versions 3.30.01 and 3.30.13
     if ("Gradient" %in% names(parameters) &&
-        any(parameters$Gradient %in% c("dev","F"))) {
-      bad <- parameters$Gradient %in% c("dev","F")
+      any(parameters$Gradient %in% c("dev", "F"))) {
+      bad <- parameters$Gradient %in% c("dev", "F")
       parameters$Pr_type[bad] <- parameters$Gradient[bad]
       parameters$Gradient[bad] <- NA
     }
@@ -1766,17 +1799,17 @@ SS_output <-
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
       # and RECRUITMENT_DIST_FORECAST was renamed RECRUITMENT_DIST_endyr)
       recruit_dist_Bmark <- matchfun2("RECRUITMENT_DIST_B", 1,
-                                      header = TRUE, type.convert = TRUE
-                                      )
+        header = TRUE, type.convert = TRUE
+      )
       if (!is.null(recruit_dist_Bmark)) {
         if (SS_versionNumeric < 3.30) {
           recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_FORECAST", 1,
-                                          header = TRUE, type.convert = TRUE
-                                          )
+            header = TRUE, type.convert = TRUE
+          )
         } else {
           recruit_dist_endyr <- matchfun2("RECRUITMENT_DIST_endyr", 1,
-                                          header = TRUE, type.convert = TRUE
-                                          )
+            header = TRUE, type.convert = TRUE
+          )
         }
         # bundle original and extra tables into a list
         recruitment_dist <- list(
@@ -1832,7 +1865,7 @@ SS_output <-
       srhead <- matchfun2("SPAWN_RECRUIT", 0,
         "SPAWN_RECRUIT", last_row_index,
         cols = 1:6
-        )
+      )
     }
     if (is.null(srhead)) {
       # if there's no SPAWN_RECRUIT section (presumably because minimal
@@ -1862,7 +1895,7 @@ SS_output <-
       )
       rownames(breakpoints_for_bias_adjustment_ramp) <- NULL
     }
-    
+
     ## Spawner-recruit curve
     # read SPAWN_RECRUIT table
     raw_recruit <- matchfun2("SPAWN_RECRUIT", last_row_index + 1)
@@ -1898,11 +1931,11 @@ SS_output <-
 
       # make older SS output names match current SS output conventions
       recruit <- df.rename(recruit,
-                           oldnames = c("year", "spawn_bio", "adjusted"),
-                           newnames = c("Yr", "SpawnBio", "bias_adjusted")
-                           )
-    } 
-    
+        oldnames = c("year", "spawn_bio", "adjusted"),
+        newnames = c("Yr", "SpawnBio", "bias_adjusted")
+      )
+    }
+
     # starting in 3.30.11.00, a table with the full spawn recr curve was added
     SPAWN_RECR_CURVE <- NULL
     if (!is.na(matchfun("Full_Spawn_Recr_Curve"))) {
@@ -2005,32 +2038,35 @@ SS_output <-
     }
 
     # Age_Comp_Fit_Summary
-    if(SS_versionNumeric < 3.30){
+    if (SS_versionNumeric < 3.30) {
       # 3.24 and before had no keyword for tuning info below FIT_AGE_COMPS
       # so working backwards from the following section to get it
-      agentune <- matchfun2("FIT_SIZE_COMPS", -(nfleets+2),
-                            "FIT_SIZE_COMPS", -2,
-                            cols = 1:10, header = TRUE)
-    }else{
+      agentune <- matchfun2("FIT_SIZE_COMPS", -(nfleets + 2),
+        "FIT_SIZE_COMPS", -2,
+        cols = 1:10, header = TRUE
+      )
+    } else {
       # 3.30 version has keyword (if included in output)
       # and requires little processing
       start <- matchfun("Age_Comp_Fit_Summary")
       if (is.na(start)) {
         agentune <- NULL
       } else {
-        if(rawrep[start + 1, 1] == ""){
+        if (rawrep[start + 1, 1] == "") {
           adjust1 <- 2
           which_blank <- 2
         } else {
           adjust1 <- 1
           which_blank <- 1
         }
-        agentune <- matchfun2("Age_Comp_Fit_Summary", adjust1 = adjust1,
-                              header = TRUE, which_blank = which_blank)
+        agentune <- matchfun2("Age_Comp_Fit_Summary",
+          adjust1 = adjust1,
+          header = TRUE, which_blank = which_blank
+        )
       }
     } # end 3.30 version
     agentune <- df.rename(agentune,
-      oldnames = c("FleetName",  "N"),
+      oldnames = c("FleetName", "N"),
       newnames = c("Fleet_name", "Nsamp_adj")
     )
 
@@ -2044,7 +2080,7 @@ SS_output <-
         agentune[agentune == "_"] <- NA
         # remove empty rows with NA or zero sample size
         agentune <- agentune[!is.na(agentune$Nsamp_adj) &
-                             agentune$Nsamp_adj > 0, ]
+          agentune$Nsamp_adj > 0, ]
         # avoid NA warnings by removing #IND values
         agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN" == "-1.#IND"] <- NA
         agentune <- type.convert(agentune, as.is = TRUE)
@@ -2483,15 +2519,15 @@ SS_output <-
     ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
     if (!is.null(ageselex)) {
       ageselex <- df.rename(ageselex,
-                            oldnames = c(
-                              "fleet", "year", "seas", "gender",
-                              "morph", "label", "factor"
-                            ),
-                            newnames = c(
-                              "Fleet", "Yr", "Seas", "Sex",
-                              "Morph", "Label", "Factor"
-                            )
-                            )
+        oldnames = c(
+          "fleet", "year", "seas", "gender",
+          "morph", "label", "factor"
+        ),
+        newnames = c(
+          "Fleet", "Yr", "Seas", "Sex",
+          "Morph", "Label", "Factor"
+        )
+      )
       # filter forecast years from selectivity if no forecast
       # NOTE: maybe refine this in 3.30
       if (!forecast) {
@@ -2967,7 +3003,7 @@ SS_output <-
     }
     # add to list of stuff that gets returned
     returndat$index_variance_tuning_check <- INDEX_1
-    
+
     # CPUE/Survey series - will not match if not found
     cpue <- matchfun2("INDEX_2", 1, "INDEX_2", ncpue + 1, header = TRUE)
     cpue[cpue == "_"] <- NA
@@ -3428,7 +3464,7 @@ SS_output <-
 
     # add recruitpars to list of stuff that gets returned
     returndat$recruitpars <- recruitpars
-    
+
     if (is.null(recruitpars)) {
       sigma_R_info <- NULL
     } else {
