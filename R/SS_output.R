@@ -386,7 +386,7 @@ SS_output <-
              " or change input to 'NoCompOK = TRUE'"
         )
       } else {
-        message("Composition file not found: ", compfile)
+        if (verbose) message("Composition file not found: ", compfile)
         comp <- FALSE
       }
     }
@@ -488,7 +488,7 @@ SS_output <-
         }
       }
     } else {
-      message("You skipped the forecast file.")
+      if (verbose) message("You skipped the forecast file.")
     }
     if (!exists("btarg")) {
       nforecastyears <- NA
