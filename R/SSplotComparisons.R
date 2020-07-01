@@ -54,8 +54,13 @@
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
 #' ending year specified in each model.
-#' @param indexfleets Vector of fleet numbers for each model for which to compare
-#' indices of abundance. Only necessary if any model has more than one index.
+#' @param which_indices Vector of fleet numbers for which indices to plot
+#' for models for cases that have the same fleet/index numbering. Vector should
+#' be a subset of the values 1:nfleets.
+#' @param indexfleets Fleet numbers for each model for which to compare
+#' indices of abundance. Only necessary if the index/fleet numbering differs
+#' among models. Can be vector of length = length(models) to plot 1 index
+#' shared among models, or a list of indices to include within each model.
 #' @param indexUncertainty Show uncertainty intervals on index data?
 #' Default=FALSE because if models have any extra standard deviations added,
 #' these intervals may differ across models.
@@ -198,6 +203,7 @@ SSplotComparisons <-
            plot=TRUE,print=FALSE,png=print,pdf=FALSE,
            models="all",
            endyrvec=NULL,
+           which_indices=NULL,
            indexfleets=NULL,
            indexUncertainty=FALSE,
            indexQlabel=TRUE,
@@ -448,7 +454,9 @@ SSplotComparisons <-
             "use the new Nsexes = -1 option in the data file.")
   }
   # check number of models to be plotted
-  if(models[1]=="all") models <- 1:n
+  if (models[1]=="all") {
+    models <- 1:n
+  }
   nlines <- length(models)
 
   # check for mcmc
@@ -464,17 +472,49 @@ SSplotComparisons <-
     stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
   }
 
-  # check length of indexfleets
-  if(!is.null(indexfleets) && length(indexfleets) < n){
-    if(length(indexfleets)==1){
-      indexfleets <- rep(indexfleets, n)
-    }else{
-      warning("'indexfleets' needs to have length either 1 or n=",n,"\n",
-           "with each value a fleet number for the index to compare.\n")
-      indexfleets <- NULL
-    }
-  }
+  # if index plots are requested, do some checks on inputs
+  if (any(subplots %in% 13:14) & nrow(indices) > 0) {
+    # check all combinations of indexfleets and which_indices provided or not
 
+    # 1. if BOTH indexfleets and which_indices provided
+    if (!is.null(indexfleets) & !is.null(which_indices)) {
+      stop("Inputs 'which_indices' and 'indexfleets' should not be used\n",
+           "  at the same time: 'which_indices' is for models with matching\n",
+           "  fleet numbers among models, while 'indexfleets' is for cases\n",
+           "  where they differ among models.")
+    }
+    # 2. if NEITHER indexfleets nor which_indices provided
+    # then create indexfleets as a list all index fleet numbers
+    # for each model
+    if (is.null(indexfleets) & is.null(which_indices)) {
+      index_fleets <- list()
+      for(imodel in 1:n){
+        index_fleets[[i]] <- sort(unique(indices$Fleet))
+      }
+    }
+    # 3. if ONLY which_indices provided, then create indexfleets
+    # as a list with only which_indices for all models
+    if (is.null(indexfleets) & !is.null(which_indices)) {
+      if (!is.vector(which_indices)) {
+        stop("'which_indices' should be a vector of fleet numbers with indices\n",
+             "  which are present in all models.")
+      }
+      index_fleets <- rep(list(which_indices), n)
+    }
+    # 4. if ONLY indexfleets provided
+    if (!is.null(indexfleets) & is.null(which_indices)) {
+      if (length(indexfleets) != n) {
+        warning("Skipping index plots: length(indexfleets) != n = ", n, ".")
+        indexfleets <- NULL
+      }
+    }
+    
+    # check for mismatched list elements 
+    if (!length(unique(lapply(indexfleets, FUN=length))) == 1){
+      stop("Fleets have different numbers of indices listed in 'indexfleets'")
+    }
+  } # end check for index plots (subplots %in% 13:14)
+  
   # setup colors, points, and line types
   if(is.null(col) & nlines>3)  col <- rc(nlines+1)[-1]
   if(is.null(col) & nlines<3)  col <- rc(nlines)
@@ -1969,15 +2009,20 @@ SSplotComparisons <-
     }
   }
 
-  # filename extension for index plots
-  val <- paste("_flt",unique(indexfleets),sep="")
-  if(length(val)!=1) val <- NULL
 
   # subplot 13: index fits
-  if(13 %in% subplots){
+  if(13 %in% subplots & nrow(indices) > 0){
     if(verbose){
       message("subplot 13: index fits")
     }
+    ## # index plots
+    ## if (!is.null(which_fleets)) {
+    ##   for (index in which_fleets) {
+    ##     indexfleets <- rep(index, n)
+    ##     # filename extension for index plots
+    ##     val <- paste("_flt",unique(indexfleets),sep="")
+    ##     if(length(val)!=1) val <- NULL
+
     if(plot){
       ymax_vec[13] <- plotIndices()
     }
@@ -1989,7 +2034,7 @@ SSplotComparisons <-
   }
 
   # subplot 14: index fits on a log scale
-  if(14 %in% subplots){
+  if(14 %in% subplots & nrow(indices) > 0){
     if(verbose){
       message("subplot 14: index fits on a log scale")
     }
@@ -2002,7 +2047,9 @@ SSplotComparisons <-
       dev.off()
     }
   }
-
+## } # end loop over indices
+## } # end check for null which_fleets
+    
   #### unfinished addition of phase plot comparisons
   ## # subplot 15: phase plot
   if(15 %in% subplots){
