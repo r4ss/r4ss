@@ -43,10 +43,31 @@ test_that("SS_output runs on simple_3.30.13 model", {
   expect_equal(tail(names(simple3.30.13),1), "inputs")
 })
 
+# tests where stuff is missing
+# missing MCMC folder
 test_that("SS_output generates warning when MCMC folder is missing", {
   expect_warning(SS_output(dir=tail(dir(example_path, full.names = TRUE),1),
    dir.mcmc="mcmc", warn=FALSE, printstats=FALSE, hidewarn=TRUE, verbose=FALSE)
   )
+})
+
+# skipping CompReport file
+simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
+                           verbose = FALSE, printstats = FALSE,
+                           compfile = NULL)
+test_that("SS_output runs on simple_3.30.13 model", {
+  expect_equal(tail(names(simple3.30.13),1), "inputs")
+})
+# missing a bunch of files
+simple3.30.13 <- SS_output(file.path(example_path,"simple_3.30.13"),
+                           verbose = FALSE, printstats = FALSE,
+                           compfile = "wrong file",
+                           covarfile = "wrong file",
+                           forefile = "wrong file",
+                           wtfile = "wrong file",
+                           warnfile = "wrong file")
+test_that("SS_output runs on simple_3.30.13 model", {
+  expect_equal(tail(names(simple3.30.13),1), "inputs")
 })
 
 ###############################################################################
