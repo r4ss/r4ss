@@ -274,6 +274,7 @@ SSplotComparisons <-
   }
 
   if(png) print <- TRUE
+
   if(png & is.null(plotdir))
     stop("to print PNG files, you must supply a directory as 'plotdir'")
 
@@ -487,9 +488,10 @@ SSplotComparisons <-
     # then create indexfleets as a list all index fleet numbers
     # for each model
     if (is.null(indexfleets) & is.null(which_indices)) {
-      index_fleets <- list()
+      indexfleets <- list()
       for(imodel in 1:n){
-        index_fleets[[i]] <- sort(unique(indices$Fleet))
+        indexfleets[[imodel]] <-
+          sort(unique(indices$Fleet[indices$imodel == imodel]))
       }
     }
     # 3. if ONLY which_indices provided, then create indexfleets
@@ -499,7 +501,7 @@ SSplotComparisons <-
         stop("'which_indices' should be a vector of fleet numbers with indices\n",
              "  which are present in all models.")
       }
-      index_fleets <- rep(list(which_indices), n)
+      indexfleets <- rep(list(which_indices), n)
     }
     # 4. if ONLY indexfleets provided
     if (!is.null(indexfleets) & is.null(which_indices)) {
@@ -509,9 +511,25 @@ SSplotComparisons <-
       }
     }
     
-    # check for mismatched list elements 
+    # check for mismatched lengths of list elements
     if (!length(unique(lapply(indexfleets, FUN=length))) == 1){
-      stop("Fleets have different numbers of indices listed in 'indexfleets'")
+      message("indexfleets:")
+      print(indexfleets)
+      stop("Fleets have different numbers of indices listed in 'indexfleets'.")
+    }
+
+    # figure out suffix to add to index plots
+    index_plot_suffix <- rep("", length(indexfleets))
+    # if more than one index is compared, add suffix to filename
+    if (length(indexfleets[[1]]) > 1) {
+      for (iindex in 1:length(indexfleets[[1]])) {
+        fleets <- as.numeric(data.frame(indexfleets)[iindex,])
+        if (length(unique(fleets)) == 1) {
+          index_plot_suffix[iindex] <- paste0("_flt", fleets[1])
+        } else {
+          index_plot_suffix[iindex] <- paste0("_index", iindex)
+        }
+      }
     }
   } # end check for index plots (subplots %in% 13:14)
   
@@ -1366,40 +1384,19 @@ SSplotComparisons <-
     return(ylim[2])
   }
 
-  ###
-  ## notes from Ian on revised approach to indices:
-  #
-  #    this function was originally written for the 2011 hake assessment
-  #    where models with different fleet structures were being compared
-  #    however, that represents a relatively rare case.
-  #    in general, it should be possible to loop over all fleets with indices
-  #    and compare them across all models
-  #    instead of checking for alignment of indices$Fleet within the
-  #    plotIndices() function itself, this function can occur within a loop over
-  #    fleet numbers. An initial check for matching sets of fleets could be used
-  #    and only revert to requiring the indexfleets input if there is a mismatch
-  #
 
-  plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
+  plotIndices <- function(log=FALSE, iindex){ 
+    # function to plot different fits to a single index of abundance
+
     # get a subset of index table including only 1 index per model
     # (hopefully matching each other)
     indices2 <- NULL
     for(iline in 1:nlines){
       imodel <- models[iline]
-      subset1 <- indices$imodel==imodel & !is.na(indices$Like)
-      subset2 <- indices$imodel==imodel & indices$Yr <= endyrvec[iline]
-      if(length(unique(indices$Fleet[subset2])) > 1){
-        if(!is.null(indexfleets[imodel])){
-          ifleet <- indexfleets[imodel]
-          indices2 <- rbind(indices2,indices[subset2 & indices$Fleet==ifleet,])
-        }else{
-          message("some models have multiple indices, 'indexfleets' required\n",
-                  "to compare fits to indices.")
-          return(invisible(NA))
-        }
-      }else{
-        indices2 <- rbind(indices2,indices[subset2,])
-      }
+      subset2 <- indices$imodel==imodel &
+        indices$Yr <= endyrvec[iline] &
+        indices$Fleet == indexfleets[[imodel]][iindex]
+      indices2 <- rbind(indices2,indices[subset2,])
     }
     # get quantities for plot
     yr <- indices2$Yr
@@ -2015,41 +2012,39 @@ SSplotComparisons <-
     if(verbose){
       message("subplot 13: index fits")
     }
-    ## # index plots
-    ## if (!is.null(which_fleets)) {
-    ##   for (index in which_fleets) {
-    ##     indexfleets <- rep(index, n)
-    ##     # filename extension for index plots
-    ##     val <- paste("_flt",unique(indexfleets),sep="")
-    ##     if(length(val)!=1) val <- NULL
-
-    if(plot){
-      ymax_vec[13] <- plotIndices()
-    }
-    if(print){
-      pngfun(paste("compare13_indices",val,".png",sep=""))
-      ymax_vec[13] <- plotIndices()
-      dev.off()
-    }
-  }
+    for (iindex in 1:length(indexfleets[[1]])) {
+      if(plot){
+        ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
+      }
+      if(print){
+        pngfun(paste0("compare13_indices",
+                      index_plot_suffix[iindex],
+                      ".png"))
+        ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
+        dev.off()
+      }
+    } # end loop over indices to plot
+  } # end check for subplot 13
 
   # subplot 14: index fits on a log scale
   if(14 %in% subplots & nrow(indices) > 0){
     if(verbose){
       message("subplot 14: index fits on a log scale")
     }
-    if(plot){
-      ymax_vec[14] <- plotIndices(log=TRUE)
-    }
-    if(print){
-      pngfun(paste("compare14_indices_log",val,".png",sep=""))
-      ymax_vec[14] <- plotIndices(log=TRUE)
-      dev.off()
-    }
-  }
-## } # end loop over indices
-## } # end check for null which_fleets
-    
+    for (iindex in 1:length(indexfleets[[1]])) {
+      if(plot){
+        ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
+      }
+      if(print){
+        pngfun(paste0("compare14_indices_log",
+                      index_plot_suffix[iindex],
+                      ".png"))
+        ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
+        dev.off()
+      }
+    } # end loop over indices to plot
+  } # end check for subplot 14
+   
   #### unfinished addition of phase plot comparisons
   ## # subplot 15: phase plot
   if(15 %in% subplots){
