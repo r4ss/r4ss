@@ -1758,13 +1758,15 @@ SSplotComparisons <-
             arrows(
               x0 = yr[subset] + adj, y0 = lower[subset],
               x1 = yr[subset] + adj, y1 = upper[subset],
-              length = 0.01, angle = 90, code = 3, col = shadecol[iline]
+              length = 0.01, angle = 90, code = 3,
+              # colors have hard-wired alpha value of 0.7
+              col = adjustcolor(col, alpha.f = 0.7)[iline]
             )
           }
           # add points on top of intervals
           points(yr[subset] + adj, obs[subset],
             pch = 21, cex = 1.5, col = 1,
-            bg = shadecol[iline]
+            bg = adjustcolor(col, alpha.f = 0.7)[iline]
           )
         }
       } else {
