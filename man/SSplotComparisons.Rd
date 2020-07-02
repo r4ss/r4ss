@@ -13,7 +13,6 @@ SSplotComparisons(
   pdf = FALSE,
   models = "all",
   endyrvec = NULL,
-  which_indices = NULL,
   indexfleets = NULL,
   indexUncertainty = TRUE,
   indexQlabel = TRUE,
@@ -54,7 +53,6 @@ SSplotComparisons(
   punits = "in",
   res = 300,
   ptsize = 10,
-  cex.main = 1,
   plotdir = NULL,
   filenameprefix = "",
   densitynames = c("SSB_Virgin", "R0"),
@@ -134,14 +132,19 @@ columns in summary tables.}
 final year of values to show for each model. By default it is set to the
 ending year specified in each model.}
 
-\item{which_indices}{Vector of fleet numbers for which indices to plot
-for models for cases that have the same fleet/index numbering. Vector should
-be a subset of the values 1:nfleets.}
-
-\item{indexfleets}{Fleet numbers for each model for which to compare
-indices of abundance. Only necessary if the index/fleet numbering differs
-among models. Can be vector of length = length(models) to plot 1 index
-shared among models, or a list of indices to include within each model.}
+\item{indexfleets}{Fleet numbers for each model to compare
+indices of abundance. Can take different forms:
+\itemize{
+  \item NULL: (default) create a separate plot for each index as long as the fleet
+numbering is the same across all models.
+  \item integer: create a single comparison plot for the chosen index
+  \item vector of length equal to number of models: a single fleet number
+for each model to be compared in a single plot
+  \item list: list of fleet numbers associated with indices within each
+model to be compared, where the list elements are each a vector of the
+same length but the names of the list elements don't matter and can be
+absent.
+}}
 
 \item{indexUncertainty}{Show uncertainty intervals on index data?
 Default=FALSE because if models have any extra standard deviations added,
@@ -246,8 +249,6 @@ remove)}
 
 \item{ptsize}{Point size for PNG file}
 
-\item{cex.main}{Character expansion for plot titles}
-
 \item{plotdir}{Directory where PNG or PDF files will be written. By default
 it will be the directory where the model was run.}
 
@@ -307,6 +308,10 @@ MLE}
 \item{show_equilibrium}{Whether to show the equilibrium values for
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.}
+
+\item{which_indices}{Vector of fleet numbers for which indices to plot
+for models for cases that have the same fleet/index numbering. Vector should
+be a subset of the values 1:nfleets.}
 }
 \description{
 Creates a user-chosen set of plots comparing model output from a summary of

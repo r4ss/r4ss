@@ -57,10 +57,19 @@
 #' @param which_indices Vector of fleet numbers for which indices to plot
 #' for models for cases that have the same fleet/index numbering. Vector should
 #' be a subset of the values 1:nfleets.
-#' @param indexfleets Fleet numbers for each model for which to compare
-#' indices of abundance. Only necessary if the index/fleet numbering differs
-#' among models. Can be vector of length = length(models) to plot 1 index
-#' shared among models, or a list of indices to include within each model.
+#' @param indexfleets Fleet numbers for each model to compare
+#' indices of abundance. Can take different forms:
+#' \itemize{
+#'   \item NULL: (default) create a separate plot for each index as long as the fleet
+#' numbering is the same across all models.
+#'   \item integer: create a single comparison plot for the chosen index
+#'   \item vector of length equal to number of models: a single fleet number
+#' for each model to be compared in a single plot
+#'   \item list: list of fleet numbers associated with indices within each
+#' model to be compared, where the list elements are each a vector of the
+#' same length but the names of the list elements don't matter and can be
+#' absent.
+#' }
 #' @param indexUncertainty Show uncertainty intervals on index data?
 #' Default=FALSE because if models have any extra standard deviations added,
 #' these intervals may differ across models.
@@ -128,7 +137,6 @@
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
@@ -208,7 +216,6 @@ SSplotComparisons <-
            plot = TRUE, print = FALSE, png = print, pdf = FALSE,
            models = "all",
            endyrvec = NULL,
-           which_indices = NULL,
            indexfleets = NULL,
            indexUncertainty = TRUE,
            indexQlabel = TRUE,
@@ -246,7 +253,7 @@ SSplotComparisons <-
            legendorder = NULL, legendncol = 1,
            sprtarg = NULL, btarg = NULL, minbthresh = NULL,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300,
-           ptsize = 10, cex.main = 1,
+           ptsize = 10,
            plotdir = NULL,
            filenameprefix = "",
            densitynames = c("SSB_Virgin", "R0"),
@@ -506,51 +513,35 @@ SSplotComparisons <-
 
     # if index plots are requested, do some checks on inputs
     if (any(subplots %in% 13:14) & nrow(indices) > 0) {
-      # check all combinations of indexfleets and which_indices provided or not
-
-      # 1. if BOTH indexfleets and which_indices provided
-      if (!is.null(indexfleets) & !is.null(which_indices)) {
-        stop(
-          "Inputs 'which_indices' and 'indexfleets' should not be used\n",
-          "  at the same time: 'which_indices' is for models with matching\n",
-          "  fleet numbers among models, while 'indexfleets' is for cases\n",
-          "  where they differ among models."
-        )
-      }
-      # 2. if NEITHER indexfleets nor which_indices provided
-      # then create indexfleets as a list all index fleet numbers
-      # for each model
-      if (is.null(indexfleets) & is.null(which_indices)) {
+      # check indexfleets
+      if (is.null(indexfleets)) {
+        # if indexfleets is NULL
         indexfleets <- list()
         for (imodel in 1:n) {
-          indexfleets[[imodel]] <-
+          indexfleets[[paste0("model", imodel)]] <-
             sort(unique(indices$Fleet[indices$imodel == imodel]))
         }
-      }
-      # 3. if ONLY which_indices provided, then create indexfleets
-      # as a list with only which_indices for all models
-      if (is.null(indexfleets) & !is.null(which_indices)) {
-        if (!is.vector(which_indices)) {
-          stop(
-            "'which_indices' should be a vector of fleet numbers with indices\n",
-            "  which are present in all models."
-          )
-        }
-        indexfleets <- rep(list(which_indices), n)
-      }
-      # 4. if ONLY indexfleets provided
-      if (!is.null(indexfleets) & is.null(which_indices)) {
-        if (length(indexfleets) != n) {
-          warning("Skipping index plots: length(indexfleets) != n = ", n, ".")
-          indexfleets <- NULL
+      } else {
+        # if indexfleets is provided
+        if (!is.null(indexfleets)) {
+          # if a single number is provided, then repeat it n times
+          if (is.vector(indexfleets) & length(indexfleets) == 1) {
+            indexfleets <- rep(indexfleets, n)
+          }
+          if (length(indexfleets) != n) {
+            warning("Skipping index plots: length(indexfleets) should be 1 or n = ",
+                    n, ".")
+            indexfleets <- NULL
+          }
         }
       }
-
       # check for mismatched lengths of list elements
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
         message("indexfleets:")
         print(indexfleets)
-        stop("Fleets have different numbers of indices listed in 'indexfleets'.")
+        warning("Skipping index plots:\n",
+                "Fleets have different numbers of indices listed in 'indexfleets'.")
+        indexfleets <- NULL
       }
 
       # figure out suffix to add to index plots
