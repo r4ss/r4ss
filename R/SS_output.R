@@ -371,7 +371,7 @@ SS_output <-
         message("Skipping CompReport because 'compfile = NULL'")
       }
     } else {
-      if (file.exists(compfile)) {
+      if (file.exists(file.path(dir, compfile))) {
         # non-NULL compfile input provided and file exists
         compfile <- file.path(dir, compfile)
         comphead <- readLines(con = compfile, n = 30)
