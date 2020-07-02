@@ -13,8 +13,9 @@ SSplotComparisons(
   pdf = FALSE,
   models = "all",
   endyrvec = NULL,
+  which_indices = NULL,
   indexfleets = NULL,
-  indexUncertainty = FALSE,
+  indexUncertainty = TRUE,
   indexQlabel = TRUE,
   indexQdigits = 4,
   indexSEvec = NULL,
@@ -133,8 +134,14 @@ columns in summary tables.}
 final year of values to show for each model. By default it is set to the
 ending year specified in each model.}
 
-\item{indexfleets}{Vector of fleet numbers for each model for which to compare
-indices of abundance. Only necessary if any model has more than one index.}
+\item{which_indices}{Vector of fleet numbers for which indices to plot
+for models for cases that have the same fleet/index numbering. Vector should
+be a subset of the values 1:nfleets.}
+
+\item{indexfleets}{Fleet numbers for each model for which to compare
+indices of abundance. Only necessary if the index/fleet numbering differs
+among models. Can be vector of length = length(models) to plot 1 index
+shared among models, or a list of indices to include within each model.}
 
 \item{indexUncertainty}{Show uncertainty intervals on index data?
 Default=FALSE because if models have any extra standard deviations added,
@@ -209,9 +216,10 @@ values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})}
 \item{legendlabels}{Optional vector of labels to include in legend. Default
 is 'model1','model2',etc.}
 
-\item{legendloc}{Location of legend. Either a string like "topleft" or a vector
-of two numeric values representing the fraction of the maximum in the x and y
-dimensions, respectively. See ?legend for more info on the string options.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See ?legend for more info on the
+string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
 the legend display the model names in an order that is different than that
@@ -271,9 +279,11 @@ used for smoothing MCMC posteriors. See 'adjust' in ?density for details.}
 \item{densitysymbols}{Add symbols along lines in density plots. Quantiles
 are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.}
 
-\item{densitytails}{Shade tails outside of 95\% interval darker in density plots?}
+\item{densitytails}{Shade tails outside of 95\% interval darker in
+density plots?}
 
-\item{densitymiddle}{Shade middle inside of 95\% interval darker in density plots?}
+\item{densitymiddle}{Shade middle inside of 95\% interval darker in
+density plots?}
 
 \item{densitylwd}{Line width for density plots}
 
@@ -305,30 +315,33 @@ multiple models, where the collection was created using the
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 # directories where models were run need to be defined
-dir1 <- 'c:/SS/mod1'
-dir2 <- 'c:/SS/mod2'
+dir1 <- "c:/SS/mod1"
+dir2 <- "c:/SS/mod2"
 
 # read two models
-mod1 <- SS_output(dir=dir1)
-mod2 <- SS_output(dir=dir2)
+mod1 <- SS_output(dir = dir1)
+mod2 <- SS_output(dir = dir2)
 
 # create list summarizing model results
 mod.sum <- SSsummarize(list(mod1, mod2))
 
 # plot comparisons
-SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
+SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
 
 # Example showing comparison of MLE to MCMC results where the mcmc would have
 # been run in the subdirectory 'c:/SS/mod1/mcmc'
-mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
-# pass the same model twice to SSsummarize in order to plot it twice 
+mod1 <- SS_output(dir = "c:/SS/mod1", dir.mcmc = "mcmc")
+# pass the same model twice to SSsummarize in order to plot it twice
 mod.sum <- SSsummarize(list(mod1, mod1))
 # compare MLE to MCMC
-SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
-
+SSplotComparisons(mod.sum,
+  legendlabels = c("MCMC", "MLE"),
+  mcmcVec = c(TRUE, FALSE)
+)
 }
+
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SSsummarize}},
