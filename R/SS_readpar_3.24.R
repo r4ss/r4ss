@@ -101,10 +101,10 @@ SS_readpar_3.24 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Read in the values for stock recruitment parameters
     SR_seq <- as.numeric(parvals[(grep("SR_parm",parvals)+1)])
     #Create list object from the base control file parameter matrix
-    if(!is.null(ctllist$SRparm)){
-      parlist$SR_parms<-ctllist$SRparm[,3:4]
+    if(!is.null(ctllist$SR_parms)){
+      parlist$SR_parms<-ctllist$SR_parms[,3:4]
     }else{
-      stop("Missing ctllist$SRparm")
+      stop("Missing ctllist$SR_parms")
     }
     #Rename columns and add final parameter estimate data from par file
     colnames(parlist$SR_parms) <- c("INIT","ESTIM")
