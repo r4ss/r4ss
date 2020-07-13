@@ -99,7 +99,6 @@ SS_readdat_3.30 <-
     ## will be shown.
     while(ind < length(dat) & !length(grep(str, dat[ind]))){
       ind <- ind + 1
-      print(ind)
     }
     if(ind == length(dat)){
       stop("SS_readdat_3.30-find.index: Error - ",
