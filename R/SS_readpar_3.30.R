@@ -59,8 +59,17 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
       stop("Missing ctllist$MG_parms")
     }
     #Add time varying mortality and growth parameters if they exist
-    if(!is.null(ctllist$MG_parms_tv)){
-      parlist$MG_parms <- rbind(parlist$MG_parms,ctllist$MG_parms_tv[,3:4])
+    if(any(ctllist$MG_parms[, c("env_var&link", "dev_link", "Block")] != 0)) {
+      if(!is.null(ctllist$MG_parms_tv)) {
+        parlist$MG_parms <- rbind(parlist$MG_parms,ctllist$MG_parms_tv[,3:4])
+      } else {
+        tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["MG_parms"]], 
+                                      block_design = ctllist[["Block_Design"]])
+        tmp_tv <- data.frame(INIT = rep(NA, times = length(tmp_parlabs)),
+                             PRIOR = rep(NA, times = length(tmp_parlabs)),
+                             row.names = tmp_parlabs, stringsAsFactors = FALSE)
+        parlist$MG_parms <- rbind(parlist$MG_parms, tmp_tv)
+      }
       dev_temp <- ctllist$MG_parms[ctllist$MG_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
@@ -88,8 +97,17 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
       stop("Missing ctllist$SR_parms")
     }
     #Add time varying stock recruitment parameters if they exist
-    if(!is.null(ctllist$SR_parms_tv)){
-      parlist$SR_parms <- rbind(parlist$SR_parms,ctllist$SR_parms_tv[,3:4])
+    if(any(ctllist$SR_parms[, c("env_var&link", "dev_link", "Block")] != 0)){
+      if(!is.null(ctllist$SR_parms_tv)) {
+        parlist$SR_parms <- rbind(parlist$SR_parms,ctllist$SR_parms_tv[,3:4])
+      } else {
+        tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["SR_parms"]], 
+                                      block_design = ctllist[["Block_Design"]])
+        tmp_tv <- data.frame(INIT = rep(NA, times = length(tmp_parlabs)),
+                                PRIOR = rep(NA, times = length(tmp_parlabs)),
+                                row.names = tmp_parlabs, stringsAsFactors = FALSE)
+        parlist$SR_parms <- rbind(parlist$SR_parms, tmp_tv)
+      }
       dev_temp <- ctllist$SR_parms[ctllist$SR_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
@@ -198,8 +216,17 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
       stop("Missing ctllist$Q_parms")
     }
     #Add time varying catchability Q parameters if they exist
-    if(!is.null(ctllist$Q_parms_tv)){
-      parlist$Q_parms <- rbind(parlist$Q_parms,ctllist$Q_parms_tv[,3:4])
+    if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0)){
+      if(!is.null(ctllist$Q_parms_tv)) {
+        parlist$Q_parms <- rbind(parlist$Q_parms,ctllist$Q_parms_tv[,3:4])
+      } else {
+        tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["Q_parms"]], 
+                                      block_design = ctllist[["Block_Design"]])
+        tmp_tv <- data.frame(INIT = rep(NA, times = length(tmp_parlabs)),
+                             PRIOR = rep(NA, times = length(tmp_parlabs)),
+                             row.names = tmp_parlabs, stringsAsFactors = FALSE)
+        parlist$Q_parms <- rbind(parlist$Q_parms, tmp_tv)
+      }
       dev_temp <- ctllist$Q_parms[ctllist$Q_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
@@ -240,8 +267,17 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
       }
     }
     #Add time varying size selectivity parameters if they exist
-    if(!is.null(ctllist$size_selex_parms_tv)){
-      parlist$S_parms<-rbind(parlist$S_parms,ctllist$size_selex_parms_tv[,3:4])
+    if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0)) {
+      if(!is.null(ctllist$size_selex_parms_tv)) {
+        parlist$S_parms<-rbind(parlist$S_parms,ctllist$size_selex_parms_tv[,3:4])
+      } else {
+        tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["size_selex_parms"]], 
+                                      block_design = ctllist[["Block_Design"]])
+        tmp_tv <- data.frame(INIT = rep(NA, times = length(tmp_parlabs)),
+                             PRIOR = rep(NA, times = length(tmp_parlabs)),
+                             row.names = tmp_parlabs, stringsAsFactors = FALSE)
+        parlist$S_parms <- rbind(parlist$S_parms, tmp_tv)
+      }
       dev_temp <- ctllist$size_selex_parms[ctllist$size_selex_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
@@ -250,8 +286,17 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
       }
     }
     #Add time varying age selectivity parameters if they exist
-    if(!is.null(ctllist$age_selex_parms_tv)){
-      parlist$S_parms<-rbind(parlist$S_parms,ctllist$age_selex_parms_tv[,3:4])
+    if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0)) {
+      if(!is.null(ages_selex_parms_tv)) {
+        parlist$S_parms<-rbind(parlist$S_parms,ctllist$age_selex_parms_tv[,3:4])
+      } else {
+        tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["age_selex_parms"]], 
+                                      block_design = ctllist[["Block_Design"]])
+        tmp_tv <- data.frame(INIT = rep(NA, times = length(tmp_parlabs)),
+                             PRIOR = rep(NA, times = length(tmp_parlabs)),
+                             row.names = tmp_parlabs, stringsAsFactors = FALSE)
+        parlist$S_parms <- rbind(parlist$S_parms, tmp_tv)
+      }
       dev_temp <- ctllist$age_selex_parms[ctllist$age_selex_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
