@@ -61,7 +61,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Add time varying mortality and growth parameters if they exist
     if(!is.null(ctllist$MG_parms_tv)){
       parlist$MG_parms <- rbind(parlist$MG_parms,ctllist$MG_parms_tv[,3:4])
-      dev_temp <- ctllist$MG_parms_tv[ctllist$MG_parms_tv[,9]>0,,drop=FALSE]
+      dev_temp <- ctllist$MG_parms[ctllist$MG_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
         dev_parm_end <- c(dev_parm_end,dev_temp[,11])
@@ -90,7 +90,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Add time varying stock recruitment parameters if they exist
     if(!is.null(ctllist$SR_parms_tv)){
       parlist$SR_parms <- rbind(parlist$SR_parms,ctllist$SR_parms_tv[,3:4])
-      dev_temp <- ctllist$SR_parms_tv[ctllist$SR_parms_tv[,9]>0,,drop=FALSE]
+      dev_temp <- ctllist$SR_parms[ctllist$SR_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
         dev_parm_end <- c(dev_parm_end,dev_temp[,11])
@@ -127,7 +127,8 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     parlist$recdev1[,1]<-ctllist$MainRdevYrFirst:ctllist$MainRdevYrLast
     rec_temp<-as.numeric(strsplit(parvals[(grep("recdev1",parvals)+1)]," ")[[1]])
     rec_temp<-rec_temp[!is.na(rec_temp)]
-    parlist$recdev1[,2]<-rec_temp
+    parlist$recdev1[1:length(rec_temp),2]<-rec_temp
+    parlist$recdev1<-parlist$recdev1[1:length(rec_temp),]
     colnames(parlist$recdev1)<-c("year","recdev")
   }
   
@@ -137,7 +138,8 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     parlist$recdev2[,1]<-ctllist$MainRdevYrFirst:ctllist$MainRdevYrLast
     rec_temp<-as.numeric(strsplit(parvals[(grep("recdev2",parvals)+1)]," ")[[1]])
     rec_temp<-rec_temp[!is.na(rec_temp)]
-    parlist$recdev2[,2]<-rec_temp
+    parlist$recdev2[1:length(rec_temp),2]<-rec_temp
+    parlist$recdev2<-parlist$recdev2[1:length(rec_temp),]
     colnames(parlist$recdev2)<-c("year","recdev")
   }
   
@@ -198,7 +200,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Add time varying catchability Q parameters if they exist
     if(!is.null(ctllist$Q_parms_tv)){
       parlist$Q_parms <- rbind(parlist$Q_parms,ctllist$Q_parms_tv[,3:4])
-      dev_temp <- ctllist$Q_parms_tv[ctllist$Q_parms_tv[,9]>0,,drop=FALSE]
+      dev_temp <- ctllist$Q_parms[ctllist$Q_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
         dev_parm_end <- c(dev_parm_end,dev_temp[,11])
@@ -240,7 +242,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Add time varying size selectivity parameters if they exist
     if(!is.null(ctllist$size_selex_parms_tv)){
       parlist$S_parms<-rbind(parlist$S_parms,ctllist$size_selex_parms_tv[,3:4])
-      dev_temp <- ctllist$MG_parms_tv[ctllist$MG_parms_tv[,9]>0,,drop=FALSE]
+      dev_temp <- ctllist$size_selex_parms[ctllist$size_selex_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
         dev_parm_end <- c(dev_parm_end,dev_temp[,11])
@@ -250,7 +252,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     #Add time varying age selectivity parameters if they exist
     if(!is.null(ctllist$age_selex_parms_tv)){
       parlist$S_parms<-rbind(parlist$S_parms,ctllist$age_selex_parms_tv[,3:4])
-      dev_temp <- ctllist$MG_parms_tv[ctllist$MG_parms_tv[,9]>0,,drop=FALSE]
+      dev_temp <- ctllist$age_selex_parms[ctllist$age_selex_parms[,9]>0,,drop=FALSE]
       if(length(dev_temp[,9])>0){
         dev_parm_start <- c(dev_parm_start,dev_temp[,10])
         dev_parm_end <- c(dev_parm_end,dev_temp[,11])
