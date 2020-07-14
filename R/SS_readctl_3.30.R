@@ -1415,9 +1415,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   return(ctllist)
 }
 
-# function to add get the names of short time varying parameter lines
-# full_parms: a dataframe containing the full parameter lines
-# block_design: an object containing the block design for the control file.
+#' Get time varying parameter labels
+#' 
+#' function to add get the names of short time varying parameter lines
 #' @param full_parms the dataframe with the full parameter lines in the control
 #'  file as read in by r4ss.
 #' @param block_design The block design in the control file as read in by r4ss.
