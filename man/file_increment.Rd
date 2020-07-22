@@ -7,7 +7,8 @@
 file_increment(
   i,
   verbose = FALSE,
-  pattern = "Report\\\\.sso|covar\\\\.sso|warning\\\\.sso|ParmTrace\\\\.sso|\\\\.par$"
+ 
+    pattern = "Report\\\\.sso|covar\\\\.sso|warning\\\\.sso|ParmTrace\\\\.sso|summary\\\\.sso|\\\\.par$"
 )
 }
 \arguments{

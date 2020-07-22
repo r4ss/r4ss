@@ -17,7 +17,7 @@
 #' whether or not the file was successfully renamed.
 #'
 file_increment <- function(i, verbose = FALSE,
-  pattern = "Report\\.sso|covar\\.sso|warning\\.sso|ParmTrace\\.sso|\\.par$"){
+  pattern = "Report\\.sso|covar\\.sso|warning\\.sso|ParmTrace\\.sso|summary\\.sso|\\.par$"){
   if (verbose) {
     message("Renaming output files to have names like Report", i, ".sso")
   }

@@ -5,8 +5,7 @@
 #' in the format Report1.sso, Report2.sso, etc.
 #'
 #' @param mydir Directory where model files are located.
-#' @param model Executable name of the \code{.exe} file in \code{mydir}
-#'  without the extension, e.g., \code{"ss"}.
+#' @template model
 #' @param extras Additional command line arguments passed to the executable.
 #'   The default, \code{"-nohess"}, runs each jittered model without the hessian.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
@@ -62,10 +61,7 @@ SS_RunJitter <- function(mydir,
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
-  setwd(mydir)
-  if (length(dir(pattern = paste0("^",model,"$","|",model,"\\.exe"))) != 1) {
-    stop(model, " was not found in ", mydir, call. = FALSE)
-  }
+  model <- check_model(model = model, mydir = mydir)
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", mydir)
@@ -93,7 +89,9 @@ SS_RunJitter <- function(mydir,
 
   # create empty ss.dat file to avoid the ADMB message
   # "Error trying to open data input file ss.dat"
-  file.create(paste0(model,".dat"))
+  if (!file.exists(paste0(model,".dat"))) {
+    file.create(paste0(model,".dat"))
+  }
 
   # check length of Njitter input
   if (length(Njitter) == 1){
@@ -124,23 +122,23 @@ SS_RunJitter <- function(mydir,
     }
     # Only save stuff if it converged
     if ("Report.sso" %in% list.files()) {
-        Rep.head <- readLines("Report.sso", n = 300)
-        likelinenum <- grep("^LIKELIHOOD", Rep.head)
-        if(length(likelinenum)==0){
-          warning("can't find LIKELIHOOD section in Report.sso")
-          like <- NA
-        }else{
-          likeline <- Rep.head[likelinenum]
-          like <- type.convert(gsub("LIKELIHOOD\\s+", "", likeline))
-          likesaved[i] <- like
-        }
+      rep <- SS_read_summary()
+      if (is.null(rep)) {
+        report <- SS_output(dir = getwd(), forecast = FALSE,
+          covar = FALSE, checkcor = FALSE, NoCompOK = TRUE,
+          verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose)
+        like <- report$likelihoods_used[row.names(report$likelihoods_used) == "TOTAL", "values"]
+      } else {
+        like <- rep$likelihoods[grep("TOTAL", row.names(rep$likelihoods)), 1]
+      }
+      likesaved[i] <- like
       if (printlikes){
         message("Likelihood for jitter ", i, " = ", like)
       }
       # rename output files
       file_increment(i = i)
     } else{
-      warning("No Report.sso file found from run ", i)
+      if (verbose) warning("No Report.sso file found from run ", i)
     }
   }
   # Move original files back
