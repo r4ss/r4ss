@@ -209,7 +209,7 @@ function(
     cmntvec <- c(cmntvec, cmnt)
     # split line and convert to numeric
     vecstrings <- strsplit(splitline[1],split="[[:blank:]]+")[[1]]
-    vec <- as.numeric(vecstrings[vecstrings!=""])
+    vec <- type.convert(vecstrings[vecstrings!=""], as.is = TRUE)
     if(max(is.na(vec))==1){
       stop("There's a problem with a non-numeric value in line ",linenums[i])
     }
