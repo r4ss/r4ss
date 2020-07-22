@@ -4,6 +4,7 @@
 #'
 #'
 #' @param file Filename either with full path or relative to working directory.
+#' @template verbose
 #' @return Output will be a list with four elements, \code{header},
 #' \code{likelihoods}, \code{parameters}, and \code{derived_quants}.
 #' Each is a data frame with rownames indicating the quantity shown in each row.
@@ -19,11 +20,11 @@
 #'
 
 
-SS_read_summary <- function(file="ss_summary.sso"){
+SS_read_summary <- function(file="ss_summary.sso", verbose = FALSE){
 
   # check to make sure file is present and non-empty
   if(is.na(file.info(file)$size) || file.info(file)$size == 0){
-    warning("file is missing or empty: ", file)
+    if (verbose) warning("file is missing or empty: ", file)
     return(NULL)
   }
 
