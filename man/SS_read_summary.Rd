@@ -4,10 +4,13 @@
 \alias{SS_read_summary}
 \title{read ss_summary file}
 \usage{
-SS_read_summary(file = "ss_summary.sso")
+SS_read_summary(file = "ss_summary.sso", verbose = FALSE)
 }
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
 }
 \value{
 Output will be a list with four elements, \code{header},
