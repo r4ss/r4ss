@@ -308,10 +308,6 @@ MLE}
 \item{show_equilibrium}{Whether to show the equilibrium values for
 SSB. For some model comparisons, these might not be comparable and thus
 useful to turn off. Defaults to TRUE.}
-
-\item{which_indices}{Vector of fleet numbers for which indices to plot
-for models for cases that have the same fleet/index numbering. Vector should
-be a subset of the values 1:nfleets.}
 }
 \description{
 Creates a user-chosen set of plots comparing model output from a summary of

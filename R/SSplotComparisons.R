@@ -54,9 +54,6 @@
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
 #' ending year specified in each model.
-#' @param which_indices Vector of fleet numbers for which indices to plot
-#' for models for cases that have the same fleet/index numbering. Vector should
-#' be a subset of the values 1:nfleets.
 #' @param indexfleets Fleet numbers for each model to compare
 #' indices of abundance. Can take different forms:
 #' \itemize{
