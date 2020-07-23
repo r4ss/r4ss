@@ -46,10 +46,9 @@ run_SS_models <- function(dirvec = NULL,
   
   # vector of NA values to store results
   results <- rep(NA, length(dirvec))
-  
-  OS <- "Mac" # don't know the version$os info for Mac
-  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
-  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+
+  # this should always be "windows" or "unix" (includes Mac and Linux)
+  OS <- .Platform$OS.type
 
   # figure out name of executable based on 'model' input which may contain .exe
   if(length(grep(".exe",tolower(model))) == 1){
@@ -57,7 +56,7 @@ run_SS_models <- function(dirvec = NULL,
     exe <- model
   }else{
     # if 'model' doesn't include .exe then append it (for Windows computers only)
-    exe <- paste(model, ifelse(OS=="Windows",".exe",""),sep="")
+    exe <- paste(model, ifelse(OS=="windows",".exe",""),sep="")
   }
   
   if(exe_in_path == TRUE) {
@@ -96,12 +95,12 @@ run_SS_models <- function(dirvec = NULL,
         setwd(dir) # change working directory
 
         command <- paste(model, extras)
-        if(OS!="Windows"){
+        if(OS!="windows"){
           command <- paste0("./", command)
         }
         message("Running model in directory: ",getwd())
         message("Using the command: ", command)
-        if(OS=="Windows" & !systemcmd){
+        if(OS=="windows" & !systemcmd){
           console.output <- shell(cmd=command, intern=intern)
         }else{
           console.output <- system(command, intern=intern)

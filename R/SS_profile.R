@@ -130,10 +130,9 @@ function(
   # Ensure wd is not changed by the function
   orig_wd <- getwd()
   on.exit(setwd(orig_wd))
-  
-  OS <- "Mac" # don't know the version$os info for Mac
-  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
-  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+
+  # this should always be "windows" or "unix" (includes Mac and Linux)
+  OS <- .Platform$OS.type
 
   # figure out name of executable based on 'model' input which may contain .exe
   if(length(grep(".exe",tolower(model))) == 1){
@@ -141,10 +140,10 @@ function(
     exe <- model
   }else{
     # if 'model' doesn't include .exe then append it (for Windows computers only)
-    exe <- paste(model,ifelse(OS=="Windows",".exe",""),sep="")
+    exe <- paste(model,ifelse(OS=="windows",".exe",""),sep="")
   }
   # check whether exe is in directory
-  if(OS=="Windows"){
+  if(OS=="windows"){
     if(!tolower(exe) %in% tolower(dir(dir))) stop("Executable ",exe," not found in ",dir)
   }else{
     if(!exe %in% dir(dir)) stop("Executable ",exe," not found in ",dir)
@@ -288,10 +287,10 @@ function(
 
       # run model
       command <- paste(model, extras)
-      if(OS!="Windows") command <- paste("./",command,sep="")
+      if(OS!="windows") command <- paste("./",command,sep="")
       cat("Running model in directory:",getwd(),"\n")
       cat("Using the command: '",command,"'\n",sep="")
-      if(OS=="Windows" & !systemcmd){
+      if(OS=="windows" & !systemcmd){
         shell(cmd=command)
       }else{
         system(command)

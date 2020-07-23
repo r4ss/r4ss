@@ -87,10 +87,8 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   stdfile <- paste0(exe, ".std")
   corfile <- paste0(exe, ".cor")
   
-  # figure out operating system
-  OS <- "Mac" # don't know the version$os info for Mac
-  if(length(grep("linux",version$os)) > 0) OS <- "Linux"
-  if(length(grep("mingw",version$os)) > 0) OS <- "Windows"
+  # this should always be "windows" or "unix" (includes Mac and Linux)
+  OS <- .Platform$OS.type
 
   # Directory
   if(is.na(File)){
