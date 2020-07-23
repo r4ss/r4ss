@@ -61,6 +61,7 @@ SS_RunJitter <- function(mydir,
   # Determine working directory on start and return upon exit
   startdir <- getwd()
   on.exit(setwd(startdir))
+  setwd(mydir)
   model <- check_model(model = model, mydir = mydir)
 
   if (verbose) {

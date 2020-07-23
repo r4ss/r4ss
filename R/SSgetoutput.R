@@ -76,7 +76,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
       compFileName <- paste("CompReport",key2,".sso",sep="")
       NoCompOK <- FALSE
     }else{
-      compFileName <- "nothing"
+      compFileName <- NULL
       NoCompOK <- TRUE
     }
 
