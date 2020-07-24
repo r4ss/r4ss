@@ -3194,9 +3194,10 @@ SS_output <-
       cols = 1:max(6, accuage + 2),
       header = FALSE,
       which_blank = length(sdsize_lines) + 2
-    )
-    if (length(rawALK) > 1 & !is.null(rawALK) &&
-      length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
+      )
+    if (length(sdsize_lines) > 0 &&
+        length(rawALK) > 1 && # this should filter NULL values
+        length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
       morph_col <- 5
       if (SS_versionNumeric < 3.30 &
         length(grep("Sub_Seas", rawALK[, 3])) == 0) {
