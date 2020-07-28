@@ -2345,7 +2345,7 @@ SSplotComparisons <-
 
 
     # subplot 13: index fits
-    if (13 %in% subplots & nrow(indices) > 0) {
+    if (13 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
         message("subplot 13: index fits")
       }
@@ -2366,7 +2366,7 @@ SSplotComparisons <-
     } # end check for subplot 13
 
     # subplot 14: index fits on a log scale
-    if (14 %in% subplots & nrow(indices) > 0) {
+    if (14 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
         message("subplot 14: index fits on a log scale")
       }
