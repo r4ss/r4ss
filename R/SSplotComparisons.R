@@ -509,7 +509,7 @@ SSplotComparisons <-
     }
 
     # if index plots are requested, do some checks on inputs
-    if (any(subplots %in% 13:14) & nrow(indices) > 0) {
+    if (any(subplots %in% 13:14) & !is.null(indices) && nrow(indices) > 0) {
       # check indexfleets
       if (is.null(indexfleets)) {
         # if indexfleets is NULL
