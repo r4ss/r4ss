@@ -89,17 +89,22 @@ SSplotSpawnrecruit <-
   }
   plotinfo <- NULL
 
-  recruit <- replist$recruit
+  recruit <- replist[["recruit"]]
+  if (is.null(recruit)) {
+    message("Skipping stock-recruit plots: no recruitment information available")
+    return()
+  }
   nsexes <- replist$nsexes
 
   # set axis labels
   xlab <- labels[1]
   ylab <- labels[2]
   # check if spawning output rather than spawning biomass is plotted
-  if(replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
+  if (is.na(replist$SpawnOutputUnits) || 
+      replist$SpawnOutputUnits == 'numbers') { # quantity from test in SS_output
     xlab <- labels[3]
   }
-  if(relative){
+  if(relative) {
     xlab <- labels[4]
     ylab <- labels[5]
   }

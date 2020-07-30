@@ -14,7 +14,7 @@ SSplotComparisons(
   models = "all",
   endyrvec = NULL,
   indexfleets = NULL,
-  indexUncertainty = FALSE,
+  indexUncertainty = TRUE,
   indexQlabel = TRUE,
   indexQdigits = 4,
   indexSEvec = NULL,
@@ -53,7 +53,6 @@ SSplotComparisons(
   punits = "in",
   res = 300,
   ptsize = 10,
-  cex.main = 1,
   plotdir = NULL,
   filenameprefix = "",
   densitynames = c("SSB_Virgin", "R0"),
@@ -133,8 +132,19 @@ columns in summary tables.}
 final year of values to show for each model. By default it is set to the
 ending year specified in each model.}
 
-\item{indexfleets}{Vector of fleet numbers for each model for which to compare
-indices of abundance. Only necessary if any model has more than one index.}
+\item{indexfleets}{Fleet numbers for each model to compare
+indices of abundance. Can take different forms:
+\itemize{
+  \item NULL: (default) create a separate plot for each index as long as the fleet
+numbering is the same across all models.
+  \item integer: create a single comparison plot for the chosen index
+  \item vector of length equal to number of models: a single fleet number
+for each model to be compared in a single plot
+  \item list: list of fleet numbers associated with indices within each
+model to be compared, where the list elements are each a vector of the
+same length but the names of the list elements don't matter and can be
+absent.
+}}
 
 \item{indexUncertainty}{Show uncertainty intervals on index data?
 Default=FALSE because if models have any extra standard deviations added,
@@ -209,9 +219,10 @@ values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})}
 \item{legendlabels}{Optional vector of labels to include in legend. Default
 is 'model1','model2',etc.}
 
-\item{legendloc}{Location of legend. Either a string like "topleft" or a vector
-of two numeric values representing the fraction of the maximum in the x and y
-dimensions, respectively. See ?legend for more info on the string options.}
+\item{legendloc}{Location of legend. Either a string like "topleft" or a
+vector of two numeric values representing the fraction of the maximum in
+the x and y dimensions, respectively. See ?legend for more info on the
+string options.}
 
 \item{legendorder}{Optional vector of model numbers that can be used to have
 the legend display the model names in an order that is different than that
@@ -237,8 +248,6 @@ remove)}
 \item{res}{Resolution for PNG file}
 
 \item{ptsize}{Point size for PNG file}
-
-\item{cex.main}{Character expansion for plot titles}
 
 \item{plotdir}{Directory where PNG or PDF files will be written. By default
 it will be the directory where the model was run.}
@@ -271,9 +280,11 @@ used for smoothing MCMC posteriors. See 'adjust' in ?density for details.}
 \item{densitysymbols}{Add symbols along lines in density plots. Quantiles
 are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.}
 
-\item{densitytails}{Shade tails outside of 95\% interval darker in density plots?}
+\item{densitytails}{Shade tails outside of 95\% interval darker in
+density plots?}
 
-\item{densitymiddle}{Shade middle inside of 95\% interval darker in density plots?}
+\item{densitymiddle}{Shade middle inside of 95\% interval darker in
+density plots?}
 
 \item{densitylwd}{Line width for density plots}
 
@@ -305,30 +316,33 @@ multiple models, where the collection was created using the
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 # directories where models were run need to be defined
-dir1 <- 'c:/SS/mod1'
-dir2 <- 'c:/SS/mod2'
+dir1 <- "c:/SS/mod1"
+dir2 <- "c:/SS/mod2"
 
 # read two models
-mod1 <- SS_output(dir=dir1)
-mod2 <- SS_output(dir=dir2)
+mod1 <- SS_output(dir = dir1)
+mod2 <- SS_output(dir = dir2)
 
 # create list summarizing model results
 mod.sum <- SSsummarize(list(mod1, mod2))
 
 # plot comparisons
-SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
+SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
 
 # Example showing comparison of MLE to MCMC results where the mcmc would have
 # been run in the subdirectory 'c:/SS/mod1/mcmc'
-mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
-# pass the same model twice to SSsummarize in order to plot it twice 
+mod1 <- SS_output(dir = "c:/SS/mod1", dir.mcmc = "mcmc")
+# pass the same model twice to SSsummarize in order to plot it twice
 mod.sum <- SSsummarize(list(mod1, mod1))
 # compare MLE to MCMC
-SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
-
+SSplotComparisons(mod.sum,
+  legendlabels = c("MCMC", "MLE"),
+  mcmcVec = c(TRUE, FALSE)
+)
 }
+
 }
 \seealso{
 \code{\link{SS_plots}}, \code{\link{SSsummarize}},

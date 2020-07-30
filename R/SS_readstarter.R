@@ -70,6 +70,16 @@ SS_readstarter <-  function(file='starter.ss', verbose=TRUE){
   mylist$init_values_src <- allnums[i]; i <- i+1
   mylist$run_display_detail <- allnums[i]; i <- i+1
   mylist$detailed_age_structure <- allnums[i]; i <- i+1
+  if(mylist$detailed_age_structure == 3) {
+    mylist$custom_start <- allnums[i]; i <- i + 1
+    end_custom <- which(allnums == -999) 
+    end_custom <- end_custom[end_custom >= i] #return only vals after i
+    end_custom <- end_custom[1] # return first value after i.
+    if(end_custom > i) {
+      mylist$custom_add_rm <- allnums[i:(end_custom-1)]
+    }
+    i <- end_custom + 1
+  }
   mylist$checkup <- allnums[i]; i <- i+1
   mylist$parmtrace <- allnums[i]; i <- i+1
   mylist$cumreport <- allnums[i]; i <- i+1

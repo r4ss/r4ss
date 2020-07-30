@@ -200,45 +200,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     return(ctllist)
   }
   
-  # function to add get the names of short time varying parameter lines
-  # full_parms: a dataframe containing the full parameter lines
-  # block_design: an object containing the block design for the control file. 
-  get_tv_parlabs <- function(full_parms = ctllist$MG_parms, 
-                             block_design = ctllist$Block_Design) {
-    # Figure out parameters are time varying
-    tmp_tv <- list(env   = full_parms[,"env_var&link"], 
-                   dev   = full_parms[,"dev_link"],
-                   block = full_parms[,"Block"])
-    par_num <- lapply(tmp_tv, function(x) which(x != 0))
-    loop_pars <- unlist(par_num)
-    loop_pars <- loop_pars[order(loop_pars)]
-    parlab <- vector() # a maybe faster approach is if we could initialize with the correct size.
-    for(i in loop_pars) {
-      tmp_parname <- rownames(full_parms)[i]
-      # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
-      if(i %in% par_num[["env"]]) {
-        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
-      }
-      if(i %in% par_num[["block"]]) {
-        n_blk <- full_parms$Block[i]
-        tmp_blk_design <- block_design[[n_blk]]
-        # Get the start year for each block
-        blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
-        parlab <- c(parlab,
-                        paste0("# ", 
-                               rep(tmp_parname,times = length(blk_start_yrs)),
-                               "_BLK", n_blk, "add", blk_start_yrs))
-      }
-      if(i %in% par_num[["dev"]]) {
-        # parameter name if there is devs
-        parlab <- c(parlab, 
-                        paste0("# ", 
-                               rep(tmp_parname, times = 2), 
-                               c("_dev_se", "_dev_autocorr")))
-      }
-    }
-    invisible(parlab)
-  }
   # internally used commmon values ----
   lng_par_colnames <- c("LO", "HI", "INIT", "PRIOR", "PR_SD", "PR_type", "PHASE",
                         "env_var&link","dev_link", "dev_minyr", "dev_maxyr", "dev_PH", 
@@ -669,7 +630,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   if(any(ctllist$MG_parms[,c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[1] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$MG_parms)
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["MG_parms"]], ctllist[["Block_Design"]])
     ctllist <- add_df(ctllist, 
                       name = "MG_parms_tv", 
                       nrow = length(tmp_parlab), 
@@ -749,7 +710,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   if(any(ctllist$SR_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[2] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$SR_parms)
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["SR_parms"]], ctllist[["Block_Design"]])
     ctllist <- add_df(ctllist, 
                       name = "SR_parms_tv", 
                       nrow = length(tmp_parlab), 
@@ -917,7 +878,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     }
     if(any(ctllist$Q_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
        ctllist$time_vary_auto_generation[3] != 0) {
-      tmp_parlab <- get_tv_parlabs(full_parms = ctllist$Q_parms)
+      tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["Q_parms"]], ctllist[["Block_Design"]])
       ctllist <- add_df(ctllist, 
                         name = "Q_parms_tv", 
                         nrow = length(tmp_parlab), 
@@ -949,7 +910,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   # This contains the number of params for each pattern (the name)
   selex_patterns <- c("0" = 0,"1" = 2,"2" = 8,"3" = 6,"4" = 0, "5" = 2,
                         "6" = 2, "7" = 8, "8" = 8, "9"= 6, "10" = 0, "11" = 2,
-                        "12" = 2, "13" = 8, " 14" = Nages + 1, "15" = 0, 
+                        "12" = 2, "13" = 8, "14" = Nages + 1, "15" = 0, 
                         "16" = 2, "17" = Nages + 1, "18" = 8, "19" = 6,
                         "20" = 6, "21" = 2, "22" = 4, "23" = 6, "24" =  6,
                         "25" = 3, "26" = 3, "27" = 3, "28" = NA, "29" = NA, 
@@ -1202,7 +1163,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   if(any(ctllist$size_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$size_selex_parms)
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["size_selex_parms"]], ctllist[["Block_Design"]])
     ctllist <- add_df(ctllist, 
                       name = "size_selex_parms_tv", 
                       nrow = length(tmp_parlab), 
@@ -1212,7 +1173,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   }
   if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0) &
      ctllist$time_vary_auto_generation[5] != 0) {
-    tmp_parlab <- get_tv_parlabs(full_parms = ctllist$age_selex_parms)
+    tmp_parlab <- get_tv_parlabs(full_parms = ctllist[["age_selex_parms"]], ctllist[["Block_Design"]])
     ctllist <- add_df(ctllist, 
                       name = "age_selex_parms_tv", 
                       nrow = length(tmp_parlab), 
@@ -1452,5 +1413,48 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist$'.i'<-NULL
   # return the result
   return(ctllist)
+}
+
+#' Get time varying parameter labels
+#' 
+#' function to add get the names of short time varying parameter lines
+#' @param full_parms the dataframe with the full parameter lines in the control
+#'  file as read in by r4ss.
+#' @param block_design The block design in the control file as read in by r4ss.
+get_tv_parlabs <- function(full_parms, 
+                           block_design) {
+  # Figure out parameters are time varying
+  tmp_tv <- list(env   = full_parms[,"env_var&link"], 
+                 dev   = full_parms[,"dev_link"],
+                 block = full_parms[,"Block"])
+  par_num <- lapply(tmp_tv, function(x) which(x != 0))
+  loop_pars <- unlist(par_num)
+  loop_pars <- loop_pars[order(loop_pars)]
+  parlab <- vector() # a maybe faster approach is if we could initialize with the correct size.
+  for(i in loop_pars) {
+    tmp_parname <- rownames(full_parms)[i]
+    # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
+    if(i %in% par_num[["env"]]) {
+      parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+    }
+    if(i %in% par_num[["block"]]) {
+      n_blk <- full_parms$Block[i]
+      tmp_blk_design <- block_design[[n_blk]]
+      # Get the start year for each block
+      blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
+      parlab <- c(parlab,
+                  paste0("# ", 
+                         rep(tmp_parname,times = length(blk_start_yrs)),
+                         "_BLK", n_blk, "add", blk_start_yrs))
+    }
+    if(i %in% par_num[["dev"]]) {
+      # parameter name if there is devs
+      parlab <- c(parlab, 
+                  paste0("# ", 
+                         rep(tmp_parname, times = 2), 
+                         c("_dev_se", "_dev_autocorr")))
+    }
+  }
+  invisible(parlab)
 }
 

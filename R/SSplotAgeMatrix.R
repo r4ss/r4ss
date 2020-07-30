@@ -90,6 +90,12 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
               'are not requested in the starter file.')
       return()
     }
+    if(length(replist$lbinspop) == 1 && is.na(replist$lbinspop)) {
+      message('No distribution of length at age plots produced because ',
+              'replist$ALK is NULL, likely because "detailed age-structured reports"',
+              'are not requested in the starter file.')
+      return()
+    }
     # vertical dimension is plotting length bins
     ybins <- replist$lbinspop
     # number of slices should be the number of sex/growth-pattern/morph combos

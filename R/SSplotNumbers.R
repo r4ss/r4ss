@@ -89,20 +89,22 @@ SSplotNumbers <-
   plotinfo <- NULL
 
   natage    <- replist$natage
+  ngpatterns <- max(natage$Bio_Pattern)
+
   natlen    <- replist$natlen
   if(plotdir=="default"){
     plotdir <- replist$inputs$dir
   }
   if(is.null(natage)){
-    cat("Skipped some plots because NUMBERS_AT_AGE unavailable in report file\n",
-        "     because starter file set to produce limited report detail.\n")
+    message("Skipped some plots because NUMBERS_AT_AGE unavailable\n",
+            " in the report file. The starter file may be set to produce\n",
+            " limited report detail.")
   }else{
     # get more stuff from replist
     nsexes          <- replist$nsexes
     nareas          <- replist$nareas
     nseasons        <- replist$nseasons
     spawnseas       <- replist$spawnseas
-    ngpatterns      <- replist$ngpatterns
     morph_indexing  <- replist$morph_indexing
     accuage         <- replist$accuage
     agebins         <- replist$agebins
@@ -184,7 +186,7 @@ SSplotNumbers <-
           # create data frame with 0 values to fill across platoons/submorphs
           morphlist <- unique(natagetemp_all$Platoon)
           natagetemp0 <- natagetemp_all[natagetemp_all$Platoon==morphlist[1] &
-                                          natagetemp_all$Bio_Pattern==1,]
+                                        natagetemp_all$Bio_Pattern==1,]
           for(iage in 0:accuage){
             # matrix of zeros for upcoming calculations
             natagetemp0[,column1 + iage] <- 0
@@ -395,8 +397,8 @@ SSplotNumbers <-
 
 
     ##########
-    # repeat code above for numbers at length
-    if(length(intersect(6:8, subplots))>0) # do these numbers at length plots
+    # repeat code above for numbers at length (subplots 6, 7 and 8)
+    if(length(intersect(6:8, subplots))>0 & !is.null(natlen) & all(!is.na(lbinspop))) 
     {
       column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
 
@@ -534,7 +536,8 @@ SSplotNumbers <-
               plot(natlenyrs,meanlen,col="blue",lty=1,pch=4,xlab=labels[1],ylim=ylim,
                    type="o",ylab=ylab,main=main,cex.main=cex.main)
               points(natlenyrs,meanlenf,col="red",lty=2,pch=1,type="o")
-              legend("bottomleft",bty="n", c("Females","Males"), lty=c(2,1), pch=c(1,4), col = c("red","blue"))
+              legend("bottomleft",bty="n", c("Females","Males"),
+                     lty=c(2,1), pch=c(1,4), col = c("red","blue"))
             }
             if(plot){
               if(6 %in% subplots) lenBubble.fn()
@@ -691,7 +694,7 @@ SSplotNumbers <-
     } # end print to PNG
 
     # plot the ageing imprecision for all age methods
-    if(N_ageerror_defs > 0){
+    if(!is.null(N_ageerror_defs) && N_ageerror_defs > 0){
       xvals <- age_error_sd$age + 0.5
       yvals <- age_error_sd[, -1]
       ylim <- c(0, max(yvals))
@@ -774,7 +777,6 @@ SSplotNumbers <-
       }
 
       # run functions to make requested plots
-
       if(plot & 5 %in% subplots){
         # make plots of age error standard deviations
         ageingfun()
@@ -805,28 +807,28 @@ SSplotNumbers <-
         # make files with plots of age error matrices
         for(i_ageerror_def in 1:N_ageerror_defs){
           file <- paste0("numbers5_ageerror_matrix_",
-                        i_ageerror_def, ".png")
+                         i_ageerror_def, ".png")
           caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
           caption <- paste0(caption,
-                           " <br>(White = 1.0, Orange = 0.5, Red = 0.0)")
+                            " <br>(White = 1.0, Orange = 0.5, Red = 0.0)")
           plotinfo <- pngfun(file=file, caption=caption)
           ageingfun()
           ageing_matrix_fun(i_ageerror_def)
           dev.off()
         } # end loop over ageing error methods
-
-        if(10 %in% subplots){
-          # newer plot of ageing matrix as histogram-style figure
-          plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 2,
-                                          plot = plot, print = print,
-                                          plotdir = plotdir, pwidth = pwidth,
-                                          pheight = pheight, punits = punits,
-                                          res = res, ptsize = ptsize,
-                                          cex.main = cex.main,
-                                          mainTitle = mainTitle)
-          plotinfo <- rbind(plotinfo, plotinfo.tmp)
-        }
       } # end print to PNG
+
+      if(10 %in% subplots){
+        # newer plot of ageing matrix as histogram-style figure
+        plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 2,
+                                        plot = plot, print = print,
+                                        plotdir = plotdir, pwidth = pwidth,
+                                        pheight = pheight, punits = punits,
+                                        res = res, ptsize = ptsize,
+                                        cex.main = cex.main,
+                                        mainTitle = mainTitle)
+        plotinfo <- rbind(plotinfo, plotinfo.tmp)
+      }
     } # end if AAK
   } # end if data available
   if(!is.null(plotinfo)) plotinfo$category <- "Numbers"

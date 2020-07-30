@@ -46,6 +46,22 @@ SS_readdat_3.30 <-
   ###############################################################################
   ## Divide data file into sections ----
   sec.end.inds <- grep("^999\\b", dat)
+  ## Run some checks to ensure that only the section break 999's are being captured 
+  ## and not things such as year 999 or a catch of 999mt etc
+  incorr.secs <- NULL
+  for(i in 1:length(sec.end.inds)){
+    check_section <- dat[sec.end.inds[i]]
+    check_section <- strsplit(check_section,"#")[[1]][1]
+    check_section <- unlist(strsplit(unlist(strsplit(check_section,"\t"))," "))
+    check_section <- check_section[check_section!=""]
+    if(length(check_section)>1){
+      incorr.secs <- c(incorr.secs,i)
+    }
+  }
+  if(length(incorr.secs)>0){
+    sec.end.inds <- sec.end.inds[-incorr.secs]
+  }
+  
   Nsections <- length(sec.end.inds)
   if(!Nsections){
     stop("Error - There was no EOF marker (999) in the data file.")

@@ -135,6 +135,20 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # subplot 105: diagram with labels showing female CV = f(A) (offset type 3)
   # subplot 106: diagram with labels showing female CV = f(A) & male offset (type 3)
 
+  # test for presence of wtatage_switch
+  wtatage_switch  <- replist$wtatage_switch
+  if(wtatage_switch){
+    message("Note: this model uses the empirical weight-at-age input.\n",
+            "      Plots of many quantities related to growth are skipped.")
+  } else {
+    if (is.null(replist$endgrowth)) {
+      message("Skipping biology plots because model output doesn't include\n",
+              " biology-at-age information ($endgrowth), likely because\n",
+              " brief output was specified in starter.ss.")
+      return()
+    }
+  }
+  
   # subfunction to write png files
   pngfun <- function(file, caption=NA){
     # replace any slashes (as in 'Eggs/kg_inter_Fem')
@@ -158,12 +172,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
   #### plot function 1
   # mean weight, maturity, fecundity, spawning output
-
   # get objects from replist
   nseasons     <- replist$nseasons
   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
-  # calculate CVs from SD and mean length
-  growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
   growthCVtype <- replist$growthCVtype
   biology      <- replist$biology
   startyr      <- replist$startyr
@@ -254,18 +265,6 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
 
-  # test for presence of wtatage_switch
-  # (not created in older versions of SS_output)
-  if(!is.null(replist$wtatage_switch)){
-    wtatage_switch  <- replist$wtatage_switch
-  }else{
-    stop("SSplotBiology function doesn't match SS_output function.",
-         "Update one or both functions.")
-  }
-  if(wtatage_switch){
-    cat("Note: this model uses the empirical weight-at-age input.\n",
-        "      Plots of many quantities related to growth are skipped.\n")
-  }
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
   ## if(nrow(growdat[growdat$Sex==1 & growdat$Morph==morphs[1],])==0){
@@ -304,28 +303,34 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # Beginning of season 1 (or specified season) mean length at age
   #   with 95% range of lengths (by sex if applicable)
   ## Ian T.: consider somehow generalizing to allow looping over growth pattern
-  growdatF <- growdat[growdat$Sex==1 & growdat$Morph==morphs[1],]
-  growdatF$Sd_Size <- growdatF$SD_Beg
-  if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-    growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
-    growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
-  }else{                        # normal distribution of length at age
-    growdatF$high <- qnorm(0.975, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
-    growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
-  }
+  if (!is.null(growdat)) {
+    # calculate CVs from SD and mean length
+    growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
 
-  if(nsexes > 1){ # do males if 2-sex model
-    growdatM <- growdat[growdat$Sex==2 & growdat$Morph==morphs[2],]
-    # IAN T. this should probably be generalized
-    xm <- growdatM$Age_Beg
-
-    growdatM$Sd_Size <- growdatM$SD_Beg
+    # female growth
+    growdatF <- growdat[growdat$Sex==1 & growdat$Morph==morphs[1],]
+    growdatF$Sd_Size <- growdatF$SD_Beg
     if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-      growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
-      growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
+      growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
+      growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
     }else{                        # normal distribution of length at age
-      growdatM$high <- qnorm(0.975, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
-      growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
+      growdatF$high <- qnorm(0.975, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
+      growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
+    }
+
+    if(nsexes > 1){ # do males if 2-sex model
+      growdatM <- growdat[growdat$Sex==2 & growdat$Morph==morphs[2],]
+      # IAN T. this should probably be generalized
+      xm <- growdatM$Age_Beg
+
+      growdatM$Sd_Size <- growdatM$SD_Beg
+      if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
+        growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
+        growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
+      }else{                        # normal distribution of length at age
+        growdatM$high <- qnorm(0.975, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
+        growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
+      }
     }
   }
 
@@ -1072,7 +1077,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   if(plot){ # plot to screen or to PDF file
     if(5 %in% subplots) {
       weight_plot(sex=1)
-      if(!wtatage_switch & nsexes==2){
+      if(nsexes==2){
         weight_plot(sex=2)
       }
     }
@@ -1246,7 +1251,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       cat("! Warning: no time-varying growth info because\n",
           "     starter file set to produce limited report detail.\n")
     }else{
-      if(growthvaries){ # if growth is time varying
+      # if growth is time varying and weight-at-age not used
+      if(growthvaries & !wtatage_switch){ 
         for(i in 1:nsexes){
           growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
                                        growthseries$Morph==morphs[i],]
@@ -1261,9 +1267,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
           x <- 0:accuage
           y <- growdatuse$Yr
           z <- as.matrix(growdatuse[,-(1:4)])
-          time <- FALSE
-          for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
-          if(time){
+          # check for time-varying growth
+          if(replist$growthvaries){
             z <- t(z)
             if(i==1){main <- "Female time-varying growth"}
             if(nsexes==1){main <- "Time-varying growth"}

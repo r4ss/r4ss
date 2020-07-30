@@ -58,6 +58,21 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
     value = mylist[names(mylist)==name]
     writeLines(paste0(value," #_",name),con=zz)
   }
+  
+  # function to write a vector
+  wl.vector <- function(name,
+                        comment = NULL,
+                        collapse = NULL) {
+    value = mylist[names(mylist) == name][[1]]
+    if (is.null(collapse))
+      collapse <- " "
+    if (is.null(comment)) {
+      writeLines(paste(paste(value, collapse = collapse), " #_", name, sep = ""), con =
+                   zz)
+    }else{
+      writeLines(paste(paste(value, collapse = collapse), comment), con = zz)
+    }
+  }
 
   writeLines("#C starter file written by R function SS_writestarter")
   writeLines("#C rerun model to get more complete formatting in starter.ss_new")
@@ -73,6 +88,13 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("init_values_src")
   wl("run_display_detail")
   wl("detailed_age_structure")
+  if(mylist$detailed_age_structure == 3) {
+    writeLines(paste0("# custom report options: -100 to start with minimal; ",
+      "-101 to start with all; -number to remove, +number to add, -999 to end"))
+    wl("custom_start")
+    if(!is.null(mylist$custom_add_rm)) wl.vector("custom_add_rm")
+    writeLines("-999")
+  }
   wl("checkup")
   wl("parmtrace")
   wl("cumreport")

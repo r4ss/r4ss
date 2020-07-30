@@ -26,7 +26,7 @@ SS_output(
   verbose = TRUE,
   printstats = TRUE,
   hidewarn = FALSE,
-  NoCompOK = FALSE,
+  NoCompOK = TRUE,
   aalmaxbinrange = 4
 )
 }
@@ -108,16 +108,16 @@ contained within the list produced by this function.
 }
 \examples{
 
-  \dontrun{
-    # read model output
-    myreplist <- SS_output(dir='c:/SS/Simple/')
-    # make a bunch of plots
-    SS_plots(myreplist)
+\dontrun{
+# read model output
+myreplist <- SS_output(dir = "c:/SS/Simple/")
+# make a bunch of plots
+SS_plots(myreplist)
 
-    # read model output and also read MCMC results (if run), which in
-    # this case would be stored in c:/SS/Simple/mcmc/
-    myreplist <- SS_output(dir='c:/SS/Simple/', dir.mcmc="mcmc")
-  }
+# read model output and also read MCMC results (if run), which in
+# this case would be stored in c:/SS/Simple/mcmc/
+myreplist <- SS_output(dir = "c:/SS/Simple/", dir.mcmc = "mcmc")
+}
 
 }
 \seealso{

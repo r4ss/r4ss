@@ -80,7 +80,7 @@ SSplotTimeseries <-
   # subplot13 = fraction of recruitment by area
   # subplot14 = recruitment by birth season
   # subplot15 = fraction of recruitment by birth season
-  # subplot16 = dynamic B0
+  # subplot16 = dynamic B0 (not yet implemented)
   if(missing(subplot)) stop("'subplot' input required")
   if(length(subplot)>1) stop("function can only do 1 subplot at a time")
   # subfunction to write png files
@@ -153,7 +153,8 @@ SSplotTimeseries <-
 
   # check if spawning output rather than spawning biomass is plotted
   #if(FecPar2!=0){ # old test based on parameter values not robust to all options
-  if(replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
+  if(is.na(replist$SpawnOutputUnits) ||
+     replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
     labels[5] <- labels[7]
     labels[6] <- gsub("biomass","output",labels[6])
   }
@@ -249,6 +250,10 @@ SSplotTimeseries <-
     # change ylab to represent fractions for those plots
     if(subplot %in% c(13,15)) ylab <- labels[9]
 
+    if(subplot > 15){
+      stop("subplot should be a value from 1 to 15")
+    }
+
     # title initially set equal to y-label
     main=ylab
 
@@ -258,7 +263,8 @@ SSplotTimeseries <-
       # case where fish are born in the year after spawning
       yrshift <- 1
     }
-    if(!is.null(replist$recruitment_dist$recruit_dist)){
+    if(!is.null(replist$recruitment_dist$recruit_dist) &&
+       "Age" %in% names(replist$recruitment_dist$recruit_dist) ){
       # case where fish are born in the year after spawning
       yrshift <- min(as.numeric(replist$recruitment_dist$recruit_dist$Age, na.rm=TRUE))
     }

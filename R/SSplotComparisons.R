@@ -54,8 +54,19 @@
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
 #' ending year specified in each model.
-#' @param indexfleets Vector of fleet numbers for each model for which to compare
-#' indices of abundance. Only necessary if any model has more than one index.
+#' @param indexfleets Fleet numbers for each model to compare
+#' indices of abundance. Can take different forms:
+#' \itemize{
+#'   \item NULL: (default) create a separate plot for each index as long as the fleet
+#' numbering is the same across all models.
+#'   \item integer: create a single comparison plot for the chosen index
+#'   \item vector of length equal to number of models: a single fleet number
+#' for each model to be compared in a single plot
+#'   \item list: list of fleet numbers associated with indices within each
+#' model to be compared, where the list elements are each a vector of the
+#' same length but the names of the list elements don't matter and can be
+#' absent.
+#' }
 #' @param indexUncertainty Show uncertainty intervals on index data?
 #' Default=FALSE because if models have any extra standard deviations added,
 #' these intervals may differ across models.
@@ -104,9 +115,10 @@
 #' @param legend Add a legend?
 #' @param legendlabels Optional vector of labels to include in legend. Default
 #' is 'model1','model2',etc.
-#' @param legendloc Location of legend. Either a string like "topleft" or a vector
-#' of two numeric values representing the fraction of the maximum in the x and y
-#' dimensions, respectively. See ?legend for more info on the string options.
+#' @param legendloc Location of legend. Either a string like "topleft" or a
+#' vector of two numeric values representing the fraction of the maximum in
+#' the x and y dimensions, respectively. See ?legend for more info on the
+#' string options.
 #' @param legendorder Optional vector of model numbers that can be used to have
 #' the legend display the model names in an order that is different than that
 #' which is represented in the summary input object.
@@ -122,7 +134,6 @@
 #' @param punits Units for PNG file
 #' @param res Resolution for PNG file
 #' @param ptsize Point size for PNG file
-#' @param cex.main Character expansion for plot titles
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
@@ -145,8 +156,10 @@
 #' used for smoothing MCMC posteriors. See 'adjust' in ?density for details.
 #' @param densitysymbols Add symbols along lines in density plots. Quantiles
 #' are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.
-#' @param densitytails Shade tails outside of 95\% interval darker in density plots?
-#' @param densitymiddle Shade middle inside of 95\% interval darker in density plots?
+#' @param densitytails Shade tails outside of 95\% interval darker in
+#' density plots?
+#' @param densitymiddle Shade middle inside of 95\% interval darker in
+#' density plots?
 #' @param densitylwd Line width for density plots
 #' @param fix0 Always include 0 in the density plots?
 #' @param new Create new empty plot window
@@ -167,1946 +180,2346 @@
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
 #' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
 #' @examples
-#' 
-#'   \dontrun{
+#'
+#' \dontrun{
 #' # directories where models were run need to be defined
-#' dir1 <- 'c:/SS/mod1'
-#' dir2 <- 'c:/SS/mod2'
-#' 
+#' dir1 <- "c:/SS/mod1"
+#' dir2 <- "c:/SS/mod2"
+#'
 #' # read two models
-#' mod1 <- SS_output(dir=dir1)
-#' mod2 <- SS_output(dir=dir2)
-#' 
+#' mod1 <- SS_output(dir = dir1)
+#' mod2 <- SS_output(dir = dir2)
+#'
 #' # create list summarizing model results
 #' mod.sum <- SSsummarize(list(mod1, mod2))
-#' 
+#'
 #' # plot comparisons
-#' SSplotComparisons(mod.sum, legendlabels=c("First model", "Second model"))
-#' 
+#' SSplotComparisons(mod.sum, legendlabels = c("First model", "Second model"))
+#'
 #' # Example showing comparison of MLE to MCMC results where the mcmc would have
 #' # been run in the subdirectory 'c:/SS/mod1/mcmc'
-#' mod1 <- SS_output(dir='c:/SS/mod1', dir.mcmc='mcmc')
-#' # pass the same model twice to SSsummarize in order to plot it twice 
+#' mod1 <- SS_output(dir = "c:/SS/mod1", dir.mcmc = "mcmc")
+#' # pass the same model twice to SSsummarize in order to plot it twice
 #' mod.sum <- SSsummarize(list(mod1, mod1))
 #' # compare MLE to MCMC
-#' SSplotComparisons(mod.sum, legendlabels=c("MCMC", "MLE"), mcmcVec=c(TRUE,FALSE))
-#'
+#' SSplotComparisons(mod.sum,
+#'   legendlabels = c("MCMC", "MLE"),
+#'   mcmcVec = c(TRUE, FALSE)
+#' )
 #' }
-
+#'
 SSplotComparisons <-
-  function(summaryoutput,subplots=1:20,
-           plot=TRUE,print=FALSE,png=print,pdf=FALSE,
-           models="all",
-           endyrvec=NULL,
-           indexfleets=NULL,
-           indexUncertainty=FALSE,
-           indexQlabel=TRUE,
-           indexQdigits=4,
-           indexSEvec=NULL,
-           #TRUE in following command plots the observed index for each model
+  function(summaryoutput, subplots = 1:20,
+           plot = TRUE, print = FALSE, png = print, pdf = FALSE,
+           models = "all",
+           endyrvec = NULL,
+           indexfleets = NULL,
+           indexUncertainty = TRUE,
+           indexQlabel = TRUE,
+           indexQdigits = 4,
+           indexSEvec = NULL,
+           # TRUE in following command plots the observed index for each model
            # with colors, or FALSE just plots observed once in black dots
-           indexPlotEach=FALSE,
-           labels=c("Year",             #1
-             "Spawning biomass (t)",    #2
-             "Fraction of unfished",    #3
-             "Age-0 recruits (1,000s)", #4
-             "Recruitment deviations",  #5
-             "Index",                   #6
-             "Log index",               #7
-             "SPR-related quantity",    #8 automatically updated when consistent
-             "Density",                 #9
-             "Management target",       #10
-             "Minimum stock size threshold", #11
-             "Spawning output",         #12
-             "Harvest rate"),           #13
-           col=NULL, shadecol=NULL,
-           pch=NULL, lty=1, lwd=2,
-           spacepoints=10,
-           staggerpoints=1,
-           initpoint=0,
-           tickEndYr=TRUE,
-           shadeForecast=TRUE,
-           xlim=NULL, ylimAdj=1.05,
-           xaxs="i", yaxs="i",
-           type="o", uncertainty=TRUE, shadealpha=0.1,
-           legend=TRUE, legendlabels=NULL, legendloc="topright",
-           legendorder=NULL,legendncol=1,
-           sprtarg=NULL, btarg=NULL, minbthresh=NULL,
-           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-           plotdir=NULL,
-           filenameprefix="",
-           densitynames=c("SSB_Virgin","R0"),
-           densityxlabs=NULL,
-           rescale=TRUE,
-           densityscalex=1,
-           densityscaley=1,
-           densityadjust=1,
-           densitysymbols=TRUE,
-           densitytails=TRUE,
-           densitymiddle=FALSE,
-           densitylwd=1,
-           fix0=TRUE,
-           new=TRUE,
-           add=FALSE,
-           par=list(mar=c(5,4,1,1)+.1),
-           verbose=TRUE,
-           mcmcVec=FALSE,
-           show_equilibrium=TRUE)
-{
-  meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
-  ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
+           indexPlotEach = FALSE,
+           labels = c(
+             "Year", # 1
+             "Spawning biomass (t)", # 2
+             "Fraction of unfished", # 3
+             "Age-0 recruits (1,000s)", # 4
+             "Recruitment deviations", # 5
+             "Index", # 6
+             "Log index", # 7
+             "SPR-related quantity", # 8 automatically updated when consistent
+             "Density", # 9
+             "Management target", # 10
+             "Minimum stock size threshold", # 11
+             "Spawning output", # 12
+             "Harvest rate" # 13
+           ),
+           col = NULL, shadecol = NULL,
+           pch = NULL, lty = 1, lwd = 2,
+           spacepoints = 10,
+           staggerpoints = 1,
+           initpoint = 0,
+           tickEndYr = TRUE,
+           shadeForecast = TRUE,
+           xlim = NULL, ylimAdj = 1.05,
+           xaxs = "i", yaxs = "i",
+           type = "o", uncertainty = TRUE, shadealpha = 0.1,
+           legend = TRUE, legendlabels = NULL, legendloc = "topright",
+           legendorder = NULL, legendncol = 1,
+           sprtarg = NULL, btarg = NULL, minbthresh = NULL,
+           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300,
+           ptsize = 10,
+           plotdir = NULL,
+           filenameprefix = "",
+           densitynames = c("SSB_Virgin", "R0"),
+           densityxlabs = NULL,
+           rescale = TRUE,
+           densityscalex = 1,
+           densityscaley = 1,
+           densityadjust = 1,
+           densitysymbols = TRUE,
+           densitytails = TRUE,
+           densitymiddle = FALSE,
+           densitylwd = 1,
+           fix0 = TRUE,
+           new = TRUE,
+           add = FALSE,
+           par = list(mar = c(5, 4, 1, 1) + .1),
+           verbose = TRUE,
+           mcmcVec = FALSE,
+           show_equilibrium = TRUE) {
 
-  # subfunction to write png files
-  pngfun <- function(file){
-    # if extra text requested, add it before extention in file name
-    file <- paste0(filenameprefix, file)
-    # open png file
-    png(filename=file.path(plotdir,file),
-        width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-    # change graphics parameters to input value
-    par(par)
-  }
+    # switch to avoid repetition of warning about mean recruitment
+    meanRecWarning <- TRUE
+    ymax_vec <- rep(NA, 17) # vector of ymax values for each plot
 
-  if(png) print <- TRUE
-  if(png & is.null(plotdir))
-    stop("to print PNG files, you must supply a directory as 'plotdir'")
-
-  # check for internal consistency
-  if(pdf & png){
-    stop("To use 'pdf', set 'print' or 'png' to FALSE.")
-  }
-  if(pdf){
-    if(is.null(plotdir)){
-      stop("to write to a PDF, you must supply a directory as 'plotdir'")
-    }
-    pdffile <- file.path(plotdir,
-                         paste0(filenameprefix, "SSplotComparisons_",
-                                format(Sys.time(), '%d-%b-%Y_%H.%M' ), ".pdf"))
-    pdf(file=pdffile, width=pwidth, height=pheight)
-    if(verbose){
-      message("PDF file with plots will be:",pdffile)
-    }
-    par(par)
-  }
-
-  # subfunction to add legend
-  legendfun <- function(legendlabels,cumulative=FALSE) {
-    if(cumulative){
-      legendloc="topleft"
-    }
-    if(is.numeric(legendloc)) {
-      Usr <- par()$usr
-      legendloc <- list(x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
-                        y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3]))
-    }
-    
-    # if type input is "l" then turn off points on top of lines in legend
-    legend.pch <- pch
-    if(type=="l"){
-      legend.pch <- rep(NA,length(pch))
-    }
-    legend(legendloc, legend=legendlabels[legendorder],
-           col=col[legendorder], lty=lty[legendorder],seg.len = 2,
-           lwd=lwd[legendorder], pch=legend.pch[legendorder], bty="n", ncol=legendncol)
-  }
-
-  rc <- function(n,alpha=1){
-    # a subset of rich.colors by Arni Magnusson from the gregmisc package
-    # a.k.a. rich.colors.short, but put directly in this function
-    # to try to diagnose problem with transparency on one computer
-    x <- seq(0, 1, length = n)
-    r <- 1/(1 + exp(20 - 35 * x))
-    g <- pmin(pmax(0, -0.8 + 6 * x - 5 * x^2), 1)
-    b <- dnorm(x, 0.25, 0.15)/max(dnorm(x, 0.25, 0.15))
-    rgb.m <- matrix(c(r, g, b), ncol = 3)
-    rich.vector <- apply(rgb.m, 1, function(v) rgb(v[1], v[2], v[3], alpha=alpha))
-  }
-
-  # get stuff from summary output
-  n             <- summaryoutput$n
-  nsexes        <- summaryoutput$nsexes
-  startyrs      <- summaryoutput$startyrs
-  endyrs        <- summaryoutput$endyrs
-  pars          <- summaryoutput$pars
-  parsSD        <- summaryoutput$parsSD
-  parphases     <- summaryoutput$parphases
-  quants        <- summaryoutput$quants
-  quantsSD      <- summaryoutput$quantsSD
-  SpawnBio      <- summaryoutput$SpawnBio
-  SpawnBioLower <- summaryoutput$SpawnBioLower
-  SpawnBioUpper <- summaryoutput$SpawnBioUpper
-  Bratio        <- summaryoutput$Bratio
-  BratioLower   <- summaryoutput$BratioLower
-  BratioUpper   <- summaryoutput$BratioUpper
-  SPRratio      <- summaryoutput$SPRratio
-  SPRratioLower <- summaryoutput$SPRratioLower
-  SPRratioUpper <- summaryoutput$SPRratioUpper
-  Fvalue      <- summaryoutput$Fvalue
-  FvalueLower <- summaryoutput$FvalueLower
-  FvalueUpper <- summaryoutput$FvalueUpper
-  recruits      <- summaryoutput$recruits
-  recruitsLower <- summaryoutput$recruitsLower
-  recruitsUpper <- summaryoutput$recruitsUpper
-  recdevs       <- summaryoutput$recdevs
-  recdevsLower  <- summaryoutput$recdevsLower
-  recdevsUpper  <- summaryoutput$recdevsUpper
-  indices       <- summaryoutput$indices
-  mcmc          <- summaryoutput$mcmc               #a list of dataframes, 1 for each model with mcmc output
-  lowerCI       <- summaryoutput$lowerCI
-  upperCI       <- summaryoutput$upperCI
-  SpawnOutputUnits <- summaryoutput$SpawnOutputUnits
-  btargs         <- summaryoutput$btargs
-  minbthreshs    <- summaryoutput$minbthreshs
-  sprtargs       <- summaryoutput$sprtargs
-  SPRratioLabels <- summaryoutput$SPRratioLabels
-  FvalueLabels <- summaryoutput$FvalueLabels
-
-  # checking for the same reference points across models
-  if(is.null(btarg)) {
-    btarg <- unique(btargs)
-    if(length(btarg)>1){
-      warning("setting btarg = -999 because models don't have matching values")
-      btarg <- -999
-    }
-  }
-  if(is.null(minbthresh)) {
-    minbthresh <- unique(minbthreshs)
-    if(length(minbthresh)>1){
-      warning("setting minbthresh = -999 because models don't have matching values")
-      minbthresh <- -999
-    }
-  }
-  if(is.null(sprtarg)) {
-    sprtarg <- unique(sprtargs)
-    if(length(sprtarg)>1){
-      warning("setting sprtarg = -999 because models don't have matching values")
-      sprtarg <- -999
-    }
-  }
-  SPRratioLabel <- unique(SPRratioLabels)
-  if(length(SPRratioLabel)>1){
-    warning("setting label for SPR plot to 8th element of input 'labels' ",
-            "because the models don't have matching labels")
-    SPRratioLabel <- labels[8]
-  }
-  FvalueLabel <- unique(FvalueLabels)
-  if(length(FvalueLabel)>1){
-    warning("setting label for F plot to 13th element of input 'labels' ",
-            "because the models don't have matching labels")
-    FvalueLabel <- labels[13]
-  }else{
-    FvalueLabel <- gsub("_", " ", FvalueLabel)
-  }
-
-  ### process input for which models have uncertainty shown
-  ##
-  # if vector is numeric rather than logical, convert to logical
-  if(!is.logical(uncertainty) & is.numeric(uncertainty)){
-    if(any(!uncertainty %in% 1:n)){
-      # stop if numerical values aren't integers <= n
-      stop("'uncertainty' should be a subset of the integers\n",
-           " 1-",n,", where n=",n," is the number of models.\n",
-           "  Or it can be a single TRUE/FALSE value.\n",
-           "  Or a vector of TRUE/FALSE, of length n=",n)
-    }else{
-      # convert integers to logical
-      uncertainty <- 1:n %in% uncertainty
-    }
-  }
-
-  # if a single value, repeat for all models
-  if(is.logical(uncertainty) & length(uncertainty)==1){
-    uncertainty <- rep(uncertainty, n)
-  }
-  # if all that hasn't yet made it length n, then stop
-  if(length(uncertainty)!=n){
-    stop("'uncertainty' as TRUE/FALSE should have length 1 or n.\n",
-         "  length(uncertainty) = ",length(uncertainty))
-  }
-  # some feedback about uncertainty settings
-  if(all(uncertainty)){
-    message("showing uncertainty for all models")
-  }
-  if(!any(uncertainty)){
-    message("not showing uncertainty for any models")
-  }
-  if(any(uncertainty) & !all(uncertainty)){
-    message("showing uncertainty for model",
-            ifelse(sum(uncertainty)>1,"s: "," "),
-            paste(which(uncertainty),collapse=","))
-  }
-  for(i in 1:n){
-    if(all(is.na(quantsSD[,i]) | quantsSD[,i]==0)){
-      message("No uncertainty available for model ", i)
-      uncertainty[i] <- FALSE
-    }
-  }
-  #### no longer dividing by 2 for single-sex models
-  if(length(unique(nsexes)) > 1){
-    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
-            "to get female-only spawning biomass output by SS for a single-sex model,\n",
-            "use the new Nsexes = -1 option in the data file.")
-  }
-  # check number of models to be plotted
-  if(models[1]=="all") models <- 1:n
-  nlines <- length(models)
-
-  # check for mcmc
-  if(any(mcmcVec) & length(mcmc) == 0){
-    mcmcVec <- FALSE
-    warning("Setting mcmcVec = FALSE because summaryoutput$mcmc is empty")
-  }
-  # check length of mcmcVec
-  if(nlines > 1 & length(mcmcVec)==1){
-    mcmcVec <- rep(mcmcVec, nlines)
-  }
-  if(nlines != length(mcmcVec)){
-    stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
-  }
-
-  # check length of indexfleets
-  if(!is.null(indexfleets) && length(indexfleets) < n){
-    if(length(indexfleets)==1){
-      indexfleets <- rep(indexfleets, n)
-    }else{
-      warning("'indexfleets' needs to have length either 1 or n=",n,"\n",
-           "with each value a fleet number for the index to compare.\n")
-      indexfleets <- NULL
-    }
-  }
-
-  # setup colors, points, and line types
-  if(is.null(col) & nlines>3)  col <- rc(nlines+1)[-1]
-  if(is.null(col) & nlines<3)  col <- rc(nlines)
-  if(is.null(col) & nlines==3) col <- c("blue","red","green3")
-  if(is.null(shadecol)){
-    # new approach thanks to Trevor Branch
-    shadecol <- adjustcolor(col, alpha.f=shadealpha)
-  }
-  # set pch values if no input
-  if(is.null(pch)){
-    pch <- rep(1:25,10)[1:nlines]
-  }
-
-  # if line stuff is shorter than number of lines, recycle as needed
-  if(length(col) < nlines) col <- rep(col,nlines)[1:nlines]
-  if(length(pch) < nlines) pch <- rep(pch,nlines)[1:nlines]
-  if(length(lty) < nlines) lty <- rep(lty,nlines)[1:nlines]
-  if(length(lwd) < nlines) lwd <- rep(lwd,nlines)[1:nlines]
-
-  if(!is.expression(legendlabels[1]) && is.null(legendlabels)){
-    legendlabels <- paste("model",1:nlines)
-  }
-  if(is.null(legendorder)){
-    legendorder <- 1:nlines
-  }
-
-  # open new window if requested
-  if(plot & new & !pdf){
-    dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
-    par(par)
-  }
-
-  # get MCMC results if requested
-  for(iline in (1:nlines)[mcmcVec]){
-    imodel <- models[iline]
-
-    # reset values to NA for mcmc columns only
-    cols <- imodel
-    SpawnBioLower[,cols] <- SpawnBioUpper[,cols] <- SpawnBio[,cols] <- NA
-    BratioLower[,cols] <- BratioUpper[,cols] <- Bratio[,cols] <- NA
-    SPRratioLower[,cols] <- SPRratioUpper[,cols] <- SPRratio[,cols] <- NA
-    recruitsLower[,cols] <- recruitsUpper[,cols] <- recruits[,cols] <- NA
-    recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
-
-    ### get MCMC for SpawnBio
-    tmp <- grep("SSB",names(mcmc[[imodel]]))   #try it to see what you get
-    # exclude rows that aren't part of the timseries
-    tmp2 <- c(grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_SPRtgt", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_MSY", names(mcmc[[imodel]]), ignore.case = TRUE))
-    tmp <- setdiff(tmp,tmp2)
-    if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
-      SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
-      SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
+    # subfunction to write png files
+    pngfun <- function(file) {
+      # if extra text requested, add it before extention in file name
+      file <- paste0(filenameprefix, file)
+      # open png file
+      png(
+        filename = file.path(plotdir, file),
+        width = pwidth,
+        height = pheight,
+        units = punits,
+        res = res,
+        pointsize = ptsize
+      )
+      # change graphics parameters to input value
+      par(par)
     }
 
-    ### get MCMC for Bratio
-    tmp <- grep("Bratio",names(mcmc[[imodel]]))   #try it to see what you get
-    if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      Bratio[,imodel] <- med[match(Bratio$Label,mcmclabs)]
-      BratioLower[,imodel] <- lower[match(BratioLower$Label,mcmclabs)]
-      BratioUpper[,imodel] <- upper[match(BratioUpper$Label,mcmclabs)]
+    if (png) print <- TRUE
+
+    if (png & is.null(plotdir)) {
+      stop("to print PNG files, you must supply a directory as 'plotdir'")
     }
 
-    ### get MCMC for SPRratio
-    tmp <- grep("SPRratio",names(mcmc[[imodel]]))   #try it to see what you get
-    if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      SPRratio[,imodel] <- med[match(SPRratio$Label,mcmclabs)]
-      SPRratioLower[,imodel] <- lower[match(SPRratioLower$Label,mcmclabs)]
-      SPRratioUpper[,imodel] <- upper[match(SPRratioUpper$Label,mcmclabs)]
+    # check for internal consistency
+    if (pdf & png) {
+      stop("To use 'pdf', set 'print' or 'png' to FALSE.")
     }
-
-    ### get MCMC for recruits
-    tmp <- grep("^Recr_", names(mcmc[[imodel]]))   #try it to see what you get
-    # exclude rows that aren't part of the timseries
-    tmp2 <- grep("Recr_unfished", names(mcmc[[imodel]]), ignore.case = TRUE)
-    tmp <- setdiff(tmp,tmp2)
-    if(length(tmp) > 0) { #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      mean  <- apply(mcmc.tmp,2,mean, na.rm=TRUE)   #mean recruitment should be more comparable
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      if(!meanRecWarning){
-        message("note: using mean recruitment from MCMC instead of median,\n",
-                "because it is more comparable to MLE\n")
-        meanRecWarning <- TRUE
+    if (pdf) {
+      if (is.null(plotdir)) {
+        stop("to write to a PDF, you must supply a directory as 'plotdir'")
       }
-      recruits[,imodel] <- mean[match(recruits$Label,mcmclabs)]
-      recruitsLower[,imodel] <- lower[match(recruitsLower$Label,mcmclabs)]
-      recruitsUpper[,imodel] <- upper[match(recruitsUpper$Label,mcmclabs)]
+      pdffile <- file.path(
+        plotdir,
+        paste0(
+          filenameprefix, "SSplotComparisons_",
+          format(Sys.time(), "%d-%b-%Y_%H.%M"), ".pdf"
+        )
+      )
+      pdf(file = pdffile, width = pwidth, height = pheight)
+      if (verbose) {
+        message("PDF file with plots will be:", pdffile)
+      }
+      par(par)
     }
 
-    ### get MCMC for recdevs
-    # get values from mcmc to replace
-    tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
-                    grep("_InitAge_",names(mcmc[[imodel]])),
-                    grep("ForeRecr_",names(mcmc[[imodel]]))))
-    if(length(tmp) > 0) { #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
-      recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
-      recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
-    }
-  }
+    # subfunction to add legend
+    legendfun <- function(legendlabels, cumulative = FALSE) {
+      if (cumulative) {
+        legendloc <- "topleft"
+      }
+      if (is.numeric(legendloc)) {
+        Usr <- par()$usr
+        legendloc <- list(
+          x = Usr[1] + legendloc[1] * (Usr[2] - Usr[1]),
+          y = Usr[3] + legendloc[2] * (Usr[4] - Usr[3])
+        )
+      }
 
-  if(is.null(endyrvec)){
-    endyrvec <- endyrs + 1 
-  }
-  if(length(endyrvec)==1){
-    endyrvec <- rep(endyrvec,nlines)
-  }
-  # not sure why there should be NA values for Yr column in recdevs,
-  # but old code to eliminate the devs past endyr wasn't working as configured before
-  recdevs <- recdevs[!is.na(recdevs$Yr),]
-  recdevsLower <- recdevsLower[!is.na(recdevsLower$Yr),]
-  recdevsUpper <- recdevsUpper[!is.na(recdevsUpper$Yr),]
-  
-  
-  # change to NA any values beyond endyr
-  if(!is.null(endyrvec)){
-    for(iline in 1:nlines){
-      endyr <- endyrvec[iline]
-      imodel <- models[iline]
-      SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
-      SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
-      SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
-      Bratio[Bratio$Yr > endyr, imodel] <- NA
-      BratioLower[Bratio$Yr > endyr, imodel] <- NA
-      BratioUpper[Bratio$Yr > endyr, imodel] <- NA
-      #### note: add generalized startyrvec option in the future
-      ## if(exists("startyrvec")){
-      ##   startyr <- startyrvec[iline]
-      ##   Bratio[Bratio$Yr < startyr, imodel] <- NA
-      ##   BratioLower[Bratio$Yr < startyr, imodel] <- NA
-      ##   BratioUpper[Bratio$Yr < startyr, imodel] <- NA
-      ## }
-      SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
-      SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
-      SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
-      Fvalue[Fvalue$Yr >= endyr, imodel] <- NA
-      FvalueLower[Fvalue$Yr >= endyr, imodel] <- NA
-      FvalueUpper[Fvalue$Yr >= endyr, imodel] <- NA
-      recruits[recruits$Yr > endyr, imodel] <- NA
-      recruitsLower[recruits$Yr > endyr, imodel] <- NA
-      recruitsUpper[recruits$Yr > endyr, imodel] <- NA
-      if(!is.null(recdevs)){
-        recdevs[recdevs$Yr > endyr, imodel] <- NA
-        recdevsLower[recdevs$Yr > endyr, imodel] <- NA
-        recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+      # if type input is "l" then turn off points on top of lines in legend
+      legend.pch <- pch
+      if (type == "l") {
+        legend.pch <- rep(NA, length(pch))
+      }
+      legend(legendloc,
+        legend = legendlabels[legendorder],
+        col = col[legendorder],
+        lty = lty[legendorder],
+        seg.len = 2,
+        lwd = lwd[legendorder],
+        pch = legend.pch[legendorder],
+        bty = "n",
+        ncol = legendncol
+      )
+    }
+
+    # get stuff from summary output
+    n <- summaryoutput$n
+    nsexes <- summaryoutput$nsexes
+    startyrs <- summaryoutput$startyrs
+    endyrs <- summaryoutput$endyrs
+    pars <- summaryoutput$pars
+    parsSD <- summaryoutput$parsSD
+    parphases <- summaryoutput$parphases
+    quants <- summaryoutput$quants
+    quantsSD <- summaryoutput$quantsSD
+    SpawnBio <- summaryoutput$SpawnBio
+    SpawnBioLower <- summaryoutput$SpawnBioLower
+    SpawnBioUpper <- summaryoutput$SpawnBioUpper
+    Bratio <- summaryoutput$Bratio
+    BratioLower <- summaryoutput$BratioLower
+    BratioUpper <- summaryoutput$BratioUpper
+    SPRratio <- summaryoutput$SPRratio
+    SPRratioLower <- summaryoutput$SPRratioLower
+    SPRratioUpper <- summaryoutput$SPRratioUpper
+    Fvalue <- summaryoutput$Fvalue
+    FvalueLower <- summaryoutput$FvalueLower
+    FvalueUpper <- summaryoutput$FvalueUpper
+    recruits <- summaryoutput$recruits
+    recruitsLower <- summaryoutput$recruitsLower
+    recruitsUpper <- summaryoutput$recruitsUpper
+    recdevs <- summaryoutput$recdevs
+    recdevsLower <- summaryoutput$recdevsLower
+    recdevsUpper <- summaryoutput$recdevsUpper
+    indices <- summaryoutput$indices
+    # note that "mcmc" is a a list of dataframes,
+    # 1 for each model with mcmc output
+    mcmc <- summaryoutput$mcmc
+    lowerCI <- summaryoutput$lowerCI
+    upperCI <- summaryoutput$upperCI
+    SpawnOutputUnits <- summaryoutput$SpawnOutputUnits
+    btargs <- summaryoutput$btargs
+    minbthreshs <- summaryoutput$minbthreshs
+    sprtargs <- summaryoutput$sprtargs
+    SPRratioLabels <- summaryoutput$SPRratioLabels
+    FvalueLabels <- summaryoutput$FvalueLabels
+
+    # checking for the same reference points across models
+    if (is.null(btarg)) {
+      btarg <- unique(btargs)
+      if (length(btarg) > 1) {
+        warning("setting btarg = -999 because models don't have matching values")
+        btarg <- -999
       }
     }
-  }
-
-
-  # function to add shaded uncertainty intervals behind line
-  # requires the existence of the TRUE/FALSE vector "uncertainty"
-  addpoly <- function(yrvec, lower, upper){
-    lower[lower<0] <- 0 # max of value or 0
-    for(iline in (1:nlines)[uncertainty]){
-      imodel <- models[iline]
-      good <- !is.na(lower[,imodel]) & !is.na(upper[,imodel])
-      polygon(x=c(yrvec[good],rev(yrvec[good])),
-              y=c(lower[good,imodel],rev(upper[good,imodel])),
-              border=NA,col=shadecol[iline])
-#      lines(yrvec[good],lower[good,imodel],lty=3,col=col[iline])
-#      lines(yrvec[good],upper[good,imodel],lty=3,col=col[iline])
+    if (is.null(minbthresh)) {
+      minbthresh <- unique(minbthreshs)
+      if (length(minbthresh) > 1) {
+        warning("setting minbthresh = -999 because models don't have matching values")
+        minbthresh <- -999
+      }
     }
-  }
-
-  ## equ <- -(1:2) # IGT 2020/3/12: this variable seems to not be used
-  
-  # function to plot spawning biomass
-  plotSpawnBio <- function(show_uncertainty=TRUE){
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
+    if (is.null(sprtarg)) {
+      sprtarg <- unique(sprtargs)
+      if (length(sprtarg) > 1) {
+        warning("setting sprtarg = -999 because models don't have matching values")
+        sprtarg <- -999
+      }
     }
-    # get axis limits
-    if(is.null(xlim)){
-      if(show_equilibrium){
-        xlim <- range(SpawnBio$Yr)
+    SPRratioLabel <- unique(SPRratioLabels)
+    if (length(SPRratioLabel) > 1) {
+      warning(
+        "setting label for SPR plot to 8th element of input 'labels' ",
+        "because the models don't have matching labels"
+      )
+      SPRratioLabel <- labels[8]
+    }
+    FvalueLabel <- unique(FvalueLabels)
+    if (length(FvalueLabel) > 1) {
+      warning(
+        "setting label for F plot to 13th element of input 'labels' ",
+        "because the models don't have matching labels"
+      )
+      FvalueLabel <- labels[13]
+    } else {
+      FvalueLabel <- gsub("_", " ", FvalueLabel)
+    }
+
+    ### process input for which models have uncertainty shown
+    ##
+    # if vector is numeric rather than logical, convert to logical
+    if (!is.logical(uncertainty) & is.numeric(uncertainty)) {
+      if (any(!uncertainty %in% 1:n)) {
+        # stop if numerical values aren't integers <= n
+        stop(
+          "'uncertainty' should be a subset of the integers\n",
+          " 1-", n, ", where n=", n, " is the number of models.\n",
+          "  Or it can be a single TRUE/FALSE value.\n",
+          "  Or a vector of TRUE/FALSE, of length n=", n
+        )
       } else {
-        xlim <- range(SpawnBio$Yr[-c(1,2)])
-      }
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))){
-        xlim[2] <- max(endyrvec)
+        # convert integers to logical
+        uncertainty <- 1:n %in% uncertainty
       }
     }
-    ylim <- ylimAdj*range(0, SpawnBio[SpawnBio$Yr >= xlim[1] &
-                                      SpawnBio$Yr <= xlim[2],
-                                      models], na.rm=TRUE)
-    if(show_uncertainty){
-      ylim <- range(ylim, ylimAdj*SpawnBioUpper[SpawnBio$Yr >= xlim[1] &
-                                                SpawnBio$Yr <= xlim[2],
-                                                models[uncertainty]], na.rm=TRUE)
+
+    # if a single value, repeat for all models
+    if (is.logical(uncertainty) & length(uncertainty) == 1) {
+      uncertainty <- rep(uncertainty, n)
+    }
+    # if all that hasn't yet made it length n, then stop
+    if (length(uncertainty) != n) {
+      stop(
+        "'uncertainty' as TRUE/FALSE should have length 1 or n.\n",
+        "  length(uncertainty) = ", length(uncertainty)
+      )
+    }
+    # some feedback about uncertainty settings
+    if (all(uncertainty)) {
+      message("showing uncertainty for all models")
+    }
+    if (!any(uncertainty)) {
+      message("not showing uncertainty for any models")
+    }
+    if (any(uncertainty) & !all(uncertainty)) {
+      message(
+        "showing uncertainty for model",
+        ifelse(sum(uncertainty) > 1, "s: ", " "),
+        paste(which(uncertainty), collapse = ",")
+      )
+    }
+    for (i in 1:n) {
+      if (all(is.na(quantsSD[, i]) | quantsSD[, i] == 0)) {
+        message("No uncertainty available for model ", i)
+        uncertainty[i] <- FALSE
+      }
+    }
+    #### no longer dividing by 2 for single-sex models
+    if (length(unique(nsexes)) > 1) {
+      warning(
+        "SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
+        "to get female-only spawning biomass output by SS for a single-sex model,\n",
+        "use the new Nsexes = -1 option in the data file."
+      )
+    }
+    # check number of models to be plotted
+    if (models[1] == "all") {
+      models <- 1:n
+    }
+    nlines <- length(models)
+
+    # check for mcmc
+    if (any(mcmcVec) & length(mcmc) == 0) {
+      mcmcVec <- FALSE
+      warning("Setting mcmcVec = FALSE because summaryoutput$mcmc is empty")
+    }
+    # check length of mcmcVec
+    if (nlines > 1 & length(mcmcVec) == 1) {
+      mcmcVec <- rep(mcmcVec, nlines)
+    }
+    if (nlines != length(mcmcVec)) {
+      stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
     }
 
-    # set units on spawning biomass plot
-    if(length(unique(SpawnOutputUnits))!=1)
-      warning("Some models may have different units for spawning output than others")
-    if(any(SpawnOutputUnits=="numbers")){
-      ylab <- labels[12] # numbers
-    }else{
-      ylab <- labels[2] # biomass
+    # if index plots are requested, do some checks on inputs
+    if (any(subplots %in% 13:14) & !is.null(indices) && nrow(indices) > 0) {
+      # check indexfleets
+      if (is.null(indexfleets)) {
+        # if indexfleets is NULL
+        indexfleets <- list()
+        for (imodel in 1:n) {
+          indexfleets[[paste0("model", imodel)]] <-
+            sort(unique(indices$Fleet[indices$imodel == imodel]))
+        }
+      } else {
+        # if indexfleets is provided
+        if (!is.null(indexfleets)) {
+          # if a single number is provided, then repeat it n times
+          if (is.vector(indexfleets) & length(indexfleets) == 1) {
+            indexfleets <- rep(indexfleets, n)
+          }
+          if (length(indexfleets) != n) {
+            warning("Skipping index plots: length(indexfleets) should be 1 or n = ",
+                    n, ".")
+            indexfleets <- NULL
+          }
+        }
+      }
+      # check for mismatched lengths of list elements
+      if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
+        message("indexfleets:")
+        print(indexfleets)
+        warning("Skipping index plots:\n",
+                "Fleets have different numbers of indices listed in 'indexfleets'.")
+        indexfleets <- NULL
+      }
+
+      # figure out suffix to add to index plots
+      index_plot_suffix <- rep("", length(indexfleets))
+      # if more than one index is compared, add suffix to filename
+      if (length(indexfleets[[1]]) > 1) {
+        for (iindex in 1:length(indexfleets[[1]])) {
+          fleets <- as.numeric(data.frame(indexfleets)[iindex, ])
+          if (length(unique(fleets)) == 1) {
+            index_plot_suffix[iindex] <- paste0("_flt", fleets[1])
+          } else {
+            index_plot_suffix[iindex] <- paste0("_index", iindex)
+          }
+        }
+      }
+    } # end check for index plots (subplots %in% 13:14)
+
+    # setup colors, points, and line types
+    if (is.null(col) & nlines > 3) col <- rich.colors.short(nlines + 1)[-1]
+    if (is.null(col) & nlines < 3) col <- rich.colors.short(nlines)
+    if (is.null(col) & nlines == 3) col <- c("blue", "red", "green3")
+    if (is.null(shadecol)) {
+      # new approach thanks to Trevor Branch
+      shadecol <- adjustcolor(col, alpha.f = shadealpha)
+    }
+    # set pch values if no input
+    if (is.null(pch)) {
+      pch <- rep(1:25, 10)[1:nlines]
     }
 
-    # do some scaling of y-axis
-    yunits <- 1
-    if(rescale & ylim[2] > 1e3 & ylim[2] < 1e6){
-      yunits <- 1e3
-      ylab <- gsub("(t)","(x1000 t)", ylab, fixed=TRUE)
-      ylab <- gsub("eggs","x1000 eggs", ylab, fixed=TRUE)
+    # if line stuff is shorter than number of lines, recycle as needed
+    if (length(col) < nlines) col <- rep(col, nlines)[1:nlines]
+    if (length(pch) < nlines) pch <- rep(pch, nlines)[1:nlines]
+    if (length(lty) < nlines) lty <- rep(lty, nlines)[1:nlines]
+    if (length(lwd) < nlines) lwd <- rep(lwd, nlines)[1:nlines]
+
+    if (!is.expression(legendlabels[1]) && is.null(legendlabels)) {
+      legendlabels <- paste("model", 1:nlines)
     }
-    if(rescale & ylim[2] > 1e6){
-      yunits <- 1e6
-      ylab <- gsub("(t)","(million t)", ylab, fixed=TRUE)
-      ylab <- gsub("eggs","millions of eggs", ylab, fixed=TRUE)
+    if (is.null(legendorder)) {
+      legendorder <- 1:nlines
     }
-    if(rescale & ylim[2] > 1e9){
-      yunits <- 1e9
-      ylab <- gsub("million","billion", ylab, fixed=TRUE)
+
+    # open new window if requested
+    if (plot & new & !pdf) {
+      dev.new(
+        width = pwidth,
+        height = pheight,
+        pointsize = ptsize,
+        record = TRUE
+      )
+      par(par)
     }
-    if(!add){
-      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=ylab,
-           xaxs=xaxs,yaxs=yaxs,axes=FALSE)
+
+    # get MCMC results if requested
+    for (iline in (1:nlines)[mcmcVec]) {
+      imodel <- models[iline]
+
+      # reset values to NA for mcmc columns only
+      cols <- imodel
+      SpawnBioLower[, cols] <- SpawnBioUpper[, cols] <- SpawnBio[, cols] <- NA
+      BratioLower[, cols] <- BratioUpper[, cols] <- Bratio[, cols] <- NA
+      SPRratioLower[, cols] <- SPRratioUpper[, cols] <- SPRratio[, cols] <- NA
+      recruitsLower[, cols] <- recruitsUpper[, cols] <- recruits[, cols] <- NA
+      recdevsLower[, cols] <- recdevsUpper[, cols] <- recdevs[, cols] <- NA
+
+      ### get MCMC for SpawnBio
+      tmp <- grep("SSB", names(mcmc[[imodel]])) # try it to see what you get
+      # exclude rows that aren't part of the timseries
+      tmp2 <- c(
+        grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
+        grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+        grep("SSB_SPRtgt", names(mcmc[[imodel]]), ignore.case = TRUE),
+        grep("SSB_MSY", names(mcmc[[imodel]]), ignore.case = TRUE)
+      )
+      tmp <- setdiff(tmp, tmp2)
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        SpawnBio[, imodel] <- med[match(SpawnBio$Label, mcmclabs)]
+        SpawnBioLower[, imodel] <- lower[match(SpawnBioLower$Label, mcmclabs)]
+        SpawnBioUpper[, imodel] <- upper[match(SpawnBioUpper$Label, mcmclabs)]
+      }
+
+      ### get MCMC for Bratio
+      tmp <- grep("Bratio", names(mcmc[[imodel]])) # try it to see what you get
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        Bratio[, imodel] <- med[match(Bratio$Label, mcmclabs)]
+        BratioLower[, imodel] <- lower[match(BratioLower$Label, mcmclabs)]
+        BratioUpper[, imodel] <- upper[match(BratioUpper$Label, mcmclabs)]
+      }
+
+      ### get MCMC for SPRratio
+      # try it to see what you get
+      tmp <- grep("SPRratio", names(mcmc[[imodel]]))
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        SPRratio[, imodel] <- med[match(SPRratio$Label, mcmclabs)]
+        SPRratioLower[, imodel] <- lower[match(SPRratioLower$Label, mcmclabs)]
+        SPRratioUpper[, imodel] <- upper[match(SPRratioUpper$Label, mcmclabs)]
+      }
+
+      ### get MCMC for recruits
+      tmp <- grep("^Recr_", names(mcmc[[imodel]])) # try it to see what you get
+      # exclude rows that aren't part of the timseries
+      tmp2 <- grep("Recr_unfished", names(mcmc[[imodel]]), ignore.case = TRUE)
+      tmp <- setdiff(tmp, tmp2)
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        # mean recruitment should be more comparable
+        mean <- apply(mcmc.tmp, 2, mean, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        if (!meanRecWarning) {
+          message(
+            "note: using mean recruitment from MCMC instead of median,\n",
+            "because it is more comparable to MLE\n"
+          )
+          meanRecWarning <- TRUE
+        }
+        recruits[, imodel] <- mean[match(recruits$Label, mcmclabs)]
+        recruitsLower[, imodel] <- lower[match(recruitsLower$Label, mcmclabs)]
+        recruitsUpper[, imodel] <- upper[match(recruitsUpper$Label, mcmclabs)]
+      }
+
+      ### get MCMC for recdevs
+      # get values from mcmc to replace
+      tmp <- unique(c(
+        grep("_RecrDev_", names(mcmc[[imodel]])),
+        grep("_InitAge_", names(mcmc[[imodel]])),
+        grep("ForeRecr_", names(mcmc[[imodel]]))
+      ))
+      if (length(tmp) > 0) { # there are some mcmc values to use
+        # subset of columns from MCMC for this model
+        mcmc.tmp <- mcmc[[imodel]][, tmp]
+        mcmclabs <- names(mcmc.tmp)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        recdevs[, imodel] <- med[match(recdevs$Label, mcmclabs)]
+        recdevsLower[, imodel] <- lower[match(recdevsLower$Label, mcmclabs)]
+        recdevsUpper[, imodel] <- upper[match(recdevsUpper$Label, mcmclabs)]
+      }
     }
-    if(show_uncertainty){
-      # add shading for undertainty
-      addpoly(yrvec=SpawnBio$Yr[-(1:2)], lower=SpawnBioLower[-(1:2),],
-              upper=SpawnBioUpper[-(1:2),])
-      # equilibrium spawning biomass year by model
-      xEqu <- SpawnBio$Yr[2] - (1:nlines)/nlines
-    }else{
-      # equilibrium spawning biomass year by model
-      xEqu <- rep(SpawnBio$Yr[2], nlines)
+
+    if (is.null(endyrvec)) {
+      endyrvec <- endyrs + 1
     }
-    # draw points and lines
-    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
-              col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
-    }else{
-      # spread out points with interval equal to spacepoints and
-      # staggering equal to staggerpoints
-      matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
-              col=col,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
-      SpawnBio2 <- SpawnBio
-      for(iline in 1:nlines){
+    if (length(endyrvec) == 1) {
+      endyrvec <- rep(endyrvec, nlines)
+    }
+    # not sure why there should be NA values for Yr column in recdevs,
+    # but old code to eliminate the devs past endyr wasn't working as
+    # configured before
+    recdevs <- recdevs[!is.na(recdevs$Yr), ]
+    recdevsLower <- recdevsLower[!is.na(recdevsLower$Yr), ]
+    recdevsUpper <- recdevsUpper[!is.na(recdevsUpper$Yr), ]
+
+
+    # change to NA any values beyond endyr
+    if (!is.null(endyrvec)) {
+      for (iline in 1:nlines) {
+        endyr <- endyrvec[iline]
         imodel <- models[iline]
-        SpawnBio2[(SpawnBio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints,
-                  imodel] <- NA
-      }
-      matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
-              col=col,pch=pch,lwd=lwd,type="p", ylim = ylim, add = TRUE)
-    }
-
-    if(show_equilibrium){
-    ## add arrows for equilibrium values
-    old_warn <- options()$warn      # previous setting
-    options(warn=-1)                # turn off "zero-length arrow" warning
-    if(show_uncertainty){
-      arrows(x0=xEqu[models[uncertainty]],
-             y0=as.numeric(SpawnBioLower[1,models[uncertainty]]),
-             x1=xEqu[models[uncertainty]],
-             y1=as.numeric(SpawnBioUpper[1,models[uncertainty]]),
-             length=0.01, angle=90, code=3, col=col[uncertainty],
-             lwd=2)
-    }
-    options(warn=old_warn)  #returning to old value
-    ## add points at equilibrium values
-    points(x=xEqu, SpawnBio[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
-    }
-    # add axes
-    if(!add){
-      abline(h=0,col="grey")
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
-      }
-      
-      # add shaded area over forecast years if at more than 1 forecast year is shown
-      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
-        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
-             xright=par()$usr[2], ytop=par()$usr[4],
-             col=gray(0, alpha=0.1), border=NA)
-      }
-      yticks <- pretty(ylim)
-      axis(2,at=yticks,labels=format(yticks/yunits),las=1)
-      box()
-    }
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-  # function to plot biomass ratio (may be identical to previous plot)
-  plotBratio <- function(show_uncertainty=TRUE){
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-    # get axis limits
-    if(is.null(xlim)){
-      xlim <- range(Bratio$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
-    ylim <- ylimAdj*range(0, Bratio[Bratio$Yr >= xlim[1] &
-                                    Bratio$Yr <= xlim[2],
-                                    models], na.rm=TRUE)
-    if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim/ylimAdj, BratioUpper[Bratio$Yr >= xlim[1] &
-                                                      Bratio$Yr <= xlim[2],
-                                                      models[uncertainty]], na.rm=TRUE)
-    }
-
-    # make plot
-    if(!add){
-      plot(0,type="n",xlim=xlim,ylim=ylim,xlab=labels[1],ylab=labels[3],
-           xaxs=xaxs,yaxs=yaxs,axes=FALSE)
-    }
-    if(show_uncertainty){
-      addpoly(Bratio$Yr, lower=BratioLower, upper=BratioUpper)
-    }
-
-    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
-    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(Bratio$Yr,Bratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
-      if(type!="l"){
-        Bratio2 <- Bratio
-        for(iline in 1:nlines){
-          imodel <- models[iline]
-          Bratio2[(Bratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+        SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
+        SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
+        SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
+        Bratio[Bratio$Yr > endyr, imodel] <- NA
+        BratioLower[Bratio$Yr > endyr, imodel] <- NA
+        BratioUpper[Bratio$Yr > endyr, imodel] <- NA
+        #### note: add generalized startyrvec option in the future
+        ## if(exists("startyrvec")){
+        ##   startyr <- startyrvec[iline]
+        ##   Bratio[Bratio$Yr < startyr, imodel] <- NA
+        ##   BratioLower[Bratio$Yr < startyr, imodel] <- NA
+        ##   BratioUpper[Bratio$Yr < startyr, imodel] <- NA
+        ## }
+        SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
+        SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
+        SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
+        Fvalue[Fvalue$Yr >= endyr, imodel] <- NA
+        FvalueLower[Fvalue$Yr >= endyr, imodel] <- NA
+        FvalueUpper[Fvalue$Yr >= endyr, imodel] <- NA
+        recruits[recruits$Yr > endyr, imodel] <- NA
+        recruitsLower[recruits$Yr > endyr, imodel] <- NA
+        recruitsUpper[recruits$Yr > endyr, imodel] <- NA
+        if (!is.null(recdevs)) {
+          recdevs[recdevs$Yr > endyr, imodel] <- NA
+          recdevsLower[recdevs$Yr > endyr, imodel] <- NA
+          recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
         }
-        matplot(Bratio2$Yr,Bratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
       }
     }
 
 
-    yticks <- pretty(par()$yaxp[1:2])
-    if(btarg>0){
-      abline(h=btarg,col="red",lty=2)
-      text(min(Bratio$Yr)+4,btarg+0.03,labels[10],adj=0)
-      yticks <- sort(c(btarg,yticks))
-    }
-    if(minbthresh>0){
-      abline(h=minbthresh,col="red",lty=2)
-      text(min(Bratio$Yr)+4,minbthresh+0.03,labels[11],adj=0)
-      yticks <- sort(c(minbthresh,yticks))
-    }
-    if(!add){
-      abline(h=0,col="grey")
-      abline(h=1,col="grey",lty=2)
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
+    # function to add shaded uncertainty intervals behind line
+    # requires the existence of the TRUE/FALSE vector "uncertainty"
+    addpoly <- function(yrvec, lower, upper) {
+      lower[lower < 0] <- 0 # max of value or 0
+      for (iline in (1:nlines)[uncertainty]) {
+        imodel <- models[iline]
+        good <- !is.na(lower[, imodel]) & !is.na(upper[, imodel])
+        polygon(
+          x = c(yrvec[good], rev(yrvec[good])),
+          y = c(lower[good, imodel], rev(upper[good, imodel])),
+          border = NA, col = shadecol[iline]
+        )
+        #      lines(yrvec[good],lower[good,imodel],lty=3,col=col[iline])
+        #      lines(yrvec[good],upper[good,imodel],lty=3,col=col[iline])
       }
-      # add shaded area over forecast years if at more than 1 forecast year is shown
-      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
-        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
-             xright=par()$usr[2], ytop=par()$usr[4],
-             col=gray(0, alpha=0.1), border=NA)
-      }
-      axis(2,at=yticks, las=1)
-      box()
-    }
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-  plotSPRratio <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-    # get axis limits
-    if(is.null(xlim)){
-      xlim <- range(SPRratio$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
-    ylim <- ylimAdj*range(0, SPRratio[SPRratio$Yr >= xlim[1] &
-                                      SPRratio$Yr <= xlim[2],
-                                      models], na.rm=TRUE)
-    if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim/ylimAdj,
-                            SPRratioUpper[SPRratio$Yr >= xlim[1] &
-                                          SPRratio$Yr <= xlim[2],
-                                          models[uncertainty]], na.rm=TRUE)
     }
 
-    # make plot
-    if(!add){
-      if(!is.na(SPRratioLabel) &&
-         SPRratioLabel == paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
-        # add to right-hand outer margin to make space for second vertical axis
-        # store current margin parameters
-        # save old margins
-        newmar <- oldmar <- par()$mar
-        # match right-hand margin value to left-hand value
-        newmar[4] <- newmar[2]
-        # update graphics parameters
-        par(mar=newmar)
+    ## equ <- -(1:2) # IGT 2020/3/12: this variable seems to not be used
+
+    # function to plot spawning biomass
+    plotSpawnBio <- function(show_uncertainty = TRUE) {
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
       }
-      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1],
-           ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
-      axis(2)
-    }
-    if(show_uncertainty){
-      addpoly(SPRratio$Yr, lower=SPRratioLower, upper=SPRratioUpper)
-    }
-    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
-    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(SPRratio$Yr,SPRratio[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
-      if(type!="l"){
-        SPRratio2 <- SPRratio
-        for(iline in 1:nlines){
-          imodel <- models[iline]
-          SPRratio2[(SPRratio2$Yr-initpoint)%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
+      # get axis limits
+      if (is.null(xlim)) {
+        if (show_equilibrium) {
+          xlim <- range(SpawnBio$Yr)
+        } else {
+          xlim <- range(SpawnBio$Yr[-c(1, 2)])
         }
-        matplot(SPRratio2$Yr,SPRratio2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
+        }
       }
-    }
-    abline(h=0,col="grey")
-    if(sprtarg>0){
-      if(SPRratioLabel=="1-SPR"){
-        # if starter file chooses raw SPR as the option for reporting, don't show ratio
-        abline(h=sprtarg,col="red",lty=2)
-        text(SPRratio$Yr[1]+4,(sprtarg+0.03),labels[10],adj=0)
-        mtext(side=2,line=3,SPRratioLabel)
-      }else{
-        # draw line at sprtarg
+      ylim <- ylimAdj * range(0, SpawnBio[
+        SpawnBio$Yr >= xlim[1] &
+          SpawnBio$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        ylim <- range(ylim, ylimAdj * SpawnBioUpper[
+          SpawnBio$Yr >= xlim[1] &
+            SpawnBio$Yr <= xlim[2],
+          models[uncertainty]
+        ], na.rm = TRUE)
+      }
+
+      # set units on spawning biomass plot
+      if (length(unique(SpawnOutputUnits)) != 1) {
+        warning(
+          "Some models may have different units",
+          " for spawning output than others"
+        )
+      }
+      if (any(SpawnOutputUnits == "numbers")) {
+        ylab <- labels[12] # numbers
+      } else {
+        ylab <- labels[2] # biomass
+      }
+
+      # do some scaling of y-axis
+      yunits <- 1
+      if (rescale & ylim[2] > 1e3 & ylim[2] < 1e6) {
+        yunits <- 1e3
+        ylab <- gsub("(t)", "(x1000 t)", ylab, fixed = TRUE)
+        ylab <- gsub("eggs", "x1000 eggs", ylab, fixed = TRUE)
+      }
+      if (rescale & ylim[2] > 1e6) {
+        yunits <- 1e6
+        ylab <- gsub("(t)", "(million t)", ylab, fixed = TRUE)
+        ylab <- gsub("eggs", "millions of eggs", ylab, fixed = TRUE)
+      }
+      if (rescale & ylim[2] > 1e9) {
+        yunits <- 1e9
+        ylab <- gsub("million", "billion", ylab, fixed = TRUE)
+      }
+      if (!add) {
+        plot(0,
+          type = "n", xlim = xlim, ylim = ylim, xlab = labels[1], ylab = ylab,
+          xaxs = xaxs, yaxs = yaxs, axes = FALSE
+        )
+      }
+      if (show_uncertainty) {
+        # add shading for undertainty
+        addpoly(
+          yrvec = SpawnBio$Yr[-(1:2)], lower = SpawnBioLower[-(1:2), ],
+          upper = SpawnBioUpper[-(1:2), ]
+        )
+        # equilibrium spawning biomass year by model
+        xEqu <- SpawnBio$Yr[2] - (1:nlines) / nlines
+      } else {
+        # equilibrium spawning biomass year by model
+        xEqu <- rep(SpawnBio$Yr[2], nlines)
+      }
+      # draw points and lines
+      if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
+        matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+          col = col, pch = pch, lty = lty, lwd = lwd, type = type,
+          ylim = ylim, add = TRUE
+        )
+      } else {
+        # spread out points with interval equal to spacepoints and
+        # staggering equal to staggerpoints
+        matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+          col = col, lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
+        )
+        SpawnBio2 <- SpawnBio
+        for (iline in 1:nlines) {
+          imodel <- models[iline]
+          SpawnBio2[
+            (SpawnBio2$Yr - initpoint) %% spacepoints !=
+              (staggerpoints * iline) %% spacepoints,
+            imodel
+          ] <- NA
+        }
+        matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
+          col = col, pch = pch, lwd = lwd, type = "p", ylim = ylim, add = TRUE
+        )
+      }
+
+      if (show_equilibrium) {
+        ## add arrows for equilibrium values
+        old_warn <- options()$warn # previous setting
+        options(warn = -1) # turn off "zero-length arrow" warning
+        if (show_uncertainty) {
+          arrows(
+            x0 = xEqu[models[uncertainty]],
+            y0 = as.numeric(SpawnBioLower[1, models[uncertainty]]),
+            x1 = xEqu[models[uncertainty]],
+            y1 = as.numeric(SpawnBioUpper[1, models[uncertainty]]),
+            length = 0.01, angle = 90, code = 3, col = col[uncertainty],
+            lwd = 2
+          )
+        }
+        options(warn = old_warn) # returning to old value
+        ## add points at equilibrium values
+        points(
+          x = xEqu, SpawnBio[1, models], col = col, pch = pch,
+          cex = 1.2, lwd = lwd
+        )
+      }
+      # add axes
+      if (!add) {
+        abline(h = 0, col = "grey")
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+
+        # add shaded area over forecast years if more than 1 forecast year shown
+        if (!is.null(endyrvec) &
+          max(endyrvec) > 1 + max(endyrs) &
+          shadeForecast) {
+          rect(
+            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
+            xright = par()$usr[2], ytop = par()$usr[4],
+            col = gray(0, alpha = 0.1), border = NA
+          )
+        }
         yticks <- pretty(ylim)
-        if(!is.na(SPRratioLabel) &&
-           SPRratioLabel==paste0("(1-SPR)/(1-SPR_", floor(100*sprtarg), "%)")){
-          # add right-hand vertical axis showing 1-SPR
-          abline(h=1,col="red",lty=2)
-          text(SPRratio$Yr[1]+4,1+0.03,labels[10],adj=0)
-          axis(4,at=yticks,labels=yticks*(1-sprtarg),las=1)
-          mtext(side=4,line=3,"1 - SPR")
-          # line below has round to be more accurate than the floor which is used
-          # in the test above and in SS
-          mtext(side=2,line=3,paste("(1-SPR)/(1-SPR_",100*sprtarg,"%)",sep=""))
-        }else{
-          message("No line added to SPR ratio plot, as the settings used in this model",
-                  "have not yet been tested in SSplotComparisons.")
-          mtext(side=2,line=3,SPRratioLabel)
-        }
-      }
-    }else{
-      mtext(side=2,line=3,FvalueLabel)
-    }
-    if(!add){
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
-      }
-      # add shaded area over forecast years if at more than 1 forecast year is shown
-      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
-        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
-             xright=par()$usr[2], ytop=par()$usr[4],
-             col=gray(0, alpha=0.1), border=NA)
-      }
-    }
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    box()
-    if(exists("oldmar")){
-      # restore old margin parameters
-      par(mar=oldmar)
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-
-  #### fishing mortality (however it is specified in the models)
-  plotF <- function(show_uncertainty=TRUE){ # plot biomass ratio (may be identical to previous plot)
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-    # get axis limits
-    if(is.null(xlim)){
-      xlim <- range(Fvalue$Yr)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
-    ylim <- ylimAdj*range(0, Fvalue[Fvalue$Yr >= xlim[1] &
-                                    Fvalue$Yr <= xlim[2],
-                                    models], na.rm=TRUE)
-    if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim/ylimAdj,
-                            FvalueUpper[Fvalue$Yr >= xlim[1] &
-                                        Fvalue$Yr <= xlim[2],
-                                        models[uncertainty]], na.rm=TRUE)
-    }
-
-    # make plot
-    if(!add){
-      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[1], 
-           ylab="", xaxs=xaxs, yaxs=yaxs, las=1, axes=FALSE)
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
-      }
-      axis(2)
-    }
-    if(show_uncertainty){
-      addpoly(Fvalue$Yr, lower=FvalueLower, upper=FvalueUpper)
-    }
-    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type=type, ylim = ylim, add = TRUE)
-    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(Fvalue$Yr,Fvalue[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="l", ylim = ylim, add = TRUE)
-      if(type!="l"){
-        Fvalue2 <- Fvalue
-        for(iline in 1:nlines){
-          imodel <- models[iline]
-          Fvalue2[Fvalue2$Yr%%spacepoints != (staggerpoints*iline)%%spacepoints, imodel] <- NA
-        }
-        matplot(Fvalue2$Yr,Fvalue2[,models],col=col,pch=pch,lty=lty,lwd=lwd,type="p", ylim = ylim, add = TRUE)
-      }
-    }
-    abline(h=0,col="grey")
-    mtext(side=2,line=3,FvalueLabel)
-    box()
-    if(legend) legendfun(legendlabels)
-
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-  plotRecruits <- function(show_uncertainty=TRUE, recruit_lines=TRUE){ # plot recruitment
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-    # determine x-limits
-    if(is.null(xlim)){
-      if(show_equilibrium){
-        xlim <- range(recruits$Yr)
-      } else {
-        xlim <- range(recruits$Yr[-c(1,2)])
-      }
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))) xlim[2] <- max(endyrvec)
-    }
-    
-    # determine y-limits
-    ylim <- ylimAdj*range(0, recruits[recruits$Yr >= xlim[1] &
-                                      recruits$Yr <= xlim[2],
-                                      models], na.rm=TRUE)
-    if(show_uncertainty){
-      ylim <- ylimAdj*range(ylim/ylimAdj,
-                            recruitsUpper[recruits$Yr >= xlim[1] &
-                                          recruits$Yr <= xlim[2],
-                                          models[uncertainty]], na.rm=TRUE)
-    }
-
-    # do some automatic scaling of the units
-    ylab <- labels[4]
-    yunits <- 1
-    if(ylim[2] > 1e3 & ylim[2] < 1e6){ # if max recruits a million and a billion
-      yunits <- 1e3
-      ylab <- gsub("1,000s","millions",ylab)
-    }
-    if(ylim[2] > 1e6){ # if max is greater than a billion (e.g. pacific hake)
-      yunits <- 1e6
-      ylab <- gsub("1,000s","billions",ylab)
-    }
-
-    # plot lines showing recruitment
-    if(spacepoints %in% c(0,1,FALSE) ){ # don't spread out points
-      matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type=type,
-              xlim=xlim,ylim=ylim,
-              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=add)
-    }else{ # spread out points with interval equal to spacepoints and staggering equal to staggerpoints
-      matplot(recruits$Yr[-(1:2)],recruits[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="l",
-              xlim=xlim,ylim=ylim,
-              xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE,add=add)
-      if(type!="l"){
-        recruits2 <- recruits
-        for(iline in 1:nlines){
-          imodel <- models[iline]
-          recruits2[(recruits2$Yr%%spacepoints-initpoint) != (staggerpoints*iline)%%spacepoints, imodel] <- NA
-        }
-        matplot(recruits2$Yr[-(1:2)],recruits2[-(1:2),models],col=col,pch=pch,lty=lty,lwd=lwd,type="p",
-                xlab=labels[1],ylab=ylab,xaxs=xaxs,yaxs=yaxs,axes=FALSE, ylim = ylim, add = TRUE)
-      }
-    }
-
-    ## Add points at equilibrium values. Note: I adapted this logic from the
-    ## SSB plot above.
-    if(show_uncertainty){
-        xEqu <- recruits$Yr[2] - (1:nlines)/nlines
-    }else{
-        xEqu <- rep(recruits$Yr[1], nlines)
-    }
-    if(show_equilibrium)
-        points(x=xEqu, y=recruits[1, models], col=col, pch=pch, cex=1.2, lwd=lwd)
-    # add uncertainty intervals when requested
-    if(show_uncertainty){
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        if(uncertainty[imodel]){
-          ## plot all but equilbrium values
-          xvec <- recruits$Yr
-          if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
-          old_warn <- options()$warn      # previous setting
-          options(warn=-1)                # turn off "zero-length arrow" warning
-          # arrows (-2 in vectors below is to remove initial year recruitment)
-          arrows(x0=xvec[-c(1,2)], y0=pmax(as.numeric(recruitsLower[-c(1,2),imodel]),0),
-                 x1=xvec[-c(1,2)], y1=as.numeric(recruitsUpper[-c(1,2),imodel]),
-                 length=0.01, angle=90, code=3, col=col[imodel])
-          options(warn=old_warn)  #returning to old value
-          if(show_equilibrium){
-            arrows(x0=xEqu[imodel],
-                   y0=pmax(as.numeric(recruitsLower[1,imodel]),0),
-                   x1=xEqu[imodel],
-                   y1=as.numeric(recruitsUpper[1,imodel]),
-                   length=0.01, angle=90, code=3, col=col[imodel])
-          }
-        }
-      }
-    }
-
-    abline(h=0,col="grey")
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    if(!add){
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
-      }
-      # add shaded area over forecast years if at more than 1 forecast year is shown
-      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
-        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
-             xright=par()$usr[2], ytop=par()$usr[4],
-             col=gray(0, alpha=0.1), border=NA)
-      }
-      yticks <- pretty(ylim)
-      axis(2,at=yticks,labels=format(yticks/yunits),las=1)
-      box()
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-  plotRecDevs <- function(show_uncertainty=TRUE){ # plot recruit deviations
-    # test for bad values
-    if(any(is.na(recdevs$Yr))){
-      warning("Recdevs associated with initial age structure may not be shown")
-    }
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-
-
-
-    # empty plot
-    if(is.null(xlim)){
-      xlim <- range(recdevs$Yr, na.rm=TRUE)
-      if(!is.null(endyrvec) & all(endyrvec < max(xlim))){
-        xlim[2] <- max(endyrvec)
-      }
-    }
-    ylim <- ylimAdj*range(recdevs[recdevs$Yr >= xlim[1] &
-                                  recdevs$Yr <= xlim[2],
-                                  models], na.rm=TRUE)
-    if(show_uncertainty){
-      if(all(is.na(recdevsLower[,models]))){
-        # can't do uncertainty if no range present
-        return(invisible(NA))
-      }
-      ylim <- ylimAdj*range(recdevsLower[recdevs$Yr >= xlim[1] &
-                                         recdevs$Yr <= xlim[2],
-                                         models],
-                            recdevsUpper[recdevs$Yr >= xlim[1] &
-                                         recdevs$Yr <= xlim[2],
-                                         models], na.rm=TRUE)
-    }
-    ylim <- range(-ylim,ylim) # make symmetric
-
-    if(!add){
-      plot(0, xlim=xlim, ylim=ylim, axes=FALSE,
-           type="n", xlab=labels[1], ylab=labels[5], xaxs=xaxs, yaxs=yaxs, las=1)
-      axis(2, las=1)
-      abline(h=0, col="grey")
-    }
-    
-    if(show_uncertainty){
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        if(uncertainty[imodel]){
-          xvec <- recdevs$Yr
-          if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
-          arrows(x0=xvec, y0=as.numeric(recdevsLower[,imodel]),
-                 x1=xvec, y1=as.numeric(recdevsUpper[,imodel]),
-                 length=0.01, angle=90, code=3, col=col[iline])
-        }
-      }
-    }
-
-    # loop over vector of models to add lines
-    for(iline in 1:nlines){
-      imodel <- models[iline]
-      yvec <- recdevs[, imodel]
-      xvec <- recdevs$Yr
-      points(xvec,yvec,pch=pch[iline],lwd=lwd[iline],col=col[iline])
-    }
-    if(!add){
-      if(tickEndYr){ # include ending year in axis labels
-        ticks <- graphics::axTicks(1) # default tick positions if axis(1) were run
-        # make axis (excluding anything after the max ending year)
-        axis(1, at=c(ticks[ticks<max(endyrvec)], max(endyrvec)))
-      }else{
-        # nothing special (may include labels beyond the ending year)
-        axis(1)
-      }
-      # add shaded area over forecast years if at more than 1 forecast year is shown
-      if(!is.null(endyrvec) & max(endyrvec) > 1+max(endyrs) & shadeForecast){
-        rect(xleft=max(endyrs)+1, ybottom=par()$usr[3],
-             xright=par()$usr[2], ytop=par()$usr[4],
-             col=gray(0, alpha=0.1), border=NA)
-      }
-      box()
-    }
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-
-      ## xmax <- 1.1*max(reldep)
-      ## ymax <- 1.1*max(1,relspr[!is.na(relspr)])
-      ## ylab <- managementratiolabels[1,2]
-      ## phasefunc <- function(){
-      ##   if(!add) plot(reldep,relspr,xlab="B/Btarget",
-      ##                 xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
-      ##   lines(reldep,relspr,type="o",col=col2)
-      ##   abline(h=0,col="grey")
-      ##   abline(v=0,col="grey")
-      ##   lines(reldep,relspr,type="o",col=col2)
-      ##   points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
-      ##   abline(h=1,col=col4,lty=2)
-      ##   abline(v=1,col=col4,lty=2)}
-
-  plotPhase <- function(show_uncertainty=TRUE){ # plot biomass ratio vs. SPRratio
-    # only show uncertainty if values are present for at least one model
-    if(!any(uncertainty)){
-      show_uncertainty <- FALSE
-    }
-    # get axis limits
-    xlim <- range(0, ylimAdj*Bratio[,models], na.rm=TRUE)
-    ylim <- range(0, ylimAdj*SPRratio[,models], na.rm=TRUE)
-
-    # make plot
-    if(!add){
-      plot(0, type="n", xlim=xlim, ylim=ylim, xlab=labels[3],
-           ylab=SPRratioLabel, xaxs=xaxs, yaxs=yaxs, las=1)
-    }
-
-    goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
-    lastyr <- max(goodyrs)
-    for(iline in 1:nlines){
-      imodel <- models[iline]
-      # no option get to stagger points in phase plots, only the last point is marked
-      xvals <- Bratio[Bratio$Yr %in% goodyrs, imodel]
-      yvals <- SPRratio[SPRratio$Yr %in% goodyrs, imodel]
-      lines(xvals,
-            yvals,
-            col=col[iline],
-            lty=lty[iline],lwd=lwd[iline],
-            type='l') # no user control of type to add points
-      # NA values and missing points will occur if final year is different
-      points(tail(xvals,1),
-             tail(yvals,1),
-             col=col[iline],
-             pch=pch[iline],lwd=lwd[iline])
-    }
-
-    abline(h=1,v=1,col="grey",lty=2)
-
-    if(btarg>0) abline(v=btarg,col="red",lty=2)
-    if(sprtarg>0) abline(h=sprtarg,col="red",lty=2)
-
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-    # return upper y-limit
-    return(ylim[2])
-  }
-
-  ###
-  ## notes from Ian on revised approach to indices:
-  #
-  #    this function was originally written for the 2011 hake assessment
-  #    where models with different fleet structures were being compared
-  #    however, that represents a relatively rare case.
-  #    in general, it should be possible to loop over all fleets with indices
-  #    and compare them across all models
-  #    instead of checking for alignment of indices$Fleet within the
-  #    plotIndices() function itself, this function can occur within a loop over
-  #    fleet numbers. An initial check for matching sets of fleets could be used
-  #    and only revert to requiring the indexfleets input if there is a mismatch
-  #
-
-  plotIndices <- function(log=FALSE){ # plot different fits to a single index of abundance
-    # get a subset of index table including only 1 index per model
-    # (hopefully matching each other)
-    indices2 <- NULL
-    for(iline in 1:nlines){
-      imodel <- models[iline]
-      subset1 <- indices$imodel==imodel & !is.na(indices$Like)
-      subset2 <- indices$imodel==imodel & indices$Yr <= endyrvec[iline]
-      if(length(unique(indices$Fleet[subset2])) > 1){
-        if(!is.null(indexfleets[imodel])){
-          ifleet <- indexfleets[imodel]
-          indices2 <- rbind(indices2,indices[subset2 & indices$Fleet==ifleet,])
-        }else{
-          message("some models have multiple indices, 'indexfleets' required\n",
-                  "to compare fits to indices.")
-          return(invisible(NA))
-        }
-      }else{
-        indices2 <- rbind(indices2,indices[subset2,])
-      }
-    }
-    # get quantities for plot
-    yr <- indices2$Yr
-    obs <- indices2$Obs
-    exp <- indices2$Exp
-    imodel <- indices2$imodel
-    Q <- indices2$Calc_Q
-    if(log){
-      obs <- log(obs)
-      exp <- log(exp)
-      ylab=labels[7]
-    }else{
-      ylab=labels[6]
-    }
-
-    # get uncertainty intervals if requested
-    if(indexUncertainty){
-      if(indexPlotEach) {
-        if(is.null(indexSEvec)){
-          indexSEvec <- indices2$SE
-        }
-        y <- obs
-        if(log){
-          upper <- qnorm(.975,mean=y,sd=indexSEvec)
-          lower <- qnorm(.025,mean=y,sd=indexSEvec)
-        }else{
-          upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
-          lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
-        }
-      }else {
-        subset <- indices2$imodel==models[1]
-        if(is.null(indexSEvec)){
-          indexSEvec <- indices2$SE[subset]
-        }
-        y <- obs[subset]
-        if(log){
-          upper <- qnorm(.975,mean=y,sd=indexSEvec)
-          lower <- qnorm(.025,mean=y,sd=indexSEvec)
-        }else{
-          upper <- qlnorm(.975,meanlog=log(y),sdlog=indexSEvec)
-          lower <- qlnorm(.025,meanlog=log(y),sdlog=indexSEvec)
-        }
-      }
-    }else{
-      upper <- NULL
-      lower <- NULL
-    }
-
-    ### make plot of index fits
-    # calculate ylim (excluding dummy observations from observed but not expected)
-    sub <- !is.na(indices2$Like)
-    ylim <- range(exp, obs[sub], lower[sub], upper[sub], na.rm=TRUE)
-    # if no values included in subset, then set ylim based on all values
-    if(!any(sub)){
-      ylim <- range(exp, obs, lower, upper, na.rm=TRUE)
-    }
-    if(!log){
-      # 0 included if not in log space
-      ylim <- c(0, ylimAdj * ylim[2])
-    }else{
-      # add padding on top and bottom
-      ylim <- ylim + c(-1, 1) * (ylimAdj - 1) * diff(ylim)
-    }
-
-    meanQ <- rep(NA,nlines)
-
-    if(!add){
-      if(!is.null(endyrvec)) {
-        xlim <- c(min(yr), max(endyrvec))
-      }else {
-        xlim <- range(yr)
-      }
-      plot(0, type = "n", xlim = xlim, yaxs = yaxs,
-           ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE)
-    }
-    if(!log & yaxs != "i"){
-      abline(h = 0, col = "grey")
-    }
-    Qtext <- rep("(Q =", nlines)
-    for(iline in (1:nlines)[!mcmcVec]){
-      imodel <- models[iline]
-      subset <- indices2$imodel==imodel
-      meanQ[iline] <- mean(Q[subset])
-      if(indexQlabel && any(Q[subset]!=mean(Q[subset]))){
-        Qtext[iline] <- "(mean Q ="
-      }
-      x <- yr[subset]
-      y <- exp[subset]
-      lines(x, y, pch=pch[iline], lwd=lwd[iline],
-            lty=lty[iline], col=col[iline], type=type)
-    }
-    legendlabels2 <- legendlabels
-    if(indexQlabel){
-      legendlabels2 <- paste(legendlabels, Qtext,
-                             format(meanQ, digits=indexQdigits), ")")
-    }
-    if(legend){
-      # add legend if requested
-      legendfun(legendlabels)
-    }
-
-    # get uncertainty intervals if requested
-    # put observed values on top
-    #subset <- indices2$imodel==1
-    # points(yr[subset],obs[subset],pch=16,cex=1.5,type="o",lty=3) # connected by dashed lines
-    if(indexPlotEach) {  #plot observed values for each model or just the first model
-      for(iline in (1:nlines)[!mcmcVec]){
-        adj <- 0.2*iline/nlines - 0.1
-        imodel <- models[iline]
-        subset <- indices2$imodel==imodel & !is.na(indices2$Like)
-        if(indexUncertainty){
-          arrows(x0=yr[subset]+adj, y0=lower[subset],
-                 x1=yr[subset]+adj, y1=upper[subset],
-                 length=0.01, angle=90, code=3, col=shadecol[iline])
-        }
-        points(yr[subset]+adj, obs[subset], pch=21, cex=1.5, col=1, bg=shadecol[iline])
-      }
-    }else {
-      imodel <- models[which(endyrvec==max(endyrvec))[1]]
-      subset <- indices2$imodel==imodel & !is.na(indices2$Like)
-      if(indexUncertainty)
-        arrows(x0=yr[subset], y0=lower[subset],
-               x1=yr[subset], y1=upper[subset],
-               length=0.01, angle=90, code=3, col=1)
-      points(yr[subset],obs[subset],pch=16,cex=1.5)
-    }
-
-    if(!add){
-      xticks <- pretty(xlim)
-      axis(1, at=xticks, labels=format(xticks))
-      if(tickEndYr){
-        axis(1, at=max(endyrvec))
-      }
-      axis(2)
-      box()
-    }
-    # return upper y-limit
-    return(ylim[2])
-  } # end plotIndices function
-
-  plotDensities <- function(parname,xlab,denslwd,limit0=TRUE,cumulative=FALSE){
-    if(any(!mcmcVec)) {
-      vals <- rbind(pars[pars$Label==parname, names(pars)!="recdev"],
-                    quants[quants$Label==parname,])
-      if(nrow(vals)!=1){
-        warn <- paste("problem getting values for parameter:",parname,"")
-        if(nrow(vals)==0){
-          warn <- paste(warn,
-                        "no Labels match in either parameters or derived quantities")
-        }
-        if(nrow(vals)>0){
-          warn <- paste(warn,
-                        "Too many matching Labels:",
-                        pars$Label[pars$Label==parname],
-                        quants$Label[quants$Label==parname])
-        }
-        warning(warn)
-        return(NULL)  #previous versions had an else statement, but this will end the function here instead and saves indenting
-      }
-      valSDs <- rbind(parsSD[pars$Label==parname,],
-                      quantsSD[quants$Label==parname,])
-    }
-
-    xmax <- xmin <- ymax <- NULL # placeholder for limits
-    mcmcDens <- vector(mode="list",length=nlines)   #placeholder for the mcmc density estimates, if there are any
-    # loop over models to set range
-    good <- rep(TRUE,nlines) # indicator of which values to plot
-    for(iline in 1:nlines){
-      imodel <- models[iline]
-      if(mcmcVec[iline]) {
-        # figure out which columns of posteriors to use
-        mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
-        # warn if it can't find the columns
-        if(length(mcmcColumn)==0) {
-          message("No columns selected from MCMC for '",parname,"' in model ",imodel)
-          good[iline] <- FALSE
-        }
-        # warn if too many columns
-        if(length(mcmcColumn)>1) {
-          message("Too many columns selected from MCMC for model ",imodel,":")
-          print(names(mcmc[[imodel]])[mcmcColumn])
-          warning("Please specify a unique label in the mcmc dataframe",
-                  "or specify mcmcVec=FALSE for model ",
-                  imodel," (or mcmcVec=FALSE applying to all models).")
-          good[iline] <- FALSE
-        }
-        # add density
-        if(good[iline]){
-          mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          xmin <- min(xmin, quantile(mcmcVals,0.005, na.rm=TRUE))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-          xmax <- max(xmax, quantile(mcmcVals,0.995, na.rm=TRUE))
-          z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
-          z$x <- z$x[c(1,1:length(z$x),length(z$x))]
-          z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
-          ymax <- max(ymax,max(z$y))  #update ymax
-          mcmcDens[[iline]] <- z      #save the density estimate for later plotting
-        }
-      }else{
-        parval <- vals[1,imodel]
-        parSD <- valSDs[1,imodel]
-        if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
-        if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          # update x range
-          xmin <- min(xmin, qnorm(0.005,parval,parSD))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-          xmax <- max(xmax, qnorm(0.995,parval,parSD))
-          # calculate density to get y range
-          x <- seq(xmin,xmax,length=500)
-          mle <- dnorm(x,parval,parSD)
-          mlescale <- 1/(sum(mle)*mean(diff(x)))
-          mle <- mle*mlescale
-          # update ymax
-          ymax <- max(ymax,max(mle))
-        }else{ # if no SD, at least make sure interval includes MLE estimate
-          xmin <- min(xmin, parval)
-          xmax <- max(xmax, parval)
-        }
-      }
-    }
-    if(grepl("Bratio",parname)) xmin <- 0 # xmin=0 for relative spawning biomass plots
-    if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-    if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-
-    # calculate x-limits and vector of values for densities
-    xlim <- c(xmin,xmin+(xmax-xmin)*densityscalex)
-    x <- seq(xmin,xmax,length=500)
-
-    # calculate some scaling stuff
-    xunits <- 1
-    if(rescale & xmax > 1e3 & xmax < 3e6){
-      xunits <- 1e3
-      #xlab <- gsub("mt","x1000 mt",xlab)
-      xlab2 <- "'1000 t"
-    }
-    if(rescale & xmax > 3e6){
-      xunits <- 1e6
-      #xlab <- gsub("mt","million mt",xlab)
-      xlab2 <- "million t"
-    }
-    # make empty plot
-    if(is.null(ymax)){
-      message("  skipping plot of ", parname,
-              " because it seems to not be estimated in any model")
-    }else{
-      if(!add) {
-        if(cumulative) {
-          plot(0, type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs,
-               ylim = c(0, 1), xlab = xlab, ylab = "")
-        } else {
-          plot(0, type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs, 
-               ylim = c(0, 1.1*ymax*densityscaley), xlab = xlab, ylab = "")
-        }
-      }
-      # add vertical lines for target and threshold relative spawning biomass values
-      if(grepl("Bratio",parname)){
-        if(btarg>0){
-          abline(v=btarg,col="red",lty=2)
-          text(btarg+0.03,par()$usr[4],labels[10],adj=1.05,srt=90)
-        }
-        if(minbthresh>0){
-          abline(v=minbthresh,col="red",lty=2)
-          text(minbthresh+0.03,par()$usr[4],labels[11],adj=1.05,srt=90)
-        }
-      }
-
-      symbolsQuants <- c(0.025,0.125,0.25,0.5,0.75,0.875,0.975)
-      # loop again to make plots
-      for(iline in (1:nlines)[good]){
-        imodel <- models[iline]
-        if(mcmcVec[iline]) {
-          # make density for MCMC posterior
-          mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
-          mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          x2 <- quantile(mcmcVals, symbolsQuants, na.rm=TRUE)   # for symbols on plot
-          #find the positions in the density that are closest to these quantiles
-          x <- mcmcDens[[iline]]$x
-          if(!cumulative) {
-            y <- mcmcDens[[iline]]$y
-            yscale <- 1/(sum(y)*mean(diff(x)))
-            y <- y*yscale
-          } else {
-            y <- cumsum(mcmcDens[[iline]]$y)/sum(mcmcDens[[iline]]$y)
-          }
-          y2 <- NULL
-          for(ii in x2) {
-            # find y-value associated with closest matching x-value
-            # "min" was added for a rare case where two values were equally close
-            y2 <- c(y2,min(y[abs(x-ii)==min(abs(x-ii))]))
-          }
-          # make shaded polygon
-          if(!cumulative) {
-            polygon(c(x[1],x,rev(x)[1]),c(0,y,0),col=shadecol[iline],border=NA)
-          } else {
-            # polygon for cumulative has extra point in bottom right
-            polygon(c(x[1],x,rev(x)[c(1,1)]),c(0,y,1,0),col=shadecol[iline],border=NA)
-          }
-          # add thicker line
-          lines(x,y,col=col[iline],lwd=2)
-          # add points on line and vertical line at median (hopefully)
-          if(!cumulative) {
-              if(densitysymbols) points(x2,y2,col=col[iline],pch=pch[iline])
-              #really hokey and assumes that the middle value of the vector of quantiles is the median
-              lines(rep(x2[median(1:length(x2))],2),c(0,y2[median(1:length(x2))]),col=col[iline])
-          } else {
-              if(densitysymbols) points(x2,symbolsQuants,col=col[iline],pch=pch[iline])
-              lines(rep(median(mcmcVals),2),c(0,0.5),col=col[iline])
-          }
-        }else{
-          # make normal density for MLE
-          parval <- vals[1,imodel]
-          parSD <- valSDs[1,imodel]
-          if(!is.na(parSD) && parSD>0){
-            xmin <- min(xmin, qnorm(0.005,parval,parSD))
-            if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-            if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-            x <- seq(xmin,max(xmax,xlim),length=500)
-            #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
-            x2 <- qnorm(symbolsQuants,parval,parSD)
-            if(cumulative) {
-                y <- mle <- pnorm(x,parval,parSD)  # smooth line
-                y2 <- mle2 <- pnorm(x2,parval,parSD) # symbols
-            } else {
-                mle <- dnorm(x,parval,parSD)  # smooth line
-                mle2 <- dnorm(x2,parval,parSD) # symbols
-                mlescale <- 1/(sum(mle)*mean(diff(x)))
-                y <- mle <- mle*mlescale
-                y2 <- mle2 <- mle2*mlescale
-            }
-            # add shaded polygons
-            polygon(c(x[1],x,rev(x)[1]),c(0,mle,0),col=shadecol[iline],border=NA)
-            lines(x,mle,col=col[iline],lwd=2)
-            if(!cumulative) {
-                if(densitysymbols) points(x2,mle2,col=col[iline],pch=pch[iline])
-                lines(rep(parval,2),c(0,dnorm(parval,parval,parSD)*mlescale),col=col[iline],lwd=denslwd) #
-            } else {
-                if(densitysymbols) points(x2,symbolsQuants,col=col[iline],pch=pch[iline])
-                lines(rep(parval,2),c(0,0.5),col=col[iline],lwd=denslwd) #
-            }
-          }else{
-            # add vertical line for estimate of no density can be added
-            abline(v=parval,col=col[iline],lwd=denslwd)
-          }
-        }
-        # should be able to move more stuff into this section
-        # that applies to both MLE and MCMC
-
-        if(densitytails & densitymiddle){
-          warning("You are shading both tails and central 95% of density plots",
-                  "which is illogical")
-        }
-
-        doShade <- FALSE
-        if(mcmcVec[iline]) {
-          doShade <- TRUE
-        } else {
-          if(!is.na(parSD) && parSD>0) {
-            doShade <- TRUE
-          }
-        }
-        if(densitytails & doShade) {
-          # figure out which points are in the tails of the distibutions
-          x.lower <- x[x<=x2[1]]
-          y.lower <- y[x<=x2[1]]
-          x.upper <- x[x>=rev(x2)[1]]
-          y.upper <- y[x>=rev(x2)[1]]
-          # add darker shading for tails
-          polygon(c(x.lower[1],x.lower,rev(x.lower)[1]),
-                  c(0,y.lower,0),col=shadecol[iline],border=NA)
-          polygon(c(x.upper[1],x.upper,rev(x.upper)[1]),
-                  c(0,y.upper,0),col=shadecol[iline],border=NA)
-        }
-        if(densitymiddle & doShade) {#} & !is.na(parSD) && parSD>0){
-          x.middle <- x[x>=x2[1] & x<=rev(x2)[1]]
-          y.middle <- y[x>=x2[1] & x<=rev(x2)[1]]
-          polygon(c(x.middle[1],x.middle,rev(x.middle)[1]),
-                  c(0,y.middle,0),col=shadecol[iline],border=NA)
-        }
-
-      }
-      # add axes and labels
-      if(!add) {
-        abline(h=0,col="grey")
-        xticks <- pretty(xlim)
-        axis(1, at=xticks, labels=format(xticks/xunits))
-        theLine <- 1
-        if(cumulative) {
-            axis(2,at=symbolsQuants,labels=format(symbolsQuants),las=1,cex.axis=0.9)
-            theLine <- 3
-        }
-        mtext(side=2,line=theLine,labels[9])
+        axis(2, at = yticks, labels = format(yticks / yunits), las = 1)
         box()
       }
-      if(xunits!=1){
-        message("x-axis for ",parname," in density plot has been divided by ",
-                xunits," (so may be in units of ",xlab2,")")
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
       }
-      # add legend
-      if(legend){
-        legendfun(legendlabels,cumulative)
-      }
+      # return upper y-limit
+      return(ylim[2])
     }
-    # in the future, this could return the upper y-limit,
-    # currently there's no control over ylim in these plots
-    return(NA)
-  } # end plotDensities function
 
-  uncertaintyplots <- intersect(c(2,4,6,8,10,12), subplots)
-  if(!any(uncertainty) & length(uncertaintyplots)>0){
-    # warn if uncertainty is off but uncertainty plots are requested
-    message("skipping plots with uncertainty:",paste(uncertaintyplots,collapse=","))
-  }
-  # subplot 1: spawning biomass
-  if(1 %in% subplots){
-    if(verbose){
-      message("subplot 1: spawning biomass")
-    }
-    if(plot){
-      ymax_vec[1] <- plotSpawnBio(show_uncertainty=FALSE)
-    }
-    if(print){
-      pngfun("compare1_spawnbio.png")
-      ymax_vec[1] <- plotSpawnBio(show_uncertainty=FALSE)
-      dev.off()
-    }
-  }
-
-  # subplot 2: spawning biomass with uncertainty intervals
-  if(2 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 2: spawning biomass with uncertainty intervals")
+    # function to plot biomass ratio (may be identical to previous plot)
+    plotBratio <- function(show_uncertainty = TRUE) {
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
       }
-      if(plot){
-        ymax_vec[2] <- plotSpawnBio(show_uncertainty=TRUE)
-      }
-      if(print){
-        pngfun("compare2_spawnbio_uncertainty.png")
-        ymax_vec[2] <- plotSpawnBio(show_uncertainty=TRUE)
-        dev.off()
-      }
-    }
-  }
-
-  # subplot 3: biomass ratio (hopefully equal to spawning relative spawning biomass)
-  if(3 %in% subplots){
-    if(verbose){
-      message("subplot 3: biomass ratio (hopefully equal to fraction of unfished)")
-    }
-    if(plot){
-      ymax_vec[3] <- plotBratio(show_uncertainty=FALSE)
-    }
-    if(print){
-      pngfun("compare3_Bratio.png")
-      ymax_vec[3] <- plotBratio(show_uncertainty=FALSE)
-      dev.off()
-    }
-  }
-
-  # subplot 4: biomass ratio with uncertainty
-  if(4 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 4: biomass ratio with uncertainty")
-      }
-      if(plot){
-        ymax_vec[4] <- plotBratio(show_uncertainty=TRUE)
-      }
-      if(print){
-        pngfun("compare4_Bratio_uncertainty.png")
-        ymax_vec[4] <- plotBratio(show_uncertainty=TRUE)
-        dev.off()
-      }
-    }
-  }
-
-  # subplot 5: SPR ratio
-  if(5 %in% subplots){
-    if(verbose){
-      message("subplot 5: SPR ratio")
-    }
-    if(plot){
-      ymax_vec[5] <- plotSPRratio(show_uncertainty=FALSE)
-    }
-    if(print){
-      pngfun("compare5_SPRratio.png")
-      ymax_vec[5] <- plotSPRratio(show_uncertainty=FALSE)
-      dev.off()
-    }
-  }
-
-  # subplot 6: SPR ratio with uncertainty
-  if(6 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 6: SPR ratio with uncertainty")
-      }
-      if(plot){
-        ymax_vec[6] <- plotSPRratio(show_uncertainty=TRUE)
-      }
-      if(print){
-        pngfun("compare6_SPRratio_uncertainty.png")
-        ymax_vec[6] <- plotSPRratio(show_uncertainty=TRUE)
-        dev.off()
-      }
-    }
-  }
-
-  # subplot 7: F (harvest rate or fishing mortality, however defined)
-  if(7 %in% subplots){
-    if(verbose){
-      message("subplot 7: F value")
-    }
-    if(plot){
-      ymax_vec[7] <- plotF(show_uncertainty=FALSE)
-    }
-    if(print){
-      pngfun("compare7_Fvalue.png")
-      ymax_vec[7] <- plotF(show_uncertainty=FALSE)
-      dev.off()
-    }
-  }
-  
-  # subplot 8: F (harvest rate or fishing mortality, however defined)
-  #            with uncertainty
-  if(8 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 8: F value with uncertainty")
-      }
-      if(plot){
-        ymax_vec[8] <- plotF(show_uncertainty=TRUE)
-      }
-      if(print){
-        pngfun("compare8_Fvalue_uncertainty.png")
-        ymax_vec[8] <- plotF(show_uncertainty=TRUE)
-        dev.off()
-      }
-    }
-  }
-  
-  # subplot 9: recruits
-  if(9 %in% subplots){
-    if(verbose){
-      message("subplot 9: recruits")
-    }
-    if(plot){
-      ymax_vec[9] <- plotRecruits(show_uncertainty=FALSE)
-    }
-    if(print){
-      pngfun("compare9_recruits.png")
-      ymax_vec[9] <- plotRecruits(show_uncertainty=FALSE)
-      dev.off()
-    }
-  }
-
-  # subplot 10: recruits with uncertainty
-  if(10 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 10: recruits with uncertainty")
-      }
-      if(plot){
-        ymax_vec[10] <- plotRecruits()
-      }
-      if(print){
-        pngfun("compare10_recruits_uncertainty.png")
-        ymax_vec[10] <- plotRecruits()
-        dev.off()
-      }
-    }
-  }
-
-  # subplot 11: recruit devs
-  if(11 %in% subplots){
-    if(verbose) message("subplot 11: recruit devs")
-    if(is.null(recdevs)){
-      message("No recdevs present in the model summary, skipping plot.")
-    }else{
-      if(plot){
-        ymax_vec[11] <- plotRecDevs(show_uncertainty=FALSE)
-      }
-      if(print){
-        pngfun("compare11_recdevs.png")
-        ymax_vec[11] <- plotRecDevs(show_uncertainty=FALSE)
-        dev.off()
-      }
-    }
-  }
-
-  # subplot 12: recruit devs with uncertainty
-  if(12 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplot 12: recruit devs with uncertainty")
-      }
-      if(plot){
-        ymax_vec[12] <- plotRecDevs()
-      }
-      if(print){
-        pngfun("compare12_recdevs_uncertainty.png")
-        ymax_vec[12] <- plotRecDevs()
-        dev.off()
-      }
-    }
-  }
-
-  # filename extension for index plots
-  val <- paste("_flt",unique(indexfleets),sep="")
-  if(length(val)!=1) val <- NULL
-
-  # subplot 13: index fits
-  if(13 %in% subplots){
-    if(verbose){
-      message("subplot 13: index fits")
-    }
-    if(plot){
-      ymax_vec[13] <- plotIndices()
-    }
-    if(print){
-      pngfun(paste("compare13_indices",val,".png",sep=""))
-      ymax_vec[13] <- plotIndices()
-      dev.off()
-    }
-  }
-
-  # subplot 14: index fits on a log scale
-  if(14 %in% subplots){
-    if(verbose){
-      message("subplot 14: index fits on a log scale")
-    }
-    if(plot){
-      ymax_vec[14] <- plotIndices(log=TRUE)
-    }
-    if(print){
-      pngfun(paste("compare14_indices_log",val,".png",sep=""))
-      ymax_vec[14] <- plotIndices(log=TRUE)
-      dev.off()
-    }
-  }
-
-  #### unfinished addition of phase plot comparisons
-  ## # subplot 15: phase plot
-  if(15 %in% subplots){
-    if(verbose){
-      message("subplot 15: phase plot")
-    }
-    if(plot){
-      ymax_vec[15] <- plotPhase()
-    }
-    if(print){
-      pngfun("compare15_phase_plot.png")
-      ymax_vec[15] <- plotPhase()
-      dev.off()
-    }
-  }
-
-  # subplot 16 and 17: densities, and cumulative probability plots
-  if(16 %in% subplots | 17 %in% subplots){
-    if(any(uncertainty)){
-      if(verbose){
-        message("subplots 16 and 17: densities")
-      }
-      # look for all parameters or derived quantities matching the input list of names
-      expandednames <- NULL
-      for(i in 1:length(densitynames)){
-        matchingnames <- c(pars$Label,quants$Label)[grep(densitynames[i],c(pars$Label,quants$Label),fixed=TRUE)]
-        expandednames <- c(expandednames,matchingnames)
-      }
-      if(length(expandednames)==0){
-        warning("  No parameter/quantity names matching 'densitynames' input.")
-      }else{
-        message("  parameter/quantity names matching 'densitynames' input:")
-        print(expandednames)
-        ndensities <- length(expandednames)
-        # make a table to store associated x-labels
-        densitytable <- data.frame(name=expandednames,label=expandednames,stringsAsFactors=FALSE)
-        if(!is.null(densityxlabs) && length(densityxlabs)==ndensities){
-          densitytable$label <- densityxlabs
-          message("  table of parameter/quantity labels with associated x-axis label:")
-          print(densitytable)
-        }else{
-          if(!is.null(densityxlabs)){
-            warning("length of 'densityxlabs' doesn't match the number of values ",
-                    "matching 'densitynames' so parameter labels will be used instead")
-          }
-        }
-        # loop over parameters for densitities
-        for(iplot in 1:ndensities){
-          # find matching parameter
-          name <- densitytable[iplot,1]
-          xlab <- densitytable[iplot,2]
-          #if(verbose) message("  quantity name=",name,"\n",sep="")
-          if(plot) {
-            ymax_vec[16] <- plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
-          }
-          if(print){
-            pngfun(paste("compare16_densities_",name,".png",sep=""))
-            ymax_vec[16] <- plotDensities(parname=name,xlab=xlab,denslwd=densitylwd)
-            dev.off()
-          }
-        }
-        # loop again for cumulative densities
-        for(iplot in 1:ndensities){
-          # find matching parameter
-          name <- densitytable[iplot,1]
-          xlab <- densitytable[iplot,2]
-          #if(verbose) message("  quantity name=",name,"\n",sep="")
-          if(plot) {
-            ymax_vec[17] <- plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=TRUE)
-          }
-          if(print){
-            pngfun(paste("compare17_densities_",name,".png",sep=""))
-            ymax_vec[17] <- plotDensities(parname=name,xlab=xlab,denslwd=densitylwd,cumulative=TRUE)
-            dev.off()
-          }
+      # get axis limits
+      if (is.null(xlim)) {
+        xlim <- range(Bratio$Yr)
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
         }
       }
+      ylim <- ylimAdj * range(0, Bratio[
+        Bratio$Yr >= xlim[1] &
+          Bratio$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        ylim <- ylimAdj * range(ylim / ylimAdj, BratioUpper[
+          Bratio$Yr >= xlim[1] &
+            Bratio$Yr <= xlim[2],
+          models[uncertainty]
+        ], na.rm = TRUE)
+      }
+
+      # make plot
+      if (!add) {
+        plot(0,
+          type = "n", xlim = xlim, ylim = ylim,
+          xlab = labels[1], ylab = labels[3],
+          xaxs = xaxs, yaxs = yaxs, axes = FALSE
+        )
+      }
+      if (show_uncertainty) {
+        addpoly(Bratio$Yr, lower = BratioLower, upper = BratioUpper)
+      }
+
+      if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
+        matplot(Bratio$Yr, Bratio[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
+        )
+      } else {
+        # spread out points with interval equal to spacepoints and
+        # staggering equal to staggerpoints
+        matplot(Bratio$Yr, Bratio[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
+        )
+        if (type != "l") {
+          Bratio2 <- Bratio
+          for (iline in 1:nlines) {
+            imodel <- models[iline]
+            Bratio2[(Bratio2$Yr - initpoint) %% spacepoints !=
+              (staggerpoints * iline) %% spacepoints, imodel] <- NA
+          }
+          matplot(Bratio2$Yr, Bratio2[, models],
+            col = col, pch = pch,
+            lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
+          )
+        }
+      }
+
+
+      yticks <- pretty(par()$yaxp[1:2])
+      if (btarg > 0) {
+        abline(h = btarg, col = "red", lty = 2)
+        text(min(Bratio$Yr) + 4, btarg + 0.03, labels[10], adj = 0)
+        yticks <- sort(c(btarg, yticks))
+      }
+      if (minbthresh > 0) {
+        abline(h = minbthresh, col = "red", lty = 2)
+        text(min(Bratio$Yr) + 4, minbthresh + 0.03, labels[11], adj = 0)
+        yticks <- sort(c(minbthresh, yticks))
+      }
+      if (!add) {
+        abline(h = 0, col = "grey")
+        abline(h = 1, col = "grey", lty = 2)
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+        # add shaded area over forecast years if more than 1 forecast year shown
+        if (!is.null(endyrvec) &
+          max(endyrvec) > 1 + max(endyrs) &
+          shadeForecast) {
+          rect(
+            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
+            xright = par()$usr[2], ytop = par()$usr[4],
+            col = gray(0, alpha = 0.1), border = NA
+          )
+        }
+        axis(2, at = yticks, las = 1)
+        box()
+      }
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+      # return upper y-limit
+      return(ylim[2])
     }
+
+    plotSPRratio <- function(show_uncertainty = TRUE) {
+      # plot biomass ratio (may be identical to previous plot)
+
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
+      }
+      # get axis limits
+      if (is.null(xlim)) {
+        xlim <- range(SPRratio$Yr)
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
+        }
+      }
+      ylim <- ylimAdj * range(0, SPRratio[
+        SPRratio$Yr >= xlim[1] &
+          SPRratio$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        ylim <- ylimAdj * range(ylim / ylimAdj,
+          SPRratioUpper[
+            SPRratio$Yr >= xlim[1] &
+              SPRratio$Yr <= xlim[2],
+            models[uncertainty]
+          ],
+          na.rm = TRUE
+        )
+      }
+
+      # make plot
+      if (!add) {
+        if (!is.na(SPRratioLabel) &&
+          SPRratioLabel ==
+            paste0("(1-SPR)/(1-SPR_", floor(100 * sprtarg), "%)")) {
+
+          # add to right-hand outer margin to make space
+          # for second vertical axis
+
+          # store current margin parameters
+          # save old margins
+          newmar <- oldmar <- par()$mar
+          # match right-hand margin value to left-hand value
+          newmar[4] <- newmar[2]
+          # update graphics parameters
+          par(mar = newmar)
+        }
+        plot(0,
+          type = "n", xlim = xlim, ylim = ylim, xlab = labels[1],
+          ylab = "", xaxs = xaxs, yaxs = yaxs, las = 1, axes = FALSE
+        )
+        axis(2)
+      }
+      if (show_uncertainty) {
+        addpoly(SPRratio$Yr, lower = SPRratioLower, upper = SPRratioUpper)
+      }
+      if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
+        matplot(SPRratio$Yr, SPRratio[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
+        )
+      } else {
+        # spread out points with interval equal to spacepoints and
+        # staggering equal to staggerpoints
+        matplot(SPRratio$Yr, SPRratio[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
+        )
+        if (type != "l") {
+          SPRratio2 <- SPRratio
+          for (iline in 1:nlines) {
+            imodel <- models[iline]
+            SPRratio2[(SPRratio2$Yr - initpoint) %% spacepoints !=
+              (staggerpoints * iline) %% spacepoints, imodel] <- NA
+          }
+          matplot(SPRratio2$Yr, SPRratio2[, models],
+            col = col, pch = pch,
+            lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
+          )
+        }
+      }
+      abline(h = 0, col = "grey")
+      if (sprtarg > 0) {
+        if (SPRratioLabel == "1-SPR") {
+          # if starter file chooses raw SPR as the option for reporting,
+          # don't show ratio
+          abline(h = sprtarg, col = "red", lty = 2)
+          text(SPRratio$Yr[1] + 4, (sprtarg + 0.03), labels[10], adj = 0)
+          mtext(side = 2, line = 3, SPRratioLabel)
+        } else {
+          # draw line at sprtarg
+          yticks <- pretty(ylim)
+          if (!is.na(SPRratioLabel) &&
+            SPRratioLabel == paste0(
+              "(1-SPR)/(1-SPR_",
+              floor(100 * sprtarg), "%)"
+            )) {
+            # add right-hand vertical axis showing 1-SPR
+            abline(h = 1, col = "red", lty = 2)
+            text(SPRratio$Yr[1] + 4, 1 + 0.03, labels[10], adj = 0)
+            axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
+            mtext(side = 4, line = 3, "1 - SPR")
+            # line below has round to be more accurate
+            # than the floor which is used
+            # in the test above and in SS
+            mtext(side = 2, line = 3, paste("(1-SPR)/(1-SPR_",
+              100 * sprtarg, "%)",
+              sep = ""
+            ))
+          } else {
+            message(
+              "No line added to SPR ratio plot, ",
+              "as the settings used in this model ",
+              "have not yet been configured in SSplotComparisons."
+            )
+            mtext(side = 2, line = 3, SPRratioLabel)
+          }
+        }
+      } else {
+        mtext(side = 2, line = 3, FvalueLabel)
+      }
+      if (!add) {
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+        # add shaded area over forecast years if more than 1 forecast year shown
+        if (!is.null(endyrvec) &
+          max(endyrvec) > 1 + max(endyrs) &
+          shadeForecast) {
+          rect(
+            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
+            xright = par()$usr[2], ytop = par()$usr[4],
+            col = gray(0, alpha = 0.1), border = NA
+          )
+        }
+      }
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+      box()
+      if (exists("oldmar")) {
+        # restore old margin parameters
+        par(mar = oldmar)
+      }
+      # return upper y-limit
+      return(ylim[2])
+    }
+
+
+    #### fishing mortality (however it is specified in the models)
+    plotF <- function(show_uncertainty = TRUE) {
+      # plot biomass ratio (may be identical to previous plot)
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
+      }
+      # get axis limits
+      if (is.null(xlim)) {
+        xlim <- range(Fvalue$Yr)
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
+        }
+      }
+      ylim <- ylimAdj * range(0, Fvalue[
+        Fvalue$Yr >= xlim[1] &
+          Fvalue$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        ylim <- ylimAdj * range(ylim / ylimAdj,
+          FvalueUpper[
+            Fvalue$Yr >= xlim[1] &
+              Fvalue$Yr <= xlim[2],
+            models[uncertainty]
+          ],
+          na.rm = TRUE
+        )
+      }
+
+      # make plot
+      if (!add) {
+        plot(0,
+          type = "n", xlim = xlim, ylim = ylim, xlab = labels[1],
+          ylab = "", xaxs = xaxs, yaxs = yaxs, las = 1, axes = FALSE
+        )
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+        axis(2)
+      }
+      if (show_uncertainty) {
+        addpoly(Fvalue$Yr, lower = FvalueLower, upper = FvalueUpper)
+      }
+      if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
+        matplot(Fvalue$Yr, Fvalue[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
+        )
+      } else {
+        # spread out points with interval equal to spacepoints and
+        # staggering equal to staggerpoints
+        matplot(Fvalue$Yr, Fvalue[, models],
+          col = col, pch = pch,
+          lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
+        )
+        if (type != "l") {
+          Fvalue2 <- Fvalue
+          for (iline in 1:nlines) {
+            imodel <- models[iline]
+            Fvalue2[Fvalue2$Yr %% spacepoints !=
+              (staggerpoints * iline) %% spacepoints, imodel] <- NA
+          }
+          matplot(Fvalue2$Yr, Fvalue2[, models],
+            col = col, pch = pch,
+            lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
+          )
+        }
+      }
+      abline(h = 0, col = "grey")
+      mtext(side = 2, line = 3, FvalueLabel)
+      box()
+      if (legend) legendfun(legendlabels)
+
+      # return upper y-limit
+      return(ylim[2])
+    }
+
+    plotRecruits <- function(show_uncertainty = TRUE, recruit_lines = TRUE) {
+      # plot recruitment
+
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
+      }
+      # determine x-limits
+      if (is.null(xlim)) {
+        if (show_equilibrium) {
+          xlim <- range(recruits$Yr)
+        } else {
+          xlim <- range(recruits$Yr[-c(1, 2)])
+        }
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
+        }
+      }
+
+      # determine y-limits
+      ylim <- ylimAdj * range(0, recruits[
+        recruits$Yr >= xlim[1] &
+          recruits$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        ylim <- ylimAdj * range(ylim / ylimAdj,
+          recruitsUpper[
+            recruits$Yr >= xlim[1] &
+              recruits$Yr <= xlim[2],
+            models[uncertainty]
+          ],
+          na.rm = TRUE
+        )
+      }
+
+      # do some automatic scaling of the units
+      ylab <- labels[4]
+      yunits <- 1
+      if (ylim[2] > 1e3 & ylim[2] < 1e6) {
+        # if max recruits a million and a billion
+        yunits <- 1e3
+        ylab <- gsub("1,000s", "millions", ylab)
+      }
+      if (ylim[2] > 1e6) {
+        # if max is greater than a billion (e.g. pacific hake)
+        yunits <- 1e6
+        ylab <- gsub("1,000s", "billions", ylab)
+      }
+
+      # plot lines showing recruitment
+      if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
+        matplot(recruits$Yr[-(1:2)], recruits[-(1:2), models],
+          col = col, pch = pch, lty = lty, lwd = lwd, type = type,
+          xlim = xlim, ylim = ylim,
+          xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
+          axes = FALSE, add = add
+        )
+      } else {
+        # spread out points with interval equal to spacepoints and
+        # staggering equal to staggerpoints
+        matplot(recruits$Yr[-(1:2)], recruits[-(1:2), models],
+          col = col, pch = pch, lty = lty, lwd = lwd, type = "l",
+          xlim = xlim, ylim = ylim,
+          xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
+          axes = FALSE, add = add
+        )
+        if (type != "l") {
+          recruits2 <- recruits
+          for (iline in 1:nlines) {
+            imodel <- models[iline]
+            recruits2[(recruits2$Yr %% spacepoints - initpoint) !=
+              (staggerpoints * iline) %% spacepoints, imodel] <- NA
+          }
+          matplot(recruits2$Yr[-(1:2)], recruits2[-(1:2), models],
+            col = col, pch = pch, lty = lty, lwd = lwd, type = "p",
+            xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
+            axes = FALSE, ylim = ylim, add = TRUE
+          )
+        }
+      }
+
+      ## Add points at equilibrium values. Note: I adapted this logic from the
+      ## SSB plot above.
+      if (show_uncertainty) {
+        xEqu <- recruits$Yr[2] - (1:nlines) / nlines
+      } else {
+        xEqu <- rep(recruits$Yr[1], nlines)
+      }
+      if (show_equilibrium) {
+        points(
+          x = xEqu, y = recruits[1, models], col = col, pch = pch,
+          cex = 1.2, lwd = lwd
+        )
+      }
+      # add uncertainty intervals when requested
+      if (show_uncertainty) {
+        for (iline in 1:nlines) {
+          imodel <- models[iline]
+          if (uncertainty[imodel]) {
+            ## plot all but equilbrium values
+            xvec <- recruits$Yr
+            if (nlines > 1) xvec <- xvec + 0.4 * iline / nlines - 0.2
+            old_warn <- options()$warn # previous setting
+            options(warn = -1) # turn off "zero-length arrow" warning
+            # arrows (-2 in vectors below is to remove initial year recruitment)
+            arrows(
+              x0 = xvec[-c(1, 2)],
+              y0 = pmax(as.numeric(recruitsLower[-c(1, 2), imodel]), 0),
+              x1 = xvec[-c(1, 2)],
+              y1 = as.numeric(recruitsUpper[-c(1, 2), imodel]),
+              length = 0.01, angle = 90, code = 3, col = col[imodel]
+            )
+            options(warn = old_warn) # returning to old value
+            if (show_equilibrium) {
+              arrows(
+                x0 = xEqu[imodel],
+                y0 = pmax(as.numeric(recruitsLower[1, imodel]), 0),
+                x1 = xEqu[imodel],
+                y1 = as.numeric(recruitsUpper[1, imodel]),
+                length = 0.01, angle = 90, code = 3, col = col[imodel]
+              )
+            }
+          }
+        }
+      }
+
+      abline(h = 0, col = "grey")
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+      if (!add) {
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+        # add shaded area over forecast years if more than 1 forecast year shown
+        if (!is.null(endyrvec) &
+          max(endyrvec) > 1 + max(endyrs) &
+          shadeForecast) {
+          rect(
+            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
+            xright = par()$usr[2], ytop = par()$usr[4],
+            col = gray(0, alpha = 0.1), border = NA
+          )
+        }
+        yticks <- pretty(ylim)
+        axis(2, at = yticks, labels = format(yticks / yunits), las = 1)
+        box()
+      }
+      # return upper y-limit
+      return(ylim[2])
+    }
+
+    plotRecDevs <- function(show_uncertainty = TRUE) { # plot recruit deviations
+      # test for bad values
+      if (any(is.na(recdevs$Yr))) {
+        warning("Recdevs associated with initial age structure may not be shown")
+      }
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
+      }
+
+
+
+      # empty plot
+      if (is.null(xlim)) {
+        xlim <- range(recdevs$Yr, na.rm = TRUE)
+        if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
+          xlim[2] <- max(endyrvec)
+        }
+      }
+      ylim <- ylimAdj * range(recdevs[
+        recdevs$Yr >= xlim[1] &
+          recdevs$Yr <= xlim[2],
+        models
+      ], na.rm = TRUE)
+      if (show_uncertainty) {
+        if (all(is.na(recdevsLower[, models]))) {
+          # can't do uncertainty if no range present
+          return(invisible(NA))
+        }
+        ylim <- ylimAdj * range(recdevsLower[
+          recdevs$Yr >= xlim[1] &
+            recdevs$Yr <= xlim[2],
+          models
+        ],
+        recdevsUpper[
+          recdevs$Yr >= xlim[1] &
+            recdevs$Yr <= xlim[2],
+          models
+        ],
+        na.rm = TRUE
+        )
+      }
+      ylim <- range(-ylim, ylim) # make symmetric
+
+      if (!add) {
+        plot(0,
+          xlim = xlim, ylim = ylim, axes = FALSE,
+          type = "n", xlab = labels[1], ylab = labels[5], xaxs = xaxs,
+          yaxs = yaxs, las = 1
+        )
+        axis(2, las = 1)
+        abline(h = 0, col = "grey")
+      }
+
+      if (show_uncertainty) {
+        for (iline in 1:nlines) {
+          imodel <- models[iline]
+          if (uncertainty[imodel]) {
+            xvec <- recdevs$Yr
+            if (nlines > 1) xvec <- xvec + 0.4 * iline / nlines - 0.2
+            arrows(
+              x0 = xvec, y0 = as.numeric(recdevsLower[, imodel]),
+              x1 = xvec, y1 = as.numeric(recdevsUpper[, imodel]),
+              length = 0.01, angle = 90, code = 3, col = col[iline]
+            )
+          }
+        }
+      }
+
+      # loop over vector of models to add lines
+      for (iline in 1:nlines) {
+        imodel <- models[iline]
+        yvec <- recdevs[, imodel]
+        xvec <- recdevs$Yr
+        points(xvec, yvec, pch = pch[iline], lwd = lwd[iline], col = col[iline])
+      }
+      if (!add) {
+        if (tickEndYr) { # include ending year in axis labels
+          # default tick positions if axis(1) were run
+          ticks <- graphics::axTicks(1)
+          # make axis (excluding anything after the max ending year)
+          axis(1, at = c(ticks[ticks < max(endyrvec)], max(endyrvec)))
+        } else {
+          # nothing special (may include labels beyond the ending year)
+          axis(1)
+        }
+        # add shaded area over forecast years if more than 1 forecast year shown
+        if (!is.null(endyrvec) &
+          max(endyrvec) > 1 + max(endyrs) &
+          shadeForecast) {
+          rect(
+            xleft = max(endyrs) + 1, ybottom = par()$usr[3],
+            xright = par()$usr[2], ytop = par()$usr[4],
+            col = gray(0, alpha = 0.1), border = NA
+          )
+        }
+        box()
+      }
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+      # return upper y-limit
+      return(ylim[2])
+    }
+
+
+    ## xmax <- 1.1*max(reldep)
+    ## ymax <- 1.1*max(1,relspr[!is.na(relspr)])
+    ## ylab <- managementratiolabels[1,2]
+    ## phasefunc <- function(){
+    ##   if(!add) plot(reldep,relspr,xlab="B/Btarget",
+    ##                 xlim=c(0,xmax),ylim=c(0,ymax),ylab=ylab,type="n")
+    ##   lines(reldep,relspr,type="o",col=col2)
+    ##   abline(h=0,col="grey")
+    ##   abline(v=0,col="grey")
+    ##   lines(reldep,relspr,type="o",col=col2)
+    ##   points(reldep[length(reldep)],relspr[length(relspr)],col=col4,pch=19)
+    ##   abline(h=1,col=col4,lty=2)
+    ##   abline(v=1,col=col4,lty=2)}
+
+    plotPhase <- function(show_uncertainty = TRUE) {
+      # plot biomass ratio vs. SPRratio
+
+      # only show uncertainty if values are present for at least one model
+      if (!any(uncertainty)) {
+        show_uncertainty <- FALSE
+      }
+      # get axis limits
+      xlim <- range(0, ylimAdj * Bratio[, models], na.rm = TRUE)
+      ylim <- range(0, ylimAdj * SPRratio[, models], na.rm = TRUE)
+
+      # make plot
+      if (!add) {
+        plot(0,
+          type = "n", xlim = xlim, ylim = ylim, xlab = labels[3],
+          ylab = SPRratioLabel, xaxs = xaxs, yaxs = yaxs, las = 1
+        )
+      }
+
+      goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
+      lastyr <- max(goodyrs)
+      for (iline in 1:nlines) {
+        imodel <- models[iline]
+        # no option get to stagger points in phase plots,
+        # only the last point is marked
+        xvals <- Bratio[Bratio$Yr %in% goodyrs, imodel]
+        yvals <- SPRratio[SPRratio$Yr %in% goodyrs, imodel]
+        lines(xvals,
+          yvals,
+          col = col[iline],
+          lty = lty[iline], lwd = lwd[iline],
+          type = "l"
+        ) # no user control of type to add points
+        # NA values and missing points will occur if final year is different
+        points(tail(xvals, 1),
+          tail(yvals, 1),
+          col = col[iline],
+          pch = pch[iline], lwd = lwd[iline]
+        )
+      }
+
+      abline(h = 1, v = 1, col = "grey", lty = 2)
+
+      if (btarg > 0) abline(v = btarg, col = "red", lty = 2)
+      if (sprtarg > 0) abline(h = sprtarg, col = "red", lty = 2)
+
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+      # return upper y-limit
+      return(ylim[2])
+    }
+
+
+    plotIndices <- function(log = FALSE, iindex) {
+      # function to plot different fits to a single index of abundance
+
+      # get a subset of index table including only 1 index per model
+      # (hopefully matching each other)
+      indices2 <- NULL
+      for (iline in 1:nlines) {
+        imodel <- models[iline]
+        subset2 <- indices$imodel == imodel &
+          indices$Yr <= endyrvec[iline] &
+          indices$Fleet == indexfleets[[imodel]][iindex]
+        indices2 <- rbind(indices2, indices[subset2, ])
+      }
+      # get quantities for plot
+      yr <- indices2$Yr
+      obs <- indices2$Obs
+      exp <- indices2$Exp
+      imodel <- indices2$imodel
+      Q <- indices2$Calc_Q
+      if (log) {
+        obs <- log(obs)
+        exp <- log(exp)
+        ylab <- labels[7]
+      } else {
+        ylab <- labels[6]
+      }
+
+      # get uncertainty intervals if requested
+      if (indexUncertainty) {
+        if (indexPlotEach) {
+          if (is.null(indexSEvec)) {
+            indexSEvec <- indices2$SE
+          }
+          y <- obs
+          if (log) {
+            upper <- qnorm(.975, mean = y, sd = indexSEvec)
+            lower <- qnorm(.025, mean = y, sd = indexSEvec)
+          } else {
+            upper <- qlnorm(.975, meanlog = log(y), sdlog = indexSEvec)
+            lower <- qlnorm(.025, meanlog = log(y), sdlog = indexSEvec)
+          }
+        } else {
+          subset <- indices2$imodel == models[1]
+          if (is.null(indexSEvec)) {
+            indexSEvec <- indices2$SE[subset]
+          }
+          y <- obs[subset]
+          if (log) {
+            upper <- qnorm(.975, mean = y, sd = indexSEvec)
+            lower <- qnorm(.025, mean = y, sd = indexSEvec)
+          } else {
+            upper <- qlnorm(.975, meanlog = log(y), sdlog = indexSEvec)
+            lower <- qlnorm(.025, meanlog = log(y), sdlog = indexSEvec)
+          }
+        }
+      } else {
+        upper <- NULL
+        lower <- NULL
+      }
+
+      ### make plot of index fits
+      # calculate ylim (excluding dummy observations from observed but not expected)
+      sub <- !is.na(indices2$Like)
+      ylim <- range(exp, obs[sub], lower[sub], upper[sub], na.rm = TRUE)
+      # if no values included in subset, then set ylim based on all values
+      if (!any(sub)) {
+        ylim <- range(exp, obs, lower, upper, na.rm = TRUE)
+      }
+      if (!log) {
+        # 0 included if not in log space
+        ylim <- c(0, ylimAdj * ylim[2])
+      } else {
+        # add padding on top and bottom
+        ylim <- ylim + c(-1, 1) * (ylimAdj - 1) * diff(ylim)
+      }
+
+      meanQ <- rep(NA, nlines)
+
+      if (!add) {
+        if (!is.null(endyrvec)) {
+          xlim <- c(min(yr), max(endyrvec))
+        } else {
+          xlim <- range(yr)
+        }
+        plot(0,
+          type = "n", xlim = xlim, yaxs = yaxs,
+          ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE
+        )
+      }
+      if (!log & yaxs != "i") {
+        abline(h = 0, col = "grey")
+      }
+      Qtext <- rep("(Q =", nlines)
+      for (iline in (1:nlines)[!mcmcVec]) {
+        imodel <- models[iline]
+        subset <- indices2$imodel == imodel
+        meanQ[iline] <- mean(Q[subset])
+        if (indexQlabel && any(Q[subset] != mean(Q[subset]))) {
+          Qtext[iline] <- "(mean Q ="
+        }
+        x <- yr[subset]
+        y <- exp[subset]
+        lines(x, y,
+          pch = pch[iline], lwd = lwd[iline],
+          lty = lty[iline], col = col[iline], type = type
+        )
+      }
+      legendlabels2 <- legendlabels
+      if (indexQlabel) {
+        legendlabels2 <- paste(
+          legendlabels, Qtext,
+          format(meanQ, digits = indexQdigits), ")"
+        )
+      }
+      if (legend) {
+        # add legend if requested
+        legendfun(legendlabels)
+      }
+
+      if (indexPlotEach) {
+        # plot observed values for each model (staggered slightly)
+        for (iline in (1:nlines)[!mcmcVec]) {
+          adj <- 0.2 * iline / nlines - 0.1
+          imodel <- models[iline]
+          subset <- indices2$imodel == imodel & !is.na(indices2$Like)
+          # add uncertainty intervals if requested
+          if (indexUncertainty) {
+            arrows(
+              x0 = yr[subset] + adj, y0 = lower[subset],
+              x1 = yr[subset] + adj, y1 = upper[subset],
+              length = 0.01, angle = 90, code = 3,
+              # colors have hard-wired alpha value of 0.7
+              col = adjustcolor(col, alpha.f = 0.7)[iline]
+            )
+          }
+          # add points on top of intervals
+          points(yr[subset] + adj, obs[subset],
+            pch = 21, cex = 1.5, col = 1,
+            bg = adjustcolor(col, alpha.f = 0.7)[iline]
+          )
+        }
+      } else {
+        # plot only the first model
+        imodel <- models[which(endyrvec == max(endyrvec))[1]]
+        subset <- indices2$imodel == imodel & !is.na(indices2$Like)
+        # add uncertainty intervals if requested
+        if (indexUncertainty) {
+          arrows(
+            x0 = yr[subset], y0 = lower[subset],
+            x1 = yr[subset], y1 = upper[subset],
+            length = 0.01, angle = 90, code = 3, col = 1
+          )
+        }
+        # add points on top of intervals
+        points(yr[subset], obs[subset], pch = 16, cex = 1.5)
+      }
+
+      # if not added to existing plot then add axis labels and box
+      if (!add) {
+        xticks <- pretty(xlim)
+        axis(1, at = xticks, labels = format(xticks))
+        if (tickEndYr) {
+          axis(1, at = max(endyrvec))
+        }
+        axis(2)
+        box()
+      }
+      # return upper y-limit
+      return(ylim[2])
+    } # end plotIndices function
+
+    plotDensities <- function(parname, xlab, denslwd, limit0 = TRUE,
+                              cumulative = FALSE) {
+      if (any(!mcmcVec)) {
+        vals <- rbind(
+          pars[pars$Label == parname, names(pars) != "recdev"],
+          quants[quants$Label == parname, ]
+        )
+        if (nrow(vals) != 1) {
+          warn <- paste("problem getting values for parameter:", parname, "")
+          if (nrow(vals) == 0) {
+            warn <- paste(
+              warn,
+              "no Labels match in either parameters or derived quantities"
+            )
+          }
+          if (nrow(vals) > 0) {
+            warn <- paste(
+              warn,
+              "Too many matching Labels:",
+              pars$Label[pars$Label == parname],
+              quants$Label[quants$Label == parname]
+            )
+          }
+          warning(warn)
+          # previous versions had an else statement,
+          # but this will end the function here instead and saves indenting
+          return(NULL)
+        }
+        valSDs <- rbind(
+          parsSD[pars$Label == parname, ],
+          quantsSD[quants$Label == parname, ]
+        )
+      }
+
+      xmax <- xmin <- ymax <- NULL # placeholder for limits
+      # placeholder for the mcmc density estimates, if there are any
+      mcmcDens <- vector(mode = "list", length = nlines)
+      # loop over models to set range
+      good <- rep(TRUE, nlines) # indicator of which values to plot
+      for (iline in 1:nlines) {
+        imodel <- models[iline]
+        if (mcmcVec[iline]) {
+          # figure out which columns of posteriors to use
+          mcmcColumn <- grep(parname, colnames(mcmc[[imodel]]), fixed = TRUE)
+          # warn if it can't find the columns
+          if (length(mcmcColumn) == 0) {
+            message(
+              "No columns selected from MCMC for '", parname,
+              "' in model ", imodel
+            )
+            good[iline] <- FALSE
+          }
+          # warn if too many columns
+          if (length(mcmcColumn) > 1) {
+            message(
+              "Too many columns selected from MCMC for model ",
+              imodel, ":"
+            )
+            print(names(mcmc[[imodel]])[mcmcColumn])
+            warning(
+              "Please specify a unique label in the mcmc dataframe",
+              "or specify mcmcVec=FALSE for model ",
+              imodel, " (or mcmcVec=FALSE applying to all models)."
+            )
+            good[iline] <- FALSE
+          }
+          # add density
+          if (good[iline]) {
+            mcmcVals <- mcmc[[imodel]][, mcmcColumn]
+            xmin <- min(xmin, quantile(mcmcVals, 0.005, na.rm = TRUE))
+            if (limit0) {
+              xmin <- max(0, xmin) # by default no plot can go below 0
+            }
+            if (fix0 & !grepl("R0", parname)) {
+              xmin <- 0 # include 0 if requested (except for log(R0) plots)
+            }
+            xmax <- max(xmax, quantile(mcmcVals, 0.995, na.rm = TRUE))
+            # density estimate of mcmc sample (posterior)
+            z <- density(mcmcVals, cut = 0, adjust = densityadjust)
+            z$x <- z$x[c(1, 1:length(z$x), length(z$x))]
+            # just to make sure that a good looking polygon is created
+            z$y <- c(0, z$y, 0)
+            ymax <- max(ymax, max(z$y)) # update ymax
+            mcmcDens[[iline]] <- z # save density estimate for later plotting
+          }
+        } else {
+          parval <- vals[1, imodel]
+          parSD <- valSDs[1, imodel]
+          if (!is.numeric(parval)) parval <- -1 # do this in case models added without the parameter
+          if (!is.na(parSD) && parSD > 0) { # if non-zero SD available
+            # update x range
+            xmin <- min(xmin, qnorm(0.005, parval, parSD))
+            if (limit0) xmin <- max(0, xmin) # by default no plot can go below 0
+            if (fix0 & !grepl("R0", parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
+            xmax <- max(xmax, qnorm(0.995, parval, parSD))
+            # calculate density to get y range
+            x <- seq(xmin, xmax, length = 500)
+            mle <- dnorm(x, parval, parSD)
+            mlescale <- 1 / (sum(mle) * mean(diff(x)))
+            mle <- mle * mlescale
+            # update ymax
+            ymax <- max(ymax, max(mle))
+          } else { # if no SD, at least make sure interval includes MLE estimate
+            xmin <- min(xmin, parval)
+            xmax <- max(xmax, parval)
+          }
+        }
+      }
+      if (grepl("Bratio", parname)) {
+        xmin <- 0 # xmin=0 for relative spawning biomass plots
+      }
+      if (limit0) {
+        xmin <- max(0, xmin) # by default no plot can go below 0
+      }
+      if (fix0 & !grepl("R0", parname)) {
+        xmin <- 0 # include 0 if requested (except for log(R0) plots)
+      }
+
+      # calculate x-limits and vector of values for densities
+      xlim <- c(xmin, xmin + (xmax - xmin) * densityscalex)
+      x <- seq(xmin, xmax, length = 500)
+
+      # calculate some scaling stuff
+      xunits <- 1
+      if (rescale & xmax > 1e3 & xmax < 3e6) {
+        xunits <- 1e3
+        # xlab <- gsub("mt","x1000 mt",xlab)
+        xlab2 <- "'1000 t"
+      }
+      if (rescale & xmax > 3e6) {
+        xunits <- 1e6
+        # xlab <- gsub("mt","million mt",xlab)
+        xlab2 <- "million t"
+      }
+      # make empty plot
+      if (is.null(ymax)) {
+        message(
+          "  skipping plot of ", parname,
+          " because it seems to not be estimated in any model"
+        )
+      } else {
+        if (!add) {
+          if (cumulative) {
+            plot(0,
+              type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs,
+              ylim = c(0, 1), xlab = xlab, ylab = ""
+            )
+          } else {
+            plot(0,
+              type = "n", xlim = xlim, axes = FALSE, xaxs = "i", yaxs = yaxs,
+              ylim = c(0, 1.1 * ymax * densityscaley), xlab = xlab, ylab = ""
+            )
+          }
+        }
+        # add vertical lines for target and threshold
+        # relative spawning biomass values
+        if (grepl("Bratio", parname)) {
+          if (btarg > 0) {
+            abline(v = btarg, col = "red", lty = 2)
+            text(btarg + 0.03, par()$usr[4], labels[10], adj = 1.05, srt = 90)
+          }
+          if (minbthresh > 0) {
+            abline(v = minbthresh, col = "red", lty = 2)
+            text(minbthresh + 0.03, par()$usr[4], labels[11],
+              adj = 1.05, srt = 90
+            )
+          }
+        }
+
+        symbolsQuants <- c(0.025, 0.125, 0.25, 0.5, 0.75, 0.875, 0.975)
+        # loop again to make plots
+        for (iline in (1:nlines)[good]) {
+          imodel <- models[iline]
+          if (mcmcVec[iline]) {
+            # make density for MCMC posterior
+            mcmcColumn <- grep(parname, colnames(mcmc[[imodel]]), fixed = TRUE)
+            mcmcVals <- mcmc[[imodel]][, mcmcColumn]
+            # for symbols on plot
+            x2 <- quantile(mcmcVals, symbolsQuants, na.rm = TRUE)
+            # find the positions in the density closest to these quantiles
+            x <- mcmcDens[[iline]]$x
+            if (!cumulative) {
+              y <- mcmcDens[[iline]]$y
+              yscale <- 1 / (sum(y) * mean(diff(x)))
+              y <- y * yscale
+            } else {
+              y <- cumsum(mcmcDens[[iline]]$y) / sum(mcmcDens[[iline]]$y)
+            }
+            y2 <- NULL
+            for (ii in x2) {
+              # find y-value associated with closest matching x-value
+              # "min" was added for rare case where two values are equally close
+              y2 <- c(y2, min(y[abs(x - ii) == min(abs(x - ii))]))
+            }
+            # make shaded polygon
+            if (!cumulative) {
+              polygon(c(x[1], x, rev(x)[1]), c(0, y, 0),
+                col = shadecol[iline],
+                border = NA
+              )
+            } else {
+              # polygon for cumulative has extra point in bottom right
+              polygon(c(x[1], x, rev(x)[c(1, 1)]), c(0, y, 1, 0),
+                col = shadecol[iline], border = NA
+              )
+            }
+            # add thicker line
+            lines(x, y, col = col[iline], lwd = 2)
+            # add points on line and vertical line at median (hopefully)
+            if (!cumulative) {
+              if (densitysymbols) {
+                points(x2, y2, col = col[iline], pch = pch[iline])
+              }
+              # really hokey and assumes that the middle value of
+              # the vector of quantiles is the median
+              lines(rep(x2[median(1:length(x2))], 2),
+                c(0, y2[median(1:length(x2))]),
+                col = col[iline]
+              )
+            } else {
+              if (densitysymbols) {
+                points(x2, symbolsQuants, col = col[iline], pch = pch[iline])
+              }
+              lines(rep(median(mcmcVals), 2), c(0, 0.5), col = col[iline])
+            }
+          } else {
+            # make normal density for MLE
+            parval <- vals[1, imodel]
+            parSD <- valSDs[1, imodel]
+            if (!is.na(parSD) && parSD > 0) {
+              xmin <- min(xmin, qnorm(0.005, parval, parSD))
+              if (limit0) {
+                xmin <- max(0, xmin) # by default no plot can go below 0
+              }
+              if (fix0 & !grepl("R0", parname)) {
+                xmin <- 0 # include 0 if requested (except for log(R0) plots)
+              }
+              x <- seq(xmin, max(xmax, xlim), length = 500)
+              # x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
+              x2 <- qnorm(symbolsQuants, parval, parSD)
+              if (cumulative) {
+                y <- mle <- pnorm(x, parval, parSD) # smooth line
+                y2 <- mle2 <- pnorm(x2, parval, parSD) # symbols
+              } else {
+                mle <- dnorm(x, parval, parSD) # smooth line
+                mle2 <- dnorm(x2, parval, parSD) # symbols
+                mlescale <- 1 / (sum(mle) * mean(diff(x)))
+                y <- mle <- mle * mlescale
+                y2 <- mle2 <- mle2 * mlescale
+              }
+              # add shaded polygons
+              polygon(c(x[1], x, rev(x)[1]), c(0, mle, 0),
+                col = shadecol[iline], border = NA
+              )
+              lines(x, mle, col = col[iline], lwd = 2)
+              if (!cumulative) {
+                if (densitysymbols) {
+                  points(x2, mle2, col = col[iline], pch = pch[iline])
+                }
+                lines(rep(parval, 2),
+                  c(0, dnorm(parval, parval, parSD) * mlescale),
+                  col = col[iline], lwd = denslwd
+                )
+              } else {
+                if (densitysymbols) {
+                  points(x2, symbolsQuants, col = col[iline], pch = pch[iline])
+                }
+                lines(rep(parval, 2),
+                  c(0, 0.5),
+                  col = col[iline], lwd = denslwd
+                )
+              }
+            } else {
+              # add vertical line for estimate of no density can be added
+              abline(v = parval, col = col[iline], lwd = denslwd)
+            }
+          }
+          # should be able to move more stuff into this section
+          # that applies to both MLE and MCMC
+
+          if (densitytails & densitymiddle) {
+            warning(
+              "You are shading both tails and central 95% of density plots",
+              "which is illogical"
+            )
+          }
+
+          doShade <- FALSE
+          if (mcmcVec[iline]) {
+            doShade <- TRUE
+          } else {
+            if (!is.na(parSD) && parSD > 0) {
+              doShade <- TRUE
+            }
+          }
+          if (densitytails & doShade) {
+            # figure out which points are in the tails of the distibutions
+            x.lower <- x[x <= x2[1]]
+            y.lower <- y[x <= x2[1]]
+            x.upper <- x[x >= rev(x2)[1]]
+            y.upper <- y[x >= rev(x2)[1]]
+            # add darker shading for tails
+            polygon(c(x.lower[1], x.lower, rev(x.lower)[1]),
+              c(0, y.lower, 0),
+              col = shadecol[iline], border = NA
+            )
+            polygon(c(x.upper[1], x.upper, rev(x.upper)[1]),
+              c(0, y.upper, 0),
+              col = shadecol[iline], border = NA
+            )
+          }
+          if (densitymiddle & doShade) { # } & !is.na(parSD) && parSD>0){
+            x.middle <- x[x >= x2[1] & x <= rev(x2)[1]]
+            y.middle <- y[x >= x2[1] & x <= rev(x2)[1]]
+            polygon(c(x.middle[1], x.middle, rev(x.middle)[1]),
+              c(0, y.middle, 0),
+              col = shadecol[iline], border = NA
+            )
+          }
+        }
+        # add axes and labels
+        if (!add) {
+          abline(h = 0, col = "grey")
+          xticks <- pretty(xlim)
+          axis(1, at = xticks, labels = format(xticks / xunits))
+          theLine <- 1
+          if (cumulative) {
+            axis(2,
+              at = symbolsQuants, labels = format(symbolsQuants),
+              las = 1, cex.axis = 0.9
+            )
+            theLine <- 3
+          }
+          mtext(side = 2, line = theLine, labels[9])
+          box()
+        }
+        if (xunits != 1) {
+          message(
+            "x-axis for ", parname, " in density plot has been divided by ",
+            xunits, " (so may be in units of ", xlab2, ")"
+          )
+        }
+        # add legend
+        if (legend) {
+          legendfun(legendlabels, cumulative)
+        }
+      }
+      # in the future, this could return the upper y-limit,
+      # currently there's no control over ylim in these plots
+      return(NA)
+    } # end plotDensities function
+
+    uncertaintyplots <- intersect(c(2, 4, 6, 8, 10, 12), subplots)
+    if (!any(uncertainty) & length(uncertaintyplots) > 0) {
+      # warn if uncertainty is off but uncertainty plots are requested
+      message(
+        "skipping plots with uncertainty:",
+        paste(uncertaintyplots, collapse = ",")
+      )
+    }
+    # subplot 1: spawning biomass
+    if (1 %in% subplots) {
+      if (verbose) {
+        message("subplot 1: spawning biomass")
+      }
+      if (plot) {
+        ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
+      }
+      if (print) {
+        pngfun("compare1_spawnbio.png")
+        ymax_vec[1] <- plotSpawnBio(show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 2: spawning biomass with uncertainty intervals
+    if (2 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 2: spawning biomass with uncertainty intervals")
+        }
+        if (plot) {
+          ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
+        }
+        if (print) {
+          pngfun("compare2_spawnbio_uncertainty.png")
+          ymax_vec[2] <- plotSpawnBio(show_uncertainty = TRUE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 3: biomass ratio
+    # (hopefully equal to spawning relative spawning biomass)
+    if (3 %in% subplots) {
+      if (verbose) {
+        message("subplot 3: biomass ratio (hopefully equal to fraction of unfished)")
+      }
+      if (plot) {
+        ymax_vec[3] <- plotBratio(show_uncertainty = FALSE)
+      }
+      if (print) {
+        pngfun("compare3_Bratio.png")
+        ymax_vec[3] <- plotBratio(show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 4: biomass ratio with uncertainty
+    if (4 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 4: biomass ratio with uncertainty")
+        }
+        if (plot) {
+          ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
+        }
+        if (print) {
+          pngfun("compare4_Bratio_uncertainty.png")
+          ymax_vec[4] <- plotBratio(show_uncertainty = TRUE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 5: SPR ratio
+    if (5 %in% subplots) {
+      if (verbose) {
+        message("subplot 5: SPR ratio")
+      }
+      if (plot) {
+        ymax_vec[5] <- plotSPRratio(show_uncertainty = FALSE)
+      }
+      if (print) {
+        pngfun("compare5_SPRratio.png")
+        ymax_vec[5] <- plotSPRratio(show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 6: SPR ratio with uncertainty
+    if (6 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 6: SPR ratio with uncertainty")
+        }
+        if (plot) {
+          ymax_vec[6] <- plotSPRratio(show_uncertainty = TRUE)
+        }
+        if (print) {
+          pngfun("compare6_SPRratio_uncertainty.png")
+          ymax_vec[6] <- plotSPRratio(show_uncertainty = TRUE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 7: F (harvest rate or fishing mortality, however defined)
+    if (7 %in% subplots) {
+      if (verbose) {
+        message("subplot 7: F value")
+      }
+      if (plot) {
+        ymax_vec[7] <- plotF(show_uncertainty = FALSE)
+      }
+      if (print) {
+        pngfun("compare7_Fvalue.png")
+        ymax_vec[7] <- plotF(show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 8: F (harvest rate or fishing mortality, however defined)
+    #            with uncertainty
+    if (8 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 8: F value with uncertainty")
+        }
+        if (plot) {
+          ymax_vec[8] <- plotF(show_uncertainty = TRUE)
+        }
+        if (print) {
+          pngfun("compare8_Fvalue_uncertainty.png")
+          ymax_vec[8] <- plotF(show_uncertainty = TRUE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 9: recruits
+    if (9 %in% subplots) {
+      if (verbose) {
+        message("subplot 9: recruits")
+      }
+      if (plot) {
+        ymax_vec[9] <- plotRecruits(show_uncertainty = FALSE)
+      }
+      if (print) {
+        pngfun("compare9_recruits.png")
+        ymax_vec[9] <- plotRecruits(show_uncertainty = FALSE)
+        dev.off()
+      }
+    }
+
+    # subplot 10: recruits with uncertainty
+    if (10 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 10: recruits with uncertainty")
+        }
+        if (plot) {
+          ymax_vec[10] <- plotRecruits()
+        }
+        if (print) {
+          pngfun("compare10_recruits_uncertainty.png")
+          ymax_vec[10] <- plotRecruits()
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 11: recruit devs
+    if (11 %in% subplots) {
+      if (verbose) message("subplot 11: recruit devs")
+      if (is.null(recdevs)) {
+        message("No recdevs present in the model summary, skipping plot.")
+      } else {
+        if (plot) {
+          ymax_vec[11] <- plotRecDevs(show_uncertainty = FALSE)
+        }
+        if (print) {
+          pngfun("compare11_recdevs.png")
+          ymax_vec[11] <- plotRecDevs(show_uncertainty = FALSE)
+          dev.off()
+        }
+      }
+    }
+
+    # subplot 12: recruit devs with uncertainty
+    if (12 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplot 12: recruit devs with uncertainty")
+        }
+        if (plot) {
+          ymax_vec[12] <- plotRecDevs()
+        }
+        if (print) {
+          pngfun("compare12_recdevs_uncertainty.png")
+          ymax_vec[12] <- plotRecDevs()
+          dev.off()
+        }
+      }
+    }
+
+
+    # subplot 13: index fits
+    if (13 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
+      if (verbose) {
+        message("subplot 13: index fits")
+      }
+      for (iindex in 1:length(indexfleets[[1]])) {
+        if (plot) {
+          ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
+        }
+        if (print) {
+          pngfun(paste0(
+            "compare13_indices",
+            index_plot_suffix[iindex],
+            ".png"
+          ))
+          ymax_vec[13] <- plotIndices(log = FALSE, iindex = iindex)
+          dev.off()
+        }
+      } # end loop over indices to plot
+    } # end check for subplot 13
+
+    # subplot 14: index fits on a log scale
+    if (14 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
+      if (verbose) {
+        message("subplot 14: index fits on a log scale")
+      }
+      for (iindex in 1:length(indexfleets[[1]])) {
+        if (plot) {
+          ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
+        }
+        if (print) {
+          pngfun(paste0(
+            "compare14_indices_log",
+            index_plot_suffix[iindex],
+            ".png"
+          ))
+          ymax_vec[14] <- plotIndices(log = TRUE, iindex = iindex)
+          dev.off()
+        }
+      } # end loop over indices to plot
+    } # end check for subplot 14
+
+    #### unfinished addition of phase plot comparisons
+    ## # subplot 15: phase plot
+    if (15 %in% subplots) {
+      if (verbose) {
+        message("subplot 15: phase plot")
+      }
+      if (plot) {
+        ymax_vec[15] <- plotPhase()
+      }
+      if (print) {
+        pngfun("compare15_phase_plot.png")
+        ymax_vec[15] <- plotPhase()
+        dev.off()
+      }
+    }
+
+    # subplot 16 and 17: densities, and cumulative probability plots
+    if (16 %in% subplots | 17 %in% subplots) {
+      if (any(uncertainty)) {
+        if (verbose) {
+          message("subplots 16 and 17: densities")
+        }
+        # look for all parameters or derived quantities matching
+        # the input list of names
+        expandednames <- NULL
+        for (i in 1:length(densitynames)) {
+          matchingnames <- c(
+            pars$Label,
+            quants$Label
+          )[grep(densitynames[i],
+            c(pars$Label, quants$Label),
+            fixed = TRUE
+          )]
+          expandednames <- c(expandednames, matchingnames)
+        }
+        if (length(expandednames) == 0) {
+          warning("  No parameter/quantity names matching 'densitynames' input.")
+        } else {
+          message("  parameter/quantity names matching 'densitynames' input:")
+          print(expandednames)
+          ndensities <- length(expandednames)
+          # make a table to store associated x-labels
+          densitytable <- data.frame(
+            name = expandednames,
+            label = expandednames,
+            stringsAsFactors = FALSE
+          )
+          if (!is.null(densityxlabs) && length(densityxlabs) == ndensities) {
+            densitytable$label <- densityxlabs
+            message(
+              "  table of parameter/quantity labels with associated",
+              " x-axis label:"
+            )
+            print(densitytable)
+          } else {
+            if (!is.null(densityxlabs)) {
+              warning(
+                "length of 'densityxlabs' doesn't match the number of values ",
+                "matching 'densitynames' so parameter labels will be used instead"
+              )
+            }
+          }
+          # loop over parameters for densitities
+          for (iplot in 1:ndensities) {
+            # find matching parameter
+            name <- densitytable[iplot, 1]
+            xlab <- densitytable[iplot, 2]
+            # if(verbose) message("  quantity name=",name,"\n",sep="")
+            if (plot) {
+              ymax_vec[16] <- plotDensities(
+                parname = name, xlab = xlab,
+                denslwd = densitylwd
+              )
+            }
+            if (print) {
+              pngfun(paste("compare16_densities_", name, ".png", sep = ""))
+              ymax_vec[16] <- plotDensities(
+                parname = name, xlab = xlab,
+                denslwd = densitylwd
+              )
+              dev.off()
+            }
+          }
+          # loop again for cumulative densities
+          for (iplot in 1:ndensities) {
+            # find matching parameter
+            name <- densitytable[iplot, 1]
+            xlab <- densitytable[iplot, 2]
+            # if(verbose) message("  quantity name=",name,"\n",sep="")
+            if (plot) {
+              ymax_vec[17] <- plotDensities(
+                parname = name, xlab = xlab,
+                denslwd = densitylwd,
+                cumulative = TRUE
+              )
+            }
+            if (print) {
+              pngfun(paste("compare17_densities_", name, ".png", sep = ""))
+              ymax_vec[17] <- plotDensities(
+                parname = name, xlab = xlab,
+                denslwd = densitylwd,
+                cumulative = TRUE
+              )
+              dev.off()
+            }
+          }
+        }
+      }
+    }
+
+
+    #### unfinished addition of growth comparisons
+    ## # subplot 19: growth, females
+    ## if(19 %in% subplots){
+    ##   if(verbose) message("subplot 19: growth, females\n")
+    ##   if(plot) plotgrowth(sex='f')
+    ##   if(print){
+    ##     pngfun("compare19_growth_females.png")
+    ##     plotgrowth(sex='f')
+    ##     dev.off()
+    ##   }
+    ## }
+
+    ## # subplot 20: growth, males
+    ## if(20 %in% subplots){
+    ##   if(verbose) message("subplot 20: growth, males\n")
+    ##   if(plot) plotgrowth(sex='m')
+    ##   if(print){
+    ##     pngfun("compare20_growth_males.png")
+    ##     plotgrowth(sex='m')
+    ##     dev.off()
+    ##   }
+    ## }
+
+    if (pdf) dev.off()
+    return(invisible(ymax_vec))
   }
-
-
-  #### unfinished addition of growth comparisons
-  ## # subplot 19: growth, females
-  ## if(19 %in% subplots){
-  ##   if(verbose) message("subplot 19: growth, females\n")
-  ##   if(plot) plotgrowth(sex='f')
-  ##   if(print){
-  ##     pngfun("compare19_growth_females.png")
-  ##     plotgrowth(sex='f')
-  ##     dev.off()
-  ##   }
-  ## }
-
-  ## # subplot 20: growth, males
-  ## if(20 %in% subplots){
-  ##   if(verbose) message("subplot 20: growth, males\n")
-  ##   if(plot) plotgrowth(sex='m')
-  ##   if(print){
-  ##     pngfun("compare20_growth_males.png")
-  ##     plotgrowth(sex='m')
-  ##     dev.off()
-  ##   }
-  ## }
-
-  if(pdf) dev.off()
-  return(invisible(ymax_vec))
-}

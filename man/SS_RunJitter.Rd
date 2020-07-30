@@ -11,58 +11,73 @@ SS_RunJitter(
   Njitter,
   Intern = TRUE,
   systemcmd = FALSE,
-  printlikes = TRUE
+  printlikes = TRUE,
+  verbose = FALSE,
+  jitter_fraction = NULL,
+  init_values_src = NULL
 )
 }
 \arguments{
-\item{mydir}{Directory where model files are located}
+\item{mydir}{Directory where model files are located.}
 
-\item{model}{Executable name}
+\item{model}{Executable name of the \code{.exe} file in \code{mydir}
+without the extension, e.g., \code{"ss"}.}
 
-\item{extras}{Additional command line arguments passed to executable}
+\item{extras}{Additional command line arguments passed to the executable.
+The default, \code{"-nohess"}, runs each jittered model without the hessian.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,
 else \code{1:Njitter} will be executed.}
 
-\item{Intern}{Show command line info in R console or keep hidden (Internal=TRUE)}
+\item{Intern}{Show command line info in R console or keep hidden. The default,
+\code{TRUE}, keeps the executable hidden.}
 
-\item{systemcmd}{Option to switch between 'shell' and 'system'}
+\item{systemcmd}{Option to switch between 'shell' and 'system'. The default,
+\code{FALSE}, facilitates using the shell command on Windows.}
 
-\item{printlikes}{Print likelihood values to console}
+\item{printlikes}{A logical value specifying if the likelihood values should
+be printed to the console.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
+
+\item{jitter_fraction}{The value, typically 0.1, used to define a uniform
+distribution in cumulative normal space to generate new initial parameter values.
+The default of \code{NULL} forces the user to specify the jitter_fraction
+in the starter file, and this value must be greater than zero and
+will not be overwritten.}
+
+\item{init_values_src}{Either zero or one, specifying if the initial values to
+jitter should be read from the control file or from the par file, respectively.
+The default is \code{NULL}, which will leave the starter file unchanged.}
 }
 \value{
 A vector of likelihoods for each jitter iteration.
 }
 \description{
-Iteratively runs SS model with different jittered starting parameter values
-(jitter value must be manually set in starter.ss). Output files are renamed
+Iteratively run a Stock Synthesis model with different jittered starting
+parameter values based on the jitter fraction. Output files are renamed
 in the format Report1.sso, Report2.sso, etc.
 }
 \examples{
-  \dontrun{
-    #### Change starter file appropriately (can also edit file directly)
-    starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
-    # Change to use .par file
-    starter$init_values_src = 1
-    # Change jitter (0.1 is an arbitrary, but common choice for jitter amount)
-    starter$jitter_fraction = 0.1
-    # write modified starter file
-    SS_writestarter(starter, dir=mydir, overwrite=TRUE)
+\dontrun{
+  #### Run jitter from par file with arbitrary, but common, choice of 0.1
+  modeldir <- tail(dir(system.file("extdata", package="r4ss"), full.names=TRUE),1)
+  numjitter <- 25
+  jit.likes <- SS_RunJitter(mydir=modeldir, Njitter=numjitter,
+   jitter_fraction=0.1, init_value_src=1)
 
-    #### Run jitter using this function
-    jit.likes <- SS_RunJitter(mydir=mydir, Njitter=25)
-
-    #### Read in results using other r4ss functions
-    # (note that un-jittered model can be read using keyvec=0:Njitter)
-    profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Njitter, getcovar=FALSE)
-    # summarize output
-    profilesummary <- SSsummarize(profilemodels)
-    # Likelihoods
-    profilesummary$likelihoods[1,]
-    # Parameters
-    profilesummary$pars
-  }
+  #### Read in results using other r4ss functions
+  # (note that un-jittered model can be read using keyvec=0:numjitter)
+  profilemodels <- SSgetoutput(dirvec=modeldir, keyvec=1:numjitter, getcovar=FALSE)
+  # summarize output
+  profilesummary <- SSsummarize(profilemodels)
+  # Likelihoods
+  profilesummary$likelihoods[1,]
+  # Parameters
+  profilesummary$pars
+}
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor
