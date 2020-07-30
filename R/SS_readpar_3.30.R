@@ -189,6 +189,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
   #Build and read in annual fleet specific fishing mortality rates if they exist
   if(length(grep("F_rate",parvals))>0){
     temp_Frate_1<-datlist$catch
+    temp_Frate_1<-temp_Frate_1[order(temp_Frate_1$fleet,temp_Frate_1$year,temp_Frate_1$seas),]
     temp_Frate_1<-temp_Frate_1[temp_Frate_1$year>0,1:4,drop=FALSE]
     temp_Frate_2<-temp_Frate_1[temp_Frate_1$catch>0,]
     if(length(temp_Frate_1[,1])==length(grep("F_rate",parvals))){
