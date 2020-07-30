@@ -27,9 +27,6 @@ SSplotSelex(
   col1 = "red",
   col2 = "blue",
   lwd = 2,
-  fleetcols = "default",
-  fleetpch = "default",
-  fleetlty = "default",
   spacepoints = 5,
   staggerpoints = 1,
   legendloc = "bottomright",
@@ -96,15 +93,6 @@ Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead
 \item{col2}{color for male growth curve}
 
 \item{lwd}{Line widths for plots}
-
-\item{fleetcols}{Optional vector of colors for each fleet (in multi-fleet
-plots)}
-
-\item{fleetpch}{Optional vector of plot characters for each fleet (in
-multi-fleet plots)}
-
-\item{fleetlty}{Optional vector of line types for each fleet (in multi-fleet
-plots)}
 
 \item{spacepoints}{number of years between points shown on top of lines (for
 long timeseries, points every year get mashed together)}

@@ -53,16 +53,10 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        exefile='ss', extras="-nox",intern=FALSE,CallType="system",
                        RemoveBlocks=FALSE){
 
-  # determine operating system in a relatively brute force way
-  OS <- "Mac" # don't know the version$os info for Mac
-  prefix <- "./" # prefix applied to start of command to run model
-  if(length(grep("linux",version$os)) > 0){
-    OS <- "Linux"
-  }
-  if(length(grep("mingw",version$os)) > 0){
-    OS <- "Windows"
-    prefix <- ""
-  }
+  # this should always be "windows" or "unix" (includes Mac and Linux)
+  OS <- .Platform$OS.type
+  # prefix applied to start of command to run model
+  prefix <- ifelse(OS == "windows", "", "./")
 
   # save working directory
   oldwd <- getwd()
@@ -74,7 +68,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
   # make directories, modify starter file, and start retrospective analyses
 
   # for Windows users, automatically determine executable
-  if(!is.null(exefile) & OS=="Windows"){
+  if(!is.null(exefile) & OS=="windows"){
     exefiles <- dir(olddir)[grep(".exe",dir(olddir))]
     # if exactly one executable found in model directory, use that instead
     if(length(exefiles)==1){

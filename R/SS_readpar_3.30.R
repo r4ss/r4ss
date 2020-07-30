@@ -288,7 +288,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     }
     #Add time varying age selectivity parameters if they exist
     if(any(ctllist$age_selex_parms[, c("env_var&link", "dev_link", "Block")] != 0)) {
-      if(!is.null(ages_selex_parms_tv)) {
+      if(!is.null(ctllist$age_selex_parms_tv)) {
         parlist$S_parms<-rbind(parlist$S_parms,ctllist$age_selex_parms_tv[,3:4])
       } else {
         tmp_parlabs <- get_tv_parlabs(full_parms = ctllist[["age_selex_parms"]], 

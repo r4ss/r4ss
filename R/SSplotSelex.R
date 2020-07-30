@@ -29,12 +29,6 @@
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
 #' @param lwd Line widths for plots
-#' @param fleetcols Optional vector of colors for each fleet (in multi-fleet
-#' plots)
-#' @param fleetpch Optional vector of plot characters for each fleet (in
-#' multi-fleet plots)
-#' @param fleetlty Optional vector of line types for each fleet (in multi-fleet
-#' plots)
 #' @param spacepoints number of years between points shown on top of lines (for
 #' long timeseries, points every year get mashed together)
 #' @param staggerpoints number of years to stagger the first point (if
@@ -81,9 +75,6 @@ SSplotSelex <-
                     "Retention",   #5
                     "Discard mortality"),  #6
            col1="red",col2="blue",lwd=2,
-           fleetcols="default",
-           fleetpch="default",
-           fleetlty="default",
            spacepoints=5,
            staggerpoints=1,
            legendloc="bottomright",

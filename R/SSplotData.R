@@ -186,7 +186,7 @@ SSplotData <- function(replist,
           }
           if(typename == "cpue"){
             # filter out rows that aren't used
-            dat.f <- dat.f[dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate by year, taking average SE (on a log scale)
               dat.agg <- aggregate(dat.f$SE, by=list(dat.f$Yr), FUN=mean)
@@ -196,7 +196,7 @@ SSplotData <- function(replist,
           }
           if(typename == "mnwgt"){
             # filter out rows that aren't used
-            dat.f <- dat.f[dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # get mean CV across partitions
               dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
@@ -206,7 +206,7 @@ SSplotData <- function(replist,
           }
           if(typename == "discard"){
             # filter out rows that aren't used
-            dat.f <- dat.f[dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # get mean standard deviation across partitions
               dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)

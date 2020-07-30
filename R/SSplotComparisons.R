@@ -54,9 +54,6 @@
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
 #' ending year specified in each model.
-#' @param which_indices Vector of fleet numbers for which indices to plot
-#' for models for cases that have the same fleet/index numbering. Vector should
-#' be a subset of the values 1:nfleets.
 #' @param indexfleets Fleet numbers for each model to compare
 #' indices of abundance. Can take different forms:
 #' \itemize{
@@ -512,7 +509,7 @@ SSplotComparisons <-
     }
 
     # if index plots are requested, do some checks on inputs
-    if (any(subplots %in% 13:14) & nrow(indices) > 0) {
+    if (any(subplots %in% 13:14) & !is.null(indices) && nrow(indices) > 0) {
       # check indexfleets
       if (is.null(indexfleets)) {
         # if indexfleets is NULL
@@ -2348,7 +2345,7 @@ SSplotComparisons <-
 
 
     # subplot 13: index fits
-    if (13 %in% subplots & nrow(indices) > 0) {
+    if (13 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
         message("subplot 13: index fits")
       }
@@ -2369,7 +2366,7 @@ SSplotComparisons <-
     } # end check for subplot 13
 
     # subplot 14: index fits on a log scale
-    if (14 %in% subplots & nrow(indices) > 0) {
+    if (14 %in% subplots & !is.null(indices) && nrow(indices) > 0) {
       if (verbose) {
         message("subplot 14: index fits on a log scale")
       }

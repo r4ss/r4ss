@@ -2121,7 +2121,7 @@ SS_output <-
       if (!is.na(matchfun("FIT_SIZE_COMPS"))) {
         # note that there are hashes in between sub-sections,
         # so using rep_blank_lines instead of default
-        # rep_blank_and_hash_lines to find ending
+        # rep_blank_or_hash_lines to find ending
         fit_size_comps <- matchfun2("FIT_SIZE_COMPS", 1,
           header = FALSE,
           blank_lines = rep_blank_lines
@@ -3187,16 +3187,31 @@ SS_output <-
     returndat$tagtotrecap <- tagtotrecap
 
     # age-length matrix
+    # this section is more complex because of blank lines internally
+
+    # first look for rows like " Seas: 12 Sub_Seas: 2   Morph: 12"
+    sdsize_lines <- grep("^sdsize", rawrep[, 1])
+
+    # the section ends with first blank line after the last of the sdsize_lines
+    # so count the blanks as 1 greater than those in between the keyword
+    # and the last of those sdsize_lines
+    # an alternative here would be to modify matchfun2 to allow input of a
+    # specific line number to end the section
+    which_blank <- 1 + length(rep_blank_or_hash_lines[
+                         rep_blank_or_hash_lines > matchfun("AGE_LENGTH_KEY") &
+                         rep_blank_or_hash_lines < max(sdsize_lines)])
+    
     # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
     # needs to be at least 6 even if there are fewer ages
-    sdsize_lines <- grep("^sdsize", rawrep[, 1])
     rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
       cols = 1:max(6, accuage + 2),
       header = FALSE,
-      which_blank = length(sdsize_lines) + 2
-    )
-    if (length(rawALK) > 1 & !is.null(rawALK) &&
-      length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
+      which_blank = which_blank
+      )
+    # confirm that the section is present
+    if (length(sdsize_lines) > 0 &&
+        length(rawALK) > 1 && # this should filter NULL values
+        length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
       morph_col <- 5
       if (SS_versionNumeric < 3.30 &
         length(grep("Sub_Seas", rawALK[, 3])) == 0) {
@@ -3213,6 +3228,7 @@ SS_output <-
         Matrix = 1:N_ALKs
       )
 
+      # loop over subsections within age-length matrix
       for (i in 1:N_ALKs) {
         # get matrix of values
         ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
