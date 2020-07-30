@@ -62,7 +62,7 @@ SS_RunJitter <- function(mydir,
   startdir <- getwd()
   on.exit(setwd(startdir))
   setwd(mydir)
-  model <- check_model(model = model, mydir = mydir)
+  model <- check_model(model = model, mydir = getwd())
 
   if (verbose) {
     message("Temporarily changing working directory to:\n", mydir)
@@ -143,8 +143,9 @@ SS_RunJitter <- function(mydir,
     }
   }
   # Move original files back
-  file.copy(from = dir(pattern = "0\\.sso"),
-    to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", dir(pattern = "0\\.sso")),
+  pattern0 <- dir(pattern = "[a-z_]0\\.sso")
+  file.copy(from = pattern0,
+    to = gsub("([a-zA-Z])0|_0\\.sso", "\\1", pattern0),
     overwrite = TRUE)
 
   if (printlikes){
