@@ -132,12 +132,17 @@ SSplotCatch <-
     SS_versionshort <- toupper(substr(replist$SS_version, 1, 8))
     SS_versionNumeric <- replist$SS_versionNumeric
 
-
+    # if the user has no specified whether catch should be in numbers or not
+    # 1 = biomass, 2 = numbers
     if (is.null(catchasnumbers)) {
       if (min(catch_units, na.rm = TRUE) == 2) {
+        # if there is no fleet with catch_units = 1, then assume numbers
         catchasnumbers <- TRUE
       } else {
+        # if there is any fleet with catch_units = 1, plot in biomass
         catchasnumbers <- FALSE
+        # check for other fleets with catch_units = 2 = numbers
+        # and warn that to be careful interpreting plots
         if (2 %in% catch_units[fleet_types != 3]) {
           warning(
             "Catch is a mix of numbers and biomass,",
