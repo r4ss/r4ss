@@ -3115,15 +3115,13 @@ SS_output <-
     movement <- matchfun2("MOVEMENT", 1, substr1 = FALSE, header = TRUE)
     if (!is.null(movement)) {
       names(movement) <- c(
-        movement[1, 1:6],
-        paste("age", movement[1, -(1:6)], sep = "")
+        names(movement)[1:6],
+        paste("age", names(movement)[-(1:6)], sep = "")
       )
       movement <- df.rename(movement,
         oldnames = c("Gpattern"),
         newnames = c("GP")
       )
-
-      movement <- movement[-1, ]
       for (i in 1:ncol(movement)) {
         movement[, i] <- as.numeric(movement[, i])
       }
