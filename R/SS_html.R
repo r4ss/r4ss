@@ -319,10 +319,14 @@ SS_html <- function(replist=NULL,
       cat('\n\n<h2><a name="', category, '">', category, '</h2>\n', sep="",
           file=htmlfile, append=TRUE)
       for(i in 1:nrow(plotinfo)){
+        # default alternative text is caption up to any line break <br>
+        alt <- strsplit(plotinfo$caption[i],
+                        split = "<br>",
+                        fixed = TRUE)[[1]][1]
         cat("<p align=left><a href='", plotinfo$basename[i],
             "'><img src='", plotinfo$basename[i],
             "' border=0 width=", width,
-            " alt='", plotinfo$caption[i], "'></a><br>",
+            " alt='", alt, "'></a><br>",
             plotinfo$caption[i],
             "<br><i><small>file: <a href='", plotinfo$basename[i],
             "'>", plotinfo$basename[i], "</a></small></i>\n",
