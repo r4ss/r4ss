@@ -56,7 +56,7 @@ SSplotComps(
   cohortlines = c(),
   labels = c("Length (cm)", "Age (yr)", "Year", "Observed sample size",
     "Effective sample size", "Proportion", "cm", "Frequency", "Weight", "Length", "(mt)",
-    "(numbers x1000)", "Stdev (Age) (yr)", "Conditional AAL plot, ", "Size bin"),
+    "(numbers x1000)", "Stdev (Age)", "Conditional AAL plot, ", "Size bin"),
   printmkt = TRUE,
   printsex = TRUE,
   maxrows = 4,

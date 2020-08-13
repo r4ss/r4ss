@@ -151,7 +151,7 @@ SSplotComps <-
                       "Length",                #10
                       "(mt)",                  #11
                       "(numbers x1000)",       #12
-                      "Stdev (Age) (yr)",      #13
+                      "Stdev (Age)",           #13
                       "Conditional AAL plot, ",#14
                       "Size bin"),             #15
            printmkt=TRUE,printsex=TRUE,
