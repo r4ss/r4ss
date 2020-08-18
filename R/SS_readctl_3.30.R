@@ -35,7 +35,7 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified.
-#' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
+#' @param N_rows_equil_catch Integer value of the number of parameter lines to 
 #' read for equilibrium catch. Defaults to 0.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
@@ -397,7 +397,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_elem(ctllist,"parameter_offset_approach")    #_parameter_offset_approach
 
   # MG parlines -----
-  N_MGparm<-MGparm_per_def*ctllist$N_GP*abs(ctllist$Ngenders)  ## Parmeters for M and Growth multiplied by N_GP and Ngenders
+  N_MGparm<-MGparm_per_def*ctllist$N_GP*abs(ctllist$Ngenders)  ## Parameters for M and Growth multiplied by N_GP and Ngenders
   MGparmLabel<-list()
   cnt<-1
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 

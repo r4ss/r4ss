@@ -1,3 +1,7 @@
+# r4ss 1.39.1 (18 August 2020)
+* Numerous bug fixes and minor improvements
+* Compatibility with SS version 3.30.16
+
 # r4ss 1.38.0 (25 March 2020)
 * Numerous bug fixes and minor improvements
 * Compatibility with SS version 3.30.15

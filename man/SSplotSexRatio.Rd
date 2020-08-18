@@ -118,7 +118,7 @@ number of years of data}
 \description{
 Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
 plots depend on \code{make_multifig}. The confidence intervals around the
-obserserved points are based on a Jeffreys interval calculated from
+observed points are based on a Jeffreys interval calculated from
 the adjusted input sample size (with a floor of 1).
 }
 \references{

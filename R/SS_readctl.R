@@ -42,7 +42,7 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
-#' @param N_rows_equil_catch Integer value of the number of parmeter lines to 
+#' @param N_rows_equil_catch Integer value of the number of parameter lines to 
 #' read for equilibrium catch. Defaults to 0. Used only for version 3.30.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0. Used only for version 3.30

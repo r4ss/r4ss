@@ -70,7 +70,7 @@ option. Defaults to NULL and should be left as such if 1) the catch
 multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 datlist is specified.}
 
-\item{N_rows_equil_catch}{Integer value of the number of parmeter lines to 
+\item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
 read for equilibrium catch. Defaults to 0.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
