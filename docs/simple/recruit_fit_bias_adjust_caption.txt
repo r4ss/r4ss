@@ -1,0 +1,8 @@
+Points are transformed variances. Red line shows current settings forfor bias adjustment specified in control file.Blue line shows least squares estimate of alternative bias adjustmentrelationship for recruitment deviations (which may or may not be animprovement. For more information, see<br> 
+<blockquote>Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias due to variability of estimated recruitments in fishery assessment models. <i>Can. J. Fish. Aquat. Sci.</i>, 68:1744-1760.</blockquote><br> 
+Estimated alternative inputs to SS control file associated with blue line in figure: 
+<pre>1962.2   #_last_early_yr_nobias_adj_in_MPD 
+1971.0   #_first_yr_fullbias_adj_in_MPD 
+2000.5   #_last_yr_fullbias_adj_in_MPD 
+2002.0   #_first_recent_yr_nobias_adj_in_MPD 
+0.7033   #_max_bias_adj_in_MPD (1.0 to mimic pre-2009 models)   </pre>

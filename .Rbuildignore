@@ -7,3 +7,4 @@ revdep
 ^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+docs
