@@ -290,12 +290,19 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ## FecundAtAge <- ageselex[ageselex$factor=="Fecund", names(ageselex)%in%0:accuage]
   ## WtAtAge <- ageselex[ageselex$factor=="bodywt", names(ageselex)%in%0:accuage]
 
+  # column name for weight-at-length
+  # (Wt_len for 1-sex models starting with 3.30.16)
+  Wt_len_colname <- "Wt_len_F"
+  if("Wt_len" %in% names(biology)){
+    Wt_len_colname <- "Wt_len"
+  }
+  
   # determine fecundity type
   # define labels and x-variable
   if(FecType==1){
     fec_ylab <- "Eggs per kg"
     fec_xlab <- labels[8]
-    FecX <- biology$Wt_len_F
+    FecX <- biology[[Wt_len_colname]]
     FecY <- FecPar1 + FecPar2*FecX
   }
   if(labels[11]!="Default fecundity label") fec_ylab <- labels[11]
@@ -354,12 +361,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     x <- biology$Mean_Size
     if(!wtatage_switch){ # if empirical weight-at-age is not used
       if(!add){
-        ymax <- max(biology$Wt_len_F)
+        ymax <- max(biology[[Wt_len_colname]])
         if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
         plot(x, x, ylim=c(0,1.1*ymax), xlab=labels[1], ylab=labels[4], type="n",
              las=1, yaxs='i')
       }
-      lines(x,biology$Wt_len_F,type='o',col=colvec[1])
+      lines(x,biology[[Wt_len_colname]],type='o',col=colvec[1])
       if(nsexes > 1){
         lines(x,biology$Wt_len_M,type='o',col=colvec[2])
         if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(colvec[1],colvec[2]))
@@ -504,7 +511,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   fec_weight_fn <- function(){ # fecundity at weight from BIOLOGY section
     ymax <- 1.1*max(biology$Fecundity)
     if(!add){
-      plot(biology$Wt_len_F, biology$Fecundity, xlab=labels[8], ylab=labels[10],
+      plot(biology[[Wt_len_colname]], biology$Fecundity, xlab=labels[8], ylab=labels[10],
            las=1, yaxs='i', ylim=c(0,ymax), col=colvec[1], type='o')
     }else{
       points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
@@ -694,7 +701,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       lab2 <- "Wt_Beg"
       lab2long <- "Mean weight"
       lab1max <- 1
-      lab2max <- max(c(biology$Wt_len_F, biology$Wt_len_M), na.rm=TRUE)
+      lab2max <- max(c(biology[[Wt_len_colname]], biology$Wt_len_M), na.rm=TRUE)
       lab1_axis_vec <- c(0, 0.5, 1)
     }
     # calculate scaling factor between CVs and SDs to share each panel
@@ -715,7 +722,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
             col=colvec[col_index1], lwd=3)
       if(nsexes > 1){ # add lines for males
         if(option==1){
-          # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
+          # add line for lab1 vs. Age
+          # (unless it's maturity, which is not defined for males)
           lines(growdatM[[lab1]], growdatM$Len_Beg, col=colvec[2],
                 lwd=1, lty='13')
         }
@@ -726,7 +734,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
     if(option==2){
       # if plotting maturity and fecundity, then get this panel from length-based data
-      lines(biology$Wt_len_F*lab2_to_lab1_scale, biology$Mean_Size,
+      lines(biology[[Wt_len_colname]]*lab2_to_lab1_scale, biology$Mean_Size,
             col=colvec[col_index1], lwd=3)
       lines(biology$Mat_len, biology$Mean_Size, col=colvec[col_index1], lty='12')
       if(nsexes > 1){
