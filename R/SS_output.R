@@ -2388,7 +2388,8 @@ SS_output <-
 
     # simple test to figure out if fecundity is proportional to spawning biomass:
     returndat$SpawnOutputUnits <-
-      ifelse(!is.na(biology$Fecundity[1]) &&
+      ifelse(!is.null(biology$Fecundity[1]) &&
+        !is.na(biology$Fecundity[1]) &&
         all(biology$Wt_len_F == biology$Fecundity),
       "biomass", "numbers"
       )
