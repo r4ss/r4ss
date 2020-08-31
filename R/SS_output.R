@@ -1338,13 +1338,25 @@ SS_output <-
       # if semi-parametric selectivity IS used
 
       # parse parameter labels to get info
+      # the parameter labels look like like
+      # Fishery_ARDEV_y1991_A3 (for age-based selectivity)
+      # or
+      # Fishery_ARDEV_y1991_Lbin3 (for length-based selectivity)
+      #
+      # the code below parses those strings to figure out age vs. length,
+      # separate the numeric year value and bin number
       seldev_label_info <- strsplit(seldev_pars$Label, split = "_")
       seldev_label_info <- data.frame(do.call(rbind, lapply(seldev_label_info, rbind)))
 
       # add columns to pars data.frame with info from labels
       seldev_pars$Fleet <- seldev_label_info$X1
       seldev_pars$Year <- as.numeric(substring(seldev_label_info$X3, 2))
-      seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) == "a", "age", "length")
+      # note: bin was indicated by "a" for length- and age-based selectivity
+      # until early 2020 when separate "A" or "Lbin" codes were used
+      seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) %in%
+                                 c("A", "a"),
+                                 yes = "age",
+                                 no = "length")
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars$Type == "age", 2, 5)
       # parse bin (age or length bin)
