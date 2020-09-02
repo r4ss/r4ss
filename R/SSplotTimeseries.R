@@ -358,7 +358,8 @@ SSplotTimeseries <-
           stdtable <- stdtable[tolower(stdtable$Label)!="recr_unfished",]
           # year as the part of the Label string starting with 6th character
           stdtable$Yr <- substring(stdtable$Label,6)
-          # filling in Virgin and Initial years as 2 and 1 years prior to following years
+          # filling in Virgin and Initial years as
+          # 2 years and 1 year prior to following years
           stdtable$Yr[1:2] <- as.numeric(stdtable$Yr[3])-(2:1)
           stdtable$Yr <- as.numeric(stdtable$Yr) + yrshift
           bioscale <- 1
@@ -370,9 +371,14 @@ SSplotTimeseries <-
         if(subplot==11){
           # assume recruitments have log-normal distribution
           # from first principals (multiplicative survival probabilities)
+          # and from their basis as exponential of normal recdevs
           stdtable$logint <- sqrt(log(1+(std/v)^2))
-          stdtable$lower <- exp(log(v) - 1.96*stdtable$logint)
-          stdtable$upper <- exp(log(v) + 1.96*stdtable$logint)
+          stdtable$lower <- qlnorm(p = 0.025,
+                                    meanlog = log(v),
+                                    sdlog = stdtable$logint)
+          stdtable$upper <- qlnorm(p = 0.975,
+                                    meanlog = log(v),
+                                    sdlog = stdtable$logint)
         }else{ # assume normal distribution matching internal assumptions of ADMB
           stdtable$upper <- v + 1.96*std
           stdtable$lower <- pmax(v - 1.96*std, 0) # max of value or 0

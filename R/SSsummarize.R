@@ -350,10 +350,17 @@ SSsummarize <- function(biglist,
   recruitsSD <- recruitsSD[order(recruitsSD$Yr),]
 
   recruitsLower <- recruitsUpper <- recruitsSD
-  recruitsLower[,1:n] <- qnorm(p=lowerCI, mean=as.matrix(recruits[,1:n]),
-                               sd=as.matrix(recruitsSD[,1:n]))
-  recruitsUpper[,1:n] <- qnorm(p=upperCI, mean=as.matrix(recruits[,1:n]),
-                               sd=as.matrix(recruitsSD[,1:n]))
+  # assume recruitments have log-normal distribution
+  # from first principals (multiplicative survival probabilities)
+  # and from their basis as exponential of normal recdevs
+  sdlog <- sqrt(log(1 + (as.matrix(recruitsSD[,1:n]) /
+                         as.matrix(recruits[,1:n]))^2))
+  recruitsLower[,1:n] <- qlnorm(p = lowerCI,
+                                meanlog = log(as.matrix(recruits[,1:n])),
+                                sdlog = sdlog)
+  recruitsUpper[,1:n] <- qlnorm(p = upperCI,
+                                meanlog = log(as.matrix(recruits[,1:n])),
+                                sdlog = sdlog)
 
   # identify parameters that are recruitment deviations
   pars$recdev <- FALSE

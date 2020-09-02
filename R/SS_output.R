@@ -1338,13 +1338,25 @@ SS_output <-
       # if semi-parametric selectivity IS used
 
       # parse parameter labels to get info
+      # the parameter labels look like like
+      # Fishery_ARDEV_y1991_A3 (for age-based selectivity)
+      # or
+      # Fishery_ARDEV_y1991_Lbin3 (for length-based selectivity)
+      #
+      # the code below parses those strings to figure out age vs. length,
+      # separate the numeric year value and bin number
       seldev_label_info <- strsplit(seldev_pars$Label, split = "_")
       seldev_label_info <- data.frame(do.call(rbind, lapply(seldev_label_info, rbind)))
 
       # add columns to pars data.frame with info from labels
       seldev_pars$Fleet <- seldev_label_info$X1
       seldev_pars$Year <- as.numeric(substring(seldev_label_info$X3, 2))
-      seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) == "a", "age", "length")
+      # note: bin was indicated by "a" for length- and age-based selectivity
+      # until early 2020 when separate "A" or "Lbin" codes were used
+      seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) %in%
+                                 c("A", "a"),
+                                 yes = "age",
+                                 no = "length")
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars$Type == "age", 2, 5)
       # parse bin (age or length bin)
@@ -2366,15 +2378,6 @@ SS_output <-
       lbinspop <- biology$Low[biology$GP == 1]
     }
 
-    # add things to list getting returned
-    returndat$biology <- biology
-    returndat$FecType <- FecType
-    returndat$FecPar1name <- FecPar1name
-    returndat$FecPar2name <- FecPar2name
-
-    returndat$FecPar1 <- parameters$Value[parameters$Label == FecPar1name]
-    returndat$FecPar2 <- parameters$Value[parameters$Label == FecPar2name]
-
     # warning for 3.30 models with multiple growth patterns that have
     # repeat fecundity values, likely to be sorted out in new SS version
     if (length(returndat$FecPar1) > 1) {
@@ -2386,12 +2389,46 @@ SS_output <-
       returndat$FecPar2 <- returndat$FecPar2[2]
     }
 
-    # simple test to figure out if fecundity is proportional to spawning biomass:
-    returndat$SpawnOutputUnits <-
-      ifelse(!is.na(biology$Fecundity[1]) &&
-        all(biology$Wt_len_F == biology$Fecundity),
-      "biomass", "numbers"
-      )
+    # cleanup and tests related to biology at length table
+    if (!is.null(biology)) {
+      # fix for extra header associated with extra column header
+      # for single sex models that got fixed in 3.30.16
+      if (nsexes == 1 &&
+        is.na(biology$Fecundity[1]) &&
+        "Wt_len_M" %in% names(biology)) {
+        # copy Wt_len_M to Fecundity
+        biology$Fecundity <- biology$Wt_len_M
+        # remove Wt_len_M
+        biology <- biology[, !names(biology) %in% "Wt_len_M"]
+      }
+
+      # test to figure out if fecundity is proportional to spawning biomass
+
+      # first get weight-at-length column (Wt_len_F for 2-sex models,
+      # Wt_len for 1-sex models starting with 3.30.16)
+      if ("Wt_len" %in% names(biology)) {
+        Wt_len_F <- biology$Wt_len
+      } else {
+        Wt_len_F <- biology$Wt_len_F
+      }
+
+      # check for any mismatch between weight-at-length and fecundity
+      returndat$SpawnOutputUnits <-
+        ifelse(!is.null(biology$Fecundity[1]) &&
+          !is.na(biology$Fecundity[1]) &&
+          any(Wt_len_F != biology$Fecundity),
+        "numbers", "biomass"
+        )
+    }
+
+    # add biology and fecundity varibles to list getting returned
+    returndat$biology <- biology
+    returndat$FecType <- FecType
+    returndat$FecPar1name <- FecPar1name
+    returndat$FecPar2name <- FecPar2name
+
+    returndat$FecPar1 <- parameters$Value[parameters$Label == FecPar1name]
+    returndat$FecPar2 <- parameters$Value[parameters$Label == FecPar2name]
 
     # get natural mortality type and vectors of M by age
     adjust1 <- ifelse(custom, 2, 1)
@@ -3196,20 +3233,21 @@ SS_output <-
     # an alternative here would be to modify matchfun2 to allow input of a
     # specific line number to end the section
     which_blank <- 1 + length(rep_blank_or_hash_lines[
-                         rep_blank_or_hash_lines > matchfun("AGE_LENGTH_KEY") &
-                         rep_blank_or_hash_lines < max(sdsize_lines)])
-    
+      rep_blank_or_hash_lines > matchfun("AGE_LENGTH_KEY") &
+        rep_blank_or_hash_lines < max(sdsize_lines)
+    ])
+
     # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
     # needs to be at least 6 even if there are fewer ages
     rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
       cols = 1:max(6, accuage + 2),
       header = FALSE,
       which_blank = which_blank
-      )
+    )
     # confirm that the section is present
     if (length(sdsize_lines) > 0 &&
-        length(rawALK) > 1 && # this should filter NULL values
-        length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
+      length(rawALK) > 1 && # this should filter NULL values
+      length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
       morph_col <- 5
       if (SS_versionNumeric < 3.30 &
         length(grep("Sub_Seas", rawALK[, 3])) == 0) {

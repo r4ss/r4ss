@@ -32,7 +32,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
   
   if(is.character(ctlsource)){
     ctllist<-SS_readctl(file=ctlsource,use_datlist=TRUE,
-                        datlist=datlist)
+                        datlist=datlist, version = "3.30", verbose = FALSE)
   }else if(is.list(ctlsource)){
     ctllist<-ctlsource
   }else{

@@ -9,7 +9,9 @@ get_SIS_info(
   dir = NULL,
   writecsv = TRUE,
   stock = "StockName",
-  final_year = 2019
+  final_year = 2019,
+  data_year = NULL,
+  sciencecenter = "NWFSC"
 )
 }
 \arguments{

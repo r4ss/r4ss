@@ -77,7 +77,7 @@ test_that("get_ncol finds the correct number of columns for SS_output", {
   reportfiles <- dir(example_path, pattern = "^Report", recursive = TRUE, 
                      full.names = TRUE)
   results <- mapply(r4ss:::get_ncol, reportfiles)
-  expect_vector(results)
+  expect_true(is.atomic(results))
   expect(all(results %in% 55:56), 
     "Optimum width of Report.sso wasn't 55 or 56.")
 })
