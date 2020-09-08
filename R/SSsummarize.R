@@ -25,6 +25,7 @@
 #' 0.025 for 95\% intervals.
 #' @param upperCI Quantile for upper bound on calculated intervals. Default =
 #' 0.975 for 95\% intervals.
+#' @template verbose
 #' @author Ian Taylor
 #' @export
 #' @seealso \code{\link{SSgetoutput}}
@@ -36,7 +37,8 @@ SSsummarize <- function(biglist,
                         selgender=1,
                         SpawnOutputUnits=NULL,
                         lowerCI=0.025,
-                        upperCI=0.975){
+                        upperCI=0.975,
+                        verbose = TRUE){
   # loop over outputs to create list of parameters, derived quantities, and years
   parnames <- NULL
   dernames <- NULL
@@ -85,6 +87,10 @@ SSsummarize <- function(biglist,
   mcmc       <- list()
   warn       <- FALSE # flag for whether filter warning has been printed or not
 
+  if (verbose) {
+    message("Summarizing ", n, " models:")
+  }
+  
   # loop over models within biglist
   for(imodel in 1:n){
     stats <- biglist[[imodel]]
@@ -103,49 +109,73 @@ SSsummarize <- function(biglist,
 
     # size selectivity
     sizeseltemp <- stats$sizeselex
-    if(is.null(sizeselfactor)) sizeselfactor <- unique(sizeseltemp$Factor)
-    for(iselfactor in 1:length(sizeselfactor)){
-      seltemp_i <- sizeseltemp[sizeseltemp$Factor==sizeselfactor[iselfactor],]
-      seltemp_i$imodel <- imodel
-      seltemp_i$name <- modelnames[imodel]
-      # if sizesel is not NULL, then check for whether columns of new addition
-      # match existing file
-      if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) &&
-                                all(names(seltemp_i)==names(sizesel)))){
-        sizesel <- rbind(sizesel,seltemp_i)
-      }else{
-        warning("problem summarizing size selectivity due to mismatched columns ",
-            "(perhaps different bins)\n")
+    # check for non-NULL selectivity table
+    if (is.null(sizeseltemp)) {
+      if(verbose) {
+        message("  no selectivity-at-length output")
       }
+    } else {
+      # if factor(s) not input, get all unique values from table
+      if(is.null(sizeselfactor) & !is.null(sizeseltemp)) {
+        sizeselfactor <- unique(sizeseltemp$Factor)
+      }
+      # loop over factor(s) input by user or taken from table
+      for(iselfactor in 1:length(sizeselfactor)){
+        seltemp_i <- sizeseltemp[sizeseltemp$Factor==sizeselfactor[iselfactor],]
+        seltemp_i$imodel <- imodel
+        seltemp_i$name <- modelnames[imodel]
+        # if sizesel is not NULL, then check for whether columns of new addition
+        # match existing file
+        if(is.null(sizesel) || (ncol(seltemp_i)==ncol(sizesel) &&
+                                all(names(seltemp_i)==names(sizesel)))){
+          sizesel <- rbind(sizesel,seltemp_i)
+        }else{
+          warning("problem summarizing size selectivity due to mismatched columns ",
+                  "(perhaps different bins)\n")
+        }
+      }
+      rownames(sizesel) <- 1:nrow(sizesel)
     }
-    rownames(sizesel) <- 1:nrow(sizesel)
-
+    
     # age selectivity
     ageseltemp  <- stats$ageselex
-    if(is.null(ageselfactor)) ageselfactor <- unique(ageseltemp$Factor)
-    for(iselfactor in 1:length(ageselfactor)){
-      seltemp_i <- ageseltemp[ageseltemp$Factor==ageselfactor[iselfactor],]
-      seltemp_i$imodel <- imodel
-      seltemp_i$name <- modelnames[imodel]
-      # if agesel is not NULL, then check for whether columns of new addition
-      # match existing file
-      if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) &&
-                               all(names(seltemp_i)==names(agesel)))){
-        agesel <- rbind(agesel,seltemp_i)
-      }else{
-        warning("problem summarizing age selectivity due to mismatched columns ",
-                "(perhaps different bins)\n")
+    # check for NULL selectivity table
+    if (is.null(ageseltemp)) {
+      if(verbose) {
+        message("  no selectivity-at-age output")
       }
-    }
-    rownames(agesel) <- 1:nrow(agesel)
-
+    } else {      
+      # if factor(s) not input, get all unique values from table
+      if(is.null(ageselfactor)) {
+        ageselfactor <- unique(ageseltemp$Factor)
+      }
+      # loop over factor(s) input by user or taken from table
+      for(iselfactor in 1:length(ageselfactor)){
+        seltemp_i <- ageseltemp[ageseltemp$Factor==ageselfactor[iselfactor],]
+        seltemp_i$imodel <- imodel
+        seltemp_i$name <- modelnames[imodel]
+        # if agesel is not NULL, then check for whether columns of new addition
+        # match existing file
+        if(is.null(agesel) || (ncol(seltemp_i)==ncol(agesel) &&
+                               all(names(seltemp_i)==names(agesel)))){
+          agesel <- rbind(agesel,seltemp_i)
+        }else{
+          warning("problem summarizing age selectivity due to mismatched columns ",
+                  "(perhaps different bins)\n")
+        }
+      }
+      rownames(agesel) <- 1:nrow(agesel)
+    } 
 
     ## growth (females only)
     growthtemp <- stats$growthseries
-    imorphf <- ifelse(max(stats$morph_indexing$Index)==10,3,1)
-    growthtemp <- growthtemp[growthtemp$Morph==imorphf,-(1:4)]
-    growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp),]))
-
+    # check for non-NULL growth output
+    if(!is.null(growthtemp)){
+      imorphf <- ifelse(max(stats$morph_indexing$Index)==10,3,1)
+      growthtemp <- growthtemp[growthtemp$Morph==imorphf,-(1:4)]
+      growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp),]))
+    }
+    
     ## likelihoods (total by component)
     liketemp <- stats$likelihoods_used
     for(irow in 1:nrow(liketemp)){
@@ -185,7 +215,7 @@ SSsummarize <- function(biglist,
       parsSD[parnames==parstemp$Label[ipar], imodel] <- parstemp$Parm_StDev[ipar]
       parphases[parnames==parstemp$Label[ipar], imodel] <- parstemp$Phase[ipar]
     }
-    message("  N active pars=",sum(!is.na(parstemp$Active_Cnt)))
+    message("  N active pars = ",sum(!is.na(parstemp$Active_Cnt)))
 
     ## compile derived quantities
     quantstemp <- stats$derived_quants
@@ -203,7 +233,9 @@ SSsummarize <- function(biglist,
     ## indices
     indextemp <- stats$cpue
     if(is.null(indextemp) || is.na(indextemp[[1]][1])){
-      message("  no index data")
+      if (verbose) {
+        message("  no index data")
+      }
     }else{
       # temporarily remove columns added in SS version 3.30.13 (March 2019)
       indextemp <- indextemp[!names(indextemp) %in% c("Area","Subseas","Month")] 
@@ -542,5 +574,11 @@ SSsummarize <- function(biglist,
   mylist$mcmc           <- mcmc
   #mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
 
+  if (verbose) {
+    message("Summary finished. ",
+            "To avoid printing details above, use 'verbose = FALSE'.")
+  }
+
+  
   return(invisible(mylist))
 } # end function
