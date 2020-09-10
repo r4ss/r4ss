@@ -200,8 +200,16 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   M_at_age     <- replist$M_at_age
   Growth_Parameters <- replist$Growth_Parameters
 
-  if(is.null(morphs)){
+  if (is.null(morphs)){
     morphs   <- replist$mainmorphs
+    if (is.null(morphs)) {
+      # if morphs not supplied but growth is available, use middle
+      # morph within each sex
+      morphs <- median(growdat$Morph[growdat$Sex == 1])
+      if(nsexes == 2) {
+        morphs <- c(morphs, median(growdat$Morph[growdat$Sex == 2]))
+      }
+    }
   }
 
   # get any derived quantities related to growth curve uncertainty
@@ -282,8 +290,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
   # check dimensions
   if(length(morphs)>nsexes){
-    cat("!Error with morph indexing in SSplotBiology function.\n",
-        " Code is not set up to handle multiple growth patterns or birth seasons.\n")
+    warning("!Error with morph indexing in SSplotBiology function.\n",
+            " Code is not set up to handle multiple growth patterns or birth seasons.\n")
   }
 
   ## # stuff from selectivity that is not used
@@ -648,7 +656,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
              col=c(colvec[1],colvec[2]))
     }
   }
-  if(plot & 1 %in% subplots & !wtatage_switch) growth_curve_fn()
+  if(plot & 1 %in% subplots & !wtatage_switch) {
+    growth_curve_fn()
+  }
   if(print & 1 %in% subplots & !wtatage_switch){
     file <- "bio1_sizeatage.png"
     caption <- paste("Length at age in the beginning of the year (or season) in the ending",
@@ -1083,7 +1093,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ## by whether the model is 1-sex or 2-sex. In the latter two separate
   ## plots need to be made.
   if(plot){ # plot to screen or to PDF file
-    if(5 %in% subplots) {
+    if(5 %in% subplots & !is.null(biology)) {
       weight_plot(sex=1)
       if(nsexes==2){
         weight_plot(sex=2)

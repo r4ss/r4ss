@@ -1354,9 +1354,10 @@ SS_output <-
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
       seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) %in%
-                                 c("A", "a"),
-                                 yes = "age",
-                                 no = "length")
+        c("A", "a"),
+      yes = "age",
+      no = "length"
+      )
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars$Type == "age", 2, 5)
       # parse bin (age or length bin)
@@ -3227,60 +3228,63 @@ SS_output <-
     # first look for rows like " Seas: 12 Sub_Seas: 2   Morph: 12"
     sdsize_lines <- grep("^sdsize", rawrep[, 1])
 
-    # the section ends with first blank line after the last of the sdsize_lines
-    # so count the blanks as 1 greater than those in between the keyword
-    # and the last of those sdsize_lines
-    # an alternative here would be to modify matchfun2 to allow input of a
-    # specific line number to end the section
-    which_blank <- 1 + length(rep_blank_or_hash_lines[
-      rep_blank_or_hash_lines > matchfun("AGE_LENGTH_KEY") &
-        rep_blank_or_hash_lines < max(sdsize_lines)
-    ])
+    # check for presence of any lines with that string
+    if (length(sdsize_lines) > 0) {
 
-    # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
-    # needs to be at least 6 even if there are fewer ages
-    rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
-      cols = 1:max(6, accuage + 2),
-      header = FALSE,
-      which_blank = which_blank
-    )
-    # confirm that the section is present
-    if (length(sdsize_lines) > 0 &&
-      length(rawALK) > 1 && # this should filter NULL values
-      length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
-      morph_col <- 5
-      if (SS_versionNumeric < 3.30 &
-        length(grep("Sub_Seas", rawALK[, 3])) == 0) {
-        morph_col <- 3
-      }
-      starts <- grep("Morph:", rawALK[, morph_col]) + 2
-      ends <- grep("mean", rawALK[, 1]) - 1
-      N_ALKs <- length(starts)
-      # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
-      ALK <- array(NA, c(nlbinspop, accuage + 1, N_ALKs))
-      dimnames(ALK) <- list(
-        Length = rev(lbinspop),
-        TrueAge = 0:accuage,
-        Matrix = 1:N_ALKs
+      # the section ends with first blank line after the last of the sdsize_lines
+      # so count the blanks as 1 greater than those in between the keyword
+      # and the last of those sdsize_lines
+      # an alternative here would be to modify matchfun2 to allow input of a
+      # specific line number to end the section
+      which_blank <- 1 + length(rep_blank_or_hash_lines[
+        rep_blank_or_hash_lines > matchfun("AGE_LENGTH_KEY") &
+          rep_blank_or_hash_lines < max(sdsize_lines)
+      ])
+
+      # because of rows like " Seas: 12 Sub_Seas: 2   Morph: 12", the number of columns
+      # needs to be at least 6 even if there are fewer ages
+      rawALK <- matchfun2("AGE_LENGTH_KEY", 4,
+        cols = 1:max(6, accuage + 2),
+        header = FALSE,
+        which_blank = which_blank
       )
+      # confirm that the section is present
+      if (length(rawALK) > 1 && # this should filter NULL values
+        length(grep("AGE_AGE_KEY", rawALK[, 1])) == 0) {
+        morph_col <- 5
+        if (SS_versionNumeric < 3.30 &
+          length(grep("Sub_Seas", rawALK[, 3])) == 0) {
+          morph_col <- 3
+        }
+        starts <- grep("Morph:", rawALK[, morph_col]) + 2
+        ends <- grep("mean", rawALK[, 1]) - 1
+        N_ALKs <- length(starts)
+        # 3rd dimension should be either nmorphs or nmorphs*(number of Sub_Seas)
+        ALK <- array(NA, c(nlbinspop, accuage + 1, N_ALKs))
+        dimnames(ALK) <- list(
+          Length = rev(lbinspop),
+          TrueAge = 0:accuage,
+          Matrix = 1:N_ALKs
+        )
 
-      # loop over subsections within age-length matrix
-      for (i in 1:N_ALKs) {
-        # get matrix of values
-        ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
-        # loop over ages to convert values to numeric
-        ALKtemp <- type.convert(ALKtemp, as.is = TRUE)
-        # fill in appropriate slice of array
-        ALK[, , i] <- as.matrix(ALKtemp)
-        # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
-        Matrix.Info <- rawALK[starts[i] - 2, ]
-        # filter out empty elements
-        Matrix.Info <- Matrix.Info[Matrix.Info != ""]
-        # combine elements to form a label in the dimnames
-        dimnames(ALK)$Matrix[i] <- paste(Matrix.Info, collapse = " ")
-      }
-      returndat$ALK <- ALK
-    }
+        # loop over subsections within age-length matrix
+        for (i in 1:N_ALKs) {
+          # get matrix of values
+          ALKtemp <- rawALK[starts[i]:ends[i], 2 + 0:accuage]
+          # loop over ages to convert values to numeric
+          ALKtemp <- type.convert(ALKtemp, as.is = TRUE)
+          # fill in appropriate slice of array
+          ALK[, , i] <- as.matrix(ALKtemp)
+          # get info on each matrix (such as "Seas: 1 Sub_Seas: 1 Morph: 1")
+          Matrix.Info <- rawALK[starts[i] - 2, ]
+          # filter out empty elements
+          Matrix.Info <- Matrix.Info[Matrix.Info != ""]
+          # combine elements to form a label in the dimnames
+          dimnames(ALK)$Matrix[i] <- paste(Matrix.Info, collapse = " ")
+        }
+        returndat$ALK <- ALK
+      } # end check for keyword present
+    } # end check for length(sdsize_lines) > 0
 
     # ageing error matrices
     rawAAK <- matchfun2("AGE_AGE_KEY", 1)

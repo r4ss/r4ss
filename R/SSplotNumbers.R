@@ -89,18 +89,14 @@ SSplotNumbers <-
   plotinfo <- NULL
 
   natage    <- replist$natage
-  ngpatterns <- max(natage$Bio_Pattern)
-
-  natlen    <- replist$natlen
-  if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
-  }
   if(is.null(natage)){
     message("Skipped some plots because NUMBERS_AT_AGE unavailable\n",
             " in the report file. The starter file may be set to produce\n",
             " limited report detail.")
   }else{
-    # get more stuff from replist
+    # get stuff from replist
+    ngpatterns <- max(natage$Bio_Pattern)
+    natlen    <- replist$natlen
     nsexes          <- replist$nsexes
     nareas          <- replist$nareas
     nseasons        <- replist$nseasons
@@ -119,6 +115,10 @@ SSplotNumbers <-
     mainmorphs <- replist$mainmorphs
     SS_versionNumeric <- replist$SS_versionNumeric
 
+    if(plotdir=="default"){
+      plotdir <- replist$inputs$dir
+    }
+    
     if(areas[1]=="all"){
       areas <- 1:nareas
     }else{
