@@ -291,7 +291,7 @@ SS_plots <-
     uncertainty <- FALSE
   }
   if(forecastplot & max(timeseries$Yr > endyr+1)==0){
-    cat("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default\n")
+    message("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default")
     forecastplot <- FALSE
   }
 
@@ -308,7 +308,9 @@ SS_plots <-
       return("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
   }}
 
-  if(verbose) cat("Finished defining objects\n")
+  if(verbose){
+    message("Finished defining objects")
+  }
 
   # set fleet-specific names, and plotting parameters
   if(fleetnames[1]=="default"){
@@ -348,7 +350,9 @@ SS_plots <-
     dev.new(width=pwidth,height=pheight,pointsize=ptsize,record=TRUE)
   }
   if(nplots>0 & !new){
-    if(verbose) cat("Adding plots to existing plot window. Plot history not erased.\n")
+    if(verbose) {
+      message("Adding plots to existing plot window. Plot history not erased.")
+    }
   }
 
   ### deal with directories in which to create PNG or PDF files
@@ -363,7 +367,7 @@ SS_plots <-
     dir.isdir <- file.info(dir)$isdir
     # create directory
     if(is.na(dir.isdir) | !dir.isdir){
-      cat("Directory doesn't exist, attempting to create:\n", dir, "\n")
+      message("Directory doesn't exist, attempting to create:\n", dir)
       dir.create(dir)
     }
     # test again (even though failure to create dir should have already caused error)
@@ -390,7 +394,8 @@ SS_plots <-
       dir.create(plotdir)
     }
     if(verbose){
-      cat("Plots will be written to PNG files in the directory:\n  ",plotdir,"\n")
+      message("Plots will be written to PNG files in the directory:\n  ",
+              plotdir)
     }
     # get info on any older plots inside the plotdir directory
     csv.files <- grep("plotInfoTable.+csv", dir(plotdir), value=TRUE)
@@ -409,10 +414,10 @@ SS_plots <-
         StartTimeName <- gsub(" ", "_", StartTimeName, fixed=TRUE)
         StartTimeName <- gsub("._", "_", StartTimeName, fixed=TRUE)
         plotdir.old <- file.path(dir, paste0("plots_", StartTimeName))
-        cat("NOTE: the directory\n   ",
-            plotdir,
-            "\n  contains plots from a previous model run, renaming to\n   ",
-            plotdir.old, "\n")
+        message("NOTE: the directory\n   ",
+                plotdir,
+                "\n  contains plots from a previous model run, renaming to\n   ",
+                plotdir.old)
         file.rename(plotdir, plotdir.old)
         # create a new, empty directory for the new plots
         dir.create(plotdir)
@@ -427,7 +432,7 @@ SS_plots <-
                                      ".pdf"))
     pdf(file=pdffile, width=pwidth, height=pheight)
     if(verbose){
-      cat("PDF file with plots will be:",pdffile,'\n')
+      message("PDF file with plots will be:", pdffile)
     }
   }
 
@@ -501,7 +506,9 @@ SS_plots <-
   igroup <- 1
   if(igroup %in% plot | length(cohortlines)>0)
   {
-    if(verbose) cat("Starting biology plots (group ",igroup,")\n",sep="")
+    if(verbose) {
+      message("Starting biology plots (group ",igroup,")")
+    }
     plotinfo <- SSplotBiology(replist=replist,
                               forecast=forecastplot, minyr=minyr, maxyr=maxyr,
                               plot=!png, print=png,
@@ -509,7 +516,6 @@ SS_plots <-
                               ptsize=ptsize, res=res, mainTitle=mainTitle,
                               cex.main=cex.main, plotdir=plotdir)
     if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
-    #if(verbose) cat("Finished biology plots\n")
   }
 
   ##########################################
@@ -553,7 +559,9 @@ SS_plots <-
   igroup <- 3
   if(igroup %in% plot)
   {
-    if(verbose) cat("Starting timeseries plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting timeseries plots (group ",igroup,")")
+}
     for(isubplot in 1:15){ # which of 12 subplots to make
       for(doforecast in unique(c(FALSE,forecastplot))){ # add forecast or not
         if(isubplot %in% c(7,9,11)){
@@ -622,7 +630,9 @@ SS_plots <-
   #
   igroup <- 4
   if(igroup %in% plot){
-    if(verbose) cat("Starting recruitment deviation plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting recruitment deviation plots (group ",igroup,")")
+}
     plotinfo <-
       SSplotRecdevs(replist=replist,
                     plot=!png, print=png,
@@ -651,7 +661,9 @@ SS_plots <-
   igroup <- 5
   if(igroup %in% plot){
     if(uncertainty){
-      if(verbose) cat("Starting estimation of recruitment bias adjustment and associated plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting estimation of recruitment bias adjustment and associated plots (group ",igroup,")")
+}
       if(is.numeric(rmse_table$RMSE)){
         if(max(rmse_table$RMSE)>0){
           temp <-
@@ -664,14 +676,16 @@ SS_plots <-
           plotinfo <- temp$plotinfo
           if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
         }else{
-          cat("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.\n")
+          message("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.")
         }
       }else{
-        cat("skipping bias adjustment fit because\n",
-            "input list element 'rmse_table' has non-numeric 'RMSE' column\n")
+        message("skipping bias adjustment fit because\n",
+            "input list element 'rmse_table' has non-numeric 'RMSE' column")
       }
     }else{
-      if(verbose) cat("Skipping estimation of recruitment bias adjustment (group ",igroup,") because uncertainty=FALSE\n",sep="")
+      if(verbose) { 
+message("Skipping estimation of recruitment bias adjustment (group ",igroup,") because uncertainty=FALSE")
+}
     }
   } # end if igroup in plot or print
 
@@ -680,7 +694,9 @@ SS_plots <-
   #
   igroup <- 6
   if(igroup %in% plot){
-    if(verbose) cat("Starting spawner-recruit curve plot (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting spawner-recruit curve plot (group ",igroup,")")
+}
     plotinfo <-
       SSplotSpawnrecruit(replist=replist,
                          plot=!png, print=png,
@@ -698,7 +714,9 @@ SS_plots <-
   igroup <- 7
   if(igroup %in% plot)
   {
-    if(verbose) cat("Starting catch plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting catch plots (group ",igroup,")")
+}
     temp <-
       SSplotCatch(replist=replist,
                   plot=!png, print=png,
@@ -726,7 +744,9 @@ SS_plots <-
   #
   igroup <- 8
   if(igroup %in% plot){
-    if(verbose) cat("Starting SPR plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting SPR plots (group ",igroup,")")
+}
     plotinfo <-
       SSplotSPR(replist=replist,
                 plot=!png, print=png,
@@ -744,7 +764,9 @@ SS_plots <-
   igroup <- 9
   if(igroup %in% plot){
     if(!is.na(replist$discard) && nrow(replist$discard)>0){
-      if(verbose) cat("Starting discard plot (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting discard plot (group ",igroup,")")
+}
       plotinfo <-
         SSplotDiscard(replist=replist,
                       plot=!png, print=png,
@@ -756,7 +778,9 @@ SS_plots <-
                       plotdir=plotdir)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
-      if(verbose) cat("Skipping discard plot (group ",igroup,") because no discard data\n",sep="")
+      if(verbose) { 
+message("Skipping discard plot (group ",igroup,") because no discard data")
+}
     }
   } # end if igroup in plot or print
 
@@ -766,7 +790,9 @@ SS_plots <-
   igroup <- 10
   if(igroup %in% plot){
     if(!is.na(replist$mnwgt) && nrow(replist$mnwgt)>0){
-      if(verbose) cat("Starting mean body weight plot (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting mean body weight plot (group ",igroup,")")
+}
       plotinfo <-
         SSplotMnwt(replist=replist,
                    plot=!png, print=png,
@@ -778,7 +804,9 @@ SS_plots <-
                    plotdir=plotdir)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
-      if(verbose) cat("Skipping mean weight plot (group ",igroup,") because no mean weight data\n",sep="")
+      if(verbose) { 
+message("Skipping mean weight plot (group ",igroup,") because no mean weight data")
+}
     }
   } # end if igroup in plot or print
 
@@ -789,7 +817,9 @@ SS_plots <-
   igroup <- 11
   if(igroup %in% plot){
     if(!is.null(dim(replist$cpue))){
-      if(verbose) cat("Starting index plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting index plots (group ",igroup,")")
+}
       plotinfo <- SSplotIndices(replist=replist,
                                 fleets=fleets,
                                 fleetnames=fleetnames,
@@ -803,7 +833,10 @@ SS_plots <-
                                 maxyr=maxyr)
       if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
     }else{
-      if(verbose) cat("Skipping index plots (group ",igroup,") because no indices in model\n",sep="")
+      if(verbose) {
+        message("Skipping index plots (group ",igroup,
+                 ") because no indices in model (or are not reported)")
+      }
     }
   } # end if igroup in plot or print
 
@@ -812,20 +845,30 @@ SS_plots <-
   #
   igroup <- 12
   if(igroup %in% plot){
-    if(verbose) cat("Starting numbers at age plots (group ",igroup,")\n",sep="")
-    plotinfo <-
-      SSplotNumbers(replist=replist,
-                    areas=areas,
-                    areanames=areanames,
-                    areacols=areacols,
-                    pntscalar=pntscalar.nums,
-                    bublegend=showlegend,
-                    plot=!png, print=png,
-                    pwidth=pwidth, pheight=pheight, punits=punits,
-                    ptsize=ptsize, res=res,
-                    mainTitle=mainTitle, cex.main=cex.main,
-                    plotdir=plotdir)
-    if(!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable,plotinfo)
+    if(!is.null(replist$natage)) {
+      if(verbose) {
+        message("Starting numbers at age plots (group ",igroup,")")
+      }
+      plotinfo <-
+        SSplotNumbers(replist=replist,
+                      areas=areas,
+                      areanames=areanames,
+                      areacols=areacols,
+                      pntscalar=pntscalar.nums,
+                      bublegend=showlegend,
+                      plot=!png, print=png,
+                      pwidth=pwidth, pheight=pheight, punits=punits,
+                      ptsize=ptsize, res=res,
+                      mainTitle=mainTitle, cex.main=cex.main,
+                      plotdir=plotdir)
+      if(!is.null(plotinfo)) {
+        plotInfoTable <- rbind(plotInfoTable,plotinfo)
+      }
+    } else {
+        message("Skipping numbers plots (group ",igroup,
+                 ") because numbers-at-age table not included in output")
+      # end check for numbers-at-age table available
+    }
   } # end if igroup in plot or print
 
   ##########################################
@@ -833,7 +876,7 @@ SS_plots <-
   #
   # use of SSplotcomps function to make composition plots
   if(is.null(comp_data_exists) || !comp_data_exists){
-    cat("No composition data, skipping all composition plots\n")
+    message("No composition data, skipping all composition plots")
   }else{
     lenCompDatGroup <- 13
     ageCompDatGroup <- 14
@@ -842,11 +885,18 @@ SS_plots <-
     {
       if(length(intersect(c(lenCompDatGroup, ageCompDatGroup, condCompDatGroup),
                           plot))>0)
-        cat("Skipping plot groups ",lenCompDatGroup,"-",condCompDatGroup," (comp data without fit) because input 'datplot=F'\n",sep="")
+        message("Skipping plot groups ",
+                lenCompDatGroup,
+                "-",
+                condCompDatGroup,
+                " (comp data without fit) because input 'datplot=FALSE'")
+}
     }else{
       if(lenCompDatGroup %in% plot)  # data only aspects
       {
-        if(verbose) cat("Starting length comp data plots (group ",lenCompDatGroup,")\n",sep="")
+        if(verbose) { 
+message("Starting length comp data plots (group ",lenCompDatGroup,")")
+}
         # length comp polygon and bubble plots
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -908,7 +958,9 @@ SS_plots <-
         }
       }
       if(ageCompDatGroup %in% plot){
-        if(verbose) cat("Starting age comp data plots (group ",ageCompDatGroup,")\n",sep="")
+        if(verbose) { 
+message("Starting age comp data plots (group ",ageCompDatGroup,")")
+}
         # age comp polygon and bubble plots (data only)
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -965,7 +1017,9 @@ SS_plots <-
         }
       }
       if(condCompDatGroup %in% plot){
-        if(verbose) cat("Starting conditional comp data plots (group ",condCompDatGroup,")\n",sep="")
+        if(verbose) { 
+message("Starting conditional comp data plots (group ",condCompDatGroup,")")
+}
         # conditional age plot (data only)
         plotinfo <-
           SSplotComps(replist=replist,datonly=TRUE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -999,7 +1053,9 @@ SS_plots <-
     #
     igroup <- 16
     if(igroup %in% plot){
-      if(verbose) cat("Starting fit to length comp plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting fit to length comp plots (group ",igroup,")")
+}
       # regular length comps
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="LEN",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -1088,7 +1144,9 @@ SS_plots <-
     #
     igroup <- 17
     if(igroup %in% plot){
-      if(verbose) cat("Starting fit to age comp plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting fit to age comp plots (group ",igroup,")")
+}
       # normal marginal ages
       plotinfo <-
         SSplotComps(replist=replist,datonly=FALSE,kind="AGE",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -1149,7 +1207,9 @@ SS_plots <-
     #
     igroup <- 18
     if(igroup %in% plot){
-      if(verbose) cat("Starting fit to conditional age-at-length comp plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting fit to conditional age-at-length comp plots (group ",igroup,")")
+}
       if(aalresids){
         plotinfo <-
           SSplotComps(replist=replist,subplots=3,datonly=FALSE,kind="cond",bub=TRUE,verbose=verbose,fleets=fleets,
@@ -1219,19 +1279,14 @@ SS_plots <-
       if(nrow(replist$condbase)>0){
         if(replist$nagebins == 1){
           if(verbose){
-            cat("Skipping conditional age-at-length diagnostic plots (group ",igroup,
-                ") due to only 1 age bin\n", sep="")
+            message("Skipping conditional age-at-length diagnostic plots (group ",
+                    igroup,
+                    ") due to only 1 age bin")
           }
         }else{
-          if(verbose) cat("Starting conditional age-at-length diagnostic plots (group ",igroup,")\n",sep="")
-          ## if(verbose){
-          ##   cat("Starting Andre's conditional age-at-length plots (group ",igroup,")\n",
-          ##       "  This plot shows mean age and std. dev. in conditional A@L.\n",
-          ##       "    Left plots are mean A@L by size-class (obs. and pred.)\n",
-          ##       "    with 90% CIs based on adding 1.64 SE of mean to the data.\n",
-          ##       "    Right plots in each pair are SE of mean A@L (obs. and pred.)\n",
-          ##       "    with 90% CIs based on the chi-square distribution.\n")
-          ## }
+          if(verbose) { 
+message("Starting conditional age-at-length diagnostic plots (group ",igroup,")")
+}
           plotinfo <-
             SSplotComps(replist=replist,subplots=9:10,datonly=FALSE,kind="cond",
                         bub=TRUE,verbose=verbose,fleets=fleets,
@@ -1255,7 +1310,9 @@ SS_plots <-
             plotInfoTable$category[plotInfoTable$category=="Comp"] <- "A@LComp"
         }
       }else{
-        if(verbose) cat("Skipping conditional A@L plots (group ",igroup,") because no such data in model\n",sep="")
+        if(verbose) { 
+message("Skipping conditional A@L plots (group ",igroup,") because no such data in model")
+}
       }
     } # end if igroup in plot or print
 
@@ -1347,9 +1404,13 @@ SS_plots <-
     igroup <- 21
     if(igroup %in% plot){
       if(is.null(replist$tagdbase2) || nrow(replist$tagdbase2)==0){
-        if(verbose) cat("Skipping tag plots (group ",igroup,") because no tag data in model\n",sep="")
+        if(verbose) { 
+message("Skipping tag plots (group ",igroup,") because no tag data in model")
+}
       }else{
-        if(verbose) cat("Starting tag plots (group ",igroup,")\n",sep="")
+        if(verbose) { 
+message("Starting tag plots (group ",igroup,")")
+}
         plotinfo <-
           SSplotTags(replist=replist,
                      rows=rows,cols=cols,
@@ -1371,7 +1432,9 @@ SS_plots <-
   #
   igroup <- 22
   if(igroup %in% plot){
-    if(verbose) cat("Starting yield plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting yield plots (group ",igroup,")")
+}
     plotinfo <-
       SSplotYield(replist=replist,
                   plot=!png, print=png,
@@ -1388,7 +1451,9 @@ SS_plots <-
   igroup <- 23
   if(igroup %in% plot){
     if(!is.null(replist$movement) && nrow(replist$movement)>0){
-      if(verbose) cat("Starting movement rate plots (group ",igroup,")\n",sep="")
+      if(verbose) { 
+message("Starting movement rate plots (group ",igroup,")")
+}
       plotinfo <- NULL
       temp <-
         SSplotMovementRates(replist=replist,
@@ -1411,7 +1476,9 @@ SS_plots <-
   #
   igroup <- 24
   if(igroup %in% plot){
-    if(verbose) cat("Starting data range plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting data range plots (group ",igroup,")")
+}
     plotinfo <- NULL
     temp <-
       SSplotData(replist=replist,
@@ -1429,7 +1496,9 @@ SS_plots <-
   #
   igroup <- 25
   if(igroup %in% plot){
-    if(verbose) cat("Starting parameter distribution plots (group ",igroup,")\n",sep="")
+    if(verbose) { 
+message("Starting parameter distribution plots (group ",igroup,")")
+}
     if(showpost && is.null(replist$mcmc)){
       showpost <- FALSE
     }
@@ -1453,7 +1522,9 @@ SS_plots <-
   } # end if igroup in plot or print
 
   if(pdf) dev.off() # close PDF file if it was open
-  if(verbose) cat("Finished all requested plots in SS_plots function\n")
+  if(verbose) {
+    message("Finished all requested plots in SS_plots function")
+  }
   
   ##########################################
   # diagnostic tables
@@ -1463,15 +1534,18 @@ SS_plots <-
     if(nrow(replist$estimated_non_dev_parameters) == 0){
       if(verbose){
         message("Skipping diagnostic tables (group ",igroup,
-                ") because there are no estimated non-dev parameters\n",sep="")
+                ") because there are no estimated non-dev parameters")
+}
       }
     }else{
       if(!png){
         message("Skipping diagnostic tables (group ",igroup,
-                ") because png=FALSE\n",sep="")
+                ") because png=FALSE")
+}
       }else{
         if(verbose){
-          message("Starting diagnostic tables (group ",igroup,")\n",sep="")
+          message("Starting diagnostic tables (group ",igroup,")")
+}
         }
         
         plotinfo <- NULL
