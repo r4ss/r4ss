@@ -3634,7 +3634,10 @@ SS_output <-
     inputs$verbose <- verbose
 
     returndat$inputs <- inputs
-
+    
+    returndat$empirical_selectivity = empirical_selectivity(returndat, thr=1e-5)
+    class(returndat) = c("SS_output", "list")
+    
     if (verbose) {
       message("completed SS_output")
     }
