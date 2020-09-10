@@ -3633,9 +3633,11 @@ SS_output <-
     inputs$covar <- covar
     inputs$verbose <- verbose
 
-    returndat$inputs <- inputs
-    
     returndat$empirical_selectivity = empirical_selectivity(returndat, thr=1e-5)
+
+    # testthat tests checks for $inputs as last element of the list returned
+    # by this function, so if that is changed, the test should be modified too
+    returndat$inputs <- inputs
     class(returndat) = c("SS_output", "list")
     
     if (verbose) {
