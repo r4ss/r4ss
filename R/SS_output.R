@@ -319,7 +319,7 @@ SS_output <-
       if (!is.na(parfile)) {
         corfile <- sub(".par", ".cor", parfile, fixed = TRUE)
         if (!file.exists(corfile)) {
-          warning("Some stats skipped because the .cor file not found:", corfile, "\n")
+          warning("Some stats skipped because the .cor file not found:", corfile)
           corfile <- NA
         }
       }
@@ -334,7 +334,8 @@ SS_output <-
         covarhead <- readLines(con = covarfile, n = 10)
         covarskip <- grep("active-i", covarhead) - 1
         covartime <- findtime(covarhead)
-        # the conversion to R time class below may no longer be necessary as strings should match
+        # the conversion to R time class below may no longer
+        # be necessary as strings should match
         if (is.null(covartime) || is.null(repfiletime)) {
           message(
             "problem comparing the file creation times:\n",
@@ -414,7 +415,9 @@ SS_output <-
               " or change input to 'NoCompOK = TRUE'"
             )
           } else {
-            message("Composition file not found: ", compfile)
+            if (verbose) {
+              message("Composition file not found: ", compfile)
+            }
           }
         }
       }
@@ -566,7 +569,7 @@ SS_output <-
       if (verbose) {
         message(
           "Multiple files in directory match pattern *.log\n",
-          "choosing most recently modified file:", logfile, "\n"
+          "choosing most recently modified file:", logfile
         )
       }
     }
@@ -601,7 +604,7 @@ SS_output <-
     if (warn) {
       warnname <- file.path(dir, warnfile)
       if (!file.exists(warnname)) {
-        message(warnfile, " file not found")
+        warning("Warnings file not found: ", warnfile)
         nwarn <- NA
         warn <- NA
       } else {
@@ -880,7 +883,7 @@ SS_output <-
         # make correction to tag output associated with 3.24f (fixed in later versions)
         if (substr(SS_version, 1, 9) == "SS-V3.24f") {
           if (!hidewarn) {
-            message("Correcting for bug in tag data output associated with SSv3.24f\n")
+            message("Correcting for bug in tag data output associated with SSv3.24f")
           }
           tag1rows <- compdbase$Sexes == "TAG1"
           if (any(tag1rows)) {
@@ -910,7 +913,7 @@ SS_output <-
         if (n > 0) {
           warning(
             n, " rows from composition database have NA sample size\n",
-            "but are not part of a super-period. (Maybe input as N=0?)\n"
+            "but are not part of a super-period. (Maybe input as N=0?)"
           )
         }
         compdbase <- type.convert(compdbase, as.is = TRUE)
@@ -3633,8 +3636,16 @@ SS_output <-
     inputs$covar <- covar
     inputs$verbose <- verbose
 
-    returndat$empirical_selectivity = empirical_selectivity(returndat, thr=1e-5)
-
+    # get empirical_selectivity if compfile and
+    # numbers at age and length are all available
+    if (comp && !is.null(natage) && !is.null(natlen)) {
+      returndat$empirical_selectivity <- empirical_selectivity(returndat, thr=1e-5)
+    } else {
+      if (verbose) {
+        message("Skipping empirical selectivity due to unavailable information")
+      }
+    }
+    
     # testthat tests checks for $inputs as last element of the list returned
     # by this function, so if that is changed, the test should be modified too
     returndat$inputs <- inputs
