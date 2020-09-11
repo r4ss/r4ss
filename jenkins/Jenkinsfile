@@ -36,14 +36,12 @@ pipeline {
 	    always {
 		    sh label: 'Zip run_R folder', script: 'zip -r r4ss_results.zip run_R'
 		    archiveArtifacts 'r4ss_results.zip'
-		}
-        changed {
-            script {
-                if (currentBuild.currentResult == 'SUCCESS') { // Other values: SUCCESS, UNSTABLE
-                    // Send an email only if the build status has changed from red to green
-                   mail bcc: '', body: 'Stock Synthesis build now passing!', cc: '', from: '', replyTo: '', subject: 'Jenkins Build Passing Again: stock-synthesis-r4ss', to: 'kathryn.doering@noaa.gov'
-                }
-            }
-        }
+	  	}
+		  failure {
+        mail bcc: '', body: 'Stock Synthesis r4ss build failed.', cc: '', from: '', replyTo: '', subject: 'stock-synthesis-r4ss: Jenkins Build Failure', to: 'kathryn.doering@noaa.gov ian.taylor@noaa.gov'
+      }
+      success {
+        mail bcc: '', body: 'Stock Synthesis r4ss build passed.', cc: '', from: '', replyTo: '', subject: 'stock-synthesis-r4ss: Jenkins Build Passing!', to: 'kathryn.doering@noaa.gov ian.taylor@noaa.gov'
+      }
     }
 }
