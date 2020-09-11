@@ -1,6 +1,6 @@
 pipeline {
     agent { dockerfile {
-          dir 'jenkins/stock-synthesis/r4ss'
+          dir 'jenkins'
         }
     }
     stages { 
