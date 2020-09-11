@@ -5,8 +5,6 @@ remotes::install_local(".", upgrade = "always",
 						
 # get model folder names
 mod_names <- list.dirs("run_R/models", full.names = FALSE, recursive = FALSE)
-# quick test just one models
-mod_names <- mod_names[1]
 print(mod_names)
 
 out <- lapply(mod_names, function(i) {
