@@ -24,6 +24,7 @@
 #' @param period indicator of whether to make plots using numbers at age just
 #' from the beginning ("B") or middle of the year ("M") (new option starting
 #' with SSv3.11)
+#' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param pwidth width of plot
@@ -50,6 +51,7 @@ SSplotNumbers <-
            bub.bg=gray(0.5,alpha=0.5),
            bublegend=TRUE,
            period=c("B","M"),
+           meanlines = TRUE,
            add=FALSE,
            labels=c("Year",                   #1
                "Age",                           #2
@@ -310,10 +312,13 @@ SSplotNumbers <-
                     legend=bublegend,bg.open=bub.bg,
                     main=main, maxsize=(pntscalar+1.0),
                     las=1,cex.main=cex.main,allopen=TRUE)
-            lines(natageyrs,meanage,col="red",lwd=3)
+            # add line for mean age
+            if(meanlines){
+              lines(natageyrs,meanage,col="red",lwd=3)
+            }
           }
           meanAge.fn <- function(){
-            # mean age for males and femails
+            # mean age for males and females
             ylim <- c(0, max(meanage, meanagef, na.rm=TRUE))
             plot(natageyrs, meanage, col="blue", lty=1, pch=4, xlab=labels[1],
                  ylim=ylim, type="o", ylab=ylab, main=main, cex.main=cex.main)
@@ -528,7 +533,10 @@ SSplotNumbers <-
                       legend=bublegend,bg.open=bub.bg,
                       main=main,maxsize=(pntscalar+1.0),
                       las=1,cex.main=cex.main,allopen=TRUE)
-              lines(natlenyrs,meanlen,col="red",lwd=3)
+              # add line for mean length
+              if(meanlines){
+                lines(natlenyrs,meanlen,col="red",lwd=3)
+              }
             }
             meanLen.fn <- function(){
               # mean length for males and females

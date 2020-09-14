@@ -17,6 +17,7 @@ SSplotNumbers(
   bub.bg = gray(0.5, alpha = 0.5),
   bublegend = TRUE,
   period = c("B", "M"),
+  meanlines = TRUE,
   add = FALSE,
   labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
     "Mean observed age (yr)", "Mean age (yr)", "mean age in the population",
@@ -67,6 +68,8 @@ Default=2.6}
 \item{period}{indicator of whether to make plots using numbers at age just
 from the beginning ("B") or middle of the year ("M") (new option starting
 with SSv3.11)}
+
+\item{meanlines}{add lines for mean age or length on top of bubble plots}
 
 \item{add}{add to existing plot? (not yet implemented)}
 
