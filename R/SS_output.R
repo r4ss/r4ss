@@ -827,8 +827,16 @@ SS_output <-
     # compositions
     if (comp) { # skip this stuff if no CompReport.sso file
       # read header section of file to get bin information
+      # first, figure out how many columns are needed
+
+      # IGT 11-Sept-2020: temporarily hardwiring while I figure out how
+      #                   read.table works
+      ncols.compfile <- 300 
+      #ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
+
+      # now read table using the appropriate number of columns
       allbins <- read.table(
-        file = compfile, col.names = 1:ncols, fill = TRUE,
+        file = compfile, col.names = 1:ncols.compfile, fill = TRUE,
         colClasses = "character", skip = 3, nrows = 25
       )
       # lbins is data length bins
@@ -839,7 +847,8 @@ SS_output <-
       lbinspop <- as.numeric(allbins[grep("Size_Bins_pop", allbins[, 1]) + 2, -1])
       lbinspop <- lbinspop[!is.na(lbinspop)]
       nlbinspop <- length(lbinspop)
-      Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition", allbins[, 1]), 2])
+      Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",
+                                                 allbins[, 1]), 2])
       if (compend == compskip + 2) {
         message("It appears that there is no composition data in CompReport.sso")
         comp <- FALSE # turning off switch to function doesn't look for comp data later on

@@ -8,3 +8,4 @@ revdep
 ^.*\.Rproj$
 ^\.Rproj\.user$
 docs
+jenkins

@@ -1624,14 +1624,14 @@ SS_plots <-
         ptsize = ptsize, res = res,
         nrows = parrows,
         ncols = parcols,
-        # mainTitle = mainTitle,
-        # cex.main = cex.main,
         showmle = showmle,
         showpost = showpost,
         showprior = showprior,
         showinit = showinit,
         showdev = showdev,
-        fitrange = fitrange, plotdir = plotdir
+        fitrange = fitrange,
+        verbose = verbose,
+        plotdir = plotdir
       )
       if (!is.null(plotinfo)) {
         plotInfoTable <- rbind(plotInfoTable, plotinfo)
