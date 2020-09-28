@@ -20,9 +20,7 @@ None
 ## Downstream dependencies
 I have checked the 2 downstream dependencies:
 
-* ss3sim: A new version (1.1.1) is being submitted to CRAN 
-in conjunction with this release and they have been checked 
-together
+* ss3sim: There were no issues.
 
 * MSEtool: There were no issues.
 
