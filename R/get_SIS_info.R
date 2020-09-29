@@ -13,8 +13,11 @@
 #' format "[species]_2019_SIS_info.csv" where \code{species}
 #' is an additional input
 #' @param stock String to prepend id info to filename for CSV file
-#' @param final_year Year for reference points and final year of timeseries
+#' @param final_year Year of assessment and reference points
 #' (typically will be model$endyr + 1)
+#' @param data_year Last year of of timeseries data 
+#' @param sciencecenter Origin of assessment report
+#' @param Mgt_Council Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)
 #' @author Ian G. Taylor, Andi Stephens
 #' @export
 #' @seealso \code{\link{SS_output}}
@@ -31,7 +34,7 @@
 
 
 get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
-                         stock = "StockName", final_year = 2019, data_year = NULL, sciencecenter="NWFSC"){
+                         stock = "StockName", final_year = 2019, data_year = NULL, sciencecenter="NWFSC", Mgt_Council="NA"){
 
   # directory to write file
   if(is.null(dir)){
@@ -276,12 +279,36 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     SPRtarg_text <- paste0("SPR", 100*model$sprtarg, "%") # e.g. SPR50%
   }
 
+  F_limit = 1-model$sprtarg
+  F_limit_basis = paste0("1-SPR_", SPRtarg_text)
+  F_msy = F_limit
+  F_msy_basis = F_limit_basis
+  
+  # GM Settings: Using F_SPR target
+  if(Mgt_Council=="GM"){
+    
+    #Annual FSPR names changed between versions
+    if("annF_SPR" %in% rownames(model$derived_quants)){
+      F_limit <- round(model$derived_quants["annF_SPR", "Value"],digits=3)
+      }else{
+        F_limit <- round(model$derived_quants["Fstd_SPRtgt", "Value"],digits=3)
+        }
+    F_msy = F_limit
+    F_limit_basis = paste0("F",100*model$btarg, "%")
+    F_msy_basis = paste0("F",100*model$btarg, "% as Proxy")
+    }
+  
+
   if(model$btarg == -999){
     Btarg_text <- "BXX%"
     model$btarg <- NA
     warning('No value for model$btarg')
   }else{
     Btarg_text <- paste0("B", 100*model$btarg, "%") # e.g. B40%
+	# GM Settings:
+	if(Mgt_Council=="GM"){
+      Btarg_text <- paste0("SPR", 100*model$btarg, "%")
+    }
   }
 
   if(model$minbthresh == -999){
@@ -290,9 +317,30 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     warning('No value for model$minbthresh')
   }else{
     MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
+	B_msy_basis = paste0("SS", Btarg_text)
+    B_msy = round(model$SBzero*model$btarg)
+    B_limit = round(model$SBzero*model$minbthresh)
   }
 
-  Bcurrent <- tab$SpawnBio[tab$Year == data_year]
+  # GM Settings:
+  if(Mgt_Council=="GM"){
+    MinBthresh_text <- paste0("(1-M)*SPR", 100*model$btarg, "%") # e.g. B25%
+    B_msy_basis = Btarg_text
+    eq_year = data_year+model$N_forecast_yrs
+    B_msy = round(model$derived_quants$Value[which(model$derived_quants$Label==paste0("SSB_",eq_year))])
+    B_limit = round((0.5*B_msy))
+    }
+
+  B_year = final_year
+  ts_tab_short <- data.frame(Year = ts$Yr,
+                             SpawnBio = round(ts$SpawnBio,2))
+  Bcurrent <- round(ts_tab_short$SpawnBio[ts_tab_short$Year == final_year])
+  
+  # GM Settings:
+  if(Mgt_Council == "GM"){
+    B_year = data_year
+    Bcurrent <- round(tab$SpawnBio[tab$Year == data_year])
+  }
 
   # MSY-proxy labels were changed at some point
   if("Dead_Catch_SPR" %in% rownames(model$derived_quants)){
@@ -302,11 +350,31 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     Yield_at_SPR_target <- round(model$derived_quants["TotYield_SPRtgt", "Value"])
     Yield_at_B_target <- round(model$derived_quants["TotYield_Btgt", "Value"])
   }
+  
+  Best_F_Est = tab$"1-SPR"[tab$Year == data_year]
+  F_basis = "Equilibrium SPR"
+  F_unit = "1-SPR"
+  
+  # GM Settings: Best F estimate = geometric mean of last three data years
+  if(Mgt_Council=="GM"){
+    Best_F_Est = round(mean(tab$"Exploit_rate"[tab$Year %in% c((data_year-2):data_year)]),2)
+    F_basis = paste0("Total_Catch/Total_Biomass_Geometric_Mean_",(data_year-2),"-",data_year)
+    F_unit = "Exploitation Rate"
+    }
 
   # SS version
   SS_version <- strsplit(model$SS_version, split = ";")[[1]][1]
   gsub("-safe", "", SS_version)
   gsub("-opt", "", SS_version)
+  
+  stock_level_to_MSY = Bcurrent/B_msy
+  if(stock_level_to_MSY>1){stock_level_to_MSY = "ABOVE"
+  }else if (stock_level_to_MSY<0.90){ stock_level_to_MSY = "BELOW"
+  }else if(stock_level_to_MSY>0.90 & stock_level_to_MSY<1){stock_level_to_MSY = "NEAR"
+  }else{stock_level_to_MSY = "UNKNOWN"}
+
+
+
 
   # make big 2-column table of info about each model
   info_tab <- c(paste0("SAIP:,", "https://spo.nmfs.noaa.gov/sites/default/files/TMSPO183.pdf"),
@@ -333,27 +401,27 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("F Year, ",          data_year),
                 paste0("Min F Estimate, ",  ""),
                 paste0("Max F Estimate, ",  ""),
-                paste0("Best F Estimate, ", tab$"1-SPR"[tab$Year == data_year]),
-                paste0("F Basis, ",         "Equilibrium SPR"),
-                paste0("F Unit, ",          "1-SPR"),
+                paste0("Best F Estimate, ", Best_F_Est),
+                paste0("F Basis, ",         F_basis),
+                paste0("F Unit, ",          F_unit),
                 "",
 
                 "Domestic Fishing Mortality Derive Management Quantities",
-                paste0("Flimit, ",          1 - model$sprtarg),
-                paste0("Flimit Basis, ",    "1-SPR_", SPRtarg_text),
-                paste0("FMSY, ",            1 - model$sprtarg),
-                paste0("FMSY Basis, ",      "1-SPR_",SPRtarg_text),
+                paste0("Flimit, ",          F_limit),
+                paste0("Flimit Basis, ",    F_limit_basis),
+                paste0("FMSY, ",            F_msy),
+                paste0("FMSY Basis, ",      F_msy_basis),
                 paste0("F target,",         ""),
                 paste0("F target Basis,",   ""),
-                paste0("MSY, ",             Yield_at_SPR_target),
-                paste0("MSY Unit,",         "mt"),
-                paste0("MSY Basis, ",     "Yield with ", SPRtarg_text,
-                       " at SB_", SPRtarg_text),
+                #paste0("MSY, ",             Yield_at_SPR_target), # These lines have moved to the next section
+                #paste0("MSY Unit,",         "mt"),
+                #paste0("MSY Basis, ",     "Yield with ", SPRtarg_text,
+                #      " at SB_", SPRtarg_text),
                 "",
 
                 "Biomass Estimates",
-                paste0("[Unfished Spawning Biomass], ", model$SBzero),
-                paste0("B Year, ",          final_year),
+                paste0("[Unfished Spawning Biomass], ", model$SBzero), # no longer a requested value
+                paste0("B Year, ",          B_year),
                 paste0("Min B. Estimate, ", ""),
                 paste0("Max. B Estimate, ", ""),
                 paste0("Best B Estimate, ", Bcurrent),
@@ -369,13 +437,13 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "",
 
                 "Domestic Biomass Derived Management Quantities",
-                paste0("Blimit, ",          model$SBzero*model$minbthresh),
+                paste0("Blimit, ",          B_limit),
                 paste0("Blimit Basis, ",    MinBthresh_text),
-                paste0("BMSY, ",            model$SBzero*model$btarg),
-                paste0("BMSY Basis, ",      "SS", Btarg_text), # e.g. SSB40%
-                paste0("B/Blimit, ",        Bcurrent/(model$SBzero*model$minbthresh)),
-                paste0("B/Bmsy, ",          Bcurrent/(model$SBzero*model$btarg)),
-                paste0("Stock Level (relative) to BMSY, ", "Above"),
+                paste0("BMSY, ",            B_msy),
+                paste0("BMSY Basis, ",      B_msy_basis), # e.g. SSB40%
+                paste0("B/Blimit, ",        round((Bcurrent/B_limit),2)),
+                paste0("B/Bmsy, ",          round((Bcurrent/B_msy), 3)),
+                paste0("Stock Level (relative) to BMSY, ", stock_level_to_MSY),
                 # paste0("age ", summary_age, "+ summary biomass, ",
                 #        model$timeseries$Bio_smry[model$timeseries$Yr == final_year - 1]),
                 "",

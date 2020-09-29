@@ -152,8 +152,8 @@ SSplotTimeseries <-
   }
 
   # check if spawning output rather than spawning biomass is plotted
-  #if(FecPar2!=0){ # old test based on parameter values not robust to all options
-  if(is.na(replist$SpawnOutputUnits) ||
+  if(is.null(replist$SpawnOutputUnits) ||
+     is.na(replist$SpawnOutputUnits) ||
      replist$SpawnOutputUnits=='numbers'){ # quantity from test in SS_output
     labels[5] <- labels[7]
     labels[6] <- gsub("biomass","output",labels[6])

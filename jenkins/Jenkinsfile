@@ -1,0 +1,47 @@
+pipeline {
+    agent { dockerfile {
+          dir 'jenkins'
+        }
+    }
+    stages { 
+	    stage('Prepare workspace') {
+            steps {
+			  sh label: 'print wd', script: 'pwd'
+			  sh label: 'view files', script: 'ls .'
+			  sh label: 'remove an old dir (force in case does not exist)', script: 'rm -rf simple_run'
+			  sh label: 'remove an old file (force in case does not exist)', script: 'rm -f Simple.zip'
+			  sh label: 'remove an old file (force in case does not exist)', script: 'rm -f models.zip'
+			  sh label: 'remove an old file (force in case does not exist)', script: 'rm -rf local_R_lib'
+			  sh label: 'remove an old dir (force in case does not exist)', script: 'rm -rf run_R'
+			  sh label: 'verify removed', script: 'ls .'
+		   }
+        }
+        stage('Copy models.zip artifact from previous stage') {
+            steps {
+			  sh label: 'create subfolder to save artifact', script: 'mkdir run_R'
+              copyArtifacts filter: 'models.zip', fingerprintArtifacts: true, projectName: 'stock-synthesis-model', selector: lastSuccessful()
+              sh label: 'move models.zip', script: 'mv models.zip run_R/models.zip' 
+			  sh label: 'Unzip models.zip', script: 'cd run_R && unzip models.zip'
+			  // sh label: 'view files', script: 'ls -R run_R'
+		   }
+        }
+	    stage('Run R code to test R') {
+		    steps{
+			    sh label: 'view files and str', script: 'ls /usr/local/lib/R -l'
+		    	sh label: 'install and run r4ss', script: 'Rscript jenkins/run_r4ss.R'
+			}	
+		}
+	}
+    post {
+	    always {
+		    sh label: 'Zip run_R folder', script: 'zip -r r4ss_results.zip run_R'
+		    archiveArtifacts 'r4ss_results.zip'
+	  	}
+		  failure {
+        mail bcc: '', body: 'Stock Synthesis r4ss build failed.', cc: '', from: '', replyTo: '', subject: 'stock-synthesis-r4ss: Jenkins Build Failure', to: 'kathryn.doering@noaa.gov ian.taylor@noaa.gov'
+      }
+      success {
+        mail bcc: '', body: 'Stock Synthesis r4ss build passed.', cc: '', from: '', replyTo: '', subject: 'stock-synthesis-r4ss: Jenkins Build Passing!', to: 'kathryn.doering@noaa.gov ian.taylor@noaa.gov'
+      }
+    }
+}

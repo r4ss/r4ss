@@ -11,7 +11,8 @@ get_SIS_info(
   stock = "StockName",
   final_year = 2019,
   data_year = NULL,
-  sciencecenter = "NWFSC"
+  sciencecenter = "NWFSC",
+  Mgt_Council = "NA"
 )
 }
 \arguments{
@@ -25,8 +26,14 @@ is an additional input}
 
 \item{stock}{String to prepend id info to filename for CSV file}
 
-\item{final_year}{Year for reference points and final year of timeseries
+\item{final_year}{Year of assessment and reference points
 (typically will be model$endyr + 1)}
+
+\item{data_year}{Last year of of timeseries data}
+
+\item{sciencecenter}{Origin of assessment report}
+
+\item{Mgt_Council}{Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)}
 }
 \description{
 Processes model results contained in the list created by

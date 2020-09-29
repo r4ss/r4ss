@@ -269,12 +269,17 @@ SSplotPars <-
                                        goodnames
                                      )))
       }
-      goodnames <- goodnames[-devrows]
-      message("Excluding ", length(devrows),
-              "deviation parameters because input 'showdev' = FALSE")
-      if (length(goodnames) == 0) {
-        message("no parameters to plot")
-        return()
+      # if there are devs in the list, remove them
+      if (length(devrows) > 0) {
+        goodnames <- goodnames[-devrows]
+        if (verbose) {
+          message("Excluding ", length(devrows),
+                  " deviation parameters because input 'showdev' = FALSE")
+        }
+        if (length(goodnames) == 0) {
+          message("no parameters to plot")
+          return()
+        }
       }
     } else {
       # warn if any of these are present

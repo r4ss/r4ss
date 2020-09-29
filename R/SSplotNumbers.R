@@ -24,6 +24,7 @@
 #' @param period indicator of whether to make plots using numbers at age just
 #' from the beginning ("B") or middle of the year ("M") (new option starting
 #' with SSv3.11)
+#' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param pwidth width of plot
@@ -40,797 +41,867 @@
 #' @export
 #' @seealso \code{\link{SS_output}}, \code{\link{SS_plots}}
 SSplotNumbers <-
-  function(replist,subplots=1:10,
-           plot=TRUE,print=FALSE,
-           numbers.unit=1000,
-           areas="all",
-           areanames="default",
-           areacols="default",
-           pntscalar=2.6,
-           bub.bg=gray(0.5,alpha=0.5),
-           bublegend=TRUE,
-           period=c("B","M"),
-           add=FALSE,
-           labels=c("Year",                   #1
-               "Age",                           #2
-               "True age (yr)",                 #3
-               "SD of observed age (yr)",       #4
-               "Mean observed age (yr)",        #5
-               "Mean age (yr)",                 #6
-               "mean age in the population",    #7
-               "Ageing imprecision",            #8
-               "Numbers at age at equilibrium", #9
-               "Equilibrium age distribution",  #10
-               "Fraction female in numbers at age", #11
-               "Length",                        #12
-               "Mean length (cm)",              #13
-               "mean length (cm) in the population", #14
-               "expected numbers at age",       #15
-               "Beginning of year",             #16
-               "Middle of year",                #17
-               "expected numbers at length",   #18
-               # 19 below is out of order, runumbering others would be tedious
-               "Fraction female in numbers at length"), #19
-           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,
-           cex.main=1,
-           plotdir="default",
-           mainTitle=FALSE,
-           verbose=TRUE)
-{
-  # plot various things related to numbers-at-age for Stock Synthesis
+  function(replist, subplots = 1:10,
+           plot = TRUE, print = FALSE,
+           numbers.unit = 1000,
+           areas = "all",
+           areanames = "default",
+           areacols = "default",
+           pntscalar = 2.6,
+           bub.bg = gray(0.5, alpha = 0.5),
+           bublegend = TRUE,
+           period = c("B", "M"),
+           meanlines = TRUE,
+           add = FALSE,
+           labels = c(
+             "Year", # 1
+             "Age", # 2
+             "True age (yr)", # 3
+             "SD of observed age (yr)", # 4
+             "Mean observed age (yr)", # 5
+             "Mean age (yr)", # 6
+             "mean age in the population", # 7
+             "Ageing imprecision", # 8
+             "Numbers at age at equilibrium", # 9
+             "Equilibrium age distribution", # 10
+             "Fraction female in numbers at age", # 11
+             "Length", # 12
+             "Mean length (cm)", # 13
+             "mean length (cm) in the population", # 14
+             "expected numbers at age", # 15
+             "Beginning of year", # 16
+             "Middle of year", # 17
+             "expected numbers at length", # 18
+             # 19 below is out of order, runumbering others would be tedious
+             "Fraction female in numbers at length"
+           ), # 19
+           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
+           cex.main = 1,
+           plotdir = "default",
+           mainTitle = FALSE,
+           verbose = TRUE) {
+    # plot various things related to numbers-at-age for Stock Synthesis
 
-  # subfunction to write png files
-  pngfun <- function(file, caption=NA){
-    png(filename=file.path(plotdir, file),
-        width=pwidth, height=pheight, units=punits, res=res, pointsize=ptsize)
-    plotinfo <- rbind(plotinfo, data.frame(file=file, caption=caption))
-    return(plotinfo)
-  }
-  plotinfo <- NULL
+    # subfunction to write png files
+    pngfun <- function(file, caption = NA) {
+      png(
+        filename = file.path(plotdir, file),
+        width = pwidth, height = pheight, units = punits, res = res, pointsize = ptsize
+      )
+      plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
+      return(plotinfo)
+    }
+    plotinfo <- NULL
 
-  natage    <- replist$natage
-  ngpatterns <- max(natage$Bio_Pattern)
+    natage <- replist$natage
+    if (is.null(natage)) {
+      message(
+        "Skipped some plots because NUMBERS_AT_AGE unavailable\n",
+        " in the report file. The starter file may be set to produce\n",
+        " limited report detail."
+      )
+    } else {
+      # get stuff from replist
+      ngpatterns <- max(natage$Bio_Pattern)
+      natlen <- replist$natlen
+      nsexes <- replist$nsexes
+      nareas <- replist$nareas
+      nseasons <- replist$nseasons
+      spawnseas <- replist$spawnseas
+      morph_indexing <- replist$morph_indexing
+      accuage <- replist$accuage
+      agebins <- replist$agebins
+      endyr <- replist$endyr
+      N_ageerror_defs <- replist$N_ageerror_defs
+      AAK <- replist$AAK
+      age_error_mean <- replist$age_error_mean
+      age_error_sd <- replist$age_error_sd
+      lbinspop <- replist$lbinspop
+      nlbinspop <- replist$nlbinspop
+      recruitment_dist <- replist$recruitment_dist
+      mainmorphs <- replist$mainmorphs
+      SS_versionNumeric <- replist$SS_versionNumeric
 
-  natlen    <- replist$natlen
-  if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
-  }
-  if(is.null(natage)){
-    message("Skipped some plots because NUMBERS_AT_AGE unavailable\n",
-            " in the report file. The starter file may be set to produce\n",
-            " limited report detail.")
-  }else{
-    # get more stuff from replist
-    nsexes          <- replist$nsexes
-    nareas          <- replist$nareas
-    nseasons        <- replist$nseasons
-    spawnseas       <- replist$spawnseas
-    morph_indexing  <- replist$morph_indexing
-    accuage         <- replist$accuage
-    agebins         <- replist$agebins
-    endyr           <- replist$endyr
-    N_ageerror_defs <- replist$N_ageerror_defs
-    AAK             <- replist$AAK
-    age_error_mean  <- replist$age_error_mean
-    age_error_sd    <- replist$age_error_sd
-    lbinspop        <- replist$lbinspop
-    nlbinspop       <- replist$nlbinspop
-    recruitment_dist <- replist$recruitment_dist
-    mainmorphs <- replist$mainmorphs
-    SS_versionNumeric <- replist$SS_versionNumeric
-
-    if(areas[1]=="all"){
-      areas <- 1:nareas
-    }else{
-      if(length(intersect(areas,1:nareas))!=length(areas)){
-        stop("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+      if (plotdir == "default") {
+        plotdir <- replist$inputs$dir
       }
-    }
-    if(areanames[1]=="default"){
-      areanames <- paste0("area",1:nareas)
-    }
 
-    if(areacols[1]=="default"){
-      areacols  <- rich.colors.short(nareas)
-      if(nareas > 2) areacols <- rich.colors.short(nareas+1)[-1]
-    }
-
-    if(SS_versionNumeric<=3.1){
-      stop("numbers at age plots no longer supported for SS version 3.10 and earlier")
-    }
-
-    ###########
-    # Numbers at age plots
-
-    # combining across platoons/submorphs and growth patterns
-    column1 <- 12
-    if(SS_versionNumeric >= 3.30){
-      column1 <- 13
-    }
-    remove <- -(1:(column1-1)) # removes first group of columns
-
-    if("Settlement" %in% names(natage)){
-      settlement <- unique(natage$Settlement) 
-      if(length(settlement)>1){
-        cat("Numbers at age plots only show first settlement event\n")
+      if (areas[1] == "all") {
+        areas <- 1:nareas
+      } else {
+        if (length(intersect(areas, 1:nareas)) != length(areas)) {
+          stop("Input 'areas' should be 'all' or a vector of values between 1 and nareas.")
+        }
       }
-    }
-    bseas <- unique(natage$BirthSeas)
-    if(length(bseas)>1){
-      cat("Numbers at age plots are for only the first birth season\n")
-    }
-    if(ngpatterns>1){
-      cat("Numbers at age plots may not deal correctly with growth patterns:",
-          "no guarantees!\n")
-    }
-    if(nseasons>1){
-      cat("Numbers at age plots are for season 1 only\n")
-      # change plot labels for seasonal models 
-      labels[16] <- gsub(pattern="of year", replacement="of season 1", x=labels[16])
-      labels[17] <- gsub(pattern="of year", replacement="of season 1", x=labels[17])
-    }
-    for(iarea in areas){
-      for(iperiod in 1:length(period)){
-        for(m in 1:nsexes){
-          # warning! implementation of birthseasons may not be correct in this section
-          # data frame to combine values across factors
-          natagetemp_all <- natage[natage$Area==iarea &
-                                   natage$Sex==m &
-                                   natage$Seas==1 &
-                                   natage$Era!="VIRG" &
-                                   !is.na(natage$"0") &
-                                   natage$Yr < (endyr+2) &
-                                   natage$BirthSeas==min(bseas),]
-                                   # natage$Bio_Pattern==1,] # formerly filtered
-          natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid"==period[iperiod],]
-          # create data frame with 0 values to fill across platoons/submorphs
-          morphlist <- unique(natagetemp_all$Platoon)
-          natagetemp0 <- natagetemp_all[natagetemp_all$Platoon==morphlist[1] &
-                                        natagetemp_all$Bio_Pattern==1,]
-          for(iage in 0:accuage){
-            # matrix of zeros for upcoming calculations
-            natagetemp0[,column1 + iage] <- 0
-          }
+      if (areanames[1] == "default") {
+        areanames <- paste0("area", 1:nareas)
+      }
 
-          for(imorph in 1:length(morphlist)){
-            for(igp in 1:ngpatterns){
-              natagetemp_imorph_igp <-
-                natagetemp_all[natagetemp_all$Platoon==morphlist[imorph] &
-                                 natagetemp_all$Bio_Pattern==igp,]
-              natagetemp0[,column1+0:accuage] <-
-                natagetemp0[,column1+0:accuage] +
-                  natagetemp_imorph_igp[,column1+0:accuage]
-            } # end growth pattern loop
-          } # end morph loop
-          if(ngpatterns>0){
-            natagetemp0$Bio_Pattern==999
-          }
+      if (areacols[1] == "default") {
+        areacols <- rich.colors.short(nareas)
+        if (nareas > 2) areacols <- rich.colors.short(nareas + 1)[-1]
+      }
 
-          nyrsplot <- nrow(natagetemp0)
-          resx <- rep(natagetemp0$Yr, accuage+1)
-          resy <- NULL
-          for(i in 0:accuage){
-            resy <- c(resy,rep(i,nyrsplot))
-          }
-          resz <- NULL
-          for(i in column1+0:accuage){
-            # numbers here are scaled by units
-            resz <- c(resz, numbers.unit * natagetemp0[,i])
-          }
+      if (SS_versionNumeric <= 3.1) {
+        stop("numbers at age plots no longer supported for SS version 3.10 and earlier")
+      }
 
-          # clean up big numbers
-          units <- ""
-          if(max(resz, na.rm=TRUE) > 1e9){
-            resz <- resz/1e9
-            units <- "billion"
-          }
-          if(max(resz, na.rm=TRUE) > 1e6 & units==""){
-            resz <- resz/1e6
-            units <- "million"
-          }
-          if(max(resz, na.rm=TRUE) > 1e3 & units==""){
-            resz <- resz/1e3
-            units <- "thousand"
-          }
-          # assign unique name to data frame for area, sex (beginning of year only)
-          if(iperiod==1){
-            assign(paste0("natagetemp0area", iarea, "sex", m), natagetemp0)
-          }
-          if(m==1 & nsexes==1) sextitle <- ""
-          if(m==1 & nsexes==2) sextitle <- " of females"
-          if(m==2) sextitle=" of males"
-          if(nareas>1) sextitle <- paste0(sextitle, " in ", areanames[iarea])
-          if(!period[iperiod] %in% c("B", "M")){
-            stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
-          }
-          if(period[iperiod]=="B"){
-            periodtitle <- labels[16]
-            fileperiod <- "_beg"
-          }
-          if(period[iperiod]=="M"){
-            periodtitle <- labels[17]
-            fileperiod <- "_mid"
-          }
-          # title for use in title or caption
-          plottitle1 <- paste0(periodtitle, " ", labels[15], sextitle,
-                               " in (max ~ ", format(round(max(resz, na.rm=TRUE), 1), nsmall=1),
-                               " ", units, ")")
-          # title if requested
-          main <- ""
-          if(mainTitle) {
-            main <- plottitle1
-          }
-          
-          ### calculations related to mean age
+      ###########
+      # Numbers at age plots
 
-          # removing the first columns to get just numbers
-          natagetemp1 <- as.matrix(natagetemp0[,remove])
-          ages <- 0:accuage
-          natagetemp2 <- as.data.frame(natagetemp1)
-          natagetemp2$sum <- as.vector(apply(natagetemp1,1,sum))
+      # combining across platoons/submorphs and growth patterns
+      column1 <- 12
+      if (SS_versionNumeric >= 3.30) {
+        column1 <- 13
+      }
+      remove <- -(1:(column1 - 1)) # removes first group of columns
 
-          # remove rows with 0 fish (i.e. no growth pattern in this area)
-          natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
-          natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ]
-          natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
-          prodmat <- t(natagetemp1)*ages
-
-          prodsum <- as.vector(apply(prodmat,2,sum))
-          natagetemp2$sumprod <- prodsum
-          natagetemp2$meanage <-
-            natagetemp2$sumprod/natagetemp2$sum - (natagetemp0$BirthSeas-1)/nseasons
-          natageyrs <- sort(unique(natagetemp0$Yr))
-          if(iperiod==1){
-            natageyrsB <- natageyrs # unique name for beginning of year
-          }
-          meanage <- 0*natageyrs
-
-          for(i in 1:length(natageyrs)){
-            # averaging over values within a year (depending on birth season)
-            meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr==natageyrs[i]]*
-                              natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])/
-                                sum(natagetemp2$sum[natagetemp0$Yr==natageyrs[i]])
-          }
-
-          if(m==1 & nsexes==2){
-            meanagef <- meanage # save value for females in 2 sex models
-          }
-
-          ylab <- labels[6]
-          main <- ""
-          plottitle2 <- paste(periodtitle,labels[7])
-          if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
-          if(mainTitle) {
-            main <- plottitle2
-          }
-          ageBubble.fn <- function(){
-            # bubble plot with line
-            bubble3(x=resx, y=resy, z=resz,
-                    xlab=labels[1],ylab=labels[2],
-                    legend=bublegend,bg.open=bub.bg,
-                    main=main, maxsize=(pntscalar+1.0),
-                    las=1,cex.main=cex.main,allopen=TRUE)
-            lines(natageyrs,meanage,col="red",lwd=3)
-          }
-          meanAge.fn <- function(){
-            # mean age for males and femails
-            ylim <- c(0, max(meanage, meanagef, na.rm=TRUE))
-            plot(natageyrs, meanage, col="blue", lty=1, pch=4, xlab=labels[1],
-                 ylim=ylim, type="o", ylab=ylab, main=main, cex.main=cex.main)
-            points(natageyrs, meanagef, col="red", lty=2, pch=1, type="o")
-            legend("bottomleft", bty="n", c("Females", "Males"), lty=c(2, 1),
-                   pch=c(1, 4), col = c("red", "blue"))
-          }
-          if(plot){
-            if(1 %in% subplots) ageBubble.fn()
-            if(2 %in% subplots & m==2 & nsexes==2){
-              meanAge.fn()
-            }
-          }
-          if(print){
-            filepartsex <- paste0("_sex", m)
-            filepartarea <- ""
-            if(nareas > 1){
-              filepartarea <- paste0("_", areanames[iarea])
-            }
-            if(1 %in% subplots){
-              file <- paste0("numbers1", filepartarea, filepartsex,
-                             fileperiod, ".png")
-              caption <- plottitle1
-              plotinfo <- pngfun(file=file, caption=caption)
-              ageBubble.fn()
-              dev.off()
-            }
-            # make 2-sex plot after looping over both sexes
-            if(2 %in% subplots & m==2 & nsexes==2){
-              file <- paste0("numbers2_meanage", filepartarea,
-                             fileperiod, ".png", sep="")
-              caption <- plottitle2
-              plotinfo <- pngfun(file=file, caption=caption)
-              meanAge.fn()
-              dev.off()
-            }
-          } # end printing to PNG file
-        } # end gender loop
-      } # end period loop
-    } # end area loop
-    if(nsexes>1){
-      for(iarea in areas){
-        plottitle3 <- paste0(labels[11], sep="")
-        if(nareas > 1){
-          plottitle3 <- paste0(plottitle3, " for ", areanames[iarea])
+      if ("Settlement" %in% names(natage)) {
+        settlement <- unique(natage$Settlement)
+        if (length(settlement) > 1) {
+          cat("Numbers at age plots only show first settlement event\n")
         }
-        main <- ""
-        if(mainTitle) {
-          main <- plottitle3
-        } 
-        # get objects that were assigned earlier
-        natagef <- get(paste0("natagetemp0area", iarea, "sex", 1))
-        natagem <- get(paste0("natagetemp0area", iarea, "sex", 2))
-        natagefyrs <- natagef$Yr
-        natageratio <- as.matrix(natagef[,remove]/
-                                   (natagem[,remove] + natagef[,remove]))
-        natageratio[is.nan(natageratio)] <- NA
-        if(diff(range(natageratio,finite=TRUE))!=0){
-          numbersRatioAge.fn <- function(...){
-            contour(natagefyrs, 0:accuage, natageratio, xaxs="i", yaxs="i",
-                    xlab=labels[1], ylab=labels[2], main=main,
-                    cex.main=cex.main, ...)
-          }
-          if(plot & 3 %in% subplots){
-            numbersRatioAge.fn(labcex=1)
-          }
-          if(print & 3 %in% subplots){
-            filepart <- ""
-            if(nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
-            file <- paste0("numbers3_frac_female_age", filepart, ".png")
-            caption <- plottitle3
-            plotinfo <- pngfun(file=file, caption=caption)
-            numbersRatioAge.fn(labcex=0.6)
-            dev.off()}
-        }else{
-          cat("skipped sex ratio contour plot because females=males\n",
-              "for all ages and years\n")
-        }
-      } # end area loop
-    } # end if nsexes>1
-
-
-    ##########
-    # repeat code above for numbers at length (subplots 6, 7 and 8)
-    if(length(intersect(6:8, subplots))>0 & !is.null(natlen) & all(!is.na(lbinspop))) 
-    {
-      column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
-
-      for(iarea in areas){
-        for(iperiod in 1:length(period)){
-          for(m in 1:nsexes){
+      }
+      bseas <- unique(natage$BirthSeas)
+      if (length(bseas) > 1) {
+        cat("Numbers at age plots are for only the first birth season\n")
+      }
+      if (ngpatterns > 1) {
+        cat(
+          "Numbers at age plots may not deal correctly with growth patterns:",
+          "no guarantees!\n"
+        )
+      }
+      if (nseasons > 1) {
+        cat("Numbers at age plots are for season 1 only\n")
+        # change plot labels for seasonal models
+        labels[16] <- gsub(pattern = "of year", replacement = "of season 1", x = labels[16])
+        labels[17] <- gsub(pattern = "of year", replacement = "of season 1", x = labels[17])
+      }
+      for (iarea in areas) {
+        for (iperiod in 1:length(period)) {
+          for (m in 1:nsexes) {
             # warning! implementation of birthseasons may not be correct in this section
             # data frame to combine values across factors
-            natlentemp_all <- natlen[natlen$Area==iarea &
-                                     natlen$Sex==m &
-                                     natlen$Seas==1 &
-                                     natlen$Era!="VIRG" &
-                                     #natlen$Era!="FORE" &    
-                                     natlen$Yr < (endyr+2) &
-                                     natlen$BirthSeas==min(bseas),]
-                                     # natlen$Bio_Pattern==1,] # formerly filtered
-            natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid"==period[iperiod],]
-
+            natagetemp_all <- natage[natage$Area == iarea &
+              natage$Sex == m &
+              natage$Seas == 1 &
+              natage$Era != "VIRG" &
+              !is.na(natage$"0") &
+              natage$Yr < (endyr + 2) &
+              natage$BirthSeas == min(bseas), ]
+            # natage$Bio_Pattern==1,] # formerly filtered
+            natagetemp_all <- natagetemp_all[natagetemp_all$"Beg/Mid" == period[iperiod], ]
             # create data frame with 0 values to fill across platoons/submorphs
-            morphlist <- unique(natlentemp_all$Platoon)
-            natlentemp0 <- natlentemp_all[natlentemp_all$Platoon==morphlist[1] &
-                                            natlentemp_all$Bio_Pattern==1,]
-            for(ilen in 1:nlbinspop){
+            morphlist <- unique(natagetemp_all$Platoon)
+            natagetemp0 <- natagetemp_all[natagetemp_all$Platoon == morphlist[1] &
+              natagetemp_all$Bio_Pattern == 1, ]
+            for (iage in 0:accuage) {
               # matrix of zeros for upcoming calculations
-              natlentemp0[,column1 + ilen] <- 0
+              natagetemp0[, column1 + iage] <- 0
             }
-            for(imorph in 1:length(morphlist)){
-              for(igp in 1:ngpatterns){
-                natlentemp_imorph_igp <-
-                  natlentemp_all[natlentemp_all$Platoon==morphlist[imorph] &
-                                   natlentemp_all$Bio_Pattern==igp,]
-                natlentemp0[,column1+1:nlbinspop] <-
-                  natlentemp0[,column1+1:nlbinspop] +
-                    natlentemp_imorph_igp[,column1+1:nlbinspop]
+
+            for (imorph in 1:length(morphlist)) {
+              for (igp in 1:ngpatterns) {
+                natagetemp_imorph_igp <-
+                  natagetemp_all[natagetemp_all$Platoon == morphlist[imorph] &
+                    natagetemp_all$Bio_Pattern == igp, ]
+                natagetemp0[, column1 + 0:accuage] <-
+                  natagetemp0[, column1 + 0:accuage] +
+                  natagetemp_imorph_igp[, column1 + 0:accuage]
               } # end growth pattern loop
             } # end morph loop
-            if(ngpatterns>0) natlentemp0$Bio_Pattern==999
+            if (ngpatterns > 0) {
+              natagetemp0$Bio_Pattern == 999
+            }
 
-            nyrsplot <- nrow(natlentemp0)
-            resx <- rep(natlentemp0$Yr, nlbinspop)
+            nyrsplot <- nrow(natagetemp0)
+            resx <- rep(natagetemp0$Yr, accuage + 1)
             resy <- NULL
-            for(ilen in 1:nlbinspop) resy <- c(resy,rep(lbinspop[ilen],nyrsplot))
+            for (i in 0:accuage) {
+              resy <- c(resy, rep(i, nyrsplot))
+            }
             resz <- NULL
-            for(ilen in column1+1:nlbinspop){
+            for (i in column1 + 0:accuage) {
               # numbers here are scaled by units
-              resz <- c(resz, numbers.unit * natlentemp0[,ilen])
+              resz <- c(resz, numbers.unit * natagetemp0[, i])
             }
 
             # clean up big numbers
             units <- ""
-            if(max(resz, na.rm=TRUE) > 1e9){
-              resz <- resz/1e9
+            if (max(resz, na.rm = TRUE) > 1e9) {
+              resz <- resz / 1e9
               units <- "billion"
             }
-            if(max(resz, na.rm=TRUE) > 1e6 & units==""){
-              resz <- resz/1e6
+            if (max(resz, na.rm = TRUE) > 1e6 & units == "") {
+              resz <- resz / 1e6
               units <- "million"
             }
-            if(max(resz, na.rm=TRUE) > 1e3 & units==""){
-              resz <- resz/1e3
+            if (max(resz, na.rm = TRUE) > 1e3 & units == "") {
+              resz <- resz / 1e3
               units <- "thousand"
             }
-
-            # assign unique name to data frame for area, sex
-            assign(paste0("natlentemp0area", iarea, "sex", m), natlentemp0)
-
-            if(m==1 & nsexes==1) sextitle <- ""
-            if(m==1 & nsexes==2) sextitle <- " of females"
-            if(m==2) sextitle=" of males"
-            if(nareas>1) sextitle <- paste0(sextitle," in ",areanames[iarea])
-            if(period[iperiod]=="B") periodtitle <- labels[16] else
-            if(period[iperiod]=="M") periodtitle <- labels[17] else
-            stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
-              plottitle1 <- paste0(periodtitle, " ", labels[18], sextitle,
-                                " in (max ~ ",format(round(max(resz, na.rm=TRUE),1),nsmall=1),
-                                " ",units,")")
+            # assign unique name to data frame for area, sex (beginning of year only)
+            if (iperiod == 1) {
+              assign(paste0("natagetemp0area", iarea, "sex", m), natagetemp0)
+            }
+            if (m == 1 & nsexes == 1) sextitle <- ""
+            if (m == 1 & nsexes == 2) sextitle <- " of females"
+            if (m == 2) sextitle <- " of males"
+            if (nareas > 1) sextitle <- paste0(sextitle, " in ", areanames[iarea])
+            if (!period[iperiod] %in% c("B", "M")) {
+              stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
+            }
+            if (period[iperiod] == "B") {
+              periodtitle <- labels[16]
+              fileperiod <- "_beg"
+            }
+            if (period[iperiod] == "M") {
+              periodtitle <- labels[17]
+              fileperiod <- "_mid"
+            }
+            # title for use in title or caption
+            plottitle1 <- paste0(
+              periodtitle, " ", labels[15], sextitle,
+              " in (max ~ ", format(round(max(resz, na.rm = TRUE), 1), nsmall = 1),
+              " ", units, ")"
+            )
+            # title if requested
             main <- ""
-            if(mainTitle) {
+            if (mainTitle) {
               main <- plottitle1
             }
 
-            ### calculations related to mean len
+            ### calculations related to mean age
+
             # removing the first columns to get just numbers
-            natlentemp1 <- as.matrix(natlentemp0[,remove])
-            natlentemp2 <- as.data.frame(natlentemp1)
-            natlentemp2$sum <- as.vector(apply(natlentemp1,1,sum))
+            natagetemp1 <- as.matrix(natagetemp0[, remove])
+            ages <- 0:accuage
+            natagetemp2 <- as.data.frame(natagetemp1)
+            natagetemp2$sum <- as.vector(apply(natagetemp1, 1, sum))
 
             # remove rows with 0 fish (i.e. no growth pattern in this area)
-            natlentemp0 <- natlentemp0[natlentemp2$sum > 0, ]
-            natlentemp1 <- natlentemp1[natlentemp2$sum > 0, ]
-            natlentemp2 <- natlentemp2[natlentemp2$sum > 0, ]
-            prodmat <- t(natlentemp1)*lbinspop
+            natagetemp0 <- natagetemp0[natagetemp2$sum > 0, ]
+            natagetemp1 <- natagetemp1[natagetemp2$sum > 0, ]
+            natagetemp2 <- natagetemp2[natagetemp2$sum > 0, ]
+            prodmat <- t(natagetemp1) * ages
 
-            prodsum <- as.vector(apply(prodmat,2,sum))
-            natlentemp2$sumprod <- prodsum
-            natlentemp2$meanlen <-
-              natlentemp2$sumprod/natlentemp2$sum - (natlentemp0$BirthSeas-1)/nseasons
-            natlenyrs <- sort(unique(natlentemp0$Yr))
-            if(iperiod==1){
-              natlenyrsB <- natlenyrs # unique name for years associated with period=="B"
+            prodsum <- as.vector(apply(prodmat, 2, sum))
+            natagetemp2$sumprod <- prodsum
+            natagetemp2$meanage <-
+              natagetemp2$sumprod / natagetemp2$sum - (natagetemp0$BirthSeas - 1) / nseasons
+            natageyrs <- sort(unique(natagetemp0$Yr))
+            if (iperiod == 1) {
+              natageyrsB <- natageyrs # unique name for beginning of year
             }
+            meanage <- 0 * natageyrs
 
-            meanlen <- 0*natlenyrs
-            for(i in 1:length(natlenyrs)){
+            for (i in 1:length(natageyrs)) {
               # averaging over values within a year (depending on birth season)
-              meanlen[i] <-
-                sum(natlentemp2$meanlen[natlentemp0$Yr==natlenyrs[i]]*
-                      natlentemp2$sum[natlentemp0$Yr==natlenyrs[i]])/
-                  sum(natlentemp2$sum[natlentemp0$Yr==natlenyrs[i]])}
-
-            if(m==1 & nsexes==2){
-              meanlenf <- meanlenf <- meanlen # save value for females in 2 sex models
+              meanage[i] <- sum(natagetemp2$meanage[natagetemp0$Yr == natageyrs[i]] *
+                natagetemp2$sum[natagetemp0$Yr == natageyrs[i]]) /
+                sum(natagetemp2$sum[natagetemp0$Yr == natageyrs[i]])
             }
 
-            ylab <- labels[13]
-            plottitle2 <- paste(periodtitle,labels[14])
-            if(nareas>1) plottitle2 <- paste(plottitle2,"in",areanames[iarea])
+            if (m == 1 & nsexes == 2) {
+              meanagef <- meanage # save value for females in 2 sex models
+            }
+
+            ylab <- labels[6]
             main <- ""
-            if(mainTitle) {
+            plottitle2 <- paste(periodtitle, labels[7])
+            if (nareas > 1) plottitle2 <- paste(plottitle2, "in", areanames[iarea])
+            if (mainTitle) {
               main <- plottitle2
             }
-
-            lenBubble.fn <- function(){
+            ageBubble.fn <- function() {
               # bubble plot with line
-              bubble3(x=resx, y=resy, z=resz,
-                      xlab=labels[1],ylab=labels[12],
-                      legend=bublegend,bg.open=bub.bg,
-                      main=main,maxsize=(pntscalar+1.0),
-                      las=1,cex.main=cex.main,allopen=TRUE)
-              lines(natlenyrs,meanlen,col="red",lwd=3)
-            }
-            meanLen.fn <- function(){
-              # mean length for males and females
-              ylim <- c(0, max(meanlen, meanlenf))
-              plot(natlenyrs,meanlen,col="blue",lty=1,pch=4,xlab=labels[1],ylim=ylim,
-                   type="o",ylab=ylab,main=main,cex.main=cex.main)
-              points(natlenyrs,meanlenf,col="red",lty=2,pch=1,type="o")
-              legend("bottomleft",bty="n", c("Females","Males"),
-                     lty=c(2,1), pch=c(1,4), col = c("red","blue"))
-            }
-            if(plot){
-              if(6 %in% subplots) lenBubble.fn()
-              if(7 %in% subplots & m==2 & nsexes==2) meanLen.fn()
-            }
-            if(print){
-              filepartsex <- paste0("_sex",m)
-              filepartarea <- ""
-              if(nareas > 1){
-                filepartarea <- paste0("_",areanames[iarea])
+              bubble3(
+                x = resx, y = resy, z = resz,
+                xlab = labels[1], ylab = labels[2],
+                legend = bublegend, bg.open = bub.bg,
+                main = main, maxsize = (pntscalar + 1.0),
+                las = 1, cex.main = cex.main, allopen = TRUE
+              )
+              # add line for mean age
+              if (meanlines) {
+                lines(natageyrs, meanage, col = "red", lwd = 3)
               }
-              if(6 %in% subplots){
-                file <- paste0("numbers6_len", filepartarea,
-                               filepartsex, ".png")
+            }
+            meanAge.fn <- function() {
+              # mean age for males and females
+              ylim <- c(0, max(meanage, meanagef, na.rm = TRUE))
+              plot(natageyrs, meanage,
+                col = "blue", lty = 1, pch = 4, xlab = labels[1],
+                ylim = ylim, type = "o", ylab = ylab, main = main, cex.main = cex.main
+              )
+              points(natageyrs, meanagef, col = "red", lty = 2, pch = 1, type = "o")
+              legend("bottomleft",
+                bty = "n", c("Females", "Males"), lty = c(2, 1),
+                pch = c(1, 4), col = c("red", "blue")
+              )
+            }
+            if (plot) {
+              if (1 %in% subplots) ageBubble.fn()
+              if (2 %in% subplots & m == 2 & nsexes == 2) {
+                meanAge.fn()
+              }
+            }
+            if (print) {
+              filepartsex <- paste0("_sex", m)
+              filepartarea <- ""
+              if (nareas > 1) {
+                filepartarea <- paste0("_", areanames[iarea])
+              }
+              if (1 %in% subplots) {
+                file <- paste0(
+                  "numbers1", filepartarea, filepartsex,
+                  fileperiod, ".png"
+                )
                 caption <- plottitle1
-                plotinfo <- pngfun(file=file, caption=caption)
-                lenBubble.fn()
+                plotinfo <- pngfun(file = file, caption = caption)
+                ageBubble.fn()
                 dev.off()
               }
               # make 2-sex plot after looping over both sexes
-              if(7 %in% subplots & m==2 & nsexes==2){
-                file <- paste0("numbers7_meanlen", filepartarea, ".png")
+              if (2 %in% subplots & m == 2 & nsexes == 2) {
+                file <- paste0("numbers2_meanage", filepartarea,
+                  fileperiod, ".png",
+                  sep = ""
+                )
                 caption <- plottitle2
-                plotinfo <- pngfun(file=file, caption=caption)
-                meanLen.fn()
+                plotinfo <- pngfun(file = file, caption = caption)
+                meanAge.fn()
                 dev.off()
               }
-            } # end printing of plot 14
+            } # end printing to PNG file
           } # end gender loop
         } # end period loop
       } # end area loop
-
-      if(nsexes>1){
-        for(iarea in areas){
+      if (nsexes > 1) {
+        for (iarea in areas) {
+          plottitle3 <- paste0(labels[11], sep = "")
+          if (nareas > 1) {
+            plottitle3 <- paste0(plottitle3, " for ", areanames[iarea])
+          }
+          main <- ""
+          if (mainTitle) {
+            main <- plottitle3
+          }
           # get objects that were assigned earlier
-          natlenf <- get(paste0("natlentemp0area", iarea, "sex", 1))
-          natlenm <- get(paste0("natlentemp0area", iarea, "sex", 2))
-          natlenratio <- as.matrix(natlenf[, remove]/
-                                     (natlenm[, remove]+natlenf[, remove]))
-          if(diff(range(natlenratio, finite=TRUE))!=0){
-            numbersRatioLen.fn <- function(...){
-              main <- ""
-              caption <- labels[19]
-              if(nareas > 1){
-                caption <- paste0(main, " for ", areanames[iarea])
-              }
-              if(mainTitle) {
-                main <- caption
-              }
-              z <- natlenratio
-              # check for mismatch that caused crash in one particular model
-              # note from Ian (11/1/2018): taking too long to sort this out so
-              #                            just skipping the plot for the rare case
-              #                            that has the error
-              if(length(natlenyrsB) == nrow(z)){
-                contour(natlenyrsB, lbinspop, z,
-                        xaxs="i", yaxs="i", xlab=labels[1], ylab=labels[12],
-                        main=main, cex.main=cex.main, ...)
-              }else{
-                warning("Skipping plot of sex ratio by length and year\n  ",
-                        "due to mismatch in length of table and vector of years.\n  ",
-                        "This may be due to 0 values in the table.")
-              }
+          natagef <- get(paste0("natagetemp0area", iarea, "sex", 1))
+          natagem <- get(paste0("natagetemp0area", iarea, "sex", 2))
+          natagefyrs <- natagef$Yr
+          natageratio <- as.matrix(natagef[, remove] /
+            (natagem[, remove] + natagef[, remove]))
+          natageratio[is.nan(natageratio)] <- NA
+          if (diff(range(natageratio, finite = TRUE)) != 0) {
+            numbersRatioAge.fn <- function(...) {
+              contour(natagefyrs, 0:accuage, natageratio,
+                xaxs = "i", yaxs = "i",
+                xlab = labels[1], ylab = labels[2], main = main,
+                cex.main = cex.main, ...
+              )
             }
-            if(plot & 8 %in% subplots){
-              numbersRatioLen.fn(labcex=1)
+            if (plot & 3 %in% subplots) {
+              numbersRatioAge.fn(labcex = 1)
             }
-            if(print & 8 %in% subplots){
+            if (print & 3 %in% subplots) {
               filepart <- ""
-              if(nareas > 1){
-                filepart <- paste0("_", areanames[iarea], filepart)
-              }
-              file <- paste0("numbers8_frac_female_len", filepart, ".png")
-              caption <- caption
-              plotinfo <- pngfun(file=file, caption=caption)
-              numbersRatioLen.fn(labcex=0.6)
+              if (nareas > 1) filepart <- paste0("_", areanames[iarea], filepart)
+              file <- paste0("numbers3_frac_female_age", filepart, ".png")
+              caption <- plottitle3
+              plotinfo <- pngfun(file = file, caption = caption)
+              numbersRatioAge.fn(labcex = 0.6)
               dev.off()
             }
-          }else{
-            cat("skipped sex ratio contour plot because females=males",
-                "for all lengths and years\n")
+          } else {
+            cat(
+              "skipped sex ratio contour plot because females=males\n",
+              "for all ages and years\n"
+            )
           }
         } # end area loop
       } # end if nsexes>1
 
-    } # end numbers at length plots
 
-    ##########
-    # plot of equilibrium age composition by gender and area
-    equilibfun <- function(){
-      equilage <- natage[natage$Era=="VIRG", ]
-      equilage <- equilage[as.vector(apply(equilage[, remove], 1, sum))>0, ]
+      ##########
+      # repeat code above for numbers at length (subplots 6, 7 and 8)
+      if (length(intersect(6:8, subplots)) > 0 & !is.null(natlen) & all(!is.na(lbinspop))) {
+        column1 <- column1 - 1 # because index of lengths starts at 1, not 0 as in ages
+
+        for (iarea in areas) {
+          for (iperiod in 1:length(period)) {
+            for (m in 1:nsexes) {
+              # warning! implementation of birthseasons may not be correct in this section
+              # data frame to combine values across factors
+              natlentemp_all <- natlen[natlen$Area == iarea &
+                natlen$Sex == m &
+                natlen$Seas == 1 &
+                natlen$Era != "VIRG" &
+                # natlen$Era!="FORE" &
+                natlen$Yr < (endyr + 2) &
+                natlen$BirthSeas == min(bseas), ]
+              # natlen$Bio_Pattern==1,] # formerly filtered
+              natlentemp_all <- natlentemp_all[natlentemp_all$"Beg/Mid" == period[iperiod], ]
+
+              # create data frame with 0 values to fill across platoons/submorphs
+              morphlist <- unique(natlentemp_all$Platoon)
+              natlentemp0 <- natlentemp_all[natlentemp_all$Platoon == morphlist[1] &
+                natlentemp_all$Bio_Pattern == 1, ]
+              for (ilen in 1:nlbinspop) {
+                # matrix of zeros for upcoming calculations
+                natlentemp0[, column1 + ilen] <- 0
+              }
+              for (imorph in 1:length(morphlist)) {
+                for (igp in 1:ngpatterns) {
+                  natlentemp_imorph_igp <-
+                    natlentemp_all[natlentemp_all$Platoon == morphlist[imorph] &
+                      natlentemp_all$Bio_Pattern == igp, ]
+                  natlentemp0[, column1 + 1:nlbinspop] <-
+                    natlentemp0[, column1 + 1:nlbinspop] +
+                    natlentemp_imorph_igp[, column1 + 1:nlbinspop]
+                } # end growth pattern loop
+              } # end morph loop
+              if (ngpatterns > 0) natlentemp0$Bio_Pattern == 999
+
+              nyrsplot <- nrow(natlentemp0)
+              resx <- rep(natlentemp0$Yr, nlbinspop)
+              resy <- NULL
+              for (ilen in 1:nlbinspop) resy <- c(resy, rep(lbinspop[ilen], nyrsplot))
+              resz <- NULL
+              for (ilen in column1 + 1:nlbinspop) {
+                # numbers here are scaled by units
+                resz <- c(resz, numbers.unit * natlentemp0[, ilen])
+              }
+
+              # clean up big numbers
+              units <- ""
+              if (max(resz, na.rm = TRUE) > 1e9) {
+                resz <- resz / 1e9
+                units <- "billion"
+              }
+              if (max(resz, na.rm = TRUE) > 1e6 & units == "") {
+                resz <- resz / 1e6
+                units <- "million"
+              }
+              if (max(resz, na.rm = TRUE) > 1e3 & units == "") {
+                resz <- resz / 1e3
+                units <- "thousand"
+              }
+
+              # assign unique name to data frame for area, sex
+              assign(paste0("natlentemp0area", iarea, "sex", m), natlentemp0)
+
+              if (m == 1 & nsexes == 1) sextitle <- ""
+              if (m == 1 & nsexes == 2) sextitle <- " of females"
+              if (m == 2) sextitle <- " of males"
+              if (nareas > 1) sextitle <- paste0(sextitle, " in ", areanames[iarea])
+              if (period[iperiod] == "B") {
+                periodtitle <- labels[16]
+              } else
+              if (period[iperiod] == "M") {
+                periodtitle <- labels[17]
+              } else {
+                stop("'period' input to SSplotNumbers should include only 'B' or 'M'")
+              }
+              plottitle1 <- paste0(
+                periodtitle, " ", labels[18], sextitle,
+                " in (max ~ ", format(round(max(resz, na.rm = TRUE), 1), nsmall = 1),
+                " ", units, ")"
+              )
+              main <- ""
+              if (mainTitle) {
+                main <- plottitle1
+              }
+
+              ### calculations related to mean len
+              # removing the first columns to get just numbers
+              natlentemp1 <- as.matrix(natlentemp0[, remove])
+              natlentemp2 <- as.data.frame(natlentemp1)
+              natlentemp2$sum <- as.vector(apply(natlentemp1, 1, sum))
+
+              # remove rows with 0 fish (i.e. no growth pattern in this area)
+              natlentemp0 <- natlentemp0[natlentemp2$sum > 0, ]
+              natlentemp1 <- natlentemp1[natlentemp2$sum > 0, ]
+              natlentemp2 <- natlentemp2[natlentemp2$sum > 0, ]
+              prodmat <- t(natlentemp1) * lbinspop
+
+              prodsum <- as.vector(apply(prodmat, 2, sum))
+              natlentemp2$sumprod <- prodsum
+              natlentemp2$meanlen <-
+                natlentemp2$sumprod / natlentemp2$sum - (natlentemp0$BirthSeas - 1) / nseasons
+              natlenyrs <- sort(unique(natlentemp0$Yr))
+              if (iperiod == 1) {
+                natlenyrsB <- natlenyrs # unique name for years associated with period=="B"
+              }
+
+              meanlen <- 0 * natlenyrs
+              for (i in 1:length(natlenyrs)) {
+                # averaging over values within a year (depending on birth season)
+                meanlen[i] <-
+                  sum(natlentemp2$meanlen[natlentemp0$Yr == natlenyrs[i]] *
+                    natlentemp2$sum[natlentemp0$Yr == natlenyrs[i]]) /
+                    sum(natlentemp2$sum[natlentemp0$Yr == natlenyrs[i]])
+              }
+
+              if (m == 1 & nsexes == 2) {
+                meanlenf <- meanlenf <- meanlen # save value for females in 2 sex models
+              }
+
+              ylab <- labels[13]
+              plottitle2 <- paste(periodtitle, labels[14])
+              if (nareas > 1) plottitle2 <- paste(plottitle2, "in", areanames[iarea])
+              main <- ""
+              if (mainTitle) {
+                main <- plottitle2
+              }
+
+              lenBubble.fn <- function() {
+                # bubble plot with line
+                bubble3(
+                  x = resx, y = resy, z = resz,
+                  xlab = labels[1], ylab = labels[12],
+                  legend = bublegend, bg.open = bub.bg,
+                  main = main, maxsize = (pntscalar + 1.0),
+                  las = 1, cex.main = cex.main, allopen = TRUE
+                )
+                # add line for mean length
+                if (meanlines) {
+                  lines(natlenyrs, meanlen, col = "red", lwd = 3)
+                }
+              }
+              meanLen.fn <- function() {
+                # mean length for males and females
+                ylim <- c(0, max(meanlen, meanlenf))
+                plot(natlenyrs, meanlen,
+                  col = "blue", lty = 1, pch = 4, xlab = labels[1], ylim = ylim,
+                  type = "o", ylab = ylab, main = main, cex.main = cex.main
+                )
+                points(natlenyrs, meanlenf, col = "red", lty = 2, pch = 1, type = "o")
+                legend("bottomleft",
+                  bty = "n", c("Females", "Males"),
+                  lty = c(2, 1), pch = c(1, 4), col = c("red", "blue")
+                )
+              }
+              if (plot) {
+                if (6 %in% subplots) lenBubble.fn()
+                if (7 %in% subplots & m == 2 & nsexes == 2) meanLen.fn()
+              }
+              if (print) {
+                filepartsex <- paste0("_sex", m)
+                filepartarea <- ""
+                if (nareas > 1) {
+                  filepartarea <- paste0("_", areanames[iarea])
+                }
+                if (6 %in% subplots) {
+                  file <- paste0(
+                    "numbers6_len", filepartarea,
+                    filepartsex, ".png"
+                  )
+                  caption <- plottitle1
+                  plotinfo <- pngfun(file = file, caption = caption)
+                  lenBubble.fn()
+                  dev.off()
+                }
+                # make 2-sex plot after looping over both sexes
+                if (7 %in% subplots & m == 2 & nsexes == 2) {
+                  file <- paste0("numbers7_meanlen", filepartarea, ".png")
+                  caption <- plottitle2
+                  plotinfo <- pngfun(file = file, caption = caption)
+                  meanLen.fn()
+                  dev.off()
+                }
+              } # end printing of plot 14
+            } # end gender loop
+          } # end period loop
+        } # end area loop
+
+        if (nsexes > 1) {
+          for (iarea in areas) {
+            # get objects that were assigned earlier
+            natlenf <- get(paste0("natlentemp0area", iarea, "sex", 1))
+            natlenm <- get(paste0("natlentemp0area", iarea, "sex", 2))
+            natlenratio <- as.matrix(natlenf[, remove] /
+              (natlenm[, remove] + natlenf[, remove]))
+            if (diff(range(natlenratio, finite = TRUE)) != 0) {
+              numbersRatioLen.fn <- function(...) {
+                main <- ""
+                caption <- labels[19]
+                if (nareas > 1) {
+                  caption <- paste0(main, " for ", areanames[iarea])
+                }
+                if (mainTitle) {
+                  main <- caption
+                }
+                z <- natlenratio
+                # check for mismatch that caused crash in one particular model
+                # note from Ian (11/1/2018): taking too long to sort this out so
+                #                            just skipping the plot for the rare case
+                #                            that has the error
+                if (length(natlenyrsB) == nrow(z)) {
+                  contour(natlenyrsB, lbinspop, z,
+                    xaxs = "i", yaxs = "i", xlab = labels[1], ylab = labels[12],
+                    main = main, cex.main = cex.main, ...
+                  )
+                } else {
+                  warning(
+                    "Skipping plot of sex ratio by length and year\n  ",
+                    "due to mismatch in length of table and vector of years.\n  ",
+                    "This may be due to 0 values in the table."
+                  )
+                }
+              }
+              if (plot & 8 %in% subplots) {
+                numbersRatioLen.fn(labcex = 1)
+              }
+              if (print & 8 %in% subplots) {
+                filepart <- ""
+                if (nareas > 1) {
+                  filepart <- paste0("_", areanames[iarea], filepart)
+                }
+                file <- paste0("numbers8_frac_female_len", filepart, ".png")
+                caption <- caption
+                plotinfo <- pngfun(file = file, caption = caption)
+                numbersRatioLen.fn(labcex = 0.6)
+                dev.off()
+              }
+            } else {
+              cat(
+                "skipped sex ratio contour plot because females=males",
+                "for all lengths and years\n"
+              )
+            }
+          } # end area loop
+        } # end if nsexes>1
+      } # end numbers at length plots
+
+      ##########
+      # plot of equilibrium age composition by gender and area
+      equilibfun <- function() {
+        equilage <- natage[natage$Era == "VIRG", ]
+        equilage <- equilage[as.vector(apply(equilage[, remove], 1, sum)) > 0, ]
 
 
-      BirthSeas <- spawnseas
-      if(!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
-      if(length(bseas)>1){
-        cat("showing equilibrium age for first birth season", BirthSeas, "\n")
-      }
-
-      main <- ""
-      if(mainTitle){
-        main <- labels[10]
-      }
-
-      plot(0, type='n', xlim=c(0, accuage),
-           ylim=c(0, 1.05*max(equilage[equilage$BirthSeas==BirthSeas
-             & equilage$Seas==BirthSeas, remove])),
-           xaxs='i', yaxs='i', xlab='Age', ylab=labels[9], main=main, cex.main=cex.main)
-
-      # now fill in legend
-      legendlty <- NULL
-      legendcol <- NULL
-      legendlegend <- NULL
-      for(iarea in areas){
-        for(m in 1:nsexes){
-          equilagetemp <- equilage[equilage$Area==iarea & equilage$Sex==m
-                                   & equilage$BirthSeas==BirthSeas
-                                   & equilage$Seas==BirthSeas, ]
-          if(nrow(equilagetemp)>1){
-            cat("in plot of equilibrium age composition by gender and area\n",
-                "multiple morphs are not supported,",
-                "using first row from choices below\n")
-            print(equilagetemp[, 1:10])
-          }
-          equilagetemp <- equilagetemp[1, remove]
-          lines(0:accuage, equilagetemp, lty=m, lwd=3, col=areacols[iarea])
-          legendlty <- c(legendlty, m)
-          legendcol <- c(legendcol, areacols[iarea])
-
-          if(m==1 & nsexes==1) sextitle <- ""
-          if(m==1 & nsexes==2) sextitle <- "Females"
-          if(m==2) sextitle="Males"
-          if(nareas>1){
-            sextitle <- paste0(sextitle, " in ", areanames[iarea])
-          }
-          legendlegend <- c(legendlegend, sextitle)
+        BirthSeas <- spawnseas
+        if (!(spawnseas %in% bseas)) BirthSeas <- min(bseas)
+        if (length(bseas) > 1) {
+          cat("showing equilibrium age for first birth season", BirthSeas, "\n")
         }
-      }
-      if(length(legendlegend)>1){
-        legend("topright", legend=legendlegend, col=legendcol, lty=legendlty, lwd=3)
-      }
-    }
-
-    if(plot & 4 %in% subplots){
-      equilibfun()
-    }
-    if(print & 4 %in% subplots){
-      file="numbers4_equilagecomp.png"
-      caption <- labels[10]
-      plotinfo <- pngfun(file=file, caption=caption)
-      equilibfun()
-      dev.off()
-    } # end print to PNG
-
-    # plot the ageing imprecision for all age methods
-    if(!is.null(N_ageerror_defs) && N_ageerror_defs > 0){
-      xvals <- age_error_sd$age + 0.5
-      yvals <- age_error_sd[, -1]
-      ylim <- c(0, max(yvals))
-      if(N_ageerror_defs == 1){
-        colvec <- "black"
-      }else{
-        colvec <- rich.colors.short(N_ageerror_defs)
-      }
-
-      main <- ""
-      if(mainTitle) {
-        main <- labels[8]
-      }
-
-      ageingfun <- function(){
-        matplot(xvals, yvals, ylim=ylim, type="o", pch=1, lty=1, col=colvec,
-                xlab=labels[3], ylab=labels[4], main=main, cex.main=cex.main)
-        abline(h=0, col="grey") # grey line at 0
-        legend('topleft', bty='n', pch=1, lty=1, col=colvec,
-               # more columns for crazy models like hake with many ageing matrices
-               ncol=ifelse(N_ageerror_defs<20, 1, 2),
-               legend=paste("Ageing method", 1:N_ageerror_defs))
-      }
-
-      # check for bias in ageing error pattern
-      ageingbias <- age_error_mean[, -1] - (age_error_mean$age+0.5)
-
-      if(mean(ageingbias==0)!=1){
-        ageingfun2 <- function(){
-          yvals <- age_error_mean[, -1]
-          ylim <- c(0, max(yvals))
-          matplot(xvals, yvals, ylim=ylim, type="o", pch=1, lty=1, col=colvec,
-                  xlab=labels[3], ylab=labels[5], main=main)
-          abline(h=0, col="grey") # grey line at 0
-          abline(0, 1, col="grey") # grey line with slope = 1
-          legend('topleft', bty='n', pch=1, lty=1, col=colvec,
-                 # more columns for crazy models like hake with many ageing matrices
-                 ncol=ifelse(N_ageerror_defs<20, 1, 2),
-                 legend=paste("Ageing method", 1:N_ageerror_defs))
-        }
-      }
-
-      ageing_matrix_fun <- function(i_ageerror_def){
-        ## function to make shaded image illustrating true vs. obs. age
 
         main <- ""
-        if(mainTitle){
-          main <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
+        if (mainTitle) {
+          main <- labels[10]
         }
-        # change label from "Mean observered age" to "Observed age"
-        # this could be additional input instead
-        ylab <- gsub(pattern="Mean o", replacement="O", x=labels[5])
-        # take subset of age-age-key that for particular method
-        # but only the rows for females because males should always be identical
-        agebins.tmp <- sort(unique(as.numeric(dimnames(AAK)$ObsAgeBin)))
-        z <- t(AAK[i_ageerror_def, rev(1:length(agebins.tmp)), ])
-        # deal with circumstance where there is a single age bin
-        if(nrow(z) == 1 & is.null(rownames(z)) & length(agebins.tmp)==1){
-          z <- t(z) # extra transpose somehow needed 
-          colnames(z) <- agebins.tmp # columnnames also need to be added
+
+        plot(0,
+          type = "n", xlim = c(0, accuage),
+          ylim = c(0, 1.05 * max(equilage[equilage$BirthSeas == BirthSeas
+          & equilage$Seas == BirthSeas, remove])),
+          xaxs = "i", yaxs = "i", xlab = "Age", ylab = labels[9], main = main, cex.main = cex.main
+        )
+
+        # now fill in legend
+        legendlty <- NULL
+        legendcol <- NULL
+        legendlegend <- NULL
+        for (iarea in areas) {
+          for (m in 1:nsexes) {
+            equilagetemp <- equilage[equilage$Area == iarea & equilage$Sex == m
+            & equilage$BirthSeas == BirthSeas
+            & equilage$Seas == BirthSeas, ]
+            if (nrow(equilagetemp) > 1) {
+              cat(
+                "in plot of equilibrium age composition by gender and area\n",
+                "multiple morphs are not supported,",
+                "using first row from choices below\n"
+              )
+              print(equilagetemp[, 1:10])
+            }
+            equilagetemp <- equilagetemp[1, remove]
+            lines(0:accuage, equilagetemp, lty = m, lwd = 3, col = areacols[iarea])
+            legendlty <- c(legendlty, m)
+            legendcol <- c(legendcol, areacols[iarea])
+
+            if (m == 1 & nsexes == 1) sextitle <- ""
+            if (m == 1 & nsexes == 2) sextitle <- "Females"
+            if (m == 2) sextitle <- "Males"
+            if (nareas > 1) {
+              sextitle <- paste0(sextitle, " in ", areanames[iarea])
+            }
+            legendlegend <- c(legendlegend, sextitle)
+          }
         }
-        # make image
-        image(x=as.numeric(rownames(z)),
-              y=as.numeric(colnames(z)),
-              z=z,
-              xlab=labels[3],
-              ylab=ylab,
-              main=main, axes=FALSE)
-        if(accuage<=40){
-          axis(1, at=0:accuage)
-          axis(2, at=agebins.tmp, las=2)
+        if (length(legendlegend) > 1) {
+          legend("topright", legend = legendlegend, col = legendcol, lty = legendlty, lwd = 3)
         }
-        if(accuage>40){
-          axis(1, at=0:accuage, labels=rep("", accuage+1))
-          axis(1, at=seq(0, accuage, 5))
-          axis(2, at=agebins.tmp, labels=rep("", length(agebins.tmp)))
-          axis(2, at=agebins.tmp[agebins.tmp %in% seq(0, accuage, 5)], las=2)
-        }
-        box()
       }
 
-      # run functions to make requested plots
-      if(plot & 5 %in% subplots){
-        # make plots of age error standard deviations
-        ageingfun()
-        # make plots of age error means
-        if(mean(ageingbias==0)!=1) ageingfun2()
-        # make plots of age error matrices
-        for(i_ageerror_def in 1:N_ageerror_defs){
-          ageing_matrix_fun(i_ageerror_def)
-        }
+      if (plot & 4 %in% subplots) {
+        equilibfun()
       }
-      if(print & 5 %in% subplots){
-        # make files with plots of age error standard deviations
-        file <- "numbers5_ageerrorSD.png"
-        caption <- paste0(labels[8], ": ", labels[4])
-        plotinfo <- pngfun(file=file, caption=caption)
-        ageingfun()
+      if (print & 4 %in% subplots) {
+        file <- "numbers4_equilagecomp.png"
+        caption <- labels[10]
+        plotinfo <- pngfun(file = file, caption = caption)
+        equilibfun()
         dev.off()
-
-        # make files with plots of age error means
-        if(mean(ageingbias==0)!=1){
-          file <- "numbers5_ageerrorMeans.png"
-          caption <- paste0(labels[8], ": ", labels[5])
-          plotinfo <- pngfun(file=file, caption=caption)
-          ageingfun2()
-          dev.off()
-        }
-
-        # make files with plots of age error matrices
-        for(i_ageerror_def in 1:N_ageerror_defs){
-          file <- paste0("numbers5_ageerror_matrix_",
-                         i_ageerror_def, ".png")
-          caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
-          caption <- paste0(caption,
-                            " <br>(White = 1.0, Orange = 0.5, Red = 0.0)")
-          plotinfo <- pngfun(file=file, caption=caption)
-          ageingfun()
-          ageing_matrix_fun(i_ageerror_def)
-          dev.off()
-        } # end loop over ageing error methods
       } # end print to PNG
 
-      if(10 %in% subplots){
-        # newer plot of ageing matrix as histogram-style figure
-        plotinfo.tmp <- SSplotAgeMatrix(replist = replist, option = 2,
-                                        plot = plot, print = print,
-                                        plotdir = plotdir, pwidth = pwidth,
-                                        pheight = pheight, punits = punits,
-                                        res = res, ptsize = ptsize,
-                                        cex.main = cex.main,
-                                        mainTitle = mainTitle)
-        plotinfo <- rbind(plotinfo, plotinfo.tmp)
-      }
-    } # end if AAK
-  } # end if data available
-  if(!is.null(plotinfo)) plotinfo$category <- "Numbers"
-  return(invisible(plotinfo))
-} # end function
+      # plot the ageing imprecision for all age methods
+      if (!is.null(N_ageerror_defs) && N_ageerror_defs > 0) {
+        xvals <- age_error_sd$age + 0.5
+        yvals <- age_error_sd[, -1]
+        ylim <- c(0, max(yvals))
+        if (N_ageerror_defs == 1) {
+          colvec <- "black"
+        } else {
+          colvec <- rich.colors.short(N_ageerror_defs)
+        }
+
+        main <- ""
+        if (mainTitle) {
+          main <- labels[8]
+        }
+
+        ageingfun <- function() {
+          matplot(xvals, yvals,
+            ylim = ylim, type = "o", pch = 1, lty = 1, col = colvec,
+            xlab = labels[3], ylab = labels[4], main = main, cex.main = cex.main
+          )
+          abline(h = 0, col = "grey") # grey line at 0
+          legend("topleft",
+            bty = "n", pch = 1, lty = 1, col = colvec,
+            # more columns for crazy models like hake with many ageing matrices
+            ncol = ifelse(N_ageerror_defs < 20, 1, 2),
+            legend = paste("Ageing method", 1:N_ageerror_defs)
+          )
+        }
+
+        # check for bias in ageing error pattern
+        ageingbias <- age_error_mean[, -1] - (age_error_mean$age + 0.5)
+
+        if (mean(ageingbias == 0) != 1) {
+          ageingfun2 <- function() {
+            yvals <- age_error_mean[, -1]
+            ylim <- c(0, max(yvals))
+            matplot(xvals, yvals,
+              ylim = ylim, type = "o", pch = 1, lty = 1, col = colvec,
+              xlab = labels[3], ylab = labels[5], main = main
+            )
+            abline(h = 0, col = "grey") # grey line at 0
+            abline(0, 1, col = "grey") # grey line with slope = 1
+            legend("topleft",
+              bty = "n", pch = 1, lty = 1, col = colvec,
+              # more columns for crazy models like hake with many ageing matrices
+              ncol = ifelse(N_ageerror_defs < 20, 1, 2),
+              legend = paste("Ageing method", 1:N_ageerror_defs)
+            )
+          }
+        }
+
+        ageing_matrix_fun <- function(i_ageerror_def) {
+          ## function to make shaded image illustrating true vs. obs. age
+
+          main <- ""
+          if (mainTitle) {
+            main <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
+          }
+          # change label from "Mean observered age" to "Observed age"
+          # this could be additional input instead
+          ylab <- gsub(pattern = "Mean o", replacement = "O", x = labels[5])
+          # take subset of age-age-key that for particular method
+          # but only the rows for females because males should always be identical
+          agebins.tmp <- sort(unique(as.numeric(dimnames(AAK)$ObsAgeBin)))
+          z <- t(AAK[i_ageerror_def, rev(1:length(agebins.tmp)), ])
+          # deal with circumstance where there is a single age bin
+          if (nrow(z) == 1 & is.null(rownames(z)) & length(agebins.tmp) == 1) {
+            z <- t(z) # extra transpose somehow needed
+            colnames(z) <- agebins.tmp # columnnames also need to be added
+          }
+          # make image
+          image(
+            x = as.numeric(rownames(z)),
+            y = as.numeric(colnames(z)),
+            z = z,
+            xlab = labels[3],
+            ylab = ylab,
+            main = main, axes = FALSE
+          )
+          if (accuage <= 40) {
+            axis(1, at = 0:accuage)
+            axis(2, at = agebins.tmp, las = 2)
+          }
+          if (accuage > 40) {
+            axis(1, at = 0:accuage, labels = rep("", accuage + 1))
+            axis(1, at = seq(0, accuage, 5))
+            axis(2, at = agebins.tmp, labels = rep("", length(agebins.tmp)))
+            axis(2, at = agebins.tmp[agebins.tmp %in% seq(0, accuage, 5)], las = 2)
+          }
+          box()
+        }
+
+        # run functions to make requested plots
+        if (plot & 5 %in% subplots) {
+          # make plots of age error standard deviations
+          ageingfun()
+          # make plots of age error means
+          if (mean(ageingbias == 0) != 1) ageingfun2()
+          # make plots of age error matrices
+          for (i_ageerror_def in 1:N_ageerror_defs) {
+            ageing_matrix_fun(i_ageerror_def)
+          }
+        }
+        if (print & 5 %in% subplots) {
+          # make files with plots of age error standard deviations
+          file <- "numbers5_ageerrorSD.png"
+          caption <- paste0(labels[8], ": ", labels[4])
+          plotinfo <- pngfun(file = file, caption = caption)
+          ageingfun()
+          dev.off()
+
+          # make files with plots of age error means
+          if (mean(ageingbias == 0) != 1) {
+            file <- "numbers5_ageerrorMeans.png"
+            caption <- paste0(labels[8], ": ", labels[5])
+            plotinfo <- pngfun(file = file, caption = caption)
+            ageingfun2()
+            dev.off()
+          }
+
+          # make files with plots of age error matrices
+          for (i_ageerror_def in 1:N_ageerror_defs) {
+            file <- paste0(
+              "numbers5_ageerror_matrix_",
+              i_ageerror_def, ".png"
+            )
+            caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
+            caption <- paste0(
+              caption,
+              " <br>(White = 1.0, Orange = 0.5, Red = 0.0)"
+            )
+            plotinfo <- pngfun(file = file, caption = caption)
+            ageingfun()
+            ageing_matrix_fun(i_ageerror_def)
+            dev.off()
+          } # end loop over ageing error methods
+        } # end print to PNG
+
+        if (10 %in% subplots) {
+          # newer plot of ageing matrix as histogram-style figure
+          plotinfo.tmp <- SSplotAgeMatrix(
+            replist = replist, option = 2,
+            plot = plot, print = print,
+            plotdir = plotdir, pwidth = pwidth,
+            pheight = pheight, punits = punits,
+            res = res, ptsize = ptsize,
+            cex.main = cex.main,
+            mainTitle = mainTitle
+          )
+          plotinfo <- rbind(plotinfo, plotinfo.tmp)
+        }
+      } # end if AAK
+    } # end if data available
+    if (!is.null(plotinfo)) plotinfo$category <- "Numbers"
+    return(invisible(plotinfo))
+  } # end function
