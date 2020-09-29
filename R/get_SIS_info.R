@@ -407,7 +407,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "",
 
                 "Domestic Fishing Mortality Derive Management Quantities",
-                paste0("Flimit, ",          1F_limit),
+                paste0("Flimit, ",          F_limit),
                 paste0("Flimit Basis, ",    F_limit_basis),
                 paste0("FMSY, ",            F_msy),
                 paste0("FMSY Basis, ",      F_msy_basis),
