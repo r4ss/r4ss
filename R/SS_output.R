@@ -2516,10 +2516,10 @@ SS_output <-
       midmorphs <- c(c(0, nmorphs / nsexes) + ceiling(nmorphs / nsexes / 2))
     }
     returndat$endgrowth <- growdat
-
     # test for use of empirical weight-at-age input file (wtatage.ss)
-    test <- matchfun2("MEAN_BODY_WT(begin)", 0,
-      "MEAN_BODY_WT(begin)", 0,
+    # should match only "MEAN_BODY_WT(Begin)" or "MEAN_BODY_WT(begin)"
+    test <- matchfun2("MEAN_BODY_WT(", 0,
+      "MEAN_BODY_WT(", 1,
       header = FALSE
     )
     wtatage_switch <- length(grep("wtatage.ss", test)) > 0
