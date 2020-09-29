@@ -310,8 +310,6 @@ SS_output <-
     if (verbose) {
       message("Report file time:", repfiletime)
     }
-    # TRUE/VALSE indicator of custom reporting options (started in 3.30.15.06)
-    custom <- length(grep("report:", rephead)) > 0
 
     corfile <- NA
     if (covar) {
@@ -452,6 +450,11 @@ SS_output <-
         "  increase 'ncols' input above current value (ncols=", ncols, ")"
       )
     }
+
+    # check for revised format to facilitate custom reporting
+    # added with 3.30.15.06
+    custom <- !is.na(matchfun(string = "report:1", obj = rawrep[,2]))
+    
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
         message("Got all columns using ncols = ", ncols)
