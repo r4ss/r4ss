@@ -56,8 +56,8 @@ and format}
 \item{width}{numeric, width of the columns in the output}
 
 \item{eol}{the character(s) to print at the end of each line (row).  For
-example, 'eol="\r\n"' will produce Windows' line endings on a Unix-alike OS,
-and 'eol="\r"' will produce files as expected by Mac OS Excel 2004.}
+example, 'eol="\\r\\n"' will produce Windows' line endings on a Unix-alike OS,
+and 'eol="\\r"' will produce files as expected by Mac OS Excel 2004.}
 
 \item{qmethod}{a character string specifying how to deal with embedded
 double quote characters when quoting strings.  Must be one of '"escape"'
@@ -119,12 +119,12 @@ output, all columns will be quoted! If quotes are used,
 \code{\link{read.table}} can be easily used to read the data back into .
 Check examples. Do read the details about \code{quoteInfo} argument.
 
-Use only *true* character, i.e., avoid use of tabs, i.e., "\t", or similar
+Use only *true* character, i.e., avoid use of tabs, i.e., "\\t", or similar
 separators via argument \code{sep}. Width of the separator is taken as the
 number of characters evaluated via \code{\link{nchar}(sep)}.
 
 Use argument \code{na} to convert missing/unknown values. Only single value
-can be specified. Use \code{\link{NAToUnknown}} prior to export if you need
+can be specified. Use \code{gdata::NAToUnknown} prior to export if you need
 greater flexibility.
 
 If \code{rowCol} is not \code{NULL} and \code{rownames=TRUE}, rownames will
