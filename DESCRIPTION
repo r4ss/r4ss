@@ -16,7 +16,6 @@ Depends:
 Imports:
     coda,
     corpcor,
-    gdata,
     kableExtra
 Suggests: 
     gtools,

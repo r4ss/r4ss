@@ -16,7 +16,6 @@
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @author Yukio Takeuchi
-#' @importFrom gdata write.fwf
 #' @export
 #' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
 # ' \code{\link{SS_readforecast}},
@@ -127,7 +126,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
       }
       #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
       #                 row.names=FALSE,col.names=FALSE)
-      gdata::write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
+      write.fwf(file=zz,x=dataframe,append=TRUE,sep="\t",quote=FALSE,
                        rownames=FALSE,colnames=FALSE,digits=6)
     #  write_delim(path=zz,x=dataframe,append=TRUE,delim=" ",col_names=TRUE)
     }

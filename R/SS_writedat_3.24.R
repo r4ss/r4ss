@@ -140,7 +140,7 @@ SS_writedat_3.24 <- function(datlist,
             quote = FALSE
         )
       }else{
-        gdata::write.fwf(
+        write.fwf(
             file = zz,
             x = dataframe,
             append = TRUE,
