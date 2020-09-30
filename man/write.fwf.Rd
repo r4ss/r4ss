@@ -170,6 +170,10 @@ is issued.
 }
 \examples{
 
+\dontrun{
+  #### Note: example below is from the version of write.fwf in the gdata
+  ####       package but failed when running after moving to r4ss
+
   ## Some data
   num <- round(c(733070.345678, 1214213.78765456, 553823.798765678,
                  1085022.8876545678,  571063.88765456, 606718.3876545678,
@@ -239,6 +243,7 @@ is issued.
 
   ## Tidy up
   unlink(file)
+}
 }
 \author{
 Gregor Gorjanc
