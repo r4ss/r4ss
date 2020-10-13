@@ -27,20 +27,6 @@
 #'   \item 16  densities
 #'   \item 17  cumulative densities
 #' }
-#' Note that this represents a revision in the numbering for 7 and higher
-#' from the numbering used up to r4ss version 1.36.0 which was as follows:
-#' \itemize{
-#'   \item 18  F value with uncertainty
-#'   \item 7  recruits
-#'   \item 8  recruits with uncertainty
-#'   \item 9  recruit devs
-#'   \item 10  recruit devs with uncertainty
-#'   \item 11  index fits
-#'   \item 12  index fits on a log scale
-#'   \item 13  phase plot
-#'   \item 14  densities
-#'   \item 15  cumulative densities
-#' }
 #' @param plot Plot to active plot device?
 #' @param print Send plots to PNG files in directory specified by
 #' \code{plotdir}?
@@ -83,8 +69,10 @@
 #' @param col Optional vector of colors to be used for lines. Input NULL
 #' makes use of \code{rich.colors.short} function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty
-#' intervals. Input NULL makes use of \code{rich.colors.short} function
-#' with alpha transparency.
+#' intervals. The default (NULL) is to use the same colors provided by
+#' \code{col} (either the default or a user-chosen input) and make them
+#' more transparent by applying the \code{shadealpha} input as an alpha
+#' transparency value (using the \code{adjustcolor()} function)
 #' @param pch Optional vector of plot character values
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
@@ -1041,7 +1029,7 @@ SSplotComparisons <-
     }
 
     plotSPRratio <- function(show_uncertainty = TRUE) {
-      # plot biomass ratio (may be identical to previous plot)
+      # plot SPR quantity (may be ratio or raw value)
 
       # only show uncertainty if values are present for at least one model
       if (!any(uncertainty)) {
@@ -1159,7 +1147,7 @@ SSplotComparisons <-
           }
         }
       } else {
-        mtext(side = 2, line = 3, FvalueLabel)
+        mtext(side = 2, line = 3, SPRratioLabel)
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels

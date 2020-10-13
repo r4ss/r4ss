@@ -169,8 +169,10 @@ colors, or FALSE just plots observed once in black dots.}
 makes use of \code{rich.colors.short} function.}
 
 \item{shadecol}{Optional vector of colors to be used for shading uncertainty
-intervals. Input NULL makes use of \code{rich.colors.short} function
-with alpha transparency.}
+intervals. The default (NULL) is to use the same colors provided by
+\code{col} (either the default or a user-chosen input) and make them
+more transparent by applying the \code{shadealpha} input as an alpha
+transparency value (using the \code{adjustcolor()} function)}
 
 \item{pch}{Optional vector of plot character values}
 
