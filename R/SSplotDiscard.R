@@ -96,6 +96,10 @@ SSplotDiscard <-
         FleetName <- fleetnames[ifleet]
 
         yr <- as.numeric(usedisc$Yr)
+        # only use fractional year value if there are multiple seasons
+        if(any(usedisc$Seas > 1)){
+          yr <- as.numeric(usedisc$Time)
+        }
         ob <- as.numeric(usedisc$Obs)
         std <- as.numeric(usedisc$Std_use)
         if (DF_discard == -3) { # truncated normal thanks to Robbie Emmet
@@ -115,8 +119,8 @@ SSplotDiscard <-
           uiw <- qnorm(0.975, ob, std) - ob
         }
         if (DF_discard == 0) { # normal with std interpreted as CV
-          liw <- ob - qnorm(0.025, ob, std * ob)
-          uiw <- qnorm(0.975, ob, std * ob) - ob
+          liw <- ob - qnorm(0.025, ob, std)
+          uiw <- qnorm(0.975, ob, std) - ob
         }
         if (DF_discard > 0) { # t-distribution with DF_discard = degrees of freedom
           liw <- -std * qt(0.025, DF_discard) # quantile of t-distribution
