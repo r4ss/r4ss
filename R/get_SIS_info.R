@@ -326,7 +326,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(Mgt_Council=="GM"){
     MinBthresh_text <- paste0("(1-M)*SPR", 100*model$btarg, "%") # e.g. B25%
     B_msy_basis = Btarg_text
-    eq_year = data_year+model$N_forecast_yrs
+    eq_year = data_year+model$nforecastyears
     B_msy = round(model$derived_quants$Value[which(model$derived_quants$Label==paste0("SSB_",eq_year))])
     B_limit = round((0.5*B_msy))
     }
