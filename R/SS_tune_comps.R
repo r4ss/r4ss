@@ -39,6 +39,8 @@
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
 #' @template verbose
+#' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
+#'  FALSE, which caps tuning values at 1.
 #' @param ... Additional arguments to pass to \code{\link{run_SS_models}}.
 #'
 #' @return Returns a table that can be copied into the control file.
@@ -54,17 +56,25 @@
 SS_tune_comps <- function(replist = NULL, fleets='all', 
                           option =c("Francis", "MI", "none", "DM"),
                           digits=6, write = TRUE, niters_tuning = 0,
-                          init_run = FALSE, dir = NULL, model = "ss",
-                          exe_in_path = FALSE, extras = "-nox", 
+                          init_run = FALSE, dir = getwd(), model = "ss",
+                          exe_in_path = FALSE, extras = "-nox",
+                          allow_up_tuning = FALSE,
                           verbose = TRUE, ...){
   # check inputs
   option <- match.arg(option, several.ok = FALSE)
-  if(fleets[1]=="all"){
-    fleets <- 1:replist$nfleets
-  }else{
-    if(length(intersect(fleets,1:replist$nfleets))!=length(fleets)){
-      stop("Input 'fleets' should be 'all' or a vector of fleet numbers.")
+  # try to read in rep list, if it is null.
+  if(is.null(replist)) {
+    replist <- try(SS_output(dir = dir, verbose = FALSE, hidewarn = TRUE))
+    if("try-error" %in% class(replist)) {
+      replist <- NULL
     }
+  }
+  # this combination of setting won't work:
+  if(is.null(replist) &
+     init_run == FALSE & 
+     option %in% c("Francis", "MI", "none")) {
+    stop("Please specify replist (no report file found) or set init_run == TRUE",
+          " when using option Francis, MI, or none")
   }
   # read in model files 
   # get the r4ss files
@@ -73,6 +83,13 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
   ctl <- SS_readctl(file.path(dir, start$ctlfile),
                     use_datlist = TRUE, datlist = dat,
                     verbose = FALSE)
+  if(fleets[1]=="all") {
+    fleets <- 1:dat$Nfleets
+  }else{
+    if(length(intersect(dat$Nfleets,1:dat$Nfleets))!=length(fleets)){
+      stop("Input 'fleets' should be 'all' or a vector of fleet numbers.")
+    }
+  }
   # add check that last_phase is less than max_phase in starter. If not,
   #modify the max phase and send warning.
   # get the highest phase in the model
@@ -117,14 +134,17 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
                            hidewarn = TRUE)
     }
     if(niters_tuning == 0) {
-    # calculate the tuning table
+    # calculate the tuning table and regurn
     tuning_table <- get_tuning_table(replist = replist, fleets = fleets, 
                                      option = option, digits = digits,
                                      write = write, verbose = verbose)
+    return(tuning_table)
     }
     if(niters_tuning > 0) {
     # Use results from the tuning table to rerun the model, if desired.
-    for(it in seq_along(niters_tuning)) {
+    weights <- vector("list", length = niters_tuning)
+    tuning_table_list <- vector("list", length = niters_tuning)
+    for(it in seq_len(niters_tuning)) {
       # 2. get the tunings
       suppressWarnings(
         out <- SS_output(dir, verbose = FALSE, printstats = FALSE,
@@ -134,9 +154,12 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
       var_adj <- get_tuning_table(replist = replist, fleets = fleets, 
                                   option = option, digits = digits,
                                   write = write, verbose = verbose)
+      var_adj_unmodified <- var_adj
       var_adj <- var_adj[, 1:3]
       colnames(var_adj) <- c("Factor", "Fleet", "Value")
-      var_adj$Value <- ifelse(var_adj$Value > 1, 1, var_adj$Value)
+      if(allow_up_tuning == FALSE) {
+        var_adj$Value <- ifelse(var_adj$Value > 1, 1, var_adj$Value)
+      }
       var_adj <- var_adj[var_adj$Fleet %in% fleets, ]
       start <- SS_readstarter(file.path(dir, "starter.ss"),
                                     verbose = FALSE)
@@ -180,13 +203,12 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
                         overwrite = TRUE,
                         verbose = FALSE)
       # 4. run SS again with reweighting
-      if(main_run == TRUE) {
-        run_SS_models(dirvec = dir, model = model, extras = extras, 
+      run_SS_models(dirvec = dir, model = model, extras = extras,
                       skipfinished = FALSE, exe_in_path = exe_in_path, 
                       verbose = verbose, ...)
-      }
       # save the weights from the run to a list
       weights[[it]] <- var_adj
+      tuning_table_list[[it]] <- var_adj_unmodified
       }
     }
   }
@@ -244,20 +266,23 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
                       overwrite = TRUE)
     if(niters_tuning > 0) {
         run_SS_models(dirvec = dir, model = model, extras = extras,
-                      skipped_finished = FALSE, exe_in_path = exe_in_path,
+                      skipfinished = FALSE, exe_in_path = exe_in_path,
                       verbose = verbose, ...)
       suppressWarnings(
         out <- SS_output(dir, verbose = FALSE, printstats = FALSE,
                                hidewarn = TRUE)
       )
       # figure out what to read in for weights? maybe the DM param ests?
-      tuning_table <- out[["Dirichlet_Multinomial_pars"]]
+      weights <- out[["Dirichlet_Multinomial_pars"]]
+      tuning_table_list <- out[["Dirichlet_Multinomial_pars"]]
     } else {
       # maybe return something besides this weights?
-      tuning_table <- NA
+      weights <- NA
+      tuning_table_list <- NA
     }
   }
-  tuning_table
+  return_list <- list(tuning_table_list = tuning_table_list,
+                     weights = weights)
 }
 
 
@@ -270,11 +295,10 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 #' @template verbose
 get_tuning_table <- function(replist, fleets, 
-                             option = formals(SS_tune_comps)[["option"]],
+                             option,
                              digits = 6, write = TRUE, verbose = TRUE) {
   
   # check inputs
-  option <- match.arg(option, several.ok = FALSE)
   # place to store info on data weighting
   tuning_table <- data.frame(Factor       = integer(),
                              Fleet        = integer(),
@@ -291,7 +315,6 @@ get_tuning_table <- function(replist, fleets,
                              Name         = character(),
                              Note         = character(),
                              stringsAsFactors=FALSE)
-  
   # loop over fleets and modify the values for length data
   for(type in c("len","age")){
     for(fleet in fleets){
