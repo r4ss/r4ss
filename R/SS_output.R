@@ -1418,7 +1418,7 @@ SS_output <-
     # (new option for comp likelihood that uses these parameters for automated
     #  data weighting)
     DM_pars <- parameters[
-      grep("ln(EffN_mult)", parameters$Label, fixed = TRUE),
+      grep("ln\\((EffN_mult)|(DM_theta)\\)", parameters$Label),
       names(parameters) %in% c("Value", "Phase", "Min", "Max")
     ]
     DM_pars$Theta <- exp(DM_pars$Value)
