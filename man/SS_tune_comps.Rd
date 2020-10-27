@@ -2,30 +2,65 @@
 % Please edit documentation in R/SS_tune_comps.R
 \name{SS_tune_comps}
 \alias{SS_tune_comps}
-\title{Calculate new tunings for length and age compositions}
+\title{Calculate new tunings and rerun models for length and age compositions}
 \usage{
 SS_tune_comps(
-  replist,
+  replist = NULL,
   fleets = "all",
-  option = "Francis",
+  option = c("Francis", "MI", "none", "DM"),
   digits = 6,
   write = TRUE,
-  verbose = TRUE
+  niters_tuning = 0,
+  init_run = FALSE,
+  dir = getwd(),
+  model = "ss",
+  exe_in_path = FALSE,
+  extras = "-nox",
+  allow_up_tuning = FALSE,
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
-\item{replist}{List output from SS_output}
+\item{replist}{List output from SS_output.}
 
 \item{fleets}{Either the string 'all', or a vector of fleet numbers}
 
-\item{option}{Which type of tuning: 'none', 'Francis', or 'MI'}
+\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'}
 
 \item{digits}{Number of digits to round numbers to}
 
 \item{write}{Write suggested tunings to a file 'suggested_tunings.ss'}
 
+\item{niters_tuning}{The number of times to retune models. Defaults to 0,
+where only the tunings should be calculated and the model is not rerun. Note
+That for DM, it will be assumed that 0 means not to run the model and
+specifying 1 or greater will only run the model once (b/c DM is not an 
+iterative retuning method.)}
+
+\item{init_run}{Should the model be run before calculating the tunings?
+Defaults to FALSE. This run is not counted as an iteration for 
+niters_tuning.}
+
+\item{dir}{The path to the model directory}
+
+\item{model}{The name of the stock synthesis executable. This model is
+assumed to be either in the same folder as the model files (specified in
+`dir`), or in the PATH if exe_in_path is TRUE.}
+
+\item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
+will look for exe in the model folders. Default = FALSE.}
+
+\item{extras}{Additional commands to use when running SS. Default = "-nox"
+will reduce the amount of command-line output.}
+
+\item{allow_up_tuning}{Allow tuning values for Francis or MI > 1? Defaults to
+FALSE, which caps tuning values at 1.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
+
+\item{...}{Additional arguments to pass to \code{\link{run_SS_models}}.}
 }
 \value{
 Returns a table that can be copied into the control file.
@@ -39,6 +74,11 @@ for SS 3.30 models to adjust the input sample sizes for length and age
 compositions based on either the Francis or McAllister-Ianelli tuning.
 }
 \details{
+Note that for the dirichlet multinomial (DM) option, a table of tunings is
+not created as the DM is not an iterative reweighting option. Instead, each
+of the length and age comps will be assigned a DM parameter and the model 
+will be rerun.
+
 Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
 table in Report.sso is already in the format required to paste into
 the control file to apply the McAllister-Ianelli tuning. However, this
@@ -55,5 +95,5 @@ fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 \code{\link{SSMethod.TA1.8}}
 }
 \author{
-Ian G. Taylor
+Ian G. Taylor, Kathryn Doering
 }

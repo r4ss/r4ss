@@ -97,20 +97,6 @@ Numbering of subplots is as follows:
   \item 15  phase plot
   \item 16  densities
   \item 17  cumulative densities
-}
-Note that this represents a revision in the numbering for 7 and higher
-from the numbering used up to r4ss version 1.36.0 which was as follows:
-\itemize{
-  \item 18  F value with uncertainty
-  \item 7  recruits
-  \item 8  recruits with uncertainty
-  \item 9  recruit devs
-  \item 10  recruit devs with uncertainty
-  \item 11  index fits
-  \item 12  index fits on a log scale
-  \item 13  phase plot
-  \item 14  densities
-  \item 15  cumulative densities
 }}
 
 \item{plot}{Plot to active plot device?}
