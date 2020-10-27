@@ -58,9 +58,7 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
                           exe_in_path = FALSE, extras = "-nox", 
                           verbose = TRUE, ...){
   # check inputs
-  option <- match.arg(option, 
-                      choices = c("Francis", "MI", "none", "DM"),
-                      several.ok = FALSE)
+  option <- match.arg(option, several.ok = FALSE)
   if(fleets[1]=="all"){
     fleets <- 1:replist$nfleets
   }else{
@@ -68,7 +66,48 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
       stop("Input 'fleets' should be 'all' or a vector of fleet numbers.")
     }
   }
+  # read in model files 
+  # get the r4ss files
+  start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
+  dat <- SS_readdat(file.path(dir, start$datfile), verbose = FALSE)
+  ctl <- SS_readctl(file.path(dir, start$ctlfile),
+                    use_datlist = TRUE, datlist = dat,
+                    verbose = FALSE)
+  # add check that last_phase is less than max_phase in starter. If not,
+  #modify the max phase and send warning.
+  # get the highest phase in the model
+  last_phase <- get_last_phase(ctl)
+  if(last_phase >= start[["last_estimation_phase"]]) {
+    warning("The last phase used in the control file, ", last_phase,
+            ", is higher or the same as the last_estimation_phase in the ",
+            "starter file currently set to ",
+            start[["last_estimation_phase"]], ".",
+            "Changing the last_estimation_phase in the starter file to ",
+            last_phase+1, ".")
+    start[["last_estimation_phase"]] <- last_phase + 1
+    SS_writestarter(start, dir = dir, verbose = FALSE,
+                    overwrite = TRUE)
+  }
+  
+  # none, francis, MI ----
   if (option %in% c("none", "Francis", "MI")) {
+    if (verbose) message("Removing DM parameters from model")
+    if (!is.null(ctl[["dirichlet_parms"]])) {
+      # take DM specifications out of data file
+      dat[["len_info"]][, "CompError"] <- 0
+      dat[["age_info"]][, "CompError"] <- 0
+      dat[["len_info"]][fleets_len, "ParmSelect"] <- 0
+      dat[["age_info"]][fleets_age, "ParmSelect"] <- 0
+      ctl[["dirichlet_parms"]] <- NULL
+      SS_writectl(ctl,
+                  file.path(dir, start$ctlfile),
+                  overwrite = TRUE,
+                  verbose = FALSE)
+      SS_writedat(dat,
+                  file.path(dir, start$datfile),
+                  overwrite = TRUE,
+                  verbose = FALSE)
+    }
     # do an init model run if desired, to get a new replist.
     if(init_run) {
       run_SS_models(dirvec = dir, model = model, extras = extras, 
@@ -153,12 +192,10 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
   }
   # DM ----
   if(option == "DM") {
-    # get the r4ss files
-    start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-    dat <- SS_readdat(file.path(dir, start$datfile), verbose = FALSE)
-    ctl <- SS_readctl(file.path(dir, start$ctlfile),
-                            use_datlist = TRUE, datlist = dat,
-                            verbose = FALSE)
+    if(init_run) {
+      warning("Init run was TRUE, but option == DM, so no initial run was done.",
+              "The model will only be run if niters > 0.")
+    }
     # determine which fleets specified by user are included in model
     fleets_len <- fleets[fleets %in% unique(dat[["lencomp"]][,"FltSvy"])]
     fleets_age <- fleets[fleets %in% unique(dat[["agecomp"]][,"FltSvy"])]
@@ -204,7 +241,7 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
     SS_writedat(dat, file.path(dir, start$datfile), verbose = FALSE,
                       overwrite = TRUE)
     SS_writectl(ctl, file.path(dir, start$ctlfile), verbose = FALSE,
-                      overwrite = TRsUE)
+                      overwrite = TRUE)
     if(niters_tuning > 0) {
         run_SS_models(dirvec = dir, model = model, extras = extras,
                       skipped_finished = FALSE, exe_in_path = exe_in_path,
@@ -227,13 +264,17 @@ SS_tune_comps <- function(replist = NULL, fleets='all',
 #' Get the tuning table
 #' 
 #' @param replist List output from SS_output.
-#' @param fleets Either the string 'all', or a vector of fleet numbers
+#' @param fleets A vector of fleet numbers
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 #' @template verbose
-get_tuning_table <- function(replist, fleets = 'all', option = "Francis",
+get_tuning_table <- function(replist, fleets, 
+                             option = formals(SS_tune_comps)[["option"]],
                              digits = 6, write = TRUE, verbose = TRUE) {
+  
+  # check inputs
+  option <- match.arg(option, several.ok = FALSE)
   # place to store info on data weighting
   tuning_table <- data.frame(Factor       = integer(),
                              Fleet        = integer(),
