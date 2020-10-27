@@ -42,13 +42,14 @@ test_that(" ss tune comps works with MI and up tuning", {
 })
 
 test_that(" ss tune comps works when just want to return the Francis table", {
-  replist <- SS_output(dir = file.path(runs_path, "simple_3.30.13"), 
-                       verbose = FALSE, hidewarn = TRUE, printstats = FALSE)
+  replist <- suppressWarnings(SS_output(dir = file.path(runs_path, "simple_3.30.13"), 
+                       verbose = FALSE, hidewarn = TRUE, printstats = FALSE))
   test <- SS_tune_comps(replist = replist, option = "Francis",
                         niters_tuning = 0, 
                         dir = file.path(runs_path, "simple_3.30.13"),
                         verbose = FALSE)
-  expect_length(test, 1)
+  expect_true(nrow(test) == 4)
+  expect_true(is.data.frame(test))
 })
 
 test_that(" ss tune comps works with DM", {
