@@ -120,8 +120,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       # take DM specifications out of data file
       dat[["len_info"]][, "CompError"] <- 0
       dat[["age_info"]][, "CompError"] <- 0
-      dat[["len_info"]][fleets_len, "ParmSelect"] <- 0
-      dat[["age_info"]][fleets_age, "ParmSelect"] <- 0
+      dat[["len_info"]][, "ParmSelect"] <- 0
+      dat[["age_info"]][, "ParmSelect"] <- 0
       ctl[["dirichlet_parms"]] <- NULL
       SS_writectl(ctl,
         file.path(dir, start$ctlfile),
