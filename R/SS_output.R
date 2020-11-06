@@ -3384,11 +3384,11 @@ SS_output <-
       matchcol2 = 5,
       header = TRUE
     )
-    if (!is.null(Z_at_age)) {
-      Z_at_age[Z_at_age == "_"] <- NA
+    if (!is.null(M_at_age)) {
+      M_at_age[M_at_age == "_"] <- NA
       # if birth season is not season 1, you can get infinite values
-      Z_at_age[Z_at_age == "-1.#INF"] <- NA
-      Z_at_age <- type.convert(Z_at_age, as.is = TRUE)
+      M_at_age[M_at_age == "-1.#INF"] <- NA
+      M_at_age <- type.convert(M_at_age, as.is = TRUE)
     }
     returndat$M_at_age <- M_at_age
 
