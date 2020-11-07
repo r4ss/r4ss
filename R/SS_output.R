@@ -2475,7 +2475,7 @@ SS_output <-
 
     # get growth parameters
     Growth_Parameters <- matchfun2("Growth_Parameters", 1,
-      "Growth_Parameters", 1 + ngpatterns,
+      "Growth_Parameters", 1 + ngpatterns * nsexes,
       header = TRUE, type.convert = TRUE
     )
     returndat$Growth_Parameters <- Growth_Parameters
