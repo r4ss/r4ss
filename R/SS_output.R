@@ -2599,7 +2599,10 @@ SS_output <-
       # NOTE: add read of additional header info here
       exploitation <- matchfun2("EXPLOITATION",
         which(exploitation_head[, 1] == "Yr"),
-        header = TRUE
+        header = TRUE,
+        # using rep_blank_lines instead of default
+        # rep_blank_or_hash_lines to find ending because of hash
+        blank_lines = rep_blank_lines
       )
       # remove meta-data about fleets (filtered by color in 1st column):
       # "Catchunits:","FleetType:","FleetArea:","FleetID:"
