@@ -110,6 +110,9 @@ SS_output <-
       })
     }
 
+
+
+
     matchfun2 <- function(string1,
                           adjust1,
                           string2 = NULL,
@@ -454,7 +457,7 @@ SS_output <-
     # check for revised format to facilitate custom reporting
     # added with 3.30.15.06
     custom <- !is.na(matchfun(string = "report:1", obj = rawrep[,2]))
-    
+
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
         message("Got all columns using ncols = ", ncols)
@@ -831,7 +834,7 @@ SS_output <-
 
       # IGT 11-Sept-2020: temporarily hardwiring while I figure out how
       #                   read.table works
-      ncols.compfile <- 300 
+      ncols.compfile <- 300
       #ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
 
       # now read table using the appropriate number of columns
@@ -2599,6 +2602,7 @@ SS_output <-
       # NOTE: add read of additional header info here
       exploitation <- matchfun2("EXPLOITATION",
         which(exploitation_head[, 1] == "Yr"),
+        string2 = 'CATCH',
         header = TRUE
       )
       # remove meta-data about fleets (filtered by color in 1st column):
