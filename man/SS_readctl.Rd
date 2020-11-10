@@ -70,7 +70,7 @@ explicitly available in control file 3.24 syntax}
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
-\item{N_CPUE_obs}{number of CPUE observations.}
+\item{N_CPUE_obs}{number of CPUE observations. Only passed to SS_readctl_3.24.}
 
 \item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
 option. Defaults to NULL and should be left as such if 1) the catch 

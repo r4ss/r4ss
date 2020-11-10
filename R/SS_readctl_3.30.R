@@ -30,7 +30,6 @@
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
 #'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs integer vector of length=Nfleets containing number of data points of each CPUE time series
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
@@ -62,7 +61,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Nfleets=2,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
-    N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
     catch_mult_fleets = NULL,
     N_rows_equil_catch = 0, 
     N_dirichlet_parms = 0,
@@ -223,7 +221,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$Nfleets<-Nfleets
     ctllist$Do_AgeKey<-Do_AgeKey
     ctllist$N_tag_groups<-N_tag_groups
-    ctllist$N_CPUE_obs<-N_CPUE_obs
     fleetnames<-paste0("FL",1:Nfleets)
 
     ctllist$fleetnames<-fleetnames
@@ -258,7 +255,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$Do_AgeKey <- 0
     }
     ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
-    ctllist$N_CPUE_obs <- N_CPUE_obs <- datlist$N_cpue
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications ----

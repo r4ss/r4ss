@@ -35,7 +35,7 @@
 #'  explicitly available in control file 3.24 syntax
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
-#' @param N_CPUE_obs number of CPUE observations.
+#' @param N_CPUE_obs number of CPUE observations. Only passed to SS_readctl_3.24.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'  determined from control file
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
@@ -171,7 +171,6 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Npopbins     = Npopbins,
                                Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
-                               N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
                                N_rows_equil_catch = N_rows_equil_catch,
                                N_dirichlet_parms = N_dirichlet_parms,
