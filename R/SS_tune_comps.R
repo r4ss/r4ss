@@ -3,9 +3,9 @@
 #' Creates a table of values that can be copied into the SS control file
 #' for SS 3.30 models to adjust the input sample sizes for length and age
 #' compositions based on either the Francis or McAllister-Ianelli tuning.
-#' Optionally, this function can also automatically add the tunings and rerun 
+#' Optionally, this function can also automatically add the tunings and rerun
 #' the model for the number of iterations desired by the user.
-#' 
+#'
 #' Note that for the dirichlet multinomial (DM) option, a table of tunings is
 #' not created as the DM is not an iterative reweighting option. Instead, each
 #' of the fleets with length and age composition data will be assigned a DM
@@ -29,20 +29,20 @@
 #' @param niters_tuning The number of times to retune models. Defaults to 0,
 #'  where only the tunings should be calculated and the model is not rerun. Note
 #'  That for DM, it will be assumed that 0 means not to run the model and
-#'  specifying 1 or greater will only run the model once (b/c DM is not an 
+#'  specifying 1 or greater will only run the model once (b/c DM is not an
 #'  iterative retuning method.)
 #' @param init_run Should the model be run before calculating the tunings?
-#'  Defaults to FALSE. This run is not counted as an iteration for 
+#'  Defaults to FALSE. This run is not counted as an iteration for
 #'  niters_tuning and will not be used if option = "DM".
 #' @param dir The path to the model directory
 #' @param model The name of the stock synthesis executable. This model is
 #'  assumed to be either in the same folder as the model files (specified in
-#'  `dir`), or in the PATH if exe_in_path is TRUE. This will not be used if 
-#'  init_run = FALSE and niters_tuning = 0. 
+#'  `dir`), or in the PATH if exe_in_path is TRUE. This will not be used if
+#'  init_run = FALSE and niters_tuning = 0.
 #' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
 #'  will look for exe in the model folders. Default = FALSE.
 #' @param extras Additional commands to use when running SS. Default = "-nox"
-#'  will reduce the amount of command-line output. A commonly used option is 
+#'  will reduce the amount of command-line output. A commonly used option is
 #'  "-nohess" to skip calculating the hessian (and asymptotic uncertainty).
 #' @template verbose
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
@@ -59,32 +59,39 @@
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
-#' @examples 
-#'   \dontrun {
-#'       example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
-#'       copy_SS_inputs(dir.old = example_path, dir.new = "simple_mod", verbose = FALSE)
-#'       file.copy(from = file.path(example_path, "Report.sso"),
-#'                 to = file.path("simple_mod", "Report.sso"))
-#'       mod_path <- "simple_mod"
-#'       # just get the Francis and MI tables
-#'       weight_table <- SS_tune_comps(option = "none", verbose = FALSE)
-#'       # Run MI weighting and allow upweighting for 1 iteration. Assume that an ss 
-#'       # executable called "ss or ss.exe" is available in the mod_path folder.
-#'       tune_info <- SS_tune_comps(option = "MI",
-#'                                  niters_tuning = 1,
-#'                                  dir = mod_path,
-#'                                  allow_up_tuning = TRUE,
-#'                                  model = "ss",
-#'                                  verbose = FALSE)
-#'       # Run DM. The function will automatically remove the MI weighting and
-#'       # add in the DM parameters. Use -nohess when running model to speed up
-#'       # run.
-#'       DM_parm_info <- SS_tune_comps(option = "DM",
-#'                                     niters_tuning = 1, # must be 1 or greater to run
-#'                                     dir = mod_path,
-#'                                     model = "ss",
-#'                                     extras = "-nohess",
-#'                                     verbose = FALSE)
+#' @examples
+#'
+#' \dontrun{
+#' example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' copy_SS_inputs(dir.old = example_path, dir.new = "simple_mod", verbose = FALSE)
+#' file.copy(
+#'   from = file.path(example_path, "Report.sso"),
+#'   to = file.path("simple_mod", "Report.sso")
+#' )
+#' mod_path <- "simple_mod"
+#' # just get the Francis and MI tables
+#' weight_table <- SS_tune_comps(option = "none", verbose = FALSE)
+#' # Run MI weighting and allow upweighting for 1 iteration. Assume that an ss
+#' # executable called "ss or ss.exe" is available in the mod_path folder.
+#' tune_info <- SS_tune_comps(
+#'   option = "MI",
+#'   niters_tuning = 1,
+#'   dir = mod_path,
+#'   allow_up_tuning = TRUE,
+#'   model = "ss",
+#'   verbose = FALSE
+#' )
+#' # Run DM. The function will automatically remove the MI weighting and
+#' # add in the DM parameters. Use -nohess when running model to speed up
+#' # run.
+#' DM_parm_info <- SS_tune_comps(
+#'   option = "DM",
+#'   niters_tuning = 1, # must be 1 or greater to run
+#'   dir = mod_path,
+#'   model = "ss",
+#'   extras = "-nohess",
+#'   verbose = FALSE
+#' )
 #' }
 SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
@@ -147,7 +154,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   }
 
   # francis, MI ----
-  if (option %in% c("none","Francis", "MI")) {
+  if (option %in% c("none", "Francis", "MI")) {
     if (verbose) message("Removing DM parameters from model")
     if (!is.null(ctl[["dirichlet_parms"]])) {
       # take DM specifications out of data file
@@ -325,10 +332,11 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       "dev_maxyr" = 0,
       "dev_PH" = 0,
       "Block" = 0,
-      "Block_Fxn" = 0)
-      
+      "Block_Fxn" = 0
+    )
+
     # remove weights specified through variance adjustment for comps, if any
-    if(!is.null(ctl[["Variance_adjustment_list"]])) {
+    if (!is.null(ctl[["Variance_adjustment_list"]])) {
       message("removing variance adjustments from model")
       ctl[["Variance_adjustment_list"]] <- NULL
       ctl[["DoVar_adjust"]] <- 0
