@@ -64,7 +64,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   option <- match.arg(option, several.ok = FALSE)
   # try to read in rep list, if it is null.
   if (is.null(replist)) {
-    replist <- try(SS_output(dir = dir, verbose = FALSE, hidewarn = TRUE))
+    replist <- try(SS_output(dir = dir, verbose = FALSE, hidewarn = TRUE, printstats = FALSE))
     if ("try-error" %in% class(replist)) {
       replist <- NULL
     }
