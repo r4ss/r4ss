@@ -66,6 +66,7 @@
 #' @param set.pars Set the graphical parameters such as mar and mfrow.
 #' Can be set to FALSE in order to add plots form multiple calls to
 #' this function as separate panels in one larger figure.
+#' @param add add to existing plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SSMethod.Cond.TA1.8}}
@@ -92,7 +93,7 @@ SSMethod.TA1.8 <-
            method=NULL, plotit=TRUE, printit=TRUE,
            datonly=FALSE, plotadj=!datonly, maxpanel=1000,
            fleetnames=NULL, label.part=TRUE, label.sex=TRUE,
-           set.pars=TRUE)
+           set.pars=TRUE, add = FALSE)
 {
   # Check the type is correct and the sexes is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -247,12 +248,15 @@ SSMethod.TA1.8 <-
       # loop over panels
       subpldat <- pldat[plindx==uplindx[i],,drop=FALSE]
       x <- subpldat[,ifelse(type=='con','Lbin','Yr')]
-      # calculate ylim, including removing Inf values
-      plot(x,subpldat[,'Obsmn'],pch='-',
-           xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
-               finite=TRUE, na.rm=TRUE),
-           xlab='',ylab='')
+      # make empty plot (unless adding to existing plot)
+      if(!add){
+        # calculate ylim, including removing Inf values
+        plot(x,subpldat[,'Obsmn'],pch='-',
+             xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
+             ylim=range(subpldat[,c('Obslo','Obshi','ObsloAdj','ObshiAdj','Expmn')],
+                        finite=TRUE, na.rm=TRUE),
+             xlab='',ylab='')
+      }
       segments(x, subpldat[,'Obslo'], x, subpldat[,'Obshi'], lwd=3, lend=3)
       if(plotadj){
         arrows(x,subpldat[,'ObsloAdj'],x,subpldat[,'ObshiAdj'],lwd=1,
@@ -280,7 +284,9 @@ SSMethod.TA1.8 <-
       if(label.part){
         lab <- paste(lab,partition.labels)
       }
-      mtext(lab,side=3,at=mean(x))
+      if(!add){
+        mtext(lab,side=3,at=mean(x))
+      }
     }
     # define y-axis label
     ylab <- 'Mean age' # default as age unless replaced below
@@ -303,8 +309,10 @@ SSMethod.TA1.8 <-
         ylab <- paste0('Mean value (',paste(units, collapse=' or '),')')
       }
     }
-    mtext(ylab, side=2,las=0,outer=TRUE)
-    mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
+    if(!add){
+      mtext(ylab, side=2,las=0,outer=TRUE)
+      mtext(ifelse(type=='con','Length','Year'),side=1,outer=TRUE)
+    }
     # restore previous graphics parameters (if changed to begin with
     if(set.pars){
       par(mfrow=par_current$mfrow, mar=par_current$mar, mgp=par_current$mgp,

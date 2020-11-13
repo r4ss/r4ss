@@ -20,7 +20,8 @@ SSMethod.TA1.8(
   fleetnames = NULL,
   label.part = TRUE,
   label.sex = TRUE,
-  set.pars = TRUE
+  set.pars = TRUE,
+  add = FALSE
 )
 }
 \arguments{
@@ -77,6 +78,8 @@ of fleets in the model, not the number of fleets considered in this function.}
 \item{set.pars}{Set the graphical parameters such as mar and mfrow.
 Can be set to FALSE in order to add plots form multiple calls to
 this function as separate panels in one larger figure.}
+
+\item{add}{add to existing plot}
 }
 \description{
 Uses method TA1.8 (described in Appendix A of Francis 2011) to do

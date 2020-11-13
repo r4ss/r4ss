@@ -61,6 +61,7 @@
 #' @param maxpanel maximum number of panels within a plot
 #' @param FullDiagOut Print full diagnostics?
 #' @param ShowVersionB Report the Version B value in addition to the default?
+#' @param add add to existing plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
 #' @seealso \code{\link{SSMethod.TA1.8}}
@@ -74,7 +75,7 @@ SSMethod.Cond.TA1.8 <-
   function(fit, fleet, part=0:2, seas=NULL,
            plotit=TRUE, printit=TRUE, datonly=FALSE, plotadj=!datonly,
            maxpanel=1000, FullDiagOut=FALSE,
-           ShowVersionB=FALSE, fleetnames=NULL)
+           ShowVersionB=FALSE, fleetnames=NULL, add = FALSE)
 {
   # Check the type is correct and the pick.sex is correct
   is.in <- function (x, y)!is.na(match(x, y))
@@ -207,10 +208,13 @@ SSMethod.Cond.TA1.8 <-
         cat("NaN values in Francis calculations, plot may not make sense\n")
         ylim <- c(0, fit$accuage)
       }
-      plot(x,subpldat[,'Obsmn'],pch='-',
-           xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
-           ylim=ylim,
-           xlab='',ylab='')
+      # make empty plot (unless adding to existing plot)
+      if(!add){
+        plot(x,subpldat[,'Obsmn'],pch='-',
+             xlim=if(length(x)>1)range(x) else c(x-0.5,x+0.5),
+             ylim=ylim,
+             xlab='',ylab='')
+      }
       # add intervals for status-quo sample sizes adjustment
       segments(x,subpldat[,'Obslo'],x,subpldat[,'Obshi'],lwd=3, lend=3)
       if(plotadj){
@@ -232,10 +236,14 @@ SSMethod.Cond.TA1.8 <-
       fl <- fleetnames[subpldat[1,'Fleet']]
       yr <- paste(subpldat[1,'Yr'])
       lab <- paste(fl)
-      mtext(lab,side=3,at=mean(x))
+      if(!add){
+        mtext(lab,side=3,at=mean(x))
+      }
     }
-    mtext('Mean age',side=2,outer=TRUE,las=0)
-    mtext('Year',side=1,outer=TRUE)
+    if(!add) {
+      mtext('Mean age',side=2,outer=TRUE,las=0)
+      mtext('Year',side=1,outer=TRUE)
+    }
   }
   if(!datonly){
     # calculate intervals and return adjustments only if datonly=FALSE
