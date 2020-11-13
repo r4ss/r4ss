@@ -16,7 +16,7 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 sim_3.30.13 <- file.path(tmp_path, "extdata", "simple_3.30.13")
 sim_3.24 <- file.path(tmp_path, "extdata", "simple_3.24")
 
-test_that("SS_readctl and SS_writectl works for 3.30.13", {
+test_that("SS_readctl and SS_writectl, var adj translator fxn, works for 3.30.13", {
   # read data file b/c necessary input to read control
   dat_3.30.13 <- SS_readdat(file.path(sim_3.30.13, "simple_data.ss"),
                             verbose = FALSE)
@@ -27,6 +27,14 @@ test_that("SS_readctl and SS_writectl works for 3.30.13", {
     use_datlist = TRUE,
     datlist = dat_3.30.13)
   expect_type(ctl_3.30.13, "list")
+  # check that the variance adj translator works (functionality was in
+  # SS_readctl_3.30, but then refactored to its own fxn to avoid confusion.)
+  var_adj_3.24 <- translate_3.30_to_3.24_var_adjust(
+    Variance_adjustment_list = ctl_3.30.13[["Variance_adjustment_list"]], 
+    Nfleets = ctl_3.30.13[["Nfleets"]])
+  expect_true(nrow(var_adj_3.24) == 6)
+  expect_true(ncol(var_adj_3.24) == ctl_3.30.13[["Nfleets"]])
+
   #check write control
   if(file.exists(file.path(sim_3.30.13,"testctl.ss"))){
     file.remove(file.path(sim_3.30.13,"testctl.ss"))

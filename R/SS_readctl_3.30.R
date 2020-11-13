@@ -1262,24 +1262,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist <- add_df(ctllist,name="Variance_adjustment_list",nrow=NULL,ncol=3,
                     col.names=c("Factor","Fleet","Value"))
   if(!is.null(ctllist$Variance_adjustment_list)) ctllist$DoVar_adjust <- 1
-  # create version 3.24 variance adjustments
-  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
-  ctllist$Variance_adjustments[4:6,]<-1
-  colnames(ctllist$Variance_adjustments)<-fleetnames
-  rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",
-                                                        "add_to_discard_stddev",
-                                                        "add_to_bodywt_CV",
-                                                        "mult_by_lencomp_N",
-                                                        "mult_by_agecomp_N",
-                                                        "mult_by_size-at-age_N")))
-  if(!is.null(ctllist$Variance_adjustment_list)) {
-    if(nrow(ctllist$Variance_adjustment_list) > 0) {
-      for(j in seq_len(nrow(ctllist$Variance_adjustment_list))){
-        ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
-          ctllist$Variance_adjustment_list[j,]$Value
-      }
-    }
-  }
   
   # Lambdas ----
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
@@ -1454,3 +1436,41 @@ get_tv_parlabs <- function(full_parms,
   invisible(parlab)
 }
 
+#' Use 3.30 variance adjustments to create the 3.24 formatting
+#' 
+#' This functionality used to be in SS_readctl_3.30, but ware removed to avoid
+#'  confusion.
+#' @param Variance_adjustment_list The Variance_adjustments_list element 
+#'  in the control file r4ss list output generated from \link{SS_readctl}.
+#'  Defaults to NULL, which can be the case if no variance adjustments were 
+#'  included in the model.
+#' @param Nfleets Number of fleets in the model
+#' @param fleetnames Name of the fleets. Defaults to fleet numbers, in the order
+#'  defined in the model.
+#' @return A dataframe of 3.24 variance adjustments.
+translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
+                                              Nfleets, 
+                                              fleetnames = seq_len(Nfleets)) {
+  # create version 3.24 variance adjustments
+  Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
+  Variance_adjustments[4:6,]<-1
+  colnames(Variance_adjustments)<-fleetnames
+  rownames(Variance_adjustments)<-paste0("#_",
+                                      paste(c("add_to_survey_CV",
+                                              "add_to_discard_stddev",
+                                              "add_to_bodywt_CV",
+                                              "mult_by_lencomp_N",
+                                              "mult_by_agecomp_N",
+                                              "mult_by_size-at-age_N")))
+  if(!is.null(Variance_adjustment_list)) {
+    if(nrow(Variance_adjustment_list) > 0) {
+      for(j in seq_len(nrow(Variance_adjustment_list))){
+        Variance_adjustments[
+          Variance_adjustment_list[j,]$Factor,
+          Variance_adjustment_list[j,]$Fleet]<-
+        Variance_adjustment_list[j,]$Value
+      }
+    }
+  }
+  Variance_adjustments
+}
