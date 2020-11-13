@@ -24,12 +24,13 @@ Default=TRUE.}
 Read Stock Synthesis (version 3.30) parameter file into list object in R.
 }
 \seealso{
-\code{\link{SS_readctl}}, \code{\link{SS_readdat}}
-\code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
-\code{\link{SS_readctl_3.24}},
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
+\code{\link{SS_readctl}},
+\code{\link{SS_readdat}},
+\code{\link{SS_readstarter}},
+\code{\link{SS_readforecast}},
 \code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link{SS_writeforecast}},
+\code{\link{SS_writedat}}
 }
 \author{
 Nathan R. Vaughan
