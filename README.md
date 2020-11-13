@@ -35,7 +35,7 @@ library(r4ss)
 
 To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.ncep.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
 
-A basic vignette can be viewed at <https://cran.r-project.org/web/packages/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
+A basic vignette can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
 ```S
 remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)
 ```
