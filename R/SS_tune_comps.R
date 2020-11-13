@@ -113,8 +113,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
     )
   }
 
-  # none, francis, MI ----
-  if (option %in% c("none", "Francis", "MI")) {
+  # francis, MI ----
+  if (option %in% c("none","Francis", "MI")) {
     if (verbose) message("Removing DM parameters from model")
     if (!is.null(ctl[["dirichlet_parms"]])) {
       # take DM specifications out of data file
@@ -146,7 +146,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         hidewarn = TRUE
       )
     }
-    if (niters_tuning == 0) {
+    if (niters_tuning == 0 | option == "none") {
       # calculate the tuning table and regurn
       tuning_table <- get_tuning_table(
         replist = replist, fleets = fleets,
