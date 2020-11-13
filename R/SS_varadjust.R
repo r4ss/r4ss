@@ -207,7 +207,7 @@ SS_varadjust <- function(dir="C:/myfiles/mymodels/myrun/",
   # table of variance adjustments
   printdf(ctl)
   # for 3.30 models, add row of -9999 values if not already present
-  if(version=="3.30" && tail(newtable)[1]!=-9999){
+  if(version=="3.30" && (tail(newtable, n = 1)[1])!=-9999){
     writeLines("-9999 0 0 #_terminator_row")
   }
   # stuff after variance adjustments
