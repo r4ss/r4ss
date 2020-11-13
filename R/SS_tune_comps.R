@@ -292,9 +292,15 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       "dev_maxyr" = 0,
       "dev_PH" = 0,
       "Block" = 0,
-      "Block_Fxn" = 0
-    )
-    # 3. Run the model once - look for convergence
+      "Block_Fxn" = 0)
+      
+    # remove weights specified through variance adjustment for comps, if any
+    if(!is.null(ctl[["Variance_adjustment_list"]])) {
+      message("removing variance adjustments from model")
+      ctl[["Variance_adjustment_list"]] <- NULL
+      ctl[["DoVar_adjust"]] <- 0
+    }
+    # Run the model once - look for convergence
     SS_writedat(dat, file.path(dir, start$datfile),
       verbose = FALSE,
       overwrite = TRUE
