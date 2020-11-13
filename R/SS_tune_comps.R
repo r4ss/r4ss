@@ -1,25 +1,29 @@
-#' Calculate new tunings and rerun models for length and age compositions
+#' Calculate new tunings and (re)run models for length and age compositions
 #'
 #' Creates a table of values that can be copied into the SS control file
 #' for SS 3.30 models to adjust the input sample sizes for length and age
 #' compositions based on either the Francis or McAllister-Ianelli tuning.
+#' Optionally, this function can also automatically add the tunings and rerun 
+#' the model for the number of iterations desired by the user.
 #' 
 #' Note that for the dirichlet multinomial (DM) option, a table of tunings is
 #' not created as the DM is not an iterative reweighting option. Instead, each
-#' of the length and age comps will be assigned a DM parameter and the model 
-#' will be rerun.
+#' of the fleets with length and age composition data will be assigned a DM
+#' parameter and the model will be rerun.
 #'
 #' Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
 #' table in Report.sso is already in the format required to paste into
 #' the control file to apply the McAllister-Ianelli tuning. However, this
 #' function provides the additional option of the Francis tuning and the
-#' ability to compare the two approaches.  Also note, that the
-#' Dirichlet-Multinomial likelihood is an alternative approach that allow
+#' ability to compare the two approaches, as well as the functionality to add
+#' tunings and rerun the model. Also note, that the
+#' Dirichlet-Multinomial likelihood is an alternative approach that allows
 #' the tuning factor to be estimated rather than iteratively tuned.
 #'
 #' @param replist List output from SS_output.
 #' @param fleets Either the string 'all', or a vector of fleet numbers
-#' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'
+#' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'. 'None'
+#'  will just return information about the Francis and MI weights suggested.
 #' @param digits Number of digits to round numbers to
 #' @param write Write suggested tunings to a file 'suggested_tunings.ss'
 #' @param niters_tuning The number of times to retune models. Defaults to 0,
@@ -29,15 +33,17 @@
 #'  iterative retuning method.)
 #' @param init_run Should the model be run before calculating the tunings?
 #'  Defaults to FALSE. This run is not counted as an iteration for 
-#'  niters_tuning.
+#'  niters_tuning and will not be used if option = "DM".
 #' @param dir The path to the model directory
 #' @param model The name of the stock synthesis executable. This model is
 #'  assumed to be either in the same folder as the model files (specified in
-#'  `dir`), or in the PATH if exe_in_path is TRUE.
+#'  `dir`), or in the PATH if exe_in_path is TRUE. This will not be used if 
+#'  init_run = FALSE and niters_tuning = 0. 
 #' @param exe_in_path logical. If TRUE, will look for exe in the PATH. If FALSE,
-#' will look for exe in the model folders. Default = FALSE.
+#'  will look for exe in the model folders. Default = FALSE.
 #' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amount of command-line output.
+#'  will reduce the amount of command-line output. A commonly used option is 
+#'  "-nohess" to skip calculating the hessian (and asymptotic uncertainty).
 #' @template verbose
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
@@ -53,6 +59,33 @@
 #' @seealso \code{\link{SSMethod.TA1.8}}
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
+#' @examples 
+#'   \dontrun {
+#'       example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#'       copy_SS_inputs(dir.old = example_path, dir.new = "simple_mod", verbose = FALSE)
+#'       file.copy(from = file.path(example_path, "Report.sso"),
+#'                 to = file.path("simple_mod", "Report.sso"))
+#'       mod_path <- "simple_mod"
+#'       # just get the Francis and MI tables
+#'       weight_table <- SS_tune_comps(option = "none", verbose = FALSE)
+#'       # Run MI weighting and allow upweighting for 1 iteration. Assume that an ss 
+#'       # executable called "ss or ss.exe" is available in the mod_path folder.
+#'       tune_info <- SS_tune_comps(option = "MI",
+#'                                  niters_tuning = 1,
+#'                                  dir = mod_path,
+#'                                  allow_up_tuning = TRUE,
+#'                                  model = "ss",
+#'                                  verbose = FALSE)
+#'       # Run DM. The function will automatically remove the MI weighting and
+#'       # add in the DM parameters. Use -nohess when running model to speed up
+#'       # run.
+#'       DM_parm_info <- SS_tune_comps(option = "DM",
+#'                                     niters_tuning = 1, # must be 1 or greater to run
+#'                                     dir = mod_path,
+#'                                     model = "ss",
+#'                                     extras = "-nohess",
+#'                                     verbose = FALSE)
+#' }
 SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
                           digits = 6, write = TRUE, niters_tuning = 0,
