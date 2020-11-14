@@ -35,7 +35,9 @@
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to 
-#' read for equilibrium catch. Defaults to 0.
+#'  read for equilibrium catch. Defaults to NULL, which means the function will
+#'  attempt to figure out how many lines of equilibrium catch to read from the 
+#'  control file comments.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
@@ -62,7 +64,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
     catch_mult_fleets = NULL,
-    N_rows_equil_catch = 0, 
+    N_rows_equil_catch = NULL, 
     N_dirichlet_parms = 0,
     ##################################
     use_datlist=FALSE,
@@ -770,31 +772,65 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$F_Method == 3) {
     ctllist <- add_elem(ctllist,"F_iter")
   }
-  #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch
-  if(use_datlist == FALSE & N_rows_equil_catch  > 0  ) {
-    #TODO: modeify code so there is an appraoch that does not require the datlist.{
-    #To achieve this I think we will need to write a script to check row length and 
-    #identify all short parameter lines until catchability section is reached
-    #I don't think there is any way to identify which Fleets/Seasons the F's match up with.
-    stop("Cannot yet read in init_F (which should be done if ", 
-         "N_rows_equil_catch > 0) if use_datalist == F")
-  }
   
-  if(any(datlist$catch[, "year"] == -999)) {
-    tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
-    if(any(tmp_equil[, "catch"] > 0)) {
-      tmp_equil <- tmp_equil[tmp_equil$catch > 0, ]
-      # reorder as ss expects.
-      tmp_equil_sort <- tmp_equil[order(tmp_equil$fleet, tmp_equil$seas), ]
-      comments_initF <- paste0("InitF_seas_", tmp_equil_sort$seas, 
-                                "_flt_", tmp_equil_sort$fleet, 
-                                fleetnames[tmp_equil_sort$fleet])
-      ctllist<-add_df(ctllist, name = "init_F", nrow = length(comments_initF), 
-                      ncol = 7, col.names=srt_par_colnames,
-                      comments = comments_initF)
-      ctllist$init_F$PType <- 18
+  #_initial_F_parms -----
+  # get them for fleet/seasons with non-zero initial equilbrium catch
+  
+  # determine N_rows_equil_catch if it is null and use_datlist = FALSE
+  if(use_datlist == FALSE && is.null(N_rows_equil_catch)) {
+    parm_error <- FALSE
+    ctl_with_cmts <- readLines(file)
+    Fparms_start <- grep("initial_F_parms; count", ctl_with_cmts)
+    #parse to get count number
+    if(length(Fparms_start) == 1) {
+      F_parm_count <- strsplit(
+        grep("initial_F_parms; count", ctl_with_cmts, value = TRUE),
+        split = "= ")[[1]]
+      F_parm_count <- F_parm_count[length(F_parm_count)]
+      F_parm_count <- as.integer(F_parm_count)
+      if(is.na(F_parm_count)) {
+        parm_error <- TRUE
+      } else {
+        N_rows_equil_catch <- F_parm_count
+      }
+    } else {
+      parm_error <- TRUE
+    }
+    if(parm_error) {
+      stop("Could not determine the number of initial F params from control ", 
+           "file comments. Please specify N_rows_equil_catch instead of leaving", 
+           " NULL or read from a data list object by setting use_datlist = TRUE", 
+           " and specifying the datlist")
     }
   }
+  # get the comments. This will determine how big the df is.
+  comments_initF <- NULL
+  if(use_datlist == FALSE && isTRUE(N_rows_equil_catch > 0)) { # use approach that doesn't need data file.
+    comments_initF <- paste0("InitF_", seq_len(N_rows_equil_catch))
+  }
+  # method for creating the init F when use_datlist is true
+  if(use_datlist) {
+    if(any(datlist$catch[, "year"] == -999)) {
+      tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
+      if(any(tmp_equil[, "catch"] > 0)) {
+        tmp_equil <- tmp_equil[tmp_equil$catch > 0, ]
+        # reorder as ss expects.
+        tmp_equil_sort <- tmp_equil[order(tmp_equil$fleet, tmp_equil$seas), ]
+        comments_initF <- paste0("InitF_seas_", tmp_equil_sort$seas, 
+                                  "_flt_", tmp_equil_sort$fleet, 
+                                  fleetnames[tmp_equil_sort$fleet])
+      }
+    }
+  }
+  if(!is.null(comments_initF)) {
+    ctllist<-add_df(ctllist, name = "init_F", nrow = length(comments_initF), 
+                    ncol = 7, col.names=srt_par_colnames,
+                    comments = comments_initF)
+    ctllist$init_F$PType <- 18
+  }
+  # TODO: maybe add check for use_datlist = FALSE? this would involve using
+  # comments in the ctl file to try to figure out if the lines in the ctlfile
+  # match those read in to ctllist.
   
   # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,

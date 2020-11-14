@@ -60,7 +60,8 @@ test_that("SS_readctl and SS_writectl works for 3.30.13 when not reading from da
     N_areas = dat_3.30.13[["N_areas"]], 
     Nages = dat_3.30.13[["Nages"]], 
     Ngender = dat_3.30.13[["Ngenders"]], 
-    Nfleets = dat_3.30.13[["Nfleets"]])
+    Nfleets = dat_3.30.13[["Nfleets"]], 
+    N_rows_equil_catch = NULL)
   
   expect_type(ctl_3.30.13, "list")
   #check write control

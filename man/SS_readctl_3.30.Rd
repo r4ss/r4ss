@@ -18,7 +18,7 @@ SS_readctl_3.30(
   Do_AgeKey = FALSE,
   N_tag_groups = NA,
   catch_mult_fleets = NULL,
-  N_rows_equil_catch = 0,
+  N_rows_equil_catch = NULL,
   N_dirichlet_parms = 0,
   use_datlist = FALSE,
   datlist = NULL
@@ -68,7 +68,9 @@ multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 datlist is specified.}
 
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
-read for equilibrium catch. Defaults to 0.}
+read for equilibrium catch. Defaults to NULL, which means the function will
+attempt to figure out how many lines of equilibrium catch to read from the 
+control file comments.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
 parameters. Defaults to 0.}
