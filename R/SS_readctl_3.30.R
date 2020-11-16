@@ -838,7 +838,13 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
   if(!is.null(ctllist$Q_options)) {
-  rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
+    if (all(ctllist$Q_options$fleet %in% 1:Nfleets)) {
+      rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
+    } else {
+      stop("There was a error reading the Q_options, possibly due to ",
+           "the presence of initial F params prior to that input. ",
+           "Check that the line 'initial_F_parms; count = ' is correct.")
+    }
   }
   # q parlines ----
   N_Q_parms <- 0
