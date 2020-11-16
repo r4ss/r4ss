@@ -401,7 +401,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
                  # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10, 
                  # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14,
-                 # catch mult = NA (but could assign in the future)
+                 # catch mult = NA (but could assign in the future),
+                 # ? = 15, 
+                 # MGparm_seas_effects = 16, SRparms = 17, initial_F_parms = 18
   
   GenderLabel<-c("Fem","Mal")
   for(i in seq_len(abs(ctllist$Ngenders))) {
