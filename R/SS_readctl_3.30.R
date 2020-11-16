@@ -30,13 +30,14 @@
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
 #'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs integer vector of length=Nfleets containing number of data points of each CPUE time series
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
 #'   option. Defaults to NULL and should be left as such if 1) the catch 
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to 
-#' read for equilibrium catch. Defaults to 0.
+#'  read for equilibrium catch. Defaults to NULL, which means the function will
+#'  attempt to figure out how many lines of equilibrium catch to read from the 
+#'  control file comments.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
@@ -62,9 +63,8 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     Nfleets=2,
     Do_AgeKey=FALSE,
     N_tag_groups=NA,
-    N_CPUE_obs=c(0,0,9,12), # This information is needed if Q_type of 3 or 4 is used
     catch_mult_fleets = NULL,
-    N_rows_equil_catch = 0, 
+    N_rows_equil_catch = NULL, 
     N_dirichlet_parms = 0,
     ##################################
     use_datlist=FALSE,
@@ -223,7 +223,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     ctllist$Nfleets<-Nfleets
     ctllist$Do_AgeKey<-Do_AgeKey
     ctllist$N_tag_groups<-N_tag_groups
-    ctllist$N_CPUE_obs<-N_CPUE_obs
     fleetnames<-paste0("FL",1:Nfleets)
 
     ctllist$fleetnames<-fleetnames
@@ -258,7 +257,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       ctllist$Do_AgeKey <- 0
     }
     ctllist$N_tag_groups <- N_tag_groups <- datlist$N_tag_groups
-    ctllist$N_CPUE_obs <- N_CPUE_obs <- datlist$N_cpue
     ctllist$fleetnames <- fleetnames<-datlist$fleetnames
   }
   # specifications ----
@@ -403,7 +401,9 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   PType<-array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5, 
                  # Hermaph = 6, RecDevs GP = 7 Areas = 8 Seas= 9, RecDev Interactions = 10, 
                  # GrowthDevs = 11, Movement = 12, AgeKey = 13, Frac female = 14,
-                 # catch mult = NA (but could assign in the future)
+                 # catch mult = NA (but could assign in the future),
+                 # ? = 15, 
+                 # MGparm_seas_effects = 16, SRparms = 17, initial_F_parms = 18
   
   GenderLabel<-c("Fem","Mal")
   for(i in seq_len(abs(ctllist$Ngenders))) {
@@ -774,41 +774,77 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   if(ctllist$F_Method == 3) {
     ctllist <- add_elem(ctllist,"F_iter")
   }
-  #_initial_F_parms - get them for fleet/seasons with non-zero initial equilbrium catch
-  if(use_datlist == FALSE & N_rows_equil_catch  > 0  ) {
-    #TODO: modeify code so there is an appraoch that does not require the datlist.{
-    #To achieve this I think we will need to write a script to check row length and 
-    #identify all short parameter lines until catchability section is reached
-    #I don't think there is any way to identify which Fleets/Seasons the F's match up with.
-    stop("Cannot yet read in init_F (which should be done if ", 
-         "N_rows_equil_catch > 0) if use_datalist == F")
-  }
   
-  if(any(datlist$catch[, "year"] == -999)) {
-    tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
-    if(any(tmp_equil[, "catch"] > 0)) {
-      tmp_equil <- tmp_equil[tmp_equil$catch > 0, ]
-      # reorder as ss expects.
-      tmp_equil_sort <- tmp_equil[order(tmp_equil$fleet, tmp_equil$seas), ]
-      comments_initF <- paste0("InitF_seas_", tmp_equil_sort$seas, 
-                                "_flt_", tmp_equil_sort$fleet, 
-                                fleetnames[tmp_equil_sort$fleet])
-      ctllist<-add_df(ctllist, name = "init_F", nrow = length(comments_initF), 
-                      ncol = 7, col.names=srt_par_colnames,
-                      comments = comments_initF)
-      ctllist$init_F$PType <- 18
+  #_initial_F_parms -----
+  # get them for fleet/seasons with non-zero initial equilbrium catch
+  
+  # determine N_rows_equil_catch if it is null and use_datlist = FALSE
+  if(use_datlist == FALSE && is.null(N_rows_equil_catch)) {
+    parm_error <- FALSE
+    ctl_with_cmts <- readLines(file)
+    Fparms_start <- grep("initial_F_parms; count", ctl_with_cmts)
+    #parse to get count number
+    if(length(Fparms_start) == 1) {
+      F_parm_count <- strsplit(
+        grep("initial_F_parms; count", ctl_with_cmts, value = TRUE),
+        split = "= ")[[1]]
+      F_parm_count <- F_parm_count[length(F_parm_count)]
+      F_parm_count <- as.integer(F_parm_count)
+      if(is.na(F_parm_count)) {
+        parm_error <- TRUE
+      } else {
+        N_rows_equil_catch <- F_parm_count
+      }
+    } else {
+      parm_error <- TRUE
+    }
+    if(parm_error) {
+      stop("Could not determine the number of initial F params from control ", 
+           "file comments. Please specify N_rows_equil_catch instead of leaving", 
+           " NULL or read from a data list object by setting use_datlist = TRUE", 
+           " and specifying the datlist")
     }
   }
+  # get the comments. This will determine how big the df is.
+  comments_initF <- NULL
+  if(use_datlist == FALSE && isTRUE(N_rows_equil_catch > 0)) { # use approach that doesn't need data file.
+    comments_initF <- paste0("InitF_", seq_len(N_rows_equil_catch))
+  }
+  # method for creating the init F when use_datlist is true
+  if(use_datlist) {
+    if(any(datlist$catch[, "year"] == -999)) {
+      tmp_equil <- datlist$catch[datlist$catch[,"year"] == -999, ]
+      if(any(tmp_equil[, "catch"] > 0)) {
+        tmp_equil <- tmp_equil[tmp_equil$catch > 0, ]
+        # reorder as ss expects.
+        tmp_equil_sort <- tmp_equil[order(tmp_equil$fleet, tmp_equil$seas), ]
+        comments_initF <- paste0("InitF_seas_", tmp_equil_sort$seas, 
+                                  "_flt_", tmp_equil_sort$fleet, 
+                                  fleetnames[tmp_equil_sort$fleet])
+      }
+    }
+  }
+  if(!is.null(comments_initF)) {
+    ctllist<-add_df(ctllist, name = "init_F", nrow = length(comments_initF), 
+                    ncol = 7, col.names=srt_par_colnames,
+                    comments = comments_initF)
+    ctllist$init_F$PType <- 18
+  }
+  # TODO: maybe add check for use_datlist = FALSE? this would involve using
+  # comments in the ctl file to try to figure out if the lines in the ctlfile
+  # match those read in to ctllist.
   
   # Q_setup ----
   ctllist<-add_df(ctllist,name="Q_options",ncol=6,
               col.names=c("fleet","link","link_info","extra_se","biasadj","float")) # no nrow, so read to -9999
   if(!is.null(ctllist$Q_options)) {
-  rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
-  # create 3.24 compatible Q_setup ----
-  comments_fl<-paste0(1:(Nfleets)," ",fleetnames)
-  ctllist$Q_setup<-data.frame(matrix(data=0,nrow=(Nfleets),ncol=4),row.names=comments_fl)
-  colnames(ctllist$Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+    if (all(ctllist$Q_options$fleet %in% 1:Nfleets)) {
+      rownames(ctllist$Q_options) <- ctllist$fleetnames[ctllist$Q_options$fleet]
+    } else {
+      stop("There was a error reading the Q_options, possibly due to ",
+           "the presence of initial F params prior to that input. ",
+           "Check that the line 'initial_F_parms; count = ' is correct.")
+    }
   }
   # q parlines ----
   N_Q_parms <- 0
@@ -820,20 +856,14 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     {
       if((ctllist$Q_options[j,]$float==0)||(ctllist$Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
       {
-        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type <- 2
         flname <- fleetnames[ctllist$Q_options[j,]$fleet]
         comments_Q_type[[i]] <- paste0("LnQ_base_", flname,"(",
                                      ctllist$Q_options[j,]$fleet,")",collapse="")
         i <- i + 1
         N_Q_parms<-N_Q_parms+1
       }
-      if(ctllist$Q_options[j,]$link==2)  # mirrored
-      {
-        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Q_type<--abs(ctllist$Q_options[j,]$link_info)
-      }
       if(ctllist$Q_options[j,]$link==3)  # do power
       {
-        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<-1
         flname<-fleetnames[ctllist$Q_options[j,]$fleet]
         comments_Q_type[[i]]<-paste0("Q_power_", flname, "(", 
                                      ctllist$Q_options[j,]$fleet ,")", 
@@ -843,7 +873,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
       if(ctllist$Q_options[j,]$link==4)  # mirrored with offset
       {
-        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$Den_dep<--abs(ctllist$Q_options[j,]$link_info)
         flname<-fleetnames[ctllist$Q_options[j,]$fleet]
         comments_Q_type[[i]]<-paste0("Q_Mirror_offset_", flname, "(", 
                                      ctllist$Q_options[j,]$fleet, ")",
@@ -853,7 +882,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
       }
       if(ctllist$Q_options[j,]$extra_se==1)  # do extra se
       {
-        ctllist$Q_setup[ctllist$Q_options[j,]$fleet,]$extra_se<-1
         flname<-fleetnames[ctllist$Q_options[j,]$fleet]
         comments_Q_type[[i]]<-paste0("Q_extraSD_", flname, "(",
                                      ctllist$Q_options[j,]$fleet, ")",
@@ -1266,24 +1294,6 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
   ctllist <- add_df(ctllist,name="Variance_adjustment_list",nrow=NULL,ncol=3,
                     col.names=c("Factor","Fleet","Value"))
   if(!is.null(ctllist$Variance_adjustment_list)) ctllist$DoVar_adjust <- 1
-  # create version 3.24 variance adjustments
-  ctllist$Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
-  ctllist$Variance_adjustments[4:6,]<-1
-  colnames(ctllist$Variance_adjustments)<-fleetnames
-  rownames(ctllist$Variance_adjustments)<-paste0("#_",paste(c("add_to_survey_CV",
-                                                        "add_to_discard_stddev",
-                                                        "add_to_bodywt_CV",
-                                                        "mult_by_lencomp_N",
-                                                        "mult_by_agecomp_N",
-                                                        "mult_by_size-at-age_N")))
-  if(!is.null(ctllist$Variance_adjustment_list)) {
-    if(nrow(ctllist$Variance_adjustment_list) > 0) {
-      for(j in seq_len(nrow(ctllist$Variance_adjustment_list))){
-        ctllist$Variance_adjustments[ctllist$Variance_adjustment_list[j,]$Factor,ctllist$Variance_adjustment_list[j,]$Fleet]<-
-          ctllist$Variance_adjustment_list[j,]$Value
-      }
-    }
-  }
   
   # Lambdas ----
   ctllist<-add_elem(ctllist,"maxlambdaphase") #_maxlambdaphase
@@ -1458,3 +1468,96 @@ get_tv_parlabs <- function(full_parms,
   invisible(parlab)
 }
 
+#' Use 3.30 variance adjustments to create the 3.24 formatting
+#' 
+#' This functionality used to be in SS_readctl_3.30, but ware removed to avoid
+#'  confusion.
+#' @param Variance_adjustment_list The Variance_adjustments_list element 
+#'  in the control file r4ss list output generated from \link{SS_readctl}.
+#'  Defaults to NULL, which can be the case if no variance adjustments were 
+#'  included in the model.
+#' @param Nfleets Number of fleets in the model
+#' @param fleetnames Name of the fleets. Defaults to fleet numbers, in the order
+#'  defined in the model.
+#' @return A dataframe of 3.24 variance adjustments.
+translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
+                                              Nfleets, 
+                                              fleetnames = seq_len(Nfleets)) {
+  # create version 3.24 variance adjustments
+  Variance_adjustments<-as.data.frame(matrix(data=0,nrow=6,ncol=(Nfleets)))
+  Variance_adjustments[4:6,]<-1
+  colnames(Variance_adjustments)<-fleetnames
+  rownames(Variance_adjustments)<-paste0("#_",
+                                      paste(c("add_to_survey_CV",
+                                              "add_to_discard_stddev",
+                                              "add_to_bodywt_CV",
+                                              "mult_by_lencomp_N",
+                                              "mult_by_agecomp_N",
+                                              "mult_by_size-at-age_N")))
+  if(!is.null(Variance_adjustment_list)) {
+    if(nrow(Variance_adjustment_list) > 0) {
+      for(j in seq_len(nrow(Variance_adjustment_list))){
+        Variance_adjustments[
+          Variance_adjustment_list[j,]$Factor,
+          Variance_adjustment_list[j,]$Fleet]<-
+        Variance_adjustment_list[j,]$Value
+      }
+    }
+  }
+  Variance_adjustments
+}
+
+#' Use 3.30 q options to create the 3.24 q setup
+#' 
+#' @param Q_options The Q options list element in the 3.30
+#'  control file r4ss list output generated from \link{SS_readctl}.
+#' @param Nfleets Number of fleets in the model
+#' @param fleetnames Name of the fleets. Defaults to fleet numbers, in the order
+#' @return A dataframe containing the 3.24 Q setup.
+translate_3.30_to_3.24_Q_setup <- function(Q_options,
+                                             Nfleets,
+                                             fleetnames = seq_len(Nfleets)) {
+  # create 3.24 compatible Q_setup ----
+  comments_fl<-paste0(1:(Nfleets)," ",fleetnames)
+  Q_setup<-data.frame(matrix(data=0,nrow=(Nfleets),ncol=4),row.names=comments_fl)
+  colnames(Q_setup)<-c("Den_dep","env_var","extra_se","Q_type")
+  N_Q_parms <- 0
+  i<-1
+  if(!is.null(Q_options)) {
+    for(j in seq_len(nrow(Q_options)))
+    {
+      if((Q_options[j,]$float==0)||(Q_options[j,]$float==1)) # handle float 0 or 1 as 1 parm sel 
+      {
+        Q_setup[Q_options[j,]$fleet,]$Q_type <- 2
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(Q_options[j,]$link==2)  # mirrored
+      {
+        Q_setup[Q_options[j,]$fleet,]$Q_type<--abs(Q_options[j,]$link_info)
+      }
+      if(Q_options[j,]$link==3)  # do power
+      {
+        Q_setup[Q_options[j,]$fleet,]$Den_dep<-1
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(Q_options[j,]$link==4)  # mirrored with offset
+      {
+        Q_setup[Q_options[j,]$fleet,]$Den_dep<--abs(Q_options[j,]$link_info)
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+      if(Q_options[j,]$extra_se==1)  # do extra se
+      {
+        Q_setup[Q_options[j,]$fleet,]$extra_se<-1
+        i <- i + 1
+        N_Q_parms<-N_Q_parms+1
+      }
+    }
+  } else {
+    message("Q_options was NULL, so could not determine Q_setup.")
+    Q_setup <- NULL
+  }
+  Q_setup
+}

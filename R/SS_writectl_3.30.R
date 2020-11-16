@@ -17,6 +17,12 @@
 #' 
 SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
   if(verbose) message("Running SS_writectl_3.30\n")
+  #input checks
+  if(ctllist[["ReadVersion"]] != "3.30") {
+    stop("ReadVersion must be '3.30', but is ", ctllist[["ReadVersion"]], ". ", 
+         "Please make sure the control file list object is created from a 3.30", 
+         " SS model and not an earlier version.")
+  }
   
   if(file.exists(outfile)){
     if(!overwrite){

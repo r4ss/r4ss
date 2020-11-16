@@ -20,7 +20,7 @@ SS_readctl(
   N_tag_groups = NA,
   N_CPUE_obs = NA,
   catch_mult_fleets = NULL,
-  N_rows_equil_catch = 0,
+  N_rows_equil_catch = NULL,
   N_dirichlet_parms = 0,
   use_datlist = FALSE,
   datlist = NULL,
@@ -70,7 +70,7 @@ explicitly available in control file 3.24 syntax}
 \item{N_tag_groups}{number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
-\item{N_CPUE_obs}{number of CPUE observations.}
+\item{N_CPUE_obs}{number of CPUE observations. Only passed to SS_readctl_3.24.}
 
 \item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
 option. Defaults to NULL and should be left as such if 1) the catch 
@@ -78,7 +78,9 @@ multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.}
 
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
-read for equilibrium catch. Defaults to 0. Used only for version 3.30.}
+read for equilibrium catch. Defaults to NULL, which means the function will
+attempt to figure out how many lines of equilibrium catch to read from the 
+control file comments. Used only for version 3.30.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
 parameters. Defaults to 0. Used only for version 3.30}

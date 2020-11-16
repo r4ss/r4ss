@@ -35,7 +35,7 @@
 #'  explicitly available in control file 3.24 syntax
 #' @param N_tag_groups number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
-#' @param N_CPUE_obs number of CPUE observations.
+#' @param N_CPUE_obs number of CPUE observations. Only passed to SS_readctl_3.24.
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'  determined from control file
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier 
@@ -43,7 +43,9 @@
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 #'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to 
-#' read for equilibrium catch. Defaults to 0. Used only for version 3.30.
+#'  read for equilibrium catch. Defaults to NULL, which means the function will
+#'  attempt to figure out how many lines of equilibrium catch to read from the 
+#'  control file comments. Used only for version 3.30.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0. Used only for version 3.30
 #' @param datlist list or character. if list : produced from SS_writedat
@@ -69,7 +71,7 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                        N_tag_groups=NA,
                        N_CPUE_obs=NA,
                        catch_mult_fleets = NULL,
-                       N_rows_equil_catch = 0,
+                       N_rows_equil_catch = NULL,
                        N_dirichlet_parms = 0,
                        use_datlist=FALSE,
                        datlist=NULL,
@@ -171,7 +173,6 @@ SS_readctl <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,
                                Npopbins     = Npopbins,
                                Nfleets      = Nfleets,
                                N_tag_groups = N_tag_groups,
-                               N_CPUE_obs   = N_CPUE_obs,
                                catch_mult_fleets = catch_mult_fleets,
                                N_rows_equil_catch = N_rows_equil_catch,
                                N_dirichlet_parms = N_dirichlet_parms,

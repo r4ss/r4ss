@@ -17,9 +17,8 @@ SS_readctl_3.30(
   Nfleets = 2,
   Do_AgeKey = FALSE,
   N_tag_groups = NA,
-  N_CPUE_obs = c(0, 0, 9, 12),
   catch_mult_fleets = NULL,
-  N_rows_equil_catch = 0,
+  N_rows_equil_catch = NULL,
   N_dirichlet_parms = 0,
   use_datlist = FALSE,
   datlist = NULL
@@ -63,15 +62,15 @@ to disable them. This information is not explicitly available in control file, t
 \item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
 control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
 
-\item{N_CPUE_obs}{integer vector of length=Nfleets containing number of data points of each CPUE time series}
-
 \item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
 option. Defaults to NULL and should be left as such if 1) the catch 
 multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
 datlist is specified.}
 
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
-read for equilibrium catch. Defaults to 0.}
+read for equilibrium catch. Defaults to NULL, which means the function will
+attempt to figure out how many lines of equilibrium catch to read from the 
+control file comments.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
 parameters. Defaults to 0.}

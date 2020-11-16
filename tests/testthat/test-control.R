@@ -53,7 +53,7 @@ test_that("SS_readctl and SS_writectl works for 3.30.13 when not reading from da
     Nages = dat_3.30.13[["Nages"]], 
     Ngender = dat_3.30.13[["Ngenders"]], 
     Nfleets = dat_3.30.13[["Nfleets"]], 
-    N_CPUE_obs = dat_3.30.13[["N_cpue"]])
+    N_rows_equil_catch = NULL)
   
   expect_type(ctl_3.30.13, "list")
   #check write control
@@ -174,6 +174,30 @@ test_that(paste0("SS_readctl_3.24, SS_writectl_3.24, SS_readdat_3.24, and ",
                     outfile = file.path(sim_3.24,"testctl.ss"))
    expect_true(file.exists(file.path(sim_3.24,"testctl.ss")))
  })
+
+test_that("var adj and q translator fxns, works for 3.30.13", {
+  # read data file b/c necessary input to read control
+  dat_3.30.13 <- SS_readdat(file.path(sim_3.30.13, "simple_data.ss"),
+                            verbose = FALSE)
+  # read the control file so that test can run on it
+  ctl_3.30.13 <- SS_readctl(
+    file.path(sim_3.30.13, "simple_control.ss"),
+    verbose = FALSE,
+    use_datlist = TRUE,
+    datlist = dat_3.30.13)
+  # check that the variance adj translator works (functionality was in
+  # SS_readctl_3.30, but then refactored to its own fxn to avoid confusion.)
+  var_adj_3.24 <- translate_3.30_to_3.24_var_adjust(
+    Variance_adjustment_list = ctl_3.30.13[["Variance_adjustment_list"]], 
+    Nfleets = ctl_3.30.13[["Nfleets"]])
+  expect_true(nrow(var_adj_3.24) == 6)
+  expect_true(ncol(var_adj_3.24) == ctl_3.30.13[["Nfleets"]])
+  q_3.24 <- translate_3.30_to_3.24_Q_setup(
+    Q_options = ctl_3.30.13[["Q_options"]], 
+    Nfleets = ctl_3.30.13[["Nfleets"]]
+  )
+  expect_true(nrow(q_3.24) == ctl_3.30.13[["Nfleets"]])
+})
 
 #clean up
 unlink(tmp_path, recursive = TRUE)

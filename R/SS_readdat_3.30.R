@@ -684,12 +684,6 @@ SS_readdat_3.30 <-
   datlist$Nfleet <- nrow(subset(datlist$fleetinfo,datlist$fleetinfo$type<=2))
   datlist$Nsurveys <- datlist$Nfleets-datlist$Nfleet
   totfleets<-datlist$Nfleet+datlist$Nsurveys
-  # Note that using NROW on datlist$CPUE that is NA will return 1, when in 
-  # reality the number of years should be 0.
-  datlist$N_cpue <- ifelse(is.null(datlist[["CPUE"]]) || 
-                             (is.null(dim(datlist[["CPUE"]])) && is.na(datlist[["CPUE"]])), 
-                           0,
-                           NROW(datlist[["CPUE"]]))
   # fleet details
   if(nrow(datlist$fleetinfo) > 1){
     # if more than 1 fleet in the model, create legacy format tables associated with 3.24
