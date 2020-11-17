@@ -14,6 +14,15 @@ runs_path <- file.path(tmp_path, "extdata")
 #clean up
 on.exit(unlink(tmp_path, recursive = TRUE))
 
+test_that("get_last_phase works", {
+  start <- r4ss::SS_readstarter(file.path(runs_path,  "simple_3.30.13", "starter.ss"), verbose = FALSE)
+  dat <- r4ss::SS_readdat(file.path(runs_path,  "simple_3.30.13", start$datfile), verbose = FALSE)
+  ctl <- r4ss::SS_readctl(file.path(runs_path,  "simple_3.30.13", start$ctlfile), use_datlist = TRUE,
+                          datlist = dat, verbose = FALSE)
+  last_phase <- get_last_phase(ctl)
+  expect_true(last_phase == 4) # based on last known value.
+})
+
 test_that(" ss tune comps works when just want to return the Francis table", {
   replist <- suppressWarnings(SS_output(dir = file.path(runs_path, "simple_3.30.13"), 
                                         verbose = FALSE, hidewarn = TRUE, printstats = FALSE))
