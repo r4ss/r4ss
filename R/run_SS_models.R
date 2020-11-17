@@ -74,6 +74,15 @@ run_SS_models <- function(dirvec = NULL,
       exe <- tmp_exe
     }
   } else {
+    # check if exe is in PATH, to warn user this will be used by default
+    tmp_exe <- Sys.which(basename(exe))[[1]] # get 1st ss exe with name exe that is in your path
+    if(tmp_exe != "") {
+      warning("An binary named ", basename(exe), 
+              " was found in your PATH and will be", 
+              " used by default even though exe_in_path is FALSE. Please remove", 
+              " the exe in your PATH to avoid this behavior. This binary is", 
+              " located at ", normalizePath(tmp_exe), ".")
+    }
     # check if model is in the same dir as each folder of dir vec. If not
     # found in all folders, see if can find using the relative or absolute path.
     # If can't find, revert back to assuming the model is in each folder of the
@@ -86,9 +95,9 @@ run_SS_models <- function(dirvec = NULL,
         exe_exists <- TRUE
       }
       exe_exists
-    }, mod = model)
+    }, mod = exe)
     if(!all(unlist(all_exes_in_folder) == TRUE)) {
-      exists_abs_path <- file.info(normalizePath(model))$exe
+      exists_abs_path <- file.info(normalizePath(exe, mustWork = FALSE))$exe
       if(is.na(exists_abs_path) | (exists_abs_path) == "no" ) {
         exe_exists_abs_path <- FALSE
       } else {
@@ -96,7 +105,7 @@ run_SS_models <- function(dirvec = NULL,
       }
       if(exe_exists_abs_path) {
         message("Assuming path to the exe provided in model")
-        model <- (normalizePath(model))
+        exe <- (normalizePath(exe))
       } else {
         message("Assuming model is in each dirvec folder, but missing from ", 
                 "some folders")
@@ -125,7 +134,7 @@ run_SS_models <- function(dirvec = NULL,
         message("changing working directory to ",dir)
         setwd(dir) # change working directory
 
-        command <- paste(model, extras)
+        command <- paste(exe, extras)
         if(OS!="windows"){
           command <- paste0("./", command)
         }
