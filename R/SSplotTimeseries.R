@@ -317,15 +317,19 @@ SSplotTimeseries <-
       ymax <- max(yvals,1,na.rm=TRUE)
 
       # correct ymax value for plot 10 (other plots may need it too)
-      if(subplot==10){
+      if(subplot == 10){
         for(iarea in 1:nareas){
-          yvals <- ts$SpawnBio[ts$Area==iarea]/(ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas][1])
-          #ymax <- max(ymax,yvals,na.rm=TRUE)
-          ymax <- max(yvals,na.rm=TRUE)
+          # test for any non-zero spawning biomass in each area
+          if (max(ts$SpawnBio[ts$Area==iarea], na.rm = TRUE) > 0) {
+            # calculate relative spawning biomass
+            yvals <- ts$SpawnBio[ts$Area == iarea] /
+              (ts$SpawnBio[ts$Area==iarea & ts$Seas == spawnseas][1])
+            ymax <- max(yvals, na.rm=TRUE)
+          }
         }
       }
     }
-    if(subplot==10){
+    if(subplot == 10){
       yvals[1] <- NA
     }
 
