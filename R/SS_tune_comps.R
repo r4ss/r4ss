@@ -127,10 +127,15 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
     verbose = FALSE
   )
   if (fleets[1] == "all") {
-    fleets <- 1:dat$Nfleets
+    fleets <- seq_len(dat$Nfleets)
   } else {
-    if (length(intersect(dat$Nfleets, 1:dat$Nfleets)) != length(fleets)) {
-      stop("Input 'fleets' should be 'all' or a vector of fleet numbers.")
+    if (!all(fleets %in% seq_len(dat$Nfleets))) {
+      fleets <- fleets[fleets %in% seq_len(dat$Nfleets)]
+      warning("Not all fleets are included in the model. Changing fleets to ",
+              "use only ones in the model: ", paste0(fleets, collapse = ", "))
+      if(length(fleets) == 0) {
+        stop("Please specify fleets used in the model")
+      }
     }
   }
   # add check that last_phase is less than max_phase in starter. If not,
