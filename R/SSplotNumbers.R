@@ -324,7 +324,7 @@ SSplotNumbers <-
                 las = 1, cex.main = cex.main, allopen = TRUE
               )
               # add line for mean age
-              if (meanlines) {
+              if (meanlines & all(!is.nan(meanage))) {
                 lines(natageyrs, meanage, col = "red", lwd = 3)
               }
             }
