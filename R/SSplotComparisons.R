@@ -1650,7 +1650,7 @@ SSplotComparisons <-
           if (is.null(indexSEvec)) {
             indexSEvec <- indices2$SE[subset]
           }
-          y <- obs[subset]
+          y <- obs
           if (log) {
             upper <- qnorm(.975, mean = y, sd = indexSEvec)
             lower <- qnorm(.025, mean = y, sd = indexSEvec)
@@ -1728,6 +1728,8 @@ SSplotComparisons <-
         for (iline in (1:nlines)[!mcmcVec]) {
           adj <- 0.2 * iline / nlines - 0.1
           imodel <- models[iline]
+          if(any(is.na(indices2$like)))
+            warning("NA's found in likelihood, may cause issues with index plots")
           subset <- indices2$imodel == imodel & !is.na(indices2$Like)
           # add uncertainty intervals if requested
           if (indexUncertainty) {
