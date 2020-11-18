@@ -87,22 +87,12 @@ run_SS_models <- function(dirvec = NULL,
     # found in all folders, see if can find using the relative or absolute path.
     # If can't find, revert back to assuming the model is in each folder of the
     # dirvec.
-    all_exes_in_folder <- lapply(dirvec, function(dir, mod) {
-      exists <- file.info(file.path(dir, mod))$exe
-      if(is.na(exists) | exists == "no" ) {
-        exe_exists <- FALSE
-      } else {
-        exe_exists <- TRUE
-      }
+    all_exes_in_folder <- lapply(dirvec, function(dir, mod, OS) {
+      exe_exists <- file.exists(file.path(dir, mod))
       exe_exists
-    }, mod = exe)
+    }, mod = exe, OS = OS)
     if(!all(unlist(all_exes_in_folder) == TRUE)) {
-      exists_abs_path <- file.info(normalizePath(exe, mustWork = FALSE))$exe
-      if(is.na(exists_abs_path) | (exists_abs_path) == "no" ) {
-        exe_exists_abs_path <- FALSE
-      } else {
-        exe_exists_abs_path <- TRUE
-      }
+      exe_exists_abs_path <- file.exists(normalizePath(exe))
       if(exe_exists_abs_path) {
         message("Assuming path to the exe provided in model")
         exe <- (normalizePath(exe))
