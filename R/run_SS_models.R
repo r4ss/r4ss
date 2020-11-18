@@ -135,7 +135,7 @@ run_SS_models <- function(dirvec = NULL,
         setwd(dir) # change working directory
 
         command <- paste(exe, extras)
-        if(OS!="windows"){
+        if(OS!="windows" & (basename(exe) == exe)) {
           command <- paste0("./", command)
         }
         message("Running model in directory: ",getwd())
