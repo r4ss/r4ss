@@ -567,7 +567,7 @@ SSplotNumbers <-
                   las = 1, cex.main = cex.main, allopen = TRUE
                 )
                 # add line for mean length
-                if (meanlines) {
+                if (meanlines & all(!is.nan(meanlen))) {
                   lines(natlenyrs, meanlen, col = "red", lwd = 3)
                 }
               }
