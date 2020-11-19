@@ -228,8 +228,8 @@ SS_writedat_3.30 <- function(datlist,
   print.df(d$CPUEinfo, terminate=FALSE)
 
   writeComment("#\n#_CPUE_data")
-  if(isTRUE(nrow(d$CPUE) > 0)) {
-    print.df(d$CPUE)
+  if(isTRUE(nrow(d[["CPUE"]]) > 0)) {
+    print.df(d[["CPUE"]])
   } else {
     writeLines(text = "-9999 1 1 1 1 # terminator", con = zz)
   }
