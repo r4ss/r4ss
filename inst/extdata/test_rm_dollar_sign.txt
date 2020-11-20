@@ -1,0 +1,7 @@
+x$my_name <- y$test
+x[["my_name"]]
+no_replace_here <- 44
+x$names<-new_assign;x$`22`
+x$names <- new_assign; x$`22`
+x$`$$weirdcharacters`<-222
+x$`nameinbacktick`
