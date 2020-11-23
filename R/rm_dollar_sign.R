@@ -38,7 +38,7 @@ rm_dollar_sign <- function(file = "inst/extdata/test_rm_dollar_sign.txt",
                     lines)
   # all others not in back ticks
   pattern_no_backtick <- 
-    "([[:alnum:]]|\\.|\\_)\\$([[:alnum:]]+)(([[:alnum:]]|\\.|\\_)*)(\\s|[[:punct:]]|$)"
+    "([[:alnum:]]|\\.|\\_|\\])\\$([[:alnum:]]+)(([[:alnum:]]|\\.|\\_)*)(\\s|[[:punct:]]|$)"
   replace_no_backtick <- "\\1\\[\\[\"\\2\\3\"\\]\\]\\5"
   mod_lines <- gsub(
     pattern = pattern_no_backtick, 
