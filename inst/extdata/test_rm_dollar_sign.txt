@@ -5,3 +5,6 @@ x$names<-new_assign;x$`22`
 x$names <- new_assign; x$`22`
 x$`$$weirdcharacters`<-222
 x$`nameinbacktick`
+x$mylist$my_col$YetAnotherCol
+x$mylist$my_col$`1_somename`
+x$`bad$name` <- 55
