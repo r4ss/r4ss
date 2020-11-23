@@ -31,7 +31,16 @@ rm_dollar_sign <- function(file = "inst/extdata/test_rm_dollar_sign.txt",
                            max_loops = 5) {
   #read in the file
   lines <- readLines(file)
-
+  # warn if there are any names like test$`text$moretext`
+  difficult_lines <- 
+    grep(pattern = "([[:alnum:]]|\\.|\\_)\\$`[[:alnum:]]+[[:print:]]*\\$([[:alnum:]]|\\.|\\_)*`",
+         lines)
+  if(length(difficult_lines) > 0 ) {
+    difficult_txt <- lines[difficult_lines]
+    warning("The following lines may not have convert correctly because of names", 
+            " in back ticks containing dollar signs.\n",
+            paste0(paste0("Line ",difficult_lines, " ", difficult_txt), collapse = "\n"))
+  }
   # get rid of names in back ticks first:
   mod_lines <- gsub(pattern = "([[:alnum:]]|\\.|\\_)\\$`([[:print:]]+)`", 
                     replacement = "\\1\\[\\[\"\\2\"\\]\\]", 
