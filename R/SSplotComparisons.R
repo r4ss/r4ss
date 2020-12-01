@@ -1057,7 +1057,7 @@ SSplotComparisons <-
           na.rm = TRUE
         )
       }
-
+      par(par)
       # make plot
       if (!add) {
         if (!is.na(SPRratioLabel) &&
@@ -1115,8 +1115,11 @@ SSplotComparisons <-
           # if starter file chooses raw SPR as the option for reporting,
           # don't show ratio
           abline(h = sprtarg, col = "red", lty = 2)
-          text(SPRratio$Yr[1] + 4, (sprtarg + 0.03), labels[10], adj = 0)
-          mtext(side = 2, line = 3, SPRratioLabel)
+          text(SPRratio$Yr[1] + 4, (sprtarg + 0.03), labels[10],
+               adj = 0)
+          mtext(side = 2, text=SPRratioLabel,
+                line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+
         } else {
           # draw line at sprtarg
           yticks <- pretty(ylim)
@@ -1129,25 +1132,26 @@ SSplotComparisons <-
             abline(h = 1, col = "red", lty = 2)
             text(SPRratio$Yr[1] + 4, 1 + 0.03, labels[10], adj = 0)
             axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
-            mtext(side = 4, line = 3, "1 - SPR")
+            mtext(side = 4, text="1 - SPR",
+                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
             # line below has round to be more accurate
             # than the floor which is used
             # in the test above and in SS
-            mtext(side = 2, line = 3, paste("(1-SPR)/(1-SPR_",
-              100 * sprtarg, "%)",
-              sep = ""
-            ))
+            mtext(side = 2, text=paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
+                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
           } else {
             message(
               "No line added to SPR ratio plot, ",
               "as the settings used in this model ",
               "have not yet been configured in SSplotComparisons."
             )
-            mtext(side = 2, line = 3, SPRratioLabel)
+            mtext(side = 2, text=SPRratioLabel,
+                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
           }
         }
       } else {
-        mtext(side = 2, line = 3, SPRratioLabel)
+        mtext(side = 2, text=SPRratioLabel,
+              line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels
@@ -1213,7 +1217,7 @@ SSplotComparisons <-
           na.rm = TRUE
         )
       }
-
+      par(par)
       # make plot
       if (!add) {
         plot(0,
@@ -1260,7 +1264,8 @@ SSplotComparisons <-
         }
       }
       abline(h = 0, col = "grey")
-      mtext(side = 2, line = 3, FvalueLabel)
+      mtext(side = 2, text=FvalueLabel,
+            line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
       box()
       if (legend) legendfun(legendlabels)
 
@@ -1918,6 +1923,7 @@ SSplotComparisons <-
           " because it seems to not be estimated in any model"
         )
       } else {
+        par(par)
         if (!add) {
           if (cumulative) {
             plot(0,
@@ -2102,15 +2108,17 @@ SSplotComparisons <-
           abline(h = 0, col = "grey")
           xticks <- pretty(xlim)
           axis(1, at = xticks, labels = format(xticks / xunits))
-          theLine <- 1
+          theLine <- par()$mgp[1]
           if (cumulative) {
-            axis(2,
-              at = symbolsQuants, labels = format(symbolsQuants),
-              las = 1, cex.axis = 0.9
-            )
-            theLine <- 3
+            axis(2, at = symbolsQuants, labels = format(symbolsQuants),
+                 cex.axis = 0.9)
+            mtext(side = 2, line = theLine,
+                  text='Cumulative Probability',
+                  col=par()$col.lab, cex=par()$cex.lab)
+          } else {
+            mtext(side = 2, line = theLine, text=labels[9],
+                  col=par()$col.lab, cex=par()$cex.lab)
           }
-          mtext(side = 2, line = theLine, labels[9])
           box()
         }
         if (xunits != 1) {
