@@ -2802,18 +2802,23 @@ SS_output <-
     ) == stringmatch])
     fmax <- max(Hrates)
 
-    # depletion
-    depletion_method <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
-    depletion_basis <- rawrep[matchfun("B_ratio_denominator"), 2]
-    if (depletion_basis == "no_depletion_basis") {
-      depletion_basis <- "none"
+    # depletion basis
+    depletion_basis <- as.numeric(rawrep[matchfun("Depletion_basis"), 2])
+    if(is.na(depletion_basis)){
+      # older versions had a different string
+      depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
+    }
+      
+    B_ratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
+    if (B_ratio_denominator == "no_depletion_basis") {
+      B_ratio_denominator <- "none"
     } else {
-      depletion_basis <- as.numeric(strsplit(depletion_basis, "%*",
+      B_ratio_denominator <- as.numeric(strsplit(B_ratio_denominator, "%*",
         fixed = TRUE
       )[[1]][1]) / 100
     }
-    returndat$depletion_method <- depletion_method
     returndat$depletion_basis <- depletion_basis
+    returndat$B_ratio_denominator <- B_ratio_denominator
 
     ## discard fractions ###
 
@@ -3395,6 +3400,37 @@ SS_output <-
     }
     returndat$M_at_age <- M_at_age
 
+    # new section added in SSv3.30.16.03
+    Report_Z_by_area_morph_platoon <-
+      matchfun2("Report_Z_by_area_morph_platoon", 
+                adjust1 = 1,
+                header = FALSE)
+    if (is.null(Report_Z_by_area_morph_platoon)) {
+      Z_by_area <- NULL
+      M_by_area <- NULL
+    } else {
+      Z_by_area <- matchfun2("With_fishery",
+                             adjust1 = 1,
+                             "No_fishery_for_Z=M",
+                             adjust2 = -1,
+                             matchcol1 = 2,
+                             matchcol2 = 2,
+                             obj = Report_Z_by_area_morph_platoon,
+                             header = TRUE,
+                             type.convert = TRUE
+                             )
+      M_by_area <- matchfun2("No_fishery_for_Z=M",
+                             blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
+                             adjust1 = 1,
+                             matchcol1 = 2,
+                             obj = Report_Z_by_area_morph_platoon,
+                             header = TRUE,
+                             type.convert = TRUE
+                             )
+    }
+    returndat["Z_by_area"] <- list(Z_by_area)
+    returndat["M_by_area"] <- list(M_by_area)
+    
     # Dynamic_Bzero output "with fishery"
     Dynamic_Bzero <- matchfun2("Spawning_Biomass_Report_2", 1)
     # Dynamic_Bzero output "no fishery"

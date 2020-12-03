@@ -32,7 +32,12 @@
 #' @param forecast_abc Optional input vector for management adopted ABC values for table g. These values
 #' will be overwrite the ABC values in the projection table, rather than the model estimated
 #' ABC values. Example input: c(1500, 1300)
+#' @param format Logical. Option to control whether tables are formatted (e.g. commas added, CIs separeted with "-"). The
+#' formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
+#' work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
+#' the tables from being formatted further since the objects are no longer numeric.
 #' @param verbose Return updates of function progress to the R console?
+#'
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
 #' @author Chantel Wetzel
 #' @export
@@ -49,6 +54,7 @@ SSexecutivesummary <- function (replist,
                                 adopted_acl = NULL,
                                 forecast_ofl = NULL,
                                 forecast_abc = NULL,
+                                format = TRUE,
                                 verbose = TRUE) 
 {
 
@@ -195,11 +201,19 @@ SSexecutivesummary <- function (replist,
 
 
     if(sum(total.catch) != sum(total.dead)){
-      es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      if(format) {
+        es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      }else{
+        es.a = data.frame(hist[1:(length(hist)-1)], catch, total.catch, total.dead)        
+      }
       colnames(es.a) = c("Years", fleet.names, "Total Catch", "Total Dead")
       write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)
     } else {
-      es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2))
+      if(format){
+        es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2))
+      }else{
+        es.a = data.frame(hist[1:(length(hist)-1)], catch, total.catch)        
+      }
       colnames(es.a) = c("Years", fleet.names, "Total Catch")
       write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)      
     }
@@ -218,11 +232,17 @@ SSexecutivesummary <- function (replist,
     if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
     depl = Get.Values(replist = replist, label = "Bratio" , hist, ci_value )
     for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
+    if(format){
     es.b =  data.frame(hist,
                        comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
-                       print(100*depl$dq, digits = 1), paste0(print(100*depl$low,digits = 1), "\u2013", print(100*depl$high,digits = 1)))
-    colnames(es.b) = c("Years", sb.label, "95% Asymptotic Interval", "Estimated Depletion (%)", "95% Asymptotic Interval")
+                       print(depl$dq, digits = 1), paste0(print(depl$low,digits = 1), "\u2013", print(depl$high,digits = 1)))
+    colnames(es.b) = c("Years", sb.label, "Interval", "Fraction Unfished", "Interval")
+    }else{
+    es.b =  data.frame(hist, ssb$dq, ssb$low, ssb$high, depl$dq, depl$low, depl$high)
+    colnames(es.b) = c("Years", sb.label, "Lower Interval", "Upper Interval", 
+                       "Fraction Unfished", "Lower Interval", "Upper Interval")
 
+    }
     write.csv(es.b, file.path(csv.dir, "b_SSB_ES.csv"), row.names = FALSE)
 
   } # end check for 'b' %in% tables
@@ -275,18 +295,31 @@ SSexecutivesummary <- function (replist,
 
       }
       # Zero out the sd for years where devs were not estimated
-      devs.out = data.frame(print(devs[,1], digits = 3), paste0(print(devs[,2],digits = 3), "\u2013", print(devs[,3], digits = 3)))
+      if(format){
+        devs.out = data.frame(print(devs[,1], digits = 3), paste0(print(devs[,2],digits = 3), "\u2013", print(devs[,3], digits = 3)))
+      } else {
+        devs.out = devs     
+      }
     }
 
-    if (dim(recdevMain)[1] == 0) { devs.out = data.frame(rep(0, length(hist)), rep(0, length(hist))) }
+    if (dim(recdevMain)[1] == 0) { 
+      if (format) { devs.out = data.frame(rep(0, length(hist)), rep(0, length(hist))) 
+      } else {
+       devs.out = data.frame(rep(0, length(hist)), rep(0, length(hist)), rep(0, length(hist))) 
+      }
+    }
     for (i in 1:length(hist)){ dig = ifelse(recruits[i,2] < 100, 1, 0)}
-
+    if(format){
     es.c = data.frame(hist,
                       comma(recruits$dq, dig), paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig)),
                       devs.out )
 
-    colnames(es.c) = c("Years", "Recruitment", "95% Asymptotic Interval", "Recruitment Deviations", "95% Asymptotic Interval")
-
+    colnames(es.c) = c("Years", "Recruitment", "Interval", "Recruitment Deviations", "Interval")
+    } else {
+    es.c = data.frame(hist, recruits$dq, recruits$low, recruits$high, devs.out[,1], devs.out[,2], devs.out[,3])
+    colnames(es.c) = c("Years", "Recruitment", "Lower Interval", "Upper Interval", 
+                        "Recruitment Deviations", "Lower Interval", "Upper Interval")
+    } 
     write.csv(es.c, file.path(csv.dir, "c_Recr_ES.csv"), row.names = FALSE)
 
   } # end check for 'c' %in% tables
@@ -306,12 +339,19 @@ SSexecutivesummary <- function (replist,
 
     adj.spr = Get.Values(replist = replist, label = "SPRratio" , hist[1:(length(hist)-1)], ci_value)
     f.value = Get.Values(replist = replist, label = "F" , hist[1:(length(hist)-1)], ci_value)
+    if(format){
     es.d = data.frame(hist[1:(length(hist)-1)],
            print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
            print(f.value$dq,4),     paste0(print(f.value$low, 4),     "\u2013", print(f.value$high, 4)))
-    colnames(es.d) = c("Years", paste0("Estimated ", spr_type, " (%)"), "95% Asymptotic Interval", 
-                        f_type, "95% Asymptotic Interval")
-
+    colnames(es.d) = c("Years", paste0(spr_type, " (%)"), "Interval", 
+                        f_type, "Interval")
+    } else {
+    es.d = data.frame(hist[1:(length(hist)-1)],
+           adj.spr$dq*100, adj.spr$low*100, adj.spr$high*100,
+           f.value$dq, f.value$low, f.value$high)
+    colnames(es.d) = c("Years", spr_type, "Lower Interval", "Upper Interval", 
+                        f_type, "Lower Interval", "Upper Interval")      
+    }
     write.csv(es.d, file.path(csv.dir, "d_SPR_ES.csv"), row.names = FALSE)
 
   } # end check for 'd' %in% tables
@@ -333,8 +373,12 @@ SSexecutivesummary <- function (replist,
     totyield.btgt = "Dead_Catch_Btgt"
     totyield.spr  = "Dead_Catch_SPR"
     totyield.msy  = "Dead_Catch_MSY"
+    f.msy.name  = "Fstd_MSY"
+    f.btgt.name = "Fstd_Btgt"
+    f.spr.name  = "Fstd_SPR"
 
-    if (toupper(substr(replist$SS_version, 10, 11)) < 13){
+    #if (toupper(substr(replist$SS_version, 10, 11)) < 13){
+    if (toupper(substr(replist$SS_version, 6, 7)) < 13){
       sb.unfished   = "SSB_Unfished"
       smry.unfished = "SmryBio_Unfished"
       recr.unfished = "Recr_Unfished"
@@ -343,20 +387,26 @@ SSexecutivesummary <- function (replist,
       totyield.msy     = "TotYield_MSY"
     } 
 
-    final.depl = 100*depl[dim(depl)[1],2:4]
+    if (toupper(substr(replist$SS_version, 6, 7)) > 15){
+      f.msy.name  = "annF_MSY"
+      f.btgt.name = "annF_Btgt"
+      f.spr.name  = "annF_SPR"
+    }
+
+    final.depl = depl[dim(depl)[1],2:4]
     ssb.virgin = Get.Values(replist = replist, label = sb.unfished,   hist, ci_value, single = TRUE)
     smry.virgin= Get.Values(replist = replist, label = smry.unfished, hist, ci_value, single = TRUE)
     rec.virgin = Get.Values(replist = replist, label = recr.unfished, hist, ci_value, single = TRUE)
     b.target   = Get.Values(replist = replist, label = "SSB_Btgt",    hist, ci_value, single = TRUE)
     spr.btarg  = Get.Values(replist = replist, label = "SPR_Btgt",    hist, ci_value, single = TRUE)
-    f.btarg    = Get.Values(replist = replist, label = "Fstd_Btgt",   hist, ci_value, single = TRUE)
+    f.btarg    = Get.Values(replist = replist, label = f.btgt.name,   hist, ci_value, single = TRUE)
     yield.btarg= Get.Values(replist = replist, label = totyield.btgt, hist, ci_value, single = TRUE)
     b.spr      = Get.Values(replist = replist, label = "SSB_SPR",     hist, ci_value, single = TRUE)
-    f.spr      = Get.Values(replist = replist, label = "Fstd_SPR",    hist, ci_value, single = TRUE)
+    f.spr      = Get.Values(replist = replist, label = f.spr.name,    hist, ci_value, single = TRUE)
     yield.spr  = Get.Values(replist = replist, label = totyield.spr,  hist, ci_value, single = TRUE)
     b.msy      = Get.Values(replist = replist, label = "SSB_MSY",     hist, ci_value, single = TRUE)
     spr.msy    = Get.Values(replist = replist, label = "SPR_MSY",     hist, ci_value, single = TRUE)
-    f.msy      = Get.Values(replist = replist, label = "Fstd_MSY",    hist, ci_value, single = TRUE)
+    f.msy      = Get.Values(replist = replist, label = f.msy.name,    hist, ci_value, single = TRUE)
     msy        = Get.Values(replist = replist, label = totyield.msy,  hist, ci_value, single = TRUE)
 
     # Convert spawning ci_valueities for single-sex models
@@ -367,6 +417,7 @@ SSexecutivesummary <- function (replist,
       b.msy = b.msy / sexfactor
     }
 
+    if(format){
     es.e =  matrix(c(
         comma(ssb.virgin$dq,       dig),  paste0(comma(ssb.virgin$low,      dig), "\u2013", comma(ssb.virgin$high,      dig)),
         comma(smry.virgin$dq,      dig),  paste0(comma(smry.virgin$low,     dig), "\u2013", comma(smry.virgin$high,     dig)),
@@ -392,28 +443,75 @@ SSexecutivesummary <- function (replist,
 
     es.e = noquote(es.e)
 
-    colnames(es.e) = c("Estimate", "95% Asymptotic Interval")
+    colnames(es.e) = c("Estimate", "Interval")
     rownames(es.e) = c(paste("Unfished", sb.label),
                 paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),               
                 "Unfished Recruitment (R0)",
                 paste0(sb.label, " (", hist[length(hist)], ")"),
-                paste0("Depletion ", "(", hist[length(hist)], ")"),
-                paste0("Reference Points Based SB", btarg, "%"),
-                paste0("Proxy ", sb.label, "(SB",btarg, "%)"),
-                paste0("SPR resulting in SB", btarg, "%"),
-                paste0("Exploitation Rate Resulting in SB", btarg, "%"),
-                paste0("Yield with SPR Based On SB", btarg, "% (mt)"),
-                "Reference Points based on SPR proxy for MSY",
+                paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
+                paste0("Reference Points Based SB", btarg, " Percent"),
+                paste0("Proxy ", sb.label, "(SB",btarg, " Percent)"),
+                paste0("SPR Resulting in SB", btarg, " Percent"),
+                paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
+                paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
+                "Reference Points Based on SPR Proxy for MSY",
                 paste0("Proxy ", sb.label, " (SPR", spr, ")"),
                 paste0("SPR", spr),
-                paste0("Exploitation rate corresponding to SPR", spr),
+                paste0("Exploitation Rate Corresponding to SPR", spr),
                 paste0("Yield with SPR", spr, " at SB SPR (mt)"),
-                "Reference points based on estimated MSY values",
+                "Reference Points Based on Estimated MSY Values",
                 paste0(sb.label, " at MSY (SB MSY)"),
                 "SPR MSY",
-                "Exploitation rate corresponding to SPR MSY",
+                "Exploitation Rate Corresponding to SPR MSY",
                 "MSY (mt)")
+    } else {
+    es.e =  matrix(c(
+        ssb.virgin$dq,       ssb.virgin$low,       ssb.virgin$high,     
+        smry.virgin$dq,      smry.virgin$low,      smry.virgin$high,    
+        rec.virgin$dq,       rec.virgin$low,       rec.virgin$high,     
+        ssb$dq[dim(ssb)[1]], ssb$low[dim(ssb)[1]], ssb$high[dim(ssb)[1]],
+        final.depl$dq,       final.depl$low,       final.depl$high,     
+        "",    "",    "",
+        b.target$dq,         b.target$low,         b.target$high,   
+        spr.btarg$dq,        spr.btarg$low,        spr.btarg$high,  
+        f.btarg$dq,          f.btarg$low,          f.btarg$high,    
+        yield.btarg$dq,      yield.btarg$low,      yield.btarg$high,
+        "",    "",    "",
+        b.spr$dq,            b.spr$low,            b.spr$high,    
+        spr,                 "  ",                 "  ", 
+        f.spr$dq,            f.spr$low,            f.spr$high,        
+        yield.spr$dq,        yield.spr$low,        yield.spr$high,    
+        "",    "",    "",
+        b.msy$dq,            b.msy$low,            b.msy$high,   
+        spr.msy$dq,          spr.msy$low,          spr.msy$high, 
+        f.msy$dq,            f.msy$low,            f.msy$high,   
+        msy$dq,              msy$low,              msy$high     
+    ), ncol = 3, byrow=T )
 
+    es.e = noquote(es.e)
+
+    colnames(es.e) = c("Estimate", "Lower Interval", "Upper Interval")
+    rownames(es.e) = c(paste("Unfished", sb.label),
+                paste0("Unfished Age ", smry.age, "+ Biomass (mt)"),               
+                "Unfished Recruitment (R0)",
+                paste0(sb.label, " (", hist[length(hist)], ")"),
+                paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
+                paste0("Reference Points Based SB", btarg, " Percent"),
+                paste0("Proxy ", sb.label, "(SB",btarg, " Percent"),
+                paste0("SPR Resulting in SB", btarg, " Percent"),
+                paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
+                paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
+                "Reference Points Based on SPR Proxy for MSY",
+                paste0("Proxy ", sb.label, " (SPR", spr, ")"),
+                paste0("SPR", spr),
+                paste0("Exploitation Rate Corresponding to SPR", spr),
+                paste0("Yield with SPR", spr, " at SB SPR (mt)"),
+                "Reference Points Based on Estimated MSY Values",
+                paste0(sb.label, " at MSY (SB MSY)"),
+                "SPR MSY",
+                "Exploitation Rate Corresponding to SPR MSY",
+                "MSY (mt)")      
+    } 
     write.csv(es.e, file.path(csv.dir, "e_ReferencePoints_ES.csv"))
 
   } # end check for 'e' %in% tables
@@ -428,21 +526,21 @@ SSexecutivesummary <- function (replist,
     }
     
     if(is.null(adopted_ofl)){
-      ofl = rep("fill_in", length(hist)-1)
+      ofl = rep("fill in", length(hist)-1)
     } else {
       if(length(adopted_ofl) != 12) { stop("The adopted_ofl vector needs to have 10 values.") }
       ofl = adopted_ofl
     }
 
     if(is.null(adopted_abc)){
-      abc = rep("fill_in", length(hist)-1)
+      abc = rep("fill in", length(hist)-1)
     } else {
       if(length(adopted_abc) != 12) { stop("The adopted_abc vector needs to have 10 values.") }
       abc = adopted_abc
     }
 
     if(is.null(adopted_acl)){
-      acl = rep("fill_in", length(hist)-1)
+      acl = rep("fill in", length(hist)-1)
     } else {
       if(length(adopted_acl) != 12) { stop("The adopted_acl vector needs to have 10 values.") }
       acl = adopted_acl
@@ -507,15 +605,18 @@ SSexecutivesummary <- function (replist,
       smry.fore = smry.fore + temp
     }
 
+    if(format){
     es.g = data.frame(fore,
            comma(ofl.fore, 2),
            comma(abc.fore, 2),
            comma(smry.fore,   2),
            comma(ssb.fore, 2),
-           print(depl.fore*100,2))
+           print(depl.fore,2))
+    } else {
+    es.g = data.frame(fore, ofl.fore, abc.fore, smry.fore, ssb.fore, depl.fore)
+    }
 
-    colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Depletion (%)")
-
+    colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
     write.csv(es.g, file.path(csv.dir, "g_Projections_ES.csv"), row.names = FALSE)
 
   } # end check for 'g' %in% tables
@@ -582,7 +683,7 @@ SSexecutivesummary <- function (replist,
     recruits = Get.Values(replist = replist, label = "Recr" , hist, ci_value )
 
     if(is.null(adopted_ofl)){
-      ofl = rep("fill_in", length(hist))
+      ofl = rep("fill in", length(hist))
     } else {
       if(length(adopted_ofl) != 12) { stop("The adopted_ofl vector needs to have 12 values.") }
       if(is.null(forecast_ofl)) { 
@@ -593,7 +694,7 @@ SSexecutivesummary <- function (replist,
     }
 
     if(is.null(adopted_acl)){
-      acl = rep("fill_in", length(hist))
+      acl = rep("fill in", length(hist))
     } else {
       if(length(adopted_acl) != 12) { stop("The adopted_acl vector needs to have 12 values.") }
       if(is.null(forecast_abc)) { 
@@ -603,6 +704,7 @@ SSexecutivesummary <- function (replist,
       }
     }
 
+    if(format){
     es.i = matrix(c(
            c("OFL", ofl),
            c("ACL", acl),
@@ -611,13 +713,31 @@ SSexecutivesummary <- function (replist,
            c(f_type, c(print(f.value$dq[1:(length(hist)-1)],2), "NA")),
            c(paste0("Age ", smry.age, "+ Biomass (mt)"), comma(smry,   dig)),
            c(sb.label, comma(ssb$dq, dig)),
-           c("95% CI", paste0(comma(ssb$low, dig), "\u2013", comma(ssb$high, dig))),
+           c("Interval", paste0(comma(ssb$low, dig), "\u2013", comma(ssb$high, dig))),
            c("Recruits", comma(recruits$dq, dig)),
-           c("95% CI", paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig))),
-           c("Depletion (%)", print(depl$dq*100, 1)),
-           c("95% CI", paste0(print(depl$low*100,1), "\u2013", print(depl$high*100,1)))),
+           c("Interval", paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig))),
+           c("Fraction Unfished", print(depl$dq, 1)),
+           c("Interval", paste0(print(depl$low,1), "\u2013", print(depl$high,1)))),
            ncol = (length(hist)+1), byrow = T)
-
+    } else {
+    es.i = matrix(c(
+           c("OFL", ofl),
+           c("ACL", acl),
+           total.bind,
+           c(spr_type, c(adj.spr$dq[1:(length(hist)-1)], NA)),
+           c(f_type, c(f.value$dq[1:(length(hist)-1)], NA)),
+           c(paste0("Age ", smry.age, "+ Biomass (mt)"), smry),
+           c(sb.label, ssb$dq),
+           c("Lower Interval", ssb$low),
+           c("Upper Interval", ssb$high),
+           c("Recruits", recruits$dq),
+           c("Lower Interval", recruits$low), 
+           c("Upper Interval", recruits$high),
+           c("Fraction Unfished", depl$dq),
+           c("Lower Interval", depl$low), 
+           c("Upper Interval", depl$high)),
+           ncol = (length(hist)+1), byrow = T)
+    }
     es.i = noquote(es.i)
     colnames(es.i) = c("Quantity", hist)
 
@@ -661,11 +781,19 @@ SSexecutivesummary <- function (replist,
     total.catch = apply(catch, 1, sum) 
 
     if(sum(total.catch) != sum(total.dead)){
-      mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      if(format){
+        mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2), comma(total.dead, digits = 2))
+      }else{
+        mortality = data.frame(ind, catch, total.catch, total.dead)        
+      }
       colnames(mortality) = c("Years", fleet.names, "Total Catch", "Total Dead")
       write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)      
     } else {
-      mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
+      if(format){
+        mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
+      }else{
+        mortality = data.frame(ind, catch, total.catch)        
+      }
       colnames(mortality) = c("Years", fleet.names, "Total Catch")
       write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)
     }
@@ -722,18 +850,29 @@ SSexecutivesummary <- function (replist,
     adj.spr.all = replist$derived_quants[grep("SPRratio_",replist$derived_quants$Label),"Value"] 
     if(ind != 0) { adj.spr.all = c(rep(0, ind), adj.spr.all)}
   
-    ts.table = data.frame(all,
-          comma(tot.bio.all,0),
-          comma(ssb.all,0),
-          comma(smry.all,0),
-          print(depl.all*100,1),
-          comma(recruits.all,0),
-          total.dead.all,
-          print(adj.spr.all,3),
-          expl.all)
-    
+    if(format){
+      ts.table = data.frame(all,
+            comma(tot.bio.all,0),
+            comma(ssb.all,0),
+            comma(smry.all,0),
+            print(depl.all*100,1),
+            comma(recruits.all,0),
+            total.dead.all,
+            print(adj.spr.all,3),
+            expl.all)
+    }else{
+      ts.table = data.frame(all,
+            tot.bio.all,
+            ssb.all,
+            smry.all,
+            depl.all,
+            recruits.all,
+            total.dead.all,
+            adj.spr.all,
+            expl.all)      
+    }
     colnames(ts.table) = c("Year", "Total Biomass (mt)", sb.label, 
-      paste0("Total Biomass ", smry.age ," (mt)"), "Depletion (%)", 
+      paste0("Total Biomass ", smry.age ," (mt)"), "Fraction Unfished", 
       "Age-0 Recruits", "Total Catch (mt)", spr_type, "Exploitation Rate")
     write.csv(ts.table, file = paste0(csv.dir,"TimeSeries.csv"), row.names = FALSE) 
   }  
