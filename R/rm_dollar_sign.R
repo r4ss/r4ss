@@ -19,13 +19,27 @@
 #' @return A character vector of the modified text. As a side effect, produces
 #'  a text file out_file that was written out from R using writeLines().
 #' @author Kathryn Doering
-#' @example 
+#' #' @example 
+#' test_text <- c("x$my_name <- y$test"
+#'                  "x[['my_name']]", 
+#'                  "no_replace_here <- 44",
+#'                  "x$names<-new_assign;x$`22`",
+#'                  "x$names <- new_assign; x$`22`",
+#'                  "x$`$$weirdcharacters`<-222",
+#'                  "x$`nameinbacktick`",
+#'                  "x$mylist$my_col$YetAnotherCol",
+#'                  "x$mylist$my_col$`1_somename`",
+#'                  "x$`bad$name` <- 55",
+#'                  "x$`other_$badname`")
+#' writeLines(test_text, "test_rm_dollar_sign.txt")
+#' on.exit(file.remove("test_rm_dollar_sign.txt"), add = TRUE)
+#' 
 #'  new_text <- rm_dollar_sign(
-#'    file = system.file("inst/extdata/test_rm_dollar_sign.txt",
-#'      package = "r4ss"),
+#'    file = "test_rm_dollar_sign.txt",
 #'    out_file = NULL)
+#'    new_text
 
-rm_dollar_sign <- function(file = "inst/extdata/test_rm_dollar_sign.txt",
+rm_dollar_sign <- function(file,
                            out_file = file, 
                            allow_recursive = TRUE,
                            max_loops = 5) {
