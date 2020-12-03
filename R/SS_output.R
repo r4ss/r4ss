@@ -2802,18 +2802,23 @@ SS_output <-
     ) == stringmatch])
     fmax <- max(Hrates)
 
-    # depletion
-    depletion_method <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
-    depletion_basis <- rawrep[matchfun("B_ratio_denominator"), 2]
-    if (depletion_basis == "no_depletion_basis") {
-      depletion_basis <- "none"
+    # depletion basis
+    depletion_basis <- as.numeric(rawrep[matchfun("Depletion_basis"), 2])
+    if(is.na(depletion_basis)){
+      # older versions had a different string
+      depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
+    }
+      
+    B_ratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
+    if (B_ratio_denominator == "no_depletion_basis") {
+      B_ratio_denominator <- "none"
     } else {
-      depletion_basis <- as.numeric(strsplit(depletion_basis, "%*",
+      B_ratio_denominator <- as.numeric(strsplit(B_ratio_denominator, "%*",
         fixed = TRUE
       )[[1]][1]) / 100
     }
-    returndat$depletion_method <- depletion_method
     returndat$depletion_basis <- depletion_basis
+    returndat$B_ratio_denominator <- B_ratio_denominator
 
     ## discard fractions ###
 
