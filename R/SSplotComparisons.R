@@ -486,7 +486,7 @@ SSplotComparisons <-
     # check for mcmc
     if (any(mcmcVec) & length(mcmc) == 0) {
       mcmcVec <- FALSE
-      warning("Setting mcmcVec = FALSE because summaryoutput[["mcmc"]] is empty")
+      warning("Setting mcmcVec = FALSE because summaryoutput[['mcmc']] is empty")
     }
     # check length of mcmcVec
     if (nlines > 1 & length(mcmcVec) == 1) {

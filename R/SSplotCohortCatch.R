@@ -84,7 +84,7 @@ SSplotCohortCatch <-
   
 #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
   if(is.null(wtatage)){
-    cat("Warning: no weight-at-age data in replist[["wtatage"]]\n",
+    cat("Warning: no weight-at-age data in replist[['wtatage']]\n",
         "        plots of cohort contributions will be in numbers only\n")
     subplots <- setdiff(subplots,2) # removing subplot 2 from the list
   }else{

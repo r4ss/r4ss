@@ -113,7 +113,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                             Catch_n = model[["timeseries"]][,dead_N_columns])
   }
   if(length(dead_bio_columns) == 0){
-    stop("No columns matching 'dead(B)' in model[["timeseries"]]")
+    stop("No columns matching 'dead(B)' in model[['timeseries'']]")
   }
   
   # not sure why this is needed, but it is
@@ -161,7 +161,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(nrow(tab) != length(years) || any(tab[["Year"]] != years)){
     stop("problem with mismatch of years:\n",
          "range(years): ", range(years), "\n",
-         "range(tab[["Year"]]): ", range(tab[["Year"]]), "\n")
+         "range(tab[['Year']]): ", range(tab[["Year"]]), "\n")
   }
 
   # replace NA with 0 in exploitation rate for years with 0 catch
@@ -274,7 +274,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(model[["sprtarg"]] == -999){
     SPRtarg_text <- "SPR_XX%"
     model[["sprtarg"]] <- NA
-    warning('No value for model[["sprtarg"]]')
+    warning("No value for model[['sprtarg']]")
   }else{
     SPRtarg_text <- paste0("SPR", 100*model[["sprtarg"]], "%") # e.g. SPR50%
   }
@@ -302,7 +302,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(model[["btarg"]] == -999){
     Btarg_text <- "BXX%"
     model[["btarg"]] <- NA
-    warning('No value for model[["btarg"]]')
+    warning("No value for model[['btarg']]")
   }else{
     Btarg_text <- paste0("B", 100*model[["btarg"]], "%") # e.g. B40%
 	# GM Settings:
@@ -314,7 +314,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(model[["minbthresh"]] == -999){
     MinBthresh_text <- "BXX%"
     model[["minbthresh"]] <- NA
-    warning('No value for model[["minbthresh"]]')
+    warning("No value for model[['minbthresh']]")
   }else{
     MinBthresh_text <- paste0("B", 100*model[["minbthresh"]], "%") # e.g. B25%
 	B_msy_basis = paste0("SS", Btarg_text)

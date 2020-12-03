@@ -289,7 +289,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
                       ))
   # Below check added to help users with troubleshooting
   if(!ctllist[["maturity_option"]] %in% c(1:6)) {
-    stop("Invalid maturity option used. ctllist[["maturity_option"]] is", 
+    stop("Invalid maturity option used. ctllist[['maturity_option']] is", 
          ctllist[["maturity_option"]], ", but must be 1, 2, 3, 4, 5, or 6.")
   }
   # Below if statements are lines are conditional on the maturity option chosen
@@ -580,7 +580,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
     printdf("pars_2D_AR")
     writeLines(text = "-9999 1 1 1 1 1 1 1 1 1 1 # Terminator ", con = zz)
   } else {
-    stop("ctllist[["Use_2D_AR1_selectivity"]] has value ", 
+    stop("ctllist[['Use_2D_AR1_selectivity']] has value ", 
          ctllist[["Use_2D_AR1_selectivity"]], ", but can only have value 0 or 1.")
   }
   # Tag model parameters ----
@@ -595,7 +595,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
     printdf("TG_Report_fleet", header = FALSE)
     printdf("TG_Report_fleet_decay", header = FALSE)
   } else {
-    stop("ctllist[["TG_custom"]] has value ", ctllist[["TG_custom"]], " but can only",
+    stop("ctllist[['TG_custom']] has value ", ctllist[["TG_custom"]], " but can only",
          "have value 0 or 1.")
   }
   # Time varying parameters for tagging, would go here, if implemented.
@@ -624,8 +624,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
   if((ctllist[["N_lambdas"]] > 0) & (!is.null(ctllist[["lambdas"]]))) {
     if(nrow(ctllist[["lambdas"]]) != ctllist[["N_lambdas"]]){
       stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
-           "make them consistent (i.e., if ctllist[["N_lambdas"]] is greater than ",
-           "0, ctllist[["N_lambdas"]] should equal nrow(ctllist[["lambdas"]]))")
+           "make them consistent (i.e., if ctllist[['N_lambdas']] is greater than ",
+           "0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))")
     }
     printdf("lambdas", terminate = T)
   } else if ((ctllist[["N_lambdas"]] == 0) & (is.null(ctllist[["lambdas"]]))) {
@@ -634,9 +634,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite=FALSE, verbose) {
     wl.vector("tmp_var", comment = "# terminator")
   } else {
     stop("ctllist components N_lambdas and lambdas are not consistent. Please ",
-        "make them consistent (i.e., if ctllist[["N_lambdas"]] is 0 ,then ",
-        "ctllist[["lambdas"]] should be NULL; if ctllist[["N_lambdas"]] is greater than ",
-        "0, ctllist[["N_lambdas"]] should equal nrow(ctllist[["lambdas"]]))")
+        "make them consistent (i.e., if ctllist[['N_lambdas']] is 0 ,then ",
+        "ctllist[['lambdas']] should be NULL; if ctllist[['N_lambdas']] is greater than ",
+        "0, ctllist[['N_lambdas']] should equal nrow(ctllist[['lambdas']]))")
   }
   writeComment("#")
   # more sd reporting ----

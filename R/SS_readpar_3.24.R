@@ -56,7 +56,7 @@ SS_readpar_3.24 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["MG_parms"]])){
       parlist[["MG_parms"]]<-ctllist[["MG_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["MG_parms"]]")
+      stop("Missing ctllist[['MG_parms']]")
     }
     #Add time varying mortality and growth parameters if they exist
     if(!is.null(ctllist[["MG_parms_tv"]])){
@@ -104,7 +104,7 @@ SS_readpar_3.24 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["SR_parms"]])){
       parlist[["SR_parms"]]<-ctllist[["SR_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["SR_parms"]]")
+      stop("Missing ctllist[['SR_parms']]")
     }
     #Rename columns and add final parameter estimate data from par file
     colnames(parlist[["SR_parms"]]) <- c("INIT","ESTIM")
@@ -211,7 +211,7 @@ SS_readpar_3.24 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["Q_parms"]])){
       parlist[["Q_parms"]]<-ctllist[["Q_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["Q_parms"]]")
+      stop("Missing ctllist[['Q_parms']]")
     }
     #Add time varying catchability Q parameters if they exist
     if(!is.null(ctllist[["Q_parms_tv"]])){

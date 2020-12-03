@@ -243,7 +243,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
     } else if (datlist[["lbin_method"]] == 3) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]] # read actual input
     } else {
-      stop("datlist[["lbin_method"]] is ", datlist[["lbin_method"]], "but only can be 1", 
+      stop("datlist[['lbin_method']] is ", datlist[['lbin_method']], "but only can be 1", 
            ", 2, or 3.")
     }
     ctllist[["Nfleets"]]<-Nfleets<-datlist[["Nfleets"]]
@@ -1388,7 +1388,7 @@ SS_readctl_3.30 <- function(file,verbose=TRUE,echoall=FALSE,version="3.30",
               "empirical weight at age. Note that even if number of growth", 
               " ages > 0, SS will ignore these and not expect any input for ", 
               "the line stddev_reporting_growth. Changing ",
-              "ctllist[["stdev_reporting_specs"]][6] to 0 to make this clear.")
+              "ctllist[['stdev_reporting_specs']][6] to 0 to make this clear.")
       ctllist[["stddev_reporting_specs"]][6] <- 0
     }
     if(ctllist[["stddev_reporting_specs"]][6] > 0  & ctllist[["EmpiricalWAA"]] == 0) {

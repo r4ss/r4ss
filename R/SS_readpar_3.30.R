@@ -57,7 +57,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["MG_parms"]])){
       parlist[["MG_parms"]]<-ctllist[["MG_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["MG_parms"]]")
+      stop("Missing ctllist[['MG_parms']]")
     }
     #Add time varying mortality and growth parameters if they exist
     if(any(ctllist[["MG_parms"]][, c("env_var&link", "dev_link", "Block")] != 0)) {
@@ -95,7 +95,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["SR_parms"]])){
       parlist[["SR_parms"]]<-ctllist[["SR_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["SR_parms"]]")
+      stop("Missing ctllist[['SR_parms']]")
     }
     #Add time varying stock recruitment parameters if they exist
     if(any(ctllist[["SR_parms"]][, c("env_var&link", "dev_link", "Block")] != 0)){
@@ -215,7 +215,7 @@ SS_readpar_3.30 <- function(parfile,datsource,ctlsource,verbose=TRUE){
     if(!is.null(ctllist[["Q_parms"]])){
       parlist[["Q_parms"]]<-ctllist[["Q_parms"]][,3:4]
     }else{
-      stop("Missing ctllist[["Q_parms"]]")
+      stop("Missing ctllist[['Q_parms']]")
     }
     #Add time varying catchability Q parameters if they exist
     if(any(ctllist[["Q_parms"]][, c("env_var&link", "dev_link", "Block")] != 0)){
