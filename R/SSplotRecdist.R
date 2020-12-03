@@ -49,13 +49,13 @@ SSplotRecdist <-
   }
   plotinfo <- NULL
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
-  nareas   <- replist$nareas
-  nseasons <- replist$nseasons
-  recdist  <- replist$recruitment_dist
+  nareas   <- replist[["nareas"]]
+  nseasons <- replist[["nseasons"]]
+  recdist  <- replist[["recruitment_dist"]]
   # if version 3.24Q or beyond, recdist is a list, so taking just the first element for now
-  if("recruit_dist_endyr" %in% names(recdist)) recdist <- recdist$recruit_dist_endyr
+  if("recruit_dist_endyr" %in% names(recdist)) recdist <- recdist[["recruit_dist_endyr"]]
   
   areavec <- 1:nareas
   seasvec <- 1:nseasons
@@ -66,7 +66,7 @@ SSplotRecdist <-
   
   for(iarea in areavec){
     for(iseas in seasvec){
-      recmat[iarea,iseas] <- sum(recdist$Value[recdist$Area==iarea & recdist$Seas==iseas & recdist$Used==1])
+      recmat[iarea,iseas] <- sum(recdist[["Value"]][recdist[["Area"]]==iarea & recdist[["Seas"]]==iseas & recdist[["Used"]]==1])
     }
   }
 
@@ -98,6 +98,6 @@ SSplotRecdist <-
     dev.off()
   }
 
-  if(!is.null(plotinfo)) plotinfo$category <- "Recruitment"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Recruitment"
   return(invisible(plotinfo))
 }

@@ -68,23 +68,23 @@ SSplotCohortCatch <-
   }
   plotinfo <- NULL
 
-  catage           <- replist$catage
-  wtatage          <- replist$wtatage
-  nseasons         <- replist$nseasons
-  nsexes           <- replist$nsexes
-  nfleets          <- replist$nfleets
-  nfishfleets      <- replist$nfishfleets
-  catch_units      <- replist$catch_units
-  startyr          <- replist$startyr
-  endyr            <- replist$endyr
-  accuage          <- replist$accuage
-  growthvaries     <- replist$growthvaries
-  growdat          <- replist$endgrowth
-  SS_versionshort  <- toupper(substr(replist$SS_version,1,8))
+  catage           <- replist[["catage"]]
+  wtatage          <- replist[["wtatage"]]
+  nseasons         <- replist[["nseasons"]]
+  nsexes           <- replist[["nsexes"]]
+  nfleets          <- replist[["nfleets"]]
+  nfishfleets      <- replist[["nfishfleets"]]
+  catch_units      <- replist[["catch_units"]]
+  startyr          <- replist[["startyr"]]
+  endyr            <- replist[["endyr"]]
+  accuage          <- replist[["accuage"]]
+  growthvaries     <- replist[["growthvaries"]]
+  growdat          <- replist[["endgrowth"]]
+  SS_versionshort  <- toupper(substr(replist[["SS_version"]],1,8))
   
 #  if(nfishfleets==1 & verbose) cat("  Note: skipping stacked plots of catch for single-fleet model\n")
   if(is.null(wtatage)){
-    cat("Warning: no weight-at-age data in replist$wtatage\n",
+    cat("Warning: no weight-at-age data in replist[["wtatage"]]\n",
         "        plots of cohort contributions will be in numbers only\n")
     subplots <- setdiff(subplots,2) # removing subplot 2 from the list
   }else{
@@ -92,7 +92,7 @@ SSplotCohortCatch <-
       cat("Warning: plots of catch by cohort might not work for seasonal models.\n")
   }
   
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
   # vector of cohort birth years
   yrs <- startyr:endyr
@@ -124,15 +124,15 @@ SSplotCohortCatch <-
             # copy values from catage to catcohort_fltsex
             # summation could include multiple seasons or morphs within a year
             catcohort_fltsex[icohort,iage,ifleet,isex] <-
-              sum(catage[catage$Fleet==f & catage$Yr==y & catage$Sex==isex,
+              sum(catage[catage[["Fleet"]]==f & catage[["Yr"]]==y & catage[["Sex"]]==isex,
                          names(catage)==y-cohort])
             # get assocated weight value
             if(is.null(wtatage)){
               w <- 0 # dummy value to keep code from breaking when wtatage not available
             }else{
-              w <- wtatage[[paste(a)]][abs(wtatage$Yr)==y &
-                                         wtatage$Fleet==f &
-                                           wtatage$Sex==isex]
+              w <- wtatage[[paste(a)]][abs(wtatage[["Yr"]])==y &
+                                         wtatage[["Fleet"]]==f &
+                                           wtatage[["Sex"]]==isex]
             }
             wtatage_fltsex[icohort,iage,ifleet,isex] <- w
           } # end loop over sexes
@@ -254,6 +254,6 @@ SSplotCohortCatch <-
          cumcatcohortN=cumcatcohortN,
          cumcatcohortB=cumcatcohortB)
  
-  returnlist$plotinfo <- plotinfo
+  returnlist[["plotinfo"]] <- plotinfo
   return(invisible(returnlist))
 }

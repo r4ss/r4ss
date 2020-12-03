@@ -44,7 +44,7 @@
 #'     
 #'     retroModels <- SSgetoutput(dirvec=file.path(mydir, "retrospectives",paste("retro",0:-5,sep="")))
 #'     retroSummary <- SSsummarize(retroModels)
-#'     endyrvec <- retroSummary$endyrs + 0:-5
+#'     endyrvec <- retroSummary[["endyrs"]] + 0:-5
 #'     SSplotComparisons(retroSummary, endyrvec=endyrvec, legendlabels=paste("Data",0:-5,"years"))
 #'   }
 #' 
@@ -54,7 +54,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
                        RemoveBlocks=FALSE){
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform$OS.type
+  OS <- .Platform[["OS.type"]]
   # prefix applied to start of command to run model
   prefix <- ifelse(OS == "windows", "", "./")
 
@@ -98,8 +98,8 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
   
   message("Getting input file names from starter file:\n",startfile)
   starter <- SS_readstarter(startfile,verbose=FALSE)
-  ctlfile <- starter$ctlfile
-  datfile <- starter$datfile
+  ctlfile <- starter[["ctlfile"]]
+  datfile <- starter[["datfile"]]
 
   filenames <- c(exefile,forefile,ctlfile,datfile,wtatagefile,testfile)
   message('copying model files from\n',olddir,'\n  to\n',newdir)
@@ -123,8 +123,8 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
       stop("error copying file(s): ",filenames[!copy.test])
     }
     # change starter file to do retrospectives
-    starter$retro_yr <- years[iyr]
-    starter$init_values_src <- 0
+    starter[["retro_yr"]] <- years[iyr]
+    starter[["init_values_src"]] <- 0
     setwd(file.path(newdir,subdirnames[iyr]))
     SS_writestarter(starter, dir=getwd(), verbose=FALSE, overwrite=TRUE)
 
@@ -190,7 +190,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir='retrospectives',
 ##   retroSummary <- SSsummarize(retroModels)
 
 ##   # set the ending year of each model in the set
-##   endyrvec <- retroModels[[1]]$endyr-10:0
+##   endyrvec <- retroModels[[1]][["endyr"]]-10:0
 ##   # make comparison plot
 ##   pdf('retrospectives/retrospective_comparison_plots.pdf')
 ##   SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)

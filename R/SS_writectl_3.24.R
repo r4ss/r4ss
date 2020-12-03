@@ -32,16 +32,16 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   # function to write Stock Synthesis ctl files
   if(verbose) cat("running SS_writectl\n")
 
-  if(ctllist$type!="Stock_Synthesis_control_file"){
+  if(ctllist[["type"]]!="Stock_Synthesis_control_file"){
     stop("input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'")
   }
 
   # this command will hopefully prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
   ## on.exit({if(sink.number()>0) sink(); close(zz)})
-  nseas<-ifelse(is.null(ctllist$nseas),nseas,ctllist$nseas)
-  N_areas<-ifelse(is.null(ctllist$N_areas),N_areas,ctllist$N_areas)
-  Do_AgeKey<-ifelse(is.null(ctllist$Do_AgeKey),Do_AgeKey,ctllist$Do_AgeKey)
+  nseas<-ifelse(is.null(ctllist[["nseas"]]),nseas,ctllist[["nseas"]])
+  N_areas<-ifelse(is.null(ctllist[["N_areas"]]),N_areas,ctllist[["N_areas"]])
+  Do_AgeKey<-ifelse(is.null(ctllist[["Do_AgeKey"]]),Do_AgeKey,ctllist[["Do_AgeKey"]])
 
   if(file.exists(outfile)){
     if(!overwrite){
@@ -114,7 +114,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     }
     if(!is.null(dataframe)){
       if(header){
-        dataframe$PType <- NULL
+        dataframe[["PType"]] <- NULL
         names(dataframe)[1] <- paste("#_",names(dataframe)[1],sep="")
         writeLines(paste(names(dataframe),collapse="\t"),con=zz)
       }
@@ -122,7 +122,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   #  print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE,header)
       if(!is.null(rownames(dataframe))){
         rownames(dataframe)<-sapply(rownames(dataframe),function(z){ifelse(length(grep(x=z,pattern="^#"))==1,z,paste0("#_",z))})
-        dataframe$comments<-rownames(dataframe)
+        dataframe[["comments"]]<-rownames(dataframe)
       }
       #     write.table(file=zz,x=dataframe,append=TRUE,sep=" ",quote=FALSE,
       #                 row.names=FALSE,col.names=FALSE)
@@ -141,12 +141,12 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   # write the contents
   wl("N_GP",comment="# N_Growth_Patterns") # N_Growth_Patterns
   wl("N_platoon",comment="#_N_Morphs_Within_GrowthPattern") # number of platoons  1, 3, 5 are best values to use
-  if(ctllist$N_platoon>1){
+  if(ctllist[["N_platoon"]]>1){
     stop("currently sub morphs are not supported yet in this R code")
     wl("sd_ratio")
     wl("submorphdist")
   }
-  if(ctllist$N_GP*nseas*N_areas>1) {
+  if(ctllist[["N_GP"]]*nseas*N_areas>1) {
     wl("recr_dist_read",comment="#_number of recruitment assignments (overrides GP*area*seas parameter values)")
     wl("recr_dist_inx",comment="#_recruitment interaction requested")
     printdf("recr_dist_pattern")
@@ -164,7 +164,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     writeComment("#_Cond 1 1 1 2 4 10 # example move definition for seas=1, morph=1, source=1 dest=2, age1=4, age2=10")
   }
   wl("N_Block_Designs",comment="#_Nblock_Patterns")
-  if(ctllist$N_Block_Designs>0){
+  if(ctllist[["N_Block_Designs"]]>0){
     wl.vector("blocks_per_pattern",comment="#_blocks_per_pattern")
     wl.list("Block_Design",header="#_begin and end years of blocks")
   }else{
@@ -175,23 +175,23 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("fracfemale") #_fracfemale
   wl("natM_type",comment="#_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate")
   writeComment("#_Age_natmort_by gender x growthpattern")
-  if(ctllist$natM_type==1){
+  if(ctllist[["natM_type"]]==1){
     wl("N_natM",comment="#_Number of M_segments")
     wl.vector("M_ageBreakPoints",comment="# age(real) at M breakpoints")
-  }else if(ctllist$natM_type==2){
+  }else if(ctllist[["natM_type"]]==2){
     wl.vector("Lorenzen_refage",comment="#_reference age for Lorenzen M; read 1P per morph")
-  }else if(ctllist$natM_type %in% c(3,4)){
+  }else if(ctllist[["natM_type"]] %in% c(3,4)){
     printdf("natM")
-  }else if(ctllist$natM_type==0){
+  }else if(ctllist[["natM_type"]]==0){
     # Just to skip
   }else{
-    stop("natM_type :",ctllist$natM_type, "is not supported")
+    stop("natM_type :",ctllist[["natM_type"]], "is not supported")
   }
   ## Growth ##
   wl("GrowthModel",comment="# GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented")
   wl("Growth_Age_for_L1")
   wl("Growth_Age_for_L2",comment="#_Growth_Age_for_L2 (999 to use as Linf)")
-  if(ctllist$GrowthModel == 3) {
+  if(ctllist[["GrowthModel"]] == 3) {
     wl("N_ageK", comment = "# number of K multipliers to read")
     wl.vector("Age_K_points", comment = "# ages for K multiplier")
   }
@@ -199,16 +199,16 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("CV_Growth_Pattern",comment="#_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)")
   wl("maturity_option",comment=
     "#_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity by GP; 4=read age-fecundity by GP; 5=read fec and wt from wtatage.ss; 6=read length-maturity by GP")
-  if(ctllist$maturity_option %in% c(3,4)){
+  if(ctllist[["maturity_option"]] %in% c(3,4)){
     printdf("Age_Maturity")
   }
-  if(ctllist$maturity_option==6){
+  if(ctllist[["maturity_option"]]==6){
     printdf("Len_Maturity")
   }
   wl("First_Mature_Age")
   wl("fecundity_option",comment=
       "fecundity option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b; (4)eggs=a+b*L; (5)eggs=a+b*W")
-  if(is.null(ctllist$hermaphroditism_option))ctllist$hermaphroditism_option<-1
+  if(is.null(ctllist[["hermaphroditism_option"]]))ctllist[["hermaphroditism_option"]]<-1
   wl("hermaphroditism_option",comment="hermaphroditism option:  0=none; 1=age-specific fxn")
   wl("parameter_offset_approach",comment=
     "parameter_offset_approach (1=none, 2= M, G, CV_G as offset from female-GP1, 3=like SS2 V1.x)")
@@ -220,9 +220,9 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 
   # MG environmental linkage lines
   writeComment("#")
-  if(any(ctllist$MG_parms$env_var != 0)) {
+  if(any(ctllist[["MG_parms"]][["env_var"]] != 0)) {
     wl("read_MG_custom_env_var")
-    if(ctllist$read_MG_custom_env_var == 1) {
+    if(ctllist[["read_MG_custom_env_var"]] == 1) {
       printdf("MG_custom_env_var")
     } else {
       writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no MG-environ parameters")
@@ -250,16 +250,16 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_seasonal_effects_on_biology_parms")
   wl.vector("MGparm_seas_effects",comment=
     "#_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,Malewtlen1,malewtlen2,L1,K")
-  N_seas_effects<-sum(ctllist$MGparm_seas_effects)
+  N_seas_effects<-sum(ctllist[["MGparm_seas_effects"]])
   if(N_seas_effects>0){
     printdf("MG_parms_seas")
     writeComment("#")
   }else{
     writeComment(c("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no seasonal MG parameters","#"))
   }
-  DoParmDev<-sum(ctllist$MG_parms[,9])
+  DoParmDev<-sum(ctllist[["MG_parms"]][,9])
   if(DoParmDev>0){
-    if(is.null(ctllist$MGparm_Dev_Phase))ctllist$MGparm_Dev_Phase<- -4
+    if(is.null(ctllist[["MGparm_Dev_Phase"]]))ctllist[["MGparm_Dev_Phase"]]<- -4
     wl("MGparm_Dev_Phase")
     writeComment("#")
   }
@@ -275,7 +275,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("MainRdevYrLast",comment="last year of main recr_devs; forecast devs start in following year")
   wl("recdev_phase",comment="recdev phase")
   wl("recdev_adv",comment="(0/1) to read 13 advanced options")
-  if(ctllist$recdev_adv){
+  if(ctllist[["recdev_adv"]]){
   #  cat("writing 13 advanced SRR options\n")
     wl("recdev_early_start",comment="#_recdev_early_start (0=none; neg value makes relative to recdev_start)")
     wl("recdev_early_phase",comment="#_recdev_early_phase")
@@ -296,7 +296,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("# read specified recr devs")
   writeComment("#_Yr Input_value")
 
-  if(ctllist$recdev_adv && ctllist$N_Read_recdevs>0){
+  if(ctllist[["recdev_adv"]] && ctllist[["N_Read_recdevs"]]>0){
     printdf("recdev_input")
   }
 
@@ -307,10 +307,10 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   wl("F_ballpark_year",comment="F ballpark year (neg value to disable)")
   wl("F_Method",comment="F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)")
   wl("maxF",comment="max F or harvest rate, depends on F_Method")
-  if(ctllist$F_Method==1){
+  if(ctllist[["F_Method"]]==1){
   #  Fmethod:1 does not need any additional information
   #  stop("stop currently F_method:1 is not implemented")
-  }else if(ctllist$F_Method==2){
+  }else if(ctllist[["F_Method"]]==2){
   #  stop("stop currently F_method:2 is not implemented")
     writeComment("overall start F value; overall phase; N detailed inputs to read")
     wl.vector("F_setup")
@@ -319,7 +319,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     } else {
       writeComment("fleet yr seas Fvalue se phase")
     }
-  }else if(ctllist$F_Method==3){
+  }else if(ctllist[["F_Method"]]==3){
     wl("F_iter",comment="N iterations for tuning F in hybrid method (recommend 3 to 7)")
   }
   writeComment(c("#","#_initial_F_parms"))
@@ -334,7 +334,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
 ## First of all to check if random Q parameters are used.
 ## If yes, read 1 number for flag to see if to read single parameter for each random Q or
 ## one parameter for each data point
-  if(sum(ctllist$Q_setup[,4] %in% c(3,4))>0){
+  if(sum(ctllist[["Q_setup"]][,4] %in% c(3,4))>0){
     wl("Do_Q_detail",comment=
         "If q has random component, then 0=read one parm for each fleet with random q; 1=read a parm for each year of index")
   }else{
@@ -344,27 +344,27 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#_Q_parms(if_any);Qunits_are_ln(q)")
   header<-TRUE
   # Density dependant Q(Q-power)
-  if(sum(ctllist$Q_setup[,1])>0){
-    if(any(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2)){
-      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,1]>0),4]<2))
+  if(sum(ctllist[["Q_setup"]][,1])>0){
+    if(any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][,1]>0),4]<2)){
+      cat("must create base Q parm to use Q_power for fleet: ",which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][,1]>0),4]<2))
       stop()
     }
     printdf("Q_power",header=header);header<-FALSE
   }
 # Q-env
-  if(sum(ctllist$Q_setup[,2])>0){
-    if(any(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2)){
-      cat("must create base Q parm to use Q_env for fleet: ",which(ctllist$Q_setup[(ctllist$Q_setup[,2]>0),4]<2))
+  if(sum(ctllist[["Q_setup"]][,2])>0){
+    if(any(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][,2]>0),4]<2)){
+      cat("must create base Q parm to use Q_env for fleet: ",which(ctllist[["Q_setup"]][(ctllist[["Q_setup"]][,2]>0),4]<2))
       stop()
     }
     printdf("Q_env",header=header);header<-FALSE
   }
 # Q_extraSD
-  if(sum(ctllist$Q_setup[,3])>0){
+  if(sum(ctllist[["Q_setup"]][,3])>0){
     printdf("Q_extraSD",header=header);header<-FALSE
   }
 # Q-type
-  if(!is.null(ctllist$Q_parms))printdf("Q_parms",header=header);header<-FALSE
+  if(!is.null(ctllist[["Q_parms"]]))printdf("Q_parms",header=header);header<-FALSE
 
   writeComment("#_size_selex_types")
   writeComment("#discard_options:_0=none;_1=define_retention;_2=retention&mortality;_3=all_discarded_dead")
@@ -377,14 +377,14 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("#")
   #selex parameters
   writeComment("SizeSelex")
-  if(!is.null(ctllist$size_selex_parms)){
+  if(!is.null(ctllist[["size_selex_parms"]])){
   #  writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
     printdf("size_selex_parms")
   }else{
     writeComment("#_No size_selex_parm")
   }
   writeComment("AgeSelex")
-  if(!is.null(ctllist$age_selex_parms)){
+  if(!is.null(ctllist[["age_selex_parms"]])){
   #  writeComment("#_LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn")
     printdf("age_selex_parms")
   }else{
@@ -394,9 +394,9 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   ## Following parts are not yet implemented in this code
   writeComment("#_Cond 0 #_custom_sel-env_setup (0/1)")
   writeComment("#_Cond -2 2 0 0 -1 99 -2 #_placeholder when no enviro fxns")
-  if(sum(ctllist$age_selex_parms[,13])+sum(ctllist$size_selex_parms[,13])>0){
+  if(sum(ctllist[["age_selex_parms"]][,13])+sum(ctllist[["size_selex_parms"]][,13])>0){
     wl("DoCustom_sel_blk_setup",comment="custom_sel-blk_setup (0/1) ")
-    if(ctllist$DoCustom_sel_blk_setup){
+    if(ctllist[["DoCustom_sel_blk_setup"]]){
       printdf("custom_sel_blk_setup")
     }
   }else{
@@ -405,12 +405,12 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   }
   writeComment("#_Cond No selex parm trends ")
 
-  if(!is.null(ctllist$selparm_Dev_Phase) && ctllist$selparm_Dev_Phase){
+  if(!is.null(ctllist[["selparm_Dev_Phase"]]) && ctllist[["selparm_Dev_Phase"]]){
     wl("selparm_Dev_Phase",comment="#selparm_dev_PH")
   }else{
     writeComment("#_Cond -4 # placeholder for selparm_Dev_Phase")
   }
-  if(ctllist$DoAdjust){
+  if(ctllist[["DoAdjust"]]){
     wl("selex_adjust_method",comment="env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)")
   }else{
     writeComment("#_Cond 0 #_env/block/dev_adjust_method (1=standard; 2=logistic trans to keep in base parm bounds; 3=standard w/ no bound check)")
@@ -422,7 +422,7 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   ## Later they will be copyed from frq2dat
   writeComment("# Tag loss and Tag reporting parameters go next")
   wl("TG_custom",comment="TG_custom:  0=no read; 1=read if tags exist")
-  if(ctllist$TG_custom==0){
+  if(ctllist[["TG_custom"]]==0){
     writeComment(c("#_Cond -6 6 1 1 2 0.01 -4 0 0 0 0 0 0 0  #_placeholder if no parameters","#"))
   }else{
   #########################################
@@ -433,11 +433,11 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
     printdf("TG_Report_fleet_decay")
   ###########################
   }
-  if(is.null(ctllist$DoVar_adjust))ctllist$Var_adjust<- 0
+  if(is.null(ctllist[["DoVar_adjust"]]))ctllist[["Var_adjust"]]<- 0
   wl("DoVar_adjust",comment="Variance_adjustments_to_input_values")
 
 
-  if(ctllist$DoVar_adjust>0){
+  if(ctllist[["DoVar_adjust"]]>0){
     printdf("Variance_adjustments")
   }
   wl("maxlambdaphase")
@@ -446,30 +446,30 @@ SS_writectl_3.24 <- function(ctllist,outfile,overwrite=FALSE,verbose=TRUE,
   writeComment("# Like_comp codes:  1=surv; 2=disc; 3=mnwt; 4=length; 5=age; 6=SizeFreq; 7=sizeage; 8=catch; 9=init_equ_catch;")
   writeComment("# 10=recrdev; 11=parm_prior; 12=parm_dev; 13=CrashPen; 14=Morphcomp; 15=Tag-comp; 16=Tag-negbin; 17=F_ballpark")
 #  writeComment("#like_comp fleet/survey  phase  value  sizefreq_method")
-  if(ctllist$N_lambdas>0){
-  #  lambda_pettern_vec<-ctlist$lambda[,1]
+  if(ctllist[["N_lambdas"]]>0){
+  #  lambda_pettern_vec<-ctlist[["lambda"]][,1]
   #  if(sum(lambda_pettern_vec %in% c(15,16))==0){
   #
   #  }
-    printdf(ctllist$lambdas)
+    printdf(ctllist[["lambdas"]])
   #############
   ## Summary outputs of lambdas as comments is planed to follow in the future version
   }
 
-  if(is.null(ctllist$more_stddev_reporting))ctllist$more_stddev_reporting<-0
+  if(is.null(ctllist[["more_stddev_reporting"]]))ctllist[["more_stddev_reporting"]]<-0
   wl("more_stddev_reporting")
-  if(ctllist$more_stddev_reporting != 0){
+  if(ctllist[["more_stddev_reporting"]] != 0){
     wl.vector("stddev_reporting_specs",comment="# selex type, len/age, year, N selex bins, Growth pattern, N growth ages, NatAge_area(-1 for all), NatAge_yr, N Natages")
     ## Selex bin
-    if(ctllist$stddev_reporting_specs[4]>0){
+    if(ctllist[["stddev_reporting_specs"]][4]>0){
       wl.vector("stddev_reporting_selex",comment="# selex bins to be reported (-1 in first bin to self-generate)")
     }
     ## Growth bin
-    if(ctllist$stddev_reporting_specs[6]>0){
+    if(ctllist[["stddev_reporting_specs"]][6]>0){
       wl.vector("stddev_reporting_growth",comment="# growth bins to be reported (-1 in first bin to self-generate)")
     }
     ## N at age
-    if(ctllist$stddev_reporting_specs[9]>0){
+    if(ctllist[["stddev_reporting_specs"]][9]>0){
       wl.vector("stddev_reporting_N_at_A",comment="# N@A to be reported (-1 in first bin to self-generate)")
     }
   }else{

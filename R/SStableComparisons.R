@@ -10,10 +10,10 @@
 #' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param likenames Labels for likelihood values to include, should match
-#' substring of labels in \code{summaryoutput$likelihoods}.
+#' substring of labels in \code{summaryoutput[["likelihoods"]]}.
 #' @param names Labels for parameters or derived quantities to include, should
-#' match substring of labels in \code{summaryoutput$pars} or
-#' \code{summaryoutput$quants}.
+#' match substring of labels in \code{summaryoutput[["pars"]]} or
+#' \code{summaryoutput[["quants"]]}.
 #' @param digits Optional vector of the number of decimal digits to use in
 #' reporting each quantity.
 #' @param modelnames optional vector of labels to use as column names. Default
@@ -54,13 +54,13 @@ SStableComparisons <-  function(summaryoutput,
   if(verbose) cat("running SStableComparisons\n")
 
   # get stuff from summary output
-  n           <- summaryoutput$n
-  nsexes      <- summaryoutput$nsexes
-  pars        <- summaryoutput$pars
-  quants      <- summaryoutput$quants
-  likelihoods <- summaryoutput$likelihoods
-  npars       <- summaryoutput$npars
-  indices     <- summaryoutput$indices
+  n           <- summaryoutput[["n"]]
+  nsexes      <- summaryoutput[["nsexes"]]
+  pars        <- summaryoutput[["pars"]]
+  quants      <- summaryoutput[["quants"]]
+  likelihoods <- summaryoutput[["likelihoods"]]
+  npars       <- summaryoutput[["npars"]]
+  indices     <- summaryoutput[["indices"]]
 
   if(models[1]=="all") models <- 1:n
   ncols <- length(models)
@@ -73,7 +73,7 @@ SStableComparisons <-  function(summaryoutput,
   if(!mcmc) {
     if(!is.null(likenames)){
       likenames <- paste(likenames,"_like",sep="")
-      likelihoods$Label <- paste(likelihoods$Label,"_like",sep="")
+      likelihoods[["Label"]] <- paste(likelihoods[["Label"]],"_like",sep="")
       names <- c(likenames, names)
     }
     nnames <- length(names)
@@ -92,8 +92,8 @@ SStableComparisons <-  function(summaryoutput,
         tab <- rbind(tab, " ")
       }else{
         # get values
-        vals <- bigtable[grep(name, bigtable$Label, fixed=TRUE),]
-        #      cat("labels found:\n",bigtable$Label[grep(name, bigtable$Label)],"\n")
+        vals <- bigtable[grep(name, bigtable[["Label"]], fixed=TRUE),]
+        #      cat("labels found:\n",bigtable[["Label"]][grep(name, bigtable[["Label"]])],"\n")
         # scale recruits into billions, or millions, or thousands
         if(substring(name,1,4)=="Recr" & length(grep("like",name))==0) {
           median.value <- median(as.numeric(vals[1,-1]), na.rm=TRUE)
@@ -115,13 +115,13 @@ SStableComparisons <-  function(summaryoutput,
         if(name %in% c("Q","Q_calc")){
           Calc_Q <- aggregate(Calc_Q ~ name+Fleet,data=indices,FUN=mean)
           cat("\n")
-          fleetvec <- sort(as.numeric(unique(Calc_Q$Fleet)))
+          fleetvec <- sort(as.numeric(unique(Calc_Q[["Fleet"]])))
           vals <- data.frame(matrix(NA,nrow=length(fleetvec),ncol=ncol(bigtable)))
           names(vals) <- names(bigtable)
           for(ifleet in 1:length(fleetvec)){
             f <- fleetvec[ifleet]
             vals[ifleet,1] <- paste("Q_calc_mean_fleet_",f,sep="")
-            vals[ifleet,-1] <- Calc_Q$Calc_Q[Calc_Q$Fleet==f]
+            vals[ifleet,-1] <- Calc_Q[["Calc_Q"]][Calc_Q[["Fleet"]]==f]
           }
         }
         if(verbose) cat("added ",nrow(vals)," row",ifelse(nrow(vals)!=1,"s",""),"\n",sep="")
@@ -152,7 +152,7 @@ SStableComparisons <-  function(summaryoutput,
         vals <- as.data.frame(matrix(NA,ncol=ncols+1,nrow=1))
         vals[1] <- name
         for(imodel in models) {   ###loop over models and create a vector of medians to put into tab
-          mcmcTable <- summaryoutput$mcmc[[imodel]]
+          mcmcTable <- summaryoutput[["mcmc"]][[imodel]]
           # get values
           #for future functionality grabbing more than one column
           tmp <- mcmcTable[,grep(name, names(mcmcTable), fixed=TRUE)]  

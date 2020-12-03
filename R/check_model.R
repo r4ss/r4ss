@@ -13,7 +13,7 @@ check_model <- function(model, mydir = getwd()) {
   modelnoexe <- gsub("\\.exe$", "", model)
 
   # Check that the file exists
-  os <- ifelse(grepl("windows", .Platform$OS.type, ignore.case = TRUE),
+  os <- ifelse(grepl("windows", .Platform[["OS.type"]], ignore.case = TRUE),
     "windows", "linux")
   exename <- paste0(modelnoexe,
     switch(os, windows = ".exe", linux = ""))

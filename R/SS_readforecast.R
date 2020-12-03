@@ -65,12 +65,12 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   add_vec<-function(forelist,length,name,comments=NULL){
     i<-forelist$'.i'
     dat<-forelist$'.dat'
-    forelist$temp<-dat[i+1:length-1]
+    forelist[["temp"]]<-dat[i+1:length-1]
     forelist$'.i'<-i+length
     if(is.null(comments)){
-      names(forelist$temp)<-paste0(paste0("#_",name,"_",collapse=""),1:length)
+      names(forelist[["temp"]])<-paste0(paste0("#_",name,"_",collapse=""),1:length)
     }else{
-      names(forelist$temp)<-comments
+      names(forelist[["temp"]])<-comments
     }
     if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
     if(verbose){cat(name,",i=",forelist$'.i',"\n");print(forelist[name])}
@@ -123,7 +123,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
     
     if(is.null(nrows))i <- i+ncol
     
-    forelist$temp<-df0
+    forelist[["temp"]]<-df0
     forelist$'.i'<-i
     if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
     if(verbose){
@@ -138,7 +138,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   add_elem<-function(forelist=NA,name){
     i<-forelist$'.i'
     dat<-forelist$'.dat'
-    forelist$temp<-dat[i]
+    forelist[["temp"]]<-dat[i]
     forelist$'.i'<-i+1
     if(!is.na(name))names(forelist)[names(forelist)=="temp"]<-name
     if(verbose)cat(name,",i=",forelist$'.i'," ;",forelist[[which(names(forelist)==name)]],"\n")
@@ -149,9 +149,9 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   add_list<-function(forelist=NA,name,length,length_each){
     i<-forelist$'.i'
     dat<-forelist$'.dat'
-    forelist$temp<-list()
+    forelist[["temp"]]<-list()
     for(j in 1:length){
-      forelist$temp[[j]]<-dat[i+1:length_each[j]-1]; i <- i+length_each[j]
+      forelist[["temp"]][[j]]<-dat[i+1:length_each[j]-1]; i <- i+length_each[j]
     }
     forelist$'.i'<-i
     if(!is.null(name))names(forelist)[names(forelist)=="temp"]<-name
@@ -166,43 +166,43 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   forelist <- list()
   forelist$'.i' <- i
   forelist$'.dat' <- allnums
-  forelist$warnings <- ""
+  forelist[["warnings"]] <- ""
   if(!is.null(nseas)){
-    forelist$nseas <- as.numeric(nseas)}
+    forelist[["nseas"]] <- as.numeric(nseas)}
   if(!is.null(Nfleets)){
-    forelist$Nfleets <- as.numeric(Nfleets)}
+    forelist[["Nfleets"]] <- as.numeric(Nfleets)}
   if(!is.null(Nareas)){
-    forelist$Nareas <- as.numeric(Nareas)}
-  forelist$SSversion <- as.numeric(version)
-  forelist$sourcefile <- file
-  forelist$type <- "Stock_Synthesis_forecast_file"
+    forelist[["Nareas"]] <- as.numeric(Nareas)}
+  forelist[["SSversion"]] <- as.numeric(version)
+  forelist[["sourcefile"]] <- file
+  forelist[["type"]] <- "Stock_Synthesis_forecast_file"
   
   forelist<-add_elem(forelist,"benchmarks")
   forelist<-add_elem(forelist,"MSY")
   forelist<-add_elem(forelist,"SPRtarget")
   forelist<-add_elem(forelist,"Btarget")
-  if(forelist$SSversion==3.24){
+  if(forelist[["SSversion"]]==3.24){
     forelist<-add_vec(forelist,length=6,name="Bmark_years")
   }else{
     forelist<-add_vec(forelist,length=10,name="Bmark_years")
   }
   if(verbose){
-    cat("Benchmark years: ", forelist$Bmark_years, "\n")
+    cat("Benchmark years: ", forelist[["Bmark_years"]], "\n")
   }
   forelist<-add_elem(forelist,"Bmark_relF_Basis")
   forelist<-add_elem(forelist,"Forecast")
-  if(forelist$Forecast %in% c(0, -1) & !readAll) {
+  if(forelist[["Forecast"]] %in% c(0, -1) & !readAll) {
     if(verbose) {
-      message("Forecast is ", forelist$Forecast, 
+      message("Forecast is ", forelist[["Forecast"]], 
               " and input readAll=FALSE so skipping remainder of file")
     }
-  } else if(forelist$Forecast %in% c(0, -1) & readAll & 
+  } else if(forelist[["Forecast"]] %in% c(0, -1) & readAll & 
            ((is.na(forelist$.dat[forelist$.i]) |
              forelist$.dat[forelist$.i] == 999 ))) {
     # stop reading if forecast 0 or -1 used, and no other lines present 
     # (aside from 999), but readAll = TRUE.
     if(verbose){
-      message("Forecast =", forelist$Forecast, "\n")
+      message("Forecast =", forelist[["Forecast"]], "\n")
     }
     warning("readAll selected as TRUE, but lines beyond Forecast are not ", 
             "present in the forecasting file, so skipping remainder of ", 
@@ -210,7 +210,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
   }else{
     # continue reading forecast
     if(verbose){
-      message("Forecast =", forelist$Forecast, "\n")
+      message("Forecast =", forelist[["Forecast"]], "\n")
     }
     forelist<-add_elem(forelist,"Nforecastyrs")
     # check for compatible input with forecast option 1.
@@ -222,22 +222,22 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
       forelist[["Nforecastyrs"]] <- 1
     }
     forelist<-add_elem(forelist,"F_scalar")
-    if(forelist$SSversion==3.24){
+    if(forelist[["SSversion"]]==3.24){
       forelist<-add_vec(forelist,length=4,name="Fcast_years")
     }else{
       forelist<-add_vec(forelist,length=6,name="Fcast_years")
     }
     if(verbose){
-      cat("Forecast years: ", forelist$Fcast_years, "\n")
+      cat("Forecast years: ", forelist[["Fcast_years"]], "\n")
     }
     
     if(version=="3.30" | version==3.3){
       forelist<-add_elem(forelist,"Fcast_selex")
       if(verbose){
-        cat("Forecast selectivity option: ", forelist$Fcast_selex, "\n")
+        cat("Forecast selectivity option: ", forelist[["Fcast_selex"]], "\n")
       }
     }else{
-      forelist$Fcast_selex <- NA
+      forelist[["Fcast_selex"]] <- NA
     }
     
     forelist<-add_elem(forelist,"ControlRuleMethod")
@@ -245,7 +245,7 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
     forelist<-add_elem(forelist,"BfornoF")
     forelist<-add_elem(forelist,"Flimitfraction")
     
-    if(forelist$Flimitfraction<0){
+    if(forelist[["Flimitfraction"]]<0){
       forelist<-add_df(forelist,ncol=2,col.names=c("Year","Fraction"),name="Flimitfraction")
     }
     
@@ -263,46 +263,46 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
     forelist<-add_elem(forelist,"basis_for_fcast_catch_tuning")
     
     if(version==3.24){
-      if(forelist$fleet_relative_F==2){
-        forelist<-add_df(forelist,nrows=forelist$nseas,ncol=forelist$Nfleets,col.names=paste0("Fleet ",1:forelist$Nfleets),name="vals_fleet_relative_f")
+      if(forelist[["fleet_relative_F"]]==2){
+        forelist<-add_df(forelist,nrows=forelist[["nseas"]],ncol=forelist[["Nfleets"]],col.names=paste0("Fleet ",1:forelist[["Nfleets"]]),name="vals_fleet_relative_f")
       }
-      forelist<-add_vec(forelist,length=forelist$Nfleets,name="max_totalcatch_by_fleet")
-      forelist<-add_vec(forelist,length=forelist$Nareas,name="max_totalcatch_by_area")
-      forelist<-add_vec(forelist,length=forelist$Nfleets,name="fleet_assignment_to_allocation_group")
-      forelist$N_allocation_groups<-max(forelist$fleet_assignment_to_allocation_group)
-      if(forelist$N_allocation_groups>0){
-        forelist<-add_vec(forelist,length=forelist$N_allocation_groups,name="allocation_among_groups")
+      forelist<-add_vec(forelist,length=forelist[["Nfleets"]],name="max_totalcatch_by_fleet")
+      forelist<-add_vec(forelist,length=forelist[["Nareas"]],name="max_totalcatch_by_area")
+      forelist<-add_vec(forelist,length=forelist[["Nfleets"]],name="fleet_assignment_to_allocation_group")
+      forelist[["N_allocation_groups"]]<-max(forelist[["fleet_assignment_to_allocation_group"]])
+      if(forelist[["N_allocation_groups"]]>0){
+        forelist<-add_vec(forelist,length=forelist[["N_allocation_groups"]],name="allocation_among_groups")
       }else{
-        forelist$allocation_among_groups<-NULL
+        forelist[["allocation_among_groups"]]<-NULL
       }
       
       forelist<-add_elem(forelist,"Ncatch")
       forelist<-add_elem(forelist,"InputBasis")
-      if(forelist$Ncatch==0){
-        forelist$ForeCatch<-NULL
+      if(forelist[["Ncatch"]]==0){
+        forelist[["ForeCatch"]]<-NULL
       }else{
-        if(forelist$InputBasis==-1){
-          forelist<-add_df(forelist,nrows=forelist$Ncatch,ncol=5,col.names=c("Year","Seas","Fleet","Catch or F","Basis"),name="ForeCatch")
+        if(forelist[["InputBasis"]]==-1){
+          forelist<-add_df(forelist,nrows=forelist[["Ncatch"]],ncol=5,col.names=c("Year","Seas","Fleet","Catch or F","Basis"),name="ForeCatch")
         }else{
-          forelist<-add_df(forelist,nrows=forelist$Ncatch,ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
+          forelist<-add_df(forelist,nrows=forelist[["Ncatch"]],ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
         }
       }
     }else{
-      if(forelist$fleet_relative_F==2){
+      if(forelist[["fleet_relative_F"]]==2){
         forelist<-add_df(forelist,ncol=3,col.names=c("Season","Fleet","Relative F"),name="vals_fleet_relative_f")
       }
       forelist<-add_df(forelist,ncol=2,col.names=c("Fleet","Max Catch"),name="max_totalcatch_by_fleet")
       forelist<-add_df(forelist,ncol=2,col.names=c("Area","Max Catch"),name="max_totalcatch_by_area")
       forelist<-add_df(forelist,ncol=2,col.names=c("Fleet","Group"),name="fleet_assignment_to_allocation_group")
-      if(!is.null(forelist$fleet_assignment_to_allocation_group)){
-        forelist$N_allocation_groups<-max(forelist$fleet_assignment_to_allocation_group[,2])
-        forelist<-add_df(forelist,ncol=(forelist$N_allocation_groups+1),col.names=c("Year",paste0("Group ",1:forelist$N_allocation_groups)),name="allocation_among_groups")
+      if(!is.null(forelist[["fleet_assignment_to_allocation_group"]])){
+        forelist[["N_allocation_groups"]]<-max(forelist[["fleet_assignment_to_allocation_group"]][,2])
+        forelist<-add_df(forelist,ncol=(forelist[["N_allocation_groups"]]+1),col.names=c("Year",paste0("Group ",1:forelist[["N_allocation_groups"]])),name="allocation_among_groups")
       }else{
-        forelist$N_allocation_groups<-0
-        forelist$allocation_among_groups<-NULL
+        forelist[["N_allocation_groups"]]<-0
+        forelist[["allocation_among_groups"]]<-NULL
       }
       forelist<-add_elem(forelist,"InputBasis")
-      if(forelist$InputBasis==-1){
+      if(forelist[["InputBasis"]]==-1){
         forelist<-add_df(forelist,ncol=5,col.names=c("Year","Seas","Fleet","Catch or F","Basis"),name="ForeCatch")
       }else{
         forelist<-add_df(forelist,ncol=4,col.names=c("Year","Seas","Fleet","Catch or F"),name="ForeCatch")
@@ -310,11 +310,11 @@ SS_readforecast <-  function(file='forecast.ss', Nfleets=NULL, Nareas=NULL, nsea
     }
     if(forelist$'.dat'[forelist$'.i']==999){
       if(verbose) message("read of forecast file complete (final value = 999)\n")
-      forelist$eof <- TRUE
+      forelist[["eof"]] <- TRUE
     }else{
       warning("Error: final value is ", forelist$'.dat'[forelist$'.i'], " but ",
               "should be 999\n")
-      forelist$eof <- FALSE
+      forelist[["eof"]] <- FALSE
     }
   }
   

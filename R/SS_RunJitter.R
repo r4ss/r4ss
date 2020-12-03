@@ -43,9 +43,9 @@
 #'   # summarize output
 #'   profilesummary <- SSsummarize(profilemodels)
 #'   # Likelihoods
-#'   profilesummary$likelihoods[1,]
+#'   profilesummary[["likelihoods"]][1,]
 #'   # Parameters
-#'   profilesummary$pars
+#'   profilesummary[["pars"]]
 #' }
 
 SS_RunJitter <- function(mydir,
@@ -74,16 +74,16 @@ SS_RunJitter <- function(mydir,
   }
   # read starter file to test for non-zero jitter value
   starter <- SS_readstarter(verbose=verbose)
-  starter$parmtrace <- ifelse(starter$parmtrace == 0, 1, starter$parmtrace)
-  if (starter$jitter_fraction == 0 & is.null(jitter_fraction)) {
+  starter[["parmtrace"]] <- ifelse(starter[["parmtrace"]] == 0, 1, starter[["parmtrace"]])
+  if (starter[["jitter_fraction"]] == 0 & is.null(jitter_fraction)) {
     stop("Change the jitter value in the starter file to be > 0\n",
       "or change the jitter_fraction argument to be > 0.", call. = FALSE)
   }
   if (!is.null(jitter_fraction)) {
-    starter$jitter_fraction <- jitter_fraction
+    starter[["jitter_fraction"]] <- jitter_fraction
   }
   if (!is.null(init_values_src)) {
-    starter$init_values_src <- init_values_src
+    starter[["init_values_src"]] <- init_values_src
   }
   r4ss::SS_writestarter(starter, overwrite = TRUE, verbose = FALSE, warn = FALSE)
   file_increment(0, verbose = verbose)
@@ -102,13 +102,13 @@ SS_RunJitter <- function(mydir,
   for(i in Njitter){
     if (verbose) message("Jitter=", i, ", ", date())
     # check for use of .par file and replace original if needed
-    if(starter$init_values_src == 1){
+    if(starter[["init_values_src"]] == 1){
       if (verbose) message("Replacing .par file with original")
       file.copy(from=paste0(model,".par_0.sso"), to=paste0(model,".par"), overwrite=TRUE)
     }
     # run model
     command <- paste(model, extras)
-    if (.Platform$OS.type!="windows") {
+    if (.Platform[["OS.type"]]!="windows") {
       command <- paste0("./", command)
     }
 
@@ -116,7 +116,7 @@ SS_RunJitter <- function(mydir,
       message("Running SS jitter in directory: ", getwd(),
         "\nUsing the command: ", command)
     }
-    if (.Platform$OS.type == "windows" & !systemcmd) {
+    if (.Platform[["OS.type"]] == "windows" & !systemcmd) {
       shell(cmd = command, intern = Intern)
     }else{
       system(command, intern = Intern, show.output.on.console = !Intern)
@@ -128,9 +128,9 @@ SS_RunJitter <- function(mydir,
         report <- SS_output(dir = getwd(), forecast = FALSE,
           covar = FALSE, checkcor = FALSE, NoCompOK = TRUE,
           verbose = verbose, warn = verbose, hidewarn = !verbose, printstats = verbose)
-        like <- report$likelihoods_used[row.names(report$likelihoods_used) == "TOTAL", "values"]
+        like <- report[["likelihoods_used"]][row.names(report[["likelihoods_used"]]) == "TOTAL", "values"]
       } else {
-        like <- rep$likelihoods[grep("TOTAL", row.names(rep$likelihoods)), 1]
+        like <- rep[["likelihoods"]][grep("TOTAL", row.names(rep[["likelihoods"]])), 1]
       }
       likesaved[i] <- like
       if (printlikes){

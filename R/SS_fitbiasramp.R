@@ -79,30 +79,30 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   }
   plotinfo <- NULL
 
-  if(!is.list(replist) | replist$SS_versionNumeric < 3.11){
+  if(!is.list(replist) | replist[["SS_versionNumeric"]] < 3.11){
     stop("this function needs an input object created by SS_output from SS version 3.11 or greater")
   }
-  if(replist$inputs$covar==FALSE){
+  if(replist[["inputs"]][["covar"]]==FALSE){
     stop("you need to have covar=TRUE in the input to the SS_output function")
   }
-  parameters <- replist$parameters
-  startyr    <- replist$startyr
-  recruit    <- replist$recruit
-  sigma_R_in <- replist$sigma_R_in
-  rmse_table <- replist$rmse_table
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  parameters <- replist[["parameters"]]
+  startyr    <- replist[["startyr"]]
+  recruit    <- replist[["recruit"]]
+  sigma_R_in <- replist[["sigma_R_in"]]
+  rmse_table <- replist[["rmse_table"]]
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
   if(print && !dir.exists(plotdir)) dir.create(plotdir, recursive = TRUE)
 
-  if(!is.numeric(rmse_table$RMSE)){
+  if(!is.numeric(rmse_table[["RMSE"]])){
     stop("Input list element 'rmse_table' has non-numeric 'RMSE' column.")
   }
-  if(max(rmse_table$RMSE)==0){
+  if(max(rmse_table[["RMSE"]])==0){
     stop("No bias adjustment needed. Root mean squared error of recruit devs is 0.")
   }
   
   if(is.null(startvalues)){
-      nonfixedyrs <- recruit$Yr[recruit$era!="Fixed"]
-      mainyrs <- recruit$Yr[recruit$era=="Main"]
+      nonfixedyrs <- recruit[["Yr"]][recruit[["era"]]!="Fixed"]
+      mainyrs <- recruit[["Yr"]][recruit[["era"]]=="Main"]
       startvalues <- c(min(nonfixedyrs),
                        min(mainyrs) + .3*diff(range(mainyrs)),
                        max(mainyrs) - .1*diff(range(mainyrs)),
@@ -235,13 +235,13 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     return(data.frame(yr=yr,biasadj=biasadj))
   }
 
-  recdevs <- replist$recruitpars[!is.na(replist$recruitpars$Parm_StDev),]
-  val <- recdevs$Value
-  std <- recdevs$Parm_StDev
-  yr <- recdevs$Yr
+  recdevs <- replist[["recruitpars"]][!is.na(replist[["recruitpars"]][["Parm_StDev"]]),]
+  val <- recdevs[["Value"]]
+  std <- recdevs[["Parm_StDev"]]
+  yr <- recdevs[["Yr"]]
 
   # test for forecast years to exclude points from fit and color gray
-  is.forecast <- yr > replist$endyr
+  is.forecast <- yr > replist[["endyr"]]
   col.vec <- ifelse(is.forecast, 'gray', 'black')
   
   # test for presence of estimated recruitment deviations
@@ -280,7 +280,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     if(shownew) lines(biasadjfun(yr,newbias[[1]],transform=transform),col=4,lwd=3,lty=1)
     legendlines <- 1
     if(shownew) legendlines <- 1:2
-    lines(recruit$Yr,recruit$biasadj,col=2,lwd=3,lty=2)
+    lines(recruit[["Yr"]],recruit[["biasadj"]],col=2,lwd=3,lty=2)
     legend('topleft',col=c(2,4)[legendlines],lwd=3,lty=(2:1)[legendlines],
            inset=.01,cex=.9,bg=rgb(1,1,1,.8),box.col=NA,
            legend=c('bias adjust in model','estimated alternative')[legendlines])
@@ -300,7 +300,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
   df <- data.frame(value=newvals,label=names)
 
   if(verbose) {
-  if(newbias$convergence!=0){
+  if(newbias[["convergence"]]!=0){
       cat("Problem with convergence, here is output from 'optim':\n")
       cat("##############################\n")
       print(newbias)
@@ -328,10 +328,10 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
             "with blue line in figure: \n<pre>",
             sep="")
     for(iline in 1:4){
-      caption <- paste(caption, format(round(df$value[iline],1),nsmall=1), "   ",
-                       df$label[iline], " \n", sep="")
+      caption <- paste(caption, format(round(df[["value"]][iline],1),nsmall=1), "   ",
+                       df[["label"]][iline], " \n", sep="")
     }
-    caption <- paste(caption, df$value[5], "   ", df$label[5], sep="")
+    caption <- paste(caption, df[["value"]][5], "   ", df[["label"]][5], sep="")
     caption <- paste(caption,"  </pre>")
     
     plotinfo <- pngfun(file=file, caption=caption)
@@ -359,7 +359,7 @@ function(replist, verbose=FALSE, startvalues=NULL, method="BFGS", twoplots=TRUE,
     writeLines(ctlfile,newctl)
     if(verbose) cat('wrote new file to',newctl,'with values',paste(newvals,collapse=" "),"\n")
   }
-  if(!is.null(plotinfo)) plotinfo$category <- "RecDev"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "RecDev"
   return(invisible(list(newbias=newbias, df=df, plotinfo=plotinfo)))
 }
 

@@ -33,54 +33,54 @@ SSunavailableSpawningOutput <-
   }
 
   plotinfo <- NULL
-  ageselex <- replist$ageselex
-  accuage <- replist$accuage
-  catch <- replist$catch
-  fleet_type <- replist$fleet_type
+  ageselex <- replist[["ageselex"]]
+  accuage <- replist[["accuage"]]
+  catch <- replist[["catch"]]
+  fleet_type <- replist[["fleet_type"]]
   if(!"kill_bio" %in% names(catch)){
     # model is 3.24 with less info
-    catch$kill_bio <- catch$Obs
+    catch[["kill_bio"]] <- catch[["Obs"]]
     # Check to make sure all the catch units are the same
-    catch.units.same <- all(replist$catch_units[1] ==
-                              replist$catch_units[1:replist$nfishfleets])
+    catch.units.same <- all(replist[["catch_units"]][1] ==
+                              replist[["catch_units"]][1:replist[["nfishfleets"]]])
     if(!catch.units.same){
       warning('Catch units for all fleets are not equal. Calculated weighted
              mean selectivity for calculating unavailable spawning
              output may not be accurate.')
     }
     # define fleet_type which is missing from 3.24
-    fleet_type <- c(rep(1, replist$nfishfleets),
-                    rep(3, replist$nfleets - replist$nfishfleets))
+    fleet_type <- c(rep(1, replist[["nfishfleets"]]),
+                    rep(3, replist[["nfleets"]] - replist[["nfishfleets"]]))
   }
     
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
   # Run the code for each area
-  for(area in 1:replist$nareas){
+  for(area in 1:replist[["nareas"]]){
 
     ##########################################################################
     # step 1: calculate catch by fleet by year
 
-    timeseries <- replist$timeseries
+    timeseries <- replist[["timeseries"]]
 
     # get the fishing fleets that fish in this area and aren't surveys (type=3)
-    fleets.this.area <- replist$fleet_ID[replist$fleet_area==area &
+    fleets.this.area <- replist[["fleet_ID"]][replist[["fleet_area"]]==area &
                                            fleet_type!=3]
-    years.with.catch <- sort(unique(catch$Yr[catch$Fleet %in% fleets.this.area &
-                                               catch$kill_bio > 0]))
+    years.with.catch <- sort(unique(catch[["Yr"]][catch[["Fleet"]] %in% fleets.this.area &
+                                               catch[["kill_bio"]] > 0]))
 
     ##########################################################################
     # Step 2: Female numbers at age matrix by year
-    num.at.age <- replist$natage
+    num.at.age <- replist[["natage"]]
     
     # old line which used "subset"
     ## num.at.age.female <- subset(num.at.age, Sex==1 & Era=="TIME" & BegMid=="B" & Area==area & Yr %in% years.with.catch)
     # replacement line without "subset"
-    num.at.age.female <- num.at.age[num.at.age$Sex==1 & num.at.age$Era=="TIME" &
-                                      num.at.age$"Beg/Mid"=="B" & num.at.age$Area==area &
-                                        num.at.age$Yr %in% years.with.catch,]
-    years <- num.at.age.female$Yr
-    seas <- num.at.age.female$Seas
+    num.at.age.female <- num.at.age[num.at.age[["Sex"]]==1 & num.at.age[["Era"]]=="TIME" &
+                                      num.at.age$"Beg/Mid"=="B" & num.at.age[["Area"]]==area &
+                                        num.at.age[["Yr"]] %in% years.with.catch,]
+    years <- num.at.age.female[["Yr"]]
+    seas <- num.at.age.female[["Seas"]]
     first.col <- which(names(num.at.age.female)=='0')
     num.at.age.female <- num.at.age.female[,first.col:ncol(num.at.age.female)]
     if(max(seas)>1) {
@@ -99,16 +99,16 @@ SSunavailableSpawningOutput <-
       # Get the female selectivity at age in this year for all fleets
       year.get <- years.with.catch[y]
       age.selectivity.female.year <-
-        ageselex[ageselex$Sex==1 &
-                   ageselex$Factor=='Asel2' &
-                     ageselex$Yr==year.get &
-                       ageselex$Fleet %in% fleets.this.area,]
+        ageselex[ageselex[["Sex"]]==1 &
+                   ageselex[["Factor"]]=='Asel2' &
+                     ageselex[["Yr"]]==year.get &
+                       ageselex[["Fleet"]] %in% fleets.this.area,]
       catch.by.fleet.year <- rep(0, length(fleets.this.area))
 
       for(ifleet in 1:length(fleets.this.area)){
         f <- fleets.this.area[ifleet]
-        catch.by.fleet.year[ifleet] <- catch$kill_bio[catch$Fleet == f &
-                                                        catch$Yr==year.get]
+        catch.by.fleet.year[ifleet] <- catch[["kill_bio"]][catch[["Fleet"]] == f &
+                                                        catch[["Yr"]]==year.get]
       }
       # Weight the selectivity at length by fleet for this year based on
       # the propotion of catch that came from each fleet in this year
@@ -129,9 +129,9 @@ SSunavailableSpawningOutput <-
     # step 5: generate spawning output estimates from exploitable numbers at age
 
     # old line which used "subset"
-    ## biology.at.age.female <- subset(replist$endgrowth, Sex==1)
+    ## biology.at.age.female <- subset(replist[["endgrowth"]], Sex==1)
     # replacement line without "subset"
-    biology.at.age.female <- replist$endgrowth[replist$endgrowth$Sex==1,]
+    biology.at.age.female <- replist[["endgrowth"]][replist[["endgrowth"]][["Sex"]]==1,]
 
     exploitable.spawning.output.by.age <- matrix(nrow=nrow(exploitable.females.at.age),
                                                  ncol=ncol(exploitable.females.at.age),
@@ -340,7 +340,7 @@ SSunavailableSpawningOutput <-
 
       # Plot title
       title.text <- 'Unavailable Spawning Output'
-      if(replist$nareas > 1){
+      if(replist[["nareas"]] > 1){
         title.text <- paste0(title.text, ", Area ", area)
       }
       mtext(title.text, side=3, outer=TRUE, line=0.5)
@@ -352,7 +352,7 @@ SSunavailableSpawningOutput <-
     }
 
     if(print){
-      if(replist$nareas > 1){
+      if(replist[["nareas"]] > 1){
         file <- paste0('UnavailableSpawningOutput_Area',area, '.png')
         caption <- paste('Unavailable Spawning Output, Area', area)
       } else {
@@ -367,7 +367,7 @@ SSunavailableSpawningOutput <-
   }
 
   # Return the plot info
-  if(!is.null(plotinfo)) plotinfo$category <- 'Sel'
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- 'Sel'
   return(invisible(plotinfo))
 
 }

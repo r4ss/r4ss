@@ -35,10 +35,10 @@ SSplotMCMC_ExtraSelex <- function(post, add=FALSE, nsexes=1,shift=0,
     names <- names(post)[cols]
     splitnames <- strsplit(names,"_")
     namesDF <- as.data.frame(matrix(unlist(strsplit(names,"_")),ncol=6,byrow=T))
-    i       <- as.numeric(as.character(namesDF$V3))[1]
-    m       <- as.character(namesDF$V4)[1]
-    agelen  <- as.character(namesDF$V5)[1]
-    bin     <- sort(unique(as.numeric(as.character(namesDF$V6))))+shift
+    i       <- as.numeric(as.character(namesDF[["V3"]]))[1]
+    m       <- as.character(namesDF[["V4"]])[1]
+    agelen  <- as.character(namesDF[["V5"]])[1]
+    bin     <- sort(unique(as.numeric(as.character(namesDF[["V6"]]))))+shift
     quants <- apply(sel,2,quantile, probs=c(0.025,0.5,0.975))
     
     xlab <- "Age (years)"

@@ -118,19 +118,19 @@ SSplotCatch <-
     }
     plotinfo <- NULL
 
-    F_method <- replist$F_method
-    timeseries <- replist$timeseries
-    nseasons <- replist$nseasons
-    nareas <- replist$nareas
-    nfleets <- replist$nfleets
-    nfishfleets <- replist$nfishfleets
-    catch_units <- replist$catch_units
-    fleet_types <- replist$definitions$fleet_type
-    endyr <- replist$endyr
-    FleetNames <- replist$FleetNames
-    IsFishFleet <- replist$IsFishFleet
-    SS_versionshort <- toupper(substr(replist$SS_version, 1, 8))
-    SS_versionNumeric <- replist$SS_versionNumeric
+    F_method <- replist[["F_method"]]
+    timeseries <- replist[["timeseries"]]
+    nseasons <- replist[["nseasons"]]
+    nareas <- replist[["nareas"]]
+    nfleets <- replist[["nfleets"]]
+    nfishfleets <- replist[["nfishfleets"]]
+    catch_units <- replist[["catch_units"]]
+    fleet_types <- replist[["definitions"]][["fleet_type"]]
+    endyr <- replist[["endyr"]]
+    FleetNames <- replist[["FleetNames"]]
+    IsFishFleet <- replist[["IsFishFleet"]]
+    SS_versionshort <- toupper(substr(replist[["SS_version"]], 1, 8))
+    SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
     # if the user has no specified whether catch should be in numbers or not
     # 1 = biomass, 2 = numbers
@@ -158,7 +158,7 @@ SSplotCatch <-
       fleetnames <- FleetNames
     }
     if (plotdir == "default") {
-      plotdir <- replist$inputs$dir
+      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     if (catchasnumbers) {
@@ -174,12 +174,12 @@ SSplotCatch <-
 
     # time series quantities used for multiple plots
     if (nseasons > 1) {
-      timeseries$Yr <- timeseries$Yr + replist$seasfracs
+      timeseries[["Yr"]] <- timeseries[["Yr"]] + replist[["seasfracs"]]
     }
-    ts <- timeseries[timeseries$Yr >= minyr & timeseries$Yr <= maxyr, ]
+    ts <- timeseries[timeseries[["Yr"]] >= minyr & timeseries[["Yr"]] <= maxyr, ]
     # filter out forecast years if requested
     if (!forecastplot) {
-      ts <- ts[ts$Yr <= endyr + 1, ]
+      ts <- ts[ts[["Yr"]] <= endyr + 1, ]
     }
 
     # spread equilibrium catch over all seasons for 3.24 and earlier models
@@ -191,8 +191,8 @@ SSplotCatch <-
       }
       # which columns contain some form of catch
       catch.cols <- sort(unique(catch.cols))
-      equil.catch.vec <- ts[which(ts$Era == "INIT")[1], catch.cols]
-      for (irow in which(ts$Era == "INIT")) {
+      equil.catch.vec <- ts[which(ts[["Era"]] == "INIT")[1], catch.cols]
+      for (irow in which(ts[["Era"]] == "INIT")) {
         ts[irow, catch.cols] <- equil.catch.vec / nseasons
       }
     }
@@ -208,11 +208,11 @@ SSplotCatch <-
     }
 
     ### total landings (retained) & catch (encountered)
-    goodrows <- ts$Area == 1 & ts$Era %in% c("INIT", "TIME")
+    goodrows <- ts[["Area"]] == 1 & ts[["Era"]] %in% c("INIT", "TIME")
     if (forecastplot) {
-      goodrows <- ts$Area == 1 & ts$Era %in% c("INIT", "TIME", "FORE")
+      goodrows <- ts[["Area"]] == 1 & ts[["Era"]] %in% c("INIT", "TIME", "FORE")
     }
-    catchyrs <- ts$Yr[goodrows] # T/F indicator of the lines for which we want to plot catch
+    catchyrs <- ts[["Yr"]][goodrows] # T/F indicator of the lines for which we want to plot catch
 
     if (SS_versionNumeric == 3.11) {
       stringN <- "enc(N)"
@@ -243,9 +243,9 @@ SSplotCatch <-
     # add total across areas
     if (nareas > 1) {
       for (iarea in 2:nareas) {
-        arearows <- ts$Area == iarea & ts$Era %in% c("INIT", "TIME")
+        arearows <- ts[["Area"]] == iarea & ts[["Era"]] %in% c("INIT", "TIME")
         if (forecastplot) {
-          arearows <- ts$Area == iarea & ts$Era %in% c("INIT", "TIME", "FORE")
+          arearows <- ts[["Area"]] == iarea & ts[["Era"]] %in% c("INIT", "TIME", "FORE")
         }
         if (catchasnumbers) {
           retmat <- retmat + as.matrix(ts[arearows, substr(names(ts), 1, nchar("retain(N)")) == "retain(N)"])
@@ -306,15 +306,15 @@ SSplotCatch <-
 
     # add total across seasons "mat2" indicates aggregation across seasons
     if (nseasons > 1) {
-      catchyrs2 <- floor(ts$Yr[goodrows & ts$Seas == 1]) # T/F indicator of the lines for which we want to plot catch
-      subset <- ts$Seas[goodrows] == 1
+      catchyrs2 <- floor(ts[["Yr"]][goodrows & ts[["Seas"]] == 1]) # T/F indicator of the lines for which we want to plot catch
+      subset <- ts[["Seas"]][goodrows] == 1
       retmat2 <- retmat[subset, ]
       totcatchmat2 <- totcatchmat[subset, ]
-      # totcatchmat2Yr  <- ts$Yr[subset]
+      # totcatchmat2Yr  <- ts[["Yr"]][subset]
       totobscatchmat2 <- totobscatchmat[subset, ]
       discmat2 <- discmat[subset, ]
       for (iseason in 2:nseasons) {
-        subset <- ts$Seas[goodrows] == iseason
+        subset <- ts[["Seas"]][goodrows] == iseason
         retmat2 <- retmat2 + retmat[subset, ]
         totcatchmat2 <- totcatchmat2 + totcatchmat[subset, ]
         totobscatchmat2 <- totobscatchmat2 + totobscatchmat[subset, ]
@@ -571,18 +571,18 @@ SSplotCatch <-
     totobscatchmat <- as.data.frame(totobscatchmat)
     names(totcatchmat) <- fleetnames[1:nfleets_with_catch]
     names(totobscatchmat) <- fleetnames[1:nfleets_with_catch]
-    totcatchmat$Yr <- catchyrs
-    totobscatchmat$Yr <- catchyrs
+    totcatchmat[["Yr"]] <- catchyrs
+    totobscatchmat[["Yr"]] <- catchyrs
     returnlist <- list()
     returnlist[["totcatchmat"]] <- totcatchmat
     returnlist[["totobscatchmat"]] <- totobscatchmat
     if (nseasons > 1) {
       totcatchmat2 <- as.data.frame(totcatchmat2)
       names(totcatchmat2) <- fleetnames[1:nfleets_with_catch]
-      # totcatchmat2$Yr <- totcatchmat2Yr
+      # totcatchmat2[["Yr"]] <- totcatchmat2Yr
       returnlist[["totcatchmat2"]] <- totcatchmat2
     }
-    if (!is.null(plotinfo)) plotinfo$category <- "Catch"
-    returnlist$plotinfo <- plotinfo
+    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Catch"
+    returnlist[["plotinfo"]] <- plotinfo
     return(invisible(returnlist))
   }

@@ -54,54 +54,54 @@ SSplotRecdevs <-
     return(plotinfo)
   }
   plotinfo <- NULL
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
-  parameters <- replist$parameters
-  recruit    <- replist$recruit
-  startyr    <- replist$startyr
-  endyr      <- replist$endyr
-  sigma_R_in <- replist$sigma_R_in
+  parameters <- replist[["parameters"]]
+  recruit    <- replist[["recruit"]]
+  startyr    <- replist[["startyr"]]
+  endyr      <- replist[["endyr"]]
+  sigma_R_in <- replist[["sigma_R_in"]]
 
 
-  recdevEarly <- parameters[substring(parameters$Label,1,13) %in% c("Early_RecrDev"),]
-  early_initage <- parameters[substring(parameters$Label,1,13) %in% c("Early_InitAge"),]
-  main_initage <- parameters[substring(parameters$Label,1,12) %in% c("Main_InitAge"),]
-  recdev <- parameters[substring(parameters$Label,1,12) %in% c("Main_RecrDev"),]
-  recdevFore <- parameters[substring(parameters$Label,1,8)=="ForeRecr",]
-  recdevLate <- parameters[substring(parameters$Label,1,12)=="Late_RecrDev",]
+  recdevEarly <- parameters[substring(parameters[["Label"]],1,13) %in% c("Early_RecrDev"),]
+  early_initage <- parameters[substring(parameters[["Label"]],1,13) %in% c("Early_InitAge"),]
+  main_initage <- parameters[substring(parameters[["Label"]],1,12) %in% c("Main_InitAge"),]
+  recdev <- parameters[substring(parameters[["Label"]],1,12) %in% c("Main_RecrDev"),]
+  recdevFore <- parameters[substring(parameters[["Label"]],1,8)=="ForeRecr",]
+  recdevLate <- parameters[substring(parameters[["Label"]],1,12)=="Late_RecrDev",]
 
-  if(nrow(recdev)==0 || max(recdev$Value)==0){
+  if(nrow(recdev)==0 || max(recdev[["Value"]])==0){
     if(verbose) cat("Skipped SSplotrecdevs - no rec devs estimated\n")
   }else{
     if(nrow(recdev)>0){
       # early
-      recdev$Yr <- as.numeric(substring(recdev$Label,14))
+      recdev[["Yr"]] <- as.numeric(substring(recdev[["Label"]],14))
       if(nrow(recdevEarly)>0){
-        recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label,15))
+        recdevEarly[["Yr"]] <- as.numeric(substring(recdevEarly[["Label"]],15))
       }else{
-        recdevEarly$Yr <- integer(0) # empty value to add column to data.frame with 0 rows
+        recdevEarly[["Yr"]] <- integer(0) # empty value to add column to data.frame with 0 rows
       }
       if(nrow(early_initage)>0){
-        early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label,15))
+        early_initage[["Yr"]] <- startyr - as.numeric(substring(early_initage[["Label"]],15))
         recdevEarly <- rbind(early_initage,recdevEarly)
       }
       # main
       if(nrow(main_initage)>0){
-        main_initage$Yr <- startyr - as.numeric(substring(main_initage$Label,14))
+        main_initage[["Yr"]] <- startyr - as.numeric(substring(main_initage[["Label"]],14))
         recdev <- rbind(main_initage,recdev)
       }
       # forecast
       if(nrow(recdevFore)>0){
-        recdevFore$Yr <- as.numeric(substring(recdevFore$Label,10))
+        recdevFore[["Yr"]] <- as.numeric(substring(recdevFore[["Label"]],10))
       }else{
-        recdevFore$Yr <- NULL
+        recdevFore[["Yr"]] <- NULL
       }
       if(nrow(recdevLate)>0){
-        recdevLate$Yr <- as.numeric(substring(recdevLate$Label,14))
+        recdevLate[["Yr"]] <- as.numeric(substring(recdevLate[["Label"]],14))
         recdevFore <- rbind(recdevLate,recdevFore)
       }
 
-      Yr <- c(recdevEarly$Yr,recdev$Yr,recdevFore$Yr)
+      Yr <- c(recdevEarly[["Yr"]],recdev[["Yr"]],recdevFore[["Yr"]])
       if(forecastplot){
         goodyrs <- ifelse(Yr >= minyr & Yr <= maxyr, TRUE,FALSE)
       }else{
@@ -109,7 +109,7 @@ SSplotRecdevs <-
         goodyrs <- Yr <= endyr+1 & Yr >= minyr & Yr <= maxyr 
       }
       xlim <- range(Yr[goodyrs],na.rm=TRUE)
-      ylim <- range(c(recdevEarly$Value,recdev$Value,recdevFore$Value)[goodyrs],
+      ylim <- range(c(recdevEarly[["Value"]],recdev[["Value"]],recdevFore[["Value"]])[goodyrs],
                     na.rm=TRUE)
 
       recdevfunc <- function(uncertainty){
@@ -119,11 +119,11 @@ SSplotRecdevs <-
         colvec <- c(rep(col2,nrow(recdevEarly)),
                     rep(col1,nrow(recdev)),
                     rep(col2,nrow(recdevFore)))[goodyrs]
-        ## alldevs$Parm_StDev[is.na(alldevs$Parm_StDev)] <- 0
-        val <- alldevs$Value
-        Yr <- alldevs$Yr
+        ## alldevs[["Parm_StDev"]][is.na(alldevs[["Parm_StDev"]])] <- 0
+        val <- alldevs[["Value"]]
+        Yr <- alldevs[["Yr"]]
         if(uncertainty){
-          std <- alldevs$Parm_StDev
+          std <- alldevs[["Parm_StDev"]]
           recdev_hi <- val + 1.96*std
           recdev_lo <- val - 1.96*std
           ylim <- range(recdev_hi, recdev_lo, na.rm=TRUE)
@@ -145,19 +145,19 @@ SSplotRecdevs <-
         {
           # std. dev. of recdevs
           par(mar=par("mar")[c(1:3,2)])
-          ymax <- 1.1*max(recdev$Parm_StDev,recdevEarly$Parm_StDev,recdevFore$Parm_StDev,sigma_R_in,na.rm=TRUE)
-          plot(recdev$Yr,recdev$Parm_StDev,xlab=labels[1],
+          ymax <- 1.1*max(recdev[["Parm_StDev"]],recdevEarly[["Parm_StDev"]],recdevFore[["Parm_StDev"]],sigma_R_in,na.rm=TRUE)
+          plot(recdev[["Yr"]],recdev[["Parm_StDev"]],xlab=labels[1],
                main="Recruitment deviation variance",cex.main=cex.main,
                ylab=labels[2],xlim=xlim,ylim=c(0,ymax),type="b")
           if(nrow(recdevEarly)>0)
-              lines(recdevEarly$Yr,recdevEarly$Parm_StDev,type="b",col=col2)
+              lines(recdevEarly[["Yr"]],recdevEarly[["Parm_StDev"]],type="b",col=col2)
           if(forecastplot & nrow(recdevFore)>0)
-              lines(recdevFore$Yr,recdevFore$Parm_StDev,type="b",col=col2)
+              lines(recdevFore[["Yr"]],recdevFore[["Parm_StDev"]],type="b",col=col2)
           abline(h=0,col="grey")
           abline(h=sigma_R_in,col=col4)
 
           ## # bias correction (2nd axis, scaled by ymax)
-          ## lines(recruit$year,ymax*recruit$biasadj,col=col3)
+          ## lines(recruit[["year"]],ymax*recruit[["biasadj"]],col=col3)
           ## abline(h=ymax*1,col=col3,lty=3)
           ## ypts <- pretty(0:1)
           ## axis(side=4,at=ymax*ypts,label=ypts)
@@ -202,6 +202,6 @@ SSplotRecdevs <-
       } # end if print
     } # end if nrow(recdevs)>0
   } # end if max(recdev)>0
-  if(!is.null(plotinfo)) plotinfo$category <- "RecDev"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "RecDev"
   return(invisible(plotinfo))
 } # end function

@@ -67,7 +67,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
   }
   plotinfo <- NULL
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   # get stuff form replist created by SS_output
@@ -75,7 +75,7 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
   # that would be a matrix used to convert length to age rather than age to length)
 
   # maximum age
-  accuage <- replist$accuage
+  accuage <- replist[["accuage"]]
   # vector of ages
   agevec <- 0:accuage
   # length of vector (always accuage+1, but convenient to name)
@@ -83,21 +83,21 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
 
   if(option==1){
     # option 1 is plotting distribution of length at age
-    array <- replist$ALK
+    array <- replist[["ALK"]]
     if(is.null(array)){
       warning('No distribution of length at age plots produced because ',
-              'replist$ALK is NULL, likely because "detailed age-structured reports"',
+              'replist[["ALK"]] is NULL, likely because "detailed age-structured reports"',
               'are not requested in the starter file.')
       return()
     }
-    if(length(replist$lbinspop) == 1 && is.na(replist$lbinspop)) {
+    if(length(replist[["lbinspop"]]) == 1 && is.na(replist[["lbinspop"]])) {
       message('No distribution of length at age plots produced because ',
-              'replist$ALK is NULL, likely because "detailed age-structured reports"',
+              'replist[["ALK"]] is NULL, likely because "detailed age-structured reports"',
               'are not requested in the starter file.')
       return()
     }
     # vertical dimension is plotting length bins
-    ybins <- replist$lbinspop
+    ybins <- replist[["lbinspop"]]
     # number of slices should be the number of sex/growth-pattern/morph combos
     nslices <- dim(array)[3]
     if(is.null(slices)){
@@ -113,10 +113,10 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
   }
   if(option==2){
     # option 2 is plotting distribution of observed age at true age
-    array <- replist$AAK
+    array <- replist[["AAK"]]
     if(is.null(array)){
       warning('No distribution of observed age at true age plots produced because ',
-              'replist$AAK is NULL.')
+              'replist[["AAK"]] is NULL.')
       return()
     }
     # age bins
@@ -269,10 +269,10 @@ SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,
   # add category and return plotinfo
   if(!is.null(plotinfo)){
     if(option==1){
-      plotinfo$category <- "Bio"
+      plotinfo[["category"]] <- "Bio"
     }
     if(option==1){
-      plotinfo$category <- "Numbers"
+      plotinfo[["category"]] <- "Numbers"
     }
   }
   return(invisible(plotinfo))

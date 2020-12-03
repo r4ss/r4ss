@@ -33,22 +33,22 @@ SSbiologytables <- function (replist = NULL, printfolder="tables", dir="default"
 {
 	print.numeric  <- function(x, digits) { formatC(x, digits = digits, format = "f") }
 
-	inputs      <- replist$inputs
-	biology     <- replist$endgrowth # biology at length final model year
-  nsexes      <- replist$nsexes  
-  nfleets     <- replist$nfleets
-  lbinspop    <- replist$lbinspop
-  nlbinspop   <- replist$nlbinspop
-  sizeselex   <- replist$sizeselex
-  ageselex    <- replist$ageselex
-  accuage     <- replist$accuage # max age
-  FleetNames  <- replist$FleetNames
+	inputs      <- replist[["inputs"]]
+	biology     <- replist[["endgrowth"]] # biology at length final model year
+  nsexes      <- replist[["nsexes"]]  
+  nfleets     <- replist[["nfleets"]]
+  lbinspop    <- replist[["lbinspop"]]
+  nlbinspop   <- replist[["nlbinspop"]]
+  sizeselex   <- replist[["sizeselex"]]
+  ageselex    <- replist[["ageselex"]]
+  accuage     <- replist[["accuage"]] # max age
+  FleetNames  <- replist[["FleetNames"]]
 
   ### deal with directories in which to create PNG or PDF files
   if(dir=="default"){
     # directory within which printfolder will be created
     # by default it is assumed to be the location of the model files
-    dir <- inputs$dir }
+    dir <- inputs[["dir"]] }
 
   # figure out path to where PNG files will go
   plotdir <- file.path(dir,printfolder)
@@ -63,22 +63,22 @@ SSbiologytables <- function (replist = NULL, printfolder="tables", dir="default"
 
   # determine the year to summarize
   if(selexyr[1]=="default"){
-  	selexyr <- replist$endyr }
+  	selexyr <- replist[["endyr"]] }
 
   # Table
   # Age: Ave Len - Ave Wgt - % mature (by sex)
-  # "Mat*Fecund" is = biology$Fecundity %*% alk (mat = 1, fecundity = fecundity_l * ALK)
-  bio = data.frame(Age          = biology[biology$Sex == 1, "Age_Beg"], 
-  		 		         Ave_Length_f = print(biology[biology$Sex == 1, "Len_Beg"]   ,digits = 1),
-  		 		         Ave_Wght_f   = print(biology[biology$Sex == 1, "Wt_Beg"]    ,digits = 2),
-  		 		         Mature_f     = print(biology[biology$Sex == 1, "Len_Mat"]   ,digits = 2),
-  		 		         Fecund_f     = print(biology[biology$Sex == 1, "Mat*Fecund"],digits = 2))
+  # "Mat*Fecund" is = biology[["Fecundity"]] %*% alk (mat = 1, fecundity = fecundity_l * ALK)
+  bio = data.frame(Age          = biology[biology[["Sex"]] == 1, "Age_Beg"], 
+  		 		         Ave_Length_f = print(biology[biology[["Sex"]] == 1, "Len_Beg"]   ,digits = 1),
+  		 		         Ave_Wght_f   = print(biology[biology[["Sex"]] == 1, "Wt_Beg"]    ,digits = 2),
+  		 		         Mature_f     = print(biology[biology[["Sex"]] == 1, "Len_Mat"]   ,digits = 2),
+  		 		         Fecund_f     = print(biology[biology[["Sex"]] == 1, "Mat*Fecund"],digits = 2))
     
   if (nsexes == 2){
     bio = data.frame(bio, 
-    		 		         Ave_Length_m = print(biology[biology$Sex == 2, "Len_Beg"],digits = 1),
-    		 		         Ave_Wght_m   = print(biology[biology$Sex == 2, "Wt_Beg"], digits = 2),
-    		 		         Mature_m     = print(biology[biology$Sex == 2, "Len_Mat"],digits = 2))	}
+    		 		         Ave_Length_m = print(biology[biology[["Sex"]] == 2, "Len_Beg"],digits = 1),
+    		 		         Ave_Wght_m   = print(biology[biology[["Sex"]] == 2, "Wt_Beg"], digits = 2),
+    		 		         Mature_m     = print(biology[biology[["Sex"]] == 2, "Len_Mat"],digits = 2))	}
   
   write.csv(bio, paste0(plotdir, "/biology_by_age.csv"), row.names = F)
 
@@ -86,7 +86,7 @@ SSbiologytables <- function (replist = NULL, printfolder="tables", dir="default"
   selex.age = selex.age.ret = data.frame(Age = 0:accuage)
   for(j in 1:nsexes){
   	for (i in 1:nfleets){
-  		ind = ageselex[!is.na(ageselex$Fleet), "Fleet"] == i
+  		ind = ageselex[!is.na(ageselex[["Fleet"]]), "Fleet"] == i
   		find = which(ageselex[ind, "Sex"] == j & ageselex[ind, "Yr"] == selexyr & ageselex[ind,"Factor"] == "Asel")
   		selex.age = data.frame(selex.age, print(as.numeric(ageselex[find,8:dim(ageselex)[2]]), digits = 2))	
   	}
@@ -99,10 +99,10 @@ SSbiologytables <- function (replist = NULL, printfolder="tables", dir="default"
   selex.size = selex.size.ret = data.frame(Length = as.numeric(names(sizeselex[6:dim(sizeselex)[2]])) )
   for(j in 1:nsexes){
   	for (i in 1:nfleets){
-  		find = which(sizeselex$Fleet == i & sizeselex$Sex == j & sizeselex$Yr == selexyr & sizeselex$Factor == "Lsel")
+  		find = which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Lsel")
   		selex.size = data.frame(selex.size, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2))
 
-  		find = which(sizeselex$Fleet == i & sizeselex$Sex == j & sizeselex$Yr == selexyr & sizeselex$Factor == "Keep")
+  		find = which(sizeselex[["Fleet"]] == i & sizeselex[["Sex"]] == j & sizeselex[["Yr"]] == selexyr & sizeselex[["Factor"]] == "Keep")
       if (length(find) != 0){
         if(j == 1) { retnames = c(retnames, FleetNames[i]) }
         selex.size.ret = data.frame(selex.size.ret, print(as.numeric(sizeselex[find, 6:dim(sizeselex)[2]]), digits = 2)) }  		

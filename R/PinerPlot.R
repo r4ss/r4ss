@@ -119,9 +119,9 @@ PinerPlot <-
   if(print & is.null(plotdir)) stop("to print PNG files, you must supply a directory as 'plotdir'")
 
   # get stuff from summary output into shorter variable names
-  n    <- summaryoutput$n
-  lbf  <- summaryoutput$likelihoods_by_fleet
-  lbtg <- summaryoutput$likelihoods_by_tag_group
+  n    <- summaryoutput[["n"]]
+  lbf  <- summaryoutput[["likelihoods_by_fleet"]]
+  lbtg <- summaryoutput[["likelihoods_by_tag_group"]]
 
   if (is.null(lbf)) {
     stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
@@ -129,17 +129,17 @@ PinerPlot <-
   }
   # count of fleets
   nfleets <- ncol(lbf)-3
-  pars <- summaryoutput$pars
+  pars <- summaryoutput[["pars"]]
   # names of fleets
-  FleetNames     <- summaryoutput$FleetNames[[1]]
+  FleetNames     <- summaryoutput[["FleetNames"]][[1]]
   # stop if lengths don't match
   if(length(FleetNames)!=nfleets){
     stop("problem with FleetNames: length!= ",nfleets,"\n",
          paste(FleetNames,collapse="\n"))
   }
   # stop if component input isn't found in table
-  component_options <- c(unique(lbf$Label[-grep("_lambda", lbf$Label)]),
-                         unique(lbtg$Label[-grep("_lambda", lbtg$Label)]))
+  component_options <- c(unique(lbf[["Label"]][-grep("_lambda", lbf[["Label"]])]),
+                         unique(lbtg[["Label"]][-grep("_lambda", lbtg[["Label"]])]))
   if(!component %in% component_options){
     stop("input 'component' needs to be one of the following\n",
          paste("    ", component_options, "\n"))
@@ -165,30 +165,30 @@ PinerPlot <-
 
   # find the parameter that the profile was over
   if(exact){
-    parnumber <- match(profile.string,pars$Label)
+    parnumber <- match(profile.string,pars[["Label"]])
   }else{
-    parnumber <- grep(profile.string,pars$Label)
+    parnumber <- grep(profile.string,pars[["Label"]])
   }
   if(length(parnumber)<=0){
     stop("No parameters matching profile.string='",profile.string,"'",sep="")
   }
-  parlabel <- pars$Label[parnumber]
+  parlabel <- pars[["Label"]][parnumber]
   if(length(parlabel) > 1){
     stop("Multiple parameters matching profile.string='",profile.string,"':\n",
          paste(parlabel,collapse=", "),
          "\nYou may need to use 'exact=TRUE'.", sep="")
   }
-  parvec <- as.numeric(pars[pars$Label==parlabel,models])
+  parvec <- as.numeric(pars[pars[["Label"]]==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")
   cat("Parameter values (after subsetting based on input 'models'):\n")
   print(parvec)
   if(xlim[1]=="default") xlim <- range(parvec)
 
   # rearange likelihoods to be in columns by type
-  if(likelihood_type=="raw") prof.table <- lbf[which(lbf$model %in% models & lbf$Label==component), ]
+  if(likelihood_type=="raw") prof.table <- lbf[which(lbf[["model"]] %in% models & lbf[["Label"]]==component), ]
   if(likelihood_type=="raw_times_lambda"){
-    prof.table <- lbf[which(lbf$model %in% models & lbf$Label==component), ]
-    prof.table[,-c(1:3)] <- prof.table[,-c(1:3)] * lbf[which(lbf$model %in% models & lbf$Label==component)-1, ][,-c(1:3)]
+    prof.table <- lbf[which(lbf[["model"]] %in% models & lbf[["Label"]]==component), ]
+    prof.table[,-c(1:3)] <- prof.table[,-c(1:3)] * lbf[which(lbf[["model"]] %in% models & lbf[["Label"]]==component)-1, ][,-c(1:3)]
   }
 
   # Aggregate by input fleetgroups (a character vector, where two fleets with the same value are aggregated)

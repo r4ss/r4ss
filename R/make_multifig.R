@@ -330,7 +330,7 @@ make_multifig <-
         if(length(ptsx) > 0){
           widths <- rep(NA, length(ptsx))
           for(ibin in 1:length(ptsx)){
-            widths[ibin] <- bin.width.table$width[bin.width.table$bin == ptsx[ibin]]
+            widths[ibin] <- bin.width.table[["width"]][bin.width.table[["bin"]] == ptsx[ibin]]
           }
         }else{
           widths <- NULL
@@ -625,7 +625,7 @@ make_multifig <-
     }
   }
   # restore previous graphics parameter settings
-  par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+  par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]])
   #par(mfcol=c(rows,cols), mar=c(5,4,4,2)+.1, oma=rep(0,4))
 
   if(anyscaled){

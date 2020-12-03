@@ -60,51 +60,51 @@ SSplotYield <-
   }
   plotinfo <- NULL
 
-  equil_yield <- replist$equil_yield
+  equil_yield <- replist[["equil_yield"]]
   # column named changed from Catch to Tot_Catch in SSv3.30
   if("Tot_Catch" %in% names(equil_yield)){
-    equil_yield$Catch <- equil_yield$Tot_Catch
+    equil_yield[["Catch"]] <- equil_yield[["Tot_Catch"]]
   }
-  nareas      <- replist$nareas
-  nseasons    <- replist$nseasons
-  timeseries  <- replist$timeseries
-  #SSB0          <- replist$SBzero
-  SSB0        <- replist$derived_quants["SSB_Virgin", "Value"]
+  nareas      <- replist[["nareas"]]
+  nseasons    <- replist[["nseasons"]]
+  timeseries  <- replist[["timeseries"]]
+  #SSB0          <- replist[["SBzero"]]
+  SSB0        <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
   # function for yield curve
   yieldfunc <- function(refpoints = NULL){
     if(!add){
       # empty plot
-      plot(0,type="n",xlim=c(0,max(equil_yield$Depletion,1,na.rm=TRUE)),
-           ylim=c(0,max(equil_yield$Catch,na.rm=TRUE)),
+      plot(0,type="n",xlim=c(0,max(equil_yield[["Depletion"]],1,na.rm=TRUE)),
+           ylim=c(0,max(equil_yield[["Catch"]],na.rm=TRUE)),
            xlab=labels[1],ylab=labels[2])
       abline(h=0,col="grey")
       abline(v=0,col="grey")
     }
     
     # add lines for reference points (if requested)
-    lines(equil_yield$Depletion, equil_yield$Catch,
+    lines(equil_yield[["Depletion"]], equil_yield[["Catch"]],
           lwd = lwd, col = col, lty = lty)
     colvec <- c(4,2,3,1)
     if('MSY' %in% refpoints){
-      lines(x = rep(replist$derived_quants["SSB_MSY", "Value"]/SSB0, 2),
-            y = c(0, replist$derived_quants["Dead_Catch_MSY", "Value"]),
+      lines(x = rep(replist[["derived_quants"]]["SSB_MSY", "Value"]/SSB0, 2),
+            y = c(0, replist[["derived_quants"]]["Dead_Catch_MSY", "Value"]),
             col = colvec[1], lwd = 2, lty = 2)
     }
     if('Btgt' %in% refpoints){
-      lines(x = rep(replist$derived_quants["SSB_Btgt", "Value"]/SSB0, 2),
-            y = c(0, replist$derived_quants["Dead_Catch_Btgt", "Value"]),
+      lines(x = rep(replist[["derived_quants"]]["SSB_Btgt", "Value"]/SSB0, 2),
+            y = c(0, replist[["derived_quants"]]["Dead_Catch_Btgt", "Value"]),
             col = colvec[2], lwd = 2, lty = 2)
     }
     if('SPR' %in% refpoints){
-      lines(x = rep(replist$derived_quants["SSB_SPR", "Value"]/SSB0, 2),
-            y = c(0, replist$derived_quants["Dead_Catch_SPR", "Value"]),
+      lines(x = rep(replist[["derived_quants"]]["SSB_SPR", "Value"]/SSB0, 2),
+            y = c(0, replist[["derived_quants"]]["Dead_Catch_SPR", "Value"]),
             col = colvec[3], lwd = 2, lty = 2)
     }
     if('Current' %in% refpoints){
-      which_val <- which(abs(equil_yield$Depletion - replist$current_depletion) ==
-        min(abs(equil_yield$Depletion - replist$current_depletion)))[1]
-      lines(x = rep(replist$current_depletion, 2),
-            y = c(0, equil_yield$Catch[which_val]),
+      which_val <- which(abs(equil_yield[["Depletion"]] - replist[["current_depletion"]]) ==
+        min(abs(equil_yield[["Depletion"]] - replist[["current_depletion"]])))[1]
+      lines(x = rep(replist[["current_depletion"]], 2),
+            y = c(0, equil_yield[["Catch"]][which_val]),
             col = colvec[4], lwd = 2, lty = 2)
     }
     # legend
@@ -124,9 +124,9 @@ SSplotYield <-
     if(!is.null(equil_yield[[1]][1]) && any(!is.na(equil_yield[[1]]))){
       # further test for bad values
       # (not sure the circumstances where this is needed)
-      if(any(!is.na(equil_yield$Depletion)) &
-         any(!is.na(equil_yield$Catch)) &
-         any(!is.infinite(equil_yield$Depletion))){
+      if(any(!is.na(equil_yield[["Depletion"]])) &
+         any(!is.na(equil_yield[["Catch"]])) &
+         any(!is.infinite(equil_yield[["Depletion"]]))){
         if(1 %in% subplots){
           # make plot
           if(plot){
@@ -162,7 +162,7 @@ SSplotYield <-
   }
   
   # timeseries excluding equilibrium conditions or forecasts
-  ts <- timeseries[!timeseries$Era %in% c("VIRG","FORE"),]
+  ts <- timeseries[!timeseries[["Era"]] %in% c("VIRG","FORE"),]
 
   # get total dead catch
   stringB <- "dead(B)"
@@ -171,8 +171,8 @@ SSplotYield <-
   catch <- rowSums(catchmat)
 
   # aggregate catch and biomass across seasons and areas
-  catch_agg <- aggregate(x=catch, by=list(ts$Yr), FUN=sum)$x
-  Bio_agg <- aggregate(x=ts$Bio_all, by=list(ts$Yr), FUN=sum)$x
+  catch_agg <- aggregate(x=catch, by=list(ts[["Yr"]]), FUN=sum)$x
+  Bio_agg <- aggregate(x=ts[["Bio_all"]], by=list(ts[["Yr"]]), FUN=sum)$x
 
   # number of years to consider
   Nyrs <- length(Bio_agg)
@@ -223,6 +223,6 @@ SSplotYield <-
       dev.off()
     }
   }
-  if(!is.null(plotinfo)) plotinfo$category <- "Yield"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Yield"
   return(invisible(plotinfo))
 } # end function

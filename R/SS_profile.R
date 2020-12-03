@@ -70,10 +70,10 @@
 #' # read starter file
 #' starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
 #' # change control file name in the starter file
-#' starter$ctlfile <- "control_modified.ss"
+#' starter[["ctlfile"]] <- "control_modified.ss"
 #' # make sure the prior likelihood is calculated
 #' # for non-estimated quantities
-#' starter$prior_like <- 1
+#' starter[["prior_like"]] <- 1
 #' # write modified starter file
 #' SS_writestarter(starter, dir=mydir, overwrite=TRUE)
 #' 
@@ -99,7 +99,7 @@
 #' 
 #' # OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED
 #' MLEmodel <- SS_output("C:/ss/SSv3.24l_Dec5/Simple")
-#' profilemodels$MLE <- MLEmodel
+#' profilemodels[["MLE"]] <- MLEmodel
 #' profilesummary <- SSsummarize(profilemodels)
 #' # END OPTIONAL COMMANDS
 #' 
@@ -132,7 +132,7 @@ function(
   on.exit(setwd(orig_wd))
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform$OS.type
+  OS <- .Platform[["OS.type"]]
 
   # figure out name of executable based on 'model' input which may contain .exe
   if(length(grep(".exe",tolower(model))) == 1){
@@ -193,18 +193,18 @@ function(
   if(length(starter.file)==0) stop("starter.ss not found in",dir)
   starter <- SS_readstarter(starter.file)
   # check for new control file
-  if(starter$ctlfile!=newctlfile){
+  if(starter[["ctlfile"]]!=newctlfile){
     stop("starter file should be changed to change\n",
-         "'",starter$ctlfile,"' to '",newctlfile,"'")
+         "'",starter[["ctlfile"]],"' to '",newctlfile,"'")
   }
   # check for prior in likelihood
-  if(prior_check & starter$prior_like==0){
+  if(prior_check & starter[["prior_like"]]==0){
     stop("for likelihood profile, you should change the starter file value of\n",
          " 'Include prior likelihood for non-estimated parameters'\n",
          " from 0 to 1 and re-run the estimation.\n")
   }
   # check for consistency in use of par file
-  if(usepar & starter$init_values_src==0){
+  if(usepar & starter[["init_values_src"]]==0){
     stop("with setting 'usepar=TRUE', you need to change the starter file value\n",
          " for initial value source from 0 (ctl file) to 1 (par file).\n")
   }
@@ -244,7 +244,7 @@ function(
       # read parameter lines of control file
       ctltable_new <- SS_parlines(ctlfile=newctlfile)
       # which parameters are estimated in phase 1
-      if(!any(ctltable_new$PHASE == 1)){
+      if(!any(ctltable_new[["PHASE"]] == 1)){
         warning("At least one parameter needs to be estimated in phase 1.\n",
                 "Edit control file to add a parameter\n",
                 "which isn't being profiled over to phase 1.")
@@ -302,7 +302,7 @@ function(
         onegood <- TRUE
         Rep <- readLines('Report.sso',n=200)
         like <- read.table('Report.sso',skip=grep('LIKELIHOOD',Rep)[2]+0,nrows=11,header=TRUE,fill=TRUE)
-        liketable <- rbind(liketable,as.numeric(like$logL.Lambda))
+        liketable <- rbind(liketable,as.numeric(like[["logL.Lambda"]]))
       }else{
         liketable <- rbind(liketable,rep(NA,10))
       }
@@ -319,7 +319,7 @@ function(
   } # end loop of whichruns
   if(onegood){
     liketable <- as.data.frame(liketable)
-    names(liketable) <- like$Component
+    names(liketable) <- like[["Component"]]
     bigtable <- cbind(profilevec,converged,liketable)
     names(bigtable)[1] <- 'Value'
     return(bigtable)

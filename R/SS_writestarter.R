@@ -19,7 +19,7 @@
 SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
                             overwrite=FALSE, verbose=TRUE, warn=TRUE){
   if(verbose) cat("running SS_writestarter\n")
-  if(mylist$type!="Stock_Synthesis_starter_file"){
+  if(mylist[["type"]]!="Stock_Synthesis_starter_file"){
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_starter_file'\n")
   }
   # this command will hopefully prevent earlier issues of getting stuck with all R
@@ -76,7 +76,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
 
   writeLines("#C starter file written by R function SS_writestarter")
   writeLines("#C rerun model to get more complete formatting in starter.ss_new")
-  writeLines(paste("#C should work with SS version:",mylist$SSversion))
+  writeLines(paste("#C should work with SS version:",mylist[["SSversion"]]))
   writeLines(paste("#C file write time:",Sys.time()))
   writeLines("#")
 
@@ -88,11 +88,11 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("init_values_src")
   wl("run_display_detail")
   wl("detailed_age_structure")
-  if(mylist$detailed_age_structure == 3) {
+  if(mylist[["detailed_age_structure"]] == 3) {
     writeLines(paste0("# custom report options: -100 to start with minimal; ",
       "-101 to start with all; -number to remove, +number to add, -999 to end"))
     wl("custom_start")
-    if(!is.null(mylist$custom_add_rm)) wl.vector("custom_add_rm")
+    if(!is.null(mylist[["custom_add_rm"]])) wl.vector("custom_add_rm")
     writeLines("-999")
   }
   wl("checkup")
@@ -108,7 +108,7 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("minyr_sdreport")
   wl("maxyr_sdreport")
   wl("N_STD_yrs")
-  if(mylist$N_STD_yrs>0){
+  if(mylist[["N_STD_yrs"]]>0){
     wl("STD_yr_vec")
   }
   wl("converge_criterion")
@@ -118,12 +118,12 @@ SS_writestarter <- function(mylist, dir=NULL, file="starter.ss",
   wl("depl_denom_frac")
   wl("SPR_basis")
   wl("F_report_units")
-  if(mylist$F_report_units %in% 4:5){
+  if(mylist[["F_report_units"]] %in% 4:5){
     cat(mylist[["F_age_range"]],"#_F_age_range\n")
   }
   wl("F_report_basis")
   # only write ALK_tolerance if this is SSv3.30 (value didn't exist in 3.24)
-  if(mylist$final==3.3){
+  if(mylist[["final"]]==3.3){
     wl("MCMC_output_detail")
     wl("ALK_tolerance")
   }

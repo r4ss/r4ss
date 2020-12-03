@@ -103,8 +103,8 @@ function(replist,subplots=c(1:10,12),
          maximum_ymax_ratio=Inf, show_input_uncertainty=TRUE, verbose=TRUE, ...)
 {
   # get some quantities from replist
-  cpue              <- replist$cpue
-  SS_versionNumeric <- replist$SS_versionNumeric
+  cpue              <- replist[["cpue"]]
+  SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
   # confirm that some CPUE values are present
   if(is.null(dim(cpue))){
@@ -135,26 +135,26 @@ function(replist,subplots=c(1:10,12),
     if(error == 0){
       if(!log){
         lower_total <- qlnorm(.025, meanlog = log(y[include]),
-                              sdlog = cpueuse$SE[include])
+                              sdlog = cpueuse[["SE"]][include])
         upper_total <- qlnorm(.975, meanlog = log(y[include]),
-                              sdlog = cpueuse$SE[include])
+                              sdlog = cpueuse[["SE"]][include])
       }else{
         lower_total <- qnorm(.025, mean = log(y[include]),
-                              sd = cpueuse$SE[include])
+                              sd = cpueuse[["SE"]][include])
         upper_total <- qnorm(.975, mean = log(y[include]),
-                              sd = cpueuse$SE[include])
+                              sd = cpueuse[["SE"]][include])
       }
     }
     # normal error interval
     if(error == -1){
-      lower_total <- qnorm(.025, mean = y[include], sd = cpueuse$SE[include])
-      upper_total <- qnorm(.975, mean = y[include], sd = cpueuse$SE[include])
+      lower_total <- qnorm(.025, mean = y[include], sd = cpueuse[["SE"]][include])
+      upper_total <- qnorm(.975, mean = y[include], sd = cpueuse[["SE"]][include])
     }
 
     # T-distribution interval
     if(error > 0){
-      lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse$SE[include]
-      upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse$SE[include]
+      lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE"]][include]
+      upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE"]][include]
       if(!log){
         lower_total <- exp(lower_total)
         upper_total <- exp(upper_total)
@@ -164,7 +164,7 @@ function(replist,subplots=c(1:10,12),
     if(max(upper_total)==Inf){
       warning("Removing upper interval on indices with infinite upper quantile values.\n",
               "Check the uncertainty inputs for the indices.")
-      upper_total[upper_total == Inf] <- 100*max(cpueuse$Obs[upper_total == Inf])
+      upper_total[upper_total == Inf] <- 100*max(cpueuse[["Obs"]][upper_total == Inf])
     }
 
     # plot title
@@ -210,30 +210,30 @@ function(replist,subplots=c(1:10,12),
     }
 
     # show thicker lines behind final lines for input uncertainty (if different)
-    if(show_input_uncertainty && any(!is.null(cpueuse$SE_input[include]))){
+    if(show_input_uncertainty && any(!is.null(cpueuse[["SE_input"]][include]))){
       # lognormal error interval
       if(error == 0){
         if(!log){
           lower_input <- qlnorm(.025, meanlog = log(y[include]),
-                                sdlog = cpueuse$SE_input[include])
+                                sdlog = cpueuse[["SE_input"]][include])
           upper_input <- qlnorm(.975, meanlog = log(y[include]),
-                                sdlog = cpueuse$SE_input[include])
+                                sdlog = cpueuse[["SE_input"]][include])
         }else{
           lower_input <- qnorm(.025, mean = log(y[include]),
-                                sd = cpueuse$SE_input[include])
+                                sd = cpueuse[["SE_input"]][include])
           upper_input <- qnorm(.975, mean = log(y[include]),
-                                sd = cpueuse$SE_input[include])
+                                sd = cpueuse[["SE_input"]][include])
         }
       }
       # normal error interval
       if(error == -1){
-        lower_input <- qnorm(.025, mean = y[include], sd = cpueuse$SE_input[include])
-        upper_input <- qnorm(.975, mean = y[include], sd = cpueuse$SE_input[include])
+        lower_input <- qnorm(.025, mean = y[include], sd = cpueuse[["SE_input"]][include])
+        upper_input <- qnorm(.975, mean = y[include], sd = cpueuse[["SE_input"]][include])
       }
       # T-distribution interval
       if(error > 0){
-        lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse$SE_input[include]
-        upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse$SE_input[include]
+        lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE_input"]][include]
+        upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE_input"]][include]
         if(!log){
           lower_total <- exp(lower_total)
           upper_total <- exp(upper_total)
@@ -280,17 +280,17 @@ function(replist,subplots=c(1:10,12),
 
     if(option == 1){ # residuals based on total SE
       ylab <- labels[13]
-      y <- (log(cpueuse$Obs) - log(cpueuse$Exp))/cpueuse$SE
+      y <- (log(cpueuse[["Obs"]]) - log(cpueuse[["Exp"]]))/cpueuse[["SE"]]
     }
     if(error == 0 & option == 2){ # residuals based on input SE
       ylab <- labels[13]
       # manually calculating residual based on SE_input
-      y <- (log(cpueuse$Obs) - log(cpueuse$Exp))/cpueuse$SE_input
+      y <- (log(cpueuse[["Obs"]]) - log(cpueuse[["Exp"]]))/cpueuse[["SE_input"]]
     }
     if(option == 3){ # deviations
       ylab <- labels[14]
       # Dev should be equal to log(Obs/Exp)
-      y <- cpueuse$Dev
+      y <- cpueuse[["Dev"]]
     }
 
     # plot title
@@ -366,11 +366,11 @@ function(replist,subplots=c(1:10,12),
     if(smooth && npoints > 6 && diff(range(y))>0){
       if(!log){
         psmooth <- loess(z[include] ~ y[include], degree=1)
-        lines(psmooth$x[order(psmooth$x)], psmooth$fit[order(psmooth$x)],
+        lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
               lwd=1.2, col=col4, lty="dashed")
       }else{
         psmooth <- loess(log(z[include]) ~ log(y[include]), degree=1)
-        lines(psmooth$x[order(psmooth$x)], psmooth$fit[order(psmooth$x)],
+        lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
               lwd=1.2, col=col4, lty="dashed")
       }
     }
@@ -383,7 +383,7 @@ function(replist,subplots=c(1:10,12),
     # plot of time-varying catchability (if present)
     main <- paste(labels[10], Fleet, sep=" ")
     if(!mainTitle) main <- ""
-    q <- cpueuse$Calc_Q
+    q <- cpueuse[["Calc_Q"]]
     if(!add) plot(x,q,type='o',xlab=labels[1],main=main,
                   cex.main=cex.main,ylab=labels[9],
                   col=colvec2[1],pch=pch2)
@@ -393,9 +393,9 @@ function(replist,subplots=c(1:10,12),
     # plot of time-varying catchability (if present)
     main <- paste(labels[12], Fleet, sep=" ")
     if(!mainTitle) main <- ""
-    v <- cpueuse$Vuln_bio
-    q1 <- cpueuse$Calc_Q
-    q2 <- cpueuse$Eff_Q
+    v <- cpueuse[["Vuln_bio"]]
+    q1 <- cpueuse[["Calc_Q"]]
+    q2 <- cpueuse[["Eff_Q"]]
     if(all(q1==q2)) ylab <- labels[9] else ylab <- "Effective catchability"
     if(!add) plot(v,q2,type='o',xlab=labels[11],main=main,
                   cex.main=cex.main,ylab=ylab,
@@ -403,44 +403,44 @@ function(replist,subplots=c(1:10,12),
   }
 
   # check for super periods
-  if(length(grep("supr_per",cpue$Supr_Per))){
+  if(length(grep("supr_per",cpue[["Supr_Per"]]))){
     warning("Some indices have superperiods. Values will be plotted\n",
             "in year/season associated with data in report file.")
-    cpue <- cpue[!is.na(cpue$Dev),]
+    cpue <- cpue[!is.na(cpue[["Dev"]]),]
   }
 
-  FleetNames   <- replist$FleetNames
-  nfleets      <- replist$nfleets
-  nseasons     <- replist$nseasons
+  FleetNames   <- replist[["FleetNames"]]
+  nfleets      <- replist[["nfleets"]]
+  nseasons     <- replist[["nseasons"]]
 
   # find any extra SD parameters
-  parameters  <- replist$parameters
-  Q_extraSD_info <- parameters[grep("Q_extraSD", parameters$Label),]
+  parameters  <- replist[["parameters"]]
+  Q_extraSD_info <- parameters[grep("Q_extraSD", parameters[["Label"]]),]
   # calculate how many of these parameters there are
   nSDpars <- nrow(Q_extraSD_info)
   if(nSDpars > 0){
     # parse the parameter label to get the fleet number
-    Q_extraSD_info$Fleet <- NA
+    Q_extraSD_info[["Fleet"]] <- NA
     for(ipar in 1:nSDpars){
       if(SS_versionNumeric >= 3.3){
         # parsing label with ending like "(2)" assuming only one set of parentheses
-        num <- strsplit(Q_extraSD_info$Label[ipar], split="[()]", fixed=FALSE)[[1]][2]
+        num <- strsplit(Q_extraSD_info[["Label"]][ipar], split="[()]", fixed=FALSE)[[1]][2]
       }else{
-        num <- strsplit(substring(Q_extraSD_info$Label[ipar], nchar("Q_extraSD_")+1),
+        num <- strsplit(substring(Q_extraSD_info[["Label"]][ipar], nchar("Q_extraSD_")+1),
                         split="_", fixed=TRUE)[[1]][1]
       }
-      Q_extraSD_info$Fleet[ipar] <- as.numeric(num)
+      Q_extraSD_info[["Fleet"]][ipar] <- as.numeric(num)
     }
     # NOTE: important columns in Q_extraSD_info to use below are $Value and $Fleet
   }
   if(nseasons>1){
     # if seasons, put CPUE at season midpoint
-    cpue$YrSeas <- cpue$Yr + (cpue$Seas - 0.5)/nseasons
+    cpue[["YrSeas"]] <- cpue[["Yr"]] + (cpue[["Seas"]] - 0.5)/nseasons
   }else{
     # if no seasons, put at integer year value
-    cpue$YrSeas <- cpue$Yr
+    cpue[["YrSeas"]] <- cpue[["Yr"]]
   }
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
   if(fleetnames[1]=="default") fleetnames <- FleetNames
   if(fleets[1]=="all"){
@@ -450,7 +450,7 @@ function(replist,subplots=c(1:10,12),
   }}
 
   # subset fleets as requested
-  fleetvec <- intersect(fleets, unique(as.numeric(cpue$Fleet)))
+  fleetvec <- intersect(fleets, unique(as.numeric(cpue[["Fleet"]])))
 
 
   # empty data.frame to store data for comparison among indices
@@ -466,7 +466,7 @@ function(replist,subplots=c(1:10,12),
 
     # use fancy colors only if the individual index spans more than one season
     usecol <- FALSE
-    if(length(unique(cpue$Seas[cpue$Fleet==ifleet])) > 1){
+    if(length(unique(cpue[["Seas"]][cpue[["Fleet"]]==ifleet])) > 1){
       usecol <- TRUE
     }
 
@@ -510,7 +510,7 @@ function(replist,subplots=c(1:10,12),
     if(is.null(seasnames)) seasnames <- paste("Season",1:nseasons,sep="")
 
     Fleet <- fleetnames[ifleet]
-    error <- replist$survey_error[ifleet]
+    error <- replist[["survey_error"]][ifleet]
     if(error == 0){
       error_caption <- "lognormal error"
     }
@@ -526,43 +526,43 @@ function(replist,subplots=c(1:10,12),
                               " degrees of freedom")
     }
 
-    cpueuse <- cpue[cpue$Fleet==ifleet,]
-    cpueuse <- cpueuse[order(cpueuse$YrSeas),]
+    cpueuse <- cpue[cpue[["Fleet"]]==ifleet,]
+    cpueuse <- cpueuse[order(cpueuse[["YrSeas"]]),]
 
     # look for time-vary
-    time <- diff(range(cpueuse$Calc_Q))>0
+    time <- diff(range(cpueuse[["Calc_Q"]]))>0
     # look for time-varying effective Q
-    time2 <- diff(range(cpueuse$Eff_Q))>0
+    time2 <- diff(range(cpueuse[["Eff_Q"]]))>0
     # Teresa's model had NA values in Eff_Q for unknown reasons
     # line below will allow model to play on
     if(is.na(time2)){
       time2 <- FALSE
     }
     # look for extra SD and calculate input SD (if different from final value)
-    if(exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info$Fleet){
+    if(exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info[["Fleet"]]){
       # input uncertainty is final value minus extra SD parameter (if present)
-      cpueuse$SE_input <- cpueuse$SE - Q_extraSD_info$Value[Q_extraSD_info$Fleet==ifleet]
+      cpueuse[["SE_input"]] <- cpueuse[["SE"]] - Q_extraSD_info[["Value"]][Q_extraSD_info[["Fleet"]]==ifleet]
     }else{
-      cpueuse$SE_input <- NULL # could also set equal to $SE but then additional test required to not display
+      cpueuse[["SE_input"]] <- NULL # could also set equal to $SE but then additional test required to not display
     }
     # use short variable names for often-used quantities
-    x <- cpueuse$YrSeas
-    y <- cpueuse$Obs
-    z <- cpueuse$Exp
+    x <- cpueuse[["YrSeas"]]
+    y <- cpueuse[["Obs"]]
+    z <- cpueuse[["Exp"]]
     npoints <- length(z)
-    include <- !is.na(cpueuse$Like)
+    include <- !is.na(cpueuse[["Like"]])
     if(any(include)){
       if(usecol){
-        s <- cpueuse$Seas[which(include)]
+        s <- cpueuse[["Seas"]][which(include)]
       }else{
         s <- 1 # only use colorvector if more than 1 season
       }
       if(datplot){
         # add index data to data frame which is used to compare all indices
-        if(min(cpueuse$Obs >= 0)){
-          cpueuse$Index <- rep(ifleet,length(cpueuse$YrSeas))
-          cpueuse$stdvalue <- cpueuse$Obs/mean(cpueuse$Obs)
-          tempcpue <- cbind(cpueuse$Index,cpueuse$YrSeas,cpueuse$Obs,cpueuse$stdvalue)
+        if(min(cpueuse[["Obs"]] >= 0)){
+          cpueuse[["Index"]] <- rep(ifleet,length(cpueuse[["YrSeas"]]))
+          cpueuse[["stdvalue"]] <- cpueuse[["Obs"]]/mean(cpueuse[["Obs"]])
+          tempcpue <- cbind(cpueuse[["Index"]],cpueuse[["YrSeas"]],cpueuse[["Obs"]],cpueuse[["stdvalue"]])
           colnames(tempcpue) <- c("Index","year","value","stdvalue")
           allcpue <- rbind(allcpue,tempcpue)
         }else{
@@ -731,8 +731,8 @@ function(replist,subplots=c(1:10,12),
         #### residuals based on input uncertainty
         if(11 %in% subplots &
            show_input_uncertainty &&
-           any(!is.null(cpueuse$SE_input[include])) &&
-           any(cpueuse$SE_input > cpueuse$SE)){
+           any(!is.null(cpueuse[["SE_input"]][include])) &&
+           any(cpueuse[["SE_input"]] > cpueuse[["SE"]])){
           
           file <- paste0("index11_resids_SE_input_",Fleet,".png")
           caption <- paste0("Residuals for fit to index for ", Fleet,".")
@@ -783,19 +783,19 @@ function(replist,subplots=c(1:10,12),
       if(!mainTitle){
         main <- ""
       }
-      xlim <- c(min(allcpue$year,na.rm=TRUE) - 1,
-                max(allcpue$year,na.rm=TRUE) + 1)
+      xlim <- c(min(allcpue[["year"]],na.rm=TRUE) - 1,
+                max(allcpue[["year"]],na.rm=TRUE) + 1)
 
       # change year range if requested
       xlim[1] <- max(xlim[1],minyr)
       xlim[2] <- min(xlim[2],maxyr)
 
       # set y limits
-      ylim <- c(range(allcpue$stdvalue,na.rm=TRUE))
+      ylim <- c(range(allcpue[["stdvalue"]],na.rm=TRUE))
       # set colors
-      usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE), alpha = 0.7)
-      if(max(allcpue$Index,na.rm=TRUE) >= 2){
-        usecols <- rich.colors.short(max(allcpue$Index,na.rm=TRUE)+1,
+      usecols <- rich.colors.short(max(allcpue[["Index"]],na.rm=TRUE), alpha = 0.7)
+      if(max(allcpue[["Index"]],na.rm=TRUE) >= 2){
+        usecols <- rich.colors.short(max(allcpue[["Index"]],na.rm=TRUE)+1,
                                      alpha = 0.7)[-1]
       }
       # make empty plot
@@ -803,8 +803,8 @@ function(replist,subplots=c(1:10,12),
                     col=usecols[1], ylab=labels[8], xlim=xlim,ylim=ylim)
       # add points and lines for each fleet
       for(ifleet in fleetvec){
-        points(x=allcpue$year[allcpue$Index==ifleet],
-               y=allcpue$stdvalue[allcpue$Index==ifleet],
+        points(x=allcpue[["year"]][allcpue[["Index"]]==ifleet],
+               y=allcpue[["stdvalue"]][allcpue[["Index"]]==ifleet],
                pch=pch2, col=usecols[ifleet], cex=cex,
                lwd=1, lty="dashed", type="o")
       }
@@ -825,6 +825,6 @@ function(replist,subplots=c(1:10,12),
       dev.off()}
   } # end datplot
 
-  if(!is.null(plotinfo)) plotinfo$category <- "Index"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Index"
   return(invisible(plotinfo))
 } # end function

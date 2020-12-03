@@ -172,13 +172,13 @@ SSplotProfile <-
   }
   
   # get stuff from summary output
-  n             <- summaryoutput$n
-  likelihoods   <- summaryoutput$likelihoods
+  n             <- summaryoutput[["n"]]
+  likelihoods   <- summaryoutput[["likelihoods"]]
   if (is.null(likelihoods)) {
     stop("Input 'summaryoutput' needs to be a list output from SSsummarize\n",
          "and have an element named 'likelihoods'.")
   }
-  pars          <- summaryoutput$pars
+  pars          <- summaryoutput[["pars"]]
 
   # check number of models to be plotted
   if(models[1]=="all"){
@@ -190,20 +190,20 @@ SSplotProfile <-
   
   # find the parameter that the profile was over
   if(exact){
-    parnumber <- match(profile.string,pars$Label)
+    parnumber <- match(profile.string,pars[["Label"]])
   }else{
-    parnumber <- grep(profile.string,pars$Label)
+    parnumber <- grep(profile.string,pars[["Label"]])
   }
   if(length(parnumber)<=0){
     stop("No parameters matching profile.string='",profile.string,"'",sep="")
   }
-  parlabel <- pars$Label[parnumber]
+  parlabel <- pars[["Label"]][parnumber]
   if(length(parlabel) > 1){
     stop("Multiple parameters matching profile.string='",profile.string,"':\n",
          paste(parlabel,collapse=", "),
          "\nYou may need to use 'exact=TRUE'.", sep="")
   }
-  parvec <- as.numeric(pars[pars$Label==parlabel,models])
+  parvec <- as.numeric(pars[pars[["Label"]]==parlabel,models])
   cat("Parameter matching profile.string='",profile.string,"': '",parlabel,"'\n",sep="")
   cat("Parameter values (after subsetting based on input 'models'):\n")
   print(parvec)
@@ -211,8 +211,8 @@ SSplotProfile <-
 
   # rearange likelihoods to be in columns by type
   # Fixed bug that crashes plot when only a subset of components are listed (Steve Teo)
-  prof.table <- data.frame(t(likelihoods[likelihoods$Label %in% components,models])) 
-  names(prof.table) <- likelihoods[likelihoods$Label %in% components,ncol(likelihoods)]
+  prof.table <- data.frame(t(likelihoods[likelihoods[["Label"]] %in% components,models])) 
+  names(prof.table) <- likelihoods[likelihoods[["Label"]] %in% components,ncol(likelihoods)]
   component.labels.good <- rep("",ncol(prof.table))
   for(icol in 1:ncol(prof.table)){
     ilabel <- which(components==names(prof.table)[icol])

@@ -40,7 +40,7 @@
 #'  retroSummary <- SSsummarize(retroModels)
 #'
 #'  # set the ending year of each model in the set
-#'  endyrvec <- retroModels[[1]]$endyr-10:0
+#'  endyrvec <- retroModels[[1]][["endyr"]]-10:0
 #'  # make comparison plot
 #'  pdf('retrospectives/retrospective_comparison_plots.pdf')
 #'  SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)
@@ -80,25 +80,25 @@ SSplotRetroRecruits <-
   }
 
   # number of models
-  n <- retroSummary$n
+  n <- retroSummary[["n"]]
 
   # get either recruitment deviations or true recruitments
   if(devs){
     # devs
-    recvals       <- retroSummary$recdevs
-    recvalsLower  <- retroSummary$recdevsLower
-    recvalsUpper  <- retroSummary$recdevsUpper
+    recvals       <- retroSummary[["recdevs"]]
+    recvalsLower  <- retroSummary[["recdevsLower"]]
+    recvalsUpper  <- retroSummary[["recdevsUpper"]]
     scale <- 1
   }else{
     # recruits
-    recvals       <- retroSummary$recruits
-    recvalsLower  <- retroSummary$recruitsLower
-    recvalsUpper  <- retroSummary$recruitsUpper
+    recvals       <- retroSummary[["recruits"]]
+    recvalsLower  <- retroSummary[["recruitsLower"]]
+    recvalsUpper  <- retroSummary[["recruitsUpper"]]
     scale <- 1e6 # should generalize this in the future for non-hake species
   }
   # lower and upper quantiles as defined in summary
-  lowerCI       <- retroSummary$lowerCI
-  upperCI       <- retroSummary$upperCI
+  lowerCI       <- retroSummary[["lowerCI"]]
+  upperCI       <- retroSummary[["upperCI"]]
 
   # figure out colors (using the r4ss adaptation of Arni's function)
   colvec      <- rich.colors.short(length(cohorts),alpha=.7)
@@ -156,7 +156,7 @@ SSplotRetroRecruits <-
   
   if(legend) ylim <- ylim + c(0,.1*(ylim[2]-ylim[1]))
   if(length(mcmcVec)==1) mcmcVec <- rep(mcmcVec,n)
-  if(any(mcmcVec)) mcmc <- retroSummary$mcmc
+  if(any(mcmcVec)) mcmc <- retroSummary[["mcmc"]]
   for(imodel in (1:n)[mcmcVec]){
     if(devs){
       tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
@@ -172,9 +172,9 @@ SSplotRetroRecruits <-
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
       upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
-      recvals[,imodel] <- med[match(recvals$Label,mcmclabs)]
-      recvalsLower[,imodel] <- lower[match(recvalsLower$Label,mcmclabs)]
-      recvalsUpper[,imodel] <- upper[match(recvalsUpper$Label,mcmclabs)]
+      recvals[,imodel] <- med[match(recvals[["Label"]],mcmclabs)]
+      recvalsLower[,imodel] <- lower[match(recvalsLower[["Label"]],mcmclabs)]
+      recvalsUpper[,imodel] <- upper[match(recvalsUpper[["Label"]],mcmclabs)]
     }
   }
 
@@ -182,9 +182,9 @@ SSplotRetroRecruits <-
   
   for(iy in 1:length(cohorts)){
     y <- cohorts[iy]
-    cohortvals      <- recvals[recvals$Yr==y,1:n]
-    cohortvalsLower <- recvalsLower[recvalsLower$Yr==y,1:n]
-    cohortvalsUpper <- recvalsUpper[recvalsUpper$Yr==y,1:n]
+    cohortvals      <- recvals[recvals[["Yr"]]==y,1:n]
+    cohortvalsLower <- recvalsLower[recvalsLower[["Yr"]]==y,1:n]
+    cohortvalsUpper <- recvalsUpper[recvalsUpper[["Yr"]]==y,1:n]
     # combine rows where the parameter labels may differ
     if(nrow(cohortvals)>1){
       cohortvals2      <- rep(NA,n)

@@ -55,17 +55,17 @@ SSplotSPR <-
   plotinfo <- NULL
 
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
-  sprseries             <- replist$sprseries
-  timeseries            <- replist$timeseries
-  derived_quants        <- replist$derived_quants
-  nsexes                <- replist$nsexes
-  nseasons              <- replist$nseasons
-  nareas                <- replist$nareas
-  endyr                 <- replist$endyr
-  managementratiolabels	<- replist$managementratiolabels
+  sprseries             <- replist[["sprseries"]]
+  timeseries            <- replist[["timeseries"]]
+  derived_quants        <- replist[["derived_quants"]]
+  nsexes                <- replist[["nsexes"]]
+  nseasons              <- replist[["nseasons"]]
+  nareas                <- replist[["nareas"]]
+  endyr                 <- replist[["endyr"]]
+  managementratiolabels	<- replist[["managementratiolabels"]]
 
   # message about skipping plots
   if (is.null(sprseries)){
@@ -73,17 +73,17 @@ SSplotSPR <-
     return()
   }
   
-  if(sprtarg=="default") sprtarg <- replist$sprtarg
-  if(btarg=="default") btarg <- replist$btarg
+  if(sprtarg=="default") sprtarg <- replist[["sprtarg"]]
+  if(btarg=="default") btarg <- replist[["btarg"]]
 
   # choose which points to plot
-  good <- sprseries$Yr <= endyr
+  good <- sprseries[["Yr"]] <= endyr
   if(forecastplot) good <- rep(TRUE,nrow(sprseries))
   
   sprfunc <- function(){
-    if(!add) plot(0,xlab=labels[1],ylab=labels[2],xlim=range(sprseries$Yr[good]),
-                  ylim=c(0,max(1,max(sprseries$spr[!is.na(sprseries$spr)]))),type="n")
-    lines(sprseries$Yr[good],sprseries$spr[good],type="o",col=col2)
+    if(!add) plot(0,xlab=labels[1],ylab=labels[2],xlim=range(sprseries[["Yr"]][good]),
+                  ylim=c(0,max(1,max(sprseries[["spr"]][!is.na(sprseries[["spr"]])]))),type="n")
+    lines(sprseries[["Yr"]][good],sprseries[["spr"]][good],type="o",col=col2)
     if(sprtarg>0) abline(h=sprtarg,col=col4,lty=2)
     abline(h=0,col="grey")
     abline(h=1,col="grey")
@@ -104,9 +104,9 @@ SSplotSPR <-
   if(nseasons>1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
   if(nseasons==1){ 
     sprfunc2 <- function(){
-      if(!add) plot(0,xlim=range(sprseries$Yr[good]),
+      if(!add) plot(0,xlim=range(sprseries[["Yr"]][good]),
                     xlab=labels[1],ylab=labels[3],ylim=c(0,1),type="n")
-      lines(sprseries$Yr[good],(1-sprseries$spr[good]),type="o",col=col2)
+      lines(sprseries[["Yr"]][good],(1-sprseries[["spr"]][good]),type="o",col=col2)
       if(sprtarg>0) abline(h=(1-sprtarg),col=col4,lty=2)
       abline(h=0,col="grey")
       abline(h=1,col="grey")}
@@ -125,24 +125,24 @@ SSplotSPR <-
     if(!uncertainty | sprtarg<=0){
       cat("skipped SPR ratio timeseries: requires both sprtarg>0 and uncertainty=TRUE.\n")
     }else{
-      sprratiostd <- derived_quants[substring(derived_quants$Label,1,8)=="SPRratio",]
-      sprratiostd$Yr <- as.numeric(substring(sprratiostd$Label,10))
-      sprratiostd$period <- "fore"
-      sprratiostd$period[sprratiostd$Yr<=(endyr)] <- "time"
-      sprratiostd$upper <- sprratiostd$Value + 1.96*sprratiostd$StdDev
-      sprratiostd$lower <- pmax(sprratiostd$Value - 1.96*sprratiostd$StdDev,0) # max of value or 0
+      sprratiostd <- derived_quants[substring(derived_quants[["Label"]],1,8)=="SPRratio",]
+      sprratiostd[["Yr"]] <- as.numeric(substring(sprratiostd[["Label"]],10))
+      sprratiostd[["period"]] <- "fore"
+      sprratiostd[["period"]][sprratiostd[["Yr"]]<=(endyr)] <- "time"
+      sprratiostd[["upper"]] <- sprratiostd[["Value"]] + 1.96*sprratiostd[["StdDev"]]
+      sprratiostd[["lower"]] <- pmax(sprratiostd[["Value"]] - 1.96*sprratiostd[["StdDev"]],0) # max of value or 0
       ylab <- managementratiolabels[1,2]
-      ylim=c(0,max(1,sprratiostd$upper[sprratiostd$period=="time"]))
+      ylim=c(0,max(1,sprratiostd[["upper"]][sprratiostd[["period"]]=="time"]))
       sprfunc3 <- function(){
-        if(!add) plot(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],
+        if(!add) plot(sprratiostd[["Yr"]][sprratiostd[["period"]]=="time"],sprratiostd[["Value"]][sprratiostd[["period"]]=="time"],
                       xlab=labels[1],ylim=ylim,ylab=ylab,type="n")
-        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$Value[sprratiostd$period=="time"],
+        lines(sprratiostd[["Yr"]][sprratiostd[["period"]]=="time"],sprratiostd[["Value"]][sprratiostd[["period"]]=="time"],
               type="o",col=col2)
         abline(h=0,col="grey")
         abline(h=1,col=col4)
-        text((min(sprratiostd$Yr)+4),(1+0.02),"Management target",adj=0)
-        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$upper[sprratiostd$period=="time"],col=col2,lty="dashed")
-        lines(sprratiostd$Yr[sprratiostd$period=="time"],sprratiostd$lower[sprratiostd$period=="time"],col=col2,lty="dashed")
+        text((min(sprratiostd[["Yr"]])+4),(1+0.02),"Management target",adj=0)
+        lines(sprratiostd[["Yr"]][sprratiostd[["period"]]=="time"],sprratiostd[["upper"]][sprratiostd[["period"]]=="time"],col=col2,lty="dashed")
+        lines(sprratiostd[["Yr"]][sprratiostd[["period"]]=="time"],sprratiostd[["lower"]][sprratiostd[["period"]]=="time"],col=col2,lty="dashed")
       }
       if(3 %in% subplots){
         if(plot) sprfunc3()
@@ -160,29 +160,29 @@ SSplotSPR <-
       if(btarg<=0 | sprtarg<=0){
         cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
       }else{
-        timeseries$Yr <- timeseries$Yr + (timeseries$Seas-1)/nseasons
+        timeseries[["Yr"]] <- timeseries[["Yr"]] + (timeseries[["Seas"]]-1)/nseasons
         #!subsetting to season 1 only, initially just getting area 1
-        ts <- timeseries[timeseries$Seas==1 &
-                           timeseries$Area==1 &
-                             timeseries$Yr <= endyr,]
+        ts <- timeseries[timeseries[["Seas"]]==1 &
+                           timeseries[["Area"]]==1 &
+                             timeseries[["Yr"]] <= endyr,]
         # if there is more than 1 area, add them in now
         # this could be done using "aggregate" but this approach is more foolproof (hopefully)
         if(nareas>1){
           for(iarea in 2:nareas){
-            ts_area_i <- timeseries[timeseries$Seas==1 &
-                                      timeseries$Area==iarea &
-                                        timeseries$Yr <= endyr,]
-            ts$SpawnBio <- ts$SpawnBio + ts_area_i$SpawnBio
+            ts_area_i <- timeseries[timeseries[["Seas"]]==1 &
+                                      timeseries[["Area"]]==iarea &
+                                        timeseries[["Yr"]] <= endyr,]
+            ts[["SpawnBio"]] <- ts[["SpawnBio"]] + ts_area_i[["SpawnBio"]]
           }
         }
         # divide spawning biomass by 2 for single-sex models
         if(nsexes==1){
-          ts$SpawnBio <- ts$SpawnBio/2
+          ts[["SpawnBio"]] <- ts[["SpawnBio"]]/2
         }
         # calculate depletion
-        depletionseries <- ts$SpawnBio/ts$SpawnBio[1]
-        reldep <- depletionseries[ts$Yr %in% sprseries$Yr]/btarg
-        relspr <- (1-sprseries$spr[sprseries$Yr <= endyr])/(1-sprtarg)
+        depletionseries <- ts[["SpawnBio"]]/ts[["SpawnBio"]][1]
+        reldep <- depletionseries[ts[["Yr"]] %in% sprseries[["Yr"]]]/btarg
+        relspr <- (1-sprseries[["spr"]][sprseries[["Yr"]] <= endyr])/(1-sprtarg)
         # set axis limits
         xmax <- 1.1*max(reldep)
         ymax <- 1.1*max(1,relspr[!is.na(relspr)])
@@ -211,6 +211,6 @@ SSplotSPR <-
       }
     } # end test for making phase plot
   } # end check for number of seasons=1
-  if(!is.null(plotinfo)) plotinfo$category <- "SPR"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "SPR"
   return(invisible(plotinfo))
 }

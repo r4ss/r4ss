@@ -100,7 +100,7 @@ function(keyvec=NULL,dirvec=NULL,getcovar=TRUE,getcomp=TRUE,forecast=TRUE,
                               compfile=compFileName, NoCompOK=NoCompOK, printstats=FALSE,
                               covar=FALSE, forecast=forecast, verbose=FALSE, ncols=ncols)
       }
-      output$key <- as.character(key)
+      output[["key"]] <- as.character(key)
     }else{
       cat("!repfile doesn't exists or is empty\n")
     }

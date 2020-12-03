@@ -147,12 +147,12 @@
 #'                          cha1=c(letters[17:26], NA),
 #'                          cha2=c(NA, "longer", letters[25:17]),
 #'                          stringsAsFactors=FALSE)
-#'   levels(testData$fac1) <- c(levels(testData$fac1), "unusedLevel")
-#'   testData$Date <- as.Date("1900-1-1")
-#'   testData$Date[2] <- NA
-#'   testData$POSIXt <- as.POSIXct(strptime("1900-1-1 01:01:01",
+#'   levels(testData[["fac1"]]) <- c(levels(testData[["fac1"]]), "unusedLevel")
+#'   testData[["Date"]] <- as.Date("1900-1-1")
+#'   testData[["Date"]][2] <- NA
+#'   testData[["POSIXt"]] <- as.POSIXct(strptime("1900-1-1 01:01:01",
 #'                                          format="%Y-%m-%d %H:%M:%S"))
-#'   testData$POSIXt[5] <- NA
+#'   testData[["POSIXt"]][5] <- NA
 #' 
 #'   ## Default
 #'   write.fwf(x=testData)
@@ -169,10 +169,10 @@
 #'   write.fwf(x=testData[, 1:5], width=20)
 #' 
 #'   ## Show effect of 'scienfic' option
-#'   testData$num3 <- testData$num3 * 1e8
+#'   testData[["num3"]] <- testData[["num3"]] * 1e8
 #'   write.fwf(testData, scientific=TRUE)
 #'   write.fwf(testData, scientific=FALSE)
-#'   testData$num3 <- testData$num3 / 1e8
+#'   testData[["num3"]] <- testData[["num3"]] / 1e8
 #' 
 #'   ## Write to file and report format and fixed width information
 #'   file <- tempfile()
@@ -181,18 +181,18 @@
 #' 
 #'   ## Read exported data back to R (note +1 due to separator)
 #'   ## ... without header
-#'   read.fwf(file=file, widths=formatInfo$width + 1, header=FALSE, skip=1,
+#'   read.fwf(file=file, widths=formatInfo[["width"]] + 1, header=FALSE, skip=1,
 #'            strip.white=TRUE)
 #'   
 #'   ## ... with header - via postimport modfication
-#'   tmp <- read.fwf(file=file, widths=formatInfo$width + 1, skip=1,
+#'   tmp <- read.fwf(file=file, widths=formatInfo[["width"]] + 1, skip=1,
 #'                   strip.white=TRUE)
 #'   colnames(tmp) <- read.table(file=file, nrow=1, as.is=TRUE)
 #'   tmp
 #' 
 #'   ## ... with header - persuading read.fwf to accept header properly
 #'   ## (thanks to Marc Schwartz)
-#'   read.fwf(file=file, widths=formatInfo$width + 1, strip.white=TRUE,
+#'   read.fwf(file=file, widths=formatInfo[["width"]] + 1, strip.white=TRUE,
 #'            skip=1, col.names=read.table(file=file, nrow=1, as.is=TRUE))
 #' 
 #'   ## ... with header - with the use of quotes
@@ -297,7 +297,7 @@ write.fwf <- function(x,
   if(is.matrix(x)) tmp <- as.data.frame(tmp)
   tmp1 <- sapply(tmp, length)
   tmp <- t(as.data.frame(tmp))
-  retFormat$width <- tmp[, 1]
+  retFormat[["width"]] <- tmp[, 1]
   ## Collect other details for numeric columns
   if(any(isNum)) {
     ## Numeric columns with digits
@@ -361,11 +361,11 @@ write.fwf <- function(x,
 
   ## Check that width was not to small
   if(!widthNULL) {
-    test <- retFormat$width > width
+    test <- retFormat[["width"]] > width
     if(any(test)) {
       tmpCol <- paste(colnamesMy[test], collapse=", ")
       tmpWidth <- paste(width[test], collapse=", ")
-      tmpNeed <- paste(retFormat$width[test], collapse=", ")
+      tmpNeed <- paste(retFormat[["width"]][test], collapse=", ")
       stop(paste("'width' (", tmpWidth, ") was too small for columns: ",
                  tmpCol, "\n 'width' should be at least (", tmpNeed, ")",
                  sep=""))
@@ -403,13 +403,13 @@ write.fwf <- function(x,
 
   if(formatInfo) {
     ## be carefull with these ifelse constructs
-    retFormat$position[1] <- ifelse(quote, ifelse(quoteInfo, 1, 2), 1)
-    if(ifelse(quote, quoteInfo, FALSE)) retFormat$width <- retFormat$width + 2
+    retFormat[["position"]][1] <- ifelse(quote, ifelse(quoteInfo, 1, 2), 1)
+    if(ifelse(quote, quoteInfo, FALSE)) retFormat[["width"]] <- retFormat[["width"]] + 2
     N <- nrow(retFormat)
     if(N > 1) {
       for(i in 2:N) {
-        retFormat$position[i] <- retFormat$position[i - 1] +
-          retFormat$width[i - 1] + nchar(x=sep, type="chars") +
+        retFormat[["position"]][i] <- retFormat[["position"]][i - 1] +
+          retFormat[["width"]][i - 1] + nchar(x=sep, type="chars") +
             ifelse(quote, ifelse(quoteInfo, 0, 1), 0)
       }
     }

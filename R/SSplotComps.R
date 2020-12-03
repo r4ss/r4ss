@@ -197,33 +197,33 @@ SSplotComps <-
   }
   plotinfo <- NULL
 
-  SS_versionNumeric <- replist$SS_versionNumeric
+  SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
-  lendbase      <- replist$lendbase
-  sizedbase     <- replist$sizedbase
-  agedbase      <- replist$agedbase
-  condbase      <- replist$condbase
-  ghostagedbase <- replist$ghostagedbase
-  ghostlendbase <- replist$ghostlendbase
-  ladbase       <- replist$ladbase
-  wadbase       <- replist$wadbase
-  tagdbase1     <- replist$tagdbase1
-  tagdbase2     <- replist$tagdbase2
+  lendbase      <- replist[["lendbase"]]
+  sizedbase     <- replist[["sizedbase"]]
+  agedbase      <- replist[["agedbase"]]
+  condbase      <- replist[["condbase"]]
+  ghostagedbase <- replist[["ghostagedbase"]]
+  ghostlendbase <- replist[["ghostlendbase"]]
+  ladbase       <- replist[["ladbase"]]
+  wadbase       <- replist[["wadbase"]]
+  tagdbase1     <- replist[["tagdbase1"]]
+  tagdbase2     <- replist[["tagdbase2"]]
 
-  nfleets       <- replist$nfleets
-  nseasons      <- replist$nseasons
-  seasfracs     <- replist$seasfracs
-  FleetNames    <- replist$FleetNames
-  nsexes        <- replist$nsexes
-  accuage       <- replist$accuage
+  nfleets       <- replist[["nfleets"]]
+  nseasons      <- replist[["nseasons"]]
+  seasfracs     <- replist[["seasfracs"]]
+  FleetNames    <- replist[["FleetNames"]]
+  nsexes        <- replist[["nsexes"]]
+  accuage       <- replist[["accuage"]]
 
-  Age_tuning    <- replist$Age_comp_Eff_N_tuning_check
+  Age_tuning    <- replist[["Age_comp_Eff_N_tuning_check"]]
 
   # define a variety of titles and labels
   titles <- NULL
   titlemkt <- ""
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   # sort out which fleets will be included
@@ -293,12 +293,12 @@ SSplotComps <-
     }
   }
   if(kind=="SIZE"){
-    dbase_kind <- sizedbase[sizedbase$method==sizemethod,]
+    dbase_kind <- sizedbase[sizedbase[["method"]]==sizemethod,]
     # if user provided sizebinlabs, then add tick and label
     # associated with each bin
     if(!is.null(sizebinlabs)){
       kindlab <- labels[15]
-      axis1 <- sort(unique(dbase_kind$Bin))
+      axis1 <- sort(unique(dbase_kind[["Bin"]]))
       # confirm that vector of labels is the correct length
       if(length(sizebinlabs) == length(axis1)){
         axis1labs <- sizebinlabs
@@ -310,7 +310,7 @@ SSplotComps <-
       }
     }else{
       # evenly spaced units in length or weight rather than sizebins
-      sizeunits <- unique(dbase_kind$units)
+      sizeunits <- unique(dbase_kind[["units"]])
       if(length(sizeunits)>1){
         stop("!error with size units in generalized size comp plots:\n",
              "    more than one unit value per method.\n")
@@ -330,7 +330,7 @@ SSplotComps <-
       titledata <- "Size comps, "
     }
     # add text noting which size method is represented
-    if(length(unique(sizedbase$method)) > 1){
+    if(length(unique(sizedbase[["method"]])) > 1){
       filenamestart <- paste0(filenamestart, "method", sizemethod, "_")
       titledata <- paste0(titledata, " size method ", sizemethod, ", ")
     }
@@ -380,7 +380,7 @@ SSplotComps <-
     }
   }
   if(kind=="L@A"){
-    dbase_kind <- ladbase[ladbase$Nsamp_adj!=0,] # remove values with 0 sample size
+    dbase_kind <- ladbase[ladbase[["Nsamp_adj"]]!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_LAAdat_"
@@ -389,10 +389,10 @@ SSplotComps <-
       filenamestart <- "comp_LAAfit_"
       titledata <- "Mean length at age fit, "
     }      
-    dbase_kind$SD <- dbase_kind$Lbin_lo / dbase_kind$Nsamp_adj
+    dbase_kind[["SD"]] <- dbase_kind[["Lbin_lo"]] / dbase_kind[["Nsamp_adj"]]
   }
   if(kind=="W@A"){
-    dbase_kind <- wadbase[wadbase$Nsamp_adj!=0,] # remove values with 0 sample size
+    dbase_kind <- wadbase[wadbase[["Nsamp_adj"]]!=0,] # remove values with 0 sample size
     kindlab=labels[2]
     if(datonly){
       filenamestart <- "comp_WAAdat_"
@@ -401,7 +401,7 @@ SSplotComps <-
       filenamestart <- "comp_WAAfit_"
       titledata <- "Mean weight at age fit, "
     }
-    dbase_kind$SD <- dbase_kind$Lbin_lo/dbase_kind$Nsamp_adj
+    dbase_kind[["SD"]] <- dbase_kind[["Lbin_lo"]]/dbase_kind[["Nsamp_adj"]]
   }
   if(!(kind%in%c("LEN","SIZE","AGE","cond","GSTAGE","GSTLEN","L@A","W@A"))){
     stop("Input 'kind' to SSplotComps needs to be one of the following:\n  ",
@@ -412,36 +412,36 @@ SSplotComps <-
   # either equal to partition or constant across all samples
   if(nrow(dbase_kind)>0){
     if(aggregates_by_mkt){
-      dbase_kind$Part_group <- dbase_kind$Part
+      dbase_kind[["Part_group"]] <- dbase_kind[["Part"]]
     }else{
-      dbase_kind$Part_group <- -1 # code for all partitions combined
+      dbase_kind[["Part_group"]] <- -1 # code for all partitions combined
     }
   }
 
 
   # Add asterix to indicate super periods and then remove rows labeled "skip".
   # It would be better to somehow show the range of years, but that seems difficult.
-  if(any(dbase_kind$SuprPer=="Sup" & dbase_kind$Used=="skip")){
+  if(any(dbase_kind[["SuprPer"]]=="Sup" & dbase_kind[["Used"]]=="skip")){
     cat("Note: removing super-period composition values labeled 'skip'\n",
         "     and designating super-period values with a '*'\n")
-    dbase_kind <- dbase_kind[dbase_kind$SuprPer=="No" | dbase_kind$Used!="skip",]
-    dbase_kind$YrSeasName <- paste(dbase_kind$YrSeasName,ifelse(dbase_kind$SuprPer=="Sup","*",""),sep="")
+    dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]]=="No" | dbase_kind[["Used"]]!="skip",]
+    dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]],ifelse(dbase_kind[["SuprPer"]]=="Sup","*",""),sep="")
   }
   ageerr_warning <- TRUE
 
   # subset data based on requested range of fleets and sexes
-  dbase_kind <- dbase_kind[dbase_kind$Fleet %in% fleets & dbase_kind$sex %in% sexes,]
+  dbase_kind <- dbase_kind[dbase_kind[["Fleet"]] %in% fleets & dbase_kind[["sex"]] %in% sexes,]
 
   # loop over fleets
   for(f in fleets){
     # check for the presence of data
-    if(length(dbase_kind$Obs[dbase_kind$Fleet==f])>0){
-      dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+    if(length(dbase_kind[["Obs"]][dbase_kind[["Fleet"]]==f])>0){
+      dbasef <- dbase_kind[dbase_kind[["Fleet"]]==f,]
       #get mean sample quantities to show in conditional age-at-length figures
-      if(kind %in% c("cond","GSTcond") && f %in% Age_tuning$Fleet){
+      if(kind %in% c("cond","GSTcond") && f %in% Age_tuning[["Fleet"]]){
         #### these values not to be trusted in the presence of ghost data:
-        ## HarmEffNage <- Age_tuning$"HarMean(effN)"[Age_tuning$Fleet==f]
-        ## MeanNage    <- Age_tuning$"mean(inputN*Adj)"[Age_tuning$Fleet==f]
+        ## HarmEffNage <- Age_tuning$"HarMean(effN)"[Age_tuning[["Fleet"]]==f]
+        ## MeanNage    <- Age_tuning$"mean(inputN*Adj)"[Age_tuning[["Fleet"]]==f]
         HarmEffNage <- NULL
         MeanNage <- NULL
       }else{
@@ -451,27 +451,27 @@ SSplotComps <-
       # loop over sex combinations
       ## for(k in (1:3)[testor])
       ## {
-      ##   if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
-      ##   if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
-      ##   if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
+      ##   if(k==1){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0,]}
+      ##   if(k==2){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3),]}
+      ##   if(k==3){dbase_k <- dbasef[dbasef[["sex"]]==2,]}
       ##   sex <- ifelse(k==3, 2, 1)
       ##   if(sex %in% sexes){
       ##     cat('sex',sex,'\n')
 
       dbase_k <- dbasef
       # loop over partitions (discard, retain, total)
-      for(j in unique(dbase_k$Part)){
-        dbase <- dbase_k[dbase_k$Part==j,]
+      for(j in unique(dbase_k[["Part"]])){
+        dbase <- dbase_k[dbase_k[["Part"]]==j,]
         # dbase is the final data.frame used in the individual plots
         # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
 
         ## # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
         ## if(!"Yr.S" %in% names(dbase)){
         ##   # add fraction of season to distinguish between samples
-        ##   dbase$Yr.S <- dbase$Yr + (0.5/nseasons)*dbase$Seas
+        ##   dbase[["Yr.S"]] <- dbase[["Yr"]] + (0.5/nseasons)*dbase[["Seas"]]
         ## }
         # check for multiple ageing error types within a year to plot separately
-        max_n_ageerr <- max(apply(table(dbase$Yr.S,dbase$Ageerr)>0,1,sum))
+        max_n_ageerr <- max(apply(table(dbase[["Yr.S"]],dbase[["Ageerr"]])>0,1,sum))
 
         if(max_n_ageerr > 1){
           if(ageerr_warning){
@@ -481,11 +481,11 @@ SSplotComps <-
             ageerr_warning <- FALSE
           }
           # add 1/1000 of a year for each ageing error type to distinguish between types within a year
-          dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/1000
-          dbase$YrSeasName <- paste(dbase$YrSeasName,"a",dbase$Ageerr,sep="")
+          dbase[["Yr.S"]] <- dbase[["Yr.S"]] + dbase[["Ageerr"]]/1000
+          dbase[["YrSeasName"]] <- paste(dbase[["YrSeasName"]],"a",dbase[["Ageerr"]],sep="")
         }
-        ## dbase$Yr.S[dbase_k$Pick_sex==1] <- dbase$Yr.S[dbase_k$Pick_sex==1] + 1e-6
-        ## dbase$Yr.S[dbase_k$Pick_sex==2] <- dbase$Yr.S[dbase_k$Pick_sex==2] + 2e-6
+        ## dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==1] <- dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==1] + 1e-6
+        ## dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==2] <- dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==2] + 2e-6
 
         ## assemble pieces of plot title
         # market category
@@ -511,22 +511,22 @@ SSplotComps <-
           }
           titles <- c(ptitle,titles) # compiling list of all plot titles
           tempfun <- function(ipage,...){
-            sexvec <- dbase$sex
+            sexvec <- dbase[["sex"]]
             # a function to combine a bunch of repeated commands
             if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
               # test for Dirichlet-Multinomial likelihood
-              if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
+              if("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))){
                 # Dirichlet-Multinomial likelihood
-                make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
-                              linesx=dbase$Bin,linesy=dbase$Exp,
-                              sampsize=dbase$Nsamp_adj,
-                              effN=dbase$DM_effN,
+                make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],
+                              linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                              sampsize=dbase[["Nsamp_adj"]],
+                              effN=dbase[["DM_effN"]],
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="N input=",
                               effN_label="N adj.=",
                               bars=bars,linepos=(1-datonly)*linepos,
                               nlegends=3,
-                              legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                              legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims,ipage=ipage,scalebins=scalebins,
@@ -536,15 +536,15 @@ SSplotComps <-
                               sexvec=sexvec, yupper=yupper, ...)
               }else{
                 # standard multinomial likelihood
-                make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
-                              linesx=dbase$Bin,linesy=dbase$Exp,
-                              sampsize=dbase$Nsamp_adj,effN=dbase$effN,
+                make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],
+                              linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                              sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="N adj.=",
                               effN_label="N eff.=",
                               bars=bars,linepos=(1-datonly)*linepos,
                               nlegends=3,
-                              legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                              legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
                               main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                               maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                               fixdims=fixdims,ipage=ipage,scalebins=scalebins,
@@ -555,11 +555,11 @@ SSplotComps <-
               }                
             }
             if(kind=="GSTAGE"){
-              make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                            sampsize=dbase$Nsamp_adj,effN=dbase$effN,
+              make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                            sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],
                             showsampsize=FALSE,showeffN=FALSE,
                             bars=bars,linepos=(1-datonly)*linepos,
-                            nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                            nlegends=3,legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
@@ -569,10 +569,10 @@ SSplotComps <-
                             sexvec=sexvec, yupper=yupper, ...)
             }
             if(kind=="GSTLEN"){
-              make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                            sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+              make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                            sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],showsampsize=FALSE,showeffN=FALSE,
                             bars=bars,linepos=(1-datonly)*linepos,
-                            nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                            nlegends=3,legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
                             main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                             maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                             fixdims=fixdims,ipage=ipage,scalebins=scalebins,
@@ -582,11 +582,11 @@ SSplotComps <-
                             sexvec=sexvec,...)
             }
             if(kind %in% c("L@A","W@A")){
-              make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,
-                            linesx=dbase$Bin,linesy=dbase$Exp,
-                            ptsSD=dbase$SD,
-                            sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
-                            nlegends=1,legtext=list(dbase$YrSeasName),
+              make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],
+                            linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                            ptsSD=dbase[["SD"]],
+                            sampsize=dbase[["Nsamp_adj"]],effN=0,showsampsize=FALSE,showeffN=FALSE,
+                            nlegends=1,legtext=list(dbase[["YrSeasName"]]),
                             bars=bars,linepos=(1-datonly)*linepos,
                             main=ptitle,cex.main=cex.main,xlab=kindlab,
                             ylab=ifelse(kind=="W@A",labels[9],labels[1]),
@@ -601,7 +601,7 @@ SSplotComps <-
 
           if(plot) tempfun(ipage=0,...)
           if(print){ # set up plotting to png file if required
-            npages <- ceiling(length(unique(dbase$Yr.S))/maxrows/maxcols)
+            npages <- ceiling(length(unique(dbase[["Yr.S"]]))/maxrows/maxcols)
             for(ipage in 1:npages){
               pagetext <- ""
               caption_count <- ""
@@ -611,10 +611,10 @@ SSplotComps <-
               }
               caption_extra <- ""
               if(ipage==1){
-                if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
+                if("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))){
                   # get Theta value for this fleet
-                  ipar <- replist$age_data_info$ParmSelect[f]
-                  Theta <- as.numeric(replist$Dirichlet_Multinomial_pars$Theta[ipar])
+                  ipar <- replist[["age_data_info"]][["ParmSelect"]][f]
+                  Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                   # note: in caption below, &#920 = Theta
                   caption_extra <-
                     paste0(".<br><br>'N input' is the input sample size. ",
@@ -656,16 +656,16 @@ SSplotComps <-
 
         # some things related to the next two bubble plots (single or multi-panel)
         if(datonly){
-          z <- dbase$Obs
+          z <- dbase[["Obs"]]
           if(scalebubbles){
-            z <- dbase$Nsamp_adj*dbase$Obs # if requested, scale by sample sizes
+            z <- dbase[["Nsamp_adj"]]*dbase[["Obs"]] # if requested, scale by sample sizes
           }
           col <- rep("black",2)
           titletype <- titledata
           filetype <- "bub"
           allopen <- TRUE
         }else{
-          z <- dbase$Pearson
+          z <- dbase[["Pearson"]]
           col <- rep(colvec[3],2)
           titletype <- "Pearson residuals, "
           filetype <- "resids"
@@ -676,10 +676,10 @@ SSplotComps <-
         if(2 %in% subplots & bub & kind!="cond"){
           # get growth curves if requested
           if(length(cohortlines)>0){
-            growdat <- replist$endgrowth
-            growdatF <- growdat[growdat$Sex==1 & growdat$Morph==min(growdat$Morph[growdat$Sex==1]),]
+            growdat <- replist[["endgrowth"]]
+            growdatF <- growdat[growdat[["Sex"]]==1 & growdat[["Morph"]]==min(growdat[["Morph"]][growdat[["Sex"]]==1]),]
             if(nsexes > 1){
-              growdatM <- growdat[growdat$Sex==2 & growdat$Morph==min(growdat$Morph[growdat$Sex==2]),]
+              growdatM <- growdat[growdat[["Sex"]]==2 & growdat[["Morph"]]==min(growdat[["Morph"]][growdat[["Sex"]]==2]),]
             }
           }
           # assemble caption that may also be used for plot title
@@ -693,10 +693,10 @@ SSplotComps <-
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
           tempfun2 <- function(){
-            xvals <- dbase$Yr.S
+            xvals <- dbase[["Yr.S"]]
             # calculate smallest difference among years
             # which is used to adjust offsets males and females
-            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)),
+            xdiff <- 0.1*sort(unique(diff(sort(unique(dbase[["Yr.S"]])),
                                           na.rm=TRUE)))[1]
             # not sure what cases would have missing xdiff
             # from above calculation, but it definitely happens
@@ -707,18 +707,18 @@ SSplotComps <-
             }
             cols <- rep(colvec[3],nrow(dbase))
             if(nsexes > 1){
-              xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
-                (dbase$sex[dbase$sex>0]-1.5)*xdiff
-              if(length(unique(dbase$Yr.S))==1){
+              xvals[dbase[["sex"]]>0] <- dbase[["Yr.S"]][dbase[["sex"]]>0] -
+                (dbase[["sex"]][dbase[["sex"]]>0]-1.5)*xdiff
+              if(length(unique(dbase[["Yr.S"]]))==1){
                 # if only one year, don't bother showing points
                 # as mid-year values
                 # this may not be ideal for seasonal models
-                xvals[dbase$sex>0] <- floor(dbase$Yr.S[dbase$sex>0]) -
-                  (dbase$sex[dbase$sex>0]-1.5)*xdiff
+                xvals[dbase[["sex"]]>0] <- floor(dbase[["Yr.S"]][dbase[["sex"]]>0]) -
+                  (dbase[["sex"]][dbase[["sex"]]>0]-1.5)*xdiff
               }
-              cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
+              cols[dbase[["sex"]]>0] <- colvec[dbase[["sex"]][dbase[["sex"]]>0]]
             }
-            bubble3(x=xvals, y=dbase$Bin, z=z, xlab=labels[3],
+            bubble3(x=xvals, y=dbase[["Bin"]], z=z, xlab=labels[3],
                     ylab=kindlab, col=cols, cexZ1=cexZ1,
                     legend=bublegend,
                     las=1, main=ptitle, cex.main=cex.main, maxsize=pntscalar,
@@ -729,13 +729,13 @@ SSplotComps <-
                 cat("  Adding line for",cohortlines[icohort],"cohort\n")
                 if(kind=="LEN"){
                   if(nsexes>1){
-                    lines(growdatF$Age_Mid+cohortlines[icohort],
-                          growdatF$Len_Mid, col=colvec[1]) #females
-                    lines(growdatM$Age_Mid+cohortlines[icohort],
-                          growdatM$Len_Mid, col=colvec[2]) #males
+                    lines(growdatF[["Age_Mid"]]+cohortlines[icohort],
+                          growdatF[["Len_Mid"]], col=colvec[1]) #females
+                    lines(growdatM[["Age_Mid"]]+cohortlines[icohort],
+                          growdatM[["Len_Mid"]], col=colvec[2]) #males
                   }else{
-                    lines(growdatF$Age_Mid+cohortlines[icohort],
-                          growdatF$Len_Mid, col=colvec[3]) #single-sex growth
+                    lines(growdatF[["Age_Mid"]]+cohortlines[icohort],
+                          growdatF[["Len_Mid"]], col=colvec[3]) #single-sex growth
                   }
                 }
                 if(kind %in% c("AGE","GSTAGE")){
@@ -783,10 +783,10 @@ SSplotComps <-
           effNline.old <- effNline
           if(is.logical(sampsizeline) && sampsizeline){
             # scaling when displaying only adjusted input sample size
-            sampsizeline <- max(dbase$Bin)/max(dbase$Nsamp_adj,na.rm=TRUE)
+            sampsizeline <- max(dbase[["Bin"]])/max(dbase[["Nsamp_adj"]],na.rm=TRUE)
             if(!datonly && is.logical(effNline) && effNline){
               # scaling when displaying both input and effective
-              sampsizeline <- effNline  <- max(dbase$Bin)/max(dbase$Nsamp_adj,dbase$effN,na.rm=TRUE)
+              sampsizeline <- effNline  <- max(dbase[["Bin"]])/max(dbase[["Nsamp_adj"]],dbase[["effN"]],na.rm=TRUE)
               cat("  Fleet ",f," ",titlesex,"adj. input & effective N in red & green scaled by ",effNline,"\n",sep="")
             }else{
               cat("  Fleet ",f," ",titlesex,"adj. input N in red scaled by ",sampsizeline,"\n",sep="")
@@ -794,17 +794,17 @@ SSplotComps <-
           }
           # function to make plots
           tempfun3 <- function(ipage,...){
-            sexvec <- dbase$sex
+            sexvec <- dbase[["sex"]]
             col.index <- sexvec
             col.index[col.index==0] <- 3
             cols <- colvec[col.index]
-            yrvec <- dbase$Yr.S + dbase$sex*1e-6
-            make_multifig(ptsx=dbase$Bin,ptsy=dbase$Lbin_mid,yr=yrvec,size=z,
-                          sampsize=dbase$Nsamp_adj,showsampsize=showsampsize,effN=dbase$effN,
+            yrvec <- dbase[["Yr.S"]] + dbase[["sex"]]*1e-6
+            make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Lbin_mid"]],yr=yrvec,size=z,
+                          sampsize=dbase[["Nsamp_adj"]],showsampsize=showsampsize,effN=dbase[["effN"]],
                           showeffN=FALSE,
                           cexZ1=cexZ1,
                           bublegend=bublegend,
-                          nlegends=1,legtext=list(dbase$YrSeasName),
+                          nlegends=1,legtext=list(dbase[["YrSeasName"]]),
                           bars=FALSE,linepos=0,main=ptitle,cex.main=cex.main,
                           xlab=labels[2],ylab=labels[1],ymin0=FALSE,maxrows=maxrows2,maxcols=maxcols2,
                           fixdims=fixdims,allopen=allopen,minnbubble=minnbubble,
@@ -820,8 +820,8 @@ SSplotComps <-
           }
           if(plot) tempfun3(ipage=0,...)
           if(print){ # set up plotting to png file if required
-            npages <- ceiling(length(unique(dbase$Yr.S))*
-                                length(unique(dbase$sex))/maxrows2/maxcols2)
+            npages <- ceiling(length(unique(dbase[["Yr.S"]]))*
+                                length(unique(dbase[["sex"]]))/maxrows2/maxcols2)
             for(ipage in 1:npages){
               pagetext <- ""
               if(npages>1){
@@ -845,9 +845,9 @@ SSplotComps <-
         if((4 %in% subplots | 5 %in% subplots) & aalyear[1] > 0 & kind=="cond"){
           for(y in 1:length(aalyear)){
             aalyr <- aalyear[y]
-            if(length(dbase$Obs[dbase$Yr==aalyr])>0){
-              ydbase <- dbase[dbase$Yr==aalyr,]
-              sexvec <- ydbase$sex
+            if(length(dbase[["Obs"]][dbase[["Yr"]]==aalyr])>0){
+              ydbase <- dbase[dbase[["Yr"]]==aalyr,]
+              sexvec <- ydbase[["sex"]]
               if(4 %in% subplots){
                 ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
                 caption <- paste(aalyr," age-at-length bin, ",title_sexmkt,fleetnames[f],sep="")
@@ -857,12 +857,12 @@ SSplotComps <-
                   ptitle <- ""
                 }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
-                lenbinlegend <- paste(ydbase$Lbin_lo,labels[7],sep="")
-                lenbinlegend[ydbase$Lbin_range>0] <- paste(ydbase$Lbin_lo,"-",ydbase$Lbin_hi,labels[7],sep="")
+                lenbinlegend <- paste(ydbase[["Lbin_lo"]],labels[7],sep="")
+                lenbinlegend[ydbase[["Lbin_range"]]>0] <- paste(ydbase[["Lbin_lo"]],"-",ydbase[["Lbin_hi"]],labels[7],sep="")
                 tempfun4 <- function(ipage,...){ # temporary function to aid repeating the big function call
-                  make_multifig(ptsx=ydbase$Bin,ptsy=ydbase$Obs,yr=ydbase$Lbin_lo,
-                                linesx=ydbase$Bin,linesy=ydbase$Exp,
-                                sampsize=ydbase$Nsamp_adj,effN=ydbase$effN,showsampsize=showsampsize,showeffN=showeffN,
+                  make_multifig(ptsx=ydbase[["Bin"]],ptsy=ydbase[["Obs"]],yr=ydbase[["Lbin_lo"]],
+                                linesx=ydbase[["Bin"]],linesy=ydbase[["Exp"]],
+                                sampsize=ydbase[["Nsamp_adj"]],effN=ydbase[["effN"]],showsampsize=showsampsize,showeffN=showeffN,
                                 nlegends=3,legtext=list(lenbinlegend,"sampsize","effN"),
                                 bars=FALSE,linepos=linepos,main=ptitle,cex.main=cex.main,
                                 xlab=labels[2],ylab=labels[6],maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -873,7 +873,7 @@ SSplotComps <-
                 }
                 if(plot) tempfun4(ipage=0,...)
                 if(print){
-                  npages <- ceiling(length(unique(ydbase$Yr.S))/maxrows/maxcols)
+                  npages <- ceiling(length(unique(ydbase[["Yr.S"]]))/maxrows/maxcols)
                   for(ipage in 1:npages){
                     pagetext <- ""
                     if(npages>1){
@@ -897,11 +897,11 @@ SSplotComps <-
               } # end if 4 in subplots
               if(5 %in% subplots){
                 ### subplot 5: Pearson residuals for A-L key
-                z <- ydbase$Pearson
+                z <- ydbase[["Pearson"]]
                 col.index <- sexvec
                 col.index[col.index==0] <- 3
                 cols <- colvec[col.index]
-                x.vec <- ydbase$Bin + ydbase$sex*1e-6
+                x.vec <- ydbase[["Bin"]] + ydbase[["sex"]]*1e-6
                 caption <- paste(aalyr," Pearson residuals for A-L key, ",title_sexmkt,fleetnames[f],sep="")
                 caption <- paste(caption," (max=",round(abs(max(z)),digits=2),")",sep="")
                 if(mainTitle) {
@@ -911,7 +911,7 @@ SSplotComps <-
                 }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun5 <- function(){
-                  bubble3(x=x.vec,y=ydbase$Lbin_lo,z=z,xlab=labels[2],
+                  bubble3(x=x.vec,y=ydbase[["Lbin_lo"]],z=z,xlab=labels[2],
                           ylab=labels[1],col=cols,las=1,main=ptitle,
                           cex.main=cex.main,maxsize=pntscalar,
                           cexZ1=cexZ1,
@@ -946,8 +946,8 @@ SSplotComps <-
         ### subplot 6: multi-panel plot of point and line fit to conditional
         ###            age-at-length for specific length bins
         if(6 %in% subplots & aalbin[1] > 0){
-          badbins <- setdiff(aalbin, dbase$Lbin_hi)
-          goodbins <- intersect(aalbin, dbase$Lbin_hi)
+          badbins <- setdiff(aalbin, dbase[["Lbin_hi"]])
+          goodbins <- intersect(aalbin, dbase[["Lbin_hi"]])
           if(length(goodbins)>0){
             if(length(badbins)>0){
               cat("Error! the following inputs for 'aalbin' do not match the Lbin_hi values for the conditional age-at-length data:",badbins,"\n",
@@ -955,9 +955,9 @@ SSplotComps <-
             }
             for(ibin in 1:length(goodbins)){ # loop over good bins
               ilenbin <- goodbins[ibin]
-              abindbase <- dbase[dbase$Lbin_hi==ilenbin,]
+              abindbase <- dbase[dbase[["Lbin_hi"]]==ilenbin,]
               if(nrow(abindbase)>0){ # check for data associated with this bin
-                sexvec <- abindbase$sex
+                sexvec <- abindbase[["sex"]]
                 caption <- paste0("Age-at-length ",ilenbin,labels[7],", ",title_sexmkt,fleetnames[f])
                 if(mainTitle) {
                   ptitle <- caption
@@ -966,9 +966,9 @@ SSplotComps <-
                 }
                 titles <- c(ptitle,titles) # compiling list of all plot titles
                 tempfun6 <- function(ipage,...){ # temporary function to aid repeating the big function call
-                  make_multifig(ptsx=abindbase$Bin,ptsy=abindbase$Obs,yr=abindbase$Yr.S,linesx=abindbase$Bin,linesy=abindbase$Exp,
-                                sampsize=abindbase$Nsamp_adj,effN=abindbase$effN,showsampsize=showsampsize,showeffN=showeffN,
-                                nlegends=3,legtext=list(abindbase$YrSeasName,"sampsize","effN"),
+                  make_multifig(ptsx=abindbase[["Bin"]],ptsy=abindbase[["Obs"]],yr=abindbase[["Yr.S"]],linesx=abindbase[["Bin"]],linesy=abindbase[["Exp"]],
+                                sampsize=abindbase[["Nsamp_adj"]],effN=abindbase[["effN"]],showsampsize=showsampsize,showeffN=showeffN,
+                                nlegends=3,legtext=list(abindbase[["YrSeasName"]],"sampsize","effN"),
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -977,7 +977,7 @@ SSplotComps <-
                 }
                 if(plot) tempfun6(ipage=0,...)
                 if(print){
-                  npages <- ceiling(length(unique(abindbase$Yr.S))/maxrows/maxcols)
+                  npages <- ceiling(length(unique(abindbase[["Yr.S"]]))/maxrows/maxcols)
                   for(ipage in 1:npages){
                     pagetext <- ""
                     if(npages>1){
@@ -998,7 +998,7 @@ SSplotComps <-
 
         ### subplot 7: sample size plot
         if(7 %in% subplots & samplesizeplots & !datonly &
-           !("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))) &
+           !("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) &
            !(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
           caption <- paste0("N-EffN comparison, ",titledata,title_sexmkt,fleetnames[f])
           if(mainTitle) {
@@ -1011,8 +1011,8 @@ SSplotComps <-
             if(kind=="cond"){
               # trap nonrobust effective n's
               # should this only be for conditional age-at-length or all plots?
-              dbasegood <- dbase[dbase$Obs>=0.0001 & dbase$Exp<0.99 &
-                                 !is.na(dbase$effN) & dbase$effN<maxneff,]
+              dbasegood <- dbase[dbase[["Obs"]]>=0.0001 & dbase[["Exp"]]<0.99 &
+                                 !is.na(dbase[["effN"]]) & dbase[["effN"]]<maxneff,]
             }else{
               dbasegood <- dbase
             }
@@ -1021,35 +1021,35 @@ SSplotComps <-
               # (for the purposes of this function)
               dbasegood2 <- dbasegood[,c("YrSeasName","Nsamp_adj","effN")]
               dbasegood2 <- unique(dbasegood2)
-              plot(dbasegood2$Nsamp_adj, dbasegood2$effN,xlab=labels[4],main=ptitle,
+              plot(dbasegood2[["Nsamp_adj"]], dbasegood2[["effN"]],xlab=labels[4],main=ptitle,
                    cex.main=cex.main,
-                   ylim=c(0,1.15*max(dbasegood2$effN)),xlim=c(0,1.15*max(dbasegood2$Nsamp_adj)),
+                   ylim=c(0,1.15*max(dbasegood2[["effN"]])),xlim=c(0,1.15*max(dbasegood2[["Nsamp_adj"]])),
                    col=colvec[3],pch=19,ylab=labels[5],xaxs="i",yaxs="i")
               # add labels for the years if requested
               if(showyears){
                 par(xpd=TRUE) # allows the label to go over plot boundary
-                text(x=dbasegood2$Nsamp_adj, y=dbasegood2$effN,
-                     dbasegood2$YrSeasName,adj=c(-0.2,0.5))
+                text(x=dbasegood2[["Nsamp_adj"]], y=dbasegood2[["effN"]],
+                     dbasegood2[["YrSeasName"]],adj=c(-0.2,0.5))
                 par(xpd=FALSE) # restores default clipping
               }
               abline(0,1,col="black",lty=1)
               # add loess smoother if there's at least 6 points with a range greater than 2
-              if(smooth & length(unique(dbasegood2$Nsamp_adj)) > 6 & diff(range(dbasegood2$Nsamp_adj))>2){
+              if(smooth & length(unique(dbasegood2[["Nsamp_adj"]])) > 6 & diff(range(dbasegood2[["Nsamp_adj"]]))>2){
                 old_warn <- options()$warn      # previous warnings setting
                 options(warn=-1)                # turn off loess warnings
-                psmooth <- loess(dbasegood2$effN~dbasegood2$Nsamp_adj, degree=1)
+                psmooth <- loess(dbasegood2[["effN"]]~dbasegood2[["Nsamp_adj"]], degree=1)
                 options(warn=old_warn)  #returning to old value
-                lines(psmooth$x[order(psmooth$x)],psmooth$fit[order(psmooth$x)],lwd=1.2,col="red",lty="dashed")
+                lines(psmooth[["x"]][order(psmooth[["x"]])],psmooth[["fit"]][order(psmooth[["x"]])],lwd=1.2,col="red",lty="dashed")
               }
               if(addMeans){
                 # vertical line with label for mean input sample size
-                abline(v=mean(dbasegood2$Nsamp_adj),lty="22",col='green3')
-                text(x=mean(dbasegood2$Nsamp_adj),y=0,
+                abline(v=mean(dbasegood2[["Nsamp_adj"]]),lty="22",col='green3')
+                text(x=mean(dbasegood2[["Nsamp_adj"]]),y=0,
                      col='green3',"arithmetic mean",
                      srt=90, adj=c(-0.1,-0.3))
                 # horizontal line with label for harmonic effective sample size
-                abline(h=1/mean(1/dbasegood2$effN),lty="22",col='green3')
-                text(x=0, y=1/mean(1/dbasegood2$effN),
+                abline(h=1/mean(1/dbasegood2[["effN"]]),lty="22",col='green3')
+                text(x=0, y=1/mean(1/dbasegood2[["effN"]]),
                      col='green3',"harmonic mean",
                      adj=c(-0.1,-0.3))
               }
@@ -1093,7 +1093,7 @@ SSplotComps <-
                               " based on current samples sizes.")
             # add warning at top of caption if Dirichlet-Multinomial is used
             # regarldess of whether it is applied to this fleet/data combination
-            if(!is.null(replist$Dirichlet_Multinomial_pars)){
+            if(!is.null(replist[["Dirichlet_Multinomial_pars"]])){
               caption <-
                 paste("WARNING: this figure is based on multinomial likelihood",
                       "and has not been updated to account for Dirichlet-Multinomial",
@@ -1131,7 +1131,7 @@ SSplotComps <-
           } # end test for print to PNG option
         } # end subplot 8
         ### subplot 9: Chris Francis TA1.8 method for conditional data
-        if(9 %in% subplots & kind=="cond" & (f %in% condbase$Fleet)){
+        if(9 %in% subplots & kind=="cond" & (f %in% condbase[["Fleet"]])){
           if(plot){
             SSMethod.Cond.TA1.8(fit=replist,
                                 fleet=f, fleetnames=fleetnames, datonly=datonly)
@@ -1181,7 +1181,7 @@ SSplotComps <-
           } # end test for print to PNG option
         }
         ### subplot 10: Andre's mean age and std. dev. in conditional AAL
-        if(10 %in% subplots & kind=="cond" & length(unique(dbase$Bin)) > 1){
+        if(10 %in% subplots & kind=="cond" & length(unique(dbase[["Bin"]])) > 1){
           caption1 <- paste(labels[14], title_sexmkt, fleetnames[f],sep="")
           if(mainTitle) {
             ptitle <- caption1
@@ -1189,12 +1189,12 @@ SSplotComps <-
             ptitle <- ""
           }
           andrefun <- function(ipage=0){
-            Lens <-sort(unique(dbase$Lbin_lo))
-            Yrs <- sort(unique(dbase$Yr.S))
+            Lens <-sort(unique(dbase[["Lbin_lo"]]))
+            Yrs <- sort(unique(dbase[["Yr.S"]]))
 
-            ymax <- 1.1*max(dbase$Bin,na.rm=TRUE)
-            xmax <- max(condbase$Lbin_hi,na.rm=TRUE)
-            xmin <- min(condbase$Lbin_lo,na.rm=TRUE)
+            ymax <- 1.1*max(dbase[["Bin"]],na.rm=TRUE)
+            xmax <- max(condbase[["Lbin_hi"]],na.rm=TRUE)
+            xmin <- min(condbase[["Lbin_lo"]],na.rm=TRUE)
 
             # do some stuff so that figures that span multiple pages can be output as separate PNG files
             npanels <- length(Yrs)
@@ -1205,24 +1205,24 @@ SSplotComps <-
 
             par(mfrow=c(andrerows,2),mar=c(2,4,1,1),oma=andre_oma)
             for (Yr in Yrs2){
-              y <- dbase[dbase$Yr.S==Yr,]
+              y <- dbase[dbase[["Yr.S"]]==Yr,]
               Size <- NULL; Size2 <- NULL
               Obs <- NULL; Obs2 <- NULL
               Pred <- NULL;  Pred2 <- NULL
               Upp <- NULL; Low <- NULL; Upp2 <- NULL; Low2 <- NULL
               for (Ilen in Lens){
-                z <- y[y$Lbin_lo == Ilen,]
+                z <- y[y[["Lbin_lo"]] == Ilen,]
                 if (length(z[,1]) > 0){
-                  weightsPred <- z$Exp/sum(z$Exp)
-                  weightsObs <- z$Obs/sum(z$Obs)
-                  ObsV <- sum(z$Bin*weightsObs)
-                  ObsV2 <- sum(z$Bin*z$Bin*weightsObs)
-                  PredV <- sum(z$Bin*weightsPred)
-                  PredV2 <- sum(z$Bin*z$Bin*weightsPred)
+                  weightsPred <- z[["Exp"]]/sum(z[["Exp"]])
+                  weightsObs <- z[["Obs"]]/sum(z[["Obs"]])
+                  ObsV <- sum(z[["Bin"]]*weightsObs)
+                  ObsV2 <- sum(z[["Bin"]]*z[["Bin"]]*weightsObs)
+                  PredV <- sum(z[["Bin"]]*weightsPred)
+                  PredV2 <- sum(z[["Bin"]]*z[["Bin"]]*weightsPred)
                   # Overdispersion on N
-                  # NN <- z$Nsamp_adj[1]*0.01 # Andre did this for reasons unknown
-                  NN <- z$Nsamp_adj[1]
-                  if (max(z$Obs, na.rm=TRUE) > 1.0e-4 & !is.na(NN) && NN>0){
+                  # NN <- z[["Nsamp_adj"]][1]*0.01 # Andre did this for reasons unknown
+                  NN <- z[["Nsamp_adj"]][1]
+                  if (max(z[["Obs"]], na.rm=TRUE) > 1.0e-4 & !is.na(NN) && NN>0){
                     Size <- c(Size,Ilen)
                     Obs <- c(Obs,ObsV)
                     Pred <- c(Pred,PredV)
@@ -1275,7 +1275,7 @@ SSplotComps <-
           } # end andrefun
           if(plot) andrefun()
           if(print){ # set up plotting to png file if required
-            npages <- ceiling(length(unique(dbase$Yr.S))/andrerows)
+            npages <- ceiling(length(unique(dbase[["Yr.S"]]))/andrerows)
             for(ipage in 1:npages){
               pagetext <- ""
               caption <- caption1
@@ -1316,10 +1316,10 @@ SSplotComps <-
       # no longer subsetting by sex, so mapping directly over
       dbase_k <- dbase_kind
       # loop over partitions (discard, retain, total)
-      for(j in unique(dbase_k$Part_group)){
+      for(j in unique(dbase_k[["Part_group"]])){
         # dbase is the final data.frame used in the individual plots
         # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
-        dbase <- dbase_k[dbase_k$Part_group==j,]
+        dbase <- dbase_k[dbase_k[["Part_group"]]==j,]
         if(nrow(dbase)>0){
           # market category
           if(j ==-1) titlemkt <- ""
@@ -1352,64 +1352,64 @@ SSplotComps <-
           }
           titles <- c(ptitle,titles) # compiling list of all plot titles
 
-          Bins <- sort(unique(dbase$Bin))
+          Bins <- sort(unique(dbase[["Bin"]]))
           nbins <- length(Bins)
-          df <- data.frame(Nsamp_adj = dbase$Nsamp_adj,
-                           effN      = dbase$effN,
-                           obs       = dbase$Obs * dbase$Nsamp_adj,
-                           exp       = dbase$Exp * dbase$Nsamp_adj)
-          if("DM_effN" %in% names(dbase) && any(!is.na(dbase$DM_effN))){
-            df$DM_effN <- dbase$DM_effN
+          df <- data.frame(Nsamp_adj = dbase[["Nsamp_adj"]],
+                           effN      = dbase[["effN"]],
+                           obs       = dbase[["Obs"]] * dbase[["Nsamp_adj"]],
+                           exp       = dbase[["Exp"]] * dbase[["Nsamp_adj"]])
+          if("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))){
+            df[["DM_effN"]] <- dbase[["DM_effN"]]
           }
 
           agg <- aggregate(x=df,
-                           by=list(bin=dbase$Bin, f=dbase$Fleet,
-                               sex=dbase$sex, mkt=dbase$Part),
+                           by=list(bin=dbase[["Bin"]], f=dbase[["Fleet"]],
+                               sex=dbase[["sex"]], mkt=dbase[["Part"]]),
                            FUN=sum)
-          agg <- agg[agg$f %in% fleets,]
-          agg$obs <- agg$obs/agg$Nsamp_adj
-          agg$exp <- agg$exp/agg$Nsamp_adj
+          agg <- agg[agg[["f"]] %in% fleets,]
+          agg[["obs"]] <- agg[["obs"]]/agg[["Nsamp_adj"]]
+          agg[["exp"]] <- agg[["exp"]]/agg[["Nsamp_adj"]]
 
           # note: sample sizes will be different for each bin if tail compression is used
           #       printed sample sizes in plot will be maximum, which may or may not
           #       represent sum of sample sizes over all years/ages
 
           # loop over fleets
-          for(f in unique(agg$f)){
+          for(f in unique(agg[["f"]])){
             # loop over fleets within market
-            for(mkt in unique(agg$mkt[agg$f == f])){
-              sub <- agg$f == f & agg$mkt == mkt
-              agg$Nsamp_adj[sub] <- max(agg$Nsamp_adj[sub])
-              if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
-                agg$DM_effN[sub] <- max(agg$DM_effN[sub], na.rm=TRUE)
+            for(mkt in unique(agg[["mkt"]][agg[["f"]] == f])){
+              sub <- agg[["f"]] == f & agg[["mkt"]] == mkt
+              agg[["Nsamp_adj"]][sub] <- max(agg[["Nsamp_adj"]][sub])
+              if("DM_effN" %in% names(agg) && any(!is.na(agg[["DM_effN"]]))){
+                agg[["DM_effN"]][sub] <- max(agg[["DM_effN"]][sub], na.rm=TRUE)
               }else{
-                if(any(!is.na(agg$effN[sub]))){
-                  agg$effN[sub] <- max(agg$effN[sub], na.rm=TRUE)
+                if(any(!is.na(agg[["effN"]][sub]))){
+                  agg[["effN"]][sub] <- max(agg[["effN"]][sub], na.rm=TRUE)
                 }else{
-                  agg$effN[sub] <- NA
+                  agg[["effN"]][sub] <- NA
                 }
               }
             }
           }
 
-          namesvec <- fleetnames[agg$f]
+          namesvec <- fleetnames[agg[["f"]]]
 
           # check for multiple market categories in a fleet to plot separately
-          max_n_mkt <- max(apply(table(agg$f, agg$mkt)>0, 1, sum))
+          max_n_mkt <- max(apply(table(agg[["f"]], agg[["mkt"]])>0, 1, sum))
           if(max_n_mkt > 0){
             mktnames <- c("","(discards)","(retained)")
-            namesvec <- paste(fleetnames[agg$f], mktnames[agg$mkt+1])
+            namesvec <- paste(fleetnames[agg[["f"]]], mktnames[agg[["mkt"]]+1])
           }
           if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
             # group remaining calculations as a function
             tempfun7 <- function(ipage,...){
               # test for Dirichlet-Multinomial likelihood
-              if("DM_effN" %in% names(agg) && any(!is.na(agg$DM_effN))){
+              if("DM_effN" %in% names(agg) && any(!is.na(agg[["DM_effN"]]))){
                 # Dirichlet-Multinomial likelihood
-                make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
-                              linesx=agg$bin,linesy=agg$exp,
-                              sampsize=agg$Nsamp_adj, 
-                              effN=agg$DM_effN,
+                make_multifig(ptsx=agg[["bin"]],ptsy=agg[["obs"]],yr=paste(agg[["f"]], agg[["mkt"]]),
+                              linesx=agg[["bin"]],linesy=agg[["exp"]],
+                              sampsize=agg[["Nsamp_adj"]], 
+                              effN=agg[["DM_effN"]],
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="Sum of N input=",
                               effN_label="Sum of N adj.=",
@@ -1422,12 +1422,12 @@ SSplotComps <-
                               colvec=colvec, linescol=linescol, 
                               xlas = xlas, ylas = ylas,
                               axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
-                              sexvec=agg$sex, yupper=yupper, ...)
+                              sexvec=agg[["sex"]], yupper=yupper, ...)
               }else{
                 # standard multinomial likelihood
-                make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=paste(agg$f, agg$mkt),
-                              linesx=agg$bin,linesy=agg$exp,
-                              sampsize=agg$Nsamp_adj, effN=agg$effN,
+                make_multifig(ptsx=agg[["bin"]],ptsy=agg[["obs"]],yr=paste(agg[["f"]], agg[["mkt"]]),
+                              linesx=agg[["bin"]],linesy=agg[["exp"]],
+                              sampsize=agg[["Nsamp_adj"]], effN=agg[["effN"]],
                               showsampsize=showsampsize,showeffN=showeffN,
                               sampsize_label="Sum of N adj.=",
                               effN_label="Sum of N eff.=",
@@ -1440,12 +1440,12 @@ SSplotComps <-
                               colvec=colvec, linescol=linescol, 
                               xlas = xlas, ylas = ylas,
                               axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
-                              sexvec=agg$sex, yupper=yupper, ...)
+                              sexvec=agg[["sex"]], yupper=yupper, ...)
               }
             }
             if(plot) tempfun7(ipage=0,...)
             if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(agg$f))/maxrows/maxcols)
+              npages <- ceiling(length(unique(agg[["f"]]))/maxrows/maxcols)
               for(ipage in 1:npages){
                 if(max_n_mkt > 0){
                   caption <-
@@ -1470,18 +1470,18 @@ SSplotComps <-
           }else{
             # haven't configured this aggregated plot for other types
             ## if(kind=="GSTAGE"){
-            ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-            ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+            ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+            ##                 sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],showsampsize=FALSE,showeffN=FALSE,
             ##                 bars=bars,linepos=(1-datonly)*linepos,
-            ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+            ##                 nlegends=3,legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
             ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
             ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
             ##                 fixdims=fixdims,ipage=ipage,...)
             ## }
             ## if(kind %in% c("L@A","W@A")){
-            ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-            ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
-            ##                 nlegends=1,legtext=list(dbase$YrSeasName),
+            ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+            ##                 sampsize=dbase[["Nsamp_adj"]],effN=0,showsampsize=FALSE,showeffN=FALSE,
+            ##                 nlegends=1,legtext=list(dbase[["YrSeasName"]]),
             ##                 bars=bars,linepos=(1-datonly)*linepos,
             ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
             ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -1497,31 +1497,31 @@ SSplotComps <-
   ### subplot 22: by fleet aggregating across years within each season
   if(22 %in% subplots & kind!="cond" & nseasons>1) # for age or length comps, but not conditional AAL
   {
-    dbasef <- dbase_kind[dbase_kind$Fleet %in% fleets,]
-    if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+    dbasef <- dbase_kind[dbase_kind[["Fleet"]] %in% fleets,]
+    if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef[["DM_effN"]]))){
       warning("Sample sizes in plots by fleet aggregating across years within each season have not yet been updated to reflect Dirichlet-Multinomial likelihood")
     }
     # check for the presence of data
     if(nrow(dbasef)>0)
     {
-      testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0
-      testor[2] <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3)])>0
-      testor[3] <- length(dbasef$sex[dbasef$sex==2])>0
+      testor    <- length(dbasef[["sex"]][dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0 ])>0
+      testor[2] <- length(dbasef[["sex"]][dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3)])>0
+      testor[3] <- length(dbasef[["sex"]][dbasef[["sex"]]==2])>0
 
       # loop over sex combinations
       for(k in (1:3)[testor])
       {
-        if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
-        if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
-        if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
+        if(k==1){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0,]}
+        if(k==2){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3),]}
+        if(k==3){dbase_k <- dbasef[dbasef[["sex"]]==2,]}
         sex <- ifelse(k==3, 2, 1)
 
         # loop over partitions (discard, retain, total)
-        for(j in unique(dbase_k$Part))
+        for(j in unique(dbase_k[["Part"]]))
         {
           # dbase is the final data.frame used in the individual plots
           # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
-          dbase <- dbase_k[dbase_k$Part==j,]
+          dbase <- dbase_k[dbase_k[["Part"]]==j,]
           if(nrow(dbase)>0){
             ## assemble pieces of plot title
             # sex
@@ -1552,41 +1552,41 @@ SSplotComps <-
             }
             titles <- c(ptitle,titles) # compiling list of all plot titles
 
-            Bins <- sort(unique(dbase$Bin))
+            Bins <- sort(unique(dbase[["Bin"]]))
             nbins <- length(Bins)
-            df <- data.frame(Nsamp_adj = dbase$Nsamp_adj,
-                             effN      = dbase$effN,
-                             obs       = dbase$Obs*dbase$Nsamp_adj,
-                             exp       = dbase$Exp*dbase$Nsamp_adj)
-            agg <- aggregate(x=df, by=list(bin=dbase$Bin,f=dbase$Fleet,s=dbase$Seas), FUN=sum)
-            agg <- agg[agg$f %in% fleets,]
-            if(any(agg$s<=0)){
+            df <- data.frame(Nsamp_adj = dbase[["Nsamp_adj"]],
+                             effN      = dbase[["effN"]],
+                             obs       = dbase[["Obs"]]*dbase[["Nsamp_adj"]],
+                             exp       = dbase[["Exp"]]*dbase[["Nsamp_adj"]])
+            agg <- aggregate(x=df, by=list(bin=dbase[["Bin"]],f=dbase[["Fleet"]],s=dbase[["Seas"]]), FUN=sum)
+            agg <- agg[agg[["f"]] %in% fleets,]
+            if(any(agg[["s"]]<=0)){
               cat("super-periods may not work correctly in plots of aggregated comps\n")
-              agg <- agg[agg$s > 0,]
+              agg <- agg[agg[["s"]] > 0,]
             }
-            agg$obs <- agg$obs/agg$Nsamp_adj
-            agg$exp <- agg$exp/agg$Nsamp_adj
+            agg[["obs"]] <- agg[["obs"]]/agg[["Nsamp_adj"]]
+            agg[["exp"]] <- agg[["exp"]]/agg[["Nsamp_adj"]]
             # note: sample sizes will be different for each bin if tail compression is used
             #       printed sample sizes in plot will be maximum, which may or may not
             #       represent sum of sample sizes over all years/ages
 
-            for(f in unique(agg$f)){ # loop over fleets
-              for(s in unique(agg$s[agg$f==f])){ # loop over seasons within fleet
-                infleetseas <- agg$f==f & agg$s==s
-                agg$Nsamp_adj[infleetseas] <- max(agg$Nsamp_adj[infleetseas])
-                agg$effN[infleetseas] <- max(agg$effN[infleetseas])
+            for(f in unique(agg[["f"]])){ # loop over fleets
+              for(s in unique(agg[["s"]][agg[["f"]]==f])){ # loop over seasons within fleet
+                infleetseas <- agg[["f"]]==f & agg[["s"]]==s
+                agg[["Nsamp_adj"]][infleetseas] <- max(agg[["Nsamp_adj"]][infleetseas])
+                agg[["effN"]][infleetseas] <- max(agg[["effN"]][infleetseas])
               }
             }
-            agg$fseas <- agg$f + seasfracs[agg$s]
+            agg[["fseas"]] <- agg[["f"]] + seasfracs[agg[["s"]]]
 
-            namesvec <- paste(fleetnames[agg$f]," s",agg$s,sep="")
+            namesvec <- paste(fleetnames[agg[["f"]]]," s",agg[["s"]],sep="")
 
             # group remaining calculations as a function
             tempfun8 <- function(ipage,...){
               if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-                make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fseas,
-                              linesx=agg$bin,linesy=agg$exp,
-                              sampsize=agg$Nsamp_adj, effN=agg$effN,
+                make_multifig(ptsx=agg[["bin"]],ptsy=agg[["obs"]],yr=agg[["fseas"]],
+                              linesx=agg[["bin"]],linesy=agg[["exp"]],
+                              sampsize=agg[["Nsamp_adj"]], effN=agg[["effN"]],
                               showsampsize=showsampsize,showeffN=showeffN,
                               bars=bars,linepos=(1-datonly)*linepos,
                               nlegends=3,
@@ -1597,23 +1597,23 @@ SSplotComps <-
                               colvec=colvec, linescol=linescol, 
                               xlas = xlas, ylas = ylas,
                               axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
-                              sexvec=agg$sex, yupper=yupper, ...)
+                              sexvec=agg[["sex"]], yupper=yupper, ...)
               }
 
          # haven't configured this aggregated plot for other types
               ## if(kind=="GSTAGE"){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+              ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+              ##                 sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],showsampsize=FALSE,showeffN=FALSE,
               ##                 bars=bars,linepos=(1-datonly)*linepos,
-              ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+              ##                 nlegends=3,legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
               ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
               ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
               ##                 fixdims=fixdims,ipage=ipage,...)
               ## }
               ## if(kind %in% c("L@A","W@A")){
-              ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-              ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
-              ##                 nlegends=1,legtext=list(dbase$YrSeasName),
+              ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+              ##                 sampsize=dbase[["Nsamp_adj"]],effN=0,showsampsize=FALSE,showeffN=FALSE,
+              ##                 nlegends=1,legtext=list(dbase[["YrSeasName"]]),
               ##                 bars=bars,linepos=(1-datonly)*linepos,
               ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
               ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -1623,7 +1623,7 @@ SSplotComps <-
             }
             if(plot) tempfun8(ipage=0,...)
             if(print){ # set up plotting to png file if required
-              npages <- ceiling(length(unique(agg$fseas))/maxrows/maxcols)
+              npages <- ceiling(length(unique(agg[["fseas"]]))/maxrows/maxcols)
               for(ipage in 1:npages)
               {
                 pagetext <- ""
@@ -1649,28 +1649,28 @@ SSplotComps <-
   if(23 %in% subplots & kind!="cond" & nseasons>1){ # for age or length comps, but not conditional AAL
     # loop over fleets
     for(f in fleets){
-      dbasef <- dbase_kind[dbase_kind$Fleet==f,]
-      if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef$DM_effN))){
+      dbasef <- dbase_kind[dbase_kind[["Fleet"]]==f,]
+      if("DM_effN" %in% names(dbasef) && any(!is.na(dbasef[["DM_effN"]]))){
         warning("Sample sizes in plots by fleet aggregating across seasons within a year have not yet been updated to reflect Dirichlet-Multinomial likelihood")
       }
       
       # check for the presence of data
       if(nrow(dbasef)>0){
-        testor    <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex==0 ])>0
-        testor[2] <- length(dbasef$sex[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3)])>0
-        testor[3] <- length(dbasef$sex[dbasef$sex==2])>0
+        testor    <- length(dbasef[["sex"]][dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0 ])>0
+        testor[2] <- length(dbasef[["sex"]][dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3)])>0
+        testor[3] <- length(dbasef[["sex"]][dbasef[["sex"]]==2])>0
         # loop over sex combinations
         for(k in (1:3)[testor]){
-          if(k==1){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex==0,]}
-          if(k==2){dbase_k <- dbasef[dbasef$sex==1 & dbasef$Pick_sex %in% c(1,3),]}
-          if(k==3){dbase_k <- dbasef[dbasef$sex==2,]}
+          if(k==1){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0,]}
+          if(k==2){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3),]}
+          if(k==3){dbase_k <- dbasef[dbasef[["sex"]]==2,]}
           sex <- ifelse(k==3, 2, 1)
 
           # loop over partitions (discard, retain, total)
-          for(j in unique(dbase_k$Part)){
+          for(j in unique(dbase_k[["Part"]])){
             # dbase is the final data.frame used in the individual plots
             # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
-            dbase <- dbase_k[dbase_k$Part==j,]
+            dbase <- dbase_k[dbase_k[["Part"]]==j,]
             if(nrow(dbase)>0){
               ## assemble pieces of plot title
               # sex
@@ -1692,30 +1692,30 @@ SSplotComps <-
               title_sexmkt <- paste(titlesex,titlemkt,sep="")
               filename_fltsexmkt <- paste("flt",f,"sex",k,"mkt",j,sep="")
 
-              Bins <- sort(unique(dbase$Bin))
+              Bins <- sort(unique(dbase[["Bin"]]))
               nbins <- length(Bins)
-              df <- data.frame(Nsamp_adj = dbase$Nsamp_adj,
-                               effN      = dbase$effN,
-                               obs       = dbase$Obs*dbase$Nsamp_adj,
-                               exp       = dbase$Exp*dbase$Nsamp_adj)
+              df <- data.frame(Nsamp_adj = dbase[["Nsamp_adj"]],
+                               effN      = dbase[["effN"]],
+                               obs       = dbase[["Obs"]]*dbase[["Nsamp_adj"]],
+                               exp       = dbase[["Exp"]]*dbase[["Nsamp_adj"]])
               agg <- aggregate(x = df,
-                               by = list(bin=dbase$Bin,f=dbase$Fleet,y=floor(dbase$Yr.S)),
+                               by = list(bin=dbase[["Bin"]],f=dbase[["Fleet"]],y=floor(dbase[["Yr.S"]])),
                                FUN = sum)
-              agg <- agg[agg$f %in% fleets,]
-              agg$obs <- agg$obs/agg$Nsamp_adj
-              agg$exp <- agg$exp/agg$Nsamp_adj
+              agg <- agg[agg[["f"]] %in% fleets,]
+              agg[["obs"]] <- agg[["obs"]]/agg[["Nsamp_adj"]]
+              agg[["exp"]] <- agg[["exp"]]/agg[["Nsamp_adj"]]
 
               # note: sample sizes will be different for each bin if tail compression is used
               #       printed sample sizes in plot will be maximum, which may or may not
               #       represent sum of sample sizes over all years/ages
-              for(f in unique(agg$f)){
-                for(y in unique(agg$y[agg$f==f])){
-                  infleetyr <- agg$f==f & agg$y==y
-                  agg$Nsamp_adj[infleetyr] <- max(agg$Nsamp_adj[infleetyr])
-                  agg$effN[infleetyr] <- max(agg$effN[infleetyr])
+              for(f in unique(agg[["f"]])){
+                for(y in unique(agg[["y"]][agg[["f"]]==f])){
+                  infleetyr <- agg[["f"]]==f & agg[["y"]]==y
+                  agg[["Nsamp_adj"]][infleetyr] <- max(agg[["Nsamp_adj"]][infleetyr])
+                  agg[["effN"]][infleetyr] <- max(agg[["effN"]][infleetyr])
                 }
               }
-              agg$fy <- agg$f + agg$y/10000
+              agg[["fy"]] <- agg[["f"]] + agg[["y"]]/10000
               # total title
               caption <- paste(titledata,title_sexmkt,fleetnames[f],
                                "\naggregated across seasons within year",sep="")
@@ -1729,36 +1729,36 @@ SSplotComps <-
               tempfun9 <- function(ipage,...){
 
                 if(!(kind %in% c("GSTAGE","GSTLEN","L@A","W@A"))){
-                  make_multifig(ptsx=agg$bin,ptsy=agg$obs,yr=agg$fy,
-                                linesx=agg$bin,linesy=agg$exp,
-                                sampsize=agg$Nsamp_adj, effN=agg$effN,
+                  make_multifig(ptsx=agg[["bin"]],ptsy=agg[["obs"]],yr=agg[["fy"]],
+                                linesx=agg[["bin"]],linesy=agg[["exp"]],
+                                sampsize=agg[["Nsamp_adj"]], effN=agg[["effN"]],
                                 showsampsize=showsampsize,showeffN=showeffN,
                                 bars=bars,linepos=(1-datonly)*linepos,
                                 nlegends=3,
-                                legtext=list(agg$y,"sampsize","effN"),
+                                legtext=list(agg[["y"]],"sampsize","effN"),
                                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                                 fixdims=fixdims2,ipage=ipage,lwd=2,scalebins=scalebins,
                                 colvec=colvec, linescol=linescol, 
                                 xlas = xlas, ylas = ylas,
                                 axis1 = axis1, axis2 = axis2, axis1labs = axis1labs,
-                                sexvec=agg$sex, yupper=yupper, ...)
+                                sexvec=agg[["sex"]], yupper=yupper, ...)
                 }
 
                 # haven't configured this aggregated plot for other types
                 ## if(kind=="GSTAGE"){
-                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                ##                 sampsize=dbase$Nsamp_adj,effN=dbase$effN,showsampsize=FALSE,showeffN=FALSE,
+                ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                ##                 sampsize=dbase[["Nsamp_adj"]],effN=dbase[["effN"]],showsampsize=FALSE,showeffN=FALSE,
                 ##                 bars=bars,linepos=(1-datonly)*linepos,
-                ##                 nlegends=3,legtext=list(dbase$YrSeasName,"sampsize","effN"),
+                ##                 nlegends=3,legtext=list(dbase[["YrSeasName"]],"sampsize","effN"),
                 ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=labels[6],
                 ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
                 ##                 fixdims=fixdims,ipage=ipage,...)
                 ## }
                 ## if(kind %in% c("L@A","W@A")){
-                ##   make_multifig(ptsx=dbase$Bin,ptsy=dbase$Obs,yr=dbase$Yr.S,linesx=dbase$Bin,linesy=dbase$Exp,
-                ##                 sampsize=dbase$Nsamp_adj,effN=0,showsampsize=FALSE,showeffN=FALSE,
-                ##                 nlegends=1,legtext=list(dbase$YrSeasName),
+                ##   make_multifig(ptsx=dbase[["Bin"]],ptsy=dbase[["Obs"]],yr=dbase[["Yr.S"]],linesx=dbase[["Bin"]],linesy=dbase[["Exp"]],
+                ##                 sampsize=dbase[["Nsamp_adj"]],effN=0,showsampsize=FALSE,showeffN=FALSE,
+                ##                 nlegends=1,legtext=list(dbase[["YrSeasName"]]),
                 ##                 bars=bars,linepos=(1-datonly)*linepos,
                 ##                 main=ptitle,cex.main=cex.main,xlab=kindlab,ylab=ifelse(kind=="W@A",labels[9],labels[1]),
                 ##                 maxrows=maxrows,maxcols=maxcols,rows=rows,cols=cols,
@@ -1769,7 +1769,7 @@ SSplotComps <-
 
               if(plot) tempfun9(ipage=0,...)
               if(print){ # set up plotting to png file if required
-                npages <- ceiling(length(unique(agg$fy))/maxrows/maxcols)
+                npages <- ceiling(length(unique(agg[["fy"]]))/maxrows/maxcols)
                 for(ipage in 1:npages){
                   pagetext <- ""
                   if(npages>1){
@@ -1795,45 +1795,45 @@ SSplotComps <-
   if(24 %in% subplots & kind %in% c("LEN","AGE")){
 
     # loop over partitions groups (everything, or separate discard, retain, total)
-    for(j in unique(dbase_kind$Part_group)){
+    for(j in unique(dbase_kind[["Part_group"]])){
       # subset data.frame for this partition group and subset of fleets of interest
-      dbase_parts <- dbase_kind[dbase_kind$Part_group==j,]
+      dbase_parts <- dbase_kind[dbase_kind[["Part_group"]]==j,]
       # new column combining fleet and partition
       # where 3.1 is fleet=3, partition=1
-      dbase_parts$FleetPart <- dbase_parts$Fleet + 0.1*dbase_parts$Part
+      dbase_parts[["FleetPart"]] <- dbase_parts[["Fleet"]] + 0.1*dbase_parts[["Part"]]
       # table of info on each panel
-      panel_table <- data.frame(FleetPart=sort(unique(dbase_parts$FleetPart)))
+      panel_table <- data.frame(FleetPart=sort(unique(dbase_parts[["FleetPart"]])))
       # separate the pieces out again
-      panel_table$Fleet <- floor(panel_table$FleetPart)
+      panel_table[["Fleet"]] <- floor(panel_table[["FleetPart"]])
       # round below is necessary because values were coming out as
       # 1.9999999999999996 instead of 2
-      panel_table$Part <- round(10*(panel_table$FleetPart - panel_table$Fleet))
+      panel_table[["Part"]] <- round(10*(panel_table[["FleetPart"]] - panel_table[["Fleet"]]))
       # fleet name to use for each panel
-      panel_table$Name <- fleetnames[panel_table$Fleet]
+      panel_table[["Name"]] <- fleetnames[panel_table[["Fleet"]]]
 
       # check for multiple market categories in a fleet to plot separately
-      max_n_mkt <- max(apply(table(panel_table$Fleet,
-                                   panel_table$Part)>0, 1, sum))
+      max_n_mkt <- max(apply(table(panel_table[["Fleet"]],
+                                   panel_table[["Part"]])>0, 1, sum))
       if(max_n_mkt > 1){
         # if multiple categories within a fleet, append to name
         mktnames <- c("","(discards)","(retained)")
-        panel_table$Name <- paste(panel_table$Name,
-                                  mktnames[panel_table$Part+1])
+        panel_table[["Name"]] <- paste(panel_table[["Name"]],
+                                  mktnames[panel_table[["Part"]]+1])
       }
       npanels <- nrow(panel_table)
       panelvec <- 1:npanels
 
-      xlim <- range(dbase_parts$Yr.S) # set xlim based on range across all fleets
-      xaxislab <- sort(unique(floor(dbase_parts$Yr.S))) # label with all years
+      xlim <- range(dbase_parts[["Yr.S"]]) # set xlim based on range across all fleets
+      xaxislab <- sort(unique(floor(dbase_parts[["Yr.S"]]))) # label with all years
 
       # get growth curves if requested
       if(length(cohortlines)>0){
-        growdat <- replist$endgrowth
-        growdatF <- growdat[growdat$Sex==1 &
-                              growdat$Morph==min(growdat$Morph[growdat$Sex==1]),]
+        growdat <- replist[["endgrowth"]]
+        growdatF <- growdat[growdat[["Sex"]]==1 &
+                              growdat[["Morph"]]==min(growdat[["Morph"]][growdat[["Sex"]]==1]),]
         if(nsexes > 1){
-          growdatM <- growdat[growdat$Sex==2 &
-                                growdat$Morph==min(growdat$Morph[growdat$Sex==2]),]
+          growdatM <- growdat[growdat[["Sex"]]==2 &
+                                growdat[["Morph"]]==min(growdat[["Morph"]][growdat[["Sex"]]==2]),]
         }
       }
       # market category
@@ -1873,17 +1873,17 @@ SSplotComps <-
 
         # loop over panels (fleet x partition)
         for(ipanel in panelvec[panelrange]){
-          flt <- panel_table$Fleet[ipanel] # fleet number
-          mkt <- panel_table$Part[ipanel] # market category
+          flt <- panel_table[["Fleet"]][ipanel] # fleet number
+          mkt <- panel_table[["Part"]][ipanel] # market category
           # subset database of values
-          dbase <- dbase_parts[dbase_parts$Fleet==flt &
-                                 dbase_parts$Part==mkt,]
+          dbase <- dbase_parts[dbase_parts[["Fleet"]]==flt &
+                                 dbase_parts[["Part"]]==mkt,]
           # dbase is the final data.frame used in the individual plots
           # it is subset based on the kind (age, len, age-at-len), sex, and partition,
           ### not sure if multiple ageing error methods is supported at the moment,
           ### haven't tested -Ian 6/7/17
           # check for multiple ageing error types within a year to plot separately
-          max_n_ageerr <- max(apply(table(dbase$Yr.S,dbase$Ageerr)>0,1,sum))
+          max_n_ageerr <- max(apply(table(dbase[["Yr.S"]],dbase[["Ageerr"]])>0,1,sum))
 
           if(max_n_ageerr > 1){
             if(ageerr_warning){
@@ -1894,13 +1894,13 @@ SSplotComps <-
             }
             # add 1/1000 of a year for each ageing error type to distinguish
             # between types within a year (may not work well for this plot)
-            dbase$Yr.S <- dbase$Yr.S + dbase$Ageerr/(1000*max_n_ageerr)
-            dbase$YrSeasName <- paste(dbase$YrSeasName,"a",dbase$Ageerr,sep="")
+            dbase[["Yr.S"]] <- dbase[["Yr.S"]] + dbase[["Ageerr"]]/(1000*max_n_ageerr)
+            dbase[["YrSeasName"]] <- paste(dbase[["YrSeasName"]],"a",dbase[["Ageerr"]],sep="")
           }
 
           # calculate smallest difference among years
           # which is used to adjust offsets males and females
-          xdiff <- 0.1*sort(unique(diff(sort(unique(dbase$Yr.S)),
+          xdiff <- 0.1*sort(unique(diff(sort(unique(dbase[["Yr.S"]])),
                                         na.rm=TRUE)))[1]
           # not sure what cases would have missing xdiff
           # from above calculation, but it definitely happens
@@ -1911,30 +1911,30 @@ SSplotComps <-
           }
 
           # define colors
-          xvals <- dbase$Yr.S
+          xvals <- dbase[["Yr.S"]]
           cols <- rep(colvec[3],nrow(dbase))
           if(nsexes > 1){
-            xvals[dbase$sex>0] <- dbase$Yr.S[dbase$sex>0] -
-              (dbase$sex[dbase$sex>0]-1.5)*xdiff
-            if(length(unique(dbase$Yr.S))==1){
+            xvals[dbase[["sex"]]>0] <- dbase[["Yr.S"]][dbase[["sex"]]>0] -
+              (dbase[["sex"]][dbase[["sex"]]>0]-1.5)*xdiff
+            if(length(unique(dbase[["Yr.S"]]))==1){
               # if only one year, don't bother showing points
               # as mid-year values
               # this may not be ideal for seasonal models
-              xvals[dbase$sex>0] <- floor(dbase$Yr.S[dbase$sex>0]) -
-                (dbase$sex[dbase$sex>0]-1.5)*xdiff
+              xvals[dbase[["sex"]]>0] <- floor(dbase[["Yr.S"]][dbase[["sex"]]>0]) -
+                (dbase[["sex"]][dbase[["sex"]]>0]-1.5)*xdiff
             }
-            cols[dbase$sex>0] <- colvec[dbase$sex[dbase$sex>0]]
+            cols[dbase[["sex"]]>0] <- colvec[dbase[["sex"]][dbase[["sex"]]>0]]
           }
 
           # determine bubble size and colors
           if(datonly){
-            z <- dbase$Obs
-            if(scalebubbles) z <- dbase$Nsamp_adj*dbase$Obs # if requested, scale by sample sizes
+            z <- dbase[["Obs"]]
+            if(scalebubbles) z <- dbase[["Nsamp_adj"]]*dbase[["Obs"]] # if requested, scale by sample sizes
             titletype <- titledata
             filetype <- "bub"
             allopen <- TRUE
           }else{
-            z <- dbase$Pearson
+            z <- dbase[["Pearson"]]
             titletype <- "Pearson residuals, "
             filetype <- "resids"
             allopen <- FALSE
@@ -1942,14 +1942,14 @@ SSplotComps <-
 
           # make bubbles for a single fleet
           # this section is a modified version of tempfun2 above
-          ylim <- range(dbase$Bin)
+          ylim <- range(dbase[["Bin"]])
           ylim[2] <- ylim[2]+0.2*diff(ylim) # add buffer of 10% at the top for fleet name
-          bubble3(x=xvals, y=dbase$Bin, z=z, col=cols, cexZ1=cexZ1,
+          bubble3(x=xvals, y=dbase[["Bin"]], z=z, col=cols, cexZ1=cexZ1,
                   legend=bublegend,
                   las=1,main="",cex.main=cex.main,maxsize=pntscalar,allopen=allopen,
                   xlim=xlim,ylim=ylim,axis1=FALSE)
           ### add label at top left of each panel
-          legend('topleft', title=panel_table$Name[ipanel],
+          legend('topleft', title=panel_table[["Name"]][ipanel],
                  legend=NA, bty='n', cex=1.5)
           ### alternative way with legends on the side
           ### (probably not as good once the partition has been added)
@@ -1961,11 +1961,11 @@ SSplotComps <-
             for(icohort in 1:length(cohortlines)){
               cat("  Adding line for",cohortlines[icohort],"cohort\n")
               if(kind=="LEN"){
-                lines(growdatF$Age+cohortlines[icohort],
-                      growdatF$Len_Mid, col=colvec[1]) #females
+                lines(growdatF[["Age"]]+cohortlines[icohort],
+                      growdatF[["Len_Mid"]], col=colvec[1]) #females
                 if(nsexes>1){
-                  lines(growdatM$Age+cohortlines[icohort],
-                        growdatM$Len_Mid, col=colvec[2]) #males
+                  lines(growdatM[["Age"]]+cohortlines[icohort],
+                        growdatM[["Len_Mid"]], col=colvec[2]) #males
                 }
               }
               if(kind=="AGE"){
@@ -1987,7 +1987,7 @@ SSplotComps <-
             title(main=ptitle, outer=TRUE, xlab=labels[3], ylab=kindlab)
         } # end loop over fleets
         # restore previous graphics parameter settings
-        par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+        par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]])
       } # end function wrapping up a single page of the residual comparison plot
 
           # make plots or write to PNG file
@@ -2029,7 +2029,7 @@ SSplotComps <-
     par(mfcol=c(rows,cols),mar=c(5,4,4,2)+.1,oma=rep(0,4))
   } # end subplot 24
 
-  if(!is.null(plotinfo)) plotinfo$category <- "Comp"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Comp"
   return(invisible(plotinfo))
 } # end SSplotComps function
 ###########################

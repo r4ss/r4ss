@@ -53,6 +53,6 @@ SS_readwtatage <- function(file = "wtatage.ss", verbose=TRUE) {
   }
   names(wtatage) <- wtatage_names
   # Remove terminator line
-  wtatage <- wtatage[wtatage$Yr > -9998, ]
+  wtatage <- wtatage[wtatage[["Yr"]] > -9998, ]
   return(wtatage)
 }

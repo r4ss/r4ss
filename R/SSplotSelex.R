@@ -120,23 +120,23 @@ SSplotSelex <-
   # empty table into which information on line types etc. might be copied
   infotable2 <- NULL
 
-  nsexes         <- replist$nsexes
-  nseasons       <- replist$nseasons
-  nfleets        <- replist$nfleets
-  lbinspop       <- replist$lbinspop
-  nlbinspop      <- replist$nlbinspop
-  sizeselex      <- replist$sizeselex
-  ageselex       <- replist$ageselex
-  accuage        <- replist$accuage
-  startyr        <- replist$startyr
-  endyr          <- replist$endyr
-  FleetNames     <- replist$FleetNames
-  growdat        <- replist$endgrowth
-  growthCVtype   <- replist$growthCVtype
-  mainmorphs     <- replist$mainmorphs
-  nareas         <- replist$nareas
-  ngpatterns     <- replist$ngpatterns
-  derived_quants <- replist$derived_quants
+  nsexes         <- replist[["nsexes"]]
+  nseasons       <- replist[["nseasons"]]
+  nfleets        <- replist[["nfleets"]]
+  lbinspop       <- replist[["lbinspop"]]
+  nlbinspop      <- replist[["nlbinspop"]]
+  sizeselex      <- replist[["sizeselex"]]
+  ageselex       <- replist[["ageselex"]]
+  accuage        <- replist[["accuage"]]
+  startyr        <- replist[["startyr"]]
+  endyr          <- replist[["endyr"]]
+  FleetNames     <- replist[["FleetNames"]]
+  growdat        <- replist[["endgrowth"]]
+  growthCVtype   <- replist[["growthCVtype"]]
+  mainmorphs     <- replist[["mainmorphs"]]
+  nareas         <- replist[["nareas"]]
+  ngpatterns     <- replist[["ngpatterns"]]
+  derived_quants <- replist[["derived_quants"]]
 
   # message about skipping plots
   if (is.null(ageselex)){
@@ -156,7 +156,7 @@ SSplotSelex <-
 
   plotinfo <- NULL
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
   ians_blues <- c("white","grey","lightblue","skyblue","steelblue1","slateblue",topo.colors(6),"blue","blue2","blue3","blue4","black")
 
@@ -183,20 +183,20 @@ SSplotSelex <-
   # make plots
   plotAllSel <- function(factor="Lsel"){
     # first subset values
-    if(factor %in% unique(sizeselex$Factor)){
+    if(factor %in% unique(sizeselex[["Factor"]])){
       agebased <- FALSE
-      allselex <- sizeselex[sizeselex$Factor==factor &
-                            sizeselex$Fleet %in% fleets &
-                            sizeselex$Sex %in% sexes,]
+      allselex <- sizeselex[sizeselex[["Factor"]]==factor &
+                            sizeselex[["Fleet"]] %in% fleets &
+                            sizeselex[["Sex"]] %in% sexes,]
     }
-    if(factor %in% unique(ageselex$Factor)){
+    if(factor %in% unique(ageselex[["Factor"]])){
       agebased <- TRUE
-      allselex <- ageselex[ageselex$Factor==factor &
-                           ageselex$Seas==season &
-                           ageselex$Fleet %in% fleets &
-                           ageselex$Sex %in% sexes,]
+      allselex <- ageselex[ageselex[["Factor"]]==factor &
+                           ageselex[["Seas"]]==season &
+                           ageselex[["Fleet"]] %in% fleets &
+                           ageselex[["Sex"]] %in% sexes,]
     }
-    if(!factor %in% unique(c(sizeselex$Factor,ageselex$Factor))){
+    if(!factor %in% unique(c(sizeselex[["Factor"]],ageselex[["Factor"]]))){
       cat("  Factor '",factor,"' not found in age- or length-based selectivity.\n",
           "  This may be due to having 'detailed age-structured reports'\n",
           "  turned off in the starter file.\n", sep="")
@@ -209,8 +209,8 @@ SSplotSelex <-
     # figure out which fleets have time-varying qunatities
     time <- rep(FALSE,nfleets)
     for(ifleet in fleets)
-      time[ifleet] <- any(apply(allselex[allselex$Fleet==ifleet &
-                                           allselex$Yr %in% (startyr:endyr),],
+      time[ifleet] <- any(apply(allselex[allselex[["Fleet"]]==ifleet &
+                                           allselex[["Yr"]] %in% (startyr:endyr),],
                                 2, function(x){any(x!=x[1])}))
     if(any(time)){
       if(length(years)>1 & length(fleets)>1) cat("plot not yet configured to work well with multiple years and multiple fleets\n")
@@ -221,8 +221,8 @@ SSplotSelex <-
       year_ranges <- NULL
       for(i in 1:length(inputyears)){
         if(inputyears[i]>=startyr){
-          newyear <- min(endyr,allselex$Yr[allselex$Yr >= inputyears[i]])
-          newyear2 <- max(startyr,allselex$Yr[allselex$Yr <= inputyears[i]])
+          newyear <- min(endyr,allselex[["Yr"]][allselex[["Yr"]] >= inputyears[i]])
+          newyear2 <- max(startyr,allselex[["Yr"]][allselex[["Yr"]] <= inputyears[i]])
           if(newyear2<=newyear){
             newyear_range <- paste(newyear2,"-",newyear,sep="")
             if(newyear==newyear2 & newyear>startyr-3) newyear_range <- newyear
@@ -257,14 +257,14 @@ SSplotSelex <-
     }else{
       year_ranges <- ""
     }
-    allselex <- allselex2 <- allselex[allselex$Yr %in% years,]
+    allselex <- allselex2 <- allselex[allselex[["Yr"]] %in% years,]
     if(nrow(allselex)==0){
       cat("No values found for this combination of years and factor\n")
       return()
     }
 
     # do some processing
-    Sex <- allselex$Sex
+    Sex <- allselex[["Sex"]]
     if(!agebased){
       allselex <- allselex[,-(1:5)]
       xlab <- labels[1]
@@ -275,7 +275,7 @@ SSplotSelex <-
     }
     if(!is.null(infotable)){
       infotable2 <- infotable
-      good <- Sex %in% infotable$Sex
+      good <- Sex %in% infotable[["Sex"]]
       allselex <- allselex[good,]
       allselex2 <- allselex2[good,]
       if(nrow(infotable2)!=nrow(allselex)){
@@ -284,48 +284,48 @@ SSplotSelex <-
     }else{
       # make table of info for each row (unless it is supplied already)
       infotable2 <- allselex2[c("Fleet","Sex","Yr")]
-      infotable2$ifleet <- NA
-      infotable2$FleetName <- fleetnames[infotable2$Fleet]
-      infotable2$longname <- infotable2$FleetName
+      infotable2[["ifleet"]] <- NA
+      infotable2[["FleetName"]] <- fleetnames[infotable2[["Fleet"]]]
+      infotable2[["longname"]] <- infotable2[["FleetName"]]
       for(i in 1:nrow(infotable2)){
-        infotable2$Yr_range[i] <- year_ranges[years==infotable2$Yr[i]]
+        infotable2[["Yr_range"]][i] <- year_ranges[years==infotable2[["Yr"]][i]]
       }
 
-      if(length(unique(infotable2$Yr)) > 1){
-        infotable2$longname <- paste(infotable2$FleetName,infotable2$Yr_range)
+      if(length(unique(infotable2[["Yr"]])) > 1){
+        infotable2[["longname"]] <- paste(infotable2[["FleetName"]],infotable2[["Yr_range"]])
       }
       # check for whether there are differences between males and females
-      twosex <- all(1:2 %in% infotable2$Sex) && any(allselex[infotable2$Sex==1,]!=allselex[infotable2$Sex==2,])
+      twosex <- all(1:2 %in% infotable2[["Sex"]]) && any(allselex[infotable2[["Sex"]]==1,]!=allselex[infotable2[["Sex"]]==2,])
       if(!twosex){ # show only sex with lowest number if no differences between sexes
-        good <- infotable2$Sex==min(infotable2$Sex)
+        good <- infotable2[["Sex"]]==min(infotable2[["Sex"]])
         allselex <- allselex[good,]
         allselex2 <- allselex2[good,]
         infotable2 <- infotable2[good,]
       }else{
-        infotable2$longname <- paste(infotable2$longname, c("(f)","(m)")[infotable2$Sex])
+        infotable2[["longname"]] <- paste(infotable2[["longname"]], c("(f)","(m)")[infotable2[["Sex"]]])
       }
 
       # add index from 1 up to number of fleets plotted
-      allfleets <- sort(unique(infotable2$Fleet))
+      allfleets <- sort(unique(infotable2[["Fleet"]]))
       for(ifleet in 1:length(allfleets))
-        infotable2$ifleet[infotable2$Fleet==allfleets[ifleet]] <- ifleet
+        infotable2[["ifleet"]][infotable2[["Fleet"]]==allfleets[ifleet]] <- ifleet
       # choose colors
       colvec <- rich.colors.short(length(allfleets))
-      infotable2$col <- colvec[infotable2$ifleet]
+      infotable2[["col"]] <- colvec[infotable2[["ifleet"]]]
       # choose line types
-      infotable2$lty <- 1
+      infotable2[["lty"]] <- 1
       # either line by Sex
-      infotable2$lwd <- lwd
-      if(twosex) infotable2$lty <- infotable2$Sex
+      infotable2[["lwd"]] <- lwd
+      if(twosex) infotable2[["lty"]] <- infotable2[["Sex"]]
       # or line by year (with line width by Sex)
-      allyears <- sort(unique(infotable2$Yr))
+      allyears <- sort(unique(infotable2[["Yr"]]))
       if(length(allyears)>1){
         for(iyear in 1:length(allyears))
-          infotable2$lty[infotable2$Yr==allyears[iyear]] <- iyear
-        if(twosex) infotable2$lwd[infotable2$Sex==2] <- lwd/2
+          infotable2[["lty"]][infotable2[["Yr"]]==allyears[iyear]] <- iyear
+        if(twosex) infotable2[["lwd"]][infotable2[["Sex"]]==2] <- lwd/2
       }
       # choose plot characters
-      infotable2$pch <- infotable2$ifleet %% 25
+      infotable2[["pch"]] <- infotable2[["ifleet"]] %% 25
     }
 
     main <- factor
@@ -336,8 +336,8 @@ SSplotSelex <-
     if(length(fleets)>1) main <- paste(main, "by fleet")
     if(length(fleets)==1) main <- paste(main, "for", fleetnames[fleets])
 
-    if(length(unique(infotable2$Yr))==1){
-      main <- paste(main,"in",unique(infotable2$Yr))
+    if(length(unique(infotable2[["Yr"]]))==1){
+      main <- paste(main,"in",unique(infotable2[["Yr"]]))
     }
     if(!showmain) main <- NULL
 ## cat("info on plot for debugging:\n")
@@ -352,24 +352,24 @@ SSplotSelex <-
     abline(h=0,col="grey")
     abline(h=1,col="grey")
     # add lines for selectivities
-    matplot(x=bins, y=t(allselex), col=infotable2$col,
-            lty=infotable2$lty, lwd=infotable2$lwd, type="l",add=TRUE)
+    matplot(x=bins, y=t(allselex), col=infotable2[["col"]],
+            lty=infotable2[["lty"]], lwd=infotable2[["lwd"]], type="l",add=TRUE)
     # add points on top of lines (first subsetting to optionally show fewer points)
     allselex2 <- allselex
     if(spacepoints > 0){
       for(iline in 1:nrow(allselex))
         allselex2[iline,(1:ncol(allselex))%%spacepoints != (staggerpoints*iline)%%spacepoints] <- NA
-      matplot(x=bins, y=t(allselex2), col=infotable2$col,
-              lwd=infotable2$lwd, pch=infotable2$pch, type="p",add=TRUE)
+      matplot(x=bins, y=t(allselex2), col=infotable2[["col"]],
+              lwd=infotable2[["lwd"]], pch=infotable2[["pch"]], type="p",add=TRUE)
     }else{
       # if 'spacepoints' is less than or equal to 0, don't show points
-      infotable2$pch <- NA
+      infotable2[["pch"]] <- NA
     }
     # add legend
     if(nrow(infotable2)>1)
-      legend(legendloc, inset=c(0,0.05), legend=infotable2$longname, col=infotable2$col,
+      legend(legendloc, inset=c(0,0.05), legend=infotable2[["longname"]], col=infotable2[["col"]],
              seg.len=4,
-             lty=infotable2$lty, pch=infotable2$pch, lwd=infotable2$lwd, bty='n')
+             lty=infotable2[["lty"]], pch=infotable2[["pch"]], lwd=infotable2[["lwd"]], bty='n')
     return(infotable2)
   }
 
@@ -417,22 +417,22 @@ SSplotSelex <-
       if(m==1 & nsexes==1) sextitle2 <- "Ending"
       if(m==1 & nsexes==2) sextitle2 <- "Female ending"
       if(m==2) sextitle2 <- "Male ending"
-      intret   <- sizeselex[sizeselex$Factor=="Ret"  & sizeselex$Yr!=startyr-3 & sizeselex$Sex==m,]
-      intmort  <- sizeselex[sizeselex$Factor=="Mort" & sizeselex$Yr!=startyr-3 & sizeselex$Sex==m,]
-      intkeep  <- sizeselex[sizeselex$Factor=="Keep" & sizeselex$Yr!=startyr-3 & sizeselex$Sex==m,]
-      intdead  <- sizeselex[sizeselex$Factor=="Dead" & sizeselex$Yr!=startyr-3 & sizeselex$Sex==m,]
-      intselex <- sizeselex[sizeselex$Factor=="Lsel" & sizeselex$Yr!=startyr-3 & sizeselex$Sex==m,]
-      plotselex <- intselex[intselex$Fleet==i,]
-      plotret <- intret[intret$Fleet==i,]
-      plotmort <- intmort[intmort$Fleet==i,]
+      intret   <- sizeselex[sizeselex[["Factor"]]=="Ret"  & sizeselex[["Yr"]]!=startyr-3 & sizeselex[["Sex"]]==m,]
+      intmort  <- sizeselex[sizeselex[["Factor"]]=="Mort" & sizeselex[["Yr"]]!=startyr-3 & sizeselex[["Sex"]]==m,]
+      intkeep  <- sizeselex[sizeselex[["Factor"]]=="Keep" & sizeselex[["Yr"]]!=startyr-3 & sizeselex[["Sex"]]==m,]
+      intdead  <- sizeselex[sizeselex[["Factor"]]=="Dead" & sizeselex[["Yr"]]!=startyr-3 & sizeselex[["Sex"]]==m,]
+      intselex <- sizeselex[sizeselex[["Factor"]]=="Lsel" & sizeselex[["Yr"]]!=startyr-3 & sizeselex[["Sex"]]==m,]
+      plotselex <- intselex[intselex[["Fleet"]]==i,]
+      plotret <- intret[intret[["Fleet"]]==i,]
+      plotmort <- intmort[intmort[["Fleet"]]==i,]
 
       # test for time-varying length selectivity
       time <- any(apply(plotselex[-c(1,nrow(plotselex)),-(1:5)], 2, function(x){any(x!=x[1])}))
       if(time)
       {
         x <- lbinspop
-        subset <- plotselex$Yr >= minyr & plotselex$Yr <= maxyr
-        y <- plotselex$Yr[subset]
+        subset <- plotselex[["Yr"]] >= minyr & plotselex[["Yr"]] <= maxyr
+        y <- plotselex[["Yr"]][subset]
         z <- plotselex[subset,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
@@ -465,9 +465,9 @@ SSplotSelex <-
       if(time2)
       {
         x <- lbinspop
-        subset <- intret$Yr >= minyr & intret$Yr <= maxyr
-        y <- intret$Yr[subset & intret$Fleet==i]
-        z <- intret[subset & intret$Fleet==i,-(1:5)]
+        subset <- intret[["Yr"]] >= minyr & intret[["Yr"]] <= maxyr
+        y <- intret[["Yr"]][subset & intret[["Fleet"]]==i]
+        z <- intret[subset & intret[["Fleet"]]==i,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
         main <- paste(sextitle1,"varying retention for ", fleetnames[i],sep="")
@@ -499,9 +499,9 @@ SSplotSelex <-
       if(time3)
       {
         x <- lbinspop
-        subset <- intmort$Yr >= minyr & intmort$Yr <= maxyr
-        y <- intmort$Yr[subset & intmort$Fleet==i]
-        z <- intmort[subset & intmort$Fleet==i,-(1:5)]
+        subset <- intmort[["Yr"]] >= minyr & intmort[["Yr"]] <= maxyr
+        y <- intmort[["Yr"]][subset & intmort[["Fleet"]]==i]
+        z <- intmort[subset & intmort[["Fleet"]]==i,-(1:5)]
         z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
         z <- t(z)
         main <- paste(sextitle1,"varying discard mortality for ", fleetnames[i],sep="")
@@ -535,7 +535,7 @@ SSplotSelex <-
       }
 
       # make plot of end year selectivity (with retention and discard mortality if used)
-      endselex <- plotselex[plotselex$Yr==endyr,-(1:5)]
+      endselex <- plotselex[plotselex[["Yr"]]==endyr,-(1:5)]
 
       plotret <- plotret[nrow(plotret),-(1:5)] # final year only
       ylab <- labels[4]
@@ -546,7 +546,7 @@ SSplotSelex <-
       selfunc <- function()
       {
         # determine whether retention was used
-        intret2 <- intret[intret$Fleet==i,]
+        intret2 <- intret[intret[["Fleet"]]==i,]
         retchecktemp <- as.vector(unlist(intret2[1,]))
         retcheck <- as.numeric(retchecktemp[6:length(retchecktemp)])
         if(is.na(sum(retcheck))) retcheckuse <- 0
@@ -561,19 +561,19 @@ SSplotSelex <-
         if(1%in%selexlines) lines(bins,vals,type="o",col=col2,cex=1.1)
         if(retcheckuse > 0){
           # if retention, then add additional lines & legend
-          useret <- intret[intret$Fleet==i,]
-          usekeep <- intkeep[intkeep$Fleet==i,]
-          usemort <- intmort[intmort$Fleet==i,]
-          usedead <- intdead[intdead$Fleet==i,]
-          if(endyr %in% as.numeric(useret$Yr)){
+          useret <- intret[intret[["Fleet"]]==i,]
+          usekeep <- intkeep[intkeep[["Fleet"]]==i,]
+          usemort <- intmort[intmort[["Fleet"]]==i,]
+          usedead <- intdead[intdead[["Fleet"]]==i,]
+          if(endyr %in% as.numeric(useret[["Yr"]])){
             useyr <- endyr
           }else{
-            useyr <- max(as.numeric(useret$Yr))
+            useyr <- max(as.numeric(useret[["Yr"]]))
           }
-          plotret <- useret[useret$Yr==useyr,]
-          plotkeep <- usekeep[usekeep$Yr==useyr,]
-          plotmort <- usemort[usemort$Yr==useyr,]
-          plotdead <- usedead[usedead$Yr==useyr,]
+          plotret <- useret[useret[["Yr"]]==useyr,]
+          plotkeep <- usekeep[usekeep[["Yr"]]==useyr,]
+          plotmort <- usemort[usemort[["Yr"]]==useyr,]
+          plotdead <- usedead[usedead[["Yr"]]==useyr,]
           # compute discard as function of size: selectivity*(1 - retention)
           plotdisc <- plotret
           plotdisc[-(1:5)] <- vals*(1-plotret[,-(1:5)])
@@ -633,18 +633,18 @@ SSplotSelex <-
         if(m==1 & nsexes==2) sextitle2 <- "Female ending"
         if(m==2) sextitle2 <- "Male ending"
         ageselexcols <- (1:ncol(ageselex))[names(ageselex) %in% as.character(0:accuage)]
-        plotageselex <- ageselex[ageselex$Factor==factor & ageselex$Fleet==i &
-                                   ageselex$Yr!=startyr-3 & ageselex$Sex==m, ]
+        plotageselex <- ageselex[ageselex[["Factor"]]==factor & ageselex[["Fleet"]]==i &
+                                   ageselex[["Yr"]]!=startyr-3 & ageselex[["Sex"]]==m, ]
 
         # test for time-varying age selectivity
         time <- any(apply(plotageselex[-c(1,nrow(plotageselex)),ageselexcols],
                           2,function(x){any(x!=x[1])}))
         if(time){
           if((min(as.numeric(as.vector(t(plotageselex[,-(1:7)])))) < 1)){
-            subset <- as.numeric(plotageselex$Yr) >= minyr &
-              as.numeric(plotageselex$Yr) <= maxyr
+            subset <- as.numeric(plotageselex[["Yr"]]) >= minyr &
+              as.numeric(plotageselex[["Yr"]]) <= maxyr
             x <- seq(0,accuage,by=1)
-            y <- as.numeric(plotageselex$Yr)[subset]
+            y <- as.numeric(plotageselex[["Yr"]])[subset]
             z <- plotageselex[subset, -(1:7)]
             z <- matrix(as.numeric(as.matrix(z)),ncol=ncol(z))
             z <- t(z)
@@ -668,7 +668,7 @@ SSplotSelex <-
                 dev.off()
               }
             }
-            plotageselex2 <- plotageselex[plotageselex$Yr %in% c(max(as.numeric(plotageselex$Yr))),]
+            plotageselex2 <- plotageselex[plotageselex[["Yr"]] %in% c(max(as.numeric(plotageselex[["Yr"]]))),]
             plotageselex2 <- plotageselex2[,-(1:7)]
             main <- paste(sextitle2," year selectivity for ", fleetnames[i],sep="")
             endselfunc <- function(){
@@ -692,7 +692,7 @@ SSplotSelex <-
           }
         }
         if(!time){
-          plotageselex <- plotageselex[plotageselex$Yr==max(plotageselex$Yr),]
+          plotageselex <- plotageselex[plotageselex[["Yr"]]==max(plotageselex[["Yr"]]),]
           plotageselex <- plotageselex[,-(1:7)]
           vals <- as.numeric(paste(c(plotageselex)))
           # test for constant across all values
@@ -731,9 +731,9 @@ SSplotSelex <-
   ################################################################################
   ### Matrix of selectivity deviations for semi-parametric (2D-AR1) selectivity
   
-  if(15 %in% subplot & !is.null(replist$seldev_matrix)){
-    seldev_pars <- replist$seldev_pars
-    seldev_matrix <- replist$seldev_matrix
+  if(15 %in% subplot & !is.null(replist[["seldev_matrix"]])){
+    seldev_pars <- replist[["seldev_pars"]]
+    seldev_matrix <- replist[["seldev_matrix"]]
     # define color palette
     devcol.fn <- colorRampPalette(colors = c('red','white','blue'))
 
@@ -791,28 +791,28 @@ SSplotSelex <-
      ){ # need to connect growth patterns to fleets in future
     # subsetting for one season only. This could be replaced
     #   by info on the growth within the season when each fleet operates.
-    growdat <- growdat[growdat$Seas==season,]
+    growdat <- growdat[growdat[["Seas"]]==season,]
     if(nseasons>1) cat("Warning: plots showing growth curve with selectivity are using season",season,"growth,\nwhich may not match the timing of the fishery.\n")
 
     # Mid year mean length at age with 95% range of lengths (by sex if applicable)
-    growdatF <- growdat[growdat$Sex==1 & growdat$Morph==mainmorphs[1],]
-    growdatF$Sd_Size <- growdatF$SD_Mid
+    growdatF <- growdat[growdat[["Sex"]]==1 & growdat[["Morph"]]==mainmorphs[1],]
+    growdatF[["Sd_Size"]] <- growdatF[["SD_Mid"]]
     if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-      growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
-      growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Mid), sdlog=growdatF$Sd_Size)
+      growdatF[["high"]] <- qlnorm(0.975, meanlog=log(growdatF[["Len_Mid"]]), sdlog=growdatF[["Sd_Size"]])
+      growdatF[["low"]]  <- qlnorm(0.025, meanlog=log(growdatF[["Len_Mid"]]), sdlog=growdatF[["Sd_Size"]])
     }else{                        # normal distribution of length at age
-      growdatF$high <- qnorm(0.975, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
-      growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Mid, sd=growdatF$Sd_Size)
+      growdatF[["high"]] <- qnorm(0.975, mean=growdatF[["Len_Mid"]], sd=growdatF[["Sd_Size"]])
+      growdatF[["low"]]  <- qnorm(0.025, mean=growdatF[["Len_Mid"]], sd=growdatF[["Sd_Size"]])
     }
     if(nsexes > 1){
-      growdatM <- growdat[growdat$Sex==2 & growdat$Morph==mainmorphs[2],]
-      growdatM$Sd_Size <- growdatM$SD_Mid
+      growdatM <- growdat[growdat[["Sex"]]==2 & growdat[["Morph"]]==mainmorphs[2],]
+      growdatM[["Sd_Size"]] <- growdatM[["SD_Mid"]]
       if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-        growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
-        growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Mid), sdlog=growdatM$Sd_Size)
+        growdatM[["high"]] <- qlnorm(0.975, meanlog=log(growdatM[["Len_Mid"]]), sdlog=growdatM[["Sd_Size"]])
+        growdatM[["low"]]  <- qlnorm(0.025, meanlog=log(growdatM[["Len_Mid"]]), sdlog=growdatM[["Sd_Size"]])
       }else{                        # normal distribution of length at age
-        growdatM$high <- qnorm(0.975, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
-        growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Mid, sd=growdatM$Sd_Size)
+        growdatM[["high"]] <- qnorm(0.975, mean=growdatM[["Len_Mid"]], sd=growdatM[["Sd_Size"]])
+        growdatM[["low"]]  <- qnorm(0.025, mean=growdatM[["Len_Mid"]], sd=growdatM[["Sd_Size"]])
       }
     }
 
@@ -826,16 +826,16 @@ SSplotSelex <-
         if(m==1 & nsexes==1) sextitle2 <- "Ending"
         if(m==1 & nsexes==2) sextitle2 <- "Female ending"
         if(m==2) sextitle2 <- "Male ending"
-        plotlenselex <- as.numeric(sizeselex[sizeselex$Factor=="Lsel" &
-                                               sizeselex$Yr==endyr &
-                                                 sizeselex$Fleet==i &
-                                                   sizeselex$Sex==m,-(1:5)])
+        plotlenselex <- as.numeric(sizeselex[sizeselex[["Factor"]]=="Lsel" &
+                                               sizeselex[["Yr"]]==endyr &
+                                                 sizeselex[["Fleet"]]==i &
+                                                   sizeselex[["Sex"]]==m,-(1:5)])
         # test if there is any length-based selectivity (otherwise plot is uninformative)
         if(any(plotlenselex!=1)){
-          plotageselex <- as.numeric(ageselex[ageselex$Factor=="Asel" &
-                                                ageselex$Yr==endyr &
-                                                  ageselex$Fleet==i &
-                                                    ageselex$Sex==m,-(1:7)])
+          plotageselex <- as.numeric(ageselex[ageselex[["Factor"]]=="Asel" &
+                                                ageselex[["Yr"]]==endyr &
+                                                  ageselex[["Fleet"]]==i &
+                                                    ageselex[["Sex"]]==m,-(1:7)])
           # x here should probably be replaced by $Age_Mid or some more informative value
           x <- seq(0,accuage,by=1)
           y <- lbinspop
@@ -847,20 +847,20 @@ SSplotSelex <-
             contour(x,y,z,nlevels=5,xlab=xlab,ylab=ylab,
                     main=main,cex.main=cex.main,col=ians_blues,lwd=lwd)
             if(m==1){
-              lines(x,growdatF$Len_Mid,col='white',lwd=5)
-              lines(x,growdatF$Len_Mid,col=col1,lwd=3)
-              lines(x,growdatF$high,col='white',lwd=1,lty=1)
-              lines(x,growdatF$high,col=col1,lwd=1,lty="dashed")
-              lines(x,growdatF$low,col='white',lwd=1,lty=1)
-              lines(x,growdatF$low,col=col1,lwd=1,lty="dashed")
+              lines(x,growdatF[["Len_Mid"]],col='white',lwd=5)
+              lines(x,growdatF[["Len_Mid"]],col=col1,lwd=3)
+              lines(x,growdatF[["high"]],col='white',lwd=1,lty=1)
+              lines(x,growdatF[["high"]],col=col1,lwd=1,lty="dashed")
+              lines(x,growdatF[["low"]],col='white',lwd=1,lty=1)
+              lines(x,growdatF[["low"]],col=col1,lwd=1,lty="dashed")
             }
             if(m==2){
-              lines(x,growdatM$Len_Mid,col='white',lwd=5)
-              lines(x,growdatM$Len_Mid,col=col2,lwd=3)
-              lines(x,growdatM$high,col='white',lwd=1,lty=1)
-              lines(x,growdatM$high,col=col2,lwd=1,lty="dashed")
-              lines(x,growdatM$low,col='white',lwd=1,lty=1)
-              lines(x,growdatM$low,col=col2,lwd=1,lty="dashed")
+              lines(x,growdatM[["Len_Mid"]],col='white',lwd=5)
+              lines(x,growdatM[["Len_Mid"]],col=col2,lwd=3)
+              lines(x,growdatM[["high"]],col='white',lwd=1,lty=1)
+              lines(x,growdatM[["high"]],col=col2,lwd=1,lty="dashed")
+              lines(x,growdatM[["low"]],col='white',lwd=1,lty=1)
+              lines(x,growdatM[["low"]],col=col2,lwd=1,lty="dashed")
             }
           }
           if(plot){
@@ -885,44 +885,44 @@ SSplotSelex <-
 
   if(22 %in% subplot){
     # get values from Extra SD reporting if created by request at bottom of control file
-    rows <- grep("Selex_std",derived_quants$Label)
+    rows <- grep("Selex_std",derived_quants[["Label"]])
     if(length(rows)>0){
       sel <- derived_quants[rows,]
-      names <- sel$Label
+      names <- sel[["Label"]]
       splitnames <- strsplit(names,"_")
       namesDF <- as.data.frame(matrix(unlist(strsplit(names,"_")),ncol=6,byrow=T))
-      sel$Fleet   <- as.numeric(as.character(namesDF$V3))
-      sel$Sex     <- as.character(namesDF$V4)
-      sel$agelen  <- as.character(namesDF$V5)
-      sel$bin     <- as.numeric(as.character(namesDF$V6))
-      sel$lower   <- pmax(qnorm(0.025, mean=sel$Value, sd=sel$StdDev),0) # trim at 0
-      sel$upper   <- pmin(qnorm(0.975, mean=sel$Value, sd=sel$StdDev),1) # trim at 1
-      i <- sel$Fleet[1]
-      agelen <- sel$agelen[1]
-      xlab <- labels[1:2][1 + (sel$agelen[1]=="A")] # decide label between length and age
+      sel[["Fleet"]]   <- as.numeric(as.character(namesDF[["V3"]]))
+      sel[["Sex"]]     <- as.character(namesDF[["V4"]])
+      sel[["agelen"]]  <- as.character(namesDF[["V5"]])
+      sel[["bin"]]     <- as.numeric(as.character(namesDF[["V6"]]))
+      sel[["lower"]]   <- pmax(qnorm(0.025, mean=sel[["Value"]], sd=sel[["StdDev"]]),0) # trim at 0
+      sel[["upper"]]   <- pmin(qnorm(0.975, mean=sel[["Value"]], sd=sel[["StdDev"]]),1) # trim at 1
+      i <- sel[["Fleet"]][1]
+      agelen <- sel[["agelen"]][1]
+      xlab <- labels[1:2][1 + (sel[["agelen"]][1]=="A")] # decide label between length and age
 
-      for(m in intersect(unique(sel$Sex),c("Fem","Mal")[sexes])){
-        seltemp <- sel[sel$Sex==m,]
+      for(m in intersect(unique(sel[["Sex"]]),c("Fem","Mal")[sexes])){
+        seltemp <- sel[sel[["Sex"]]==m,]
         if(m=="Fem" & nsexes==1) sextitle3 <- ""
         if(m=="Fem" & nsexes==2) sextitle3 <- "females"
         if(m=="Mal") sextitle3 <- "males"
         main <- paste("Uncertainty in selectivity for",fleetnames[i],sextitle3)
-        no0 <- seltemp$StdDev>0.001
+        no0 <- seltemp[["StdDev"]]>0.001
 
         if(FALSE){
           #Ian T.: this is the beginning of code to add the full selectivity line,
           #        including bins for which no uncertainty was requested
-          if(agelen=="L") plotselex <- sizeselex[sizeselex$Factor=="Lsel" & ageselex$Fleet==i & sizeselex$Sex==m,]
-          if(agelen=="A") plotselex <- ageselex[ageselex$Factor=="Asel" & ageselex$Fleet==i & ageselex$Sex==m,]
+          if(agelen=="L") plotselex <- sizeselex[sizeselex[["Factor"]]=="Lsel" & ageselex[["Fleet"]]==i & sizeselex[["Sex"]]==m,]
+          if(agelen=="A") plotselex <- ageselex[ageselex[["Factor"]]=="Asel" & ageselex[["Fleet"]]==i & ageselex[["Sex"]]==m,]
         }
 
         plot_extra_selex_SD <- function(){
           if(!add)
-            plot(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
-                 ylab=labels[4],type="n",col=col2,cex=1.1,xlim=c(0,max(seltemp$bin)))
-          lines(seltemp$bin,seltemp$Value,xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
-                ylab=labels[4],type="o",col=col2,cex=1.1,xlim=c(0,max(seltemp$bin)))
-          arrows(x0=seltemp$bin[no0], y0=seltemp$lower[no0], x1=seltemp$bin[no0], y1=seltemp$upper[no0],
+            plot(seltemp[["bin"]],seltemp[["Value"]],xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+                 ylab=labels[4],type="n",col=col2,cex=1.1,xlim=c(0,max(seltemp[["bin"]])))
+          lines(seltemp[["bin"]],seltemp[["Value"]],xlab=xlab,ylim=c(0,1),main=main,cex.main=cex.main,
+                ylab=labels[4],type="o",col=col2,cex=1.1,xlim=c(0,max(seltemp[["bin"]])))
+          arrows(x0=seltemp[["bin"]][no0], y0=seltemp[["lower"]][no0], x1=seltemp[["bin"]][no0], y1=seltemp[["upper"]][no0],
                  length=0.01, angle=90, code=3, col=col2)
           abline(h=0,col="grey")
         }
@@ -939,6 +939,6 @@ SSplotSelex <-
   } # check check for subplot in list
 
   # return info on any PNG files created
-  if(!is.null(plotinfo)) plotinfo$category <- "Sel"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Sel"
   return(invisible(list(infotable=infotable2,plotinfo=plotinfo)))
 }

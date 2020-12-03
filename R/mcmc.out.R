@@ -331,7 +331,7 @@ mcmc.out <- function (
             font=1,cex=0.9,adj=0)
 
        l1.ac <- acf(mcmcobject[,i],lag.max=1,type="correlation",plot=F)
-       acoruse <- round(l1.ac$acf[2],6)
+       acoruse <- round(l1.ac[["acf"]][2],6)
        text(13,25-i,acoruse,font=1,cex=0.9,adj=0)
 
        effsize<- effectiveSize(mcmcobject[,i])
@@ -342,7 +342,7 @@ mcmc.out <- function (
        if(acoruse <= 0.4)
         {
          geweke <- geweke.diag(mcmcobject[,i],frac1=0.1,frac2=0.5)
-         gewuse <- round(geweke$z,3)
+         gewuse <- round(geweke[["z"]],3)
         }
        text(19,25-i,gewuse,font=1,cex=0.9,adj=0)
 

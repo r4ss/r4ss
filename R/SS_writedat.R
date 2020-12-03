@@ -37,7 +37,7 @@ SS_writedat <- function(datlist,
   }
 
   # check datlist
-  if (datlist$type != "Stock_Synthesis_data_file") {
+  if (datlist[["type"]] != "Stock_Synthesis_data_file") {
     stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
 

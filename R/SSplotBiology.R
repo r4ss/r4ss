@@ -41,7 +41,7 @@
 #' @param seas which season to plot (values other than 1 only work in
 #' seasonal models but but maybe not fully implemented)
 #' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
-#' will be replist$mainmorphs
+#' will be replist[["mainmorphs"]]
 #' @param forecast Include forecast years in plots of time-varying biology?
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
@@ -136,12 +136,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # subplot 106: diagram with labels showing female CV = f(A) & male offset (type 3)
 
   # test for presence of wtatage_switch
-  wtatage_switch  <- replist$wtatage_switch
+  wtatage_switch  <- replist[["wtatage_switch"]]
   if(wtatage_switch){
     message("Note: this model uses the empirical weight-at-age input.\n",
             "      Plots of many quantities related to growth are skipped.")
   } else {
-    if (is.null(replist$endgrowth)) {
+    if (is.null(replist[["endgrowth"]])) {
       message("Skipping biology plots because model output doesn't include\n",
               " biology-at-age information ($endgrowth), likely because\n",
               " brief output was specified in starter.ss.")
@@ -173,47 +173,47 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   #### plot function 1
   # mean weight, maturity, fecundity, spawning output
   # get objects from replist
-  nseasons     <- replist$nseasons
-  growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
-  growthCVtype <- replist$growthCVtype
-  biology      <- replist$biology
-  startyr      <- replist$startyr
-  FecType      <- replist$FecType
-  FecPar1name  <- replist$FecPar1name
-  FecPar2name  <- replist$FecPar2name
-  FecPar1      <- replist$FecPar1
-  FecPar2      <- replist$FecPar2
-  parameters   <- replist$parameters
-  nsexes       <- replist$nsexes
-  accuage      <- replist$accuage
-  startyr      <- replist$startyr
-  endyr        <- replist$endyr
-  growthvaries <- replist$growthvaries
-  growthseries <- replist$growthseries
-  ageselex     <- replist$ageselex
-  MGparmAdj    <- replist$MGparmAdj
-  wtatage      <- replist$wtatage
+  nseasons     <- replist[["nseasons"]]
+  growdat      <- replist[["endgrowth"]][replist[["endgrowth"]][["Seas"]]==seas,]
+  growthCVtype <- replist[["growthCVtype"]]
+  biology      <- replist[["biology"]]
+  startyr      <- replist[["startyr"]]
+  FecType      <- replist[["FecType"]]
+  FecPar1name  <- replist[["FecPar1name"]]
+  FecPar2name  <- replist[["FecPar2name"]]
+  FecPar1      <- replist[["FecPar1"]]
+  FecPar2      <- replist[["FecPar2"]]
+  parameters   <- replist[["parameters"]]
+  nsexes       <- replist[["nsexes"]]
+  accuage      <- replist[["accuage"]]
+  startyr      <- replist[["startyr"]]
+  endyr        <- replist[["endyr"]]
+  growthvaries <- replist[["growthvaries"]]
+  growthseries <- replist[["growthseries"]]
+  ageselex     <- replist[["ageselex"]]
+  MGparmAdj    <- replist[["MGparmAdj"]]
+  wtatage      <- replist[["wtatage"]]
   # remove comments on each line of wtatage that were added with SSv3.30
   if("comment" %in% names(wtatage)){
     wtatage <- wtatage[,-grep("comment",names(wtatage))]
   }
-  M_at_age     <- replist$M_at_age
-  Growth_Parameters <- replist$Growth_Parameters
+  M_at_age     <- replist[["M_at_age"]]
+  Growth_Parameters <- replist[["Growth_Parameters"]]
 
   if (is.null(morphs)){
-    morphs   <- replist$mainmorphs
+    morphs   <- replist[["mainmorphs"]]
     if (is.null(morphs)) {
       # if morphs not supplied but growth is available, use middle
       # morph within each sex
-      morphs <- median(growdat$Morph[growdat$Sex == 1])
+      morphs <- median(growdat[["Morph"]][growdat[["Sex"]] == 1])
       if(nsexes == 2) {
-        morphs <- c(morphs, median(growdat$Morph[growdat$Sex == 2]))
+        morphs <- c(morphs, median(growdat[["Morph"]][growdat[["Sex"]] == 2]))
       }
     }
   }
 
   # get any derived quantities related to growth curve uncertainty
-  Grow_std <- replist$derived_quants[grep("Grow_std_", replist$derived_quants$Label),]
+  Grow_std <- replist[["derived_quants"]][grep("Grow_std_", replist[["derived_quants"]][["Label"]]),]
   if(nrow(Grow_std)==0){
     Grow_std <- NULL
   }else{
@@ -222,19 +222,19 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     #                     "Grow_std_GP:_1_Fem_A_25"
     # so the "shift" below = 0 or 1 to adjust the position accordingly
     # "pattern 1, female, age 25"
-    Grow_std$pattern <- NA
-    Grow_std$sex_char <- NA
-    Grow_std$sex <- NA
-    Grow_std$age <- NA
-    shift <- length(grep("GP:", Grow_std$Label[1]))
+    Grow_std[["pattern"]] <- NA
+    Grow_std[["sex_char"]] <- NA
+    Grow_std[["sex"]] <- NA
+    Grow_std[["age"]] <- NA
+    shift <- length(grep("GP:", Grow_std[["Label"]][1]))
     for(irow in 1:nrow(Grow_std)){
-      tmp <- strsplit(Grow_std$Label[irow], split="_")[[1]]
-      Grow_std$pattern[irow] <- as.numeric(tmp[3 + shift])
-      Grow_std$sex_char[irow] <- tmp[4 + shift]
-      Grow_std$age[irow] <- as.numeric(tmp[6 + shift])
+      tmp <- strsplit(Grow_std[["Label"]][irow], split="_")[[1]]
+      Grow_std[["pattern"]][irow] <- as.numeric(tmp[3 + shift])
+      Grow_std[["sex_char"]][irow] <- tmp[4 + shift]
+      Grow_std[["age"]][irow] <- as.numeric(tmp[6 + shift])
     }
-    Grow_std$sex[Grow_std$sex_char=="Fem"] <- 1
-    Grow_std$sex[Grow_std$sex_char=="Mal"] <- 2
+    Grow_std[["sex"]][Grow_std[["sex_char"]]=="Fem"] <- 1
+    Grow_std[["sex"]][Grow_std[["sex_char"]]=="Mal"] <- 2
     #### now it should look something like this:
     ##                                         Label   Value   StdDev (Val-1.0)/Stddev
     ## Grow_std_GP:_1_Fem_A_0 Grow_std_GP:_1_Fem_A_0 27.3188 0.393286               NA
@@ -245,24 +245,24 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
   # get any derived quantities related to M uncertainty
-  NatM_std <- replist$derived_quants[grep("NatM_std_", replist$derived_quants$Label),]
+  NatM_std <- replist[["derived_quants"]][grep("NatM_std_", replist[["derived_quants"]][["Label"]]),]
   if(nrow(NatM_std)==0){
     NatM_std <- NULL
   }else{
     # convert things like "NatM_std_GP:_1_Fem_A_1" into
     # "pattern 1, female, age 25"
-    NatM_std$pattern <- NA
-    NatM_std$sex_char <- NA
-    NatM_std$sex <- NA
-    NatM_std$age <- NA
+    NatM_std[["pattern"]] <- NA
+    NatM_std[["sex_char"]] <- NA
+    NatM_std[["sex"]] <- NA
+    NatM_std[["age"]] <- NA
     for(irow in 1:nrow(NatM_std)){
-      tmp <- strsplit(NatM_std$Label[irow], split="_")[[1]]
-      NatM_std$pattern[irow] <- as.numeric(tmp[4])
-      NatM_std$sex_char[irow] <- tmp[5]
-      NatM_std$age[irow] <- as.numeric(tmp[7])
+      tmp <- strsplit(NatM_std[["Label"]][irow], split="_")[[1]]
+      NatM_std[["pattern"]][irow] <- as.numeric(tmp[4])
+      NatM_std[["sex_char"]][irow] <- tmp[5]
+      NatM_std[["age"]][irow] <- as.numeric(tmp[7])
     }
-    NatM_std$sex[NatM_std$sex_char=="Fem"] <- 1
-    NatM_std$sex[NatM_std$sex_char=="Mal"] <- 2
+    NatM_std[["sex"]][NatM_std[["sex_char"]]=="Fem"] <- 1
+    NatM_std[["sex"]][NatM_std[["sex_char"]]=="Mal"] <- 2
     #### now it should look something like this:
     ##                                         Label    Value StdDev (Val-1.0)/Stddev
     ## NatM_std_GP:_1_Fem_A_1 NatM_std_GP:_1_Fem_A_1 0.564563      0               NA
@@ -275,9 +275,9 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
   if(!seas %in% 1:nseasons) stop("'seas' input should be within 1:nseasons")
   # trying to fix error when spawning not in season 1:
-  ## if(nrow(growdat[growdat$Sex==1 & growdat$Morph==morphs[1],])==0){
-  ##   seas <- replist$spawnseas
-  ##   growdat      <- replist$endgrowth[replist$endgrowth$Seas==seas,]
+  ## if(nrow(growdat[growdat[["Sex"]]==1 & growdat[["Morph"]]==morphs[1],])==0){
+  ##   seas <- replist[["spawnseas"]]
+  ##   growdat      <- replist[["endgrowth"]][replist[["endgrowth"]][["Seas"]]==seas,]
   ##   cat("Note: growth will be shown for spawning season =",seas,"\n")
   ## }
   if(nseasons>1){
@@ -286,7 +286,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
   # check dimensions
   if(length(morphs)>nsexes){
@@ -295,8 +295,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
   ## # stuff from selectivity that is not used
-  ## FecundAtAge <- ageselex[ageselex$factor=="Fecund", names(ageselex)%in%0:accuage]
-  ## WtAtAge <- ageselex[ageselex$factor=="bodywt", names(ageselex)%in%0:accuage]
+  ## FecundAtAge <- ageselex[ageselex[["factor"]]=="Fecund", names(ageselex)%in%0:accuage]
+  ## WtAtAge <- ageselex[ageselex[["factor"]]=="bodywt", names(ageselex)%in%0:accuage]
 
   # column name for weight-at-length
   # (Wt_len for 1-sex models starting with 3.30.16)
@@ -320,31 +320,31 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ## Ian T.: consider somehow generalizing to allow looping over growth pattern
   if (!is.null(growdat)) {
     # calculate CVs from SD and mean length
-    growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
+    growdat[["CV_Beg"]] <- growdat[["SD_Beg"]]/growdat[["Len_Beg"]]
 
     # female growth
-    growdatF <- growdat[growdat$Sex==1 & growdat$Morph==morphs[1],]
-    growdatF$Sd_Size <- growdatF$SD_Beg
+    growdatF <- growdat[growdat[["Sex"]]==1 & growdat[["Morph"]]==morphs[1],]
+    growdatF[["Sd_Size"]] <- growdatF[["SD_Beg"]]
     if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-      growdatF$high <- qlnorm(0.975, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
-      growdatF$low  <- qlnorm(0.025, meanlog=log(growdatF$Len_Beg), sdlog=growdatF$Sd_Size)
+      growdatF[["high"]] <- qlnorm(0.975, meanlog=log(growdatF[["Len_Beg"]]), sdlog=growdatF[["Sd_Size"]])
+      growdatF[["low"]]  <- qlnorm(0.025, meanlog=log(growdatF[["Len_Beg"]]), sdlog=growdatF[["Sd_Size"]])
     }else{                        # normal distribution of length at age
-      growdatF$high <- qnorm(0.975, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
-      growdatF$low  <- qnorm(0.025, mean=growdatF$Len_Beg, sd=growdatF$Sd_Size)
+      growdatF[["high"]] <- qnorm(0.975, mean=growdatF[["Len_Beg"]], sd=growdatF[["Sd_Size"]])
+      growdatF[["low"]]  <- qnorm(0.025, mean=growdatF[["Len_Beg"]], sd=growdatF[["Sd_Size"]])
     }
 
     if(nsexes > 1){ # do males if 2-sex model
-      growdatM <- growdat[growdat$Sex==2 & growdat$Morph==morphs[2],]
+      growdatM <- growdat[growdat[["Sex"]]==2 & growdat[["Morph"]]==morphs[2],]
       # IAN T. this should probably be generalized
-      xm <- growdatM$Age_Beg
+      xm <- growdatM[["Age_Beg"]]
 
-      growdatM$Sd_Size <- growdatM$SD_Beg
+      growdatM[["Sd_Size"]] <- growdatM[["SD_Beg"]]
       if(growthCVtype=="logSD=f(A)"){ # lognormal distribution of length at age
-        growdatM$high <- qlnorm(0.975, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
-        growdatM$low  <- qlnorm(0.025, meanlog=log(growdatM$Len_Beg), sdlog=growdatM$Sd_Size)
+        growdatM[["high"]] <- qlnorm(0.975, meanlog=log(growdatM[["Len_Beg"]]), sdlog=growdatM[["Sd_Size"]])
+        growdatM[["low"]]  <- qlnorm(0.025, meanlog=log(growdatM[["Len_Beg"]]), sdlog=growdatM[["Sd_Size"]])
       }else{                        # normal distribution of length at age
-        growdatM$high <- qnorm(0.975, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
-        growdatM$low  <- qnorm(0.025, mean=growdatM$Len_Beg, sd=growdatM$Sd_Size)
+        growdatM[["high"]] <- qnorm(0.975, mean=growdatM[["Len_Beg"]], sd=growdatM[["Sd_Size"]])
+        growdatM[["low"]]  <- qnorm(0.025, mean=growdatM[["Len_Beg"]], sd=growdatM[["Sd_Size"]])
       }
     }
   }
@@ -366,24 +366,24 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     ## This needs to be a function of sex since it can be called
     ## either once for a single sex model or twice to produce plots for
     ## each one.
-    x <- biology$Mean_Size
+    x <- biology[["Mean_Size"]]
     if(!wtatage_switch){ # if empirical weight-at-age is not used
       if(!add){
         ymax <- max(biology[[Wt_len_colname]])
-        if(nsexes>1) ymax <- max(ymax, biology$Wt_len_M)
+        if(nsexes>1) ymax <- max(ymax, biology[["Wt_len_M"]])
         plot(x, x, ylim=c(0,1.1*ymax), xlab=labels[1], ylab=labels[4], type="n",
              las=1, yaxs='i')
       }
       lines(x,biology[[Wt_len_colname]],type='o',col=colvec[1])
       if(nsexes > 1){
-        lines(x,biology$Wt_len_M,type='o',col=colvec[2])
+        lines(x,biology[["Wt_len_M"]],type='o',col=colvec[2])
         if(!add) legend(legendloc,bty="n", c("Females","Males"), lty=1, col = c(colvec[1],colvec[2]))
       }
     } else { ## if empirical weight-at-age IS used
-      wtmat <- wtatage[wtatage$Fleet==-1 & wtatage$Sex==sex & wtatage$Seas==seas,-(2:6)]
+      wtmat <- wtatage[wtatage[["Fleet"]]==-1 & wtatage[["Sex"]]==sex & wtatage[["Seas"]]==seas,-(2:6)]
       wtmat <- clean_wtatage(wtmat)
       if(!is.null(wtmat)){
-        ## persp(x=abs(wtmat$Yr), y=0:accuage,
+        ## persp(x=abs(wtmat[["Yr"]]), y=0:accuage,
         ##       z=as.matrix(wtmat[,-1]),
         ##       theta=70,phi=30,xlab="Year",ylab="Age",zlab="Weight", main="")
         makeimage(wtmat, main="")
@@ -394,32 +394,32 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
   maturity_plot <- function(){ # maturity
     if(!wtatage_switch){ # if empirical weight-at-age is not used
-      x <- biology$Mean_Size
-      if(min(biology$Mat_len)<1){ # if length based
-        if(!add) plot(x, biology$Mat_len, xlab=labels[1], ylab=labels[3],
-                      las=1, yaxs='i', ylim=c(0, max(biology$Mat_len)),
+      x <- biology[["Mean_Size"]]
+      if(min(biology[["Mat_len"]])<1){ # if length based
+        if(!add) plot(x, biology[["Mat_len"]], xlab=labels[1], ylab=labels[3],
+                      las=1, yaxs='i', ylim=c(0, max(biology[["Mat_len"]])),
                       type='o', col=colvec[1])
-        if(add) lines(x, biology$Mat_len, type='o', col=colvec[1])
+        if(add) lines(x, biology[["Mat_len"]], type='o', col=colvec[1])
       }else{ # else is age based
         if(!add){
-          plot(growdatF$Age_Beg, growdatF$Age_Mat, xlab=labels[2],
-               las=1, yaxs='i', ylim=c(0, 1.1*max(growdatF$Age_Mat)),
+          plot(growdatF[["Age_Beg"]], growdatF[["Age_Mat"]], xlab=labels[2],
+               las=1, yaxs='i', ylim=c(0, 1.1*max(growdatF[["Age_Mat"]])),
                ylab=labels[3], type='o', col=colvec[1])
         }else{
-          lines(growdatF$Age_Beg, growdatF$Age_Mat,
+          lines(growdatF[["Age_Beg"]], growdatF[["Age_Mat"]],
                 type='o',col=colvec[1])
         }
       }
     }else{
       #print(seas)
       # if empirical weight-at-age IS used
-      fecmat <- wtatage[wtatage$Fleet==-2 & wtatage$Sex==1,]
+      fecmat <- wtatage[wtatage[["Fleet"]]==-2 & wtatage[["Sex"]]==1,]
       if(nrow(fecmat) > 1){
         # figure out which seasons have fecundity values (maybe always only one?)
-        fecseasons <- sort(unique(fecmat$Seas))
+        fecseasons <- sort(unique(fecmat[["Seas"]]))
         seas_label <- NULL
         for(iseas in fecseasons){
-          fecmat_seas <- fecmat[fecmat$Seas==iseas, -(2:6)]
+          fecmat_seas <- fecmat[fecmat[["Seas"]]==iseas, -(2:6)]
           # label the season only if a multi-season model
           # also testing for length of fecseasons, but that's probably redundant
           if(nseasons>1 | length(fecseasons) > 1){
@@ -440,7 +440,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
   makeimage <- function(mat,main=""){
-    yrvec <- abs(mat$Yr)
+    yrvec <- abs(mat[["Yr"]])
     ##### this stuff was used to add a row of mean values
     ## if(is.null(meanvec)){
     ##   meanvec <- mat[,1]
@@ -473,13 +473,13 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     ## add text if desired
     if(imageplot_text){
       zdataframe <- expand.grid(age=0:accuage,yr=yrvec2)
-      zdataframe$z <- c(t(mat2))
-      zdataframe$font <- 1
+      zdataframe[["z"]] <- c(t(mat2))
+      zdataframe[["font"]] <- 1
       ## Rounding should depend on how big the numbers get. This is untested
       ## and may need to be adjusted.
-      ztext <- format(round(zdataframe$z, imageplot_text_round))
+      ztext <- format(round(zdataframe[["z"]], imageplot_text_round))
       ztext[ztext=="   NA" | ztext=="  NA"] <- ""
-      text(x=zdataframe$age,y=zdataframe$Yr,label=ztext,font=zdataframe$font,cex=.7)
+      text(x=zdataframe[["age"]],y=zdataframe[["Yr"]],label=ztext,font=zdataframe[["font"]],cex=.7)
     }
 
     ## add a legend to the image plot
@@ -501,7 +501,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     ## turn off the matrix plot
     layout(mat=c(1,1))
     # restore default single panel settings
-    par(mfcol=c(1,1), mar=par_old$mar, oma=par_old$oma)
+    par(mfcol=c(1,1), mar=par_old[["mar"]], oma=par_old[["oma"]])
   }
 
   fec_pars_fn <- function(){ # fecundity from model parameters
@@ -515,28 +515,28 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       points(FecX, FecY,col=colvec[2],pch=19)
     }
   }
-  fecundityOK <- all(!is.na(biology$Fecundity))
+  fecundityOK <- all(!is.na(biology[["Fecundity"]]))
   fec_weight_fn <- function(){ # fecundity at weight from BIOLOGY section
-    ymax <- 1.1*max(biology$Fecundity)
+    ymax <- 1.1*max(biology[["Fecundity"]])
     if(!add){
-      plot(biology[[Wt_len_colname]], biology$Fecundity, xlab=labels[8], ylab=labels[10],
+      plot(biology[[Wt_len_colname]], biology[["Fecundity"]], xlab=labels[8], ylab=labels[10],
            las=1, yaxs='i', ylim=c(0,ymax), col=colvec[1], type='o')
     }else{
-      points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
+      points(biology[["Mean_Size"]], biology[["Fecundity"]], col=colvec[1], type='o')
     }
   }
   fec_len_fn <- function(){ # fecundity at length from BIOLOGY section
-    ymax <- 1.1*max(biology$Fecundity)
+    ymax <- 1.1*max(biology[["Fecundity"]])
     if(!add){
-      plot(biology$Mean_Size, biology$Fecundity, xlab=labels[9], ylab=labels[10],
+      plot(biology[["Mean_Size"]], biology[["Fecundity"]], xlab=labels[9], ylab=labels[10],
            las=1, yaxs='i', ylim=c(0,1.1*ymax), col=colvec[1], type='o', yaxs='i')
     }else{
-      points(biology$Mean_Size, biology$Fecundity, col=colvec[1], type='o')
+      points(biology[["Mean_Size"]], biology[["Fecundity"]], col=colvec[1], type='o')
     }
   }
   spawn_output_len_fn <- function(){ # spawning output at length
-    x <- biology$Mean_Size
-    y <- biology$Spawn
+    x <- biology[["Mean_Size"]]
+    y <- biology[["Spawn"]]
     ymax <- 1.1*max(y)
     if(!add){
       plot(x, y, xlab=labels[1], ylab=labels[5], type='o', col=colvec[1],
@@ -546,8 +546,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
   }
   spawn_output_age_fn <- function(){ # spawning output at age
-    x <- growdat$Age_Beg[growdat$Sex==1]
-    y <- growdat$"Mat*Fecund"[growdat$Sex==1]
+    x <- growdat[["Age_Beg"]][growdat[["Sex"]]==1]
+    y <- growdat$"Mat*Fecund"[growdat[["Sex"]]==1]
     ymax <- 1.1*max(y)
     if(!add){
       plot(x, y, xlab=labels[2], ylab=labels[5], type='o', col=colvec[1],
@@ -557,8 +557,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
   }
 
-  ymax <- max(biology$Mean_Size)
-  x <- growdatF$Age_Beg
+  ymax <- max(biology[["Mean_Size"]])
+  x <- growdatF[["Age_Beg"]]
 
   main <- "Ending year expected growth (with 95% intervals)"
   # if(nseasons > 1){main <- paste(main," season 1",sep="")}
@@ -576,16 +576,16 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     options(warn=-1)
     # confirm presence of table of values and request to add to plot
     if(!is.null(std_table)){
-      std_table.sex <- std_table[std_table$sex == sex,]
+      std_table.sex <- std_table[std_table[["sex"]] == sex,]
       # confirm presence for requested sex
       if(!is.null(std_table.sex)){
         for(irow in 1:nrow(std_table.sex)){
-          std.age <- std_table.sex$age[irow]
+          std.age <- std_table.sex[["age"]][irow]
           # this might not work for log-normal length at age
-          mean <- std_table.sex$Value[irow]
-          ages <- std_table.sex$age[irow] + age_offset
-          high <- qnorm(0.975, mean=mean, sd=std_table.sex$StdDev[irow])
-          low  <- qnorm(0.025, mean=mean, sd=std_table.sex$StdDev[irow])
+          mean <- std_table.sex[["Value"]][irow]
+          ages <- std_table.sex[["age"]][irow] + age_offset
+          high <- qnorm(0.975, mean=mean, sd=std_table.sex[["StdDev"]][irow])
+          low  <- qnorm(0.025, mean=mean, sd=std_table.sex[["StdDev"]][irow])
           # set sex-dependent color
           if(sex == 1){
             col <- colvec[col_index1]
@@ -605,10 +605,10 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
   growth_curve_fn <- function(add_labels=TRUE, add_uncertainty=TRUE){ # growth
-    x <- growdatF$Age_Beg
+    x <- growdatF[["Age_Beg"]]
     # make empty plot unless this is being added to existing figure
     if(!add){
-      plot(x, growdatF$Len_Beg, ylim=c(0,1.1*ymax), type="n",
+      plot(x, growdatF[["Len_Beg"]], ylim=c(0,1.1*ymax), type="n",
            xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
       abline(h=0,col="grey")
       if(add_labels){
@@ -619,12 +619,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
     lty <- 1
     # make shaded polygon
-    polygon(c(x, rev(x)), c(growdatF$low, rev(growdatF$high)),
+    polygon(c(x, rev(x)), c(growdatF[["low"]], rev(growdatF[["high"]])),
             border=NA, col=shadecolvec[col_index1])
     # add lines for mean, low and high
-    lines(x,growdatF$Len_Beg,col=colvec[col_index1],lwd=2,lty=ltyvec[1])
-    lines(x,growdatF$high,col=colvec[col_index1],lwd=1,lty='12')
-    lines(x,growdatF$low,col=colvec[col_index1],lwd=1,lty='12')
+    lines(x,growdatF[["Len_Beg"]],col=colvec[col_index1],lwd=2,lty=ltyvec[1])
+    lines(x,growdatF[["high"]],col=colvec[col_index1],lwd=1,lty='12')
+    lines(x,growdatF[["low"]],col=colvec[col_index1],lwd=1,lty='12')
 
     # add 95% intervals for uncertainty in growth from $derived_quants
     if(add_uncertainty){
@@ -634,12 +634,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     # add males if they are present in the model
     if(nsexes > 1){
       # make shaded polygon
-      polygon(c(xm, rev(xm)), c(growdatM$low, rev(growdatM$high)),
+      polygon(c(xm, rev(xm)), c(growdatM[["low"]], rev(growdatM[["high"]])),
               border=NA, col=shadecolvec[2])
       # add lines for mean, low and high
-      lines(xm,growdatM$Len_Beg,col=colvec[2],lwd=2,lty=ltyvec[2])
-      lines(xm,growdatM$high,col=colvec[2],lwd=1,lty='13')
-      lines(xm,growdatM$low,col=colvec[2],lwd=1,lty='13')
+      lines(xm,growdatM[["Len_Beg"]],col=colvec[2],lwd=2,lty=ltyvec[2])
+      lines(xm,growdatM[["high"]],col=colvec[2],lwd=1,lty='13')
+      lines(xm,growdatM[["low"]],col=colvec[2],lwd=1,lty='13')
 
       # add 95% intervals for uncertainty in growth from $derived_quants
       if(add_uncertainty){
@@ -711,7 +711,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       lab2 <- "Wt_Beg"
       lab2long <- "Mean weight"
       lab1max <- 1
-      lab2max <- max(c(biology[[Wt_len_colname]], biology$Wt_len_M), na.rm=TRUE)
+      lab2max <- max(c(biology[[Wt_len_colname]], biology[["Wt_len_M"]]), na.rm=TRUE)
       lab1_axis_vec <- c(0, 0.5, 1)
     }
     # calculate scaling factor between CVs and SDs to share each panel
@@ -725,30 +725,30 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     if(option==1){
       # if plotting SD and CV, then get it from age-based data
       # add line for lab1 vs. Len
-      lines(growdatF[[lab1]], growdatF$Len_Beg, col=colvec[col_index1],
+      lines(growdatF[[lab1]], growdatF[["Len_Beg"]], col=colvec[col_index1],
             lwd=1, lty='12')
       # add line for lab2 vs. Len
-      lines(growdatF[[lab2]]*lab2_to_lab1_scale, growdatF$Len_Beg,
+      lines(growdatF[[lab2]]*lab2_to_lab1_scale, growdatF[["Len_Beg"]],
             col=colvec[col_index1], lwd=3)
       if(nsexes > 1){ # add lines for males
         if(option==1){
           # add line for lab1 vs. Age
           # (unless it's maturity, which is not defined for males)
-          lines(growdatM[[lab1]], growdatM$Len_Beg, col=colvec[2],
+          lines(growdatM[[lab1]], growdatM[["Len_Beg"]], col=colvec[2],
                 lwd=1, lty='13')
         }
         # add line for lab2 vs. Len
-        lines(growdatM[[lab2]]*lab2_to_lab1_scale, growdatM$Len_Beg, col=colvec[2],
+        lines(growdatM[[lab2]]*lab2_to_lab1_scale, growdatM[["Len_Beg"]], col=colvec[2],
               lwd=3, lty=2)
       }
     }
     if(option==2){
       # if plotting maturity and fecundity, then get this panel from length-based data
-      lines(biology[[Wt_len_colname]]*lab2_to_lab1_scale, biology$Mean_Size,
+      lines(biology[[Wt_len_colname]]*lab2_to_lab1_scale, biology[["Mean_Size"]],
             col=colvec[col_index1], lwd=3)
-      lines(biology$Mat_len, biology$Mean_Size, col=colvec[col_index1], lty='12')
+      lines(biology[["Mat_len"]], biology[["Mean_Size"]], col=colvec[col_index1], lty='12')
       if(nsexes > 1){
-        lines(biology$Wt_len_M*lab2_to_lab1_scale, biology$Mean_Size,
+        lines(biology[["Wt_len_M"]]*lab2_to_lab1_scale, biology[["Mean_Size"]],
               col=colvec[2], lwd=3, lty=2)
       }
     }
@@ -764,31 +764,31 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
     # make empty plot in lower-left position
     plot(0, type='n',
-         xaxs='i', xlim=range(growdat$Age_Beg),
+         xaxs='i', xlim=range(growdat[["Age_Beg"]]),
          yaxs='i', ylim=c(0,1.0*lab1max),
          axes=FALSE)
     # add line for lab1 vs. Age
     if(option == 1){
-      lines(growdatF$Age_Beg, growdatF[[lab1]], col=colvec[col_index1],
+      lines(growdatF[["Age_Beg"]], growdatF[[lab1]], col=colvec[col_index1],
             lwd=1, lty='12')
     }
     if(option == 2){
       # maturity curve is product of age-based and length-based factors
-      lines(growdatF$Age_Beg, growdatF[["Len_Mat"]] * growdatF[["Age_Mat"]],
+      lines(growdatF[["Age_Beg"]], growdatF[["Len_Mat"]] * growdatF[["Age_Mat"]],
             col=colvec[col_index1], lwd=1, lty='12')
     }
     
     # add line for lab2 vs. Age
-    lines(growdatF$Age_Beg, growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
+    lines(growdatF[["Age_Beg"]], growdatF[[lab2]]*lab2_to_lab1_scale, col=colvec[col_index1],
           lwd=3)
     if(nsexes > 1){ # add lines for males
       if(option==1){
         # add line for lab1 vs. Age (unless it's maturity, which is not defined for males)
-        lines(growdatM$Age_Beg, growdatM[[lab1]], col=colvec[2],
+        lines(growdatM[["Age_Beg"]], growdatM[[lab1]], col=colvec[2],
               lwd=1, lty='13')
       }
       # add line for lab2 vs. Age
-      lines(growdatM$Age_Beg, growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
+      lines(growdatM[["Age_Beg"]], growdatM[[lab2]]*lab2_to_lab1_scale, col=colvec[2],
             lwd=3, lty=2)
     }
     # add axes and labels
@@ -801,7 +801,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     box()
 
     # restore default single panel settings
-    par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+    par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]])
   } # end growth_curve_plus_fn()
 
   
@@ -864,19 +864,19 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     # save current parameter settings
     par_old <- par()
     par(mar=c(4,4,1,4))
-    AminF <- Growth_Parameters$A1[1]
-    AmaxF <- Growth_Parameters$A2[1]
-    AminM <- Growth_Parameters$A1[2]
-    AmaxM <- Growth_Parameters$A2[2]
-    L_at_AminF <- Growth_Parameters$L_a_A1[1]
-    L_at_AmaxF <- Growth_Parameters$L_a_A2[1]
-    L_at_AminM <- Growth_Parameters$L_a_A1[2]
-    L_at_AmaxM <- Growth_Parameters$L_a_A2[2]
-    LinfF <- Growth_Parameters$Linf[1]
-    LinfM <- Growth_Parameters$Linf[2]
-    ymax <- max(biology$Mean_Size)
+    AminF <- Growth_Parameters[["A1"]][1]
+    AmaxF <- Growth_Parameters[["A2"]][1]
+    AminM <- Growth_Parameters[["A1"]][2]
+    AmaxM <- Growth_Parameters[["A2"]][2]
+    L_at_AminF <- Growth_Parameters[["L_a_A1"]][1]
+    L_at_AmaxF <- Growth_Parameters[["L_a_A2"]][1]
+    L_at_AminM <- Growth_Parameters[["L_a_A1"]][2]
+    L_at_AmaxM <- Growth_Parameters[["L_a_A2"]][2]
+    LinfF <- Growth_Parameters[["Linf"]][1]
+    LinfM <- Growth_Parameters[["Linf"]][2]
+    ymax <- max(biology[["Mean_Size"]])
     plot(0, type="n",
-         xlim=c(0,1+max(growdatF$Age_Beg)),
+         xlim=c(0,1+max(growdatF[["Age_Beg"]])),
          ylim=c(0,1.1*ymax),
          xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
     abline(h=0,col="grey")
@@ -887,11 +887,11 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
          labels=expression(0, italic(L[A[1]]), italic(L[A[2]]),
              italic(L[infinity])), las=1)
     # add growth curve itself
-    lines(growdatF$Age_Beg,growdatF$Len_Beg,
+    lines(growdatF[["Age_Beg"]],growdatF[["Len_Beg"]],
           col=1,lwd=3,lty=1)
     # add growth curve for males
     if(nsexes > 1 & option==2){
-      lines(growdatM$Age_Beg,growdatM$Len_Beg,
+      lines(growdatM[["Age_Beg"]],growdatM[["Len_Beg"]],
             col=1,lwd=2,lty=2)
     }
     if(option==1){
@@ -925,7 +925,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
     box()
     # restore old parameter settings
-    par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+    par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]])
   }
 
   # plots of diagrams for illustrating parameterization
@@ -956,17 +956,17 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     # save current parameter settings
     par_old <- par()
     par(mar=c(4,4,1,4))
-    AminF <- Growth_Parameters$A1[1]
-    AmaxF <- Growth_Parameters$A2[1]
-    AminM <- Growth_Parameters$A1[2]
-    AmaxM <- Growth_Parameters$A2[2]
-    CV_at_AminF <- Growth_Parameters$CVmin[1]
-    CV_at_AmaxF <- Growth_Parameters$CVmax[1]
-    CV_at_AminM <- Growth_Parameters$CVmin[2]
-    CV_at_AmaxM <- Growth_Parameters$CVmax[2]
+    AminF <- Growth_Parameters[["A1"]][1]
+    AmaxF <- Growth_Parameters[["A2"]][1]
+    AminM <- Growth_Parameters[["A1"]][2]
+    AmaxM <- Growth_Parameters[["A2"]][2]
+    CV_at_AminF <- Growth_Parameters[["CVmin"]][1]
+    CV_at_AmaxF <- Growth_Parameters[["CVmax"]][1]
+    CV_at_AminM <- Growth_Parameters[["CVmin"]][2]
+    CV_at_AmaxM <- Growth_Parameters[["CVmax"]][2]
     ymax <- max(CV_at_AminF,CV_at_AmaxF,CV_at_AminM,CV_at_AmaxM)
     plot(0, type="n",
-         xlim=c(0,1+max(growdatF$Age_Beg)),
+         xlim=c(0,1+max(growdatF[["Age_Beg"]])),
          ylim=c(0,1.1*ymax),
          xlab="", ylab="", axes=FALSE, xaxs='i', yaxs='i')
     abline(h=0,col="grey")
@@ -976,11 +976,11 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     axis(2, at=c(0, CV_at_AminF, CV_at_AmaxF),
          labels=expression(0, italic(CV[A[1]]), italic(CV[A[2]])), las=1)
     # add growth curve itself
-    lines(growdatF$Age_Beg,growdatF$CV_Beg,
+    lines(growdatF[["Age_Beg"]],growdatF[["CV_Beg"]],
           col=1,lwd=3,lty=1)
     # add growth curve for males
     if(nsexes > 1 & option%in%c(2,4)){
-      lines(growdatM$Age_Beg,growdatM$CV_Beg,
+      lines(growdatM[["Age_Beg"]],growdatM[["CV_Beg"]],
             col=1,lwd=2,lty=2)
     }
     if(option==1){
@@ -1050,7 +1050,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
     box()
     # restore old parameter settings
-    par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma)
+    par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]])
   }
 
   # extra plots illustrating parameterization of CV in growth
@@ -1088,7 +1088,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   }
 
 
-  x <- biology$Mean_Size
+  x <- biology[["Mean_Size"]]
   ## NOTE: weight plots are now a special case since they are broken down
   ## by whether the model is 1-sex or 2-sex. In the latter two separate
   ## plots need to be made.
@@ -1144,7 +1144,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
     }
     if(6 %in% subplots){
       file <- "bio6_maturity.png"
-      caption <- paste("Maturity at",ifelse(min(biology$Mat_len)<1,"length","age"))
+      caption <- paste("Maturity at",ifelse(min(biology[["Mat_len"]])<1,"length","age"))
       if(wtatage_switch){
         caption <- "Spawning output at age (maturity x fecundity)"
       }
@@ -1199,10 +1199,10 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   } # end check for print=TRUE (printing to PNG files)
 
   # Natural mortality (if age-dependent -- need to add time-varying M plot)
-  MatAge <- growdatF$M # female mortality in the ending year
+  MatAge <- growdatF[["M"]] # female mortality in the ending year
   if(nsexes > 1){
-    growdatM <- growdat[growdat$Morph==morphs[2],]
-    MatAge_M <- growdatM$M
+    growdatM <- growdat[growdat[["Morph"]]==morphs[2],]
+    MatAge_M <- growdatM[["M"]]
   }
   # not sure what role M2 is playing here
   M2 <- MGparmAdj[,c(1,grep("NatM",names(MGparmAdj)))]
@@ -1218,11 +1218,11 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       # function to plut natural mortality
       mfunc <- function(add_uncertainty = TRUE){
         if(!add){
-          plot(growdatF$Age_Beg, MatAge, col=colvec[col_index1], lwd=2,
+          plot(growdatF[["Age_Beg"]], MatAge, col=colvec[col_index1], lwd=2,
                ylim=c(0, ymax), yaxs='i', type="n",
                ylab=labels[7], xlab=labels[2], las=1)
         }
-        lines(growdatF$Age_Beg, MatAge, col=colvec[col_index1],lwd=2,type='o')
+        lines(growdatF[["Age_Beg"]], MatAge, col=colvec[col_index1],lwd=2,type='o')
 
         # add uncertainty in M-at-age (if available from derived_quants)
         if(add_uncertainty){
@@ -1230,8 +1230,8 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
         }
         
         if(nsexes > 1){
-          growdatM <- growdat[growdat$Morph==morphs[2],]
-          lines(growdatM$Age_Beg, growdatM$M, lty=ltyvec[2], col=colvec[2],
+          growdatM <- growdat[growdat[["Morph"]]==morphs[2],]
+          lines(growdatM[["Age_Beg"]], growdatM[["M"]], lty=ltyvec[2], col=colvec[2],
                 lwd=2, type='o')
           legend('bottomleft', bty="n", c("Females","Males"), lty=ltyvec, lwd=2,
                  col=c(colvec[col_index1],colvec[2]))
@@ -1272,21 +1272,21 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       # if growth is time varying and weight-at-age not used
       if(growthvaries & !wtatage_switch){ 
         for(i in 1:nsexes){
-          growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-                                       growthseries$Morph==morphs[i],]
+          growdatuse <- growthseries[growthseries[["Yr"]] >= startyr-2 &
+                                       growthseries[["Morph"]]==morphs[i],]
           # trim based on forecast=TRUE/FALSE
           if(!forecast){
-            growdatuse <- growdatuse[growdatuse$Yr <= endyr,]
+            growdatuse <- growdatuse[growdatuse[["Yr"]] <= endyr,]
           }
           # trim based on minyr and maxyr
-          growdatuse <- growdatuse[growdatuse$Yr >= minyr &
-                                     growdatuse$Yr <= maxyr,]
+          growdatuse <- growdatuse[growdatuse[["Yr"]] >= minyr &
+                                     growdatuse[["Yr"]] <= maxyr,]
           # assemble vectors and matrix
           x <- 0:accuage
-          y <- growdatuse$Yr
+          y <- growdatuse[["Yr"]]
           z <- as.matrix(growdatuse[,-(1:4)])
           # check for time-varying growth
-          if(replist$growthvaries){
+          if(replist[["growthvaries"]]){
             z <- t(z)
             if(i==1){main <- "Female time-varying growth"}
             if(nsexes==1){main <- "Time-varying growth"}
@@ -1332,13 +1332,13 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
       if(forecast){
         MGparmAdj.tmp <- MGparmAdj
       }else{
-        MGparmAdj.tmp <- MGparmAdj[MGparmAdj$Yr <= endyr, ]
+        MGparmAdj.tmp <- MGparmAdj[MGparmAdj[["Yr"]] <= endyr, ]
       }
       # trim based on minyr and maxyr
-      MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp$Yr >= minyr &
-                                       MGparmAdj.tmp$Yr <= maxyr,]
+      MGparmAdj.tmp <- MGparmAdj.tmp[MGparmAdj.tmp[["Yr"]] >= minyr &
+                                       MGparmAdj.tmp[["Yr"]] <= maxyr,]
       # make plot
-      plot(MGparmAdj.tmp$Yr, MGparmAdj.tmp[[parmlabel]],
+      plot(MGparmAdj.tmp[["Yr"]], MGparmAdj.tmp[[parmlabel]],
            xlab=labels[12], ylab=parmlabel, type="l", lwd=3, col=colvec[2])
     }
     # check to make sure MGparmAdj looks as expected
@@ -1351,7 +1351,7 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
         if(parmlabel!="Change?"){
           parmvals  <- MGparmAdj[,icol]
           # check for changes
-          if(length(unique(parmvals[MGparmAdj$Yr <= endyr])) > 1){
+          if(length(unique(parmvals[MGparmAdj[["Yr"]] <= endyr])) > 1){
             # make plot
             if(plot) timeVaryingParmFunc(parmlabel)
             if(print){
@@ -1373,12 +1373,12 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   # plot of vectors found in models with hermaphroditism
   if("Herma_Trans" %in% names(growdatF)){
     herma_func1 <- function(){
-      plot(growdatF$Age_Beg, growdatF$Herma_Trans, xaxs='i', ylim=c(0,1), las=1,
+      plot(growdatF[["Age_Beg"]], growdatF[["Herma_Trans"]], xaxs='i', ylim=c(0,1), las=1,
            xlab=labels[12], ylab=labels[13], type="l", lwd=3, col=colvec[2])
       abline(h=c(0,1), col='grey')
     }
     herma_func2 <- function(){
-      plot(growdatF$Age_Beg, growdatF$Herma_Cum, xaxs='i', ylim=c(0,1), las=1,
+      plot(growdatF[["Age_Beg"]], growdatF[["Herma_Cum"]], xaxs='i', ylim=c(0,1), las=1,
            xlab=labels[2], ylab=labels[14], type="l", lwd=3, col=colvec[2])
       abline(h=c(0,1), col='grey')
     }
@@ -1409,14 +1409,14 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
 
   ##   # Matrix of M-at-age if mortality varies with age and time
   ##   # strip off forecast years in M-at-age matrix
-  ##   M_at_age <- M_at_age[M_at_age$Year <= endyr,]
+  ##   M_at_age <- M_at_age[M_at_age[["Year"]] <= endyr,]
 
 
-  ##   if(any(M_at_age$Bio_Pattern!=1)){}
+  ##   if(any(M_at_age[["Bio_Pattern"]]!=1)){}
 
-  ##   for(i in unique(M_at_age$Bio_Pattern)){
+  ##   for(i in unique(M_at_age[["Bio_Pattern"]])){
   ##     for(isex in unique(
-  ##   M_at_age_tmpYear <- M_at_age$Year
+  ##   M_at_age_tmpYear <- M_at_age[["Year"]]
   ##   M_at_age_ages <- 0:accuage
   ##   M_at_age_matrix <- as.matrix(M_at_age[,-
 
@@ -1424,10 +1424,10 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ## if(growthvaries){ # if growth is time varying
   ##     for(i in 1:nsexes)
   ##     {
-  ##       growdatuse <- growthseries[growthseries$Yr >= startyr-2 &
-  ##                                  growthseries$Morph==morphs[i],]
+  ##       growdatuse <- growthseries[growthseries[["Yr"]] >= startyr-2 &
+  ##                                  growthseries[["Morph"]]==morphs[i],]
   ##       x <- 0:accuage
-  ##       y <- growdatuse$Yr
+  ##       y <- growdatuse[["Yr"]]
   ##       z <- as.matrix(growdatuse[,-(1:4)])
   ##       time <- FALSE
   ##       for(t in 1:ncol(z)) if(max(z[,t])!=min(z[,t])) time <- TRUE
@@ -1471,6 +1471,6 @@ function(replist, plot = TRUE, print = FALSE, add = FALSE,
   ## }# end disable of time-varying growth for multi-season models
 
   # add category and return plotinfo
-  if(!is.null(plotinfo)) plotinfo$category <- "Bio"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Bio"
   return(invisible(plotinfo))
 }

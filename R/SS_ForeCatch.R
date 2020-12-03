@@ -54,14 +54,14 @@ SS_ForeCatch <- function(replist, yrs = 2019:2030,
                          dead = TRUE, zeros = FALSE){
   # function for creating table of fixed forecast catches
   # based on values in the timeseries output
-  timeseries <- replist$timeseries
+  timeseries <- replist[["timeseries"]]
 
   # create new empty object to store stuff
   forecast_catches <- NULL
 
-  if(!all(yrs %in% timeseries$Yr)){
+  if(!all(yrs %in% timeseries[["Yr"]])){
     warning("Not all requested years are present in timeseries output.")
-    yrs <- yrs[yrs %in% timeseries$Yr]
+    yrs <- yrs[yrs %in% timeseries[["Yr"]]]
   }
   # if only one value for total is input, repeat for all years
   if(!is.null(total) & length(total)==1){
@@ -71,34 +71,34 @@ SS_ForeCatch <- function(replist, yrs = 2019:2030,
   for(iyr in 1:length(yrs)){
     y <- yrs[iyr]
     forecast_catches_y <- NULL
-    for(iseas in 1:replist$nseasons){
-      for(iarea in 1:replist$nareas){
-        if(replist$SS_versionNumeric < 3.30){
-          fleets_with_catch <- 1:replist$nfishfleets
+    for(iseas in 1:replist[["nseasons"]]){
+      for(iarea in 1:replist[["nareas"]]){
+        if(replist[["SS_versionNumeric"]] < 3.30){
+          fleets_with_catch <- 1:replist[["nfishfleets"]]
         }else{
-          fleets_with_catch <- which(replist$fleet_type==1)
+          fleets_with_catch <- which(replist[["fleet_type"]]==1)
         }
         for(ifleet in fleets_with_catch){
 
           # figure out column name
-          if(replist$catch_units[ifleet]==1){
+          if(replist[["catch_units"]][ifleet]==1){
             string <- ifelse(dead, "dead(B)", "retain(B):_")
           }
-          if(replist$catch_units[ifleet]==2){
+          if(replist[["catch_units"]][ifleet]==2){
             string <- ifelse(dead, "dead(N)", "retain(N):_")
           }
           colname <- paste0(string, ":_", ifleet)
           # extract catch
           if(average){
-            catches <- timeseries[timeseries$Area==iarea &
-                                    timeseries$Seas==iseas &
-                                      timeseries$Yr %in% avg.yrs,
+            catches <- timeseries[timeseries[["Area"]]==iarea &
+                                    timeseries[["Seas"]]==iseas &
+                                      timeseries[["Yr"]] %in% avg.yrs,
                                   colname]
             catch <- mean(catches)
           }else{
-            catch <- timeseries[timeseries$Area==iarea &
-                                  timeseries$Seas==iseas &
-                                    timeseries$Yr==y,
+            catch <- timeseries[timeseries[["Area"]]==iarea &
+                                  timeseries[["Seas"]]==iseas &
+                                    timeseries[["Yr"]]==y,
                                 colname]
           }
           # create new row for table
@@ -112,17 +112,17 @@ SS_ForeCatch <- function(replist, yrs = 2019:2030,
 
     # if requested, scale catches to sum to input total (such as ACL)
     if(!is.null(total)){
-      forecast_catches_y$Catch <- total[iyr]*
-        forecast_catches_y$Catch / sum(forecast_catches_y$Catch)
+      forecast_catches_y[["Catch"]] <- total[iyr]*
+        forecast_catches_y[["Catch"]] / sum(forecast_catches_y[["Catch"]])
     }
 
     # round values
-    forecast_catches_y$Catch <- round(forecast_catches_y$Catch, digits)
+    forecast_catches_y[["Catch"]] <- round(forecast_catches_y[["Catch"]], digits)
 
     # add comment on right-hand-side
-    forecast_catches_y$comment <- ""
-    forecast_catches_y$comment[1] <- paste0("#sum_for_",y,": ",
-                                            sum(forecast_catches_y$Catch))
+    forecast_catches_y[["comment"]] <- ""
+    forecast_catches_y[["comment"]][1] <- paste0("#sum_for_",y,": ",
+                                            sum(forecast_catches_y[["Catch"]]))
     # add block for this year to other blocks
     forecast_catches <- rbind(forecast_catches, forecast_catches_y)
   } # end loop over years

@@ -112,13 +112,13 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
   }
 
   # sort out labels
-  parlines$Label[parlines$Label=="#"] <- parlines$Label2[parlines$Label=="#"]
+  parlines[["Label"]][parlines[["Label"]]=="#"] <- parlines[["Label2"]][parlines[["Label"]]=="#"]
   parlines <- parlines[,names(parlines)!="Label2"] # dropping the Label2 column
 
   # make line number numeric
-  parlines$Linenum <- as.numeric(rownames(parlines))
+  parlines[["Linenum"]] <- as.numeric(rownames(parlines))
   # sort by order found in control file
-  parlines <- parlines[order(parlines$Linenum),]
+  parlines <- parlines[order(parlines[["Linenum"]]),]
 
   # make other values numeric
   for(i in 1:(ncol(parlines)-2)){
@@ -126,7 +126,7 @@ SS_parlines <- function(ctlfile="control.ss_new", dir=NULL,
   }
   # filter for active parameters only
   if(active){
-    parlines <- parlines[parlines$PHASE > 0,]
+    parlines <- parlines[parlines[["PHASE"]] > 0,]
   }
   return(parlines)
 } # end function

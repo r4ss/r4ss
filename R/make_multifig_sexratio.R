@@ -92,7 +92,7 @@ make_multifig_sexratio <-
     ylab <- "Female:Male Ratio"
   }
   ## define dimensions
-  yrvec <- sort(unique(dbase$Yr))
+  yrvec <- sort(unique(dbase[["Yr"]]))
   npanels <- length(yrvec)
   nrows <- min(ceiling(sqrt(npanels)), maxrows)
   ncols <- min(ceiling(npanels/nrows), maxcols)
@@ -109,12 +109,12 @@ make_multifig_sexratio <-
   df.list <- list();k <- 1
   # minimum observation is likely to be the additive constant required
   # by the multinomial and can be subtracted from all obs and exp values
-  minobs <- min(dbase$Obs, na.rm=TRUE)
+  minobs <- min(dbase[["Obs"]], na.rm=TRUE)
   
   for(yr.temp in yrvec){
-    for(bin in unique(dbase$Bin)){
-      female <- dbase[dbase$Sex==1 & dbase$Bin==bin & dbase$Yr==yr.temp,]
-      male <- dbase[dbase$Sex==2 & dbase$Bin==bin &dbase$Yr==yr.temp,]
+    for(bin in unique(dbase[["Bin"]])){
+      female <- dbase[dbase[["Sex"]]==1 & dbase[["Bin"]]==bin & dbase[["Yr"]]==yr.temp,]
+      male <- dbase[dbase[["Sex"]]==2 & dbase[["Bin"]]==bin &dbase[["Yr"]]==yr.temp,]
       nm <- nrow(male); nf <- nrow(female)
       ## Four cases depending on which data were observed. If only one sex
       ## was observed, do some special things. If none, we'll skip it
@@ -123,9 +123,9 @@ make_multifig_sexratio <-
       lwr <- NA
       upr <- NA
       if(nm == 1 & nf == 0){
-        effN <- male$effN; Nsamp_adj <- male$Nsamp_adj; e <- NA; o <- 0
+        effN <- male[["effN"]]; Nsamp_adj <- male[["Nsamp_adj"]]; e <- NA; o <- 0
       } else if(nm == 0 & nf == 1) {
-        effN <- female$effN; Nsamp_adj <- female$Nsamp_adj; e <- NA; o <- Inf
+        effN <- female[["effN"]]; Nsamp_adj <- female[["Nsamp_adj"]]; e <- NA; o <- Inf
       } else if(nrow(female)==1 & nrow(male)==1){
         ## Calculate the ratio if data exists for both. Use delta method for
         ## multinomial estimators to get approximate SE for the ratio of the
@@ -135,19 +135,19 @@ make_multifig_sexratio <-
 
         # sample size is shared across both vectors (at least if Sexes==3)
         # IGT 2019-05-02: should check for case where sexes are input separately
-        effN <- female$effN
-        Nsamp_adj <- female$Nsamp_adj
+        effN <- female[["effN"]]
+        Nsamp_adj <- female[["Nsamp_adj"]]
         if(sexratio.option == 1){ # females:males
-          e <- (female$Exp - minobs)/(male$Exp - minobs)
-          o <- (female$Obs - minobs)/(male$Obs - minobs)
+          e <- (female[["Exp"]] - minobs)/(male[["Exp"]] - minobs)
+          o <- (female[["Obs"]] - minobs)/(male[["Obs"]] - minobs)
         }
         if(sexratio.option == 2){ # female:total
-          e <- (female$Exp - minobs)/(female$Exp + male$Exp - 2*minobs)
-          o <- (female$Obs - minobs)/(female$Obs + male$Obs - 2*minobs)
+          e <- (female[["Exp"]] - minobs)/(female[["Exp"]] + male[["Exp"]] - 2*minobs)
+          o <- (female[["Obs"]] - minobs)/(female[["Obs"]] + male[["Obs"]] - 2*minobs)
         }
         # need rounding to avoid differences like -2.122513e-17
-        pf <- female$Obs
-        pm <- male$Obs
+        pf <- female[["Obs"]]
+        pm <- male[["Obs"]]
         e <- round(e, 10)
         o <- round(o, 10)
 
@@ -159,7 +159,7 @@ make_multifig_sexratio <-
           upr <- qnorm(1 - (1 - CI)/2, o, se.ratio)
         }
         if(sexratio.option == 2){ # female:total
-          pt <- female$Obs + male$Obs - 2*minobs
+          pt <- female[["Obs"]] + male[["Obs"]] - 2*minobs
           # assuming sample size for this bin is at least 1
           Nbin <- max(pt*Nsamp_adj, 1)
           if(pt > 0){
@@ -201,13 +201,13 @@ make_multifig_sexratio <-
   df <- do.call(rbind, df.list)
 
   ## Calculate ranges of plots
-  xrange <- range(df$Bin, na.rm=TRUE)
+  xrange <- range(df[["Bin"]], na.rm=TRUE)
   if(sexratio.option == 1){ # females:males
-    if(nrow(df[!is.na(df$se.ratio),])==0){
+    if(nrow(df[!is.na(df[["se.ratio"]]),])==0){
       warning(paste("No SE of ratio found, defaulting to ymax of 4"))
       yrange <- c(0,4)
     } else {
-      yrange <- c(0, max(c(df$Exp, df$Obs+0*df$se.ratio), na.rm=TRUE))
+      yrange <- c(0, max(c(df[["Exp"]], df[["Obs"]]+0*df[["se.ratio"]]), na.rm=TRUE))
     }
     if(!is.null(yupper)) yrange <- c(0,yupper)
   }
@@ -227,16 +227,16 @@ make_multifig_sexratio <-
   ## I replaced <number>/0 above with Inf so replace those and any points
   ## outside the region to be "x" on the top of the plot
   if(sexratio.option == 1){ # females:males
-    which.toobig <- which(df$Obs > yrange_big[2])
-    which.toosmall <- which(df$Obs==0)
-    df$Obs[which.toobig] <- yrange_big[2]
+    which.toobig <- which(df[["Obs"]] > yrange_big[2])
+    which.toosmall <- which(df[["Obs"]]==0)
+    df[["Obs"]][which.toobig] <- yrange_big[2]
     ## Use different pch for those that are truncated to the plot
-    df$pch2 <- 16
-    df$pch2[which.toobig] <- 4
-    df$pch2[which.toosmall] <- 4
+    df[["pch2"]] <- 16
+    df[["pch2"]][which.toobig] <- 4
+    df[["pch2"]][which.toosmall] <- 4
   }
   if(sexratio.option == 2){ # females:total
-    df$pch2 <- 16
+    df[["pch2"]] <- 16
   }
 
   ## get axis labels
@@ -250,7 +250,7 @@ make_multifig_sexratio <-
   ## create multifigure layout, set inner margins all to 0 and add outer margins
   ## old graphics parameter settings
   par_old <- par()
-  on.exit( par(mfcol=par_old$mfcol, mar=par_old$mar, oma=par_old$oma) )
+  on.exit( par(mfcol=par_old[["mfcol"]], mar=par_old[["mar"]], oma=par_old[["oma"]]) )
   ## new settings
   par(mfcol=c(nrows,ncols),mar=rep(0,4),oma=multifig_oma)
   panelrange <- 1:npanels
@@ -269,15 +269,15 @@ make_multifig_sexratio <-
       abline(h=0.5,col="grey") # grey line at 0.5
       abline(h=c(0,1),col="grey", lty=3) # grey line at 0.5
     }
-    df2 <- na.omit(df[df$Yr == yr_i,])
-    df2 <- df2[order(df2$Bin),]
-    points(x=df2$Bin, y=df2$Obs ,ylim=yrange_big, xlim=xrange_big, pch=df2$pch2,
+    df2 <- na.omit(df[df[["Yr"]] == yr_i,])
+    df2 <- df2[order(df2[["Bin"]]),]
+    points(x=df2[["Bin"]], y=df2[["Obs"]] ,ylim=yrange_big, xlim=xrange_big, pch=df2[["pch2"]],
            col=ptscol, cex=ptscex)
-    segments(x0=df2$Bin, y0=df2$lwr, y1=df2$upr, col=ptscol)
+    segments(x0=df2[["Bin"]], y0=df2[["lwr"]], y1=df2[["upr"]], col=ptscol)
 
     # add model expectation (unless data-only plot is requested)
     if(!datonly){
-      lines(df2$Bin, y=df2$Exp, lwd=lwd, lty=lty, col=linescol)
+      lines(df2[["Bin"]], y=df2[["Exp"]], lwd=lwd, lty=lty, col=linescol)
     }
     
     ## add legends
@@ -288,10 +288,10 @@ make_multifig_sexratio <-
         text_i <- yr_i
       } else if(legtext_i=="effN" & nrow(df2)>0 & showeffN){
         ## all rows should be same so grab first
-        text_i <- paste0('effN=', round(df2$effN[1], sampsizeround))
+        text_i <- paste0('effN=', round(df2[["effN"]][1], sampsizeround))
       } else if(legtext_i == "N" & nrow(df2)>0 & showsampsize){
         # all rows should be same so grab first
-        text_i <- paste0('N=', round(df2$Nsamp_adj[1], sampsizeround)) 
+        text_i <- paste0('N=', round(df2[["Nsamp_adj"]][1], sampsizeround)) 
       } else {
         text_i <- ''
       }

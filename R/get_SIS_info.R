@@ -14,7 +14,7 @@
 #' is an additional input
 #' @param stock String to prepend id info to filename for CSV file
 #' @param final_year Year of assessment and reference points
-#' (typically will be model$endyr + 1)
+#' (typically will be model[["endyr"]] + 1)
 #' @param data_year Last year of of timeseries data 
 #' @param sciencecenter Origin of assessment report
 #' @param Mgt_Council Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)
@@ -38,12 +38,12 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
 
   # directory to write file
   if(is.null(dir)){
-    dir <- model$inputs$dir
+    dir <- model[["inputs"]][["dir"]]
   }
 
   
   if (is.null(data_year)) {
-    data_year <- model$endyr
+    data_year <- model[["endyr"]]
   }
   
   # construct filename
@@ -57,70 +57,70 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
           file.path(dir, filename_timeseries ))
 
   # years to report for catch-related quantities
-  startyr <- model$startyr
+  startyr <- model[["startyr"]]
   years <- startyr:final_year
 
   # get values from TIME_SERIES table
-  ts <- model$timeseries
+  ts <- model[["timeseries"]]
 
   # if check for unsupported model configurations
-  if(model$nseasons > 1){
+  if(model[["nseasons"]] > 1){
     stop("multi-season models are not yet supported")
   }
 
   # aggregate across areas if needed
-  if(model$nareas > 1){
+  if(model[["nareas"]] > 1){
     ts.tmp <- ts # copy of table
-    ts <- ts.tmp[ts.tmp$Area == 1,]
-    for(iarea in 2:model$nareas){
-      ts[,-(1:4)] <- ts[,-(1:4)] + ts.tmp[ts.tmp$Area == iarea,-(1:4)]
+    ts <- ts.tmp[ts.tmp[["Area"]] == 1,]
+    for(iarea in 2:model[["nareas"]]){
+      ts[,-(1:4)] <- ts[,-(1:4)] + ts.tmp[ts.tmp[["Area"]] == iarea,-(1:4)]
     }
   }
 
   # calculate fraction unfished
-  ts$FractionUnfished <-
-    ts$SpawnBio / ts$SpawnBio[ts$Era == "VIRG"]
+  ts[["FractionUnfished"]] <-
+    ts[["SpawnBio"]] / ts[["SpawnBio"]][ts[["Era"]] == "VIRG"]
 
   # extract columns of interest
-  ts_tab <- data.frame(Year = ts$Yr,
-                       Total_Bio = round(ts$Bio_all,2),
-                       SpawnBio = round(ts$SpawnBio,2),
-                       FractionUnfished = round(ts$FractionUnfished, 3), 
-                       Summary_Bio = round(ts$Bio_smry,2),
-                       Recruitment = round(ts$Recruit_0,2))
+  ts_tab <- data.frame(Year = ts[["Yr"]],
+                       Total_Bio = round(ts[["Bio_all"]],2),
+                       SpawnBio = round(ts[["SpawnBio"]],2),
+                       FractionUnfished = round(ts[["FractionUnfished"]], 3), 
+                       Summary_Bio = round(ts[["Bio_smry"]],2),
+                       Recruitment = round(ts[["Recruit_0"]],2))
 
   # subset for years of interest and replace potential bad 0 value with NA
-  ts_tab <- ts_tab[ts_tab$Year %in% years,]
-  # if(ts_tab$Total_Bio[ts_tab$Year == final_year] == 0){
-  #  ts_tab$Total_Bio[ts_tab$Year == final_year] <- NA
+  ts_tab <- ts_tab[ts_tab[["Year"]] %in% years,]
+  # if(ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] == 0){
+  #  ts_tab[["Total_Bio"]][ts_tab[["Year"]] == final_year] <- NA
   # }
   
 
   # calculate total dead catch (aggregated across fleets)
-  dead_bio_columns <- grep("dead(B)", names(model$timeseries), fixed = TRUE)
-  dead_N_columns <- grep("dead(N)", names(model$timeseries), fixed = TRUE)  
+  dead_bio_columns <- grep("dead(B)", names(model[["timeseries"]]), fixed = TRUE)
+  dead_N_columns <- grep("dead(N)", names(model[["timeseries"]]), fixed = TRUE)  
   if(length(dead_bio_columns) > 1){
-    catch_tab <- data.frame(Year = model$timeseries$Yr,
-                            Catch_bio = apply(model$timeseries[,dead_bio_columns],
+    catch_tab <- data.frame(Year = model[["timeseries"]][["Yr"]],
+                            Catch_bio = apply(model[["timeseries"]][,dead_bio_columns],
                                               MARGIN = 1, FUN = sum),
-                            Catch_n = apply(model$timeseries[,dead_N_columns],
+                            Catch_n = apply(model[["timeseries"]][,dead_N_columns],
                                             MARGIN = 1, FUN = sum)
     )
   }
   if(length(dead_bio_columns) == 1){
-    catch_tab <- data.frame(Year = model$timeseries$Yr,
-                            Catch_bio = model$timeseries[,dead_bio_columns],
-                            Catch_n = model$timeseries[,dead_N_columns])
+    catch_tab <- data.frame(Year = model[["timeseries"]][["Yr"]],
+                            Catch_bio = model[["timeseries"]][,dead_bio_columns],
+                            Catch_n = model[["timeseries"]][,dead_N_columns])
   }
   if(length(dead_bio_columns) == 0){
-    stop("No columns matching 'dead(B)' in model$timeseries")
+    stop("No columns matching 'dead(B)' in model[["timeseries"]]")
   }
   
   # not sure why this is needed, but it is
-  catch_tab$Year <- as.numeric(catch_tab$Year)
-  if(model$nareas > 1){
-    catch_tab <- aggregate(catch_tab$Catch,
-                           by = list(catch_tab$Year),
+  catch_tab[["Year"]] <- as.numeric(catch_tab[["Year"]])
+  if(model[["nareas"]] > 1){
+    catch_tab <- aggregate(catch_tab[["Catch"]],
+                           by = list(catch_tab[["Year"]]),
                            FUN = sum)
     names(catch_tab) <- c("Year", "Catch")
   }
@@ -128,49 +128,49 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   rownames(catch_tab) <- 1:nrow(catch_tab)
 
   # filter years and set forecast values to NA
-  catch_tab <- catch_tab[catch_tab$Year %in% years,]
-  # catch_tab[catch_tab$Year == final_year, -1] <- NA
+  catch_tab <- catch_tab[catch_tab[["Year"]] %in% years,]
+  # catch_tab[catch_tab[["Year"]] == final_year, -1] <- NA
 
   # calculate proxy-F values (e.g. exploitation rate)
   F_tab <- data.frame(Year = years,
-                      Exploit_rate = round(model$derived_quants[paste0("F_", years), "Value"], 4))
-  if(length(grep("Exploit(bio)", model$F_report_basis, fixed = TRUE)) == 0){
+                      Exploit_rate = round(model[["derived_quants"]][paste0("F_", years), "Value"], 4))
+  if(length(grep("Exploit(bio)", model[["F_report_basis"]], fixed = TRUE)) == 0){
     warning("Problem with units of F, value is not exploitation rate")
   }
   # filter years and set forecast values to NA
-  F_tab <- F_tab[F_tab$Year %in% years,]
-  # F_tab[F_tab$Year == final_year, -1] <- NA
+  F_tab <- F_tab[F_tab[["Year"]] %in% years,]
+  # F_tab[F_tab[["Year"]] == final_year, -1] <- NA
 
   # SPR-related quantities
-  spr_tab <- model$sprseries[, c("Yr", "SPR_report","Tot_Exploit","SPR")]
+  spr_tab <- model[["sprseries"]][, c("Yr", "SPR_report","Tot_Exploit","SPR")]
   names(spr_tab)[1] <- "Year"
-  if(model$SPRratioLabel!="1-SPR"){
+  if(model[["SPRratioLabel"]]!="1-SPR"){
     # add 1-SPR if it does not exist as SPR_report already
-    spr_tab$"1-SPR" <- 1 - spr_tab$SPR
+    spr_tab$"1-SPR" <- 1 - spr_tab[["SPR"]]
     spr_tab <- spr_tab[,c("Year","SPR_report","Tot_Exploit","1-SPR")]
   }else{
     spr_tab <- spr_tab[,c("Year","SPR_report","Tot_Exploit")]
   }
   # filter years and set forecast values to NA
-  spr_tab <- spr_tab[spr_tab$Year %in% years,]
-  # spr_tab[spr_tab$Year == final_year, -1] <- NA
+  spr_tab <- spr_tab[spr_tab[["Year"]] %in% years,]
+  # spr_tab[spr_tab[["Year"]] == final_year, -1] <- NA
   spr_tab[,-1] <- round(spr_tab[,-1], 3)
 
   # merge columns from time series, catch, F, and SPR together
   tab <- merge(merge(merge(ts_tab, catch_tab), F_tab), spr_tab)
-  if(nrow(tab) != length(years) || any(tab$Year != years)){
+  if(nrow(tab) != length(years) || any(tab[["Year"]] != years)){
     stop("problem with mismatch of years:\n",
          "range(years): ", range(years), "\n",
-         "range(tab$Year): ", range(tab$Year), "\n")
+         "range(tab[["Year"]]): ", range(tab[["Year"]]), "\n")
   }
 
   # replace NA with 0 in exploitation rate for years with 0 catch
-  tab$Exploit_rate[!is.na(tab$Catch_bio) & tab$Catch_bio == 0] <- 0
+  tab[["Exploit_rate"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
   # again for 8th column (SPR-ratio)
-  tab$SPR_report[!is.na(tab$Catch_bio) & tab$Catch_bio == 0] <- 0
+  tab[["SPR_report"]][!is.na(tab[["Catch_bio"]]) & tab[["Catch_bio"]] == 0] <- 0
 
   # age for summary biomass
-  summary_age <- model$summary_age
+  summary_age <- model[["summary_age"]]
   if(is.null(summary_age)){
     summary_age <- "X"
   }
@@ -205,7 +205,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   
   # numbers vs biomass switch should work for all models 
   # ran using SS after 8/28/20
-  if(model$SpawnOutputUnits == "numbers"){ 
+  if(model[["SpawnOutputUnits"]] == "numbers"){ 
     header_info["Description","SpawnBio"] <- "Spawning Output(Eggs)" 
     header_info["Unit",       "SpawnBio"] <- "XXXX"
   }else{
@@ -240,7 +240,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # info on Exploitation rate
   header_info["Category",   "Exploit_rate"] <- "Fmort"
   header_info["Primary",    "Exploit_rate"] <- "XXX"
-  header_info["Description","Exploit_rate"] <- strsplit(model$F_report_basis, ";")[[1]][1]
+  header_info["Description","Exploit_rate"] <- strsplit(model[["F_report_basis"]], ";")[[1]][1]
   header_info["Unit",       "Exploit_rate"] <- "Rate"
   
   # info on total Exploitation rate
@@ -253,12 +253,12 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   # info on SPR_report
   header_info["Category",   "SPR_report"] <- "Fmort"
   header_info["Primary",    "SPR_report"] <- "XXX"
-  header_info["Description","SPR_report"] <- model$SPRratioLabel
+  header_info["Description","SPR_report"] <- model[["SPRratioLabel"]]
   header_info["Unit",       "SPR_report"] <- "Rate"
   
   # Only needs to be added if SPR_report is not 1-spr
   # info on 1 - SPR
-  if(model$SPRratioLabel!="1-SPR"){ 
+  if(model[["SPRratioLabel"]]!="1-SPR"){ 
     header_info["Category",   "1-SPR"] <- "Fmort"
     header_info["Primary",    "1-SPR"] <- "XXX"
     header_info["Description","1-SPR"] <- "1 - SPR"
@@ -271,15 +271,15 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   ######################################################################
   # start gathering quantities of interest
 
-  if(model$sprtarg == -999){
+  if(model[["sprtarg"]] == -999){
     SPRtarg_text <- "SPR_XX%"
-    model$sprtarg <- NA
-    warning('No value for model$sprtarg')
+    model[["sprtarg"]] <- NA
+    warning('No value for model[["sprtarg"]]')
   }else{
-    SPRtarg_text <- paste0("SPR", 100*model$sprtarg, "%") # e.g. SPR50%
+    SPRtarg_text <- paste0("SPR", 100*model[["sprtarg"]], "%") # e.g. SPR50%
   }
 
-  F_limit = 1-model$sprtarg
+  F_limit = 1-model[["sprtarg"]]
   F_limit_basis = paste0("1-SPR_", SPRtarg_text)
   F_msy = F_limit
   F_msy_basis = F_limit_basis
@@ -288,82 +288,82 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
   if(Mgt_Council=="GM"){
     
     #Annual FSPR names changed between versions
-    if("annF_SPR" %in% rownames(model$derived_quants)){
-      F_limit <- round(model$derived_quants["annF_SPR", "Value"],digits=3)
+    if("annF_SPR" %in% rownames(model[["derived_quants"]])){
+      F_limit <- round(model[["derived_quants"]]["annF_SPR", "Value"],digits=3)
       }else{
-        F_limit <- round(model$derived_quants["Fstd_SPRtgt", "Value"],digits=3)
+        F_limit <- round(model[["derived_quants"]]["Fstd_SPRtgt", "Value"],digits=3)
         }
     F_msy = F_limit
-    F_limit_basis = paste0("F",100*model$btarg, "%")
-    F_msy_basis = paste0("F",100*model$btarg, "% as Proxy")
+    F_limit_basis = paste0("F",100*model[["btarg"]], "%")
+    F_msy_basis = paste0("F",100*model[["btarg"]], "% as Proxy")
     }
   
 
-  if(model$btarg == -999){
+  if(model[["btarg"]] == -999){
     Btarg_text <- "BXX%"
-    model$btarg <- NA
-    warning('No value for model$btarg')
+    model[["btarg"]] <- NA
+    warning('No value for model[["btarg"]]')
   }else{
-    Btarg_text <- paste0("B", 100*model$btarg, "%") # e.g. B40%
+    Btarg_text <- paste0("B", 100*model[["btarg"]], "%") # e.g. B40%
 	# GM Settings:
 	if(Mgt_Council=="GM"){
-      Btarg_text <- paste0("SPR", 100*model$btarg, "%")
+      Btarg_text <- paste0("SPR", 100*model[["btarg"]], "%")
     }
   }
 
-  if(model$minbthresh == -999){
+  if(model[["minbthresh"]] == -999){
     MinBthresh_text <- "BXX%"
-    model$minbthresh <- NA
-    warning('No value for model$minbthresh')
+    model[["minbthresh"]] <- NA
+    warning('No value for model[["minbthresh"]]')
   }else{
-    MinBthresh_text <- paste0("B", 100*model$minbthresh, "%") # e.g. B25%
+    MinBthresh_text <- paste0("B", 100*model[["minbthresh"]], "%") # e.g. B25%
 	B_msy_basis = paste0("SS", Btarg_text)
-    B_msy = round(model$SBzero*model$btarg)
-    B_limit = round(model$SBzero*model$minbthresh)
+    B_msy = round(model[["SBzero"]]*model[["btarg"]])
+    B_limit = round(model[["SBzero"]]*model[["minbthresh"]])
   }
 
   # GM Settings:
   if(Mgt_Council=="GM"){
-    MinBthresh_text <- paste0("(1-M)*SPR", 100*model$btarg, "%") # e.g. B25%
+    MinBthresh_text <- paste0("(1-M)*SPR", 100*model[["btarg"]], "%") # e.g. B25%
     B_msy_basis = Btarg_text
-    eq_year = data_year+model$nforecastyears
-    B_msy = round(model$derived_quants$Value[which(model$derived_quants$Label==paste0("SSB_",eq_year))])
+    eq_year = data_year+model[["nforecastyears"]]
+    B_msy = round(model[["derived_quants"]][["Value"]][which(model[["derived_quants"]][["Label"]]==paste0("SSB_",eq_year))])
     B_limit = round((0.5*B_msy))
     }
 
   B_year = final_year
-  ts_tab_short <- data.frame(Year = ts$Yr,
-                             SpawnBio = round(ts$SpawnBio,2))
-  Bcurrent <- round(ts_tab_short$SpawnBio[ts_tab_short$Year == final_year])
+  ts_tab_short <- data.frame(Year = ts[["Yr"]],
+                             SpawnBio = round(ts[["SpawnBio"]],2))
+  Bcurrent <- round(ts_tab_short[["SpawnBio"]][ts_tab_short[["Year"]] == final_year])
   
   # GM Settings:
   if(Mgt_Council == "GM"){
     B_year = data_year
-    Bcurrent <- round(tab$SpawnBio[tab$Year == data_year])
+    Bcurrent <- round(tab[["SpawnBio"]][tab[["Year"]] == data_year])
   }
 
   # MSY-proxy labels were changed at some point
-  if("Dead_Catch_SPR" %in% rownames(model$derived_quants)){
-    Yield_at_SPR_target <- round(model$derived_quants["Dead_Catch_SPR", "Value"])
-    Yield_at_B_target <- round(model$derived_quants["Dead_Catch_Btgt", "Value"])
+  if("Dead_Catch_SPR" %in% rownames(model[["derived_quants"]])){
+    Yield_at_SPR_target <- round(model[["derived_quants"]]["Dead_Catch_SPR", "Value"])
+    Yield_at_B_target <- round(model[["derived_quants"]]["Dead_Catch_Btgt", "Value"])
   }else{
-    Yield_at_SPR_target <- round(model$derived_quants["TotYield_SPRtgt", "Value"])
-    Yield_at_B_target <- round(model$derived_quants["TotYield_Btgt", "Value"])
+    Yield_at_SPR_target <- round(model[["derived_quants"]]["TotYield_SPRtgt", "Value"])
+    Yield_at_B_target <- round(model[["derived_quants"]]["TotYield_Btgt", "Value"])
   }
   
-  Best_F_Est = tab$"1-SPR"[tab$Year == data_year]
+  Best_F_Est = tab$"1-SPR"[tab[["Year"]] == data_year]
   F_basis = "Equilibrium SPR"
   F_unit = "1-SPR"
   
   # GM Settings: Best F estimate = geometric mean of last three data years
   if(Mgt_Council=="GM"){
-    Best_F_Est = round(mean(tab$"Exploit_rate"[tab$Year %in% c((data_year-2):data_year)]),2)
+    Best_F_Est = round(mean(tab$"Exploit_rate"[tab[["Year"]] %in% c((data_year-2):data_year)]),2)
     F_basis = paste0("Total_Catch/Total_Biomass_Geometric_Mean_",(data_year-2),"-",data_year)
     F_unit = "Exploitation Rate"
     }
 
   # SS version
-  SS_version <- strsplit(model$SS_version, split = ";")[[1]][1]
+  SS_version <- strsplit(model[["SS_version"]], split = ";")[[1]][1]
   gsub("-safe", "", SS_version)
   gsub("-opt", "", SS_version)
   
@@ -420,7 +420,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 "",
 
                 "Biomass Estimates",
-                paste0("[Unfished Spawning Biomass], ", model$SBzero), # no longer a requested value
+                paste0("[Unfished Spawning Biomass], ", model[["SBzero"]]), # no longer a requested value
                 paste0("B Year, ",          B_year),
                 paste0("Min B. Estimate, ", ""),
                 paste0("Max. B Estimate, ", ""),
@@ -432,7 +432,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 # paste0("[MSY Basis], ",     "Yield with SPR_",
                 #        Btarg_text," at ",   Btarg_text, "(mt)"),
                 # paste0("[Depletion], ",
-                #        round(model$derived_quants[paste0("Bratio_", final_year),
+                #        round(model[["derived_quants"]][paste0("Bratio_", final_year),
                 #                                   "Value"], 3)),
                 "",
 
@@ -445,7 +445,7 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
                 paste0("B/Bmsy, ",          round((Bcurrent/B_msy), 3)),
                 paste0("Stock Level (relative) to BMSY, ", stock_level_to_MSY),
                 # paste0("age ", summary_age, "+ summary biomass, ",
-                #        model$timeseries$Bio_smry[model$timeseries$Yr == final_year - 1]),
+                #        model[["timeseries"]][["Bio_smry"]][model[["timeseries"]][["Yr"]] == final_year - 1]),
                 "",
                 "")
 

@@ -576,7 +576,7 @@ SS_output <-
     if (length(logfile) == 1 && file.info(file.path(dir, logfile))$size > 0) {
       logfile <- read.table(file.path(dir, logfile))[, c(4, 6)]
       names(logfile) <- c("TempFile", "Size")
-      maxtemp <- max(logfile$Size)
+      maxtemp <- max(logfile[["Size"]])
       if (maxtemp == 0) {
         if (verbose) {
           message(
@@ -658,10 +658,10 @@ SS_output <-
 
     # check for new format for definitions (starting with 3.30.12)
     # ("Jitter" is an indicator of the new format)
-    if ("Jitter:" %in% rawdefs$X1) {
+    if ("Jitter:" %in% rawdefs[["X1"]]) {
       get.def <- function(string) {
         # function to grab numeric value from 2nd column matching string in 1st column
-        row <- grep(string, rawdefs$X1)[1]
+        row <- grep(string, rawdefs[["X1"]])[1]
         if (length(row) > 0) {
           return(as.numeric(rawdefs[row, 2]))
         } else {
@@ -675,7 +675,7 @@ SS_output <-
       Season_Durations <- seasdurations <- as.numeric(rawdefs[
         grep(
           "Season_Durations",
-          rawdefs$X1
+          rawdefs[["X1"]]
         ),
         1 + 1:nseasons
       ])
@@ -708,7 +708,7 @@ SS_output <-
       ALK_tolerance <- get.def("ALK_tolerance")
 
       # table starting with final occurrence of "Fleet" in column 1
-      fleetdefs <- rawdefs[tail(grep("Fleet", rawdefs$X1), 1):nrow(rawdefs), ]
+      fleetdefs <- rawdefs[tail(grep("Fleet", rawdefs[["X1"]]), 1):nrow(rawdefs), ]
       names(fleetdefs) <- fleetdefs[1, ] # set names equal to first row
       fleetdefs <- fleetdefs[-1, ] # remove first row
       # remove any blank columns beyond Fleet_name
@@ -723,18 +723,18 @@ SS_output <-
       # fleet_type definitions from TPL:
       # 1=fleet with catch; 2=discard only fleet with F;
       # 3=survey(ignore catch); 4=ignore completely
-      fleet_type <- fleetdefs$fleet_type
-      fleet_timing <- fleetdefs$timing
-      fleet_area <- fleetdefs$area
-      catch_units <- fleetdefs$catch_units
-      ## equ_catch_se <- fleetdefs$equ_catch_se
-      ## catch_se     <- fleetdefs$catch_se
-      survey_units <- fleetdefs$survey_units
-      survey_error <- fleetdefs$survey_error
-      fleet_ID <- fleetdefs$Fleet
+      fleet_type <- fleetdefs[["fleet_type"]]
+      fleet_timing <- fleetdefs[["timing"]]
+      fleet_area <- fleetdefs[["area"]]
+      catch_units <- fleetdefs[["catch_units"]]
+      ## equ_catch_se <- fleetdefs[["equ_catch_se"]]
+      ## catch_se     <- fleetdefs[["catch_se"]]
+      survey_units <- fleetdefs[["survey_units"]]
+      survey_error <- fleetdefs[["survey_error"]]
+      fleet_ID <- fleetdefs[["Fleet"]]
       IsFishFleet <- fleet_type <= 2 # based on definitions above
       nfishfleets <- sum(IsFishFleet)
-      FleetNames <- fleetdefs$Fleet_name
+      FleetNames <- fleetdefs[["Fleet_name"]]
       nfleets <- max(fleet_ID)
 
       # process some season info
@@ -754,7 +754,7 @@ SS_output <-
       if (SS_versionNumeric >= 3.30) {
         # add read of additions to DEFINITIONS section added with 3.30.12
         # version 3.3 (fleet info switched from columns to rows starting with 3.30)
-        FleetNames <- as.character(rawdefs[grep("fleet_names", rawdefs$X1), -1])
+        FleetNames <- as.character(rawdefs[grep("fleet_names", rawdefs[["X1"]]), -1])
         FleetNames <- FleetNames[!is.na(FleetNames) & FleetNames != ""]
         # get fleet info
         nfleets <- length(FleetNames)
@@ -780,21 +780,21 @@ SS_output <-
         # fleet_type definitions from TPL:
         # 1=fleet with catch; 2=discard only fleet with F;
         # 3=survey(ignore catch); 4=ignore completely
-        fleet_type <- fleetdefs$fleet_type
-        fleet_timing <- fleetdefs$timing
-        fleet_area <- fleetdefs$area
-        catch_units <- fleetdefs$catch_units
-        equ_catch_se <- fleetdefs$equ_catch_se
-        catch_se <- fleetdefs$catch_se
-        survey_units <- fleetdefs$survey_units
-        survey_error <- fleetdefs$survey_error
+        fleet_type <- fleetdefs[["fleet_type"]]
+        fleet_timing <- fleetdefs[["timing"]]
+        fleet_area <- fleetdefs[["area"]]
+        catch_units <- fleetdefs[["catch_units"]]
+        equ_catch_se <- fleetdefs[["equ_catch_se"]]
+        catch_se <- fleetdefs[["catch_se"]]
+        survey_units <- fleetdefs[["survey_units"]]
+        survey_error <- fleetdefs[["survey_error"]]
         IsFishFleet <- fleet_type <= 2 # based on definitions above
       } else {
         # version 3.20-3.24
         # get fleet info
         fleetdefs <- rawdefs[-(1:3), apply(rawdefs[-(1:3), ], 2, emptytest) < 1]
         fleetdefs[fleetdefs == ""] <- NA
-        lab <- fleetdefs$X1
+        lab <- fleetdefs[["X1"]]
         fleet_ID <- as.numeric(fleetdefs[grep("fleet_ID", lab), -1])
         names(fleetdefs) <- c("Label", paste("Fleet", fleet_ID, sep = ""))
         FleetNames <- as.character(fleetdefs[grep("fleet_names", lab), -1])
@@ -813,7 +813,7 @@ SS_output <-
 
       # more dimensions
       nfishfleets <- sum(IsFishFleet)
-      nsexes <- length(unique(as.numeric(sizeselex$Sex)))
+      nsexes <- length(unique(as.numeric(sizeselex[["Sex"]])))
       nareas <- max(as.numeric(rawrep[begin:end, 1]))
       # startyr is the 'initial' year not including VIRG or INIT years
       startyr <- min(as.numeric(rawrep[begin:end, 2])) + 2
@@ -886,39 +886,39 @@ SS_output <-
         # add new column in code below:
         # "sex": 0 (unknown), 1 (female), or 2 (male)
         # this is the code used by r4ss
-        compdbase$sex <- compdbase$Sexes
-        compdbase$sex[compdbase$Sexes == 3] <- compdbase$Sex[compdbase$Sexes == 3]
+        compdbase[["sex"]] <- compdbase[["Sexes"]]
+        compdbase[["sex"]][compdbase[["Sexes"]] == 3] <- compdbase[["Sex"]][compdbase[["Sexes"]] == 3]
 
         # make correction to tag output associated with 3.24f (fixed in later versions)
         if (substr(SS_version, 1, 9) == "SS-V3.24f") {
           if (!hidewarn) {
             message("Correcting for bug in tag data output associated with SSv3.24f\n")
           }
-          tag1rows <- compdbase$Sexes == "TAG1"
+          tag1rows <- compdbase[["Sexes"]] == "TAG1"
           if (any(tag1rows)) {
             tag1 <- compdbase[tag1rows, ]
             tag1new <- tag1
             tag1new[, 4:23] <- tag1new[, 3:22] # shift columns over
-            tag1new$Yr.S <- tag1new$Yr # move Yr.S
-            tag1new$Yr <- floor(as.numeric(tag1new$Yr)) # turn Yr.S into Yr
+            tag1new[["Yr.S"]] <- tag1new[["Yr"]] # move Yr.S
+            tag1new[["Yr"]] <- floor(as.numeric(tag1new[["Yr"]])) # turn Yr.S into Yr
             compdbase[tag1rows, ] <- tag1new
           }
         }
 
         # remove rows within missing observations (beginning of each section)
-        compdbase <- compdbase[compdbase$Obs != "", ]
+        compdbase <- compdbase[compdbase[["Obs"]] != "", ]
         # replace underscores with NA
         compdbase[compdbase == "_"] <- NA
         # replace any NA values in the Used? column with "yes".
-        compdbase$Used[is.na(compdbase$Used)] <- "yes"
+        compdbase[["Used"]][is.na(compdbase[["Used"]])] <- "yes"
         # add SuprPer column for versions where it didn't exist
         if (!("SuprPer" %in% names(compdbase))) {
-          compdbase$SuprPer <- "No"
+          compdbase[["SuprPer"]] <- "No"
         }
-        compdbase$SuprPer[is.na(compdbase$SuprPer)] <- "No"
-        n <- sum(is.na(compdbase$Nsamp_adj) &
-          compdbase$Used != "skip" &
-          compdbase$Kind != "TAG2")
+        compdbase[["SuprPer"]][is.na(compdbase[["SuprPer"]])] <- "No"
+        n <- sum(is.na(compdbase[["Nsamp_adj"]]) &
+          compdbase[["Used"]] != "skip" &
+          compdbase[["Kind"]] != "TAG2")
         if (n > 0) {
           warning(
             n, " rows from composition database have NA sample size\n",
@@ -929,29 +929,29 @@ SS_output <-
 
         # configure seasons
         if (nseasons > 1) {
-          compdbase$YrSeasName <- paste(floor(compdbase$Yr), "s", compdbase$Seas, sep = "")
+          compdbase[["YrSeasName"]] <- paste(floor(compdbase[["Yr"]]), "s", compdbase[["Seas"]], sep = "")
         } else {
-          compdbase$YrSeasName <- compdbase$Yr
+          compdbase[["YrSeasName"]] <- compdbase[["Yr"]]
         }
 
         # starting with SSv3.24a, the Yr.S column is already in the output, otherwise fill it in
         if (!"Yr.S" %in% names(compdbase)) {
-          if (any(floor(compdbase$Yr) != compdbase$Yr)) {
+          if (any(floor(compdbase[["Yr"]]) != compdbase[["Yr"]])) {
             # in some cases, year is already a decimal number
-            compdbase$Yr.S <- compdbase$Yr
-            compdbase$Yr <- floor(compdbase$Yr)
+            compdbase[["Yr.S"]] <- compdbase[["Yr"]]
+            compdbase[["Yr"]] <- floor(compdbase[["Yr"]])
           } else {
             # add fraction of season to distinguish between samples
-            compdbase$Yr.S <- compdbase$Yr + (0.5 / nseasons) * compdbase$Seas
+            compdbase[["Yr.S"]] <- compdbase[["Yr"]] + (0.5 / nseasons) * compdbase[["Seas"]]
           }
         }
 
         # deal with Lbins
-        compdbase$Lbin_range <- compdbase$Lbin_hi - compdbase$Lbin_lo
-        compdbase$Lbin_mid <- 0.5 * (compdbase$Lbin_lo + compdbase$Lbin_hi)
+        compdbase[["Lbin_range"]] <- compdbase[["Lbin_hi"]] - compdbase[["Lbin_lo"]]
+        compdbase[["Lbin_mid"]] <- 0.5 * (compdbase[["Lbin_lo"]] + compdbase[["Lbin_hi"]])
 
         # divide into objects by kind
-        Lbin_range <- compdbase$Lbin_range
+        Lbin_range <- compdbase[["Lbin_range"]]
         if (is.null(Lbin_range)) { # if/else required to avoid warning if no comp data at all
           notconditional <- TRUE
           conditional <- FALSE
@@ -959,59 +959,59 @@ SS_output <-
           notconditional <- !is.na(Lbin_range) & Lbin_range > aalmaxbinrange
           conditional <- !is.na(Lbin_range) & Lbin_range <= aalmaxbinrange
         }
-        if ("skip" %in% compdbase$SuprPer) {
+        if ("skip" %in% compdbase[["SuprPer"]]) {
           # formatting error in some SS 3.30 versions caused skip to appear in
           # the wrong column, so copy to the right one
-          compdbase$Used[compdbase$SuprPer == "skip"] <- "skip"
+          compdbase[["Used"]][compdbase[["SuprPer"]] == "skip"] <- "skip"
           # probability of being a super-period is low, so assigning "No"
           # to assist with identification of ghost comps below
-          compdbase$SuprPer[compdbase$SuprPer == "No"]
+          compdbase[["SuprPer"]][compdbase[["SuprPer"]] == "No"]
         }
         if (SS_versionNumeric >= 3.22) {
           # new designation of ghost fleets from negative samp size to negative fleet
-          lendbase <- compdbase[compdbase$Kind == "LEN" &
-            compdbase$Used != "skip", ]
-          sizedbase <- compdbase[compdbase$Kind == "SIZE" &
-            compdbase$Used != "skip", ]
-          agedbase <- compdbase[compdbase$Kind == "AGE" &
-            compdbase$Used != "skip" & notconditional, ]
-          condbase <- compdbase[compdbase$Kind == "AGE" &
-            compdbase$Used != "skip" & conditional, ]
+          lendbase <- compdbase[compdbase[["Kind"]] == "LEN" &
+            compdbase[["Used"]] != "skip", ]
+          sizedbase <- compdbase[compdbase[["Kind"]] == "SIZE" &
+            compdbase[["Used"]] != "skip", ]
+          agedbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+            compdbase[["Used"]] != "skip" & notconditional, ]
+          condbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+            compdbase[["Used"]] != "skip" & conditional, ]
         } else {
           # older designation of ghost fleets from negative samp size to negative fleet
-          lendbase <- compdbase[compdbase$Kind == "LEN" &
-            (compdbase$SuprPer == "Sup" |
-              (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)), ]
-          sizedbase <- compdbase[compdbase$Kind == "SIZE" &
-            (compdbase$SuprPer == "Sup" |
-              (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)), ]
-          agedbase <- compdbase[compdbase$Kind == "AGE" &
-            (compdbase$SuprPer == "Sup" |
-              (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
+          lendbase <- compdbase[compdbase[["Kind"]] == "LEN" &
+            (compdbase[["SuprPer"]] == "Sup" |
+              (!is.na(compdbase[["Nsamp_adj"]]) & compdbase[["Nsamp_adj"]] > 0)), ]
+          sizedbase <- compdbase[compdbase[["Kind"]] == "SIZE" &
+            (compdbase[["SuprPer"]] == "Sup" |
+              (!is.na(compdbase[["Nsamp_adj"]]) & compdbase[["Nsamp_adj"]] > 0)), ]
+          agedbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+            (compdbase[["SuprPer"]] == "Sup" |
+              (!is.na(compdbase[["Nsamp_adj"]]) & compdbase[["Nsamp_adj"]] > 0)) &
             notconditional, ]
-          condbase <- compdbase[compdbase$Kind == "AGE" &
-            (compdbase$SuprPer == "Sup" |
-              (!is.na(compdbase$Nsamp_adj) & compdbase$Nsamp_adj > 0)) &
+          condbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+            (compdbase[["SuprPer"]] == "Sup" |
+              (!is.na(compdbase[["Nsamp_adj"]]) & compdbase[["Nsamp_adj"]] > 0)) &
             conditional, ]
         }
-        ghostagedbase <- compdbase[compdbase$Kind == "AGE" &
-          compdbase$Used == "skip" &
-          compdbase$SuprPer == "No" & notconditional, ]
-        ghostcondbase <- compdbase[compdbase$Kind == "AGE" &
-          compdbase$Used == "skip" &
-          compdbase$SuprPer == "No" & conditional, ]
-        ghostlendbase <- compdbase[compdbase$Kind == "LEN" &
-          compdbase$Used == "skip" &
-          compdbase$SuprPer == "No", ]
-        compdbase$Kind[compdbase$Kind == "L@A" & compdbase$Ageerr < 0] <- "W@A"
+        ghostagedbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+          compdbase[["Used"]] == "skip" &
+          compdbase[["SuprPer"]] == "No" & notconditional, ]
+        ghostcondbase <- compdbase[compdbase[["Kind"]] == "AGE" &
+          compdbase[["Used"]] == "skip" &
+          compdbase[["SuprPer"]] == "No" & conditional, ]
+        ghostlendbase <- compdbase[compdbase[["Kind"]] == "LEN" &
+          compdbase[["Used"]] == "skip" &
+          compdbase[["SuprPer"]] == "No", ]
+        compdbase[["Kind"]][compdbase[["Kind"]] == "L@A" & compdbase[["Ageerr"]] < 0] <- "W@A"
 
         # extra processing for sizedbase
         if (!is.null(sizedbase) && nrow(sizedbase) > 0) {
-          sizedbase$bio.or.num <- c("bio", "num")[sizedbase$Lbin_lo]
-          sizedbase$units <- c("kg", "lb", "cm", "in")[sizedbase$Lbin_hi]
-          sizedbase$method <- sizedbase$Ageerr
+          sizedbase[["bio.or.num"]] <- c("bio", "num")[sizedbase[["Lbin_lo"]]]
+          sizedbase[["units"]] <- c("kg", "lb", "cm", "in")[sizedbase[["Lbin_hi"]]]
+          sizedbase[["method"]] <- sizedbase[["Ageerr"]]
 
-          if (any(sizedbase$units %in% c("lb", "in"))) {
+          if (any(sizedbase[["units"]] %in% c("lb", "in"))) {
             if (verbose) {
               message(
                 "Note: converting bins in generalized size comp data ",
@@ -1020,15 +1020,15 @@ SS_output <-
             }
           }
           # convert bins from kg to lbs when that was the original unit
-          sizedbase$Bin[sizedbase$units == "lb"] <-
-            sizedbase$Bin[sizedbase$units == "lb"] / 0.4536
+          sizedbase[["Bin"]][sizedbase[["units"]] == "lb"] <-
+            sizedbase[["Bin"]][sizedbase[["units"]] == "lb"] / 0.4536
           # convert bins from cm to inches when that was the original unit
-          sizedbase$Bin[sizedbase$units == "in"] <-
-            sizedbase$Bin[sizedbase$units == "in"] / 2.54
+          sizedbase[["Bin"]][sizedbase[["units"]] == "in"] <-
+            sizedbase[["Bin"]][sizedbase[["units"]] == "in"] / 2.54
 
           sizebinlist <- list()
-          for (imethod in 1:max(sizedbase$method)) {
-            tmp <- sort(unique(sizedbase$Bin[sizedbase$method == imethod]))
+          for (imethod in 1:max(sizedbase[["method"]])) {
+            tmp <- sort(unique(sizedbase[["Bin"]][sizedbase[["method"]] == imethod]))
             if (length(tmp) == 0) tmp <- NULL
             sizebinlist[[paste("size_method_", imethod, sep = "")]] <- tmp
           }
@@ -1036,15 +1036,15 @@ SS_output <-
           sizebinlist <- NA
         }
 
-        if (is.null(compdbase$Nsamp_adj)) {
+        if (is.null(compdbase[["Nsamp_adj"]])) {
           good <- TRUE
         } else {
-          good <- !is.na(compdbase$Nsamp_adj)
+          good <- !is.na(compdbase[["Nsamp_adj"]])
         }
-        ladbase <- compdbase[compdbase$Kind == "L@A" & good, ]
-        wadbase <- compdbase[compdbase$Kind == "W@A" & good, ]
-        tagdbase1 <- compdbase[compdbase$Kind == "TAG1", ]
-        tagdbase2 <- compdbase[compdbase$Kind == "TAG2", ]
+        ladbase <- compdbase[compdbase[["Kind"]] == "L@A" & good, ]
+        wadbase <- compdbase[compdbase[["Kind"]] == "W@A" & good, ]
+        tagdbase1 <- compdbase[compdbase[["Kind"]] == "TAG1", ]
+        tagdbase2 <- compdbase[compdbase[["Kind"]] == "TAG2", ]
         # consider range of bins for conditional age at length data
         if (verbose) {
           message(
@@ -1067,9 +1067,9 @@ SS_output <-
         }
         # convert bin indices to true lengths
         if (nrow(agedbase) > 0) {
-          Lbin_ranges <- as.data.frame(table(agedbase$Lbin_range))
+          Lbin_ranges <- as.data.frame(table(agedbase[["Lbin_range"]]))
           names(Lbin_ranges)[1] <- "Lbin_hi-Lbin_lo"
-          if (length(unique(agedbase$Lbin_range)) > 1) {
+          if (length(unique(agedbase[["Lbin_range"]])) > 1) {
             warning(
               "different ranges of Lbin_lo to Lbin_hi found in age comps.\n",
               paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"),
@@ -1077,10 +1077,10 @@ SS_output <-
               "some of these data as conditional age-at-length."
             )
           }
-          agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
+          agebins <- sort(unique(agedbase[["Bin"]][!is.na(agedbase[["Bin"]])]))
         } else {
           if (nrow(condbase) > 0) {
-            agebins <- sort(unique(condbase$Bin[!is.na(condbase$Bin)]))
+            agebins <- sort(unique(condbase[["Bin"]][!is.na(condbase[["Bin"]])]))
           } else {
             agebins <- NA
           }
@@ -1117,7 +1117,7 @@ SS_output <-
     )
     if (!is.null(morph_indexing)) {
       # calculate number of growth patterns
-      ngpatterns <- max(morph_indexing$GP)
+      ngpatterns <- max(morph_indexing[["GP"]])
     } else {
       ngpatterns <- NULL
     }
@@ -1129,24 +1129,24 @@ SS_output <-
 
     # stats list: items that are output to the GUI (if printstats==T) for a quick summary of results
     stats <- list()
-    stats$SS_version <- SS_version
-    stats$SS_versionshort <- SS_versionshort
-    stats$SS_versionNumeric <- SS_versionNumeric
+    stats[["SS_version"]] <- SS_version
+    stats[["SS_versionshort"]] <- SS_versionshort
+    stats[["SS_versionNumeric"]] <- SS_versionNumeric
 
-    stats$StartTime <- paste(as.character(matchfun2("StartTime", 0, "StartTime", 0, cols = 1:6)), collapse = " ")
-    stats$RunTime <- paste(as.character(matchfun2("StartTime", 2, "StartTime", 2, cols = 4:9)), collapse = " ")
+    stats[["StartTime"]] <- paste(as.character(matchfun2("StartTime", 0, "StartTime", 0, cols = 1:6)), collapse = " ")
+    stats[["RunTime"]] <- paste(as.character(matchfun2("StartTime", 2, "StartTime", 2, cols = 4:9)), collapse = " ")
 
     # data return object to fill in various things
     returndat <- list()
 
     # input files
     tempfiles <- matchfun2("Data_File", 0, "Control_File", 0, cols = 1:2)
-    stats$Files_used <- paste(c(tempfiles[1, ], tempfiles[2, ]), collapse = " ")
-    returndat$Data_File <- tempfiles[1, 2]
-    returndat$Control_File <- tempfiles[2, 2]
+    stats[["Files_used"]] <- paste(c(tempfiles[1, ], tempfiles[2, ]), collapse = " ")
+    returndat[["Data_File"]] <- tempfiles[1, 2]
+    returndat[["Control_File"]] <- tempfiles[2, 2]
 
     # check warnings
-    stats$Nwarnings <- nwarn
+    stats[["Nwarnings"]] <- nwarn
     if (length(warn) > 20) {
       warn <- c(warn[1:20], paste(
         "Note:", length(warn) - 20,
@@ -1155,7 +1155,7 @@ SS_output <-
         "file to see full list."
       ))
     }
-    stats$warnings <- warn
+    stats[["warnings"]] <- warn
 
     # likelihoods
     rawlike <- matchfun2("LIKELIHOOD", 2, "Fleet:", -2)
@@ -1171,14 +1171,14 @@ SS_output <-
     lambdas <- rawlike[, 3]
     lambdas[lambdas == ""] <- NA
     lambdas <- as.numeric(lambdas)
-    like$lambdas <- lambdas
+    like[["lambdas"]] <- lambdas
     # separate new section added in SS version 3.30.13.04 (2019-05-31)
     if (length(laplace_line) > 0) {
-      stats$likelihoods_used <- like[1:(laplace_line - 1), ]
-      stats$likelihoods_laplace <- like[laplace_line:nrow(like), ]
+      stats[["likelihoods_used"]] <- like[1:(laplace_line - 1), ]
+      stats[["likelihoods_laplace"]] <- like[laplace_line:nrow(like), ]
     } else {
-      stats$likelihoods_used <- like
-      stats$likelihoods_laplace <- NULL
+      stats[["likelihoods_used"]] <- like
+      stats[["likelihoods_laplace"]] <- NULL
     }
 
     # read fleet-specific likelihoods
@@ -1198,15 +1198,15 @@ SS_output <-
 
     # replace numeric column names with fleet names
     names(likelihoods_by_fleet) <- c("Label", "ALL", FleetNames)
-    labs <- likelihoods_by_fleet$Label
+    labs <- likelihoods_by_fleet[["Label"]]
 
     # removing ":" at the end of likelihood components
     for (irow in 1:length(labs)) {
       labs[irow] <- substr(labs[irow], 1, nchar(labs[irow]) - 1)
     }
-    likelihoods_by_fleet$Label <- labs
+    likelihoods_by_fleet[["Label"]] <- labs
 
-    stats$likelihoods_by_fleet <- likelihoods_by_fleet
+    stats[["likelihoods_by_fleet"]] <- likelihoods_by_fleet
 
     likelihoods_by_tag_group <- matchfun2("Tag_Group:", 0, header = TRUE)
     # check for presence of tag data likelihood which has different column structure
@@ -1225,15 +1225,15 @@ SS_output <-
         )
       )
       # remove colon from "Tag_Group:"
-      likelihoods_by_tag_group$Label[1] <- "Tag_Group"
-      stats$likelihoods_by_tag_group <- likelihoods_by_tag_group
+      likelihoods_by_tag_group[["Label"]][1] <- "Tag_Group"
+      stats[["likelihoods_by_tag_group"]] <- likelihoods_by_tag_group
     }
 
     # read detail on parameters devs (if present, 3.30 only)
     Parm_devs_detail <- matchfun2("Parm_devs_detail", 1,
       header = TRUE, type.convert = TRUE
     )
-    stats$Parm_devs_detail <- Parm_devs_detail
+    stats[["Parm_devs_detail"]] <- Parm_devs_detail
 
     # parameters
     parameters <- matchfun2("PARAMETERS", 1, header = TRUE)
@@ -1259,10 +1259,10 @@ SS_output <-
     # fix issue with missing column in dev output
     # associated with at least SS versions 3.30.01 and 3.30.13
     if ("Gradient" %in% names(parameters) &&
-      any(parameters$Gradient %in% c("dev", "F"))) {
-      bad <- parameters$Gradient %in% c("dev", "F")
-      parameters$Pr_type[bad] <- parameters$Gradient[bad]
-      parameters$Gradient[bad] <- NA
+      any(parameters[["Gradient"]] %in% c("dev", "F"))) {
+      bad <- parameters[["Gradient"]] %in% c("dev", "F")
+      parameters[["Pr_type"]][bad] <- parameters[["Gradient"]][bad]
+      parameters[["Gradient"]][bad] <- NA
     }
     # make values numeric
     parameters <- type.convert(parameters, as.is = TRUE)
@@ -1273,44 +1273,44 @@ SS_output <-
     # it's possible that SS_output doesn't work for models prior to 3.21, in
     # which case this section could be removed
     if (SS_versionNumeric < 3.21) {
-      parameters$Pr_type_numeric <- parameters$Pr_type
-      parameters$Pr_type[parameters$Pr_type_numeric == -1] <- "No_prior"
-      parameters$Pr_type[parameters$Pr_type_numeric == 0] <- "Normal"
-      parameters$Pr_type[parameters$Pr_type_numeric == 1] <- "Sym_Beta"
-      parameters$Pr_type[parameters$Pr_type_numeric == 2] <- "Full_Beta"
-      parameters$Pr_type[parameters$Pr_type_numeric == 3] <- "Log_Norm"
-      parameters$Pr_type[parameters$Pr_type_numeric == 4] <- "Log_Norm_adjusted"
+      parameters[["Pr_type_numeric"]] <- parameters[["Pr_type"]]
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == -1] <- "No_prior"
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == 0] <- "Normal"
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == 1] <- "Sym_Beta"
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == 2] <- "Full_Beta"
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == 3] <- "Log_Norm"
+      parameters[["Pr_type"]][parameters[["Pr_type_numeric"]] == 4] <- "Log_Norm_adjusted"
     }
 
     # fix for duplicate parameter labels in 3.30.03.03,
     # not robust to more than 2 growth patterns but probably will be fixed soon
-    ParmLabels <- parameters$Label
+    ParmLabels <- parameters[["Label"]]
     ParmLabels[duplicated(ParmLabels)] <- paste0(ParmLabels[duplicated(ParmLabels)], "_2")
     # end fix
     rownames(parameters) <- ParmLabels
 
     # names of active parameters
-    activepars <- parameters$Label[!is.na(parameters$Active_Cnt)]
+    activepars <- parameters[["Label"]][!is.na(parameters[["Active_Cnt"]])]
 
     if (!is.na(parfile)) {
       parline <- read.table(parfile, fill = TRUE, comment.char = "", nrows = 1)
     } else {
       parline <- matrix(NA, 1, 16)
     }
-    stats$N_estimated_parameters <- parline[1, 6]
+    stats[["N_estimated_parameters"]] <- parline[1, 6]
 
     # subset to active parameters only
-    pars <- parameters[!is.na(parameters$Active_Cnt), ]
+    pars <- parameters[!is.na(parameters[["Active_Cnt"]]), ]
 
     if (nrow(pars) > 0) {
-      pars$Afterbound <- ""
-      pars$checkdiff <- pars$Value - pars$Min
-      pars$checkdiff2 <- pars$Max - pars$Value
-      pars$checkdiff3 <- abs(pars$Value - (pars$Max - (pars$Max - pars$Min) / 2))
-      pars$Afterbound[pars$checkdiff < 0.001 | pars$checkdiff2 < 0.001 | pars$checkdiff2 < 0.001] <- "CHECK"
-      pars$Afterbound[!pars$Afterbound %in% "CHECK"] <- "OK"
+      pars[["Afterbound"]] <- ""
+      pars[["checkdiff"]] <- pars[["Value"]] - pars[["Min"]]
+      pars[["checkdiff2"]] <- pars[["Max"]] - pars[["Value"]]
+      pars[["checkdiff3"]] <- abs(pars[["Value"]] - (pars[["Max"]] - (pars[["Max"]] - pars[["Min"]]) / 2))
+      pars[["Afterbound"]][pars[["checkdiff"]] < 0.001 | pars[["checkdiff2"]] < 0.001 | pars[["checkdiff2"]] < 0.001] <- "CHECK"
+      pars[["Afterbound"]][!pars[["Afterbound"]] %in% "CHECK"] <- "OK"
     }
-    stats$table_of_phases <- table(parameters$Phase)
+    stats[["table_of_phases"]] <- table(parameters[["Phase"]])
     # subset columns for printed table of estimated parameters
     estimated_non_dev_parameters <- pars[, names(pars) %in%
       c(
@@ -1335,11 +1335,11 @@ SS_output <-
       estimated_non_dev_parameters <- estimated_non_dev_parameters[-devrows, ]
     }
     # add table to stats that get printed in console
-    stats$estimated_non_dev_parameters <- estimated_non_dev_parameters
+    stats[["estimated_non_dev_parameters"]] <- estimated_non_dev_parameters
 
     # Semi-parametric (2D-AR1) selectivity parameters
     seldev_pars <- parameters[
-      grep("ARDEV", parameters$Label, fixed = TRUE),
+      grep("ARDEV", parameters[["Label"]], fixed = TRUE),
       names(parameters) %in% c("Label", "Value")
     ]
     if (nrow(seldev_pars) == 0) {
@@ -1357,37 +1357,37 @@ SS_output <-
       #
       # the code below parses those strings to figure out age vs. length,
       # separate the numeric year value and bin number
-      seldev_label_info <- strsplit(seldev_pars$Label, split = "_")
+      seldev_label_info <- strsplit(seldev_pars[["Label"]], split = "_")
       seldev_label_info <- data.frame(do.call(rbind, lapply(seldev_label_info, rbind)))
 
       # add columns to pars data.frame with info from labels
-      seldev_pars$Fleet <- seldev_label_info$X1
-      seldev_pars$Year <- as.numeric(substring(seldev_label_info$X3, 2))
+      seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
+      seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[["X3"]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
-      seldev_pars$Type <- ifelse(substring(seldev_label_info$X4, 1, 1) %in%
+      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[["X4"]], 1, 1) %in%
         c("A", "a"),
       yes = "age",
       no = "length"
       )
       # how many non-numeric digits to skip over in parsing bin value
-      first_bin_digit <- ifelse(seldev_pars$Type == "age", 2, 5)
+      first_bin_digit <- ifelse(seldev_pars[["Type"]] == "age", 2, 5)
       # parse bin (age or length bin)
-      seldev_pars$Bin <- as.numeric(substring(seldev_label_info$X4, first_bin_digit))
+      seldev_pars[["Bin"]] <- as.numeric(substring(seldev_label_info[["X4"]], first_bin_digit))
       # remove label column which is redundant with rownames
       seldev_pars <- seldev_pars[, -1]
 
       # make matrix
       seldev_matrix <- list()
-      for (fleet in sort(unique(seldev_pars$Fleet))) {
+      for (fleet in sort(unique(seldev_pars[["Fleet"]]))) {
         # subset for specific fleet
-        seldev_pars_f <- seldev_pars[seldev_pars$Fleet == fleet, ]
-        for (type in unique(seldev_pars_f$Type)) {
+        seldev_pars_f <- seldev_pars[seldev_pars[["Fleet"]] == fleet, ]
+        for (type in unique(seldev_pars_f[["Type"]])) {
           # subset for type (unlikely to have more than 1 per fleet, but safer this way)
-          seldev_pars_sub <- seldev_pars_f[seldev_pars_f$Type == type, ]
+          seldev_pars_sub <- seldev_pars_f[seldev_pars_f[["Type"]] == type, ]
           seldev_label <- paste0(fleet, "_", type, "_seldevs")
-          seldev_yrs <- sort(unique(seldev_pars_sub$Year))
-          seldev_bins <- sort(unique(seldev_pars_sub$Bin))
+          seldev_yrs <- sort(unique(seldev_pars_sub[["Year"]]))
+          seldev_bins <- sort(unique(seldev_pars_sub[["Bin"]]))
           # create empty matrix with labels on each dimension
           if (type == "length") {
             seldev_matrix[[seldev_label]] <-
@@ -1407,7 +1407,7 @@ SS_output <-
           for (y in seldev_yrs) {
             for (bin in seldev_bins) {
               seldev_matrix[[seldev_label]][paste(y), paste(bin)] <-
-                seldev_pars_sub$Value[seldev_pars_sub$Year == y & seldev_pars_sub$Bin == bin]
+                seldev_pars_sub[["Value"]][seldev_pars_sub[["Year"]] == y & seldev_pars_sub[["Bin"]] == bin]
             }
           } # end loop over years
         } # end loop over types
@@ -1418,11 +1418,11 @@ SS_output <-
     # (new option for comp likelihood that uses these parameters for automated
     #  data weighting)
     DM_pars <- parameters[
-      grep("ln\\((EffN_mult)|(DM_theta)\\)", parameters$Label),
+      grep("ln\\((EffN_mult)|(DM_theta)\\)", parameters[["Label"]]),
       names(parameters) %in% c("Value", "Phase", "Min", "Max")
     ]
-    DM_pars$Theta <- exp(DM_pars$Value)
-    DM_pars$"Theta/(1+Theta)" <- DM_pars$Theta / (1 + DM_pars$Theta)
+    DM_pars[["Theta"]] <- exp(DM_pars[["Value"]])
+    DM_pars$"Theta/(1+Theta)" <- DM_pars[["Theta"]] / (1 + DM_pars[["Theta"]])
     # if D-M parameters are present, then do some extra processing steps
     age_data_info <- NULL
     len_data_info <- NULL
@@ -1430,7 +1430,7 @@ SS_output <-
     if (nrow(DM_pars) > 0) {
       # save to "stats" list that gets printed to R console
       # (and also added to "returndat" which is returned by this function)
-      stats$Dirichlet_Multinomial_pars <- DM_pars
+      stats[["Dirichlet_Multinomial_pars"]] <- DM_pars
 
       # figure out which fleet uses which parameter,
       # currently (as of SS version 3.30.10.00), requires reading data file
@@ -1448,18 +1448,18 @@ SS_output <-
           verbose = verbose
         )
         datfile <- SS_readdat(
-          file = file.path(dir, starter$datfile),
+          file = file.path(dir, starter[["datfile"]]),
           verbose = verbose, version = "3.30"
         )
       }
-      age_data_info <- datfile$age_info
-      len_data_info <- datfile$len_info
+      age_data_info <- datfile[["age_info"]]
+      len_data_info <- datfile[["len_info"]]
       if (!is.null(age_data_info) & !is.null(len_data_info)) {
-        age_data_info$CompError <- as.numeric(age_data_info$CompError)
-        age_data_info$ParmSelect <- as.numeric(age_data_info$ParmSelect)
-        len_data_info$CompError <- as.numeric(len_data_info$CompError)
-        len_data_info$ParmSelect <- as.numeric(len_data_info$ParmSelect)
-        if (!any(age_data_info$CompError == 1) & !any(len_data_info$CompError == 1)) {
+        age_data_info[["CompError"]] <- as.numeric(age_data_info[["CompError"]])
+        age_data_info[["ParmSelect"]] <- as.numeric(age_data_info[["ParmSelect"]])
+        len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
+        len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
+        if (!any(age_data_info[["CompError"]] == 1) & !any(len_data_info[["CompError"]] == 1)) {
           stop(
             "Problem Dirichlet-Multinomial parameters: \n",
             "  Report file indicates parameters exist, but no CompError values\n",
@@ -1471,65 +1471,65 @@ SS_output <-
       ## get Dirichlet-Multinomial parameter values and adjust input N
       if (comp) { # only possible if CompReport.sso was read
         if (nrow(agedbase) > 0) {
-          agedbase$DM_effN <- NA
+          agedbase[["DM_effN"]] <- NA
         }
         if (nrow(lendbase) > 0) {
-          lendbase$DM_effN <- NA
+          lendbase[["DM_effN"]] <- NA
         }
         if (nrow(condbase) > 0) {
-          condbase$DM_effN <- NA
+          condbase[["DM_effN"]] <- NA
         }
         # loop over fleets within agedbase
-        for (f in unique(agedbase$Fleet)) {
-          if (age_data_info$CompError[f] == 1) {
-            ipar <- age_data_info$ParmSelect[f]
+        for (f in unique(agedbase[["Fleet"]])) {
+          if (age_data_info[["CompError"]][f] == 1) {
+            ipar <- age_data_info[["ParmSelect"]][f]
             if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars$Theta[ipar]
+              Theta <- DM_pars[["Theta"]][ipar]
             } else {
               stop(
                 "Issue with Dirichlet-Multinomial parameter:",
                 "Fleet = ", f, "and ParmSelect = ", ipar
               )
             }
-            sub <- agedbase$Fleet == f
-            agedbase$DM_effN[sub] <-
-              1 / (1 + Theta) + agedbase$Nsamp_adj[sub] * Theta / (1 + Theta)
+            sub <- agedbase[["Fleet"]] == f
+            agedbase[["DM_effN"]][sub] <-
+              1 / (1 + Theta) + agedbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
           } # end test for D-M likelihood for this fleet
         } # end loop over fleets within agedbase
 
         # loop over fleets within lendbase
-        for (f in unique(lendbase$Fleet)) {
-          if (len_data_info$CompError[f] == 1) {
-            ipar <- len_data_info$ParmSelect[f]
+        for (f in unique(lendbase[["Fleet"]])) {
+          if (len_data_info[["CompError"]][f] == 1) {
+            ipar <- len_data_info[["ParmSelect"]][f]
             if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars$Theta[ipar]
+              Theta <- DM_pars[["Theta"]][ipar]
             } else {
               stop(
                 "Issue with Dirichlet-Multinomial parameter:",
                 "Fleet = ", f, "and ParmSelect = ", ipar
               )
             }
-            sub <- lendbase$Fleet == f
-            lendbase$DM_effN[sub] <-
-              1 / (1 + Theta) + lendbase$Nsamp_adj[sub] * Theta / (1 + Theta)
+            sub <- lendbase[["Fleet"]] == f
+            lendbase[["DM_effN"]][sub] <-
+              1 / (1 + Theta) + lendbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
           } # end test for D-M likelihood for this fleet
         } # end loop over fleets within lendbase
 
         # loop over fleets within condbase
-        for (f in unique(condbase$Fleet)) {
-          if (age_data_info$CompError[f] == 1) {
-            ipar <- age_data_info$ParmSelect[f]
+        for (f in unique(condbase[["Fleet"]])) {
+          if (age_data_info[["CompError"]][f] == 1) {
+            ipar <- age_data_info[["ParmSelect"]][f]
             if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars$Theta[ipar]
+              Theta <- DM_pars[["Theta"]][ipar]
             } else {
               stop(
                 "Issue with Dirichlet-Multinomial parameter:",
                 "Fleet = ", f, "and ParmSelect = ", ipar
               )
             }
-            sub <- condbase$Fleet == f
-            condbase$DM_effN[sub] <-
-              1 / (1 + Theta) + condbase$Nsamp_adj[sub] * Theta / (1 + Theta)
+            sub <- condbase[["Fleet"]] == f
+            condbase[["DM_effN"]][sub] <-
+              1 / (1 + Theta) + condbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
           } # end test for D-M likelihood for this fleet
         } # end loop over fleets within condbase
       } # end test for whether CompReport.sso info is available
@@ -1542,28 +1542,28 @@ SS_output <-
       if (verbose) {
         message("Got covar file.")
       }
-      stdtable <- CoVar[CoVar$Par..j == "Std", c(7, 9, 5)]
+      stdtable <- CoVar[CoVar[["Par..j"]] == "Std", c(7, 9, 5)]
       names(stdtable) <- c("name", "std", "type")
-      N_estimated_parameters2 <- sum(stdtable$type == "Par")
+      N_estimated_parameters2 <- sum(stdtable[["type"]] == "Par")
 
       # this section was muddling Derived Quants with Parameters in early version of SSv3.20
       # got work-around pending fix from Rick to use of "Par" vs. "Der" in covar file.
-      if (is.na(stats$N_estimated_parameters)) {
-        stats$N_estimated_parameters <- N_estimated_parameters2
+      if (is.na(stats[["N_estimated_parameters"]])) {
+        stats[["N_estimated_parameters"]] <- N_estimated_parameters2
       } else {
-        if (stats$N_estimated_parameters != N_estimated_parameters2) {
+        if (stats[["N_estimated_parameters"]] != N_estimated_parameters2) {
           warning(
-            stats$N_estimated_parameters,
+            stats[["N_estimated_parameters"]],
             "estimated parameters indicated by", parfile, "\n",
             N_estimated_parameters2,
             "estimated parameters shown in", covarfile, "\n",
-            "returning the first value:", stats$N_estimated_parameters
+            "returning the first value:", stats[["N_estimated_parameters"]]
           )
-          stats$N_estimated_parameters <- stats$N_estimated_parameters
+          stats[["N_estimated_parameters"]] <- stats[["N_estimated_parameters"]]
         }
       }
-      Nstd <- sum(stdtable$std > 0)
-      checkbadrun <- unique(stdtable$std)
+      Nstd <- sum(stdtable[["std"]] > 0)
+      checkbadrun <- unique(stdtable[["std"]])
       if (length(checkbadrun) == 1) {
         if (checkbadrun %in% c(NA, "NaN", "na")) {
           stop(paste0(
@@ -1577,31 +1577,31 @@ SS_output <-
       if (Nstd <= 1) {
         stop("Too few estimated quantities in covar file (n=", Nstd, "). Change input to covar=FALSE.")
       }
-      if (checkcor == TRUE & stats$N_estimated_parameters > 1) {
-        corfilter <- CoVar[CoVar$all.i != CoVar$all.j &
-          CoVar$Par..i == "Par" &
-          CoVar$Par..j == "Par" &
-          CoVar$label.i %in% activepars &
-          CoVar$label.j %in% activepars &
-          !substr(CoVar$label.i, 1, 8) == "ForeRecr" &
-          !substr(CoVar$label.j, 1, 8) == "ForeRecr", ]
-        rangecor <- range(abs(corfilter$corr))
+      if (checkcor == TRUE & stats[["N_estimated_parameters"]] > 1) {
+        corfilter <- CoVar[CoVar[["all.i"]] != CoVar[["all.j"]] &
+          CoVar[["Par..i"]] == "Par" &
+          CoVar[["Par..j"]] == "Par" &
+          CoVar[["label.i"]] %in% activepars &
+          CoVar[["label.j"]] %in% activepars &
+          !substr(CoVar[["label.i"]], 1, 8) == "ForeRecr" &
+          !substr(CoVar[["label.j"]], 1, 8) == "ForeRecr", ]
+        rangecor <- range(abs(corfilter[["corr"]]))
         corstats <- list()
-        corstats$cormessage1 <- paste("Range of abs(parameter correlations) is", min(rangecor), "to", max(rangecor))
+        corstats[["cormessage1"]] <- paste("Range of abs(parameter correlations) is", min(rangecor), "to", max(rangecor))
         # search for high or low correlations in covar file
-        highcor <- corfilter[abs(corfilter$corr) >= cormax, names(CoVar) %in% c("label.i", "label.j", "corr")]
-        lowcorcandidates <- corfilter[abs(corfilter$corr) <= cormin, names(CoVar) %in% c("label.i", "label.j", "corr")]
-        lowcortestlist <- data.frame(unique(c(lowcorcandidates$label.i, lowcorcandidates$label.j)))
-        lowcortestlist$name <- as.character(lowcortestlist[, 1])
+        highcor <- corfilter[abs(corfilter[["corr"]]) >= cormax, names(CoVar) %in% c("label.i", "label.j", "corr")]
+        lowcorcandidates <- corfilter[abs(corfilter[["corr"]]) <= cormin, names(CoVar) %in% c("label.i", "label.j", "corr")]
+        lowcortestlist <- data.frame(unique(c(lowcorcandidates[["label.i"]], lowcorcandidates[["label.j"]])))
+        lowcortestlist[["name"]] <- as.character(lowcortestlist[, 1])
         nlowcor <- 0
         lowcor <- 0
         if (nrow(lowcortestlist) > 0) {
-          lowcortestlist$max <- NA
+          lowcortestlist[["max"]] <- NA
           for (i in 1:length(lowcortestlist[, 1]))
           {
-            lowcortestlist$max[i] <- max(corfilter$corr[corfilter$label.i == lowcortestlist$name[i]], corfilter$corr[corfilter$label.j == lowcortestlist$name[i]])
+            lowcortestlist[["max"]][i] <- max(corfilter[["corr"]][corfilter[["label.i"]] == lowcortestlist[["name"]][i]], corfilter[["corr"]][corfilter[["label.j"]] == lowcortestlist[["name"]][i]])
           }
-          lowcor <- lowcortestlist[abs(lowcortestlist$max) <= cormin, 2:3]
+          lowcor <- lowcortestlist[abs(lowcortestlist[["max"]]) <= cormin, 2:3]
           nlowcor <- nrow(lowcor)
         }
         nhighcor <- nrow(highcor)
@@ -1609,44 +1609,44 @@ SS_output <-
           if (nhighcor == 0) textblock <- "No correlations"
           if (nhighcor == 1) textblock <- "1 correlation"
           if (nhighcor > 1) textblock <- paste(nhighcor, "correlations")
-          corstats$cormessage2 <- paste(textblock, " above threshold (cormax=", cormax, ")", sep = "")
+          corstats[["cormessage2"]] <- paste(textblock, " above threshold (cormax=", cormax, ")", sep = "")
           if (nhighcor > 0 & nhighcor <= printhighcor) {
             row.names(highcor) <- paste("   ", 1:nhighcor)
-            corstats$cormessage3 <- highcor
+            corstats[["cormessage3"]] <- highcor
           }
           if (nhighcor > 0 & nhighcor > printhighcor) {
-            highcorsub <- highcor[order(-abs(highcor$corr)), ]
+            highcorsub <- highcor[order(-abs(highcor[["corr"]])), ]
             highcorsub <- highcorsub[1:printhighcor, ]
             row.names(highcorsub) <- paste("   ", 1:printhighcor)
-            corstats$cormessage4 <- paste(
+            corstats[["cormessage4"]] <- paste(
               "Highest", printhighcor,
               "parameter correlations above threshold (to print more, increase 'printhighcor' input):"
             )
-            corstats$cormessage5 <- highcorsub
+            corstats[["cormessage5"]] <- highcorsub
           }
         } else {
-          corstats$cormessage6 <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
+          corstats[["cormessage6"]] <- "High correlations not reported. To report, change 'printhighcor' input to a positive value."
         }
 
         if (printlowcor > 0) {
           if (nlowcor == 0) textblock <- "No uncorrelated parameters"
           if (nlowcor == 1) textblock <- "1 uncorrelation"
           if (nlowcor > 1) textblock <- paste(nlowcor, "uncorrelated parameters")
-          corstats$cormessage7 <- paste(textblock, " below threshold (cormin=", cormin, ")", sep = "")
+          corstats[["cormessage7"]] <- paste(textblock, " below threshold (cormin=", cormin, ")", sep = "")
           if (nlowcor > 0 & nlowcor <= printlowcor) {
-            corstats$cormessage8 <- lowcor
+            corstats[["cormessage8"]] <- lowcor
           }
           if (nlowcor > 0 & nlowcor > printlowcor) {
-            lowcorsub <- lowcor[order(abs(lowcor$max)), ]
+            lowcorsub <- lowcor[order(abs(lowcor[["max"]])), ]
             lowcorsub <- lowcorsub[1:printlowcor, ]
-            corstats$cormessage9 <- paste(
+            corstats[["cormessage9"]] <- paste(
               "Lowest", printlowcor,
               "parameters uncorrelations below threshold (to print more, increase 'printlowcor' input):"
             )
-            corstats$cormessage10 <- lowcorsub
+            corstats[["cormessage10"]] <- lowcorsub
           }
         } else {
-          corstats$cormessage11 <- "Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
+          corstats[["cormessage11"]] <- "Uncorrelated parameters not reported. To report, change 'printlowcor' input to a positive value."
         }
       } else { # if checkcor = FALSE or only 1 estimated parameter
         corstats <- NA
@@ -1713,13 +1713,13 @@ SS_output <-
     der <- df.rename(der, oldnames = "LABEL", newnames = "Label")
 
     # remove extra row (don't remember why it occurs)
-    der <- der[der$Label != "Bzero_again", ]
+    der <- der[der[["Label"]] != "Bzero_again", ]
     der[der == "_"] <- NA
     der[der == ""] <- NA
 
     # remove bad rows that were present in 3.30-beta in September 2016
     # (note that spelling differs from "Parm_devs_detail" after likelihood)
-    test <- grep("Parm_dev_details", der$Label)
+    test <- grep("Parm_dev_details", der[["Label"]])
     if (length(test) > 0) {
       der <- der[1:(min(test) - 1), ]
     }
@@ -1727,10 +1727,10 @@ SS_output <-
     der <- type.convert(der, as.is = TRUE)
 
     # replace SPB with SSB as changed in SS version 3.30.10.00 (29 Nov. 2017)
-    der$Label <- gsub("SPB_", "SSB_", der$Label, fixed = TRUE)
+    der[["Label"]] <- gsub("SPB_", "SSB_", der[["Label"]], fixed = TRUE)
     # set rownames equal to Label column
     # (skipping any duplicates, such as ln(SPB)_YYYY for models with limited year range)
-    rownames(der)[!duplicated(der$Label)] <- der$Label[!duplicated(der$Label)]
+    rownames(der)[!duplicated(der[["Label"]])] <- der[["Label"]][!duplicated(der[["Label"]])]
 
     # get management ratio labels from top of DERIVED_QUANTITIES
     managementratiolabels <- matchfun2("DERIVED_QUANTITIES", 1, "DERIVED_QUANTITIES", 3, cols = 1:2)
@@ -1815,10 +1815,10 @@ SS_output <-
       # calculate first season with recruitment
       if ("Frac/sex" %in% names(recruitment_dist)) {
         first_seas_with_recruits <-
-          min(recruitment_dist$Seas[recruitment_dist$"Frac/sex" > 0])
+          min(recruitment_dist[["Seas"]][recruitment_dist$"Frac/sex" > 0])
       } else {
         first_seas_with_recruits <-
-          min(recruitment_dist$Seas[recruitment_dist$Value > 0])
+          min(recruitment_dist[["Seas"]][recruitment_dist[["Value"]] > 0])
       }
       # starting in SSv3.24Q there are additional tables
       # (in v3.30 RECRUITMENT_DIST_BENCHMARK was renamed RECRUITMENT_DIST_Bmark
@@ -1847,9 +1847,9 @@ SS_output <-
 
     # gradient
     if (covar & !is.na(corfile)) {
-      stats$log_det_hessian <- read.table(corfile, nrows = 1)[1, 10]
+      stats[["log_det_hessian"]] <- read.table(corfile, nrows = 1)[1, 10]
     }
-    stats$maximum_gradient_component <-
+    stats[["maximum_gradient_component"]] <-
       as.numeric(matchfun2("Convergence_Level", 0,
         "Convergence_Level", 0,
         cols = 2
@@ -1857,14 +1857,14 @@ SS_output <-
 
     # parameters with highest gradients (3.30 only)
     if ("Gradient" %in% names(parameters)) {
-      if (any(!is.na(parameters$Gradient))) {
+      if (any(!is.na(parameters[["Gradient"]]))) {
         # number of gradients to report is 5 (an arbitrary choice),
         # or fewer if fewer than 5 parameters estimated.
-        ngrads <- min(5, max(parameters$Active_Cnt, na.rm = TRUE))
+        ngrads <- min(5, max(parameters[["Active_Cnt"]], na.rm = TRUE))
         # add highest gradients to table of stats that get printed to the console
-        stats$parameters_with_highest_gradients <-
+        stats[["parameters_with_highest_gradients"]] <-
           head(parameters[
-            order(abs(parameters$Gradient), decreasing = TRUE),
+            order(abs(parameters[["Gradient"]]), decreasing = TRUE),
             c("Value", "Gradient")
           ], n = 5)
       }
@@ -1949,7 +1949,7 @@ SS_output <-
       raw_recruit <- raw_recruit[-(1:2), ] # remove header rows
       recruit <- raw_recruit[-(1:2), ] # remove rows for Virg and Init
       # temporary change for model that has bad values in dev column
-      recruit$dev[recruit$dev == "-nan(ind)"] <- NA
+      recruit[["dev"]][recruit[["dev"]] == "-nan(ind)"] <- NA
 
       # make values numeric
       recruit <- type.convert(recruit, as.is = TRUE)
@@ -2003,7 +2003,7 @@ SS_output <-
       # convert underscores
       lenntune[lenntune == "_"] <- NA
       # reorder columns (leaving out sample sizes perhaps to save space)
-      lenntune <- lenntune[lenntune$N > 0, c(10, 1, 4:9)]
+      lenntune <- lenntune[lenntune[["N"]] > 0, c(10, 1, 4:9)]
       # avoid NA warnings by removing #IND values
       lenntune$"MeaneffN/MeaninputN"[lenntune$"MeaneffN/MeaninputN" == "-1.#IND"] <- NA
       lenntune <- type.convert(lenntune, as.is = TRUE)
@@ -2022,7 +2022,7 @@ SS_output <-
         } else {
           # process 3.30 versions prior to 3.30.12
           # reorder columns (leaving out sample sizes perhaps to save space)
-          lenntune <- lenntune[lenntune$Nsamp_adj > 0, ]
+          lenntune <- lenntune[lenntune[["Nsamp_adj"]] > 0, ]
           lenntune <- type.convert(lenntune, as.is = TRUE)
           ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
           # lenntune$"HarMean/MeanInputN" <- lenntune$"HarMean"/lenntune$"mean_inputN*Adj"
@@ -2048,7 +2048,7 @@ SS_output <-
         } # end pre-3.30.12 version of processing Length_Comp_Fit_Summary
       } # end 3.30 version of processing Length_Comp_Fit_Summary
     }
-    stats$Length_Comp_Fit_Summary <- lenntune
+    stats[["Length_Comp_Fit_Summary"]] <- lenntune
 
     ## FIT_AGE_COMPS
     fit_age_comps <- matchfun2("FIT_AGE_COMPS", 1, header = TRUE)
@@ -2104,8 +2104,8 @@ SS_output <-
         # convert underscores
         agentune[agentune == "_"] <- NA
         # remove empty rows with NA or zero sample size
-        agentune <- agentune[!is.na(agentune$Nsamp_adj) &
-          agentune$Nsamp_adj > 0, ]
+        agentune <- agentune[!is.na(agentune[["Nsamp_adj"]]) &
+          agentune[["Nsamp_adj"]] > 0, ]
         # avoid NA warnings by removing #IND values
         agentune$"MeaneffN/MeaninputN"[agentune$"MeaneffN/MeaninputN" == "-1.#IND"] <- NA
         agentune <- type.convert(agentune, as.is = TRUE)
@@ -2114,8 +2114,8 @@ SS_output <-
           agentune$"HarMean(effN)" / agentune$"mean(inputN*Adj)"
 
         # calculate recommended value (for length data this is done internally in SS)
-        agentune$Recommend_Var_Adj <-
-          agentune$Var_Adj * agentune$"HarMean(effN)/mean(inputN*Adj)"
+        agentune[["Recommend_Var_Adj"]] <-
+          agentune[["Var_Adj"]] * agentune$"HarMean(effN)/mean(inputN*Adj)"
 
         # remove distracting columns (no longer present in recent versions of SS)
         badnames <- c("mean_effN", "Mean(effN/inputN)", "MeaneffN/MeaninputN")
@@ -2136,7 +2136,7 @@ SS_output <-
         agentune <- NULL
       }
     }
-    stats$Age_Comp_Fit_Summary <- agentune
+    stats[["Age_Comp_Fit_Summary"]] <- agentune
 
     ## FIT_SIZE_COMPS
     fit_size_comps <- NULL
@@ -2157,10 +2157,10 @@ SS_output <-
           # column names
           names(fit_size_comps) <- fit_size_comps[2, ]
           # add new columns for method-specific info
-          fit_size_comps$Method <- NA
-          fit_size_comps$Units <- NA
-          fit_size_comps$Scale <- NA
-          fit_size_comps$Add_to_comp <- NA
+          fit_size_comps[["Method"]] <- NA
+          fit_size_comps[["Units"]] <- NA
+          fit_size_comps[["Scale"]] <- NA
+          fit_size_comps[["Add_to_comp"]] <- NA
           # find the lines with the method-specific info
           method_lines <- grep("#Method:", fit_size_comps[, 1])
           method_info <- fit_size_comps[method_lines, ]
@@ -2174,10 +2174,10 @@ SS_output <-
             } else {
               end <- nrow(fit_size_comps)
             }
-            fit_size_comps$Method[start:end] <- method_info[imethod, 2]
-            fit_size_comps$Units[start:end] <- method_info[imethod, 4]
-            fit_size_comps$Scale[start:end] <- method_info[imethod, 6]
-            fit_size_comps$Add_to_comp[start:end] <- method_info[imethod, 8]
+            fit_size_comps[["Method"]][start:end] <- method_info[imethod, 2]
+            fit_size_comps[["Units"]][start:end] <- method_info[imethod, 4]
+            fit_size_comps[["Scale"]][start:end] <- method_info[imethod, 6]
+            fit_size_comps[["Add_to_comp"]][start:end] <- method_info[imethod, 8]
             # split out rows with info on tuning
             sizentune <- rbind(sizentune, fit_size_comps[tune_lines[imethod]:end, ])
           }
@@ -2190,11 +2190,11 @@ SS_output <-
           sizentune[1, max(goodcols)] <- "Method"
           sizentune <- sizentune[, goodcols]
           names(sizentune) <- sizentune[1, ]
-          sizentune <- sizentune[sizentune$Factor == 7, ]
+          sizentune <- sizentune[sizentune[["Factor"]] == 7, ]
           sizentune <- type.convert(sizentune, as.is = TRUE)
-          stats$Size_Comp_Fit_Summary <- sizentune
+          stats[["Size_Comp_Fit_Summary"]] <- sizentune
           # format fit_size_comps: remove extra rows, make numeric
-          fit_size_comps <- fit_size_comps[fit_size_comps$Fleet_Name %in% FleetNames, ]
+          fit_size_comps <- fit_size_comps[fit_size_comps[["Fleet_Name"]] %in% FleetNames, ]
         } # end check for non-empty fit_size_comps
       } else {
         # formatting used for earlier 3.30 versions (prior to 3.30.12)
@@ -2222,26 +2222,26 @@ SS_output <-
         )
         if (!is.null(dim(sizentune))) {
           sizentune[, 1] <- sizentune[, 10]
-          sizentune <- sizentune[sizentune$Npos > 0, c(1, 3, 4, 5, 6, 8, 9)]
+          sizentune <- sizentune[sizentune[["Npos"]] > 0, c(1, 3, 4, 5, 6, 8, 9)]
         } else {
           sizentune <- NULL
         }
       }
-      stats$Size_comp_Eff_N_tuning_check <- sizentune
+      stats[["Size_comp_Eff_N_tuning_check"]] <- sizentune
     }
 
     # get information that will help diagnose jitter coverage and bad bounds
     jitter_info <- parameters[
-      !is.na(parameters$Active_Cnt) &
-        !is.na(parameters$Min),
+      !is.na(parameters[["Active_Cnt"]]) &
+        !is.na(parameters[["Min"]]),
       c("Value", "Min", "Max", "Init")
     ]
-    jitter_info$sigma <- (jitter_info$Max - jitter_info$Min) / (2 * qnorm(.999))
-    jitter_info$CV <- jitter_info$sigma / jitter_info$Init
-    jitter_info$InitLocation <- pnorm(
-      q = jitter_info$Init,
-      mean = (jitter_info$Max + jitter_info$Min) / 2,
-      sd = jitter_info$sigma
+    jitter_info[["sigma"]] <- (jitter_info[["Max"]] - jitter_info[["Min"]]) / (2 * qnorm(.999))
+    jitter_info[["CV"]] <- jitter_info[["sigma"]] / jitter_info[["Init"]]
+    jitter_info[["InitLocation"]] <- pnorm(
+      q = jitter_info[["Init"]],
+      mean = (jitter_info[["Max"]] + jitter_info[["Min"]]) / 2,
+      sd = jitter_info[["sigma"]]
     )
 
 
@@ -2252,25 +2252,25 @@ SS_output <-
 
     # add stuff to list to return
     if (SS_versionNumeric <= 3.24) {
-      returndat$definitions <- fleetdefs
-      returndat$fleet_ID <- fleet_ID
-      returndat$fleet_area <- fleet_area
-      returndat$catch_units <- catch_units
-      returndat$catch_error <- catch_error
+      returndat[["definitions"]] <- fleetdefs
+      returndat[["fleet_ID"]] <- fleet_ID
+      returndat[["fleet_area"]] <- fleet_area
+      returndat[["catch_units"]] <- catch_units
+      returndat[["catch_error"]] <- catch_error
     }
     if (SS_versionNumeric >= 3.30) {
-      returndat$definitions <- fleetdefs
-      returndat$fleet_ID <- fleet_ID
-      returndat$fleet_type <- fleet_type
-      returndat$fleet_timing <- fleet_timing
-      returndat$fleet_area <- fleet_area
-      returndat$catch_units <- catch_units
+      returndat[["definitions"]] <- fleetdefs
+      returndat[["fleet_ID"]] <- fleet_ID
+      returndat[["fleet_type"]] <- fleet_type
+      returndat[["fleet_timing"]] <- fleet_timing
+      returndat[["fleet_area"]] <- fleet_area
+      returndat[["catch_units"]] <- catch_units
       if (exists("catch_se")) {
-        returndat$catch_se <- catch_se
-        returndat$equ_catch_se <- equ_catch_se
+        returndat[["catch_se"]] <- catch_se
+        returndat[["equ_catch_se"]] <- equ_catch_se
       } else {
-        returndat$catch_se <- NA
-        returndat$equ_catch_se <- NA
+        returndat[["catch_se"]] <- NA
+        returndat[["equ_catch_se"]] <- NA
       }
     }
 
@@ -2284,63 +2284,63 @@ SS_output <-
       }
     }
 
-    returndat$mcmc <- mcmc
-    returndat$survey_units <- survey_units
-    returndat$survey_error <- survey_error
-    returndat$IsFishFleet <- IsFishFleet
-    returndat$nfishfleets <- nfishfleets
+    returndat[["mcmc"]] <- mcmc
+    returndat[["survey_units"]] <- survey_units
+    returndat[["survey_error"]] <- survey_error
+    returndat[["IsFishFleet"]] <- IsFishFleet
+    returndat[["nfishfleets"]] <- nfishfleets
 
-    returndat$nfleets <- nfleets
-    returndat$nsexes <- nsexes
-    returndat$ngpatterns <- ngpatterns
-    returndat$lbins <- lbins
-    returndat$Lbin_method <- Lbin_method
-    returndat$nlbins <- nlbins
-    returndat$lbinspop <- lbinspop
-    returndat$nlbinspop <- nlbinspop
-    returndat$sizebinlist <- sizebinlist
-    returndat$age_data_info <- age_data_info
-    returndat$len_data_info <- len_data_info
-    returndat$agebins <- agebins
-    returndat$nagebins <- nagebins
-    returndat$accuage <- accuage
-    returndat$nareas <- nareas
-    returndat$startyr <- startyr
-    returndat$endyr <- endyr
-    returndat$nseasons <- nseasons
-    returndat$seasfracs <- seasfracs
-    returndat$seasdurations <- seasdurations
-    returndat$N_sub_seasons <- return.def("N_sub_seasons")
-    returndat$Spawn_month <- return.def("Spawn_month")
-    returndat$Spawn_seas <- return.def("Spawn_seas")
-    returndat$Spawn_timing_in_season <- return.def("Spawn_timing_in_season")
-    returndat$Retro_year <- return.def("Retro_year")
-    returndat$N_forecast_yrs <- return.def("N_forecast_yrs")
-    returndat$Empirical_wt_at_age <- return.def("Empirical_wt_at_age")
-    returndat$N_bio_patterns <- return.def("N_bio_patterns")
-    returndat$N_platoons <- return.def("N_platoons")
-    returndat$NatMort_option <- return.def("NatMort_option")
-    returndat$GrowthModel_option <- return.def("GrowthModel_option")
-    returndat$Maturity_option <- return.def("Maturity_option")
-    returndat$Fecundity_option <- return.def("Fecundity_option")
-    returndat$Start_from_par <- return.def("Start_from_par")
-    returndat$Do_all_priors <- return.def("Do_all_priors")
-    returndat$Use_softbound <- return.def("Use_softbound")
-    returndat$N_nudata <- return.def("N_nudata")
-    returndat$Max_phase <- return.def("Max_phase")
-    returndat$Current_phase <- return.def("Current_phase")
-    returndat$Jitter <- return.def("Jitter")
-    returndat$ALK_tolerance <- return.def("ALK_tolerance")
-    returndat$nforecastyears <- nforecastyears
-    returndat$morph_indexing <- morph_indexing
-    returndat$MGparmAdj <- MGparmAdj
-    returndat$forecast_selectivity <- forecast_selectivity
-    returndat$SelSizeAdj <- SelSizeAdj
-    returndat$SelAgeAdj <- SelAgeAdj
-    returndat$recruitment_dist <- recruitment_dist
-    returndat$recruit <- recruit
-    returndat$SPAWN_RECR_CURVE <- SPAWN_RECR_CURVE
-    returndat$breakpoints_for_bias_adjustment_ramp <-
+    returndat[["nfleets"]] <- nfleets
+    returndat[["nsexes"]] <- nsexes
+    returndat[["ngpatterns"]] <- ngpatterns
+    returndat[["lbins"]] <- lbins
+    returndat[["Lbin_method"]] <- Lbin_method
+    returndat[["nlbins"]] <- nlbins
+    returndat[["lbinspop"]] <- lbinspop
+    returndat[["nlbinspop"]] <- nlbinspop
+    returndat[["sizebinlist"]] <- sizebinlist
+    returndat[["age_data_info"]] <- age_data_info
+    returndat[["len_data_info"]] <- len_data_info
+    returndat[["agebins"]] <- agebins
+    returndat[["nagebins"]] <- nagebins
+    returndat[["accuage"]] <- accuage
+    returndat[["nareas"]] <- nareas
+    returndat[["startyr"]] <- startyr
+    returndat[["endyr"]] <- endyr
+    returndat[["nseasons"]] <- nseasons
+    returndat[["seasfracs"]] <- seasfracs
+    returndat[["seasdurations"]] <- seasdurations
+    returndat[["N_sub_seasons"]] <- return.def("N_sub_seasons")
+    returndat[["Spawn_month"]] <- return.def("Spawn_month")
+    returndat[["Spawn_seas"]] <- return.def("Spawn_seas")
+    returndat[["Spawn_timing_in_season"]] <- return.def("Spawn_timing_in_season")
+    returndat[["Retro_year"]] <- return.def("Retro_year")
+    returndat[["N_forecast_yrs"]] <- return.def("N_forecast_yrs")
+    returndat[["Empirical_wt_at_age"]] <- return.def("Empirical_wt_at_age")
+    returndat[["N_bio_patterns"]] <- return.def("N_bio_patterns")
+    returndat[["N_platoons"]] <- return.def("N_platoons")
+    returndat[["NatMort_option"]] <- return.def("NatMort_option")
+    returndat[["GrowthModel_option"]] <- return.def("GrowthModel_option")
+    returndat[["Maturity_option"]] <- return.def("Maturity_option")
+    returndat[["Fecundity_option"]] <- return.def("Fecundity_option")
+    returndat[["Start_from_par"]] <- return.def("Start_from_par")
+    returndat[["Do_all_priors"]] <- return.def("Do_all_priors")
+    returndat[["Use_softbound"]] <- return.def("Use_softbound")
+    returndat[["N_nudata"]] <- return.def("N_nudata")
+    returndat[["Max_phase"]] <- return.def("Max_phase")
+    returndat[["Current_phase"]] <- return.def("Current_phase")
+    returndat[["Jitter"]] <- return.def("Jitter")
+    returndat[["ALK_tolerance"]] <- return.def("ALK_tolerance")
+    returndat[["nforecastyears"]] <- nforecastyears
+    returndat[["morph_indexing"]] <- morph_indexing
+    returndat[["MGparmAdj"]] <- MGparmAdj
+    returndat[["forecast_selectivity"]] <- forecast_selectivity
+    returndat[["SelSizeAdj"]] <- SelSizeAdj
+    returndat[["SelAgeAdj"]] <- SelAgeAdj
+    returndat[["recruitment_dist"]] <- recruitment_dist
+    returndat[["recruit"]] <- recruit
+    returndat[["SPAWN_RECR_CURVE"]] <- SPAWN_RECR_CURVE
+    returndat[["breakpoints_for_bias_adjustment_ramp"]] <-
       breakpoints_for_bias_adjustment_ramp
 
     # Static growth
@@ -2355,7 +2355,7 @@ SS_output <-
     # determine fecundity type
     FecType <- 0
     # get parameter labels
-    pl <- parameters$Label
+    pl <- parameters[["Label"]]
     FecGrep1 <- grep("Eggs/kg_slope_wt_Fem", pl)
     FecGrep2 <- grep("Eggs_exp_len_Fem", pl)
     FecGrep3 <- grep("Eggs_exp_wt_Fem", pl)
@@ -2388,18 +2388,18 @@ SS_output <-
       FecPar2name <- pl[FecGrep5[1]]
     }
     if (is.na(lbinspop[1])) {
-      lbinspop <- biology$Low[biology$GP == 1]
+      lbinspop <- biology[["Low"]][biology[["GP"]] == 1]
     }
 
     # warning for 3.30 models with multiple growth patterns that have
     # repeat fecundity values, likely to be sorted out in new SS version
-    if (length(returndat$FecPar1) > 1) {
+    if (length(returndat[["FecPar1"]]) > 1) {
       warning(
         "Plots will only show fecundity and related quantities",
         "for Growth Pattern 1"
       )
-      returndat$FecPar1 <- returndat$FecPar1[1]
-      returndat$FecPar2 <- returndat$FecPar2[2]
+      returndat[["FecPar1"]] <- returndat[["FecPar1"]][1]
+      returndat[["FecPar2"]] <- returndat[["FecPar2"]][2]
     }
 
     # cleanup and tests related to biology at length table
@@ -2407,10 +2407,10 @@ SS_output <-
       # fix for extra header associated with extra column header
       # for single sex models that got fixed in 3.30.16
       if (nsexes == 1 &&
-        is.na(biology$Fecundity[1]) &&
+        is.na(biology[["Fecundity"]][1]) &&
         "Wt_len_M" %in% names(biology)) {
         # copy Wt_len_M to Fecundity
-        biology$Fecundity <- biology$Wt_len_M
+        biology[["Fecundity"]] <- biology[["Wt_len_M"]]
         # remove Wt_len_M
         biology <- biology[, !names(biology) %in% "Wt_len_M"]
       }
@@ -2420,28 +2420,28 @@ SS_output <-
       # first get weight-at-length column (Wt_len_F for 2-sex models,
       # Wt_len for 1-sex models starting with 3.30.16)
       if ("Wt_len" %in% names(biology)) {
-        Wt_len_F <- biology$Wt_len
+        Wt_len_F <- biology[["Wt_len"]]
       } else {
-        Wt_len_F <- biology$Wt_len_F
+        Wt_len_F <- biology[["Wt_len_F"]]
       }
 
       # check for any mismatch between weight-at-length and fecundity
-      returndat$SpawnOutputUnits <-
-        ifelse(!is.null(biology$Fecundity[1]) &&
-          !is.na(biology$Fecundity[1]) &&
-          any(Wt_len_F != biology$Fecundity),
+      returndat[["SpawnOutputUnits"]] <-
+        ifelse(!is.null(biology[["Fecundity"]][1]) &&
+          !is.na(biology[["Fecundity"]][1]) &&
+          any(Wt_len_F != biology[["Fecundity"]]),
         "numbers", "biomass"
         )
     }
 
     # add biology and fecundity varibles to list getting returned
-    returndat$biology <- biology
-    returndat$FecType <- FecType
-    returndat$FecPar1name <- FecPar1name
-    returndat$FecPar2name <- FecPar2name
+    returndat[["biology"]] <- biology
+    returndat[["FecType"]] <- FecType
+    returndat[["FecPar1name"]] <- FecPar1name
+    returndat[["FecPar2name"]] <- FecPar2name
 
-    returndat$FecPar1 <- parameters$Value[parameters$Label == FecPar1name]
-    returndat$FecPar2 <- parameters$Value[parameters$Label == FecPar2name]
+    returndat[["FecPar1"]] <- parameters[["Value"]][parameters[["Label"]] == FecPar1name]
+    returndat[["FecPar2"]] <- parameters[["Value"]][parameters[["Label"]] == FecPar2name]
 
     # get natural mortality type and vectors of M by age
     adjust1 <- ifelse(custom, 2, 1)
@@ -2469,21 +2469,21 @@ SS_output <-
       header = TRUE,
       type.convert = TRUE
     )
-    returndat$M_type <- M_type
-    returndat$Natural_Mortality_Bmark <- Natural_Mortality_Bmark
-    returndat$Natural_Mortality_endyr <- Natural_Mortality_endyr
+    returndat[["M_type"]] <- M_type
+    returndat[["Natural_Mortality_Bmark"]] <- Natural_Mortality_Bmark
+    returndat[["Natural_Mortality_endyr"]] <- Natural_Mortality_endyr
 
     # get growth parameters
     Growth_Parameters <- matchfun2("Growth_Parameters", 1,
       "Growth_Parameters", 1 + ngpatterns * nsexes,
       header = TRUE, type.convert = TRUE
     )
-    returndat$Growth_Parameters <- Growth_Parameters
+    returndat[["Growth_Parameters"]] <- Growth_Parameters
 
     Seas_Effects <- matchfun2("Seas_Effects", 1,
       header = TRUE, type.convert = TRUE
     )
-    returndat$Seas_Effects <- Seas_Effects
+    returndat[["Seas_Effects"]] <- Seas_Effects
 
     # ending year growth, including pattern for the CV (added in SSv3.22b_Aug3)
     # CVtype will occur on same line or following
@@ -2493,11 +2493,11 @@ SS_output <-
     )
     growthCVtype <- grep("endyr_with_", unlist(growthCVtype), value = TRUE)
     if (length(growthCVtype) > 0) {
-      returndat$growthCVtype <- strsplit(growthCVtype,
+      returndat[["growthCVtype"]] <- strsplit(growthCVtype,
         split = "endyr_with_"
       )[[1]][2]
     } else {
-      returndat$growthCVtype <- "unknown"
+      returndat[["growthCVtype"]] <- "unknown"
     }
     # formatting change in 3.30.15.06 puts table one line lower
     growdat <- matchfun2("Biology_at_age",
@@ -2512,10 +2512,10 @@ SS_output <-
       )
       # extract a few quantities related to growth morphs/platoons
       # note 16-June-2020: these values don't seem to be used anywhere
-      nmorphs <- max(growdat$Morph)
+      nmorphs <- max(growdat[["Morph"]])
       midmorphs <- c(c(0, nmorphs / nsexes) + ceiling(nmorphs / nsexes / 2))
     }
-    returndat$endgrowth <- growdat
+    returndat[["endgrowth"]] <- growdat
     # test for use of empirical weight-at-age input file (wtatage.ss)
     # should match only "MEAN_BODY_WT(Begin)" or "MEAN_BODY_WT(begin)"
     test <- matchfun2("MEAN_BODY_WT(", 0,
@@ -2523,13 +2523,13 @@ SS_output <-
       header = FALSE
     )
     wtatage_switch <- length(grep("wtatage.ss", test)) > 0
-    returndat$wtatage_switch <- wtatage_switch
+    returndat[["wtatage_switch"]] <- wtatage_switch
 
     # mean body weight
     mean_body_wt <- matchfun2("MEAN_BODY_WT(begin)", 1,
       header = TRUE, type.convert = TRUE
     )
-    returndat$mean_body_wt <- mean_body_wt
+    returndat[["mean_body_wt"]] <- mean_body_wt
 
     # Time-varying growth
     mean_size <- matchfun2("MEAN_SIZE_TIMESERIES", 1,
@@ -2541,29 +2541,29 @@ SS_output <-
     growthvaries <- FALSE
     if (!is.null(mean_size)) {
       if (SS_versionNumeric < 3.30) {
-        mean_size <- mean_size[mean_size$Beg == 1 &
-          mean_size$Yr >= startyr &
-          mean_size$Yr < endyr, ]
+        mean_size <- mean_size[mean_size[["Beg"]] == 1 &
+          mean_size[["Yr"]] >= startyr &
+          mean_size[["Yr"]] < endyr, ]
       } else {
-        mean_size <- mean_size[mean_size$SubSeas == 1 &
-          mean_size$Yr >= startyr &
-          mean_size$Yr < endyr, ]
+        mean_size <- mean_size[mean_size[["SubSeas"]] == 1 &
+          mean_size[["Yr"]] >= startyr &
+          mean_size[["Yr"]] < endyr, ]
       }
       if (nseasons > 1) {
-        mean_size <- mean_size[mean_size$Seas == 1, ]
+        mean_size <- mean_size[mean_size[["Seas"]] == 1, ]
       }
-      if (length(unique(mean_size$Yr)) > 1) {
+      if (length(unique(mean_size[["Yr"]])) > 1) {
         growthvaries <- TRUE
       }
-      returndat$growthseries <- mean_size
-      returndat$growthvaries <- growthvaries
+      returndat[["growthseries"]] <- mean_size
+      returndat[["growthvaries"]] <- growthvaries
     }
 
     # Length-based selectivity and retention
     if (!forecast) {
-      sizeselex <- sizeselex[sizeselex$Yr <= endyr, ]
+      sizeselex <- sizeselex[sizeselex[["Yr"]] <= endyr, ]
     }
-    returndat$sizeselex <- sizeselex
+    returndat[["sizeselex"]] <- sizeselex
 
     # Age-based selectivity
     ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
@@ -2581,12 +2581,12 @@ SS_output <-
       # filter forecast years from selectivity if no forecast
       # NOTE: maybe refine this in 3.30
       if (!forecast) {
-        ageselex <- ageselex[ageselex$Yr <= endyr, ]
+        ageselex <- ageselex[ageselex[["Yr"]] <= endyr, ]
       }
       # make values numeric
       ageselex <- type.convert(ageselex, as.is = TRUE)
     }
-    returndat$ageselex <- ageselex
+    returndat[["ageselex"]] <- ageselex
 
     # EXPLOITATION
     # read first 20 rows to figure out where meta-data ends
@@ -2634,7 +2634,7 @@ SS_output <-
       # get numeric value for F_method
       F_method <- as.numeric(rawrep[matchfun("F_Method"), 2])
     }
-    returndat$F_method <- F_method
+    returndat[["F_method"]] <- F_method
 
     if (!is.null(exploitation)) {
       # more processing of exploitation (if present)
@@ -2642,11 +2642,11 @@ SS_output <-
       # make text numeric
       # "init_yr" not used as of 3.30.13, but must have been in the past
       # "INIT" appears to be used in 3.30.13 and beyond
-      exploitation$Yr[exploitation$Yr %in% c("INIT", "init_yr")] <- startyr - 1
+      exploitation[["Yr"]][exploitation[["Yr"]] %in% c("INIT", "init_yr")] <- startyr - 1
       # make columns numeric
       exploitation <- type.convert(exploitation, as.is = TRUE)
     }
-    returndat$exploitation <- exploitation
+    returndat[["exploitation"]] <- exploitation
 
     # catch
     catch <- matchfun2("CATCH", 1, substr1 = FALSE, header = TRUE)
@@ -2658,57 +2658,57 @@ SS_output <-
         newnames = c("Fleet_Name", "Time")
       )
       # fix likelihood associated with 0 catch
-      catch$Like[catch$Like == "-1.#IND"] <- NA
+      catch[["Like"]][catch[["Like"]] == "-1.#IND"] <- NA
       # change "INIT" or "init" to year value following convention used elsewhere
-      catch$Yr[tolower(catch$Yr) == "init"] <- startyr - 1
+      catch[["Yr"]][tolower(catch[["Yr"]]) == "init"] <- startyr - 1
       # make columns numeric
       catch <- type.convert(catch, as.is = TRUE)
     }
-    returndat$catch <- catch
+    returndat[["catch"]] <- catch
 
     # age associated with summary biomass
     summary_age <- rawrep[matchfun("TIME_SERIES"), ifelse(custom, 3, 2)]
     summary_age <- as.numeric(substring(summary_age, nchar("BioSmry_age:_") + 1))
-    returndat$summary_age <- summary_age
+    returndat[["summary_age"]] <- summary_age
     # time series
     timeseries <- matchfun2("TIME_SERIES", 1, header = TRUE)
     # temporary fix for 3.30.03.06
-    timeseries <- timeseries[timeseries$Seas != "recruits", ]
+    timeseries <- timeseries[timeseries[["Seas"]] != "recruits", ]
 
     timeseries[timeseries == "_"] <- NA
     timeseries <- type.convert(timeseries, as.is = TRUE)
     ## # sum catches and other quantities across fleets
     ## # commented out pending additional test for more than one fleet with catch,
     ## # without which the apply function has errors
-    ## timeseries$dead_B_sum <- apply(timeseries[,grep("dead(B)",names(timeseries),
+    ## timeseries[["dead_B_sum"]] <- apply(timeseries[,grep("dead(B)",names(timeseries),
     ##                                                 fixed=TRUE)], 1, sum)
-    ## timeseries$dead_N_sum <- apply(timeseries[,grep("dead(N)",names(timeseries),
+    ## timeseries[["dead_N_sum"]] <- apply(timeseries[,grep("dead(N)",names(timeseries),
     ##                                                 fixed=TRUE)], 1, sum)
-    ## timeseries$retain_B_sum <- apply(timeseries[,grep("retain(B)",names(timeseries),
+    ## timeseries[["retain_B_sum"]] <- apply(timeseries[,grep("retain(B)",names(timeseries),
     ##                                                   fixed=TRUE)], 1, sum)
-    ## timeseries$retain_N_sum <- apply(timeseries[,grep("retain(N)",names(timeseries),
+    ## timeseries[["retain_N_sum"]] <- apply(timeseries[,grep("retain(N)",names(timeseries),
     ##                                                   fixed=TRUE)], 1, sum)
-    ## timeseries$sel_B_sum <- apply(timeseries[,grep("sel(B)",names(timeseries),
+    ## timeseries[["sel_B_sum"]] <- apply(timeseries[,grep("sel(B)",names(timeseries),
     ##                                                fixed=TRUE)], 1, sum)
-    ## timeseries$sel_N_sum <- apply(timeseries[,grep("sel(N)",names(timeseries),
+    ## timeseries[["sel_N_sum"]] <- apply(timeseries[,grep("sel(N)",names(timeseries),
     ##                                                fixed=TRUE)], 1, sum)
-    ## timeseries$obs_cat_sum <- apply(timeseries[,grep("obs_cat",names(timeseries),
+    ## timeseries[["obs_cat_sum"]] <- apply(timeseries[,grep("obs_cat",names(timeseries),
     ##                                                  fixed=TRUE)], 1, sum)
 
-    returndat$timeseries <- timeseries
+    returndat[["timeseries"]] <- timeseries
 
     # get spawning season
     # currently (v3.20b), Spawning Biomass is only calculated
     # in a unique spawning season within the year
     if (!exists("spawnseas")) {
-      spawnseas <- unique(timeseries$Seas[!is.na(timeseries$SpawnBio)])
+      spawnseas <- unique(timeseries[["Seas"]][!is.na(timeseries[["SpawnBio"]])])
 
       # problem with spawning season calculation when NA values in SpawnBio
       if (length(spawnseas) == 0) {
         spawnseas <- NA
       }
     }
-    returndat$spawnseas <- spawnseas
+    returndat[["spawnseas"]] <- spawnseas
 
     # set mainmorphs as those morphs born in the first season with recruitment
     # and the largest fraction of the platoons (should equal middle platoon when present)
@@ -2717,61 +2717,61 @@ SS_output <-
     } else {
       if (SS_versionNumeric >= 3.30) {
         # new "platoon" label
-        temp <- morph_indexing[morph_indexing$BirthSeas ==
+        temp <- morph_indexing[morph_indexing[["BirthSeas"]] ==
           first_seas_with_recruits &
-          morph_indexing$Platoon_Dist ==
-            max(morph_indexing$Platoon_Dist), ]
-        mainmorphs <- min(temp$Index[temp$Sex == 1])
+          morph_indexing[["Platoon_Dist"]] ==
+            max(morph_indexing[["Platoon_Dist"]]), ]
+        mainmorphs <- min(temp[["Index"]][temp[["Sex"]] == 1])
         if (nsexes == 2) {
-          mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+          mainmorphs <- c(mainmorphs, min(temp[["Index"]][temp[["Sex"]] == 2]))
         }
       }
       if (SS_versionNumeric < 3.30) {
         # old "sub_morph" label
-        temp <- morph_indexing[morph_indexing$BirthSeas ==
+        temp <- morph_indexing[morph_indexing[["BirthSeas"]] ==
           first_seas_with_recruits &
-          morph_indexing$Sub_Morph_Dist ==
-            max(morph_indexing$Sub_Morph_Dist), ]
-        mainmorphs <- min(temp$Index[temp$Sex == 1])
+          morph_indexing[["Sub_Morph_Dist"]] ==
+            max(morph_indexing[["Sub_Morph_Dist"]]), ]
+        mainmorphs <- min(temp[["Index"]][temp[["Sex"]] == 1])
         if (nsexes == 2) {
-          mainmorphs <- c(mainmorphs, min(temp$Index[temp$Sex == 2]))
+          mainmorphs <- c(mainmorphs, min(temp[["Index"]][temp[["Sex"]] == 2]))
         }
       }
       if (length(mainmorphs) == 0) {
         warning("Error with morph indexing")
       }
     }
-    returndat$mainmorphs <- mainmorphs
+    returndat[["mainmorphs"]] <- mainmorphs
 
     # get birth seasons as vector of seasons with non-zero recruitment
-    birthseas <- sort(unique(timeseries$Seas[timeseries$Recruit_0 > 0]))
+    birthseas <- sort(unique(timeseries[["Seas"]][timeseries[["Recruit_0"]] > 0]))
     # temporary fix for model with missing Recruit_0 values
     # (so far this has only been seen in one 3.30 model with 2 GPs)
     if (length(birthseas) == 0) {
-      birthseas <- sort(unique(morph_indexing$BirthSeas))
+      birthseas <- sort(unique(morph_indexing[["BirthSeas"]]))
     }
-    returndat$birthseas <- birthseas
+    returndat[["birthseas"]] <- birthseas
 
     # stats and dimensions
-    timeseries$Yr <- timeseries$Yr + (timeseries$Seas - 1) / nseasons
-    ts <- timeseries[timeseries$Yr <= endyr + 1, ]
-    tsyears <- ts$Yr[ts$Seas == 1]
+    timeseries[["Yr"]] <- timeseries[["Yr"]] + (timeseries[["Seas"]] - 1) / nseasons
+    ts <- timeseries[timeseries[["Yr"]] <= endyr + 1, ]
+    tsyears <- ts[["Yr"]][ts[["Seas"]] == 1]
 
     # Depletion
-    tsspaw_bio <- ts$SpawnBio[ts$Seas == spawnseas & ts$Area == 1]
+    tsspaw_bio <- ts[["SpawnBio"]][ts[["Seas"]] == spawnseas & ts[["Area"]] == 1]
     if (nareas > 1) # loop over areas if necessary to sum spawning biomass
       {
         for (a in 2:nareas) {
-          tsspaw_bio <- tsspaw_bio + ts$SpawnBio[ts$Seas == spawnseas &
-            ts$Area == a]
+          tsspaw_bio <- tsspaw_bio + ts[["SpawnBio"]][ts[["Seas"]] == spawnseas &
+            ts[["Area"]] == a]
         }
       }
     if (nsexes == 1) {
       tsspaw_bio <- tsspaw_bio / 2
     }
     depletionseries <- tsspaw_bio / tsspaw_bio[1]
-    stats$SBzero <- tsspaw_bio[1]
-    stats$current_depletion <- depletionseries[length(depletionseries)]
+    stats[["SBzero"]] <- tsspaw_bio[1]
+    stats[["current_depletion"]] <- depletionseries[length(depletionseries)]
 
     # total landings
     ls <- nrow(ts) - 1
@@ -2779,16 +2779,16 @@ SS_output <-
       names(ts), 1,
       nchar("retain(B)")
     ) == "retain(B)"])
-    ts$totretained <- 0
-    ts$totretained[3:ls] <- rowSums(totretainedmat)[3:ls]
+    ts[["totretained"]] <- 0
+    ts[["totretained"]][3:ls] <- rowSums(totretainedmat)[3:ls]
 
     # total catch
     totcatchmat <- as.matrix(ts[, substr(
       names(ts), 1,
       nchar("enc(B)")
     ) == "enc(B)"])
-    ts$totcatch <- 0
-    ts$totcatch[3:ls] <- rowSums(totcatchmat)[3:ls]
+    ts[["totcatch"]] <- 0
+    ts[["totcatch"]][3:ls] <- rowSums(totcatchmat)[3:ls]
 
     # harvest rates
     if (F_method == 1) {
@@ -2817,8 +2817,8 @@ SS_output <-
         fixed = TRUE
       )[[1]][1]) / 100
     }
-    returndat$depletion_basis <- depletion_basis
-    returndat$B_ratio_denominator <- B_ratio_denominator
+    returndat[["depletion_basis"]] <- depletion_basis
+    returndat[["B_ratio_denominator"]] <- B_ratio_denominator
 
     ## discard fractions ###
 
@@ -2890,14 +2890,14 @@ SS_output <-
       if (SS_versionNumeric <= 3.23) {
         discard <- type.convert(discard, as.is = TRUE)
         if (!"Fleet_Name" %in% names(discard)) {
-          discard$Fleet_Name <- discard$Fleet
+          discard[["Fleet_Name"]] <- discard[["Fleet"]]
         }
-        discard$Fleet <- NA
+        discard[["Fleet"]] <- NA
         for (i in 1:nrow(discard)) {
-          discard$Fleet[i] <- strsplit(discard$Fleet_Name[i], "_")[[1]][1]
-          discard$Fleet_Name[i] <- substring(
-            discard$Fleet_Name[i],
-            nchar(discard$Fleet[i]) + 2
+          discard[["Fleet"]][i] <- strsplit(discard[["Fleet_Name"]][i], "_")[[1]][1]
+          discard[["Fleet_Name"]][i] <- substring(
+            discard[["Fleet_Name"]][i],
+            nchar(discard[["Fleet"]][i]) + 2
           )
         }
       } else {
@@ -2908,10 +2908,10 @@ SS_output <-
     } else {
       discard <- NA
     }
-    returndat$discard <- discard
-    returndat$discard_type <- discard_type
-    returndat$DF_discard <- DF_discard
-    returndat$discard_spec <- discard_spec
+    returndat[["discard"]] <- discard
+    returndat[["discard_type"]] <- discard_type
+    returndat[["DF_discard"]] <- DF_discard
+    returndat[["discard_spec"]] <- discard_spec
 
     ## Average body weight observations
     # degrees of freedom for T-distribution
@@ -2929,14 +2929,14 @@ SS_output <-
       if (SS_versionNumeric <= 3.23) {
         mnwgt <- type.convert(mnwgt, as.is = TRUE)
         if (!"Fleet_Name" %in% names(mnwgt)) {
-          mnwgt$Fleet_Name <- mnwgt$Fleet
+          mnwgt[["Fleet_Name"]] <- mnwgt[["Fleet"]]
         }
-        mnwgt$Fleet <- NA
+        mnwgt[["Fleet"]] <- NA
         for (i in 1:nrow(mnwgt)) {
-          mnwgt$Fleet[i] <- strsplit(mnwgt$Fleet_Name[i], "_")[[1]][1]
-          mnwgt$Fleet_Name[i] <- substring(
-            mnwgt$Fleet_Name[i],
-            nchar(mnwgt$Fleet_Name[i]) + 2
+          mnwgt[["Fleet"]][i] <- strsplit(mnwgt[["Fleet_Name"]][i], "_")[[1]][1]
+          mnwgt[["Fleet_Name"]][i] <- substring(
+            mnwgt[["Fleet_Name"]][i],
+            nchar(mnwgt[["Fleet_Name"]][i]) + 2
           )
         }
       } else { # v3.24 and beyond has separate columns for fleet number and fleet name
@@ -2946,8 +2946,8 @@ SS_output <-
       DF_mnwgt <- NA
       mnwgt <- NA
     }
-    returndat$mnwgt <- mnwgt
-    returndat$DF_mnwgt <- DF_mnwgt
+    returndat[["mnwgt"]] <- mnwgt
+    returndat[["DF_mnwgt"]] <- DF_mnwgt
 
     # Yield and SPR time-series
     spr <- matchfun2("SPR_SERIES", 5, header = TRUE)
@@ -2968,24 +2968,24 @@ SS_output <-
       spr[spr == "&"] <- NA
       spr[spr == "-1.#IND"] <- NA
       spr <- type.convert(spr, as.is = TRUE)
-      # spr <- spr[spr$Year <= endyr,]
-      spr$spr <- spr$SPR
-      stats$last_years_SPR <- spr$spr[nrow(spr)]
-      stats$SPRratioLabel <- managementratiolabels[1, 2]
-      stats$last_years_SPRratio <- spr$SPR_std[nrow(spr)]
+      # spr <- spr[spr[["Year"]] <= endyr,]
+      spr[["spr"]] <- spr[["SPR"]]
+      stats[["last_years_SPR"]] <- spr[["spr"]][nrow(spr)]
+      stats[["SPRratioLabel"]] <- managementratiolabels[1, 2]
+      stats[["last_years_SPRratio"]] <- spr[["SPR_std"]][nrow(spr)]
     }
-    returndat$sprseries <- spr
+    returndat[["sprseries"]] <- spr
 
-    returndat$managementratiolabels <- managementratiolabels
-    returndat$F_report_basis <- managementratiolabels$Label[2]
-    if (length(grep("%", managementratiolabels$Label[3])) > 0) {
-      returndat$B_ratio_denominator <-
-        as.numeric(strsplit(managementratiolabels$Label[3], "%")[[1]][1]) / 100
+    returndat[["managementratiolabels"]] <- managementratiolabels
+    returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
+    if (length(grep("%", managementratiolabels[["Label"]][3])) > 0) {
+      returndat[["B_ratio_denominator"]] <-
+        as.numeric(strsplit(managementratiolabels[["Label"]][3], "%")[[1]][1]) / 100
     } else {
-      returndat$B_ratio_denominator <- NA
+      returndat[["B_ratio_denominator"]] <- NA
     }
-    returndat$sprtarg <- sprtarg
-    returndat$btarg <- btarg
+    returndat[["sprtarg"]] <- sprtarg
+    returndat[["btarg"]] <- btarg
 
     # override minbthresh = 0.25 if it looks like hake
     if (!is.na(btarg) & btarg == 0.4 & startyr == 1966 & sprtarg == 0.4 &
@@ -3000,7 +3000,7 @@ SS_output <-
       }
       minbthresh <- 0.1 # treaty value for hake
     }
-    returndat$minbthresh <- minbthresh
+    returndat[["minbthresh"]] <- minbthresh
 
     # read Kobe plot
     if (length(grep("Kobe_Plot", rawrep[, 1])) != 0) {
@@ -3028,9 +3028,9 @@ SS_output <-
       Kobe_warn <- NA
       Kobe_MSY_basis <- NA
     }
-    returndat$Kobe_warn <- Kobe_warn
-    returndat$Kobe_MSY_basis <- Kobe_MSY_basis
-    returndat$Kobe <- Kobe
+    returndat[["Kobe_warn"]] <- Kobe_warn
+    returndat[["Kobe_MSY_basis"]] <- Kobe_MSY_basis
+    returndat[["Kobe"]] <- Kobe
 
     flush.console()
 
@@ -3049,9 +3049,9 @@ SS_output <-
       ncpue_column <- 11
       INDEX_1 <- matchfun2("INDEX_1", 1, "INDEX_3", -4, header = TRUE)
       # remove any comments at the bottom of table
-      INDEX_1 <- INDEX_1[substr(INDEX_1$Fleet, 1, 1) != "#", ]
+      INDEX_1 <- INDEX_1[substr(INDEX_1[["Fleet"]], 1, 1) != "#", ]
       # count of observations per index
-      ncpue <- sum(as.numeric(INDEX_1$N), na.rm = TRUE)
+      ncpue <- sum(as.numeric(INDEX_1[["N"]]), na.rm = TRUE)
     } else {
       ncpue_column <- 11
       ncpue <- sum(as.numeric(rawrep[
@@ -3060,7 +3060,7 @@ SS_output <-
       ]))
     }
     # add to list of stuff that gets returned
-    returndat$index_variance_tuning_check <- INDEX_1
+    returndat[["index_variance_tuning_check"]] <- INDEX_1
 
     # CPUE/Survey series - will not match if not found
     cpue <- matchfun2("INDEX_2", 1, "INDEX_2", ncpue + 1, header = TRUE)
@@ -3076,17 +3076,17 @@ SS_output <-
       )
       # process old fleet number/name combo (e.g. "2_SURVEY")
       if (SS_versionNumeric < 3.24) {
-        cpue$Name <- NA
+        cpue[["Name"]] <- NA
         for (i in 1:nrow(cpue)) {
-          cpue$Fleet[i] <- strsplit(cpue$Fleet[i], "_")[[1]][1]
-          cpue$Name[i] <- substring(cpue$Fleet[i], nchar(cpue$Fleet[i]) + 2)
+          cpue[["Fleet"]][i] <- strsplit(cpue[["Fleet"]][i], "_")[[1]][1]
+          cpue[["Name"]][i] <- substring(cpue[["Fleet"]][i], nchar(cpue[["Fleet"]][i]) + 2)
         }
       }
       # replace any bad values (were present in at least one 3.24s model)
-      if (any(cpue$Exp == "1.#QNAN")) {
-        cpue$Exp[cpue$Exp == "1.#QNAN"] <- NA
-        cpue$Calc_Q[cpue$Calc_Q == "1.#QNAN"] <- NA
-        cpue$Eff_Q[cpue$Eff_Q == "1.#QNAN"] <- NA
+      if (any(cpue[["Exp"]] == "1.#QNAN")) {
+        cpue[["Exp"]][cpue[["Exp"]] == "1.#QNAN"] <- NA
+        cpue[["Calc_Q"]][cpue[["Calc_Q"]] == "1.#QNAN"] <- NA
+        cpue[["Eff_Q"]][cpue[["Eff_Q"]] == "1.#QNAN"] <- NA
       }
       # make columns numeric
       cpue <- type.convert(cpue, as.is = TRUE)
@@ -3094,7 +3094,7 @@ SS_output <-
       # if INDEX_2 not present
       cpue <- NULL
     }
-    returndat$cpue <- cpue
+    returndat[["cpue"]] <- cpue
 
     # Numbers at age
     natage <- matchfun2("NUMBERS_AT_AGE", 1,
@@ -3110,7 +3110,7 @@ SS_output <-
         newnames = c("Sex", "Platoon")
       )
     }
-    returndat$natage <- natage
+    returndat[["natage"]] <- natage
 
     # NUMBERS_AT_AGE_Annual with and without fishery
     natage_annual_1_no_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_1", 1,
@@ -3119,15 +3119,15 @@ SS_output <-
     natage_annual_2_with_fishery <- matchfun2("NUMBERS_AT_AGE_Annual_2", 1,
       header = TRUE, type.convert = TRUE
     )
-    returndat$natage_annual_1_no_fishery <- natage_annual_1_no_fishery
-    returndat$natage_annual_2_with_fishery <- natage_annual_2_with_fishery
+    returndat[["natage_annual_1_no_fishery"]] <- natage_annual_1_no_fishery
+    returndat[["natage_annual_2_with_fishery"]] <- natage_annual_2_with_fishery
 
     # Biomass at age (introduced in 3.30)
     batage <- matchfun2("BIOMASS_AT_AGE", 1,
       substr1 = FALSE,
       header = TRUE, type.convert = TRUE
     )
-    returndat$batage <- batage
+    returndat[["batage"]] <- batage
 
     # Numbers at length
     col.adjust <- 12
@@ -3144,30 +3144,30 @@ SS_output <-
       oldnames = c("Gender", "SubMorph"),
       newnames = c("Sex", "Platoon")
     )
-    returndat$natlen <- natlen
+    returndat[["natlen"]] <- natlen
 
     # Biomass at length (first appeared in version 3.24l, 12-5-2012)
     batlen <- matchfun2("BIOMASS_AT_LENGTH", 1,
       substr1 = FALSE,
       header = TRUE, type.convert = TRUE
     )
-    returndat$batlen <- batlen
+    returndat[["batlen"]] <- batlen
 
     # F at age (first appeared in version 3.30.13, 8-Mar-2019)
     fatage <- matchfun2("F_AT_AGE", 1, header = TRUE, type.convert = TRUE)
-    returndat$fatage <- fatage
+    returndat[["fatage"]] <- fatage
 
     # read discard at age (added with 3.30.12, 29-Aug-2018)
     discard_at_age <- matchfun2("DISCARD_AT_AGE", 1,
       header = TRUE, type.convert = TRUE
     )
-    returndat$discard_at_age <- discard_at_age
+    returndat[["discard_at_age"]] <- discard_at_age
 
     # catch at age
     catage <- matchfun2("CATCH_AT_AGE", 1,
       header = TRUE, type.convert = TRUE
     )
-    returndat$catage <- catage
+    returndat[["catage"]] <- catage
 
     # Movement
     movement <- matchfun2("MOVEMENT", 1, substr1 = FALSE, header = TRUE)
@@ -3184,7 +3184,7 @@ SS_output <-
         movement[, i] <- as.numeric(movement[, i])
       }
     }
-    returndat$movement <- movement
+    returndat[["movement"]] <- movement
 
     # tag reporting rates
     tagreportrates <- matchfun2("Reporting_Rates_by_Fishery", 1,
@@ -3193,7 +3193,7 @@ SS_output <-
       header = TRUE,
       type.convert = TRUE
     )
-    returndat$tagreportrates <- tagreportrates
+    returndat[["tagreportrates"]] <- tagreportrates
 
     # tag release table
     # (no space after this table before Tags_Alive table)
@@ -3214,9 +3214,9 @@ SS_output <-
       tagfirstperiod <- NULL
       tagaccumperiod <- NULL
     }
-    returndat$tagrelease <- tagrelease
-    returndat$tagfirstperiod <- tagfirstperiod
-    returndat$tagaccumperiod <- tagaccumperiod
+    returndat[["tagrelease"]] <- tagrelease
+    returndat[["tagfirstperiod"]] <- tagfirstperiod
+    returndat[["tagaccumperiod"]] <- tagaccumperiod
 
     # tags alive
     # (no space after this table before Total_recaptures table)
@@ -3230,7 +3230,7 @@ SS_output <-
       tagsalive[tagsalive == ""] <- NA
       tagsalive <- type.convert(tagsalive, as.is = TRUE)
     }
-    returndat$tagsalive <- tagsalive
+    returndat[["tagsalive"]] <- tagsalive
 
     # total recaptures
     tagtotrecap <- matchfun2("Total_recaptures", 1)
@@ -3240,7 +3240,7 @@ SS_output <-
       tagtotrecap[tagtotrecap == ""] <- NA
       tagtotrecap <- type.convert(tagtotrecap, as.is = TRUE)
     }
-    returndat$tagtotrecap <- tagtotrecap
+    returndat[["tagtotrecap"]] <- tagtotrecap
 
     # age-length matrix
     # this section is more complex because of blank lines internally
@@ -3302,7 +3302,7 @@ SS_output <-
           # combine elements to form a label in the dimnames
           dimnames(ALK)$Matrix[i] <- paste(Matrix.Info, collapse = " ")
         }
-        returndat$ALK <- ALK
+        returndat[["ALK"]] <- ALK
       } # end check for keyword present
     } # end check for length(sdsize_lines) > 0
 
@@ -3340,12 +3340,12 @@ SS_output <-
               TrueAge = 0:accuage
             )
           }
-          returndat$AAK <- AAK
-          returndat$age_error_mean <- age_error_mean
-          returndat$age_error_sd <- age_error_sd
+          returndat[["AAK"]] <- AAK
+          returndat[["age_error_mean"]] <- age_error_mean
+          returndat[["age_error_sd"]] <- age_error_sd
         }
       } # end check for ageing error matrices
-      returndat$N_ageerror_defs <- N_ageerror_defs
+      returndat[["N_ageerror_defs"]] <- N_ageerror_defs
     } # end check for NULL output of ageing error info
 
     # get equilibrium yield for newer versions of SS (some 3.24 and all 3.30),
@@ -3366,11 +3366,11 @@ SS_output <-
       yielddat[yielddat == "-nan(ind)"] <- NA # this value sometimes occurs in 3.30 models
       names(yielddat) <- names
       yielddat <- type.convert(yielddat, as.is = TRUE)
-      yielddat <- yielddat[order(yielddat$Depletion, decreasing = FALSE), ]
+      yielddat <- yielddat[order(yielddat[["Depletion"]], decreasing = FALSE), ]
     } else {
       yielddat <- NA
     }
-    returndat$equil_yield <- yielddat
+    returndat[["equil_yield"]] <- yielddat
 
     # Z at age
     # With_fishery
@@ -3382,7 +3382,7 @@ SS_output <-
       Z_at_age[Z_at_age == "-1.#INF"] <- NA
       Z_at_age <- type.convert(Z_at_age, as.is = TRUE)
     }
-    returndat$Z_at_age <- Z_at_age
+    returndat[["Z_at_age"]] <- Z_at_age
 
     # M at age table ends with comments
     #   Note:  Z calculated as -ln(Nt+1 / Nt)
@@ -3398,7 +3398,7 @@ SS_output <-
       M_at_age[M_at_age == "-1.#INF"] <- NA
       M_at_age <- type.convert(M_at_age, as.is = TRUE)
     }
-    returndat$M_at_age <- M_at_age
+    returndat[["M_at_age"]] <- M_at_age
 
     # new section added in SSv3.30.16.03
     Report_Z_by_area_morph_platoon <-
@@ -3447,130 +3447,130 @@ SS_output <-
           "Yr", "Era", paste0("SSB_area", 1:nareas),
           paste0("SSB_nofishing_area", 1:nareas)
         )
-        Dynamic_Bzero$SSB <- apply(Dynamic_Bzero[, 2 + 1:nareas], 1, sum)
-        Dynamic_Bzero$SSB_nofishing <-
+        Dynamic_Bzero[["SSB"]] <- apply(Dynamic_Bzero[, 2 + 1:nareas], 1, sum)
+        Dynamic_Bzero[["SSB_nofishing"]] <-
           apply(Dynamic_Bzero[, 2 + nareas + 1:nareas], 1, sum)
       }
     }
-    returndat$Dynamic_Bzero <- Dynamic_Bzero
+    returndat[["Dynamic_Bzero"]] <- Dynamic_Bzero
 
     # adding stuff to list which gets returned by function
     if (comp) {
-      returndat$comp_data_exists <- TRUE
-      returndat$lendbase <- lendbase
-      returndat$sizedbase <- sizedbase
-      returndat$agedbase <- agedbase
-      returndat$condbase <- condbase
-      returndat$ghostagedbase <- ghostagedbase
-      returndat$ghostcondbase <- ghostcondbase
-      returndat$ghostlendbase <- ghostlendbase
-      returndat$ladbase <- ladbase
-      returndat$wadbase <- wadbase
-      returndat$tagdbase1 <- tagdbase1
-      returndat$tagdbase2 <- tagdbase2
+      returndat[["comp_data_exists"]] <- TRUE
+      returndat[["lendbase"]] <- lendbase
+      returndat[["sizedbase"]] <- sizedbase
+      returndat[["agedbase"]] <- agedbase
+      returndat[["condbase"]] <- condbase
+      returndat[["ghostagedbase"]] <- ghostagedbase
+      returndat[["ghostcondbase"]] <- ghostcondbase
+      returndat[["ghostlendbase"]] <- ghostlendbase
+      returndat[["ladbase"]] <- ladbase
+      returndat[["wadbase"]] <- wadbase
+      returndat[["tagdbase1"]] <- tagdbase1
+      returndat[["tagdbase2"]] <- tagdbase2
     } else {
-      returndat$comp_data_exists <- FALSE
+      returndat[["comp_data_exists"]] <- FALSE
     }
     # tables on fit to comps and mean age stuff from within Report.sso
-    returndat$len_comp_fit_table <- fit_len_comps
-    returndat$age_comp_fit_table <- fit_age_comps
-    returndat$size_comp_fit_table <- fit_size_comps
+    returndat[["len_comp_fit_table"]] <- fit_len_comps
+    returndat[["age_comp_fit_table"]] <- fit_age_comps
+    returndat[["size_comp_fit_table"]] <- fit_size_comps
 
-    returndat$derived_quants <- der
-    returndat$parameters <- parameters
-    returndat$FleetNames <- FleetNames
-    returndat$repfiletime <- repfiletime
+    returndat[["derived_quants"]] <- der
+    returndat[["parameters"]] <- parameters
+    returndat[["FleetNames"]] <- FleetNames
+    returndat[["repfiletime"]] <- repfiletime
 
     # type of stock recruit relationship
     SRRtype <- rawrep[matchfun("SPAWN_RECRUIT"), 3]
     if (!is.na(SRRtype) && SRRtype == "Function:") {
       SRRtype <- as.numeric(rawrep[matchfun("SPAWN_RECRUIT"), 4])
     }
-    returndat$SRRtype <- SRRtype
+    returndat[["SRRtype"]] <- SRRtype
 
     # get "sigma" used by Pacific Council in P-star calculations
     SSB_final_Label <- paste0("SSB_", endyr + 1)
-    if (SSB_final_Label %in% der$Label) {
-      SSB_final_EST <- der$Value[der$Label == SSB_final_Label]
-      SSB_final_SD <- der$StdDev[der$Label == SSB_final_Label]
-      returndat$Pstar_sigma <- sqrt(log((SSB_final_SD / SSB_final_EST)^2 + 1))
+    if (SSB_final_Label %in% der[["Label"]]) {
+      SSB_final_EST <- der[["Value"]][der[["Label"]] == SSB_final_Label]
+      SSB_final_SD <- der[["StdDev"]][der[["Label"]] == SSB_final_Label]
+      returndat[["Pstar_sigma"]] <- sqrt(log((SSB_final_SD / SSB_final_EST)^2 + 1))
     } else {
-      returndat$Pstar_sigma <- NULL
+      returndat[["Pstar_sigma"]] <- NULL
     }
     # get alternative "sigma" based on OFL catch used by Pacific Council
     # (added 23 Sept 2019 based on decision by PFMC SSC)
     OFL_final_Label <- paste0("OFLCatch_", endyr + 1)
-    if (OFL_final_Label %in% der$Label) {
-      OFL_final_EST <- der$Value[der$Label == OFL_final_Label]
-      OFL_final_SD <- der$StdDev[der$Label == OFL_final_Label]
-      returndat$OFL_sigma <- sqrt(log((OFL_final_SD / OFL_final_EST)^2 + 1))
+    if (OFL_final_Label %in% der[["Label"]]) {
+      OFL_final_EST <- der[["Value"]][der[["Label"]] == OFL_final_Label]
+      OFL_final_SD <- der[["StdDev"]][der[["Label"]] == OFL_final_Label]
+      returndat[["OFL_sigma"]] <- sqrt(log((OFL_final_SD / OFL_final_EST)^2 + 1))
     } else {
-      returndat$OFL_sigma <- NULL
+      returndat[["OFL_sigma"]] <- NULL
     }
 
     if (covar) {
-      returndat$CoVar <- CoVar
-      if (stats$N_estimated_parameters > 1) {
-        returndat$highcor <- highcor
-        returndat$lowcor <- lowcor
-        returndat$corstats <- corstats
+      returndat[["CoVar"]] <- CoVar
+      if (stats[["N_estimated_parameters"]] > 1) {
+        returndat[["highcor"]] <- highcor
+        returndat[["lowcor"]] <- lowcor
+        returndat[["corstats"]] <- corstats
       }
-      returndat$stdtable <- stdtable
+      returndat[["stdtable"]] <- stdtable
     }
 
     # extract parameter lines representing annual recruit devs
-    recdevEarly <- parameters[substring(parameters$Label, 1, 13) == "Early_RecrDev", ]
-    early_initage <- parameters[substring(parameters$Label, 1, 13) == "Early_InitAge", ]
-    main_initage <- parameters[substring(parameters$Label, 1, 12) == "Main_InitAge", ]
-    recdev <- parameters[substring(parameters$Label, 1, 12) == "Main_RecrDev", ]
-    recdevFore <- parameters[substring(parameters$Label, 1, 8) == "ForeRecr", ]
-    recdevLate <- parameters[substring(parameters$Label, 1, 12) == "Late_RecrDev", ]
+    recdevEarly <- parameters[substring(parameters[["Label"]], 1, 13) == "Early_RecrDev", ]
+    early_initage <- parameters[substring(parameters[["Label"]], 1, 13) == "Early_InitAge", ]
+    main_initage <- parameters[substring(parameters[["Label"]], 1, 12) == "Main_InitAge", ]
+    recdev <- parameters[substring(parameters[["Label"]], 1, 12) == "Main_RecrDev", ]
+    recdevFore <- parameters[substring(parameters[["Label"]], 1, 8) == "ForeRecr", ]
+    recdevLate <- parameters[substring(parameters[["Label"]], 1, 12) == "Late_RecrDev", ]
 
     # empty variable to fill in sections
     recruitpars <- NULL
 
     # assign "type" label to each one and identify year
     if (nrow(early_initage) > 0) {
-      early_initage$type <- "Early_InitAge"
-      early_initage$Yr <- startyr - as.numeric(substring(early_initage$Label, 15))
+      early_initage[["type"]] <- "Early_InitAge"
+      early_initage[["Yr"]] <- startyr - as.numeric(substring(early_initage[["Label"]], 15))
       recruitpars <- rbind(recruitpars, early_initage)
     }
     if (nrow(recdevEarly) > 0) {
-      recdevEarly$type <- "Early_RecrDev"
-      recdevEarly$Yr <- as.numeric(substring(recdevEarly$Label, 15))
+      recdevEarly[["type"]] <- "Early_RecrDev"
+      recdevEarly[["Yr"]] <- as.numeric(substring(recdevEarly[["Label"]], 15))
       recruitpars <- rbind(recruitpars, recdevEarly)
     }
     if (nrow(main_initage) > 0) {
-      main_initage$type <- "Main_InitAge"
-      main_initage$Yr <- startyr - as.numeric(substring(main_initage$Label, 14))
+      main_initage[["type"]] <- "Main_InitAge"
+      main_initage[["Yr"]] <- startyr - as.numeric(substring(main_initage[["Label"]], 14))
       recruitpars <- rbind(recruitpars, main_initage)
     }
     if (nrow(recdev) > 0) {
-      recdev$type <- "Main_RecrDev"
-      recdev$Yr <- as.numeric(substring(recdev$Label, 14))
+      recdev[["type"]] <- "Main_RecrDev"
+      recdev[["Yr"]] <- as.numeric(substring(recdev[["Label"]], 14))
       recruitpars <- rbind(recruitpars, recdev)
     }
     if (nrow(recdevFore) > 0) {
-      recdevFore$type <- "ForeRecr"
-      recdevFore$Yr <- as.numeric(substring(recdevFore$Label, 10))
+      recdevFore[["type"]] <- "ForeRecr"
+      recdevFore[["Yr"]] <- as.numeric(substring(recdevFore[["Label"]], 10))
       recruitpars <- rbind(recruitpars, recdevFore)
     }
     if (nrow(recdevLate) > 0) {
-      recdevLate$type <- "Late_RecrDev"
-      recdevLate$Yr <- as.numeric(substring(recdevLate$Label, 14))
+      recdevLate[["type"]] <- "Late_RecrDev"
+      recdevLate[["Yr"]] <- as.numeric(substring(recdevLate[["Label"]], 14))
       recruitpars <- rbind(recruitpars, recdevLate)
     }
 
     # sort by year and remove any retain only essential columns
     if (!is.null(recruitpars)) {
       recruitpars <- recruitpars[
-        order(recruitpars$Yr),
+        order(recruitpars[["Yr"]]),
         c("Value", "Parm_StDev", "type", "Yr")
       ]
     }
 
     # add recruitpars to list of stuff that gets returned
-    returndat$recruitpars <- recruitpars
+    returndat[["recruitpars"]] <- recruitpars
 
     if (is.null(recruitpars)) {
       sigma_R_info <- NULL
@@ -3586,69 +3586,69 @@ SS_output <-
       )
 
       # calculate recdev stats  for Main period
-      subset <- recruitpars$type %in% c("Main_InitAge", "Main_RecrDev")
-      within_period <- sigma_R_info$period == "Main"
-      sigma_R_info$N_devs[within_period] <- sum(subset)
-      sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-      sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-      sigma_R_info$mean_SEsquared[within_period] <-
-        mean((recruitpars$Parm_StDev[subset])^2)
+      subset <- recruitpars[["type"]] %in% c("Main_InitAge", "Main_RecrDev")
+      within_period <- sigma_R_info[["period"]] == "Main"
+      sigma_R_info[["N_devs"]][within_period] <- sum(subset)
+      sigma_R_info[["SD_of_devs"]][within_period] <- sd(recruitpars[["Value"]][subset])
+      sigma_R_info[["mean_SE"]][within_period] <- mean(recruitpars[["Parm_StDev"]][subset])
+      sigma_R_info[["mean_SEsquared"]][within_period] <-
+        mean((recruitpars[["Parm_StDev"]][subset])^2)
 
       # calculate recdev stats  for Early+Main periods
-      subset <- recruitpars$type %in% c(
+      subset <- recruitpars[["type"]] %in% c(
         "Early_RecrDev", "Early_InitAge",
         "Main_InitAge", "Main_RecrDev"
       )
-      within_period <- sigma_R_info$period == "Early+Main"
-      sigma_R_info$N_devs[within_period] <- sum(subset)
-      sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-      sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-      sigma_R_info$mean_SEsquared[within_period] <-
-        mean((recruitpars$Parm_StDev[subset])^2)
+      within_period <- sigma_R_info[["period"]] == "Early+Main"
+      sigma_R_info[["N_devs"]][within_period] <- sum(subset)
+      sigma_R_info[["SD_of_devs"]][within_period] <- sd(recruitpars[["Value"]][subset])
+      sigma_R_info[["mean_SE"]][within_period] <- mean(recruitpars[["Parm_StDev"]][subset])
+      sigma_R_info[["mean_SEsquared"]][within_period] <-
+        mean((recruitpars[["Parm_StDev"]][subset])^2)
 
       # calculate recdev stats for Early+Main+Late periods
-      subset <- recruitpars$type %in% c(
+      subset <- recruitpars[["type"]] %in% c(
         "Early_RecrDev", "Early_InitAge",
         "Main_InitAge", "Main_RecrDev", "Late_RecrDev"
       )
-      within_period <- sigma_R_info$period == "Early+Main+Late"
-      sigma_R_info$N_devs[within_period] <- sum(subset)
-      sigma_R_info$SD_of_devs[within_period] <- sd(recruitpars$Value[subset])
-      sigma_R_info$mean_SE[within_period] <- mean(recruitpars$Parm_StDev[subset])
-      sigma_R_info$mean_SEsquared[within_period] <-
-        mean((recruitpars$Parm_StDev[subset])^2)
+      within_period <- sigma_R_info[["period"]] == "Early+Main+Late"
+      sigma_R_info[["N_devs"]][within_period] <- sum(subset)
+      sigma_R_info[["SD_of_devs"]][within_period] <- sd(recruitpars[["Value"]][subset])
+      sigma_R_info[["mean_SE"]][within_period] <- mean(recruitpars[["Parm_StDev"]][subset])
+      sigma_R_info[["mean_SEsquared"]][within_period] <-
+        mean((recruitpars[["Parm_StDev"]][subset])^2)
 
       # add variance as square of SD
-      sigma_R_info$Var_of_devs <- sigma_R_info$SD_of_devs^2
+      sigma_R_info[["Var_of_devs"]] <- sigma_R_info[["SD_of_devs"]]^2
 
       # add sqrt of sum
-      sigma_R_info$sqrt_sum_of_components <- sqrt(sigma_R_info$Var_of_devs +
-        sigma_R_info$mean_SEsquared)
+      sigma_R_info[["sqrt_sum_of_components"]] <- sqrt(sigma_R_info[["Var_of_devs"]] +
+        sigma_R_info[["mean_SEsquared"]])
       # ratio of sqrt of sum to sigmaR
-      sigma_R_info$SD_of_devs_over_sigma_R <- sigma_R_info$SD_of_devs / sigma_R_in
-      sigma_R_info$sqrt_sum_over_sigma_R <- sigma_R_info$sqrt_sum_of_components / sigma_R_in
-      sigma_R_info$alternative_sigma_R <- sigma_R_in * sigma_R_info$sqrt_sum_over_sigma_R
+      sigma_R_info[["SD_of_devs_over_sigma_R"]] <- sigma_R_info[["SD_of_devs"]] / sigma_R_in
+      sigma_R_info[["sqrt_sum_over_sigma_R"]] <- sigma_R_info[["sqrt_sum_of_components"]] / sigma_R_in
+      sigma_R_info[["alternative_sigma_R"]] <- sigma_R_in * sigma_R_info[["sqrt_sum_over_sigma_R"]]
     }
-    stats$sigma_R_in <- sigma_R_in
-    stats$sigma_R_info <- sigma_R_info
-    stats$rmse_table <- rmse_table
+    stats[["sigma_R_in"]] <- sigma_R_in
+    stats[["sigma_R_info"]] <- sigma_R_info
+    stats[["rmse_table"]] <- rmse_table
 
     # process adjustments to recruit devs
-    RecrDistpars <- parameters[substring(parameters$Label, 1, 8) == "RecrDist", ]
-    returndat$RecrDistpars <- RecrDistpars
+    RecrDistpars <- parameters[substring(parameters[["Label"]], 1, 8) == "RecrDist", ]
+    returndat[["RecrDistpars"]] <- RecrDistpars
 
     # adding read of wtatage file
-    returndat$wtatage <- wtatage
+    returndat[["wtatage"]] <- wtatage
 
     # adding new jitter info table
-    returndat$jitter_info <- jitter_info
+    returndat[["jitter_info"]] <- jitter_info
 
     # add list of stats to list that gets returned
     returndat <- c(returndat, stats)
 
     # add info on semi-parametric selectivity deviations
-    returndat$seldev_pars <- seldev_pars
-    returndat$seldev_matrix <- seldev_matrix
+    returndat[["seldev_pars"]] <- seldev_pars
+    returndat[["seldev_matrix"]] <- seldev_matrix
 
     # print list of statistics
     if (printstats) {
@@ -3656,13 +3656,13 @@ SS_output <-
 
       # remove scientific notation (only for display, not returned values,
       # which were added to returndat already)
-      stats$likelihoods_used <- format(stats$likelihoods_used, scientific = 20)
-      stats$estimated_non_dev_parameters <- format(stats$estimated_non_dev_parameters,
+      stats[["likelihoods_used"]] <- format(stats[["likelihoods_used"]], scientific = 20)
+      stats[["estimated_non_dev_parameters"]] <- format(stats[["estimated_non_dev_parameters"]],
         scientific = 20
       )
       print(stats)
       if (covar) {
-        if (stats$N_estimated_parameters > 1) {
+        if (stats[["N_estimated_parameters"]] > 1) {
           print(corstats, quote = FALSE)
         } else {
           message("Too few estimated parameters to report correlations.")
@@ -3671,20 +3671,20 @@ SS_output <-
     }
 
     # add log file to list that gets returned
-    returndat$logfile <- logfile
+    returndat[["logfile"]] <- logfile
 
 
     # return the inputs to this function so they can be used by SS_plots
     # or other functions
     inputs <- list()
-    inputs$dir <- dir
-    inputs$repfile <- repfile
-    inputs$forecast <- forecast
-    inputs$warn <- warn
-    inputs$covar <- covar
-    inputs$verbose <- verbose
+    inputs[["dir"]] <- dir
+    inputs[["repfile"]] <- repfile
+    inputs[["forecast"]] <- forecast
+    inputs[["warn"]] <- warn
+    inputs[["covar"]] <- covar
+    inputs[["verbose"]] <- verbose
 
-    returndat$inputs <- inputs
+    returndat[["inputs"]] <- inputs
 
     if (verbose) {
       message("completed SS_output")

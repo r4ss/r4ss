@@ -75,7 +75,7 @@
 #' Fisheries and Aquatic Sciences 68: 1124-1138.
 #' @examples
 #' \dontrun{
-#' Nfleet <- length(myreplist$FleetNames)
+#' Nfleet <- length(myreplist[["FleetNames"]])
 #' for (Ifleet in 1:Nfleet) {
 #'   SSMethod.TA1.8(myreplist, "len", fleet = Ifleet, maxpanel = maxpanel)
 #' }
@@ -112,18 +112,18 @@ SSMethod.TA1.8 <-
     # replace default fleetnames with user input if requested
     if (is.null(fleetnames)) {
       # use fleetnames in the model
-      fleetnames <- fit$FleetNames
+      fleetnames <- fit[["FleetNames"]]
     } else {
       # if custom names input, check length
-      if (length(fleetnames) != fit$nfleets) {
-        stop("fleetnames needs to be NULL or have length = nfleets = ", fit$nfleets)
+      if (length(fleetnames) != fit[["nfleets"]]) {
+        stop("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]])
       }
     }
     # Select the type of datbase
     dbase <- fit[[paste(type, "dbase", sep = "")]]
     # sel is vector of row indices selected for the plot/calculations
     # select row indices matching fleet and partition
-    sel <- is.in(dbase$Fleet, fleet) & is.in(dbase$Part, part)
+    sel <- is.in(dbase[["Fleet"]], fleet) & is.in(dbase[["Part"]], part)
     # select row indices matching Sexes column
     if (type != "con") {
       # change column nanme on earlier SS versions to match change from
@@ -133,7 +133,7 @@ SSMethod.TA1.8 <-
     }
     # for generalized size frequency comps, select chosen size method
     if (type == "size" & !is.null(method)) {
-      sel <- sel & is.in(dbase$method, method)
+      sel <- sel & is.in(dbase[["method"]], method)
     }
     # if there are no rows selected, return empty result
     if (sum(sel) == 0) {
@@ -143,38 +143,38 @@ SSMethod.TA1.8 <-
     dbase <- dbase[sel, ]
     if (is.null(seas)) {
       seas <- "comb"
-      if (length(unique(dbase$Seas)) > 1) {
+      if (length(unique(dbase[["Seas"]])) > 1) {
         message("Combining data from multiple seasons")
       }
     }
     # if generalized size comp is used, check for mix of units
     if (type == "size") {
-      if (length(unique(dbase$units)) > 1) {
-        warning("Mix of units being compared:", unique(dbase$units))
+      if (length(unique(dbase[["units"]])) > 1) {
+        warning("Mix of units being compared:", unique(dbase[["units"]]))
       }
     }
     # create label for partitions
-    partitions <- sort(unique(dbase$Part)) # values are 0, 1, or 2
+    partitions <- sort(unique(dbase[["Part"]])) # values are 0, 1, or 2
     partition.labels <- c("whole", "discarded", "retained")[partitions + 1]
     partition.labels <- paste0("(", paste(partition.labels, collapse = "&"), " catch)")
     # indx is string combining fleet, year, and potentially conditional bin
-    indx <- paste(dbase$Fleet, dbase$Yr, if (type == "con") {
+    indx <- paste(dbase[["Fleet"]], dbase[["Yr"]], if (type == "con") {
       dbase$"Lbin_lo"
     } else {
       ""
-    }, if (seas == "sep") dbase$Seas else "")
+    }, if (seas == "sep") dbase[["Seas"]] else "")
     # if subsetting by sex, add Sexes value to the indx strings
     sex.flag <- type != "con" & max(tapply(
       dbase$"Sexes",
-      dbase$Fleet, function(x) length(unique(x))
+      dbase[["Fleet"]], function(x) length(unique(x))
     )) > 1
     if (sex.flag) {
       indx <- paste(indx, dbase$"Sexes")
     }
     # if subsetting by generalized size-method, add that value to indx strings
-    method.flag <- type == "size" && length(unique(dbase$method)) > 1
+    method.flag <- type == "size" && length(unique(dbase[["method"]])) > 1
     if (method.flag) {
-      indx <- paste(indx, dbase$method)
+      indx <- paste(indx, dbase[["method"]])
     }
     # unique strings in indx vector
     uindx <- unique(indx)
@@ -208,23 +208,23 @@ SSMethod.TA1.8 <-
     # Find the weighting factor for this combination of factors
     for (i in 1:length(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
-      xvar <- subdbase$Bin
-      pldat[i, "Obsmn"] <- sum(subdbase$Obs * xvar) / sum(subdbase$Obs)
-      pldat[i, "Expmn"] <- sum(subdbase$Exp * xvar) / sum(subdbase$Exp)
-      pldat[i, "semn"] <- sqrt((sum(subdbase$Exp * xvar^2) / sum(subdbase$Exp) -
-        pldat[i, "Expmn"]^2) / mean(subdbase$Nsamp_adj))
+      xvar <- subdbase[["Bin"]]
+      pldat[i, "Obsmn"] <- sum(subdbase[["Obs"]] * xvar) / sum(subdbase[["Obs"]])
+      pldat[i, "Expmn"] <- sum(subdbase[["Exp"]] * xvar) / sum(subdbase[["Exp"]])
+      pldat[i, "semn"] <- sqrt((sum(subdbase[["Exp"]] * xvar^2) / sum(subdbase[["Exp"]]) -
+        pldat[i, "Expmn"]^2) / mean(subdbase[["Nsamp_adj"]]))
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
       pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]
-      pldat[i, "Fleet"] <- mean(subdbase$Fleet)
-      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase$Yr else subdbase$Yr.S)
+      pldat[i, "Fleet"] <- mean(subdbase[["Fleet"]])
+      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]])
       if (type == "con") pldat[i, "Lbin"] <- mean(subdbase$"Lbin_lo")
       if (sex.flag) {
         pldat[i, "sexes"] <- mean(subdbase$"Sexes")
       }
       if (type == "size") {
-        pldat[i, "method"] <- mean(subdbase$method)
-        plunits[i] <- subdbase$units[1] # units of size comps
+        pldat[i, "method"] <- mean(subdbase[["method"]])
+        plunits[i] <- subdbase[["units"]][1] # units of size comps
       }
     }
     Nmult <- 1 / var(pldat[, "Std.res"], na.rm = TRUE)
@@ -341,8 +341,8 @@ SSMethod.TA1.8 <-
       # restore previous graphics parameters (if changed to begin with
       if (set.pars) {
         par(
-          mfrow = par_current$mfrow, mar = par_current$mar, mgp = par_current$mgp,
-          oma = par_current$oma, las = par_current$las
+          mfrow = par_current[["mfrow"]], mar = par_current[["mar"]], mgp = par_current[["mgp"]],
+          oma = par_current[["oma"]], las = par_current[["las"]]
         )
       }
     }

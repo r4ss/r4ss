@@ -124,13 +124,13 @@ SS_makedatlist <-
                                         rep(areas,Nfleet+Nsurveys)))
         names(fleetinfo1) <- fleetnames
         names(fleetinfo1)[1] <- paste("#",names(fleetinfo1)[1],sep="")
-        fleetinfo1$input <- c("#_surveytiming","#_areas")
+        fleetinfo1[["input"]] <- c("#_surveytiming","#_areas")
 
         fleetinfo2 <- data.frame(rbind(rep(units_of_catch,Nfleet),
                                         rep(se_log_catch,Nfleet)))
         names(fleetinfo2) <- fleetnames[1:Nfleet]
         names(fleetinfo2)[1] <- paste("#",names(fleetinfo2)[1],sep="")
-        fleetinfo2$input <- c("#_units_of_catch","#_se_log_catch")
+        fleetinfo2[["input"]] <- c("#_units_of_catch","#_se_log_catch")
 
         names(ageerror) <- c("#_age0",paste("age",1:Nages,sep=""))
 

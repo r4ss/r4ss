@@ -266,21 +266,21 @@ SS_plots <-
 
 
     # get quantities from the big list
-    nfleets <- replist$nfleets
-    nfishfleets <- replist$nfishfleets
-    nareas <- replist$nareas
-    nseasons <- replist$nseasons
-    timeseries <- replist$timeseries
-    lbins <- replist$lbins
-    inputs <- replist$inputs
-    endyr <- replist$endyr
-    SS_version <- replist$SS_version
-    SS_versionNumeric <- replist$SS_versionNumeric
-    StartTime <- replist$StartTime
-    Files_used <- replist$Files_used
-    FleetNames <- replist$FleetNames
-    rmse_table <- replist$rmse_table
-    comp_data_exists <- replist$comp_data_exists
+    nfleets <- replist[["nfleets"]]
+    nfishfleets <- replist[["nfishfleets"]]
+    nareas <- replist[["nareas"]]
+    nseasons <- replist[["nseasons"]]
+    timeseries <- replist[["timeseries"]]
+    lbins <- replist[["lbins"]]
+    inputs <- replist[["inputs"]]
+    endyr <- replist[["endyr"]]
+    SS_version <- replist[["SS_version"]]
+    SS_versionNumeric <- replist[["SS_versionNumeric"]]
+    StartTime <- replist[["StartTime"]]
+    Files_used <- replist[["Files_used"]]
+    FleetNames <- replist[["FleetNames"]]
+    rmse_table <- replist[["rmse_table"]]
+    comp_data_exists <- replist[["comp_data_exists"]]
 
     # check for internal consistency
     if (pdf & png) {
@@ -289,11 +289,11 @@ SS_plots <-
     if (html & !png) {
       stop("You can't set 'html=TRUE' without also setting 'png=TRUE'")
     }
-    if (uncertainty & !inputs$covar) {
+    if (uncertainty & !inputs[["covar"]]) {
       warning("covar information unavailable, changing 'uncertainty' to FALSE")
       uncertainty <- FALSE
     }
-    if (forecastplot & max(timeseries$Yr > endyr + 1) == 0) {
+    if (forecastplot & max(timeseries[["Yr"]] > endyr + 1) == 0) {
       message("Changing 'forecastplot' input to FALSE because all years up to endyr+1 are included by default")
       forecastplot <- FALSE
     }
@@ -365,7 +365,7 @@ SS_plots <-
     if (dir == "default") {
       # directory within which printfolder will be created
       # by default it is assumed to be the location of the model files
-      dir <- inputs$dir
+      dir <- inputs[["dir"]]
     }
     if (png | pdf) {
       # get info on directory where subfolder will go
@@ -413,7 +413,7 @@ SS_plots <-
           plotInfo.old <- read.csv(file.path(plotdir, csv.files[ifile]),
             stringsAsFactors = FALSE
           )
-          StartTimes.old <- c(StartTimes.old, unique(plotInfo.old$StartTime))
+          StartTimes.old <- c(StartTimes.old, unique(plotInfo.old[["StartTime"]]))
         }
         if (any(StartTimes.old != StartTime)) {
 
@@ -554,7 +554,7 @@ SS_plots <-
           ptsize = ptsize, res = res, cex.main = cex.main,
           plotdir = plotdir
         )
-      plotinfo <- selexinfo$plotinfo
+      plotinfo <- selexinfo[["plotinfo"]]
       if (!is.null(plotinfo)) {
         plotInfoTable <- rbind(plotInfoTable, plotinfo)
       }
@@ -635,7 +635,7 @@ SS_plots <-
 
       ### add plot of Summary F
       # first get vector of years
-      yrs <- replist$startyr:replist$endyr
+      yrs <- replist[["startyr"]]:replist[["endyr"]]
       yrs <- yrs[yrs >= minyr & yrs <= maxyr]
       # now run plot function
       plotinfo <- SSplotSummaryF(
@@ -694,8 +694,8 @@ SS_plots <-
         if (verbose) {
           message("Starting estimation of recruitment bias adjustment and associated plots (group ", igroup, ")")
         }
-        if (is.numeric(rmse_table$RMSE)) {
-          if (max(rmse_table$RMSE) > 0) {
+        if (is.numeric(rmse_table[["RMSE"]])) {
+          if (max(rmse_table[["RMSE"]]) > 0) {
             temp <-
               SS_fitbiasramp(
                 replist = replist,
@@ -705,7 +705,7 @@ SS_plots <-
                 ptsize = ptsize, res = res, cex.main = cex.main,
                 plotdir = plotdir
               )
-            plotinfo <- temp$plotinfo
+            plotinfo <- temp[["plotinfo"]]
             if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
           } else {
             message("Skipping bias adjustment fit because root mean squared error of recruit devs is 0.")
@@ -772,7 +772,7 @@ SS_plots <-
           plotdir = plotdir,
           verbose = verbose
         )
-      plotinfo <- temp$plotinfo
+      plotinfo <- temp[["plotinfo"]]
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
 
@@ -802,7 +802,7 @@ SS_plots <-
     #
     igroup <- 9
     if (igroup %in% plot) {
-      if (!is.na(replist$discard) && nrow(replist$discard) > 0) {
+      if (!is.na(replist[["discard"]]) && nrow(replist[["discard"]]) > 0) {
         if (verbose) {
           message("Starting discard plot (group ", igroup, ")")
         }
@@ -830,7 +830,7 @@ SS_plots <-
     #
     igroup <- 10
     if (igroup %in% plot) {
-      if (!is.na(replist$mnwgt) && nrow(replist$mnwgt) > 0) {
+      if (!is.na(replist[["mnwgt"]]) && nrow(replist[["mnwgt"]]) > 0) {
         if (verbose) {
           message("Starting mean body weight plot (group ", igroup, ")")
         }
@@ -859,7 +859,7 @@ SS_plots <-
     #
     igroup <- 11
     if (igroup %in% plot) {
-      if (!is.null(dim(replist$cpue))) {
+      if (!is.null(dim(replist[["cpue"]]))) {
         if (verbose) {
           message("Starting index plots (group ", igroup, ")")
         }
@@ -892,7 +892,7 @@ SS_plots <-
     #
     igroup <- 12
     if (igroup %in% plot) {
-      if (!is.null(replist$natage)) {
+      if (!is.null(replist[["natage"]])) {
         if (verbose) {
           message("Starting numbers at age plots (group ", igroup, ")")
         }
@@ -971,7 +971,7 @@ SS_plots <-
             if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
 
             # length comp sex ratios (data only, for 2-sex models only)
-            if (replist$nsexes == 2) {
+            if (replist[["nsexes"]] == 2) {
               plotinfo <-
                 SSplotSexRatio(
                   replist = replist,
@@ -997,7 +997,7 @@ SS_plots <-
             }
 
             # size comp polygon and bubble plots (data only)
-            for (sizemethod in sort(unique(replist$sizedbase$method))) {
+            for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
               plotinfo <-
                 SSplotComps(
                   replist = replist, datonly = TRUE, kind = "SIZE", sizemethod = sizemethod,
@@ -1060,7 +1060,7 @@ SS_plots <-
           flush.console()
 
           # age comp sex ratios (data only)
-          if (replist$nsexes == 2) {
+          if (replist[["nsexes"]] == 2) {
             plotinfo <-
               SSplotSexRatio(
                 replist = replist,
@@ -1110,7 +1110,7 @@ SS_plots <-
         } # end conditional data plots
 
         if (!is.null(plotInfoTable)) {
-          plotInfoTable$category[plotInfoTable$category == "Comp"] <- "CompDat"
+          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "CompDat"
         }
 
         flush.console()
@@ -1164,8 +1164,8 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
 
         # loop over size methods for generalized size comp data
-        if (nrow(replist$sizedbase) > 0) {
-          for (sizemethod in sort(unique(replist$sizedbase$method))) {
+        if (nrow(replist[["sizedbase"]]) > 0) {
+          for (sizemethod in sort(unique(replist[["sizedbase"]][["method"]]))) {
             plotinfo <-
               SSplotComps(
                 replist = replist, datonly = FALSE, kind = "SIZE", sizemethod = sizemethod,
@@ -1188,7 +1188,7 @@ SS_plots <-
         }
 
         # length comp sex ratios (for 2-sex models only)
-        if (replist$nsexes == 2) {
+        if (replist[["nsexes"]] == 2) {
           plotinfo <-
             SSplotSexRatio(
               replist = replist,
@@ -1212,7 +1212,7 @@ SS_plots <-
         }
 
         if (!is.null(plotInfoTable)) {
-          plotInfoTable$category[plotInfoTable$category == "Comp"] <- "LenComp"
+          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "LenComp"
         }
       }
 
@@ -1261,7 +1261,7 @@ SS_plots <-
           )
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
         # age comp sex ratios
-        if (replist$nsexes == 2) {
+        if (replist[["nsexes"]] == 2) {
           plotinfo <-
             SSplotSexRatio(
               replist = replist,
@@ -1282,7 +1282,7 @@ SS_plots <-
           if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
         }
         if (!is.null(plotInfoTable)) {
-          plotInfoTable$category[plotInfoTable$category == "Comp"] <- "AgeComp"
+          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "AgeComp"
         }
       } # end if igroup in plot or print
 
@@ -1315,7 +1315,7 @@ SS_plots <-
           if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
         }
         # conditional age at length for a given year
-        if (length(intersect(aalyear, unique(timeseries$Yr))) > 0) {
+        if (length(intersect(aalyear, unique(timeseries[["Yr"]]))) > 0) {
           plotinfo <-
             SSplotComps(
               replist = replist, subplots = 4:5, datonly = FALSE, kind = "cond", bub = TRUE, verbose = verbose, fleets = fleets,
@@ -1358,7 +1358,7 @@ SS_plots <-
           if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
         }
         if (!is.null(plotInfoTable)) {
-          plotInfoTable$category[plotInfoTable$category == "Comp"] <- "A@LComp"
+          plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "A@LComp"
         }
       } # end if igroup in plot or print
 
@@ -1367,8 +1367,8 @@ SS_plots <-
       #
       igroup <- 19
       if (igroup %in% plot) {
-        if (nrow(replist$condbase) > 0) {
-          if (replist$nagebins == 1) {
+        if (nrow(replist[["condbase"]]) > 0) {
+          if (replist[["nagebins"]] == 1) {
             if (verbose) {
               message(
                 "Skipping conditional age-at-length diagnostic plots (group ",
@@ -1402,7 +1402,7 @@ SS_plots <-
               )
             if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
             if (!is.null(plotInfoTable)) {
-              plotInfoTable$category[plotInfoTable$category == "Comp"] <- "A@LComp"
+              plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "A@LComp"
             }
           }
         } else {
@@ -1488,7 +1488,7 @@ SS_plots <-
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } # end if length-at-age and weight-at-age comps in plot or print
       if (!is.null(plotInfoTable)) {
-        plotInfoTable$category[plotInfoTable$category == "Comp"] <- "Mean@A"
+        plotInfoTable[["category"]][plotInfoTable[["category"]] == "Comp"] <- "Mean@A"
       }
 
       # restore default single panel settings if needed
@@ -1508,7 +1508,7 @@ SS_plots <-
       #
       igroup <- 21
       if (igroup %in% plot) {
-        if (is.null(replist$tagdbase2) || nrow(replist$tagdbase2) == 0) {
+        if (is.null(replist[["tagdbase2"]]) || nrow(replist[["tagdbase2"]]) == 0) {
           if (verbose) {
             message("Skipping tag plots (group ", igroup, ") because no tag data in model")
           }
@@ -1521,7 +1521,7 @@ SS_plots <-
               replist = replist,
               rows = rows, cols = cols,
               tagrows = tagrows, tagcols = tagcols,
-              latency = replist$tagfirstperiod,
+              latency = replist[["tagfirstperiod"]],
               pntscalar = pntscalar.tags, minnbubble = minnbubble,
               plot = !png, print = png,
               pwidth = pwidth, pheight = pheight, punits = punits,
@@ -1559,7 +1559,7 @@ SS_plots <-
     #
     igroup <- 23
     if (igroup %in% plot) {
-      if (!is.null(replist$movement) && nrow(replist$movement) > 0) {
+      if (!is.null(replist[["movement"]]) && nrow(replist[["movement"]]) > 0) {
         if (verbose) {
           message("Starting movement rate plots (group ", igroup, ")")
         }
@@ -1572,7 +1572,7 @@ SS_plots <-
             ptsize = ptsize, res = res, cex.main = cex.main,
             plotdir = plotdir
           )
-        plotinfo <- temp$plotinfo
+        plotinfo <- temp[["plotinfo"]]
         if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
       } else {
         if (verbose) {
@@ -1602,7 +1602,7 @@ SS_plots <-
           plotdir = plotdir, margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
           fleetnames = fleetnames, maxsize = maxsize
         )
-      if (!is.null(temp) & length(temp) > 0) plotinfo <- temp$plotinfo
+      if (!is.null(temp) & length(temp) > 0) plotinfo <- temp[["plotinfo"]]
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)
     } # end if igroup in plot or print
 
@@ -1614,7 +1614,7 @@ SS_plots <-
       if (verbose) {
         message("Starting parameter distribution plots (group ", igroup, ")")
       }
-      if (showpost && is.null(replist$mcmc)) {
+      if (showpost && is.null(replist[["mcmc"]])) {
         showpost <- FALSE
       }
       plotinfo <- SSplotPars(
@@ -1648,7 +1648,7 @@ SS_plots <-
     #
     igroup <- 26
     if (igroup %in% plot) {
-      if (nrow(replist$estimated_non_dev_parameters) == 0) {
+      if (nrow(replist[["estimated_non_dev_parameters"]]) == 0) {
         if (verbose) {
           message(
             "Skipping diagnostic tables (group ", igroup,
@@ -1684,13 +1684,13 @@ SS_plots <-
     #
     if (!is.null(plotInfoTable)) {
       # make sure there are no factors
-      plotInfoTable$file <- as.character(plotInfoTable$file)
-      plotInfoTable$caption <- as.character(plotInfoTable$caption)
+      plotInfoTable[["file"]] <- as.character(plotInfoTable[["file"]])
+      plotInfoTable[["caption"]] <- as.character(plotInfoTable[["caption"]])
       # record the current time and the model run time
       png_time <- Sys.time()
       # png_time2 <- format(writetime,'%d-%m-%Y_%H.%M')
-      plotInfoTable$png_time <- png_time
-      plotInfoTable$StartTime <- StartTime
+      plotInfoTable[["png_time"]] <- png_time
+      plotInfoTable[["StartTime"]] <- StartTime
       # create a name for the file and write it to the plot directory
       csvname <- file.path(
         plotdir,

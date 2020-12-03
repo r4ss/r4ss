@@ -37,28 +37,28 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
   }
   plotinfo <- NULL
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
-  if(yrs[1]=="all") {yrs <- replist$startyr:replist$endyr}
-  Ftot <- replist$derived_quants[match(paste("F_",yrs,sep=""),replist$derived_quants$Label),]
-  if(all(is.na(Ftot$Value))){
+  if(yrs[1]=="all") {yrs <- replist[["startyr"]]:replist[["endyr"]]}
+  Ftot <- replist[["derived_quants"]][match(paste("F_",yrs,sep=""),replist[["derived_quants"]][["Label"]]),]
+  if(all(is.na(Ftot[["Value"]]))){
     warning("Skipping SSplotSummaryF because no real values found in DERIVED_QUANTITIES\n",
             "    Values with labels like F_2012 may not be real.\n")
     return()
   }
-  Fmax <- max(c(Ftot$Value,Ftgt+0.01),na.rm=TRUE)
+  Fmax <- max(c(Ftot[["Value"]],Ftgt+0.01),na.rm=TRUE)
   if(uncertainty){
-    uppFtot <- Ftot$Value + 1.96*Ftot$StdDev
-    lowFtot <- Ftot$Value - 1.96*Ftot$StdDev
+    uppFtot <- Ftot[["Value"]] + 1.96*Ftot[["StdDev"]]
+    lowFtot <- Ftot[["Value"]] - 1.96*Ftot[["StdDev"]]
     Fmax <- max(c(uppFtot,Ftgt+0.01),na.rm=TRUE)
   }
   plotfun <- function(){
     plot(0,type="n",,xlab="Year",ylab=ylab,xlim=range(yrs),ylim=c(0,Fmax),
          cex.lab=1.0,cex.axis=1.0,cex=0.7)
     abline(h=0,col='grey')
-    if(uncertainty) segments(as.numeric(substring(Ftot$Label,3,6)),uppFtot,as.numeric(substring(Ftot$Label,3,6)),lowFtot,col=gray(0.5))
-    points(as.numeric(substring(Ftot$Label,3,6)),Ftot$Value,pch=16,type="p")
+    if(uncertainty) segments(as.numeric(substring(Ftot[["Label"]],3,6)),uppFtot,as.numeric(substring(Ftot[["Label"]],3,6)),lowFtot,col=gray(0.5))
+    points(as.numeric(substring(Ftot[["Label"]],3,6)),Ftot[["Value"]],pch=16,type="p")
     abline(h=Ftgt,col="red")
   }
   if(plot) plotfun()
@@ -67,7 +67,7 @@ SSplotSummaryF <- function(replist,yrs="all",Ftgt=NA,ylab="Summary Fishing Morta
     plotinfo <- pngfun(file="ts_summaryF.png", caption=caption)
     plotfun()
     dev.off()
-    if(!is.null(plotinfo)) plotinfo$category <- "Timeseries"
+    if(!is.null(plotinfo)) plotinfo[["category"]] <- "Timeseries"
   }
   if(verbose) cat("Plotting Summary F\n")
   return(invisible(plotinfo))

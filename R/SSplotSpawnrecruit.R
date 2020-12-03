@@ -31,7 +31,7 @@
 #' of points, where the points are disconnected (lty=NA) by default
 #' @param ptcol vector or single value for the color of the points, "default"
 #' will by replaced by a vector of colors of length equal to
-#' nrow(replist$recruit)
+#' nrow(replist[["recruit"]])
 #' @param legend add a legend to the figure?
 #' @param legendloc location of legend. By default it is chosen as the first
 #' value in the set of "topleft", "topright", "bottomright" that results in no
@@ -94,14 +94,14 @@ SSplotSpawnrecruit <-
     message("Skipping stock-recruit plots: no recruitment information available")
     return()
   }
-  nsexes <- replist$nsexes
+  nsexes <- replist[["nsexes"]]
 
   # set axis labels
   xlab <- labels[1]
   ylab <- labels[2]
   # check if spawning output rather than spawning biomass is plotted
-  if (is.na(replist$SpawnOutputUnits) || 
-      replist$SpawnOutputUnits == 'numbers') { # quantity from test in SS_output
+  if (is.na(replist[["SpawnOutputUnits"]]) || 
+      replist[["SpawnOutputUnits"]] == 'numbers') { # quantity from test in SS_output
     xlab <- labels[3]
   }
   if(relative) {
@@ -115,43 +115,43 @@ SSplotSpawnrecruit <-
   }
   
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
-  if(minyr=="default") minyr <- min(recruit$Yr)
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
+  if(minyr=="default") minyr <- min(recruit[["Yr"]])
 
-  recruit <- recruit[recruit$era %in% c("Early","Main","Fixed","Late",
+  recruit <- recruit[recruit[["era"]] %in% c("Early","Main","Fixed","Late",
                                         ifelse(forecast,"Forecast",NA)) &
-                     recruit$Yr>=minyr,]
+                     recruit[["Yr"]]>=minyr,]
   
-  timeseries <- replist$timeseries
-  recruit$spawn_bio <- bioscale*recruit$SpawnBio
-  timeseries$SpawnBio <- bioscale*timeseries$SpawnBio
+  timeseries <- replist[["timeseries"]]
+  recruit[["spawn_bio"]] <- bioscale*recruit[["SpawnBio"]]
+  timeseries[["SpawnBio"]] <- bioscale*timeseries[["SpawnBio"]]
 
   # x and y limits
   if(is.null(ylim)){
-    ylim=c(0, 1.1*max(recruit$pred_recr, recruit$exp_recr, recruit$bias_adjusted))
+    ylim=c(0, 1.1*max(recruit[["pred_recr"]], recruit[["exp_recr"]], recruit[["bias_adjusted"]]))
   }
-  x <- recruit$spawn_bio
+  x <- recruit[["spawn_bio"]]
   if(is.null(xlim)){
     xlim=c(0, 1.1*max(x))
   }
 
   # only add lines for environmentally dependent recruitment if it differs
   # from expected recruitment without environmental link
-  show_env <- show_env & any(recruit$with_env!=recruit$exp_recr)
+  show_env <- show_env & any(recruit[["with_env"]]!=recruit[["exp_recr"]])
                 
   # store virgin and initial values
-  B0 <- sum(timeseries$SpawnBio[timeseries$Era=="VIRG"], na.rm=TRUE)
-  B1 <- sum(timeseries$SpawnBio[timeseries$Era=="INIT"], na.rm=TRUE)
-  R0 <- sum(timeseries$Recruit_0[timeseries$Era=="VIRG"], na.rm=TRUE)
-  R1 <- sum(timeseries$Recruit_0[timeseries$Era=="INIT"], na.rm=TRUE)
+  B0 <- sum(timeseries[["SpawnBio"]][timeseries[["Era"]]=="VIRG"], na.rm=TRUE)
+  B1 <- sum(timeseries[["SpawnBio"]][timeseries[["Era"]]=="INIT"], na.rm=TRUE)
+  R0 <- sum(timeseries[["Recruit_0"]][timeseries[["Era"]]=="VIRG"], na.rm=TRUE)
+  R1 <- sum(timeseries[["Recruit_0"]][timeseries[["Era"]]=="INIT"], na.rm=TRUE)
 
   # work around for issue with Shepherd function producing 0 values in equilibrium
   # use first non-zero value for each
   if(B0==0){
-    B0 <- head(recruit$spawn_bio[recruit$spawn_bio!=0], 1)
+    B0 <- head(recruit[["spawn_bio"]][recruit[["spawn_bio"]]!=0], 1)
   }
   if(R0==0){
-    R0 <- head(recruit$exp_recr[recruit$exp_recr!=0], 1)
+    R0 <- head(recruit[["exp_recr"]][recruit[["exp_recr"]]!=0], 1)
   }
   if(B0==B1 & R0==R1){
     init <- FALSE
@@ -206,29 +206,29 @@ SSplotSpawnrecruit <-
     }
     if(show_env){
       # add line for expected recruitment with environmental variability
-      lines(x[order(x)]*x.mult, recruit$with_env[order(x)]*y.mult,
+      lines(x[order(x)]*x.mult, recruit[["with_env"]][order(x)]*y.mult,
             lwd=1, lty=ltyvec[1], col=colvec[1])
     }
     if(expected){
       # add line for expected recruitment
-      lines(x[order(x)]*x.mult, recruit$exp_recr[order(x)]*y.mult,
+      lines(x[order(x)]*x.mult, recruit[["exp_recr"]][order(x)]*y.mult,
             lwd=2, lty=ltyvec[3], col=colvec[3])
     }
     if(bias_adjusted){
       # add line for adjusted recruitment
-      lines(x*x.mult, recruit$bias_adjusted*y.mult,
+      lines(x*x.mult, recruit[["bias_adjusted"]]*y.mult,
             lwd=1, lty=ltyvec[2], col=colvec[2])
     }
     if(estimated){
       # add points for individual estimates
-      points(x*x.mult, recruit$pred_recr*y.mult, pch=21, col=colvec[4], bg=ptcol)
+      points(x*x.mult, recruit[["pred_recr"]]*y.mult, pch=21, col=colvec[4], bg=ptcol)
     }
     if(text){
       # add text, but only label values with larger devs (in abs value)
-      show <- abs(recruit$dev) > textmindev
+      show <- abs(recruit[["dev"]]) > textmindev
       show[1] <- show[length(show)] <- TRUE  # also include first & last years
-      text(x[show]*x.mult, recruit$pred_recr[show]*y.mult,
-           labels=recruit$Yr[show], pos=2, cex=.7)
+      text(x[show]*x.mult, recruit[["pred_recr"]][show]*y.mult,
+           labels=recruit[["Yr"]][show], pos=2, cex=.7)
     }
     # add point for virgin biomass/recruitment (if requested)
     if(virg){
@@ -248,10 +248,10 @@ SSplotSpawnrecruit <-
         # run legend without plotting
         legend.out <- legend(..., plot=FALSE)
         # get coordinates of legend boundaries
-        leg.left <- legend.out$rect$left
-        leg.right <- legend.out$rect$left + legend.out$rect$w
-        leg.top <- legend.out$rect$top
-        leg.bottom <- legend.out$rect$top - legend.out$rect$h
+        leg.left <- legend.out[["rect"]][["left"]]
+        leg.right <- legend.out[["rect"]][["left"]] + legend.out[["rect"]][["w"]]
+        leg.top <- legend.out[["rect"]][["top"]]
+        leg.bottom <- legend.out[["rect"]][["top"]] - legend.out[["rect"]][["h"]]
         # test for overlap
         if(any(x >= leg.left & x <= leg.right & 
                  y >= leg.bottom & y <= leg.top)){
@@ -266,7 +266,7 @@ SSplotSpawnrecruit <-
       if(is.null(legendloc)){
         for(legendloc in c("topleft", "topright", "bottomright")){
           has_overlap <- legend.overlap(x = x*x.mult,
-                                        y = recruit$pred_recr*y.mult,
+                                        y = recruit[["pred_recr"]]*y.mult,
                                         legendloc, legend=legend_lab,
                                         col=legend_col, pt.bg=legend_bg, lwd=legend_lwd,
                                         lty=legend_lty, pch=legend_pch, bg=rgb(1,1,1,.6))
@@ -301,17 +301,17 @@ SSplotSpawnrecruit <-
       xmax <- 1.05*max(x/B0)
       # make empty plot (if not adding to existing plot)
       plot(0, type='n', xlim=c(0, xmax),
-           ylim=c(-1.1,1.1)*max(abs(recruit$dev), na.rm=TRUE),
+           ylim=c(-1.1,1.1)*max(abs(recruit[["dev"]]), na.rm=TRUE),
            las=1, xaxs='i', yaxs='i', xlab=labels[4], ylab=labels[6])
     }
     abline(h=0, col='grey')
-    points(x/B0, recruit$dev, pch=21, bg=ptcol, col = colvec[4], cex=1.5)
+    points(x/B0, recruit[["dev"]], pch=21, bg=ptcol, col = colvec[4], cex=1.5)
     if(text){
       # add text, but only label values with larger devs (in abs value)
-      show <- abs(recruit$dev) > textmindev
+      show <- abs(recruit[["dev"]]) > textmindev
       show[1] <- show[length(show)] <- TRUE  # also include first & last years
-      text(x[show]/B0, recruit$dev[show],
-           labels=recruit$Yr[show], pos=2, cex=.7)
+      text(x[show]/B0, recruit[["dev"]][show],
+           labels=recruit[["Yr"]][show], pos=2, cex=.7)
     }
     # add point for virgin biomass/recruitment (if requested)
     if(virg){
@@ -366,6 +366,6 @@ SSplotSpawnrecruit <-
       dev.off()
     }
   }
-  if(!is.null(plotinfo)) plotinfo$category <- "S-R"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "S-R"
   return(invisible(plotinfo))
 }

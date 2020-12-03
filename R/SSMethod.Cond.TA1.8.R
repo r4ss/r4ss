@@ -82,21 +82,21 @@ SSMethod.Cond.TA1.8 <-
     # replace default fleetnames with user input if requested
     if (is.null(fleetnames)) {
       # use fleetnames in the model
-      fleetnames <- fit$FleetNames
+      fleetnames <- fit[["FleetNames"]]
     } else {
       # if custom names input, check length
-      if (length(fleetnames) != fit$nfleets) {
-        stop("fleetnames needs to be NULL or have length = nfleets = ", fit$nfleets)
+      if (length(fleetnames) != fit[["nfleets"]]) {
+        stop("fleetnames needs to be NULL or have length = nfleets = ", fit[["nfleets"]])
       }
     }
 
     # Select the type of datbase
     dbase <- fit[["condbase"]]
-    if (length(unique(dbase$Bin)) == 1) {
+    if (length(unique(dbase[["Bin"]])) == 1) {
       warning("Francis weighting method doesn't work with only 1 age bin")
       return()
     }
-    sel <- is.in(dbase$Fleet, fleet) & is.in(dbase$Part, part)
+    sel <- is.in(dbase[["Fleet"]], fleet) & is.in(dbase[["Part"]], part)
     if (sum(sel) == 0) {
       return()
     }
@@ -104,12 +104,12 @@ SSMethod.Cond.TA1.8 <-
     dbase <- dbase[sel, ]
     if (is.null(seas)) {
       seas <- "comb"
-      if (length(unique(dbase$Seas)) > 1) {
+      if (length(unique(dbase[["Seas"]])) > 1) {
         message("Combining data from multiple seasons")
       }
     }
 
-    indx <- paste(dbase$Fleet, dbase$Yr, if (seas == "sep") dbase$Seas else "")
+    indx <- paste(dbase[["Fleet"]], dbase[["Yr"]], if (seas == "sep") dbase[["Seas"]] else "")
     uindx <- unique(indx)
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
@@ -134,23 +134,23 @@ SSMethod.Cond.TA1.8 <-
     for (i in 1:length(uindx)) { # each row of pldat is an individual comp
       subdbase <- dbase[indx == uindx[i], ]
 
-      Lbins <- unique(subdbase$Lbin_lo)
+      Lbins <- unique(subdbase[["Lbin_lo"]])
       Intermediate <- matrix(0, length(Lbins), 5,
         dimnames = list(Lbins, c("Obsmn", "Varn", "Expmn", "N", "Resid"))
       )
       for (j in 1:length(Lbins)) {
         ILbin <- Lbins[j]
-        subsubdbase <- subdbase[subdbase$Lbin_lo == ILbin, ]
-        if (length(subsubdbase$Yr) > 0) {
-          xvar <- subsubdbase$Bin
-          AbarNObs <- sum(subsubdbase$Obs * xvar) / sum(subsubdbase$Obs)
-          AbarNPre <- sum(subsubdbase$Exp * xvar) / sum(subsubdbase$Exp)
-          AbarVarn <- (sum(subsubdbase$Exp * xvar^2) / sum(subsubdbase$Exp) - AbarNPre^2)
+        subsubdbase <- subdbase[subdbase[["Lbin_lo"]] == ILbin, ]
+        if (length(subsubdbase[["Yr"]]) > 0) {
+          xvar <- subsubdbase[["Bin"]]
+          AbarNObs <- sum(subsubdbase[["Obs"]] * xvar) / sum(subsubdbase[["Obs"]])
+          AbarNPre <- sum(subsubdbase[["Exp"]] * xvar) / sum(subsubdbase[["Exp"]])
+          AbarVarn <- (sum(subsubdbase[["Exp"]] * xvar^2) / sum(subsubdbase[["Exp"]]) - AbarNPre^2)
           Intermediate[j, "Obsmn"] <- AbarNObs
           Intermediate[j, "Expmn"] <- AbarNPre
           Intermediate[j, "Varn"] <- AbarVarn
-          Intermediate[j, "N"] <- mean(subsubdbase$Nsamp_adj)
-          Intermediate[j, "Resid"] <- (AbarNObs - AbarNPre) / sqrt(AbarVarn / mean(subsubdbase$Nsamp_adj))
+          Intermediate[j, "N"] <- mean(subsubdbase[["Nsamp_adj"]])
+          Intermediate[j, "Resid"] <- (AbarNObs - AbarNPre) / sqrt(AbarVarn / mean(subsubdbase[["Nsamp_adj"]]))
         }
       }
       Total <- sum(Intermediate[, "N"])
@@ -173,9 +173,9 @@ SSMethod.Cond.TA1.8 <-
       pldat[i, "Obslo"] <- pldat[i, "Obsmn"] - 2 * pldat[i, "semn"]
       pldat[i, "Obshi"] <- pldat[i, "Obsmn"] + 2 * pldat[i, "semn"]
       pldat[i, "Std.res"] <- (pldat[i, "Obsmn"] - pldat[i, "Expmn"]) / pldat[i, "semn"]
-      pldat[i, "Fleet"] <- mean(subdbase$Fleet)
+      pldat[i, "Fleet"] <- mean(subdbase[["Fleet"]])
       pldat[i, "Total"] <- Total
-      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase$Yr else subdbase$Yr.S)
+      pldat[i, "Yr"] <- mean(if (seas == "comb") subdbase[["Yr"]] else subdbase[["Yr.S"]])
       pldat[i, "EffN"] <- 1 / var(Intermediate[, "Resid"])
       AllRes <- c(AllRes, Intermediate[, "Resid"])
     }
@@ -216,7 +216,7 @@ SSMethod.Cond.TA1.8 <-
           # plot may not make sense but will help users note that a problem exists
           # (as opposed to skipping the plot)
           cat("NaN values in Francis calculations, plot may not make sense\n")
-          ylim <- c(0, fit$accuage)
+          ylim <- c(0, fit[["accuage"]])
         }
         # make empty plot (unless adding to existing plot)
         if (!add) {

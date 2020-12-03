@@ -14,44 +14,44 @@ SS_makeHTMLdiagnostictable <- function(replist,
                                        plotdir = NULL,
                                        gradmax = 1E-3) {
   #Filter out parameters with NA gradients
-  parchecks <- replist$estimated_non_dev_parameters
-  cormin <- replist$inputs$cormin
-  cormax <- replist$inputs$cormax
+  parchecks <- replist[["estimated_non_dev_parameters"]]
+  cormin <- replist[["inputs"]][["cormin"]]
+  cormax <- replist[["inputs"]][["cormax"]]
 
   # set default directory (following convention in other plot functions,
   # not bothering to create "plots" subfolder if called indepenently of SS_plots)
   if(is.null(plotdir)){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   #Filter out columns related to priors if there aren't any
-  if (all(parchecks$Pr_type == "No_prior")) {
-    parchecks$Prior <- NULL
-    parchecks$Pr_SD <- NULL
-    parchecks$Pr_Like <- NULL
+  if (all(parchecks[["Pr_type"]] == "No_prior")) {
+    parchecks[["Prior"]] <- NULL
+    parchecks[["Pr_SD"]] <- NULL
+    parchecks[["Pr_Like"]] <- NULL
   }
-  cors <- replist$corstats
+  cors <- replist[["corstats"]]
 
   #Highlight high gradients
   #(sorting turned off keep parameters in familiar order)
-  if(!is.null(parchecks$Gradient)){
-    parchecks <- parchecks[!is.na(parchecks$Gradient), ]
-    #parchecks <- parchecks[order(-parchecks$Gradient), ]
-    parchecks$Gradient <-
-      kableExtra::cell_spec(parchecks$Gradient,
+  if(!is.null(parchecks[["Gradient"]])){
+    parchecks <- parchecks[!is.na(parchecks[["Gradient"]]), ]
+    #parchecks <- parchecks[order(-parchecks[["Gradient"]]), ]
+    parchecks[["Gradient"]] <-
+      kableExtra::cell_spec(parchecks[["Gradient"]],
                             "html",
-                            color = ifelse(abs(parchecks$Gradient) >
+                            color = ifelse(abs(parchecks[["Gradient"]]) >
                                              gradmax, "red", "black"))
   }
   #Format table with parameter checks so high gradients or parameters on bounds are shown in red
-  parchecks$Afterbound <-
-    kableExtra::cell_spec(parchecks$Afterbound,
+  parchecks[["Afterbound"]] <-
+    kableExtra::cell_spec(parchecks[["Afterbound"]],
                           "html",
-                          color = ifelse(parchecks$Afterbound == "OK", "black", "red"))
-  parchecks$Status <-
-    kableExtra::cell_spec(parchecks$Status,
+                          color = ifelse(parchecks[["Afterbound"]] == "OK", "black", "red"))
+  parchecks[["Status"]] <-
+    kableExtra::cell_spec(parchecks[["Status"]],
                           "html",
-                          color = ifelse(parchecks$Status == "OK", "black", "red"))
+                          color = ifelse(parchecks[["Status"]] == "OK", "black", "red"))
 
   #Write out table
   the_table <- kableExtra::kable(parchecks,
@@ -77,14 +77,14 @@ SS_makeHTMLdiagnostictable <- function(replist,
   ))
 
   #Format high correlations table
-  if(!is.null(cors$cormessage3)){
-    high_cor_table <- cors$cormessage3
+  if(!is.null(cors[["cormessage3"]])){
+    high_cor_table <- cors[["cormessage3"]]
 
-    high_cor_table <- high_cor_table[order(high_cor_table$corr), ]
-    high_cor_table$corr <-
-      kableExtra::cell_spec(high_cor_table$corr,
+    high_cor_table <- high_cor_table[order(high_cor_table[["corr"]]), ]
+    high_cor_table[["corr"]] <-
+      kableExtra::cell_spec(high_cor_table[["corr"]],
                             "html",
-                            color = ifelse(abs(high_cor_table$corr) >
+                            color = ifelse(abs(high_cor_table[["corr"]]) >
                                              cormax, "red", "black"))
     the_table2 <- kableExtra::kable(high_cor_table,
                                     format = "html",
@@ -102,14 +102,14 @@ SS_makeHTMLdiagnostictable <- function(replist,
     ))
   }
   #Select and format low correlations table
-  if(!is.null(cors$cormessage10)){
-    low_cor_table <- cors$cormessage10
+  if(!is.null(cors[["cormessage10"]])){
+    low_cor_table <- cors[["cormessage10"]]
 
-    low_cor_table <- low_cor_table[order(low_cor_table$max), ]
-    low_cor_table$max <-
-      kableExtra::cell_spec(low_cor_table$max,
+    low_cor_table <- low_cor_table[order(low_cor_table[["max"]]), ]
+    low_cor_table[["max"]] <-
+      kableExtra::cell_spec(low_cor_table[["max"]],
                             "html",
-                            color = ifelse(abs(low_cor_table$max) <
+                            color = ifelse(abs(low_cor_table[["max"]]) <
                                              cormin, "purple", "black"))
     the_table3 <- kableExtra::kable(low_cor_table,
                                     format = "html",

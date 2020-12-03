@@ -55,18 +55,18 @@ SSplotMovementRates <-
   }
   plotinfo <- NULL
 
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
   
   # get values from replist
-  accuage    <- replist$accuage
-  move       <- replist$movement
-  nseasons   <- replist$nseasons
+  accuage    <- replist[["accuage"]]
+  move       <- replist[["movement"]]
+  nseasons   <- replist[["nseasons"]]
   min.move.age   <- min.move.age # need to get min.move.age into repfile somewhere
-  seasdur    <- replist$seasdurations
-  parameters <- replist$parameters
-  accuage    <- replist$accuage
-  nareas     <- replist$nareas
-  MGparmAdj  <- replist$MGparmAdj
+  seasdur    <- replist[["seasdurations"]]
+  parameters <- replist[["parameters"]]
+  accuage    <- replist[["accuage"]]
+  nareas     <- replist[["nareas"]]
+  MGparmAdj  <- replist[["MGparmAdj"]]
 
   # some empty value to be replaced in subplot 2
   moveByYr   <- NULL 
@@ -76,10 +76,10 @@ SSplotMovementRates <-
   if(1 %in% subplots){
     if(verbose) cat("  running subplot 1: movement rates in final year\n")
     
-    if(moveseas[1]=="all") moveseas <- sort(unique(move$Seas))
+    if(moveseas[1]=="all") moveseas <- sort(unique(move[["Seas"]]))
     for(iseas in moveseas){
-      move2   <- move[move$Seas==moveseas[iseas] &
-                      move$Source_area!=move$Dest_area,]
+      move2   <- move[move[["Seas"]]==moveseas[iseas] &
+                      move[["Source_area"]]!=move[["Dest_area"]],]
       
       if(nrow(move2)==0){
         if(verbose) cat("Skipping movement rate plot: no movement in season",moveseas[iseas],"\n")
@@ -100,7 +100,7 @@ SSplotMovementRates <-
           if(legend){
             legend(legendloc,lwd=3,bty="n",
                    col=colvec,lty=1:nrow(move2),
-                   legend=paste("area",move2$Source_area,"to area",move2$Dest_area)
+                   legend=paste("area",move2[["Source_area"]],"to area",move2[["Dest_area"]])
                    )
           }
         }
@@ -119,19 +119,19 @@ SSplotMovementRates <-
   # subplot 2: time-varying movement
   if(2 %in% subplots){
     # subset some report values
-    movepars <- parameters[grep("Move",replist$parameters$Label),]
+    movepars <- parameters[grep("Move",replist[["parameters"]][["Label"]]),]
     MGparmAdj <- MGparmAdj[,c(1,grep("MoveParm",names(MGparmAdj)))]
     # exclude forecast years (values were reported as zeros)
-    MGparmAdj <- MGparmAdj[MGparmAdj$Yr <= replist$endyr,]
+    MGparmAdj <- MGparmAdj[MGparmAdj[["Yr"]] <= replist[["endyr"]],]
     time <- any(apply(MGparmAdj[,-1], 2, function(x){any(x!=x[1])}))
     if(time){
       warning("plot of time-varying movement rates not currently working")
     if(FALSE){
       if(verbose) cat("  running subplot 2: time-varying movement rates\n")
       moveinfo <- move[,1:6]
-      moveinfo$LabelBase2 <- paste("seas_",moveinfo$Seas,"_GP_",moveinfo$GP,
-                                   "from_",moveinfo$Source,"to_",moveinfo$Dest,sep="")
-      moveinfo <- moveinfo[moveinfo$LabelBase2 %in% substring(movepars$Label,12),]
+      moveinfo[["LabelBase2"]] <- paste("seas_",moveinfo[["Seas"]],"_GP_",moveinfo[["GP"]],
+                                   "from_",moveinfo[["Source"]],"to_",moveinfo[["Dest"]],sep="")
+      moveinfo <- moveinfo[moveinfo[["LabelBase2"]] %in% substring(movepars[["Label"]],12),]
       ## print(moveinfo)
       nmoves <- nrow(moveinfo)
       if(verbose) cat("  N movement rates:",nmoves,"\n")
@@ -139,7 +139,7 @@ SSplotMovementRates <-
         cat("  WARNING: time-varying movement plots not yet configured",
             "for models with N areas > 2\n")
       }else{
-        yrvec <- replist$startyr:replist$endyr
+        yrvec <- replist[["startyr"]]:replist[["endyr"]]
         nyrs <- length(yrvec)
 
         ## if(nmoves*2 != nrow(movepars)){
@@ -205,23 +205,23 @@ SSplotMovementRates <-
         for(iyr in 1:nyrs){
           y <- yrvec[iyr]
           for(imove in 1:nmoves){
-            LabelA <- paste("MoveParm_A_",moveinfo$LabelBase2[imove],sep="")
-            LabelB <- paste("MoveParm_B_",moveinfo$LabelBase2[imove],sep="")
-            seas <- moveinfo$Seas[imove]
-            basevalueA <- movepars$Value[movepars$Label==LabelA]
-            basevalueB <- movepars$Value[movepars$Label==LabelB]
-            valueA <- MGparmAdj[[LabelA]][MGparmAdj$Yr==y]
-            valueB <- MGparmAdj[[LabelB]][MGparmAdj$Yr==y]
+            LabelA <- paste("MoveParm_A_",moveinfo[["LabelBase2"]][imove],sep="")
+            LabelB <- paste("MoveParm_B_",moveinfo[["LabelBase2"]][imove],sep="")
+            seas <- moveinfo[["Seas"]][imove]
+            basevalueA <- movepars[["Value"]][movepars[["Label"]]==LabelA]
+            basevalueB <- movepars[["Value"]][movepars[["Label"]]==LabelB]
+            valueA <- MGparmAdj[[LabelA]][MGparmAdj[["Yr"]]==y]
+            valueB <- MGparmAdj[[LabelB]][MGparmAdj[["Yr"]]==y]
             # fill in array
             moveByYr[ , iyr, imove] <-
               movecalc(min.move.age = min.move.age,
                        accuage  = accuage,
-                       minage   = rep(moveinfo$minage[imove],2),
-                       maxage   = rep(moveinfo$maxage[imove],2),
+                       minage   = rep(moveinfo[["minage"]][imove],2),
+                       maxage   = rep(moveinfo[["maxage"]][imove],2),
                        valueA   = c(valueA,0),
                        valueB   = c(valueB,0),
-                       from     = rep(moveinfo$Source_area[imove],2),
-                       to       = c(moveinfo$Dest_area[imove],moveinfo$Source_area[imove]),
+                       from     = rep(moveinfo[["Source_area"]][imove],2),
+                       to       = c(moveinfo[["Dest_area"]][imove],moveinfo[["Source_area"]][imove]),
                        seasdur  = seasdur[seas]
                        )
           } # end loop over movement definitions
@@ -230,8 +230,8 @@ SSplotMovementRates <-
         # make plots
         cat("Warning! Time-varying movement plots are experimental and might be totally wrong\n")
         for(imove in 1:nmoves){
-          Source_area <- moveinfo$Source_area[imove]
-          Dest_area <- moveinfo$Dest_area[imove]
+          Source_area <- moveinfo[["Source_area"]][imove]
+          Dest_area <- moveinfo[["Dest_area"]][imove]
           movetable <- moveByYr[, , imove]
           ### not sure why following line was present, removing on 10 May 2018
           #movetable <- moveByYr[1, ,imove,] 
@@ -260,8 +260,8 @@ SSplotMovementRates <-
   if(!is.null(moveByYr))
     returnlist <- list(moveinfo=moveinfo, moveByYr=moveByYr)
   if(!is.null(plotinfo)){
-    plotinfo$category <- "Move"
-    returnlist$plotinfo <- plotinfo
+    plotinfo[["category"]] <- "Move"
+    returnlist[["plotinfo"]] <- plotinfo
   }
   return(invisible(returnlist))
 }

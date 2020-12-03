@@ -75,50 +75,50 @@ SSplotData <- function(replist,
   plotinfo <- NULL
 
   ## ### override datasize variable in seasonal models
-  ## if(replist$nseasons > 1){
+  ## if(replist[["nseasons"]] > 1){
   ##   cat("  Setting datasize to FALSE because not yet implemented for seasonal models.\n")
   ##   datasize <- FALSE
   ## }
 
   ### get info from replist
   # dimensions
-  startyr       <- replist$startyr
-  endyr         <- replist$endyr
-  nfleets       <- replist$nfleets
+  startyr       <- replist[["startyr"]]
+  endyr         <- replist[["endyr"]]
+  nfleets       <- replist[["nfleets"]]
   
   if(fleetnames[1]=="default"){
-    fleetnames  <- replist$FleetNames
+    fleetnames  <- replist[["FleetNames"]]
   }
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   # catch
-  catch         <- replist$catch
+  catch         <- replist[["catch"]]
   
   # index
-  cpue          <- replist$cpue
+  cpue          <- replist[["cpue"]]
 
   # composition data
-  lendbase      <- replist$lendbase
-  sizedbase     <- replist$sizedbase
-  agedbase      <- replist$agedbase
-  condbase      <- replist$condbase
-  ghostagedbase <- replist$ghostagedbase
-  ghostcondbase <- replist$ghostcondbase
-  ghostlendbase <- replist$ghostlendbase
-  ladbase       <- replist$ladbase
-  wadbase       <- replist$wadbase
-  tagdbase1     <- replist$tagdbase1
+  lendbase      <- replist[["lendbase"]]
+  sizedbase     <- replist[["sizedbase"]]
+  agedbase      <- replist[["agedbase"]]
+  condbase      <- replist[["condbase"]]
+  ghostagedbase <- replist[["ghostagedbase"]]
+  ghostcondbase <- replist[["ghostcondbase"]]
+  ghostlendbase <- replist[["ghostlendbase"]]
+  ladbase       <- replist[["ladbase"]]
+  wadbase       <- replist[["wadbase"]]
+  tagdbase1     <- replist[["tagdbase1"]]
 
   # mean body weight
-  mnwgt         <- replist$mnwgt
+  mnwgt         <- replist[["mnwgt"]]
 
   # discards
-  discard       <- replist$discard
+  discard       <- replist[["discard"]]
 
   # tag data
-  tagrelease      <- replist$tagrelease
+  tagrelease      <- replist[["tagrelease"]]
 
   # make table of data types
   typetable <- matrix(c(
@@ -164,16 +164,16 @@ SSplotData <- function(replist,
         allyrs <- NULL
         size <- NULL
         # subset for this fleet
-        dat.f <- dat[dat$Fleet == ifleet,]
+        dat.f <- dat[dat[["Fleet"]] == ifleet,]
         # check for observations from this fleet
         if(nrow(dat.f) > 0){
 
           # identify years from different data types
           if(typename == "catch"){
             # aggregate catch by year
-            dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
-            allyrs <- dat.agg$Group.1[dat.agg$x > 0]
-            size <- dat.agg$x[dat.agg$x > 0]
+            dat.agg <- aggregate(dat.f[["Obs"]], by=list(dat.f[["Yr"]]), FUN=sum)
+            allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
+            size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
 
             #### turning off this feature because a data plot should probably
             #### only show data, rather than estimated discard mortality
@@ -181,47 +181,47 @@ SSplotData <- function(replist,
             ## # presumably this will include discards whereas the previous approach
             ## # may have only been landed catch
             ## if("kill_bio" %in% names(dat.f)){
-            ##   size <- dat.f$kill_bio[dat.f$Obs>0]
+            ##   size <- dat.f[["kill_bio"]][dat.f[["Obs"]]>0]
             ## }
           }
           if(typename == "cpue"){
             # filter out rows that aren't used
-            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f[["Use"]]) & dat.f[["Use"]] > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate by year, taking average SE (on a log scale)
-              dat.agg <- aggregate(dat.f$SE, by=list(dat.f$Yr), FUN=mean)
-              allyrs <- dat.agg$Group.1
-              size <- 1/dat.agg$x # inverse of mean SE
+              dat.agg <- aggregate(dat.f[["SE"]], by=list(dat.f[["Yr"]]), FUN=mean)
+              allyrs <- dat.agg[["Group.1"]]
+              size <- 1/dat.agg[["x"]] # inverse of mean SE
             }
           }
           if(typename == "mnwgt"){
             # filter out rows that aren't used
-            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f[["Use"]]) & dat.f[["Use"]] > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # get mean CV across partitions
-              dat.agg <- aggregate(dat.f$CV, by=list(dat.f$Yr), FUN=mean)
-              allyrs <- dat.agg$Group.1
-              size <- 1/dat.agg$x # inverse of mean CV
+              dat.agg <- aggregate(dat.f[["CV"]], by=list(dat.f[["Yr"]]), FUN=mean)
+              allyrs <- dat.agg[["Group.1"]]
+              size <- 1/dat.agg[["x"]] # inverse of mean CV
             }
           }
           if(typename == "discard"){
             # filter out rows that aren't used
-            dat.f <- dat.f[!is.na(dat.f$Use) & dat.f$Use > 0,]
+            dat.f <- dat.f[!is.na(dat.f[["Use"]]) & dat.f[["Use"]] > 0,]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # get mean standard deviation across partitions
-              dat.agg <- aggregate(dat.f$Std_in, by=list(dat.f$Yr), FUN=mean)
-              allyrs <- dat.agg$Group.1
-              size <- 1/dat.agg$x # inverse of mean CV
+              dat.agg <- aggregate(dat.f[["Std_in"]], by=list(dat.f[["Yr"]]), FUN=mean)
+              allyrs <- dat.agg[["Group.1"]]
+              size <- 1/dat.agg[["x"]] # inverse of mean CV
             }
           }
           if(typename %in% c("lendbase", "sizedbase", "agedbase")){
             # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
-            allyrs <- dat.agg$Group.1
-            size <- dat.agg$x
+            dat.agg <- aggregate(dat.f[["Nsamp_adj"]], by=list(dat.f[["Yr"]]), FUN=sum)
+            allyrs <- dat.agg[["Group.1"]]
+            size <- dat.agg[["x"]]
           }
           if(typename %in% c("ghostagedbase", "ghostcondbase", "ghostlendbase")){
-            allyrs <- unique(dat.f$Yr)
+            allyrs <- unique(dat.f[["Yr"]])
             # sample sizes not currently (as of 3.30.13) reported
             # for ghost observations
             size <- rep(1, length(allyrs))
@@ -230,33 +230,33 @@ SSplotData <- function(replist,
             # subset to a row for each observation (entry in data file)
             # to get representative sample size (sample size is repeated
             # for all bins within each vector of observations)
-            representative.rows <- !duplicated(paste(dat.f$Yr.S,
-                                                     dat.f$Sexes,
-                                                     dat.f$Lbin_lo,
-                                                     dat.f$Lbin_hi))
+            representative.rows <- !duplicated(paste(dat.f[["Yr.S"]],
+                                                     dat.f[["Sexes"]],
+                                                     dat.f[["Lbin_lo"]],
+                                                     dat.f[["Lbin_hi"]]))
             dat.sub <- dat.f[representative.rows,]
             # check for observations within this fleet
             if(nrow(dat.sub) > 0){
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.sub$Nsamp_adj, by=list(dat.sub$Yr), FUN=sum)
-              allyrs <- dat.agg$Group.1
-              size <- dat.agg$x
+              dat.agg <- aggregate(dat.sub[["Nsamp_adj"]], by=list(dat.sub[["Yr"]]), FUN=sum)
+              allyrs <- dat.agg[["Group.1"]]
+              size <- dat.agg[["x"]]
             }
           }
           if(typename=="tagrelease" & ifleet==1){
             # aggregate sample sizes by year
-            dat.agg <- aggregate(dat.f$Nrelease, by=list(dat.f$Yr), FUN=sum)
-            allyrs <- dat.agg$Group.1
-            size <- dat.agg$x
+            dat.agg <- aggregate(dat.f[["Nrelease"]], by=list(dat.f[["Yr"]]), FUN=sum)
+            allyrs <- dat.agg[["Group.1"]]
+            size <- dat.agg[["x"]]
           }
           if(typename=="tagdbase1"){
             # filter out rows that aren't used
-            dat.f <- dat.f[dat.f$Used == "yes",]
+            dat.f <- dat.f[dat.f[["Used"]] == "yes",]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.f$Obs, by=list(dat.f$Yr), FUN=sum)
-              allyrs <- dat.agg$Group.1[dat.agg$x > 0]
-              size <- dat.agg$x[dat.agg$x > 0]
+              dat.agg <- aggregate(dat.f[["Obs"]], by=list(dat.f[["Yr"]]), FUN=sum)
+              allyrs <- dat.agg[["Group.1"]][dat.agg[["x"]] > 0]
+              size <- dat.agg[["x"]][dat.agg[["x"]] > 0]
             }
           }
           # length- and weight-at-age have different sample sizes for each age
@@ -264,12 +264,12 @@ SSplotData <- function(replist,
           # (results will be same as if average was used due to rescaling) 
           if(typename %in% c("ladbase","wadbase")){
             # filter out rows that aren't used
-            dat.f <- dat.f[dat.f$Used == "yes",]
+            dat.f <- dat.f[dat.f[["Used"]] == "yes",]
             if(nrow(dat.f) > 0){ # skip of all values are excluded
               # aggregate sample sizes by year
-              dat.agg <- aggregate(dat.f$Nsamp_adj, by=list(dat.f$Yr), FUN=sum)
-              allyrs <- dat.agg$Group.1
-              size <- dat.agg$x
+              dat.agg <- aggregate(dat.f[["Nsamp_adj"]], by=list(dat.f[["Yr"]]), FUN=sum)
+              allyrs <- dat.agg[["Group.1"]]
+              size <- dat.agg[["x"]]
             }
           }
 
@@ -307,13 +307,13 @@ SSplotData <- function(replist,
   }
 
   # typetable2 has been subset according to requested choices of type
-  typetable2 <- typetable[typetable$fleet %in% fleets &
-                            typetable$typename %in% datatypes,]
+  typetable2 <- typetable[typetable[["fleet"]] %in% fleets &
+                            typetable[["typename"]] %in% datatypes,]
 
   # define dimensions of plot
-  ntypes <- length(unique(typetable2$itype))
+  ntypes <- length(unique(typetable2[["itype"]]))
   # fleets2 is a subset of fleets that have data of the requested types
-  fleets2 <- sort(unique(typetable2$fleet))
+  fleets2 <- sort(unique(typetable2[["fleet"]]))
   fleets2 <- fleets2[fleets2 %in% c(0,fleets)]
   nfleets2 <- length(fleets2)
   # add name for tag releases which are not assigned to a fleet
@@ -334,10 +334,10 @@ SSplotData <- function(replist,
   # function containing plotting commands
   plotdata <- function(datasize){
     par(mar=margins) # multi-panel plot
-    xlim <- c(-1,1)+range(typetable2$yr,na.rm=TRUE)
+    xlim <- c(-1,1)+range(typetable2[["yr"]],na.rm=TRUE)
     yval <- 0
     # count number of unique combinations of fleet and data type
-    ymax <- sum(as.data.frame(table(typetable2$fleet,typetable2$itype))$Freq>0)
+    ymax <- sum(as.data.frame(table(typetable2[["fleet"]],typetable2[["itype"]]))$Freq>0)
     main.temp <- ""
     if(mainTitle){
       main.temp <- if(datasize) {
@@ -353,27 +353,27 @@ SSplotData <- function(replist,
     axistable <- data.frame(fleet=rep(NA,ymax),yval=NA)
     itick <- 1
     # loop over data types
-    for(itype in rev(unique(typetable2$itype))){
+    for(itype in rev(unique(typetable2[["itype"]]))){
       ## Calculate relative size for each data type separately
-      size.max <- max(typetable2$size[typetable2$itype==itype], na.rm=TRUE)
+      size.max <- max(typetable2[["size"]][typetable2[["itype"]]==itype], na.rm=TRUE)
       if(size.max > 0){
         # rescale if max > 0
-        typetable2$size[typetable2$itype==itype] <-
-          typetable2$size[typetable2$itype==itype] / size.max
+        typetable2[["size"]][typetable2[["itype"]]==itype] <-
+          typetable2[["size"]][typetable2[["itype"]]==itype] / size.max
       }else{
         # if max = 0, then set all points to 0 (presumably they already were)
-        typetable2$size[typetable2$itype==itype] <- 0
+        typetable2[["size"]][typetable2[["itype"]]==itype] <- 0
       }
             
       # name for this data type
-      typename <- unique(typetable2$typename[typetable2$itype==itype])
+      typename <- unique(typetable2[["typename"]][typetable2[["itype"]]==itype])
       # subset of fleets for this data type
-      type.fleets <- sort(unique(typetable2$fleet[typetable2$itype==itype]))
+      type.fleets <- sort(unique(typetable2[["fleet"]][typetable2[["itype"]]==itype]))
       for(ifleet in rev(type.fleets)){
-        yrs <- typetable2$yr[typetable2$fleet==ifleet & typetable2$itype==itype]
+        yrs <- typetable2[["yr"]][typetable2[["fleet"]]==ifleet & typetable2[["itype"]]==itype]
         if(length(yrs)>0){
           col <- fleetcol[which(fleets2 == ifleet)]
-          size.cex <- typetable2$size[typetable2$fleet==ifleet & typetable2$itype==itype]
+          size.cex <- typetable2[["size"]][typetable2[["fleet"]]==ifleet & typetable2[["itype"]]==itype]
           yval <- yval+1
           x <- min(yrs):max(yrs)
           n <- length(x)
@@ -410,7 +410,7 @@ SSplotData <- function(replist,
       text(mean(xlim),yval-.3,typelabels[typenames==typename],font=2)
       #text(mean(xlim),yval,typelabels[typenames==typename],font=2)
     }
-    axis(4,at=axistable$yval,labels=fleetnames[axistable$fleet],las=1)
+    axis(4,at=axistable[["yval"]],labels=fleetnames[axistable[["fleet"]]],las=1)
     box()
     axis(1,at=xticks)
   }
@@ -445,7 +445,7 @@ SSplotData <- function(replist,
           "Note that since the circles are are scaled relative <br> ",
           "to maximum within each type, the scaling within separate plots <br> ",
           "should not be compared.")
-      if(replist$nseasons > 1){
+      if(replist[["nseasons"]] > 1){
         caption <- paste(
             caption,
             "<br>This is a seasonal model, so scaling is based on either <br> ",
@@ -462,8 +462,8 @@ SSplotData <- function(replist,
   returnlist <- list(typetable2=typetable2)
 
   if(!is.null(plotinfo)){
-    plotinfo$category <- "Data"
-    returnlist$plotinfo <- plotinfo
+    plotinfo[["category"]] <- "Data"
+    returnlist[["plotinfo"]] <- plotinfo
   }
   return(invisible(returnlist))
 }

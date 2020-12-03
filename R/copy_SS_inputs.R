@@ -61,11 +61,11 @@ copy_SS_inputs <- function(dir.old=NULL,
 
   results <- rep(NA, 6)
   if(!use_ss_new){ # copy original input files
-    results[1] <- file.copy(from=file.path(dir.old, starter$ctlfile),
-                            to = file.path(dir.new, starter$ctlfile),
+    results[1] <- file.copy(from=file.path(dir.old, starter[["ctlfile"]]),
+                            to = file.path(dir.new, starter[["ctlfile"]]),
                             overwrite=overwrite)
-    results[2] <- file.copy(from=file.path(dir.old, starter$datfile),
-                            to = file.path(dir.new, starter$datfile),
+    results[2] <- file.copy(from=file.path(dir.old, starter[["datfile"]]),
+                            to = file.path(dir.new, starter[["datfile"]]),
                             overwrite=overwrite)
     results[3] <- file.copy(from=file.path(dir.old, "forecast.ss"),
                             to = file.path(dir.new, "forecast.ss"),
@@ -80,10 +80,10 @@ copy_SS_inputs <- function(dir.old=NULL,
     }
   }else{ # copy ss_new files
     results[1] <- file.copy(from=file.path(dir.old, "control.ss_new"),
-              to = file.path(dir.new, starter$ctlfile),
+              to = file.path(dir.new, starter[["ctlfile"]]),
               overwrite=overwrite)
     results[2] <- file.copy(from=file.path(dir.old, "data.ss_new"),
-              to = file.path(dir.new, starter$datfile),
+              to = file.path(dir.new, starter[["datfile"]]),
               overwrite=overwrite)
     results[3] <- file.copy(from=file.path(dir.old, "forecast.ss_new"),
               to = file.path(dir.new, "forecast.ss"),

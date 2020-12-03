@@ -88,7 +88,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   corfile <- paste0(exe, ".cor")
   
   # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform$OS.type
+  OS <- .Platform[["OS.type"]]
 
   # Directory
   if(is.na(File)){
@@ -147,16 +147,16 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
   if( StartFromPar==TRUE &&
      paste0(exe, "_", Iteration-1, ".par") %in% list.files(File) ){
-    STARTER$init_values_src <- 1
+    STARTER[["init_values_src"]] <- 1
     PAR_0 <- scan(file.path(File, paste0(exe, "_",Iteration-1,".par")),
                   comment.char="#", quiet=TRUE)
   }else{
-    STARTER$init_values_src <- 0
+    STARTER[["init_values_src"]] <- 0
   }
   SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE, verbose=FALSE)
 
   # Read CTL
-  CTL <- readLines(file.path(File,STARTER$ctlfile))
+  CTL <- readLines(file.path(File,STARTER[["ctlfile"]]))
   # Modify CTL
   for(ParI in 1:length(SD_Group_Vec)){
     for(CtlLineI in 1:length(CTL_linenum_List[[ParI]])){
@@ -204,7 +204,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   #assign("CTL", value=CTL, envir=.GlobalEnv)
   #stop()
   # Write CTL
-  writeLines(CTL, file.path(File,STARTER$ctlfile))
+  writeLines(CTL, file.path(File,STARTER[["ctlfile"]]))
   if( "PAR_0" %in% ls() ){
     write(PAR_0, file=ParFile, ncolumns=10)
   }
@@ -243,7 +243,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   if(Converged==FALSE){
     # Change starter to take PAR file
     STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
-    STARTER$init_values_src <- 1
+    STARTER[["init_values_src"]] <- 1
     SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE, verbose=FALSE)
     # Loop through all previous start values
     PreviousIteration <- 0
@@ -312,7 +312,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
   if(Converged==TRUE){
     # Re-run to get Hessian
     STARTER <- SS_readstarter(file.path(File,"starter.ss"), verbose=FALSE)
-    STARTER$init_values_src <- 1
+    STARTER[["init_values_src"]] <- 1
     SS_writestarter(STARTER, dir=File, file="starter.ss", overwrite=TRUE,
                     verbose=FALSE)
     file.copy(from=file.path(File, paste0(exe, "_",Iteration,"-first.par")),
@@ -341,9 +341,9 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
         BiasRamp <- SS_fitbiasramp(SsOutput, altmethod="psoptim", print=FALSE, plot=FALSE)
         file.remove(file.path(File, stdfile))
         # Put into CTL
-        CTL <- readLines(file.path(File, STARTER$ctlfile))
-        CTL[BiasRamp_linenum_Vec] <- apply(BiasRamp$df, MARGIN=1, FUN=paste, collapse=" ")
-        writeLines(CTL, file.path(File, STARTER$ctlfile))
+        CTL <- readLines(file.path(File, STARTER[["ctlfile"]]))
+        CTL[BiasRamp_linenum_Vec] <- apply(BiasRamp[["df"]], MARGIN=1, FUN=paste, collapse=" ")
+        writeLines(CTL, file.path(File, STARTER[["ctlfile"]]))
         # Re-run to get Hessian
         command <- "ss3 -cbs 500000000 -gbs 500000000"
         if(OS!="Windows"){
@@ -378,10 +378,10 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
                 to=file.path(File, paste0("admodel_",Iteration,".hes")))
     file.rename(from=file.path(File,"Report.sso"),
                 to=file.path(File, paste0("Report_",Iteration,".sso")))
-    file.copy(from=file.path(File,STARTER$datfile),
-              to=file.path(File, paste0(STARTER$datfile,"_",Iteration,".dat")))
-    file.copy(from=file.path(File,STARTER$ctlfile),
-              to=file.path(File, paste0(STARTER$ctlfile,"_",Iteration,".ctl")))
+    file.copy(from=file.path(File,STARTER[["datfile"]]),
+              to=file.path(File, paste0(STARTER[["datfile"]],"_",Iteration,".dat")))
+    file.copy(from=file.path(File,STARTER[["ctlfile"]]),
+              to=file.path(File, paste0(STARTER[["ctlfile"]],"_",Iteration,".ctl")))
 
     # Read in some stuff
     STD <- scan(file.path(File, paste0(exe, "_",Iteration,".std")),
@@ -393,8 +393,8 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     DIAG <- read.admbFit(file.path(File, paste0(exe, "_",Iteration)))
     HESS <- getADMBHessian(File=File, FileName=paste0("admodel_",Iteration,".hes"))
     # Calculate Hessian
-    cov <- corpcor::pseudoinverse(HESS$hes)
-    scale <- HESS$scale
+    cov <- corpcor::pseudoinverse(HESS[["hes"]])
+    scale <- HESS[["scale"]]
     cov.bounded <- cov*(scale %o% scale)
     #se <- sqrt(diag(cov.bounded))
     #cor <- cov.bounded/(se %o% se)
@@ -414,7 +414,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
     }
 
     # Calculate NLL (while adding in constant of integration for random-walk coefficients)
-    NLL <- DIAG$nloglike
+    NLL <- DIAG[["nloglike"]]
     for(ParI in 1:length(SD_Group_Vec)){
       # Add in constant of integration for "Long_Penalty" parameters
       if(CTL_linenum_Type[ParI]=="Long_Penalty"){
@@ -477,7 +477,7 @@ NegLogInt_Fn <- function(File=NA, Input_SD_Group_Vec,
         ## }
         ## #Version 6 -- use subset of covariance calculated from COR file
         ## if(Version==6){
-        ##   Cov <- DIAG$cov
+        ##   Cov <- DIAG[["cov"]]
         ##   LnDet[IntI] <- -1 * determinant(Cov[Int_num_List[[IntI]],Int_num_List[[IntI]]],
         ##                                  logarithm=TRUE)$modulus[[1]]
         ## }

@@ -24,7 +24,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   # function to write Stock Synthesis forecast files
   if(verbose) cat("running SS_writeforecast\n")
   
-  if(!is.list(mylist) || mylist$type!="Stock_Synthesis_forecast_file"){
+  if(!is.list(mylist) || mylist[["type"]]!="Stock_Synthesis_forecast_file"){
     stop("input 'mylist' should be a list with $type=='Stock_Synthesis_forecast_file'")
   }
   
@@ -65,7 +65,7 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
     print.data.frame(dataframe, row.names=FALSE, strip.white=TRUE)
   }
   
-  SSversion <- mylist$SSversion
+  SSversion <- mylist[["SSversion"]]
   
   writeLines("#C forecast file written by R function SS_writeforecast")
   writeLines("#C rerun model to get more complete formatting in forecast.ss_new")
@@ -82,12 +82,12 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
   }else{
     writeLines("#_Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF,  beg_recr_dist, end_recr_dist, beg_SRparm, end_SRparm (enter actual year, or values of 0 or -integer to be rel. endyr)")
   }
-  writeLines(paste(paste(mylist$Bmark_years,collapse=" ")))
+  writeLines(paste(paste(mylist[["Bmark_years"]],collapse=" ")))
   wl("Bmark_relF_Basis")
   wl("Forecast")
   
 
-  if(mylist$Forecast > 0 | writeAll) {
+  if(mylist[["Forecast"]] > 0 | writeAll) {
     if(mylist[["Forecast"]] <= 0 & is.null(mylist[["eof"]])) {
       # only continue beyond this point if Forecast is not 0 or writeAll==TRUE,
       # so dont do other processing.
@@ -100,17 +100,17 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
       wl("F_scalar")
       if(SSversion==3.24){
         writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF")
-        writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
+        writeLines(paste(paste(mylist[["Fcast_years"]],collapse=" ")))
       }else{
         writeLines("#_Fcast_years:  beg_selex, end_selex, beg_relF, end_relF, beg_recruits, end_recruits (enter actual year, or values of 0 or -integer to be rel. endyr)")
-        writeLines(paste(paste(mylist$Fcast_years,collapse=" ")))
+        writeLines(paste(paste(mylist[["Fcast_years"]],collapse=" ")))
         wl("Fcast_selex")
       }
       wl("ControlRuleMethod")
       wl("BforconstantF")
       wl("BfornoF")
       wl("Flimitfraction")
-      if (mylist$Flimitfraction < 0) {
+      if (mylist[["Flimitfraction"]] < 0) {
         printdf("Flimitfraction_m")
       }
       wl("N_forecast_loops")
@@ -132,62 +132,62 @@ SS_writeforecast <-  function(mylist, dir=NULL, file="forecast.ss",
       if(SSversion==3.24){
         
         # write relative F values by fleet
-        if(mylist$fleet_relative_F==2){
+        if(mylist[["fleet_relative_F"]]==2){
           writeLines("#_vals_fleet_relative_f")
-          writeLines(paste(mylist$vals_fleet_relative_f,collapse=" "))
+          writeLines(paste(mylist[["vals_fleet_relative_f"]],collapse=" "))
         }
         
         writeLines("# max totalcatch by fleet (-1 to have no max)")
-        writeLines(paste(mylist$max_totalcatch_by_fleet,collapse=" "))
+        writeLines(paste(mylist[["max_totalcatch_by_fleet"]],collapse=" "))
         writeLines("# max totalcatch by area (-1 to have no max)")
-        writeLines(paste(mylist$max_totalcatch_by_area,collapse=" "))
+        writeLines(paste(mylist[["max_totalcatch_by_area"]],collapse=" "))
         writeLines("# fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)")
-        writeLines(paste(mylist$fleet_assignment_to_allocation_group,collapse=" "))
-        if(any(mylist$fleet_assignment_to_allocation_group!=0)){
-          writeLines(paste("# allocation fraction for each of:",mylist$N_allocation_groups," allocation groups"))
-          writeLines(paste(mylist$allocation_among_groups,collapse=" "))
+        writeLines(paste(mylist[["fleet_assignment_to_allocation_group"]],collapse=" "))
+        if(any(mylist[["fleet_assignment_to_allocation_group"]]!=0)){
+          writeLines(paste("# allocation fraction for each of:",mylist[["N_allocation_groups"]]," allocation groups"))
+          writeLines(paste(mylist[["allocation_among_groups"]],collapse=" "))
         }
         wl("Ncatch")
         wl("InputBasis")
-        if(mylist$Ncatch>0){
-          printdf(mylist$ForeCatch)
+        if(mylist[["Ncatch"]]>0){
+          printdf(mylist[["ForeCatch"]])
         }
       }
       # fleet and area-specific inputs for version 3.30
       if(SSversion=="3.30" | SSversion==3.3){
         
         # write relative F values by fleet
-        if(mylist$fleet_relative_F==2){
+        if(mylist[["fleet_relative_F"]]==2){
           writeLines("#_vals_fleet_relative_f")
-          printdf(mylist$vals_fleet_relative_f)
+          printdf(mylist[["vals_fleet_relative_f"]])
           writeLines("-9999 0 0")
         }
         
         writeLines("# enter list of fleet number and max for fleets with max annual catch; terminate with fleet=-9999")
-        if(!is.null(mylist$max_totalcatch_by_fleet)){
-          printdf(mylist$max_totalcatch_by_fleet)
+        if(!is.null(mylist[["max_totalcatch_by_fleet"]])){
+          printdf(mylist[["max_totalcatch_by_fleet"]])
         }
         writeLines("-9999 -1")
         writeLines("# enter list of area ID and max annual catch; terminate with area=-9999")
-        if(!is.null(mylist$max_totalcatch_by_area)){
-          printdf(mylist$max_totalcatch_by_area)
+        if(!is.null(mylist[["max_totalcatch_by_area"]])){
+          printdf(mylist[["max_totalcatch_by_area"]])
         }
         writeLines("-9999 -1")
         writeLines("# enter list of fleet number and allocation group assignment, if any; terminate with fleet=-9999")
-        if(!is.null(mylist$fleet_assignment_to_allocation_group)){
-          printdf(mylist$fleet_assignment_to_allocation_group)
+        if(!is.null(mylist[["fleet_assignment_to_allocation_group"]])){
+          printdf(mylist[["fleet_assignment_to_allocation_group"]])
         }
         writeLines("-9999 -1")
-        if(mylist$N_allocation_groups>0){
-          printdf(mylist$allocation_among_groups)
-          writeLines(paste0(c("-9999",rep(-1,mylist$N_allocation_groups)),
+        if(mylist[["N_allocation_groups"]]>0){
+          printdf(mylist[["allocation_among_groups"]])
+          writeLines(paste0(c("-9999",rep(-1,mylist[["N_allocation_groups"]])),
                             collapse=" "))
         }
         wl("InputBasis")
-        if(!is.null(mylist$ForeCatch) && nrow(mylist$ForeCatch > 0)){
-          printdf(mylist$ForeCatch)
+        if(!is.null(mylist[["ForeCatch"]]) && nrow(mylist[["ForeCatch"]] > 0)){
+          printdf(mylist[["ForeCatch"]])
         }
-        if(mylist$InputBasis==-1){
+        if(mylist[["InputBasis"]]==-1){
           writeLines("-9999 0 0 0 0")
         }else{
           writeLines("-9999 0 0 0")

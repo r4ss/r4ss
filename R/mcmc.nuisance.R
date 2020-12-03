@@ -115,7 +115,7 @@ mcmc.nuisance <- function (
   names(stats)[2] <- "geweke" 					# name the second column
   names(stats)[3] <- "effn"
   names(stats)[4] <- "heidelwelsch"
-  stats$Label <- names(mcmcdata) # add the header values if they exist
+  stats[["Label"]] <- names(mcmcdata) # add the header values if they exist
   
   hwsums <- as.vector(c(0,0,0)) 				# for use in plotting later on 
 
@@ -123,7 +123,7 @@ mcmc.nuisance <- function (
    {
     ##### Autocorrelation #####
      acftemp <- acf(mcmcobject[,i],lag.max=1,type="correlation",plot=F) # calculate the AC at lag 1
-     acoruse <- round(acftemp$acf[2],3) 		# extract the value and round it
+     acoruse <- round(acftemp[["acf"]][2],3) 		# extract the value and round it
      stats[i,1] <- acoruse 				# store it in the stats data.frame
 
     ##### Geweke statistic #####
@@ -132,7 +132,7 @@ mcmc.nuisance <- function (
      if(acoruse <= 0.4)
         {
          geweke <- geweke.diag(mcmcobject[,i],frac1=0.1,frac2=0.5)
-         gewuse <- round(geweke$z,3)
+         gewuse <- round(geweke[["z"]],3)
         }
      if(gewuse > 3)
         {gewuse <- 3}
@@ -172,7 +172,7 @@ mcmc.nuisance <- function (
   par(new=FALSE,						# Use same graphical window
       mfrow=c(2,2)) 						# set up "cells" to graph into
 
-  hist(stats$autocor,
+  hist(stats[["autocor"]],
        main="",col = "GREY",
        breaks=c(seq(-1,1,by=0.1)),
        xlim=c(-1,1),
@@ -184,11 +184,11 @@ mcmc.nuisance <- function (
                font=2, 						# make the font bold
                cex=1.5) 					# scale the text size
 
-  hist(stats$effn,main="",ylab="",xlab="Effective sample size",
+  hist(stats[["effn"]],main="",ylab="",xlab="Effective sample size",
        breaks=c(seq(0,draws,by=(draws/10))),
        xlim=c(0,draws),
        col = "GREY",)
-  hist(stats$geweke,main="",xlab="Geweke statistic",
+  hist(stats[["geweke"]],main="",xlab="Geweke statistic",
        breaks=c(seq(-5,5,by=0.25)),
        xlim=c(-3,3),
        right=TRUE,

@@ -96,8 +96,8 @@ SSmakeMmatrix <- function(mat, startyr, outfile=NULL,
                         Block_Fxn = 0)  #
 
   # add some comments
-  Mparams$comment <- paste("# M parameter for age",ages)
-  Mparams$comment[maxage+1] <- paste(Mparams$comment[maxage+1],"+",sep="")
+  Mparams[["comment"]] <- paste("# M parameter for age",ages)
+  Mparams[["comment"]][maxage+1] <- paste(Mparams[["comment"]][maxage+1],"+",sep="")
 
   cat("\n# stuff to paste into the first block of parameter lines\n")
   printdf(Mparams)
@@ -116,7 +116,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile=NULL,
                        stringsAsFactors = FALSE)
 
   # modify final comment to make clear as a plus group
-  Mlinks$comment[maxage+1] <- paste(Mlinks$comment[maxage+1],"+",sep="")
+  Mlinks[["comment"]][maxage+1] <- paste(Mlinks[["comment"]][maxage+1],"+",sep="")
 
   cat("\n# stuff to paste below the line labeled 'CohortGrowDev'\n")
   cat("1 #_custom mortality/growth environmental setup\n")
@@ -132,7 +132,7 @@ SSmakeMmatrix <- function(mat, startyr, outfile=NULL,
                        Variable=index,
                        Value=Mscaled,
                        comment=paste("# Env. index for time-varying M at age",a))
-    if(a==maxage) temp$comment <- paste(temp$comment,"+",sep="")
+    if(a==maxage) temp[["comment"]] <- paste(temp[["comment"]],"+",sep="")
     Menv <- rbind(Menv, temp) # paste into data.frame
   }
 

@@ -58,33 +58,33 @@ SSplotMnwt <-
   plotinfo <- NULL
 
   # get stuff from replist
-  mnwgt         <- replist$mnwgt
-  FleetNames    <- replist$FleetNames
-  DF_mnwgt      <- replist$DF_mnwgt
-  nfleets       <- replist$nfleets
-  SS_versionshort <- replist$SS_versionshort
+  mnwgt         <- replist[["mnwgt"]]
+  FleetNames    <- replist[["FleetNames"]]
+  DF_mnwgt      <- replist[["DF_mnwgt"]]
+  nfleets       <- replist[["nfleets"]]
+  SS_versionshort <- replist[["SS_versionshort"]]
 
 
   if(fleets[1]=="all") fleets <- 1:nfleets
   if(fleetnames[1]=="default") fleetnames <- FleetNames
-  if(plotdir=="default") plotdir <- replist$inputs$dir
+  if(plotdir=="default") plotdir <- replist[["inputs"]][["dir"]]
 
   # mean body weight observations ###
   if(!is.na(mnwgt)[1]){
-    for(ifleet in intersect(fleets,unique(mnwgt$Fleet))){
+    for(ifleet in intersect(fleets,unique(mnwgt[["Fleet"]]))){
       # usemnwgt is subset of mnwgt for the particular fleet
-      usemnwgt <- mnwgt[mnwgt$Fleet==ifleet & mnwgt$Obs>0,]
+      usemnwgt <- mnwgt[mnwgt[["Fleet"]]==ifleet & mnwgt[["Obs"]]>0,]
       if(SS_versionshort == "3.30"){
-        usemnwgt$Part <- usemnwgt$Part
+        usemnwgt[["Part"]] <- usemnwgt[["Part"]]
       } else {
-        usemnwgt$Part <- usemnwgt$Mkt
+        usemnwgt[["Part"]] <- usemnwgt[["Mkt"]]
       }
       FleetName <- fleetnames[ifleet]
-      for(j in unique(usemnwgt$Part)){
-        yr <- usemnwgt$Yr[usemnwgt$Part==j]
-        ob <- usemnwgt$Obs[usemnwgt$Part==j]
-        cv <- usemnwgt$CV[usemnwgt$Part==j]
-        ex <- usemnwgt$Exp[usemnwgt$Part==j]
+      for(j in unique(usemnwgt[["Part"]])){
+        yr <- usemnwgt[["Yr"]][usemnwgt[["Part"]]==j]
+        ob <- usemnwgt[["Obs"]][usemnwgt[["Part"]]==j]
+        cv <- usemnwgt[["CV"]][usemnwgt[["Part"]]==j]
+        ex <- usemnwgt[["Exp"]][usemnwgt[["Part"]]==j]
         xmin <- min(yr)-3
         xmax <- max(yr)+3
         liw <- -ob*cv*qt(0.025,DF_mnwgt) # quantile of t-distribution
@@ -140,6 +140,6 @@ SSplotMnwt <-
   ## }else{ # if mean weight data exists
   ##   if(verbose) cat("No mean body weight data to plot\n")
   }
-  if(!is.null(plotinfo)) plotinfo$category <- "Mnwt"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Mnwt"
   return(invisible(plotinfo))
 }

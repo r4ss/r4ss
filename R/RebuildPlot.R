@@ -231,9 +231,9 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
      LastCatch <- c(LastCatch,Yvals[length(Yvals)])
    }
  Xint <- sort.int(LastCatch,index.return=T)
- Files <- Files[Xint$ix]
- Opts <- Opts[Xint$ix]
- Labels <- Labels[Xint$ix]
+ Files <- Files[Xint[["ix"]]]
+ Opts <- Opts[Xint[["ix"]]]
+ Labels <- Labels[Xint[["ix"]]]
 
  if (ColorsUsed[1] == "default") ColorsUsed <- rich.colors.short(NOpts)
 
@@ -282,8 +282,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(AltStrat.output$ProbRecovery)) AltStrat.output$ProbRecovery <- data.frame(Yr=Xvals)
-       AltStrat.output$ProbRecovery[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output[["ProbRecovery"]])) AltStrat.output[["ProbRecovery"]] <- data.frame(Yr=Xvals)
+       AltStrat.output[["ProbRecovery"]][,Icnt+1] <- Yvals
       }
      abline(h=50,lwd=3)
      abline(v=Tmin,lwd=1,lty=2)
@@ -315,8 +315,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(AltStrat.output$Catch)) AltStrat.output$Catch <- data.frame(Yr=Xvals)
-       AltStrat.output$Catch[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output[["Catch"]])) AltStrat.output[["Catch"]] <- data.frame(Yr=Xvals)
+       AltStrat.output[["Catch"]][,Icnt+1] <- Yvals
       }
     }
 
@@ -345,8 +345,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(AltStrat.output$Depletion)) AltStrat.output$Depletion <- data.frame(Yr=Xvals)
-       AltStrat.output$Depletion[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output[["Depletion"]])) AltStrat.output[["Depletion"]] <- data.frame(Yr=Xvals)
+       AltStrat.output[["Depletion"]][,Icnt+1] <- Yvals
       }
     }
 
@@ -375,8 +375,8 @@ AltStrategies<-function(FileN,UUUs,Options,Title,yearmax,Titles,cols=c("red","bl
        lines(Xvals,Yvals,lty=IlineType,col=ColorsUsed[IlineType],lwd=lwd)
 
        # store stuff in output list
-       if(is.null(AltStrat.output$Bio)) AltStrat.output$Bio <- data.frame(Yr=Xvals)
-       AltStrat.output$Bio[,Icnt+1] <- Yvals
+       if(is.null(AltStrat.output[["Bio"]])) AltStrat.output[["Bio"]] <- data.frame(Yr=Xvals)
+       AltStrat.output[["Bio"]][,Icnt+1] <- Yvals
       }
      Jpnt <- which(UUUs[[1]]=="# Recruitments")-8
      B0 <- as.double(UUUs[[1]][Jpnt,1])
@@ -436,24 +436,24 @@ IndividualPlots<-function(UUU,Title,yearmax)
  for (ii in AllInd)
   {
 
-   if (ii==1) ind$ratio     <- PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax,1)
+   if (ii==1) ind[["ratio"]]     <- PlotA(UUU,0,"Spawning Output \\ Target",Ipnt,Npnt,yearmax,1)
 
-   if (ii==2) ind$catch     <- PlotA(UUU,6,paste("Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
+   if (ii==2) ind[["catch"]]     <- PlotA(UUU,6,paste("Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
-   if (ii==3) ind$rec       <- PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax,1)
+   if (ii==3) ind[["rec"]]       <- PlotA(UUU,12,"Recruitment",Ipnt,Npnt,yearmax,1)
 
-   if (ii==4) ind$mort      <- PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax,1)
+   if (ii==4) ind[["mort"]]      <- PlotA(UUU,18,expression(paste("Fishing Mortality ", (yr^-1))),Ipnt,Npnt,yearmax,1)
 
-   if (ii==5) ind$expl.bio  <- PlotA(UUU,24,paste("Exploitable Biomass",BioUnit),Ipnt,Npnt,yearmax,BioScalar)
+   if (ii==5) ind[["expl.bio"]]  <- PlotA(UUU,24,paste("Exploitable Biomass",BioUnit),Ipnt,Npnt,yearmax,BioScalar)
 
-   if (ii==6) ind$cum.catch <- PlotA(UUU,30,paste("Cumulative (discounted) Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
+   if (ii==6) ind[["cum.catch"]] <- PlotA(UUU,30,paste("Cumulative (discounted) Catch",CatchUnit),Ipnt,Npnt,yearmax,1)
 
    if (ii==7)
     {
-     ind$sb <- PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax,BioScalar)
+     ind[["sb"]] <- PlotA(UUU,36,"Spawning Biomass",Ipnt,Npnt,yearmax,BioScalar)
      Jpnt <- which(UUU=="# Recruitments")-8
      B0 <- as.double(UUU[Jpnt,1])
-     ind$sb$B0 <- B0/BioScalar
+     ind[["sb"]][["B0"]] <- B0/BioScalar
      abline(h=0.4*B0/BioScalar,lwd=1,lty=2)
      abline(h=0.25*B0/BioScalar,lwd=1,lty=2)
      cat("Making spawning biomass plot for run",ii,"\n")
@@ -619,12 +619,12 @@ FinalRecovery<-function(UUU,Title)
  for (Ifile in 1:Nfiles)
   if (5 %in% Plots[[Ifile]]) DoStrategies <- TRUE
  if (DoStrategies==T){
-   OutputList$AltStrategies <- AltStrategies(fileN,UUUs,Options,"",
+   OutputList[["AltStrategies"]] <- AltStrategies(fileN,UUUs,Options,"",
                                              yearmax,Titles)
  }
  if(pdf) dev.off()
 
- OutputList$ind.list <- ind.list
+ OutputList[["ind.list"]] <- ind.list
  return(invisible(OutputList))
 }
 

@@ -28,12 +28,12 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   }
   # Check user inputs are valid to avoid issues with functions.
   # check ctllist
-  if (ctllist$type != "Stock_Synthesis_control_file") {
+  if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
   # check version input
   if(is.null(version)) {
-  version <- ctllist$ReadVersion
+  version <- ctllist[["ReadVersion"]]
   }
   if(!(version == "3.24" | version == "3.30" | version == 3.3)) {
     stop("Input 'version' should be either '3.24' or '3.30'")

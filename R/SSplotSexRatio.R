@@ -89,23 +89,23 @@ SSplotSexRatio <-
   }
   plotinfo <- NULL
 
-  SS_versionNumeric <- replist$SS_versionNumeric
+  SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
-  lendbase      <- replist$lendbase
-  agedbase      <- replist$agedbase
-  ghostagedbase <- replist$ghostagedbase
-  ghostlendbase <- replist$ghostlendbase
-  nfleets       <- replist$nfleets
-  nseasons      <- replist$nseasons
-  seasfracs     <- replist$seasfracs
-  FleetNames    <- replist$FleetNames
-  nsexes        <- replist$nsexes
+  lendbase      <- replist[["lendbase"]]
+  agedbase      <- replist[["agedbase"]]
+  ghostagedbase <- replist[["ghostagedbase"]]
+  ghostlendbase <- replist[["ghostlendbase"]]
+  nfleets       <- replist[["nfleets"]]
+  nseasons      <- replist[["nseasons"]]
+  seasfracs     <- replist[["seasfracs"]]
+  FleetNames    <- replist[["FleetNames"]]
+  nsexes        <- replist[["nsexes"]]
 
   ## define a variety of titles and labels
   titles <- NULL
   titlemkt <- ""
   if(plotdir=="default"){
-    plotdir <- replist$inputs$dir
+    plotdir <- replist[["inputs"]][["dir"]]
   }
 
   ## sort out which fleets will be included
@@ -153,24 +153,24 @@ SSplotSexRatio <-
 
   ## Add asterix to indicate super periods and then remove rows labeled "skip".
   ## It would be better to somehow show the range of years, but that seems difficult.
-  if(any(dbase_kind$SuprPer=="Sup" & dbase_kind$Used=="skip")){
+  if(any(dbase_kind[["SuprPer"]]=="Sup" & dbase_kind[["Used"]]=="skip")){
     cat("Note: removing super-period composition values labeled 'skip'\n",
         "     and designating super-period values with a '*'\n")
-    dbase_kind <- dbase_kind[dbase_kind$SuprPer=="No" | dbase_kind$Used!="skip",]
-    dbase_kind$YrSeasName <- paste(dbase_kind$YrSeasName,ifelse(dbase_kind$SuprPer=="Sup","*",""),sep="")
+    dbase_kind <- dbase_kind[dbase_kind[["SuprPer"]]=="No" | dbase_kind[["Used"]]!="skip",]
+    dbase_kind[["YrSeasName"]] <- paste(dbase_kind[["YrSeasName"]],ifelse(dbase_kind[["SuprPer"]]=="Sup","*",""),sep="")
   }
   ageerr_warning <- TRUE
 
   ## # subset data based on requested range of sexes
-  ## dbase_kind <- dbase_kind[dbase_kind$sex %in% sexes,]
+  ## dbase_kind <- dbase_kind[dbase_kind[["sex"]] %in% sexes,]
   ## loop over fleets
   for(f in fleets){
-    dbasef <- dbase_kind[dbase_kind$Fleet==f,]
+    dbasef <- dbase_kind[dbase_kind[["Fleet"]]==f,]
     ## For a 2-sex model some fleets may have only females so skip those
-    if(length(unique(dbasef$Sex)) > 1 & nrow(dbasef) > 0 ){
+    if(length(unique(dbasef[["Sex"]])) > 1 & nrow(dbasef) > 0 ){
       ## loop over partitions (discard, retain, total)
-      for(j in unique(dbasef$Part)){
-        dbase <- dbasef[dbasef$Part==j,]
+      for(j in unique(dbasef[["Part"]])){
+        dbase <- dbasef[dbasef[["Part"]]==j,]
         ## assemble pieces of plot title
         ## market category
         if(j==0) titlemkt <- "whole catch, "
@@ -205,7 +205,7 @@ SSplotSexRatio <-
         ## Do the plotting and saving
         if(plot) tempfun(ipage=0,...)
         if(print){ # set up plotting to png file if required
-          npages <- ceiling(length(unique(dbase$Yr))/maxrows/maxcols)
+          npages <- ceiling(length(unique(dbase[["Yr"]]))/maxrows/maxcols)
           for(ipage in 1:npages){
             pagetext <- ""
             caption_count <- ""
@@ -240,7 +240,7 @@ SSplotSexRatio <-
     } # end if data
   } # end loop over fleets
 
-  if(!is.null(plotinfo)) plotinfo$category <- "Comp"
+  if(!is.null(plotinfo)) plotinfo[["category"]] <- "Comp"
   return(invisible(plotinfo))
 } # end embedded SSplotComps function
 ###########################

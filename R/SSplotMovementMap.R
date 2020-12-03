@@ -54,15 +54,15 @@ SSplotMovementMap <-
 
   # add arrows
   if(!is.null(xytable) & !is.null(replist)){
-    move <- replist$movement
-    move <- move[move$Source_area!=move$Dest_area
-                 & move$Seas==moveseas,]
+    move <- replist[["movement"]]
+    move <- move[move[["Source_area"]]!=move[["Dest_area"]]
+                 & move[["Seas"]]==moveseas,]
 
     lwdvec <- NULL
     ratevec <- NULL
     for(i in 1:nrow(move)){
-      area1 <- move$Source_area[i]
-      area2 <- move$Dest_area[i]
+      area1 <- move[["Source_area"]][i]
+      area2 <- move[["Dest_area"]][i]
 
       x1b <- xytable[area1,1]
       y1b <- xytable[area1,2]

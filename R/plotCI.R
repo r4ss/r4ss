@@ -23,8 +23,8 @@ plotCI <-
             ..., sfrac = 0.01, ymax = NULL, add = FALSE, col = "black") {
     # Written by Venables; modified for access to ylim, contents, and color
     if (is.list(x)) {
-      y <- x$y
-      x <- x$x
+      y <- x[["y"]]
+      x <- x[["x"]]
     }
     if (is.null(y)) {
       if (is.null(x)) {

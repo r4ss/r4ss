@@ -121,16 +121,16 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   # read in model files
   # get the r4ss files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  dat <- SS_readdat(file.path(dir, start$datfile), verbose = FALSE)
-  ctl <- SS_readctl(file.path(dir, start$ctlfile),
+  dat <- SS_readdat(file.path(dir, start[["datfile"]]), verbose = FALSE)
+  ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
     use_datlist = TRUE, datlist = dat,
     verbose = FALSE
   )
   if (fleets[1] == "all") {
-    fleets <- seq_len(dat$Nfleets)
+    fleets <- seq_len(dat[["Nfleets"]])
   } else {
-    if (!all(fleets %in% seq_len(dat$Nfleets))) {
-      fleets <- fleets[fleets %in% seq_len(dat$Nfleets)]
+    if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
+      fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
       warning("Not all fleets are included in the model. Changing fleets to ",
               "use only ones in the model: ", paste0(fleets, collapse = ", "))
       if(length(fleets) == 0) {
@@ -169,12 +169,12 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       dat[["age_info"]][, "ParmSelect"] <- 0
       ctl[["dirichlet_parms"]] <- NULL
       SS_writectl(ctl,
-        file.path(dir, start$ctlfile),
+        file.path(dir, start[["ctlfile"]]),
         overwrite = TRUE,
         verbose = FALSE
       )
       SS_writedat(dat,
-        file.path(dir, start$datfile),
+        file.path(dir, start[["datfile"]]),
         overwrite = TRUE,
         verbose = FALSE
       )
@@ -222,16 +222,16 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         var_adj <- var_adj[, 1:3]
         colnames(var_adj) <- c("Factor", "Fleet", "Value")
         if (allow_up_tuning == FALSE) {
-          var_adj$Value <- ifelse(var_adj$Value > 1, 1, var_adj$Value)
+          var_adj[["Value"]] <- ifelse(var_adj[["Value"]] > 1, 1, var_adj[["Value"]])
         }
-        var_adj <- var_adj[var_adj$Fleet %in% fleets, ]
+        var_adj <- var_adj[var_adj[["Fleet"]] %in% fleets, ]
         start <- SS_readstarter(file.path(dir, "starter.ss"),
           verbose = FALSE
         )
-        dat <- SS_readdat(file.path(dir, start$datfile),
+        dat <- SS_readdat(file.path(dir, start[["datfile"]]),
           verbose = FALSE
         )
-        ctl <- SS_readctl(file.path(dir, start$ctlfile),
+        ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
           use_datlist = TRUE, datlist = dat,
           verbose = FALSE
         )
@@ -239,19 +239,19 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           ctl[["DoVar_adjust"]] <- 1
           if (is.null(ctl[["Variance_adjustment_list"]])) {
             # create the list if it does not already exist
-            ctl$Variance_adjustment_list <- var_adj
+            ctl[["Variance_adjustment_list"]] <- var_adj
           } else {
             # leave all var adj intact, unless they match factor and fleet in var_adj.
             cur_var_adj <- ctl[["Variance_adjustment_list"]]
             for (i in seq_len(nrow(var_adj))) {
               tmp_fac <- var_adj[i, "Factor"]
               tmp_flt <- var_adj[i, "Fleet"]
-              tmp_row <- which(ctl$Variance_adjustment_list[, "Factor"] == tmp_fac &
-                ctl$Variance_adjustment_list[, "Fleet"] == tmp_flt)
+              tmp_row <- which(ctl[["Variance_adjustment_list"]][, "Factor"] == tmp_fac &
+                ctl[["Variance_adjustment_list"]][, "Fleet"] == tmp_flt)
               if (length(tmp_row) == 1) {
-                ctl$Variance_adjustment_list[tmp_row, ] <- var_adj[i, ]
+                ctl[["Variance_adjustment_list"]][tmp_row, ] <- var_adj[i, ]
               } else if (length(tmp_row) == 0) {
-                ctl$Variance_adjustment_list <- rbind(ctl$Variance_adjustment_list, var_adj[i, ])
+                ctl[["Variance_adjustment_list"]] <- rbind(ctl[["Variance_adjustment_list"]], var_adj[i, ])
               }
               # sanity check. If user recieving this error message, function is not
               # working as developer intended.
@@ -268,7 +268,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           }
         }
         SS_writectl(ctl,
-          file.path(dir, start$ctlfile),
+          file.path(dir, start[["ctlfile"]]),
           overwrite = TRUE,
           verbose = FALSE
         )
@@ -347,11 +347,11 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       ctl[["DoVar_adjust"]] <- 0
     }
     # Run the model once - look for convergence
-    SS_writedat(dat, file.path(dir, start$datfile),
+    SS_writedat(dat, file.path(dir, start[["datfile"]]),
       verbose = FALSE,
       overwrite = TRUE
     )
-    SS_writectl(ctl, file.path(dir, start$ctlfile),
+    SS_writectl(ctl, file.path(dir, start[["ctlfile"]]),
       verbose = FALSE,
       overwrite = TRUE
     )
@@ -420,17 +420,17 @@ get_tuning_table <- function(replist, fleets,
       if (verbose) message("calculating ", type, " tunings for fleet ", fleet, "\n")
       if (type == "len") {
         # table of info from SS
-        tunetable <- replist$Length_Comp_Fit_Summary
+        tunetable <- replist[["Length_Comp_Fit_Summary"]]
         Factor <- 4 # code for Control file
-        has_marginal <- fleet %in% replist$lendbase$Fleet
+        has_marginal <- fleet %in% replist[["lendbase"]][["Fleet"]]
         has_conditional <- FALSE
       }
       if (type == "age") {
         # table of info from SS
-        tunetable <- replist$Age_Comp_Fit_Summary
+        tunetable <- replist[["Age_Comp_Fit_Summary"]]
         Factor <- 5 # code for Control file
-        has_marginal <- fleet %in% replist$agedbase$Fleet
-        has_conditional <- fleet %in% replist$condbase$Fleet
+        has_marginal <- fleet %in% replist[["agedbase"]][["Fleet"]]
+        has_conditional <- fleet %in% replist[["condbase"]][["Fleet"]]
       }
       if (has_marginal & has_conditional) {
         warning(
@@ -471,10 +471,10 @@ get_tuning_table <- function(replist, fleets,
         # current value
         Curr_Var_Adj <- NA
         if ("Curr_Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable$Curr_Var_Adj[tunetable$Fleet == fleet]
+          Curr_Var_Adj <- tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if ("Var_Adj" %in% names(tunetable)) {
-          Curr_Var_Adj <- tunetable$Var_Adj[tunetable$Fleet == fleet]
+          Curr_Var_Adj <- tunetable[["Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(Curr_Var_Adj)) {
           stop("Model output missing required values, perhaps due to an older version of SS")
@@ -483,15 +483,15 @@ get_tuning_table <- function(replist, fleets,
         # McAllister-Ianelli multiplier
         MI_mult <- NA
         if ("HarMean(effN)/mean(inputN*Adj)" %in% names(tunetable)) {
-          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable$Fleet == fleet]
+          MI_mult <- tunetable$"HarMean(effN)/mean(inputN*Adj)"[tunetable[["Fleet"]] == fleet]
         }
         if ("MeaneffN/MeaninputN" %in% names(tunetable)) {
-          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable$Fleet == fleet]
+          MI_mult <- tunetable$"MeaneffN/MeaninputN"[tunetable[["Fleet"]] == fleet]
         }
         if ("Factor" %in% names(tunetable)) {
           # starting with version 3.30.12
-          MI_mult <- tunetable$Recommend_var_adj[tunetable$Fleet == fleet] /
-            tunetable$Curr_Var_Adj[tunetable$Fleet == fleet]
+          MI_mult <- tunetable[["Recommend_var_adj"]][tunetable[["Fleet"]] == fleet] /
+            tunetable[["Curr_Var_Adj"]][tunetable[["Fleet"]] == fleet]
         }
         if (is.na(MI_mult)) {
           stop("Model output missing required values, perhaps due to an older version of SS")
@@ -512,7 +512,7 @@ get_tuning_table <- function(replist, fleets,
             Francis_hi = round(Francis_hi, digits),
             MI_mult = round(MI_mult, digits),
             Type = type,
-            Name = replist$FleetNames[fleet],
+            Name = replist[["FleetNames"]][fleet],
             Note = Note,
             stringsAsFactors = FALSE
           )
@@ -525,22 +525,22 @@ get_tuning_table <- function(replist, fleets,
 
   # fill in new variance adjustment based on chosen option
   if (option == "none") {
-    tuning_table$New_Var_adj <- tuning_table$Old_Var_adj
+    tuning_table[["New_Var_adj"]] <- tuning_table[["Old_Var_adj"]]
   }
   if (option == "Francis") {
-    tuning_table$New_Var_adj <- tuning_table$New_Francis
-    NAvals <- is.na(tuning_table$New_Var_adj)
-    tuning_table$New_Var_adj[NAvals] <- tuning_table$New_MI[NAvals]
-    tuning_table$Note[NAvals] <- paste0(tuning_table$Note[NAvals], "--using MI value")
+    tuning_table[["New_Var_adj"]] <- tuning_table[["New_Francis"]]
+    NAvals <- is.na(tuning_table[["New_Var_adj"]])
+    tuning_table[["New_Var_adj"]][NAvals] <- tuning_table[["New_MI"]][NAvals]
+    tuning_table[["Note"]][NAvals] <- paste0(tuning_table[["Note"]][NAvals], "--using MI value")
   }
   if (option == "MI") {
-    tuning_table$New_Var_adj <- tuning_table$New_MI
+    tuning_table[["New_Var_adj"]] <- tuning_table[["New_MI"]]
   }
   names(tuning_table)[1] <- "#Factor" # add hash to facilitate pasting into Control
   rownames(tuning_table) <- 1:nrow(tuning_table)
 
   # stuff related to generalized size frequency data
-  tunetable_size <- replist$Size_Comp_Fit_Summary
+  tunetable_size <- replist[["Size_Comp_Fit_Summary"]]
   if (!is.null(tunetable_size)) {
     warning(
       "\n  Generalized size composition data doesn't have\n",
@@ -553,7 +553,7 @@ get_tuning_table <- function(replist, fleets,
 
   # return the results
   if (write) {
-    file <- file.path(replist$inputs$dir, "suggested_tuning.ss")
+    file <- file.path(replist[["inputs"]][["dir"]], "suggested_tuning.ss")
     if (verbose) message("writing to file", file, "\n")
     write.table(tuning_table,
       file = file, quote = FALSE, row.names = FALSE

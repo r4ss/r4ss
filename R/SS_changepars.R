@@ -122,7 +122,7 @@ function(
     ctltable <- SS_parlines(ctlfile=fullctlfile)
     
     # list of all parameter labels
-    allnames <- ctltable$Label
+    allnames <- ctltable[["Label"]]
     # empty list of "good" labels to be added to
     goodnames <- list()
     # if strings are provided, look for matching subset of labels
@@ -155,10 +155,10 @@ function(
     nvals <- length(goodnames)
     if(verbose){
       cat('These are the ctl file lines as they currently exist:\n')
-      print(ctltable[ctltable$Label %in% goodnames,])
+      print(ctltable[ctltable[["Label"]] %in% goodnames,])
     }
     for(i in 1:nvals){
-      linenums[i] <- ctltable$Linenum[ctltable$Label==goodnames[i]]
+      linenums[i] <- ctltable[["Linenum"]][ctltable[["Label"]]==goodnames[i]]
     }
   }else{
     if(is.null(linenums)){

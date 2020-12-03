@@ -19,12 +19,12 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
     lines(yrvec,upper,lty=3,col=col)
   }
 
-  n             <- retroSummary$n
-  recdevs       <- retroSummary$recdevs
-  recdevsLower  <- retroSummary$recdevsLower
-  recdevsUpper  <- retroSummary$recdevsUpper
-  lowerCI       <- retroSummary$lowerCI
-  upperCI       <- retroSummary$upperCI
+  n             <- retroSummary[["n"]]
+  recdevs       <- retroSummary[["recdevs"]]
+  recdevsLower  <- retroSummary[["recdevsLower"]]
+  recdevsUpper  <- retroSummary[["recdevsUpper"]]
+  lowerCI       <- retroSummary[["lowerCI"]]
+  upperCI       <- retroSummary[["upperCI"]]
 
   colvec      <- rich.colors.short(length(cohorts),alpha=.7)
   shadecolvec <- rich.colors.short(length(cohorts),alpha=.1)
@@ -53,7 +53,7 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
   if(legend) ylim <- ylim + c(0,1)
 
   if(length(mcmcVec)==1) mcmcVec <- rep(mcmcVec,n)
-  if(any(mcmcVec)) mcmc <- retroSummary$mcmc
+  if(any(mcmcVec)) mcmc <- retroSummary[["mcmc"]]
   for(imodel in (1:n)[mcmcVec]){
     tmp <- unique(c(grep("_RecrDev_",names(mcmc[[imodel]])),
                     grep("_InitAge_",names(mcmc[[imodel]])),
@@ -64,17 +64,17 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
       lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI)   #hard-wired probability
       med   <- apply(mcmc.tmp,2,quantile,prob=0.5)   #hard-wired probability
       upper <- apply(mcmc.tmp,2,quantile,prob=upperCI)   #hard-wired probability
-      recdevs[,imodel] <- med[match(recdevs$Label,mcmclabs)]
-      recdevsLower[,imodel] <- lower[match(recdevsLower$Label,mcmclabs)]
-      recdevsUpper[,imodel] <- upper[match(recdevsUpper$Label,mcmclabs)]
+      recdevs[,imodel] <- med[match(recdevs[["Label"]],mcmclabs)]
+      recdevsLower[,imodel] <- lower[match(recdevsLower[["Label"]],mcmclabs)]
+      recdevsUpper[,imodel] <- upper[match(recdevsUpper[["Label"]],mcmclabs)]
     }
   }
   
   for(iy in 1:length(cohorts)){
     y <- cohorts[iy]
-    cohortdevs      <- recdevs[recdevs$Yr==y,1:n]
-    cohortdevsLower <- recdevsLower[recdevsLower$Yr==y,1:n]
-    cohortdevsUpper <- recdevsUpper[recdevsUpper$Yr==y,1:n]
+    cohortdevs      <- recdevs[recdevs[["Yr"]]==y,1:n]
+    cohortdevsLower <- recdevsLower[recdevsLower[["Yr"]]==y,1:n]
+    cohortdevsUpper <- recdevsUpper[recdevsUpper[["Yr"]]==y,1:n]
     # combine rows where the parameter labels may differ
     if(nrow(cohortdevs)>1){
       cohortdevs2      <- rep(NA,n)
@@ -149,7 +149,7 @@ SSplotRetroDevs <- function(retroSummary,endyrvec,cohorts,ylim=c(-3,3),uncertain
 ##   retroSummary <- SSsummarize(retroModels)
 
 ##   # set the ending year of each model in the set
-##   endyrvec <- retroModels[[1]]$endyr-10:0
+##   endyrvec <- retroModels[[1]][["endyr"]]-10:0
 ##   # make comparison plot
 ##   pdf('retrospectives/retrospective_comparison_plots.pdf')
 ##   SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)

@@ -56,7 +56,7 @@ run_SS_models <- function(dirvec = NULL,
   results <- rep(NA, length(dirvec))
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
-  OS <- .Platform$OS.type
+  OS <- .Platform[["OS.type"]]
 
   # figure out name of executable based on 'model' input which may contain .exe
   if(length(grep(".exe",tolower(model))) == 1){
