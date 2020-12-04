@@ -5,6 +5,10 @@
 #' signs to double brackets with names in quotations instead. Note that this
 #' function will incorrectly convert text that includesnames in backticks that
 #' include a dollar sign (for example, test$`my$name` will not convert correctly).
+#' Note also that if a dollar sign is within a text string, it will also not 
+#' convert correctly (for example, "See test$name" would become 
+#' "See test[["name"]]", which is not parsable R code. Luckily, this is easily 
+#' discoverable by loading or sourcing the function.)
 #' @param file A file containing R source code
 #' @param out_file The name or path of a new file to write to. This is by
 #'  default the same as the original file. Set to NULL to avoid writing a new
