@@ -4,12 +4,7 @@
 \alias{rm_dollar_sign}
 \title{Replace dollar sign operator in a file}
 \usage{
-rm_dollar_sign(
-  file = "inst/extdata/test_rm_dollar_sign.txt",
-  out_file = file,
-  allow_recursive = TRUE,
-  max_loops = 5
-)
+rm_dollar_sign(file, out_file = file, allow_recursive = TRUE, max_loops = 5)
 }
 \arguments{
 \item{file}{A file containing R source code}

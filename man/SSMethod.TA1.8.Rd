@@ -112,7 +112,7 @@ notes might help anyone wanting to check or correct the code.
 }
 \examples{
 \dontrun{
-Nfleet <- length(myreplist$FleetNames)
+Nfleet <- length(myreplist[["FleetNames"]])
 for (Ifleet in 1:Nfleet) {
   SSMethod.TA1.8(myreplist, "len", fleet = Ifleet, maxpanel = maxpanel)
 }

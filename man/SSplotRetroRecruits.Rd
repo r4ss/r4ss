@@ -69,7 +69,7 @@ examine retrospective patterns in estimation of recruitment deviations.
  retroSummary <- SSsummarize(retroModels)
 
  # set the ending year of each model in the set
- endyrvec <- retroModels[[1]]$endyr-10:0
+ endyrvec <- retroModels[[1]][["endyr"]]-10:0
  # make comparison plot
  pdf('retrospectives/retrospective_comparison_plots.pdf')
  SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)

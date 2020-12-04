@@ -189,12 +189,12 @@ is issued.
                          cha1=c(letters[17:26], NA),
                          cha2=c(NA, "longer", letters[25:17]),
                          stringsAsFactors=FALSE)
-  levels(testData$fac1) <- c(levels(testData$fac1), "unusedLevel")
-  testData$Date <- as.Date("1900-1-1")
-  testData$Date[2] <- NA
-  testData$POSIXt <- as.POSIXct(strptime("1900-1-1 01:01:01",
+  levels(testData[["fac1"]]) <- c(levels(testData[["fac1"]]), "unusedLevel")
+  testData[["Date"]] <- as.Date("1900-1-1")
+  testData[["Date"]][2] <- NA
+  testData[["POSIXt"]] <- as.POSIXct(strptime("1900-1-1 01:01:01",
                                          format="\%Y-\%m-\%d \%H:\%M:\%S"))
-  testData$POSIXt[5] <- NA
+  testData[["POSIXt"]][5] <- NA
 
   ## Default
   write.fwf(x=testData)
@@ -211,10 +211,10 @@ is issued.
   write.fwf(x=testData[, 1:5], width=20)
 
   ## Show effect of 'scienfic' option
-  testData$num3 <- testData$num3 * 1e8
+  testData[["num3"]] <- testData[["num3"]] * 1e8
   write.fwf(testData, scientific=TRUE)
   write.fwf(testData, scientific=FALSE)
-  testData$num3 <- testData$num3 / 1e8
+  testData[["num3"]] <- testData[["num3"]] / 1e8
 
   ## Write to file and report format and fixed width information
   file <- tempfile()
@@ -223,18 +223,18 @@ is issued.
 
   ## Read exported data back to R (note +1 due to separator)
   ## ... without header
-  read.fwf(file=file, widths=formatInfo$width + 1, header=FALSE, skip=1,
+  read.fwf(file=file, widths=formatInfo[["width"]] + 1, header=FALSE, skip=1,
            strip.white=TRUE)
   
   ## ... with header - via postimport modfication
-  tmp <- read.fwf(file=file, widths=formatInfo$width + 1, skip=1,
+  tmp <- read.fwf(file=file, widths=formatInfo[["width"]] + 1, skip=1,
                   strip.white=TRUE)
   colnames(tmp) <- read.table(file=file, nrow=1, as.is=TRUE)
   tmp
 
   ## ... with header - persuading read.fwf to accept header properly
   ## (thanks to Marc Schwartz)
-  read.fwf(file=file, widths=formatInfo$width + 1, strip.white=TRUE,
+  read.fwf(file=file, widths=formatInfo[["width"]] + 1, strip.white=TRUE,
            skip=1, col.names=read.table(file=file, nrow=1, as.is=TRUE))
 
   ## ... with header - with the use of quotes

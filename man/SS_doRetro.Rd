@@ -71,7 +71,7 @@ to exclude.
     
     retroModels <- SSgetoutput(dirvec=file.path(mydir, "retrospectives",paste("retro",0:-5,sep="")))
     retroSummary <- SSsummarize(retroModels)
-    endyrvec <- retroSummary$endyrs + 0:-5
+    endyrvec <- retroSummary[["endyrs"]] + 0:-5
     SSplotComparisons(retroSummary, endyrvec=endyrvec, legendlabels=paste("Data",0:-5,"years"))
   }
 

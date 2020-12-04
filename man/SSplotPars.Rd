@@ -148,7 +148,7 @@ SSplotPars(replist = model)
 SSplotPars(
   replist = model, strings = c("steep", "R0"),
   nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
-  plotdir = file.path(model$inputs$dir, "distribution_plots")
+  plotdir = file.path(model[["inputs"]][["dir"]], "distribution_plots")
 )
 }
 

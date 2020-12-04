@@ -64,7 +64,7 @@ Function has not been fully tested yet
      print(varadjust)
 
      # write new table to file
-     SS_varadjust(dir=replist$inputs$dir, newctlfile="new_control.ss",
+     SS_varadjust(dir=replist[["inputs"]][["dir"]], newctlfile="new_control.ss",
                   newtable=varadjust, overwrite=FALSE)
    }
 }

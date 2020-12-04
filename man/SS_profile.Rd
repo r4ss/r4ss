@@ -122,10 +122,10 @@ mydir <- "C:/ss/Simple - Copy"
 # read starter file
 starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
 # change control file name in the starter file
-starter$ctlfile <- "control_modified.ss"
+starter[["ctlfile"]] <- "control_modified.ss"
 # make sure the prior likelihood is calculated
 # for non-estimated quantities
-starter$prior_like <- 1
+starter[["prior_like"]] <- 1
 # write modified starter file
 SS_writestarter(starter, dir=mydir, overwrite=TRUE)
 
@@ -151,7 +151,7 @@ profilesummary <- SSsummarize(profilemodels)
 
 # OPTIONAL COMMANDS TO ADD MODEL WITH PROFILE PARAMETER ESTIMATED
 MLEmodel <- SS_output("C:/ss/SSv3.24l_Dec5/Simple")
-profilemodels$MLE <- MLEmodel
+profilemodels[["MLE"]] <- MLEmodel
 profilesummary <- SSsummarize(profilemodels)
 # END OPTIONAL COMMANDS
 

@@ -74,9 +74,9 @@ in the format Report1.sso, Report2.sso, etc.
   # summarize output
   profilesummary <- SSsummarize(profilemodels)
   # Likelihoods
-  profilesummary$likelihoods[1,]
+  profilesummary[["likelihoods"]][1,]
   # Parameters
-  profilesummary$pars
+  profilesummary[["pars"]]
 }
 }
 \author{

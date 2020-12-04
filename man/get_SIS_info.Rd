@@ -27,7 +27,7 @@ is an additional input}
 \item{stock}{String to prepend id info to filename for CSV file}
 
 \item{final_year}{Year of assessment and reference points
-(typically will be model$endyr + 1)}
+(typically will be model[["endyr"]] + 1)}
 
 \item{data_year}{Last year of of timeseries data}
 
