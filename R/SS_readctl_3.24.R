@@ -213,7 +213,7 @@ SS_readctl_3.24 <- function(file,
     ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]]
     ctllist[["Nfleet"]] <- Nfleet <- datlist[["Nfleet"]]
     ctllist[["Nsurveys"]] <- Nsurveys <- datlist[["Nsurveys"]]
-    if (datlist[["N_ageerror_definition"]] > 0) {
+    if (datlist[["N_ageerror_definitions"]] > 0) {
       ctllist[["Do_AgeKey"]] <- Do_AgeKey <-
         ifelse(any(datlist[["ageerror"]][1:(nrow(datlist[["ageerror"]]) / 2) * 2, 1] < 0),
           1,
