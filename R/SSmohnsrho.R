@@ -5,7 +5,7 @@
 ##' (2) a "Wood's Hole Mohn's Rho", and
 ##' (3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho"
 ##' (2) and (3) are based on all years between the reference and the retrospective run.
-##' 
+##'
 ##'
 ##' @param summaryoutput List created by \code{SSsummarize}. The expected order for the
 ##' models are the full reference model, the retro -1, retro -2, and so forth.
@@ -28,9 +28,11 @@ SSmohnsrho <-
            endyrvec = NULL,
            startyr = NULL,
            verbose = TRUE) {
-    if(verbose){
-      message ("The expected order of models in the summary output are the\n",
-               "reference model followed by retro -1, retro -2, and so forth.")
+    if (verbose) {
+      message(
+        "The expected order of models in the summary output are the\n",
+        "reference model followed by retro -1, retro -2, and so forth."
+      )
     }
 
     N <- summaryoutput[["n"]]
@@ -54,23 +56,23 @@ SSmohnsrho <-
     for (i in 1:(N - 1)) {
       ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i])
       mohnSSB[i] <- (summaryoutput[["SpawnBio"]][ind, i + 1] -
-                       summaryoutput[["SpawnBio"]][ind, 1]) /
-                         summaryoutput[["SpawnBio"]][ind, 1]
+        summaryoutput[["SpawnBio"]][ind, 1]) /
+        summaryoutput[["SpawnBio"]][ind, 1]
 
       ind <- which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i])
       mohnRec[i] <- (summaryoutput[["recruits"]][ind, i + 1] -
-                       summaryoutput[["recruits"]][ind, 1]) /
-                         summaryoutput[["recruits"]][ind, 1]
+        summaryoutput[["recruits"]][ind, 1]) /
+        summaryoutput[["recruits"]][ind, 1]
 
       ind <- which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i])
       mohnBratio[i] <- (summaryoutput[["Bratio"]][ind, i + 1] -
-                          summaryoutput[["Bratio"]][ind, 1]) /
-                            summaryoutput[["Bratio"]][ind, 1]
+        summaryoutput[["Bratio"]][ind, 1]) /
+        summaryoutput[["Bratio"]][ind, 1]
 
       ind <- which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i])
       mohnF[i] <- (summaryoutput[["Fvalue"]][ind, i + 1] -
-                     summaryoutput[["Fvalue"]][ind, 1]) /
-                       summaryoutput[["Fvalue"]][ind, 1]
+        summaryoutput[["Fvalue"]][ind, 1]) /
+        summaryoutput[["Fvalue"]][ind, 1]
     }
 
     # Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho
@@ -79,23 +81,23 @@ SSmohnsrho <-
     for (i in 1:(N - 1)) {
       Hind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i + 1])
       HmohnSSB[i] <- (summaryoutput[["SpawnBio"]][Hind, i + 1] -
-                        summaryoutput[["SpawnBio"]][Hind, 1]) /
-                          summaryoutput[["SpawnBio"]][Hind, 1]
+        summaryoutput[["SpawnBio"]][Hind, 1]) /
+        summaryoutput[["SpawnBio"]][Hind, 1]
 
       Hind <- which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i + 1])
       HmohnRec[i] <- (summaryoutput[["recruits"]][Hind, i + 1] -
-                        summaryoutput[["recruits"]][Hind, 1]) /
-                          summaryoutput[["recruits"]][Hind, 1]
+        summaryoutput[["recruits"]][Hind, 1]) /
+        summaryoutput[["recruits"]][Hind, 1]
 
       Hind <- which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i + 1])
       HmohnF[i] <- (summaryoutput[["Fvalue"]][Hind, i + 1] -
-                      summaryoutput[["Fvalue"]][Hind, 1]) /
-                        summaryoutput[["Fvalue"]][Hind, 1]
+        summaryoutput[["Fvalue"]][Hind, 1]) /
+        summaryoutput[["Fvalue"]][Hind, 1]
 
       Hind <- which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i + 1])
       HmohnBratio[i] <- (summaryoutput[["Bratio"]][Hind, i + 1] -
-                           summaryoutput[["Bratio"]][Hind, 1]) /
-                             summaryoutput[["Bratio"]][Hind, 1]
+        summaryoutput[["Bratio"]][Hind, 1]) /
+        summaryoutput[["Bratio"]][Hind, 1]
     }
 
     # Wood's Hole Mohn's Rho Calculation for all years for each of the
@@ -108,22 +110,22 @@ SSmohnsrho <-
       ind <- which(summaryoutput[["SpawnBio"]][["Yr"]] == startyr):which(summaryoutput[["SpawnBio"]][["Yr"]] == endyrvec[i])
       mohnSSB.all[i] <-
         sum((summaryoutput[["SpawnBio"]][ind, i + 1] - summaryoutput[["SpawnBio"]][ind, 1]) /
-              summaryoutput[["SpawnBio"]][ind, 1]) / length(ind)
+          summaryoutput[["SpawnBio"]][ind, 1]) / length(ind)
 
       ind <- which(summaryoutput[["recruits"]][["Yr"]] == startyr):which(summaryoutput[["recruits"]][["Yr"]] == endyrvec[i])
       mohnRec.all[i] <-
         sum((summaryoutput[["recruits"]][ind, i + 1] - summaryoutput[["recruits"]][ind, 1]) /
-              summaryoutput[["recruits"]][ind, 1]) / length(ind)
+          summaryoutput[["recruits"]][ind, 1]) / length(ind)
 
       ind <- which(summaryoutput[["Bratio"]][["Yr"]] == startyr + 1):which(summaryoutput[["Bratio"]][["Yr"]] == endyrvec[i])
       mohnBratio.all[i] <-
         sum((summaryoutput[["Bratio"]][ind, i + 1] - summaryoutput[["Bratio"]][ind, 1]) /
-              summaryoutput[["Bratio"]][ind, 1]) / length(ind)
+          summaryoutput[["Bratio"]][ind, 1]) / length(ind)
 
       ind <- which(summaryoutput[["Fvalue"]][["Yr"]] == startyr):which(summaryoutput[["Fvalue"]][["Yr"]] == endyrvec[i])
       mohnF.all[i] <-
         sum((summaryoutput[["Fvalue"]][ind, i + 1] - summaryoutput[["Fvalue"]][ind, 1]) /
-              summaryoutput[["Fvalue"]][ind, 1]) / length(ind)
+          summaryoutput[["Fvalue"]][ind, 1]) / length(ind)
     }
 
     mohn.out <- list()

@@ -15,41 +15,45 @@
 #' @export
 #' @seealso \code{\link{SS_readwtatage}}
 #'
-SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
-                            overwrite=FALSE, verbose=TRUE, warn=TRUE){
-  if(verbose) message("running SS_writewtatage\n")
+SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
+                            overwrite = FALSE, verbose = TRUE, warn = TRUE) {
+  if (verbose) message("running SS_writewtatage\n")
 
   # Prevent earlier issues of getting stuck with all R
   # output written to the file after the function crashes before closing connection
-  on.exit({if(sink.number()>0) sink()})
+  on.exit({
+    if (sink.number() > 0) sink()
+  })
 
-  if(is.null(dir)) dir <- getwd() # set to working directory if no input provided
-  if(grepl("/$", dir)) {
+  if (is.null(dir)) dir <- getwd() # set to working directory if no input provided
+  if (grepl("/$", dir)) {
     outfile <- paste0(dir, file) # bc trailing backslash
   } else {
-    outfile <- file.path(dir,file)
+    outfile <- file.path(dir, file)
   }
-  if(file.exists(outfile)){
-    if(!overwrite){
-      stop("file exists:",outfile,"\n  set overwrite=TRUE to replace\n")
-    }else{
-      if(warn) {message("overwriting file:",outfile,"\n")}
+  if (file.exists(outfile)) {
+    if (!overwrite) {
+      stop("file exists:", outfile, "\n  set overwrite=TRUE to replace\n")
+    } else {
+      if (warn) {
+        message("overwriting file:", outfile, "\n")
+      }
       file.remove(outfile)
     }
-  }else{
-    if(verbose)message("writing new file:",outfile,"\n")
+  } else {
+    if (verbose) message("writing new file:", outfile, "\n")
   }
 
   # record current max characters per line and then expand in case of long lines
   oldwidth <- options()$width
-  options(width=1000)
+  options(width = 1000)
 
-  if(verbose) message("opening connection to",outfile,"\n")
-  zz <- file(outfile, open="at")
+  if (verbose) message("opening connection to", outfile, "\n")
+  zz <- file(outfile, open = "at")
   on.exit(close(zz))
-  sink(zz, split=verbose)
+  sink(zz, split = verbose)
 
-  writeLines(paste(NCOL(mylist)-7, "# maxage"))
+  writeLines(paste(NCOL(mylist) - 7, "# maxage"))
   writeLines("# if Yr is negative, then fill remaining years for that Seas, growpattern, Bio_Pattern, Fleet")
   writeLines("# if season is negative, then fill remaining fleets for that Seas, Bio_Pattern, Sex, Fleet")
   writeLines("# will fill through forecast years, so be careful")
@@ -59,19 +63,20 @@ SS_writewtatage <- function(mylist, dir=NULL, file="wtatage.ss",
 
   # Check for terminal line in data frame
   mylist <- mylist[order(mylist[["Yr"]], mylist[["Fleet"]], mylist[["Seas"]]), ]
-  if(any(mylist[["Yr"]] < -9998)){
+  if (any(mylist[["Yr"]] < -9998)) {
     mylist <- mylist[c(
       which(mylist[["Yr"]] >= -9998),
-      which(mylist[["Yr"]] < -9998)), ]
-  }else{
-    mylist <- rbind(mylist, mylist[1,])
+      which(mylist[["Yr"]] < -9998)
+    ), ]
+  } else {
+    mylist <- rbind(mylist, mylist[1, ])
     mylist[NROW(mylist), "Yr"] <- -9999
   }
   colnames(mylist)[1] <- paste0("#", colnames(mylist)[1])
-  print.data.frame(mylist, row.names=FALSE, strip.white=TRUE, max = dim(mylist)[1]*dim(mylist)[2])
+  print.data.frame(mylist, row.names = FALSE, strip.white = TRUE, max = dim(mylist)[1] * dim(mylist)[2])
 
   # restore printing width to whatever the user had before
-  options(width=oldwidth)
+  options(width = oldwidth)
   sink()
-  if(verbose)message("file written to",outfile,"\n")
+  if (verbose) message("file written to", outfile, "\n")
 }

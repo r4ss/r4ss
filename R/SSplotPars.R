@@ -253,7 +253,7 @@ SSplotPars <-
       goodnames <- goodnames[-skip]
       message("Skipping 'F_fleet_' parameters which aren't yet supported by this function")
     }
-    
+
     if (!showdev) {
       # remove deviations from the list of parameter labels to plot
       # exclude parameters that represent recdevs or other deviations
@@ -265,16 +265,18 @@ SSplotPars <-
       devrows <- NULL
       for (iname in 1:length(devnames)) {
         devrows <- unique(c(devrows, grep(
-                                       devnames[iname],
-                                       goodnames
-                                     )))
+          devnames[iname],
+          goodnames
+        )))
       }
       # if there are devs in the list, remove them
       if (length(devrows) > 0) {
         goodnames <- goodnames[-devrows]
         if (verbose) {
-          message("Excluding ", length(devrows),
-                  " deviation parameters because input 'showdev' = FALSE")
+          message(
+            "Excluding ", length(devrows),
+            " deviation parameters because input 'showdev' = FALSE"
+          )
         }
         if (length(goodnames) == 0) {
           message("no parameters to plot")
@@ -325,7 +327,7 @@ SSplotPars <-
     npages <- ceiling(npars / (nrows * ncols))
 
     ####################################################################
-    
+
     plotPars.fn <- function() {
       # function to make the actual plot
       if (!add) {
@@ -426,11 +428,13 @@ SSplotPars <-
         Ptype <- "Normal"
         Pr <- 0
       }
-      
+
       # add bounds and sigma for recdevs
-      if (any(sapply(X = c("RecrDev", "InitAge", "ForeRecr"),
-                     FUN = grepl,
-                     parname))) {
+      if (any(sapply(
+        X = c("RecrDev", "InitAge", "ForeRecr"),
+        FUN = grepl,
+        parname
+      ))) {
         Psd <- parameters[["Value"]][parameters[["Label"]] == "SR_sigmaR"]
       }
 

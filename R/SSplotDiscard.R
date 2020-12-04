@@ -97,7 +97,7 @@ SSplotDiscard <-
 
         yr <- as.numeric(usedisc[["Yr"]])
         # only use fractional year value if there are multiple seasons
-        if(any(usedisc[["Seas"]] > 1)){
+        if (any(usedisc[["Seas"]] > 1)) {
           yr <- as.numeric(usedisc[["Time"]])
         }
         ob <- as.numeric(usedisc[["Obs"]])

@@ -31,53 +31,61 @@
 #' \code{\link{SS_writestarter}},
 #' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
 
-SS_readdat <- function(file, version=NULL, verbose=TRUE,echoall=FALSE,section=NULL){
+SS_readdat <- function(file, version = NULL, verbose = TRUE, echoall = FALSE, section = NULL) {
 
   # automatic testing of version number ----
-  if(is.null(version)) {
+  if (is.null(version)) {
     # look for 3.24 or 3.30 at the top of the chosen file
-    version <- scan(file, what=character(), nlines=5, quiet=!verbose)
-    version <- substring(version,3,6)
+    version <- scan(file, what = character(), nlines = 5, quiet = !verbose)
+    version <- substring(version, 3, 6)
     version <- version[version %in% c("3.24", "3.30")]
     # if that fails, look for data.ss_new file in the same directory
-    if(length(version) > 0){
-      if(verbose)cat("assuming version", version, "based on first five lines of data file\n")
-    }else{
+    if (length(version) > 0) {
+      if (verbose) cat("assuming version", version, "based on first five lines of data file\n")
+    } else {
       newfile <- file.path(dirname(file), "data.ss_new")
-      if(file.exists(newfile)){
-        version <- scan(newfile, what=character(), nlines=1, quiet=!verbose)
-        version <- substring(version,3,6)
-        if(verbose)cat("assuming version", version, "based on first line of data.ss_new\n")
-      }else{
+      if (file.exists(newfile)) {
+        version <- scan(newfile, what = character(), nlines = 1, quiet = !verbose)
+        version <- substring(version, 3, 6)
+        if (verbose) cat("assuming version", version, "based on first line of data.ss_new\n")
+      } else {
         stop("input 'version' required due to missing value at top of", file)
       }
     }
   }
-  nver <- as.numeric(substring(version,1,4))
-  if(verbose) cat("Char version is ", version, "\n")
-  if(verbose) cat("Numeric version is ", nver, "\n")
+  nver <- as.numeric(substring(version, 1, 4))
+  if (verbose) cat("Char version is ", version, "\n")
+  if (verbose) cat("Numeric version is ", nver, "\n")
 
   # call function for SS version 2.00 ----
-  if(nver<3){
-    datlist <- SS_readdat_2.00(file=file, verbose=verbose,
-                               echoall=echoall, section=section)
+  if (nver < 3) {
+    datlist <- SS_readdat_2.00(
+      file = file, verbose = verbose,
+      echoall = echoall, section = section
+    )
   }
 
   # call function for SS version 3.00 ----
-  if((nver>=3)&&(nver<3.2)){
-    datlist <- SS_readdat_3.00(file=file, verbose=verbose,
-                               echoall=echoall, section=section)
+  if ((nver >= 3) && (nver < 3.2)) {
+    datlist <- SS_readdat_3.00(
+      file = file, verbose = verbose,
+      echoall = echoall, section = section
+    )
   }
-  
+
   # call function for SS version 3.24 ----
-  if((nver>=3.2)&&(nver<3.3)){
-    datlist <- SS_readdat_3.24(file=file, verbose=verbose,
-                               echoall=echoall, section=section)
+  if ((nver >= 3.2) && (nver < 3.3)) {
+    datlist <- SS_readdat_3.24(
+      file = file, verbose = verbose,
+      echoall = echoall, section = section
+    )
   }
   # call function for SS version 3.30 ----
-  if(nver>=3.3){
-    datlist <- SS_readdat_3.30(file=file, verbose=verbose,
-                               echoall=echoall, section=section)
+  if (nver >= 3.3) {
+    datlist <- SS_readdat_3.30(
+      file = file, verbose = verbose,
+      echoall = echoall, section = section
+    )
   }
   # return the result
   return(datlist)

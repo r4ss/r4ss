@@ -1,32 +1,32 @@
-SS_decision_table_stuff <- function(replist, yrs=2019:2030){
+SS_decision_table_stuff <- function(replist, yrs = 2019:2030) {
   # function for getting values for decision tables
   # not yet cleaned up for inclusion in r4ss
 
   # needs to be able to aggregate across areas for spatial models
-  if(replist[["nareas"]] > 1){
+  if (replist[["nareas"]] > 1) {
     warning("You probably need to aggregate function output across areas")
   }
   # subset timeseries
-  ts <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% yrs,]
+  ts <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% yrs, ]
   # note that new $dead_B_sum quantity can be used in future versions
-  catch <- apply(ts[,grep("dead(B)",names(ts),fixed=TRUE)], 1, sum)
+  catch <- apply(ts[, grep("dead(B)", names(ts), fixed = TRUE)], 1, sum)
   yr <- ts[["Yr"]]
   # get spawning biomass
-  SpawnBio <- round(ts[["SpawnBio"]],1)
+  SpawnBio <- round(ts[["SpawnBio"]], 1)
   # get depletion (this calc is independent of Bratio definition)
-  SpawnBioVirg <- replist[["timeseries"]][["SpawnBio"]][replist[["timeseries"]][["Era"]]=="VIRG"]
-  dep <- round(SpawnBio/SpawnBioVirg,3)
+  SpawnBioVirg <- replist[["timeseries"]][["SpawnBio"]][replist[["timeseries"]][["Era"]] == "VIRG"]
+  dep <- round(SpawnBio / SpawnBioVirg, 3)
   # get summary biomass (not currently reported)
   Bio_smry <- ts[["Bio_smry"]]
   # combine stuff
-  #stuff <- data.frame(yr=yr[ts[["Area"]]==1], catch, dep, SpawnBio, Bio_smry)
+  # stuff <- data.frame(yr=yr[ts[["Area"]]==1], catch, dep, SpawnBio, Bio_smry)
   stuff <- data.frame(yr, catch, SpawnBio, dep)
   return(stuff)
 }
 
 
 
-if(FALSE){
+if (FALSE) {
   # example use
   (dt <- SS_decision_table_stuff(base))
   ##        yr    catch SpawnBio   dep
@@ -38,5 +38,4 @@ if(FALSE){
   ## 3596 2022 17.07926     34.8 0.535
   ## 3597 2023 16.83214     34.3 0.527
   ## 3598 2024 16.61281     33.9 0.521
-  
 }

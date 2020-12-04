@@ -25,7 +25,7 @@ SS_writedat_3.24 <- function(datlist,
                              faster = FALSE,
                              verbose = TRUE) {
   # function to write Stock Synthesis data files
-  if (verbose){
+  if (verbose) {
     message("running SS_writedat_3.24")
   }
 
@@ -39,7 +39,7 @@ SS_writedat_3.24 <- function(datlist,
     if (!overwrite) {
       message("File exists and input 'overwrite'=FALSE: ", outfile)
       return()
-    } else{
+    } else {
       file.remove(outfile)
     }
   }
@@ -48,7 +48,7 @@ SS_writedat_3.24 <- function(datlist,
   oldmax.print <- options()$max.print
   options(width = 5000, max.print = 9999999)
 
-  if (verbose){
+  if (verbose) {
     message("opening connection to ", outfile)
   }
   zz <- file(outfile, open = "at")
@@ -60,15 +60,16 @@ SS_writedat_3.24 <- function(datlist,
 
   # simple function to write a single line
   wl <- function(name, comment = NULL) {
-    value = datlist[names(datlist) == name]
+    value <- datlist[names(datlist) == name]
     if (is.null(comment)) {
       writeLines(paste(value, " #_", name, sep = "", collapse = "_"), con = zz)
-    }else{
+    } else {
       if (length(grep(comment, pattern = "^#")) != 0) {
         writeLines(paste(value, comment), con = zz)
-      }else{
+      } else {
         writeLines(paste(value, " #_", comment, sep = "", collapse = "_"),
-                   con = zz)
+          con = zz
+        )
       }
     }
   }
@@ -77,13 +78,16 @@ SS_writedat_3.24 <- function(datlist,
   wl.vector <- function(name,
                         comment = NULL,
                         collapse = NULL) {
-    value = datlist[names(datlist) == name][[1]]
-    if (is.null(collapse))
+    value <- datlist[names(datlist) == name][[1]]
+    if (is.null(collapse)) {
       collapse <- " "
+    }
     if (is.null(comment)) {
-      writeLines(paste(paste(value, collapse = collapse), " #_", name, sep = ""), con =
-                 zz)
-    }else{
+      writeLines(paste(paste(value, collapse = collapse), " #_", name, sep = ""),
+        con =
+          zz
+      )
+    } else {
       writeLines(paste(paste(value, collapse = collapse), comment), con = zz)
     }
   }
@@ -95,10 +99,13 @@ SS_writedat_3.24 <- function(datlist,
     if (!is.null(header)) {
       writeLines(paste0("#_", header), con = zz)
     }
-    value = datlist[names(datlist) == name][[1]]
+    value <- datlist[names(datlist) == name][[1]]
     value1 <- sapply(value,
-                     function(x) { paste(paste(x), collapse = " ") },
-                     simplify = TRUE)
+      function(x) {
+        paste(paste(x), collapse = " ")
+      },
+      simplify = TRUE
+    )
     writeLines(value1, con = zz)
   }
 
@@ -110,7 +117,7 @@ SS_writedat_3.24 <- function(datlist,
       tmp <- datlist[names(datlist) == dataframe]
       if (length(tmp) > 0) {
         dataframe <- tmp[[1]]
-      }else{
+      } else {
         dataframe <- NULL
       }
     }
@@ -119,44 +126,46 @@ SS_writedat_3.24 <- function(datlist,
         names(dataframe)[1] <- paste("#_", names(dataframe)[1], sep = "")
         writeLines(paste(names(dataframe), collapse = "\t"), con = zz)
       }
-      if (!is.na(headerLine))
+      if (!is.na(headerLine)) {
         xxx <- 2
+      }
       if (!is.null(rownames(dataframe))) {
         rownames(dataframe) <-
           sapply(rownames(dataframe), function(z) {
             ifelse(length(grep(
-                x = z, pattern = "^#"
+              x = z, pattern = "^#"
             )) == 1, z, paste0("#_", z))
           })
         dataframe[["comments"]] <- rownames(dataframe)
       }
       if (faster) {
         write.table(
-            dataframe,
-            file = zz,
-            append = TRUE,
-            col.names = TRUE,
-            row.names = FALSE,
-            quote = FALSE
+          dataframe,
+          file = zz,
+          append = TRUE,
+          col.names = TRUE,
+          row.names = FALSE,
+          quote = FALSE
         )
-      }else{
+      } else {
         write.fwf(
-            file = zz,
-            x = dataframe,
-            append = TRUE,
-            sep = "\t",
-            quote = FALSE,
-            rownames = FALSE,
-            colnames = FALSE,
-            digits = 6
+          file = zz,
+          x = dataframe,
+          append = TRUE,
+          sep = "\t",
+          quote = FALSE,
+          rownames = FALSE,
+          colnames = FALSE,
+          digits = 6
         )
       }
     }
   }
   ## Function copied from SS_writectl3.24
   writeComment <- function(text, ...) {
-    if (length(grep(x = text, pattern = "^#")) != length(text))
-    text <- paste("#_", text, sep = "")
+    if (length(grep(x = text, pattern = "^#")) != length(text)) {
+      text <- paste("#_", text, sep = "")
+    }
     writeLines(text = text, con = zz, ...)
   }
 
@@ -176,9 +185,9 @@ SS_writedat_3.24 <- function(datlist,
   wl("Nfleet")
   wl("Nsurveys")
   wl("N_areas")
-  #writeLines(paste(paste(datlist[["fleetnames"]],collapse="%"),"#_fleetnames"))
+  # writeLines(paste(paste(datlist[["fleetnames"]],collapse="%"),"#_fleetnames"))
   wl.vector("fleetnames", collapse = "%", comment = "#_fleetnames")
-  #writeLines(paste(paste(datlist[["surveytiming"]],collapse=" "),"#_surveytiming_in_season"))
+  # writeLines(paste(paste(datlist[["surveytiming"]],collapse=" "),"#_surveytiming_in_season"))
   wl.vector("surveytiming", comment = "#_surveytiming_in_season")
   # writelines(paste(paste(datlist[["areas"]],collapse=" "),"#_area_assignments_for_each_fishery_and_survey"))
   wl.vector("areas", comment = "#_area_assignments_for_each_fishery_and_survey")
@@ -191,8 +200,9 @@ SS_writedat_3.24 <- function(datlist,
   # writeLines(paste(paste(datlist[["init_equil"]],collapse=" "),"#_init_equil_catch_for_each_fishery"))
   wl.vector("init_equil", comment = "#_init_equil_catch_for_each_fishery")
   wl("N_catch", comment = "#_N_lines_of_catch_to_read")
-  if (!is.null(datlist[["catch"]]))
+  if (!is.null(datlist[["catch"]])) {
     printdf(datlist[["catch"]])
+  }
 
   # write index info
   wl("N_cpue")
@@ -207,17 +217,20 @@ SS_writedat_3.24 <- function(datlist,
   wl("N_discard_fleets")
   writeComment("#_discard_units (1=same_as_catchunits(bio/num); 2=fraction; 3=numbers)")
   writeComment(
-      "#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal"
+    "#_discard_errtype:  >0 for DF of T-dist(read CV below); 0 for normal with CV; -1 for normal with se; -2 for lognormal"
   )
-  if (!is.null(datlist[["discard_fleet_info"]]))
+  if (!is.null(datlist[["discard_fleet_info"]])) {
     printdf(datlist[["discard_fleet_info"]])
+  }
   wl("N_discard")
-  if (!is.null(datlist[["discard_data"]]))
+  if (!is.null(datlist[["discard_data"]])) {
     printdf(datlist[["discard_data"]])
+  }
   wl("N_meanbodywt")
   wl("DF_for_meanbodywt", comment = "#_DF_for_meanbodywt_T-distribution_like")
-  if (!is.null(datlist[["meanbodywt"]]))
+  if (!is.null(datlist[["meanbodywt"]])) {
     printdf(datlist[["meanbodywt"]])
+  }
 
   # write length and age comps
   # length data
@@ -238,7 +251,7 @@ SS_writedat_3.24 <- function(datlist,
   wl("max_combined_lbin", comment = "#_combine males into females at or below this bin number")
   wl("N_lbins")
   writeComment("#_lbin_vector")
-  #writeLines(paste(datlist[["lbin_vector"]],collapse=" "))
+  # writeLines(paste(datlist[["lbin_vector"]],collapse=" "))
   wl.vector("lbin_vector")
   wl("N_lencomp", comment = "#_N_Length_comp_observations")
   if (!is.null(datlist[["lencomp"]])) {
@@ -252,8 +265,9 @@ SS_writedat_3.24 <- function(datlist,
     wl.vector("agebin_vector")
   }
   wl("N_ageerror_definitions")
-  if (!is.null(datlist[["ageerror"]]))
+  if (!is.null(datlist[["ageerror"]])) {
     printdf(datlist[["ageerror"]])
+  }
   wl("N_agecomp")
   wl("Lbin_method", comment = "#_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths")
   wl("max_combined_age", comment = "#_combine males into females at or below this bin number")
@@ -262,16 +276,19 @@ SS_writedat_3.24 <- function(datlist,
   }
   wl("N_MeanSize_at_Age_obs")
   #    datlist[["MeanSize_at_Age_obs2"]] <- matrix(datlist[["N_MeanSize_at_Age_obs"]])
-  if (!is.null(datlist[["MeanSize_at_Age"]]))
+  if (!is.null(datlist[["MeanSize_at_Age"]])) {
     printdf(datlist[["MeanSize_at_Age_obs"]])
+  }
   wl("N_environ_variables")
   wl("N_environ_obs")
-  if (!is.null(datlist[["envdat"]]))
+  if (!is.null(datlist[["envdat"]])) {
     printdf(datlist[["envdat"]])
+  }
 
   # write generalized size frequency data
-  if (is.null(datlist[["N_sizefreq_methods"]]))
+  if (is.null(datlist[["N_sizefreq_methods"]])) {
     datlist[["N_sizefreq_methods"]] <- 0
+  }
   wl("N_sizefreq_methods")
   if (datlist[["N_sizefreq_methods"]] > 0) {
     #  writeLines(paste(paste(datlist[["nbins_per_method"]],collapse=" "),"#_nbins_per_method"))
@@ -299,20 +316,23 @@ SS_writedat_3.24 <- function(datlist,
     wl("N_recap_events")
     wl("mixing_latency_period")
     wl("max_periods")
-    if (!is.null(datlist[["tag_releases"]]))
+    if (!is.null(datlist[["tag_releases"]])) {
       printdf(datlist[["tag_releases"]])
-    if (!is.null(datlist[["tag_recaps"]]))
+    }
+    if (!is.null(datlist[["tag_recaps"]])) {
       printdf(datlist[["tag_recaps"]])
+    }
   }
-  if (is.null(datlist[["morphcomp_data"]]))
+  if (is.null(datlist[["morphcomp_data"]])) {
     datlist[["morphcomp_data"]] <- 0
+  }
   wl("morphcomp_data")
   writeComment("#")
   writeLines("999", con = zz)
   #  options(width=oldwidth,max.print=oldmax.print)
   #  sink()
   #  close(zz)
-  if (verbose){
+  if (verbose) {
     message("file written to ", outfile)
   }
 }

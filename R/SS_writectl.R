@@ -32,32 +32,34 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
     stop("Input 'ctllist' should be a list with component type == 'Stock_Synthesis_control_file")
   }
   # check version input
-  if(is.null(version)) {
-  version <- ctllist[["ReadVersion"]]
+  if (is.null(version)) {
+    version <- ctllist[["ReadVersion"]]
   }
-  if(!(version == "3.24" | version == "3.30" | version == 3.3)) {
+  if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     stop("Input 'version' should be either '3.24' or '3.30'")
   }
   # Check user inputs and/or prepare the file to be overwitten.
-  if(file.exists(outfile)) {
-    if(!overwrite) {
-      stop("Outfile called ", outfile," exists and input 'overwrite'= FALSE.",
-           "Please set overwrite = TRUE if you wish to overwrite the file.")
-    } else if(overwrite) {
+  if (file.exists(outfile)) {
+    if (!overwrite) {
+      stop(
+        "Outfile called ", outfile, " exists and input 'overwrite'= FALSE.",
+        "Please set overwrite = TRUE if you wish to overwrite the file."
+      )
+    } else if (overwrite) {
       file.remove(outfile)
     }
   }
-  
+
   # function call depends on user version
-  if(version == "3.24") {
+  if (version == "3.24") {
     # Specify nseas, N_areas, and Do_AgeKey as input.
     SS_writectl_3.24(ctllist, outfile, overwrite = overwrite, verbose = verbose)
   }
-  if(version == "3.30" | version == 3.3) {
+  if (version == "3.30" | version == 3.3) {
     # This function will get nseas, N_areas, and Do_AgeKey from ctllist.
     SS_writectl_3.30(ctllist, outfile, overwrite, verbose)
   }
   # because this function is used for its side effects (i.e., writing to disk),
   # return its first argument invisibly.
-  invisible(ctllist) 
+  invisible(ctllist)
 }

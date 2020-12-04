@@ -514,8 +514,10 @@ SSplotComparisons <-
             indexfleets <- rep(indexfleets, n)
           }
           if (length(indexfleets) != n) {
-            warning("Skipping index plots: length(indexfleets) should be 1 or n = ",
-                    n, ".")
+            warning(
+              "Skipping index plots: length(indexfleets) should be 1 or n = ",
+              n, "."
+            )
             indexfleets <- NULL
           }
         }
@@ -524,8 +526,10 @@ SSplotComparisons <-
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
         message("indexfleets:")
         print(indexfleets)
-        warning("Skipping index plots:\n",
-                "Fleets have different numbers of indices listed in 'indexfleets'.")
+        warning(
+          "Skipping index plots:\n",
+          "Fleets have different numbers of indices listed in 'indexfleets'."
+        )
         indexfleets <- NULL
       }
 
@@ -1116,10 +1120,12 @@ SSplotComparisons <-
           # don't show ratio
           abline(h = sprtarg, col = "red", lty = 2)
           text(SPRratio[["Yr"]][1] + 4, (sprtarg + 0.03), labels[10],
-               adj = 0)
-          mtext(side = 2, text=SPRratioLabel,
-                line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
-
+            adj = 0
+          )
+          mtext(
+            side = 2, text = SPRratioLabel,
+            line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+          )
         } else {
           # draw line at sprtarg
           yticks <- pretty(ylim)
@@ -1132,26 +1138,34 @@ SSplotComparisons <-
             abline(h = 1, col = "red", lty = 2)
             text(SPRratio[["Yr"]][1] + 4, 1 + 0.03, labels[10], adj = 0)
             axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
-            mtext(side = 4, text="1 - SPR",
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 4, text = "1 - SPR",
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
             # line below has round to be more accurate
             # than the floor which is used
             # in the test above and in SS
-            mtext(side = 2, text=paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, text = paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
           } else {
             message(
               "No line added to SPR ratio plot, ",
               "as the settings used in this model ",
               "have not yet been configured in SSplotComparisons."
             )
-            mtext(side = 2, text=SPRratioLabel,
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, text = SPRratioLabel,
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
           }
         }
       } else {
-        mtext(side = 2, text=SPRratioLabel,
-              line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+        mtext(
+          side = 2, text = SPRratioLabel,
+          line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+        )
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels
@@ -1264,8 +1278,10 @@ SSplotComparisons <-
         }
       }
       abline(h = 0, col = "grey")
-      mtext(side = 2, text=FvalueLabel,
-            line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+      mtext(
+        side = 2, text = FvalueLabel,
+        line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+      )
       box()
       if (legend) legendfun(legendlabels)
 
@@ -1733,8 +1749,9 @@ SSplotComparisons <-
         for (iline in (1:nlines)[!mcmcVec]) {
           adj <- 0.2 * iline / nlines - 0.1
           imodel <- models[iline]
-          if(any(is.na(indices2[["like"]])))
+          if (any(is.na(indices2[["like"]]))) {
             warning("NA's found in likelihood, may cause issues with index plots")
+          }
           subset <- indices2[["imodel"]] == imodel & !is.na(indices2[["Like"]])
           # add uncertainty intervals if requested
           if (indexUncertainty) {
@@ -2110,14 +2127,20 @@ SSplotComparisons <-
           axis(1, at = xticks, labels = format(xticks / xunits))
           theLine <- par()$mgp[1]
           if (cumulative) {
-            axis(2, at = symbolsQuants, labels = format(symbolsQuants),
-                 cex.axis = 0.9)
-            mtext(side = 2, line = theLine,
-                  text='Cumulative Probability',
-                  col=par()$col.lab, cex=par()$cex.lab)
+            axis(2,
+              at = symbolsQuants, labels = format(symbolsQuants),
+              cex.axis = 0.9
+            )
+            mtext(
+              side = 2, line = theLine,
+              text = "Cumulative Probability",
+              col = par()$col.lab, cex = par()$cex.lab
+            )
           } else {
-            mtext(side = 2, line = theLine, text=labels[9],
-                  col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, line = theLine, text = labels[9],
+              col = par()$col.lab, cex = par()$cex.lab
+            )
           }
           box()
         }

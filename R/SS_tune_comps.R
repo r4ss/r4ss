@@ -131,9 +131,11 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   } else {
     if (!all(fleets %in% seq_len(dat[["Nfleets"]]))) {
       fleets <- fleets[fleets %in% seq_len(dat[["Nfleets"]])]
-      warning("Not all fleets are included in the model. Changing fleets to ",
-              "use only ones in the model: ", paste0(fleets, collapse = ", "))
-      if(length(fleets) == 0) {
+      warning(
+        "Not all fleets are included in the model. Changing fleets to ",
+        "use only ones in the model: ", paste0(fleets, collapse = ", ")
+      )
+      if (length(fleets) == 0) {
         stop("Please specify fleets used in the model")
       }
     }

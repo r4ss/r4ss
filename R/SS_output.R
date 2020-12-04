@@ -453,8 +453,8 @@ SS_output <-
 
     # check for revised format to facilitate custom reporting
     # added with 3.30.15.06
-    custom <- !is.na(matchfun(string = "report:1", obj = rawrep[,2]))
-    
+    custom <- !is.na(matchfun(string = "report:1", obj = rawrep[, 2]))
+
     if (verbose) {
       if ((maxnonblank + 1) == ncols) {
         message("Got all columns using ncols = ", ncols)
@@ -831,8 +831,8 @@ SS_output <-
 
       # IGT 11-Sept-2020: temporarily hardwiring while I figure out how
       #                   read.table works
-      ncols.compfile <- 300 
-      #ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
+      ncols.compfile <- 300
+      # ncols.compfile <- get_ncol(compfile, skip = 3, nrows = 25)
 
       # now read table using the appropriate number of columns
       allbins <- read.table(
@@ -847,8 +847,10 @@ SS_output <-
       lbinspop <- as.numeric(allbins[grep("Size_Bins_pop", allbins[, 1]) + 2, -1])
       lbinspop <- lbinspop[!is.na(lbinspop)]
       nlbinspop <- length(lbinspop)
-      Lbin_method <- as.numeric(allbins[matchfun("Method_for_Lbin_definition",
-                                                 allbins[, 1]), 2])
+      Lbin_method <- as.numeric(allbins[matchfun(
+        "Method_for_Lbin_definition",
+        allbins[, 1]
+      ), 2])
       if (compend == compskip + 2) {
         message("It appears that there is no composition data in CompReport.sso")
         comp <- FALSE # turning off switch to function doesn't look for comp data later on
@@ -2804,11 +2806,11 @@ SS_output <-
 
     # depletion basis
     depletion_basis <- as.numeric(rawrep[matchfun("Depletion_basis"), 2])
-    if(is.na(depletion_basis)){
+    if (is.na(depletion_basis)) {
       # older versions had a different string
       depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
     }
-      
+
     B_ratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
     if (B_ratio_denominator == "no_depletion_basis") {
       B_ratio_denominator <- "none"
@@ -3402,35 +3404,36 @@ SS_output <-
 
     # new section added in SSv3.30.16.03
     Report_Z_by_area_morph_platoon <-
-      matchfun2("Report_Z_by_area_morph_platoon", 
-                adjust1 = 1,
-                header = FALSE)
+      matchfun2("Report_Z_by_area_morph_platoon",
+        adjust1 = 1,
+        header = FALSE
+      )
     if (is.null(Report_Z_by_area_morph_platoon)) {
       Z_by_area <- NULL
       M_by_area <- NULL
     } else {
       Z_by_area <- matchfun2("With_fishery",
-                             adjust1 = 1,
-                             "No_fishery_for_Z=M",
-                             adjust2 = -1,
-                             matchcol1 = 2,
-                             matchcol2 = 2,
-                             obj = Report_Z_by_area_morph_platoon,
-                             header = TRUE,
-                             type.convert = TRUE
-                             )
+        adjust1 = 1,
+        "No_fishery_for_Z=M",
+        adjust2 = -1,
+        matchcol1 = 2,
+        matchcol2 = 2,
+        obj = Report_Z_by_area_morph_platoon,
+        header = TRUE,
+        type.convert = TRUE
+      )
       M_by_area <- matchfun2("No_fishery_for_Z=M",
-                             blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
-                             adjust1 = 1,
-                             matchcol1 = 2,
-                             obj = Report_Z_by_area_morph_platoon,
-                             header = TRUE,
-                             type.convert = TRUE
-                             )
+        blank_lines = nrow(Report_Z_by_area_morph_platoon) + 1,
+        adjust1 = 1,
+        matchcol1 = 2,
+        obj = Report_Z_by_area_morph_platoon,
+        header = TRUE,
+        type.convert = TRUE
+      )
     }
     returndat["Z_by_area"] <- list(Z_by_area)
     returndat["M_by_area"] <- list(M_by_area)
-    
+
     # Dynamic_Bzero output "with fishery"
     Dynamic_Bzero <- matchfun2("Spawning_Biomass_Report_2", 1)
     # Dynamic_Bzero output "no fishery"
