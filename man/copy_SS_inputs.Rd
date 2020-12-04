@@ -46,10 +46,12 @@ and wtatage.ss (if present) to a new directory, as specified.
 }
 \examples{
 
-  \dontrun{
-    copy_SS_inputs(dir.old='c:/SS/old_model',
-                   dir.new='c:/SS/new_model')
-  }
+\dontrun{
+copy_SS_inputs(
+  dir.old = "c:/SS/old_model",
+  dir.new = "c:/SS/new_model"
+)
+}
 
 }
 \author{

@@ -17,7 +17,7 @@ SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose)
 }
 \description{
 write Stock Synthesis control file from list object in R which was created
-  using \code{\link{SS_readctl}}.This function is designed to be called 
+  using \code{\link{SS_readctl}}.This function is designed to be called
   using \code{\link{SS_writectl}} and should not be called directly.
 }
 \seealso{

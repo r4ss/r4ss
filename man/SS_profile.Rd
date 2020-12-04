@@ -113,39 +113,41 @@ be read using \code{\link{SSgetoutput}} or by multiple calls to
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 # note: don't run this in your main directory
 # make a copy in case something goes wrong
 mydir <- "C:/ss/Simple - Copy"
 
 # the following commands related to starter.ss could be done by hand
 # read starter file
-starter <- SS_readstarter(file.path(mydir, 'starter.ss'))
+starter <- SS_readstarter(file.path(mydir, "starter.ss"))
 # change control file name in the starter file
 starter[["ctlfile"]] <- "control_modified.ss"
 # make sure the prior likelihood is calculated
 # for non-estimated quantities
 starter[["prior_like"]] <- 1
 # write modified starter file
-SS_writestarter(starter, dir=mydir, overwrite=TRUE)
+SS_writestarter(starter, dir = mydir, overwrite = TRUE)
 
 # vector of values to profile over
-h.vec <- seq(0.3,0.9,.1)
+h.vec <- seq(0.3, 0.9, .1)
 Nprofile <- length(h.vec)
 
 # run SS_profile command
-profile <- SS_profile(dir=mydir, # directory
-                      # "NatM" is a subset of one of the
-                      # parameter labels in control.ss_new
-                      model="ss",
-                      masterctlfile="control.ss_new",
-                      newctlfile="control_modified.ss",
-                      string="steep",
-                      profilevec=h.vec)
+profile <- SS_profile(
+  dir = mydir, # directory
+  # "NatM" is a subset of one of the
+  # parameter labels in control.ss_new
+  model = "ss",
+  masterctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  string = "steep",
+  profilevec = h.vec
+)
 
 
 # read the output files (with names like Report1.sso, Report2.sso, etc.)
-profilemodels <- SSgetoutput(dirvec=mydir, keyvec=1:Nprofile)
+profilemodels <- SSgetoutput(dirvec = mydir, keyvec = 1:Nprofile)
 # summarize output
 profilesummary <- SSsummarize(profilemodels)
 
@@ -156,13 +158,13 @@ profilesummary <- SSsummarize(profilemodels)
 # END OPTIONAL COMMANDS
 
 # plot profile using summary created above
-SSplotProfile(profilesummary,           # summary object
-              profile.string = "steep", # substring of profile parameter
-              profile.label="Stock-recruit steepness (h)") # axis label
+SSplotProfile(profilesummary, # summary object
+  profile.string = "steep", # substring of profile parameter
+  profile.label = "Stock-recruit steepness (h)"
+) # axis label
 
 # make timeseries plots comparing models in profile
-SSplotComparisons(profilesummary,legendlabels=paste("h =",h.vec))
-
+SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 }
 
 }

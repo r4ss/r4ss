@@ -35,7 +35,7 @@ Numbering of subplots is as follows:
 \itemize{
   \item 1 yield curve
   \item 2 yield curve with reference points
-  \item 3 surplus production vs. biomass plots (Walters et al. 2008) 
+  \item 3 surplus production vs. biomass plots (Walters et al. 2008)
 }}
 
 \item{refpoints}{character vector of which reference points to display in

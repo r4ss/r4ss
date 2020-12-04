@@ -23,10 +23,10 @@ Should be compatible with Stock Synthesis versions 3.24 through 3.30
 
 \dontrun{
 # read in the report file using SS_output
-myreplist <- SS_output(dir='c:/SS/simple/')
+myreplist <- SS_output(dir = "c:/SS/simple/")
 
 # make a collection of plots using SS_plots
-SS_plots(replist=myreplist)
+SS_plots(replist = myreplist)
 }
 
 }

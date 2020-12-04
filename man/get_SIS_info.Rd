@@ -45,14 +45,15 @@ copy step.
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 # directory with the model output
 mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
 # read the model output
 model <- SS_output(dir = mydir)
 # run get_SIS_info:
 info <- get_SIS_info(model, stock = "SimpleExample")
-  }
+}
+
 }
 \seealso{
 \code{\link{SS_output}}

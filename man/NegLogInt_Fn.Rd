@@ -82,20 +82,23 @@ from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
 }
 \examples{
 
-  \dontrun{
-    direc <- "C:/Models/LaplaceApprox/base"  #need the full path because wd is changed in function
-    if("Optimization_record.txt" \%in\% list.files(direc)) file.remove(file.path(direc,"Optimization_record.txt"))
-    Opt <- optimize(f=NegLogInt_Fn,
-                   interval=c(0.001, 0.12),
-                   maximum=FALSE,
-                   File=direc,
-                   Input_SD_Group_Vec=1,
-                   CTL_linenum_List=list(127:131),
-                   ESTPAR_num_List=list(86:205),
-                   Int_Group_List=1,
-                   PAR_num_Vec=NA,
-                   Intern=TRUE)
-  }
+\dontrun{
+direc <- "C:/Models/LaplaceApprox/base" # need the full path because wd is changed in function
+if ("Optimization_record.txt" \%in\% list.files(direc)) file.remove(file.path(direc, "Optimization_record.txt"))
+Opt <- optimize(
+  f = NegLogInt_Fn,
+  interval = c(0.001, 0.12),
+  maximum = FALSE,
+  File = direc,
+  Input_SD_Group_Vec = 1,
+  CTL_linenum_List = list(127:131),
+  ESTPAR_num_List = list(86:205),
+  Int_Group_List = 1,
+  PAR_num_Vec = NA,
+  Intern = TRUE
+)
+}
+
 }
 \references{
 Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random

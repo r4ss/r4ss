@@ -22,9 +22,9 @@ read Stock Synthesis ss_summary.sso file into list object in R
 }
 \examples{
 
-  \dontrun{
-    summary <- SS_read_summary(file='c:/mymodel/ss_summary.sso')
-  }
+\dontrun{
+summary <- SS_read_summary(file = "c:/mymodel/ss_summary.sso")
+}
 
 }
 \seealso{

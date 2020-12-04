@@ -23,7 +23,7 @@ to the working directory). First, if exe_in_path is
 FALSE, The function will look an executable with the same name in each
 element of dirvec. Then, if it is not found in each, the function will
 assume that model is the path to the executable and there is only 1 copy of
-the executable. Note that if there is an exe in your PATH with the same 
+the executable. Note that if there is an exe in your PATH with the same
 name, this will be used even if exe_in_path is FALSE.}
 
 \item{extras}{Additional commands to use when running SS. Default = "-nox"
@@ -51,13 +51,15 @@ Loops over a vector of directories and iteratively runs SS in each one
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 extdata_mods <- system.file("extdata", package = "r4ss")
-dirvec <- c(file.path(extdata_mods, "simple_3.30.12"), 
-            file.path(extdata_mods, "simple_3.30.13"))
+dirvec <- c(
+  file.path(extdata_mods, "simple_3.30.12"),
+  file.path(extdata_mods, "simple_3.30.13")
+)
 # if ss or ss.exe is available in both directories:
 run_SS_models(dirvec = dirvec)
-  }
+}
 
 }
 \seealso{

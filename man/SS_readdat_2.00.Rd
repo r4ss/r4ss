@@ -23,7 +23,7 @@ will read input data, (equivalent to section=1). ## needs to be added}
 \description{
 Read Stock Synthesis (version 2.00) data file into list object in R.
 This function was formerly called SS_readdat. That name is now used
-for a wrapper function that calls either SS_readdat_2.00 SS_readdat_3.00 
+for a wrapper function that calls either SS_readdat_2.00 SS_readdat_3.00
 SS_readdat_3.24 or SS_readdat_3.30 (and potentially additional functions in the future).
 }
 \seealso{

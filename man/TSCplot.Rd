@@ -89,28 +89,27 @@ are to be plotted, a 'mcmc' list element should be added using the
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 
-    # define directory
-    directory <- "C:\NOAA2011\Dover\Models\base_20110701"
-    # read model output
-    base <- SS_output(dir=directory,covar = FALSE,verbose = FALSE)
+# define directory
+directory <- "C:\\\\NOAA2011\\\\Dover\\\\Models\\\\base_20110701"
+# read model output
+base <- SS_output(dir = directory, covar = FALSE, verbose = FALSE)
 
-    #show the plot in R
-    TSCplot(base)
-    TSCplot(base,yrs=2000:2011,pchSpace = 1)
+# show the plot in R
+TSCplot(base)
+TSCplot(base, yrs = 2000:2011, pchSpace = 1)
 
-    #Create the plot as a PNG file
-    TSCplot(base,makePNG="C:\NOAA2012\Assessments\TSCdover.png")
-    #Create the plot as a PDF file
-    TSCplot(base,makePDF="C:\NOAA2012\Assessment\TSCdover.pdf")
+# Create the plot as a PNG file
+TSCplot(base, makePNG = "C:\\\\NOAA2012\\\\Assessments\\\\TSCdover.png")
+# Create the plot as a PDF file
+TSCplot(base, makePDF = "C:\\\\NOAA2012\\\\Assessment\\\\TSCdover.pdf")
 
-    # Model with MCMC results
-    directory <- "C:/Models"
-    base <- SS_output(dir = directory, dir.mcmc = 'mcmc')
-    TSCplot(base, ylimDepl = c(0, 1.25), pchSpace = 1, MCMC = TRUE)
-
-  }
+# Model with MCMC results
+directory <- "C:/Models"
+base <- SS_output(dir = directory, dir.mcmc = "mcmc")
+TSCplot(base, ylimDepl = c(0, 1.25), pchSpace = 1, MCMC = TRUE)
+}
 
 }
 \seealso{

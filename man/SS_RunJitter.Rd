@@ -62,22 +62,25 @@ in the format Report1.sso, Report2.sso, etc.
 }
 \examples{
 \dontrun{
-  #### Run jitter from par file with arbitrary, but common, choice of 0.1
-  modeldir <- tail(dir(system.file("extdata", package="r4ss"), full.names=TRUE),1)
-  numjitter <- 25
-  jit.likes <- SS_RunJitter(mydir=modeldir, Njitter=numjitter,
-   jitter_fraction=0.1, init_value_src=1)
+#### Run jitter from par file with arbitrary, but common, choice of 0.1
+modeldir <- tail(dir(system.file("extdata", package = "r4ss"), full.names = TRUE), 1)
+numjitter <- 25
+jit.likes <- SS_RunJitter(
+  mydir = modeldir, Njitter = numjitter,
+  jitter_fraction = 0.1, init_value_src = 1
+)
 
-  #### Read in results using other r4ss functions
-  # (note that un-jittered model can be read using keyvec=0:numjitter)
-  profilemodels <- SSgetoutput(dirvec=modeldir, keyvec=1:numjitter, getcovar=FALSE)
-  # summarize output
-  profilesummary <- SSsummarize(profilemodels)
-  # Likelihoods
-  profilesummary[["likelihoods"]][1,]
-  # Parameters
-  profilesummary[["pars"]]
+#### Read in results using other r4ss functions
+# (note that un-jittered model can be read using keyvec=0:numjitter)
+profilemodels <- SSgetoutput(dirvec = modeldir, keyvec = 1:numjitter, getcovar = FALSE)
+# summarize output
+profilesummary <- SSsummarize(profilemodels)
+# Likelihoods
+profilesummary[["likelihoods"]][1, ]
+# Parameters
+profilesummary[["pars"]]
 }
+
 }
 \author{
 James T. Thorson, Kelli F. Johnson, Ian G. Taylor

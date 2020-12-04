@@ -15,7 +15,7 @@ file.}
 
 \item{allow_recursive}{Should dollar sign references of list in list be
 replaced? If this is FALSE, then only the first reference will be replaced.
-For example, F$first$second would become F[["first"]]$second when 
+For example, F$first$second would become F[["first"]]$second when
 alow_recursive is FALSE, but would become F[["first"]][["second"]] if TRUE.}
 
 \item{max_loops}{How many times should dollar signs be looked for
@@ -29,15 +29,19 @@ A character vector of the modified text. As a side effect, produces
 \description{
 The dollar sign is convienent to write, but allows for partial matching,
 which we don't often want. This function takes a file and changes all dollar
-signs to double brackets with names in quotations instead. Note that this 
-function will incorrectly convert text that includesnames in backticks that 
+signs to double brackets with names in quotations instead. Note that this
+function will incorrectly convert text that includesnames in backticks that
 include a dollar sign (for example, test$`my$name` will not convert correctly).
+Note also that if a dollar sign is within a text string, it will also not 
+convert correctly (for example, "See test$name" would become 
+"See test[["name"]]", which is not parsable R code. Luckily, this is easily 
+discoverable by loading or sourcing the function.)
 }
 \author{
 Kathryn Doering
-#' @example 
+#' @example
 test_text <- c("x$my_name <- y$test"
-                 "x[['my_name']]", 
+                 "x[['my_name']]",
                  "no_replace_here <- 44",
                  "x$names<-new_assign;x$`22`",
                  "x$names <- new_assign; x$`22`",
