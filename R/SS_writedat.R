@@ -23,7 +23,7 @@
 #' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
 #' \code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
 #' \code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
-#' 
+#'
 #'
 SS_writedat <- function(datlist,
                         outfile,
@@ -32,30 +32,33 @@ SS_writedat <- function(datlist,
                         faster = FALSE,
                         verbose = TRUE) {
   # function to write Stock Synthesis data files
-  if (verbose){
+  if (verbose) {
     message("running SS_writedat")
   }
 
   # check datlist
-  if (datlist$type != "Stock_Synthesis_data_file") {
+  if (datlist[["type"]] != "Stock_Synthesis_data_file") {
     stop("input 'datlist' should be a list with $type=='Stock_Synthesis_data_file'")
   }
 
   # check version input
-  if(!(version=="3.24" | version=="3.30" | version==3.3)){
+  if (!(version == "3.24" | version == "3.30" | version == 3.3)) {
     stop("Input 'version' should be either '3.24' or '3.30'")
   }
 
   # call function for SS version 3.24
-  if(version=="3.24"){ # should work whether "version" is character or numeric
-    SS_writedat_3.24(datlist, outfile, overwrite = overwrite,
-                     faster = faster, verbose = verbose)
+  if (version == "3.24") { # should work whether "version" is character or numeric
+    SS_writedat_3.24(datlist, outfile,
+      overwrite = overwrite,
+      faster = faster, verbose = verbose
+    )
   }
 
   # call function for SS version 3.30
-  if(version=="3.30" | version==3.3){ # turns out 3.30 != "3.30" in R
-    SS_writedat_3.30(datlist, outfile, overwrite = overwrite,
-                     faster = faster, verbose = verbose)
+  if (version == "3.30" | version == 3.3) { # turns out 3.30 != "3.30" in R
+    SS_writedat_3.30(datlist, outfile,
+      overwrite = overwrite,
+      faster = faster, verbose = verbose
+    )
   }
- 
 }

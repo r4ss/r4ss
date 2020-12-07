@@ -53,10 +53,10 @@ SSsummarize <- function(biglist,
   }
   for (imodel in 1:n) {
     stats <- biglist[[imodel]]
-    parnames <- union(parnames, stats$parameters$Label)
-    dernames <- union(dernames, stats$derived_quants$Label)
-    allyears <- union(allyears, stats$timeseries$Yr)
-    likenames <- union(likenames, rownames(stats$likelihoods_used))
+    parnames <- union(parnames, stats[["parameters"]][["Label"]])
+    dernames <- union(dernames, stats[["derived_quants"]][["Label"]])
+    allyears <- union(allyears, stats[["timeseries"]][["Yr"]])
+    likenames <- union(likenames, rownames(stats[["likelihoods_used"]]))
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
@@ -98,17 +98,17 @@ SSsummarize <- function(biglist,
     message("imodel=", imodel, "/", n)
 
     # gradient
-    maxgrad <- c(maxgrad, stats$maximum_gradient_component)
+    maxgrad <- c(maxgrad, stats[["maximum_gradient_component"]])
 
     # nsexes
-    nsexes <- c(nsexes, stats$nsexes)
+    nsexes <- c(nsexes, stats[["nsexes"]])
 
     # start and end years
-    startyrs <- c(startyrs, stats$startyr)
-    endyrs <- c(endyrs, stats$endyr)
+    startyrs <- c(startyrs, stats[["startyr"]])
+    endyrs <- c(endyrs, stats[["endyr"]])
 
     # size selectivity
-    sizeseltemp <- stats$sizeselex
+    sizeseltemp <- stats[["sizeselex"]]
     # check for non-NULL selectivity table
     if (is.null(sizeseltemp)) {
       if (verbose) {
@@ -117,13 +117,13 @@ SSsummarize <- function(biglist,
     } else {
       # if factor(s) not input, get all unique values from table
       if (is.null(sizeselfactor) & !is.null(sizeseltemp)) {
-        sizeselfactor <- unique(sizeseltemp$Factor)
+        sizeselfactor <- unique(sizeseltemp[["Factor"]])
       }
       # loop over factor(s) input by user or taken from table
       for (iselfactor in 1:length(sizeselfactor)) {
-        seltemp_i <- sizeseltemp[sizeseltemp$Factor == sizeselfactor[iselfactor], ]
-        seltemp_i$imodel <- imodel
-        seltemp_i$name <- modelnames[imodel]
+        seltemp_i <- sizeseltemp[sizeseltemp[["Factor"]] == sizeselfactor[iselfactor], ]
+        seltemp_i[["imodel"]] <- imodel
+        seltemp_i[["name"]] <- modelnames[imodel]
         # if sizesel is not NULL, then check for whether columns of new addition
         # match existing file
         if (is.null(sizesel) || (ncol(seltemp_i) == ncol(sizesel) &&
@@ -140,7 +140,7 @@ SSsummarize <- function(biglist,
     }
 
     # age selectivity
-    ageseltemp <- stats$ageselex
+    ageseltemp <- stats[["ageselex"]]
     # check for NULL selectivity table
     if (is.null(ageseltemp)) {
       if (verbose) {
@@ -149,13 +149,13 @@ SSsummarize <- function(biglist,
     } else {
       # if factor(s) not input, get all unique values from table
       if (is.null(ageselfactor)) {
-        ageselfactor <- unique(ageseltemp$Factor)
+        ageselfactor <- unique(ageseltemp[["Factor"]])
       }
       # loop over factor(s) input by user or taken from table
       for (iselfactor in 1:length(ageselfactor)) {
-        seltemp_i <- ageseltemp[ageseltemp$Factor == ageselfactor[iselfactor], ]
-        seltemp_i$imodel <- imodel
-        seltemp_i$name <- modelnames[imodel]
+        seltemp_i <- ageseltemp[ageseltemp[["Factor"]] == ageselfactor[iselfactor], ]
+        seltemp_i[["imodel"]] <- imodel
+        seltemp_i[["name"]] <- modelnames[imodel]
         # if agesel is not NULL, then check for whether columns of new addition
         # match existing file
         if (is.null(agesel) || (ncol(seltemp_i) == ncol(agesel) &&
@@ -172,23 +172,23 @@ SSsummarize <- function(biglist,
     }
 
     ## growth (females only)
-    growthtemp <- stats$growthseries
+    growthtemp <- stats[["growthseries"]]
     # check for non-NULL growth output
     if (!is.null(growthtemp)) {
-      imorphf <- ifelse(max(stats$morph_indexing$Index) == 10, 3, 1)
-      growthtemp <- growthtemp[growthtemp$Morph == imorphf, -(1:4)]
+      imorphf <- ifelse(max(stats[["morph_indexing"]][["Index"]]) == 10, 3, 1)
+      growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
       growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp), ]))
     }
 
     ## likelihoods (total by component)
-    liketemp <- stats$likelihoods_used
+    liketemp <- stats[["likelihoods_used"]]
     for (irow in 1:nrow(liketemp)) {
-      likelihoods[likenames == rownames(liketemp)[irow], imodel] <- liketemp$values[irow]
-      likelambdas[likenames == rownames(liketemp)[irow], imodel] <- liketemp$lambdas[irow]
+      likelihoods[likenames == rownames(liketemp)[irow], imodel] <- liketemp[["values"]][irow]
+      likelambdas[likenames == rownames(liketemp)[irow], imodel] <- liketemp[["lambdas"]][irow]
     }
     ## likelihoods by fleet
     # add initial column with model number to table from each model
-    liketemp2 <- data.frame(model = imodel, stats$likelihoods_by_fleet)
+    liketemp2 <- data.frame(model = imodel, stats[["likelihoods_by_fleet"]])
     # test for presence of existing table to append to with matching number of columns
     if (is.null(likelihoods_by_fleet) ||
       (ncol(likelihoods_by_fleet) == ncol(liketemp2) &&
@@ -200,8 +200,8 @@ SSsummarize <- function(biglist,
 
     ## likelihoods by tag group
     # add initial column with model number to table from each model
-    if (!is.null(stats$likelihoods_by_tag_group)) {
-      liketemp3 <- data.frame(model = imodel, stats$likelihoods_by_tag_group)
+    if (!is.null(stats[["likelihoods_by_tag_group"]])) {
+      liketemp3 <- data.frame(model = imodel, stats[["likelihoods_by_tag_group"]])
       # test for presence of existing table to append to with matching number of columns
       if (is.null(likelihoods_by_tag_group) ||
         (ncol(likelihoods_by_tag_group) == ncol(liketemp3) &&
@@ -213,29 +213,29 @@ SSsummarize <- function(biglist,
     }
 
     ## compile parameters
-    parstemp <- stats$parameters
+    parstemp <- stats[["parameters"]]
     for (ipar in 1:nrow(parstemp)) {
-      pars[parnames == parstemp$Label[ipar], imodel] <- parstemp$Value[ipar]
-      parsSD[parnames == parstemp$Label[ipar], imodel] <- parstemp$Parm_StDev[ipar]
-      parphases[parnames == parstemp$Label[ipar], imodel] <- parstemp$Phase[ipar]
+      pars[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Value"]][ipar]
+      parsSD[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Parm_StDev"]][ipar]
+      parphases[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Phase"]][ipar]
     }
-    message("  N active pars = ", sum(!is.na(parstemp$Active_Cnt)))
+    message("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]])))
 
     ## compile derived quantities
-    quantstemp <- stats$derived_quants
+    quantstemp <- stats[["derived_quants"]]
     for (iquant in 1:nrow(quantstemp)) {
-      quants[dernames == quantstemp$Label[iquant], imodel] <- quantstemp$Value[iquant]
-      quantsSD[dernames == quantstemp$Label[iquant], imodel] <- quantstemp$StdDev[iquant]
+      quants[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[["Value"]][iquant]
+      quantsSD[dernames == quantstemp[["Label"]][iquant], imodel] <- quantstemp[["StdDev"]][iquant]
     }
-    SPRratioLabels <- c(SPRratioLabels, stats$SPRratioLabel)
-    FvalueLabels <- c(FvalueLabels, stats$F_report_basis)
-    sprtargs <- c(sprtargs, stats$sprtarg)
-    btargs <- c(btargs, stats$btarg)
-    minbthreshs <- c(minbthreshs, stats$minbthresh)
-    FleetNames[[imodel]] <- stats$FleetNames
+    SPRratioLabels <- c(SPRratioLabels, stats[["SPRratioLabel"]])
+    FvalueLabels <- c(FvalueLabels, stats[["F_report_basis"]])
+    sprtargs <- c(sprtargs, stats[["sprtarg"]])
+    btargs <- c(btargs, stats[["btarg"]])
+    minbthreshs <- c(minbthreshs, stats[["minbthresh"]])
+    FleetNames[[imodel]] <- stats[["FleetNames"]]
 
     ## indices
-    indextemp <- stats$cpue
+    indextemp <- stats[["cpue"]]
     if (is.null(indextemp) || is.na(indextemp[[1]][1])) {
       if (verbose) {
         message("  no index data")
@@ -243,8 +243,8 @@ SSsummarize <- function(biglist,
     } else {
       # temporarily remove columns added in SS version 3.30.13 (March 2019)
       indextemp <- indextemp[!names(indextemp) %in% c("Area", "Subseas", "Month")]
-      indextemp$name <- modelnames[imodel]
-      indextemp$imodel <- imodel
+      indextemp[["name"]] <- modelnames[imodel]
+      indextemp[["imodel"]] <- imodel
       if (is.null(indices)) {
         # first pass through with nothing in combined data frame
         indices <- rbind(indices, indextemp)
@@ -262,7 +262,7 @@ SSsummarize <- function(biglist,
     }
 
     # number of parameters
-    npars <- c(npars, stats$N_estimated_parameters)
+    npars <- c(npars, stats[["N_estimated_parameters"]])
 
     # 2nd fecundity parameter indicates whether spawning output is proportional to biomass
     if (!is.null(SpawnOutputUnits)) {
@@ -278,11 +278,11 @@ SSsummarize <- function(biglist,
     }
     # if NA value in vector for current model, replace with value from model
     if (is.na(SpawnOutputUnits[imodel])) {
-      SpawnOutputUnits[imodel] <- stats$SpawnOutputUnits
+      SpawnOutputUnits[imodel] <- stats[["SpawnOutputUnits"]]
     }
     # get mcmc values if present
-    if (!is.null(stats$mcmc)) {
-      mcmc[[imodel]] <- stats$mcmc
+    if (!is.null(stats[["mcmc"]])) {
+      mcmc[[imodel]] <- stats[["mcmc"]]
     }
   } # end loop over models
 
@@ -292,34 +292,34 @@ SSsummarize <- function(biglist,
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
 
-  pars$Label <- parsSD$Label <- parphases$Label <- parnames
-  quants$Label <- quantsSD$Label <- dernames
-  likelihoods$Label <- likelambdas$Label <- likenames
+  pars[["Label"]] <- parsSD[["Label"]] <- parphases[["Label"]] <- parnames
+  quants[["Label"]] <- quantsSD[["Label"]] <- dernames
+  likelihoods[["Label"]] <- likelambdas[["Label"]] <- likenames
   # extract year values from labels for some parameters associated with years
-  pars$Yr <- NA
+  pars[["Yr"]] <- NA
   for (ipar in 1:nrow(pars)) {
-    substrings <- strsplit(as.character(pars$Label[ipar]), "_")[[1]]
+    substrings <- strsplit(as.character(pars[["Label"]][ipar]), "_")[[1]]
     yr <- substrings[substrings %in% allyears][1]
-    pars$Yr[ipar] <- ifelse(is.null(yr), NA, as.numeric(yr))
+    pars[["Yr"]][ipar] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
-  quants$Yr <- quantsSD$Yr <- NA
+  quants[["Yr"]] <- quantsSD[["Yr"]] <- NA
   for (iquant in 1:nrow(quants)) {
-    substrings <- strsplit(as.character(quants$Label[iquant]), "_")[[1]]
+    substrings <- strsplit(as.character(quants[["Label"]][iquant]), "_")[[1]]
     yr <- substrings[substrings %in% allyears][1]
-    quants$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
-    quantsSD$Yr[iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
+    quants[["Yr"]][iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
+    quantsSD[["Yr"]][iquant] <- ifelse(is.null(yr), NA, as.numeric(yr))
   }
 
   # rows numbers of derived quantities that start with "SSB_"
-  SSBrows <- grep("SSB_", quants$Label)
+  SSBrows <- grep("SSB_", quants[["Label"]])
   # row numbers that start with "SSB_" but are not part of time series
   SSBexclude <- c(
-    grep("SSB_unfished", quants$Label, ignore.case = TRUE),
-    grep("SSB_Btgt", quants$Label, ignore.case = TRUE),
-    grep("SSB_SPR", quants$Label, ignore.case = TRUE),
-    grep("SSB_MSY", quants$Label, ignore.case = TRUE),
-    grep("SSB_F01", quants$Label, ignore.case = TRUE)
+    grep("SSB_unfished", quants[["Label"]], ignore.case = TRUE),
+    grep("SSB_Btgt", quants[["Label"]], ignore.case = TRUE),
+    grep("SSB_SPR", quants[["Label"]], ignore.case = TRUE),
+    grep("SSB_MSY", quants[["Label"]], ignore.case = TRUE),
+    grep("SSB_F01", quants[["Label"]], ignore.case = TRUE)
   )
   # filter rows to only include time series
   SSBrows <- setdiff(SSBrows, SSBexclude)
@@ -327,13 +327,13 @@ SSsummarize <- function(biglist,
   SpawnBio <- quants[SSBrows, ]
   SpawnBioSD <- quantsSD[SSBrows, ]
   # add year values for Virgin and Initial years
-  minyr <- min(SpawnBio$Yr, na.rm = TRUE)
-  SpawnBio$Yr[grep("SSB_Virgin", SpawnBio$Label)] <- minyr - 2
-  SpawnBio$Yr[grep("SSB_Initial", SpawnBio$Label)] <- minyr - 1
-  SpawnBioSD$Yr <- SpawnBio$Yr
+  minyr <- min(SpawnBio[["Yr"]], na.rm = TRUE)
+  SpawnBio[["Yr"]][grep("SSB_Virgin", SpawnBio[["Label"]])] <- minyr - 2
+  SpawnBio[["Yr"]][grep("SSB_Initial", SpawnBio[["Label"]])] <- minyr - 1
+  SpawnBioSD[["Yr"]] <- SpawnBio[["Yr"]]
 
-  SpawnBio <- SpawnBio[order(SpawnBio$Yr), ]
-  SpawnBioSD <- SpawnBioSD[order(SpawnBioSD$Yr), ]
+  SpawnBio <- SpawnBio[order(SpawnBio[["Yr"]]), ]
+  SpawnBioSD <- SpawnBioSD[order(SpawnBioSD[["Yr"]]), ]
 
   SpawnBioLower <- SpawnBioUpper <- SpawnBioSD
   SpawnBioLower[, 1:n] <- qnorm(
@@ -346,8 +346,8 @@ SSsummarize <- function(biglist,
   )
 
   # identify biomass ratio parameters
-  Bratio <- quants[grep("^Bratio_", quants$Label), ]
-  BratioSD <- quantsSD[grep("^Bratio_", quantsSD$Label), ]
+  Bratio <- quants[grep("^Bratio_", quants[["Label"]]), ]
+  BratioSD <- quantsSD[grep("^Bratio_", quantsSD[["Label"]]), ]
 
   BratioLower <- BratioUpper <- BratioSD
   BratioLower[, 1:n] <- qnorm(
@@ -360,8 +360,8 @@ SSsummarize <- function(biglist,
   )
 
   # identify SPR ratio derived quantities
-  SPRratio <- quants[grep("^SPRratio_", quants$Label), ]
-  SPRratioSD <- quantsSD[grep("^SPRratio_", quantsSD$Label), ]
+  SPRratio <- quants[grep("^SPRratio_", quants[["Label"]]), ]
+  SPRratioSD <- quantsSD[grep("^SPRratio_", quantsSD[["Label"]]), ]
 
   SPRratioLower <- SPRratioUpper <- SPRratioSD
   SPRratioLower[, 1:n] <- qnorm(
@@ -374,8 +374,8 @@ SSsummarize <- function(biglist,
   )
 
   # identify F derived quantities
-  Fvalue <- quants[grep("^F_", quants$Label), ]
-  FvalueSD <- quantsSD[grep("^F_", quantsSD$Label), ]
+  Fvalue <- quants[grep("^F_", quants[["Label"]]), ]
+  FvalueSD <- quantsSD[grep("^F_", quantsSD[["Label"]]), ]
 
   FvalueLower <- FvalueUpper <- FvalueSD
   FvalueLower[, 1:n] <- qnorm(
@@ -389,20 +389,20 @@ SSsummarize <- function(biglist,
 
 
   # identify recruitment parameters and their uncertainty
-  recruits <- quants[grep("^Recr_", quants$Label), ]
-  recruitsSD <- quantsSD[grep("^Recr_", quantsSD$Label), ]
-  if (length(grep("Recr_Unfished", recruits$Label, ignore.case = TRUE)) > 0) {
-    recruits <- recruits[-grep("Recr_Unfished", recruits$Label, ignore.case = TRUE), ]
-    recruitsSD <- recruitsSD[-grep("Recr_Unfished", recruitsSD$Label, ignore.case = TRUE), ]
+  recruits <- quants[grep("^Recr_", quants[["Label"]]), ]
+  recruitsSD <- quantsSD[grep("^Recr_", quantsSD[["Label"]]), ]
+  if (length(grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE)) > 0) {
+    recruits <- recruits[-grep("Recr_Unfished", recruits[["Label"]], ignore.case = TRUE), ]
+    recruitsSD <- recruitsSD[-grep("Recr_Unfished", recruitsSD[["Label"]], ignore.case = TRUE), ]
   }
-  minyr <- min(recruits$Yr, na.rm = TRUE)
+  minyr <- min(recruits[["Yr"]], na.rm = TRUE)
 
-  recruits$Yr[grep("Recr_Virgin", recruits$Label)] <- minyr - 2
-  recruits$Yr[grep("Recr_Initial", recruits$Label)] <- minyr - 1
-  recruitsSD$Yr[grep("Recr_Virgin", recruitsSD$Label)] <- minyr - 2
-  recruitsSD$Yr[grep("Recr_Initial", recruitsSD$Label)] <- minyr - 1
-  recruits <- recruits[order(recruits$Yr), ]
-  recruitsSD <- recruitsSD[order(recruitsSD$Yr), ]
+  recruits[["Yr"]][grep("Recr_Virgin", recruits[["Label"]])] <- minyr - 2
+  recruits[["Yr"]][grep("Recr_Initial", recruits[["Label"]])] <- minyr - 1
+  recruitsSD[["Yr"]][grep("Recr_Virgin", recruitsSD[["Label"]])] <- minyr - 2
+  recruitsSD[["Yr"]][grep("Recr_Initial", recruitsSD[["Label"]])] <- minyr - 1
+  recruits <- recruits[order(recruits[["Yr"]]), ]
+  recruitsSD <- recruitsSD[order(recruitsSD[["Yr"]]), ]
 
   recruitsLower <- recruitsUpper <- recruitsSD
   # assume recruitments have log-normal distribution
@@ -422,16 +422,16 @@ SSsummarize <- function(biglist,
   )
 
   # identify parameters that are recruitment deviations
-  pars$recdev <- FALSE
-  pars$recdev[grep("RecrDev", pars$Label)] <- TRUE
-  pars$recdev[grep("InitAge", pars$Label)] <- TRUE
-  pars$recdev[grep("ForeRecr", pars$Label)] <- TRUE
+  pars[["recdev"]] <- FALSE
+  pars[["recdev"]][grep("RecrDev", pars[["Label"]])] <- TRUE
+  pars[["recdev"]][grep("InitAge", pars[["Label"]])] <- TRUE
+  pars[["recdev"]][grep("ForeRecr", pars[["Label"]])] <- TRUE
 
   # if there are any initial age parameters, figure out what year they're from
-  InitAgeRows <- grep("InitAge", pars$Label)
+  InitAgeRows <- grep("InitAge", pars[["Label"]])
   if (length(InitAgeRows) > 0) {
     # separate out values from string
-    temp <- unlist(strsplit(pars$Label[InitAgeRows], "InitAge_"))
+    temp <- unlist(strsplit(pars[["Label"]][InitAgeRows], "InitAge_"))
     # get odd entries in above separation
     InitAgeVals <- as.numeric(temp[seq(2, length(temp), 2)])
     # make empty matrix to store values
@@ -441,7 +441,7 @@ SSsummarize <- function(biglist,
       # get parameters
       modelpars <- pars[, imodel]
       # get vector of years associated with recdevs
-      devyears <- pars$Yr[!is.na(modelpars) & pars$recdev]
+      devyears <- pars[["Yr"]][!is.na(modelpars) & pars[["recdev"]]]
       # figure out first year of recdevs that already have years figured out
       if (any(!is.na(devyears))) {
         minyr <- min(devyears, na.rm = TRUE)
@@ -464,19 +464,19 @@ SSsummarize <- function(biglist,
         "use InitAgeYrs matrix"
       )
     } else {
-      pars$Yr[InitAgeRows] <- apply(InitAgeYrs, 1, max, na.rm = TRUE)
+      pars[["Yr"]][InitAgeRows] <- apply(InitAgeYrs, 1, max, na.rm = TRUE)
     }
   } else {
     # no parameters seem to be associated with initial age structure
     InitAgeYrs <- NA
   }
-  if (any(pars$recdev)) {
-    recdevs <- pars[pars$recdev, ]
-    recdevsSD <- parsSD[pars$recdev, ]
-    myorder <- order(recdevs$Yr) # save order for use in both values and SDs
+  if (any(pars[["recdev"]])) {
+    recdevs <- pars[pars[["recdev"]], ]
+    recdevsSD <- parsSD[pars[["recdev"]], ]
+    myorder <- order(recdevs[["Yr"]]) # save order for use in both values and SDs
     recdevs <- recdevs[myorder, 1:(n + 2)]
     recdevsSD <- recdevsSD[myorder, 1:(n + 1)]
-    recdevsSD$Yr <- recdevs$Yr
+    recdevsSD[["Yr"]] <- recdevs[["Yr"]]
     recdevsLower <- recdevsUpper <- recdevsSD
     recdevsLower[, 1:n] <- qnorm(
       p = lowerCI, mean = as.matrix(recdevs[, 1:n]),
@@ -498,12 +498,12 @@ SSsummarize <- function(biglist,
   # choice of recdev vector breaks
   merge.duplicates <- function(x) {
     if (!is.null(x)) {
-      if (length(unique(x$Yr)) < length(x$Yr)) {
+      if (length(unique(x[["Yr"]])) < length(x[["Yr"]])) {
         # n should be number of models
         n <- sum(!names(x) %in% c("Label", "Yr"))
         x2 <- NULL # alternative data.frame
-        for (Yr in unique(x$Yr)) {
-          x.Yr <- x[which(x$Yr == Yr), ]
+        for (Yr in unique(x[["Yr"]])) {
+          x.Yr <- x[which(x[["Yr"]] == Yr), ]
           if (nrow(x.Yr) == 1) {
             # if only 1 row associated with this year add to new data.frame
             x2 <- rbind(x2, x.Yr)
@@ -544,69 +544,69 @@ SSsummarize <- function(biglist,
   # function to sort by year
   sort.fn <- function(x) {
     if (!is.null(x)) {
-      return(x[order(x$Yr), ])
+      return(x[order(x[["Yr"]]), ])
     } else {
       return()
     }
   }
 
   mylist <- list()
-  mylist$n <- n
-  mylist$npars <- npars
-  mylist$modelnames <- modelnames
-  mylist$maxgrad <- maxgrad
-  mylist$nsexes <- nsexes
-  mylist$startyrs <- startyrs
-  mylist$endyrs <- endyrs
-  mylist$pars <- pars
-  mylist$parsSD <- parsSD
-  mylist$parphases <- parphases
-  mylist$quants <- quants
-  mylist$quantsSD <- quantsSD
-  mylist$likelihoods <- likelihoods
-  mylist$likelambdas <- likelambdas
-  mylist$likelihoods_by_fleet <- likelihoods_by_fleet
-  mylist$likelihoods_by_tag_group <- likelihoods_by_tag_group
-  mylist$SpawnBio <- sort.fn(SpawnBio)
-  mylist$SpawnBioSD <- sort.fn(SpawnBioSD)
-  mylist$SpawnBioLower <- sort.fn(SpawnBioLower)
-  mylist$SpawnBioUpper <- sort.fn(SpawnBioUpper)
-  mylist$Bratio <- sort.fn(Bratio)
-  mylist$BratioSD <- sort.fn(BratioSD)
-  mylist$BratioLower <- sort.fn(BratioLower)
-  mylist$BratioUpper <- sort.fn(BratioUpper)
-  mylist$SPRratio <- sort.fn(SPRratio)
-  mylist$SPRratioSD <- sort.fn(SPRratioSD)
-  mylist$SPRratioLower <- sort.fn(SPRratioLower)
-  mylist$SPRratioUpper <- sort.fn(SPRratioUpper)
-  mylist$SPRratioLabels <- SPRratioLabels
-  mylist$Fvalue <- sort.fn(Fvalue)
-  mylist$FvalueSD <- sort.fn(FvalueSD)
-  mylist$FvalueLower <- sort.fn(FvalueLower)
-  mylist$FvalueUpper <- sort.fn(FvalueUpper)
-  mylist$FvalueLabels <- FvalueLabels
-  mylist$sprtargs <- sprtargs
-  mylist$btargs <- btargs
-  mylist$minbthreshs <- minbthreshs
-  mylist$recruits <- sort.fn(recruits)
-  mylist$recruitsSD <- sort.fn(recruitsSD)
-  mylist$recruitsLower <- sort.fn(recruitsLower)
-  mylist$recruitsUpper <- sort.fn(recruitsUpper)
-  mylist$recdevs <- merge.duplicates(sort.fn(recdevs))
-  mylist$recdevsSD <- merge.duplicates(sort.fn(recdevsSD))
-  mylist$recdevsLower <- merge.duplicates(sort.fn(recdevsLower))
-  mylist$recdevsUpper <- merge.duplicates(sort.fn(recdevsUpper))
-  mylist$growth <- growth
-  mylist$sizesel <- sizesel
-  mylist$agesel <- agesel
-  mylist$indices <- indices
-  mylist$InitAgeYrs <- InitAgeYrs
-  mylist$lowerCI <- lowerCI
-  mylist$upperCI <- upperCI
-  mylist$SpawnOutputUnits <- SpawnOutputUnits
-  mylist$FleetNames <- FleetNames
-  mylist$mcmc <- mcmc
-  # mylist$lbinspop   <- as.numeric(names(stats$sizeselex)[-(1:5)])
+  mylist[["n"]] <- n
+  mylist[["npars"]] <- npars
+  mylist[["modelnames"]] <- modelnames
+  mylist[["maxgrad"]] <- maxgrad
+  mylist[["nsexes"]] <- nsexes
+  mylist[["startyrs"]] <- startyrs
+  mylist[["endyrs"]] <- endyrs
+  mylist[["pars"]] <- pars
+  mylist[["parsSD"]] <- parsSD
+  mylist[["parphases"]] <- parphases
+  mylist[["quants"]] <- quants
+  mylist[["quantsSD"]] <- quantsSD
+  mylist[["likelihoods"]] <- likelihoods
+  mylist[["likelambdas"]] <- likelambdas
+  mylist[["likelihoods_by_fleet"]] <- likelihoods_by_fleet
+  mylist[["likelihoods_by_tag_group"]] <- likelihoods_by_tag_group
+  mylist[["SpawnBio"]] <- sort.fn(SpawnBio)
+  mylist[["SpawnBioSD"]] <- sort.fn(SpawnBioSD)
+  mylist[["SpawnBioLower"]] <- sort.fn(SpawnBioLower)
+  mylist[["SpawnBioUpper"]] <- sort.fn(SpawnBioUpper)
+  mylist[["Bratio"]] <- sort.fn(Bratio)
+  mylist[["BratioSD"]] <- sort.fn(BratioSD)
+  mylist[["BratioLower"]] <- sort.fn(BratioLower)
+  mylist[["BratioUpper"]] <- sort.fn(BratioUpper)
+  mylist[["SPRratio"]] <- sort.fn(SPRratio)
+  mylist[["SPRratioSD"]] <- sort.fn(SPRratioSD)
+  mylist[["SPRratioLower"]] <- sort.fn(SPRratioLower)
+  mylist[["SPRratioUpper"]] <- sort.fn(SPRratioUpper)
+  mylist[["SPRratioLabels"]] <- SPRratioLabels
+  mylist[["Fvalue"]] <- sort.fn(Fvalue)
+  mylist[["FvalueSD"]] <- sort.fn(FvalueSD)
+  mylist[["FvalueLower"]] <- sort.fn(FvalueLower)
+  mylist[["FvalueUpper"]] <- sort.fn(FvalueUpper)
+  mylist[["FvalueLabels"]] <- FvalueLabels
+  mylist[["sprtargs"]] <- sprtargs
+  mylist[["btargs"]] <- btargs
+  mylist[["minbthreshs"]] <- minbthreshs
+  mylist[["recruits"]] <- sort.fn(recruits)
+  mylist[["recruitsSD"]] <- sort.fn(recruitsSD)
+  mylist[["recruitsLower"]] <- sort.fn(recruitsLower)
+  mylist[["recruitsUpper"]] <- sort.fn(recruitsUpper)
+  mylist[["recdevs"]] <- merge.duplicates(sort.fn(recdevs))
+  mylist[["recdevsSD"]] <- merge.duplicates(sort.fn(recdevsSD))
+  mylist[["recdevsLower"]] <- merge.duplicates(sort.fn(recdevsLower))
+  mylist[["recdevsUpper"]] <- merge.duplicates(sort.fn(recdevsUpper))
+  mylist[["growth"]] <- growth
+  mylist[["sizesel"]] <- sizesel
+  mylist[["agesel"]] <- agesel
+  mylist[["indices"]] <- indices
+  mylist[["InitAgeYrs"]] <- InitAgeYrs
+  mylist[["lowerCI"]] <- lowerCI
+  mylist[["upperCI"]] <- upperCI
+  mylist[["SpawnOutputUnits"]] <- SpawnOutputUnits
+  mylist[["FleetNames"]] <- FleetNames
+  mylist[["mcmc"]] <- mcmc
+  # mylist[["lbinspop"]]   <- as.numeric(names(stats[["sizeselex"]])[-(1:5)])
 
   if (verbose) {
     message(

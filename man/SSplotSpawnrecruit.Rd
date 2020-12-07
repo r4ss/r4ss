@@ -88,7 +88,7 @@ of points, where the points are disconnected (lty=NA) by default}
 
 \item{ptcol}{vector or single value for the color of the points, "default"
 will by replaced by a vector of colors of length equal to
-nrow(replist$recruit)}
+nrow(replist[["recruit"]])}
 
 \item{legend}{add a legend to the figure?}
 

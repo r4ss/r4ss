@@ -11,9 +11,9 @@ translate_3.30_to_3.24_var_adjust(
 )
 }
 \arguments{
-\item{Variance_adjustment_list}{The Variance_adjustments_list element 
+\item{Variance_adjustment_list}{The Variance_adjustments_list element
 in the control file r4ss list output generated from \link{SS_readctl}.
-Defaults to NULL, which can be the case if no variance adjustments were 
+Defaults to NULL, which can be the case if no variance adjustments were
 included in the model.}
 
 \item{Nfleets}{Number of fleets in the model}

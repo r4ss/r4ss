@@ -112,17 +112,22 @@ notes might help anyone wanting to check or correct the code.
 }
 \examples{
 \dontrun{
-Nfleet <- length(myreplist$FleetNames)
-for (Ifleet in 1:Nfleet)
-  SSMethod.TA1.8(myreplist,"len",fleet=Ifleet,maxpanel=maxpanel)
-for (Ifleet in 1:Nfleet)
-  SSMethod.TA1.8(myreplist,"age",fleet=Ifleet,maxpanel=maxpanel)
-for (Ifleet in 1:Nfleet)
-  SSMethod.TA1.8(myreplist,"size",fleet=Ifleet,maxpanel=maxpanel)
-for (Ifleet in 1:Nfleet)
-  SSMethod.TA1.8(myreplist,"con",fleet=Ifleet,maxpanel=maxpanel)
-for (Ifleet in 1:Nfleet)
-  SSMethod.Cond.TA1.8(myreplist,fleet=Ifleet,maxpanel=maxpanel)
+Nfleet <- length(myreplist[["FleetNames"]])
+for (Ifleet in 1:Nfleet) {
+  SSMethod.TA1.8(myreplist, "len", fleet = Ifleet, maxpanel = maxpanel)
+}
+for (Ifleet in 1:Nfleet) {
+  SSMethod.TA1.8(myreplist, "age", fleet = Ifleet, maxpanel = maxpanel)
+}
+for (Ifleet in 1:Nfleet) {
+  SSMethod.TA1.8(myreplist, "size", fleet = Ifleet, maxpanel = maxpanel)
+}
+for (Ifleet in 1:Nfleet) {
+  SSMethod.TA1.8(myreplist, "con", fleet = Ifleet, maxpanel = maxpanel)
+}
+for (Ifleet in 1:Nfleet) {
+  SSMethod.Cond.TA1.8(myreplist, fleet = Ifleet, maxpanel = maxpanel)
+}
 }
 
 }

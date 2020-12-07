@@ -18,6 +18,7 @@ SSexecutivesummary(
   adopted_acl = NULL,
   forecast_ofl = NULL,
   forecast_abc = NULL,
+  format = TRUE,
   verbose = TRUE
 )
 }
@@ -61,6 +62,11 @@ OFL values. Example input: c(1500, 1300)}
 \item{forecast_abc}{Optional input vector for management adopted ABC values for table g. These values
 will be overwrite the ABC values in the projection table, rather than the model estimated
 ABC values. Example input: c(1500, 1300)}
+
+\item{format}{Logical. Option to control whether tables are formatted (e.g. commas added, CIs separeted with "-"). The
+formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
+work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
+the tables from being formatted further since the objects are no longer numeric.}
 
 \item{verbose}{Return updates of function progress to the R console?}
 }

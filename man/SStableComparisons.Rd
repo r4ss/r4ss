@@ -27,11 +27,11 @@ SStableComparisons(
 columns in summary tables.}
 
 \item{likenames}{Labels for likelihood values to include, should match
-substring of labels in \code{summaryoutput$likelihoods}.}
+substring of labels in \code{summaryoutput[["likelihoods"]]}.}
 
 \item{names}{Labels for parameters or derived quantities to include, should
-match substring of labels in \code{summaryoutput$pars} or
-\code{summaryoutput$quants}.}
+match substring of labels in \code{summaryoutput[["pars"]]} or
+\code{summaryoutput[["quants"]]}.}
 
 \item{digits}{Optional vector of the number of decimal digits to use in
 reporting each quantity.}

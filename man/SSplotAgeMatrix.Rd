@@ -51,7 +51,7 @@ scaling.}
 
 \item{col.bars}{The color of the filled polygons.}
 
-\item{shift_hi}{A numeric value specifying the amount to shift the top of 
+\item{shift_hi}{A numeric value specifying the amount to shift the top of
 the polygon up.}
 
 \item{shift_lo}{A numeric value specifying the amount to shift the bottom

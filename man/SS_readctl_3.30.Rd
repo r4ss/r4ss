@@ -62,14 +62,14 @@ to disable them. This information is not explicitly available in control file, t
 \item{N_tag_groups}{number of tag release group. Default =NA. This information is not explicitly available
 control file. This information is only required if custom tag parameters is enabled (TG_custom=1)}
 
-\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
-option. Defaults to NULL and should be left as such if 1) the catch 
-multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier
+option. Defaults to NULL and should be left as such if 1) the catch
+multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 datlist is specified.}
 
-\item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
+\item{N_rows_equil_catch}{Integer value of the number of parameter lines to
 read for equilibrium catch. Defaults to NULL, which means the function will
-attempt to figure out how many lines of equilibrium catch to read from the 
+attempt to figure out how many lines of equilibrium catch to read from the
 control file comments.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
@@ -78,7 +78,7 @@ parameters. Defaults to 0.}
 \item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
 determined from control file}
 
-\item{datlist}{list or character. If list, should be a list produced from 
+\item{datlist}{list or character. If list, should be a list produced from
 \code{\link{SS_writedat}}. If character, should be the file name of an
 SS data file.}
 }
