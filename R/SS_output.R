@@ -873,10 +873,12 @@ SS_output <-
         endfile <- grep("End_comp_data", rawcompdbase[, 1])
         compdbase <- rawcompdbase[2:(endfile - 2), ] # subtract header line and last 2 lines
 
-        # update to naming convention associated with 3.30.12 (Nsamp_adj added in 3.30.15)
+        # update to naming convention associated with current SS version
+        # most changes associated with 3.30.12,
+        # Nsamp_adj added in 3.30.15
         compdbase <- df.rename(compdbase,
-          oldnames = c("Pick_sex", "Pick_gender", "Gender", "N"),
-          newnames = c("Sexes", "Sexes", "Sex", "Nsamp_adj")
+          oldnames = c("Pick_sex", "Pick_gender", "Gender", "N", "Rep"),
+          newnames = c("Sexes", "Sexes", "Sex", "Nsamp_adj", "Repl.")
         )
         # "Sexes" (formerly "Pick_sex" or "Pick_gender"):
         #         0 (unknown), 1 (female), 2 (male), or 3 (females and then males)
