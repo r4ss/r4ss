@@ -46,6 +46,7 @@ SSexecutivesummary <- function (replist,
                                 plotfolder = 'default', 
                                 ci_value = 0.95,
                                 es_only = FALSE, 
+                                fleetnames = NULL,
                                 tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers'),
                                 divide_by_2 = FALSE,
                                 endyr = NULL,
@@ -63,8 +64,8 @@ SSexecutivesummary <- function (replist,
     stop("The input 'replist' should refer to an R object created by the function 'SS_output'.")
   }
 
-  if (plotfolder == 'default') { csv.dir = paste0(replist$inputs$dir,"/tables/") }
-  if (plotfolder != 'default') { csv.dir = paste0(plotfolder,"/tables/")}
+  if (plotfolder == 'default') { csv.dir = paste0(replist$inputs$dir,"/tables") }
+  if (plotfolder != 'default') { csv.dir = paste0(plotfolder,"/tables")}
 
   dir.create(csv.dir, showWarnings = FALSE)
   if(verbose){
@@ -91,7 +92,7 @@ SSexecutivesummary <- function (replist,
     }
 
     if(!single){
-      value = dat[grep(label,dat$Label),]
+      value = dat[grep(label, dat$Label),]
       value = value[value$Label >= paste0(label, '_', yrs[1]) &
                     value$Label <= paste0(label, '_', max(yrs)),]
       dq = value$Value
@@ -169,12 +170,15 @@ SSexecutivesummary <- function (replist,
   #======================================================================
   # Spawning Biomass or Spawning Output?
   #======================================================================  
-  sb.label = if(replist$SpawnOutputUnits == 'numbers'){
-    "Spawning Output"
+  if(replist$SpawnOutputUnits == 'numbers'){
+    sb.label = "Spawning Output"
+    sb.text.name = 'spawning output'
   } else{
-    "Spawning Biomass (mt)"
+    sb.label = "Spawning Biomass (mt)"
+    sb.text.name = 'spawning biomass'
   }
 
+  caption = tex.label = filename = NULL
   #======================================================================
   #ES Table a  Catches from the fisheries
   #======================================================================
@@ -183,9 +187,10 @@ SSexecutivesummary <- function (replist,
       message("Creating Table a: Recent catches by fleet")
     }
 
-    catch = fleet.names = NULL
+    catch  = fleet.names = NULL
     total.catch = total.dead = 0
 
+    csv_name = "a_Catches_ES.csv"
     for (i in 1:nfleets){
       name = paste0("retain(B):_",i)
       input.catch = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
@@ -195,7 +200,12 @@ SSexecutivesummary <- function (replist,
       dead = replist$timeseries[replist$timeseries$Yr %in% hist[1:(length(hist)-1)], name]
       if (!is.null(dead)){ 
         total.dead = total.dead + dead
-        fleet.names = c(fleet.names, replist$FleetNames[i]) }
+        if(is.null(fleetnames)) {
+          fleet.names = c(fleet.names, replist$FleetNames[i])
+        } else {
+          fleet.names = c(fleet.names, fleetnames[i])
+        }  
+      }
     } 
     total.catch = apply(catch, 1, sum)     
 
@@ -206,19 +216,26 @@ SSexecutivesummary <- function (replist,
       }else{
         es.a = data.frame(hist[1:(length(hist)-1)], catch, total.catch, total.dead)        
       }
-      colnames(es.a) = c("Years", fleet.names, "Total Catch", "Total Dead")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)
+      colnames(es.a) = c("Year", fleet.names, "Total Catch", "Total Dead")
+    
+      write.csv(es.a, filepath(csv.dir, csv_name), row.names = FALSE)
+      caption = c(caption,
+                  'Recent landings by fleet, total landings summed across fleets, and the total mortality including discards.')
     } else {
       if(format){
         es.a = data.frame(hist[1:(length(hist)-1)], comma(catch, digits = 2), comma(total.catch, digits = 2))
       }else{
         es.a = data.frame(hist[1:(length(hist)-1)], catch, total.catch)        
       }
-      colnames(es.a) = c("Years", fleet.names, "Total Catch")
-      write.csv(es.a, paste0(csv.dir, "/a_Catches_ES.csv"), row.names = FALSE)      
+      colnames(es.a) = c("Year", fleet.names, "Total Catch")
+      write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)     
+      caption = c(caption,
+               'Recent landings by fleet and total landings summed across fleets.')
     }
-
   } # end check for 'a' %in% tables
+
+  tex.label = c(tex.label, "removalsES")
+  filename = c(filename, csv_name)
 
   #======================================================================
   #ES Table b Spawning Biomass and Depletion
@@ -236,16 +253,23 @@ SSexecutivesummary <- function (replist,
     es.b =  data.frame(hist,
                        comma(ssb$dq,digits = dig), paste0(comma(ssb$low,digits = dig), "\u2013", comma(ssb$high,digits = dig)),
                        print(depl$dq, digits = 1), paste0(print(depl$low,digits = 1), "\u2013", print(depl$high,digits = 1)))
-    colnames(es.b) = c("Years", sb.label, "Interval", "Fraction Unfished", "Interval")
+    colnames(es.b) = c("Year", sb.label, "Interval", "Fraction Unfished", "Interval")
     }else{
     es.b =  data.frame(hist, ssb$dq, ssb$low, ssb$high, depl$dq, depl$low, depl$high)
-    colnames(es.b) = c("Years", sb.label, "Lower Interval", "Upper Interval", 
+    colnames(es.b) = c("Year", sb.label, "Lower Interval", "Upper Interval", 
                        "Fraction Unfished", "Lower Interval", "Upper Interval")
 
     }
-    write.csv(es.b, file.path(csv.dir, "b_SSB_ES.csv"), row.names = FALSE)
+    csv_name = "b_SSB_ES.csv"
+    write.csv(es.b, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'b' %in% tables
+
+  caption = c(caption,
+              paste('Estimated recent trend in', sb.text.name ,'and the fraction unfished and the', round(100*ci_value,0), 
+                    'percent intervals.'))
+  tex.label = c(tex.label, 'ssbES')
+  filename = c(filename, csv_name)
 
   #======================================================================
   #ES Table c Recruitment
@@ -314,15 +338,22 @@ SSexecutivesummary <- function (replist,
                       comma(recruits$dq, dig), paste0(comma(recruits$low, dig), "\u2013", comma(recruits$high, dig)),
                       devs.out )
 
-    colnames(es.c) = c("Years", "Recruitment", "Interval", "Recruitment Deviations", "Interval")
+    colnames(es.c) = c("Year", "Recruitment", "Interval", "Recruitment Deviations", "Interval")
     } else {
     es.c = data.frame(hist, recruits$dq, recruits$low, recruits$high, devs.out[,1], devs.out[,2], devs.out[,3])
-    colnames(es.c) = c("Years", "Recruitment", "Lower Interval", "Upper Interval", 
+    colnames(es.c) = c("Year", "Recruitment", "Lower Interval", "Upper Interval", 
                         "Recruitment Deviations", "Lower Interval", "Upper Interval")
     } 
-    write.csv(es.c, file.path(csv.dir, "c_Recr_ES.csv"), row.names = FALSE)
+    csv_name = "c_Recr_ES.csv"
+    write.csv(es.c, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'c' %in% tables
+
+  caption = c(caption,
+              paste('Estimated recent trend in recruitment and recruitment deviations (recruit devs.) and the', round(100*ci_value,0), 
+                    'percent intervals.'))
+  tex.label = c(tex.label, 'recrES')
+  filename = c(filename, csv_name)
 
   #======================================================================
   #ES Table d 1-SPR (%)
@@ -343,19 +374,26 @@ SSexecutivesummary <- function (replist,
     es.d = data.frame(hist[1:(length(hist)-1)],
            print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
            print(f.value$dq,4),     paste0(print(f.value$low, 4),     "\u2013", print(f.value$high, 4)))
-    colnames(es.d) = c("Years", paste0(spr_type, " (%)"), "Interval", 
+    colnames(es.d) = c("Year", paste0(spr_type, " (%)"), "Interval", 
                         f_type, "Interval")
     } else {
     es.d = data.frame(hist[1:(length(hist)-1)],
            adj.spr$dq*100, adj.spr$low*100, adj.spr$high*100,
            f.value$dq, f.value$low, f.value$high)
-    colnames(es.d) = c("Years", spr_type, "Lower Interval", "Upper Interval", 
+    colnames(es.d) = c("Year", spr_type, "Lower Interval", "Upper Interval", 
                         f_type, "Lower Interval", "Upper Interval")      
     }
-    write.csv(es.d, file.path(csv.dir, "d_SPR_ES.csv"), row.names = FALSE)
+    csv_name = "d_SPR_ES.csv"
+    write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'd' %in% tables
-  
+ 
+  caption = c(caption,
+              paste('Estimated recent trend in the spawning potential ratio (SPR),', replist$SPRratioLabel, ', the exploitation rate, along with the', round(100*ci_value,0), 
+                    'percent intervals.'))
+  tex.label = c(tex.label, 'exploitES') 
+  filename = c(filename, csv_name)
+
   #======================================================================
   #ES Table e Reference Point Table
   #======================================================================
@@ -512,11 +550,18 @@ SSexecutivesummary <- function (replist,
                 "Exploitation Rate Corresponding to SPR MSY",
                 "MSY (mt)")      
     } 
-    write.csv(es.e, file.path(csv.dir, "e_ReferencePoints_ES.csv"))
+    csv_name = "e_ReferencePoints_ES.csv"
+    write.csv(es.e, file.path(csv.dir, csv_name))
 
   } # end check for 'e' %in% tables
 
-  
+  caption = c(caption,
+              paste('Summary of reference points and management quantities, including estimates of the ', round(100*ci_value,0), 
+                    'percent intervals.'))
+  tex.label = c(tex.label, 'referenceES')  
+  filename = c(filename, csv_name)
+
+
   #======================================================================
   # ES Table f is the historical harvest
   #======================================================================
@@ -546,6 +591,7 @@ SSexecutivesummary <- function (replist,
       acl = adopted_acl
     }
 
+    csv_name = "f_Manage_ES.csv"
     catch = dead = total.dead = 0
     for (i in 1:nfleets){
       name = paste0("retain(B):_",i)
@@ -562,14 +608,23 @@ SSexecutivesummary <- function (replist,
 
     if(sum(total.catch) != sum(total.dead)){
       es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch, dead)
-      colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings", "Total Dead")
+      colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Landings", "Total Dead")
+      caption = c(caption,
+              paste('Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs),
+                the annual catch limits (ACLs), and the total catch and landings (mt).'))
     } else {
       es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch)
-      colnames(es.f) = c("Years", "OFL", "ABC", "ACL", "Landings")
+      colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Catch")
+      caption = c(caption,
+              paste('Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs),
+                the annual catch limits (ACLs), and the total catch (mt).'))
     }
-    write.csv(es.f, file.path(csv.dir, "f_Manage_ES.csv"), row.names = FALSE)
+    write.csv(es.f, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'f' %in% tables
+
+  tex.label = c(tex.label, 'referenceES')  
+  filename = c(filename, csv_name)
 
   #======================================================================
   #ES Table g  Predicted forecast values
@@ -617,9 +672,15 @@ SSexecutivesummary <- function (replist,
     }
 
     colnames(es.g) = c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
-    write.csv(es.g, file.path(csv.dir, "g_Projections_ES.csv"), row.names = FALSE)
+    csv_name = "g_Projections_ES.csv"
+    write.csv(es.g, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'g' %in% tables
+
+  caption = c(caption,
+              paste("Projections of potential OFLs (mt), ABCs (mt), estimated", sb.text.name , "and fraction unfished."))
+  tex.label = c(tex.label, "projectionES")
+  filename = c(filename, csv_name)
 
   #======================================================================
   #ES Table h decision table
@@ -740,10 +801,15 @@ SSexecutivesummary <- function (replist,
     }
     es.i = noquote(es.i)
     colnames(es.i) = c("Quantity", hist)
-
-    write.csv(es.i, file.path(csv.dir, "i_Summary_ES.csv"), row.names = FALSE)
+    csv_name = "i_Summary_ES.csv"
+    write.csv(es.i, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'i' %in% tables
+
+  caption = c(caption,
+              'Summary of recent estimates and managment quantities')
+  tex.label = c(tex.label, 'summaryES')
+  filename = c(filename, csv_name)
 
   #======================================================================
   #End executive summary tables
@@ -766,7 +832,8 @@ SSexecutivesummary <- function (replist,
     catch = fleet.names =  NULL
     dead = total.catch = total.dead = 0
     ind = startyr:endyr
-
+    csv_file = "Catches_All_Years.csv"
+    
     for (i in 1:nfleets){
       name = paste0("retain(B):_",i)
       input.catch = replist$timeseries[replist$timeseries$Yr %in% ind, name]
@@ -786,19 +853,24 @@ SSexecutivesummary <- function (replist,
       }else{
         mortality = data.frame(ind, catch, total.catch, total.dead)        
       }
-      colnames(mortality) = c("Years", fleet.names, "Total Catch", "Total Dead")
-      write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)      
+      colnames(mortality) = c("Year", fleet.names, "Total Catch", "Total Dead")
+      write.csv(mortality, paste0(csv.dir, csv_file), row.names = FALSE) 
+      caption = c(caption, 'Catches (mt) by fleet for all years, total catches (mt), and total mortality (mt) summed by year.')     
     } else {
       if(format){
         mortality = data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
       }else{
         mortality = data.frame(ind, catch, total.catch)        
       }
-      colnames(mortality) = c("Years", fleet.names, "Total Catch")
-      write.csv(mortality, paste0(csv.dir, "/_Catches_All_Years.csv"), row.names = FALSE)
+      colnames(mortality) = c("Year", fleet.names, "Total Catch")
+      write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
+      caption = c(caption, 'Catches (mt) by fleet for all years and total catches (mt) by year summed by year.')
     }
 
   } # end check for es_only = TRUE & 'catch' %in% tables
+
+  tex.label = c(tex.label, "allcatches")
+  filename = c(filename, csv_name)
 
   #======================================================================
   #Time-series Tables
@@ -874,8 +946,15 @@ SSexecutivesummary <- function (replist,
     colnames(ts.table) = c("Year", "Total Biomass (mt)", sb.label, 
       paste0("Total Biomass ", smry.age ," (mt)"), "Fraction Unfished", 
       "Age-0 Recruits", "Total Catch (mt)", spr_type, "Exploitation Rate")
-    write.csv(ts.table, file = paste0(csv.dir,"TimeSeries.csv"), row.names = FALSE) 
+    csv_name = "TimeSeries.csv"
+    write.csv(ts.table, file = file.path(csv.dir, csv_name), row.names = FALSE) 
   }  
+
+  caption = c(caption,
+              'Time series of population estimates from the base model.')
+  tex.label = c(tex.label, 'timeseries')
+  filename = c(filename, csv_name)
+
 
   #======================================================================
   #Numbers at age
@@ -906,7 +985,7 @@ SSexecutivesummary <- function (replist,
 
         colnames(natage) <- paste0("Age ", 0:(length(get.ages)-1))
         natage <- data.frame(Year = startyr:max(fore), natage)
-        write.csv(natage, file.path(csv.dir, "_natage.csv"), row.names = FALSE)
+        write.csv(natage, file.path(csv.dir, "natage.csv"), row.names = FALSE)
       }
 
       if (nsexes == 2) {
@@ -927,13 +1006,16 @@ SSexecutivesummary <- function (replist,
 
         colnames(natage.m) <- paste0("Age", 0:(length(get.ages)-1))
         natage.m <- data.frame(Year = startyr:max(fore), natage.m)
-        write.csv(natage.m, file.path(csv.dir, "_natage_m.csv"), row.names = FALSE)
+        write.csv(natage.m, file.path(csv.dir, "natage_m.csv"), row.names = FALSE)
   
         colnames(natage.f) <- paste0("Age ", 0:(length(get.ages)-1))
         natage.f <- data.frame(Year = startyr:max(fore), natage.f)
-        write.csv(natage.f, file.path(csv.dir, "_natage.f.csv"), row.names = FALSE)
+        write.csv(natage.f, file.path(csv.dir, "natage.f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
   } # end check for es_only = TRUE & 'numbers' %in% tables
 
+  out_csv = cbind(caption, NA, tex.label, filename)
+  colnames(out_csv) = c("caption", 'altcaption', 'label', 'filename')
+  write.csv(out_csv, file.path(csv.dir, 'table_labels.csv'), row.names = FALSE)
 }
