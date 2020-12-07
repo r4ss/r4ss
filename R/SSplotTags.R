@@ -83,18 +83,18 @@ SSplotTags <-
     } else {
       # filter tag groups if requested
       if (!is.null(taggroups)) {
-        tagdbase2 <- tagdbase2[tagdbase2[["Rep"]] %in% taggroups, ]
+        tagdbase2 <- tagdbase2[tagdbase2[["Repl."]] %in% taggroups, ]
         message(
           "Filtered tag groups for plotting based on input vector taggroups\n",
-          "Plots will show", length(unique(tagdbase2[["Rep"]])),
-          "out of", length(unique(replist[["tagdbase2"]][["Rep"]])),
+          "Plots will show", length(unique(tagdbase2[["Repl."]])),
+          "out of", length(unique(replist[["tagdbase2"]][["Repl."]])),
           "total included in the model."
         )
       }
 
       # calculations needed for printing to multiple PNG files
-      grouprange <- unique(tagdbase2[["Rep"]])
-      ngroups <- length(unique(tagdbase2[["Rep"]]))
+      grouprange <- unique(tagdbase2[["Repl."]])
+      ngroups <- length(unique(tagdbase2[["Repl."]]))
       npages <- ceiling(ngroups / (tagrows * tagcols))
       nseasons <- replist[["nseasons"]]
       width <- 0.5 / nseasons
@@ -119,7 +119,7 @@ SSplotTags <-
           )
         }
         for (igroup in grouprange) {
-          tagtemp <- tagdbase2[tagdbase2[["Rep"]] == igroup, ]
+          tagtemp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
           ylim <- c(0, max(5, cbind(tagtemp[["Obs"]], tagtemp[["Exp"]]) * 1.05))
           plot(0,
             type = "n", xlab = "", ylab = "", ylim = ylim,
@@ -165,19 +165,19 @@ SSplotTags <-
       }
 
       # new system which takes latency value as input
-      tgroups <- sort(unique(tagdbase2[["Rep"]]))
+      tgroups <- sort(unique(tagdbase2[["Repl."]]))
       x <- NULL
       for (igroup in tgroups) {
         # subset results for only 1 tag group
-        temp <- tagdbase2[tagdbase2[["Rep"]] == igroup, ]
+        temp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
         # remove the first rows corresponding to the latency period
         temp <- temp[-(1:latency), ]
         x <- rbind(x, temp)
       }
 
       # obs vs exp tag recaptures by year aggregated across group
-      tagobs <- aggregate(x[["Obs"]], by = list(x[["Yr.S"]], x[["Rep"]]), FUN = sum, na.rm = TRUE)
-      tagexp <- aggregate(x[["Exp"]], by = list(x[["Yr.S"]], x[["Rep"]]), FUN = sum, na.rm = TRUE)
+      tagobs <- aggregate(x[["Obs"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
+      tagexp <- aggregate(x[["Exp"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
       Recaps <- data.frame(
         Yr.S = tagobs[, 1], Group = tagobs[, 2],
         Obs = tagobs[, 3], Exp = tagexp[, 3]
