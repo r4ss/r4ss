@@ -80,7 +80,7 @@ Additional plots not created by default
 seasonal models but but maybe not fully implemented)}
 
 \item{morphs}{Which morphs to plot (if more than 1 per sex)? By default this
-will be replist$mainmorphs}
+will be replist[["mainmorphs"]]}
 
 \item{forecast}{Include forecast years in plots of time-varying biology?}
 

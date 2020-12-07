@@ -73,9 +73,9 @@ SSplotTags <-
     }
     plotinfo <- NULL
 
-    if (plotdir == "default") plotdir <- replist$inputs$dir
+    if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
 
-    tagdbase2 <- replist$tagdbase2
+    tagdbase2 <- replist[["tagdbase2"]]
     if (is.null(tagdbase2) || nrow(tagdbase2) == 0) {
       if (verbose) {
         message("skipping tag plots because there's no tagging data")
@@ -83,27 +83,27 @@ SSplotTags <-
     } else {
       # filter tag groups if requested
       if (!is.null(taggroups)) {
-        tagdbase2 <- tagdbase2[tagdbase2$Rep %in% taggroups, ]
+        tagdbase2 <- tagdbase2[tagdbase2[["Repl."]] %in% taggroups, ]
         message(
           "Filtered tag groups for plotting based on input vector taggroups\n",
-          "Plots will show", length(unique(tagdbase2$Rep)),
-          "out of", length(unique(replist$tagdbase2$Rep)),
+          "Plots will show", length(unique(tagdbase2[["Repl."]])),
+          "out of", length(unique(replist[["tagdbase2"]][["Repl."]])),
           "total included in the model."
         )
       }
 
       # calculations needed for printing to multiple PNG files
-      grouprange <- unique(tagdbase2$Rep)
-      ngroups <- length(unique(tagdbase2$Rep))
+      grouprange <- unique(tagdbase2[["Repl."]])
+      ngroups <- length(unique(tagdbase2[["Repl."]]))
       npages <- ceiling(ngroups / (tagrows * tagcols))
-      nseasons <- replist$nseasons
+      nseasons <- replist[["nseasons"]]
       width <- 0.5 / nseasons
-      tagreportrates <- replist$tagreportrates
-      tagrelease <- replist$tagrelease
-      tagsalive <- replist$tagsalive
-      tagtotrecap <- replist$tagtotrecap
+      tagreportrates <- replist[["tagreportrates"]]
+      tagrelease <- replist[["tagrelease"]]
+      tagsalive <- replist[["tagsalive"]]
+      tagtotrecap <- replist[["tagtotrecap"]]
       if (is.null(latency)) {
-        latency <- replist$tagfirstperiod
+        latency <- replist[["tagfirstperiod"]]
       }
 
       tagfun1 <- function(ipage = 0) {
@@ -119,27 +119,27 @@ SSplotTags <-
           )
         }
         for (igroup in grouprange) {
-          tagtemp <- tagdbase2[tagdbase2$Rep == igroup, ]
-          ylim <- c(0, max(5, cbind(tagtemp$Obs, tagtemp$Exp) * 1.05))
+          tagtemp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
+          ylim <- c(0, max(5, cbind(tagtemp[["Obs"]], tagtemp[["Exp"]]) * 1.05))
           plot(0,
             type = "n", xlab = "", ylab = "", ylim = ylim,
             main = paste("TG ", igroup, sep = ""),
             xaxs = "i", yaxs = "i", xlim = c(
-              min(tagtemp$Yr.S) - 0.5,
-              max(tagtemp$Yr.S) + 0.5
+              min(tagtemp[["Yr.S"]]) - 0.5,
+              max(tagtemp[["Yr.S"]]) + 0.5
             )
           )
-          for (iy in 1:length(tagtemp$Yr.S)) {
+          for (iy in 1:length(tagtemp[["Yr.S"]])) {
             xx <- c(
-              tagtemp$Yr.S[iy] - width, tagtemp$Yr.S[iy] - width,
-              tagtemp$Yr.S[iy] + width, tagtemp$Yr.S[iy] + width
+              tagtemp[["Yr.S"]][iy] - width, tagtemp[["Yr.S"]][iy] - width,
+              tagtemp[["Yr.S"]][iy] + width, tagtemp[["Yr.S"]][iy] + width
             )
-            yy <- c(0, tagtemp$Obs[iy], tagtemp$Obs[iy], 0)
+            yy <- c(0, tagtemp[["Obs"]][iy], tagtemp[["Obs"]][iy], 0)
             polygon(xx, yy, col = ifelse(iy <= latency, col3, col4))
           }
-          points(tagtemp$Yr.S, tagtemp$Exp, type = "o", lty = 1, pch = 16)
+          points(tagtemp[["Yr.S"]], tagtemp[["Exp"]], type = "o", lty = 1, pch = 16)
           if (latency > 0) {
-            points(tagtemp$Yr.S[1:latency], tagtemp$Exp[1:latency],
+            points(tagtemp[["Yr.S"]][1:latency], tagtemp[["Exp"]][1:latency],
               type = "o", lty = 1, pch = 21, bg = "white"
             )
             if (all(par()$mfg[1:2] == 1)) {
@@ -165,56 +165,56 @@ SSplotTags <-
       }
 
       # new system which takes latency value as input
-      tgroups <- sort(unique(tagdbase2$Rep))
+      tgroups <- sort(unique(tagdbase2[["Repl."]]))
       x <- NULL
       for (igroup in tgroups) {
         # subset results for only 1 tag group
-        temp <- tagdbase2[tagdbase2$Rep == igroup, ]
+        temp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
         # remove the first rows corresponding to the latency period
         temp <- temp[-(1:latency), ]
         x <- rbind(x, temp)
       }
 
       # obs vs exp tag recaptures by year aggregated across group
-      tagobs <- aggregate(x$Obs, by = list(x$Yr.S, x$Rep), FUN = sum, na.rm = TRUE)
-      tagexp <- aggregate(x$Exp, by = list(x$Yr.S, x$Rep), FUN = sum, na.rm = TRUE)
+      tagobs <- aggregate(x[["Obs"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
+      tagexp <- aggregate(x[["Exp"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
       Recaps <- data.frame(
         Yr.S = tagobs[, 1], Group = tagobs[, 2],
         Obs = tagobs[, 3], Exp = tagexp[, 3]
       )
-      xlim <- range(Recaps$Yr.S)
-      xx2 <- aggregate(Recaps$Obs, by = list(Recaps$Yr.S), FUN = sum, na.rm = TRUE)
-      xx3 <- aggregate(Recaps$Exp, by = list(Recaps$Yr.S), FUN = sum, na.rm = TRUE)
+      xlim <- range(Recaps[["Yr.S"]])
+      xx2 <- aggregate(Recaps[["Obs"]], by = list(Recaps[["Yr.S"]]), FUN = sum, na.rm = TRUE)
+      xx3 <- aggregate(Recaps[["Exp"]], by = list(Recaps[["Yr.S"]]), FUN = sum, na.rm = TRUE)
       RecAg <- data.frame(Yr.S = xx2[, 1], Obs = xx2[, 2], Exp = xx3[, 2])
 
       tagfun2 <- function() {
         # obs vs exp tag recaptures by year aggregated across group
         plot(0,
           xlim = xlim + c(-0.5, 0.5),
-          ylim = c(0, max(RecAg$Obs, RecAg$Exp) * 1.05),
+          ylim = c(0, max(RecAg[["Obs"]], RecAg[["Exp"]]) * 1.05),
           type = "n", xaxs = "i", yaxs = "i",
           xlab = labels[1], ylab = labels[2], main = labels[5],
           cex.main = cex.main
         )
         for (iy in 1:nrow(RecAg)) {
           xx <- c(
-            RecAg$Yr.S[iy] - width, RecAg$Yr.S[iy] - width,
-            RecAg$Yr.S[iy] + width, RecAg$Yr.S[iy] + width
+            RecAg[["Yr.S"]][iy] - width, RecAg[["Yr.S"]][iy] - width,
+            RecAg[["Yr.S"]][iy] + width, RecAg[["Yr.S"]][iy] + width
           )
-          yy <- c(0, RecAg$Obs[iy], RecAg$Obs[iy], 0)
+          yy <- c(0, RecAg[["Obs"]][iy], RecAg[["Obs"]][iy], 0)
           polygon(xx, yy, col = col4)
         }
-        lines(RecAg$Yr.S, RecAg$Exp, type = "o", pch = 16, lty = 1, lwd = 2)
+        lines(RecAg[["Yr.S"]], RecAg[["Exp"]], type = "o", pch = 16, lty = 1, lwd = 2)
       }
 
-      Recaps$Pearson <- (Recaps$Obs - Recaps$Exp) / sqrt(Recaps$Exp)
-      Recaps$Pearson[Recaps$Exp == 0] <- NA
+      Recaps[["Pearson"]] <- (Recaps[["Obs"]] - Recaps[["Exp"]]) / sqrt(Recaps[["Exp"]])
+      Recaps[["Pearson"]][Recaps[["Exp"]] == 0] <- NA
 
       tagfun3 <- function() {
         # bubble plot of observed recapture data
         plottitle <- labels[6]
         bubble3(
-          x = Recaps$Yr.S, y = Recaps$Group, z = Recaps$Obs,
+          x = Recaps[["Yr.S"]], y = Recaps[["Group"]], z = Recaps[["Obs"]],
           xlab = labels[1], ylab = labels[3], col = col1,
           las = 1, main = plottitle, cex.main = cex.main, maxsize = pntscalar,
           allopen = FALSE, minnbubble = minnbubble
@@ -224,7 +224,7 @@ SSplotTags <-
         # bubble plot of residuals
         plottitle <- labels[7]
         bubble3(
-          x = Recaps$Yr.S, y = Recaps$Group, z = Recaps$Pearson,
+          x = Recaps[["Yr.S"]], y = Recaps[["Group"]], z = Recaps[["Pearson"]],
           xlab = labels[1], ylab = labels[3], col = col1,
           las = 1, main = plottitle, cex.main = cex.main, maxsize = pntscalar,
           allopen = FALSE, minnbubble = minnbubble
@@ -234,22 +234,22 @@ SSplotTags <-
         # line plot by year and group
         plottitle <- labels[8]
         plot(0,
-          type = "n", xlim = range(Recaps$Yr.S),
-          ylim = range(Recaps$Group) + c(0, 1), xlab = labels[1], ylab = labels[3],
+          type = "n", xlim = range(Recaps[["Yr.S"]]),
+          ylim = range(Recaps[["Group"]]) + c(0, 1), xlab = labels[1], ylab = labels[3],
           main = plottitle, cex.main = cex.main
         )
-        rescale <- .9 * min(ngroups - 1, 5) / max(Recaps$Obs, Recaps$Exp)
-        for (igroup in sort(unique(Recaps$Group))) {
-          lines(Recaps$Yr.S[Recaps$Group == igroup],
-            igroup + 0 * Recaps$Obs[Recaps$Group == igroup],
+        rescale <- .9 * min(ngroups - 1, 5) / max(Recaps[["Obs"]], Recaps[["Exp"]])
+        for (igroup in sort(unique(Recaps[["Group"]]))) {
+          lines(Recaps[["Yr.S"]][Recaps[["Group"]] == igroup],
+            igroup + 0 * Recaps[["Obs"]][Recaps[["Group"]] == igroup],
             col = "grey", lty = 3
           )
-          points(Recaps$Yr.S[Recaps$Group == igroup],
-            igroup + rescale * Recaps$Obs[Recaps$Group == igroup],
+          points(Recaps[["Yr.S"]][Recaps[["Group"]] == igroup],
+            igroup + rescale * Recaps[["Obs"]][Recaps[["Group"]] == igroup],
             type = "o", pch = 16, cex = .5
           )
-          lines(Recaps$Yr.S[Recaps$Group == igroup],
-            igroup + rescale * Recaps$Exp[Recaps$Group == igroup],
+          lines(Recaps[["Yr.S"]][Recaps[["Group"]] == igroup],
+            igroup + rescale * Recaps[["Exp"]][Recaps[["Group"]] == igroup],
             col = col2, lty = "42", lwd = 2
           )
         }
@@ -266,15 +266,15 @@ SSplotTags <-
         par(mfrow = c(2, 2))
         # first plot is reporting rate parameters
         barplot(
-          height = tagreportrates$Init_Reporting,
-          names.arg = tagreportrates$Fleet, ylim = c(0, 1), yaxs = "i",
+          height = tagreportrates[["Init_Reporting"]],
+          names.arg = tagreportrates[["Fleet"]], ylim = c(0, 1), yaxs = "i",
           ylab = "Reporting rate", xlab = "Fleet number",
           main = "Initial reporting rate"
         )
         box()
 
         # second plot shows any decay in reporting rate over time
-        matplot(0:5, exp((0:5) %*% t(tagreportrates$Report_Decay)),
+        matplot(0:5, exp((0:5) %*% t(tagreportrates[["Report_Decay"]])),
           type = "l", lwd = 3, lty = 1, col = rich.colors.short(nrow(tagreportrates)),
           ylim = c(0, 1.05), yaxs = "i",
           ylab = "Reporting rate", xlab = "Time at liberty (years)",
@@ -283,8 +283,8 @@ SSplotTags <-
 
         # third plot shows initial tag loss
         barplot(
-          height = tagrelease$Init_Loss,
-          names.arg = tagrelease$Fleet, ylim = c(0, 1), yaxs = "i",
+          height = tagrelease[["Init_Loss"]],
+          names.arg = tagrelease[["Fleet"]], ylim = c(0, 1), yaxs = "i",
           ylab = "Initial tag loss", xlab = "Tag group",
           main = "Initial tag loss\n(fraction of tags lost at time of tagging)"
         )
@@ -292,8 +292,8 @@ SSplotTags <-
 
         # fourth plot shows chronic tag loss
         barplot(
-          height = tagrelease$Chron_Loss,
-          names.arg = tagrelease$Fleet, ylim = c(0, 1), yaxs = "i",
+          height = tagrelease[["Chron_Loss"]],
+          names.arg = tagrelease[["Fleet"]], ylim = c(0, 1), yaxs = "i",
           ylab = "Chronic tag loss", xlab = "Tag group",
           main = "Chronic tag loss\n(fraction of tags lost per year)"
         )
@@ -417,6 +417,6 @@ SSplotTags <-
       }
       flush.console()
     } # end if data
-    if (!is.null(plotinfo)) plotinfo$category <- "Tag"
+    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Tag"
     return(invisible(plotinfo))
   } # end SSplotTags

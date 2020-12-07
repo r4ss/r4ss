@@ -72,9 +72,9 @@ pattern across years.
 }
 \examples{
 
-  \dontrun{
-    SSplotMovementRates(myreplist)
-  }
+\dontrun{
+SSplotMovementRates(myreplist)
+}
 
 }
 \seealso{

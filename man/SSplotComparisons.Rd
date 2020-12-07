@@ -143,7 +143,7 @@ these intervals may differ across models.}
 (if \code{indexQlabel=TRUE})}
 
 \item{indexSEvec}{Optional replacement for the SE values in
-summaryoutput$indices to deal with the issue of differing uncertainty by
+summaryoutput[["indices"]] to deal with the issue of differing uncertainty by
 models described above.}
 
 \item{indexPlotEach}{TRUE plots the observed index for each model with
@@ -244,8 +244,8 @@ it will be the directory where the model was run.}
 It will be separated from default name by an underscore.}
 
 \item{densitynames}{Vector of names (or subset of names) of parameters or
-derived quantities contained in summaryoutput$pars$Label or
-summaryoutput$quants$Label for which to make density plots}
+derived quantities contained in summaryoutput[["pars"]][["Label"]] or
+summaryoutput[["quants"]][["Label"]] for which to make density plots}
 
 \item{densityxlabs}{Optional vector of x-axis labels to use in the density
 plots (must be equal in length to the printed vector of quantities that

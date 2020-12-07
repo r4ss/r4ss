@@ -80,7 +80,7 @@
 #' SSplotPars(
 #'   replist = model, strings = c("steep", "R0"),
 #'   nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
-#'   plotdir = file.path(model$inputs$dir, "distribution_plots")
+#'   plotdir = file.path(model[["inputs"]][["dir"]], "distribution_plots")
 #' )
 #' }
 #'
@@ -194,7 +194,7 @@ SSplotPars <-
       stop("'replist' input needs to be a list created by the SS_output function")
     }
     if (is.null(plotdir)) {
-      plotdir <- replist$inputs$dir
+      plotdir <- replist[["inputs"]][["dir"]]
     }
     if (print & add) {
       stop("Inputs 'print' and 'add' can't both be TRUE")
@@ -206,10 +206,10 @@ SSplotPars <-
       )
     }
 
-    parameters <- replist$parameters
+    parameters <- replist[["parameters"]]
 
     # subset for only active parameters
-    allnames <- parameters$Label[!is.na(parameters$Active_Cnt)]
+    allnames <- parameters[["Label"]][!is.na(parameters[["Active_Cnt"]])]
 
     ## get list of subset names if vector "strings" is supplied
     if (!is.null(strings)) {
@@ -253,7 +253,7 @@ SSplotPars <-
       goodnames <- goodnames[-skip]
       message("Skipping 'F_fleet_' parameters which aren't yet supported by this function")
     }
-    
+
     if (!showdev) {
       # remove deviations from the list of parameter labels to plot
       # exclude parameters that represent recdevs or other deviations
@@ -265,16 +265,18 @@ SSplotPars <-
       devrows <- NULL
       for (iname in 1:length(devnames)) {
         devrows <- unique(c(devrows, grep(
-                                       devnames[iname],
-                                       goodnames
-                                     )))
+          devnames[iname],
+          goodnames
+        )))
       }
       # if there are devs in the list, remove them
       if (length(devrows) > 0) {
         goodnames <- goodnames[-devrows]
         if (verbose) {
-          message("Excluding ", length(devrows),
-                  " deviation parameters because input 'showdev' = FALSE")
+          message(
+            "Excluding ", length(devrows),
+            " deviation parameters because input 'showdev' = FALSE"
+          )
         }
         if (length(goodnames) == 0) {
           message("no parameters to plot")
@@ -296,7 +298,7 @@ SSplotPars <-
     }
 
     # get vector of standard deviations and test for NA or 0 values
-    stds <- parameters$Parm_StDev[parameters$Label %in% goodnames]
+    stds <- parameters[["Parm_StDev"]][parameters[["Label"]] %in% goodnames]
     if (showmle & (all(is.na(stds)) || min(stds, na.rm = TRUE) <= 0)) {
       message(
         "Some parameters have std. dev. values in Report.sso equal to 0.\n",
@@ -325,7 +327,7 @@ SSplotPars <-
     npages <- ceiling(npars / (nrows * ncols))
 
     ####################################################################
-    
+
     plotPars.fn <- function() {
       # function to make the actual plot
       if (!add) {
@@ -409,29 +411,31 @@ SSplotPars <-
       if (debug) {
         message("    ", parname)
       }
-      parline <- parameters[parameters$Label == parname, ]
+      parline <- parameters[parameters[["Label"]] == parname, ]
 
       # grab values associated with this parameter
-      initval <- parline$Init
-      finalval <- parline$Value
-      parsd <- parline$Parm_StDev
+      initval <- parline[["Init"]]
+      finalval <- parline[["Value"]]
+      parsd <- parline[["Parm_StDev"]]
 
-      Pmin <- parline$Min
-      Pmax <- parline$Max
-      Ptype <- parline$Pr_type
-      Psd <- parline$Pr_SD
-      Pr <- parline$Prior
+      Pmin <- parline[["Min"]]
+      Pmax <- parline[["Max"]]
+      Ptype <- parline[["Pr_type"]]
+      Psd <- parline[["Pr_SD"]]
+      Pr <- parline[["Prior"]]
 
       if (is.na(Ptype) || Ptype == "dev") {
         Ptype <- "Normal"
         Pr <- 0
       }
-      
+
       # add bounds and sigma for recdevs
-      if (any(sapply(X = c("RecrDev", "InitAge", "ForeRecr"),
-                     FUN = grepl,
-                     parname))) {
-        Psd <- parameters$Value[parameters$Label == "SR_sigmaR"]
+      if (any(sapply(
+        X = c("RecrDev", "InitAge", "ForeRecr"),
+        FUN = grepl,
+        parname
+      ))) {
+        Psd <- parameters[["Value"]][parameters[["Label"]] == "SR_sigmaR"]
       }
 
       ## Devations on parameters (either random-walk, additive, or multiplicative,
@@ -496,7 +500,7 @@ SSplotPars <-
       }
 
       # get mcmc results from replist created by SS_output
-      mcmc <- replist$mcmc
+      mcmc <- replist[["mcmc"]]
       if (showpost && is.null(mcmc)) {
         message("$mcmc not found in input 'replist', changing input to 'showpost=FALSE'")
         showpost <- FALSE
@@ -559,7 +563,7 @@ SSplotPars <-
         if (max(breakvec) < max(post)) breakvec <- c(breakvec, max(post))
         posthist <- hist(post, plot = FALSE, breaks = breakvec)
         postmedian <- median(post)
-        ymax <- max(ymax, max(posthist$density), na.rm = FALSE) # update ymax
+        ymax <- max(ymax, max(posthist[["density"]]), na.rm = FALSE) # update ymax
       }
 
       # make plot
@@ -633,7 +637,7 @@ SSplotPars <-
     } # end loop over parameters
 
     if (!is.null(plotinfo)) {
-      plotinfo$category <- "Pars"
+      plotinfo[["category"]] <- "Pars"
     }
     return(invisible(plotinfo))
   }

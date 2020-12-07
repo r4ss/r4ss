@@ -36,8 +36,8 @@
 ##'                  yrs = 2019:2020,     # years with fixed catch
 ##'                  average = TRUE,      # catch by fleet from average catch
 ##'                  avg.yrs = 2014:2018, # use average of catches over past 5 years
-##'                  total = c(rep(241.3, 2), rep(300, 10))) # total 
-##' 
+##'                  total = c(rep(241.3, 2), rep(300, 10))) # total
+##'
 ##'     # create table based on harvest control rule projection in SS
 ##'     # that can be mapped into an alternative state of nature
 ##'     SS_ForeCatch(low_state,          # object created by SS_output for low state
@@ -51,59 +51,65 @@
 SS_ForeCatch <- function(replist, yrs = 2019:2030,
                          average = FALSE, avg.yrs = 2014:2018,
                          total = NULL, digits = 2,
-                         dead = TRUE, zeros = FALSE){
+                         dead = TRUE, zeros = FALSE) {
   # function for creating table of fixed forecast catches
   # based on values in the timeseries output
-  timeseries <- replist$timeseries
+  timeseries <- replist[["timeseries"]]
 
   # create new empty object to store stuff
   forecast_catches <- NULL
 
-  if(!all(yrs %in% timeseries$Yr)){
+  if (!all(yrs %in% timeseries[["Yr"]])) {
     warning("Not all requested years are present in timeseries output.")
-    yrs <- yrs[yrs %in% timeseries$Yr]
+    yrs <- yrs[yrs %in% timeseries[["Yr"]]]
   }
   # if only one value for total is input, repeat for all years
-  if(!is.null(total) & length(total)==1){
+  if (!is.null(total) & length(total) == 1) {
     total <- rep(total, length(yrs))
   }
   # loop over seasons and areas (only 1 for most models) to subset timeseries
-  for(iyr in 1:length(yrs)){
+  for (iyr in 1:length(yrs)) {
     y <- yrs[iyr]
     forecast_catches_y <- NULL
-    for(iseas in 1:replist$nseasons){
-      for(iarea in 1:replist$nareas){
-        if(replist$SS_versionNumeric < 3.30){
-          fleets_with_catch <- 1:replist$nfishfleets
-        }else{
-          fleets_with_catch <- which(replist$fleet_type==1)
+    for (iseas in 1:replist[["nseasons"]]) {
+      for (iarea in 1:replist[["nareas"]]) {
+        if (replist[["SS_versionNumeric"]] < 3.30) {
+          fleets_with_catch <- 1:replist[["nfishfleets"]]
+        } else {
+          fleets_with_catch <- which(replist[["fleet_type"]] == 1)
         }
-        for(ifleet in fleets_with_catch){
+        for (ifleet in fleets_with_catch) {
 
           # figure out column name
-          if(replist$catch_units[ifleet]==1){
+          if (replist[["catch_units"]][ifleet] == 1) {
             string <- ifelse(dead, "dead(B)", "retain(B):_")
           }
-          if(replist$catch_units[ifleet]==2){
+          if (replist[["catch_units"]][ifleet] == 2) {
             string <- ifelse(dead, "dead(N)", "retain(N):_")
           }
           colname <- paste0(string, ":_", ifleet)
           # extract catch
-          if(average){
-            catches <- timeseries[timeseries$Area==iarea &
-                                    timeseries$Seas==iseas &
-                                      timeseries$Yr %in% avg.yrs,
-                                  colname]
+          if (average) {
+            catches <- timeseries[
+              timeseries[["Area"]] == iarea &
+                timeseries[["Seas"]] == iseas &
+                timeseries[["Yr"]] %in% avg.yrs,
+              colname
+            ]
             catch <- mean(catches)
-          }else{
-            catch <- timeseries[timeseries$Area==iarea &
-                                  timeseries$Seas==iseas &
-                                    timeseries$Yr==y,
-                                colname]
+          } else {
+            catch <- timeseries[
+              timeseries[["Area"]] == iarea &
+                timeseries[["Seas"]] == iseas &
+                timeseries[["Yr"]] == y,
+              colname
+            ]
           }
           # create new row for table
-          newrow <- data.frame(Year=y, Seas=iseas,
-                               Fleet=ifleet, Catch=catch)
+          newrow <- data.frame(
+            Year = y, Seas = iseas,
+            Fleet = ifleet, Catch = catch
+          )
           # add new row to previous rows
           forecast_catches_y <- rbind(forecast_catches_y, newrow)
         } # end loop over fleets
@@ -111,18 +117,20 @@ SS_ForeCatch <- function(replist, yrs = 2019:2030,
     } # end loop over seasons
 
     # if requested, scale catches to sum to input total (such as ACL)
-    if(!is.null(total)){
-      forecast_catches_y$Catch <- total[iyr]*
-        forecast_catches_y$Catch / sum(forecast_catches_y$Catch)
+    if (!is.null(total)) {
+      forecast_catches_y[["Catch"]] <- total[iyr] *
+        forecast_catches_y[["Catch"]] / sum(forecast_catches_y[["Catch"]])
     }
 
     # round values
-    forecast_catches_y$Catch <- round(forecast_catches_y$Catch, digits)
+    forecast_catches_y[["Catch"]] <- round(forecast_catches_y[["Catch"]], digits)
 
     # add comment on right-hand-side
-    forecast_catches_y$comment <- ""
-    forecast_catches_y$comment[1] <- paste0("#sum_for_",y,": ",
-                                            sum(forecast_catches_y$Catch))
+    forecast_catches_y[["comment"]] <- ""
+    forecast_catches_y[["comment"]][1] <- paste0(
+      "#sum_for_", y, ": ",
+      sum(forecast_catches_y[["Catch"]])
+    )
     # add block for this year to other blocks
     forecast_catches <- rbind(forecast_catches, forecast_catches_y)
   } # end loop over years
@@ -132,8 +140,8 @@ SS_ForeCatch <- function(replist, yrs = 2019:2030,
   names(forecast_catches)[4] <- string
 
   # remove rows with zero catch
-  if(!zeros & any(forecast_catches[[string]] == 0)){
-    forecast_catches <- forecast_catches[!forecast_catches[[string]] == 0,]
+  if (!zeros & any(forecast_catches[[string]] == 0)) {
+    forecast_catches <- forecast_catches[!forecast_catches[[string]] == 0, ]
   }
 
   return(forecast_catches)

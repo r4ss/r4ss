@@ -60,32 +60,36 @@ examine retrospective patterns in estimation of recruitment deviations.
 }
 \examples{
 
- \dontrun{
- # run retrospective analysis
- SS_doRetro(olddir='2013hake_12',years=0:-10)
- # read in output
- retroModels <- SSgetoutput(dirvec=paste('retrospectives/retro',-10:0,sep=''))
- # summarize output
- retroSummary <- SSsummarize(retroModels)
+\dontrun{
+# run retrospective analysis
+SS_doRetro(olddir = "2013hake_12", years = 0:-10)
+# read in output
+retroModels <- SSgetoutput(dirvec = paste("retrospectives/retro", -10:0, sep = ""))
+# summarize output
+retroSummary <- SSsummarize(retroModels)
 
- # set the ending year of each model in the set
- endyrvec <- retroModels[[1]]$endyr-10:0
- # make comparison plot
- pdf('retrospectives/retrospective_comparison_plots.pdf')
- SSplotComparisons(retroSummary,endyrvec=endyrvec,new=FALSE)
- dev.off()
+# set the ending year of each model in the set
+endyrvec <- retroModels[[1]][["endyr"]] - 10:0
+# make comparison plot
+pdf("retrospectives/retrospective_comparison_plots.pdf")
+SSplotComparisons(retroSummary, endyrvec = endyrvec, new = FALSE)
+dev.off()
 
- # make Squid Plot of recdev retrospectives 
- pdf('retrospectives/retrospective_dev_plots.pdf',width=7,height=10)
- par(mfrow=c(2,1))
- # first scaled relative to most recent estimate
- SSplotRetroRecruits(retroSummary, endyrvec=endyrvec, cohorts=1999:2012,
-                     relative=TRUE, legend=FALSE)
- # second without scaling
- SSplotRetroDevs(retroSummary, endyrvec=endyrvec, cohorts=1999:2012,
-                 relative=FALSE, legend=FALSE)
- dev.off()
- }
+# make Squid Plot of recdev retrospectives
+pdf("retrospectives/retrospective_dev_plots.pdf", width = 7, height = 10)
+par(mfrow = c(2, 1))
+# first scaled relative to most recent estimate
+SSplotRetroRecruits(retroSummary,
+  endyrvec = endyrvec, cohorts = 1999:2012,
+  relative = TRUE, legend = FALSE
+)
+# second without scaling
+SSplotRetroDevs(retroSummary,
+  endyrvec = endyrvec, cohorts = 1999:2012,
+  relative = FALSE, legend = FALSE
+)
+dev.off()
+}
 
 }
 \references{

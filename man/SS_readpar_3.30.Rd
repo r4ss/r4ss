@@ -9,11 +9,11 @@ SS_readpar_3.30(parfile, datsource, ctlsource, verbose = TRUE)
 \arguments{
 \item{parfile}{Filename either with full path or relative to working directory.}
 
-\item{datsource}{list or character. If list, should be a list produced 
+\item{datsource}{list or character. If list, should be a list produced
 from \code{\link{SS_writedat}}. If character, should be the full file location of an
 SS data file.}
 
-\item{ctlsource}{list or character. If list, should be a list produced 
+\item{ctlsource}{list or character. If list, should be a list produced
 from \code{\link{SS_writectl}}. If character, should be the full file location of an
 SS control file.}
 

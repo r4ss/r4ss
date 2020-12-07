@@ -61,7 +61,7 @@
 #' @param indexQdigits Number of significant digits for catchability in legend
 #' (if \code{indexQlabel=TRUE})
 #' @param indexSEvec Optional replacement for the SE values in
-#' summaryoutput$indices to deal with the issue of differing uncertainty by
+#' summaryoutput[["indices"]] to deal with the issue of differing uncertainty by
 #' models described above.
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
@@ -127,8 +127,8 @@
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or
-#' derived quantities contained in summaryoutput$pars$Label or
-#' summaryoutput$quants$Label for which to make density plots
+#' derived quantities contained in summaryoutput[["pars"]][["Label"]] or
+#' summaryoutput[["quants"]][["Label"]] for which to make density plots
 #' @param densityxlabs Optional vector of x-axis labels to use in the density
 #' plots (must be equal in length to the printed vector of quantities that
 #' match the \code{densitynames} input)
@@ -339,45 +339,45 @@ SSplotComparisons <-
     }
 
     # get stuff from summary output
-    n <- summaryoutput$n
-    nsexes <- summaryoutput$nsexes
-    startyrs <- summaryoutput$startyrs
-    endyrs <- summaryoutput$endyrs
-    pars <- summaryoutput$pars
-    parsSD <- summaryoutput$parsSD
-    parphases <- summaryoutput$parphases
-    quants <- summaryoutput$quants
-    quantsSD <- summaryoutput$quantsSD
-    SpawnBio <- summaryoutput$SpawnBio
-    SpawnBioLower <- summaryoutput$SpawnBioLower
-    SpawnBioUpper <- summaryoutput$SpawnBioUpper
-    Bratio <- summaryoutput$Bratio
-    BratioLower <- summaryoutput$BratioLower
-    BratioUpper <- summaryoutput$BratioUpper
-    SPRratio <- summaryoutput$SPRratio
-    SPRratioLower <- summaryoutput$SPRratioLower
-    SPRratioUpper <- summaryoutput$SPRratioUpper
-    Fvalue <- summaryoutput$Fvalue
-    FvalueLower <- summaryoutput$FvalueLower
-    FvalueUpper <- summaryoutput$FvalueUpper
-    recruits <- summaryoutput$recruits
-    recruitsLower <- summaryoutput$recruitsLower
-    recruitsUpper <- summaryoutput$recruitsUpper
-    recdevs <- summaryoutput$recdevs
-    recdevsLower <- summaryoutput$recdevsLower
-    recdevsUpper <- summaryoutput$recdevsUpper
-    indices <- summaryoutput$indices
+    n <- summaryoutput[["n"]]
+    nsexes <- summaryoutput[["nsexes"]]
+    startyrs <- summaryoutput[["startyrs"]]
+    endyrs <- summaryoutput[["endyrs"]]
+    pars <- summaryoutput[["pars"]]
+    parsSD <- summaryoutput[["parsSD"]]
+    parphases <- summaryoutput[["parphases"]]
+    quants <- summaryoutput[["quants"]]
+    quantsSD <- summaryoutput[["quantsSD"]]
+    SpawnBio <- summaryoutput[["SpawnBio"]]
+    SpawnBioLower <- summaryoutput[["SpawnBioLower"]]
+    SpawnBioUpper <- summaryoutput[["SpawnBioUpper"]]
+    Bratio <- summaryoutput[["Bratio"]]
+    BratioLower <- summaryoutput[["BratioLower"]]
+    BratioUpper <- summaryoutput[["BratioUpper"]]
+    SPRratio <- summaryoutput[["SPRratio"]]
+    SPRratioLower <- summaryoutput[["SPRratioLower"]]
+    SPRratioUpper <- summaryoutput[["SPRratioUpper"]]
+    Fvalue <- summaryoutput[["Fvalue"]]
+    FvalueLower <- summaryoutput[["FvalueLower"]]
+    FvalueUpper <- summaryoutput[["FvalueUpper"]]
+    recruits <- summaryoutput[["recruits"]]
+    recruitsLower <- summaryoutput[["recruitsLower"]]
+    recruitsUpper <- summaryoutput[["recruitsUpper"]]
+    recdevs <- summaryoutput[["recdevs"]]
+    recdevsLower <- summaryoutput[["recdevsLower"]]
+    recdevsUpper <- summaryoutput[["recdevsUpper"]]
+    indices <- summaryoutput[["indices"]]
     # note that "mcmc" is a a list of dataframes,
     # 1 for each model with mcmc output
-    mcmc <- summaryoutput$mcmc
-    lowerCI <- summaryoutput$lowerCI
-    upperCI <- summaryoutput$upperCI
-    SpawnOutputUnits <- summaryoutput$SpawnOutputUnits
-    btargs <- summaryoutput$btargs
-    minbthreshs <- summaryoutput$minbthreshs
-    sprtargs <- summaryoutput$sprtargs
-    SPRratioLabels <- summaryoutput$SPRratioLabels
-    FvalueLabels <- summaryoutput$FvalueLabels
+    mcmc <- summaryoutput[["mcmc"]]
+    lowerCI <- summaryoutput[["lowerCI"]]
+    upperCI <- summaryoutput[["upperCI"]]
+    SpawnOutputUnits <- summaryoutput[["SpawnOutputUnits"]]
+    btargs <- summaryoutput[["btargs"]]
+    minbthreshs <- summaryoutput[["minbthreshs"]]
+    sprtargs <- summaryoutput[["sprtargs"]]
+    SPRratioLabels <- summaryoutput[["SPRratioLabels"]]
+    FvalueLabels <- summaryoutput[["FvalueLabels"]]
 
     # checking for the same reference points across models
     if (is.null(btarg)) {
@@ -486,7 +486,7 @@ SSplotComparisons <-
     # check for mcmc
     if (any(mcmcVec) & length(mcmc) == 0) {
       mcmcVec <- FALSE
-      warning("Setting mcmcVec = FALSE because summaryoutput$mcmc is empty")
+      warning("Setting mcmcVec = FALSE because summaryoutput[['mcmc']] is empty")
     }
     # check length of mcmcVec
     if (nlines > 1 & length(mcmcVec) == 1) {
@@ -504,7 +504,7 @@ SSplotComparisons <-
         indexfleets <- list()
         for (imodel in 1:n) {
           indexfleets[[paste0("model", imodel)]] <-
-            sort(unique(indices$Fleet[indices$imodel == imodel]))
+            sort(unique(indices[["Fleet"]][indices[["imodel"]] == imodel]))
         }
       } else {
         # if indexfleets is provided
@@ -514,8 +514,10 @@ SSplotComparisons <-
             indexfleets <- rep(indexfleets, n)
           }
           if (length(indexfleets) != n) {
-            warning("Skipping index plots: length(indexfleets) should be 1 or n = ",
-                    n, ".")
+            warning(
+              "Skipping index plots: length(indexfleets) should be 1 or n = ",
+              n, "."
+            )
             indexfleets <- NULL
           }
         }
@@ -524,8 +526,10 @@ SSplotComparisons <-
       if (!length(unique(lapply(indexfleets, FUN = length))) == 1) {
         message("indexfleets:")
         print(indexfleets)
-        warning("Skipping index plots:\n",
-                "Fleets have different numbers of indices listed in 'indexfleets'.")
+        warning(
+          "Skipping index plots:\n",
+          "Fleets have different numbers of indices listed in 'indexfleets'."
+        )
         indexfleets <- NULL
       }
 
@@ -611,9 +615,9 @@ SSplotComparisons <-
         lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
         med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
-        SpawnBio[, imodel] <- med[match(SpawnBio$Label, mcmclabs)]
-        SpawnBioLower[, imodel] <- lower[match(SpawnBioLower$Label, mcmclabs)]
-        SpawnBioUpper[, imodel] <- upper[match(SpawnBioUpper$Label, mcmclabs)]
+        SpawnBio[, imodel] <- med[match(SpawnBio[["Label"]], mcmclabs)]
+        SpawnBioLower[, imodel] <- lower[match(SpawnBioLower[["Label"]], mcmclabs)]
+        SpawnBioUpper[, imodel] <- upper[match(SpawnBioUpper[["Label"]], mcmclabs)]
       }
 
       ### get MCMC for Bratio
@@ -625,9 +629,9 @@ SSplotComparisons <-
         lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
         med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
-        Bratio[, imodel] <- med[match(Bratio$Label, mcmclabs)]
-        BratioLower[, imodel] <- lower[match(BratioLower$Label, mcmclabs)]
-        BratioUpper[, imodel] <- upper[match(BratioUpper$Label, mcmclabs)]
+        Bratio[, imodel] <- med[match(Bratio[["Label"]], mcmclabs)]
+        BratioLower[, imodel] <- lower[match(BratioLower[["Label"]], mcmclabs)]
+        BratioUpper[, imodel] <- upper[match(BratioUpper[["Label"]], mcmclabs)]
       }
 
       ### get MCMC for SPRratio
@@ -640,9 +644,9 @@ SSplotComparisons <-
         lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
         med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
-        SPRratio[, imodel] <- med[match(SPRratio$Label, mcmclabs)]
-        SPRratioLower[, imodel] <- lower[match(SPRratioLower$Label, mcmclabs)]
-        SPRratioUpper[, imodel] <- upper[match(SPRratioUpper$Label, mcmclabs)]
+        SPRratio[, imodel] <- med[match(SPRratio[["Label"]], mcmclabs)]
+        SPRratioLower[, imodel] <- lower[match(SPRratioLower[["Label"]], mcmclabs)]
+        SPRratioUpper[, imodel] <- upper[match(SPRratioUpper[["Label"]], mcmclabs)]
       }
 
       ### get MCMC for recruits
@@ -666,9 +670,9 @@ SSplotComparisons <-
           )
           meanRecWarning <- TRUE
         }
-        recruits[, imodel] <- mean[match(recruits$Label, mcmclabs)]
-        recruitsLower[, imodel] <- lower[match(recruitsLower$Label, mcmclabs)]
-        recruitsUpper[, imodel] <- upper[match(recruitsUpper$Label, mcmclabs)]
+        recruits[, imodel] <- mean[match(recruits[["Label"]], mcmclabs)]
+        recruitsLower[, imodel] <- lower[match(recruitsLower[["Label"]], mcmclabs)]
+        recruitsUpper[, imodel] <- upper[match(recruitsUpper[["Label"]], mcmclabs)]
       }
 
       ### get MCMC for recdevs
@@ -685,9 +689,9 @@ SSplotComparisons <-
         lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
         med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
         upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
-        recdevs[, imodel] <- med[match(recdevs$Label, mcmclabs)]
-        recdevsLower[, imodel] <- lower[match(recdevsLower$Label, mcmclabs)]
-        recdevsUpper[, imodel] <- upper[match(recdevsUpper$Label, mcmclabs)]
+        recdevs[, imodel] <- med[match(recdevs[["Label"]], mcmclabs)]
+        recdevsLower[, imodel] <- lower[match(recdevsLower[["Label"]], mcmclabs)]
+        recdevsUpper[, imodel] <- upper[match(recdevsUpper[["Label"]], mcmclabs)]
       }
     }
 
@@ -700,9 +704,9 @@ SSplotComparisons <-
     # not sure why there should be NA values for Yr column in recdevs,
     # but old code to eliminate the devs past endyr wasn't working as
     # configured before
-    recdevs <- recdevs[!is.na(recdevs$Yr), ]
-    recdevsLower <- recdevsLower[!is.na(recdevsLower$Yr), ]
-    recdevsUpper <- recdevsUpper[!is.na(recdevsUpper$Yr), ]
+    recdevs <- recdevs[!is.na(recdevs[["Yr"]]), ]
+    recdevsLower <- recdevsLower[!is.na(recdevsLower[["Yr"]]), ]
+    recdevsUpper <- recdevsUpper[!is.na(recdevsUpper[["Yr"]]), ]
 
 
     # change to NA any values beyond endyr
@@ -710,32 +714,32 @@ SSplotComparisons <-
       for (iline in 1:nlines) {
         endyr <- endyrvec[iline]
         imodel <- models[iline]
-        SpawnBio[SpawnBio$Yr > endyr, imodel] <- NA
-        SpawnBioLower[SpawnBio$Yr > endyr, imodel] <- NA
-        SpawnBioUpper[SpawnBio$Yr > endyr, imodel] <- NA
-        Bratio[Bratio$Yr > endyr, imodel] <- NA
-        BratioLower[Bratio$Yr > endyr, imodel] <- NA
-        BratioUpper[Bratio$Yr > endyr, imodel] <- NA
+        SpawnBio[SpawnBio[["Yr"]] > endyr, imodel] <- NA
+        SpawnBioLower[SpawnBio[["Yr"]] > endyr, imodel] <- NA
+        SpawnBioUpper[SpawnBio[["Yr"]] > endyr, imodel] <- NA
+        Bratio[Bratio[["Yr"]] > endyr, imodel] <- NA
+        BratioLower[Bratio[["Yr"]] > endyr, imodel] <- NA
+        BratioUpper[Bratio[["Yr"]] > endyr, imodel] <- NA
         #### note: add generalized startyrvec option in the future
         ## if(exists("startyrvec")){
         ##   startyr <- startyrvec[iline]
-        ##   Bratio[Bratio$Yr < startyr, imodel] <- NA
-        ##   BratioLower[Bratio$Yr < startyr, imodel] <- NA
-        ##   BratioUpper[Bratio$Yr < startyr, imodel] <- NA
+        ##   Bratio[Bratio[["Yr"]] < startyr, imodel] <- NA
+        ##   BratioLower[Bratio[["Yr"]] < startyr, imodel] <- NA
+        ##   BratioUpper[Bratio[["Yr"]] < startyr, imodel] <- NA
         ## }
-        SPRratio[SPRratio$Yr >= endyr, imodel] <- NA
-        SPRratioLower[SPRratio$Yr >= endyr, imodel] <- NA
-        SPRratioUpper[SPRratio$Yr >= endyr, imodel] <- NA
-        Fvalue[Fvalue$Yr >= endyr, imodel] <- NA
-        FvalueLower[Fvalue$Yr >= endyr, imodel] <- NA
-        FvalueUpper[Fvalue$Yr >= endyr, imodel] <- NA
-        recruits[recruits$Yr > endyr, imodel] <- NA
-        recruitsLower[recruits$Yr > endyr, imodel] <- NA
-        recruitsUpper[recruits$Yr > endyr, imodel] <- NA
+        SPRratio[SPRratio[["Yr"]] >= endyr, imodel] <- NA
+        SPRratioLower[SPRratio[["Yr"]] >= endyr, imodel] <- NA
+        SPRratioUpper[SPRratio[["Yr"]] >= endyr, imodel] <- NA
+        Fvalue[Fvalue[["Yr"]] >= endyr, imodel] <- NA
+        FvalueLower[Fvalue[["Yr"]] >= endyr, imodel] <- NA
+        FvalueUpper[Fvalue[["Yr"]] >= endyr, imodel] <- NA
+        recruits[recruits[["Yr"]] > endyr, imodel] <- NA
+        recruitsLower[recruits[["Yr"]] > endyr, imodel] <- NA
+        recruitsUpper[recruits[["Yr"]] > endyr, imodel] <- NA
         if (!is.null(recdevs)) {
-          recdevs[recdevs$Yr > endyr, imodel] <- NA
-          recdevsLower[recdevs$Yr > endyr, imodel] <- NA
-          recdevsUpper[recdevs$Yr > endyr, imodel] <- NA
+          recdevs[recdevs[["Yr"]] > endyr, imodel] <- NA
+          recdevsLower[recdevs[["Yr"]] > endyr, imodel] <- NA
+          recdevsUpper[recdevs[["Yr"]] > endyr, imodel] <- NA
         }
       }
     }
@@ -769,23 +773,23 @@ SSplotComparisons <-
       # get axis limits
       if (is.null(xlim)) {
         if (show_equilibrium) {
-          xlim <- range(SpawnBio$Yr)
+          xlim <- range(SpawnBio[["Yr"]])
         } else {
-          xlim <- range(SpawnBio$Yr[-c(1, 2)])
+          xlim <- range(SpawnBio[["Yr"]][-c(1, 2)])
         }
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
       ylim <- ylimAdj * range(0, SpawnBio[
-        SpawnBio$Yr >= xlim[1] &
-          SpawnBio$Yr <= xlim[2],
+        SpawnBio[["Yr"]] >= xlim[1] &
+          SpawnBio[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
         ylim <- range(ylim, ylimAdj * SpawnBioUpper[
-          SpawnBio$Yr >= xlim[1] &
-            SpawnBio$Yr <= xlim[2],
+          SpawnBio[["Yr"]] >= xlim[1] &
+            SpawnBio[["Yr"]] <= xlim[2],
           models[uncertainty]
         ], na.rm = TRUE)
       }
@@ -828,37 +832,37 @@ SSplotComparisons <-
       if (show_uncertainty) {
         # add shading for undertainty
         addpoly(
-          yrvec = SpawnBio$Yr[-(1:2)], lower = SpawnBioLower[-(1:2), ],
+          yrvec = SpawnBio[["Yr"]][-(1:2)], lower = SpawnBioLower[-(1:2), ],
           upper = SpawnBioUpper[-(1:2), ]
         )
         # equilibrium spawning biomass year by model
-        xEqu <- SpawnBio$Yr[2] - (1:nlines) / nlines
+        xEqu <- SpawnBio[["Yr"]][2] - (1:nlines) / nlines
       } else {
         # equilibrium spawning biomass year by model
-        xEqu <- rep(SpawnBio$Yr[2], nlines)
+        xEqu <- rep(SpawnBio[["Yr"]][2], nlines)
       }
       # draw points and lines
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+        matplot(SpawnBio[["Yr"]][-(1:2)], SpawnBio[-(1:2), models],
           col = col, pch = pch, lty = lty, lwd = lwd, type = type,
           ylim = ylim, add = TRUE
         )
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(SpawnBio$Yr[-(1:2)], SpawnBio[-(1:2), models],
+        matplot(SpawnBio[["Yr"]][-(1:2)], SpawnBio[-(1:2), models],
           col = col, lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
         )
         SpawnBio2 <- SpawnBio
         for (iline in 1:nlines) {
           imodel <- models[iline]
           SpawnBio2[
-            (SpawnBio2$Yr - initpoint) %% spacepoints !=
+            (SpawnBio2[["Yr"]] - initpoint) %% spacepoints !=
               (staggerpoints * iline) %% spacepoints,
             imodel
           ] <- NA
         }
-        matplot(SpawnBio2$Yr[-(1:2)], SpawnBio2[-(1:2), models],
+        matplot(SpawnBio2[["Yr"]][-(1:2)], SpawnBio2[-(1:2), models],
           col = col, pch = pch, lwd = lwd, type = "p", ylim = ylim, add = TRUE
         )
       }
@@ -927,20 +931,20 @@ SSplotComparisons <-
       }
       # get axis limits
       if (is.null(xlim)) {
-        xlim <- range(Bratio$Yr)
+        xlim <- range(Bratio[["Yr"]])
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
       ylim <- ylimAdj * range(0, Bratio[
-        Bratio$Yr >= xlim[1] &
-          Bratio$Yr <= xlim[2],
+        Bratio[["Yr"]] >= xlim[1] &
+          Bratio[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
         ylim <- ylimAdj * range(ylim / ylimAdj, BratioUpper[
-          Bratio$Yr >= xlim[1] &
-            Bratio$Yr <= xlim[2],
+          Bratio[["Yr"]] >= xlim[1] &
+            Bratio[["Yr"]] <= xlim[2],
           models[uncertainty]
         ], na.rm = TRUE)
       }
@@ -954,18 +958,18 @@ SSplotComparisons <-
         )
       }
       if (show_uncertainty) {
-        addpoly(Bratio$Yr, lower = BratioLower, upper = BratioUpper)
+        addpoly(Bratio[["Yr"]], lower = BratioLower, upper = BratioUpper)
       }
 
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(Bratio$Yr, Bratio[, models],
+        matplot(Bratio[["Yr"]], Bratio[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
         )
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(Bratio$Yr, Bratio[, models],
+        matplot(Bratio[["Yr"]], Bratio[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
         )
@@ -973,10 +977,10 @@ SSplotComparisons <-
           Bratio2 <- Bratio
           for (iline in 1:nlines) {
             imodel <- models[iline]
-            Bratio2[(Bratio2$Yr - initpoint) %% spacepoints !=
+            Bratio2[(Bratio2[["Yr"]] - initpoint) %% spacepoints !=
               (staggerpoints * iline) %% spacepoints, imodel] <- NA
           }
-          matplot(Bratio2$Yr, Bratio2[, models],
+          matplot(Bratio2[["Yr"]], Bratio2[, models],
             col = col, pch = pch,
             lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
           )
@@ -987,12 +991,12 @@ SSplotComparisons <-
       yticks <- pretty(par()$yaxp[1:2])
       if (btarg > 0) {
         abline(h = btarg, col = "red", lty = 2)
-        text(min(Bratio$Yr) + 4, btarg + 0.03, labels[10], adj = 0)
+        text(min(Bratio[["Yr"]]) + 4, btarg + 0.03, labels[10], adj = 0)
         yticks <- sort(c(btarg, yticks))
       }
       if (minbthresh > 0) {
         abline(h = minbthresh, col = "red", lty = 2)
-        text(min(Bratio$Yr) + 4, minbthresh + 0.03, labels[11], adj = 0)
+        text(min(Bratio[["Yr"]]) + 4, minbthresh + 0.03, labels[11], adj = 0)
         yticks <- sort(c(minbthresh, yticks))
       }
       if (!add) {
@@ -1037,21 +1041,21 @@ SSplotComparisons <-
       }
       # get axis limits
       if (is.null(xlim)) {
-        xlim <- range(SPRratio$Yr)
+        xlim <- range(SPRratio[["Yr"]])
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
       ylim <- ylimAdj * range(0, SPRratio[
-        SPRratio$Yr >= xlim[1] &
-          SPRratio$Yr <= xlim[2],
+        SPRratio[["Yr"]] >= xlim[1] &
+          SPRratio[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
         ylim <- ylimAdj * range(ylim / ylimAdj,
           SPRratioUpper[
-            SPRratio$Yr >= xlim[1] &
-              SPRratio$Yr <= xlim[2],
+            SPRratio[["Yr"]] >= xlim[1] &
+              SPRratio[["Yr"]] <= xlim[2],
             models[uncertainty]
           ],
           na.rm = TRUE
@@ -1082,17 +1086,17 @@ SSplotComparisons <-
         axis(2)
       }
       if (show_uncertainty) {
-        addpoly(SPRratio$Yr, lower = SPRratioLower, upper = SPRratioUpper)
+        addpoly(SPRratio[["Yr"]], lower = SPRratioLower, upper = SPRratioUpper)
       }
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(SPRratio$Yr, SPRratio[, models],
+        matplot(SPRratio[["Yr"]], SPRratio[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
         )
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(SPRratio$Yr, SPRratio[, models],
+        matplot(SPRratio[["Yr"]], SPRratio[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
         )
@@ -1100,10 +1104,10 @@ SSplotComparisons <-
           SPRratio2 <- SPRratio
           for (iline in 1:nlines) {
             imodel <- models[iline]
-            SPRratio2[(SPRratio2$Yr - initpoint) %% spacepoints !=
+            SPRratio2[(SPRratio2[["Yr"]] - initpoint) %% spacepoints !=
               (staggerpoints * iline) %% spacepoints, imodel] <- NA
           }
-          matplot(SPRratio2$Yr, SPRratio2[, models],
+          matplot(SPRratio2[["Yr"]], SPRratio2[, models],
             col = col, pch = pch,
             lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
           )
@@ -1115,11 +1119,13 @@ SSplotComparisons <-
           # if starter file chooses raw SPR as the option for reporting,
           # don't show ratio
           abline(h = sprtarg, col = "red", lty = 2)
-          text(SPRratio$Yr[1] + 4, (sprtarg + 0.03), labels[10],
-               adj = 0)
-          mtext(side = 2, text=SPRratioLabel,
-                line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
-
+          text(SPRratio[["Yr"]][1] + 4, (sprtarg + 0.03), labels[10],
+            adj = 0
+          )
+          mtext(
+            side = 2, text = SPRratioLabel,
+            line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+          )
         } else {
           # draw line at sprtarg
           yticks <- pretty(ylim)
@@ -1130,28 +1136,36 @@ SSplotComparisons <-
             )) {
             # add right-hand vertical axis showing 1-SPR
             abline(h = 1, col = "red", lty = 2)
-            text(SPRratio$Yr[1] + 4, 1 + 0.03, labels[10], adj = 0)
+            text(SPRratio[["Yr"]][1] + 4, 1 + 0.03, labels[10], adj = 0)
             axis(4, at = yticks, labels = yticks * (1 - sprtarg), las = 1)
-            mtext(side = 4, text="1 - SPR",
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 4, text = "1 - SPR",
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
             # line below has round to be more accurate
             # than the floor which is used
             # in the test above and in SS
-            mtext(side = 2, text=paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, text = paste("(1-SPR)/(1-SPR_", 100 * sprtarg, "%)", sep = ""),
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
           } else {
             message(
               "No line added to SPR ratio plot, ",
               "as the settings used in this model ",
               "have not yet been configured in SSplotComparisons."
             )
-            mtext(side = 2, text=SPRratioLabel,
-                  line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, text = SPRratioLabel,
+              line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+            )
           }
         }
       } else {
-        mtext(side = 2, text=SPRratioLabel,
-              line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+        mtext(
+          side = 2, text = SPRratioLabel,
+          line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+        )
       }
       if (!add) {
         if (tickEndYr) { # include ending year in axis labels
@@ -1197,21 +1211,21 @@ SSplotComparisons <-
       }
       # get axis limits
       if (is.null(xlim)) {
-        xlim <- range(Fvalue$Yr)
+        xlim <- range(Fvalue[["Yr"]])
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
       ylim <- ylimAdj * range(0, Fvalue[
-        Fvalue$Yr >= xlim[1] &
-          Fvalue$Yr <= xlim[2],
+        Fvalue[["Yr"]] >= xlim[1] &
+          Fvalue[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
         ylim <- ylimAdj * range(ylim / ylimAdj,
           FvalueUpper[
-            Fvalue$Yr >= xlim[1] &
-              Fvalue$Yr <= xlim[2],
+            Fvalue[["Yr"]] >= xlim[1] &
+              Fvalue[["Yr"]] <= xlim[2],
             models[uncertainty]
           ],
           na.rm = TRUE
@@ -1236,17 +1250,17 @@ SSplotComparisons <-
         axis(2)
       }
       if (show_uncertainty) {
-        addpoly(Fvalue$Yr, lower = FvalueLower, upper = FvalueUpper)
+        addpoly(Fvalue[["Yr"]], lower = FvalueLower, upper = FvalueUpper)
       }
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(Fvalue$Yr, Fvalue[, models],
+        matplot(Fvalue[["Yr"]], Fvalue[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = type, ylim = ylim, add = TRUE
         )
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(Fvalue$Yr, Fvalue[, models],
+        matplot(Fvalue[["Yr"]], Fvalue[, models],
           col = col, pch = pch,
           lty = lty, lwd = lwd, type = "l", ylim = ylim, add = TRUE
         )
@@ -1254,18 +1268,20 @@ SSplotComparisons <-
           Fvalue2 <- Fvalue
           for (iline in 1:nlines) {
             imodel <- models[iline]
-            Fvalue2[Fvalue2$Yr %% spacepoints !=
+            Fvalue2[Fvalue2[["Yr"]] %% spacepoints !=
               (staggerpoints * iline) %% spacepoints, imodel] <- NA
           }
-          matplot(Fvalue2$Yr, Fvalue2[, models],
+          matplot(Fvalue2[["Yr"]], Fvalue2[, models],
             col = col, pch = pch,
             lty = lty, lwd = lwd, type = "p", ylim = ylim, add = TRUE
           )
         }
       }
       abline(h = 0, col = "grey")
-      mtext(side = 2, text=FvalueLabel,
-            line = par()$mgp[1], col=par()$col.lab, cex=par()$cex.lab)
+      mtext(
+        side = 2, text = FvalueLabel,
+        line = par()$mgp[1], col = par()$col.lab, cex = par()$cex.lab
+      )
       box()
       if (legend) legendfun(legendlabels)
 
@@ -1283,9 +1299,9 @@ SSplotComparisons <-
       # determine x-limits
       if (is.null(xlim)) {
         if (show_equilibrium) {
-          xlim <- range(recruits$Yr)
+          xlim <- range(recruits[["Yr"]])
         } else {
-          xlim <- range(recruits$Yr[-c(1, 2)])
+          xlim <- range(recruits[["Yr"]][-c(1, 2)])
         }
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
@@ -1294,15 +1310,15 @@ SSplotComparisons <-
 
       # determine y-limits
       ylim <- ylimAdj * range(0, recruits[
-        recruits$Yr >= xlim[1] &
-          recruits$Yr <= xlim[2],
+        recruits[["Yr"]] >= xlim[1] &
+          recruits[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
         ylim <- ylimAdj * range(ylim / ylimAdj,
           recruitsUpper[
-            recruits$Yr >= xlim[1] &
-              recruits$Yr <= xlim[2],
+            recruits[["Yr"]] >= xlim[1] &
+              recruits[["Yr"]] <= xlim[2],
             models[uncertainty]
           ],
           na.rm = TRUE
@@ -1325,7 +1341,7 @@ SSplotComparisons <-
 
       # plot lines showing recruitment
       if (spacepoints %in% c(0, 1, FALSE)) { # don't spread out points
-        matplot(recruits$Yr[-(1:2)], recruits[-(1:2), models],
+        matplot(recruits[["Yr"]][-(1:2)], recruits[-(1:2), models],
           col = col, pch = pch, lty = lty, lwd = lwd, type = type,
           xlim = xlim, ylim = ylim,
           xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
@@ -1334,7 +1350,7 @@ SSplotComparisons <-
       } else {
         # spread out points with interval equal to spacepoints and
         # staggering equal to staggerpoints
-        matplot(recruits$Yr[-(1:2)], recruits[-(1:2), models],
+        matplot(recruits[["Yr"]][-(1:2)], recruits[-(1:2), models],
           col = col, pch = pch, lty = lty, lwd = lwd, type = "l",
           xlim = xlim, ylim = ylim,
           xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
@@ -1344,10 +1360,10 @@ SSplotComparisons <-
           recruits2 <- recruits
           for (iline in 1:nlines) {
             imodel <- models[iline]
-            recruits2[(recruits2$Yr %% spacepoints - initpoint) !=
+            recruits2[(recruits2[["Yr"]] %% spacepoints - initpoint) !=
               (staggerpoints * iline) %% spacepoints, imodel] <- NA
           }
-          matplot(recruits2$Yr[-(1:2)], recruits2[-(1:2), models],
+          matplot(recruits2[["Yr"]][-(1:2)], recruits2[-(1:2), models],
             col = col, pch = pch, lty = lty, lwd = lwd, type = "p",
             xlab = labels[1], ylab = ylab, xaxs = xaxs, yaxs = yaxs,
             axes = FALSE, ylim = ylim, add = TRUE
@@ -1358,9 +1374,9 @@ SSplotComparisons <-
       ## Add points at equilibrium values. Note: I adapted this logic from the
       ## SSB plot above.
       if (show_uncertainty) {
-        xEqu <- recruits$Yr[2] - (1:nlines) / nlines
+        xEqu <- recruits[["Yr"]][2] - (1:nlines) / nlines
       } else {
-        xEqu <- rep(recruits$Yr[1], nlines)
+        xEqu <- rep(recruits[["Yr"]][1], nlines)
       }
       if (show_equilibrium) {
         points(
@@ -1374,7 +1390,7 @@ SSplotComparisons <-
           imodel <- models[iline]
           if (uncertainty[imodel]) {
             ## plot all but equilbrium values
-            xvec <- recruits$Yr
+            xvec <- recruits[["Yr"]]
             if (nlines > 1) xvec <- xvec + 0.4 * iline / nlines - 0.2
             old_warn <- options()$warn # previous setting
             options(warn = -1) # turn off "zero-length arrow" warning
@@ -1435,7 +1451,7 @@ SSplotComparisons <-
 
     plotRecDevs <- function(show_uncertainty = TRUE) { # plot recruit deviations
       # test for bad values
-      if (any(is.na(recdevs$Yr))) {
+      if (any(is.na(recdevs[["Yr"]]))) {
         warning("Recdevs associated with initial age structure may not be shown")
       }
       # only show uncertainty if values are present for at least one model
@@ -1447,14 +1463,14 @@ SSplotComparisons <-
 
       # empty plot
       if (is.null(xlim)) {
-        xlim <- range(recdevs$Yr, na.rm = TRUE)
+        xlim <- range(recdevs[["Yr"]], na.rm = TRUE)
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
         }
       }
       ylim <- ylimAdj * range(recdevs[
-        recdevs$Yr >= xlim[1] &
-          recdevs$Yr <= xlim[2],
+        recdevs[["Yr"]] >= xlim[1] &
+          recdevs[["Yr"]] <= xlim[2],
         models
       ], na.rm = TRUE)
       if (show_uncertainty) {
@@ -1463,13 +1479,13 @@ SSplotComparisons <-
           return(invisible(NA))
         }
         ylim <- ylimAdj * range(recdevsLower[
-          recdevs$Yr >= xlim[1] &
-            recdevs$Yr <= xlim[2],
+          recdevs[["Yr"]] >= xlim[1] &
+            recdevs[["Yr"]] <= xlim[2],
           models
         ],
         recdevsUpper[
-          recdevs$Yr >= xlim[1] &
-            recdevs$Yr <= xlim[2],
+          recdevs[["Yr"]] >= xlim[1] &
+            recdevs[["Yr"]] <= xlim[2],
           models
         ],
         na.rm = TRUE
@@ -1491,7 +1507,7 @@ SSplotComparisons <-
         for (iline in 1:nlines) {
           imodel <- models[iline]
           if (uncertainty[imodel]) {
-            xvec <- recdevs$Yr
+            xvec <- recdevs[["Yr"]]
             if (nlines > 1) xvec <- xvec + 0.4 * iline / nlines - 0.2
             arrows(
               x0 = xvec, y0 = as.numeric(recdevsLower[, imodel]),
@@ -1506,7 +1522,7 @@ SSplotComparisons <-
       for (iline in 1:nlines) {
         imodel <- models[iline]
         yvec <- recdevs[, imodel]
-        xvec <- recdevs$Yr
+        xvec <- recdevs[["Yr"]]
         points(xvec, yvec, pch = pch[iline], lwd = lwd[iline], col = col[iline])
       }
       if (!add) {
@@ -1573,14 +1589,14 @@ SSplotComparisons <-
         )
       }
 
-      goodyrs <- intersect(Bratio$Yr, SPRratio$Yr)
+      goodyrs <- intersect(Bratio[["Yr"]], SPRratio[["Yr"]])
       lastyr <- max(goodyrs)
       for (iline in 1:nlines) {
         imodel <- models[iline]
         # no option get to stagger points in phase plots,
         # only the last point is marked
-        xvals <- Bratio[Bratio$Yr %in% goodyrs, imodel]
-        yvals <- SPRratio[SPRratio$Yr %in% goodyrs, imodel]
+        xvals <- Bratio[Bratio[["Yr"]] %in% goodyrs, imodel]
+        yvals <- SPRratio[SPRratio[["Yr"]] %in% goodyrs, imodel]
         lines(xvals,
           yvals,
           col = col[iline],
@@ -1617,17 +1633,17 @@ SSplotComparisons <-
       indices2 <- NULL
       for (iline in 1:nlines) {
         imodel <- models[iline]
-        subset2 <- indices$imodel == imodel &
-          indices$Yr <= endyrvec[iline] &
-          indices$Fleet == indexfleets[[imodel]][iindex]
+        subset2 <- indices[["imodel"]] == imodel &
+          indices[["Yr"]] <= endyrvec[iline] &
+          indices[["Fleet"]] == indexfleets[[imodel]][iindex]
         indices2 <- rbind(indices2, indices[subset2, ])
       }
       # get quantities for plot
-      yr <- indices2$Yr
-      obs <- indices2$Obs
-      exp <- indices2$Exp
-      imodel <- indices2$imodel
-      Q <- indices2$Calc_Q
+      yr <- indices2[["Yr"]]
+      obs <- indices2[["Obs"]]
+      exp <- indices2[["Exp"]]
+      imodel <- indices2[["imodel"]]
+      Q <- indices2[["Calc_Q"]]
       if (log) {
         obs <- log(obs)
         exp <- log(exp)
@@ -1640,7 +1656,7 @@ SSplotComparisons <-
       if (indexUncertainty) {
         if (indexPlotEach) {
           if (is.null(indexSEvec)) {
-            indexSEvec <- indices2$SE
+            indexSEvec <- indices2[["SE"]]
           }
           y <- obs
           if (log) {
@@ -1651,9 +1667,9 @@ SSplotComparisons <-
             lower <- qlnorm(.025, meanlog = log(y), sdlog = indexSEvec)
           }
         } else {
-          subset <- indices2$imodel == models[1]
+          subset <- indices2[["imodel"]] == models[1]
           if (is.null(indexSEvec)) {
-            indexSEvec <- indices2$SE[subset]
+            indexSEvec <- indices2[["SE"]][subset]
           }
           y <- obs
           if (log) {
@@ -1671,7 +1687,7 @@ SSplotComparisons <-
 
       ### make plot of index fits
       # calculate ylim (excluding dummy observations from observed but not expected)
-      sub <- !is.na(indices2$Like)
+      sub <- !is.na(indices2[["Like"]])
       ylim <- range(exp, obs[sub], lower[sub], upper[sub], na.rm = TRUE)
       # if no values included in subset, then set ylim based on all values
       if (!any(sub)) {
@@ -1704,7 +1720,7 @@ SSplotComparisons <-
       Qtext <- rep("(Q =", nlines)
       for (iline in (1:nlines)[!mcmcVec]) {
         imodel <- models[iline]
-        subset <- indices2$imodel == imodel
+        subset <- indices2[["imodel"]] == imodel
         meanQ[iline] <- mean(Q[subset])
         if (indexQlabel && any(Q[subset] != mean(Q[subset]))) {
           Qtext[iline] <- "(mean Q ="
@@ -1733,9 +1749,10 @@ SSplotComparisons <-
         for (iline in (1:nlines)[!mcmcVec]) {
           adj <- 0.2 * iline / nlines - 0.1
           imodel <- models[iline]
-          if(any(is.na(indices2$like)))
+          if (any(is.na(indices2[["like"]]))) {
             warning("NA's found in likelihood, may cause issues with index plots")
-          subset <- indices2$imodel == imodel & !is.na(indices2$Like)
+          }
+          subset <- indices2[["imodel"]] == imodel & !is.na(indices2[["Like"]])
           # add uncertainty intervals if requested
           if (indexUncertainty) {
             arrows(
@@ -1755,7 +1772,7 @@ SSplotComparisons <-
       } else {
         # plot only the first model
         imodel <- models[which(endyrvec == max(endyrvec))[1]]
-        subset <- indices2$imodel == imodel & !is.na(indices2$Like)
+        subset <- indices2[["imodel"]] == imodel & !is.na(indices2[["Like"]])
         # add uncertainty intervals if requested
         if (indexUncertainty) {
           arrows(
@@ -1786,8 +1803,8 @@ SSplotComparisons <-
                               cumulative = FALSE) {
       if (any(!mcmcVec)) {
         vals <- rbind(
-          pars[pars$Label == parname, names(pars) != "recdev"],
-          quants[quants$Label == parname, ]
+          pars[pars[["Label"]] == parname, names(pars) != "recdev"],
+          quants[quants[["Label"]] == parname, ]
         )
         if (nrow(vals) != 1) {
           warn <- paste("problem getting values for parameter:", parname, "")
@@ -1801,8 +1818,8 @@ SSplotComparisons <-
             warn <- paste(
               warn,
               "Too many matching Labels:",
-              pars$Label[pars$Label == parname],
-              quants$Label[quants$Label == parname]
+              pars[["Label"]][pars[["Label"]] == parname],
+              quants[["Label"]][quants[["Label"]] == parname]
             )
           }
           warning(warn)
@@ -1811,8 +1828,8 @@ SSplotComparisons <-
           return(NULL)
         }
         valSDs <- rbind(
-          parsSD[pars$Label == parname, ],
-          quantsSD[quants$Label == parname, ]
+          parsSD[pars[["Label"]] == parname, ],
+          quantsSD[quants[["Label"]] == parname, ]
         )
       }
 
@@ -1861,10 +1878,10 @@ SSplotComparisons <-
             xmax <- max(xmax, quantile(mcmcVals, 0.995, na.rm = TRUE))
             # density estimate of mcmc sample (posterior)
             z <- density(mcmcVals, cut = 0, adjust = densityadjust)
-            z$x <- z$x[c(1, 1:length(z$x), length(z$x))]
+            z[["x"]] <- z[["x"]][c(1, 1:length(z[["x"]]), length(z[["x"]]))]
             # just to make sure that a good looking polygon is created
-            z$y <- c(0, z$y, 0)
-            ymax <- max(ymax, max(z$y)) # update ymax
+            z[["y"]] <- c(0, z[["y"]], 0)
+            ymax <- max(ymax, max(z[["y"]])) # update ymax
             mcmcDens[[iline]] <- z # save density estimate for later plotting
           }
         } else {
@@ -1963,13 +1980,13 @@ SSplotComparisons <-
             # for symbols on plot
             x2 <- quantile(mcmcVals, symbolsQuants, na.rm = TRUE)
             # find the positions in the density closest to these quantiles
-            x <- mcmcDens[[iline]]$x
+            x <- mcmcDens[[iline]][["x"]]
             if (!cumulative) {
-              y <- mcmcDens[[iline]]$y
+              y <- mcmcDens[[iline]][["y"]]
               yscale <- 1 / (sum(y) * mean(diff(x)))
               y <- y * yscale
             } else {
-              y <- cumsum(mcmcDens[[iline]]$y) / sum(mcmcDens[[iline]]$y)
+              y <- cumsum(mcmcDens[[iline]][["y"]]) / sum(mcmcDens[[iline]][["y"]])
             }
             y2 <- NULL
             for (ii in x2) {
@@ -2110,14 +2127,20 @@ SSplotComparisons <-
           axis(1, at = xticks, labels = format(xticks / xunits))
           theLine <- par()$mgp[1]
           if (cumulative) {
-            axis(2, at = symbolsQuants, labels = format(symbolsQuants),
-                 cex.axis = 0.9)
-            mtext(side = 2, line = theLine,
-                  text='Cumulative Probability',
-                  col=par()$col.lab, cex=par()$cex.lab)
+            axis(2,
+              at = symbolsQuants, labels = format(symbolsQuants),
+              cex.axis = 0.9
+            )
+            mtext(
+              side = 2, line = theLine,
+              text = "Cumulative Probability",
+              col = par()$col.lab, cex = par()$cex.lab
+            )
           } else {
-            mtext(side = 2, line = theLine, text=labels[9],
-                  col=par()$col.lab, cex=par()$cex.lab)
+            mtext(
+              side = 2, line = theLine, text = labels[9],
+              col = par()$col.lab, cex = par()$cex.lab
+            )
           }
           box()
         }
@@ -2411,10 +2434,10 @@ SSplotComparisons <-
         expandednames <- NULL
         for (i in 1:length(densitynames)) {
           matchingnames <- c(
-            pars$Label,
-            quants$Label
+            pars[["Label"]],
+            quants[["Label"]]
           )[grep(densitynames[i],
-            c(pars$Label, quants$Label),
+            c(pars[["Label"]], quants[["Label"]]),
             fixed = TRUE
           )]
           expandednames <- c(expandednames, matchingnames)
@@ -2432,7 +2455,7 @@ SSplotComparisons <-
             stringsAsFactors = FALSE
           )
           if (!is.null(densityxlabs) && length(densityxlabs) == ndensities) {
-            densitytable$label <- densityxlabs
+            densitytable[["label"]] <- densityxlabs
             message(
               "  table of parameter/quantity labels with associated",
               " x-axis label:"

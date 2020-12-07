@@ -58,7 +58,7 @@ also not explicitly available in control file and this information is only
 required if length based
  maturity vector is directly supplied (Maturity option of 6), and not yet tested}
 
-\item{Nfleets}{number of fishery + Survey fleets in the model. This 
+\item{Nfleets}{number of fishery + Survey fleets in the model. This
 information is also not explicitly available in control file 3.30 syntax}
 
 \item{Nfleet}{number of fishery fleets in the model. This information is also not
@@ -72,14 +72,14 @@ This information is also not explicitly available in control file.}
 
 \item{N_CPUE_obs}{number of CPUE observations. Only passed to SS_readctl_3.24.}
 
-\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
-option. Defaults to NULL and should be left as such if 1) the catch 
-multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
+\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier
+option. Defaults to NULL and should be left as such if 1) the catch
+multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.}
 
-\item{N_rows_equil_catch}{Integer value of the number of parameter lines to 
+\item{N_rows_equil_catch}{Integer value of the number of parameter lines to
 read for equilibrium catch. Defaults to NULL, which means the function will
-attempt to figure out how many lines of equilibrium catch to read from the 
+attempt to figure out how many lines of equilibrium catch to read from the
 control file comments. Used only for version 3.30.}
 
 \item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial

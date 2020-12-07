@@ -66,42 +66,42 @@ SSplotDiscard <-
     plotinfo <- NULL
 
     # get stuff from replist
-    nfishfleets <- replist$nfishfleets
-    discard <- replist$discard
-    FleetNames <- replist$FleetNames
-    DF_discard <- replist$DF_discard # used in SSv3.11
-    discard_type <- replist$discard_type # used in SSv3.11
-    discard_spec <- replist$discard_spec # used in SSv3.20
+    nfishfleets <- replist[["nfishfleets"]]
+    discard <- replist[["discard"]]
+    FleetNames <- replist[["FleetNames"]]
+    DF_discard <- replist[["DF_discard"]] # used in SSv3.11
+    discard_type <- replist[["discard_type"]] # used in SSv3.11
+    discard_spec <- replist[["discard_spec"]] # used in SSv3.20
     if (fleetnames[1] == "default") {
       fleetnames <- FleetNames
     }
     if (plotdir == "default") {
-      plotdir <- replist$inputs$dir
+      plotdir <- replist[["inputs"]][["dir"]]
     }
 
     # if discards exist
     if (!is.na(discard) && nrow(discard) > 0) {
       if (fleets[1] == "all") fleets <- 1:nfishfleets
-      for (ifleet in intersect(fleets, unique(discard$Fleet))) {
+      for (ifleet in intersect(fleets, unique(discard[["Fleet"]]))) {
         # table available beginning with SSv3.20 has fleet-specific discard specs
         if (!is.null(discard_spec)) {
           # check to make sure fleet is represented in the table
-          if (!ifleet %in% discard_spec$Fleet) {
+          if (!ifleet %in% discard_spec[["Fleet"]]) {
             stop("Fleet ", ifleet, " not found in table of discard specifications.")
           }
           # get degrees of freedom
-          DF_discard <- discard_spec$errtype[discard_spec$Fleet == ifleet]
+          DF_discard <- discard_spec[["errtype"]][discard_spec[["Fleet"]] == ifleet]
         }
-        usedisc <- discard[discard$Fleet == ifleet, ]
+        usedisc <- discard[discard[["Fleet"]] == ifleet, ]
         FleetName <- fleetnames[ifleet]
 
-        yr <- as.numeric(usedisc$Yr)
+        yr <- as.numeric(usedisc[["Yr"]])
         # only use fractional year value if there are multiple seasons
-        if(any(usedisc$Seas > 1)){
-          yr <- as.numeric(usedisc$Time)
+        if (any(usedisc[["Seas"]] > 1)) {
+          yr <- as.numeric(usedisc[["Time"]])
         }
-        ob <- as.numeric(usedisc$Obs)
-        std <- as.numeric(usedisc$Std_use)
+        ob <- as.numeric(usedisc[["Obs"]])
+        std <- as.numeric(usedisc[["Std_use"]])
         if (DF_discard == -3) { # truncated normal thanks to Robbie Emmet
           ## liw <- ob - truncnorm::qtruncnorm(0.025, 0, 1, ob, std * ob)
           ## uiw <- truncnorm::qtruncnorm(0.975, 0, 1, ob, std * ob) - ob
@@ -142,15 +142,15 @@ SSplotDiscard <-
           ## 1:  discard_in_biomass(mt)_or_numbers(1000s)_to_match_catchunits_of_fleet
           ## 2:  discard_as_fraction_of_total_catch(based_on_bio_or_num_depending_on_fleet_catchunits)
           ## 3:  discard_as_numbers(1000s)_regardless_of_fleet_catchunits
-          discard_units <- discard_spec$units[discard_spec$Fleet == ifleet]
+          discard_units <- discard_spec[["units"]][discard_spec[["Fleet"]] == ifleet]
           if (discard_units == 1) {
             # type 1: biomass or numbers
             title <- paste("Total discard for", FleetName)
             ylab <- labels[3]
-            if (replist$catch_units[ifleet] == 1) {
+            if (replist[["catch_units"]][ifleet] == 1) {
               ylab <- paste(ylab, "(mt)")
             }
-            if (replist$catch_units[ifleet] == 2) {
+            if (replist[["catch_units"]][ifleet] == 2) {
               ylab <- paste(ylab, "(1000's)")
             }
           }
@@ -158,10 +158,10 @@ SSplotDiscard <-
             # type 2: discards as fractions
             title <- paste("Discard fraction for", FleetName)
             ylab <- labels[2]
-            if (replist$catch_units[ifleet] == 1) {
+            if (replist[["catch_units"]][ifleet] == 1) {
               ylab <- paste(ylab, "(mt)")
             }
-            if (replist$catch_units[ifleet] == 2) {
+            if (replist[["catch_units"]][ifleet] == 2) {
               ylab <- paste(ylab, "(1000's)")
             }
           }
@@ -182,7 +182,7 @@ SSplotDiscard <-
             xlim = xlim, pch = 21, bg = "white"
           )
           abline(h = 0, col = "grey")
-          if (addfit) points(yr, usedisc$Exp, col = col1, pch = "-", cex = 2)
+          if (addfit) points(yr, usedisc[["Exp"]], col = col1, pch = "-", cex = 2)
         }
 
         # make plots
@@ -212,6 +212,6 @@ SSplotDiscard <-
         } # end loop over subplots
       } # discard series
     }
-    if (!is.null(plotinfo)) plotinfo$category <- "Discard"
+    if (!is.null(plotinfo)) plotinfo[["category"]] <- "Discard"
     return(invisible(plotinfo))
   } # end of function

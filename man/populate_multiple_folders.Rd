@@ -49,11 +49,13 @@ set of test models.
 }
 \examples{
 
-  \dontrun{
-    populate_multiple_folders(outerdir.old = 'c:/SS/old_models',
-                              outerdir.new = 'c:/SS/new_models',
-                              exe.dir = 'c:/SS/SSv3.30.12.00')
-  }
+\dontrun{
+populate_multiple_folders(
+  outerdir.old = "c:/SS/old_models",
+  outerdir.new = "c:/SS/new_models",
+  exe.dir = "c:/SS/SSv3.30.12.00"
+)
+}
 
 }
 \seealso{

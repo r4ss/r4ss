@@ -7,7 +7,7 @@
 selShapes()
 }
 \description{
-Currently implemented only for 
+Currently implemented only for
 \enumerate{
   \item logisitic (type 1)
   \item double normal (type 24)
