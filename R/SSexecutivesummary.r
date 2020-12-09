@@ -185,6 +185,7 @@ SSexecutivesummary <- function (replist,
   }
 
   caption = tex.label = filename = NULL
+
   #======================================================================
   #ES Table a  Catches from the fisheries
   #======================================================================
@@ -252,7 +253,11 @@ SSexecutivesummary <- function (replist,
     }
     
     ssb =  Get.Values(replist = replist, label = sb.name, hist, ci_value )
-    if (nsexes == 1) { ssb$dq = ssb$dq / sexfactor ; ssb$low = ssb$low / sexfactor ; ssb$high = ssb$high / sexfactor }
+    if (nsexes == 1) { 
+      ssb$dq = ssb$dq / sexfactor 
+      ssb$low = ssb$low / sexfactor 
+      ssb$high = ssb$high / sexfactor 
+    }
     depl = Get.Values(replist = replist, label = "Bratio" , hist, ci_value )
     for (i in 1:length(hist)){ dig = ifelse(ssb[i,2] < 100, 1, 0)}
     if(format){
@@ -264,15 +269,10 @@ SSexecutivesummary <- function (replist,
     es.b =  data.frame(hist, ssb$dq, ssb$low, ssb$high, depl$dq, depl$low, depl$high)
     colnames(es.b) = c("Year", sb.label, "Lower Interval", "Upper Interval", 
                        "Fraction Unfished", "Lower Interval", "Upper Interval")
-
-    ssb <- Get.Values(replist = replist, label = sb.name, hist, ci_value)
-    if (nsexes == 1) {
-      ssb[["dq"]] <- ssb[["dq"]] / sexfactor
-      ssb[["low"]] <- ssb[["low"]] / sexfactor
-      ssb[["high"]] <- ssb[["high"]] / sexfactor
     }
+
     csv_name = "b_SSB_ES.csv"
-    write.csv(es.b, file.path(csv.dir, csv_name), row.names = FALSE)
+    write.csv(es.b, file = file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'b' %in% tables
 
@@ -976,6 +976,34 @@ SSexecutivesummary <- function (replist,
     for (z in 1:10) {
       ind <- ind + ifelse(total.dead[z] == 0, 1, break())
     }
+
+    adj.spr.all <- replist[["derived_quants"]][grep("SPRratio_", replist[["derived_quants"]][["Label"]]), "Value"]
+    if (ind != 0) {
+      adj.spr.all <- c(rep(0, ind), adj.spr.all)
+    }
+
+    if (format) {
+      ts.table <- data.frame(all,
+                             comma(tot.bio.all, 0),
+                             comma(ssb.all, 0),
+                             comma(smry.all, 0),
+                             print(depl.all * 100, 1),
+                             comma(recruits.all, 0),
+                             total.dead.all,
+                             print(adj.spr.all, 3),
+                             expl.all)
+    } else {
+      ts.table <- data.frame(all,
+                             tot.bio.all,
+                             ssb.all,
+                             smry.all,
+                             depl.all,
+                             recruits.all,
+                             total.dead.all,
+                             adj.spr.all,
+                             expl.all)
+    }
+
     colnames(ts.table) = c("Year", "Total Biomass (mt)", sb.label, 
       paste0("Total Biomass ", smry.age ," (mt)"), "Fraction Unfished", 
       "Age-0 Recruits", "Total Catch (mt)", spr_type, "Exploitation Rate")
@@ -1049,5 +1077,5 @@ SSexecutivesummary <- function (replist,
 
   out_csv = cbind(caption, NA, tex.label, filename)
   colnames(out_csv) = c("caption", 'altcaption', 'label', 'filename')
-  write.csv(out_csv, file.path(csv.dir, 'table_labels.csv'), row.names = FALSE)
+  write.csv(out_csv, file = file.path(csv.dir, 'table_labels.csv'), row.names = FALSE)
 }
