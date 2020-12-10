@@ -49,18 +49,18 @@ SS_html <- function(replist = NULL,
   # check for table in directory with PNG files
   if (is.null(plotInfoTable)) {
     if (!is.null(replist)) {
-      filenames <- dir(plotdir)
-      # look for all files beginning with the name 'plotInfoTable'
-      filenames <- filenames[grep("plotInfoTable", filenames)]
-      filenames <- filenames[grep(".csv", filenames)]
+      filenames <- dir(plotdir, pattern = "plotInfoTable.+\\.csv", full.names = TRUE)
       if (length(filenames) == 0) stop("No CSV files with name 'plotInfoTable...'")
-      plotInfoTable <- NULL
-      # loop over matching CSV files and combine them
-      for (ifile in 1:length(filenames)) {
-        filename <- file.path(plotdir, filenames[ifile])
-        temp <- read.csv(filename, colClasses = "character")
-        plotInfoTable <- rbind(plotInfoTable, temp)
+      fileinfos <- lapply(filenames, read.csv, colClasses = "character")
+      if (length(unique(lapply(fileinfos, NCOL))) != 1) {
+        stop("\nThe columns do not align in the following files and\n",
+          "r4ss cannot determine if they were from the same model run\n",
+          "or not because rbind fails:\n",
+          paste(filenames, collapse = "\n"), "\n",
+          "Please delete or change 'plotInfoTable' to something else\n",
+          "for the files you do not want to use.")
       }
+      plotInfoTable <- do.call("rbind", fileinfos)
       plotInfoTable[["png_time"]] <- as.POSIXlt(plotInfoTable[["png_time"]])
       # look for duplicate models
       runs <- unique(plotInfoTable[["StartTime"]])
