@@ -54,12 +54,12 @@ SS_html <- function(replist = NULL,
       filenames <- filenames[grep("plotInfoTable", filenames)]
       filenames <- filenames[grep(".csv", filenames)]
       if (length(filenames) == 0) stop("No CSV files with name 'plotInfoTable...'")
-      plotInfoTable <- NULL
+      plotInfoTable <- data.frame()
       # loop over matching CSV files and combine them
       for (ifile in 1:length(filenames)) {
         filename <- file.path(plotdir, filenames[ifile])
         temp <- read.csv(filename, colClasses = "character")
-        plotInfoTable <- rbind(plotInfoTable, temp)
+        plotInfoTable <- merge(plotInfoTable, temp, all = TRUE)
       }
       plotInfoTable[["png_time"]] <- as.POSIXlt(plotInfoTable[["png_time"]])
       # look for duplicate models
