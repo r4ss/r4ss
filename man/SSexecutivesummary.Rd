@@ -9,6 +9,7 @@ SSexecutivesummary(
   plotfolder = "default",
   ci_value = 0.95,
   es_only = FALSE,
+  fleetnames = NULL,
   tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
     "numbers"),
   divide_by_2 = FALSE,
