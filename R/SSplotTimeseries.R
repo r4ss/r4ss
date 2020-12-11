@@ -424,6 +424,10 @@ SSplotTimeseries <-
       if (print) { # if printing to a file
         # adjust file names
         filename <- main
+        if (subplot == 9 & grepl(":", main)) {
+          # remove extra stuff like "B/B_0" from filename
+          filename <- strsplit(main, split=":")[[1]][1]
+        }
         filename <- gsub(",", "", filename, fixed = TRUE)
         filename <- gsub("~", "", filename, fixed = TRUE)
         filename <- gsub("%", "", filename, fixed = TRUE)
