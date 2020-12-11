@@ -1117,8 +1117,8 @@ SS_output <-
     )
     # rename some headers to match output from most recent SS versions
     morph_indexing <- df.rename(morph_indexing,
-      oldnames = c("Gpattern", "Bseas", "Gender"),
-      newnames = c("GP", "BirthSeas", "Sex")
+      oldnames = c("Gpattern", "Bseas", "BirthSeason", "Gender"),
+      newnames = c("GP", "BirthSeas", "BirthSeas", "Sex")
     )
     if (!is.null(morph_indexing)) {
       # calculate number of growth patterns
@@ -2750,7 +2750,7 @@ SS_output <-
         temp <- morph_indexing[morph_indexing[["BirthSeas"]] ==
           first_seas_with_recruits &
           morph_indexing[["Platoon_Dist"]] ==
-            max(morph_indexing[["Platoon_Dist"]]), ]
+          max(morph_indexing[["Platoon_Dist"]]), ]
         mainmorphs <- min(temp[["Index"]][temp[["Sex"]] == 1])
         if (nsexes == 2) {
           mainmorphs <- c(mainmorphs, min(temp[["Index"]][temp[["Sex"]] == 2]))
@@ -2839,16 +2839,28 @@ SS_output <-
       depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
     }
 
-    B_ratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
-    if (B_ratio_denominator == "no_depletion_basis") {
-      B_ratio_denominator <- "none"
+    Bratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
+    if (Bratio_denominator == "no_depletion_basis") {
+      Bratio_denominator <- NULL
+      Bratio_label <- NULL
     } else {
-      B_ratio_denominator <- as.numeric(strsplit(B_ratio_denominator, "%*",
-        fixed = TRUE
-      )[[1]][1]) / 100
+      # create Bratio label for use in various plots
+      if (grepl(pattern = "100", x = Bratio_denominator)) {
+        # exclude 100% if present
+        Bratio_label <- paste0("B/",
+                               substring(Bratio_denominator, 6))
+      } else {
+        Bratio_label <- paste0("B/(",
+                               Bratio_denominator,
+                               ")")
+      }
+      if (Bratio_label == "B/Virgin_Biomass") {
+        Bratio_label <- "B/B_0"
+      }
     }
     returndat[["depletion_basis"]] <- depletion_basis
-    returndat[["B_ratio_denominator"]] <- B_ratio_denominator
+    returndat[["Bratio_denominator"]] <- Bratio_denominator
+    returndat[["Bratio_label"]] <- Bratio_label
 
     ## discard fractions ###
 
@@ -3008,12 +3020,6 @@ SS_output <-
 
     returndat[["managementratiolabels"]] <- managementratiolabels
     returndat[["F_report_basis"]] <- managementratiolabels[["Label"]][2]
-    if (length(grep("%", managementratiolabels[["Label"]][3])) > 0) {
-      returndat[["B_ratio_denominator"]] <-
-        as.numeric(strsplit(managementratiolabels[["Label"]][3], "%")[[1]][1]) / 100
-    } else {
-      returndat[["B_ratio_denominator"]] <- NA
-    }
     returndat[["sprtarg"]] <- sprtarg
     returndat[["btarg"]] <- btarg
 
