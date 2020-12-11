@@ -125,9 +125,9 @@ SS_parlines <- function(ctlfile = "control.ss_new", dir = NULL,
   parlines[["Label"]][parlines[["Label"]] == "#"] <- parlines[["Label2"]][parlines[["Label"]] == "#"]
   parlines <- parlines[, names(parlines) != "Label2"] # dropping the Label2 column
   # get rid of #_ if in front of the names
-  parlines[["Label"]] <- gsub("^#_", "", ss3.ctl.parlines[["Label"]])
+  parlines[["Label"]] <- gsub("^#_", "", parlines[["Label"]])
   # get rid of _ if in front of the names
-  parlines[["Label"]] <- gsub("^_", "", ss3.ctl.parlines[["Label"]])
+  parlines[["Label"]] <- gsub("^_", "", parlines[["Label"]])
 
   # make line number numeric
   parlines[["Linenum"]] <- as.numeric(rownames(parlines))
