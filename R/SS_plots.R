@@ -485,37 +485,6 @@ SS_plots <-
     mar0 <- par()$mar # current inner margins
     oma0 <- par()$oma # current outer margins
 
-    if (length(tslabels) == 0) {
-      tslabels <- c(
-        "Total biomass (mt)", # 1
-        "Total biomass (mt) at beginning of season", # 2
-        "Summary biomass (mt)", # 3
-        "Summary biomass (mt) at beginning of season", # 4
-        "Spawning biomass (mt)", # 5
-        "Fraction of unfished", # 6
-        "Spawning output", # 7
-        "Age-0 recruits (1,000s)", # 8
-        "Fraction of total Age-0 recruits", # 9
-        "Management target", # 10
-        "Minimum stock size threshold"
-      ) # 11
-    }
-
-    if (length(catlabels) == 0) {
-      catlabels <- c(
-        "Harvest rate/Year", # 1
-        "Continuous F", # 2
-        "Landings", # 3
-        "Total catch", # 4
-        "Predicted Discards", # 5  # should add units
-        "Discard fraction", # 6  # need to add by weight or by length
-        "(mt)", # 7
-        "(numbers x1000)", # 8
-        "Observed and expected", # 9
-        "aggregated across seasons"
-      ) # 10
-    }
-
     ##########################################
     # Biology plots (mean weight, maturity, fecundity, spawning output)
     # and Time-varying growth
