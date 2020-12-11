@@ -883,7 +883,7 @@ SSexecutivesummary <- function (replist,
     catch = fleet.names =  NULL
     dead = total.catch = total.dead = 0
     ind = startyr:endyr
-    csv_file = "Catches_All_Years.csv"
+    csv_name = "Catches_All_Years.csv"
     
     for (i in 1:nfleets){
       name = paste0("retain(B):_",i)
@@ -906,7 +906,7 @@ SSexecutivesummary <- function (replist,
         mortality <- data.frame(ind, catch, total.catch, total.dead)
       }
       colnames(mortality) = c("Year", fleet.names, "Total Catch", "Total Dead")
-      write.csv(mortality, paste0(csv.dir, csv_file), row.names = FALSE) 
+      write.csv(mortality, paste0(csv.dir, csv_name), row.names = FALSE) 
       caption = c(caption, 'Catches (mt) by fleet for all years, total catches (mt), and total mortality (mt) summed by year.')     
     } else {
       if (format) {
