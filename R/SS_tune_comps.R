@@ -62,17 +62,72 @@
 #' @examples
 #'
 #' \dontrun{
+#' # Set up the folders ----
+#' # Create a temporary directory, feel free to change this location
+#' mod_path <- file.path(tempdir(), "simple_mod")
+#' # Path to simple model in r4ss and copy files to mod_path
 #' example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
-#' copy_SS_inputs(dir.old = example_path, dir.new = "simple_mod", verbose = FALSE)
+#' # copy model input files
+#' copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
+#' # copy over the Report file
 #' file.copy(
 #'   from = file.path(example_path, "Report.sso"),
-#'   to = file.path("simple_mod", "Report.sso")
+#'   to = file.path(mod_path, "Report.sso")
 #' )
-#' mod_path <- "simple_mod"
-#' # just get the Francis and MI tables
-#' weight_table <- SS_tune_comps(option = "none", verbose = FALSE)
+#' # copy comp report file
+#' file.copy(
+#' from = file.path(example_path, "CompReport.sso"),
+#' to = file.path(mod_path, "CompReport.sso")
+#' )
+#' # Use the SS_tune_comps function----
+#' 
+#' # Examples where a model is not run ----
+#' 
+#' # Just get the Francis and MI tables, without running the model. Note that the
+#' # model in mod_path needs to already have been run with Stock Synthesis, so 
+#' # that a report file is available.
+#' 
+#' weight_table <- SS_tune_comps(dir = mod_path,
+#'                               option = "none",
+#'                               verbose = FALSE)
+#' # view the weights. Note that the columns New_Francis and New_MI show the 
+#' # weights, but neither were added to the New_Var_adj column
+#' weight_table
+#' 
+#' # Get the Francis and MI tables, but with the Francis weights in the 
+#' # New_Var_adj column. Note if option = "MI" were used, the output would be
+#' # the same except that the New_Var_adj column would contain the MI weights.
+#' weight_table_fran <- SS_tune_comps(dir = mod_path,
+#'                                         option = "Francis",
+#'                                         verbose = FALSE)
+#' weight_table_fran
+#' 
+#' # Add Dirichlet multinomial tuning parameters to the model, without running it.
+#' 
+#' DM_parm_info <- SS_tune_comps(
+#'   option = "DM",
+#'   niters_tuning = 0, # 0 means the model will not be run.
+#'   dir = mod_path,
+#'   model = "ss",
+#'   extras = "-nohess",
+#'   verbose = FALSE
+#'   )
+#'  # See the Dirichlet parameters added to the model.
+#'  DM_parm_info[["tuning_table_list"]]
+#'  # can also look in the data file to see which fleets of comp data now have
+#'  # DM parameters. The "ParmSelect" colum of the len_info and age_info 
+#'  contains the dirichlet multinomial parameter numbers.
+#'  dat <- SS_readdat(file.path(mod_path, "simple_data.ss"),verbose = FALSE)
+#'  dat[["len_info"]]
+#'  dat[["age_info"]]
+#' 
+#' # Examples where models are run ----
+#' 
 #' # Run MI weighting and allow upweighting for 1 iteration. Assume that an ss
 #' # executable called "ss or ss.exe" is available in the mod_path folder.
+#' # If the executable is not available, then the call will exit on error.
+#' # Note that the Dirichlet mulitnomial parameters will be removed, but any
+#' # previous tunings will be retained.
 #' tune_info <- SS_tune_comps(
 #'   option = "MI",
 #'   niters_tuning = 1,
@@ -81,9 +136,12 @@
 #'   model = "ss",
 #'   verbose = FALSE
 #' )
-#' # Run DM. The function will automatically remove the MI weighting and
-#' # add in the DM parameters. Use -nohess when running model to speed up
-#' # run.
+#' # see the tuning table, and the weights applied to the model.
+#' tune_info
+#' 
+#' # Add Dirichlet multinomial paramters and rerun. The function will 
+#' # automatically remove the MI weighting and add in the DM parameters.
+#' # Use extras = "-nohess" when running model to speed up run.
 #' DM_parm_info <- SS_tune_comps(
 #'   option = "DM",
 #'   niters_tuning = 1, # must be 1 or greater to run
@@ -92,6 +150,11 @@
 #'   extras = "-nohess",
 #'   verbose = FALSE
 #' )
+#' # see the DM parameter estimates
+#' DM_parm_info[["tuning_table_list"]]
+#' 
+#' # cleanup ----
+#' unlink(mod_path, recursive = TRUE)
 #' }
 SS_tune_comps <- function(replist = NULL, fleets = "all",
                           option = c("Francis", "MI", "none", "DM"),
@@ -162,8 +225,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
 
   # francis, MI ----
   if (option %in% c("none", "Francis", "MI")) {
-    if (verbose) message("Removing DM parameters from model")
     if (!is.null(ctl[["dirichlet_parms"]])) {
+      if (verbose) message("Removing DM parameters from model")
       # take DM specifications out of data file
       dat[["len_info"]][, "CompError"] <- 0
       dat[["age_info"]][, "CompError"] <- 0
@@ -374,8 +437,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       tuning_table_list <- out[["Dirichlet_Multinomial_pars"]]
     } else {
       # maybe return something besides this weights?
-      weights <- NA
-      tuning_table_list <- NA
+      weights <- ctl[["dirichlet_parms"]]
+      tuning_table_list <- ctl[["dirichlet_parms"]]
     }
   }
   return_list <- list(
