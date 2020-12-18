@@ -226,7 +226,7 @@ SSexecutivesummary <- function (replist,
       }
       colnames(es.a) = c("Year", fleet.names, "Total Catch", "Total Dead")
     
-      write.csv(es.a, filepath(csv.dir, csv_name), row.names = FALSE)
+      write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption = c(caption,
                   'Recent landings by fleet, total landings summed across fleets, and the total mortality including discards.')
     } else {
