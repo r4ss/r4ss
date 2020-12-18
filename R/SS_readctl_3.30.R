@@ -234,7 +234,9 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
 
     ctllist[["fleetnames"]] <- fleetnames
   } else {
-    if (is.character(datlist)) datlist <- SS_readdat(file = datlist)
+    if (is.character(datlist)) {
+      datlist <- SS_readdat(file = datlist, verbose = verbose, echoall = echoall)
+    }
     if (is.null(datlist)) stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
