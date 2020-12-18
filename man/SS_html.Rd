@@ -17,7 +17,7 @@ SS_html(
 )
 }
 \arguments{
-\item{replist}{Object created by \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotdir}{Directory where PNG files are located.}
 

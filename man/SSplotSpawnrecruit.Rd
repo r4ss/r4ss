@@ -42,7 +42,7 @@ SSplotSpawnrecruit(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{vector of which subplots to show.  1=plot without labels,
 2=plot with year labels.}

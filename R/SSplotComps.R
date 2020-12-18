@@ -4,7 +4,7 @@
 #' plots depend on \code{make_multifig}.
 #'
 #'
-#' @param replist list created by \code{SSoutput}
+#' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "L[at]A", or "W[at]A".

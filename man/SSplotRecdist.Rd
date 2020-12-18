@@ -24,7 +24,7 @@ SSplotRecdist(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plot}{plot to active plot device?}
 

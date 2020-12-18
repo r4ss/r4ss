@@ -4,7 +4,7 @@
 #' measures related to bias adjustment.
 #'
 #'
-#' @param replist list created by \code{SSoutput}
+#' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?

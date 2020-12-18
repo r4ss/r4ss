@@ -4,7 +4,7 @@
 #' parameter distributions. MCMC not required to make function work.
 #'
 #'
-#' @param replist List produced by \code{\link{SS_output}}.
+#' @template replist
 #' @param plotdir A path to the folder where the plots will be saved. The default
 #' is \code{NULL}, which leads to the plots being created in the folder that
 #' contains the results.

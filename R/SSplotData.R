@@ -5,7 +5,7 @@
 #' model, not the input data file.
 #'
 #'
-#' @param replist list created by \code{\link{SS_output}}
+#' @template replist
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param plotdir directory where PNG files will be written. by default it will

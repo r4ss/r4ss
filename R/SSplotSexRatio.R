@@ -6,7 +6,7 @@
 #' the adjusted input sample size (with a floor of 1).
 #'
 #'
-#' @param replist list created by \code{SSoutput}
+#' @template replist
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "L[at]A", or "W[at]A".
 #' @param sexratio.option code to choose among (1) female:male ratio or

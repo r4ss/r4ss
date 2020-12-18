@@ -4,7 +4,7 @@
 #' report file. Some values have optional uncertainty intervals.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplot number controlling which subplot to create
 #' Numbering of subplots is as follows:
 #' \itemize{

@@ -29,7 +29,7 @@ SSplotAgeMatrix(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{option}{Switch set to either 1 for length at true age or
 2 for obs. age at true age}

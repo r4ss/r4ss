@@ -4,7 +4,7 @@
 #' harvest rate, continuous F, landings, and discard fraction.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models

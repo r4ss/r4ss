@@ -20,7 +20,7 @@
 #' Dirichlet-Multinomial likelihood is an alternative approach that allows
 #' the tuning factor to be estimated rather than iteratively tuned.
 #'
-#' @param replist List output from SS_output.
+#' @template replist
 #' @param fleets Either the string 'all', or a vector of fleet numbers
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'. 'None'
 #'  will just return information about the Francis and MI weights suggested.
@@ -450,7 +450,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
 
 #' Get the tuning table
 #'
-#' @param replist List output from SS_output.
+#' @template replist
 #' @param fleets A vector of fleet numbers
 #' @param option Which type of tuning: 'none', 'Francis', 'MI', or 'DM'
 #' @param digits Number of digits to round numbers to

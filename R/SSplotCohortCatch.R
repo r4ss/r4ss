@@ -5,7 +5,7 @@
 #' shown in units of both numbers and biomass.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
 #' @param plot Plot to active plot device?

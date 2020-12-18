@@ -4,7 +4,7 @@
 #' are unavailable because they're too small to be selected from ones that are
 #' too big to be selected
 #'
-#' @param replist  List created by \code{\link{SS_output}}
+#' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param plotdir Directory where PNG files will be written. by default it will

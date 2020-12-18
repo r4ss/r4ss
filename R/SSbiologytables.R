@@ -5,8 +5,7 @@
 #' for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
 #' and later.
 #'
-#' @param replist List created by \code{SS_output}
-#' backslashes (or forwardslashes) and quotes necessary.
+#' @template replist
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
 #' The directory will be created if it doesn\'t exist.

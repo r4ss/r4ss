@@ -3,7 +3,7 @@
 #' Plot fit to discard fraction from Stock Synthesis output file.
 #'
 #'
-#' @param replist List created by \code{\link{SS_output}}
+#' @template replist
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
 #' choice of \code{subplots}.

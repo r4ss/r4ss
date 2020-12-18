@@ -3,7 +3,7 @@
 #' Plot spawner-recruit curve based on output from Stock Synthesis model.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplot vector of which subplots to show.  1=plot without labels,
 #' 2=plot with year labels.
 #' @param add add to existing plot?

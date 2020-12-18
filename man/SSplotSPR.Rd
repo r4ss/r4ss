@@ -30,7 +30,7 @@ SSplotSPR(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SSoutput}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{add}{add to existing plot (not yet implemented)}
 

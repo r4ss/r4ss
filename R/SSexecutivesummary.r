@@ -4,7 +4,7 @@
 #' as required by the current Terms of Reference for US West Coast
 #' groundfish stock. Additionally, historical catches, time-series and numbers-at-ages tables are created.
 #'
-#' @param replist Object name that holds output from the SS_output function.
+#' @template replist
 #' @param plotfolder Directory where the 'tables' directory will be created.
 #' The default is the dir location where the Report.sso file is located.
 #' @param ci_value To calculate confidence intervals, default is set at 0.95

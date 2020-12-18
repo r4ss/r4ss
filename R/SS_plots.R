@@ -6,7 +6,7 @@
 #' functions to make all the plots.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called

@@ -33,7 +33,7 @@ SSplotTimeseries(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{number controlling which subplot to create
 Numbering of subplots is as follows:

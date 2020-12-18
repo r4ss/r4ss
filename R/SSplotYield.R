@@ -4,7 +4,7 @@
 #' production is based on Walters et al. (2008).
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplots vector controlling which subplots to create
 #' Numbering of subplots is as follows:
 #' \itemize{

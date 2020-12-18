@@ -16,7 +16,7 @@ SS_ForeCatch(
 )
 }
 \arguments{
-\item{replist}{List created by \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{yrs}{Range of years in which to fill in forecast catches from timeseries}
 

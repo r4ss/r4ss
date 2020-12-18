@@ -28,7 +28,7 @@ SSplotYield(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create
 Numbering of subplots is as follows:

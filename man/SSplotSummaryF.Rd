@@ -22,7 +22,7 @@ SSplotSummaryF(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{yrs}{Which years to include.}
 

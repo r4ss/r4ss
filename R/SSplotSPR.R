@@ -3,7 +3,7 @@
 #' Plot SPR quantities, including 1-SPR and phase plot.
 #'
 #'
-#' @param replist list created by \code{SSoutput}
+#' @template replist
 #' @param add add to existing plot (not yet implemented)
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?

@@ -5,7 +5,7 @@
 #' Should open main file in default browser automatically.
 #'
 #'
-#' @param replist Object created by \code{\link{SS_output}}
+#' @template replist
 #' @param plotdir Directory where PNG files are located.
 #' @param plotInfoTable CSV file with info on PNG files. By default, the
 #' \code{plotdir} directory will be searched for files with name beginning

@@ -22,7 +22,7 @@ SS_tune_comps(
 )
 }
 \arguments{
-\item{replist}{List output from SS_output.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{fleets}{Either the string 'all', or a vector of fleet numbers}
 

@@ -28,7 +28,7 @@ SS_fitbiasramp(
 )
 }
 \arguments{
-\item{replist}{Object created using \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
 

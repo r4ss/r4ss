@@ -94,7 +94,7 @@ SS_plots(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plot}{Plot sets to be created, see list of plots below.  Use to
 specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data

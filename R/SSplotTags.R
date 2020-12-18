@@ -3,7 +3,7 @@
 #' Plot observed and expected tag recaptures in aggregate and by tag group.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param latency period of tag mixing to exclude from plots (in future could
 #' be included in SS output)

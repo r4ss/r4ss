@@ -4,7 +4,7 @@
 #' mean weight, maturity, fecundity, and spawning output.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param add add to existing plot

@@ -24,7 +24,7 @@ SSexecutivesummary(
 )
 }
 \arguments{
-\item{replist}{Object name that holds output from the SS_output function.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotfolder}{Directory where the 'tables' directory will be created.
 The default is the dir location where the Report.sso file is located.}
