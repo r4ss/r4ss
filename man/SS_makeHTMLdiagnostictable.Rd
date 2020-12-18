@@ -7,7 +7,7 @@
 SS_makeHTMLdiagnostictable(replist, plotdir = NULL, gradmax = 0.001)
 }
 \arguments{
-\item{replist}{List item representing stock assessment model output list (\code{SS_output})}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotdir}{Directory where the text files containing the tables will be written.
 By default it will be the directory where the model was run.}

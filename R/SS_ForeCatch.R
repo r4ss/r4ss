@@ -6,7 +6,7 @@
 ##' harvest control rule into a model representing a different state of nature.
 ##' This is a common task for US west coast groundfish but might be useful elsewhere.
 ##'
-##' @param replist List created by \code{\link{SS_output}}
+##' @template replist
 ##' @param yrs Range of years in which to fill in forecast catches from timeseries
 ##' @param average Use average catch over a range of years for forecast
 ##' (as opposed to using forecast based on control rule)

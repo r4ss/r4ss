@@ -3,7 +3,7 @@
 #' Plot observed and expected tag recaptures in aggregate and by tag group.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param latency period of tag mixing to exclude from plots (in future could
 #' be included in SS output)
@@ -29,7 +29,7 @@
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
-#' @param res resolution of plots printed to files. Default=300
+#' @template res
 #' @param cex.main character expansion parameter for plot titles
 #' @param col1 color for bubbles
 #' @param col2 color for lines with expected values

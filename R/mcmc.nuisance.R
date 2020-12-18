@@ -7,9 +7,8 @@
 #' @param directory Directory where all results are located, one level above
 #' directory for particular run.
 #' @param run Directory with files from a particular run.
-#' @param file File containing posterior samples for nuisance parameters. This
-#' could be posteriors.sso or something written by the function
-#' \code{\link{SSgetMCMC}}.
+#' @template file
+#' @templateVar file_t posteriors
 #' @param file2 Optional second file containing posterior samples for nuisance
 #' parameters. This could be derived_posteriors.sso.
 #' @param bothfiles TRUE/FALSE indicator on whether to read \code{file2} in

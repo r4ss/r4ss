@@ -85,8 +85,8 @@
 #' is issued.
 #'
 #' @param x data.frame or matrix, the object to be written
-#' @param file character, name of file or connection, look in
-#' \code{\link{write.table}} for more
+#' @template file
+#' @templateVar file_t write.table
 #' @param append logical, append to existing data in \code{file}
 #' @param quote logical, quote data in output
 #' @param na character, the string to use for missing values i.e. \code{NA} in

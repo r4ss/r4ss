@@ -1,62 +1,100 @@
-#' read control file from SS
+#' Read control file from SS
 #'
-#' Read Stock Synthesis control file into list object in R. This function is a
-#' wrapper which calls either SS_readctl_3.24 or SS_readctl_3.30 (not yet written).
-#' This setup allows those functions to be cleaner (if somewhat redundant)
-#' than a single function that attempts to do everything.
+#' Read control file from Stock Synthesis (SS) into R as a list object.
+#' This function acts as a wrapper for version-specific SS_readctl_ functions.
+#' For example, if the control file was written using SS 3.24,
+#' then `SS_readctl` will call [SS_readctl_3.24]. Input arguments that do not
+#' pertain to the version of your control file can be left at their
+#' default values.
 #'
-#'
-#' @param file Filename either with full path or relative to working directory.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
-#'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
-#'  version is NULL, the version (3.24 or 3.30) will be looked for on the first
-#'  line of the file.
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' @template file
+#' @template version
+#' @template verbose
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
-#' @param nseas number of season in the model. This information is not
-#'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. This information is also not
-#'  explicitly available in control file
-#' @param Nages oldest age in the model. This information is also not
-#'  explicitly available in control file
-#' @param Ngenders number of genders in the model. This information is also not
-#'  explicitly available in control file
-#' @param Npopbins number of population bins in the model. This information is
-#' also not explicitly available in control file and this information is only
-#' required if length based
-#'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
-#' @param Nfleets number of fishery + Survey fleets in the model. This
-#'  information is also not explicitly available in control file 3.30 syntax
-#' @param Nfleet number of fishery fleets in the model. This information is also not
-#'  explicitly available in control file 3.24 syntax
-#' @param Nsurveys number of survey fleets in the model. This information is also not
-#'  explicitly available in control file 3.24 syntax
-#' @param N_tag_groups number of tag release groups in the model.
+#' data as it is read. The default is `FALSE`, which turns the
+#' functionality off.
+#' @param nseas Number of seasons in the model. This information is not
+#'  explicitly available in control file.
+#' @param N_areas Number of spatial areas in the model. This information is not
+#'  explicitly available in control file.
+#' @param Nages Oldest age in the model, also known as the accumulator age.
+#'  SS always starts age bins in the model with age-zero fish,
+#'  so `Nages+1` will be the number of ages represented.
+#'  This information is not explicitly available in control file.
+#' @param Ngenders Number of genders in the model. This information is not
+#'  explicitly available in control file.
+#' @param Npopbins Number of population bins in the model. This information is
+#'  not explicitly available in control file and is only
+#'  required if length-based maturity vector is directly supplied
+#'  in the control file (i.e., maturity option of 6).
+#'  Note that the functionality of this option is not yet fully tested.
+#'  Please contact the package authors if you are willing to test it out.
+#' @param Nfleets Number of Fishery + Survey fleets in the model. This
+#'  information is not explicitly available in control file 3.30 syntax.
+#' @param Nfleet Number of Fishery fleets in the model. This information is not
+#'  explicitly available in control file 3.24 syntax.
+#'  Only passed to `SS_readctl_3.24`.
+#' @param Nsurveys Number of Survey fleets in the model. This information is
+#'  not explicitly available in control file 3.24 syntax.
+#'  Only passed to `SS_readctl_3.24`.
+#' @param N_tag_groups Number of tag release groups in the model.
 #' This information is also not explicitly available in control file.
-#' @param N_CPUE_obs number of CPUE observations. Only passed to SS_readctl_3.24.
-#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
-#'  determined from control file
-#' @param catch_mult_fleets integer vector of fleets using the catch multiplier
+#' @param N_CPUE_obs Number of CPUE observations.
+#'  Only passed to SS_readctl_3.24.
+#' @param use_datlist LOGICAL if `TRUE`, use datlist to derive parameters which can not be
+#'  determined from the control file. See `datlist` argument for options for
+#'  passing the data file.
+#' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
 #'   option. Defaults to NULL and should be left as such if 1) the catch
-#'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and
-#'   datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.
+#'   multiplier option is not used for any fleet or 2) `use_datlist = TRUE` and
+#'   datlist is specified. Used only in control file 3.30 syntax.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
-#'  control file comments. Used only for version 3.30.
-#' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
-#' parameters. Defaults to 0. Used only for version 3.30
-#' @param datlist list or character. if list : produced from SS_writedat
-#'  or character : file name of dat file.
-#' @param ptype include a column in the output indicating parameter type?
-#'  (Can be useful, but causes problems for SS_writectl.) Only possible to use
-#'  for 3.24 control files.
-#' @author Ian G. Taylor, Yukio Takeuchi, Neil L Klaer
+#'  control file comments. Used only in control file 3.30 syntax.
+#' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
+#' parameters. Defaults to 0. Not used in control file 3.24 syntax.
+#' @param datlist List or character. If list, a list returned from
+#'  [r4ss::SS_writedat].
+#'  If character, a file name for a dat file to be read in.
+#' @param ptype LOGICAL if `TRUE`, which is the default,
+#'  a column will be included in the output indicating parameter type.
+#'  Using `TRUE` can be useful, but causes problems for [SS_writectl],
+#'  and therefore is not recommended if you intend to write the list
+#'  back out into a file.
+#'  Used only in control file 3.30 syntax.
+#' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
 #' @export
-#' @seealso \code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
-#' \code{\link{SS_readdat_3.24}}
+#' @md
+#' @return
+#' A list structure where each element is a section of the control file.
+#' @seealso
+#' See the following for version-specific SS_readctl functions:
+#' `r ls("package:r4ss", pattern = "SS_readctl_")`.
+#' The returned list structure can be written back to the disk using
+#' [r4ss::SS_writectl].\cr
+#' See the following for other \code{SS_read} functions:
+#' `r ls("package:r4ss", pattern = "SS_read[a-z]+$")`.\cr
+#' @examples
+#' # Read in the 'simple' example SS model stored in r4ss
+#' # Find the directory
+#' dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+#' # Read in the dat file to define the structure of the control file so that
+#' # you don't have to specify things in the function call such as 'Nfleet'
+#' datfilename <- dir(dirsimple, pattern = "data\\.ss", full.names = TRUE)
+#' dat <- r4ss::SS_readdat( file = datfilename, verbose = FALSE)
+#' # Read in the control file using a list object for datlist
+#' ctl <- r4ss::SS_readctl(
+#'   file = dir(dirsimple, pattern = "control\\.ss", full.names = TRUE),
+#'   verbose = FALSE,
+#'   datlist = dat, use_datlist = TRUE
+#' )
+#' # Read in the control file using a file name for datlist
+#' ctl <- r4ss::SS_readctl(
+#'   file = dir(dirsimple, pattern = "control\\.ss", full.names = TRUE),
+#'   verbose = FALSE,
+#'   datlist = datfilename, use_datlist = TRUE
+#' )
 
 SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
                        ## Parameters that are not defined in control file

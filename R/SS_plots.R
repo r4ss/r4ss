@@ -6,7 +6,7 @@
 #' functions to make all the plots.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param plot Plot sets to be created, see list of plots below.  Use to
 #' specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
 #' not available in the model run will automatically be skipped, whether called
@@ -149,7 +149,7 @@
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default recently changed from 12 to 10.
-#' @param res Resolution of plots printed to files. Default=300.
+#' @template res
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.

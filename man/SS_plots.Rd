@@ -94,7 +94,7 @@ SS_plots(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plot}{Plot sets to be created, see list of plots below.  Use to
 specify only those plot sets of interest, e.g., c(1,2,5,10). Plots for data
@@ -285,7 +285,8 @@ age-at-length plots (TRUE/FALSE, still in development)}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 help("png") in R for details). Default recently changed from 12 to 10.}
 
-\item{res}{Resolution of plots printed to files. Default=300.}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{mainTitle}{Logical indicating if a title should be included at the top}
 

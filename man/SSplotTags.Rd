@@ -37,7 +37,7 @@ SSplotTags(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create}
 
@@ -79,7 +79,8 @@ added to bubble plots to avoid cropping}
 \item{ptsize}{point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{resolution of plots printed to files. Default=300}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{cex.main}{character expansion parameter for plot titles}
 

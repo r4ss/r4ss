@@ -5,7 +5,7 @@
 #' file.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param areanames optional vector to replace c("Area1","Area2",...)
@@ -20,7 +20,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param verbose report progress to R GUI?

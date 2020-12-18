@@ -4,7 +4,7 @@
 #' are unavailable because they're too small to be selected from ones that are
 #' too big to be selected
 #'
-#' @param replist  List created by \code{\link{SS_output}}
+#' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param plotdir Directory where PNG files will be written. by default it will
@@ -12,7 +12,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @author Megan Stachura, Andrew Cooper, Andi Stephens, Neil Klaer, Ian G. Taylor

@@ -3,7 +3,7 @@
 #' Plot spawner-recruit curve based on output from Stock Synthesis model.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param subplot vector of which subplots to show.  1=plot without labels,
 #' 2=plot with year labels.
 #' @param add add to existing plot?
@@ -21,7 +21,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param verbose report progress to R GUI?
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points

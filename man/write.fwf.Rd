@@ -27,8 +27,11 @@ write.fwf(
 \arguments{
 \item{x}{data.frame or matrix, the object to be written}
 
-\item{file}{character, name of file or connection, look in
-\code{\link{write.table}} for more}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+  See \code{\link[utils]{write.table}} for more information because a file,
+  a connection, or \code{""} are allowed.}
 
 \item{append}{logical, append to existing data in \code{file}}
 

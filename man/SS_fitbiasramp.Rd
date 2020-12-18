@@ -28,7 +28,7 @@ SS_fitbiasramp(
 )
 }
 \arguments{
-\item{replist}{Object created using \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
 
@@ -81,7 +81,7 @@ The default is \code{punits="in"}.}
 \code{help("png")} in R for details). The default is \code{ptsize=10}.}
 
 \item{res}{Resolution of plots printed to files.
-The default is \code{res=300}.}
+The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}

@@ -25,7 +25,7 @@
 #' not recommended because it will lead to biased results.}
 #' }
 #'
-#' @param replist Object created using \code{\link{SS_output}}
+#' @template replist
 #' @param verbose Controls the amount of output to the screen.  Default=FALSE.
 #' @param startvalues A vector of 5 values for the starting points in the
 #' minimization. Default=NULL.

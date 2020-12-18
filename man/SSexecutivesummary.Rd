@@ -9,8 +9,9 @@ SSexecutivesummary(
   plotfolder = "default",
   ci_value = 0.95,
   es_only = FALSE,
+  fleetnames = NULL,
   tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
-    "numbers"),
+    "numbers", "biomass"),
   divide_by_2 = FALSE,
   endyr = NULL,
   adopted_ofl = NULL,
@@ -23,7 +24,7 @@ SSexecutivesummary(
 )
 }
 \arguments{
-\item{replist}{Object name that holds output from the SS_output function.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotfolder}{Directory where the 'tables' directory will be created.
 The default is the dir location where the Report.sso file is located.}
@@ -33,6 +34,8 @@ The default is the dir location where the Report.sso file is located.}
 \item{es_only}{TRUE/FALSE switch to produce only the executive summary tables
 will be produced, default is FALSE which will return all executive summary
 tables, historical catches, and numbers-at-ages}
+
+\item{fleetnames}{A vector of user-defined names providing a name for each fleet in the model.}
 
 \item{tables}{Which tables to produce (default is everything). Note: some
 tables depend on calculations related to previous tables, so will fail

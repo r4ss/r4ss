@@ -5,7 +5,7 @@
 #' model, not the input data file.
 #'
 #'
-#' @param replist list created by \code{\link{SS_output}}
+#' @template replist
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param plotdir directory where PNG files will be written. by default it will
@@ -33,7 +33,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param margins margins of plot (passed to par() function), which may need to

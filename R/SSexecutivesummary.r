@@ -4,13 +4,14 @@
 #' as required by the current Terms of Reference for US West Coast
 #' groundfish stock. Additionally, historical catches, time-series and numbers-at-ages tables are created.
 #'
-#' @param replist Object name that holds output from the SS_output function.
+#' @template replist
 #' @param plotfolder Directory where the 'tables' directory will be created.
 #' The default is the dir location where the Report.sso file is located.
 #' @param ci_value To calculate confidence intervals, default is set at 0.95
 #' @param es_only TRUE/FALSE switch to produce only the executive summary tables
 #' will be produced, default is FALSE which will return all executive summary
 #' tables, historical catches, and numbers-at-ages
+#' @param fleetnames A vector of user-defined names providing a name for each fleet in the model.
 #' @param tables Which tables to produce (default is everything). Note: some
 #' tables depend on calculations related to previous tables, so will fail
 #' if requested on their own (e.g. Table 'f' can't be created
@@ -225,7 +226,7 @@ SSexecutivesummary <- function (replist,
       }
       colnames(es.a) = c("Year", fleet.names, "Total Catch", "Total Dead")
     
-      write.csv(es.a, filepath(csv.dir, csv_name), row.names = FALSE)
+      write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption = c(caption,
                   'Recent landings by fleet, total landings summed across fleets, and the total mortality including discards.')
     } else {

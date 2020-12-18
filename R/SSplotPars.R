@@ -4,7 +4,7 @@
 #' parameter distributions. MCMC not required to make function work.
 #'
 #'
-#' @param replist List produced by \code{\link{SS_output}}.
+#' @template replist
 #' @param plotdir A path to the folder where the plots will be saved. The default
 #' is \code{NULL}, which leads to the plots being created in the folder that
 #' contains the results.
@@ -45,7 +45,7 @@
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
-#' @param res Resolution for PNG file
+#' @template res
 #' @param strings Subset parameters included in the plot using substring from
 #' parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
 #' estimated quantities in this model).

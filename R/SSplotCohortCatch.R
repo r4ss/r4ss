@@ -5,7 +5,7 @@
 #' shown in units of both numbers and biomass.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
 #' @param plot Plot to active plot device?
@@ -31,7 +31,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main Character expansion for plot titles (no titles in this
 #' function yet)

@@ -28,7 +28,7 @@ SSplotMnwt(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{Vector of which plots to make (1 = data only, 2 = with fit).
 If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
@@ -59,7 +59,8 @@ of \code{subplots}.}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

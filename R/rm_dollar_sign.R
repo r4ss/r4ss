@@ -9,7 +9,7 @@
 #' convert correctly (for example, "See test$name" would become 
 #' "See test[["name"]]", which is not parsable R code. Luckily, this is easily 
 #' discoverable by loading or sourcing the function.)
-#' @param file A file containing R source code
+#' @template file
 #' @param out_file The name or path of a new file to write to. This is by
 #'  default the same as the original file. Set to NULL to avoid writing a new
 #'  file.

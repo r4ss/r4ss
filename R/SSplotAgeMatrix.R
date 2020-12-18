@@ -4,7 +4,7 @@
 #' as a histogram. Values are from the AGE_LENGTH_KEY and AGE_AGE_KEY sections
 #' of Report.sso ($ALK and $AAK in the list created by SS_output)
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param option Switch set to either 1 for length at true age or
 #' 2 for obs. age at true age
 #' @param slices Optional input to choose which matrix (slice of the 3D-array)
@@ -29,7 +29,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param mainTitle Logical indicating if a title should be included at the top

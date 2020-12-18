@@ -3,7 +3,7 @@
 #' read Stock Synthesis forecast file into list object in R
 #'
 #'
-#' @param file Filename either with full path or relative to working directory.
+#' @template file
 #' @param Nfleets Number of fleets (not required in 3.30).
 #' @param Nareas Number of areas (not required in 3.30).
 #' @param nseas number of seasons (not required in 3.30).

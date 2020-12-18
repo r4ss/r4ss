@@ -14,8 +14,7 @@ SSbiologytables(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}
-backslashes (or forwardslashes) and quotes necessary.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
 PNG files will be located.  The default sub-directory is "plots".

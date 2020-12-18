@@ -4,7 +4,7 @@
 #' mean weight, maturity, fecundity, and spawning output.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param add add to existing plot
@@ -57,7 +57,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize Point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param imageplot_text Whether to add numerical text to the image plots

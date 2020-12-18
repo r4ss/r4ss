@@ -6,7 +6,7 @@
 #' (and potentially additional functions in the future).
 #'
 #'
-#' @param file Filename either with full path or relative to working directory.
+#' @template file
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
 #' @param echoall Debugging tool (not fully implemented) of echoing blocks of

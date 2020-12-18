@@ -4,7 +4,7 @@
 #' plots for time-varying selectivity.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param fleets Optional vector to subset fleets for which to make plots
 #' @param infotable Optional table of information controlling appearance of
 #' plot and legend. Is produced as output and can be modified and entered as
@@ -44,7 +44,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param showmain Include main title at top of plot?

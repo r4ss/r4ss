@@ -4,7 +4,7 @@
 #' based on T-distributions as specified in model.
 #'
 #'
-#' @param replist list created by \code{SS_output}
+#' @template replist
 #' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
 #' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
@@ -23,7 +23,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param verbose report progress to R GUI?

@@ -3,7 +3,7 @@
 #' Plots the summary F (or harvest rate) as set up in the starter file Needs a
 #' lot of work to be generalized
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param yrs Which years to include.
 #' @param Ftgt Target F where horizontal line is shown.
 #' @param ylab Y-axis label.
@@ -16,7 +16,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @author Allan Hicks
 #' @export

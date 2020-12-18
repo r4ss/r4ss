@@ -3,7 +3,7 @@
 #' Plot SPR quantities, including 1-SPR and phase plot.
 #'
 #'
-#' @param replist list created by \code{SSoutput}
+#' @template replist
 #' @param add add to existing plot (not yet implemented)
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
@@ -21,7 +21,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param plotdir directory where PNG files will be written. by default it will

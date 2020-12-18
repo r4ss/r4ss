@@ -15,7 +15,11 @@ SS_readforecast(
 )
 }
 \arguments{
-\item{file}{Filename either with full path or relative to working directory.}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+
+  See the formal arguments for a possible default filename.}
 
 \item{Nfleets}{Number of fleets (not required in 3.30).}
 

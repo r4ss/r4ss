@@ -22,7 +22,7 @@ SSplotMovementMap(
 )
 }
 \arguments{
-\item{replist}{optional list created by \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{xlim}{range of longitude values in the map}
 

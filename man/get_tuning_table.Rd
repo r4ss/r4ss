@@ -14,7 +14,7 @@ get_tuning_table(
 )
 }
 \arguments{
-\item{replist}{List output from SS_output.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{fleets}{A vector of fleet numbers}
 

@@ -4,7 +4,7 @@
 #' harvest rate, continuous F, landings, and discard fraction.
 #'
 #'
-#' @param replist List created by \code{SS_output}
+#' @template replist
 #' @param subplots Vector controlling which subplots to create
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models
@@ -44,7 +44,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main Character expansion for plot titles
 #' @param verbose Report progress to R console?

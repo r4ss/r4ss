@@ -4,7 +4,7 @@
 #' rates between cells.
 #'
 #'
-#' @param replist optional list created by \code{\link{SS_output}}
+#' @template replist
 #' @param xlim range of longitude values in the map
 #' @param ylim range of latitude values in the map
 #' @param polygonlist a list of data frames, each with two columns representing
