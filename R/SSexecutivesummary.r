@@ -47,7 +47,7 @@ SSexecutivesummary <- function (replist,
                                 ci_value = 0.95,
                                 es_only = FALSE, 
                                 fleetnames = NULL,
-                                tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers'),
+                                tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers', 'biomass'),
                                 divide_by_2 = FALSE,
                                 endyr = NULL,
                                 adopted_ofl = NULL,
@@ -1044,7 +1044,7 @@ SSexecutivesummary <- function (replist,
           }
         }
 
-        colnames(natage) <- paste0("Age ", 0:(length(get.ages) - 1))
+        colnames(natage) <- paste0("Age", 0:(length(get.ages) - 1))
         natage <- data.frame(Year = startyr:max(fore), natage)
         write.csv(natage, file.path(csv.dir, "natage.csv"), row.names = FALSE)
       }
@@ -1068,14 +1068,79 @@ SSexecutivesummary <- function (replist,
         natage.m <- data.frame(Year = startyr:max(fore), natage.m)
         write.csv(natage.m, file.path(csv.dir, "natage_m.csv"), row.names = FALSE)
   
-        colnames(natage.f) <- paste0("Age ", 0:(length(get.ages)-1))
+        colnames(natage.f) <- paste0("Age", 0:(length(get.ages)-1))
         natage.f <- data.frame(Year = startyr:max(fore), natage.f)
         write.csv(natage.f, file.path(csv.dir, "natage.f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
   } # end check for es_only = TRUE & 'numbers' %in% tables
 
+  #======================================================================
+  # Biomass at age
+  #======================================================================
+  if (es_only == FALSE & 'biomass' %in% tables){
+    if(verbose){
+      message("Creating biomass-at-age table")
+    }
+
+    check <- dim(replist[["batage"]])[2]
+    if (is.null(check)) {
+      "Detailed age-structure is not in the report file, double check settings in the starter file."
+    }
+
+    if (!is.null(check)) {
+      age0 <- which(names(replist[["batage"]]) == "0")
+      get.ages <- age0:check
+
+      if (nsexes == 1) {
+        batage <- 0
+        for (a in 1:nareas) {
+          for (b in 1:nmorphs) {
+            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+            temp <- replist[["batage"]][ind, get.ages]
+            batage <- batage + temp
+          }
+        }
+
+        colnames(batage) <- paste0("Age", 0:(length(get.ages) - 1))
+        batage <- data.frame(Year = startyr:max(fore), batage)
+        write.csv(batage, file.path(csv.dir, "batage.csv"), row.names = FALSE)
+      }
+
+      if (nsexes == 2) {
+        batage.f <- batage.m <- 0
+        for (a in 1:nareas) {
+          for (b in 1:nmorphs) {
+            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b & replist[["batage"]][, "Sex"] == 1 & replist[["batage"]][, "Beg/Mid"] == "B"
+            temp <- replist[["batage"]][ind, get.ages]
+            batage.f <- batage.f + temp
+
+            ind <- replist[["batage"]][, "Yr"] >= startyr & replist[["batage"]][, "Area"] == a & replist[["batage"]][, "Bio_Pattern"] == b &
+              replist[["batage"]][, "Sex"] == 2 & replist[["batage"]][, "Beg/Mid"] == "B"
+            temp <- replist[["batage"]][ind, get.ages]
+            batage.m <- batage.m + temp
+          }
+        }
+
+        colnames(batage.m) <- paste0("Age", 0:(length(get.ages) - 1))
+        batage.m <- data.frame(Year = startyr:max(fore), batage.m)
+        write.csv(batage.m, file.path(csv.dir, "batage_m.csv"), row.names = FALSE)
+  
+        colnames(batage.f) <- paste0("Age", 0:(length(get.ages)-1))
+        batage.f <- data.frame(Year = startyr:max(fore), batage.f)
+        write.csv(batage.f, file.path(csv.dir, "batage.f.csv"), row.names = FALSE)
+      }
+    } # end check for detailed output
+  } # end check for es_only = TRUE & 'biomass' %in% tables
+
+ #======================================================================
+ # Write out Master Table
+ #======================================================================
+
   out_csv = cbind(caption, NA, tex.label, filename)
   colnames(out_csv) = c("caption", 'altcaption', 'label', 'filename')
   write.csv(out_csv, file = file.path(csv.dir, 'table_labels.csv'), row.names = FALSE)
+
+
+
 }
