@@ -44,7 +44,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param showmain Include main title at top of plot?

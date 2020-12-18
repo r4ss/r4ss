@@ -107,7 +107,8 @@ initial value, prior, posterior, and median of the posterior.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{Resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{strings}{Subset parameters included in the plot using substring from
 parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both

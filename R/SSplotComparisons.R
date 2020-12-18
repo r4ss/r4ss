@@ -120,7 +120,7 @@
 #' @param pwidth Width of plot
 #' @param pheight Height of plot
 #' @param punits Units for PNG file
-#' @param res Resolution for PNG file
+#' @template res
 #' @param ptsize Point size for PNG file
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.

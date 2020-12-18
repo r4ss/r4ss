@@ -116,7 +116,8 @@ white space at the top of the figure)}
 
 \item{punits}{Units for PNG file}
 
-\item{res}{Resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

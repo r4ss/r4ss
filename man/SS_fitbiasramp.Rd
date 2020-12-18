@@ -81,7 +81,7 @@ The default is \code{punits="in"}.}
 \code{help("png")} in R for details). The default is \code{ptsize=10}.}
 
 \item{res}{Resolution of plots printed to files.
-The default is \code{res=300}.}
+The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}

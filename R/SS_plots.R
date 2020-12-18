@@ -149,7 +149,7 @@
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default recently changed from 12 to 10.
-#' @param res Resolution of plots printed to files. Default=300.
+#' @template res
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.

@@ -22,7 +22,7 @@
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
-#' @param res resolution for PNG file
+#' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main Character expansion parameter for plot titles
 #' @param verbose Print information on function progress.

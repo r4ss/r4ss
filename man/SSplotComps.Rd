@@ -187,7 +187,8 @@ transparent red)}
 \item{ptsize}{point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{resolution of plots printed to files. Default=300}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
