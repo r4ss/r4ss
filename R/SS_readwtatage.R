@@ -2,8 +2,7 @@
 #'
 #' Read in a weight-at-age data file into a data frame in R.
 #'
-#' @param file A relative or full path to the weight-at-age file.
-#' The default values is \code{wtatage.ss}.
+#' @template file
 #' @template verbose
 #' @export
 #' @return Returns a data frame with a variable number of columns based on the

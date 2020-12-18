@@ -3,7 +3,7 @@
 #' read Stock Synthesis starter file into list object in R
 #'
 #'
-#' @param file Filename either with full path or relative to working directory.
+#' @template file
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
 #' @export

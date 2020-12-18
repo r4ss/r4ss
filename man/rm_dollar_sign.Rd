@@ -7,7 +7,11 @@
 rm_dollar_sign(file, out_file = file, allow_recursive = TRUE, max_loops = 5)
 }
 \arguments{
-\item{file}{A file containing R source code}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+
+  See the formal arguments for a possible default filename.}
 
 \item{out_file}{The name or path of a new file to write to. This is by
 default the same as the original file. Set to NULL to avoid writing a new

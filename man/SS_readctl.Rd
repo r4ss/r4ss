@@ -28,7 +28,11 @@ SS_readctl(
 )
 }
 \arguments{
-\item{file}{Filename either with full path or relative to working directory.}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+
+  See the formal arguments for a possible default filename.}
 
 \item{version}{SS version number. Currently "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3). If

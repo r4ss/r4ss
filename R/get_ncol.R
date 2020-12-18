@@ -6,8 +6,7 @@
 #' decreases the need for users to pre-specify a width when reading
 #' in files.
 #'
-#' @param file A file path that will be read using
-#' \code{\link[utils]{read.table}}.
+#' @template file
 #' @param nrows integer: the maximum number of rows to read in.
 #' Negative and other invalid values are ignored.
 #' @param skip integer: the number of lines of the data file to skip

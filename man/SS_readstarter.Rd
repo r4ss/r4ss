@@ -7,7 +7,11 @@
 SS_readstarter(file = "starter.ss", verbose = TRUE)
 }
 \arguments{
-\item{file}{Filename either with full path or relative to working directory.}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+
+  See the formal arguments for a possible default filename.}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }

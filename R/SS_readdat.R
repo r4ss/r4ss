@@ -7,7 +7,7 @@
 #' attempts to do everything. Returned datlist is mostly consistent across versions.
 #'
 #'
-#' @param file Filename either with full path or relative to working directory.
+#' @template file
 #' @param version SS version number.
 #'  Currently "2.00", "3.00", "3.24" or "3.30" are supported,
 #'  either as character or numeric values (noting that numeric 3.30  = 3.3). If
