@@ -1,0 +1,28 @@
+# Workflow that require an SS executable to run
+# See https://github.com/r-lib/actions/tree/master/examples#readme for
+# additional example workflows available for the R community.
+
+name: R
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up R release version
+        uses: r-lib/actions/setup-r@ffe45a39586f073cc2e9af79c4ba563b657dc6e3
+      - name: Install dependencies
+        run: |
+          install.packages(c("remotes", "rcmdcheck", "testthat"))
+          remotes::install_deps(dependencies = TRUE)
+        shell: Rscript {0}
+      - name: Get an SS executable
+        run: |
+          wget https://vlab.ncep.noaa.gov/documents/259399/11683431/ss/2bd2329d-4623-c420-a360-abd6c3dd52c1?version=1.0&t=1599077106790&download=true
+      #note: may want to run other scripts, too.      
+      - name: Run tests that need an executable to run
+        run: devtools::test(filter = "runs")
+        shell: Rscript {0}
