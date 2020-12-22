@@ -16,9 +16,9 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
   path_3.24 <- file.path(runs_path, "simple_3.24")
-  skip_if(all(file.info(dir(path_3.24, full.names = TRUE))$exe == "no"),
-    message = "skipping test that requires SS executable"
-  )
+  # skip_if(all(file.info(dir(path_3.24, full.names = TRUE))$exe == "no"),
+  #   message = "skipping test that requires SS executable"
+  # )
   SS_doRetro(
     masterdir = file.path(runs_path, "simple_3.24"),
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
