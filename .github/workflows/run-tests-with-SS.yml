@@ -74,8 +74,10 @@ jobs:
           mv ss inst/extdata/simple_3.24/ss
           
       # note: may want to run other scripts, too.      
-      - name: Run tests that need an executable to run
-        run: |
-          .libPaths()
-          devtools::test(filter = "runs")
+      - name: Run tests in test-runs
+        run: devtools::test(filter = "runs")
+        shell: Rscript {0}
+        
+      - name: Run tests in test-runs
+        run: devtools::test(filter = "tune_comps")
         shell: Rscript {0}
