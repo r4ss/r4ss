@@ -16,29 +16,29 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
   path_3.24 <- file.path(runs_path, "simple_3.24")
-  # skip_if(all(file.info(dir(path_3.24, full.names = TRUE))$exe == "no"),
-  #   message = "skipping test that requires SS executable"
-  # )
+  skip_if((!file.exists(file.path(path_3.24, "ss"))) & 
+            (!file.exists(file.path(path_3.24, "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   SS_doRetro(
-    masterdir = file.path(runs_path, "simple_3.24"),
+    masterdir = path_3.24,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
 })
 
 test_that("SS_doRetro runs on simple_3.30.01 model", {
   path_3.30.01 <- file.path(runs_path, "simple_3.30.01")
-  skip_if(all(file.info(dir(path_3.30.01, full.names = TRUE))$exe == "no"),
-    message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(path_3.30.01, "ss"))) & 
+            (!file.exists(file.path(path_3.30.01, "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   SS_doRetro(
-    masterdir = file.path(runs_path, "simple_3.30.01"),
+    masterdir = path_3.30.01,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
 
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
-    dirvec = file.path(
-      runs_path, "simple_3.30.01/retrospectives",
+    dirvec = file.path(path_3.30.01,
+      "retrospectives",
       paste0("retro", 0:-2)
     )
   )
@@ -54,18 +54,17 @@ test_that("SS_doRetro runs on simple_3.30.01 model", {
 
 test_that("SS_doRetro runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if(all(file.info(dir(path_3.30.12, full.names = TRUE))$exe == "no"),
-    message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) & 
+            (!file.exists(file.path(path_3.30.12, "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   SS_doRetro(
-    masterdir = file.path(runs_path, "simple_3.30.12"),
+    masterdir = path_3.30.12,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
 
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
-    dirvec = file.path(
-      runs_path, "simple_3.30.12/retrospectives",
+    dirvec = file.path(path_3.30.12, "retrospectives",
       paste0("retro", 0:-2)
     )
   )
@@ -81,7 +80,8 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
 
 test_that("SS_RunJitter runs on newest simple model", {
   path_simple <- tail(dir(runs_path, full.names = TRUE), 1)
-  skipexe <- all(file.info(dir(path_simple, full.names = TRUE))$exe == "no")
+  skipexe <-  (!file.exists(file.path(path_simple, "ss"))) & 
+                        (!file.exists(file.path(path_simple, "ss.exe")))
   dir.jit <- file.path(path_simple, "jitter")
   expect_true(copy_SS_inputs(
     dir.old = path_simple,
@@ -118,12 +118,12 @@ test_that("SS_RunJitter runs on newest simple model", {
 
 test_that("SS_profile runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if(all(file.info(dir(path_3.30.12, full.names = TRUE))$exe == "no"),
-    message = "skipping test that requires SS executable"
-  )
-  dir.prof <- file.path(runs_path, "simple_3.30.12/profile")
+  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) & 
+            (!file.exists(file.path(path_3.30.12, "ss.exe"))), 
+          message = "skipping test that requires SS executable")
+  dir.prof <- file.path(path_3.30.12, "profile")
   copy_SS_inputs(
-    dir.old = file.path(runs_path, "simple_3.30.12"),
+    dir.old = path_3.30.12,
     dir.new = dir.prof,
     create.dir = TRUE,
     overwrite = TRUE,
