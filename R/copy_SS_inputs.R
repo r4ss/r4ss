@@ -125,6 +125,9 @@ copy_SS_inputs <- function(dir.old = NULL,
     exefiles <- dir(dir.old)[is.exe != "no"]
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.old)
+      if(.Platform[["OS.type"]] == "unix") {
+        warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
+      }
     }
     if (length(exefiles) > 1) {
       warning("Copying multiple executable files")
