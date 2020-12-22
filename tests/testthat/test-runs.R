@@ -92,6 +92,10 @@ test_that("SS_RunJitter runs on newest simple model", {
     copy_par = FALSE,
     verbose = FALSE
   ))
+  if(!skipexe & .Platform[["OS.type"]] == "unix") {
+    file.copy(from = file.path(path_simple, "ss"), 
+              to = file.path(dir.jit, "ss"))
+  }
   # run jitters
   if (skipexe) {
     expect_error(SS_RunJitter(
@@ -131,6 +135,11 @@ test_that("SS_profile runs on simple_3.30.12 model", {
     copy_par = TRUE,
     verbose = TRUE
   )
+  # b/c current copy ss inputs wont copy the exe for mac or linux
+  if(.Platform[["OS.type"]] == "unix") {
+    file.copy(from = file.path(path_3.30.12, "ss"), 
+              to = file.path(dir.prof, "ss"))
+  }
   starter <- SS_readstarter(file.path(dir.prof, "starter.ss"))
   # Make use the par file as a starting point
   starter$ctlfile <- "control_modified.ss"
