@@ -75,9 +75,9 @@ jobs:
           
       # note: may want to run other scripts, too.      
       - name: Run tests in test-runs
-        run: devtools::test(filter = "runs")
+        run: devtools::test(filter = "runs",  stop_on_failure = TRUE)
         shell: Rscript {0}
         
-      - name: Run tests in test-runs
-        run: devtools::test(filter = "tune_comps")
+      - name: Run tests in test-tune_comps
+        run: devtools::test(filter = "tune_comps", stop_on_failure = TRUE)
         shell: Rscript {0}
