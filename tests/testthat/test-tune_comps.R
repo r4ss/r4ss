@@ -64,11 +64,9 @@ test_that(" ss tune comps works when just want to return the Francis table", {
 
 
 test_that("ss tune comps works with francis", {
-  skip_if(all(file.info(dir(file.path(runs_path, "simple_3.30.13"),
-    full.names = TRUE
-  ))$exe == "no"),
-  message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) & 
+            (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "Francis", niters_tuning = 1,
@@ -80,11 +78,9 @@ test_that("ss tune comps works with francis", {
 })
 
 test_that(" ss tune comps works with MI and up tuning", {
-  skip_if(all(file.info(dir(file.path(runs_path, "simple_3.30.13"),
-    full.names = TRUE
-  ))$exe == "no"),
-  message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) & 
+            (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 1,
@@ -96,11 +92,9 @@ test_that(" ss tune comps works with MI and up tuning", {
 })
 
 test_that(" ss tune comps works with DM", {
-  skip_if(all(file.info(dir(file.path(runs_path, "simple_3.30.13"),
-    full.names = TRUE
-  ))$exe == "no"),
-  message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) & 
+            (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "DM", niters_tuning = 1,
@@ -124,11 +118,9 @@ test_that(" ss tune comps works with DM", {
 })
 
 test_that("ss tune comps works with none", {
-  skip_if(all(file.info(dir(file.path(runs_path, "simple_3.30.13"),
-    full.names = TRUE
-  ))$exe == "no"),
-  message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) & 
+            (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   test <- SS_tune_comps(
     option = "none",
     dir = file.path(runs_path, "simple_3.30.13"),
@@ -140,11 +132,9 @@ test_that("ss tune comps works with none", {
 })
 
 test_that(" ss tune comps works with multiple iterations", {
-  skip_if(all(file.info(dir(file.path(runs_path, "simple_3.30.13"),
-    full.names = TRUE
-  ))$exe == "no"),
-  message = "skipping test that requires SS executable"
-  )
+  skip_if((!file.exists(file.path(runs_path, "simple_3.30.13", "ss"))) & 
+            (!file.exists(file.path(runs_path, "simple_3.30.13", "ss.exe"))), 
+          message = "skipping test that requires SS executable")
   test <- SS_tune_comps(
     replist = NULL, fleets = "all",
     option = "MI", niters_tuning = 2,
