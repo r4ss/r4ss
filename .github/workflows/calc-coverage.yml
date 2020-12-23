@@ -1,4 +1,4 @@
-on: [workflow_dispatch]
+on: [push, pull_request]
 
 name: calc-coverage
 
