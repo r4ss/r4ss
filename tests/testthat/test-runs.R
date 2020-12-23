@@ -23,6 +23,11 @@ test_that("SS_doRetro runs on simple_3.24 model", {
     masterdir = path_3.24,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
+  retro_subdirs <- file.path(path_3.24, "retrospectives",
+                             paste0("retro", c("0", "-1", "-2")))
+  retro_ran <- lapply(retro_subdirs, 
+                      function(d) file.exists(file.path(d, "Report.sso")))
+  expect_true(all(unlist(retro_ran) == TRUE))
 })
 
 test_that("SS_doRetro runs on simple_3.30.01 model", {
@@ -34,6 +39,10 @@ test_that("SS_doRetro runs on simple_3.30.01 model", {
     masterdir = path_3.30.01,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
+  retro_subdirs <- file.path(path_3.30.01, "retrospectives", paste0("retro", c("0", "-1", "-2")))
+  retro_ran <- lapply(retro_subdirs, 
+         function(d) file.exists(file.path(d, "Report.sso")))
+  expect_true(all(unlist(retro_ran) == TRUE))
 
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
@@ -61,6 +70,11 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
     masterdir = path_3.30.12,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
+  retro_subdirs <- file.path(path_3.30.12, "retrospectives", 
+                             paste0("retro", c("0", "-1", "-2")))
+  retro_ran <- lapply(retro_subdirs, 
+                      function(d) file.exists(file.path(d, "Report.sso")))
+  expect_true(all(unlist(retro_ran) == TRUE))
 
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
