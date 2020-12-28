@@ -76,7 +76,6 @@ jobs:
       - name: move the exes
         run: |
           sudo chmod a+x ss
-          cp ss inst/extdata/simple_3.30.01/ss
           cp ss inst/extdata/simple_3.30.12/ss
           cp ss inst/extdata/simple_3.30.13/ss
           rm ss
