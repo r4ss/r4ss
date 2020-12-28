@@ -4,7 +4,7 @@
 
 name: run-tests-with-SS
 
-on: [workflow_dispatch]
+on: [push, pull_request]
 
 jobs:
   build:
