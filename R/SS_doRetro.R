@@ -170,6 +170,11 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
     if (CallType == "shell") {
       ADMBoutput <- shell(command, intern = intern)
     }
+    # add rough check for if the model ran (although a report file may exist if
+    # if the model only ran part of the way through). Warn the user in this case.
+    if (!file.exists("Report.sso")) {
+      warning("The retrospective model run failed in ", getwd())
+    }
     if (intern) {
       writeLines(c(
         "###", "ADMB output", as.character(Sys.time()),
