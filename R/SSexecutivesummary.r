@@ -48,7 +48,7 @@ SSexecutivesummary <- function (replist,
                                 ci_value = 0.95,
                                 es_only = FALSE, 
                                 fleetnames = NULL,
-                                tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers', 'biomass'),
+                                tables = c('a','b','c','d','e','f','g','h','i','catch', 'timeseries', 'numbers', 'biomass', 'likes'),
                                 divide_by_2 = FALSE,
                                 endyr = NULL,
                                 adopted_ofl = NULL,
@@ -510,7 +510,7 @@ SSexecutivesummary <- function (replist,
         paste0(sb.label, " (", hist[length(hist)], ")"),
         paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
         paste0("Reference Points Based SB", btarg, " Percent"),
-        paste0("Proxy ", sb.label, "(SB", btarg, " Percent)"),
+        paste0("Proxy ", sb.label, "SB", btarg, " Percent)"),
         paste0("SPR Resulting in SB", btarg, " Percent"),
         paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
         paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
@@ -558,7 +558,7 @@ SSexecutivesummary <- function (replist,
                 paste0(sb.label, " (", hist[length(hist)], ")"),
                 paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
                 paste0("Reference Points Based SB", btarg, " Percent"),
-                paste0("Proxy ", sb.label, "(SB",btarg, " Percent"),
+                paste0("Proxy ", sb.label, "SB",btarg, " Percent"),
                 paste0("SPR Resulting in SB", btarg, " Percent"),
                 paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
                 paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
@@ -1134,9 +1134,24 @@ SSexecutivesummary <- function (replist,
     } # end check for detailed output
   } # end check for es_only = TRUE & 'biomass' %in% tables
 
- #======================================================================
- # Write out Master Table
- #======================================================================
+  #======================================================================
+  # Likelihoods
+  #======================================================================
+  csv_name = "likelihoods.csv"
+
+  like = cbind(rownames(replist$likelihoods_used), 
+               replist$likelihoods_used$values)
+  colnames(like) = c("Label", "Total")
+  write.csv(like, file = file.path(csv.dir, csv_name), row.names = FALSE)
+
+  caption = c(caption,
+              'Likelihood components by source.')
+  tex.label = c(tex.label, 'likes')
+  filename = c(filename, csv_name)
+
+  #======================================================================
+  # Write out Master Table
+  #======================================================================
 
   out_csv = cbind(caption, NA, tex.label, filename)
   colnames(out_csv) = c("caption", 'altcaption', 'label', 'filename')
