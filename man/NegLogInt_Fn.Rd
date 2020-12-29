@@ -17,8 +17,8 @@ NegLogInt_Fn(
   ReDoBiasRamp = FALSE,
   BiasRamp_linenum_Vec = NULL,
   CTL_linenum_Type = NULL,
-  systemcmd = FALSE,
-  exe = "ss"
+  exe = "ss",
+  extras = "-nohess"
 )
 }
 \arguments{
@@ -71,13 +71,13 @@ Default is NULL, and if not explicitly specified the program will attempt to
 detect these automatically based on the length of relevant lines from the CTL
 file.}
 
-\item{systemcmd}{Should R call SS using "system" function instead of "shell".
-This may be required when running R in Emacs on Windows. Default = FALSE.}
-
 \item{exe}{SS executable name (excluding extension), either "ss" or "ss3".
 This string is used for both calling the executable and also finding the
 output files like ss.par. For 3.30, it should always be "ss" since the
 output file names are hardwired in the TPL code.}
+
+\item{extras}{Additional ADMB command line arguments passed
+to the executable.}
 }
 \description{
 (Attempt to) perform the SS implementation of the Laplace Approximation

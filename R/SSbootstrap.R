@@ -39,9 +39,7 @@ SSbootstrap <- function() {
     file.remove("covar.sso")
 
     # run model
-    shell("SS3")
-    # for some computers or versions of R, "shell" works better than "system"
-    # system("ss3")
+    system2("ss")
 
     # copy output files (might be good to use "file.exists" command first to check if they exist
     file.copy("Report.sso", paste("Report_", iboot, ".sso", sep = ""))

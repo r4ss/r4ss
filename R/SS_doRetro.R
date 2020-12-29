@@ -169,20 +169,17 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
       # but avoid otherwise in case they mess something up
       exefile_to_run <- exefile
     }
-    command <- paste0(prefix, exefile_to_run, " ", extras)
+    command <- paste0(prefix, exefile_to_run)
 
     # run model
     message("Running model in ", getwd(), "\n",
-      "using the command:\n   ", command,
-      sep = ""
+      "using the command:\n   ", command, " ", extras
     )
 
     if (file.exists("covar.sso")) file.remove("covar.sso")
     if (!show_in_console) {
       message("ADMB output generated during model run will be written to:\n   ",
-        getwd(), "/ADMBoutput.txt. \n   To change this, set intern=FALSE\n",
-        "Note: ignore message about 'Error trying to open data input file ss3.dat'\n",
-        sep = ""
+        getwd(), "/ADMBoutput.txt. \n   To change this, set intern=FALSE.",
       )
     }
 

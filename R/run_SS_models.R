@@ -10,10 +10,7 @@
 #'  assume that model is the path to the executable and there is only 1 copy of
 #'  the executable. Note that if there is an exe in your PATH with the same
 #'  name, this will be used even if exe_in_path is FALSE.
-#' @param extras Additional commands to use when running SS. Default = "-nox"
-#' will reduce the amount of command-line output.
-#' @param systemcmd Should R call SS using "system" function instead of "shell".
-#' This may be required when running R in Emacs. Default = FALSE.
+#' @template extras
 #' @param skipfinished Skip any folders that already contain a Report.sso file.
 #' This can be helpful if the function is interrupted.
 #' @template show_in_console
@@ -41,7 +38,6 @@
 run_SS_models <- function(dirvec = NULL,
                           model = "ss",
                           extras = "-nox",
-                          systemcmd = FALSE,
                           skipfinished = TRUE,
                           show_in_console = TRUE,
                           intern = lifecycle::deprecated(),
@@ -141,17 +137,13 @@ run_SS_models <- function(dirvec = NULL,
         message("changing working directory to ", dir)
         setwd(dir) # change working directory
 
-        command <- paste(exe, extras)
+        command <- exe
         if (OS != "windows" & (basename(exe) == exe)) {
-          command <- paste0("./", command)
+          command <- paste0("./", exe)
         }
         message("Running model in directory: ", getwd())
-        message("Using the command: ", command)
-        if (OS == "windows" & !systemcmd) {
-          console.output <- shell(cmd = command, intern = !show_in_console)
-        } else {
-          console.output <- system(command, intern = !show_in_console, show.output.on.console = show_in_console)
-        }
+        message("Using the command: ", command, " ", extras)
+        console.output <- system2(command, args = extras, intern = intern)
         if (!show_in_console) {
           writeLines(c(
             "###",

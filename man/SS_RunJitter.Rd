@@ -25,8 +25,8 @@ SS_RunJitter(
 on Windows) in \code{mydir} without the extension (if any), e.g.,
 \code{"ss"} or \code{"ss_win"}.}
 
-\item{extras}{Additional command line arguments passed to the executable.
-The default, \code{"-nohess"}, runs each jittered model without the hessian.}
+\item{extras}{Additional ADMB command line arguments passed
+to the executable.}
 
 \item{Njitter}{Number of jitters, or a vector of jitter iterations.
 If \code{length(Njitter) > 1} only the iterations specified will be ran,

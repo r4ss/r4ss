@@ -8,7 +8,6 @@ run_SS_models(
   dirvec = NULL,
   model = "ss",
   extras = "-nox",
-  systemcmd = FALSE,
   skipfinished = TRUE,
   show_in_console = TRUE,
   intern = lifecycle::deprecated(),
@@ -27,11 +26,8 @@ assume that model is the path to the executable and there is only 1 copy of
 the executable. Note that if there is an exe in your PATH with the same
 name, this will be used even if exe_in_path is FALSE.}
 
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output.}
-
-\item{systemcmd}{Should R call SS using "system" function instead of "shell".
-This may be required when running R in Emacs. Default = FALSE.}
+\item{extras}{Additional ADMB command line arguments passed
+to the executable.}
 
 \item{skipfinished}{Skip any folders that already contain a Report.sso file.
 This can be helpful if the function is interrupted.}

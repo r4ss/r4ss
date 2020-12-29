@@ -458,10 +458,14 @@ SS_profile <-
         } else {
           system(command)
         }
+        message("Running model in directory:", getwd())
+        message("Using the command: '", command, extras)
+        system2(command, args = extras)
 
         converged[i] <- file.exists(stdfile)
         onegood <- FALSE
-        if (read_like && file.exists("Report.sso") & file.info("Report.sso")$size > 0) {
+        if (read_like && file.exists("Report.sso") &
+            file.info("Report.sso")$size > 0) {
           onegood <- TRUE
           Rep <- readLines("Report.sso", n = 200)
           like <- read.table("Report.sso", skip = grep("LIKELIHOOD", Rep)[2] + 0, nrows = 11, header = TRUE, fill = TRUE)

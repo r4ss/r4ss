@@ -39,8 +39,6 @@
 #' Default is NULL, and if not explicitly specified the program will attempt to
 #' detect these automatically based on the length of relevant lines from the CTL
 #' file.
-#' @param systemcmd Should R call SS using "system" function instead of "shell".
-#' This may be required when running R in Emacs on Windows. Default = FALSE.
 #' @param exe SS executable name (excluding extension), either "ss" or "ss3".
 #' This string is used for both calling the executable and also finding the
 #' output files like ss.par. For 3.30, it should always be "ss" since the
@@ -233,7 +231,7 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
 
   # Run SS
   setwd(File)
-  command <- paste0(exe, " -nohess -cbs 500000000 -gbs 500000000")
+  command <- exe
   if (OS != "Windows") {
     command <- paste0("./", command)
   }

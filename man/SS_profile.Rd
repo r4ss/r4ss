@@ -73,13 +73,11 @@ Can be a vector if you are profiling multiple parameters at the same time.}
 
 \item{exe.delete}{Delete exe files in each directory?  NOT IMPLEMENTED YET.}
 
-\item{model}{Name of executable. Default = "ss".}
+\item{model}{Executable name of the \code{.exe} file in \code{mydir}
+without the extension, e.g., \code{"ss"}.}
 
-\item{extras}{Additional commands to use when running SS. Default = "-nox"
-will reduce the amount of command-line output.}
-
-\item{systemcmd}{Should R call SS using "system" function instead of "shell".
-This may be required when running R in Emacs. Default = FALSE.}
+\item{extras}{Additional ADMB command line arguments passed
+to the executable.}
 
 \item{saveoutput}{Copy output .SSO files to unique names.  Default = TRUE.}
 
