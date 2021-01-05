@@ -102,9 +102,6 @@ SSplotTags <-
     if(is.null(latency)){
       latency <- replist$tagfirstperiod
     }
-    #Dependencies
-    library(tidyverse)
-    library(ggforce)
     
     tagfun1 <- function(){
       #obs & exp recaps by tag group
@@ -116,8 +113,8 @@ SSplotTags <-
         #Get overdispersion parameter from model output
         parameters <- replist$parameters
         overdispersion <- parameters %>% 
-          filter(str_detect(Label, "TG_overdispersion_")) %>% 
-          select(Value) #grabs the overdispersion parms for each Tag Group
+          dplyr::filter(str_detect(Label, "TG_overdispersion_")) %>% 
+          dplyr::select(Value) #grabs the overdispersion parms for each Tag Group
         tau <- overdispersion$Value[1]
         
         k <- c(1:length(tagdbase2$Exp))
@@ -129,13 +126,13 @@ SSplotTags <-
         CI_up <- qnbinom(c(0.025), size = k[i], mu = mu[i])
         new_tagdbase2 <- cbind(tagdbase2, CI_up, CI_down)
         new_tagdbase2 <- new_tagdbase2 %>% 
-          mutate(
+          dplyr::mutate(
             CI_down = ifelse(is.nan(CI_down), NA, CI_down),
             CI_up = ifelse(is.nan(CI_up), NA, CI_up)
           )
         new_tagdbase2$title <- paste("TG_", as.character(new_tagdbase2[["Rep1."]]),  sep="")
 
-        newfigure1 <- ggplot(new_tagdbase2, aes(x=Yr, y=Obs)) +
+        newfigure1 <- ggplot2::ggplot(new_tagdbase2, aes(x=Yr, y=Obs)) +
           geom_bar(aes(fill=as.factor(Seas)), position="dodge", stat = "identity", alpha=0.6) +
           geom_point(aes(x=Yr, y=Exp, fill=as.factor(Seas)), position=position_dodge(0.9)) +
           facet_wrap(fct_inorder(as.factor(new_tagdbase2$title)), scales = "free") +
@@ -294,11 +291,11 @@ SSplotTags <-
     names(expected_by_fleets)[1] <- "Expected" #rename column
     new_tagdata <- cbind(tagdata, expected_by_fleets) #bind new column to tagdata dataframe
     fleet_numbers <- new_tagdata %>% 
-      mutate(Numbers_Obs = round(Obs * N),
+      dplyr::mutate(Numbers_Obs = round(Obs * N),
              Numbers_Exp = round(Exp * Expected)) #generate exp. and obs. recaptures by fleet
     fleet_numbers2 <- fleet_numbers %>%  
-      group_by(Fleet, Yr) %>% 
-      summarize(sum_exp = sum(Numbers_Exp), sum_obs = sum(Numbers_Obs))
+      dplyr::group_by(Fleet, Yr) %>% 
+      dplyr::summarize(sum_exp = sum(Numbers_Exp), sum_obs = sum(Numbers_Obs))
     
     fleet_numbers2$Fleet <- sort(as.numeric(fleet_numbers2$Fleet), decreasing = FALSE)
     fleet_numbers2$fleet_title <- paste("Fleet_", as.character(fleet_numbers2$Fleet),  sep="")
@@ -308,7 +305,7 @@ SSplotTags <-
     
     tagfun9 <- function(){
       #summarized observed and expected numbers of recaptures by fleet
-      fleet_plot2 <- ggplot(fleet_numbers2, aes(x=Yr, y=sum_obs)) +
+      fleet_plot2 <- ggplot2::ggplot(fleet_numbers2, aes(x=Yr, y=sum_obs)) +
         geom_bar(aes(fill=as.factor(Fleet)), stat = "identity", alpha=0.5) +
         geom_line(aes(y=sum_exp, color=as.factor(Fleet)), linetype=1, size=1) +
         facet_wrap(fct_inorder(as.factor(fleet_numbers2$fleet_title)), scales="free") +
@@ -321,7 +318,7 @@ SSplotTags <-
     
     #Calculate Pearson Residuals by fleet
     fleetnumbers_PRs <- fleet_numbers %>% 
-      mutate(Pearson = (Numbers_Obs - Numbers_Exp) / sqrt(Numbers_Exp))
+      dplyr::mutate(Pearson = (Numbers_Obs - Numbers_Exp) / sqrt(Numbers_Exp))
     
     fleetnumbers_PRs$Pearson[is.nan(fleetnumbers_PRs$Pearson)]<-NA
     fleetnumbers_PRs$Pearson[!is.finite(fleetnumbers_PRs$Pearson)]<-NA
@@ -336,7 +333,7 @@ SSplotTags <-
     
     tagfun10 <- function(){
       #pearson residuals by tag group and fleets
-      pearson_plot1 <- ggplot(fleetnumbers_PRs, aes(x=Yr, y=fct_inorder(as.factor(Fleet)))) +
+      pearson_plot1 <- ggplot2::ggplot(fleetnumbers_PRs, aes(x=Yr, y=fct_inorder(as.factor(Fleet)))) +
         geom_point(aes(size=Pearson, color=Pearson), alpha=0.75, na.rm=TRUE) +
         scale_color_continuous(name="Pearson\nResiduals",limits=limits, breaks=breaks, type = "viridis") +
         scale_size_continuous(name="Pearson\nResiduals",limits=limits, breaks=breaks) +
