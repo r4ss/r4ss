@@ -82,16 +82,16 @@ SSplotTags <-
   }else{
     # filter tag groups if requested
     if(!is.null(taggroups)){
-      tagdbase2 <- tagdbase2[tagdbase2$Rep %in% taggroups,]
+      tagdbase2 <- tagdbase2[tagdbase2[["Rep1."]] %in% taggroups,]
       message("Filtered tag groups for plotting based on input vector taggroups\n",
-              "Plots will show", length(unique(tagdbase2$Rep)),
-              "out of", length(unique(replist$tagdbase2$Rep)),
+              "Plots will show", length(unique(tagdbase2[["Rep1."]])),
+              "out of", length(unique(replist$tagdbase2[["Rep1."]])),
               "total included in the model.")
     }
 
     # calculations needed for printing to multiple PNG files
-    grouprange     <- unique(tagdbase2$Rep)
-    ngroups        <- length(unique(tagdbase2$Rep))
+    grouprange     <- unique(tagdbase2[["Rep1."]])
+    ngroups        <- length(unique(tagdbase2[["Rep1."]]))
     npages         <- ceiling(ngroups/(tagrows*tagcols))
     nseasons       <- replist$nseasons
     width          <- 0.5/nseasons
@@ -133,7 +133,7 @@ SSplotTags <-
             CI_down = ifelse(is.nan(CI_down), NA, CI_down),
             CI_up = ifelse(is.nan(CI_up), NA, CI_up)
           )
-        new_tagdbase2$title <- paste("TG_", as.character(new_tagdbase2$Rep),  sep="")
+        new_tagdbase2$title <- paste("TG_", as.character(new_tagdbase2[["Rep1."]]),  sep="")
 
         newfigure1 <- ggplot(new_tagdbase2, aes(x=Yr, y=Obs)) +
           geom_bar(aes(fill=as.factor(Seas)), position="dodge", stat = "identity", alpha=0.6) +
@@ -151,11 +151,11 @@ SSplotTags <-
       }
 
     # new system which takes latency value as input
-    tgroups <- sort(unique(tagdbase2$Rep))
+    tgroups <- sort(unique(tagdbase2[["Rep1."]]))
     x <- NULL
     for(igroup in tgroups){
       # subset results for only 1 tag group
-      temp <- tagdbase2[tagdbase2$Rep==igroup,]
+      temp <- tagdbase2[tagdbase2[["Rep1."]]==igroup,]
       # remove the first rows corresponding to the latency period
       temp <- temp[-(1:latency),]
       x <- rbind(x, temp)
