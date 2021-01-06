@@ -16,7 +16,11 @@ Depends:
 Imports:
     coda,
     corpcor,
-    kableExtra
+    dplyr,
+    forcats,
+    ggplot2,
+    kableExtra,
+    stingr
 Suggests: 
     gtools,
     gplots,

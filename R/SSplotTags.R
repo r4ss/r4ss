@@ -40,6 +40,7 @@
 #' be the directory where the model was run.
 #' @param verbose return updates of function progress to the R GUI?
 #' @author Andre Punt, Ian Taylor
+#' @import ggplot2
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotTags <-
@@ -113,7 +114,7 @@ SSplotTags <-
         #Get overdispersion parameter from model output
         parameters <- replist[["parameters"]]
         overdispersion <- parameters %>% 
-          dplyr::filter(str_detect(Label, "TG_overdispersion_")) %>% 
+          dplyr::filter(stringr::str_detect(Label, "TG_overdispersion_")) %>% 
           dplyr::select(Value) #grabs the overdispersion parms for each Tag Group
         tau <- overdispersion[["Value"]][1]
         
@@ -122,8 +123,8 @@ SSplotTags <-
           k[i] = mu[i]/(tau-1) #variance
         }
         i <- c(1:length(tagdbase2[["Exp"]])) 
-        CI_down <- qnbinom(c(0.975), size = k[i], mu = mu[i])
-        CI_up <- qnbinom(c(0.025), size = k[i], mu = mu[i])
+        CI_down <- stats::qnbinom(c(0.975), size = k[i], mu = mu[i])
+        CI_up <- stats::qnbinom(c(0.025), size = k[i], mu = mu[i])
         new_tagdbase2 <- cbind(tagdbase2, CI_up, CI_down)
         new_tagdbase2 <- new_tagdbase2 %>% 
           dplyr::mutate(
@@ -132,10 +133,10 @@ SSplotTags <-
           )
         new_tagdbase2[["title"]] <- paste("TG_", as.character(new_tagdbase2[["Rep1."]]),  sep="")
 
-        newfigure1 <- ggplot2::ggplot(new_tagdbase2, aes(x=Yr, y=Obs)) +
-          geom_bar(aes(fill=as.factor(Seas)), position="dodge", stat = "identity", alpha=0.6) +
+        newfigure1 <- ggplot(new_tagdbase2, aes(x= .dat$Yr, y= .dat$Obs)) +
+          geom_bar(aes(fill=as.factor(.dat$Seas)), position="dodge", stat = "identity", alpha=0.6) +
           geom_point(aes(x=Yr, y=Exp, fill=as.factor(Seas)), position=position_dodge(0.9)) +
-          facet_wrap(fct_inorder(as.factor(new_tagdbase2[["title"]])), scales = "free") +
+          facet_wrap(forcats::fct_inorder(as.factor(new_tagdbase2[["title"]])), scales = "free") +
           geom_errorbar(aes(ymin=CI_down, ymax=CI_up, color=as.factor(Seas)), position=position_dodge(0.9), width=0.25) +
           scale_color_viridis_d() +
           scale_fill_viridis_d() +
@@ -305,10 +306,10 @@ SSplotTags <-
     
     tagfun9 <- function(){
       #summarized observed and expected numbers of recaptures by fleet
-      fleet_plot2 <- ggplot2::ggplot(fleet_numbers2, aes(x=Yr, y=sum_obs)) +
-        geom_bar(aes(fill=as.factor(Fleet)), stat = "identity", alpha=0.5) +
+      fleet_plot2 <- ggplot(fleet_numbers2, aes(x=.dat$Yr, y=.dat$sum_obs)) +
+        geom_bar(aes(fill=as.factor(.dat$Fleet)), stat = "identity", alpha=0.5) +
         geom_line(aes(y=sum_exp, color=as.factor(Fleet)), linetype=1, size=1) +
-        facet_wrap(fct_inorder(as.factor(fleet_numbers2[["fleet_title"]])), scales="free") +
+        facet_wrap(forcats::fct_inorder(as.factor(fleet_numbers2[["fleet_title"]])), scales="free") +
         scale_fill_manual(values=myfill) +
         scale_color_manual(values=mycols) +
         labs(x="Year", y="Number of recaptures", subtitle="Observed (bar) and expected (line)") +
@@ -333,11 +334,11 @@ SSplotTags <-
     
     tagfun10 <- function(){
       #pearson residuals by tag group and fleets
-      pearson_plot1 <- ggplot2::ggplot(fleetnumbers_PRs, aes(x=Yr, y=fct_inorder(as.factor(Fleet)))) +
-        geom_point(aes(size=Pearson, color=Pearson), alpha=0.75, na.rm=TRUE) +
+      pearson_plot1 <- ggplot(fleetnumbers_PRs, aes(x=.dat$Yr, y=forcats::fct_inorder(as.factor(.dat$Fleet)))) +
+        geom_point(aes(size=.dat$Pearson, color=.dat$Pearson), alpha=0.75, na.rm=TRUE) +
         scale_color_continuous(name="Pearson\nResiduals",limits=limits, breaks=breaks, type = "viridis") +
         scale_size_continuous(name="Pearson\nResiduals",limits=limits, breaks=breaks) +
-        facet_wrap(fct_inorder(as.factor(fleetnumbers_PRs[["TGTitle"]])), scales = "free_x") +
+        facet_wrap(forcats::fct_inorder(as.factor(fleetnumbers_PRs[["TGTitle"]])), scales = "free_x") +
         xlab("Year") + ylab("Fleets") +
         guides(color=guide_legend(), size=guide_legend(override.aes = list(size=legend_size)))
       print(pearson_plot1)
