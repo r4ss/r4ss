@@ -20,7 +20,7 @@ Imports:
     forcats,
     ggplot2,
     kableExtra,
-    stingr
+    stringr
 Suggests: 
     gtools,
     gplots,
