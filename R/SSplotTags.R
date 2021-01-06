@@ -329,7 +329,7 @@ SSplotTags <-
       new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
       fleet_numbers <- new_tagdata %>%
         dplyr::mutate(
-          Numbers_Obs = round(.data[["Obs"]] * .data[["N"]]),
+          Numbers_Obs = round(.data[["Obs"]] * .data[["Nsamp_adj"]]),
           Numbers_Exp = round(.data[["Exp"]] * .data[["Expected"]])
         ) # generate exp. and obs. recaptures by fleet
       fleet_numbers2 <- fleet_numbers %>%
