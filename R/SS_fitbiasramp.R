@@ -299,7 +299,7 @@ SS_fitbiasramp <-
       if (shownew) lines(biasadjfun(yr, newbias[[1]], transform = transform), col = 4, lwd = 3, lty = 1)
       legendlines <- 1
       if (shownew) legendlines <- 1:2
-      lines(recruit[["Yr"]], recruit[["biasadj"]], col = 2, lwd = 3, lty = 2)
+      lines(recruit[["Yr"]], recruit[["biasadjuster"]], col = 2, lwd = 3, lty = 2)
       legend("topleft",
         col = c(2, 4)[legendlines], lwd = 3, lty = (2:1)[legendlines],
         inset = .01, cex = .9, bg = rgb(1, 1, 1, .8), box.col = NA,
