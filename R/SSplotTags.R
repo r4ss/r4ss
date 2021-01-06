@@ -86,18 +86,18 @@ SSplotTags <-
     } else {
       # filter tag groups if requested
       if (!is.null(taggroups)) {
-        tagdbase2 <- tagdbase2[tagdbase2[["Rep1."]] %in% taggroups, ]
+        tagdbase2 <- tagdbase2[tagdbase2[["Repl."]] %in% taggroups, ]
         message(
           "Filtered tag groups for plotting based on input vector taggroups\n",
-          "Plots will show", length(unique(tagdbase2[["Rep1."]])),
-          "out of", length(unique(replist[["tagdbase2"]][["Rep1."]])),
+          "Plots will show", length(unique(tagdbase2[["Repl."]])),
+          "out of", length(unique(replist[["tagdbase2"]][["Repl."]])),
           "total included in the model."
         )
       }
 
       # calculations needed for printing to multiple PNG files
-      grouprange <- unique(tagdbase2[["Rep1."]])
-      ngroups <- length(unique(tagdbase2[["Rep1."]]))
+      grouprange <- unique(tagdbase2[["Repl."]])
+      ngroups <- length(unique(tagdbase2[["Repl."]]))
       npages <- ceiling(ngroups / (tagrows * tagcols))
       nseasons <- replist[["nseasons"]]
       width <- 0.5 / nseasons
@@ -138,7 +138,7 @@ SSplotTags <-
             CI_down = ifelse(is.nan(CI_down), NA, CI_down),
             CI_up = ifelse(is.nan(CI_up), NA, CI_up)
           )
-        new_tagdbase2[["title"]] <- paste("TG_", as.character(new_tagdbase2[["Rep1."]]), sep = "")
+        new_tagdbase2[["title"]] <- paste("TG_", as.character(new_tagdbase2[["Repl."]]), sep = "")
 
         newfigure1 <- ggplot(new_tagdbase2, aes(x = .data[["Yr"]], y = .data[["Obs"]])) +
           geom_bar(aes(fill = as.factor(.data[["Seas"]])), position = "dodge", stat = "identity", alpha = 0.6) +
@@ -156,19 +156,19 @@ SSplotTags <-
       }
 
       # new system which takes latency value as input
-      tgroups <- sort(unique(tagdbase2[["Rep1."]]))
+      tgroups <- sort(unique(tagdbase2[["Repl."]]))
       x <- NULL
       for (igroup in tgroups) {
         # subset results for only 1 tag group
-        temp <- tagdbase2[tagdbase2[["Rep1."]] == igroup, ]
+        temp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
         # remove the first rows corresponding to the latency period
         temp <- temp[-(1:latency), ]
         x <- rbind(x, temp)
       }
 
       # obs vs exp tag recaptures by year aggregated across group
-      tagobs <- aggregate(x[["Obs"]], by = list(x[["Yr.S"]], x[["Rep"]]), FUN = sum, na.rm = TRUE)
-      tagexp <- aggregate(x[["Exp"]], by = list(x[["Yr.S"]], x[["Rep"]]), FUN = sum, na.rm = TRUE)
+      tagobs <- aggregate(x[["Obs"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
+      tagexp <- aggregate(x[["Exp"]], by = list(x[["Yr.S"]], x[["Repl."]]), FUN = sum, na.rm = TRUE)
       Recaps <- data.frame(
         Yr.S = tagobs[, 1], Group = tagobs[, 2],
         Obs = tagobs[, 3], Exp = tagexp[, 3]
@@ -363,7 +363,7 @@ SSplotTags <-
       fleetnumbers_PRs[["Pearson"]][!is.finite(fleetnumbers_PRs[["Pearson"]])] <- NA
 
       # Adjust names
-      fleetnumbers_PRs[["TGTitle"]] <- paste("TG_", as.character(fleetnumbers_PRs[["Rep"]]), sep = "")
+      fleetnumbers_PRs[["TGTitle"]] <- paste("TG_", as.character(fleetnumbers_PRs[["Repl."]]), sep = "")
 
       # Set limits and breaks of residuals for plotting
       limits <- as.numeric(round(range(fleetnumbers_PRs[["Pearson"]], na.rm = TRUE)))
