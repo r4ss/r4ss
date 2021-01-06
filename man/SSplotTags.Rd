@@ -6,7 +6,7 @@
 \usage{
 SSplotTags(
   replist = replist,
-  subplots = 1:8,
+  subplots = 1:10,
   latency = NULL,
   taggroups = NULL,
   rows = 1,
@@ -31,7 +31,9 @@ SSplotTags(
     "Post-latency tag recaptures aggregated across tag groups",
     "Observed tag recaptures by year and tag group",
     "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)",
-    "Observed and expected post-latency tag recaptures by year and tag group"),
+    "Observed and expected post-latency tag recaptures by year and tag group",
+    "Summarized observed and expected numbers of recaptures by fleet",
+    "Pearson residuals by tag group"),
   plotdir = "default",
   verbose = TRUE
 )
