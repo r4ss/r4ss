@@ -121,8 +121,8 @@ SSplotTags <-
         # Get overdispersion parameter from model output
         parameters <- replist[["parameters"]]
         overdispersion <- parameters %>%
-          dplyr::filter(stringr::str_detect(Label, "TG_overdispersion_")) %>%
-          dplyr::select(Value) # grabs the overdispersion parms for each Tag Group
+          dplyr::filter(stringr::str_detect(.data[["Label"]], "TG_overdispersion_")) %>%
+          dplyr::select(.data[["Value"]]) # grabs the overdispersion parms for each Tag Group
         tau <- overdispersion[["Value"]][1]
 
         k <- c(1:length(tagdbase2[["Exp"]]))
@@ -140,11 +140,11 @@ SSplotTags <-
           )
         new_tagdbase2[["title"]] <- paste("TG_", as.character(new_tagdbase2[["Rep1."]]), sep = "")
 
-        newfigure1 <- ggplot(new_tagdbase2, aes(x = .dat$Yr, y = .dat$Obs)) +
-          geom_bar(aes(fill = as.factor(.dat$Seas)), position = "dodge", stat = "identity", alpha = 0.6) +
-          geom_point(aes(x = Yr, y = Exp, fill = as.factor(Seas)), position = position_dodge(0.9)) +
+        newfigure1 <- ggplot(new_tagdbase2, aes(x = .data[["Yr"]], y = .data[["Obs"]])) +
+          geom_bar(aes(fill = as.factor(.data[["Seas"]])), position = "dodge", stat = "identity", alpha = 0.6) +
+          geom_point(aes(x = .data[["Yr"]], y = .data[["Exp"]], fill = as.factor(.data[["Seas"]])), position = position_dodge(0.9)) +
           facet_wrap(forcats::fct_inorder(as.factor(new_tagdbase2[["title"]])), scales = "free") +
-          geom_errorbar(aes(ymin = CI_down, ymax = CI_up, color = as.factor(Seas)), position = position_dodge(0.9), width = 0.25) +
+          geom_errorbar(aes(ymin = CI_down, ymax = CI_up, color = as.factor(.data[["Seas"]])), position = position_dodge(0.9), width = 0.25) +
           scale_color_viridis_d() +
           scale_fill_viridis_d() +
           theme(strip.background = element_blank()) +
@@ -329,12 +329,12 @@ SSplotTags <-
       new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
       fleet_numbers <- new_tagdata %>%
         dplyr::mutate(
-          Numbers_Obs = round(Obs * N),
-          Numbers_Exp = round(Exp * Expected)
+          Numbers_Obs = round(.data[["Obs"]] * .data[["N"]]),
+          Numbers_Exp = round(.data[["Exp"]] * .data[["Expected"]])
         ) # generate exp. and obs. recaptures by fleet
       fleet_numbers2 <- fleet_numbers %>%
-        dplyr::group_by(Fleet, Yr) %>%
-        dplyr::summarize(sum_exp = sum(Numbers_Exp), sum_obs = sum(Numbers_Obs))
+        dplyr::group_by(.data[["Fleet"]], .data[["Yr"]]) %>%
+        dplyr::summarize(sum_exp = sum(.data[["Numbers_Exp"]]), sum_obs = sum(.data[["Numbers_Obs"]]))
 
       fleet_numbers2[["Fleet"]] <- sort(as.numeric(fleet_numbers2[["Fleet"]]), decreasing = FALSE)
       fleet_numbers2[["fleet_title"]] <- paste("Fleet_", as.character(fleet_numbers2[["Fleet"]]), sep = "")
@@ -344,9 +344,9 @@ SSplotTags <-
 
       tagfun9 <- function() {
         # summarized observed and expected numbers of recaptures by fleet
-        fleet_plot2 <- ggplot(fleet_numbers2, aes(x = .dat$Yr, y = .dat$sum_obs)) +
-          geom_bar(aes(fill = as.factor(.dat$Fleet)), stat = "identity", alpha = 0.5) +
-          geom_line(aes(y = sum_exp, color = as.factor(Fleet)), linetype = 1, size = 1) +
+        fleet_plot2 <- ggplot(fleet_numbers2, aes(x = .data[["Yr"]], y = .data[["sum_obs"]])) +
+          geom_bar(aes(fill = as.factor(.data[["Fleet"]])), stat = "identity", alpha = 0.5) +
+          geom_line(aes(y = .data[["sum_exp"]], color = as.factor(.data[["Fleet"]])), linetype = 1, size = 1) +
           facet_wrap(forcats::fct_inorder(as.factor(fleet_numbers2[["fleet_title"]])), scales = "free") +
           scale_fill_manual(values = myfill) +
           scale_color_manual(values = mycols) +
@@ -357,7 +357,7 @@ SSplotTags <-
 
       # Calculate Pearson Residuals by fleet
       fleetnumbers_PRs <- fleet_numbers %>%
-        dplyr::mutate(Pearson = (Numbers_Obs - Numbers_Exp) / sqrt(Numbers_Exp))
+        dplyr::mutate(Pearson = (.data[["Numbers_Obs"]] - .data[["Numbers_Exp"]]) / sqrt(.data[["Numbers_Exp"]]))
 
       fleetnumbers_PRs[["Pearson"]][is.nan(fleetnumbers_PRs[["Pearson"]])] <- NA
       fleetnumbers_PRs[["Pearson"]][!is.finite(fleetnumbers_PRs[["Pearson"]])] <- NA
@@ -372,8 +372,8 @@ SSplotTags <-
 
       tagfun10 <- function() {
         # pearson residuals by tag group and fleets
-        pearson_plot1 <- ggplot(fleetnumbers_PRs, aes(x = .dat$Yr, y = forcats::fct_inorder(as.factor(.dat$Fleet)))) +
-          geom_point(aes(size = .dat$Pearson, color = .dat$Pearson), alpha = 0.75, na.rm = TRUE) +
+        pearson_plot1 <- ggplot(fleetnumbers_PRs, aes(x = .data[["Yr"]], y = forcats::fct_inorder(as.factor(.data[["Fleet"]])))) +
+          geom_point(aes(size = .data[["Pearson"]], color = .data[["Pearson"]]), alpha = 0.75, na.rm = TRUE) +
           scale_color_continuous(name = "Pearson\nResiduals", limits = limits, breaks = breaks, type = "viridis") +
           scale_size_continuous(name = "Pearson\nResiduals", limits = limits, breaks = breaks) +
           facet_wrap(forcats::fct_inorder(as.factor(fleetnumbers_PRs[["TGTitle"]])), scales = "free_x") +
