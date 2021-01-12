@@ -108,5 +108,5 @@ Plot observed and expected tag recaptures in aggregate and by tag group.
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \author{
-Andre Punt, Ian Taylor
+Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 }

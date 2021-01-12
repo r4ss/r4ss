@@ -11,7 +11,7 @@ SSexecutivesummary(
   es_only = FALSE,
   fleetnames = NULL,
   tables = c("a", "b", "c", "d", "e", "f", "g", "h", "i", "catch", "timeseries",
-    "numbers", "biomass"),
+    "numbers", "biomass", "likes"),
   divide_by_2 = FALSE,
   endyr = NULL,
   adopted_ofl = NULL,

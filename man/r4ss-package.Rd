@@ -14,7 +14,7 @@ parameterizations, and various other tasks.
 }
 \details{
 \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
-1.40.1\cr Date: \tab 2020-09-28\cr License: \tab GPL-3\cr LazyLoad: \tab
+1.41.0\cr Date: \tab 2021-01-11\cr License: \tab GPL-3\cr LazyLoad: \tab
 yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
 Should be compatible with Stock Synthesis versions 3.24 through 3.30
 (specifically version 3.30.16.02, from September 2020).
@@ -41,8 +41,8 @@ Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
 Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
 Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
 Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-Iago Mosqueira, Watal M. Iwasaki, Kathryn Doering, Andrea M. Havron,
-Nathan Vaughan, and LaTreese S. Denson
+Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
+Nathan Vaughan, LaTreese S. Denson, and Ashleigh J. Novak
 
 Package maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 }

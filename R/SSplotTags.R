@@ -39,7 +39,7 @@
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @param verbose return updates of function progress to the R GUI?
-#' @author Andre Punt, Ian Taylor
+#' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
