@@ -261,7 +261,7 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
     forelist <- add_elem(forelist, "Flimitfraction")
 
     if (forelist[["Flimitfraction"]] < 0) {
-      forelist <- add_df(forelist, ncol = 2, col.names = c("Year", "Fraction"), name = "Flimitfraction")
+      forelist <- add_df(forelist, ncol = 2, col.names = c("Year", "Fraction"), name = "Flimitfraction_m")
     }
 
     forelist <- add_elem(forelist, "N_forecast_loops")
