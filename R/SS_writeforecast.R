@@ -115,6 +115,7 @@ SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
       wl("Flimitfraction")
       if (mylist[["Flimitfraction"]] < 0) {
         printdf("Flimitfraction_m")
+        writeLines("-9999 0")
       }
       wl("N_forecast_loops")
 
