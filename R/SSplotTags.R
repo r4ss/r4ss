@@ -40,10 +40,11 @@
 #' be the directory where the model was run.
 #' @param verbose return updates of function progress to the R GUI?
 #' @author Andre Punt, Ian Taylor
+#' @import ggplot2
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
 SSplotTags <-
-  function(replist = replist, subplots = 1:8, latency = NULL, taggroups = NULL,
+  function(replist = replist, subplots = 1:10, latency = NULL, taggroups = NULL,
            rows = 1, cols = 1,
            tagrows = 3, tagcols = 3,
            plot = TRUE, print = FALSE,
@@ -58,8 +59,10 @@ SSplotTags <-
              "Post-latency tag recaptures aggregated across tag groups", # 5
              "Observed tag recaptures by year and tag group", # 6
              "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)", # 7
-             "Observed and expected post-latency tag recaptures by year and tag group"
-           ), # 8
+             "Observed and expected post-latency tag recaptures by year and tag group", # 8
+             "Summarized observed and expected numbers of recaptures by fleet", # 9
+             "Pearson residuals by tag group"
+           ), # 10
            plotdir = "default",
            verbose = TRUE) {
     # subfunction to write png files
@@ -106,59 +109,47 @@ SSplotTags <-
         latency <- replist[["tagfirstperiod"]]
       }
 
-      tagfun1 <- function(ipage = 0) {
+      tagfun1 <- function() {
         # obs & exp recaps by tag group
         par(
           mfcol = c(tagrows, tagcols), mar = c(2.5, 2.5, 2, 1),
           cex.main = cex.main, oma = c(2, 2, 2, 0)
         )
-        if (npages > 1 & ipage != 0) {
-          grouprange <- intersect(
-            grouprange,
-            1:(tagrows * tagcols) + tagrows * tagcols * (ipage - 1)
-          )
-        }
-        for (igroup in grouprange) {
-          tagtemp <- tagdbase2[tagdbase2[["Repl."]] == igroup, ]
-          ylim <- c(0, max(5, cbind(tagtemp[["Obs"]], tagtemp[["Exp"]]) * 1.05))
-          plot(0,
-            type = "n", xlab = "", ylab = "", ylim = ylim,
-            main = paste("TG ", igroup, sep = ""),
-            xaxs = "i", yaxs = "i", xlim = c(
-              min(tagtemp[["Yr.S"]]) - 0.5,
-              max(tagtemp[["Yr.S"]]) + 0.5
-            )
-          )
-          for (iy in 1:length(tagtemp[["Yr.S"]])) {
-            xx <- c(
-              tagtemp[["Yr.S"]][iy] - width, tagtemp[["Yr.S"]][iy] - width,
-              tagtemp[["Yr.S"]][iy] + width, tagtemp[["Yr.S"]][iy] + width
-            )
-            yy <- c(0, tagtemp[["Obs"]][iy], tagtemp[["Obs"]][iy], 0)
-            polygon(xx, yy, col = ifelse(iy <= latency, col3, col4))
-          }
-          points(tagtemp[["Yr.S"]], tagtemp[["Exp"]], type = "o", lty = 1, pch = 16)
-          if (latency > 0) {
-            points(tagtemp[["Yr.S"]][1:latency], tagtemp[["Exp"]][1:latency],
-              type = "o", lty = 1, pch = 21, bg = "white"
-            )
-            if (all(par()$mfg[1:2] == 1)) {
-              legend("topright",
-                fill = c(col3, col4),
-                c("Latency period", "Post-latency"), bty = "n"
-              )
-            }
-          }
-          box()
 
-          # add labels in left and lower outer margins once per page
-          mfg <- par("mfg")
-          if (mfg[1] == 1 & mfg[2] == 1) {
-            mtext(labels[1], side = 1, line = 0, outer = TRUE)
-            mtext(labels[2], side = 2, line = 0, outer = TRUE)
-            mtext(labels[4], side = 3, line = 0, outer = TRUE, cex = cex.main, font = 2)
-          }
+        mu <- tagdbase2[["Exp"]] # mean expected number of recaptures
+
+        # Get overdispersion parameter from model output
+        parameters <- replist[["parameters"]]
+        overdispersion <- parameters %>%
+          dplyr::filter(stringr::str_detect(.data[["Label"]], "TG_overdispersion_")) %>%
+          dplyr::select(.data[["Value"]]) # grabs the overdispersion parms for each Tag Group
+        tau <- overdispersion[["Value"]][1]
+
+        k <- c(1:length(tagdbase2[["Exp"]]))
+        for (i in 1:length(tagdbase2[["Exp"]])) {
+          k[i] <- mu[i] / (tau - 1) # variance
         }
+        i <- c(1:length(tagdbase2[["Exp"]]))
+        CI_down <- stats::qnbinom(c(0.975), size = k[i], mu = mu[i])
+        CI_up <- stats::qnbinom(c(0.025), size = k[i], mu = mu[i])
+        new_tagdbase2 <- cbind(tagdbase2, CI_up, CI_down)
+        new_tagdbase2 <- new_tagdbase2 %>%
+          dplyr::mutate(
+            CI_down = ifelse(is.nan(CI_down), NA, CI_down),
+            CI_up = ifelse(is.nan(CI_up), NA, CI_up)
+          )
+        new_tagdbase2[["title"]] <- paste("TG_", as.character(new_tagdbase2[["Repl."]]), sep = "")
+
+        newfigure1 <- ggplot(new_tagdbase2, aes(x = .data[["Yr"]], y = .data[["Obs"]])) +
+          geom_bar(aes(fill = as.factor(.data[["Seas"]])), position = "dodge", stat = "identity", alpha = 0.6) +
+          geom_point(aes(x = .data[["Yr"]], y = .data[["Exp"]], fill = as.factor(.data[["Seas"]])), position = position_dodge(0.9)) +
+          facet_wrap(forcats::fct_inorder(as.factor(new_tagdbase2[["title"]])), scales = "free") +
+          geom_errorbar(aes(ymin = CI_down, ymax = CI_up, color = as.factor(.data[["Seas"]])), position = position_dodge(0.9), width = 0.25) +
+          scale_color_viridis_d() +
+          scale_fill_viridis_d() +
+          theme(strip.background = element_blank()) +
+          labs(x = "Year", y = "Frequency", fill = "Season", color = "Season")
+        print(newfigure1)
 
         # restore default single panel settings
         par(mfcol = c(rows, cols), mar = c(5, 5, 4, 2) + .1, oma = rep(0, 4))
@@ -315,6 +306,7 @@ SSplotTags <-
         )
         abline(h = 0, col = "grey")
       }
+
       tagfun8 <- function() {
         # a function to plot the "total recaptures" matrix
         xvals <- as.numeric(substring(names(tagtotrecap)[-1], 7))
@@ -328,6 +320,69 @@ SSplotTags <-
         abline(h = 0, col = "grey")
       }
 
+      tagdata <- replist[["tagdbase1"]]
+      tagdata[["Fleet"]] <- as.character(tagdata[["Fleet"]])
+
+      max_num_fleets <- max(as.numeric(c(unique(tagdata[["Fleet"]])))) # need to get the max number of fleets you have so you can rep over that.
+      expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets)) # make a new column to bind to your other frame that contains the breakdown of obs + exp recaps by fleet
+      names(expected_by_fleets)[1] <- "Expected" # rename column
+      new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
+      fleet_numbers <- new_tagdata %>%
+        dplyr::mutate(
+          Numbers_Obs = round(.data[["Obs"]] * .data[["Nsamp_adj"]]),
+          Numbers_Exp = round(.data[["Exp"]] * .data[["Expected"]])
+        ) # generate exp. and obs. recaptures by fleet
+      fleet_numbers2 <- fleet_numbers %>%
+        dplyr::group_by(.data[["Fleet"]], .data[["Yr"]]) %>%
+        dplyr::summarize(sum_exp = sum(.data[["Numbers_Exp"]]), sum_obs = sum(.data[["Numbers_Obs"]]))
+
+      fleet_numbers2[["Fleet"]] <- sort(as.numeric(fleet_numbers2[["Fleet"]]), decreasing = FALSE)
+      fleet_numbers2[["fleet_title"]] <- paste("Fleet_", as.character(fleet_numbers2[["Fleet"]]), sep = "")
+
+      mycols <- rep("black", max_num_fleets) # set colors for plotting expected values
+      myfill <- rep("gray35", max_num_fleets)
+
+      tagfun9 <- function() {
+        # summarized observed and expected numbers of recaptures by fleet
+        fleet_plot2 <- ggplot(fleet_numbers2, aes(x = .data[["Yr"]], y = .data[["sum_obs"]])) +
+          geom_bar(aes(fill = as.factor(.data[["Fleet"]])), stat = "identity", alpha = 0.5) +
+          geom_line(aes(y = .data[["sum_exp"]], color = as.factor(.data[["Fleet"]])), linetype = 1, size = 1) +
+          facet_wrap(forcats::fct_inorder(as.factor(fleet_numbers2[["fleet_title"]])), scales = "free") +
+          scale_fill_manual(values = myfill) +
+          scale_color_manual(values = mycols) +
+          labs(x = "Year", y = "Number of recaptures", subtitle = "Observed (bar) and expected (line)") +
+          theme(strip.background = element_blank(), legend.position = "none")
+        print(fleet_plot2)
+      }
+
+      # Calculate Pearson Residuals by fleet
+      fleetnumbers_PRs <- fleet_numbers %>%
+        dplyr::mutate(Pearson = (.data[["Numbers_Obs"]] - .data[["Numbers_Exp"]]) / sqrt(.data[["Numbers_Exp"]]))
+
+      fleetnumbers_PRs[["Pearson"]][is.nan(fleetnumbers_PRs[["Pearson"]])] <- NA
+      fleetnumbers_PRs[["Pearson"]][!is.finite(fleetnumbers_PRs[["Pearson"]])] <- NA
+
+      # Adjust names
+      fleetnumbers_PRs[["TGTitle"]] <- paste("TG_", as.character(fleetnumbers_PRs[["Repl."]]), sep = "")
+
+      # Set limits and breaks of residuals for plotting
+      limits <- as.numeric(round(range(fleetnumbers_PRs[["Pearson"]], na.rm = TRUE)))
+      breaks <- seq(limits[1], limits[2], by = 3)
+      legend_size <- c(abs(breaks))
+
+      tagfun10 <- function() {
+        # pearson residuals by tag group and fleets
+        pearson_plot1 <- ggplot(fleetnumbers_PRs, aes(x = .data[["Yr"]], y = forcats::fct_inorder(as.factor(.data[["Fleet"]])))) +
+          geom_point(aes(size = .data[["Pearson"]], color = .data[["Pearson"]]), alpha = 0.75, na.rm = TRUE) +
+          scale_color_continuous(name = "Pearson\nResiduals", limits = limits, breaks = breaks, type = "viridis") +
+          scale_size_continuous(name = "Pearson\nResiduals", limits = limits, breaks = breaks) +
+          facet_wrap(forcats::fct_inorder(as.factor(fleetnumbers_PRs[["TGTitle"]])), scales = "free_x") +
+          xlab("Year") +
+          ylab("Fleets") +
+          guides(color = guide_legend(), size = guide_legend(override.aes = list(size = legend_size)))
+        print(pearson_plot1)
+      }
+
       # make plots
       if (plot) {
         if (1 %in% subplots) tagfun1()
@@ -338,32 +393,17 @@ SSplotTags <-
         if (6 %in% subplots) tagfun6()
         if (7 %in% subplots) tagfun7()
         if (8 %in% subplots) tagfun8()
+        if (9 %in% subplots) tagfun9()
+        if (10 %in% subplots) tagfun10()
       }
       # send to files if requested
       if (print) {
-        filenamestart <- "tags_by_group"
         if (1 %in% subplots) {
-          for (ipage in 1:npages) {
-            if (npages > 1) {
-              pagetext <- paste("_page", ipage, sep = "")
-            } else {
-              pagetext <- ""
-            }
-            file <- paste(filenamestart, pagetext, ".png", sep = "")
-            caption <- paste(
-              labels[4], "(lighter colored bars indicate latency",
-              "period excluded from likelihood)"
-            )
-            if (npages > 1) {
-              caption <- paste(caption, ",  (plot ", ipage,
-                "of ", npages, ")",
-                sep = ""
-              )
-            }
-            plotinfo <- pngfun(file = file, caption = caption)
-            tagfun1(ipage = ipage)
-            dev.off() # close device if png
-          }
+          file <- "tags_by_group.png"
+          caption <- "Expected and observed recaptures by tag group"
+          plotinfo <- pngfun(file = file, caption = caption)
+          tagfun1()
+          dev.off()
         }
         if (2 %in% subplots) {
           file <- "tags_aggregated.png"
@@ -412,6 +452,20 @@ SSplotTags <-
           caption <- "Total tag recaptures"
           plotinfo <- pngfun(file = file, caption = caption)
           tagfun8()
+          dev.off()
+        }
+        if (9 %in% subplots) {
+          file <- "summarized_recaptures_fleet.png"
+          caption <- "summarized observed and expected numbers of recaptures by fleet"
+          plotinfo <- pngfun(file = file, caption = caption)
+          tagfun9()
+          dev.off()
+        }
+        if (10 %in% subplots) {
+          file <- "pearson_residuals_taggroup.png"
+          caption <- "Pearson residuals by tag group"
+          plotinfo <- pngfun(file = file, caption = caption)
+          tagfun10()
           dev.off()
         }
       }
