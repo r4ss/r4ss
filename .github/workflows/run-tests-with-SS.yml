@@ -21,7 +21,7 @@ jobs:
     # kable extra is giving issues, so move from depends to suggests.
     # This works b/c the kable extra pkg is getting downloaded, but for some
     # reason when calling devtools tests it cant be found!
-      - name: Hack to move kableExtra from depends to suggests.
+      - name: Hack to move kableExtra from imports to suggests.
         run: |
           des <- readLines("DESCRIPTION")
           ke_line <- grep("kableExtra", des)
@@ -32,7 +32,17 @@ jobs:
           des <- append(des, values = "    kableExtra,", after = sug_line)
           writeLines(des, "DESCRIPTION")
         shell: Rscript {0}
-        
+      - name: Hack to move stringr from imports to suggests  
+        run: |
+          des <- readLines("DESCRIPTION")
+          ke_line <- grep("stringr", des)
+          imp_line <- grep("Imports:", des)
+          des <- des[-ke_line]
+          if((ke_line-1) != imp_line) des[ke_line-1] <- gsub(",", "", des[ke_line-1])
+          sug_line <- grep("^Suggests:", des)
+          des <- append(des, values = "    stringr,", after = sug_line)
+          writeLines(des, "DESCRIPTION")
+        shell: Rscript {0}
       - name: Query dependencies
         run: |
           install.packages('remotes')
