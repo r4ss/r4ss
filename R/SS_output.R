@@ -844,7 +844,7 @@ SS_output <-
         if(length(unique(agedbase$Lbin_range)) > 1){
           warning("different ranges of Lbin_lo to Lbin_hi found in age comps.\n",
                   paste(utils::capture.output(print(Lbin_ranges)), collapse = "\n"),
-                  "\n consider increasing 'aalmaxbinrange' to designate\n", 
+                  "\n consider increasing 'aalmaxbinrange' to designate\n",
                   "some of these data as conditional age-at-length.")
         }
         agebins <- sort(unique(agedbase$Bin[!is.na(agedbase$Bin)]))
@@ -1636,6 +1636,7 @@ SS_output <-
       lenntune <- type.convert(lenntune, as.is = TRUE)
     }else{
       # reorder columns (leaving out sample sizes perhaps to save space)
+      lenntune$N <- gsub("_", 0, lenntune$N)
       lenntune <- lenntune[lenntune$N>0, ]
       lenntune <- type.convert(lenntune, as.is = TRUE)
       ## new column "Recommend_Var_Adj" in 3.30 now matches calculation below
