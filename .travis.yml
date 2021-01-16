@@ -1,8 +1,7 @@
 language: r
-sudo: required
 cache: packages
 r:
-  - devel
+  - release
 
 services:
   - xvfb
@@ -13,11 +12,11 @@ r_packages:
 
 notifications:
   email:
+    recipients:
+      - ian.taylor@noaa.gov
+      - kathryn.doering@noaa.gov
     on_success: change
     on_failure: change
 
 warnings_are_errors: false
-
-after_success:
-  - Rscript -e 'library(covr); codecov()'
   

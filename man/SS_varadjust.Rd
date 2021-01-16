@@ -55,18 +55,21 @@ Function has not been fully tested yet
 }
 \examples{
 
-   \dontrun{
-     # load model output into R
-     replist <- SS_output(dir='c:/model/')
+\dontrun{
+# load model output into R
+replist <- SS_output(dir = "c:/model/")
 
-     # get new variance adjustments (
-     varadjust <- SS_tune_comps(replist, option="Francis")
-     print(varadjust)
+# get new variance adjustments (
+varadjust <- SS_tune_comps(replist, option = "Francis")
+print(varadjust)
 
-     # write new table to file
-     SS_varadjust(dir=replist$inputs$dir, newctlfile="new_control.ss",
-                  newtable=varadjust, overwrite=FALSE)
-   }
+# write new table to file
+SS_varadjust(
+  dir = replist[["inputs"]][["dir"]], newctlfile = "new_control.ss",
+  newtable = varadjust, overwrite = FALSE
+)
+}
+
 }
 \seealso{
 \code{\link{SS_tune_comps}}, \code{\link{SS_parlines}}, \code{\link{SS_changepars}}

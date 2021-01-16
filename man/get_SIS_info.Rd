@@ -9,7 +9,10 @@ get_SIS_info(
   dir = NULL,
   writecsv = TRUE,
   stock = "StockName",
-  final_year = 2019
+  final_year = 2019,
+  data_year = NULL,
+  sciencecenter = "NWFSC",
+  Mgt_Council = "NA"
 )
 }
 \arguments{
@@ -23,8 +26,14 @@ is an additional input}
 
 \item{stock}{String to prepend id info to filename for CSV file}
 
-\item{final_year}{Year for reference points and final year of timeseries
-(typically will be model$endyr + 1)}
+\item{final_year}{Year of assessment and reference points
+(typically will be model[["endyr"]] + 1)}
+
+\item{data_year}{Last year of of timeseries data}
+
+\item{sciencecenter}{Origin of assessment report}
+
+\item{Mgt_Council}{Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)}
 }
 \description{
 Processes model results contained in the list created by
@@ -36,14 +45,15 @@ copy step.
 }
 \examples{
 
-  \dontrun{
+\dontrun{
 # directory with the model output
 mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
 # read the model output
 model <- SS_output(dir = mydir)
 # run get_SIS_info:
 info <- get_SIS_info(model, stock = "SimpleExample")
-  }
+}
+
 }
 \seealso{
 \code{\link{SS_output}}

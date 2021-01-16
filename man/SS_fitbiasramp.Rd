@@ -28,7 +28,7 @@ SS_fitbiasramp(
 )
 }
 \arguments{
-\item{replist}{Object created using \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{verbose}{Controls the amount of output to the screen.  Default=FALSE.}
 
@@ -81,7 +81,7 @@ The default is \code{punits="in"}.}
 \code{help("png")} in R for details). The default is \code{ptsize=10}.}
 
 \item{res}{Resolution of plots printed to files.
-The default is \code{res=300}.}
+The default is \code{res = 300}.}
 
 \item{cex.main}{Character expansion for plot titles.
 The default is \code{cex.main=1}.}
@@ -93,10 +93,10 @@ for bias adjustment in Stock Synthesis.
 }
 \details{
 Implementation of the bias adjustment ramp within Stock Synthesis increases
-the likelihood that the estimated recruitmente events, which are 
+the likelihood that the estimated recruitmente events, which are
 log-normally distributed, are mean unbiased and comparable to results from
 Markov chain Mone Carlo estimation routines
-(\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}). 
+(\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}).
 Options to account for the fact that data typically do not equally represent
 all modelled time periods are as follows:
 \enumerate{

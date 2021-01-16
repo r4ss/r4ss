@@ -30,7 +30,7 @@ SSplotSPR(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SSoutput}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{add}{add to existing plot (not yet implemented)}
 
@@ -65,7 +65,8 @@ omitted by setting to NA. "default" chooses based on model output.}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

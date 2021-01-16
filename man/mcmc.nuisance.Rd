@@ -26,9 +26,11 @@ directory for particular run.}
 
 \item{run}{Directory with files from a particular run.}
 
-\item{file}{File containing posterior samples for nuisance parameters. This
-could be posteriors.sso or something written by the function
-\code{\link{SSgetMCMC}}.}
+\item{file}{Filename either with full path or relative to working directory.
+
+  Contents of the file that is referenced here should contain posterior samples
+  for nuisance parameters, e.g., posteriors.sso or
+  something written by \code{\link{SSgetMCMC}}.}
 
 \item{file2}{Optional second file containing posterior samples for nuisance
 parameters. This could be derived_posteriors.sso.}

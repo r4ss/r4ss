@@ -7,8 +7,11 @@
 SS_readwtatage(file = "wtatage.ss", verbose = TRUE)
 }
 \arguments{
-\item{file}{A relative or full path to the weight-at-age file.
-The default values is \code{wtatage.ss}.}
+\item{file}{Filename either with full path or relative to working directory.
+
+
+
+  See the formal arguments for a possible default filename.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
@@ -24,4 +27,7 @@ will be a column of comments.
 }
 \description{
 Read in a weight-at-age data file into a data frame in R.
+}
+\author{
+Kelli F. Johnson, Ian G. Taylor
 }

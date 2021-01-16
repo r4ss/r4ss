@@ -16,7 +16,7 @@ SS_ForeCatch(
 )
 }
 \arguments{
-\item{replist}{List created by \code{\link{SS_output}}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{yrs}{Range of years in which to fill in forecast catches from timeseries}
 
@@ -58,7 +58,7 @@ This is a common task for US west coast groundfish but might be useful elsewhere
                  yrs = 2019:2020,     # years with fixed catch
                  average = TRUE,      # catch by fleet from average catch
                  avg.yrs = 2014:2018, # use average of catches over past 5 years
-                 total = c(rep(241.3, 2), rep(300, 10))) # total 
+                 total = c(rep(241.3, 2), rep(300, 10))) # total
 
     # create table based on harvest control rule projection in SS
     # that can be mapped into an alternative state of nature

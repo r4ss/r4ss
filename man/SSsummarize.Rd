@@ -13,7 +13,8 @@ SSsummarize(
   selgender = 1,
   SpawnOutputUnits = NULL,
   lowerCI = 0.025,
-  upperCI = 0.975
+  upperCI = 0.975,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,9 @@ be summarized. NULL=all genders. Default=NULL.}
 
 \item{upperCI}{Quantile for upper bound on calculated intervals. Default =
 0.975 for 95\% intervals.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
 }
 \description{
 Summarize various quantities from the model output collected by

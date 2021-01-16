@@ -27,9 +27,6 @@ SSplotSelex(
   col1 = "red",
   col2 = "blue",
   lwd = 2,
-  fleetcols = "default",
-  fleetpch = "default",
-  fleetlty = "default",
   spacepoints = 5,
   staggerpoints = 1,
   legendloc = "bottomright",
@@ -45,7 +42,7 @@ SSplotSelex(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{infotable}{Optional table of information controlling appearance of
 plot and legend. Is produced as output and can be modified and entered as
@@ -97,15 +94,6 @@ Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead
 
 \item{lwd}{Line widths for plots}
 
-\item{fleetcols}{Optional vector of colors for each fleet (in multi-fleet
-plots)}
-
-\item{fleetpch}{Optional vector of plot characters for each fleet (in
-multi-fleet plots)}
-
-\item{fleetlty}{Optional vector of line types for each fleet (in multi-fleet
-plots)}
-
 \item{spacepoints}{number of years between points shown on top of lines (for
 long timeseries, points every year get mashed together)}
 
@@ -121,7 +109,8 @@ different years)}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

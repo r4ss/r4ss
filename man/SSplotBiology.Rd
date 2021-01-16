@@ -37,7 +37,7 @@ SSplotBiology(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plot}{Plot to active plot device?}
 
@@ -80,7 +80,7 @@ Additional plots not created by default
 seasonal models but but maybe not fully implemented)}
 
 \item{morphs}{Which morphs to plot (if more than 1 per sex)? By default this
-will be replist$mainmorphs}
+will be replist[["mainmorphs"]]}
 
 \item{forecast}{Include forecast years in plots of time-varying biology?}
 
@@ -117,7 +117,8 @@ be the directory where the model was run.}
 
 \item{punits}{Units for PNG file}
 
-\item{res}{Resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{Point size for PNG file}
 

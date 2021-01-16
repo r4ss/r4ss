@@ -39,7 +39,7 @@ SSplotPars(
 )
 }
 \arguments{
-\item{replist}{List produced by \code{\link{SS_output}}.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{plotdir}{A path to the folder where the plots will be saved. The default
 is \code{NULL}, which leads to the plots being created in the folder that
@@ -107,7 +107,8 @@ initial value, prior, posterior, and median of the posterior.}
 \item{ptsize}{Point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{Resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{strings}{Subset parameters included in the plot using substring from
 parameter names (i.e. "SR" will get "SR_LN(R0)" and "SR_steep" if they are both
@@ -127,15 +128,17 @@ parameter distributions. MCMC not required to make function work.
 
 \dontrun{
 # read model results
-model <- SS_output(dir='c:/SS/Simple/')
+model <- SS_output(dir = "c:/SS/Simple/")
 # make default plots where parameter distribution plots will appear
 # in the "pars" tab
 SS_plots(model)
 
 # create just the "pars" tab with control of the inputs that are
 # passed to SSplotPars
-SS_plots(model, plot = 25, showmle=TRUE, showpost=TRUE,
-showprior=TRUE, showinit=TRUE, showdev=FALSE, fitrange = FALSE)
+SS_plots(model,
+  plot = 25, showmle = TRUE, showpost = TRUE,
+  showprior = TRUE, showinit = TRUE, showdev = FALSE, fitrange = FALSE
+)
 
 # call SSplotPars directly
 SSplotPars(replist = model)
@@ -143,9 +146,11 @@ SSplotPars(replist = model)
 # Create plot in custom location. Note that strings can be partial match.
 # File name will be "parameter_distributions.png"
 # or "parameter_distributions_pageX.png" when they don't all fit on one page
-SSplotPars(replist = model, strings = c("steep", "R0"),
-           nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
-           plotdir = file.path(model$inputs$dir, "distribution_plots"))
+SSplotPars(
+  replist = model, strings = c("steep", "R0"),
+  nrows = 2, ncols = 1, plot = FALSE, print = TRUE,
+  plotdir = file.path(model[["inputs"]][["dir"]], "distribution_plots")
+)
 }
 
 }

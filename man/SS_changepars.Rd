@@ -61,21 +61,21 @@ value to the given parameter but change the remainder parameters, where
 the vector of values needs to be in the same order as either
 \code{linenums} or \code{strings}.}
 
-\item{newprior}{Vector of new prior values. 
+\item{newprior}{Vector of new prior values.
 Default=NULL.
 The vector can contain \code{NA} values, which will assign the original
 value to the given parameter but change the remainder parameters, where
 the vector of values needs to be in the same order as either
 \code{linenums} or \code{strings}.}
 
-\item{newprsd}{Vector of new prior sd values. 
+\item{newprsd}{Vector of new prior sd values.
 Default=NULL.
 The vector can contain \code{NA} values, which will assign the original
 value to the given parameter but change the remainder parameters, where
 the vector of values needs to be in the same order as either
 \code{linenums} or \code{strings}.}
 
-\item{newprtype}{Vector of new prior type. 
+\item{newprtype}{Vector of new prior type.
 Default=NULL.
 The vector can contain \code{NA} values, which will assign the original
 value to the given parameter but change the remainder parameters, where
@@ -109,10 +109,12 @@ Used by \code{\link{SS_profile}} and the \pkg{ss3sim} package.
 \examples{
 
 \dontrun{
-SS_changepars(dir='C:/ss/SSv3.30.03.05_May11/Simple - Copy',
-              strings=c("steep","sigmaR"), newvals=c(.4,.6))
+SS_changepars(
+  dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
+  strings = c("steep", "sigmaR"), newvals = c(.4, .6)
+)
 ## parameter names in control file matching input vector 'strings' (n=2):
-## [1] "SR_BH_steep" "SR_sigmaR"  
+## [1] "SR_BH_steep" "SR_sigmaR"
 ## These are the ctl file lines as they currently exist:
 ##     LO HI     INIT PRIOR PR_type SD PHASE env_var&link dev_link dev_minyr dev_maxyr
 ## 95 0.2  1 0.613717   0.7    0.05  1     4       0       0         0         0
@@ -122,7 +124,7 @@ SS_changepars(dir='C:/ss/SSv3.30.03.05_May11/Simple - Copy',
 ## 96          0     0         0   SR_sigmaR      96
 ## line numbers in control file (n=2):
 ## [1] 95 96
-## 
+##
 ## wrote new file to control_modified.ss with the following changes:
 ##    oldvals newvals oldphase newphase oldlos newlos oldhis newhis       comment
 ## 1 0.613717     0.4        4       -4    0.2    0.2      1      1 # SR_BH_steep

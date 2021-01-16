@@ -42,7 +42,7 @@ SSplotSpawnrecruit(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{vector of which subplots to show.  1=plot without labels,
 2=plot with year labels.}
@@ -73,7 +73,8 @@ be the directory where the model was run.}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 
@@ -88,7 +89,7 @@ of points, where the points are disconnected (lty=NA) by default}
 
 \item{ptcol}{vector or single value for the color of the points, "default"
 will by replaced by a vector of colors of length equal to
-nrow(replist$recruit)}
+nrow(replist[["recruit"]])}
 
 \item{legend}{add a legend to the figure?}
 

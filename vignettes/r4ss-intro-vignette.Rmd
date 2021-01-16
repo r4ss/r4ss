@@ -2,7 +2,10 @@
 title: "Introduction to r4ss"
 author: "Ian Taylor"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
 vignette: >
   %\VignetteIndexEntry{Introduction to r4ss}
   %\VignetteEngine{knitr::rmarkdown}
@@ -68,7 +71,7 @@ devtools::install_github("r4ss/r4ss", ref="1.26.0") # install r4ss version 1.26.
 where the `ref` input can be a release number, the name of a branch on GitHub, or a git SHA-1 code, which are listed with all code changes that are committed to the git repository: https://github.com/r4ss/r4ss/commits/ and can also be found (starting with r4ss version 1.29.0, on the "Home" tab of the HTML view of the plots created by `SS_plots` as described below).
 
 
-## Reading model output and making default plots
+## Reading model output and making default plots {#plot}
 
 
 The most important two functions are `SS_output` and `SS_plots`, the first
@@ -77,7 +80,7 @@ a large set of plots illustrating that output.
 
 ```{r, eval=FALSE, echo=TRUE, message=FALSE}
 # it's useful to create a variable for the directory with the model output
-mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30")
+mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.12")
 
 # read the model output and print some diagnostic messages 
 replist <- SS_output(dir = mydir, verbose=TRUE, printstats=TRUE)
@@ -91,3 +94,148 @@ By default `SS_plots` creates a large collection of PNG files in a new `plots` s
 ![Illustration of the HTML view of the plots created by the `SS_plots` function.](r4ss_html_capture.png){ width=75% }
 
 
+## Scripting Stock Synthesis workflows with r4ss
+
+Using functions in `r4ss`, a fully scripted workflow for modifying Stock Synthesis files and running Stock Synthesis models is possible.
+
+We'll demonstrate this by creating a new model from a model in the `r4ss` package.
+
+```{r}
+# initial model to modify
+mod_path <- system.file(file.path("extdata", "simple_3.30.13"), package = "r4ss")
+# create a new directory to put a new, modified version of the model
+new_mod_path <- "simple_new"
+dir.create(new_mod_path)
+```
+
+### Read in Stock Synthesis files
+
+Stock Synthesis files can be read in as list objects in R using the `SS_read*` functions.
+
+```{r, eval=TRUE}
+start <- r4ss::SS_readstarter(file = file.path(mod_path, "starter.ss"), 
+                              verbose = FALSE)
+# note the data and control file names can vary, so are determined from the 
+# starter file.
+dat <- r4ss::SS_readdat(file = file.path(mod_path, start$datfile),
+                        verbose = FALSE)
+# Read in ctl file. Note that the data fileR object is needed so that SS_readctl
+# assumes the correct data structure
+ctl <- r4ss::SS_readctl(file = file.path(mod_path, start$ctlfil),
+                        verbose = FALSE,
+                        use_datlist = TRUE, datlist = dat)
+fore <- r4ss::SS_readforecast(file = file.path(mod_path, "forecast.ss"),
+                              verbose = FALSE)
+# can also read in wtatage.ss for an empirical wt at age model using
+# r4ss::SS_readwtatage()
+```
+
+
+### Investigate the model
+
+Each of the input files is read into R as a list. The components of the list should be in the same order as they appear in the text file. Use `names` to see all the list components
+
+```{r}
+names(start) # see names of the list components of starter
+```
+Or reference a specific element to see the components. For example, we can look at the mortality and growth parameter section (MG_parms)
+
+```{r}
+ctl$MG_parms
+```
+
+### Modify the model
+You could make basic or large structural changes to your model in R. For example, the initial value of M can be changed:
+
+```{r}
+# view the initial value
+ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
+#change it to 0.2
+ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
+```
+
+Settings in other files can also be modified. For example, the biomass target can be moidified in the forecast file
+```{r}
+fore$Btarget
+fore$Btarget <- 0.45
+fore$Btarget
+```
+
+### Write out the modified models
+
+The `SS_write*` functions can be used to write out the modified stock synthesis input R objects into input files:
+
+```{r}
+r4ss::SS_writestarter(start, dir = new_mod_path, overwrite = TRUE, 
+                      verbose = FALSE)
+r4ss::SS_writedat(dat, outfile = file.path(new_mod_path, start$datfile), 
+                  overwrite = TRUE, verbose = FALSE)
+r4ss::SS_writectl(ctl, outfile = file.path(new_mod_path, start$ctlfile),
+                  overwrite = TRUE, verbose = FALSE)
+r4ss::SS_writeforecast(fore, dir = new_mod_path, file = "forecast.ss", 
+                       overwrite = TRUE, verbose = FALSE)
+```
+
+If you make changes to the input model files that render the file unparsable by Stock Synthesis, the `SS_write*` functions may throw an error (and hopefully provide an informative message about why). However, it is possible that an invalid Stock Synthesis model file could be written, so the true test is whether or not it is possible to run Stock Synthesis with the modified model files.
+
+If you need help troubleshooting SS_read* or SS_write* functions or would like to report a bug, please [post an issue in the r4ss repository.](https://github.com/r4ss/r4ss/issues)
+
+### Run the modified model
+
+The model can now be run with Stock Synthesis. The call to do this depends on where the Stock Synthesis executable is on your computer. If the Stock Synthesis executable is in the same folder as the model that will be run, `run_SS_models` can be used. Assuming the stock synthesis executable is called ss.exe:
+
+```{r, eval=FALSE}
+r4ss::run_SS_models(dirvec = new_mod_path, model = "ss", 
+                    skipfinished = FALSE)
+```
+
+Note this is similar to resetting the working directory and running the model with `system()`:
+
+```{r, eval=FALSE}
+wd <- getwd()
+setwd(new_mod_path)
+system("./ss")
+setwd(wd)
+```
+
+The advantage of `run_SS_models` is that there is no need to change the wd.
+
+If you have an executable in a different folder, there is not an option to do this from `run_SS_models` currently. However, a basic function can be used to allow the stock synthesis folder to exist anywhere.
+
+```{r, eval=FALSE}
+#' Function to run ss from a specified path. Less bells and whistles than
+#' run_SS_models
+#' @param new_mod_path The path to the model to run
+#' @param path_to_exe The path to the executable, either absolute or relative 
+#'  to new_mod_path
+#' @param options To add command line options, like "-nohess" or 
+#'  "-stopph 0 -nohess"
+run_ss <- function(new_mod_path, path_to_exe, options = "") {
+  wd <- getwd()
+  on.exit(setwd(wd)) # to ensure the wd is changed back even if fxn errors.
+  setwd(new_mod_path)
+  system(paste(path_to_exe, options))
+}
+# .. means 1 folder back from the the model folder(s). This could also be an
+# absolute rather than a relative path.
+run_ss(new_mod_path = new_mod_path, path_to_exe = "../ss")
+```
+
+Finally, if the stock synthesis executable is in your PATH, then the the `run_SS_models` can be called with `exe_in_path = TRUE`.
+
+```{r, eval=FALSE}
+r4ss::run_SS_models(dirvec = new_mod_path, model = "ss", exe_in_path = TRUE,
+                    skipfinished = FALSE)
+```
+
+### Running models in multiple directories
+
+A vector of directories can also be passed to the `dirvec` variable in `run_SS_models` to run models in multiple directories with one functon call.
+
+### Investigate the model run
+
+As [previously](#plot), `SS_output` and `SS_plots` can be used to investigate the model results.
+
+### Should I script my whole Stock Synthesis workflow?
+
+Scripting using r4ss functions is one way of developing a reproducible and coherent Stock Synthesis development workflow. However, there are many ways that Stock Synthesis models could be run and modified. What is most important is that you find a workflow that works for you and that you are able to document changes being made to a model. Using version control is another tool that may help you document changes to models.

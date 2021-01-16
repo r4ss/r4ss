@@ -17,13 +17,14 @@ SSplotNumbers(
   bub.bg = gray(0.5, alpha = 0.5),
   bublegend = TRUE,
   period = c("B", "M"),
+  meanlines = TRUE,
   add = FALSE,
   labels = c("Year", "Age", "True age (yr)", "SD of observed age (yr)",
     "Mean observed age (yr)", "Mean age (yr)", "mean age in the population",
-    "Ageing imprecision", "Numbers at age at equilibrium", "Equilibrium age distribution",
-    "Fraction female in numbers at age", "Length", "Mean length (cm)",
-    "mean length (cm) in the population", "expected numbers at age", "Beginning of year",
-    "Middle of year", "expected numbers at length",
+    "Ageing imprecision", "Numbers at age at equilibrium",
+    "Equilibrium age distribution", "Fraction female in numbers at age", "Length",
+    "Mean length (cm)", "mean length (cm) in the population", "expected numbers at age",
+    "Beginning of year", "Middle of year", "expected numbers at length",
     "Fraction female in numbers at length"),
   pwidth = 6.5,
   pheight = 5,
@@ -37,7 +38,7 @@ SSplotNumbers(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SSoutput}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create}
 
@@ -68,6 +69,8 @@ Default=2.6}
 from the beginning ("B") or middle of the year ("M") (new option starting
 with SSv3.11)}
 
+\item{meanlines}{add lines for mean age or length on top of bubble plots}
+
 \item{add}{add to existing plot? (not yet implemented)}
 
 \item{labels}{vector of labels for plots (titles and axis labels)}
@@ -78,7 +81,8 @@ with SSv3.11)}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

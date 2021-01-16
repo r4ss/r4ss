@@ -1,22 +1,25 @@
 Package: r4ss
 Type: Package
 Title: R Code for Stock Synthesis
-Version: 1.37.1
+Version: 1.41.0
 Author: Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
     Andre E. Punt, John R. Wallace, Chantel R. Wetzel, James T. Thorson,
     Yukio Takeuchi, Kotaro Ono, Cole C. Monnahan, Christine C. Stawitz,
     Z. Teresa A'mar, Athol R. Whitten, Kelli F. Johnson, Robbie L. Emmet,
     Sean C. Anderson, Gwladys I. Lambert, Megan M. Stachura,
     Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
-    Iago Mosqueira, Watal M. Iwasaki, Kathryn Doering, Andrea M. Havron,
-    and Nathan Vaughan
+    Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
+    Nathan Vaughan, LaTreese S. Denson, and Ashleigh J. Novak
 Maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
 Depends:
     R (>= 3.5.0)
 Imports:
     coda,
     corpcor,
-    gdata,
+    dplyr,
+    forcats,
+    ggplot2,
+    stringr,
     kableExtra
 Suggests: 
     gtools,
@@ -39,5 +42,5 @@ Encoding: UTF-8
 LazyLoad: yes
 URL: https://github.com/r4ss/r4ss
 BugReports: https://github.com/r4ss/r4ss/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

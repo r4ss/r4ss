@@ -6,7 +6,7 @@
 \usage{
 SSplotTags(
   replist = replist,
-  subplots = 1:8,
+  subplots = 1:10,
   latency = NULL,
   taggroups = NULL,
   rows = 1,
@@ -31,13 +31,15 @@ SSplotTags(
     "Post-latency tag recaptures aggregated across tag groups",
     "Observed tag recaptures by year and tag group",
     "Residuals for post-latency tag recaptures: (obs-exp)/sqrt(exp)",
-    "Observed and expected post-latency tag recaptures by year and tag group"),
+    "Observed and expected post-latency tag recaptures by year and tag group",
+    "Summarized observed and expected numbers of recaptures by fleet",
+    "Pearson residuals by tag group"),
   plotdir = "default",
   verbose = TRUE
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create}
 
@@ -79,7 +81,8 @@ added to bubble plots to avoid cropping}
 \item{ptsize}{point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{resolution of plots printed to files. Default=300}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{cex.main}{character expansion parameter for plot titles}
 
@@ -105,5 +108,5 @@ Plot observed and expected tag recaptures in aggregate and by tag group.
 \code{\link{SS_plots}}, \code{\link{SS_output}}
 }
 \author{
-Andre Punt, Ian Taylor
+Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 }

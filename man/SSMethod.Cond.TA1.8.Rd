@@ -16,7 +16,8 @@ SSMethod.Cond.TA1.8(
   maxpanel = 1000,
   FullDiagOut = FALSE,
   ShowVersionB = FALSE,
-  fleetnames = NULL
+  fleetnames = NULL,
+  add = FALSE
 )
 }
 \arguments{
@@ -56,6 +57,8 @@ the adjusted sample sizes (TRUE by default unless datonly = TRUE)}
 \item{fleetnames}{Vector of alternative fleet names to draw from for
 plot titles and captions. It should have length equal to the number
 of fleets in the model, not the number of fleets considered in this function.}
+
+\item{add}{add to existing plot}
 }
 \description{
 Uses an extension of method TA1.8 (described in Appendix A of Francis, 2011)

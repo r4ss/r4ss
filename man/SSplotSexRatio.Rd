@@ -14,8 +14,11 @@ SSplotSexRatio(
   fleets = "all",
   fleetnames = "default",
   yupper = 4,
+  datonly = FALSE,
   linescol = rgb(0.6, 0, 0.9, 0.7),
   lwd = 2,
+  showsampsize = TRUE,
+  showeffN = TRUE,
   axis1 = NULL,
   axis2 = NULL,
   pwidth = 6.5,
@@ -37,7 +40,7 @@ SSplotSexRatio(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SSoutput}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 "GSTAGE", "L[at]A", or "W[at]A".}
@@ -57,9 +60,15 @@ SSplotSexRatio(
 
 \item{yupper}{upper limit on ymax (only applies for sexratio.option == 1)}
 
-\item{linescol}{Color for line showing expected value (default is purple)}
+\item{datonly}{make plots of data without fits?}
+
+\item{linescol}{Color for line showing expected value (default is purple).}
 
 \item{lwd}{line width}
+
+\item{showsampsize}{add sample sizes to plot}
+
+\item{showeffN}{add effective sample sizes to plot}
 
 \item{axis1}{position of bottom axis values}
 
@@ -77,7 +86,8 @@ SSplotSexRatio(
 \item{ptsize}{point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{resolution of plots printed to files. Default=300}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
@@ -109,7 +119,7 @@ number of years of data}
 \description{
 Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
 plots depend on \code{make_multifig}. The confidence intervals around the
-obserserved points are based on a Jeffreys interval calculated from
+observed points are based on a Jeffreys interval calculated from
 the adjusted input sample size (with a floor of 1).
 }
 \references{

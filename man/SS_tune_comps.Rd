@@ -2,30 +2,68 @@
 % Please edit documentation in R/SS_tune_comps.R
 \name{SS_tune_comps}
 \alias{SS_tune_comps}
-\title{Calculate new tunings for length and age compositions}
+\title{Calculate new tunings and (re)run models for length and age compositions}
 \usage{
 SS_tune_comps(
-  replist,
+  replist = NULL,
   fleets = "all",
-  option = "Francis",
+  option = c("Francis", "MI", "none", "DM"),
   digits = 6,
   write = TRUE,
-  verbose = TRUE
+  niters_tuning = 0,
+  init_run = FALSE,
+  dir = getwd(),
+  model = "ss",
+  exe_in_path = FALSE,
+  extras = "-nox",
+  allow_up_tuning = FALSE,
+  verbose = TRUE,
+  ...
 )
 }
 \arguments{
-\item{replist}{List output from SS_output}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{fleets}{Either the string 'all', or a vector of fleet numbers}
 
-\item{option}{Which type of tuning: 'none', 'Francis', or 'MI'}
+\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'. 'None'
+will just return information about the Francis and MI weights suggested.}
 
 \item{digits}{Number of digits to round numbers to}
 
 \item{write}{Write suggested tunings to a file 'suggested_tunings.ss'}
 
+\item{niters_tuning}{The number of times to retune models. Defaults to 0,
+where only the tunings should be calculated and the model is not rerun. Note
+That for DM, it will be assumed that 0 means not to run the model and
+specifying 1 or greater will only run the model once (b/c DM is not an
+iterative retuning method.)}
+
+\item{init_run}{Should the model be run before calculating the tunings?
+Defaults to FALSE. This run is not counted as an iteration for
+niters_tuning and will not be used if option = "DM".}
+
+\item{dir}{The path to the model directory}
+
+\item{model}{The name of the stock synthesis executable. This model is
+assumed to be either in the same folder as the model files (specified in
+`dir`), or in the PATH if exe_in_path is TRUE. This will not be used if
+init_run = FALSE and niters_tuning = 0.}
+
+\item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
+will look for exe in the model folders. Default = FALSE.}
+
+\item{extras}{Additional commands to use when running SS. Default = "-nox"
+will reduce the amount of command-line output. A commonly used option is
+"-nohess" to skip calculating the hessian (and asymptotic uncertainty).}
+
+\item{allow_up_tuning}{Allow tuning values for Francis or MI > 1? Defaults to
+FALSE, which caps tuning values at 1.}
+
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
+
+\item{...}{Additional arguments to pass to \code{\link{run_SS_models}}.}
 }
 \value{
 Returns a table that can be copied into the control file.
@@ -37,15 +75,121 @@ and called "suggested_tunings.ss")
 Creates a table of values that can be copied into the SS control file
 for SS 3.30 models to adjust the input sample sizes for length and age
 compositions based on either the Francis or McAllister-Ianelli tuning.
+Optionally, this function can also automatically add the tunings and rerun
+the model for the number of iterations desired by the user.
 }
 \details{
+Note that for the dirichlet multinomial (DM) option, a table of tunings is
+not created as the DM is not an iterative reweighting option. Instead, each
+of the fleets with length and age composition data will be assigned a DM
+parameter and the model will be rerun.
+
 Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
 table in Report.sso is already in the format required to paste into
 the control file to apply the McAllister-Ianelli tuning. However, this
 function provides the additional option of the Francis tuning and the
-ability to compare the two approaches.  Also note, that the
-Dirichlet-Multinomial likelihood is an alternative approach that allow
+ability to compare the two approaches, as well as the functionality to add
+tunings and rerun the model. Also note, that the
+Dirichlet-Multinomial likelihood is an alternative approach that allows
 the tuning factor to be estimated rather than iteratively tuned.
+}
+\examples{
+
+\dontrun{
+# Set up the folders ----
+# Create a temporary directory, feel free to change this location
+mod_path <- file.path(tempdir(), "simple_mod")
+# Path to simple model in r4ss and copy files to mod_path
+example_path <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+# copy model input files
+copy_SS_inputs(dir.old = example_path, dir.new = mod_path, verbose = FALSE)
+# copy over the Report file
+file.copy(
+  from = file.path(example_path, "Report.sso"),
+  to = file.path(mod_path, "Report.sso")
+)
+# copy comp report file
+file.copy(
+from = file.path(example_path, "CompReport.sso"),
+to = file.path(mod_path, "CompReport.sso")
+)
+# Use the SS_tune_comps function----
+
+# Examples where a model is not run ----
+
+# Just get the Francis and MI tables, without running the model. Note that the
+# model in mod_path needs to already have been run with Stock Synthesis, so 
+# that a report file is available.
+
+weight_table <- SS_tune_comps(dir = mod_path,
+                              option = "none",
+                              verbose = FALSE)
+# view the weights. Note that the columns New_Francis and New_MI show the 
+# weights, but neither were added to the New_Var_adj column
+weight_table
+
+# Get the Francis and MI tables, but with the Francis weights in the 
+# New_Var_adj column. Note if option = "MI" were used, the output would be
+# the same except that the New_Var_adj column would contain the MI weights.
+weight_table_fran <- SS_tune_comps(dir = mod_path,
+                                        option = "Francis",
+                                        verbose = FALSE)
+weight_table_fran
+
+# Add Dirichlet multinomial tuning parameters to the model, without running it.
+
+DM_parm_info <- SS_tune_comps(
+  option = "DM",
+  niters_tuning = 0, # 0 means the model will not be run.
+  dir = mod_path,
+  model = "ss",
+  extras = "-nohess",
+  verbose = FALSE
+  )
+ # See the Dirichlet parameters added to the model.
+ DM_parm_info[["tuning_table_list"]]
+ # can also look in the data file to see which fleets of comp data now have
+ # DM parameters. The "ParmSelect" colum of the len_info and age_info 
+ contains the dirichlet multinomial parameter numbers.
+ dat <- SS_readdat(file.path(mod_path, "simple_data.ss"),verbose = FALSE)
+ dat[["len_info"]]
+ dat[["age_info"]]
+
+# Examples where models are run ----
+
+# Run MI weighting and allow upweighting for 1 iteration. Assume that an ss
+# executable called "ss or ss.exe" is available in the mod_path folder.
+# If the executable is not available, then the call will exit on error.
+# Note that the Dirichlet mulitnomial parameters will be removed, but any
+# previous tunings will be retained.
+tune_info <- SS_tune_comps(
+  option = "MI",
+  niters_tuning = 1,
+  dir = mod_path,
+  allow_up_tuning = TRUE,
+  model = "ss",
+  verbose = FALSE
+)
+# see the tuning table, and the weights applied to the model.
+tune_info
+
+# Add Dirichlet multinomial paramters and rerun. The function will 
+# automatically remove the MI weighting and add in the DM parameters.
+# Use extras = "-nohess" when running model to speed up run.
+DM_parm_info <- SS_tune_comps(
+  option = "DM",
+  niters_tuning = 1, # must be 1 or greater to run
+  dir = mod_path,
+  model = "ss",
+  extras = "-nohess",
+  verbose = FALSE
+)
+# see the DM parameter estimates
+DM_parm_info[["tuning_table_list"]]
+
+# cleanup ----
+unlink(mod_path, recursive = TRUE)
+}
 }
 \references{
 Francis, R.I.C.C. (2011). Data weighting in statistical
@@ -55,5 +199,5 @@ fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 \code{\link{SSMethod.TA1.8}}
 }
 \author{
-Ian G. Taylor
+Ian G. Taylor, Kathryn Doering
 }

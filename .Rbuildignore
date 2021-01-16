@@ -1,9 +1,12 @@
 ^\.git$
 cran-comments.md
-^\.travis\.yml$
+.*\.yml$
 man-roxygen
 ignored
 revdep
 ^CRAN-RELEASE$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+docs
+jenkins^
+^\.github/

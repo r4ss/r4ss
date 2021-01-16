@@ -56,7 +56,7 @@ SSplotComps(
   cohortlines = c(),
   labels = c("Length (cm)", "Age (yr)", "Year", "Observed sample size",
     "Effective sample size", "Proportion", "cm", "Frequency", "Weight", "Length", "(mt)",
-    "(numbers x1000)", "Stdev (Age) (yr)", "Conditional AAL plot, ", "Size bin"),
+    "(numbers x1000)", "Stdev (Age)", "Conditional AAL plot, ", "Size bin"),
   printmkt = TRUE,
   printsex = TRUE,
   maxrows = 4,
@@ -78,7 +78,7 @@ SSplotComps(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SSoutput}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create}
 
@@ -111,7 +111,7 @@ plots.}
 
 \item{yupper}{upper limit on ymax for polygon/histogram composition plots}
 
-\item{datonly}{make plots of data without fits as well as data with fits?}
+\item{datonly}{make plots of data without fits?}
 
 \item{samplesizeplots}{make sample size plots?}
 
@@ -187,7 +187,8 @@ transparent red)}
 \item{ptsize}{point size for plotted text in plots printed to files (see
 help("png") in R for details). Default=12.}
 
-\item{res}{resolution of plots printed to files. Default=300}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}

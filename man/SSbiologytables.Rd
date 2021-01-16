@@ -14,8 +14,7 @@ SSbiologytables(
 )
 }
 \arguments{
-\item{replist}{List created by \code{SS_output}
-backslashes (or forwardslashes) and quotes necessary.}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
 PNG files will be located.  The default sub-directory is "plots".
@@ -34,7 +33,7 @@ does not do so recursively.}
 \item{fleetnames}{Either the string "default", or a vector of characters
 strings to use for each fleet name. Default="default".}
 
-\item{selexyr}{The year to summarize selectivity, the default is the final 
+\item{selexyr}{The year to summarize selectivity, the default is the final
 model yr strings to use for each fleet name. Default="default".}
 }
 \value{
@@ -42,7 +41,7 @@ A csv files containing biology and selectivity tables
 }
 \description{
 Takes the object created by SS_output to create table for reporting
-for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12 
+for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
 and later.
 }
 \author{

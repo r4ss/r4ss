@@ -33,7 +33,7 @@ SSplotTimeseries(
 )
 }
 \arguments{
-\item{replist}{list created by \code{SS_output}}
+\item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{number controlling which subplot to create
 Numbering of subplots is as follows:
@@ -64,7 +64,7 @@ Magnusson}
 available}
 
 \item{bioscale}{scaling for spawning biomass. Default = 1.
-Previously this was set to 
+Previously this was set to
 0.5 for single-sex models, and 1.0 for all others, but now single-sex
 models are assumed to use the -1 option for Nsexes in the data file so the
 scaling is done automatically by SS.}
@@ -99,7 +99,8 @@ output is 0.25 in which case minbthresh = 0.125 (U.S. west coast flatfish).}
 
 \item{punits}{units for PNG file}
 
-\item{res}{resolution for PNG file}
+\item{res}{Resolution of plots printed to files.
+The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
 

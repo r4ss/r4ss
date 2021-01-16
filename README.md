@@ -1,7 +1,8 @@
 # r4ss: R code for Stock Synthesis
-[![Build Status](https://travis-ci.org/r4ss/r4ss.png?branch=master)](https://travis-ci.org/r4ss/r4ss) (master)
-[![Build Status](https://travis-ci.org/r4ss/r4ss.svg?branch=development)](https://travis-ci.org/r4ss/r4ss) (development)
-[![codecov](https://codecov.io/gh/r4ss/r4ss/branch/development/graph/badge.svg)](https://codecov.io/gh/r4ss/r4ss) (development)
+
+master: [![R-CMD-check](https://github.com/r4ss/r4ss/workflows/R-CMD-check/badge.svg?branch=master)](https://github.com/r4ss/r4ss/actions?query=workflow%3AR-CMD-check)
+
+development: [![R-CMD-check](https://github.com/r4ss/r4ss/workflows/R-CMD-check/badge.svg)](https://github.com/r4ss/r4ss/actions?query=workflow%3AR-CMD-check) [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/development/graph/badge.svg)](https://codecov.io/gh/r4ss/r4ss)
 
 Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Methot. The Stock Synthesis software and many other associated materials are available on the NOAA Virtual Laboratory at [https://vlab.ncep.noaa.gov/web/stock-synthesis/home](https://vlab.ncep.noaa.gov/web/stock-synthesis/home). The r4ss package is a collection of R functions for interacting with Stock Synthesis. It is based on the original work of Ian Stewart begun around 2005 and released as an open source R package in 2009. The package has a long list of authors and has benefited from a large community of users making suggestions and reporting issues.
 
@@ -9,22 +10,23 @@ Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Me
 
 ## Installation
 
-The version of r4ss on CRAN is currently out of date. Therefore, installing directly from GitHub is recommended. This requires installing the `devtools` package first.
-
+r4ss can be downloaded from CRAN using:
 ```S
-install.packages("devtools")
-devtools::install_github("r4ss/r4ss")
+install.packages("r4ss")
 ```
 
-Note: devtools may give this message: "*WARNING: Rtools is required to build R packages, but is not currently installed.*" However, Rtools is NOT required for installing r4ss via devtools, so ignore the warning.
-
-Ongoing development of r4ss has been mostly taking place in the "Development" branch on GitHub. That branch may be less stable, but can provide fixes, especially to issues related to beta releases of new SS versions. The development branch can be installed using the command:
+This is equivalent to installing the master branch directly from GitHub:
 
 ```S
-devtools::install_github("r4ss/r4ss", ref="development")
+install.packages("remotes")
+remotes::install_github("r4ss/r4ss")
 ```
 
+Ongoing development of r4ss has been mostly taking place in the "development" branch on GitHub. The development branch may be less stable, but can provide the most recent features and bug fixes. The development branch can be installed using the command:
 
+```S
+remotes::install_github("r4ss/r4ss", ref="development")
+```
 
 Once you have installed the r4ss package, it can be loaded using:
 
@@ -32,17 +34,17 @@ Once you have installed the r4ss package, it can be loaded using:
 library(r4ss)
 ````
 
-To get notifications about r4ss, you can watch this GitHub project or follow messages on the forums on Stock Synthesis VLab (account required).
+To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.ncep.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
 
-There is now a basic Vignette, which can be viewed at <https://github.com/r4ss/r4ss/blob/master/vignettes/r4ss-intro-vignette.Rmd> or built locally on your computer using this command to install the package:
+A basic vignette can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
 ```S
-devtools::install_github("r4ss/r4ss", build_vignettes = TRUE)
+remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)
 ```
 
 
 ## Changes
 
-See NEWS.md for a (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
+See [NEWS.md](https://github.com/r4ss/r4ss/blob/master/NEWS.md) for a (not very complete) log of changes to r4ss, starting with r4ss v1.24.0 from 2014. The list of commits at <https://github.com/r4ss/r4ss/commits/master> provides a much more detailed list.
 
 
 ## Reporting problems

@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_readctl.R
 \name{SS_readctl}
 \alias{SS_readctl}
-\title{read control file from SS}
+\title{Read control file from SS}
 \usage{
 SS_readctl(
   file,
@@ -14,12 +14,13 @@ SS_readctl(
   Nages = 20,
   Ngenders = 1,
   Npopbins = NA,
+  Nfleets = 4,
   Nfleet = 2,
   Nsurveys = 2,
   N_tag_groups = NA,
   N_CPUE_obs = NA,
   catch_mult_fleets = NULL,
-  N_rows_equil_catch = 0,
+  N_rows_equil_catch = NULL,
   N_dirichlet_parms = 0,
   use_datlist = FALSE,
   datlist = NULL,
@@ -27,76 +28,135 @@ SS_readctl(
 )
 }
 \arguments{
-\item{file}{Filename either with full path or relative to working directory.}
+\item{file}{Filename either with full path or relative to working directory.
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
-either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
-\item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+
+  See the formal arguments for a possible default filename.}
+
+\item{version}{SS version number. Currently "3.24" or "3.30" are supported,
+either as character or numeric values (noting that numeric 3.30  = 3.3). If
+`version = NULL` (the default), the version will be looked for on the first
+line of the file.}
+
+\item{verbose}{A logical value specifying if output should be printed
+to the screen. The default is \code{verbose = TRUE}.}
 
 \item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
-data as it is being read.}
+data as it is read. The default is \code{FALSE}, which turns the
+functionality off.}
 
-\item{nseas}{number of season in the model. This information is not
-explicitly available in control file}
+\item{nseas}{Number of seasons in the model. This information is not
+explicitly available in control file.}
 
-\item{N_areas}{number of spatial areas in the model. This information is also not
-explicitly available in control file}
+\item{N_areas}{Number of spatial areas in the model. This information is not
+explicitly available in control file.}
 
-\item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file}
+\item{Nages}{Oldest age in the model, also known as the accumulator age.
+SS always starts age bins in the model with age-zero fish,
+so \code{Nages+1} will be the number of ages represented.
+This information is not explicitly available in control file.}
 
-\item{Ngenders}{number of genders in the model. This information is also not
-explicitly available in control file}
+\item{Ngenders}{Number of genders in the model. This information is not
+explicitly available in control file.}
 
-\item{Npopbins}{number of population bins in the model. This information is
-also not explicitly available in control file and this information is only
-required if length based
- maturity vector is directly supplied (Maturity option of 6), and not yet tested}
+\item{Npopbins}{Number of population bins in the model. This information is
+not explicitly available in control file and is only
+required if length-based maturity vector is directly supplied
+in the control file (i.e., maturity option of 6).
+Note that the functionality of this option is not yet fully tested.
+Please contact the package authors if you are willing to test it out.}
 
-\item{Nfleet}{number of fisheries in the model. This information is also not
-explicitly available in control file}
+\item{Nfleets}{Number of Fishery + Survey fleets in the model. This
+information is not explicitly available in control file 3.30 syntax.}
 
-\item{Nsurveys}{number of survey fleets in the model. This information is also not
-explicitly available in control file}
+\item{Nfleet}{Number of Fishery fleets in the model. This information is not
+explicitly available in control file 3.24 syntax.
+Only passed to \code{SS_readctl_3.24}.}
 
-\item{N_tag_groups}{number of tag release groups in the model.
+\item{Nsurveys}{Number of Survey fleets in the model. This information is
+not explicitly available in control file 3.24 syntax.
+Only passed to \code{SS_readctl_3.24}.}
+
+\item{N_tag_groups}{Number of tag release groups in the model.
 This information is also not explicitly available in control file.}
 
-\item{N_CPUE_obs}{number of CPUE observations.}
+\item{N_CPUE_obs}{Number of CPUE observations.
+Only passed to SS_readctl_3.24.}
 
-\item{catch_mult_fleets}{integer vector of fleets using the catch multiplier 
-option. Defaults to NULL and should be left as such if 1) the catch 
-multiplier option is not used for any fleets or 2) use_datlist = TRUE and 
-datlist is specified. Only passed to SS_readctl_3.30 and SS_readctl_3.24.}
+\item{catch_mult_fleets}{Integer vector of fleets using the catch multiplier
+option. Defaults to NULL and should be left as such if 1) the catch
+multiplier option is not used for any fleet or 2) \code{use_datlist = TRUE} and
+datlist is specified. Used only in control file 3.30 syntax.}
 
-\item{N_rows_equil_catch}{Integer value of the number of parmeter lines to 
-read for equilibrium catch. Defaults to 0. Used only for version 3.30.}
+\item{N_rows_equil_catch}{Integer value of the number of parameter lines to
+read for equilibrium catch. Defaults to NULL, which means the function will
+attempt to figure out how many lines of equilibrium catch to read from the
+control file comments. Used only in control file 3.30 syntax.}
 
-\item{N_dirichlet_parms}{Integer value of the number of Dirichlet multinomial
-parameters. Defaults to 0. Used only for version 3.30}
+\item{N_dirichlet_parms}{Integer value of the number of Dirichlet-Multinomial
+parameters. Defaults to 0. Not used in control file 3.24 syntax.}
 
-\item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
-determined from control file}
+\item{use_datlist}{LOGICAL if \code{TRUE}, use datlist to derive parameters which can not be
+determined from the control file. See \code{datlist} argument for options for
+passing the data file.}
 
-\item{datlist}{list or character. if list : produced from SS_writedat
-or character : file name of dat file.}
+\item{datlist}{List or character. If list, a list returned from
+\link{SS_writedat}.
+If character, a file name for a dat file to be read in.}
 
-\item{ptype}{include a column in the output indicating parameter type?
-(Can be useful, but causes problems for SS_writectl.) Only possible to use
-for 3.24 control files.}
+\item{ptype}{LOGICAL if \code{TRUE}, which is the default,
+a column will be included in the output indicating parameter type.
+Using \code{TRUE} can be useful, but causes problems for \link{SS_writectl},
+and therefore is not recommended if you intend to write the list
+back out into a file.
+Used only in control file 3.30 syntax.}
+}
+\value{
+A list structure where each element is a section of the control file.
 }
 \description{
-Read Stock Synthesis control file into list object in R. This function is a
-wrapper which calls either SS_readctl_3.24 or SS_readctl_3.30 (not yet written).
-This setup allows those functions to be cleaner (if somewhat redundant)
-than a single function that attempts to do everything.
+Read control file from Stock Synthesis (SS) into R as a list object.
+This function acts as a wrapper for version-specific SS_readctl_ functions.
+For example, if the control file was written using SS 3.24,
+then \code{SS_readctl} will call \link{SS_readctl_3.24}. Input arguments that do not
+pertain to the version of your control file can be left at their
+default values.
+}
+\examples{
+# Read in the 'simple' example SS model stored in r4ss
+# Find the directory
+dirsimple <- system.file("extdata", "simple_3.30.13", package = "r4ss")
+# Read in the dat file to define the structure of the control file so that
+# you don't have to specify things in the function call such as 'Nfleet'
+datfilename <- dir(dirsimple, pattern = "data\\\\.ss", full.names = TRUE)
+dat <- r4ss::SS_readdat( file = datfilename, verbose = FALSE)
+# Read in the control file using a list object for datlist
+ctl <- r4ss::SS_readctl(
+  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  verbose = FALSE,
+  datlist = dat, use_datlist = TRUE
+)
+# Read in the control file using a file name for datlist
+ctl <- r4ss::SS_readctl(
+  file = dir(dirsimple, pattern = "control\\\\.ss", full.names = TRUE),
+  verbose = FALSE,
+  datlist = datfilename, use_datlist = TRUE
+)
 }
 \seealso{
-\code{\link{SS_readctl_3.24}}, \code{\link{SS_readdat}},
-\code{\link{SS_readdat_3.24}}
+See the following for version-specific SS_readctl functions:
+SS_readctl_3.24
+SS_readctl_3.30.
+The returned list structure can be written back to the disk using
+\link{SS_writectl}.\cr
+See the following for other \code{SS_read} functions:
+SS_readctl
+SS_readdat
+SS_readforecast
+SS_readstarter
+SS_readwtatage.\cr
 }
 \author{
-Ian G. Taylor, Yukio Takeuchi, Neil L Klaer
+Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
 }
