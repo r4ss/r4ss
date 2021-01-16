@@ -1461,8 +1461,12 @@ SS_output <-
       if (!is.null(age_data_info) & !is.null(len_data_info)) {
         age_data_info[["CompError"]] <- as.numeric(age_data_info[["CompError"]])
         age_data_info[["ParmSelect"]] <- as.numeric(age_data_info[["ParmSelect"]])
-        len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
-        len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
+        if(!is.null(len_data_info[["CompError"]])){
+          len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
+        }
+        if(!is.null(len_data_info[["Parmselect"]])){
+          len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
+        }
         if (!any(age_data_info[["CompError"]] == 1) & !any(len_data_info[["CompError"]] == 1)) {
           stop(
             "Problem Dirichlet-Multinomial parameters: \n",
