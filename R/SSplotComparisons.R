@@ -163,7 +163,7 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
-#' @param bioscale scaling for spawning biomass by default it will be set to 
+#' @param bioscale scaling for spawning biomass by default it will be set to
 #' 0.5 for single-sex models and 1.0 for all others.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
@@ -210,69 +210,6 @@ SSplotComparisons <-
            indexSEvec = NULL,
            # TRUE in following command plots the observed index for each model
            # with colors, or FALSE just plots observed once in black dots
-<<<<<<< HEAD
-           indexPlotEach=FALSE,
-           labels=c("Year",             #1
-             "Spawning biomass (t)",    #2
-             "Fraction of unfished",    #3
-             "Age-0 recruits (1,000s)", #4
-             "Recruitment deviations",  #5
-             "Index",                   #6
-             "Log index",               #7
-             "1 - SPR",                 #8 may not always be accurate
-             "Density",                 #9
-             "Management target",       #10
-             "Minimum stock size threshold", #11
-             "Spawning output",         #12
-             "Harvest rate"),           #13
-           col=NULL, shadecol=NULL,
-           pch=NULL, lty=1, lwd=2,
-           spacepoints=10,
-           staggerpoints=1,
-           initpoint=0,
-           tickEndYr=TRUE,
-           shadeForecast=TRUE,
-           xlim="default", ylimAdj=1.05,
-           xaxs="i", yaxs="i",
-           type="o", uncertainty=TRUE, shadealpha=0.1,
-           legend=TRUE, legendlabels="default", legendloc="topright",
-           legendorder="default",legendncol=1,
-           sprtarg=NULL, btarg=NULL, minbthresh=NULL,
-           pwidth=6.5,pheight=5.0,punits="in",res=300,ptsize=10,cex.main=1,
-           plotdir=NULL,
-           filenameprefix="",
-           densitynames=c("SSB_Virgin","R0"),
-           densityxlabs="default",
-           rescale=TRUE,
-           densityscalex=1,
-           densityscaley=1,
-           densityadjust=1,
-           densitysymbols=TRUE,
-           densitytails=TRUE,
-           densitymiddle=FALSE,
-           densitylwd=1,
-           fix0=TRUE,
-           new=TRUE,
-           add=FALSE,
-           par=list(mar=c(5,4,1,1)+.1),
-           verbose=TRUE,
-           mcmcVec=FALSE,
-           show_equilibrium=TRUE,
-           bioscale = 0.5)
-{
-  meanRecWarning <- TRUE # switch to avoid repetition of warning about mean recruitment
-
-  # subfunction to write png files
-  pngfun <- function(file){
-    # if extra text requested, add it before extention in file name
-    file <- paste0(filenameprefix, file)
-    # open png file
-    png(filename=file.path(plotdir,file),
-        width=pwidth,height=pheight,units=punits,res=res,pointsize=ptsize)
-    # change graphics parameters to input value
-    par(par)
-  }
-=======
            indexPlotEach = FALSE,
            labels = c(
              "Year", # 1
@@ -372,7 +309,6 @@ SSplotComparisons <-
       }
       par(par)
     }
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
 
     # subfunction to add legend
     legendfun <- function(legendlabels, cumulative = FALSE) {
@@ -529,51 +465,11 @@ SSplotComparisons <-
         paste(which(uncertainty), collapse = ",")
       )
     }
-<<<<<<< HEAD
-  }
-
-  if(any(nsexes==1)){   #### no longer dividing by 2 for single-sex models
-    for(i in (1:n)[nsexes==1]){
-      SpawnBio[,i]    <- SpawnBio[,i]*bioscale
-      SpawnBioLower[,i]  <- SpawnBioLower[,i]*bioscale
-      SpawnBioUpper[,i]  <- SpawnBioUpper[,i]*bioscale
-    }
-  }
-
-
-  #### no longer dividing by 2 for single-sex models
-  if(length(unique(nsexes)) > 1){
-    warning("SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
-            "to get female-only spawning biomass output by SS for a single-sex model,\n",
-            "use the new Nsexes = -1 option in the data file.")
-  }
-  # check number of models to be plotted
-  if(models[1]=="all") models <- 1:n
-  nlines <- length(models)
-
-  # check length of mcmcVec
-  if(nlines > 1 & length(mcmcVec)==1){
-    mcmcVec <- rep(mcmcVec, nlines)
-  }
-  if(nlines != length(mcmcVec)){
-    stop("Input 'mcmcVec' must equal 1 or the number of models.\n")
-  }
-
-  # check length of indexfleets
-  if(!is.null(indexfleets) && length(indexfleets) < n){
-    if(length(indexfleets)==1){
-      indexfleets <- rep(indexfleets, n)
-    }else{
-      warning("'indexfleets' needs to have length either 1 or n=",n,"\n",
-           "with each value a fleet number for the index to compare.\n")
-      indexfleets <- NULL
-=======
     for (i in 1:n) {
       if (all(is.na(quantsSD[, i]) | quantsSD[, i] == 0)) {
         message("No uncertainty available for model ", i)
         uncertainty[i] <- FALSE
       }
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
     }
     #### no longer dividing by 2 for single-sex models
     if (length(unique(nsexes)) > 1) {
@@ -654,42 +550,6 @@ SSplotComparisons <-
       }
     } # end check for index plots (subplots %in% 13:14)
 
-<<<<<<< HEAD
-  # get MCMC results if requested
-  for(iline in (1:nlines)[mcmcVec]){
-    imodel <- models[iline]
-
-    # reset values to NA for mcmc columns only
-    cols <- imodel
-    SpawnBioLower[,cols] <- SpawnBioUpper[,cols] <- SpawnBio[,cols] <- NA
-    BratioLower[,cols] <- BratioUpper[,cols] <- Bratio[,cols] <- NA
-    SPRratioLower[,cols] <- SPRratioUpper[,cols] <- SPRratio[,cols] <- NA
-    recruitsLower[,cols] <- recruitsUpper[,cols] <- recruits[,cols] <- NA
-    recdevsLower[,cols] <- recdevsUpper[,cols] <- recdevs[,cols] <- NA
-
-    ### get MCMC for SpawnBio
-    tmp <- grep("SSB",names(mcmc[[imodel]]))   #try it to see what you get
-    # exclude rows that aren't part of the timseries
-    tmp2 <- c(grep("SSB_unfished", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_Btgt", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_SPRtgt", names(mcmc[[imodel]]), ignore.case = TRUE),
-              grep("SSB_MSY", names(mcmc[[imodel]]), ignore.case = TRUE))
-    tmp <- setdiff(tmp,tmp2)
-    if(length(tmp) > 0) {   #there are some mcmc values to use
-      mcmc.tmp <- mcmc[[imodel]][,tmp] # subset of columns from MCMC for this model
-      mcmclabs <- names(mcmc.tmp)
-      lower <- apply(mcmc.tmp,2,quantile,prob=lowerCI, na.rm=TRUE)
-      med   <- apply(mcmc.tmp,2,quantile,prob=0.5, na.rm=TRUE)
-      upper <- apply(mcmc.tmp,2,quantile,prob=upperCI, na.rm=TRUE)
-      if(nsexes[iline] == 1) {  
-        lower <- lower*bioscale
-        upper <- upper*bioscale
-        med <- med*bioscale
-      }
-      SpawnBio[,imodel] <- med[match(SpawnBio$Label,mcmclabs)]
-      SpawnBioLower[,imodel] <- lower[match(SpawnBioLower$Label,mcmclabs)]
-      SpawnBioUpper[,imodel] <- upper[match(SpawnBioUpper$Label,mcmclabs)]
-=======
     # setup colors, points, and line types
     if (is.null(col) & nlines > 3) col <- rich.colors.short(nlines + 1)[-1]
     if (is.null(col) & nlines < 3) col <- rich.colors.short(nlines)
@@ -697,7 +557,6 @@ SSplotComparisons <-
     if (is.null(shadecol)) {
       # new approach thanks to Trevor Branch
       shadecol <- adjustcolor(col, alpha.f = shadealpha)
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
     }
     # set pch values if no input
     if (is.null(pch)) {
@@ -1344,25 +1203,6 @@ SSplotComparisons <-
       return(ylim[2])
     }
 
-<<<<<<< HEAD
-    if(!add){
-      plot(0, xlim=xlim, ylim=ylim, axes=FALSE,
-           type="n", xlab=labels[1], ylab=labels[5], xaxs=xaxs, yaxs=yaxs, las=1)
-      axis(2, las=1)
-      abline(h=0, col="grey")
-    }
-    
-    if(show_uncertainty){
-      for(iline in 1:nlines){
-        imodel <- models[iline]
-        if(uncertainty[imodel]){
-          xvec <- recdevs$Yr
-          if(nlines>1) xvec <- xvec + 0.4*iline/nlines - 0.2
-          arrows(x0=xvec, y0=as.numeric(recdevsLower[,imodel]),
-                 x1=xvec, y1=as.numeric(recdevsUpper[,imodel]),
-                 length=0.01, angle=90, code=3, col=col[iline])
-=======
-
     #### fishing mortality (however it is specified in the models)
     plotF <- function(show_uncertainty = TRUE) {
       # plot biomass ratio (may be identical to previous plot)
@@ -1375,7 +1215,6 @@ SSplotComparisons <-
         xlim <- range(Fvalue[["Yr"]])
         if (!is.null(endyrvec) & all(endyrvec < max(xlim))) {
           xlim[2] <- max(endyrvec)
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
         }
       }
       ylim <- ylimAdj * range(0, Fvalue[
@@ -1871,48 +1710,6 @@ SSplotComparisons <-
         } else {
           xlim <- range(yr)
         }
-<<<<<<< HEAD
-        # add density
-        if(good[iline]){
-          mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass  
-            mcmcVals <- mcmcVals*bioscale
-          }
-          xmin <- min(xmin, quantile(mcmcVals,0.005, na.rm=TRUE))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-          xmax <- max(xmax, quantile(mcmcVals,0.995, na.rm=TRUE))
-          z <- density(mcmcVals,cut=0,adjust=densityadjust)  #density estimate of mcmc sample (posterior)
-          z$x <- z$x[c(1,1:length(z$x),length(z$x))]
-          z$y <- c(0,z$y,0)           #just to make sure that a good looking polygon is created
-          ymax <- max(ymax,max(z$y))  #update ymax
-          mcmcDens[[iline]] <- z      #save the density estimate for later plotting
-        }
-      }else{
-        parval <- vals[1,imodel]
-        parSD <- valSDs[1,imodel]
-        if(!is.numeric(parval)) parval <- -1     #do this in case models added without the parameter
-        if(!is.na(parSD) && parSD>0){ # if non-zero SD available
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for female only spawning biomass  
-            parval <- parval*bioscale
-            parSD <- parSD*bioscale
-          }
-          # update x range
-          xmin <- min(xmin, qnorm(0.005,parval,parSD))
-          if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-          if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-          xmax <- max(xmax, qnorm(0.995,parval,parSD))
-          # calculate density to get y range
-          x <- seq(xmin,xmax,length=500)
-          mle <- dnorm(x,parval,parSD)
-          mlescale <- 1/(sum(mle)*mean(diff(x)))
-          mle <- mle*mlescale
-          # update ymax
-          ymax <- max(ymax,max(mle))
-        }else{ # if no SD, at least make sure interval includes MLE estimate
-          xmin <- min(xmin, parval)
-          xmax <- max(xmax, parval)
-=======
         plot(0,
           type = "n", xlim = xlim, yaxs = yaxs,
           ylim = ylim, xlab = "Year", ylab = ylab, axes = FALSE
@@ -1928,7 +1725,6 @@ SSplotComparisons <-
         meanQ[iline] <- mean(Q[subset])
         if (indexQlabel && any(Q[subset] != mean(Q[subset]))) {
           Qtext[iline] <- "(mean Q ="
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
         }
         x <- yr[subset]
         y <- exp[subset]
@@ -2045,24 +1841,6 @@ SSplotComparisons <-
       good <- rep(TRUE, nlines) # indicator of which values to plot
       for (iline in 1:nlines) {
         imodel <- models[iline]
-<<<<<<< HEAD
-        if(mcmcVec[iline]) {
-          # make density for MCMC posterior
-          mcmcColumn <- grep(parname,colnames(mcmc[[imodel]]),fixed=TRUE)
-          mcmcVals <- mcmc[[imodel]][,mcmcColumn]
-          if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass  
-            mcmcVals <- mcmcVals*bioscale
-          }
-          x2 <- quantile(mcmcVals, symbolsQuants, na.rm=TRUE)   # for symbols on plot
-          #find the positions in the density that are closest to these quantiles
-          x <- mcmcDens[[iline]]$x
-          if(!cumulative) {
-            y <- mcmcDens[[iline]]$y
-            yscale <- 1/(sum(y)*mean(diff(x)))
-            y <- y*yscale
-          } else {
-            y <- cumsum(mcmcDens[[iline]]$y)/sum(mcmcDens[[iline]]$y)
-=======
         if (mcmcVec[iline]) {
           # figure out which columns of posteriors to use
           mcmcColumn <- grep(parname, colnames(mcmc[[imodel]]), fixed = TRUE)
@@ -2087,7 +1865,6 @@ SSplotComparisons <-
               imodel, " (or mcmcVec=FALSE applying to all models)."
             )
             good[iline] <- FALSE
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
           }
           # add density
           if (good[iline]) {
@@ -2177,26 +1954,6 @@ SSplotComparisons <-
               ylim = c(0, 1.1 * ymax * densityscaley), xlab = xlab, ylab = ""
             )
           }
-<<<<<<< HEAD
-        }else{
-          # make normal density for MLE
-          parval <- vals[1,imodel]
-          parSD <- valSDs[1,imodel]
-          if(!is.na(parSD) && parSD>0){
-            if(nsexes[imodel]==1 &&  grepl("SSB",parname)) {   #divide by 2 for feamle only spawning biomass  
-              parval <- parval*bioscale
-              parSD <- parSD*bioscale
-            }
-            xmin <- min(xmin, qnorm(0.005,parval,parSD))
-            if(limit0) xmin <- max(0,xmin) # by default no plot can go below 0
-            if(fix0 & !grepl("R0",parname)) xmin <- 0 # include 0 if requested (except for log(R0) plots)
-            x <- seq(xmin,max(xmax,xlim),length=500)
-            #x2 <- parval+(-2:2)*parSD # 1 and 2 SDs away from mean to plot symbols
-            x2 <- qnorm(symbolsQuants,parval,parSD)
-            if(cumulative) {
-                y <- mle <- pnorm(x,parval,parSD)  # smooth line
-                y2 <- mle2 <- pnorm(x2,parval,parSD) # symbols
-=======
         }
         # add vertical lines for target and threshold
         # relative spawning biomass values
@@ -2229,7 +1986,6 @@ SSplotComparisons <-
               y <- mcmcDens[[iline]][["y"]]
               yscale <- 1 / (sum(y) * mean(diff(x)))
               y <- y * yscale
->>>>>>> a34b7918d569b85916efbb1494ab3c6f2db544cf
             } else {
               y <- cumsum(mcmcDens[[iline]][["y"]]) / sum(mcmcDens[[iline]][["y"]])
             }
