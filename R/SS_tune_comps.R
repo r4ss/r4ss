@@ -279,7 +279,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         )
         # construct the variance adjustment
         var_adj <- get_tuning_table(
-          replist = replist, fleets = fleets,
+          replist = out, fleets = fleets,
           option = option, digits = digits,
           write = write, verbose = verbose
         )
