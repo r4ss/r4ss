@@ -121,7 +121,7 @@ SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
   if (is.null(version)) {
     # look for 3.24 or 3.30 at the top of the chosen file
     version <- scan(file, what = character(), nlines = 1, quiet = !verbose)
-    version <- substring(version, 3, 6)
+    version <- substring(version, 3, 6)[1]
     # if that fails, look for data.ss_new file in the same directory
     if (version %in% c("3.24", "3.30")) {
       if (verbose) cat("assuming version", version, "based on first line of control file\n")
