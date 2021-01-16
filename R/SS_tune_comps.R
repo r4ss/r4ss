@@ -660,7 +660,7 @@ get_last_phase <- function(ctl) {
   phases <- c(
     unlist(lapply(df_vec,
       function(x, l) {
-        l[[x]][, c("PHASE", "dev_PH")]
+        l[[x]][, grep("PHASE|dev_PH", colnames(l[[x]])), drop = FALSE]
       },
       l = ctl
     )),
