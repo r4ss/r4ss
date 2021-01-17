@@ -163,6 +163,8 @@
 #' @param show_equilibrium Whether to show the equilibrium values for
 #' SSB. For some model comparisons, these might not be comparable and thus
 #' useful to turn off. Defaults to TRUE.
+#' @param bioscale Scaling of spawning biomass, which by default is set to
+#' 1.0 and leads to no changes.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
 #' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
@@ -257,7 +259,8 @@ SSplotComparisons <-
            par = list(mar = c(5, 4, 1, 1) + .1),
            verbose = TRUE,
            mcmcVec = FALSE,
-           show_equilibrium = TRUE) {
+           show_equilibrium = TRUE,
+           bioscale = 0.1) {
 
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
@@ -470,6 +473,13 @@ SSplotComparisons <-
       }
     }
     #### no longer dividing by 2 for single-sex models
+    if (any(nsexes == 1)) {
+      for(i in (1:n)[nsexes == 1]) {
+        SpawnBio[, i] <- SpawnBio[, i] * bioscale
+        SpawnBioLower[, i] <- SpawnBioLower[, i] * bioscale
+        SpawnBioUpper[, i] <- SpawnBioUpper[, i] * bioscale
+      }
+    }
     if (length(unique(nsexes)) > 1) {
       warning(
         "SSplotComparisons no longer divides SpawnBio by 2 for single-sex models\n",
@@ -612,9 +622,12 @@ SSplotComparisons <-
         mcmc.tmp <- mcmc[[imodel]][, tmp]
         mcmclabs <- names(mcmc.tmp)
 
-        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE)
-        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE)
-        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE)
+        lower <- apply(mcmc.tmp, 2, quantile, prob = lowerCI, na.rm = TRUE) *
+          ifelse(nsexes[iline] == 1, bioscale, 1)
+        med <- apply(mcmc.tmp, 2, quantile, prob = 0.5, na.rm = TRUE) *
+          ifelse(nsexes[iline] == 1, bioscale, 1)
+        upper <- apply(mcmc.tmp, 2, quantile, prob = upperCI, na.rm = TRUE) *
+          ifelse(nsexes[iline] == 1, bioscale, 1)
         SpawnBio[, imodel] <- med[match(SpawnBio[["Label"]], mcmclabs)]
         SpawnBioLower[, imodel] <- lower[match(SpawnBioLower[["Label"]], mcmclabs)]
         SpawnBioUpper[, imodel] <- upper[match(SpawnBioUpper[["Label"]], mcmclabs)]
@@ -1867,7 +1880,9 @@ SSplotComparisons <-
           }
           # add density
           if (good[iline]) {
-            mcmcVals <- mcmc[[imodel]][, mcmcColumn]
+            mcmcVals <- mcmc[[imodel]][, mcmcColumn] *
+              ifelse(nsexes[imodel] == 1 & grepl("SSB", parname),
+                bioscale, 1)
             xmin <- min(xmin, quantile(mcmcVals, 0.005, na.rm = TRUE))
             if (limit0) {
               xmin <- max(0, xmin) # by default no plot can go below 0
@@ -1885,8 +1900,12 @@ SSplotComparisons <-
             mcmcDens[[iline]] <- z # save density estimate for later plotting
           }
         } else {
-          parval <- vals[1, imodel]
-          parSD <- valSDs[1, imodel]
+          parval <- vals[1, imodel] * ifelse(
+            nsexes[imodel] == 1 & grepl("SSB", parname),
+            bioscale, 1)
+          parSD <- valSDs[1, imodel] * ifelse(
+            nsexes[imodel] == 1 & grepl("SSB", parname),
+            bioscale, 1)
           if (!is.numeric(parval)) parval <- -1 # do this in case models added without the parameter
           if (!is.na(parSD) && parSD > 0) { # if non-zero SD available
             # update x range
@@ -2027,8 +2046,12 @@ SSplotComparisons <-
             }
           } else {
             # make normal density for MLE
-            parval <- vals[1, imodel]
-            parSD <- valSDs[1, imodel]
+            parval <- vals[1, imodel] * ifelse(
+              nsexes[imodel] == 1 & grepl("SSB", parname),
+              bioscale, 1)
+            parSD <- valSDs[1, imodel] * ifelse(
+              nsexes[imodel] == 1 & grepl("SSB", parname),
+              bioscale, 1)
             if (!is.na(parSD) && parSD > 0) {
               xmin <- min(xmin, qnorm(0.005, parval, parSD))
               if (limit0) {
