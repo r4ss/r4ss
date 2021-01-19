@@ -117,7 +117,6 @@ SSplotNumbers <-
       age_error_sd <- replist[["age_error_sd"]]
       lbinspop <- replist[["lbinspop"]]
       nlbinspop <- replist[["nlbinspop"]]
-      recruitment_dist <- replist[["recruitment_dist"]]
       mainmorphs <- replist[["mainmorphs"]]
       SS_versionNumeric <- replist[["SS_versionNumeric"]]
 
