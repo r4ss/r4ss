@@ -2,7 +2,7 @@
 % Please edit documentation in R/SS_tune_comps.R
 \name{SS_tune_comps}
 \alias{SS_tune_comps}
-\title{Calculate new tunings and (re)run models for length and age compositions}
+\title{Calculate new tunings for length and age compositions and (re)run models}
 \usage{
 SS_tune_comps(
   replist = NULL,
@@ -26,29 +26,32 @@ SS_tune_comps(
 
 \item{fleets}{Either the string 'all', or a vector of fleet numbers}
 
-\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'. 'None'
-will just return information about the Francis and MI weights suggested.}
+\item{option}{Which type of tuning: 'none', 'Francis', 'MI', or 'DM'.
+The first option, \code{none}, will only return information about the
+Francis and MI weights that are suggested.}
 
-\item{digits}{Number of digits to round numbers to}
+\item{digits}{Number of digits to round numbers to.}
 
-\item{write}{Write suggested tunings to a file 'suggested_tunings.ss'}
+\item{write}{Write suggested tunings to a file saved to the disk called
+\code{suggested_tunings.ss}. This file name is currently hard coded and will
+be saved in \code{dir}.}
 
 \item{niters_tuning}{The number of times to retune models. Defaults to 0,
 where only the tunings should be calculated and the model is not rerun. Note
-That for DM, it will be assumed that 0 means not to run the model and
-specifying 1 or greater will only run the model once (b/c DM is not an
-iterative retuning method.)}
+that for DM, it will be assumed that 0 means not to run the model and
+specifying 1 or greater will only run the model once (because DM is not an
+iterative retuning method).}
 
 \item{init_run}{Should the model be run before calculating the tunings?
-Defaults to FALSE. This run is not counted as an iteration for
-niters_tuning and will not be used if option = "DM".}
+Defaults to \code{FALSE}. This run is not counted as an iteration for
+\code{niters_tuning} and will not be used if \code{option = "DM"}.}
 
-\item{dir}{The path to the model directory}
+\item{dir}{The path to the model directory.}
 
 \item{model}{The name of the stock synthesis executable. This model is
 assumed to be either in the same folder as the model files (specified in
-`dir`), or in the PATH if exe_in_path is TRUE. This will not be used if
-init_run = FALSE and niters_tuning = 0.}
+\code{dir}), or in the PATH if \code{exe_in_path = TRUE}. This will not be used if
+\code{init_run = FALSE} and \code{niters_tuning = 0}.}
 
 \item{exe_in_path}{logical. If TRUE, will look for exe in the PATH. If FALSE,
 will look for exe in the model folders. Default = FALSE.}
@@ -63,36 +66,73 @@ FALSE, which caps tuning values at 1.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
 
-\item{...}{Additional arguments to pass to \code{\link{run_SS_models}}.}
+\item{...}{Additional arguments to pass to [run_SS_models\.}
 }
 \value{
 Returns a table that can be copied into the control file.
 If \code{write=TRUE} then will write the values to a file
 (currently hardwired to go in the directory where the model was run
-and called "suggested_tunings.ss")
+and called "suggested_tunings.ss").
 }
 \description{
 Creates a table of values that can be copied into the SS control file
 for SS 3.30 models to adjust the input sample sizes for length and age
-compositions based on either the Francis or McAllister-Ianelli tuning.
-Optionally, this function can also automatically add the tunings and rerun
-the model for the number of iterations desired by the user.
+compositions based on either the Francis or McAllister-Ianelli tuning or
+adds the Dirichlet-Multinomial parameters to the necessary files to
+tune the model using an integrated method.
+Optionally, this function can automatically add these tunings to the
+appropriate files and rerun the model for the desired number of iterations.
 }
-\details{
-Note that for the dirichlet multinomial (DM) option, a table of tunings is
-not created as the DM is not an iterative reweighting option. Instead, each
-of the fleets with length and age composition data will be assigned a DM
-parameter and the model will be rerun.
+\section{\code{option}}{
+\subsection{Francis}{
 
-Note: starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
+The Francis approach to data weighting adjusts the input sample sizes using
+a scalar such that the fit of the expected value is within the uncertainty
+intervals based on the expected fit given adjusted sample sizes.
+}
+
+\subsection{McAllister-Ianelli (MI)}{
+
+Also known as the Harmonic-Mean approach to data weighting, the
+McAllister-Ianelli weighting approach uses a scalar to adjust the input
+sample size of composition data based matching the arithmetic mean
+of the input sample size to the harmonic mean of the effective sample size.
+}
+
+\subsection{Dirichlet-Multinomial (DM)}{
+
+The Dirichlet-Multinomial likelihood is an alternative approach that allows
+the tuning factor to be estimated rather than iteratively tuned.
+Note that for \code{option = "DM"} a table of tunings is
+not created as the DM is not an iterative reweighting option. Instead, each
+of the fleets with length- and age-composition data will be assigned a DM
+parameter and the model will be rerun.
+}
+}
+
+\section{SS versions}{
+\subsection{3.30.00-3.30.11}{
+
+Recommended_var_adj and other columns were named differently in these
+early version of SS. Calculations are thus done internally based on
+finding the correct column name.
+}
+
+\subsection{3.30.12-3.30.16}{
+
+Starting with SS version 3.30.12, the "Length_Comp_Fit_Summary"
 table in Report.sso is already in the format required to paste into
 the control file to apply the McAllister-Ianelli tuning. However, this
 function provides the additional option of the Francis tuning and the
 ability to compare the two approaches, as well as the functionality to add
-tunings and rerun the model. Also note, that the
-Dirichlet-Multinomial likelihood is an alternative approach that allows
-the tuning factor to be estimated rather than iteratively tuned.
+tunings and rerun the model. The "Age_Comp_Fit_Summary" table in Report.sso
+is formatted similarly though, though the Recommended_var_adj was wrongly
+set to 1 for all fleets in SS versions 3.30.12 to 3.30.16. Thus, the
+MI approach is not taken from this recommended column, instead, it is
+calculated from the harmonic mean and input sample sizes.
 }
+}
+
 \examples{
 
 \dontrun{
