@@ -66,7 +66,7 @@ FALSE, which caps tuning values at 1.}
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
 
-\item{...}{Additional arguments to pass to [run_SS_models\.}
+\item{...}{Additional arguments to pass to \link{run_SS_models}.}
 }
 \value{
 Returns a table that can be copied into the control file.

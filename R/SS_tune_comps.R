@@ -78,7 +78,7 @@
 #' @template verbose
 #' @param allow_up_tuning Allow tuning values for Francis or MI > 1? Defaults to
 #'  FALSE, which caps tuning values at 1.
-#' @param ... Additional arguments to pass to [run_SS_models\.
+#' @param ... Additional arguments to pass to [run_SS_models].
 #'
 #' @return Returns a table that can be copied into the control file.
 #' If \code{write=TRUE} then will write the values to a file
