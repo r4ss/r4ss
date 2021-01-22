@@ -83,7 +83,7 @@ SSplotComps(
 \item{subplots}{vector controlling which subplots to create}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-"GSTAGE", "L[at]A", or "W[at]A".}
+"GSTAGE", "L@A", or "W@A".}
 
 \item{sizemethod}{if kind = "SIZE" then this switch chooses which of the
 generalized size bin methods will be plotted.}
@@ -259,14 +259,14 @@ posterior distributions in which the median and mean differ.}
 \item{mainTitle}{Logical indicating if a title for the plot should be produced}
 
 \item{\dots}{additional arguments that will be passed to
-the \code{par} command in the \code{\link{make_multifig}} function.}
+the \code{par} command in the \code{\link[=make_multifig]{make_multifig()}} function.}
 }
 \description{
 Plot composition data and fits from Stock Synthesis output.  Multi-figure
 plots depend on \code{make_multifig}.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{make_multifig}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=make_multifig]{make_multifig()}}
 }
 \author{
 Ian Taylor

@@ -9,9 +9,7 @@ SS_readwtatage(file = "wtatage.ss", verbose = TRUE)
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}

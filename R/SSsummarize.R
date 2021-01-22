@@ -1,13 +1,13 @@
 #' Summarize the output from multiple Stock Synthesis models.
 #'
 #' Summarize various quantities from the model output collected by
-#' \code{\link{SSgetoutput}} and return them in a list of tables and vectors.
+#' [SSgetoutput()] and return them in a list of tables and vectors.
 #'
 #'
 #' @param biglist A list of lists, one for each model. The individual lists can
-#' be created by \code{\link{SS_output}} or the list of lists can be
-#' created by \code{\link{SSgetoutput}} (which iteratively calls
-#' \code{\link{SS_output}}).
+#' be created by [SS_output()] or the list of lists can be
+#' created by [SSgetoutput()] (which iteratively calls
+#' [SS_output()]).
 #' @param sizeselfactor A string or vector of strings indicating which elements
 #' of the selectivity at length output to summarize. Default=c("Lsel").
 #' @param ageselfactor A string or vector of strings indicating which elements
@@ -28,7 +28,7 @@
 #' @template verbose
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SSgetoutput}}
+#' @seealso [SSgetoutput()]
 SSsummarize <- function(biglist,
                         sizeselfactor = "Lsel",
                         ageselfactor = "Asel",

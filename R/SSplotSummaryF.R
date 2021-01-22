@@ -12,7 +12,7 @@
 #' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
 #' @param verbose Verbose output to R console?
-#' @param uncertainty Show 95\% uncertainty intervals around point estimates?
+#' @param uncertainty Show 95% uncertainty intervals around point estimates?
 #' @param add add to existing plot
 #' @param pwidth width of plot
 #' @param pheight height of plot
@@ -21,7 +21,7 @@
 #' @param ptsize point size for PNG file
 #' @author Allan Hicks
 #' @export
-#' @seealso \code{\link{SSplotTimeseries}}, ~~~
+#' @seealso [SSplotTimeseries()], ~~~
 SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fishing Mortality",
                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
                            uncertainty = TRUE,

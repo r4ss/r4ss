@@ -28,8 +28,8 @@ summary <- SS_read_summary(file = "c:/mymodel/ss_summary.sso")
 
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SS_readforecast}},
-\code{\link{SS_readdat}}, \code{\link{SS_readstarter}}
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readstarter]{SS_readstarter()}}
 }
 \author{
 Ian Taylor

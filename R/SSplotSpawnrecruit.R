@@ -26,12 +26,12 @@
 #' @param verbose report progress to R GUI?
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' (where the 4th value for the points is the color of the circle around the
-#' background color provided by \code{ptcol}
+#' background color provided by `ptcol`
 #' @param ltyvec vector of length 4 with line types for the 3 lines and 1 set
 #' of points, where the points are disconnected (lty=NA) by default
 #' @param ptcol vector or single value for the color of the points, "default"
 #' will by replaced by a vector of colors of length equal to
-#' nrow(replist[["recruit"]])
+#' `nrow(replist[["recruit"]])`
 #' @param legend add a legend to the figure?
 #' @param legendloc location of legend. By default it is chosen as the first
 #' value in the set of "topleft", "topright", "bottomright" that results in no
@@ -55,7 +55,7 @@
 #' @param forecast include forecast years in the curve?
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotSpawnrecruit <-
   function(replist, subplot = 1:3, add = FALSE, plot = TRUE, print = FALSE,
            xlim = NULL, ylim = NULL,

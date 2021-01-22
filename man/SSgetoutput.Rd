@@ -37,7 +37,7 @@ Default=FALSE.}
 runs? Default=TRUE.}
 
 \item{ncols}{Maximum number of columns in Report.sso (same input as for
-\code{\link{SS_output}}).  Default=210.}
+\code{\link[=SS_output]{SS_output()}}).  Default=210.}
 
 \item{listlists}{Save output from each model as a element of a list (i.e.
 make a list of lists). Default = TRUE.}
@@ -49,11 +49,11 @@ in keyvec. Default=FALSE.}
 filenaming convention based on iteration and date stamp.}
 }
 \description{
-Apply the function \code{\link{SS_output}} multiple times and save output as
+Apply the function \code{\link[=SS_output]{SS_output()}} multiple times and save output as
 individual objects or a list of lists.
 }
 \seealso{
-\code{\link{SS_output}} \code{\link{SSsummarize}}
+\code{\link[=SS_output]{SS_output()}} \code{\link[=SSsummarize]{SSsummarize()}}
 }
 \author{
 Ian Taylor

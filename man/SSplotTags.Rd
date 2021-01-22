@@ -105,7 +105,7 @@ be the directory where the model was run.}
 Plot observed and expected tag recaptures in aggregate and by tag group.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak

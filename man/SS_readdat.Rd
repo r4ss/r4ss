@@ -15,9 +15,7 @@ SS_readdat(
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{version}{SS version number.
 Currently "2.00", "3.00", "3.24" or "3.30" are supported,
@@ -44,12 +42,12 @@ functions to be cleaner (if somewhat redundant) than a single function that
 attempts to do everything. Returned datlist is mostly consistent across versions.
 }
 \seealso{
-\code{\link{SS_readdat_2.00}}, \code{\link{SS_readdat_3.00}},
-\code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
-\code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}}
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readdat_2.00]{SS_readdat_2.00()}}, \code{\link[=SS_readdat_3.00]{SS_readdat_3.00()}},
+\code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}}, \code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}},
+\code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}}
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,

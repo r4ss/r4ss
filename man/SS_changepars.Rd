@@ -103,8 +103,8 @@ the vector of values needs to be in the same order as either
 Loops over a subset of control file to change parameter lines.
 Current initial value, lower and upper bounds, and phase can be modified,
 but function could be expanded to control other columns.
-Depends on \code{\link{SS_parlines}}.
-Used by \code{\link{SS_profile}} and the \pkg{ss3sim} package.
+Depends on \code{\link[=SS_parlines]{SS_parlines()}}.
+Used by \code{\link[=SS_profile]{SS_profile()}} and the \pkg{ss3sim} package.
 }
 \examples{
 
@@ -132,7 +132,7 @@ SS_changepars(
 }
 }
 \seealso{
-\code{\link{SS_parlines}}, \code{\link{SS_profile}}
+\code{\link[=SS_parlines]{SS_parlines()}}, \code{\link[=SS_profile]{SS_profile()}}
 }
 \author{
 Ian Taylor, Christine Stawitz, Chantel Wetzel

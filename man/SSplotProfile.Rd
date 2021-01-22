@@ -54,7 +54,7 @@ SSplotProfile(
 )
 }
 \arguments{
-\item{summaryoutput}{List created by the function \code{\link{SSsummarize}}.}
+\item{summaryoutput}{List created by the function \code{\link[=SSsummarize]{SSsummarize()}}.}
 
 \item{plot}{Plot to active plot device?}
 
@@ -147,7 +147,7 @@ The default is \code{res = 300}.}
 \item{plotdir}{Directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
+\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95\% confidence interval
 based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
 can be adjusted using the \code{cutoff_prob} below.}
@@ -165,15 +165,15 @@ component that contributes more than some minimum fraction of change in
 total.
 }
 \note{
-Someday the function \code{\link{SS_profile}} will be improved and
+Someday the function \code{\link[=SS_profile]{SS_profile()}} will be improved and
 made to work directly with this plotting function, but they don't yet work
-well together. Thus, even if \code{\link{SS_profile}} is used, the output
-should be read using \code{\link{SSgetoutput}} or by multiple calls to
-\code{\link{SS_output}}.
+well together. Thus, even if \code{\link[=SS_profile]{SS_profile()}} is used, the output
+should be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple calls to
+\code{\link[=SS_output]{SS_output()}}.
 }
 \seealso{
-\code{\link{SSsummarize}}, \code{\link{SS_profile}},
-\code{\link{SS_output}}, \code{\link{SSgetoutput}}
+\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SS_profile]{SS_profile()}},
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
 Ian Taylor, Ian Stewart

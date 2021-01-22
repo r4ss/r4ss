@@ -41,7 +41,7 @@
 #' @param seas which season to plot (values other than 1 only work in
 #' seasonal models but but maybe not fully implemented)
 #' @param morphs Which morphs to plot (if more than 1 per sex)? By default this
-#' will be replist[["mainmorphs"]]
+#' will be `replist[["mainmorphs"]]`
 #' @param forecast Include forecast years in plots of time-varying biology?
 #' @param minyr optional input for minimum year to show in plots
 #' @param maxyr optional input for maximum year to show in plots
@@ -70,7 +70,7 @@
 #' @param verbose Return updates of function progress to the R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotBiology <-
   function(replist, plot = TRUE, print = FALSE, add = FALSE,
            subplots = 1:32, seas = 1,

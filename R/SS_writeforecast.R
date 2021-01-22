@@ -1,10 +1,10 @@
 #' write forecast file
 #'
 #' write Stock Synthesis forecast file from list object in R which was probably
-#' created using \code{\link{SS_readforecast}}
+#' created using [SS_readforecast()]
 #'
 #'
-#' @param mylist List object created by \code{\link{SS_readforecast}}.
+#' @param mylist List object created by [SS_readforecast()].
 #' @param dir Directory for new forecast file. Default=NULL (working
 #' directory).
 #' @param file Filename for new forecast file. Default="forecast.ss".
@@ -16,9 +16,9 @@
 #' Default=TRUE.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readdat}},
-#' \code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
+#' @seealso [SS_readstarter()], [SS_readforecast()],
+#' [SS_readdat()],
+#' [SS_writestarter()], [SS_writedat()]
 SS_writeforecast <- function(mylist, dir = NULL, file = "forecast.ss",
                              writeAll = FALSE, overwrite = FALSE, verbose = TRUE) {
   # function to write Stock Synthesis forecast files

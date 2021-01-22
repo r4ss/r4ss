@@ -101,7 +101,7 @@ Plots include bubble plots, mean age, equilibrium age composition,
 sex-ratio, and ageing imprecision patterns.
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SS_plots}}
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SS_plots]{SS_plots()}}
 }
 \author{
 Ian Stewart, Ian Taylor

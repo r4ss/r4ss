@@ -1,25 +1,25 @@
 #' Srite Stock Synthesis control file
 #'
 #' Write Stock Synthesis control file from list object in R which was probably
-#' created using \code{\link{SS_readctl}}. This function is a
+#' created using [SS_readctl()]. This function is a
 #' wrapper which calls either SS_writectl_3.24 or SS_writectl_3.30
 #' (and potentially additional functions in the future).
 #'
-#' @param ctllist List object created by \code{\link{SS_readdat}}.
+#' @param ctllist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new control file.
 #' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30 = 3.3).
 #' Defaults to NULL, which means that the function will attempt to determine the
-#' version from \code{ctllist}.
+#' version from `ctllist`.
 #' @param overwrite Should existing files be overwritten? Defaults to FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' Defaults to TRUE.
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
 #' @export
-#' @seealso \code{\link{SS_writedat_3.24}}, \code{\link{SS_writedat_3.30}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
-#' \code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
+#' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
+#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readstarter()], [SS_writestarter()],
+#' [SS_readforecast()], [SS_writeforecast()]
 SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
                         verbose = TRUE) {
   # function to write Stock Synthesis data files

@@ -89,7 +89,7 @@ of points, where the points are disconnected (lty=NA) by default}
 
 \item{ptcol}{vector or single value for the color of the points, "default"
 will by replaced by a vector of colors of length equal to
-nrow(replist[["recruit"]])}
+\code{nrow(replist[["recruit"]])}}
 
 \item{legend}{add a legend to the figure?}
 
@@ -128,7 +128,7 @@ if this point differs from virgin values}
 Plot spawner-recruit curve based on output from Stock Synthesis model.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Stewart, Ian Taylor

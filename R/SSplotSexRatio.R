@@ -1,14 +1,14 @@
 #' Plot sex-ratio data and fits for two sex models
 #'
 #' Plot sex-ratio data and fits from Stock Synthesis output.  Multi-figure
-#' plots depend on \code{make_multifig}. The confidence intervals around the
+#' plots depend on `make_multifig`. The confidence intervals around the
 #' observed points are based on a Jeffreys interval calculated from
 #' the adjusted input sample size (with a floor of 1).
 #'
 #'
 #' @template replist
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-#' "GSTAGE", "L[at]A", or "W[at]A".
+#' "GSTAGE", "L@A", or "W@A".
 #' @param sexratio.option code to choose among (1) female:male ratio or
 #' (2) fraction females out of the total
 #' @param CI confidence interval for uncertainty
@@ -25,10 +25,10 @@
 #' @param axis1 position of bottom axis values
 #' @param axis2 position of left size axis values
 #' @param pwidth default width of plots printed to files in units of
-#' \code{punits}. Default=7.
+#' `punits`. Default=7.
 #' @param pheight default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits units for \code{pwidth} and \code{pheight}. Can be "px"
+#' `punits`. Default=7.
+#' @param punits units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
@@ -51,7 +51,7 @@
 #' @param \dots additional arguments that will be passed to the plotting.
 #' @author Cole Monnahan, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
+#' @seealso [SS_plots()], [make_multifig_sexratio()]
 #' @references Brown, L.; Cai, T. Tony; DasGupta, A. (2001).
 #' Interval Estimation for a Binomial Proportion. Statistical Science.
 #' 16(2): 101-133. http://www.jstor.org/stable/2676784.

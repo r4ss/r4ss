@@ -46,8 +46,8 @@ make_multifig_sexratio(
 )
 }
 \arguments{
-\item{dbase}{element of list created by \code{\link{SS_output}} passed from
-\code{\link{SSplotSexRatio}}}
+\item{dbase}{element of list created by \code{\link[=SS_output]{SS_output()}} passed from
+\code{\link[=SSplotSexRatio]{SSplotSexRatio()}}}
 
 \item{sexratio.option}{code to choose among (1) female:male ratio or
 (2) fraction females out of the total (the default)}
@@ -138,7 +138,7 @@ passed to this function via the ... argument.}
 \item{\dots}{additional arguments (NOT YET IMPLEMENTED).}
 }
 \description{
-Modified version of \code{\link{make_multifig}} for multi-figure
+Modified version of \code{\link[=make_multifig]{make_multifig()}} for multi-figure
 plots of sex ratio data with crude confidence intervals (+/i 1 se) and
 fits from Stock Synthesis output.
 }
@@ -147,8 +147,7 @@ The SE of the sex ratio is crude and calculated as
 follows. First, assume a multinomial which as MLEs of proportions. Then
 use the delta method of the ratio F/M, using the MLE as the expected
 values and analytical variances and covariance between F and M. After
-some algebra this calculation reduces to: SE(F/M)= sqrt((f/m)^2*(
-(1-f)/(f*N) + (1-m)/(m*N) +2/N )). Confidence intervals created from
+some algebra this calculation reduces to: \code{SE(F/M)= sqrt((f/m)^2*( (1-f)/(f*N) + (1-m)/(m*N) +2/N ))}. Confidence intervals created from
 these should be considered very crude and would not necessarily be
 appropriate for future alternative compositional likelihoods.
 
@@ -156,8 +155,8 @@ This function was derived from make_multifig and hence has a lot of
 overlap in functionality and arguments.
 }
 \seealso{
-\code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
+\code{\link[=SS_plots]{SS_plots()}},\code{\link[=SSplotSexRatio]{SSplotSexRatio()}}
 }
 \author{
-Cole Monnahan. Adapted from \code{\link{make_multifig}}.
+Cole Monnahan. Adapted from \code{\link[=make_multifig]{make_multifig()}}.
 }

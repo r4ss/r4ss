@@ -1,10 +1,10 @@
 #' write control file
 #'
 #' write Stock Synthesis control file from list object in R which was probably
-#' created using \code{\link{SS_readctl}}
+#' created using [SS_readctl()]
 #'
 #'
-#' @param ctllist  List object created by \code{\link{SS_readctl}}.
+#' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
@@ -17,7 +17,7 @@
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @author Yukio Takeuchi
 #' @export
-#' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
+#' @seealso [SS_readctl()], [SS_readctl_3.24()],[SS_readstarter()],
 # ' \code{\link{SS_readforecast}},
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}

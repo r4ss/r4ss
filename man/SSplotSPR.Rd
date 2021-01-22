@@ -81,7 +81,7 @@ be the directory where the model was run.}
 Plot SPR quantities, including 1-SPR and phase plot.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Stewart, Ian Taylor

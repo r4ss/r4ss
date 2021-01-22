@@ -7,9 +7,9 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_readforecast}}, \code{\link{SS_readdat}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+#' @seealso [SS_readforecast()], [SS_readdat()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()], [SS_writedat()]
 SS_readstarter <- function(file = "starter.ss", verbose = TRUE) {
   if (verbose) {
     message("running SS_readstarter")

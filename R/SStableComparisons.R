@@ -2,18 +2,18 @@
 #'
 #' Creates a table comparing key quantities from multiple models, which is a
 #' reduction of the full information in various parts of the list created using
-#' the \code{SSsummarize} function.
+#' the `SSsummarize` function.
 #'
 #'
-#' @param summaryoutput list created by \code{SSsummarize}
+#' @param summaryoutput list created by `SSsummarize`
 #' @param models optional subset of the models described in
-#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param likenames Labels for likelihood values to include, should match
-#' substring of labels in \code{summaryoutput[["likelihoods"]]}.
+#' substring of labels in `summaryoutput[["likelihoods"]]`.
 #' @param names Labels for parameters or derived quantities to include, should
-#' match substring of labels in \code{summaryoutput[["pars"]]} or
-#' \code{summaryoutput[["quants"]]}.
+#' match substring of labels in `summaryoutput[["pars"]]` or
+#' `summaryoutput[["quants"]]`.
 #' @param digits Optional vector of the number of decimal digits to use in
 #' reporting each quantity.
 #' @param modelnames optional vector of labels to use as column names. Default
@@ -25,8 +25,8 @@
 #' @param mcmc summarize MCMC output in table?
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
-#' \code{\link{SS_output}}
+#' @seealso [SSsummarize()], [SSplotComparisons()],
+#' [SS_output()]
 SStableComparisons <- function(summaryoutput,
                                models = "all",
                                likenames = c(

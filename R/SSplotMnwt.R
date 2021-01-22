@@ -7,8 +7,8 @@
 #' @template replist
 #' @param ymax Optional input to override default ymax value.
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
-#' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
-#' choice of \code{subplots}.
+#' If `plotdat = FALSE` then subplot 1 is not created, regardless of
+#' choice of `subplots`.
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param plotdir directory where PNG files will be written. by default it will
@@ -16,7 +16,7 @@
 #' @param fleets optional vector to subset fleets for which plots will be made
 #' @param fleetnames optional replacement for fleenames used in data file
 #' @param datplot Make data-only plot of discards? This can override the choice
-#' of \code{subplots}.
+#' of `subplots`.
 #' @param labels vector of labels for plots (titles and axis labels)
 #' @param col1 first color to use in plot (for expected values)
 #' @param col2 second color to use in plot (for observations and intervals)
@@ -29,7 +29,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor, Ian Stewart
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotMnwt <-
   function(replist, subplots = 1:2, ymax = NULL,
            plot = TRUE, print = FALSE,

@@ -72,7 +72,7 @@ SS_varadjust(
 
 }
 \seealso{
-\code{\link{SS_tune_comps}}, \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
+\code{\link[=SS_tune_comps]{SS_tune_comps()}}, \code{\link[=SS_parlines]{SS_parlines()}}, \code{\link[=SS_changepars]{SS_changepars()}}
 }
 \author{
 Ian G. Taylor, Gwladys I. Lambert

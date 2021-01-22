@@ -14,7 +14,7 @@ SS_writeforecast(
 )
 }
 \arguments{
-\item{mylist}{List object created by \code{\link{SS_readforecast}}.}
+\item{mylist}{List object created by \code{\link[=SS_readforecast]{SS_readforecast()}}.}
 
 \item{dir}{Directory for new forecast file. Default=NULL (working
 directory).}
@@ -32,12 +32,12 @@ Default=TRUE.}
 }
 \description{
 write Stock Synthesis forecast file from list object in R which was probably
-created using \code{\link{SS_readforecast}}
+created using \code{\link[=SS_readforecast]{SS_readforecast()}}
 }
 \seealso{
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_readdat}},
-\code{\link{SS_writestarter}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_readdat]{SS_readdat()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian Taylor

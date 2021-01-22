@@ -1,11 +1,11 @@
 #' Create multi-figure sex ratio plots.
 #'
-#' Modified version of \code{\link{make_multifig}} for multi-figure
+#' Modified version of [make_multifig()] for multi-figure
 #' plots of sex ratio data with crude confidence intervals (+/i 1 se) and
 #' fits from Stock Synthesis output.
 #'
-#' @param dbase element of list created by \code{\link{SS_output}} passed from
-#' \code{\link{SSplotSexRatio}}
+#' @param dbase element of list created by [SS_output()] passed from
+#' [SSplotSexRatio()]
 #' @param sexratio.option code to choose among (1) female:male ratio or
 #' (2) fraction females out of the total (the default)
 #' @param CI confidence interval for uncertainty
@@ -17,7 +17,7 @@
 #' @param cols number or cols to return to as default for next plots to come or
 #' for single plots
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
-#' number of elements in \code{yr} input.
+#' number of elements in `yr` input.
 #' @param main title of plot
 #' @param cex.main character expansion for title
 #' @param xlab x-axis label
@@ -57,20 +57,20 @@
 #' @param multifig_oma vector of outer margins. Can be input to SS_plots and will be
 #' passed to this function via the ... argument.
 #' @param \dots additional arguments (NOT YET IMPLEMENTED).
-#' @author Cole Monnahan. Adapted from \code{\link{make_multifig}}.
+#' @author Cole Monnahan. Adapted from [make_multifig()].
 #' @export
 #' @details The SE of the sex ratio is crude and calculated as
 #' follows. First, assume a multinomial which as MLEs of proportions. Then
 #' use the delta method of the ratio F/M, using the MLE as the expected
 #' values and analytical variances and covariance between F and M. After
-#' some algebra this calculation reduces to: SE(F/M)= sqrt((f/m)^2*(
-#' (1-f)/(f*N) + (1-m)/(m*N) +2/N )). Confidence intervals created from
+#' some algebra this calculation reduces to: `SE(F/M)= sqrt((f/m)^2*(
+#' (1-f)/(f*N) + (1-m)/(m*N) +2/N ))`. Confidence intervals created from
 #' these should be considered very crude and would not necessarily be
 #' appropriate for future alternative compositional likelihoods.
 #'
 #' This function was derived from make_multifig and hence has a lot of
 #' overlap in functionality and arguments.
-#' @seealso \code{\link{SS_plots}},\code{\link{SSplotSexRatio}}
+#' @seealso [SS_plots()],[SSplotSexRatio()]
 make_multifig_sexratio <-
   function(dbase, sexratio.option = 2, CI = 0.75,
            sampsizeround = 1, maxrows = 6, maxcols = 6,

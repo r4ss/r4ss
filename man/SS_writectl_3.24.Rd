@@ -15,7 +15,7 @@ SS_writectl_3.24(
 )
 }
 \arguments{
-\item{ctllist}{List object created by \code{\link{SS_readctl}}.}
+\item{ctllist}{List object created by \code{\link[=SS_readctl]{SS_readctl()}}.}
 
 \item{outfile}{Filename for where to write new data file.}
 
@@ -35,10 +35,10 @@ to disable them. This information is not explicitly available in control file, t
 }
 \description{
 write Stock Synthesis control file from list object in R which was probably
-created using \code{\link{SS_readctl}}
+created using \code{\link[=SS_readctl]{SS_readctl()}}
 }
 \seealso{
-\code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}},\code{\link{SS_readstarter}},
+\code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},\code{\link[=SS_readstarter]{SS_readstarter()}},
 }
 \author{
 Yukio Takeuchi

@@ -1,13 +1,13 @@
 #' Plot composition data and fits.
 #'
 #' Plot composition data and fits from Stock Synthesis output.  Multi-figure
-#' plots depend on \code{make_multifig}.
+#' plots depend on `make_multifig`.
 #'
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-#' "GSTAGE", "L[at]A", or "W[at]A".
+#' "GSTAGE", "L@A", or "W@A".
 #' @param sizemethod if kind = "SIZE" then this switch chooses which of the
 #' generalized size bin methods will be plotted.
 #' @param aalyear Years to plot multi-panel conditional age-at-length fits for
@@ -65,10 +65,10 @@
 #' @param blue What color to use for males in bubble plots (default is slightly
 #' transparent blue)
 #' @param pwidth default width of plots printed to files in units of
-#' \code{punits}. Default=7.
+#' `punits`. Default=7.
 #' @param pheight default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits units for \code{pwidth} and \code{pheight}. Can be "px"
+#' `punits`. Default=7.
+#' @param punits units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
@@ -117,10 +117,10 @@
 #' posterior distributions in which the median and mean differ.
 #' @param mainTitle Logical indicating if a title for the plot should be produced
 #' @param \dots additional arguments that will be passed to
-#' the \code{par} command in the \code{\link{make_multifig}} function.
+#' the `par` command in the [make_multifig()] function.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{make_multifig}}
+#' @seealso [SS_plots()], [make_multifig()]
 SSplotComps <-
   function(replist, subplots = c(1:21, 24), # subplots=1:13,
            kind = "LEN", sizemethod = 1, aalyear = -1, aalbin = -1, plot = TRUE, print = FALSE,

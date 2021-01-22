@@ -9,9 +9,7 @@ SS_readstarter(file = "starter.ss", verbose = TRUE)
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{verbose}{Should there be verbose output while running the file?}
 }
@@ -19,9 +17,9 @@ SS_readstarter(file = "starter.ss", verbose = TRUE)
 read Stock Synthesis starter file into list object in R
 }
 \seealso{
-\code{\link{SS_readforecast}}, \code{\link{SS_readdat}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_readdat]{SS_readdat()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian Taylor

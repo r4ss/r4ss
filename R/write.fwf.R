@@ -1,6 +1,6 @@
 #' Write object in fixed width format
 #'
-#' \code{write.fwf} writes object in *f*ixed *w*idth *f*ormat.
+#' `write.fwf` writes object in *f*ixed *w*idth *f*ormat.
 #'
 #' Note: This function is copied from the gdata package version 2.18.0 on CRAN
 #' under the GPL-2 license.
@@ -16,52 +16,52 @@
 #' #' While *F*ixed *w*idth *f*ormat is no longer widely used, it remains common
 #' in some disciplines.
 #'
-#' Output is similar to \code{print(x)} or \code{format(x)}. Formatting is done
-#' completely by \code{\link{format}} on a column basis. Columns in the output
+#' Output is similar to `print(x)` or `format(x)`. Formatting is done
+#' completely by [format()] on a column basis. Columns in the output
 #' are by default separated with a space i.e. empty column with a width of one
-#' character, but that can be changed with \code{sep} argument as passed to
-#' \code{\link{write.table}} via \dots{}.
+#' character, but that can be changed with `sep` argument as passed to
+#' [write.table()] via \dots{}.
 #'
-#' As mentioned formatting is done completely by \code{\link{format}}.
-#' Arguments can be passed to \code{format} via \code{\dots{}} to further
-#' modify the output. However, note that the returned \code{formatInfo} might
-#' not properly account for this, since \code{\link{format.info}} (which is
+#' As mentioned formatting is done completely by [format()].
+#' Arguments can be passed to `format` via \code{\dots{}} to further
+#' modify the output. However, note that the returned `formatInfo` might
+#' not properly account for this, since [format.info()] (which is
 #' used to collect information about formatting) lacks the arguments of
-#' \code{\link{format}}.
+#' [format()].
 #'
-#' \code{quote} can be used to quote fields in the output. Since all columns of
-#' \code{x} are converted to character (via \code{\link{format}}) during the
+#' `quote` can be used to quote fields in the output. Since all columns of
+#' `x` are converted to character (via [format()]) during the
 #' output, all columns will be quoted! If quotes are used,
-#' \code{\link{read.table}} can be easily used to read the data back into .
-#' Check examples. Do read the details about \code{quoteInfo} argument.
+#' [read.table()] can be easily used to read the data back into .
+#' Check examples. Do read the details about `quoteInfo` argument.
 #'
 #' Use only *true* character, i.e., avoid use of tabs, i.e., "\\t", or similar
-#' separators via argument \code{sep}. Width of the separator is taken as the
-#' number of characters evaluated via \code{\link{nchar}(sep)}.
+#' separators via argument `sep`. Width of the separator is taken as the
+#' number of characters evaluated via `[nchar](sep)`.
 #'
-#' Use argument \code{na} to convert missing/unknown values. Only single value
-#' can be specified. Use \code{gdata::NAToUnknown} prior to export if you need
+#' Use argument `na` to convert missing/unknown values. Only single value
+#' can be specified. Use `gdata::NAToUnknown` prior to export if you need
 #' greater flexibility.
 #'
-#' If \code{rowCol} is not \code{NULL} and \code{rownames=TRUE}, rownames will
-#' also have column name with \code{rowCol} value. This is mainly for
+#' If `rowCol` is not `NULL` and `rownames=TRUE`, rownames will
+#' also have column name with `rowCol` value. This is mainly for
 #' flexibility with tools outside . Note that (at least in 2.4.0) it is not
-#' "easy" to import data back to with \code{\link{read.fwf}} if you also export
-#' rownames. This is the reason, that default is \code{rownames=FALSE}.
+#' "easy" to import data back to with [read.fwf()] if you also export
+#' rownames. This is the reason, that default is `rownames=FALSE`.
 #'
 #' Information about format of output will be returned if
-#' \code{formatInfo=TRUE}. Returned value is described in value section. This
-#' information is gathered by \code{\link{format.info}} and care was taken to
+#' `formatInfo=TRUE`. Returned value is described in value section. This
+#' information is gathered by [format.info()] and care was taken to
 #' handle numeric properly. If output contains rownames, values account for
-#' this. Additionally, if \code{rowCol} is not \code{NULL} returned values
+#' this. Additionally, if `rowCol` is not `NULL` returned values
 #' contain also information about format of rownames.
 #'
-#' If \code{quote=TRUE}, the output is of course wider due to quotes. Return
-#' value (with \code{formatInfo=TRUE}) can account for this in two ways;
-#' controlled with argument \code{quoteInfo}. However, note that there is no
-#' way to properly read the data back to if \code{quote=TRUE & quoteInfo=FALSE}
-#' arguments were used for export. \code{quoteInfo} applies only when
-#' \code{quote=TRUE}. Assume that there is a file with quoted data as shown
+#' If `quote=TRUE`, the output is of course wider due to quotes. Return
+#' value (with `formatInfo=TRUE`) can account for this in two ways;
+#' controlled with argument `quoteInfo`. However, note that there is no
+#' way to properly read the data back to if `quote=TRUE & quoteInfo=FALSE`
+#' arguments were used for export. `quoteInfo` applies only when
+#' `quote=TRUE`. Assume that there is a file with quoted data as shown
 #' bellow (column numbers in first three lines are only for demonstration of
 #' the values in the output).
 #'
@@ -69,17 +69,17 @@
 #' width with quoteInfo=TRUE 1 12345 1234 # for width with quoteInfo=FALSE "a"
 #' "hsgdh" " 9" " " " bb" " 123" }
 #'
-#' With \code{quoteInfo=TRUE} \code{write.fwf} will return
+#' With `quoteInfo=TRUE` `write.fwf` will return
 #'
 #' \preformatted{ colname position width V1 1 3 V2 5 7 V3 13 6 }
 #'
-#' or (with \code{quoteInfo=FALSE})
+#' or (with `quoteInfo=FALSE`)
 #'
 #' \preformatted{ colname position width V1 2 1 V2 6 5 V3 14 4 }
 #'
-#' Argument \code{width} can be used to increase the width of the columns in
+#' Argument `width` can be used to increase the width of the columns in
 #' the output. This argument is passed to the width argument of
-#' \code{\link{format}} function. Values in \code{width} are recycled if there
+#' [format()] function. Values in `width` are recycled if there
 #' is less values than the number of columns. If the specified width is to
 #' short in comparison to the "width" of the data in particular column, error
 #' is issued.
@@ -87,19 +87,19 @@
 #' @param x data.frame or matrix, the object to be written
 #' @template file
 #' @templateVar file_t write.table
-#' @param append logical, append to existing data in \code{file}
+#' @param append logical, append to existing data in `file`
 #' @param quote logical, quote data in output
-#' @param na character, the string to use for missing values i.e. \code{NA} in
+#' @param na character, the string to use for missing values i.e. `NA` in
 #' the output
 #' @param sep character, separator between columns in output
 #' @param rownames logical, print row names
 #' @param colnames logical, print column names
 #' @param rowCol character, rownames column name
 #' @param justify character, alignment of character columns; see
-#' \code{\link{format}}
+#' [format()]
 #' @param formatInfo logical, return information on number of levels, widths
 #' and format
-#' @param quoteInfo logical, should \code{formatInfo} account for quotes
+#' @param quoteInfo logical, should `formatInfo` account for quotes
 #' @param width numeric, width of the columns in the output
 #' @param eol the character(s) to print at the end of each line (row).  For
 #' example, 'eol="\\r\\n"' will produce Windows' line endings on a Unix-alike OS,
@@ -111,11 +111,11 @@
 #' the initial letter.
 #' @param scientific logical, if TRUE, allow numeric values to be formatted
 #' using scientific notation.
-#' @param \dots further arguments to \code{\link{format.info}} and
-#' \code{\link{format}}
+#' @param \dots further arguments to [format.info()] and
+#' [format()]
 #' @return
 #'
-#' Besides its effect to write/export data \code{write.fwf} can provide
+#' Besides its effect to write/export data `write.fwf` can provide
 #' information on format and width. A data.frame is returned with the following
 #' columns: \item{colname}{name of the column} \item{nlevels}{number of unique
 #' values (unused levels of factors are dropped), 0 for numeric column}
@@ -123,7 +123,7 @@
 #' the column} \item{digits}{number of digits after the decimal point}
 #' \item{exp}{width of exponent in exponential representation; 0 means there is
 #' no exponential representation, while 1 represents exponent of length one
-#' i.e. \code{1e+6} and 2 \code{1e+06} or \code{1e+16}}
+#' i.e. `1e+6` and 2 `1e+06` or `1e+16`}
 #' @author Gregor Gorjanc
 #' @keywords print file
 #' @examples

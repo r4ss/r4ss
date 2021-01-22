@@ -81,7 +81,7 @@ The default is \code{res = 300}.}
 Plot fit to discard fraction from Stock Synthesis output file.
 }
 \seealso{
-\code{\link{SS_plots}}
+\code{\link[=SS_plots]{SS_plots()}}
 }
 \author{
 Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet

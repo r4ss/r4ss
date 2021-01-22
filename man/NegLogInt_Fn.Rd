@@ -56,7 +56,7 @@ round of optimization from a ".par" file (I recommend TRUE)}
 in the R terminal}
 
 \item{ReDoBiasRamp}{Logical flag saying whether to re-do the bias ramp
-(using \code{\link{SS_fitbiasramp}}) each time Stock Synthesis is run.}
+(using \code{\link[=SS_fitbiasramp]{SS_fitbiasramp()}}) each time Stock Synthesis is run.}
 
 \item{BiasRamp_linenum_Vec}{Vector giving the line numbers from the CTL file
 that contain the information about the bias ramp.}
@@ -106,7 +106,7 @@ effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
 Sci.
 }
 \seealso{
-\code{\link{read.admbFit}}, \code{\link{getADMBHessian}}
+\code{\link[=read.admbFit]{read.admbFit()}}, \code{\link[=getADMBHessian]{getADMBHessian()}}
 }
 \author{
 James Thorson

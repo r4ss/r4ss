@@ -39,7 +39,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}, \code{\link{SS_plots}}
+#' @seealso [SS_output()], [SS_plots()]
 SSplotNumbers <-
   function(replist, subplots = 1:10,
            plot = TRUE, print = FALSE,

@@ -10,12 +10,12 @@
 #' @param polygonlist a list of data frames, each with two columns representing
 #' the longitude and latitude values of the colored polygons. The order of
 #' elements in the list should match the numbering of areas in the SS model.
-#' @param colvec vector of colors for each polygon (if \code{replist} is
+#' @param colvec vector of colors for each polygon (if `replist` is
 #' provided)
 #' @param land color of landmasses in the map
 #' @param xytable data frame of latitude and longitude values which will be
 #' connected by the arrows representing movement rates. The order should match
-#' the order of areas in \code{polygonlist} and in the SS model. Not necessary
+#' the order of areas in `polygonlist` and in the SS model. Not necessary
 #' if no arrows are shown on the map.
 #' @param moveage age for which movement rates will be represented
 #' @param moveseas season for which movement rates will be represented
@@ -31,7 +31,7 @@
 #' Langley
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}, \code{\link{SSplotMovementRates}}
+#' @seealso [SS_output()], [SSplotMovementRates()]
 SSplotMovementMap <-
   function(replist = NULL, xlim, ylim,
            polygonlist, colvec, land = "grey", xytable = NULL,

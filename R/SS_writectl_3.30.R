@@ -1,19 +1,19 @@
 #' write control file for SS version 3.30
 #'
 #' write Stock Synthesis control file from list object in R which was created
-#'   using \code{\link{SS_readctl}}.This function is designed to be called
-#'   using \code{\link{SS_writectl}} and should not be called directly.
+#'   using [SS_readctl()].This function is designed to be called
+#'   using [SS_writectl()] and should not be called directly.
 #'
-#' @param ctllist  List object created by \code{\link{SS_readctl}}.
+#' @param ctllist  List object created by [SS_readctl()].
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #' @author Kathryn Doering, Yukio Takeuchi, Neil Klaer, Watal M. Iwasaki
 #' @export
-#' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.30}},\code{\link{SS_readstarter}},
-#' \code{\link{SS_readforecast}},
-#' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
-#' \code{\link{SS_writedat}}
+#' @seealso [SS_readctl()], [SS_readctl_3.30()],[SS_readstarter()],
+#' [SS_readforecast()],
+#' [SS_writestarter()], [SS_writeforecast()],
+#' [SS_writedat()]
 #'
 SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose) {
   if (verbose) message("Running SS_writectl_3.30\n")

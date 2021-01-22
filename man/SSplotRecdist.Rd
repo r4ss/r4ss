@@ -66,7 +66,7 @@ season. This is based on the RECRUITMENT_DIST section of the Report.sso
 file.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SSplotRecdevs]{SSplotRecdevs()}}
 }
 \author{
 Ian Taylor

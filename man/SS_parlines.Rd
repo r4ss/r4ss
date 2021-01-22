@@ -59,8 +59,8 @@ head(parlines)
 
 }
 \seealso{
-\code{\link{SS_changepars}}, \code{\link{SS_readctl}},
-\code{\link{SS_readctl_3.24}}
+\code{\link[=SS_changepars]{SS_changepars()}}, \code{\link[=SS_readctl]{SS_readctl()}},
+\code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}}
 }
 \author{
 Ian Taylor

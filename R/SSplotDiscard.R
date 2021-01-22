@@ -5,8 +5,8 @@
 #'
 #' @template replist
 #' @param subplots Vector of which plots to make (1 = data only, 2 = with fit).
-#' If \code{plotdat = FALSE} then subplot 1 is not created, regardless of
-#' choice of \code{subplots}.
+#' If `plotdat = FALSE` then subplot 1 is not created, regardless of
+#' choice of `subplots`.
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param plotdir Directory where PNG files will be written. by default it will
@@ -14,7 +14,7 @@
 #' @param fleets Optional vector to subset fleets for which plots will be made
 #' @param fleetnames Optional replacement for fleenames used in data file
 #' @param datplot Make data-only plot of discards? This can override the choice
-#' of \code{subplots}.
+#' of `subplots`.
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param yhi Maximum y-value which will always be included in the plot
 #' (all data included regardless). Default = 1 so that discard fractions are always
@@ -33,7 +33,7 @@
 #' @param verbose Report progress to R GUI?
 #' @author Ian G. Taylor, Ian J. Stewart, Robbie L. Emmet
 #' @export
-#' @seealso \code{\link{SS_plots}}
+#' @seealso [SS_plots()]
 SSplotDiscard <-
   function(replist, subplots = 1:2,
            plot = TRUE, print = FALSE,

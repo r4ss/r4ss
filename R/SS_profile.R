@@ -8,15 +8,15 @@
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
 #' @param linenum Line number of parameter to be changed.  Can be used instead
-#' of \code{string} or left as NULL.
+#' of `string` or left as NULL.
 #' @param string String partially matching name of parameter to be changed. Can
-#' be used instead of \code{linenum} or left as NULL.
+#' be used instead of `linenum` or left as NULL.
 #' @param usepar Use PAR file from previous profile step for starting values?
 #' @param globalpar Use global par file ("parfile_original_backup.sso", which is
-#' automatically copied from original \code{parfile}) for all runs instead
+#' automatically copied from original `parfile`) for all runs instead
 #' of the par file from each successive run
 #' @param parfile Name of par file to use (for 3.30 models, this needs to
-#' remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
+#' remain 'ss.par'). When `globalpar=TRUE`, the backup copy of this
 #' is used for all runs.
 #' @param parlinenum Line number in par file to change.
 #' @param parstring String in par file preceding line number to change.
@@ -51,14 +51,14 @@
 #' values.
 #'
 #' Also, someday this function will be improved to work directly with the
-#' plotting function \code{\link{SSplotProfile}}, but they don't yet work well
-#' together. Thus, even if \code{\link{SS_profile}} is used, the output should
-#' be read using \code{\link{SSgetoutput}} or by multiple calls to
-#' \code{\link{SS_output}} before sending to \code{\link{SSplotProfile}}.
+#' plotting function [SSplotProfile()], but they don't yet work well
+#' together. Thus, even if [SS_profile()] is used, the output should
+#' be read using [SSgetoutput()] or by multiple calls to
+#' [SS_output()] before sending to [SSplotProfile()].
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
-#' \code{\link{SS_changepars}}, \code{\link{SS_parlines}}
+#' @seealso [SSplotProfile()], [SSgetoutput()],
+#' [SS_changepars()], [SS_parlines()]
 #' @examples
 #'
 #' \dontrun{

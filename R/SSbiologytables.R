@@ -1,5 +1,5 @@
 #' A function to create a table of biology for assessment reporting:
-#' length, weight, \% mature, fecundity, and selectivity
+#' length, weight, % mature, fecundity, and selectivity
 #'
 #' Takes the object created by SS_output to create table for reporting
 #' for West Coast groundfish.  Works with Stock Synthesis versions 3.30.12
@@ -14,7 +14,7 @@
 #' @param dir The directory in which a PDF file (if requested) will be created
 #' and within which the printfolder sub-directory (see above) will be created
 #' if png=TRUE. By default it will be the same directory that the report file
-#' was read from by the \code{SS_output} function. Alternatives to the default
+#' was read from by the `SS_output` function. Alternatives to the default
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.

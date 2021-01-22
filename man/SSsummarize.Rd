@@ -19,9 +19,9 @@ SSsummarize(
 }
 \arguments{
 \item{biglist}{A list of lists, one for each model. The individual lists can
-be created by \code{\link{SS_output}} or the list of lists can be
-created by \code{\link{SSgetoutput}} (which iteratively calls
-\code{\link{SS_output}}).}
+be created by \code{\link[=SS_output]{SS_output()}} or the list of lists can be
+created by \code{\link[=SSgetoutput]{SSgetoutput()}} (which iteratively calls
+\code{\link[=SS_output]{SS_output()}}).}
 
 \item{sizeselfactor}{A string or vector of strings indicating which elements
 of the selectivity at length output to summarize. Default=c("Lsel").}
@@ -43,20 +43,20 @@ be summarized. NULL=all genders. Default=NULL.}
 "numbers" giving units of spawning for each model.}
 
 \item{lowerCI}{Quantile for lower bound on calculated intervals. Default =
-0.025 for 95\% intervals.}
+0.025 for 95\\% intervals.}
 
 \item{upperCI}{Quantile for upper bound on calculated intervals. Default =
-0.975 for 95\% intervals.}
+0.975 for 95\\% intervals.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}
 }
 \description{
 Summarize various quantities from the model output collected by
-\code{\link{SSgetoutput}} and return them in a list of tables and vectors.
+\code{\link[=SSgetoutput]{SSgetoutput()}} and return them in a list of tables and vectors.
 }
 \seealso{
-\code{\link{SSgetoutput}}
+\code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
 Ian Taylor

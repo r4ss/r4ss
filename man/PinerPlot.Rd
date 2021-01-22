@@ -49,7 +49,7 @@ PinerPlot(
 }
 \arguments{
 \item{summaryoutput}{List created by the function
-\code{\link{SSsummarize}}.}
+\code{\link[=SSsummarize]{SSsummarize()}}.}
 
 \item{plot}{Plot to active plot device?}
 
@@ -103,7 +103,7 @@ likelihood.}
 \item{xlim}{Range for x-axis. Change in likelihood is calculated relative to
 values within this range.}
 
-\item{ymax}{Maximum y-value. Default is 10\% greater than largest value
+\item{ymax}{Maximum y-value. Default is 10\\% greater than largest value
 plotted.}
 
 \item{xaxs}{The style of axis interval calculation to be used for the x-axis
@@ -134,7 +134,7 @@ The default is \code{res = 300}.}
 \item{plotdir}{Directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95% confidence interval
+\item{add_cutoff}{Add dashed line at ~1.92 to indicate 95\% confidence interval
 based on common cutoff of half of chi-squared of p=.95 with 1 degree of
 freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
 can be adjusted using the \code{cutoff_prob} below.}

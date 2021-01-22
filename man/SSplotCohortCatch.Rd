@@ -89,7 +89,7 @@ estimated catch-at-age matrix and weight-at-age values by fleet.  Curves are
 shown in units of both numbers and biomass.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Taylor

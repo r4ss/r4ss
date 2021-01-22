@@ -14,8 +14,8 @@ SS_writedat(
 )
 }
 \arguments{
-\item{datlist}{List object created by \code{\link{SS_readdat}}
-(or by \code{\link{SS_readdat_3.24}} or \code{\link{SS_readdat_3.24}})}
+\item{datlist}{List object created by \code{\link[=SS_readdat]{SS_readdat()}}
+(or by \code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}} or \code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}})}
 
 \item{outfile}{Filename for where to write new data file.}
 
@@ -31,17 +31,17 @@ the columns (by using write.table instead of print.data.frame)}
 }
 \description{
 Write Stock Synthesis data file from list object in R which was probably
-created using \code{\link{SS_readdat}}. This function is a
+created using \code{\link[=SS_readdat]{SS_readdat()}}. This function is a
 wrapper which calls either SS_writedat_3.24 or SS_writedat_3.30
 (and potentially additional functions in the future). This setup allows those
 functions to be cleaner (if somewhat redundant) than a single function that
 attempts to do everything.
 }
 \seealso{
-\code{\link{SS_writedat_3.24}}, \code{\link{SS_writedat_3.30}},
-\code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
-\code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
-\code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
+\code{\link[=SS_writedat_3.24]{SS_writedat_3.24()}}, \code{\link[=SS_writedat_3.30]{SS_writedat_3.30()}},
+\code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_makedatlist]{SS_makedatlist()}},
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_readforecast]{SS_readforecast()}}, \code{\link[=SS_writeforecast]{SS_writeforecast()}}
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert

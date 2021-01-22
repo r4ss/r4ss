@@ -37,7 +37,7 @@
 #' be the directory where the model was run.
 #' @author Ian G. Taylor
 #' @export
-#' @seealso \code{\link{SSplotNumbers}}
+#' @seealso [SSplotNumbers()]
 
 
 SSplotAgeMatrix <- function(replist, option = 1, slices = NULL,

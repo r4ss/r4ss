@@ -29,9 +29,8 @@ write.fwf(
 
 \item{file}{Filename either with full path or relative to working directory.
 
-
-  See \code{\link[utils]{write.table}} for more information because a file,
-  a connection, or \code{""} are allowed.}
+See \code{\link[utils]{write.table}} for more information because a file,
+a connection, or \code{""} are allowed.}
 
 \item{append}{logical, append to existing data in \code{file}}
 
@@ -49,7 +48,7 @@ the output}
 \item{rowCol}{character, rownames column name}
 
 \item{justify}{character, alignment of character columns; see
-\code{\link{format}}}
+\code{\link[=format]{format()}}}
 
 \item{formatInfo}{logical, return information on number of levels, widths
 and format}
@@ -71,8 +70,8 @@ the initial letter.}
 \item{scientific}{logical, if TRUE, allow numeric values to be formatted
 using scientific notation.}
 
-\item{\dots}{further arguments to \code{\link{format.info}} and
-\code{\link{format}}}
+\item{\dots}{further arguments to \code{\link[=format.info]{format.info()}} and
+\code{\link[=format]{format()}}}
 }
 \value{
 Besides its effect to write/export data \code{write.fwf} can provide
@@ -86,7 +85,7 @@ no exponential representation, while 1 represents exponent of length one
 i.e. \code{1e+6} and 2 \code{1e+06} or \code{1e+16}}
 }
 \description{
-\code{write.fwf} writes object in *f*ixed *w*idth *f*ormat.
+\code{write.fwf} writes object in \emph{f}ixed \emph{w}idth \emph{f}ormat.
 }
 \details{
 Note: This function is copied from the gdata package version 2.18.0 on CRAN
@@ -100,31 +99,31 @@ was converted to these roxygen2 comments using the Rd2roxygen package
 https://yihui.org/rd2roxygen.
 
 Original documentation from gdata version of the function:
-#' While *F*ixed *w*idth *f*ormat is no longer widely used, it remains common
+#' While \emph{F}ixed \emph{w}idth \emph{f}ormat is no longer widely used, it remains common
 in some disciplines.
 
 Output is similar to \code{print(x)} or \code{format(x)}. Formatting is done
-completely by \code{\link{format}} on a column basis. Columns in the output
+completely by \code{\link[=format]{format()}} on a column basis. Columns in the output
 are by default separated with a space i.e. empty column with a width of one
 character, but that can be changed with \code{sep} argument as passed to
-\code{\link{write.table}} via \dots{}.
+\code{\link[=write.table]{write.table()}} via \dots{}.
 
-As mentioned formatting is done completely by \code{\link{format}}.
+As mentioned formatting is done completely by \code{\link[=format]{format()}}.
 Arguments can be passed to \code{format} via \code{\dots{}} to further
 modify the output. However, note that the returned \code{formatInfo} might
-not properly account for this, since \code{\link{format.info}} (which is
+not properly account for this, since \code{\link[=format.info]{format.info()}} (which is
 used to collect information about formatting) lacks the arguments of
-\code{\link{format}}.
+\code{\link[=format]{format()}}.
 
 \code{quote} can be used to quote fields in the output. Since all columns of
-\code{x} are converted to character (via \code{\link{format}}) during the
+\code{x} are converted to character (via \code{\link[=format]{format()}}) during the
 output, all columns will be quoted! If quotes are used,
-\code{\link{read.table}} can be easily used to read the data back into .
+\code{\link[=read.table]{read.table()}} can be easily used to read the data back into .
 Check examples. Do read the details about \code{quoteInfo} argument.
 
-Use only *true* character, i.e., avoid use of tabs, i.e., "\\t", or similar
+Use only \emph{true} character, i.e., avoid use of tabs, i.e., "\\t", or similar
 separators via argument \code{sep}. Width of the separator is taken as the
-number of characters evaluated via \code{\link{nchar}(sep)}.
+number of characters evaluated via \verb{[nchar](sep)}.
 
 Use argument \code{na} to convert missing/unknown values. Only single value
 can be specified. Use \code{gdata::NAToUnknown} prior to export if you need
@@ -133,12 +132,12 @@ greater flexibility.
 If \code{rowCol} is not \code{NULL} and \code{rownames=TRUE}, rownames will
 also have column name with \code{rowCol} value. This is mainly for
 flexibility with tools outside . Note that (at least in 2.4.0) it is not
-"easy" to import data back to with \code{\link{read.fwf}} if you also export
+"easy" to import data back to with \code{\link[=read.fwf]{read.fwf()}} if you also export
 rownames. This is the reason, that default is \code{rownames=FALSE}.
 
 Information about format of output will be returned if
 \code{formatInfo=TRUE}. Returned value is described in value section. This
-information is gathered by \code{\link{format.info}} and care was taken to
+information is gathered by \code{\link[=format.info]{format.info()}} and care was taken to
 handle numeric properly. If output contains rownames, values account for
 this. Additionally, if \code{rowCol} is not \code{NULL} returned values
 contain also information about format of rownames.
@@ -166,7 +165,7 @@ or (with \code{quoteInfo=FALSE})
 
 Argument \code{width} can be used to increase the width of the columns in
 the output. This argument is passed to the width argument of
-\code{\link{format}} function. Values in \code{width} are recycled if there
+\code{\link[=format]{format()}} function. Values in \code{width} are recycled if there
 is less values than the number of columns. If the specified width is to
 short in comparison to the "width" of the data in particular column, error
 is issued.

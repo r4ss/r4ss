@@ -1,6 +1,6 @@
 #' Get output from multiple Stock Synthesis models.
 #'
-#' Apply the function \code{\link{SS_output}} multiple times and save output as
+#' Apply the function [SS_output()] multiple times and save output as
 #' individual objects or a list of lists.
 #'
 #'
@@ -17,7 +17,7 @@
 #' @param verbose Print various messages to the command line as the function
 #' runs? Default=TRUE.
 #' @param ncols Maximum number of columns in Report.sso (same input as for
-#' \code{\link{SS_output}}).  Default=210.
+#' [SS_output()]).  Default=210.
 #' @param listlists Save output from each model as a element of a list (i.e.
 #' make a list of lists). Default = TRUE.
 #' @param underscore Add an underscore '_' between any file names and any keys
@@ -26,7 +26,7 @@
 #' filenaming convention based on iteration and date stamp.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}} \code{\link{SSsummarize}}
+#' @seealso [SS_output()] [SSsummarize()]
 SSgetoutput <-
   function(keyvec = NULL, dirvec = NULL, getcovar = TRUE, getcomp = TRUE, forecast = TRUE,
            verbose = TRUE, ncols = 210, listlists = TRUE, underscore = FALSE,

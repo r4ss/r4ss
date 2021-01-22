@@ -145,13 +145,13 @@ have genders combined.}
 \item{morphcomp_data}{Morph composition data. NOT IMPLEMENTED YET.}
 }
 \description{
-create a list similar to those built by \code{\link{SS_readdat}} which can
-be written to a Stock Synthesis data file using \code{\link{SS_writedat}}.
+create a list similar to those built by \code{\link[=SS_readdat]{SS_readdat()}} which can
+be written to a Stock Synthesis data file using \code{\link[=SS_writedat]{SS_writedat()}}.
 In hindsight, this function doesn't seem very useful and I haven't taken
 time to describe the arguments below.
 }
 \seealso{
-\code{\link{SS_readdat}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian Taylor

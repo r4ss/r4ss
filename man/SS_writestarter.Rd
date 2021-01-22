@@ -14,7 +14,7 @@ SS_writestarter(
 )
 }
 \arguments{
-\item{mylist}{List object created by \code{\link{SS_readstarter}}.}
+\item{mylist}{List object created by \code{\link[=SS_readstarter]{SS_readstarter()}}.}
 
 \item{dir}{Directory for new starter file. Default=NULL (working directory).}
 
@@ -29,12 +29,12 @@ Default=TRUE.}
 }
 \description{
 write Stock Synthesis starter file from list object in R which was probably
-created using \code{\link{SS_readstarter}}
+created using \code{\link[=SS_readstarter]{SS_readstarter()}}
 }
 \seealso{
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian Taylor

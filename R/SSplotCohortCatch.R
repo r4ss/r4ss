@@ -15,14 +15,14 @@
 #' @param cohortfrac What fraction of the cohorts to include in plot. If value
 #' < 1 is used, then cohorts are filtered to only include those with the
 #' highest maximum cumulative catch. Value will be overridden by
-#' \code{cohortvec}.
+#' `cohortvec`.
 #' @param cohortvec Optional vector of birth years for cohorts to include in
-#' plot. Value overrides \code{cohortfrac}.
+#' plot. Value overrides `cohortfrac`.
 #' @param cohortlabfrac What fraction of the cohorts to label in plot. By
-#' default, top 10\% of cohorts are labeled. Value will be overridden by
-#' \code{cohortlabvec}.
+#' default, top 10% of cohorts are labeled. Value will be overridden by
+#' `cohortlabvec`.
 #' @param cohortlabvec Optional vector of birth years for cohorts to label in
-#' plot. Value overrides \code{cohortlabfrac}.
+#' plot. Value overrides `cohortlabfrac`.
 #' @param lwd Line width
 #' @param plotdir Directory where PNG or PDF files will be written. By default
 #' it will be the directory where the model was run.
@@ -38,7 +38,7 @@
 #' @param verbose Report progress to R console?
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotCohortCatch <-
   function(replist, subplots = 1:2, add = FALSE,
            plot = TRUE, print = FALSE,

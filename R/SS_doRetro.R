@@ -6,9 +6,9 @@
 #'
 #'
 #' @param masterdir Directory where everything takes place.
-#' @param oldsubdir Subdirectory within \code{masterdir} with existing model
+#' @param oldsubdir Subdirectory within `masterdir` with existing model
 #' files.
-#' @param newsubdir Subdirectory within \code{masterdir} where retrospectives
+#' @param newsubdir Subdirectory within `masterdir` where retrospectives
 #' will be run. Default is 'retrospectives'.
 #' @param subdirstart First part of the pattern of names for the directories in
 #' which the models will actually be run.
@@ -32,7 +32,7 @@
 #' simplistic and probably won't work in most cases. Default=FALSE.
 #' @author Ian Taylor, Jim Thorson
 #' @export
-#' @seealso \code{\link{SSgetoutput}}
+#' @seealso [SSgetoutput()]
 #' @examples
 #'
 #' \dontrun{

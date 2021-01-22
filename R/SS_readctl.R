@@ -73,7 +73,7 @@
 #' `r ls("package:r4ss", pattern = "SS_readctl_")`.
 #' The returned list structure can be written back to the disk using
 #' [r4ss::SS_writectl].\cr
-#' See the following for other \code{SS_read} functions:
+#' See the following for other `SS_read` functions:
 #' `r ls("package:r4ss", pattern = "SS_read[a-z]+$")`.\cr
 #' @examples
 #' # Read in the 'simple' example SS model stored in r4ss

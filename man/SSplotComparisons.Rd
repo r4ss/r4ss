@@ -80,23 +80,23 @@ SSplotComparisons(
 \item{subplots}{Vector of subplots to be created
 Numbering of subplots is as follows:
 \itemize{
-  \item 1  spawning biomass
-  \item 2  spawning biomass with uncertainty intervals
-  \item 3  biomass ratio (hopefully equal to fraction of unfished)
-  \item 4  biomass ratio with uncertainty
-  \item 5  SPR ratio
-  \item 6  SPR ratio with uncertainty
-  \item 7  F value
-  \item 8  F value with uncertainty
-  \item 9  recruits
-  \item 10  recruits with uncertainty
-  \item 11  recruit devs
-  \item 12  recruit devs with uncertainty
-  \item 13  index fits
-  \item 14  index fits on a log scale
-  \item 15  phase plot
-  \item 16  densities
-  \item 17  cumulative densities
+\item 1  spawning biomass
+\item 2  spawning biomass with uncertainty intervals
+\item 3  biomass ratio (hopefully equal to fraction of unfished)
+\item 4  biomass ratio with uncertainty
+\item 5  SPR ratio
+\item 6  SPR ratio with uncertainty
+\item 7  F value
+\item 8  F value with uncertainty
+\item 9  recruits
+\item 10  recruits with uncertainty
+\item 11  recruit devs
+\item 12  recruit devs with uncertainty
+\item 13  index fits
+\item 14  index fits on a log scale
+\item 15  phase plot
+\item 16  densities
+\item 17  cumulative densities
 }}
 
 \item{plot}{Plot to active plot device?}
@@ -121,12 +121,12 @@ ending year specified in each model.}
 \item{indexfleets}{Fleet numbers for each model to compare
 indices of abundance. Can take different forms:
 \itemize{
-  \item NULL: (default) create a separate plot for each index as long as the fleet
+\item NULL: (default) create a separate plot for each index as long as the fleet
 numbering is the same across all models.
-  \item integer: create a single comparison plot for the chosen index
-  \item vector of length equal to number of models: a single fleet number
+\item integer: create a single comparison plot for the chosen index
+\item vector of length equal to number of models: a single fleet number
 for each model to be compared in a single plot
-  \item list: list of fleet numbers associated with indices within each
+\item list: list of fleet numbers associated with indices within each
 model to be compared, where the list elements are each a vector of the
 same length but the names of the list elements don't matter and can be
 absent.
@@ -143,7 +143,7 @@ these intervals may differ across models.}
 (if \code{indexQlabel=TRUE})}
 
 \item{indexSEvec}{Optional replacement for the SE values in
-summaryoutput[["indices"]] to deal with the issue of differing uncertainty by
+\code{summaryoutput[["indices"]]} to deal with the issue of differing uncertainty by
 models described above.}
 
 \item{indexPlotEach}{TRUE plots the observed index for each model with
@@ -245,8 +245,8 @@ it will be the directory where the model was run.}
 It will be separated from default name by an underscore.}
 
 \item{densitynames}{Vector of names (or subset of names) of parameters or
-derived quantities contained in summaryoutput[["pars"]][["Label"]] or
-summaryoutput[["quants"]][["Label"]] for which to make density plots}
+derived quantities contained in \code{summaryoutput[["pars"]][["Label"]]} or
+\code{summaryoutput[["quants"]][["Label"]]} for which to make density plots}
 
 \item{densityxlabs}{Optional vector of x-axis labels to use in the density
 plots (must be equal in length to the printed vector of quantities that
@@ -334,8 +334,8 @@ SSplotComparisons(mod.sum,
 
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SSsummarize}},
-\code{\link{SS_output}}, \code{\link{SSgetoutput}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SSsummarize]{SSsummarize()}},
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
 Ian G. Taylor, John R. Wallace

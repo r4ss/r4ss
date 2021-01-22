@@ -24,12 +24,12 @@
 #' @author Ian G. Taylor, Allan C. Hicks, Neil L. Klaer, Kelli F. Johnson,
 #' Chantel R. Wetzel
 #' @export
-#' @seealso \code{\link{SS_readdat_2.00}}, \code{\link{SS_readdat_3.00}},
-#' \code{\link{SS_readdat_3.24}}, \code{\link{SS_readdat_3.30}},
-#' \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.24}}
-#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+#' @seealso [SS_readdat_2.00()], [SS_readdat_3.00()],
+#' [SS_readdat_3.24()], [SS_readdat_3.30()],
+#' [SS_readctl()], [SS_readctl_3.24()]
+#' [SS_readstarter()], [SS_readforecast()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()], [SS_writedat()]
 
 SS_readdat <- function(file, version = NULL, verbose = TRUE, echoall = FALSE, section = NULL) {
 

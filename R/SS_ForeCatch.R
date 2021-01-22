@@ -18,7 +18,7 @@
 ##' @param dead TRUE/FALSE switch to choose dead catch instead of retained catch.
 ##' @param zeros Include entries with zero catch (TRUE/FALSE)
 ##'
-##' @seealso \code{\link{SS_readforecast}}, \code{\link{SS_readforecast}}
+##' @seealso [SS_readforecast()], [SS_readforecast()]
 ##' @author Ian G. Taylor
 ##' @examples
 ##'

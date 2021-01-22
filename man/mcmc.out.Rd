@@ -36,9 +36,9 @@ directory for particular run.}
 
 \item{file}{Filename either with full path or relative to working directory.
 
-  Contents of the file that is referenced here should contain posterior samples
-  for nuisance parameters, e.g., posteriors.sso or
-  something written by \code{\link{SSgetMCMC}}.}
+Contents of the file that is referenced here should contain posterior samples
+for nuisance parameters, e.g., posteriors.sso or
+something written by \code{\link{SSgetMCMC}}.}
 
 \item{namefile}{The (optional) file name of the dimension and names of
 posteriors.}
@@ -52,11 +52,11 @@ posteriors.}
 \item{closeall}{By default close all open devices.}
 
 \item{burn}{Optional burn-in value to apply on top of the option in the
-starter file and \code{\link{SSgetMCMC}}.}
+starter file and \code{\link[=SSgetMCMC]{SSgetMCMC()}}.}
 
 \item{thin}{Optional thinning value to apply on top of the option in the
 starter file, in the \code{-mcsave} runtime command, and in
-\code{\link{SSgetMCMC}}.}
+\code{\link[=SSgetMCMC]{SSgetMCMC()}}.}
 
 \item{scatter}{Can add a scatter-plot of all params at end, default is none.}
 
@@ -101,7 +101,7 @@ mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 }
 }
 \seealso{
-\code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
+\code{\link[=mcmc.nuisance]{mcmc.nuisance()}}, \code{\link[=SSgetMCMC]{SSgetMCMC()}}
 }
 \author{
 Ian Stewart, Allan Hicks (modifications)

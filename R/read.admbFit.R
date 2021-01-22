@@ -8,7 +8,7 @@
 ##' have format file.par and file.cor.
 ##' @return List of various things from these files.
 ##' @author James Thorson
-##' @seealso \code{\link{getADMBHessian}}, \code{\link{NegLogInt_Fn}}
+##' @seealso [getADMBHessian()], [NegLogInt_Fn()]
 ##' @export
 read.admbFit <- function(file) {
   ret <- list()

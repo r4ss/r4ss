@@ -30,7 +30,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor, Ian Stewart
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
+#' @seealso [SS_plots()], [SS_fitbiasramp()]
 SSplotRecdevs <-
   function(replist, subplots = 1:3, plot = TRUE, print = FALSE, add = FALSE,
            uncertainty = TRUE, minyr = -Inf, maxyr = Inf, forecastplot = FALSE,

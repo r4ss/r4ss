@@ -21,7 +21,7 @@ a three-element vector; the first element is the name of the html table file, th
 Creates html tables that show diagnostic outputs, including status checks, gradients, and correlations.
 }
 \seealso{
-[SS_plots()], [SS_output()], [SS_html()]
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}, \code{\link[=SS_html]{SS_html()}}
 }
 \author{
 Christine Stawitz

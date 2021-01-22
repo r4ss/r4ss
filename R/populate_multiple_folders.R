@@ -20,7 +20,7 @@
 #' successfully populated with the model input files and/or executables
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{copy_SS_inputs}}
+#' @seealso [copy_SS_inputs()]
 #' @examples
 #'
 #' \dontrun{

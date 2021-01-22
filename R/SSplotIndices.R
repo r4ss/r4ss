@@ -72,10 +72,10 @@
 #' the total uncertainty which may result from estimating a parameter for
 #' extra standard deviations
 #' @param verbose report progress to R GUI?
-#' @param \dots Extra arguments to pass to calls to \code{plot}
+#' @param \dots Extra arguments to pass to calls to `plot`
 #' @author Ian Stewart, Ian Taylor, James Thorson
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotIndices <-
   function(replist, subplots = c(1:10, 12),
            plot = TRUE, print = FALSE,

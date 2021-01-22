@@ -51,18 +51,18 @@ SSplotIndices(
 \item{subplots}{vector controlling which subplots to create
 Numbering of subplots is as follows:
 \itemize{
-  \item 1  index data by fleet
-  \item 2  index data with fit by fleet
-  \item 3  observed vs expected index values with smoother
-  \item 4  index data by fleet on a log scale (lognormal error only)
-  \item 5  index data with fit by fleet on a log scale (lognormal error only)
-  \item 6  log(observed) vs log(expected) with smoother (lognormal error only)
-  \item 7  time series of time-varying catchability (only if actually time-varying)
-  \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
-  \item 9  comparison of all indices
-  \item 10  index residuals based on total uncertainty
-  \item 11  index residuals based on input uncertainty
-  \item 12  index deviations (independent of index uncertainty)
+\item 1  index data by fleet
+\item 2  index data with fit by fleet
+\item 3  observed vs expected index values with smoother
+\item 4  index data by fleet on a log scale (lognormal error only)
+\item 5  index data with fit by fleet on a log scale (lognormal error only)
+\item 6  log(observed) vs log(expected) with smoother (lognormal error only)
+\item 7  time series of time-varying catchability (only if actually time-varying)
+\item 8  catchability vs. vulnerable biomass (if catchability is not constant)
+\item 9  comparison of all indices
+\item 10  index residuals based on total uncertainty
+\item 11  index residuals based on input uncertainty
+\item 12  index deviations (independent of index uncertainty)
 }}
 
 \item{plot}{plot to active plot device?}
@@ -156,7 +156,7 @@ plots such as observed vs. expected index and plots related to time-varying
 catchability (if present).
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Stewart, Ian Taylor, James Thorson

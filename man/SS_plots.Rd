@@ -102,32 +102,32 @@ not available in the model run will automatically be skipped, whether called
 or not.
 Current grouping of plots is as follows:
 \enumerate{
-  \item Biology
-  \item Selectivity and retention
-  \item Timeseries
-  \item Recruitment deviations
-  \item Recruitment bias adjustment
-  \item Spawner-recruit
-  \item Catch
-  \item SPR
-  \item Discards
-  \item Mean weight
-  \item Indices
-  \item Numbers at age
-  \item Length comp data
-  \item Age comp data
-  \item Conditional age-at-length data
-  \item Length comp fits
-  \item Age comp fits
-  \item Conditional age-at-length fits
-  \item Francis and Punt conditional age-at-length comp fits
-  \item Mean length-at-age and mean weight-at-age
-  \item Tags
-  \item Yield
-  \item Movement
-  \item Data range
-  \item Parameter distributions
-  \item Diagnostic tables
+\item Biology
+\item Selectivity and retention
+\item Timeseries
+\item Recruitment deviations
+\item Recruitment bias adjustment
+\item Spawner-recruit
+\item Catch
+\item SPR
+\item Discards
+\item Mean weight
+\item Indices
+\item Numbers at age
+\item Length comp data
+\item Age comp data
+\item Conditional age-at-length data
+\item Length comp fits
+\item Age comp fits
+\item Conditional age-at-length fits
+\item Francis and Punt conditional age-at-length comp fits
+\item Mean length-at-age and mean weight-at-age
+\item Tags
+\item Yield
+\item Movement
+\item Data range
+\item Parameter distributions
+\item Diagnostic tables
 }}
 
 \item{print}{Deprecated input for backward compatibility, now replaced by
@@ -137,7 +137,7 @@ Current grouping of plots is as follows:
 
 \item{png}{Send plots to PNG files instead of R GUI?}
 
-\item{html}{Run \code{\link{SS_html}} on completion? By default has same
+\item{html}{Run \code{\link[=SS_html]{SS_html()}} on completion? By default has same
 value as \code{png}.}
 
 \item{printfolder}{The sub-directory under 'dir' (see below) in which the
@@ -210,7 +210,7 @@ with only a single observed fish in it. Default=0.4.}
 
 \item{sprtarg}{Specify the F/SPR proxy target. Default=0.4.}
 
-\item{btarg}{Target %unfished to be used in plots showing %unfished. May be
+\item{btarg}{Target \%unfished to be used in plots showing \%unfished. May be
 omitted by setting to NA.}
 
 \item{minbthresh}{Threshold depletion to be used in plots showing depletion.
@@ -395,14 +395,14 @@ dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 Sci. 65: 2536-2551.
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SSplotBiology}},
-\code{\link{SSplotCatch}}, \code{\link{SSplotComps}},
-\code{\link{SSplotDiscard}}, \code{\link{SSplotIndices}},
-\code{\link{SSplotMnwt}}, \code{\link{SSplotNumbers}},
-\code{\link{SSplotRecdevs}}, \code{\link{SSplotSelex}},
-\code{\link{SSplotSpawnrecruit}}, \code{\link{SSplotSPR}},
-\code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
-\code{\link{SSplotYield}}
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSplotBiology]{SSplotBiology()}},
+\code{\link[=SSplotCatch]{SSplotCatch()}}, \code{\link[=SSplotComps]{SSplotComps()}},
+\code{\link[=SSplotDiscard]{SSplotDiscard()}}, \code{\link[=SSplotIndices]{SSplotIndices()}},
+\code{\link[=SSplotMnwt]{SSplotMnwt()}}, \code{\link[=SSplotNumbers]{SSplotNumbers()}},
+\code{\link[=SSplotRecdevs]{SSplotRecdevs()}}, \code{\link[=SSplotSelex]{SSplotSelex()}},
+\code{\link[=SSplotSpawnrecruit]{SSplotSpawnrecruit()}}, \code{\link[=SSplotSPR]{SSplotSPR()}},
+\code{\link[=SSplotTags]{SSplotTags()}}, \code{\link[=SSplotTimeseries]{SSplotTimeseries()}},
+\code{\link[=SSplotYield]{SSplotYield()}}
 }
 \author{
 Ian Stewart, Ian Taylor

@@ -24,8 +24,8 @@
 #' had errors like missing executable or Report.sso already present
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{copy_SS_inputs}},
-#' \code{\link{populate_multiple_folders}}
+#' @seealso [copy_SS_inputs()],
+#' [populate_multiple_folders()]
 #' @examples
 #'
 #' \dontrun{

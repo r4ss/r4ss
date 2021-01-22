@@ -17,18 +17,18 @@
 #' @param csv2 Second CSV file for nuisance quantities.
 #' @param keystrings Vector of strings that partially match parameter names to
 #' write to the file csv1. This file intended to feed into
-#' \code{\link{mcmc.out}}.
+#' [mcmc.out()].
 #' @param nuisancestrings Vector of strings that partially match derived
 #' quantity names to write to the file csv2. This file intended to feed into
-#' \code{\link{mcmc.nuisance}}.
+#' [mcmc.nuisance()].
 #' @param burnin Optional burn-in value to apply on top of the option in the
 #' starter file.
 #' @param thin Optional thinning value to apply on top of the option in the
-#' starter file and in the \code{-mcsave} runtime command.
+#' starter file and in the `-mcsave` runtime command.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
-#' \code{\link{SSplotPars}}
+#' @seealso [mcmc.out()], [mcmc.nuisance()],
+#' [SSplotPars()]
 SSgetMCMC <-
   function(dir = NULL,
            verbose = TRUE,

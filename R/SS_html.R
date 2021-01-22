@@ -1,14 +1,14 @@
 #' Create HTML files to view figures in browser.
 #'
 #' Writes a set of HTML files with tabbed navigation between them.  Depends on
-#' \code{\link{SS_plots}} with settings in place to write figures to PNG files.
+#' [SS_plots()] with settings in place to write figures to PNG files.
 #' Should open main file in default browser automatically.
 #'
 #'
 #' @template replist
 #' @param plotdir Directory where PNG files are located.
 #' @param plotInfoTable CSV file with info on PNG files. By default, the
-#' \code{plotdir} directory will be searched for files with name beginning
+#' `plotdir` directory will be searched for files with name beginning
 #' 'plotInfoTable*'
 #' @param title Title for HTML page.
 #' @param width Width of plots (in pixels).
@@ -24,7 +24,7 @@
 #' for improvement.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 #'
 SS_html <- function(replist = NULL,
                     plotdir = NULL,

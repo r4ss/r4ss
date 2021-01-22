@@ -5,13 +5,13 @@
 #'
 #' @param file Filename either with full path or relative to working directory.
 #' @template verbose
-#' @return Output will be a list with four elements, \code{header},
-#' \code{likelihoods}, \code{parameters}, and \code{derived_quants}.
+#' @return Output will be a list with four elements, `header`,
+#' `likelihoods`, `parameters`, and `derived_quants`.
 #' Each is a data frame with rownames indicating the quantity shown in each row.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_readstarter}}
+#' @seealso [SS_output()], [SS_readforecast()],
+#' [SS_readdat()], [SS_readstarter()]
 #' @examples
 #'
 #' \dontrun{

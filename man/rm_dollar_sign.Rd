@@ -9,9 +9,7 @@ rm_dollar_sign(file, out_file = file, allow_recursive = TRUE, max_loops = 5)
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{out_file}{The name or path of a new file to write to. This is by
 default the same as the original file. Set to NULL to avoid writing a new
@@ -19,8 +17,8 @@ file.}
 
 \item{allow_recursive}{Should dollar sign references of list in list be
 replaced? If this is FALSE, then only the first reference will be replaced.
-For example, F$first$second would become F[["first"]]$second when
-alow_recursive is FALSE, but would become F[["first"]][["second"]] if TRUE.}
+For example, \code{F$first$second} would become \code{F[["first"]]$second} when
+alow_recursive is FALSE, but would become \code{F[["first"]][["second"]]} if TRUE.}
 
 \item{max_loops}{How many times should dollar signs be looked for
 recursively, if allow_recursive is TRUE? Defaults to 5. This is meant to
@@ -28,38 +26,38 @@ prevent an infinite loop in case the function does not work properly.}
 }
 \value{
 A character vector of the modified text. As a side effect, produces
- a text file out_file that was written out from R using writeLines().
+a text file out_file that was written out from R using writeLines().
 }
 \description{
 The dollar sign is convienent to write, but allows for partial matching,
 which we don't often want. This function takes a file and changes all dollar
 signs to double brackets with names in quotations instead. Note that this
 function will incorrectly convert text that includesnames in backticks that
-include a dollar sign (for example, test$`my$name` will not convert correctly).
-Note also that if a dollar sign is within a text string, it will also not 
-convert correctly (for example, "See test$name" would become 
-"See test[["name"]]", which is not parsable R code. Luckily, this is easily 
+include a dollar sign (for example, test$\code{my$name} will not convert correctly).
+Note also that if a dollar sign is within a text string, it will also not
+convert correctly (for example, "See test$name" would become
+"See test[\link{"name"}]", which is not parsable R code. Luckily, this is easily
 discoverable by loading or sourcing the function.)
 }
 \author{
 Kathryn Doering
 #' @example
 test_text <- c("x$my_name <- y$test"
-                 "x[['my_name']]",
-                 "no_replace_here <- 44",
-                 "x$names<-new_assign;x$`22`",
-                 "x$names <- new_assign; x$`22`",
-                 "x$`$$weirdcharacters`<-222",
-                 "x$`nameinbacktick`",
-                 "x$mylist$my_col$YetAnotherCol",
-                 "x$mylist$my_col$`1_somename`",
-                 "x$`bad$name` <- 55",
-                 "x$`other_$badname`")
+"x[\link{'my_name'}]",
+"no_replace_here <- 44",
+"x$names<-new_assign;x$\code{22}",
+"x$names <- new_assign; x$\code{22}",
+"x$\verb{$$weirdcharacters}<-222",
+"x$\code{nameinbacktick}",
+"x$mylist$my_col$YetAnotherCol",
+"x$mylist$my_col$\verb{1_somename}",
+"x$\code{bad$name} <- 55",
+"x$\code{other_$badname}")
 writeLines(test_text, "test_rm_dollar_sign.txt")
 on.exit(file.remove("test_rm_dollar_sign.txt"), add = TRUE)
 
- new_text <- rm_dollar_sign(
-   file = "test_rm_dollar_sign.txt",
-   out_file = NULL)
-   new_text
+new_text <- rm_dollar_sign(
+file = "test_rm_dollar_sign.txt",
+out_file = NULL)
+new_text
 }

@@ -15,8 +15,8 @@
 #'  file.
 #' @param allow_recursive Should dollar sign references of list in list be
 #'  replaced? If this is FALSE, then only the first reference will be replaced.
-#'  For example, F$first$second would become F[["first"]]$second when
-#'  alow_recursive is FALSE, but would become F[["first"]][["second"]] if TRUE.
+#'  For example, `F$first$second` would become `F[["first"]]$second` when
+#'  alow_recursive is FALSE, but would become `F[["first"]][["second"]]` if TRUE.
 #' @param max_loops How many times should dollar signs be looked for
 #'  recursively, if allow_recursive is TRUE? Defaults to 5. This is meant to
 #'  prevent an infinite loop in case the function does not work properly.

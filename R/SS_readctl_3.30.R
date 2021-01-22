@@ -43,16 +43,16 @@
 #' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
 #'        determined from control file
 #' @param datlist list or character. If list, should be a list produced from
-#'   \code{\link{SS_writedat}}. If character, should be the file name of an
+#'   [SS_writedat()]. If character, should be the file name of an
 #'   SS data file.
 #' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
 #' @export
-#' @seealso \code{\link{SS_readctl}}, \code{\link{SS_readdat}}
-#' \code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
-#' \code{\link{SS_readctl_3.24}},
-#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+#' @seealso [SS_readctl()], [SS_readdat()]
+#' [SS_readdat_3.24()],[SS_readdat_3.30()]
+#' [SS_readctl_3.24()],
+#' [SS_readstarter()], [SS_readforecast()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.30",
                             ## Parameters that are not defined in control file
                             nseas = 4,
@@ -1713,7 +1713,7 @@ get_tv_parlabs <- function(full_parms,
 #' This functionality used to be in SS_readctl_3.30, but ware removed to avoid
 #'  confusion.
 #' @param Variance_adjustment_list The Variance_adjustments_list element
-#'  in the control file r4ss list output generated from \link{SS_readctl}.
+#'  in the control file r4ss list output generated from [SS_readctl].
 #'  Defaults to NULL, which can be the case if no variance adjustments were
 #'  included in the model.
 #' @param Nfleets Number of fleets in the model
@@ -1755,7 +1755,7 @@ translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
 #' Use 3.30 q options to create the 3.24 q setup
 #'
 #' @param Q_options The Q options list element in the 3.30
-#'  control file r4ss list output generated from \link{SS_readctl}.
+#'  control file r4ss list output generated from [SS_readctl].
 #' @param Nfleets Number of fleets in the model
 #' @param fleetnames Name of the fleets. Defaults to fleet numbers, in the order
 #' @return A dataframe containing the 3.24 Q setup.

@@ -53,7 +53,7 @@
 #' @param cex.main character expansion for plot titles
 #' @author Ian Taylor, Ian Stewart
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotTimeseries <-
   function(replist, subplot, add = FALSE, areas = "all",
            areacols = "default", areanames = "default",

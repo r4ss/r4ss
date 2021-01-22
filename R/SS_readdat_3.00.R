@@ -17,10 +17,10 @@
 #' will read input data, (equivalent to section=1).
 #' @author Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar
 #' @export
-#' @seealso \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
-#' \code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+#' @seealso [SS_readdat()], [SS_readdat_3.30()]
+#' [SS_readstarter()], [SS_readforecast()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()], [SS_writedat()]
 SS_readdat_3.00 <- function(file, verbose = TRUE, echoall = FALSE, section = NULL) {
   # function to read Stock Synthesis data files
 

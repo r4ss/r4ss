@@ -9,8 +9,8 @@ selShapes()
 \description{
 Currently implemented only for
 \enumerate{
-  \item logisitic (type 1)
-  \item double normal (type 24)
+\item logisitic (type 1)
+\item double normal (type 24)
 }
 This could possibly be hosted on a Shiny server instead of within r4ss
 }

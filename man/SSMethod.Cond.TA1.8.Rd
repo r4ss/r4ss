@@ -86,15 +86,15 @@ very difficult to be sure that what this function does is appropriate for all
 combinations of options. The following notes (for version A) might help anyone
 wanting to check or correct the code.
 \enumerate{
-  \item The code first removes un-needed rows
+\item The code first removes un-needed rows
 from database condbase.
-  \item The remaining rows of the database are grouped
+\item The remaining rows of the database are grouped
 (indexed by vector indx) and relevant statistics (e.g., observed and expected
 mean age), and ancillary data, are calculated for each group (these are stored
 in pldat - one row per group).
-  \item If the data are to be plotted they are further
+\item If the data are to be plotted they are further
 grouped by fleet, with one panel of the plot per fleet.
-  \item A single multiplier, \emph{w}, is calculated to apply to all the
+\item A single multiplier, \emph{w}, is calculated to apply to all the
 selected data.
 }
 }
@@ -106,7 +106,7 @@ Punt, A.E. (2015). Some insights into data weighting in integrated stock assessm
 Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
 }
 \seealso{
-\code{\link{SSMethod.TA1.8}}
+\code{\link[=SSMethod.TA1.8]{SSMethod.TA1.8()}}
 }
 \author{
 Chris Francis, Andre Punt, Ian Taylor

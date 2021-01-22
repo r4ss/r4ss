@@ -81,13 +81,13 @@
 #' @param ... Additional arguments to pass to [run_SS_models].
 #'
 #' @return Returns a table that can be copied into the control file.
-#' If \code{write=TRUE} then will write the values to a file
+#' If `write=TRUE` then will write the values to a file
 #' (currently hardwired to go in the directory where the model was run
 #' and called "suggested_tunings.ss").
 #'
 #' @author Ian G. Taylor, Kathryn Doering
 #' @export
-#' @seealso \code{\link{SSMethod.TA1.8}}
+#' @seealso [SSMethod.TA1.8()]
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #' @examples
@@ -696,7 +696,7 @@ get_tuning_table <- function(replist, fleets,
 
 #' Get the highest phase used in the control file
 #'
-#' @param ctl A control file list read in using \code{r4ss::SS_readctl}.
+#' @param ctl A control file list read in using `r4ss::SS_readctl`.
 #' @author Kathryn Doering
 get_last_phase <- function(ctl) {
   # read all phases in ctl
