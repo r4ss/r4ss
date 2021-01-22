@@ -3,12 +3,13 @@
 #' The dollar sign is convienent to write, but allows for partial matching,
 #' which we don't often want. This function takes a file and changes all dollar
 #' signs to double brackets with names in quotations instead. Note that this
-#' function will incorrectly convert text that includesnames in backticks that
-#' include a dollar sign (for example, test$`my$name` will not convert correctly).
-#' Note also that if a dollar sign is within a text string, it will also not 
-#' convert correctly (for example, "See test$name" would become 
-#' "See test[["name"]]", which is not parsable R code. Luckily, this is easily 
-#' discoverable by loading or sourcing the function.)
+#' function will incorrectly convert text enclosed in backticks that includes a dollar sign. 
+#' Note also that if a dollar sign is within a text 
+#' string enclosed with quotation marks, it will also not  convert correctly 
+#' (for example, "See test$name" would become 
+#' "See test[["name"]]", which is not parsable R code due to 2 sets of quotation 
+#' marks.) Luckily, this last issue is easily discoverable by attempting to load or source 
+#' the function because an error will be produced.
 #' @template file
 #' @param out_file The name or path of a new file to write to. This is by
 #'  default the same as the original file. Set to NULL to avoid writing a new
@@ -16,14 +17,14 @@
 #' @param allow_recursive Should dollar sign references of list in list be
 #'  replaced? If this is FALSE, then only the first reference will be replaced.
 #'  For example, `F$first$second` would become `F[["first"]]$second` when
-#'  alow_recursive is FALSE, but would become `F[["first"]][["second"]]` if TRUE.
+#'  allow_recursive is FALSE, but would become `F[["first"]][["second"]]` if TRUE.
 #' @param max_loops How many times should dollar signs be looked for
 #'  recursively, if allow_recursive is TRUE? Defaults to 5. This is meant to
 #'  prevent an infinite loop in case the function does not work properly.
 #' @return A character vector of the modified text. As a side effect, produces
-#'  a text file out_file that was written out from R using writeLines().
+#'  a text file (name specified in out_file) written out from R using writeLines().
 #' @author Kathryn Doering
-#' #' @example
+#' @examples 
 #' test_text <- c("x$my_name <- y$test"
 #'                  "x[['my_name']]",
 #'                  "no_replace_here <- 44",
