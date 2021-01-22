@@ -25,7 +25,7 @@
 #'  a text file (name specified in out_file) written out from R using writeLines().
 #' @author Kathryn Doering
 #' @examples 
-#' test_text <- c("x$my_name <- y$test"
+#' test_text <- c("x$my_name <- y$test",
 #'                  "x[['my_name']]",
 #'                  "no_replace_here <- 44",
 #'                  "x$names<-new_assign;x$`22`",
@@ -37,12 +37,11 @@
 #'                  "x$`bad$name` <- 55",
 #'                  "x$`other_$badname`")
 #' writeLines(test_text, "test_rm_dollar_sign.txt")
-#' on.exit(file.remove("test_rm_dollar_sign.txt"), add = TRUE)
-#'
-#'  new_text <- rm_dollar_sign(
+#'  new_text <- r4ss:::rm_dollar_sign(
 #'    file = "test_rm_dollar_sign.txt",
 #'    out_file = NULL)
 #'    new_text
+#' file.remove("test_rm_dollar_sign.txt")
 
 rm_dollar_sign <- function(file,
                            out_file = file,
