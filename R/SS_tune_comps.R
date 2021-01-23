@@ -215,7 +215,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   # read in model files
   # get the r4ss files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  dat <- SS_readdat(file.path(dir, start[["datfile"]]), verbose = FALSE)
+  dat <- SS_readdat(file.path(dir, start[["datfile"]]),
+    verbose = FALSE, section = 1)
   ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
     use_datlist = TRUE, datlist = dat,
     verbose = FALSE
@@ -325,7 +326,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           verbose = FALSE
         )
         dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-          verbose = FALSE
+          verbose = FALSE, section = 1
         )
         ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
           use_datlist = TRUE, datlist = dat,
