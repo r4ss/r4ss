@@ -283,13 +283,16 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         skipfinished = FALSE, verbose = verbose,
         exe_in_path = exe_in_path, ...
       )
-      replist <- SS_output(
-        dir = dir, verbose = FALSE, printstats = FALSE,
-        hidewarn = TRUE
-      )
+      suppressWarnings(
+        replist <- SS_output(
+          dir = dir, verbose = FALSE, printstats = FALSE,
+          covar = !grepl("nohess", extras),
+          hidewarn = TRUE
+        )
+     )
     }
     if (niters_tuning == 0 | option == "none") {
-      # calculate the tuning table and regurn
+      # calculate the tuning table and rerun
       tuning_table <- get_tuning_table(
         replist = replist, fleets = fleets,
         option = option, digits = digits,
@@ -306,6 +309,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         suppressWarnings(
           out <- SS_output(dir,
             verbose = FALSE, printstats = FALSE,
+            covar = !grepl("nohess", extras),
             hidewarn = TRUE
           )
         )
@@ -461,6 +465,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       suppressWarnings(
         out <- SS_output(dir,
           verbose = FALSE, printstats = FALSE,
+          covar = !grepl("nohess", extras),
           hidewarn = TRUE
         )
       )
