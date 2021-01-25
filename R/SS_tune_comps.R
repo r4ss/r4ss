@@ -215,7 +215,8 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
   # read in model files
   # get the r4ss files
   start <- SS_readstarter(file.path(dir, "starter.ss"), verbose = FALSE)
-  dat <- SS_readdat(file.path(dir, start[["datfile"]]), verbose = FALSE)
+  dat <- SS_readdat(file.path(dir, start[["datfile"]]),
+    verbose = FALSE, section = 1)
   ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
     use_datlist = TRUE, datlist = dat,
     verbose = FALSE
@@ -282,13 +283,16 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         skipfinished = FALSE, verbose = verbose,
         exe_in_path = exe_in_path, ...
       )
-      replist <- SS_output(
-        dir = dir, verbose = FALSE, printstats = FALSE,
-        hidewarn = TRUE
-      )
+      suppressWarnings(
+        replist <- SS_output(
+          dir = dir, verbose = FALSE, printstats = FALSE,
+          covar = !grepl("nohess", extras),
+          hidewarn = TRUE
+        )
+     )
     }
     if (niters_tuning == 0 | option == "none") {
-      # calculate the tuning table and regurn
+      # calculate the tuning table and rerun
       tuning_table <- get_tuning_table(
         replist = replist, fleets = fleets,
         option = option, digits = digits,
@@ -305,6 +309,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
         suppressWarnings(
           out <- SS_output(dir,
             verbose = FALSE, printstats = FALSE,
+            covar = !grepl("nohess", extras),
             hidewarn = TRUE
           )
         )
@@ -325,7 +330,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
           verbose = FALSE
         )
         dat <- SS_readdat(file.path(dir, start[["datfile"]]),
-          verbose = FALSE
+          verbose = FALSE, section = 1
         )
         ctl <- SS_readctl(file.path(dir, start[["ctlfile"]]),
           use_datlist = TRUE, datlist = dat,
@@ -460,6 +465,7 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
       suppressWarnings(
         out <- SS_output(dir,
           verbose = FALSE, printstats = FALSE,
+          covar = !grepl("nohess", extras),
           hidewarn = TRUE
         )
       )
