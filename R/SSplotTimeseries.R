@@ -281,8 +281,8 @@ SSplotTimeseries <-
         if (subplot == 11) {
           # sum total recruitment across birth seasons
           for (y in ts[["Yr"]]) {
-            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
-            yvals[ts[["Yr"]] == y & ts[["Seas"]] > 1] <- 0
+            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1 & ts[["Area"]] ==1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
+            yvals[ts[["Yr"]] == y & (ts[["Seas"]] > 1 | ts[["Area"]] > 1)] <- 0
           }
         }
         if (subplot == 15) {

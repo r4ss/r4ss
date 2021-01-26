@@ -1664,6 +1664,9 @@ get_tv_parlabs <- function(full_parms,
   par_num <- lapply(tmp_tv, function(x) which(x != 0))
   loop_pars <- unlist(par_num)
   loop_pars <- loop_pars[order(loop_pars)]
+  block_fxn <- full_parms[, "Block_Fxn"]
+  # block_method_label corresponds block method of 0, 1, 2, 3, 4
+  block_method_label <- c("mult_","add_","repl_","delta_","revertrw_")
   parlab <- vector() # a maybe faster approach is if we could initialize with the correct size.
   for (i in loop_pars) {
     tmp_parname <- rownames(full_parms)[i]
@@ -1676,12 +1679,13 @@ get_tv_parlabs <- function(full_parms,
       tmp_blk_design <- block_design[[n_blk]]
       # Get the start year for each block
       blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
+      lbl <- block_method_label[block_fxn[i] + 1]
       parlab <- c(
         parlab,
         paste0(
           "# ",
           rep(tmp_parname, times = length(blk_start_yrs)),
-          "_BLK", n_blk, "add", blk_start_yrs
+          "_BLK", n_blk, lbl, blk_start_yrs
         )
       )
     }
