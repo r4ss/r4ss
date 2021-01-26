@@ -257,11 +257,11 @@ SSplotIndices <-
         }
         # T-distribution interval
         if (error > 0) {
-          lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE_input"]][include]
-          upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE_input"]][include]
+          lower_input <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE_input"]][include]
+          upper_input <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE_input"]][include]
           if (!log) {
-            lower_total <- exp(lower_total)
-            upper_total <- exp(upper_total)
+            lower_input <- exp(lower_input)
+            upper_input <- exp(upper_input)
           }
         }
         # add segments
