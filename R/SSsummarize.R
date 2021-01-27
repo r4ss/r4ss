@@ -559,6 +559,14 @@ SSsummarize <- function(biglist,
     if (length(oldrows) != length(newrows) | length(fix) == 0) {
       return(data)
     }
+    if (get("verbose", envir = parent.frame()) &
+        deparse(substitute(data)) == "pars") {
+      message("For model(s) ", paste(fix, collapse = ", "),
+        ", values in 'pars', 'parsSD', and 'parphases' for\n",
+        paste(data[oldrows, "Label"], data[newrows, "Label"],
+          sep = " -> ", collapse = ", "),
+        "\nwere copied from x -> y.")
+    }
     data[newrows, fix] <- data[oldrows, fix]
     return(data)
   }
