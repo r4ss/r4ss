@@ -17,6 +17,8 @@ Imports:
     coda,
     corpcor,
     dplyr,
+    magrittr,
+    tibble,
     forcats,
     ggplot2,
     stringr,
