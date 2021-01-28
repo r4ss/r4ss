@@ -67,7 +67,11 @@ SSplotRecdist <-
 
     for (iarea in areavec) {
       for (iseas in seasvec) {
-        recmat[iarea, iseas] <- sum(recdist[["Value"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas & recdist[["Used"]] == 1])
+        if (replist[["SS_versionNumeric"]] == 3.3) { # At least 3.30.16 has this format
+          recmat[iarea, iseas] <- sum(recdist[["Frac/sex"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
+        }else{ 
+          recmat[iarea, iseas] <- sum(recdist[["Value"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas & recdist[["Used"]] == 1])
+        }
       }
     }
 

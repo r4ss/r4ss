@@ -95,7 +95,9 @@ SSsummarize <- function(biglist,
   for (imodel in 1:n) {
     stats <- biglist[[imodel]]
     listname <- names(biglist)[imodel]
-    message("imodel=", imodel, "/", n)
+    if (verbose) {
+      message("imodel=", imodel, "/", n)
+    }
 
     # gradient
     maxgrad <- c(maxgrad, stats[["maximum_gradient_component"]])
@@ -219,7 +221,9 @@ SSsummarize <- function(biglist,
       parsSD[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Parm_StDev"]][ipar]
       parphases[parnames == parstemp[["Label"]][ipar], imodel] <- parstemp[["Phase"]][ipar]
     }
-    message("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]])))
+    if (verbose) {
+      message("  N active pars = ", sum(!is.na(parstemp[["Active_Cnt"]])))
+    }
 
     ## compile derived quantities
     quantstemp <- stats[["derived_quants"]]
@@ -288,7 +292,7 @@ SSsummarize <- function(biglist,
 
 
   ### format and process info from the models
-  names(pars) <- names(parsSD) <- modelnames
+  names(pars) <- names(parsSD) <- names(parphases) <- modelnames
   names(quants) <- names(quantsSD) <- modelnames
   names(likelihoods) <- names(likelambdas) <- modelnames
 
@@ -541,6 +545,32 @@ SSsummarize <- function(biglist,
     return(x2)
   }
 
+  # helper fxn b/c name of DM parameter changed
+  # todo: delete when these models no longer need to be maintained
+  copy.dm <- function(data, oldgrep = "EffN", newgrep = "theta") {
+    oldrows <- grep(oldgrep, data[, "Label"])
+    if (length(oldrows) == 0) {
+      return(data)
+    }
+    newrows <- grep(newgrep, data[, "Label"])
+    fix <- which(apply(
+      X = data[newrows, grep("model", colnames(data))],
+      MARGIN = 2, function(vector) all(is.na(vector))))
+    if (length(oldrows) != length(newrows) | length(fix) == 0) {
+      return(data)
+    }
+    if (get("verbose", envir = parent.frame()) &
+        deparse(substitute(data)) == "pars") {
+      message("For model(s) ", paste(fix, collapse = ", "),
+        ", values in 'pars', 'parsSD', and 'parphases' for\n",
+        paste(data[oldrows, "Label"], data[newrows, "Label"],
+          sep = " -> ", collapse = ", "),
+        "\nwere copied from x -> y.")
+    }
+    data[newrows, fix] <- data[oldrows, fix]
+    return(data)
+  }
+
   # function to sort by year
   sort.fn <- function(x) {
     if (!is.null(x)) {
@@ -558,9 +588,9 @@ SSsummarize <- function(biglist,
   mylist[["nsexes"]] <- nsexes
   mylist[["startyrs"]] <- startyrs
   mylist[["endyrs"]] <- endyrs
-  mylist[["pars"]] <- pars
-  mylist[["parsSD"]] <- parsSD
-  mylist[["parphases"]] <- parphases
+  mylist[["pars"]] <- copy.dm(pars)
+  mylist[["parsSD"]] <- copy.dm(parsSD)
+  mylist[["parphases"]] <- copy.dm(parphases)
   mylist[["quants"]] <- quants
   mylist[["quantsSD"]] <- quantsSD
   mylist[["likelihoods"]] <- likelihoods

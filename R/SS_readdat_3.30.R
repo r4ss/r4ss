@@ -69,7 +69,7 @@ SS_readdat_3.30 <-
       stop("Error - There was no EOF marker (999) in the data file.")
     }
     if (is.null(section)) {
-      if (Nsections > 1) {
+      if (Nsections > 1 & verbose) {
         message(
           "The supplied data file has ", Nsections,
           ifelse(Nsections == 1, " section. ", " sections. "),

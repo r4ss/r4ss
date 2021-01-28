@@ -283,6 +283,10 @@ SS_writedat_3.30 <- function(datlist,
     print.df(d[["len_info"]], terminate = FALSE)
 
     # data bins
+    if(length(d[["lbin_vector"]]) != d[["N_lbins"]]) {
+      warning("The length of the lbin_vector is different than N_lbins. This ", 
+              "data file will likely not run with Stock Synthesis.")
+    }
     wl("N_lbins")
     writeComment("#_lbin_vector")
     wl.vector("lbin_vector")
