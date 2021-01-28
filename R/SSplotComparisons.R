@@ -260,7 +260,7 @@ SSplotComparisons <-
            verbose = TRUE,
            mcmcVec = FALSE,
            show_equilibrium = TRUE,
-           bioscale = 0.1) {
+           bioscale = 0.5) {
 
     # switch to avoid repetition of warning about mean recruitment
     meanRecWarning <- TRUE
