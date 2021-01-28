@@ -1142,6 +1142,7 @@ SSexecutivesummary <- function (replist,
   like = cbind(rownames(replist$likelihoods_used), 
                replist$likelihoods_used$values)
   colnames(like) = c("Label", "Total")
+  like[,1] = gsub("\\_", " ", like[,1])
   write.csv(like, file = file.path(csv.dir, csv_name), row.names = FALSE)
 
   caption = c(caption,
