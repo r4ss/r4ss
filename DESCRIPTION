@@ -19,6 +19,7 @@ Imports:
     dplyr,
     magrittr,
     tibble,
+    tidyr,
     forcats,
     ggplot2,
     stringr,

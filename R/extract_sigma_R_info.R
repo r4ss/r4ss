@@ -11,6 +11,7 @@
 #' the list output by [SS_output] and is used to scale the results.
 #' @importFrom magrittr %>%
 #'
+#' @export
 #' @return A data frame is returned with three rows and 10 columns. Rows provide
 #' summary statistics for a given group of recruitments, where the
 #' rows are additive in their inclusiveness, i.e., the data frames used to calculate
@@ -47,12 +48,13 @@ extract_sigma_R_info <- function(data, sigma_R_in) {
   if (!"Value" %in% colnames(data)) {
     minyear <- min(as.numeric(gsub("SSB_", "",
       grep("SSB_[0-9]+", value = TRUE, colnames(data)))))
-    data <- data %>% dplyr::select(matches("InitAge|RecrDev|ForeRec")) %>%
-      tidyr::gather(key = rows, value = value, everything()) %>%
-      dplyr::group_by(rows) %>%
+    data <- data %>%
+      dplyr::select(dplyr::matches("InitAge|RecrDev|ForeRec")) %>%
+      tidyr::gather(key = "rows", value = "value", tidyr::everything()) %>%
+      dplyr::group_by(.data[["rows"]]) %>%
       dplyr::summarise(.groups = "keep",
-        Value = mean(value),
-        Parm_StDev = sd(value),
+        Value = mean(.data[["value"]]),
+        Parm_StDev = stats::sd(.data[["value"]]),
       ) %>%
       dplyr::mutate(
         type = gsub("_[0-9]+", "", .data[["rows"]]),
