@@ -76,10 +76,14 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   if (verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file, warn = FALSE)
 
+  dataComments <- get_data_comments(dat)
+  # End of codes to obtain dataComments
   nver <- as.numeric(substring(version, 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
+  if (length(grep(x = dat, pattern = "^#C")))
+    dat <- dat[-grep(x = dat, pattern = "^#C")]
   allnums <- NULL
   for (i in seq_len(length(dat))) {
     # First split between input and comments
@@ -221,6 +225,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   ctllist$".i" <- i
   ctllist$".dat" <- allnums
   ctllist[["warnings"]] <- ""
+  ctllist[["dataComments"]] <- dataComments
   if (!use_datlist) {
     ctllist[["nseas"]] <- nseas
     ctllist[["N_areas"]] <- N_areas

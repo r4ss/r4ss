@@ -173,6 +173,18 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose) {
     "in the R package r4ss"
   ))
   writeComment(paste("#C file write time:", Sys.time()))
+  if (!is.null(ctllist[["dataComments"]]) &
+    length(ctllist[["dataComments"]]) >0) {
+    dataComments <-
+      sapply(ctllist[["dataComments"]], function(x) {
+        if (!grepl(x, pattern = "^#C")) {
+          x <- paste0("#C_", x)
+        }
+        x
+      })
+    for (ln in ctllist[["dataComments"]])
+      writeComment(ln)
+  }
   writeComment("#")
 
   # Write the contents ----
