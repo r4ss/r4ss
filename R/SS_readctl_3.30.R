@@ -82,8 +82,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
   if (!is.na(temp) && temp == "Start_time:") dat <- dat[-(1:2)]
-  if (length(grep(x = dat, pattern = "^#C")))
-    dat <- dat[-grep(x = dat, pattern = "^#C")]
+  
   allnums <- NULL
   for (i in seq_len(length(dat))) {
     # First split between input and comments

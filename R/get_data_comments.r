@@ -23,9 +23,10 @@ get_data_comments <-
     names(dat) <- NULL
     if (length(defaultDataComments) > 0) {
       delLns <-
-        sapply(defaultDataComments, "grep", x = dat)
+        unlist(sapply(defaultDataComments, "grep", x = dat))
       delLns <- unique(delLns)
-      dat <- dat[-delLns]
+      if(length(delLns) > 0)
+        dat <- dat[- delLns]
     }
 
     # Regular expression hopefully covering most of numerics
