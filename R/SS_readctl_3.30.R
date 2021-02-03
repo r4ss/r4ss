@@ -76,8 +76,8 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   if (verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file, warn = FALSE)
 
-  dataComments <- get_comments(dat)
-  # End of codes to obtain dataComments
+  Comments <- get_comments(dat)
+  # End of codes to obtain Comments
   nver <- as.numeric(substring(version, 1, 4))
   # parse all the numeric values into a long vector (allnums)
   temp <- strsplit(dat[2], " ")[[1]][1]
@@ -224,7 +224,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   ctllist$".i" <- i
   ctllist$".dat" <- allnums
   ctllist[["warnings"]] <- ""
-  ctllist[["dataComments"]] <- dataComments
+  ctllist[["Comments"]] <- Comments
   if (!use_datlist) {
     ctllist[["nseas"]] <- nseas
     ctllist[["N_areas"]] <- N_areas

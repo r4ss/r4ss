@@ -184,7 +184,6 @@ SS_writedat_3.30 <- function(datlist,
   writeComment(paste0("#V", d[["ReadVersion"]]))
   if (is.null(d[["Comments"]])) {
     writeComment("#C data file created using the SS_writedat function in the R package r4ss")
-    writeComment(paste("#C should work with SS version:", d[["SSversion"]]))
     writeComment(paste("#C file write time:", Sys.time()))
   } else {
     Comments <-
