@@ -76,7 +76,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   if (verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file, warn = FALSE)
 
-  dataComments <- get_data_comments(dat)
+  dataComments <- get_comments(dat)
   # End of codes to obtain dataComments
   nver <- as.numeric(substring(version, 1, 4))
   # parse all the numeric values into a long vector (allnums)

@@ -182,19 +182,19 @@ SS_writedat_3.30 <- function(datlist,
 
   # write a header
   writeComment(paste0("#V", d[["ReadVersion"]]))
-  writeComment("#C data file created using the SS_writedat function in the R package r4ss")
-  writeComment(paste("#C should work with SS version:", d[["SSversion"]]))
-  writeComment(paste("#C file write time:", Sys.time()))
-  if (!is.null(datlist[["dataComments"]]) &
-    length(datlist[["dataComments"]]) >0) {
-    dataComments <-
-      sapply(datlist[["dataComments"]], function(x) {
+  if (is.null(d[["Comments"]])) {
+    writeComment("#C data file created using the SS_writedat function in the R package r4ss")
+    writeComment(paste("#C should work with SS version:", d[["SSversion"]]))
+    writeComment(paste("#C file write time:", Sys.time()))
+  } else {
+    Comments <-
+      sapply(d[["Comments"]], function(x) {
         if (!grepl(x, pattern = "^#C")) {
           x <- paste0("#C_", x)
         }
         x
       })
-    for (ln in dataComments)
+    for (ln in Comments)
       writeComment(ln)
   }
   writeComment("#")

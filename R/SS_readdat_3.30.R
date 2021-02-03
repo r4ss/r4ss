@@ -45,10 +45,7 @@ SS_readdat_3.30 <-
       return()
     }
 
-    dataComments <-
-      get_data_comments(dat,
-        defaultDataComments = c("^#C data file created using the SS_writedat function in the R package r4ss",
-                              "^#C should work with SS version:", "^#C file write time:"))
+    Comments <- get_comments(dat)
     ###############################################################################
     ## Divide data file into sections ----
     sec.end.inds <- grep("^999\\b", dat)
@@ -187,7 +184,7 @@ SS_readdat_3.30 <-
     if (verbose) {
       message("SS_readdat_3.30 - read version = ", datlist[["ReadVersion"]])
     }
-    datlist[["dataComments"]] <- dataComments
+    datlist[["Comments"]] <- Comments
     ##############################################################################
     ## Get general model information ----
     ind <- 1
