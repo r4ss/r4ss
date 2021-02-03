@@ -260,10 +260,14 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
     if (!is.null(ctl[["dirichlet_parms"]])) {
       if (verbose) message("Removing DM parameters from model")
       # take DM specifications out of data file
-      dat[["len_info"]][, "CompError"] <- 0
-      dat[["age_info"]][, "CompError"] <- 0
-      dat[["len_info"]][, "ParmSelect"] <- 0
-      dat[["age_info"]][, "ParmSelect"] <- 0
+      if(!is.null(dat[["len_info"]])){
+        dat[["len_info"]][, "CompError"] <- 0
+        dat[["len_info"]][, "ParmSelect"] <- 0
+      }
+      if(!is.null(dat[["age_info"]])){
+        dat[["age_info"]][, "CompError"] <- 0
+        dat[["age_info"]][, "ParmSelect"] <- 0
+      }
       ctl[["dirichlet_parms"]] <- NULL
       SS_writectl(ctl,
         file.path(dir, start[["ctlfile"]]),
@@ -519,7 +523,9 @@ get_tuning_table <- function(replist, fleets,
   # loop over fleets and modify the values for length data
   for (type in c("len", "age")) {
     for (fleet in fleets) {
-      if (verbose) message("calculating ", type, " tunings for fleet ", fleet, "\n")
+      if (verbose) {
+        message("calculating ", type, " tunings for fleet ", fleet)
+      }
       if (type == "len") {
         # table of info from SS
         tunetable <- replist[["Length_Comp_Fit_Summary"]]
@@ -549,7 +555,7 @@ get_tuning_table <- function(replist, fleets,
         Francis_output <- SSMethod.TA1.8(
           fit = replist, type = type,
           fleet = fleet, plotit = FALSE,
-          printit = verbose
+          printit = FALSE
         )
         if (has_conditional) {
           # run separate function for conditional data
@@ -557,7 +563,7 @@ get_tuning_table <- function(replist, fleets,
           Francis_output <- SSMethod.Cond.TA1.8(
             fit = replist,
             fleet = fleet, plotit = FALSE,
-            printit = verbose
+            printit = FALSE
           )
         }
         Francis_mult <- Francis_output[1]
@@ -652,18 +658,20 @@ get_tuning_table <- function(replist, fleets,
   tunetable_size <- replist[["Size_Comp_Fit_Summary"]]
   if (!is.null(tunetable_size)) {
     warning(
-      "\n  Generalized size composition data doesn't have\n",
-      "  Francis weighting available and the table of tunings\n",
-      "  is formatted differently in both 'suggested_tuning.ss'\n",
-      "  and the data.frame returned by this function\n",
-      "  (which are also formatted different from each other)."
+      "Generalized size composition data doesn't have\n",
+      "Francis weighting available and the table of tunings\n",
+      "is formatted differently in both 'suggested_tuning.ss'\n",
+      "and the data.frame returned by this function\n",
+      "(which are also formatted different from each other)."
     )
   }
 
   # return the results
   if (write) {
     file <- file.path(replist[["inputs"]][["dir"]], "suggested_tuning.ss")
-    if (verbose) message("writing to file", file, "\n")
+    if (verbose) {
+      message("writing to file ", file)
+    }
     write.table(tuning_table,
       file = file, quote = FALSE, row.names = FALSE
     )
