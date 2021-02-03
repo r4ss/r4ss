@@ -636,7 +636,11 @@ SSplotComps <-
                 if (ipage == 1) {
                   if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
                     # get Theta value for this fleet
-                    ipar <- replist[["age_data_info"]][["ParmSelect"]][f]
+                    if(kind %in% "LEN"){
+                      ipar <- replist[["len_data_info"]][["ParmSelect"]][f]
+                    } else { # "AGE" or "cond"
+                      ipar <- replist[["age_data_info"]][["ParmSelect"]][f]
+                    }
                     Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                     # note: in caption below, &#920 = Theta
                     caption_extra <-
