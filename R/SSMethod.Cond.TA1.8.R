@@ -73,7 +73,7 @@
 #'
 SSMethod.Cond.TA1.8 <-
   function(fit, fleet, part = 0:2, seas = NULL,
-           plotit = TRUE, printit = TRUE, datonly = FALSE, plotadj = !datonly,
+           plotit = TRUE, printit = FALSE, datonly = FALSE, plotadj = !datonly,
            maxpanel = 1000, FullDiagOut = FALSE,
            ShowVersionB = FALSE, fleetnames = NULL, add = FALSE) {
     # Check the type is correct and the pick.sex is correct

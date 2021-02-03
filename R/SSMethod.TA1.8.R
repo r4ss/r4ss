@@ -95,7 +95,7 @@
 #'
 SSMethod.TA1.8 <-
   function(fit, type, fleet, part = 0:2, sexes = 0:3, seas = NULL,
-           method = NULL, plotit = TRUE, printit = TRUE,
+           method = NULL, plotit = TRUE, printit = FALSE,
            datonly = FALSE, plotadj = !datonly, maxpanel = 1000,
            fleetnames = NULL, label.part = TRUE, label.sex = TRUE,
            set.pars = TRUE, add = FALSE) {
