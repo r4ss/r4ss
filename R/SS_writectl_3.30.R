@@ -168,11 +168,23 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose) {
   writeComment(paste0("#V", ctllist[["ReadVersion"]]))
   # starter #C means this header will be maintained in control.ss_new file
   # created from a SS model run using this control file.
-  writeComment(paste0(
-    "#C file created using the SS_writectl function ",
-    "in the R package r4ss"
-  ))
-  writeComment(paste("#C file write time:", Sys.time()))
+  if (is.null(ctllist[["Comments"]])){
+    writeComment(paste0(
+      "#C file created using the SS_writectl function ",
+      "in the R package r4ss"
+    ))
+    writeComment(paste("#C file write time:", Sys.time()))
+  } else {
+    Comments <-
+      sapply(ctllist[["Comments"]], function(x) {
+        if (!grepl(x, pattern = "^#C")) {
+          x <- paste0("#C_", x)
+        }
+        x
+      })
+    for (ln in Comments)
+      writeComment(ln)
+  }
   writeComment("#")
 
   # Write the contents ----

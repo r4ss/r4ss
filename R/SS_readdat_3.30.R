@@ -45,6 +45,7 @@ SS_readdat_3.30 <-
       return()
     }
 
+    Comments <- get_comments(dat)
     ###############################################################################
     ## Divide data file into sections ----
     sec.end.inds <- grep("^999\\b", dat)
@@ -183,7 +184,7 @@ SS_readdat_3.30 <-
     if (verbose) {
       message("SS_readdat_3.30 - read version = ", datlist[["ReadVersion"]])
     }
-
+    datlist[["Comments"]] <- Comments
     ##############################################################################
     ## Get general model information ----
     ind <- 1
