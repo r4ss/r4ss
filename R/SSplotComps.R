@@ -641,31 +641,52 @@ SSplotComps <-
                     } else { # "AGE" or "cond"
                       ipar <- replist[["age_data_info"]][["ParmSelect"]][f]
                     }
-                    Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
-                    # note: in caption below, &#920 = Theta
-                    caption_extra <-
-                      paste0(
-                        ".<br><br>'N input' is the input sample size. ",
-                        "'N adj.' is the sample size after adjustment by the ",
-                        "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
-                        "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
-                        "<br><br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
-                        " and the sample size multiplier is approximately ",
-                        "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3),
-                        "<br><br>For more info, see<br>",
-                        "<blockquote>",
-                        "Thorson, J.T., Johnson, K.F., ",
-                        "Methot, R.D. and Taylor, I.G. 2017. ",
-                        "Model-based estimates of effective sample size ",
-                        "in stock assessment models using the ",
-                        "Dirichlet-multinomial distribution. ",
-                        "<i>Fisheries Research</i>",
-                        "192: 84-93. ",
-                        "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
-                        "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
-                        "</blockquote>"
-                      )
-                  } else {
+                    # D-M option 1 (linear)
+                    if(replist[["age_data_info"]][["CompError"]][f] == 1) {
+                      Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                      # note: in caption below &#920 = Theta
+                      caption_extra <-
+                        paste0(
+                          ".<br><br>'N input' is the input sample size. ",
+                          "'N adj.' is the sample size after adjustment by the ",
+                          "Dirichlet-Multinomial <i>&#920</i> parameter based on the ",
+                          "formula N adj. = 1 / (1+<i>&#920</i>) + N * <i>&#920</i> / (1+<i>&#920</i>). ",
+                          "<br><br>For this fleet, <i>&#920</i> = ", round(Theta, 3),
+                          " and the sample size multiplier is approximately ",
+                          "<i>&#920</i> / (1+<i>&#920</i>) = ", round(Theta / (1 + Theta), 3)
+                        )
+                    }
+                    # D-M option 2 (saturating)
+                    if(replist[["age_data_info"]][["CompError"]][f] == 2) {
+                      beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
+                      # note: in captions below &#946 = beta
+                      caption_extra <-
+                        paste0(
+                          ".<br><br>'N input' is the input sample size. ",
+                          "'N adj.' is the sample size after adjustment by the ",
+                          "Dirichlet-Multinomial <i>&#946</i> parameter based on the ",
+                          "formula N adj. = (N + N<i>&#946</i>) / (N + <i>&#946</i>). ",
+                          "<br><br>For this fleet, <i>&#946</i> = ", round(beta, 1),
+                          ". But due to the saturating functional form, there is no single ",
+                          "approximate sample size multiplier."
+                        )
+                    }
+                    caption_extra <- paste0(caption_extra,
+                                            "<br><br>For more info, see<br>",
+                                            "<blockquote>",
+                                            "Thorson, J.T., Johnson, K.F., ",
+                                            "Methot, R.D. and Taylor, I.G. 2017. ",
+                                            "Model-based estimates of effective sample size ",
+                                            "in stock assessment models using the ",
+                                            "Dirichlet-multinomial distribution. ",
+                                            "<i>Fisheries Research</i>",
+                                            "192: 84-93. ",
+                                            "<a href=https://doi.org/10.1016/j.fishres.2016.06.005>",
+                                            "https://doi.org/10.1016/j.fishres.2016.06.005</a>",
+                                            "</blockquote>"
+                                            )
+                    
+                  } else { # if not using Dirichlet-Multinomial likelihood
                     caption_extra <-
                       paste0(
                         ".<br><br>'N adj.' is the input sample size ",
@@ -674,7 +695,7 @@ SSplotComps <-
                         "in the McAllister-Iannelli tuning method."
                       )
                   }
-                }
+                } # end check for ipage == 1
                 file <- paste(filenamestart,
                   filename_fltsexmkt, pagetext, ".png",
                   sep = ""

@@ -1463,16 +1463,53 @@ SS_output <-
         age_data_info[["ParmSelect"]] <- as.numeric(age_data_info[["ParmSelect"]])
         len_data_info[["CompError"]] <- as.numeric(len_data_info[["CompError"]])
         len_data_info[["ParmSelect"]] <- as.numeric(len_data_info[["ParmSelect"]])
-        if (!any(age_data_info[["CompError"]] == 1) & !any(len_data_info[["CompError"]] == 1)) {
+        if (!any(age_data_info[["CompError"]] > 0) & !any(len_data_info[["CompError"]] > 0)) {
           stop(
-            "Problem Dirichlet-Multinomial parameters: \n",
+            "Problem with Dirichlet-Multinomial parameters: \n",
             "  Report file indicates parameters exist, but no CompError values\n",
-            "  in data.ss_new are equal to 1."
+            "  in data.ss_new are > 0."
           )
         }
       }
 
       ## get Dirichlet-Multinomial parameter values and adjust input N
+      ##
+      ## note (2021 Feb 4): the Nsamp_DM column from len_comp_fit_table
+      ## and age_comp_fit_table could be used to get the DM_effN values
+      ## in the future
+
+      get_DM_sample_size <- function(CompError,
+                                     f,
+                                     sub,
+                                     data_info,
+                                     dbase) {
+        ipar <- data_info[["ParmSelect"]][f]
+        if (ipar %in% 1:nrow(DM_pars)) {
+          if(CompError == 1){
+            Theta <- DM_pars[["Theta"]][ipar]
+          }
+          if(CompError == 2){
+            beta <- DM_pars[["Theta"]][ipar]
+          }
+        } else {
+          stop(
+            "Issue with Dirichlet-Multinomial parameter:",
+            "Fleet = ", f, "and ParmSelect = ", ipar
+          )
+        }
+        if(CompError == 1){
+          DM_effN <-
+            1 / (1 + Theta) +
+            dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
+        }
+        if(CompError == 2){
+          DM_effN <-
+            dbase[["Nsamp_adj"]][sub] * (1 + beta) /
+            (dbase[["Nsamp_adj"]][sub] + beta)
+        }
+        DM_effN
+      }
+      
       if (comp) { # only possible if CompReport.sso was read
         if (nrow(agedbase) > 0) {
           agedbase[["DM_effN"]] <- NA
@@ -1485,56 +1522,44 @@ SS_output <-
         }
         # loop over fleets within agedbase
         for (f in unique(agedbase[["Fleet"]])) {
-          if (age_data_info[["CompError"]][f] == 1) {
-            ipar <- age_data_info[["ParmSelect"]][f]
-            if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars[["Theta"]][ipar]
-            } else {
-              stop(
-                "Issue with Dirichlet-Multinomial parameter:",
-                "Fleet = ", f, "and ParmSelect = ", ipar
-              )
-            }
+          # D-M likelihood for age comps
+          if (age_data_info[["CompError"]][f] > 0) {
             sub <- agedbase[["Fleet"]] == f
             agedbase[["DM_effN"]][sub] <-
-              1 / (1 + Theta) + agedbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
-          } # end test for D-M likelihood for this fleet
+              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
+                                 f = f,
+                                 sub = sub,
+                                 data_info = age_data_info,
+                                 dbase = agedbase)
+          } # end test for D-M likelihood in age comp
         } # end loop over fleets within agedbase
 
         # loop over fleets within lendbase
         for (f in unique(lendbase[["Fleet"]])) {
-          if (len_data_info[["CompError"]][f] == 1) {
-            ipar <- len_data_info[["ParmSelect"]][f]
-            if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars[["Theta"]][ipar]
-            } else {
-              stop(
-                "Issue with Dirichlet-Multinomial parameter:",
-                "Fleet = ", f, "and ParmSelect = ", ipar
-              )
-            }
+          # D-M likelihood for len comps
+          if (len_data_info[["CompError"]][f] > 0) {
             sub <- lendbase[["Fleet"]] == f
             lendbase[["DM_effN"]][sub] <-
-              1 / (1 + Theta) + lendbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
-          } # end test for D-M likelihood for this fleet
+              get_DM_sample_size(CompError = len_data_info[["CompError"]][f],
+                                 f = f,
+                                 sub = sub,
+                                 data_info = len_data_info,
+                                 dbase = lendbase)
+          } # end test for D-M likelihood in len comp
         } # end loop over fleets within lendbase
 
         # loop over fleets within condbase
         for (f in unique(condbase[["Fleet"]])) {
-          if (age_data_info[["CompError"]][f] == 1) {
-            ipar <- age_data_info[["ParmSelect"]][f]
-            if (ipar %in% 1:nrow(DM_pars)) {
-              Theta <- DM_pars[["Theta"]][ipar]
-            } else {
-              stop(
-                "Issue with Dirichlet-Multinomial parameter:",
-                "Fleet = ", f, "and ParmSelect = ", ipar
-              )
-            }
+          # D-M likelihood for age comps
+          if (age_data_info[["CompError"]][f] > 0) {
             sub <- condbase[["Fleet"]] == f
             condbase[["DM_effN"]][sub] <-
-              1 / (1 + Theta) + condbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
-          } # end test for D-M likelihood for this fleet
+              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
+                                 f = f,
+                                 sub = sub,
+                                 data_info = age_data_info,
+                                 dbase = condbase)
+          } # end test for D-M likelihood in age comp
         } # end loop over fleets within condbase
       } # end test for whether CompReport.sso info is available
     } # end section related to Dirichlet-Multinomial likelihood
