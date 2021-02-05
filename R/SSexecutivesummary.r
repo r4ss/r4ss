@@ -160,7 +160,7 @@ SSexecutivesummary <- function (replist,
   # ======================================================================
   if (replist[["nsexes"]] == 1 & !(divide_by_2)) {
     if (verbose) {
-      message("Single sex model - spawning biomass NOT beind divided by a factor of 2.")
+      message("Single sex model - spawning biomass NOT being divided by a factor of 2.")
     }
   }
   nsexes <- replist[["nsexes"]]
@@ -681,9 +681,7 @@ SSexecutivesummary <- function (replist,
     }
 
     if (nsexes == 1) {
-      ssb.fore[["dq"]] <- ssb.fore[["dq"]] / sexfactor
-      ssb.fore[["low"]] <- ssb.fore[["low"]] / sexfactor
-      ssb.fore[["high"]] <- ssb.fore[["high"]] / sexfactor
+      ssb.fore <- ssb.fore / sexfactor
     }
 
     smry.fore <- 0
@@ -925,7 +923,7 @@ SSexecutivesummary <- function (replist,
   filename = c(filename, csv_name)
 
   #======================================================================
-  #Time-series Tables
+  # Time-series Tables
   #======================================================================
   if (es_only == FALSE & 'timeseries' %in% tables){
     if(verbose){
