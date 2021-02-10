@@ -7,7 +7,7 @@
 #' @template replist
 #' @param subplots vector controlling which subplots to create
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-#' "GSTAGE", "L@A", or "W@A".
+#' "GSTAGE", "GSTLEN", "L@A", or "W@A".
 #' @param sizemethod if kind = "SIZE" then this switch chooses which of the
 #' generalized size bin methods will be plotted.
 #' @param aalyear Years to plot multi-panel conditional age-at-length fits for
@@ -459,20 +459,19 @@ SSplotComps <-
           HarmEffNage <- NULL
           MeanNage <- NULL
         }
-        # loop over sex combinations
-        ## for(k in (1:3)[testor])
-        ## {
-        ##   if(k==1){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]]==0,]}
-        ##   if(k==2){dbase_k <- dbasef[dbasef[["sex"]]==1 & dbasef[["Pick_sex"]] %in% c(1,3),]}
-        ##   if(k==3){dbase_k <- dbasef[dbasef[["sex"]]==2,]}
-        ##   sex <- ifelse(k==3, 2, 1)
-        ##   if(sex %in% sexes){
-        ##     cat('sex',sex,'\n')
 
-        dbase_k <- dbasef
+        # get table of info about the comp data of this kind/fleet
+        if (kind %in% c("AGE", "GSTAGE", "cond", "GSTcond")) {
+          data_info <- replist[["age_data_info"]]
+        } 
+        if (kind %in% c("LEN", "GSTLEN")) {
+          data_info <- replist[["len_data_info"]]
+        }
+          
+        
         # loop over partitions (discard, retain, total)
-        for (j in unique(dbase_k[["Part"]])) {
-          dbase <- dbase_k[dbase_k[["Part"]] == j, ]
+        for (j in unique(dbasef[["Part"]])) {
+          dbase <- dbasef[dbasef[["Part"]] == j, ]
           # dbase is the final data.frame used in the individual plots
           # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
 
@@ -497,8 +496,6 @@ SSplotComps <-
             dbase[["Yr.S"]] <- dbase[["Yr.S"]] + dbase[["Ageerr"]] / 1000
             dbase[["YrSeasName"]] <- paste(dbase[["YrSeasName"]], "a", dbase[["Ageerr"]], sep = "")
           }
-          ## dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==1] <- dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==1] + 1e-6
-          ## dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==2] <- dbase[["Yr.S"]][dbase_k[["Pick_sex"]]==2] + 2e-6
 
           ## assemble pieces of plot title
           # market category
@@ -637,12 +634,12 @@ SSplotComps <-
                   if ("DM_effN" %in% names(dbase) && any(!is.na(dbase[["DM_effN"]]))) {
                     # get Theta value for this fleet
                     if(kind %in% "LEN"){
-                      ipar <- replist[["len_data_info"]][["ParmSelect"]][f]
+                      ipar <- data_info[["ParmSelect"]][f]
                     } else { # "AGE" or "cond"
-                      ipar <- replist[["age_data_info"]][["ParmSelect"]][f]
+                      ipar <- data_info[["ParmSelect"]][f]
                     }
                     # D-M option 1 (linear)
-                    if(replist[["age_data_info"]][["CompError"]][f] == 1) {
+                    if(data_info[["CompError"]][f] == 1) {
                       Theta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                       # note: in caption below &#920 = Theta
                       caption_extra <-
@@ -657,7 +654,7 @@ SSplotComps <-
                         )
                     }
                     # D-M option 2 (saturating)
-                    if(replist[["age_data_info"]][["CompError"]][f] == 2) {
+                    if(data_info[["CompError"]][f] == 2) {
                       beta <- as.numeric(replist[["Dirichlet_Multinomial_pars"]][["Theta"]][ipar])
                       # note: in captions below &#946 = beta
                       caption_extra <-
@@ -1458,13 +1455,11 @@ SSplotComps <-
       {
         # check for the presence of data
         if (nrow(dbase_kind) > 0) {
-          # no longer subsetting by sex, so mapping directly over
-          dbase_k <- dbase_kind
           # loop over partitions (discard, retain, total)
-          for (j in unique(dbase_k[["Part_group"]])) {
+          for (j in unique(dbase_kind[["Part_group"]])) {
             # dbase is the final data.frame used in the individual plots
             # it is subset based on the kind (age, len, age-at-len), fleet, sex, and partition
-            dbase <- dbase_k[dbase_k[["Part_group"]] == j, ]
+            dbase <- dbase_kind[dbase_kind[["Part_group"]] == j, ]
             if (nrow(dbase) > 0) {
               # market category
               if (j == -1) titlemkt <- ""
