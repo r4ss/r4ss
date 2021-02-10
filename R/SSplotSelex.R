@@ -23,8 +23,7 @@
 #' @param sexes Optional vector to subset genders for which to make plots
 #' (1=females, 2=males)
 #' @param selexlines Vector to select which lines get plotted. values are 1.
-#' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel\*Ret, 5. Dead
-#' = Sel\*(Ret+(1-Ret)\*Mort).
+#' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.
 #' @param subplot Vector controlling which subplots to create
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?

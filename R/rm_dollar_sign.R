@@ -7,7 +7,7 @@
 #' Note also that if a dollar sign is within a text 
 #' string enclosed with quotation marks, it will also not  convert correctly 
 #' (for example, "See test$name" would become 
-#' "See test[["name"]]", which is not parsable R code due to 2 sets of quotation 
+#' "See test\[\["name"\]\]", which is not parsable R code due to 2 sets of quotation 
 #' marks.) Luckily, this last issue is easily discoverable by attempting to load or source 
 #' the function because an error will be produced.
 #' @template file

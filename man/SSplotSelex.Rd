@@ -72,8 +72,7 @@ multi-line plot (default = 1).}
 (1=females, 2=males)}
 
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
-Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel\\emph{Ret, 5. Dead
-= Sel\}(Ret+(1-Ret)\*Mort).}
+Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
 \item{subplot}{Vector controlling which subplots to create}
 

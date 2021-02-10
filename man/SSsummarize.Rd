@@ -43,10 +43,10 @@ be summarized. NULL=all genders. Default=NULL.}
 "numbers" giving units of spawning for each model.}
 
 \item{lowerCI}{Quantile for lower bound on calculated intervals. Default =
-0.025 for 95\\% intervals.}
+0.025 for 95\% intervals.}
 
 \item{upperCI}{Quantile for upper bound on calculated intervals. Default =
-0.975 for 95\\% intervals.}
+0.975 for 95\% intervals.}
 
 \item{verbose}{A logical value specifying if output should be printed
 to the screen. The default is \code{verbose = TRUE}.}

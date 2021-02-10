@@ -22,9 +22,9 @@
 #' @param SpawnOutputUnits Optional single value or vector of "biomass" or
 #' "numbers" giving units of spawning for each model.
 #' @param lowerCI Quantile for lower bound on calculated intervals. Default =
-#' 0.025 for 95\% intervals.
+#' 0.025 for 95% intervals.
 #' @param upperCI Quantile for upper bound on calculated intervals. Default =
-#' 0.975 for 95\% intervals.
+#' 0.975 for 95% intervals.
 #' @template verbose
 #' @author Ian Taylor
 #' @export
