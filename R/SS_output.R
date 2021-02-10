@@ -1115,6 +1115,7 @@ SS_output <-
     morph_indexing <- matchfun2("MORPH_INDEXING", 1,
       header = TRUE, type.convert = TRUE
     )
+    # rename some headers to match output from most recent SS versions
     morph_indexing <- df.rename(morph_indexing,
       oldnames = c("Gpattern", "Bseas", "Gender"),
       newnames = c("GP", "BirthSeas", "Sex")

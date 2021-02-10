@@ -13,6 +13,7 @@
 #' be the directory where the model was run.
 #' @param verbose Verbose output to R console?
 #' @param uncertainty Show 95\% uncertainty intervals around point estimates?
+#' @param add add to existing plot
 #' @param pwidth width of plot
 #' @param pheight height of plot
 #' @param punits units for PNG file
@@ -24,6 +25,7 @@
 SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fishing Mortality",
                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
                            uncertainty = TRUE,
+                           add = FALSE,
                            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10) {
   # plots the summary F (or harvest rate) as set up in the starter file
   # needs a lot of work to be generalized
@@ -60,11 +62,13 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
     Fmax <- max(c(uppFtot, Ftgt + 0.01), na.rm = TRUE)
   }
   plotfun <- function() {
-    plot(0,
-      type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs), ylim = c(0, Fmax),
-      cex.lab = 1.0, cex.axis = 1.0, cex = 0.7
-    )
-    abline(h = 0, col = "grey")
+    if (!add) {
+      plot(0,
+           type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs), ylim = c(0, Fmax),
+           cex.lab = 1.0, cex.axis = 1.0, cex = 0.7
+           )
+      abline(h = 0, col = "grey")
+    }
     if (uncertainty) segments(as.numeric(substring(Ftot[["Label"]], 3, 6)), uppFtot, as.numeric(substring(Ftot[["Label"]], 3, 6)), lowFtot, col = gray(0.5))
     points(as.numeric(substring(Ftot[["Label"]], 3, 6)), Ftot[["Value"]], pch = 16, type = "p")
     abline(h = Ftgt, col = "red")

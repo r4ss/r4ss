@@ -336,9 +336,9 @@ SSplotBiology <-
     if (!is.null(growdat)) {
       # calculate CVs from SD and mean length
       growdat[["CV_Beg"]] <- growdat[["SD_Beg"]] / growdat[["Len_Beg"]]
-
       # female growth
-      growdatF <- growdat[growdat[["Sex"]] == 1 & growdat[["Morph"]] == morphs[1], ]
+      growdatF <- growdat[growdat[["Sex"]] == 1 &
+                          growdat[["Morph"]] == morphs[1], ]
       growdatF[["Sd_Size"]] <- growdatF[["SD_Beg"]]
       if (growthCVtype == "logSD=f(A)") { # lognormal distribution of length at age
         growdatF[["high"]] <- qlnorm(0.975, meanlog = log(growdatF[["Len_Beg"]]), sdlog = growdatF[["Sd_Size"]])
@@ -394,10 +394,15 @@ SSplotBiology <-
         lines(x, biology[[Wt_len_colname]], type = "o", col = colvec[1])
         if (nsexes > 1) {
           lines(x, biology[["Wt_len_M"]], type = "o", col = colvec[2])
-          if (!add) legend(legendloc, bty = "n", c("Females", "Males"), lty = 1, col = c(colvec[1], colvec[2]))
+          if (!add) {
+            legend(legendloc, bty = "n", c("Females", "Males"),
+                   lty = 1, col = c(colvec[1], colvec[2]))
+          }
         }
       } else { ## if empirical weight-at-age IS used
-        wtmat <- wtatage[wtatage[["Fleet"]] == -1 & wtatage[["Sex"]] == sex & wtatage[["Seas"]] == seas, -(2:6)]
+        wtmat <- wtatage[wtatage[["Fleet"]] == -1 &
+                         wtatage[["Sex"]] == sex &
+                         wtatage[["Seas"]] == seas, -(2:6)]
         wtmat <- clean_wtatage(wtmat)
         if (!is.null(wtmat)) {
           ## persp(x=abs(wtmat[["Yr"]]), y=0:accuage,

@@ -70,12 +70,12 @@ SSplotCatch <-
              "Continuous F", # 2
              "Landings", # 3
              "Total catch", # 4
-             "Predicted discards", # 5
+             "Predicted discards", # 5 # should add units
              "Discard fraction", # 6  # need to add by weight or by length
              "(mt)", # 7
              "(numbers x1000)", # 8
              "Observed and expected", # 9
-             "aggregated across seasons"
+             "aggregated across seasons" # 10
            ),
            catchasnumbers = NULL,
            catchbars = TRUE,

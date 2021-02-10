@@ -44,26 +44,31 @@ SSsummarize <- function(biglist,
   dernames <- NULL
   likenames <- NULL
   allyears <- NULL
-
+  
   # figure out how many models and give them names if they don't have them already
   n <- length(biglist)
   modelnames <- names(biglist)
   if (is.null(modelnames)) {
     modelnames <- paste0("model", 1:n)
   }
+  # accumulator age for each model
+  accuages <- rep(NA, n)
+
+  # do the loop
   for (imodel in 1:n) {
     stats <- biglist[[imodel]]
     parnames <- union(parnames, stats[["parameters"]][["Label"]])
     dernames <- union(dernames, stats[["derived_quants"]][["Label"]])
     allyears <- union(allyears, stats[["timeseries"]][["Yr"]])
     likenames <- union(likenames, rownames(stats[["likelihoods_used"]]))
+    # accumulator age for each model
+    accuages[imodel] <- stats$accuage
   }
   allyears <- sort(allyears) # not actually getting any timeseries stuff yet
 
   # objects to store quantities
   pars <- parsSD <- parphases <- as.data.frame(matrix(NA, nrow = length(parnames), ncol = n))
   quants <- quantsSD <- as.data.frame(matrix(NA, nrow = length(dernames), ncol = n))
-  growth <- NULL
   maxgrad <- NULL
   nsexes <- NULL
   likelihoods <- likelambdas <- as.data.frame(matrix(NA, nrow = length(likenames), ncol = n))
@@ -72,6 +77,15 @@ SSsummarize <- function(biglist,
   indices <- NULL
   sizesel <- NULL
   agesel <- NULL
+  accuage <- max(accuages)
+  if(all(accuages == accuage)) {
+    growth <- as.data.frame(matrix(NA, nrow = accuage + 1, ncol = n))
+    names(growth) <- modelnames
+  } else {
+    warning("problem summarizing growth due to different ",
+            "accumulator ages among models")
+    growth <- NULL
+  }
   # notes about what runs were used
   sim <- NULL
   listnames <- NULL
@@ -177,9 +191,20 @@ SSsummarize <- function(biglist,
     growthtemp <- stats[["growthseries"]]
     # check for non-NULL growth output
     if (!is.null(growthtemp)) {
-      imorphf <- ifelse(max(stats[["morph_indexing"]][["Index"]]) == 10, 3, 1)
+      # subset for the female main morph
+      imorphf <- stats[["morph_indexing"]][["Index"]][
+        stats[["morph_indexing"]][["Sex"]] == 1 &
+        stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
+      ]
       growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
-      growth <- cbind(growth, as.numeric(growthtemp[nrow(growthtemp), ]))
+      # remove any rows with all zeros (not sure why these occur)
+      growthtemp <- growthtemp[apply(growthtemp, 1, sum) > 0, ]
+      # get last row and bind to values from previous models
+      if (nrow(growthtemp) > 0) {
+        growth[,imodel] <- as.numeric(growthtemp[nrow(growthtemp), ])
+      } else {
+        growth[,imodel] <- NA
+      }
     }
 
     ## likelihoods (total by component)
