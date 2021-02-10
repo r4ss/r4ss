@@ -10,7 +10,7 @@ SSMethod.Cond.TA1.8(
   part = 0:2,
   seas = NULL,
   plotit = TRUE,
-  printit = TRUE,
+  printit = FALSE,
   datonly = FALSE,
   plotadj = !datonly,
   maxpanel = 1000,

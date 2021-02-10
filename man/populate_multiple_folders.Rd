@@ -34,7 +34,7 @@ should be created.}
 \item{exe.file}{Filename of executable to copy into all the subfolders.
 A value of NULL will skip copying the executable.}
 
-\item{exe.only}{Only copy exe files, don't copy input files}
+\item{exe.only}{Only copy exe files from exe.dir, don't copy input files}
 
 \item{verbose}{Return updates of function progress to the R console?}
 }

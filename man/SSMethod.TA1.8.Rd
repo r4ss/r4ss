@@ -13,7 +13,7 @@ SSMethod.TA1.8(
   seas = NULL,
   method = NULL,
   plotit = TRUE,
-  printit = TRUE,
+  printit = FALSE,
   datonly = FALSE,
   plotadj = !datonly,
   maxpanel = 1000,

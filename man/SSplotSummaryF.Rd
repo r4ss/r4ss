@@ -14,6 +14,7 @@ SSplotSummaryF(
   plotdir = "default",
   verbose = TRUE,
   uncertainty = TRUE,
+  add = FALSE,
   pwidth = 6.5,
   pheight = 5,
   punits = "in",
@@ -40,6 +41,8 @@ be the directory where the model was run.}
 \item{verbose}{Verbose output to R console?}
 
 \item{uncertainty}{Show 95\% uncertainty intervals around point estimates?}
+
+\item{add}{add to existing plot}
 
 \item{pwidth}{width of plot}
 
