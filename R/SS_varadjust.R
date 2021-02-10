@@ -21,7 +21,7 @@
 #' @param verbose TRUE/FALSE switch for amount of detail produced by function.
 #' Default=TRUE.
 #' @author Ian G. Taylor, Gwladys I. Lambert
-#' @seealso \code{\link{SS_tune_comps}}, \code{\link{SS_parlines}}, \code{\link{SS_changepars}}
+#' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export
 #' @examples
 #'

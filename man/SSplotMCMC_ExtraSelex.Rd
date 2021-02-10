@@ -16,7 +16,7 @@ SSplotMCMC_ExtraSelex(
 \arguments{
 \item{post}{A data frame containing either derived_posteriors.sso or a good
 subset of it. This can be an element of the list created by the the
-\code{\link{SSgetMCMC}} function.}
+\code{\link[=SSgetMCMC]{SSgetMCMC()}} function.}
 
 \item{add}{TRUE/FALSE option to add results to an existing plot.}
 

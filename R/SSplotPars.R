@@ -6,7 +6,7 @@
 #'
 #' @template replist
 #' @param plotdir A path to the folder where the plots will be saved. The default
-#' is \code{NULL}, which leads to the plots being created in the folder that
+#' is `NULL`, which leads to the plots being created in the folder that
 #' contains the results.
 #' @param xlab Label on horizontal axis.
 #' @param ylab Label on vertical axis.
@@ -14,14 +14,14 @@
 #' lines?
 #' @param showprior Show prior distribution as black line?
 #' @param showpost Show posterior distribution as bar graph if MCMC results
-#' are available in \code{replist}?
+#' are available in `replist`?
 #' @param showinit Show initial value as red triangle?
 #' @param showdev Include devs in the plot?
 #' @param add Add to existing plot?
 #' @param showlegend Show the legend?
 #' @param fitrange Fit range tightly around MLE & posterior distributions,
 #' instead of full parameter range?
-#' @param xaxs Parameter input for x-axis. See \code{?par} for more info.
+#' @param xaxs Parameter input for x-axis. See `?par` for more info.
 #' @param xlim Optional x-axis limits to be applied to all plots.
 #' Otherwise, limits are based on the model results.
 #' @param ylim Optional y-axis limits to be applied to all plots.
@@ -38,10 +38,10 @@
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param pwidth Default width of plots printed to files in units of
-#' \code{punits}. Default=7.
+#' `punits`. Default=7.
 #' @param pheight Default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
+#' `punits`. Default=7.
+#' @param punits Units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.

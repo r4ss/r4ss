@@ -31,7 +31,7 @@ name before the extension.
 \details{
 The \code{.par} file, which is the only file extension searched for
 with the default entry that does not end in \code{.sso}, is
-modified differently.\code{_i.sso} is added to the file name.
+modified differently.\verb{_i.sso} is added to the file name.
 }
 \author{
 Kelli Faye Johnson

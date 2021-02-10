@@ -9,9 +9,7 @@ SS_readdat_3.24(file, verbose = TRUE, echoall = FALSE, section = NULL)
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
@@ -31,10 +29,10 @@ for a wrapper function that calls either SS_readdat_3.24 or SS_readdat_3.30
 (and potentially additional functions in the future).
 }
 \seealso{
-\code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}}
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readdat]{SS_readdat()}}, \code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}}
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Ian G. Taylor, Yukio Takeuchi, Z. Teresa A'mar, Kelli F. Johnson,

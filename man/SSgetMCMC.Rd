@@ -39,11 +39,11 @@ CSV file.}
 
 \item{keystrings}{Vector of strings that partially match parameter names to
 write to the file csv1. This file intended to feed into
-\code{\link{mcmc.out}}.}
+\code{\link[=mcmc.out]{mcmc.out()}}.}
 
 \item{nuisancestrings}{Vector of strings that partially match derived
 quantity names to write to the file csv2. This file intended to feed into
-\code{\link{mcmc.nuisance}}.}
+\code{\link[=mcmc.nuisance]{mcmc.nuisance()}}.}
 
 \item{burnin}{Optional burn-in value to apply on top of the option in the
 starter file.}
@@ -56,8 +56,8 @@ Reads the MCMC output (in the posteriors.sso and derived_posteriors.sso
 files) from a model.
 }
 \seealso{
-\code{\link{mcmc.out}}, \code{\link{mcmc.nuisance}},
-\code{\link{SSplotPars}}
+\code{\link[=mcmc.out]{mcmc.out()}}, \code{\link[=mcmc.nuisance]{mcmc.nuisance()}},
+\code{\link[=SSplotPars]{SSplotPars()}}
 }
 \author{
 Ian Taylor

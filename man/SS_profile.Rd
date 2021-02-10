@@ -106,10 +106,10 @@ and some models are likely to require rerunning with alternate starting
 values.
 
 Also, someday this function will be improved to work directly with the
-plotting function \code{\link{SSplotProfile}}, but they don't yet work well
-together. Thus, even if \code{\link{SS_profile}} is used, the output should
-be read using \code{\link{SSgetoutput}} or by multiple calls to
-\code{\link{SS_output}} before sending to \code{\link{SSplotProfile}}.
+plotting function \code{\link[=SSplotProfile]{SSplotProfile()}}, but they don't yet work well
+together. Thus, even if \code{\link[=SS_profile]{SS_profile()}} is used, the output should
+be read using \code{\link[=SSgetoutput]{SSgetoutput()}} or by multiple calls to
+\code{\link[=SS_output]{SS_output()}} before sending to \code{\link[=SSplotProfile]{SSplotProfile()}}.
 }
 \examples{
 
@@ -169,8 +169,8 @@ SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
 
 }
 \seealso{
-\code{\link{SSplotProfile}}, \code{\link{SSgetoutput}},
-\code{\link{SS_changepars}}, \code{\link{SS_parlines}}
+\code{\link[=SSplotProfile]{SSplotProfile()}}, \code{\link[=SSgetoutput]{SSgetoutput()}},
+\code{\link[=SS_changepars]{SS_changepars()}}, \code{\link[=SS_parlines]{SS_parlines()}}
 }
 \author{
 Ian Taylor

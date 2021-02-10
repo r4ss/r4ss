@@ -44,5 +44,5 @@ Andrew B. Cooper, Andi Stephens, Neil L. Klaer, Carey R. McGilliard,
 Iago Mosqueira, Watal M. Iwasaki, Kathryn L. Doering, Andrea M. Havron,
 Nathan Vaughan, LaTreese S. Denson, and Ashleigh J. Novak
 
-Package maintainer: Ian G. Taylor <Ian.Taylor@noaa.gov>
+Package maintainer: Ian G. Taylor \href{mailto:Ian.Taylor@noaa.gov}{Ian.Taylor@noaa.gov}
 }

@@ -12,7 +12,7 @@
 #' @param ylo Lower limit of y range.
 #' @param yhi Upper limit of y range.
 #' @param \dots Additional inputs that will be passed to the function
-#' \code{plot(x,y,ylim=ylim,...)}
+#' `plot(x,y,ylim=ylim,...)`
 #' @param sfrac Fraction of width of plot to be used for bar ends.
 #' @param ymax Additional input for Upper limit of y range.
 #' @param add Add points and intervals to existing plot? Default=FALSE.

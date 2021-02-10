@@ -1,7 +1,7 @@
 #' Gather information for the NOAA Species Information System (SIS)
 #'
 #' Processes model results contained in the list created by
-#' \code{\link{SS_output}} in a format that is more convenient for submission
+#' [SS_output()] in a format that is more convenient for submission
 #' to SIS. Currently the results are returned invisibly as a list of two tables
 #' and written to a CSV file from which results could be copied into SIS.
 #' In the future some more direct link could be explored to avoid the manual
@@ -10,17 +10,17 @@
 #' @param model Output from SS_output
 #' @param dir Directory where the file will be written
 #' @param writecsv Write results to a CSV file (where the name will have the
-#' format "[species]_2019_SIS_info.csv" where \code{species}
+#' format "\[stock\]_2019_SIS_info.csv" where `stock`
 #' is an additional input
 #' @param stock String to prepend id info to filename for CSV file
 #' @param final_year Year of assessment and reference points
-#' (typically will be model[["endyr"]] + 1)
+#' (typically will be `model[["endyr"]] + 1`)
 #' @param data_year Last year of of timeseries data
 #' @param sciencecenter Origin of assessment report
 #' @param Mgt_Council Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)
 #' @author Ian G. Taylor, Andi Stephens
 #' @export
-#' @seealso \code{\link{SS_output}}
+#' @seealso [SS_output()]
 #' @examples
 #'
 #' \dontrun{

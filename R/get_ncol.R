@@ -1,7 +1,7 @@
-#' Calculate the number of columns in \code{Report.sso}
+#' Calculate the number of columns in `Report.sso`
 #'
 #' The number of columns is important for the optimization of
-#' \code{\link{SS_output}}. Using a \code{while} loop, this function
+#' [SS_output()]. Using a `while` loop, this function
 #' finds the optimum width for reading in data as a table and
 #' decreases the need for users to pre-specify a width when reading
 #' in files.
@@ -13,9 +13,9 @@
 #' before beginning to read data.
 #' @noRd
 #' @return
-#' An integer value specifying the number of columns in \code{file}.
+#' An integer value specifying the number of columns in `file`.
 #' @author Kelli Faye Johnson
-#' @seealso \code{\link{SS_output}}
+#' @seealso [SS_output()]
 #'
 get_ncol <- function(file, skip = 0, nrows = -1) {
   numcol <- list("yes")

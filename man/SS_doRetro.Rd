@@ -77,7 +77,7 @@ SSplotComparisons(retroSummary, endyrvec = endyrvec, legendlabels = paste("Data"
 
 }
 \seealso{
-\code{\link{SSgetoutput}}
+\code{\link[=SSgetoutput]{SSgetoutput()}}
 }
 \author{
 Ian Taylor, Jim Thorson

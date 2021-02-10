@@ -6,25 +6,25 @@
 ##' profiles. He's surely not the first person to make such a plot
 ##' but the name seems to have stuck.
 ##' @param summaryoutput List created by the function
-##' \code{\link{SSsummarize}}.
+##' [SSsummarize()].
 ##' @param plot Plot to active plot device?
 ##' @param print Print to PNG files?
 ##' @param component Which likelihood component to plot. Default is "Length_like".
 ##' @param main Title for plot. Should match component.
 ##' @param models Optional subset of the models described in
-##' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+##' `summaryoutput`.  Either "all" or a vector of numbers indicating
 ##' columns in summary tables.
 ##' @param fleets Optional vector of fleet numbers to include.
 ##' @param fleetnames Optional character vector of names for each fleet.
 ##' @param profile.string Character string used to find parameter over which the
-##' profile was conducted. If \code{exact=FALSE}, this can be a substring of
+##' profile was conducted. If `exact=FALSE`, this can be a substring of
 ##' one of the SS parameter labels found in the Report.sso file.
 ##' For instance, the default input 'R0'
-##' matches the parameter 'SR_LN(R0)'. If \code{exact=TRUE}, then
+##' matches the parameter 'SR_LN(R0)'. If `exact=TRUE`, then
 ##' profile.string needs to be an exact match to the parameter label.
 ##' @param profile.label Label for x-axis describing the parameter over which
 ##' the profile was conducted.
-##' @param exact Should the \code{profile.string} have to match the parameter
+##' @param exact Should the `profile.string` have to match the parameter
 ##' label exactly, or is a substring OK.
 ##' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
 ##' @param col Optional vector of colors for each line.
@@ -58,9 +58,9 @@
 ##' be the directory where the model was run.
 ##' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 ##' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
-##' freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
-##' can be adjusted using the \code{cutoff_prob} below.
-##' @param cutoff_prob Probability associated with \code{add_cutoff} above.
+##' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
+##' can be adjusted using the `cutoff_prob` below.
+##' @param cutoff_prob Probability associated with `add_cutoff` above.
 ##' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 ##' anything yet.)
 ##' @param fleetgroups Optional character vector, with length equal to

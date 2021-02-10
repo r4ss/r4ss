@@ -55,8 +55,8 @@ reduction of the full information in various parts of the list created using
 the \code{SSsummarize} function.
 }
 \seealso{
-\code{\link{SSsummarize}}, \code{\link{SSplotComparisons}},
-\code{\link{SS_output}}
+\code{\link[=SSsummarize]{SSsummarize()}}, \code{\link[=SSplotComparisons]{SSplotComparisons()}},
+\code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Taylor

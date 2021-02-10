@@ -22,7 +22,7 @@ SSplotRetroRecruits(
 )
 }
 \arguments{
-\item{retroSummary}{List object created by \code{\link{SSsummarize}} that
+\item{retroSummary}{List object created by \code{\link[=SSsummarize]{SSsummarize()}} that
 summarizes the results of a set of retrospective analysis models.ss}
 
 \item{endyrvec}{Vector of years representing the final year of values to
@@ -99,7 +99,7 @@ the Eastern Bering Sea.
 which is on an absolute, rather than log scale.)
 }
 \seealso{
-\code{\link{SSsummarize}}
+\code{\link[=SSsummarize]{SSsummarize()}}
 }
 \author{
 Ian Taylor

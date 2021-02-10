@@ -23,8 +23,7 @@
 #' @param sexes Optional vector to subset genders for which to make plots
 #' (1=females, 2=males)
 #' @param selexlines Vector to select which lines get plotted. values are 1.
-#' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead
-#' = Sel*(Ret+(1-Ret)*Mort).
+#' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.
 #' @param subplot Vector controlling which subplots to create
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
@@ -32,7 +31,7 @@
 #' @param spacepoints number of years between points shown on top of lines (for
 #' long timeseries, points every year get mashed together)
 #' @param staggerpoints number of years to stagger the first point (if
-#' \code{spacepoints > 1}) for each line (so that adjacent lines have points in
+#' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
 #' @param legendloc location of legend. See ?legend for more info.
 #' @param plot Plot to active plot device?
@@ -53,7 +52,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotSelex <-
   function(replist, infotable = NULL,
            fleets = "all", fleetnames = "default",

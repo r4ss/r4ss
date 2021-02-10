@@ -42,11 +42,11 @@
 #' }
 #'
 #' @param print Deprecated input for backward compatibility, now replaced by
-#' \code{png = TRUE/FALSE}.
+#' `png = TRUE/FALSE`.
 #' @param pdf Send plots to PDF file instead of R GUI?
 #' @param png Send plots to PNG files instead of R GUI?
-#' @param html Run \code{\link{SS_html}} on completion? By default has same
-#' value as \code{png}.
+#' @param html Run [SS_html()] on completion? By default has same
+#' value as `png`.
 #' @param printfolder The sub-directory under 'dir' (see below) in which the
 #' PNG files will be located.  The default sub-directory is "plots".
 #' The directory will be created if it doesn\'t exist.
@@ -55,7 +55,7 @@
 #' @param dir The directory in which a PDF file (if requested) will be created
 #' and within which the printfolder sub-directory (see above) will be created
 #' if png=TRUE. By default it will be the same directory that the report file
-#' was read from by the \code{SS_output} function. Alternatives to the default
+#' was read from by the `SS_output` function. Alternatives to the default
 #' can be either relative (to the working directory) or absolute paths.
 #' The function will attempt to create the directory it doesn't exist, but it
 #' does not do so recursively.
@@ -142,10 +142,10 @@
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots? Default=T.
 #' @param pwidth Width of plots printed to files in units of
-#' \code{punits}. Default recently changed from 7 to 6.5.
+#' `punits`. Default recently changed from 7 to 6.5.
 #' @param pheight Height width of plots printed to files in units of
-#' \code{punits}. Default recently changed from 7 to 5.0
-#' @param punits Units for \code{pwidth} and \code{pheight}. Can be "px"
+#' `punits`. Default recently changed from 7 to 5.0
+#' @param punits Units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize Point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default recently changed from 12 to 10.
@@ -202,7 +202,7 @@
 #' @param showprior Show prior distribution as black line in the parameter
 #' distribution plots?
 #' @param showpost Show posterior distribution as bar graph in parameter
-#' distribution plots (requires MCMC results to be available in \code{replist})?
+#' distribution plots (requires MCMC results to be available in `replist`)?
 #' @param showinit Show initial value as red triangle in the parameter
 #' distribution plots?
 #' @param showdev Include devs in the parameter distribution plots?
@@ -211,14 +211,14 @@
 #' @param \dots Additional arguments that will be passed to some subfunctions.
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}, \code{\link{SSplotBiology}},
-#' \code{\link{SSplotCatch}}, \code{\link{SSplotComps}},
-#' \code{\link{SSplotDiscard}}, \code{\link{SSplotIndices}},
-#' \code{\link{SSplotMnwt}}, \code{\link{SSplotNumbers}},
-#' \code{\link{SSplotRecdevs}}, \code{\link{SSplotSelex}},
-#' \code{\link{SSplotSpawnrecruit}}, \code{\link{SSplotSPR}},
-#' \code{\link{SSplotTags}}, \code{\link{SSplotTimeseries}},
-#' \code{\link{SSplotYield}}
+#' @seealso [SS_output()], [SSplotBiology()],
+#' [SSplotCatch()], [SSplotComps()],
+#' [SSplotDiscard()], [SSplotIndices()],
+#' [SSplotMnwt()], [SSplotNumbers()],
+#' [SSplotRecdevs()], [SSplotSelex()],
+#' [SSplotSpawnrecruit()], [SSplotSPR()],
+#' [SSplotTags()], [SSplotTimeseries()],
+#' [SSplotYield()]
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.

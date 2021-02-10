@@ -6,7 +6,7 @@
 #'
 #' @param x A numeric data frame or matrix with the 'x' values. If 'y' is NULL,
 #' these will become the 'y' values and the 'x' positions will be the integers
-#' from 1 to dim(x)[1].
+#' from 1 to `dim(x)[1]`.
 #' @param y The 'y' values.
 #' @param main The title for the plot.
 #' @param xlab x axis labels for the plot.
@@ -25,7 +25,7 @@
 #' @param \dots Additional arguments passed to 'plot'.
 #' @author Jim Lemon, Ian Taylor
 #' @export
-#' @references \url{https://cran.r-project.org/package=plotrix}
+#' @references <https://cran.r-project.org/package=plotrix>
 stackpoly <- function(x, y, main = "", xlab = "", ylab = "", xat = NA,
                       xaxlab = NA, xlim = NA, ylim = NA, lty = 1, border = NA,
                       col = NA, axis4 = F, x.hash = NULL, density = 20, ...)

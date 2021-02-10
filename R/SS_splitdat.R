@@ -3,9 +3,9 @@
 #' A function to split apart bootstrap data files created in data.ss_new.  To
 #' get bootstraps, the input "N bootstrap file to produce" in starter.ss needs
 #' to be 3 or greater. The function can either create a file for just the
-#' input data (if \code{inputs=TRUE}), a file for just the MLE values
-#' (if \code{MLE = TRUE}), or separate files for each of the bootstraps
-#' (if \code{inputs=FALSE} and \code{MLE=FALSE}).
+#' input data (if `inputs=TRUE`), a file for just the MLE values
+#' (if `MLE = TRUE`), or separate files for each of the bootstraps
+#' (if `inputs=FALSE` and `MLE=FALSE`).
 #'
 #'
 #' @param inpath Directory containing the input file. By default the working
@@ -16,7 +16,7 @@
 #' Default="Data.SS_New".
 #' @param outpattern File name of output data file. Default="BootData".
 #' @param number Append bootstrap number to the file name chosen in
-#' \code{outpattern}? Default=F.
+#' `outpattern`? Default=F.
 #' @param verbose Provide richer command line info of function progress?
 #' Default=TRUE.
 #' @param fillblank Replace blank lines with "#". Helps with running on linux.

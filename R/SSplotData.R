@@ -49,8 +49,8 @@
 #' @param mainTitle TRUE/FALSE switch to turn on/off the title on the plot.
 #' @author Ian Taylor, Chantel Wetzel, Cole Monnahan
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}},
-#' \code{\link{SS_readdat}}
+#' @seealso [SS_plots()], [SS_output()],
+#' [SS_readdat()]
 SSplotData <- function(replist,
                        plot = TRUE, print = FALSE,
                        plotdir = "default",

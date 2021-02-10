@@ -33,9 +33,9 @@ SSplotYield(
 \item{subplots}{vector controlling which subplots to create
 Numbering of subplots is as follows:
 \itemize{
-  \item 1 yield curve
-  \item 2 yield curve with reference points
-  \item 3 surplus production vs. biomass plots (Walters et al. 2008)
+\item 1 yield curve
+\item 2 yield curve with reference points
+\item 3 surplus production vs. biomass plots (Walters et al. 2008)
 }}
 
 \item{refpoints}{character vector of which reference points to display in
@@ -85,7 +85,7 @@ dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
 Sci. 65: 2536-2551
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Stewart, Ian Taylor

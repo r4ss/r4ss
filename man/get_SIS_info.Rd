@@ -21,23 +21,23 @@ get_SIS_info(
 \item{dir}{Directory where the file will be written}
 
 \item{writecsv}{Write results to a CSV file (where the name will have the
-format "[species]_2019_SIS_info.csv" where \code{species}
+format "[stock]_2019_SIS_info.csv" where \code{stock}
 is an additional input}
 
 \item{stock}{String to prepend id info to filename for CSV file}
 
 \item{final_year}{Year of assessment and reference points
-(typically will be model[["endyr"]] + 1)}
+(typically will be \code{model[["endyr"]] + 1})}
 
 \item{data_year}{Last year of of timeseries data}
 
 \item{sciencecenter}{Origin of assessment report}
 
-\item{Mgt_Council}{Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (`"GM"`)}
+\item{Mgt_Council}{Council jurisdiction. Currently the only option oustside of the default is Gulf of Mexico (\code{"GM"})}
 }
 \description{
 Processes model results contained in the list created by
-\code{\link{SS_output}} in a format that is more convenient for submission
+\code{\link[=SS_output]{SS_output()}} in a format that is more convenient for submission
 to SIS. Currently the results are returned invisibly as a list of two tables
 and written to a CSV file from which results could be copied into SIS.
 In the future some more direct link could be explored to avoid the manual
@@ -56,7 +56,7 @@ info <- get_SIS_info(model, stock = "SimpleExample")
 
 }
 \seealso{
-\code{\link{SS_output}}
+\code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian G. Taylor, Andi Stephens

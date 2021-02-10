@@ -1,11 +1,11 @@
 #' write data file for SS version 3.30
 #'
 #' Write Stock Synthesis data file from list object in R which was probably
-#' created using \code{\link{SS_readdat}} (which would have called on
-#' \code{\link{SS_readdat_3.30}}).
+#' created using [SS_readdat()] (which would have called on
+#' [SS_readdat_3.30()]).
 #'
 #'
-#' @param datlist List object created by \code{\link{SS_readdat}}.
+#' @param datlist List object created by [SS_readdat()].
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param faster Speed up writing by writing length and age comps without aligning
@@ -15,10 +15,10 @@
 #' Chantel R. Wetzel
 #' @export
 #' @importFrom stats reshape
-#' @seealso \code{\link{SS_writedat}}, \code{\link{SS_writedat_3.24}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
-#' \code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
+#' @seealso [SS_writedat()], [SS_writedat_3.24()],
+#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readstarter()], [SS_writestarter()],
+#' [SS_readforecast()], [SS_writeforecast()]
 #'
 SS_writedat_3.30 <- function(datlist,
                              outfile,

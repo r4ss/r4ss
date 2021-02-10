@@ -6,7 +6,7 @@
 #'
 #' @param post A data frame containing either derived_posteriors.sso or a good
 #' subset of it. This can be an element of the list created by the the
-#' \code{\link{SSgetMCMC}} function.
+#' [SSgetMCMC()] function.
 #' @param add TRUE/FALSE option to add results to an existing plot.
 #' @param nsexes Number of sexes in the model (should match model values but is
 #' only used in the title).

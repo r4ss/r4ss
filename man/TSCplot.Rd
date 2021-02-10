@@ -27,7 +27,7 @@ TSCplot(
 )
 }
 \arguments{
-\item{SSout}{The output from \code{\link{SS_output}}}
+\item{SSout}{The output from \code{\link[=SS_output]{SS_output()}}}
 
 \item{yrs}{The vector of years to plot}
 
@@ -78,14 +78,14 @@ and total dead catch.
 }
 \description{
 Creates a plot of catch and spawning biomass from the output of
-\code{\link{SS_output}} for the NOAA TSC report.
+\code{\link[=SS_output]{SS_output()}} for the NOAA TSC report.
 }
 \details{
 It creates a plot on the current graphics device, in a pdf file, or as a png
 image of the figure used in the TSC report produced by the NWFSC.  It
-expects the SS results read in by \code{\link{SS_output}}.  If MCMC results
+expects the SS results read in by \code{\link[=SS_output]{SS_output()}}.  If MCMC results
 are to be plotted, a 'mcmc' list element should be added using the
-\code{\link{SSgetMCMC}} function. See the examples below.
+\code{\link[=SSgetMCMC]{SSgetMCMC()}} function. See the examples below.
 }
 \examples{
 
@@ -113,7 +113,7 @@ TSCplot(base, ylimDepl = c(0, 1.25), pchSpace = 1, MCMC = TRUE)
 
 }
 \seealso{
-\code{\link{SS_output}} \code{\link{SSgetMCMC}}
+\code{\link[=SS_output]{SS_output()}} \code{\link[=SSgetMCMC]{SSgetMCMC()}}
 }
 \author{
 Allan Hicks

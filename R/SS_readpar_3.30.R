@@ -5,22 +5,22 @@
 #'
 #' @param parfile Filename either with full path or relative to working directory.
 #' @param datsource list or character. If list, should be a list produced
-#' from \code{\link{SS_writedat}}. If character, should be the full file location of an
+#' from [SS_writedat()]. If character, should be the full file location of an
 #' SS data file.
 #' @param ctlsource list or character. If list, should be a list produced
-#' from \code{\link{SS_writectl}}. If character, should be the full file location of an
+#' from [SS_writectl()]. If character, should be the full file location of an
 #' SS control file.
 #' @param verbose Should there be verbose output while running the file?
 #' Default=TRUE.
 #' @author Nathan R. Vaughan
 #' @export
-#' @seealso \code{\link{SS_readctl}},
-#' \code{\link{SS_readdat}},
-#' \code{\link{SS_readstarter}},
-#' \code{\link{SS_readforecast}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}},
-#' \code{\link{SS_writedat}}
+#' @seealso [SS_readctl()],
+#' [SS_readdat()],
+#' [SS_readstarter()],
+#' [SS_readforecast()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()],
+#' [SS_writedat()]
 SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
   if (is.character(datsource)) {
     datlist <- SS_readdat(file = datsource, version = "3.30", verbose = FALSE)

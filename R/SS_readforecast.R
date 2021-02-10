@@ -14,9 +14,9 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian Taylor + Nathan Vaughan
 #' @export
-#' @seealso \code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
-#' \code{\link{SS_writestarter}},
-#' \code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+#' @seealso [SS_readstarter()], [SS_readdat()],
+#' [SS_writestarter()],
+#' [SS_writeforecast()], [SS_writedat()],
 
 SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL, nseas = NULL,
                             version = "3.30", readAll = FALSE, verbose = TRUE) {

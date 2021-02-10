@@ -43,8 +43,8 @@ be the directory where the model was run.}
 \item{subplot}{vector controlling which subplots to create
 Currently there are only 2 subplots:
 \itemize{
-  \item 1 equal size points showing presence/absence of data type by year/fleet
-  \item 2 points scaled to indicate quantity or precision of data
+\item 1 equal size points showing presence/absence of data type by year/fleet
+\item 2 points scaled to indicate quantity or precision of data
 }}
 
 \item{fleetcol}{Either the string "default", or a vector of colors to use
@@ -103,8 +103,8 @@ data types may not yet be included. Note, this is based on output from the
 model, not the input data file.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}},
-\code{\link{SS_readdat}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}},
+\code{\link[=SS_readdat]{SS_readdat()}}
 }
 \author{
 Ian Taylor, Chantel Wetzel, Cole Monnahan

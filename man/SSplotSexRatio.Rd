@@ -43,7 +43,7 @@ SSplotSexRatio(
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-"GSTAGE", "L[at]A", or "W[at]A".}
+"GSTAGE", "L@A", or "W@A".}
 
 \item{sexratio.option}{code to choose among (1) female:male ratio or
 (2) fraction females out of the total}
@@ -128,7 +128,7 @@ Interval Estimation for a Binomial Proportion. Statistical Science.
 16(2): 101-133. http://www.jstor.org/stable/2676784.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{make_multifig_sexratio}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=make_multifig_sexratio]{make_multifig_sexratio()}}
 }
 \author{
 Cole Monnahan, Ian Taylor

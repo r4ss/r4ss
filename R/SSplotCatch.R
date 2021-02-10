@@ -50,7 +50,7 @@
 #' @param verbose Report progress to R console?
 #' @author Ian Taylor, Ian Stewart
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotCatch <-
   function(replist, subplots = 1:16, add = FALSE, areas = 1,
            plot = TRUE, print = FALSE,

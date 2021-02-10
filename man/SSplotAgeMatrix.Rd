@@ -87,7 +87,7 @@ as a histogram. Values are from the AGE_LENGTH_KEY and AGE_AGE_KEY sections
 of Report.sso ($ALK and $AAK in the list created by SS_output)
 }
 \seealso{
-\code{\link{SSplotNumbers}}
+\code{\link[=SSplotNumbers]{SSplotNumbers()}}
 }
 \author{
 Ian G. Taylor

@@ -85,7 +85,7 @@ Plot recruitment deviations and associated quantities including derived
 measures related to bias adjustment.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_fitbiasramp}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_fitbiasramp]{SS_fitbiasramp()}}
 }
 \author{
 Ian Taylor, Ian Stewart

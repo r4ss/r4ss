@@ -1,15 +1,15 @@
 #' write Stock Synthesis data file
 #'
 #' Write Stock Synthesis data file from list object in R which was probably
-#' created using \code{\link{SS_readdat}}. This function is a
+#' created using [SS_readdat()]. This function is a
 #' wrapper which calls either SS_writedat_3.24 or SS_writedat_3.30
 #' (and potentially additional functions in the future). This setup allows those
 #' functions to be cleaner (if somewhat redundant) than a single function that
 #' attempts to do everything.
 #'
 #'
-#' @param datlist List object created by \code{\link{SS_readdat}}
-#' (or by \code{\link{SS_readdat_3.24}} or \code{\link{SS_readdat_3.24}})
+#' @param datlist List object created by [SS_readdat()]
+#' (or by [SS_readdat_3.24()] or [SS_readdat_3.24()])
 #' @param outfile Filename for where to write new data file.
 #' @param version SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30 = 3.3).
@@ -19,10 +19,10 @@
 #' @param verbose Should there be verbose output while running the file?
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert
 #' @export
-#' @seealso \code{\link{SS_writedat_3.24}}, \code{\link{SS_writedat_3.30}},
-#' \code{\link{SS_readdat}}, \code{\link{SS_makedatlist}},
-#' \code{\link{SS_readstarter}}, \code{\link{SS_writestarter}},
-#' \code{\link{SS_readforecast}}, \code{\link{SS_writeforecast}}
+#' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
+#' [SS_readdat()], [SS_makedatlist()],
+#' [SS_readstarter()], [SS_writestarter()],
+#' [SS_readforecast()], [SS_writeforecast()]
 #'
 #'
 SS_writedat <- function(datlist,

@@ -33,7 +33,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 #' @references Walters, Hilborn, and Christensen, 2008, Surplus production
 #' dynamics in declining and recovering fish populations.  Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551

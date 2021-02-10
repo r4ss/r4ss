@@ -28,9 +28,9 @@ directory for particular run.}
 
 \item{file}{Filename either with full path or relative to working directory.
 
-  Contents of the file that is referenced here should contain posterior samples
-  for nuisance parameters, e.g., posteriors.sso or
-  something written by \code{\link{SSgetMCMC}}.}
+Contents of the file that is referenced here should contain posterior samples
+for nuisance parameters, e.g., posteriors.sso or
+something written by \code{\link{SSgetMCMC}}.}
 
 \item{file2}{Optional second file containing posterior samples for nuisance
 parameters. This could be derived_posteriors.sso.}
@@ -41,13 +41,13 @@ addition to \code{file1}.}
 \item{printstats}{Return all the statistics for a closer look.}
 
 \item{burn}{Optional burn-in value to apply on top of the option in the
-starter file and \code{\link{SSgetMCMC}}.}
+starter file and \code{\link[=SSgetMCMC]{SSgetMCMC()}}.}
 
 \item{header}{Data file with header?}
 
 \item{thin}{Optional thinning value to apply on top of the option in the
 starter file, in the \code{mcsave} runtime command, and in
-\code{\link{SSgetMCMC}}.}
+\code{\link[=SSgetMCMC]{SSgetMCMC()}}.}
 
 \item{trace}{Plot trace for param # (to help sort out problem parameters).}
 
@@ -61,10 +61,10 @@ want to consider.}
 }
 \description{
 Summarize nuisance MCMC output (used in combination with
-\code{\link{mcmc.out}} for key parameters).
+\code{\link[=mcmc.out]{mcmc.out()}} for key parameters).
 }
 \seealso{
-\code{\link{mcmc.out}}, \code{\link{SSgetMCMC}}
+\code{\link[=mcmc.out]{mcmc.out()}}, \code{\link[=SSgetMCMC]{SSgetMCMC()}}
 }
 \author{
 Ian Stewart

@@ -59,7 +59,7 @@ populate_multiple_folders(
 
 }
 \seealso{
-\code{\link{copy_SS_inputs}}
+\code{\link[=copy_SS_inputs]{copy_SS_inputs()}}
 }
 \author{
 Ian Taylor

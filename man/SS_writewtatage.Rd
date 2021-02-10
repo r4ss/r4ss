@@ -14,7 +14,7 @@ SS_writewtatage(
 )
 }
 \arguments{
-\item{mylist}{Object created by \code{\link{SS_readwtatage}}.}
+\item{mylist}{Object created by \code{\link[=SS_readwtatage]{SS_readwtatage()}}.}
 
 \item{dir}{A file path to the directory of interest.
 Typically used with \code{file}, an additional input argument,
@@ -35,15 +35,15 @@ should be overwritten. The default value is \code{overwrite = FALSE}.}
 to the screen. The default is \code{verbose = TRUE}.}
 
 \item{warn}{A logical value specifying if a warning should be
-generated if overwriting \code{file}. 
+generated if overwriting \code{file}.
 The default value is \code{warn = TRUE}.}
 }
 \description{
 Write Stock Synthesis weight-at-age file from R object that was probably
-created using \code{\link{SS_readwtatage}}
+created using \code{\link[=SS_readwtatage]{SS_readwtatage()}}
 }
 \seealso{
-\code{\link{SS_readwtatage}}
+\code{\link[=SS_readwtatage]{SS_readwtatage()}}
 }
 \author{
 Kelli Faye Johnson

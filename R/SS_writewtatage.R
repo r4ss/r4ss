@@ -1,19 +1,19 @@
 #' Write weight-at-age file
 #'
 #' Write Stock Synthesis weight-at-age file from R object that was probably
-#' created using \code{\link{SS_readwtatage}}
+#' created using [SS_readwtatage()]
 #'
-#' @param mylist Object created by \code{\link{SS_readwtatage}}.
+#' @param mylist Object created by [SS_readwtatage()].
 #' @template dir
 #' @param file Filename for new weight-at-age file, which
-#' will be appended to \code{dir} to create a full file path.
+#' will be appended to `dir` to create a full file path.
 #' Default="wtatage.ss".
 #' @template overwrite
 #' @template verbose
 #' @template warn
 #' @author Kelli Faye Johnson
 #' @export
-#' @seealso \code{\link{SS_readwtatage}}
+#' @seealso [SS_readwtatage()]
 #'
 SS_writewtatage <- function(mylist, dir = NULL, file = "wtatage.ss",
                             overwrite = FALSE, verbose = TRUE, warn = TRUE) {

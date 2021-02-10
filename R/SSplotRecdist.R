@@ -26,7 +26,7 @@
 #' @param verbose report progress to R GUI?
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SSplotRecdevs}}
+#' @seealso [SS_plots()], [SSplotRecdevs()]
 SSplotRecdist <-
   function(replist, plot = TRUE, print = FALSE,
            areanames = NULL,

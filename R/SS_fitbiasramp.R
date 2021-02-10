@@ -1,7 +1,7 @@
 #' Estimate bias adjustment for recruitment deviates
 #'
 #' Uses standard error of estimated recruitment deviates to estimate the 5
-#' controls (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011})
+#' controls ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092))
 #' for bias adjustment in Stock Synthesis.
 #'
 #' @details
@@ -9,7 +9,7 @@
 #' the likelihood that the estimated recruitmente events, which are
 #' log-normally distributed, are mean unbiased and comparable to results from
 #' Markov chain Mone Carlo estimation routines
-#' (\href{https://doi.org/10.1139/f2011-092}{Methot and Taylor, 2011}).
+#' ([Methot and Taylor, 2011](https://doi.org/10.1139/f2011-092)).
 #' Options to account for the fact that data typically do not equally represent
 #' all modelled time periods are as follows:
 #' \enumerate{
@@ -31,7 +31,7 @@
 #' minimization. Default=NULL.
 #' @param method A method to apply to the 'optim' function. See ?optim for
 #' options. Default="BFGS". By default, optim is not used, and the optimization
-#' is based on the input \code{altmethod}.
+#' is based on the input `altmethod`.
 #' @param twoplots Make a two-panel plot showing devs as well as transformed
 #' uncertainty, or just the second panel in the set?  Default=TRUE.
 #' @param transform An experimental option to treat the transform the 5
@@ -58,7 +58,7 @@
 #' @template cex.main
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_output}}
+#' @seealso [SS_output()]
 #' @template methot2011cjfas
 #'
 SS_fitbiasramp <-

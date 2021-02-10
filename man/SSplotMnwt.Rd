@@ -76,7 +76,7 @@ Plot mean weight data and fits from Stock Synthesis output. Intervals are
 based on T-distributions as specified in model.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Taylor, Ian Stewart

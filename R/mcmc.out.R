@@ -12,14 +12,14 @@
 #' @param namefile The (optional) file name of the dimension and names of
 #' posteriors.
 #' @param names Read in names file (T) or use generic naming (F).
-#' @param headernames Use the names in the header of \code{file}?
+#' @param headernames Use the names in the header of `file`?
 #' @param numparams The number of parameters to analyze.
 #' @param closeall By default close all open devices.
 #' @param burn Optional burn-in value to apply on top of the option in the
-#' starter file and \code{\link{SSgetMCMC}}.
+#' starter file and [SSgetMCMC()].
 #' @param thin Optional thinning value to apply on top of the option in the
-#' starter file, in the \code{-mcsave} runtime command, and in
-#' \code{\link{SSgetMCMC}}.
+#' starter file, in the `-mcsave` runtime command, and in
+#' [SSgetMCMC()].
 #' @param scatter Can add a scatter-plot of all params at end, default is none.
 #' @param surface Add a surface plot of 2-way correlations.
 #' @param surf1 The first parameter for the surface plot.
@@ -27,13 +27,13 @@
 #' @param stats Print stats if desired.
 #' @param plots Show plots or not.
 #' @param header Data file with header?
-#' @param sep Separator for data file passed to the \code{read.table} function.
+#' @param sep Separator for data file passed to the `read.table` function.
 #' @param print Send to screen unless asked to print.
 #' @param new Logical whether or not to open a new plot window before plotting
-#' @param colNames Specific names of the \code{file} to extract and work with. \code{NULL} keeps all columns
+#' @param colNames Specific names of the `file` to extract and work with. `NULL` keeps all columns
 #' @author Ian Stewart, Allan Hicks (modifications)
 #' @export
-#' @seealso \code{\link{mcmc.nuisance}}, \code{\link{SSgetMCMC}}
+#' @seealso [mcmc.nuisance()], [SSgetMCMC()]
 #' @examples
 #'
 #' \dontrun{

@@ -17,9 +17,7 @@ SS_readforecast(
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{Nfleets}{Number of fleets (not required in 3.30).}
 
@@ -39,9 +37,9 @@ either as character or numeric values (noting that numeric 3.30  = 3.3).}
 read Stock Synthesis forecast file into list object in R
 }
 \seealso{
-\code{\link{SS_readstarter}}, \code{\link{SS_readdat}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}},
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readdat]{SS_readdat()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}},
 }
 \author{
 Ian Taylor + Nathan Vaughan

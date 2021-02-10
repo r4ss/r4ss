@@ -7,25 +7,25 @@
 #' @param mydir Directory where model files are located.
 #' @template model
 #' @param extras Additional command line arguments passed to the executable.
-#'   The default, \code{"-nohess"}, runs each jittered model without the hessian.
+#'   The default, `"-nohess"`, runs each jittered model without the hessian.
 #' @param Njitter Number of jitters, or a vector of jitter iterations.
-#'   If \code{length(Njitter) > 1} only the iterations specified will be ran,
-#'   else \code{1:Njitter} will be executed.
+#'   If `length(Njitter) > 1` only the iterations specified will be ran,
+#'   else `1:Njitter` will be executed.
 #' @param Intern Show command line info in R console or keep hidden. The default,
-#'   \code{TRUE}, keeps the executable hidden.
+#'   `TRUE`, keeps the executable hidden.
 #' @param systemcmd Option to switch between 'shell' and 'system'. The default,
-#'   \code{FALSE}, facilitates using the shell command on Windows.
+#'   `FALSE`, facilitates using the shell command on Windows.
 #' @param printlikes A logical value specifying if the likelihood values should
 #'   be printed to the console.
 #' @template verbose
 #' @param jitter_fraction The value, typically 0.1, used to define a uniform
 #'   distribution in cumulative normal space to generate new initial parameter values.
-#'   The default of \code{NULL} forces the user to specify the jitter_fraction
+#'   The default of `NULL` forces the user to specify the jitter_fraction
 #'   in the starter file, and this value must be greater than zero and
 #'   will not be overwritten.
 #' @param init_values_src Either zero or one, specifying if the initial values to
 #'   jitter should be read from the control file or from the par file, respectively.
-#'   The default is \code{NULL}, which will leave the starter file unchanged.
+#'   The default is `NULL`, which will leave the starter file unchanged.
 #' @author James T. Thorson, Kelli F. Johnson, Ian G. Taylor
 #' @return A vector of likelihoods for each jitter iteration.
 #' @export

@@ -22,10 +22,10 @@
 #' @param minnbubble minimum number of years below which blank years will be
 #' added to bubble plots to avoid cropping
 #' @param pwidth default width of plots printed to files in units of
-#' \code{punits}. Default=7.
+#' `punits`. Default=7.
 #' @param pheight default height width of plots printed to files in units of
-#' \code{punits}. Default=7.
-#' @param punits units for \code{pwidth} and \code{pheight}. Can be "px"
+#' `punits`. Default=7.
+#' @param punits units for `pwidth` and `pheight`. Can be "px"
 #' (pixels), "in" (inches), "cm" or "mm". Default="in".
 #' @param ptsize point size for plotted text in plots printed to files (see
 #' help("png") in R for details). Default=12.
@@ -42,7 +42,7 @@
 #' @author Andre E. Punt, Ian G. Taylor, Ashleigh J. Novak
 #' @import ggplot2
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SS_output}}
+#' @seealso [SS_plots()], [SS_output()]
 SSplotTags <-
   function(replist = replist, subplots = 1:10, latency = NULL, taggroups = NULL,
            rows = 1, cols = 1,

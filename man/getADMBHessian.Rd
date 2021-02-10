@@ -25,7 +25,7 @@ Explanation of the methods (in PDF form) published here:
 \url{https://github.com/admb-project/admb-examples/blob/master/admb-tricks/covariance-calculations/ADMB_Covariance_Calculations.pdf}
 }
 \seealso{
-\code{\link{read.admbFit}}, \code{\link{NegLogInt_Fn}}
+\code{\link[=read.admbFit]{read.admbFit()}}, \code{\link[=NegLogInt_Fn]{NegLogInt_Fn()}}
 }
 \author{
 Cole Monnahan

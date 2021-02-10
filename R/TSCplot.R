@@ -1,15 +1,15 @@
 #' Create a plot for the TSC report
 #'
 #' Creates a plot of catch and spawning biomass from the output of
-#' \code{\link{SS_output}} for the NOAA TSC report.
+#' [SS_output()] for the NOAA TSC report.
 #'
 #' It creates a plot on the current graphics device, in a pdf file, or as a png
 #' image of the figure used in the TSC report produced by the NWFSC.  It
-#' expects the SS results read in by \code{\link{SS_output}}.  If MCMC results
+#' expects the SS results read in by [SS_output()].  If MCMC results
 #' are to be plotted, a 'mcmc' list element should be added using the
-#' \code{\link{SSgetMCMC}} function. See the examples below.
+#' [SSgetMCMC()] function. See the examples below.
 #'
-#' @param SSout The output from \code{\link{SS_output}}
+#' @param SSout The output from [SS_output()]
 #' @param yrs The vector of years to plot
 #' @param ylimBar y-axis limits for catch barplot
 #' @param ylimDepl y-axis limits for depletion line
@@ -17,7 +17,7 @@
 #' @param cexBarLabels character expansion for the labels underneath the bars
 #' (years)
 #' @param cex.axis character expansion for the axis labels
-#' @param space space between bars (see space argument of \code{barplot})
+#' @param space space between bars (see space argument of `barplot`)
 #' @param pchDepl character type for points on the depletion line
 #' @param colDepl color of the points on the depletion line
 #' @param lwdDepl width of the depletion line
@@ -28,7 +28,7 @@
 #' numbers help tidy up the plot when plotting many years.
 #' @param ht Height of the plot in inches
 #' @param wd Width of the plot in inches
-#' @param labelLines line argument for \code{mtext} to move the axis labels
+#' @param labelLines line argument for `mtext` to move the axis labels
 #' @param makePDF filename for a pdf file. If NULL it does not make a pdf.  Can
 #' specify a pdf filename or a png filename. Not both at the same time.
 #' @param makePNG filename for a png image. If NULL it does not make a png.
@@ -39,7 +39,7 @@
 #' and total dead catch.
 #' @author Allan Hicks
 #' @export
-#' @seealso \code{\link{SS_output}} \code{\link{SSgetMCMC}}
+#' @seealso [SS_output()] [SSgetMCMC()]
 #' @examples
 #'
 #' \dontrun{

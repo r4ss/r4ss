@@ -8,7 +8,7 @@
 #'
 #' \tabular{ll}{ Package: \tab r4ss\cr Type: \tab Package\cr Version: \tab
 #' 1.41.0\cr Date: \tab 2021-01-11\cr License: \tab GPL-3\cr LazyLoad: \tab
-#' yes\cr URL: \tab \url{https://github.com/r4ss/}\cr }
+#' yes\cr URL: \tab <https://github.com/r4ss/>\cr }
 #' Should be compatible with Stock Synthesis versions 3.24 through 3.30
 #' (specifically version 3.30.16.02, from September 2020).
 #'
@@ -25,8 +25,8 @@
 #' Nathan Vaughan, LaTreese S. Denson, and Ashleigh J. Novak
 #'
 #' Package maintainer: Ian G. Taylor <Ian.Taylor@@noaa.gov>
-#' @references r4ss on GitHub: \url{https://github.com/r4ss}
-#' \cr Download Stock Synthesis: \url{https://vlab.ncep.noaa.gov/web/stock-synthesis/home}
+#' @references r4ss on GitHub: <https://github.com/r4ss>
+#' \cr Download Stock Synthesis: <https://vlab.ncep.noaa.gov/web/stock-synthesis/home>
 #' @import coda
 #' @import kableExtra
 #' @importFrom corpcor pseudoinverse

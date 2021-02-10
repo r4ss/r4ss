@@ -63,8 +63,8 @@ run_SS_models(dirvec = dirvec)
 
 }
 \seealso{
-\code{\link{copy_SS_inputs}},
-\code{\link{populate_multiple_folders}}
+\code{\link[=copy_SS_inputs]{copy_SS_inputs()}},
+\code{\link[=populate_multiple_folders]{populate_multiple_folders()}}
 }
 \author{
 Ian Taylor

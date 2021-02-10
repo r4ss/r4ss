@@ -79,7 +79,7 @@ SSplotMovementRates(myreplist)
 
 }
 \seealso{
-\code{\link{SS_output}}, \code{\link{SSplotMovementRates}},
+\code{\link[=SS_output]{SS_output()}}, \code{\link[=SSplotMovementRates]{SSplotMovementRates()}},
 }
 \author{
 Ian Taylor

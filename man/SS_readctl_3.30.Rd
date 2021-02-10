@@ -27,9 +27,7 @@ SS_readctl_3.30(
 \arguments{
 \item{file}{Filename either with full path or relative to working directory.
 
-
-
-  See the formal arguments for a possible default filename.}
+See the formal arguments for a possible default filename.}
 
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
@@ -83,7 +81,7 @@ parameters. Defaults to 0.}
 determined from control file}
 
 \item{datlist}{list or character. If list, should be a list produced from
-\code{\link{SS_writedat}}. If character, should be the file name of an
+\code{\link[=SS_writedat]{SS_writedat()}}. If character, should be the file name of an
 SS data file.}
 }
 \description{
@@ -92,12 +90,12 @@ This function comes with its wrapper function SS_readctl
 that calls SS_readctl_3.24  or SS_readctl_3.30 (this function).
 }
 \seealso{
-\code{\link{SS_readctl}}, \code{\link{SS_readdat}}
-\code{\link{SS_readdat_3.24}},\code{\link{SS_readdat_3.30}}
-\code{\link{SS_readctl_3.24}},
-\code{\link{SS_readstarter}}, \code{\link{SS_readforecast}},
-\code{\link{SS_writestarter}},
-\code{\link{SS_writeforecast}}, \code{\link{SS_writedat}}
+\code{\link[=SS_readctl]{SS_readctl()}}, \code{\link[=SS_readdat]{SS_readdat()}}
+\code{\link[=SS_readdat_3.24]{SS_readdat_3.24()}},\code{\link[=SS_readdat_3.30]{SS_readdat_3.30()}}
+\code{\link[=SS_readctl_3.24]{SS_readctl_3.24()}},
+\code{\link[=SS_readstarter]{SS_readstarter()}}, \code{\link[=SS_readforecast]{SS_readforecast()}},
+\code{\link[=SS_writestarter]{SS_writestarter()}},
+\code{\link[=SS_writeforecast]{SS_writeforecast()}}, \code{\link[=SS_writedat]{SS_writedat()}}
 }
 \author{
 Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering

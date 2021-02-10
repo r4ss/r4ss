@@ -1,13 +1,13 @@
-#' Check input argument \code{model}
+#' Check input argument `model`
 #'
-#' Check that the executable name provided in \code{model},
-#' an input argument to numerous \code{r4ss} functions,
+#' Check that the executable name provided in `model`,
+#' an input argument to numerous `r4ss` functions,
 #' does not contain the extension and is available.
 #'
 #' @template model
-#' @param mydir The directory where \code{model} is located.
+#' @param mydir The directory where `model` is located.
 #' @author Kelli Faye Johnson
-#' @return A cleaned \code{model} name based on the input argument.
+#' @return A cleaned `model` name based on the input argument.
 
 check_model <- function(model, mydir = getwd()) {
   modelnoexe <- gsub("\\.exe$", "", model)

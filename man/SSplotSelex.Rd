@@ -72,8 +72,7 @@ multi-line plot (default = 1).}
 (1=females, 2=males)}
 
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
-Selectivity, 2. Retention, 3. Discard mortality, 4. Keep = Sel*Ret, 5. Dead
-= Sel*(Ret+(1-Ret)*Mort).}
+Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
 \item{subplot}{Vector controlling which subplots to create}
 
@@ -128,7 +127,7 @@ Plot selectivity, including retention and other quantities, with additional
 plots for time-varying selectivity.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Stewart, Ian Taylor

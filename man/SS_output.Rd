@@ -55,8 +55,8 @@ will end up in the right place, or an absolute path.}
 \item{ncols}{The maximum number of columns in files being read in.  If this
 value is too big the function runs more slowly, too small and errors will
 occur.  A warning will be output to the R command line if the value is too
-small. It should be bigger than the maximum age + 10 and the number of years
-+ 10. The default value is \code{NULL}, which finds the optimum width.}
+small. It should be bigger than the maximum age + 10 and the number of
+years + 10. The default value is \code{NULL}, which finds the optimum width.}
 
 \item{forecast}{Read the forecast-report file?}
 
@@ -121,7 +121,7 @@ myreplist <- SS_output(dir = "c:/SS/Simple/", dir.mcmc = "mcmc")
 
 }
 \seealso{
-\code{\link{SS_plots}}
+\code{\link[=SS_plots]{SS_plots()}}
 }
 \author{
 Ian Stewart, Ian Taylor

@@ -13,7 +13,7 @@
 #' This can also either be an absolute path or relative to the working
 #' directory.
 #' @param dir.mcmc Optional directory containing MCMC output. This can either be
-#' relative to \code{dir}, such that \code{file.path(dir, dir.mcmc)}
+#' relative to `dir`, such that `file.path(dir, dir.mcmc)`
 #' will end up in the right place, or an absolute path.
 #' @param repfile Name of the big report file (could be renamed by user).
 #' @param compfile Name of the composition report file.
@@ -24,8 +24,8 @@
 #' @param ncols The maximum number of columns in files being read in.  If this
 #' value is too big the function runs more slowly, too small and errors will
 #' occur.  A warning will be output to the R command line if the value is too
-#' small. It should be bigger than the maximum age + 10 and the number of years
-#' + 10. The default value is \code{NULL}, which finds the optimum width.
+#' small. It should be bigger than the maximum age + 10 and the number of
+#' years + 10. The default value is `NULL`, which finds the optimum width.
 #' @param forecast Read the forecast-report file?
 #' @param warn Read the Warning.sso file?
 #' @param covar Read covar.sso to get variance information and identify bad
@@ -51,7 +51,7 @@
 #' should probably be created at some point in the future.
 #' @author Ian Stewart, Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}}
+#' @seealso [SS_plots()]
 #' @examples
 #'
 #' \dontrun{

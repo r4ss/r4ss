@@ -5,29 +5,29 @@
 #' total.
 #'
 #'
-#' @param summaryoutput List created by the function \code{\link{SSsummarize}}.
+#' @param summaryoutput List created by the function [SSsummarize()].
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param models Optional subset of the models described in
-#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param profile.string Character string used to find parameter over which the
-#' profile was conducted. If \code{exact=FALSE}, this can be a substring of
+#' profile was conducted. If `exact=FALSE`, this can be a substring of
 #' one of the SS parameter labels found in the Report.sso file.
 #' For instance, the default input 'steep'
-#' matches the parameter 'SR_BH_steep'. If \code{exact=TRUE}, then
+#' matches the parameter 'SR_BH_steep'. If `exact=TRUE`, then
 #' profile.string needs to be an exact match to the parameter label.
 #' @param profile.label Label for x-axis describing the parameter over which
 #' the profile was conducted.
-#' @param exact Should the \code{profile.string} have to match the parameter
+#' @param exact Should the `profile.string` have to match the parameter
 #' label exactly, or is a substring OK.
 #' @param ylab Label for y-axis. Default is "Change in -log-likelihood".
 #' @param components Vector of likelihood components that may be included in
 #' plot. List is further refined by any components that are not present in
 #' model or have little change over range of profile (based on limit
-#' \code{minfraction}). Hopefully this doesn't need to be changed.
+#' `minfraction`). Hopefully this doesn't need to be changed.
 #' @param component.labels Vector of labels for use in the legend that matches
-#' the vector in \code{components}.
+#' the vector in `components`.
 #' @param minfraction Minimum change in likelihood (over range considered) as a
 #' fraction of change in total likelihood for a component to be included in the
 #' figure.
@@ -46,7 +46,7 @@
 #' likelihood.
 #' @param xlim Range for x-axis. Change in likelihood is calculated relative to
 #' values within this range.
-#' @param ymax Maximum y-value. Default is 10\% greater than largest value
+#' @param ymax Maximum y-value. Default is 10% greater than largest value
 #' plotted.
 #' @param xaxs The style of axis interval calculation to be used for the x-axis
 #' (see ?par for more info)
@@ -65,21 +65,21 @@
 #' be the directory where the model was run.
 #' @param add_cutoff Add dashed line at ~1.92 to indicate 95% confidence interval
 #' based on common cutoff of half of chi-squared of p=.95 with 1 degree of
-#' freedom: \code{0.5*qchisq(p=cutoff_prob, df=1)}. The probability value
-#' can be adjusted using the \code{cutoff_prob} below.
-#' @param cutoff_prob Probability associated with \code{add_cutoff} above.
+#' freedom: `0.5*qchisq(p=cutoff_prob, df=1)`. The probability value
+#' can be adjusted using the `cutoff_prob` below.
+#' @param cutoff_prob Probability associated with `add_cutoff` above.
 #' @param verbose Return updates of function progress to the R GUI? (Doesn't do
 #' anything yet.)
-#' @param \dots Additional arguments passed to the \code{plot} command.
-#' @note Someday the function \code{\link{SS_profile}} will be improved and
+#' @param \dots Additional arguments passed to the `plot` command.
+#' @note Someday the function [SS_profile()] will be improved and
 #' made to work directly with this plotting function, but they don't yet work
-#' well together. Thus, even if \code{\link{SS_profile}} is used, the output
-#' should be read using \code{\link{SSgetoutput}} or by multiple calls to
-#' \code{\link{SS_output}}.
+#' well together. Thus, even if [SS_profile()] is used, the output
+#' should be read using [SSgetoutput()] or by multiple calls to
+#' [SS_output()].
 #' @author Ian Taylor, Ian Stewart
 #' @export
-#' @seealso \code{\link{SSsummarize}}, \code{\link{SS_profile}},
-#' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @seealso [SSsummarize()], [SS_profile()],
+#' [SS_output()], [SSgetoutput()]
 SSplotProfile <-
   function(summaryoutput,
            plot = TRUE, print = FALSE,

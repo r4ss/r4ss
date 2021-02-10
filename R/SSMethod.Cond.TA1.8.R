@@ -4,13 +4,13 @@
 #' to do stage-2 weighting of conditional age at length composition data from a
 #' Stock Synthesis model.
 #'
-#' The function outputs a multiplier, \emph{w},
-#' (with bootstrap 95\% confidence intervals) so that
-#' \emph{N2i} = \emph{w} x \emph{N1i},
-#' where \emph{N1i} and \emph{N2i} are the stage-1 and stage-2 multinomial
-#' sample sizes for the \emph{i}th composition. Optionally makes a plot
+#' The function outputs a multiplier, *w*,
+#' (with bootstrap 95% confidence intervals) so that
+#' *N2i* = *w* x *N1i*,
+#' where *N1i* and *N2i* are the stage-1 and stage-2 multinomial
+#' sample sizes for the *i*th composition. Optionally makes a plot
 #' of observed and expected mean ages, with two alternative
-#' sets of confidence limits - based on \emph{N1i} (thin lines) and \emph{N2i}
+#' sets of confidence limits - based on *N1i* (thin lines) and *N2i*
 #' (thick lines) - for the observed values.
 #'
 #' This function formerly reported two versions of w differ according to whether
@@ -32,7 +32,7 @@
 #' in pldat - one row per group).
 #'   \item If the data are to be plotted they are further
 #' grouped by fleet, with one panel of the plot per fleet.
-#'   \item A single multiplier, \emph{w}, is calculated to apply to all the
+#'   \item A single multiplier, *w*, is calculated to apply to all the
 #' selected data.
 #' }
 #'
@@ -64,12 +64,12 @@
 #' @param add add to existing plot
 #' @author Chris Francis, Andre Punt, Ian Taylor
 #' @export
-#' @seealso \code{\link{SSMethod.TA1.8}}
+#' @seealso [SSMethod.TA1.8()]
 #' @references Francis, R.I.C.C. (2011). Data weighting in statistical
 #' fisheries stock assessment models. Can. J. Fish. Aquat. Sci. 68: 1124-1138.
 #'
 #' Punt, A.E. (2015). Some insights into data weighting in integrated stock assessments.
-#' Fish. Res. \url{http://dx.doi.org/10.1016/j.fishres.2015.12.006}
+#' Fish. Res. <http://dx.doi.org/10.1016/j.fishres.2015.12.006>
 #'
 SSMethod.Cond.TA1.8 <-
   function(fit, fleet, part = 0:2, seas = NULL,

@@ -7,7 +7,7 @@
 ##' (2) and (3) are based on all years between the reference and the retrospective run.
 ##'
 ##'
-##' @param summaryoutput List created by \code{SSsummarize}. The expected order for the
+##' @param summaryoutput List created by `SSsummarize`. The expected order for the
 ##' models are the full reference model, the retro -1, retro -2, and so forth.
 ##' @param endyrvec Single year or vector of years representing the
 ##' final year of values to show for each model.

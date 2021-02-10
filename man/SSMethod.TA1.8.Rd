@@ -97,17 +97,17 @@ difficult to be sure that what this function does is
 appropriate for all combinations of options.  The following
 notes might help anyone wanting to check or correct the code.
 \enumerate{
-  \item The code first takes the appropriate database (lendbase, sizedbase,
-        agedbase, or condbase) and removes un-needed rows.
-  \item The remaining rows of the database are grouped into individual
-        comps (indexed by vector indx) and relevant statistics (e.g.,
-        observed and expected mean length or age), and ancillary data,
-        are calculated for each comp (these are stored in pldat - one row
-        per comp).
-        If the data are to be plotted, the comps are grouped, with each
-        group corresponding to a panel in the plot, and groups are indexed
-        by plindx.
-  \item A single multiplier is calculated to apply to all the comps.
+\item The code first takes the appropriate database (lendbase, sizedbase,
+agedbase, or condbase) and removes un-needed rows.
+\item The remaining rows of the database are grouped into individual
+comps (indexed by vector indx) and relevant statistics (e.g.,
+observed and expected mean length or age), and ancillary data,
+are calculated for each comp (these are stored in pldat - one row
+per comp).
+If the data are to be plotted, the comps are grouped, with each
+group corresponding to a panel in the plot, and groups are indexed
+by plindx.
+\item A single multiplier is calculated to apply to all the comps.
 }
 }
 \examples{
@@ -137,7 +137,7 @@ fisheries stock assessment models. Canadian Journal of
 Fisheries and Aquatic Sciences 68: 1124-1138.
 }
 \seealso{
-\code{\link{SSMethod.Cond.TA1.8}}
+\code{\link[=SSMethod.Cond.TA1.8]{SSMethod.Cond.TA1.8()}}
 }
 \author{
 Chris Francis, Andre Punt, Ian Taylor

@@ -60,7 +60,7 @@ Plots the summary F (or harvest rate) as set up in the starter file Needs a
 lot of work to be generalized
 }
 \seealso{
-\code{\link{SSplotTimeseries}}, ~~~
+\code{\link[=SSplotTimeseries]{SSplotTimeseries()}}, ~~~
 }
 \author{
 Allan Hicks

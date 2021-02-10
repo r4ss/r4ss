@@ -26,5 +26,5 @@ A dataframe of 3.24 variance adjustments.
 }
 \description{
 This functionality used to be in SS_readctl_3.30, but ware removed to avoid
- confusion.
+confusion.
 }

@@ -26,7 +26,7 @@ stackpoly(
 \arguments{
 \item{x}{A numeric data frame or matrix with the 'x' values. If 'y' is NULL,
 these will become the 'y' values and the 'x' positions will be the integers
-from 1 to dim(x)[1].}
+from 1 to \code{dim(x)[1]}.}
 
 \item{y}{The 'y' values.}
 

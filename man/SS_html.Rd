@@ -40,7 +40,7 @@ runs. Only do this if you know what you're doing.}
 }
 \description{
 Writes a set of HTML files with tabbed navigation between them.  Depends on
-\code{\link{SS_plots}} with settings in place to write figures to PNG files.
+\code{\link[=SS_plots]{SS_plots()}} with settings in place to write figures to PNG files.
 Should open main file in default browser automatically.
 }
 \note{
@@ -51,7 +51,7 @@ directory. Please provide feedback on any bugs, annoyances, or suggestions
 for improvement.
 }
 \seealso{
-\code{\link{SS_plots}}, \code{\link{SS_output}}
+\code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}
 }
 \author{
 Ian Taylor

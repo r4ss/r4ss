@@ -254,7 +254,7 @@ Function created as an alternative to lattice package for multi-figure plots
 of composition data and fits from Stock Synthesis output.
 }
 \seealso{
-\code{\link{SS_plots}},\code{\link{SSplotComps}}
+\code{\link[=SS_plots]{SS_plots()}},\code{\link[=SSplotComps]{SSplotComps()}}
 }
 \author{
 Ian Taylor

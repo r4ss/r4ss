@@ -20,7 +20,7 @@ and correlations. Required for Jim Thorson's Laplace
 Approximation but likely useful for other purposes.
 }
 \seealso{
-\code{\link{getADMBHessian}}, \code{\link{NegLogInt_Fn}}
+\code{\link[=getADMBHessian]{getADMBHessian()}}, \code{\link[=NegLogInt_Fn]{NegLogInt_Fn()}}
 }
 \author{
 James Thorson

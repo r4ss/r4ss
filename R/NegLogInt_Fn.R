@@ -8,12 +8,12 @@
 #' @param Input_SD_Group_Vec Vector where each element is the standard deviation
 #' for a group of random effects (e.g., a model with a single group of random
 #' effects will have Input_SD_Group_Vec be a vector of length one)
-#' @param CTL_linenum_List List (same length as \code{Input_SD_Group_Vec}),
+#' @param CTL_linenum_List List (same length as `Input_SD_Group_Vec`),
 #' where each
 #' element is a vector giving the line number(s) for the random effect standard
 #' deviation parameter or penalty in the CTL file (and where each line will
 #' correspond to a 7-parameter or 14-parameter line).
-#' @param ESTPAR_num_List List (same length as \code{Input_SD_Group_Vec}),
+#' @param ESTPAR_num_List List (same length as `Input_SD_Group_Vec`),
 #' where each
 #' element is a vector giving the parameter number for the random effect
 #' coefficients in that group of random effects. These "parameter numbers"
@@ -30,11 +30,11 @@
 #' @param Intern Logical flag saying whether to display all ss3 runtime output
 #' in the R terminal
 #' @param ReDoBiasRamp Logical flag saying whether to re-do the bias ramp
-#' (using \code{\link{SS_fitbiasramp}}) each time Stock Synthesis is run.
+#' (using [SS_fitbiasramp()]) each time Stock Synthesis is run.
 #' @param BiasRamp_linenum_Vec Vector giving the line numbers from the CTL file
 #' that contain the information about the bias ramp.
 #' @param CTL_linenum_Type Character vector (same length as
-#' \code{Input_SD_Group_Vec}),
+#' `Input_SD_Group_Vec`),
 #' where each element is either "Short_Param", "Long_Penalty", "Long_Penalty".
 #' Default is NULL, and if not explicitly specified the program will attempt to
 #' detect these automatically based on the length of relevant lines from the CTL
@@ -45,7 +45,7 @@
 #' This string is used for both calling the executable and also finding the
 #' output files like ss.par. For 3.30, it should always be "ss" since the
 #' output file names are hardwired in the TPL code.
-#' @seealso \code{\link{read.admbFit}}, \code{\link{getADMBHessian}}
+#' @seealso [read.admbFit()], [getADMBHessian()]
 #' @author James Thorson
 #' @export
 #' @references Thorson, J.T., Hicks, A.C., and Methot, R.D. 2014. Random

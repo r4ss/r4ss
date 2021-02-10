@@ -1,6 +1,6 @@
 #' Create a bubble plot.
 #'
-#' Bubble plot based on function vaguely based on \code{bubble} by Edzer
+#' Bubble plot based on function vaguely based on `bubble` by Edzer
 #' Pebesma in gstat package. By default, positive values have closed bubbles
 #' and negative values have open bubbles.
 #'
@@ -8,12 +8,12 @@
 #' @param x Vector of x-values.
 #' @param y Vector of y-values.
 #' @param z Vector of bubble sizes, where positive sizes will be plotted as
-#' closed bubbles and negative as open unless \code{allopen==TRUE}.
+#' closed bubbles and negative as open unless `allopen==TRUE`.
 #' @param col Color for bubbles. Should be either a single value or vector
 #' of length equal to x, y, and z vectors.
 #' @param cexZ1 Character expansion (cex) value for a proportion of 1.0.
 #' @param maxsize Size of largest bubble. Preferred option is now an expansion
-#' factor for a bubble with z=1 (see \code{cexZ1} above).
+#' factor for a bubble with z=1 (see `cexZ1` above).
 #' @param do.sqrt Should size be based on the area? (Diameter proportional to
 #' sqrt(z)). Default=TRUE.
 #' @param bg.open background color for open bubbles (border will equal 'col')

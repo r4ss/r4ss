@@ -2,10 +2,10 @@
 #'
 #' Creates a user-chosen set of plots comparing model output from a summary of
 #' multiple models, where the collection was created using the
-#' \code{SSsummarize} function.
+#' `SSsummarize` function.
 #'
 #'
-#' @param summaryoutput List created by \code{SSsummarize}
+#' @param summaryoutput List created by `SSsummarize`
 #' @param subplots Vector of subplots to be created
 #' Numbering of subplots is as follows:
 #' \itemize{
@@ -29,13 +29,13 @@
 #' }
 #' @param plot Plot to active plot device?
 #' @param print Send plots to PNG files in directory specified by
-#' \code{plotdir}?
-#' @param png Has same result as \code{print}, included for consistency with
-#' \code{SS_plots}.
+#' `plotdir`?
+#' @param png Has same result as `print`, included for consistency with
+#' `SS_plots`.
 #' @param pdf Write output to PDF file? Can't be used in conjunction with
-#' \code{png} or \code{print}.
+#' `png` or `print`.
 #' @param models Optional subset of the models described in
-#' \code{summaryoutput}.  Either "all" or a vector of numbers indicating
+#' `summaryoutput`.  Either "all" or a vector of numbers indicating
 #' columns in summary tables.
 #' @param endyrvec Optional single year or vector of years representing the
 #' final year of values to show for each model. By default it is set to the
@@ -59,31 +59,31 @@
 #' @param indexQlabel Add catchability to legend in plot of index fits
 #' (TRUE/FALSE)?
 #' @param indexQdigits Number of significant digits for catchability in legend
-#' (if \code{indexQlabel=TRUE})
+#' (if `indexQlabel=TRUE`)
 #' @param indexSEvec Optional replacement for the SE values in
-#' summaryoutput[["indices"]] to deal with the issue of differing uncertainty by
+#' `summaryoutput[["indices"]]` to deal with the issue of differing uncertainty by
 #' models described above.
 #' @param indexPlotEach TRUE plots the observed index for each model with
 #' colors, or FALSE just plots observed once in black dots.
 #' @param labels Vector of labels for plots (titles and axis labels)
 #' @param col Optional vector of colors to be used for lines. Input NULL
-#' makes use of \code{rich.colors.short} function.
+#' makes use of `rich.colors.short` function.
 #' @param shadecol Optional vector of colors to be used for shading uncertainty
 #' intervals. The default (NULL) is to use the same colors provided by
-#' \code{col} (either the default or a user-chosen input) and make them
-#' more transparent by applying the \code{shadealpha} input as an alpha
-#' transparency value (using the \code{adjustcolor()} function)
+#' `col` (either the default or a user-chosen input) and make them
+#' more transparent by applying the `shadealpha` input as an alpha
+#' transparency value (using the `adjustcolor()` function)
 #' @param pch Optional vector of plot character values
 #' @param lty Optional vector of line types
 #' @param lwd Optional vector of line widths
 #' @param spacepoints Number of years between points shown on top of lines (for
 #' long timeseries, points every year get mashed together)
 #' @param staggerpoints Number of years to stagger the first point (if
-#' \code{spacepoints > 1}) for each line (so that adjacent lines have points in
+#' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
 #' @param initpoint Year value for first point to be added to lines.
 #' Points added to plots are those that satisfy
-#' (Yr-initpoint)\%\%spacepoints == (staggerpoints*iline)\%\%spacepoints
+#' (Yr-initpoint)%%spacepoints == (staggerpoints*iline)%%spacepoints
 #' @param tickEndYr TRUE/FALSE switch to turn on/off extra axis mark at final
 #' year in timeseries plots.
 #' @param shadeForecast TRUE/FALSE switch to turn on off shading of years beyond
@@ -99,7 +99,7 @@
 #' TRUE/FALSE value, or a vector of TRUE/FALSE values for each model,
 #' or a set of integers corresponding to the choice of models.
 #' @param shadealpha Transparency adjustment used to make default shadecol
-#' values (implemented as \code{adjustcolor(col=col, alpha.f=shadealpha)})
+#' values (implemented as `adjustcolor(col=col, alpha.f=shadealpha)`)
 #' @param legend Add a legend?
 #' @param legendlabels Optional vector of labels to include in legend. Default
 #' is 'model1','model2',etc.
@@ -127,11 +127,11 @@
 #' @param filenameprefix Additional text to append to PNG or PDF file names.
 #' It will be separated from default name by an underscore.
 #' @param densitynames Vector of names (or subset of names) of parameters or
-#' derived quantities contained in summaryoutput[["pars"]][["Label"]] or
-#' summaryoutput[["quants"]][["Label"]] for which to make density plots
+#' derived quantities contained in `summaryoutput[["pars"]][["Label"]]` or
+#' `summaryoutput[["quants"]][["Label"]]` for which to make density plots
 #' @param densityxlabs Optional vector of x-axis labels to use in the density
 #' plots (must be equal in length to the printed vector of quantities that
-#' match the \code{densitynames} input)
+#' match the `densitynames` input)
 #' @param rescale TRUE/FALSE control of automatic rescaling of units into
 #' thousands, millions, or billions
 #' @param densityscalex Scalar for upper x-limit in density plots (values below
@@ -143,10 +143,10 @@
 #' @param densityadjust Multiplier on bandwidth of kernel in density function
 #' used for smoothing MCMC posteriors. See 'adjust' in ?density for details.
 #' @param densitysymbols Add symbols along lines in density plots. Quantiles
-#' are \code{c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)}.
-#' @param densitytails Shade tails outside of 95\% interval darker in
+#' are `c(0.025,0.1,0.25,0.5,0.75,0.9,0.975)`.
+#' @param densitytails Shade tails outside of 95% interval darker in
 #' density plots?
-#' @param densitymiddle Shade middle inside of 95\% interval darker in
+#' @param densitymiddle Shade middle inside of 95% interval darker in
 #' density plots?
 #' @param densitylwd Line width for density plots
 #' @param fix0 Always include 0 in the density plots?
@@ -154,7 +154,7 @@
 #' @param add Allows single plot to be added to existing figure. This needs to
 #' be combined with specific 'subplots' input to make sure only one thing gets
 #' added.
-#' @param par list of graphics parameter values passed to the \code{par}
+#' @param par list of graphics parameter values passed to the `par`
 #' function
 #' @param verbose Report progress to R GUI?
 #' @param mcmcVec Vector of TRUE/FALSE values (or single value) indicating
@@ -165,8 +165,8 @@
 #' useful to turn off. Defaults to TRUE.
 #' @author Ian G. Taylor, John R. Wallace
 #' @export
-#' @seealso \code{\link{SS_plots}}, \code{\link{SSsummarize}},
-#' \code{\link{SS_output}}, \code{\link{SSgetoutput}}
+#' @seealso [SS_plots()], [SSsummarize()],
+#' [SS_output()], [SSgetoutput()]
 #' @examples
 #'
 #' \dontrun{

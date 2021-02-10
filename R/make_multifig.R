@@ -25,7 +25,7 @@
 #' @param cols number or cols to return to as default for next plots to come or
 #' for single plots
 #' @param fixdims fix the dimensions at maxrows by maxcols or resize based on
-#' number of elements in \code{yr} input.
+#' number of elements in `yr` input.
 #' @param main title of plot
 #' @param cex.main character expansion for title
 #' @param xlab x-axis label
@@ -104,10 +104,10 @@
 #' passed to this function via the ... argument.
 #' @param multifig_oma vector of outer margins. Can be input to SS_plots and will be
 #' passed to this function via the ... argument.
-#' @param \dots additional arguments passed to \code{par}.
+#' @param \dots additional arguments passed to `par`.
 #' @author Ian Taylor
 #' @export
-#' @seealso \code{\link{SS_plots}},\code{\link{SSplotComps}}
+#' @seealso [SS_plots()],[SSplotComps()]
 make_multifig <-
   function(ptsx, ptsy, yr, linesx = 0, linesy = 0, ptsSD = 0,
            sampsize = 0, effN = 0,
