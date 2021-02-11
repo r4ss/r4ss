@@ -1986,8 +1986,8 @@ SS_output <-
 
       # make older SS output names match current SS output conventions
       recruit <- df.rename(recruit,
-        oldnames = c("year", "spawn_bio", "adjusted"),
-        newnames = c("Yr", "SpawnBio", "bias_adjusted")
+        oldnames = c("year", "spawn_bio", "adjusted", "biasadj"),
+        newnames = c("Yr", "SpawnBio", "bias_adjusted", "biasadjuster")
       )
     }
 
