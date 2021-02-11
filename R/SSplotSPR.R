@@ -39,8 +39,10 @@ SSplotSPR <-
            labels = c(
              "Year", # 1
              "SPR", # 2
-             "1-SPR"
-           ), # 3
+             "1-SPR", # 3
+             "Relative fishing intensity", # 4
+             "Relative spawning output" # 5
+           ),
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            plotdir = "default",
            verbose = TRUE) {
@@ -83,7 +85,7 @@ SSplotSPR <-
     good <- sprseries[["Yr"]] <= endyr
     if (forecastplot) good <- rep(TRUE, nrow(sprseries))
 
-    sprfunc <- function() {
+    spr_timeseries <- function() {
       if (!add) {
         plot(0,
           xlab = labels[1], ylab = labels[2], xlim = range(sprseries[["Yr"]][good]),
@@ -97,20 +99,22 @@ SSplotSPR <-
     }
 
     if (1 %in% subplots) {
-      if (plot) sprfunc()
+      if (plot) spr_timeseries()
       if (print) {
         file <- "SPR1_series.png"
         caption <- "Timeseries of SPR"
         plotinfo <- pngfun(file = file, caption = caption)
-        sprfunc()
+        spr_timeseries()
         dev.off()
       }
     }
 
     # temporary disable multi-season models until code cleanup
-    if (nseasons > 1) cat("Skipped additional SPR plots because they're not yet configured for multi-season models\n")
+    if (nseasons > 1) {
+      message("Skipped 1-SPR plot because it's not yet configured for multi-season models\n")
+    }
     if (nseasons == 1) {
-      sprfunc2 <- function() {
+      minus_spr_timeseries <- function() {
         if (!add) {
           plot(0,
             xlim = range(sprseries[["Yr"]][good]),
@@ -124,113 +128,304 @@ SSplotSPR <-
       }
 
       if (2 %in% subplots) {
-        if (plot) sprfunc2()
+        if (plot) minus_spr_timeseries()
         if (print) {
           file <- "SPR2_minusSPRseries.png"
           caption <- "Timeseries of 1-SPR"
           plotinfo <- pngfun(file = file, caption = caption)
-          sprfunc2()
+          minus_spr_timeseries()
           dev.off()
         }
       }
+    } # end check for nseasons == 1
 
-      if (!uncertainty | sprtarg <= 0) {
-        cat("skipped SPR ratio timeseries: requires both sprtarg>0 and uncertainty=TRUE.\n")
-      } else {
-        sprratiostd <- derived_quants[substring(derived_quants[["Label"]], 1, 8) == "SPRratio", ]
-        sprratiostd[["Yr"]] <- as.numeric(substring(sprratiostd[["Label"]], 10))
-        sprratiostd[["period"]] <- "fore"
-        sprratiostd[["period"]][sprratiostd[["Yr"]] <= (endyr)] <- "time"
-        sprratiostd[["upper"]] <- sprratiostd[["Value"]] + 1.96 * sprratiostd[["StdDev"]]
-        sprratiostd[["lower"]] <- pmax(sprratiostd[["Value"]] - 1.96 * sprratiostd[["StdDev"]], 0) # max of value or 0
-        ylab <- managementratiolabels[1, 2]
-        ylim <- c(0, max(1, sprratiostd[["upper"]][sprratiostd[["period"]] == "time"]))
-        sprfunc3 <- function() {
-          if (!add) {
-            plot(sprratiostd[["Yr"]][sprratiostd[["period"]] == "time"], sprratiostd[["Value"]][sprratiostd[["period"]] == "time"],
-              xlab = labels[1], ylim = ylim, ylab = ylab, type = "n"
-            )
-          }
-          lines(sprratiostd[["Yr"]][sprratiostd[["period"]] == "time"], sprratiostd[["Value"]][sprratiostd[["period"]] == "time"],
-            type = "o", col = col2
-          )
-          abline(h = 0, col = "grey")
-          abline(h = 1, col = col4)
-          text((min(sprratiostd[["Yr"]]) + 4), (1 + 0.02), "Management target", adj = 0)
-          lines(sprratiostd[["Yr"]][sprratiostd[["period"]] == "time"], sprratiostd[["upper"]][sprratiostd[["period"]] == "time"], col = col2, lty = "dashed")
-          lines(sprratiostd[["Yr"]][sprratiostd[["period"]] == "time"], sprratiostd[["lower"]][sprratiostd[["period"]] == "time"], col = col2, lty = "dashed")
-        }
-        if (3 %in% subplots) {
-          if (plot) sprfunc3()
-          if (print) {
-            file <- "SPR3_ratiointerval.png"
-            caption <- "Timeseries of SPR ratio"
-            plotinfo <- pngfun(file = file, caption = caption)
-            sprfunc3()
-            dev.off()
-          }
-        }
+    # get SPR ratio and uncertainty
+    SPRratio <- derived_quants[grep(
+      "^SPRratio_",
+      derived_quants[["Label"]]
+    ), ]
+    # add "Yr" column based on string in label
+    SPRratio[["Yr"]] <- as.numeric(substring(SPRratio[["Label"]], 10))
+    # add "period" column to populate with different eras
+    SPRratio[["period"]] <- "fore"
+    SPRratio[["period"]][SPRratio[["Yr"]] <= (endyr)] <- "time"
+    # calculate 95% intervals
+    SPRratio[["upper"]] <- qnorm(
+      p = 0.975,
+      mean = SPRratio[["Value"]],
+      sd = SPRratio[["StdDev"]]
+    )
+    SPRratio[["lower"]] <- qnorm(
+      p = 0.025,
+      mean = SPRratio[["Value"]],
+      sd = SPRratio[["StdDev"]]
+    )
+
+    # get B ratio and uncertainty
+    Bratio <- derived_quants[grep("^Bratio_", derived_quants[["Label"]]), ]
+    # add "Yr" column based on string in label
+    Bratio[["Yr"]] <- as.numeric(substring(Bratio[["Label"]], 8))
+    # add "period" column to populate with different eras
+    Bratio[["period"]] <- "fore"
+    Bratio[["period"]][Bratio[["Yr"]] <= (endyr)] <- "time"
+    # calculate 95% intervals
+    Bratio[["upper"]] <- qnorm(
+      p = 0.975,
+      mean = Bratio[["Value"]],
+      sd = Bratio[["StdDev"]]
+    )
+    Bratio[["lower"]] <- qnorm(
+      p = 0.025,
+      mean = Bratio[["Value"]],
+      sd = Bratio[["StdDev"]]
+    )
+    Bratio_endyr_SD <- Bratio[["StdDev"]][Bratio[["Yr"]] == endyr]
+    SPRratio_endyr_SD <- SPRratio[["StdDev"]][SPRratio[["Yr"]] == endyr]
+    B_SPR_endyr_corr <- replist$CoVar[
+      replist$CoVar$label.i %in%
+        paste0("Bratio_", endyr) &
+        replist$CoVar$label.j %in%
+          paste0("SPRratio_", endyr),
+      "corr"
+    ]
+
+    # x-axis label for phase plot
+    xlab <- paste0(labels[5], ": ", replist[["Bratio_label"]])
+    # y-axis label and limits for time series and phase plot
+    ylab <- paste0(labels[4], ": ", replist[["SPRratioLabel"]])
+    # if not a ratio, take out the word "Relative"
+    if (!grepl(pattern = "/", x = ylab, fixed = TRUE)) {
+      ylab <- gsub(
+        pattern = "Relative fishing",
+        replacement = "Fishing",
+        x = ylab
+      )
+    }
+    ylim <- c(0, max(1, SPRratio[["upper"]][SPRratio[["period"]] == "time"]))
+
+    spr_ratio_timeseries <- function() {
+      if (!add) {
+        plot(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+          SPRratio[["Value"]][SPRratio[["period"]] == "time"],
+          xlab = labels[1], ylim = ylim, ylab = ylab, type = "n"
+        )
       }
+      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+        SPRratio[["Value"]][SPRratio[["period"]] == "time"],
+        type = "o", col = col2
+      )
+      abline(h = 0, col = "grey")
+      abline(h = 1, col = col4)
+      text((min(SPRratio[["Yr"]]) + 4), (1 + 0.02),
+        "Management target",
+        adj = 0
+      )
+      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+        SPRratio[["upper"]][SPRratio[["period"]] == "time"],
+        col = col2, lty = "dashed"
+      )
+      lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
+        SPRratio[["lower"]][SPRratio[["period"]] == "time"],
+        col = col2, lty = "dashed"
+      )
+    }
+    if (3 %in% subplots) {
+      if (plot) spr_ratio_timeseries()
+      if (print) {
+        file <- "SPR3_ratiointerval.png"
+        caption <- paste("Timeseries of SPR ratio:",
+                         replist[["SPRratioLabel"]])
+        plotinfo <- pngfun(file = file, caption = caption)
+        spr_ratio_timeseries()
+        dev.off()
+      }
+    }
 
-      if (4 %in% subplots) {
-        if (btarg <= 0 | sprtarg <= 0) {
-          cat("skipped SPR phase plot because btarg or sprtarg <= 0\n")
-        } else {
-          timeseries[["Yr"]] <- timeseries[["Yr"]] + (timeseries[["Seas"]] - 1) / nseasons
-          # !subsetting to season 1 only, initially just getting area 1
-          ts <- timeseries[timeseries[["Seas"]] == 1 &
-            timeseries[["Area"]] == 1 &
-            timeseries[["Yr"]] <= endyr, ]
-          # if there is more than 1 area, add them in now
-          # this could be done using "aggregate" but this approach is more foolproof (hopefully)
-          if (nareas > 1) {
-            for (iarea in 2:nareas) {
-              ts_area_i <- timeseries[timeseries[["Seas"]] == 1 &
-                timeseries[["Area"]] == iarea &
-                timeseries[["Yr"]] <= endyr, ]
-              ts[["SpawnBio"]] <- ts[["SpawnBio"]] + ts_area_i[["SpawnBio"]]
-            }
-          }
-          # divide spawning biomass by 2 for single-sex models
-          if (nsexes == 1) {
-            ts[["SpawnBio"]] <- ts[["SpawnBio"]] / 2
-          }
-          # calculate depletion
-          depletionseries <- ts[["SpawnBio"]] / ts[["SpawnBio"]][1]
-          reldep <- depletionseries[ts[["Yr"]] %in% sprseries[["Yr"]]] / btarg
-          relspr <- (1 - sprseries[["spr"]][sprseries[["Yr"]] <= endyr]) / (1 - sprtarg)
-          # set axis limits
-          xmax <- 1.1 * max(reldep)
-          ymax <- 1.1 * max(1, relspr[!is.na(relspr)])
-          ylab <- managementratiolabels[1, 2]
-          # function to make the plot
-          phasefunc <- function() {
-            if (!add) {
-              plot(reldep, relspr,
-                xlab = "B/Btarget",
-                xlim = c(0, xmax), ylim = c(0, ymax), ylab = ylab, type = "n"
-              )
-            }
-            lines(reldep, relspr, type = "o", col = col2)
-            abline(h = 0, col = "grey")
-            abline(v = 0, col = "grey")
-            lines(reldep, relspr, type = "o", col = col2)
-            points(reldep[length(reldep)], relspr[length(relspr)], col = col4, pch = 19)
-            abline(h = 1, col = col4, lty = 2)
-            abline(v = 1, col = col4, lty = 2)
-          }
 
-          if (plot) phasefunc()
-          if (print) {
-            file <- "SPR4_phase.png"
-            caption <- "Phase plot of biomass ratio vs. SPR ratio"
-            plotinfo <- pngfun(file = file, caption = caption)
-            phasefunc()
-            dev.off()
+    make.phase.plot.MLE <- function(x.max = 1.3,
+                                    y.max = 1.3,
+                                    period = "time") {
+      # this function modified from make.phase.plot for Pacific Hake at
+      # https://github.com/pacific-hake/hake-assessment/blob/master/R/figures-timeseries.R
+
+      # Plots the relative fishing intensity in year t against
+      # relative spawning biomass in year t
+      Bratio_yrs <- Bratio[["Yr"]][Bratio[["period"]] %in% period]
+      Bratio_vals <- Bratio[["Value"]][Bratio[["period"]] %in% period]
+      SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% Bratio_yrs]
+
+      plot(Bratio_vals,
+        SPRratio_vals,
+        type = "n",
+        pch = 20,
+        xlim = c(0, 1.1 * max(1, Bratio_vals)),
+        ylim = c(0, 1.1 * max(1, SPRratio_vals[!is.na(SPRratio_vals)])),
+        xlab = xlab,
+        ylab = ylab,
+        xaxs = "i",
+        yaxs = "i"
+      )
+      colvec <- rev(rich.colors.short(n = length(Bratio_vals)))
+      arrows(Bratio_vals[-length(Bratio_vals)],
+        SPRratio_vals[-length(SPRratio_vals)],
+        Bratio_vals[-1],
+        SPRratio_vals[-1],
+        length = 0.09,
+        col = colvec
+      )
+      # add points for each year:
+      points(Bratio_vals,
+        SPRratio_vals,
+        pch = 21,
+        col = 1,
+        bg = colvec
+      )
+
+      # add uncertainty intervals for final year:
+      segments(
+        x0 = Bratio[["Value"]][Bratio[["Yr"]] == endyr],
+        y0 = SPRratio[["lower"]][SPRratio[["Yr"]] == endyr],
+        x1 = Bratio[["Value"]][Bratio[["Yr"]] == endyr],
+        y1 = SPRratio[["upper"]][SPRratio[["Yr"]] == endyr],
+        col = rgb(0, 0, 0, 0.5)
+      )
+      segments(
+        x0 = Bratio[["lower"]][Bratio[["Yr"]] == endyr],
+        y0 = SPRratio[["Value"]][SPRratio[["Yr"]] == endyr],
+        x1 = Bratio[["upper"]][Bratio[["Yr"]] == endyr],
+        y1 = SPRratio[["Value"]][SPRratio[["Yr"]] == endyr],
+        col = rgb(0, 0, 0, 0.5)
+      )
+
+      # get mean and variance-covariance matrix of bivariate normal
+      # joint distribution based on normal approxmation from ADMB
+      mu <- c(
+        Bratio[["Value"]][Bratio[["Yr"]] == endyr],
+        SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
+      )
+      sigma <- matrix(
+        data = c(
+          Bratio_endyr_SD^2,
+          Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
+          Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
+          SPRratio_endyr_SD^2
+        ),
+        nrow = 2,
+        ncol = 2
+      )
+
+      # calculate 95% ellipse showing correlation among the points
+      # calculate points using code from mixtools::ellipse()
+      # which has GPL-2 | GPL-3 license
+      # https://CRAN.R-project.org/package=mixtools
+      es <- eigen(sigma)
+      e1 <- es$vec %*% diag(sqrt(es$val))
+      r1 <- sqrt(qchisq(0.95, 2))
+      theta <- seq(0, 2 * pi, len = 250)
+      v1 <- cbind(r1 * cos(theta), r1 * sin(theta))
+      pts <- t(mu - (e1 %*% t(v1)))
+
+      # add polygon
+      polygon(pts,
+        col = gray(0, alpha = 0.2),
+        border = NA
+      )
+
+      # label first and final years:
+      yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
+      text(
+        x = Bratio_vals[1],
+        y = SPRratio_vals[1],
+        labels = yr,
+        cex = 0.6,
+        pos = 4,
+        col = colvec[1]
+      )
+      yr <- max(Bratio[["Yr"]][Bratio[["period"]] %in% period])
+      text(
+        x = Bratio_vals[length(Bratio_vals)],
+        y = SPRratio_vals[length(Bratio_vals)] + 0.015,
+        labels = yr,
+        pos = 2,
+        cex = 0.6,
+        col = colvec[length(colvec)]
+      )
+
+      # add lines at 1.0 in each dimension
+      abline(
+        h = 1,
+        v = 1,
+        lty = 2,
+        col = rgb(0, 0, 0, 0.4)
+      )
+
+      # add bigger points for first and final years
+      points(Bratio_vals[1],
+        SPRratio_vals[1],
+        pch = 21,
+        col = 1,
+        bg = colvec[1],
+        cex = 1.2
+      )
+      points(Bratio_vals[length(Bratio_vals)],
+        SPRratio_vals[length(Bratio_vals)],
+        pch = 21,
+        col = 1,
+        bg = colvec[length(Bratio_vals)],
+        cex = 1.2
+      )
+    } # end make.phase.plot.MLE function
+
+    if (4 %in% subplots) {
+      if (btarg <= 0 | sprtarg <= 0) {
+        message("skipped SPR phase plot because btarg or sprtarg <= 0")
+      } else {
+        timeseries[["Yr"]] <- timeseries[["Yr"]] + (timeseries[["Seas"]] - 1) / nseasons
+        # !subsetting to season 1 only, initially just getting area 1
+        ts <- timeseries[timeseries[["Seas"]] == 1 &
+          timeseries[["Area"]] == 1 &
+          timeseries[["Yr"]] <= endyr, ]
+        # if there is more than 1 area, add them in now
+        # this could be done using "aggregate" but this approach is more foolproof (hopefully)
+        if (nareas > 1) {
+          for (iarea in 2:nareas) {
+            ts_area_i <- timeseries[timeseries[["Seas"]] == 1 &
+              timeseries[["Area"]] == iarea &
+              timeseries[["Yr"]] <= endyr, ]
+            ts[["SpawnBio"]] <- ts[["SpawnBio"]] + ts_area_i[["SpawnBio"]]
           }
+        }
+        # divide spawning biomass by 2 for single-sex models
+        if (nsexes == 1) {
+          ts[["SpawnBio"]] <- ts[["SpawnBio"]] / 2
+        }
+        # calculate depletion
+        depletionseries <- ts[["SpawnBio"]] / ts[["SpawnBio"]][1]
+        # set axis limits
+        # function to make the plot
+
+        if (plot) make.phase.plot.MLE()
+        if (print) {
+          file <- "SPR4_phase.png"
+          caption <- paste0(
+            "Phase plot of biomass ratio vs. SPR ratio.<br> ",
+            "Each point represents the biomass ratio at the ",
+            "start of the year and the relative fishing ",
+            "intensity in that same year. ",
+            "Lines through the final point show 95% intervals ",
+            "based on the asymptotic uncertainty for each ",
+            "dimension. The shaded ellipse is a 95% region ",
+            "which accounts for the estimated correlation ",
+            "between the two quantities: ",
+            round(B_SPR_endyr_corr, 3),
+            "."
+          )
+          plotinfo <- pngfun(file = file, caption = caption)
+          make.phase.plot.MLE()
+          dev.off()
         }
       } # end test for making phase plot
-    } # end check for number of seasons=1
+    } # end if 4 %in% subplots
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "SPR"
     return(invisible(plotinfo))
   }

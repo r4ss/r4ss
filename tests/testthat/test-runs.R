@@ -16,8 +16,8 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
   path_3.24 <- file.path(runs_path, "simple_3.24")
-  skip_if((!file.exists(file.path(path_3.24, "ss"))) & 
-            (!file.exists(file.path(path_3.24, "ss.exe"))), 
+  skip_if((!file.exists(file.path(path_3.24, "ss3"))) & 
+            (!file.exists(file.path(path_3.24, "ss3.exe"))), 
           message = "skipping test that requires SS executable")
   SS_doRetro(
     masterdir = path_3.24,
