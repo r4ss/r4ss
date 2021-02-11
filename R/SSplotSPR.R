@@ -233,7 +233,8 @@ SSplotSPR <-
       if (plot) spr_ratio_timeseries()
       if (print) {
         file <- "SPR3_ratiointerval.png"
-        caption <- "Timeseries of SPR ratio"
+        caption <- paste("Timeseries of SPR ratio:",
+                         replist[["SPRratioLabel"]])
         plotinfo <- pngfun(file = file, caption = caption)
         spr_ratio_timeseries()
         dev.off()
@@ -416,7 +417,7 @@ SSplotSPR <-
             "dimension. The shaded ellipse is a 95% region ",
             "which accounts for the estimated correlation ",
             "between the two quantities: ",
-            B_SPR_endyr_corr,
+            round(B_SPR_endyr_corr, 3),
             "."
           )
           plotinfo <- pngfun(file = file, caption = caption)

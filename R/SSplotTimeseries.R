@@ -8,13 +8,19 @@
 #' @param subplot number controlling which subplot to create
 #' Numbering of subplots is as follows:
 #' \itemize{
-#'   \item 1 Total biomass (mt) with forecast
-#'   \item 3: Total biomass (mt) at beginning of season 1 with forecast
+#'   \item 1: Total biomass (mt) with forecast
+#'   \item 2: Total biomass by area (spatial models only)
+#'   \item 3: Total biomass (mt) at beginning of spawning season with forecast
 #'   \item 4: Summary biomass (mt) with forecast
+#'   \item 5: Summary biomass (mt) by area (spatial models only)
 #'   \item 6: Summary biomass (mt) at beginning of season 1 with forecast
 #'   \item 7: Spawning output with forecast with ~95% asymptotic intervals
-#'   \item 9: Fraction of unfished with forecast with ~95% asymptotic intervals
+#'   \item 8: Spawning output by area (spatial models only)
+#'   \item 9: Relative spawning output with forecast with ~95% asymptotic intervals
+#'   \item 10: Relative spawning output by area (spatial models only)
 #'   \item 11: Age-0 recruits (1,000s) with forecast with ~95% asymptotic intervals
+#'   \item 12: Age-0 recruits by area (spatial models only)
+#'   \item 13: Fraction of recruits by area (spatial models only)
 #'   \item 14: Age-0 recruits (1,000s) by birth season with forecast
 #'   \item 15: Fraction of total Age-0 recruits by birth season with forecast
 #' }
@@ -63,23 +69,7 @@ SSplotTimeseries <-
            btarg = "default", minbthresh = "default", xlab = "Year",
            labels = NULL,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1) {
-    # individual function for plotting time series of total or summary biomass
-    # subplot1 = total biomass total all areas
-    # subplot2 = total biomass by area
-    # subplot3 = total biomass in all areas in spawning season
-    # subplot4 = summary biomass total all areas
-    # subplot5 = summary biomass by area
-    # subplot6 = summary biomass in all areas in spawning season
-    # subplot7 = spawning biomass total (with or without uncertainty)
-    # subplot8 = spawning biomass by area
-    # subplot9 = spawning depletion total (with or without uncertainty)
-    # subplot10 = spawning depletion by area
-    # subplot11 = recruitment total (with or without uncertainty)
-    # subplot12 = recruitment by area
-    # subplot13 = fraction of recruitment by area
-    # subplot14 = recruitment by birth season
-    # subplot15 = fraction of recruitment by birth season
-    # subplot16 = dynamic B0 (not yet implemented)
+
     if (missing(subplot)) stop("'subplot' input required")
     if (length(subplot) > 1) stop("function can only do 1 subplot at a time")
     # subfunction to write png files
@@ -230,7 +220,7 @@ SSplotTimeseries <-
         ylab <- labels[5]
       }
 
-      # subplot9&10 = spawning depletion
+      # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
         yvals <- ts[["SpawnBio"]] / ts[["SpawnBio"]][!is.na(ts[["SpawnBio"]])][1]
@@ -359,7 +349,7 @@ SSplotTimeseries <-
             stdtable[["Yr"]][1:2] <- as.numeric(stdtable[["Yr"]][3]) - (2:1) - yrshift
             stdtable[["Yr"]] <- as.numeric(stdtable[["Yr"]])
           }
-          if (subplot == 9) { # spawning depletion
+          if (subplot == 9) { # relative spawning output
             stdtable <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", ]
             stdtable[["Yr"]] <- as.numeric(substring(stdtable[["Label"]], 8))
           }
@@ -424,7 +414,7 @@ SSplotTimeseries <-
       if (print) { # if printing to a file
         # adjust file names
         filename <- main
-        if (subplot == 9 & grepl(":", main)) {
+        if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from filename
           filename <- strsplit(main, split=":")[[1]][1]
         }
@@ -535,7 +525,8 @@ SSplotTimeseries <-
             # update if Bratio is not relative to unfished spawning output
             if (subplot == 9 & replist[["Bratio_label"]] != "B/B_0") {
               yvals <- NA * yvals
-              yvals[which(ts[["YrSeas"]] %in% stdtable[["Yr"]])] <- stdtable[["Value"]][stdtable$Yr %in% ts[["Yr"]]]
+              yvals[which(ts[["YrSeas"]] %in% stdtable[["Yr"]])] <-
+                stdtable[["Value"]][stdtable$Yr %in% ts[["Yr"]]]
             }
 
             points(ts[["YrSeas"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
