@@ -337,27 +337,25 @@ SS_fitbiasramp <-
     if (print) {
       file <- "recruit_fit_bias_adjust.png"
       caption <-
-        paste("Points are transformed variances. Red line shows current settings for",
-          "for bias adjustment specified in control file.",
-          "Blue line shows least squares estimate of alternative bias adjustment",
-          "relationship for recruitment deviations (which may or may not be an",
+        paste0("Points are transformed variances. Red line shows current settings ",
+          "for bias adjustment specified in control file. ",
+          "Blue line shows least squares estimate of alternative bias adjustment ",
+          "relationship for recruitment deviations (which may or may not be an ",
           "improvement. For more information, see<br> \n",
           "<blockquote>Methot, R.D. and Taylor, I.G., 2011. Adjusting for bias ",
           "due to variability of estimated recruitments in fishery assessment ",
           "models. <i>Can. J. Fish. Aquat. Sci.</i>, 68:1744-1760.",
           "</blockquote><br> \n",
           "Estimated alternative inputs to SS control file associated ",
-          "with blue line in figure: \n<pre>",
-          sep = ""
+          "with blue line in figure: \n<pre>"
         )
       for (iline in 1:4) {
-        caption <- paste(caption, format(round(df[["value"]][iline], 1), nsmall = 1), "   ",
-          df[["label"]][iline], " \n",
-          sep = ""
+        caption <- paste0(caption, format(round(df[["value"]][iline], 1), nsmall = 1), "   ",
+          df[["label"]][iline], " \n"
         )
       }
-      caption <- paste(caption, df[["value"]][5], "   ", df[["label"]][5], sep = "")
-      caption <- paste(caption, "  </pre>")
+      caption <- paste0(caption, df[["value"]][5], "  ", df[["label"]][5])
+      caption <- paste(caption, "</pre>")
 
       plotinfo <- pngfun(file = file, caption = caption)
       plotbiasadj()
