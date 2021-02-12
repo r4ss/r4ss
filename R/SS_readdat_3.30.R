@@ -210,6 +210,18 @@ SS_readdat_3.30 <-
       "need_catch_mult",
       "fleetname"
     )
+    # If need_catch_mult is 1 for fleets other than catch fleets,
+    #   stop execution as SS do so.
+    if (any(datlist[["fleetinfo"]][["type"]] != 1 &
+      datlist[["fleetinfo"]][["need_catch_mult"]] == 1)) {
+        stop(
+          "Catch multipler can be used only for fleet_type = 1; Check fleet = ",
+          paste0(which(datlist[["fleetinfo"]][["type"]] != 1 &
+                datlist[["fleetinfo"]][["need_catch_mult"]] == 1), 
+            collapse = ", "), 
+          " in fleet info."
+          )
+      }
     if (echoall) {
       message("Fleet information:")
       print(datlist[["fleetinfo"]])
