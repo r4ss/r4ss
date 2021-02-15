@@ -450,14 +450,14 @@ SSplotTimeseries <-
 
       # add references points to plot of relative biomass
       if (subplot %in% 9:10 & replist[["Bratio_label"]] == "B/B_0") {
-        if (btarg > 1) {
+        if (btarg < 1) {
           abline(h = btarg, col = "red")
           text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()$usr[3:4]),
                labels[10],
                adj = 0
                )
         }
-        if (minbthresh > 1) {
+        if (minbthresh < 1) {
           abline(h = minbthresh, col = "red")
           text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()$usr[3:4]),
                labels[11],
