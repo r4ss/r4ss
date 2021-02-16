@@ -299,38 +299,41 @@ SSplotSPR <-
 
       # get mean and variance-covariance matrix of bivariate normal
       # joint distribution based on normal approxmation from ADMB
-      mu <- c(
-        Bratio[["Value"]][Bratio[["Yr"]] == endyr],
-        SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
-      )
-      sigma <- matrix(
-        data = c(
-          Bratio_endyr_SD^2,
-          Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
-          Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
-          SPRratio_endyr_SD^2
-        ),
-        nrow = 2,
-        ncol = 2
-      )
+      if (Bratio_endyr_SD > 0 &
+          SPRratio_endyr_SD > 0 &
+          !is.null(B_SPR_endyr_corr)) {
+        mu <- c(
+          Bratio[["Value"]][Bratio[["Yr"]] == endyr],
+          SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
+        )
+        sigma <- matrix(
+          data = c(
+            Bratio_endyr_SD^2,
+            Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
+            Bratio_endyr_SD * SPRratio_endyr_SD * B_SPR_endyr_corr,
+            SPRratio_endyr_SD^2
+          ),
+          nrow = 2,
+          ncol = 2
+        )
 
-      # calculate 95% ellipse showing correlation among the points
-      # calculate points using code from mixtools::ellipse()
-      # which has GPL-2 | GPL-3 license
-      # https://CRAN.R-project.org/package=mixtools
-      es <- eigen(sigma)
-      e1 <- es$vec %*% diag(sqrt(es$val))
-      r1 <- sqrt(qchisq(0.95, 2))
-      theta <- seq(0, 2 * pi, len = 250)
-      v1 <- cbind(r1 * cos(theta), r1 * sin(theta))
-      pts <- t(mu - (e1 %*% t(v1)))
+        # calculate 95% ellipse showing correlation among the points
+        # calculate points using code from mixtools::ellipse()
+        # which has GPL-2 | GPL-3 license
+        # https://CRAN.R-project.org/package=mixtools
+        es <- eigen(sigma)
+        e1 <- es$vec %*% diag(sqrt(es$val))
+        r1 <- sqrt(qchisq(0.95, 2))
+        theta <- seq(0, 2 * pi, len = 250)
+        v1 <- cbind(r1 * cos(theta), r1 * sin(theta))
+        pts <- t(mu - (e1 %*% t(v1)))
 
-      # add polygon
-      polygon(pts,
-        col = gray(0, alpha = 0.2),
-        border = NA
-      )
-
+        # add polygon
+        polygon(pts,
+                col = gray(0, alpha = 0.2),
+                border = NA
+                )
+      }
       # label first and final years:
       yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
       text(
@@ -411,15 +414,21 @@ SSplotSPR <-
             "Phase plot of biomass ratio vs. SPR ratio.<br> ",
             "Each point represents the biomass ratio at the ",
             "start of the year and the relative fishing ",
-            "intensity in that same year. ",
-            "Lines through the final point show 95% intervals ",
-            "based on the asymptotic uncertainty for each ",
-            "dimension. The shaded ellipse is a 95% region ",
-            "which accounts for the estimated correlation ",
-            "between the two quantities: ",
-            round(B_SPR_endyr_corr, 3),
-            "."
+            "intensity in that same year. "
           )
+          if (Bratio_endyr_SD > 0 &
+              SPRratio_endyr_SD > 0 &
+              !is.null(B_SPR_endyr_corr)) {
+            caption <- paste0(caption, 
+                              "Lines through the final point show 95% intervals ",
+                              "based on the asymptotic uncertainty for each ",
+                              "dimension. The shaded ellipse is a 95% region ",
+                              "which accounts for the estimated correlation ",
+                              "between the two quantities: ",
+                              round(B_SPR_endyr_corr, 3),
+                              "."
+                              )
+          }
           plotinfo <- pngfun(file = file, caption = caption)
           make.phase.plot.MLE()
           dev.off()
