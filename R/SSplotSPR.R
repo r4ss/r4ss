@@ -233,8 +233,10 @@ SSplotSPR <-
       if (plot) spr_ratio_timeseries()
       if (print) {
         file <- "SPR3_ratiointerval.png"
-        caption <- paste("Timeseries of SPR ratio:",
-                         replist[["SPRratioLabel"]])
+        caption <- paste(
+          "Timeseries of SPR ratio:",
+          replist[["SPRratioLabel"]]
+        )
         plotinfo <- pngfun(file = file, caption = caption)
         spr_ratio_timeseries()
         dev.off()
@@ -245,6 +247,7 @@ SSplotSPR <-
     make.phase.plot.MLE <- function(x.max = 1.3,
                                     y.max = 1.3,
                                     period = "time") {
+
       # this function modified from make.phase.plot for Pacific Hake at
       # https://github.com/pacific-hake/hake-assessment/blob/master/R/figures-timeseries.R
 
@@ -253,7 +256,11 @@ SSplotSPR <-
       Bratio_yrs <- Bratio[["Yr"]][Bratio[["period"]] %in% period]
       Bratio_vals <- Bratio[["Value"]][Bratio[["period"]] %in% period]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% Bratio_yrs]
-
+      if(length(Bratio_vals) != length(SPRratio_vals)){
+        message("Bratio and SPRratio vectors are different in length,",
+                "skipping phase plot.")
+        return()
+      }
       plot(Bratio_vals,
         SPRratio_vals,
         type = "n",
@@ -300,8 +307,8 @@ SSplotSPR <-
       # get mean and variance-covariance matrix of bivariate normal
       # joint distribution based on normal approxmation from ADMB
       if (Bratio_endyr_SD > 0 &
-          SPRratio_endyr_SD > 0 &
-          !is.null(B_SPR_endyr_corr)) {
+        SPRratio_endyr_SD > 0 &
+        !is.null(B_SPR_endyr_corr)) {
         mu <- c(
           Bratio[["Value"]][Bratio[["Yr"]] == endyr],
           SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
@@ -330,9 +337,9 @@ SSplotSPR <-
 
         # add polygon
         polygon(pts,
-                col = gray(0, alpha = 0.2),
-                border = NA
-                )
+          col = gray(0, alpha = 0.2),
+          border = NA
+        )
       }
       # label first and final years:
       yr <- min(Bratio[["Yr"]][Bratio[["period"]] %in% period])
@@ -417,17 +424,18 @@ SSplotSPR <-
             "intensity in that same year. "
           )
           if (Bratio_endyr_SD > 0 &
-              SPRratio_endyr_SD > 0 &
-              !is.null(B_SPR_endyr_corr)) {
-            caption <- paste0(caption, 
-                              "Lines through the final point show 95% intervals ",
-                              "based on the asymptotic uncertainty for each ",
-                              "dimension. The shaded ellipse is a 95% region ",
-                              "which accounts for the estimated correlation ",
-                              "between the two quantities: ",
-                              round(B_SPR_endyr_corr, 3),
-                              "."
-                              )
+            SPRratio_endyr_SD > 0 &
+            !is.null(B_SPR_endyr_corr)) {
+            caption <- paste0(
+              caption,
+              "Lines through the final point show 95% intervals ",
+              "based on the asymptotic uncertainty for each ",
+              "dimension. The shaded ellipse is a 95% region ",
+              "which accounts for the estimated correlation ",
+              "between the two quantities: ",
+              round(B_SPR_endyr_corr, 3),
+              "."
+            )
           }
           plotinfo <- pngfun(file = file, caption = caption)
           make.phase.plot.MLE()
