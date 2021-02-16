@@ -228,13 +228,15 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
     forelist <- add_elem(forelist, "Nforecastyrs")
     # check for compatible input with forecast option 1.
     if (forelist[["Forecast"]] == 0 & forelist[["Nforecastyrs"]] != 1) {
-      warning(
-        "Forecast = 0 should always be used with 1 forecast year. ",
-        "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
-        "of forecast, please use Forecast = -1; if you would like to ",
-        " forecast for > 1 year, please select a value of Forecast > 0."
-      )
-      forelist[["Nforecastyrs"]] <- 1
+      if(forelist[["SSversion"]] == 3.3) {
+        warning(
+          "Forecast = 0 should always be used with 1 forecast year. ",
+          "Changing Nforecastyrs to 1. If you would prefer to use 0 years ",
+          "of forecast, please use Forecast = -1; if you would like to ",
+          " forecast for > 1 year, please select a value of Forecast > 0."
+        )
+        forelist[["Nforecastyrs"]] <- 1
+      }
     }
     forelist <- add_elem(forelist, "F_scalar")
     if (forelist[["SSversion"]] == 3.24) {
