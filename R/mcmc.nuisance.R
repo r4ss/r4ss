@@ -85,11 +85,15 @@ mcmc.nuisance <- function(
     for (istring in 1:length(labelstrings)) {
       labels <- c(labels, names(mcmcdata)[grep(labelstrings[istring], names(mcmcdata))])
     }
-    cat("All labels matching the input 'labelstrings':\n")
+    message("All labels matching the input 'labelstrings':")
     print(labels)
     mcmcdata <- mcmcdata[, names(mcmcdata) %in% labels]
+  } else {
+    # when "all" are requested, exclude Iter and Objective_function columns
+    mcmcdata <- mcmcdata[, !names(mcmcdata) %in%
+                           c("Iter", "Objective_function")]
   }
-  # print(head(mcmcdata))
+
   ##### change to mcmc object for coda #####
   mcmcfirst <- mcmc(mcmcdata) # make the mcmc object from the data table
   mcmctemp <- window(mcmcfirst, thin = thin, start = (1 + burn)) # thin the chain  and remove burn in
