@@ -1459,8 +1459,6 @@ SSplotComparisons <-
         show_uncertainty <- FALSE
       }
 
-
-
       # empty plot
       if (is.null(xlim)) {
         xlim <- range(recdevs[["Yr"]], na.rm = TRUE)
@@ -1472,7 +1470,13 @@ SSplotComparisons <-
         recdevs[["Yr"]] >= xlim[1] &
           recdevs[["Yr"]] <= xlim[2],
         models
-      ], na.rm = TRUE)
+        ], na.rm = TRUE)
+
+      if (any(is.infinite(ylim))) {
+        warning('Skipping recdev plots. Infinite ylim may indicate ',
+                'all values are NA in summaryoutput[["recdevs"]]')
+        return(ylim[2])
+      }
       if (show_uncertainty) {
         if (all(is.na(recdevsLower[, models]))) {
           # can't do uncertainty if no range present
