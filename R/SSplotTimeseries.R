@@ -113,7 +113,6 @@ SSplotTimeseries <-
     nareas <- replist[["nareas"]]
     derived_quants <- replist[["derived_quants"]]
     # FecPar2        <- replist[["FecPar2"]]
-    seasfracs <- replist[["seasfracs"]]
     recruitment_dist <- replist[["recruitment_dist"]]
 
     if (btarg == "default") btarg <- replist[["btarg"]]
@@ -169,7 +168,7 @@ SSplotTimeseries <-
         ts[["YrSeas"]] <- ts[["Yr"]] + (ts[["Seas"]] - 1) / nseasons
       } else {
         # more recent models have seasfracs
-        ts[["YrSeas"]] <- ts[["Yr"]] + seasfracs
+        ts[["YrSeas"]] <- ts[["Yr"]] + replist[["seasfracs"]]
       }
     } else {
       ts[["YrSeas"]] <- ts[["Yr"]]
@@ -364,6 +363,8 @@ SSplotTimeseries <-
             stdtable[["Yr"]] <- as.numeric(stdtable[["Yr"]]) + yrshift
             bioscale <- 1
           }
+          # calculation fractional year value associated with spawning season for spawning biomass plots
+          stdtable[["YrSeas"]] <- stdtable[["Yr"]] + replist[["seasfracs"]][which(1:nseasons %in% spawnseas)]
 
           # scaling and calculation of confidence intervals
           v <- stdtable[["Value"]] * bioscale
@@ -479,8 +480,8 @@ SSplotTimeseries <-
           plot1 <- ts[["Seas"]] == s & ts[["Era"]] == "VIRG" # T/F for in seas & is virgin value
           plot2 <- ts[["Seas"]] == s & ts[["period"]] == "time" & ts[["Era"]] != "VIRG" # T/F for in seas & not virgin value
           plot3 <- ts[["Seas"]] == s & ts[["period"]] == "fore" & ts[["Era"]] != "VIRG" # T/F for in seas & is forecast
-          points(ts[["Yr"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
-          lines(ts[["Yr"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
+          points(ts[["YrSeas"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
+          lines(ts[["YrSeas"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
           points(ts[["Yr"]][plot3], yvals[plot3], pch = 19, col = mycol) # filled points for forecast
         }
         legend("topright", legend = paste("Season", birthseas), lty = 1, pch = 1, col = seascols, bty = "n")
@@ -513,7 +514,9 @@ SSplotTimeseries <-
           }
           mycol <- areacols[iarea]
           mytype <- "o" # overplotting points on lines for most time series
-          if (subplot == 11 & uncertainty) mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
+          if (subplot == 11 & uncertainty){
+            mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
+          }
           if (!uncertainty) {
             points(ts[["YrSeas"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
             lines(ts[["YrSeas"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
@@ -525,13 +528,19 @@ SSplotTimeseries <-
             # update if Bratio is not relative to unfished spawning output
             if (subplot == 9 & replist[["Bratio_label"]] != "B/B_0") {
               yvals <- NA * yvals
-              yvals[which(ts[["YrSeas"]] %in% stdtable[["Yr"]])] <-
-                stdtable[["Value"]][stdtable$Yr %in% ts[["Yr"]]]
+              yvals[which(ts[["YrSeas"]] %in% stdtable[["YrSeas"]])] <-
+                stdtable[["Value"]][stdtable[["YrSeas"]] %in% ts[["Yr"]]]
             }
 
-            points(ts[["YrSeas"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
-            lines(ts[["YrSeas"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
-            points(ts[["YrSeas"]][plot3], yvals[plot3], pch = 19, col = mycol) # filled points for forecast
+            if (subplot != 11) {
+              points(ts[["YrSeas"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
+              lines(ts[["YrSeas"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
+              points(ts[["YrSeas"]][plot3], yvals[plot3], pch = 19, col = mycol) # filled points for forecast
+            } else {
+              points(ts[["Yr"]][plot1], yvals[plot1], pch = 19, col = mycol) # filled points for virgin conditions
+              lines(ts[["Yr"]][plot2], yvals[plot2], type = mytype, col = mycol) # open points and lines in middle
+              points(ts[["Yr"]][plot3], yvals[plot3], pch = 19, col = mycol) # filled points for forecast
+            }
             if (subplot %in% c(7, 9, 11)) {
               # subset years for confidence intervals
               if (subplot == 7) {
@@ -554,20 +563,22 @@ SSplotTimeseries <-
             }
             if (subplot %in% c(7, 9)) {
               # add lines for main period
-              lines(stdtable[["Yr"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
-              lines(stdtable[["Yr"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["YrSeas"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["YrSeas"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
 
               # add dashes for early period
-              points(stdtable[["Yr"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
-              points(stdtable[["Yr"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
 
               # add dashes for forecast period
-              points(stdtable[["Yr"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
-              points(stdtable[["Yr"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["YrSeas"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["YrSeas"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
+              browser()
               old_warn <- options()$warn # previous setting
               options(warn = -1) # turn off "zero-length arrow" warning
+              # note that Yr rather than YrSeas is used here because recruitment is summed across seasons in multi-season models
               arrows(
                 x0 = stdtable[["Yr"]][plotall], y0 = stdtable[["lower"]][plotall], y1 = stdtable[["upper"]][plotall],
                 length = 0.01, angle = 90, code = 3, col = mycol
