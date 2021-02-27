@@ -575,7 +575,6 @@ SSplotTimeseries <-
               points(stdtable[["YrSeas"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
-              browser()
               old_warn <- options()$warn # previous setting
               options(warn = -1) # turn off "zero-length arrow" warning
               # note that Yr rather than YrSeas is used here because recruitment is summed across seasons in multi-season models
