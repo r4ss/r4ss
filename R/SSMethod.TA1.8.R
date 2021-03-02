@@ -182,7 +182,7 @@ SSMethod.TA1.8 <-
     if (length(uindx) == 1) {
       # presumably the method is meaningless of there's only 1 point,
       # but it's good to be able to have the function play through
-      warning("Only one point to plot")
+      message("Only one point to plot")
       return()
     }
 
