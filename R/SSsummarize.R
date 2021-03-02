@@ -39,6 +39,18 @@ SSsummarize <- function(biglist,
                         lowerCI = 0.025,
                         upperCI = 0.975,
                         verbose = TRUE) {
+  # confirm that biglist is a list of lists, each created by SS_output()
+  # this could be improved with the use of S3 classes in the future
+  if (!is.list(biglist) | # if whole thing is not a list 
+      !is.list(biglist[[1]]) | # or if the first element isn't also a list
+      !"parameters" %in% names(biglist[[1]])) { # or if 1st list seems wrong
+    stop("Input 'biglist' needs to be a list of the lists returned by ",
+         "SS_output(), either by grouping those lists within 'list()', or ",
+         "running SSgetoutput() which calls SS_output() repeatedly ",
+         "and returning a big list in the appropriate format.")
+    
+  }
+  
   # loop over outputs to create list of parameters, derived quantities, and years
   parnames <- NULL
   dernames <- NULL
@@ -188,25 +200,27 @@ SSsummarize <- function(biglist,
     }
 
     ## growth (females only)
-    growthtemp <- stats[["growthseries"]]
-    # check for non-NULL growth output
-    if (!is.null(growthtemp)) {
-      # subset for the female main morph
-      imorphf <- stats[["morph_indexing"]][["Index"]][
-        stats[["morph_indexing"]][["Sex"]] == 1 &
-        stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
-      ]
-      growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
-      # remove any rows with all zeros (not sure why these occur)
-      growthtemp <- growthtemp[apply(growthtemp, 1, sum) > 0, ]
-      # get last row and bind to values from previous models
-      if (nrow(growthtemp) > 0) {
-        growth[,imodel] <- as.numeric(growthtemp[nrow(growthtemp), ])
-      } else {
-        growth[,imodel] <- NA
+    if (!is.null(growth)) {
+      growthtemp <- stats[["growthseries"]]
+      # check for non-NULL growth output
+      if (!is.null(growthtemp)) {
+        # subset for the female main morph
+        imorphf <- stats[["morph_indexing"]][["Index"]][
+          stats[["morph_indexing"]][["Sex"]] == 1 &
+          stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
+        ]
+        growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
+        # remove any rows with all zeros (not sure why these occur)
+        growthtemp <- growthtemp[apply(growthtemp, 1, sum) > 0, ]
+        # get last row and bind to values from previous models
+        if (nrow(growthtemp) > 0) {
+          growth[,imodel] <- as.numeric(growthtemp[nrow(growthtemp), ])
+        } else {
+          growth[,imodel] <- NA
+        }
       }
     }
-
+    
     ## likelihoods (total by component)
     liketemp <- stats[["likelihoods_used"]]
     for (irow in 1:nrow(liketemp)) {
