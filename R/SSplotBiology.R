@@ -495,7 +495,7 @@ SSplotBiology <-
       par(mar = c(4.2, 4.2, 1, .5) + .1)
       image(
         x = 0:accuage, y = yrvec2, z = z, axes = F, xlab = "Age", ylab = "Year",
-        col = col, breaks = breaks, main = main
+        col = col, breaks = breaks, main = ifelse(mainTitle, main, "")
       )
       axis(1, cex.axis = .7)
       axis(2, las = 1, cex.axis = .7)
@@ -659,7 +659,8 @@ SSplotBiology <-
         )
         abline(h = 0, col = "grey")
         if (add_labels) {
-          title(main = main, xlab = labels[2], ylab = labels[6], cex.main = cex.main)
+          title(main = ifelse(mainTitle, main, ""),
+                xlab = labels[2], ylab = labels[6], cex.main = cex.main)
           axis(1)
           axis(2, las = 1)
         }
@@ -1459,42 +1460,45 @@ SSplotBiology <-
                 main <- "Male time-varying growth"
               }
               if (nseasons > 1) {
-                main <- paste(main, " season 1", sep = "")
+                main <- paste0(main, " season 1")
               }
               if (plot) {
                 if (22 %in% subplots) {
                   persp(x, y, z,
-                    col = "white", xlab = labels[2], ylab = "", zlab = labels[1], expand = 0.5,
-                    box = TRUE, main = main, cex.main = cex.main, ticktype = "detailed",
-                    phi = 35, theta = -10
+                        col = "white", xlab = labels[2], ylab = "",
+                        zlab = labels[1], expand = 0.5,
+                        box = TRUE, main = ifelse(mainTitle, main, ""),
+                        cex.main = cex.main, ticktype = "detailed",
+                        phi = 35, theta = -10
                   )
                 }
                 if (23 %in% subplots) {
                   contour(x, y, z,
                     nlevels = 12, xlab = labels[2],
-                    main = main, cex.main = cex.main, col = ians_contour, lwd = 2
+                    main = ifelse(mainTitle, main, ""),
+                    cex.main = cex.main, col = ians_contour, lwd = 2
                   )
                 }
               }
               if (print) {
                 if (22 %in% subplots) {
-                  file <- paste("bio22_timevarygrowthsurf_sex", i, ".png", sep = "")
+                  file <- paste0("bio22_timevarygrowthsurf_sex", i, ".png")
                   caption <- "Perspective plot of time-varying growth"
                   plotinfo <- pngfun(file = file, caption = caption)
                   persp(x, y, z,
                     col = "white", xlab = labels[2], ylab = "", zlab = labels[1], expand = 0.5,
-                    box = TRUE, main = main, cex.main = cex.main, ticktype = "detailed",
+                    box = TRUE, main = ifelse(mainTitle, main, ""), cex.main = cex.main, ticktype = "detailed",
                     phi = 35, theta = -10
                   )
                   dev.off()
                 }
                 if (23 %in% subplots) {
-                  file <- paste("bio23_timevarygrowthcontour_sex", i, ".png", sep = "")
+                  file <- paste0("bio23_timevarygrowthcontour_sex", i, ".png")
                   caption <- "Contour plot of time-varying growth"
                   plotinfo <- pngfun(file = file, caption = caption)
                   contour(x, y, z,
                     nlevels = 12, xlab = labels[2],
-                    main = main, cex.main = cex.main, col = ians_contour, lwd = 2
+                    main = ifelse(mainTitle, main, ""), cex.main = cex.main, col = ians_contour, lwd = 2
                   )
                   dev.off()
                 }
@@ -1536,7 +1540,7 @@ SSplotBiology <-
               # make plot
               if (plot) timeVaryingParmFunc(parmlabel)
               if (print) {
-                file <- paste("bio24_time-varying_", parmlabel, ".png", sep = "")
+                file <- paste0("bio24_time-varying_", parmlabel, ".png")
                 # replace % sign which cause problems for filename
                 file <- gsub(
                   pattern = "%", replacement = "percent", x = file,
