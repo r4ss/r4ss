@@ -190,12 +190,11 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   datlist[["N_cpue"]] <- N_cpue <- allnums[i]
   i <- i + 1
   if (verbose) cat("N_cpue =", N_cpue, "\n")
+  CPUEinfo <- data.frame(matrix(allnums[i:(i + Ntypes * 3 - 1)],
+                                nrow = Ntypes, ncol = 3, byrow = TRUE))
+  i <- i + Ntypes * 3
+  names(CPUEinfo) <- c("Fleet", "Units", "Errtype")
   if (N_cpue > 0) {
-    CPUEinfo <- data.frame(matrix(allnums[i:(i + Ntypes * 3 - 1)],
-      nrow = Ntypes, ncol = 3, byrow = TRUE
-    ))
-    i <- i + Ntypes * 3
-    names(CPUEinfo) <- c("Fleet", "Units", "Errtype")
     CPUE <- data.frame(matrix(
       allnums[i:(i + N_cpue * 5 - 1)],
       nrow = N_cpue, ncol = 5, byrow = TRUE
@@ -203,7 +202,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_cpue * 5
     names(CPUE) <- c("year", "seas", "index", "obs", "se_log")
   } else {
-    CPUEinfo <- NULL
     CPUE <- NULL
   }
   datlist[["CPUEinfo"]] <- CPUEinfo
