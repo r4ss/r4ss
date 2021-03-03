@@ -247,15 +247,17 @@ SSplotSPR <-
     make.phase.plot.MLE <- function(x.max = 1.3,
                                     y.max = 1.3,
                                     period = "time") {
-
       # this function modified from make.phase.plot for Pacific Hake at
       # https://github.com/pacific-hake/hake-assessment/blob/master/R/figures-timeseries.R
 
       # Plots the relative fishing intensity in year t against
       # relative spawning biomass in year t
-      Bratio_yrs <- Bratio[["Yr"]][Bratio[["period"]] %in% period]
-      Bratio_vals <- Bratio[["Value"]][Bratio[["period"]] %in% period]
-      SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% Bratio_yrs]
+
+      # find years that are shared by both sets of outputs
+      shared_yrs <- intersect(Bratio[["Yr"]][Bratio[["period"]] %in% period],
+                              SPRratio[["Yr"]][SPRratio[["period"]] %in% period])
+      Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
+      SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
       if(length(Bratio_vals) != length(SPRratio_vals)){
         message("Bratio and SPRratio vectors are different in length,",
                 "skipping phase plot.")
@@ -368,7 +370,24 @@ SSplotSPR <-
         lty = 2,
         col = rgb(0, 0, 0, 0.4)
       )
+      # if denominator is B0, then add line at btarg
+      if (replist[["Bratio_label"]] == "B/B_0" & replist[["btarg"]] > 0) {
+        abline(
+          v = replist[["btarg"]],
+          lty = 2,
+          col = rgb(0, 0, 0, 0.4)
+        )
+      }
+      
+      # add lines at 1.0 in each dimension
+      abline(
+        h = 1,
+        v = 1,
+        lty = 2,
+        col = rgb(0, 0, 0, 0.4)
+      )
 
+      
       # add bigger points for first and final years
       points(Bratio_vals[1],
         SPRratio_vals[1],
