@@ -379,15 +379,6 @@ SSplotSPR <-
         )
       }
       
-      # add lines at 1.0 in each dimension
-      abline(
-        h = 1,
-        v = 1,
-        lty = 2,
-        col = rgb(0, 0, 0, 0.4)
-      )
-
-      
       # add bigger points for first and final years
       points(Bratio_vals[1],
         SPRratio_vals[1],
