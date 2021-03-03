@@ -609,7 +609,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   finfo <- as.data.frame(t(finfo))
   datlist[["fleetinfo"]] <- finfo
   datlist[["NCPUEObs"]] <- array(data = 0, dim = datlist[["Nfleet"]] + datlist[["Nsurveys"]])
-  for (j in 1:nrow(datlist[["CPUE"]]))
+  for (j in seq_len(NROW(datlist[["CPUE"]])))
   {
     if (datlist[["CPUE"]][j, ][["index"]] > 0) datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] <- datlist[["NCPUEObs"]][datlist[["CPUE"]][j, ][["index"]]] + 1
   }
