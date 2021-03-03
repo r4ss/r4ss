@@ -301,7 +301,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   datlist[["add_to_comp"]] <- allnums[i]
   i <- i + 1
-  datlist[["max_combined_age"]] <- allnums[i]
+  datlist[["max_combined_lbin"]] <- allnums[i]
   i <- i + 1
   datlist[["N_lbins"]] <- N_lbins <- allnums[i]
   i <- i + 1
@@ -377,7 +377,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   # data read above
   datlist[["Lbin_method"]] <- allnums[i]
   i <- i + 1
-  datlist[["max_combined_lbin"]] <- allnums[i]
+  datlist[["max_combined_age"]] <- allnums[i]
   i <- i + 1
 
   if (N_agecomp > 0) {
