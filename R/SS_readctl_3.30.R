@@ -1682,6 +1682,10 @@ get_tv_parlabs <- function(full_parms,
       n_blk <- full_parms[["Block"]][i]
       tmp_blk_design <- block_design[[n_blk]]
       # Get the start year for each block
+      if(is.null(tmp_blk_design)){
+        stop("Time blocks used in parameter setup, but not defined in the top", 
+             "of the control file. Please define the time blocks.")
+      }
       blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
       lbl <- block_method_label[block_fxn[i] + 1]
       parlab <- c(
