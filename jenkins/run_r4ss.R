@@ -1,5 +1,4 @@
 #.libPaths() # see the library paths
-install.packages("remotes", lib = "/usr/local/lib/R/site-library")
 remotes::install_local(".", upgrade = "always", 
                        lib = "/usr/local/lib/R/site-library")
 						
