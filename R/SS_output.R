@@ -3042,9 +3042,13 @@ SS_output <-
     if (length(grep("Kobe_Plot", rawrep[, 1])) != 0) {
       # head of Kobe_Plot section differs by SS version,
       # but I haven't kept track of which is which
-      # read first 5 lines
+      # read first 5 lines to figure out which one is the header
       Kobe_head <- matchfun2("Kobe_Plot", 0, "Kobe_Plot", 5, header = TRUE)
       shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
+      if (length(shift) == 0) {
+        # work around for bug in output for 3.24z (and maybe other versions)
+        shift <- grep("MSY_basis:_Year", Kobe_head[, 1]) 
+      }
       Kobe_warn <- NA
       Kobe_MSY_basis <- NA
       if (length(grep("_basis_is_not", Kobe_head[1, 1])) > 0) {
