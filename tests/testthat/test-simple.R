@@ -280,6 +280,29 @@ test_that("SS_readdat and SS_writedat both work for 3.30.13", {
 })
 
 
+test_that("SS_readdat removes any lines of 0 comps from data file", {
+  datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
+  comp_lines_age <- grep("^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)[1]
+  datfile <- append(datfile,
+                    values = "2000 7 2 3 0 2 -1 -1 75 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    after = comp_lines_age-1)
+  writeLines(datfile, file.path(temp_path, "zero_comps.dat"))
+  dat <- expect_warning(SS_readdat(file.path(temp_path, "zero_comps.dat"), verbose = FALSE), 
+                        "Lines of all zero age comp found")
+  expect_true(nrow(dat[["agecomp"]]) == 40)
+  datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
+  comp_lines_len <- grep("-9999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)
+  datfile <- append(datfile,
+                    values = "2000 7 2 3 0 125 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+                    after = comp_lines_len-1)
+  writeLines(datfile, file.path(temp_path, "zero_comps_len.dat"))
+  dat <- expect_warning(SS_readdat(file.path(temp_path, "zero_comps_len.dat"),
+                                   verbose = FALSE), 
+                        "Lines of all zero length comp found")
+  expect_true(nrow(dat[["lencomp"]]) == 40)
+})
+
+
 ###############################################################################
 # testing read/write forecast functions for 3.30.13
 ###############################################################################

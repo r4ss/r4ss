@@ -413,6 +413,17 @@ SS_readdat_3.30 <-
             }
           )
       }
+      # remove any 0 values in the lencomp, because SS will exit on error
+      # if there are any lines of all zero age comps
+      
+      zero_lencomp <- apply(datlist[["lencomp"]][,-(1:6)], MARGIN = 1, FUN = sum) == 0
+      if(any(zero_lencomp == TRUE)) {
+        warning("Lines of all zero length comp found. SS will exit on error if", 
+                " a line of comps is all zeros, so removing, line(s) ", 
+                paste0(which(zero_lencomp), collapse = ", "))
+        datlist[["lencomp"]] <- datlist[["lencomp"]][!zero_lencomp,]
+      }
+      
       # echo values
       if (echoall) {
         message("\nFirst 2 rows of lencomp:")
@@ -509,6 +520,15 @@ SS_readdat_3.30 <-
           )
       }
       # echo values
+      # remove any 0 values in the lencomp:
+      zero_agecomp <- apply(datlist[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
+      if(any(zero_agecomp == TRUE)) {
+        warning("Lines of all zero age comp found. SS will exit on error if", 
+                " a line of comps is all zeros, so removing, line(s) ", 
+                paste0(which(zero_agecomp), collapse = ", "))
+        datlist[["agecomp"]] <- datlist[["agecomp"]][!zero_agecomp,]
+      }
+      
       if (echoall) {
         message("\nFirst 2 rows of agecomp:")
         print(head(datlist[["agecomp"]], 2))
