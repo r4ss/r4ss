@@ -875,7 +875,7 @@ SSplotIndices <-
         xlim[2] <- min(xlim[2], maxyr)
 
         # set y limits
-        ylim <- c(range(allcpue[["stdvalue"]], na.rm = TRUE))
+        ylim <- c(0, 1.05*max(allcpue[["stdvalue"]], na.rm = TRUE))
         # set colors
         usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
         if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
@@ -887,18 +887,35 @@ SSplotIndices <-
         if (!add) {
           plot(0,
             type = "n", xlab = labels[1], main = main, cex.main = cex.main,
-            col = usecols[1], ylab = labels[8], xlim = xlim, ylim = ylim
+            col = usecols[1], ylab = labels[8], xlim = xlim, ylim = ylim,
+            yaxs = "i"
           )
         }
         # add points and lines for each fleet
         for (ifleet in fleetvec) {
+          lines(
+            x = allcpue[["year"]][allcpue[["Index"]] == ifleet],
+            y = allcpue[["stdvalue"]][allcpue[["Index"]] == ifleet],
+            col = adjustcolor(usecols[ifleet], alpha.f = 0.7),
+            lwd = 2
+          )
           points(
             x = allcpue[["year"]][allcpue[["Index"]] == ifleet],
             y = allcpue[["stdvalue"]][allcpue[["Index"]] == ifleet],
-            pch = pch2, col = usecols[ifleet], cex = cex,
-            lwd = 1, lty = "dashed", type = "o"
+            pch = pch1,
+            bg = adjustcolor(usecols[ifleet], alpha.f = 0.7),
+            col = gray(0, alpha = 0.7),
+            cex = cex
           )
         }
+        legend("top",
+               legend = FleetNames[fleetvec],
+               ncol = 2,
+               bty = "n",
+               pch = pch1,
+               col = gray(0, alpha = 0.7),
+               pt.bg = usecols[fleetvec])
+               
       } # end all_index.fn
       if (plot & (9 %in% subplots)) {
         all_index.fn()
