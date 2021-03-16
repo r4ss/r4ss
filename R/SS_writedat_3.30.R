@@ -307,7 +307,17 @@ SS_writedat_3.30 <- function(datlist,
     if (is.null(d[["lencomp"]]) & d[["use_lencomp"]] == 1) {
       # empty data.frame with correct number of columns needed for terminator row
       d[["lencomp"]] <- data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Ngenders"]])))
+    } else if (d[["use_lencomp"]] == 1) {
+      # remove lines of zero len comps, and warn user.
+      zero_lencomp <- apply(d[["lencomp"]][,-(1:6)], MARGIN = 1, FUN = sum) == 0
+      if(any(zero_lencomp == TRUE)) {
+        warning("Lines of all zero length comp found. SS will exit on error if", 
+                " a line of comps is all zeros, so removing. Line(s) ", 
+                paste0(which(zero_lencomp), collapse = ", "))
+        d[["lencomp"]] <- d[["lencomp"]][!zero_lencomp,]
+      }
     }
+
     print.df(d[["lencomp"]])
   }
   # age bins
@@ -334,6 +344,16 @@ SS_writedat_3.30 <- function(datlist,
     if (is.null(d[["agecomp"]])) {
       # empty data.frame with correct number of columns needed for terminator row
       d[["agecomp"]] <- data.frame(matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Ngenders"]])))
+
+    } else {
+      # check for and remove any 0 lines and warn
+      zero_agecomp <- apply(d[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
+      if(any(zero_agecomp == TRUE)) {
+        warning("Lines of all zero age comp found. SS will exit on error if", 
+                " a line of comps is all zeros, so removing. Line(s) ", 
+                paste0(which(zero_agecomp), collapse = ", "))
+        d[["agecomp"]] <- d[["agecomp"]][!zero_agecomp,]
+      }
     }
     print.df(d[["agecomp"]])
   }
