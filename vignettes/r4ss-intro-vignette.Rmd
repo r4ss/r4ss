@@ -107,7 +107,7 @@ SS_plots(replist = replist, plot = c(7,9))
 ```
 The documentation for the plot argument in the help file for SS_plots lists the corresponding numbers for each group of plots.
 
-It is not uncommon to occasionally run into bugs with the plotting functions because of the vast number of model configurations available in SS and plots created from them. A strategy with for dealing with a bug is to exclude the set of plots where the bug is occuring as a temporary fix (bugs typically get attention fairly quickly from maintainers when reported to the [r4ss issue tracker](https://github.com/r4ss/r4ss/issues). For example, if there was a bug in the conditional age-at-length fits (plot set 18), exclude the plot:
+It is not uncommon to occasionally run into bugs with the plotting functions because of the vast number of model configurations available in SS and plots created from them. A strategy with for dealing with a bug is to exclude the set of plots where the bug is occurring as a temporary fix (bugs typically get attention fairly quickly from maintainers when reported to the [r4ss issue tracker](https://github.com/r4ss/r4ss/issues). For example, if there was a bug in the conditional age-at-length fits (plot set 18), exclude the plot:
 
 ```{r, eval=FALSE}
 SS_plots(replist, plot = c(1:17, 19:26))
@@ -178,7 +178,7 @@ ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"]
 ctl$MG_parms["NatM_p_1_Fem_GP_1", "INIT"] <- 0.2
 ```
 
-Settings in other files can also be modified. For example, the biomass target can be moidified in the forecast file
+Settings in other files can also be modified. For example, the biomass target can be modified in the forecast file
 ```{r}
 fore$Btarget
 fore$Btarget <- 0.45
@@ -254,7 +254,7 @@ r4ss::run_SS_models(dirvec = new_mod_path, model = "ss", exe_in_path = TRUE,
 
 ### Running models in multiple directories
 
-A vector of directories can also be passed to the `dirvec` variable in `run_SS_models` to run models in multiple directories with one functon call.
+A vector of directories can also be passed to the `dirvec` variable in `run_SS_models` to run models in multiple directories with one function call.
 
 ### Investigate the model run
 
@@ -266,7 +266,7 @@ Scripting using r4ss functions is one way of developing a reproducible and coher
 
 ## Functions for common stock assessment tasks
 
-While stock assessment processes differ among regions, some modeling workflows and diagnostics are common. Within r4ss, there are functions to perform a retrospective (`SS_doRetro()`), jitter the starting values and reoptimize the stock assessment model a number of times to check for local minimas (`SS_run_jitter()`) and tuning composition data (`SS_tune_comps()`).
+While stock assessment processes differ among regions, some modeling workflows and diagnostics are common. Within r4ss, there are functions to perform a retrospective (`SS_doRetro()`), jitter the starting values and reoptimize the stock assessment model a number of times to check for local minima (`SS_run_jitter()`) and tuning composition data (`SS_tune_comps()`).
 
 Additional model diagnostics for Stock Synthesis models are available as part of the [ss3diags](https://github.com/jabbamodel/ss3diags) package.
 
@@ -284,7 +284,7 @@ copy_SS_inputs(dir.old = mod_path, dir.new = retro_dir) # copy over the stock sy
 SS_doRetro(masterdir = retro_dir, oldsubdir = "", newsubdir = "retrospectives", 
            years = 0:-5)
 ```
-After running this retrospective, five new folders would be created within `retro_dir`, where each folder would contain a different run of the retrospective (removing 0 to 5 years of data).
+After running this retrospective, six new folders would be created within `retro_dir`, where each folder would contain a different run of the retrospective (removing 0 to 5 years of data).
 
 After the retrospective models have run, the results can be used as a diagnostic:
 
@@ -296,8 +296,8 @@ endyrvec <- retroSummary[["endyrs"]] + 0:-5
 SSplotComparisons(retroSummary, endyrvec = endyrvec,
                   legendlabels = paste("Data", 0:-5, "years"))
 # calculate Mohn's rho, a diagnostic value
-rho_output <- SSmonsrho(summaryoutput = retroSummary, endyrvec = endyrvec,
-                        startyr = retroSummary[["endyrs"]]-5 , verbose = FALSE)
+rho_output <- SSmohnsrho(summaryoutput = retroSummary, endyrvec = endyrvec,
+                         startyr = retroSummary[["endyrs"]]-5 , verbose = FALSE)
 ```
 
 <!-- **To add**: After the retrospective is performed, which metrics can be looked at as diagnostics? Is there another function for this? -->
@@ -325,7 +325,7 @@ Jittering starting values can also provide evidence about the sensitivity of the
 
 ### Tuning composition data
 
-Three different routines are available to tune (or weight) composition data in Stock Synthesis. The MacAllister-Ianelli (MI) and Francis tuning methods are iterative reweighting routines, while the Dirichlet-Multinomial option incorporates weighting parameters directly in the original model.
+Three different routines are available to tune (or weight) composition data in Stock Synthesis. The McAllister-Ianelli (MI) and Francis tuning methods are iterative reweighting routines, while the Dirichlet-multinomial (DM) option incorporates weighting parameters directly in the original model.
 
 Because tuning is commonly used with Stock Synthesis models, and users may be interested in exploring the same model, but  using different tuning methods, `SS_tune_comps()` can start from the same model and transform it into different tuning methods.
 
@@ -363,7 +363,7 @@ tune_info <- SS_tune_comps(
 tune_info
 ```
 
-Now, suppose we wanted to run the same model, but using dirichlet multinomial parameters to weight. The model can be copied over to a new folder, then the `SS_tune_comps` function could be used to add dirichlet multinomial parameters (1 for each fleet with composition data and for each type of composition data) and re run the model.
+Now, suppose we wanted to run the same model, but using Dirichlet-multinomial parameters to weight. The model can be copied over to a new folder, then the `SS_tune_comps` function could be used to add Dirichlet-multinomial parameters (1 for each fleet with composition data and for each type of composition data) and re run the model.
 
 ```{r, eval=FALSE}
 mod_path_dm <- file.path(tempdir(), "simple_mod_dm")
@@ -379,12 +379,12 @@ file.copy(
 from = file.path(mod_path, "CompReport.sso"),
 to = file.path(mod_path_dm, "CompReport.sso")
 )
-# Add Dirichlet multinomial paramters and rerun. The function will 
+# Add Dirichlet-multinomial parameters and rerun. The function will 
 # automatically remove the MI weighting and add in the DM parameters.
 # Use extras = "-nohess" when running model to speed up run.
 DM_parm_info <- SS_tune_comps(
   option = "DM",
-  niters_tuning = 1, # must be 1 or greater to run, through dm is not an iterative reweighting approach
+  niters_tuning = 1, # must be 1 or greater to run, through DM is not an iterative reweighting approach
   dir = mod_path_dm,
   model = "ss",
   extras = "-nohess",
