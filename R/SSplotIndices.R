@@ -772,7 +772,7 @@ SSplotIndices <-
 
         # residual/deviation plots
         if (plot) {
-          if (10 %in% subplots) {
+          if (10 %in% subplots & all(cpueuse[["Obs"]] >= 0)) {
             index_resids.fn(option = 1)
           }
           if (11 %in% subplots) {
@@ -784,7 +784,7 @@ SSplotIndices <-
         }
         if (print) {
           #### residuals based on total uncertainty
-          if (10 %in% subplots) {
+          if (10 %in% subplots & all(cpueuse[["Obs"]] >= 0)) {
             file <- paste0("index10_resids_SE_total_", Fleet, ".png")
             caption <- paste0("Residuals of fit to index for ", Fleet, ".")
             if (error == 0) {
