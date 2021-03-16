@@ -40,7 +40,11 @@ A basic vignette can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-in
 ```S
 remotes::install_github("r4ss/r4ss", build_vignettes = TRUE)
 ```
+## Citing r4ss
 
+Please cite r4ss as:
+
+Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson, Chantel R. Wetzel, Ian J. Stewart, 2021. Beyond visualizing catch-at-age models: Lessons learned from the r4ss package about software to support stock assessments, Fisheries Research, 239:105924. https://doi.org/10.1016/j.fishres.2021.105924.
 
 ## Changes
 
