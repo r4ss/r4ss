@@ -579,14 +579,23 @@ SSplotTimeseries <-
               options(warn = -1) # turn off "zero-length arrow" warning
               # note that Yr rather than YrSeas is used here because recruitment is summed across seasons in multi-season models
               arrows(
-                x0 = stdtable[["Yr"]][plotall], y0 = stdtable[["lower"]][plotall], y1 = stdtable[["upper"]][plotall],
+                x0 = stdtable[["Yr"]][plotall],
+                y0 = stdtable[["lower"]][plotall],
+                y1 = stdtable[["upper"]][plotall],
                 length = 0.01, angle = 90, code = 3, col = mycol
               )
               options(warn = old_warn) # returning to old value
             }
           } # end if uncertainty
         } # end loop over areas
-        if (nareas > 1 & subplot %in% c(2, 3, 5, 6, 8, 10, 12)) legend("topright", legend = areanames[areas], lty = 1, pch = 1, col = areacols[areas], bty = "n")
+        if (nareas > 1 & subplot %in% c(2, 3, 5, 6, 8, 10, 12, 13)) {
+          legend("topright",
+                 legend = areanames[areas],
+                 lty = 1,
+                 pch = 1,
+                 col = areacols[areas],
+                 bty = "n")
+        }
       } # end test for birthseason plots or not
       if (verbose) {
         message("  finished time series subplot ", subplot, ": ", main)
