@@ -1,0 +1,18 @@
+citHeader("To cite r4ss in publications, please use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "Beyond visualizing catch-at-age models: Lessons learned from the r4ss package about software to support stock assessments",
+  author   = "Ian G. Taylor, Kathryn L. Doering, Kelli F. Johnson, Chantel R. Wetzel, Ian J. Stewart",
+  journal  = "Fisheries Research",
+  year     = "2021",
+  volume   = "239",
+  pages    = "105924",
+  url      = "https://doi.org/10.1016/j.fishres.2021.105924",
+  textVersion = paste("Taylor, I.G., Doering, K.L., Johnson, K.F.,",
+    "Wetzel, C.R., Stewart, I.J., 2021. Beyond visualizing catch-at-age models:",
+    "Lessons learned from the r4ss package about software to support stock", 
+    "assessments. Fisheries Research, 239:105924", 
+    "https://doi.org/10.1016/j.fishres.2021.105924"
+  )
+)
