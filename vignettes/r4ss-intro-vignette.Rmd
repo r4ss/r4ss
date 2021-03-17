@@ -274,7 +274,7 @@ Additional model diagnostics for Stock Synthesis models are available as part of
 
 A retrospective analysis removes a certain number of years of the model data and recalculates the fit. This is typically done several times and the results are used to look for retrospective patterns (i.e., non-random deviations in estimated parameters or derived quantities as years of data are removed). If the model results change drastically and non-randomly as data is removed, this is less support for the model. For more on the theory and details behind retrospective analyses, see [Hurtado-Ferro et al. 2015](https://doi.org/10.1093/icesjms/fsu198) and [Legault 2020](https://doi.org/10.1093/icesjms/fsaa184).
 
-The function `SS_doRetro()` can be used to run retrospective analyses starting from an existing Stock Synthesis model. Note that it is safest to create a copy of your original Stock Synthesis model that the retrospective is run on, just in case there are problems with the run. For example, if the original model was in a folder called "C:/Simple", a five year retrospective could be done:
+The function `SS_doRetro()` can be used to run retrospective analyses starting from an existing Stock Synthesis model. Note that it is safest to create a copy of your original Stock Synthesis model that the retrospective is run on, just in case there are problems with the run. For example, a five year retrospective could be done:
 
 ```{r, eval=FALSE}
 retro_dir <-"retro_dir"
@@ -300,11 +300,9 @@ rho_output <- SSmohnsrho(summaryoutput = retroSummary, endyrvec = endyrvec,
                          startyr = retroSummary[["endyrs"]]-5 , verbose = FALSE)
 ```
 
-<!-- **To add**: After the retrospective is performed, which metrics can be looked at as diagnostics? Is there another function for this? -->
-
 ### Jittering
 
-Another commonly used diagnostic is with Stock Synthesis models is "jittering". Model initial values are changed randomly (by some fraction) and the model is reoptimized. The `SS_RunJitter()` function performs this routine for the number of times specified by the user. For a stock Synthesis model in a folder called `my_model` that also contains a copy of the stock synthesis executable named ss (or ss.exe on Windows), jittering starting values can be run 100 times (note this could take a while, as this is running the model 100 times):
+Another commonly used diagnostic with Stock Synthesis models is "jittering". Model initial values are changed randomly (by some fraction) and the model is reoptimized. The `SS_RunJitter()` function performs this routine for the number of times specified by the user. For a stock Synthesis model in a folder called `my_model` that also contains a copy of the stock synthesis executable named ss (or ss.exe on Windows), jittering starting values can be run 100 times (note this could take a while, as this is running the model 100 times):
 
 ```{r, eval=FALSE}
 jitter_dir <-"retro_dir"
