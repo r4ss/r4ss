@@ -529,7 +529,7 @@ SSplotTimeseries <-
             if (subplot == 9 & replist[["Bratio_label"]] != "B/B_0") {
               yvals <- NA * yvals
               yvals[which(ts[["YrSeas"]] %in% stdtable[["YrSeas"]])] <-
-                stdtable[["Value"]][stdtable[["YrSeas"]] %in% ts[["Yr"]]]
+                stdtable[["Value"]][stdtable[["YrSeas"]] %in% ts[["YrSeas"]]]
             }
 
             if (subplot != 11) {
