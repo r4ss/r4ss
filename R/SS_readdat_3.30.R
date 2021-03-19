@@ -518,11 +518,13 @@ SS_readdat_3.30 <-
       }
       # echo values
       # warn if any 0 values in the agecomp:
-      zero_agecomp <- apply(datlist[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
-      if(any(zero_agecomp == TRUE)) {
-        warning("Lines of all zero age comp found. SS will exit on error if", 
-                " a line of comps is all zeros. Line(s) ", 
-                paste0(which(zero_agecomp), collapse = ", "))
+      if(!is.null(datlist[["agecomp"]])) {
+        zero_agecomp <- apply(datlist[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
+        if(any(zero_agecomp == TRUE)) {
+          warning("Lines of all zero age comp found. SS will exit on error if", 
+                  " a line of comps is all zeros. Line(s) ", 
+                  paste0(which(zero_agecomp), collapse = ", "))
+        }
       }
       
       if (echoall) {
