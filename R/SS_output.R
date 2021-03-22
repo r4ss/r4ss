@@ -1353,7 +1353,10 @@ SS_output <-
       seldev_matrix <- NULL
     } else {
       # if semi-parametric selectivity IS used
-
+      if(any(duplicated(FleetNames))){
+        warning("Duplicated fleet names will cause only the semi-parametric",
+                " selectivity to be available for the first of the duplicates.")
+      }
       # parse parameter labels to get info
       # the parameter labels look like like
       # Fishery_ARDEV_y1991_A3 (for age-based selectivity)
@@ -1412,7 +1415,7 @@ SS_output <-
           for (y in seldev_yrs) {
             for (bin in seldev_bins) {
               seldev_matrix[[seldev_label]][paste(y), paste(bin)] <-
-                seldev_pars_sub[["Value"]][seldev_pars_sub[["Year"]] == y & seldev_pars_sub[["Bin"]] == bin]
+                seldev_pars_sub[["Value"]][seldev_pars_sub[["Year"]] == y & seldev_pars_sub[["Bin"]] == bin][1]
             }
           } # end loop over years
         } # end loop over types
