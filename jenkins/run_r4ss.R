@@ -1,6 +1,5 @@
 #.libPaths() # see the library paths
-install.packages("remotes", lib = "/usr/local/lib/R/site-library")
-remotes::install_local(".", upgrade = "always", 
+remotes::install_local(".", upgrade = "never", 
                        lib = "/usr/local/lib/R/site-library")
 						
 # get model folder names
