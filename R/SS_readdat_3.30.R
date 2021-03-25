@@ -540,7 +540,24 @@ SS_readdat_3.30 <-
         message("N_agebins = 0, skipping read remaining age-related stuff")
       }
     }
-
+    # check DM pars ----)
+    if (any(datlist[["len_info"]][["CompError"]] == 1) |
+        any(datlist[["age_info"]][["CompError"]] == 1)) {
+      N_dirichlet_parms <- max(c(datlist[["len_info"]][["ParmSelect"]], 
+                                 datlist[["age_info"]][["ParmSelect"]]))
+      # double check this
+      N_dir_labs <- seq_len(N_dirichlet_parms)
+      for(i in N_dir_labs) {
+        if(!i %in% c(datlist[["len_info"]][["ParmSelect"]], 
+                    datlist[["age_info"]][["ParmSelect"]])) {
+          warning("Dirichlet multinomial parameters must be sequential with no ", 
+                  " missing integers starting from 1. \nMissing DM parameter ",
+                  "labeled  ", i, ", so SS will exit on error for this model ", 
+                  "configuration. \nPlease revise the numbering of the DM ", 
+                  "parameters in the length/age info ParmSelect column.")
+        }
+      }
+    }
     ###############################################################################
     ## Mean size-at-age data ----
     datlist[["use_MeanSize_at_Age_obs"]] <- get.val(dat, ind)
