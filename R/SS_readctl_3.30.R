@@ -1676,26 +1676,45 @@ get_tv_parlabs <- function(full_parms,
     tmp_parname <- rownames(full_parms)[i]
     # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
     if (i %in% par_num[["env"]]) {
-      parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+      tmp_pat <- abs(full_parms[["env_var&link"]][i])
+      if(isTRUE(tmp_pat > 400 & tmp_pat < 500)){ # pattern 4 needs 2 pars, all else 1.
+        parlab <- c(parlab, paste0("# ", rep(tmp_parname, times = 2),
+            c("_ENV_offset", "_ENV_lgst_slope")
+          )
+        )
+      } else {
+        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+      }
     }
     if (i %in% par_num[["block"]]) {
       n_blk <- full_parms[["Block"]][i]
-      tmp_blk_design <- block_design[[n_blk]]
-      # Get the start year for each block
-      if(is.null(tmp_blk_design)){
-        stop("Time blocks used in parameter setup, but not defined in the top", 
-             "of the control file. Please define the time blocks.")
-      }
-      blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
-      lbl <- block_method_label[block_fxn[i] + 1]
-      parlab <- c(
-        parlab,
-        paste0(
-          "# ",
-          rep(tmp_parname, times = length(blk_start_yrs)),
-          "_BLK", n_blk, lbl, blk_start_yrs
+      if(n_blk > 0) {
+        tmp_blk_design <- block_design[[n_blk]]
+        # Get the start year for each block
+        if(is.null(tmp_blk_design)){
+          stop("Time blocks used in parameter setup, but not defined in the top", 
+               "of the control file. Please define the time blocks.")
+        }
+        blk_start_yrs <- tmp_blk_design[seq(1, length(tmp_blk_design), by = 2)]
+        lbl <- block_method_label[block_fxn[i] + 1]
+        parlab <- c(
+          parlab,
+          paste0(
+            "# ",
+            rep(tmp_parname, times = length(blk_start_yrs)),
+            "_BLK", n_blk, lbl, blk_start_yrs
+          )
         )
-      )
+      } else { #trends
+        parlab <- c(
+          parlab,
+          paste0(
+            "# ",
+            rep(tmp_parname, times = 3),
+            c("_TrendFinal", "_TrendInfl", "_TrendWidth_yrs")
+          )
+        )
+      }
     }
     if (i %in% par_num[["dev"]]) {
       # parameter name if there is devs
