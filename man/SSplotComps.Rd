@@ -83,7 +83,7 @@ SSplotComps(
 \item{subplots}{vector controlling which subplots to create}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
-"GSTAGE", "L@A", or "W@A".}
+"GSTAGE", "GSTLEN", "L@A", or "W@A".}
 
 \item{sizemethod}{if kind = "SIZE" then this switch chooses which of the
 generalized size bin methods will be plotted.}
