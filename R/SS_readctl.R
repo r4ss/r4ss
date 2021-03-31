@@ -8,61 +8,30 @@
 #' default values.
 #'
 #' @template file
-#' @template version
-#' @template verbose
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is read. The default is `FALSE`, which turns the
-#' functionality off.
-#' @param nseas Number of seasons in the model. This information is not
-#'  explicitly available in control file.
-#' @param N_areas Number of spatial areas in the model. This information is not
-#'  explicitly available in control file.
-#' @param Nages Oldest age in the model, also known as the accumulator age.
-#'  SS always starts age bins in the model with age-zero fish,
-#'  so `Nages+1` will be the number of ages represented.
-#'  This information is not explicitly available in control file.
-#' @param Ngenders Number of genders in the model. This information is not
-#'  explicitly available in control file.
-#' @param Npopbins Number of population bins in the model. This information is
-#'  not explicitly available in control file and is only
-#'  required if length-based maturity vector is directly supplied
-#'  in the control file (i.e., maturity option of 6).
-#'  Note that the functionality of this option is not yet fully tested.
-#'  Please contact the package authors if you are willing to test it out.
-#' @param Nfleets Number of Fishery + Survey fleets in the model. This
-#'  information is not explicitly available in control file 3.30 syntax.
-#' @param Nfleet Number of Fishery fleets in the model. This information is not
-#'  explicitly available in control file 3.24 syntax.
-#'  Only passed to `SS_readctl_3.24`.
-#' @param Nsurveys Number of Survey fleets in the model. This information is
-#'  not explicitly available in control file 3.24 syntax.
-#'  Only passed to `SS_readctl_3.24`.
-#' @param N_tag_groups Number of tag release groups in the model.
-#' This information is also not explicitly available in control file.
-#' @param N_CPUE_obs Number of CPUE observations.
-#'  Only passed to SS_readctl_3.24.
-#' @param use_datlist LOGICAL if `TRUE`, use datlist to derive parameters which can not be
-#'  determined from the control file. See `datlist` argument for options for
-#'  passing the data file.
+#' @template readctl_vars
+#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' either as character or numeric values (noting that numeric 3.30  = 3.3).
+#' @param N_CPUE_obs Number of CPUE observations. Used only in control file 3.24
+#'  syntax if `use_datlist = FALSE`.
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleet or 2) `use_datlist = TRUE` and
-#'   datlist is specified. Used only in control file 3.30 syntax.
+#'   datlist is specified. Used only in control file 3.30 syntax if 
+#'   `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
-#'  control file comments. Used only in control file 3.30 syntax.
+#'  control file comments. Used only in control file 3.30 syntax if 
+#'  `use_datlist = FALSE`.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
-#' parameters. Defaults to 0. Not used in control file 3.24 syntax.
-#' @param datlist List or character. If list, a list returned from
-#'  [r4ss::SS_writedat].
-#'  If character, a file name for a dat file to be read in.
+#'  parameters. Defaults to 0. Used only in control file 3.30 syntax if 
+#'  `use_datlist = FALSE`..
 #' @param ptype LOGICAL if `TRUE`, which is the default,
 #'  a column will be included in the output indicating parameter type.
 #'  Using `TRUE` can be useful, but causes problems for [SS_writectl],
 #'  and therefore is not recommended if you intend to write the list
 #'  back out into a file.
-#'  Used only in control file 3.30 syntax.
+#'  Used only in control file 3.24 syntax.
 #' @author Ian G. Taylor, Yukio Takeuchi, Neil L. Klaer
 #' @export
 #' @md
@@ -97,24 +66,37 @@
 #' )
 
 SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
+                       use_datlist = TRUE,
+                       datlist = "data.ss_new",
                        ## Parameters that are not defined in control file
-                       nseas = 4,
-                       N_areas = 1,
-                       Nages = 20,
-                       Ngenders = 1,
+                       nseas = NULL,
+                       N_areas = NULL,
+                       Nages = NULL,
+                       Ngenders = lifecycle::deprecated(),
+                       Nsexes = NULL,
                        Npopbins = NA,
-                       Nfleets = 4,
-                       Nfleet = 2,
-                       Nsurveys = 2,
-                       N_tag_groups = NA,
-                       N_CPUE_obs = NA,
+                       Nfleets = NULL,
+                       Nfleet = NULL,
+                       Do_AgeKey = NULL,
+                       Nsurveys = NULL,
+                       N_tag_groups = NULL,
+                       N_CPUE_obs = NULL,
                        catch_mult_fleets = NULL,
                        N_rows_equil_catch = NULL,
-                       N_dirichlet_parms = 0,
-                       use_datlist = FALSE,
-                       datlist = NULL,
-                       ptype = TRUE) {
+                       N_dirichlet_parms = NULL,
+                       ptype = FALSE) {
 
+  # warn about soft deprecated arguments ----
+  # echoall warning will occur in in SS_readctl_3.24 and SS_readctl_3.30
+  if (lifecycle::is_present(Ngenders)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl(Ngenders)",
+      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
+    )
+    Nsexes <- Ngenders
+  }
+  
   # wrapper function to call old or new version of SS_readctl
 
   # automatic testing of version number
@@ -154,28 +136,22 @@ SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
 
   # call function for SS version 3.24
   if ((nver >= 3.2) && (nver < 3.3)) {
-    if (Nfleets != 4) {
-      if (Nfleets != (Nfleet + Nsurveys)) {
-        if (Nfleet == 2 & Nsurveys == 2) {
-          stop("SS v3.24 uses Nfleet and Nsurveys but you have input a value for Nfleets instead")
-        } else {
-          stop("SS v3.30 uses Nfleet and Nsurveys but you have input a value for Nfleets as well that doesn't match with your Nfleet and Nsurveys inputs")
-        }
-      }
+    
+    if (isTRUE(!is.null(Nfleets))) {
+      stop("SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead")
     }
-
     ctllist <- SS_readctl_3.24(
       file = file,
-      version = version,
-      verbose = verbose,
       echoall = echoall,
+      verbose = verbose,
       nseas = nseas,
       N_areas = N_areas,
       Nages = Nages,
-      Ngenders = Ngenders,
+      Nsexes = Nsexes,
       Npopbins = Npopbins,
       Nfleet = Nfleet,
       Nsurveys = Nsurveys,
+      Do_AgeKey = Do_AgeKey,
       N_tag_groups = N_tag_groups,
       N_CPUE_obs = N_CPUE_obs,
       use_datlist = use_datlist,
@@ -186,27 +162,21 @@ SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
 
   # call function for SS version 3.30
   if (nver >= 3.3) {
-    if (Nfleet != 2 | Nsurveys != 2) {
-      if (Nfleets != (Nfleet + Nsurveys)) {
-        if (Nfleets == 4) {
-          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys")
-        } else {
-          stop("SS v3.30 uses Nfleets but you have input values for Nfleet and Nsurveys as well that don't match with your Nfleets input")
-        }
-      }
+    
+    if (isTRUE(!is.null(Nfleet) | !is.null(Nsurveys))) {
+       stop("SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys")
     }
-
     ctllist <- SS_readctl_3.30(
       file = file,
-      version = version,
       verbose = verbose,
       echoall = echoall,
       nseas = nseas,
       N_areas = N_areas,
       Nages = Nages,
-      Ngenders = Ngenders,
+      Nsexes = Nsexes,
       Npopbins = Npopbins,
       Nfleets = Nfleets,
+      Do_AgeKey = Do_AgeKey,
       N_tag_groups = N_tag_groups,
       catch_mult_fleets = catch_mult_fleets,
       N_rows_equil_catch = N_rows_equil_catch,

@@ -1,35 +1,14 @@
 #' read control file from SS version 3.30
 #'
 #' Read Stock Synthesis (version 3.30) control file into list object in R.
-#' This function comes with its wrapper function SS_readctl
-#' that calls SS_readctl_3.24  or SS_readctl_3.30 (this function).
-#'
+#' This function should be called from SS_readctl.
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#' data as it is being read.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param nseas number of seasons in the model. This information is not
-#'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. Default = 1. This information is also not
-#'  explicitly available in control file
-#' @param Nages oldest age in the model. This information is also not
-#'  explicitly available in control file
-#' @param Ngenders number of genders in the model. This information is also not
-#'  explicitly available in control file
-#' @param Npopbins number of population bins in the model. This information is also not
-#'  explicitly available in control file and this information is only required if length based
-#'  maturity vector is directly supplied (Maturity option of 6), and not yet tested
+#' @template readctl_vars
 #' @param Nfleets number of fishery and survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
-#'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
-#'  to disable them. This information is not explicitly available in control file, too.
-#' @param N_tag_groups number of tag release group. Default =NA. This information is not explicitly available
-#'  control file. This information is only required if custom tag parameters is enabled (TG_custom=1)
 #' @param catch_mult_fleets integer vector of fleets using the catch multiplier
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and
@@ -40,11 +19,6 @@
 #'  control file comments.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet multinomial
 #' parameters. Defaults to 0.
-#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
-#'        determined from control file
-#' @param datlist list or character. If list, should be a list produced from
-#'   [SS_writedat()]. If character, should be the file name of an
-#'   SS data file.
 #' @author Neil Klaer, Yukio Takeuchi, Watal M. Iwasaki, and Kathryn Doering
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
@@ -53,23 +27,49 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.30",
+SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = lifecycle::deprecated(), 
+                            version = lifecycle::deprecated(),
+                            use_datlist = FALSE,
+                            datlist = "data.ss_new",
                             ## Parameters that are not defined in control file
-                            nseas = 4,
-                            N_areas = 1,
-                            Nages = 20,
-                            Ngenders = 1,
-                            Npopbins = NA,
-                            Nfleets = 2,
-                            Do_AgeKey = FALSE,
-                            N_tag_groups = NA,
+                            nseas = NULL,
+                            N_areas = NULL,
+                            Nages = NULL,
+                            Ngenders = lifecycle::deprecated(),
+                            Nsexes = NULL,
+                            Npopbins = NULL,
+                            Nfleets = NULL,
+                            Do_AgeKey = NULL,
+                            N_tag_groups = NULL,
                             catch_mult_fleets = NULL,
                             N_rows_equil_catch = NULL,
-                            N_dirichlet_parms = 0,
-                            ##################################
-                            use_datlist = FALSE,
-                            datlist = NULL) {
-
+                            N_dirichlet_parms = NULL) {
+  
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.30(echoall)"
+    )
+  }
+  if (lifecycle::is_present(version)) { # deprecated b/c it is unnecessary.
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.30(version)"
+    )
+  }
+  
+  version <- "3.30"
+  
+  if (lifecycle::is_present(Ngenders)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.30(Ngenders)",
+      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
+    )
+    Nsexes <- Ngenders
+  }
 
   # function to read Stock Synthesis data files
 
@@ -229,7 +229,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
     ctllist[["nseas"]] <- nseas
     ctllist[["N_areas"]] <- N_areas
     ctllist[["Nages"]] <- Nages
-    ctllist[["Ngenders"]] <- Ngenders
+    ctllist[["Nsexes"]] <- Nsexes
     ctllist[["Npopbins"]] <- Npopbins
     ctllist[["Nfleets"]] <- Nfleets
     ctllist[["Do_AgeKey"]] <- Do_AgeKey
@@ -239,13 +239,16 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
     ctllist[["fleetnames"]] <- fleetnames
   } else {
     if (is.character(datlist)) {
-      datlist <- SS_readdat(file = datlist, verbose = verbose, echoall = echoall)
+      if(!file.exists(datlist)) {
+        stop("Cannot find data file specified in datlist: ", datlist)
+      }
+      datlist <- SS_readdat(file = datlist, version = "3.30", verbose = verbose)
     }
     if (is.null(datlist)) stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
     ctllist[["Nages"]] <- Nages <- datlist[["Nages"]]
-    ctllist[["Ngenders"]] <- Ngenders <- datlist[["Ngenders"]]
+    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Ngenders"]] # note: change this line if datlist[["Nsexes"]] used instead
     if (datlist[["lbin_method"]] == 1) {
       ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbins"]] # b/c method 1 uses data length bins
     } else if (datlist[["lbin_method"]] == 2) {
@@ -283,7 +286,6 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   ctllist[["eof"]] <- FALSE
 
   if (verbose) cat("SS_readctl_3.30 - read version = ", ctllist[["ReadVersion"]], "\n")
-
   # beginning of ctl ----
   # weight at age option
   ctllist <- add_elem(ctllist, "EmpiricalWAA")
@@ -351,11 +353,11 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
     ctllist <- add_vec(ctllist, name = "M_ageBreakPoints", length = ctllist[["N_natM"]]) # age(real) at M breakpoints
     N_natMparms <- ctllist[["N_natM"]]
   } else if (ctllist[["natM_type"]] == 2) {
-    N_natMparms <- ctllist[["N_GP"]] * abs(ctllist[["Ngenders"]])
+    N_natMparms <- ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]])
     ctllist <- add_elem(ctllist, name = "Lorenzen_refage") ## Reference age for Lorenzen M
   } else if (ctllist[["natM_type"]] %in% c(3, 4)) {
     N_natMparms <- 0
-    ctllist <- add_df(ctllist, name = "natM", nrow = ctllist[["N_GP"]] * abs(ctllist[["Ngenders"]]), ncol = Nages + 1, col.names = paste0("Age_", 0:Nages))
+    ctllist <- add_df(ctllist, name = "natM", nrow = ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]]), ncol = Nages + 1, col.names = paste0("Age_", 0:Nages))
   } else {
     stop("natM_type =", ctllist[["natM_type"]], " is not yet implemented in this script")
   }
@@ -409,9 +411,8 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
     ctllist <- add_elem(ctllist, "Herm_MalesInSSB") # _Hermaphroditism_males_in_SSB
   }
   ctllist <- add_elem(ctllist, "parameter_offset_approach") # _parameter_offset_approach
-
   # MG parlines -----
-  N_MGparm <- MGparm_per_def * ctllist[["N_GP"]] * abs(ctllist[["Ngenders"]]) ## Parameters for M and Growth multiplied by N_GP and Ngenders
+  N_MGparm <- MGparm_per_def * ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]]) ## Parameters for M and Growth multiplied by N_GP and Nsexes
   MGparmLabel <- list()
   cnt <- 1
   PType <- array() # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5,
@@ -422,7 +423,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
   # MGparm_seas_effects = 16, SRparms = 17, initial_F_parms = 18
 
   GenderLabel <- c("Fem", "Mal")
-  for (i in seq_len(abs(ctllist[["Ngenders"]]))) {
+  for (i in seq_len(abs(ctllist[["Nsexes"]]))) {
     for (j in seq_len(ctllist[["N_GP"]])) {
       if (N_natMparms > 0) {
         MGparmLabel[1:N_natMparms + cnt - 1] <- paste0("NatM_p_", 1:N_natMparms, "_", GenderLabel[i], "_GP_", j)
@@ -1033,7 +1034,6 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
       # Need Ptype?
     }
   }
-
   # selecitivty -----
   # size setup
   # TODO: make sure that this will work when special fleet types are used
@@ -1358,7 +1358,7 @@ SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = FALSE, version = "3.
       N_dirichlet_parms <- max(c(datlist[["len_info"]][["ParmSelect"]], datlist[["age_info"]][["ParmSelect"]]))
     }
   }
-  if (N_dirichlet_parms > 0) {
+  if (isTRUE(N_dirichlet_parms > 0)) {
     ctllist <- add_df(ctllist,
       name = "dirichlet_parms",
       nrow = N_dirichlet_parms,

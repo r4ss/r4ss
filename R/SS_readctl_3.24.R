@@ -7,44 +7,22 @@
 #'
 #'
 #' @template file
-#' @param verbose Should there be verbose output while running the file?
-#'  Default=TRUE.
-#' @param echoall Debugging tool (not fully implemented) of echoing blocks of
-#'  data as it is being read.
-#' @param version SS version number. Currently only "3.24" or "3.30" are supported,
+#' @param version Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
 #' either as character or numeric values (noting that numeric 3.30  = 3.3).
-#' @param nseas number of seasons in the model. This information is not
-#'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. Default = 1.
-#' This information is also not explicitly available in control file
-#' @param Nages oldest age in the model. This information is also not
-#'  explicitly available in control file
-#' @param Ngenders number of genders in the model. This information is also not
-#'  explicitly available in control file
-#' @param Npopbins number of population bins in the model. This information
-#'  is also not explicitly available in control file and this information is
-#'  only required if length based maturity vector is directly supplied
-#'  (Maturity option of 6), and not yet tested
+#' @template readctl_vars
 #' @param Nfleet number of fisheries in the model. This information is also not
 #'  explicitly available in control file
 #' @param Nsurveys number of survey fleets in the model. This information is also not
 #'  explicitly available in control file
-#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters
-#'  to be read set 1 (but in fact any non zero numeric in R) or TRUE to enable
-#'  to read them 0 or FALSE (default) to disable them.
-#'  This information is not explicitly available in control file, too.
-#' @param N_tag_groups number of tag release group. Default =NA.
-#'  This information is not explicitly available control file.
-#'  This information is only required if custom tag parameters is enabled (TG_custom=1)
-#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series
-#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which can not be
-#'  determined from control file
+#' @param N_CPUE_obs numeric vector of length=Nfleet+Nsurveys containing number 
+#'  of data points of each CPUE time series
+#' @param use_datlist LOGICAL if TRUE, use datlist to derive parameters which 
+#'  can not be determined from control file. Defaults to TRUE
 #' @param datlist list or character. if list : produced from SS_writedat
 #'  or character : file name of dat file.
 #' @param ptype include a column in the output indicating parameter type?
-#' (Can be useful, but causes problems for SS_writectl.)
+#' (Can be useful, but causes problems for SS_writectl.) Defaults to FALSE.
 #' @author Yukio Takeuchi, Neil Klaer, Iago Mosqueira, and Kathryn Doering
-
 #' @export
 #' @seealso [SS_readctl()], [SS_readdat()]
 #' [SS_readdat_3.24()],[SS_readdat_3.30()]
@@ -53,24 +31,51 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.24 <- function(file,
                             verbose = TRUE,
-                            echoall = FALSE,
-                            version = "3.24",
+                            echoall = lifecycle::deprecated(), # soft deprecate
+                            version = lifecycle::deprecated(), # soft deprecate
+                            use_datlist = TRUE,
+                            datlist = "data.ss_new",
                             # Parameters that are not defined in control file:
-                            nseas = 4,
-                            N_areas = 1,
-                            Nages = 20,
-                            Ngenders = 1,
+                            nseas = NULL,
+                            N_areas = NULL,
+                            Nages = NULL,
+                            Ngenders = lifecycle::deprecated(), #soft deprecate
+                            Nsexes = NULL,
                             Npopbins = NA,
-                            Nfleet = 2,
-                            Nsurveys = 2,
-                            Do_AgeKey = FALSE,
-                            N_tag_groups = NA,
+                            Nfleet = NULL,
+                            Nsurveys = NULL,
+                            Do_AgeKey = NULL,
+                            N_tag_groups = NULL,
                             # This information is needed if Q_type of 3 or 4 is used
-                            N_CPUE_obs = c(0, 0, 9, 12),
+                            N_CPUE_obs = NULL,
                             ##################################
-                            use_datlist = FALSE,
-                            datlist = NULL,
-                            ptype = TRUE) {
+                            ptype = FALSE) {
+  # deprecated variable warnings -----
+  # soft deprecated for now, but fully deprecate in the future.
+  if (lifecycle::is_present(echoall)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.24(echoall)"
+    )
+  }
+  if (lifecycle::is_present(version)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.24(version)"
+    )
+  }
+  
+  version <- "3.24"
+  if (lifecycle::is_present(Ngenders)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_readctl_3.24(Ngenders)",
+      details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
+    )
+    Nsexes <- Ngenders
+  }
+  
+  
   # internally used fun definitions ----
   # function to read Stock Synthesis data files
 
@@ -191,7 +196,7 @@ SS_readctl_3.24 <- function(file,
     ctllist[["nseas"]] <- nseas
     ctllist[["N_areas"]] <- N_areas
     ctllist[["Nages"]] <- Nages
-    ctllist[["Ngenders"]] <- Ngenders
+    ctllist[["Nsexes"]] <- Nsexes
     ctllist[["Npopbins"]] <- Npopbins
     ctllist[["Nfleet"]] <- Nfleet
     ctllist[["Nsurveys"]] <- Nsurveys
@@ -202,14 +207,19 @@ SS_readctl_3.24 <- function(file,
     if (Nsurveys > 0) fleetnames <- c(fleetnames, paste0("S", 1:Nsurveys))
     ctllist[["fleetnames"]] <- fleetnames
   } else {
-    if (is.character(datlist)) datlist <- SS_readdat(file = datlist)
+    if (is.character(datlist)) {
+      if(!file.exists(datlist)) {
+        stop("Cannot find data file specified in datlist: ", datlist)
+      }
+      datlist <- SS_readdat(file = datlist, version = "3.24", verbose = FALSE)
+    }
     if (is.null(datlist)) {
       stop("datlist from SS_readdat is needed if use_datlist is TRUE")
     }
     ctllist[["nseas"]] <- nseas <- datlist[["nseas"]]
     ctllist[["N_areas"]] <- N_areas <- datlist[["N_areas"]]
     ctllist[["Nages"]] <- Nages <- datlist[["Nages"]]
-    ctllist[["Ngenders"]] <- Ngenders <- datlist[["Ngenders"]]
+    ctllist[["Nsexes"]] <- Nsexes <- datlist[["Ngenders"]] # note: change if renamed to datlist[["Nsexes"]]
     ctllist[["Npopbins"]] <- Npopbins <- datlist[["N_lbinspop"]]
     ctllist[["Nfleet"]] <- Nfleet <- datlist[["Nfleet"]]
     ctllist[["Nsurveys"]] <- Nsurveys <- datlist[["Nsurveys"]]
@@ -221,12 +231,13 @@ SS_readctl_3.24 <- function(file,
         )
     }
     ctllist[["N_tag_groups"]] <- N_tag_groups <- datlist[["N_tag_groups"]]
-    N_CPUE_obs <- sapply(
-      1:(Nfleet + Nsurveys),
+    N_CPUE_obs <- lapply(
+      seq_len(Nfleet + Nsurveys),
       function(i) {
         sum(datlist[["CPUE"]][, "index"] == i)
       }
     )
+    N_CPUE_obs <- unlist(N_CPUE_obs)
     ctllist[["N_CPUE_obs"]] <- N_CPUE_obs
     ctllist[["fleetnames"]] <- fleetnames <- datlist[["fleetnames"]]
   }
@@ -333,7 +344,7 @@ SS_readctl_3.24 <- function(file,
     N_natMparms <- 0
     ctllist <- add_df(ctllist,
       name = "natM",
-      nrow = ctllist[["N_GP"]] * ctllist[["Ngenders"]],
+      nrow = ctllist[["N_GP"]] * ctllist[["Nsexes"]],
       ncol = Nages + 1,
       col.names = paste0("Age_", 0:Nages)
     )
@@ -361,7 +372,7 @@ SS_readctl_3.24 <- function(file,
   } else if (ctllist[["GrowthModel"]] == 4) {
     stop("GrowthModel == 4 is not implemented")
     N_growparms <- 2 # for the two CV parameters
-    k1 <- ctllist[["N_GP"]] * ctllist[["Ngenders"]] # for reading age_natmort
+    k1 <- ctllist[["N_GP"]] * ctllist[["Nsexes"]] # for reading age_natmort
     ctllist <- add_df(ctllist,
       name = "Len_At_Age_rd", nrow = k1,
       ncol = Nages + 1, col.names = paste0("Age_", 0:Nages)
@@ -407,7 +418,7 @@ SS_readctl_3.24 <- function(file,
   ctllist <- add_elem(ctllist, "parameter_offset_approach")
   ctllist <- add_elem(ctllist, "env_block_dev_adjust_method")
   # MG parlines -----
-  N_MGparm <- MGparm_per_def * ctllist[["N_GP"]] * ctllist[["Ngenders"]]
+  N_MGparm <- MGparm_per_def * ctllist[["N_GP"]] * ctllist[["Nsexes"]]
   MGparmLabel <- list()
   cnt <- 1
   # store parameter types M=1, Growth=2, WtLn = 3, Maturity = 4, Fecundity = 5,
@@ -416,7 +427,7 @@ SS_readctl_3.24 <- function(file,
   PType <- array()
 
   GenderLabel <- c("Fem", "Mal")
-  for (i in 1:ctllist[["Ngenders"]]) {
+  for (i in 1:ctllist[["Nsexes"]]) {
     for (j in 1:ctllist[["N_GP"]]) {
       if (N_natMparms > 0) {
         MGparmLabel[1:N_natMparms + cnt - 1] <-
@@ -453,7 +464,7 @@ SS_readctl_3.24 <- function(file,
     }
   }
 
-  N_MGparm <- N_MGparm + 2 * ctllist[["Ngenders"]] + 2 + 2 # add for wt-len(by gender), mat-len parms; eggs
+  N_MGparm <- N_MGparm + 2 * ctllist[["Nsexes"]] + 2 + 2 # add for wt-len(by gender), mat-len parms; eggs
   MGparmLabel[cnt] <- paste0("Wtlen_1_", GenderLabel[1])
   PType[cnt] <- 3
   cnt <- cnt + 1
@@ -511,7 +522,7 @@ SS_readctl_3.24 <- function(file,
   } else {
     stop("Fecundity option ", ctllist[["fecundity_option"]], " is not supported")
   }
-  if (ctllist[["Ngenders"]] == 2) {
+  if (ctllist[["Nsexes"]] == 2) {
     MGparmLabel[cnt] <- paste0("Wtlen_1_", GenderLabel[2])
     PType[cnt] <- 3
     cnt <- cnt + 1
