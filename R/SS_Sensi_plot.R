@@ -1,11 +1,12 @@
-#' Create relative sensitivity plots as described by Cope and Gertseva (in press)
+#' Create relative sensitivity plots as described in Cope and Gertseva (2020)
 #'
 #' Uses output from \code{\link{SSsummarize}} to make a figure showing
 #' sensitivity of various quantities of interest.
 #'
 #' @param model.summaries Output from \code{\link{SSsummarize}}
 #' summarizing results of models to be included
-#' @param Dir Directory where plots will be created
+#' @param dir Directory where plots will be created, either relative
+#' to working directory or an absolute path
 #' @param current.year Year to report output
 #' @param mod.names List the names of the sensitivity runs
 #' @param likelihood.out Note which likelihoods are in the model
@@ -25,19 +26,73 @@
 #' @author Jason Cope
 #' @export
 #' @seealso \code{\link{SSsummarize}}
-#' @references Cope, J. M., V. V. Gertseva. In press. A new way to
-#' visualize and report structural and data uncertainty in stock assessments.
-#' Canadian Journal of Fisheries and Aquatic Sciences.
+#' @references Cope, J. and Gertseva, V. 2020. A new way to visualize
+#' and report structural and data uncertainty in stock assessments.
+#' Can. J. Fish. Aquat. Sci. 77:1275-1280.
+#' https://doi.org/10.1139/cjfas-2020-0082
 
-## library(ggplot2)
-## library(plyr)
-## library(reshape2)
-## library(flextable)
-## library(officer)
-## library(gridExtra)
+#' @examples
+#'
+#' \dontrun{
+#' # Set directory and extract ouput from models
+#' # Model 1 needs to be the Reference model, with sensitivity runs following from run 2 on.
+#' 
+#' # Note: models are available in Jason Cope's github repository:
+#' # https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
+#' dir <- "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
+#' models.dirs <- paste0("Cab_SCS_MS_", 1:19)
+#' zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
+#' 
+#' #Use the summarize function in r4ss to get model summaries
+#' model.summaries<- SSsummarize(zz)
+#' 
+#' #Define the names of each model. This will be used to label runs in the table and in the figures.
+#' mod.names<-c(
+#'   "Reference",
+#'   "M: Fix to 2009",
+#'   "M: Fix to prior",
+#'   "M: Fix to Hamel",
+#'   "M: Fix to VBGF",
+#'   "M: Fix to OR",
+#'   "VBGF 2009",
+#'   "VBGF Grebel",
+#'   "OR maturity",
+#'   "Est. h",
+#'   "All rec devs",
+#'   "No rec devs",
+#'   "High bias adj.",
+#'   "Harmonic mean",
+#'   "Dirichlet",
+#'   "Wts = 1",
+#'   "No blocks",
+#'   "First blocks in 2000",
+#'   "Alt rec catches"
+#' )
+#' 
+#' #Run the sensitivity plot function
+#' SS_Sensi_plot(model.summaries=model.summaries,
+#'               dir = dir,
+#'               current.year=2019,
+#'               mod.names=mod.names, #List the names of the sensitivity runs
+#'               likelihood.out=c(1,1,0),
+#'               Sensi.RE.out="Sensi_RE_out.DMP", #Saved file of relative errors
+#'               CI=0.95, #Confidence interval box based on the reference model
+#'               TRP.in=0.4, #Target relative abundance value
+#'               LRP.in=0.25, #Limit relative abundance value
+#'               sensi_xlab="Sensitivity scenarios", #X-axis label
+#'               ylims.in=c(-1,1,-1,1,-1,1,-1,1,-1,1,-1,1), #Y-axis label
+#'               plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
+#'               sensi.type.breaks=c(6.5,9.5,13.5,16.5), #vertical breaks that can separate out types of sensitivities
+#'               anno.x=c(3.75,8,11.5,15,18), # Vertical positioning of the sensitivity types labels
+#'               anno.y=c(1,1,1,1,1), # Horizontal positioning of the sensitivity types labels
+#'               anno.lab=c("Natural mortality","VBGF/Mat.","Recruitment","Data Wts.","Other") #Sensitivity types labels
+#'               )
+#' }
+#'
+
 
 SS_Sensi_plot<-function(model.summaries,
-                        Dir="",
+                        dir="",
 						current.year, 
 						mod.names, 
 						likelihood.out=c(1,1,1), 
@@ -147,7 +202,7 @@ SS_Sensi_plot<-function(model.summaries,
 	Like.parm.quants.table.data<-flextable::as_grouped_data(Like.parm.quants,groups=c("Label"))
 	#as_flextable(Like.parm.quants.table.data)
 	write.csv(Like.parm.quants.table.data,
-            file.path(Dir, "Likes_parms_devquants_table.csv"))
+            file.path(dir, "Likes_parms_devquants_table.csv"))
 
 #Calcualte Relative changes
 dev.quants.mat<-as.matrix(dev.quants)
@@ -162,7 +217,7 @@ colnames(Dev.quants.temp)<-c("Metric",mod.names[-1])
 Dev.quants.ggplot<-data.frame(reshape2::melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3],logRE[,2:3])
 colnames(Dev.quants.ggplot)<-c("Metric","Model_name","Value","Model_num_plot","RE","Model_num_plot_log","logRE")
 Dev.quants.ggplot$Metric<-factor(Dev.quants.ggplot$Metric,levels=unique(Dev.quants.ggplot$Metric))
-save(Dev.quants.ggplot,file=file.path(Dir, Sensi.RE.out))
+save(Dev.quants.ggplot,file=file.path(dir, Sensi.RE.out))
 
 #Calculate RE values for reference model boxes
 CI_DQs_RE<-((dev.quants[,1]+dev.quants.SD*qnorm(CI))-dev.quants[,1])/dev.quants[,1]
@@ -232,7 +287,7 @@ if(plot.figs[1]==1)
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(TRP+0.03,LRP-0.03),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_all.png"))
+  ggsave(file.path(dir, "Sensi_REplot_all.png"))
   
   #log plot
   ggplot(Dev.quants.ggplot,aes(Model_num_plot,logRE))+
@@ -265,7 +320,7 @@ if(plot.figs[1]==1)
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(logTRP+0.03,logLRP-0.03),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_all.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_all.png"))
 }
 
 if(plot.figs[1]==1)
@@ -342,7 +397,7 @@ if(plot.figs[1]==1)
   
   #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
   p4<-ggpubr::ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
-  ggsave(file.path(Dir, "Sensi_REplot_SB_Dep_F_MSY.png"),p4)
+  ggsave(file.path(dir, "Sensi_REplot_SB_Dep_F_MSY.png"),p4)
   
   #Log plots
   Dev.quants.ggplot.SBs<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1]| Metric == unique(Dev.quants.ggplot$Metric)[2])
@@ -415,7 +470,7 @@ if(plot.figs[1]==1)
   
   p4<-ggpubr::ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
   #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
-  ggsave(file.path(Dir, "Sensi_logREplot_SB_Dep_F_MSY.png"),p4)
+  ggsave(file.path(dir, "Sensi_logREplot_SB_Dep_F_MSY.png"),p4)
   
 }
 
@@ -439,7 +494,7 @@ if(plot.figs[2]==1)
     labs(x = sensi_xlab,y = "Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_SO_0.png"))
+  ggsave(file.path(dir, "Sensi_REplot_SO_0.png"))
   
   #Log plot
   Dev.quants.ggplot.SB0<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1])
@@ -459,7 +514,7 @@ if(plot.figs[2]==1)
     labs(x = sensi_xlab,y = "Log Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_SO_0.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_SO_0.png"))
 }
 
 if(plot.figs[3]==1)
@@ -482,7 +537,7 @@ if(plot.figs[3]==1)
     labs(x = sensi_xlab,y = "Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_SOcurrent.png"))
+  ggsave(file.path(dir, "Sensi_REplot_SOcurrent.png"))
   
   #Log plots  
   Dev.quants.ggplot.SBt<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[2])
@@ -502,7 +557,7 @@ if(plot.figs[3]==1)
     labs(x = sensi_xlab,y = "Log Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_SOcurrent.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_SOcurrent.png"))
 }
 
 if(plot.figs[4]==1)
@@ -527,7 +582,7 @@ if(plot.figs[4]==1)
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_hline(yintercept =c(TRP,LRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_status.png"))
+  ggsave(file.path(dir, "Sensi_REplot_status.png"))
   
   #Log plots
   Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
@@ -549,7 +604,7 @@ if(plot.figs[4]==1)
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_status.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_status.png"))
 }
 
 if(plot.figs[5]==1)
@@ -571,7 +626,7 @@ if(plot.figs[5]==1)
     labs(x = sensi_xlab,y = "Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_MSY.png"))
+  ggsave(file.path(dir, "Sensi_REplot_MSY.png"))
   #Log plots
   Dev.quants.ggplot.MSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4])
   ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,logRE))+
@@ -589,7 +644,7 @@ if(plot.figs[5]==1)
     labs(x = sensi_xlab,y = "Log Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_MSY.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_MSY.png"))
 }
 
 if(plot.figs[6]==1)
@@ -611,7 +666,7 @@ if(plot.figs[6]==1)
     labs(x = sensi_xlab,y = "Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_REplot_FMSY.png"))
+  ggsave(file.path(dir, "Sensi_REplot_FMSY.png"))
   
   #RE plots
   Dev.quants.ggplot.FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[5])
@@ -630,6 +685,6 @@ if(plot.figs[6]==1)
     labs(x = sensi_xlab,y = "Log Relative change")+
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-  ggsave(file.path(Dir, "Sensi_logREplot_FMSY.png"))
+  ggsave(file.path(dir, "Sensi_logREplot_FMSY.png"))
 }
 }
