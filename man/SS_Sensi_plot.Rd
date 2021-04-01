@@ -24,7 +24,7 @@ SS_Sensi_plot(
 )
 }
 \arguments{
-\item{model.summaries}{Output from \code{\link{SSsummarize}}
+\item{model.summaries}{Output from \code{\link[=SSsummarize]{SSsummarize()}}
 summarizing results of models to be included}
 
 \item{dir}{Directory where plots will be created, either relative
@@ -41,6 +41,8 @@ to working directory or an absolute path}
 
 \item{CI}{Confidence interval box based on the reference model}
 
+\item{TRP.in}{Target relative abundance value}
+
 \item{LRP.in}{Limit relative abundance value}
 
 \item{sensi_xlab}{X-axis label}
@@ -52,16 +54,14 @@ to working directory or an absolute path}
 \item{sensi.type.breaks}{vertical breaks that can separate out types
 of sensitivities}
 
-\item{anno.x}{Vertical positioning of the sensitivity types labels}
+\item{anno.x}{Horizontal positioning of the sensitivity types labels}
 
-\item{anno.y}{Horizontal positioning of the sensitivity types labels}
+\item{anno.y}{Vertical positioning of the sensitivity types labels}
 
 \item{anno.lab}{Sensitivity types labels}
-
-\item{TRP.inTarget}{relative abundance value}
 }
 \description{
-Uses output from \code{\link{SSsummarize}} to make a figure showing
+Uses output from \code{\link[=SSsummarize]{SSsummarize()}} to make a figure showing
 sensitivity of various quantities of interest.
 }
 \examples{
@@ -116,9 +116,9 @@ SS_Sensi_plot(
   sensi_xlab = "Sensitivity scenarios", # X-axis label
   ylims.in = c(-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1), # Y-axis label
   plot.figs = c(1, 1, 1, 1, 1, 1), # Which plots to make/save?
-  sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks that can separate out types of sensitivities
-  anno.x = c(3.75, 8, 11.5, 15, 18), # Vertical positioning of the sensitivity types labels
-  anno.y = c(1, 1, 1, 1, 1), # Horizontal positioning of the sensitivity types labels
+  sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks 
+  anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
+  anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
 )
 }
@@ -131,7 +131,7 @@ Can. J. Fish. Aquat. Sci. 77:1275-1280.
 https://doi.org/10.1139/cjfas-2020-0082
 }
 \seealso{
-\code{\link{SSsummarize}}
+\code{\link[=SSsummarize]{SSsummarize()}}
 }
 \author{
 Jason Cope

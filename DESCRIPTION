@@ -31,7 +31,6 @@ Suggests:
     truncnorm,
     rmarkdown,
     shiny,
-    ggplot2,
     flextable,
     reshape2,
     ggpubr

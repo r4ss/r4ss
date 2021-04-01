@@ -1,9 +1,9 @@
 #' Create relative sensitivity plots as described in Cope and Gertseva (2020)
 #'
-#' Uses output from \code{\link{SSsummarize}} to make a figure showing
+#' Uses output from [SSsummarize()] to make a figure showing
 #' sensitivity of various quantities of interest.
 #'
-#' @param model.summaries Output from \code{\link{SSsummarize}}
+#' @param model.summaries Output from [SSsummarize()]
 #' summarizing results of models to be included
 #' @param dir Directory where plots will be created, either relative
 #' to working directory or an absolute path
@@ -13,19 +13,19 @@
 #' (surveys, lengths, ages)
 #' @param Sensi.RE.out  Saved file of relative changes
 #' @param CI Confidence interval box based on the reference model
-#' @param TRP.inTarget relative abundance value
+#' @param TRP.in Target relative abundance value
 #' @param LRP.in Limit relative abundance value
 #' @param sensi_xlab X-axis label
 #' @param ylims.in Y-axis label
 #' @param plot.figs Which plots to make/save?
 #' @param sensi.type.breaks vertical breaks that can separate out types
 #' of sensitivities
-#' @param anno.x Vertical positioning of the sensitivity types labels
-#' @param anno.y Horizontal positioning of the sensitivity types labels
+#' @param anno.x Horizontal positioning of the sensitivity types labels
+#' @param anno.y Vertical positioning of the sensitivity types labels
 #' @param anno.lab Sensitivity types labels
 #' @author Jason Cope
 #' @export
-#' @seealso \code{\link{SSsummarize}}
+#' @seealso [SSsummarize()]
 #' @references Cope, J. and Gertseva, V. 2020. A new way to visualize
 #' and report structural and data uncertainty in stock assessments.
 #' Can. J. Fish. Aquat. Sci. 77:1275-1280.
@@ -83,9 +83,9 @@
 #'   sensi_xlab = "Sensitivity scenarios", # X-axis label
 #'   ylims.in = c(-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1), # Y-axis label
 #'   plot.figs = c(1, 1, 1, 1, 1, 1), # Which plots to make/save?
-#'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks that can separate out types of sensitivities
-#'   anno.x = c(3.75, 8, 11.5, 15, 18), # Vertical positioning of the sensitivity types labels
-#'   anno.y = c(1, 1, 1, 1, 1), # Horizontal positioning of the sensitivity types labels
+#'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks 
+#'   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
+#'   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
 #'   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
 #' )
 #' }
@@ -109,7 +109,7 @@ SS_Sensi_plot <- function(model.summaries,
   # internal function
   gg_color_hue <- function(n) {
     hues <- seq(15, 375, length = n + 1)
-    hcl(h = hues, l = 65, c = 100)[1:n]
+    grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
   }
 
   # num.likes<-sum(likelihood.out)*2+2
@@ -243,8 +243,8 @@ SS_Sensi_plot <- function(model.summaries,
   pt.dodge <- 0.3
   if (plot.figs[1] == 1) {
     # RE plot
-    ggplot(Dev.quants.ggplot, aes(Model_num_plot, RE)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    ggplot(Dev.quants.ggplot, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -288,8 +288,8 @@ SS_Sensi_plot <- function(model.summaries,
     ggsave(file.path(dir, "Sensi_REplot_all.png"))
 
     # log plot
-    ggplot(Dev.quants.ggplot, aes(Model_num_plot, logRE)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    ggplot(Dev.quants.ggplot, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
@@ -332,8 +332,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[1] == 1) {
     # RE plots
     Dev.quants.ggplot.SBs <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[1] | Metric == unique(Dev.quants.ggplot$Metric)[2])
-    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(Model_num_plot, RE)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       scale_x_continuous(breaks = 2:(model.summaries$n)) +
@@ -368,8 +368,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     Dev.quants.ggplot.Dep <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[3])
 
-    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
       scale_x_continuous(breaks = 2:(model.summaries$n)) +
       # scale_y_continuous(limits=ylims.in[7:8])+
@@ -391,8 +391,8 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.MSY_FMSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[4] | Metric == unique(Dev.quants.ggplot$Metric)[5])
-    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(Model_num_plot, RE, group = Metric)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, RE, group = .data$Metric)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
@@ -426,8 +426,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.SBs <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[1] | Metric == unique(Dev.quants.ggplot$Metric)[2])
-    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(Model_num_plot, logRE)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    p1 <- ggplot(Dev.quants.ggplot.SBs, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       scale_x_continuous(breaks = 2:(model.summaries$n)) +
@@ -461,8 +461,8 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.Dep <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[3])
-    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    p2 <- ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
       scale_x_continuous(breaks = 2:(model.summaries$n)) +
       # scale_y_continuous(limits=ylims.in[7:8])+
@@ -484,8 +484,8 @@ SS_Sensi_plot <- function(model.summaries,
       geom_vline(xintercept = c(sensi.type.breaks), lty = lty.in)
 
     Dev.quants.ggplot.MSY_FMSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[4] | Metric == unique(Dev.quants.ggplot$Metric)[5])
-    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(Model_num_plot, logRE, group = Metric)) +
-      geom_point(aes(shape = Metric, color = Metric), position = position_dodge(pt.dodge)) +
+    p3 <- ggplot(Dev.quants.ggplot.MSY_FMSY, aes(.data$Model_num_plot, logRE, group = .data$Metric)) +
+      geom_point(aes(shape = .data$Metric, color = .data$Metric), position = position_dodge(pt.dodge)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot$Model_name)) +
@@ -521,8 +521,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[2] == 1) {
     # RE plot
     Dev.quants.ggplot.SB0 <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[1])
-    ggplot(Dev.quants.ggplot.SB0, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[1], ymax = CI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.SB0$Model_name)) +
@@ -545,8 +545,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plot
     Dev.quants.ggplot.SB0 <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[1])
-    ggplot(Dev.quants.ggplot.SB0, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.SB0, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[1], ymax = logCI_DQs_RE[1]), fill = NA, color = four.colors[1]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.SB0$Model_name)) +
@@ -571,8 +571,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[3] == 1) {
     # RE plots
     Dev.quants.ggplot.SBt <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[2])
-    ggplot(Dev.quants.ggplot.SBt, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[2], ymax = CI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt$Model_name)) +
@@ -595,8 +595,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.SBt <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[2])
-    ggplot(Dev.quants.ggplot.SBt, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.SBt, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[2], ymax = logCI_DQs_RE[2]), fill = NA, color = four.colors[2]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), minor_breaks = NULL, labels = unique(Dev.quants.ggplot.SBt$Model_name)) +
@@ -621,8 +621,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[4] == 1) {
     # RE plots
     Dev.quants.ggplot.Dep <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[3])
-    ggplot(Dev.quants.ggplot.Dep, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[3], ymax = CI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.Dep$Model_name)) +
       # scale_y_continuous(limits=ylims.in[7:8])+
@@ -647,8 +647,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # Log plots
     Dev.quants.ggplot.Dep <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[3])
-    ggplot(Dev.quants.ggplot.Dep, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.Dep, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[3], ymax = logCI_DQs_RE[3]), fill = NA, color = four.colors[3]) +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.Dep$Model_name)) +
       # scale_y_continuous(limits=ylims.in[7:8])+
@@ -675,8 +675,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[5] == 1) {
     # RE plots
     Dev.quants.ggplot.MSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[4])
-    ggplot(Dev.quants.ggplot.MSY, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[4], ymax = CI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.MSY$Model_name)) +
@@ -697,8 +697,8 @@ SS_Sensi_plot <- function(model.summaries,
     ggsave(file.path(dir, "Sensi_REplot_MSY.png"))
     # Log plots
     Dev.quants.ggplot.MSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[4])
-    ggplot(Dev.quants.ggplot.MSY, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.MSY, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[4], ymax = logCI_DQs_RE[4]), fill = NA, color = four.colors[4]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.MSY$Model_name)) +
@@ -722,8 +722,8 @@ SS_Sensi_plot <- function(model.summaries,
   if (plot.figs[6] == 1) {
     # RE plots
     Dev.quants.ggplot.FMSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[5])
-    ggplot(Dev.quants.ggplot.FMSY, aes(Model_num_plot, RE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, RE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -CI_DQs_RE[5], ymax = CI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.FMSY$Model_name)) +
@@ -745,8 +745,8 @@ SS_Sensi_plot <- function(model.summaries,
 
     # RE plots
     Dev.quants.ggplot.FMSY <- subset(Dev.quants.ggplot, Metric == unique(Dev.quants.ggplot$Metric)[5])
-    ggplot(Dev.quants.ggplot.FMSY, aes(Model_num_plot, logRE)) +
-      geom_point(aes(color = Metric)) +
+    ggplot(Dev.quants.ggplot.FMSY, aes(.data$Model_num_plot, logRE)) +
+      geom_point(aes(color = .data$Metric)) +
       geom_rect(aes(xmin = 1, xmax = model.summaries$n + 1, ymin = -logCI_DQs_RE[5], ymax = logCI_DQs_RE[5]), fill = NA, color = four.colors[5]) +
       geom_hline(yintercept = 0, lty = 1, color = "gray") +
       scale_x_continuous(breaks = 2:(model.summaries$n), labels = unique(Dev.quants.ggplot.FMSY$Model_name)) +
