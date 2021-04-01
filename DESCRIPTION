@@ -30,7 +30,11 @@ Suggests:
     testthat,
     truncnorm,
     rmarkdown,
-    shiny
+    shiny,
+    ggplot2,
+    flextable,
+    reshape2,
+    ggpubr
 Description: A collection of R functions for use with Stock Synthesis, a
     fisheries stock assessment modeling platform written in ADMB by Dr. Richard
     D.  Methot at the NOAA Northwest Fisheries Science Center. The functions
