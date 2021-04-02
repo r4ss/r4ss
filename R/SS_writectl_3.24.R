@@ -9,11 +9,11 @@
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
 #'  Defaults to FALSE.
-#' @param nseas number of season in the model. This information is not
+#' @param nseas Deprecated. number of season in the model. This information is not
 #'  explicitly available in control file
-#' @param N_areas number of spatial areas in the model. This information is also not
+#' @param N_areas Deprecated. number of spatial areas in the model. This information is also not
 #'  explicitly available in control file
-#' @param Do_AgeKey Flag to indicate if 7 additional ageing error parameters to be read
+#' @param Do_AgeKey Deprecated. Flag to indicate if 7 additional ageing error parameters to be read
 #'  set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 #'  to disable them. This information is not explicitly available in control file, too.
 #' @author Yukio Takeuchi
@@ -26,22 +26,41 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
                              ## Parameters that are not defined in control file
                              ## if ctllist is an output of SS_readctl these three inputs will be overriden by
                              ## nseas,N_areas and Do_AgeKey in ctllist
-                             nseas = 1,
-                             N_areas = 1,
-                             Do_AgeKey = FALSE) {
+                             nseas = lifecycle::deprecated(),
+                             N_areas = lifecycle::deprecated(),
+                             Do_AgeKey = lifecycle::deprecated()) {
+  # Add msgs for deprecated args ----
+  # these should be removed after 1 release version.
+  if (lifecycle::is_present(nseas)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_writectl_3.24(nseas)",
+      details = "nseas is not used. ctllist[['nseas']] is used instead."
+    )
+  }
+  
+  if (lifecycle::is_present(N_areas)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_writectl_3.24(N_areas)",
+      details = "nseas is not used. ctllist[['N_areas']] is used instead."
+    )
+  }
+  
+  if (lifecycle::is_present(Do_AgeKey)) {
+    lifecycle::deprecate_warn(
+      when = "1.41.1", 
+      what = "SS_writectl_3.24(Do_AgeKey)",
+      details = "Do_AgeKey is not used. ctllist[['Do_AgeKey']] is used instead."
+    )
+  }
+  
   # function to write Stock Synthesis ctl files
   if (verbose) cat("running SS_writectl\n")
 
   if (ctllist[["type"]] != "Stock_Synthesis_control_file") {
     stop("input 'ctllist' should be a list with $type=='Stock_Synthesis_control_file'")
   }
-
-  # this command will hopefully prevent earlier issues of getting stuck with all R
-  # output written to the file after the function crashes before closing connection
-  ## on.exit({if(sink.number()>0) sink(); close(zz)})
-  nseas <- ifelse(is.null(ctllist[["nseas"]]), nseas, ctllist[["nseas"]])
-  N_areas <- ifelse(is.null(ctllist[["N_areas"]]), N_areas, ctllist[["N_areas"]])
-  Do_AgeKey <- ifelse(is.null(ctllist[["Do_AgeKey"]]), Do_AgeKey, ctllist[["Do_AgeKey"]])
 
   if (file.exists(outfile)) {
     if (!overwrite) {
@@ -153,12 +172,12 @@ SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     wl("sd_ratio")
     wl("submorphdist")
   }
-  if (ctllist[["N_GP"]] * nseas * N_areas > 1) {
+  if (ctllist[["N_GP"]] * ctllist[["nseas"]] * ctllist[["N_areas"]] > 1) {
     wl("recr_dist_read", comment = "#_number of recruitment assignments (overrides GP*area*seas parameter values)")
     wl("recr_dist_inx", comment = "#_recruitment interaction requested")
     printdf("recr_dist_pattern")
   }
-  if (N_areas > 1) {
+  if (ctllist[["N_areas"]] > 1) {
     #  stop("Multi areas are not yet implemented")
     wl("N_moveDef", comment = "#_N_movement_definitions goes here if N_areas > 1")
     wl("firstAgeMove", comment = "#_first age that moves (real age at begin of season, not integer) also cond on do_migration>0")
