@@ -205,7 +205,13 @@ SS_writedat_3.30 <- function(datlist,
   wl.vector("months_per_seas", comment = "#_months_per_seas")
   wl("Nsubseasons")
   wl("spawn_month")
-  wl("Ngenders")
+  if(isTRUE(d[["Ngenders"]] != d[["Nsexes"]])) {
+    warning("List element `Ngenders` is in the process of being deprecated and ", 
+            "replaced by the `Nsexes`. In the meantime, r4ss::SS_writedat_3.30 will", 
+            " warn when `Ngenders` and `Nsexes` do not have the same value and", 
+            " only Nsexes will be written.")
+  }
+  wl("Nsexes")
   wl("Nages")
   wl("N_areas")
   wl("Nfleets")
@@ -306,7 +312,7 @@ SS_writedat_3.30 <- function(datlist,
     writeComment("#\n#_lencomp")
     if (is.null(d[["lencomp"]]) & d[["use_lencomp"]] == 1) {
       # empty data.frame with correct number of columns needed for terminator row
-      d[["lencomp"]] <- data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Ngenders"]])))
+      d[["lencomp"]] <- data.frame(matrix(vector(), 0, 6 + d[["N_lbins"]] * abs(d[["Nsexes"]])))
     } else if (d[["use_lencomp"]] == 1) {
       # remove lines of zero len comps, and warn user.
       zero_lencomp <- apply(d[["lencomp"]][,-(1:6)], MARGIN = 1, FUN = sum) == 0
@@ -343,7 +349,7 @@ SS_writedat_3.30 <- function(datlist,
     # age comps
     if (is.null(d[["agecomp"]])) {
       # empty data.frame with correct number of columns needed for terminator row
-      d[["agecomp"]] <- data.frame(matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Ngenders"]])))
+      d[["agecomp"]] <- data.frame(matrix(vector(), 0, 9 + d[["N_agebins"]] * abs(d[["Nsexes"]])))
 
     } else {
       # check for and remove any 0 lines and warn

@@ -166,7 +166,12 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
 
 
   # more dimensions
-  datlist[["Ngenders"]] <- Ngenders <- allnums[i]
+  datlist[["Ngenders"]] <- allnums[i]
+  datlist[["Nsexes"]] <- datlist[["Ngenders"]]
+  warning( "List object Ngenders is in the process of being deprecated from ",
+  " SS_readdat_3.24 as of version 1.41.1. In future releases only Nsexes ",
+  "will be created. For now, please modify both Ngenders and Nsexes when ",
+  "making changes")
   i <- i + 1
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
@@ -316,7 +321,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   if (verbose) cat("N_lencomp =", N_lencomp, "\n")
 
   if (N_lencomp > 0) {
-    Ncols <- N_lbins * Ngenders + 6
+    Ncols <- N_lbins * datlist[["Nsexes"]] + 6
     lencomp <- data.frame(matrix(
       allnums[i:(i + N_lencomp * Ncols - 1)],
       nrow = N_lencomp, ncol = Ncols, byrow = TRUE
@@ -324,12 +329,12 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_lencomp * Ncols
     names(lencomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("l", lbin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", lbin_vector, sep = ""), paste("m", lbin_vector, sep = ""))
       } else {
         NULL
@@ -382,19 +387,19 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
 
   if (N_agecomp > 0) {
     if (N_agebins == 0) stop("N_agecomp =", N_agecomp, " but N_agebins = 0")
-    Ncols <- N_agebins * Ngenders + 9
+    Ncols <- N_agebins * datlist[["Nsexes"]] + 9
     agecomp <- data.frame(matrix(allnums[i:(i + N_agecomp * Ncols - 1)],
       nrow = N_agecomp, ncol = Ncols, byrow = TRUE
     ))
     i <- i + N_agecomp * Ncols
     names(agecomp) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
@@ -410,7 +415,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   if (verbose) cat("N_MeanSize_at_Age_obs =", N_MeanSize_at_Age_obs, "\n")
   if (N_MeanSize_at_Age_obs > 0) {
-    Ncols <- 2 * N_agebins * Ngenders + 7
+    Ncols <- 2 * N_agebins * datlist[["Nsexes"]] + 7
     MeanSize_at_Age_obs <- data.frame(matrix(
       allnums[i:(i + N_MeanSize_at_Age_obs * Ncols - 1)],
       nrow = N_MeanSize_at_Age_obs, ncol = Ncols, byrow = TRUE
@@ -418,22 +423,22 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     i <- i + N_MeanSize_at_Age_obs * Ncols
     names(MeanSize_at_Age_obs) <- c(
       "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("f", agebin_vector, sep = ""), paste("m", agebin_vector, sep = ""))
       } else {
         NULL
       },
-      if (Ngenders == 1) {
+      if (datlist[["Nsexes"]] == 1) {
         paste("N_a", agebin_vector, sep = "")
       } else {
         NULL
       },
-      if (Ngenders > 1) {
+      if (datlist[["Nsexes"]] > 1) {
         c(paste("N_f", agebin_vector, sep = ""), paste("N_m", agebin_vector, sep = ""))
       } else {
         NULL
@@ -506,12 +511,12 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
       names(sizefreq_data_tmp) <-
         c(
           "Method", "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-          if (Ngenders == 1) {
+          if (datlist[["Nsexes"]] == 1) {
             paste("a", sizefreq_bins_list[[imethod]], sep = "")
           } else {
             NULL
           },
-          if (Ngenders > 1) {
+          if (datlist[["Nsexes"]] > 1) {
             c(
               paste("f", sizefreq_bins_list[[imethod]], sep = ""),
               paste("m", sizefreq_bins_list[[imethod]], sep = "")
