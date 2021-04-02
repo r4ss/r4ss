@@ -1,6 +1,6 @@
 
 #' @param verbose Should there be verbose output while running the file?
-#' Default=TRUE.
+#' Defaults to FALSE.
 #' @param echoall Deprecated. Debugging tool (not fully implemented) of echoing
 #'  blocks of values as it is being read.
 #' @param use_datlist LOGICAL. If TRUE, use datlist to derive parameters which 

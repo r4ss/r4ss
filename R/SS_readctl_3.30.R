@@ -27,7 +27,7 @@
 #' [SS_readstarter()], [SS_readforecast()],
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
-SS_readctl_3.30 <- function(file, verbose = TRUE, echoall = lifecycle::deprecated(), 
+SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(), 
                             version = lifecycle::deprecated(),
                             use_datlist = FALSE,
                             datlist = "data.ss_new",

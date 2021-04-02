@@ -8,6 +8,7 @@
 #' @param outfile Filename for where to write new data file.
 #' @param overwrite Should existing files be overwritten? Default=FALSE.
 #' @param verbose Should there be verbose output while running the file?
+#'  Defaults to FALSE.
 #' @param nseas number of season in the model. This information is not
 #'  explicitly available in control file
 #' @param N_areas number of spatial areas in the model. This information is also not
@@ -21,7 +22,7 @@
 # ' \code{\link{SS_readforecast}},
 # ' \code{\link{SS_writestarter}}, \code{\link{SS_writeforecast}},
 # ' \code{\link{SS_writedat}}
-SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = TRUE,
+SS_writectl_3.24 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALSE,
                              ## Parameters that are not defined in control file
                              ## if ctllist is an output of SS_readctl these three inputs will be overriden by
                              ## nseas,N_areas and Do_AgeKey in ctllist

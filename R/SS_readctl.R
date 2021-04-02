@@ -65,7 +65,7 @@
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
 
-SS_readctl <- function(file, version = NULL, verbose = TRUE, echoall = FALSE,
+SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = FALSE,
                        use_datlist = TRUE,
                        datlist = "data.ss_new",
                        ## Parameters that are not defined in control file

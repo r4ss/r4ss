@@ -30,7 +30,7 @@
 #' [SS_writestarter()],
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.24 <- function(file,
-                            verbose = TRUE,
+                            verbose = FALSE,
                             echoall = lifecycle::deprecated(), # soft deprecate
                             version = lifecycle::deprecated(), # soft deprecate
                             use_datlist = TRUE,
