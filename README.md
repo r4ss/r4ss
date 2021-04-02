@@ -10,29 +10,25 @@ Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Me
 
 ## Installation
 
-r4ss can be downloaded from CRAN using:
+The CRAN version of r4ss is out of date. It will be updated whenever SS version 3.30.17 gets released at which point you can install r4ss via:
 ```S
 install.packages("r4ss")
 ```
 
-This is equivalent to installing the master branch directly from GitHub:
+For now, it is necessary to install the main branch directly from GitHub:
 
 ```S
 install.packages("remotes")
 remotes::install_github("r4ss/r4ss")
 ```
 
-Ongoing development of r4ss has been mostly taking place in the "development" branch on GitHub. The development branch may be less stable, but can provide the most recent features and bug fixes. The development branch can be installed using the command:
-
-```S
-remotes::install_github("r4ss/r4ss", ref="development")
-```
+Ongoing development of r4ss used to take place in the "development" branch, but now is in the "main" branch. Thus, you should no longer need to reference a branch when installing from github unless you are seeking a specific feature that hasn't yet been merged into the main branch.
 
 Once you have installed the r4ss package, it can be loaded using:
 
 ```S
 library(r4ss)
-````
+```
 
 To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.ncep.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
 
