@@ -197,10 +197,6 @@ SS_readdat_3.30 <-
     datlist[["Ngenders"]] <- get.val(dat, ind)
     # Keep both Nsexes and Ngenders for now, but get rid of Ngenders in the future.
     datlist[["Nsexes"]] <- datlist[["Ngenders"]]
-    warning( "List object Ngenders is in the process of being deprecated from ",
-    " SS_readdat_3.30 as of version 1.41.1. In future releases only Nsexes ",
-    "will be created. For now, please modify both Ngenders and Nsexes when ",
-    "making changes")
     datlist[["Nages"]] <- get.val(dat, ind)
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)

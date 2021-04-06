@@ -168,10 +168,6 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   # more dimensions
   datlist[["Ngenders"]] <- allnums[i]
   datlist[["Nsexes"]] <- datlist[["Ngenders"]]
-  warning( "List object Ngenders is in the process of being deprecated from ",
-  " SS_readdat_3.24 as of version 1.41.1. In future releases only Nsexes ",
-  "will be created. For now, please modify both Ngenders and Nsexes when ",
-  "making changes")
   i <- i + 1
   datlist[["Nages"]] <- Nages <- allnums[i]
   i <- i + 1
