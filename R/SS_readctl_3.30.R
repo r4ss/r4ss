@@ -29,7 +29,7 @@
 #' [SS_writeforecast()], [SS_writedat()]
 SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecated(), 
                             version = lifecycle::deprecated(),
-                            use_datlist = FALSE,
+                            use_datlist = TRUE,
                             datlist = "data.ss_new",
                             ## Parameters that are not defined in control file
                             nseas = NULL,
