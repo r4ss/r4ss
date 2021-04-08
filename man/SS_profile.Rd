@@ -38,13 +38,17 @@ SS_profile(
 \item{newctlfile}{Destination for new control files (must match entry in
 starter file). Default = "control_modified.ss".}
 
-\item{linenum}{Line number of parameter to be changed.  Can be used instead
-of \code{string} or left as NULL.}
+\item{linenum}{Line number of parameter to be changed. Can be used instead
+of \code{string} or left as NULL. Can be a vector if you are profiling multiple
+parameters at the same time.}
 
 \item{string}{String partially matching name of parameter to be changed. Can
-be used instead of \code{linenum} or left as NULL.}
+be used instead of \code{linenum} or left as NULL. Can be a vector if you are
+profiling multiple parameters at the same time.}
 
-\item{profilevec}{Vector of values to profile over.  Default = NULL.}
+\item{profilevec}{Vector of values to profile over. If you are profileing
+over multiple parameters at the same time this should be a data.frame or
+matrix with a column for each parameter.}
 
 \item{usepar}{Use PAR file from previous profile step for starting values?}
 
@@ -56,9 +60,12 @@ of the par file from each successive run}
 remain 'ss.par'). When \code{globalpar=TRUE}, the backup copy of this
 is used for all runs.}
 
-\item{parlinenum}{Line number in par file to change.}
+\item{parlinenum}{Line number in par file to change (if usepar = TRUE).
+Can be a vector if you are profiling multiple parameters at the same time.}
 
-\item{parstring}{String in par file preceding line number to change.}
+\item{parstring}{String in par file preceding line number to change as
+an alternative to parlinenum (only needed if usepar = TRUE).
+Can be a vector if you are profiling multiple parameters at the same time.}
 
 \item{dircopy}{Copy directories for each run? NOT IMPLEMENTED YET.}
 
@@ -165,6 +172,61 @@ SSplotProfile(profilesummary, # summary object
 
 # make timeseries plots comparing models in profile
 SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
+
+
+###########################################################################
+
+# example two-dimensional profile
+# (e.g. over 2 of the parameters in the low-fecundity stock-recruit function)
+base_dir <- "c:/mymodel"
+
+dir_profile_SR <- file.path(base_dir, "Profiles/Zfrac_and_Beta")
+
+# make a grid of values in both dimensions Zfrac and Beta
+# vector of values to profile over
+Zfrac_vec <- seq(from = 0.2, to = 0.6, by = 0.1)
+Beta_vec <- c(0.5, 0.75, 1.0, 1.5, 2.0)
+par_table <- expand.grid(Zfrac = Zfrac_vec, Beta = Beta_vec)
+nrow(par_table)
+## [1] 25
+head(par_table)
+##   Zfrac Beta
+## 1   0.2 0.50
+## 2   0.3 0.50
+## 3   0.4 0.50
+## 4   0.5 0.50
+## 5   0.6 0.50
+## 6   0.2 0.75
+
+# run SS_profile command
+# requires modified version of SS_profile available via
+# remotes::install_github("r4ss/r4ss@profile_issue_224")
+profile <- SS_profile(
+  dir = dir_profile_SR, # directory
+  masterctlfile = "control.ss_new",
+  newctlfile = "control_modified.ss",
+  string = c("Zfrac","Beta"),
+  profilevec = par_table,
+  extras = "-nohess"
+)
+
+# get model output
+profilemodels <- SSgetoutput(dirvec=dir_profile_SR,
+                             keyvec=1:nrow(par_table), getcovar=FALSE)
+n <- length(profilemodels)
+profilesummary <- SSsummarize(profilemodels)
+
+# add total likelihood (row 1) to table created above
+par_table$like <- as.numeric(profilesummary$likelihoods[1, 1:n])
+
+# reshape data frame into a matrix for use with contour
+like_matrix <- reshape2::acast(par_table, Zfrac~Beta, value.var="like")
+
+# make contour plot
+contour(x = as.numeric(rownames(like_matrix)),
+        y = as.numeric(colnames(like_matrix)),
+        z = like_matrix)
+
 }
 
 }
