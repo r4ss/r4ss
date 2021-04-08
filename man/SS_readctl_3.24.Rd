@@ -7,21 +7,22 @@
 SS_readctl_3.24(
   file,
   verbose = TRUE,
-  echoall = FALSE,
-  version = "3.24",
-  nseas = 4,
-  N_areas = 1,
-  Nages = 20,
-  Ngenders = 1,
+  echoall = lifecycle::deprecated(),
+  version = lifecycle::deprecated(),
+  use_datlist = TRUE,
+  datlist = "data.ss_new",
+  nseas = NULL,
+  N_areas = NULL,
+  Nages = NULL,
+  Ngenders = lifecycle::deprecated(),
+  Nsexes = NULL,
   Npopbins = NA,
-  Nfleet = 2,
-  Nsurveys = 2,
-  Do_AgeKey = FALSE,
-  N_tag_groups = NA,
-  N_CPUE_obs = c(0, 0, 9, 12),
-  use_datlist = FALSE,
-  datlist = NULL,
-  ptype = TRUE
+  Nfleet = NULL,
+  Nsurveys = NULL,
+  Do_AgeKey = NULL,
+  N_tag_groups = NULL,
+  N_CPUE_obs = NULL,
+  ptype = FALSE
 )
 }
 \arguments{
@@ -32,28 +33,37 @@ See the formal arguments for a possible default filename.}
 \item{verbose}{Should there be verbose output while running the file?
 Default=TRUE.}
 
-\item{echoall}{Debugging tool (not fully implemented) of echoing blocks of
-data as it is being read.}
+\item{echoall}{Deprecated. Debugging tool (not fully implemented) of echoing
+blocks of values as it is being read.}
 
-\item{version}{SS version number. Currently only "3.24" or "3.30" are supported,
+\item{version}{Deprecated. SS version number. Currently only "3.24" or "3.30" are supported,
 either as character or numeric values (noting that numeric 3.30  = 3.3).}
 
-\item{nseas}{number of seasons in the model. This information is not
-explicitly available in control file}
+\item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which
+can not be determined from control file. Defaults to TRUE}
 
-\item{N_areas}{number of spatial areas in the model. Default = 1.
-This information is also not explicitly available in control file}
+\item{datlist}{list or character. if list : produced from SS_writedat
+or character : file name of dat file.}
+
+\item{nseas}{number of seasons in the model. This information is not
+explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+
+\item{N_areas}{number of spatial areas in the model. Default = 1. This information is not
+explicitly available in control file and used only if if \code{use_datlist = FALSE}.}
 
 \item{Nages}{oldest age in the model. This information is also not
-explicitly available in control file}
+explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
-\item{Ngenders}{number of genders in the model. This information is also not
-explicitly available in control file}
+\item{Ngenders}{Deprecated. Number of sexes in the model. This information is also not
+explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
-\item{Npopbins}{number of population bins in the model. This information
-is also not explicitly available in control file and this information is
-only required if length based maturity vector is directly supplied
-(Maturity option of 6), and not yet tested}
+\item{Nsexes}{number of sexes in the model. This information is also not
+explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+
+\item{Npopbins}{number of population bins in the model. This information is also not
+explicitly available in control file and this information is only required if length based
+maturity vector is directly supplied (Maturity option of 6).  and used only
+if \code{use_datlist = FALSE}.}
 
 \item{Nfleet}{number of fisheries in the model. This information is also not
 explicitly available in control file}
@@ -61,25 +71,21 @@ explicitly available in control file}
 \item{Nsurveys}{number of survey fleets in the model. This information is also not
 explicitly available in control file}
 
-\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters
-to be read set 1 (but in fact any non zero numeric in R) or TRUE to enable
-to read them 0 or FALSE (default) to disable them.
-This information is not explicitly available in control file, too.}
+\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to
+be read set 1 (but in fact any non zero numeric in R) or TRUE to enable to
+read them 0 or FALSE to disable them. This information is not
+explicitly available in control file and used only if \code{use_datlist = FALSE}.}
 
-\item{N_tag_groups}{number of tag release group. Default =NA.
-This information is not explicitly available control file.
-This information is only required if custom tag parameters is enabled (TG_custom=1)}
+\item{N_tag_groups}{number of tag release group. Default =NA. This information
+is not explicitly available control file  and used only if
+\code{use_datlist = FALSE}. This information is only required if custom tag
+parameters is enabled (TG_custom=1)}
 
-\item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number of data points of each CPUE time series}
-
-\item{use_datlist}{LOGICAL if TRUE, use datlist to derive parameters which can not be
-determined from control file}
-
-\item{datlist}{list or character. if list : produced from SS_writedat
-or character : file name of dat file.}
+\item{N_CPUE_obs}{numeric vector of length=Nfleet+Nsurveys containing number
+of data points of each CPUE time series}
 
 \item{ptype}{include a column in the output indicating parameter type?
-(Can be useful, but causes problems for SS_writectl.)}
+(Can be useful, but causes problems for SS_writectl.) Defaults to FALSE.}
 }
 \description{
 Read Stock Synthesis (version 3.24) control file into list object in R.

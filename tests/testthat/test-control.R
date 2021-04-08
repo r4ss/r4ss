@@ -17,6 +17,11 @@ sim_3.30.13 <- file.path(tmp_path, "extdata", "simple_3.30.13")
 sim_3.24 <- file.path(tmp_path, "extdata", "simple_3.24")
 
 test_that("SS_readctl and SS_writectl works for 3.30.13", {
+  # check exits on error when no datafile provided
+  expect_error(SS_readctl(file.path(sim_3.30.13, "simple_control.ss"), 
+                          verbose = FALSE), 
+               "Cannot find data file specified in datlist")
+  
   # read data file b/c necessary input to read control
   dat_3.30.13 <- SS_readdat(file.path(sim_3.30.13, "simple_data.ss"),
     verbose = FALSE
@@ -25,7 +30,6 @@ test_that("SS_readctl and SS_writectl works for 3.30.13", {
   ctl_3.30.13 <- SS_readctl(
     file.path(sim_3.30.13, "simple_control.ss"),
     verbose = FALSE,
-    use_datlist = TRUE,
     datlist = dat_3.30.13
   )
   expect_type(ctl_3.30.13, "list")
@@ -56,9 +60,10 @@ test_that("SS_readctl and SS_writectl works for 3.30.13 when not reading from da
     nseas = dat_3.30.13[["nseas"]],
     N_areas = dat_3.30.13[["N_areas"]],
     Nages = dat_3.30.13[["Nages"]],
-    Ngender = dat_3.30.13[["Ngenders"]],
+    Nsexes = dat_3.30.13[["Ngenders"]],
     Nfleets = dat_3.30.13[["Nfleets"]],
-    N_rows_equil_catch = NULL
+    N_rows_equil_catch = NULL,
+    Do_AgeKey = FALSE
   )
 
   expect_type(ctl_3.30.13, "list")
@@ -111,6 +116,11 @@ test_that(paste0(
 })
 
 test_that("SS_readctl and SS_writectl works for 3.24", {
+  # check exits on error when no datafile provided
+  expect_error(SS_readctl(file.path(sim_3.24, "simple.ctl"), 
+                          verbose = FALSE, version = "3.24"), 
+               "Cannot find data file specified in datlist")
+  
   # read data file b/c necessary input to read control
   dat_3.24 <- SS_readdat(file.path(sim_3.24, "simple.dat"),
     verbose = FALSE, version = "3.24"
@@ -150,11 +160,12 @@ test_that("SS_readctl and SS_writectl works for 3.24 when datlist = FALSE", {
     nseas = dat_3.24[["nseas"]],
     N_areas = dat_3.24[["N_areas"]],
     Nages = dat_3.24[["Nages"]],
-    Ngenders = dat_3.24[["Ngenders"]],
+    Nsexes = dat_3.24[["Ngenders"]],
     Nfleet = dat_3.24[["Nfleet"]],
     Nsurveys = dat_3.24[["Nsurveys"]],
     N_CPUE_obs = dat_3.24[["N_cpue"]],
-    version = "3.24"
+    version = "3.24",
+    Do_AgeKey = FALSE
   )
   expect_type(ctl_3.24, "list")
   # check write control

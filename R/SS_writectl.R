@@ -13,7 +13,7 @@
 #' version from `ctllist`.
 #' @param overwrite Should existing files be overwritten? Defaults to FALSE.
 #' @param verbose Should there be verbose output while running the file?
-#' Defaults to TRUE.
+#' Defaults to FALSE.
 #' @author Ian G. Taylor, Yukio Takeuchi, Gwladys I. Lambert, Kathryn Doering
 #' @export
 #' @seealso [SS_writedat_3.24()], [SS_writedat_3.30()],
@@ -21,7 +21,7 @@
 #' [SS_readstarter()], [SS_writestarter()],
 #' [SS_readforecast()], [SS_writeforecast()]
 SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
-                        verbose = TRUE) {
+                        verbose = FALSE) {
   # function to write Stock Synthesis data files
   if (verbose) {
     message("Running SS_writectl")
@@ -57,7 +57,10 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   }
   if (version == "3.30" | version == 3.3) {
     # This function will get nseas, N_areas, and Do_AgeKey from ctllist.
-    SS_writectl_3.30(ctllist, outfile, overwrite, verbose)
+    SS_writectl_3.30(ctllist = ctllist,
+                     outfile = outfile, 
+                     overwrite = overwrite,
+                     verbose = verbose)
   }
   # because this function is used for its side effects (i.e., writing to disk),
   # return its first argument invisibly.

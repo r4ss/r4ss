@@ -195,6 +195,8 @@ SS_readdat_3.30 <-
     datlist[["Nsubseasons"]] <- get.val(dat, ind)
     datlist[["spawn_month"]] <- get.val(dat, ind)
     datlist[["Ngenders"]] <- get.val(dat, ind)
+    # Keep both Nsexes and Ngenders for now, but get rid of Ngenders in the future.
+    datlist[["Nsexes"]] <- datlist[["Ngenders"]]
     datlist[["Nages"]] <- get.val(dat, ind)
     datlist[["N_areas"]] <- get.val(dat, ind)
     datlist[["Nfleets"]] <- get.val(dat, ind)
@@ -398,12 +400,12 @@ SS_readdat_3.30 <-
         colnames(datlist[["lencomp"]]) <-
           c(
             "Yr", "Seas", "FltSvy", "Gender", "Part", "Nsamp",
-            if (abs(datlist[["Ngenders"]]) == 1) {
+            if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("l", datlist[["lbin_vector"]])
             } else {
               NULL
             },
-            if (datlist[["Ngenders"]] > 1) {
+            if (datlist[["Nsexes"]] > 1) {
               c(
                 paste0("f", datlist[["lbin_vector"]]),
                 paste0("m", datlist[["lbin_vector"]])
@@ -502,12 +504,12 @@ SS_readdat_3.30 <-
           c(
             "Yr", "Seas", "FltSvy", "Gender",
             "Part", "Ageerr", "Lbin_lo", "Lbin_hi", "Nsamp",
-            if (abs(datlist[["Ngenders"]]) == 1) {
+            if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["agebin_vector"]])
             } else {
               NULL
             },
-            if (datlist[["Ngenders"]] > 1) {
+            if (datlist[["Nsexes"]] > 1) {
               c(
                 paste0("f", datlist[["agebin_vector"]]),
                 paste0("m", datlist[["agebin_vector"]])
@@ -590,12 +592,12 @@ SS_readdat_3.30 <-
       colnames(datlist[["MeanSize_at_Age_obs"]]) <-
         c(
           "Yr", "Seas", "FltSvy", "Gender", "Part", "AgeErr", "Ignore",
-          if (abs(datlist[["Ngenders"]]) == 1) {
+          if (abs(datlist[["Nsexes"]]) == 1) {
             paste0("a", datlist[["agebin_vector"]])
           } else {
             NULL
           },
-          if (datlist[["Ngenders"]] > 1) {
+          if (datlist[["Nsexes"]] > 1) {
             c(
               paste0("f", datlist[["agebin_vector"]]),
               paste0("m", datlist[["agebin_vector"]])
@@ -603,12 +605,12 @@ SS_readdat_3.30 <-
           } else {
             NULL
           },
-          if (abs(datlist[["Ngenders"]]) == 1) {
+          if (abs(datlist[["Nsexes"]]) == 1) {
             paste0("N_a", datlist[["agebin_vector"]])
           } else {
             NULL
           },
-          if (datlist[["Ngenders"]] > 1) {
+          if (datlist[["Nsexes"]] > 1) {
             c(
               paste0("N_f", datlist[["agebin_vector"]]),
               paste0("N_m", datlist[["agebin_vector"]])
@@ -690,19 +692,19 @@ SS_readdat_3.30 <-
       ## Read generalized size frequency data
       datlist[["sizefreq_data_list"]] <- list()
       for (imethod in seq_len(datlist[["N_sizefreq_methods"]])) {
-        Ncols <- 7 + abs(datlist[["Ngenders"]]) * datlist[["nbins_per_method"]][imethod]
+        Ncols <- 7 + abs(datlist[["Nsexes"]]) * datlist[["nbins_per_method"]][imethod]
         Nrows <- datlist[["Nobs_per_method"]][imethod]
         datlist[["sizefreq_data_list"]][[imethod]] <- get.df(dat, ind, Nrows)
         colnames(datlist[["sizefreq_data_list"]][[imethod]]) <-
           c(
             "Method", "Yr", "Seas", "FltSvy",
             "Gender", "Part", "Nsamp",
-            if (abs(datlist[["Ngenders"]]) == 1) {
+            if (abs(datlist[["Nsexes"]]) == 1) {
               paste0("a", datlist[["sizefreq_bins_list"]][[imethod]])
             } else {
               NULL
             },
-            if (datlist[["Ngenders"]] > 1) {
+            if (datlist[["Nsexes"]] > 1) {
               c(
                 paste0("f", datlist[["sizefreq_bins_list"]][[imethod]]),
                 paste0("m", datlist[["sizefreq_bins_list"]][[imethod]])
