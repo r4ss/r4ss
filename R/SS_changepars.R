@@ -172,9 +172,10 @@ SS_changepars <-
     }
     ctlsubset <- ctl[linenums]
     if (verbose) {
-      cat("line numbers in control file (n=", length(linenums), "):\n", sep = "")
-      cat(paste(linenums, collapse = ", "))
+      message("line numbers in control file (n=", length(linenums), "): ", 
+              paste(linenums, collapse = ", "))
     }
+    
     # define objects to store changes
     newctlsubset <- NULL
     cmntvec <- NULL

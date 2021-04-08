@@ -7,10 +7,12 @@
 #' @param masterctlfile Source control file. Default = "control.ss_new"
 #' @param newctlfile Destination for new control files (must match entry in
 #' starter file). Default = "control_modified.ss".
-#' @param linenum Line number of parameter to be changed.  Can be used instead
-#' of `string` or left as NULL.
+#' @param linenum Line number of parameter to be changed. Can be used instead
+#' of `string` or left as NULL. Can be a vector if you are profiling multiple
+#' parameters at the same time.
 #' @param string String partially matching name of parameter to be changed. Can
-#' be used instead of `linenum` or left as NULL.
+#' be used instead of `linenum` or left as NULL. Can be a vector if you are
+#' profiling multiple parameters at the same time.
 #' @param usepar Use PAR file from previous profile step for starting values?
 #' @param globalpar Use global par file ("parfile_original_backup.sso", which is
 #' automatically copied from original `parfile`) for all runs instead
@@ -18,11 +20,16 @@
 #' @param parfile Name of par file to use (for 3.30 models, this needs to
 #' remain 'ss.par'). When `globalpar=TRUE`, the backup copy of this
 #' is used for all runs.
-#' @param parlinenum Line number in par file to change.
-#' @param parstring String in par file preceding line number to change.
+#' @param parlinenum Line number in par file to change (if usepar = TRUE).
+#' Can be a vector if you are profiling multiple parameters at the same time.
+#' @param parstring String in par file preceding line number to change as
+#' an alternative to parlinenum (only needed if usepar = TRUE).
+#' Can be a vector if you are profiling multiple parameters at the same time.
 #' @param dircopy Copy directories for each run? NOT IMPLEMENTED YET.
 #' @param exe.delete Delete exe files in each directory?  NOT IMPLEMENTED YET.
-#' @param profilevec Vector of values to profile over.  Default = NULL.
+#' @param profilevec Vector of values to profile over. If you are profileing
+#' over multiple parameters at the same time this should be a data.frame or
+#' matrix with a column for each parameter.
 #' @param model Name of executable. Default = "ss".
 #' @param extras Additional commands to use when running SS. Default = "-nox"
 #' will reduce the amount of command-line output.
@@ -113,6 +120,61 @@
 #'
 #' # make timeseries plots comparing models in profile
 #' SSplotComparisons(profilesummary, legendlabels = paste("h =", h.vec))
+#'
+#'
+#' ###########################################################################
+#'
+#' # example two-dimensional profile
+#' # (e.g. over 2 of the parameters in the low-fecundity stock-recruit function)
+#' base_dir <- "c:/mymodel"
+#' 
+#' dir_profile_SR <- file.path(base_dir, "Profiles/Zfrac_and_Beta")
+#' 
+#' # make a grid of values in both dimensions Zfrac and Beta
+#' # vector of values to profile over
+#' Zfrac_vec <- seq(from = 0.2, to = 0.6, by = 0.1)
+#' Beta_vec <- c(0.5, 0.75, 1.0, 1.5, 2.0)
+#' par_table <- expand.grid(Zfrac = Zfrac_vec, Beta = Beta_vec)
+#' nrow(par_table)
+#' ## [1] 25
+#' head(par_table)
+#' ##   Zfrac Beta
+#' ## 1   0.2 0.50
+#' ## 2   0.3 0.50
+#' ## 3   0.4 0.50
+#' ## 4   0.5 0.50
+#' ## 5   0.6 0.50
+#' ## 6   0.2 0.75
+#' 
+#' # run SS_profile command
+#' # requires modified version of SS_profile available via
+#' # remotes::install_github("r4ss/r4ss@profile_issue_224")
+#' profile <- SS_profile(
+#'   dir = dir_profile_SR, # directory
+#'   masterctlfile = "control.ss_new",
+#'   newctlfile = "control_modified.ss",
+#'   string = c("Zfrac","Beta"),
+#'   profilevec = par_table,
+#'   extras = "-nohess"
+#' )
+#' 
+#' # get model output
+#' profilemodels <- SSgetoutput(dirvec=dir_profile_SR,
+#'                              keyvec=1:nrow(par_table), getcovar=FALSE)
+#' n <- length(profilemodels)
+#' profilesummary <- SSsummarize(profilemodels)
+#' 
+#' # add total likelihood (row 1) to table created above
+#' par_table$like <- as.numeric(profilesummary$likelihoods[1, 1:n])
+#' 
+#' # reshape data frame into a matrix for use with contour
+#' like_matrix <- reshape2::acast(par_table, Zfrac~Beta, value.var="like")
+#' 
+#' # make contour plot
+#' contour(x = as.numeric(rownames(like_matrix)),
+#'         y = as.numeric(colnames(like_matrix)),
+#'         z = like_matrix)
+#' 
 #' }
 #'
 SS_profile <-
@@ -120,12 +182,24 @@ SS_profile <-
            dir = "C:/myfiles/mymodels/myrun/",
            masterctlfile = "control.ss_new",
            newctlfile = "control_modified.ss", # must match entry in starter file
-           linenum = NULL, string = NULL, profilevec = NULL,
-           usepar = FALSE, globalpar = FALSE, parfile = "ss.par",
-           parlinenum = NULL, parstring = NULL,
-           dircopy = TRUE, exe.delete = FALSE,
-           model = "ss", extras = "-nox", systemcmd = FALSE, saveoutput = TRUE,
-           overwrite = TRUE, whichruns = NULL, SSversion = "3.30", prior_check = TRUE,
+           linenum = NULL,
+           string = NULL,
+           profilevec = NULL,
+           usepar = FALSE,
+           globalpar = FALSE,
+           parfile = "ss.par",
+           parlinenum = NULL,
+           parstring = NULL,
+           dircopy = TRUE,
+           exe.delete = FALSE,
+           model = "ss",
+           extras = "-nox",
+           systemcmd = FALSE,
+           saveoutput = TRUE,
+           overwrite = TRUE,
+           whichruns = NULL,
+           SSversion = "3.30",
+           prior_check = TRUE,
            read_like = TRUE,
            verbose = TRUE) {
     # Ensure wd is not changed by the function
@@ -145,7 +219,9 @@ SS_profile <-
     }
     # check whether exe is in directory
     if (OS == "windows") {
-      if (!tolower(exe) %in% tolower(dir(dir))) stop("Executable ", exe, " not found in ", dir)
+      if (!tolower(exe) %in% tolower(dir(dir))) {
+        stop("Executable ", exe, " not found in ", dir)
+      }
     } else {
       if (!exe %in% dir(dir)) stop("Executable ", exe, " not found in ", dir)
     }
@@ -156,23 +232,70 @@ SS_profile <-
       stop("You should input either 'linenum' or 'string' (but not both)")
     }
     if (!is.null(linenum) & !is.null(string)) {
-      stop("You should input either 'linenum' or 'string', but not both")
+      stop("You should input either 'linenum' or 'string' (but not both)")
     }
     if (usepar) { # if using parfile
       if (parfile != "ss.par" & (SSversion == "3.30" | SSversion == 3.3)) {
         stop("'parfile' input needs to be 'ss.par' for SS version 3.30 models")
       }
       if (is.null(parlinenum) & is.null(parstring)) {
-        stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+        stop("Using par file. You should input either 'parlinenum' or ",
+             "'parstring' (but not both)")
       }
       if (!is.null(parlinenum) & !is.null(parstring)) {
-        stop("Using par file. You should input either 'parlinenum' or 'parstring' (but not both)")
+        stop("Using par file. You should input either 'parlinenum' or ",
+             "'parstring' (but not both)")
       }
     }
 
+    # count parameters to profile over (typically just 1)
+    if (!is.null(linenum)) {
+      npars <- length(linenum)
+    }
+    if (!is.null(string)) {
+      npars <- length(string)
+    }
+    if (usepar){
+      if (!is.null(parlinenum)) {
+        npars <- length(parlinenum)
+      }
+      if (!is.null(parstring)) {
+        npars <- length(parstring)
+      }
+    }
+    # not sure what would cause a bad value, but checking for it anyway
+    if (is.na(npars) || npars < 1) {
+      stop("Problem with the number of parameters to profile over. npars = ", npars)
+    }
+        
     # figure out length of profile vec and sort out which runs to do
-    n <- length(profilevec)
-    if (n == 0) stop("Missing input 'profilevec'")
+    if (is.null(profilevec)) {
+      stop("Missing input 'profilevec'")
+    }
+    if (npars == 1){
+      n <- length(profilevec)
+    } else {
+      if ((!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
+          ncol(profilevec) != npars) {
+        stop("'profilevec' should be a data.frame or a matrix with ",
+             npars, " columns")
+      }
+      n <- length(profilevec[[1]])
+      if (any(unlist(lapply(profilevec, FUN = length)) != n)) {
+        stop("Each element in the 'profilevec' list should have length ", n)
+      }
+
+      if (verbose) {
+        message("Profiling over ", npars, "parameters")
+        if (!is.null(string)) {
+          profilevec_df <- data.frame(profilevec)
+          names(profilevec_df) <- string
+          print(profilevec_df)
+        }
+      }
+    }
+    
+    # subset runs if requested
     if (is.null(whichruns)) {
       whichruns <- 1:n
     } else {
@@ -196,7 +319,7 @@ SS_profile <-
     # read starter file to get input file names and check various things
     starter.file <- dir()[tolower(dir()) == "starter.ss"]
     if (length(starter.file) == 0) stop("starter.ss not found in", dir)
-    starter <- SS_readstarter(starter.file)
+    starter <- SS_readstarter(starter.file, verbose = FALSE)
     # check for new control file
     if (starter[["ctlfile"]] != newctlfile) {
       stop(
@@ -249,10 +372,17 @@ SS_profile <-
         # this also sets phase negative which is needed even when par file is used
         # dir set as NULL because the wd was already changed to dir earlier in the
         # script.
+        if (npars == 1) {
+          # get new parameter value
+          newvals <- profilevec[i]
+        } else {
+          # get row as a vector (passing a data.frame to SS_changepars caused error)
+          newvals <- as.numeric(profilevec[i,])
+        }
         SS_changepars(
           dir = NULL, ctlfile = masterctlfile, newctlfile = newctlfile,
           linenums = linenum, strings = string,
-          newvals = profilevec[i], estimate = FALSE,
+          newvals = newvals, estimate = FALSE,
           verbose = TRUE, repeat.vals = TRUE
         )
 
@@ -275,23 +405,28 @@ SS_profile <-
           } else {
             par <- readLines(parfile)
           }
-          # find value
-          if (!is.null(parstring)) {
-            parlinenum <- grep(parstring, par, fixed = TRUE) + 1
+          # loop over the number of parameters (typically just 1)
+          for (ipar in 1:npars) {
+            # find value
+            if (!is.null(parstring)) {
+              parlinenum <- grep(parstring[ipar], par, fixed = TRUE) + 1
+            }
+            if (length(parlinenum) == 0) {
+              stop("Problem with input parstring = '", parstring[ipar], "'")
+            }
+            parline <- par[parlinenum[ipar]]
+            parval <- as.numeric(parline)
+            if (is.na(parval)) {
+              stop(
+                "Problem with parlinenum or parstring for par file.\n",
+                "line as read: ", parline
+              )
+            }
+            # replace value
+            par[parlinenum[ipar]] <- ifelse(npars > 1,
+                                            profilevec[i, ipar],
+                                            profilevec[i])
           }
-          if (length(parlinenum) == 0) {
-            stop("Problem with input parstring = '", parstring, "'", sep = "")
-          }
-          parline <- par[parlinenum]
-          parval <- as.numeric(parline)
-          if (is.na(parval)) {
-            stop(
-              "Problem with parlinenum or parstring for par file.\n",
-              "line as read: ", parline
-            )
-          }
-          # replace value
-          par[parlinenum] <- profilevec[i]
           # add new header
           note <- c(
             paste("# New par file created by SS_profile with the value on line number", linenum),
@@ -299,12 +434,16 @@ SS_profile <-
           )
           par <- c(par, "#", note)
           print(note)
-          # write new file
+          # write new par file
           writeLines(par, paste0(parfile, "_input_", i, ".ss"))
           writeLines(par, parfile)
         }
-        if (file.exists(stdfile)) file.remove(stdfile)
-        if (file.exists("Report.sso")) file.remove("Report.sso")
+        if (file.exists(stdfile)) {
+          file.remove(stdfile)
+        }
+        if (file.exists("Report.sso")) {
+          file.remove("Report.sso")
+        }
 
         # run model
         command <- paste(model, extras)
