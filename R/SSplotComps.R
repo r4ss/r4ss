@@ -689,7 +689,7 @@ SSplotComps <-
                         ".<br><br>'N adj.' is the input sample size ",
                         "after data-weighting adjustment. ",
                         "N eff. is the calculated effective sample size used ",
-                        "in the McAllister-Iannelli tuning method."
+                        "in the McAllister-Ianelli tuning method."
                       )
                   }
                 } # end check for ipage == 1
