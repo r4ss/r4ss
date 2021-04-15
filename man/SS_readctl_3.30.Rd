@@ -6,10 +6,10 @@
 \usage{
 SS_readctl_3.30(
   file,
-  verbose = TRUE,
+  verbose = FALSE,
   echoall = lifecycle::deprecated(),
   version = lifecycle::deprecated(),
-  use_datlist = FALSE,
+  use_datlist = TRUE,
   datlist = "data.ss_new",
   nseas = NULL,
   N_areas = NULL,
@@ -31,7 +31,7 @@ SS_readctl_3.30(
 See the formal arguments for a possible default filename.}
 
 \item{verbose}{Should there be verbose output while running the file?
-Default=TRUE.}
+Defaults to FALSE.}
 
 \item{echoall}{Deprecated. Debugging tool (not fully implemented) of echoing
 blocks of values as it is being read.}

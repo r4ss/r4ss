@@ -8,10 +8,10 @@ SS_writectl_3.24(
   ctllist,
   outfile,
   overwrite = FALSE,
-  verbose = TRUE,
-  nseas = 1,
-  N_areas = 1,
-  Do_AgeKey = FALSE
+  verbose = FALSE,
+  nseas = lifecycle::deprecated(),
+  N_areas = lifecycle::deprecated(),
+  Do_AgeKey = lifecycle::deprecated()
 )
 }
 \arguments{
@@ -21,15 +21,16 @@ SS_writectl_3.24(
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{Should there be verbose output while running the file?
+Defaults to FALSE.}
 
-\item{nseas}{number of season in the model. This information is not
+\item{nseas}{Deprecated. number of season in the model. This information is not
 explicitly available in control file}
 
-\item{N_areas}{number of spatial areas in the model. This information is also not
+\item{N_areas}{Deprecated. number of spatial areas in the model. This information is also not
 explicitly available in control file}
 
-\item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to be read
+\item{Do_AgeKey}{Deprecated. Flag to indicate if 7 additional ageing error parameters to be read
 set 1 (but in fact any non zero numeric in R) or TRUE to enable to read them 0 or FALSE (default)
 to disable them. This information is not explicitly available in control file, too.}
 }

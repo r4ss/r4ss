@@ -9,7 +9,7 @@ SS_writectl(
   outfile,
   version = NULL,
   overwrite = FALSE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ version from \code{ctllist}.}
 \item{overwrite}{Should existing files be overwritten? Defaults to FALSE.}
 
 \item{verbose}{Should there be verbose output while running the file?
-Defaults to TRUE.}
+Defaults to FALSE.}
 }
 \description{
 Write Stock Synthesis control file from list object in R which was probably

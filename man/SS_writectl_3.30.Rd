@@ -4,7 +4,7 @@
 \alias{SS_writectl_3.30}
 \title{write control file for SS version 3.30}
 \usage{
-SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose)
+SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{ctllist}{List object created by \code{\link[=SS_readctl]{SS_readctl()}}.}
@@ -13,7 +13,8 @@ SS_writectl_3.30(ctllist, outfile, overwrite = FALSE, verbose)
 
 \item{overwrite}{Should existing files be overwritten? Default=FALSE.}
 
-\item{verbose}{Should there be verbose output while running the file?}
+\item{verbose}{Should there be verbose output while running the file?
+Defaults to FALSE.}
 }
 \description{
 write Stock Synthesis control file from list object in R which was created
