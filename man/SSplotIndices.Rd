@@ -6,7 +6,7 @@
 \usage{
 SSplotIndices(
   replist,
-  subplots = c(1:10, 12),
+  subplots = c(9, 1:8, 10, 12),
   plot = TRUE,
   print = FALSE,
   fleets = "all",
@@ -49,7 +49,8 @@ SSplotIndices(
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplots}{vector controlling which subplots to create
-Numbering of subplots is as follows:
+Numbering of subplots is as follows, where subplot 9 (comparison of all indices) is
+provided first:
 \itemize{
 \item 1  index data by fleet
 \item 2  index data with fit by fleet
@@ -61,7 +62,7 @@ Numbering of subplots is as follows:
 \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
 \item 9  comparison of all indices
 \item 10  index residuals based on total uncertainty
-\item 11  index residuals based on input uncertainty
+\item 11  index residuals based on input uncertainty (not currently provided)
 \item 12  index deviations (independent of index uncertainty)
 }}
 

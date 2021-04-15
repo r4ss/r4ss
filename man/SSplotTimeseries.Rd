@@ -36,7 +36,8 @@ SSplotTimeseries(
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{number controlling which subplot to create
-Numbering of subplots is as follows:
+Numbering of subplots is as follows, where the spawning biomass plots
+(7 to 10) are provided first when this function is called by \code{\link[=SS_plots]{SS_plots()}}:
 \itemize{
 \item 1: Total biomass (mt) with forecast
 \item 2: Total biomass by area (spatial models only)

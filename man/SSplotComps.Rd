@@ -6,7 +6,7 @@
 \usage{
 SSplotComps(
   replist,
-  subplots = c(1:21, 24),
+  subplots = c(21, 24, 1:10),
   kind = "LEN",
   sizemethod = 1,
   aalyear = -1,
@@ -80,7 +80,28 @@ SSplotComps(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows, where subplots 21 to 24
+(aggregated across years) are provided first, and subplots
+1 to 10 are all repeated for each fleet
+\itemize{
+\item 1 index data by fleet
+\item 1 multi-panel composition plot
+\item 2 single panel bubble plot for numbers at length or age
+\item 3 multi-panel bubble plots for conditional age-at-length
+\item 4 multi-panel plot of fit to conditional age-at-length for specific years
+\item 5 Pearson residuals for A-L key
+\item 6 multi-panel plot of point and line fit to conditional
+age-at-length for specific length bins
+\item 7 sample size plot
+\item 8 TA1.8 Francis weighting plot
+\item 9 TA1.8 Francis weighting plot for conditional data
+\item 10 Andre's mean age and std. dev. in conditional AAL
+\item 21 composition by fleet aggregating across years
+\item 22 composition by fleet aggregating across years within each season
+\item 23 composition by fleet aggregating across seasons within a year
+\item 24 bubble plot comparison of length or age residuals
+}}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 "GSTAGE", "GSTLEN", "L@A", or "W@A".}

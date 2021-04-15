@@ -3,9 +3,30 @@
 #' Plot composition data and fits from Stock Synthesis output.  Multi-figure
 #' plots depend on `make_multifig`.
 #'
-#'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows, where subplots 21 to 24
+#' (aggregated across years) are provided first, and subplots
+#' 1 to 10 are all repeated for each fleet
+#' \itemize{
+#'   \item 1 index data by fleet
+#'   \item 1 multi-panel composition plot
+#'   \item 2 single panel bubble plot for numbers at length or age
+#'   \item 3 multi-panel bubble plots for conditional age-at-length
+#'   \item 4 multi-panel plot of fit to conditional age-at-length for specific years
+#'   \item 5 Pearson residuals for A-L key
+#'   \item 6 multi-panel plot of point and line fit to conditional
+#'           age-at-length for specific length bins
+#'   \item 7 sample size plot
+#'   \item 8 TA1.8 Francis weighting plot
+#'   \item 9 TA1.8 Francis weighting plot for conditional data
+#'   \item 10 Andre's mean age and std. dev. in conditional AAL
+#'   \item 21 composition by fleet aggregating across years
+#'   \item 22 composition by fleet aggregating across years within each season
+#'   \item 23 composition by fleet aggregating across seasons within a year
+#'   \item 24 bubble plot comparison of length or age residuals
+#             across fleets within partition
+#' }
 #' @param kind indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 #' "GSTAGE", "GSTLEN", "L@A", or "W@A".
 #' @param sizemethod if kind = "SIZE" then this switch chooses which of the
@@ -122,12 +143,16 @@
 #' @export
 #' @seealso [SS_plots()], [make_multifig()]
 SSplotComps <-
-  function(replist, subplots = c(1:21, 24), # subplots=1:13,
-           kind = "LEN", sizemethod = 1, aalyear = -1, aalbin = -1, plot = TRUE, print = FALSE,
+  function(replist,
+           subplots = c(21, 24, 1:10),
+           kind = "LEN", sizemethod = 1, aalyear = -1, aalbin = -1,
+           plot = TRUE, print = FALSE,
            fleets = "all", fleetnames = "default", sexes = "all",
            yupper = 0.4,
-           datonly = FALSE, samplesizeplots = TRUE, compresidplots = TRUE, bub = FALSE,
-           showyears = TRUE, showsampsize = TRUE, showeffN = TRUE, aggregates_by_mkt = FALSE,
+           datonly = FALSE, samplesizeplots = TRUE,
+           compresidplots = TRUE, bub = FALSE,
+           showyears = TRUE, showsampsize = TRUE,
+           showeffN = TRUE, aggregates_by_mkt = FALSE,
            sampsizeline = FALSE, effNline = FALSE,
            minnbubble = 3, pntscalar = NULL,
            scalebubbles = FALSE, cexZ1 = 1.5, bublegend = TRUE,
@@ -164,30 +189,6 @@ SSplotComps <-
     ################################################################################
     # SSplotComps
     ################################################################################
-
-    ###### list of subplots
-    ###
-    ### { # loop over fleets
-    ###
-    ### subplot 1: multi-panel composition plot
-    ### subplot 2: single panel bubble plot for numbers at length or age
-    ### subplot 3: multi-panel bubble plots for conditional age-at-length
-    ### subplot 4: multi-panel plot of fit to conditional age-at-length for specific years
-    ### subplot 5: Pearson residuals for A-L key
-    ### subplot 6: multi-panel plot of point and line fit to conditional
-    ###            age-at-length for specific length bins
-    ### subplot 7: sample size plot
-    ### subplot 8: TA1.8 Francis weighting plot
-    ### subplot 9: TA1.8 Francis weighting plot for conditional data
-    ### subplot 10: Andre's mean age and std. dev. in conditional AAL
-    ###
-    ### } # end loop over fleets
-    ###
-    ### subplot 21: by fleet aggregating across years
-    ### subplot 22: by fleet aggregating across years within each season
-    ### subplot 23: by fleet aggregating across seasons within a year
-    ### subplot 24: bubble plot comparison of length or age residuals
-    ###             across fleets within partition
 
     # subfunction to write png files
     pngfun <- function(file, caption = NA) {

@@ -552,8 +552,13 @@ SS_plots <-
       if (verbose) {
         message("Starting timeseries plots (group ", igroup, ")")
       }
-      for (isubplot in 1:15) { # which of 12 subplots to make
-        for (doforecast in unique(c(FALSE, forecastplot))) { # add forecast or not
+      # which subplots to make (those for spawn bio first)
+      subplot_list <- c(7:10, 1:6, 11:15)
+      # loop over subplots
+      for (isubplot in subplot_list) {
+        # loop over add forecast or not
+        for (doforecast in unique(c(FALSE, forecastplot))) {
+          # subset of plots for which uncertainty might be added
           if (isubplot %in% c(7, 9, 11)) {
             for (douncertainty in unique(c(FALSE, uncertainty))) { # add uncertainty or not
               plotinfo <-
