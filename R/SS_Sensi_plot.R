@@ -23,6 +23,19 @@
 #' @param anno.x Horizontal positioning of the sensitivity types labels
 #' @param anno.y Vertical positioning of the sensitivity types labels
 #' @param anno.lab Sensitivity types labels
+#' @param spawn.lab Label for spawning output or spawning biomass. By default
+#' it will be set to "SO" if any model has spawning output in numbers and "SB"
+#' if all models have spawning output in biomass. Subscripts will be added
+#' for 0 or current year.
+#' @param yield.lab Label for yield reference point.
+#' By default it will be set to something like "Yield(SPR=0.3)" where the SPR
+#' value is the SPR target. If the models have different SPR targets, it will
+#' be set to "Yield(tgt SPR)".
+#' @param F.lab Label for F reference point.
+#' By default it will be set to something like "F(SPR=0.3)" where the SPR
+#' value is the SPR target. If the models have different SPR targets, it will
+#' be set to "F(tgt SPR)".
+#' 
 #' @author Jason Cope
 #' @export
 #' @seealso [SSsummarize()]
@@ -105,7 +118,10 @@ SS_Sensi_plot <- function(model.summaries,
                           sensi.type.breaks = NA,
                           anno.x = NA,
                           anno.y = NA,
-                          anno.lab = NA) {
+                          anno.lab = NA,
+                          spawn.lab = NA,
+                          yield.lab = NA,
+                          F.lab = NA) {
   # internal function
   gg_color_hue <- function(n) {
     hues <- seq(15, 375, length = n + 1)
@@ -156,7 +172,7 @@ SS_Sensi_plot <- function(model.summaries,
       (model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)]) / 2,
       model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)] / 2,
-      model.summaries$quants[model.summaries$quants$Label == "Fstd_SPR", 1:(dim(model.summaries$quants)[2] - 2)]
+      model.summaries$quants[model.summaries$quants$Label %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries$quants)[2] - 2)]
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
@@ -173,7 +189,7 @@ SS_Sensi_plot <- function(model.summaries,
       model.summaries$quants[model.summaries$quants$Label == paste0("SSB_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == paste0("Bratio_", current.year), 1:(dim(model.summaries$quants)[2] - 2)],
       model.summaries$quants[model.summaries$quants$Label == "Dead_Catch_SPR", 1:(dim(model.summaries$quants)[2] - 2)],
-      model.summaries$quants[model.summaries$quants$Label == "Fstd_SPR", 1:(dim(model.summaries$quants)[2] - 2)]
+      model.summaries$quants[model.summaries$quants$Label %in% c("Fstd_SPR", "annF_SPR"), 1:(dim(model.summaries$quants)[2] - 2)]
     )
     # Extract SDs for use in the ggplots
     dev.quants.SD <- c(
@@ -238,6 +254,28 @@ SS_Sensi_plot <- function(model.summaries,
   if (any(is.na(anno.lab))) {
     anno.lab <- c("", "")
   }
+  if (is.na(spawn.lab)) {
+    spawn.lab <- ifelse(all(model.summaries$SpawnOutputUnits == "biomass"),
+                        "SB", "SO")
+  }
+  # add subscripts to spawning label (e.g. SB0)
+  spawn.lab.0 <- as.expression(bquote(.(spawn.lab)[0]))
+  spawn.lab.curr <- as.expression(bquote(.(spawn.lab)[.(current.year)]))
+  spawn.lab.ratio <- as.expression(bquote(frac(.(spawn.lab)[.(current.year)], .(spawn.lab)[.(0)])))
+
+  if (is.na(yield.lab)) {
+    sprtarg <- model.summaries$sprtargs[1]
+    yield.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
+                        yes = paste0("Yield(SPR=", sprtarg, ")"),
+                        no = "Yield(tgt SPR)")
+  }
+  if (is.na(F.lab)) {
+    sprtarg <- model.summaries$sprtargs[1]
+    F.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
+                    yes = paste0("F(SPR=", sprtarg, ")"),
+                    no = "F(tgt SPR)")
+  }
+
 
   # Begin plots
   pt.dodge <- 0.3
@@ -263,22 +301,22 @@ SS_Sensi_plot <- function(model.summaries,
         values = c(15:18, 12),
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)])),
-          bquote(frac(SO[.(current.year)], SO[0])),
-          expression(MSY[SPR]),
-          expression(F[SPR])
+          spawn.lab.0,
+          spawn.lab.curr,
+          spawn.lab.ratio,
+          yield.lab,
+          F.lab
         )
       ) +
       scale_color_manual(
         values = four.colors[1:5],
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)])),
-          bquote(frac(SO[.(current.year)], SO[0])),
-          expression(MSY[SPR]),
-          expression(F[SPR])
+          spawn.lab.0,
+          spawn.lab.curr,
+          spawn.lab.ratio,
+          yield.lab,
+          F.lab
         )
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
@@ -304,22 +342,22 @@ SS_Sensi_plot <- function(model.summaries,
         values = c(15:18, 12),
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)])),
-          bquote(frac(SO[.(current.year)], SO[0])),
-          expression(MSY[SPR]),
-          expression(F[SPR])
+          spawn.lab.0,
+          spawn.lab.curr,
+          spawn.lab.ratio,
+          yield.lab,
+          F.lab
         )
       ) +
       scale_color_manual(
         values = four.colors[1:5],
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)])),
-          bquote(frac(SO[.(current.year)], SO[0])),
-          expression(MSY[SPR]),
-          expression(F[SPR])
+          spawn.lab.0,
+          spawn.lab.curr,
+          spawn.lab.ratio,
+          yield.lab,
+          F.lab
         )
       ) +
       labs(x = sensi_xlab, y = "Log relative change") +
@@ -348,16 +386,16 @@ SS_Sensi_plot <- function(model.summaries,
         values = c(16, 17),
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)]))
+          spawn.lab.0,
+          spawn.lab.curr
         )
       ) +
       scale_color_manual(
         values = four.colors[1:2],
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)]))
+          spawn.lab.0,
+          spawn.lab.curr
         )
       ) +
       theme(legend.text.align = 0) +
@@ -384,7 +422,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[3],
         name = "",
-        labels = as.expression(bquote(frac(SO[.(current.year)], SO[0])))
+        labels = spawn.lab.ratio
       ) +
       annotate("text", x = c((model.summaries$n + 1), (model.summaries$n + 1)), y = c(TRP + 0.1, LRP - 0.1), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(TRP, LRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
@@ -407,12 +445,12 @@ SS_Sensi_plot <- function(model.summaries,
       scale_shape_manual(
         values = c(16, 17),
         name = "",
-        labels = expression(MSY, F[SPR])
+        labels = c(yield.lab, F.lab)
       ) +
       scale_color_manual(
         values = four.colors[4:5],
         name = "",
-        labels = expression(MSY, F[SPR])
+        labels = c(yield.lab, F.lab)
       ) +
       labs(x = sensi_xlab, y = "") +
       guides(fill = FALSE) +
@@ -442,16 +480,16 @@ SS_Sensi_plot <- function(model.summaries,
         values = c(16, 17),
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)]))
+          spawn.lab.0,
+          spawn.lab.curr
         )
       ) +
       scale_color_manual(
         values = four.colors[1:2],
         name = "",
         labels = c(
-          expression(SO[0]),
-          as.expression(bquote("SO"[.(current.year)]))
+          spawn.lab.0,
+          spawn.lab.curr
         )
       ) +
       theme(legend.text.align = 0) +
@@ -477,7 +515,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[3],
         name = "",
-        labels = as.expression(bquote(frac(SO[.(current.year)], SO[0])))
+        labels = spawn.lab.ratio
       ) +
       annotate("text", x = c((model.summaries$n + 1), (model.summaries$n + 1)), y = c(logTRP + 0.08, logLRP - 0.08), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       geom_hline(yintercept = c(logTRP, logLRP, 0), lty = c(3, 3, 1), lwd = c(0.5, 0.5, 0.5), color = c("darkgreen", "darkred", "gray")) +
@@ -500,12 +538,12 @@ SS_Sensi_plot <- function(model.summaries,
       scale_shape_manual(
         values = c(16, 17),
         name = "",
-        labels = expression(MSY[SPR], F[SPR])
+        labels = c(yield.lab, F.lab)
       ) +
       scale_color_manual(
         values = four.colors[4:5],
         name = "",
-        labels = expression(MSY[SPR], F[SPR])
+        labels = c(yield.lab, F.lab)
       ) +
       labs(x = sensi_xlab, y = "") +
       guides(fill = FALSE) +
@@ -536,7 +574,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[1],
         name = "",
-        labels = expression(SO[0])
+        labels = spawn.lab.0
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -560,7 +598,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[1],
         name = "",
-        labels = expression(SO[0])
+        labels = spawn.lab.0
       ) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -586,7 +624,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[2],
         name = "",
-        labels = as.expression(bquote("SO"[.(current.year)]))
+        labels = spawn.lab.curr
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -610,7 +648,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[2],
         name = "",
-        labels = as.expression(bquote("SO"[.(current.year)]))
+        labels = spawn.lab.curr
       ) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -636,7 +674,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[3],
         name = "",
-        labels = as.expression(bquote(frac(SO[.(current.year)], SO[0])))
+        labels = spawn.lab.ratio
       ) +
       annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(TRP + 0.03, LRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Relative change") +
@@ -662,7 +700,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_colour_manual(
         values = four.colors[3],
         name = "",
-        labels = as.expression(bquote(frac(SO[.(current.year)], SO[0])))
+        labels = spawn.lab.ratio
       ) +
       annotate("text", x = c((model.summaries$n + 2), (model.summaries$n + 2)), y = c(logTRP + 0.03, logLRP - 0.03), label = c("TRP", "LRP"), size = c(3, 3), color = c("darkgreen", "darkred")) +
       labs(x = sensi_xlab, y = "Log Relative change") +
@@ -689,7 +727,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_color_manual(
         values = four.colors[4],
         name = "",
-        labels = expression(MSY[SPR])
+        labels = yield.lab
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -711,7 +749,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_color_manual(
         values = four.colors[4],
         name = "",
-        labels = expression(MSY[SPR])
+        labels = yield.lab
       ) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -736,7 +774,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_color_manual(
         values = four.colors[5],
         name = "",
-        labels = expression(F[SPR])
+        labels = F.lab
       ) +
       labs(x = sensi_xlab, y = "Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +
@@ -759,7 +797,7 @@ SS_Sensi_plot <- function(model.summaries,
       scale_color_manual(
         values = four.colors[5],
         name = "",
-        labels = expression(F[SPR])
+        labels = F.lab
       ) +
       labs(x = sensi_xlab, y = "Log Relative change") +
       annotate("text", x = anno.x, y = anno.y, label = anno.lab) +

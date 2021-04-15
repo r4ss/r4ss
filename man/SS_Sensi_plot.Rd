@@ -20,7 +20,10 @@ SS_Sensi_plot(
   sensi.type.breaks = NA,
   anno.x = NA,
   anno.y = NA,
-  anno.lab = NA
+  anno.lab = NA,
+  spawn.lab = NA,
+  yield.lab = NA,
+  F.lab = NA
 )
 }
 \arguments{
@@ -59,6 +62,21 @@ of sensitivities}
 \item{anno.y}{Vertical positioning of the sensitivity types labels}
 
 \item{anno.lab}{Sensitivity types labels}
+
+\item{spawn.lab}{Label for spawning output or spawning biomass. By default
+it will be set to "SO" if any model has spawning output in numbers and "SB"
+if all models have spawning output in biomass. Subscripts will be added
+for 0 or current year.}
+
+\item{yield.lab}{Label for yield reference point.
+By default it will be set to something like "Yield(SPR=0.3)" where the SPR
+value is the SPR target. If the models have different SPR targets, it will
+be set to "Yield(tgt SPR)".}
+
+\item{F.lab}{Label for F reference point.
+By default it will be set to something like "F(SPR=0.3)" where the SPR
+value is the SPR target. If the models have different SPR targets, it will
+be set to "F(tgt SPR)".}
 }
 \description{
 Uses output from \code{\link[=SSsummarize]{SSsummarize()}} to make a figure showing
