@@ -6,7 +6,7 @@
 \usage{
 SSplotComps(
   replist,
-  subplots = c(21, 24, 1:10),
+  subplots = c(1:10, 21, 24),
   kind = "LEN",
   sizemethod = 1,
   aalyear = -1,
@@ -43,7 +43,7 @@ SSplotComps(
   blue = rgb(0, 0, 1, 0.7),
   red = rgb(1, 0, 0, 0.7),
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 6.5,
   punits = "in",
   ptsize = 10,
   res = 300,
@@ -59,14 +59,14 @@ SSplotComps(
     "(numbers x1000)", "Stdev (Age)", "Conditional AAL plot, ", "Size bin"),
   printmkt = TRUE,
   printsex = TRUE,
-  maxrows = 4,
+  maxrows = 6,
   maxcols = 4,
-  maxrows2 = 2,
+  maxrows2 = 3,
   maxcols2 = 4,
   rows = 1,
   cols = 1,
   andre_oma = c(3, 0, 3, 0),
-  andrerows = 3,
+  andrerows = 4,
   fixdims = TRUE,
   fixdims2 = FALSE,
   maxneff = 5000,
@@ -196,17 +196,19 @@ transparent blue)}
 \item{red}{What color to use for females in bubble plots (default is slightly
 transparent red)}
 
-\item{pwidth}{default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
-\item{ptsize}{point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
