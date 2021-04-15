@@ -237,7 +237,7 @@ SS_plots <-
            pwidth = 6.5, pheight = 4.0, pheight_tall = 6.5,
            punits = "in", ptsize = 10, res = 300,
            mainTitle = FALSE, cex.main = 1, selexlines = 1:6, rows = 1, cols = 1,
-           maxrows = 6, maxcols = 4, maxrows2 = 3, maxcols2 = 4, andrerows = 4,
+           maxrows = 6, maxcols = 4, maxrows2 = 4, maxcols2 = 4, andrerows = 4,
            tagrows = 3, tagcols = 3, parrows = 4, parcols = 2, fixdims = TRUE, new = TRUE,
            SSplotDatMargin = 8, filenotes = NULL, catchasnumbers = NULL, catchbars = TRUE,
            legendloc = "topleft", minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,

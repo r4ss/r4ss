@@ -63,7 +63,7 @@ SS_plots(
   cols = 1,
   maxrows = 6,
   maxcols = 4,
-  maxrows2 = 3,
+  maxrows2 = 4,
   maxcols2 = 4,
   andrerows = 4,
   tagrows = 3,

@@ -61,7 +61,7 @@ SSplotComps(
   printsex = TRUE,
   maxrows = 6,
   maxcols = 4,
-  maxrows2 = 3,
+  maxrows2 = 4,
   maxcols2 = 4,
   rows = 1,
   cols = 1,

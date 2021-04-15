@@ -178,7 +178,7 @@ SSplotComps <-
              "Size bin"
            ), # 15
            printmkt = TRUE, printsex = TRUE,
-           maxrows = 6, maxcols = 4, maxrows2 = 3, maxcols2 = 4, rows = 1, cols = 1,
+           maxrows = 6, maxcols = 4, maxrows2 = 4, maxcols2 = 4, rows = 1, cols = 1,
            andre_oma = c(3, 0, 3, 0), andrerows = 4,
            fixdims = TRUE, fixdims2 = FALSE, maxneff = 5000, verbose = TRUE,
            scalebins = FALSE, addMeans = TRUE, mainTitle = FALSE, ...) {
