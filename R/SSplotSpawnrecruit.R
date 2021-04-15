@@ -18,11 +18,11 @@
 #' models
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight 
+#' @template punits 
+#' @template ptsize
 #' @template res
-#' @param ptsize point size for PNG file
 #' @param verbose report progress to R GUI?
 #' @param colvec vector of length 4 with colors for 3 lines and 1 set of points
 #' (where the 4th value for the points is the color of the circle around the
@@ -69,7 +69,7 @@ SSplotSpawnrecruit <-
            ),
            bioscale = "default",
            plotdir = "default",
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
+           pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
            verbose = TRUE,
            colvec = c("blue", "black", "black", gray(0, 0.7)),
            ltyvec = c(1, 2, 1, NA),

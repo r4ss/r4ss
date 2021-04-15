@@ -19,7 +19,7 @@ SSplotSpawnrecruit(
   bioscale = "default",
   plotdir = "default",
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 6.5,
   punits = "in",
   res = 300,
   ptsize = 10,
@@ -67,16 +67,22 @@ models}
 \item{plotdir}{directory where PNG files will be written. by default it will
 be the directory where the model was run.}
 
-\item{pwidth}{width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{verbose}{report progress to R GUI?}
 

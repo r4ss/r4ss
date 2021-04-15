@@ -710,7 +710,7 @@ SS_plots <-
           plot = !png, print = png,
           virg = TRUE, # add point on curve at equilibrium values (B0,R0)
           init = FALSE, # add point on curve at initial values (B1,R1)
-          pwidth = pwidth, pheight = pheight, punits = punits,
+          pwidth = pwidth, pheight = pheight_tall, punits = punits,
           ptsize = ptsize, res = res,
           plotdir = plotdir
         )
@@ -878,7 +878,7 @@ SS_plots <-
             pntscalar = pntscalar.nums,
             bublegend = showlegend,
             plot = !png, print = png,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             mainTitle = mainTitle, cex.main = cex.main,
             plotdir = plotdir
