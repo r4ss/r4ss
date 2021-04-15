@@ -24,7 +24,7 @@ SS_plots(
   areanames = "default",
   verbose = TRUE,
   uncertainty = TRUE,
-  forecastplot = TRUE,
+  forecastplot = FALSE,
   datplot = TRUE,
   Natageplot = TRUE,
   samplesizeplots = TRUE,
@@ -51,7 +51,8 @@ SS_plots(
   effNline = FALSE,
   showlegend = TRUE,
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 4,
+  pheight_tall = 6.5,
   punits = "in",
   ptsize = 10,
   res = 300,
@@ -60,14 +61,14 @@ SS_plots(
   selexlines = 1:6,
   rows = 1,
   cols = 1,
-  maxrows = 4,
+  maxrows = 6,
   maxcols = 4,
-  maxrows2 = 2,
+  maxrows2 = 3,
   maxcols2 = 4,
-  andrerows = 3,
+  andrerows = 4,
   tagrows = 3,
   tagcols = 3,
-  parrows = 2,
+  parrows = 4,
   parcols = 2,
   fixdims = TRUE,
   new = TRUE,
@@ -273,17 +274,23 @@ age-at-length plots (TRUE/FALSE, still in development)}
 
 \item{showlegend}{Display legends in various plots? Default=T.}
 
-\item{pwidth}{Width of plots printed to files in units of
-\code{punits}. Default recently changed from 7 to 6.5.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{Height width of plots printed to files in units of
-\code{punits}. Default recently changed from 7 to 5.0}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
+
+\item{pheight_tall}{Height of tall plots printed to png files in units of
+\code{punits}, where the tall plots are a subset of the plots which typically
+work best in a taller format.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
-help("png") in R for details). Default recently changed from 12 to 10.}
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
@@ -300,22 +307,22 @@ selectivity plots if the model includes retention. Default=1:5.}
 
 \item{cols}{Number of columns to use for single panel plots. Default=1.}
 
-\item{maxrows}{Maximum number of rows to for multi-panel plots.  Default=4.}
+\item{maxrows}{Maximum number of rows to for multi-panel plots.}
 
-\item{maxcols}{Maximum number of columns for multi-panel plots.  Default=4.}
+\item{maxcols}{Maximum number of columns for multi-panel plots.}
 
 \item{maxrows2}{Maximum number of rows for conditional age-at-length
-multi-panel plots. Default=2.}
+multi-panel plots.}
 
 \item{maxcols2}{Maximum number of rows for conditional age-at-length
-multi-panel plots. Default=4.}
+multi-panel plots.}
 
 \item{andrerows}{Number of rows of Andre's conditional age-at-length plots
-within each page. Default=3.}
+within each page.}
 
-\item{tagrows}{Number of rows for tagging-related plots. Default=3.}
+\item{tagrows}{Number of rows for tagging-related plots.}
 
-\item{tagcols}{Number of columns for tagging-related plots.  Default=3.}
+\item{tagcols}{Number of columns for tagging-related plots.}
 
 \item{parrows}{Number of rows for parameter distribution plots.}
 

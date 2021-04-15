@@ -141,14 +141,11 @@
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param showlegend Display legends in various plots? Default=T.
-#' @param pwidth Width of plots printed to files in units of
-#' `punits`. Default recently changed from 7 to 6.5.
-#' @param pheight Height width of plots printed to files in units of
-#' `punits`. Default recently changed from 7 to 5.0
-#' @param punits Units for `pwidth` and `pheight`. Can be "px"
-#' (pixels), "in" (inches), "cm" or "mm". Default="in".
-#' @param ptsize Point size for plotted text in plots printed to files (see
-#' help("png") in R for details). Default recently changed from 12 to 10.
+#' @template pwidth
+#' @template pheight 
+#' @template pheight_tall
+#' @template punits 
+#' @template ptsize
 #' @template res
 #' @param mainTitle Logical indicating if a title should be included at the top
 #' @param cex.main Character expansion parameter for plot titles (not yet
@@ -157,16 +154,16 @@
 #' selectivity plots if the model includes retention. Default=1:5.
 #' @param rows Number of rows to use for single panel plots. Default=1.
 #' @param cols Number of columns to use for single panel plots. Default=1.
-#' @param maxrows Maximum number of rows to for multi-panel plots.  Default=4.
-#' @param maxcols Maximum number of columns for multi-panel plots.  Default=4.
+#' @param maxrows Maximum number of rows to for multi-panel plots.
+#' @param maxcols Maximum number of columns for multi-panel plots.
 #' @param maxrows2 Maximum number of rows for conditional age-at-length
-#' multi-panel plots. Default=2.
+#' multi-panel plots.
 #' @param maxcols2 Maximum number of rows for conditional age-at-length
-#' multi-panel plots. Default=4.
+#' multi-panel plots.
 #' @param andrerows Number of rows of Andre's conditional age-at-length plots
-#' within each page. Default=3.
-#' @param tagrows Number of rows for tagging-related plots. Default=3.
-#' @param tagcols Number of columns for tagging-related plots.  Default=3.
+#' within each page.
+#' @param tagrows Number of rows for tagging-related plots.
+#' @param tagcols Number of columns for tagging-related plots.
 #' @param parrows Number of rows for parameter distribution plots.
 #' @param parcols Number of columns for parameter distribution plots.
 #' @param fixdims Control whether multi-panel plots all have dimensions equal
@@ -228,7 +225,7 @@ SS_plots <-
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
-           verbose = TRUE, uncertainty = TRUE, forecastplot = TRUE,
+           verbose = TRUE, uncertainty = TRUE, forecastplot = FALSE,
            datplot = TRUE, Natageplot = TRUE, samplesizeplots = TRUE, compresidplots = TRUE,
            comp.yupper = 0.4,
            sprtarg = "default", btarg = "default", minbthresh = "default", pntscalar = NULL,
@@ -236,10 +233,12 @@ SS_plots <-
            pntscalar.tags = 2.6, minnbubble = 8, aalyear = -1, aalbin = -1, aalresids = TRUE,
            maxneff = 5000, cohortlines = c(), smooth = TRUE, showsampsize = TRUE,
            showeffN = TRUE, sampsizeline = FALSE, effNline = FALSE,
-           showlegend = TRUE, pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300,
+           showlegend = TRUE,
+           pwidth = 6.5, pheight = 4.0, pheight_tall = 6.5,
+           punits = "in", ptsize = 10, res = 300,
            mainTitle = FALSE, cex.main = 1, selexlines = 1:6, rows = 1, cols = 1,
-           maxrows = 4, maxcols = 4, maxrows2 = 2, maxcols2 = 4, andrerows = 3,
-           tagrows = 3, tagcols = 3, parrows = 2, parcols = 2, fixdims = TRUE, new = TRUE,
+           maxrows = 6, maxcols = 4, maxrows2 = 3, maxcols2 = 4, andrerows = 4,
+           tagrows = 3, tagcols = 3, parrows = 4, parcols = 2, fixdims = TRUE, new = TRUE,
            SSplotDatMargin = 8, filenotes = NULL, catchasnumbers = NULL, catchbars = TRUE,
            legendloc = "topleft", minyr = -Inf, maxyr = Inf, sexes = "all", scalebins = FALSE,
            scalebubbles = FALSE, tslabels = NULL, catlabels = NULL, maxsize = 1.0,
@@ -938,7 +937,7 @@ SS_plots <-
                 plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
                 sexes = sexes, yupper = comp.yupper,
                 scalebins = scalebins, scalebubbles = scalebubbles,
-                pwidth = pwidth, pheight = pheight, punits = punits,
+                pwidth = pwidth, pheight = pheight_tall, punits = punits,
                 ptsize = ptsize, res = res,
                 ...
               )
@@ -963,7 +962,7 @@ SS_plots <-
                   # sexes=sexes,
                   # yupper=comp.yupper,
                   scalebins = scalebins,
-                  pwidth = pwidth, pheight = pheight, punits = punits,
+                  pwidth = pwidth, pheight = pheight_tall, punits = punits,
                   ptsize = ptsize, res = res,
                   ...
                 )
@@ -984,7 +983,7 @@ SS_plots <-
                   plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
                   sexes = sexes, yupper = comp.yupper,
                   scalebins = scalebins, scalebubbles = scalebubbles,
-                  pwidth = pwidth, pheight = pheight, punits = punits,
+                  pwidth = pwidth, pheight = pheight_tall, punits = punits,
                   ptsize = ptsize, res = res,
                   ...
                 )
@@ -1008,7 +1007,7 @@ SS_plots <-
               plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1026,7 +1025,7 @@ SS_plots <-
               plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1049,7 +1048,7 @@ SS_plots <-
                 maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
                 # sexes=sexes, yupper=comp.yupper,
                 scalebins = scalebins,
-                pwidth = pwidth, pheight = pheight, punits = punits,
+                pwidth = pwidth, pheight = pheight_tall, punits = punits,
                 ptsize = ptsize, res = res,
                 ...
               )
@@ -1076,7 +1075,7 @@ SS_plots <-
               plotdir = plotdir, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins, scalebubbles = scalebubbles,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1112,7 +1111,7 @@ SS_plots <-
             cohortlines = cohortlines,
             sexes = sexes, yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1131,7 +1130,7 @@ SS_plots <-
             maxneff = maxneff, cex.main = cex.main, cohortlines = cohortlines,
             sexes = sexes, yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1153,7 +1152,7 @@ SS_plots <-
                 cohortlines = cohortlines,
                 sexes = sexes, yupper = comp.yupper,
                 scalebins = scalebins,
-                pwidth = pwidth, pheight = pheight, punits = punits,
+                pwidth = pwidth, pheight = pheight_tall, punits = punits,
                 ptsize = ptsize, res = res,
                 ...
               )
@@ -1178,7 +1177,7 @@ SS_plots <-
               # sexes=sexes,
               # yupper=comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1211,7 +1210,7 @@ SS_plots <-
             maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
             sexes = sexes, yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1229,7 +1228,7 @@ SS_plots <-
             maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
             sexes = sexes, yupper = comp.yupper,
             scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1249,7 +1248,7 @@ SS_plots <-
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               # sexes=sexes, yupper=comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1282,7 +1281,7 @@ SS_plots <-
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1304,7 +1303,7 @@ SS_plots <-
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1325,7 +1324,7 @@ SS_plots <-
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, yupper = comp.yupper,
               scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1370,7 +1369,7 @@ SS_plots <-
                 plot = !png, print = png, smooth = smooth, plotdir = plotdir,
                 maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
                 sexes = sexes, scalebins = FALSE,
-                pwidth = pwidth, pheight = pheight, punits = punits,
+                pwidth = pwidth, pheight = pheight_tall, punits = punits,
                 ptsize = ptsize, res = res,
                 ...
               )
@@ -1406,7 +1405,7 @@ SS_plots <-
               plot = !png, print = png, smooth = smooth, plotdir = plotdir,
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1422,7 +1421,7 @@ SS_plots <-
               plot = !png, print = png, smooth = smooth, plotdir = plotdir,
               maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
               sexes = sexes, scalebins = scalebins,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res,
               ...
             )
@@ -1439,7 +1438,7 @@ SS_plots <-
             plot = !png, print = png, smooth = smooth, plotdir = plotdir,
             maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
             sexes = sexes, scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1455,7 +1454,7 @@ SS_plots <-
             plot = !png, print = png, smooth = smooth, plotdir = plotdir,
             maxneff = maxneff, mainTitle = mainTitle, cex.main = cex.main,
             sexes = sexes, scalebins = scalebins,
-            pwidth = pwidth, pheight = pheight, punits = punits,
+            pwidth = pwidth, pheight = pheight_tall, punits = punits,
             ptsize = ptsize, res = res,
             ...
           )
@@ -1498,7 +1497,7 @@ SS_plots <-
               latency = replist[["tagfirstperiod"]],
               pntscalar = pntscalar.tags, minnbubble = minnbubble,
               plot = !png, print = png,
-              pwidth = pwidth, pheight = pheight, punits = punits,
+              pwidth = pwidth, pheight = pheight_tall, punits = punits,
               ptsize = ptsize, res = res, cex.main = cex.main,
               plotdir = plotdir,
               verbose = verbose
@@ -1571,7 +1570,7 @@ SS_plots <-
         SSplotData(
           replist = replist,
           plot = !png, print = png,
-          pwidth = pwidth, pheight = pheight, punits = punits,
+          pwidth = pwidth, pheight = pheight_tall, punits = punits,
           ptsize = ptsize, res = res, mainTitle = mainTitle, cex.main = cex.main,
           plotdir = plotdir, margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
           fleetnames = fleetnames, maxsize = maxsize
@@ -1594,7 +1593,7 @@ SS_plots <-
       plotinfo <- SSplotPars(
         replist = replist,
         plot = !png, print = png,
-        pwidth = pwidth, pheight = pheight, punits = punits,
+        pwidth = pwidth, pheight = pheight_tall, punits = punits,
         ptsize = ptsize, res = res,
         nrows = parrows,
         ncols = parcols,
