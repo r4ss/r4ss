@@ -616,9 +616,9 @@ SSplotTimeseries <-
                  bty = "n")
         }
       } # end test for birthseason plots or not
-      if (verbose) {
-        message("  finished time series subplot ", subplot, ": ", main)
-      }
+      ## if (verbose) {
+      ##   message("  finished time series subplot ", subplot, ": ", main)
+      ## }
       if (print) dev.off()
       return(plotinfo)
     } # end biofunc
