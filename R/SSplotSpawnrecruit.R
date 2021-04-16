@@ -80,7 +80,7 @@ SSplotSpawnrecruit <-
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
            show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE) {
     # plot of spawner recruit curve
-
+    
     # subfunction to write png files
     pngfun <- function(file, caption = NA) {
       png(
@@ -96,6 +96,10 @@ SSplotSpawnrecruit <-
     if (is.null(recruit)) {
       message("Skipping stock-recruit plots: no recruitment information available")
       return()
+    } else {
+      if (3 %in% subplot && max(abs(recruit[["dev"]]), na.rm = TRUE) < 1e-6) {
+        subplot <- setdiff(subplot, 3)
+      }
     }
     nsexes <- replist[["nsexes"]]
 
