@@ -117,14 +117,14 @@ SS_html <- function(replist = NULL,
   for (icat in 0:length(categories)) {
     if (icat == 0) {
       category <- "Home"
-      htmlfile <- file.path(plotdir, "SS_output.html")
+      htmlfile <- file.path(plotdir, "_SS_output.html")
       htmlhome <- htmlfile
       if (verbose) {
         cat("Home HTML file with output will be:\n", htmlhome, "\n")
       }
     } else {
       category <- categories[icat]
-      htmlfile <- file.path(plotdir, paste("SS_output_", category, ".html", sep = ""))
+      htmlfile <- file.path(plotdir, paste("_SS_output_", category, ".html", sep = ""))
     }
     # write HTML head including some CSS stuff about fonts and whatnot
     # source for text below is http://unraveled.com/publications/css_tabs/
@@ -233,13 +233,13 @@ SS_html <- function(replist = NULL,
     for (itab in 0:length(categories)) {
       if (itab == 0) {
         tab <- "Home"
-        cat('    <li class="tab1"><a href="SS_output.html">Home</a></li>\n',
+        cat('    <li class="tab1"><a href="_SS_output.html">Home</a></li>\n',
           sep = "",
           file = htmlfile, append = TRUE
         )
       } else {
         tab <- categories[itab]
-        cat('    <li class="tab', itab + 1, '"><a href="SS_output_', tab, '.html">', tab, "</a></li>\n",
+        cat('    <li class="tab', itab + 1, '"><a href="_SS_output_', tab, '.html">', tab, "</a></li>\n",
           sep = "",
           file = htmlfile, append = TRUE
         )
