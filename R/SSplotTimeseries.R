@@ -58,6 +58,8 @@
 #' @template res
 #' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
+#' @template mainTitle
+#' @template mar
 #' @author Ian Taylor, Ian Stewart
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
@@ -69,10 +71,15 @@ SSplotTimeseries <-
            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
            btarg = "default", minbthresh = "default", xlab = "Year",
            labels = NULL,
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1) {
+           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
+           mainTitle = FALSE, mar = NULL) {
 
-    if (missing(subplot)) stop("'subplot' input required")
-    if (length(subplot) > 1) stop("function can only do 1 subplot at a time")
+    if (missing(subplot)) {
+      stop("'subplot' input required")
+    }
+    if (length(subplot) > 1) {
+      stop("function can only do 1 subplot at a time")
+    }
     # subfunction to write png files
     pngfun <- function(file, caption = NA) {
       png(
@@ -83,6 +90,15 @@ SSplotTimeseries <-
       return(plotinfo)
     }
     plotinfo <- NULL
+
+    # set default plot margins
+    if (is.null(mar)) {
+      if (mainTitle){
+        mar <-  c(5, 4, 4, 2) + 0.1
+      } else {
+        mar <- c(5, 4, 2, 2) + 0.1
+      }
+    }
 
     # default labels that are passed from SS_plots but available if running
     # this function independently
@@ -443,9 +459,11 @@ SSplotTimeseries <-
         yrvals <- ts[["YrSeas"]][plot1 | plot2 | plot3]
         # axis limits
         xlim <- range(yrvals)
+        par(mar = mar)
         plot(yrvals, yvals[plot1 | plot2 | plot3],
           type = "n", xlab = xlab, ylim = c(0, 1.05 * ymax), yaxs = "i", ylab = ylab,
-          main = main, cex.main = cex.main, xlim = xlim
+          main = ifelse(mainTitle, main, ""),
+          cex.main = cex.main, xlim = xlim
         )
         # abline(h=0,col="grey") # no longer required due to use of yaxs='i'
       }

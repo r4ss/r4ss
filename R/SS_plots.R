@@ -140,14 +140,14 @@
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param effNline show line for effective sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
-#' @param showlegend Display legends in various plots? Default=T.
+#' @param showlegend Display legends in various plots?
 #' @template pwidth
-#' @template pheight 
+#' @template pheight
 #' @template pheight_tall
-#' @template punits 
+#' @template punits
 #' @template ptsize
 #' @template res
-#' @param mainTitle Logical indicating if a title should be included at the top
+#' @template mainTitle
 #' @param cex.main Character expansion parameter for plot titles (not yet
 #' implemented for all plots). Default=1.
 #' @param selexlines Vector controlling which lines should be shown on
@@ -520,7 +520,8 @@ SS_plots <-
           plot = !png, print = png,
           pwidth = pwidth, pheight = pheight, punits = punits,
           ptsize = ptsize, res = res, cex.main = cex.main,
-          plotdir = plotdir
+          plotdir = plotdir,
+          mainTitle = mainTitle,
         )
       plotinfo <- selexinfo[["plotinfo"]]
       if (!is.null(plotinfo)) {
@@ -575,7 +576,9 @@ SS_plots <-
                   minbthresh = minbthresh,
                   minyr = minyr, maxyr = maxyr,
                   pwidth = pwidth, pheight = pheight, punits = punits,
-                  ptsize = ptsize, res = res, cex.main = cex.main,
+                  ptsize = ptsize, res = res,
+                  mainTitle = mainTitle,
+                  cex.main = cex.main,
                   labels = tslabels,
                   plotdir = plotdir
                 )
@@ -597,7 +600,9 @@ SS_plots <-
                 minbthresh = minbthresh,
                 minyr = minyr, maxyr = maxyr,
                 pwidth = pwidth, pheight = pheight, punits = punits,
-                ptsize = ptsize, res = res, cex.main = cex.main,
+                ptsize = ptsize, res = res, 
+                mainTitle = mainTitle,
+                cex.main = cex.main,
                 labels = tslabels,
                 plotdir = plotdir
               )

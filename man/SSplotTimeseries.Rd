@@ -29,7 +29,9 @@ SSplotTimeseries(
   punits = "in",
   res = 300,
   ptsize = 10,
-  cex.main = 1
+  cex.main = 1,
+  mainTitle = FALSE,
+  mar = NULL
 )
 }
 \arguments{
@@ -112,6 +114,11 @@ The default is \code{res = 300}.}
 \item{ptsize}{point size for PNG file}
 
 \item{cex.main}{character expansion for plot titles}
+
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots)}
+
+\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plot timeseries data contained in TIME_SERIES output from Stock Synthesis

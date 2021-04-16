@@ -19,6 +19,7 @@
 #' @param punits units for PNG file
 #' @template res
 #' @param ptsize point size for PNG file
+#' @template mar
 #' @author Allan Hicks
 #' @export
 #' @seealso [SSplotTimeseries()], ~~~
@@ -26,7 +27,8 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
                            plot = TRUE, print = FALSE, plotdir = "default", verbose = TRUE,
                            uncertainty = TRUE,
                            add = FALSE,
-                           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10) {
+                           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
+                           mar = NULL) {
   # plots the summary F (or harvest rate) as set up in the starter file
   # needs a lot of work to be generalized
 
@@ -39,6 +41,12 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
     plotinfo <- rbind(plotinfo, data.frame(file = file, caption = caption))
     return(plotinfo)
   }
+
+  # set default plot margins
+  if (is.null(mar)) {
+    mar <- c(5, 4, 2, 2) + 0.1
+  }
+  
   plotinfo <- NULL
   if (plotdir == "default") {
     plotdir <- replist[["inputs"]][["dir"]]
@@ -65,7 +73,8 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
     if (!add) {
       plot(0,
            type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs), ylim = c(0, Fmax),
-           cex.lab = 1.0, cex.axis = 1.0, cex = 0.7
+           cex.lab = 1.0, cex.axis = 1.0, cex = 0.7,
+           mar = mar
            )
       abline(h = 0, col = "grey")
     }
