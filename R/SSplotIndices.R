@@ -412,12 +412,12 @@ SSplotIndices <-
       if (smooth && npoints > 6 && diff(range(y)) > 0) {
         if (!log) {
           psmooth <- loess(z[include] ~ y[include], degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
+          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
             lwd = 1.2, col = col4, lty = "dashed"
           )
         } else {
           psmooth <- loess(log(z[include]) ~ log(y[include]), degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
+          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
             lwd = 1.2, col = col4, lty = "dashed"
           )
         }
@@ -646,9 +646,15 @@ SSplotIndices <-
         }
 
         if (plot) {
-          if (1 %in% subplots & datplot) index.fn(addexpected = FALSE)
-          if (2 %in% subplots) index.fn()
-          if (3 %in% subplots) obs_vs_exp.fn()
+          if (1 %in% subplots & datplot) {
+            index.fn(addexpected = FALSE)
+          }
+          if (2 %in% subplots) {
+            index.fn()
+          }
+          if (3 %in% subplots) {
+            obs_vs_exp.fn()
+          }
         }
         if (print) {
           if (1 %in% subplots & datplot) {
