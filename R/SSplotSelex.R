@@ -77,6 +77,11 @@
 #' `spacepoints > 1`) for each line (so that adjacent lines have points in
 #' different years)
 #' @param legendloc location of legend. See ?legend for more info.
+#' @template pwidth
+#' @template pheight
+#' @template punits
+#' @template ptsize
+#' @template res
 #' @param plot Plot to active plot device?
 #' @param print Print to PNG files?
 #' @param add Add to existing plot (not yet implemented)
@@ -85,6 +90,7 @@
 #' @param col2 color for male growth curve
 #' @param cex.main character expansion for plot titles
 #' @template mainTitle
+#' @template mar
 #' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
 #' @param verbose report progress to R GUI?

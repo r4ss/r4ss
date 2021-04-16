@@ -52,7 +52,7 @@ included in this group but now replaced by better distribution plots)
 \item 6: Expected numbers at length
 \item 7: Mean length in the population
 \item 8: Fraction female in numbers at length
-\item 9: \link{no plot yet}
+\item 9: no plot yet
 \item 10: Distribution of observed age at true age by ageing error type
 }}
 

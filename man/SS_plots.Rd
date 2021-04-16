@@ -184,13 +184,14 @@ for each area. Default="default".}
 \item{areanames}{Optional vector of names for each area used in titles.
 Default="default".}
 
-\item{verbose}{Return updates of function progress to the R GUI?  Default=T.}
+\item{verbose}{Return updates of function progress to the R GUI?
+Default=TRUE.}
 
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}
 
 \item{forecastplot}{Include forecast years in the timeseries plots and
-plots of time-varying quantities? Default=TRUE.}
+plots of time-varying quantities?}
 
 \item{datplot}{Plot the data by itself? This is useful in document
 preparation, but doesn't change across alternative model runs with the same
@@ -199,9 +200,9 @@ Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
 Default=TRUE.}
 
 \item{Natageplot}{Plot the expected numbers at age bubble plots and mean-age
-time series?  Default=T.}
+time series?  Default=TRUE.}
 
-\item{samplesizeplots}{Show sample size plots?  Default=T.}
+\item{samplesizeplots}{Show sample size plots?  Default=TRUE.}
 
 \item{compresidplots}{Show residuals for composition plots?}
 
@@ -259,12 +260,12 @@ data. Default=5000.}
 add growth curves to numbers at length bubble plots.  Default=c().}
 
 \item{smooth}{Add loess smoother to observed vs. expected index plots and
-input vs. effective sample size? Default=T.}
+input vs. effective sample size? Default=TRUE.}
 
-\item{showsampsize}{Display sample sizes on composition plots?  Default=T.}
+\item{showsampsize}{Display sample sizes on composition plots?  Default=TRUE.}
 
 \item{showeffN}{Display effective sample sizes on composition plots?
-Default=T.}
+Default=TRUE.}
 
 \item{sampsizeline}{show line for input sample sizes on top of conditional
 age-at-length plots (TRUE/FALSE, still in development)}
@@ -272,7 +273,7 @@ age-at-length plots (TRUE/FALSE, still in development)}
 \item{effNline}{show line for effective sample sizes on top of conditional
 age-at-length plots (TRUE/FALSE, still in development)}
 
-\item{showlegend}{Display legends in various plots? Default=T.}
+\item{showlegend}{Display legends in various plots?}
 
 \item{pwidth}{Default width of plots printed to files in units of
 \code{punits}. The default is \code{pwidth=6.5}.}
@@ -295,7 +296,8 @@ The default is \code{punits="in"}.}
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{mainTitle}{Logical indicating if a title should be included at the top}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots)}
 
 \item{cex.main}{Character expansion parameter for plot titles (not yet
 implemented for all plots). Default=1.}
@@ -330,9 +332,9 @@ within each page.}
 
 \item{fixdims}{Control whether multi-panel plots all have dimensions equal
 to maxrows by maxcols, or resized within those limits to fit number of
-plots. Default=T.}
+plots. Default=TRUE.}
 
-\item{new}{Open a new window or add to existing plot windows.  Default=T.}
+\item{new}{Open a new window or add to existing plot windows.  Default=TRUE.}
 
 \item{SSplotDatMargin}{Size of right-hand margin in data plot (may be too
 small if fleet names are long)}

@@ -79,19 +79,20 @@
 #' for each area. Default="default".
 #' @param areanames Optional vector of names for each area used in titles.
 #' Default="default".
-#' @param verbose Return updates of function progress to the R GUI?  Default=T.
+#' @param verbose Return updates of function progress to the R GUI?
+#' Default=TRUE.
 #' @param uncertainty Include values in plots showing estimates of uncertainty
 #' (requires positive definite hessian in model?  Default=TRUE.
 #' @param forecastplot Include forecast years in the timeseries plots and
-#' plots of time-varying quantities? Default=TRUE.
+#' plots of time-varying quantities?
 #' @param datplot Plot the data by itself? This is useful in document
 #' preparation, but doesn't change across alternative model runs with the same
 #' data, so can be committed to save time once the plots have been created once.
 #' Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
 #' Default=TRUE.
 #' @param Natageplot Plot the expected numbers at age bubble plots and mean-age
-#' time series?  Default=T.
-#' @param samplesizeplots Show sample size plots?  Default=T.
+#' time series?  Default=TRUE.
+#' @param samplesizeplots Show sample size plots?  Default=TRUE.
 #' @param compresidplots Show residuals for composition plots?
 #' @param comp.yupper Upper limit on ymax for polygon/histogram composition
 #' plots. This avoids scaling all plots to have max=1 if there is a vector
@@ -132,10 +133,10 @@
 #' @param cohortlines Optional vector of birth years for cohorts for which to
 #' add growth curves to numbers at length bubble plots.  Default=c().
 #' @param smooth Add loess smoother to observed vs. expected index plots and
-#' input vs. effective sample size? Default=T.
-#' @param showsampsize Display sample sizes on composition plots?  Default=T.
+#' input vs. effective sample size? Default=TRUE.
+#' @param showsampsize Display sample sizes on composition plots?  Default=TRUE.
 #' @param showeffN Display effective sample sizes on composition plots?
-#' Default=T.
+#' Default=TRUE.
 #' @param sampsizeline show line for input sample sizes on top of conditional
 #' age-at-length plots (TRUE/FALSE, still in development)
 #' @param effNline show line for effective sample sizes on top of conditional
@@ -168,8 +169,8 @@
 #' @param parcols Number of columns for parameter distribution plots.
 #' @param fixdims Control whether multi-panel plots all have dimensions equal
 #' to maxrows by maxcols, or resized within those limits to fit number of
-#' plots. Default=T.
-#' @param new Open a new window or add to existing plot windows.  Default=T.
+#' plots. Default=TRUE.
+#' @param new Open a new window or add to existing plot windows.  Default=TRUE.
 #' @param SSplotDatMargin Size of right-hand margin in data plot (may be too
 #' small if fleet names are long)
 #' @param filenotes Optional vector of character strings to be added to intro
