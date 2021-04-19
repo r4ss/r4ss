@@ -2601,6 +2601,12 @@ SS_output <-
     # Age-based selectivity
     ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
     if (!is.null(ageselex)) {
+      # account for additional header row added in March 2021 
+      # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
+      # (not the most efficient way to do this)
+      if(any(grepl("COMBINED_ALK", names(ageselex)))) {
+        ageselex <- matchfun2("AGE_SELEX", 5, header = TRUE)
+      }
       ageselex <- df.rename(ageselex,
         oldnames = c(
           "fleet", "year", "seas", "gender",
