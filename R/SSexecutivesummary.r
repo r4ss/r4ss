@@ -139,7 +139,7 @@ SSexecutivesummary <- function (replist,
   } else {
     foreyr <- foreyr - (endyr - replist[["endyr"]])
   }
-  hist <- (endyr - 11):(endyr + 1)
+  hist <- (endyr - 9):(endyr + 1)
   fore <- (endyr + 1):(endyr + foreyr)
   all <- startyr:max(fore)
   nareas <- replist[["nareas"]]
@@ -224,7 +224,7 @@ SSexecutivesummary <- function (replist,
       } else {
         es.a <- data.frame(hist[1:(length(hist) - 1)], catch, total.catch, total.dead)
       }
-      colnames(es.a) = c("Year", fleet.names, "Total Catch", "Total Dead")
+      colnames(es.a) = c("Year", fleet.names, "Total Landings", "Total Dead")
     
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)
       caption = c(caption,
@@ -235,7 +235,7 @@ SSexecutivesummary <- function (replist,
       } else {
         es.a <- data.frame(hist[1:(length(hist) - 1)], catch, total.catch)
       }
-      colnames(es.a) = c("Year", fleet.names, "Total Catch")
+      colnames(es.a) = c("Year", fleet.names, "Total Landings")
       write.csv(es.a, file.path(csv.dir, csv_name), row.names = FALSE)     
       caption = c(caption,
                'Recent landings by fleet and total landings summed across fleets.')
@@ -370,7 +370,7 @@ SSexecutivesummary <- function (replist,
   } # end check for 'c' %in% tables
 
   caption = c(caption,
-              paste('Estimated recent trend in recruitment and recruitment deviations (recruit devs.) and the', round(100*ci_value,0), 
+              paste('Estimated recent trend in recruitment and recruitment deviations and the', round(100*ci_value,0), 
                     'percent intervals.'))
   tex.label = c(tex.label, 'recrES')
   filename = c(filename, csv_name)
@@ -393,13 +393,13 @@ SSexecutivesummary <- function (replist,
     f.value = Get.Values(replist = replist, label = "F" , hist[1:(length(hist)-1)], ci_value)
     if(format){
     es.d = data.frame(hist[1:(length(hist)-1)],
-           print(adj.spr$dq*100,2), paste0(print(adj.spr$low*100,2), "\u2013", print(adj.spr$high*100,2)),
+           print(adj.spr$dq,2), paste0(print(adj.spr$low,2), "\u2013", print(adj.spr$high,2)),
            print(f.value$dq,4),     paste0(print(f.value$low, 4),     "\u2013", print(f.value$high, 4)))
-    colnames(es.d) = c("Year", paste0(spr_type, " (%)"), "Interval", 
+    colnames(es.d) = c("Year", spr_type, "Interval", 
                         f_type, "Interval")
     } else {
     es.d = data.frame(hist[1:(length(hist)-1)],
-           adj.spr$dq*100, adj.spr$low*100, adj.spr$high*100,
+           adj.spr$dq, adj.spr$low, adj.spr$high,
            f.value$dq, f.value$low, f.value$high)
     colnames(es.d) = c("Year", spr_type, "Lower Interval", "Upper Interval", 
                         f_type, "Lower Interval", "Upper Interval")      
@@ -410,7 +410,7 @@ SSexecutivesummary <- function (replist,
   } # end check for 'd' %in% tables
  
   caption = c(caption,
-              paste('Estimated recent trend in the spawning potential ratio (SPR),', replist$SPRratioLabel, ', the exploitation rate, along with the', round(100*ci_value,0), 
+              paste('Estimated recent trend in the', replist$SPRratioLabel, 'where SPR is the spawning potential ratio the exploitation rate, and the ', round(100*ci_value,0), 
                     'percent intervals.'))
   tex.label = c(tex.label, 'exploitES') 
   filename = c(filename, csv_name)
@@ -452,21 +452,21 @@ SSexecutivesummary <- function (replist,
       f.spr.name <- "annF_SPR"
     }
 
-    final.depl <- depl[dim(depl)[1], 2:4]
-    ssb.virgin <- Get.Values(replist = replist, label = sb.unfished, hist, ci_value, single = TRUE)
+    final.depl  <- depl[dim(depl)[1], 2:4]
+    ssb.virgin  <- Get.Values(replist = replist, label = sb.unfished, hist, ci_value, single = TRUE)
     smry.virgin <- Get.Values(replist = replist, label = smry.unfished, hist, ci_value, single = TRUE)
-    rec.virgin <- Get.Values(replist = replist, label = recr.unfished, hist, ci_value, single = TRUE)
-    b.target <- Get.Values(replist = replist, label = "SSB_Btgt", hist, ci_value, single = TRUE)
-    spr.btarg <- Get.Values(replist = replist, label = "SPR_Btgt", hist, ci_value, single = TRUE)
-    f.btarg <- Get.Values(replist = replist, label = f.btgt.name, hist, ci_value, single = TRUE)
+    rec.virgin  <- Get.Values(replist = replist, label = recr.unfished, hist, ci_value, single = TRUE)
+    b.target    <- Get.Values(replist = replist, label = "SSB_Btgt", hist, ci_value, single = TRUE)
+    spr.btarg   <- Get.Values(replist = replist, label = "SPR_Btgt", hist, ci_value, single = TRUE)
+    f.btarg     <- Get.Values(replist = replist, label = f.btgt.name, hist, ci_value, single = TRUE)
     yield.btarg <- Get.Values(replist = replist, label = totyield.btgt, hist, ci_value, single = TRUE)
-    b.spr <- Get.Values(replist = replist, label = "SSB_SPR", hist, ci_value, single = TRUE)
-    f.spr <- Get.Values(replist = replist, label = f.spr.name, hist, ci_value, single = TRUE)
-    yield.spr <- Get.Values(replist = replist, label = totyield.spr, hist, ci_value, single = TRUE)
-    b.msy <- Get.Values(replist = replist, label = "SSB_MSY", hist, ci_value, single = TRUE)
-    spr.msy <- Get.Values(replist = replist, label = "SPR_MSY", hist, ci_value, single = TRUE)
-    f.msy <- Get.Values(replist = replist, label = f.msy.name, hist, ci_value, single = TRUE)
-    msy <- Get.Values(replist = replist, label = totyield.msy, hist, ci_value, single = TRUE)
+    b.spr       <- Get.Values(replist = replist, label = "SSB_SPR", hist, ci_value, single = TRUE)
+    f.spr       <- Get.Values(replist = replist, label = f.spr.name, hist, ci_value, single = TRUE)
+    yield.spr   <- Get.Values(replist = replist, label = totyield.spr, hist, ci_value, single = TRUE)
+    b.msy       <- Get.Values(replist = replist, label = "SSB_MSY", hist, ci_value, single = TRUE)
+    spr.msy     <- Get.Values(replist = replist, label = "SPR_MSY", hist, ci_value, single = TRUE)
+    f.msy       <- Get.Values(replist = replist, label = f.msy.name, hist, ci_value, single = TRUE)
+    msy         <- Get.Values(replist = replist, label = totyield.msy, hist, ci_value, single = TRUE)
 
     # Convert spawning ci_valueities for single-sex models
     if (nsexes == 1) {
@@ -490,7 +490,7 @@ SSexecutivesummary <- function (replist,
         comma(yield.btarg[["dq"]], dig), paste0(comma(yield.btarg[["low"]], dig), "\u2013", comma(yield.btarg[["high"]], dig)),
         "", "",
         comma(b.spr[["dq"]], dig), paste0(comma(b.spr[["low"]], dig), "\u2013", comma(b.spr[["high"]], dig)),
-        print(spr, 3), " NA ",
+        print(spr/100, 3), " - ",
         print(f.spr[["dq"]], 3), paste0(print(f.spr[["low"]], 3), "\u2013", print(f.spr[["high"]], 3)),
         comma(yield.spr[["dq"]], dig), paste0(comma(yield.spr[["low"]], dig), "\u2013", comma(yield.spr[["high"]], dig)),
         "", "",
@@ -510,7 +510,7 @@ SSexecutivesummary <- function (replist,
         paste0(sb.label, " (", hist[length(hist)], ")"),
         paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
         paste0("Reference Points Based SB", btarg, " Percent"),
-        paste0("Proxy ", sb.label, "SB", btarg, " Percent)"),
+        paste0("Proxy ", sb.label, " SB", btarg, " Percent)"),
         paste0("SPR Resulting in SB", btarg, " Percent"),
         paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
         paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
@@ -532,17 +532,17 @@ SSexecutivesummary <- function (replist,
         rec.virgin[["dq"]], rec.virgin[["low"]], rec.virgin[["high"]],
         ssb[["dq"]][dim(ssb)[1]], ssb[["low"]][dim(ssb)[1]], ssb[["high"]][dim(ssb)[1]],
         final.depl[["dq"]], final.depl[["low"]], final.depl[["high"]],
-        "", "", "",
+        "-", "-", "-",
         b.target[["dq"]], b.target[["low"]], b.target[["high"]],
         spr.btarg[["dq"]], spr.btarg[["low"]], spr.btarg[["high"]],
         f.btarg[["dq"]], f.btarg[["low"]], f.btarg[["high"]],
         yield.btarg[["dq"]], yield.btarg[["low"]], yield.btarg[["high"]],
-        "", "", "",
+        "-", "-", "-",
         b.spr[["dq"]], b.spr[["low"]], b.spr[["high"]],
-        spr, "  ", "  ",
+        spr/100, "-", "-",
         f.spr[["dq"]], f.spr[["low"]], f.spr[["high"]],
         yield.spr[["dq"]], yield.spr[["low"]], yield.spr[["high"]],
-        "", "", "",
+        "-", "-", "-",
         b.msy[["dq"]], b.msy[["low"]], b.msy[["high"]],
         spr.msy[["dq"]], spr.msy[["low"]], spr.msy[["high"]],
         f.msy[["dq"]], f.msy[["low"]], f.msy[["high"]],
@@ -558,7 +558,7 @@ SSexecutivesummary <- function (replist,
                 paste0(sb.label, " (", hist[length(hist)], ")"),
                 paste0("Fraction Unfished ", "(", hist[length(hist)], ")"),
                 paste0("Reference Points Based SB", btarg, " Percent"),
-                paste0("Proxy ", sb.label, "SB",btarg, " Percent"),
+                paste0("Proxy ", sb.label, " SB",btarg, " Percent"),
                 paste0("SPR Resulting in SB", btarg, " Percent"),
                 paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
                 paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
@@ -639,10 +639,10 @@ SSexecutivesummary <- function (replist,
 
     if(sum(total.catch) != sum(total.dead)){
       es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch, dead)
-      colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Landings", "Total Dead")
+      colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Landings", "Total Mortality")
       caption = c(caption,
               paste('Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs),
-                the annual catch limits (ACLs), and the total catch and landings (mt).'))
+                the annual catch limits (ACLs), the total landings, and total mortality (mt).'))
     } else {
       es.f = data.frame(hist[1:(length(hist)-1)], ofl, abc, acl, catch)
       colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Catch")
@@ -904,9 +904,9 @@ SSexecutivesummary <- function (replist,
       } else {
         mortality <- data.frame(ind, catch, total.catch, total.dead)
       }
-      colnames(mortality) = c("Year", fleet.names, "Total Catch", "Total Dead")
+      colnames(mortality) = c("Year", fleet.names, "Total Landings", "Total Dead")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE) 
-      caption = c(caption, 'Catches (mt) by fleet for all years, total catches (mt), and total mortality (mt) summed by year.')     
+      caption = c(caption, 'Landings (mt) by fleet for all years, total landings (mt), and total mortality (mt) summed by year.')     
     } else {
       if (format) {
         mortality <- data.frame(ind, comma(catch, digits = 2), comma(total.catch, digits = 2))
@@ -915,7 +915,7 @@ SSexecutivesummary <- function (replist,
       }
       colnames(mortality) = c("Year", fleet.names, "Total Catch")
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
-      caption = c(caption, 'Catches (mt) by fleet for all years and total catches (mt) by year summed by year.')
+      caption = c(caption, 'Catches (mt) by fleet for all years and total catches (mt) summed by year.')
     }
   } # end check for es_only = TRUE & 'catch' %in% tables
 
@@ -1004,8 +1004,8 @@ SSexecutivesummary <- function (replist,
     }
 
     colnames(ts.table) = c("Year", "Total Biomass (mt)", sb.label, 
-      paste0("Total Biomass ", smry.age ," (mt)"), "Fraction Unfished", 
-      "Age-0 Recruits", "Total Catch (mt)", spr_type, "Exploitation Rate")
+      paste0("Total Biomass ", smry.age ,"+ (mt)"), "Fraction Unfished", 
+      "Age-0 Recruits", "Total Mortality (mt)", spr_type, "Exploitation Rate")
     csv_name = "TimeSeries.csv"
     write.csv(ts.table, file = file.path(csv.dir, csv_name), row.names = FALSE) 
   }  
