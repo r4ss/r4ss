@@ -6,7 +6,7 @@
 \usage{
 SSplotComps(
   replist,
-  subplots = c(1:21, 24),
+  subplots = c(1:10, 21, 24),
   kind = "LEN",
   sizemethod = 1,
   aalyear = -1,
@@ -43,7 +43,7 @@ SSplotComps(
   blue = rgb(0, 0, 1, 0.7),
   red = rgb(1, 0, 0, 0.7),
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 6.5,
   punits = "in",
   ptsize = 10,
   res = 300,
@@ -59,14 +59,14 @@ SSplotComps(
     "(numbers x1000)", "Stdev (Age)", "Conditional AAL plot, ", "Size bin"),
   printmkt = TRUE,
   printsex = TRUE,
-  maxrows = 4,
+  maxrows = 6,
   maxcols = 4,
-  maxrows2 = 2,
+  maxrows2 = 4,
   maxcols2 = 4,
   rows = 1,
   cols = 1,
   andre_oma = c(3, 0, 3, 0),
-  andrerows = 3,
+  andrerows = 4,
   fixdims = TRUE,
   fixdims2 = FALSE,
   maxneff = 5000,
@@ -80,7 +80,28 @@ SSplotComps(
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows, where subplots 21 to 24
+(aggregated across years) are provided first, and subplots
+1 to 10 are all repeated for each fleet
+\itemize{
+\item 1 index data by fleet
+\item 1 multi-panel composition plot
+\item 2 single panel bubble plot for numbers at length or age
+\item 3 multi-panel bubble plots for conditional age-at-length
+\item 4 multi-panel plot of fit to conditional age-at-length for specific years
+\item 5 Pearson residuals for A-L key
+\item 6 multi-panel plot of point and line fit to conditional
+age-at-length for specific length bins
+\item 7 sample size plot
+\item 8 TA1.8 Francis weighting plot
+\item 9 TA1.8 Francis weighting plot for conditional data
+\item 10 Andre's mean age and std. dev. in conditional AAL
+\item 21 composition by fleet aggregating across years
+\item 22 composition by fleet aggregating across years within each season
+\item 23 composition by fleet aggregating across seasons within a year
+\item 24 bubble plot comparison of length or age residuals
+}}
 
 \item{kind}{indicator of type of plot can be "LEN", "SIZE", "AGE", "cond",
 "GSTAGE", "GSTLEN", "L@A", or "W@A".}
@@ -175,17 +196,19 @@ transparent blue)}
 \item{red}{What color to use for females in bubble plots (default is slightly
 transparent red)}
 
-\item{pwidth}{default width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{default height width of plots printed to files in units of
-\code{punits}. Default=7.}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
-\item{ptsize}{point size for plotted text in plots printed to files (see
-help("png") in R for details). Default=12.}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}

@@ -15,7 +15,7 @@ file_increment(
 \code{.sso} extension.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 
 \item{pattern}{A character value specifying the file names to search
 for in \code{getwd()}.}

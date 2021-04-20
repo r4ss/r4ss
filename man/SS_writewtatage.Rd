@@ -32,7 +32,7 @@ Default="wtatage.ss".}
 should be overwritten. The default value is \code{overwrite = FALSE}.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 
 \item{warn}{A logical value specifying if a warning should be
 generated if overwriting \code{file}.

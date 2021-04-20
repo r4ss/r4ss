@@ -24,7 +24,7 @@ SS_plots(
   areanames = "default",
   verbose = TRUE,
   uncertainty = TRUE,
-  forecastplot = TRUE,
+  forecastplot = FALSE,
   datplot = TRUE,
   Natageplot = TRUE,
   samplesizeplots = TRUE,
@@ -51,7 +51,8 @@ SS_plots(
   effNline = FALSE,
   showlegend = TRUE,
   pwidth = 6.5,
-  pheight = 5,
+  pheight = 4,
+  pheight_tall = 6.5,
   punits = "in",
   ptsize = 10,
   res = 300,
@@ -60,14 +61,14 @@ SS_plots(
   selexlines = 1:6,
   rows = 1,
   cols = 1,
-  maxrows = 4,
+  maxrows = 6,
   maxcols = 4,
-  maxrows2 = 2,
+  maxrows2 = 4,
   maxcols2 = 4,
-  andrerows = 3,
+  andrerows = 4,
   tagrows = 3,
   tagcols = 3,
-  parrows = 2,
+  parrows = 4,
   parcols = 2,
   fixdims = TRUE,
   new = TRUE,
@@ -183,13 +184,14 @@ for each area. Default="default".}
 \item{areanames}{Optional vector of names for each area used in titles.
 Default="default".}
 
-\item{verbose}{Return updates of function progress to the R GUI?  Default=T.}
+\item{verbose}{Return updates of function progress to the R GUI?
+Default=TRUE.}
 
 \item{uncertainty}{Include values in plots showing estimates of uncertainty
 (requires positive definite hessian in model?  Default=TRUE.}
 
 \item{forecastplot}{Include forecast years in the timeseries plots and
-plots of time-varying quantities? Default=TRUE.}
+plots of time-varying quantities?}
 
 \item{datplot}{Plot the data by itself? This is useful in document
 preparation, but doesn't change across alternative model runs with the same
@@ -198,9 +200,9 @@ Setting datplot=FALSE is equivalent to leaving off plots 15 and 16.
 Default=TRUE.}
 
 \item{Natageplot}{Plot the expected numbers at age bubble plots and mean-age
-time series?  Default=T.}
+time series?  Default=TRUE.}
 
-\item{samplesizeplots}{Show sample size plots?  Default=T.}
+\item{samplesizeplots}{Show sample size plots?  Default=TRUE.}
 
 \item{compresidplots}{Show residuals for composition plots?}
 
@@ -258,12 +260,12 @@ data. Default=5000.}
 add growth curves to numbers at length bubble plots.  Default=c().}
 
 \item{smooth}{Add loess smoother to observed vs. expected index plots and
-input vs. effective sample size? Default=T.}
+input vs. effective sample size? Default=TRUE.}
 
-\item{showsampsize}{Display sample sizes on composition plots?  Default=T.}
+\item{showsampsize}{Display sample sizes on composition plots?  Default=TRUE.}
 
 \item{showeffN}{Display effective sample sizes on composition plots?
-Default=T.}
+Default=TRUE.}
 
 \item{sampsizeline}{show line for input sample sizes on top of conditional
 age-at-length plots (TRUE/FALSE, still in development)}
@@ -271,24 +273,31 @@ age-at-length plots (TRUE/FALSE, still in development)}
 \item{effNline}{show line for effective sample sizes on top of conditional
 age-at-length plots (TRUE/FALSE, still in development)}
 
-\item{showlegend}{Display legends in various plots? Default=T.}
+\item{showlegend}{Display legends in various plots?}
 
-\item{pwidth}{Width of plots printed to files in units of
-\code{punits}. Default recently changed from 7 to 6.5.}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{Height width of plots printed to files in units of
-\code{punits}. Default recently changed from 7 to 5.0}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
+
+\item{pheight_tall}{Height of tall plots printed to png files in units of
+\code{punits}, where the tall plots are a subset of the plots which typically
+work best in a taller format.}
 
 \item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
-(pixels), "in" (inches), "cm" or "mm". Default="in".}
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{ptsize}{Point size for plotted text in plots printed to files (see
-help("png") in R for details). Default recently changed from 12 to 10.}
+\code{help("png")} in R for details).}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{mainTitle}{Logical indicating if a title should be included at the top}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots)}
 
 \item{cex.main}{Character expansion parameter for plot titles (not yet
 implemented for all plots). Default=1.}
@@ -300,22 +309,22 @@ selectivity plots if the model includes retention. Default=1:5.}
 
 \item{cols}{Number of columns to use for single panel plots. Default=1.}
 
-\item{maxrows}{Maximum number of rows to for multi-panel plots.  Default=4.}
+\item{maxrows}{Maximum number of rows to for multi-panel plots.}
 
-\item{maxcols}{Maximum number of columns for multi-panel plots.  Default=4.}
+\item{maxcols}{Maximum number of columns for multi-panel plots.}
 
 \item{maxrows2}{Maximum number of rows for conditional age-at-length
-multi-panel plots. Default=2.}
+multi-panel plots.}
 
 \item{maxcols2}{Maximum number of rows for conditional age-at-length
-multi-panel plots. Default=4.}
+multi-panel plots.}
 
 \item{andrerows}{Number of rows of Andre's conditional age-at-length plots
-within each page. Default=3.}
+within each page.}
 
-\item{tagrows}{Number of rows for tagging-related plots. Default=3.}
+\item{tagrows}{Number of rows for tagging-related plots.}
 
-\item{tagcols}{Number of columns for tagging-related plots.  Default=3.}
+\item{tagcols}{Number of columns for tagging-related plots.}
 
 \item{parrows}{Number of rows for parameter distribution plots.}
 
@@ -323,9 +332,9 @@ within each page. Default=3.}
 
 \item{fixdims}{Control whether multi-panel plots all have dimensions equal
 to maxrows by maxcols, or resized within those limits to fit number of
-plots. Default=T.}
+plots. Default=TRUE.}
 
-\item{new}{Open a new window or add to existing plot windows.  Default=T.}
+\item{new}{Open a new window or add to existing plot windows.  Default=TRUE.}
 
 \item{SSplotDatMargin}{Size of right-hand margin in data plot (may be too
 small if fleet names are long)}

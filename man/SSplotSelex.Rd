@@ -30,13 +30,15 @@ SSplotSelex(
   spacepoints = 5,
   staggerpoints = 1,
   legendloc = "bottomright",
-  pwidth = 7,
-  pheight = 7,
+  pwidth = 6.5,
+  pheight = 5,
   punits = "in",
   res = 300,
-  ptsize = 12,
+  ptsize = 10,
   cex.main = 1,
-  showmain = TRUE,
+  mainTitle = TRUE,
+  showmain = lifecycle::deprecated(),
+  mar = NULL,
   plotdir = "default",
   verbose = TRUE
 )
@@ -74,7 +76,51 @@ multi-line plot (default = 1).}
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
 Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
-\item{subplot}{Vector controlling which subplots to create}
+\item{subplot}{Vector controlling which subplots to create.
+Numbering of subplots is as follows,
+
+\emph{Plots with all fleets grouped together}
+\itemize{
+\item 1 selectivity at length in end year for all fleets shown together
+\item 2 selectivity at age in end year for all fleets shown together
+(this includes both age-based selectivity "Asel" and age values derived
+from length-based, "Asel2". You can choose only one using
+"agefactors" if needed.)
+}
+
+\emph{Plots of time-varying length-based selectivity}
+\itemize{
+\item 3 selectivity at length time-varying surface
+\item 4 selectivity at length time-varying contour
+\item 5 retention at length time-varying surface
+\item 6 retention at length time-varying surface
+\item 7 discard mortality time-varying surface
+\item 8 discard mortality time-varying contour
+}
+
+\emph{Selectivity at length in end year by fleet}
+\itemize{
+\item 9 selectivity, retention, and discard mortality at length in ending year
+}
+
+\emph{Plots of time-varying age-based selectivity}
+\itemize{
+\item 11 selectivity at age time-varying surface
+\item 12 selectivity at age time-varying contour
+}
+
+\emph{Selectivity at age in end year by fleet}
+\itemize{
+\item 13 selectivity at age in ending year if time-varying
+\item 14 selectivity at age in ending year if NOT time-varying
+\item 15 matrix of selectivity deviations for semi-parametric selectivity
+}
+
+\emph{Selectivity for both/either age or length}
+\itemize{
+\item 21 selectivity at age and length contour with overlaid growth curve
+\item 22 selectivity with uncertainty if requested at end of control file
+}}
 
 \item{skipAgeSelex10}{Exclude plots for age selectivity type 10 (selectivity
 = 1.0 for all ages beginning at age 1)?}
@@ -102,25 +148,35 @@ different years)}
 
 \item{legendloc}{location of legend. See ?legend for more info.}
 
-\item{pwidth}{width of plot}
+\item{pwidth}{Default width of plots printed to files in units of
+\code{punits}. The default is \code{pwidth=6.5}.}
 
-\item{pheight}{height of plot}
+\item{pheight}{Height of plots printed to png files in units of \code{punits}.
+Default is designed to allow two plots per page, with \code{pheight_tall} used
+for plots that work best with a taller format and a single plot per page.}
 
-\item{punits}{units for PNG file}
+\item{punits}{Units for \code{pwidth} and \code{pheight}. Can be "px"
+(pixels), "in" (inches), "cm" (centimeters), or "mm" (millimeters).
+The default is \code{punits="in"}.}
 
 \item{res}{Resolution of plots printed to files.
 The default is \code{res = 300}.}
 
-\item{ptsize}{point size for PNG file}
+\item{ptsize}{Point size for plotted text in plots printed to files (see
+\code{help("png")} in R for details).}
 
 \item{cex.main}{character expansion for plot titles}
 
-\item{showmain}{Include main title at top of plot?}
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots)}
+
+\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 
 \item{plotdir}{Directory where PNG files will be written. By default it will
 be the directory where the model was run.}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot selectivity, including retention and other quantities, with additional

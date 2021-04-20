@@ -93,11 +93,11 @@ SSplotPars <-
            # priorinit = TRUE, priorfinal = TRUE,
            showlegend = TRUE, fitrange = FALSE, xaxs = "i",
            xlim = NULL, ylim = NULL, verbose = TRUE, debug = FALSE,
-           nrows = 3, ncols = 3,
+           nrows = 4, ncols = 2,
            ltyvec = c(1, 1, 3, 4),
            colvec = c("blue", "red", "black", "gray60", rgb(0, 0, 0, .5)),
            add = FALSE, plot = TRUE, print = FALSE,
-           pwidth = 6.5, pheight = 5.0, punits = "in", ptsize = 10, res = 300,
+           pwidth = 6.5, pheight = 6.5, punits = "in", ptsize = 10, res = 300,
            strings = NULL, exact = FALSE,
            newheaders = NULL) {
     # define subfunction

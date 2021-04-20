@@ -49,7 +49,7 @@ be summarized. NULL=all genders. Default=NULL.}
 0.975 for 95\% intervals.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 }
 \description{
 Summarize various quantities from the model output collected by

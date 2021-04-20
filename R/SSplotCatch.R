@@ -6,6 +6,35 @@
 #'
 #' @template replist
 #' @param subplots Vector controlling which subplots to create
+#' Numbering of subplots is as follows,
+#'
+#' *Basic plots for all models*
+#' \itemize{
+#'   \item 1 landings
+#'   \item 2 landings stacked
+#'   \item 3 observed and expected landings (if different)
+#'   \item 9 harvest rate
+#' }
+#'
+#' *Plots for models with discards*
+#' \itemize{
+#'   \item 4 total catch (including discards)
+#'   \item 5 total catch (including discards) stacked
+#'   \item 6 discards
+#'   \item 7 discards stacked plot (depends on multiple fleets)
+#'   \item 8 discard fraction
+#'   \item 16 landings + dead discards"
+#' }
+#'
+#' *Plots for seasonal models*
+#' \itemize{
+#'   \item 10 landings aggregated across seasons
+#'   \item 11 landings aggregated across seasons stacked
+#'   \item 12 total catch (if discards present) aggregated across seasons
+#'   \item 13 total catch (if discards present) aggregated across seasons stacked
+#'   \item 14 discards aggregated across seasons
+#'   \item 15 discards aggregated across seasons stacked
+#' }
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models
 #' @param plot Plot to active plot device?
@@ -84,6 +113,24 @@ SSplotCatch <-
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
            cex.main = 1, # note: no plot titles yet implemented
            verbose = TRUE) {
+    # IGT 16Apr2021: labels were not getting passed into the function.
+    # I don't why by this work-around should bring them back until we can
+    # figure out what's going on
+    if (is.null(labels)) {
+      labels = c(
+        "Harvest rate/Year", # 1
+        "Continuous F", # 2
+        "Landings", # 3
+        "Total catch", # 4
+        "Predicted discards", # 5 # should add units
+        "Discard fraction", # 6  # need to add by weight or by length
+        "(mt)", # 7
+        "(numbers x1000)", # 8
+        "Observed and expected", # 9
+        "aggregated across seasons" # 10
+      )
+    }
+
     # note: stacked plots depend on multiple fleets
     subplot_names <- c(
       "1: landings",
@@ -106,7 +153,6 @@ SSplotCatch <-
       # note: subplot 16
       "16: landings + dead discards"
     )
-
     # subfunction to write png files
     pngfun <- function(file, caption = NA) {
       png(
@@ -196,7 +242,6 @@ SSplotCatch <-
         ts[irow, catch.cols] <- equil.catch.vec / nseasons
       }
     }
-
 
     # harvest rates
     if (F_method == 1) {
@@ -528,9 +573,10 @@ SSplotCatch <-
       if (max(discmat, na.rm = TRUE) > 0 & subplot == 16) {
         a <- stackfunc(ymat = deadmat, ymax = ymax, ylab = "", add = add)
       }
-      if (verbose & a) {
-        message("  finished catch subplot", subplot_names[subplot])
-      }
+      #### turning off message for now
+      ## if (verbose & a) {
+      ##   message("  finished catch subplot", subplot_names[subplot])
+      ## }
       return(a)
     } # end makeplots
 

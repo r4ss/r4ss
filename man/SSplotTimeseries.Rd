@@ -29,30 +29,33 @@ SSplotTimeseries(
   punits = "in",
   res = 300,
   ptsize = 10,
-  cex.main = 1
+  cex.main = 1,
+  mainTitle = FALSE,
+  mar = NULL
 )
 }
 \arguments{
 \item{replist}{A list object created by \code{\link{SS_output}()}.}
 
 \item{subplot}{number controlling which subplot to create
-Numbering of subplots is as follows:
+Numbering of subplots is as follows, where the spawning biomass plots
+(7 to 10) are provided first when this function is called by \code{\link[=SS_plots]{SS_plots()}}:
 \itemize{
-\item 1: Total biomass (mt) with forecast
-\item 2: Total biomass by area (spatial models only)
-\item 3: Total biomass (mt) at beginning of spawning season with forecast
-\item 4: Summary biomass (mt) with forecast
-\item 5: Summary biomass (mt) by area (spatial models only)
-\item 6: Summary biomass (mt) at beginning of season 1 with forecast
-\item 7: Spawning output with forecast with ~95\% asymptotic intervals
-\item 8: Spawning output by area (spatial models only)
-\item 9: Relative spawning output with forecast with ~95\% asymptotic intervals
-\item 10: Relative spawning output by area (spatial models only)
-\item 11: Age-0 recruits (1,000s) with forecast with ~95\% asymptotic intervals
-\item 12: Age-0 recruits by area (spatial models only)
-\item 13: Fraction of recruits by area (spatial models only)
-\item 14: Age-0 recruits (1,000s) by birth season with forecast
-\item 15: Fraction of total Age-0 recruits by birth season with forecast
+\item 1 Total biomass (mt) with forecast
+\item 2 Total biomass by area (spatial models only)
+\item 3 Total biomass (mt) at beginning of spawning season with forecast
+\item 4 Summary biomass (mt) with forecast
+\item 5 Summary biomass (mt) by area (spatial models only)
+\item 6 Summary biomass (mt) at beginning of season 1 with forecast
+\item 7 Spawning output with forecast with ~95\% asymptotic intervals
+\item 8 Spawning output by area (spatial models only)
+\item 9 Relative spawning output with forecast with ~95\% asymptotic intervals
+\item 10 Relative spawning output by area (spatial models only)
+\item 11 Age-0 recruits (1,000s) with forecast with ~95\% asymptotic intervals
+\item 12 Age-0 recruits by area (spatial models only)
+\item 13 Fraction of recruits by area (spatial models only)
+\item 14 Age-0 recruits (1,000s) by birth season with forecast
+\item 15 Fraction of total Age-0 recruits by birth season with forecast
 }}
 
 \item{add}{add to existing plot? (not yet implemented)}
@@ -111,6 +114,11 @@ The default is \code{res = 300}.}
 \item{ptsize}{point size for PNG file}
 
 \item{cex.main}{character expansion for plot titles}
+
+\item{mainTitle}{Logical indicating if a title should be included at the top
+(not yet implemented for all plots)}
+
+\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plot timeseries data contained in TIME_SERIES output from Stock Synthesis

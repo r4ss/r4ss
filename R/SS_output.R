@@ -2575,17 +2575,19 @@ SS_output <-
     if (!is.null(mean_size)) {
       if (SS_versionNumeric < 3.30) {
         mean_size <- mean_size[mean_size[["Beg"]] == 1 &
+          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       } else {
         mean_size <- mean_size[mean_size[["SubSeas"]] == 1 &
+          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       }
       if (nseasons > 1) {
         mean_size <- mean_size[mean_size[["Seas"]] == 1, ]
       }
-      if (length(unique(mean_size[["Yr"]])) > 1) {
+      if (sum(!duplicated(mean_size[,-(1:4)])) > 1) {
         growthvaries <- TRUE
       }
       returndat[["growthseries"]] <- mean_size

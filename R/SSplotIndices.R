@@ -7,7 +7,8 @@
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
-#' Numbering of subplots is as follows:
+#' Numbering of subplots is as follows, where subplot 9 (comparison of all indices) is
+#' provided first:
 #' \itemize{
 #'   \item 1  index data by fleet
 #'   \item 2  index data with fit by fleet
@@ -19,9 +20,10 @@
 #'   \item 8  catchability vs. vulnerable biomass (if catchability is not constant)
 #'   \item 9  comparison of all indices
 #'   \item 10  index residuals based on total uncertainty
-#'   \item 11  index residuals based on input uncertainty
+#'   \item 11  index residuals based on input uncertainty (not currently provided)
 #'   \item 12  index deviations (independent of index uncertainty)
 #' }
+#' 
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
@@ -77,7 +79,8 @@
 #' @export
 #' @seealso [SS_plots()], [SS_output()]
 SSplotIndices <-
-  function(replist, subplots = c(1:10, 12),
+  function(replist,
+           subplots = c(9, 1:8, 10, 12), # IGT 2021/4/15: not sure why 11 is skipped
            plot = TRUE, print = FALSE,
            fleets = "all", fleetnames = "default",
            smooth = TRUE, add = FALSE, datplot = TRUE,
@@ -409,12 +412,12 @@ SSplotIndices <-
       if (smooth && npoints > 6 && diff(range(y)) > 0) {
         if (!log) {
           psmooth <- loess(z[include] ~ y[include], degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
+          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
             lwd = 1.2, col = col4, lty = "dashed"
           )
         } else {
           psmooth <- loess(log(z[include]) ~ log(y[include]), degree = 1)
-          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fit"]][order(psmooth[["x"]])],
+          lines(psmooth[["x"]][order(psmooth[["x"]])], psmooth[["fitted"]][order(psmooth[["x"]])],
             lwd = 1.2, col = col4, lty = "dashed"
           )
         }
@@ -643,9 +646,15 @@ SSplotIndices <-
         }
 
         if (plot) {
-          if (1 %in% subplots & datplot) index.fn(addexpected = FALSE)
-          if (2 %in% subplots) index.fn()
-          if (3 %in% subplots) obs_vs_exp.fn()
+          if (1 %in% subplots & datplot) {
+            index.fn(addexpected = FALSE)
+          }
+          if (2 %in% subplots) {
+            index.fn()
+          }
+          if (3 %in% subplots) {
+            obs_vs_exp.fn()
+          }
         }
         if (print) {
           if (1 %in% subplots & datplot) {

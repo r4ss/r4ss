@@ -64,7 +64,7 @@ will reduce the amount of command-line output. A commonly used option is
 FALSE, which caps tuning values at 1.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 
 \item{...}{Additional arguments to pass to \link{run_SS_models}.}
 }

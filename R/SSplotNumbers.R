@@ -7,6 +7,20 @@
 #'
 #' @template replist
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows, 
+#' \itemize{
+#'   \item 1: Expected numbers at age
+#'   \item 2: Mean age in the population
+#'   \item 3: Fraction female in numbers at age
+#'   \item 4: Equilibrium age distribution
+#'   \item 5: Ageing imprecision: SD of observed age (plot using image() formerly
+#' included in this group but now replaced by better distribution plots)
+#'   \item 6: Expected numbers at length
+#'   \item 7: Mean length in the population
+#'   \item 8: Fraction female in numbers at length
+#'   \item 9: no plot yet
+#'   \item 10: Distribution of observed age at true age by ageing error type
+#' }
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param numbers.unit Units for numbers. Default (based on typical Stock Synthesis
@@ -27,11 +41,11 @@
 #' @param meanlines add lines for mean age or length on top of bubble plots
 #' @param add add to existing plot? (not yet implemented)
 #' @param labels vector of labels for plots (titles and axis labels)
-#' @param pwidth width of plot
-#' @param pheight height of plot
-#' @param punits units for PNG file
+#' @template pwidth
+#' @template pheight 
+#' @template punits 
+#' @template ptsize
 #' @template res
-#' @param ptsize point size for PNG file
 #' @param cex.main character expansion for plot titles
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
@@ -41,7 +55,7 @@
 #' @export
 #' @seealso [SS_output()], [SS_plots()]
 SSplotNumbers <-
-  function(replist, subplots = 1:10,
+  function(replist, subplots = c(1:10),
            plot = TRUE, print = FALSE,
            numbers.unit = 1000,
            areas = "all",
@@ -75,7 +89,7 @@ SSplotNumbers <-
              # 19 below is out of order, runumbering others would be tedious
              "Fraction female in numbers at length"
            ), # 19
-           pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
+           pwidth = 6.5, pheight = 6.5, punits = "in", res = 300, ptsize = 10,
            cex.main = 1,
            plotdir = "default",
            mainTitle = FALSE,
@@ -624,15 +638,15 @@ SSplotNumbers <-
             natlenratio <- as.matrix(natlenf[, remove] /
               (natlenm[, remove] + natlenf[, remove]))
             if (diff(range(natlenratio, finite = TRUE)) != 0) {
+              main <- ""
+              caption <- labels[19]
+              if (nareas > 1) {
+                caption <- paste0(main, " for ", areanames[iarea])
+              }
+              if (mainTitle) {
+                main <- caption
+              }
               numbersRatioLen.fn <- function(...) {
-                main <- ""
-                caption <- labels[19]
-                if (nareas > 1) {
-                  caption <- paste0(main, " for ", areanames[iarea])
-                }
-                if (mainTitle) {
-                  main <- caption
-                }
                 z <- natlenratio
                 # check for mismatch that caused crash in one particular model
                 # note from Ian (11/1/2018): taking too long to sort this out so
@@ -799,57 +813,12 @@ SSplotNumbers <-
           }
         }
 
-        ageing_matrix_fun <- function(i_ageerror_def) {
-          ## function to make shaded image illustrating true vs. obs. age
-
-          main <- ""
-          if (mainTitle) {
-            main <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
-          }
-          # change label from "Mean observered age" to "Observed age"
-          # this could be additional input instead
-          ylab <- gsub(pattern = "Mean o", replacement = "O", x = labels[5])
-          # take subset of age-age-key that for particular method
-          # but only the rows for females because males should always be identical
-          agebins.tmp <- sort(unique(as.numeric(dimnames(AAK)$ObsAgeBin)))
-          z <- t(AAK[i_ageerror_def, rev(1:length(agebins.tmp)), ])
-          # deal with circumstance where there is a single age bin
-          if (nrow(z) == 1 & is.null(rownames(z)) & length(agebins.tmp) == 1) {
-            z <- t(z) # extra transpose somehow needed
-            colnames(z) <- agebins.tmp # columnnames also need to be added
-          }
-          # make image
-          image(
-            x = as.numeric(rownames(z)),
-            y = as.numeric(colnames(z)),
-            z = z,
-            xlab = labels[3],
-            ylab = ylab,
-            main = main, axes = FALSE
-          )
-          if (accuage <= 40) {
-            axis(1, at = 0:accuage)
-            axis(2, at = agebins.tmp, las = 2)
-          }
-          if (accuage > 40) {
-            axis(1, at = 0:accuage, labels = rep("", accuage + 1))
-            axis(1, at = seq(0, accuage, 5))
-            axis(2, at = agebins.tmp, labels = rep("", length(agebins.tmp)))
-            axis(2, at = agebins.tmp[agebins.tmp %in% seq(0, accuage, 5)], las = 2)
-          }
-          box()
-        }
-
         # run functions to make requested plots
         if (plot & 5 %in% subplots) {
           # make plots of age error standard deviations
           ageingfun()
           # make plots of age error means
           if (mean(ageingbias == 0) != 1) ageingfun2()
-          # make plots of age error matrices
-          for (i_ageerror_def in 1:N_ageerror_defs) {
-            ageing_matrix_fun(i_ageerror_def)
-          }
         }
         if (print & 5 %in% subplots) {
           # make files with plots of age error standard deviations
@@ -867,23 +836,6 @@ SSplotNumbers <-
             ageingfun2()
             dev.off()
           }
-
-          # make files with plots of age error matrices
-          for (i_ageerror_def in 1:N_ageerror_defs) {
-            file <- paste0(
-              "numbers5_ageerror_matrix_",
-              i_ageerror_def, ".png"
-            )
-            caption <- paste0(labels[8], ": matrix for method ", i_ageerror_def)
-            caption <- paste0(
-              caption,
-              " <br>(White = 1.0, Orange = 0.5, Red = 0.0)"
-            )
-            plotinfo <- pngfun(file = file, caption = caption)
-            ageingfun()
-            ageing_matrix_fun(i_ageerror_def)
-            dev.off()
-          } # end loop over ageing error methods
         } # end print to PNG
 
         if (10 %in% subplots) {

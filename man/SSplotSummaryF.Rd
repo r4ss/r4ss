@@ -19,7 +19,8 @@ SSplotSummaryF(
   pheight = 5,
   punits = "in",
   res = 300,
-  ptsize = 10
+  ptsize = 10,
+  mar = NULL
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ be the directory where the model was run.}
 The default is \code{res = 300}.}
 
 \item{ptsize}{point size for PNG file}
+
+\item{mar}{Either NULL to allow the default (which depends on whether the main title is included or not) or a numerical vector of the form c(bottom, left, top, right) which gives the number of lines of margin to be specified on the four sides of the plot, which is passed to \code{par()}.}
 }
 \description{
 Plots the summary F (or harvest rate) as set up in the starter file Needs a

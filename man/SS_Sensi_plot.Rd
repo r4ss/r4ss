@@ -134,7 +134,7 @@ SS_Sensi_plot(
   sensi_xlab = "Sensitivity scenarios", # X-axis label
   ylims.in = c(-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1), # Y-axis label
   plot.figs = c(1, 1, 1, 1, 1, 1), # Which plots to make/save?
-  sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks 
+  sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels

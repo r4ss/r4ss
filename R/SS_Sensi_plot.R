@@ -35,7 +35,7 @@
 #' By default it will be set to something like "F(SPR=0.3)" where the SPR
 #' value is the SPR target. If the models have different SPR targets, it will
 #' be set to "F(tgt SPR)".
-#' 
+#'
 #' @author Jason Cope
 #' @export
 #' @seealso [SSsummarize()]
@@ -96,7 +96,7 @@
 #'   sensi_xlab = "Sensitivity scenarios", # X-axis label
 #'   ylims.in = c(-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1), # Y-axis label
 #'   plot.figs = c(1, 1, 1, 1, 1, 1), # Which plots to make/save?
-#'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks 
+#'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
 #'   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
 #'   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
 #'   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
@@ -256,7 +256,8 @@ SS_Sensi_plot <- function(model.summaries,
   }
   if (is.na(spawn.lab)) {
     spawn.lab <- ifelse(all(model.summaries$SpawnOutputUnits == "biomass"),
-                        "SB", "SO")
+      "SB", "SO"
+    )
   }
   # add subscripts to spawning label (e.g. SB0)
   spawn.lab.0 <- as.expression(bquote(.(spawn.lab)[0]))
@@ -266,14 +267,16 @@ SS_Sensi_plot <- function(model.summaries,
   if (is.na(yield.lab)) {
     sprtarg <- model.summaries$sprtargs[1]
     yield.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
-                        yes = paste0("Yield(SPR=", sprtarg, ")"),
-                        no = "Yield(tgt SPR)")
+      yes = paste0("Yield(SPR=", sprtarg, ")"),
+      no = "Yield(tgt SPR)"
+    )
   }
   if (is.na(F.lab)) {
     sprtarg <- model.summaries$sprtargs[1]
     F.lab <- ifelse(test = all(model.summaries$sprtargs == sprtarg),
-                    yes = paste0("F(SPR=", sprtarg, ")"),
-                    no = "F(tgt SPR)")
+      yes = paste0("F(SPR=", sprtarg, ")"),
+      no = "F(tgt SPR)"
+    )
   }
 
 

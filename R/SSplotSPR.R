@@ -277,6 +277,8 @@ SSplotSPR <-
         yaxs = "i"
       )
       colvec <- rev(rich.colors.short(n = length(Bratio_vals)))
+      old_warn <- options()$warn # previous setting
+      options(warn = -1) # turn off "zero-length arrow" warning
       arrows(Bratio_vals[-length(Bratio_vals)],
         SPRratio_vals[-length(SPRratio_vals)],
         Bratio_vals[-1],
@@ -284,6 +286,7 @@ SSplotSPR <-
         length = 0.09,
         col = colvec
       )
+      options(warn = old_warn) # returning to old value
       # add points for each year:
       points(Bratio_vals,
         SPRratio_vals,
@@ -352,15 +355,15 @@ SSplotSPR <-
         y = SPRratio_vals[1],
         labels = yr,
         cex = 0.6,
-        adj = c(0, 0), # above and to the right
+        adj = c(-0.5, -0.3), # above and to the right
         col = colvec[1]
       )
       yr <- max(Bratio[["Yr"]][Bratio[["period"]] %in% period])
       text(
         x = Bratio_vals[length(Bratio_vals)],
-        y = SPRratio_vals[length(Bratio_vals)] + 0.015,
+        y = SPRratio_vals[length(Bratio_vals)],
         labels = yr,
-        pos = 2, # to the left
+        adj = c(1.5, -0.3), # above and to the left
         cex = 0.6,
         col = colvec[length(colvec)]
       )
