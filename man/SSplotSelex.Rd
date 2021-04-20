@@ -76,8 +76,9 @@ multi-line plot (default = 1).}
 \item{selexlines}{Vector to select which lines get plotted. values are 1.
 Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.}
 
-\item{subplot}{Vector controlling which subplots to create
+\item{subplot}{Vector controlling which subplots to create.
 Numbering of subplots is as follows,
+
 \emph{Plots with all fleets grouped together}
 \itemize{
 \item 1 selectivity at length in end year for all fleets shown together
@@ -97,7 +98,7 @@ from length-based, "Asel2". You can choose only one using
 \item 8 discard mortality time-varying contour
 }
 
-\emph{selectivity at length in end year by fleet}
+\emph{Selectivity at length in end year by fleet}
 \itemize{
 \item 9 selectivity, retention, and discard mortality at length in ending year
 }
@@ -108,17 +109,17 @@ from length-based, "Asel2". You can choose only one using
 \item 12 selectivity at age time-varying contour
 }
 
-\emph{selectivity at age in end year by fleet}
+\emph{Selectivity at age in end year by fleet}
 \itemize{
-\item 13. selectivity at age in ending year if time-varying
-\item 14. selectivity at age in ending year if NOT time-varying
-\item 15. matrix of selectivity deviations for semi-parametric selectivity
+\item 13 selectivity at age in ending year if time-varying
+\item 14 selectivity at age in ending year if NOT time-varying
+\item 15 matrix of selectivity deviations for semi-parametric selectivity
 }
 
-\emph{selectivity for both/either age or length}
+\emph{Selectivity for both/either age or length}
 \itemize{
-\item 21. selectivity at age and length contour with overlaid growth curve
-\item 22. selectivity with uncertainty if requested at end of control file
+\item 21 selectivity at age and length contour with overlaid growth curve
+\item 22 selectivity with uncertainty if requested at end of control file
 }}
 
 \item{skipAgeSelex10}{Exclude plots for age selectivity type 10 (selectivity
@@ -174,7 +175,8 @@ The default is \code{res = 300}.}
 \item{plotdir}{Directory where PNG files will be written. By default it will
 be the directory where the model was run.}
 
-\item{verbose}{report progress to R GUI?}
+\item{verbose}{A logical value specifying if output should be printed
+to the screen.}
 }
 \description{
 Plot selectivity, including retention and other quantities, with additional

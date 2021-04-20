@@ -24,8 +24,9 @@
 #' (1=females, 2=males)
 #' @param selexlines Vector to select which lines get plotted. values are 1.
 #' Selectivity, 2. Retention, 3. Discard mortality, 4. Keep.
-#' @param subplot Vector controlling which subplots to create
+#' @param subplot Vector controlling which subplots to create.
 #' Numbering of subplots is as follows,
+#'
 #' *Plots with all fleets grouped together*
 #' \itemize{
 #'   \item 1 selectivity at length in end year for all fleets shown together
@@ -45,7 +46,7 @@
 #'   \item 8 discard mortality time-varying contour
 #' }
 #'
-#' *selectivity at length in end year by fleet*
+#' *Selectivity at length in end year by fleet*
 #' \itemize{
 #'   \item 9 selectivity, retention, and discard mortality at length in ending year
 #' }
@@ -56,17 +57,17 @@
 #'   \item 12 selectivity at age time-varying contour
 #' }
 #'
-#' *selectivity at age in end year by fleet*
+#' *Selectivity at age in end year by fleet*
 #' \itemize{
-#'   \item 13. selectivity at age in ending year if time-varying
-#'   \item 14. selectivity at age in ending year if NOT time-varying
-#'   \item 15. matrix of selectivity deviations for semi-parametric selectivity
+#'   \item 13 selectivity at age in ending year if time-varying
+#'   \item 14 selectivity at age in ending year if NOT time-varying
+#'   \item 15 matrix of selectivity deviations for semi-parametric selectivity
 #' }
 #'
-#' *selectivity for both/either age or length*
+#' *Selectivity for both/either age or length*
 #' \itemize{
-#'   \item 21. selectivity at age and length contour with overlaid growth curve
-#'   \item 22. selectivity with uncertainty if requested at end of control file
+#'   \item 21 selectivity at age and length contour with overlaid growth curve
+#'   \item 22 selectivity with uncertainty if requested at end of control file
 #' }
 #' @param skipAgeSelex10 Exclude plots for age selectivity type 10 (selectivity
 #' = 1.0 for all ages beginning at age 1)?
@@ -93,7 +94,7 @@
 #' @template mar
 #' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
-#' @param verbose report progress to R GUI?
+#' @template verbose
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

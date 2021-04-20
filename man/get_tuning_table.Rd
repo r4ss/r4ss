@@ -25,7 +25,7 @@ get_tuning_table(
 \item{write}{Write suggested tunings to a file 'suggested_tunings.ss'}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 }
 \description{
 Get the tuning table

@@ -6,6 +6,35 @@
 #'
 #' @template replist
 #' @param subplots Vector controlling which subplots to create
+#' Numbering of subplots is as follows,
+#'
+#' *Basic plots for all models*
+#' \itemize{
+#'   \item 1 landings
+#'   \item 2 landings stacked
+#'   \item 3 observed and expected landings (if different)
+#'   \item 9 harvest rate
+#' }
+#'
+#' *Plots for models with discards*
+#' \itemize{
+#'   \item 4 total catch (including discards)
+#'   \item 5 total catch (including discards) stacked
+#'   \item 6 discards
+#'   \item 7 discards stacked plot (depends on multiple fleets)
+#'   \item 8 discard fraction
+#'   \item 16 landings + dead discards"
+#' }
+#'
+#' *Plots for seasonal models*
+#' \itemize{
+#'   \item 10 landings aggregated across seasons
+#'   \item 11 landings aggregated across seasons stacked
+#'   \item 12 total catch (if discards present) aggregated across seasons
+#'   \item 13 total catch (if discards present) aggregated across seasons stacked
+#'   \item 14 discards aggregated across seasons
+#'   \item 15 discards aggregated across seasons stacked
+#' }
 #' @param add Add to existing plot? (not yet implemented)
 #' @param areas Optional subset of areas to plot for spatial models
 #' @param plot Plot to active plot device?

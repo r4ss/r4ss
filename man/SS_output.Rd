@@ -83,7 +83,7 @@ R GUI.}
 GUI.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 
 \item{printstats}{Print summary statistics about the output to the R GUI?}
 

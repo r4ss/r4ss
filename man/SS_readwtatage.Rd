@@ -12,7 +12,7 @@ SS_readwtatage(file = "wtatage.ss", verbose = TRUE)
 See the formal arguments for a possible default filename.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 }
 \value{
 Returns a data frame with a variable number of columns based on the

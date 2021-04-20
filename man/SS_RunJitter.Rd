@@ -40,7 +40,7 @@ else \code{1:Njitter} will be executed.}
 be printed to the console.}
 
 \item{verbose}{A logical value specifying if output should be printed
-to the screen. The default is \code{verbose = TRUE}.}
+to the screen.}
 
 \item{jitter_fraction}{The value, typically 0.1, used to define a uniform
 distribution in cumulative normal space to generate new initial parameter values.
