@@ -6,13 +6,13 @@
 \usage{
 SSplotYield(
   replist,
-  subplots = 1:3,
+  subplots = 1:4,
   refpoints = c("MSY", "Btgt", "SPR", "Current"),
   add = FALSE,
   plot = TRUE,
   print = FALSE,
   labels = c("Fraction unfished", "Equilibrium yield (mt)", "Total biomass (mt)",
-    "Surplus production (mt)"),
+    "Surplus production (mt)", "Yield per recruit (kg)"),
   col = "blue",
   col2 = "black",
   lty = 1,

@@ -39,15 +39,16 @@
 #' Sci. 65: 2536-2551
 SSplotYield <-
   function(replist,
-           subplots = 1:3,
+           subplots = 1:4,
            refpoints = c("MSY", "Btgt", "SPR", "Current"),
            add = FALSE, plot = TRUE, print = FALSE,
            labels = c(
              "Fraction unfished", # 1
              "Equilibrium yield (mt)", # 2
              "Total biomass (mt)", # 3
-             "Surplus production (mt)"
-           ), # 4
+             "Surplus production (mt)", #4
+             "Yield per recruit (kg)" #5
+           ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
            plotdir = "default",
@@ -63,6 +64,7 @@ SSplotYield <-
     }
     plotinfo <- NULL
 
+    # extract quantities from replist
     equil_yield <- replist[["equil_yield"]]
     # column named changed from Catch to Tot_Catch in SSv3.30
     if ("Tot_Catch" %in% names(equil_yield)) {
@@ -70,9 +72,9 @@ SSplotYield <-
     }
     nareas <- replist[["nareas"]]
     nseasons <- replist[["nseasons"]]
-    timeseries <- replist[["timeseries"]]
-    # SSB0          <- replist[["SBzero"]]
+    timeseries <- replist[["timeseries"]]    
     SSB0 <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
+
     # function for yield curve
     yieldfunc <- function(refpoints = NULL) {
       if (!add) {
@@ -227,6 +229,23 @@ SSplotYield <-
       points(Bio_agg_good[1], sprod_good[1], col = col2, bg = "white", pch = 21)
     } # end sprodfunc
 
+    # function to plot time series of Yield per recruit
+    YPR_timeseries <- function() {
+      # exclude forecast years
+      sub <- sprseries[["Era"]] != "FORE"
+      # plot a line
+      plot(x = sprseries[["Yr"]][sub],
+           y = sprseries[["YPR"]][sub],
+           ylim = c(0, 1.1 * max(sprseries[["YPR"]][sub], na.rm = TRUE)),
+           xlab = "Year",
+           ylab = labels[5],
+           type = "l",
+           lwd = 2,
+           col = "blue",
+           yaxs = "i"
+           )
+    } # end YPR_timeseries function
+    
     if (3 %in% subplots) {
       if (plot) {
         sprodfunc()
@@ -246,6 +265,28 @@ SSplotYield <-
         dev.off()
       }
     }
+
+    if (4 %in% subplots) {
+      # stuff related to subplot 4 (YPR timeseries)
+      sprseries <- replist[["sprseries"]]
+      if (is.null(sprseries)) {
+        if (verbose) {
+          message("Skipping yield per recruit plot because SPR_SERIES not in output")
+        }
+      } else {
+        if (plot) {
+          YPR_timeseries()
+        }
+        if (print) {
+          file <- "yield4_YPR_timeseries.png"
+          caption <- "Time series of yield per recruit (kg)"
+          plotinfo <- pngfun(file = file, caption = caption)
+          YPR_timeseries()
+          dev.off()
+        }
+      } # end check for sprseries available
+    } # end check for 4 in subplots
+    
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "Yield"
     return(invisible(plotinfo))
   } # end function
