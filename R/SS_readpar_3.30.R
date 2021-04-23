@@ -141,6 +141,10 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
 
   # Build and read in early phase recruitment deviations if they exist
   if (length(grep("recdev_early", parvals)) > 0) {
+    if(ctllist[["recdev_early_start"]] < 0) {
+      # change to absolute
+      ctllist[["recdev_early_start"]] <- ctllist[["MainRdevYrFirst"]] +  ctllist[["recdev_early_start"]]
+    }
     parlist[["recdev_early"]] <- matrix(NA, nrow = (ctllist[["MainRdevYrFirst"]] - ctllist[["recdev_early_start"]]), ncol = 2)
     parlist[["recdev_early"]][, 1] <- ctllist[["recdev_early_start"]]:(ctllist[["MainRdevYrFirst"]] - 1)
     rec_temp <- as.numeric(strsplit(parvals[(grep("recdev_early", parvals) + 1)], " ")[[1]])
