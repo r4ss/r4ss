@@ -232,7 +232,12 @@ SSplotYield <-
     # function to plot time series of Yield per recruit
     YPR_timeseries <- function() {
       # exclude forecast years
-      sub <- sprseries[["Era"]] != "FORE"
+      if ("Era" %in% names(sprseries)) {
+        sub <- sprseries[["Era"]] != "FORE"
+      } else {
+        # older versions of SS didn't include the Era column
+        sub <- sprseries[["Yr"]] <= replist[["endyr"]]
+      }
       # plot a line
       plot(x = sprseries[["Yr"]][sub],
            y = sprseries[["YPR"]][sub],
