@@ -3139,6 +3139,19 @@ SS_output <-
         cpue[["Calc_Q"]][cpue[["Calc_Q"]] == "1.#QNAN"] <- NA
         cpue[["Eff_Q"]][cpue[["Eff_Q"]] == "1.#QNAN"] <- NA
       }
+
+      # work-around for missing SE_input values 3.30.16
+      # https://github.com/nmfs-stock-synthesis/stock-synthesis/issues/169
+      # https://github.com/r4ss/r4ss/issues/324
+      badrows <- which(cpue[["Use"]] == "")
+      if (length(badrows) > 0) {
+        # shift columns to the right
+        columns <- which(names(cpue) == "SE_input"):which(names(cpue) == "Use")
+        cpue[badrows, columns] <- cpue[badrows, columns - 1]
+        # add NA value for missing column
+        cpue[badrows, "SE_input"] <- NA
+      }
+
       # make columns numeric
       cpue <- type.convert(cpue, as.is = TRUE)
     } else {
