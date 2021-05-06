@@ -384,6 +384,13 @@ SSexecutivesummary <- function (replist,
       "Fill in F method"
     )
 
+    if(stringr::str_detect(replist$SPRratioLabel, "%")){
+    spr_label = paste0(substring(replist$SPRratioLabel, 1, 14), " ",
+                       substring(replist$SPRratioLabel, 16, 17),
+                      "\\%)")
+    } else {
+      spr_label = replist$SPRratioLabel
+    }
 
     adj.spr = Get.Values(replist = replist, label = "SPRratio" , years_minus_final, ci_value)
     f.value = Get.Values(replist = replist, label = "F" , years_minus_final, ci_value)
@@ -397,16 +404,16 @@ SSexecutivesummary <- function (replist,
     es.d = data.frame(years_minus_final,
            adj.spr$dq, adj.spr$low, adj.spr$high,
            f.value$dq, f.value$low, f.value$high)
-    colnames(es.d) = c("Year", spr_type, "Lower Interval", "Upper Interval", 
+    colnames(es.d) = c("Year", spr_label, "Lower Interval", "Upper Interval", 
                         f_type, "Lower Interval", "Upper Interval")      
     }
     csv_name = "d_SPR_ES.csv"
     write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
 
   } # end check for 'd' %in% tables
- 
+
   caption = c(caption,
-              paste('Estimated recent trend in the', replist$SPRratioLabel, 'where SPR is the spawning potential ratio the exploitation rate, and the ', round(100*ci_value,0), 
+              paste('Estimated recent trend in the', spr_label, 'where SPR is the spawning potential ratio the exploitation rate, and the ', round(100*ci_value,0), 
                     'percent intervals.'))
   tex.label = c(tex.label, 'exploitES') 
   filename = c(filename, csv_name)
@@ -505,11 +512,11 @@ SSexecutivesummary <- function (replist,
         "Unfished Recruitment (R0)",
         paste0(sb.label, " (", years[length(years)], ")"),
         paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-        paste0("Reference Points Based SB", btarg, " Percent"),
-        paste0("Proxy ", sb.label, " SB", btarg, " Percent)"),
-        paste0("SPR Resulting in SB", btarg, " Percent"),
-        paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
-        paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
+        paste0("Reference Points Based SB", btarg, "%"),
+        paste0("Proxy ", sb.label, " SB", btarg, "%"),
+        paste0("SPR Resulting in SB", btarg, "%"),
+        paste0("Exploitation Rate Resulting in SB", btarg, "%"),
+        paste0("Yield with SPR Based On SB", btarg, "% (mt)"),
         "Reference Points Based on SPR Proxy for MSY",
         paste0("Proxy ", sb.label, " (SPR", spr, ")"),
         paste0("SPR", spr),
@@ -553,11 +560,11 @@ SSexecutivesummary <- function (replist,
                 "Unfished Recruitment (R0)",
                 paste0(sb.label, " (", years[length(years)], ")"),
                 paste0("Fraction Unfished ", "(", years[length(years)], ")"),
-                paste0("Reference Points Based SB", btarg, " Percent"),
-                paste0("Proxy ", sb.label, " SB",btarg, " Percent"),
-                paste0("SPR Resulting in SB", btarg, " Percent"),
-                paste0("Exploitation Rate Resulting in SB", btarg, " Percent"),
-                paste0("Yield with SPR Based On SB", btarg, " Percent (mt)"),
+                paste0("Reference Points Based SB", btarg, "\\%"),
+                paste0("Proxy ", sb.label, " SB",btarg, "\\%"),
+                paste0("SPR Resulting in SB", btarg, "\\%"),
+                paste0("Exploitation Rate Resulting in SB", btarg, "\\%"),
+                paste0("Yield with SPR Based On SB", btarg, "\\% (mt)"),
                 "Reference Points Based on SPR Proxy for MSY",
                 paste0("Proxy ", sb.label, " (SPR", spr, ")"),
                 paste0("SPR", spr),
