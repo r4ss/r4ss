@@ -1667,7 +1667,7 @@ get_tv_parlabs <- function(full_parms,
   )
   par_num <- lapply(tmp_tv, function(x) which(x != 0))
   loop_pars <- unlist(par_num)
-  loop_pars <- loop_pars[order(loop_pars)]
+  loop_pars <- unique(loop_pars[order(loop_pars)])
   block_fxn <- full_parms[, "Block_Fxn"]
   # block_method_label corresponds block method of 0, 1, 2, 3, 4
   block_method_label <- c("mult_","add_","repl_","delta_","revertrw_")
@@ -1675,17 +1675,6 @@ get_tv_parlabs <- function(full_parms,
   for (i in loop_pars) {
     tmp_parname <- rownames(full_parms)[i]
     # Add lines to the data frame as you go. (maybe can use the same approach as long parlines)
-    if (i %in% par_num[["env"]]) {
-      tmp_pat <- abs(full_parms[["env_var&link"]][i])
-      if(isTRUE(tmp_pat > 400 & tmp_pat < 500)){ # pattern 4 needs 2 pars, all else 1.
-        parlab <- c(parlab, paste0("# ", rep(tmp_parname, times = 2),
-            c("_ENV_offset", "_ENV_lgst_slope")
-          )
-        )
-      } else {
-        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
-      }
-    }
     if (i %in% par_num[["block"]]) {
       n_blk <- full_parms[["Block"]][i]
       if(n_blk > 0) {
@@ -1716,6 +1705,19 @@ get_tv_parlabs <- function(full_parms,
         )
       }
     }
+    
+    if (i %in% par_num[["env"]]) {
+      tmp_pat <- abs(full_parms[["env_var&link"]][i])
+      if(isTRUE(tmp_pat > 400 & tmp_pat < 500)){ # pattern 4 needs 2 pars, all else 1.
+        parlab <- c(parlab, paste0("# ", rep(tmp_parname, times = 2),
+            c("_ENV_offset", "_ENV_lgst_slope")
+          )
+        )
+      } else {
+        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+      }
+    }
+    
     if (i %in% par_num[["dev"]]) {
       # parameter name if there is devs
       parlab <- c(
