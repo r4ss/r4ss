@@ -1689,7 +1689,6 @@ get_tv_parlabs <- function(full_parms,
         parlab <- c(
           parlab,
           paste0(
-            "# ",
             rep(tmp_parname, times = length(blk_start_yrs)),
             "_BLK", n_blk, lbl, blk_start_yrs
           )
@@ -1698,7 +1697,6 @@ get_tv_parlabs <- function(full_parms,
         parlab <- c(
           parlab,
           paste0(
-            "# ",
             rep(tmp_parname, times = 3),
             c("_TrendFinal", "_TrendInfl", "_TrendWidth_yrs")
           )
@@ -1709,7 +1707,7 @@ get_tv_parlabs <- function(full_parms,
     if (i %in% par_num[["env"]]) {
       tmp_pat <- abs(full_parms[["env_var&link"]][i])
       if(isTRUE(tmp_pat > 400 & tmp_pat < 500)){ # pattern 4 needs 2 pars, all else 1.
-        parlab <- c(parlab, paste0("# ", rep(tmp_parname, times = 2),
+        parlab <- c(parlab, paste0(rep(tmp_parname, times = 2),
             c("_ENV_offset", "_ENV_lgst_slope")
           )
         )
@@ -1723,7 +1721,6 @@ get_tv_parlabs <- function(full_parms,
       parlab <- c(
         parlab,
         paste0(
-          "# ",
           rep(tmp_parname, times = 2),
           c("_dev_se", "_dev_autocorr")
         )
