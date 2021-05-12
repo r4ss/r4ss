@@ -2217,9 +2217,9 @@ SSplotComps <-
                   # add more information only to first page of plots
                   caption <- paste(caption,
                     "\nThese plots show mean age and std. dev. in conditional A@L.<br>",
-                    "Left plots are mean A@L by size-class (obs. and pred.) ",
+                    "Left plots are mean A@L by size-class (obs. and exp.) ",
                     "with 90% CIs based on adding 1.64 SE of mean to the data.<br>",
-                    "Right plots in each pair are SE of mean A@L (obs. and pred.) ",
+                    "Right plots in each pair are SE of mean A@L (obs. and exp.) ",
                     "with 90% CIs based on the chi-square distribution.",
                     sep = ""
                   )
