@@ -180,7 +180,7 @@ SS_Sensi_plot <- function(model.summaries,
       (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]) / 2,
       model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
       model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1] / 2,
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "Fstd_SPR", 1]
+      model.summaries$quantsSD[model.summaries$quantsSD$Label %in% c("Fstd_SPR", "annF_SPR"), 1]
     )
   }
   if (any(model.summaries$nsexes == 2)) {
@@ -197,7 +197,7 @@ SS_Sensi_plot <- function(model.summaries,
       (model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("SSB_", current.year), 1]),
       model.summaries$quantsSD[model.summaries$quantsSD$Label == paste0("Bratio_", current.year), 1],
       model.summaries$quantsSD[model.summaries$quantsSD$Label == "Dead_Catch_SPR", 1],
-      model.summaries$quantsSD[model.summaries$quantsSD$Label == "Fstd_SPR", 1]
+      model.summaries$quantsSD[model.summaries$quantsSD$Label %in% c("Fstd_SPR", "annF_SPR"), 1]
     )
   }
   dev.quants.labs <- data.frame(c("SB0", paste0("SSB_", current.year), paste0("Bratio_", current.year), "MSY_SPR", "F_SPR"), dev.quants, "Derived quantities")
