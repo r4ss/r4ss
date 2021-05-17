@@ -134,7 +134,7 @@ SS_Sensi_plot <- function(model.summaries,
   if (missing(mod.names)) {
     mod.names <- paste("model ", 1:model.summaries$n)
   }
-  if (any(unique(modout$likelihoods_by_fleet$Label)=="Surv_lambda")) 
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Surv_lambda")) 
   {
     syrvlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_lambda"]
     survey.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(3, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_lambda")
@@ -144,7 +144,7 @@ SS_Sensi_plot <- function(model.summaries,
   else {
     survey.lambda <- survey.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (any(unique(modout$likelihoods_by_fleet$Label)=="Length_lambda")) 
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Length_lambda")) 
   {
     Ltlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_lambda"]
     Lt.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_lambda")
@@ -154,7 +154,7 @@ SS_Sensi_plot <- function(model.summaries,
   else {
     Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (any(unique(modout$likelihoods_by_fleet$Label)=="Age_lambda")) {
+  if (any(unique(model.summaries$likelihoods_by_fleet$Label)=="Age_lambda")) {
     Agelambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_lambda"]
     Age.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_lambda")
     Agelike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_like"]
