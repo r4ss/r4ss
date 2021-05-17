@@ -1519,61 +1519,54 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   else {
     ctllist[["N_lambdas"]] <- 0
   }
-
+  
   if (ctllist[["N_lambdas"]] > 0) {
-    # find and delete duplicates
-    chk1 <- duplicated(ctllist[["lambdas"]])
-    if (any(chk1)) # there are duplicates
+    chk1 <- duplicated(ctllist[["lambdas"]][,c("like_comp", "fleet", "phase")])
+    if (any(chk1)) # there are duplicates; don't remove. SS will just use the last one.
       {
-        ctllist[["lambdas"]] <- ctllist[["lambdas"]][!chk1, ]
-        ctllist[["N_lambdas"]] <- nrow(ctllist[["lambdas"]])
-        ctllist[["warnings"]] <- paste(ctllist[["warnings"]], "Duplicate_lambdas", sep = ",")
+        warn_comp <- ctllist[["lambdas"]][chk1, "like_comp"]
+        warn_flt <- ctllist[["lambdas"]][chk1, "fleet"]
+        warn_phz <- ctllist[["lambdas"]][chk1, "phase"]
+        warning("Duplicate lambda input for likelihood component(s): ",
+                paste0(warn_comp, collapse =  ", "), "; fleet(s): ",
+                paste0(warn_flt, collapse = ", "), "; phase(s):", 
+                paste0(warn_phz, collapse = ", "))
       }
-
+      tmp_rownames <- vector(mode = "character", length = ctllist[["N_lambdas"]])
     for (i in seq_len(ctllist[["N_lambdas"]])) {
       like_comp <- ctllist[["lambdas"]][i, 1]
-      fl <- ctllist[["lambdas"]][i, 2]
+      fl <- fleetnames[ctllist[["lambdas"]][i, 2]]
       phz <- ctllist[["lambdas"]][i, 3]
-      value <- ctllist[["lambdas"]][i, 4]
       sizefreq_method <- ctllist[["lambdas"]][i, 5]
-      if (like_comp == 1) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Surv_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 2) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("discard_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 3) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("mean-weight_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 4) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("length_", fleetnames[fl], "_sizefreq_method_", sizefreq_method, "_Phz", phz)
-      } else if (like_comp == 5) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("age_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 6) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("SizeFreq_", fleetnames[fl], "_sizefreq_method_", sizefreq_method, "_Phz", phz)
-      } else if (like_comp == 7) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("SizeAge_", fleetnames[fl], "_sizefreq_method_", sizefreq_method, "_Phz", phz)
-      } else if (like_comp == 8) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("catch_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 9) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("init_equ_catch_", fleetnames[fl], "_lambda_for_init_equ_catch_can_only_enable/disable for_all_fleets_Phz", phz)
-      } else if (like_comp == 10) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("recrdev_Phz", phz)
-      } else if (like_comp == 11) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("parm_prior_", fleetnames[fl], "_Phz", phz)
-      } else if (like_comp == 12) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("parm_dev_Phz", phz)
-      } else if (like_comp == 13) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("CrashPen_Phz", phz)
-      } else if (like_comp == 14) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Morph-Comp_Phz", phz)
-      } else if (like_comp == 15) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Tag-comp-likelihood-", fl, "_Phz", phz)
-      } else if (like_comp == 16) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Tag-negbin-likelihood-", fl, "_Phz", phz)
-      } else if (like_comp == 17) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("F-ballpark-", fl, "_Phz", phz)
-      } else if (like_comp == 18) {
-        rownames(ctllist[["lambdas"]])[i] <- paste0("Regime-shift-", fl, "_Phz", phz)
-      }
+      tmp_rownames[i] <- switch(as.character(like_comp), 
+       "1" = paste0("Surv_", fl, "_Phz", phz), 
+       "2" = paste0("discard_", fl, "_Phz", phz), 
+       "3" = paste0("mean-weight_", fl, "_Phz", phz), 
+       "4" = paste0("length_", fl, "_sizefreq_method_",
+                  sizefreq_method, "_Phz", phz), 
+       "5" = paste0("age_", fl, "_Phz", phz), 
+       "6" = paste0("SizeFreq_", fl, "_sizefreq_method_", 
+                  sizefreq_method, "_Phz", phz), 
+       "7" = paste0("SizeAge_", fl, "_sizefreq_method_", 
+                  sizefreq_method, "_Phz", phz), 
+       "8" = paste0("catch_", fl, "_Phz", phz), 
+       "9" = paste0("init_equ_catch_", fl, "_Phz", phz), 
+       "10" = paste0("recrdev_Phz", phz), 
+       "11" = paste0("parm_prior_", fl, "_Phz", phz), 
+       "12" = paste0("parm_dev_Phz", phz), 
+       "13" = paste0("CrashPen_Phz", phz), 
+       "14" = paste0("Morph-Comp_Phz", phz), 
+       "15" = paste0("Tag-comp-likelihood_", fl, "_Phz", phz), 
+       "16" = paste0("Tag-negbin-likelihood_", fl, "_Phz", phz), 
+       "17" = paste0("F-ballpark_", fl, "_Phz", phz), 
+       "18" = paste0("Regime-shift_", fl, "_Phz", phz), 
+        paste0(like_comp, "_", fl))
     }
+    dup_rownames <- duplicated(tmp_rownames, fromLast = TRUE)
+    if(any(dup_rownames == TRUE)) {
+      tmp_rownames[dup_rownames] <- paste0(tmp_rownames[dup_rownames], "_duplicate")
+    }
+    rownames(ctllist[["lambdas"]]) <- tmp_rownames
   }
 
   # more sd reporting ----
