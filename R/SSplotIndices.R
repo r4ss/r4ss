@@ -23,7 +23,7 @@
 #'   \item 11  index residuals based on input uncertainty (not currently provided)
 #'   \item 12  index deviations (independent of index uncertainty)
 #' }
-#' 
+#'
 #' @param plot plot to active plot device?
 #' @param print print to PNG files?
 #' @param fleets optional vector to subset fleets for which plots will be made
@@ -69,10 +69,11 @@
 #' @param maximum_ymax_ratio Maximum allowed value for ymax (specified
 #' as ratio of y), which overrides any
 #' value of ymax that is greater (default = Inf)
-#' @param show_input_uncertainty switch controlling whether to add thicker
+#' @param show_input_uncertainty Switch controlling whether to add thicker
 #' uncertainty interval lines indicating the input uncertainty relative to
 #' the total uncertainty which may result from estimating a parameter for
-#' extra standard deviations
+#' extra standard deviations. This is only added for the plots with index
+#' fit included (the data-only plots only show the input uncertainty).
 #' @param verbose report progress to R GUI?
 #' @param \dots Extra arguments to pass to calls to `plot`
 #' @author Ian Stewart, Ian Taylor, James Thorson
@@ -80,7 +81,7 @@
 #' @seealso [SS_plots()], [SS_output()]
 SSplotIndices <-
   function(replist,
-           subplots = c(9, 1:8, 10, 12), # IGT 2021/4/15: not sure why 11 is skipped
+           subplots = c(1:10, 12), # IGT 2021/4/15: not sure why 11 is skipped
            plot = TRUE, print = FALSE,
            fleets = "all", fleetnames = "default",
            smooth = TRUE, add = FALSE, datplot = TRUE,
@@ -137,43 +138,65 @@ SSplotIndices <-
       if (error == -1 & log == TRUE) {
         return()
       }
-      # interval around points with total SE (input + any estimated extra)
-      if (error == 0) {
-        if (!log) {
-          lower_total <- qlnorm(.025,
-            meanlog = log(y[include]),
-            sdlog = cpueuse[["SE"]][include]
-          )
-          upper_total <- qlnorm(.975,
-            meanlog = log(y[include]),
-            sdlog = cpueuse[["SE"]][include]
-          )
+
+      # function to get uncertainty intervals around points
+      # (with or without extra standard error included)
+      get_intervals <- function(total = TRUE) {
+        if (total) {
+          colname <- "SE"
         } else {
-          lower_total <- qnorm(.025,
-            mean = log(y[include]),
-            sd = cpueuse[["SE"]][include]
-          )
-          upper_total <- qnorm(.975,
-            mean = log(y[include]),
-            sd = cpueuse[["SE"]][include]
-          )
+          colname <- "SE_input"
         }
-      }
-      # normal error interval
-      if (error == -1) {
-        lower_total <- qnorm(.025, mean = y[include], sd = cpueuse[["SE"]][include])
-        upper_total <- qnorm(.975, mean = y[include], sd = cpueuse[["SE"]][include])
+        if (error == 0) {
+          if (!log) {
+            lower <- qlnorm(.025,
+              meanlog = log(y[include]),
+              sdlog = cpueuse[[colname]][include]
+            )
+            upper <- qlnorm(.975,
+              meanlog = log(y[include]),
+              sdlog = cpueuse[[colname]][include]
+            )
+          } else {
+            lower <- qnorm(.025,
+              mean = log(y[include]),
+              sd = cpueuse[[colname]][include]
+            )
+            upper <- qnorm(.975,
+              mean = log(y[include]),
+              sd = cpueuse[[colname]][include]
+            )
+          }
+        }
+        # normal error interval
+        if (error == -1) {
+          lower <- qnorm(.025, mean = y[include], sd = cpueuse[[colname]][include])
+          upper <- qnorm(.975, mean = y[include], sd = cpueuse[[colname]][include])
+        }
+
+        # T-distribution interval
+        if (error > 0) {
+          lower <- log(y[include]) + qt(.025, df = error) * cpueuse[[colname]][include]
+          upper <- log(y[include]) + qt(.975, df = error) * cpueuse[[colname]][include]
+          if (!log) {
+            lower <- exp(lower)
+            upper <- exp(upper)
+          }
+        }
+        return(data.frame(lower = lower, upper = upper))
       }
 
-      # T-distribution interval
-      if (error > 0) {
-        lower_total <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE"]][include]
-        upper_total <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE"]][include]
-        if (!log) {
-          lower_total <- exp(lower_total)
-          upper_total <- exp(upper_total)
-        }
-      }
+      # get total uncertainty
+      total_intervals <- get_intervals(total = TRUE)
+      lower_total <- total_intervals[["lower"]]
+      upper_total <- total_intervals[["upper"]]
+
+      # get input uncertainty
+      # SE_input column was first available in SS version 3.30.15 but is calculated
+      # elsewhere in this function for models that didn't report it
+      input_intervals <- get_intervals(total = FALSE)
+      lower_input <- input_intervals[["lower"]]
+      upper_input <- input_intervals[["upper"]]
 
       if (max(upper_total) == Inf) {
         warning(
@@ -229,57 +252,33 @@ SSplotIndices <-
         )
       }
 
-      # show thicker lines behind final lines for input uncertainty (if different)
-      if (show_input_uncertainty && any(!is.null(cpueuse[["SE_input"]][include]))) {
-        # lognormal error interval
-        if (error == 0) {
-          if (!log) {
-            lower_input <- qlnorm(.025,
-              meanlog = log(y[include]),
-              sdlog = cpueuse[["SE_input"]][include]
-            )
-            upper_input <- qlnorm(.975,
-              meanlog = log(y[include]),
-              sdlog = cpueuse[["SE_input"]][include]
-            )
-          } else {
-            lower_input <- qnorm(.025,
-              mean = log(y[include]),
-              sd = cpueuse[["SE_input"]][include]
-            )
-            upper_input <- qnorm(.975,
-              mean = log(y[include]),
-              sd = cpueuse[["SE_input"]][include]
-            )
-          }
+      # set bounds for arrows at total uncertainty
+      lower <- lower_total
+      upper <- upper_total
+
+      if (addexpected) {
+        # show thicker lines behind final lines for input uncertainty
+        # only in plot with expected value as well
+        if (show_input_uncertainty & !all(lower_input == lower_total)) {
+          segments(x[include], lower_input,
+            x[include], upper_input,
+            col = colvec1[s], lwd = 3, lend = 1
+          )
         }
-        # normal error interval
-        if (error == -1) {
-          lower_input <- qnorm(.025, mean = y[include], sd = cpueuse[["SE_input"]][include])
-          upper_input <- qnorm(.975, mean = y[include], sd = cpueuse[["SE_input"]][include])
-        }
-        # T-distribution interval
-        if (error > 0) {
-          lower_input <- log(y[include]) + qt(.025, df = error) * cpueuse[["SE_input"]][include]
-          upper_input <- log(y[include]) + qt(.975, df = error) * cpueuse[["SE_input"]][include]
-          if (!log) {
-            lower_input <- exp(lower_input)
-            upper_input <- exp(upper_input)
-          }
-        }
-        # add segments
-        segments(x[include], lower_input,
-          x[include], upper_input,
-          col = colvec1[s], lwd = 3, lend = 1
-        )
+      } else {
+        # change bounds for arrows at input uncertainty for plots without fit
+        # if values are available
+        lower <- lower_input
+        upper <- upper_input
       }
 
       # add intervals
       arrows(
-        x0 = x[include], y0 = lower_total,
-        x1 = x[include], y1 = upper_total,
+        x0 = x[include], y0 = lower,
+        x1 = x[include], y1 = upper,
         length = 0.03, angle = 90, code = 3, col = colvec1[s]
       )
+
       # add points and expected values on standard scale
       if (!log) {
         points(
@@ -603,12 +602,15 @@ SSplotIndices <-
       if (is.na(time2)) {
         time2 <- FALSE
       }
-      # look for extra SD and calculate input SD (if different from final value)
-      if (exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info[["Fleet"]]) {
-        # input uncertainty is final value minus extra SD parameter (if present)
-        cpueuse[["SE_input"]] <- cpueuse[["SE"]] - Q_extraSD_info[["Value"]][Q_extraSD_info[["Fleet"]] == ifleet]
-      } else {
-        cpueuse[["SE_input"]] <- NULL # could also set equal to $SE but then additional test required to not display
+      # if "SE_input" column not available, look for extra SD and
+      # calculate input SD (if different from final value)
+      if (!"SE_input" %in% names(cpue)) {
+        if (exists("Q_extraSD_info") && ifleet %in% Q_extraSD_info[["Fleet"]]) {
+          # input uncertainty is final value minus extra SD parameter (if present)
+          cpueuse[["SE_input"]] <- cpueuse[["SE"]] - Q_extraSD_info[["Value"]][Q_extraSD_info[["Fleet"]] == ifleet]
+        } else {
+          cpueuse[["SE_input"]] <- cpueuse[["SE"]]
+        }
       }
       # use short variable names for often-used quantities
       x <- cpueuse[["YrSeas"]]
@@ -884,7 +886,7 @@ SSplotIndices <-
         xlim[2] <- min(xlim[2], maxyr)
 
         # set y limits
-        ylim <- c(0, 1.05*max(allcpue[["stdvalue"]], na.rm = TRUE))
+        ylim <- c(0, 1.05 * max(allcpue[["stdvalue"]], na.rm = TRUE))
         # set colors
         usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
         if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
@@ -918,13 +920,13 @@ SSplotIndices <-
           )
         }
         legend("top",
-               legend = FleetNames[fleetvec],
-               ncol = 2,
-               bty = "n",
-               pch = pch1,
-               col = gray(0, alpha = 0.7),
-               pt.bg = usecols[fleetvec])
-               
+          legend = FleetNames[fleetvec],
+          ncol = 2,
+          bty = "n",
+          pch = pch1,
+          col = gray(0, alpha = 0.7),
+          pt.bg = usecols[fleetvec]
+        )
       } # end all_index.fn
       if (plot & (9 %in% subplots)) {
         all_index.fn()
