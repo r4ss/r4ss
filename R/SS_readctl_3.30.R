@@ -110,7 +110,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     ctllist[["temp"]] <- dat[i + 1:length - 1]
     ctllist$".i" <- i + length
     if (is.null(comments)) {
-      names(ctllist[["temp"]]) <- paste0(paste0("#_", name, "_", collapse = ""), 1:length)
+      names(ctllist[["temp"]]) <- paste0(paste0(name, "_", collapse = ""), 1:length)
     } else {
       names(ctllist[["temp"]]) <- comments
     }
@@ -163,7 +163,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     df0 <- as.data.frame(matrix(dat[i + 1:k - 1], nrow = nrow, ncol = ncol, byrow = TRUE))
     colnames(df0) <- col.names
     if (is.null(comments)) {
-      rownames(df0) <- paste0(paste0("#_", name, collapse = ""), 1:nrow)
+      rownames(df0) <- paste0(paste0(name, collapse = ""), 1:nrow)
     } else {
       rownames(df0) <- comments
     }
@@ -1467,7 +1467,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("#_TG_Loss_chronic_", 1:ctllist[["N_tag_groups"]])
+        paste0("TG_Loss_chronic_", 1:ctllist[["N_tag_groups"]])
     )
     ctllist <- add_df(ctllist,
       name = "TG_overdispersion",
@@ -1475,7 +1475,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("#_TG_overdispersion_", 1:ctllist[["N_tag_groups"]])
+        paste0("TG_overdispersion_", 1:ctllist[["N_tag_groups"]])
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet",
@@ -1483,7 +1483,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("#_TG_report_fleet_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_fleet_par_", 1:ctllist[["Nfleets"]])
     )
     ctllist <- add_df(ctllist,
       name = "TG_Report_fleet_decay",
@@ -1491,7 +1491,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       ncol = 14,
       col.names = lng_par_colnames,
       comments =
-        paste0("#_TG_report_decay_par_", 1:ctllist[["Nfleets"]])
+        paste0("TG_report_decay_par_", 1:ctllist[["Nfleets"]])
     )
   }
 
@@ -1712,7 +1712,7 @@ get_tv_parlabs <- function(full_parms,
           )
         )
       } else {
-        parlab <- c(parlab, paste0("# ", tmp_parname, "_ENV_add"))
+        parlab <- c(parlab, paste0(tmp_parname, "_ENV_add"))
       }
     }
     
@@ -1750,7 +1750,6 @@ translate_3.30_to_3.24_var_adjust <- function(Variance_adjustment_list = NULL,
   Variance_adjustments[4:6, ] <- 1
   colnames(Variance_adjustments) <- fleetnames
   rownames(Variance_adjustments) <- paste0(
-    "#_",
     paste(c(
       "add_to_survey_CV",
       "add_to_discard_stddev",
