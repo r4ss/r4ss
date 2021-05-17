@@ -107,7 +107,7 @@ SS_Sensi_plot <- function(model.summaries,
                           dir = "",
                           current.year,
                           mod.names,
-                          likelihood.out = c(1, 1, 1),
+                          #likelihood.out = c(1, 1, 1),
                           Sensi.RE.out = "Sensi_RE_out.DMP",
                           CI = 0.95,
                           TRP.in = 0.4,
@@ -134,17 +134,18 @@ SS_Sensi_plot <- function(model.summaries,
   if (missing(mod.names)) {
     mod.names <- paste("model ", 1:model.summaries$n)
   }
-  if (likelihood.out[1] == 1) {
+  if (any(unique(modout$likelihoods_by_fleet$Label)=="Surv_lambda")) 
+  {
     syrvlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_lambda"]
     survey.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(3, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_lambda")
-
     syrvlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Surv_like"]
     survey.like <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(syrvlike_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Survey_likelihood")
   }
   else {
     survey.lambda <- survey.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (likelihood.out[2] == 1) {
+  if (any(unique(modout$likelihoods_by_fleet$Label)=="Length_lambda")) 
+  {
     Ltlambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_lambda"]
     Lt.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Ltlambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Lt_lambda")
     Ltlike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Length_like"]
@@ -153,7 +154,7 @@ SS_Sensi_plot <- function(model.summaries,
   else {
     Lt.lambda <- Lt.like <- data.frame(t(rep(NA, model.summaries$n + 2)))
   }
-  if (likelihood.out[3] == 1) {
+  if (any(unique(modout$likelihoods_by_fleet$Label)=="Age_lambda")) {
     Agelambda_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_lambda"]
     Age.lambda <- data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2], t(model.summaries$likelihoods_by_fleet[seq(Agelambda_index, dim(model.summaries$likelihoods_by_fleet)[1], num.likes), ][-1:-2]), "Age_lambda")
     Agelike_index <- c(1:num.likes)[subset(model.summaries$likelihoods_by_fleet, model == 1)$Label == "Age_like"]
