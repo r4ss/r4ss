@@ -61,7 +61,7 @@ test_that("SS_Sensi_plot runs", {
     dir = temp_path,
     current.year = 2001,
     mod.names = mod.names, # List the names of the sensitivity runs
-    likelihood.out = c(1, 1, 0),
+    #likelihood.out = c(1, 1, 0),
     Sensi.RE.out = "Sensi_RE_out.DMP", # Saved file of relative errors
     CI = 0.95, # Confidence interval box based on the reference model
     TRP.in = 0.4, # Target relative abundance value
