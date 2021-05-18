@@ -318,6 +318,11 @@ SSexecutivesummary <- function (replist,
       if (length(main.yrs) > 0) {
         recdevs <- Get.Values(replist = replist, label = "Main_RecrDev", yrs = main.yrs, ci_value)
         devs <- recdevs[, c("dq", "low", "high")]
+      } else {
+        n <- length(years) - length(late.yrs) - length(fore.yrs)
+        devs <- data.frame(dq = rep(0, n),
+                           low = rep(0, n),
+                           high = rep(0, n))
       }
 
       if (length(late.yrs) > 0) {
@@ -325,13 +330,16 @@ SSexecutivesummary <- function (replist,
         devs <- rbind(devs, late.recdevs[, c("dq", "low", "high")])
       }
 
-      if (length(fore.yrs) > 0) {
+      if (length(fore.yrs) > 0 ) {
         fore.recdevs <- Get.Values(replist = replist, label = "ForeRecr", yrs = fore.yrs, ci_value)
         if (length(late.yrs) > 0) {
           devs <- rbind(devs, fore.recdevs[, c("dq", "low", "high")])
-        }
+        } 
       }
+
       # Zero out the sd for years where devs were not estimated
+      devs[is.na(devs)] <- 0
+
       if (format) {
         devs.out <- data.frame(print(devs[, 1], digits = 3), paste0(print(devs[, 2], digits = 3), "\u2013", print(devs[, 3], digits = 3)))
       } else {
