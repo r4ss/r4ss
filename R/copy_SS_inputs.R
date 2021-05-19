@@ -54,7 +54,9 @@ copy_SS_inputs <- function(dir.old = NULL,
     }
   }
   # read starter file to figure out what other inputs are
-  starter <- SS_readstarter(file.path(dir.old, "starter.ss"), verbose = FALSE)
+  starter <- SS_readstarter(file.path(dir.old,
+                                      ifelse(use_ss_new, "starter.ss_new", "starter.ss")),
+                                      verbose = FALSE)
 
   if (verbose) {
     message("copying files from\n ", dir.old, "\nto\n ", dir.new)
