@@ -328,11 +328,11 @@ SSexecutivesummary <- function (replist,
       if (length(late.yrs) > 0) {
         late.recdevs <- Get.Values(replist = replist, label = "Late_RecrDev", yrs = late.yrs, ci_value)
         devs <- rbind(devs, late.recdevs[, c("dq", "low", "high")])
-      }
+      } 
 
       if (length(fore.yrs) > 0 ) {
         fore.recdevs <- Get.Values(replist = replist, label = "ForeRecr", yrs = fore.yrs, ci_value)
-        if (length(late.yrs) > 0) {
+        if (length(fore.yrs) > 0) {
           devs <- rbind(devs, fore.recdevs[, c("dq", "low", "high")])
         } 
       }
