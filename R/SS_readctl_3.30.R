@@ -1577,7 +1577,30 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     if (ctllist[["more_stddev_reporting"]] == 1) {
       ctllist <- add_vec(ctllist, name = "stddev_reporting_specs", length = 9)
     } else if (ctllist[["more_stddev_reporting"]] == 2) { # adds option for M
-      ctllist <- add_vec(ctllist, name = "stddev_reporting_specs", length = 11)
+      ctllist <- add_vec(ctllist, name = "stddev_reporting_specs", length = 13)
+      # check that the inputs for 12 and 13 are valid. If they aren't, read 11 
+      # items instead and warn.
+      valid_input <- TRUE
+      if(!ctllist[["stddev_reporting_specs"]][12] %in% c(0,1,2)) {
+        valid_input <- FALSE
+      }
+      if(!ctllist[["stddev_reporting_specs"]][13] %in% c(0,1)) {
+        valid_input <- FALSE
+      }
+      if(valid_input == FALSE) {
+        warning("Incorrect inputs detected for stddev_reporting_specs when ",
+                "using option 2. Assuming that no input for dynamic B0 or ", 
+                "Summary Bio were provided, as in SS 3.30.15 and .16.\n", 
+                "Placeholder 0s added for ",
+                "ctllist[['stddev_reporting_specs']][12:13].\nIf the user ", 
+                "is using version 3.30.15 or 3.30.16, the 0s should  be ",
+                "removed before writing out the file by using the code ",
+                "\nctllist[['stddev_reporting_specs']] <- ctllist[['stddev_reporting_specs']][1:11]")
+        ctllist$".i" <-  ctllist$".i" - 2 #back up 
+        ctllist[["stddev_reporting_specs"]] <- 
+          c(ctllist[["stddev_reporting_specs"]][1:11], 0, 0)
+      }
+      
     } else {
       stop(
         "more_stddev_reporting read as ", ctllist[["more_stddev_reporting"]],

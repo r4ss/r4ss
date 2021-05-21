@@ -801,7 +801,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     ctllist[["tmp_natage_stddev_reporting_specs"]] <- ctllist[["stddev_reporting_specs"]][7:9]
     if (ctllist[["more_stddev_reporting"]] == 2) {
       ctllist[["tmp_matage_stddev_reporting_specs"]] <-
-        ctllist[["stddev_reporting_specs"]][10:11]
+        ctllist[["stddev_reporting_specs"]][10:length(ctllist[["stddev_reporting_specs"]])]
     }
     wl.vector("tmp_selex_stddev_reporting_specs",
       comment = paste0(
@@ -818,8 +818,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     if (!is.null(ctllist[["tmp_matage_stddev_reporting_specs"]])) {
       wl.vector("tmp_matage_stddev_reporting_specs",
         comment = paste0(
-          "    # Mortality: (1) 0 or growth pattern, ",
-          "(2) M ages; NOTE: does each sex"
+          "    # Mortality, Dyn B0 (>3.30.16), SmryBio (>3.30.16) "
         )
       )
     }
