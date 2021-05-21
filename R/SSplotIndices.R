@@ -259,7 +259,7 @@ SSplotIndices <-
       if (addexpected) {
         # show thicker lines behind final lines for input uncertainty
         # only in plot with expected value as well
-        if (show_input_uncertainty & !all(lower_input == lower_total)) {
+        if (show_input_uncertainty & !all(lower_input == lower_total, na.rm = TRUE)) {
           segments(x[include], lower_input,
             x[include], upper_input,
             col = colvec1[s], lwd = 3, lend = 1
@@ -633,7 +633,7 @@ SSplotIndices <-
             colnames(tempcpue) <- c("Index", "year", "value", "stdvalue")
             allcpue <- rbind(allcpue, tempcpue)
           } else {
-            if (verbose) {
+            if (verbose & 9 %in% subplots & datplot ) {
               message(
                 "Excluding fleet ", ifleet,
                 " from index comparison figure because it has negative values"
