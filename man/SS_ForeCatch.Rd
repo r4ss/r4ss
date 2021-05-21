@@ -6,9 +6,9 @@
 \usage{
 SS_ForeCatch(
   replist,
-  yrs = 2019:2030,
+  yrs = 2021:2032,
   average = FALSE,
-  avg.yrs = 2014:2018,
+  avg.yrs = 2016:2020,
   total = NULL,
   digits = 2,
   dead = TRUE,
@@ -47,7 +47,7 @@ This is a common task for US west coast groundfish but might be useful elsewhere
   \dontrun{
     # create table based on average over past 5 years
     SS_ForeCatch(base,                # object created by SS_output
-                 yrs = 2019:2020,     # years with fixed catch
+                 yrs = 2021:2022,     # years with fixed catch
                  average = TRUE,      # catch by fleet from average catch
                  avg.yrs = 2014:2018) # use average of catches over past 5 years
 
@@ -55,15 +55,15 @@ This is a common task for US west coast groundfish but might be useful elsewhere
     # are based on current harvest specifications and the next 10 are set to some
     # new value (with ratio among fleets based on average over past 5 years)
     SS_ForeCatch(base,                # object created by SS_output
-                 yrs = 2019:2020,     # years with fixed catch
+                 yrs = 2021:2022,     # years with fixed catch
                  average = TRUE,      # catch by fleet from average catch
-                 avg.yrs = 2014:2018, # use average of catches over past 5 years
+                 avg.yrs = 2016:2020, # use average of catches over past 5 years
                  total = c(rep(241.3, 2), rep(300, 10))) # total
 
     # create table based on harvest control rule projection in SS
     # that can be mapped into an alternative state of nature
     SS_ForeCatch(low_state,          # object created by SS_output for low state
-                 yrs=2019:2030,      # forecast period after fixed ACL years
+                 yrs=2021:2032,      # forecast period after fixed ACL years
                  average=FALSE)      # use values forecast in SS, not historic catch
 
   }

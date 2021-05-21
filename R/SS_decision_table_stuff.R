@@ -1,5 +1,6 @@
-SS_decision_table_stuff <- function(replist, yrs = 2019:2030) {
+SS_decision_table_stuff <- function(replist, yrs = 2021:2032) {
   # function for getting values for decision tables
+  # as required in the Pacific Fishery Management Council Terms of Reference
   # not yet cleaned up for inclusion in r4ss
 
   # needs to be able to aggregate across areas for spatial models

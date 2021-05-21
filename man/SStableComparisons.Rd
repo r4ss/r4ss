@@ -9,7 +9,7 @@ SStableComparisons(
   models = "all",
   likenames = c("TOTAL", "Survey", "Length_comp", "Age_comp", "priors", "Size_at_age"),
   names = c("Recr_Virgin", "R0", "steep", "NatM", "L_at_Amax", "VonBert_K", "SSB_Virg",
-    "Bratio_2017", "SPRratio_2016"),
+    "Bratio_2021", "SPRratio_2020"),
   digits = NULL,
   modelnames = "default",
   csv = FALSE,
