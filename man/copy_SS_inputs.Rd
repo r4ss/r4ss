@@ -13,6 +13,7 @@ copy_SS_inputs(
   use_ss_new = FALSE,
   copy_exe = FALSE,
   copy_par = FALSE,
+  dir.exe = NULL,
   verbose = TRUE
 )
 }
@@ -30,9 +31,12 @@ created?}
 
 \item{use_ss_new}{Use .ss_new files instead of original inputs?}
 
-\item{copy_exe}{Copy any executables found in dir.old to dir.new?}
+\item{copy_exe}{Copy any executables found in dir.old to dir.new or
+dir.exe (if provided)?}
 
 \item{copy_par}{Copy any .par files found in dir.old to dir.new?}
+
+\item{dir.exe}{Path to executable to copy instead of any in dir.old}
 
 \item{verbose}{Return updates of function progress to the R console?}
 }

@@ -11,8 +11,10 @@
 #' @param recursive logical. Should elements of the path other than the last be
 #'        created?
 #' @param use_ss_new Use .ss_new files instead of original inputs?
-#' @param copy_exe Copy any executables found in dir.old to dir.new?
+#' @param copy_exe Copy any executables found in dir.old to dir.new or
+#' dir.exe (if provided)?
 #' @param copy_par Copy any .par files found in dir.old to dir.new?
+#' @param dir.exe Path to executable to copy instead of any in dir.old
 #' @param verbose Return updates of function progress to the R console?
 #' @return Doesn't return anything
 #' @author Ian Taylor
@@ -34,6 +36,7 @@ copy_SS_inputs <- function(dir.old = NULL,
                            use_ss_new = FALSE,
                            copy_exe = FALSE,
                            copy_par = FALSE,
+                           dir.exe = NULL,
                            verbose = TRUE) {
 
   # check to make sure the first input is in the correct format
@@ -122,11 +125,14 @@ copy_SS_inputs <- function(dir.old = NULL,
   }
   # copy executables(s) if requested
   if (copy_exe) {
+    if (is.null(dir.exe)) {
+      dir.exe <- dir.old
+    }
     # figure out which files are executables
-    is.exe <- file.info(dir(dir.old, full.names = TRUE))$exe
-    exefiles <- dir(dir.old)[is.exe != "no"]
+    is.exe <- file.info(dir(dir.exe, full.names = TRUE))$exe
+    exefiles <- dir(dir.exe)[is.exe != "no"]
     if (length(exefiles) == 0) {
-      warning("No executable files found in ", dir.old)
+      warning("No executable files found in ", dir.exe)
       if(.Platform[["OS.type"]] == "unix") {
         warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
       }
@@ -136,7 +142,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     }
     for (file in exefiles) {
       results[6] <- file.copy(
-        from = file.path(dir.old, file),
+        from = file.path(dir.exe, file),
         to = file.path(dir.new, file),
         overwrite = overwrite
       )
