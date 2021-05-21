@@ -106,11 +106,20 @@ SSexecutivesummary <- function (replist,
       sd <- value[["StdDev"]]
     }
 
-    if (label == " Recr" || label == "Recr_virgin") {
-      low <- exp(log(dq) - qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
-      high <- exp(log(dq) + qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
+    if (label == "Recr" || label == "Recr_virgin") {
+      # Orig code version - this is the same as SSsummarize below
+       low  <- exp(log(dq) - qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
+       high <- exp(log(dq) + qnorm(1 - (1 - ci_value) / 2) * sqrt(log(1 + (sd / dq) * (sd / dq))))
+      # maia's suggestions
+      # issue #537 in github
+      # low  <- dq / exp(qnorm(1 - (1 - ci_value) / 2) * dev_sd ) #where dev_sd is the recdev upper interval
+      # high <- dq * exp(qnorm(1 - (1 - ci_value) / 2) * dev_sd )
+      # SSsummarize 
+      #sdlog <- sqrt(log(1 + (sd / dq)^2))
+      #low  <- qlnorm(p = ((1 - ci_value)/2), meanlog = log(dq), sdlog = sdlog) 
+      #high <- qlnorm(p = (1 - (1 - ci_value)/2), meanlog = log(dq), sdlog = sdlog) 
     }
-    if (label != " Recr" && label != "Recr_virgin") {
+    if (label != "Recr" && label != "Recr_virgin") {
       low <- dq - qnorm(1 - (1 - ci_value) / 2) * sd
       high <- dq + qnorm(1 - (1 - ci_value) / 2) * sd
     }
