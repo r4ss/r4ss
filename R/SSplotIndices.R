@@ -223,19 +223,29 @@ SSplotIndices <-
       }
       if (!add) {
         # get range for expected values
-        zmax <- NULL
+        zrange <- NULL
         if (addexpected) {
-          zmin <- min(z, na.rm = TRUE)
+          zrange <- range(z, na.rm = TRUE)
         }
         logzrange <- range(log(z))
 
-        # y-limits with lognormal error
+        # y-limits for non-log plot
         if (!log) {
-          # ylim for standard scale
-          ylim <- c(0, 1.05 * min(
-            max(upper_total, zmax, na.rm = TRUE),
-            max(maximum_ymax_ratio * y)
-          ))
+          # ylim for standard scale (if lognormal)
+          if (error != -1) {
+            ylim <- c(0, 1.05 * min(
+              max(upper_total, zrange, na.rm = TRUE),
+              max(maximum_ymax_ratio * y)
+            ))
+          } else {
+            ylim <- 1.05 * c(
+              min(lower_total, zrange, na.rm = TRUE),
+              min(
+                max(upper_total, zrange, na.rm = TRUE),
+                max(maximum_ymax_ratio * y)
+              )
+            )
+          }
         }
         if (log) {
           # ylim for log scale plot
@@ -633,7 +643,7 @@ SSplotIndices <-
             colnames(tempcpue) <- c("Index", "year", "value", "stdvalue")
             allcpue <- rbind(allcpue, tempcpue)
           } else {
-            if (verbose & 9 %in% subplots & datplot ) {
+            if (verbose & 9 %in% subplots & datplot) {
               message(
                 "Excluding fleet ", ifleet,
                 " from index comparison figure because it has negative values"
