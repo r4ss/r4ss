@@ -9,7 +9,6 @@ SS_Sensi_plot(
   dir = "",
   current.year,
   mod.names,
-  likelihood.out = c(1, 1, 1),
   Sensi.RE.out = "Sensi_RE_out.DMP",
   CI = 0.95,
   TRP.in = 0.4,
@@ -36,9 +35,6 @@ to working directory or an absolute path}
 \item{current.year}{Year to report output}
 
 \item{mod.names}{List the names of the sensitivity runs}
-
-\item{likelihood.out}{Note which likelihoods are in the model
-(surveys, lengths, ages)}
 
 \item{Sensi.RE.out}{Saved file of relative changes}
 
@@ -77,6 +73,9 @@ be set to "Yield(tgt SPR)".}
 By default it will be set to something like "F(SPR=0.3)" where the SPR
 value is the SPR target. If the models have different SPR targets, it will
 be set to "F(tgt SPR)".}
+
+\item{likelihood.out}{Note which likelihoods are in the model
+(surveys, lengths, ages)}
 }
 \description{
 Uses output from \code{\link[=SSsummarize]{SSsummarize()}} to make a figure showing

@@ -131,7 +131,7 @@ Use the r4ss utility function to copy over the model files from `mod_path` to `n
 copy_SS_inputs(dir.old = mod_path, dir.new = new_mod_path)
 ```
 
-Note that the function `copy_multiple_folders()` can be used to copy several folders of Stock Synthesis model inputs.
+Note that the function `populate_multiple_folders()` can be used to copy several folders of Stock Synthesis model inputs.
 
 ### Read in Stock Synthesis files
 
