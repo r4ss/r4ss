@@ -26,7 +26,7 @@
 #'
 #' Package maintainer: Ian G. Taylor <Ian.Taylor@@noaa.gov>
 #' @references r4ss on GitHub: <https://github.com/r4ss>
-#' \cr Download Stock Synthesis: <https://vlab.ncep.noaa.gov/web/stock-synthesis/home>
+#' \cr Download Stock Synthesis: <https://vlab..noaa.gov/web/stock-synthesis/home>
 #' @import coda
 #' @import kableExtra
 #' @importFrom corpcor pseudoinverse

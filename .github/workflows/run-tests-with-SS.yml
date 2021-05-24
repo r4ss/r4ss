@@ -78,7 +78,7 @@ jobs:
         
       - name: Get the 3.30.16 SS executable
         run: |
-          wget -O ss https://vlab.ncep.noaa.gov/documents/259399/11683431/ss/2bd2329d-4623-c420-a360-abd6c3dd52c1?version=1.0&t=1599077106790&download=true
+          wget -O ss https://vlab.noaa.gov/documents/259399/11683431/ss/2bd2329d-4623-c420-a360-abd6c3dd52c1?version=1.0&t=1599077106790&download=true
       - name: see items in dir
         run: ls -l
       - name: see wd
@@ -91,7 +91,7 @@ jobs:
           rm ss
       - name: Get a 3.24 SS executable
         run: |
-          wget -O ss https://vlab.ncep.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
+          wget -O ss https://vlab.noaa.gov/documents/259399/2000201/ss_3.24Z/037e3921-1f00-611a-1c30-d7a5c1063835?version=1.1&t=1608655599519&download=true
       - name: Change permissions, copy 3.24 exe
         run: |
           sudo chmod a+x ss

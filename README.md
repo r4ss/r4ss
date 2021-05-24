@@ -4,7 +4,7 @@ master: [![R-CMD-check](https://github.com/r4ss/r4ss/workflows/R-CMD-check/badge
 
 development: [![R-CMD-check](https://github.com/r4ss/r4ss/workflows/R-CMD-check/badge.svg)](https://github.com/r4ss/r4ss/actions?query=workflow%3AR-CMD-check) [![codecov](https://codecov.io/gh/r4ss/r4ss/branch/development/graph/badge.svg)](https://codecov.io/gh/r4ss/r4ss)
 
-Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Methot. The Stock Synthesis software and many other associated materials are available on the NOAA Virtual Laboratory at [https://vlab.ncep.noaa.gov/web/stock-synthesis/home](https://vlab.ncep.noaa.gov/web/stock-synthesis/home). The r4ss package is a collection of R functions for interacting with Stock Synthesis. It is based on the original work of Ian Stewart begun around 2005 and released as an open source R package in 2009. The package has a long list of authors and has benefited from a large community of users making suggestions and reporting issues.
+Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Methot. The Stock Synthesis software and many other associated materials are available on the NOAA Virtual Laboratory at [https://vlab.noaa.gov/web/stock-synthesis/home](https://vlab.noaa.gov/web/stock-synthesis/home). The r4ss package is a collection of R functions for interacting with Stock Synthesis. It is based on the original work of Ian Stewart begun around 2005 and released as an open source R package in 2009. The package has a long list of authors and has benefited from a large community of users making suggestions and reporting issues.
 
 *Code available on this website comes with no warranty or guarantee of accuracy. It merely represents an ongoing attempt to integrate output plotting, statistics and diagnostics. It is absolutely necessary that prior to use with a new application, the user checks the output manually to verify that there are no plotting or statistical bugs which could incorrectly represent the output files being analyzed.*
 
@@ -30,7 +30,7 @@ Once you have installed the r4ss package, it can be loaded using:
 library(r4ss)
 ```
 
-To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.ncep.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
+To get notifications about r4ss, you can watch this GitHub project or follow messages on the [forums on Stock Synthesis VLab](https://vlab.noaa.gov/web/stock-synthesis/public-forums). Note that to subscribe to the Stock Synthesis VLab forums, an account is required, but those without an account may still view and post forum messages.
 
 A basic vignette can be viewed at <https://r4ss.github.io/r4ss/vignettes/r4ss-intro-vignette.html> or built locally on your computer using this command to install the package:
 ```S

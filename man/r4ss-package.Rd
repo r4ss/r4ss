@@ -32,7 +32,7 @@ SS_plots(replist = myreplist)
 }
 \references{
 r4ss on GitHub: \url{https://github.com/r4ss}
-\cr Download Stock Synthesis: \url{https://vlab.ncep.noaa.gov/web/stock-synthesis/home}
+\cr Download Stock Synthesis: \url{https://vlab..noaa.gov/web/stock-synthesis/home}
 }
 \author{
 Ian G. Taylor, Ian J. Stewart, Allan C. Hicks, Tommy M. Garrison,
