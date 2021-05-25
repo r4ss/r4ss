@@ -48,11 +48,6 @@ jobs:
       #     rm  -rf ss-test-models-repo
       #     ls
       #     ls inst/extdata
-          
-      - name: look at usr/bin
-        if: runner.os == 'Linux'
-        run: |
-          ls /usr/bin/ss -r
       
       - name: Get the 3.30.16 SS executable and move to expected location if using linux
         if: runner.os == 'Linux'
@@ -116,8 +111,8 @@ jobs:
          name: mod_results
          path: inst/extdata/simple_3.30.13
          
-      # if: failure()
-      #  uses: actions/upload-artifact@main
-      #  with:
-      #    name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-      #    path: check
+      if: failure()
+       uses: actions/upload-artifact@main
+       with:
+         name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+         path: check
