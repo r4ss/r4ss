@@ -30,24 +30,21 @@ jobs:
       - uses: r-lib/actions/setup-r@master
         with:
           r-version: ${{ matrix.config.r }}
-
       - uses: r-lib/actions/setup-pandoc@master
       
-      # - name: Get repository of SS models on Linux
-      #   if: runner.os == 'Linux'
-      #   uses: actions/checkout@v2
-      #   with: 
-      #     repository: 'nmfs-stock-synthesis/ss-test-models'
-      #     path: ss-test-models-repo
-      # 
-      # - name: move the models to the desired location
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     ls
-      #     mv ss-test-models-repo/models inst
-      #     rm  -rf ss-test-models-repo
-      #     ls
-      #     ls inst/extdata
+      - name: Get repository of SS models on Linux
+        if: runner.os == 'Linux'
+        uses: actions/checkout@v2
+        with:
+          repository: 'nmfs-stock-synthesis/ss-test-models'
+          path: ss-test-models-repo
+
+      - name: move the models to the desired location
+        if: runner.os == 'Linux'
+        run: |
+          mv ss-test-models-repo/models inst/extdata
+          rm  -rf ss-test-models-repo
+          ls inst/extdata
       
       - name: Get the 3.30.16 SS executable and move to expected location if using linux
         if: runner.os == 'Linux'
@@ -105,14 +102,8 @@ jobs:
         shell: bash
 
       - name: Upload check results
-        if: runner.os == 'Linux'
+        if: failure()
         uses: actions/upload-artifact@main
         with:
-         name: mod_results
-         path: inst/extdata/simple_3.30.13
-         
-      if: failure()
-       uses: actions/upload-artifact@main
-       with:
-         name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-         path: check
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          path: check
