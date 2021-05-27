@@ -63,16 +63,24 @@ to exclude.
 \examples{
 
 \dontrun{
-# note: don't run this in your main directory--make a copy in case something goes wrong
+# note: don't run this in your main directory--make a copy in case something
+# goes wrong
 mydir <- "C:/Simple"
 
 ## retrospective analyses
-SS_doRetro(masterdir = mydir, oldsubdir = "", newsubdir = "retrospectives", years = 0:-5)
+SS_doRetro(masterdir = mydir,
+           oldsubdir = "",
+           newsubdir = "retrospectives",
+           years = 0:-5)
 
-retroModels <- SSgetoutput(dirvec = file.path(mydir, "retrospectives", paste("retro", 0:-5, sep = "")))
+retroModels <- SSgetoutput(
+  dirvec = file.path(mydir, "retrospectives", paste("retro", 0:-5, sep = ""))
+)
 retroSummary <- SSsummarize(retroModels)
 endyrvec <- retroSummary[["endyrs"]] + 0:-5
-SSplotComparisons(retroSummary, endyrvec = endyrvec, legendlabels = paste("Data", 0:-5, "years"))
+SSplotComparisons(retroSummary,
+                  endyrvec = endyrvec,
+                  legendlabels = paste("Data", 0:-5, "years"))
 }
 
 }

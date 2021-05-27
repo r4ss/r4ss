@@ -73,9 +73,6 @@ be set to "Yield(tgt SPR)".}
 By default it will be set to something like "F(SPR=0.3)" where the SPR
 value is the SPR target. If the models have different SPR targets, it will
 be set to "F(tgt SPR)".}
-
-\item{likelihood.out}{Note which likelihoods are in the model
-(surveys, lengths, ages)}
 }
 \description{
 Uses output from \code{\link[=SSsummarize]{SSsummarize()}} to make a figure showing
@@ -85,18 +82,21 @@ sensitivity of various quantities of interest.
 
 \dontrun{
 # Set directory and extract ouput from models
-# Model 1 needs to be the Reference model, with sensitivity runs following from run 2 on.
+# Model 1 needs to be the Reference model, with sensitivity runs following
+# from run 2 on.
 
 # Note: models are available in Jason Cope's github repository:
 # https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
-dir <- "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
+dir <- 
+  "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
 models.dirs <- paste0("Cab_SCS_MS_", 1:19)
 zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
 
 # Use the summarize function in r4ss to get model summaries
 model.summaries <- SSsummarize(zz)
 
-# Define the names of each model. This will be used to label runs in the table and in the figures.
+# Define the names of each model. This will be used to label runs in the 
+# table and in the figures.
 mod.names <- c(
   "Reference",
   "M: Fix to 2009",
@@ -136,7 +136,8 @@ SS_Sensi_plot(
   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
-  anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
+  anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", 
+    "Other") # Sensitivity types labels
 )
 }
 

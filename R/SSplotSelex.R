@@ -95,6 +95,7 @@
 #' @param plotdir Directory where PNG files will be written. By default it will
 #' be the directory where the model was run.
 #' @template verbose
+#' @param showmain Deprecated, use mainTitle instead.
 #' @author Ian Stewart, Ian Taylor
 #' @export
 #' @seealso [SS_plots()], [SS_output()]

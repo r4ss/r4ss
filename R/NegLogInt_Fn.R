@@ -54,8 +54,11 @@
 #' @examples
 #'
 #' \dontrun{
-#' direc <- "C:/Models/LaplaceApprox/base" # need the full path because wd is changed in function
-#' if ("Optimization_record.txt" %in% list.files(direc)) file.remove(file.path(direc, "Optimization_record.txt"))
+#'  # need the full path because wd is changed in function
+#' direc <- "C:/Models/LaplaceApprox/base"
+#' if ("Optimization_record.txt" %in% list.files(direc)) {
+#'  file.remove(file.path(direc, "Optimization_record.txt"))
+#' }
 #' Opt <- optimize(
 #'   f = NegLogInt_Fn,
 #'   interval = c(0.001, 0.12),

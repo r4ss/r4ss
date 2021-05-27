@@ -78,7 +78,11 @@ starter file, in the \code{-mcsave} runtime command, and in
 
 \item{new}{Logical whether or not to open a new plot window before plotting}
 
-\item{colNames}{Specific names of the \code{file} to extract and work with. \code{NULL} keeps all columns}
+\item{colNames}{Specific names of the \code{file} to extract and work with. \code{NULL}
+keeps all columns}
+}
+\value{
+
 }
 \description{
 Makes four panel plot showing trace plots, moving average, autocorrelations,
@@ -96,7 +100,12 @@ mcmc.out("mcmcRun", run = "", numparams = 4, closeall = F)
 
 # Or for more control
 par(mar = c(5, 3.5, 0, 0.5), oma = c(0, 2.5, 0.2, 0))
-mcmc.out("mcmcRun", run = "", numparams = 1, closeall = F, new = F, colNames = c("NatM_p_1_Fem_GP_1"))
+mcmc.out("mcmcRun", 
+         run = "",
+         numparams = 1,
+         closeall = F,
+         new = F, 
+         colNames = c("NatM_p_1_Fem_GP_1"))
 mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 }
 }

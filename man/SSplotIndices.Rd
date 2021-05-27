@@ -6,7 +6,7 @@
 \usage{
 SSplotIndices(
   replist,
-  subplots = c(9, 1:8, 10, 12),
+  subplots = c(1:10, 12),
   plot = TRUE,
   print = FALSE,
   fleets = "all",
@@ -142,10 +142,11 @@ values)}
 as ratio of y), which overrides any
 value of ymax that is greater (default = Inf)}
 
-\item{show_input_uncertainty}{switch controlling whether to add thicker
+\item{show_input_uncertainty}{Switch controlling whether to add thicker
 uncertainty interval lines indicating the input uncertainty relative to
 the total uncertainty which may result from estimating a parameter for
-extra standard deviations}
+extra standard deviations. This is only added for the plots with index
+fit included (the data-only plots only show the input uncertainty).}
 
 \item{verbose}{report progress to R GUI?}
 
