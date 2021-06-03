@@ -457,7 +457,7 @@ SSplotSelex <-
       # remove factor == "Asel" if all age-based selectivity == 1
       if ("Asel" %in% agefactors &&
           all(ageselex[ageselex[["Factor"]] == "Asel",
-                       paste(replist[["agebins"]])] == 1)) {
+                       paste(1:replist[["accuage"]])] == 1)) {
         agefactors <- setdiff(agefactors, "Asel")
         message("Skipping plot of age-based selectivity as all values = 1.0")
       }
