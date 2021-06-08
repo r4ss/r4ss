@@ -9,8 +9,6 @@
 #' to working directory or an absolute path
 #' @param current.year Year to report output
 #' @param mod.names List the names of the sensitivity runs
-#' @param likelihood.out Note which likelihoods are in the model
-#' (surveys, lengths, ages)
 #' @param Sensi.RE.out  Saved file of relative changes
 #' @param CI Confidence interval box based on the reference model
 #' @param TRP.in Target relative abundance value
@@ -48,18 +46,21 @@
 #'
 #' \dontrun{
 #' # Set directory and extract ouput from models
-#' # Model 1 needs to be the Reference model, with sensitivity runs following from run 2 on.
+#' # Model 1 needs to be the Reference model, with sensitivity runs following
+#' # from run 2 on.
 #'
 #' # Note: models are available in Jason Cope's github repository:
 #' # https://github.com/shcaba/Stock-Assessment-Sensitivity-Plots/
-#' dir <- "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
+#' dir <- 
+#'   "C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
 #' models.dirs <- paste0("Cab_SCS_MS_", 1:19)
 #' zz <- SSgetoutput(dirvec = file.path(dir, models.dirs))
 #'
 #' # Use the summarize function in r4ss to get model summaries
 #' model.summaries <- SSsummarize(zz)
 #'
-#' # Define the names of each model. This will be used to label runs in the table and in the figures.
+#' # Define the names of each model. This will be used to label runs in the 
+#' # table and in the figures.
 #' mod.names <- c(
 #'   "Reference",
 #'   "M: Fix to 2009",
@@ -99,7 +100,8 @@
 #'   sensi.type.breaks = c(6.5, 9.5, 13.5, 16.5), # vertical breaks
 #'   anno.x = c(3.75, 8, 11.5, 15, 18), # positioning of types labels
 #'   anno.y = c(1, 1, 1, 1, 1), # positioning of types labels
-#'   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", "Other") # Sensitivity types labels
+#'   anno.lab = c("Natural mortality", "VBGF/Mat.", "Recruitment", "Data Wts.", 
+#'     "Other") # Sensitivity types labels
 #' )
 #' }
 #'
@@ -107,7 +109,7 @@ SS_Sensi_plot <- function(model.summaries,
                           dir = "",
                           current.year,
                           mod.names,
-                          #likelihood.out = c(1, 1, 1),
+                          #likelihood.out = c(1, 1, 1), # note which likelihoods are in the model
                           Sensi.RE.out = "Sensi_RE_out.DMP",
                           CI = 0.95,
                           TRP.in = 0.4,

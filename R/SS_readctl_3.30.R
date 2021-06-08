@@ -353,7 +353,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     ctllist <- add_vec(ctllist, name = "M_ageBreakPoints", length = ctllist[["N_natM"]]) # age(real) at M breakpoints
     N_natMparms <- ctllist[["N_natM"]]
   } else if (ctllist[["natM_type"]] == 2) {
-    N_natMparms <- ctllist[["N_GP"]] * abs(ctllist[["Nsexes"]])
+    N_natMparms <- 1
     ctllist <- add_elem(ctllist, name = "Lorenzen_refage") ## Reference age for Lorenzen M
   } else if (ctllist[["natM_type"]] %in% c(3, 4)) {
     N_natMparms <- 0
@@ -1564,7 +1564,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     dup_rownames <- duplicated(tmp_rownames, fromLast = TRUE)
     if(any(dup_rownames == TRUE)) {
-      tmp_rownames[dup_rownames] <- paste0(tmp_rownames[dup_rownames], "_duplicate")
+      tmp_n <- seq_along(dup_rownames[dup_rownames == TRUE])
+      tmp_rownames[dup_rownames] <- paste0(tmp_rownames[dup_rownames],
+                                           "_duplicate", tmp_n)
     }
     rownames(ctllist[["lambdas"]]) <- tmp_rownames
   }
@@ -1609,7 +1611,8 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       )
     }
     ## Selex bin
-    if (ctllist[["stddev_reporting_specs"]][4] > 0) {
+    if (ctllist[["stddev_reporting_specs"]][1] > 0 &
+        ctllist[["stddev_reporting_specs"]][4] > 0) {
       ctllist <-
         add_vec(ctllist,
           name = "stddev_reporting_selex",
@@ -1618,7 +1621,9 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
     }
     ## Growth bin
     # if using wt at age, this is not read.
-    if (ctllist[["EmpiricalWAA"]] != 0 & ctllist[["stddev_reporting_specs"]][6] > 0) {
+    if (ctllist[["EmpiricalWAA"]] != 0 & 
+        (ctllist[["stddev_reporting_specs"]][5] > 0 |
+        ctllist[["stddev_reporting_specs"]][6] > 0)) {
       warning(
         "Additional stddev reporting being used with a model using ",
         "empirical weight at age. Note that even if number of growth",
@@ -1628,14 +1633,17 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       )
       ctllist[["stddev_reporting_specs"]][6] <- 0
     }
-    if (ctllist[["stddev_reporting_specs"]][6] > 0 & ctllist[["EmpiricalWAA"]] == 0) {
+    if (ctllist[["stddev_reporting_specs"]][5] > 0 &
+        ctllist[["stddev_reporting_specs"]][6] > 0 & 
+        ctllist[["EmpiricalWAA"]] == 0) {
       ctllist <- add_vec(ctllist,
         name = "stddev_reporting_growth",
         length = ctllist[["stddev_reporting_specs"]][6]
       )
     }
     ## N at age
-    if (ctllist[["stddev_reporting_specs"]][9] > 0) {
+    if (ctllist[["stddev_reporting_specs"]][7] > 0 &
+        ctllist[["stddev_reporting_specs"]][9] > 0) {
       ctllist <- add_vec(ctllist,
         name = "stddev_reporting_N_at_A",
         length = ctllist[["stddev_reporting_specs"]][9]

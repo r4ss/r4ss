@@ -69,10 +69,16 @@ explicitly available in control file and this information is only required if le
 maturity vector is directly supplied (Maturity option of 6).  and used only
 if \code{use_datlist = FALSE}.}
 
+\item{Nfleets}{Number of fishing fleets and surveys, for 3.30 models.}
+
+\item{Nfleet}{Number of fishing fleets, for 3.24 and lower version models.}
+
 \item{Do_AgeKey}{Flag to indicate if 7 additional ageing error parameters to
 be read set 1 (but in fact any non zero numeric in R) or TRUE to enable to
 read them 0 or FALSE to disable them. This information is not
 explicitly available in control file and used only if \code{use_datlist = FALSE}.}
+
+\item{Nsurveys}{Number of surveys, for 3.24 and lower version models.}
 
 \item{N_tag_groups}{number of tag release group. Default =NA. This information
 is not explicitly available control file  and used only if

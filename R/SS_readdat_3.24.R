@@ -499,7 +499,7 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
     # read generalized size frequency data
     sizefreq_data_list <- list()
     for (imethod in 1:N_sizefreq_methods) {
-      Ncols <- 7 + Ngenders * nbins_per_method[imethod]
+      Ncols <- 7 + datlist[["Ngenders"]] * nbins_per_method[imethod]
       Nrows <- Nobs_per_method[imethod]
       sizefreq_data_tmp <- data.frame(matrix(allnums[i:(i + Nrows * Ncols - 1)],
         nrow = Nrows, ncol = Ncols, byrow = TRUE

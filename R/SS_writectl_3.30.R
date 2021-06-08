@@ -823,7 +823,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       )
     }
     # Selex bin
-    if (ctllist[["stddev_reporting_specs"]][4] > 0) {
+    if (ctllist[["stddev_reporting_specs"]][1] > 0 &
+        ctllist[["stddev_reporting_specs"]][4] > 0) {
       wl.vector("stddev_reporting_selex",
         comment = paste0(
           "# vector with selex std bins (-1 in first ",
@@ -833,7 +834,9 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
     }
     # Growth bin
     # not written if empirical weight at age is used.
-    if (ctllist[["stddev_reporting_specs"]][6] > 0 & ctllist[["EmpiricalWAA"]] == 0) {
+    if (ctllist[["stddev_reporting_specs"]][5] > 0 &
+        ctllist[["stddev_reporting_specs"]][6] > 0 & 
+        ctllist[["EmpiricalWAA"]] == 0) {
       wl.vector("stddev_reporting_growth",
         comment = paste0(
           "# vector with growth std ages picks (-1 in ",
@@ -842,7 +845,8 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       )
     }
     # N at age
-    if (ctllist[["stddev_reporting_specs"]][9] > 0) {
+    if (ctllist[["stddev_reporting_specs"]][7] > 0 &
+        ctllist[["stddev_reporting_specs"]][9] > 0) {
       wl.vector("stddev_reporting_N_at_A",
         comment = paste0(
           "# vector with NatAge std ages (-1 in first ",

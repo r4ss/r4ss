@@ -8,5 +8,5 @@ revdep
 ^.*\.Rproj$
 ^\.Rproj\.user$
 docs
-jenkins^
+^jenkins
 ^\.github/

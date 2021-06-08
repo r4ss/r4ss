@@ -30,8 +30,10 @@
 #' @param sep Separator for data file passed to the `read.table` function.
 #' @param print Send to screen unless asked to print.
 #' @param new Logical whether or not to open a new plot window before plotting
-#' @param colNames Specific names of the `file` to extract and work with. `NULL` keeps all columns
+#' @param colNames Specific names of the `file` to extract and work with. `NULL` 
+#'   keeps all columns
 #' @author Ian Stewart, Allan Hicks (modifications)
+#' @return 
 #' @export
 #' @seealso [mcmc.nuisance()], [SSgetMCMC()]
 #' @examples
@@ -46,49 +48,40 @@
 #'
 #' # Or for more control
 #' par(mar = c(5, 3.5, 0, 0.5), oma = c(0, 2.5, 0.2, 0))
-#' mcmc.out("mcmcRun", run = "", numparams = 1, closeall = F, new = F, colNames = c("NatM_p_1_Fem_GP_1"))
+#' mcmc.out("mcmcRun", 
+#'          run = "",
+#'          numparams = 1,
+#'          closeall = F,
+#'          new = F, 
+#'          colNames = c("NatM_p_1_Fem_GP_1"))
 #' mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 #' }
 mcmc.out <- function(
                      directory = "c:/mydirectory/",
-                     run = "mymodel/", # folder with ADMB run files
-                     file = "keyposteriors.csv", # the file name of the posteriors
-                     namefile = "postplotnames.sso", # the (optional) file name of the dimension and names of posteriors
-                     names = FALSE, # read in names file (T) or use generic naming (F)
-                     headernames = TRUE, # use the names in the header of 'file'
-                     numparams = 1, # the number of parameters to analyze
-                     closeall = TRUE, # by default close all open devices
-                     burn = 0, # can specify a burn in to remove
-                     thin = 1, # can specify further thinning, default is none
-                     scatter = FALSE, # can add a scatter-plot of all params at end, default is none
-                     surface = FALSE, # add a surface plot of 2-way correlations
-                     surf1 = 1, # the first parameter for the surface plot
-                     surf2 = 2, # the second parameter for the surface plot
-                     stats = FALSE, # print stats if desired
-                     plots = TRUE, # show plots or not
-                     header = TRUE, # data file with header?
-                     sep = ",", # sep for data file
-                     print = FALSE, # send to screen unless asked to print
-                     new = T, # open a new window
-                     colNames = NULL # specific column names to subset on
+                     run = "mymodel/",
+                     file = "keyposteriors.csv",
+                     namefile = "postplotnames.sso",
+                     names = FALSE,
+                     headernames = TRUE,
+                     numparams = 1,
+                     closeall = TRUE,
+                     burn = 0,
+                     thin = 1,
+                     scatter = FALSE,
+                     surface = FALSE,
+                     surf1 = 1,
+                     surf2 = 2,
+                     stats = FALSE,
+                     plots = TRUE,
+                     header = TRUE,
+                     sep = ",",
+                     print = FALSE,
+                     new = T,
+                     colNames = NULL
                      )
 
-                     # sample call: mcmc.out(run="english_8.4\\",names=T,burn=10,thin=1,scatter=F,stats=T,plots=T)
-
-                     ##############################################################################################################
-                     # Purpose: To summarize,analyze and plot key MCMC output
-                     # Written: Ian Stewart, July 2003
-                     # Arguments: See above
-                     # Returns: Graphical devices containing plots and summaries,
-                     #          parameter plots are stacked in the history, page up and down scrolls through them
-                     # Notes: columns with fixed values will cause the diagnostic tests to crash
 ##############################################################################################################
 {
-  #### the following commands no longer needed since packages are required by r4ss
-  ## require(coda) || stop("package coda is required")
-  ## geterrmessage()
-  ## require(gtools) || stop("package gtools is required")
-  ## geterrmessage()
 
   # add section to set up for printing or display to screen (default)
   if (print == TRUE) {} # not implemented

@@ -23,6 +23,9 @@
 #'  attempt to figure out how many lines of equilibrium catch to read from the
 #'  control file comments. Used only in control file 3.30 syntax if 
 #'  `use_datlist = FALSE`.
+#' @param Nfleets Number of fishing fleets and surveys, for 3.30 models.
+#' @param Nfleet Number of fishing fleets, for 3.24 and lower version models.
+#' @param Nsurveys Number of surveys, for 3.24 and lower version models.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
 #'  parameters. Defaults to 0. Used only in control file 3.30 syntax if 
 #'  `use_datlist = FALSE`..
