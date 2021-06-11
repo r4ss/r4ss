@@ -23,7 +23,7 @@
 #'   \item 6 discards
 #'   \item 7 discards stacked plot (depends on multiple fleets)
 #'   \item 8 discard fraction
-#'   \item 16 landings + dead discards"
+#'   \item 16 landings + dead discards
 #' }
 #'
 #' *Plots for seasonal models*
@@ -591,7 +591,9 @@ SSplotCatch <-
           myname <- gsub(pattern = badstrings[i], replacement = " ", x = myname, fixed = T)
         }
         filename <- paste0("catch", myname, ".png")
+        # default caption is based on the subplot_names vector defined at the top
         caption <- substring(myname, 3)
+        # add to caption for a few plots
         if (exists("equil.catch.vec") &&
           max(equil.catch.vec, na.rm = TRUE) > 0 &&
           isubplot %in% 1:9) {
@@ -599,6 +601,15 @@ SSplotCatch <-
             caption, "<br>Note: the first ", nseasons,
             " values represent the unfinished equilibrium catch",
             " divided equally among all seasons."
+          )
+        }
+        if (isubplot == 3 & any(catch_units == 2)) {
+          caption <- paste0(
+            caption,
+            ". Catch input in numbers is compared here to catch in biomass, ",
+            "making this figure less useful for models like this with catch in numbers. ",
+            "Future versions of this plot will be improve to ",
+            "compare catch in the same units."
           )
         }
         plotinfo2 <- pngfun(filename, caption = caption)
