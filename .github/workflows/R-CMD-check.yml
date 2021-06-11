@@ -49,7 +49,7 @@ jobs:
       - name: Get the 3.30.17 SS executable and move to expected location if using linux
         if: runner.os == 'Linux'
         run: |
-          wget -O ss https://vlab.noaa.gov/documents/259399/15691896/ss_linux/b218af0a-21fb-558f-de26-020ec6d6ae54?version=1.0&t=1623428432813&download=true
+          wget -O ss https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/v3.30.17/ss_linux
           sudo chmod a+x ss
           cp ss inst/extdata/simple_3.30.12/ss
           cp ss inst/extdata/simple_3.30.13/ss
