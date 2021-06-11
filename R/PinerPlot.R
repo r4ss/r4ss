@@ -239,7 +239,7 @@ PinerPlot <-
     }
 
     # remove columns that have change less than minfraction change relative to total
-    column.max <- apply(prof.table[, -c(1:3)], 2, max, na.rm = TRUE)
+    column.max <- apply(data.frame(prof.table[, -c(1:3)]), 2, max, na.rm = TRUE)
     change.fraction <- column.max / max(prof.table[, 3], na.rm = TRUE)
     include <- change.fraction >= minfraction
     cat("\nFleets-specific likelihoods showing max change as fraction of total change.\n",
