@@ -603,7 +603,7 @@ SSplotCatch <-
             " divided equally among all seasons."
           )
         }
-        if (isubplot == 3 & any(catch_units == 2)) {
+        if (isubplot == 3 & any(catch_units == 2, na.rm = TRUE)) {
           caption <- paste0(
             caption,
             ". Catch input in numbers is compared here to catch in biomass, ",
