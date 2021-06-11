@@ -65,7 +65,7 @@ Numbering of subplots is as follows,
 \item 6 discards
 \item 7 discards stacked plot (depends on multiple fleets)
 \item 8 discard fraction
-\item 16 landings + dead discards"
+\item 16 landings + dead discards
 }
 
 \emph{Plots for seasonal models}
