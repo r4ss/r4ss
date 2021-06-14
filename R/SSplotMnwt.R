@@ -93,10 +93,6 @@ SSplotMnwt <-
           liw <- -ob * cv * qt(0.025, DF_mnwgt) # quantile of t-distribution
           uiw <- ob * cv * qt(0.975, DF_mnwgt) # quantile of t-distribution
           liw[(ob - liw) < 0] <- ob[(ob - liw) < 0] # no negative limits
-          if (is.null(ymax)) {
-            ymax <- max(ob + uiw)
-            ymax <- max(ymax, ex)
-          }
           titlepart <- labels[2]
           if (j == 2) titlepart <- labels[3]
           if (j == 0) titlepart <- labels[4]
