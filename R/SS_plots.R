@@ -846,6 +846,7 @@ SS_plots <-
           replist = replist,
           fleets = fleets,
           fleetnames = fleetnames,
+          fleetcols = fleetcols,
           plot = !png, print = png,
           datplot = datplot,
           pwidth = pwidth, pheight = pheight, punits = punits,
@@ -1580,7 +1581,9 @@ SS_plots <-
           pwidth = pwidth, pheight = pheight_tall, punits = punits,
           ptsize = ptsize, res = res, mainTitle = mainTitle, cex.main = cex.main,
           plotdir = plotdir, margins = c(5.1, 2.1, 4.1, SSplotDatMargin),
-          fleetnames = fleetnames, maxsize = maxsize
+          fleetnames = fleetnames,
+          fleetcol = fleetcols, # mismatch in names between functions
+          maxsize = maxsize
         )
       if (!is.null(temp) & length(temp) > 0) plotinfo <- temp[["plotinfo"]]
       if (!is.null(plotinfo)) plotInfoTable <- rbind(plotInfoTable, plotinfo)

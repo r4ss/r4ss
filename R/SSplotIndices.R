@@ -33,6 +33,8 @@
 #' @param add add to existing plot (not yet implemented)
 #' @param datplot make plot of data only?
 #' @param labels vector of labels for plots (titles and axis labels)
+#' @param fleetcols vector of colors for all fleets (including those
+#' with no index data)
 #' @param col1 vector of colors for points in each season for time series plot.
 #' Default is red for single season models and a rainbow using the
 #' rich.colors.short function for multiple seasons.
@@ -101,6 +103,7 @@ SSplotIndices <-
              "Residual", # 13
              "Deviation"
            ), # 14
+           fleetcols = NULL,
            col1 = "default", col2 = "default", col3 = "blue", col4 = "red",
            pch1 = 21, pch2 = 16, cex = 1, bg = "white",
            legend = TRUE, legendloc = "topright", seasnames = NULL,
@@ -898,11 +901,15 @@ SSplotIndices <-
         # set y limits
         ylim <- c(0, 1.05 * max(allcpue[["stdvalue"]], na.rm = TRUE))
         # set colors
-        usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
-        if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
-          usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE) + 1,
-            alpha = 0.7
-          )[-1]
+        if (!is.null(fleetcols)) {
+          usecols <- fleetcols
+        } else {
+          usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
+          if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
+            usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE) + 1,
+                                         alpha = 0.7
+                                         )[-1]
+          }
         }
         # make empty plot
         if (!add) {
