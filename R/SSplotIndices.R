@@ -513,7 +513,9 @@ SSplotIndices <-
     }
     if (plotdir == "default") plotdir <- replist[["inputs"]][["dir"]]
 
-    if (fleetnames[1] == "default") fleetnames <- FleetNames
+    if (fleetnames[1] == "default") {
+      fleetnames <- FleetNames
+    }
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
     } else {
@@ -937,7 +939,7 @@ SSplotIndices <-
           )
         }
         legend("top",
-          legend = FleetNames[fleetvec],
+          legend = fleetnames[fleetvec],
           ncol = 2,
           bty = "n",
           pch = pch1,
