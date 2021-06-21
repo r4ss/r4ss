@@ -2473,48 +2473,53 @@ SSplotComparisons <-
               )
             }
           }
+
           # loop over parameters for densitities
-          for (iplot in 1:ndensities) {
-            # find matching parameter
-            name <- densitytable[iplot, 1]
-            xlab <- densitytable[iplot, 2]
-            # if(verbose) message("  quantity name=",name,"\n",sep="")
-            if (plot) {
-              ymax_vec[16] <- plotDensities(
-                parname = name, xlab = xlab,
-                denslwd = densitylwd
-              )
-            }
-            if (print) {
-              pngfun(paste("compare16_densities_", name, ".png", sep = ""))
-              ymax_vec[16] <- plotDensities(
-                parname = name, xlab = xlab,
-                denslwd = densitylwd
-              )
-              dev.off()
+          if (16 %in% subplots) {
+            for (iplot in 1:ndensities) {
+              # find matching parameter
+              name <- densitytable[iplot, 1]
+              xlab <- densitytable[iplot, 2]
+              # if(verbose) message("  quantity name=",name,"\n",sep="")
+              if (plot) {
+                ymax_vec[16] <- plotDensities(
+                  parname = name, xlab = xlab,
+                  denslwd = densitylwd
+                )
+              }
+              if (print) {
+                pngfun(paste("compare16_densities_", name, ".png", sep = ""))
+                ymax_vec[16] <- plotDensities(
+                  parname = name, xlab = xlab,
+                  denslwd = densitylwd
+                )
+                dev.off()
+              }
             }
           }
           # loop again for cumulative densities
-          for (iplot in 1:ndensities) {
-            # find matching parameter
-            name <- densitytable[iplot, 1]
-            xlab <- densitytable[iplot, 2]
-            # if(verbose) message("  quantity name=",name,"\n",sep="")
-            if (plot) {
-              ymax_vec[17] <- plotDensities(
-                parname = name, xlab = xlab,
-                denslwd = densitylwd,
-                cumulative = TRUE
-              )
-            }
-            if (print) {
-              pngfun(paste("compare17_densities_", name, ".png", sep = ""))
-              ymax_vec[17] <- plotDensities(
-                parname = name, xlab = xlab,
-                denslwd = densitylwd,
-                cumulative = TRUE
-              )
-              dev.off()
+          if (17 %in% subplots) {
+            for (iplot in 1:ndensities) {
+              # find matching parameter
+              name <- densitytable[iplot, 1]
+              xlab <- densitytable[iplot, 2]
+              # if(verbose) message("  quantity name=",name,"\n",sep="")
+              if (plot) {
+                ymax_vec[17] <- plotDensities(
+                  parname = name, xlab = xlab,
+                  denslwd = densitylwd,
+                  cumulative = TRUE
+                )
+              }
+              if (print) {
+                pngfun(paste("compare17_densities_", name, ".png", sep = ""))
+                ymax_vec[17] <- plotDensities(
+                  parname = name, xlab = xlab,
+                  denslwd = densitylwd,
+                  cumulative = TRUE
+                )
+                dev.off()
+              }
             }
           }
         }
