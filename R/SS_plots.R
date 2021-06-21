@@ -1679,9 +1679,14 @@ SS_plots <-
         plotdir,
         paste0(
           "plotInfoTable_",
-          format(png_time, "%d-%m-%Y_%H.%M.%S"), ".csv"
+          format(png_time, "%d-%m-%Y_%H.%M.%OS4"), ".csv"
         )
       )
+      if (file.exists(csvname)) {
+        # Warn if file exists (and will be overwritten, losing information).
+        # In the future the file name could be changed to avoid this
+        warning("Overwriting", csvname)
+      }
       write.csv(plotInfoTable, csvname, row.names = FALSE)
       if (verbose) message("Wrote table of info on PNG files to:\n   ", csvname)
       # write HTML files to display the images
