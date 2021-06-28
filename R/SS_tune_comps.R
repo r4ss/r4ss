@@ -447,9 +447,18 @@ SS_tune_comps <- function(replist = NULL, fleets = "all",
 
     # remove weights specified through variance adjustment for comps, if any
     if (!is.null(ctl[["Variance_adjustment_list"]])) {
-      message("removing variance adjustments from model")
-      ctl[["Variance_adjustment_list"]] <- NULL
-      ctl[["DoVar_adjust"]] <- 0
+      message("removing composition variance adjustments from model")
+      # filter out just factors 4 and 5 for length and age comps
+      if (nrow(ctl[["Variance_adjustment_list"]] > 0)) {
+        ctl[["Variance_adjustment_list"]] <-
+          ctl[["Variance_adjustment_list"]][!ctl[["Variance_adjustment_list"]][["Factor"]] %in%
+                                            c(4:5),]
+      }
+      # remove the list if there's nothing left
+      if (nrow(ctl[["Variance_adjustment_list"]]) == 0) {
+        ctl[["Variance_adjustment_list"]] <- NULL
+        ctl[["DoVar_adjust"]] <- 0
+      }
     }
     # Run the model once - look for convergence
     SS_writedat(dat, file.path(dir, start[["datfile"]]),
