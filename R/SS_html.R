@@ -61,7 +61,7 @@ SS_html <- function(replist = NULL,
         temp <- read.csv(filename, colClasses = "character")
         plotInfoTable <- rbind(plotInfoTable, temp)
       }
-      plotInfoTable[["png_time"]] <- as.POSIXlt(plotInfoTable[["png_time"]])
+      #plotInfoTable[["png_time"]] <- as.POSIXlt(plotInfoTable[["png_time"]])
       # look for duplicate models
       runs <- unique(plotInfoTable[["StartTime"]])
       if (length(runs) > 1) {
