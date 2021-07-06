@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSplotSPR.R
 \name{SSplotSPR}
 \alias{SSplotSPR}
-\title{Plot SPR quantities.}
+\title{Plot Spawning Potential Ratio (SPR) quantities.}
 \usage{
 SSplotSPR(
   replist,
@@ -41,7 +41,15 @@ SSplotSPR(
 
 \item{uncertainty}{include plots showing uncertainty?}
 
-\item{subplots}{vector controlling which subplots to create}
+\item{subplots}{vector controlling which subplots to create
+Numbering of subplots is as follows:
+\enumerate{
+\item timeseries of SPR,
+\item timeseries of 1 - SPR,
+\item timeseries of SPR ratio (as specified in the starter file), and
+\item phase plot of Biomass ratio vs SPR ratio (as specified in the
+starter file).
+}}
 
 \item{forecastplot}{Include forecast years in plot?}
 
@@ -79,7 +87,7 @@ be the directory where the model was run.}
 \item{verbose}{report progress to R GUI?}
 }
 \description{
-Plot SPR quantities, including 1-SPR and phase plot.
+Plot time series of SPR, 1-SPR, the chosen SPR ratio and the phase plot.
 }
 \seealso{
 \code{\link[=SS_plots]{SS_plots()}}, \code{\link[=SS_output]{SS_output()}}

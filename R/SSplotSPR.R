@@ -1,7 +1,6 @@
-#' Plot SPR quantities.
+#' Plot Spawning Potential Ratio (SPR) quantities.
 #'
-#' Plot SPR quantities, including 1-SPR and phase plot.
-#'
+#' Plot time series of SPR, 1-SPR, the chosen SPR ratio and the phase plot.
 #'
 #' @template replist
 #' @param add add to existing plot (not yet implemented)
@@ -9,6 +8,12 @@
 #' @param print print to PNG files?
 #' @param uncertainty include plots showing uncertainty?
 #' @param subplots vector controlling which subplots to create
+#' Numbering of subplots is as follows:
+#'   1. timeseries of SPR,
+#'   2. timeseries of 1 - SPR,
+#'   3. timeseries of SPR ratio (as specified in the starter file), and
+#'   4. phase plot of Biomass ratio vs SPR ratio (as specified in the
+#' starter file).
 #' @param forecastplot Include forecast years in plot?
 #' @param col1 first color used
 #' @param col2 second color used
@@ -216,10 +221,12 @@ SSplotSPR <-
       )
       abline(h = 0, col = "grey")
       abline(h = 1, col = col4)
-      text((min(SPRratio[["Yr"]]) + 4), (1 + 0.02),
-        "Management target",
-        adj = 0
-      )
+      #### "management target" doesn't make sense for all settings and
+      #### is probably a limit, not a target, even where it does
+      ## text((min(SPRratio[["Yr"]]) + 4), (1 + 0.02),
+      ##   "Management target",
+      ##   adj = 0
+      ## )
       lines(SPRratio[["Yr"]][SPRratio[["period"]] == "time"],
         SPRratio[["upper"]][SPRratio[["period"]] == "time"],
         col = col2, lty = "dashed"

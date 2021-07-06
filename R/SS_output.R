@@ -2852,8 +2852,7 @@ SS_output <-
 
     Bratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
     if (Bratio_denominator == "no_depletion_basis") {
-      Bratio_denominator <- NULL
-      Bratio_label <- NULL
+      Bratio_label <- "no_depletion_basis"
     } else {
       # create Bratio label for use in various plots
       if (grepl(pattern = "100", x = Bratio_denominator)) {
