@@ -2601,7 +2601,8 @@ SS_output <-
     returndat[["sizeselex"]] <- sizeselex
 
     # Age-based selectivity
-    ageselex <- matchfun2("AGE_SELEX", 4, header = TRUE)
+    # Updated for 3.30.17 which added an additional row in the AGE_SELEX header
+    ageselex <- matchfun2("COMBINED_ALK*selL*selA", 1, header = TRUE)
     if (!is.null(ageselex)) {
       # account for additional header row added in March 2021 
       # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
