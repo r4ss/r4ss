@@ -30,6 +30,7 @@
 #' blocks is removed from top of control file. Blocks can cause problems for
 #' retrospective analyses, but the method for removing them is overly
 #' simplistic and probably won't work in most cases. Default=FALSE.
+#' @param smartctl Better control of the recdevs and blocks in the control file.
 #' @author Ian Taylor, Jim Thorson
 #' @export
 #' @seealso [SSgetoutput()]
@@ -59,7 +60,8 @@
 SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
                        subdirstart = "retro", years = 0:-5, overwrite = TRUE,
                        exefile = "ss", extras = "-nox", intern = FALSE, CallType = "system",
-                       RemoveBlocks = FALSE) {
+                       RemoveBlocks = FALSE,
+                       smartctl = TRUE) {
 
   # this should always be "windows" or "unix" (includes Mac and Linux)
   OS <- .Platform[["OS.type"]]
@@ -147,6 +149,40 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
     }
     file.remove(ctlfile)
     writeLines(ctl, ctlfile)
+
+    if (smartctl) {
+      dat <- SS_readdat(datfile, verbose = FALSE)
+      ctl <- SS_readctl(ctlfile, use_datlist = TRUE, datlist = dat, verbose = FALSE)
+      endyr <- dat$endyr
+      endyrnew <- endyr + years[iyr]
+      ctl$MainRdevYrLast <- ctl$MainRdevYrLast + years[iyr]
+      ctl$last_yr_fullbias_adj <- ctl$MainRdevYrLast - 1
+      ctl$first_recent_yr_nobias_adj <- ctl$MainRdevYrLast
+      for (iiblock in seq_along(ctl[["Block_Design"]])) {
+        while (dplyr::last(ctl[["Block_Design"]][[iiblock]]) >= endyrnew) {
+          if (dplyr::nth(ctl[["Block_Design"]][[iiblock]], n = -2) > endyrnew) {
+            ctl[["Block_Design"]][[iiblock]] <- ctl[["Block_Design"]][[iiblock]][
+                -c((length(ctl[["Block_Design"]][[iiblock]])-1):length(ctl[["Block_Design"]][[iiblock]]))
+              ]
+            stage1 <- ctl$size_selex_parms %>%
+              dplyr::filter(Block == iiblock) %>%
+              rownames
+            stage2 <- rownames(ctl$size_selex_parms_tv) %>% gsub("_BLK.+$", "", .)
+            if (length(stage1) == 0) next
+            stage3 <- purrr::modify_depth(
+                lapply(stage1, grep, x = stage2,fixed = TRUE),
+                1,
+                ~ .[[length(.)]]
+              ) %>% unlist
+            ctl$size_selex_parms_tv <- ctl$size_selex_parms_tv[-(stage3), ]
+          } else {
+            ctl[["Block_Design"]][[iiblock]] <- ctl[["Block_Design"]][[iiblock]] - 1
+          }
+        }
+      }
+      ctl[["blocks_per_pattern"]] <- sapply(ctl[["Block_Design"]], length) / 2
+      SS_writectl(ctl, ctlfile, overwrite = TRUE)
+    }
 
     # if spaces in exe file, then put the filename in quotes
     if (length(grep(" ", exefile)) > 0) {
