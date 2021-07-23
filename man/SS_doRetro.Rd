@@ -15,7 +15,8 @@ SS_doRetro(
   extras = "-nox",
   intern = FALSE,
   CallType = "system",
-  RemoveBlocks = FALSE
+  RemoveBlocks = FALSE,
+  smartctl = TRUE
 )
 }
 \arguments{
@@ -54,6 +55,8 @@ R. Default is "system".}
 blocks is removed from top of control file. Blocks can cause problems for
 retrospective analyses, but the method for removing them is overly
 simplistic and probably won't work in most cases. Default=FALSE.}
+
+\item{smartctl}{Better control of the recdevs and blocks in the control file.}
 }
 \description{
 Do retrospective analyses by creating new directories, copying model files,
