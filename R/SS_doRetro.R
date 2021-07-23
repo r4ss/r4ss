@@ -159,7 +159,7 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
       ctl$last_yr_fullbias_adj <- ctl$MainRdevYrLast - 1
       ctl$first_recent_yr_nobias_adj <- ctl$MainRdevYrLast
       for (iiblock in seq_along(ctl[["Block_Design"]])) {
-        while (dplyr::last(ctl[["Block_Design"]][[iiblock]]) >= endyrnew) {
+        while (dplyr::last(ctl[["Block_Design"]][[iiblock]]) > endyrnew) {
           if (dplyr::nth(ctl[["Block_Design"]][[iiblock]], n = -2) > endyrnew) {
             ctl[["Block_Design"]][[iiblock]] <- ctl[["Block_Design"]][[iiblock]][
                 -c((length(ctl[["Block_Design"]][[iiblock]])-1):length(ctl[["Block_Design"]][[iiblock]]))
@@ -176,7 +176,8 @@ SS_doRetro <- function(masterdir, oldsubdir, newsubdir = "retrospectives",
               ) %>% unlist
             ctl$size_selex_parms_tv <- ctl$size_selex_parms_tv[-(stage3), ]
           } else {
-            ctl[["Block_Design"]][[iiblock]] <- ctl[["Block_Design"]][[iiblock]] - 1
+            lastloc <- length(ctl[["Block_Design"]][[iiblock]])
+            ctl[["Block_Design"]][[iiblock]][lastloc] <- ctl[["Block_Design"]][[iiblock]][lastloc] - 1
           }
         }
       }
