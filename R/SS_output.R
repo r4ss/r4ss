@@ -2564,31 +2564,40 @@ SS_output <-
     )
     returndat[["mean_body_wt"]] <- mean_body_wt
 
-    # Time-varying growth
+    # get time series of mean length at age
     mean_size <- matchfun2("MEAN_SIZE_TIMESERIES", 1,
       "mean_size_Jan_1", -2,
       cols = 1:(4 + accuage + 1),
       header = TRUE,
       type.convert = TRUE
     )
+    # filter values for range of years in time series
+    # (may not be needed in more recent SS versions)
     growthvaries <- FALSE
     if (!is.null(mean_size)) {
       if (SS_versionNumeric < 3.30) {
         mean_size <- mean_size[mean_size[["Beg"]] == 1 &
-          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       } else {
         mean_size <- mean_size[mean_size[["SubSeas"]] == 1 &
-          mean_size[["Morph"]] == 1 &
           mean_size[["Yr"]] >= startyr &
           mean_size[["Yr"]] < endyr, ]
       }
       if (nseasons > 1) {
         mean_size <- mean_size[mean_size[["Seas"]] == 1, ]
       }
-      if (sum(!duplicated(mean_size[,-(1:4)])) > 1) {
-        growthvaries <- TRUE
+      # loop over morphs to check for time-varying growth
+      # (typically only 1 or 1:2 for females and males)
+      for (morph in unique(mean_size[["Morph"]])) {
+        # check is based on ages 0 up to accuage-1, because the mean
+        # length in the plus group can vary over time as a function of changes
+        # in the numbers at age (where fishing down the old fish causes
+        # fewer additional ages lumped into that group)
+        if (sum(!duplicated(mean_size[mean_size[["Morph"]] == morph,
+                                      paste(0:(accuage-1))])) > 1) {
+          growthvaries <- TRUE
+        }
       }
       returndat[["growthseries"]] <- mean_size
       returndat[["growthvaries"]] <- growthvaries
