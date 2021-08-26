@@ -25,8 +25,8 @@
 
 SSmohnsrho <-
   function(summaryoutput,
-           endyrvec = NULL,
-           startyr = NULL,
+           endyrvec,
+           startyr,
            verbose = TRUE) {
     if (verbose) {
       message(
@@ -36,12 +36,12 @@ SSmohnsrho <-
     }
 
     N <- summaryoutput[["n"]]
-    if (length(endyrvec) == 0) {
+    if (missing(endyrvec)) {
       endyrvec <- rev((summaryoutput[["endyrs"]][N] - N + 1):summaryoutput[["endyrs"]][N])
     }
 
-    if (length(startyr) == 0) {
-      startyr <- summaryoutput[["startyr"]][1]
+    if (missing(startyr)) {
+      startyr <- min(endyrvec)
     }
 
 
