@@ -2860,6 +2860,17 @@ SS_output <-
       depletion_basis <- as.numeric(rawrep[matchfun("Depletion_method"), 2])
     }
 
+
+    if (depletion_basis %in% 3:4){
+      starter <- SS_readstarter(
+          file = file.path(dir, "starter.ss"),
+          verbose = verbose
+        )
+      depletion_multiplier <- starter$depl_denom_frac
+    } else {
+      depletion_multiplier <- 1
+    }
+
     Bratio_denominator <- rawrep[matchfun("B_ratio_denominator"), 2]
     if (Bratio_denominator == "no_depletion_basis") {
       Bratio_label <- "no_depletion_basis"
@@ -2879,6 +2890,7 @@ SS_output <-
       }
     }
     returndat[["depletion_basis"]] <- depletion_basis
+    returndat[["depletion_multiplier"]] <- depletion_multiplier
     returndat[["Bratio_denominator"]] <- Bratio_denominator
     returndat[["Bratio_label"]] <- Bratio_label
 
