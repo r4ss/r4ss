@@ -320,9 +320,9 @@ SSplotSPR <-
 
       # get mean and variance-covariance matrix of bivariate normal
       # joint distribution based on normal approxmation from ADMB
-      if (Bratio_endyr_SD > 0 &
+      if (isTRUE(Bratio_endyr_SD > 0 &
         SPRratio_endyr_SD > 0 &
-        !is.null(B_SPR_endyr_corr)) {
+        !is.null(B_SPR_endyr_corr))) {
         mu <- c(
           Bratio[["Value"]][Bratio[["Yr"]] == endyr],
           SPRratio[["Value"]][SPRratio[["Yr"]] == endyr]
@@ -420,9 +420,9 @@ SSplotSPR <-
           "start of the year and the relative fishing ",
           "intensity in that same year. "
         )
-        if (Bratio_endyr_SD > 0 &
+        if (isTRUE(Bratio_endyr_SD > 0 &
             SPRratio_endyr_SD > 0 &
-            !is.null(B_SPR_endyr_corr)) {
+            !is.null(B_SPR_endyr_corr))) {
           caption <- paste0(
             caption,
             "Lines through the final point show 95% intervals ",
