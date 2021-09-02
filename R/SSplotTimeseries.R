@@ -386,6 +386,9 @@ SSplotTimeseries <-
           }
           # calculation fractional year value associated with spawning season for spawning biomass plots
           stdtable[["YrSeas"]] <- stdtable[["Yr"]] + replist[["seasfracs"]][which(1:nseasons %in% spawnseas)]
+          if (ts[["YrSeas"]][1] == ts[["Yr"]][1]){
+            stdtable[["YrSeas"]] <- stdtable[["Yr"]]
+          }
 
           # scaling and calculation of confidence intervals
           v <- stdtable[["Value"]] * bioscale
