@@ -871,7 +871,12 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   if (ctllist[["F_Method"]] == 3) {
     ctllist <- add_elem(ctllist, "F_iter")
   }
-
+  if (ctllist[["F_Method"]] == 4) {
+    ctllist <- add_df(ctllist = ctllist, ncol = 3, 
+                      col.names = c("Fleet", "start_F", "first_parm_phase"), 
+                      name = "F_4_Fleet_Parms")
+    ctllist <- add_elem(ctllist, "F_iter")
+  }
   # _initial_F_parms -----
   # get them for fleet/seasons with non-zero initial equilbrium catch
 
