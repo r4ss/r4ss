@@ -918,17 +918,17 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                       name = "F_4_Fleet_Parms")
     ctllist <- add_elem(ctllist, "F_iter")
   }
-  # _initial_F_parms -----
-  # get them for fleet/seasons with non-zero initial equilbrium catch
+  # initial_F_parms -----
+  # get them for fleet/seasons with non-zero initial equilibrium catch
 
   # determine N_rows_equil_catch if it is null and use_datlist = FALSE
   if (use_datlist == FALSE && is.null(N_rows_equil_catch)) {
     parm_error <- FALSE
-    Fparms_start <- grep("initial_F_parms; count", ctl_with_cmts)
+    Fparms_start <- grep("initial_F_parms; ", ctl_with_cmts)
     # parse to get count number
     if (length(Fparms_start) == 1) {
       F_parm_count <- strsplit(
-        grep("initial_F_parms; count", ctl_with_cmts, value = TRUE),
+        grep("initial_F_parms; ", ctl_with_cmts, value = TRUE),
         split = "= "
       )[[1]]
       F_parm_count <- F_parm_count[length(F_parm_count)]
