@@ -18,6 +18,13 @@
 #'   multiplier option is not used for any fleet or 2) `use_datlist = TRUE` and
 #'   datlist is specified. Used only in control file 3.30 syntax if 
 #'   `use_datlist = FALSE`.
+#' @param predM_fleets integer vector of fleets with predator mortality included.
+#'  Predator mortality fleets are only available in v3.30.18 and
+#'  higher. Defaults to NULL and should be left as such if 1) predation mortality
+#'  is not used for any fleets; 2) `use_datlist = TRUE` and `datlist` is specified;
+#'  or 3) if comments in the control file should be used instead to determine 
+#'  the the predM_fleets. Used only in control file 3.30 syntax if 
+#'  `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
@@ -85,6 +92,7 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
                        N_tag_groups = NULL,
                        N_CPUE_obs = NULL,
                        catch_mult_fleets = NULL,
+                       predM_fleets = NULL, 
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
                        ptype = FALSE) {
@@ -182,6 +190,7 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
       Do_AgeKey = Do_AgeKey,
       N_tag_groups = N_tag_groups,
       catch_mult_fleets = catch_mult_fleets,
+      predM_fleets = predM_fleets,
       N_rows_equil_catch = N_rows_equil_catch,
       N_dirichlet_parms = N_dirichlet_parms,
       use_datlist = use_datlist,

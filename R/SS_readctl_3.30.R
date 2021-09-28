@@ -13,6 +13,12 @@
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 #'   datlist is specified.
+#' @param predM_fleets integer vector of fleets with predator mortality included.
+#'  Predator mortality fleets are only available in v3.30.18 and
+#'  higher. Defaults to NULL and should be left as such if 1) predation mortality
+#'  is not used for any fleets; 2) use_datlist = TRUE and datlist is specified;
+#'  or 3) if comments in the control file should be used instead to determine 
+#'  the the predM_fleets.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
@@ -42,6 +48,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
                             Do_AgeKey = NULL,
                             N_tag_groups = NULL,
                             catch_mult_fleets = NULL,
+                            predM_fleets = NULL,
                             N_rows_equil_catch = NULL,
                             N_dirichlet_parms = NULL) {
   
@@ -75,7 +82,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
 
   if (verbose) cat("running SS_readctl_3.30\n")
   dat <- readLines(file, warn = FALSE)
-
+  ctl_with_cmts <- dat # save original read in file with commemts
   Comments <- get_comments(dat)
   # End of codes to obtain Comments
   nver <- as.numeric(substring(version, 1, 4))
@@ -693,7 +700,41 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   PType[cnt:(cnt + ctllist[["N_GP"]] - 1)] <- 14
   cnt <- cnt + ctllist[["N_GP"]]
   N_MGparm <- N_MGparm + ctllist[["N_GP"]]
-
+  # specify the parameter lines for predator fleets, if any.
+  if(use_datlist == TRUE) {
+    if(any(datlist[["fleetinfo"]][["type"]] == 4)) {
+      pred_indices <- which(datlist[["fleetinfo"]][["type"]] == 4)
+    } else{
+      pred_indices <- integer(0)
+    }
+  } else {
+    if(isTRUE(is.null(predM_fleets))) {
+      pred_fleet_lines <- grep("PredM2_\\d+$", ctl_with_cmts)
+      if(length(pred_fleet_lines) > 0) {
+        # get the fleets
+        tmp_pred_flts <- strsplit(ctl_with_cmts[pred_fleet_lines], split = "PredM2_")
+        tmp_pred_flts <- lapply(tmp_pred_flts, function(x) {
+          flt <- x[length(x)]
+          flt
+        })
+        pred_indices <- unlist(tmp_pred_flts)
+        message("Based on control file parameter names, assuming there are ", 
+                length(pred_indices), " predation mortality parameters in MGparms.")
+      } else {
+        pred_indices <- integer(0)
+      }
+    } else {
+      pred_indices <- predM_fleets
+      if(isTRUE(is.null(predM_fleets))) {
+        pred_indices <- integer(0)
+      }
+    }
+  }
+  if(isTRUE(length(pred_indices) > 0)) {
+    N_MGparm <- N_MGparm + length(pred_indices)
+    MGparmLabel <- c(MGparmLabel, paste0("PredM2_", pred_indices))
+    PType <- c(PType, rep(NA, length(pred_indices)))
+  }
   ctllist <- add_df(ctllist,
     name = "MG_parms", nrow = N_MGparm, ncol = 14,
     col.names = lng_par_colnames,
@@ -883,7 +924,6 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
   # determine N_rows_equil_catch if it is null and use_datlist = FALSE
   if (use_datlist == FALSE && is.null(N_rows_equil_catch)) {
     parm_error <- FALSE
-    ctl_with_cmts <- readLines(file)
     Fparms_start <- grep("initial_F_parms; count", ctl_with_cmts)
     # parse to get count number
     if (length(Fparms_start) == 1) {
