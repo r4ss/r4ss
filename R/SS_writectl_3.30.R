@@ -577,6 +577,12 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       comment = "# N iterations for tuning F in hybrid method (recommend 3 to 7)"
     )
   }
+  if (ctllist[["F_Method"]] == 4) {
+    printdf("F_4_Fleet_Parms", terminate = TRUE)
+    wl("F_iter",
+       comment = "# N iterations for tuning F in hybrid method (recommend 3 to 7)"
+    )
+  }
   writeComment("#")
   if (!is.null(ctllist[["init_F"]])) {
     writeComment("initial_F_parms")
