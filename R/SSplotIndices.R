@@ -300,6 +300,9 @@ SSplotIndices <-
         )
         if (addexpected) {
           lines(x, z, lwd = 2, col = col3)
+          if (length(x) == 1) {
+            points(x, z, pch = 23, col = col3)
+          }
         }
       } else {
         # add points and expected values on log scale
@@ -309,6 +312,9 @@ SSplotIndices <-
         )
         if (addexpected) {
           lines(x, log(z), lwd = 2, col = col3)
+          if (length(x) == 1) {
+            points(x, log(z), pch = 23, col = col3)
+          }
         }
       }
       if (legend & length(colvec1) > 1) {
