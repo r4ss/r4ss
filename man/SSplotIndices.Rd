@@ -84,8 +84,9 @@ sizes}
 
 \item{labels}{vector of labels for plots (titles and axis labels)}
 
-\item{fleetcols}{vector of colors for all fleets (including those
-with no index data)}
+\item{fleetcols}{Vector of colors for all fleets (including those
+with no index data). If the vector supplied is shorter than the number
+of fleets, it will be replaced with one that is equal in length.}
 
 \item{col1}{vector of colors for points in each season for time series plot.
 Default is red for single season models and a rainbow using the

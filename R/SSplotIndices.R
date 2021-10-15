@@ -909,7 +909,7 @@ SSplotIndices <-
         # set y limits
         ylim <- c(0, 1.05 * max(allcpue[["stdvalue"]], na.rm = TRUE))
         # set colors
-        if (!is.null(fleetcols)) {
+        if (!is.null(fleetcols) & length(fleetcols) >= nfleets) {
           usecols <- fleetcols
         } else {
           usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
