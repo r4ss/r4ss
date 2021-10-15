@@ -19,7 +19,13 @@
 #' @param col2 second color used
 #' @param col3 third color used
 #' @param col4 fourth color used
-#' @param sprtarg F/SPR proxy target. "default" chooses based on model output.
+#' @param sprtarg F/SPR proxy target. "default" chooses based on model output,
+#' where models which have SPR_report_basis = 0 or 1 specified in the starter
+#' file will use the SPR target specified in the forecast file. Models which
+#' have SPR_report_basis = 2 will use SPR at MSY for the SPR target
+#' and models which have the SPR_report_basis = 3 will use
+#' SPR at Btarget for the SPR target in these plots. Zero or negative values of
+#' sprtarg input here will cause no horizontal line to be plotted.
 #' @param btarg target depletion to be used in plots showing depletion. May be
 #' omitted by setting to NA. "default" chooses based on model output.
 #' @param labels vector of labels for plots (titles and axis labels)
@@ -76,15 +82,33 @@ SSplotSPR <-
     nareas <- replist[["nareas"]]
     endyr <- replist[["endyr"]]
     managementratiolabels <- replist[["managementratiolabels"]]
-
+    SPRratioLabel <- replist[["SPRratioLabel"]]
+    
     # message about skipping plots
     if (is.null(sprseries)) {
       message("Skipping SPR plots: no output available")
       return()
     }
 
-    if (sprtarg == "default") sprtarg <- replist[["sprtarg"]]
-    if (btarg == "default") btarg <- replist[["btarg"]]
+    # get SPR target and associated label based on forecast specified SPR target or
+    # the denominator of the SPR ratio as specified in the starter file
+    if (sprtarg == "default") {
+      sprtarg <- replist[["sprtarg"]]
+      sprtarg_label <- "SPR target"
+      if (grepl("SPR_MSY", SPRratioLabel)) {
+        sprtarg <- replist$derived_quants["SPR_MSY", "Value"]
+        sprtarg_label <- "SPR at MSY"
+      }
+      if (grepl("SPR_at_B", SPRratioLabel)) {
+        sprtarg <- replist$derived_quants["SPR_Btgt", "Value"]
+        sprtarg_label <- substring(SPRratioLabel,
+                                   first = nchar("(1-SPR)/(1-") + 1,
+                                   last = nchar("(1-SPR)/(1-SPR_at_B48%"))
+      }
+    }
+    if (btarg == "default") {
+      btarg <- replist[["btarg"]]
+    }
 
     # choose which points to plot
     good <- sprseries[["Yr"]] <= endyr
@@ -98,7 +122,9 @@ SSplotSPR <-
         )
       }
       lines(sprseries[["Yr"]][good], sprseries[["spr"]][good], type = "o", col = col2)
-      if (sprtarg > 0) abline(h = sprtarg, col = col4, lty = 2)
+      if (sprtarg > 0) {
+        abline(h = sprtarg, col = col4, lty = 2)
+      }
       abline(h = 0, col = "grey")
       abline(h = 1, col = "grey")
     }
@@ -108,6 +134,11 @@ SSplotSPR <-
       if (print) {
         file <- "SPR1_series.png"
         caption <- "Timeseries of SPR"
+        if (sprtarg > 0) {
+          caption <- paste0(caption,
+                            ". Horizontal line is at ", sprtarg_label, ": ", 
+                            round(sprtarg, 3))
+        }
         plotinfo <- pngfun(file = file, caption = caption)
         spr_timeseries()
         dev.off()
@@ -128,7 +159,9 @@ SSplotSPR <-
                  )
           }
           lines(sprseries[["Yr"]][good], (1 - sprseries[["spr"]][good]), type = "o", col = col2)
-          if (sprtarg > 0) abline(h = (1 - sprtarg), col = col4, lty = 2)
+          if (sprtarg > 0) {
+            abline(h = (1 - sprtarg), col = col4, lty = 2)
+          }
           abline(h = 0, col = "grey")
           abline(h = 1, col = "grey")
         }
@@ -137,6 +170,11 @@ SSplotSPR <-
         if (print) {
           file <- "SPR2_minusSPRseries.png"
           caption <- "Timeseries of 1-SPR"
+          if (sprtarg > 0) {
+            caption <- paste0(caption,
+                              ". Horizontal line is at 1 - ", sprtarg_label, ": ", 
+                              "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3))
+          }
           plotinfo <- pngfun(file = file, caption = caption)
           minus_spr_timeseries()
           dev.off()
@@ -197,7 +235,7 @@ SSplotSPR <-
     # x-axis label for phase plot
     xlab <- paste0(labels[5], ": ", replist[["Bratio_label"]])
     # y-axis label and limits for time series and phase plot
-    ylab <- paste0(labels[4], ": ", replist[["SPRratioLabel"]])
+    ylab <- paste0(labels[4], ": ", SPRratioLabel)
     # if not a ratio, take out the word "Relative"
     if (!grepl(pattern = "/", x = ylab, fixed = TRUE)) {
       ylab <- gsub(
@@ -244,7 +282,7 @@ SSplotSPR <-
         file <- "SPR3_ratiointerval.png"
         caption <- paste(
           "Timeseries of SPR ratio:",
-          replist[["SPRratioLabel"]]
+          SPRratioLabel
         )
         plotinfo <- pngfun(file = file, caption = caption)
         spr_ratio_timeseries()
