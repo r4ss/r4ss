@@ -92,9 +92,9 @@ SSplotSPR <-
 
     # get SPR target and associated label based on forecast specified SPR target or
     # the denominator of the SPR ratio as specified in the starter file
+    sprtarg_label <- "SPR target"
     if (sprtarg == "default") {
       sprtarg <- replist[["sprtarg"]]
-      sprtarg_label <- "SPR target"
       if (grepl("SPR_MSY", SPRratioLabel)) {
         sprtarg <- replist$derived_quants["SPR_MSY", "Value"]
         sprtarg_label <- "SPR at MSY"
