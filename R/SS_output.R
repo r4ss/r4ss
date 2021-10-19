@@ -265,6 +265,7 @@ SS_output <-
     SS_versionCode <- rephead[grep("#V", rephead)]
     SS_version <- rephead[grep("Stock_Synthesis", rephead)]
     SS_version <- SS_version[substring(SS_version, 1, 2) != "#C"] # remove any version numbering in the comments
+    SS_version <- SS_version[1]
     if (substring(SS_version, 1, 2) == "#V") {
       SS_version <- substring(SS_version, 3)
     }
