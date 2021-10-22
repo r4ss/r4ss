@@ -731,7 +731,7 @@ SSexecutivesummary <- function (replist,
   } # end check for 'g' %in% tables
 
   caption = c(caption,
-              paste("Projections of potential OFLs (mt), ABCs (mt), estimated", sb.text.name , "and fraction unfished."))
+              paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished."))
   tex.label = c(tex.label, "projectionES")
   filename = c(filename, csv_name)
 
