@@ -661,7 +661,7 @@ SSexecutivesummary <- function (replist,
       es.f = data.frame(years_minus_final, ofl, abc, acl, catch, dead)
       colnames(es.f) = c("Year", "OFL", "ABC", "ACL", "Landings", "Total Mortality")
       caption = c(caption,
-              paste('Recent trend in the overfishing limits (OFL), the acceptable biological catches (ABCs),
+              paste('Recent trend in the overfishing limits (OFLs), the acceptable biological catches (ABCs),
                 the annual catch limits (ACLs), the total landings, and total mortality (mt).'))
     } else {
       es.f = data.frame(years_minus_final, ofl, abc, acl, catch)
