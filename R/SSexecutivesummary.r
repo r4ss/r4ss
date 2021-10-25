@@ -674,7 +674,7 @@ SSexecutivesummary <- function (replist,
 
   } # end check for 'f' %in% tables
 
-  tex.label = c(tex.label, 'referenceES')  
+  tex.label = c(tex.label, 'manageES')  
   filename = c(filename, csv_name)
 
   #======================================================================
