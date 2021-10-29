@@ -456,7 +456,9 @@ SSplotSPR <-
           "Phase plot of biomass ratio vs. SPR ratio.<br> ",
           "Each point represents the biomass ratio at the ",
           "start of the year and the relative fishing ",
-          "intensity in that same year. "
+          "intensity in that same year. ",
+          "Warmer colors (red) represent early years and ",
+          "colder colors (blue) represent recent years. "
         )
         if (isTRUE(Bratio_endyr_SD > 0 &
             SPRratio_endyr_SD > 0 &
