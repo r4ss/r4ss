@@ -1,0 +1,77 @@
+# run models without estimation
+name: run-no-est
+
+on:
+  workflow_call:
+
+jobs:
+  run-no-est:
+    runs-on: ubuntu-latest
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
+
+    steps:
+
+      - name: Checkout ss repo
+        uses: actions/checkout@v2
+
+ #     - name: Get last compiled version of SS; alternative to compiling in same wkflow
+ #       uses: dawidd6/action-download-artifact@v2
+ #       with:
+ #         workflow: build-centos.yml
+ #         workflow_conclusion: success
+ #         name: ss_linux
+ #         path: ss_linux
+
+      - name: Checkout models repo
+        uses: actions/checkout@v2
+        with:
+          repository: 'nmfs-stock-synthesis/ss-test-models'
+          path: ss-test-models-repo
+
+      - name: setup R
+        uses: r-lib/actions/setup-r@master
+
+      - name: Get admb and put in path
+        run: |
+          wget https://github.com/admb-project/admb/releases/download/admb-12.3/admb-12.3-linux.zip
+          sudo unzip admb-12.3-linux.zip -d /usr/local/bin
+          sudo chmod 755 /usr/local/bin/admb-12.3/bin/admb
+          echo "/usr/local/bin/admb-12.3/bin" >> $GITHUB_PATH
+
+      - name: Build stock synthesis
+        run: |
+          rm -rf SS330
+          mkdir SS330
+          /bin/bash ./Make_SS_330_new.sh -b SS330
+
+      - name: move exes, scripts to needed locations
+        run: |
+          mv ss-test-models-repo/models ss-test-models-repo/model_runs
+          mv SS330/ss ss-test-models-repo/model_runs/ss
+          mv ss-test-models-repo/jenkins/model_compare_noest/run_from_par.R ss-test-models-repo/run_from_par.R
+          mv ss-test-models-repo/jenkins/model_compare_noest/run_compare_noest.R ss-test-models-repo/run_compare_noest.R
+
+      - name: change permissions on ss exes
+        run: chmod a+x ss-test-models-repo/model_runs/ss
+
+      - name: run models without estimation
+        run: |
+         cd ss-test-models-repo && Rscript run_from_par.R
+
+      - name: Run comparison
+        run: |
+          mkdir ss-test-models-repo/run_R
+          cd ss-test-models-repo && Rscript run_compare_noest.R
+
+      - name: Determine results of test
+        run: cd ss-test-models-repo && Rscript jenkins/shared/check_failed.R
+
+      - name: Archive results
+        uses: actions/upload-artifact@main
+        if: always()
+        with:
+          name: 'result_textfiles'
+          path: ss-test-models-repo/run_R/
+
