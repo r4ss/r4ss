@@ -23,10 +23,18 @@ jobs:
       - name: Install dependencies
         run: Rscript -e 'install.packages("styler")'
 
+      - name: get last commit msg
+        id: commit-msg
+        run: |
+          git tag
+          last_commit_msg=$(git log -1 --pretty=%B)
+          echo "::set-output name=msg::${last_commit_msg}"
+
       - name: Style
         run: Rscript -e 'styler::style_pkg()'
-
+        
       - name: Create Pull Request
+        if: ${{ !contains(steps.commit-msg.outputs.msg, 'style_pkg') }}
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: 'style: run styler::style_pkg()'
