@@ -31,10 +31,15 @@ jobs:
           last_commit_msg=$(git log -1 --pretty=%B)
           echo "::set-output name=msg::${last_commit_msg}"
 
-      - name: Style and commit
-        run: Rscript -e 'styler::style_pkg()'
+      - name: Style
+        id: style
+        run: |
+          Rscript -e 'styler::style_pkg()'
+          changes=$(git status -s)
+          echo "::set-output name=changes::${style-changes}"
 
       - name: commit updated style
+        if: ${{ contains(steps.style.outputs.style-changes, 'M') }}
         run: |
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
@@ -42,9 +47,14 @@ jobs:
           git commit -m 'Style: run styler::style_pkg()'
 
       - name: Document
-        run: Rscript -e 'roxygen2::roxygenise()'
+        id: doc
+        run: |
+          Rscript -e 'roxygen2::roxygenise()'
+          changes=$(git status -s)
+          echo "::set-output name=changes::${doc-changes}"
 
       - name: commit updated documents
+        if: ${{ contains(steps.doc.outputs.doc-changes, 'M') }}
         run: |
           git config --local user.name "$GITHUB_ACTOR"
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
