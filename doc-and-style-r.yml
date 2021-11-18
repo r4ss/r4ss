@@ -42,7 +42,7 @@ jobs:
         if: inputs.run-rm_dollar_sign == true && inputs.pkg-is-r4ss != true
         run: Rscript -e 'remotes::install_github("r4ss/r4ss", upgrade = "always")'
 
-      - name: add r4ss, if using r4ss::rm_dollar_sign
+      - name: add r4ss, if using r4ss::rm_dollar_sign and pkg is r4ss
         if: inputs.run-rm_dollar_sign == true && inputs.pkg-is-r4ss == true
         run: Rscript -e 'remotes::install_local(".", upgrade = "always")'
 
@@ -56,35 +56,9 @@ jobs:
       - name: Style
         run: Rscript -e 'styler::style_pkg()'
 
-      - name: check for changes
-        id: style
-        run: |
-          changes=$(git status -s)
-          echo "::set-output name=changes::${style-changes}"
-
-      - name: commit updated style
-        if: ${{ contains(steps.style.outputs.style-changes, 'M') }}
-        run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add \*.R
-          git commit -m 'Style: run styler::style_pkg()'
-
       - name: Document
         run: Rscript -e 'roxygen2::roxygenise()'
-      - name: check for doc-changes
-        id: doc
-        run: |
-          changes=$(git status -s)
-          echo "::set-output name=changes::${doc-changes}"
 
-      - name: commit updated documents
-        if: ${{ contains(steps.doc.outputs.doc-changes, 'M') }}
-        run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add man/\* NAMESPACE
-          git commit -m 'docs: run devtools::document()'
       - name: Run run-rm_dollar_sign
         if: inputs.run-rm_dollar_sign == true
         run: |
@@ -95,21 +69,6 @@ jobs:
           }
           out <- lapply(files_to_change, function(x) r4ss:::rm_dollar_sign(x))
         shell: Rscript {0}
-
-      - name: check if any changes
-        id: dollar-sign
-        if: inputs.run-rm_dollar_sign == true
-        run: |
-          dollar_changes=$(git status -s)
-          echo "::set-output name=dollar_changes::${doll-sign-changes}"
-
-      - name: commit rm_dollar_sign changes, if any
-        if: inputs.run-rm_dollar_sign == true && ${{ contains(steps.dollar-sign.outputs.doll-sign-changes, 'M') }}
-        run: |
-          git config --local user.name "$GITHUB_ACTOR"
-          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-          git add \*.R
-          git commit -m 'run r4ss::rm_dollar_sign'
 
       - name: Style again, just in case
         run: Rscript -e 'styler::style_pkg()'
