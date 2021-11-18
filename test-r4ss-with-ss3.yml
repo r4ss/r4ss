@@ -3,11 +3,6 @@ name: test-r4ss-with-ss3
 
 on:
   workflow_call:
-    inputs:
-      ss3-ref:
-      default: 'main'
-      required: true
-      type: string
 
 jobs:
   run-no-est:
@@ -20,8 +15,6 @@ jobs:
 
       - name: Checkout ss repo
         uses: actions/checkout@v2
-        with:
-          ref: inputs.ss3-ref
 
       - name: Checkout models repo
         uses: actions/checkout@v2
