@@ -3,16 +3,26 @@
 # styling, the changes are commited and a pull request to the branch the Workflow
 # was started on is opened - this PR contains the commit.
 
+# note may want to add a .gitignore file to .github/workflows in the repository that
+# excludes *.rds files
+
 # Workflow derived from https://github.com/r-lib/actions/tree/master/examples
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
  workflow_call:
+   inputs:
+     run-rm_dollar_sign:
+       required: false
+       type: boolean
+     pkg-is-r4ss:
+       required: false
+       type: boolean
 
 name: style r code with styler
 
 jobs:
   doc-and-style-r:
-    name: style
+    name: doc and style
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -26,7 +36,15 @@ jobs:
           extra-packages: |
             styler
             roxygen2
+            remotes
 
+      - name: add r4ss, if using r4ss::rm_dollar_sign
+        if: inputs.run-rm_dollar_sign == true && inputs.pkg-is-r4ss != true
+        run: Rscript -e 'remotes::install_github("r4ss/r4ss", upgrade = "always")'
+
+      - name: add r4ss, if using r4ss::rm_dollar_sign
+        if: inputs.run-rm_dollar_sign == true && inputs.pkg-is-r4ss == true
+        run: Rscript -e 'remotes::install_local(".", upgrade = "always")'
 
       - name: get last commit msg
         id: commit-msg
@@ -64,12 +82,37 @@ jobs:
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git add man/\* NAMESPACE
           git commit -m 'docs: run devtools::document()'
+     - name: Run run-rm_dollar_sign
+       if: inputs.run-rm_dollar_sign == true
+       run: |
+         files_to_change <- list.files("R", full.names = TRUE)
+         to_rm <- grep("rm_dollar_sign", files_to_change)
+         files_to_change <- files_to_change[-to_rm]
+         lapply(files_to_change, function(x) r4ss::rm_dollar_sign(x))
+       shell: Rscript {0}
+
+      - name: check if any changes
+        id: dollar-sign
+        if: inputs.run-rm_dollar_sign == true
+        run: |
+          dollar_changes=$(git status -s)
+          echo "::set-output name=dollar_changes::${doll-sign-changes}"
+
+      - name: commit rm_dollar_sign changes, if any
+        if: inputs.run-rm_dollar_sign == true && ${{ contains(steps.dollar-sign.outputs.doll-sign-changes, 'M') }}
+        run: |
+          git config --local user.name "$GITHUB_ACTOR"
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git add man/\* NAMESPACE
+          git commit -m 'docs: run devtools::document()'
 
       - name: Style again, just in case
         run: Rscript -e 'styler::style_pkg()'
 
       - name: Document again, just in case
-        run: Rscript -e 'roxygen2::roxygenise()'
+        run: |
+          list.files()
+          Rscript -e 'roxygen2::roxygenise()'
 
       - name: Create Pull Request
         if: ${{ !contains(steps.commit-msg.outputs.msg, 'run') }}
