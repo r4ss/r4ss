@@ -82,14 +82,14 @@ jobs:
           git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
           git add man/\* NAMESPACE
           git commit -m 'docs: run devtools::document()'
-     - name: Run run-rm_dollar_sign
-       if: inputs.run-rm_dollar_sign == true
-       run: |
-         files_to_change <- list.files("R", full.names = TRUE)
-         to_rm <- grep("rm_dollar_sign", files_to_change)
-         files_to_change <- files_to_change[-to_rm]
-         lapply(files_to_change, function(x) r4ss::rm_dollar_sign(x))
-       shell: Rscript {0}
+      - name: Run run-rm_dollar_sign
+        if: inputs.run-rm_dollar_sign == true
+        run: |
+          files_to_change <- list.files("R", full.names = TRUE)
+          to_rm <- grep("rm_dollar_sign", files_to_change)
+          files_to_change <- files_to_change[-to_rm]
+          lapply(files_to_change, function(x) r4ss::rm_dollar_sign(x))
+        shell: Rscript {0}
 
       - name: check if any changes
         id: dollar-sign
