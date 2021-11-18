@@ -22,7 +22,6 @@
 #' @export
 #' @seealso [SS_output()]
 #' @examples
-#'
 #' \dontrun{
 #' # directory with the model output
 #' mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")
@@ -423,7 +422,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     paste0("Size/Age Composition Input Data,", "XXXX"),
     paste0("Ecosystem Linkage,", "XXXX"),
     "",
-
     "Fishing Mortality Estimates",
     paste0("F Year, ", data_year),
     paste0("Min F Estimate, ", ""),
@@ -432,7 +430,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     paste0("F Basis, ", F_basis),
     paste0("F Unit, ", F_unit),
     "",
-
     "Domestic Fishing Mortality Derive Management Quantities",
     paste0("Flimit, ", F_limit),
     paste0("Flimit Basis, ", F_limit_basis),
@@ -445,7 +442,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     # paste0("MSY Basis, ",     "Yield with ", SPRtarg_text,
     #      " at SB_", SPRtarg_text),
     "",
-
     "Biomass Estimates",
     paste0("[Unfished Spawning Biomass], ", model[["SBzero"]]), # no longer a requested value
     paste0("B Year, ", B_year),
@@ -462,7 +458,6 @@ get_SIS_info <- function(model, dir = NULL, writecsv = TRUE,
     #        round(model[["derived_quants"]][paste0("Bratio_", final_year),
     #                                   "Value"], 3)),
     "",
-
     "Domestic Biomass Derived Management Quantities",
     paste0("Blimit, ", B_limit),
     paste0("Blimit Basis, ", MinBthresh_text),

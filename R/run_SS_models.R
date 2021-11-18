@@ -27,7 +27,6 @@
 #' @seealso [copy_SS_inputs()],
 #' [populate_multiple_folders()]
 #' @examples
-#'
 #' \dontrun{
 #' extdata_mods <- system.file("extdata", package = "r4ss")
 #' dirvec <- c(

@@ -24,7 +24,6 @@
 #' @seealso [SS_tune_comps()], [SS_parlines()], [SS_changepars()]
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' # load model output into R
 #' replist <- SS_output(dir = "c:/model/")

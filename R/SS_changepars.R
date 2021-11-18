@@ -72,7 +72,6 @@
 #' @seealso [SS_parlines()], [SS_profile()]
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' SS_changepars(
 #'   dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
@@ -96,8 +95,7 @@
 #' ## 2 0.600000     0.6       -4       -4    0.0    0.0      2      2   # SR_sigmaR
 #' }
 SS_changepars <-
-  function(
-           dir = NULL,
+  function(dir = NULL,
            ctlfile = "control.ss_new",
            newctlfile = "control_modified.ss",
            linenums = NULL, strings = NULL, newvals = NULL, repeat.vals = FALSE,
@@ -172,10 +170,12 @@ SS_changepars <-
     }
     ctlsubset <- ctl[linenums]
     if (verbose) {
-      message("line numbers in control file (n=", length(linenums), "): ", 
-              paste(linenums, collapse = ", "))
+      message(
+        "line numbers in control file (n=", length(linenums), "): ",
+        paste(linenums, collapse = ", ")
+      )
     }
-    
+
     # define objects to store changes
     newctlsubset <- NULL
     cmntvec <- NULL

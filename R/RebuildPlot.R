@@ -41,7 +41,6 @@
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' # example with one file
 #' DoProjectPlots(
@@ -402,8 +401,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
       if (any(Labels == "default")) {
         titls <- titles[II]
         if (length(FileN) > 0) titls <- paste(Titles[Ifile], ": ", titls, sep = "")
-      }
-      else {
+      } else {
         titls <- Labels[IlineType]
       }
 

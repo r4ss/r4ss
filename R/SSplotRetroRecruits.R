@@ -30,7 +30,6 @@
 #' <http://www.afsc.noaa.gov/REFM/docs/2011/EBSpollock.pdf>. (Figure 1.31,
 #' which is on an absolute, rather than log scale.)
 #' @examples
-#'
 #' \dontrun{
 #' # run retrospective analysis
 #' SS_doRetro(olddir = "2013hake_12", years = 0:-10)

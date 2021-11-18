@@ -41,7 +41,6 @@
 #' @export
 #' @seealso [SS_output()] [SSgetMCMC()]
 #' @examples
-#'
 #' \dontrun{
 #'
 #' # define directory
