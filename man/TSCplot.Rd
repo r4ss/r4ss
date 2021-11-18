@@ -88,7 +88,6 @@ are to be plotted, a 'mcmc' list element should be added using the
 \code{\link[=SSgetMCMC]{SSgetMCMC()}} function. See the examples below.
 }
 \examples{
-
 \dontrun{
 
 # define directory

@@ -21,6 +21,7 @@ SS_readctl_3.30(
   Do_AgeKey = NULL,
   N_tag_groups = NULL,
   catch_mult_fleets = NULL,
+  predM_fleets = NULL,
   N_rows_equil_catch = NULL,
   N_dirichlet_parms = NULL
 )
@@ -82,6 +83,13 @@ parameters is enabled (TG_custom=1)}
 option. Defaults to NULL and should be left as such if 1) the catch
 multiplier option is not used for any fleets or 2) use_datlist = TRUE and
 datlist is specified.}
+
+\item{predM_fleets}{integer vector of fleets with predator mortality included.
+Predator mortality fleets are only available in v3.30.18 and
+higher. Defaults to NULL and should be left as such if 1) predation mortality
+is not used for any fleets; 2) use_datlist = TRUE and datlist is specified;
+or 3) if comments in the control file should be used instead to determine
+the the predM_fleets.}
 
 \item{N_rows_equil_catch}{Integer value of the number of parameter lines to
 read for equilibrium catch. Defaults to NULL, which means the function will

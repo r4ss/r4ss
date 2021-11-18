@@ -44,7 +44,6 @@ followed by a non-numeric element. It's possible that this system could
 break down under certain circumstances
 }
 \examples{
-
 \dontrun{
 parlines <- SS_parlines(ctlfile = "c:/ss/Simple/Control.SS_New")
 head(parlines)
