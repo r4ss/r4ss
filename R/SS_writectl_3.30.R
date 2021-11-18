@@ -851,7 +851,7 @@ SS_writectl_3.30 <- function(ctllist, outfile, overwrite = FALSE, verbose = FALS
       )
     }
     # N at age
-    if (ctllist[["stddev_reporting_specs"]][7] > 0 &
+    if (ctllist[["stddev_reporting_specs"]][7] != 0 &
         ctllist[["stddev_reporting_specs"]][9] > 0) {
       wl.vector("stddev_reporting_N_at_A",
         comment = paste0(

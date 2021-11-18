@@ -1687,7 +1687,7 @@ SS_readctl_3.30 <- function(file, verbose = FALSE, echoall = lifecycle::deprecat
       )
     }
     ## N at age
-    if (ctllist[["stddev_reporting_specs"]][7] > 0 &
+    if (ctllist[["stddev_reporting_specs"]][7] != 0 &
         ctllist[["stddev_reporting_specs"]][9] > 0) {
       ctllist <- add_vec(ctllist,
         name = "stddev_reporting_N_at_A",
