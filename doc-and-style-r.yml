@@ -90,7 +90,7 @@ jobs:
           if(isTRUE(length(to_rm)>0)) {
             files_to_change <- files_to_change[-to_rm]
           }
-          out <- lapply(files_to_change, function(x) r4ss::rm_dollar_sign(x))
+          out <- lapply(files_to_change, function(x) r4ss:::rm_dollar_sign(x))
         shell: Rscript {0}
 
       - name: check if any changes
