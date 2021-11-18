@@ -5,7 +5,7 @@ on:
   workflow_call:
 
 jobs:
-  run-no-est:
+  test-r4ss-with-ss3:
     runs-on: ubuntu-latest
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
@@ -61,14 +61,14 @@ jobs:
 
       - name: run SS output and SS plots
         run: |
-          mod_names <- list.dirs("model_runs", full.names = FALSE, recursive = FALSE)
+          mod_names <- list.dirs("ss-test-models-repo/model_runs", full.names = FALSE, recursive = FALSE)
           print(mod_names)
           if(length(mod_names) == 0) {
             stop("Did not r4ss on any models; perhaps path to models is not correct?")
           }
 
           out <- lapply(mod_names, function(i) {
-            tryCatch(r4ss::SS_output(file.path("run_R", "model_runs", i),
+            tryCatch(r4ss::SS_output(file.path("ss-test-models-repo", "model_runs", i),
                                      verbose = FALSE, hidewarn = TRUE, printstats = FALSE),
                      error = function(e) {
                        print(e)
