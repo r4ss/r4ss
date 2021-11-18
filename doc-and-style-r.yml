@@ -54,9 +54,11 @@ jobs:
           echo "::set-output name=msg::${last_commit_msg}"
 
       - name: Style
+        run: Rscript -e 'styler::style_pkg()'
+
+      - name: check for changes
         id: style
         run: |
-          Rscript -e 'styler::style_pkg()'
           changes=$(git status -s)
           echo "::set-output name=changes::${style-changes}"
 
@@ -69,9 +71,10 @@ jobs:
           git commit -m 'Style: run styler::style_pkg()'
 
       - name: Document
+        run: Rscript -e 'roxygen2::roxygenise()'
+      - name: check for doc-changes
         id: doc
         run: |
-          Rscript -e 'roxygen2::roxygenise()'
           changes=$(git status -s)
           echo "::set-output name=changes::${doc-changes}"
 
