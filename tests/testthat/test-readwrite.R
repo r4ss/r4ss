@@ -19,7 +19,7 @@ test_that("models can be read and written", {
     start <- SS_readstarter(file = file.path(m, "starter.ss"), verbose = FALSE)
     fore <- SS_readforecast(file.path(m, "forecast.ss"), verbose = FALSE)
     dat <- SS_readdat(file.path(m, start[["datfile"]]), verbose = FALSE)
-    ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat, verbose = FALSE)
+    ctl <- SS_readctl(file.path(m, start[["ctlfile"]]), datlist = dat)
     expect_true(is.list(start))
     expect_true(is.list(fore))
     expect_true(is.list(dat))
