@@ -8,12 +8,7 @@ Stock Synthesis is a fisheries stock assessment model written in ADMB by Rick Me
 
 ## Installation
 
-The CRAN version of r4ss is out of date. It will be updated whenever SS version 3.30.17 gets released at which point you can install r4ss via:
-```S
-install.packages("r4ss")
-```
-
-For now, it is necessary to install the main branch directly from GitHub:
+The CRAN version of r4ss is out of date. For now, it is necessary to install the main branch directly from GitHub:
 
 ```S
 install.packages("remotes")
