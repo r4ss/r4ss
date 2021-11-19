@@ -43,6 +43,7 @@ jobs:
         run: |
           mv ss-test-models-repo/models/Simple .
           mv SS330/ss ss
+          ls
 
       - name: change permissions on ss exe
         run: chmod a+x ss
