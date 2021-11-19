@@ -41,16 +41,15 @@ jobs:
 
       - name: move exes, scripts to needed locations
         run: |
-          mv ss-test-models-repo/models ss-test-models-repo/model_runs
-          mv SS330/ss ss-test-models-repo/model_runs/Simple/ss
+          mv ss-test-models-repo/models/Simple .
+          mv SS330/ss ss
 
       - name: change permissions on ss exe
-        run: chmod a+x ss-test-models-repo/model_runs/Simple/ss
+        run: chmod a+x ss
 
       - name: run models without estimation
         run: |
           # Run NUTS algorithim in ADMB to make sure still works with stock synthesis
-          setwd("ss-test-models-repo/model_runs/Simple/ss")
           # run the simple model with -hbf option to get the necessary files
           system("./ss -hbf")
           # run the simple model 30 times using the NUTS algorithim
