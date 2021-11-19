@@ -915,8 +915,8 @@ SSplotIndices <-
           usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
           if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
             usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE) + 1,
-                                         alpha = 0.7
-                                         )[-1]
+              alpha = 0.7
+            )[-1]
           }
         }
         # make empty plot

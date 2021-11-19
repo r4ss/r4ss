@@ -19,8 +19,8 @@
 #' @param plotdir directory where PNG files will be written. by default it will
 #' be the directory where the model was run.
 #' @template pwidth
-#' @template pheight 
-#' @template punits 
+#' @template pheight
+#' @template punits
 #' @template ptsize
 #' @template res
 #' @param verbose report progress to R GUI?
@@ -80,7 +80,7 @@ SSplotSpawnrecruit <-
            expected = TRUE, estimated = TRUE, bias_adjusted = TRUE,
            show_env = TRUE, virg = TRUE, init = TRUE, forecast = FALSE) {
     # plot of spawner recruit curve
-    
+
     # subfunction to write png files
     pngfun <- function(file, caption = NA) {
       png(

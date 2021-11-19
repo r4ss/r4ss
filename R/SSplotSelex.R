@@ -157,13 +157,13 @@ SSplotSelex <-
 
     if (lifecycle::is_present(showmain)) {
       lifecycle::deprecate_warn(
-                   when = "1.41.1", 
-                   what = "SSplotSelex(showmain)",
-                   details = "Please use mainTitle instead. Ability to use showmain will be dropped in next release."
-                 )
+        when = "1.41.1",
+        what = "SSplotSelex(showmain)",
+        details = "Please use mainTitle instead. Ability to use showmain will be dropped in next release."
+      )
       mainTitle <- showmain
     }
-    
+
     # message about skipping plots
     if (is.null(ageselex)) {
       message("Skipping age-based selectivity plots: no output available")
@@ -188,9 +188,11 @@ SSplotSelex <-
       plotdir <- replist[["inputs"]][["dir"]]
     }
 
-    ians_blues <- c("white", "grey", "lightblue", "skyblue", "steelblue1",
-                    "slateblue", topo.colors(6), "blue", "blue2", "blue3",
-                    "blue4", "black")
+    ians_blues <- c(
+      "white", "grey", "lightblue", "skyblue", "steelblue1",
+      "slateblue", topo.colors(6), "blue", "blue2", "blue3",
+      "blue4", "black"
+    )
 
     if (fleets[1] == "all") {
       fleets <- 1:nfleets
@@ -200,7 +202,7 @@ SSplotSelex <-
       }
     }
     # note lower-case value is the one used below (either equal to vector from replist, or input by user)
-    if (fleetnames[1] == "default") fleetnames <- FleetNames 
+    if (fleetnames[1] == "default") fleetnames <- FleetNames
 
     if (sexes[1] == "all") {
       sexes <- 1:nsexes
@@ -213,13 +215,13 @@ SSplotSelex <-
 
     # set default plot margins
     if (is.null(mar)) {
-      if (mainTitle){
-        mar <-  c(5, 4, 4, 2) + 0.1
+      if (mainTitle) {
+        mar <- c(5, 4, 4, 2) + 0.1
       } else {
         mar <- c(5, 4, 2, 2) + 0.1
       }
     }
-    
+
     ################################################################################
     ### make plot of selectivity at length for all fleets together
     # make plots
@@ -239,7 +241,8 @@ SSplotSelex <-
           ageselex[["Sex"]] %in% sexes, ]
       }
       if (!factor %in% unique(c(sizeselex[["Factor"]], ageselex[["Factor"]]))) {
-        stop("Factor '", factor, "' not found in age- or length-based selectivity. ",
+        stop(
+          "Factor '", factor, "' not found in age- or length-based selectivity. ",
           "This may be due to having 'detailed age-structured reports' ",
           "turned off in the starter file."
         )
@@ -414,7 +417,7 @@ SSplotSelex <-
       if (spacepoints > 0) {
         for (iline in 1:nrow(allselex)) {
           allselex2[iline, (1:ncol(allselex)) %%
-                           spacepoints != (staggerpoints * iline) %% spacepoints] <- NA
+            spacepoints != (staggerpoints * iline) %% spacepoints] <- NA
         }
         matplot(
           x = bins, y = t(allselex2), col = infotable2[["col"]],
@@ -457,13 +460,15 @@ SSplotSelex <-
     if (2 %in% subplot & !is.null(ageselex)) {
       # remove factor == "Asel" if all age-based selectivity == 1
       if ("Asel" %in% agefactors &&
-          all(ageselex[ageselex[["Factor"]] == "Asel",
-                       paste(0:replist[["accuage"]])] == 1)) {
+        all(ageselex[
+          ageselex[["Factor"]] == "Asel",
+          paste(0:replist[["accuage"]])
+        ] == 1)) {
         agefactors <- setdiff(agefactors, "Asel")
         message("Skipping plot of age-based selectivity as all values = 1.0")
       }
 
-      if(length(agefactors) > 0){
+      if (length(agefactors) > 0) {
         for (ifactor in 1:length(agefactors)) {
           factor <- agefactors[ifactor]
           if (plot) {
@@ -473,8 +478,10 @@ SSplotSelex <-
             file <- paste("sel02_multiple_fleets_age", ifactor, ".png", sep = "")
             caption <- "Selectivity at age for multiple fleets."
             if (factor == "Asel2") {
-              caption <- paste("Selectivity at age derived from selectivity at",
-                               "length for multiple fleets.")
+              caption <- paste(
+                "Selectivity at age derived from selectivity at",
+                "length for multiple fleets."
+              )
             }
             plotinfo <- pngfun(file = file, caption = caption)
             infotable2 <- plotAllSel(factor = factor)
@@ -501,20 +508,20 @@ SSplotSelex <-
           if (m == 1 & nsexes == 2) sextitle2 <- "Female ending"
           if (m == 2) sextitle2 <- "Male ending"
           intret <- sizeselex[sizeselex[["Factor"]] == "Ret" &
-                              sizeselex[["Yr"]] != startyr - 3 &
-                              sizeselex[["Sex"]] == m, ]
+            sizeselex[["Yr"]] != startyr - 3 &
+            sizeselex[["Sex"]] == m, ]
           intmort <- sizeselex[sizeselex[["Factor"]] == "Mort" &
-                               sizeselex[["Yr"]] != startyr - 3 &
-                               sizeselex[["Sex"]] == m, ]
+            sizeselex[["Yr"]] != startyr - 3 &
+            sizeselex[["Sex"]] == m, ]
           intkeep <- sizeselex[sizeselex[["Factor"]] == "Keep" &
-                               sizeselex[["Yr"]] != startyr - 3 &
-                               sizeselex[["Sex"]] == m, ]
+            sizeselex[["Yr"]] != startyr - 3 &
+            sizeselex[["Sex"]] == m, ]
           intdead <- sizeselex[sizeselex[["Factor"]] == "Dead" &
-                               sizeselex[["Yr"]] != startyr - 3 &
-                               sizeselex[["Sex"]] == m, ]
+            sizeselex[["Yr"]] != startyr - 3 &
+            sizeselex[["Sex"]] == m, ]
           intselex <- sizeselex[sizeselex[["Factor"]] == "Lsel" &
-                                sizeselex[["Yr"]] != startyr - 3 &
-                                sizeselex[["Sex"]] == m, ]
+            sizeselex[["Yr"]] != startyr - 3 &
+            sizeselex[["Sex"]] == m, ]
           plotselex <- intselex[intselex[["Fleet"]] == i, ]
           plotret <- intret[intret[["Fleet"]] == i, ]
           plotmort <- intmort[intmort[["Fleet"]] == i, ]
@@ -533,16 +540,20 @@ SSplotSelex <-
             main <- paste(sextitle1, "varying selectivity for ", fleetnames[i], sep = "")
             if (plot) {
               if (3 %in% subplot) {
-                persp(x, y, z, col = "white", xlab = labels[1],
-                      ylab = labels[3], zlab = labels[4], expand = 0.5,
-                      box = TRUE, main = ifelse(mainTitle, main, ""),
-                      cex.main = cex.main, ticktype = "detailed",
-                      phi = 35, theta = -10)
+                persp(x, y, z,
+                  col = "white", xlab = labels[1],
+                  ylab = labels[3], zlab = labels[4], expand = 0.5,
+                  box = TRUE, main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, ticktype = "detailed",
+                  phi = 35, theta = -10
+                )
               }
               if (4 %in% subplot) {
-                contour(x, y, z, nlevels = 5, xlab = labels[1],
-                        ylab = labels[3], main = ifelse(mainTitle, main, ""),
-                        cex.main = cex.main, col = ians_blues, lwd = lwd)
+                contour(x, y, z,
+                  nlevels = 5, xlab = labels[1],
+                  ylab = labels[3], main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, col = ians_blues, lwd = lwd
+                )
               }
             }
             if (print) {
@@ -550,19 +561,23 @@ SSplotSelex <-
                 file <- paste("sel03_len_timevary_surf_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Surface plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                persp(x, y, z, col = "white", xlab = labels[1], ylab = labels[3],
-                      zlab = labels[4], expand = 0.5, box = TRUE,
-                      main = ifelse(mainTitle, main, ""), cex.main = cex.main,
-                      ticktype = "detailed", phi = 35, theta = -10)
+                persp(x, y, z,
+                  col = "white", xlab = labels[1], ylab = labels[3],
+                  zlab = labels[4], expand = 0.5, box = TRUE,
+                  main = ifelse(mainTitle, main, ""), cex.main = cex.main,
+                  ticktype = "detailed", phi = 35, theta = -10
+                )
                 dev.off()
               }
               if (4 %in% subplot) {
                 file <- paste("sel04_len_timevary_contour_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Countour plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                contour(x, y, z, nlevels = 5, xlab = labels[1], ylab = labels[3],
-                        main = ifelse(mainTitle, main, ""), cex.main = cex.main,
-                        col = ians_blues, lwd = lwd)
+                contour(x, y, z,
+                  nlevels = 5, xlab = labels[1], ylab = labels[3],
+                  main = ifelse(mainTitle, main, ""), cex.main = cex.main,
+                  col = ians_blues, lwd = lwd
+                )
                 dev.off()
               }
             }
@@ -581,16 +596,20 @@ SSplotSelex <-
             main <- paste(sextitle1, "varying retention for ", fleetnames[i], sep = "")
             if (plot) {
               if (5 %in% subplot) {
-                persp(x, y, z, col = "white", xlab = labels[1],
-                      ylab = labels[3], zlab = labels[5], expand = 0.5,
-                      box = TRUE, main = ifelse(mainTitle, main, ""),
-                      cex.main = cex.main, ticktype = "detailed",
-                      phi = 35, theta = -10)
+                persp(x, y, z,
+                  col = "white", xlab = labels[1],
+                  ylab = labels[3], zlab = labels[5], expand = 0.5,
+                  box = TRUE, main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, ticktype = "detailed",
+                  phi = 35, theta = -10
+                )
               }
               if (6 %in% subplot) {
-                contour(x, y, z, nlevels = 5, xlab = labels[1],
-                        ylab = labels[3], main = ifelse(mainTitle, main, ""),
-                        cex.main = cex.main, col = ians_blues, lwd = lwd)
+                contour(x, y, z,
+                  nlevels = 5, xlab = labels[1],
+                  ylab = labels[3], main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, col = ians_blues, lwd = lwd
+                )
               }
             }
             if (print) {
@@ -598,20 +617,24 @@ SSplotSelex <-
                 file <- paste("sel05_timevary_ret_surf_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Surface plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                persp(x, y, z, col = "white", xlab = labels[1],
-                      ylab = labels[3], zlab = labels[5], expand = 0.5,
-                      box = TRUE, main = ifelse(mainTitle, main, ""),
-                      cex.main = cex.main, ticktype = "detailed",
-                      phi = 35, theta = -10)
+                persp(x, y, z,
+                  col = "white", xlab = labels[1],
+                  ylab = labels[3], zlab = labels[5], expand = 0.5,
+                  box = TRUE, main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, ticktype = "detailed",
+                  phi = 35, theta = -10
+                )
                 dev.off()
               }
               if (6 %in% subplot) {
                 file <- paste("sel06_timevary_ret_contour_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Countour plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                contour(x, y, z, nlevels = 5, xlab = labels[1],
-                        ylab = labels[3], main = ifelse(mainTitle, main, ""),
-                        cex.main = cex.main, col = ians_blues, lwd = lwd)
+                contour(x, y, z,
+                  nlevels = 5, xlab = labels[1],
+                  ylab = labels[3], main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, col = ians_blues, lwd = lwd
+                )
                 dev.off()
               }
             }
@@ -640,8 +663,8 @@ SSplotSelex <-
               }
               if (8 %in% subplot) {
                 contour(x, y, z,
-                        nlevels = 5, xlab = labels[1], ylab = labels[3],
-                        main = ifelse(mainTitle, main, ""),
+                  nlevels = 5, xlab = labels[1], ylab = labels[3],
+                  main = ifelse(mainTitle, main, ""),
                   cex.main = cex.main, col = ians_blues, lwd = lwd
                 )
               }
@@ -651,19 +674,23 @@ SSplotSelex <-
                 file <- paste("sel07_timevary_mort_surf_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Surface plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                persp(x, y, z, col = "white", xlab = labels[1],
-                      ylab = labels[3], zlab = labels[6], expand = 0.5,
-                      box = TRUE, main = ifelse(mainTitle, main, ""),
-                      cex.main = cex.main, ticktype = "detailed", phi = 35, theta = -10)
+                persp(x, y, z,
+                  col = "white", xlab = labels[1],
+                  ylab = labels[3], zlab = labels[6], expand = 0.5,
+                  box = TRUE, main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, ticktype = "detailed", phi = 35, theta = -10
+                )
                 dev.off()
               }
               if (8 %in% subplot) {
                 file <- paste("sel08_timevary_mort_contour_flt", i, "sex", m, ".png", sep = "")
                 caption <- paste("Surface plot of", main)
                 plotinfo <- pngfun(file = file, caption = caption)
-                contour(x, y, z, nlevels = 5, xlab = labels[1],
-                        ylab = labels[3], main = ifelse(mainTitle, main, ""),
-                        cex.main = cex.main, col = ians_blues, lwd = lwd)
+                contour(x, y, z,
+                  nlevels = 5, xlab = labels[1],
+                  ylab = labels[3], main = ifelse(mainTitle, main, ""),
+                  cex.main = cex.main, col = ians_blues, lwd = lwd
+                )
                 dev.off()
               }
             }
@@ -720,30 +747,35 @@ SSplotSelex <-
               # add additional lines if requested
               if (2 %in% selexlines) {
                 lines(as.numeric(as.vector(names(plotret)[-(1:5)])),
-                      as.numeric(as.character(plotret[1, -(1:5)])),
-                      col = "red", type = "o", pch = 3, cex = .9)
+                  as.numeric(as.character(plotret[1, -(1:5)])),
+                  col = "red", type = "o", pch = 3, cex = .9
+                )
                 ylab <- paste(ylab, ", Retention", sep = "")
               }
               if (3 %in% selexlines) {
                 lines(as.numeric(as.vector(names(plotmort)[-(1:5)])),
-                      as.numeric(as.character(plotmort[1, -(1:5)])),
-                      col = "orange", type = "o", pch = 4, cex = .9)
+                  as.numeric(as.character(plotmort[1, -(1:5)])),
+                  col = "orange", type = "o", pch = 4, cex = .9
+                )
                 ylab <- paste(ylab, ", Mortality", sep = "")
               }
               if (4 %in% selexlines) {
                 lines(as.numeric(as.vector(names(plotkeep)[-(1:5)])),
-                      as.numeric(as.character(plotkeep[1, -(1:5)])),
-                      col = "purple", type = "o", pch = 2, cex = .9)
+                  as.numeric(as.character(plotkeep[1, -(1:5)])),
+                  col = "purple", type = "o", pch = 2, cex = .9
+                )
               }
               if (5 %in% selexlines) {
                 lines(as.numeric(as.vector(names(plotdead)[-(1:5)])),
-                      as.numeric(as.character(plotdead[1, -(1:5)])),
-                      col = "green3", type = "o", pch = 5, cex = .9)
+                  as.numeric(as.character(plotdead[1, -(1:5)])),
+                  col = "green3", type = "o", pch = 5, cex = .9
+                )
               }
               if (6 %in% selexlines) {
                 lines(as.numeric(as.vector(names(plotdead)[-(1:5)])),
-                      as.numeric(as.character(plotdisc[1, -(1:5)])),
-                      col = "grey50", type = "o", pch = 6, cex = .9)
+                  as.numeric(as.character(plotdisc[1, -(1:5)])),
+                  col = "grey50", type = "o", pch = 6, cex = .9
+                )
               }
               # add legend
               legend(legendloc,
@@ -760,7 +792,7 @@ SSplotSelex <-
           }
           # make plot if selectivity is not constant at 0 or 1 for all bins
           if ((min(vals) < 1 & max(vals) > 0) |
-              (!is.na(diff(range(retvals))) && diff(range(retvals)) != 0)) {
+            (!is.na(diff(range(retvals))) && diff(range(retvals)) != 0)) {
             if (9 %in% subplot) {
               if (plot) selfunc()
               if (print) {
@@ -770,7 +802,7 @@ SSplotSelex <-
                 selfunc()
                 dev.off()
               }
-            }            
+            }
           }
         } # sexes
       } # fleets
@@ -815,15 +847,19 @@ SSplotSelex <-
                 main <- paste(sextitle1, "varying selectivity for ", fleetnames[i], sep = "")
                 if (plot) {
                   if (11 %in% subplot) {
-                    persp(x, y, z, col = "white", xlab = labels[2],
-                          ylab = labels[3], zlab = ylab, expand = 0.5,
-                          box = TRUE, main = ifelse(mainTitle, main, ""), cex.main = cex.main,
-                          ticktype = "detailed", phi = 35, theta = -10)
+                    persp(x, y, z,
+                      col = "white", xlab = labels[2],
+                      ylab = labels[3], zlab = ylab, expand = 0.5,
+                      box = TRUE, main = ifelse(mainTitle, main, ""), cex.main = cex.main,
+                      ticktype = "detailed", phi = 35, theta = -10
+                    )
                   }
                   if (12 %in% subplot) {
-                    contour(x, y, z, nlevels = 5, xlab = labels[2],
-                            main = ifelse(mainTitle, main, ""),
-                            cex.main = cex.main, col = ians_blues, lwd = lwd)
+                    contour(x, y, z,
+                      nlevels = 5, xlab = labels[2],
+                      main = ifelse(mainTitle, main, ""),
+                      cex.main = cex.main, col = ians_blues, lwd = lwd
+                    )
                   }
                 }
                 if (print) {
@@ -831,20 +867,24 @@ SSplotSelex <-
                     file <- paste("sel11_timevary_surf_flt", i, "sex", m, ".png", sep = "")
                     caption <- main
                     plotinfo <- pngfun(file = file, caption = caption)
-                    persp(x, y, z, col = "white", xlab = labels[2],
-                          ylab = labels[3], zlab = ylab, expand = 0.5,
-                          box = TRUE, main = ifelse(mainTitle, main, ""),
-                          cex.main = cex.main, ticktype = "detailed",
-                          phi = 35, theta = -10)
+                    persp(x, y, z,
+                      col = "white", xlab = labels[2],
+                      ylab = labels[3], zlab = ylab, expand = 0.5,
+                      box = TRUE, main = ifelse(mainTitle, main, ""),
+                      cex.main = cex.main, ticktype = "detailed",
+                      phi = 35, theta = -10
+                    )
                     dev.off()
                   }
                   if (12 %in% subplot) {
                     file <- paste("sel12_timevary_contour_flt", i, "sex", m, ".png", sep = "")
                     caption <- main
                     plotinfo <- pngfun(file = file, caption = caption)
-                    contour(x, y, z, nlevels = 5, xlab = labels[2],
-                            main = ifelse(mainTitle, main, ""),
-                            cex.main = cex.main, col = ians_blues, lwd = lwd)
+                    contour(x, y, z,
+                      nlevels = 5, xlab = labels[2],
+                      main = ifelse(mainTitle, main, ""),
+                      cex.main = cex.main, col = ians_blues, lwd = lwd
+                    )
                     dev.off()
                   }
                 }
@@ -855,14 +895,14 @@ SSplotSelex <-
                   if (!add) {
                     par(mar = mar)
                     plot(as.numeric(names(plotageselex2)),
-                         as.numeric(paste(c(plotageselex2))),
-                         xlab = labels[2], ylim = c(0, 1), main = ifelse(mainTitle, main, ""),
-                         cex.main = cex.main, ylab = ylab,
-                         type = "n", col = col2, cex = 1.1
+                      as.numeric(paste(c(plotageselex2))),
+                      xlab = labels[2], ylim = c(0, 1), main = ifelse(mainTitle, main, ""),
+                      cex.main = cex.main, ylab = ylab,
+                      type = "n", col = col2, cex = 1.1
                     )
                   }
                   lines(as.numeric(names(plotageselex2)),
-                        as.numeric(paste(c(plotageselex2))),
+                    as.numeric(paste(c(plotageselex2))),
                     type = "o", col = col2, cex = 1.1
                   )
                   abline(h = 0, col = "grey")
@@ -893,7 +933,7 @@ SSplotSelex <-
               }
               if (doplot) {
                 main <- paste(sextitle2, " year selectivity for ", fleetnames[i], sep = "")
-                
+
                 endselfunc2 <- function() {
                   if (!add) {
                     par(mar = mar)
@@ -994,8 +1034,10 @@ SSplotSelex <-
       #   by info on the growth within the season when each fleet operates.
       growdat <- growdat[growdat[["Seas"]] == season, ]
       if (nseasons > 1) {
-        message("Warning: plots showing growth curve with selectivity are using season ",
-                season, " growth, which may not match the timing of the fishery.")
+        message(
+          "Warning: plots showing growth curve with selectivity are using season ",
+          season, " growth, which may not match the timing of the fishery."
+        )
       }
 
       # Mid year mean length at age with 95% range of lengths (by sex if applicable)
@@ -1120,13 +1162,13 @@ SSplotSelex <-
             #        including bins for which no uncertainty was requested
             if (agelen == "L") {
               plotselex <- sizeselex[sizeselex[["Factor"]] == "Lsel" &
-                                     ageselex[["Fleet"]] == i &
-                                     sizeselex[["Sex"]] == m, ]
+                ageselex[["Fleet"]] == i &
+                sizeselex[["Sex"]] == m, ]
             }
             if (agelen == "A") {
               plotselex <- ageselex[ageselex[["Factor"]] == "Asel" &
-                                    ageselex[["Fleet"]] == i &
-                                    ageselex[["Sex"]] == m, ]
+                ageselex[["Fleet"]] == i &
+                ageselex[["Sex"]] == m, ]
             }
           }
 
@@ -1134,17 +1176,17 @@ SSplotSelex <-
             if (!add) {
               par(mar = mar)
               plot(seltemp[["bin"]], seltemp[["Value"]],
-                   xlab = xlab, ylim = c(0, 1),
-                   main = ifelse(mainTitle, main, ""), cex.main = cex.main,
-                   ylab = labels[4], type = "n", col = col2, cex = 1.1,
-                   xlim = c(0, max(seltemp[["bin"]])),
+                xlab = xlab, ylim = c(0, 1),
+                main = ifelse(mainTitle, main, ""), cex.main = cex.main,
+                ylab = labels[4], type = "n", col = col2, cex = 1.1,
+                xlim = c(0, max(seltemp[["bin"]])),
               )
             }
             lines(seltemp[["bin"]], seltemp[["Value"]],
-                  xlab = xlab, ylim = c(0, 1),
-                  main = ifelse(mainTitle, main, ""), cex.main = cex.main,
-                  ylab = labels[4], type = "o", col = col2, cex = 1.1,
-                  xlim = c(0, max(seltemp[["bin"]]))
+              xlab = xlab, ylim = c(0, 1),
+              main = ifelse(mainTitle, main, ""), cex.main = cex.main,
+              ylab = labels[4], type = "o", col = col2, cex = 1.1,
+              xlim = c(0, max(seltemp[["bin"]]))
             )
             arrows(
               x0 = seltemp[["bin"]][no0], y0 = seltemp[["lower"]][no0],

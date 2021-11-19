@@ -46,8 +46,8 @@ SSplotYield <-
              "Fraction unfished", # 1
              "Equilibrium yield (mt)", # 2
              "Total biomass (mt)", # 3
-             "Surplus production (mt)", #4
-             "Yield per recruit (kg)" #5
+             "Surplus production (mt)", # 4
+             "Yield per recruit (kg)" # 5
            ),
            col = "blue", col2 = "black", lty = 1, lwd = 2, cex.main = 1,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10,
@@ -72,7 +72,7 @@ SSplotYield <-
     }
     nareas <- replist[["nareas"]]
     nseasons <- replist[["nseasons"]]
-    timeseries <- replist[["timeseries"]]    
+    timeseries <- replist[["timeseries"]]
     SSB0 <- replist[["derived_quants"]]["SSB_Virgin", "Value"]
 
     # function for yield curve
@@ -239,18 +239,19 @@ SSplotYield <-
         sub <- sprseries[["Yr"]] <= replist[["endyr"]]
       }
       # plot a line
-      plot(x = sprseries[["Yr"]][sub],
-           y = sprseries[["YPR"]][sub],
-           ylim = c(0, 1.1 * max(sprseries[["YPR"]][sub], na.rm = TRUE)),
-           xlab = "Year",
-           ylab = labels[5],
-           type = "l",
-           lwd = 2,
-           col = "blue",
-           yaxs = "i"
-           )
+      plot(
+        x = sprseries[["Yr"]][sub],
+        y = sprseries[["YPR"]][sub],
+        ylim = c(0, 1.1 * max(sprseries[["YPR"]][sub], na.rm = TRUE)),
+        xlab = "Year",
+        ylab = labels[5],
+        type = "l",
+        lwd = 2,
+        col = "blue",
+        yaxs = "i"
+      )
     } # end YPR_timeseries function
-    
+
     if (3 %in% subplots) {
       if (plot) {
         sprodfunc()
@@ -291,7 +292,7 @@ SSplotYield <-
         }
       } # end check for sprseries available
     } # end check for 4 in subplots
-    
+
     if (!is.null(plotinfo)) plotinfo[["category"]] <- "Yield"
     return(invisible(plotinfo))
   } # end function

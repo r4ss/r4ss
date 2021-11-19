@@ -49,7 +49,6 @@ data files, than copies those files along with starter.ss, forecast.ss,
 and wtatage.ss (if present) to a new directory, as specified.
 }
 \examples{
-
 \dontrun{
 copy_SS_inputs(
   dir.old = "c:/SS/old_model",

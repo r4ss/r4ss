@@ -72,7 +72,6 @@ reported in Report.sso. If movement is time-varying, an additional figure shows
 pattern across years.
 }
 \examples{
-
 \dontrun{
 SSplotMovementRates(myreplist)
 }

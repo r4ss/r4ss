@@ -29,7 +29,6 @@
 #' [SS_readctl_3.24()]
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' parlines <- SS_parlines(ctlfile = "c:/ss/Simple/Control.SS_New")
 #' head(parlines)

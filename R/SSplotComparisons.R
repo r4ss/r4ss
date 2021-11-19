@@ -168,7 +168,6 @@
 #' @seealso [SS_plots()], [SSsummarize()],
 #' [SS_output()], [SSgetoutput()]
 #' @examples
-#'
 #' \dontrun{
 #' # directories where models were run need to be defined
 #' dir1 <- "c:/SS/mod1"
@@ -1470,11 +1469,13 @@ SSplotComparisons <-
         recdevs[["Yr"]] >= xlim[1] &
           recdevs[["Yr"]] <= xlim[2],
         models
-        ], na.rm = TRUE)
+      ], na.rm = TRUE)
 
       if (any(is.infinite(ylim))) {
-        warning('Skipping recdev plots. Infinite ylim may indicate ',
-                'all values are NA in summaryoutput[["recdevs"]]')
+        warning(
+          "Skipping recdev plots. Infinite ylim may indicate ",
+          'all values are NA in summaryoutput[["recdevs"]]'
+        )
         return(ylim[2])
       }
       if (show_uncertainty) {

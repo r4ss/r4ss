@@ -41,22 +41,23 @@ SSsummarize <- function(biglist,
                         verbose = TRUE) {
   # confirm that biglist is a list of lists, each created by SS_output()
   # this could be improved with the use of S3 classes in the future
-  if (!is.list(biglist) | # if whole thing is not a list 
-      !is.list(biglist[[1]]) | # or if the first element isn't also a list
-      !"parameters" %in% names(biglist[[1]])) { # or if 1st list seems wrong
-    stop("Input 'biglist' needs to be a list of the lists returned by ",
-         "SS_output(), either by grouping those lists within 'list()', or ",
-         "running SSgetoutput() which calls SS_output() repeatedly ",
-         "and returning a big list in the appropriate format.")
-    
+  if (!is.list(biglist) | # if whole thing is not a list
+    !is.list(biglist[[1]]) | # or if the first element isn't also a list
+    !"parameters" %in% names(biglist[[1]])) { # or if 1st list seems wrong
+    stop(
+      "Input 'biglist' needs to be a list of the lists returned by ",
+      "SS_output(), either by grouping those lists within 'list()', or ",
+      "running SSgetoutput() which calls SS_output() repeatedly ",
+      "and returning a big list in the appropriate format."
+    )
   }
-  
+
   # loop over outputs to create list of parameters, derived quantities, and years
   parnames <- NULL
   dernames <- NULL
   likenames <- NULL
   allyears <- NULL
-  
+
   # figure out how many models and give them names if they don't have them already
   n <- length(biglist)
   modelnames <- names(biglist)
@@ -90,12 +91,14 @@ SSsummarize <- function(biglist,
   sizesel <- NULL
   agesel <- NULL
   accuage <- max(accuages)
-  if(all(accuages == accuage)) {
+  if (all(accuages == accuage)) {
     growth <- as.data.frame(matrix(NA, nrow = accuage + 1, ncol = n))
     names(growth) <- modelnames
   } else {
-    warning("problem summarizing growth due to different ",
-            "accumulator ages among models")
+    warning(
+      "problem summarizing growth due to different ",
+      "accumulator ages among models"
+    )
     growth <- NULL
   }
   # notes about what runs were used
@@ -207,20 +210,20 @@ SSsummarize <- function(biglist,
         # subset for the female main morph
         imorphf <- stats[["morph_indexing"]][["Index"]][
           stats[["morph_indexing"]][["Sex"]] == 1 &
-          stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
+            stats[["morph_indexing"]][["Platoon"]] %in% stats$mainmorphs
         ]
         growthtemp <- growthtemp[growthtemp[["Morph"]] == imorphf, -(1:4)]
         # remove any rows with all zeros (not sure why these occur)
         growthtemp <- growthtemp[apply(growthtemp, 1, sum) > 0, ]
         # get last row and bind to values from previous models
         if (nrow(growthtemp) > 0) {
-          growth[,imodel] <- as.numeric(growthtemp[nrow(growthtemp), ])
+          growth[, imodel] <- as.numeric(growthtemp[nrow(growthtemp), ])
         } else {
-          growth[,imodel] <- NA
+          growth[, imodel] <- NA
         }
       }
     }
-    
+
     ## likelihoods (total by component)
     liketemp <- stats[["likelihoods_used"]]
     for (irow in 1:nrow(liketemp)) {
@@ -594,17 +597,21 @@ SSsummarize <- function(biglist,
     newrows <- grep(newgrep, data[, "Label"])
     fix <- which(apply(
       X = data[newrows, grep("model", colnames(data))],
-      MARGIN = 2, function(vector) all(is.na(vector))))
+      MARGIN = 2, function(vector) all(is.na(vector))
+    ))
     if (length(oldrows) != length(newrows) | length(fix) == 0) {
       return(data)
     }
     if (get("verbose", envir = parent.frame()) &
-        deparse(substitute(data)) == "pars") {
-      message("For model(s) ", paste(fix, collapse = ", "),
+      deparse(substitute(data)) == "pars") {
+      message(
+        "For model(s) ", paste(fix, collapse = ", "),
         ", values in 'pars', 'parsSD', and 'parphases' for\n",
         paste(data[oldrows, "Label"], data[newrows, "Label"],
-          sep = " -> ", collapse = ", "),
-        "\nwere copied from x -> y.")
+          sep = " -> ", collapse = ", "
+        ),
+        "\nwere copied from x -> y."
+      )
     }
     data[newrows, fix] <- data[oldrows, fix]
     return(data)

@@ -89,7 +89,6 @@ Makes four panel plot showing trace plots, moving average, autocorrelations,
 and densities for chosen parameters from MCMC output.
 }
 \examples{
-
 \dontrun{
 mcmc.df <- SSgetMCMC(
   dir = "mcmcRun", writecsv = T,
@@ -100,12 +99,13 @@ mcmc.out("mcmcRun", run = "", numparams = 4, closeall = F)
 
 # Or for more control
 par(mar = c(5, 3.5, 0, 0.5), oma = c(0, 2.5, 0.2, 0))
-mcmc.out("mcmcRun", 
-         run = "",
-         numparams = 1,
-         closeall = F,
-         new = F, 
-         colNames = c("NatM_p_1_Fem_GP_1"))
+mcmc.out("mcmcRun",
+  run = "",
+  numparams = 1,
+  closeall = F,
+  new = F,
+  colNames = c("NatM_p_1_Fem_GP_1")
+)
 mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 }
 }

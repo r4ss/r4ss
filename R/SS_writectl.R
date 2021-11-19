@@ -57,10 +57,12 @@ SS_writectl <- function(ctllist, outfile, version = NULL, overwrite = FALSE,
   }
   if (version == "3.30" | version == 3.3) {
     # This function will get nseas, N_areas, and Do_AgeKey from ctllist.
-    SS_writectl_3.30(ctllist = ctllist,
-                     outfile = outfile, 
-                     overwrite = overwrite,
-                     verbose = verbose)
+    SS_writectl_3.30(
+      ctllist = ctllist,
+      outfile = outfile,
+      overwrite = overwrite,
+      verbose = verbose
+    )
   }
   # because this function is used for its side effects (i.e., writing to disk),
   # return its first argument invisibly.

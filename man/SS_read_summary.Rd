@@ -21,7 +21,6 @@ Each is a data frame with rownames indicating the quantity shown in each row.
 read Stock Synthesis ss_summary.sso file into list object in R
 }
 \examples{
-
 \dontrun{
 summary <- SS_read_summary(file = "c:/mymodel/ss_summary.sso")
 }

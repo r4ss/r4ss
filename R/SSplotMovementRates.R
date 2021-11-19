@@ -30,7 +30,6 @@
 #' @export
 #' @seealso [SS_output()], [SSplotMovementRates()],
 #' @examples
-#'
 #' \dontrun{
 #' SSplotMovementRates(myreplist)
 #' }
@@ -109,7 +108,7 @@ SSplotMovementRates <-
           }
           if (plot) move.endyr.fn()
           if (print) {
-            #file <- "move1_movement_rates.png"
+            # file <- "move1_movement_rates.png"
             file <- paste0("move1_movement_rates_seas", moveseas[iseas], ".png")
             caption <- main
             plotinfo <- pngfun(file = file, caption = caption)

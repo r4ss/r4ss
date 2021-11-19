@@ -48,7 +48,6 @@ such as for the purpose of running a new version of SS for an existing
 set of test models.
 }
 \examples{
-
 \dontrun{
 populate_multiple_folders(
   outerdir.old = "c:/SS/old_models",

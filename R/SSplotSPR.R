@@ -83,7 +83,7 @@ SSplotSPR <-
     endyr <- replist[["endyr"]]
     managementratiolabels <- replist[["managementratiolabels"]]
     SPRratioLabel <- replist[["SPRratioLabel"]]
-    
+
     # message about skipping plots
     if (is.null(sprseries)) {
       message("Skipping SPR plots: no output available")
@@ -102,8 +102,9 @@ SSplotSPR <-
       if (grepl("SPR_at_B", SPRratioLabel)) {
         sprtarg <- replist$derived_quants["SPR_Btgt", "Value"]
         sprtarg_label <- substring(SPRratioLabel,
-                                   first = nchar("(1-SPR)/(1-") + 1,
-                                   last = nchar("(1-SPR)/(1-SPR_at_B48%"))
+          first = nchar("(1-SPR)/(1-") + 1,
+          last = nchar("(1-SPR)/(1-SPR_at_B48%")
+        )
       }
     }
     if (btarg == "default") {
@@ -135,9 +136,11 @@ SSplotSPR <-
         file <- "SPR1_series.png"
         caption <- "Timeseries of SPR"
         if (sprtarg > 0) {
-          caption <- paste0(caption,
-                            ". Horizontal line is at ", sprtarg_label, ": ", 
-                            round(sprtarg, 3))
+          caption <- paste0(
+            caption,
+            ". Horizontal line is at ", sprtarg_label, ": ",
+            round(sprtarg, 3)
+          )
         }
         plotinfo <- pngfun(file = file, caption = caption)
         spr_timeseries()
@@ -154,9 +157,9 @@ SSplotSPR <-
         minus_spr_timeseries <- function() {
           if (!add) {
             plot(0,
-                 xlim = range(sprseries[["Yr"]][good]),
-                 xlab = labels[1], ylab = labels[3], ylim = c(0, 1), type = "n"
-                 )
+              xlim = range(sprseries[["Yr"]][good]),
+              xlab = labels[1], ylab = labels[3], ylim = c(0, 1), type = "n"
+            )
           }
           lines(sprseries[["Yr"]][good], (1 - sprseries[["spr"]][good]), type = "o", col = col2)
           if (sprtarg > 0) {
@@ -171,9 +174,11 @@ SSplotSPR <-
           file <- "SPR2_minusSPRseries.png"
           caption <- "Timeseries of 1-SPR"
           if (sprtarg > 0) {
-            caption <- paste0(caption,
-                              ". Horizontal line is at 1 - ", sprtarg_label, ": ", 
-                              "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3))
+            caption <- paste0(
+              caption,
+              ". Horizontal line is at 1 - ", sprtarg_label, ": ",
+              "1 - ", round(sprtarg, 3), " = ", round(1 - sprtarg, 3)
+            )
           }
           plotinfo <- pngfun(file = file, caption = caption)
           minus_spr_timeseries()
@@ -181,7 +186,7 @@ SSplotSPR <-
         }
       } # end check for nseasons == 1
     } # end check for subplot 2
-    
+
     # get SPR ratio and uncertainty (used in suplots 3 and 4)
     SPRratio <- derived_quants[grep(
       "^SPRratio_",
@@ -301,13 +306,17 @@ SSplotSPR <-
       # relative spawning biomass in year t
 
       # find years that are shared by both sets of outputs
-      shared_yrs <- intersect(Bratio[["Yr"]][Bratio[["period"]] %in% period],
-                              SPRratio[["Yr"]][SPRratio[["period"]] %in% period])
+      shared_yrs <- intersect(
+        Bratio[["Yr"]][Bratio[["period"]] %in% period],
+        SPRratio[["Yr"]][SPRratio[["period"]] %in% period]
+      )
       Bratio_vals <- Bratio[["Value"]][Bratio[["Yr"]] %in% shared_yrs]
       SPRratio_vals <- SPRratio[["Value"]][SPRratio[["Yr"]] %in% shared_yrs]
-      if(length(Bratio_vals) != length(SPRratio_vals)){
-        message("Bratio and SPRratio vectors are different in length,",
-                "skipping phase plot.")
+      if (length(Bratio_vals) != length(SPRratio_vals)) {
+        message(
+          "Bratio and SPRratio vectors are different in length,",
+          "skipping phase plot."
+        )
         return()
       }
       plot(Bratio_vals,
@@ -428,7 +437,7 @@ SSplotSPR <-
           col = rgb(0, 0, 0, 0.4)
         )
       }
-      
+
       # add bigger points for first and final years
       points(Bratio_vals[1],
         SPRratio_vals[1],
@@ -461,8 +470,8 @@ SSplotSPR <-
           "colder colors (blue) represent recent years. "
         )
         if (isTRUE(Bratio_endyr_SD > 0 &
-            SPRratio_endyr_SD > 0 &
-            !is.null(B_SPR_endyr_corr))) {
+          SPRratio_endyr_SD > 0 &
+          !is.null(B_SPR_endyr_corr))) {
           caption <- paste0(
             caption,
             "Lines through the final point show 95% intervals ",

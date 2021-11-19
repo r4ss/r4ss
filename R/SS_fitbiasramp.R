@@ -337,7 +337,8 @@ SS_fitbiasramp <-
     if (print) {
       file <- "recruit_fit_bias_adjust.png"
       caption <-
-        paste0("Points are transformed variances. Red line shows current settings ",
+        paste0(
+          "Points are transformed variances. Red line shows current settings ",
           "for bias adjustment specified in control file. ",
           "Blue line shows least squares estimate of alternative bias adjustment ",
           "relationship for recruitment deviations (which may or may not be an ",
@@ -350,7 +351,8 @@ SS_fitbiasramp <-
           "with blue line in figure: \n<pre>"
         )
       for (iline in 1:4) {
-        caption <- paste0(caption, format(round(df[["value"]][iline], 1), nsmall = 1), "   ",
+        caption <- paste0(
+          caption, format(round(df[["value"]][iline], 1), nsmall = 1), "   ",
           df[["label"]][iline], " \n"
         )
       }

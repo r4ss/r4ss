@@ -284,31 +284,38 @@ test_that("SS_readdat/SS_writedat removes lines of 0 age comps from data file", 
   datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
   comp_lines_age <- grep("^-9999  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)[1]
   datfile <- append(datfile,
-                    values = "2000 7 2 3 0 2 -1 -1 75 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-                    after = comp_lines_age-1)
+    values = "2000 7 2 3 0 2 -1 -1 75 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    after = comp_lines_age - 1
+  )
   writeLines(datfile, file.path(temp_path, "zero_comps.dat"))
-  dat <- expect_warning(SS_readdat(file.path(temp_path, "zero_comps.dat"), verbose = FALSE), 
-                        "Lines of all zero age comp found")
+  dat <- expect_warning(
+    SS_readdat(file.path(temp_path, "zero_comps.dat"), verbose = FALSE),
+    "Lines of all zero age comp found"
+  )
   expect_warning(SS_writedat(dat, file.path(temp_path, "comps_rm_age.dat"), verbose = FALSE))
   dat2 <- SS_readdat(file.path(temp_path, "comps_rm_age.dat"))
-  expect_true(nrow(dat[["agecomp"]]) == (nrow(dat2[["agecomp"]])+1))
+  expect_true(nrow(dat[["agecomp"]]) == (nrow(dat2[["agecomp"]]) + 1))
 })
 
 test_that("SS_readdat/SS_writedat removes lines of 0 length comps from data file", {
   datfile <- readLines(file.path(example_path, "simple_3.30.13/simple_data.ss"))
   comp_lines_len <- grep("-9999 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0", datfile)
   datfile <- append(datfile,
-                    values = "2000 7 2 3 0 125 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-                    after = comp_lines_len-1)
+    values = "2000 7 2 3 0 125 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+    after = comp_lines_len - 1
+  )
   writeLines(datfile, file.path(temp_path, "zero_comps_len.dat"))
-  dat <- expect_warning(SS_readdat(file.path(temp_path, "zero_comps_len.dat"),
-                                   verbose = FALSE), 
-                        "Lines of all zero length comp found")
+  dat <- expect_warning(
+    SS_readdat(file.path(temp_path, "zero_comps_len.dat"),
+      verbose = FALSE
+    ),
+    "Lines of all zero length comp found"
+  )
   expect_warning(SS_writedat(dat, file.path(temp_path, "comps_rm_len.dat"),
-                             verbose = FALSE))
+    verbose = FALSE
+  ))
   dat2 <- SS_readdat(file.path(temp_path, "comps_rm_len.dat"), verbose = FALSE)
-  expect_true(nrow(dat[["lencomp"]]) == (nrow(dat2[["lencomp"]])+1))
-  
+  expect_true(nrow(dat[["lencomp"]]) == (nrow(dat2[["lencomp"]]) + 1))
 })
 
 

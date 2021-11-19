@@ -20,7 +20,6 @@
 #' @author Ian Taylor
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' copy_SS_inputs(
 #'   dir.old = "c:/SS/old_model",
@@ -57,9 +56,12 @@ copy_SS_inputs <- function(dir.old = NULL,
     }
   }
   # read starter file to figure out what other inputs are
-  starter <- SS_readstarter(file.path(dir.old,
-                                      ifelse(use_ss_new, "starter.ss_new", "starter.ss")),
-                                      verbose = FALSE)
+  starter <- SS_readstarter(file.path(
+    dir.old,
+    ifelse(use_ss_new, "starter.ss_new", "starter.ss")
+  ),
+  verbose = FALSE
+  )
 
   if (verbose) {
     message("copying files from\n ", dir.old, "\nto\n ", dir.new)
@@ -133,7 +135,7 @@ copy_SS_inputs <- function(dir.old = NULL,
     exefiles <- dir(dir.exe)[is.exe != "no"]
     if (length(exefiles) == 0) {
       warning("No executable files found in ", dir.exe)
-      if(.Platform[["OS.type"]] == "unix") {
+      if (.Platform[["OS.type"]] == "unix") {
         warning("Stock Synthesis executables cannot yet be copied for Mac or Linux")
       }
     }

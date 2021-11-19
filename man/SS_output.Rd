@@ -107,7 +107,6 @@ information and statistics can be returned to the R console or just
 contained within the list produced by this function.
 }
 \examples{
-
 \dontrun{
 # read model output
 myreplist <- SS_output(dir = "c:/SS/Simple/")

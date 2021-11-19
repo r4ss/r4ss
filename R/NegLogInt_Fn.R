@@ -52,12 +52,11 @@
 #' effect estimation of time-varying factors in Stock Synthesis. ICES J. Mar.
 #' Sci.
 #' @examples
-#'
 #' \dontrun{
-#'  # need the full path because wd is changed in function
+#' # need the full path because wd is changed in function
 #' direc <- "C:/Models/LaplaceApprox/base"
 #' if ("Optimization_record.txt" %in% list.files(direc)) {
-#'  file.remove(file.path(direc, "Optimization_record.txt"))
+#'   file.remove(file.path(direc, "Optimization_record.txt"))
 #' }
 #' Opt <- optimize(
 #'   f = NegLogInt_Fn,
@@ -365,9 +364,9 @@ NegLogInt_Fn <- function(File = NA, Input_SD_Group_Vec,
     Sys.sleep(1)
 
     # Estimate new bias ramp
-    if (ReDoBiasRamp == TRUE
-    & stdfile %in% list.files(File)
-    & file.info(file.path(File, stdfile))$size > 0) {
+    if (ReDoBiasRamp == TRUE &
+      stdfile %in% list.files(File) &
+      file.info(file.path(File, stdfile))$size > 0) {
       # try reading output
       SsOutput <- try(SS_output(File, covar = TRUE, forecast = FALSE, verbose = F, printstats = F), silent = TRUE)
       if (class(SsOutput) != "try-error") {

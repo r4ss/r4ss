@@ -18,10 +18,10 @@
 #' @author Yukio Takeuchi
 #' @seealso \code{\link{SS_readdat}}, \code{\link{SS_readdat_3.30}},
 #' \code{\link{SS_readctl}}, \code{\link{SS_readctl_3.30}}
-#' 
+#'
 #
 get_comments <-
-  function (dat, defaultComments = NULL) {
+  function(dat, defaultComments = NULL) {
     # Remove left and right trailing spaces of each line
     dat <- sapply(dat, "trimws")
     names(dat) <- NULL
@@ -29,19 +29,22 @@ get_comments <-
       delLns <-
         unlist(sapply(defaultComments, "grep", x = dat))
       delLns <- unique(delLns)
-      if (length(delLns) > 0)
-        dat <- dat[- delLns]
+      if (length(delLns) > 0) {
+        dat <- dat[-delLns]
+      }
     }
 
     # Regular expression hopefully covering most of numerics
     # https://qiita.com/BlueSilverCat/items/f35f9b03169d0f70818b (in Japanese)
-     regexpNumeric <-
-      '^[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:(?:[eE][+-]?\\d+)|(?:\\*10\\^[+-]?\\d+))?'
+    regexpNumeric <-
+      "^[+-]?(?:\\d+\\.?\\d*|\\.\\d+)(?:(?:[eE][+-]?\\d+)|(?:\\*10\\^[+-]?\\d+))?"
     # Find the 1st line containing numeric data
     firstNumericLine <- grep(dat, pattern = regexpNumeric)[1]
     res <-
-      grep(x = dat[seq_len(firstNumericLine - 1)],
-        pattern = "^#C", value = TRUE)
-    if (length(res) == 0)res <- NULL
+      grep(
+        x = dat[seq_len(firstNumericLine - 1)],
+        pattern = "^#C", value = TRUE
+      )
+    if (length(res) == 0) res <- NULL
     return(res)
-  } 
+  }

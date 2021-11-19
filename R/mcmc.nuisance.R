@@ -29,8 +29,7 @@
 #' @author Ian Stewart
 #' @export
 #' @seealso [mcmc.out()], [SSgetMCMC()]
-mcmc.nuisance <- function(
-                          directory = "c:/mydirectory/", # directory to use
+mcmc.nuisance <- function(directory = "c:/mydirectory/", # directory to use
                           run = "mymodel/", # folder with ADMB run files
                           file = "posteriors.sso", # the file name of the posteriors
                           file2 = "derived_posteriors.sso", # the file name of the posteriors
@@ -45,7 +44,6 @@ mcmc.nuisance <- function(
                           sep = "" # sep for data file
                           )
                           # sample call:  mcmc.nuisance(run="flatfish_tagging\\",burn=0,thin=1,printstats=F,trace=0)
-
                           ##############################################################################################################
                           # Purpose: To summarize nuisance MCMC output (used in combination with mcmc.out() for key parameters)
                           # Written: Ian Stewart, August 2003
@@ -91,7 +89,7 @@ mcmc.nuisance <- function(
   } else {
     # when "all" are requested, exclude Iter and Objective_function columns
     mcmcdata <- mcmcdata[, !names(mcmcdata) %in%
-                           c("Iter", "Objective_function")]
+      c("Iter", "Objective_function")]
   }
 
   ##### change to mcmc object for coda #####

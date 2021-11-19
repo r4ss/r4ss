@@ -56,8 +56,8 @@ SSplotMovementMap <-
     # add arrows
     if (!is.null(xytable) & !is.null(replist)) {
       move <- replist[["movement"]]
-      move <- move[move[["Source_area"]] != move[["Dest_area"]]
-      & move[["Seas"]] == moveseas, ]
+      move <- move[move[["Source_area"]] != move[["Dest_area"]] &
+        move[["Seas"]] == moveseas, ]
 
       lwdvec <- NULL
       ratevec <- NULL
