@@ -41,10 +41,10 @@ jobs:
 
       - name: move exes, scripts to needed locations
         run: |
-          mv ss-test-models-repo/models/Simple/starter.ss .
-          mv ss-test-models-repo/models/Simple/forecast.ss .
-          ss-test-models-repo/models/Simple/control.ss .
-          ss-test-models-repo/models/Simple/data.ss .
+          mv ss-test-models-repo/models/Simple/starter.ss starter.ss
+          mv ss-test-models-repo/models/Simple/forecast.ss forecast.ss
+          mv ss-test-models-repo/models/Simple/control.ss control.ss
+          mv ss-test-models-repo/models/Simple/data.ss data.ss
           mv SS330/ss ss
           ls
 
