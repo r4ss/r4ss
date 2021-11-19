@@ -16,37 +16,42 @@ on.exit(unlink(tmp_path, recursive = TRUE))
 # testing SS_doRetro
 test_that("SS_doRetro runs on simple_3.24 model", {
   path_3.24 <- file.path(runs_path, "simple_3.24")
-  skip_if((!file.exists(file.path(path_3.24, "ss"))) & 
-            (!file.exists(file.path(path_3.24, "ss.exe"))), 
-          message = "skipping test that requires SS executable")
+  skip_if((!file.exists(file.path(path_3.24, "ss"))) &
+    (!file.exists(file.path(path_3.24, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
   SS_doRetro(
     masterdir = path_3.24,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
-  retro_subdirs <- file.path(path_3.24, "retrospectives",
-                             paste0("retro", c("0", "-1", "-2")))
-  retro_ran <- lapply(retro_subdirs, 
-                      function(d) file.exists(file.path(d, "Report.sso")))
+  retro_subdirs <- file.path(
+    path_3.24, "retrospectives",
+    paste0("retro", c("0", "-1", "-2"))
+  )
+  retro_ran <- lapply(
+    retro_subdirs,
+    function(d) file.exists(file.path(d, "Report.sso"))
+  )
   expect_true(all(unlist(retro_ran) == TRUE))
 })
 
-# test commented out b/c there seems to be a bug for retrospectives in 3.30.01; 
+# test commented out b/c there seems to be a bug for retrospectives in 3.30.01;
 # the user should update their model to a newer version of Stock synthesis to
 # run retrospectives
 # test_that("SS_doRetro runs on simple_3.30.01 model", {
 #   path_3.30.01 <- file.path(runs_path, "simple_3.30.01")
-#   skip_if((!file.exists(file.path(path_3.30.01, "ss"))) & 
-#             (!file.exists(file.path(path_3.30.01, "ss.exe"))), 
+#   skip_if((!file.exists(file.path(path_3.30.01, "ss"))) &
+#             (!file.exists(file.path(path_3.30.01, "ss.exe"))),
 #           message = "skipping test that requires SS executable")
 #   SS_doRetro(
 #     masterdir = path_3.30.01,
 #     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
 #   )
 #   retro_subdirs <- file.path(path_3.30.01, "retrospectives", paste0("retro", c("0", "-1", "-2")))
-#   retro_ran <- lapply(retro_subdirs, 
+#   retro_ran <- lapply(retro_subdirs,
 #          function(d) file.exists(file.path(d, "Report.sso")))
 #   expect_true(all(unlist(retro_ran) == TRUE))
-# 
+#
 #   # read model output from the retrospectives
 #   retroModels <- SSgetoutput(
 #     dirvec = file.path(path_3.30.01,
@@ -66,22 +71,28 @@ test_that("SS_doRetro runs on simple_3.24 model", {
 
 test_that("SS_doRetro runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) & 
-            (!file.exists(file.path(path_3.30.12, "ss.exe"))), 
-          message = "skipping test that requires SS executable")
+  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
+    (!file.exists(file.path(path_3.30.12, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
   SS_doRetro(
     masterdir = path_3.30.12,
     oldsubdir = "", newsubdir = "retrospectives", years = 0:-2
   )
-  retro_subdirs <- file.path(path_3.30.12, "retrospectives", 
-                             paste0("retro", c("0", "-1", "-2")))
-  retro_ran <- lapply(retro_subdirs, 
-                      function(d) file.exists(file.path(d, "Report.sso")))
+  retro_subdirs <- file.path(
+    path_3.30.12, "retrospectives",
+    paste0("retro", c("0", "-1", "-2"))
+  )
+  retro_ran <- lapply(
+    retro_subdirs,
+    function(d) file.exists(file.path(d, "Report.sso"))
+  )
   expect_true(all(unlist(retro_ran) == TRUE))
 
   # read model output from the retrospectives
   retroModels <- SSgetoutput(
-    dirvec = file.path(path_3.30.12, "retrospectives",
+    dirvec = file.path(
+      path_3.30.12, "retrospectives",
       paste0("retro", 0:-2)
     )
   )
@@ -97,8 +108,8 @@ test_that("SS_doRetro runs on simple_3.30.12 model", {
 
 test_that("SS_RunJitter runs on newest simple model", {
   path_simple <- tail(dir(runs_path, full.names = TRUE), 1)
-  skipexe <-  (!file.exists(file.path(path_simple, "ss"))) & 
-                        (!file.exists(file.path(path_simple, "ss.exe")))
+  skipexe <- (!file.exists(file.path(path_simple, "ss"))) &
+    (!file.exists(file.path(path_simple, "ss.exe")))
   dir.jit <- file.path(path_simple, "jitter")
   expect_true(copy_SS_inputs(
     dir.old = path_simple,
@@ -109,9 +120,11 @@ test_that("SS_RunJitter runs on newest simple model", {
     copy_par = FALSE,
     verbose = FALSE
   ))
-  if(!skipexe & .Platform[["OS.type"]] == "unix") {
-    file.copy(from = file.path(path_simple, "ss"), 
-              to = file.path(dir.jit, "ss"))
+  if (!skipexe & .Platform[["OS.type"]] == "unix") {
+    file.copy(
+      from = file.path(path_simple, "ss"),
+      to = file.path(dir.jit, "ss")
+    )
   }
   # run jitters
   if (skipexe) {
@@ -139,9 +152,10 @@ test_that("SS_RunJitter runs on newest simple model", {
 
 test_that("SS_profile runs on simple_3.30.12 model", {
   path_3.30.12 <- file.path(runs_path, "simple_3.30.12")
-  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) & 
-            (!file.exists(file.path(path_3.30.12, "ss.exe"))), 
-          message = "skipping test that requires SS executable")
+  skip_if((!file.exists(file.path(path_3.30.12, "ss"))) &
+    (!file.exists(file.path(path_3.30.12, "ss.exe"))),
+  message = "skipping test that requires SS executable"
+  )
   dir.prof <- file.path(path_3.30.12, "profile")
   copy_SS_inputs(
     dir.old = path_3.30.12,
@@ -153,9 +167,11 @@ test_that("SS_profile runs on simple_3.30.12 model", {
     verbose = TRUE
   )
   # b/c current copy ss inputs wont copy the exe for mac or linux
-  if(.Platform[["OS.type"]] == "unix") {
-    file.copy(from = file.path(path_3.30.12, "ss"), 
-              to = file.path(dir.prof, "ss"))
+  if (.Platform[["OS.type"]] == "unix") {
+    file.copy(
+      from = file.path(path_3.30.12, "ss"),
+      to = file.path(dir.prof, "ss")
+    )
   }
   starter <- SS_readstarter(file.path(dir.prof, "starter.ss"))
   # Make use the par file as a starting point

@@ -81,12 +81,11 @@ output file names are hardwired in the TPL code.}
 from Thorson, Hicks and Methot (2014) ICES J. Mar. Sci.
 }
 \examples{
-
 \dontrun{
- # need the full path because wd is changed in function
+# need the full path because wd is changed in function
 direc <- "C:/Models/LaplaceApprox/base"
 if ("Optimization_record.txt" \%in\% list.files(direc)) {
- file.remove(file.path(direc, "Optimization_record.txt"))
+  file.remove(file.path(direc, "Optimization_record.txt"))
 }
 Opt <- optimize(
   f = NegLogInt_Fn,

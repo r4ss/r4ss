@@ -13,7 +13,6 @@
 #' @seealso [SS_output()], [SS_readforecast()],
 #' [SS_readdat()], [SS_readstarter()]
 #' @examples
-#'
 #' \dontrun{
 #' summary <- SS_read_summary(file = "c:/mymodel/ss_summary.sso")
 #' }

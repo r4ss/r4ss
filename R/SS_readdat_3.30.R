@@ -216,14 +216,15 @@ SS_readdat_3.30 <-
     #   stop execution as SS do so.
     if (any(datlist[["fleetinfo"]][["type"]] != 1 &
       datlist[["fleetinfo"]][["need_catch_mult"]] == 1)) {
-        stop(
-          "Catch multipler can be used only for fleet_type = 1; Check fleet = ",
-          paste0(which(datlist[["fleetinfo"]][["type"]] != 1 &
-                datlist[["fleetinfo"]][["need_catch_mult"]] == 1), 
-            collapse = ", "), 
-          " in fleet info."
-          )
-      }
+      stop(
+        "Catch multipler can be used only for fleet_type = 1; Check fleet = ",
+        paste0(which(datlist[["fleetinfo"]][["type"]] != 1 &
+          datlist[["fleetinfo"]][["need_catch_mult"]] == 1),
+        collapse = ", "
+        ),
+        " in fleet info."
+      )
+    }
     if (echoall) {
       message("Fleet information:")
       print(datlist[["fleetinfo"]])
@@ -416,12 +417,14 @@ SS_readdat_3.30 <-
           )
       }
       # warn if any 0 values in the lencomp, because SS will exit on error
-      if(!is.null(datlist[["lencomp"]])) {
-        zero_lencomp <- apply(datlist[["lencomp"]][,-(1:6)], MARGIN = 1, FUN = sum) == 0
-        if(any(zero_lencomp == TRUE)) {
-          warning("Lines of all zero length comp found. SS will exit on error if", 
-                  " a line of comps is all zeros. Line(s) ", 
-                  paste0(which(zero_lencomp), collapse = ", "))
+      if (!is.null(datlist[["lencomp"]])) {
+        zero_lencomp <- apply(datlist[["lencomp"]][, -(1:6)], MARGIN = 1, FUN = sum) == 0
+        if (any(zero_lencomp == TRUE)) {
+          warning(
+            "Lines of all zero length comp found. SS will exit on error if",
+            " a line of comps is all zeros. Line(s) ",
+            paste0(which(zero_lencomp), collapse = ", ")
+          )
         }
       }
       # echo values
@@ -521,15 +524,17 @@ SS_readdat_3.30 <-
       }
       # echo values
       # warn if any 0 values in the agecomp:
-      if(!is.null(datlist[["agecomp"]])) {
-        zero_agecomp <- apply(datlist[["agecomp"]][,-(1:9)], MARGIN = 1, FUN = sum) == 0
-        if(any(zero_agecomp == TRUE)) {
-          warning("Lines of all zero age comp found. SS will exit on error if", 
-                  " a line of comps is all zeros. Line(s) ", 
-                  paste0(which(zero_agecomp), collapse = ", "))
+      if (!is.null(datlist[["agecomp"]])) {
+        zero_agecomp <- apply(datlist[["agecomp"]][, -(1:9)], MARGIN = 1, FUN = sum) == 0
+        if (any(zero_agecomp == TRUE)) {
+          warning(
+            "Lines of all zero age comp found. SS will exit on error if",
+            " a line of comps is all zeros. Line(s) ",
+            paste0(which(zero_agecomp), collapse = ", ")
+          )
         }
       }
-      
+
       if (echoall) {
         message("\nFirst 2 rows of agecomp:")
         print(head(datlist[["agecomp"]], 2))
@@ -544,19 +549,25 @@ SS_readdat_3.30 <-
     }
     # check DM pars ----)
     if (any(datlist[["len_info"]][["CompError"]] == 1) |
-        any(datlist[["age_info"]][["CompError"]] == 1)) {
-      N_dirichlet_parms <- max(c(datlist[["len_info"]][["ParmSelect"]], 
-                                 datlist[["age_info"]][["ParmSelect"]]))
+      any(datlist[["age_info"]][["CompError"]] == 1)) {
+      N_dirichlet_parms <- max(c(
+        datlist[["len_info"]][["ParmSelect"]],
+        datlist[["age_info"]][["ParmSelect"]]
+      ))
       # double check this
       N_dir_labs <- seq_len(N_dirichlet_parms)
-      for(i in N_dir_labs) {
-        if(!i %in% c(datlist[["len_info"]][["ParmSelect"]], 
-                    datlist[["age_info"]][["ParmSelect"]])) {
-          warning("Dirichlet multinomial parameters must be sequential with no ", 
-                  " missing integers starting from 1. \nMissing DM parameter ",
-                  "labeled  ", i, ", so SS will exit on error for this model ", 
-                  "configuration. \nPlease revise the numbering of the DM ", 
-                  "parameters in the length/age info ParmSelect column.")
+      for (i in N_dir_labs) {
+        if (!i %in% c(
+          datlist[["len_info"]][["ParmSelect"]],
+          datlist[["age_info"]][["ParmSelect"]]
+        )) {
+          warning(
+            "Dirichlet multinomial parameters must be sequential with no ",
+            " missing integers starting from 1. \nMissing DM parameter ",
+            "labeled  ", i, ", so SS will exit on error for this model ",
+            "configuration. \nPlease revise the numbering of the DM ",
+            "parameters in the length/age info ParmSelect column."
+          )
         }
       }
     }

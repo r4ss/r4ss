@@ -18,7 +18,10 @@ check_model <- function(model, mydir = getwd()) {
   )
   exename <- paste0(
     modelnoexe,
-    switch(os, windows = ".exe", linux = "")
+    switch(os,
+      windows = ".exe",
+      linux = ""
+    )
   )
   if (!file.exists(file.path(mydir, exename))) {
     stop(exename, " does not exist in ", mydir)

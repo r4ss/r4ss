@@ -67,7 +67,6 @@
 #' @seealso [SSplotProfile()], [SSgetoutput()],
 #' [SS_changepars()], [SS_parlines()]
 #' @examples
-#'
 #' \dontrun{
 #' # note: don't run this in your main directory
 #' # make a copy in case something goes wrong
@@ -127,9 +126,9 @@
 #' # example two-dimensional profile
 #' # (e.g. over 2 of the parameters in the low-fecundity stock-recruit function)
 #' base_dir <- "c:/mymodel"
-#' 
+#'
 #' dir_profile_SR <- file.path(base_dir, "Profiles/Zfrac_and_Beta")
-#' 
+#'
 #' # make a grid of values in both dimensions Zfrac and Beta
 #' # vector of values to profile over
 #' Zfrac_vec <- seq(from = 0.2, to = 0.6, by = 0.1)
@@ -145,7 +144,7 @@
 #' ## 4   0.5 0.50
 #' ## 5   0.6 0.50
 #' ## 6   0.2 0.75
-#' 
+#'
 #' # run SS_profile command
 #' # requires modified version of SS_profile available via
 #' # remotes::install_github("r4ss/r4ss@profile_issue_224")
@@ -153,33 +152,35 @@
 #'   dir = dir_profile_SR, # directory
 #'   masterctlfile = "control.ss_new",
 #'   newctlfile = "control_modified.ss",
-#'   string = c("Zfrac","Beta"),
+#'   string = c("Zfrac", "Beta"),
 #'   profilevec = par_table,
 #'   extras = "-nohess"
 #' )
-#' 
+#'
 #' # get model output
-#' profilemodels <- SSgetoutput(dirvec=dir_profile_SR,
-#'                              keyvec=1:nrow(par_table), getcovar=FALSE)
+#' profilemodels <- SSgetoutput(
+#'   dirvec = dir_profile_SR,
+#'   keyvec = 1:nrow(par_table), getcovar = FALSE
+#' )
 #' n <- length(profilemodels)
 #' profilesummary <- SSsummarize(profilemodels)
-#' 
+#'
 #' # add total likelihood (row 1) to table created above
 #' par_table$like <- as.numeric(profilesummary$likelihoods[1, 1:n])
-#' 
+#'
 #' # reshape data frame into a matrix for use with contour
-#' like_matrix <- reshape2::acast(par_table, Zfrac~Beta, value.var="like")
-#' 
+#' like_matrix <- reshape2::acast(par_table, Zfrac ~ Beta, value.var = "like")
+#'
 #' # make contour plot
-#' contour(x = as.numeric(rownames(like_matrix)),
-#'         y = as.numeric(colnames(like_matrix)),
-#'         z = like_matrix)
-#' 
+#' contour(
+#'   x = as.numeric(rownames(like_matrix)),
+#'   y = as.numeric(colnames(like_matrix)),
+#'   z = like_matrix
+#' )
 #' }
 #'
 SS_profile <-
-  function(
-           dir = "C:/myfiles/mymodels/myrun/",
+  function(dir = "C:/myfiles/mymodels/myrun/",
            masterctlfile = "control.ss_new",
            newctlfile = "control_modified.ss", # must match entry in starter file
            linenum = NULL,
@@ -239,12 +240,16 @@ SS_profile <-
         stop("'parfile' input needs to be 'ss.par' for SS version 3.30 models")
       }
       if (is.null(parlinenum) & is.null(parstring)) {
-        stop("Using par file. You should input either 'parlinenum' or ",
-             "'parstring' (but not both)")
+        stop(
+          "Using par file. You should input either 'parlinenum' or ",
+          "'parstring' (but not both)"
+        )
       }
       if (!is.null(parlinenum) & !is.null(parstring)) {
-        stop("Using par file. You should input either 'parlinenum' or ",
-             "'parstring' (but not both)")
+        stop(
+          "Using par file. You should input either 'parlinenum' or ",
+          "'parstring' (but not both)"
+        )
       }
     }
 
@@ -255,7 +260,7 @@ SS_profile <-
     if (!is.null(string)) {
       npars <- length(string)
     }
-    if (usepar){
+    if (usepar) {
       if (!is.null(parlinenum)) {
         npars <- length(parlinenum)
       }
@@ -267,18 +272,20 @@ SS_profile <-
     if (is.na(npars) || npars < 1) {
       stop("Problem with the number of parameters to profile over. npars = ", npars)
     }
-        
+
     # figure out length of profile vec and sort out which runs to do
     if (is.null(profilevec)) {
       stop("Missing input 'profilevec'")
     }
-    if (npars == 1){
+    if (npars == 1) {
       n <- length(profilevec)
     } else {
       if ((!is.data.frame(profilevec) & !is.matrix(profilevec)) ||
-          ncol(profilevec) != npars) {
-        stop("'profilevec' should be a data.frame or a matrix with ",
-             npars, " columns")
+        ncol(profilevec) != npars) {
+        stop(
+          "'profilevec' should be a data.frame or a matrix with ",
+          npars, " columns"
+        )
       }
       n <- length(profilevec[[1]])
       if (any(unlist(lapply(profilevec, FUN = length)) != n)) {
@@ -294,7 +301,7 @@ SS_profile <-
         }
       }
     }
-    
+
     # subset runs if requested
     if (is.null(whichruns)) {
       whichruns <- 1:n
@@ -377,7 +384,7 @@ SS_profile <-
           newvals <- profilevec[i]
         } else {
           # get row as a vector (passing a data.frame to SS_changepars caused error)
-          newvals <- as.numeric(profilevec[i,])
+          newvals <- as.numeric(profilevec[i, ])
         }
         SS_changepars(
           dir = NULL, ctlfile = masterctlfile, newctlfile = newctlfile,
@@ -424,8 +431,9 @@ SS_profile <-
             }
             # replace value
             par[parlinenum[ipar]] <- ifelse(npars > 1,
-                                            profilevec[i, ipar],
-                                            profilevec[i])
+              profilevec[i, ipar],
+              profilevec[i]
+            )
           }
           # add new header
           note <- c(

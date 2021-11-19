@@ -141,9 +141,9 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
 
   # Build and read in early phase recruitment deviations if they exist
   if (length(grep("recdev_early", parvals)) > 0) {
-    if(ctllist[["recdev_early_start"]] < 0) {
+    if (ctllist[["recdev_early_start"]] < 0) {
       # change to absolute
-      ctllist[["recdev_early_start"]] <- ctllist[["MainRdevYrFirst"]] +  ctllist[["recdev_early_start"]]
+      ctllist[["recdev_early_start"]] <- ctllist[["MainRdevYrFirst"]] + ctllist[["recdev_early_start"]]
     }
     parlist[["recdev_early"]] <- matrix(NA, nrow = (ctllist[["MainRdevYrFirst"]] - ctllist[["recdev_early_start"]]), ncol = 2)
     parlist[["recdev_early"]][, 1] <- ctllist[["recdev_early_start"]]:(ctllist[["MainRdevYrFirst"]] - 1)
@@ -215,7 +215,7 @@ SS_readpar_3.30 <- function(parfile, datsource, ctlsource, verbose = TRUE) {
       colnames(temp_Frate_2) <- c("year", "seas", "fleet", "F")
       parlist[["F_rate"]] <- temp_Frate_2
     } else {
-      stop("The length of the catch matrix (", length(temp_Frate_1[, 1]), ", or ", length(temp_Frate_2[, 1]), " 
+      stop("The length of the catch matrix (", length(temp_Frate_1[, 1]), ", or ", length(temp_Frate_2[, 1]), "
            with zero catches removed) does not match with the length of the F_rate parameter vector (", length(grep("F_rate", parvals)), ")")
     }
   }

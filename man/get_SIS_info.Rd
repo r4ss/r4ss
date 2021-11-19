@@ -44,7 +44,6 @@ In the future some more direct link could be explored to avoid the manual
 copy step.
 }
 \examples{
-
 \dontrun{
 # directory with the model output
 mydir <- file.path(path.package("r4ss"), "extdata/simple_3.30.13")

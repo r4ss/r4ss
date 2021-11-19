@@ -192,7 +192,8 @@ SS_readdat_3.24 <- function(file, verbose = TRUE, echoall = FALSE, section = NUL
   i <- i + 1
   if (verbose) cat("N_cpue =", N_cpue, "\n")
   CPUEinfo <- data.frame(matrix(allnums[i:(i + Ntypes * 3 - 1)],
-                                nrow = Ntypes, ncol = 3, byrow = TRUE))
+    nrow = Ntypes, ncol = 3, byrow = TRUE
+  ))
   i <- i + Ntypes * 3
   names(CPUEinfo) <- c("Fleet", "Units", "Errtype")
   if (N_cpue > 0) {

@@ -46,7 +46,7 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   if (is.null(mar)) {
     mar <- c(5, 4, 2, 2) + 0.1
   }
-  
+
   plotinfo <- NULL
   if (plotdir == "default") {
     plotdir <- replist[["inputs"]][["dir"]]
@@ -72,10 +72,10 @@ SSplotSummaryF <- function(replist, yrs = "all", Ftgt = NA, ylab = "Summary Fish
   plotfun <- function() {
     if (!add) {
       plot(0,
-           type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs), ylim = c(0, Fmax),
-           cex.lab = 1.0, cex.axis = 1.0, cex = 0.7,
-           mar = mar
-           )
+        type = "n", , xlab = "Year", ylab = ylab, xlim = range(yrs), ylim = c(0, Fmax),
+        cex.lab = 1.0, cex.axis = 1.0, cex = 0.7,
+        mar = mar
+      )
       abline(h = 0, col = "grey")
     }
     if (uncertainty) segments(as.numeric(substring(Ftot[["Label"]], 3, 6)), uppFtot, as.numeric(substring(Ftot[["Label"]], 3, 6)), lowFtot, col = gray(0.5))

@@ -23,9 +23,12 @@ SS_decision_table_stuff <- function(replist, yrs = 2021:2032, digits = c(0, 0, 3
   # subset timeseries
   ts <- replist[["timeseries"]][replist[["timeseries"]][["Yr"]] %in% yrs, ]
   # note that new $dead_B_sum quantity can be used in future versions
-  catch <- round(apply(ts[, grep("dead(B)", names(ts), fixed = TRUE)],
-                       MARGIN = 1, FUN = sum),
-                 digits[1])
+  catch <- round(
+    apply(ts[, grep("dead(B)", names(ts), fixed = TRUE)],
+      MARGIN = 1, FUN = sum
+    ),
+    digits[1]
+  )
   yr <- ts[["Yr"]]
   # get spawning biomass
   SpawnBio <- round(ts[["SpawnBio"]], digits[2])

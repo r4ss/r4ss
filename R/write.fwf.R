@@ -127,7 +127,6 @@
 #' @author Gregor Gorjanc
 #' @keywords print file
 #' @examples
-#'
 #' \dontrun{
 #' #### Note: example below is from the version of write.fwf in the gdata
 #' ####       package but failed when running after moving to r4ss

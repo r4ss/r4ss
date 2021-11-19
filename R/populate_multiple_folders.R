@@ -22,7 +22,6 @@
 #' @export
 #' @seealso [copy_SS_inputs()]
 #' @examples
-#'
 #' \dontrun{
 #' populate_multiple_folders(
 #'   outerdir.old = "c:/SS/old_models",

@@ -54,7 +54,6 @@ Default=TRUE.}
 Function has not been fully tested yet
 }
 \examples{
-
 \dontrun{
 # load model output into R
 replist <- SS_output(dir = "c:/model/")

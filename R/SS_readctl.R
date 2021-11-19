@@ -16,25 +16,25 @@
 #' @param catch_mult_fleets Integer vector of fleets using the catch multiplier
 #'   option. Defaults to NULL and should be left as such if 1) the catch
 #'   multiplier option is not used for any fleet or 2) `use_datlist = TRUE` and
-#'   datlist is specified. Used only in control file 3.30 syntax if 
+#'   datlist is specified. Used only in control file 3.30 syntax if
 #'   `use_datlist = FALSE`.
 #' @param predM_fleets integer vector of fleets with predator mortality included.
 #'  Predator mortality fleets are only available in v3.30.18 and
 #'  higher. Defaults to NULL and should be left as such if 1) predation mortality
 #'  is not used for any fleets; 2) `use_datlist = TRUE` and `datlist` is specified;
-#'  or 3) if comments in the control file should be used instead to determine 
-#'  the the predM_fleets. Used only in control file 3.30 syntax if 
+#'  or 3) if comments in the control file should be used instead to determine
+#'  the the predM_fleets. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
 #' @param N_rows_equil_catch Integer value of the number of parameter lines to
 #'  read for equilibrium catch. Defaults to NULL, which means the function will
 #'  attempt to figure out how many lines of equilibrium catch to read from the
-#'  control file comments. Used only in control file 3.30 syntax if 
+#'  control file comments. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`.
 #' @param Nfleets Number of fishing fleets and surveys, for 3.30 models.
 #' @param Nfleet Number of fishing fleets, for 3.24 and lower version models.
 #' @param Nsurveys Number of surveys, for 3.24 and lower version models.
 #' @param N_dirichlet_parms Integer value of the number of Dirichlet-Multinomial
-#'  parameters. Defaults to 0. Used only in control file 3.30 syntax if 
+#'  parameters. Defaults to 0. Used only in control file 3.30 syntax if
 #'  `use_datlist = FALSE`..
 #' @param ptype LOGICAL if `TRUE`, which is the default,
 #'  a column will be included in the output indicating parameter type.
@@ -61,7 +61,7 @@
 #' # Read in the dat file to define the structure of the control file so that
 #' # you don't have to specify things in the function call such as 'Nfleet'
 #' datfilename <- dir(dirsimple, pattern = "data\\.ss", full.names = TRUE)
-#' dat <- r4ss::SS_readdat( file = datfilename, verbose = FALSE)
+#' dat <- r4ss::SS_readdat(file = datfilename, verbose = FALSE)
 #' # Read in the control file using a list object for datlist
 #' ctl <- r4ss::SS_readctl(
 #'   file = dir(dirsimple, pattern = "control\\.ss", full.names = TRUE),
@@ -74,7 +74,6 @@
 #'   verbose = FALSE,
 #'   datlist = datfilename, use_datlist = TRUE
 #' )
-
 SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycle::deprecated(),
                        use_datlist = TRUE,
                        datlist = "data.ss_new",
@@ -92,7 +91,7 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
                        N_tag_groups = NULL,
                        N_CPUE_obs = NULL,
                        catch_mult_fleets = NULL,
-                       predM_fleets = NULL, 
+                       predM_fleets = NULL,
                        N_rows_equil_catch = NULL,
                        N_dirichlet_parms = NULL,
                        ptype = FALSE) {
@@ -101,13 +100,13 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
   # echoall warning will occur in in SS_readctl_3.24 and SS_readctl_3.30
   if (lifecycle::is_present(Ngenders)) {
     lifecycle::deprecate_warn(
-      when = "1.41.1", 
+      when = "1.41.1",
       what = "SS_readctl(Ngenders)",
       details = "Please use Nsexes instead. Ability to use Ngenders will be dropped in next release."
     )
     Nsexes <- Ngenders
   }
-  
+
   # wrapper function to call old or new version of SS_readctl
 
   # automatic testing of version number
@@ -147,7 +146,6 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
 
   # call function for SS version 3.24
   if ((nver >= 3.2) && (nver < 3.3)) {
-    
     if (isTRUE(!is.null(Nfleets))) {
       stop("SS v3.24 uses Nfleet and Nsurveys but a value has been input for Nfleets instead")
     }
@@ -173,9 +171,8 @@ SS_readctl <- function(file, version = NULL, verbose = FALSE, echoall = lifecycl
 
   # call function for SS version 3.30
   if (nver >= 3.3) {
-    
     if (isTRUE(!is.null(Nfleet) | !is.null(Nsurveys))) {
-       stop("SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys")
+      stop("SS v3.30 uses Nfleets but values have been input for Nfleet and/or Nsurveys")
     }
     ctllist <- SS_readctl_3.30(
       file = file,
