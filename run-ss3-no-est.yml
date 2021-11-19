@@ -71,9 +71,9 @@ jobs:
       - name: Run .ss_new
         run: |
           # code to run the ss_new models
-          mod_names <- list.dirs("ss-test-models-repo/run_R/model_runs",
+          mod_names <- list.dirs("ss-test-models-repo/model_runs",
             full.names = FALSE, recursive = FALSE)
-          mod_paths <- list.dirs("ss-test-models-repo/run_R/model_runs",
+          mod_paths <- list.dirs("ss-test-models-repo/model_runs",
             full.names = TRUE, recursive = FALSE)
           print(mod_names)
 
