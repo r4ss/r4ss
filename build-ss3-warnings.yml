@@ -61,7 +61,7 @@ jobs:
         run: |
           n_warn <- read.table("n_warn.txt")
           n_warn <- as.integer(n_warn[1,1])
-          if (n_warn > 81) {
+          if (n_warn > 83) {
             stop("Increased number of warnings")
           } else {
             message("Acceptable number of warnings")
