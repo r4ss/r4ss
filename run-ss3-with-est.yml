@@ -138,7 +138,7 @@ jobs:
             pos <- which(mod_names == i)
             sum_file <- file.path(mod_fold, i, "ss_summary.sso")
             if (i == "Simple") {
-              file.copy(sum_file, file.path("run_R", paste0(i, "_ss_summary.sso"))
+              file.copy(sum_file, file.path("run_R", paste0(i, "_ss_summary.sso")))
             }
             ref_sum_file <- file.path(mod_fold, i, "ss_summary_ref.sso")
 
