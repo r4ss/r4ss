@@ -267,8 +267,8 @@ SS_readforecast <- function(file = "forecast.ss", Nfleets = NULL, Nareas = NULL,
 
     forelist <- add_elem(forelist, "N_forecast_loops")
     forelist <- add_elem(forelist, "First_forecast_loop_with_stochastic_recruitment")
-    forelist <- add_elem(forelist, "Forecast_loop_control_3")
-    forelist <- add_elem(forelist, "Forecast_loop_control_4")
+    forelist <- add_elem(forelist, "fcast_rec_option")
+    forelist <- add_elem(forelist, "fcast_rec_val")
     forelist <- add_elem(forelist, "Forecast_loop_control_5")
     forelist <- add_elem(forelist, "FirstYear_for_caps_and_allocations")
     forelist <- add_elem(forelist, "stddev_of_log_catch_ratio")
