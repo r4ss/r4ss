@@ -241,8 +241,7 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- ts[["SpawnBio"]] / ts[["SpawnBio"]][!is.na(ts[["SpawnBio"]])][1]
-        yvals <- yvals / depletion_multiplier  
+        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"] 
         ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])           
       }
 

@@ -2861,7 +2861,7 @@ SS_output <-
     }
 
 
-    if (depletion_basis %in% 3:4){
+    if (depletion_basis %in% c(1,3:4)) {
       starter <- SS_readstarter(
           file = file.path(dir, "starter.ss"),
           verbose = verbose
