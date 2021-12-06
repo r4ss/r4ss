@@ -132,9 +132,3 @@ jobs:
         with:
           branch: gh-pages
           folder: docs/
-            
-      - name: upload html file as artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: SS330_User_Manual.html
-          path: SS330_User_Manual.html
