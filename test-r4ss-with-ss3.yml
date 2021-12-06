@@ -49,8 +49,8 @@ jobs:
         run: |
           mv ss-test-models-repo/models ss-test-models-repo/model_runs
           mv SS330/ss ss-test-models-repo/model_runs/ss
-          mv ss-test-models-repo/jenkins/model_compare_noest/run_from_par.R ss-test-models-repo/run_from_par.R
-          mv ss-test-models-repo/jenkins/model_compare_noest/run_compare_noest.R ss-test-models-repo/run_compare_noest.R
+          mv ss-test-models-repo/.github/r_scripts/run_from_par.R ss-test-models-repo/run_from_par.R
+          mv ss-test-models-repo/.github/r_scripts/run_compare_noest.R ss-test-models-repo/run_compare_noest.R
 
       - name: change permissions on ss exes
         run: chmod a+x ss-test-models-repo/model_runs/ss

@@ -121,7 +121,7 @@ jobs:
 
       - name: Run comparison
         run: |
-          source("ss-test-models-repo/jenkins/shared/compare.R")
+          source("ss-test-models-repo/.github/r_scripts/compare.R")
           orig_wd <- getwd()
           setwd("ss-test-models-repo")
           on.exit(orig_wd)
@@ -173,7 +173,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Determine results of test
-        run: cd ss-test-models-repo && Rscript jenkins/shared/check_failed.R
+        run: cd ss-test-models-repo && Rscript .github/r_scripts/check_failed.R
 
       - name: Archive results
         uses: actions/upload-artifact@main
