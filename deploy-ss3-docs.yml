@@ -21,6 +21,10 @@ jobs:
         uses: r-lib/actions/setup-pandoc@master
         with:
             pandoc-version: '2.14.0.3'
+            
+      - name: Install rmarkdown
+        run: install.packages("rmarkdown")
+        shell: Rscript {0}
         
       - name: Convert tex to html for experimental version of manual
         run: pandoc SS330_User_Manual.tex -s -o SS330_User_Manual.html --toc --self-contained --mathjax --default-image-extension=png --number-sections --citeproc --variable linkcolor=#0033CC
