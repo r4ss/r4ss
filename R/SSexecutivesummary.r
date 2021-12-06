@@ -137,13 +137,14 @@ SSexecutivesummary <- function(replist,
     if (match_digits) {
       decimalplaces <- function(x) {
         ifelse(abs(x - round(x)) > .Machine$double.eps^0.5,
-               nchar(sub('^\\d+\\.', '', sub('0+$', '', as.character(x)))),
-               0)
+          nchar(sub("^\\d+\\.", "", sub("0+$", "", as.character(x)))),
+          0
+        )
       }
       low <- round(low, decimalplaces(dq))
       high <- round(high, decimalplaces(dq))
     }
-    
+
     if (!single) {
       # check for length in case filtering results in 0 rows
       # (e.g. no Main_Recrdev within the range of yrs)
