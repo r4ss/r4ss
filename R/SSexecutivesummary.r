@@ -37,6 +37,9 @@
 #' formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
 #' work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
 #' the tables from being formatted further since the objects are no longer numeric.
+#' @param match_digits TRUE/FALSE switch on whether the low and high interval values
+#' in e_ReferencePoints_ES will be reported with the same number of decimal digits
+#' as the estaimte.
 #' @param verbose Return updates of function progress to the R console?
 #'
 #' @return Individual csv files for each executive summary table and additional tables (catch, timeseries, numbers-at-age).
@@ -57,6 +60,7 @@ SSexecutivesummary <- function(replist,
                                forecast_ofl = NULL,
                                forecast_abc = NULL,
                                format = TRUE,
+                               match_digits = FALSE,
                                verbose = TRUE) {
 
   # Make sure table.dir contains the report file
@@ -127,6 +131,19 @@ SSexecutivesummary <- function(replist,
       high <- dq + qnorm(1 - (1 - ci_value) / 2) * sd
     }
 
+    # match the number of decimal digits for the low and high with the estimate
+    # using approach found at
+    # https://stackoverflow.com/questions/5173692/how-to-return-number-of-decimal-places-in-r
+    if (match_digits) {
+      decimalplaces <- function(x) {
+        ifelse(abs(x - round(x)) > .Machine$double.eps^0.5,
+               nchar(sub('^\\d+\\.', '', sub('0+$', '', as.character(x)))),
+               0)
+      }
+      low <- round(low, decimalplaces(dq))
+      high <- round(high, decimalplaces(dq))
+    }
+    
     if (!single) {
       # check for length in case filtering results in 0 rows
       # (e.g. no Main_Recrdev within the range of yrs)
@@ -204,7 +221,7 @@ SSexecutivesummary <- function(replist,
     sb.text.name <- "spawning biomass"
   }
 
-  caption <- tex.label <- filename <- NULL
+  caption <- tex.label <- filename <- csv_name <- NULL
 
   # ======================================================================
   # ES Table a  Catches from the fisheries
@@ -263,10 +280,10 @@ SSexecutivesummary <- function(replist,
         "Recent landings by fleet and total landings summed across fleets."
       )
     }
-  } # end check for 'a' %in% tables
 
-  tex.label <- c(tex.label, "removalsES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "removalsES")
+    filename <- c(filename, csv_name)
+  } # end check for 'a' %in% tables
 
   # ======================================================================
   # ES Table b Spawning Biomass and Depletion
@@ -303,17 +320,17 @@ SSexecutivesummary <- function(replist,
 
     csv_name <- "b_SSB_ES.csv"
     write.csv(es.b, file = file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'b' %in% tables
 
-  caption <- c(
-    caption,
-    paste(
-      "Estimated recent trend in", sb.text.name, "and the fraction unfished and the", round(100 * ci_value, 0),
-      "percent intervals."
+    caption <- c(
+      caption,
+      paste(
+        "Estimated recent trend in", sb.text.name, "and the fraction unfished and the", round(100 * ci_value, 0),
+        "percent intervals."
+      )
     )
-  )
-  tex.label <- c(tex.label, "ssbES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "ssbES")
+    filename <- c(filename, csv_name)
+  } # end check for 'b' %in% tables
 
   # ======================================================================
   # ES Table c Recruitment
@@ -399,17 +416,17 @@ SSexecutivesummary <- function(replist,
     }
     csv_name <- "c_Recr_ES.csv"
     write.csv(es.c, file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'c' %in% tables
 
-  caption <- c(
-    caption,
-    paste(
-      "Estimated recent trend in recruitment and recruitment deviations and the", round(100 * ci_value, 0),
-      "percent intervals."
+    caption <- c(
+      caption,
+      paste(
+        "Estimated recent trend in recruitment and recruitment deviations and the", round(100 * ci_value, 0),
+        "percent intervals."
+      )
     )
-  )
-  tex.label <- c(tex.label, "recrES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "recrES")
+    filename <- c(filename, csv_name)
+  } # end check for 'c' %in% tables
 
   # ======================================================================
   # ES Table d 1-SPR (%)
@@ -459,17 +476,17 @@ SSexecutivesummary <- function(replist,
     }
     csv_name <- "d_SPR_ES.csv"
     write.csv(es.d, file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'd' %in% tables
 
-  caption <- c(
-    caption,
-    paste(
-      "Estimated recent trend in the", spr_label, "where SPR is the spawning potential ratio the exploitation rate, and the ", round(100 * ci_value, 0),
-      "percent intervals."
+    caption <- c(
+      caption,
+      paste(
+        "Estimated recent trend in the", spr_label, "where SPR is the spawning potential ratio the exploitation rate, and the ", round(100 * ci_value, 0),
+        "percent intervals."
+      )
     )
-  )
-  tex.label <- c(tex.label, "exploitES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "exploitES")
+    filename <- c(filename, csv_name)
+  } # end check for 'd' %in% tables
 
   # ======================================================================
   # ES Table e Reference Point Table
@@ -633,17 +650,17 @@ SSexecutivesummary <- function(replist,
     }
     csv_name <- "e_ReferencePoints_ES.csv"
     write.csv(es.e, file.path(csv.dir, csv_name))
-  } # end check for 'e' %in% tables
 
-  caption <- c(
-    caption,
-    paste(
-      "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
-      "percent intervals."
+    caption <- c(
+      caption,
+      paste(
+        "Summary of reference points and management quantities, including estimates of the ", round(100 * ci_value, 0),
+        "percent intervals."
+      )
     )
-  )
-  tex.label <- c(tex.label, "referenceES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "referenceES")
+    filename <- c(filename, csv_name)
+  } # end check for 'e' %in% tables
 
 
   # ======================================================================
@@ -716,10 +733,10 @@ SSexecutivesummary <- function(replist,
       )
     }
     write.csv(es.f, file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'f' %in% tables
 
-  tex.label <- c(tex.label, "manageES")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "manageES")
+    filename <- c(filename, csv_name)
+  } # end check for 'f' %in% tables
 
   # ======================================================================
   # ES Table g  Predicted forecast values
@@ -771,14 +788,14 @@ SSexecutivesummary <- function(replist,
     colnames(es.g) <- c("Year", "Predicted OFL (mt)", "ABC Catch (mt)", paste0("Age ", smry.age, "+ Biomass (mt)"), sb.label, "Fraction Unfished")
     csv_name <- "g_Projections_ES.csv"
     write.csv(es.g, file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'g' %in% tables
 
-  caption <- c(
-    caption,
-    paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
-  )
-  tex.label <- c(tex.label, "projectionES")
-  filename <- c(filename, csv_name)
+    caption <- c(
+      caption,
+      paste0("Projections of potential OFLs (mt), ABCs (mt), estimated ", sb.text.name, ", and fraction unfished.")
+    )
+    tex.label <- c(tex.label, "projectionES")
+    filename <- c(filename, csv_name)
+  } # end check for 'g' %in% tables
 
   # ======================================================================
   # ES Table h decision table
@@ -918,14 +935,14 @@ SSexecutivesummary <- function(replist,
     colnames(es.i) <- c("Quantity", years)
     csv_name <- "i_Summary_ES.csv"
     write.csv(es.i, file.path(csv.dir, csv_name), row.names = FALSE)
-  } # end check for 'i' %in% tables
 
-  caption <- c(
-    caption,
-    "Summary of recent estimates and managment quantities"
-  )
-  tex.label <- c(tex.label, "summaryES")
-  filename <- c(filename, csv_name)
+    caption <- c(
+      caption,
+      "Summary of recent estimates and managment quantities"
+    )
+    tex.label <- c(tex.label, "summaryES")
+    filename <- c(filename, csv_name)
+  } # end check for 'i' %in% tables
 
   # ======================================================================
   # End executive summary tables
@@ -983,10 +1000,10 @@ SSexecutivesummary <- function(replist,
       write.csv(mortality, file.path(csv.dir, csv_name), row.names = FALSE)
       caption <- c(caption, "Catches (mt) by fleet for all years and total catches (mt) summed by year.")
     }
-  } # end check for es_only = TRUE & 'catch' %in% tables
 
-  tex.label <- c(tex.label, "allcatches")
-  filename <- c(filename, csv_name)
+    tex.label <- c(tex.label, "allcatches")
+    filename <- c(filename, csv_name)
+  } # end check for es_only == FALSE & "catch" %in% tables
 
   # ======================================================================
   # Time-series Tables
@@ -1093,14 +1110,14 @@ SSexecutivesummary <- function(replist,
     )
     csv_name <- "TimeSeries.csv"
     write.csv(ts.table, file = file.path(csv.dir, csv_name), row.names = FALSE)
-  }
 
-  caption <- c(
-    caption,
-    "Time series of population estimates from the base model."
-  )
-  tex.label <- c(tex.label, "timeseries")
-  filename <- c(filename, csv_name)
+    caption <- c(
+      caption,
+      "Time series of population estimates from the base model."
+    )
+    tex.label <- c(tex.label, "timeseries")
+    filename <- c(filename, csv_name)
+  } # end check for es_only == FALSE & "timeseries" %in% tables
 
 
   # ======================================================================
@@ -1217,7 +1234,7 @@ SSexecutivesummary <- function(replist,
         write.csv(batage.f, file.path(csv.dir, "batage.f.csv"), row.names = FALSE)
       }
     } # end check for detailed output
-  } # end check for es_only = TRUE & 'biomass' %in% tables
+  } # end check for es_only == FALSE & "biomass" %in% tables
 
   # ======================================================================
   # Likelihoods
