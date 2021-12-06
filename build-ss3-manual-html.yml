@@ -7,6 +7,10 @@ on:
         default: ${{ github.ref }}
         required: false
         type: string
+      deploy:
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   build-html:
@@ -119,6 +123,7 @@ jobs:
         shell: Rscript {0}
         
       - name: Deploy to GitHub pages
+        if: inputs.deploy == true
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:
           branch: gh-pages
