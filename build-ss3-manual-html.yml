@@ -1,4 +1,4 @@
-name: build deploy html version of the ss3 user manual
+name: build html version of the ss3 user manual
 
 on:
   workflow_call:
@@ -7,10 +7,6 @@ on:
         default: ${{ github.ref }}
         required: false
         type: string
-      deploy:
-        default: false
-        required: false
-        type: boolean
 
 jobs:
   build-html:
@@ -121,13 +117,6 @@ jobs:
           html_txt <- append(html_txt, "  vertical-align: top;", after = where_add)
           writeLines(html_txt, "SS330_User_Manual.html")
         shell: Rscript {0}
-        
-      - name: Deploy to GitHub pages
-        if: inputs.deploy == true
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: docs/
             
       - name: upload html file as artifact
         uses: actions/upload-artifact@v2
