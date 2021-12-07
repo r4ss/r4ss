@@ -1,0 +1,70 @@
+# run stock synthesis models in the user-examples repo.
+name: check-models-run
+on:
+ workflow_call:
+
+jobs:
+  check-models-run:
+    runs-on: ubuntu-latest
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+          
+      - name: setup R  
+        uses: r-lib/actions/setup-r@master
+        
+      - name: Get the 3.30.18 SS3 executable
+        run:  wget -O ss https://github.com/nmfs-stock-synthesis/stock-synthesis/releases/download/v3.30.18/ss_linux
+          
+      - name: change permissions on ss exes
+        run: |
+          mv ss model_files/ss
+          chmod a+x model_files/ss
+      
+      - name: run models
+        run: |
+          mod_names <- list.dirs(file.path("model_files"), full.names = FALSE, recursive = FALSE)
+          mod_paths <- list.dirs(file.path("model_files"), full.names = TRUE, recursive = FALSE)
+          print(mod_names)
+          run_ss_no_est <- function(dir) {
+            wd <- getwd()
+            on.exit(system(paste0("cd ", wd)))
+            # run the models with estimation and see if model finishes without error
+            message("running ss on ", basename(dir))
+            system(paste0("cd ", dir, " && ../ss -stopph 0 -nohess"))
+            model_ran <- file.exists(file.path(dir, "control.ss_new"))
+            return(model_ran)
+          }
+          mod_ran <- lapply(mod_paths, function(x) tryCatch(run_ss_no_est(x), 
+                                                   error = function(e) print(e)
+                                                   ))
+          mod_errors <- mod_names[unlist(lapply(mod_ran, function(x) "simpleError" %in% class(x)))]
+          success <- TRUE
+          if(length(mod_errors) > 0) {
+            message("Model code with errors were: ", paste0(mod_errors, collapse = ", "), 
+                    ". See error list above for more details.")
+            success <- FALSE
+          } else {
+            message("All code ran without error, but model runs may still have failed.")
+          }
+          mod_no_run <- mod_names[unlist(lapply(mod_ran, function(x) isFALSE(x)))] # false means model didn't run
+          if(length(mod_no_run) > 0) {
+            message("Models that didn't run are ", paste0(mod_no_run, collapse = ", "))
+            success <- FALSE
+          } else {
+            message("All models ran without error.")
+          }
+          # determine if job fails or passes
+          if(success == FALSE) {
+            stop("Job failed due to code with errors or models that didn't run.")
+          } else {
+            message("All models successfully ran.")
+          }
+        shell: Rscript {0}
+        
+          
