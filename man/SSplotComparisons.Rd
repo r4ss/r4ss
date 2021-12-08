@@ -304,7 +304,6 @@ multiple models, where the collection was created using the
 \code{SSsummarize} function.
 }
 \examples{
-
 \dontrun{
 # directories where models were run need to be defined
 dir1 <- "c:/SS/mod1"

@@ -59,7 +59,6 @@ Inspired by Jim Ianelli and named by Sean Cox, the squid plot is a way to
 examine retrospective patterns in estimation of recruitment deviations.
 }
 \examples{
-
 \dontrun{
 # run retrospective analysis
 SS_doRetro(olddir = "2013hake_12", years = 0:-10)

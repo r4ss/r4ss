@@ -41,22 +41,25 @@ marks.) Luckily, this last issue is easily discoverable by attempting to load or
 the function because an error will be produced.
 }
 \examples{
-test_text <- c("x$my_name <- y$test",
-                 "x[['my_name']]",
-                 "no_replace_here <- 44",
-                 "x$names<-new_assign;x$`22`",
-                 "x$names <- new_assign; x$`22`",
-                 "x$`$$weirdcharacters`<-222",
-                 "x$`nameinbacktick`",
-                 "x$mylist$my_col$YetAnotherCol",
-                 "x$mylist$my_col$`1_somename`",
-                 "x$`bad$name` <- 55",
-                 "x$`other_$badname`")
+test_text <- c(
+  "x$my_name <- y$test",
+  "x[['my_name']]",
+  "no_replace_here <- 44",
+  "x$names<-new_assign;x$`22`",
+  "x$names <- new_assign; x$`22`",
+  "x$`$$weirdcharacters`<-222",
+  "x$`nameinbacktick`",
+  "x$mylist$my_col$YetAnotherCol",
+  "x$mylist$my_col$`1_somename`",
+  "x$`bad$name` <- 55",
+  "x$`other_$badname`"
+)
 writeLines(test_text, "test_rm_dollar_sign.txt")
- new_text <- r4ss:::rm_dollar_sign(
-   file = "test_rm_dollar_sign.txt",
-   out_file = NULL)
-   new_text
+new_text <- r4ss:::rm_dollar_sign(
+  file = "test_rm_dollar_sign.txt",
+  out_file = NULL
+)
+new_text
 file.remove("test_rm_dollar_sign.txt")
 }
 \author{

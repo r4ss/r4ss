@@ -323,10 +323,10 @@ SSplotTags <-
       tagdata <- replist[["tagdbase1"]]
 
       # need to get the max number of fleets you have so you can rep over that.
-      max_num_fleets <- max(tagdata[["Fleet"]]) 
+      max_num_fleets <- max(tagdata[["Fleet"]])
       # make a new column to bind to your other frame that contains
       # the breakdown of obs + exp recaps by fleet
-      expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets)) 
+      expected_by_fleets <- as.data.frame(rep(tagdbase2[["Exp"]], each = max_num_fleets))
       names(expected_by_fleets)[1] <- "Expected" # rename column
       new_tagdata <- cbind(tagdata, expected_by_fleets) # bind new column to tagdata dataframe
       fleet_numbers <- new_tagdata %>%

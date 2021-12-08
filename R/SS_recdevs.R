@@ -29,8 +29,7 @@
 #' @author Ian Taylor
 #' @export
 SS_recdevs <-
-  function(
-           fyr, lyr, ctl = NULL, recdevs = NULL,
+  function(fyr, lyr, ctl = NULL, recdevs = NULL,
            rescale = TRUE, scaleyrs = NULL,
            dir = "working_directory",
            ctlfile = "control.ss_new",

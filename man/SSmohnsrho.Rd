@@ -4,7 +4,7 @@
 \alias{SSmohnsrho}
 \title{Calculate Mohn's Rho values for select quantities}
 \usage{
-SSmohnsrho(summaryoutput, endyrvec = NULL, startyr = NULL, verbose = TRUE)
+SSmohnsrho(summaryoutput, endyrvec, startyr, verbose = TRUE)
 }
 \arguments{
 \item{summaryoutput}{List created by \code{SSsummarize}. The expected order for the
@@ -14,22 +14,27 @@ models are the full reference model, the retro -1, retro -2, and so forth.}
 final year of values to show for each model.}
 
 \item{startyr}{Single year used to calculate the start of the Wood's Hole
-Mohn's Rho value across all years.}
+Mohn's Rho value across all years. Defaults to startyr of reference model.}
 
 \item{verbose}{Print messages when running the function?}
 }
 \description{
 Function calculates:
-(1) a rho value for the ending year for each retrospective relative to the reference model,
-(2) a "Wood's Hole Mohn's Rho", and
-(3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho"
-(2) and (3) are based on all years between the reference and the retrospective run.
+(1) a rho value for the ending year for each retrospective relative to the reference model
+as in Mohn (1999),
+(2) a "Wood's Hole Mohn's Rho", which is a rho value averaged across all years for each
+retrospective relative to the reference model, and
+(3) an "Alaska Fisheries Science Center and Hurtado-Ferro et al. (2015) Mohn's rho,
+which is the average rho per retrospective "peel".
 }
 \references{
 Hurtado-Ferro et al. 2015. Looking in the rear-view mirror: bias
 and retrospective patterns in integrated, age-structured stock assessment
 models. ICES J. Mar. Sci Volume 72, Issue 1, 1 January 2015,
 Pages 99-110, https://doi.org/10.1093/icesjms/fsu198
+Mohn, R. 1999. The retrospective problem in sequential population analysis:
+An investigation using cod fishery and simulated data. ICES J. Mar. Sci
+Volume 56, Pages 473-488
 }
 \author{
 Chantel R. Wetzel and Carey McGilliard

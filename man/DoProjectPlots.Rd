@@ -91,7 +91,6 @@ Rgui. Default=FALSE.}
 Make a set of plots based on output from Andre Punt's Rebuilder program.
 }
 \examples{
-
 \dontrun{
 # example with one file
 DoProjectPlots(

@@ -117,7 +117,7 @@ SSplotCatch <-
     # I don't why by this work-around should bring them back until we can
     # figure out what's going on
     if (is.null(labels)) {
-      labels = c(
+      labels <- c(
         "Harvest rate/Year", # 1
         "Continuous F", # 2
         "Landings", # 3

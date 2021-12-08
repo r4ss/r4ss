@@ -53,7 +53,6 @@
 #' @export
 #' @seealso [SS_plots()]
 #' @examples
-#'
 #' \dontrun{
 #' # read model output
 #' myreplist <- SS_output(dir = "c:/SS/Simple/")
@@ -265,6 +264,7 @@ SS_output <-
     SS_versionCode <- rephead[grep("#V", rephead)]
     SS_version <- rephead[grep("Stock_Synthesis", rephead)]
     SS_version <- SS_version[substring(SS_version, 1, 2) != "#C"] # remove any version numbering in the comments
+    SS_version <- SS_version[1]
     if (substring(SS_version, 1, 2) == "#V") {
       SS_version <- substring(SS_version, 3)
     }
@@ -1353,9 +1353,11 @@ SS_output <-
       seldev_matrix <- NULL
     } else {
       # if semi-parametric selectivity IS used
-      if(any(duplicated(FleetNames))){
-        warning("Duplicated fleet names will cause only the semi-parametric",
-                " selectivity to be available for the first of the duplicates.")
+      if (any(duplicated(FleetNames))) {
+        warning(
+          "Duplicated fleet names will cause only the semi-parametric",
+          " selectivity to be available for the first of the duplicates."
+        )
       }
       # parse parameter labels to get info
       # the parameter labels look like like
@@ -1489,10 +1491,10 @@ SS_output <-
                                      dbase) {
         ipar <- data_info[["ParmSelect"]][f]
         if (ipar %in% 1:nrow(DM_pars)) {
-          if(CompError == 1){
+          if (CompError == 1) {
             Theta <- DM_pars[["Theta"]][ipar]
           }
-          if(CompError == 2){
+          if (CompError == 2) {
             beta <- DM_pars[["Theta"]][ipar]
           }
         } else {
@@ -1501,19 +1503,19 @@ SS_output <-
             "Fleet = ", f, "and ParmSelect = ", ipar
           )
         }
-        if(CompError == 1){
+        if (CompError == 1) {
           DM_effN <-
             1 / (1 + Theta) +
             dbase[["Nsamp_adj"]][sub] * Theta / (1 + Theta)
         }
-        if(CompError == 2){
+        if (CompError == 2) {
           DM_effN <-
             dbase[["Nsamp_adj"]][sub] * (1 + beta) /
-            (dbase[["Nsamp_adj"]][sub] + beta)
+              (dbase[["Nsamp_adj"]][sub] + beta)
         }
         DM_effN
       }
-      
+
       if (comp) { # only possible if CompReport.sso was read
         if (nrow(agedbase) > 0) {
           agedbase[["DM_effN"]] <- NA
@@ -1530,11 +1532,13 @@ SS_output <-
           if (age_data_info[["CompError"]][f] > 0) {
             sub <- agedbase[["Fleet"]] == f
             agedbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = age_data_info,
-                                 dbase = agedbase)
+              get_DM_sample_size(
+                CompError = age_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = age_data_info,
+                dbase = agedbase
+              )
           } # end test for D-M likelihood in age comp
         } # end loop over fleets within agedbase
 
@@ -1544,11 +1548,13 @@ SS_output <-
           if (len_data_info[["CompError"]][f] > 0) {
             sub <- lendbase[["Fleet"]] == f
             lendbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = len_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = len_data_info,
-                                 dbase = lendbase)
+              get_DM_sample_size(
+                CompError = len_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = len_data_info,
+                dbase = lendbase
+              )
           } # end test for D-M likelihood in len comp
         } # end loop over fleets within lendbase
 
@@ -1558,11 +1564,13 @@ SS_output <-
           if (age_data_info[["CompError"]][f] > 0) {
             sub <- condbase[["Fleet"]] == f
             condbase[["DM_effN"]][sub] <-
-              get_DM_sample_size(CompError = age_data_info[["CompError"]][f],
-                                 f = f,
-                                 sub = sub,
-                                 data_info = age_data_info,
-                                 dbase = condbase)
+              get_DM_sample_size(
+                CompError = age_data_info[["CompError"]][f],
+                f = f,
+                sub = sub,
+                data_info = age_data_info,
+                dbase = condbase
+              )
           } # end test for D-M likelihood in age comp
         } # end loop over fleets within condbase
       } # end test for whether CompReport.sso info is available
@@ -2594,8 +2602,10 @@ SS_output <-
         # length in the plus group can vary over time as a function of changes
         # in the numbers at age (where fishing down the old fish causes
         # fewer additional ages lumped into that group)
-        if (sum(!duplicated(mean_size[mean_size[["Morph"]] == morph,
-                                      paste(0:(accuage-1))])) > 1) {
+        if (sum(!duplicated(mean_size[
+          mean_size[["Morph"]] == morph,
+          paste(0:(accuage - 1))
+        ])) > 1) {
           growthvaries <- TRUE
         }
       }
@@ -2613,10 +2623,10 @@ SS_output <-
     # Updated for 3.30.17 which added an additional row in the AGE_SELEX header
     ageselex <- matchfun2("COMBINED_ALK*selL*selA", 1, header = TRUE)
     if (!is.null(ageselex)) {
-      # account for additional header row added in March 2021 
+      # account for additional header row added in March 2021
       # SS commit: 31ae478d1bae53235e14912d8c5c452a62c71adb
       # (not the most efficient way to do this)
-      if(any(grepl("COMBINED_ALK", names(ageselex)))) {
+      if (any(grepl("COMBINED_ALK", names(ageselex)))) {
         ageselex <- matchfun2("AGE_SELEX", 5, header = TRUE)
       }
       ageselex <- df.rename(ageselex,
@@ -2771,7 +2781,7 @@ SS_output <-
         temp <- morph_indexing[morph_indexing[["BirthSeas"]] ==
           first_seas_with_recruits &
           morph_indexing[["Platoon_Dist"]] ==
-          max(morph_indexing[["Platoon_Dist"]]), ]
+            max(morph_indexing[["Platoon_Dist"]]), ]
         mainmorphs <- min(temp[["Index"]][temp[["Sex"]] == 1])
         if (nsexes == 2) {
           mainmorphs <- c(mainmorphs, min(temp[["Index"]][temp[["Sex"]] == 2]))
@@ -2878,12 +2888,16 @@ SS_output <-
       # create Bratio label for use in various plots
       if (grepl(pattern = "100", x = Bratio_denominator)) {
         # exclude 100% if present
-        Bratio_label <- paste0("B/",
-                               substring(Bratio_denominator, 6))
+        Bratio_label <- paste0(
+          "B/",
+          substring(Bratio_denominator, 6)
+        )
       } else {
-        Bratio_label <- paste0("B/(",
-                               Bratio_denominator,
-                               ")")
+        Bratio_label <- paste0(
+          "B/(",
+          Bratio_denominator,
+          ")"
+        )
       }
       if (Bratio_label == "B/Virgin_Biomass") {
         Bratio_label <- "B/B_0"
@@ -3079,7 +3093,7 @@ SS_output <-
       shift <- grep("^Y", Kobe_head[, 1]) # may be "Year" or "Yr"
       if (length(shift) == 0) {
         # work around for bug in output for 3.24z (and maybe other versions)
-        shift <- grep("MSY_basis:_Year", Kobe_head[, 1]) 
+        shift <- grep("MSY_basis:_Year", Kobe_head[, 1])
       }
       Kobe_warn <- NA
       Kobe_MSY_basis <- NA

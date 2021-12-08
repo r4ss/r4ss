@@ -1,0 +1,9 @@
+# document and style  using reusable workflow
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+name: call-doc-and-style-r
+jobs:
+  call-workflow:
+    uses: nmfs-stock-synthesis/workflows/.github/workflows/doc-and-style-r.yml@main

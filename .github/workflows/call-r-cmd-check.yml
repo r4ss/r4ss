@@ -1,0 +1,13 @@
+# call r-cmd check reusable workflow
+# For help debugging build failures open an issue on the RStudio community with the 'github-actions' tag.
+# https://community.rstudio.com/new-topic?category=Package%20development&tags=github-actions
+on: [push, pull_request, workflow_dispatch]
+
+name: call-r-cmd-check
+
+jobs:
+  call-workflow:
+    uses: k-doering-NOAA/reusable-workflows/.github/workflows/r-cmd-check.yml@main
+    with:
+      copy-ss-test-models: true
+      copy-ss3-bins: true

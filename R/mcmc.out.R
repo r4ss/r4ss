@@ -30,14 +30,13 @@
 #' @param sep Separator for data file passed to the `read.table` function.
 #' @param print Send to screen unless asked to print.
 #' @param new Logical whether or not to open a new plot window before plotting
-#' @param colNames Specific names of the `file` to extract and work with. `NULL` 
+#' @param colNames Specific names of the `file` to extract and work with. `NULL`
 #'   keeps all columns
 #' @author Ian Stewart, Allan Hicks (modifications)
-#' @return 
+#' @return
 #' @export
 #' @seealso [mcmc.nuisance()], [SSgetMCMC()]
 #' @examples
-#'
 #' \dontrun{
 #' mcmc.df <- SSgetMCMC(
 #'   dir = "mcmcRun", writecsv = T,
@@ -48,16 +47,16 @@
 #'
 #' # Or for more control
 #' par(mar = c(5, 3.5, 0, 0.5), oma = c(0, 2.5, 0.2, 0))
-#' mcmc.out("mcmcRun", 
-#'          run = "",
-#'          numparams = 1,
-#'          closeall = F,
-#'          new = F, 
-#'          colNames = c("NatM_p_1_Fem_GP_1"))
+#' mcmc.out("mcmcRun",
+#'   run = "",
+#'   numparams = 1,
+#'   closeall = F,
+#'   new = F,
+#'   colNames = c("NatM_p_1_Fem_GP_1")
+#' )
 #' mtext("M (natural mortality)", side = 2, outer = T, line = 1.5, cex = 1.1)
 #' }
-mcmc.out <- function(
-                     directory = "c:/mydirectory/",
+mcmc.out <- function(directory = "c:/mydirectory/",
                      run = "mymodel/",
                      file = "keyposteriors.csv",
                      namefile = "postplotnames.sso",
@@ -77,9 +76,7 @@ mcmc.out <- function(
                      sep = ",",
                      print = FALSE,
                      new = T,
-                     colNames = NULL
-                     )
-
+                     colNames = NULL)
 ##############################################################################################################
 {
 

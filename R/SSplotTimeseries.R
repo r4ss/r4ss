@@ -73,7 +73,6 @@ SSplotTimeseries <-
            labels = NULL,
            pwidth = 6.5, pheight = 5.0, punits = "in", res = 300, ptsize = 10, cex.main = 1,
            mainTitle = FALSE, mar = NULL) {
-
     if (missing(subplot)) {
       stop("'subplot' input required")
     }
@@ -93,8 +92,8 @@ SSplotTimeseries <-
 
     # set default plot margins
     if (is.null(mar)) {
-      if (mainTitle){
-        mar <-  c(5, 4, 4, 2) + 0.1
+      if (mainTitle) {
+        mar <- c(5, 4, 4, 2) + 0.1
       } else {
         mar <- c(5, 4, 2, 2) + 0.1
       }
@@ -286,7 +285,7 @@ SSplotTimeseries <-
         if (subplot == 11) {
           # sum total recruitment across birth seasons
           for (y in ts[["Yr"]]) {
-            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1 & ts[["Area"]] ==1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
+            yvals[ts[["Yr"]] == y & ts[["Seas"]] == 1 & ts[["Area"]] == 1] <- sum(yvals[ts[["Yr"]] == y], na.rm = TRUE)
             yvals[ts[["Yr"]] == y & (ts[["Seas"]] > 1 | ts[["Area"]] > 1)] <- 0
           }
         }
@@ -440,7 +439,7 @@ SSplotTimeseries <-
         filename <- main
         if (subplot %in% 9:10 & grepl(":", main)) {
           # remove extra stuff like "B/B_0" from filename
-          filename <- strsplit(main, split=":")[[1]][1]
+          filename <- strsplit(main, split = ":")[[1]][1]
         }
         filename <- gsub(",", "", filename, fixed = TRUE)
         filename <- gsub("~", "", filename, fixed = TRUE)
@@ -479,22 +478,22 @@ SSplotTimeseries <-
         if (btarg < 1) {
           abline(h = btarg, col = "red")
           text(max(startyr, minyr) + 4, btarg + 0.02 * diff(par()$usr[3:4]),
-               labels[10],
-               adj = 0
-               )
+            labels[10],
+            adj = 0
+          )
         }
         if (minbthresh < 1) {
           abline(h = minbthresh, col = "red")
           text(max(startyr, minyr) + 4, minbthresh + 0.02 * diff(par()$usr[3:4]),
-               labels[11],
-               adj = 0
-               )
+            labels[11],
+            adj = 0
+          )
         }
       }
       if (subplot %in% 9:10) {
         abline(h = 1.0, col = "red")
       }
-      
+
       if (subplot %in% 14:15) {
         # these plots show lines for each birth season,
         # but probably won't work if there are multiple birth seasons and multiple areas
@@ -539,7 +538,7 @@ SSplotTimeseries <-
           }
           mycol <- areacols[iarea]
           mytype <- "o" # overplotting points on lines for most time series
-          if (subplot == 11 & uncertainty){
+          if (subplot == 11 & uncertainty) {
             mytype <- "p" # just points without connecting lines if plotting recruitment with confidence intervals
           }
           if (!uncertainty) {
@@ -616,11 +615,12 @@ SSplotTimeseries <-
         } # end loop over areas
         if (nareas > 1 & subplot %in% c(2, 3, 5, 6, 8, 10, 12, 13)) {
           legend("topright",
-                 legend = areanames[areas],
-                 lty = 1,
-                 pch = 1,
-                 col = areacols[areas],
-                 bty = "n")
+            legend = areanames[areas],
+            lty = 1,
+            pch = 1,
+            col = areacols[areas],
+            bty = "n"
+          )
         }
       } # end test for birthseason plots or not
       ## if (verbose) {

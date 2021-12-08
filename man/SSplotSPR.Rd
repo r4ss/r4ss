@@ -61,7 +61,13 @@ starter file).
 
 \item{col4}{fourth color used}
 
-\item{sprtarg}{F/SPR proxy target. "default" chooses based on model output.}
+\item{sprtarg}{F/SPR proxy target. "default" chooses based on model output,
+where models which have SPR_report_basis = 0 or 1 specified in the starter
+file will use the SPR target specified in the forecast file. Models which
+have SPR_report_basis = 2 will use SPR at MSY for the SPR target
+and models which have the SPR_report_basis = 3 will use
+SPR at Btarget for the SPR target in these plots. Zero or negative values of
+sprtarg input here will cause no horizontal line to be plotted.}
 
 \item{btarg}{target depletion to be used in plots showing depletion. May be
 omitted by setting to NA. "default" chooses based on model output.}

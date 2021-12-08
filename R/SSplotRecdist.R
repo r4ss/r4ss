@@ -69,7 +69,7 @@ SSplotRecdist <-
       for (iseas in seasvec) {
         if (replist[["SS_versionNumeric"]] == 3.3) { # At least 3.30.16 has this format
           recmat[iarea, iseas] <- sum(recdist[["Frac/sex"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas])
-        }else{ 
+        } else {
           recmat[iarea, iseas] <- sum(recdist[["Value"]][recdist[["Area"]] == iarea & recdist[["Seas"]] == iseas & recdist[["Used"]] == 1])
         }
       }

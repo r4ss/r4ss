@@ -18,10 +18,13 @@ sim_3.24 <- file.path(tmp_path, "extdata", "simple_3.24")
 
 test_that("SS_readctl and SS_writectl works for 3.30.13", {
   # check exits on error when no datafile provided
-  expect_error(SS_readctl(file.path(sim_3.30.13, "simple_control.ss"), 
-                          verbose = FALSE), 
-               "Cannot find data file specified in datlist")
-  
+  expect_error(
+    SS_readctl(file.path(sim_3.30.13, "simple_control.ss"),
+      verbose = FALSE
+    ),
+    "Cannot find data file specified in datlist"
+  )
+
   # read data file b/c necessary input to read control
   dat_3.30.13 <- SS_readdat(file.path(sim_3.30.13, "simple_data.ss"),
     verbose = FALSE
@@ -117,10 +120,13 @@ test_that(paste0(
 
 test_that("SS_readctl and SS_writectl works for 3.24", {
   # check exits on error when no datafile provided
-  expect_error(SS_readctl(file.path(sim_3.24, "simple.ctl"), 
-                          verbose = FALSE, version = "3.24"), 
-               "Cannot find data file specified in datlist")
-  
+  expect_error(
+    SS_readctl(file.path(sim_3.24, "simple.ctl"),
+      verbose = FALSE, version = "3.24"
+    ),
+    "Cannot find data file specified in datlist"
+  )
+
   # read data file b/c necessary input to read control
   dat_3.24 <- SS_readdat(file.path(sim_3.24, "simple.dat"),
     verbose = FALSE, version = "3.24"

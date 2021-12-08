@@ -56,7 +56,6 @@
 #' @author Ian G. Taylor, Cole C. Monnahan
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' # read model results
 #' model <- SS_output(dir = "c:/SS/Simple/")
@@ -85,8 +84,7 @@
 #' }
 #'
 SSplotPars <-
-  function(
-           replist, plotdir = NULL,
+  function(replist, plotdir = NULL,
            xlab = "Parameter value", ylab = "Density",
            showmle = TRUE, showpost = TRUE, showprior = TRUE, showinit = TRUE,
            showdev = FALSE,

@@ -171,7 +171,6 @@ short in comparison to the "width" of the data in particular column, error
 is issued.
 }
 \examples{
-
 \dontrun{
 #### Note: example below is from the version of write.fwf in the gdata
 ####       package but failed when running after moving to r4ss

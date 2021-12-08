@@ -215,7 +215,7 @@ make_multifig <-
     # get axis limits
     xrange <- range(c(ptsx, linesx, ptsx, linesx))
     if (ymin0) {
-      yrange <- c(0, max(ptsy, linesy))
+      yrange <- c(0, max(ptsy, linesy, na.rm = TRUE))
     } else {
       yrange <- range(c(ptsy, linesy, ptsy, linesy))
     }

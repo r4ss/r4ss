@@ -46,7 +46,6 @@
 #'   read.table tail write.csv write.table
 #'
 #' @examples
-#'
 #' \dontrun{
 #' # read in the report file using SS_output
 #' myreplist <- SS_output(dir = "c:/SS/simple/")

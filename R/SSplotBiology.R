@@ -338,7 +338,7 @@ SSplotBiology <-
       growdat[["CV_Beg"]] <- growdat[["SD_Beg"]] / growdat[["Len_Beg"]]
       # female growth
       growdatF <- growdat[growdat[["Sex"]] == 1 &
-                          growdat[["Morph"]] == morphs[1], ]
+        growdat[["Morph"]] == morphs[1], ]
       growdatF[["Sd_Size"]] <- growdatF[["SD_Beg"]]
       if (growthCVtype == "logSD=f(A)") { # lognormal distribution of length at age
         growdatF[["high"]] <- qlnorm(0.975, meanlog = log(growdatF[["Len_Beg"]]), sdlog = growdatF[["Sd_Size"]])
@@ -395,14 +395,16 @@ SSplotBiology <-
         if (nsexes > 1) {
           lines(x, biology[["Wt_len_M"]], type = "o", col = colvec[2])
           if (!add) {
-            legend(legendloc, bty = "n", c("Females", "Males"),
-                   lty = 1, col = c(colvec[1], colvec[2]))
+            legend(legendloc,
+              bty = "n", c("Females", "Males"),
+              lty = 1, col = c(colvec[1], colvec[2])
+            )
           }
         }
       } else { ## if empirical weight-at-age IS used
         wtmat <- wtatage[wtatage[["Fleet"]] == -1 &
-                         wtatage[["Sex"]] == sex &
-                         wtatage[["Seas"]] == seas, -(2:6)]
+          wtatage[["Sex"]] == sex &
+          wtatage[["Seas"]] == seas, -(2:6)]
         wtmat <- clean_wtatage(wtmat)
         if (!is.null(wtmat)) {
           ## persp(x=abs(wtmat[["Yr"]]), y=0:accuage,
@@ -659,8 +661,10 @@ SSplotBiology <-
         )
         abline(h = 0, col = "grey")
         if (add_labels) {
-          title(main = ifelse(mainTitle, main, ""),
-                xlab = labels[2], ylab = labels[6], cex.main = cex.main)
+          title(
+            main = ifelse(mainTitle, main, ""),
+            xlab = labels[2], ylab = labels[6], cex.main = cex.main
+          )
           axis(1)
           axis(2, las = 1)
         }
@@ -1465,11 +1469,11 @@ SSplotBiology <-
               if (plot) {
                 if (22 %in% subplots) {
                   persp(x, y, z,
-                        col = "white", xlab = labels[2], ylab = "",
-                        zlab = labels[1], expand = 0.5,
-                        box = TRUE, main = ifelse(mainTitle, main, ""),
-                        cex.main = cex.main, ticktype = "detailed",
-                        phi = 35, theta = -10
+                    col = "white", xlab = labels[2], ylab = "",
+                    zlab = labels[1], expand = 0.5,
+                    box = TRUE, main = ifelse(mainTitle, main, ""),
+                    cex.main = cex.main, ticktype = "detailed",
+                    phi = 35, theta = -10
                   )
                 }
                 if (23 %in% subplots) {

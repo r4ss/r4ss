@@ -20,7 +20,6 @@ Should be compatible with Stock Synthesis versions 3.24 through 3.30
 (specifically version 3.30.17.00, from June 2021).
 }
 \examples{
-
 \dontrun{
 # read in the report file using SS_output
 myreplist <- SS_output(dir = "c:/SS/simple/")

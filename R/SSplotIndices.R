@@ -300,6 +300,9 @@ SSplotIndices <-
         )
         if (addexpected) {
           lines(x, z, lwd = 2, col = col3)
+          if (length(x) == 1) {
+            points(x, z, pch = 23, col = col3)
+          }
         }
       } else {
         # add points and expected values on log scale
@@ -309,6 +312,9 @@ SSplotIndices <-
         )
         if (addexpected) {
           lines(x, log(z), lwd = 2, col = col3)
+          if (length(x) == 1) {
+            points(x, log(z), pch = 23, col = col3)
+          }
         }
       }
       if (legend & length(colvec1) > 1) {
@@ -903,14 +909,14 @@ SSplotIndices <-
         # set y limits
         ylim <- c(0, 1.05 * max(allcpue[["stdvalue"]], na.rm = TRUE))
         # set colors
-        if (!is.null(fleetcols)) {
+        if (!is.null(fleetcols) & length(fleetcols) >= nfleets) {
           usecols <- fleetcols
         } else {
           usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE), alpha = 0.7)
           if (max(allcpue[["Index"]], na.rm = TRUE) >= 2) {
             usecols <- rich.colors.short(max(allcpue[["Index"]], na.rm = TRUE) + 1,
-                                         alpha = 0.7
-                                         )[-1]
+              alpha = 0.7
+            )[-1]
           }
         }
         # make empty plot

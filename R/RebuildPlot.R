@@ -41,7 +41,6 @@
 #' @author Andre Punt, Ian Taylor
 #' @export
 #' @examples
-#'
 #' \dontrun{
 #' # example with one file
 #' DoProjectPlots(
@@ -105,7 +104,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   Net_Spawn_Graph <- function(UUU, Amin, Amax, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "#_Age_Fecu") + 1
+    Ipnt <- which(UUU == "#Age_Fecu") + 1
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Amax * 5 - Amin), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + Amax * 5 - Amin), 2])
     plot(Xvals, Yvals, xlab = "Age (years)", ylab = "Net Spawning Output", lty = 1, type = "l", lwd = lwd, xaxs = "i", yaxs = "i", ylim = c(0, 1.05 * max(Yvals)))
@@ -135,7 +134,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
   B0Dist <- function(UUU, Title) {
     par(mfrow = c(Outlines[1], Outlines[2]))
 
-    Ipnt <- which(UUU == "#B0_Dist") + 1
+    Ipnt <- which(UUU == "#B0_Dist") + 2
     Xvals <- as.double(UUU[Ipnt:(Ipnt + 19), 1])
     Yvals <- as.double(UUU[Ipnt:(Ipnt + 19), 2])
     plot(Xvals, Yvals, xlab = expression(B[0]), ylab = "Relative Density", type = "n", yaxs = "i", ylim = c(0, 1.05 * max(Yvals)))
@@ -402,8 +401,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
       if (any(Labels == "default")) {
         titls <- titles[II]
         if (length(FileN) > 0) titls <- paste(Titles[Ifile], ": ", titls, sep = "")
-      }
-      else {
+      } else {
         titls <- Labels[IlineType]
       }
 
@@ -494,7 +492,7 @@ DoProjectPlots <- function(dirn = "C:/myfiles/", fileN = c("res.csv"), Titles = 
     Ipnt <- which(UUU == "#Individual") + 2
     Npnt <- as.double(UUU[Ipnt - 1, 1])
 
-    Ipnt <- which(UUU == "# First Five") + 1
+    Ipnt <- which(UUU == "#First_Five") + 2
     Xvals <- as.double(UUU[Ipnt:(Ipnt + Npnt - 1), 1])
     if (yearmax > 0) {
       Use <- Xvals <= yearmax

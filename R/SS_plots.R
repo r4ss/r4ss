@@ -221,8 +221,7 @@
 #' dynamics in declining and recovering fish populations. Can. J. Fish. Aquat.
 #' Sci. 65: 2536-2551.
 SS_plots <-
-  function(
-           replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
+  function(replist = NULL, plot = 1:26, print = NULL, pdf = FALSE, png = TRUE, html = png,
            printfolder = "plots", dir = "default", fleets = "all", areas = "all",
            fleetnames = "default", fleetcols = "default", fleetlty = 1, fleetpch = 1,
            lwd = 1, areacols = "default", areanames = "default",
@@ -601,7 +600,7 @@ SS_plots <-
                 minbthresh = minbthresh,
                 minyr = minyr, maxyr = maxyr,
                 pwidth = pwidth, pheight = pheight, punits = punits,
-                ptsize = ptsize, res = res, 
+                ptsize = ptsize, res = res,
                 mainTitle = mainTitle,
                 cex.main = cex.main,
                 labels = tslabels,

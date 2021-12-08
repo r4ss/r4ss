@@ -20,6 +20,7 @@ SSexecutivesummary(
   forecast_ofl = NULL,
   forecast_abc = NULL,
   format = TRUE,
+  match_digits = FALSE,
   verbose = TRUE
 )
 }
@@ -70,6 +71,10 @@ ABC values. Example input: c(1500, 1300)}
 formatting is intended to create tables that can be cut and pasted easily into a word document without additional formatting
 work. If the tables are being used by LaTex/Markdown or other documenting software, having formatting turned on prevents
 the tables from being formatted further since the objects are no longer numeric.}
+
+\item{match_digits}{TRUE/FALSE switch on whether the low and high interval values
+in e_ReferencePoints_ES will be reported with the same number of decimal digits
+as the estaimte.}
 
 \item{verbose}{Return updates of function progress to the R console?}
 }

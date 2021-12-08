@@ -7,8 +7,10 @@ test_that("models can be read and written", {
   dir.create(mod_path, showWarnings = FALSE)
   orig_mod_path <- system.file("extdata", "models", package = "r4ss")
   file.copy(orig_mod_path, mod_path, recursive = TRUE)
-  all_mods <- list.dirs(file.path(mod_path, "models"), full.names = TRUE, 
-                        recursive = FALSE)
+  all_mods <- list.dirs(file.path(mod_path, "models"),
+    full.names = TRUE,
+    recursive = FALSE
+  )
   message("Will read and write models", basename(all_mods))
   for (m in all_mods) {
     message("Now reading model ", basename(m))
@@ -20,8 +22,10 @@ test_that("models can be read and written", {
     expect_true(is.list(fore))
     expect_true(is.list(dat))
     expect_true(is.list(ctl))
-    files <- file.path(m, c("starter.ss", "forecast.ss", start[["datfile"]], 
-                            start[["ctlfile"]]))
+    files <- file.path(m, c(
+      "starter.ss", "forecast.ss", start[["datfile"]],
+      start[["ctlfile"]]
+    ))
     lapply(files, function(x) file.remove(x))
     message("Now writing model ", basename(m))
     SS_writestarter(start, dir = m, verbose = FALSE)
@@ -30,7 +34,6 @@ test_that("models can be read and written", {
     SS_writectl(ctl, outfile = file.path(m, start[["ctlfile"]]), verbose = FALSE)
     lapply(files, function(x) expect_true(file.exists(x)))
   }
-  
-  #todo: run the models with no est to make sure the written files work with SS
-})
 
+  # todo: run the models with no est to make sure the written files work with SS
+})

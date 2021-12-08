@@ -107,7 +107,6 @@ Depends on \code{\link[=SS_parlines]{SS_parlines()}}.
 Used by \code{\link[=SS_profile]{SS_profile()}} and the \pkg{ss3sim} package.
 }
 \examples{
-
 \dontrun{
 SS_changepars(
   dir = "C:/ss/SSv3.30.03.05_May11/Simple - Copy",
