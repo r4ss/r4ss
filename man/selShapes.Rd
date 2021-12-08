@@ -2,17 +2,12 @@
 % Please edit documentation in R/selShapes.R
 \name{selShapes}
 \alias{selShapes}
-\title{A Shiny app that displays various selectivity curves given parameters that would be input into SS}
+\title{Launch a shiny app that displays various selectivity curves}
 \usage{
 selShapes()
 }
 \description{
-Currently implemented only for
-\enumerate{
-\item logisitic (type 1)
-\item double normal (type 24)
-}
-This could possibly be hosted on a Shiny server instead of within r4ss
+This app is hosted at https://connect.fisheries.noaa.gov/shiny-selex-ss3/
 }
 \author{
 Allan Hicks, Andrea Havron, Ian Taylor,
