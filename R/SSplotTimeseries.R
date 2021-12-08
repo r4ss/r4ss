@@ -130,6 +130,8 @@ SSplotTimeseries <-
     derived_quants <- replist[["derived_quants"]]
     # FecPar2        <- replist[["FecPar2"]]
     recruitment_dist <- replist[["recruitment_dist"]]
+    depletion_basis <- replist[["depletion_basis"]]
+    depletion_multiplier <- replist[["depletion_multiplier"]]
 
     if (btarg == "default") btarg <- replist[["btarg"]]
     if (minbthresh == "default") minbthresh <- replist[["minbthresh"]]
@@ -238,8 +240,8 @@ SSplotTimeseries <-
       # subplot9&10 = relative spawning output
       if (subplot %in% 9:10) {
         # yvals for spatial models are corrected later within loop over areas
-        yvals <- ts[["SpawnBio"]] / ts[["SpawnBio"]][!is.na(ts[["SpawnBio"]])][1]
-        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])
+        yvals <- derived_quants[substring(derived_quants[["Label"]], 1, 6) == "Bratio", "Value"] 
+        ylab <- paste0(labels[6], ": ", replist[["Bratio_label"]])           
       }
 
       # subplot11-15 = recruitment
@@ -323,6 +325,7 @@ SSplotTimeseries <-
             yvals[iyr] <- sum(ts[["SpawnBio"]][ts[["YrSeas"]] == y])
           }
           yvals <- yvals / yvals[!is.na(yvals)][1] # total depletion
+          yvals <- yvals / depletion_multiplier
         }
         ymax <- max(yvals, 1, na.rm = TRUE)
 
@@ -381,6 +384,9 @@ SSplotTimeseries <-
           }
           # calculation fractional year value associated with spawning season for spawning biomass plots
           stdtable[["YrSeas"]] <- stdtable[["Yr"]] + replist[["seasfracs"]][which(1:nseasons %in% spawnseas)]
+          if (ts[["YrSeas"]][1] == ts[["Yr"]][1]){
+            stdtable[["YrSeas"]] <- stdtable[["Yr"]]
+          }
 
           # scaling and calculation of confidence intervals
           v <- stdtable[["Value"]] * bioscale
@@ -546,8 +552,9 @@ SSplotTimeseries <-
             # update if Bratio is not relative to unfished spawning output
             if (subplot == 9 & replist[["Bratio_label"]] != "B/B_0") {
               yvals <- NA * yvals
-              yvals[which(ts[["YrSeas"]] %in% stdtable[["YrSeas"]])] <-
-                stdtable[["Value"]][stdtable[["YrSeas"]] %in% ts[["YrSeas"]]]
+              # Change to year rather that middle of the year
+              yvals[which(ts[["Yr"]] %in% stdtable[["Yr"]])] <-
+                stdtable[["Value"]][stdtable[["Yr"]] %in% ts[["Yr"]]]
             }
 
             if (subplot != 11) {
@@ -581,16 +588,16 @@ SSplotTimeseries <-
             }
             if (subplot %in% c(7, 9)) {
               # add lines for main period
-              lines(stdtable[["YrSeas"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
-              lines(stdtable[["YrSeas"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["Yr"]][plot2], stdtable[["upper"]][plot2], lty = 2, col = mycol)
+              lines(stdtable[["Yr"]][plot2], stdtable[["lower"]][plot2], lty = 2, col = mycol)
 
               # add dashes for early period
-              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
-              points(stdtable[["YrSeas"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["Yr"]][plot1] + 1, stdtable[["upper"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
+              points(stdtable[["Yr"]][plot1] + 1, stdtable[["lower"]][plot1], pch = "-", col = mycol) # +1 is because VIRG was shifted right 1 year
 
               # add dashes for forecast period
-              points(stdtable[["YrSeas"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
-              points(stdtable[["YrSeas"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["Yr"]][plot3], stdtable[["upper"]][plot3], pch = "-", col = mycol)
+              points(stdtable[["Yr"]][plot3], stdtable[["lower"]][plot3], pch = "-", col = mycol)
             }
             if (subplot == 11) { # confidence intervals as error bars because recruitment is more variable
               old_warn <- options()$warn # previous setting
