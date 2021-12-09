@@ -1372,10 +1372,12 @@ SS_output <-
 
       # add columns to pars data.frame with info from labels
       seldev_pars[["Fleet"]] <- seldev_label_info[["X1"]]
-      seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[["X3"]], 2))
+      yr_col <- grep("^y\\d\\d\\d\\d$",  seldev_label_info[1, ])
+      type_bin_col <- grep("^[aAlL][[:alpha:]]{0,3}\\d$", seldev_label_info[1, ])
+      seldev_pars[["Year"]] <- as.numeric(substring(seldev_label_info[[yr_col]], 2))
       # note: bin was indicated by "a" for length- and age-based selectivity
       # until early 2020 when separate "A" or "Lbin" codes were used
-      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[["X4"]], 1, 1) %in%
+      seldev_pars[["Type"]] <- ifelse(substring(seldev_label_info[[type_bin_col]], 1, 1) %in%
         c("A", "a"),
       yes = "age",
       no = "length"
@@ -1383,7 +1385,7 @@ SS_output <-
       # how many non-numeric digits to skip over in parsing bin value
       first_bin_digit <- ifelse(seldev_pars[["Type"]] == "age", 2, 5)
       # parse bin (age or length bin)
-      seldev_pars[["Bin"]] <- as.numeric(substring(seldev_label_info[["X4"]], first_bin_digit))
+      seldev_pars[["Bin"]] <- as.numeric(substring(seldev_label_info[[type_bin_col]], first_bin_digit))
       # remove label column which is redundant with rownames
       seldev_pars <- seldev_pars[, -1]
 
