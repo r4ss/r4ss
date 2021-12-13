@@ -1,7 +1,11 @@
 # Run r cmd check
 on:
   push:
+   paths-ignore:
+     - '.github/workflows/call**'
   pull_request:
+    paths-ignore:
+      - '.github/workflows/call**'
   schedule:
     # This should run the default branch weekly on sunday
     - cron: '0 0 * * 0'

@@ -3,6 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
+    paths: 
+      - 'R/**'
+      - 'tests/**'
 name: call-doc-and-style-r
 jobs:
   call-workflow:
