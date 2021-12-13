@@ -8,6 +8,9 @@ on:
       - '.github/**'
       - 'README.md'
   pull_request:
+    paths-ignore:
+      - '.github/**'
+      - 'README.md'
 jobs:
   call-workflow:
     uses: nmfs-stock-synthesis/workflows/.github/workflows/calc-coverage.yml@main
